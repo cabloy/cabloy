@@ -1,0 +1,210 @@
+# A-Commerce Software Requirements Specification
+
+## Purpose and Authority
+
+This specification translates the [A-Commerce PRD](./prd.md) into implementable and testable system contracts. It is the technical source of truth for data ownership, server-side authorization, state transitions, transaction boundaries, and integration behavior. The [PDP/WBS](./pdp-wbs.md) sequences its delivery.
+
+## System Context
+
+A-Commerce is a Vona/Zova suite-first domain:
+
+```text
+vona/src/suite/a-commerce/modules/<module>/
+zova/src/suite/a-commerce/modules/<module>/
+```
+
+It runs two independent Zova SSR applications and Vona SSR sites:
+
+| Concern              | Customer application                                                                           | Operator application                                                    |
+| -------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| SSR site ID          | `commerce`                                                                                     | `commerceAdmin`                                                         |
+| Public path          | `commerce` (`/commerce`)                                                                       | `commerce-admin` (`/commerce-admin`)                                    |
+| Zova flavor          | `cabloyCommerce`                                                                               | `cabloyCommerceAdmin`                                                   |
+| Primary audience     | Authenticated customers, with public catalogue browsing                                        | Authorized tenant operators                                             |
+| SSR privacy baseline | Anonymous shell for private data unless a later decision requires cookie-aware personalization | Cookie-aware SSR may be enabled only when the site contract requires it |
+
+`web` and `admin` are already registered SSR site IDs in Cabloy Basic. Commerce must declare new IDs and public paths rather than reuse either identity.
+
+Every Commerce flavor must have a root build wrapper that builds its SSR bundle and generated REST package together. The generated REST package is part of the Vona/Zova contract boundary; a REST-only build is not the standard replacement for its corresponding SSR build.
+
+## Capability Ownership
+
+| Module               | Owns                                                                                        | Does not own                                                    |
+| -------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `commerce-catalog`   | Categories, products, SKUs, publication, catalogue read models                              | Historical order price or SKU snapshots                         |
+| `commerce-trade`     | Carts, checkout, orders, order lines, address snapshots, reservation lifecycle, order state | Coupon policy definitions or payment-provider implementation    |
+| `commerce-promotion` | Coupon templates, customer coupon grants, eligibility, reservation, redemption              | Order amount authority after snapshot persistence               |
+| `commerce-payment`   | Commerce payment attempts, mock payment outcomes, idempotency records, mock refunds         | Order aggregate ownership or external provider selection policy |
+| `commerce-member`    | Customer addresses, member commerce extensions, personal-centre aggregation                 | Framework authentication and Passport identity                  |
+| `commerce-siteweb`   | Customer SSR site registration and site-level composition                                   | Commerce domain data                                            |
+| `commerce-siteadmin` | Operator SSR site registration and site-level composition                                   | Commerce domain data                                            |
+
+Inventory reservation is initially a `commerce-trade` aggregate behavior. The persisted reservation and stock mutation contracts must remain explicit enough that a dedicated inventory module can later own stock operations without changing checkout behavior.
+
+## Tenant, Identity, and Authorization Contracts
+
+### Tenant isolation
+
+- **SRS-TEN-01**: The active tenant is resolved on the server from Cabloy's authoritative request/session context. The browser must not select or assert the tenant for authorization.
+- **SRS-TEN-02**: Catalogue, SKU, stock, reservation, cart, address, order, order line, coupon, coupon reservation/redemption, payment, shipment, refund, and audit queries and mutations are scoped to that active tenant.
+- **SRS-TEN-03**: Tenant scope is enforced for relation traversal, asynchronous processing, scheduled expiration, event handling, and mutation recovery—not only list endpoints.
+- **SRS-TEN-04**: A resource identifier alone never grants cross-tenant access. Services must verify both tenant membership and resource ownership before reading or mutating it.
+
+### Customer and operator authorization
+
+- **SRS-AUT-01**: Checkout, carts, addresses, orders, payment attempts, and refund requests require authentication. Guest checkout is not available.
+- **SRS-AUT-02**: Customer operations verify that the target resource belongs to the current authenticated customer in the active tenant.
+- **SRS-AUT-03**: Operator operations require explicit commerce permissions for catalogue, stock, order, shipment, coupon, payment, and refund actions as applicable.
+- **SRS-AUT-04**: Zova `SITE_ID` and route admission determine site access only. Vona API and service authorization independently enforce tenant and resource permissions.
+- **SRS-AUT-05**: A refund request and an approval are separate actions. The MVP allows the same authorized operator to perform both, but no customer can approve or execute a refund.
+
+## Data and Money Contracts
+
+### Shared record requirements
+
+- **SRS-DAT-01**: Commerce records persist tenant ownership or derive it through a mandatory tenant-owned parent relationship that is enforced in services.
+- **SRS-DAT-02**: Mutations that affect order, stock, coupon, payment, shipment, or refund state append an audit record containing the actor, action, prior and next state where applicable, correlation ID, reason when supplied, and timestamp.
+- **SRS-DAT-03**: Business uniqueness is enforced through tenant-aware service logic and transactional checks. Do not use `table.unique(...)` for tenant-scoped business uniqueness.
+- **SRS-DAT-04**: Ordinary indexes support tenant-scoped lookup, active-state lookup, and idempotency lookup.
+
+### Monetary values and snapshots
+
+- **SRS-MNY-01**: Every persisted money amount is a signed or unsigned integer count of USD cents. Floating-point values are not persisted or used to determine totals.
+- **SRS-MNY-02**: An order snapshots line title, SKU attributes, unit price, quantity, eligible subtotal, coupon identity and discount, address, payable total, and payment currency at creation.
+- **SRS-MNY-03**: Coupon discount is `min(fixedDiscountCents, eligibleSubtotalCents)` and the payable amount must not be negative.
+- **SRS-MNY-04**: Later product, SKU, address, coupon-template, or price changes do not alter an existing order snapshot, payment amount, or refund amount.
+
+## State Machines
+
+State names in this section are canonical. A later implementation may use integer persistence codes, but it must expose the same meaning and forbid the same transitions.
+
+### Catalogue and SKU
+
+| State      | Meaning                                                     | Allowed next states    |
+| ---------- | ----------------------------------------------------------- | ---------------------- |
+| `draft`    | Not sellable or customer-visible                            | `active`, `archived`   |
+| `active`   | Customer-visible and potentially sellable                   | `inactive`, `archived` |
+| `inactive` | Not newly sellable; existing orders remain historical facts | `active`, `archived`   |
+| `archived` | Permanently unavailable for new sales                       | none                   |
+
+- **SRS-CAT-01**: Checkout accepts only an `active` SKU with sufficient available stock.
+- **SRS-CAT-02**: Catalogue display is advisory; checkout reruns publication, tenant, price, and availability validation.
+
+### Stock reservation
+
+| State      | Meaning                                             | Allowed next states    |
+| ---------- | --------------------------------------------------- | ---------------------- |
+| `reserved` | Stock is held for an unpaid order                   | `consumed`, `released` |
+| `consumed` | Payment completed and the held stock became sold    | `restored`             |
+| `released` | The unpaid order was cancelled, failed, or expired  | none                   |
+| `restored` | A successful whole-order refund restored sold stock | none                   |
+
+- **SRS-INV-01**: Available stock is calculated from the tenant's one-warehouse on-hand stock minus active reservations; the persistent representation may store equivalent counters if they preserve this invariant.
+- **SRS-INV-02**: The system must prevent a reservation from reducing available stock below zero.
+- **SRS-INV-03**: Each order line has a traceable reservation record. Release, consumption, and restoration are idempotent.
+
+### Order
+
+| State              | Meaning                                                         | Allowed next states                          |
+| ------------------ | --------------------------------------------------------------- | -------------------------------------------- |
+| `awaiting_payment` | Order and reservations created; payment not accepted            | `paid`, `cancelled`, `expired`               |
+| `paid`             | Payment accepted; shipment not yet recorded                     | `shipped`, `refund_requested`                |
+| `refund_requested` | Customer has requested an eligible refund                       | `paid`, `refund_approved`, `refund_rejected` |
+| `refund_approved`  | Operator approved; mock refund is being executed                | `refunded`                                   |
+| `refund_rejected`  | Operator rejected the request; order remains paid and unshipped | `paid`                                       |
+| `shipped`          | Whole-order carrier/tracking information recorded               | none                                         |
+| `refunded`         | Whole-order mock refund succeeded and stock was restored        | none                                         |
+| `cancelled`        | Customer/operator cancellation before payment completion        | none                                         |
+| `expired`          | 30-minute unpaid timeout released reservations                  | none                                         |
+
+- **SRS-ORD-01**: `paid`, `refund_requested`, `refund_approved`, or `refund_rejected` must not transition to `shipped` unless the current state is `paid` at the transaction boundary.
+- **SRS-ORD-02**: `shipped`, `refunded`, `cancelled`, and `expired` are final in the MVP.
+- **SRS-ORD-03**: The refund route accepts only `paid` orders. It is unavailable after shipment and for every final or payment-incomplete state.
+
+### Coupon use
+
+| State       | Meaning                                          | Allowed next states     |
+| ----------- | ------------------------------------------------ | ----------------------- |
+| `available` | Held by an eligible customer and usable if valid | `reserved`, `expired`   |
+| `reserved`  | Bound to an unpaid order                         | `redeemed`, `available` |
+| `redeemed`  | Payment succeeded and coupon use is final        | none                    |
+| `expired`   | No longer usable                                 | none                    |
+
+- **SRS-CPN-01**: One order holds at most one coupon reservation.
+- **SRS-CPN-02**: Coupon validation checks active status, customer ownership, validity, total usage limit, per-customer limit, and minimum spend while creating the order.
+- **SRS-CPN-03**: Cancellation, failed payment, and expiry change `reserved` to `available` exactly once; a successful refund leaves `redeemed` unchanged.
+
+### Payment and refund attempts
+
+| Record          | State       | Meaning                                                   |
+| --------------- | ----------- | --------------------------------------------------------- |
+| Payment attempt | `created`   | Order created a mock payment attempt                      |
+| Payment attempt | `succeeded` | A validated mock success completed exactly once           |
+| Payment attempt | `failed`    | Mock payment failed                                       |
+| Payment attempt | `cancelled` | Mock payment cancelled or order expired/cancelled         |
+| Refund attempt  | `created`   | Approved refund is ready for mock execution               |
+| Refund attempt  | `succeeded` | Mock refund completed exactly once                        |
+| Refund attempt  | `failed`    | Mock refund failed and the paid order remains recoverable |
+
+- **SRS-RFD-01**: A refund request records the requesting customer, order, reason, requested time, decision actor, decision reason, and execution attempt. It is created only from the order's current `paid` state.
+- **SRS-RFD-02**: Approval must recheck tenant ownership and that no shipment exists. A refund attempt may run only from `refund_approved`; a rejection returns the order to `paid` without changing stock or coupon redemption.
+- **SRS-RFD-03**: Successful refund execution restores each consumed reservation exactly once, transitions the order to `refunded`, and leaves the coupon in `redeemed` state.
+
+- **SRS-PAY-01**: A payment or refund event has a durable idempotency key scoped to its attempt and tenant.
+- **SRS-PAY-02**: Replaying a successful event returns the existing final result and must not reapply any stock, coupon, order, or audit mutation.
+- **SRS-PAY-03**: Payment success consumes reservations and changes the order from `awaiting_payment` to `paid` atomically. Refund success restores stock and changes the order from `refund_approved` to `refunded` atomically.
+
+### Shipment
+
+- **SRS-SHP-01**: A shipment is a whole-order record with a non-empty carrier and tracking number, the operator, and the timestamp.
+- **SRS-SHP-02**: Creating the shipment is permitted only for the same tenant's current `paid` order and moves that order to `shipped` in the same transaction.
+- **SRS-SHP-03**: The MVP has no split shipment, tracking-provider integration, delivery confirmation, or post-shipment correction workflow.
+
+## Transactional and Concurrency Requirements
+
+- **SRS-TXN-01**: Order creation is one `@Core.transaction()`-protected operation. It resolves tenant and customer, loads authoritative SKU and coupon data, validates every condition, creates order snapshots, reserves stock, reserves a coupon if present, creates the payment attempt, and writes audit records.
+- **SRS-TXN-02**: The stock update uses a concurrency-safe row lock or conditional update. It succeeds only when sufficient current availability exists. A losing concurrent checkout rolls back completely and reports insufficient stock.
+- **SRS-TXN-03**: Any failure during order creation leaves no partial order, reservation, coupon reservation, payment attempt, or cache mutation.
+- **SRS-TXN-04**: Payment success, cancellation/failure, unpaid expiry, shipment, and refund success each have explicit transactional transitions and are safe to retry.
+- **SRS-TXN-05**: Scheduled expiry locates only still-`awaiting_payment` orders whose reservation deadline has passed; it rechecks current state in the transaction before releasing stock or coupons.
+- **SRS-TXN-06**: Cache writes related to transactional mutations use the framework's transaction-aware path, and tests assert database rollback and cache consistency when relevant.
+
+## API and Frontend State Contracts
+
+- **SRS-API-01**: Vona is the contract truth. Backend DTO/controller/API changes follow the forward contract loop; Zova consumers are regenerated rather than manually patched.
+- **SRS-API-02**: A reverse change to frontend metadata/routes requires the matching Commerce flavor SSR + REST build before `npm run deps:vona`. A REST-only build is insufficient because the SSR bundle and generated contract must move together.
+- **SRS-API-03**: APIs expose semantic resource and action boundaries. A customer action never accepts an arbitrary customer, tenant, total, discount, or state transition from the browser.
+- **SRS-UI-01**: Reusable async product, cart, order, coupon, and operator query state belongs to a Zova Model. Controllers orchestrate scenes rather than becoming shared fetch/cache owners.
+- **SRS-UI-02**: A custom endpoint belonging to an existing resource reuses the existing resource Model's state and invalidation tree where possible rather than creating a competing module-local cache owner.
+- **SRS-UI-03**: Customer SSR renders no private cart, address, order, coupon, or payment information in an anonymous response. Final client theme and authenticated state remain hydration-tolerant.
+
+## Non-Functional Requirements
+
+- **SRS-NFR-01**: Order, payment, inventory, coupon, shipment, and refund state changes are attributable and diagnosable through audit records and correlation IDs.
+- **SRS-NFR-02**: Customer addresses and tracking data are treated as tenant-scoped personal data and are returned only to the owning customer or authorized tenant operator.
+- **SRS-NFR-03**: Tests cover tenant isolation, stock contention, duplicate payment/refund event delivery, expiry, coupon limits, shipment/refund conflict, and historical snapshot stability.
+- **SRS-NFR-04**: Any schema change in a future implementation follows the repository migration rules. Before adding a persisted field to an existing resource, the implementer asks whether `vonaModule.fileVersion` should increase; every `meta.version.ts` change requires `npm run test`.
+
+## Acceptance Mapping
+
+| SRS area                 | PRD source               | Required evidence                                          | Test-plan scenarios                       |
+| ------------------------ | ------------------------ | ---------------------------------------------------------- | ----------------------------------------- |
+| `SRS-TEN-*`, `SRS-AUT-*` | `PRD-ORD-04`             | Cross-tenant and cross-customer negative API tests         | `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SSR-02`  |
+| `SRS-CAT-*`, `SRS-INV-*` | `PRD-CAT-*`, `PRD-INV-*` | SKU publication and concurrent checkout tests              | `ATP-INV-01`, `ATP-SNAP-01`               |
+| `SRS-ORD-*`, `SRS-TXN-*` | `PRD-ORD-*`, `PRD-INV-*` | Transaction rollback, expiry, and snapshot tests           | `ATP-TXN-01`, `ATP-EXP-01`, `ATP-SNAP-01` |
+| `SRS-CPN-*`, `SRS-MNY-*` | `PRD-CPN-*`              | Coupon eligibility, integer-cent, and release tests        | `ATP-CPN-01`                              |
+| `SRS-PAY-*`              | `PRD-PAY-*`              | Idempotent mock event tests                                | `ATP-PAY-01`, `ATP-RFD-01`                |
+| `SRS-SHP-*`, `SRS-RFD-*` | `PRD-SHP-*`, `PRD-RFD-*` | Shipment/refund lifecycle tests                            | `ATP-SHP-01`, `ATP-RACE-01`               |
+| `SRS-API-*`, `SRS-UI-*`  | All PRD areas            | Flavor build, REST contract, and end-to-end browser checks | `ATP-CTR-01`, `ATP-SSR-01`, `ATP-SSR-02`  |
+
+## Related Records
+
+- [A-Commerce internal planning index](./README.md)
+- [Product Requirements Document](./prd.md)
+- [Product Delivery Plan and Work Breakdown Structure](./pdp-wbs.md)
+- [Test Strategy and Acceptance Plan](./test-plan.md)
+- [ADR 0001: Establish A-Commerce MVP Boundaries](./decisions/0001-mvp-boundaries.md)
+- [Transaction guide](../../../cabloy-docs/backend/transaction-guide.md)
+- [Contract-loop playbook](../../../cabloy-docs/fullstack/contract-loop-playbook.md)
+- [SSR Vona/Zova boundary and call chain](../../architecture/ssr-vona-zova-boundary-and-call-chain.md)
+- [Resource custom-API state ownership](../../architecture/resource-custom-api-state-ownership.md)

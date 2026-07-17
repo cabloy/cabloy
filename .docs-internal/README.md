@@ -61,6 +61,10 @@ Those concerns should live elsewhere.
 - [ADR 0007: Resource Mutation Response Contract](./decisions/0007-resource-mutation-response-contract.md)
 - [ADR 0008: Role Localization Seed and Display Contract](./decisions/0008-role-localization-seed-and-display-contract.md)
 
+### Business planning
+
+- [A-Commerce Internal Planning](./business/a-commerce/README.md), including its [ADR 0001: Establish MVP Boundaries](./business/a-commerce/decisions/0001-mvp-boundaries.md)
+
 ### Architecture notes
 
 - [a-status Module Architecture](./architecture/a-status-module-architecture.md)
