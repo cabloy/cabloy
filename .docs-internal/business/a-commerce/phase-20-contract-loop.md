@@ -1,0 +1,55 @@
+# A-Commerce Phase 20 Contract Loop
+
+## Purpose
+
+This note records the executable contract boundary introduced by Phase 20. It supplements the delivery rules in [the A-Commerce SRS](./srs.md) and [PDP/WBS](./pdp-wbs.md); it does not replace them.
+
+## Commerce sites and flavors
+
+| Surface  | Vona SSR site   | Public path       | Zova flavor           | Paired root build                   |
+| -------- | --------------- | ----------------- | --------------------- | ----------------------------------- |
+| Customer | `commerce`      | `/commerce`       | `cabloyCommerce`      | `npm run build:zova:commerce`       |
+| Operator | `commerceAdmin` | `/commerce-admin` | `cabloyCommerceAdmin` | `npm run build:zova:commerce-admin` |
+
+Each paired build creates the matching SSR bundle under its Commerce site-owner module and a generated REST package under `vona/.zova-rest/`. The generated REST directories are build artifacts and must not be edited manually.
+
+## Forward chain: Vona contract to Zova consumer
+
+When a Commerce Vona DTO, controller, validation rule, or OpenAPI declaration changes:
+
+1. update and verify Vona contract truth first;
+2. start the local API when OpenAPI generation needs the Swagger endpoint;
+3. configure the owning Zova module with `npm run zova :openapi:config <module>` once it exposes operations;
+4. ensure the module declares non-empty `operations.match` or `operations.ignore`;
+5. regenerate with `npm run zova :openapi:generate <module>`;
+6. consume the generated API/schema from a thin Zova Model facade rather than hand-patching generated files.
+
+## Reverse chain: Zova site metadata to Vona consumer
+
+When Commerce routes, pages, icons, render metadata, or other Vona-consumed frontend metadata changes:
+
+```bash
+npm run build:zova:commerce
+# or
+npm run build:zova:commerce-admin
+npm run deps:vona
+```
+
+Never substitute `build:rest:*` alone: the SSR bundle and generated REST package form one boundary and must move together.
+
+## Verification evidence
+
+Phase 20 retains build and browser evidence for:
+
+- `ATP-CTR-01`: each paired build produces separate Commerce SSR and REST artifacts and `npm run deps:vona` resolves them;
+- `ATP-SSR-01`: anonymous `/commerce` HTML contains no cart, address, order, coupon, or payment data before hydration;
+- `ATP-SSR-02`: `/commerce-admin` is independent from `/commerce`; future operator routes and APIs must independently enforce tenant-scoped authorization.
+
+Run the committed Playwright checks against a running Vona application:
+
+```bash
+npm run test:e2e:commerce
+npm run test:e2e:commerce-admin
+```
+
+Set `COMMERCE_E2E_BASE_URL` when the target is not the Commerce SSR development server at `http://127.0.0.1:9000`.

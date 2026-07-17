@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.base",
+  "compilerOptions": {},
+  "references": [
+    {
+      "path": "modules/commerce-catalog/tsconfig.build.json"
+    },
+    {
+      "path": "modules/commerce-trade/tsconfig.build.json"
+    },
+    {
+      "path": "modules/commerce-promotion/tsconfig.build.json"
+    },
+    {
+      "path": "modules/commerce-payment/tsconfig.build.json"
+    },
+    {
+      "path": "modules/commerce-member/tsconfig.build.json"
+    },
+    {
+      "path": "modules/commerce-siteweb/tsconfig.build.json"
+    },
+    {
+      "path": "modules/commerce-siteadmin/tsconfig.build.json"
+    }
+  ],
+  "exclude": ["modules"]
+}

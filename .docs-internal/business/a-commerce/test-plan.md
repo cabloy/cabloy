@@ -10,7 +10,7 @@ PRD requirement -> SRS contract -> PDP/WBS task -> ATP scenario -> observed evid
 
 The [PRD](./prd.md) owns product outcomes and business acceptance. The [SRS](./srs.md) owns system contracts, security, state machines, and invariants. The [PDP/WBS](./pdp-wbs.md) owns delivery sequencing. This test plan must not redefine those decisions; it defines how they are proved.
 
-A-Commerce is currently planning-only. No `a-commerce` Vona/Zova suite, Commerce flavor scripts, or committed browser-E2E runner exists yet. Every Commerce-specific source path and command marked **future-gated** becomes usable only after the corresponding WBS work creates it.
+A-Commerce Phase 20 establishes the `a-commerce` Vona/Zova suite, Commerce flavor scripts, paired SSR/REST artifact builds, and a committed Playwright browser-E2E runner. Later business source paths remain future-gated until their owning WBS phase creates them.
 
 ## Scope and Quality Priorities
 
@@ -129,7 +129,7 @@ SSR, hydration, route admission, and Vona API authorization are separate evidenc
 
 Customer-site verification must inspect actual anonymous HTML and subsequent hydrated behavior. It must prove that private customer data is absent before the authenticated client query resolves. Operator-site verification must prove that an unauthorized person cannot obtain access merely by knowing a route or menu path, and direct API calls remain independently protected.
 
-A browser acceptance suite is future-gated. Until a committed runner is selected and configured, record browser-driven procedures and evidence manually or through approved interactive tooling; do not claim that a repository `test:e2e` command exists.
+Phase 20 commits a Playwright browser acceptance suite under `e2e/a-commerce/`. Install Chromium once with `npx playwright install chromium`; then run the Commerce customer and operator smoke commands against their matching SSR development server or a target supplied through `COMMERCE_E2E_BASE_URL`.
 
 ## Commands
 
@@ -155,15 +155,18 @@ npm run format
 # Focus a future module-local test after the suite and test file exist
 npm run vona :bin:test -- commerce-trade/test/checkoutReservation.test.ts --flavor=normal
 
-# Build paired Commerce SSR and REST artifacts after WBS-20-02 adds wrappers
+# Build paired Commerce SSR and REST artifacts
 npm run build:zova:commerce
 npm run build:zova:commerce-admin
 npm run deps:vona
 npm run deps:zova
 
-# Placeholder names only: valid after a committed browser runner is adopted
+# Run the committed Playwright smoke checks against matching SSR development servers
+npm run dev:zova:commerce
 npm run test:e2e:commerce
-npm run test:e2e:commerce-admin
+
+npm run dev:zova:commerce-admin
+COMMERCE_E2E_BASE_URL=http://127.0.0.1:9001 npm run test:e2e:commerce-admin
 ```
 
 For release contention evidence, run the relevant Commerce transaction scenarios on PostgreSQL in addition to the fast default database suite. Existing CI provides the multi-database pattern; Commerce test cases must be added to it when the modules exist.

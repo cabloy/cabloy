@@ -8,7 +8,8 @@ This directory records the agreed product, system, and delivery baseline for the
 2. [Software Requirements Specification](./srs.md) defines the implementation contracts, ownership boundaries, state machines, and invariants.
 3. [Product Delivery Plan and Work Breakdown Structure](./pdp-wbs.md) sequences the work and defines completion checks.
 4. [Test Strategy and Acceptance Plan](./test-plan.md) defines executable acceptance scenarios, evidence, and release proof.
-5. [ADR 0001](./decisions/0001-mvp-boundaries.md) records the durable architecture and scope decisions behind this plan.
+5. [Phase 20 Contract Loop](./phase-20-contract-loop.md) defines the paired Commerce SSR/REST build and synchronization workflow.
+6. [ADR 0001](./decisions/0001-mvp-boundaries.md) records the durable architecture and scope decisions behind this plan.
 
 ## Confirmed MVP Baseline
 

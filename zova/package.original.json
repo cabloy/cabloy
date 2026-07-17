@@ -46,7 +46,16 @@
     "build:rest:cabloyBasicWeb": "npm run prerun && npm run zova :bin:buildRest -- --flavor cabloyBasicWeb",
     "preview:ssr:cabloyBasicWeb": "concurrently \"node ./dist-mock/index.js\" \"node ./dist/ssr-cabloyBasicWeb/index.js\"",
     "dev:spa:cabloyBasicWeb": "npm run prerun && quasar dev --mode spa --flavor cabloyBasicWeb",
-    "build:ssr:cabloyBasicBatch": "npm run build:ssr:cabloyBasicAdmin && npm run build:ssr:cabloyBasicWeb && npm run build:rest:cabloyBasicAdmin && npm run build:rest:cabloyBasicWeb"
+    "dev:ssr:cabloyCommerce": "npm run prerun && quasar dev --mode ssr --flavor cabloyCommerce",
+    "build:ssr:cabloyCommerce": "npm run prerun && quasar build --mode ssr --flavor cabloyCommerce",
+    "build:rest:cabloyCommerce": "npm run prerun && npm run zova :bin:buildRest -- --flavor cabloyCommerce",
+    "preview:ssr:cabloyCommerce": "concurrently \"node ./dist-mock/index.js\" \"node ./dist/ssr-cabloyCommerce/index.js\"",
+    "dev:ssr:cabloyCommerceAdmin": "npm run prerun && quasar dev --mode ssr --flavor cabloyCommerceAdmin",
+    "build:ssr:cabloyCommerceAdmin": "npm run prerun && quasar build --mode ssr --flavor cabloyCommerceAdmin",
+    "build:rest:cabloyCommerceAdmin": "npm run prerun && npm run zova :bin:buildRest -- --flavor cabloyCommerceAdmin",
+    "preview:ssr:cabloyCommerceAdmin": "concurrently \"node ./dist-mock/index.js\" \"node ./dist/ssr-cabloyCommerceAdmin/index.js\"",
+    "build:ssr:cabloyBasicBatch": "npm run build:ssr:cabloyBasicAdmin && npm run build:ssr:cabloyBasicWeb && npm run build:rest:cabloyBasicAdmin && npm run build:rest:cabloyBasicWeb",
+    "build:ssr:cabloyCommerceBatch": "npm run build:ssr:cabloyCommerce && npm run build:ssr:cabloyCommerceAdmin && npm run build:rest:cabloyCommerce && npm run build:rest:cabloyCommerceAdmin"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.2.2",

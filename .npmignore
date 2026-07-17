@@ -76,8 +76,7 @@ vona/docker-compose.yml
 /vona/src/backend/play
 !/zova/packages-utils/quasar-app-extension-zova/dist
 
-vona/src/suite/cabloy-basic/modules/basic-siteadmin/assets/site
-vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site
+**/assets/site
 
 # --- Additional npm-only exclusions ---
 

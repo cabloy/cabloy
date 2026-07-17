@@ -61,11 +61,14 @@ importers:
         specifier: ^8.21.3
         version: 8.21.3
       '@tanstack/vue-form':
-        specifier: ^1.32.0
-        version: 1.33.0(vue@3.5.38(typescript@5.9.3))
+        specifier: ^1.33.2
+        version: 1.33.2(vue@3.5.38(typescript@5.9.3))
       '@tanstack/vue-query':
         specifier: ^5.100.10
         version: 5.101.1(vue@3.5.38(typescript@5.9.3))
+      '@tanstack/vue-store':
+        specifier: ^0.11.0
+        version: 0.11.0(vue@3.5.38(typescript@5.9.3))
       '@tanstack/vue-table':
         specifier: ^8.21.3
         version: 8.21.3(vue@3.5.38(typescript@5.9.3))
@@ -74,7 +77,7 @@ importers:
         version: 10.5.2(postcss@8.5.15)
       axios:
         specifier: ^1.16.1
-        version: 1.18.1
+        version: 1.18.1(supports-color@10.2.2)
       compression:
         specifier: ^1.8.1
         version: 1.8.1
@@ -264,6 +267,27 @@ importers:
       zova-module-basic-text:
         specifier: workspace:^
         version: link:src/suite/cabloy-basic/modules/basic-text
+      zova-module-commerce-catalog:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-catalog
+      zova-module-commerce-member:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-member
+      zova-module-commerce-payment:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-payment
+      zova-module-commerce-promotion:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-promotion
+      zova-module-commerce-siteadmin:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-siteadmin
+      zova-module-commerce-siteweb:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-siteweb
+      zova-module-commerce-trade:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-trade
       zova-module-demo-basic:
         specifier: workspace:^
         version: link:src/suite/a-demo/modules/demo-basic
@@ -315,7 +339,7 @@ importers:
     devDependencies:
       '@cabloy/cli':
         specifier: ^3.1.28
-        version: 3.1.28(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.28(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
       '@cabloy/lint':
         specifier: ^5.1.27
         version: 5.1.30(@typescript-eslint/eslint-plugin@8.62.1(@typescript-eslint/parser@8.62.1(eslint@10.6.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.6.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.62.1(eslint@10.6.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.62.1(typescript@5.9.3))(@typescript-eslint/utils@8.62.1(eslint@10.6.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.6.0(jiti@2.7.0))(oxfmt@0.45.0)(oxlint@1.72.0)(supports-color@10.2.2)(typescript@5.9.3)(vue-eslint-parser@10.4.1(eslint@10.6.0(jiti@2.7.0)))
@@ -390,7 +414,7 @@ importers:
     dependencies:
       '@cabloy/cli':
         specifier: ^3.1.28
-        version: 3.1.28(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.28(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
       '@cabloy/process-helper':
         specifier: ^3.1.8
         version: 3.1.8
@@ -401,7 +425,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.5
       zova-cli-set-front:
-        specifier: ^1.2.95
+        specifier: ^1.2.96
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -424,7 +448,7 @@ importers:
         version: 7.29.7(@babel/core@7.29.7)
       '@cabloy/cli':
         specifier: ^3.1.28
-        version: 3.1.28(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.28(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
       '@cabloy/extend':
         specifier: ^3.2.8
         version: 3.2.8
@@ -822,7 +846,7 @@ importers:
         specifier: ^5.1.78
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.134
+        specifier: ^5.1.136
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -959,7 +983,7 @@ importers:
         specifier: ^5.1.23
         version: link:modules/a-fetch
       zova-module-a-form:
-        specifier: ^5.1.43
+        specifier: ^5.1.44
         version: link:modules/a-form
       zova-module-a-icon:
         specifier: ^5.1.26
@@ -977,7 +1001,7 @@ importers:
         specifier: ^5.1.33
         version: link:modules/a-model
       zova-module-a-openapi:
-        specifier: ^5.1.43
+        specifier: ^5.1.44
         version: link:modules/a-openapi
       zova-module-a-router:
         specifier: ^5.1.30
@@ -989,13 +1013,13 @@ importers:
         specifier: ^5.1.33
         version: link:modules/a-routertabs
       zova-module-a-ssr:
-        specifier: ^5.1.29
+        specifier: ^5.1.30
         version: link:modules/a-ssr
       zova-module-a-ssrhmr:
         specifier: ^5.1.22
         version: link:modules/a-ssrhmr
       zova-module-a-ssrserver:
-        specifier: ^5.1.22
+        specifier: ^5.1.23
         version: link:modules/a-ssrserver
       zova-module-a-style:
         specifier: ^5.1.32
@@ -1081,7 +1105,7 @@ importers:
     dependencies:
       axios:
         specifier: ^1.16.1
-        version: 1.18.1
+        version: 1.18.1(supports-color@10.2.2)
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -1354,7 +1378,7 @@ importers:
     devDependencies:
       '@cabloy/cli':
         specifier: ^3.1.28
-        version: 3.1.28(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.28(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
       '@types/luxon':
         specifier: ^3.7.1
         version: 3.7.2
@@ -1370,6 +1394,93 @@ importers:
       zova-openapi:
         specifier: ^1.1.17
         version: link:../../../../../packages-utils/zova-openapi
+
+  src/suite/a-commerce:
+    dependencies:
+      zova-module-commerce-catalog:
+        specifier: ^5.0.0
+        version: link:modules/commerce-catalog
+      zova-module-commerce-member:
+        specifier: ^5.0.0
+        version: link:modules/commerce-member
+      zova-module-commerce-payment:
+        specifier: ^5.0.0
+        version: link:modules/commerce-payment
+      zova-module-commerce-promotion:
+        specifier: ^5.0.0
+        version: link:modules/commerce-promotion
+      zova-module-commerce-siteadmin:
+        specifier: ^5.0.0
+        version: link:modules/commerce-siteadmin
+      zova-module-commerce-siteweb:
+        specifier: ^5.0.0
+        version: link:modules/commerce-siteweb
+      zova-module-commerce-trade:
+        specifier: ^5.0.0
+        version: link:modules/commerce-trade
+
+  src/suite/a-commerce/modules/commerce-catalog:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/a-commerce/modules/commerce-member:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/a-commerce/modules/commerce-payment:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/a-commerce/modules/commerce-promotion:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/a-commerce/modules/commerce-siteadmin:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/a-commerce/modules/commerce-siteweb:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/a-commerce/modules/commerce-trade:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
 
   src/suite/a-demo:
     dependencies:
@@ -3931,9 +4042,6 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  '@tanstack/form-core@1.33.0':
-    resolution: {integrity: sha512-AV4Pw9Dk4orFsuPBcDssfWMJFs+yMYBae7zZ4oTqrCf4ftNGQKxvrQRZeqKHG6A4TkiLeSvf2kzIjcVkrW7E6w==}
-
   '@tanstack/form-core@1.33.2':
     resolution: {integrity: sha512-F60zJd15bGrXKonc1kpRYnNRNfiES7F+hgvrPMrsZznPLqZtO2DIg76OU6R25kCYkqYQY5xvuKteuWcUsc587A==}
 
@@ -3957,11 +4065,6 @@ packages:
   '@tanstack/table-core@8.21.3':
     resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
     engines: {node: '>=12'}
-
-  '@tanstack/vue-form@1.33.0':
-    resolution: {integrity: sha512-ZdVDo4W2ohL27bCjsuNy/eQ8PHm9mOzCFNfI7d6GfhS5KHqehZ8TiR/y1eRJR/c1y3nucgSi6RfY6iLHBMVhAQ==}
-    peerDependencies:
-      vue: ^3.4.0
 
   '@tanstack/vue-form@1.33.2':
     resolution: {integrity: sha512-yolxEs4XSQu2RhBpM48YgqmmpftR4v28XniH5UjGg9/Z3WOJAv+COSmWwC64ozs2OZIKF+j5ufu1ki62jtP6nA==}
@@ -8248,7 +8351,7 @@ snapshots:
 
   '@bufbuild/protobuf@2.12.1': {}
 
-  '@cabloy/cli@3.1.28(vue@3.5.38(typescript@5.9.3))':
+  '@cabloy/cli@3.1.28(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))':
     dependencies:
       '@babel/parser': 7.29.7
       '@cabloy/module-glob': 5.3.17
@@ -8257,7 +8360,7 @@ snapshots:
       '@cabloy/utils': 2.1.26
       '@cabloy/word-utils': link:packages-utils/word-utils
       '@npmcli/config': 10.11.0
-      '@zhennann/common-bin': 4.0.1
+      '@zhennann/common-bin': 4.0.1(supports-color@10.2.2)
       '@zhennann/ejs': 3.0.1
       boxen: 4.2.0
       chalk: 3.0.0
@@ -9734,12 +9837,6 @@ snapshots:
 
   '@tanstack/devtools-event-client@0.4.4': {}
 
-  '@tanstack/form-core@1.33.0':
-    dependencies:
-      '@tanstack/devtools-event-client': 0.4.4
-      '@tanstack/pacer-lite': 0.1.1
-      '@tanstack/store': 0.11.0
-
   '@tanstack/form-core@1.33.2':
     dependencies:
       '@tanstack/devtools-event-client': 0.4.4
@@ -9761,14 +9858,6 @@ snapshots:
   '@tanstack/store@0.11.0': {}
 
   '@tanstack/table-core@8.21.3': {}
-
-  '@tanstack/vue-form@1.33.0(vue@3.5.38(typescript@5.9.3))':
-    dependencies:
-      '@tanstack/form-core': 1.33.0
-      '@tanstack/vue-store': 0.11.0(vue@3.5.38(typescript@5.9.3))
-      vue: 3.5.38(typescript@5.9.3)
-    transitivePeerDependencies:
-      - '@vue/composition-api'
 
   '@tanstack/vue-form@1.33.2(vue@3.5.38(typescript@5.9.3))':
     dependencies:
@@ -10297,7 +10386,7 @@ snapshots:
 
   '@vue/shared@3.5.13': {}
 
-  '@zhennann/common-bin@4.0.1':
+  '@zhennann/common-bin@4.0.1(supports-color@10.2.2)':
     dependencies:
       chalk: 4.1.2
       change-case: 4.1.2
@@ -10331,7 +10420,7 @@ snapshots:
 
   acorn@8.17.0: {}
 
-  agent-base@6.0.2:
+  agent-base@6.0.2(supports-color@10.2.2):
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
@@ -10443,11 +10532,11 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axios@1.18.1:
+  axios@1.18.1(supports-color@10.2.2):
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.6
-      https-proxy-agent: 5.0.1
+      https-proxy-agent: 5.0.1(supports-color@10.2.2)
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
@@ -11869,9 +11958,9 @@ snapshots:
       statuses: 2.0.2
       toidentifier: 1.0.1
 
-  https-proxy-agent@5.0.1:
+  https-proxy-agent@5.0.1(supports-color@10.2.2):
     dependencies:
-      agent-base: 6.0.2
+      agent-base: 6.0.2(supports-color@10.2.2)
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
