@@ -1,9 +1,9 @@
 import type { Constructable } from 'vona';
 
-import type { BeanModelMeta } from '../bean.model/bean.model_meta.ts';
 import type { IDtoGetParams } from '../../types/dto/dtoGet.ts';
 import type { TypeDtoSelectAndCountResult } from '../../types/dto/dtoSelectAndCount.ts';
 import type { IModelClassRecord } from '../../types/onion/model.ts';
+import type { BeanModelMeta } from '../bean.model/bean.model_meta.ts';
 
 import { DtoGet } from './dtoGet.ts';
 import { DtoListAndCount } from './dtoListAndCount.ts';

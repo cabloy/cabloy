@@ -3,13 +3,13 @@ import type { FunctionAsync } from 'vona';
 import { BeanBase, beanFullNameFromOnionName } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
+import type { ServiceDatabaseDialectBase } from '../service/databaseDialectBase_.ts';
 import type { ConfigDatabaseClient } from '../types/config.ts';
 import type {
   IDatabaseClientDialectRecord,
   IDatabaseClientRecord,
   IDbInfo,
 } from '../types/database.ts';
-import type { ServiceDatabaseDialectBase } from '../service/databaseDialectBase_.ts';
 
 import { ServiceDatabaseAsyncLocalStorage } from '../service/databaseAsyncLocalStorage_.ts';
 import { ServiceDatabaseClient } from '../service/databaseClient_.ts';

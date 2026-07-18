@@ -258,13 +258,13 @@ That distinction matters because the order is part of the onion dependency model
 
 A source-aligned hook matrix for the current built-ins is:
 
-| Interceptor | onRequest | onRequestError | onResponse | onResponseError |
-| --- | --- | --- | --- | --- |
-| `mock` | - | - | - | yes |
-| `headers` | yes | - | - | - |
-| `jwt` | yes | - | - | - |
-| `performAction` | yes | - | - | - |
-| `body` | - | - | yes | yes |
+| Interceptor     | onRequest | onRequestError | onResponse | onResponseError |
+| --------------- | --------- | -------------- | ---------- | --------------- |
+| `mock`          | -         | -              | -          | yes             |
+| `headers`       | yes       | -              | -          | -               |
+| `jwt`           | yes       | -              | -          | -               |
+| `performAction` | yes       | -              | -          | -               |
+| `body`          | -         | -              | yes        | yes             |
 
 This table is only a reading shortcut. The authoritative source is still the concrete bean implementation under `a-interceptor/src/bean/`.
 

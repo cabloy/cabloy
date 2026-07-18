@@ -153,15 +153,15 @@ If a class does not need container-managed behavior, it usually belongs in `src/
 
 ## Decision table
 
-| Scenario | Use `@Virtual()` | Recommended placement | Reason |
-| --- | --- | --- | --- |
-| independent business service | No | `src/service` | it should own its own runtime resource boundary |
-| runtime-anchor base with container behavior | Yes | `src/service` or `src/service/*_.ts` | it is container-managed but belongs logically to the parent bean system |
-| bean-scene facade that intentionally stays on shorthand surface | Yes, if it is a bridge node | `src/bean` | it participates in shorthand lookup but is not a new ownership center |
-| compatibility / dialect / variant node built on a parent bean | Yes | same scene as the concrete variant type | runtime ownership should inherit from the parent chain |
-| pure helper or superclass convenience class | No | `src/lib` | no bean ownership semantics are needed |
-| class kept in `src/bean` only to expose shortcut lookup | Usually no | re-evaluate placement | `@Virtual()` is not a shorthand filter |
-| misplaced bean-scene class that should not be globally visible | No | move to `src/lib` or `src/service` | fix placement, not metadata |
+| Scenario                                                        | Use `@Virtual()`            | Recommended placement                   | Reason                                                                  |
+| --------------------------------------------------------------- | --------------------------- | --------------------------------------- | ----------------------------------------------------------------------- |
+| independent business service                                    | No                          | `src/service`                           | it should own its own runtime resource boundary                         |
+| runtime-anchor base with container behavior                     | Yes                         | `src/service` or `src/service/*_.ts`    | it is container-managed but belongs logically to the parent bean system |
+| bean-scene facade that intentionally stays on shorthand surface | Yes, if it is a bridge node | `src/bean`                              | it participates in shorthand lookup but is not a new ownership center   |
+| compatibility / dialect / variant node built on a parent bean   | Yes                         | same scene as the concrete variant type | runtime ownership should inherit from the parent chain                  |
+| pure helper or superclass convenience class                     | No                          | `src/lib`                               | no bean ownership semantics are needed                                  |
+| class kept in `src/bean` only to expose shortcut lookup         | Usually no                  | re-evaluate placement                   | `@Virtual()` is not a shorthand filter                                  |
+| misplaced bean-scene class that should not be globally visible  | No                          | move to `src/lib` or `src/service`      | fix placement, not metadata                                             |
 
 ## Worked examples
 

@@ -2,6 +2,7 @@ import { isNil } from '@cabloy/utils';
 import { appResource, BeanBase, cast } from 'vona';
 import { $tableNameFromEntity } from 'vona-module-a-ormutils';
 
+import type { BeanModel } from '../../bean/bean.model.ts';
 import type { ServiceDb } from '../../service/db_.ts';
 import type {
   IDatabaseClientRecord,
@@ -15,7 +16,6 @@ import type {
   TypeModelOptionsTable,
   TypeModelRelationOptionsMetaClient,
 } from '../../types/index.ts';
-import type { BeanModel } from '../../bean/bean.model.ts';
 
 import { getTableOrTableAlias, prepareClassModel } from '../../common/utils.ts';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from '../../types/index.ts';

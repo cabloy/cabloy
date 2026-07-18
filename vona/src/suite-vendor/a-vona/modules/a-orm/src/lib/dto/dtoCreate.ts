@@ -1,8 +1,8 @@
 import type { Constructable } from 'vona';
 
-import type { BeanModelMeta } from '../bean.model/bean.model_meta.ts';
 import type { IDtoMutateParams, TypeDtoMutateResult } from '../../types/dto/dtoMutate.ts';
 import type { IModelClassRecord } from '../../types/onion/model.ts';
+import type { BeanModelMeta } from '../bean.model/bean.model_meta.ts';
 
 import { _DtoMutate_raw } from './dtoMutate.ts';
 

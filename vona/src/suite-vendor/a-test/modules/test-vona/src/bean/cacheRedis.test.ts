@@ -4,4 +4,7 @@ export type TCacheRedisTestKey = any;
 export type TCacheRedisTestData = string;
 
 @CacheRedis({ ttl: 1 * 1000 })
-export class CacheRedisTest extends ServiceCacheRedisBase<TCacheRedisTestKey, TCacheRedisTestData> {}
+export class CacheRedisTest extends ServiceCacheRedisBase<
+  TCacheRedisTestKey,
+  TCacheRedisTestData
+> {}

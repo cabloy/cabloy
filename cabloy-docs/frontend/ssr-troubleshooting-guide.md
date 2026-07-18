@@ -51,15 +51,15 @@ If you identify the failing layer first, most SSR debugging becomes much faster.
 
 Use this quick map before diving deeper.
 
-| Symptom | Start here |
-| --- | --- |
-| request does not hit the expected SSR page | Vona SSR orchestration |
-| dev works but prod fails | frontend build output + SSR env/runtime |
-| HTML appears but hydration is wrong | client hydration |
+| Symptom                                                   | Start here                              |
+| --------------------------------------------------------- | --------------------------------------- |
+| request does not hit the expected SSR page                | Vona SSR orchestration                  |
+| dev works but prod fails                                  | frontend build output + SSR env/runtime |
+| HTML appears but hydration is wrong                       | client hydration                        |
 | server-rendered data is missing or refetched unexpectedly | Zova SSR server render + init data flow |
-| SEO/meta output is missing | Zova SSR server render + meta flow |
-| first paint theme is wrong | SSR env + theme rules |
-| static assets 404 after SSR deploy | frontend build output |
+| SEO/meta output is missing                                | Zova SSR server render + meta flow      |
+| first paint theme is wrong                                | SSR env + theme rules                   |
+| static assets 404 after SSR deploy                        | frontend build output                   |
 
 ## Symptom 1: the request does not hit the expected SSR page
 

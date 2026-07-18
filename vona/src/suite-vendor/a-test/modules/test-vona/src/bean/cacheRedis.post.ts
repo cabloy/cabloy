@@ -8,4 +8,7 @@ export type TCacheRedisPostKey = TableIdentity;
 export type TCacheRedisPostData = Partial<EntityPost>;
 
 @CacheRedis()
-export class CacheRedisPost extends ServiceCacheRedisBase<TCacheRedisPostKey, TCacheRedisPostData> {}
+export class CacheRedisPost extends ServiceCacheRedisBase<
+  TCacheRedisPostKey,
+  TCacheRedisPostData
+> {}

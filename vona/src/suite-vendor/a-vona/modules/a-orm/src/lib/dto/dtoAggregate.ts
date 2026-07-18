@@ -4,11 +4,11 @@ import { ensureArray } from '@cabloy/utils';
 import { Api, v } from 'vona-module-a-openapiutils';
 import z from 'zod';
 
-import type { BeanModelMeta } from '../bean.model/bean.model_meta.ts';
 import type { TypeDtoAggrResult } from '../../types/dto/dtoAggregate.ts';
 import type { TypeModelSelectAggrParamsAggrs } from '../../types/modelAggr.ts';
 import type { IModelClassRecord } from '../../types/onion/model.ts';
 import type { TypeModelOfModelLike, TypeSymbolKeyEntity } from '../../types/relations.ts';
+import type { BeanModelMeta } from '../bean.model/bean.model_meta.ts';
 
 export function DtoAggregate<
   Aggrs extends TypeModelSelectAggrParamsAggrs<

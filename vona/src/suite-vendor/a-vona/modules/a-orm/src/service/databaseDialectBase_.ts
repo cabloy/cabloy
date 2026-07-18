@@ -159,11 +159,18 @@ export class ServiceDatabaseDialectBase extends BeanBase {
     if (isNil(value)) return undefined;
     if (BOOLEAN_COLUMN_TYPES.includes(type)) return safeBoolean(value);
     if (NUMBER_COLUMN_TYPES.includes(type)) return this._safeNumber(value);
-    if (this._columnTypePrefixes(type, TIMESTAMP_COLUMN_TYPE_PREFIXES) && value === 'CURRENT_TIMESTAMP') {
+    if (
+      this._columnTypePrefixes(type, TIMESTAMP_COLUMN_TYPE_PREFIXES) &&
+      value === 'CURRENT_TIMESTAMP'
+    ) {
       return undefined; // new Date();
     }
-    if (this._columnTypePrefixes(type, FLOAT_COLUMN_TYPE_PREFIXES)) return this._safeNumber(value);
-    if (this._columnTypePrefixes(type, INTEGER_COLUMN_TYPE_PREFIXES)) return this._safeNumber(value);
+    if (this._columnTypePrefixes(type, FLOAT_COLUMN_TYPE_PREFIXES)) {
+      return this._safeNumber(value);
+    }
+    if (this._columnTypePrefixes(type, INTEGER_COLUMN_TYPE_PREFIXES)) {
+      return this._safeNumber(value);
+    }
     // pg: NULL::character varying
     if (value.indexOf('NULL::') === 0) return undefined;
     return value;

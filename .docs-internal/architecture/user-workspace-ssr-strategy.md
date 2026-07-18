@@ -16,10 +16,10 @@ The Site and role terminology in this note follows [ADR 0006](../decisions/0006-
 
 Cabloy Basic has these relevant Zova flavor settings:
 
-| Flavor | Site | `SSR_COOKIE` | Current rendering intent |
-| --- | --- | ---: | --- |
-| `cabloyBasicWeb` | Web | `false` | Anonymous/public SSR, suitable for cacheable and SEO-oriented content. |
-| `cabloyBasicAdmin` | Admin | `true` | Cookie-aware SSR for internal management and operations. |
+| Flavor             | Site  | `SSR_COOKIE` | Current rendering intent                                               |
+| ------------------ | ----- | -----------: | ---------------------------------------------------------------------- |
+| `cabloyBasicWeb`   | Web   |      `false` | Anonymous/public SSR, suitable for cacheable and SEO-oriented content. |
+| `cabloyBasicAdmin` | Admin |       `true` | Cookie-aware SSR for internal management and operations.               |
 
 `SSR_COOKIE=false` sets `cookieDisabledOnServer` during server rendering. Router guards therefore cannot use a request cookie to construct a complete server-side Passport for authenticated-route admission. Browser hydration can still obtain Passport state and run the same route policy.
 
@@ -47,12 +47,12 @@ The conflict is false when SSR rendering strategy is separated from business own
 
 Choose a rendering strategy per page class, not by treating every authenticated page as an Admin page.
 
-| Page class | Examples | Business Site | SSR strategy |
-| --- | --- | --- | --- |
-| Public content | home, content detail, product list, search, login, registration | Web | Anonymous SSR. These routes declare `requiresAuth: false`. |
-| Private user workspace without personalized SSR requirement | profile shell, order shell, account settings, notifications shell | Web | Anonymous SSR shell followed by browser Passport/site admission and private data loading. |
-| Private user workspace requiring personalized SSR | personalized order list, account dashboard with required server first paint, user workspace with strict server route decision | Dedicated Member/Account Site | Cookie-aware SSR with `SSR_COOKIE=true`. |
-| Internal back office | user management, content operations, system settings | Admin | Cookie-aware SSR with `SSR_COOKIE=true`. |
+| Page class                                                  | Examples                                                                                                                      | Business Site                 | SSR strategy                                                                              |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------- |
+| Public content                                              | home, content detail, product list, search, login, registration                                                               | Web                           | Anonymous SSR. These routes declare `requiresAuth: false`.                                |
+| Private user workspace without personalized SSR requirement | profile shell, order shell, account settings, notifications shell                                                             | Web                           | Anonymous SSR shell followed by browser Passport/site admission and private data loading. |
+| Private user workspace requiring personalized SSR           | personalized order list, account dashboard with required server first paint, user workspace with strict server route decision | Dedicated Member/Account Site | Cookie-aware SSR with `SSR_COOKIE=true`.                                                  |
+| Internal back office                                        | user management, content operations, system settings                                                                          | Admin                         | Cookie-aware SSR with `SSR_COOKIE=true`.                                                  |
 
 The default is the second row: a user workspace page remains in Web and uses anonymous SSR plus client-side private-data loading.
 
@@ -122,11 +122,11 @@ Create a new cookie-aware SSR Site only when one or more of these requirements a
 
 Recommended identity and policy if this Site is introduced:
 
-| SSR Site | `siteId` | Cookie SSR | Responsibility |
-| --- | --- | ---: | --- |
-| Web | `web` | `false` | Public/anonymous user-facing content and anonymous SSR shells. |
-| Member or Account | `member` or `account` | `true` | Personalized end-user workspace. |
-| Admin | `admin` | `true` | Internal administration and operations. |
+| SSR Site          | `siteId`              | Cookie SSR | Responsibility                                                 |
+| ----------------- | --------------------- | ---------: | -------------------------------------------------------------- |
+| Web               | `web`                 |    `false` | Public/anonymous user-facing content and anonymous SSR shells. |
+| Member or Account | `member` or `account` |     `true` | Personalized end-user workspace.                               |
+| Admin             | `admin`               |     `true` | Internal administration and operations.                        |
 
 Example initial role policy:
 
@@ -155,12 +155,12 @@ Use this option only when Web as a whole is intended to be a cookie-aware SSR ap
 
 The following boundaries must remain explicit:
 
-| Layer | Responsibility |
-| --- | --- |
-| Vona `@SsrSite.siteId` | Stable server-owned identity for an SSR Site. |
-| Zova `SITE_ID` | Current Site runtime context. Vona derives it for SSR; SPA flavors configure it explicitly. |
-| Zova Router Guard | Page navigation, `requiresAuth`, Passport availability, and role Site-policy user experience. |
-| Vona API/resource guards | Server-side authorization for all private data and mutations. |
+| Layer                    | Responsibility                                                                                |
+| ------------------------ | --------------------------------------------------------------------------------------------- |
+| Vona `@SsrSite.siteId`   | Stable server-owned identity for an SSR Site.                                                 |
+| Zova `SITE_ID`           | Current Site runtime context. Vona derives it for SSR; SPA flavors configure it explicitly.   |
+| Zova Router Guard        | Page navigation, `requiresAuth`, Passport availability, and role Site-policy user experience. |
+| Vona API/resource guards | Server-side authorization for all private data and mutations.                                 |
 
 A same-domain cookie only proves authentication. It never grants Admin, Member, or Web workspace data access by itself.
 

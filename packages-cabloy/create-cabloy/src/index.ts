@@ -105,7 +105,9 @@ async function main() {
     });
     if (testDataExitCode !== 0) {
       s3.stop('Test data initialization skipped', 1);
-      p.log.warn(pc.yellow('npm run init:test-data failed. You can try running it manually later.'));
+      p.log.warn(
+        pc.yellow('npm run init:test-data failed. You can try running it manually later.'),
+      );
     } else {
       s3.stop('Test data initialized successfully!');
     }

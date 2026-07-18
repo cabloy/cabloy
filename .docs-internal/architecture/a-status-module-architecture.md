@@ -322,11 +322,11 @@ That freshness rule should be preserved if the write path is ever refactored.
 
 `meta.redlock.ts` declares typed isolate resource names as:
 
-- ``statusSet.${string}``
+- `statusSet.${string}`
 
 At call time, `BeanStatusBase` uses:
 
-- ``statusSet.${module}.${name}``
+- `statusSet.${module}.${name}`
 
 The Redlock base then prefixes that resource with the owning module of the lock bean itself.
 
