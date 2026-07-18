@@ -6,6 +6,7 @@ export default function (_sys: ZovaSys) {
   config.routes = {
     path: {
       '/commerce/siteadmin/dashboard': { alias: '/' },
+      '/home/indexadmin/dashboard': undefined,
     },
   };
 

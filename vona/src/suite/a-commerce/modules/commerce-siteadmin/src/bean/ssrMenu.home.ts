@@ -6,11 +6,13 @@ import { SsrMenu } from 'vona-module-a-ssr';
 
 import type { ISsrSiteOptionsCommerceAdmin } from './ssrSite.commerceAdmin.ts';
 
+import { $locale } from '../.metadata/locales.ts';
+
 export interface ISsrMenuOptionsHome extends IDecoratorSsrMenuOptions<ISsrSiteOptionsCommerceAdmin> {}
 
 @SsrMenu<ISsrMenuOptionsHome>({
   item: {
-    title: 'Commerce Administration',
+    title: $locale('CommerceAdministration'),
     order: $order(1),
     icon: undefined,
     link: '/',
