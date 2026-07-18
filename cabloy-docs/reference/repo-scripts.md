@@ -47,10 +47,28 @@ Run `npm run upgrade:dry-run` before `npm run upgrade` to inspect the framework 
 Both E2E families use the same command structure:
 
 - `test:e2e:<suite>` runs every browser scenario in the suite.
-- `test:e2e:<suite>:web` and `test:e2e:<suite>:admin` run one surface.
-- `test:e2e:<suite>:dev` resets managed local test state, starts one development Vona worker, and runs the complete suite.
+- `test:e2e:<suite>:web` and `test:e2e:<suite>:admin` are durable surface shortcuts that select `@web` and `@admin` tests.
+- `test:e2e:<suite>:dev` resets managed local test state, starts one development Vona worker, then runs the suite or a Playwright-filtered subset.
 
-The Basic skeleton exercises Web at `/` and anonymous Admin routing at `/admin` through Vona's SSR dispatcher. Prepare fresh Basic SSR artifacts explicitly when frontend SSR output has changed:
+Use native Playwright tags for scenario categories rather than adding a root script for each feature. Every framework scenario uses one surface tag (`@web` or `@admin`) and one purpose tag when applicable (`@smoke` or `@flow`). ATP IDs remain in titles for exact evidence and failure reruns.
+
+Pass Playwright options after npm's `--` delimiter:
+
+```bash
+# Exact acceptance scenario
+npm run test:e2e:basic -- --grep ATP-BASIC-FLOW-01
+
+# Category or surface selection
+npm run test:e2e:basic:dev -- --grep @flow
+npm run test:e2e:basic:dev -- --grep @admin
+
+# Compose tags with a Playwright regular expression
+npm run test:e2e:basic:dev -- --grep '(?=.*@admin)(?=.*@flow)'
+```
+
+The managed `:dev` runner owns its suite config and local lifecycle. It accepts normal Playwright selection and reporting options, but does not accept `--config` or positional spec paths. Use `--grep` or `--grep-invert` to narrow the run. It rejects an external base URL rather than resetting or starting an externally managed target.
+
+The Basic suite exercises Web at `/` and Admin at `/admin` through Vona's SSR dispatcher. Prepare fresh Basic SSR artifacts explicitly when frontend SSR output has changed:
 
 ```bash
 npm run build:zova
@@ -58,15 +76,15 @@ npm run deps:vona
 npm run test:e2e:basic:dev
 ```
 
-For an externally managed Basic target, set `BASIC_E2E_BASE_URL` and use an aggregate or focused command. These commands do not reset, start, stop, or rebuild the target:
+For an externally managed Basic target, set `BASIC_E2E_BASE_URL` and use aggregate, surface, or forwarded-tag commands. These commands do not reset, start, stop, or rebuild the target:
 
 ```bash
 BASIC_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:basic
-BASIC_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:basic:web
 BASIC_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:basic:admin
+BASIC_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:basic -- --grep @flow
 ```
 
-Commerce browser acceptance exercises Customer Web at `/commerce` and anonymous Operator Admin routing at `/commerce-admin`. Prepare its paired artifacts explicitly:
+Commerce browser acceptance exercises Customer Web at `/commerce` and Operator Admin routing at `/commerce-admin`. Prepare its paired artifacts explicitly:
 
 ```bash
 npm run build:zova:commerce
@@ -74,13 +92,15 @@ npm run deps:vona
 npm run test:e2e:commerce:dev
 ```
 
-For an externally managed Commerce target, set `COMMERCE_E2E_BASE_URL` and use the matching aggregate or focused command. The target owner is responsible for data, cache, and artifact freshness:
+For an externally managed Commerce target, set `COMMERCE_E2E_BASE_URL` and use the matching aggregate, surface, or forwarded-tag command. The target owner is responsible for data, cache, and artifact freshness:
 
 ```bash
 COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce
 COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce:web
-COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce:admin
+COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce -- --grep @smoke
 ```
+
+Browser commands consume existing SSR and REST artifacts; they never rebuild them. Install Chromium once when needed with `npx playwright install chromium`.
 
 ## Edition-sensitive note
 

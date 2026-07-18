@@ -98,170 +98,174 @@ function assertVisualOrder(geometry: IFieldGeometry[]) {
   }
 }
 
-test('ATP-BASIC-SSR-01: anonymous Web HTML hydrates through the default site', async ({
-  page,
-  request,
-}) => {
-  const response = await request.get('/');
-  expect(response.ok()).toBeTruthy();
-  expect((await response.text()).toLowerCase()).not.toContain('data-zova-hydrated');
+test(
+  'ATP-BASIC-SSR-01: anonymous Web HTML hydrates through the default site',
+  { tag: ['@web', '@smoke'] },
+  async ({ page, request }) => {
+    const response = await request.get('/');
+    expect(response.ok()).toBeTruthy();
+    expect((await response.text()).toLowerCase()).not.toContain('data-zova-hydrated');
 
-  const pageErrors = collectPageErrors(page);
-  const documentResponse = await page.goto('/', { waitUntil: 'load' });
-  expect(documentResponse?.ok()).toBeTruthy();
-  await expect(page).toHaveURL(/\/$/);
-  await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
-  await expect(page.getByText('Web: en-us')).toBeVisible();
-  await expect(page.getByText('Dashboard')).toHaveCount(0);
-  await expect(page.locator('body')).toBeVisible();
-  await expect(page).not.toHaveTitle(/error/i);
-  expect(pageErrors).toEqual([]);
-});
+    const pageErrors = collectPageErrors(page);
+    const documentResponse = await page.goto('/', { waitUntil: 'load' });
+    expect(documentResponse?.ok()).toBeTruthy();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+    await expect(page.getByText('Web: en-us')).toBeVisible();
+    await expect(page.getByText('Dashboard')).toHaveCount(0);
+    await expect(page.locator('body')).toBeVisible();
+    await expect(page).not.toHaveTitle(/error/i);
+    expect(pageErrors).toEqual([]);
+  },
+);
 
-test('ATP-BASIC-SSR-02: Admin waits for nested hydration before ready', async ({
-  page,
-  request,
-}) => {
-  const response = await request.get('/admin/', { maxRedirects: 0 });
-  expect(response.status()).toBe(302);
-  const loginPath = response.headers().location;
-  expect(loginPath).toMatch(/^\/admin\/login(?:\?|$)/);
+test(
+  'ATP-BASIC-SSR-02: Admin waits for nested hydration before ready',
+  { tag: ['@admin', '@smoke'] },
+  async ({ page, request }) => {
+    const response = await request.get('/admin/', { maxRedirects: 0 });
+    expect(response.status()).toBe(302);
+    const loginPath = response.headers().location;
+    expect(loginPath).toMatch(/^\/admin\/login(?:\?|$)/);
 
-  const loginResponse = await request.get(loginPath!);
-  expect(loginResponse.ok()).toBeTruthy();
-  expect((await loginResponse.text()).toLowerCase()).not.toContain('data-zova-hydrated');
+    const loginResponse = await request.get(loginPath!);
+    expect(loginResponse.ok()).toBeTruthy();
+    expect((await loginResponse.text()).toLowerCase()).not.toContain('data-zova-hydrated');
 
-  let releaseRequest: (() => void) | undefined;
-  const requestHeld = new Promise<void>(resolve => {
-    releaseRequest = resolve;
-  });
-  let firstRequest = true;
-  let requestObserved: () => void;
-  const requestBlocked = new Promise<void>(resolve => {
-    requestObserved = resolve;
-  });
+    let releaseRequest: (() => void) | undefined;
+    const requestHeld = new Promise<void>(resolve => {
+      releaseRequest = resolve;
+    });
+    let firstRequest = true;
+    let requestObserved: () => void;
+    const requestBlocked = new Promise<void>(resolve => {
+      requestObserved = resolve;
+    });
 
-  await page.route(/\/admin\/assets\/a-form-[^/]+\.js(?:\?.*)?$/, async route => {
-    if (!firstRequest) {
+    await page.route(/\/admin\/assets\/a-form-[^/]+\.js(?:\?.*)?$/, async route => {
+      if (!firstRequest) {
+        await route.continue();
+        return;
+      }
+      firstRequest = false;
+      requestObserved();
+      await requestHeld;
       await route.continue();
-      return;
+    });
+
+    const pageErrors = collectPageErrors(page);
+    const navigation = page.goto('/admin/', { waitUntil: 'load' });
+    try {
+      await requestBlocked;
+      await expect(page).toHaveURL(/\/admin\/login(?:\?|$)/);
+      await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
+      await expect(page.locator('html')).not.toHaveAttribute('data-zova-hydrated');
+    } finally {
+      releaseRequest?.();
     }
-    firstRequest = false;
-    requestObserved();
-    await requestHeld;
-    await route.continue();
-  });
 
-  const pageErrors = collectPageErrors(page);
-  const navigation = page.goto('/admin/', { waitUntil: 'load' });
-  try {
-    await requestBlocked;
-    await expect(page).toHaveURL(/\/admin\/login(?:\?|$)/);
+    const documentResponse = await navigation;
+    expect(documentResponse?.ok()).toBeTruthy();
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
     await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
-    await expect(page.locator('html')).not.toHaveAttribute('data-zova-hydrated');
-  } finally {
-    releaseRequest?.();
-  }
+    await expect(page.getByText('Dashboard')).toHaveCount(0);
+    await expect(page.locator('body')).toBeVisible();
+    expect(pageErrors).toEqual([]);
+    await page.unroute(/\/admin\/assets\/a-form-[^/]+\.js(?:\?.*)?$/);
+  },
+);
 
-  const documentResponse = await navigation;
-  expect(documentResponse?.ok()).toBeTruthy();
-  await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
-  await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
-  await expect(page.getByText('Dashboard')).toHaveCount(0);
-  await expect(page.locator('body')).toBeVisible();
-  expect(pageErrors).toEqual([]);
-  await page.unroute(/\/admin\/assets\/a-form-[^/]+\.js(?:\?.*)?$/);
-});
+test(
+  'ATP-BASIC-FLOW-01: Training Student flow filter wraps and submits queries',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const pageErrors = collectPageErrors(page);
 
-test('ATP-BASIC-FLOW-01: Training Student flow filter wraps and submits queries', async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  const pageErrors = collectPageErrors(page);
+    await loginAsAdmin(page);
 
-  await loginAsAdmin(page);
+    const initialSelect = waitForStudentSelect(page);
+    await page.getByRole('link', { name: 'Student', exact: true }).click();
+    await expect(page).toHaveURL(studentResourceUrl);
+    await initialSelect;
 
-  const initialSelect = waitForStudentSelect(page);
-  await page.getByRole('link', { name: 'Student', exact: true }).click();
-  await expect(page).toHaveURL(studentResourceUrl);
-  await initialSelect;
+    const name = page.getByLabel('Student Name');
+    const level = page.getByRole('combobox', { name: 'Training Stage' });
+    const createdAt = page.locator('label').filter({ hasText: /^Created At/ });
+    const dates = createdAt.locator('input[type="date"]');
+    const createdAtStart = dates.nth(0);
+    const createdAtEnd = dates.nth(1);
+    const search = page.getByRole('button', { name: 'Search', exact: true });
+    const reset = page.getByRole('button', { name: 'Reset', exact: true });
 
-  const name = page.getByLabel('Student Name');
-  const level = page.getByRole('combobox', { name: 'Training Stage' });
-  const createdAt = page.locator('label').filter({ hasText: /^Created At/ });
-  const dates = createdAt.locator('input[type="date"]');
-  const createdAtStart = dates.nth(0);
-  const createdAtEnd = dates.nth(1);
-  const search = page.getByRole('button', { name: 'Search', exact: true });
-  const reset = page.getByRole('button', { name: 'Reset', exact: true });
+    await expect(name).toBeVisible();
+    await expect(level).toBeVisible();
+    await expect(dates).toHaveCount(2);
+    await expect(search).toBeVisible();
+    await expect(reset).toBeVisible();
 
-  await expect(name).toBeVisible();
-  await expect(level).toBeVisible();
-  await expect(dates).toHaveCount(2);
-  await expect(search).toBeVisible();
-  await expect(reset).toBeVisible();
+    const wideGeometry = await getFlowGeometry(name, level, createdAtStart);
+    expect(wideGeometry[0].container.display).toBe('flex');
+    expect(wideGeometry[0].container.flexWrap).toBe('wrap');
+    expect(wideGeometry[1].container).toEqual(wideGeometry[0].container);
+    expect(wideGeometry[2].container).toEqual(wideGeometry[0].container);
+    expect(Math.abs(wideGeometry[0].field.top - wideGeometry[1].field.top)).toBeLessThanOrEqual(2);
+    expect(Math.abs(wideGeometry[1].field.top - wideGeometry[2].field.top)).toBeLessThanOrEqual(2);
+    assertVisualOrder(wideGeometry);
+    for (const geometry of wideGeometry) {
+      expect(geometry.field.right).toBeLessThanOrEqual(geometry.container.right + 1);
+    }
 
-  const wideGeometry = await getFlowGeometry(name, level, createdAtStart);
-  expect(wideGeometry[0].container.display).toBe('flex');
-  expect(wideGeometry[0].container.flexWrap).toBe('wrap');
-  expect(wideGeometry[1].container).toEqual(wideGeometry[0].container);
-  expect(wideGeometry[2].container).toEqual(wideGeometry[0].container);
-  expect(Math.abs(wideGeometry[0].field.top - wideGeometry[1].field.top)).toBeLessThanOrEqual(2);
-  expect(Math.abs(wideGeometry[1].field.top - wideGeometry[2].field.top)).toBeLessThanOrEqual(2);
-  assertVisualOrder(wideGeometry);
-  for (const geometry of wideGeometry) {
-    expect(geometry.field.right).toBeLessThanOrEqual(geometry.container.right + 1);
-  }
+    await page.setViewportSize({ width: 700, height: 900 });
+    await expect
+      .poll(
+        async () =>
+          new Set(
+            (await getFlowGeometry(name, level, createdAtStart)).map(item =>
+              Math.round(item.field.top),
+            ),
+          ).size,
+      )
+      .toBeGreaterThan(1);
 
-  await page.setViewportSize({ width: 700, height: 900 });
-  await expect
-    .poll(
-      async () =>
-        new Set(
-          (await getFlowGeometry(name, level, createdAtStart)).map(item =>
-            Math.round(item.field.top),
-          ),
-        ).size,
-    )
-    .toBeGreaterThan(1);
+    const narrowGeometry = await getFlowGeometry(name, level, createdAtStart);
+    assertVisualOrder(narrowGeometry);
+    const viewport = page.viewportSize()!;
+    for (const geometry of narrowGeometry) {
+      expect(geometry.field.left).toBeGreaterThanOrEqual(-1);
+      expect(geometry.field.right).toBeLessThanOrEqual(viewport.width + 1);
+    }
+    const createdAtEndBox = await createdAtEnd.boundingBox();
+    expect(createdAtEndBox).not.toBeNull();
+    expect(createdAtEndBox!.x + createdAtEndBox!.width).toBeLessThanOrEqual(viewport.width + 1);
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        ),
+      )
+      .toBeLessThanOrEqual(1);
 
-  const narrowGeometry = await getFlowGeometry(name, level, createdAtStart);
-  assertVisualOrder(narrowGeometry);
-  const viewport = page.viewportSize()!;
-  for (const geometry of narrowGeometry) {
-    expect(geometry.field.left).toBeGreaterThanOrEqual(-1);
-    expect(geometry.field.right).toBeLessThanOrEqual(viewport.width + 1);
-  }
-  const createdAtEndBox = await createdAtEnd.boundingBox();
-  expect(createdAtEndBox).not.toBeNull();
-  expect(createdAtEndBox!.x + createdAtEndBox!.width).toBeLessThanOrEqual(viewport.width + 1);
-  await expect
-    .poll(() =>
-      page.evaluate(
-        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-      ),
-    )
-    .toBeLessThanOrEqual(1);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await name.fill('Flow E2E');
+    await level.selectOption('2');
+    await createdAtStart.fill('2026-01-10');
+    await createdAtEnd.fill('2026-01-20');
 
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await name.fill('Flow E2E');
-  await level.selectOption('2');
-  await createdAtStart.fill('2026-01-10');
-  await createdAtEnd.fill('2026-01-20');
+    const searchResponse = waitForStudentSelect(page);
+    await search.click();
+    const searchUrl = new URL((await searchResponse).url());
+    expect(searchUrl.searchParams.get('name')).toBe('Flow E2E');
+    expect(searchUrl.searchParams.get('level')).toBe('2');
+    expect(searchUrl.searchParams.get('createdAt')).toBe('2026-01-10~2026-01-20');
+    await expect(name).toHaveValue('Flow E2E');
+    await expect(level).toHaveValue('2');
 
-  const searchResponse = waitForStudentSelect(page);
-  await search.click();
-  const searchUrl = new URL((await searchResponse).url());
-  expect(searchUrl.searchParams.get('name')).toBe('Flow E2E');
-  expect(searchUrl.searchParams.get('level')).toBe('2');
-  expect(searchUrl.searchParams.get('createdAt')).toBe('2026-01-10~2026-01-20');
-  await expect(name).toHaveValue('Flow E2E');
-  await expect(level).toHaveValue('2');
-
-  await reset.click();
-  await expect(name).toHaveValue('');
-  await expect(level).toHaveValue('');
-  await expect(createdAtStart).toHaveValue('');
-  await expect(createdAtEnd).toHaveValue('');
-  expect(pageErrors).toEqual([]);
-});
+    await reset.click();
+    await expect(name).toHaveValue('');
+    await expect(level).toHaveValue('');
+    await expect(createdAtStart).toHaveValue('');
+    await expect(createdAtEnd).toHaveValue('');
+    expect(pageErrors).toEqual([]);
+  },
+);

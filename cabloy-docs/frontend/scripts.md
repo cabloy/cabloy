@@ -65,18 +65,25 @@ Then use the managed clean local acceptance command:
 npm run test:e2e:basic:dev
 ```
 
-It resets Vona-managed test data and the local Redis namespace, starts one development Vona worker, and runs Web plus anonymous Admin checks. The E2E commands consume already-built artifacts; they do not rebuild them.
+It resets Vona-managed test data and the local Redis namespace, starts one development Vona worker, and runs the complete suite by default. The E2E commands consume already-built artifacts; they do not rebuild them.
 
 The suite command family is consistent across Basic and Commerce:
 
 ```text
 test:e2e:<suite>          complete suite
-test:e2e:<suite>:web      focused Web or Customer surface
-test:e2e:<suite>:admin    focused Admin surface
-test:e2e:<suite>:dev      managed clean local complete-suite run
+test:e2e:<suite>:web      all @web surface scenarios
+test:e2e:<suite>:admin    all @admin surface scenarios
+test:e2e:<suite>:dev      managed clean local suite run
 ```
 
-For a separately managed Basic target, set `BASIC_E2E_BASE_URL` and use `test:e2e:basic`, `test:e2e:basic:web`, or `test:e2e:basic:admin`; the caller owns target data, cache, and artifact freshness. The equivalent Commerce commands use `COMMERCE_E2E_BASE_URL`.
+Use Playwright tags after npm's argument delimiter for feature/category selection instead of adding one root script per scenario:
+
+```bash
+npm run test:e2e:basic:dev -- --grep @flow
+npm run test:e2e:basic -- --grep ATP-BASIC-FLOW-01
+```
+
+For the complete tag vocabulary, managed-runner argument boundaries, and externally managed-target examples, see [Repo Scripts](/reference/repo-scripts#ssr-browser-checks). For a separately managed Basic target, set `BASIC_E2E_BASE_URL`; the equivalent Commerce commands use `COMMERCE_E2E_BASE_URL`. The caller owns external-target data, cache, and artifact freshness.
 
 ## Zova script model
 

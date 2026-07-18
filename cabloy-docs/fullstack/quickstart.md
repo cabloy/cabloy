@@ -109,7 +109,7 @@ npm run upgrade:dry-run
 npm run upgrade
 ```
 
-In Cabloy Basic, upgrade synchronizes the framework-owned SSR browser E2E baseline and its root `test:e2e:*` commands plus `@playwright/test` development dependency. The framework reserves these paths:
+In Cabloy Basic, upgrade synchronizes the framework-owned SSR browser E2E baseline, its suite/surface root `test:e2e:*` commands, and the `@playwright/test` development dependency. It does not add a root script for each individual E2E scenario. The framework reserves these paths:
 
 ```text
 e2e/config/

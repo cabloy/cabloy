@@ -76,6 +76,11 @@ const FRAMEWORK_E2E_SCRIPT_NAMES_CABLOY_BASIC: string[] = [
 
 const FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC = '@playwright/test';
 
+const OBSOLETE_FRAMEWORK_E2E_SCRIPTS_CABLOY_BASIC: Record<string, string> = {
+  'test:e2e:basic:flow':
+    'playwright test --config e2e/config/playwright.basic.config.ts --grep ATP-BASIC-FLOW-01',
+};
+
 const MERGE_DIRS: string[] = [
   // Claude project assets
   '.claude/commands',
@@ -235,6 +240,9 @@ function needsBasicE2eReconciliation(): boolean {
     const script = packageJson.scripts?.[name];
     if (!script?.includes('e2e/')) return true;
   }
+  for (const [name, value] of Object.entries(OBSOLETE_FRAMEWORK_E2E_SCRIPTS_CABLOY_BASIC)) {
+    if (packageJson.scripts?.[name] === value) return true;
+  }
   return !packageJson.devDependencies?.[FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC];
 }
 
@@ -310,6 +318,23 @@ function reconcileFrameworkE2ePackageJson(dryRun?: boolean): void {
       );
     } else {
       delete projectPackage.dependencies[FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC];
+    }
+  }
+
+  for (const [name, value] of Object.entries(OBSOLETE_FRAMEWORK_E2E_SCRIPTS_CABLOY_BASIC)) {
+    const currentValue = projectPackage.scripts?.[name];
+    if (!currentValue) continue;
+    if (currentValue !== value) {
+      log(
+        `  Retain customized obsolete framework E2E script package.json scripts.${name}; remove it manually if no longer needed.`,
+      );
+      continue;
+    }
+    changed = true;
+    if (dryRun) {
+      log(`  [dry-run] Remove obsolete framework E2E script package.json scripts.${name}`);
+    } else {
+      delete projectPackage.scripts?.[name];
     }
   }
 
