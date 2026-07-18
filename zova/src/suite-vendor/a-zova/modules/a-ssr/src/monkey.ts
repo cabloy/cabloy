@@ -28,6 +28,11 @@ export class Monkey
   }
 
   async appInitialize() {
+    if (process.env.CLIENT && this.ctx.meta.$ssr.isRuntimeSsrPreHydration) {
+      this.ctx.meta.$ssr.onHydrated(() => {
+        document.documentElement.setAttribute('data-zova-hydrated', this.sys.env.SITE_ID);
+      });
+    }
     // ssr errorHandler
     if (process.env.SERVER) {
       this._ssrErrorHandler();

@@ -28,6 +28,12 @@ For admin systems, SSR still needs to cooperate with client-facing behavior such
 
 A central SSR capability is preparing initial data on the server, synchronizing it to the client, and completing hydration naturally.
 
+### Initial hydration completion
+
+For browser work that must wait for the initial SSR handoff, register `this.$ssr.onHydrated(...)`. The callback runs once after the SSR root and Zova-tracked nested hydration work complete, including deferred client updates.
+
+This lifecycle applies only to the initial client hydration of SSR HTML. It is not an SPA-startup or later client-navigation readiness signal. Do not render a client-ready marker into server HTML; add it from an `onHydrated(...)` callback when browser-visible evidence is required.
+
 ### SEO meta
 
 SSR also supports flexible SEO metadata handling.

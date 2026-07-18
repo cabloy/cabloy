@@ -153,6 +153,10 @@ export class CtxSSR extends BeanSimple {
     ssrContext.stateDefer = ssrContext.stateDefer || {};
   }
 
+  /**
+   * Registers a callback that runs after initial client SSR hydration completes.
+   * It does not run for SPA startup or later client navigation.
+   */
   onHydrated(fn: Functionable) {
     this[SymbolOnHydrateds].push(fn);
   }
@@ -268,6 +272,20 @@ export class CtxSSR extends BeanSimple {
       clientValue = res.clientValue;
     }
     return { ignore: false, clientValue };
+  }
+
+  /** @internal */
+  public _hydratingRootInc() {
+    if (process.env.CLIENT && this.isRuntimeSsrPreHydration) {
+      this._hydratingInc();
+    }
+  }
+
+  /** @internal */
+  public _hydratingRootDec() {
+    if (process.env.CLIENT && this.isRuntimeSsrPreHydration) {
+      this._hydratingDec();
+    }
   }
 
   /** @internal */

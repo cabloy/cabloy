@@ -4,6 +4,9 @@ export default function (_sys: ZovaSys) {
   const config: ZovaConfigOptional = {};
 
   config.routes = {
+    path: {
+      '/home/indexadmin/dashboard': undefined,
+    },
     name: {
       'home-indexweb:home': { alias: '/:locale(zh-cn)?' },
     },

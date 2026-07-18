@@ -11,6 +11,10 @@ export class ControllerApp extends BeanControllerBase {
   $$beanBehaviorsHolder: BeanBehaviorsHolder;
 
   protected async __init__() {
+    if (process.env.CLIENT && this.$ssr.isRuntimeSsrPreHydration) {
+      this.$ssr._hydratingRootInc();
+      this.$controllerMounted(() => this.$ssr._hydratingRootDec());
+    }
     this._initMeta();
     await this._initBehaviors();
   }
