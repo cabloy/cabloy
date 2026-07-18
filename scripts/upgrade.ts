@@ -501,7 +501,7 @@ async function main(): Promise<void> {
     if (comparison === 0) {
       if (basicE2eIncomplete) {
         log(
-          `Cabloy is already up to date (current: ${currentVersion}), but the Cabloy Basic E2E baseline is incomplete. Continuing repair.\n`,
+          `Cabloy is already up to date (current: ${currentVersion}), but the Cabloy Basic E2E baseline is incomplete. Repairing it in this upgrade; no additional upgrade command is required.\n`,
         );
       } else if (!dryRun) {
         log(`Cabloy is already up to date (current: ${currentVersion}). Skipping upgrade.`);
