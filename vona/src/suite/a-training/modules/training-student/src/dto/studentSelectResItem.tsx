@@ -29,7 +29,7 @@ export interface IDtoOptionsStudentSelectResItem extends IDecoratorDtoOptions {}
                       { type: 'field', name: 'level' },
                       { type: 'field', name: 'createdAt' },
                     ],
-                  } as any,
+                  },
                 ],
               },
             }),

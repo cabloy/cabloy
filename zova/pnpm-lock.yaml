@@ -846,7 +846,7 @@ importers:
         specifier: ^5.1.78
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.136
+        specifier: ^5.1.137
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -962,7 +962,7 @@ importers:
         specifier: ^5.1.21
         version: link:modules/a-api
       zova-module-a-app:
-        specifier: ^5.1.24
+        specifier: ^5.1.25
         version: link:modules/a-app
       zova-module-a-bean:
         specifier: ^5.1.31
@@ -983,7 +983,7 @@ importers:
         specifier: ^5.1.23
         version: link:modules/a-fetch
       zova-module-a-form:
-        specifier: ^5.1.44
+        specifier: ^5.1.45
         version: link:modules/a-form
       zova-module-a-icon:
         specifier: ^5.1.26
@@ -1001,7 +1001,7 @@ importers:
         specifier: ^5.1.33
         version: link:modules/a-model
       zova-module-a-openapi:
-        specifier: ^5.1.44
+        specifier: ^5.1.45
         version: link:modules/a-openapi
       zova-module-a-router:
         specifier: ^5.1.30
@@ -1013,7 +1013,7 @@ importers:
         specifier: ^5.1.33
         version: link:modules/a-routertabs
       zova-module-a-ssr:
-        specifier: ^5.1.30
+        specifier: ^5.1.31
         version: link:modules/a-ssr
       zova-module-a-ssrhmr:
         specifier: ^5.1.22
