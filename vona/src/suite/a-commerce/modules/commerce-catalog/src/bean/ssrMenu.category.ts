@@ -1,0 +1,30 @@
+import type { IDecoratorSsrMenuOptions } from 'vona-module-a-ssr';
+import type { ISsrSiteOptionsCommerceAdmin } from 'vona-module-commerce-siteadmin';
+
+import { BeanBase } from 'vona';
+import { $order } from 'vona-module-a-openapiutils';
+import { SsrMenu } from 'vona-module-a-ssr';
+
+import { $locale } from '../.metadata/locales.ts';
+
+export interface ISsrMenuOptionsCategory extends IDecoratorSsrMenuOptions<ISsrSiteOptionsCommerceAdmin> {}
+
+@SsrMenu<ISsrMenuOptionsCategory>({
+  items: {
+    category: {
+      title: $locale('Category'),
+      order: $order(1),
+      icon: undefined,
+      link: 'presetResource',
+      meta: {
+        params: {
+          resource: 'commerce-catalog:category',
+        },
+      },
+      group: 'commerce-siteadmin:catalog',
+      roles: ['systemAdmin'],
+    },
+  },
+  site: ['commerce-siteadmin:commerceAdmin'],
+})
+export class SsrMenuCategory extends BeanBase {}
