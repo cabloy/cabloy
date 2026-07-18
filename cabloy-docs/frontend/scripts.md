@@ -54,7 +54,18 @@ Then use the managed clean local acceptance command:
 npm run test:e2e:basic:dev
 ```
 
-It resets Vona-managed test data and the local Redis namespace, starts one development Vona worker, and runs Web plus anonymous Admin checks. The E2E commands consume already-built artifacts; they do not rebuild them. For a separately managed target, use `BASIC_E2E_BASE_URL`; the caller owns target data, cache, and artifact freshness.
+It resets Vona-managed test data and the local Redis namespace, starts one development Vona worker, and runs Web plus anonymous Admin checks. The E2E commands consume already-built artifacts; they do not rebuild them.
+
+The suite command family is consistent across Basic and Commerce:
+
+```text
+test:e2e:<suite>          complete suite
+test:e2e:<suite>:web      focused Web or Customer surface
+test:e2e:<suite>:admin    focused Admin surface
+test:e2e:<suite>:dev      managed clean local complete-suite run
+```
+
+For a separately managed Basic target, set `BASIC_E2E_BASE_URL` and use `test:e2e:basic`, `test:e2e:basic:web`, or `test:e2e:basic:admin`; the caller owns target data, cache, and artifact freshness. The equivalent Commerce commands use `COMMERCE_E2E_BASE_URL`.
 
 ## Zova script model
 

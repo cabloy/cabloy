@@ -149,12 +149,9 @@ npm run lint
 npm run format
 ```
 
-### Future-gated after the relevant WBS work
+### Phase 20 browser acceptance
 
 ```bash
-# Focus a future module-local test after the suite and test file exist
-npm run vona :bin:test -- commerce-trade/test/checkoutReservation.test.ts --flavor=normal
-
 # Refresh paired Commerce SSR and REST artifacts when frontend or contract output changed
 npm run build:zova:commerce
 npm run build:zova:commerce-admin
@@ -164,10 +161,18 @@ npm run deps:vona
 # start one Vona development worker, then run both smoke scenarios
 npm run test:e2e:commerce:dev
 
-# Focused checks against an externally managed Vona target;
+# Aggregate or focused checks against an externally managed Vona target;
 # the caller owns its database and cache cleanliness
 COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce
-COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce-admin
+COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce:web
+COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce:admin
+```
+
+### Future-gated after the relevant WBS work
+
+```bash
+# Focus a future module-local test after the suite and test file exist
+npm run vona :bin:test -- commerce-trade/test/checkoutReservation.test.ts --flavor=normal
 ```
 
 For release contention evidence, run the relevant Commerce transaction scenarios on PostgreSQL in addition to the fast default database suite. Existing CI provides the multi-database pattern; Commerce test cases must be added to it when the modules exist.
