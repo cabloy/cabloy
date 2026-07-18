@@ -47,7 +47,9 @@
   "vonaModule": {
     "dependencies": {
       "a-vona": "5.0.0",
-      "a-ssr": "5.0.0"
-    }
+      "a-ssr": "5.0.0",
+      "home-user": "5.0.0"
+    },
+    "fileVersion": 1
   }
 }

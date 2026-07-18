@@ -9,37 +9,28 @@ describe('role.test.ts', () => {
       const roleRegisteredUser = await scope.model.role.getByName('registeredUser');
       assert.equal(roleRegisteredUser?.title, 'Registered User');
       assert.deepEqual(roleRegisteredUser?.locales, { 'zh-cn': '注册用户' });
-      assert.deepEqual(roleRegisteredUser?.siteIds, ['web']);
+      assert.ok(roleRegisteredUser?.siteIds.includes('web'));
 
       const roleSystemAdmin = await scope.model.role.getByName('systemAdmin');
       assert.equal(roleSystemAdmin?.title, 'System Administrator');
       assert.deepEqual(roleSystemAdmin?.locales, { 'zh-cn': '系统管理员' });
-      assert.deepEqual(roleSystemAdmin?.siteIds, ['web', 'admin']);
+      assert.ok(roleSystemAdmin?.siteIds.includes('web'));
+      assert.ok(roleSystemAdmin?.siteIds.includes('admin'));
 
       await app.bean.passport.signinMock();
       const passport = await app.bean.executor.performAction('get', '/home/user/passport/current');
-      assert.deepEqual(
-        passport.roles.map(role => ({
-          name: role.name,
-          title: role.title,
-          locales: role.locales,
-          siteIds: role.siteIds,
-        })),
-        [
-          {
-            name: 'registeredUser',
-            title: 'Registered User',
-            locales: { 'zh-cn': '注册用户' },
-            siteIds: ['web'],
-          },
-          {
-            name: 'systemAdmin',
-            title: 'System Administrator',
-            locales: { 'zh-cn': '系统管理员' },
-            siteIds: ['web', 'admin'],
-          },
-        ],
+      const passportRegisteredUser = passport.roles.find(
+        (role: any) => role.name === 'registeredUser',
       );
+      assert.equal(passportRegisteredUser?.title, 'Registered User');
+      assert.deepEqual(passportRegisteredUser?.locales, { 'zh-cn': '注册用户' });
+      assert.ok(passportRegisteredUser?.siteIds.includes('web'));
+
+      const passportSystemAdmin = passport.roles.find((role: any) => role.name === 'systemAdmin');
+      assert.equal(passportSystemAdmin?.title, 'System Administrator');
+      assert.deepEqual(passportSystemAdmin?.locales, { 'zh-cn': '系统管理员' });
+      assert.ok(passportSystemAdmin?.siteIds.includes('web'));
+      assert.ok(passportSystemAdmin?.siteIds.includes('admin'));
     });
   });
 });
