@@ -102,9 +102,23 @@ These commands build the edition-specific frontend flavors from the repository y
 
 ## 6. Upgrade an existing project
 
+Inspect the planned framework changes before applying them:
+
 ```bash
+npm run upgrade:dry-run
 npm run upgrade
 ```
+
+In Cabloy Basic, upgrade synchronizes the framework-owned SSR browser E2E baseline and its root `test:e2e:*` commands plus `@playwright/test` development dependency. The framework reserves these paths:
+
+```text
+e2e/config/
+e2e/scripts/
+e2e/specs/a-basic/
+e2e/specs/a-commerce/
+```
+
+Keep project-owned browser tests outside those reserved paths, for example under `e2e/specs/my-project/`; upgrade overlays framework files without deleting project test paths. Projects whose previous upgrader predates this E2E synchronization may need to run `npm run upgrade` once more: the updated upgrader recognizes an incomplete Basic E2E baseline even when the version marker is already current.
 
 ## 7. Next steps for framework-aware development
 

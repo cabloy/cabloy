@@ -9,6 +9,8 @@ The root `package.json` is the first reference point for shared monorepo workflo
 ## Current shared entrypoints in Cabloy Basic
 
 - `npm run init`
+- `npm run upgrade`
+- `npm run upgrade:dry-run`
 - `npm run vona`
 - `npm run zova`
 - `npm run dev`
@@ -35,6 +37,10 @@ The root `package.json` is the first reference point for shared monorepo workflo
 - `npm run docs:dev`
 - `npm run docs:build`
 - `npm run docs:preview`
+
+## Upgrade
+
+Run `npm run upgrade:dry-run` before `npm run upgrade` to inspect the framework files and root manifest entries that an upgrade would synchronize. In Cabloy Basic, the upgrade owns `e2e/config/`, `e2e/scripts/`, `e2e/specs/a-basic/`, and `e2e/specs/a-commerce/`, together with the framework `test:e2e:*` scripts and `@playwright/test` development dependency. Keep project browser tests outside those reserved paths; see [Fullstack Quickstart](/fullstack/quickstart) for the upgrade bootstrap behavior.
 
 ## SSR browser checks
 

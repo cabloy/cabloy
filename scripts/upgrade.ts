@@ -6,6 +6,7 @@ import {
   mkdirSync,
   readFileSync,
   rmSync,
+  writeFileSync,
   unlinkSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -54,6 +55,26 @@ const OVERWRITE_DIRS_CABLOY_BASIC: string[] = [
   'zova/src/suite/a-training',
   'zova/src/suite/a-devui',
 ];
+
+const FRAMEWORK_E2E_DIRS_CABLOY_BASIC: string[] = [
+  'e2e/config',
+  'e2e/scripts',
+  'e2e/specs/a-basic',
+  'e2e/specs/a-commerce',
+];
+
+const FRAMEWORK_E2E_SCRIPT_NAMES_CABLOY_BASIC: string[] = [
+  'test:e2e:basic',
+  'test:e2e:basic:web',
+  'test:e2e:basic:admin',
+  'test:e2e:basic:dev',
+  'test:e2e:commerce',
+  'test:e2e:commerce:web',
+  'test:e2e:commerce:admin',
+  'test:e2e:commerce:dev',
+];
+
+const FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC = '@playwright/test';
 
 const MERGE_DIRS: string[] = [
   // Claude project assets
@@ -109,6 +130,12 @@ type LatestPackageInfo = {
   tarballUrl: string;
 };
 
+type PackageJson = {
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+  scripts?: Record<string, string>;
+};
+
 // --- Helpers ---
 
 // oxlint-disable no-console
@@ -128,6 +155,14 @@ function shouldCopyPath(path: string): boolean {
 
 function copyDirectory(src: string, dest: string): void {
   cpSync(src, dest, { recursive: true, filter: shouldCopyPath });
+}
+
+function isCabloyBasic(): boolean {
+  return existsSync(resolve(ROOT_DIR, '__CABLOY_BASIC__'));
+}
+
+function readPackageJson(filePath: string): PackageJson {
+  return JSON.parse(readFileSync(filePath, 'utf-8')) as PackageJson;
 }
 
 function isValidVersion(version: string): boolean {
@@ -185,6 +220,105 @@ async function extractTarball(tarballPath: string, targetDir: string): Promise<v
     await extractTar({ file: tarballPath, cwd: targetDir, strip: 1 });
   } catch {
     throw new Error('Failed to extract tarball');
+  }
+}
+
+function needsBasicE2eReconciliation(): boolean {
+  if (!isCabloyBasic()) return false;
+
+  for (const dir of FRAMEWORK_E2E_DIRS_CABLOY_BASIC) {
+    if (!existsSync(resolve(ROOT_DIR, dir))) return true;
+  }
+
+  const packageJson = readPackageJson(resolve(ROOT_DIR, 'package.json'));
+  for (const name of FRAMEWORK_E2E_SCRIPT_NAMES_CABLOY_BASIC) {
+    const script = packageJson.scripts?.[name];
+    if (!script?.includes('e2e/')) return true;
+  }
+  return !packageJson.devDependencies?.[FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC];
+}
+
+function mergeFrameworkE2eAssets(dryRun?: boolean): void {
+  if (!isCabloyBasic()) return;
+
+  for (const dir of FRAMEWORK_E2E_DIRS_CABLOY_BASIC) {
+    const src = resolve(TEMP_DIR, dir);
+    const dest = resolve(ROOT_DIR, dir);
+    if (!existsSync(src)) {
+      throw new Error(`Expected framework E2E directory in package: ${dir}`);
+    }
+    if (dryRun) {
+      log(`  [dry-run] Merge framework E2E directory: ${dir}`);
+      continue;
+    }
+    copyDirectory(src, dest);
+  }
+}
+
+function reconcileFrameworkE2ePackageJson(dryRun?: boolean): void {
+  if (!isCabloyBasic()) return;
+
+  const projectPackagePath = resolve(ROOT_DIR, 'package.json');
+  const sourcePackagePath = resolve(TEMP_DIR, 'package.json');
+  const projectPackage = readPackageJson(projectPackagePath);
+  const sourcePackage = readPackageJson(sourcePackagePath);
+  const sourcePlaywrightVersion =
+    sourcePackage.devDependencies?.[FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC];
+  if (!sourcePlaywrightVersion) {
+    throw new Error(
+      `Expected ${FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC} in framework package devDependencies`,
+    );
+  }
+
+  let changed = false;
+  for (const name of FRAMEWORK_E2E_SCRIPT_NAMES_CABLOY_BASIC) {
+    const sourceValue = sourcePackage.scripts?.[name];
+    if (!sourceValue) {
+      throw new Error(`Expected framework E2E script in package.json: ${name}`);
+    }
+    if (projectPackage.scripts?.[name] === sourceValue) continue;
+    changed = true;
+    if (dryRun) {
+      log(`  [dry-run] Set package.json scripts.${name}`);
+    } else {
+      projectPackage.scripts ??= {};
+      projectPackage.scripts[name] = sourceValue;
+    }
+  }
+
+  if (
+    projectPackage.devDependencies?.[FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC] !==
+    sourcePlaywrightVersion
+  ) {
+    changed = true;
+    if (dryRun) {
+      log(
+        `  [dry-run] Set package.json devDependencies.${FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC} = ${sourcePlaywrightVersion}`,
+      );
+    } else {
+      projectPackage.devDependencies ??= {};
+      projectPackage.devDependencies[FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC] =
+        sourcePlaywrightVersion;
+    }
+  }
+
+  if (projectPackage.dependencies?.[FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC]) {
+    changed = true;
+    if (dryRun) {
+      log(
+        `  [dry-run] Remove package.json dependencies.${FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC}`,
+      );
+    } else {
+      delete projectPackage.dependencies[FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC];
+    }
+  }
+
+  if (!changed) {
+    if (dryRun) log('  [dry-run] Framework E2E package entries already match');
+    return;
+  }
+  if (!dryRun) {
+    writeFileSync(projectPackagePath, `${JSON.stringify(projectPackage, null, 2)}\n`);
   }
 }
 
@@ -250,7 +384,7 @@ async function downloadAndExtract(tarballUrl: string): Promise<void> {
 // --- Step 3: Selective overwrite ---
 
 function selectiveOverwrite(dryRun?: boolean): void {
-  const overwriteDirs = existsSync(resolve(ROOT_DIR, '__CABLOY_BASIC__'))
+  const overwriteDirs = isCabloyBasic()
     ? [...OVERWRITE_DIRS, ...OVERWRITE_DIRS_CABLOY_BASIC]
     : OVERWRITE_DIRS;
 
@@ -291,6 +425,9 @@ function selectiveOverwrite(dryRun?: boolean): void {
     }
     rmSync(dest, { recursive: true, force: true });
   }
+
+  // Merge Cabloy Basic framework E2E directories without deleting project-owned paths.
+  mergeFrameworkE2eAssets(dryRun);
 
   // Overwrite files
   for (const file of WHITELIST_FILES) {
@@ -348,6 +485,7 @@ async function main(): Promise<void> {
 
   const latestPackageInfo = await fetchLatestPackageInfo();
   const currentVersion = readVersionMarker();
+  const basicE2eIncomplete = needsBasicE2eReconciliation();
 
   if (currentVersion) {
     log(`Current project Cabloy version: ${currentVersion}`);
@@ -361,13 +499,18 @@ async function main(): Promise<void> {
   if (currentVersion) {
     const comparison = compareVersions(currentVersion, latestPackageInfo.version);
     if (comparison === 0) {
-      if (!dryRun) {
+      if (basicE2eIncomplete) {
+        log(
+          `Cabloy is already up to date (current: ${currentVersion}), but the Cabloy Basic E2E baseline is incomplete. Continuing repair.\n`,
+        );
+      } else if (!dryRun) {
         log(`Cabloy is already up to date (current: ${currentVersion}). Skipping upgrade.`);
         return;
+      } else {
+        log(
+          `Cabloy is already up to date (current: ${currentVersion}). Continuing dry-run to show overwrite plan.\n`,
+        );
       }
-      log(
-        `Cabloy is already up to date (current: ${currentVersion}). Continuing dry-run to show overwrite plan.\n`,
-      );
     } else if (comparison > 0) {
       throw new Error(
         `Project Cabloy version ${currentVersion} is newer than npm latest ${latestPackageInfo.version}. Aborting upgrade.`,
@@ -390,12 +533,19 @@ async function main(): Promise<void> {
     selectiveOverwrite(dryRun);
     log('');
 
-    // 4. Run init
+    // 4. Reconcile Cabloy Basic framework E2E manifest entries
+    if (isCabloyBasic()) {
+      log('Reconciling framework-owned E2E package entries...');
+      reconcileFrameworkE2ePackageJson(dryRun);
+      log('');
+    }
+
+    // 5. Run init
     log('Running npm run init...');
     runInit(dryRun, latestPackageInfo.version);
     log('');
 
-    // 5. Run init:test-data
+    // 6. Run init:test-data
     log('Running npm run init:test-data...');
     runInitTestData(dryRun);
     log('');
