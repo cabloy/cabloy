@@ -18,10 +18,34 @@ The root `package.json` is the first reference point for shared monorepo workflo
 - `npm run build:zova`
 - `npm run start`
 - `npm run test`
+- `npm run test:e2e:basic`
+- `npm run test:e2e:basic:dev`
 - `npm run tsc`
 - `npm run docs:dev`
 - `npm run docs:build`
 - `npm run docs:preview`
+
+## Basic SSR browser checks
+
+The Basic SSR skeleton exercises Web at `/` and anonymous Admin routing at `/admin` through Vona's SSR dispatcher. Prepare fresh Basic SSR artifacts explicitly when frontend SSR output has changed:
+
+```bash
+npm run build:zova
+npm run deps:vona
+```
+
+Then run the clean local gate:
+
+```bash
+npm run test:e2e:basic:dev
+```
+
+The managed command resets Vona's local test database and Redis namespace, then starts one development Vona worker. Focused commands do not rebuild artifacts. To test an externally managed target without resetting it or managing its process, set `BASIC_E2E_BASE_URL`:
+
+```bash
+BASIC_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:basic:web
+BASIC_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:basic:admin
+```
 
 ## Edition-sensitive note
 

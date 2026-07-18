@@ -30,7 +30,7 @@ A central SSR capability is preparing initial data on the server, synchronizing 
 
 ### Initial hydration completion
 
-For browser work that must wait for the initial SSR handoff, register `this.$ssr.onHydrated(...)`. The callback runs once after the SSR root and Zova-tracked nested hydration work complete, including deferred client updates.
+For browser work that must wait for the initial SSR handoff, register `this.$ssr.onHydrated(...)`. The callback runs once only after the SSR root and every currently tracked Zova nested hydration boundary complete, including deferred client updates. Root mount alone is not sufficient when an async component or controller is still hydrating.
 
 This lifecycle applies only to the initial client hydration of SSR HTML. It is not an SPA-startup or later client-navigation readiness signal. Do not render a client-ready marker into server HTML; add it from an `onHydrated(...)` callback when browser-visible evidence is required.
 

@@ -30,6 +30,32 @@ npm run build:zova
 
 These map to Basic-specific Zova flavors in this repository.
 
+## Basic SSR browser acceptance
+
+The default Basic Web and Admin sites have browser smoke commands that exercise Vona SSR dispatch at `7102`, not a standalone Zova development-server port.
+
+Prepare current artifacts explicitly when the relevant frontend SSR output changed:
+
+```bash
+# Web only
+npm run build:zova:web
+
+# Admin only
+npm run build:zova:admin
+
+# Both default Basic sites
+npm run build:zova
+npm run deps:vona
+```
+
+Then use the managed clean local acceptance command:
+
+```bash
+npm run test:e2e:basic:dev
+```
+
+It resets Vona-managed test data and the local Redis namespace, starts one development Vona worker, and runs Web plus anonymous Admin checks. The E2E commands consume already-built artifacts; they do not rebuild them. For a separately managed target, use `BASIC_E2E_BASE_URL`; the caller owns target data, cache, and artifact freshness.
+
 ## Zova script model
 
 The underlying Zova package still organizes scripts around app mode and flavor.
