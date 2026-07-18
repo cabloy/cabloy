@@ -8,9 +8,9 @@
 
 Cabloy is a Node.js fullstack framework for AI vibe coding.
 
-Use one fullstack framework instead of stitching together separate backend and frontend stacks.
+**One fullstack system for AI vibe coding—bidirectional type sync, CLI-first workflows, docs, and skills.**
 
-With Vona, Zova, suite-based modules, and CLI-first workflows, Cabloy turns common scaffolding, metadata, refactors, and verification into explicit commands for faster, more accurate AI vibe coding.
+Instead of stitching separate backend and frontend stacks together, Cabloy keeps their contracts, tooling, and guidance connected in one repository. Vona, Zova, and suite-based modules provide the aligned architecture behind that workflow.
 
 [Documentation](https://docs.cabloy.com) · [npm](https://www.npmjs.com/package/cabloy) · [Web Demo](https://cabloy.com) · [Admin Demo](https://cabloy.com/admin) · [GitHub](https://github.com/cabloy/cabloy)
 
@@ -102,12 +102,12 @@ npm run upgrade
 
 ## Highlights
 
-- **One framework system** — build backend and frontend in one fullstack architecture
-- **Vona + Zova** — use aligned backend and frontend frameworks for code sharing, workflow reuse, and cross-stack consistency
-- **Suite-based modular system** — organize capabilities as suites and modules so services, features, metadata, and tooling evolve in composable units
-- **Multiple delivery modes** — deliver SSR, SPA, Web, and Admin applications with shared conventions across the stack
-- **CLI-first workflows for AI vibe coding** — turn common scaffolding, metadata, refactors, and verification into explicit commands for faster, more accurate AI vibe coding
-- **Monorepo-native development** — keep framework source, docs, and tooling aligned in one monorepo workflow
+- **One fullstack system** — build backend and frontend together instead of assembling separate stacks
+- **Bidirectional type sync** — use the contract loop to keep backend contracts and frontend metadata aligned in both directions
+- **CLI-first workflows** — use explicit commands for scaffolding, generation, refactors, and verification
+- **Docs and skills** — give people and AI agents reusable, source-grounded guidance for the current repository
+- **Vona + Zova** — use aligned backend and frontend layers for code sharing and cross-stack consistency
+- **Modular delivery** — organize capabilities as suites and modules, then deliver SSR, SPA, Web, and Admin applications with shared conventions
 
 ## Technology Stack
 

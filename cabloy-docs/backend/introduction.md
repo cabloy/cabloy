@@ -2,7 +2,7 @@
 
 This page is the backend hub for Cabloy users, contributors, and AI vibe coding workflows that need the backend side of the framework.
 
-Vona is the backend half of Cabloy’s one-framework-system fullstack architecture.
+Vona is the backend layer of Cabloy’s one fullstack system, supporting bidirectional type sync, CLI-first workflows, and source-grounded docs and skills.
 
 ## What Vona is responsible for
 

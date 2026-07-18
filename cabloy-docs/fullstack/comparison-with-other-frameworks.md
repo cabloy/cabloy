@@ -1,12 +1,12 @@
 # Comparison with Other Frameworks
 
-This page shows how **Cabloy** differs from several common framework choices, so readers can quickly see where Cabloy stands out as a Node.js fullstack framework system and which strengths come from the fullstack system as a whole versus the backend layer provided by **Vona**.
+This page shows how **Cabloy** differs from several common framework choices, focusing on its one fullstack system for AI vibe coding: bidirectional type sync, CLI-first workflows, and source-grounded docs and skills. It also distinguishes strengths of the fullstack system from those of the backend layer provided by **Vona**.
 
 ## What is being compared
 
 Cabloy is a **Node.js fullstack framework system**.
 
-That means the comparison is not only about a backend runtime or only about a frontend stack. It is about how **Vona** on the backend and **Zova** on the frontend stay aligned through shared conventions, shared scripts, SSR-aware delivery modes, and cross-stack generation workflows.
+That means the comparison is not only about a backend runtime or a frontend stack. It is about a unified system where **Vona** and **Zova** support bidirectional type sync, CLI-first workflows, and reusable docs and skills, alongside shared conventions, SSR-aware delivery modes, and cross-stack generation workflows.
 
 For the broader Cabloy model, start with these pages:
 
@@ -23,17 +23,19 @@ The sections below use the same comparison lens each time:
 - **System center** — what the framework treats as the main architectural center
 - **Backend model** — how much backend structure and infrastructure the framework provides by default
 - **Frontend and admin model** — how the UI side is expected to evolve
-- **Cross-stack workflow** — how backend/frontend contracts and generation workflows stay aligned
+- **Cross-stack workflow** — how bidirectional type sync, contracts, and generation workflows stay aligned
+- **Guidance and automation** — how CLI-first workflows, docs, and skills make repository conventions reusable
 - **Best fit** — the kind of team or project the framework fits most naturally
 
 ## Cabloy vs Next.js
 
 | Perspective              | Cabloy                                                                                         | Next.js                                                                |
 | ------------------------ | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| System center            | One framework system with Vona on the backend and Zova on the frontend                         | Frontend-centric fullstack framework                                   |
+| System center            | One fullstack system, with Vona and Zova as aligned backend and frontend layers                | Frontend-centric fullstack framework                                   |
 | Backend model            | Dedicated backend framework with its own runtime, contracts, infrastructure, and CLI workflows | Backend capabilities are typically centered around the web app runtime |
 | Frontend and admin model | Shared conventions across SSR, SPA, Web, and Admin applications                                | Strong fit for React-based web application delivery                    |
-| Cross-stack workflow     | Explicit backend OpenAPI output, frontend SDK generation, and frontend metadata feedback loops | Usually chosen per project or ecosystem tooling                        |
+| Cross-stack workflow     | Bidirectional type sync through OpenAPI, SDK generation, and metadata feedback loops           | Usually chosen per project or ecosystem tooling                        |
+| Guidance and automation  | CLI-first workflows plus source-grounded docs and skills                                       | Usually chosen per project or ecosystem tooling                        |
 | Best fit                 | Teams that want a coordinated fullstack system with a stronger dedicated backend layer         | Teams that want a React-centered fullstack web application path        |
 
 Cabloy and Next.js both target fullstack application development, but they organize the stack differently.
@@ -43,8 +45,9 @@ Cabloy keeps the backend and frontend as **separate but coordinated framework la
 Representative Cabloy strengths in this comparison include:
 
 - a clear backend/frontend collaboration model rather than a single frontend-centered runtime
-- explicit contract workflows from backend OpenAPI output to frontend SDK generation
-- frontend-generated metadata that can flow back into backend-side tooling
+- bidirectional type sync through backend OpenAPI output, frontend SDK generation, and frontend metadata feedback loops
+- CLI-first workflows for scaffolding, generation, refactors, and verification
+- source-grounded docs and skills that make repository conventions reusable for people and AI agents
 - shared delivery conventions for SSR, SPA, Web, and Admin applications
 
 If your main goal is a React-centered fullstack web app, Next.js may feel more direct. If your main goal is a **coordinated fullstack framework system** with a stronger backend layer and explicit cross-stack workflows, Cabloy is the better fit.
@@ -53,10 +56,11 @@ If your main goal is a React-centered fullstack web app, Next.js may feel more d
 
 | Perspective              | Cabloy                                                                                                | NestJS                                                                                  |
 | ------------------------ | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| System center            | Fullstack system                                                                                      | Backend framework                                                                       |
+| System center            | One fullstack system                                                                                  | Backend framework                                                                       |
 | Backend model            | Vona provides backend runtime, contracts, infrastructure, and CLI workflows                           | NestJS focuses on backend application structure                                         |
 | Frontend and admin model | Frontend collaboration is built into the broader Cabloy system through Zova and shared docs/workflows | Usually paired with a separate frontend choice                                          |
-| Cross-stack workflow     | Backend contracts can feed frontend SDK generation inside the same framework system                   | Typically assembled from separate backend and frontend tooling choices                  |
+| Cross-stack workflow     | Bidirectional type sync connects backend contracts, frontend SDKs, and metadata feedback              | Typically assembled from separate backend and frontend tooling choices                  |
+| Guidance and automation  | CLI-first workflows plus source-grounded docs and skills                                              | Usually chosen per project or ecosystem tooling                                         |
 | Best fit                 | Teams that want backend strength inside a shared fullstack system                                     | Teams that want a backend-first framework and will choose the frontend stack separately |
 
 The most important difference here is **scope**.
@@ -77,10 +81,11 @@ If a team only needs a backend framework and wants to choose the frontend stack 
 
 | Perspective              | Cabloy                                                                                                                    | Django Admin                                                                             |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| System center            | Typed Node.js fullstack framework system                                                                                  | Python server-centered admin framework experience                                        |
+| System center            | Typed Node.js fullstack system with aligned backend and frontend layers                                                   | Python server-centered admin framework experience                                        |
 | Backend model            | Dedicated backend runtime and infrastructure through Vona                                                                 | Django backend conventions centered on the admin stack                                   |
 | Frontend and admin model | Modern frontend layer through Zova with SSR, SPA, Web, and Admin delivery modes                                           | Admin experience is centered on server-rendered templates and built-in admin conventions |
-| Cross-stack workflow     | Backend and frontend stay aligned through generated contracts, metadata, and shared workflows                             | The default model is more tightly centered on the server-side admin stack                |
+| Cross-stack workflow     | Bidirectional type sync through generated contracts, metadata, and shared workflows                                       | The default model is more tightly centered on the server-side admin stack                |
+| Guidance and automation  | CLI-first workflows plus source-grounded docs and skills                                                                  | Usually centered on Django conventions and ecosystem tooling                             |
 | Best fit                 | Teams that want rapid admin development in Node.js without giving up typed frontend flexibility and richer UI interaction | Teams that want a fast server-centered admin path in the Python ecosystem                |
 
 This comparison is worth keeping even though the language ecosystems are different.
@@ -110,9 +115,10 @@ For Cabloy’s frontend/runtime side of this comparison, see:
 These comparisons are most useful when your decision depends on questions like:
 
 - do you want one coordinated framework system instead of stitching backend and frontend frameworks together?
+- do you need bidirectional type sync through an explicit contract loop?
+- do you want CLI-first workflows, source-grounded docs, and skills that make repository conventions reusable?
 - do you need a stronger dedicated backend layer inside a fullstack architecture?
-- do you want explicit contract-loop workflows between backend and frontend?
 - do you need shared conventions across SSR, SPA, Web, and Admin delivery modes?
 - do you want Django-Admin-like rapid admin development inside the Node.js ecosystem, but with a more modern frontend and interaction model?
 
-If those questions matter, Cabloy’s value is not just one isolated feature. It is the way **Vona**, **Zova**, shared scripts, and cross-stack workflows stay aligned as one framework system.
+If those questions matter, Cabloy’s value is not just one isolated feature. It is the way **Vona**, **Zova**, shared scripts, docs, skills, and cross-stack workflows stay aligned as one fullstack system.

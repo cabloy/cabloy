@@ -2,18 +2,18 @@
 
 Cabloy is a Node.js fullstack framework for AI vibe coding.
 
-Use one fullstack framework instead of stitching together separate backend and frontend stacks.
+**One fullstack system for AI vibe coding—bidirectional type sync, CLI-first workflows, docs, and skills.**
 
-With Vona, Zova, suite-based modules, and CLI-first workflows, Cabloy turns common scaffolding, metadata, refactors, and verification into explicit commands for faster, more accurate AI vibe coding.
+Instead of stitching separate backend and frontend stacks together, Cabloy keeps their contracts, tooling, and guidance connected in one repository. Vona, Zova, and suite-based modules are the aligned architecture behind that workflow.
 
 ## What Cabloy emphasizes
 
-- **One framework system** — build backend and frontend in one fullstack architecture
-- **Vona + Zova** — use aligned backend and frontend frameworks for code sharing, workflow reuse, and cross-stack consistency
-- **Suite-based modular system** — organize capabilities as suites and modules so services, features, metadata, and tooling evolve in composable units
-- **Multiple delivery modes** — deliver SSR, SPA, Web, and Admin applications with shared conventions across the stack
-- **CLI-first workflows for AI vibe coding** — turn common scaffolding, metadata, refactors, and verification into explicit commands for faster, more accurate AI vibe coding
-- **Monorepo-native development** — keep framework source, docs, and tooling aligned in one monorepo workflow
+- **One fullstack system** — build backend and frontend together instead of assembling separate stacks
+- **Bidirectional type sync** — use the contract loop to keep backend contracts and frontend metadata aligned in both directions
+- **CLI-first workflows** — use explicit commands for scaffolding, generation, refactors, and verification
+- **Docs and skills** — give people and AI agents reusable, source-grounded guidance for the current repository
+- **Vona + Zova** — use aligned backend and frontend layers for code sharing and cross-stack consistency
+- **Modular delivery** — organize capabilities as suites and modules, then deliver SSR, SPA, Web, and Admin applications with shared conventions
 
 ## How to approach fullstack work
 
@@ -84,9 +84,9 @@ In earlier standalone-repo explanations, this was often described as placing the
 
 For the integration workflow and current monorepo shape, see [Vona + Zova Integration](/fullstack/vona-zova-integration) and [SSR Overview](/frontend/ssr-overview).
 
-### 2. Type information flows in both directions
+### 2. Bidirectional type sync through the contract loop
 
-Cabloy does not treat type sharing as backend-to-frontend only. The collaboration loop is bidirectional:
+Cabloy does not treat type sharing as backend-to-frontend only. The collaboration loop provides bidirectional type sync:
 
 - **Backend → Frontend**: Vona emits Swagger/OpenAPI contracts that Zova uses to generate frontend SDKs and related schema-aware helpers
 - **Frontend → Backend**: Zova generates structural metadata and types such as routes, components, and icons, which can be reflected back into backend-side tooling and type hints
