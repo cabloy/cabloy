@@ -1,5 +1,31 @@
 # Changelog
 
+## 5.1.110
+
+### Features
+
+- Add form layout sections for flow forms.
+- Add a Commerce development E2E workflow.
+- Establish the A-Commerce Phase 20 foundation.
+- Upgrade the Basic E2E baseline.
+- Add a Basic SSR E2E test skeleton.
+
+### Bug Fixes
+
+- Complete the Zova SSR hydration lifecycle.
+- Clarify E2E upgrade repair behavior.
+
+### Improvements
+
+- Rename and reorganize the E2E runner and harness files.
+- Standardize E2E test selection.
+- Normalize Commerce script commands.
+- Add coverage for the Student flow filter layout.
+- Update Student selection item and controller components.
+- Update framework performance documentation.
+- Add an A-Commerce planning baseline.
+- Add a Form Layout guide.
+
 ## 5.1.109
 
 ### Features
