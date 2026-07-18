@@ -48,15 +48,15 @@ Before a release candidate, run the required focused tests, complete suite, type
 
 ## Test Levels and Planned Locations
 
-| Level                         | Purpose                                                                        | Current or future location                                    |
-| ----------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------- |
-| Service and state tests       | Validate money, eligibility, transitions, and snapshots                        | Future module-local `test/**/*.ts`                            |
-| Transaction/integration tests | Prove atomic checkout, locking, rollback, expiry, and idempotency              | Future module-local `test/**/*.ts` with `vona-mock`           |
-| Action/API tests              | Prove authentication, tenant/resource ownership, and invalid-transition denial | Future module-local `test/**/*.ts` with `performAction(...)`  |
-| Cross-database tests          | Confirm transaction/locking behavior on supported database clients             | Existing CI pattern; Commerce cases added when implemented    |
-| Contract tests                | Prove generated REST and SSR artifacts match changed contracts                 | Future paired Commerce build wrappers                         |
-| SSR document tests            | Inspect anonymous HTML, site selection, route admission, and assets            | Future Commerce site-owner tests plus HTTP checks             |
-| Browser acceptance            | Prove real navigation, hydration, interaction, and operator/customer journeys  | Future `e2e/a-commerce/` after a committed runner is selected |
+| Level                         | Purpose                                                                        | Current or future location                                   |
+| ----------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------ |
+| Service and state tests       | Validate money, eligibility, transitions, and snapshots                        | Future module-local `test/**/*.ts`                           |
+| Transaction/integration tests | Prove atomic checkout, locking, rollback, expiry, and idempotency              | Future module-local `test/**/*.ts` with `vona-mock`          |
+| Action/API tests              | Prove authentication, tenant/resource ownership, and invalid-transition denial | Future module-local `test/**/*.ts` with `performAction(...)` |
+| Cross-database tests          | Confirm transaction/locking behavior on supported database clients             | Existing CI pattern; Commerce cases added when implemented   |
+| Contract tests                | Prove generated REST and SSR artifacts match changed contracts                 | Future paired Commerce build wrappers                        |
+| SSR document tests            | Inspect anonymous HTML, site selection, route admission, and assets            | Future Commerce site-owner tests plus HTTP checks            |
+| Browser acceptance            | Prove real navigation, hydration, interaction, and operator/customer journeys  | `e2e/specs/a-commerce/`                                      |
 
 Planned backend test ownership:
 
@@ -129,7 +129,7 @@ SSR, hydration, route admission, and Vona API authorization are separate evidenc
 
 Customer-site verification must inspect actual anonymous HTML and subsequent hydrated behavior. It must prove that private customer data is absent before the authenticated client query resolves and that `/commerce` resolves to the Web home rather than the inherited Admin dashboard. Raw SSR HTML must also lack `data-zova-hydrated`; the browser must receive the site-specific attribute only after Zova's `a-ssr` lifecycle runs its `onHydrated()` callback (`commerce` for customer and `commerceAdmin` for operator). This is an initial SSR-hydration proof, not a generic SPA or later client-navigation readiness signal. Operator-site verification must prove that an unauthorized person cannot obtain access merely by knowing a route or menu path, and direct API calls remain independently protected.
 
-Phase 20 commits a Playwright browser acceptance suite under `e2e/a-commerce/`. Install Chromium once with `npx playwright install chromium`; after Commerce SSR/REST artifacts are current, the clean default path is `npm run test:e2e:commerce:dev`. It runs `npm run db:reset`, starts one Vona development worker, and runs both browser smoke scenarios through `http://127.0.0.1:7102`. The reset recreates Vona's managed test database and clears the local Vona Redis namespace. Set `COMMERCE_E2E_BASE_URL` to test an externally managed target without Playwright resetting, starting, or stopping Vona.
+Phase 20 commits a Playwright browser acceptance suite under `e2e/specs/a-commerce/`. Install Chromium once with `npx playwright install chromium`; after Commerce SSR/REST artifacts are current, the clean default path is `npm run test:e2e:commerce:dev`. It runs `npm run db:reset`, starts one Vona development worker, and runs both browser smoke scenarios through `http://127.0.0.1:7102`. The reset recreates Vona's managed test database and clears the local Vona Redis namespace. Set `COMMERCE_E2E_BASE_URL` to test an externally managed target without Playwright resetting, starting, or stopping Vona.
 
 ## Commands
 

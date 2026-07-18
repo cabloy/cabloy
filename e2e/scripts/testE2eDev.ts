@@ -1,15 +1,11 @@
 import { execFileSync } from 'node:child_process';
 import { createServer } from 'node:net';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
-import { E2E_PORT, getE2eSuite } from './e2e.ts';
-
-const ROOT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { E2E_PORT, E2E_ROOT_DIR, getE2eSuite } from './e2e.ts';
 const suiteName = process.argv[2];
 const suite = getE2eSuite(suiteName);
 
-function run(command: string, args: string[], cwd = ROOT_DIR) {
+function run(command: string, args: string[], cwd = E2E_ROOT_DIR) {
   // eslint-disable-next-line
   console.log(`\n===> ${[command, ...args].join(' ')}`);
   execFileSync(command, args, {

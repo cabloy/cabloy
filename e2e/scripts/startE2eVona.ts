@@ -1,11 +1,9 @@
 import { spawn } from 'node:child_process';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
-const ROOT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { E2E_ROOT_DIR } from './e2e.ts';
 
 const child = spawn('npm', ['run', 'dev:one'], {
-  cwd: ROOT_DIR,
+  cwd: E2E_ROOT_DIR,
   detached: process.platform !== 'win32',
   stdio: 'inherit',
 });

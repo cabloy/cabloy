@@ -1,17 +1,24 @@
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+export const E2E_ROOT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const E2E_PORT = 7102;
 export const E2E_LOCAL_BASE_URL = `http://127.0.0.1:${E2E_PORT}`;
+
+const E2E_CONFIG_DIR = resolve(E2E_ROOT_DIR, 'e2e', 'config');
+const E2E_SPECS_DIR = resolve(E2E_ROOT_DIR, 'e2e', 'specs');
 
 const e2eSuites = {
   basic: {
     externalBaseUrlEnv: 'BASIC_E2E_BASE_URL',
-    configFile: 'playwright.basic.config.ts',
-    testDir: './e2e/a-basic',
+    configFile: resolve(E2E_CONFIG_DIR, 'playwright.basic.config.ts'),
+    testDir: resolve(E2E_SPECS_DIR, 'a-basic'),
     readinessPath: '/',
   },
   commerce: {
     externalBaseUrlEnv: 'COMMERCE_E2E_BASE_URL',
-    configFile: 'playwright.commerce.config.ts',
-    testDir: './e2e/a-commerce',
+    configFile: resolve(E2E_CONFIG_DIR, 'playwright.commerce.config.ts'),
+    testDir: resolve(E2E_SPECS_DIR, 'a-commerce'),
     readinessPath: '/commerce',
   },
 } as const;

@@ -1,8 +1,8 @@
 import { defineConfig } from '@playwright/test';
 
-import type { E2eSuiteName } from './scripts/e2e.ts';
+import type { E2eSuiteName } from '../scripts/e2e.ts';
 
-import { E2E_LOCAL_BASE_URL, getE2eSuite } from './scripts/e2e.ts';
+import { E2E_LOCAL_BASE_URL, E2E_ROOT_DIR, getE2eSuite } from '../scripts/e2e.ts';
 
 export function createE2eConfig(suiteName: E2eSuiteName) {
   const suite = getE2eSuite(suiteName);
@@ -22,7 +22,8 @@ export function createE2eConfig(suiteName: E2eSuiteName) {
     webServer: externalBaseURL
       ? undefined
       : {
-          command: 'node scripts/startE2eVona.ts',
+          command: 'node e2e/scripts/startE2eVona.ts',
+          cwd: E2E_ROOT_DIR,
           url: `${baseURL}${suite.readinessPath}`,
           timeout: 180_000,
           reuseExistingServer: false,
