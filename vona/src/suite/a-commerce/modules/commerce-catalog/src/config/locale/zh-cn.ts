@@ -1,0 +1,18 @@
+export default {
+  Category: '分类',
+  Description: '描述',
+  Name: '名称',
+  Operations: '操作',
+  ParentCategory: '父分类',
+  PriceCents: '价格（分）',
+  Product: '商品',
+  ProductTitle: '商品标题',
+  Published: '已发布',
+  Sku: 'SKU',
+  SkuCode: 'SKU 编码',
+  SkuLifecycle: 'SKU 生命周期',
+  SkuLifecycleActive: '已启用',
+  SkuLifecycleArchived: '已归档',
+  SkuLifecycleDraft: '草稿',
+  SkuLifecycleInactive: '未启用',
+};

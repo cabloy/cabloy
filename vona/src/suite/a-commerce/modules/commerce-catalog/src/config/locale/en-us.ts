@@ -1,0 +1,18 @@
+export default {
+  Category: 'Category',
+  Description: 'Description',
+  Name: 'Name',
+  Operations: 'Operations',
+  ParentCategory: 'Parent category',
+  PriceCents: 'Price (cents)',
+  Product: 'Product',
+  ProductTitle: 'Product title',
+  Published: 'Published',
+  Sku: 'SKU',
+  SkuCode: 'SKU code',
+  SkuLifecycle: 'SKU lifecycle',
+  SkuLifecycleActive: 'Active',
+  SkuLifecycleArchived: 'Archived',
+  SkuLifecycleDraft: 'Draft',
+  SkuLifecycleInactive: 'Inactive',
+};
