@@ -152,9 +152,8 @@ npm run format
 ### Phase 20 browser acceptance
 
 ```bash
-# Refresh paired Commerce SSR and REST artifacts when frontend or contract output changed
+# Refresh both Commerce SSR and REST artifact pairs when frontend or contract output changed
 npm run build:zova:commerce
-npm run build:zova:commerce-admin
 npm run deps:vona
 
 # Clean development-Vona browser acceptance: reset database and local Redis,

@@ -28,7 +28,7 @@ export interface ISsrSiteOptionsCommerce extends IDecoratorSsrSiteOptions<
   publicPath: 'commerce',
   bundlePath: 'ssr-cabloyCommerce-5.0.0',
   diagnostics: {
-    buildCommand: 'npm run build:zova:commerce',
+    buildCommand: 'npm run build:zova:commerce:web',
   },
 })
 export class SsrSiteCommerce extends BeanSsrSiteBase<ISsrSiteOptionsCommerce> {}

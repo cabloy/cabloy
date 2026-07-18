@@ -28,7 +28,18 @@ npm run dev:zova:web
 npm run build:zova
 ```
 
-These map to Basic-specific Zova flavors in this repository.
+These map to Basic-specific Zova flavors in this repository. Commerce follows the same aggregate-and-surface pattern:
+
+```bash
+# Customer Web or Operator Admin development server
+npm run dev:zova:commerce:web
+npm run dev:zova:commerce:admin
+
+# Both Commerce SSR/REST artifact pairs, or one surface only
+npm run build:zova:commerce
+npm run build:zova:commerce:web
+npm run build:zova:commerce:admin
+```
 
 ## Basic SSR browser acceptance
 

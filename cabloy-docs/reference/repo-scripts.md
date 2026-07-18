@@ -14,8 +14,13 @@ The root `package.json` is the first reference point for shared monorepo workflo
 - `npm run dev`
 - `npm run dev:zova:admin`
 - `npm run dev:zova:web`
+- `npm run dev:zova:commerce:web`
+- `npm run dev:zova:commerce:admin`
 - `npm run build`
 - `npm run build:zova`
+- `npm run build:zova:commerce`
+- `npm run build:zova:commerce:web`
+- `npm run build:zova:commerce:admin`
 - `npm run start`
 - `npm run test`
 - `npm run test:e2e:basic`
@@ -59,7 +64,6 @@ Commerce browser acceptance exercises Customer Web at `/commerce` and anonymous 
 
 ```bash
 npm run build:zova:commerce
-npm run build:zova:commerce-admin
 npm run deps:vona
 npm run test:e2e:commerce:dev
 ```

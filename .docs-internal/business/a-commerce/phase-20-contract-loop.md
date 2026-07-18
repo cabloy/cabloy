@@ -8,8 +8,8 @@ This note records the executable contract boundary introduced by Phase 20. It su
 
 | Surface  | Vona SSR site   | Public path       | Zova flavor           | Paired root build                   |
 | -------- | --------------- | ----------------- | --------------------- | ----------------------------------- |
-| Customer | `commerce`      | `/commerce`       | `cabloyCommerce`      | `npm run build:zova:commerce`       |
-| Operator | `commerceAdmin` | `/commerce-admin` | `cabloyCommerceAdmin` | `npm run build:zova:commerce-admin` |
+| Customer | `commerce`      | `/commerce`       | `cabloyCommerce`      | `npm run build:zova:commerce:web`   |
+| Operator | `commerceAdmin` | `/commerce-admin` | `cabloyCommerceAdmin` | `npm run build:zova:commerce:admin` |
 
 Each paired build creates the matching SSR bundle under its Commerce site-owner module and a generated REST package under `vona/.zova-rest/`. The generated REST directories are build artifacts and must not be edited manually.
 
@@ -29,9 +29,9 @@ When a Commerce Vona DTO, controller, validation rule, or OpenAPI declaration ch
 When Commerce routes, pages, icons, render metadata, or other Vona-consumed frontend metadata changes:
 
 ```bash
-npm run build:zova:commerce
+npm run build:zova:commerce:web
 # or
-npm run build:zova:commerce-admin
+npm run build:zova:commerce:admin
 npm run deps:vona
 ```
 
@@ -51,7 +51,6 @@ Build both paired Commerce SSR/REST artifacts whenever Commerce frontend or gene
 
 ```bash
 npm run build:zova:commerce
-npm run build:zova:commerce-admin
 npm run deps:vona
 ```
 

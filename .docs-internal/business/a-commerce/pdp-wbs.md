@@ -340,9 +340,8 @@ Run the narrowest relevant verification first, then broaden it:
 npm run vona :
 npm run zova :
 
-# after corresponding Commerce flavor scripts exist
+# refresh both Commerce SSR and REST artifact pairs
 npm run build:zova:commerce
-npm run build:zova:commerce-admin
 npm run deps:vona
 npm run deps:zova
 

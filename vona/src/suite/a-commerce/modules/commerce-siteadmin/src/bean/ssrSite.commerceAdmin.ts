@@ -28,7 +28,7 @@ export interface ISsrSiteOptionsCommerceAdmin extends IDecoratorSsrSiteOptions<
   publicPath: 'commerce-admin',
   bundlePath: 'ssr-cabloyCommerceAdmin-5.0.0',
   diagnostics: {
-    buildCommand: 'npm run build:zova:commerce-admin',
+    buildCommand: 'npm run build:zova:commerce:admin',
   },
 })
 export class SsrSiteCommerceAdmin extends BeanSsrSiteBase<ISsrSiteOptionsCommerceAdmin> {}
