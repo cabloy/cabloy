@@ -57,7 +57,7 @@ npm run deps:vona
 Then run the clean development-Vona browser acceptance gate:
 
 ```bash
-npm run test:e2e:commerce:dev
+npm run test:e2e:commerce:clean
 ```
 
 The wrapper runs `npm run db:reset`, which recreates Vona's managed test database and clears the local Vona Redis namespace. Playwright then starts one `npm run dev:one` Vona worker and exercises both `/commerce` and `/commerce-admin` through `http://127.0.0.1:7102`. This validates Vona site selection and in-process SSR using the already-built Commerce site assets without rebuilding Vona for every browser run.

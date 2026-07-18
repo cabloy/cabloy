@@ -67,11 +67,11 @@ const FRAMEWORK_E2E_SCRIPT_NAMES_CABLOY_BASIC: string[] = [
   'test:e2e:basic',
   'test:e2e:basic:web',
   'test:e2e:basic:admin',
-  'test:e2e:basic:dev',
+  'test:e2e:basic:clean',
   'test:e2e:commerce',
   'test:e2e:commerce:web',
   'test:e2e:commerce:admin',
-  'test:e2e:commerce:dev',
+  'test:e2e:commerce:clean',
 ];
 
 const FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC = '@playwright/test';

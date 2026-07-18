@@ -20,12 +20,12 @@ function assertPlaywrightArgs(args: string[]) {
   for (const arg of args) {
     if (arg === '--config' || arg.startsWith('--config=')) {
       throw new Error(
-        `test:e2e:${suiteName}:dev manages its suite config. Use --grep or --grep-invert to select tests.`,
+        `test:e2e:${suiteName}:clean manages its suite config. Use --grep or --grep-invert to select tests.`,
       );
     }
     if (!arg.startsWith('-') && (arg.startsWith('e2e/') || /\.[cm]?[jt]sx?$/.test(arg))) {
       throw new Error(
-        `test:e2e:${suiteName}:dev does not accept spec paths. Use --grep or --grep-invert to select tests.`,
+        `test:e2e:${suiteName}:clean does not accept spec paths. Use --grep or --grep-invert to select tests.`,
       );
     }
   }
@@ -46,7 +46,7 @@ async function assertPortAvailable() {
 
 if (process.env[suite.externalBaseUrlEnv]) {
   throw new Error(
-    `test:e2e:${suiteName}:dev manages only a local target. Use the aggregate or surface E2E commands for ${suite.externalBaseUrlEnv}.`,
+    `test:e2e:${suiteName}:clean manages only a local target. Use the aggregate or surface E2E commands for ${suite.externalBaseUrlEnv}.`,
   );
 }
 

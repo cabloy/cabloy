@@ -62,7 +62,7 @@ npm run deps:vona
 Then use the managed clean local acceptance command:
 
 ```bash
-npm run test:e2e:basic:dev
+npm run test:e2e:basic:clean
 ```
 
 It resets Vona-managed test data and the local Redis namespace, starts one development Vona worker, and runs the complete suite by default. The E2E commands consume already-built artifacts; they do not rebuild them.
@@ -73,13 +73,13 @@ The suite command family is consistent across Basic and Commerce:
 test:e2e:<suite>          complete suite
 test:e2e:<suite>:web      all @web surface scenarios
 test:e2e:<suite>:admin    all @admin surface scenarios
-test:e2e:<suite>:dev      managed clean local suite run
+test:e2e:<suite>:clean      managed clean local suite run
 ```
 
 Use Playwright tags after npm's argument delimiter for feature/category selection instead of adding one root script per scenario:
 
 ```bash
-npm run test:e2e:basic:dev -- --grep @flow
+npm run test:e2e:basic:clean -- --grep @flow
 npm run test:e2e:basic -- --grep ATP-BASIC-FLOW-01
 ```
 

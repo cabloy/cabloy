@@ -28,11 +28,11 @@ The root `package.json` is the first reference point for shared monorepo workflo
 - `npm run test:e2e:basic`
 - `npm run test:e2e:basic:web`
 - `npm run test:e2e:basic:admin`
-- `npm run test:e2e:basic:dev`
+- `npm run test:e2e:basic:clean`
 - `npm run test:e2e:commerce`
 - `npm run test:e2e:commerce:web`
 - `npm run test:e2e:commerce:admin`
-- `npm run test:e2e:commerce:dev`
+- `npm run test:e2e:commerce:clean`
 - `npm run tsc`
 - `npm run docs:dev`
 - `npm run docs:build`
@@ -48,7 +48,7 @@ Both E2E families use the same command structure:
 
 - `test:e2e:<suite>` runs every browser scenario in the suite.
 - `test:e2e:<suite>:web` and `test:e2e:<suite>:admin` are durable surface shortcuts that select `@web` and `@admin` tests.
-- `test:e2e:<suite>:dev` resets managed local test state, starts one development Vona worker, then runs the suite or a Playwright-filtered subset.
+- `test:e2e:<suite>:clean` resets managed local test state, starts one development Vona worker, then runs the suite or a Playwright-filtered subset.
 
 Use native Playwright tags for scenario categories rather than adding a root script for each feature. Every framework scenario uses one surface tag (`@web` or `@admin`) and one purpose tag when applicable (`@smoke` or `@flow`). ATP IDs remain in titles for exact evidence and failure reruns.
 
@@ -59,21 +59,21 @@ Pass Playwright options after npm's `--` delimiter:
 npm run test:e2e:basic -- --grep ATP-BASIC-FLOW-01
 
 # Category or surface selection
-npm run test:e2e:basic:dev -- --grep @flow
-npm run test:e2e:basic:dev -- --grep @admin
+npm run test:e2e:basic:clean -- --grep @flow
+npm run test:e2e:basic:clean -- --grep @admin
 
 # Compose tags with a Playwright regular expression
-npm run test:e2e:basic:dev -- --grep '(?=.*@admin)(?=.*@flow)'
+npm run test:e2e:basic:clean -- --grep '(?=.*@admin)(?=.*@flow)'
 ```
 
-The managed `:dev` runner owns its suite config and local lifecycle. It accepts normal Playwright selection and reporting options, but does not accept `--config` or positional spec paths. Use `--grep` or `--grep-invert` to narrow the run. It rejects an external base URL rather than resetting or starting an externally managed target.
+The managed `:clean` runner owns its suite config and local lifecycle. It accepts normal Playwright selection and reporting options, but does not accept `--config` or positional spec paths. Use `--grep` or `--grep-invert` to narrow the run. It rejects an external base URL rather than resetting or starting an externally managed target.
 
 The Basic suite exercises Web at `/` and Admin at `/admin` through Vona's SSR dispatcher. Prepare fresh Basic SSR artifacts explicitly when frontend SSR output has changed:
 
 ```bash
 npm run build:zova
 npm run deps:vona
-npm run test:e2e:basic:dev
+npm run test:e2e:basic:clean
 ```
 
 For an externally managed Basic target, set `BASIC_E2E_BASE_URL` and use aggregate, surface, or forwarded-tag commands. These commands do not reset, start, stop, or rebuild the target:
@@ -89,7 +89,7 @@ Commerce browser acceptance exercises Customer Web at `/commerce` and Operator A
 ```bash
 npm run build:zova:commerce
 npm run deps:vona
-npm run test:e2e:commerce:dev
+npm run test:e2e:commerce:clean
 ```
 
 For an externally managed Commerce target, set `COMMERCE_E2E_BASE_URL` and use the matching aggregate, surface, or forwarded-tag command. The target owner is responsible for data, cache, and artifact freshness:
