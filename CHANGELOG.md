@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.111
+
+### Features
+
+- Update the application functionality.
+
 ## 5.1.110
 
 ### Features
