@@ -1,11 +1,11 @@
 # Form Layout Guide
 
-Use Form Layout when a schema-driven resource form needs a deliberate structure: field order, responsive sections, groups, or tabs.
+Use Form Layout when a schema-driven resource form needs a deliberate structure: field order, Grid or flow sections, groups, or tabs.
 
 This guide covers the **structural** layout contract authored in DTO metadata and rendered through `basic-form:blockFormLayout`. It does not replace [Form Guide](/frontend/form-guide), which explains `ZForm`, field rendering, validation, and manual or mixed forms.
 
 > [!TIP]
-> Cabloy Basic implements the renderer described here with DaisyUI and Tailwind CSS. The `formLayout` contract and its resolver are shared Zova surfaces, but group, grid, and tab presentation are Basic-specific. Do not assume Cabloy Start uses identical markup or styling.
+> Cabloy Basic implements the renderer described here with DaisyUI and Tailwind CSS. The `formLayout` contract and its resolver are shared Zova surfaces, but group, Grid, flow, and tab presentation are Basic-specific. Do not assume Cabloy Start uses identical markup or styling.
 
 ## The layout layers are different
 
@@ -13,9 +13,9 @@ Several APIs contain the word “layout,” but they own different concerns:
 
 | Surface                                        | Owns                                                                                                           | Does not own                                              |
 | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `formLayout`                                   | Field placement, sections, groups, responsive spans, and tabs                                                  | Field renderer selection, validation rules, submit policy |
+| `formLayout`                                   | Field placement, Grid/flow sections, groups, responsive spans, and tabs                                        | Field renderer selection, validation rules, submit policy |
 | `basic-form:blockFormLayout`                   | Resolving and rendering a structural `formLayout` tree in Cabloy Basic                                         | Page-entry or filter actions                              |
-| `layout`, `formFieldLayout`, `FormFieldLayout` | One field's label and wrapper presentation: inline/block mode, icons, borders, header/footer, class, and style | Sections, responsive grids, groups, or tabs               |
+| `layout`, `formFieldLayout`, `FormFieldLayout` | One field's label and wrapper presentation: inline/block mode, icons, borders, header/footer, class, and style | Sections, Grid/flow placement, groups, or tabs            |
 
 For example, `formFieldLayout: { inline: false }` makes each field use a block-style wrapper. It does not create a grid. Pair it with `basic-form:blockFormLayout` when the fields also need structural placement.
 
@@ -103,21 +103,21 @@ formLayout
       └─ section
 ```
 
-| Node      | Key properties                                   | Allowed children         | Use it for                                |
-| --------- | ------------------------------------------------ | ------------------------ | ----------------------------------------- |
-| `field`   | required `name`; optional `span`                 | none                     | Place one resolved schema field           |
-| `section` | optional `id`, `title`, `description`, `columns` | fields only              | A responsive field grid                   |
-| `group`   | optional `id`, `title`, `description`            | fields, groups, sections | A semantic, bordered fieldset-style group |
-| `tabs`    | optional `id`                                    | tabs only                | One tab container                         |
-| `tab`     | optional `id`; required `title`                  | fields, groups, sections | One tab panel                             |
+| Node      | Key properties                                             | Allowed children         | Use it for                                |
+| --------- | ---------------------------------------------------------- | ------------------------ | ----------------------------------------- |
+| `field`   | required `name`; optional `span`                           | none                     | Place one resolved schema field           |
+| `section` | optional `id`, `title`, `description`, `layout`, `columns` | fields only              | A Grid or wrapping flow field layout      |
+| `group`   | optional `id`, `title`, `description`                      | fields, groups, sections | A semantic, bordered fieldset-style group |
+| `tabs`    | optional `id`                                              | tabs only                | One tab container                         |
+| `tab`     | optional `id`; required `title`                            | fields, groups, sections | One tab panel                             |
 
-A section is the grid boundary. Use a group when the fields need a semantic or visual boundary, and place a section inside that group when it also needs responsive columns. There is no separate `row` node: grid placement creates rows automatically.
+A section is a layout boundary. It uses the Grid strategy by default; set `layout: 'flow'` for compact, left-packed fields that wrap at their intrinsic widths. Use a group when the fields need a semantic or visual boundary, and place a section inside that group when it also needs Grid columns or flow placement. There is no separate `row` node: Grid and flow placement create rows automatically.
 
 Nested tabs are not part of the current contract. Likewise, a section cannot contain a group or another section.
 
-## Responsive sections and field spans
+## Grid sections and field spans
 
-Both `section.columns` and `field.span` use the same responsive shape:
+Grid is the default section strategy: omit `layout` or set `layout: 'grid'`. Both `section.columns` and `field.span` use the same responsive shape:
 
 ```ts
 {
@@ -150,6 +150,24 @@ formLayout: {
   ],
 },
 ```
+
+## Flow sections
+
+Set `layout: 'flow'` when compact fields should appear from left to right without being distributed across equal Grid columns. Cabloy Basic renders a flow section as a wrapping flex layout, so each field keeps its renderer-defined width and moves to the next line only when space runs out.
+
+```tsx
+{
+  type: 'section',
+  layout: 'flow',
+  children: [
+    { type: 'field', name: 'name' },
+    { type: 'field', name: 'level' },
+    { type: 'field', name: 'createdAt' },
+  ],
+}
+```
+
+`columns` and `span` are Grid-only settings. Omit them from flow sections; they do not determine flex widths or offsets. Use `formFieldLayout.inline` independently when the fields themselves should use compact inline wrappers.
 
 ## How the resolver handles the declared tree
 
@@ -256,18 +274,18 @@ The Student list filter combines field-wrapper and structural layout concerns:
 
 ```tsx
 ZovaRender.block('basic-page:blockFilter', {
-  formFieldLayout: { inline: false },
+  formFieldLayout: { inline: true },
   blocks: [
     ZovaRender.block('basic-form:blockFormLayout', {
       formLayout: {
         children: [
           {
             type: 'section',
-            columns: { default: 1, md: 2 },
+            layout: 'flow',
             children: [
               { type: 'field', name: 'name' },
               { type: 'field', name: 'level' },
-              { type: 'field', name: 'createdAt', span: { default: 1, md: 2 } },
+              { type: 'field', name: 'createdAt' },
             ],
           },
         ],
@@ -278,12 +296,12 @@ ZovaRender.block('basic-page:blockFilter', {
 });
 ```
 
-Here `formFieldLayout.inline: false` controls how each field wrapper is presented. The section's `columns` and the date field's `span` control where those wrappers appear. `basic-page:blockFilterActions` remains required because the custom blocks replace automatic filter body/footer content.
+Here `formFieldLayout.inline: true` controls how each field wrapper is presented. The flow section keeps those compact wrappers left-packed and wraps them when necessary. `basic-page:blockFilterActions` remains required because the custom blocks replace automatic filter body/footer content.
 
 ## Authoring checklist
 
 1. Start with DTO or resource metadata; do not hand-patch generated `.zova-rest` artifacts.
-2. Use `formLayout` when the requirement is field placement, responsive structure, groups, or tabs.
+2. Use `formLayout` when the requirement is field placement, Grid or flow structure, groups, or tabs.
 3. Use `layout`, `formFieldLayout`, `options`, or provider behaviors when the requirement is one field's wrapper or renderer.
 4. Keep entry actions in page-entry toolbar blocks and filter actions in `basic-page:blockFilterActions`.
 5. Review field names against the scene-specific schema. Unlisted visible fields are appended; unknown and duplicate declarations are silently pruned from the rendered plan.
@@ -299,6 +317,6 @@ For source-level investigation, follow this order:
 4. `zova/src/suite/cabloy-basic/modules/basic-form/src/component/blockFormLayout/controller.tsx`
 5. `vona/src/suite/a-training/modules/training-student/test/student.test.ts`
 
-The Student test verifies that entry and filter DTO metadata preserves the current block nesting, optional IDs, columns, spans, and field order through OpenAPI generation. It is a contract-metadata test, not a browser end-to-end assertion for tabs, grids, or error badges.
+The Student test verifies that entry and filter DTO metadata preserves the current block nesting, optional IDs, Grid columns/spans, flow layout selection, and field order through OpenAPI generation. It is a contract-metadata test, not a browser end-to-end assertion for tabs, layout behavior, or error badges.
 
 For the broader form runtime, continue with [Zova Form Under the Hood](/frontend/zova-form-under-the-hood) and [Zova Form Source Reading Map](/frontend/zova-form-source-reading-map).

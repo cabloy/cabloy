@@ -9,13 +9,34 @@ import type {
   IResolvedFormLayoutTab,
   IResolvedFormLayoutTabs,
 } from 'zova-module-a-form';
-import type { IFormLayout, IResourceBlockOptionsBase } from 'zova-module-a-openapi';
+import type {
+  IFormLayout,
+  IFormLayoutResponsiveColumns,
+  IResourceBlockOptionsBase,
+  TypeFormLayoutColumns,
+} from 'zova-module-a-openapi';
 
 import { classes } from 'typestyle';
 import { useId } from 'vue';
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { resolveFormLayout } from 'zova-module-a-form';
+
+const gridClasses: Record<
+  'grid-cols' | 'col-span',
+  Record<'default' | 'md' | 'lg', Record<TypeFormLayoutColumns, string>>
+> = {
+  'grid-cols': {
+    default: { 1: 'grid-cols-1', 2: 'grid-cols-2', 3: 'grid-cols-3', 4: 'grid-cols-4' },
+    md: { 1: 'md:grid-cols-1', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-4' },
+    lg: { 1: 'lg:grid-cols-1', 2: 'lg:grid-cols-2', 3: 'lg:grid-cols-3', 4: 'lg:grid-cols-4' },
+  },
+  'col-span': {
+    default: { 1: 'col-span-1', 2: 'col-span-2', 3: 'col-span-3', 4: 'col-span-4' },
+    md: { 1: 'md:col-span-1', 2: 'md:col-span-2', 3: 'md:col-span-3', 4: 'md:col-span-4' },
+    lg: { 1: 'lg:col-span-1', 2: 'lg:col-span-2', 3: 'lg:col-span-3', 4: 'lg:col-span-4' },
+  },
+};
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {
@@ -66,10 +87,11 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
     }
   }
 
-  private _renderField(node: IResolvedFormLayoutField) {
+  private _renderField(node: IResolvedFormLayoutField, sectionLayout?: 'grid' | 'flow') {
     const { $$form } = this.$$renderContext;
-    const span = this._gridClasses('col-span', node.span);
-    return <div class={span}>{$$form.renderField(node.name)}</div>;
+    const className =
+      sectionLayout === 'flow' ? 'min-w-0 max-w-full' : this._gridClasses('col-span', node.span);
+    return <div class={className}>{$$form.renderField(node.name)}</div>;
   }
 
   private _renderGroup(node: IResolvedFormLayoutGroup) {
@@ -83,12 +105,16 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
   }
 
   private _renderSection(node: IResolvedFormLayoutSection) {
-    const className = classes('mb-6 grid gap-4', this._gridClasses('grid-cols', node.columns));
+    const layout = node.layout ?? 'grid';
+    const className =
+      layout === 'flow'
+        ? 'mb-6 flex flex-wrap items-start gap-4'
+        : classes('mb-6 grid gap-4', this._gridClasses('grid-cols', node.columns));
     return (
       <section>
         {!!node.title && <h3 class="mb-1 text-lg font-semibold">{node.title}</h3>}
         {!!node.description && <p class="mb-4 text-sm text-base-content/70">{node.description}</p>}
-        <div class={className}>{node.children.map(child => this._renderField(child))}</div>
+        <div class={className}>{node.children.map(child => this._renderField(child, layout))}</div>
       </section>
     );
   }
@@ -151,15 +177,12 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
     );
   }
 
-  private _gridClasses(
-    prefix: 'grid-cols' | 'col-span',
-    columns?: { default?: number; md?: number; lg?: number },
-  ) {
-    const classes: string[] = [];
+  private _gridClasses(prefix: 'grid-cols' | 'col-span', columns?: IFormLayoutResponsiveColumns) {
+    const classNames: string[] = [];
     const valueDefault = columns?.default ?? (prefix === 'grid-cols' ? 1 : undefined);
-    if (valueDefault) classes.push(`${prefix}-${valueDefault}`);
-    if (columns?.md) classes.push(`md:${prefix}-${columns.md}`);
-    if (columns?.lg) classes.push(`lg:${prefix}-${columns.lg}`);
-    return classes.join(' ');
+    if (valueDefault) classNames.push(gridClasses[prefix].default[valueDefault]);
+    if (columns?.md) classNames.push(gridClasses[prefix].md[columns.md]);
+    if (columns?.lg) classNames.push(gridClasses[prefix].lg[columns.lg]);
+    return classNames.join(' ');
   }
 }

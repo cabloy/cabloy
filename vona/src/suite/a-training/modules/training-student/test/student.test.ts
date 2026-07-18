@@ -54,18 +54,19 @@ describe('student.test.ts', () => {
       });
       const filterBlock = (component as any)?.rest?.blocks?.[0]?.options?.blocks?.[0];
       assert.equal(filterBlock?.render, 'basic-page:blockFilter');
-      assert.equal(filterBlock?.options?.formFieldLayout?.inline, false);
+      assert.equal(filterBlock?.options?.formFieldLayout?.inline, true);
       assert.deepEqual(
         filterBlock?.options?.blocks?.map(item => item.render),
         ['basic-form:blockFormLayout', 'basic-page:blockFilterActions'],
       );
       const formLayout = filterBlock?.options?.blocks?.[0]?.options?.formLayout;
-      assert.deepEqual(formLayout?.children[0]?.columns, { default: 1, md: 2 });
+      assert.equal(formLayout?.children[0]?.layout, 'flow');
+      assert.equal(formLayout?.children[0]?.columns, undefined);
       assert.deepEqual(
         formLayout?.children[0]?.children.map(item => item.name),
         ['name', 'level', 'createdAt'],
       );
-      assert.deepEqual(formLayout?.children[0]?.children[2]?.span, { default: 1, md: 2 });
+      assert.equal(formLayout?.children[0]?.children[2]?.span, undefined);
     });
   });
 

@@ -4,6 +4,8 @@ export interface IFormLayout {
 
 export type TypeFormLayoutColumns = 1 | 2 | 3 | 4;
 
+export type TypeFormLayoutSectionLayout = 'grid' | 'flow';
+
 export interface IFormLayoutResponsiveColumns {
   default?: TypeFormLayoutColumns;
   md?: TypeFormLayoutColumns;
@@ -29,6 +31,7 @@ export interface IFormLayoutSection {
   id?: string;
   title?: string;
   description?: string;
+  layout?: TypeFormLayoutSectionLayout;
   columns?: IFormLayoutResponsiveColumns;
   children: IFormLayoutField[];
 }

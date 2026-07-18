@@ -184,18 +184,18 @@ A bare `basic-page:blockFilter` keeps the default schema field rendering and add
 
 ```tsx
 ZovaRender.block('basic-page:blockFilter', {
-  formFieldLayout: { inline: false },
+  formFieldLayout: { inline: true },
   blocks: [
     ZovaRender.block('basic-form:blockFormLayout', {
       formLayout: {
         children: [
           {
             type: 'section',
-            columns: { default: 1, md: 2 },
+            layout: 'flow',
             children: [
               { type: 'field', name: 'name' },
               { type: 'field', name: 'level' },
-              { type: 'field', name: 'createdAt', span: { default: 1, md: 2 } },
+              { type: 'field', name: 'createdAt' },
             ],
           },
         ],
@@ -208,7 +208,7 @@ ZovaRender.block('basic-page:blockFilter', {
 
 `basic-form:blockFormLayout` only places schema fields. `basic-page:blockFilterActions` owns Search/Reset placement and invokes the filter command surface supplied through the form scope, so it preserves filter normalization and page-query behavior. A nonempty `blocks` list replaces the automatic body and footer; include the action block explicitly to make the filter operable.
 
-`ZForm.inline` is no longer a form API. Use `formFieldLayout.inline` for field-level compact layout, or use blocks plus `basic-form:blockFormLayout` for structural layout. Read [Form Layout Guide](/frontend/form-layout-guide) for the full node grammar, responsive section rules, resolver behavior, tabs, and entry-form composition.
+`ZForm.inline` is no longer a form API. Use `formFieldLayout.inline` for field-level compact layout, or use blocks plus `basic-form:blockFormLayout` for structural layout. The flow section above keeps compact filters left-packed and wrapping; use the default Grid section when fields need responsive columns and spans. Read [Form Layout Guide](/frontend/form-layout-guide) for the full node grammar, section layout rules, resolver behavior, tabs, and entry-form composition.
 
 ## Step 5: Let `blockToolbarBulk` own bulk-action display
 

@@ -23,13 +23,13 @@ export interface IDtoOptionsStudentSelectResItem extends IDecoratorDtoOptions {}
                 children: [
                   {
                     type: 'section',
-                    columns: { default: 1, md: 2, lg: 3 },
+                    layout: 'flow',
                     children: [
                       { type: 'field', name: 'name' },
                       { type: 'field', name: 'level' },
-                      { type: 'field', name: 'createdAt', span: { default: 1, md: 2, lg: 1 } },
+                      { type: 'field', name: 'createdAt' },
                     ],
-                  },
+                  } as any,
                 ],
               },
             }),

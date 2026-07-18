@@ -1,4 +1,7 @@
-import type { IFormLayoutResponsiveColumns } from 'zova-module-a-openapi';
+import type {
+  IFormLayoutResponsiveColumns,
+  TypeFormLayoutSectionLayout,
+} from 'zova-module-a-openapi';
 
 export interface IResolvedFormLayout {
   children: IResolvedFormLayoutNode[];
@@ -25,6 +28,7 @@ export interface IResolvedFormLayoutSection {
   id: string;
   title?: string;
   description?: string;
+  layout?: TypeFormLayoutSectionLayout;
   columns?: IFormLayoutResponsiveColumns;
   children: IResolvedFormLayoutField[];
 }
