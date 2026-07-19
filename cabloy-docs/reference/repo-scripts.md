@@ -98,7 +98,7 @@ The Start E2E baseline is maintained in the private repository:
 ```text
 e2e/config/
 e2e/scripts/
-e2e/specs/a-start/
+e2e/specs/cabloy-start/
 ```
 
 The public-package upgrade flow does not source or reconcile the Start baseline, its `test:e2e:start*` scripts, or `@playwright/test`. Keep project browser tests outside the baseline paths, for example under `e2e/specs/my-project/`.

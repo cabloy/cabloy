@@ -127,7 +127,7 @@ Cabloy Start is checked out from the licensed private repository rather than cre
 ```text
 e2e/config/
 e2e/scripts/
-e2e/specs/a-start/
+e2e/specs/cabloy-start/
 ```
 
 The public Cabloy upgrade flow does not synchronize or repair those Start E2E files, the `test:e2e:start*` scripts, or `@playwright/test`. Keep project-owned browser scenarios outside the baseline paths, for example under `e2e/specs/my-project/`.
