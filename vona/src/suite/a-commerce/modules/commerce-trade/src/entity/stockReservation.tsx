@@ -8,10 +8,12 @@ import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
 
-export interface IEntityOptionsStockAudit extends IDecoratorEntityOptions {}
+export type TypeStockReservationState = 'reserved' | 'consumed' | 'released' | 'restored';
 
-@Entity<IEntityOptionsStockAudit>('commerceTradeStockAudit', {
-  openapi: { title: $locale('StockAudit') },
+export interface IEntityOptionsStockReservation extends IDecoratorEntityOptions {}
+
+@Entity<IEntityOptionsStockReservation>('commerceTradeStockReservation', {
+  openapi: { title: $locale('StockReservation') },
   fields: {
     id: $makeMetadata(ZovaRender.order(1, 'core')),
     iid: $makeMetadata(ZovaRender.visible(false)),
@@ -28,7 +30,7 @@ export interface IEntityOptionsStockAudit extends IDecoratorEntityOptions {}
     ),
   },
 })
-export class EntityStockAudit extends EntityBase {
+export class EntityStockReservation extends EntityBase {
   @Api.field(
     v.title($locale('StockBalanceId')),
     v.required(),
@@ -41,46 +43,21 @@ export class EntityStockAudit extends EntityBase {
   skuId: TableIdentity;
 
   @Api.field(
-    v.title($locale('StockReservationId')),
-    v.optional(),
-    v.tableIdentity(),
+    v.title($locale('Quantity')),
+    v.required(),
+    z.number().int().positive(),
     ZovaRender.order(3),
   )
-  stockReservationId?: TableIdentity;
+  quantity: number;
 
   @Api.field(
-    v.title($locale('StockOperation')),
+    v.title($locale('ReservationState')),
     v.required(),
-    z.enum(['adjust', 'reserve', 'consume', 'release', 'restore']),
+    z.enum(['reserved', 'consumed', 'released', 'restored']),
     ZovaRender.order(4),
   )
-  operation: 'adjust' | 'reserve' | 'consume' | 'release' | 'restore';
+  state: TypeStockReservationState;
 
-  @Api.field(v.title($locale('Delta')), v.required(), z.int(), ZovaRender.order(5))
-  delta: number;
-
-  @Api.field(v.title($locale('Reason')), v.required(), v.min(1), ZovaRender.order(6))
-  reason: string;
-
-  @Api.field(v.title($locale('CorrelationId')), v.required(), v.min(1), ZovaRender.order(7))
+  @Api.field(v.title($locale('CorrelationId')), v.required(), v.min(1), ZovaRender.order(5))
   correlationId: string;
-
-  @Api.field(v.title($locale('OnHand')), v.required(), z.number().int().min(0), ZovaRender.order(8))
-  onHand: number;
-
-  @Api.field(
-    v.title($locale('Reserved')),
-    v.required(),
-    z.number().int().min(0),
-    ZovaRender.order(9),
-  )
-  reserved: number;
-
-  @Api.field(
-    v.title($locale('Available')),
-    v.required(),
-    z.number().int().min(0),
-    ZovaRender.order(10),
-  )
-  available: number;
 }

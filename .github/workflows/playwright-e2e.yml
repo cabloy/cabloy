@@ -26,8 +26,14 @@ jobs:
         run: npm run init
       - name: install Chromium
         run: npx playwright install --with-deps chromium
-      - name: run E2E baseline
+      - name: run Basic E2E baseline
         run: npm run test:e2e:basic:clean
+      - name: build Commerce Zova artifacts
+        run: npm run build:zova:commerce
+      - name: synchronize Vona dependencies
+        run: npm run deps:vona
+      - name: run Commerce E2E baseline
+        run: npm run test:e2e:commerce:clean
       - name: upload Playwright artifacts
         if: failure()
         uses: actions/upload-artifact@v4

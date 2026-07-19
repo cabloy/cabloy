@@ -45,6 +45,8 @@ Acceptance checks:
 
 Dependencies: `WBS-10-01`.
 
+Status: implementation is complete; formal closure requires the `ATP-SSR-01`, `ATP-SSR-02`, and `ATP-CTR-01` observed-evidence records in the [test plan](./test-plan.md) and a successful Commerce CI browser baseline.
+
 #### WBS-20-01: Create the A-Commerce suite and first capability modules
 
 Primary areas:

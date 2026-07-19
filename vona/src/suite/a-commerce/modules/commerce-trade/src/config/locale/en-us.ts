@@ -11,4 +11,9 @@ export default {
   StockAudit: 'Stock Audit',
   StockBalance: 'Stock Balance',
   StockBalanceId: 'Stock Balance ID',
+  StockOperation: 'Stock Operation',
+  StockReservation: 'Stock Reservation',
+  StockReservationId: 'Stock Reservation ID',
+  ReservationState: 'Reservation State',
+  Quantity: 'Quantity',
 };

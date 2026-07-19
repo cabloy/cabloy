@@ -29,10 +29,25 @@ test(
     expect(documentResponse?.ok()).toBeTruthy();
     await expect(page).toHaveURL(/\/commerce(?:\/|$)/);
     await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
-    await expect(page.getByText('Web: en-us')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Commerce catalogue' })).toBeVisible();
     await expect(page.getByText('Dashboard')).toHaveCount(0);
     await expect(page.locator('body')).toBeVisible();
     await expect(page).not.toHaveTitle(/error/i);
+    expect(pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'Commerce catalogue: public sellable inventory renders after hydration',
+  { tag: ['@web', '@flow'] },
+  async ({ page }) => {
+    const pageErrors = collectPageErrors(page);
+    const response = await page.goto('/commerce', { waitUntil: 'load' });
+    expect(response?.ok()).toBeTruthy();
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+    await expect(page.getByRole('heading', { name: 'Commerce catalogue' })).toBeVisible();
+    await expect(page.getByText('Wireless Headphones')).toBeVisible();
+    await expect(page.getByText('24 available')).toBeVisible();
     expect(pageErrors).toEqual([]);
   },
 );

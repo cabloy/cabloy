@@ -11,4 +11,9 @@ export default {
   StockAudit: '库存审计',
   StockBalance: '库存余额',
   StockBalanceId: '库存余额 ID',
+  StockOperation: '库存操作',
+  StockReservation: '库存预留',
+  StockReservationId: '库存预留 ID',
+  ReservationState: '预留状态',
+  Quantity: '数量',
 };

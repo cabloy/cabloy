@@ -18,6 +18,25 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.int0(entityStockBalance.available).comment(entityStockBalance.$comment.available);
     });
 
+    const entityStockReservation = this.scope.entity.stockReservation;
+    await this.bean.model.createTable(entityStockReservation.$table, table => {
+      table.comment(entityStockReservation.$comment.$table);
+      table.basicFields();
+      table
+        .tableIdentity(entityStockReservation.stockBalanceId)
+        .comment(entityStockReservation.$comment.stockBalanceId);
+      table
+        .tableIdentity(entityStockReservation.skuId)
+        .comment(entityStockReservation.$comment.skuId);
+      table
+        .integer(entityStockReservation.quantity)
+        .comment(entityStockReservation.$comment.quantity);
+      table.string(entityStockReservation.state, 20).comment(entityStockReservation.$comment.state);
+      table
+        .string(entityStockReservation.correlationId, 100)
+        .comment(entityStockReservation.$comment.correlationId);
+    });
+
     const entityStockAudit = this.scope.entity.stockAudit;
     await this.bean.model.createTable(entityStockAudit.$table, table => {
       table.comment(entityStockAudit.$comment.$table);
@@ -26,6 +45,11 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         .tableIdentity(entityStockAudit.stockBalanceId)
         .comment(entityStockAudit.$comment.stockBalanceId);
       table.tableIdentity(entityStockAudit.skuId).comment(entityStockAudit.$comment.skuId);
+      table
+        .tableIdentity(entityStockAudit.stockReservationId)
+        .nullable()
+        .comment(entityStockAudit.$comment.stockReservationId);
+      table.string(entityStockAudit.operation, 20).comment(entityStockAudit.$comment.operation);
       table.integer(entityStockAudit.delta).comment(entityStockAudit.$comment.delta);
       table.string(entityStockAudit.reason, 255).comment(entityStockAudit.$comment.reason);
       table

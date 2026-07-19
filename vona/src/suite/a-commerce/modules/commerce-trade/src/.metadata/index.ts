@@ -5,14 +5,17 @@ import type { TableIdentity } from 'table-identity';
 /** entity: begin */
 export * from '../entity/stockAudit.tsx';
 export * from '../entity/stockBalance.tsx';
+export * from '../entity/stockReservation.tsx';
 import type { IEntityOptionsStockAudit } from '../entity/stockAudit.tsx';
 import type { IEntityOptionsStockBalance } from '../entity/stockBalance.tsx';
+import type { IEntityOptionsStockReservation } from '../entity/stockReservation.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
   
     export interface IEntityRecord {
       'commerce-trade:stockAudit': IEntityOptionsStockAudit;
 'commerce-trade:stockBalance': IEntityOptionsStockBalance;
+'commerce-trade:stockReservation': IEntityOptionsStockReservation;
     }
 
   
@@ -24,20 +27,25 @@ declare module 'vona-module-commerce-trade' {
 /** entity: begin */
 import type { EntityStockAudit } from '../entity/stockAudit.tsx';
 import type { EntityStockBalance } from '../entity/stockBalance.tsx';
+import type { EntityStockReservation } from '../entity/stockReservation.tsx';
 export interface IModuleEntity {
   'stockAudit': EntityStockAuditMeta;
 'stockBalance': EntityStockBalanceMeta;
+'stockReservation': EntityStockReservationMeta;
 }
 /** entity: end */
 /** entity: begin */
 export type EntityStockAuditTableName = 'commerceTradeStockAudit';
 export type EntityStockBalanceTableName = 'commerceTradeStockBalance';
+export type EntityStockReservationTableName = 'commerceTradeStockReservation';
 export type EntityStockAuditMeta=TypeEntityMeta<EntityStockAudit,EntityStockAuditTableName>;
 export type EntityStockBalanceMeta=TypeEntityMeta<EntityStockBalance,EntityStockBalanceTableName>;
+export type EntityStockReservationMeta=TypeEntityMeta<EntityStockReservation,EntityStockReservationTableName>;
 declare module 'vona-module-a-orm' {
   export interface ITableRecord {
     'commerceTradeStockAudit': EntityStockAuditMeta;
 'commerceTradeStockBalance': EntityStockBalanceMeta;
+'commerceTradeStockReservation': EntityStockReservationMeta;
   }
 }
 declare module 'vona-module-commerce-trade' {
@@ -49,19 +57,26 @@ declare module 'vona-module-commerce-trade' {
     export interface IEntityOptionsStockBalance {
       fields?: TypeEntityOptionsFields<EntityStockBalance, IEntityOptionsStockBalance[TypeSymbolKeyFieldsMore]>;
     }
+
+    export interface IEntityOptionsStockReservation {
+      fields?: TypeEntityOptionsFields<EntityStockReservation, IEntityOptionsStockReservation[TypeSymbolKeyFieldsMore]>;
+    }
 }
 /** entity: end */
 /** model: begin */
 export * from '../model/stockAudit.ts';
 export * from '../model/stockBalance.ts';
+export * from '../model/stockReservation.ts';
 import type { IModelOptionsStockAudit } from '../model/stockAudit.ts';
 import type { IModelOptionsStockBalance } from '../model/stockBalance.ts';
+import type { IModelOptionsStockReservation } from '../model/stockReservation.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
   
     export interface IModelRecord {
       'commerce-trade:stockAudit': IModelOptionsStockAudit;
 'commerce-trade:stockBalance': IModelOptionsStockBalance;
+'commerce-trade:stockReservation': IModelOptionsStockReservation;
     }
 
   
@@ -88,15 +103,28 @@ declare module 'vona-module-commerce-trade' {
             get $beanFullName(): 'commerce-trade.model.stockBalance';
             get $onionName(): 'commerce-trade:stockBalance';
             get $onionOptions(): IModelOptionsStockBalance;
+          }
+
+        export interface ModelStockReservation {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ModelStockReservation {
+            get $beanFullName(): 'commerce-trade.model.stockReservation';
+            get $onionName(): 'commerce-trade:stockReservation';
+            get $onionOptions(): IModelOptionsStockReservation;
           } 
 }
 /** model: end */
 /** model: begin */
 import type { ModelStockAudit } from '../model/stockAudit.ts';
 import type { ModelStockBalance } from '../model/stockBalance.ts';
+import type { ModelStockReservation } from '../model/stockReservation.ts';
 export interface IModuleModel {
   'stockAudit': ModelStockAudit;
 'stockBalance': ModelStockBalance;
+'stockReservation': ModelStockReservation;
 }
 /** model: end */
 /** model: begin */
@@ -106,6 +134,7 @@ declare module 'vona' {
   export interface IBeanRecordGeneral {
     'commerce-trade.model.stockAudit': ModelStockAudit;
 'commerce-trade.model.stockBalance': ModelStockBalance;
+'commerce-trade.model.stockReservation': ModelStockReservation;
   }
 }
 /** model: end */
@@ -164,11 +193,37 @@ export interface ModelStockBalance {
 updateById<T extends IModelUpdateOptions<EntityStockBalance,ModelStockBalance>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityStockBalance,ModelStockBalance, T>, options?: T): Promise<TypeModelMutateRelationData<EntityStockBalance,ModelStockBalance, T>>;
 deleteById<T extends IModelDeleteOptions<EntityStockBalance,ModelStockBalance>>(id: TableIdentity, options?: T): Promise<void>;
     }
+export interface ModelStockReservation {
+      [SymbolKeyEntity]: EntityStockReservation;
+      [SymbolKeyEntityMeta]: EntityStockReservationMeta;
+      [SymbolKeyModelOptions]: IModelOptionsStockReservation;
+      get<T extends IModelGetOptions<EntityStockReservation,ModelStockReservation>>(where: TypeModelWhere<EntityStockReservation>, options?: T): Promise<TypeModelRelationResult<EntityStockReservation, ModelStockReservation, T> | undefined>;
+      mget<T extends IModelGetOptions<EntityStockReservation,ModelStockReservation>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityStockReservation, ModelStockReservation, T>[]>;
+      selectAndCount<T extends IModelSelectParams<EntityStockReservation,ModelStockReservation,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityStockReservation, ModelStockReservation, T>>;
+      select<T extends IModelSelectParams<EntityStockReservation,ModelStockReservation,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityStockReservation, ModelStockReservation, T>[]>;
+      insert<T extends IModelInsertOptions<EntityStockReservation,ModelStockReservation>>(data?: TypeModelMutateRelationData<EntityStockReservation,ModelStockReservation, T>, options?: T): Promise<TypeModelMutateRelationData<EntityStockReservation,ModelStockReservation, T, true>>;
+      insertBulk<T extends IModelInsertOptions<EntityStockReservation,ModelStockReservation>>(items: TypeModelMutateRelationData<EntityStockReservation,ModelStockReservation, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityStockReservation,ModelStockReservation, T, true>[]>;
+      update<T extends IModelUpdateOptions<EntityStockReservation,ModelStockReservation>>(data: TypeModelMutateRelationData<EntityStockReservation,ModelStockReservation, T>, options?: T): Promise<TypeModelMutateRelationData<EntityStockReservation,ModelStockReservation, T>>;
+      updateBulk<T extends IModelUpdateOptions<EntityStockReservation,ModelStockReservation>>(items: TypeModelMutateRelationData<EntityStockReservation,ModelStockReservation, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityStockReservation,ModelStockReservation, T>[]>;
+      delete<T extends IModelDeleteOptions<EntityStockReservation,ModelStockReservation>>(where?: TypeModelWhere<EntityStockReservation>, options?: T): Promise<void>;
+      deleteBulk<T extends IModelDeleteOptions<EntityStockReservation,ModelStockReservation>>(ids: TableIdentity[], options?: T): Promise<void>;
+      mutate<T extends IModelMutateOptions<EntityStockReservation,ModelStockReservation>>(data?: TypeModelMutateRelationData<EntityStockReservation,ModelStockReservation, T>, options?: T): Promise<TypeModelMutateRelationData<EntityStockReservation,ModelStockReservation, T>>;
+      mutateBulk<T extends IModelMutateOptions<EntityStockReservation,ModelStockReservation>>(items: TypeModelMutateRelationData<EntityStockReservation,ModelStockReservation, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityStockReservation,ModelStockReservation, T>[]>;
+      count<T extends IModelSelectCountParams<EntityStockReservation,ModelStockReservation,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<string | undefined>;
+      increment<T extends IModelIncrementParams<EntityStockReservation,ModelStockReservation,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      decrement<T extends IModelIncrementParams<EntityStockReservation,ModelStockReservation,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      aggregate<T extends IModelSelectAggrParams<EntityStockReservation,ModelStockReservation,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelAggrRelationResult<T>>;
+      group<T extends IModelSelectGroupParams<EntityStockReservation,ModelStockReservation,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelGroupRelationResult<EntityStockReservation, T>[]>;
+      getById<T extends IModelGetOptions<EntityStockReservation,ModelStockReservation>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityStockReservation, ModelStockReservation, T> | undefined>;
+updateById<T extends IModelUpdateOptions<EntityStockReservation,ModelStockReservation>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityStockReservation,ModelStockReservation, T>, options?: T): Promise<TypeModelMutateRelationData<EntityStockReservation,ModelStockReservation, T>>;
+deleteById<T extends IModelDeleteOptions<EntityStockReservation,ModelStockReservation>>(id: TableIdentity, options?: T): Promise<void>;
+    }
 }
 declare module 'vona-module-a-orm' {
   export interface IModelClassRecord {
     'commerce-trade:stockAudit': ModelStockAudit;
 'commerce-trade:stockBalance': ModelStockBalance;
+'commerce-trade:stockReservation': ModelStockReservation;
   }
 }
 /** model: end */

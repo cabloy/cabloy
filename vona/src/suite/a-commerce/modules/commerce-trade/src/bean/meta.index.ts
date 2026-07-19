@@ -8,8 +8,13 @@ import { $tableColumns } from 'vona-module-a-ormutils';
   indexes: {
     ...$tableColumns('commerceTradeStockAudit', 'stockBalanceId'),
     ...$tableColumns('commerceTradeStockAudit', 'skuId'),
+    ...$tableColumns('commerceTradeStockAudit', 'stockReservationId'),
     ...$tableColumns('commerceTradeStockAudit', 'correlationId'),
     ...$tableColumns('commerceTradeStockBalance', 'skuId'),
+    ...$tableColumns('commerceTradeStockReservation', 'stockBalanceId'),
+    ...$tableColumns('commerceTradeStockReservation', 'skuId'),
+    ...$tableColumns('commerceTradeStockReservation', 'correlationId'),
+    ...$tableColumns('commerceTradeStockReservation', 'state'),
   },
 })
 export class MetaIndex extends BeanBase {}

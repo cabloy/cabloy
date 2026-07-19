@@ -48,15 +48,15 @@ Before a release candidate, run the required focused tests, complete suite, type
 
 ## Test Levels and Planned Locations
 
-| Level                         | Purpose                                                                        | Current or future location                                   |
-| ----------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------ |
-| Service and state tests       | Validate money, eligibility, transitions, and snapshots                        | Future module-local `test/**/*.ts`                           |
-| Transaction/integration tests | Prove atomic checkout, locking, rollback, expiry, and idempotency              | Future module-local `test/**/*.ts` with `vona-mock`          |
-| Action/API tests              | Prove authentication, tenant/resource ownership, and invalid-transition denial | Future module-local `test/**/*.ts` with `performAction(...)` |
-| Cross-database tests          | Confirm transaction/locking behavior on supported database clients             | Existing CI pattern; Commerce cases added when implemented   |
-| Contract tests                | Prove generated REST and SSR artifacts match changed contracts                 | Future paired Commerce build wrappers                        |
-| SSR document tests            | Inspect anonymous HTML, site selection, route admission, and assets            | Future Commerce site-owner tests plus HTTP checks            |
-| Browser acceptance            | Prove real navigation, hydration, interaction, and operator/customer journeys  | `e2e/specs/a-commerce/`                                      |
+| Level                         | Purpose                                                                        | Current or future location                                                          |
+| ----------------------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| Service and state tests       | Validate money, eligibility, transitions, and snapshots                        | Existing and future module-local `test/**/*.ts`                                     |
+| Transaction/integration tests | Prove atomic checkout, locking, rollback, expiry, and idempotency              | Existing and future module-local `test/**/*.ts` with `vona-mock`                    |
+| Action/API tests              | Prove authentication, tenant/resource ownership, and invalid-transition denial | Existing and future module-local `test/**/*.ts` with `performAction(...)`           |
+| Cross-database tests          | Confirm transaction/locking behavior on supported database clients             | Existing CI pattern; Commerce cases added when implemented                          |
+| Contract tests                | Prove generated REST and SSR artifacts match changed contracts                 | Existing paired Commerce build wrappers                                             |
+| SSR document tests            | Inspect anonymous HTML, site selection, route admission, and assets            | Existing Commerce Playwright HTTP/browser checks; future site-owner tests as needed |
+| Browser acceptance            | Prove real navigation, hydration, interaction, and operator/customer journeys  | `e2e/specs/a-commerce/`                                                             |
 
 Planned backend test ownership:
 
@@ -74,7 +74,7 @@ vona/src/suite/a-commerce/modules/commerce-siteweb/test/ssrPrivacy.test.ts
 vona/src/suite/a-commerce/modules/commerce-siteadmin/test/operatorAccess.test.ts
 ```
 
-These are target locations, not currently existing files. The test remains with the module that owns the invariant: checkout/reservation in trade, coupon state in promotion, event idempotency in payment, and SSR admission/privacy in the matching site owner.
+These are target locations for capabilities not yet implemented. Existing Phase 20 and Phase 30 coverage already includes `commerce-catalog/test/catalog.test.ts`, `commerce-trade/test/stockBalance.test.ts`, `commerce-trade/test/stockAudit.test.ts`, and `commerce-siteadmin/test/operatorAccess.test.ts`. The test remains with the module that owns the invariant: checkout/reservation in trade, coupon state in promotion, event idempotency in payment, and SSR admission/privacy in the matching site owner.
 
 ## Test Fixtures and Evidence
 
@@ -103,6 +103,16 @@ Each accepted `ATP-*` scenario retains:
 - waiver owner, reason, and expiry date for any temporary exception.
 
 An expired waiver is a release blocker.
+
+### Phase 20 observed evidence
+
+| ATP ID       | Traceability                            | Revision / database / flavor                              | Command                                            | Result                                                                                   | Retained evidence                                                       | Status                             |
+| ------------ | --------------------------------------- | --------------------------------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------- |
+| `ATP-SSR-01` | `SRS-UI-03`, `SRS-NFR-02`, `WBS-20-02`  | Working tree at 2026-07-19; SQLite; `cabloyCommerce`      | `npm run test:e2e:commerce:clean`                  | Passed: anonymous privacy and Commerce hydration smoke scenario                          | Local terminal run; CI workflow runs the same Commerce browser baseline | Passed locally; CI gate configured |
+| `ATP-SSR-02` | `SRS-AUT-03`, `SRS-AUT-04`, `WBS-20-02` | Working tree at 2026-07-19; SQLite; `cabloyCommerceAdmin` | `npm run test:e2e:commerce:clean`; `npm run test`  | Passed: independent Admin SSR smoke; full Vona suite includes direct operator API denial | Local terminal runs; CI workflow runs the Commerce browser baseline     | Passed locally; CI gate configured |
+| `ATP-CTR-01` | `SRS-API-01`, `SRS-API-02`, `WBS-20-03` | Working tree at 2026-07-19; both Commerce flavors         | `npm run build:zova:commerce && npm run deps:vona` | Passed: paired SSR/REST artifacts built and Vona dependency discovery synchronized       | Local terminal build logs; generated artifacts remain derived output    | Passed locally                     |
+
+The `playwright-e2e` workflow runs the Basic and Commerce clean browser baselines. A successful Commerce workflow run is durable CI evidence for the executable browser scenarios; retain its run URL or identifier with the observed result.
 
 ## Acceptance Scenario Catalogue
 
