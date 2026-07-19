@@ -1,0 +1,43 @@
+name: playwright-e2e
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_DEFAULT_CLIENT: sqlite3
+      PNPM_CONFIG_MINIMUM_RELEASE_AGE: 0
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@v5
+        with:
+          version: 11.5.2
+      - name: init
+        run: npm run init
+      - name: build zova
+        run: npm run build:zova
+      - name: synchronize Vona dependencies
+        run: npm run deps:vona
+      - name: install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: run E2E baseline
+        run: npm run test:e2e:basic:clean
+      - name: upload Playwright artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
