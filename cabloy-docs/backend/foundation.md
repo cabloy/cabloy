@@ -232,23 +232,34 @@ Scope groups a module’s resources behind one structured facade, including area
 - locale
 - error
 
-The key distinction is:
+Choose the narrowest lookup form that matches what is known at the call site:
 
-- `this.scope` means local module resources
-- `this.$scope.<module>` means cross-module resources
-- `app.scope(...)` means explicit app-level scope lookup outside the local class shorthand
+| Situation                                                                                                | Preferred form               | Example                                   |
+| -------------------------------------------------------------------------------------------------------- | ---------------------------- | ----------------------------------------- |
+| Resource belongs to the current `BeanBase` module                                                        | `this.scope`                 | `this.scope.model.stockBalance`           |
+| Another module is fixed in source and `$scope` is available                                              | `this.$scope.<fixedModule>`  | `this.$scope.commerceCatalog.model.sku`   |
+| Code has an application reference rather than `BeanBase` shorthands, such as a test or standalone helper | `app.scope('<module-name>')` | `app.scope('commerce-catalog').model.sku` |
+| A class uses the explicit application API or selects the module name at runtime                          | `this.app.scope(moduleName)` | `this.app.scope(moduleName)`              |
+
+Prefer `this.scope` for module-local business code and `this.$scope.<fixedModule>` for a statically known cross-module target. Use `app.scope(...)` or `this.app.scope(...)` when the shorthand is unavailable or the module name is genuinely dynamic. Do not replace a fixed typed shorthand with a string lookup merely for style, or mix equivalent fixed lookup forms in one access path.
 
 This is one of the reasons Vona backend code can stay concise without flattening everything into arbitrary imports.
 
 ## Scope lookup vs module dependencies
 
-Scope lookup resolves a resource from a module that is already part of the active application composition. For example:
+All of the lookup forms above resolve a resource from a module that is already part of the active application composition. Fixed cross-module Bean code normally uses:
 
 ```typescript
-const modelResource = this.app.scope('other-module').model.resource;
+const modelSku = this.$scope.commerceCatalog.model.sku;
 ```
 
-Using `this.$scope.<module>` or `app.scope(...)` does not by itself require adding the target module to the caller's `vonaModule.dependencies`. Lookup does not create a module dependency edge, so lookup alone cannot create a circular dependency.
+A test or standalone helper with an application reference can use:
+
+```typescript
+const modelSku = app.scope('commerce-catalog').model.sku;
+```
+
+Using `this.$scope.<fixedModule>`, `app.scope(...)`, or `this.app.scope(...)` does not by itself require adding the target module to the caller's `vonaModule.dependencies`. Lookup does not create a module dependency edge, so lookup alone cannot create a circular dependency.
 
 Scope lookup also does not compose, install, load, or order an absent module. The target must already be available through suite/application composition. Declare `vonaModule.dependencies` only when the caller has a genuine requirement for a target module's availability, dependency-first ordering, or minimum compatible version—not merely because it looks up that module's service, model, config, locale, or another resource.
 

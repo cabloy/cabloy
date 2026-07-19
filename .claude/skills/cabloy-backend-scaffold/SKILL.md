@@ -154,7 +154,14 @@ For the canonical explanation, read [Multi-Instance and Instance Resolution](../
 
 ### Cross-module resource lookup
 
-When backend code uses `this.app.scope('other-module')`, `app.scope(...)`, or `this.$scope.<module>`, first distinguish runtime lookup from a true module dependency:
+Choose the narrowest lookup form before evaluating module dependency intent:
+
+- use `this.scope` for resources owned by the current `BeanBase` module
+- use `this.$scope.<fixedModule>` when the target module is statically known and the typed shorthand is available
+- use `app.scope('<module-name>')` in tests or standalone code with an application reference instead of BeanBase shorthands
+- use `this.app.scope(moduleName)` or `app.scope(moduleName)` when the module name is genuinely selected at runtime; do not replace a fixed module target with a dynamic string lookup merely for style
+
+Then distinguish runtime lookup from a true module dependency:
 
 - lookup resolves a resource from a module already composed into the application; it does not by itself require a `vonaModule.dependencies` entry or create a circular dependency edge
 - add `vonaModule.dependencies` only when the feature genuinely requires the target module's availability, dependency-first ordering, or minimum compatible version
