@@ -51,8 +51,10 @@ const OVERWRITE_DIRS: string[] = [
 const OVERWRITE_DIRS_CABLOY_BASIC: string[] = [
   'vona/src/suite/cabloy-basic',
   'vona/src/suite/a-training',
+  'vona/src/suite/a-commerce',
   'zova/src/suite/cabloy-basic',
   'zova/src/suite/a-training',
+  'zova/src/suite/a-commerce',
   'zova/src/suite/a-devui',
 ];
 
