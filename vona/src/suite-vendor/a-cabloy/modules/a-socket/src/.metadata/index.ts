@@ -17,7 +17,7 @@ declare module 'vona-module-a-socket' {
 /** bean: end */
 /** bean: begin */
 import type { BeanSocket } from '../bean/bean.socket.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'socket': BeanSocket;

@@ -43,7 +43,7 @@ declare module 'vona-module-a-datasharding' {
 /** bean: end */
 /** bean: begin */
 import type { BeanDatasharding } from '../bean/bean.datasharding.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'datasharding': BeanDatasharding;

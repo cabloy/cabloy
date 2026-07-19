@@ -90,6 +90,8 @@ declare module 'vona-module-training-recordsubject' {
       [SymbolKeyEntityMeta]: EntitySubjectMeta;
       [SymbolKeyModelOptions]: IModelOptionsSubject;
       get<T extends IModelGetOptions<EntitySubject,ModelSubject>>(where: TypeModelWhere<EntitySubject>, options?: T): Promise<TypeModelRelationResult<EntitySubject, ModelSubject, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntitySubject,ModelSubject>>(where: TypeModelWhere<EntitySubject>, options?: T): Promise<TypeModelRelationResult<EntitySubject, ModelSubject, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntitySubject,ModelSubject>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntitySubject, ModelSubject, T> | undefined>;
       mget<T extends IModelGetOptions<EntitySubject,ModelSubject>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntitySubject, ModelSubject, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntitySubject,ModelSubject,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntitySubject, ModelSubject, T>>;
       select<T extends IModelSelectParams<EntitySubject,ModelSubject,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntitySubject, ModelSubject, T>[]>;

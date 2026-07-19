@@ -43,7 +43,7 @@ declare module 'vona-module-a-serialization' {
 /** bean: end */
 /** bean: begin */
 import type { BeanSerializer } from '../bean/bean.serializer.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'serializer': BeanSerializer;

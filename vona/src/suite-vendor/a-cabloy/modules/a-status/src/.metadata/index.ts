@@ -90,6 +90,8 @@ declare module 'vona-module-a-status' {
       [SymbolKeyEntityMeta]: EntityStatusMeta;
       [SymbolKeyModelOptions]: IModelOptionsStatus;
       get<T extends IModelGetOptions<EntityStatus,ModelStatus>>(where: TypeModelWhere<EntityStatus>, options?: T): Promise<TypeModelRelationResult<EntityStatus, ModelStatus, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityStatus,ModelStatus>>(where: TypeModelWhere<EntityStatus>, options?: T): Promise<TypeModelRelationResult<EntityStatus, ModelStatus, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityStatus,ModelStatus>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityStatus, ModelStatus, T> | undefined>;
       mget<T extends IModelGetOptions<EntityStatus,ModelStatus>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityStatus, ModelStatus, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityStatus,ModelStatus,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityStatus, ModelStatus, T>>;
       select<T extends IModelSelectParams<EntityStatus,ModelStatus,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityStatus, ModelStatus, T>[]>;

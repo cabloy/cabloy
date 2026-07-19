@@ -17,7 +17,7 @@ declare module 'vona-module-a-redis' {
 /** bean: end */
 /** bean: begin */
 import type { BeanRedis } from '../bean/bean.redis.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'redis': BeanRedis;

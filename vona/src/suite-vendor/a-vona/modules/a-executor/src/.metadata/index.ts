@@ -17,7 +17,7 @@ declare module 'vona-module-a-executor' {
 /** bean: end */
 /** bean: begin */
 import type { BeanExecutor } from '../bean/bean.executor.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'executor': BeanExecutor;

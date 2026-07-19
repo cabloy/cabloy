@@ -17,7 +17,7 @@ declare module 'vona-module-a-beanmutate' {
 /** bean: end */
 /** bean: begin */
 import type { BeanMutate } from '../bean/bean.mutate.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'mutate': BeanMutate;

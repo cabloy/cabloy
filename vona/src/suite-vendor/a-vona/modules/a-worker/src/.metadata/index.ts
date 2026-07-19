@@ -17,7 +17,7 @@ declare module 'vona-module-a-worker' {
 /** bean: end */
 /** bean: begin */
 import type { BeanWorker } from '../bean/bean.worker.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'worker': BeanWorker;

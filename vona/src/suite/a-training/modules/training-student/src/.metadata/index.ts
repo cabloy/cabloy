@@ -86,7 +86,7 @@ import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'von
 declare module 'vona-module-training-student' {
   export interface IModelOptionsStudent {
         relations: {
-          trainingRecords: IModelRelationHasMany<'training-record:record', 'studentId', false, 'id'|'name'|'subjectCount'|'totalScore'|'averageScore'|'trainingTime'|'sceneImageIds'|'description', undefined, undefined, undefined>;
+          trainingRecords: IModelRelationHasMany<'training-record:record', 'studentId', false, 'id'|'name'|'subjectCount'|'totalScore'|'averageScore'|'trainingTime'|'sceneImageIds'|'dossierFileIds'|'description', undefined, undefined, undefined>;
         };
       }
   export interface ModelStudent {
@@ -94,6 +94,8 @@ declare module 'vona-module-training-student' {
       [SymbolKeyEntityMeta]: EntityStudentMeta;
       [SymbolKeyModelOptions]: IModelOptionsStudent;
       get<T extends IModelGetOptions<EntityStudent,ModelStudent>>(where: TypeModelWhere<EntityStudent>, options?: T): Promise<TypeModelRelationResult<EntityStudent, ModelStudent, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityStudent,ModelStudent>>(where: TypeModelWhere<EntityStudent>, options?: T): Promise<TypeModelRelationResult<EntityStudent, ModelStudent, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityStudent,ModelStudent>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityStudent, ModelStudent, T> | undefined>;
       mget<T extends IModelGetOptions<EntityStudent,ModelStudent>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityStudent, ModelStudent, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityStudent,ModelStudent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityStudent, ModelStudent, T>>;
       select<T extends IModelSelectParams<EntityStudent,ModelStudent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityStudent, ModelStudent, T>[]>;

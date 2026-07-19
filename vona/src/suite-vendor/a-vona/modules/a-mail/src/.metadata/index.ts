@@ -90,6 +90,8 @@ declare module 'vona-module-a-mail' {
       [SymbolKeyEntityMeta]: EntityMailMeta;
       [SymbolKeyModelOptions]: IModelOptionsMail;
       get<T extends IModelGetOptions<EntityMail,ModelMail>>(where: TypeModelWhere<EntityMail>, options?: T): Promise<TypeModelRelationResult<EntityMail, ModelMail, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityMail,ModelMail>>(where: TypeModelWhere<EntityMail>, options?: T): Promise<TypeModelRelationResult<EntityMail, ModelMail, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityMail,ModelMail>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityMail, ModelMail, T> | undefined>;
       mget<T extends IModelGetOptions<EntityMail,ModelMail>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityMail, ModelMail, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityMail,ModelMail,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityMail, ModelMail, T>>;
       select<T extends IModelSelectParams<EntityMail,ModelMail,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityMail, ModelMail, T>[]>;
@@ -135,7 +137,7 @@ declare module 'vona-module-a-mail' {
 /** bean: end */
 /** bean: begin */
 import type { BeanMail } from '../bean/bean.mail.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'mail': BeanMail;

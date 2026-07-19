@@ -57,7 +57,7 @@ declare module 'vona-module-a-security' {
 /** bean: end */
 /** bean: begin */
 import type { BeanSecurity } from '../bean/bean.security.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'security': BeanSecurity;

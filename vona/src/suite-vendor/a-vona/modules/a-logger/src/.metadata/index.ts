@@ -69,7 +69,7 @@ declare module 'vona-module-a-logger' {
 /** bean: end */
 /** bean: begin */
 import type { BeanLogger } from '../bean/bean.logger.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'logger': BeanLogger;

@@ -83,7 +83,7 @@ declare module 'vona-module-a-core' {
 /** bean: end */
 /** bean: begin */
 import type { BeanCore } from '../bean/bean.core.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'core': BeanCore;

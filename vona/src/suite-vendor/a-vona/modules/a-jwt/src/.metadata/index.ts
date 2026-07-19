@@ -19,7 +19,7 @@ declare module 'vona-module-a-jwt' {
 /** bean: end */
 /** bean: begin */
 import type { BeanJwt } from '../bean/bean.jwt.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'jwt': BeanJwt;

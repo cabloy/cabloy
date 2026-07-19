@@ -91,53 +91,6 @@ declare module 'vona' {
   }
 }
 /** bean: end */
-/** controller: begin */
-export * from '../controller/memoryDiag.ts';
-import type { IControllerOptionsMemoryDiag } from '../controller/memoryDiag.ts';
-import 'vona-module-a-web';
-declare module 'vona-module-a-web' {
-
-    export interface IControllerRecord {
-      'a-ssr:memoryDiag': IControllerOptionsMemoryDiag;
-    }
-
-
-}
-declare module 'vona-module-a-ssr' {
-
-        export interface ControllerMemoryDiag {
-          /** @internal */
-          get scope(): ScopeModuleASsr;
-        }
-
-          export interface ControllerMemoryDiag {
-            get $beanFullName(): 'a-ssr.controller.memoryDiag';
-            get $onionName(): 'a-ssr:memoryDiag';
-            get $onionOptions(): IControllerOptionsMemoryDiag;
-          }
-}
-/** controller: end */
-/** controller: begin */
-// @ts-ignore ignore
-import type { ControllerMemoryDiag } from '../controller/memoryDiag.ts';
-declare module 'vona-module-a-ssr' {
-
-    export interface IControllerOptionsMemoryDiag {
-      actions?: TypeControllerOptionsActions<ControllerMemoryDiag>;
-    }
-}
-declare module 'vona-module-a-web' {
-  export interface IApiPathGetRecord{
-        '/ssr/memoryDiag/stats': undefined;
-    }
-export interface IApiPathPostRecord{
-        '/ssr/memoryDiag/gc': undefined;
-'/ssr/memoryDiag/heapSnapshot': undefined;
-    }
-
-}
-
-/** controller: end */
 /** service: begin */
 export * from '../service/devProxy.ts';
 export * from '../service/ssr.ts';
@@ -355,6 +308,53 @@ declare module 'vona-module-a-ssr' {
           } 
 }
 /** hmr: end */
+/** controller: begin */
+export * from '../controller/memoryDiag.ts';
+import type { IControllerOptionsMemoryDiag } from '../controller/memoryDiag.ts';
+import 'vona-module-a-web';
+declare module 'vona-module-a-web' {
+  
+    export interface IControllerRecord {
+      'a-ssr:memoryDiag': IControllerOptionsMemoryDiag;
+    }
+
+  
+}
+declare module 'vona-module-a-ssr' {
+  
+        export interface ControllerMemoryDiag {
+          /** @internal */
+          get scope(): ScopeModuleASsr;
+        }
+
+          export interface ControllerMemoryDiag {
+            get $beanFullName(): 'a-ssr.controller.memoryDiag';
+            get $onionName(): 'a-ssr:memoryDiag';
+            get $onionOptions(): IControllerOptionsMemoryDiag;
+          } 
+}
+/** controller: end */
+/** controller: begin */
+// @ts-ignore ignore
+import type { ControllerMemoryDiag } from '../controller/memoryDiag.ts';
+declare module 'vona-module-a-ssr' {
+  
+    export interface IControllerOptionsMemoryDiag {
+      actions?: TypeControllerOptionsActions<ControllerMemoryDiag>;
+    }
+}
+declare module 'vona-module-a-web' {
+  export interface IApiPathGetRecord{
+        '/ssr/memoryDiag/stats': undefined;
+    }
+export interface IApiPathPostRecord{
+        '/ssr/memoryDiag/gc': undefined;
+'/ssr/memoryDiag/heapSnapshot': undefined;
+    }
+
+}
+
+/** controller: end */
 /** config: begin */
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';

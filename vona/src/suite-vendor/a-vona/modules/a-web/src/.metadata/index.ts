@@ -57,7 +57,7 @@ declare module 'vona-module-a-web' {
 /** bean: end */
 /** bean: begin */
 import type { BeanRouter } from '../bean/bean.router.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'router': BeanRouter;

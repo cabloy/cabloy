@@ -90,6 +90,8 @@ declare module 'vona-module-a-paypal' {
       [SymbolKeyEntityMeta]: EntityPaypalRecordMeta;
       [SymbolKeyModelOptions]: IModelOptionsPaypalRecord;
       get<T extends IModelGetOptions<EntityPaypalRecord,ModelPaypalRecord>>(where: TypeModelWhere<EntityPaypalRecord>, options?: T): Promise<TypeModelRelationResult<EntityPaypalRecord, ModelPaypalRecord, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityPaypalRecord,ModelPaypalRecord>>(where: TypeModelWhere<EntityPaypalRecord>, options?: T): Promise<TypeModelRelationResult<EntityPaypalRecord, ModelPaypalRecord, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityPaypalRecord,ModelPaypalRecord>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityPaypalRecord, ModelPaypalRecord, T> | undefined>;
       mget<T extends IModelGetOptions<EntityPaypalRecord,ModelPaypalRecord>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityPaypalRecord, ModelPaypalRecord, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityPaypalRecord,ModelPaypalRecord,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityPaypalRecord, ModelPaypalRecord, T>>;
       select<T extends IModelSelectParams<EntityPaypalRecord,ModelPaypalRecord,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityPaypalRecord, ModelPaypalRecord, T>[]>;
@@ -135,7 +137,7 @@ declare module 'vona-module-a-paypal' {
 /** bean: end */
 /** bean: begin */
 import type { BeanPaypal } from '../bean/bean.paypal.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'paypal': BeanPaypal;

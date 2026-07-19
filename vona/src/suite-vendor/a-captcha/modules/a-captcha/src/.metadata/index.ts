@@ -45,7 +45,7 @@ declare module 'vona-module-a-captcha' {
 /** bean: end */
 /** bean: begin */
 import type { BeanCaptcha } from '../bean/bean.captcha.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'captcha': BeanCaptcha;

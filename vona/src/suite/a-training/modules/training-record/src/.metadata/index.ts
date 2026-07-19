@@ -95,6 +95,8 @@ trainingRecordSubjects: IModelRelationHasMany<'training-recordsubject:subject', 
       [SymbolKeyEntityMeta]: EntityRecordMeta;
       [SymbolKeyModelOptions]: IModelOptionsRecord;
       get<T extends IModelGetOptions<EntityRecord,ModelRecord>>(where: TypeModelWhere<EntityRecord>, options?: T): Promise<TypeModelRelationResult<EntityRecord, ModelRecord, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityRecord,ModelRecord>>(where: TypeModelWhere<EntityRecord>, options?: T): Promise<TypeModelRelationResult<EntityRecord, ModelRecord, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityRecord,ModelRecord>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityRecord, ModelRecord, T> | undefined>;
       mget<T extends IModelGetOptions<EntityRecord,ModelRecord>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityRecord, ModelRecord, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityRecord,ModelRecord,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityRecord, ModelRecord, T>>;
       select<T extends IModelSelectParams<EntityRecord,ModelRecord,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityRecord, ModelRecord, T>[]>;
@@ -393,15 +395,15 @@ export * from '../bean/fileScene.dossierFile.ts';
 
 import { type IDecoratorFileSceneOptions } from 'vona-module-a-file';
 declare module 'vona-module-a-file' {
-
+  
     export interface IFileSceneRecord {
       'training-record:dossierFile': IDecoratorFileSceneOptions;
     }
 
-
+  
 }
 declare module 'vona-module-training-record' {
-
+  
         export interface FileSceneDossierFile {
           /** @internal */
           get scope(): ScopeModuleTrainingRecord;
@@ -411,7 +413,7 @@ declare module 'vona-module-training-record' {
             get $beanFullName(): 'training-record.fileScene.dossierFile';
             get $onionName(): 'training-record:dossierFile';
             get $onionOptions(): IDecoratorFileSceneOptions;
-          }
+          } 
 }
 /** fileScene: end */
 /** imageScene: begin */
@@ -419,15 +421,15 @@ export * from '../bean/imageScene.sceneImage.ts';
 
 import { type IDecoratorImageSceneOptions } from 'vona-module-a-image';
 declare module 'vona-module-a-image' {
-
+  
     export interface IImageSceneRecord {
       'training-record:sceneImage': IDecoratorImageSceneOptions;
     }
 
-
+  
 }
 declare module 'vona-module-training-record' {
-
+  
         export interface ImageSceneSceneImage {
           /** @internal */
           get scope(): ScopeModuleTrainingRecord;
@@ -437,7 +439,7 @@ declare module 'vona-module-training-record' {
             get $beanFullName(): 'training-record.imageScene.sceneImage';
             get $onionName(): 'training-record:sceneImage';
             get $onionOptions(): IDecoratorImageSceneOptions;
-          }
+          } 
 }
 /** imageScene: end */
 /** locale: begin */

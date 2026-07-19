@@ -17,7 +17,7 @@ declare module 'vona-module-a-onion' {
 /** bean: end */
 /** bean: begin */
 import type { BeanOnion } from '../bean/bean.onion.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'onion': BeanOnion;

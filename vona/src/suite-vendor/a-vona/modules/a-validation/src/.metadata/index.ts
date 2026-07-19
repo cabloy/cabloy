@@ -17,7 +17,7 @@ declare module 'vona-module-a-validation' {
 /** bean: end */
 /** bean: begin */
 import type { BeanValidator } from '../bean/bean.validator.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'validator': BeanValidator;

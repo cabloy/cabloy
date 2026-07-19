@@ -39,8 +39,7 @@ declare module 'vona-module-a-user' {
             get $beanFullName(): 'a-user.guard.roleName';
             get $onionName(): 'a-user:roleName';
             get $onionOptions(): IGuardOptionsRoleName;
-          }
-
+          } 
 }
 /** guard: end */
 /** bean: begin */
@@ -75,12 +74,12 @@ declare module 'vona-module-a-user' {
 import type { BeanPassport } from '../bean/bean.passport.ts';
 import type { BeanRole } from '../bean/bean.role.ts';
 import type { BeanUser } from '../bean/bean.user.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'passport': BeanPassport;
-'role': BeanRole;
-'user': BeanUser;
+    'role': BeanRole;
+    'user': BeanUser;
   }
 }
 /** bean: end */

@@ -90,6 +90,8 @@ declare module 'vona-module-a-datasource' {
       [SymbolKeyEntityMeta]: EntityDatasourceMeta;
       [SymbolKeyModelOptions]: IModelOptionsDatasource;
       get<T extends IModelGetOptions<EntityDatasource,ModelDatasource>>(where: TypeModelWhere<EntityDatasource>, options?: T): Promise<TypeModelRelationResult<EntityDatasource, ModelDatasource, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityDatasource,ModelDatasource>>(where: TypeModelWhere<EntityDatasource>, options?: T): Promise<TypeModelRelationResult<EntityDatasource, ModelDatasource, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityDatasource,ModelDatasource>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityDatasource, ModelDatasource, T> | undefined>;
       mget<T extends IModelGetOptions<EntityDatasource,ModelDatasource>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityDatasource, ModelDatasource, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityDatasource,ModelDatasource,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityDatasource, ModelDatasource, T>>;
       select<T extends IModelSelectParams<EntityDatasource,ModelDatasource,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityDatasource, ModelDatasource, T>[]>;
@@ -139,7 +141,7 @@ declare module 'vona-module-a-datasource' {
 /** bean: end */
 /** bean: begin */
 import type { BeanDatasource } from '../bean/bean.datasource.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'datasource': BeanDatasource;

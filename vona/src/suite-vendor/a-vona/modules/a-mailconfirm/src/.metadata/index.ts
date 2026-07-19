@@ -18,7 +18,7 @@ declare module 'vona-module-a-mailconfirm' {
 /** bean: end */
 /** bean: begin */
 import type { BeanMailConfirm } from '../bean/bean.mailConfirm.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'mailConfirm': BeanMailConfirm;

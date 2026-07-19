@@ -17,7 +17,7 @@ declare module 'vona-module-a-event' {
 /** bean: end */
 /** bean: begin */
 import type { BeanEvent } from '../bean/bean.event.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'event': BeanEvent;

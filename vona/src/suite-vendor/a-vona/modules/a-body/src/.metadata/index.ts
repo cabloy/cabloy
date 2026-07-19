@@ -64,11 +64,11 @@ declare module 'vona-module-a-body' {
 /** bean: begin */
 import type { BeanBodyReq } from '../bean/bean.bodyReq.ts';
 import type { BeanBodyRes } from '../bean/bean.bodyRes.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'bodyReq': BeanBodyReq;
-'bodyRes': BeanBodyRes;
+    'bodyRes': BeanBodyRes;
   }
 }
 /** bean: end */

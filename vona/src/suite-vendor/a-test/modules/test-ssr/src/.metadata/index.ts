@@ -67,17 +67,17 @@ import type { IControllerOptionsToolOne } from '../controller/toolOne.ts';
 import type { IControllerOptionsToolTwo } from '../controller/toolTwo.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-
+  
     export interface IControllerRecord {
       'test-ssr:toolMinimal': IControllerOptionsToolMinimal;
 'test-ssr:toolOne': IControllerOptionsToolOne;
 'test-ssr:toolTwo': IControllerOptionsToolTwo;
     }
 
-
+  
 }
 declare module 'vona-module-test-ssr' {
-
+  
         export interface ControllerToolMinimal {
           /** @internal */
           get scope(): ScopeModuleTestSsr;
@@ -109,7 +109,7 @@ declare module 'vona-module-test-ssr' {
             get $beanFullName(): 'test-ssr.controller.toolTwo';
             get $onionName(): 'test-ssr:toolTwo';
             get $onionOptions(): IControllerOptionsToolTwo;
-          }
+          } 
 }
 /** controller: end */
 /** controller: begin */
@@ -120,7 +120,7 @@ import type { ControllerToolOne } from '../controller/toolOne.ts';
 // @ts-ignore ignore
 import type { ControllerToolTwo } from '../controller/toolTwo.ts';
 declare module 'vona-module-test-ssr' {
-
+  
     export interface IControllerOptionsToolMinimal {
       actions?: TypeControllerOptionsActions<ControllerToolMinimal>;
     }

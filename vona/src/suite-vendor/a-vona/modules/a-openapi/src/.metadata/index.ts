@@ -17,7 +17,7 @@ declare module 'vona-module-a-openapi' {
 /** bean: end */
 /** bean: begin */
 import type { BeanOpenapi } from '../bean/bean.openapi.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'openapi': BeanOpenapi;

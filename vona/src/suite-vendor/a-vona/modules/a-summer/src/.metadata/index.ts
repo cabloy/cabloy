@@ -17,7 +17,7 @@ declare module 'vona-module-a-summer' {
 /** bean: end */
 /** bean: begin */
 import type { BeanSummer } from '../bean/bean.summer.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'summer': BeanSummer;

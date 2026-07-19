@@ -17,7 +17,7 @@ declare module 'vona-module-a-ssrhmr' {
 /** bean: end */
 /** bean: begin */
 import type { BeanSsrHmr } from '../bean/bean.ssrHmr.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'ssrHmr': BeanSsrHmr;

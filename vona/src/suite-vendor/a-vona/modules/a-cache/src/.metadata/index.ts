@@ -17,7 +17,7 @@ declare module 'vona-module-a-cache' {
 /** bean: end */
 /** bean: begin */
 import type { BeanCache } from '../bean/bean.cache.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'cache': BeanCache;

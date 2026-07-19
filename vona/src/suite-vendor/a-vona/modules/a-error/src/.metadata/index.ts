@@ -43,7 +43,7 @@ declare module 'vona-module-a-error' {
 /** bean: end */
 /** bean: begin */
 import type { BeanError } from '../bean/bean.error.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'error': BeanError;
