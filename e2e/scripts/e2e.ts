@@ -12,7 +12,7 @@ const e2eSuites = {
   basic: {
     externalBaseUrlEnv: 'BASIC_E2E_BASE_URL',
     configFile: resolve(E2E_CONFIG_DIR, 'playwright.basic.config.ts'),
-    testDir: resolve(E2E_SPECS_DIR, 'a-basic'),
+    testDir: resolve(E2E_SPECS_DIR, 'cabloy-basic'),
     readinessPath: '/',
   },
   commerce: {

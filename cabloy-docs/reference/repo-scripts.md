@@ -85,7 +85,7 @@ Basic upgrade owns these browser baseline paths:
 ```text
 e2e/config/
 e2e/scripts/
-e2e/specs/a-basic/
+e2e/specs/cabloy-basic/
 e2e/specs/a-commerce/
 ```
 

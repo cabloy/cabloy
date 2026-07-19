@@ -114,7 +114,7 @@ In Cabloy Basic, upgrade synchronizes the framework-owned SSR browser E2E baseli
 ```text
 e2e/config/
 e2e/scripts/
-e2e/specs/a-basic/
+e2e/specs/cabloy-basic/
 e2e/specs/a-commerce/
 ```
 

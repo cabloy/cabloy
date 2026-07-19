@@ -59,7 +59,7 @@ const OVERWRITE_DIRS_CABLOY_BASIC: string[] = [
 const FRAMEWORK_E2E_DIRS_CABLOY_BASIC: string[] = [
   'e2e/config',
   'e2e/scripts',
-  'e2e/specs/a-basic',
+  'e2e/specs/cabloy-basic',
   'e2e/specs/a-commerce',
 ];
 
