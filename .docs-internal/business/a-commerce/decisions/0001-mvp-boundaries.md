@@ -88,6 +88,7 @@ The following are intentionally not part of the MVP:
 - [A-Commerce PRD](../prd.md)
 - [A-Commerce SRS](../srs.md)
 - [A-Commerce PDP/WBS](../pdp-wbs.md)
+- [ADR 0002: Preserve a Path to Multiple Merchants Within One Vona Instance](./0002-multi-merchant-within-one-vona-instance.md) — proposed follow-on guardrails for the deferred multi-merchant scope
 - [ADR 0004: Preserve Fullstack SSR and Bidirectional Type-Flow Principles](../../../decisions/0004-fullstack-ssr-and-bidirectional-type-flow.md)
 - [ADR 0006: SSR Site Access and Role Model](../../../decisions/0006-ssr-site-access-and-role-model.md) — proposed guidance
 - [SSR Vona/Zova Boundary and Call Chain](../../../architecture/ssr-vona-zova-boundary-and-call-chain.md)
