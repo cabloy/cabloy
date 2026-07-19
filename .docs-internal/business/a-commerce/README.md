@@ -11,6 +11,7 @@ This directory records the agreed product, system, and delivery baseline for the
 5. [Phase 20 Contract Loop](./phase-20-contract-loop.md) defines the paired Commerce SSR/REST build and synchronization workflow.
 6. [ADR 0001](./decisions/0001-mvp-boundaries.md) records the accepted MVP architecture and scope decisions behind this plan.
 7. [ADR 0002](./decisions/0002-multi-merchant-within-one-vona-instance.md) records proposed guardrails for a future multi-merchant boundary within one Vona instance.
+8. [ADR 0009](../../decisions/0009-homepage-module-naming-boundary.md) records the accepted cross-suite ownership and naming boundary between reusable A-Home entry modules and Commerce site modules.
 
 ## Confirmed MVP Baseline
 
@@ -47,6 +48,8 @@ The planned capability boundaries are:
 - `commerce-siteweb`: the customer-facing SSR site and Web composition;
 - `commerce-siteadmin`: the operator SSR site and Admin composition.
 
+The reusable `a-home` modules `home-indexweb` and `home-indexadmin` provide general Web and Admin landing or entry pages. They remain distinct from the Commerce-owned `commerce-siteweb` and `commerce-siteadmin` modules, which own Commerce application/site composition.
+
 Inventory reservation starts as a `commerce-trade` aggregate behavior. The SRS keeps inventory ownership explicit so that a later inventory module can be extracted without changing the business contract.
 
 ## Document Authority
@@ -57,6 +60,7 @@ Inventory reservation starts as a `commerce-trade` aggregate behavior. The SRS k
 - The test plan owns acceptance strategy, traceability evidence, and release proof.
 - ADR 0001 owns the accepted MVP scope and architecture choices.
 - ADR 0002 owns proposed guardrails for any future multi-merchant boundary inside one Vona instance.
+- [ADR 0009](../../decisions/0009-homepage-module-naming-boundary.md) owns the cross-suite naming and ownership boundary between reusable A-Home entry modules and Commerce site modules.
 
 If the documents disagree, update the authoritative document first and then update every downstream reference.
 
