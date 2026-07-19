@@ -120,6 +120,28 @@ e2e/specs/a-commerce/
 
 Keep project-owned browser tests outside those reserved paths, for example under `e2e/specs/my-project/`; upgrade overlays framework files without deleting project test paths. Projects whose previous upgrader predates this E2E synchronization may need to run `npm run upgrade` once more: the updated upgrader recognizes an incomplete Basic E2E baseline even when the version marker is already current.
 
+### Cabloy Start repository baseline
+
+Cabloy Start is checked out from the licensed private repository rather than created through `npm create cabloy`. Its E2E baseline is maintained in that repository:
+
+```text
+e2e/config/
+e2e/scripts/
+e2e/specs/a-start/
+```
+
+The public Cabloy upgrade flow does not synchronize or repair those Start E2E files, the `test:e2e:start*` scripts, or `@playwright/test`. Keep project-owned browser scenarios outside the baseline paths, for example under `e2e/specs/my-project/`.
+
+Prepare and run the managed Start baseline locally with:
+
+```bash
+npm run build:zova
+npm run deps:vona
+npm run test:e2e:start:clean
+```
+
+The managed command requires port `7102` to be available and owns the local reset and Vona worker lifecycle. For a separately managed target, set `START_E2E_BASE_URL` and use `test:e2e:start`, `test:e2e:start:web`, or `test:e2e:start:admin`; those commands do not reset, build, start, or stop the target. Install Chromium once when needed with `npx playwright install chromium`. See [Repo Scripts](/reference/repo-scripts#ssr-browser-checks) for the complete command variants.
+
 ## 7. Next steps for framework-aware development
 
 If you are contributing to framework-aware workflows or using Cabloy CLI generation directly, prefer CLI-backed generation over manual scaffolding.

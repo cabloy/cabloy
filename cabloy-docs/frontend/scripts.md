@@ -20,15 +20,17 @@ For the edition-detection workflow, also see [Edition Detection](/editions/detec
 
 ## Cabloy Basic root wrappers
 
-From the current root repository:
+Cabloy Basic exposes these default Web and Admin wrappers:
 
 ```bash
 npm run dev:zova:admin
 npm run dev:zova:web
 npm run build:zova
+npm run build:zova:admin
+npm run build:zova:web
 ```
 
-These map to Basic-specific Zova flavors in this repository. Commerce follows the same aggregate-and-surface pattern:
+They map to the `cabloyBasicAdmin` and `cabloyBasicWeb` flavors. Basic also includes the Commerce aggregate-and-surface wrappers:
 
 ```bash
 # Customer Web or Operator Admin development server
@@ -43,9 +45,9 @@ npm run build:zova:commerce:admin
 
 ## Basic SSR browser acceptance
 
-The default Basic Web and Admin sites have browser smoke commands that exercise Vona SSR dispatch at `7102`, not a standalone Zova development-server port.
+The default Basic Web and Admin sites have browser smoke commands that exercise Vona SSR dispatch at port `7102`, not a standalone Zova development-server port.
 
-Prepare current artifacts explicitly when the relevant frontend SSR output changed:
+Prepare current SSR and REST artifacts explicitly when frontend output has changed:
 
 ```bash
 # Web only
@@ -54,40 +56,77 @@ npm run build:zova:web
 # Admin only
 npm run build:zova:admin
 
-# Both default Basic sites
+# Both default Basic sites, then a managed local run
 npm run build:zova
 npm run deps:vona
-```
-
-Then use the managed clean local acceptance command:
-
-```bash
 npm run test:e2e:basic:clean
 ```
 
-It resets Vona-managed test data and the local Redis namespace, starts one development Vona worker, and runs the complete suite by default. The E2E commands consume already-built artifacts; they do not rebuild them.
+The managed clean command resets Vona-managed test data and the local Redis namespace, starts one development Vona worker, and runs the complete suite by default. Browser commands consume already-built artifacts; they do not rebuild them.
 
-The suite command family is consistent across Basic and Commerce:
+The Basic and Commerce suite families use the same command shape:
 
 ```text
 test:e2e:<suite>          complete suite
 test:e2e:<suite>:web      all @web surface scenarios
 test:e2e:<suite>:admin    all @admin surface scenarios
-test:e2e:<suite>:clean      managed clean local suite run
+test:e2e:<suite>:clean    managed clean local suite run
 ```
 
-Use Playwright tags after npm's argument delimiter for feature/category selection instead of adding one root script per scenario:
+Use Playwright tags after npm's argument delimiter for scenario selection instead of adding one root script per scenario:
 
 ```bash
 npm run test:e2e:basic:clean -- --grep @flow
 npm run test:e2e:basic -- --grep ATP-BASIC-FLOW-01
 ```
 
-For the complete tag vocabulary, managed-runner argument boundaries, and externally managed-target examples, see [Repo Scripts](/reference/repo-scripts#ssr-browser-checks). For a separately managed Basic target, set `BASIC_E2E_BASE_URL`; the equivalent Commerce commands use `COMMERCE_E2E_BASE_URL`. The caller owns external-target data, cache, and artifact freshness.
+For the complete tag vocabulary, managed-runner argument boundaries, and externally managed-target examples, see [Repo Scripts](/reference/repo-scripts#ssr-browser-checks). For a separately managed Basic target, set `BASIC_E2E_BASE_URL`; Commerce commands use `COMMERCE_E2E_BASE_URL`. The caller owns external-target data, cache, and artifact freshness.
+
+## Cabloy Start root wrappers
+
+Cabloy Start is the licensed private edition. Its default root wrappers use the `cabloyStartAdmin` and `cabloyStartWeb` flavors:
+
+```bash
+npm run dev:zova:admin
+npm run dev:zova:web
+npm run build:zova
+npm run build:zova:admin
+npm run build:zova:web
+```
+
+Cabloy Start does not expose the Basic Commerce wrapper family.
+
+## Start SSR browser acceptance
+
+The Start Web and Admin browser baseline also exercises Vona SSR dispatch at port `7102`. Prepare current SSR and REST artifacts, then use the managed local command:
+
+```bash
+npm run build:zova
+npm run deps:vona
+npm run test:e2e:start:clean
+```
+
+The Start command family is:
+
+```text
+test:e2e:start          complete suite
+test:e2e:start:web      all @web surface scenarios
+test:e2e:start:admin    all @admin surface scenarios
+test:e2e:start:clean    managed clean local suite run
+```
+
+Start scenarios currently use `@web`, `@admin`, and `@smoke`. Select a scenario or surface with Playwright arguments:
+
+```bash
+npm run test:e2e:start:clean -- --grep @web
+npm run test:e2e:start -- --grep ATP-START-FLOW-01
+```
+
+For a separately managed Start target, set `START_E2E_BASE_URL`. The target owner is responsible for data, cache, and artifact freshness.
 
 ## Zova script model
 
-The underlying Zova package still organizes scripts around app mode and flavor.
+The underlying Zova package organizes scripts around app mode and flavor.
 
 Examples from the current source include:
 
@@ -100,18 +139,18 @@ Examples from the current source include:
 - `dev:ssr:cabloyBasicAdmin`
 - `build:ssr:cabloyBasicAdmin`
 - `build:rest:cabloyBasicAdmin`
-- `dev:ssr:cabloyBasicWeb`
-- `build:ssr:cabloyBasicWeb`
-- `build:rest:cabloyBasicWeb`
+- `dev:ssr:cabloyStartAdmin`
+- `build:ssr:cabloyStartAdmin`
+- `build:rest:cabloyStartAdmin`
 
 ## Cabloy Basic
 
-The current public repository documents and scripts support Basic-specific flavors such as:
+The public repository supports Basic-specific flavors:
 
 - `cabloyBasicAdmin`
 - `cabloyBasicWeb`
 
-Representative Zova commands inside this repo include:
+Representative Zova commands are:
 
 ```bash
 cd zova && npm run dev:ssr:cabloyBasicAdmin
@@ -121,18 +160,24 @@ cd zova && npm run build:rest:cabloyBasicAdmin
 
 ## Cabloy Start
 
-The sibling `cabloy-start` repository is the private commercial edition and uses Start-specific flavors such as:
+The licensed private repository supports Start-specific flavors:
 
 - `cabloyStartAdmin`
 - `cabloyStartWeb`
 
-Those commands are not driven by the current Basic repo root wrappers, so verify the Start repo’s `package.json`, flavor names, SSR site baselines, and project assets before documenting or automating them.
+Representative Zova commands are:
+
+```bash
+cd zova && npm run dev:ssr:cabloyStartAdmin
+cd zova && npm run build:ssr:cabloyStartAdmin
+cd zova && npm run build:rest:cabloyStartAdmin
+```
 
 ## Workflow guidance
 
 When documenting or automating frontend scripts:
 
-- start from root wrappers for normal Cabloy Basic workflows
+- start from the root wrappers for the detected edition
 - detect the edition before choosing flavor-specific examples
 - verify the exact flavor before writing edition-specific examples
 - use REST/type generation commands deliberately when backend integration depends on them
