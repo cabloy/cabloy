@@ -240,6 +240,20 @@ The key distinction is:
 
 This is one of the reasons Vona backend code can stay concise without flattening everything into arbitrary imports.
 
+## Scope lookup vs module dependencies
+
+Scope lookup resolves a resource from a module that is already part of the active application composition. For example:
+
+```typescript
+const modelResource = this.app.scope('other-module').model.resource;
+```
+
+Using `this.$scope.<module>` or `app.scope(...)` does not by itself require adding the target module to the caller's `vonaModule.dependencies`. Lookup does not create a module dependency edge, so lookup alone cannot create a circular dependency.
+
+Scope lookup also does not compose, install, load, or order an absent module. The target must already be available through suite/application composition. Declare `vonaModule.dependencies` only when the caller has a genuine requirement for a target module's availability, dependency-first ordering, or minimum compatible version—not merely because it looks up that module's service, model, config, locale, or another resource.
+
+For the package, suite, and module dependency distinction, see [Package Map](/reference/package-map).
+
 ## Suite / module / package boundaries
 
 Vona architecture is not only about classes and beans. It is also about structural boundaries.

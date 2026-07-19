@@ -94,7 +94,7 @@ A useful distinction is:
 - `this.scope` means local module resources
 - `this.$scope.<module>` means cross-module resources
 
-That same access model also appears for model, entity, config, locale, and other scope resources.
+That same access model also appears for model, entity, config, locale, and other scope resources. Cross-module scope lookup alone does not require a `vonaModule.dependencies` entry; see [Backend Foundation](/backend/foundation#scope-lookup-vs-module-dependencies) for the distinction between lookup and a true module dependency.
 
 ## Direct bean access
 

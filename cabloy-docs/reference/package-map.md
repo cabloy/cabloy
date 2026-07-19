@@ -36,7 +36,7 @@ Example: `vona/src/suite/a-training/modules/training-student/package.json`
 
 - package name: `vona-module-training-student`
 - title: `training-student`
-- `vonaModule.dependencies` records module-level framework dependencies
+- `vonaModule.dependencies` records genuine module availability, dependency-first ordering, and minimum-version requirements
 
 ### Suite package
 
@@ -58,17 +58,21 @@ This matters because Vona modularization is not just folder layout. Package meta
 
 ## Practical modularization edge table
 
-| Unit    | Main role                             | Where dependency intent is usually expressed                         |
-| ------- | ------------------------------------- | -------------------------------------------------------------------- |
-| Package | metadata and publication unit         | package-level `dependencies`, scripts, exports, and release metadata |
-| Module  | main backend capability unit          | `vonaModule.dependencies` for framework/module dependency intent     |
-| Suite   | composition unit for multiple modules | normal package `dependencies` that compose module packages           |
+| Surface                          | Main role                                                                                               |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Package                          | metadata, publication, and ordinary package imports/dependencies                                        |
+| Suite package `dependencies`     | compose the module packages that the suite includes                                                     |
+| Module `vonaModule.dependencies` | declare genuine target-module availability, dependency-first ordering, and minimum-version requirements |
+| Scope lookup                     | resolve resources from an already application-composed module without creating a module dependency edge |
 
 A practical comparison is:
 
-- a standalone module package still uses `vonaModule.dependencies` to describe backend framework/module dependency intent
+- a standalone module package uses `vonaModule.dependencies` when its feature truly requires another module to be available, ordered first, or at a minimum compatible version
 - a suite package uses ordinary package `dependencies` to compose the module packages it contains or depends on
 - a suite-contained module still remains a module package with its own `vonaModule.dependencies`
+- `this.$scope.<module>` and `app.scope(...)` perform runtime lookup of an already composed module; cross-module service, model, config, locale, or other resource lookup alone is not a reason to add `vonaModule.dependencies`
+
+Do not add speculative module dependency declarations merely to document a scope lookup or avoid an assumed circular dependency. Lookup creates no module-order edge. Conversely, scope lookup cannot make an absent module available: declare a module dependency when the feature genuinely requires the target module's availability, ordering, or minimum version.
 
 ## How this relates to backend docs
 

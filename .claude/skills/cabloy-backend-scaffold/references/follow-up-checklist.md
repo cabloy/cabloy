@@ -30,6 +30,13 @@ After generating or extending a backend thread, check which follow-up layers app
 - cache behavior
 - transaction behavior
 
+## Module composition and dependency intent
+
+- target module is already composed into the application when code uses cross-module scope lookup
+- cross-module `this.$scope.<module>` or `app.scope(...)` lookup alone does not require `vonaModule.dependencies`
+- `vonaModule.dependencies` is added only for a genuine target-module availability, dependency-first ordering, or minimum-version requirement
+- do not create speculative dependency edges or circular declarations merely to document a lookup
+
 ## Verification follow-up
 
 - unit tests

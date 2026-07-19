@@ -152,6 +152,17 @@ For normal resource persistence, preserve Vona's default active-instance scope:
 
 For the canonical explanation, read [Multi-Instance and Instance Resolution](../../../cabloy-docs/backend/multi-instance-and-instance-resolution.md) and [Model Guide](../../../cabloy-docs/backend/model-guide.md).
 
+### Cross-module resource lookup
+
+When backend code uses `this.app.scope('other-module')`, `app.scope(...)`, or `this.$scope.<module>`, first distinguish runtime lookup from a true module dependency:
+
+- lookup resolves a resource from a module already composed into the application; it does not by itself require a `vonaModule.dependencies` entry or create a circular dependency edge
+- add `vonaModule.dependencies` only when the feature genuinely requires the target module's availability, dependency-first ordering, or minimum compatible version
+- do not add a dependency declaration merely because code looks up another module's service, model, config, locale, or other resource
+- scope lookup cannot make an absent module available; validate application/suite composition separately when the target must exist
+
+For the canonical distinction, read [Backend Foundation](../../../cabloy-docs/backend/foundation.md#scope-lookup-vs-module-dependencies) and [Package Map](../../../cabloy-docs/reference/package-map.md).
+
 ### Verification
 
 Check whether the feature needs:
