@@ -1,4 +1,5 @@
 export default {
+  Available: 'Available',
   Category: 'Category',
   Description: 'Description',
   Name: 'Name',

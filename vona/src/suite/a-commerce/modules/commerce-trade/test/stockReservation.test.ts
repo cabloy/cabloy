@@ -46,6 +46,19 @@ async function reserve(
   });
 }
 
+async function assertReservationRejected(skuId: number, suffix: string, expectedCode: number) {
+  const [_, err] = await catchError(() => reserve(skuId, suffix));
+  assert.equal(err?.code, expectedCode);
+  const balance = await app.scope('commerce-trade').model.stockBalance.get({ skuId });
+  assert.deepEqual([balance?.onHand, balance?.reserved, balance?.available], [3, 0, 3]);
+  assert.equal(await app.scope('commerce-trade').model.stockReservation.get({ skuId }), undefined);
+  const audits = await app.scope('commerce-trade').model.stockAudit.select({ where: { skuId } });
+  assert.deepEqual(
+    audits.map(audit => audit.operation),
+    ['adjust'],
+  );
+}
+
 describe('stockReservation.test.ts', () => {
   it('reserves and consumes stock exactly once with traceable audits', async () => {
     await app.bean.executor.mockCtx(async () => {
@@ -98,6 +111,43 @@ describe('stockReservation.test.ts', () => {
           ['adjust', 'reserve', 'consume'],
         );
         assert.equal(audits[1].stockReservationId, reservation.id);
+      } finally {
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
+  it('rejects reservations for inactive or unpublished catalog data without writes', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const suffix = `${Date.now()}`;
+      await app.bean.passport.signinMock();
+      try {
+        const inactiveSkuId = await prepareStock(`${suffix}-inactive`);
+        await app.scope('commerce-catalog').model.sku.updateById(inactiveSkuId, {
+          lifecycle: 'inactive',
+        });
+        await assertReservationRejected(inactiveSkuId, `${suffix}-inactive`, 404);
+
+        const unpublishedProductSkuId = await prepareStock(`${suffix}-product`);
+        const unpublishedProductSku = await app
+          .scope('commerce-catalog')
+          .model.sku.getById(unpublishedProductSkuId);
+        await app
+          .scope('commerce-catalog')
+          .model.product.updateById(unpublishedProductSku!.productId, { published: false });
+        await assertReservationRejected(unpublishedProductSkuId, `${suffix}-product`, 409);
+
+        const unpublishedCategorySkuId = await prepareStock(`${suffix}-category`);
+        const unpublishedCategorySku = await app
+          .scope('commerce-catalog')
+          .model.sku.getById(unpublishedCategorySkuId);
+        const unpublishedCategoryProduct = await app
+          .scope('commerce-catalog')
+          .model.product.getById(unpublishedCategorySku!.productId);
+        await app
+          .scope('commerce-catalog')
+          .model.category.updateById(unpublishedCategoryProduct!.categoryId, { published: false });
+        await assertReservationRejected(unpublishedCategorySkuId, `${suffix}-category`, 409);
       } finally {
         await app.bean.passport.signout();
       }

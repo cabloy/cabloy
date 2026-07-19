@@ -148,6 +148,8 @@ declare module 'vona-module-commerce-trade' {
       [SymbolKeyEntityMeta]: EntityStockAuditMeta;
       [SymbolKeyModelOptions]: IModelOptionsStockAudit;
       get<T extends IModelGetOptions<EntityStockAudit,ModelStockAudit>>(where: TypeModelWhere<EntityStockAudit>, options?: T): Promise<TypeModelRelationResult<EntityStockAudit, ModelStockAudit, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityStockAudit,ModelStockAudit>>(where: TypeModelWhere<EntityStockAudit>, options?: T): Promise<TypeModelRelationResult<EntityStockAudit, ModelStockAudit, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityStockAudit,ModelStockAudit>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityStockAudit, ModelStockAudit, T> | undefined>;
       mget<T extends IModelGetOptions<EntityStockAudit,ModelStockAudit>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityStockAudit, ModelStockAudit, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityStockAudit,ModelStockAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityStockAudit, ModelStockAudit, T>>;
       select<T extends IModelSelectParams<EntityStockAudit,ModelStockAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityStockAudit, ModelStockAudit, T>[]>;
@@ -173,6 +175,8 @@ export interface ModelStockBalance {
       [SymbolKeyEntityMeta]: EntityStockBalanceMeta;
       [SymbolKeyModelOptions]: IModelOptionsStockBalance;
       get<T extends IModelGetOptions<EntityStockBalance,ModelStockBalance>>(where: TypeModelWhere<EntityStockBalance>, options?: T): Promise<TypeModelRelationResult<EntityStockBalance, ModelStockBalance, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityStockBalance,ModelStockBalance>>(where: TypeModelWhere<EntityStockBalance>, options?: T): Promise<TypeModelRelationResult<EntityStockBalance, ModelStockBalance, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityStockBalance,ModelStockBalance>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityStockBalance, ModelStockBalance, T> | undefined>;
       mget<T extends IModelGetOptions<EntityStockBalance,ModelStockBalance>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityStockBalance, ModelStockBalance, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityStockBalance,ModelStockBalance,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityStockBalance, ModelStockBalance, T>>;
       select<T extends IModelSelectParams<EntityStockBalance,ModelStockBalance,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityStockBalance, ModelStockBalance, T>[]>;
@@ -198,6 +202,8 @@ export interface ModelStockReservation {
       [SymbolKeyEntityMeta]: EntityStockReservationMeta;
       [SymbolKeyModelOptions]: IModelOptionsStockReservation;
       get<T extends IModelGetOptions<EntityStockReservation,ModelStockReservation>>(where: TypeModelWhere<EntityStockReservation>, options?: T): Promise<TypeModelRelationResult<EntityStockReservation, ModelStockReservation, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityStockReservation,ModelStockReservation>>(where: TypeModelWhere<EntityStockReservation>, options?: T): Promise<TypeModelRelationResult<EntityStockReservation, ModelStockReservation, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityStockReservation,ModelStockReservation>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityStockReservation, ModelStockReservation, T> | undefined>;
       mget<T extends IModelGetOptions<EntityStockReservation,ModelStockReservation>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityStockReservation, ModelStockReservation, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityStockReservation,ModelStockReservation,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityStockReservation, ModelStockReservation, T>>;
       select<T extends IModelSelectParams<EntityStockReservation,ModelStockReservation,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityStockReservation, ModelStockReservation, T>[]>;

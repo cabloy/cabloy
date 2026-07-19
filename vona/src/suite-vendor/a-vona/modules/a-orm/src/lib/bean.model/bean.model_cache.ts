@@ -465,6 +465,58 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
     return item;
   }
 
+  async getForUpdate<T extends IModelGetOptions<TRecord>>(
+    where: TypeModelWhere<TRecord>,
+    options?: T,
+  ): Promise<any | undefined> {
+    if (!this.db.inTransaction) {
+      throw new Error('model error: getForUpdate requires an active transaction');
+    }
+    const optionsLock = Object.assign({}, options, {
+      disableCacheEntity: true,
+      disableCacheQuery: true,
+    });
+    const relations = this.relations.handleRelationsCollection(optionsLock);
+    const [options2, refKeys] = this.relations.prepareColumnsByRelations(relations, optionsLock);
+    let item = await this.__getForUpdate_raw(undefined, where, options2);
+    if (!item) return item;
+    item = await this.relations.handleRelationsOne(
+      relations,
+      item,
+      optionsLock as any,
+      optionsLock,
+    );
+    if (refKeys) {
+      for (const refKey of refKeys) {
+        delete item![refKey];
+      }
+    }
+    return item;
+  }
+
+  async getByIdForUpdate<T extends IModelGetOptions<TRecord>>(
+    id: TableIdentity,
+    options?: T,
+  ): Promise<any | undefined> {
+    return await this.getForUpdate({ id } as TypeModelWhere<TRecord>, options);
+  }
+
+  private async __getForUpdate_raw(
+    table: keyof ITableRecord | undefined,
+    where: TypeModelWhere<TRecord>,
+    options?: IModelGetOptions<TRecord>,
+  ): Promise<TRecord | undefined> {
+    table = table || this.getTable(where);
+    if (!table) return this.scopeOrm.error.ShouldSpecifyTable.throw();
+    const params: IModelSelectParams<TRecord> = { where, limit: 1 };
+    if (options?.columns) {
+      params.columns = options.columns as any;
+    }
+    const builder = this._select_buildParams(table, params as any, options).forUpdate();
+    const items = await super._select(table, params, options, builder);
+    return items[0];
+  }
+
   private async __get_raw(
     table: keyof ITableRecord | undefined,
     where: TypeModelWhere<TRecord>,

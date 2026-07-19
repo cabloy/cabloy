@@ -1,4 +1,5 @@
 export default {
+  Available: '可用库存',
   Category: '分类',
   Description: '描述',
   Name: '名称',

@@ -468,18 +468,18 @@ import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'von
 declare module 'vona-module-test-vona' {
   export interface IModelOptionsCategory {
         relations: {
-          children: IModelRelationHasMany<ModelCategory, 'categoryIdParent', true, 'id'|'name', undefined, undefined, undefined>;
+          children: IModelRelationHasMany<'test-vona:category', 'categoryIdParent', true, 'id'|'name', undefined, undefined, undefined>;
         };
       }
 export interface IModelOptionsCategoryChain {
         relations: {
-          parent: IModelRelationBelongsTo<ModelCategoryChain, ModelCategoryChain, true, 'id'|'name'|'categoryIdParent'>;
+          parent: IModelRelationBelongsTo<'test-vona:categoryChain', 'test-vona:categoryChain', true, 'id'|'name'|'categoryIdParent'>;
         };
       }
 export interface IModelOptionsOrder {
         relations: {
-          user: IModelRelationBelongsTo<ModelOrder, ModelUser, true, 'id'|'name'>;
-products: IModelRelationHasMany<ModelProduct, 'orderId', true, 'id'|'name'|'price'|'quantity'|'amount', undefined, undefined, undefined>;
+          user: IModelRelationBelongsTo<'test-vona:order', 'test-vona:user', true, 'id'|'name'>;
+products: IModelRelationHasMany<'test-vona:product', 'orderId', true, 'id'|'name'|'price'|'quantity'|'amount', undefined, undefined, undefined>;
         };
       }
 export interface IModelOptionsOrderStats {
@@ -490,36 +490,36 @@ productsGroups: IModelRelationHasMany<ModelProduct, 'orderId', false, undefined,
       }
 export interface IModelOptionsPost {
         relations: {
-          postContent: IModelRelationHasOne<ModelPostContent, 'postId', false, 'id'|'content'>;
-user: IModelRelationBelongsTo<ModelPost, ModelUser, true, 'id'|'name'>;
+          postContent: IModelRelationHasOne<'test-vona:postContent', 'postId', false, 'id'|'content'>;
+user: IModelRelationBelongsTo<'test-vona:post', 'test-vona:user', true, 'id'|'name'>;
         };
       }
 export interface IModelOptionsPostContent {
         relations: {
-          post: IModelRelationBelongsTo<ModelPostContent, ModelPost, false, undefined>;
+          post: IModelRelationBelongsTo<'test-vona:postContent', 'test-vona:post', false, undefined>;
         };
       }
 export interface IModelOptionsRole {
         relations: {
-          users: IModelRelationBelongsToMany<ModelRoleUser, ModelUser, false, 'id'|'name',undefined,undefined,undefined>;
+          users: IModelRelationBelongsToMany<'test-vona:roleUser', 'test-vona:user', false, 'id'|'name',undefined,undefined,undefined>;
         };
       }
 export interface IModelOptionsUser {
         relations: {
-          posts: IModelRelationHasMany<ModelPost, 'userId', false, 'id'|'title', ['test-vona:user',ModelPostContent], undefined, undefined>;
+          posts: IModelRelationHasMany<'test-vona:post', 'userId', false, 'id'|'title', ['test-vona:user','test-vona:postContent'], undefined, undefined>;
 roles: IModelRelationBelongsToMany<'test-vona:roleUser', 'test-vona:role', false, 'id'|'name',undefined,undefined,undefined>;
-orders: IModelRelationHasMany<ModelOrder, 'userId', false, undefined, undefined, undefined, undefined>;
+orders: IModelRelationHasMany<'test-vona:order', 'userId', false, undefined, undefined, undefined, undefined>;
         };
       }
 export interface IModelOptionsUserStats {
         relations: {
-          posts: IModelRelationHasMany<ModelPost, 'userId', true, undefined, undefined, { count?: '*'|'title' | Array<'*'|'title'>;sum?: 'stars' | Array<'stars'> }, undefined>;
+          posts: IModelRelationHasMany<'test-vona:post', 'userId', true, undefined, undefined, { count?: '*'|'title' | Array<'*'|'title'>;sum?: 'stars' | Array<'stars'> }, undefined>;
 roles: IModelRelationBelongsToMany<'test-vona:roleUser', 'test-vona:role', false, undefined,undefined,{ count?: '*' | Array<'*'> },undefined>;
         };
       }
 export interface IModelOptionsUserStatsGroup {
         relations: {
-          posts: IModelRelationHasMany<ModelPost, 'userId', true, undefined, undefined, { count?: '*'|'title' | Array<'*'|'title'>;sum?: 'stars' | Array<'stars'> }, 'title' | Array<'title'>>;
+          posts: IModelRelationHasMany<'test-vona:post', 'userId', true, undefined, undefined, { count?: '*'|'title' | Array<'*'|'title'>;sum?: 'stars' | Array<'stars'> }, 'title' | Array<'title'>>;
 roles: IModelRelationBelongsToMany<'test-vona:roleUser', 'test-vona:role', false, undefined,undefined,{ count?: '*' | Array<'*'> },'name' | Array<'name'>>;
         };
       }
@@ -528,6 +528,8 @@ roles: IModelRelationBelongsToMany<'test-vona:roleUser', 'test-vona:role', false
       [SymbolKeyEntityMeta]: EntityCategoryMeta;
       [SymbolKeyModelOptions]: IModelOptionsCategory;
       get<T extends IModelGetOptions<EntityCategory,ModelCategory>>(where: TypeModelWhere<EntityCategory>, options?: T): Promise<TypeModelRelationResult<EntityCategory, ModelCategory, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityCategory,ModelCategory>>(where: TypeModelWhere<EntityCategory>, options?: T): Promise<TypeModelRelationResult<EntityCategory, ModelCategory, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityCategory,ModelCategory>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityCategory, ModelCategory, T> | undefined>;
       mget<T extends IModelGetOptions<EntityCategory,ModelCategory>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityCategory, ModelCategory, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityCategory,ModelCategory,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityCategory, ModelCategory, T>>;
       select<T extends IModelSelectParams<EntityCategory,ModelCategory,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityCategory, ModelCategory, T>[]>;
@@ -557,6 +559,8 @@ export interface ModelCategoryChain {
       [SymbolKeyEntityMeta]: EntityCategoryMeta;
       [SymbolKeyModelOptions]: IModelOptionsCategoryChain;
       get<T extends IModelGetOptions<EntityCategory,ModelCategoryChain>>(where: TypeModelWhere<EntityCategory>, options?: T): Promise<TypeModelRelationResult<EntityCategory, ModelCategoryChain, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityCategory,ModelCategoryChain>>(where: TypeModelWhere<EntityCategory>, options?: T): Promise<TypeModelRelationResult<EntityCategory, ModelCategoryChain, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityCategory,ModelCategoryChain>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityCategory, ModelCategoryChain, T> | undefined>;
       mget<T extends IModelGetOptions<EntityCategory,ModelCategoryChain>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityCategory, ModelCategoryChain, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityCategory,ModelCategoryChain,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityCategory, ModelCategoryChain, T>>;
       select<T extends IModelSelectParams<EntityCategory,ModelCategoryChain,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityCategory, ModelCategoryChain, T>[]>;
@@ -586,6 +590,8 @@ export interface ModelOrder {
       [SymbolKeyEntityMeta]: EntityOrderMeta;
       [SymbolKeyModelOptions]: IModelOptionsOrder;
       get<T extends IModelGetOptions<EntityOrder,ModelOrder>>(where: TypeModelWhere<EntityOrder>, options?: T): Promise<TypeModelRelationResult<EntityOrder, ModelOrder, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityOrder,ModelOrder>>(where: TypeModelWhere<EntityOrder>, options?: T): Promise<TypeModelRelationResult<EntityOrder, ModelOrder, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityOrder,ModelOrder>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityOrder, ModelOrder, T> | undefined>;
       mget<T extends IModelGetOptions<EntityOrder,ModelOrder>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityOrder, ModelOrder, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityOrder,ModelOrder,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityOrder, ModelOrder, T>>;
       select<T extends IModelSelectParams<EntityOrder,ModelOrder,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityOrder, ModelOrder, T>[]>;
@@ -611,6 +617,8 @@ export interface ModelOrderStats {
       [SymbolKeyEntityMeta]: EntityOrderMeta;
       [SymbolKeyModelOptions]: IModelOptionsOrderStats;
       get<T extends IModelGetOptions<EntityOrder,ModelOrderStats>>(where: TypeModelWhere<EntityOrder>, options?: T): Promise<TypeModelRelationResult<EntityOrder, ModelOrderStats, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityOrder,ModelOrderStats>>(where: TypeModelWhere<EntityOrder>, options?: T): Promise<TypeModelRelationResult<EntityOrder, ModelOrderStats, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityOrder,ModelOrderStats>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityOrder, ModelOrderStats, T> | undefined>;
       mget<T extends IModelGetOptions<EntityOrder,ModelOrderStats>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityOrder, ModelOrderStats, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityOrder,ModelOrderStats,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityOrder, ModelOrderStats, T>>;
       select<T extends IModelSelectParams<EntityOrder,ModelOrderStats,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityOrder, ModelOrderStats, T>[]>;
@@ -636,6 +644,8 @@ export interface ModelPost {
       [SymbolKeyEntityMeta]: EntityPostMeta;
       [SymbolKeyModelOptions]: IModelOptionsPost;
       get<T extends IModelGetOptions<EntityPost,ModelPost>>(where: TypeModelWhere<EntityPost>, options?: T): Promise<TypeModelRelationResult<EntityPost, ModelPost, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityPost,ModelPost>>(where: TypeModelWhere<EntityPost>, options?: T): Promise<TypeModelRelationResult<EntityPost, ModelPost, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityPost,ModelPost>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityPost, ModelPost, T> | undefined>;
       mget<T extends IModelGetOptions<EntityPost,ModelPost>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityPost, ModelPost, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityPost,ModelPost,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityPost, ModelPost, T>>;
       select<T extends IModelSelectParams<EntityPost,ModelPost,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityPost, ModelPost, T>[]>;
@@ -661,6 +671,8 @@ export interface ModelPostContent {
       [SymbolKeyEntityMeta]: EntityPostContentMeta;
       [SymbolKeyModelOptions]: IModelOptionsPostContent;
       get<T extends IModelGetOptions<EntityPostContent,ModelPostContent>>(where: TypeModelWhere<EntityPostContent>, options?: T): Promise<TypeModelRelationResult<EntityPostContent, ModelPostContent, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityPostContent,ModelPostContent>>(where: TypeModelWhere<EntityPostContent>, options?: T): Promise<TypeModelRelationResult<EntityPostContent, ModelPostContent, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityPostContent,ModelPostContent>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityPostContent, ModelPostContent, T> | undefined>;
       mget<T extends IModelGetOptions<EntityPostContent,ModelPostContent>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityPostContent, ModelPostContent, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityPostContent,ModelPostContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityPostContent, ModelPostContent, T>>;
       select<T extends IModelSelectParams<EntityPostContent,ModelPostContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityPostContent, ModelPostContent, T>[]>;
@@ -686,6 +698,8 @@ export interface ModelProduct {
       [SymbolKeyEntityMeta]: EntityProductMeta;
       [SymbolKeyModelOptions]: IModelOptionsProduct;
       get<T extends IModelGetOptions<EntityProduct,ModelProduct>>(where: TypeModelWhere<EntityProduct>, options?: T): Promise<TypeModelRelationResult<EntityProduct, ModelProduct, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityProduct,ModelProduct>>(where: TypeModelWhere<EntityProduct>, options?: T): Promise<TypeModelRelationResult<EntityProduct, ModelProduct, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityProduct,ModelProduct>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityProduct, ModelProduct, T> | undefined>;
       mget<T extends IModelGetOptions<EntityProduct,ModelProduct>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityProduct, ModelProduct, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityProduct,ModelProduct,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityProduct, ModelProduct, T>>;
       select<T extends IModelSelectParams<EntityProduct,ModelProduct,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityProduct, ModelProduct, T>[]>;
@@ -715,6 +729,8 @@ export interface ModelRole {
       [SymbolKeyEntityMeta]: EntityRoleMeta;
       [SymbolKeyModelOptions]: IModelOptionsRole;
       get<T extends IModelGetOptions<EntityRole,ModelRole>>(where: TypeModelWhere<EntityRole>, options?: T): Promise<TypeModelRelationResult<EntityRole, ModelRole, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityRole,ModelRole>>(where: TypeModelWhere<EntityRole>, options?: T): Promise<TypeModelRelationResult<EntityRole, ModelRole, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityRole,ModelRole>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityRole, ModelRole, T> | undefined>;
       mget<T extends IModelGetOptions<EntityRole,ModelRole>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityRole, ModelRole, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityRole,ModelRole,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityRole, ModelRole, T>>;
       select<T extends IModelSelectParams<EntityRole,ModelRole,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityRole, ModelRole, T>[]>;
@@ -744,6 +760,8 @@ export interface ModelRoleUser {
       [SymbolKeyEntityMeta]: EntityRoleUserMeta;
       [SymbolKeyModelOptions]: IModelOptionsRoleUser;
       get<T extends IModelGetOptions<EntityRoleUser,ModelRoleUser>>(where: TypeModelWhere<EntityRoleUser>, options?: T): Promise<TypeModelRelationResult<EntityRoleUser, ModelRoleUser, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityRoleUser,ModelRoleUser>>(where: TypeModelWhere<EntityRoleUser>, options?: T): Promise<TypeModelRelationResult<EntityRoleUser, ModelRoleUser, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityRoleUser,ModelRoleUser>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityRoleUser, ModelRoleUser, T> | undefined>;
       mget<T extends IModelGetOptions<EntityRoleUser,ModelRoleUser>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityRoleUser, ModelRoleUser, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityRoleUser,ModelRoleUser,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityRoleUser, ModelRoleUser, T>>;
       select<T extends IModelSelectParams<EntityRoleUser,ModelRoleUser,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityRoleUser, ModelRoleUser, T>[]>;
@@ -769,6 +787,8 @@ export interface ModelTest {
       [SymbolKeyEntityMeta]: EntityTestMeta;
       [SymbolKeyModelOptions]: IModelOptionsTest;
       get<T extends IModelGetOptions<EntityTest,ModelTest>>(where: TypeModelWhere<EntityTest>, options?: T): Promise<TypeModelRelationResult<EntityTest, ModelTest, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityTest,ModelTest>>(where: TypeModelWhere<EntityTest>, options?: T): Promise<TypeModelRelationResult<EntityTest, ModelTest, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityTest,ModelTest>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityTest, ModelTest, T> | undefined>;
       mget<T extends IModelGetOptions<EntityTest,ModelTest>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityTest, ModelTest, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityTest,ModelTest,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityTest, ModelTest, T>>;
       select<T extends IModelSelectParams<EntityTest,ModelTest,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityTest, ModelTest, T>[]>;
@@ -794,6 +814,8 @@ export interface ModelTestDynamicTable {
       [SymbolKeyEntityMeta]: EntityTestMeta;
       [SymbolKeyModelOptions]: IModelOptionsTestDynamicTable;
       get<T extends IModelGetOptions<EntityTest,ModelTestDynamicTable>>(where: TypeModelWhere<EntityTest>, options?: T): Promise<TypeModelRelationResult<EntityTest, ModelTestDynamicTable, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityTest,ModelTestDynamicTable>>(where: TypeModelWhere<EntityTest>, options?: T): Promise<TypeModelRelationResult<EntityTest, ModelTestDynamicTable, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityTest,ModelTestDynamicTable>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityTest, ModelTestDynamicTable, T> | undefined>;
       mget<T extends IModelGetOptions<EntityTest,ModelTestDynamicTable>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityTest, ModelTestDynamicTable, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityTest,ModelTestDynamicTable,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityTest, ModelTestDynamicTable, T>>;
       select<T extends IModelSelectParams<EntityTest,ModelTestDynamicTable,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityTest, ModelTestDynamicTable, T>[]>;
@@ -819,6 +841,8 @@ export interface ModelUser {
       [SymbolKeyEntityMeta]: EntityUserMeta;
       [SymbolKeyModelOptions]: IModelOptionsUser;
       get<T extends IModelGetOptions<EntityUser,ModelUser>>(where: TypeModelWhere<EntityUser>, options?: T): Promise<TypeModelRelationResult<EntityUser, ModelUser, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityUser,ModelUser>>(where: TypeModelWhere<EntityUser>, options?: T): Promise<TypeModelRelationResult<EntityUser, ModelUser, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityUser,ModelUser>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityUser, ModelUser, T> | undefined>;
       mget<T extends IModelGetOptions<EntityUser,ModelUser>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityUser, ModelUser, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityUser,ModelUser,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityUser, ModelUser, T>>;
       select<T extends IModelSelectParams<EntityUser,ModelUser,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityUser, ModelUser, T>[]>;
@@ -848,6 +872,8 @@ export interface ModelUserStats {
       [SymbolKeyEntityMeta]: EntityUserMeta;
       [SymbolKeyModelOptions]: IModelOptionsUserStats;
       get<T extends IModelGetOptions<EntityUser,ModelUserStats>>(where: TypeModelWhere<EntityUser>, options?: T): Promise<TypeModelRelationResult<EntityUser, ModelUserStats, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityUser,ModelUserStats>>(where: TypeModelWhere<EntityUser>, options?: T): Promise<TypeModelRelationResult<EntityUser, ModelUserStats, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityUser,ModelUserStats>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityUser, ModelUserStats, T> | undefined>;
       mget<T extends IModelGetOptions<EntityUser,ModelUserStats>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityUser, ModelUserStats, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityUser,ModelUserStats,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityUser, ModelUserStats, T>>;
       select<T extends IModelSelectParams<EntityUser,ModelUserStats,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityUser, ModelUserStats, T>[]>;
@@ -877,6 +903,8 @@ export interface ModelUserStatsGroup {
       [SymbolKeyEntityMeta]: EntityUserMeta;
       [SymbolKeyModelOptions]: IModelOptionsUserStatsGroup;
       get<T extends IModelGetOptions<EntityUser,ModelUserStatsGroup>>(where: TypeModelWhere<EntityUser>, options?: T): Promise<TypeModelRelationResult<EntityUser, ModelUserStatsGroup, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityUser,ModelUserStatsGroup>>(where: TypeModelWhere<EntityUser>, options?: T): Promise<TypeModelRelationResult<EntityUser, ModelUserStatsGroup, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityUser,ModelUserStatsGroup>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityUser, ModelUserStatsGroup, T> | undefined>;
       mget<T extends IModelGetOptions<EntityUser,ModelUserStatsGroup>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityUser, ModelUserStatsGroup, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityUser,ModelUserStatsGroup,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityUser, ModelUserStatsGroup, T>>;
       select<T extends IModelSelectParams<EntityUser,ModelUserStatsGroup,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityUser, ModelUserStatsGroup, T>[]>;
@@ -939,7 +967,7 @@ declare module 'vona-module-test-vona' {
 /** bean: end */
 /** bean: begin */
 import type { BeanTestCtx } from '../bean/bean.testCtx.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'testCtx': BeanTestCtx;
@@ -2086,6 +2114,7 @@ declare module 'vona-module-a-web' {
 '/test/vona/onion/echo3/:userId': undefined;
 '/test/vona/onion/echo5': undefined;
 '/test/vona/onion/echo6': undefined;
+'/test/vona/onion/echo7': undefined;
 '/test/vona/order/findAll': undefined;
 '/test/vona/order/findMany': undefined;
 '/test/vona/passport/echo/:name': undefined;
@@ -2119,6 +2148,7 @@ export interface IApiPathPostRecord{
 '/test/vona/transaction/success': undefined;
 '/test/vona/upload/fields': undefined;
 '/test/vona/upload/file': undefined;
+'/test/vona/upload/strict': undefined;
 '/test/vona/upload/files': undefined;
     }
 export interface IApiPathPatchRecord{
@@ -2126,7 +2156,13 @@ export interface IApiPathPatchRecord{
     }
 
 }
-
+import 'vona-module-a-openapi';
+  declare module 'vona-module-a-openapi' {
+    export interface IResourceRecord {
+      'test-vona:guardPassport': never;
+    }
+  }
+  
 /** controller: end */
 /** config: begin */
 export * from '../config/config.ts';

@@ -44,11 +44,9 @@ export class ServiceStockBalance extends BeanBase {
       this.app.throw(404, 'SKU not found');
     }
 
-    let stockBalance = await this.scope.model.stockBalance
-      .builderSelect()
-      .where('skuId', stockAdjust.skuId)
-      .forUpdate()
-      .first();
+    let stockBalance = await this.scope.model.stockBalance.getForUpdate({
+      skuId: stockAdjust.skuId,
+    });
     if (!stockBalance) {
       if (stockAdjust.delta < 0) {
         throw new Error('stock adjustment would make balance negative');
@@ -92,15 +90,19 @@ export class ServiceStockBalance extends BeanBase {
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
   async reserve(command: IStockReservationCommand): Promise<EntityStockReservation> {
     this._assertReservationCommand(command);
-    const sku = await this.$scope.commerceCatalog.model.sku.getById(command.skuId);
+    const sku = await this.$scope.commerceCatalog.model.sku.getById(command.skuId, {
+      include: {
+        product: {
+          include: {
+            category: true,
+          },
+        },
+      },
+    });
     if (!sku || sku.lifecycle !== 'active') {
       this.app.throw(404, 'SKU not found');
     }
-    const product = await this.$scope.commerceCatalog.model.product.getById(sku.productId);
-    const category = product
-      ? await this.$scope.commerceCatalog.model.category.getById(product.categoryId)
-      : undefined;
-    if (!product?.published || !category?.published) {
+    if (!sku.product?.published || !sku.product.category?.published) {
       this.app.throw(409, 'SKU is not sellable');
     }
 
@@ -197,11 +199,9 @@ export class ServiceStockBalance extends BeanBase {
     if (!transition.reason.trim()) {
       this.app.throw(400, 'stock reservation reason is required');
     }
-    const reservation = await this.scope.model.stockReservation
-      .builderSelect()
-      .where('id', transition.reservationId)
-      .forUpdate()
-      .first();
+    const reservation = await this.scope.model.stockReservation.getByIdForUpdate(
+      transition.reservationId,
+    );
     if (!reservation) {
       this.app.throw(404, 'stock reservation not found');
     }
@@ -212,11 +212,9 @@ export class ServiceStockBalance extends BeanBase {
       this.app.throw(409, `cannot ${targetState} a ${reservation.state} stock reservation`);
     }
 
-    const stockBalance = await this.scope.model.stockBalance
-      .builderSelect()
-      .where('id', reservation.stockBalanceId)
-      .forUpdate()
-      .first();
+    const stockBalance = await this.scope.model.stockBalance.getByIdForUpdate(
+      reservation.stockBalanceId,
+    );
     if (!stockBalance) {
       this.app.throw(404, 'stock balance not found');
     }
@@ -245,11 +243,7 @@ export class ServiceStockBalance extends BeanBase {
   }
 
   private async _getLockedBalance(skuId: TableIdentity): Promise<EntityStockBalance | undefined> {
-    return await this.scope.model.stockBalance
-      .builderSelect()
-      .where('skuId', skuId)
-      .forUpdate()
-      .first();
+    return await this.scope.model.stockBalance.getForUpdate({ skuId });
   }
 
   private async _updateBalance(

@@ -46,7 +46,8 @@
   "title": "commerce-catalog",
   "vonaModule": {
     "dependencies": {
-      "a-vona": "5.0.0"
+      "a-vona": "5.0.0",
+      "commerce-trade": "5.0.0"
     },
     "fileVersion": 1
   }
