@@ -35,6 +35,7 @@
     "dev:zova:commerce:admin": "cd zova && npm run dev:ssr:cabloyCommerceAdmin",
     "build": "npm run build:zova && pnpm --dir vona run build",
     "build:docker": "npm run build:zova && pnpm --dir vona run build:docker",
+    "build:zova:all": "npm run build:zova && npm run build:zova:commerce",
     "build:zova": "pnpm --dir zova run build:ssr:cabloyBasicBatch",
     "build:zova:admin": "pnpm --dir zova run build:ssr:cabloyBasicAdmin && pnpm --dir zova run build:rest:cabloyBasicAdmin",
     "build:zova:web": "pnpm --dir zova run build:ssr:cabloyBasicWeb && pnpm --dir zova run build:rest:cabloyBasicWeb",

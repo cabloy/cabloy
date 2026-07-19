@@ -24,10 +24,6 @@ jobs:
           version: 11.5.2
       - name: init
         run: npm run init
-      - name: build zova
-        run: npm run build:zova
-      - name: synchronize Vona dependencies
-        run: npm run deps:vona
       - name: install Chromium
         run: npx playwright install --with-deps chromium
       - name: run E2E baseline

@@ -260,18 +260,12 @@ function initZova(): void {
   exec('npm run zova :tools:deps');
 }
 
-// --- Step E: buildSsrCabloyBasicStartBatch ---
+// --- Step E: buildSsrZovaAll ---
 
-function buildSsrCabloyBasicStartBatch(): void {
-  if (existsSync(resolve(ROOT_DIR, '__CABLOY_BASIC__'))) {
-    // eslint-disable-next-line
-    console.log('[init] Building zova SSR cabloyBasicBatch...');
-    exec('pnpm run build:ssr:cabloyBasicBatch', ZOVA_DIR);
-  } else if (existsSync(resolve(ROOT_DIR, '__CABLOY_START__'))) {
-    // eslint-disable-next-line
-    console.log('[init] Building zova SSR cabloyStartBatch...');
-    exec('pnpm run build:ssr:cabloyStartBatch', ZOVA_DIR);
-  }
+function buildSsrZovaAll(): void {
+  // eslint-disable-next-line
+  console.log('[init] Building all zova SSR flavors...');
+  exec('npm run build:zova:all');
 }
 
 // --- Step F: cleanupWorkspaceYaml ---
@@ -314,7 +308,7 @@ generateEnvProdLocal();
 generateEnvProdDockerLocal();
 cleanupWorkspaceYaml();
 initZova();
-buildSsrCabloyBasicStartBatch();
+buildSsrZovaAll();
 initVona();
 initCabloyDocs();
 writeVersionMarker();

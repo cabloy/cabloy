@@ -43,6 +43,8 @@ npm run build:zova:commerce:web
 npm run build:zova:commerce:admin
 ```
 
+`npm run build:zova:all` sequentially runs the focused Basic and Commerce batch builds. `npm run init` uses it to prepare every shipped Cabloy Basic SSR/REST flavor before Vona is initialized. For normal frontend work, continue to use `build:zova` or `build:zova:commerce` when only that suite's artifacts changed.
+
 ## Basic SSR browser acceptance
 
 The default Basic Web and Admin sites have browser smoke commands that exercise Vona SSR dispatch at port `7102`, not a standalone Zova development-server port.

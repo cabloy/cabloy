@@ -23,6 +23,7 @@ Cabloy Basic exposes these shared root scripts:
 - `npm run dev:zova:commerce:admin`
 - `npm run build`
 - `npm run build:zova`
+- `npm run build:zova:all`
 - `npm run build:zova:admin`
 - `npm run build:zova:web`
 - `npm run build:zova:commerce`
@@ -44,6 +45,8 @@ Cabloy Basic exposes these shared root scripts:
 - `npm run docs:dev`
 - `npm run docs:build`
 - `npm run docs:preview`
+
+`npm run init` prepares all Cabloy Basic SSR and REST artifacts with `npm run build:zova:all`, which sequentially builds the Basic and Commerce flavor batches before Vona initialization. Use `build:zova` or `build:zova:commerce` for focused artifact refreshes; use `build:zova:all` only when every shipped Basic flavor must be prepared.
 
 ## Cabloy Start entrypoints
 
