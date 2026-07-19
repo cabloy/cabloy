@@ -191,6 +191,24 @@ That means:
 
 For the model-layer perspective, also see [Model Guide](/backend/model-guide).
 
+## Tenancy boundary: one Vona tenant per instance
+
+In Vona's current tenancy model, a tenant corresponds to an instance. The resolved active instance is the data-isolation boundary for ordinary resource code.
+
+For resources that inherit the normal entity base behavior:
+
+- `iid` persists the instance discriminator when instances share a datasource
+- normal model CRUD uses the active `ctx.instance.id` rather than a caller-supplied tenant or `iid`
+- isolated instances can add a separate datasource boundary through `isolateClient`, but they still remain separate instances
+
+This means a normal scoped lookup has one business result when it finds no row: that resource is absent in the current tenant/instance. Do not bypass model scope or issue an unscoped secondary lookup merely to reveal that another instance has the same identifier and change the result to `403`.
+
+This rule does not eliminate genuine authorization failures. Return `403` when the current request is not authorized to perform an operation on a resource that is available in its authorized scope. The rule only prevents ordinary scoped misses from becoming cross-instance existence disclosures.
+
+Do not use instance selection to represent a future merchant, store, organization, or similar business boundary. A multi-merchant design belongs inside one instance and needs explicit merchant ownership, authorization, relations, indexes, and tests in addition to the existing instance boundary.
+
+For the operational model rules, see [Model Guide](/backend/model-guide). For generated resource behavior, see [CRUD Workflow](/backend/crud-workflow).
+
 ## Relationship to runtime and config docs
 
 Read this guide together with:

@@ -199,23 +199,21 @@ A practical implication is:
 
 ## Instance-aware model semantics
 
-One important current-runtime distinction is that ordinary model usage is instance-aware by default.
+One important current-runtime distinction is that ordinary model usage is instance-aware by default. In Vona's current tenancy model, the active instance is the tenant boundary.
 
-A practical interpretation is:
+For normal resource models, the model layer handles the active instance `iid` as part of ordinary persistence behavior:
 
-- normal model operations participate in the current instance context
-- instance-aware filtering is part of normal model behavior unless disabled
-- request-scoped code should usually preserve that behavior instead of bypassing it casually
+- inserts receive the active instance identity
+- selects, `getById`, counts, updates, and deletes receive the active instance predicate
+- request-scoped code should preserve this behavior instead of accepting caller-controlled tenant or `iid` scope
 
-This is why `disableInstance` is a meaningful semantic choice rather than a minor ORM toggle.
+This is why `disableInstance` is a meaningful semantic choice rather than a minor ORM toggle. Use it only for a genuinely global/system model or another explicitly authorized contract that must ignore the active instance boundary.
 
-Use it only when the model truly should ignore the active instance boundary.
+A scoped miss is absent in the current tenant/instance. Do not use `disableInstance`, a plain builder, or raw SQL merely to probe another instance and choose between `403` and not-found behavior. A real authorization failure can still be `403`; the distinction is that an ordinary resource lookup should not disclose cross-instance existence.
 
-Another practical implication is:
+Lower-level builders and raw SQL need extra care when replacing ordinary model behavior. Preserve the active instance predicate when the operation is meant to remain instance-scoped, and document the authorization and audit contract when it deliberately is not.
 
-- lower-level builder or raw-SQL flows may need extra care when you are reproducing behavior that the ordinary model path would have applied automatically
-
-For the broader instance/config story, also see [Config Guide](/backend/config-guide).
+For the tenancy terminology and runtime boundary, see [Multi-Instance and Instance Resolution](/backend/multi-instance-and-instance-resolution). For generated resource flows, see [CRUD Workflow](/backend/crud-workflow). For the broader instance/config story, also see [Config Guide](/backend/config-guide).
 
 ## Datasource selection
 

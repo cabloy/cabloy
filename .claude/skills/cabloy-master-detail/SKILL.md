@@ -152,7 +152,18 @@ Important rule:
 
 - do not start from hand-patching DTO placement or relation semantics until the generator path and specimen shape have been checked first
 
-## Step 6: Keep fullstack boundaries explicit
+## Step 6: Preserve the instance boundary across the aggregate
+
+Master-detail ownership is separate from Vona's tenant/instance boundary:
+
+- in the current tenancy model, a tenant corresponds to an instance and normal parent/detail model operations retain the active instance scope
+- relation and foreign-key checks must preserve that scope; aggregate ownership does not authorize bypassing it
+- treat a missing parent or detail from the normal scoped aggregate flow as absent; do not add unscoped existence probes merely to distinguish a foreign-instance row
+- if a future multi-merchant design is needed, model merchant ownership explicitly within the instance in addition to the aggregate relation
+
+For the canonical tenancy explanation, read [Multi-Instance and Instance Resolution](../../../cabloy-docs/backend/multi-instance-and-instance-resolution.md) and [Model Guide](../../../cabloy-docs/backend/model-guide.md).
+
+## Step 7: Keep fullstack boundaries explicit
 
 This skill is primarily for backend detail aggregation.
 
@@ -166,7 +177,7 @@ Use this skill first when the core problem is still:
 - aggregate vs standalone detail mode
 - nested detail DTO naming or placement in a scaffolding context
 
-## Step 7: Verification guidance
+## Step 8: Verification guidance
 
 Always finish with verification that matches the detail shape.
 

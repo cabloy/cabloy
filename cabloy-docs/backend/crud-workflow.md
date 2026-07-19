@@ -95,6 +95,16 @@ Read this guide together with:
 - [Migration and Changes](/backend/migration-and-changes)
 - [Unit Testing](/backend/unit-testing)
 
+## Instance-scoped CRUD
+
+Generated controller, service, and model flows retain Vona's default active-instance scope. In the current tenancy model, a tenant corresponds to an instance, so ordinary resource CRUD should not accept caller-controlled `iid` or tenant selection.
+
+When a normal scoped view, update, or delete target is not found, preserve its absent/not-found semantics. Do not run an unscoped raw-table probe merely to discover whether another instance owns the same identifier and convert that result into `403`.
+
+If a future requirement introduces multiple merchants inside one instance, model that as an explicit additional business boundary with its own ownership, authorization, relations, indexes, and tests. It does not replace the existing instance scope.
+
+For the runtime tenancy boundary, see [Multi-Instance and Instance Resolution](/backend/multi-instance-and-instance-resolution). For model-level behavior and exceptional raw/builder usage, see [Model Guide](/backend/model-guide).
+
 ## Recommended workflow
 
 1. run the CRUD generator

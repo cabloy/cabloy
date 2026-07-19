@@ -142,6 +142,16 @@ Check whether the feature needs:
 - relation definitions
 - datasource or cache considerations
 
+For normal resource persistence, preserve Vona's default active-instance scope:
+
+- in the current tenancy model, a tenant corresponds to an instance and ordinary model CRUD handles the current `iid`
+- do not expose caller-controlled `iid` or tenant selection in ordinary resource DTOs or controller logic
+- treat a record absent from an ordinary scoped model lookup as absent; do not use raw cross-instance probes merely to choose between `403` and not-found behavior
+- use `disableInstance`, plain builders, or raw SQL only for an explicit global/system or otherwise authorized contract
+- model a future multi-merchant requirement as a separate boundary within an instance, with its own ownership and authorization rules
+
+For the canonical explanation, read [Multi-Instance and Instance Resolution](../../../cabloy-docs/backend/multi-instance-and-instance-resolution.md) and [Model Guide](../../../cabloy-docs/backend/model-guide.md).
+
 ### Verification
 
 Check whether the feature needs:
