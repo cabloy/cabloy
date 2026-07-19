@@ -41,9 +41,9 @@ Never substitute `build:rest:*` alone: the SSR bundle and generated REST package
 
 Phase 20 retains build and browser evidence for:
 
-- `ATP-CTR-01`: each paired build produces separate Commerce SSR and REST artifacts and `npm run deps:vona` resolves them;
+- `ATP-CTR-01`: the `commerce-siteadmin` operator-context DTO/controller is the first observed forward-contract probe. Regenerate its Zova OpenAPI consumer, then build both paired Commerce SSR and REST artifacts and confirm `npm run deps:vona` resolves them without editing generated files;
 - `ATP-SSR-01`: anonymous `/commerce` HTML contains no cart, address, order, coupon, or payment data before hydration, then the browser observes `html[data-zova-hydrated="commerce"]`;
-- `ATP-SSR-02`: `/commerce-admin` is independent from `/commerce`, redirects to its own login route, then the browser observes `html[data-zova-hydrated="commerceAdmin"]`; future operator routes and APIs must independently enforce tenant-scoped authorization.
+- `ATP-SSR-02`: `/commerce-admin` is independent from `/commerce`, redirects to its own login route, then the browser observes `html[data-zova-hydrated="commerceAdmin"]`. The module-local `commerce-siteadmin/test/operatorAccess.test.ts` separately proves that its direct operator-context API rejects anonymous and non-`systemAdmin` callers; route/menu admission is not API authorization.
 
 `data-zova-hydrated` is absent from raw SSR HTML. Zova's `a-ssr` lifecycle sets it client-side from `onHydrated()` after the SSR root and framework-tracked nested hydration work drain. It is an initial SSR-hydration marker, not a generic SPA or later client-navigation ready signal.
 
