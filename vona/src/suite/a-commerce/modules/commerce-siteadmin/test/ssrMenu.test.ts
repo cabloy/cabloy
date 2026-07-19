@@ -6,6 +6,8 @@ const menuNames = [
   'commerce-catalog:category#category',
   'commerce-catalog:product#product',
   'commerce-catalog:sku#sku',
+  'commerce-trade:stockBalance#stockBalance',
+  'commerce-trade:stockAudit#stockAudit',
 ];
 
 async function retrieveMenus() {
@@ -50,6 +52,23 @@ describe('ssrMenu.test.ts', () => {
         );
         assert.equal(menuSku?.group, catalog.name);
         assert.equal(menuSku?.meta?.params?.resource, 'commerce-catalog:sku');
+
+        const inventory = menusSystemAdmin.groups?.find(
+          group => group.name === 'commerce-siteadmin:inventory',
+        );
+        assert.ok(inventory);
+
+        const menuStockBalance = menusSystemAdmin.menus?.find(
+          menu => menu.name === 'commerce-trade:stockBalance#stockBalance',
+        );
+        assert.equal(menuStockBalance?.group, inventory.name);
+        assert.equal(menuStockBalance?.meta?.params?.resource, 'commerce-trade:stockBalance');
+
+        const menuStockAudit = menusSystemAdmin.menus?.find(
+          menu => menu.name === 'commerce-trade:stockAudit#stockAudit',
+        );
+        assert.equal(menuStockAudit?.group, inventory.name);
+        assert.equal(menuStockAudit?.meta?.params?.resource, 'commerce-trade:stockAudit');
       } finally {
         await app.bean.passport.signout();
       }

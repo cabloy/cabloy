@@ -196,12 +196,15 @@ declare module 'vona-module-commerce-siteadmin' {
 /** ssrMenu: end */
 /** ssrMenuGroup: begin */
 export * from '../bean/ssrMenuGroup.catalog.ts';
+export * from '../bean/ssrMenuGroup.inventory.ts';
 import type { ISsrMenuGroupOptionsCatalog } from '../bean/ssrMenuGroup.catalog.ts';
+import type { ISsrMenuGroupOptionsInventory } from '../bean/ssrMenuGroup.inventory.ts';
 import 'vona-module-a-ssr';
 declare module 'vona-module-a-ssr' {
   
     export interface ISsrMenuGroupRecord {
       'commerce-siteadmin:catalog': ISsrMenuGroupOptionsCatalog;
+'commerce-siteadmin:inventory': ISsrMenuGroupOptionsInventory;
     }
 
   
@@ -217,6 +220,17 @@ declare module 'vona-module-commerce-siteadmin' {
             get $beanFullName(): 'commerce-siteadmin.ssrMenuGroup.catalog';
             get $onionName(): 'commerce-siteadmin:catalog';
             get $onionOptions(): ISsrMenuGroupOptionsCatalog;
+          }
+
+        export interface SsrMenuGroupInventory {
+          /** @internal */
+          get scope(): ScopeModuleCommerceSiteadmin;
+        }
+
+          export interface SsrMenuGroupInventory {
+            get $beanFullName(): 'commerce-siteadmin.ssrMenuGroup.inventory';
+            get $onionName(): 'commerce-siteadmin:inventory';
+            get $onionOptions(): ISsrMenuGroupOptionsInventory;
           } 
 }
 /** ssrMenuGroup: end */
