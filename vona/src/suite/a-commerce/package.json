@@ -10,6 +10,7 @@
     "vona-module-commerce-member": "^5.0.0",
     "vona-module-commerce-payment": "^5.0.0",
     "vona-module-commerce-promotion": "^5.0.0",
+    "vona-module-commerce-seed": "^5.0.0",
     "vona-module-commerce-siteadmin": "^5.0.0",
     "vona-module-commerce-siteweb": "^5.0.0",
     "vona-module-commerce-trade": "^5.0.0"

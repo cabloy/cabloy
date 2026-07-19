@@ -340,6 +340,9 @@ importers:
       vona-module-commerce-promotion:
         specifier: workspace:^
         version: link:src/suite/a-commerce/modules/commerce-promotion
+      vona-module-commerce-seed:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-seed
       vona-module-commerce-siteadmin:
         specifier: workspace:^
         version: link:src/suite/a-commerce/modules/commerce-siteadmin
@@ -2813,6 +2816,9 @@ importers:
       vona-module-commerce-promotion:
         specifier: ^5.0.0
         version: link:modules/commerce-promotion
+      vona-module-commerce-seed:
+        specifier: ^5.0.0
+        version: link:modules/commerce-seed
       vona-module-commerce-siteadmin:
         specifier: ^5.0.0
         version: link:modules/commerce-siteadmin
@@ -2851,6 +2857,15 @@ importers:
         version: 6.1.3
 
   src/suite/a-commerce/modules/commerce-promotion:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/a-commerce/modules/commerce-seed:
     devDependencies:
       clean-package:
         specifier: ^2.2.0

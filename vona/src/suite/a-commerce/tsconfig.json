@@ -22,6 +22,9 @@
     },
     {
       "path": "modules/commerce-siteadmin/tsconfig.build.json"
+    },
+    {
+      "path": "modules/commerce-seed/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]
