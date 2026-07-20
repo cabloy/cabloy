@@ -6,5 +6,10 @@ import { EntityCategory } from '../entity/category.tsx';
 
 export interface IModelOptionsCategory extends IDecoratorModelOptions<EntityCategory> {}
 
-@Model<IModelOptionsCategory>({ entity: EntityCategory })
+@Model<IModelOptionsCategory>({
+  entity: EntityCategory,
+  cache: {
+    modelsClear: 'commerce-catalog:product',
+  },
+})
 export class ModelCategory extends BeanModelBase<EntityCategory> {}

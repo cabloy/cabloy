@@ -8,6 +8,9 @@ export interface IModelOptionsSku extends IDecoratorModelOptions<EntitySku> {}
 
 @Model<IModelOptionsSku>({
   entity: EntitySku,
+  cache: {
+    modelsClear: 'commerce-catalog:product',
+  },
   relations: {
     product: $relation.belongsTo('commerce-catalog:sku', 'commerce-catalog:product', 'productId'),
   },

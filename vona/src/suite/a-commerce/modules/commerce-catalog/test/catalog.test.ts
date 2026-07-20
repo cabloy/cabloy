@@ -125,6 +125,149 @@ describe('catalog.test.ts', () => {
       ]);
       assert.equal(catalogPublicProduct.priceCents, 1299);
       assert.equal(catalogPublicProduct.available, 2);
+      const publicProduct = await app.bean.executor.performAction(
+        'get',
+        '/commerce/catalog/product/public/:id',
+        { params: { id: active.productId }, innerAccess: false },
+      );
+      assert.equal(String(publicProduct.id), String(active.productId));
+      for (const catalog of [
+        draft,
+        inactive,
+        archived,
+        unpublishedProduct,
+        unpublishedCategory,
+        zeroStock,
+      ]) {
+        const publicProduct = await app.bean.executor.performAction(
+          'get',
+          '/commerce/catalog/product/public/:id',
+          { params: { id: catalog.productId }, innerAccess: false },
+        );
+        assert.equal(publicProduct, undefined);
+      }
+    });
+  });
+
+  it('paginates and aggregates public Products without duplicate roots', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const first = await createCatalog('__catalog-page-first__', 'active');
+      const second = await createCatalog('__catalog-page-second__', 'active');
+      const scopeCatalog = app.scope('commerce-catalog');
+      const additionalSku = await scopeCatalog.model.sku.insert({
+        code: '__catalog-page-first-additional-sku__',
+        productId: first.productId,
+        priceCents: 999,
+        lifecycle: 'active',
+      });
+      const inactiveSku = await scopeCatalog.model.sku.insert({
+        code: '__catalog-page-first-inactive-sku__',
+        productId: first.productId,
+        priceCents: 100,
+        lifecycle: 'inactive',
+      });
+      for (const [skuId, delta] of [
+        [first.skuId, 2],
+        [additionalSku.id, 3],
+        [inactiveSku.id, 4],
+        [second.skuId, 1],
+      ] as const) {
+        await app.scope('commerce-trade').service.stockBalance.adjustStock({
+          skuId,
+          delta,
+          reason: 'catalog pagination fixture',
+          correlationId: `catalog-pagination-${skuId}`,
+        });
+      }
+      const query = { title: '__catalog-page-', pageSize: 1 };
+      const pageOne = await app.bean.executor.performAction(
+        'get',
+        '/commerce/catalog/product/public',
+        {
+          query: { ...query, pageNo: 1 },
+          innerAccess: false,
+        },
+      );
+      const pageTwo = await app.bean.executor.performAction(
+        'get',
+        '/commerce/catalog/product/public',
+        {
+          query: { ...query, pageNo: 2 },
+          innerAccess: false,
+        },
+      );
+      assert.equal(pageOne.total, '2');
+      assert.equal(pageOne.pageCount, 2);
+      assert.equal(pageOne.pageSize, 1);
+      assert.equal(pageOne.pageNo, 1);
+      assert.equal(pageTwo.total, '2');
+      assert.equal(pageTwo.pageNo, 2);
+      assert.notEqual(String(pageOne.list[0].id), String(pageTwo.list[0].id));
+      const firstPublicProduct = [pageOne, pageTwo]
+        .flatMap(page => page.list)
+        .find(product => String(product.id) === String(first.productId));
+      assert.equal(firstPublicProduct.priceCents, 999);
+      assert.equal(firstPublicProduct.available, 5);
+      assert.deepEqual(
+        firstPublicProduct.skuAvailables.map(sku => String(sku.id)).sort(),
+        [first.skuId, additionalSku.id].map(String).sort(),
+      );
+      const categoryProducts = await app.bean.executor.performAction(
+        'get',
+        '/commerce/catalog/product/public',
+        {
+          query: { categoryId: first.categoryId },
+          innerAccess: false,
+        },
+      );
+      assert.equal(categoryProducts.total, '1');
+      assert.equal(String(categoryProducts.list[0].id), String(first.productId));
+    });
+  });
+
+  it('refreshes public eligibility after Category, SKU, and stock changes', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const catalog = await createCatalog('__catalog-cache__', 'active');
+      const query = { title: '__catalog-cache__' };
+      const selectPublic = async () => {
+        return await app.bean.executor.performAction('get', '/commerce/catalog/product/public', {
+          query,
+          innerAccess: false,
+        });
+      };
+      await app.scope('commerce-trade').service.stockBalance.adjustStock({
+        skuId: catalog.skuId,
+        delta: 1,
+        reason: 'catalog cache fixture',
+        correlationId: `catalog-cache-add-${catalog.skuId}`,
+      });
+      assert.equal((await selectPublic()).total, '1');
+      await app.scope('commerce-trade').service.stockBalance.adjustStock({
+        skuId: catalog.skuId,
+        delta: -1,
+        reason: 'catalog cache fixture',
+        correlationId: `catalog-cache-remove-${catalog.skuId}`,
+      });
+      assert.equal((await selectPublic()).total, '0');
+      await app.scope('commerce-trade').service.stockBalance.adjustStock({
+        skuId: catalog.skuId,
+        delta: 1,
+        reason: 'catalog cache fixture',
+        correlationId: `catalog-cache-restore-${catalog.skuId}`,
+      });
+      assert.equal((await selectPublic()).total, '1');
+      await app.scope('commerce-catalog').model.sku.updateById(catalog.skuId, {
+        lifecycle: 'inactive',
+      });
+      assert.equal((await selectPublic()).total, '0');
+      await app.scope('commerce-catalog').model.sku.updateById(catalog.skuId, {
+        lifecycle: 'active',
+      });
+      assert.equal((await selectPublic()).total, '1');
+      await app.scope('commerce-catalog').model.category.updateById(catalog.categoryId, {
+        published: false,
+      });
+      assert.equal((await selectPublic()).total, '0');
     });
   });
 
@@ -196,6 +339,18 @@ describe('catalog.test.ts', () => {
           publicProducts.list.some((product: any) => product.title === '__catalog-share__ product'),
           true,
         );
+        const foreignProduct = await app.bean.executor.performAction(
+          'get',
+          '/commerce/catalog/product/public/:id',
+          { params: { id: defaultProductId }, innerAccess: false },
+        );
+        assert.equal(foreignProduct, undefined);
+        const publicProduct = await app.bean.executor.performAction(
+          'get',
+          '/commerce/catalog/product/public/:id',
+          { params: { id: catalog.productId }, innerAccess: false },
+        );
+        assert.equal(String(publicProduct.id), String(catalog.productId));
       },
       { instanceName: 'shareTest' as any },
     );
