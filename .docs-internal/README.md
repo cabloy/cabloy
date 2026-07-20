@@ -61,6 +61,7 @@ Those concerns should live elsewhere.
 - [ADR 0007: Resource Mutation Response Contract](./decisions/0007-resource-mutation-response-contract.md)
 - [ADR 0008: Role Localization Seed and Display Contract](./decisions/0008-role-localization-seed-and-display-contract.md)
 - [ADR 0009: Preserve Homepage Module Naming Boundaries](./decisions/0009-homepage-module-naming-boundary.md)
+- [ADR 0010: Keep Internal Planning Documents Repository-Native](./decisions/0010-repository-native-planning-documents.md)
 
 ### Business planning
 
