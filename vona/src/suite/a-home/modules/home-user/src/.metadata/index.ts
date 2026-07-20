@@ -144,7 +144,7 @@ import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'von
 declare module 'vona-module-home-user' {
   export interface IModelOptionsUser {
         relations: {
-          roles: IModelRelationBelongsToMany<'home-user:roleUser', 'home-user:role', false, undefined,undefined,undefined,undefined>;
+          roles: IModelRelationBelongsToMany<'home-user:roleUser', 'home-user:role', false, '*',undefined,undefined,undefined>;
         };
       }
   export interface ModelRole {

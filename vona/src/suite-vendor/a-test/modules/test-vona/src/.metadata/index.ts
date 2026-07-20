@@ -484,8 +484,8 @@ products: IModelRelationHasMany<'test-vona:product', 'orderId', true, 'id'|'name
       }
 export interface IModelOptionsOrderStats {
         relations: {
-          productStats: IModelRelationHasMany<ModelProduct, 'orderId', true, undefined, undefined, { count?: '*' | Array<'*'>;sum?: 'amount' | Array<'amount'> }, undefined>;
-productsGroups: IModelRelationHasMany<ModelProduct, 'orderId', false, undefined, undefined, { count?: '*' | Array<'*'>;sum?: 'amount' | Array<'amount'> }, 'id' | Array<'id'>>;
+          productStats: IModelRelationHasMany<ModelProduct, 'orderId', true, '*', undefined, { count?: '*' | Array<'*'>;sum?: 'amount' | Array<'amount'> }, undefined>;
+productsGroups: IModelRelationHasMany<ModelProduct, 'orderId', false, '*', undefined, { count?: '*' | Array<'*'>;sum?: 'amount' | Array<'amount'> }, 'id' | Array<'id'>>;
         };
       }
 export interface IModelOptionsPost {
@@ -496,7 +496,7 @@ user: IModelRelationBelongsTo<'test-vona:post', 'test-vona:user', true, 'id'|'na
       }
 export interface IModelOptionsPostContent {
         relations: {
-          post: IModelRelationBelongsTo<'test-vona:postContent', 'test-vona:post', false, undefined>;
+          post: IModelRelationBelongsTo<'test-vona:postContent', 'test-vona:post', false, '*'>;
         };
       }
 export interface IModelOptionsRole {
@@ -508,19 +508,19 @@ export interface IModelOptionsUser {
         relations: {
           posts: IModelRelationHasMany<'test-vona:post', 'userId', false, 'id'|'title', ['test-vona:user','test-vona:postContent'], undefined, undefined>;
 roles: IModelRelationBelongsToMany<'test-vona:roleUser', 'test-vona:role', false, 'id'|'name',undefined,undefined,undefined>;
-orders: IModelRelationHasMany<'test-vona:order', 'userId', false, undefined, undefined, undefined, undefined>;
+orders: IModelRelationHasMany<'test-vona:order', 'userId', false, '*', undefined, undefined, undefined>;
         };
       }
 export interface IModelOptionsUserStats {
         relations: {
-          posts: IModelRelationHasMany<'test-vona:post', 'userId', true, undefined, undefined, { count?: '*'|'title' | Array<'*'|'title'>;sum?: 'stars' | Array<'stars'> }, undefined>;
-roles: IModelRelationBelongsToMany<'test-vona:roleUser', 'test-vona:role', false, undefined,undefined,{ count?: '*' | Array<'*'> },undefined>;
+          posts: IModelRelationHasMany<'test-vona:post', 'userId', true, '*', undefined, { count?: '*'|'title' | Array<'*'|'title'>;sum?: 'stars' | Array<'stars'> }, undefined>;
+roles: IModelRelationBelongsToMany<'test-vona:roleUser', 'test-vona:role', false, '*',undefined,{ count?: '*' | Array<'*'> },undefined>;
         };
       }
 export interface IModelOptionsUserStatsGroup {
         relations: {
-          posts: IModelRelationHasMany<'test-vona:post', 'userId', true, undefined, undefined, { count?: '*'|'title' | Array<'*'|'title'>;sum?: 'stars' | Array<'stars'> }, 'title' | Array<'title'>>;
-roles: IModelRelationBelongsToMany<'test-vona:roleUser', 'test-vona:role', false, undefined,undefined,{ count?: '*' | Array<'*'> },'name' | Array<'name'>>;
+          posts: IModelRelationHasMany<'test-vona:post', 'userId', true, '*', undefined, { count?: '*'|'title' | Array<'*'|'title'>;sum?: 'stars' | Array<'stars'> }, 'title' | Array<'title'>>;
+roles: IModelRelationBelongsToMany<'test-vona:roleUser', 'test-vona:role', false, '*',undefined,{ count?: '*' | Array<'*'> },'name' | Array<'name'>>;
         };
       }
   export interface ModelCategory {
