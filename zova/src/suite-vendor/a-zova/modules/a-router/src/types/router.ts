@@ -122,8 +122,14 @@ export interface TypePageSchema {
 }
 export type TypePageSchemas = Record<string, TypePageSchema>;
 
+type TypePagePathParams<PARAMS> = PARAMS extends object
+  ? {
+      [K in keyof PARAMS]: K extends 'locale' ? PARAMS[K] | true : PARAMS[K];
+    }
+  : PARAMS;
+
 export interface TypePagePathSchema<PARAMS = unknown, QUERY = unknown> {
-  params?: PARAMS;
+  params?: TypePagePathParams<PARAMS>;
   query?: QUERY;
 }
 
