@@ -140,7 +140,7 @@ Check whether the feature needs:
 - `meta.version`
 - field indexes
 - relation definitions
-- datasource or cache considerations
+- datasource or cache considerations, including cross-Model query-cache dependencies
 
 For normal resource persistence, preserve Vona's default active-instance scope:
 

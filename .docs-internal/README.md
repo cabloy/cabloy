@@ -85,3 +85,4 @@ Those concerns should live elsewhere.
 - [Anonymous Token Route Pattern](./architecture/anonymous-token-route-pattern.md)
 - [AI Enablement Architecture](./architecture/ai-enablement.md)
 - [User Workspace SSR Strategy](./architecture/user-workspace-ssr-strategy.md)
+- [Vona Cross-Model Query-Cache Dependencies](./architecture/vona-cross-model-query-cache-dependencies.md)

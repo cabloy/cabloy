@@ -33,6 +33,7 @@ Representative examples:
 - `ssr-leak-experiment-cleanup-checklist.md` records the execution order and verification path used to fully remove the old SSR leak investigation flags from source
 - `ssr-route-typing-zova-rest-declaration-visibility.md` records why backend SSR route keys could collapse to `never`, how the generated `zova-rest-*` declaration fix preserves module augmentation visibility, and how the backend consumer path was validated
 - `anonymous-token-route-pattern.md` records the invariants for temporary-token anonymous HTTP routes, including the need for `@Passport.public()`, exact sign/verify path matching, and HTTP-level verification of signed URLs
+- `vona-cross-model-query-cache-dependencies.md` records Vona source-to-target query-cache dependency direction, transitive propagation, target callback replacement semantics, and the no-duplicate/no-cycle graph safety rules
 
 ## What should go elsewhere
 

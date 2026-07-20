@@ -28,6 +28,11 @@ After generating or extending a backend thread, check which follow-up layers app
 - relations
 - datasource choice
 - cache behavior
+- cross-Model query-cache dependencies: when a source mutation can change another Model's cached query members, totals, projections, includes, or visibility, declare exactly one directed `modelsClear` / `modelsClearedBy` edge
+- keep the dependency graph acyclic and free of duplicate edges; do not declare both forms for the same edge because propagation is transitive and current runtime collection does not deduplicate targets
+- when `modelsClearedByFn` is required, treat it as replacement behavior and explicitly own the target clear and any necessary downstream propagation
+- prefer normal Model/service mutation paths so source invalidation, commit-time re-clear, and configured double-delete remain active
+- add a warm-query → mutate-source → repeat-query regression test for each new dependency path; read [Vona Cross-Model Query-Cache Dependencies](../../../../.docs-internal/architecture/vona-cross-model-query-cache-dependencies.md) for the source-backed decision rules
 - transaction behavior
 
 ## Module composition and dependency intent
