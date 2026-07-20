@@ -144,14 +144,14 @@ import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'von
 declare module 'vona-module-commerce-catalog' {
   export interface IModelOptionsProduct {
         relations: {
-          category: IModelRelationBelongsTo<'commerce-catalog:product', 'commerce-catalog:category', false, undefined>;
-skus: IModelRelationHasMany<'commerce-catalog:sku', 'productId', false, undefined, undefined, undefined, undefined>;
+          category: IModelRelationBelongsTo<'commerce-catalog:product', 'commerce-catalog:category', false, '*'>;
+skus: IModelRelationHasMany<'commerce-catalog:sku', 'productId', false, '*', undefined, undefined, undefined>;
 skuAvailables: IModelRelationHasMany<'commerce-catalog:sku', 'productId', false, 'id'|'code'|'productId'|'priceCents', ['commerce-trade:stockBalance'], undefined, undefined>;
         };
       }
 export interface IModelOptionsSku {
         relations: {
-          product: IModelRelationBelongsTo<'commerce-catalog:sku', 'commerce-catalog:product', false, undefined>;
+          product: IModelRelationBelongsTo<'commerce-catalog:sku', 'commerce-catalog:product', false, '*'>;
         };
       }
   export interface ModelCategory {

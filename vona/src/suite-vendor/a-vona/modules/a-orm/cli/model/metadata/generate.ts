@@ -247,18 +247,10 @@ function __parseRelation_options(node: t.Node) {
     aggrs = options?.aggrs;
   }
   // columns
-  if (!options?.columns) {
-    if (options?.groups) {
-      columns = 'undefined';
-    } else {
-      columns = 'undefined'; // '\'*\'';
-    }
+  if (!options?.columns || options.columns.includes('*')) {
+    columns = "'*'";
   } else {
-    if (options?.columns.includes('*')) {
-      columns = "'*'";
-    } else {
-      columns = __joinColumnsType(options?.columns, false);
-    }
+    columns = __joinColumnsType(options.columns, false);
   }
   return { autoload, columns, groups, aggrs };
 }
