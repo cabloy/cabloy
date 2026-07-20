@@ -63,14 +63,19 @@ test(
     const localizedPath = '/commerce/zh-cn';
     const response = await request.get(localizedPath);
     expect(response.ok()).toBeTruthy();
-    expect((await response.text()).toLowerCase()).not.toContain('data-zova-hydrated');
+    const html = await response.text();
+    expect(html.toLowerCase()).not.toContain('data-zova-hydrated');
+    expect(html).toContain('商品目录');
+    expect(html).toContain('当前价格和库存以结算时确认为准。');
 
     const pageErrors = collectPageErrors(page);
     const documentResponse = await page.goto(localizedPath, { waitUntil: 'load' });
     expect(documentResponse?.ok()).toBeTruthy();
     await expect(page).toHaveURL(/\/commerce\/zh-cn(?:\/|$)/);
     await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
-    await expect(page.getByRole('heading', { name: 'Commerce catalogue' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '商品目录' })).toBeVisible();
+    await expect(page.getByText('当前价格和库存以结算时确认为准。')).toBeVisible();
+    await expect(page.getByText('库存 24 件')).toBeVisible();
 
     const productLink = page.getByRole('link', { name: 'Wireless Headphones' });
     await expect(productLink).toHaveAttribute('href', /\/commerce\/zh-cn\/product\/\d+$/);
@@ -82,6 +87,7 @@ test(
     await expect(page).toHaveURL(/\/commerce\/zh-cn\/product\/\d+(?:\/|$)/);
     await expect(page.getByRole('heading', { name: 'Wireless Headphones' })).toBeVisible();
     await expect(page.getByText('HPH-BLK')).toBeVisible();
+    await expect(page.getByText('库存 24 件')).toBeVisible();
     expect(pageErrors).toEqual([]);
   },
 );

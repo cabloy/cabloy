@@ -187,8 +187,11 @@ $query: NSControllerPageProduct.QueryOutput;
 }
 /** pages: end */
 
+/** locale: begin */
+import { locales } from './locales.js';
+/** locale: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil } from 'zova';
+import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';
 import { Scope } from 'zova-module-a-bean';
 
 @Scope()
@@ -196,6 +199,7 @@ export class ScopeModuleCommerceCatalog extends BeanScopeBase {}
 
 export interface ScopeModuleCommerceCatalog {
   util: BeanScopeUtil;
+locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 api: IModuleApi;
 apiSchema: IModuleApiSchema;
 }
@@ -208,9 +212,14 @@ declare module 'zova' {
   
   
 
-  
+  export interface IBeanScopeLocale {
+    'commerce-catalog': (typeof locales)[TypeLocaleBase];
+  }
 
   
 }
-  
+
+export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `commerce-catalog::${K}` {
+  return `commerce-catalog::${key}`;
+}
 /** scope: end */

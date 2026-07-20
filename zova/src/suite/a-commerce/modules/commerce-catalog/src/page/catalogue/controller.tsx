@@ -46,10 +46,8 @@ export class ControllerPageCatalogue extends BeanControllerPageBase {
     return (
       <ZPage>
         <section class="mx-auto max-w-6xl p-6">
-          <h1 class="text-3xl font-semibold">Commerce catalogue</h1>
-          <p class="mt-2 text-base-content/70">
-            Current prices and stock are confirmed at checkout.
-          </p>
+          <h1 class="text-3xl font-semibold">{this.scope.locale.CommerceCatalogue()}</h1>
+          <p class="mt-2 text-base-content/70">{this.scope.locale.CheckoutPriceStockNotice()}</p>
           {query.error && (
             <div role="alert" class="alert alert-error mt-6">
               <span>{query.error.message}</span>
@@ -65,8 +63,12 @@ export class ControllerPageCatalogue extends BeanControllerPageBase {
                   </h2>
                   <p class="text-base-content/70">{item.description}</p>
                   <div class="card-actions mt-2 items-center justify-between">
-                    <span class="font-semibold">From ${(item.priceCents / 100).toFixed(2)}</span>
-                    <span class="badge badge-success">{item.available} available</span>
+                    <span class="font-semibold">
+                      {this.scope.locale.PriceFrom(`$${(item.priceCents / 100).toFixed(2)}`)}
+                    </span>
+                    <span class="badge badge-success">
+                      {this.scope.locale.AvailableCount(item.available)}
+                    </span>
                   </div>
                 </div>
               </article>

@@ -87,7 +87,7 @@ ${
   return \`${moduleName}::\${key}\`;
 }`
     : ''
-}  
+}
 /** scope: end */
 `;
   return content;

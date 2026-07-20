@@ -48,7 +48,9 @@ export class ControllerPageProduct extends BeanControllerPageBase {
                     <div class="flex items-center justify-between rounded border border-base-300 p-3">
                       <span>{sku.code}</span>
                       <span>${(sku.priceCents / 100).toFixed(2)}</span>
-                      <span class="badge badge-success">{sku.available} available</span>
+                      <span class="badge badge-success">
+                        {this.scope.locale.AvailableCount(sku.available)}
+                      </span>
                     </div>
                   ))}
                 </div>
