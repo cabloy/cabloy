@@ -6,5 +6,10 @@ import { EntityStockBalance } from '../entity/stockBalance.tsx';
 
 export interface IModelOptionsStockBalance extends IDecoratorModelOptions<EntityStockBalance> {}
 
-@Model<IModelOptionsStockBalance>({ entity: EntityStockBalance })
+@Model<IModelOptionsStockBalance>({
+  entity: EntityStockBalance,
+  cache: {
+    modelsClear: 'commerce-catalog:sku',
+  },
+})
 export class ModelStockBalance extends BeanModelBase<EntityStockBalance> {}
