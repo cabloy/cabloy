@@ -7,19 +7,19 @@ import z from 'zod';
 
 import { $locale } from '../.metadata/locales.ts';
 
-export interface IDtoOptionsSkuPublic extends IDecoratorDtoOptions {}
+export interface IDtoOptionsProductPublicSku extends IDecoratorDtoOptions {}
 
-@Dto<IDtoOptionsSkuPublic>()
-export class DtoSkuPublic {
+@Dto<IDtoOptionsProductPublicSku>()
+export class DtoProductPublicSku {
   @Api.field(v.tableIdentity())
   id: TableIdentity;
 
   @Api.field(v.title($locale('SkuCode')), v.required())
   code: string;
 
-  @Api.field(v.title($locale('Product')), v.required(), v.tableIdentity())
-  productId: TableIdentity;
-
   @Api.field(v.title($locale('PriceCents')), v.required(), z.number().int().nonnegative())
   priceCents: number;
+
+  @Api.field(v.title($locale('Available')), v.required(), z.number().int().positive())
+  available: number;
 }
