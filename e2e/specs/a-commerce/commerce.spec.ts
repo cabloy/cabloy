@@ -57,6 +57,36 @@ test(
 );
 
 test(
+  'Commerce catalogue: localized Product navigation preserves locale',
+  { tag: ['@web', '@flow'] },
+  async ({ page, request }) => {
+    const localizedPath = '/commerce/zh-cn';
+    const response = await request.get(localizedPath);
+    expect(response.ok()).toBeTruthy();
+    expect((await response.text()).toLowerCase()).not.toContain('data-zova-hydrated');
+
+    const pageErrors = collectPageErrors(page);
+    const documentResponse = await page.goto(localizedPath, { waitUntil: 'load' });
+    expect(documentResponse?.ok()).toBeTruthy();
+    await expect(page).toHaveURL(/\/commerce\/zh-cn(?:\/|$)/);
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+    await expect(page.getByRole('heading', { name: 'Commerce catalogue' })).toBeVisible();
+
+    const productLink = page.getByRole('link', { name: 'Wireless Headphones' });
+    await expect(productLink).toHaveAttribute('href', /\/commerce\/zh-cn\/product\/\d+$/);
+    const productPath = await productLink.getAttribute('href');
+    const productResponse = await request.get(productPath!);
+    expect(productResponse.ok()).toBeTruthy();
+    expect((await productResponse.text()).toLowerCase()).not.toContain('data-zova-hydrated');
+    await productLink.click();
+    await expect(page).toHaveURL(/\/commerce\/zh-cn\/product\/\d+(?:\/|$)/);
+    await expect(page.getByRole('heading', { name: 'Wireless Headphones' })).toBeVisible();
+    await expect(page.getByText('HPH-BLK')).toBeVisible();
+    expect(pageErrors).toEqual([]);
+  },
+);
+
+test(
   'ATP-SSR-02: Commerce Admin is an independent SSR site',
   { tag: ['@admin', '@smoke'] },
   async ({ page, request }) => {

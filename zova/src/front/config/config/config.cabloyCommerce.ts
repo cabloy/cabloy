@@ -8,7 +8,9 @@ export default function (_sys: ZovaSys) {
       '/home/indexadmin/dashboard': undefined,
     },
     name: {
-      'home-indexweb:home': { alias: '/:locale(zh-cn)?' },
+      'commerce-catalog:catalogue': { alias: '/:locale(zh-cn)?' },
+      'commerce-catalog:product': { alias: '/:locale(zh-cn)?/product/:id' },
+      'home-indexweb:home': undefined,
     },
   };
 

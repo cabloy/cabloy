@@ -146,6 +146,7 @@ declare module 'zova' {
 /** controller: end */
 /** pages: begin */
 export * from './page/catalogue.js';
+import { NSControllerPageCatalogue } from './page/catalogue.js';
 export * from './page/product.js';
 import { NSControllerPageProduct } from './page/product.js';
 export * from '../routes.js';
@@ -153,8 +154,8 @@ import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
 export interface IPagePathRecord {
-  '/commerce/catalog/catalogue': TypePagePathSchema<undefined,undefined>;
-'/commerce/catalog/product/:id': TypePagePathSchema<NSControllerPageProduct.ParamsInput,NSControllerPageProduct.QueryInput>;
+  '/commerce/catalog/catalogue/:locale?': TypePagePathSchema<NSControllerPageCatalogue.ParamsInput,NSControllerPageCatalogue.QueryInput>;
+'/commerce/catalog/product/:id/:locale?': TypePagePathSchema<NSControllerPageProduct.ParamsInput,NSControllerPageProduct.QueryInput>;
 }
 export interface IPageNameRecord {
   'commerce-catalog:catalogue': undefined;
@@ -165,13 +166,21 @@ export const pagePathSchemas = {
 
 };
 export const pageNameSchemas = {
+'commerce-catalog:catalogue': {
+          params: NSControllerPageCatalogue.paramsSchema,
+          query: NSControllerPageCatalogue.querySchema,
+        },
 'commerce-catalog:product': {
           params: NSControllerPageProduct.paramsSchema,
           query: NSControllerPageProduct.querySchema,
         },
 };
 declare module 'zova-module-commerce-catalog' {
-  export interface ControllerPageProduct {
+  export interface ControllerPageCatalogue {
+        $params: NSControllerPageCatalogue.ParamsOutput;
+$query: NSControllerPageCatalogue.QueryOutput;
+      }
+export interface ControllerPageProduct {
         $params: NSControllerPageProduct.ParamsOutput;
 $query: NSControllerPageProduct.QueryOutput;
       }
