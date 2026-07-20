@@ -5,7 +5,6 @@ import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
 import type { DtoSkuCreate } from '../dto/skuCreate.tsx';
-import type { DtoSkuPublic } from '../dto/skuPublic.tsx';
 import type { DtoSkuSelectRes } from '../dto/skuSelectRes.tsx';
 import type { DtoSkuUpdate } from '../dto/skuUpdate.tsx';
 import type { DtoSkuView } from '../dto/skuView.tsx';
@@ -36,14 +35,6 @@ export class ServiceSku extends BeanBase {
 
   async delete(id: TableIdentity) {
     return await this.scope.model.sku.deleteById(id);
-  }
-
-  async selectActive(): Promise<DtoSkuPublic[]> {
-    const skus = await this.scope.model.sku.select({
-      columns: ['id', 'code', 'productId', 'priceCents'],
-      where: { lifecycle: 'active' },
-    });
-    return skus;
   }
 
   private async _ensureProductExists(productId: TableIdentity) {

@@ -11,7 +11,6 @@ import { z } from 'zod';
 import type { ModelSku } from '../model/sku.ts';
 
 import { DtoSkuCreate } from '../dto/skuCreate.tsx';
-import { DtoSkuPublic } from '../dto/skuPublic.tsx';
 import { DtoSkuSelectReq } from '../dto/skuSelectReq.tsx';
 import { DtoSkuSelectRes } from '../dto/skuSelectRes.tsx';
 import { DtoSkuUpdate } from '../dto/skuUpdate.tsx';
@@ -36,13 +35,6 @@ export class ControllerSku extends BeanBase {
     @Arg.filter(DtoSkuSelectReq) params: IQueryParams<ModelSku>,
   ): Promise<DtoSkuSelectRes> {
     return await this.scope.service.sku.select(params);
-  }
-
-  @Web.get('active')
-  @Api.body(v.array(v.object(DtoSkuPublic)))
-  @Passport.public()
-  async selectActive(): Promise<DtoSkuPublic[]> {
-    return await this.scope.service.sku.selectActive();
   }
 
   @Web.get(':id')
