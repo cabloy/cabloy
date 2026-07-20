@@ -79,4 +79,76 @@ describe('product.test.ts', () => {
       }
     });
   });
+
+  it('loads all skus and only available skus through Product relations', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const suffix = Date.now();
+      const scopeCatalog = app.scope('commerce-catalog');
+      const category = await scopeCatalog.model.category.insert({
+        name: `__ProductRelationsCategory-${suffix}__`,
+        published: true,
+      });
+      const product = await scopeCatalog.model.product.insert({
+        categoryId: category.id,
+        title: `__ProductRelations-${suffix}__`,
+        published: true,
+      });
+      const productOther = await scopeCatalog.model.product.insert({
+        categoryId: category.id,
+        title: `__ProductRelationsOther-${suffix}__`,
+        published: true,
+      });
+      const activeAvailable = await scopeCatalog.model.sku.insert({
+        code: `__ProductRelationsActive-${suffix}__`,
+        productId: product.id,
+        priceCents: 100,
+        lifecycle: 'active',
+      });
+      const activeZero = await scopeCatalog.model.sku.insert({
+        code: `__ProductRelationsZero-${suffix}__`,
+        productId: product.id,
+        priceCents: 200,
+        lifecycle: 'active',
+      });
+      const inactiveAvailable = await scopeCatalog.model.sku.insert({
+        code: `__ProductRelationsInactive-${suffix}__`,
+        productId: product.id,
+        priceCents: 300,
+        lifecycle: 'inactive',
+      });
+      const otherAvailable = await scopeCatalog.model.sku.insert({
+        code: `__ProductRelationsOtherSku-${suffix}__`,
+        productId: productOther.id,
+        priceCents: 400,
+        lifecycle: 'active',
+      });
+      for (const skuId of [activeAvailable.id, inactiveAvailable.id, otherAvailable.id]) {
+        await app.scope('commerce-trade').service.stockBalance.adjustStock({
+          skuId,
+          delta: 1,
+          reason: 'product relation fixture',
+          correlationId: `product-relations-${skuId}`,
+        });
+      }
+      const products = await scopeCatalog.model.product.select({
+        where: { id: [product.id, productOther.id] },
+        orders: [['id', 'asc']],
+        include: { skus: true, skuAvailables: true },
+      });
+      const item = products.find(item => String(item.id) === String(product.id))!;
+      const itemOther = products.find(item => String(item.id) === String(productOther.id))!;
+      assert.deepEqual(
+        item.skus.map(sku => String(sku.id)).sort(),
+        [activeAvailable.id, activeZero.id, inactiveAvailable.id].map(String).sort(),
+      );
+      assert.deepEqual(
+        item.skuAvailables.map(sku => String(sku.id)),
+        [String(activeAvailable.id)],
+      );
+      assert.deepEqual(
+        itemOther.skuAvailables.map(sku => String(sku.id)),
+        [String(otherAvailable.id)],
+      );
+    });
+  });
 });

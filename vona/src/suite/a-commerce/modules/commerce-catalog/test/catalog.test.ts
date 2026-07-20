@@ -52,41 +52,87 @@ describe('catalog.test.ts', () => {
     });
   });
 
-  it('stores integer cents and exposes only active SKUs to customers', async () => {
+  it('stores integer cents and exposes only sellable products to customers', async () => {
     await app.bean.executor.mockCtx(async () => {
       const active = await createCatalog('__catalog-active__', 'active');
-      await createCatalog('__catalog-draft__', 'draft');
-      await createCatalog('__catalog-inactive__', 'inactive');
-      await createCatalog('__catalog-archived__', 'archived');
+      const draft = await createCatalog('__catalog-draft__', 'draft');
+      const inactive = await createCatalog('__catalog-inactive__', 'inactive');
+      const archived = await createCatalog('__catalog-archived__', 'archived');
+      const unpublishedProduct = await createCatalog('__catalog-unpublished-product__', 'active');
+      const unpublishedCategory = await createCatalog('__catalog-unpublished-category__', 'active');
+      const zeroStock = await createCatalog('__catalog-zero-stock__', 'active');
 
-      const publicSkus = await app.bean.executor.performAction(
+      for (const catalog of [
+        active,
+        draft,
+        inactive,
+        archived,
+        unpublishedProduct,
+        unpublishedCategory,
+      ]) {
+        await app.scope('commerce-trade').service.stockBalance.adjustStock({
+          skuId: catalog.skuId,
+          delta: 2,
+          reason: 'catalog public fixture',
+          correlationId: `catalog-public-${catalog.skuId}`,
+        });
+      }
+      await app.scope('commerce-catalog').model.product.updateById(unpublishedProduct.productId, {
+        published: false,
+      });
+      await app
+        .scope('commerce-catalog')
+        .model.category.updateById(unpublishedCategory.categoryId, {
+          published: false,
+        });
+
+      const publicProducts = await app.bean.executor.performAction(
         'get',
-        '/commerce/catalog/sku/active',
-        {
-          innerAccess: false,
-        },
+        '/commerce/catalog/product/public',
+        { innerAccess: false },
       );
       assert.equal(
-        publicSkus.some((sku: any) => String(sku.id) === String(active.skuId)),
+        publicProducts.list.some((product: any) => String(product.id) === String(active.productId)),
         true,
       );
-      const catalogPublicSkus = publicSkus.filter((sku: any) => sku.code.startsWith('__catalog-'));
-      assert.equal(
-        catalogPublicSkus.every((sku: any) => sku.priceCents === 1299),
-        true,
+      for (const catalog of [
+        draft,
+        inactive,
+        archived,
+        unpublishedProduct,
+        unpublishedCategory,
+        zeroStock,
+      ]) {
+        assert.equal(
+          publicProducts.list.some(
+            (product: any) => String(product.id) === String(catalog.productId),
+          ),
+          false,
+        );
+      }
+      const catalogPublicProduct = publicProducts.list.find(
+        (product: any) => String(product.id) === String(active.productId),
       );
-      assert.equal(
-        catalogPublicSkus.every((sku: any) => sku.lifecycle === undefined),
-        true,
-      );
+      assert.deepEqual(Object.keys(catalogPublicProduct).sort(), [
+        'available',
+        'categoryId',
+        'categoryName',
+        'description',
+        'id',
+        'priceCents',
+        'skuAvailables',
+        'title',
+      ]);
+      assert.equal(catalogPublicProduct.priceCents, 1299);
+      assert.equal(catalogPublicProduct.available, 2);
     });
   });
 
   it('isolates catalog data and SKU uniqueness by tenant', async () => {
-    let defaultSkuId: unknown;
+    let defaultProductId: unknown;
     await app.bean.executor.mockCtx(async () => {
       const catalog = await createCatalog('__catalog-default__', 'active');
-      defaultSkuId = catalog.skuId;
+      defaultProductId = catalog.productId;
 
       await app.bean.passport.signinMock();
       try {
@@ -127,19 +173,27 @@ describe('catalog.test.ts', () => {
           await app.bean.passport.signout();
         }
 
-        const publicSkus = await app.bean.executor.performAction(
+        await app.scope('commerce-trade').service.stockBalance.adjustStock({
+          skuId: catalog.skuId,
+          delta: 1,
+          reason: 'catalog tenant fixture',
+          correlationId: `catalog-tenant-${catalog.skuId}`,
+        });
+        const publicProducts = await app.bean.executor.performAction(
           'get',
-          '/commerce/catalog/sku/active',
+          '/commerce/catalog/product/public',
           {
             innerAccess: false,
           },
         );
         assert.equal(
-          publicSkus.some((sku: any) => String(sku.id) === String(defaultSkuId)),
+          publicProducts.list.some(
+            (product: any) => String(product.id) === String(defaultProductId),
+          ),
           false,
         );
         assert.equal(
-          publicSkus.some((sku: any) => sku.code === '__catalog-share__-sku'),
+          publicProducts.list.some((product: any) => product.title === '__catalog-share__ product'),
           true,
         );
       },

@@ -1,5 +1,5 @@
 // eslint-disable
-import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore,IModelRelationBelongsTo } from 'vona-module-a-orm';
+import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore,IModelRelationBelongsTo,IModelRelationHasMany } from 'vona-module-a-orm';
 import type { TypeEntityOptionsFields,TypeControllerOptionsActions } from 'vona-module-a-openapi';
 import type { TableIdentity } from 'table-identity';
 /** entity: begin */
@@ -145,6 +145,8 @@ declare module 'vona-module-commerce-catalog' {
   export interface IModelOptionsProduct {
         relations: {
           category: IModelRelationBelongsTo<'commerce-catalog:product', 'commerce-catalog:category', false, undefined>;
+skus: IModelRelationHasMany<'commerce-catalog:sku', 'productId', false, undefined, undefined, undefined, undefined>;
+skuAvailables: IModelRelationHasMany<'commerce-catalog:sku', 'productId', false, 'id'|'code'|'productId'|'priceCents', ['commerce-trade:stockBalance'], undefined, undefined>;
         };
       }
 export interface IModelOptionsSku {
@@ -366,13 +368,16 @@ export * from '../dto/categorySelectResItem.tsx';
 export * from '../dto/categoryUpdate.tsx';
 export * from '../dto/categoryView.tsx';
 export * from '../dto/productCreate.tsx';
+export * from '../dto/productPublic.tsx';
+export * from '../dto/productPublicSelectReq.tsx';
+export * from '../dto/productPublicSelectRes.tsx';
+export * from '../dto/productPublicSku.tsx';
 export * from '../dto/productSelectReq.tsx';
 export * from '../dto/productSelectRes.tsx';
 export * from '../dto/productSelectResItem.tsx';
 export * from '../dto/productUpdate.tsx';
 export * from '../dto/productView.tsx';
 export * from '../dto/skuCreate.tsx';
-export * from '../dto/skuPublic.tsx';
 export * from '../dto/skuSelectReq.tsx';
 export * from '../dto/skuSelectRes.tsx';
 export * from '../dto/skuSelectResItem.tsx';
@@ -385,13 +390,16 @@ import type { IDtoOptionsCategorySelectResItem } from '../dto/categorySelectResI
 import type { IDtoOptionsCategoryUpdate } from '../dto/categoryUpdate.tsx';
 import type { IDtoOptionsCategoryView } from '../dto/categoryView.tsx';
 import type { IDtoOptionsProductCreate } from '../dto/productCreate.tsx';
+import type { IDtoOptionsProductPublic } from '../dto/productPublic.tsx';
+import type { IDtoOptionsProductPublicSelectReq } from '../dto/productPublicSelectReq.tsx';
+import type { IDtoOptionsProductPublicSelectRes } from '../dto/productPublicSelectRes.tsx';
+import type { IDtoOptionsProductPublicSku } from '../dto/productPublicSku.tsx';
 import type { IDtoOptionsProductSelectReq } from '../dto/productSelectReq.tsx';
 import type { IDtoOptionsProductSelectRes } from '../dto/productSelectRes.tsx';
 import type { IDtoOptionsProductSelectResItem } from '../dto/productSelectResItem.tsx';
 import type { IDtoOptionsProductUpdate } from '../dto/productUpdate.tsx';
 import type { IDtoOptionsProductView } from '../dto/productView.tsx';
 import type { IDtoOptionsSkuCreate } from '../dto/skuCreate.tsx';
-import type { IDtoOptionsSkuPublic } from '../dto/skuPublic.tsx';
 import type { IDtoOptionsSkuSelectReq } from '../dto/skuSelectReq.tsx';
 import type { IDtoOptionsSkuSelectRes } from '../dto/skuSelectRes.tsx';
 import type { IDtoOptionsSkuSelectResItem } from '../dto/skuSelectResItem.tsx';
@@ -408,13 +416,16 @@ declare module 'vona-module-a-web' {
 'commerce-catalog:categoryUpdate': IDtoOptionsCategoryUpdate;
 'commerce-catalog:categoryView': IDtoOptionsCategoryView;
 'commerce-catalog:productCreate': IDtoOptionsProductCreate;
+'commerce-catalog:productPublic': IDtoOptionsProductPublic;
+'commerce-catalog:productPublicSelectReq': IDtoOptionsProductPublicSelectReq;
+'commerce-catalog:productPublicSelectRes': IDtoOptionsProductPublicSelectRes;
+'commerce-catalog:productPublicSku': IDtoOptionsProductPublicSku;
 'commerce-catalog:productSelectReq': IDtoOptionsProductSelectReq;
 'commerce-catalog:productSelectRes': IDtoOptionsProductSelectRes;
 'commerce-catalog:productSelectResItem': IDtoOptionsProductSelectResItem;
 'commerce-catalog:productUpdate': IDtoOptionsProductUpdate;
 'commerce-catalog:productView': IDtoOptionsProductView;
 'commerce-catalog:skuCreate': IDtoOptionsSkuCreate;
-'commerce-catalog:skuPublic': IDtoOptionsSkuPublic;
 'commerce-catalog:skuSelectReq': IDtoOptionsSkuSelectReq;
 'commerce-catalog:skuSelectRes': IDtoOptionsSkuSelectRes;
 'commerce-catalog:skuSelectResItem': IDtoOptionsSkuSelectResItem;
@@ -436,13 +447,16 @@ import type { DtoCategorySelectResItem } from '../dto/categorySelectResItem.tsx'
 import type { DtoCategoryUpdate } from '../dto/categoryUpdate.tsx';
 import type { DtoCategoryView } from '../dto/categoryView.tsx';
 import type { DtoProductCreate } from '../dto/productCreate.tsx';
+import type { DtoProductPublic } from '../dto/productPublic.tsx';
+import type { DtoProductPublicSelectReq } from '../dto/productPublicSelectReq.tsx';
+import type { DtoProductPublicSelectRes } from '../dto/productPublicSelectRes.tsx';
+import type { DtoProductPublicSku } from '../dto/productPublicSku.tsx';
 import type { DtoProductSelectReq } from '../dto/productSelectReq.tsx';
 import type { DtoProductSelectRes } from '../dto/productSelectRes.tsx';
 import type { DtoProductSelectResItem } from '../dto/productSelectResItem.tsx';
 import type { DtoProductUpdate } from '../dto/productUpdate.tsx';
 import type { DtoProductView } from '../dto/productView.tsx';
 import type { DtoSkuCreate } from '../dto/skuCreate.tsx';
-import type { DtoSkuPublic } from '../dto/skuPublic.tsx';
 import type { DtoSkuSelectReq } from '../dto/skuSelectReq.tsx';
 import type { DtoSkuSelectRes } from '../dto/skuSelectRes.tsx';
 import type { DtoSkuSelectResItem } from '../dto/skuSelectResItem.tsx';
@@ -478,6 +492,22 @@ declare module 'vona-module-commerce-catalog' {
       fields?: TypeEntityOptionsFields<DtoProductCreate, IDtoOptionsProductCreate[TypeSymbolKeyFieldsMore]>;
     }
 
+    export interface IDtoOptionsProductPublic {
+      fields?: TypeEntityOptionsFields<DtoProductPublic, IDtoOptionsProductPublic[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsProductPublicSelectReq {
+      fields?: TypeEntityOptionsFields<DtoProductPublicSelectReq, IDtoOptionsProductPublicSelectReq[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsProductPublicSelectRes {
+      fields?: TypeEntityOptionsFields<DtoProductPublicSelectRes, IDtoOptionsProductPublicSelectRes[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsProductPublicSku {
+      fields?: TypeEntityOptionsFields<DtoProductPublicSku, IDtoOptionsProductPublicSku[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsProductSelectReq {
       fields?: TypeEntityOptionsFields<DtoProductSelectReq, IDtoOptionsProductSelectReq[TypeSymbolKeyFieldsMore]>;
     }
@@ -500,10 +530,6 @@ declare module 'vona-module-commerce-catalog' {
 
     export interface IDtoOptionsSkuCreate {
       fields?: TypeEntityOptionsFields<DtoSkuCreate, IDtoOptionsSkuCreate[TypeSymbolKeyFieldsMore]>;
-    }
-
-    export interface IDtoOptionsSkuPublic {
-      fields?: TypeEntityOptionsFields<DtoSkuPublic, IDtoOptionsSkuPublic[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsSkuSelectReq {
@@ -612,9 +638,10 @@ export interface IApiPathGetRecord{
         '/commerce/catalog/category': undefined;
 '/commerce/catalog/category/:id': undefined;
 '/commerce/catalog/product': undefined;
+'/commerce/catalog/product/public': undefined;
+'/commerce/catalog/product/public/:id': undefined;
 '/commerce/catalog/product/:id': undefined;
 '/commerce/catalog/sku': undefined;
-'/commerce/catalog/sku/public': undefined;
 '/commerce/catalog/sku/:id': undefined;
     }
 export interface IApiPathPatchRecord{

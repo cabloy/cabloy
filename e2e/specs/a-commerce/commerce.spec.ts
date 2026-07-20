@@ -46,8 +46,12 @@ test(
     expect(response?.ok()).toBeTruthy();
     await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
     await expect(page.getByRole('heading', { name: 'Commerce catalogue' })).toBeVisible();
-    await expect(page.getByText('Wireless Headphones')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Wireless Headphones' })).toBeVisible();
     await expect(page.getByText('24 available')).toBeVisible();
+    await page.getByRole('link', { name: 'Wireless Headphones' }).click();
+    await expect(page).toHaveURL(/\/commerce\/product\/\d+(?:\/|$)/);
+    await expect(page.getByRole('heading', { name: 'Wireless Headphones' })).toBeVisible();
+    await expect(page.getByText('HPH-BLK')).toBeVisible();
     expect(pageErrors).toEqual([]);
   },
 );
