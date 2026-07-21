@@ -182,6 +182,11 @@ describe('stockReservation.test.ts', () => {
           reason: 'refund success',
         });
         assert.equal(restored.state, 'restored');
+        const duplicateRestore = await app.scope('commerce-trade').service.stockBalance.restore({
+          reservationId: consumedReservation.id,
+          reason: 'refund success retry',
+        });
+        assert.equal(duplicateRestore.state, 'restored');
 
         const [_, err] = await catchError(() =>
           app.scope('commerce-trade').service.stockBalance.consume({
@@ -192,6 +197,62 @@ describe('stockReservation.test.ts', () => {
         assert.equal(err?.code, 409);
         const balance = await app.scope('commerce-trade').model.stockBalance.get({ skuId });
         assert.deepEqual([balance?.onHand, balance?.reserved, balance?.available], [3, 0, 3]);
+        const audits = await app.scope('commerce-trade').model.stockAudit.select({
+          where: { skuId },
+        });
+        assert.equal(audits.length, 6);
+        assert.deepEqual(
+          audits.map(audit => audit.operation),
+          ['adjust', 'reserve', 'release', 'reserve', 'consume', 'restore'],
+        );
+        assert.deepEqual(
+          audits.map(audit => audit.stockBalanceId),
+          audits.map(() => balance?.id),
+        );
+        assert.deepEqual(
+          audits.map(audit => audit.stockReservationId),
+          [
+            null,
+            releasedReservation.id,
+            releasedReservation.id,
+            consumedReservation.id,
+            consumedReservation.id,
+            consumedReservation.id,
+          ],
+        );
+        assert.deepEqual(
+          audits.map(audit => audit.correlationId),
+          [
+            `reservation-setup-${suffix}`,
+            `reservation-${suffix}-release`,
+            `reservation-${suffix}-release`,
+            `reservation-${suffix}-restore`,
+            `reservation-${suffix}-restore`,
+            `reservation-${suffix}-restore`,
+          ],
+        );
+        assert.deepEqual(
+          audits.map(audit => audit.reason),
+          [
+            'reservation test setup',
+            'reservation test',
+            'payment failed',
+            'reservation test',
+            'payment success',
+            'refund success',
+          ],
+        );
+        assert.deepEqual(
+          audits.map(audit => [audit.delta, audit.onHand, audit.reserved, audit.available]),
+          [
+            [3, 3, 0, 3],
+            [-2, 3, 2, 1],
+            [0, 3, 0, 3],
+            [-1, 3, 1, 2],
+            [-1, 2, 0, 2],
+            [1, 3, 0, 3],
+          ],
+        );
       } finally {
         await app.bean.passport.signout();
       }
