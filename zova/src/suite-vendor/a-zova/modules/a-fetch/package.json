@@ -35,7 +35,7 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "axios": "^1.16.1"
+    "axios": "^1.18.1"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",
