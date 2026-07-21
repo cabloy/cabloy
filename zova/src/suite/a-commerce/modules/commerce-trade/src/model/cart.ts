@@ -62,4 +62,16 @@ export class ModelCart extends BeanModelBase {
       },
     });
   }
+
+  clear() {
+    return this.$useMutationData({
+      mutationKey: ['clear'],
+      mutationFn: async () => {
+        return await this.scope.api.commerceTradeCart.clear();
+      },
+      onSuccess: async () => {
+        await this.$invalidateQueries({ queryKey: ['current'] });
+      },
+    });
+  }
 }
