@@ -98,13 +98,7 @@ export class SysRouter extends BeanBase {
     absolute?: boolean,
   ) {
     const query = options?.query;
-    let params = options?.params;
-    const paramsLocale = cast(params)?.locale;
-    if (paramsLocale !== undefined) {
-      const localeCurrent = paramsLocale === true ? this.app.meta.locale.current : paramsLocale;
-      const locale = localeCurrent === this.sys.config.locale.default ? undefined : localeCurrent;
-      params = Object.assign({}, params, { locale });
-    }
+    const params = this._normalizePageParams(options?.params);
     const pagePath = combineParamsAndQuery(path, { params, query });
     return absolute ? this.sys.util.getAbsoluteUrlFromPagePath(pagePath) : pagePath;
   }
@@ -236,6 +230,36 @@ export class SysRouter extends BeanBase {
     });
   }
 
+  resolveAlias<K extends keyof IPageNameRecord>(
+    name: K,
+    options?: { params?: any; query?: any },
+  ): string | undefined {
+    const alias = this.sys.config.routes.name[name]?.alias;
+    if (!alias) return;
+    const params = this._normalizePageParams(cast(options)?.params);
+    const query = cast(options)?.query;
+    const aliasName = `$alias:${name}` as never;
+    const routeAlias = this._resolveNameOrPath(query, query => {
+      const route = this.router.resolve({
+        name: this.router.hasRoute(aliasName) ? aliasName : name,
+        params,
+        query,
+      });
+      return route.fullPath;
+    });
+    return routeAlias.startsWith('/__alias__')
+      ? routeAlias.substring('/__alias__'.length) || '/'
+      : routeAlias;
+  }
+
+  private _normalizePageParams(params) {
+    const paramsLocale = cast(params)?.locale;
+    if (paramsLocale === undefined) return params;
+    const localeCurrent = paramsLocale === true ? this.app.meta.locale.current : paramsLocale;
+    const locale = localeCurrent === this.sys.config.locale.default ? undefined : localeCurrent;
+    return Object.assign({}, params, { locale });
+  }
+
   private _resolveNameOrPath(query, fn) {
     const query1 = {};
     const query2: any = [];
@@ -320,10 +344,11 @@ export class SysRouter extends BeanBase {
     }
     // name alias
     if (name && configRoute?.alias) {
+      const alias = Array.isArray(configRoute.alias) ? configRoute.alias[0] : configRoute.alias;
       // add extra route
       this.router.addRoute({
         name: `$alias:${name}`,
-        path: `/__alias__${configRoute?.alias}`,
+        path: `/__alias__${alias}`,
         redirect: '',
       });
     }

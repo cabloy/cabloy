@@ -50,6 +50,25 @@ The distinction matters:
 - use `routes.path` for normal path-based aliases
 - use `routes.name` when the route depends on params-aware naming
 
+## Generate a configured alias path
+
+When application code needs a user-facing URL for a named route, use the canonical route name with `$router.resolveAlias(...)`:
+
+```ts
+const path = this.$router.resolveAlias('demo-todo:item', {
+  params: {
+    id: '42',
+    locale: true,
+  },
+});
+```
+
+The helper returns the configured alias path, such as `/zh-cn/todo/42`, or `undefined` when that route name has no configured alias. `locale: true` uses the active locale and omits the configured default locale from an optional locale segment.
+
+Use the canonical generated route name. Do not construct `$alias:<name>` or strip `/__alias__` in application code: those are private router implementation details.
+
+Use `$router.getPagePath(...)` for a known canonical path template and `$router.resolveName(...)` for canonical named-route resolution. Do not add alias behavior to `getPagePath(...)`, because aliases are configured against route names rather than page-path templates.
+
 ## Implementation checks for route-alias changes
 
 When changing user-facing routes, ask:

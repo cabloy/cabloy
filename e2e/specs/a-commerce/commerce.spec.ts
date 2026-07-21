@@ -88,6 +88,10 @@ test(
     await expect(page.getByRole('heading', { name: 'Wireless Headphones' })).toBeVisible();
     await expect(page.getByText('HPH-BLK')).toBeVisible();
     await expect(page.getByText('库存 24 件')).toBeVisible();
+    await expect(page.getByRole('link', { name: '购物车' })).toHaveAttribute(
+      'href',
+      '/commerce/zh-cn/cart',
+    );
     expect(pageErrors).toEqual([]);
   },
 );

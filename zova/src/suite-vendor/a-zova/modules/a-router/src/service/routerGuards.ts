@@ -33,18 +33,16 @@ export class ServiceRouterGuards extends BeanRouterGuardsBase {
           const resLoadModule = await this._forceLoadModule(router, match?.name, match?.path);
           if (resLoadModule && resLoadModule !== true) return resLoadModule;
           if (resLoadModule === false) return to.fullPath;
-          if (router.getRealRouteName(match?.name)) {
-            const routeAlias = router.resolveName(
-              `$alias:${match?.name as string}` as never,
+          const name = router.getRealRouteName(match?.name);
+          if (name) {
+            const routeAlias = router.resolveAlias(
+              name as never,
               {
                 params: to.params,
                 query: to.query,
-              } as any,
+              } as never,
             );
-            const fullPath = routeAlias.startsWith('/__alias__')
-              ? routeAlias.substring('/__alias__'.length)
-              : routeAlias;
-            return fullPath || '/';
+            return routeAlias || '/';
           } else {
             return {
               path: Array.isArray(alias) ? alias[0] : alias,
