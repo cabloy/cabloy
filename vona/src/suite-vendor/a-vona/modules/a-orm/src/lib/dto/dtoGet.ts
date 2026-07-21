@@ -38,18 +38,12 @@ export function DtoGet<
     : ModelLike,
   params?: T,
 ): Constructable<TypeDtoGetResult<ModelLike, T>> {
-  return _DtoGet_raw(modelLike, params);
+  return _DtoGet_raw(modelLike as any, params as any) as Constructable<
+    TypeDtoGetResult<ModelLike, T>
+  >;
 }
 
-function _DtoGet_raw<
-  ModelLike extends BeanModelMeta | keyof IModelClassRecord,
-  T extends IDtoGetParams<ModelLike> | undefined = undefined,
->(
-  modelLike: ModelLike extends BeanModelMeta
-    ? (() => Constructable<ModelLike>) | Constructable<ModelLike>
-    : ModelLike,
-  params?: T,
-): Constructable<TypeDtoGetResult<ModelLike, T>> {
+function _DtoGet_raw(modelLike: any, params?: any): Constructable<any> {
   // model
   const modelClass = prepareClassModel(modelLike);
   // entity
