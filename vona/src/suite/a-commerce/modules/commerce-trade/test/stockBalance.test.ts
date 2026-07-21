@@ -183,4 +183,105 @@ describe('stockBalance.test.ts', () => {
       { instanceName: 'shareTest' as any },
     );
   });
+
+  it('hides foreign stock balances and audits from operator read APIs', async () => {
+    const suffix = `${Date.now()}`;
+    let skuId!: number;
+    let balanceId!: number;
+    let auditId!: number;
+    const reason = `stock read isolation ${suffix}`;
+    const correlationId = `stock-read-isolation-${suffix}`;
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      try {
+        skuId = await createSku(suffix);
+        const balance = await adjustStock({ skuId, delta: 5, reason, correlationId });
+        balanceId = balance.id;
+        const audits = await app.scope('commerce-trade').model.stockAudit.select({
+          where: { skuId },
+        });
+        assert.equal(audits.length, 1);
+        auditId = audits[0].id;
+      } finally {
+        await app.bean.passport.signout();
+      }
+    });
+
+    await app.bean.executor.mockCtx(
+      async () => {
+        await app.bean.passport.signinMock();
+        try {
+          assert.equal(
+            await app.bean.executor.performAction('get', '/commerce/trade/stockBalance/:id', {
+              params: { id: balanceId },
+            }),
+            undefined,
+          );
+          const balances = await app.bean.executor.performAction(
+            'get',
+            '/commerce/trade/stockBalance',
+          );
+          assert.equal(
+            balances.list.some(
+              (balance: { id: unknown }) => String(balance.id) === String(balanceId),
+            ),
+            false,
+          );
+          assert.equal(
+            await app.bean.executor.performAction('get', '/commerce/trade/stockAudit/:id', {
+              params: { id: auditId },
+            }),
+            undefined,
+          );
+          const audits = await app.bean.executor.performAction('get', '/commerce/trade/stockAudit');
+          assert.equal(
+            audits.list.some((audit: { id: unknown }) => String(audit.id) === String(auditId)),
+            false,
+          );
+        } finally {
+          await app.bean.passport.signout();
+        }
+      },
+      { instanceName: 'shareTest' as any },
+    );
+
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      try {
+        const balance = await app.bean.executor.performAction(
+          'get',
+          '/commerce/trade/stockBalance/:id',
+          { params: { id: balanceId } },
+        );
+        assert.deepEqual(
+          [balance.id, balance.skuId, balance.onHand, balance.reserved, balance.available],
+          [balanceId, skuId, 5, 0, 5],
+        );
+        const audit = await app.bean.executor.performAction(
+          'get',
+          '/commerce/trade/stockAudit/:id',
+          {
+            params: { id: auditId },
+          },
+        );
+        assert.deepEqual(
+          [
+            audit.id,
+            audit.stockBalanceId,
+            audit.skuId,
+            audit.operation,
+            audit.delta,
+            audit.reason,
+            audit.correlationId,
+            audit.onHand,
+            audit.reserved,
+            audit.available,
+          ],
+          [auditId, balanceId, skuId, 'adjust', 5, reason, correlationId, 5, 0, 5],
+        );
+      } finally {
+        await app.bean.passport.signout();
+      }
+    });
+  });
 });
