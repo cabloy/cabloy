@@ -4,7 +4,7 @@ on:
     branches:
       - main
 jobs:
-  test:
+  basic-e2e:
     runs-on: ubuntu-latest
     env:
       DATABASE_DEFAULT_CLIENT: sqlite3
@@ -28,6 +28,38 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: run Basic E2E baseline
         run: npm run test:e2e:basic:clean
+      - name: upload Playwright artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts-basic
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+
+  commerce-e2e:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_DEFAULT_CLIENT: sqlite3
+      PNPM_CONFIG_MINIMUM_RELEASE_AGE: 0
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@v5
+        with:
+          version: 11.5.2
+      - name: init
+        run: npm run init
+      - name: install Chromium
+        run: npx playwright install --with-deps chromium
       - name: build Commerce Zova artifacts
         run: npm run build:zova:commerce
       - name: synchronize Vona dependencies
@@ -38,7 +70,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-artifacts
+          name: playwright-artifacts-commerce
           path: |
             playwright-report/
             test-results/
