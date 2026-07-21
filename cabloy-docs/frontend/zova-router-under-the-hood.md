@@ -263,7 +263,7 @@ This detail is important because:
 - the runtime can still preserve named-route identity and params-aware resolution
 - alias handling remains a router concern instead of leaking into page code
 
-`$alias:<name>` and `/__alias__` are private runtime machinery. Application code should use `$router.resolveAlias('module:page', { params, query })`, which accepts the canonical route name and returns the configured public alias path (or `undefined` when no alias is configured).
+`$alias:<name>` and `/__alias__` are private runtime machinery. Application code should use `$router.getAliasPath('module:page', { params, query }, absolute?)`, which accepts the canonical route name and returns the configured public alias path (or `undefined` when no alias is configured). Its optional `absolute` argument uses the same origin and public-path conversion as `getPagePath(...)`.
 
 #### Layout wrapping
 
@@ -291,12 +291,12 @@ This helper:
 - handles locale-specific param normalization
 - can return a relative page path or an absolute URL
 
-Zova also exposes canonical named-route resolution through `resolveName(...)` and configured public alias resolution through `resolveAlias(...)`. These helpers preserve the module-aware naming/path model rather than asking every caller to manually build URLs.
+Zova also exposes canonical named-route resolution through `resolveName(...)` and configured public alias-path generation through `getAliasPath(...)`. Like `getPagePath(...)`, `getAliasPath(...)` can return either a relative path or an absolute URL. These helpers preserve the module-aware naming/path model rather than asking every caller to manually build URLs.
 
 That is why the recommended page-navigation surface stays framework-native:
 
 - `this.$router.getPagePath(...)`
-- `this.$router.resolveAlias(...)`
+- `this.$router.getAliasPath(...)`
 - `this.app.$gotoPage(...)`
 - `this.app.$gotoHome(...)`
 

@@ -35,7 +35,7 @@ export class ServiceRouterGuards extends BeanRouterGuardsBase {
           if (resLoadModule === false) return to.fullPath;
           const name = router.getRealRouteName(match?.name);
           if (name) {
-            const routeAlias = router.resolveAlias(
+            const routeAlias = router.getAliasPath(
               name as never,
               {
                 params: to.params,

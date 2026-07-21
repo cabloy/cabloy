@@ -230,9 +230,10 @@ export class SysRouter extends BeanBase {
     });
   }
 
-  resolveAlias<K extends keyof IPageNameRecord>(
+  getAliasPath<K extends keyof IPageNameRecord>(
     name: K,
     options?: { params?: any; query?: any },
+    absolute?: boolean,
   ): string | undefined {
     const alias = this.sys.config.routes.name[name]?.alias;
     if (!alias) return;
@@ -247,9 +248,10 @@ export class SysRouter extends BeanBase {
       });
       return route.fullPath;
     });
-    return routeAlias.startsWith('/__alias__')
+    const pagePath = routeAlias.startsWith('/__alias__')
       ? routeAlias.substring('/__alias__'.length) || '/'
       : routeAlias;
+    return absolute ? this.sys.util.getAbsoluteUrlFromPagePath(pagePath) : pagePath;
   }
 
   private _normalizePageParams(params) {

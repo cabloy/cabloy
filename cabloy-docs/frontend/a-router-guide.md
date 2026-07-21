@@ -122,7 +122,7 @@ Its main jobs are:
 - merge config-route overrides
 - synthesize alias routes when needed
 - wrap routed pages with layout routes when `meta.layout` requires it
-- expose helpers such as `getPagePath(...)`, `resolveName(...)`, and `ensureRoute(...)`
+- expose helpers such as `getPagePath(...)`, `getAliasPath(...)`, `resolveName(...)`, and `ensureRoute(...)`
 
 This is the file that most clearly shows how a module-local route record becomes operational router structure.
 
