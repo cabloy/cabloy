@@ -6,6 +6,9 @@ import { $tableColumns } from 'vona-module-a-ormutils';
 
 @Meta<IMetaOptionsIndex>({
   indexes: {
+    ...$tableColumns('commerceTradeCart', 'userId'),
+    ...$tableColumns('commerceTradeCartItem', 'cartId'),
+    ...$tableColumns('commerceTradeCartItem', 'skuId'),
     ...$tableColumns('commerceTradeStockAudit', 'stockBalanceId'),
     ...$tableColumns('commerceTradeStockAudit', 'skuId'),
     ...$tableColumns('commerceTradeStockAudit', 'stockReservationId'),

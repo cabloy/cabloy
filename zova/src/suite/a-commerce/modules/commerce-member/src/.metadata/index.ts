@@ -4,15 +4,15 @@ export * from '../model/address.js';
 import { IModelOptionsAddress } from '../model/address.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-
+  
     export interface IModelRecord {
       'commerce-member:address': IModelOptionsAddress;
     }
 
-
+  
 }
 declare module 'zova-module-commerce-member' {
-
+  
         export interface ModelAddress {
           /** @internal */
           get scope(): ScopeModuleCommerceMember;
@@ -22,7 +22,7 @@ declare module 'zova-module-commerce-member' {
           get $beanFullName(): 'commerce-member.model.address';
           get $onionName(): 'commerce-member:address';
           get $onionOptions(): IModelOptionsAddress;
-        }
+        } 
 }
 /** model: end */
 /** model: begin */
@@ -39,11 +39,11 @@ export * from '../api/commerceMemberAddress.js';
 
 import 'zova';
 declare module 'zova' {
-
-
+  
+  
 }
 declare module 'zova-module-commerce-member' {
-
+  
         export interface ApiCommerceMemberAddress {
           /** @internal */
           get scope(): ScopeModuleCommerceMember;
@@ -52,8 +52,8 @@ declare module 'zova-module-commerce-member' {
         export interface ApiCommerceMemberAddress {
           get $beanFullName(): 'commerce-member.api.commerceMemberAddress';
           get $onionName(): 'commerce-member:commerceMemberAddress';
-
-        }
+          
+        } 
 }
 /** api: end */
 /** api: begin */
@@ -79,11 +79,11 @@ export * from '../apiSchema/commerceMemberAddress.js';
 
 import 'zova';
 declare module 'zova' {
-
-
+  
+  
 }
 declare module 'zova-module-commerce-member' {
-
+  
         export interface ApiSchemaCommerceMemberAddress {
           /** @internal */
           get scope(): ScopeModuleCommerceMember;
@@ -92,8 +92,8 @@ declare module 'zova-module-commerce-member' {
         export interface ApiSchemaCommerceMemberAddress {
           get $beanFullName(): 'commerce-member.apiSchema.commerceMemberAddress';
           get $onionName(): 'commerce-member:commerceMemberAddress';
-
-        }
+          
+        } 
 }
 /** apiSchema: end */
 /** apiSchema: begin */
@@ -129,12 +129,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'commerce-member': ScopeModuleCommerceMember;
   }
+  
+  
 
+  
 
-
-
-
-
+  
 }
 
 /** scope: end */

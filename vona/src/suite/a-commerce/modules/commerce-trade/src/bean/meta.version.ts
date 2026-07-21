@@ -59,5 +59,21 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.int0(entityStockAudit.reserved).comment(entityStockAudit.$comment.reserved);
       table.int0(entityStockAudit.available).comment(entityStockAudit.$comment.available);
     });
+
+    const entityCart = this.scope.entity.cart;
+    await this.bean.model.createTable(entityCart.$table, table => {
+      table.comment(entityCart.$comment.$table);
+      table.basicFields();
+      table.userId(entityCart.userId).comment(entityCart.$comment.userId);
+    });
+
+    const entityCartItem = this.scope.entity.cartItem;
+    await this.bean.model.createTable(entityCartItem.$table, table => {
+      table.comment(entityCartItem.$comment.$table);
+      table.basicFields();
+      table.tableIdentity(entityCartItem.cartId).comment(entityCartItem.$comment.cartId);
+      table.tableIdentity(entityCartItem.skuId).comment(entityCartItem.$comment.skuId);
+      table.integer(entityCartItem.quantity).comment(entityCartItem.$comment.quantity);
+    });
   }
 }

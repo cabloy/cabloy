@@ -1,11 +1,15 @@
 // eslint-disable
-import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore } from 'vona-module-a-orm';
+import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore,IModelRelationHasMany } from 'vona-module-a-orm';
 import type { TypeEntityOptionsFields,TypeControllerOptionsActions } from 'vona-module-a-openapi';
 import type { TableIdentity } from 'table-identity';
 /** entity: begin */
+export * from '../entity/cart.tsx';
+export * from '../entity/cartItem.tsx';
 export * from '../entity/stockAudit.tsx';
 export * from '../entity/stockBalance.tsx';
 export * from '../entity/stockReservation.tsx';
+import type { IEntityOptionsCart } from '../entity/cart.tsx';
+import type { IEntityOptionsCartItem } from '../entity/cartItem.tsx';
 import type { IEntityOptionsStockAudit } from '../entity/stockAudit.tsx';
 import type { IEntityOptionsStockBalance } from '../entity/stockBalance.tsx';
 import type { IEntityOptionsStockReservation } from '../entity/stockReservation.tsx';
@@ -13,7 +17,9 @@ import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
   
     export interface IEntityRecord {
-      'commerce-trade:stockAudit': IEntityOptionsStockAudit;
+      'commerce-trade:cart': IEntityOptionsCart;
+'commerce-trade:cartItem': IEntityOptionsCartItem;
+'commerce-trade:stockAudit': IEntityOptionsStockAudit;
 'commerce-trade:stockBalance': IEntityOptionsStockBalance;
 'commerce-trade:stockReservation': IEntityOptionsStockReservation;
     }
@@ -25,31 +31,49 @@ declare module 'vona-module-commerce-trade' {
 }
 /** entity: end */
 /** entity: begin */
+import type { EntityCart } from '../entity/cart.tsx';
+import type { EntityCartItem } from '../entity/cartItem.tsx';
 import type { EntityStockAudit } from '../entity/stockAudit.tsx';
 import type { EntityStockBalance } from '../entity/stockBalance.tsx';
 import type { EntityStockReservation } from '../entity/stockReservation.tsx';
 export interface IModuleEntity {
-  'stockAudit': EntityStockAuditMeta;
+  'cart': EntityCartMeta;
+'cartItem': EntityCartItemMeta;
+'stockAudit': EntityStockAuditMeta;
 'stockBalance': EntityStockBalanceMeta;
 'stockReservation': EntityStockReservationMeta;
 }
 /** entity: end */
 /** entity: begin */
+export type EntityCartTableName = 'commerceTradeCart';
+export type EntityCartItemTableName = 'commerceTradeCartItem';
 export type EntityStockAuditTableName = 'commerceTradeStockAudit';
 export type EntityStockBalanceTableName = 'commerceTradeStockBalance';
 export type EntityStockReservationTableName = 'commerceTradeStockReservation';
+export type EntityCartMeta=TypeEntityMeta<EntityCart,EntityCartTableName>;
+export type EntityCartItemMeta=TypeEntityMeta<EntityCartItem,EntityCartItemTableName>;
 export type EntityStockAuditMeta=TypeEntityMeta<EntityStockAudit,EntityStockAuditTableName>;
 export type EntityStockBalanceMeta=TypeEntityMeta<EntityStockBalance,EntityStockBalanceTableName>;
 export type EntityStockReservationMeta=TypeEntityMeta<EntityStockReservation,EntityStockReservationTableName>;
 declare module 'vona-module-a-orm' {
   export interface ITableRecord {
-    'commerceTradeStockAudit': EntityStockAuditMeta;
+    'commerceTradeCart': EntityCartMeta;
+'commerceTradeCartItem': EntityCartItemMeta;
+'commerceTradeStockAudit': EntityStockAuditMeta;
 'commerceTradeStockBalance': EntityStockBalanceMeta;
 'commerceTradeStockReservation': EntityStockReservationMeta;
   }
 }
 declare module 'vona-module-commerce-trade' {
   
+    export interface IEntityOptionsCart {
+      fields?: TypeEntityOptionsFields<EntityCart, IEntityOptionsCart[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IEntityOptionsCartItem {
+      fields?: TypeEntityOptionsFields<EntityCartItem, IEntityOptionsCartItem[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IEntityOptionsStockAudit {
       fields?: TypeEntityOptionsFields<EntityStockAudit, IEntityOptionsStockAudit[TypeSymbolKeyFieldsMore]>;
     }
@@ -64,9 +88,13 @@ declare module 'vona-module-commerce-trade' {
 }
 /** entity: end */
 /** model: begin */
+export * from '../model/cart.ts';
+export * from '../model/cartItem.ts';
 export * from '../model/stockAudit.ts';
 export * from '../model/stockBalance.ts';
 export * from '../model/stockReservation.ts';
+import type { IModelOptionsCart } from '../model/cart.ts';
+import type { IModelOptionsCartItem } from '../model/cartItem.ts';
 import type { IModelOptionsStockAudit } from '../model/stockAudit.ts';
 import type { IModelOptionsStockBalance } from '../model/stockBalance.ts';
 import type { IModelOptionsStockReservation } from '../model/stockReservation.ts';
@@ -74,7 +102,9 @@ import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
   
     export interface IModelRecord {
-      'commerce-trade:stockAudit': IModelOptionsStockAudit;
+      'commerce-trade:cart': IModelOptionsCart;
+'commerce-trade:cartItem': IModelOptionsCartItem;
+'commerce-trade:stockAudit': IModelOptionsStockAudit;
 'commerce-trade:stockBalance': IModelOptionsStockBalance;
 'commerce-trade:stockReservation': IModelOptionsStockReservation;
     }
@@ -83,6 +113,28 @@ declare module 'vona-module-a-orm' {
 }
 declare module 'vona-module-commerce-trade' {
   
+        export interface ModelCart {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ModelCart {
+            get $beanFullName(): 'commerce-trade.model.cart';
+            get $onionName(): 'commerce-trade:cart';
+            get $onionOptions(): IModelOptionsCart;
+          }
+
+        export interface ModelCartItem {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ModelCartItem {
+            get $beanFullName(): 'commerce-trade.model.cartItem';
+            get $onionName(): 'commerce-trade:cartItem';
+            get $onionOptions(): IModelOptionsCartItem;
+          }
+
         export interface ModelStockAudit {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -118,11 +170,15 @@ declare module 'vona-module-commerce-trade' {
 }
 /** model: end */
 /** model: begin */
+import type { ModelCart } from '../model/cart.ts';
+import type { ModelCartItem } from '../model/cartItem.ts';
 import type { ModelStockAudit } from '../model/stockAudit.ts';
 import type { ModelStockBalance } from '../model/stockBalance.ts';
 import type { ModelStockReservation } from '../model/stockReservation.ts';
 export interface IModuleModel {
-  'stockAudit': ModelStockAudit;
+  'cart': ModelCart;
+'cartItem': ModelCartItem;
+'stockAudit': ModelStockAudit;
 'stockBalance': ModelStockBalance;
 'stockReservation': ModelStockReservation;
 }
@@ -132,7 +188,9 @@ export interface IModuleModel {
 import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
-    'commerce-trade.model.stockAudit': ModelStockAudit;
+    'commerce-trade.model.cart': ModelCart;
+'commerce-trade.model.cartItem': ModelCartItem;
+'commerce-trade.model.stockAudit': ModelStockAudit;
 'commerce-trade.model.stockBalance': ModelStockBalance;
 'commerce-trade.model.stockReservation': ModelStockReservation;
   }
@@ -142,8 +200,66 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-commerce-trade' {
-  
-  export interface ModelStockAudit {
+  export interface IModelOptionsCart {
+        relations: {
+          items: IModelRelationHasMany<'commerce-trade:cartItem', 'cartId', false, 'id'|'skuId'|'quantity', undefined, undefined, undefined>;
+        };
+      }
+  export interface ModelCart {
+      [SymbolKeyEntity]: EntityCart;
+      [SymbolKeyEntityMeta]: EntityCartMeta;
+      [SymbolKeyModelOptions]: IModelOptionsCart;
+      get<T extends IModelGetOptions<EntityCart,ModelCart>>(where: TypeModelWhere<EntityCart>, options?: T): Promise<TypeModelRelationResult<EntityCart, ModelCart, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityCart,ModelCart>>(where: TypeModelWhere<EntityCart>, options?: T): Promise<TypeModelRelationResult<EntityCart, ModelCart, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityCart,ModelCart>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityCart, ModelCart, T> | undefined>;
+      mget<T extends IModelGetOptions<EntityCart,ModelCart>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityCart, ModelCart, T>[]>;
+      selectAndCount<T extends IModelSelectParams<EntityCart,ModelCart,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityCart, ModelCart, T>>;
+      select<T extends IModelSelectParams<EntityCart,ModelCart,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityCart, ModelCart, T>[]>;
+      insert<T extends IModelInsertOptions<EntityCart,ModelCart>>(data?: TypeModelMutateRelationData<EntityCart,ModelCart, T>, options?: T): Promise<TypeModelMutateRelationData<EntityCart,ModelCart, T, true>>;
+      insertBulk<T extends IModelInsertOptions<EntityCart,ModelCart>>(items: TypeModelMutateRelationData<EntityCart,ModelCart, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityCart,ModelCart, T, true>[]>;
+      update<T extends IModelUpdateOptions<EntityCart,ModelCart>>(data: TypeModelMutateRelationData<EntityCart,ModelCart, T>, options?: T): Promise<TypeModelMutateRelationData<EntityCart,ModelCart, T>>;
+      updateBulk<T extends IModelUpdateOptions<EntityCart,ModelCart>>(items: TypeModelMutateRelationData<EntityCart,ModelCart, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityCart,ModelCart, T>[]>;
+      delete<T extends IModelDeleteOptions<EntityCart,ModelCart>>(where?: TypeModelWhere<EntityCart>, options?: T): Promise<void>;
+      deleteBulk<T extends IModelDeleteOptions<EntityCart,ModelCart>>(ids: TableIdentity[], options?: T): Promise<void>;
+      mutate<T extends IModelMutateOptions<EntityCart,ModelCart>>(data?: TypeModelMutateRelationData<EntityCart,ModelCart, T>, options?: T): Promise<TypeModelMutateRelationData<EntityCart,ModelCart, T>>;
+      mutateBulk<T extends IModelMutateOptions<EntityCart,ModelCart>>(items: TypeModelMutateRelationData<EntityCart,ModelCart, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityCart,ModelCart, T>[]>;
+      count<T extends IModelSelectCountParams<EntityCart,ModelCart,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<string | undefined>;
+      increment<T extends IModelIncrementParams<EntityCart,ModelCart,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      decrement<T extends IModelIncrementParams<EntityCart,ModelCart,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      aggregate<T extends IModelSelectAggrParams<EntityCart,ModelCart,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelAggrRelationResult<T>>;
+      group<T extends IModelSelectGroupParams<EntityCart,ModelCart,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelGroupRelationResult<EntityCart, T>[]>;
+      getById<T extends IModelGetOptions<EntityCart,ModelCart>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityCart, ModelCart, T> | undefined>;
+updateById<T extends IModelUpdateOptions<EntityCart,ModelCart>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityCart,ModelCart, T>, options?: T): Promise<TypeModelMutateRelationData<EntityCart,ModelCart, T>>;
+deleteById<T extends IModelDeleteOptions<EntityCart,ModelCart>>(id: TableIdentity, options?: T): Promise<void>;
+    }
+export interface ModelCartItem {
+      [SymbolKeyEntity]: EntityCartItem;
+      [SymbolKeyEntityMeta]: EntityCartItemMeta;
+      [SymbolKeyModelOptions]: IModelOptionsCartItem;
+      get<T extends IModelGetOptions<EntityCartItem,ModelCartItem>>(where: TypeModelWhere<EntityCartItem>, options?: T): Promise<TypeModelRelationResult<EntityCartItem, ModelCartItem, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityCartItem,ModelCartItem>>(where: TypeModelWhere<EntityCartItem>, options?: T): Promise<TypeModelRelationResult<EntityCartItem, ModelCartItem, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityCartItem,ModelCartItem>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityCartItem, ModelCartItem, T> | undefined>;
+      mget<T extends IModelGetOptions<EntityCartItem,ModelCartItem>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityCartItem, ModelCartItem, T>[]>;
+      selectAndCount<T extends IModelSelectParams<EntityCartItem,ModelCartItem,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityCartItem, ModelCartItem, T>>;
+      select<T extends IModelSelectParams<EntityCartItem,ModelCartItem,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityCartItem, ModelCartItem, T>[]>;
+      insert<T extends IModelInsertOptions<EntityCartItem,ModelCartItem>>(data?: TypeModelMutateRelationData<EntityCartItem,ModelCartItem, T>, options?: T): Promise<TypeModelMutateRelationData<EntityCartItem,ModelCartItem, T, true>>;
+      insertBulk<T extends IModelInsertOptions<EntityCartItem,ModelCartItem>>(items: TypeModelMutateRelationData<EntityCartItem,ModelCartItem, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityCartItem,ModelCartItem, T, true>[]>;
+      update<T extends IModelUpdateOptions<EntityCartItem,ModelCartItem>>(data: TypeModelMutateRelationData<EntityCartItem,ModelCartItem, T>, options?: T): Promise<TypeModelMutateRelationData<EntityCartItem,ModelCartItem, T>>;
+      updateBulk<T extends IModelUpdateOptions<EntityCartItem,ModelCartItem>>(items: TypeModelMutateRelationData<EntityCartItem,ModelCartItem, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityCartItem,ModelCartItem, T>[]>;
+      delete<T extends IModelDeleteOptions<EntityCartItem,ModelCartItem>>(where?: TypeModelWhere<EntityCartItem>, options?: T): Promise<void>;
+      deleteBulk<T extends IModelDeleteOptions<EntityCartItem,ModelCartItem>>(ids: TableIdentity[], options?: T): Promise<void>;
+      mutate<T extends IModelMutateOptions<EntityCartItem,ModelCartItem>>(data?: TypeModelMutateRelationData<EntityCartItem,ModelCartItem, T>, options?: T): Promise<TypeModelMutateRelationData<EntityCartItem,ModelCartItem, T>>;
+      mutateBulk<T extends IModelMutateOptions<EntityCartItem,ModelCartItem>>(items: TypeModelMutateRelationData<EntityCartItem,ModelCartItem, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityCartItem,ModelCartItem, T>[]>;
+      count<T extends IModelSelectCountParams<EntityCartItem,ModelCartItem,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<string | undefined>;
+      increment<T extends IModelIncrementParams<EntityCartItem,ModelCartItem,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      decrement<T extends IModelIncrementParams<EntityCartItem,ModelCartItem,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      aggregate<T extends IModelSelectAggrParams<EntityCartItem,ModelCartItem,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelAggrRelationResult<T>>;
+      group<T extends IModelSelectGroupParams<EntityCartItem,ModelCartItem,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelGroupRelationResult<EntityCartItem, T>[]>;
+      getById<T extends IModelGetOptions<EntityCartItem,ModelCartItem>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityCartItem, ModelCartItem, T> | undefined>;
+updateById<T extends IModelUpdateOptions<EntityCartItem,ModelCartItem>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityCartItem,ModelCartItem, T>, options?: T): Promise<TypeModelMutateRelationData<EntityCartItem,ModelCartItem, T>>;
+deleteById<T extends IModelDeleteOptions<EntityCartItem,ModelCartItem>>(id: TableIdentity, options?: T): Promise<void>;
+    }
+export interface ModelStockAudit {
       [SymbolKeyEntity]: EntityStockAudit;
       [SymbolKeyEntityMeta]: EntityStockAuditMeta;
       [SymbolKeyModelOptions]: IModelOptionsStockAudit;
@@ -227,13 +343,16 @@ deleteById<T extends IModelDeleteOptions<EntityStockReservation,ModelStockReserv
 }
 declare module 'vona-module-a-orm' {
   export interface IModelClassRecord {
-    'commerce-trade:stockAudit': ModelStockAudit;
+    'commerce-trade:cart': ModelCart;
+'commerce-trade:cartItem': ModelCartItem;
+'commerce-trade:stockAudit': ModelStockAudit;
 'commerce-trade:stockBalance': ModelStockBalance;
 'commerce-trade:stockReservation': ModelStockReservation;
   }
 }
 /** model: end */
 /** service: begin */
+export * from '../service/cart.ts';
 export * from '../service/stockAudit.ts';
 export * from '../service/stockBalance.ts';
 
@@ -241,7 +360,8 @@ import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
   
     export interface IServiceRecord {
-      'commerce-trade:stockAudit': never;
+      'commerce-trade:cart': never;
+'commerce-trade:stockAudit': never;
 'commerce-trade:stockBalance': never;
     }
 
@@ -249,6 +369,17 @@ declare module 'vona-module-a-bean' {
 }
 declare module 'vona-module-commerce-trade' {
   
+        export interface ServiceCart {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ServiceCart {
+            get $beanFullName(): 'commerce-trade.service.cart';
+            get $onionName(): 'commerce-trade:cart';
+            
+          }
+
         export interface ServiceStockAudit {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -273,10 +404,12 @@ declare module 'vona-module-commerce-trade' {
 }
 /** service: end */
 /** service: begin */
+import type { ServiceCart } from '../service/cart.ts';
 import type { ServiceStockAudit } from '../service/stockAudit.ts';
 import type { ServiceStockBalance } from '../service/stockBalance.ts';
 export interface IModuleService {
-  'stockAudit': ServiceStockAudit;
+  'cart': ServiceCart;
+'stockAudit': ServiceStockAudit;
 'stockBalance': ServiceStockBalance;
 }
 /** service: end */
@@ -285,7 +418,8 @@ export interface IModuleService {
 import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
-    'commerce-trade.service.stockAudit': ServiceStockAudit;
+    'commerce-trade.service.cart': ServiceCart;
+'commerce-trade.service.stockAudit': ServiceStockAudit;
 'commerce-trade.service.stockBalance': ServiceStockBalance;
   }
 }
@@ -330,6 +464,10 @@ declare module 'vona-module-commerce-trade' {
 }
 /** meta: end */
 /** dto: begin */
+export * from '../dto/cartAddItem.tsx';
+export * from '../dto/cartItem.tsx';
+export * from '../dto/cartUpdateItem.tsx';
+export * from '../dto/cartView.tsx';
 export * from '../dto/stockAdjust.tsx';
 export * from '../dto/stockAuditCreate.tsx';
 export * from '../dto/stockAuditSelectReq.tsx';
@@ -343,6 +481,10 @@ export * from '../dto/stockBalanceSelectRes.tsx';
 export * from '../dto/stockBalanceSelectResItem.tsx';
 export * from '../dto/stockBalanceUpdate.tsx';
 export * from '../dto/stockBalanceView.tsx';
+import type { IDtoOptionsCartAddItem } from '../dto/cartAddItem.tsx';
+import type { IDtoOptionsCartItem } from '../dto/cartItem.tsx';
+import type { IDtoOptionsCartUpdateItem } from '../dto/cartUpdateItem.tsx';
+import type { IDtoOptionsCartView } from '../dto/cartView.tsx';
 import type { IDtoOptionsStockAdjust } from '../dto/stockAdjust.tsx';
 import type { IDtoOptionsStockAuditCreate } from '../dto/stockAuditCreate.tsx';
 import type { IDtoOptionsStockAuditSelectReq } from '../dto/stockAuditSelectReq.tsx';
@@ -360,7 +502,11 @@ import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
   
     export interface IDtoRecord {
-      'commerce-trade:stockAdjust': IDtoOptionsStockAdjust;
+      'commerce-trade:cartAddItem': IDtoOptionsCartAddItem;
+'commerce-trade:cartItem': IDtoOptionsCartItem;
+'commerce-trade:cartUpdateItem': IDtoOptionsCartUpdateItem;
+'commerce-trade:cartView': IDtoOptionsCartView;
+'commerce-trade:stockAdjust': IDtoOptionsStockAdjust;
 'commerce-trade:stockAuditCreate': IDtoOptionsStockAuditCreate;
 'commerce-trade:stockAuditSelectReq': IDtoOptionsStockAuditSelectReq;
 'commerce-trade:stockAuditSelectRes': IDtoOptionsStockAuditSelectRes;
@@ -382,6 +528,10 @@ declare module 'vona-module-commerce-trade' {
 }
 /** dto: end */
 /** dto: begin */
+import type { DtoCartAddItem } from '../dto/cartAddItem.tsx';
+import type { DtoCartItem } from '../dto/cartItem.tsx';
+import type { DtoCartUpdateItem } from '../dto/cartUpdateItem.tsx';
+import type { DtoCartView } from '../dto/cartView.tsx';
 import type { DtoStockAdjust } from '../dto/stockAdjust.tsx';
 import type { DtoStockAuditCreate } from '../dto/stockAuditCreate.tsx';
 import type { DtoStockAuditSelectReq } from '../dto/stockAuditSelectReq.tsx';
@@ -397,6 +547,22 @@ import type { DtoStockBalanceUpdate } from '../dto/stockBalanceUpdate.tsx';
 import type { DtoStockBalanceView } from '../dto/stockBalanceView.tsx';
 declare module 'vona-module-commerce-trade' {
   
+    export interface IDtoOptionsCartAddItem {
+      fields?: TypeEntityOptionsFields<DtoCartAddItem, IDtoOptionsCartAddItem[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsCartItem {
+      fields?: TypeEntityOptionsFields<DtoCartItem, IDtoOptionsCartItem[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsCartUpdateItem {
+      fields?: TypeEntityOptionsFields<DtoCartUpdateItem, IDtoOptionsCartUpdateItem[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsCartView {
+      fields?: TypeEntityOptionsFields<DtoCartView, IDtoOptionsCartView[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsStockAdjust {
       fields?: TypeEntityOptionsFields<DtoStockAdjust, IDtoOptionsStockAdjust[TypeSymbolKeyFieldsMore]>;
     }
@@ -451,15 +617,18 @@ declare module 'vona-module-commerce-trade' {
 }
 /** dto: end */
 /** controller: begin */
+export * from '../controller/cart.ts';
 export * from '../controller/stockAudit.ts';
 export * from '../controller/stockBalance.ts';
+import type { IControllerOptionsCart } from '../controller/cart.ts';
 import type { IControllerOptionsStockAudit } from '../controller/stockAudit.ts';
 import type { IControllerOptionsStockBalance } from '../controller/stockBalance.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
   
     export interface IControllerRecord {
-      'commerce-trade:stockAudit': IControllerOptionsStockAudit;
+      'commerce-trade:cart': IControllerOptionsCart;
+'commerce-trade:stockAudit': IControllerOptionsStockAudit;
 'commerce-trade:stockBalance': IControllerOptionsStockBalance;
     }
 
@@ -467,6 +636,17 @@ declare module 'vona-module-a-web' {
 }
 declare module 'vona-module-commerce-trade' {
   
+        export interface ControllerCart {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ControllerCart {
+            get $beanFullName(): 'commerce-trade.controller.cart';
+            get $onionName(): 'commerce-trade:cart';
+            get $onionOptions(): IControllerOptionsCart;
+          }
+
         export interface ControllerStockAudit {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -492,11 +672,17 @@ declare module 'vona-module-commerce-trade' {
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
+import type { ControllerCart } from '../controller/cart.ts';
+// @ts-ignore ignore
 import type { ControllerStockAudit } from '../controller/stockAudit.ts';
 // @ts-ignore ignore
 import type { ControllerStockBalance } from '../controller/stockBalance.ts';
 declare module 'vona-module-commerce-trade' {
   
+    export interface IControllerOptionsCart {
+      actions?: TypeControllerOptionsActions<ControllerCart>;
+    }
+
     export interface IControllerOptionsStockAudit {
       actions?: TypeControllerOptionsActions<ControllerStockAudit>;
     }
@@ -507,13 +693,22 @@ declare module 'vona-module-commerce-trade' {
 }
 declare module 'vona-module-a-web' {
   export interface IApiPathGetRecord{
-        '/commerce/trade/stockAudit': undefined;
+        '/commerce/trade/cart': undefined;
+'/commerce/trade/stockAudit': undefined;
 '/commerce/trade/stockAudit/:id': undefined;
 '/commerce/trade/stockBalance': undefined;
 '/commerce/trade/stockBalance/:id': undefined;
     }
 export interface IApiPathPostRecord{
-        '/commerce/trade/stockBalance/adjustStock': undefined;
+        '/commerce/trade/cart/items': undefined;
+'/commerce/trade/stockBalance/adjustStock': undefined;
+    }
+export interface IApiPathPatchRecord{
+        '/commerce/trade/cart/items/:id': undefined;
+    }
+export interface IApiPathDeleteRecord{
+        '/commerce/trade/cart/items/:id': undefined;
+'/commerce/trade/cart/items': undefined;
     }
 
 }
