@@ -77,7 +77,7 @@ importers:
         version: 10.5.2(postcss@8.5.15)
       axios:
         specifier: ^1.18.1
-        version: 1.18.1
+        version: 1.18.1(supports-color@10.2.2)
       compression:
         specifier: ^1.8.1
         version: 1.8.1
@@ -425,7 +425,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.5
       zova-cli-set-front:
-        specifier: ^1.2.96
+        specifier: ^1.2.97
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -846,7 +846,7 @@ importers:
         specifier: ^5.1.78
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.137
+        specifier: ^5.1.138
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -944,7 +944,7 @@ importers:
   src/suite-vendor/a-cabloy:
     dependencies:
       zova-module-rest-resource:
-        specifier: ^5.1.41
+        specifier: ^5.1.42
         version: link:modules/rest-resource
 
   src/suite-vendor/a-cabloy/modules/rest-resource:
@@ -965,7 +965,7 @@ importers:
         specifier: ^5.1.25
         version: link:modules/a-app
       zova-module-a-bean:
-        specifier: ^5.1.31
+        specifier: ^5.1.32
         version: link:modules/a-bean
       zova-module-a-behavior:
         specifier: ^5.1.25
@@ -980,7 +980,7 @@ importers:
         specifier: ^5.1.33
         version: link:modules/a-command
       zova-module-a-fetch:
-        specifier: ^5.1.23
+        specifier: ^5.1.24
         version: link:modules/a-fetch
       zova-module-a-form:
         specifier: ^5.1.45
@@ -1001,10 +1001,10 @@ importers:
         specifier: ^5.1.33
         version: link:modules/a-model
       zova-module-a-openapi:
-        specifier: ^5.1.45
+        specifier: ^5.1.46
         version: link:modules/a-openapi
       zova-module-a-router:
-        specifier: ^5.1.30
+        specifier: ^5.1.31
         version: link:modules/a-router
       zova-module-a-routerstack:
         specifier: ^5.1.26
@@ -1105,7 +1105,7 @@ importers:
     dependencies:
       axios:
         specifier: ^1.18.1
-        version: 1.18.1
+        version: 1.18.1(supports-color@10.2.2)
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -10420,7 +10420,7 @@ snapshots:
 
   acorn@8.17.0: {}
 
-  agent-base@6.0.2:
+  agent-base@6.0.2(supports-color@10.2.2):
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
@@ -10532,11 +10532,11 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axios@1.18.1:
+  axios@1.18.1(supports-color@10.2.2):
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.6
-      https-proxy-agent: 5.0.1
+      https-proxy-agent: 5.0.1(supports-color@10.2.2)
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
@@ -11958,9 +11958,9 @@ snapshots:
       statuses: 2.0.2
       toidentifier: 1.0.1
 
-  https-proxy-agent@5.0.1:
+  https-proxy-agent@5.0.1(supports-color@10.2.2):
     dependencies:
-      agent-base: 6.0.2
+      agent-base: 6.0.2(supports-color@10.2.2)
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color

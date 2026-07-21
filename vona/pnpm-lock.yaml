@@ -1691,7 +1691,7 @@ importers:
   src/suite-vendor/a-file:
     dependencies:
       vona-module-a-file:
-        specifier: ^5.0.5
+        specifier: ^5.0.6
         version: link:modules/a-file
       vona-module-file-cloudflare:
         specifier: ^5.0.4

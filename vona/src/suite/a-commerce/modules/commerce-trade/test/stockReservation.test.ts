@@ -5,32 +5,70 @@ import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
-async function createSku(suffix: string): Promise<number> {
-  const categoryId = await app.bean.executor.performAction('post', '/commerce/catalog/category', {
+interface IStockFixture {
+  categoryId: number;
+  productId: number;
+  skuId: number;
+}
+
+type IStockFixturePartial = Partial<IStockFixture>;
+
+async function createSku(suffix: string, fixtures: IStockFixturePartial[]): Promise<IStockFixture> {
+  const fixture: IStockFixturePartial = {};
+  fixtures.push(fixture);
+  fixture.categoryId = await app.bean.executor.performAction('post', '/commerce/catalog/category', {
     body: { name: `reservation-category-${suffix}`, published: true },
   });
-  const productId = await app.bean.executor.performAction('post', '/commerce/catalog/product', {
-    body: { categoryId, title: `reservation-product-${suffix}`, published: true },
-  });
-  return await app.bean.executor.performAction('post', '/commerce/catalog/sku', {
+  fixture.productId = await app.bean.executor.performAction('post', '/commerce/catalog/product', {
     body: {
-      productId,
+      categoryId: fixture.categoryId,
+      title: `reservation-product-${suffix}`,
+      published: true,
+    },
+  });
+  fixture.skuId = await app.bean.executor.performAction('post', '/commerce/catalog/sku', {
+    body: {
+      productId: fixture.productId,
       code: `reservation-sku-${suffix}`,
       priceCents: 100,
       lifecycle: 'active',
     },
   });
+  return fixture as IStockFixture;
 }
 
-async function prepareStock(suffix: string, quantity = 3): Promise<number> {
-  const skuId = await createSku(suffix);
+async function prepareStock(
+  suffix: string,
+  fixtures: IStockFixturePartial[],
+  quantity = 3,
+): Promise<IStockFixture> {
+  const fixture = await createSku(suffix, fixtures);
   await app.scope('commerce-trade').service.stockBalance.adjustStock({
-    skuId,
+    skuId: fixture.skuId,
     delta: quantity,
     reason: 'reservation test setup',
     correlationId: `reservation-setup-${suffix}`,
   });
-  return skuId;
+  return fixture;
+}
+
+async function dropStockFixtures(fixtures: IStockFixturePartial[]) {
+  const scopeTrade = app.scope('commerce-trade');
+  const scopeCatalog = app.scope('commerce-catalog');
+  for (const fixture of fixtures.toReversed()) {
+    if (fixture.skuId !== undefined) {
+      await scopeTrade.model.stockAudit.delete({ skuId: fixture.skuId });
+      await scopeTrade.model.stockReservation.delete({ skuId: fixture.skuId });
+      await scopeTrade.model.stockBalance.delete({ skuId: fixture.skuId });
+      await scopeCatalog.model.sku.delete({ id: fixture.skuId });
+    }
+    if (fixture.productId !== undefined) {
+      await scopeCatalog.model.product.delete({ id: fixture.productId });
+    }
+    if (fixture.categoryId !== undefined) {
+      await scopeCatalog.model.category.delete({ id: fixture.categoryId });
+    }
+  }
 }
 
 async function reserve(
@@ -62,14 +100,15 @@ async function assertReservationRejected(skuId: number, suffix: string, expected
 describe('stockReservation.test.ts', () => {
   it('reserves and consumes stock exactly once with traceable audits', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const suffix = `${Date.now()}`;
+      const fixtures: IStockFixturePartial[] = [];
       await app.bean.passport.signinMock();
       try {
-        const skuId = await prepareStock(suffix);
-        const reservation = await reserve(skuId, suffix);
+        const suffix = `${Date.now()}`;
+        const fixture = await prepareStock(suffix, fixtures);
+        const reservation = await reserve(fixture.skuId, suffix);
         const balanceAfterReserve = await app
           .scope('commerce-trade')
-          .model.stockBalance.get({ skuId });
+          .model.stockBalance.get({ skuId: fixture.skuId });
         assert.deepEqual(
           [
             balanceAfterReserve?.onHand,
@@ -79,7 +118,7 @@ describe('stockReservation.test.ts', () => {
           [3, 2, 1],
         );
 
-        const duplicate = await reserve(skuId, suffix);
+        const duplicate = await reserve(fixture.skuId, suffix);
         assert.equal(duplicate.id, reservation.id);
         const consumed = await app.scope('commerce-trade').service.stockBalance.consume({
           reservationId: reservation.id,
@@ -94,7 +133,7 @@ describe('stockReservation.test.ts', () => {
 
         const balanceAfterConsume = await app
           .scope('commerce-trade')
-          .model.stockBalance.get({ skuId });
+          .model.stockBalance.get({ skuId: fixture.skuId });
         assert.deepEqual(
           [
             balanceAfterConsume?.onHand,
@@ -103,15 +142,16 @@ describe('stockReservation.test.ts', () => {
           ],
           [1, 0, 1],
         );
-        const audits = await app
-          .scope('commerce-trade')
-          .model.stockAudit.select({ where: { skuId } });
+        const audits = await app.scope('commerce-trade').model.stockAudit.select({
+          where: { skuId: fixture.skuId },
+        });
         assert.deepEqual(
           audits.map(audit => audit.operation),
           ['adjust', 'reserve', 'consume'],
         );
         assert.equal(audits[1].stockReservationId, reservation.id);
       } finally {
+        await dropStockFixtures(fixtures);
         await app.bean.passport.signout();
       }
     });
@@ -119,36 +159,29 @@ describe('stockReservation.test.ts', () => {
 
   it('rejects reservations for inactive or unpublished catalog data without writes', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const suffix = `${Date.now()}`;
+      const fixtures: IStockFixturePartial[] = [];
       await app.bean.passport.signinMock();
       try {
-        const inactiveSkuId = await prepareStock(`${suffix}-inactive`);
-        await app.scope('commerce-catalog').model.sku.updateById(inactiveSkuId, {
+        const suffix = `${Date.now()}`;
+        const inactiveSku = await prepareStock(`${suffix}-inactive`, fixtures);
+        await app.scope('commerce-catalog').model.sku.updateById(inactiveSku.skuId, {
           lifecycle: 'inactive',
         });
-        await assertReservationRejected(inactiveSkuId, `${suffix}-inactive`, 404);
+        await assertReservationRejected(inactiveSku.skuId, `${suffix}-inactive`, 404);
 
-        const unpublishedProductSkuId = await prepareStock(`${suffix}-product`);
-        const unpublishedProductSku = await app
-          .scope('commerce-catalog')
-          .model.sku.getById(unpublishedProductSkuId);
+        const unpublishedProductSku = await prepareStock(`${suffix}-product`, fixtures);
         await app
           .scope('commerce-catalog')
-          .model.product.updateById(unpublishedProductSku!.productId, { published: false });
-        await assertReservationRejected(unpublishedProductSkuId, `${suffix}-product`, 409);
+          .model.product.updateById(unpublishedProductSku.productId, { published: false });
+        await assertReservationRejected(unpublishedProductSku.skuId, `${suffix}-product`, 409);
 
-        const unpublishedCategorySkuId = await prepareStock(`${suffix}-category`);
-        const unpublishedCategorySku = await app
-          .scope('commerce-catalog')
-          .model.sku.getById(unpublishedCategorySkuId);
-        const unpublishedCategoryProduct = await app
-          .scope('commerce-catalog')
-          .model.product.getById(unpublishedCategorySku!.productId);
+        const unpublishedCategorySku = await prepareStock(`${suffix}-category`, fixtures);
         await app
           .scope('commerce-catalog')
-          .model.category.updateById(unpublishedCategoryProduct!.categoryId, { published: false });
-        await assertReservationRejected(unpublishedCategorySkuId, `${suffix}-category`, 409);
+          .model.category.updateById(unpublishedCategorySku.categoryId, { published: false });
+        await assertReservationRejected(unpublishedCategorySku.skuId, `${suffix}-category`, 409);
       } finally {
+        await dropStockFixtures(fixtures);
         await app.bean.passport.signout();
       }
     });
@@ -156,11 +189,12 @@ describe('stockReservation.test.ts', () => {
 
   it('releases and restores stock only from legal reservation states', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const suffix = `${Date.now()}`;
+      const fixtures: IStockFixturePartial[] = [];
       await app.bean.passport.signinMock();
       try {
-        const skuId = await prepareStock(suffix);
-        const releasedReservation = await reserve(skuId, `${suffix}-release`);
+        const suffix = `${Date.now()}`;
+        const fixture = await prepareStock(suffix, fixtures);
+        const releasedReservation = await reserve(fixture.skuId, `${suffix}-release`);
         const released = await app.scope('commerce-trade').service.stockBalance.release({
           reservationId: releasedReservation.id,
           reason: 'payment failed',
@@ -172,7 +206,7 @@ describe('stockReservation.test.ts', () => {
         });
         assert.equal(duplicateRelease.state, 'released');
 
-        const consumedReservation = await reserve(skuId, `${suffix}-restore`, 1);
+        const consumedReservation = await reserve(fixture.skuId, `${suffix}-restore`, 1);
         await app.scope('commerce-trade').service.stockBalance.consume({
           reservationId: consumedReservation.id,
           reason: 'payment success',
@@ -195,10 +229,12 @@ describe('stockReservation.test.ts', () => {
           }),
         );
         assert.equal(err?.code, 409);
-        const balance = await app.scope('commerce-trade').model.stockBalance.get({ skuId });
+        const balance = await app
+          .scope('commerce-trade')
+          .model.stockBalance.get({ skuId: fixture.skuId });
         assert.deepEqual([balance?.onHand, balance?.reserved, balance?.available], [3, 0, 3]);
         const audits = await app.scope('commerce-trade').model.stockAudit.select({
-          where: { skuId },
+          where: { skuId: fixture.skuId },
         });
         assert.equal(audits.length, 6);
         assert.deepEqual(
@@ -254,6 +290,7 @@ describe('stockReservation.test.ts', () => {
           ],
         );
       } finally {
+        await dropStockFixtures(fixtures);
         await app.bean.passport.signout();
       }
     });
@@ -261,31 +298,35 @@ describe('stockReservation.test.ts', () => {
 
   it('allows exactly one competing reservation for the final unit', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const suffix = `${Date.now()}`;
+      const fixtures: IStockFixturePartial[] = [];
       await app.bean.passport.signinMock();
       try {
-        const skuId = await prepareStock(suffix, 1);
+        const suffix = `${Date.now()}`;
+        const fixture = await prepareStock(suffix, fixtures, 1);
         const results = await Promise.allSettled([
-          reserve(skuId, `${suffix}-first`, 1),
-          reserve(skuId, `${suffix}-second`, 1),
+          reserve(fixture.skuId, `${suffix}-first`, 1),
+          reserve(fixture.skuId, `${suffix}-second`, 1),
         ]);
         assert.equal(results.filter(result => result.status === 'fulfilled').length, 1);
         assert.equal(results.filter(result => result.status === 'rejected').length, 1);
 
-        const balance = await app.scope('commerce-trade').model.stockBalance.get({ skuId });
+        const balance = await app
+          .scope('commerce-trade')
+          .model.stockBalance.get({ skuId: fixture.skuId });
         assert.deepEqual([balance?.onHand, balance?.reserved, balance?.available], [1, 1, 0]);
         const reservations = await app.scope('commerce-trade').model.stockReservation.select({
-          where: { skuId },
+          where: { skuId: fixture.skuId },
         });
-        const audits = await app
-          .scope('commerce-trade')
-          .model.stockAudit.select({ where: { skuId } });
+        const audits = await app.scope('commerce-trade').model.stockAudit.select({
+          where: { skuId: fixture.skuId },
+        });
         assert.equal(reservations.length, 1);
         assert.deepEqual(
           audits.map(audit => audit.operation),
           ['adjust', 'reserve'],
         );
       } finally {
+        await dropStockFixtures(fixtures);
         await app.bean.passport.signout();
       }
     });
@@ -293,29 +334,33 @@ describe('stockReservation.test.ts', () => {
 
   it('rolls back reservation and balance when audit persistence fails', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const suffix = `${Date.now()}`;
+      const fixtures: IStockFixturePartial[] = [];
       await app.bean.passport.signinMock();
       try {
-        const skuId = await prepareStock(suffix);
+        const suffix = `${Date.now()}`;
+        const fixture = await prepareStock(suffix, fixtures);
         const modelStockAudit = app.scope('commerce-trade').model.stockAudit;
         const insert = modelStockAudit.insert.bind(modelStockAudit);
         (modelStockAudit as any).insert = async () => {
           throw new Error('reservation audit insert failure');
         };
         try {
-          const [_, err] = await catchError(() => reserve(skuId, suffix));
+          const [_, err] = await catchError(() => reserve(fixture.skuId, suffix));
           assert.match(err?.message ?? '', /reservation audit insert failure/);
         } finally {
           (modelStockAudit as any).insert = insert;
         }
 
-        const balance = await app.scope('commerce-trade').model.stockBalance.get({ skuId });
+        const balance = await app
+          .scope('commerce-trade')
+          .model.stockBalance.get({ skuId: fixture.skuId });
         assert.deepEqual([balance?.onHand, balance?.reserved, balance?.available], [3, 0, 3]);
         assert.equal(
-          await app.scope('commerce-trade').model.stockReservation.get({ skuId }),
+          await app.scope('commerce-trade').model.stockReservation.get({ skuId: fixture.skuId }),
           undefined,
         );
       } finally {
+        await dropStockFixtures(fixtures);
         await app.bean.passport.signout();
       }
     });
