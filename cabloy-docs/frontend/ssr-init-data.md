@@ -44,6 +44,31 @@ Client reuse requires the model call to resolve to the same effective query key:
 
 For helper selection and the complete passport flow, read [Model State Guide](/frontend/model-state-guide). For the dehydration filter and QueryClient lifecycle, read [A-Model Under the Hood](/frontend/a-model-under-the-hood).
 
+## Hydration-equivalent initial render
+
+The server-rendered HTML and the client's hydration-time initial render must be equivalent. Compare the server response with the first client render that hydrates it, not with the browser UI after later client work completes.
+
+Choose one of these strategies for each render-driving state:
+
+### State required in SSR output
+
+Use the model-owned query on both sides, prepare it in the server-capable initialization path, and let the client reuse the transferred state through the same effective Model, selector, and logical query key. This is the normal approach for public data that must appear in the initial HTML.
+
+### State intentionally omitted from SSR
+
+For private, cookie-unavailable, or browser-only state, render the same neutral shell or placeholder on the server and during the client's hydration-time initial render. Begin the query, loading state, and private rendered branch only at an explicit client boundary, such as `onHydrated`, `ClientOnly`, completed route admission, a mounted client lifecycle, or user interaction.
+
+A `process.env.CLIENT` branch is not sufficient when it changes the first hydration tree. A state transition after hydration is valid; a different hydration-time initial tree is not.
+
+### Query helper roles
+
+- `$useStateData(...)` owns the query identity, state, cache lifecycle, and hydration reuse.
+- `disableSuspenseOnInit: true` skips only `$useStateData(...)`'s automatic first-creation `query.suspense()` kick. It does not prevent query creation, restore, mounted/no-data fetches, or later refetches.
+- `$QueryEnsureLoaded(...)` is an awaited availability gate: it waits only while `query.data === undefined`. Use it at a deliberate boundary that needs loaded data, not to suppress a query during hydration.
+- If a boundary requires domain-valid data rather than merely loaded data, choose `$QueryGetFresh(...)` or `$QueryEnsureFresh(...)` with the model's freshness rule.
+
+For the detailed state-helper semantics, read [Use State Data Best Practices](/frontend/use-state-data-best-practices). For browser-only rendering, read [SSR ClientOnly](/frontend/ssr-client-only).
+
 ## Implementation checks for SSR data-loading changes
 
 When changing SSR pages, avoid inventing parallel data-loading patterns unless there is a real reason.

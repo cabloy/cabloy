@@ -81,6 +81,8 @@ Request /account or /orders
 
 The server-rendered HTML must not contain private user data. This preserves the Web flavor's anonymous SSR, cache, SEO, and hydration behavior while keeping private data behind Vona API authorization.
 
+The hydration-time first client tree must remain that same anonymous shell. Browser Passport restoration, Site admission, and private query initialization may replace the shell only after an explicit client boundary; they must not create a private or differently shaped loading branch during hydration itself. Avoiding private HTML leakage is necessary but insufficient when the initial client render still differs from the server output.
+
 This is still SSR:
 
 ```text
@@ -174,9 +176,10 @@ A same-domain cookie only proves authentication. It never grants Admin, Member, 
 2. Leave public routes explicitly marked `requiresAuth: false`.
 3. Keep user workspace routes authenticated by default.
 4. Ensure Web SSR output for authenticated routes contains no private data when `SSR_COOKIE=false`.
-5. In the browser, complete Passport and `SITE_ID=web` role-policy checks before private data interaction.
-6. Protect every private data API with Vona Passport/resource guards.
-7. Test anonymous SSR output, browser hydration, unauthenticated redirect, role denial, and direct API denial separately.
+5. Keep the client's hydration-time initial render equivalent to that anonymous SSR shell; do not start a private query or render a private/loading branch until an explicit post-hydration, admission, mounted, or interaction boundary.
+6. In the browser, complete Passport and `SITE_ID=web` role-policy checks before private data interaction.
+7. Protect every private data API with Vona Passport/resource guards.
+8. Test anonymous SSR output, hydration-time equivalence, browser admission, unauthenticated redirect, role denial, and direct API denial separately.
 
 ### Dedicated Member/Account Site, when justified
 

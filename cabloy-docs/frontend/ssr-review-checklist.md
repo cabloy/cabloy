@@ -79,6 +79,9 @@ Review these questions when the change affects route resolution, server-side dat
 
 - [ ] Is the initial server-rendered HTML still correct before hydration begins?
 - [ ] If data is involved, is it prepared through the intended SSR/model/controller flow?
+- [ ] Does the server HTML match the client's hydration-time initial render in structure, visible state, and render-driving data?
+- [ ] For SSR-required data, does the client reuse the transferred state through the same effective query key instead of producing a separate first-screen result?
+- [ ] For private, cookie-unavailable, or browser-only data intentionally omitted by SSR, does the server and hydration-time client render keep the same neutral shell or placeholder?
 - [ ] If metadata is involved, is it still produced through the intended SSR-aware meta path?
 - [ ] If the change touches SSR-only behavior, did I verify it at the server-render stage rather than only after client boot?
 
@@ -92,10 +95,12 @@ Read together:
 
 Review these questions when the change affects browser-only behavior, first paint, or client takeover after SSR.
 
-- [ ] Is the client reusing server-provided state rather than recomputing a different first-screen result?
-- [ ] If browser-only behavior is involved, should part of the UI be isolated with `ClientOnly`?
+- [ ] Is the client reusing server-provided state rather than recomputing a different hydration-time initial result?
+- [ ] If state was intentionally omitted by SSR, is its query/load/render branch deferred until an explicit post-hydration, admission, mounted, or interaction boundary?
+- [ ] If browser-only behavior is involved, should part of the UI be isolated with `ClientOnly` and a hydration-equivalent placeholder?
+- [ ] Is `disableSuspenseOnInit` being used only to skip its init-time suspense kick, rather than as an assumed no-fetch or hydration-deferral mechanism?
 - [ ] Did I separate a hydration issue from a server-render issue before changing code?
-- [ ] If the final browser state differs from the server output, is that difference expected and framework-supported?
+- [ ] If the browser UI later differs from the server output, does that change begin after hydration through an expected framework-supported boundary?
 
 Read together:
 
@@ -135,6 +140,8 @@ Flag the change for follow-up when any of these are true:
 - the change assumes one edition's theme/UI behavior applies universally
 - the change was validated only in dev even though the failure is deploy- or build-sensitive
 - the review never identified which SSR layer was actually changing
+- private or browser-only state omitted by SSR appears or starts loading during the client's hydration-time initial render
+- `disableSuspenseOnInit` is presented as proof that a query cannot fetch or affect hydration
 
 ## Reviewer template
 
@@ -156,10 +163,13 @@ Review this change with the Cabloy SSR checklist in mind.
 
 1. Identify which SSR layer the change touches: Vona SSR orchestration, frontend build output, Zova SSR server render, or client hydration.
 2. Separate server-render correctness from hydration correctness.
-3. Verify whether the change reuses the intended framework abstraction instead of adding a parallel workaround.
-4. Check whether the change needs built-mode validation rather than only dev-mode validation.
-5. Review edition-sensitive UI/theme assumptions when the change touches first paint, tokens, dark mode, or SSR env behavior.
-6. Flag any change whose review never identifies the failing or affected SSR layer.
+3. Compare server HTML with the client's hydration-time initial render, not with later post-hydration browser state.
+4. Verify whether SSR-required state reuses the intended transferred query state and whether deliberately omitted private/browser-only state remains absent until an explicit client boundary.
+5. Do not accept `disableSuspenseOnInit` as evidence that a query cannot fetch or change hydration behavior.
+6. Verify whether the change reuses the intended framework abstraction instead of adding a parallel workaround.
+7. Check whether the change needs built-mode validation rather than only dev-mode validation.
+8. Review edition-sensitive UI/theme assumptions when the change touches first paint, tokens, dark mode, or SSR env behavior.
+9. Flag any change whose review never identifies the failing or affected SSR layer.
 ```
 
 ## Read together

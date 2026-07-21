@@ -136,6 +136,8 @@ Check whether the feature needs:
 - SSR init-data updates
 - OpenAPI SDK regeneration
 - schema-driven UI or `$apiSchema` review
+- SSR hydration-equivalence review: classify state as SSR-required or intentionally deferred; keep server HTML and the hydration-time client render equivalent; defer private, cookie-unavailable, or browser-only query/load/render branches to an explicit post-hydration, admission, mounted, or interaction boundary
+- distinguish `$useStateData(...)` query ownership from readiness waits: `disableSuspenseOnInit` only skips its init-time suspense kick and does not prevent query creation or fetches; choose `$QueryEnsureLoaded(...)` or freshness helpers only at the later boundary that needs them
 - reverse fullstack handoff when newly added frontend resources will later be consumed by backend metadata or backend tooling
 
 If the frontend change introduces resources such as a custom form-field renderer, table-cell renderer, or other generated metadata that backend `ZovaRender.field(...)` / `ZovaRender.cell(...)` will consume, do not treat the task as frontend-only cleanup.
@@ -166,6 +168,7 @@ Check whether the feature needs:
 - build
 - metadata regeneration verification
 - SSR or route-path verification
+- hydration-time initial-render equivalence when SSR, private state, browser-only state, or async model state changes
 - edition-specific flavor, SSR site baseline, and project-asset verification
 
 ### SSR theme review reminder

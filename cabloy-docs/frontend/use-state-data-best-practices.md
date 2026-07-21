@@ -98,6 +98,10 @@ A controller renders as though the interaction is ready, but clicking the button
 
 That is a sign that a query-state concern may have been pushed too far into imperative interaction code.
 
+### SSR exception: intentionally omitted state
+
+For state intentionally omitted from SSR, hydration equivalence takes priority over the normal render-time default. Keep the same neutral shell or placeholder in the server output and the client's hydration-time initial render, then establish or load the private/client-only branch only after an explicit client boundary. Read [SSR Init Data](/frontend/ssr-init-data) before applying this exception.
+
 ## Practical rule 3: `disableSuspenseOnInit: true` disables the init-time `query.suspense()` kick, not the query itself
 
 This point needs precise wording.

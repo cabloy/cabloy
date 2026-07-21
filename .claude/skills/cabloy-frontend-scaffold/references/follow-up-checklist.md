@@ -13,6 +13,10 @@ After generating or extending a frontend thread, check which follow-up layers ap
 
 - API service or model alignment
 - SSR init-data needs
+- classify render-driving state as SSR-required or intentionally deferred; server HTML and the hydration-time client render must remain equivalent
+- for intentionally deferred private, cookie-unavailable, or browser-only state, keep the same neutral shell/placeholder through hydration and begin query/load/render work only at an explicit post-hydration, admission, mounted, or interaction boundary
+- `disableSuspenseOnInit` skips only the init-time suspense kick; do not treat it as a no-fetch or hydration-deferral mechanism
+- use `$QueryEnsureLoaded(...)` only where loaded data is explicitly required; choose freshness helpers when the boundary requires domain-valid data
 - OpenAPI SDK or schema-driven layer impact
 - backend contract reminder if frontend depends on generated backend contract output
 - if backend metadata will consume newly added frontend render resources, run the relevant Zova build first and then `npm run deps:vona`
