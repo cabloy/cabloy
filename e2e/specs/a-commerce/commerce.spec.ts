@@ -111,6 +111,7 @@ test(
     const documentResponse = await page.goto(productPath, { waitUntil: 'load' });
     expect(documentResponse?.ok()).toBeTruthy();
     await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+    await expect(page).toHaveURL(productPath);
     await expect(page.getByRole('heading', { name: 'Wireless Headphones' })).toBeVisible();
 
     const cartLink = page.locator('a[href="/commerce/cart"]');

@@ -37,7 +37,6 @@ export class ControllerPageProduct extends BeanControllerPageBase {
   }
 
   get queryCurrentCart() {
-    if (process.env.SERVER) return;
     return this.$$modelCart.current();
   }
 

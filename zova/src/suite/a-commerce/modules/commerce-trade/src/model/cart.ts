@@ -12,6 +12,7 @@ export interface IModelOptionsCart extends IDecoratorModelOptions {}
 @Model<IModelOptionsCart>()
 export class ModelCart extends BeanModelBase {
   current() {
+    if (!process.env.CLIENT || !this.$passport.isAuthenticated) return;
     return this.$useStateData({
       queryKey: ['current'],
       queryFn: async () => {
