@@ -355,4 +355,90 @@ describe('catalog.test.ts', () => {
       { instanceName: 'shareTest' as any },
     );
   });
+
+  it('treats foreign operator catalogue resources as absent', async () => {
+    const prefix = `__catalog-foreign-${Date.now()}__`;
+    let defaultCatalog!: Awaited<ReturnType<typeof createCatalog>>;
+    await app.bean.executor.mockCtx(async () => {
+      defaultCatalog = await createCatalog(prefix, 'active');
+    });
+
+    await app.bean.executor.mockCtx(
+      async () => {
+        await app.bean.passport.signinMock();
+        try {
+          const resources = [
+            ['category', defaultCatalog.categoryId, { name: 'foreign category', published: false }],
+            [
+              'product',
+              defaultCatalog.productId,
+              {
+                categoryId: defaultCatalog.categoryId,
+                title: 'foreign product',
+                published: false,
+              },
+            ],
+            [
+              'sku',
+              defaultCatalog.skuId,
+              {
+                productId: defaultCatalog.productId,
+                code: 'foreign-sku',
+                priceCents: 100,
+                lifecycle: 'inactive',
+              },
+            ],
+          ] as const;
+          for (const [resource, id, body] of resources) {
+            assert.equal(
+              await app.bean.executor.performAction('get', `/commerce/catalog/${resource}/:id`, {
+                params: { id },
+              }),
+              undefined,
+            );
+            const selected = await app.bean.executor.performAction(
+              'get',
+              `/commerce/catalog/${resource}`,
+            );
+            assert.equal(
+              selected.list.some((item: { id: unknown }) => String(item.id) === String(id)),
+              false,
+            );
+            const update = () =>
+              app.bean.executor.performAction('patch', `/commerce/catalog/${resource}/:id`, {
+                params: { id },
+                body,
+              });
+            if (resource === 'category') {
+              assert.equal(await update(), null);
+            } else {
+              await assert.rejects(update);
+            }
+            assert.equal(
+              await app.bean.executor.performAction('delete', `/commerce/catalog/${resource}/:id`, {
+                params: { id },
+              }),
+              null,
+            );
+          }
+        } finally {
+          await app.bean.passport.signout();
+        }
+      },
+      { instanceName: 'shareTest' as any },
+    );
+
+    await app.bean.executor.mockCtx(async () => {
+      const category = await app
+        .scope('commerce-catalog')
+        .model.category.getById(defaultCatalog.categoryId);
+      const product = await app
+        .scope('commerce-catalog')
+        .model.product.getById(defaultCatalog.productId);
+      const sku = await app.scope('commerce-catalog').model.sku.getById(defaultCatalog.skuId);
+      assert.equal(category?.name, `${prefix} category`);
+      assert.equal(product?.title, `${prefix} product`);
+      assert.equal(sku?.code, `${prefix}-sku`);
+    });
+  });
 });
