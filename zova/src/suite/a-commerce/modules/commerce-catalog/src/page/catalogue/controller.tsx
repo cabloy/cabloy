@@ -26,9 +26,9 @@ export class ControllerPageCatalogue extends BeanControllerPageBase {
   }
 
   private _getProductPagePath(id: string | number): string {
-    return this.$router.getPagePath('/commerce/catalog/product/:id/:locale?', {
+    return this.$router.getAliasPath('commerce-catalog:product', {
       params: { id: String(id), locale: true },
-    });
+    })!;
   }
 
   protected render() {
