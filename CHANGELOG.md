@@ -1,5 +1,22 @@
 # Changelog
 
+## 5.1.112
+
+### Features
+
+- Add commerce member address ownership support.
+- Add commerce cart capabilities.
+- Add a commerce test seed module.
+- Add rules and catalog capabilities.
+- Add server-side rendered menu support.
+- Add commerce site administration capabilities.
+
+### Improvements
+
+- Update commerce DTOs, controllers, routing, product handling, stock balances, and upgrade flows.
+- Add Playwright end-to-end test workflow coverage.
+- Refine full-stack positioning documentation.
+
 ## 5.1.111
 
 ### Features
