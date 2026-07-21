@@ -72,6 +72,8 @@ Before inventing a custom implementation path:
 - In Vona, a tenant corresponds to an instance. Ordinary resource-model CRUD is automatically scoped to the active instance; treat records absent from that scope as absent, and do not use raw cross-instance probes merely to choose between `403` and not-found behavior. Model future multi-merchant boundaries explicitly inside an instance.
 - Model cross-Model query-cache dependencies as one directed, acyclic `modelsClear` / `modelsClearedBy` graph, and verify source mutations refresh warmed dependent queries; read `.docs-internal/architecture/vona-cross-model-query-cache-dependencies.md` before designing a nontrivial graph.
 - For `@Api.field(...)` and related schemaLike composition, framework guards now preserve previously attached OpenAPI metadata across schema rebuilds, but structure-shaping schemaLike is still order-sensitive. Treat `v.object(...)`, `v.array(...)`, `v.optional()`, `v.nullable()`, `v.default(...)`, and preprocess/transform wrappers as structure-shaping; keep the final structure-defining schemaLike last and verify emitted schema/OpenAPI output after such edits.
+- Unit tests must delete every test-owned persisted resource in `finally`, using precise owned identities and reverse dependency order.
+- Shared durable test or local-development fixtures must be created idempotently through the owning module's `meta.version.ts` `test()` lifecycle and treated as read-only by tests.
 
 ## Verification expectations
 

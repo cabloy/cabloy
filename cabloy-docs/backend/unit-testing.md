@@ -86,6 +86,31 @@ await app.bean.executor.mockCtx(async () => {
 
 Locale-sensitive variants and additional request-context helpers are also available.
 
+## Persisted fixture lifecycle
+
+Classify persisted test data before creating it:
+
+- use a **test-local fixture** for a single test or scenario;
+- use an owning module's `meta.version.ts` `test()` seed only for stable baseline data shared across tests or intentionally used by the local-development test-data workflow.
+
+A test owns every persisted resource it creates. Keep the returned entity or exact ID and delete owned records from `finally`, including when an assertion or action fails. Delete dependents before their owners and use the same active tenant/instance context that created them. Do not discover cleanup targets through broad table queries, time-based prefixes, or business conditions when the test already knows the exact identity.
+
+```typescript
+let parentId: number | undefined;
+let childId: number | undefined;
+try {
+  parentId = await createParent();
+  childId = await createChild(parentId);
+
+  // exercise and assert the behavior under test
+} finally {
+  if (childId) await deleteChild(childId);
+  if (parentId) await deleteParent(parentId);
+}
+```
+
+Treat shared `test()` seed records as read-only. If a scenario needs to change a record, create a separate test-local fixture instead and clean it up. See [Migration and Changes](/backend/migration-and-changes#test-test-only-data) for the durable seed lifecycle.
+
 ## Working with module scope in tests
 
 Representative pattern:

@@ -35,6 +35,15 @@ After generating or extending a backend thread, check which follow-up layers app
 - add a warm-query → mutate-source → repeat-query regression test for each new dependency path; read [Vona Cross-Model Query-Cache Dependencies](../../../../.docs-internal/architecture/vona-cross-model-query-cache-dependencies.md) for the source-backed decision rules
 - transaction behavior
 
+## Test resource lifecycle follow-up
+
+- classify persisted test data as either an owning-module durable seed or a test-local fixture
+- create durable test or local-development baseline data idempotently in the owning module's `meta.version.ts` `test()` lifecycle with stable business identifiers or equivalent lookup/create behavior
+- treat durable seed data as read-only in tests; create an independent fixture when a scenario needs mutation
+- retain exact IDs or entities for every test-local persisted resource and delete them from `finally`
+- delete joins, children, derived records, and other dependents before their owners, in the same active tenant/instance scope
+- do not use unscoped, timestamp-, prefix-, or broad business-condition deletion when an exact test-owned identity is available
+
 ## Module composition and dependency intent
 
 - target module is already composed into the application when code uses cross-module scope lookup

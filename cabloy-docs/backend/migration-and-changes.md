@@ -146,6 +146,10 @@ export class MetaVersion extends BeanBase implements IMetaVersionTest {
 
 This is valuable because test data becomes part of the structured migration lifecycle instead of being scattered across unrelated setup code.
 
+Use `test()` for durable baseline fixtures that are shared by multiple tests or intentionally available to local development through the managed test-data workflow. The owning module must create these records idempotently with stable business identifiers or equivalent lookup/create behavior, rather than relying on a newly recreated database or generated IDs.
+
+Treat durable `test()` seed records as read-only in ordinary tests. A scenario that needs different state must create independent, test-owned data and clean it up in `finally`; it must not mutate or delete the shared baseline. `test()` remains distinct from `init()`: use `init()` for instance-aware initialization data and reserve `test()` for the test-data lifecycle.
+
 ## Version changes across the generated backend thread
 
 When the generated CRUD thread evolves, migration should evolve with it.
