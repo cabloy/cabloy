@@ -30,9 +30,10 @@ process.on('SIGTERM', stop);
 child.on('error', error => {
   // eslint-disable-next-line
   console.error(error);
-  process.exitCode = 1;
+  process.exit(1);
 });
 
 child.on('exit', code => {
-  process.exitCode = code ?? 1;
+  // Playwright waits for this wrapper to exit, not only for Vona's workers to stop.
+  process.exit(code ?? 1);
 });
