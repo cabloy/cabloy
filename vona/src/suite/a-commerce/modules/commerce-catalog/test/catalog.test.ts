@@ -1,3 +1,4 @@
+import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
@@ -439,6 +440,153 @@ describe('catalog.test.ts', () => {
       assert.equal(category?.name, `${prefix} category`);
       assert.equal(product?.title, `${prefix} product`);
       assert.equal(sku?.code, `${prefix}-sku`);
+    });
+  });
+
+  it('rejects foreign catalogue relation identifiers without local writes', async () => {
+    const suffix = `${Date.now()}`;
+    let foreignCatalog!: Awaited<ReturnType<typeof createCatalog>>;
+    await app.bean.executor.mockCtx(
+      async () => {
+        foreignCatalog = await createCatalog(`__catalog-relation-foreign-${suffix}__`, 'active');
+      },
+      { instanceName: 'shareTest' as any },
+    );
+
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      try {
+        const parentCategoryId = await app.bean.executor.performAction(
+          'post',
+          '/commerce/catalog/category',
+          { body: { name: `relation-parent-${suffix}`, published: true } },
+        );
+        const categoryId = await app.bean.executor.performAction(
+          'post',
+          '/commerce/catalog/category',
+          {
+            body: {
+              name: `relation-category-${suffix}`,
+              parentId: parentCategoryId,
+              published: true,
+            },
+          },
+        );
+        const productId = await app.bean.executor.performAction(
+          'post',
+          '/commerce/catalog/product',
+          {
+            body: {
+              categoryId,
+              title: `relation-product-${suffix}`,
+              published: true,
+            },
+          },
+        );
+        const skuId = await app.bean.executor.performAction('post', '/commerce/catalog/sku', {
+          body: {
+            productId,
+            code: `relation-sku-${suffix}`,
+            priceCents: 100,
+            lifecycle: 'draft',
+          },
+        });
+        const operations = [
+          () =>
+            app.bean.executor.performAction('post', '/commerce/catalog/category', {
+              body: {
+                name: `foreign-parent-category-${suffix}`,
+                parentId: foreignCatalog.categoryId,
+                published: true,
+              },
+            }),
+          () =>
+            app.bean.executor.performAction('patch', '/commerce/catalog/category/:id', {
+              params: { id: categoryId },
+              body: {
+                name: `relation-category-updated-${suffix}`,
+                parentId: foreignCatalog.categoryId,
+                published: false,
+              },
+            }),
+          () =>
+            app.bean.executor.performAction('post', '/commerce/catalog/product', {
+              body: {
+                categoryId: foreignCatalog.categoryId,
+                title: `foreign-category-product-${suffix}`,
+                published: true,
+              },
+            }),
+          () =>
+            app.bean.executor.performAction('patch', '/commerce/catalog/product/:id', {
+              params: { id: productId },
+              body: {
+                categoryId: foreignCatalog.categoryId,
+                title: `relation-product-updated-${suffix}`,
+                published: false,
+              },
+            }),
+          () =>
+            app.bean.executor.performAction('post', '/commerce/catalog/sku', {
+              body: {
+                productId: foreignCatalog.productId,
+                code: `foreign-product-sku-${suffix}`,
+                priceCents: 100,
+                lifecycle: 'draft',
+              },
+            }),
+          () =>
+            app.bean.executor.performAction('patch', '/commerce/catalog/sku/:id', {
+              params: { id: skuId },
+              body: {
+                productId: foreignCatalog.productId,
+                code: `relation-sku-updated-${suffix}`,
+                priceCents: 200,
+                lifecycle: 'active',
+              },
+            }),
+        ];
+        for (const operation of operations) {
+          const [_, err] = await catchError(operation);
+          assert.equal(err?.code, 404);
+        }
+
+        const category = await app.scope('commerce-catalog').model.category.getById(categoryId);
+        const product = await app.scope('commerce-catalog').model.product.getById(productId);
+        const sku = await app.scope('commerce-catalog').model.sku.getById(skuId);
+        assert.deepEqual(
+          [category?.name, category?.parentId, category?.published],
+          [`relation-category-${suffix}`, parentCategoryId, true],
+        );
+        assert.deepEqual(
+          [product?.categoryId, product?.title, product?.published],
+          [categoryId, `relation-product-${suffix}`, true],
+        );
+        assert.deepEqual(
+          [sku?.productId, sku?.code, sku?.priceCents, sku?.lifecycle],
+          [productId, `relation-sku-${suffix}`, 100, 'draft'],
+        );
+        assert.equal(
+          await app.scope('commerce-catalog').model.category.get({
+            name: `foreign-parent-category-${suffix}`,
+          }),
+          undefined,
+        );
+        assert.equal(
+          await app.scope('commerce-catalog').model.product.get({
+            title: `foreign-category-product-${suffix}`,
+          }),
+          undefined,
+        );
+        assert.equal(
+          await app.scope('commerce-catalog').model.sku.get({
+            code: `foreign-product-sku-${suffix}`,
+          }),
+          undefined,
+        );
+      } finally {
+        await app.bean.passport.signout();
+      }
     });
   });
 });
