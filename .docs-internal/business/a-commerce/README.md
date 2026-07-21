@@ -8,11 +8,10 @@ This directory records the agreed product, system, and delivery baseline for the
 2. [Software Requirements Specification](./srs.md) defines the implementation contracts, ownership boundaries, state machines, and invariants.
 3. [Product Delivery Plan and Work Breakdown Structure](./pdp-wbs.md) sequences the work and defines completion checks.
 4. [Test Strategy and Acceptance Plan](./test-plan.md) defines executable acceptance scenarios, evidence, and release proof.
-5. [Phase 20 Contract Loop](./phase-20-contract-loop.md) defines the paired Commerce SSR/REST build and synchronization workflow.
-6. [ADR 0001](./decisions/0001-mvp-boundaries.md) records the accepted MVP architecture and scope decisions behind this plan.
-7. [ADR 0002](./decisions/0002-multi-merchant-within-one-vona-instance.md) records proposed guardrails for a future multi-merchant boundary within one Vona instance.
-8. [ADR 0010](../../decisions/0010-repository-native-planning-documents.md) records the accepted repository-wide decision to keep internal planning documents repository-native rather than adopt OpenSpec as a parallel authority.
-9. [ADR 0009](../../decisions/0009-homepage-module-naming-boundary.md) records the accepted cross-suite ownership and naming boundary between reusable A-Home entry modules and Commerce site modules.
+5. [Delivery Progress](./progress.md) is the derived execution-status index for WBS state, evidence pointers, blockers, and next proof; it does not redefine authoritative requirements or acceptance.
+6. [Phase 20 Contract Loop](./phase-20-contract-loop.md) defines the paired Commerce SSR/REST build and synchronization workflow.
+7. [ADR 0001](./decisions/0001-mvp-boundaries.md) records the accepted MVP architecture and scope decisions behind this plan.
+8. [ADR 0002](./decisions/0002-multi-merchant-within-one-vona-instance.md) records proposed guardrails for a future multi-merchant boundary within one Vona instance.
 
 ## Confirmed MVP Baseline
 
