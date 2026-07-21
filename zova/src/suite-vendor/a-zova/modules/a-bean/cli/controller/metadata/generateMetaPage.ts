@@ -70,7 +70,9 @@ export async function generateMetaPage(
       // contentPathRecords.push(_combineContentPathRecord(routePathFull, `\`${apiPath3}\``, hasSchemaQuery, className));
       // contentPathRecords.push(_combineContentPathRecord(routePathFull, hasSchemaParams, hasSchemaQuery, className));
       //
-      contentNameRecords.push(`'${routeNameFull}': undefined;`);
+      contentNameRecords.push(
+        _combineContentPathRecord(routeNameFull, hasSchemaParams, hasSchemaQuery, namespace),
+      );
     }
     // schema
     if (!routeName) {

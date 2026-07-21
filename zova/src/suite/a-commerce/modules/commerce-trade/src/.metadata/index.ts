@@ -147,7 +147,7 @@ export interface IPagePathRecord {
   '/commerce/trade/cart/:locale?': TypePagePathSchema<NSControllerPageCart.ParamsInput,NSControllerPageCart.QueryInput>;
 }
 export interface IPageNameRecord {
-  'commerce-trade:cart': undefined;
+  'commerce-trade:cart': TypePagePathSchema<NSControllerPageCart.ParamsInput,NSControllerPageCart.QueryInput>;
 }
 }
 export const pagePathSchemas = {

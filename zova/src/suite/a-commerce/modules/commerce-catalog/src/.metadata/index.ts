@@ -158,8 +158,8 @@ export interface IPagePathRecord {
 '/commerce/catalog/product/:id/:locale?': TypePagePathSchema<NSControllerPageProduct.ParamsInput,NSControllerPageProduct.QueryInput>;
 }
 export interface IPageNameRecord {
-  'commerce-catalog:catalogue': undefined;
-'commerce-catalog:product': undefined;
+  'commerce-catalog:catalogue': TypePagePathSchema<NSControllerPageCatalogue.ParamsInput,NSControllerPageCatalogue.QueryInput>;
+'commerce-catalog:product': TypePagePathSchema<NSControllerPageProduct.ParamsInput,NSControllerPageProduct.QueryInput>;
 }
 }
 export const pagePathSchemas = {

@@ -35,7 +35,7 @@ export interface IPagePathRecord {
   '/home/indexweb/home/:locale?': TypePagePathSchema<NSControllerPageHome.ParamsInput,undefined>;
 }
 export interface IPageNameRecord {
-  'home-indexweb:home': undefined;
+  'home-indexweb:home': TypePagePathSchema<NSControllerPageHome.ParamsInput,undefined>;
 }
 }
 export const pagePathSchemas = {
@@ -77,5 +77,5 @@ declare module 'zova' {
 
   
 }
-  
+
 /** scope: end */

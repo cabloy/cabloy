@@ -120,7 +120,7 @@ export interface IPagePathRecord {
 '/demo/todo/todo': TypePagePathSchema<undefined,undefined>;
 }
 export interface IPageNameRecord {
-  'demo-todo:item': undefined;
+  'demo-todo:item': TypePagePathSchema<NSControllerPageItem.ParamsInput,NSControllerPageItem.QueryInput>;
 }
 }
 export const pagePathSchemas = {
@@ -164,5 +164,5 @@ declare module 'zova' {
 
   
 }
-  
+
 /** scope: end */

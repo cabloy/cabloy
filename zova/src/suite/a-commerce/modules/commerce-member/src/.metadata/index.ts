@@ -147,7 +147,7 @@ export interface IPagePathRecord {
   '/commerce/member/address/:locale?': TypePagePathSchema<NSControllerPageAddress.ParamsInput,NSControllerPageAddress.QueryInput>;
 }
 export interface IPageNameRecord {
-  'commerce-member:address': undefined;
+  'commerce-member:address': TypePagePathSchema<NSControllerPageAddress.ParamsInput,NSControllerPageAddress.QueryInput>;
 }
 }
 export const pagePathSchemas = {

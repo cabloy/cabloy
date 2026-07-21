@@ -232,7 +232,7 @@ export class SysRouter extends BeanBase {
 
   getAliasPath<K extends keyof IPageNameRecord>(
     name: K,
-    options?: { params?: any; query?: any },
+    options?: IPageNameRecord[K],
     absolute?: boolean,
   ): string | undefined {
     const alias = this.sys.config.routes.name[name]?.alias;

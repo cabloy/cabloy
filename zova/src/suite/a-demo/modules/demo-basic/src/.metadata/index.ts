@@ -196,10 +196,10 @@ export interface IPagePathRecord {
 '/demo/basic/toolTwo/:id?': TypePagePathSchema<NSControllerPageToolTwo.ParamsInput,NSControllerPageToolTwo.QueryInput>;
 }
 export interface IPageNameRecord {
-  'demo-basic:routeParams': undefined;
-'demo-basic:toolMinimal': undefined;
-'demo-basic:toolOne': undefined;
-'demo-basic:toolTwo': undefined;
+  'demo-basic:routeParams': TypePagePathSchema<NSControllerPageRouteParams.ParamsInput,NSControllerPageRouteParams.QueryInput>;
+'demo-basic:toolMinimal': TypePagePathSchema<undefined,undefined>;
+'demo-basic:toolOne': TypePagePathSchema<NSControllerPageToolOne.ParamsInput,NSControllerPageToolOne.QueryInput>;
+'demo-basic:toolTwo': TypePagePathSchema<NSControllerPageToolTwo.ParamsInput,NSControllerPageToolTwo.QueryInput>;
 }
 }
 export const pagePathSchemas = {
@@ -425,5 +425,5 @@ declare module 'zova' {
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `demo-basic::${K}` {
   return `demo-basic::${key}`;
-}  
+}
 /** scope: end */

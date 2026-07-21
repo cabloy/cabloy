@@ -87,9 +87,9 @@ export interface IPagePathRecord {
 '/rest/resource/:resource': TypePagePathSchema<NSControllerPageResource.ParamsInput,undefined>;
 }
 export interface IPageNameRecord {
-  'rest-resource:entry': undefined;
-'rest-resource:entryCreate': undefined;
-'rest-resource:resource': undefined;
+  'rest-resource:entry': TypePagePathSchema<NSControllerPageEntry.ParamsInput,undefined>;
+'rest-resource:entryCreate': TypePagePathSchema<NSControllerPageEntryCreate.ParamsInput,undefined>;
+'rest-resource:resource': TypePagePathSchema<NSControllerPageResource.ParamsInput,undefined>;
 }
 }
 export const pagePathSchemas = {
@@ -145,5 +145,5 @@ declare module 'zova' {
 
   
 }
-  
+
 /** scope: end */

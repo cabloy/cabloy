@@ -141,6 +141,17 @@ export default async function (app: VonaApplication) {
       pool: { min: 0, max: 5 },
       acquireConnectionTimeout: 60000 * 10,
       asyncStackTraces: true,
+      log: {
+        warn(message) {
+          if (
+            message ===
+            'sqlite3 only supports serializable transactions, ignoring the isolation level param'
+          ) {
+            return;
+          }
+          console.warn(message);
+        },
+      },
     },
     defaultClient: env.DATABASE_DEFAULT_CLIENT as keyof IDatabaseClientRecord,
     clients: {
