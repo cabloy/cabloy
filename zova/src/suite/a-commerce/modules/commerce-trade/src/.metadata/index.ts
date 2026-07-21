@@ -111,6 +111,62 @@ declare module 'zova' {
   }
 }
 /** apiSchema: end */
+/** controller: begin */
+export * from '../page/cart/controller.jsx';
+
+import 'zova';
+declare module 'zova' {
+  
+  
+}
+declare module 'zova-module-commerce-trade' {
+  
+        export interface ControllerPageCart {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        } 
+}
+/** controller: end */
+/** controller: begin */
+import { ControllerPageCart } from '../page/cart/controller.jsx';
+import 'zova';
+declare module 'zova' {
+  export interface IBeanRecordLocal {
+    'commerce-trade.controller.pageCart': ControllerPageCart;
+  }
+}
+/** controller: end */
+/** pages: begin */
+export * from './page/cart.js';
+import { NSControllerPageCart } from './page/cart.js';
+export * from '../routes.js';
+import { TypePagePathSchema } from 'zova-module-a-router';
+import 'zova';
+declare module 'zova-module-a-router' {
+export interface IPagePathRecord {
+  '/commerce/trade/cart/:locale?': TypePagePathSchema<NSControllerPageCart.ParamsInput,NSControllerPageCart.QueryInput>;
+}
+export interface IPageNameRecord {
+  'commerce-trade:cart': undefined;
+}
+}
+export const pagePathSchemas = {
+
+};
+export const pageNameSchemas = {
+'commerce-trade:cart': {
+          params: NSControllerPageCart.paramsSchema,
+          query: NSControllerPageCart.querySchema,
+        },
+};
+declare module 'zova-module-commerce-trade' {
+  export interface ControllerPageCart {
+        $params: NSControllerPageCart.ParamsOutput;
+$query: NSControllerPageCart.QueryOutput;
+      }
+}
+/** pages: end */
+
 /** locale: begin */
 import { locales } from './locales.js';
 /** locale: end */

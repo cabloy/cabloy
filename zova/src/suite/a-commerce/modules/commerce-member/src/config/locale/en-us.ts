@@ -1,0 +1,17 @@
+export default {
+  AddAddress: 'Add address',
+  AddressLine1: 'Address line 1',
+  AddressLine2: 'Address line 2',
+  Addresses: 'Addresses',
+  AddressesEmpty: 'No addresses yet.',
+  CancelAddressEdit: 'Cancel',
+  City: 'City',
+  CountryCode: 'Country code',
+  DeleteAddress: 'Delete',
+  EditAddress: 'Edit',
+  Phone: 'Phone',
+  PostalCode: 'Postal code',
+  RecipientName: 'Recipient name',
+  Region: 'Region',
+  SaveAddress: 'Save address',
+};

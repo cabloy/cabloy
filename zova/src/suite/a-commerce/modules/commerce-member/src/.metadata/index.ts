@@ -111,8 +111,67 @@ declare module 'zova' {
   }
 }
 /** apiSchema: end */
+/** controller: begin */
+export * from '../page/address/controller.jsx';
+
+import 'zova';
+declare module 'zova' {
+  
+  
+}
+declare module 'zova-module-commerce-member' {
+  
+        export interface ControllerPageAddress {
+          /** @internal */
+          get scope(): ScopeModuleCommerceMember;
+        } 
+}
+/** controller: end */
+/** controller: begin */
+import { ControllerPageAddress } from '../page/address/controller.jsx';
+import 'zova';
+declare module 'zova' {
+  export interface IBeanRecordLocal {
+    'commerce-member.controller.pageAddress': ControllerPageAddress;
+  }
+}
+/** controller: end */
+/** pages: begin */
+export * from './page/address.js';
+import { NSControllerPageAddress } from './page/address.js';
+export * from '../routes.js';
+import { TypePagePathSchema } from 'zova-module-a-router';
+import 'zova';
+declare module 'zova-module-a-router' {
+export interface IPagePathRecord {
+  '/commerce/member/address/:locale?': TypePagePathSchema<NSControllerPageAddress.ParamsInput,NSControllerPageAddress.QueryInput>;
+}
+export interface IPageNameRecord {
+  'commerce-member:address': undefined;
+}
+}
+export const pagePathSchemas = {
+
+};
+export const pageNameSchemas = {
+'commerce-member:address': {
+          params: NSControllerPageAddress.paramsSchema,
+          query: NSControllerPageAddress.querySchema,
+        },
+};
+declare module 'zova-module-commerce-member' {
+  export interface ControllerPageAddress {
+        $params: NSControllerPageAddress.ParamsOutput;
+$query: NSControllerPageAddress.QueryOutput;
+      }
+}
+/** pages: end */
+
+/** locale: begin */
+import { locales } from './locales.js';
+/** locale: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil } from 'zova';
+import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';
 import { Scope } from 'zova-module-a-bean';
 
 @Scope()
@@ -120,6 +179,7 @@ export class ScopeModuleCommerceMember extends BeanScopeBase {}
 
 export interface ScopeModuleCommerceMember {
   util: BeanScopeUtil;
+locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 api: IModuleApi;
 apiSchema: IModuleApiSchema;
 }
@@ -132,9 +192,14 @@ declare module 'zova' {
   
   
 
-  
+  export interface IBeanScopeLocale {
+    'commerce-member': (typeof locales)[TypeLocaleBase];
+  }
 
   
 }
 
+export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `commerce-member::${K}` {
+  return `commerce-member::${key}`;
+}
 /** scope: end */

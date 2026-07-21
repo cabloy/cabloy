@@ -1,0 +1,17 @@
+export default {
+  AddAddress: '新增地址',
+  AddressLine1: '地址行 1',
+  AddressLine2: '地址行 2',
+  Addresses: '地址',
+  AddressesEmpty: '暂无地址。',
+  CancelAddressEdit: '取消',
+  City: '城市',
+  CountryCode: '国家代码',
+  DeleteAddress: '删除',
+  EditAddress: '编辑',
+  Phone: '电话',
+  PostalCode: '邮政编码',
+  RecipientName: '收件人姓名',
+  Region: '地区',
+  SaveAddress: '保存地址',
+};

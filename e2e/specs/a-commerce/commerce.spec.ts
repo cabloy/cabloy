@@ -93,6 +93,24 @@ test(
 );
 
 test(
+  'Commerce customer entries: anonymous browser is redirected to login',
+  { tag: ['@web', '@cart'] },
+  async ({ page, request }) => {
+    for (const path of ['/commerce/cart', '/commerce/address']) {
+      const response = await request.get(path);
+      expect(response.ok()).toBeTruthy();
+      expect((await response.text()).toLowerCase()).not.toContain('data-zova-hydrated');
+
+      const pageErrors = collectPageErrors(page);
+      const documentResponse = await page.goto(path, { waitUntil: 'load' });
+      expect(documentResponse?.ok()).toBeTruthy();
+      await expect(page).toHaveURL(/\/commerce\/login\?(?:.*&)?returnTo=/);
+      expect(pageErrors).toEqual([]);
+    }
+  },
+);
+
+test(
   'ATP-SSR-02: Commerce Admin is an independent SSR site',
   { tag: ['@admin', '@smoke'] },
   async ({ page, request }) => {
