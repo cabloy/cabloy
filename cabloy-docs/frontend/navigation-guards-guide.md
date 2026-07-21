@@ -16,33 +16,38 @@ Typical uses include:
 
 The `home-base` module provides a router-guard service hook where custom logic can be added.
 
+Use the pure `app.$getPagePath(...)` family to construct a guard destination. Use the imperative `app.$gotoPage(...)` family from event handlers or workflows that intentionally start navigation. Do not call `$gotoLogin()` or `$gotoAccessDenied()` from a `beforeEach` guard and then return `false`: Client-side `$goto...()` starts a nested navigation while `false` aborts the navigation currently being guarded.
+
 Representative shape:
 
 ```typescript
 class ServiceRouterGuards {
   protected onRouterGuards(router: BeanRouter) {
     router.beforeEach(async to => {
-      if (
-        !this.sys.config.ssr.cookieDisabledOnServer &&
-        to.meta.requiresAuth !== false &&
-        !this.$passport.isAuthenticated
-      ) {
-        const [_res, err] = await catchError(() => {
-          return this.$passport.ensurePassport();
-        });
+      if (to.meta.requiresAuth === false) return;
+      if (this.sys.config.ssr.cookieDisabledOnServer) return;
+
+      if (!this.$passport.isAuthenticated) {
+        const [_res, err] = await catchError(() => this.$passport.ensurePassport());
         if (err) {
           this.$errorHandler(err, 'onRouterGuards');
           return false;
         }
-        if (!this.$passport.isAuthenticated) {
-          this.app.$gotoLogin(to.fullPath);
-          return false;
+      }
+
+      if (!this.$passport.isAuthenticated) {
+        const pagePath = this.app.$getPagePathLogin(to.fullPath);
+        if (process.env.SERVER) {
+          this.app.$redirect(pagePath);
         }
+        return pagePath;
       }
     });
   }
 }
 ```
+
+`$getPagePathLogin(to.fullPath)` preserves the protected destination as `returnTo` without starting navigation. On the Client, returning that path lets Vue Router redirect the current navigation atomically. On the Server, `$redirect(...)` preserves the SSR HTTP redirect flow.
 
 ## Why route meta matters here
 
@@ -53,6 +58,10 @@ That means route configuration and guard behavior should be read together, not a
 ## SSR-sensitive detail
 
 The example also references SSR-related configuration such as cookie handling on the server side.
+
+When `SSR_COOKIE=false`, `cookieDisabledOnServer` is true only during server rendering. The guard deliberately allows the protected route's neutral SSR entry, then the browser restores Passport state and applies the same admission policy after hydration. This preserves equivalent server and hydration-time initial rendering without weakening Client-side protection.
+
+For cookie-enabled SSR, a rejected request must still use `$redirect(...)` so the SSR layer returns its HTTP redirect response. On the Client, return a route path or route-location object from the guard instead of using an imperative `$goto...()` helper.
 
 So guards are not purely a client-side router concern. In Cabloy/Zova, they can also intersect with SSR behavior.
 

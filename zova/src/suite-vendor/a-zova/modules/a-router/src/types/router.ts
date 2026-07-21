@@ -17,7 +17,7 @@ import type {
 
 import type { BeanRouter } from '../bean/bean.router.js';
 import type { BeanRouterViewBase } from '../lib/routerViewBase.js';
-import type { IGotoPageOptions } from './utils.js';
+import type { IGetPagePathOptions, IGotoPageOptions } from './utils.js';
 import 'vue-router';
 
 export type Lazy<T> = () => Promise<T>;
@@ -49,6 +49,12 @@ declare module '@cabloy/vue-router' {
 declare module 'zova' {
   export interface ZovaApplication {
     $redirect(pagePath: string, status?: 301 | 302): never;
+    $getPagePath<K extends keyof IPagePathRecord>(
+      pagePath: K,
+      options?: IPagePathRecord[K] & IGetPagePathOptions,
+    ): string;
+    $getPagePathLogin(returnTo?: string, cause?: string): string;
+    $getPagePathAccessDenied(): string;
     $gotoPage(pagePath: string, options?: IGotoPageOptions): TypeGotoPageResult;
     $gotoHome(options?: IGotoPageOptions): TypeGotoPageResult;
     $gotoLogin(returnTo?: string, cause?: string): TypeGotoPageResult;

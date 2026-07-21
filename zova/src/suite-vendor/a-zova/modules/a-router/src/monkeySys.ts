@@ -51,24 +51,43 @@ export class MonkeySys
       error.message = process.env.SERVER ? error.url : error.pagePath;
       throw error;
     };
-    app.$gotoPage = (pagePath: string, options?: IGotoPageOptions): TypeGotoPageResult => {
-      const query = options?.query ?? {};
+    app.$getPagePath = (pagePath, options) => {
+      const query = { ...options?.query };
       // returnTo
       if (options?.returnTo) {
         const returnTo =
-          typeof options?.returnTo === 'string' ? options?.returnTo : app.$getCurrentPagePath();
+          typeof options.returnTo === 'string' ? options.returnTo : app.$getCurrentPagePath();
         if (returnTo !== app.$getPagePathHome()) {
           query[app.sys.env.ROUTER_KEY_RETURNTO] = returnTo;
         }
       }
-      // combineParamsAndQuery
-      pagePath = app.meta.$router.getPagePath(
+      return app.meta.$router.getPagePath(
         pagePath as never,
         {
           params: options?.params,
           query,
         } as never,
       );
+    };
+    app.$getPagePathLogin = (returnTo?: string, cause?: string) => {
+      const query: any = {};
+      if (cause) {
+        query.cause = cause;
+      }
+      const returnTo2 = returnTo === app.sys.env.ROUTER_PAGE_LOGIN ? undefined : returnTo;
+      return app.$getPagePath(
+        app.sys.env.ROUTER_PAGE_LOGIN as never,
+        {
+          query,
+          returnTo: returnTo2,
+        } as never,
+      );
+    };
+    app.$getPagePathAccessDenied = () => {
+      return app.$getPagePath('/home/base/errorAccessDenied' as never);
+    };
+    app.$gotoPage = (pagePath: string, options?: IGotoPageOptions): TypeGotoPageResult => {
+      pagePath = app.$getPagePath(pagePath as never, options as never);
       // redirect
       if (process.env.SERVER || options?.forceRedirect) {
         return app.$redirect(pagePath);
@@ -91,15 +110,12 @@ export class MonkeySys
       ) {
         return;
       }
-      const query: any = {};
-      if (cause) {
-        query.cause = cause;
-      }
-      const returnTo2 = returnTo === app.sys.env.ROUTER_PAGE_LOGIN ? undefined : (returnTo ?? true);
-      return app.$gotoPage(app.sys.env.ROUTER_PAGE_LOGIN, { query, returnTo: returnTo2 });
+      const returnTo2 = returnTo ?? app.$getCurrentPagePath();
+      const pagePath = app.$getPagePathLogin(returnTo2, cause);
+      return app.$gotoPage(pagePath);
     };
     app.$gotoAccessDenied = () => {
-      const pagePath = '/home/base/errorAccessDenied';
+      const pagePath = app.$getPagePathAccessDenied();
       if (cast(app.meta.$router.currentRoute)?.path === pagePath) return;
       return app.$gotoPage(pagePath, { replace: true });
     };

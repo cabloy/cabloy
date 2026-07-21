@@ -125,6 +125,7 @@ test(
   { tag: ['@web', '@cart'] },
   async ({ page, request }) => {
     const path = '/commerce/address';
+    const routePath = '/address';
     const response = await request.get(path, { maxRedirects: 0 });
     expect(response.status()).toBe(200);
     expect(response.headers().location).toBeUndefined();
@@ -134,6 +135,10 @@ test(
     const documentResponse = await page.goto(path, { waitUntil: 'load' });
     expect(documentResponse?.ok()).toBeTruthy();
     await expect(page).toHaveURL(/\/commerce\/login\?(?:.*&)?returnTo=/);
+    const loginUrl = new URL(page.url());
+    expect(loginUrl.searchParams.getAll('returnTo')).toEqual([routePath]);
+    await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Addresses' })).toHaveCount(0);
     expect(pageErrors).toEqual([]);
   },
 );

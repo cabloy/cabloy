@@ -26,23 +26,31 @@ export class ServiceRouterGuards extends BeanRouterGuardsBase {
         }
       }
       if (!this.$passport.isAuthenticated) {
-        try {
-          this.app.$gotoLogin(to.fullPath);
-        } catch (err: any) {
-          this.$errorHandler(err);
+        const pagePath = this.app.$getPagePathLogin(to.fullPath);
+        if (process.env.SERVER) {
+          try {
+            this.app.$redirect(pagePath);
+          } catch (err: any) {
+            this.$errorHandler(err);
+          }
+          return false;
         }
-        return false;
+        return pagePath;
       }
       const siteId = this.sys.env.SITE_ID;
       const siteAdmitted =
         !!siteId && !!this.$passport.roles?.some(role => role.siteIds.includes(siteId));
       if (!siteAdmitted) {
-        try {
-          this.app.$gotoAccessDenied();
-        } catch (err: any) {
-          this.$errorHandler(err);
+        const pagePath = this.app.$getPagePathAccessDenied();
+        if (process.env.SERVER) {
+          try {
+            this.app.$redirect(pagePath);
+          } catch (err: any) {
+            this.$errorHandler(err);
+          }
+          return false;
         }
-        return false;
+        return { path: pagePath, replace: true };
       }
     });
     router.beforeResolve(async to => {
