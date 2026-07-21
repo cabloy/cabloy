@@ -1,3 +1,6 @@
+import type { ModelCart } from 'zova-module-commerce-trade';
+
+import { RouterLink } from '@cabloy/vue-router';
 import { z } from 'zod';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
@@ -17,6 +20,9 @@ export class ControllerPageProduct extends BeanControllerPageBase {
   @Use()
   $$modelCatalogue: ModelCatalogue;
 
+  @Use({ beanFullName: 'commerce-trade.model.cart' })
+  $$modelCart: ModelCart;
+
   currentProductId?: string;
 
   protected async __init__() {
@@ -28,6 +34,27 @@ export class ControllerPageProduct extends BeanControllerPageBase {
 
   get queryPublicProduct() {
     return this.$$modelCatalogue.publicProduct(this.currentProductId);
+  }
+
+  get queryCurrentCart() {
+    if (process.env.SERVER) return;
+    return this.$$modelCart.current();
+  }
+
+  async addItem(skuId: string) {
+    await this.$$modelCart.addItem().mutateAsync({ skuId, quantity: 1 });
+  }
+
+  private _getCartPagePath(): string {
+    return this.$router.getAliasPath('commerce-trade:cart', {
+      params: { locale: true },
+    })!;
+  }
+
+  private _renderCartBadge() {
+    const quantity =
+      this.queryCurrentCart?.data?.items.reduce((total, item) => total + item.quantity, 0) ?? 0;
+    return quantity > 0 ? <span class="badge badge-sm">{quantity}</span> : undefined;
   }
 
   protected render() {
@@ -43,6 +70,12 @@ export class ControllerPageProduct extends BeanControllerPageBase {
                 {query.data.description && (
                   <p class="text-base-content/70">{query.data.description}</p>
                 )}
+                <div class="mt-4 flex justify-end">
+                  <RouterLink class="btn btn-outline btn-sm gap-2" to={this._getCartPagePath()}>
+                    {this.scope.locale.Cart()}
+                    {this._renderCartBadge()}
+                  </RouterLink>
+                </div>
                 <div class="mt-4 space-y-3">
                   {query.data.skuAvailables.map(sku => (
                     <div class="flex items-center justify-between rounded border border-base-300 p-3">
@@ -51,6 +84,12 @@ export class ControllerPageProduct extends BeanControllerPageBase {
                       <span class="badge badge-success">
                         {this.scope.locale.AvailableCount(sku.available)}
                       </span>
+                      <button
+                        class="btn btn-primary btn-sm"
+                        onClick={() => this.addItem(String(sku.id))}
+                      >
+                        {this.scope.locale.AddToCart()}
+                      </button>
                     </div>
                   ))}
                 </div>

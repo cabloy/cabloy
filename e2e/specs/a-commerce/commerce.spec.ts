@@ -97,6 +97,30 @@ test(
 );
 
 test(
+  'Commerce Product: Cart badge keeps SSR initial render neutral',
+  { tag: ['@web', '@cart'] },
+  async ({ page, request }) => {
+    const productPath = '/commerce/product/1';
+    const productResponse = await request.get(productPath);
+    expect(productResponse.ok()).toBeTruthy();
+    const productHtml = await productResponse.text();
+    expect(productHtml.toLowerCase()).not.toContain('data-zova-hydrated');
+    expect(productHtml).toContain('>Cart<!----></a>');
+
+    const pageErrors = collectPageErrors(page);
+    const documentResponse = await page.goto(productPath, { waitUntil: 'load' });
+    expect(documentResponse?.ok()).toBeTruthy();
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+    await expect(page.getByRole('heading', { name: 'Wireless Headphones' })).toBeVisible();
+
+    const cartLink = page.locator('a[href="/commerce/cart"]');
+    await expect(cartLink).toHaveCount(1);
+    await expect(cartLink.locator('.badge')).toHaveCount(0);
+    expect(pageErrors).toEqual([]);
+  },
+);
+
+test(
   'Commerce customer entries: anonymous browser is redirected to login',
   { tag: ['@web', '@cart'] },
   async ({ page, request }) => {
