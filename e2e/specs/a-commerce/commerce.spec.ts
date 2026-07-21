@@ -121,20 +121,37 @@ test(
 );
 
 test(
-  'Commerce customer entries: anonymous browser is redirected to login',
+  'Commerce Address: cookie-disabled SSR renders a neutral protected entry',
   { tag: ['@web', '@cart'] },
   async ({ page, request }) => {
-    for (const path of ['/commerce/cart', '/commerce/address']) {
-      const response = await request.get(path);
-      expect(response.ok()).toBeTruthy();
-      expect((await response.text()).toLowerCase()).not.toContain('data-zova-hydrated');
+    const path = '/commerce/address';
+    const response = await request.get(path, { maxRedirects: 0 });
+    expect(response.status()).toBe(200);
+    expect(response.headers().location).toBeUndefined();
+    expect((await response.text()).toLowerCase()).not.toContain('data-zova-hydrated');
 
-      const pageErrors = collectPageErrors(page);
-      const documentResponse = await page.goto(path, { waitUntil: 'load' });
-      expect(documentResponse?.ok()).toBeTruthy();
-      await expect(page).toHaveURL(/\/commerce\/login\?(?:.*&)?returnTo=/);
-      expect(pageErrors).toEqual([]);
-    }
+    const pageErrors = collectPageErrors(page);
+    const documentResponse = await page.goto(path, { waitUntil: 'load' });
+    expect(documentResponse?.ok()).toBeTruthy();
+    await expect(page).toHaveURL(/\/commerce\/login\?(?:.*&)?returnTo=/);
+    expect(pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'Commerce Cart: anonymous browser is redirected to login',
+  { tag: ['@web', '@cart'] },
+  async ({ page, request }) => {
+    const path = '/commerce/cart';
+    const response = await request.get(path);
+    expect(response.ok()).toBeTruthy();
+    expect((await response.text()).toLowerCase()).not.toContain('data-zova-hydrated');
+
+    const pageErrors = collectPageErrors(page);
+    const documentResponse = await page.goto(path, { waitUntil: 'load' });
+    expect(documentResponse?.ok()).toBeTruthy();
+    await expect(page).toHaveURL(/\/commerce\/login\?(?:.*&)?returnTo=/);
+    expect(pageErrors).toEqual([]);
   },
 );
 
