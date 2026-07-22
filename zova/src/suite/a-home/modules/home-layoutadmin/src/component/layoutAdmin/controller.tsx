@@ -38,7 +38,7 @@ export class ControllerLayoutAdmin extends BeanControllerBase {
     // viewport
     if (process.env.CLIENT) {
       this._windowResizeHandler = () => {
-        this.viewportWidth = window.innerWidth;
+        this.viewportWidth = document.documentElement.clientWidth;
       };
       this._windowResizeHandler();
       window.addEventListener('resize', this._windowResizeHandler);
