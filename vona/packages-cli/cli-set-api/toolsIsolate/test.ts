@@ -7,6 +7,7 @@ import { globby } from 'globby';
 import { createWriteStream } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { pipeline } from 'node:stream/promises';
 import { run } from 'node:test';
 import { lcov, spec } from 'node:test/reporters';
 import { fileURLToPath } from 'node:url';
@@ -104,18 +105,24 @@ async function testRun(projectPath: string, coverage: boolean, patterns: string[
         }
       });
     const summaryPromise = waitForTestSummary(testStream);
-    if (coverage) {
-      const reporterDir = path.join(projectPath, 'coverage');
-      fse.ensureDirSync(reporterDir);
-      const reporterLcov = createWriteStream(path.join(reporterDir, 'lcov.info'));
-      testStream.compose(lcov).pipe(reporterLcov);
-    } else {
-      testStream.compose(spec).pipe(process.stdout);
-    }
+    const reporterPromise = coverage
+      ? (() => {
+          const reporterDir = path.join(projectPath, 'coverage');
+          fse.ensureDirSync(reporterDir);
+          const reporterLcov = createWriteStream(path.join(reporterDir, 'lcov.info'));
+          return pipeline(testStream.compose(lcov), reporterLcov);
+        })()
+      : pipeline(testStream.compose(spec), process.stdout, { end: false });
 
-    const summarySuccess = await summaryPromise;
+    const [summarySuccess, [, reporterError]] = await Promise.all([
+      summaryPromise,
+      catchError(() => reporterPromise),
+    ]);
     if (!summarySuccess) {
       throw new Error('node:test reported failed tests');
+    }
+    if (reporterError) {
+      throw reporterError;
     }
   } catch (error) {
     testError = error;

@@ -24,12 +24,14 @@ if (!(await waitForTestSummary(testStream))) {
 
 This makes a failed Node test suite reject the isolated runner, exit the child Node process nonzero, and fail the calling CLI command and CI job. Do not resolve unconditionally upon `test:summary`; that creates false-green test commands.
 
-## `test:summary` is not an asynchronous shutdown barrier
+## `test:summary` is not an asynchronous lifecycle barrier
 
-The event means that the test result is final. It does not mean that the host application has released all of its resources, nor that the Node process has finished exiting.
+The event means that the test result is final. It does not mean that the reporter has flushed its output, that the host application has released all of its resources, or that the Node process has finished exiting.
 
 In particular, it does not guarantee completion of:
 
+- the `spec` reporter footer and failing-test locations written to stdout;
+- the `lcov` reporter output written to `coverage/lcov.info`;
 - `app.close()`;
 - database-pool, HTTP-server, timer, worker, or other handle cleanup owned by the Vona application;
 - an asynchronous listener registered for the event;
@@ -48,14 +50,20 @@ Calling `resolve()` or `reject()` before that close finishes can allow the outer
 
 ## Required control flow
 
-Do not use an event listener itself as the shutdown boundary. Convert the `test:summary` event to an awaitable result, then make `testRun()` own shutdown through `try` / `finally`:
+Do not use an event listener itself as the shutdown boundary. Convert the `test:summary` event to an awaitable result, begin an awaitable reporter pipeline, and make `testRun()` own shutdown through `try` / `finally`:
 
 ```ts
 let testError: unknown;
 let closeError: unknown;
 try {
-  const summarySuccess = await waitForTestSummary(testStream);
+  const summaryPromise = waitForTestSummary(testStream);
+  const reporterPromise = pipeline(testStream.compose(spec), process.stdout, { end: false });
+  const [summarySuccess, [, reporterError]] = await Promise.all([
+    summaryPromise,
+    catchError(() => reporterPromise),
+  ]);
   if (!summarySuccess) throw new Error('node:test reported failed tests');
+  if (reporterError) throw reporterError;
 } catch (error) {
   testError = error;
 } finally {
@@ -68,13 +76,14 @@ if (closeError) throw closeError;
 
 The production implementation additionally logs a close failure when a test failure already exists, preserving the test failure as the primary result.
 
-This creates the explicit lifecycle barrier that event listeners alone cannot provide:
+This creates the explicit lifecycle barriers that event listeners alone cannot provide:
 
 1. **Aggregate result:** `waitForTestSummary()` reports the final `summary.success` value or runner-stream error.
-2. **Early host cleanup:** the `---done---` `test:pass` event starts the one shared close operation before `node:test` emits its summary. This preserves the existing runner behavior in which Vona-owned handles must begin closing before the test stream can finish.
-3. **Guaranteed host cleanup:** `testRun()` awaits that same once-only close Promise in `finally`; if `---done---` did not pass because tests failed, were cancelled, or runner startup failed, `finally` starts the close instead.
-4. **Failure priority:** a test failure remains primary; a close failure is logged alongside it. If tests passed, a close failure fails the runner.
-5. **Process result:** `CliBinTest._run()` awaits the child process without broad error suppression, so a failed runner produces a nonzero CLI/CI result.
+2. **Reporter drain:** the `spec` or `lcov` pipeline is awaited before the aggregate failure is propagated, so failure locations, summary diagnostics, and coverage output reach their destination. A reporter error is raised only after a successful test summary; an unsuccessful summary remains the primary failure.
+3. **Early host cleanup:** the `---done---` `test:pass` event starts the one shared close operation before `node:test` emits its summary. This preserves the existing runner behavior in which Vona-owned handles must begin closing before the test stream can finish.
+4. **Guaranteed host cleanup:** `testRun()` awaits that same once-only close Promise in `finally`; if `---done---` did not pass because tests failed, were cancelled, or runner startup failed, `finally` starts the close instead.
+5. **Failure priority:** a test failure remains primary; a close failure is logged alongside it. If tests passed, a close failure fails the runner.
+6. **Process result:** `CliBinTest._run()` awaits the child process without broad error suppression, so a failed runner produces a nonzero CLI/CI result.
 
 The `---done---` listener is therefore an **early shutdown trigger**, not the awaited shutdown boundary. The once-only close helper ensures that it and `finally` cannot close the application twice.
 
@@ -83,6 +92,7 @@ The `---done---` listener is therefore an **early shutdown trigger**, not the aw
 Any later change to this runner must preserve all of the following:
 
 - `app.close()` runs exactly once;
+- the reporter pipeline finishes before test failure propagation;
 - a test failure remains the primary reported failure;
 - a close failure is surfaced without masking a test failure;
 - no-test, cancellation, initialization-failure, and ordinary failure paths still close the application;
