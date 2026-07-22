@@ -46,11 +46,18 @@ npm run test
 
 A typical Vona test flow includes:
 
-1. create a global `app` object
+1. create one shared global `app` object for the test run
 2. clean Redis data
 3. recreate the database
 4. execute migration code
 5. run the test files
+6. close the shared application after the test run
+
+The runner owns this application lifecycle. Test files import the shared app from `vona-mock` and must not create or close it themselves:
+
+```typescript
+import { app } from 'vona-mock';
+```
 
 This is one of the most important distinctions from ordinary app flow: test execution rebuilds and verifies the framework lifecycle, not only the target function.
 
@@ -72,6 +79,33 @@ Representative command:
 cd vona && npm run cov
 ```
 
+## Runner concurrency
+
+The Vona runner uses Node's built-in test runner with one shared application and process isolation disabled. `TEST_CONCURRENCY` controls runner scheduling:
+
+- `true` uses the available CPU count;
+- `false` forces serial execution;
+- a positive integer sets an explicit concurrency limit.
+
+```bash
+TEST_CONCURRENCY=false npm run test
+TEST_CONCURRENCY=4 npm run test
+```
+
+Cabloy Basic requests concurrency by default with `TEST_CONCURRENCY=true`. When the active database dialect does not advertise the required concurrency capability, the runner falls back to serial execution. The default SQLite path therefore runs serially.
+
+Runner concurrency schedules ordinary tests; it does not prove a business-level race condition. Tests must not rely on scheduling, timing, or execution order for correctness.
+
+A suite can also make sibling-test scheduling explicit:
+
+```typescript
+describe('resource.test.ts', { concurrency: false }, () => {
+  // sibling tests in this suite are serialized
+});
+```
+
+This setting controls test scheduling only. It is not a substitute for explicitly creating competing business operations.
+
 ## Mock request context
 
 One of the most important Vona testing patterns is simulating a request context.
@@ -83,6 +117,10 @@ await app.bean.executor.mockCtx(async () => {
   // test logic here
 });
 ```
+
+Treat one `mockCtx(...)` callback as one simulated request boundary. Keep `app.ctx`, authentication, current database selection, and context-dependent service, model, or action work inside that callback, and always await it. Do not retain request-context state after the callback returns.
+
+`mockCtx(...)` isolates request-local context. It does not isolate committed persisted records, app-global state, external caches, or shared durable fixtures. For independent concurrent requests, create one `mockCtx(...)` for each branch; parallel work started inside a single `mockCtx(...)` shares that request context.
 
 Locale-sensitive variants and additional request-context helpers are also available.
 
@@ -110,6 +148,37 @@ try {
 ```
 
 Treat shared `seed()` records as read-only. If a scenario needs to change a record, create a separate test-local fixture instead and clean it up. See [Migration and Changes](/backend/migration-and-changes#seed-test-environment-baseline-data) for the durable seed lifecycle.
+
+Application shutdown is runner-owned; authentication and fixture cleanup are test-owned. Do not call `app.close()` from a test. Keep `signout()` and exact-identity deletion in `finally` inside an appropriate request context.
+
+## Testing concurrent behavior explicitly
+
+A concurrency test creates competing business operations inside one test; it does not depend on the runner to happen to schedule tests at the same time.
+
+```typescript
+const attempt = async () => {
+  return await app.bean.executor.mockCtx(async () => {
+    await app.bean.passport.signinMock();
+    try {
+      return await reserve(resourceId);
+    } finally {
+      await app.bean.passport.signout();
+    }
+  });
+};
+
+const results = await Promise.allSettled([attempt(), attempt()]);
+```
+
+Use this sequence:
+
+1. create a dedicated test-local fixture in an appropriate `mockCtx(...)`;
+2. give every contender its own `mockCtx(...)` and authentication lifecycle;
+3. launch the contenders explicitly and wait for all of them to settle;
+4. use a fresh `mockCtx(...)` to assert both individual outcomes and the combined durable invariant;
+5. clean up exact owned fixtures only after every branch has settled, in the appropriate tenant/instance context.
+
+For example, a one-winner reservation test should verify not only the fulfilled and rejected operations but also the final balance, surviving reservation, and audit records. If the invariant depends on row locks, transaction isolation, or another database-specific capability, skip the test on unsupported dialects rather than weakening its assertions. See [stockReservation.test.ts](../../vona/src/suite/a-commerce/modules/commerce-trade/test/stockReservation.test.ts) for this pattern.
 
 ## Working with module scope in tests
 
@@ -218,6 +287,8 @@ Read this guide together with:
 - [CRUD Workflow](/backend/crud-workflow)
 - [Migration and Changes](/backend/migration-and-changes)
 - [Controller Guide](/backend/controller-guide)
+- [Transaction Guide](/backend/transaction-guide)
+- [Redlock Guide](/backend/redlock-guide)
 
 A practical split is:
 

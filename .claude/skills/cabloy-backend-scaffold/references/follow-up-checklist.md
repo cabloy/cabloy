@@ -43,6 +43,10 @@ After generating or extending a backend thread, check which follow-up layers app
 - retain exact IDs or entities for every test-local persisted resource and delete them from `finally`
 - delete joins, children, derived records, and other dependents before their owners, in the same active tenant/instance scope
 - do not use unscoped, timestamp-, prefix-, or broad business-condition deletion when an exact test-owned identity is available
+- treat the application lifecycle as runner-owned; do not create or close the shared `app` in an individual test
+- give each scoped test or operation its own `app.bean.executor.mockCtx(...)` boundary
+- for a business race, give every contender a separate `mockCtx(...)`, launch the competing operations explicitly, wait for all branches to settle, and assert the combined durable state
+- gate lock- or isolation-sensitive contention tests on supporting database capabilities; runner scheduling is never race-condition evidence
 
 ## Module composition and dependency intent
 

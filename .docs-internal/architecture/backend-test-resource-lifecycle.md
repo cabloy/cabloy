@@ -37,6 +37,14 @@ Create and delete data through the active tenant or instance scope. A cross-tena
 
 The existing `create()` / `drop()` helper in [testData.ts](../../vona/src/suite-vendor/a-test/modules/test-vona/src/service/testData.ts) demonstrates returning precise fixture identities and removing dependents before owners. Its use from `finally` in [modelForUpdate.test.ts](../../vona/src/suite-vendor/a-test/modules/test-vona/test/database/modelForUpdate.test.ts) demonstrates the required failure-safe call-site shape.
 
+## Request-context and concurrency ownership
+
+The test runner owns one shared application lifecycle. Individual tests must not create or close that application. A test owns every `app.bean.executor.mockCtx(...)` boundary it enters: request context, active tenant/instance, identity, and context-selected database behavior belong inside that callback.
+
+Use a separate `mockCtx(...)` for every explicitly competing business operation. Launch contention deliberately within one test, wait for every branch to settle, then use a fresh appropriate context to assert the combined durable outcome and clean exact owned fixtures. Runner and suite parallelism only schedule tests; they are not evidence that a business race occurred.
+
+If an invariant depends on row locking, transaction isolation, or another dialect capability, gate the test on a supporting database rather than weakening the invariant. The [stock-reservation test](../../vona/src/suite/a-commerce/modules/commerce-trade/test/stockReservation.test.ts) demonstrates separate contexts, explicit `Promise.allSettled(...)` fan-out, durable-state assertions, and context-scoped cleanup.
+
 ## Durable module seeds
 
 Use the owning module's `meta.version.ts` `seed()` hook for durable test or local-development baseline fixtures. Vona has `update`, `init`, and `seed` lifecycle scenes; `seed()` runs during test-mode startup and is not a substitute for schema migration or tenant initialization.
@@ -57,5 +65,9 @@ When reviewing backend tests, verify:
 - every persisted record is explicitly classified as test-local or durable;
 - test-local records are tracked by exact owned identity;
 - `finally` cleanup runs in reverse dependency order and in the proper tenant/instance context;
+- the runner-owned application lifecycle is not created or closed by individual tests;
+- each scoped test and each intentional contender owns an appropriate `mockCtx(...)` boundary;
+- contention tests explicitly fan out competing operations, wait for all branches to settle, and assert the combined durable result rather than relying on runner scheduling;
+- lock- or isolation-dependent assertions are gated on supporting database capabilities;
 - shared durable records come from `meta.version.ts` `seed()` and remain read-only to tests;
 - a new rule is applied prospectively unless cleanup migration work is explicitly in scope.
