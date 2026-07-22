@@ -98,6 +98,14 @@ function assertVisualOrder(geometry: IFieldGeometry[]) {
   }
 }
 
+async function getDocumentHorizontalOverflow(page: Page) {
+  return page.evaluate(() => {
+    return (
+      Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth
+    );
+  });
+}
+
 test(
   'ATP-BASIC-SSR-01: anonymous Web HTML hydrates through the default site',
   { tag: ['@web', '@smoke'] },
@@ -217,6 +225,8 @@ test(
     }
 
     await page.setViewportSize({ width: 700, height: 900 });
+    const drawer = page.locator('.drawer').first();
+    await expect(drawer).not.toHaveClass(/\bdrawer-open\b/);
     await expect
       .poll(
         async () =>
@@ -238,15 +248,10 @@ test(
     const createdAtEndBox = await createdAtEnd.boundingBox();
     expect(createdAtEndBox).not.toBeNull();
     expect(createdAtEndBox!.x + createdAtEndBox!.width).toBeLessThanOrEqual(viewport.width + 1);
-    await expect
-      .poll(() =>
-        page.evaluate(
-          () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-        ),
-      )
-      .toBeLessThanOrEqual(1);
+    await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
 
     await page.setViewportSize({ width: 1440, height: 900 });
+    await expect(drawer).toHaveClass(/\bdrawer-open\b/);
     await name.fill('Flow E2E');
     await level.selectOption('2');
     await createdAtStart.fill('2026-01-10');
