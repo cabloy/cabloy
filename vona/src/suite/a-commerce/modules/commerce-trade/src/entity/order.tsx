@@ -8,6 +8,7 @@ import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
 import { DtoOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
+import { DtoOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
 
 export type TypeOrderState =
   | 'awaiting_payment'
@@ -53,6 +54,9 @@ export class EntityOrder extends EntityBase {
 
   @Api.field(v.object(DtoOrderAddressSnapshot))
   addressSnapshot: DtoOrderAddressSnapshot;
+
+  @Api.field(v.optional(), v.object(DtoOrderCouponSnapshot))
+  couponSnapshot?: DtoOrderCouponSnapshot;
 
   @Api.field(
     z.enum([

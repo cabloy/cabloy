@@ -5,6 +5,7 @@ import { Service } from 'vona-module-a-bean';
 import { Core } from 'vona-module-a-core';
 
 import type { DtoOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
+import type { DtoOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
 import type { DtoOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
 import type { EntityOrder } from '../entity/order.tsx';
 import type { EntityOrderLine } from '../entity/orderLine.tsx';
@@ -19,6 +20,7 @@ export interface IOrderSnapshotLineCommand {
 export interface IOrderSnapshotCreateCommand {
   addressId: TableIdentity;
   correlationId: string;
+  couponGrantId?: TableIdentity;
   lines: IOrderSnapshotLineCommand[];
 }
 
@@ -72,6 +74,37 @@ export class ServiceOrder extends BeanBase {
       payableTotalCents: eligibleSubtotalCents,
       reservationExpiresAt: new Date(Date.now() + 30 * 60 * 1000),
     });
+    let couponSnapshot: DtoOrderCouponSnapshot | undefined;
+    if (command.couponGrantId) {
+      const reservation = await this.$scope.commercePromotion.service.coupon.reserve({
+        couponGrantId: command.couponGrantId,
+        userId: this.bean.passport.currentUser!.id,
+        orderId: order.id,
+        eligibleSubtotalCents,
+        currency: 'USD',
+        correlationId: `${command.correlationId}:coupon`,
+        reason: 'order snapshot created',
+      });
+      const couponGrant = reservation.couponGrant;
+      couponSnapshot = {
+        couponGrantId: couponGrant.id,
+        couponTemplateId: couponGrant.templateId,
+        couponCode: couponGrant.couponCode,
+        templateName: couponGrant.templateNameSnapshot,
+        currency: couponGrant.currencySnapshot,
+        fixedDiscountCents: couponGrant.discountCentsSnapshot,
+        minSpendCents: couponGrant.minSpendCentsSnapshot,
+        appliedDiscountCents: reservation.discountCents,
+      };
+      await this.scope.model.order.updateById(order.id, {
+        couponSnapshot,
+        discountCents: reservation.discountCents,
+        payableTotalCents: eligibleSubtotalCents - reservation.discountCents,
+      });
+      order.couponSnapshot = couponSnapshot;
+      order.discountCents = reservation.discountCents;
+      order.payableTotalCents = eligibleSubtotalCents - reservation.discountCents;
+    }
     const lines = await Promise.all(
       preparedLines.map(async line => {
         const orderLine = await this.scope.model.orderLine.insert({
@@ -126,6 +159,7 @@ export class ServiceOrder extends BeanBase {
     });
     if (
       String(order.addressId) !== String(command.addressId) ||
+      String(order.couponSnapshot?.couponGrantId ?? '') !== String(command.couponGrantId ?? '') ||
       lines.length !== command.lines.length ||
       lines.some(
         (line, index) =>
