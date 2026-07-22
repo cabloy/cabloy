@@ -63,10 +63,27 @@ async function testRun(projectPath: string, coverage: boolean, patterns: string[
   ];
   // app
   const app: VonaApplication = await createGeneralApp(projectPath);
-  // concurrency
-  const concurrency = await prepareConcurrency(app);
-  return new Promise<void>((resolve, reject) => {
-    let summarySuccess = false;
+  let testError: unknown;
+  let closeError: unknown;
+  let closePromise: Promise<void> | undefined;
+  const closeApplication = async () => {
+    const [_, error] = await catchError(() => app.close());
+    closeError = error;
+    // handles
+    if (process.env.TEST_WHYISNODERUNNING === 'true') {
+      await sleep(2000);
+      const handles = (process as any)._getActiveHandles();
+      if (handles.length > 3) {
+        whyIsNodeRunning();
+      }
+    }
+  };
+  const closeApplicationOnce = () => {
+    return (closePromise ??= closeApplication());
+  };
+  try {
+    // concurrency
+    const concurrency = await prepareConcurrency(app);
     const testStream = run({
       isolation: 'none',
       concurrency,
@@ -81,30 +98,12 @@ async function testRun(projectPath: string, coverage: boolean, patterns: string[
       .on('test:coverage', data => {
         outputCoverageReport(data.summary.totals);
       })
-      .on('test:summary', async summary => {
-        summarySuccess = summary.success;
-        if (summarySuccess) {
-          resolve();
-        } else {
-          reject(new Error('node:test reported failed tests'));
-        }
-      })
-      .on('test:pass', async t => {
+      .on('test:pass', t => {
         if (t.name === '---done---') {
-          const [_, err] = await catchError(() => app.close());
-          if (err) {
-            console.error(err);
-          }
-          // handles
-          if (process.env.TEST_WHYISNODERUNNING === 'true') {
-            await sleep(2000);
-            const handles = (process as any)._getActiveHandles();
-            if (handles.length > 3) {
-              whyIsNodeRunning();
-            }
-          }
+          void closeApplicationOnce();
         }
       });
+    const summaryPromise = waitForTestSummary(testStream);
     if (coverage) {
       const reporterDir = path.join(projectPath, 'coverage');
       fse.ensureDirSync(reporterDir);
@@ -113,6 +112,32 @@ async function testRun(projectPath: string, coverage: boolean, patterns: string[
     } else {
       testStream.compose(spec).pipe(process.stdout);
     }
+
+    const summarySuccess = await summaryPromise;
+    if (!summarySuccess) {
+      throw new Error('node:test reported failed tests');
+    }
+  } catch (error) {
+    testError = error;
+  } finally {
+    await closeApplicationOnce();
+  }
+  if (testError) {
+    if (closeError) console.error(closeError);
+    throw toError(testError);
+  }
+  if (closeError) {
+    throw toError(closeError);
+  }
+}
+
+function toError(error: unknown) {
+  return error instanceof Error ? error : new Error(String(error));
+}
+
+function waitForTestSummary(testStream: ReturnType<typeof run>) {
+  return new Promise<boolean>((resolve, reject) => {
+    testStream.once('test:summary', summary => resolve(summary.success)).once('error', reject);
   });
 }
 
