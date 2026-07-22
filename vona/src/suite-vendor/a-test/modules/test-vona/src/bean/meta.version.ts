@@ -1,6 +1,6 @@
 import type {
-  IMetaVersionTest,
-  IMetaVersionTestOptions,
+  IMetaVersionSeed,
+  IMetaVersionSeedOptions,
   IMetaVersionUpdate,
   IMetaVersionUpdateOptions,
 } from 'vona-module-a-version';
@@ -9,7 +9,7 @@ import { BeanBase } from 'vona';
 import { Meta } from 'vona-module-a-meta';
 
 @Meta()
-export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVersionTest {
+export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVersionSeed {
   async update(options: IMetaVersionUpdateOptions) {
     if (options.version === 1) {
       // testVonaTest
@@ -88,7 +88,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
     }
   }
 
-  async test(_options: IMetaVersionTestOptions) {
+  async seed(_options: IMetaVersionSeedOptions) {
     // user: Kevin
     const userKevin = await this.scope.model.user.insert({ name: 'Kevin' });
     // create: post/postContent

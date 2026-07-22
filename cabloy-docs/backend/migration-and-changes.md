@@ -73,19 +73,19 @@ Three migration scenarios are defined:
 | -------- | ------------------------------------------------ |
 | `update` | schema evolution such as tables and fields       |
 | `init`   | instance- or tenant-specific initialization data |
-| `test`   | test-only data for the test environment          |
+| `seed`   | shared baseline data for the test environment    |
 
 This split is one of the most important Vona migration ideas because it separates:
 
 - structural change
 - initialization logic
-- test data setup
+- shared baseline data setup
 
 A practical generated-thread interpretation is:
 
 - `update` follows schema and entity/model evolution
 - `init` follows instance-aware initialization needs introduced by the backend feature
-- `test` keeps the generated or refined contract easy to verify under the test lifecycle
+- `seed` provides shared baseline data while the application starts in test mode
 
 ## Update: schema migration
 
@@ -128,27 +128,27 @@ export class MetaVersion extends BeanBase implements IMetaVersionInit {
 
 The important point is that initialization can run per instance or tenant, which keeps tenant data isolated.
 
-## Test: test-only data
+## Seed: test-environment baseline data
 
 Representative pattern:
 
 ```typescript
 @Meta()
-export class MetaVersion extends BeanBase implements IMetaVersionTest {
-  async test() {
+export class MetaVersion extends BeanBase implements IMetaVersionSeed {
+  async seed() {
     await this.scope.model.student.insert({
       name: 'Jimmy',
-      description: 'Only used in unit test',
+      description: 'Shared test-environment baseline data',
     });
   }
 }
 ```
 
-This is valuable because test data becomes part of the structured migration lifecycle instead of being scattered across unrelated setup code.
+This is valuable because shared baseline data becomes part of the structured version lifecycle instead of being scattered across unrelated setup code.
 
-Use `test()` for durable baseline fixtures that are shared by multiple tests or intentionally available to local development through the managed test-data workflow. The owning module must create these records idempotently with stable business identifiers or equivalent lookup/create behavior, rather than relying on a newly recreated database or generated IDs.
+Vona invokes `seed()` while the application starts in test mode. Use it for durable baseline fixtures shared by multiple tests, E2E tests, or the managed local-development test-data workflow. The seed path starts from a newly recreated managed database; it is not a repeatable, same-database data-import mechanism.
 
-Treat durable `test()` seed records as read-only in ordinary tests. A scenario that needs different state must create independent, test-owned data and clean it up in `finally`; it must not mutate or delete the shared baseline. `test()` remains distinct from `init()`: use `init()` for instance-aware initialization data and reserve `test()` for the test-data lifecycle.
+Treat shared `seed()` records as read-only in ordinary tests. A scenario that needs different state must create independent, test-owned data and clean it up in `finally`; it must not mutate or delete the shared baseline. `seed()` remains distinct from `init()`: use `init()` for instance-aware initialization data and reserve `seed()` for shared test-environment baseline data.
 
 ## Version changes across the generated backend thread
 
@@ -189,7 +189,7 @@ When changing backend schema or module initialization behavior, do not only edit
 Also ask:
 
 1. does this change require a `fileVersion` increment?
-2. does `meta.version` need an `update`, `init`, or `test` branch?
+2. does `meta.version` need an `update`, `init`, or `seed` branch?
 3. should the local verification path include `test` or `db:reset`?
 4. does the change affect the CRUD-generated thread or frontend-facing API contract as well?
 

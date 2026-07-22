@@ -52,12 +52,12 @@ export class ServiceStartup extends BeanBase {
       }
     }
 
-    // version test
+    // version seed
     if (this.app.meta.isTest) {
       const instanceName = '';
       await this.bean.executor.newCtx(
         async () => {
-          await this.$scope.version.service.version.__instanceTest(instanceName);
+          await this.$scope.version.service.version.__instanceSeed(instanceName);
         },
         {
           dbInfo: { level: 1 },

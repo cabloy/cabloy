@@ -12,7 +12,7 @@ import type {
   IMetaVersionInit,
   IMetaVersionOptions,
   IMetaVersionOptionsInner,
-  IMetaVersionTest,
+  IMetaVersionSeed,
   IMetaVersionUpdate,
 } from '../types/version.ts';
 
@@ -61,11 +61,11 @@ export class ServiceVersion extends BeanBase {
     }
   }
 
-  async __instanceTest(instanceName: keyof IInstanceRecord) {
-    await this.__check({ scene: 'test', instanceName });
+  async __instanceSeed(instanceName: keyof IInstanceRecord) {
+    await this.__check({ scene: 'seed', instanceName });
   }
 
-  // scene: null/init/test
+  // scene: update/init/seed
   async __check(options: IMetaVersionOptionsInner) {
     options.result = {};
 
@@ -158,11 +158,11 @@ export class ServiceVersion extends BeanBase {
       }
     }
 
-    if (options.scene === 'test') {
-      // test module
+    if (options.scene === 'seed') {
+      // seed module
       await this.bean.executor.newCtx(
         async () => {
-          await this.__testModuleTransaction(module, fileVersionNew, options);
+          await this.__seedModuleTransaction(module, fileVersionNew, options);
         },
         {
           instanceName: options.instanceName,
@@ -260,13 +260,13 @@ export class ServiceVersion extends BeanBase {
     }
   }
 
-  // test module
-  async __testModuleTransaction(module, version, options) {
+  // seed module
+  async __seedModuleTransaction(module, version, options) {
     // bean
-    const beanVersion = this.__getBeanVersion<IMetaVersionTest>(module.info.relativeName, false);
+    const beanVersion = this.__getBeanVersion<IMetaVersionSeed>(module.info.relativeName, false);
     // execute
-    if (beanVersion && beanVersion.test) {
-      await beanVersion.test({ ...options, version });
+    if (beanVersion && beanVersion.seed) {
+      await beanVersion.seed({ ...options, version });
     }
   }
 

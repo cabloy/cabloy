@@ -38,7 +38,7 @@ After generating or extending a backend thread, check which follow-up layers app
 ## Test resource lifecycle follow-up
 
 - classify persisted test data as either an owning-module durable seed or a test-local fixture
-- create durable test or local-development baseline data idempotently in the owning module's `meta.version.ts` `test()` lifecycle with stable business identifiers or equivalent lookup/create behavior
+- create durable test or local-development baseline data in the owning module's `meta.version.ts` `seed()` hook; this managed path starts from a newly recreated database
 - treat durable seed data as read-only in tests; create an independent fixture when a scenario needs mutation
 - retain exact IDs or entities for every test-local persisted resource and delete them from `finally`
 - delete joins, children, derived records, and other dependents before their owners, in the same active tenant/instance scope

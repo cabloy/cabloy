@@ -1,11 +1,11 @@
-import type { IMetaVersionTest, IMetaVersionTestOptions } from 'vona-module-a-version';
+import type { IMetaVersionSeed, IMetaVersionSeedOptions } from 'vona-module-a-version';
 
 import { BeanBase } from 'vona';
 import { Meta } from 'vona-module-a-meta';
 
 @Meta()
-export class MetaVersion extends BeanBase implements IMetaVersionTest {
-  async test(_options: IMetaVersionTestOptions) {
+export class MetaVersion extends BeanBase implements IMetaVersionSeed {
+  async seed(_options: IMetaVersionSeedOptions) {
     const scopeCatalog = this.$scope.commerceCatalog;
     const scopeTrade = this.$scope.commerceTrade;
 

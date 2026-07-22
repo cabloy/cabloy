@@ -11,7 +11,7 @@ This is a forward-looking convention. It does not make this document a mandate t
 Before creating persisted data, choose one of two categories:
 
 1. **Test-local fixture**: data needed only by one test or one tightly coupled test scenario. The test owns it and must delete it.
-2. **Durable module seed**: stable baseline data needed by multiple tests or intentionally available to local development through the managed test-data workflow. The owning module creates it through `meta.version.ts` `test()`.
+2. **Durable module seed**: stable baseline data needed by multiple tests or intentionally available to local development through the managed test-data workflow. The owning module creates it through `meta.version.ts` `seed()`.
 
 Default to a test-local fixture. Promote data to a durable seed only when it has genuine shared baseline value.
 
@@ -39,14 +39,14 @@ The existing `create()` / `drop()` helper in [testData.ts](../../vona/src/suite-
 
 ## Durable module seeds
 
-Use the owning module's `meta.version.ts` `test()` lifecycle for durable test or local-development baseline fixtures. Vona has `update`, `init`, and `test` lifecycle scenes; `test()` is the test-data scene, not a substitute for schema migration or tenant initialization.
+Use the owning module's `meta.version.ts` `seed()` hook for durable test or local-development baseline fixtures. Vona has `update`, `init`, and `seed` lifecycle scenes; `seed()` runs during test-mode startup and is not a substitute for schema migration or tenant initialization.
 
 A durable seed must:
 
-- use stable business identifiers or equivalent lookup/create semantics;
-- be idempotent when the seed path runs more than once;
 - stay within the owning module and its intended tenant/instance scope;
 - be minimal, deterministic, and suitable for shared reuse.
+
+The managed seed path starts from a newly recreated database; it is not designed to run repeatedly against the same database.
 
 Tests may read durable seed data but must not mutate or delete it. A test requiring a changed state must create an independent test-local fixture, then clean that fixture in `finally`.
 
@@ -57,5 +57,5 @@ When reviewing backend tests, verify:
 - every persisted record is explicitly classified as test-local or durable;
 - test-local records are tracked by exact owned identity;
 - `finally` cleanup runs in reverse dependency order and in the proper tenant/instance context;
-- shared durable records are idempotent `meta.version.ts` `test()` seeds and remain read-only to tests;
+- shared durable records come from `meta.version.ts` `seed()` and remain read-only to tests;
 - a new rule is applied prospectively unless cleanup migration work is explicitly in scope.

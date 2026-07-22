@@ -73,7 +73,7 @@ Before inventing a custom implementation path:
 - Model cross-Model query-cache dependencies as one directed, acyclic `modelsClear` / `modelsClearedBy` graph, and verify source mutations refresh warmed dependent queries; read `.docs-internal/architecture/vona-cross-model-query-cache-dependencies.md` before designing a nontrivial graph.
 - For `@Api.field(...)` and related schemaLike composition, framework guards now preserve previously attached OpenAPI metadata across schema rebuilds, but structure-shaping schemaLike is still order-sensitive. Treat `v.object(...)`, `v.array(...)`, `v.optional()`, `v.nullable()`, `v.default(...)`, and preprocess/transform wrappers as structure-shaping; keep the final structure-defining schemaLike last and verify emitted schema/OpenAPI output after such edits.
 - Unit tests must delete every test-owned persisted resource in `finally`, using precise owned identities and reverse dependency order.
-- Shared durable test or local-development fixtures must be created idempotently through the owning module's `meta.version.ts` `test()` lifecycle and treated as read-only by tests.
+- Shared durable test or local-development fixtures must be created through the owning module's `meta.version.ts` `seed()` hook and treated as read-only by tests; the managed seed path starts from a newly recreated database rather than repeating against one database.
 
 ## Verification expectations
 

@@ -1,6 +1,6 @@
 import type {
-  IMetaVersionTest,
-  IMetaVersionTestOptions,
+  IMetaVersionSeed,
+  IMetaVersionSeedOptions,
   IMetaVersionUpdate,
   IMetaVersionUpdateOptions,
 } from 'vona-module-a-version';
@@ -13,7 +13,7 @@ import { Meta } from 'vona-module-a-meta';
 import type { EntityProduct } from '../entity/product.tsx';
 
 @Meta()
-export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVersionTest {
+export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVersionSeed {
   async update(options: IMetaVersionUpdateOptions) {
     if (options.version === 1) {
       const entityProduct = this.scope.entity.product;
@@ -28,7 +28,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
     }
   }
 
-  async test(_options: IMetaVersionTestOptions): Promise<void> {
+  async seed(_options: IMetaVersionSeedOptions): Promise<void> {
     const items: Partial<EntityProduct>[] = [];
     const now = Date.now();
     for (let i = 0; i < 100; i++) {

@@ -172,7 +172,7 @@ For the canonical distinction, read [Backend Foundation](../../../cabloy-docs/ba
 
 ### Verification
 
-For persisted test data, classify each record as a durable module seed or a test-local fixture. Durable seed data belongs in the owning module's idempotent `meta.version.ts` `test()` lifecycle and is read-only to tests; test-local resources must be tracked and deleted in `finally` in reverse dependency order.
+For persisted test data, classify each record as a durable module seed or a test-local fixture. Durable seed data belongs in the owning module's `meta.version.ts` `seed()` hook, runs from a newly recreated managed database, and is read-only to tests; test-local resources must be tracked and deleted in `finally` in reverse dependency order.
 
 Check whether the feature needs:
 

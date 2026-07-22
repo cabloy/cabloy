@@ -2,7 +2,7 @@ import type { IInstanceRecord } from 'vona';
 import type { ConfigInstanceBase } from 'vona-module-a-instance';
 
 export interface IMetaVersionOptions {
-  scene: 'update' | 'init' | 'test';
+  scene: 'update' | 'init' | 'seed';
   instanceName?: keyof IInstanceRecord;
 }
 
@@ -19,7 +19,7 @@ export interface IMetaVersionInitOptions extends ConfigInstanceBase {
   version: number;
 }
 
-export interface IMetaVersionTestOptions {
+export interface IMetaVersionSeedOptions {
   version: number;
   instanceName: string;
 }
@@ -32,8 +32,8 @@ export interface IMetaVersionInit {
   init: (options: IMetaVersionInitOptions) => Promise<void>;
 }
 
-export interface IMetaVersionTest {
-  test: (options: IMetaVersionTestOptions) => Promise<void>;
+export interface IMetaVersionSeed {
+  seed: (options: IMetaVersionSeedOptions) => Promise<void>;
 }
 
 declare module 'vona' {
