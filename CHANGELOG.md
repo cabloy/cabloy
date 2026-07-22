@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.1.113
+
+### Features
+
+- Update application capabilities and workflows.
+
+### Improvements
+
+- Rename the version test lifecycle to the seed lifecycle.
+- Run Commerce end-to-end tests independently in CI.
+- Strengthen Commerce catalog, stock balance, and stock reservation test coverage.
+- Record Commerce stock verification and Phase 20 CI evidence.
+
 ## 5.1.112
 
 ### Features
