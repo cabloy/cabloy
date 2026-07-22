@@ -92,6 +92,10 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.tableIdentity(entityOrder.addressId).comment(entityOrder.$comment.addressId);
       table.string(entityOrder.correlationId, 80).comment(entityOrder.$comment.correlationId);
       table.json(entityOrder.addressSnapshot).comment(entityOrder.$comment.addressSnapshot);
+      table
+        .json(entityOrder.couponSnapshot)
+        .nullable()
+        .comment(entityOrder.$comment.couponSnapshot);
       table.string(entityOrder.state, 30).comment(entityOrder.$comment.state);
       table.string(entityOrder.currency, 3).comment(entityOrder.$comment.currency);
       table

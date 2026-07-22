@@ -509,6 +509,7 @@ declare module 'vona-module-commerce-trade' {
           export interface ServiceOrder {
             get $beanFullName(): 'commerce-trade.service.order';
             get $onionName(): 'commerce-trade:order';
+            
           }
 
         export interface ServiceStockAudit {
@@ -603,6 +604,7 @@ export * from '../dto/cartItem.tsx';
 export * from '../dto/cartUpdateItem.tsx';
 export * from '../dto/cartView.tsx';
 export * from '../dto/orderAddressSnapshot.tsx';
+export * from '../dto/orderCouponSnapshot.tsx';
 export * from '../dto/orderLineSkuAttributeSnapshot.tsx';
 export * from '../dto/stockAdjust.tsx';
 export * from '../dto/stockAuditCreate.tsx';
@@ -622,6 +624,7 @@ import type { IDtoOptionsCartItem } from '../dto/cartItem.tsx';
 import type { IDtoOptionsCartUpdateItem } from '../dto/cartUpdateItem.tsx';
 import type { IDtoOptionsCartView } from '../dto/cartView.tsx';
 import type { IDtoOptionsOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
+import type { IDtoOptionsOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
 import type { IDtoOptionsOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
 import type { IDtoOptionsStockAdjust } from '../dto/stockAdjust.tsx';
 import type { IDtoOptionsStockAuditCreate } from '../dto/stockAuditCreate.tsx';
@@ -645,6 +648,7 @@ declare module 'vona-module-a-web' {
 'commerce-trade:cartUpdateItem': IDtoOptionsCartUpdateItem;
 'commerce-trade:cartView': IDtoOptionsCartView;
 'commerce-trade:orderAddressSnapshot': IDtoOptionsOrderAddressSnapshot;
+'commerce-trade:orderCouponSnapshot': IDtoOptionsOrderCouponSnapshot;
 'commerce-trade:orderLineSkuAttributeSnapshot': IDtoOptionsOrderLineSkuAttributeSnapshot;
 'commerce-trade:stockAdjust': IDtoOptionsStockAdjust;
 'commerce-trade:stockAuditCreate': IDtoOptionsStockAuditCreate;
@@ -673,6 +677,7 @@ import type { DtoCartItem } from '../dto/cartItem.tsx';
 import type { DtoCartUpdateItem } from '../dto/cartUpdateItem.tsx';
 import type { DtoCartView } from '../dto/cartView.tsx';
 import type { DtoOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
+import type { DtoOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
 import type { DtoOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
 import type { DtoStockAdjust } from '../dto/stockAdjust.tsx';
 import type { DtoStockAuditCreate } from '../dto/stockAuditCreate.tsx';
@@ -707,6 +712,10 @@ declare module 'vona-module-commerce-trade' {
 
     export interface IDtoOptionsOrderAddressSnapshot {
       fields?: TypeEntityOptionsFields<DtoOrderAddressSnapshot, IDtoOptionsOrderAddressSnapshot[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsOrderCouponSnapshot {
+      fields?: TypeEntityOptionsFields<DtoOrderCouponSnapshot, IDtoOptionsOrderCouponSnapshot[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsOrderLineSkuAttributeSnapshot {

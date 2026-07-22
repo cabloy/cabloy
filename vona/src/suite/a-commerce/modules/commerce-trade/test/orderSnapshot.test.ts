@@ -9,9 +9,12 @@ interface IFixture {
   skuId?: number;
   addressId?: number;
   orderId?: number;
+  couponTemplateId?: number;
+  couponGrantId?: number;
 }
 
 async function cleanup(fixture: IFixture) {
+  const promotion = app.scope('commerce-promotion');
   const trade = app.scope('commerce-trade');
   const catalog = app.scope('commerce-catalog');
   const member = app.scope('commerce-member');
@@ -22,6 +25,13 @@ async function cleanup(fixture: IFixture) {
     }
     await trade.model.orderLine.delete({ orderId: fixture.orderId });
     await trade.model.order.delete({ id: fixture.orderId });
+  }
+  if (fixture.couponGrantId !== undefined) {
+    await promotion.model.couponAudit.delete({ couponGrantId: fixture.couponGrantId });
+    await promotion.model.couponGrant.delete({ id: fixture.couponGrantId });
+  }
+  if (fixture.couponTemplateId !== undefined) {
+    await promotion.model.couponTemplate.delete({ id: fixture.couponTemplateId });
   }
   if (fixture.skuId !== undefined) {
     await trade.model.stockAudit.delete({ skuId: fixture.skuId });
@@ -78,6 +88,28 @@ describe('orderSnapshot.test.ts', () => {
         });
         await app.bean.passport.signout();
         await app.bean.passport.signinMock();
+        fixture.couponTemplateId = (
+          await app.scope('commerce-promotion').model.couponTemplate.insert({
+            name: `snapshot coupon ${suffix}`,
+            state: 'active',
+            currency: 'USD',
+            discountCents: 500,
+            minSpendCents: 1_000,
+            validFrom: new Date(Date.now() - 1_000),
+            validUntil: new Date(Date.now() + 60_000),
+            issuedCount: 0,
+            redeemedCount: 0,
+          })
+        ).id as number;
+        const customerId = app.bean.passport.currentUser!.id;
+        fixture.couponGrantId = (
+          await app.scope('commerce-promotion').service.coupon.issue({
+            templateId: fixture.couponTemplateId,
+            userId: customerId,
+            correlationId: `snapshot-coupon-${suffix}`,
+            reason: 'snapshot fixture',
+          })
+        ).id as number;
         fixture.addressId = await app.bean.executor.performAction(
           'post',
           '/commerce/member/address',
@@ -96,12 +128,14 @@ describe('orderSnapshot.test.ts', () => {
 
         const created = await app.scope('commerce-trade').service.order.createSnapshot({
           addressId: fixture.addressId,
+          couponGrantId: fixture.couponGrantId,
           correlationId: `snapshot-order-${suffix}`,
           lines: [{ skuId: fixture.skuId, quantity: 2 }],
         });
         fixture.orderId = created.order.id as number;
         const replay = await app.scope('commerce-trade').service.order.createSnapshot({
           addressId: fixture.addressId,
+          couponGrantId: fixture.couponGrantId,
           correlationId: `snapshot-order-${suffix}`,
           lines: [{ skuId: fixture.skuId, quantity: 2 }],
         });
@@ -115,7 +149,10 @@ describe('orderSnapshot.test.ts', () => {
           }),
         );
         assert.equal(conflict?.code, 409);
-        assert.equal(created.order.payableTotalCents, 2598);
+        assert.equal(created.order.discountCents, 500);
+        assert.equal(created.order.payableTotalCents, 2098);
+        assert.equal(created.order.couponSnapshot?.couponGrantId, fixture.couponGrantId);
+        assert.equal(created.order.couponSnapshot?.couponCode, `snapshot-coupon-${suffix}`);
         assert.equal(created.lines[0].titleSnapshot, `snapshot product ${suffix}`);
         assert.deepEqual(created.lines[0].skuAttributesSnapshot, [
           { name: 'Color', value: 'Black' },
@@ -141,7 +178,9 @@ describe('orderSnapshot.test.ts', () => {
           .service.order.viewSnapshot(created.order.id);
         assert.equal(snapshot?.order.addressSnapshot.city, 'San Francisco');
         assert.equal(snapshot?.order.addressSnapshot.addressLine1, '1 Market Street');
-        assert.equal(snapshot?.order.payableTotalCents, 2598);
+        assert.equal(snapshot?.order.discountCents, 500);
+        assert.equal(snapshot?.order.payableTotalCents, 2098);
+        assert.equal(snapshot?.order.couponSnapshot?.templateName, `snapshot coupon ${suffix}`);
         assert.equal(snapshot?.lines.length, 1);
         assert.equal(snapshot?.lines[0].skuCodeSnapshot, `snapshot-sku-${suffix}`);
         assert.equal(snapshot?.lines[0].titleSnapshot, `snapshot product ${suffix}`);
