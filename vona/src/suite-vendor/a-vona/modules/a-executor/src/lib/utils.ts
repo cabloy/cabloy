@@ -2,9 +2,11 @@ export function __delegateProperties(ctx, ctxCaller) {
   for (const property of ['state']) {
     __delegateProperty(ctx, ctxCaller, property);
   }
-  for (const property of ['headers']) {
-    __delegateProperty(ctx.request, ctxCaller.request, property);
-    // if (ctx.request[property]) req[property] = ctx.request[property];
+  if (ctxCaller.request) {
+    for (const property of ['headers']) {
+      __delegateProperty(ctx.request, ctxCaller.request, property);
+      // if (ctx.request[property]) req[property] = ctx.request[property];
+    }
   }
 }
 

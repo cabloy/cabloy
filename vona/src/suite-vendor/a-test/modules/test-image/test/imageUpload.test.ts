@@ -1,6 +1,8 @@
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { Blob } from 'node:buffer';
+import { randomUUID } from 'node:crypto';
+import { createServer } from 'node:http';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 import { $apiPath } from 'vona-module-a-openapiutils';
@@ -12,20 +14,73 @@ const tinyPng = Buffer.from(
 const uploadImageFilenameChinese = '测试图片.png';
 
 function createCloudflareResponse(result: Record<string, any>) {
-  return new Response(
-    JSON.stringify({
-      success: true,
-      errors: [],
-      messages: [],
-      result,
-    }),
-    {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+  return JSON.stringify({
+    success: true,
+    errors: [],
+    messages: [],
+    result,
+  });
+}
+
+async function createCloudflareServer() {
+  const server = createServer((req, res) => {
+    const url = req.url ?? '';
+    const method = req.method ?? 'GET';
+    let result: Record<string, any> | undefined;
+    if (url.includes('/images/v2/direct_upload') && method === 'POST') {
+      result = {
+        id: 'cf-direct-api-1',
+        uploadURL: 'https://upload.imagedelivery.net/hash123/cf-direct-api-1',
+        requireSignedURLs: true,
+        draft: true,
+        variants: ['https://imagedelivery.net/hash123/cf-direct-api-1/public'],
+      };
+    } else if (url.includes('/images/v1/cf-direct-api-1') && method === 'GET') {
+      result = {
+        id: 'cf-direct-api-1',
+        filename: 'direct.png',
+        draft: false,
+        requireSignedURLs: true,
+        variants: ['https://imagedelivery.net/hash123/cf-direct-api-1/public'],
+      };
+    } else if (url.includes('/images/v1') && method === 'POST') {
+      result = {
+        id: 'cf-upload-url-api-1',
+        filename: 'image.png',
+        requireSignedURLs: true,
+        variants: ['https://imagedelivery.net/hash123/cf-upload-url-api-1/public'],
+      };
+    }
+    if (!result) {
+      res.writeHead(404);
+      res.end();
+      return;
+    }
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(createCloudflareResponse(result));
+  });
+  await new Promise<void>((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      server.off('error', reject);
+      resolve();
+    });
+  });
+  const address = server.address();
+  if (!address || typeof address === 'string') {
+    await new Promise<void>((resolve, reject) =>
+      server.close(error => (error ? reject(error) : resolve())),
+    );
+    throw new Error('Cloudflare test server did not expose a TCP address');
+  }
+  return {
+    apiBaseUrl: `http://127.0.0.1:${address.port}`,
+    async close() {
+      await new Promise<void>((resolve, reject) =>
+        server.close(error => (error ? reject(error) : resolve())),
+      );
     },
-  );
+  };
 }
 
 describe('imageUpload.test.ts', () => {
@@ -185,76 +240,41 @@ describe('imageUpload.test.ts', () => {
 
   it('action:image:direct-upload and upload-url api', async () => {
     await app.bean.executor.mockCtx(async () => {
+      const clientName = `api-${randomUUID()}`;
       const jwt = await app.bean.passport.signinMock('admin');
-      const provider = await app.bean.imageProvider.get({
-        providerName: 'image-cloudflare:cloudflare',
-        clientName: 'default',
-      });
-      await app.bean.imageProvider.scope.model.imageProvider.updateById(provider.id, {
-        clientOptions: {
-          accountId: 'account123',
-          apiToken: 'token123',
-          accountHash: 'hash123',
-          signingKey: 'signing-secret',
-        } as any,
-      });
       const resolveUploadContextRaw = app.bean.imageUploadPolicy.resolveUploadContext.bind(
         app.bean.imageUploadPolicy,
       );
-      app.bean.imageUploadPolicy.resolveUploadContext = async data => {
-        const context = await resolveUploadContextRaw(data);
-        return {
-          ...context,
-          providerName: 'image-cloudflare:cloudflare',
-          clientName: 'default',
-        };
-      };
-      const fetchRaw = globalThis.fetch;
-      globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-        const url = String(input);
-        const method = init?.method ?? 'GET';
-        if (
-          url.includes('/image/upload-policy') ||
-          url.includes('/image/direct-upload') ||
-          url.includes('/image/upload-url')
-        ) {
-          return await fetchRaw(input, init);
-        }
-        if (url.includes('/images/v2/direct_upload') && method === 'POST') {
-          return createCloudflareResponse({
-            id: 'cf-direct-api-1',
-            uploadURL: 'https://upload.imagedelivery.net/hash123/cf-direct-api-1',
-            requireSignedURLs: true,
-            draft: true,
-            variants: ['https://imagedelivery.net/hash123/cf-direct-api-1/public'],
-          });
-        }
-        if (url.includes('/images/v1/cf-direct-api-1') && method === 'GET') {
-          return createCloudflareResponse({
-            id: 'cf-direct-api-1',
-            filename: 'direct.png',
-            draft: false,
-            requireSignedURLs: true,
-            variants: ['https://imagedelivery.net/hash123/cf-direct-api-1/public'],
-          });
-        }
-        if (url.includes('/images/v1') && method === 'POST') {
-          return createCloudflareResponse({
-            id: 'cf-upload-url-api-1',
-            filename: 'image.png',
-            requireSignedURLs: true,
-            variants: ['https://imagedelivery.net/hash123/cf-upload-url-api-1/public'],
-          });
-        }
-        throw new Error(`unexpected fetch: ${method} ${url}`);
-      };
+      let cloudflareServer: Awaited<ReturnType<typeof createCloudflareServer>> | undefined;
       try {
+        cloudflareServer = await createCloudflareServer();
+        const provider = await app.bean.imageProvider.get({
+          providerName: 'image-cloudflare:cloudflare',
+          clientName,
+        });
+        await app.bean.imageProvider.scope.model.imageProvider.updateById(provider.id, {
+          clientOptions: {
+            accountId: 'account123',
+            apiToken: 'token123',
+            accountHash: 'hash123',
+            signingKey: 'signing-secret',
+            apiBaseUrl: cloudflareServer.apiBaseUrl,
+          } as any,
+        });
+        app.bean.imageUploadPolicy.resolveUploadContext = async data => {
+          const context = await resolveUploadContextRaw(data);
+          return {
+            ...context,
+            providerName: 'image-cloudflare:cloudflare',
+            clientName,
+          };
+        };
         const resolveProviderRaw = (app.bean.imageUploadPolicy as any)._resolveProvider.bind(
           app.bean.imageUploadPolicy,
         );
         (app.bean.imageUploadPolicy as any)._resolveProvider = async () => ({
           providerName: 'image-cloudflare:cloudflare',
-          clientName: 'default',
+          clientName,
         });
         try {
           const uploadPolicyUrl = app.util.getAbsoluteUrlByApiPath('/image/upload-policy');
@@ -367,7 +387,11 @@ describe('imageUpload.test.ts', () => {
         assert.equal('finalizedAt' in uploadUrlData.data, false);
       } finally {
         app.bean.imageUploadPolicy.resolveUploadContext = resolveUploadContextRaw;
-        globalThis.fetch = fetchRaw;
+        await app.bean.imageProvider.scope.model.imageProvider.delete({
+          providerName: 'image-cloudflare:cloudflare',
+          clientName,
+        });
+        await cloudflareServer?.close();
         await app.bean.passport.signout();
       }
     });

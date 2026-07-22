@@ -162,7 +162,7 @@ export class ServiceImageCloudflare extends BeanBase {
     options: IImageProviderCloudflareClientOptions,
   ) {
     const normalized = this._normalizeClientOptions(options);
-    const response = await fetch(
+    const response = await this.bean.core.fetch(
       `${normalized.apiBaseUrl}/accounts/${normalized.accountId}/images/v1/${encodeURIComponent(image.resourceId)}`,
       {
         method: 'DELETE',
@@ -247,13 +247,16 @@ export class ServiceImageCloudflare extends BeanBase {
     apiPath: string,
     init: RequestInit,
   ) {
-    const response = await fetch(`${options.apiBaseUrl}/accounts/${options.accountId}${apiPath}`, {
-      ...init,
-      headers: {
-        ...this._createHeaders(options),
-        ...(init.headers ?? {}),
+    const response = await this.bean.core.fetch(
+      `${options.apiBaseUrl}/accounts/${options.accountId}${apiPath}`,
+      {
+        ...init,
+        headers: {
+          ...this._createHeaders(options),
+          ...(init.headers ?? {}),
+        },
       },
-    });
+    );
     return await this._parseEnvelope<T>(response);
   }
 
