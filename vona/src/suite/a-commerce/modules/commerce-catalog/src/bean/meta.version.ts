@@ -42,6 +42,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         table.tableIdentity(entitySku.productId).comment(entitySku.$comment.productId);
         table.string(entitySku.code, 100).comment(entitySku.$comment.code);
         table.integer(entitySku.priceCents).comment(entitySku.$comment.priceCents);
+        table.json(entitySku.attributes).comment(entitySku.$comment.attributes);
         table.string(entitySku.lifecycle, 20).comment(entitySku.$comment.lifecycle);
         table.index([entitySku.productId], `idx_${entitySku.$table}_productId`);
         table.index([entitySku.lifecycle], `idx_${entitySku.$table}_lifecycle`);

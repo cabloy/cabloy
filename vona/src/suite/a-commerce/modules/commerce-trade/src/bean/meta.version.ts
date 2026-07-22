@@ -29,6 +29,10 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         .tableIdentity(entityStockReservation.skuId)
         .comment(entityStockReservation.$comment.skuId);
       table
+        .tableIdentity(entityStockReservation.orderLineId)
+        .nullable()
+        .comment(entityStockReservation.$comment.orderLineId);
+      table
         .integer(entityStockReservation.quantity)
         .comment(entityStockReservation.$comment.quantity);
       table.string(entityStockReservation.state, 20).comment(entityStockReservation.$comment.state);
@@ -78,6 +82,54 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.tableIdentity(entityCartItem.cartId).comment(entityCartItem.$comment.cartId);
       table.tableIdentity(entityCartItem.skuId).comment(entityCartItem.$comment.skuId);
       table.integer(entityCartItem.quantity).comment(entityCartItem.$comment.quantity);
+    });
+
+    const entityOrder = this.scope.entity.order;
+    await this.bean.model.createTable(entityOrder.$table, table => {
+      table.comment(entityOrder.$comment.$table);
+      table.basicFields();
+      table.userId(entityOrder.userId).comment(entityOrder.$comment.userId);
+      table.tableIdentity(entityOrder.addressId).comment(entityOrder.$comment.addressId);
+      table.string(entityOrder.correlationId, 80).comment(entityOrder.$comment.correlationId);
+      table.json(entityOrder.addressSnapshot).comment(entityOrder.$comment.addressSnapshot);
+      table.string(entityOrder.state, 30).comment(entityOrder.$comment.state);
+      table.string(entityOrder.currency, 3).comment(entityOrder.$comment.currency);
+      table
+        .integer(entityOrder.eligibleSubtotalCents)
+        .comment(entityOrder.$comment.eligibleSubtotalCents);
+      table.integer(entityOrder.discountCents).comment(entityOrder.$comment.discountCents);
+      table.integer(entityOrder.payableTotalCents).comment(entityOrder.$comment.payableTotalCents);
+      table
+        .dateTime(entityOrder.reservationExpiresAt)
+        .comment(entityOrder.$comment.reservationExpiresAt);
+    });
+
+    const entityOrderLine = this.scope.entity.orderLine;
+    await this.bean.model.createTable(entityOrderLine.$table, table => {
+      table.comment(entityOrderLine.$comment.$table);
+      table.basicFields();
+      table.tableIdentity(entityOrderLine.orderId).comment(entityOrderLine.$comment.orderId);
+      table.tableIdentity(entityOrderLine.skuId).comment(entityOrderLine.$comment.skuId);
+      table.tableIdentity(entityOrderLine.productId).comment(entityOrderLine.$comment.productId);
+      table
+        .string(entityOrderLine.skuCodeSnapshot, 100)
+        .comment(entityOrderLine.$comment.skuCodeSnapshot);
+      table
+        .string(entityOrderLine.titleSnapshot, 100)
+        .comment(entityOrderLine.$comment.titleSnapshot);
+      table
+        .json(entityOrderLine.skuAttributesSnapshot)
+        .comment(entityOrderLine.$comment.skuAttributesSnapshot);
+      table
+        .integer(entityOrderLine.unitPriceCents)
+        .comment(entityOrderLine.$comment.unitPriceCents);
+      table.integer(entityOrderLine.quantity).comment(entityOrderLine.$comment.quantity);
+      table
+        .integer(entityOrderLine.eligibleSubtotalCents)
+        .comment(entityOrderLine.$comment.eligibleSubtotalCents);
+      table
+        .integer(entityOrderLine.lineTotalCents)
+        .comment(entityOrderLine.$comment.lineTotalCents);
     });
   }
 }

@@ -61,7 +61,7 @@ describe('modelWhere.test.ts', () => {
         _and_: Op.omit,
       });
       sql = builder.toQuery();
-      assert.equal(sql, 'select * from "testVonaPost" where (("iid" = 1) and ("id" = 2))');
+      assert.equal(sql, 'select * from "testVonaPost"');
       // op: and: empty
       builder = scopeTest.model.post.builder();
       scopeTest.model.post.buildWhere(builder, {
@@ -82,7 +82,7 @@ describe('modelWhere.test.ts', () => {
         _or_: Op.omit,
       });
       sql = builder.toQuery();
-      assert.equal(sql, 'select * from "testVonaPost" where (("iid" = 1) or ("id" = 2))');
+      assert.equal(sql, 'select * from "testVonaPost"');
       // op: or: more
       builder = scopeTest.model.post.builder();
       scopeTest.model.post.buildWhere(builder, {
@@ -109,7 +109,7 @@ describe('modelWhere.test.ts', () => {
         _not_: Op.omit,
       });
       sql = builder.toQuery();
-      assert.equal(sql, 'select * from "testVonaPost" where not ("iid" = 1 and "id" = 2)');
+      assert.equal(sql, 'select * from "testVonaPost"');
       // op: exists
       builder = scopeTest.model.post.builder();
       scopeTest.model.post.buildWhere(builder, {

@@ -448,7 +448,7 @@ describe('catalog.test.ts', () => {
     let foreignCatalog!: Awaited<ReturnType<typeof createCatalog>>;
     await app.bean.executor.mockCtx(
       async () => {
-        foreignCatalog = await createCatalog(`__catalog-relation-foreign-${suffix}__`, 'active');
+        foreignCatalog = await createCatalog(`crf-${suffix}`, 'active');
       },
       { instanceName: 'shareTest' as any },
     );

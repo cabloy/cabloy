@@ -42,11 +42,14 @@ export class EntityStockReservation extends EntityBase {
   @Api.field(v.title($locale('SkuId')), v.required(), v.tableIdentity(), ZovaRender.order(2))
   skuId: TableIdentity;
 
+  @Api.field(v.title($locale('OrderLineId')), v.optional(), v.tableIdentity(), ZovaRender.order(3))
+  orderLineId?: TableIdentity;
+
   @Api.field(
     v.title($locale('Quantity')),
     v.required(),
     z.number().int().positive(),
-    ZovaRender.order(3),
+    ZovaRender.order(4),
   )
   quantity: number;
 

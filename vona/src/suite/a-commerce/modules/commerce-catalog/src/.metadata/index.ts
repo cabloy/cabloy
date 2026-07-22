@@ -377,6 +377,7 @@ export * from '../dto/productSelectRes.tsx';
 export * from '../dto/productSelectResItem.tsx';
 export * from '../dto/productUpdate.tsx';
 export * from '../dto/productView.tsx';
+export * from '../dto/skuAttribute.tsx';
 export * from '../dto/skuCreate.tsx';
 export * from '../dto/skuSelectReq.tsx';
 export * from '../dto/skuSelectRes.tsx';
@@ -399,6 +400,7 @@ import type { IDtoOptionsProductSelectRes } from '../dto/productSelectRes.tsx';
 import type { IDtoOptionsProductSelectResItem } from '../dto/productSelectResItem.tsx';
 import type { IDtoOptionsProductUpdate } from '../dto/productUpdate.tsx';
 import type { IDtoOptionsProductView } from '../dto/productView.tsx';
+import type { IDtoOptionsSkuAttribute } from '../dto/skuAttribute.tsx';
 import type { IDtoOptionsSkuCreate } from '../dto/skuCreate.tsx';
 import type { IDtoOptionsSkuSelectReq } from '../dto/skuSelectReq.tsx';
 import type { IDtoOptionsSkuSelectRes } from '../dto/skuSelectRes.tsx';
@@ -425,6 +427,7 @@ declare module 'vona-module-a-web' {
 'commerce-catalog:productSelectResItem': IDtoOptionsProductSelectResItem;
 'commerce-catalog:productUpdate': IDtoOptionsProductUpdate;
 'commerce-catalog:productView': IDtoOptionsProductView;
+'commerce-catalog:skuAttribute': IDtoOptionsSkuAttribute;
 'commerce-catalog:skuCreate': IDtoOptionsSkuCreate;
 'commerce-catalog:skuSelectReq': IDtoOptionsSkuSelectReq;
 'commerce-catalog:skuSelectRes': IDtoOptionsSkuSelectRes;
@@ -456,6 +459,7 @@ import type { DtoProductSelectRes } from '../dto/productSelectRes.tsx';
 import type { DtoProductSelectResItem } from '../dto/productSelectResItem.tsx';
 import type { DtoProductUpdate } from '../dto/productUpdate.tsx';
 import type { DtoProductView } from '../dto/productView.tsx';
+import type { DtoSkuAttribute } from '../dto/skuAttribute.tsx';
 import type { DtoSkuCreate } from '../dto/skuCreate.tsx';
 import type { DtoSkuSelectReq } from '../dto/skuSelectReq.tsx';
 import type { DtoSkuSelectRes } from '../dto/skuSelectRes.tsx';
@@ -526,6 +530,10 @@ declare module 'vona-module-commerce-catalog' {
 
     export interface IDtoOptionsProductView {
       fields?: TypeEntityOptionsFields<DtoProductView, IDtoOptionsProductView[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsSkuAttribute {
+      fields?: TypeEntityOptionsFields<DtoSkuAttribute, IDtoOptionsSkuAttribute[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsSkuCreate {

@@ -17,6 +17,7 @@ import type { ModelStockBalance } from '../model/stockBalance.ts';
 
 export interface IStockReservationCommand {
   skuId: TableIdentity;
+  orderLineId?: TableIdentity;
   quantity: number;
   correlationId: string;
   reason: string;
@@ -137,6 +138,7 @@ export class ServiceStockBalance extends BeanBase {
     if (existingReservation) {
       if (
         String(existingReservation.skuId) !== String(command.skuId) ||
+        String(existingReservation.orderLineId ?? '') !== String(command.orderLineId ?? '') ||
         existingReservation.quantity !== command.quantity
       ) {
         this.app.throw(409, 'stock reservation correlation conflicts with an existing reservation');
@@ -150,6 +152,7 @@ export class ServiceStockBalance extends BeanBase {
     const reservation = await this.scope.model.stockReservation.insert({
       stockBalanceId: stockBalance.id,
       skuId: command.skuId,
+      orderLineId: command.orderLineId,
       quantity: command.quantity,
       state: 'reserved',
       correlationId: command.correlationId,

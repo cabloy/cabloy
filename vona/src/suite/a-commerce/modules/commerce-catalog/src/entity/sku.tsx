@@ -7,6 +7,7 @@ import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
+import { DtoSkuAttribute } from '../dto/skuAttribute.tsx';
 
 export const skuLifecycleItems = [
   { value: 'draft', title: $locale('SkuLifecycleDraft') },
@@ -57,9 +58,17 @@ export class EntitySku extends EntityBase {
   priceCents: number;
 
   @Api.field(
+    v.title($locale('SkuAttributes')),
+    v.default([]),
+    v.array(v.object(DtoSkuAttribute)),
+    ZovaRender.order(4),
+  )
+  attributes: DtoSkuAttribute[];
+
+  @Api.field(
     v.title($locale('SkuLifecycle')),
     v.default('draft'),
-    ZovaRender.order(4),
+    ZovaRender.order(5),
     z.enum(['draft', 'active', 'inactive', 'archived']),
   )
   lifecycle: 'draft' | 'active' | 'inactive' | 'archived';

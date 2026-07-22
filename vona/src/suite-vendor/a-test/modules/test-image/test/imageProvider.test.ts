@@ -17,22 +17,18 @@ describe('imageProvider.test.ts', () => {
       assert.deepEqual(res.clientOptions?.variants?.original ?? {}, {});
       assert.equal(res.clientOptions?.signedDeliveryKind, 'proxy');
 
-      const cloudflare = await app.bean.imageProvider.get({
-        providerName: 'image-cloudflare:cloudflare',
-        clientName: 'default',
-      });
       const cloudflareClientOptions: IImageProviderCloudflareClientOptions = {
         accountId: 'account123',
         apiToken: 'token123',
         accountHash: 'hash123',
       };
-      await app.bean.imageProvider.scope.model.imageProvider.updateById(cloudflare.id, {
-        clientOptions: cloudflareClientOptions,
-      });
-      const resCloudflare = await app.bean.imageProvider.getClientOptions({
-        providerName: 'image-cloudflare:cloudflare',
-        clientName: 'default',
-      });
+      const resCloudflare = await app.bean.imageProvider.getClientOptions(
+        {
+          providerName: 'image-cloudflare:cloudflare',
+          clientName: 'default',
+        },
+        cloudflareClientOptions,
+      );
       assert.equal(resCloudflare.clientOptions?.signedDeliveryKind, 'provider');
       assert.equal(resCloudflare.clientOptions?.accountHash, 'hash123');
       assert.equal(resCloudflare.clientOptions?.accountId, 'account123');
