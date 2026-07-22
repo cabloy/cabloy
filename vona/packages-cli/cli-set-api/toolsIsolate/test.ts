@@ -65,7 +65,8 @@ async function testRun(projectPath: string, coverage: boolean, patterns: string[
   const app: VonaApplication = await createGeneralApp(projectPath);
   // concurrency
   const concurrency = await prepareConcurrency(app);
-  return new Promise(resolve => {
+  return new Promise<void>((resolve, reject) => {
+    let summarySuccess = false;
     const testStream = run({
       isolation: 'none',
       concurrency,
@@ -80,14 +81,17 @@ async function testRun(projectPath: string, coverage: boolean, patterns: string[
       .on('test:coverage', data => {
         outputCoverageReport(data.summary.totals);
       })
-      .on('test:summary', async () => {
-        resolve(undefined);
+      .on('test:summary', async summary => {
+        summarySuccess = summary.success;
+        if (summarySuccess) {
+          resolve();
+        } else {
+          reject(new Error('node:test reported failed tests'));
+        }
       })
       .on('test:pass', async t => {
         if (t.name === '---done---') {
-          const [_, err] = await catchError(() => {
-            return app.close();
-          });
+          const [_, err] = await catchError(() => app.close());
           if (err) {
             console.error(err);
           }

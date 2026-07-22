@@ -34,6 +34,14 @@ jobs:
           version: 11.5.2
       - name: init
         run: npm run init
+      - name: run Commerce stock contention gate
+        run: >-
+          TEST_CONCURRENCY=false DATABASE_DEFAULT_CLIENT=pg npm run vona :bin:test --
+          commerce-trade/test/stockBalance.test.ts
+          commerce-trade/test/stockReservation.test.ts
+          commerce-trade/test/stockAudit.test.ts
+          --flavor=normal
+        working-directory: vona
       - run: DATABASE_DEFAULT_CLIENT=pg npm run test
         working-directory: vona
       - run: DATABASE_DEFAULT_CLIENT=pg npm run build -- --flavor=ci

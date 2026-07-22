@@ -279,14 +279,22 @@ describe('stockReservation.test.ts', () => {
           ],
         );
         assert.deepEqual(
-          audits.map(audit => [audit.delta, audit.onHand, audit.reserved, audit.available]),
+          audits.map(audit => [
+            audit.delta,
+            audit.priorOnHand,
+            audit.priorReserved,
+            audit.priorAvailable,
+            audit.onHand,
+            audit.reserved,
+            audit.available,
+          ]),
           [
-            [3, 3, 0, 3],
-            [-2, 3, 2, 1],
-            [0, 3, 0, 3],
-            [-1, 3, 1, 2],
-            [-1, 2, 0, 2],
-            [1, 3, 0, 3],
+            [3, 0, 0, 0, 3, 0, 3],
+            [-2, 3, 0, 3, 3, 2, 1],
+            [0, 3, 2, 1, 3, 0, 3],
+            [-1, 3, 0, 3, 3, 1, 2],
+            [-1, 3, 1, 2, 2, 0, 2],
+            [1, 2, 0, 2, 3, 0, 3],
           ],
         );
       } finally {
@@ -296,20 +304,56 @@ describe('stockReservation.test.ts', () => {
     });
   });
 
-  it('allows exactly one competing reservation for the final unit', async () => {
-    await app.bean.executor.mockCtx(async () => {
-      const fixtures: IStockFixturePartial[] = [];
-      await app.bean.passport.signinMock();
-      try {
-        const suffix = `${Date.now()}`;
-        const fixture = await prepareStock(suffix, fixtures, 1);
-        const results = await Promise.allSettled([
-          reserve(fixture.skuId, `${suffix}-first`, 1),
-          reserve(fixture.skuId, `${suffix}-second`, 1),
-        ]);
-        assert.equal(results.filter(result => result.status === 'fulfilled').length, 1);
-        assert.equal(results.filter(result => result.status === 'rejected').length, 1);
+  it('allows exactly one independent reservation for the final unit', async t => {
+    if (process.env.DATABASE_DEFAULT_CLIENT !== 'pg') {
+      t.skip('requires PostgreSQL row-lock contention');
+      return;
+    }
+    const fixtures: IStockFixturePartial[] = [];
+    const suffix = `${Date.now()}`;
+    let fixture!: IStockFixture;
+    try {
+      await app.bean.executor.mockCtx(async () => {
+        await app.bean.passport.signinMock();
+        try {
+          fixture = await prepareStock(suffix, fixtures, 1);
+        } finally {
+          await app.bean.passport.signout();
+        }
+      });
 
+      const reserveInContext = async (correlationSuffix: string) => {
+        return await app.bean.executor.mockCtx(async () => {
+          await app.bean.passport.signinMock();
+          try {
+            return await reserve(fixture.skuId, correlationSuffix, 1);
+          } finally {
+            await app.bean.passport.signout();
+          }
+        });
+      };
+      const results = await Promise.allSettled([
+        reserveInContext(`${suffix}-first`),
+        reserveInContext(`${suffix}-second`),
+      ]);
+      assert.equal(
+        results.filter(result => result.status === 'fulfilled').length,
+        1,
+        JSON.stringify(results),
+      );
+      assert.equal(
+        results.filter(result => result.status === 'rejected').length,
+        1,
+        JSON.stringify(results),
+      );
+      const rejected = results.find(result => result.status === 'rejected');
+      assert.equal(
+        (rejected as PromiseRejectedResult | undefined)?.reason?.code,
+        409,
+        String((rejected as PromiseRejectedResult | undefined)?.reason),
+      );
+
+      await app.bean.executor.mockCtx(async () => {
         const balance = await app
           .scope('commerce-trade')
           .model.stockBalance.get({ skuId: fixture.skuId });
@@ -325,40 +369,85 @@ describe('stockReservation.test.ts', () => {
           audits.map(audit => audit.operation),
           ['adjust', 'reserve'],
         );
-      } finally {
+        assert.equal(audits.filter(audit => audit.operation === 'reserve').length, 1);
+        assert.equal(
+          audits.some(audit => audit.correlationId === `reservation-${suffix}-first`) ||
+            audits.some(audit => audit.correlationId === `reservation-${suffix}-second`),
+          true,
+        );
+      });
+    } finally {
+      await app.bean.executor.mockCtx(async () => {
         await dropStockFixtures(fixtures);
-        await app.bean.passport.signout();
-      }
-    });
+      });
+    }
   });
 
-  it('rolls back reservation and balance when audit persistence fails', async () => {
+  it('rolls back reservation, balance, and audit writes in one transaction', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixtures: IStockFixturePartial[] = [];
       await app.bean.passport.signinMock();
       try {
         const suffix = `${Date.now()}`;
         const fixture = await prepareStock(suffix, fixtures);
-        const modelStockAudit = app.scope('commerce-trade').model.stockAudit;
-        const insert = modelStockAudit.insert.bind(modelStockAudit);
-        (modelStockAudit as any).insert = async () => {
-          throw new Error('reservation audit insert failure');
-        };
-        try {
-          const [_, err] = await catchError(() => reserve(fixture.skuId, suffix));
-          assert.match(err?.message ?? '', /reservation audit insert failure/);
-        } finally {
-          (modelStockAudit as any).insert = insert;
-        }
+        const balance = await app.scope('commerce-trade').model.stockBalance.get({
+          skuId: fixture.skuId,
+        });
+        const db = app.ctx.db;
+        const [_, err] = await catchError(async () => {
+          await db.transaction.begin(async () => {
+            const modelStockBalance = app
+              .scope('commerce-trade')
+              .model.stockBalance.newInstance(db);
+            const modelStockReservation = app
+              .scope('commerce-trade')
+              .model.stockReservation.newInstance(db);
+            const modelStockAudit = app.scope('commerce-trade').model.stockAudit.newInstance(db);
+            const reservation = await modelStockReservation.insert({
+              stockBalanceId: balance!.id,
+              skuId: fixture.skuId,
+              quantity: 2,
+              state: 'reserved',
+              correlationId: `reservation-${suffix}-rollback`,
+            });
+            await modelStockBalance.updateById(balance!.id, {
+              onHand: 3,
+              reserved: 2,
+              available: 1,
+            });
+            await modelStockAudit.insert({
+              stockBalanceId: balance!.id,
+              skuId: fixture.skuId,
+              stockReservationId: reservation.id,
+              actorId: app.bean.passport.currentUser!.id,
+              operation: 'reserve',
+              delta: -2,
+              reason: 'transaction rollback proof',
+              correlationId: reservation.correlationId,
+              priorOnHand: 3,
+              priorReserved: 0,
+              priorAvailable: 3,
+              onHand: 3,
+              reserved: 2,
+              available: 1,
+            });
+            throw new Error('transaction rollback proof');
+          });
+        });
+        assert.match(err?.message ?? '', /transaction rollback proof/);
 
-        const balance = await app
+        const unchanged = await app
           .scope('commerce-trade')
           .model.stockBalance.get({ skuId: fixture.skuId });
-        assert.deepEqual([balance?.onHand, balance?.reserved, balance?.available], [3, 0, 3]);
+        assert.deepEqual([unchanged?.onHand, unchanged?.reserved, unchanged?.available], [3, 0, 3]);
         assert.equal(
           await app.scope('commerce-trade').model.stockReservation.get({ skuId: fixture.skuId }),
           undefined,
         );
+        const audits = await app.scope('commerce-trade').model.stockAudit.select({
+          where: { skuId: fixture.skuId },
+        });
+        assert.equal(audits.length, 1);
       } finally {
         await dropStockFixtures(fixtures);
         await app.bean.passport.signout();

@@ -49,12 +49,16 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         .tableIdentity(entityStockAudit.stockReservationId)
         .nullable()
         .comment(entityStockAudit.$comment.stockReservationId);
+      table.userId(entityStockAudit.actorId).nullable().comment(entityStockAudit.$comment.actorId);
       table.string(entityStockAudit.operation, 20).comment(entityStockAudit.$comment.operation);
       table.integer(entityStockAudit.delta).comment(entityStockAudit.$comment.delta);
       table.string(entityStockAudit.reason, 255).comment(entityStockAudit.$comment.reason);
       table
         .string(entityStockAudit.correlationId, 100)
         .comment(entityStockAudit.$comment.correlationId);
+      table.int0(entityStockAudit.priorOnHand).comment(entityStockAudit.$comment.priorOnHand);
+      table.int0(entityStockAudit.priorReserved).comment(entityStockAudit.$comment.priorReserved);
+      table.int0(entityStockAudit.priorAvailable).comment(entityStockAudit.$comment.priorAvailable);
       table.int0(entityStockAudit.onHand).comment(entityStockAudit.$comment.onHand);
       table.int0(entityStockAudit.reserved).comment(entityStockAudit.$comment.reserved);
       table.int0(entityStockAudit.available).comment(entityStockAudit.$comment.available);

@@ -77,15 +77,12 @@ export class CliBinTest extends BeanCliBase {
       patterns.join(','),
     ]);
     // args = args.concat(['--experimental-transform-types', getImportEsm(), testFile, projectPath, (!!argv.coverage).toString(), patterns.join(',')]);
-    // ignore error special in windows
-    await catchError(() => {
-      return this.helper.spawnExe({
-        cmd: 'node',
-        args,
-        options: {
-          cwd: projectPath,
-        },
-      });
+    await this.helper.spawnExe({
+      cmd: 'node',
+      args,
+      options: {
+        cwd: projectPath,
+      },
     });
   }
 

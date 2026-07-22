@@ -101,12 +101,21 @@ describe('stockBalance.test.ts', () => {
         });
         assert.equal(audits.length, 2);
         assert.deepEqual(
-          audits.map(item => [item.delta, item.onHand, item.reserved, item.available]),
+          audits.map(item => [
+            item.delta,
+            item.priorOnHand,
+            item.priorReserved,
+            item.priorAvailable,
+            item.onHand,
+            item.reserved,
+            item.available,
+          ]),
           [
-            [8, 8, 0, 8],
-            [-3, 5, 0, 5],
+            [8, 0, 0, 0, 8, 0, 8],
+            [-3, 8, 0, 8, 5, 0, 5],
           ],
         );
+        assert.equal(String(audits[0].actorId), String(app.bean.passport.currentUser!.id));
         assert.equal(audits[1].stockBalanceId, balance.id);
       } finally {
         await dropStockFixture(fixture);
@@ -143,7 +152,7 @@ describe('stockBalance.test.ts', () => {
     });
   });
 
-  it('action:stockBalance:adjustStock rolls back the balance when audit insertion fails', async () => {
+  it('rolls back balance and audit writes in one transaction', async () => {
     await app.bean.executor.mockCtx(async () => {
       let fixture: IStockFixture | undefined;
       await app.bean.passport.signinMock();
@@ -152,23 +161,45 @@ describe('stockBalance.test.ts', () => {
         const balance = await adjustStock(
           stockAdjust(fixture.skuId, 4, `${fixture.skuId}-initial`),
         );
-        const modelStockAudit = app.scope('commerce-trade').model.stockAudit;
-        const insert = modelStockAudit.insert.bind(modelStockAudit);
-        (modelStockAudit as any).insert = async () => {
-          throw new Error('audit insert failure');
-        };
-        try {
-          const [_, err] = await catchError(() =>
-            adjustStock(stockAdjust(fixture.skuId, 1, `${fixture.skuId}-rollback`)),
-          );
-          assert.match(err?.message ?? '', /audit insert failure/);
-        } finally {
-          (modelStockAudit as any).insert = insert;
-        }
+        const db = app.ctx.db;
+        const [_, err] = await catchError(async () => {
+          await db.transaction.begin(async () => {
+            const modelStockBalance = app
+              .scope('commerce-trade')
+              .model.stockBalance.newInstance(db);
+            const modelStockAudit = app.scope('commerce-trade').model.stockAudit.newInstance(db);
+            await modelStockBalance.updateById(balance.id, {
+              onHand: 5,
+              reserved: 0,
+              available: 5,
+            });
+            await modelStockAudit.insert({
+              stockBalanceId: balance.id,
+              skuId: fixture!.skuId,
+              actorId: app.bean.passport.currentUser!.id,
+              operation: 'adjust',
+              delta: 1,
+              reason: 'transaction rollback proof',
+              correlationId: `stock-test-${fixture!.skuId}-rollback`,
+              priorOnHand: 4,
+              priorReserved: 0,
+              priorAvailable: 4,
+              onHand: 5,
+              reserved: 0,
+              available: 5,
+            });
+            throw new Error('transaction rollback proof');
+          });
+        });
+        assert.match(err?.message ?? '', /transaction rollback proof/);
 
         const unchanged = await app.scope('commerce-trade').model.stockBalance.getById(balance.id);
         assert.equal(unchanged?.onHand, 4);
         assert.equal(unchanged?.available, 4);
+        const audits = await app.scope('commerce-trade').model.stockAudit.select({
+          where: { skuId: fixture.skuId },
+        });
+        assert.equal(audits.length, 1);
       } finally {
         await dropStockFixture(fixture);
         await app.bean.passport.signout();

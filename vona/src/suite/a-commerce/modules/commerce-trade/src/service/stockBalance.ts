@@ -47,6 +47,11 @@ export class ServiceStockBalance extends BeanBase {
     let stockBalance = await this.scope.model.stockBalance.getForUpdate({
       skuId: stockAdjust.skuId,
     });
+    const priorBalance = stockBalance ?? {
+      onHand: 0,
+      reserved: 0,
+      available: 0,
+    };
     if (!stockBalance) {
       if (stockAdjust.delta < 0) {
         throw new Error('stock adjustment would make balance negative');
@@ -79,6 +84,7 @@ export class ServiceStockBalance extends BeanBase {
 
     await this._appendAudit({
       stockBalance,
+      priorBalance,
       delta: stockAdjust.delta,
       operation: 'adjust',
       reason: stockAdjust.reason,
@@ -87,8 +93,23 @@ export class ServiceStockBalance extends BeanBase {
     return stockBalance;
   }
 
-  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
   async reserve(command: IStockReservationCommand): Promise<EntityStockReservation> {
+    const transaction = this.bean.database.current.transaction;
+    if (transaction.inTransaction) {
+      return await this._reserve(command);
+    }
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await transaction.begin(() => this._reserve(command), {
+          isolationLevel: 'SERIALIZABLE',
+        });
+      } catch (error) {
+        if (!this._isSerializationFailure(error) || attempt >= 1) throw error;
+      }
+    }
+  }
+
+  private async _reserve(command: IStockReservationCommand): Promise<EntityStockReservation> {
     this._assertReservationCommand(command);
     const sku = await this.$scope.commerceCatalog.model.sku.getById(command.skuId, {
       include: {
@@ -133,12 +154,14 @@ export class ServiceStockBalance extends BeanBase {
       state: 'reserved',
       correlationId: command.correlationId,
     });
+    const priorBalance = stockBalance;
     const updatedBalance = await this._updateBalance(stockBalance, {
       onHand: stockBalance.onHand,
       reserved: stockBalance.reserved + command.quantity,
     });
     await this._appendAudit({
       stockBalance: updatedBalance,
+      priorBalance,
       stockReservationId: reservation.id,
       delta: -command.quantity,
       operation: 'reserve',
@@ -218,6 +241,7 @@ export class ServiceStockBalance extends BeanBase {
     if (!stockBalance) {
       this.app.throw(404, 'stock balance not found');
     }
+    const priorBalance = stockBalance;
     const updatedBalance = await this._updateBalance(
       stockBalance,
       calculateBalance(stockBalance, reservation),
@@ -228,6 +252,7 @@ export class ServiceStockBalance extends BeanBase {
       targetState === 'consumed' ? 'consume' : targetState === 'released' ? 'release' : 'restore';
     await this._appendAudit({
       stockBalance: updatedBalance,
+      priorBalance,
       stockReservationId: reservation.id,
       delta:
         operation === 'consume'
@@ -264,6 +289,7 @@ export class ServiceStockBalance extends BeanBase {
 
   private async _appendAudit({
     stockBalance,
+    priorBalance,
     stockReservationId,
     delta,
     operation,
@@ -271,6 +297,7 @@ export class ServiceStockBalance extends BeanBase {
     correlationId,
   }: {
     stockBalance: EntityStockBalance;
+    priorBalance: Pick<EntityStockBalance, 'onHand' | 'reserved' | 'available'>;
     stockReservationId?: TableIdentity;
     delta: number;
     operation: 'adjust' | 'reserve' | 'consume' | 'release' | 'restore';
@@ -281,14 +308,24 @@ export class ServiceStockBalance extends BeanBase {
       stockBalanceId: stockBalance.id,
       skuId: stockBalance.skuId,
       stockReservationId,
+      actorId: this.bean.passport.currentUser?.anonymous
+        ? undefined
+        : this.bean.passport.currentUser?.id,
       operation,
       delta,
       reason,
       correlationId,
+      priorOnHand: priorBalance.onHand,
+      priorReserved: priorBalance.reserved,
+      priorAvailable: priorBalance.available,
       onHand: stockBalance.onHand,
       reserved: stockBalance.reserved,
       available: stockBalance.available,
     });
+  }
+
+  private _isSerializationFailure(error: unknown) {
+    return (error as { code?: unknown })?.code === '40001';
   }
 
   private _assertReservationCommand(command: IStockReservationCommand) {

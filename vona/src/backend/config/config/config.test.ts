@@ -32,7 +32,7 @@ export default async function (_app: VonaApplication) {
   config.database = {
     testDatabase: true,
     base: {
-      pool: { min: 0, max: 1 },
+      pool: { min: 0, max: 3 },
     },
     clients: {},
   };
