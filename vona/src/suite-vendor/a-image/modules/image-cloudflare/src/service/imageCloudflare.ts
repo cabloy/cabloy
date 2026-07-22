@@ -11,14 +11,6 @@ import type {
 import fse from 'fs-extra';
 import path from 'node:path';
 import { BeanBase } from 'vona';
-
-type TypeImageCloudflareFetch = typeof globalThis.fetch;
-
-declare module 'vona' {
-  export interface ContextState {
-    imageCloudflareFetch?: TypeImageCloudflareFetch;
-  }
-}
 import { Service } from 'vona-module-a-bean';
 
 import type { IImageProviderCloudflareClientOptions } from '../bean/imageProvider.cloudflare.ts';
@@ -170,7 +162,7 @@ export class ServiceImageCloudflare extends BeanBase {
     options: IImageProviderCloudflareClientOptions,
   ) {
     const normalized = this._normalizeClientOptions(options);
-    const response = await this._getFetch()(
+    const response = await fetch(
       `${normalized.apiBaseUrl}/accounts/${normalized.accountId}/images/v1/${encodeURIComponent(image.resourceId)}`,
       {
         method: 'DELETE',
@@ -250,16 +242,12 @@ export class ServiceImageCloudflare extends BeanBase {
     };
   }
 
-  private _getFetch(): TypeImageCloudflareFetch {
-    return this.ctx.state.imageCloudflareFetch ?? globalThis.fetch;
-  }
-
   private async _request<T>(
     options: ICloudflareClientOptionsNormalized,
     apiPath: string,
     init: RequestInit,
   ) {
-    const response = await this._getFetch()(`${options.apiBaseUrl}/accounts/${options.accountId}${apiPath}`, {
+    const response = await fetch(`${options.apiBaseUrl}/accounts/${options.accountId}${apiPath}`, {
       ...init,
       headers: {
         ...this._createHeaders(options),

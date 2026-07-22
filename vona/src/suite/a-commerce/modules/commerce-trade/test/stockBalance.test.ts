@@ -2,6 +2,7 @@ import type { DtoStockAdjust, EntityStockBalance } from 'vona-module-commerce-tr
 
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
+import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
@@ -14,6 +15,10 @@ interface IStockFixture {
 }
 
 type IStockFixturePartial = Partial<IStockFixture>;
+
+function createTestId() {
+  return randomUUID().slice(0, 12);
+}
 
 function stockAdjust(skuId: number, delta: number, suffix: string): DtoStockAdjust {
   return {
@@ -80,7 +85,7 @@ describe('stockBalance.test.ts', () => {
       let fixture: IStockFixture | undefined;
       await app.bean.passport.signinMock();
       try {
-        fixture = await createSku(`${Date.now()}`);
+        fixture = await createSku(createTestId());
         const balance = await adjustStock(
           stockAdjust(fixture.skuId, 8, `${fixture.skuId}-initial`),
         );
@@ -129,7 +134,7 @@ describe('stockBalance.test.ts', () => {
       let fixture: IStockFixture | undefined;
       await app.bean.passport.signinMock();
       try {
-        fixture = await createSku(`${Date.now()}`);
+        fixture = await createSku(createTestId());
         const balance = await adjustStock(
           stockAdjust(fixture.skuId, 2, `${fixture.skuId}-initial`),
         );
@@ -157,7 +162,7 @@ describe('stockBalance.test.ts', () => {
       let fixture: IStockFixture | undefined;
       await app.bean.passport.signinMock();
       try {
-        fixture = await createSku(`${Date.now()}`);
+        fixture = await createSku(createTestId());
         const balance = await adjustStock(
           stockAdjust(fixture.skuId, 4, `${fixture.skuId}-initial`),
         );
@@ -236,7 +241,7 @@ describe('stockBalance.test.ts', () => {
       await app.bean.executor.mockCtx(async () => {
         await app.bean.passport.signinMock();
         try {
-          fixture = await createSku(`${Date.now()}`);
+          fixture = await createSku(createTestId());
           await adjustStock(stockAdjust(fixture.skuId, 5, `${fixture.skuId}-default`));
         } finally {
           await app.bean.passport.signout();
@@ -275,7 +280,7 @@ describe('stockBalance.test.ts', () => {
   });
 
   it('hides foreign stock balances and audits from operator read APIs', async () => {
-    const suffix = `${Date.now()}`;
+    const suffix = createTestId();
     let fixture: IStockFixture | undefined;
     let balanceId!: number;
     let auditId!: number;

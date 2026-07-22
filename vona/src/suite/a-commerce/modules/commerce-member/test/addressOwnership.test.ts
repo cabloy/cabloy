@@ -6,10 +6,15 @@ import type {
 
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
+import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
 const actionPath = '/commerce/member/address';
+
+function createTestId() {
+  return randomUUID().slice(0, 12);
+}
 
 function createAddress(suffix: string): DtoAddressCreate {
   return {
@@ -60,7 +65,7 @@ describe('address.test.ts', () => {
 
   it('derives ownership from the authenticated customer and scopes every action', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const suffix = `${Date.now()}`;
+      const suffix = createTestId();
       const customerA = await registerAndSignin(`address-a-${suffix}`);
       const customerB = await registerAndSignin(`address-b-${suffix}`);
       const addressData = createAddress(suffix);

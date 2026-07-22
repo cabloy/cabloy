@@ -27,8 +27,8 @@ describe('imageCloudflareMapping.test.ts', () => {
   it('action:image:cloudflare mapping', async () => {
     await app.bean.executor.mockCtx(async () => {
       const calls: Array<{ method: string; url: string }> = [];
-      let directUploadDraft = true;
-      const imageCloudflareFetch: typeof globalThis.fetch = async (input, init) => {
+      const fetchRaw = globalThis.fetch;
+      globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
         const url = String(input);
         const method = init?.method ?? 'GET';
         calls.push({ method, url });
@@ -45,7 +45,7 @@ describe('imageCloudflareMapping.test.ts', () => {
           return createCloudflareResponse({
             id: 'cf-direct-1',
             filename: 'direct.txt',
-            draft: directUploadDraft,
+            draft: false,
             public: false,
             variants: ['https://imagedelivery.net/hash123/cf-direct-1/public'],
           });
@@ -64,17 +64,21 @@ describe('imageCloudflareMapping.test.ts', () => {
         }
         throw new Error(`unexpected fetch: ${method} ${url}`);
       };
-      const file = path.join(os.tmpdir(), `test-image-cloudflare-${crypto.randomUUID()}.txt`);
-      const imageIds: number[] = [];
+      const file = path.join(os.tmpdir(), 'test-image-cloudflare.txt');
       await fse.writeFile(file, 'hello cloudflare');
       try {
-        app.ctx.state.imageCloudflareFetch = imageCloudflareFetch;
-        const clientOptions = {
-          accountId: 'account123',
-          apiToken: 'token123',
-          accountHash: 'hash123',
-          signingKey: 'signing-secret',
-        };
+        const provider = await app.bean.imageProvider.get({
+          providerName: 'image-cloudflare:cloudflare',
+          clientName: 'default',
+        });
+        await app.bean.imageProvider.scope.model.imageProvider.updateById(provider.id, {
+          clientOptions: {
+            accountId: 'account123',
+            apiToken: 'token123',
+            accountHash: 'hash123',
+            signingKey: 'signing-secret',
+          } as any,
+        });
 
         const image = await app.bean.image.upload(
           'image-cloudflare:cloudflare',
@@ -85,10 +89,8 @@ describe('imageCloudflareMapping.test.ts', () => {
           },
           {
             clientName: 'default',
-            clientOptions,
           },
         );
-        imageIds.push(image.id);
         assert.equal(image.provider, 'image-cloudflare:cloudflare');
         assert.equal(image.resourceId, 'cf-upload-1');
         assert.equal(image.deliveryBaseUrl, 'https://imagedelivery.net/hash123');
@@ -132,10 +134,11 @@ describe('imageCloudflareMapping.test.ts', () => {
           },
           {
             clientName: 'default',
-            clientOptions: { ...clientOptions, public: false },
+            clientOptions: {
+              public: false,
+            },
           },
         );
-        imageIds.push(directUpload.id);
         assert.equal('provider' in directUpload, false);
         assert.equal('resourceId' in directUpload, false);
         assert.equal('uploadedAt' in directUpload, false);
@@ -154,12 +157,28 @@ describe('imageCloudflareMapping.test.ts', () => {
         assert.equal(draftUrl, undefined);
         assert.equal(draftErr?.code, 403);
 
+        const finalizeBeforeReadyRaw = globalThis.fetch;
+        globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+          const url = String(input);
+          const method = init?.method ?? 'GET';
+          calls.push({ method, url });
+          if (url.includes('/images/v1/cf-direct-1') && method === 'GET') {
+            return createCloudflareResponse({
+              id: 'cf-direct-1',
+              filename: 'direct.txt',
+              draft: true,
+              public: false,
+              variants: ['https://imagedelivery.net/hash123/cf-direct-1/public'],
+            });
+          }
+          return await fetchRaw(input, init);
+        };
         const [finalizePending, finalizePendingErr] = await catchError(() =>
           app.bean.image.finalizeDirectUpload(directUpload.id),
         );
         assert.equal(finalizePending, undefined);
         assert.equal(finalizePendingErr?.code, 403);
-        directUploadDraft = false;
+        globalThis.fetch = finalizeBeforeReadyRaw;
 
         const finalizedDirectUpload = await app.bean.image.finalizeDirectUpload(directUpload.id);
         assert.equal(finalizedDirectUpload.filename, 'direct.txt');
@@ -180,10 +199,11 @@ describe('imageCloudflareMapping.test.ts', () => {
           },
           {
             clientName: 'default',
-            clientOptions: { ...clientOptions, public: false },
+            clientOptions: {
+              public: false,
+            },
           },
         );
-        imageIds.push(uploadedByUrl.id);
         assert.equal(uploadedByUrl.resourceId.startsWith('cf-upload-'), true);
 
         await app.bean.image.delete(image.id);
@@ -192,9 +212,7 @@ describe('imageCloudflareMapping.test.ts', () => {
           true,
         );
       } finally {
-        for (const imageId of imageIds.toReversed()) {
-          await app.bean.image.scope.model.image.deleteById(imageId);
-        }
+        globalThis.fetch = fetchRaw;
         await fse.remove(file);
       }
     });

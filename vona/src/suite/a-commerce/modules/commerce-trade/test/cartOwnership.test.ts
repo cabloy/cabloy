@@ -2,10 +2,15 @@ import type { DtoCartAddItem, DtoCartUpdateItem } from 'vona-module-commerce-tra
 
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
+import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
 const actionPath = '/commerce/trade/cart';
+
+function createTestId() {
+  return randomUUID().slice(0, 12);
+}
 
 function cartItem(skuId: number, quantity = 1): DtoCartAddItem {
   return { skuId, quantity };
@@ -78,7 +83,7 @@ describe('cartOwnership.test.ts', () => {
 
   it('derives cart ownership from the authenticated customer and scopes every item action', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const suffix = `${Date.now()}`;
+      const suffix = createTestId();
       const skuId = await createSellableSku(suffix);
       const customerA = await registerAndSignin(`cart-a-${suffix}`);
       const customerB = await registerAndSignin(`cart-b-${suffix}`);
@@ -135,7 +140,7 @@ describe('cartOwnership.test.ts', () => {
     let itemId!: number;
     let customerDefault!: Awaited<ReturnType<typeof registerAndSignin>>;
     await app.bean.executor.mockCtx(async () => {
-      const suffix = `${Date.now()}`;
+      const suffix = createTestId();
       const skuId = await createSellableSku(suffix);
       customerDefault = await registerAndSignin(`cart-default-${suffix}`);
       const cart = await performAs(customerDefault.token, 'post', `${actionPath}/items`, {

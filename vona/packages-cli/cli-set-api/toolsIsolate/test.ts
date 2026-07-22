@@ -94,9 +94,15 @@ async function testRun(projectPath: string, coverage: boolean, patterns: string[
       cwd: projectPath,
       files,
       setup: async () => {},
-    } as any).on('test:coverage', data => {
-      outputCoverageReport(data.summary.totals);
-    });
+    } as any)
+      .on('test:coverage', data => {
+        outputCoverageReport(data.summary.totals);
+      })
+      .on('test:pass', t => {
+        if (t.name === '---done---') {
+          void closeApplicationOnce();
+        }
+      });
     const summaryPromise = waitForTestSummary(testStream);
     if (coverage) {
       const reporterDir = path.join(projectPath, 'coverage');

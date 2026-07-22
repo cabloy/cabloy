@@ -2,6 +2,7 @@ import type { EntityStockReservation } from 'vona-module-commerce-trade';
 
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
+import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
@@ -12,6 +13,10 @@ interface IStockFixture {
 }
 
 type IStockFixturePartial = Partial<IStockFixture>;
+
+function createTestId() {
+  return randomUUID().slice(0, 12);
+}
 
 async function createSku(suffix: string, fixtures: IStockFixturePartial[]): Promise<IStockFixture> {
   const fixture: IStockFixturePartial = {};
@@ -97,13 +102,13 @@ async function assertReservationRejected(skuId: number, suffix: string, expected
   );
 }
 
-describe('stockReservation.test.ts', () => {
+describe('stockReservation.test.ts', { concurrency: false }, () => {
   it('reserves and consumes stock exactly once with traceable audits', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixtures: IStockFixturePartial[] = [];
       await app.bean.passport.signinMock();
       try {
-        const suffix = `${Date.now()}`;
+        const suffix = createTestId();
         const fixture = await prepareStock(suffix, fixtures);
         const reservation = await reserve(fixture.skuId, suffix);
         const balanceAfterReserve = await app
@@ -162,7 +167,7 @@ describe('stockReservation.test.ts', () => {
       const fixtures: IStockFixturePartial[] = [];
       await app.bean.passport.signinMock();
       try {
-        const suffix = `${Date.now()}`;
+        const suffix = createTestId();
         const inactiveSku = await prepareStock(`${suffix}-inactive`, fixtures);
         await app.scope('commerce-catalog').model.sku.updateById(inactiveSku.skuId, {
           lifecycle: 'inactive',
@@ -192,7 +197,7 @@ describe('stockReservation.test.ts', () => {
       const fixtures: IStockFixturePartial[] = [];
       await app.bean.passport.signinMock();
       try {
-        const suffix = `${Date.now()}`;
+        const suffix = createTestId();
         const fixture = await prepareStock(suffix, fixtures);
         const releasedReservation = await reserve(fixture.skuId, `${suffix}-release`);
         const released = await app.scope('commerce-trade').service.stockBalance.release({
@@ -310,7 +315,7 @@ describe('stockReservation.test.ts', () => {
       return;
     }
     const fixtures: IStockFixturePartial[] = [];
-    const suffix = `${Date.now()}`;
+    const suffix = createTestId();
     let fixture!: IStockFixture;
     try {
       await app.bean.executor.mockCtx(async () => {
@@ -388,7 +393,7 @@ describe('stockReservation.test.ts', () => {
       const fixtures: IStockFixturePartial[] = [];
       await app.bean.passport.signinMock();
       try {
-        const suffix = `${Date.now()}`;
+        const suffix = createTestId();
         const fixture = await prepareStock(suffix, fixtures);
         const balance = await app.scope('commerce-trade').model.stockBalance.get({
           skuId: fixture.skuId,
