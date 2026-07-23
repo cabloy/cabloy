@@ -84,6 +84,7 @@
       "a-queue": "5.0.0",
       "a-redis": "5.0.0",
       "a-redlock": "5.0.0",
+      "a-retryable": "5.0.0",
       "a-runtime": "5.0.0",
       "a-schedule": "5.0.0",
       "a-security": "5.0.0",

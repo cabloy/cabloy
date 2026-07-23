@@ -160,6 +160,9 @@
     },
     {
       "path": "modules/a-hmrbase/tsconfig.build.json"
+    },
+    {
+      "path": "modules/a-retryable/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]

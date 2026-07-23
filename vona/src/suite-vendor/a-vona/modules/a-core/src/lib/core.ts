@@ -3,6 +3,7 @@ import type { IFilterOptionsError } from 'vona-module-a-error';
 import type { IAopMethodOptionsLog } from 'vona-module-a-logger';
 import type { TypeUseOnionOmitOptionsGlobal } from 'vona-module-a-onion';
 import type { IAopMethodOptionsTransaction } from 'vona-module-a-orm';
+import type { IAopMethodOptionsRetryable } from 'vona-module-a-retryable';
 import type { IInterceptorOptionsUpload } from 'vona-module-a-upload';
 
 import { Aspect } from 'vona-module-a-aspect';
@@ -29,6 +30,10 @@ function Transaction(options?: Partial<IAopMethodOptionsTransaction>): MethodDec
   return Aspect.aopMethod('a-orm:transaction', options);
 }
 
+function Retryable(options: IAopMethodOptionsRetryable): MethodDecorator {
+  return Aspect.aopMethod('a-retryable:retryable', options);
+}
+
 function CaptchaVerify(options?: Partial<IInterceptorOptionsCaptchaVerify>): MethodDecorator {
   return Aspect.interceptor('a-captcha:captchaVerify', options);
 }
@@ -46,6 +51,7 @@ export const Core = {
   error: Error,
   log: Log,
   transaction: Transaction,
+  retryable: Retryable,
   captchaVerify: CaptchaVerify,
   fileUpload: FileUpload,
   serializer: Serializer,

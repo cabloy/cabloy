@@ -614,7 +614,7 @@ export class BeanContainer {
             throw new Error(`get property accessor not exists: ${aopMethod.onionName}`);
           return beanInstance.get(
             aopMethod.options,
-            _patchAopNext([receiver, _], next),
+            _patchAopMethodNext([receiver, _], next),
             receiver,
             prop,
           );
@@ -627,7 +627,7 @@ export class BeanContainer {
           return beanInstance.set(
             aopMethod.options,
             value,
-            _patchAopNext([receiver, value], next),
+            _patchAopMethodNext([receiver, value], next),
             receiver,
             prop,
           );
@@ -640,7 +640,7 @@ export class BeanContainer {
           return beanInstance.execute(
             aopMethod.options,
             args,
-            _patchAopNext([receiver, args], next),
+            _patchAopMethodNext([receiver, args], next),
             receiver,
             prop,
           );
@@ -671,6 +671,18 @@ function _patchAopNext([receiver, context], next) {
     context = args.length === 0 ? context : args[0];
     return next([receiver, context]);
   };
+}
+
+function _patchAopMethodNext([receiver, context], next) {
+  const nextPatched = (...args) => {
+    context = args.length === 0 ? context : args[0];
+    return next([receiver, context]);
+  };
+  nextPatched.replay = (...args) => {
+    const nextContext = args.length === 0 ? context : args[0];
+    return next.replay([receiver, nextContext]);
+  };
+  return nextPatched;
 }
 
 function __checkAopOfDescriptorInfo(descriptorInfo) {

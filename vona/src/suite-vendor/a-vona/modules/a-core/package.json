@@ -84,7 +84,9 @@
   },
   "title": "a-core",
   "vonaModule": {
-    "dependencies": {},
+    "dependencies": {
+      "a-retryable": "5.0.0"
+    },
     "globalDependencies": {
       "@babel/core": true,
       "@babel/traverse": true,

@@ -44,6 +44,7 @@
     "vona-module-a-queue": "workspace:^",
     "vona-module-a-redis": "workspace:^",
     "vona-module-a-redlock": "workspace:^",
+    "vona-module-a-retryable": "workspace:^",
     "vona-module-a-runtime": "workspace:^",
     "vona-module-a-schedule": "workspace:^",
     "vona-module-a-security": "workspace:^",

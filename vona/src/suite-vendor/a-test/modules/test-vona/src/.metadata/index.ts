@@ -981,6 +981,7 @@ export * from '../service/category.ts';
 export * from '../service/order.ts';
 export * from '../service/post.ts';
 export * from '../service/product.ts';
+export * from '../service/retryable.ts';
 export * from '../service/test.ts';
 export * from '../service/testApp.ts';
 export * from '../service/testClass.ts';
@@ -998,6 +999,7 @@ declare module 'vona-module-a-bean' {
 'test-vona:order': never;
 'test-vona:post': never;
 'test-vona:product': never;
+'test-vona:retryable': never;
 'test-vona:test': never;
 'test-vona:testApp': never;
 'test-vona:testClass': never;
@@ -1076,6 +1078,17 @@ declare module 'vona-module-test-vona' {
             
           }
 
+        export interface ServiceRetryable {
+          /** @internal */
+          get scope(): ScopeModuleTestVona;
+        }
+
+          export interface ServiceRetryable {
+            get $beanFullName(): 'test-vona.service.retryable';
+            get $onionName(): 'test-vona:retryable';
+            
+          }
+
         export interface ServiceTest {
           /** @internal */
           get scope(): ScopeModuleTestVona;
@@ -1150,6 +1163,7 @@ import type { ServiceCategory } from '../service/category.ts';
 import type { ServiceOrder } from '../service/order.ts';
 import type { ServicePost } from '../service/post.ts';
 import type { ServiceProduct } from '../service/product.ts';
+import type { ServiceRetryable } from '../service/retryable.ts';
 import type { ServiceTest } from '../service/test.ts';
 import type { ServiceTestApp } from '../service/testApp.ts';
 import type { ServiceTestClass } from '../service/testClass.ts';
@@ -1163,6 +1177,7 @@ export interface IModuleService {
 'order': ServiceOrder;
 'post': ServicePost;
 'product': ServiceProduct;
+'retryable': ServiceRetryable;
 'test': ServiceTest;
 'testApp': ServiceTestApp;
 'testClass': ServiceTestClass;
@@ -1182,6 +1197,7 @@ declare module 'vona' {
 'test-vona.service.order': ServiceOrder;
 'test-vona.service.post': ServicePost;
 'test-vona.service.product': ServiceProduct;
+'test-vona.service.retryable': ServiceRetryable;
 'test-vona.service.test': ServiceTest;
 'test-vona.service.testApp': ServiceTestApp;
 'test-vona.service.testClass': ServiceTestClass;

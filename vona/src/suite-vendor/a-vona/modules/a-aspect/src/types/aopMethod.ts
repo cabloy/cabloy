@@ -15,15 +15,28 @@ export interface IUseAopMethodPropMetadataInner<T extends keyof IAopMethodRecord
 
 export interface IAopMethodRecord {}
 
+export type AopMethodNext = Next & {
+  replay: Next;
+};
+
+export type AopMethodNextSync = NextSync & {
+  replay: NextSync;
+};
+
 export interface IAopMethodGet {
-  get(options: IDecoratorAopMethodOptions, next: NextSync, receiver: any, prop: string): any;
+  get(
+    options: IDecoratorAopMethodOptions,
+    next: AopMethodNextSync,
+    receiver: any,
+    prop: string,
+  ): any;
 }
 
 export interface IAopMethodSet {
   set(
     options: IDecoratorAopMethodOptions,
     value: any,
-    next: NextSync,
+    next: AopMethodNextSync,
     receiver: any,
     prop: string,
   ): boolean;
@@ -33,7 +46,7 @@ export interface IAopMethodExecute {
   execute(
     options: IDecoratorAopMethodOptions,
     args: [],
-    next: Next | NextSync,
+    next: AopMethodNext | AopMethodNextSync,
     receiver: any,
     prop: string,
   ): Promise<any> | any;
