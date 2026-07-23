@@ -46,7 +46,7 @@ async function cleanup(fixture: IFixture) {
   if (fixture.addressId !== undefined) await member.model.address.delete({ id: fixture.addressId });
 }
 
-describe('orderSnapshot.test.ts', () => {
+describe('orderSnapshot.test.ts', { concurrency: false }, () => {
   it('persists catalog and address facts independently from later source changes', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixture: IFixture = {};

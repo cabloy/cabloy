@@ -46,7 +46,8 @@
   "title": "commerce-promotion",
   "vonaModule": {
     "dependencies": {
-      "a-vona": "5.0.0"
+      "a-vona": "5.0.0",
+      "commerce-siteadmin": "5.0.0"
     },
     "fileVersion": 1
   }

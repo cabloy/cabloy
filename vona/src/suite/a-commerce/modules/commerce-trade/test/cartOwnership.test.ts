@@ -63,7 +63,7 @@ async function createSellableSku(suffix: string) {
   }
 }
 
-describe('cartOwnership.test.ts', () => {
+describe('cartOwnership.test.ts', { concurrency: false }, () => {
   it('denies anonymous cart actions', async () => {
     await app.bean.executor.mockCtx(async () => {
       for (const [method, path, options] of [

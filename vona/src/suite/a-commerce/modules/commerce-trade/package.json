@@ -48,6 +48,7 @@
     "dependencies": {
       "a-vona": "5.0.0",
       "commerce-member": "5.0.0",
+      "commerce-payment": "5.0.0",
       "commerce-promotion": "5.0.0"
     },
     "fileVersion": 1

@@ -79,7 +79,7 @@ async function adjustStock(stockAdjust: DtoStockAdjust): Promise<EntityStockBala
   return await app.bean.executor.performAction('post', actionPath, { body: stockAdjust });
 }
 
-describe('stockBalance.test.ts', () => {
+describe('stockBalance.test.ts', { concurrency: false }, () => {
   it('action:stockBalance:adjustStock appends an audit with server-scoped balance', async () => {
     await app.bean.executor.mockCtx(async () => {
       let fixture: IStockFixture | undefined;

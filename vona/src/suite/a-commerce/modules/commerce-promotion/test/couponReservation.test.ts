@@ -20,7 +20,7 @@ async function cleanup(fixture: IFixture) {
   }
 }
 
-describe('couponReservation.test.ts', () => {
+describe('couponReservation.test.ts', { concurrency: false }, () => {
   it('enforces fixed-discount eligibility and exact-once transitions', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixture: IFixture = {};
@@ -103,6 +103,17 @@ describe('couponReservation.test.ts', () => {
           reason: 'test release',
         });
         assert.equal(released.state, 'available');
+        const releaseReplay = await coupon.release({
+          couponGrantId: grant.id,
+          orderId: 100_001,
+          correlationId: `release-${suffix}`,
+          reason: 'test release',
+        });
+        assert.equal(releaseReplay.state, 'available');
+        const releaseAudits = await app.scope('commerce-promotion').model.couponAudit.select({
+          where: { couponGrantId: grant.id, operation: 'release' },
+        });
+        assert.equal(releaseAudits.length, 1);
         const reservedAgain = await coupon.reserve({
           couponGrantId: grant.id,
           userId: customer.id,

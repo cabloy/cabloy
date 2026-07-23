@@ -6,6 +6,7 @@ import type { TableIdentity } from 'table-identity';
 export * from '../entity/cart.tsx';
 export * from '../entity/cartItem.tsx';
 export * from '../entity/order.tsx';
+export * from '../entity/orderAudit.tsx';
 export * from '../entity/orderLine.tsx';
 export * from '../entity/stockAudit.tsx';
 export * from '../entity/stockBalance.tsx';
@@ -13,6 +14,7 @@ export * from '../entity/stockReservation.tsx';
 import type { IEntityOptionsCart } from '../entity/cart.tsx';
 import type { IEntityOptionsCartItem } from '../entity/cartItem.tsx';
 import type { IEntityOptionsOrder } from '../entity/order.tsx';
+import type { IEntityOptionsOrderAudit } from '../entity/orderAudit.tsx';
 import type { IEntityOptionsOrderLine } from '../entity/orderLine.tsx';
 import type { IEntityOptionsStockAudit } from '../entity/stockAudit.tsx';
 import type { IEntityOptionsStockBalance } from '../entity/stockBalance.tsx';
@@ -24,6 +26,7 @@ declare module 'vona-module-a-orm' {
       'commerce-trade:cart': IEntityOptionsCart;
 'commerce-trade:cartItem': IEntityOptionsCartItem;
 'commerce-trade:order': IEntityOptionsOrder;
+'commerce-trade:orderAudit': IEntityOptionsOrderAudit;
 'commerce-trade:orderLine': IEntityOptionsOrderLine;
 'commerce-trade:stockAudit': IEntityOptionsStockAudit;
 'commerce-trade:stockBalance': IEntityOptionsStockBalance;
@@ -40,6 +43,7 @@ declare module 'vona-module-commerce-trade' {
 import type { EntityCart } from '../entity/cart.tsx';
 import type { EntityCartItem } from '../entity/cartItem.tsx';
 import type { EntityOrder } from '../entity/order.tsx';
+import type { EntityOrderAudit } from '../entity/orderAudit.tsx';
 import type { EntityOrderLine } from '../entity/orderLine.tsx';
 import type { EntityStockAudit } from '../entity/stockAudit.tsx';
 import type { EntityStockBalance } from '../entity/stockBalance.tsx';
@@ -48,6 +52,7 @@ export interface IModuleEntity {
   'cart': EntityCartMeta;
 'cartItem': EntityCartItemMeta;
 'order': EntityOrderMeta;
+'orderAudit': EntityOrderAuditMeta;
 'orderLine': EntityOrderLineMeta;
 'stockAudit': EntityStockAuditMeta;
 'stockBalance': EntityStockBalanceMeta;
@@ -58,6 +63,7 @@ export interface IModuleEntity {
 export type EntityCartTableName = 'commerceTradeCart';
 export type EntityCartItemTableName = 'commerceTradeCartItem';
 export type EntityOrderTableName = 'commerceTradeOrder';
+export type EntityOrderAuditTableName = 'commerceTradeOrderAudit';
 export type EntityOrderLineTableName = 'commerceTradeOrderLine';
 export type EntityStockAuditTableName = 'commerceTradeStockAudit';
 export type EntityStockBalanceTableName = 'commerceTradeStockBalance';
@@ -65,6 +71,7 @@ export type EntityStockReservationTableName = 'commerceTradeStockReservation';
 export type EntityCartMeta=TypeEntityMeta<EntityCart,EntityCartTableName>;
 export type EntityCartItemMeta=TypeEntityMeta<EntityCartItem,EntityCartItemTableName>;
 export type EntityOrderMeta=TypeEntityMeta<EntityOrder,EntityOrderTableName>;
+export type EntityOrderAuditMeta=TypeEntityMeta<EntityOrderAudit,EntityOrderAuditTableName>;
 export type EntityOrderLineMeta=TypeEntityMeta<EntityOrderLine,EntityOrderLineTableName>;
 export type EntityStockAuditMeta=TypeEntityMeta<EntityStockAudit,EntityStockAuditTableName>;
 export type EntityStockBalanceMeta=TypeEntityMeta<EntityStockBalance,EntityStockBalanceTableName>;
@@ -74,6 +81,7 @@ declare module 'vona-module-a-orm' {
     'commerceTradeCart': EntityCartMeta;
 'commerceTradeCartItem': EntityCartItemMeta;
 'commerceTradeOrder': EntityOrderMeta;
+'commerceTradeOrderAudit': EntityOrderAuditMeta;
 'commerceTradeOrderLine': EntityOrderLineMeta;
 'commerceTradeStockAudit': EntityStockAuditMeta;
 'commerceTradeStockBalance': EntityStockBalanceMeta;
@@ -92,6 +100,10 @@ declare module 'vona-module-commerce-trade' {
 
     export interface IEntityOptionsOrder {
       fields?: TypeEntityOptionsFields<EntityOrder, IEntityOptionsOrder[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IEntityOptionsOrderAudit {
+      fields?: TypeEntityOptionsFields<EntityOrderAudit, IEntityOptionsOrderAudit[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IEntityOptionsOrderLine {
@@ -115,6 +127,7 @@ declare module 'vona-module-commerce-trade' {
 export * from '../model/cart.ts';
 export * from '../model/cartItem.ts';
 export * from '../model/order.ts';
+export * from '../model/orderAudit.ts';
 export * from '../model/orderLine.ts';
 export * from '../model/stockAudit.ts';
 export * from '../model/stockBalance.ts';
@@ -122,6 +135,7 @@ export * from '../model/stockReservation.ts';
 import type { IModelOptionsCart } from '../model/cart.ts';
 import type { IModelOptionsCartItem } from '../model/cartItem.ts';
 import type { IModelOptionsOrder } from '../model/order.ts';
+import type { IModelOptionsOrderAudit } from '../model/orderAudit.ts';
 import type { IModelOptionsOrderLine } from '../model/orderLine.ts';
 import type { IModelOptionsStockAudit } from '../model/stockAudit.ts';
 import type { IModelOptionsStockBalance } from '../model/stockBalance.ts';
@@ -133,6 +147,7 @@ declare module 'vona-module-a-orm' {
       'commerce-trade:cart': IModelOptionsCart;
 'commerce-trade:cartItem': IModelOptionsCartItem;
 'commerce-trade:order': IModelOptionsOrder;
+'commerce-trade:orderAudit': IModelOptionsOrderAudit;
 'commerce-trade:orderLine': IModelOptionsOrderLine;
 'commerce-trade:stockAudit': IModelOptionsStockAudit;
 'commerce-trade:stockBalance': IModelOptionsStockBalance;
@@ -174,6 +189,17 @@ declare module 'vona-module-commerce-trade' {
             get $beanFullName(): 'commerce-trade.model.order';
             get $onionName(): 'commerce-trade:order';
             get $onionOptions(): IModelOptionsOrder;
+          }
+
+        export interface ModelOrderAudit {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ModelOrderAudit {
+            get $beanFullName(): 'commerce-trade.model.orderAudit';
+            get $onionName(): 'commerce-trade:orderAudit';
+            get $onionOptions(): IModelOptionsOrderAudit;
           }
 
         export interface ModelOrderLine {
@@ -225,6 +251,7 @@ declare module 'vona-module-commerce-trade' {
 import type { ModelCart } from '../model/cart.ts';
 import type { ModelCartItem } from '../model/cartItem.ts';
 import type { ModelOrder } from '../model/order.ts';
+import type { ModelOrderAudit } from '../model/orderAudit.ts';
 import type { ModelOrderLine } from '../model/orderLine.ts';
 import type { ModelStockAudit } from '../model/stockAudit.ts';
 import type { ModelStockBalance } from '../model/stockBalance.ts';
@@ -233,6 +260,7 @@ export interface IModuleModel {
   'cart': ModelCart;
 'cartItem': ModelCartItem;
 'order': ModelOrder;
+'orderAudit': ModelOrderAudit;
 'orderLine': ModelOrderLine;
 'stockAudit': ModelStockAudit;
 'stockBalance': ModelStockBalance;
@@ -247,6 +275,7 @@ declare module 'vona' {
     'commerce-trade.model.cart': ModelCart;
 'commerce-trade.model.cartItem': ModelCartItem;
 'commerce-trade.model.order': ModelOrder;
+'commerce-trade.model.orderAudit': ModelOrderAudit;
 'commerce-trade.model.orderLine': ModelOrderLine;
 'commerce-trade.model.stockAudit': ModelStockAudit;
 'commerce-trade.model.stockBalance': ModelStockBalance;
@@ -348,6 +377,33 @@ export interface ModelOrder {
       getById<T extends IModelGetOptions<EntityOrder,ModelOrder>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityOrder, ModelOrder, T> | undefined>;
 updateById<T extends IModelUpdateOptions<EntityOrder,ModelOrder>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityOrder,ModelOrder, T>, options?: T): Promise<TypeModelMutateRelationData<EntityOrder,ModelOrder, T>>;
 deleteById<T extends IModelDeleteOptions<EntityOrder,ModelOrder>>(id: TableIdentity, options?: T): Promise<void>;
+    }
+export interface ModelOrderAudit {
+      [SymbolKeyEntity]: EntityOrderAudit;
+      [SymbolKeyEntityMeta]: EntityOrderAuditMeta;
+      [SymbolKeyModelOptions]: IModelOptionsOrderAudit;
+      get<T extends IModelGetOptions<EntityOrderAudit,ModelOrderAudit>>(where: TypeModelWhere<EntityOrderAudit>, options?: T): Promise<TypeModelRelationResult<EntityOrderAudit, ModelOrderAudit, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityOrderAudit,ModelOrderAudit>>(where: TypeModelWhere<EntityOrderAudit>, options?: T): Promise<TypeModelRelationResult<EntityOrderAudit, ModelOrderAudit, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityOrderAudit,ModelOrderAudit>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityOrderAudit, ModelOrderAudit, T> | undefined>;
+      mget<T extends IModelGetOptions<EntityOrderAudit,ModelOrderAudit>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityOrderAudit, ModelOrderAudit, T>[]>;
+      selectAndCount<T extends IModelSelectParams<EntityOrderAudit,ModelOrderAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityOrderAudit, ModelOrderAudit, T>>;
+      select<T extends IModelSelectParams<EntityOrderAudit,ModelOrderAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityOrderAudit, ModelOrderAudit, T>[]>;
+      insert<T extends IModelInsertOptions<EntityOrderAudit,ModelOrderAudit>>(data?: TypeModelMutateRelationData<EntityOrderAudit,ModelOrderAudit, T>, options?: T): Promise<TypeModelMutateRelationData<EntityOrderAudit,ModelOrderAudit, T, true>>;
+      insertBulk<T extends IModelInsertOptions<EntityOrderAudit,ModelOrderAudit>>(items: TypeModelMutateRelationData<EntityOrderAudit,ModelOrderAudit, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityOrderAudit,ModelOrderAudit, T, true>[]>;
+      update<T extends IModelUpdateOptions<EntityOrderAudit,ModelOrderAudit>>(data: TypeModelMutateRelationData<EntityOrderAudit,ModelOrderAudit, T>, options?: T): Promise<TypeModelMutateRelationData<EntityOrderAudit,ModelOrderAudit, T>>;
+      updateBulk<T extends IModelUpdateOptions<EntityOrderAudit,ModelOrderAudit>>(items: TypeModelMutateRelationData<EntityOrderAudit,ModelOrderAudit, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityOrderAudit,ModelOrderAudit, T>[]>;
+      delete<T extends IModelDeleteOptions<EntityOrderAudit,ModelOrderAudit>>(where?: TypeModelWhere<EntityOrderAudit>, options?: T): Promise<void>;
+      deleteBulk<T extends IModelDeleteOptions<EntityOrderAudit,ModelOrderAudit>>(ids: TableIdentity[], options?: T): Promise<void>;
+      mutate<T extends IModelMutateOptions<EntityOrderAudit,ModelOrderAudit>>(data?: TypeModelMutateRelationData<EntityOrderAudit,ModelOrderAudit, T>, options?: T): Promise<TypeModelMutateRelationData<EntityOrderAudit,ModelOrderAudit, T>>;
+      mutateBulk<T extends IModelMutateOptions<EntityOrderAudit,ModelOrderAudit>>(items: TypeModelMutateRelationData<EntityOrderAudit,ModelOrderAudit, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityOrderAudit,ModelOrderAudit, T>[]>;
+      count<T extends IModelSelectCountParams<EntityOrderAudit,ModelOrderAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<string | undefined>;
+      increment<T extends IModelIncrementParams<EntityOrderAudit,ModelOrderAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      decrement<T extends IModelIncrementParams<EntityOrderAudit,ModelOrderAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      aggregate<T extends IModelSelectAggrParams<EntityOrderAudit,ModelOrderAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelAggrRelationResult<T>>;
+      group<T extends IModelSelectGroupParams<EntityOrderAudit,ModelOrderAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelGroupRelationResult<EntityOrderAudit, T>[]>;
+      getById<T extends IModelGetOptions<EntityOrderAudit,ModelOrderAudit>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityOrderAudit, ModelOrderAudit, T> | undefined>;
+updateById<T extends IModelUpdateOptions<EntityOrderAudit,ModelOrderAudit>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityOrderAudit,ModelOrderAudit, T>, options?: T): Promise<TypeModelMutateRelationData<EntityOrderAudit,ModelOrderAudit, T>>;
+deleteById<T extends IModelDeleteOptions<EntityOrderAudit,ModelOrderAudit>>(id: TableIdentity, options?: T): Promise<void>;
     }
 export interface ModelOrderLine {
       [SymbolKeyEntity]: EntityOrderLine;
@@ -463,6 +519,7 @@ declare module 'vona-module-a-orm' {
     'commerce-trade:cart': ModelCart;
 'commerce-trade:cartItem': ModelCartItem;
 'commerce-trade:order': ModelOrder;
+'commerce-trade:orderAudit': ModelOrderAudit;
 'commerce-trade:orderLine': ModelOrderLine;
 'commerce-trade:stockAudit': ModelStockAudit;
 'commerce-trade:stockBalance': ModelStockBalance;
@@ -470,6 +527,31 @@ declare module 'vona-module-a-orm' {
   }
 }
 /** model: end */
+/** bean: begin */
+export * from '../bean/bean.scheduleOrderExpiry.ts';
+
+import 'vona';
+declare module 'vona' {
+  
+  
+}
+declare module 'vona-module-commerce-trade' {
+  
+        export interface BeanScheduleOrderExpiry {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        } 
+}
+/** bean: end */
+/** bean: begin */
+import type { BeanScheduleOrderExpiry } from '../bean/bean.scheduleOrderExpiry.ts';
+import 'vona';
+declare module 'vona' {
+  export interface IBeanRecordGlobal {
+    'scheduleOrderExpiry': BeanScheduleOrderExpiry;
+  }
+}
+/** bean: end */
 /** service: begin */
 export * from '../service/cart.ts';
 export * from '../service/order.ts';
@@ -603,6 +685,8 @@ export * from '../dto/cartAddItem.tsx';
 export * from '../dto/cartItem.tsx';
 export * from '../dto/cartUpdateItem.tsx';
 export * from '../dto/cartView.tsx';
+export * from '../dto/checkoutCreate.tsx';
+export * from '../dto/checkoutResult.tsx';
 export * from '../dto/orderAddressSnapshot.tsx';
 export * from '../dto/orderCouponSnapshot.tsx';
 export * from '../dto/orderLineSkuAttributeSnapshot.tsx';
@@ -623,6 +707,8 @@ import type { IDtoOptionsCartAddItem } from '../dto/cartAddItem.tsx';
 import type { IDtoOptionsCartItem } from '../dto/cartItem.tsx';
 import type { IDtoOptionsCartUpdateItem } from '../dto/cartUpdateItem.tsx';
 import type { IDtoOptionsCartView } from '../dto/cartView.tsx';
+import type { IDtoOptionsCheckoutCreate } from '../dto/checkoutCreate.tsx';
+import type { IDtoOptionsCheckoutResult } from '../dto/checkoutResult.tsx';
 import type { IDtoOptionsOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
 import type { IDtoOptionsOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
 import type { IDtoOptionsOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
@@ -647,6 +733,8 @@ declare module 'vona-module-a-web' {
 'commerce-trade:cartItem': IDtoOptionsCartItem;
 'commerce-trade:cartUpdateItem': IDtoOptionsCartUpdateItem;
 'commerce-trade:cartView': IDtoOptionsCartView;
+'commerce-trade:checkoutCreate': IDtoOptionsCheckoutCreate;
+'commerce-trade:checkoutResult': IDtoOptionsCheckoutResult;
 'commerce-trade:orderAddressSnapshot': IDtoOptionsOrderAddressSnapshot;
 'commerce-trade:orderCouponSnapshot': IDtoOptionsOrderCouponSnapshot;
 'commerce-trade:orderLineSkuAttributeSnapshot': IDtoOptionsOrderLineSkuAttributeSnapshot;
@@ -676,6 +764,8 @@ import type { DtoCartAddItem } from '../dto/cartAddItem.tsx';
 import type { DtoCartItem } from '../dto/cartItem.tsx';
 import type { DtoCartUpdateItem } from '../dto/cartUpdateItem.tsx';
 import type { DtoCartView } from '../dto/cartView.tsx';
+import type { DtoCheckoutCreate } from '../dto/checkoutCreate.tsx';
+import type { DtoCheckoutResult } from '../dto/checkoutResult.tsx';
 import type { DtoOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
 import type { DtoOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
 import type { DtoOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
@@ -708,6 +798,14 @@ declare module 'vona-module-commerce-trade' {
 
     export interface IDtoOptionsCartView {
       fields?: TypeEntityOptionsFields<DtoCartView, IDtoOptionsCartView[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsCheckoutCreate {
+      fields?: TypeEntityOptionsFields<DtoCheckoutCreate, IDtoOptionsCheckoutCreate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsCheckoutResult {
+      fields?: TypeEntityOptionsFields<DtoCheckoutResult, IDtoOptionsCheckoutResult[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsOrderAddressSnapshot {
@@ -777,9 +875,11 @@ declare module 'vona-module-commerce-trade' {
 /** dto: end */
 /** controller: begin */
 export * from '../controller/cart.ts';
+export * from '../controller/checkout.ts';
 export * from '../controller/stockAudit.ts';
 export * from '../controller/stockBalance.ts';
 import type { IControllerOptionsCart } from '../controller/cart.ts';
+import type { IControllerOptionsCheckout } from '../controller/checkout.ts';
 import type { IControllerOptionsStockAudit } from '../controller/stockAudit.ts';
 import type { IControllerOptionsStockBalance } from '../controller/stockBalance.ts';
 import 'vona-module-a-web';
@@ -787,6 +887,7 @@ declare module 'vona-module-a-web' {
   
     export interface IControllerRecord {
       'commerce-trade:cart': IControllerOptionsCart;
+'commerce-trade:checkout': IControllerOptionsCheckout;
 'commerce-trade:stockAudit': IControllerOptionsStockAudit;
 'commerce-trade:stockBalance': IControllerOptionsStockBalance;
     }
@@ -804,6 +905,17 @@ declare module 'vona-module-commerce-trade' {
             get $beanFullName(): 'commerce-trade.controller.cart';
             get $onionName(): 'commerce-trade:cart';
             get $onionOptions(): IControllerOptionsCart;
+          }
+
+        export interface ControllerCheckout {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ControllerCheckout {
+            get $beanFullName(): 'commerce-trade.controller.checkout';
+            get $onionName(): 'commerce-trade:checkout';
+            get $onionOptions(): IControllerOptionsCheckout;
           }
 
         export interface ControllerStockAudit {
@@ -833,6 +945,8 @@ declare module 'vona-module-commerce-trade' {
 // @ts-ignore ignore
 import type { ControllerCart } from '../controller/cart.ts';
 // @ts-ignore ignore
+import type { ControllerCheckout } from '../controller/checkout.ts';
+// @ts-ignore ignore
 import type { ControllerStockAudit } from '../controller/stockAudit.ts';
 // @ts-ignore ignore
 import type { ControllerStockBalance } from '../controller/stockBalance.ts';
@@ -840,6 +954,10 @@ declare module 'vona-module-commerce-trade' {
   
     export interface IControllerOptionsCart {
       actions?: TypeControllerOptionsActions<ControllerCart>;
+    }
+
+    export interface IControllerOptionsCheckout {
+      actions?: TypeControllerOptionsActions<ControllerCheckout>;
     }
 
     export interface IControllerOptionsStockAudit {

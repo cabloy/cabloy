@@ -135,5 +135,24 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         .integer(entityOrderLine.lineTotalCents)
         .comment(entityOrderLine.$comment.lineTotalCents);
     });
+
+    // This v1 schema is intentionally rebuild-only while Commerce is pre-deployment.
+    const entityOrderAudit = this.scope.entity.orderAudit;
+    await this.bean.model.createTable(entityOrderAudit.$table, table => {
+      table.comment(entityOrderAudit.$comment.$table);
+      table.basicFields();
+      table.tableIdentity(entityOrderAudit.orderId).comment(entityOrderAudit.$comment.orderId);
+      table.string(entityOrderAudit.operation, 20).comment(entityOrderAudit.$comment.operation);
+      table
+        .string(entityOrderAudit.fromState, 30)
+        .nullable()
+        .comment(entityOrderAudit.$comment.fromState);
+      table.string(entityOrderAudit.toState, 30).comment(entityOrderAudit.$comment.toState);
+      table.userId(entityOrderAudit.actorId).nullable().comment(entityOrderAudit.$comment.actorId);
+      table
+        .string(entityOrderAudit.correlationId, 100)
+        .comment(entityOrderAudit.$comment.correlationId);
+      table.string(entityOrderAudit.reason, 255).comment(entityOrderAudit.$comment.reason);
+    });
   }
 }

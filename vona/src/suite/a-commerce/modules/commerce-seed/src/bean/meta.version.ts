@@ -66,15 +66,13 @@ export class MetaVersion extends BeanBase implements IMetaVersionSeed {
       }),
     ]);
 
-    await Promise.all(
-      [24, 15, 8, 30].map((delta, index) =>
-        scopeTrade.service.stockBalance.adjustStock({
-          skuId: skus[index].id,
-          delta,
-          reason: 'Initial commerce seed inventory',
-          correlationId: `commerce-seed-initial-${skus[index].id}`,
-        }),
-      ),
-    );
+    for (const [index, delta] of [24, 15, 8, 30].entries()) {
+      await scopeTrade.service.stockBalance.adjustStock({
+        skuId: skus[index].id,
+        delta,
+        reason: 'Initial commerce seed inventory',
+        correlationId: `commerce-seed-initial-${skus[index].id}`,
+      });
+    }
   }
 }
