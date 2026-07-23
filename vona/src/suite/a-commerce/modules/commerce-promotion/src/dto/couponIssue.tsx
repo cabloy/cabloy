@@ -14,7 +14,7 @@ export class DtoCouponIssue {
   @Api.field(v.required(), v.tableIdentity())
   userId: TableIdentity;
 
-  @Api.field(v.required(), v.min(1), v.max(100))
+  @Api.field(v.required(), v.min(1), v.max(80))
   correlationId: string;
 
   @Api.field(v.required(), v.min(1), v.max(255))

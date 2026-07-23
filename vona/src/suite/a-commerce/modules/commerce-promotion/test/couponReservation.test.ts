@@ -39,14 +39,29 @@ describe('couponReservation.test.ts', { concurrency: false }, () => {
             minSpendCents: 1000,
             validFrom: new Date(Date.now() - 1_000),
             validUntil: new Date(Date.now() + 60_000),
-            totalIssueLimit: 1,
+            totalIssueLimit: 2,
             totalUsageLimit: 1,
-            perCustomerIssueLimit: 1,
+            perCustomerIssueLimit: 3,
             issuedCount: 0,
             redeemedCount: 0,
           })
         ).id as number;
         const coupon = app.scope('commerce-promotion').service.coupon;
+        const [, issuanceLengthError] = await catchError(() =>
+          coupon.issue({
+            templateId: fixture.templateId!,
+            userId: customer.id,
+            correlationId: 'x'.repeat(81),
+            reason: 'test overlong issue correlation',
+          }),
+        );
+        assert.equal(issuanceLengthError?.code, 400);
+        assert.equal(
+          await app
+            .scope('commerce-promotion')
+            .model.couponGrant.get({ couponCode: 'x'.repeat(81) }),
+          undefined,
+        );
         const grant = await coupon.issue({
           templateId: fixture.templateId,
           userId: customer.id,
@@ -56,6 +71,20 @@ describe('couponReservation.test.ts', { concurrency: false }, () => {
         fixture.grantId = grant.id as number;
         assert.equal(grant.state, 'available');
         assert.equal(grant.discountCentsSnapshot, 500);
+        const exactLimitGrant = await coupon.issue({
+          templateId: fixture.templateId,
+          userId: customer.id,
+          correlationId: 'a'.repeat(80),
+          reason: 'test exact issue correlation limit',
+        });
+        assert.equal(exactLimitGrant.couponCode.length, 80);
+        await app.scope('commerce-promotion').model.couponAudit.delete({
+          couponGrantId: exactLimitGrant.id,
+        });
+        await app.scope('commerce-promotion').model.couponGrant.delete({ id: exactLimitGrant.id });
+        await app.scope('commerce-promotion').model.couponTemplate.updateById(fixture.templateId, {
+          issuedCount: 1,
+        });
 
         const [_, belowMinimumError] = await catchError(() =>
           coupon.reserve({
@@ -95,6 +124,25 @@ describe('couponReservation.test.ts', { concurrency: false }, () => {
           reason: 'test reserve',
         });
         assert.equal(replay.couponGrant.id, grant.id);
+        const [, wrongCustomerError] = await catchError(() =>
+          coupon.reserve({
+            couponGrantId: grant.id,
+            userId: customer.id + 10_000,
+            orderId: 100_001,
+            eligibleSubtotalCents: 1_200,
+            currency: 'USD',
+            correlationId: `reserve-wrong-customer-${suffix}`,
+            reason: 'test wrong customer',
+          }),
+        );
+        assert.equal(wrongCustomerError?.code, 404);
+        const reserveAuditsBeforeRelease = await app
+          .scope('commerce-promotion')
+          .model.couponAudit.select({ where: { couponGrantId: grant.id } });
+        assert.deepEqual(
+          reserveAuditsBeforeRelease.map(item => item.operation),
+          ['issue', 'reserve'],
+        );
 
         const released = await coupon.release({
           couponGrantId: grant.id,
@@ -124,6 +172,35 @@ describe('couponReservation.test.ts', { concurrency: false }, () => {
           reason: 'test reserve again',
         });
         assert.equal(reservedAgain.discountCents, 500);
+        const anotherGrant = await coupon.issue({
+          templateId: fixture.templateId,
+          userId: customer.id,
+          correlationId: `issue-another-${suffix}`,
+          reason: 'test second grant',
+        });
+        const [, secondCouponError] = await catchError(() =>
+          coupon.reserve({
+            couponGrantId: anotherGrant.id,
+            userId: customer.id,
+            orderId: 100_002,
+            eligibleSubtotalCents: 1_200,
+            currency: 'USD',
+            correlationId: `reserve-another-${suffix}`,
+            reason: 'test second coupon',
+          }),
+        );
+        assert.equal(secondCouponError?.code, 409);
+        assert.equal(
+          (await app.scope('commerce-promotion').model.couponGrant.getById(anotherGrant.id))?.state,
+          'available',
+        );
+        await app.scope('commerce-promotion').model.couponAudit.delete({
+          couponGrantId: anotherGrant.id,
+        });
+        await app.scope('commerce-promotion').model.couponGrant.delete({ id: anotherGrant.id });
+        await app.scope('commerce-promotion').model.couponTemplate.updateById(fixture.templateId, {
+          issuedCount: 1,
+        });
         const redeemed = await coupon.redeem({
           couponGrantId: grant.id,
           orderId: 100_002,

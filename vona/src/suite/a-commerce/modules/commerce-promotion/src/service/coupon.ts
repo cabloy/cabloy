@@ -52,6 +52,9 @@ export class ServiceCoupon extends BeanBase {
   @Core.retryable(serializationRetryOptions)
   async issue(command: ICouponIssueCommand): Promise<EntityCouponGrant> {
     this._assertCommand(command);
+    if (command.correlationId.length > 80) {
+      this.app.throw(400, 'coupon issuance correlationId is too long');
+    }
     const template = await this.scope.model.couponTemplate.getByIdForUpdate(command.templateId);
     if (!template) this.app.throw(404, 'coupon template not found');
     this._assertTemplateIssuable(template);
@@ -313,9 +316,9 @@ export class ServiceCoupon extends BeanBase {
     };
     await this.scope.model.couponGrant.updateById(grant.id, {
       state: releasedGrant.state,
-      reservationOrderId: undefined,
-      reservationCorrelationId: undefined,
-      reservedAt: undefined,
+      reservationOrderId: null as any,
+      reservationCorrelationId: null as any,
+      reservedAt: null as any,
     });
     await this._appendAudit({
       grant: releasedGrant,

@@ -23,6 +23,11 @@ const serializationRetryOptions = {
   errorCodes: ['40001'],
 };
 
+const checkoutSerializationRetryOptions = {
+  ...serializationRetryOptions,
+  retries: 3,
+};
+
 export interface IOrderSnapshotLineCommand {
   skuId: TableIdentity;
   quantity: number;
@@ -39,6 +44,16 @@ export interface IOrderSnapshotCreateResult {
   order: EntityOrder;
   lines: EntityOrderLine[];
 }
+
+export type CheckoutFailureStage =
+  | 'afterOrderSnapshot'
+  | 'afterCouponReservation'
+  | 'afterStockReservation'
+  | 'afterPaymentAttempt'
+  | 'afterOrderAudit'
+  | 'afterCartMutation';
+
+type CheckoutStageCallback = (stage: CheckoutFailureStage) => void | Promise<void>;
 
 interface IPreparedOrderLine {
   index: number;
@@ -157,8 +172,24 @@ export class ServiceOrder extends BeanBase {
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
-  @Core.retryable(serializationRetryOptions)
+  @Core.retryable(checkoutSerializationRetryOptions)
   async checkout(command: DtoCheckoutCreate): Promise<DtoCheckoutResult> {
+    return await this._checkout(command);
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async checkoutForTest(
+    command: DtoCheckoutCreate,
+    onStage: CheckoutStageCallback,
+  ): Promise<DtoCheckoutResult> {
+    return await this._checkout(command, onStage);
+  }
+
+  private async _checkout(
+    command: DtoCheckoutCreate,
+    onStage?: CheckoutStageCallback,
+  ): Promise<DtoCheckoutResult> {
     this._assertCheckoutCommand(command);
     const userId = this.bean.passport.currentUser!.id;
     const existingOrder = await this.scope.model.order.getForUpdate({
@@ -211,6 +242,7 @@ export class ServiceOrder extends BeanBase {
       couponGrantId: command.couponGrantId,
       preparedLines,
       reason: 'checkout created',
+      onStage,
     });
     const paymentAttempt = await this.$scope.commercePayment.service.paymentAttempt.create({
       orderId: order.id,
@@ -219,6 +251,7 @@ export class ServiceOrder extends BeanBase {
       amountCents: order.payableTotalCents,
       correlationId: `${command.correlationId}:payment`,
     });
+    await onStage?.('afterPaymentAttempt');
     await this._appendAudit({
       orderId: order.id,
       operation: 'created',
@@ -226,9 +259,11 @@ export class ServiceOrder extends BeanBase {
       correlationId: command.correlationId,
       reason: 'checkout created',
     });
+    await onStage?.('afterOrderAudit');
     for (const item of lockedCartItems) {
       await this.scope.model.cartItem.deleteById(item.id);
     }
+    await onStage?.('afterCartMutation');
     return {
       orderId: order.id,
       paymentAttemptId: paymentAttempt.id,
@@ -315,6 +350,7 @@ export class ServiceOrder extends BeanBase {
     couponGrantId,
     preparedLines,
     reason,
+    onStage,
   }: {
     userId: TableIdentity;
     address: {
@@ -332,6 +368,7 @@ export class ServiceOrder extends BeanBase {
     couponGrantId?: TableIdentity;
     preparedLines: IPreparedOrderLine[];
     reason: string;
+    onStage?: CheckoutStageCallback;
   }): Promise<IOrderSnapshotCreateResult> {
     const eligibleSubtotalCents = preparedLines.reduce((total, line) => {
       const nextTotal = total + line.eligibleSubtotalCents;
@@ -352,6 +389,7 @@ export class ServiceOrder extends BeanBase {
       payableTotalCents: eligibleSubtotalCents,
       reservationExpiresAt: new Date(Date.now() + 30 * 60 * 1000),
     });
+    await onStage?.('afterOrderSnapshot');
     if (couponGrantId) {
       const reservation = await this.$scope.commercePromotion.service.coupon.reserve({
         couponGrantId,
@@ -381,6 +419,7 @@ export class ServiceOrder extends BeanBase {
       order.couponSnapshot = couponSnapshot;
       order.discountCents = reservation.discountCents;
       order.payableTotalCents = eligibleSubtotalCents - reservation.discountCents;
+      await onStage?.('afterCouponReservation');
     }
     const lines: EntityOrderLine[] = [];
     for (const line of preparedLines) {
@@ -403,6 +442,7 @@ export class ServiceOrder extends BeanBase {
         correlationId: `${correlationId}:line:${line.index}`,
         reason,
       });
+      await onStage?.('afterStockReservation');
       lines.push(orderLine);
     }
     return { order, lines };
