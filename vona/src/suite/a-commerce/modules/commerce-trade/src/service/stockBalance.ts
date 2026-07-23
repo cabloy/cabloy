@@ -28,6 +28,16 @@ export interface IStockReservationTransition {
   reason: string;
 }
 
+const serializationRetryOptions = {
+  retries: 1,
+  factor: 1,
+  minTimeout: 0,
+  maxTimeout: 0,
+  randomize: false,
+  errorCodes: ['40001'],
+  ownerOnly: true,
+};
+
 @Service()
 export class ServiceStockBalance extends BeanBase {
   async select(params?: IQueryParams<ModelStockBalance>): Promise<DtoStockBalanceSelectRes> {
@@ -94,23 +104,9 @@ export class ServiceStockBalance extends BeanBase {
     return stockBalance;
   }
 
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async reserve(command: IStockReservationCommand): Promise<EntityStockReservation> {
-    const transaction = this.bean.database.current.transaction;
-    if (transaction.inTransaction) {
-      return await this._reserve(command);
-    }
-    for (let attempt = 0; ; attempt++) {
-      try {
-        return await transaction.begin(() => this._reserve(command), {
-          isolationLevel: 'SERIALIZABLE',
-        });
-      } catch (error) {
-        if (!this._isSerializationFailure(error) || attempt >= 1) throw error;
-      }
-    }
-  }
-
-  private async _reserve(command: IStockReservationCommand): Promise<EntityStockReservation> {
     this._assertReservationCommand(command);
     const sku = await this.$scope.commerceCatalog.model.sku.getById(command.skuId, {
       include: {
@@ -325,10 +321,6 @@ export class ServiceStockBalance extends BeanBase {
       reserved: stockBalance.reserved,
       available: stockBalance.available,
     });
-  }
-
-  private _isSerializationFailure(error: unknown) {
-    return (error as { code?: unknown })?.code === '40001';
   }
 
   private _assertReservationCommand(command: IStockReservationCommand) {

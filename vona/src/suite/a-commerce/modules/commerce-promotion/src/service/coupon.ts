@@ -2,6 +2,7 @@ import type { TableIdentity } from 'table-identity';
 
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
+import { Core } from 'vona-module-a-core';
 
 import type { EntityCouponGrant } from '../entity/couponGrant.tsx';
 import type { EntityCouponTemplate } from '../entity/couponTemplate.tsx';
@@ -35,68 +36,21 @@ export interface ICouponReservationResult {
   discountCents: number;
 }
 
+const serializationRetryOptions = {
+  retries: 1,
+  factor: 1,
+  minTimeout: 0,
+  maxTimeout: 0,
+  randomize: false,
+  errorCodes: ['40001'],
+  ownerOnly: true,
+};
+
 @Service()
 export class ServiceCoupon extends BeanBase {
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async issue(command: ICouponIssueCommand): Promise<EntityCouponGrant> {
-    return await this._inTransaction(() => this._issue(command));
-  }
-
-  async reserve(command: ICouponReserveCommand): Promise<ICouponReservationResult> {
-    return await this._inTransaction(() => this._reserve(command));
-  }
-
-  async release(command: ICouponTransitionCommand): Promise<EntityCouponGrant> {
-    return await this._inTransaction(() => this._transition(command, 'available'));
-  }
-
-  async redeem(command: ICouponTransitionCommand): Promise<EntityCouponGrant> {
-    return await this._inTransaction(() => this._transition(command, 'redeemed'));
-  }
-
-  async expireAvailable(now = new Date()): Promise<number> {
-    return await this._inTransaction(async () => {
-      const grants = await this.scope.model.couponGrant.select({
-        where: { state: 'available' },
-      });
-      let expired = 0;
-      for (const grant of grants) {
-        if (grant.validUntilSnapshot > now) continue;
-        const lockedGrant = await this.scope.model.couponGrant.getByIdForUpdate(grant.id);
-        if (
-          !lockedGrant ||
-          lockedGrant.state !== 'available' ||
-          lockedGrant.validUntilSnapshot > now
-        ) {
-          continue;
-        }
-        await this.scope.model.couponGrant.updateById(lockedGrant.id, { state: 'expired' });
-        await this._appendAudit({
-          grant: lockedGrant,
-          operation: 'expire',
-          fromState: 'available',
-          toState: 'expired',
-          correlationId: `coupon-expiry:${lockedGrant.id}:${lockedGrant.validUntilSnapshot.toISOString()}`,
-          reason: 'coupon validity expired',
-        });
-        expired++;
-      }
-      return expired;
-    });
-  }
-
-  async mine(): Promise<EntityCouponGrant[]> {
-    const now = new Date();
-    return await this.scope.model.couponGrant
-      .select({
-        where: { userId: this._getCurrentUserId(), state: 'available' },
-        orders: [['validUntilSnapshot', 'asc']],
-      })
-      .then(grants =>
-        grants.filter(grant => grant.validFromSnapshot <= now && grant.validUntilSnapshot > now),
-      );
-  }
-
-  private async _issue(command: ICouponIssueCommand): Promise<EntityCouponGrant> {
     this._assertCommand(command);
     const template = await this.scope.model.couponTemplate.getByIdForUpdate(command.templateId);
     if (!template) this.app.throw(404, 'coupon template not found');
@@ -149,7 +103,9 @@ export class ServiceCoupon extends BeanBase {
     return grant;
   }
 
-  private async _reserve(command: ICouponReserveCommand): Promise<ICouponReservationResult> {
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async reserve(command: ICouponReserveCommand): Promise<ICouponReservationResult> {
     this._assertCommand(command);
     if (!Number.isSafeInteger(command.eligibleSubtotalCents) || command.eligibleSubtotalCents < 0) {
       this.app.throw(400, 'coupon eligible subtotal must be a non-negative integer');
@@ -226,6 +182,61 @@ export class ServiceCoupon extends BeanBase {
       couponGrant: reservedGrant,
       discountCents: Math.min(grant.discountCentsSnapshot, command.eligibleSubtotalCents),
     };
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async release(command: ICouponTransitionCommand): Promise<EntityCouponGrant> {
+    return await this._transition(command, 'available');
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async redeem(command: ICouponTransitionCommand): Promise<EntityCouponGrant> {
+    return await this._transition(command, 'redeemed');
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async expireAvailable(now = new Date()): Promise<number> {
+    const grants = await this.scope.model.couponGrant.select({
+      where: { state: 'available' },
+    });
+    let expired = 0;
+    for (const grant of grants) {
+      if (grant.validUntilSnapshot > now) continue;
+      const lockedGrant = await this.scope.model.couponGrant.getByIdForUpdate(grant.id);
+      if (
+        !lockedGrant ||
+        lockedGrant.state !== 'available' ||
+        lockedGrant.validUntilSnapshot > now
+      ) {
+        continue;
+      }
+      await this.scope.model.couponGrant.updateById(lockedGrant.id, { state: 'expired' });
+      await this._appendAudit({
+        grant: lockedGrant,
+        operation: 'expire',
+        fromState: 'available',
+        toState: 'expired',
+        correlationId: `coupon-expiry:${lockedGrant.id}:${lockedGrant.validUntilSnapshot.toISOString()}`,
+        reason: 'coupon validity expired',
+      });
+      expired++;
+    }
+    return expired;
+  }
+
+  async mine(): Promise<EntityCouponGrant[]> {
+    const now = new Date();
+    return await this.scope.model.couponGrant
+      .select({
+        where: { userId: this._getCurrentUserId(), state: 'available' },
+        orders: [['validUntilSnapshot', 'asc']],
+      })
+      .then(grants =>
+        grants.filter(grant => grant.validFromSnapshot <= now && grant.validUntilSnapshot > now),
+      );
   }
 
   private async _transition(
@@ -349,18 +360,6 @@ export class ServiceCoupon extends BeanBase {
       correlationId,
       reason,
     });
-  }
-
-  private async _inTransaction<T>(fn: () => Promise<T>): Promise<T> {
-    const transaction = this.bean.database.current.transaction;
-    if (transaction.inTransaction) return await fn();
-    for (let attempt = 0; ; attempt++) {
-      try {
-        return await transaction.begin(fn, { isolationLevel: 'SERIALIZABLE' });
-      } catch (error) {
-        if ((error as { code?: unknown })?.code !== '40001' || attempt >= 1) throw error;
-      }
-    }
   }
 
   private _assertTemplateIssuable(template: EntityCouponTemplate | undefined) {

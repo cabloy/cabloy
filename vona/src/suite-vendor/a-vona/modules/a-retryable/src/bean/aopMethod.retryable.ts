@@ -9,6 +9,7 @@ import { AopMethod } from 'vona-module-a-aspect';
 
 export interface IAopMethodOptionsRetryable extends IDecoratorAopMethodOptions, Retry.WrapOptions {
   errorCodes: string[];
+  ownerOnly?: boolean;
 }
 
 @AopMethod<IAopMethodOptionsRetryable>()
@@ -20,6 +21,9 @@ export class AopMethodRetryable extends BeanAopMethodBase implements IAopMethodE
     _receiver: any,
     _prop: string,
   ): Promise<any> {
+    if (options.ownerOnly && this.bean.database.current.transaction.inTransaction) {
+      return await next.replay();
+    }
     const operation = Retry.operation(options);
     return await new Promise((resolve, reject) => {
       operation.attempt(() => {

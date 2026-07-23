@@ -12,6 +12,11 @@ const RetryOptions = {
   errorCodes: ['RETRYABLE'],
 };
 
+const OwnerOnlyRetryOptions = {
+  ...RetryOptions,
+  ownerOnly: true,
+};
+
 @Service()
 export class ServiceRetryable extends BeanBase {
   private _attempts = new Map<string, number>();
@@ -37,6 +42,15 @@ export class ServiceRetryable extends BeanBase {
   @Core.transaction()
   @Core.retryable(RetryOptions)
   async transaction(tableName: string, key: string, failures: number) {
+    const attempt = this._nextAttempt(key);
+    await this.bean.model.insert(tableName as any, { name: `${key}-${attempt}` });
+    if (attempt <= failures) this._throw('RETRYABLE');
+    return attempt;
+  }
+
+  @Core.transaction()
+  @Core.retryable(OwnerOnlyRetryOptions)
+  async ownerOnlyTransaction(tableName: string, key: string, failures: number) {
     const attempt = this._nextAttempt(key);
     await this.bean.model.insert(tableName as any, { name: `${key}-${attempt}` });
     if (attempt <= failures) this._throw('RETRYABLE');

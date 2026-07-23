@@ -91,4 +91,38 @@ describe('retryable.test.ts', { concurrency: false }, () => {
       }
     });
   });
+
+  it('retries owner-only operations only when they own the transaction', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const retryable = app.scope('test-vona').service.retryable;
+      const tableName = `__tempOwnerOnlyRetryable${randomUUID().replaceAll('-', '')}`;
+      const standaloneKey = `standalone-${randomUUID()}`;
+      const nestedKey = `nested-${randomUUID()}`;
+      try {
+        await app.bean.model.createTable(tableName, table => {
+          table.basicFields();
+          table.string('name');
+        });
+        assert.equal(await retryable.ownerOnlyTransaction(tableName, standaloneKey, 1), 2);
+        assert.equal(retryable.attempts(standaloneKey), 2);
+        await assert.rejects(
+          app.bean.database.current.transaction.begin(
+            () => retryable.ownerOnlyTransaction(tableName, nestedKey, 1),
+            { isolationLevel: 'SERIALIZABLE' },
+          ),
+          { code: 'RETRYABLE' },
+        );
+        assert.equal(retryable.attempts(nestedKey), 1);
+        const items = await app.bean.model.select(tableName as any, {
+          orders: [['id', 'asc']],
+        });
+        assert.deepEqual(
+          items.map(item => item.name),
+          [`${standaloneKey}-2`],
+        );
+      } finally {
+        await app.bean.model.dropTable(tableName);
+      }
+    });
+  });
 });

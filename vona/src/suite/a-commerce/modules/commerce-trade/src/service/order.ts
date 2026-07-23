@@ -14,6 +14,15 @@ import type { EntityOrderLine } from '../entity/orderLine.tsx';
 
 const maxOrderCents = 2_147_483_647;
 
+const serializationRetryOptions = {
+  retries: 1,
+  factor: 1,
+  minTimeout: 0,
+  maxTimeout: 0,
+  randomize: false,
+  errorCodes: ['40001'],
+};
+
 export interface IOrderSnapshotLineCommand {
   skuId: TableIdentity;
   quantity: number;
@@ -46,6 +55,7 @@ interface IPreparedOrderLine {
 @Service()
 export class ServiceOrder extends BeanBase {
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async createSnapshot(command: IOrderSnapshotCreateCommand): Promise<IOrderSnapshotCreateResult> {
     this._assertCommand(command);
 
@@ -147,6 +157,7 @@ export class ServiceOrder extends BeanBase {
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async checkout(command: DtoCheckoutCreate): Promise<DtoCheckoutResult> {
     this._assertCheckoutCommand(command);
     const userId = this.bean.passport.currentUser!.id;
@@ -230,6 +241,7 @@ export class ServiceOrder extends BeanBase {
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async expireIfDue(orderId: TableIdentity, now = new Date()): Promise<boolean> {
     const order = await this.scope.model.order.getByIdForUpdate(orderId);
     if (!order || order.state !== 'awaiting_payment' || order.reservationExpiresAt > now)

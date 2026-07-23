@@ -2,6 +2,7 @@ import type { TableIdentity } from 'table-identity';
 
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
+import { Core } from 'vona-module-a-core';
 
 import type { EntityPaymentAttempt } from '../entity/paymentAttempt.tsx';
 
@@ -26,13 +27,8 @@ export class ServicePaymentAttempt extends BeanBase {
     });
   }
 
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
   async cancel(orderId: TableIdentity): Promise<EntityPaymentAttempt | undefined> {
-    const transaction = this.bean.database.current.transaction;
-    if (transaction.inTransaction) return await this._cancel(orderId);
-    return await transaction.begin(() => this._cancel(orderId), { isolationLevel: 'SERIALIZABLE' });
-  }
-
-  private async _cancel(orderId: TableIdentity): Promise<EntityPaymentAttempt | undefined> {
     const attempt = await this.scope.model.paymentAttempt.getForUpdate({ orderId });
     if (!attempt || attempt.state === 'cancelled') return attempt;
     const cancelledAt = new Date();
