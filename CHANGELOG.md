@@ -1,5 +1,19 @@
 # Changelog
 
+## 5.1.114
+
+### Features
+
+- Add retryable AOP infrastructure for Commerce transactions.
+- Add a foundational Commerce coupon lifecycle.
+- Add a foundational Commerce order snapshot capability.
+- Add `ctx.state.fetch` support.
+- Add checkout functionality.
+
+### Improvements
+
+- Decorate Commerce transaction retries.
+
 ## 5.1.113
 
 ### Features
