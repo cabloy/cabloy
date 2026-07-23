@@ -1,5 +1,19 @@
 # Changelog
 
+## 5.1.116
+
+### Features
+
+- Update platform capabilities and integrations.
+
+### Bug Fixes
+
+- Stabilize Commerce trade transactions and associated tests.
+
+### Improvements
+
+- Update address ownership test coverage.
+
 ## 5.1.115
 
 ### Improvements
