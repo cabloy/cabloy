@@ -215,27 +215,34 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
       t.skip('requires PostgreSQL row-lock contention');
       return;
     }
-    await app.bean.executor.mockCtx(async () => {
-      const fixture: IFixture = {};
-      try {
+    const fixture: IFixture = {};
+    try {
+      await app.bean.executor.mockCtx(async () => {
         Object.assign(fixture, await createCheckoutFixture(randomUUID().slice(0, 12)));
-        const settle = async () => {
-          return await app.bean.executor.mockCtx(async () => {
-            await app.bean.passport.signinMock(fixture.customerName as any);
-            try {
-              return await app
-                .scope('commerce-trade')
-                .service.order.applyPaymentOutcome(fixture.paymentAttemptId!, {
-                  outcome: 'succeeded',
-                  idempotencyKey: 'concurrent-success-1',
-                });
-            } finally {
-              await app.bean.passport.signout();
-            }
-          });
-        };
-        const results = await Promise.allSettled([settle(), settle()]);
-        assert.equal(results.filter(result => result.status === 'fulfilled').length, 2);
+        await app.bean.passport.signout();
+      });
+      const settle = async () => {
+        return await app.bean.executor.mockCtx(async () => {
+          await app.bean.passport.signinMock(fixture.customerName as any);
+          try {
+            return await app
+              .scope('commerce-trade')
+              .service.order.applyPaymentOutcome(fixture.paymentAttemptId!, {
+                outcome: 'succeeded',
+                idempotencyKey: 'concurrent-success-1',
+              });
+          } finally {
+            await app.bean.passport.signout();
+          }
+        });
+      };
+      const results = await Promise.allSettled([settle(), settle()]);
+      assert.equal(
+        results.filter(result => result.status === 'fulfilled').length,
+        2,
+        JSON.stringify(results),
+      );
+      await app.bean.executor.mockCtx(async () => {
         const audits = await app.scope('commerce-payment').model.paymentAudit.select({
           where: { paymentAttemptId: fixture.paymentAttemptId },
         });
@@ -247,11 +254,12 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
           orderLineId: line?.id,
         });
         assert.equal(reservation?.state, 'consumed');
-      } finally {
+      });
+    } finally {
+      await app.bean.executor.mockCtx(async () => {
         await cleanup(fixture);
-        await app.bean.passport.signout();
-      }
-    });
+      });
+    }
   });
 
   it('permits only one terminal outcome when payment success races expiry', async t => {
@@ -259,33 +267,36 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
       t.skip('requires PostgreSQL row-lock contention');
       return;
     }
-    await app.bean.executor.mockCtx(async () => {
-      const fixture: IFixture = {};
-      try {
+    const fixture: IFixture = {};
+    const deadline = new Date(Date.now() + 60_000);
+    try {
+      await app.bean.executor.mockCtx(async () => {
         Object.assign(fixture, await createCheckoutFixture(randomUUID().slice(0, 12)));
-        const deadline = new Date(Date.now() + 60_000);
         await app.scope('commerce-trade').model.order.updateById(fixture.orderId!, {
           reservationExpiresAt: deadline,
         });
-        const success = app.bean.executor.mockCtx(async () => {
-          await app.bean.passport.signinMock(fixture.customerName as any);
-          try {
-            return await app
-              .scope('commerce-trade')
-              .service.order.applyPaymentOutcome(fixture.paymentAttemptId!, {
-                outcome: 'succeeded',
-                idempotencyKey: 'expiry-race-1',
-              });
-          } finally {
-            await app.bean.passport.signout();
-          }
-        });
-        const expiry = app.bean.executor.mockCtx(async () => {
+        await app.bean.passport.signout();
+      });
+      const success = app.bean.executor.mockCtx(async () => {
+        await app.bean.passport.signinMock(fixture.customerName as any);
+        try {
           return await app
             .scope('commerce-trade')
-            .service.order.expireIfDue(fixture.orderId!, new Date(deadline.getTime() + 1));
-        });
-        await Promise.allSettled([success, expiry]);
+            .service.order.applyPaymentOutcome(fixture.paymentAttemptId!, {
+              outcome: 'succeeded',
+              idempotencyKey: 'expiry-race-1',
+            });
+        } finally {
+          await app.bean.passport.signout();
+        }
+      });
+      const expiry = app.bean.executor.mockCtx(async () => {
+        return await app
+          .scope('commerce-trade')
+          .service.order.expireIfDue(fixture.orderId!, new Date(deadline.getTime() + 1));
+      });
+      await Promise.allSettled([success, expiry]);
+      await app.bean.executor.mockCtx(async () => {
         const order = await app.scope('commerce-trade').model.order.getById(fixture.orderId!);
         const attempt = await app
           .scope('commerce-payment')
@@ -311,11 +322,12 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
           );
           assert.ok(grant?.state === 'available' || grant?.state === 'expired');
         }
-      } finally {
+      });
+    } finally {
+      await app.bean.executor.mockCtx(async () => {
         await cleanup(fixture);
-        await app.bean.passport.signout();
-      }
-    });
+      });
+    }
   });
 
   it('rejects conflicting payment event reuse without another transition', async () => {
