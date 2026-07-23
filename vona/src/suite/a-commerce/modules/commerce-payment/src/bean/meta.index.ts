@@ -10,6 +10,9 @@ import { $tableColumns } from 'vona-module-a-ormutils';
     ...$tableColumns('commercePaymentAttempt', 'userId'),
     ...$tableColumns('commercePaymentAttempt', 'state'),
     ...$tableColumns('commercePaymentAttempt', 'correlationId'),
+    ...$tableColumns('commercePaymentAudit', 'paymentAttemptId'),
+    ...$tableColumns('commercePaymentAudit', 'orderId'),
+    ...$tableColumns('commercePaymentAudit', 'idempotencyKey'),
   },
 })
 export class MetaIndex extends BeanBase {}

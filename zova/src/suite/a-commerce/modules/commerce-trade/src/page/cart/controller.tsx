@@ -41,6 +41,12 @@ export class ControllerPageCart extends BeanControllerPageBase {
     })!;
   }
 
+  private _getCheckoutPagePath(): string {
+    return this.$router.getAliasPath('commerce-trade:checkout', {
+      params: { locale: true },
+    })!;
+  }
+
   protected render() {
     const query = this.queryCurrent;
     const items = query?.data?.items ?? [];
@@ -54,9 +60,14 @@ export class ControllerPageCart extends BeanControllerPageBase {
                 {this.scope.locale.Addresses()}
               </RouterLink>
               {items.length > 0 && (
-                <button class="btn btn-outline btn-sm" onClick={() => this.clear()}>
-                  {this.scope.locale.ClearCart()}
-                </button>
+                <>
+                  <RouterLink class="btn btn-primary btn-sm" to={this._getCheckoutPagePath()}>
+                    Checkout
+                  </RouterLink>
+                  <button class="btn btn-outline btn-sm" onClick={() => this.clear()}>
+                    {this.scope.locale.ClearCart()}
+                  </button>
+                </>
               )}
             </div>
           </div>

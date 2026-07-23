@@ -27,9 +27,46 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         .string(entityPaymentAttempt.correlationId, 100)
         .comment(entityPaymentAttempt.$comment.correlationId);
       table
+        .dateTime(entityPaymentAttempt.finalizedAt)
+        .nullable()
+        .comment(entityPaymentAttempt.$comment.finalizedAt);
+      table
         .dateTime(entityPaymentAttempt.cancelledAt)
         .nullable()
         .comment(entityPaymentAttempt.$comment.cancelledAt);
+    });
+
+    const entityPaymentAudit = this.scope.entity.paymentAudit;
+    await this.bean.model.createTable(entityPaymentAudit.$table, table => {
+      table.comment(entityPaymentAudit.$comment.$table);
+      table.basicFields();
+      table
+        .tableIdentity(entityPaymentAudit.paymentAttemptId)
+        .comment(entityPaymentAudit.$comment.paymentAttemptId);
+      table.tableIdentity(entityPaymentAudit.orderId).comment(entityPaymentAudit.$comment.orderId);
+      table.userId(entityPaymentAudit.userId).comment(entityPaymentAudit.$comment.userId);
+      table.string(entityPaymentAudit.provider, 20).comment(entityPaymentAudit.$comment.provider);
+      table.string(entityPaymentAudit.outcome, 20).comment(entityPaymentAudit.$comment.outcome);
+      table
+        .string(entityPaymentAudit.fromAttemptState, 20)
+        .comment(entityPaymentAudit.$comment.fromAttemptState);
+      table
+        .string(entityPaymentAudit.toOrderState, 30)
+        .comment(entityPaymentAudit.$comment.toOrderState);
+      table
+        .string(entityPaymentAudit.idempotencyKey, 100)
+        .comment(entityPaymentAudit.$comment.idempotencyKey);
+      table
+        .string(entityPaymentAudit.correlationId, 100)
+        .comment(entityPaymentAudit.$comment.correlationId);
+      table.string(entityPaymentAudit.reason, 255).comment(entityPaymentAudit.$comment.reason);
+      table
+        .userId(entityPaymentAudit.actorId)
+        .nullable()
+        .comment(entityPaymentAudit.$comment.actorId);
+      table
+        .dateTime(entityPaymentAudit.processedAt)
+        .comment(entityPaymentAudit.$comment.processedAt);
     });
   }
 }

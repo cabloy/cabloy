@@ -689,7 +689,11 @@ export * from '../dto/checkoutCreate.tsx';
 export * from '../dto/checkoutResult.tsx';
 export * from '../dto/orderAddressSnapshot.tsx';
 export * from '../dto/orderCouponSnapshot.tsx';
+export * from '../dto/orderDetail.tsx';
 export * from '../dto/orderLineSkuAttributeSnapshot.tsx';
+export * from '../dto/orderSummary.tsx';
+export * from '../dto/paymentOutcomeCreate.tsx';
+export * from '../dto/paymentOutcomeResult.tsx';
 export * from '../dto/stockAdjust.tsx';
 export * from '../dto/stockAuditCreate.tsx';
 export * from '../dto/stockAuditSelectReq.tsx';
@@ -711,7 +715,11 @@ import type { IDtoOptionsCheckoutCreate } from '../dto/checkoutCreate.tsx';
 import type { IDtoOptionsCheckoutResult } from '../dto/checkoutResult.tsx';
 import type { IDtoOptionsOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
 import type { IDtoOptionsOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
+import type { IDtoOptionsOrderDetail } from '../dto/orderDetail.tsx';
 import type { IDtoOptionsOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
+import type { IDtoOptionsOrderSummary } from '../dto/orderSummary.tsx';
+import type { IDtoOptionsPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
+import type { IDtoOptionsPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
 import type { IDtoOptionsStockAdjust } from '../dto/stockAdjust.tsx';
 import type { IDtoOptionsStockAuditCreate } from '../dto/stockAuditCreate.tsx';
 import type { IDtoOptionsStockAuditSelectReq } from '../dto/stockAuditSelectReq.tsx';
@@ -737,7 +745,11 @@ declare module 'vona-module-a-web' {
 'commerce-trade:checkoutResult': IDtoOptionsCheckoutResult;
 'commerce-trade:orderAddressSnapshot': IDtoOptionsOrderAddressSnapshot;
 'commerce-trade:orderCouponSnapshot': IDtoOptionsOrderCouponSnapshot;
+'commerce-trade:orderDetail': IDtoOptionsOrderDetail;
 'commerce-trade:orderLineSkuAttributeSnapshot': IDtoOptionsOrderLineSkuAttributeSnapshot;
+'commerce-trade:orderSummary': IDtoOptionsOrderSummary;
+'commerce-trade:paymentOutcomeCreate': IDtoOptionsPaymentOutcomeCreate;
+'commerce-trade:paymentOutcomeResult': IDtoOptionsPaymentOutcomeResult;
 'commerce-trade:stockAdjust': IDtoOptionsStockAdjust;
 'commerce-trade:stockAuditCreate': IDtoOptionsStockAuditCreate;
 'commerce-trade:stockAuditSelectReq': IDtoOptionsStockAuditSelectReq;
@@ -768,7 +780,11 @@ import type { DtoCheckoutCreate } from '../dto/checkoutCreate.tsx';
 import type { DtoCheckoutResult } from '../dto/checkoutResult.tsx';
 import type { DtoOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
 import type { DtoOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
+import type { DtoOrderDetail } from '../dto/orderDetail.tsx';
 import type { DtoOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
+import type { DtoOrderSummary } from '../dto/orderSummary.tsx';
+import type { DtoPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
+import type { DtoPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
 import type { DtoStockAdjust } from '../dto/stockAdjust.tsx';
 import type { DtoStockAuditCreate } from '../dto/stockAuditCreate.tsx';
 import type { DtoStockAuditSelectReq } from '../dto/stockAuditSelectReq.tsx';
@@ -816,8 +832,24 @@ declare module 'vona-module-commerce-trade' {
       fields?: TypeEntityOptionsFields<DtoOrderCouponSnapshot, IDtoOptionsOrderCouponSnapshot[TypeSymbolKeyFieldsMore]>;
     }
 
+    export interface IDtoOptionsOrderDetail {
+      fields?: TypeEntityOptionsFields<DtoOrderDetail, IDtoOptionsOrderDetail[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsOrderLineSkuAttributeSnapshot {
       fields?: TypeEntityOptionsFields<DtoOrderLineSkuAttributeSnapshot, IDtoOptionsOrderLineSkuAttributeSnapshot[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsOrderSummary {
+      fields?: TypeEntityOptionsFields<DtoOrderSummary, IDtoOptionsOrderSummary[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsPaymentOutcomeCreate {
+      fields?: TypeEntityOptionsFields<DtoPaymentOutcomeCreate, IDtoOptionsPaymentOutcomeCreate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsPaymentOutcomeResult {
+      fields?: TypeEntityOptionsFields<DtoPaymentOutcomeResult, IDtoOptionsPaymentOutcomeResult[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsStockAdjust {
@@ -876,10 +908,14 @@ declare module 'vona-module-commerce-trade' {
 /** controller: begin */
 export * from '../controller/cart.ts';
 export * from '../controller/checkout.ts';
+export * from '../controller/order.ts';
+export * from '../controller/payment.ts';
 export * from '../controller/stockAudit.ts';
 export * from '../controller/stockBalance.ts';
 import type { IControllerOptionsCart } from '../controller/cart.ts';
 import type { IControllerOptionsCheckout } from '../controller/checkout.ts';
+import type { IControllerOptionsOrder } from '../controller/order.ts';
+import type { IControllerOptionsPayment } from '../controller/payment.ts';
 import type { IControllerOptionsStockAudit } from '../controller/stockAudit.ts';
 import type { IControllerOptionsStockBalance } from '../controller/stockBalance.ts';
 import 'vona-module-a-web';
@@ -888,6 +924,8 @@ declare module 'vona-module-a-web' {
     export interface IControllerRecord {
       'commerce-trade:cart': IControllerOptionsCart;
 'commerce-trade:checkout': IControllerOptionsCheckout;
+'commerce-trade:order': IControllerOptionsOrder;
+'commerce-trade:payment': IControllerOptionsPayment;
 'commerce-trade:stockAudit': IControllerOptionsStockAudit;
 'commerce-trade:stockBalance': IControllerOptionsStockBalance;
     }
@@ -916,6 +954,28 @@ declare module 'vona-module-commerce-trade' {
             get $beanFullName(): 'commerce-trade.controller.checkout';
             get $onionName(): 'commerce-trade:checkout';
             get $onionOptions(): IControllerOptionsCheckout;
+          }
+
+        export interface ControllerOrder {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ControllerOrder {
+            get $beanFullName(): 'commerce-trade.controller.order';
+            get $onionName(): 'commerce-trade:order';
+            get $onionOptions(): IControllerOptionsOrder;
+          }
+
+        export interface ControllerPayment {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ControllerPayment {
+            get $beanFullName(): 'commerce-trade.controller.payment';
+            get $onionName(): 'commerce-trade:payment';
+            get $onionOptions(): IControllerOptionsPayment;
           }
 
         export interface ControllerStockAudit {
@@ -947,6 +1007,10 @@ import type { ControllerCart } from '../controller/cart.ts';
 // @ts-ignore ignore
 import type { ControllerCheckout } from '../controller/checkout.ts';
 // @ts-ignore ignore
+import type { ControllerOrder } from '../controller/order.ts';
+// @ts-ignore ignore
+import type { ControllerPayment } from '../controller/payment.ts';
+// @ts-ignore ignore
 import type { ControllerStockAudit } from '../controller/stockAudit.ts';
 // @ts-ignore ignore
 import type { ControllerStockBalance } from '../controller/stockBalance.ts';
@@ -960,6 +1024,14 @@ declare module 'vona-module-commerce-trade' {
       actions?: TypeControllerOptionsActions<ControllerCheckout>;
     }
 
+    export interface IControllerOptionsOrder {
+      actions?: TypeControllerOptionsActions<ControllerOrder>;
+    }
+
+    export interface IControllerOptionsPayment {
+      actions?: TypeControllerOptionsActions<ControllerPayment>;
+    }
+
     export interface IControllerOptionsStockAudit {
       actions?: TypeControllerOptionsActions<ControllerStockAudit>;
     }
@@ -971,6 +1043,8 @@ declare module 'vona-module-commerce-trade' {
 declare module 'vona-module-a-web' {
   export interface IApiPathGetRecord{
         '/commerce/trade/cart': undefined;
+'/commerce/trade/order/mine': undefined;
+'/commerce/trade/order/:id': undefined;
 '/commerce/trade/stockAudit': undefined;
 '/commerce/trade/stockAudit/:id': undefined;
 '/commerce/trade/stockBalance': undefined;
@@ -978,6 +1052,8 @@ declare module 'vona-module-a-web' {
     }
 export interface IApiPathPostRecord{
         '/commerce/trade/cart/items': undefined;
+'/commerce/trade/checkout': undefined;
+'/commerce/trade/payment/:attemptId/outcome': undefined;
 '/commerce/trade/stockBalance/adjustStock': undefined;
     }
 export interface IApiPathPatchRecord{

@@ -431,6 +431,54 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/commerce/trade/order/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeOrder_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeOrder_view'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/payment/{attemptId}/outcome': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradePayment_outcome'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/commerce/trade/stockAudit': {
     parameters: {
       query?: never;
@@ -2254,6 +2302,84 @@ export interface components {
       addressId: number | string;
       couponGrantId?: number | string | undefined;
       correlationId: string;
+    };
+    'commerce-trade.dto.orderSummary': {
+      id: number | string;
+      /** @enum {string} */
+      state: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
+      /** @enum {string} */
+      currency: 'USD';
+      payableTotalCents: number;
+      /** Format: date-time */
+      createdAt: Date;
+    };
+    'commerce-trade.dto.orderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          id: number | string;
+          /** @enum {string} */
+          state: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
+          /** @enum {string} */
+          currency: 'USD';
+          eligibleSubtotalCents: number;
+          discountCents: number;
+          payableTotalCents: number;
+          /** Format: date-time */
+          reservationExpiresAt: Date;
+          addressSnapshot: components['schemas']['commerce-trade.dto.orderAddressSnapshot'];
+          couponSnapshot?: components['schemas']['commerce-trade.dto.orderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          lines: {
+            id: number | string;
+            skuCodeSnapshot: string;
+            titleSnapshot: string;
+            skuAttributesSnapshot: components['schemas']['commerce-trade.dto.orderLineSkuAttributeSnapshot'][];
+            unitPriceCents: number;
+            quantity: number;
+            lineTotalCents: number;
+          }[];
+        }
+      | undefined;
+    'commerce-trade.dto.orderAddressSnapshot': {
+      recipientName: string;
+      phone: string;
+      countryCode: string;
+      region: string;
+      city: string;
+      postalCode: string;
+      addressLine1: string;
+      addressLine2?: string | undefined;
+    };
+    'commerce-trade.dto.orderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          couponGrantId: number | string;
+          couponTemplateId: number | string;
+          couponCode: string;
+          templateName: string;
+          /** @enum {string} */
+          currency: 'USD';
+          fixedDiscountCents: number;
+          minSpendCents: number;
+          appliedDiscountCents: number;
+        }
+      | undefined;
+    'commerce-trade.dto.orderLineSkuAttributeSnapshot': {
+      name: string;
+      value: string;
+    };
+    'commerce-trade.dto.paymentOutcomeResult': {
+      orderId: number | string;
+      paymentAttemptId: number | string;
+      /** @enum {string} */
+      orderState: 'paid' | 'cancelled' | 'expired';
+      /** @enum {string} */
+      paymentAttemptState: 'succeeded' | 'failed' | 'cancelled';
+      /** @enum {string} */
+      currency: 'USD';
+      payableTotalCents: number;
+    };
+    'commerce-trade.dto.paymentOutcomeCreate': {
+      /** @enum {string} */
+      outcome: 'succeeded' | 'failed' | 'cancelled';
+      idempotencyKey: string;
     };
     'commerce-trade.dto.stockAuditSelectRes': {
       list: components['schemas']['commerce-trade.dto.stockAuditSelectResItem'][];
@@ -5271,6 +5397,86 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['commerce-trade.dto.checkoutResult'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_mine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.orderSummary'][];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-trade.dto.orderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradePayment_outcome: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        attemptId: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.paymentOutcomeCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.paymentOutcomeResult'];
           };
         };
       };

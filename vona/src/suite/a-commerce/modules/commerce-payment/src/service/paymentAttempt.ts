@@ -4,7 +4,7 @@ import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { Core } from 'vona-module-a-core';
 
-import type { EntityPaymentAttempt } from '../entity/paymentAttempt.tsx';
+import type { EntityPaymentAttempt, TypePaymentAttemptState } from '../entity/paymentAttempt.tsx';
 
 export interface IPaymentAttemptCreateCommand {
   orderId: TableIdentity;
@@ -13,6 +13,11 @@ export interface IPaymentAttemptCreateCommand {
   amountCents: number;
   correlationId: string;
 }
+
+export type TypePaymentAttemptFinalState = Extract<
+  TypePaymentAttemptState,
+  'succeeded' | 'failed' | 'cancelled'
+>;
 
 @Service()
 export class ServicePaymentAttempt extends BeanBase {
@@ -27,15 +32,25 @@ export class ServicePaymentAttempt extends BeanBase {
     });
   }
 
-  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
-  async cancel(orderId: TableIdentity): Promise<EntityPaymentAttempt | undefined> {
+  async finalize(
+    orderId: TableIdentity,
+    state: TypePaymentAttemptFinalState,
+  ): Promise<EntityPaymentAttempt | undefined> {
     const attempt = await this.scope.model.paymentAttempt.getForUpdate({ orderId });
-    if (!attempt || attempt.state === 'cancelled') return attempt;
-    const cancelledAt = new Date();
+    if (!attempt || attempt.state === state) return attempt;
+    if (attempt.state !== 'created') this.app.throw(409, 'payment attempt is already finalized');
+    const finalizedAt = new Date();
+    const cancelledAt = state === 'cancelled' ? finalizedAt : undefined;
     await this.scope.model.paymentAttempt.updateById(attempt.id, {
-      state: 'cancelled',
+      state,
+      finalizedAt,
       cancelledAt,
     });
-    return { ...attempt, state: 'cancelled', cancelledAt };
+    return { ...attempt, state, finalizedAt, cancelledAt };
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  async cancel(orderId: TableIdentity): Promise<EntityPaymentAttempt | undefined> {
+    return await this.finalize(orderId, 'cancelled');
   }
 }

@@ -1,4 +1,5 @@
 import type { TableIdentity } from 'table-identity';
+import type { EntityPaymentAttempt } from 'vona-module-commerce-payment';
 
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
@@ -8,7 +9,11 @@ import type { DtoCheckoutCreate } from '../dto/checkoutCreate.tsx';
 import type { DtoCheckoutResult } from '../dto/checkoutResult.tsx';
 import type { DtoOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
 import type { DtoOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
+import type { DtoOrderDetail } from '../dto/orderDetail.tsx';
 import type { DtoOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
+import type { DtoOrderSummary } from '../dto/orderSummary.tsx';
+import type { DtoPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
+import type { DtoPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
 import type { EntityOrder } from '../entity/order.tsx';
 import type { EntityOrderLine } from '../entity/orderLine.tsx';
 
@@ -277,43 +282,160 @@ export class ServiceOrder extends BeanBase {
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
   @Core.retryable(serializationRetryOptions)
+  async applyPaymentOutcome(
+    paymentAttemptId: TableIdentity,
+    command: DtoPaymentOutcomeCreate,
+  ): Promise<DtoPaymentOutcomeResult> {
+    if (!command.idempotencyKey.trim()) this.app.throw(400, 'payment idempotencyKey is required');
+    const userId = this.bean.passport.currentUser!.id;
+    const attempt =
+      await this.$scope.commercePayment.model.paymentAttempt.getById(paymentAttemptId);
+    if (!attempt || String(attempt.userId) !== String(userId)) {
+      this.app.throw(404, 'payment attempt not found');
+    }
+    const order = await this.scope.model.order.getByIdForUpdate(attempt.orderId);
+    if (!order || String(order.userId) !== String(userId)) this.app.throw(404, 'order not found');
+    const lockedAttempt = await this.$scope.commercePayment.model.paymentAttempt.getByIdForUpdate(
+      attempt.id,
+    );
+    if (!lockedAttempt) this.app.throw(404, 'payment attempt not found');
+
+    const existingAudit = await this.$scope.commercePayment.model.paymentAudit.get({
+      paymentAttemptId: lockedAttempt.id,
+      idempotencyKey: command.idempotencyKey,
+    });
+    if (existingAudit) {
+      if (existingAudit.outcome !== command.outcome) {
+        this.app.throw(409, 'payment idempotency key conflicts with an existing outcome');
+      }
+      return this._paymentOutcomeResult(order, lockedAttempt);
+    }
+    if (order.state !== 'awaiting_payment' || lockedAttempt.state !== 'created') {
+      this.app.throw(409, 'payment attempt is no longer available');
+    }
+    if (order.reservationExpiresAt <= new Date()) {
+      await this._expireLockedOrder(order);
+      const expiredAttempt = await this.$scope.commercePayment.model.paymentAttempt.getById(
+        lockedAttempt.id,
+      );
+      return this._paymentOutcomeResult({ ...order, state: 'expired' }, expiredAttempt!);
+    }
+
+    const correlationId = `${order.correlationId}:payment:${command.idempotencyKey}`;
+    const normalizedOutcome =
+      this.$scope.commercePayment.service.mockPaymentAdapter.normalizeOutcome(command.outcome);
+    const orderState = normalizedOutcome === 'succeeded' ? 'paid' : 'cancelled';
+    const reason =
+      normalizedOutcome === 'succeeded'
+        ? 'mock payment succeeded'
+        : normalizedOutcome === 'failed'
+          ? 'mock payment failed'
+          : 'mock payment cancelled';
+
+    // Publish the aggregate terminal states before taking line/coupon locks. Concurrent
+    // expiry or payment outcomes serialize on this order lock and then observe the winner.
+    await this.scope.model.order.updateById(order.id, { state: orderState });
+    const finalizedAttempt = await this.$scope.commercePayment.service.paymentAttempt.finalize(
+      order.id,
+      normalizedOutcome,
+    );
+    if (!finalizedAttempt) this.app.throw(404, 'payment attempt not found');
+    if (normalizedOutcome === 'succeeded') {
+      await this._consumeReservedOrderResources(order, correlationId, reason);
+    } else {
+      await this._releaseReservedOrderResources(order, correlationId, reason);
+    }
+    await this.$scope.commercePayment.model.paymentAudit.insert({
+      paymentAttemptId: finalizedAttempt.id,
+      orderId: order.id,
+      userId,
+      provider: 'mock',
+      outcome: normalizedOutcome,
+      fromAttemptState: 'created',
+      toOrderState: orderState,
+      idempotencyKey: command.idempotencyKey,
+      correlationId,
+      reason,
+      actorId: userId,
+      processedAt: new Date(),
+    });
+    await this._appendAudit({
+      orderId: order.id,
+      operation: orderState === 'paid' ? 'paid' : 'cancelled',
+      fromState: 'awaiting_payment',
+      toState: orderState,
+      correlationId,
+      reason,
+    });
+    return this._paymentOutcomeResult({ ...order, state: orderState }, finalizedAttempt);
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async expireIfDue(orderId: TableIdentity, now = new Date()): Promise<boolean> {
     const order = await this.scope.model.order.getByIdForUpdate(orderId);
     if (!order || order.state !== 'awaiting_payment' || order.reservationExpiresAt > now)
       return false;
 
-    if (order.couponSnapshot) {
-      await this.$scope.commercePromotion.service.coupon.release({
-        couponGrantId: order.couponSnapshot.couponGrantId,
-        orderId: order.id,
-        correlationId: `${order.correlationId}:expiry:coupon`,
-        reason: 'unpaid order expired',
-      });
-    }
-    const lines = await this.scope.model.orderLine.select({
-      where: { orderId: order.id },
-      orders: [['skuId', 'asc']],
-    });
-    for (const line of lines) {
-      const reservation = await this.scope.model.stockReservation.get({ orderLineId: line.id });
-      if (reservation) {
-        await this.scope.service.stockBalance.release({
-          reservationId: reservation.id,
-          reason: 'unpaid order expired',
-        });
-      }
-    }
-    await this.$scope.commercePayment.service.paymentAttempt.cancel(order.id);
-    await this.scope.model.order.updateById(order.id, { state: 'expired' });
-    await this._appendAudit({
-      orderId: order.id,
-      operation: 'expired',
-      fromState: 'awaiting_payment',
-      toState: 'expired',
-      correlationId: `${order.correlationId}:expiry`,
-      reason: 'unpaid order expired',
-    });
+    await this._expireLockedOrder(order);
     return true;
+  }
+
+  async mine(): Promise<DtoOrderSummary[]> {
+    const orders = await this.scope.model.order.select({
+      columns: ['id', 'state', 'currency', 'payableTotalCents', 'createdAt'],
+      where: { userId: this.bean.passport.currentUser!.id },
+      orders: [['id', 'desc']],
+    });
+    return orders
+      .filter(
+        order =>
+          order.state === 'awaiting_payment' ||
+          order.state === 'paid' ||
+          order.state === 'cancelled' ||
+          order.state === 'expired',
+      )
+      .map(order => ({
+        id: order.id,
+        state: order.state as DtoOrderSummary['state'],
+        currency: order.currency,
+        payableTotalCents: order.payableTotalCents,
+        createdAt: order.createdAt,
+      }));
+  }
+
+  async view(id: TableIdentity): Promise<DtoOrderDetail | undefined> {
+    const snapshot = await this.viewSnapshot(id);
+    if (!snapshot) return undefined;
+    const { order, lines } = snapshot;
+    if (
+      order.state !== 'awaiting_payment' &&
+      order.state !== 'paid' &&
+      order.state !== 'cancelled' &&
+      order.state !== 'expired'
+    ) {
+      this.app.throw(409, 'order state is not available to customers');
+    }
+    return {
+      id: order.id,
+      state: order.state,
+      currency: order.currency,
+      eligibleSubtotalCents: order.eligibleSubtotalCents,
+      discountCents: order.discountCents,
+      payableTotalCents: order.payableTotalCents,
+      reservationExpiresAt: order.reservationExpiresAt,
+      addressSnapshot: order.addressSnapshot,
+      couponSnapshot: order.couponSnapshot,
+      lines: lines.map(line => ({
+        id: line.id,
+        skuCodeSnapshot: line.skuCodeSnapshot,
+        titleSnapshot: line.titleSnapshot,
+        skuAttributesSnapshot: line.skuAttributesSnapshot,
+        unitPriceCents: line.unitPriceCents,
+        quantity: line.quantity,
+        lineTotalCents: line.lineTotalCents,
+      })),
+    };
   }
 
   async viewSnapshot(id: TableIdentity): Promise<IOrderSnapshotCreateResult | undefined> {
@@ -323,6 +445,94 @@ export class ServiceOrder extends BeanBase {
     });
     if (!order) return undefined;
     return await this._viewSnapshot(order);
+  }
+
+  private async _expireLockedOrder(order: EntityOrder) {
+    const correlationId = `${order.correlationId}:expiry`;
+    const reason = 'unpaid order expired';
+    await this._releaseReservedOrderResources(order, correlationId, reason);
+    await this.$scope.commercePayment.service.paymentAttempt.cancel(order.id);
+    await this.scope.model.order.updateById(order.id, { state: 'expired' });
+    await this._appendAudit({
+      orderId: order.id,
+      operation: 'expired',
+      fromState: 'awaiting_payment',
+      toState: 'expired',
+      correlationId,
+      reason,
+    });
+  }
+
+  private async _consumeReservedOrderResources(
+    order: EntityOrder,
+    correlationId: string,
+    reason: string,
+  ) {
+    const lines = await this.scope.model.orderLine.select({
+      where: { orderId: order.id },
+      orders: [['skuId', 'asc']],
+    });
+    for (const line of lines) {
+      const reservation = await this.scope.model.stockReservation.get({ orderLineId: line.id });
+      if (reservation) {
+        await this.scope.service.stockBalance.consume({ reservationId: reservation.id, reason });
+      }
+    }
+    if (order.couponSnapshot) {
+      await this.$scope.commercePromotion.service.coupon.redeem({
+        couponGrantId: order.couponSnapshot.couponGrantId,
+        orderId: order.id,
+        correlationId: `${correlationId}:coupon`,
+        reason,
+      });
+    }
+  }
+
+  private async _releaseReservedOrderResources(
+    order: EntityOrder,
+    correlationId: string,
+    reason: string,
+  ) {
+    if (order.couponSnapshot) {
+      await this.$scope.commercePromotion.service.coupon.release({
+        couponGrantId: order.couponSnapshot.couponGrantId,
+        orderId: order.id,
+        correlationId: `${correlationId}:coupon`,
+        reason,
+      });
+    }
+    const lines = await this.scope.model.orderLine.select({
+      where: { orderId: order.id },
+      orders: [['skuId', 'asc']],
+    });
+    for (const line of lines) {
+      const reservation = await this.scope.model.stockReservation.get({ orderLineId: line.id });
+      if (reservation) {
+        await this.scope.service.stockBalance.release({ reservationId: reservation.id, reason });
+      }
+    }
+  }
+
+  private _paymentOutcomeResult(
+    order: Pick<EntityOrder, 'id' | 'state' | 'currency' | 'payableTotalCents'>,
+    paymentAttempt: Pick<EntityPaymentAttempt, 'id' | 'state'>,
+  ): DtoPaymentOutcomeResult {
+    if (
+      (order.state !== 'paid' && order.state !== 'cancelled' && order.state !== 'expired') ||
+      (paymentAttempt.state !== 'succeeded' &&
+        paymentAttempt.state !== 'failed' &&
+        paymentAttempt.state !== 'cancelled')
+    ) {
+      this.app.throw(409, 'payment attempt is not finalized');
+    }
+    return {
+      orderId: order.id,
+      paymentAttemptId: paymentAttempt.id,
+      orderState: order.state,
+      paymentAttemptState: paymentAttempt.state,
+      currency: order.currency,
+      payableTotalCents: order.payableTotalCents,
+    };
   }
 
   private async _checkoutResult(order: EntityOrder): Promise<DtoCheckoutResult> {
@@ -457,9 +667,9 @@ export class ServiceOrder extends BeanBase {
     reason,
   }: {
     orderId: TableIdentity;
-    operation: 'created' | 'expired';
-    fromState?: 'awaiting_payment' | 'expired';
-    toState: 'awaiting_payment' | 'expired';
+    operation: 'created' | 'paid' | 'cancelled' | 'expired';
+    fromState?: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
+    toState: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
     correlationId: string;
     reason: string;
   }) {

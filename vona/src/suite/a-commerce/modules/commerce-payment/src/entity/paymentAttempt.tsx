@@ -5,7 +5,7 @@ import { Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
 import { z } from 'zod';
 
-export type TypePaymentAttemptState = 'created' | 'cancelled';
+export type TypePaymentAttemptState = 'created' | 'succeeded' | 'failed' | 'cancelled';
 
 export interface IEntityOptionsPaymentAttempt extends IDecoratorEntityOptions {}
 
@@ -17,7 +17,7 @@ export class EntityPaymentAttempt extends EntityBase {
   @Api.field(v.tableIdentity())
   userId: TableIdentity;
 
-  @Api.field(z.enum(['created', 'cancelled']))
+  @Api.field(z.enum(['created', 'succeeded', 'failed', 'cancelled']))
   state: TypePaymentAttemptState;
 
   @Api.field(z.literal('USD'))
@@ -28,6 +28,9 @@ export class EntityPaymentAttempt extends EntityBase {
 
   @Api.field(v.required(), v.min(1), v.max(100))
   correlationId: string;
+
+  @Api.field(v.optional())
+  finalizedAt?: Date;
 
   @Api.field(v.optional())
   cancelledAt?: Date;

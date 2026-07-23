@@ -4,12 +4,15 @@ import type { TypeEntityOptionsFields } from 'vona-module-a-openapi';
 import type { TableIdentity } from 'table-identity';
 /** entity: begin */
 export * from '../entity/paymentAttempt.tsx';
+export * from '../entity/paymentAudit.tsx';
 import type { IEntityOptionsPaymentAttempt } from '../entity/paymentAttempt.tsx';
+import type { IEntityOptionsPaymentAudit } from '../entity/paymentAudit.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
   
     export interface IEntityRecord {
       'commerce-payment:paymentAttempt': IEntityOptionsPaymentAttempt;
+'commerce-payment:paymentAudit': IEntityOptionsPaymentAudit;
     }
 
   
@@ -20,16 +23,21 @@ declare module 'vona-module-commerce-payment' {
 /** entity: end */
 /** entity: begin */
 import type { EntityPaymentAttempt } from '../entity/paymentAttempt.tsx';
+import type { EntityPaymentAudit } from '../entity/paymentAudit.tsx';
 export interface IModuleEntity {
   'paymentAttempt': EntityPaymentAttemptMeta;
+'paymentAudit': EntityPaymentAuditMeta;
 }
 /** entity: end */
 /** entity: begin */
 export type EntityPaymentAttemptTableName = 'commercePaymentAttempt';
+export type EntityPaymentAuditTableName = 'commercePaymentAudit';
 export type EntityPaymentAttemptMeta=TypeEntityMeta<EntityPaymentAttempt,EntityPaymentAttemptTableName>;
+export type EntityPaymentAuditMeta=TypeEntityMeta<EntityPaymentAudit,EntityPaymentAuditTableName>;
 declare module 'vona-module-a-orm' {
   export interface ITableRecord {
     'commercePaymentAttempt': EntityPaymentAttemptMeta;
+'commercePaymentAudit': EntityPaymentAuditMeta;
   }
 }
 declare module 'vona-module-commerce-payment' {
@@ -37,16 +45,23 @@ declare module 'vona-module-commerce-payment' {
     export interface IEntityOptionsPaymentAttempt {
       fields?: TypeEntityOptionsFields<EntityPaymentAttempt, IEntityOptionsPaymentAttempt[TypeSymbolKeyFieldsMore]>;
     }
+
+    export interface IEntityOptionsPaymentAudit {
+      fields?: TypeEntityOptionsFields<EntityPaymentAudit, IEntityOptionsPaymentAudit[TypeSymbolKeyFieldsMore]>;
+    }
 }
 /** entity: end */
 /** model: begin */
 export * from '../model/paymentAttempt.ts';
+export * from '../model/paymentAudit.ts';
 import type { IModelOptionsPaymentAttempt } from '../model/paymentAttempt.ts';
+import type { IModelOptionsPaymentAudit } from '../model/paymentAudit.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
   
     export interface IModelRecord {
       'commerce-payment:paymentAttempt': IModelOptionsPaymentAttempt;
+'commerce-payment:paymentAudit': IModelOptionsPaymentAudit;
     }
 
   
@@ -62,13 +77,26 @@ declare module 'vona-module-commerce-payment' {
             get $beanFullName(): 'commerce-payment.model.paymentAttempt';
             get $onionName(): 'commerce-payment:paymentAttempt';
             get $onionOptions(): IModelOptionsPaymentAttempt;
+          }
+
+        export interface ModelPaymentAudit {
+          /** @internal */
+          get scope(): ScopeModuleCommercePayment;
+        }
+
+          export interface ModelPaymentAudit {
+            get $beanFullName(): 'commerce-payment.model.paymentAudit';
+            get $onionName(): 'commerce-payment:paymentAudit';
+            get $onionOptions(): IModelOptionsPaymentAudit;
           } 
 }
 /** model: end */
 /** model: begin */
 import type { ModelPaymentAttempt } from '../model/paymentAttempt.ts';
+import type { ModelPaymentAudit } from '../model/paymentAudit.ts';
 export interface IModuleModel {
   'paymentAttempt': ModelPaymentAttempt;
+'paymentAudit': ModelPaymentAudit;
 }
 /** model: end */
 /** model: begin */
@@ -77,6 +105,7 @@ import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
     'commerce-payment.model.paymentAttempt': ModelPaymentAttempt;
+'commerce-payment.model.paymentAudit': ModelPaymentAudit;
   }
 }
 /** model: end */
@@ -112,27 +141,68 @@ declare module 'vona-module-commerce-payment' {
 updateById<T extends IModelUpdateOptions<EntityPaymentAttempt,ModelPaymentAttempt>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityPaymentAttempt,ModelPaymentAttempt, T>, options?: T): Promise<TypeModelMutateRelationData<EntityPaymentAttempt,ModelPaymentAttempt, T>>;
 deleteById<T extends IModelDeleteOptions<EntityPaymentAttempt,ModelPaymentAttempt>>(id: TableIdentity, options?: T): Promise<void>;
     }
+export interface ModelPaymentAudit {
+      [SymbolKeyEntity]: EntityPaymentAudit;
+      [SymbolKeyEntityMeta]: EntityPaymentAuditMeta;
+      [SymbolKeyModelOptions]: IModelOptionsPaymentAudit;
+      get<T extends IModelGetOptions<EntityPaymentAudit,ModelPaymentAudit>>(where: TypeModelWhere<EntityPaymentAudit>, options?: T): Promise<TypeModelRelationResult<EntityPaymentAudit, ModelPaymentAudit, T> | undefined>;
+      getForUpdate<T extends IModelGetOptions<EntityPaymentAudit,ModelPaymentAudit>>(where: TypeModelWhere<EntityPaymentAudit>, options?: T): Promise<TypeModelRelationResult<EntityPaymentAudit, ModelPaymentAudit, T> | undefined>;
+      getByIdForUpdate<T extends IModelGetOptions<EntityPaymentAudit,ModelPaymentAudit>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityPaymentAudit, ModelPaymentAudit, T> | undefined>;
+      mget<T extends IModelGetOptions<EntityPaymentAudit,ModelPaymentAudit>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityPaymentAudit, ModelPaymentAudit, T>[]>;
+      selectAndCount<T extends IModelSelectParams<EntityPaymentAudit,ModelPaymentAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityPaymentAudit, ModelPaymentAudit, T>>;
+      select<T extends IModelSelectParams<EntityPaymentAudit,ModelPaymentAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityPaymentAudit, ModelPaymentAudit, T>[]>;
+      insert<T extends IModelInsertOptions<EntityPaymentAudit,ModelPaymentAudit>>(data?: TypeModelMutateRelationData<EntityPaymentAudit,ModelPaymentAudit, T>, options?: T): Promise<TypeModelMutateRelationData<EntityPaymentAudit,ModelPaymentAudit, T, true>>;
+      insertBulk<T extends IModelInsertOptions<EntityPaymentAudit,ModelPaymentAudit>>(items: TypeModelMutateRelationData<EntityPaymentAudit,ModelPaymentAudit, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityPaymentAudit,ModelPaymentAudit, T, true>[]>;
+      update<T extends IModelUpdateOptions<EntityPaymentAudit,ModelPaymentAudit>>(data: TypeModelMutateRelationData<EntityPaymentAudit,ModelPaymentAudit, T>, options?: T): Promise<TypeModelMutateRelationData<EntityPaymentAudit,ModelPaymentAudit, T>>;
+      updateBulk<T extends IModelUpdateOptions<EntityPaymentAudit,ModelPaymentAudit>>(items: TypeModelMutateRelationData<EntityPaymentAudit,ModelPaymentAudit, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityPaymentAudit,ModelPaymentAudit, T>[]>;
+      delete<T extends IModelDeleteOptions<EntityPaymentAudit,ModelPaymentAudit>>(where?: TypeModelWhere<EntityPaymentAudit>, options?: T): Promise<void>;
+      deleteBulk<T extends IModelDeleteOptions<EntityPaymentAudit,ModelPaymentAudit>>(ids: TableIdentity[], options?: T): Promise<void>;
+      mutate<T extends IModelMutateOptions<EntityPaymentAudit,ModelPaymentAudit>>(data?: TypeModelMutateRelationData<EntityPaymentAudit,ModelPaymentAudit, T>, options?: T): Promise<TypeModelMutateRelationData<EntityPaymentAudit,ModelPaymentAudit, T>>;
+      mutateBulk<T extends IModelMutateOptions<EntityPaymentAudit,ModelPaymentAudit>>(items: TypeModelMutateRelationData<EntityPaymentAudit,ModelPaymentAudit, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityPaymentAudit,ModelPaymentAudit, T>[]>;
+      count<T extends IModelSelectCountParams<EntityPaymentAudit,ModelPaymentAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<string | undefined>;
+      increment<T extends IModelIncrementParams<EntityPaymentAudit,ModelPaymentAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      decrement<T extends IModelIncrementParams<EntityPaymentAudit,ModelPaymentAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      aggregate<T extends IModelSelectAggrParams<EntityPaymentAudit,ModelPaymentAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelAggrRelationResult<T>>;
+      group<T extends IModelSelectGroupParams<EntityPaymentAudit,ModelPaymentAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelGroupRelationResult<EntityPaymentAudit, T>[]>;
+      getById<T extends IModelGetOptions<EntityPaymentAudit,ModelPaymentAudit>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityPaymentAudit, ModelPaymentAudit, T> | undefined>;
+updateById<T extends IModelUpdateOptions<EntityPaymentAudit,ModelPaymentAudit>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityPaymentAudit,ModelPaymentAudit, T>, options?: T): Promise<TypeModelMutateRelationData<EntityPaymentAudit,ModelPaymentAudit, T>>;
+deleteById<T extends IModelDeleteOptions<EntityPaymentAudit,ModelPaymentAudit>>(id: TableIdentity, options?: T): Promise<void>;
+    }
 }
 declare module 'vona-module-a-orm' {
   export interface IModelClassRecord {
     'commerce-payment:paymentAttempt': ModelPaymentAttempt;
+'commerce-payment:paymentAudit': ModelPaymentAudit;
   }
 }
 /** model: end */
 /** service: begin */
+export * from '../service/mockPaymentAdapter.ts';
 export * from '../service/paymentAttempt.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
   
     export interface IServiceRecord {
-      'commerce-payment:paymentAttempt': never;
+      'commerce-payment:mockPaymentAdapter': never;
+'commerce-payment:paymentAttempt': never;
     }
 
   
 }
 declare module 'vona-module-commerce-payment' {
   
+        export interface ServiceMockPaymentAdapter {
+          /** @internal */
+          get scope(): ScopeModuleCommercePayment;
+        }
+
+          export interface ServiceMockPaymentAdapter {
+            get $beanFullName(): 'commerce-payment.service.mockPaymentAdapter';
+            get $onionName(): 'commerce-payment:mockPaymentAdapter';
+            
+          }
+
         export interface ServicePaymentAttempt {
           /** @internal */
           get scope(): ScopeModuleCommercePayment;
@@ -146,9 +216,11 @@ declare module 'vona-module-commerce-payment' {
 }
 /** service: end */
 /** service: begin */
+import type { ServiceMockPaymentAdapter } from '../service/mockPaymentAdapter.ts';
 import type { ServicePaymentAttempt } from '../service/paymentAttempt.ts';
 export interface IModuleService {
-  'paymentAttempt': ServicePaymentAttempt;
+  'mockPaymentAdapter': ServiceMockPaymentAdapter;
+'paymentAttempt': ServicePaymentAttempt;
 }
 /** service: end */
 /** service: begin */
@@ -156,7 +228,8 @@ export interface IModuleService {
 import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
-    'commerce-payment.service.paymentAttempt': ServicePaymentAttempt;
+    'commerce-payment.service.mockPaymentAdapter': ServiceMockPaymentAdapter;
+'commerce-payment.service.paymentAttempt': ServicePaymentAttempt;
   }
 }
 /** service: end */

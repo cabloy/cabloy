@@ -110,6 +110,34 @@ export type ApiSchemaCommerceTradeDtoCheckoutCreate =
   components['schemas']['commerce-trade.dto.checkoutCreate'];
 export type ApiSchemaCommerceTradeDtoCheckoutCreatePartial =
   Partial<ApiSchemaCommerceTradeDtoCheckoutCreate>;
+export type ApiSchemaCommerceTradeDtoOrderSummary =
+  components['schemas']['commerce-trade.dto.orderSummary'];
+export type ApiSchemaCommerceTradeDtoOrderSummaryPartial =
+  Partial<ApiSchemaCommerceTradeDtoOrderSummary>;
+export type ApiSchemaCommerceTradeDtoOrderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
+  components['schemas']['commerce-trade.dto.orderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+export type ApiSchemaCommerceTradeDtoOrderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
+  Partial<ApiSchemaCommerceTradeDtoOrderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
+export type ApiSchemaCommerceTradeDtoOrderAddressSnapshot =
+  components['schemas']['commerce-trade.dto.orderAddressSnapshot'];
+export type ApiSchemaCommerceTradeDtoOrderAddressSnapshotPartial =
+  Partial<ApiSchemaCommerceTradeDtoOrderAddressSnapshot>;
+export type ApiSchemaCommerceTradeDtoOrderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
+  components['schemas']['commerce-trade.dto.orderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+export type ApiSchemaCommerceTradeDtoOrderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
+  Partial<ApiSchemaCommerceTradeDtoOrderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
+export type ApiSchemaCommerceTradeDtoOrderLineSkuAttributeSnapshot =
+  components['schemas']['commerce-trade.dto.orderLineSkuAttributeSnapshot'];
+export type ApiSchemaCommerceTradeDtoOrderLineSkuAttributeSnapshotPartial =
+  Partial<ApiSchemaCommerceTradeDtoOrderLineSkuAttributeSnapshot>;
+export type ApiSchemaCommerceTradeDtoPaymentOutcomeResult =
+  components['schemas']['commerce-trade.dto.paymentOutcomeResult'];
+export type ApiSchemaCommerceTradeDtoPaymentOutcomeResultPartial =
+  Partial<ApiSchemaCommerceTradeDtoPaymentOutcomeResult>;
+export type ApiSchemaCommerceTradeDtoPaymentOutcomeCreate =
+  components['schemas']['commerce-trade.dto.paymentOutcomeCreate'];
+export type ApiSchemaCommerceTradeDtoPaymentOutcomeCreatePartial =
+  Partial<ApiSchemaCommerceTradeDtoPaymentOutcomeCreate>;
 export type ApiSchemaCommerceTradeDtoStockAuditSelectRes =
   components['schemas']['commerce-trade.dto.stockAuditSelectRes'];
 export type ApiSchemaCommerceTradeDtoStockAuditSelectResPartial =

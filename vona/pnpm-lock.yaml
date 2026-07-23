@@ -1802,7 +1802,7 @@ importers:
   src/suite-vendor/a-test:
     dependencies:
       vona-module-test-file:
-        specifier: ^5.0.6
+        specifier: ^5.0.7
         version: link:modules/test-file
 
   src/suite-vendor/a-test/modules/test-auth:
