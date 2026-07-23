@@ -49,4 +49,29 @@ describe('fileProvider.test.ts', () => {
       }
     });
   });
+
+  it('stores null client options as SQL NULL', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const model = app.bean.fileProvider.scope.model.fileProvider;
+      const clientName = `json-null-${Date.now()}`;
+      let providerId: number | undefined;
+      try {
+        const provider = await model.insert({
+          providerName: 'file-native:native',
+          clientName,
+          clientOptions: null,
+        });
+        providerId = provider.id as number;
+        assert.equal((await model.get({ id: providerId, clientOptions: null }))?.id, providerId);
+
+        await model.updateById(providerId, { clientOptions: { public: true } });
+        assert.equal(await model.get({ id: providerId, clientOptions: null }), undefined);
+
+        await model.updateById(providerId, { clientOptions: null });
+        assert.equal((await model.get({ id: providerId, clientOptions: null }))?.id, providerId);
+      } finally {
+        if (providerId !== undefined) await model.delete({ id: providerId });
+      }
+    });
+  });
 });

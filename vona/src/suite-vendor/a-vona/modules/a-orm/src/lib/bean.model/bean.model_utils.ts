@@ -49,7 +49,7 @@ export class BeanModelUtils<TRecord extends {}> extends BeanModelMeta<TRecord> {
       if (Object.prototype.hasOwnProperty.call(item, columnName)) {
         let value = item[columnName];
         dataOriginal[columnName] = value;
-        if (column.type === 'json' && value !== undefined) {
+        if (column.type === 'json' && !isNil(value)) {
           value = JSON.stringify(value);
         }
         data[columnName] = value;
