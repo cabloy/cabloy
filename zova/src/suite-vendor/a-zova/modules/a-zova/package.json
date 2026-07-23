@@ -1,6 +1,6 @@
 {
   "name": "zova-module-a-zova",
-  "version": "5.1.93",
+  "version": "5.1.94",
   "gitHead": "2c5c19284bab738e492856189acb6fad74b8a7b7",
   "description": "zova",
   "keywords": [
@@ -34,7 +34,7 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "@cabloy/compose": "^2.1.8",
+    "@cabloy/compose": "^2.1.9",
     "@cabloy/deps": "^1.1.8",
     "@cabloy/json5": "^1.1.9",
     "@cabloy/module-info": "^2.0.3",
@@ -43,7 +43,7 @@
     "@cabloy/word-utils": "^2.1.14",
     "defu": "^6.1.7",
     "luxon": "^3.7.2",
-    "zova-jsx": "^1.1.78"
+    "zova-jsx": "^1.1.79"
   },
   "devDependencies": {
     "@cabloy/cli": "^3.1.28",
