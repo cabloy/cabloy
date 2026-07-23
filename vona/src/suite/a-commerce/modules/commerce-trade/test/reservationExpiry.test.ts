@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { after, before, describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
+import { BeanScheduleOrderExpiry } from '../src/bean/bean.scheduleOrderExpiry.ts';
 import { acquireTestLock } from './testLock.ts';
 
 interface IFixture {
@@ -59,6 +60,85 @@ async function cleanup(fixture: IFixture) {
     await catalog.model.product.delete({ id: fixture.productId });
   if (fixture.categoryId !== undefined)
     await catalog.model.category.delete({ id: fixture.categoryId });
+}
+
+async function createExpiredCheckoutFixture(suffix: string): Promise<IFixture> {
+  const fixture: IFixture = {};
+  const customerName = `schedule-expiry-customer-${suffix}`;
+  const customer = await app.bean.user.register({ name: customerName }, true);
+  fixture.userId = customer.id as number;
+  await app.bean.passport.signinMock(customerName as any);
+  try {
+    const userId = app.bean.passport.currentUser!.id;
+    fixture.categoryId = await app.bean.executor.performAction(
+      'post',
+      '/commerce/catalog/category',
+      {
+        body: { name: `schedule-expiry-category-${suffix}`, published: true },
+      },
+    );
+    fixture.productId = await app.bean.executor.performAction('post', '/commerce/catalog/product', {
+      body: {
+        categoryId: fixture.categoryId,
+        title: `schedule-expiry-product-${suffix}`,
+        published: true,
+      },
+    });
+    fixture.skuId = await app.bean.executor.performAction('post', '/commerce/catalog/sku', {
+      body: {
+        productId: fixture.productId,
+        code: `schedule-expiry-sku-${suffix}`,
+        priceCents: 899,
+        attributes: [],
+        lifecycle: 'active',
+      },
+    });
+    fixture.balanceId = (
+      await app.scope('commerce-trade').service.stockBalance.adjustStock({
+        skuId: fixture.skuId,
+        delta: 1,
+        reason: 'schedule expiry fixture',
+        correlationId: `schedule-expiry-stock-${suffix}`,
+      })
+    ).id as number;
+    fixture.addressId = await app.bean.executor.performAction('post', '/commerce/member/address', {
+      body: {
+        recipientName: 'Schedule Expiry Customer',
+        phone: '15555550135',
+        countryCode: 'US',
+        region: 'California',
+        city: 'San Francisco',
+        postalCode: '94105',
+        addressLine1: '8 Market Street',
+      },
+    });
+    const cart = await app.scope('commerce-trade').model.cart.insert({ userId });
+    fixture.cartId = cart.id as number;
+    await app.scope('commerce-trade').model.cartItem.insert({
+      cartId: cart.id,
+      skuId: fixture.skuId,
+      quantity: 1,
+    });
+    const created = await app.scope('commerce-trade').service.order.checkout({
+      addressId: fixture.addressId,
+      correlationId: `schedule-expiry-${suffix}`,
+    });
+    fixture.orderId = created.orderId as number;
+    fixture.paymentAttemptId = created.paymentAttemptId as number;
+    const line = await app.scope('commerce-trade').model.orderLine.get({
+      orderId: fixture.orderId,
+    });
+    fixture.orderLineId = line?.id as number;
+    fixture.reservationId = (
+      await app.scope('commerce-trade').model.stockReservation.get({ orderLineId: line?.id })
+    )?.id as number;
+    await app.scope('commerce-trade').model.order.updateById(fixture.orderId, {
+      reservationExpiresAt: new Date(Date.now() - 1_000),
+    });
+    return fixture;
+  } finally {
+    await app.bean.passport.signout();
+  }
 }
 
 describe('reservationExpiry.test.ts', { concurrency: false, sequential: true }, () => {
@@ -241,5 +321,112 @@ describe('reservationExpiry.test.ts', { concurrency: false, sequential: true }, 
         await app.bean.passport.signout();
       }
     });
+  });
+
+  it('expires only the current instance due order when the schedule executes', async () => {
+    const suffix = randomUUID().slice(0, 12);
+    let defaultFixture: IFixture | undefined;
+    let shareFixture: IFixture | undefined;
+    try {
+      await app.bean.executor.mockCtx(async () => {
+        defaultFixture = await createExpiredCheckoutFixture(`default-${suffix}`);
+      });
+      await app.bean.executor.mockCtx(
+        async () => {
+          shareFixture = await createExpiredCheckoutFixture(`share-${suffix}`);
+        },
+        { instanceName: 'shareTest' as any },
+      );
+
+      await app.bean.executor.mockCtx(async () => {
+        await app.bean
+          ._getBean<BeanScheduleOrderExpiry>('commerce-trade.schedule.beanScheduleOrderExpiry')
+          .execute();
+        const order = await app
+          .scope('commerce-trade')
+          .model.order.getById(defaultFixture!.orderId!);
+        const reservation = await app
+          .scope('commerce-trade')
+          .model.stockReservation.getById(defaultFixture!.reservationId!);
+        const paymentAttempt = await app
+          .scope('commerce-payment')
+          .model.paymentAttempt.getById(defaultFixture!.paymentAttemptId!);
+        assert.equal(order?.state, 'expired');
+        assert.equal(reservation?.state, 'released');
+        assert.equal(paymentAttempt?.state, 'cancelled');
+        await app.bean
+          ._getBean<BeanScheduleOrderExpiry>('commerce-trade.schedule.beanScheduleOrderExpiry')
+          .execute();
+        const audits = await app.scope('commerce-trade').model.orderAudit.select({
+          where: { orderId: defaultFixture!.orderId! },
+        });
+        assert.deepEqual(
+          audits.map(audit => audit.operation),
+          ['created', 'expired'],
+        );
+      });
+
+      await app.bean.executor.mockCtx(
+        async () => {
+          const order = await app
+            .scope('commerce-trade')
+            .model.order.getById(shareFixture!.orderId!);
+          const reservation = await app
+            .scope('commerce-trade')
+            .model.stockReservation.getById(shareFixture!.reservationId!);
+          const paymentAttempt = await app
+            .scope('commerce-payment')
+            .model.paymentAttempt.getById(shareFixture!.paymentAttemptId!);
+          assert.equal(order?.state, 'awaiting_payment');
+          assert.equal(reservation?.state, 'reserved');
+          assert.equal(paymentAttempt?.state, 'created');
+
+          await app.bean
+            ._getBean<BeanScheduleOrderExpiry>('commerce-trade.schedule.beanScheduleOrderExpiry')
+            .execute();
+          assert.equal(
+            (await app.scope('commerce-trade').model.order.getById(shareFixture!.orderId!))?.state,
+            'expired',
+          );
+          assert.equal(
+            (
+              await app
+                .scope('commerce-trade')
+                .model.stockReservation.getById(shareFixture!.reservationId!)
+            )?.state,
+            'released',
+          );
+          assert.equal(
+            (
+              await app
+                .scope('commerce-payment')
+                .model.paymentAttempt.getById(shareFixture!.paymentAttemptId!)
+            )?.state,
+            'cancelled',
+          );
+          await app.bean
+            ._getBean<BeanScheduleOrderExpiry>('commerce-trade.schedule.beanScheduleOrderExpiry')
+            .execute();
+          const audits = await app.scope('commerce-trade').model.orderAudit.select({
+            where: { orderId: shareFixture!.orderId! },
+          });
+          assert.deepEqual(
+            audits.map(audit => audit.operation),
+            ['created', 'expired'],
+          );
+        },
+        { instanceName: 'shareTest' as any },
+      );
+    } finally {
+      await app.bean.executor.mockCtx(
+        async () => {
+          if (shareFixture) await cleanup(shareFixture);
+        },
+        { instanceName: 'shareTest' as any },
+      );
+      await app.bean.executor.mockCtx(async () => {
+        if (defaultFixture) await cleanup(defaultFixture);
+      });
+    }
   });
 });

@@ -182,14 +182,15 @@ Primary areas:
 Tasks:
 
 - implement coupon templates/grants, validity, minimum spend, issuance/usage limits, and per-customer limits;
-- implement one-coupon reservation at order creation and release on cancellation, failure, or expiry;
-- snapshot coupon identity and discount on the order.
+- implement one-coupon reservation at order creation and release on unpaid-order expiry;
+- snapshot coupon identity and discount on the order;
+- leave payment-event cancellation/failure release and payment-success redemption to Phase 50.
 
 Acceptance checks:
 
 - one order cannot reserve multiple coupons;
-- invalid, exhausted, expired, cross-tenant, or ineligible coupon usage fails without partial writes;
-- refund does not restore a redeemed coupon.
+- invalid, exhausted, expired, cross-tenant, or ineligible coupon issuance/reservation fails without partial writes;
+- unpaid-order expiry releases a reserved coupon exactly once while preserving the immutable order discount snapshot.
 
 #### WBS-40-03: Implement atomic order creation and 30-minute reservation expiry
 
@@ -202,13 +203,14 @@ Tasks:
 
 - implement `@Core.transaction()` checkout flow with authoritative SKU, amount, coupon, tenant, and address validation;
 - create immutable commercial snapshots, stock reservations, coupon reservations, payment attempt, and audit records atomically;
-- implement expiry processing that rechecks `awaiting_payment` state before releasing reservations.
+- implement unpaid-order expiry processing that rechecks `awaiting_payment` state before releasing reservations and cancelling its initial payment-attempt record;
+- leave payment-event outcomes, reservation consumption/redemption, and payment-success-versus-expiry contention to Phase 50.
 
 Acceptance checks:
 
 - concurrent checkout cannot oversell;
 - an error leaves no partial order, stock reservation, coupon reservation, payment attempt, or cached mutation;
-- every still-unpaid order expires at or after 30 minutes and releases stock/coupon once.
+- every still-unpaid order expires at or after 30 minutes and releases stock/coupon once without crossing tenant scope.
 
 ### Phase 50: Mock payment and customer order experience
 
@@ -289,13 +291,14 @@ Tasks:
 
 - implement customer request, operator approval/rejection, mock refund execution, and audit reason capture;
 - validate state again at approval/execution time to prevent shipment/refund races;
-- restore sold stock exactly once on successful refund and retain coupon redemption.
+- restore sold stock exactly once on successful refund and retain coupon redemption without reissuing or restoring the redeemed coupon.
 
 Acceptance checks:
 
 - only paid, unshipped whole orders can enter the refund flow;
 - shipment and refund race tests permit only one legal terminal outcome;
-- repeated refund success does not duplicate stock restoration or transition history.
+- repeated refund success does not duplicate stock restoration or transition history;
+- refund does not restore a redeemed coupon.
 
 ### Phase 70: Migrations, integration hardening, and release acceptance
 
@@ -358,14 +361,14 @@ A future task that changes `meta.version.ts` must run `npm run test`, because it
 
 ## Traceability Matrix
 
-| WBS task group | PRD requirements                      | SRS contracts                                      | Completion evidence                                    |
-| -------------- | ------------------------------------- | -------------------------------------------------- | ------------------------------------------------------ |
-| `WBS-20-*`     | Site isolation launch criterion       | `SRS-API-*`, `SRS-UI-03`                           | `ATP-SSR-01`, `ATP-SSR-02`, `ATP-CTR-01`               |
-| `WBS-30-*`     | `PRD-CAT-*`, `PRD-INV-*`              | `SRS-CAT-*`, `SRS-INV-*`, `SRS-TEN-*`              | `ATP-TEN-01`, `ATP-INV-01`, `ATP-SNAP-01`              |
-| `WBS-40-*`     | `PRD-ORD-*`, `PRD-CPN-*`, `PRD-INV-*` | `SRS-ORD-*`, `SRS-CPN-*`, `SRS-TXN-*`, `SRS-MNY-*` | `ATP-AUT-01`, `ATP-TXN-01`, `ATP-CPN-01`, `ATP-EXP-01` |
-| `WBS-50-*`     | `PRD-PAY-*`, `PRD-ORD-*`              | `SRS-PAY-*`, `SRS-AUT-*`                           | `ATP-PAY-01`, `ATP-EXP-01`                             |
-| `WBS-60-*`     | `PRD-SHP-*`, `PRD-RFD-*`              | `SRS-SHP-*`, `SRS-RFD-*`, `SRS-PAY-*`              | `ATP-SHP-01`, `ATP-RFD-01`, `ATP-RACE-01`              |
-| `WBS-70-*`     | All PRD requirements                  | All applicable SRS contracts                       | All applicable `ATP-*` evidence and release gates      |
+| WBS task group | PRD requirements                      | SRS contracts                                                   | Completion evidence                                                                                                          |
+| -------------- | ------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `WBS-20-*`     | Site isolation launch criterion       | `SRS-API-*`, `SRS-UI-03`                                        | `ATP-SSR-01`, `ATP-SSR-02`, `ATP-CTR-01`                                                                                     |
+| `WBS-30-*`     | `PRD-CAT-*`, `PRD-INV-*`              | `SRS-CAT-*`, `SRS-INV-*`, `SRS-TEN-*`                           | `ATP-TEN-01`, `ATP-INV-01`, `ATP-SNAP-01`                                                                                    |
+| `WBS-40-*`     | `PRD-ORD-*`, `PRD-CPN-*`, `PRD-INV-*` | `SRS-ORD-*`, `SRS-CPN-*`, `SRS-TEN-*`, `SRS-TXN-*`, `SRS-MNY-*` | Phase-40-owned branches of `ATP-TEN-01`, `ATP-AUT-01`, `ATP-INV-01`, `ATP-TXN-01`, `ATP-CPN-01`, `ATP-EXP-01`, `ATP-SNAP-01` |
+| `WBS-50-*`     | `PRD-PAY-*`, `PRD-ORD-*`              | `SRS-PAY-*`, `SRS-AUT-*`                                        | `ATP-PAY-01`, `ATP-EXP-01`                                                                                                   |
+| `WBS-60-*`     | `PRD-SHP-*`, `PRD-RFD-*`              | `SRS-SHP-*`, `SRS-RFD-*`, `SRS-PAY-*`                           | `ATP-SHP-01`, `ATP-RFD-01`, `ATP-RACE-01`                                                                                    |
+| `WBS-70-*`     | All PRD requirements                  | All applicable SRS contracts                                    | All applicable `ATP-*` evidence and release gates                                                                            |
 
 ## Related Records
 

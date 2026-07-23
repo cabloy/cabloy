@@ -58,6 +58,8 @@ export class ServiceCoupon extends BeanBase {
     const template = await this.scope.model.couponTemplate.getByIdForUpdate(command.templateId);
     if (!template) this.app.throw(404, 'coupon template not found');
     this._assertTemplateIssuable(template);
+    const user = await this.bean.user.findOneById(command.userId);
+    if (!user) this.app.throw(404, 'coupon recipient not found');
     const existing = await this.scope.model.couponGrant.get({
       couponCode: command.correlationId,
     });

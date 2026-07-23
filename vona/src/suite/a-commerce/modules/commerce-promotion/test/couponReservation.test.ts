@@ -4,32 +4,107 @@ import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
+import type { EntityCouponGrant } from '../src/entity/couponGrant.tsx';
+import type { EntityCouponTemplate } from '../src/entity/couponTemplate.tsx';
+
 interface IFixture {
   templateId?: number;
   grantId?: number;
+  userId?: number;
+  templateIds?: number[];
+  grantIds?: number[];
+  userIds?: number[];
+}
+
+function createTestId() {
+  return randomUUID().slice(0, 12);
 }
 
 async function cleanup(fixture: IFixture) {
   const promotion = app.scope('commerce-promotion');
-  if (fixture.grantId !== undefined) {
-    await promotion.model.couponAudit.delete({ couponGrantId: fixture.grantId });
-    await promotion.model.couponGrant.delete({ id: fixture.grantId });
+  const grantIds = [...new Set([fixture.grantId, ...(fixture.grantIds ?? [])].filter(Boolean))];
+  const templateIds = [
+    ...new Set([fixture.templateId, ...(fixture.templateIds ?? [])].filter(Boolean)),
+  ];
+  const userIds = [...new Set([fixture.userId, ...(fixture.userIds ?? [])].filter(Boolean))];
+  for (const grantId of grantIds) {
+    await promotion.model.couponAudit.delete({ couponGrantId: grantId });
+    await promotion.model.couponGrant.delete({ id: grantId });
   }
-  if (fixture.templateId !== undefined) {
-    await promotion.model.couponTemplate.delete({ id: fixture.templateId });
+  for (const templateId of templateIds) {
+    await promotion.model.couponTemplate.delete({ id: templateId });
   }
+  for (const userId of userIds) {
+    await app.scope('home-user').model.roleUser.delete({ userId });
+    await app.bean.user.removeById(userId);
+  }
+}
+
+async function createTemplate(
+  fixture: IFixture,
+  suffix: string,
+  overrides: Partial<EntityCouponTemplate> = {},
+): Promise<EntityCouponTemplate> {
+  const now = Date.now();
+  const template = await app.scope('commerce-promotion').model.couponTemplate.insert({
+    name: `Coupon ${suffix}`,
+    state: 'active',
+    currency: 'USD',
+    discountCents: 500,
+    minSpendCents: 1_000,
+    validFrom: new Date(now - 60_000),
+    validUntil: new Date(now + 60_000),
+    issuedCount: 0,
+    redeemedCount: 0,
+    ...overrides,
+  });
+  (fixture.templateIds ??= []).push(template.id as number);
+  return template;
+}
+
+async function createGrant(
+  fixture: IFixture,
+  template: EntityCouponTemplate,
+  userId: number,
+  suffix: string,
+  overrides: Partial<EntityCouponGrant> = {},
+): Promise<EntityCouponGrant> {
+  const grant = await app.scope('commerce-promotion').model.couponGrant.insert({
+    templateId: template.id,
+    userId,
+    couponCode: `grant-${suffix}`,
+    state: 'available',
+    templateNameSnapshot: template.name,
+    currencySnapshot: template.currency,
+    discountCentsSnapshot: template.discountCents,
+    minSpendCentsSnapshot: template.minSpendCents,
+    validFromSnapshot: template.validFrom,
+    validUntilSnapshot: template.validUntil,
+    ...overrides,
+  });
+  (fixture.grantIds ??= []).push(grant.id as number);
+  return grant;
+}
+
+async function registerCustomer(fixture: IFixture, name: string) {
+  await app.bean.user.register({ name }, true);
+  await app.bean.passport.signinMock(name as any);
+  const customer = app.bean.passport.currentUser!;
+  (fixture.userIds ??= []).push(customer.id as number);
+  return customer;
 }
 
 describe('couponReservation.test.ts', { concurrency: false }, () => {
   it('enforces fixed-discount eligibility and exact-once transitions', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixture: IFixture = {};
-      const suffix = randomUUID().slice(0, 12);
+      const suffix = createTestId();
       try {
         const customerName = `coupon-customer-${suffix}`;
         await app.bean.user.register({ name: customerName }, true);
         await app.bean.passport.signinMock(customerName as any);
         const customer = app.bean.passport.currentUser!;
+        fixture.userId = customer.id as number;
         fixture.templateId = (
           await app.scope('commerce-promotion').model.couponTemplate.insert({
             name: `Coupon ${suffix}`,
@@ -237,9 +312,323 @@ describe('couponReservation.test.ts', { concurrency: false }, () => {
           ['issue', 'reserve', 'release', 'reserve', 'redeem'],
         );
       } finally {
-        await cleanup(fixture);
         await app.bean.passport.signout();
+        await cleanup(fixture);
       }
     });
+  });
+
+  it('rejects invalid, expired, and exhausted issuance and reservation without writes', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture: IFixture = {};
+      const suffix = createTestId();
+      try {
+        const customer = await registerCustomer(fixture, `coupon-boundary-${suffix}`);
+        const coupon = app.scope('commerce-promotion').service.coupon;
+        const now = Date.now();
+        const disabledTemplate = await createTemplate(fixture, `disabled-${suffix}`, {
+          state: 'disabled',
+        });
+        const expiredTemplate = await createTemplate(fixture, `expired-${suffix}`, {
+          validFrom: new Date(now - 120_000),
+          validUntil: new Date(now - 60_000),
+        });
+        const issueExhaustedTemplate = await createTemplate(fixture, `issue-exhausted-${suffix}`, {
+          totalIssueLimit: 1,
+          issuedCount: 1,
+        });
+        const perCustomerLimitedTemplate = await createTemplate(fixture, `per-customer-${suffix}`, {
+          perCustomerIssueLimit: 1,
+        });
+        const perCustomerGrant = await coupon.issue({
+          templateId: perCustomerLimitedTemplate.id,
+          userId: customer.id,
+          correlationId: `issue-per-customer-first-${suffix}`,
+          reason: 'test per-customer first issuance',
+        });
+        (fixture.grantIds ??= []).push(perCustomerGrant.id as number);
+        const [__, perCustomerError] = await catchError(() =>
+          coupon.issue({
+            templateId: perCustomerLimitedTemplate.id,
+            userId: customer.id,
+            correlationId: `issue-per-customer-second-${suffix}`,
+            reason: 'test per-customer exhausted issuance',
+          }),
+        );
+        assert.equal(perCustomerError?.code, 409);
+        assert.equal(
+          await app
+            .scope('commerce-promotion')
+            .model.couponGrant.get({ couponCode: `issue-per-customer-second-${suffix}` }),
+          undefined,
+        );
+        assert.equal(
+          (
+            await app
+              .scope('commerce-promotion')
+              .model.couponTemplate.getById(perCustomerLimitedTemplate.id)
+          )?.issuedCount,
+          1,
+        );
+        for (const [template, label] of [
+          [disabledTemplate, 'disabled'],
+          [expiredTemplate, 'expired'],
+          [issueExhaustedTemplate, 'issue-exhausted'],
+        ] as const) {
+          const correlationId = `issue-${label}-${suffix}`;
+          const [_, error] = await catchError(() =>
+            coupon.issue({
+              templateId: template.id,
+              userId: customer.id,
+              correlationId,
+              reason: `test ${label} issuance`,
+            }),
+          );
+          assert.equal(error?.code, 409);
+          assert.equal(
+            await app
+              .scope('commerce-promotion')
+              .model.couponGrant.get({ couponCode: correlationId }),
+            undefined,
+          );
+          assert.equal(
+            (await app.scope('commerce-promotion').model.couponTemplate.getById(template.id))
+              ?.issuedCount,
+            template.issuedCount,
+          );
+        }
+
+        const disabledReservationTemplate = await createTemplate(
+          fixture,
+          `reserve-disabled-${suffix}`,
+          { state: 'disabled' },
+        );
+        const expiredReservationTemplate = await createTemplate(
+          fixture,
+          `reserve-expired-${suffix}`,
+        );
+        const usageExhaustedTemplate = await createTemplate(
+          fixture,
+          `reserve-exhausted-${suffix}`,
+          { totalUsageLimit: 1, redeemedCount: 1 },
+        );
+        const disabledGrant = await createGrant(
+          fixture,
+          disabledReservationTemplate,
+          customer.id as number,
+          `reserve-disabled-${suffix}`,
+        );
+        const expiredGrant = await createGrant(
+          fixture,
+          expiredReservationTemplate,
+          customer.id as number,
+          `reserve-expired-${suffix}`,
+          {
+            validFromSnapshot: new Date(now - 120_000),
+            validUntilSnapshot: new Date(now - 60_000),
+          },
+        );
+        const usageExhaustedGrant = await createGrant(
+          fixture,
+          usageExhaustedTemplate,
+          customer.id as number,
+          `reserve-exhausted-${suffix}`,
+        );
+        for (const [grant, label] of [
+          [disabledGrant, 'disabled'],
+          [expiredGrant, 'expired'],
+          [usageExhaustedGrant, 'usage-exhausted'],
+        ] as const) {
+          const [_, error] = await catchError(() =>
+            coupon.reserve({
+              couponGrantId: grant.id,
+              userId: customer.id,
+              orderId: 200_000 + grant.id,
+              eligibleSubtotalCents: 1_000,
+              currency: 'USD',
+              correlationId: `reserve-${label}-${suffix}`,
+              reason: `test ${label} reservation`,
+            }),
+          );
+          assert.equal(error?.code, 409);
+          assert.equal(
+            (await app.scope('commerce-promotion').model.couponGrant.getById(grant.id))?.state,
+            'available',
+          );
+          assert.deepEqual(
+            await app
+              .scope('commerce-promotion')
+              .model.couponAudit.select({ where: { couponGrantId: grant.id } }),
+            [],
+          );
+        }
+      } finally {
+        await app.bean.passport.signout();
+        await cleanup(fixture);
+      }
+    });
+  });
+
+  it('rejects a direct issue action for a recipient from another instance', async () => {
+    const defaultFixture: IFixture = {};
+    const foreignFixture: IFixture = {};
+    const suffix = createTestId();
+    let template!: EntityCouponTemplate;
+    let foreignUserId!: number;
+    try {
+      await app.bean.executor.mockCtx(async () => {
+        template = await createTemplate(defaultFixture, `foreign-recipient-${suffix}`);
+      });
+      await app.bean.executor.mockCtx(
+        async () => {
+          const customer = await registerCustomer(foreignFixture, `coupon-foreign-${suffix}`);
+          foreignUserId = customer.id as number;
+          await app.bean.passport.signout();
+        },
+        { instanceName: 'shareTest' as any },
+      );
+      await app.bean.executor.mockCtx(async () => {
+        await app.bean.passport.signinMock();
+        try {
+          const [_, error] = await catchError(() =>
+            app.bean.executor.performAction('post', '/commerce/promotion/coupon/issue', {
+              body: {
+                templateId: template.id,
+                userId: foreignUserId,
+                correlationId: `foreign-recipient-${suffix}`,
+                reason: 'test foreign recipient issue action',
+              },
+            }),
+          );
+          assert.equal(error?.code, 404);
+          assert.equal(
+            await app
+              .scope('commerce-promotion')
+              .model.couponGrant.get({ couponCode: `foreign-recipient-${suffix}` }),
+            undefined,
+          );
+          assert.equal(
+            (await app.scope('commerce-promotion').model.couponTemplate.getById(template.id))
+              ?.issuedCount,
+            0,
+          );
+        } finally {
+          await app.bean.passport.signout();
+        }
+      });
+    } finally {
+      await app.bean.executor.mockCtx(
+        async () => {
+          await cleanup(foreignFixture);
+        },
+        { instanceName: 'shareTest' as any },
+      );
+      await app.bean.executor.mockCtx(async () => {
+        await cleanup(defaultFixture);
+      });
+    }
+  });
+
+  it('allows exactly one PostgreSQL reservation when a coupon has one total usage', async t => {
+    if (process.env.DATABASE_DEFAULT_CLIENT !== 'pg') {
+      t.skip('requires PostgreSQL row-lock contention');
+      return;
+    }
+    const fixture: IFixture = {};
+    const suffix = createTestId();
+    let customerId!: number;
+    let customerName!: string;
+    let grantIds!: number[];
+    try {
+      await app.bean.executor.mockCtx(async () => {
+        customerName = `coupon-concurrent-${suffix}`;
+        const customer = await registerCustomer(fixture, customerName);
+        customerId = customer.id as number;
+        const template = await createTemplate(fixture, `concurrent-${suffix}`, {
+          totalIssueLimit: 2,
+          totalUsageLimit: 1,
+        });
+        const coupon = app.scope('commerce-promotion').service.coupon;
+        grantIds = [
+          (
+            await coupon.issue({
+              templateId: template.id,
+              userId: customerId,
+              correlationId: `concurrent-first-${suffix}`,
+              reason: 'test concurrent first issue',
+            })
+          ).id as number,
+          (
+            await coupon.issue({
+              templateId: template.id,
+              userId: customerId,
+              correlationId: `concurrent-second-${suffix}`,
+              reason: 'test concurrent second issue',
+            })
+          ).id as number,
+        ];
+        fixture.grantIds = grantIds;
+        await app.bean.passport.signout();
+      });
+
+      const reserveInContext = async (grantId: number, label: string) => {
+        return await app.bean.executor.mockCtx(async () => {
+          await app.bean.passport.signinMock(customerName as any);
+          try {
+            return await app.scope('commerce-promotion').service.coupon.reserve({
+              couponGrantId: grantId,
+              userId: customerId,
+              orderId: 300_000 + grantId,
+              eligibleSubtotalCents: 1_000,
+              currency: 'USD',
+              correlationId: `concurrent-${label}-${suffix}`,
+              reason: `test concurrent ${label} reservation`,
+            });
+          } finally {
+            await app.bean.passport.signout();
+          }
+        });
+      };
+      const results = await Promise.allSettled([
+        reserveInContext(grantIds[0], 'first'),
+        reserveInContext(grantIds[1], 'second'),
+      ]);
+      assert.equal(
+        results.filter(result => result.status === 'fulfilled').length,
+        1,
+        JSON.stringify(results),
+      );
+      assert.equal(
+        results.filter(result => result.status === 'rejected').length,
+        1,
+        JSON.stringify(results),
+      );
+      const rejected = results.find(result => result.status === 'rejected');
+      assert.equal(
+        (rejected as PromiseRejectedResult | undefined)?.reason?.code,
+        409,
+        String((rejected as PromiseRejectedResult | undefined)?.reason),
+      );
+
+      await app.bean.executor.mockCtx(async () => {
+        const grants = await app.scope('commerce-promotion').model.couponGrant.select({
+          where: { templateId: fixture.templateIds![0] },
+        });
+        const audits = await app.scope('commerce-promotion').model.couponAudit.select({
+          where: { templateId: fixture.templateIds![0] },
+          orders: [['id', 'asc']],
+        });
+        assert.equal(grants.filter(grant => grant.state === 'reserved').length, 1);
+        assert.equal(grants.filter(grant => grant.state === 'available').length, 1);
+        assert.deepEqual(
+          audits.map(audit => audit.operation),
+          ['issue', 'issue', 'reserve'],
+        );
+      });
+    } finally {
+      await app.bean.executor.mockCtx(async () => {
+        await cleanup(fixture);
+      });
+    }
   });
 });
