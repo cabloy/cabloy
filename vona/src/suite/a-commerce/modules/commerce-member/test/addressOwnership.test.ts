@@ -91,7 +91,10 @@ describe('address.test.ts', () => {
         true,
       );
 
-      const update: DtoAddressUpdate = { ...addressData, city: 'Oakland', addressLine2: undefined };
+      const { addressLine2: _, ...update } = {
+        ...addressData,
+        city: 'Oakland',
+      } satisfies DtoAddressUpdate;
       assert.equal(
         await performAs(customerA.token, 'patch', `${actionPath}/:id`, {
           params: { id: addressId },
