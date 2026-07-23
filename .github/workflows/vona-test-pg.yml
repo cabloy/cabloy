@@ -40,6 +40,10 @@ jobs:
           commerce-trade/test/stockBalance.test.ts
           commerce-trade/test/stockReservation.test.ts
           commerce-trade/test/stockAudit.test.ts
+          commerce-promotion/test/couponReservation.test.ts
+          commerce-payment/test/paymentAttempt.test.ts
+          commerce-trade/test/checkoutReservation.test.ts
+          commerce-trade/test/reservationExpiry.test.ts
           --flavor=normal
         working-directory: vona
       - run: DATABASE_DEFAULT_CLIENT=pg npm run test

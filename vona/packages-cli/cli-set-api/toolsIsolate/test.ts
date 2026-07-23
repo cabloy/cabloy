@@ -150,13 +150,19 @@ function waitForTestSummary(testStream: ReturnType<typeof run>) {
 
 async function prepareConcurrency(app: VonaApplication) {
   // check
+  const configured = process.env.TEST_CONCURRENCY;
   let concurrency = 1;
-  if (process.env.TEST_CONCURRENCY === 'true') {
-    concurrency = os.cpus().length;
-  } else if (process.env.TEST_CONCURRENCY === 'false') {
+  if (configured === 'false') {
     concurrency = 1;
+  } else if (configured === undefined || configured === 'true') {
+    concurrency = Math.max(1, os.cpus().length);
   } else {
-    concurrency = Number.parseInt(process.env.TEST_CONCURRENCY!);
+    concurrency = Number.parseInt(configured, 10);
+    if (!Number.isSafeInteger(concurrency) || concurrency < 1) {
+      throw new Error(
+        `TEST_CONCURRENCY must be true, false, or a positive integer; received ${configured}`,
+      );
+    }
   }
   if (concurrency === 1) return concurrency;
   // check again
