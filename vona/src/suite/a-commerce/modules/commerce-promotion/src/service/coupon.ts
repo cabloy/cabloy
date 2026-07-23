@@ -316,9 +316,9 @@ export class ServiceCoupon extends BeanBase {
     };
     await this.scope.model.couponGrant.updateById(grant.id, {
       state: releasedGrant.state,
-      reservationOrderId: null as any,
-      reservationCorrelationId: null as any,
-      reservedAt: null as any,
+      reservationOrderId: undefined,
+      reservationCorrelationId: undefined,
+      reservedAt: undefined,
     });
     await this._appendAudit({
       grant: releasedGrant,

@@ -151,6 +151,12 @@ describe('couponReservation.test.ts', { concurrency: false }, () => {
           reason: 'test release',
         });
         assert.equal(released.state, 'available');
+        const releasedPersisted = await app
+          .scope('commerce-promotion')
+          .model.couponGrant.getById(grant.id);
+        assert.equal(releasedPersisted?.reservationOrderId, null);
+        assert.equal(releasedPersisted?.reservationCorrelationId, null);
+        assert.equal(releasedPersisted?.reservedAt, null);
         const releaseReplay = await coupon.release({
           couponGrantId: grant.id,
           orderId: 100_001,

@@ -253,6 +253,9 @@ export class BeanModelCrudInner<TRecord extends {}> extends BeanModelView<TRecor
     if (!table) return this.scopeOrm.error.ShouldSpecifyTable.throw();
     // data
     [data] = await this.prepareData(table, data);
+    for (const key in data) {
+      if (data[key] === undefined) data[key] = null as never;
+    }
     // where
     const where = Object.assign({}, options?.where);
     // id

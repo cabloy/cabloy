@@ -45,6 +45,9 @@ describe('modelMagic.test.ts', () => {
       await scopeTest.model.user.updateById(item.id, { age: 18 });
       user = await scopeTest.model.user.getById(item.id);
       assert.equal(user?.age, 18);
+      await scopeTest.model.user.updateById(item.id, { age: undefined });
+      user = await scopeTest.model.user.getById(item.id);
+      assert.equal(user?.age, null);
       // deleteById
       await scopeTest.model.user.deleteById(item.id);
     });
