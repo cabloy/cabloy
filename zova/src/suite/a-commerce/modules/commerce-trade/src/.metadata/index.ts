@@ -36,6 +36,7 @@ declare module 'zova' {
 /** model: end */
 /** api: begin */
 export * from '../api/commerceTradeCart.js';
+export * from '../api/commerceTradeCheckout.js';
 
 import 'zova';
 declare module 'zova' {
@@ -53,13 +54,26 @@ declare module 'zova-module-commerce-trade' {
           get $beanFullName(): 'commerce-trade.api.commerceTradeCart';
           get $onionName(): 'commerce-trade:commerceTradeCart';
           
+        }
+
+        export interface ApiCommerceTradeCheckout {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+        export interface ApiCommerceTradeCheckout {
+          get $beanFullName(): 'commerce-trade.api.commerceTradeCheckout';
+          get $onionName(): 'commerce-trade:commerceTradeCheckout';
+          
         } 
 }
 /** api: end */
 /** api: begin */
 import { ApiCommerceTradeCart } from '../api/commerceTradeCart.js';
+import { ApiCommerceTradeCheckout } from '../api/commerceTradeCheckout.js';
 export interface IModuleApi {
   'commerceTradeCart': ApiCommerceTradeCart;
+'commerceTradeCheckout': ApiCommerceTradeCheckout;
 }
 /** api: end */
 /** api: begin */
@@ -68,6 +82,7 @@ import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
     'commerce-trade.api.commerceTradeCart': ApiCommerceTradeCart;
+'commerce-trade.api.commerceTradeCheckout': ApiCommerceTradeCheckout;
   }
 }
 /** api: end */
@@ -76,6 +91,7 @@ export * from '../api/openapi/index.js';
 /** openapi: end */
 /** apiSchema: begin */
 export * from '../apiSchema/commerceTradeCart.js';
+export * from '../apiSchema/commerceTradeCheckout.js';
 
 import 'zova';
 declare module 'zova' {
@@ -93,13 +109,26 @@ declare module 'zova-module-commerce-trade' {
           get $beanFullName(): 'commerce-trade.apiSchema.commerceTradeCart';
           get $onionName(): 'commerce-trade:commerceTradeCart';
           
+        }
+
+        export interface ApiSchemaCommerceTradeCheckout {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+        export interface ApiSchemaCommerceTradeCheckout {
+          get $beanFullName(): 'commerce-trade.apiSchema.commerceTradeCheckout';
+          get $onionName(): 'commerce-trade:commerceTradeCheckout';
+          
         } 
 }
 /** apiSchema: end */
 /** apiSchema: begin */
 import { ApiSchemaCommerceTradeCart } from '../apiSchema/commerceTradeCart.js';
+import { ApiSchemaCommerceTradeCheckout } from '../apiSchema/commerceTradeCheckout.js';
 export interface IModuleApiSchema {
   'commerceTradeCart': ApiSchemaCommerceTradeCart;
+'commerceTradeCheckout': ApiSchemaCommerceTradeCheckout;
 }
 /** apiSchema: end */
 /** apiSchema: begin */
@@ -108,6 +137,7 @@ import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
     'commerce-trade.apiSchema.commerceTradeCart': ApiSchemaCommerceTradeCart;
+'commerce-trade.apiSchema.commerceTradeCheckout': ApiSchemaCommerceTradeCheckout;
   }
 }
 /** apiSchema: end */

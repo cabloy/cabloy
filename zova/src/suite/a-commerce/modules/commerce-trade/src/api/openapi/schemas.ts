@@ -8,6 +8,86 @@ export type ApiSchemaTestVonaEntityProduct = components['schemas']['test-vona.en
 export type ApiSchemaTestVonaEntityProductPartial = Partial<ApiSchemaTestVonaEntityProduct>;
 export type ApiSchemaACaptchaDtoCaptchaData = components['schemas']['a-captcha.dto.captchaData'];
 export type ApiSchemaACaptchaDtoCaptchaDataPartial = Partial<ApiSchemaACaptchaDtoCaptchaData>;
+export type ApiSchemaCommerceMemberDtoAddressCreate =
+  components['schemas']['commerce-member.dto.addressCreate'];
+export type ApiSchemaCommerceMemberDtoAddressCreatePartial =
+  Partial<ApiSchemaCommerceMemberDtoAddressCreate>;
+export type ApiSchemaCommerceMemberDtoAddressSelectRes =
+  components['schemas']['commerce-member.dto.addressSelectRes'];
+export type ApiSchemaCommerceMemberDtoAddressSelectResPartial =
+  Partial<ApiSchemaCommerceMemberDtoAddressSelectRes>;
+export type ApiSchemaCommerceMemberDtoAddressSelectResItem =
+  components['schemas']['commerce-member.dto.addressSelectResItem'];
+export type ApiSchemaCommerceMemberDtoAddressSelectResItemPartial =
+  Partial<ApiSchemaCommerceMemberDtoAddressSelectResItem>;
+export type ApiSchemaCommerceMemberDtoAddressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875 =
+  components['schemas']['commerce-member.dto.addressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+export type ApiSchemaCommerceMemberDtoAddressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =
+  Partial<ApiSchemaCommerceMemberDtoAddressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875>;
+export type ApiSchemaCommerceMemberDtoAddressUpdate =
+  components['schemas']['commerce-member.dto.addressUpdate'];
+export type ApiSchemaCommerceMemberDtoAddressUpdatePartial =
+  Partial<ApiSchemaCommerceMemberDtoAddressUpdate>;
+export type ApiSchemaHomeUserDtoPassport_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
+  components['schemas']['home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+export type ApiSchemaHomeUserDtoPassport_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
+  Partial<ApiSchemaHomeUserDtoPassport_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
+export type ApiSchemaHomeUserEntityUser = components['schemas']['home-user.entity.user'];
+export type ApiSchemaHomeUserEntityUserPartial = Partial<ApiSchemaHomeUserEntityUser>;
+export type ApiSchemaAAuthDtoAuth = components['schemas']['a-auth.dto.auth'];
+export type ApiSchemaAAuthDtoAuthPartial = Partial<ApiSchemaAAuthDtoAuth>;
+export type ApiSchemaHomeUserEntityRole = components['schemas']['home-user.entity.role'];
+export type ApiSchemaHomeUserEntityRolePartial = Partial<ApiSchemaHomeUserEntityRole>;
+export type ApiSchemaHomeUserDtoPassportJwt = components['schemas']['home-user.dto.passportJwt'];
+export type ApiSchemaHomeUserDtoPassportJwtPartial = Partial<ApiSchemaHomeUserDtoPassportJwt>;
+export type ApiSchemaHomeUserDtoPassport = components['schemas']['home-user.dto.passport'];
+export type ApiSchemaHomeUserDtoPassportPartial = Partial<ApiSchemaHomeUserDtoPassport>;
+export type ApiSchemaAJwtDtoJwtToken = components['schemas']['a-jwt.dto.jwtToken'];
+export type ApiSchemaAJwtDtoJwtTokenPartial = Partial<ApiSchemaAJwtDtoJwtToken>;
+export type ApiSchemaHomeUserDtoRegister = components['schemas']['home-user.dto.register'];
+export type ApiSchemaHomeUserDtoRegisterPartial = Partial<ApiSchemaHomeUserDtoRegister>;
+export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9 =
+  components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9'];
+export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9Partial =
+  Partial<ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9>;
+export type ApiSchemaHomeUserDtoLogin = components['schemas']['home-user.dto.login'];
+export type ApiSchemaHomeUserDtoLoginPartial = Partial<ApiSchemaHomeUserDtoLogin>;
+export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661 =
+  components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661'];
+export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661Partial =
+  Partial<ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661>;
+export type ApiSchemaCommerceSiteadminDtoOperatorContext =
+  components['schemas']['commerce-siteadmin.dto.operatorContext'];
+export type ApiSchemaCommerceSiteadminDtoOperatorContextPartial =
+  Partial<ApiSchemaCommerceSiteadminDtoOperatorContext>;
+export type ApiSchemaCommercePromotionDtoCouponMineItem =
+  components['schemas']['commerce-promotion.dto.couponMineItem'];
+export type ApiSchemaCommercePromotionDtoCouponMineItemPartial =
+  Partial<ApiSchemaCommercePromotionDtoCouponMineItem>;
+export type ApiSchemaCommercePromotionDtoCouponIssue =
+  components['schemas']['commerce-promotion.dto.couponIssue'];
+export type ApiSchemaCommercePromotionDtoCouponIssuePartial =
+  Partial<ApiSchemaCommercePromotionDtoCouponIssue>;
+export type ApiSchemaCommercePromotionDtoCouponTemplateCreate =
+  components['schemas']['commerce-promotion.dto.couponTemplateCreate'];
+export type ApiSchemaCommercePromotionDtoCouponTemplateCreatePartial =
+  Partial<ApiSchemaCommercePromotionDtoCouponTemplateCreate>;
+export type ApiSchemaCommercePromotionDtoCouponTemplateSelectRes =
+  components['schemas']['commerce-promotion.dto.couponTemplateSelectRes'];
+export type ApiSchemaCommercePromotionDtoCouponTemplateSelectResPartial =
+  Partial<ApiSchemaCommercePromotionDtoCouponTemplateSelectRes>;
+export type ApiSchemaCommercePromotionDtoCouponTemplateSelectResItem =
+  components['schemas']['commerce-promotion.dto.couponTemplateSelectResItem'];
+export type ApiSchemaCommercePromotionDtoCouponTemplateSelectResItemPartial =
+  Partial<ApiSchemaCommercePromotionDtoCouponTemplateSelectResItem>;
+export type ApiSchemaCommercePromotionDtoCouponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875 =
+  components['schemas']['commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+export type ApiSchemaCommercePromotionDtoCouponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =
+  Partial<ApiSchemaCommercePromotionDtoCouponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875>;
+export type ApiSchemaCommercePromotionDtoCouponTemplateUpdate =
+  components['schemas']['commerce-promotion.dto.couponTemplateUpdate'];
+export type ApiSchemaCommercePromotionDtoCouponTemplateUpdatePartial =
+  Partial<ApiSchemaCommercePromotionDtoCouponTemplateUpdate>;
 export type ApiSchemaCommerceTradeDtoCartView =
   components['schemas']['commerce-trade.dto.cartView'];
 export type ApiSchemaCommerceTradeDtoCartViewPartial = Partial<ApiSchemaCommerceTradeDtoCartView>;
@@ -22,6 +102,14 @@ export type ApiSchemaCommerceTradeDtoCartUpdateItem =
   components['schemas']['commerce-trade.dto.cartUpdateItem'];
 export type ApiSchemaCommerceTradeDtoCartUpdateItemPartial =
   Partial<ApiSchemaCommerceTradeDtoCartUpdateItem>;
+export type ApiSchemaCommerceTradeDtoCheckoutResult =
+  components['schemas']['commerce-trade.dto.checkoutResult'];
+export type ApiSchemaCommerceTradeDtoCheckoutResultPartial =
+  Partial<ApiSchemaCommerceTradeDtoCheckoutResult>;
+export type ApiSchemaCommerceTradeDtoCheckoutCreate =
+  components['schemas']['commerce-trade.dto.checkoutCreate'];
+export type ApiSchemaCommerceTradeDtoCheckoutCreatePartial =
+  Partial<ApiSchemaCommerceTradeDtoCheckoutCreate>;
 export type ApiSchemaCommerceTradeDtoStockAuditSelectRes =
   components['schemas']['commerce-trade.dto.stockAuditSelectRes'];
 export type ApiSchemaCommerceTradeDtoStockAuditSelectResPartial =
@@ -114,6 +202,10 @@ export type ApiSchemaCommerceCatalogDtoSkuCreate =
   components['schemas']['commerce-catalog.dto.skuCreate'];
 export type ApiSchemaCommerceCatalogDtoSkuCreatePartial =
   Partial<ApiSchemaCommerceCatalogDtoSkuCreate>;
+export type ApiSchemaCommerceCatalogDtoSkuAttribute =
+  components['schemas']['commerce-catalog.dto.skuAttribute'];
+export type ApiSchemaCommerceCatalogDtoSkuAttributePartial =
+  Partial<ApiSchemaCommerceCatalogDtoSkuAttribute>;
 export type ApiSchemaCommerceCatalogDtoSkuSelectRes =
   components['schemas']['commerce-catalog.dto.skuSelectRes'];
 export type ApiSchemaCommerceCatalogDtoSkuSelectResPartial =
@@ -130,58 +222,6 @@ export type ApiSchemaCommerceCatalogDtoSkuUpdate =
   components['schemas']['commerce-catalog.dto.skuUpdate'];
 export type ApiSchemaCommerceCatalogDtoSkuUpdatePartial =
   Partial<ApiSchemaCommerceCatalogDtoSkuUpdate>;
-export type ApiSchemaCommerceMemberDtoAddressCreate =
-  components['schemas']['commerce-member.dto.addressCreate'];
-export type ApiSchemaCommerceMemberDtoAddressCreatePartial =
-  Partial<ApiSchemaCommerceMemberDtoAddressCreate>;
-export type ApiSchemaCommerceMemberDtoAddressSelectRes =
-  components['schemas']['commerce-member.dto.addressSelectRes'];
-export type ApiSchemaCommerceMemberDtoAddressSelectResPartial =
-  Partial<ApiSchemaCommerceMemberDtoAddressSelectRes>;
-export type ApiSchemaCommerceMemberDtoAddressSelectResItem =
-  components['schemas']['commerce-member.dto.addressSelectResItem'];
-export type ApiSchemaCommerceMemberDtoAddressSelectResItemPartial =
-  Partial<ApiSchemaCommerceMemberDtoAddressSelectResItem>;
-export type ApiSchemaCommerceMemberDtoAddressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875 =
-  components['schemas']['commerce-member.dto.addressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
-export type ApiSchemaCommerceMemberDtoAddressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =
-  Partial<ApiSchemaCommerceMemberDtoAddressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875>;
-export type ApiSchemaCommerceMemberDtoAddressUpdate =
-  components['schemas']['commerce-member.dto.addressUpdate'];
-export type ApiSchemaCommerceMemberDtoAddressUpdatePartial =
-  Partial<ApiSchemaCommerceMemberDtoAddressUpdate>;
-export type ApiSchemaHomeUserDtoPassport_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
-  components['schemas']['home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
-export type ApiSchemaHomeUserDtoPassport_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
-  Partial<ApiSchemaHomeUserDtoPassport_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
-export type ApiSchemaHomeUserEntityUser = components['schemas']['home-user.entity.user'];
-export type ApiSchemaHomeUserEntityUserPartial = Partial<ApiSchemaHomeUserEntityUser>;
-export type ApiSchemaAAuthDtoAuth = components['schemas']['a-auth.dto.auth'];
-export type ApiSchemaAAuthDtoAuthPartial = Partial<ApiSchemaAAuthDtoAuth>;
-export type ApiSchemaHomeUserEntityRole = components['schemas']['home-user.entity.role'];
-export type ApiSchemaHomeUserEntityRolePartial = Partial<ApiSchemaHomeUserEntityRole>;
-export type ApiSchemaHomeUserDtoPassportJwt = components['schemas']['home-user.dto.passportJwt'];
-export type ApiSchemaHomeUserDtoPassportJwtPartial = Partial<ApiSchemaHomeUserDtoPassportJwt>;
-export type ApiSchemaHomeUserDtoPassport = components['schemas']['home-user.dto.passport'];
-export type ApiSchemaHomeUserDtoPassportPartial = Partial<ApiSchemaHomeUserDtoPassport>;
-export type ApiSchemaAJwtDtoJwtToken = components['schemas']['a-jwt.dto.jwtToken'];
-export type ApiSchemaAJwtDtoJwtTokenPartial = Partial<ApiSchemaAJwtDtoJwtToken>;
-export type ApiSchemaHomeUserDtoRegister = components['schemas']['home-user.dto.register'];
-export type ApiSchemaHomeUserDtoRegisterPartial = Partial<ApiSchemaHomeUserDtoRegister>;
-export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9 =
-  components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9'];
-export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9Partial =
-  Partial<ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9>;
-export type ApiSchemaHomeUserDtoLogin = components['schemas']['home-user.dto.login'];
-export type ApiSchemaHomeUserDtoLoginPartial = Partial<ApiSchemaHomeUserDtoLogin>;
-export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661 =
-  components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661'];
-export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661Partial =
-  Partial<ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661>;
-export type ApiSchemaCommerceSiteadminDtoOperatorContext =
-  components['schemas']['commerce-siteadmin.dto.operatorContext'];
-export type ApiSchemaCommerceSiteadminDtoOperatorContextPartial =
-  Partial<ApiSchemaCommerceSiteadminDtoOperatorContext>;
 export type ApiSchemaAMenuDtoMenus = components['schemas']['a-menu.dto.menus'];
 export type ApiSchemaAMenuDtoMenusPartial = Partial<ApiSchemaAMenuDtoMenus>;
 export type ApiSchemaAMenuDtoMenuItem = components['schemas']['a-menu.dto.menuItem'];

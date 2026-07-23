@@ -95,6 +95,278 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/commerce/member/address': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceMemberAddress_select'];
+    put?: never;
+    post: operations['CommerceMemberAddress_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/member/address/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceMemberAddress_view'];
+    put?: never;
+    post?: never;
+    delete: operations['CommerceMemberAddress_delete'];
+    options?: never;
+    head?: never;
+    patch: operations['CommerceMemberAddress_update'];
+    trace?: never;
+  };
+  '/api/home/user/passport/current': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['HomeUserPassport_current'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/home/user/passport/logout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['HomeUserPassport_logout'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/home/user/passport/register': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['HomeUserPassport_register'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/home/user/passport/login': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['HomeUserPassport_login'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/home/user/passport/login/{module}/{providerName}/{clientName?}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['HomeUserPassport_loginOauth'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/home/user/passport/associate/{module}/{providerName}/{clientName?}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['HomeUserPassport_associate'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/home/user/passport/migrate/{module}/{providerName}/{clientName?}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['HomeUserPassport_migrate'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/home/user/passport/refreshAuthToken': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['HomeUserPassport_refreshAuthToken'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/home/user/passport/createPassportJwtFromOauthCode': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['HomeUserPassport_createPassportJwtFromOauthCode'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/home/user/passport/createTempAuthToken': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['HomeUserPassport_createTempAuthToken'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/siteadmin/operator/context': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceSiteadminOperator_context'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/promotion/coupon/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommercePromotionCoupon_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/promotion/coupon/issue': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommercePromotionCoupon_issue'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/promotion/couponTemplate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommercePromotionCouponTemplate_select'];
+    put?: never;
+    post: operations['CommercePromotionCouponTemplate_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/promotion/couponTemplate/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommercePromotionCouponTemplate_view'];
+    put?: never;
+    post?: never;
+    delete: operations['CommercePromotionCouponTemplate_delete'];
+    options?: never;
+    head?: never;
+    patch: operations['CommercePromotionCouponTemplate_update'];
+    trace?: never;
+  };
   '/api/commerce/trade/cart': {
     parameters: {
       query?: never;
@@ -141,6 +413,22 @@ export interface paths {
     options?: never;
     head?: never;
     patch: operations['CommerceTradeCart_updateItem'];
+    trace?: never;
+  };
+  '/api/commerce/trade/checkout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeCheckout_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
     trace?: never;
   };
   '/api/commerce/trade/stockAudit': {
@@ -349,214 +637,6 @@ export interface paths {
     options?: never;
     head?: never;
     patch: operations['CommerceCatalogSku_update'];
-    trace?: never;
-  };
-  '/api/commerce/member/address': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['CommerceMemberAddress_select'];
-    put?: never;
-    post: operations['CommerceMemberAddress_create'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/commerce/member/address/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['CommerceMemberAddress_view'];
-    put?: never;
-    post?: never;
-    delete: operations['CommerceMemberAddress_delete'];
-    options?: never;
-    head?: never;
-    patch: operations['CommerceMemberAddress_update'];
-    trace?: never;
-  };
-  '/api/home/user/passport/current': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['HomeUserPassport_current'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/home/user/passport/logout': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['HomeUserPassport_logout'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/home/user/passport/register': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['HomeUserPassport_register'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/home/user/passport/login': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['HomeUserPassport_login'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/home/user/passport/login/{module}/{providerName}/{clientName?}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['HomeUserPassport_loginOauth'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/home/user/passport/associate/{module}/{providerName}/{clientName?}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['HomeUserPassport_associate'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/home/user/passport/migrate/{module}/{providerName}/{clientName?}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['HomeUserPassport_migrate'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/home/user/passport/refreshAuthToken': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['HomeUserPassport_refreshAuthToken'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/home/user/passport/createPassportJwtFromOauthCode': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['HomeUserPassport_createPassportJwtFromOauthCode'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/home/user/passport/createTempAuthToken': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['HomeUserPassport_createTempAuthToken'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/commerce/siteadmin/operator/context': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['CommerceSiteadminOperator_context'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
     trace?: never;
   };
   '/api/home/base/menu/{publicPath?}': {
@@ -1714,6 +1794,423 @@ export interface components {
       token?: unknown;
       payload?: unknown;
     };
+    'commerce-member.dto.addressCreate': {
+      /** @description Recipient Name */
+      recipientName: string;
+      /** @description Phone */
+      phone: string;
+      /** @description Country Code */
+      countryCode: string;
+      /** @description Region */
+      region: string;
+      /** @description City */
+      city: string;
+      /** @description Postal Code */
+      postalCode: string;
+      /** @description Address Line 1 */
+      addressLine1: string;
+      /** @description Address Line 2 */
+      addressLine2?: string | undefined;
+    };
+    'commerce-member.dto.addressSelectRes': {
+      list: components['schemas']['commerce-member.dto.addressSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'commerce-member.dto.addressSelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /** @description ID */
+      id: number | string;
+      /** @description Recipient Name */
+      recipientName: string;
+      /** @description Phone */
+      phone: string;
+      /** @description Country Code */
+      countryCode: string;
+      /** @description Region */
+      region: string;
+      /** @description City */
+      city: string;
+      /** @description Postal Code */
+      postalCode: string;
+      /** @description Address Line 1 */
+      addressLine1: string;
+      /** @description Address Line 2 */
+      addressLine2?: string | undefined;
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'commerce-member.dto.addressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+      | {
+          /**
+           * Format: date-time
+           * @description Created At
+           */
+          createdAt: Date;
+          /**
+           * Format: date-time
+           * @description Updated At
+           */
+          updatedAt: Date;
+          /** @description ID */
+          id: number | string;
+          /** @description Recipient Name */
+          recipientName: string;
+          /** @description Phone */
+          phone: string;
+          /** @description Country Code */
+          countryCode: string;
+          /** @description Region */
+          region: string;
+          /** @description City */
+          city: string;
+          /** @description Postal Code */
+          postalCode: string;
+          /** @description Address Line 1 */
+          addressLine1: string;
+          /** @description Address Line 2 */
+          addressLine2?: string | undefined;
+        }
+      | undefined;
+    'commerce-member.dto.addressUpdate': {
+      /** @description Recipient Name */
+      recipientName: string;
+      /** @description Phone */
+      phone: string;
+      /** @description Country Code */
+      countryCode: string;
+      /** @description Region */
+      region: string;
+      /** @description City */
+      city: string;
+      /** @description Postal Code */
+      postalCode: string;
+      /** @description Address Line 1 */
+      addressLine1: string;
+      /** @description Address Line 2 */
+      addressLine2?: string | undefined;
+    };
+    'home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          user: components['schemas']['home-user.entity.user'];
+          auth: components['schemas']['a-auth.dto.auth'];
+          roles: components['schemas']['home-user.entity.role'][];
+        }
+      | undefined;
+    'home-user.entity.user': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /**
+       * @description Instance ID
+       * @default 0
+       */
+      iid?: number;
+      /** @description ID */
+      id: number | string;
+      /** @description User Name */
+      name: string;
+      /** @description Avatar */
+      avatar?: string | undefined;
+      /** @description Email */
+      email?: string | undefined;
+      /** @description Mobile */
+      mobile?: string | undefined;
+      /**
+       * @description Activated
+       * @default false
+       */
+      activated?: boolean;
+      /** @description Language */
+      locale?: string | undefined;
+      /** @description Timezone */
+      tz?: string | undefined;
+    };
+    'a-auth.dto.auth': {
+      /** @description ID */
+      id: number | string;
+      profileId: string;
+      authProvider?: {
+        /** @description ID */
+        id: number;
+        providerName: string;
+        clientName: string;
+      };
+    };
+    'home-user.entity.role': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /**
+       * @description Instance ID
+       * @default 0
+       */
+      iid?: number;
+      /** @description ID */
+      id: number | string;
+      /** @description Role Name */
+      name: string;
+      /** @description Role Title */
+      title: string;
+      /** @description Role Locales */
+      locales?:
+        | {
+            [key: string]: string;
+          }
+        | undefined;
+      siteIds: string[];
+    };
+    'home-user.dto.passportJwt': {
+      passport: components['schemas']['home-user.dto.passport'];
+      jwt: components['schemas']['a-jwt.dto.jwtToken'];
+    };
+    'home-user.dto.passport': {
+      user: components['schemas']['home-user.entity.user'];
+      auth: components['schemas']['a-auth.dto.auth'];
+      roles: components['schemas']['home-user.entity.role'][];
+    };
+    'a-jwt.dto.jwtToken': {
+      accessToken: string;
+      refreshToken: string;
+      expiresIn: number;
+    };
+    'home-user.dto.register': {
+      username: string;
+      /** Format: email */
+      email: string;
+      password: string;
+      passwordConfirm: string;
+      captcha: components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9'];
+    };
+    'a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9': {
+      id: string;
+      token: string;
+    };
+    'home-user.dto.login': {
+      username: string;
+      password: string;
+      captcha: components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661'];
+    };
+    'a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661': {
+      id: string;
+      token: string;
+    };
+    'commerce-siteadmin.dto.operatorContext': {
+      instanceId: string;
+      instanceName: string;
+      userId: string;
+      userName: string;
+    };
+    'commerce-promotion.dto.couponMineItem': {
+      id: number | string;
+      couponCode: string;
+      templateName: string;
+      /** @enum {string} */
+      currency: 'USD';
+      discountCents: number;
+      minSpendCents: number;
+      /** Format: date-time */
+      validUntil: Date;
+    };
+    'commerce-promotion.dto.couponIssue': {
+      templateId: number | string;
+      userId: number | string;
+      correlationId: string;
+      reason: string;
+    };
+    'commerce-promotion.dto.couponTemplateCreate': {
+      name: string;
+      /** @enum {string} */
+      state: 'draft' | 'active';
+      /** @enum {string} */
+      currency: 'USD';
+      discountCents: number;
+      minSpendCents: number;
+      /** Format: date-time */
+      validFrom: Date;
+      /** Format: date-time */
+      validUntil: Date;
+      totalIssueLimit?: number | undefined;
+      totalUsageLimit?: number | undefined;
+      perCustomerIssueLimit?: number | undefined;
+      description?: string | undefined;
+    };
+    'commerce-promotion.dto.couponTemplateSelectRes': {
+      list: components['schemas']['commerce-promotion.dto.couponTemplateSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'commerce-promotion.dto.couponTemplateSelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /**
+       * @description Instance ID
+       * @default 0
+       */
+      iid?: number;
+      /** @description ID */
+      id: number | string;
+      /** @description Name */
+      name: string;
+      /**
+       * @description Template State
+       * @enum {string}
+       */
+      state: 'draft' | 'active' | 'disabled';
+      /**
+       * @description Currency
+       * @enum {string}
+       */
+      currency: 'USD';
+      /** @description Fixed Discount (Cents) */
+      discountCents: number;
+      /** @description Minimum Spend (Cents) */
+      minSpendCents: number;
+      /**
+       * Format: date-time
+       * @description Valid From
+       */
+      validFrom: Date;
+      /**
+       * Format: date-time
+       * @description Valid Until
+       */
+      validUntil: Date;
+      /** @description Total Issue Limit */
+      totalIssueLimit?: number | undefined;
+      /** @description Total Usage Limit */
+      totalUsageLimit?: number | undefined;
+      /** @description Per-customer Issue Limit */
+      perCustomerIssueLimit?: number | undefined;
+      /** @description Issued Count */
+      issuedCount: number;
+      /** @description Redeemed Count */
+      redeemedCount: number;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+      | {
+          /**
+           * Format: date-time
+           * @description Created At
+           */
+          createdAt: Date;
+          /**
+           * Format: date-time
+           * @description Updated At
+           */
+          updatedAt: Date;
+          /**
+           * @description Deleted
+           * @default false
+           */
+          deleted?: boolean;
+          /**
+           * @description Instance ID
+           * @default 0
+           */
+          iid?: number;
+          /** @description ID */
+          id: number | string;
+          /** @description Name */
+          name: string;
+          /**
+           * @description Template State
+           * @enum {string}
+           */
+          state: 'draft' | 'active' | 'disabled';
+          /**
+           * @description Currency
+           * @enum {string}
+           */
+          currency: 'USD';
+          /** @description Fixed Discount (Cents) */
+          discountCents: number;
+          /** @description Minimum Spend (Cents) */
+          minSpendCents: number;
+          /**
+           * Format: date-time
+           * @description Valid From
+           */
+          validFrom: Date;
+          /**
+           * Format: date-time
+           * @description Valid Until
+           */
+          validUntil: Date;
+          /** @description Total Issue Limit */
+          totalIssueLimit?: number | undefined;
+          /** @description Total Usage Limit */
+          totalUsageLimit?: number | undefined;
+          /** @description Per-customer Issue Limit */
+          perCustomerIssueLimit?: number | undefined;
+          /** @description Issued Count */
+          issuedCount: number;
+          /** @description Redeemed Count */
+          redeemedCount: number;
+          /** @description Description */
+          description?: string | undefined;
+        }
+      | undefined;
+    'commerce-promotion.dto.couponTemplateUpdate': {
+      name?: string | undefined;
+      /** @enum {string|null} */
+      state?: 'draft' | 'active' | 'disabled' | null | undefined;
+      description?: string | undefined;
+    };
     'commerce-trade.dto.cartView': {
       id?: number | string | undefined;
       items: components['schemas']['commerce-trade.dto.cartItem'][];
@@ -1739,6 +2236,24 @@ export interface components {
     'commerce-trade.dto.cartUpdateItem': {
       /** @description Quantity */
       quantity: number;
+    };
+    'commerce-trade.dto.checkoutResult': {
+      orderId: number | string;
+      paymentAttemptId: number | string;
+      /** @enum {string} */
+      state: 'awaiting_payment';
+      /** @enum {string} */
+      paymentAttemptState: 'created';
+      /** @enum {string} */
+      currency: 'USD';
+      payableTotalCents: number;
+      /** Format: date-time */
+      reservationExpiresAt: Date;
+    };
+    'commerce-trade.dto.checkoutCreate': {
+      addressId: number | string;
+      couponGrantId?: number | string | undefined;
+      correlationId: string;
     };
     'commerce-trade.dto.stockAuditSelectRes': {
       list: components['schemas']['commerce-trade.dto.stockAuditSelectResItem'][];
@@ -1776,6 +2291,8 @@ export interface components {
       skuId: number | string;
       /** @description Stock Reservation ID */
       stockReservationId?: number | string | undefined;
+      /** @description Actor ID */
+      actorId?: number | string | undefined;
       /**
        * @description Stock Operation
        * @enum {string}
@@ -1787,6 +2304,12 @@ export interface components {
       reason: string;
       /** @description Correlation ID */
       correlationId: string;
+      /** @description Prior On Hand */
+      priorOnHand: number;
+      /** @description Prior Reserved */
+      priorReserved: number;
+      /** @description Prior Available */
+      priorAvailable: number;
       /** @description On Hand */
       onHand: number;
       /** @description Reserved */
@@ -1826,6 +2349,8 @@ export interface components {
           skuId: number | string;
           /** @description Stock Reservation ID */
           stockReservationId?: number | string | undefined;
+          /** @description Actor ID */
+          actorId?: number | string | undefined;
           /**
            * @description Stock Operation
            * @enum {string}
@@ -1837,6 +2362,12 @@ export interface components {
           reason: string;
           /** @description Correlation ID */
           correlationId: string;
+          /** @description Prior On Hand */
+          priorOnHand: number;
+          /** @description Prior Reserved */
+          priorReserved: number;
+          /** @description Prior Available */
+          priorAvailable: number;
           /** @description On Hand */
           onHand: number;
           /** @description Reserved */
@@ -2235,11 +2766,22 @@ export interface components {
       /** @description Price (cents) */
       priceCents: number;
       /**
+       * @description SKU attributes
+       * @default []
+       */
+      attributes?: components['schemas']['commerce-catalog.dto.skuAttribute'][];
+      /**
        * @description SKU lifecycle
        * @default draft
        * @enum {string}
        */
       lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
+    };
+    'commerce-catalog.dto.skuAttribute': {
+      /** @description SKU attribute name */
+      name: string;
+      /** @description SKU attribute value */
+      value: string;
     };
     'commerce-catalog.dto.skuSelectRes': {
       list: components['schemas']['commerce-catalog.dto.skuSelectResItem'][];
@@ -2277,6 +2819,11 @@ export interface components {
       productId: number | string;
       /** @description Price (cents) */
       priceCents: number;
+      /**
+       * @description SKU attributes
+       * @default []
+       */
+      attributes?: components['schemas']['commerce-catalog.dto.skuAttribute'][];
       /**
        * @description SKU lifecycle
        * @default draft
@@ -2317,6 +2864,11 @@ export interface components {
           /** @description Price (cents) */
           priceCents: number;
           /**
+           * @description SKU attributes
+           * @default []
+           */
+          attributes?: components['schemas']['commerce-catalog.dto.skuAttribute'][];
+          /**
            * @description SKU lifecycle
            * @default draft
            * @enum {string}
@@ -2332,253 +2884,16 @@ export interface components {
       /** @description Price (cents) */
       priceCents: number;
       /**
+       * @description SKU attributes
+       * @default []
+       */
+      attributes?: components['schemas']['commerce-catalog.dto.skuAttribute'][];
+      /**
        * @description SKU lifecycle
        * @default draft
        * @enum {string}
        */
       lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
-    };
-    'commerce-member.dto.addressCreate': {
-      /** @description Recipient Name */
-      recipientName: string;
-      /** @description Phone */
-      phone: string;
-      /** @description Country Code */
-      countryCode: string;
-      /** @description Region */
-      region: string;
-      /** @description City */
-      city: string;
-      /** @description Postal Code */
-      postalCode: string;
-      /** @description Address Line 1 */
-      addressLine1: string;
-      /** @description Address Line 2 */
-      addressLine2?: string | undefined;
-    };
-    'commerce-member.dto.addressSelectRes': {
-      list: components['schemas']['commerce-member.dto.addressSelectResItem'][];
-      total: string;
-      pageCount: number;
-      pageSize: number;
-      pageNo: number;
-    };
-    'commerce-member.dto.addressSelectResItem': {
-      /**
-       * Format: date-time
-       * @description Created At
-       */
-      createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
-      /** @description ID */
-      id: number | string;
-      /** @description Recipient Name */
-      recipientName: string;
-      /** @description Phone */
-      phone: string;
-      /** @description Country Code */
-      countryCode: string;
-      /** @description Region */
-      region: string;
-      /** @description City */
-      city: string;
-      /** @description Postal Code */
-      postalCode: string;
-      /** @description Address Line 1 */
-      addressLine1: string;
-      /** @description Address Line 2 */
-      addressLine2?: string | undefined;
-      /** @description Operations */
-      _operationsRow?: unknown;
-    };
-    'commerce-member.dto.addressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
-      | {
-          /**
-           * Format: date-time
-           * @description Created At
-           */
-          createdAt: Date;
-          /**
-           * Format: date-time
-           * @description Updated At
-           */
-          updatedAt: Date;
-          /** @description ID */
-          id: number | string;
-          /** @description Recipient Name */
-          recipientName: string;
-          /** @description Phone */
-          phone: string;
-          /** @description Country Code */
-          countryCode: string;
-          /** @description Region */
-          region: string;
-          /** @description City */
-          city: string;
-          /** @description Postal Code */
-          postalCode: string;
-          /** @description Address Line 1 */
-          addressLine1: string;
-          /** @description Address Line 2 */
-          addressLine2?: string | undefined;
-        }
-      | undefined;
-    'commerce-member.dto.addressUpdate': {
-      /** @description Recipient Name */
-      recipientName: string;
-      /** @description Phone */
-      phone: string;
-      /** @description Country Code */
-      countryCode: string;
-      /** @description Region */
-      region: string;
-      /** @description City */
-      city: string;
-      /** @description Postal Code */
-      postalCode: string;
-      /** @description Address Line 1 */
-      addressLine1: string;
-      /** @description Address Line 2 */
-      addressLine2?: string | undefined;
-    };
-    'home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
-      | {
-          user: components['schemas']['home-user.entity.user'];
-          auth: components['schemas']['a-auth.dto.auth'];
-          roles: components['schemas']['home-user.entity.role'][];
-        }
-      | undefined;
-    'home-user.entity.user': {
-      /**
-       * Format: date-time
-       * @description Created At
-       */
-      createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
-      /**
-       * @description Deleted
-       * @default false
-       */
-      deleted?: boolean;
-      /**
-       * @description Instance ID
-       * @default 0
-       */
-      iid?: number;
-      /** @description ID */
-      id: number | string;
-      /** @description User Name */
-      name: string;
-      /** @description Avatar */
-      avatar?: string | undefined;
-      /** @description Email */
-      email?: string | undefined;
-      /** @description Mobile */
-      mobile?: string | undefined;
-      /**
-       * @description Activated
-       * @default false
-       */
-      activated?: boolean;
-      /** @description Language */
-      locale?: string | undefined;
-      /** @description Timezone */
-      tz?: string | undefined;
-    };
-    'a-auth.dto.auth': {
-      /** @description ID */
-      id: number | string;
-      profileId: string;
-      authProvider?: {
-        /** @description ID */
-        id: number;
-        providerName: string;
-        clientName: string;
-      };
-    };
-    'home-user.entity.role': {
-      /**
-       * Format: date-time
-       * @description Created At
-       */
-      createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
-      /**
-       * @description Deleted
-       * @default false
-       */
-      deleted?: boolean;
-      /**
-       * @description Instance ID
-       * @default 0
-       */
-      iid?: number;
-      /** @description ID */
-      id: number | string;
-      /** @description Role Name */
-      name: string;
-      /** @description Role Title */
-      title: string;
-      /** @description Role Locales */
-      locales?:
-        | {
-            [key: string]: string;
-          }
-        | undefined;
-      siteIds: string[];
-    };
-    'home-user.dto.passportJwt': {
-      passport: components['schemas']['home-user.dto.passport'];
-      jwt: components['schemas']['a-jwt.dto.jwtToken'];
-    };
-    'home-user.dto.passport': {
-      user: components['schemas']['home-user.entity.user'];
-      auth: components['schemas']['a-auth.dto.auth'];
-      roles: components['schemas']['home-user.entity.role'][];
-    };
-    'a-jwt.dto.jwtToken': {
-      accessToken: string;
-      refreshToken: string;
-      expiresIn: number;
-    };
-    'home-user.dto.register': {
-      username: string;
-      /** Format: email */
-      email: string;
-      password: string;
-      passwordConfirm: string;
-      captcha: components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9'];
-    };
-    'a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9': {
-      id: string;
-      token: string;
-    };
-    'home-user.dto.login': {
-      username: string;
-      password: string;
-      captcha: components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661'];
-    };
-    'a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661': {
-      id: string;
-      token: string;
-    };
-    'commerce-siteadmin.dto.operatorContext': {
-      instanceId: string;
-      instanceName: string;
-      userId: string;
-      userName: string;
     };
     'a-menu.dto.menus': {
       menus?: components['schemas']['a-menu.dto.menuItem'][] | undefined;
@@ -4159,6 +4474,649 @@ export interface operations {
       };
     };
   };
+  CommerceMemberAddress_select: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        recipientName?: string | undefined;
+        phone?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-member.dto.addressSelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-member.dto.addressCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-member.dto.addressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-member.dto.addressUpdate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  HomeUserPassport_current: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+  };
+  HomeUserPassport_logout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  HomeUserPassport_register: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['home-user.dto.register'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['home-user.dto.passportJwt'];
+          };
+        };
+      };
+    };
+  };
+  HomeUserPassport_login: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['home-user.dto.login'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['home-user.dto.passportJwt'];
+          };
+        };
+      };
+    };
+  };
+  HomeUserPassport_loginOauth: {
+    parameters: {
+      query?: {
+        redirect?: string | undefined;
+      };
+      header?: never;
+      path: {
+        module: string;
+        providerName: string;
+        clientName: ((string | undefined) | undefined) | undefined;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+  };
+  HomeUserPassport_associate: {
+    parameters: {
+      query?: {
+        redirect?: string | undefined;
+      };
+      header?: never;
+      path: {
+        module: string;
+        providerName: string;
+        clientName: ((string | undefined) | undefined) | undefined;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['home-user.dto.passportJwt'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  HomeUserPassport_migrate: {
+    parameters: {
+      query?: {
+        redirect?: string | undefined;
+      };
+      header?: never;
+      path: {
+        module: string;
+        providerName: string;
+        clientName: ((string | undefined) | undefined) | undefined;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['home-user.dto.passportJwt'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  HomeUserPassport_refreshAuthToken: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          refreshToken: string;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-jwt.dto.jwtToken'];
+          };
+        };
+      };
+    };
+  };
+  HomeUserPassport_createPassportJwtFromOauthCode: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          code: string;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['home-user.dto.passportJwt'];
+          };
+        };
+      };
+    };
+  };
+  HomeUserPassport_createTempAuthToken: {
+    parameters: {
+      query?: {
+        path?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceSiteadminOperator_context: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-siteadmin.dto.operatorContext'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommercePromotionCoupon_mine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-promotion.dto.couponMineItem'][];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommercePromotionCoupon_issue: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-promotion.dto.couponIssue'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommercePromotionCouponTemplate_select: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        name?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-promotion.dto.couponTemplateSelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommercePromotionCouponTemplate_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-promotion.dto.couponTemplateCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommercePromotionCouponTemplate_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommercePromotionCouponTemplate_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommercePromotionCouponTemplate_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-promotion.dto.couponTemplateUpdate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   CommerceTradeCart_current: {
     parameters: {
       query?: never;
@@ -4285,6 +5243,34 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['commerce-trade.dto.cartView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeCheckout_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.checkoutCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.checkoutResult'];
           };
         };
       };
@@ -4928,451 +5914,6 @@ export interface operations {
             code: string;
             message: string;
             data: undefined;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  CommerceMemberAddress_select: {
-    parameters: {
-      query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
-        createdAt?: string | undefined;
-        recipientName?: string | undefined;
-        phone?: string | undefined;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['commerce-member.dto.addressSelectRes'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  CommerceMemberAddress_create: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['commerce-member.dto.addressCreate'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: number | string;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  CommerceMemberAddress_view: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: components['schemas']['commerce-member.dto.addressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  CommerceMemberAddress_delete: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: undefined;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  CommerceMemberAddress_update: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['commerce-member.dto.addressUpdate'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: undefined;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  HomeUserPassport_current: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: components['schemas']['home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
-          };
-        };
-      };
-    };
-  };
-  HomeUserPassport_logout: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  HomeUserPassport_register: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['home-user.dto.register'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['home-user.dto.passportJwt'];
-          };
-        };
-      };
-    };
-  };
-  HomeUserPassport_login: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['home-user.dto.login'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['home-user.dto.passportJwt'];
-          };
-        };
-      };
-    };
-  };
-  HomeUserPassport_loginOauth: {
-    parameters: {
-      query?: {
-        redirect?: string | undefined;
-      };
-      header?: never;
-      path: {
-        module: string;
-        providerName: string;
-        clientName: ((string | undefined) | undefined) | undefined;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-  };
-  HomeUserPassport_associate: {
-    parameters: {
-      query?: {
-        redirect?: string | undefined;
-      };
-      header?: never;
-      path: {
-        module: string;
-        providerName: string;
-        clientName: ((string | undefined) | undefined) | undefined;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['home-user.dto.passportJwt'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  HomeUserPassport_migrate: {
-    parameters: {
-      query?: {
-        redirect?: string | undefined;
-      };
-      header?: never;
-      path: {
-        module: string;
-        providerName: string;
-        clientName: ((string | undefined) | undefined) | undefined;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['home-user.dto.passportJwt'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  HomeUserPassport_refreshAuthToken: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': {
-          refreshToken: string;
-        };
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['a-jwt.dto.jwtToken'];
-          };
-        };
-      };
-    };
-  };
-  HomeUserPassport_createPassportJwtFromOauthCode: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': {
-          code: string;
-        };
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['home-user.dto.passportJwt'];
-          };
-        };
-      };
-    };
-  };
-  HomeUserPassport_createTempAuthToken: {
-    parameters: {
-      query?: {
-        path?: string | undefined;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: string;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  CommerceSiteadminOperator_context: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['commerce-siteadmin.dto.operatorContext'];
           };
         };
       };

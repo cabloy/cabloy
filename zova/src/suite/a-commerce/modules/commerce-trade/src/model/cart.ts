@@ -6,6 +6,7 @@ import type {
   ApiApiCommerceTradeCartaddItemRequestBody,
   ApiApiCommerceTradeCartupdateItemRequestBody,
 } from '../api/commerceTradeCart.js';
+import type { ApiApiCommerceTradeCheckoutcreateRequestBody } from '../api/commerceTradeCheckout.js';
 
 export interface IModelOptionsCart extends IDecoratorModelOptions {}
 
@@ -57,6 +58,18 @@ export class ModelCart extends BeanModelBase {
       mutationKey: ['deleteItem'],
       mutationFn: async (id: string) => {
         return await this.scope.api.commerceTradeCart.deleteItem({ params: { id } });
+      },
+      onSuccess: async () => {
+        await this.$invalidateQueries({ queryKey: ['current'] });
+      },
+    });
+  }
+
+  checkout() {
+    return this.$useMutationData({
+      mutationKey: ['checkout'],
+      mutationFn: async (body: ApiApiCommerceTradeCheckoutcreateRequestBody) => {
+        return await this.scope.api.commerceTradeCheckout.create(body);
       },
       onSuccess: async () => {
         await this.$invalidateQueries({ queryKey: ['current'] });
