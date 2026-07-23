@@ -34,6 +34,18 @@ jobs:
           version: 11.5.2
       - name: init
         run: npm run init
+      - name: run Commerce lifecycle gate
+        run: >-
+          DATABASE_DEFAULT_CLIENT=mysql DATABASE_CLIENT_MYSQL_HOST=127.0.0.1 DATABASE_CLIENT_MYSQL_PASSWORD=root npm run vona :bin:test --
+          commerce-trade/test/stockBalance.test.ts
+          commerce-trade/test/stockReservation.test.ts
+          commerce-trade/test/stockAudit.test.ts
+          commerce-promotion/test/couponReservation.test.ts
+          commerce-payment/test/paymentAttempt.test.ts
+          commerce-trade/test/checkoutReservation.test.ts
+          commerce-trade/test/reservationExpiry.test.ts
+          --flavor=normal
+        working-directory: vona
       - run: DATABASE_DEFAULT_CLIENT=mysql DATABASE_CLIENT_MYSQL_HOST=127.0.0.1 DATABASE_CLIENT_MYSQL_PASSWORD=root npm run test
         working-directory: vona
       - run: DATABASE_DEFAULT_CLIENT=mysql DATABASE_CLIENT_MYSQL_HOST=127.0.0.1 DATABASE_CLIENT_MYSQL_PASSWORD=root npm run build -- --flavor=ci
