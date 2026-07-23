@@ -3,8 +3,10 @@ import type { DtoStockAdjust, EntityStockBalance } from 'vona-module-commerce-tr
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
-import { describe, it } from 'node:test';
+import { after, before, describe, it } from 'node:test';
 import { app } from 'vona-mock';
+
+import { acquireTestLock } from './testLock.ts';
 
 const actionPath = '/commerce/trade/stockBalance/adjustStock';
 
@@ -80,6 +82,16 @@ async function adjustStock(stockAdjust: DtoStockAdjust): Promise<EntityStockBala
 }
 
 describe('stockBalance.test.ts', { concurrency: false }, () => {
+  let releaseTestLock: (() => void) | undefined;
+
+  before(async () => {
+    releaseTestLock = await acquireTestLock();
+  });
+
+  after(() => {
+    releaseTestLock?.();
+  });
+
   it('action:stockBalance:adjustStock appends an audit with server-scoped balance', async () => {
     await app.bean.executor.mockCtx(async () => {
       let fixture: IStockFixture | undefined;
@@ -103,6 +115,7 @@ describe('stockBalance.test.ts', { concurrency: false }, () => {
 
         const audits = await app.scope('commerce-trade').model.stockAudit.select({
           where: { skuId: fixture.skuId },
+          orders: [['id', 'asc']],
         });
         assert.equal(audits.length, 2);
         assert.deepEqual(
@@ -141,6 +154,7 @@ describe('stockBalance.test.ts', { concurrency: false }, () => {
         const [_, err] = await catchError(() =>
           adjustStock(stockAdjust(fixture.skuId, -3, `${fixture.skuId}-reject`)),
         );
+        assert.equal(err?.code, 409);
         assert.match(err?.message ?? '', /negative/);
 
         const unchanged = await app.scope('commerce-trade').model.stockBalance.getById(balance.id);

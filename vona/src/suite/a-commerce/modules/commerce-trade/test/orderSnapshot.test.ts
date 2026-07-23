@@ -1,7 +1,10 @@
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
-import { describe, it } from 'node:test';
+import { randomUUID } from 'node:crypto';
+import { after, before, describe, it } from 'node:test';
 import { app } from 'vona-mock';
+
+import { acquireTestLock } from './testLock.ts';
 
 interface IFixture {
   categoryId?: number;
@@ -11,6 +14,7 @@ interface IFixture {
   orderId?: number;
   couponTemplateId?: number;
   couponGrantId?: number;
+  userId?: number;
 }
 
 async function cleanup(fixture: IFixture) {
@@ -44,13 +48,27 @@ async function cleanup(fixture: IFixture) {
   if (fixture.categoryId !== undefined)
     await catalog.model.category.delete({ id: fixture.categoryId });
   if (fixture.addressId !== undefined) await member.model.address.delete({ id: fixture.addressId });
+  if (fixture.userId !== undefined) {
+    await app.scope('home-user').model.roleUser.delete({ userId: fixture.userId });
+    await app.bean.user.removeById(fixture.userId);
+  }
 }
 
 describe('orderSnapshot.test.ts', { concurrency: false }, () => {
+  let releaseTestLock: (() => void) | undefined;
+
+  before(async () => {
+    releaseTestLock = await acquireTestLock();
+  });
+
+  after(() => {
+    releaseTestLock?.();
+  });
+
   it('persists catalog and address facts independently from later source changes', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixture: IFixture = {};
-      const suffix = `${Date.now()}`;
+      const suffix = randomUUID().slice(0, 12);
       try {
         await app.bean.passport.signinMock();
         fixture.categoryId = await app.bean.executor.performAction(
@@ -87,7 +105,14 @@ describe('orderSnapshot.test.ts', { concurrency: false }, () => {
           correlationId: `snapshot-stock-${suffix}`,
         });
         await app.bean.passport.signout();
-        await app.bean.passport.signinMock();
+
+        const customerName = `snapshot-customer-${suffix}`;
+        const customer = await app.bean.user.register({ name: customerName }, true);
+        fixture.userId = customer.id as number;
+        await app.bean.passport.signinMock(customerName as any);
+        const customerId = app.bean.passport.currentUser!.id;
+        assert.equal(String(customerId), String(fixture.userId));
+
         fixture.couponTemplateId = (
           await app.scope('commerce-promotion').model.couponTemplate.insert({
             name: `snapshot coupon ${suffix}`,
@@ -101,7 +126,6 @@ describe('orderSnapshot.test.ts', { concurrency: false }, () => {
             redeemedCount: 0,
           })
         ).id as number;
-        const customerId = app.bean.passport.currentUser!.id;
         fixture.couponGrantId = (
           await app.scope('commerce-promotion').service.coupon.issue({
             templateId: fixture.couponTemplateId,

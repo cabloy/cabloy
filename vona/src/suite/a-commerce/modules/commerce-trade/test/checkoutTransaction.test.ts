@@ -1,10 +1,12 @@
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
-import { describe, it } from 'node:test';
+import { after, before, describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
 import type { CheckoutFailureStage } from '../src/service/order.ts';
+
+import { acquireTestLock } from './testLock.ts';
 
 interface IFixture {
   categoryId: number;
@@ -149,6 +151,16 @@ async function assertRollback(fixture: IFixture) {
 }
 
 describe('checkoutTransaction.test.ts', { concurrency: false, sequential: true }, () => {
+  let releaseTestLock: (() => void) | undefined;
+
+  before(async () => {
+    releaseTestLock = await acquireTestLock();
+  });
+
+  after(() => {
+    releaseTestLock?.();
+  });
+
   for (const stage of [
     'afterOrderSnapshot',
     'afterCouponReservation',

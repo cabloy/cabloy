@@ -10,6 +10,16 @@ import type { DtoCartUpdateItem } from '../dto/cartUpdateItem.tsx';
 import type { DtoCartView } from '../dto/cartView.tsx';
 import type { EntityCart } from '../entity/cart.tsx';
 
+const serializationRetryOptions = {
+  retries: 1,
+  factor: 1,
+  minTimeout: 0,
+  maxTimeout: 0,
+  randomize: false,
+  errorCodes: ['40001', 'ER_LOCK_DEADLOCK', 'ER_LOCK_WAIT_TIMEOUT'],
+  ownerOnly: true,
+};
+
 @Service()
 export class ServiceCart extends BeanBase {
   async current(): Promise<DtoCartView> {
@@ -18,6 +28,7 @@ export class ServiceCart extends BeanBase {
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async addItem(command: DtoCartAddItem): Promise<DtoCartView> {
     await this._assertSellableSku(command.skuId, command.quantity);
     const cart = await this._getOrCreateCurrentCart();
@@ -40,6 +51,7 @@ export class ServiceCart extends BeanBase {
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async updateItem(id: TableIdentity, command: DtoCartUpdateItem): Promise<DtoCartView> {
     const cart = await this._getCurrentCartForUpdate();
     if (!cart) return { items: [] };
@@ -51,6 +63,7 @@ export class ServiceCart extends BeanBase {
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async deleteItem(id: TableIdentity): Promise<DtoCartView> {
     const cart = await this._getCurrentCartForUpdate();
     if (!cart) return { items: [] };
@@ -60,6 +73,7 @@ export class ServiceCart extends BeanBase {
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async clear(): Promise<DtoCartView> {
     const cart = await this._getCurrentCartForUpdate();
     if (!cart) return { items: [] };

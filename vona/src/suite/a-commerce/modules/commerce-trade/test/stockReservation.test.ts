@@ -3,8 +3,10 @@ import type { EntityStockReservation } from 'vona-module-commerce-trade';
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
-import { describe, it } from 'node:test';
+import { after, before, describe, it } from 'node:test';
 import { app } from 'vona-mock';
+
+import { acquireTestLock } from './testLock.ts';
 
 interface IStockFixture {
   categoryId: number;
@@ -95,7 +97,10 @@ async function assertReservationRejected(skuId: number, suffix: string, expected
   const balance = await app.scope('commerce-trade').model.stockBalance.get({ skuId });
   assert.deepEqual([balance?.onHand, balance?.reserved, balance?.available], [3, 0, 3]);
   assert.equal(await app.scope('commerce-trade').model.stockReservation.get({ skuId }), undefined);
-  const audits = await app.scope('commerce-trade').model.stockAudit.select({ where: { skuId } });
+  const audits = await app.scope('commerce-trade').model.stockAudit.select({
+    where: { skuId },
+    orders: [['id', 'asc']],
+  });
   assert.deepEqual(
     audits.map(audit => audit.operation),
     ['adjust'],
@@ -103,6 +108,16 @@ async function assertReservationRejected(skuId: number, suffix: string, expected
 }
 
 describe('stockReservation.test.ts', { concurrency: false }, () => {
+  let releaseTestLock: (() => void) | undefined;
+
+  before(async () => {
+    releaseTestLock = await acquireTestLock();
+  });
+
+  after(() => {
+    releaseTestLock?.();
+  });
+
   it('reserves and consumes stock exactly once with traceable audits', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixtures: IStockFixturePartial[] = [];
@@ -149,6 +164,7 @@ describe('stockReservation.test.ts', { concurrency: false }, () => {
         );
         const audits = await app.scope('commerce-trade').model.stockAudit.select({
           where: { skuId: fixture.skuId },
+          orders: [['id', 'asc']],
         });
         assert.deepEqual(
           audits.map(audit => audit.operation),
@@ -240,6 +256,7 @@ describe('stockReservation.test.ts', { concurrency: false }, () => {
         assert.deepEqual([balance?.onHand, balance?.reserved, balance?.available], [3, 0, 3]);
         const audits = await app.scope('commerce-trade').model.stockAudit.select({
           where: { skuId: fixture.skuId },
+          orders: [['id', 'asc']],
         });
         assert.equal(audits.length, 6);
         assert.deepEqual(
@@ -368,6 +385,7 @@ describe('stockReservation.test.ts', { concurrency: false }, () => {
         });
         const audits = await app.scope('commerce-trade').model.stockAudit.select({
           where: { skuId: fixture.skuId },
+          orders: [['id', 'asc']],
         });
         assert.equal(reservations.length, 1);
         assert.deepEqual(

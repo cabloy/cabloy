@@ -66,7 +66,7 @@ export class ServiceStockBalance extends BeanBase {
     };
     if (!stockBalance) {
       if (stockAdjust.delta < 0) {
-        throw new Error('stock adjustment would make balance negative');
+        this.app.throw(409, 'stock adjustment would make balance negative');
       }
       stockBalance = await this.scope.model.stockBalance.insert({
         skuId: stockAdjust.skuId,
@@ -79,7 +79,7 @@ export class ServiceStockBalance extends BeanBase {
       const reserved = stockBalance.reserved;
       const available = onHand - reserved;
       if (onHand < 0 || reserved < 0 || available < 0) {
-        throw new Error('stock adjustment would make balance negative');
+        this.app.throw(409, 'stock adjustment would make balance negative');
       }
       await this.scope.model.stockBalance.updateById(stockBalance.id, {
         onHand,

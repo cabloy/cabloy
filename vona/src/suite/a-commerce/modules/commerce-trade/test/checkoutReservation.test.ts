@@ -1,7 +1,9 @@
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
-import { describe, it } from 'node:test';
+import { after, before, describe, it } from 'node:test';
 import { app } from 'vona-mock';
+
+import { acquireTestLock } from './testLock.ts';
 
 interface IFixture {
   categoryId?: number;
@@ -48,6 +50,16 @@ async function cleanup(fixture: IFixture) {
 }
 
 describe('checkoutReservation.test.ts', { concurrency: false }, () => {
+  let releaseTestLock: (() => void) | undefined;
+
+  before(async () => {
+    releaseTestLock = await acquireTestLock();
+  });
+
+  after(() => {
+    releaseTestLock?.();
+  });
+
   it('creates an atomic checkout from the persisted cart and replays its correlation', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixture: IFixture = {};
