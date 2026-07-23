@@ -29,6 +29,32 @@ await this.scope.model.post.delete({ id: 1 });
 
 These operations are the clearest fit when the caller already knows the exact write intent.
 
+## Field presence in insert and update
+
+For normal writable fields, insert and update intentionally interpret field presence differently:
+
+| Field state                | `insert`                                           | `update`                         |
+| -------------------------- | -------------------------------------------------- | -------------------------------- |
+| Field is absent            | Leave the column to normal insert/default behavior | Leave the stored value unchanged |
+| Own field with `undefined` | Leave the column to normal insert/default behavior | Write SQL `NULL`                 |
+| `null`                     | Write SQL `NULL`                                   | Write SQL `NULL`                 |
+
+An own `undefined` means the property exists on the JavaScript object but its value is `undefined`, such as `{ title: undefined }`. This lets an update distinguish an omitted field from an intentional clear:
+
+```typescript
+await this.scope.model.post.update({
+  id,
+  title: undefined, // write SQL NULL
+  // stars is absent, so its stored value is unchanged
+});
+```
+
+### JSON columns
+
+JSON columns follow the same field-presence rules. Non-null values are persisted as JSON. An explicit `null` writes SQL `NULL`, not a JSON literal `null`. On update, an own `undefined` also clears the column to SQL `NULL`.
+
+A JSON request body normally omits object properties whose value is `undefined`. This distinction therefore most often applies to in-process TypeScript model calls or server-side payload construction.
+
 ## Conditional update and delete paths
 
 Write operations do not have to target one row only by primary key.
@@ -56,7 +82,7 @@ await this.scope.model.post.delete({
 });
 ```
 
-That matters because the mutation layer still participates in the same structured query language used by select operations.
+That matters because the mutation layer still participates in the same structured query language used by select operations. In `options.where`, an absent field, an own `undefined`, and `Op.omit` all omit that condition; `null` requests SQL `IS NULL`. See [ORM Select Guide](/backend/orm-select-guide#absent-undefined-and-null-in-where) for the detailed query contract.
 
 ## Bulk mutation operations
 
@@ -87,9 +113,12 @@ Instead of forcing callers to choose insert/update/delete up front, Vona can inf
 
 Representative logic:
 
-- no `id` → insert
-- `id` present → update
-- `id` present and `deleted: true` → delete
+- `id` absent, `undefined`, or `null` → insert
+- non-nullish `id` → update
+- non-nullish `id` and `deleted: true` → delete
+- `deleted: true` without a non-nullish `id` → ignore the item because no deletion target exists
+
+A non-nullish identity is neither `null` nor `undefined`. `mutate` chooses by that usable identity value, not merely by whether the `id` key exists.
 
 Representative pattern:
 
@@ -182,13 +211,10 @@ The important rule is:
 
 There is also a useful argument-handling rule to remember:
 
-- default `eq` magic methods such as `getByName()` or `selectByName()` treat an omitted argument as `null`
-- non-`eq` magic methods such as `getByNameEqI()` require an explicit value and throw if the argument is omitted
+- default `eq` magic methods such as `getByName()` or `selectByName()` treat an omitted or `undefined` argument as `null`
+- non-`eq` magic methods such as `getByNameEqI()` require a concrete value and throw when the argument is omitted or `undefined`
 
-This aligns magic-method behavior with the current ORM `where` semantics:
-
-- `Op.omit` means omit a condition explicitly
-- `null` means SQL `IS NULL`
+This is argument adaptation performed by the convenience method. It differs from a direct structured `where` object, where `{ name: undefined }` omits the condition. Use `Op.omit` to make direct condition omission explicit, and use `null` to request SQL `IS NULL`.
 
 That means mutation should stay conceptually grounded in the standard model methods even when convenience wrappers are present.
 

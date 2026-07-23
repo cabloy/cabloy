@@ -122,29 +122,34 @@ A practical operator-family reading is:
 - composition/subquery: `_and_`, `_or_`, `_not_`, `_exists_`, `_notExists_`
 - identifier helper: `_ref_`
 
-### Omitting a condition with `Op.omit`
+### Absent, `undefined`, and `null` in `where`
 
-Use `Op.omit` when you want to express omission explicitly at the call site. `Op.omit` is defined as `undefined`, but using the named constant makes the business meaning of the query object clearer.
+A direct `where` object distinguishes omitted conditions from SQL `NULL` checks:
+
+| Field value                | Meaning                           |
+| -------------------------- | --------------------------------- |
+| Field is absent            | Do not add a condition            |
+| Own field with `undefined` | Do not add a condition            |
+| `Op.omit`                  | Explicitly do not add a condition |
+| `null`                     | Match SQL `NULL` with `IS NULL`   |
+
+An own `undefined` means the property exists on the JavaScript object but its value is `undefined`, such as `{ title: undefined }`. It has the same query result as an absent field, while `Op.omit` is the readable way to make that omission intentional in a dynamically composed query.
 
 Representative pattern:
 
 ```typescript
 import { Op } from 'vona-module-a-orm';
 
-const where = {
-  title: { _includes_: 'ai' },
-  stars: { _gt_: 20 },
-};
-
 await this.scope.model.post.select({
   where: {
-    ...where,
-    stars: Op.omit,
+    title: undefined, // omitted
+    stars: Op.omit, // explicitly omitted
+    publishedAt: null, // SQL IS NULL
   },
 });
 ```
 
-This lets a query builder remove one condition cleanly without rebuilding the whole `where` object by hand, while `null` remains available for SQL `IS NULL` semantics.
+The same direct-`where` rule applies to filters used by mutation, aggregate, and group operations.
 
 That distinction also matters at the request-contract layer: omitting a nullable filter and passing a real `null` are different operations. When a query DTO needs `IS NULL` behavior from frontend query params, the parsing contract must explicitly preserve `null` instead of collapsing it to omission.
 
