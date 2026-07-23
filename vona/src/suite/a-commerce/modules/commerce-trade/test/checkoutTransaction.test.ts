@@ -121,6 +121,8 @@ async function cleanup(fixture: IFixture) {
   await catalog.model.product.delete({ id: fixture.productId });
   await catalog.model.category.delete({ id: fixture.categoryId });
   await member.model.address.delete({ id: fixture.addressId });
+  await app.scope('home-user').model.roleUser.delete({ userId: fixture.userId });
+  await app.bean.user.removeById(fixture.userId);
 }
 
 async function assertRollback(fixture: IFixture) {
@@ -158,7 +160,9 @@ describe('checkoutTransaction.test.ts', { concurrency: false, sequential: true }
     it(`rolls back every checkout write when ${stage} fails`, async () => {
       await app.bean.executor.mockCtx(async () => {
         const suffix = randomUUID().slice(0, 12);
-        await app.bean.passport.signinMock();
+        const customerName = `checkout-txn-customer-${suffix}`;
+        await app.bean.user.register({ name: customerName }, true);
+        await app.bean.passport.signinMock(customerName as any);
         let fixture: IFixture | undefined;
         try {
           fixture = await createFixture(suffix);

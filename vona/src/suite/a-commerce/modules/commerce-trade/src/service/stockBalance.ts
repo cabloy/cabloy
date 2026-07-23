@@ -34,7 +34,7 @@ const serializationRetryOptions = {
   minTimeout: 0,
   maxTimeout: 0,
   randomize: false,
-  errorCodes: ['40001'],
+  errorCodes: ['40001', 'ER_LOCK_DEADLOCK', 'ER_LOCK_WAIT_TIMEOUT'],
   ownerOnly: true,
 };
 
@@ -49,6 +49,7 @@ export class ServiceStockBalance extends BeanBase {
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async adjustStock(stockAdjust: DtoStockAdjust): Promise<EntityStockBalance> {
     const sku = await this.$scope.commerceCatalog.model.sku.getById(stockAdjust.skuId);
     if (!sku) {

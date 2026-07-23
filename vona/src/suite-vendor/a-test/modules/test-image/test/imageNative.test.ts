@@ -11,7 +11,7 @@ const tinyPng = Buffer.from(
   'base64',
 );
 
-describe('imageNative.test.ts', () => {
+describe('imageNative.test.ts', { concurrency: false }, () => {
   it('action:image:native private upload/get/delete', async () => {
     await app.bean.executor.mockCtx(async () => {
       const file = path.join(os.tmpdir(), 'test-image-native.png');

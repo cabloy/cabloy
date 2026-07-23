@@ -4,7 +4,7 @@ import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
-describe('imageProvider.test.ts', () => {
+describe('imageProvider.test.ts', { concurrency: false }, () => {
   it('action:imageProvider:client options', async () => {
     await app.bean.executor.mockCtx(async () => {
       const res = await app.bean.imageProvider.getClientOptions({

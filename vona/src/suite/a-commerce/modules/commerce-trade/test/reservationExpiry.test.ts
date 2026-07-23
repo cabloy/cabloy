@@ -163,7 +163,7 @@ describe('reservationExpiry.test.ts', { concurrency: false, sequential: true }, 
           .model.stockReservation.get({ orderLineId: line?.id });
         fixture.reservationId = reservation?.id as number;
         await app.scope('commerce-trade').model.order.updateById(created.orderId, {
-          reservationExpiresAt: new Date(Date.now() - 1),
+          reservationExpiresAt: new Date(Date.now() - 1_000),
         });
 
         assert.equal(

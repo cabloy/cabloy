@@ -4,7 +4,7 @@ import { FileScene } from 'vona-module-a-file';
 @FileScene({
   provider: {
     providerName: 'file-cloudflare:cloudflare',
-    clientName: 'default',
+    clientName: 'test-upload',
   },
   public: false,
   upload: {

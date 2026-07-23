@@ -83,7 +83,7 @@ async function createCloudflareServer() {
   };
 }
 
-describe('imageUpload.test.ts', () => {
+describe('imageUpload.test.ts', { concurrency: false }, () => {
   it('action:image:upload api requires auth', async () => {
     await app.bean.executor.mockCtx(async () => {
       const [res, err] = await catchError(async () => {
@@ -207,7 +207,7 @@ describe('imageUpload.test.ts', () => {
     });
   });
 
-  it('action:image:native direct-upload api rejected', async () => {
+  it('action:image:native direct-upload api rejected', { concurrency: false }, async () => {
     await app.bean.executor.mockCtx(async () => {
       const jwt = await app.bean.passport.signinMock('admin');
       try {

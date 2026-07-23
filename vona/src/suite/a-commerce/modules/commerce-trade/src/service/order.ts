@@ -20,7 +20,7 @@ const serializationRetryOptions = {
   minTimeout: 0,
   maxTimeout: 0,
   randomize: false,
-  errorCodes: ['40001'],
+  errorCodes: ['40001', 'ER_LOCK_DEADLOCK', 'ER_LOCK_WAIT_TIMEOUT'],
 };
 
 const checkoutSerializationRetryOptions = {

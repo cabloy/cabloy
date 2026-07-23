@@ -120,7 +120,7 @@ describe('fileUpload.test.ts', () => {
       const jwt = await app.bean.passport.signinMock('admin');
       const provider = await app.bean.fileProvider.get({
         providerName: 'file-cloudflare:cloudflare',
-        clientName: 'default',
+        clientName: 'test-upload',
       });
       const clientOptionsRaw = provider.clientOptions;
       const fileIds: number[] = [];

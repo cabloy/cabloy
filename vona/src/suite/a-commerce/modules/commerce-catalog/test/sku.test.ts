@@ -26,7 +26,7 @@ async function viewSku(id: TableIdentity): Promise<EntitySku> {
   });
 }
 
-describe('sku.test.ts', () => {
+describe('sku.test.ts', { concurrency: false }, () => {
   it('action:sku', async () => {
     await app.bean.executor.mockCtx(async () => {
       await app.bean.passport.signinMock();
