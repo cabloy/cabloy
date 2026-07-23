@@ -240,6 +240,16 @@ export class ServiceCoupon extends BeanBase {
         ? (grant.redeemedOrderId ?? grant.reservationOrderId)
         : grant.reservationOrderId;
     if (String(currentOrderId) !== String(command.orderId)) {
+      if (targetState === 'available') {
+        const releasedAudit = await this.scope.model.couponAudit.get({
+          couponGrantId: grant.id,
+          operation: 'release',
+          orderId: command.orderId,
+          correlationId: command.correlationId,
+        });
+        if (releasedAudit && (grant.state === 'available' || grant.state === 'expired'))
+          return grant;
+      }
       this.app.throw(404, 'coupon grant reservation not found');
     }
     if (grant.state === targetState) return grant;

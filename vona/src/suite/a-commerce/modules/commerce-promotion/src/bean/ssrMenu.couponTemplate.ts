@@ -1,5 +1,5 @@
 import type { IDecoratorSsrMenuOptions } from 'vona-module-a-ssr';
-import type { ISsrSiteOptionsAdmin } from 'vona-module-basic-siteadmin';
+import type { ISsrSiteOptionsCommerceAdmin } from 'vona-module-commerce-siteadmin';
 
 import { BeanBase } from 'vona';
 import { $order } from 'vona-module-a-openapiutils';
@@ -7,7 +7,7 @@ import { SsrMenu } from 'vona-module-a-ssr';
 
 import { $locale } from '../.metadata/locales.ts';
 
-export interface ISsrMenuOptionsCouponTemplate extends IDecoratorSsrMenuOptions<ISsrSiteOptionsAdmin> {}
+export interface ISsrMenuOptionsCouponTemplate extends IDecoratorSsrMenuOptions<ISsrSiteOptionsCommerceAdmin> {}
 
 @SsrMenu<ISsrMenuOptionsCouponTemplate>({
   items: {
@@ -21,10 +21,10 @@ export interface ISsrMenuOptionsCouponTemplate extends IDecoratorSsrMenuOptions<
           resource: 'commerce-promotion:couponTemplate',
         },
       },
-      group: 'basic-siteadmin:management',
+      group: 'commerce-siteadmin:catalog',
       roles: ['systemAdmin'],
     },
   },
-  site: ['basic-siteadmin:admin'],
+  site: ['commerce-siteadmin:commerceAdmin'],
 })
 export class SsrMenuCouponTemplate extends BeanBase {}
