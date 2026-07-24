@@ -428,6 +428,10 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
             innerAccess: false,
           }),
         () =>
+          app.bean.executor.performAction('get', '/commerce/trade/order/viewMine/1', {
+            innerAccess: false,
+          }),
+        () =>
           app.bean.executor.performAction('get', '/commerce/trade/order/1', {
             innerAccess: false,
           }),
@@ -454,11 +458,11 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
           await app.bean.passport.signout();
           await app.bean.passport.signinMock(foreignName as any);
           assert.equal(
-            await app.scope('commerce-trade').service.order.view(fixture.orderId!),
+            await app.scope('commerce-trade').service.order.viewMine(fixture.orderId!),
             undefined,
           );
           assert.equal(
-            (await app.scope('commerce-trade').service.order.mine()).some(
+            (await app.scope('commerce-trade').service.order.mine()).list.some(
               order => String(order.id) === String(fixture.orderId),
             ),
             false,
@@ -510,11 +514,11 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
           await app.bean.passport.signinMock(foreignName as any);
           try {
             assert.equal(
-              await app.scope('commerce-trade').service.order.view(fixture.orderId!),
+              await app.scope('commerce-trade').service.order.viewMine(fixture.orderId!),
               undefined,
             );
             assert.equal(
-              (await app.scope('commerce-trade').service.order.mine()).some(
+              (await app.scope('commerce-trade').service.order.mine()).list.some(
                 order => String(order.id) === String(fixture.orderId),
               ),
               false,

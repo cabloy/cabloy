@@ -2,9 +2,11 @@
 /** model: begin */
 export * from '../model/cart.js';
 export * from '../model/order.js';
+export * from '../model/orderMine.js';
 export * from '../model/payment.js';
 import { IModelOptionsCart } from '../model/cart.js';
 import { IModelOptionsOrder } from '../model/order.js';
+import { IModelOptionsOrderMine } from '../model/orderMine.js';
 import { IModelOptionsPayment } from '../model/payment.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
@@ -12,6 +14,7 @@ declare module 'zova-module-a-model' {
     export interface IModelRecord {
       'commerce-trade:cart': IModelOptionsCart;
 'commerce-trade:order': IModelOptionsOrder;
+'commerce-trade:orderMine': IModelOptionsOrderMine;
 'commerce-trade:payment': IModelOptionsPayment;
     }
 
@@ -41,6 +44,17 @@ declare module 'zova-module-commerce-trade' {
           get $onionOptions(): IModelOptionsOrder;
         }
 
+        export interface ModelOrderMine {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+        export interface ModelOrderMine {
+          get $beanFullName(): 'commerce-trade.model.orderMine';
+          get $onionName(): 'commerce-trade:orderMine';
+          get $onionOptions(): IModelOptionsOrderMine;
+        }
+
         export interface ModelPayment {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -56,12 +70,14 @@ declare module 'zova-module-commerce-trade' {
 /** model: begin */
 import { ModelCart } from '../model/cart.js';
 import { ModelOrder } from '../model/order.js';
+import { ModelOrderMine } from '../model/orderMine.js';
 import { ModelPayment } from '../model/payment.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
     'commerce-trade.model.cart': ModelCart;
 'commerce-trade.model.order': ModelOrder;
+'commerce-trade.model.orderMine': ModelOrderMine;
 'commerce-trade.model.payment': ModelPayment;
   }
 }

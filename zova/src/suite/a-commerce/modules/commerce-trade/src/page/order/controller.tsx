@@ -3,7 +3,7 @@ import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZPage } from 'zova-module-home-base';
 
-import { ModelOrder } from '../../model/order.js';
+import { ModelOrderMine } from '../../model/orderMine.js';
 
 export const ControllerPageOrderSchemaParams = z.object({
   id: z.string(),
@@ -14,7 +14,7 @@ export const ControllerPageOrderSchemaQuery = z.object({});
 @Controller()
 export class ControllerPageOrder extends BeanControllerPageBase {
   @Use()
-  $$modelOrder: ModelOrder;
+  $$modelOrderMine: ModelOrderMine;
 
   get orderId() {
     return this.$router.currentRoute.value.params.id as string;
@@ -22,7 +22,7 @@ export class ControllerPageOrder extends BeanControllerPageBase {
 
   get queryOrder() {
     if (!this.$ssr.isRuntimeSsrHydrated) return;
-    return this.$$modelOrder.view(this.orderId);
+    return this.$$modelOrderMine.viewMine(this.orderId);
   }
 
   protected render() {

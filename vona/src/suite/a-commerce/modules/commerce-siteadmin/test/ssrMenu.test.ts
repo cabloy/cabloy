@@ -8,6 +8,7 @@ const menuNames = [
   'commerce-catalog:sku#sku',
   'commerce-trade:stockBalance#stockBalance',
   'commerce-trade:stockAudit#stockAudit',
+  'commerce-trade:order#order',
 ];
 
 async function retrieveMenus() {
@@ -69,6 +70,12 @@ describe('ssrMenu.test.ts', () => {
         );
         assert.equal(menuStockAudit?.group, inventory.name);
         assert.equal(menuStockAudit?.meta?.params?.resource, 'commerce-trade:stockAudit');
+
+        const menuOrder = menusSystemAdmin.menus?.find(
+          menu => menu.name === 'commerce-trade:order#order',
+        );
+        assert.equal(menuOrder?.group, inventory.name);
+        assert.equal(menuOrder?.meta?.params?.resource, 'commerce-trade:order');
       } finally {
         await app.bean.passport.signout();
       }

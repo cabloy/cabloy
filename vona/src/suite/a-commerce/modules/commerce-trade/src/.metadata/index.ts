@@ -691,7 +691,13 @@ export * from '../dto/orderAddressSnapshot.tsx';
 export * from '../dto/orderCouponSnapshot.tsx';
 export * from '../dto/orderDetail.tsx';
 export * from '../dto/orderLineSkuAttributeSnapshot.tsx';
+export * from '../dto/orderMineReq.tsx';
+export * from '../dto/orderMineRes.tsx';
+export * from '../dto/orderSelectReq.tsx';
+export * from '../dto/orderSelectRes.tsx';
+export * from '../dto/orderSelectResItem.tsx';
 export * from '../dto/orderSummary.tsx';
+export * from '../dto/orderView.tsx';
 export * from '../dto/paymentOutcomeCreate.tsx';
 export * from '../dto/paymentOutcomeResult.tsx';
 export * from '../dto/stockAdjust.tsx';
@@ -717,7 +723,13 @@ import type { IDtoOptionsOrderAddressSnapshot } from '../dto/orderAddressSnapsho
 import type { IDtoOptionsOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
 import type { IDtoOptionsOrderDetail } from '../dto/orderDetail.tsx';
 import type { IDtoOptionsOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
+import type { IDtoOptionsOrderMineReq } from '../dto/orderMineReq.tsx';
+import type { IDtoOptionsOrderMineRes } from '../dto/orderMineRes.tsx';
+import type { IDtoOptionsOrderSelectReq } from '../dto/orderSelectReq.tsx';
+import type { IDtoOptionsOrderSelectRes } from '../dto/orderSelectRes.tsx';
+import type { IDtoOptionsOrderSelectResItem } from '../dto/orderSelectResItem.tsx';
 import type { IDtoOptionsOrderSummary } from '../dto/orderSummary.tsx';
+import type { IDtoOptionsOrderView } from '../dto/orderView.tsx';
 import type { IDtoOptionsPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
 import type { IDtoOptionsPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
 import type { IDtoOptionsStockAdjust } from '../dto/stockAdjust.tsx';
@@ -747,7 +759,13 @@ declare module 'vona-module-a-web' {
 'commerce-trade:orderCouponSnapshot': IDtoOptionsOrderCouponSnapshot;
 'commerce-trade:orderDetail': IDtoOptionsOrderDetail;
 'commerce-trade:orderLineSkuAttributeSnapshot': IDtoOptionsOrderLineSkuAttributeSnapshot;
+'commerce-trade:orderMineReq': IDtoOptionsOrderMineReq;
+'commerce-trade:orderMineRes': IDtoOptionsOrderMineRes;
+'commerce-trade:orderSelectReq': IDtoOptionsOrderSelectReq;
+'commerce-trade:orderSelectRes': IDtoOptionsOrderSelectRes;
+'commerce-trade:orderSelectResItem': IDtoOptionsOrderSelectResItem;
 'commerce-trade:orderSummary': IDtoOptionsOrderSummary;
+'commerce-trade:orderView': IDtoOptionsOrderView;
 'commerce-trade:paymentOutcomeCreate': IDtoOptionsPaymentOutcomeCreate;
 'commerce-trade:paymentOutcomeResult': IDtoOptionsPaymentOutcomeResult;
 'commerce-trade:stockAdjust': IDtoOptionsStockAdjust;
@@ -782,7 +800,13 @@ import type { DtoOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
 import type { DtoOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
 import type { DtoOrderDetail } from '../dto/orderDetail.tsx';
 import type { DtoOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
+import type { DtoOrderMineReq } from '../dto/orderMineReq.tsx';
+import type { DtoOrderMineRes } from '../dto/orderMineRes.tsx';
+import type { DtoOrderSelectReq } from '../dto/orderSelectReq.tsx';
+import type { DtoOrderSelectRes } from '../dto/orderSelectRes.tsx';
+import type { DtoOrderSelectResItem } from '../dto/orderSelectResItem.tsx';
 import type { DtoOrderSummary } from '../dto/orderSummary.tsx';
+import type { DtoOrderView } from '../dto/orderView.tsx';
 import type { DtoPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
 import type { DtoPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
 import type { DtoStockAdjust } from '../dto/stockAdjust.tsx';
@@ -840,8 +864,32 @@ declare module 'vona-module-commerce-trade' {
       fields?: TypeEntityOptionsFields<DtoOrderLineSkuAttributeSnapshot, IDtoOptionsOrderLineSkuAttributeSnapshot[TypeSymbolKeyFieldsMore]>;
     }
 
+    export interface IDtoOptionsOrderMineReq {
+      fields?: TypeEntityOptionsFields<DtoOrderMineReq, IDtoOptionsOrderMineReq[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsOrderMineRes {
+      fields?: TypeEntityOptionsFields<DtoOrderMineRes, IDtoOptionsOrderMineRes[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsOrderSelectReq {
+      fields?: TypeEntityOptionsFields<DtoOrderSelectReq, IDtoOptionsOrderSelectReq[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsOrderSelectRes {
+      fields?: TypeEntityOptionsFields<DtoOrderSelectRes, IDtoOptionsOrderSelectRes[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsOrderSelectResItem {
+      fields?: TypeEntityOptionsFields<DtoOrderSelectResItem, IDtoOptionsOrderSelectResItem[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsOrderSummary {
       fields?: TypeEntityOptionsFields<DtoOrderSummary, IDtoOptionsOrderSummary[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsOrderView {
+      fields?: TypeEntityOptionsFields<DtoOrderView, IDtoOptionsOrderView[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsPaymentOutcomeCreate {
@@ -1044,6 +1092,8 @@ declare module 'vona-module-a-web' {
   export interface IApiPathGetRecord{
         '/commerce/trade/cart': undefined;
 '/commerce/trade/order/mine': undefined;
+'/commerce/trade/order/viewMine/:id': undefined;
+'/commerce/trade/order': undefined;
 '/commerce/trade/order/:id': undefined;
 '/commerce/trade/stockAudit': undefined;
 '/commerce/trade/stockAudit/:id': undefined;
@@ -1068,22 +1118,26 @@ export interface IApiPathDeleteRecord{
 import 'vona-module-a-openapi';
   declare module 'vona-module-a-openapi' {
     export interface IResourceRecord {
-      'commerce-trade:stockAudit': never;
+      'commerce-trade:order': never;
+'commerce-trade:stockAudit': never;
 'commerce-trade:stockBalance': never;
     }
   }
   
 /** controller: end */
 /** ssrMenu: begin */
+export * from '../bean/ssrMenu.order.ts';
 export * from '../bean/ssrMenu.stockAudit.ts';
 export * from '../bean/ssrMenu.stockBalance.ts';
+import type { ISsrMenuOptionsOrder } from '../bean/ssrMenu.order.ts';
 import type { ISsrMenuOptionsStockAudit } from '../bean/ssrMenu.stockAudit.ts';
 import type { ISsrMenuOptionsStockBalance } from '../bean/ssrMenu.stockBalance.ts';
 import 'vona-module-a-ssr';
 declare module 'vona-module-a-ssr' {
   
     export interface ISsrMenuRecord {
-      'commerce-trade:stockAudit': ISsrMenuOptionsStockAudit;
+      'commerce-trade:order': ISsrMenuOptionsOrder;
+'commerce-trade:stockAudit': ISsrMenuOptionsStockAudit;
 'commerce-trade:stockBalance': ISsrMenuOptionsStockBalance;
     }
 
@@ -1091,6 +1145,17 @@ declare module 'vona-module-a-ssr' {
 }
 declare module 'vona-module-commerce-trade' {
   
+        export interface SsrMenuOrder {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface SsrMenuOrder {
+            get $beanFullName(): 'commerce-trade.ssrMenu.order';
+            get $onionName(): 'commerce-trade:order';
+            get $onionOptions(): ISsrMenuOptionsOrder;
+          }
+
         export interface SsrMenuStockAudit {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;

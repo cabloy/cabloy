@@ -3,7 +3,7 @@ import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZPage } from 'zova-module-home-base';
 
-import { ModelOrder } from '../../model/order.js';
+import { ModelOrderMine } from '../../model/orderMine.js';
 
 export const ControllerPageOrdersSchemaParams = z.object({
   locale: z.string().optional(),
@@ -13,11 +13,14 @@ export const ControllerPageOrdersSchemaQuery = z.object({});
 @Controller()
 export class ControllerPageOrders extends BeanControllerPageBase {
   @Use()
-  $$modelOrder: ModelOrder;
+  $$modelOrderMine: ModelOrderMine;
+
+  pageNo = 1;
+  readonly pageSize = 10;
 
   get queryOrders() {
     if (!this.$ssr.isRuntimeSsrHydrated) return;
-    return this.$$modelOrder.mine();
+    return this.$$modelOrderMine.mine({ pageNo: this.pageNo, pageSize: this.pageSize });
   }
 
   viewOrder(id: string) {
@@ -33,7 +36,8 @@ export class ControllerPageOrders extends BeanControllerPageBase {
       );
     }
     const query = this.queryOrders;
-    const orders = query?.data ?? [];
+    const orders = query?.data?.list ?? [];
+    const pageCount = query?.data?.pageCount ?? 0;
     return (
       <ZPage>
         <section class="mx-auto max-w-4xl p-6">
@@ -58,6 +62,27 @@ export class ControllerPageOrders extends BeanControllerPageBase {
               </article>
             ))}
           </div>
+          {pageCount > 1 && (
+            <div class="mt-6 flex items-center justify-between">
+              <button
+                class="btn btn-outline btn-sm"
+                disabled={this.pageNo <= 1}
+                onClick={() => (this.pageNo -= 1)}
+              >
+                Previous
+              </button>
+              <span class="text-sm text-base-content/70">
+                Page {this.pageNo} of {pageCount}
+              </span>
+              <button
+                class="btn btn-outline btn-sm"
+                disabled={this.pageNo >= pageCount}
+                onClick={() => (this.pageNo += 1)}
+              >
+                Next
+              </button>
+            </div>
+          )}
           {query?.error && (
             <div role="alert" class="alert alert-error mt-6">
               <span>{query.error.message}</span>

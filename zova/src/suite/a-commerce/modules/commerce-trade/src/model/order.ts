@@ -1,30 +1,26 @@
+import type { TableIdentity } from 'table-identity';
 import type { IDecoratorModelOptions } from 'zova-module-a-model';
+import type { ModelResource } from 'zova-module-rest-resource';
 
+import { Use, usePrepareArg } from 'zova';
 import { BeanModelBase, Model } from 'zova-module-a-model';
 
 export interface IModelOptionsOrder extends IDecoratorModelOptions {}
 
+const OrderResource = 'commerce-trade:order';
+
 @Model<IModelOptionsOrder>()
 export class ModelOrder extends BeanModelBase {
-  mine() {
-    if (!process.env.CLIENT || !this.$passport.isAuthenticated) return;
-    return this.$useStateData({
-      queryKey: ['mine'],
-      queryFn: async () => {
-        return await this.scope.api.commerceTradeOrder.mine();
-      },
-      meta: { disableSuspenseOnInit: true },
-    });
+  @Use({ beanFullName: 'rest-resource.model.resource' })
+  protected get $$modelResource(): ModelResource {
+    return usePrepareArg(OrderResource, true);
   }
 
-  view(id: string) {
-    if (!process.env.CLIENT || !this.$passport.isAuthenticated) return;
-    return this.$useStateData({
-      queryKey: ['view', id],
-      queryFn: async () => {
-        return await this.scope.api.commerceTradeOrder.view({ params: { id } });
-      },
-      meta: { disableSuspenseOnInit: true },
-    });
+  select(query?: Record<string, unknown>) {
+    return this.$$modelResource.select(query);
+  }
+
+  view(id: TableIdentity) {
+    return this.$$modelResource.view(id);
   }
 }

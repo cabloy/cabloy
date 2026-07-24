@@ -1,4 +1,5 @@
 import type { TableIdentity } from 'table-identity';
+import type { IQueryParams } from 'vona-module-a-orm';
 import type { EntityPaymentAttempt } from 'vona-module-commerce-payment';
 
 import { BeanBase } from 'vona';
@@ -11,13 +12,23 @@ import type { DtoOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
 import type { DtoOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
 import type { DtoOrderDetail } from '../dto/orderDetail.tsx';
 import type { DtoOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
+import type { DtoOrderMineRes } from '../dto/orderMineRes.tsx';
+import type { DtoOrderSelectRes } from '../dto/orderSelectRes.tsx';
 import type { DtoOrderSummary } from '../dto/orderSummary.tsx';
+import type { DtoOrderView } from '../dto/orderView.tsx';
 import type { DtoPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
 import type { DtoPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
 import type { EntityOrder } from '../entity/order.tsx';
 import type { EntityOrderLine } from '../entity/orderLine.tsx';
+import type { ModelOrder } from '../model/order.ts';
 
 const maxOrderCents = 2_147_483_647;
+const customerVisibleOrderStates: EntityOrder['state'][] = [
+  'awaiting_payment',
+  'paid',
+  'cancelled',
+  'expired',
+];
 
 const serializationRetryOptions = {
   retries: 1,
@@ -413,31 +424,39 @@ export class ServiceOrder extends BeanBase {
     return true;
   }
 
-  async mine(): Promise<DtoOrderSummary[]> {
-    const orders = await this.scope.model.order.select({
-      columns: ['id', 'state', 'currency', 'payableTotalCents', 'createdAt'],
-      where: { userId: this.bean.passport.currentUser!.id },
-      orders: [['id', 'desc']],
+  async select(params?: IQueryParams<ModelOrder>): Promise<DtoOrderSelectRes> {
+    return await this.scope.model.order.selectAndCount({
+      ...params,
+      orders: params?.orders ?? [['id', 'desc']],
     });
-    return orders
-      .filter(
-        order =>
-          order.state === 'awaiting_payment' ||
-          order.state === 'paid' ||
-          order.state === 'cancelled' ||
-          order.state === 'expired',
-      )
-      .map(order => ({
-        id: order.id,
-        state: order.state as DtoOrderSummary['state'],
-        currency: order.currency,
-        payableTotalCents: order.payableTotalCents,
-        createdAt: order.createdAt,
-      }));
   }
 
-  async view(id: TableIdentity): Promise<DtoOrderDetail | undefined> {
-    const snapshot = await this.viewSnapshot(id);
+  async view(id: TableIdentity): Promise<DtoOrderView | undefined> {
+    return await this.scope.model.order.getById(id);
+  }
+
+  async mine(params?: IQueryParams<ModelOrder>): Promise<DtoOrderMineRes> {
+    const result = await this.scope.model.order.selectAndCount({
+      ...params,
+      columns: ['id', 'state', 'currency', 'payableTotalCents', 'createdAt'],
+      where: {
+        ...params?.where,
+        userId: this.bean.passport.currentUser!.id,
+        state: customerVisibleOrderStates,
+      },
+      orders: params?.orders ?? [['id', 'desc']],
+    });
+    return {
+      ...result,
+      list: result.list.map(order => ({
+        ...order,
+        state: order.state as DtoOrderSummary['state'],
+      })),
+    };
+  }
+
+  async viewMine(id: TableIdentity): Promise<DtoOrderDetail | undefined> {
+    const snapshot = await this._viewMineSnapshot(id);
     if (!snapshot) return undefined;
     const { order, lines } = snapshot;
     if (
@@ -471,6 +490,14 @@ export class ServiceOrder extends BeanBase {
   }
 
   async viewSnapshot(id: TableIdentity): Promise<IOrderSnapshotCreateResult | undefined> {
+    const order = await this.scope.model.order.getById(id);
+    if (!order) return undefined;
+    return await this._viewSnapshot(order);
+  }
+
+  private async _viewMineSnapshot(
+    id: TableIdentity,
+  ): Promise<IOrderSnapshotCreateResult | undefined> {
     const order = await this.scope.model.order.get({
       id,
       userId: this.bean.passport.currentUser!.id,
