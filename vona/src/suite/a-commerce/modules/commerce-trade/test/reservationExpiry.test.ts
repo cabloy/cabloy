@@ -101,17 +101,21 @@ async function createExpiredCheckoutFixture(suffix: string): Promise<IFixture> {
         correlationId: `schedule-expiry-stock-${suffix}`,
       })
     ).id as number;
-    fixture.addressId = await app.bean.executor.performAction('post', '/commerce/member/address', {
-      body: {
-        recipientName: 'Schedule Expiry Customer',
-        phone: '15555550135',
-        countryCode: 'US',
-        region: 'California',
-        city: 'San Francisco',
-        postalCode: '94105',
-        addressLine1: '8 Market Street',
+    fixture.addressId = await app.bean.executor.performAction(
+      'post',
+      '/commerce/member/address/createMine',
+      {
+        body: {
+          recipientName: 'Schedule Expiry Customer',
+          phone: '15555550135',
+          countryCode: 'US',
+          region: 'California',
+          city: 'San Francisco',
+          postalCode: '94105',
+          addressLine1: '8 Market Street',
+        },
       },
-    });
+    );
     const cart = await app.scope('commerce-trade').model.cart.insert({ userId });
     fixture.cartId = cart.id as number;
     await app.scope('commerce-trade').model.cartItem.insert({
@@ -219,7 +223,7 @@ describe('reservationExpiry.test.ts', { concurrency: false, sequential: true }, 
         ).id as number;
         fixture.addressId = await app.bean.executor.performAction(
           'post',
-          '/commerce/member/address',
+          '/commerce/member/address/createMine',
           {
             body: {
               recipientName: 'Expiry Customer',

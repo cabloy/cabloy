@@ -130,7 +130,7 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
         fixture.userId = app.bean.passport.currentUser!.id as number;
         fixture.addressId = await app.bean.executor.performAction(
           'post',
-          '/commerce/member/address',
+          '/commerce/member/address/createMine',
           {
             body: {
               recipientName: 'Checkout Action Customer',
@@ -266,7 +266,7 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
         local.userId = app.bean.passport.currentUser!.id as number;
         local.addressId = await app.bean.executor.performAction(
           'post',
-          '/commerce/member/address',
+          '/commerce/member/address/createMine',
           {
             body: {
               recipientName: 'Local Checkout Customer',
@@ -299,7 +299,7 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
             foreign.userId = app.bean.passport.currentUser!.id as number;
             foreign.addressId = await app.bean.executor.performAction(
               'post',
-              '/commerce/member/address',
+              '/commerce/member/address/createMine',
               {
                 body: {
                   recipientName: 'Foreign Checkout Customer',
@@ -473,7 +473,7 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
         ).id as number;
         fixture.addressId = await app.bean.executor.performAction(
           'post',
-          '/commerce/member/address',
+          '/commerce/member/address/createMine',
           {
             body: {
               recipientName: 'Checkout Snapshot Customer',
@@ -624,7 +624,7 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
         fixture.stockAuditIds = auditsBefore.map(item => item.id as number);
         fixture.addressId = await app.bean.executor.performAction(
           'post',
-          '/commerce/member/address',
+          '/commerce/member/address/createMine',
           {
             body: {
               recipientName: 'Checkout Customer',
@@ -715,7 +715,7 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
         try {
           const addressId = await app.bean.executor.performAction(
             'post',
-            '/commerce/member/address',
+            '/commerce/member/address/createMine',
             {
               body: {
                 recipientName: `Checkout Contention Customer ${index}`,

@@ -124,17 +124,21 @@ async function createCheckoutFixture(suffix: string, withCoupon = true): Promise
       })
     ).id as number;
   }
-  fixture.addressId = await app.bean.executor.performAction('post', '/commerce/member/address', {
-    body: {
-      recipientName: 'Payment Customer',
-      phone: '15555550136',
-      countryCode: 'US',
-      region: 'California',
-      city: 'San Francisco',
-      postalCode: '94105',
-      addressLine1: '9 Market Street',
+  fixture.addressId = await app.bean.executor.performAction(
+    'post',
+    '/commerce/member/address/createMine',
+    {
+      body: {
+        recipientName: 'Payment Customer',
+        phone: '15555550136',
+        countryCode: 'US',
+        region: 'California',
+        city: 'San Francisco',
+        postalCode: '94105',
+        addressLine1: '9 Market Street',
+      },
     },
-  });
+  );
   const cart = await app.scope('commerce-trade').model.cart.insert({ userId });
   fixture.cartId = cart.id as number;
   await app.scope('commerce-trade').model.cartItem.insert({

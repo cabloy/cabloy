@@ -136,7 +136,7 @@ describe('orderSnapshot.test.ts', { concurrency: false }, () => {
         ).id as number;
         fixture.addressId = await app.bean.executor.performAction(
           'post',
-          '/commerce/member/address',
+          '/commerce/member/address/createMine',
           {
             body: {
               recipientName: 'Snapshot Recipient',

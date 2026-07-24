@@ -62,17 +62,21 @@ async function createFixture(suffix: string): Promise<IFixture> {
     correlationId: `checkout-txn-coupon-${suffix}`,
     reason: 'checkout transaction fixture',
   });
-  const addressId = await app.bean.executor.performAction('post', '/commerce/member/address', {
-    body: {
-      recipientName: 'Checkout Transaction Customer',
-      phone: '15555550125',
-      countryCode: 'US',
-      region: 'California',
-      city: 'San Francisco',
-      postalCode: '94105',
-      addressLine1: '3 Market Street',
+  const addressId = await app.bean.executor.performAction(
+    'post',
+    '/commerce/member/address/createMine',
+    {
+      body: {
+        recipientName: 'Checkout Transaction Customer',
+        phone: '15555550125',
+        countryCode: 'US',
+        region: 'California',
+        city: 'San Francisco',
+        postalCode: '94105',
+        addressLine1: '3 Market Street',
+      },
     },
-  });
+  );
   const cart = await app.scope('commerce-trade').model.cart.insert({ userId });
   const cartItem = await app.scope('commerce-trade').model.cartItem.insert({
     cartId: cart.id,
