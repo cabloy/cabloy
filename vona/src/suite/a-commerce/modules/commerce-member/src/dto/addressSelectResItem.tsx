@@ -15,9 +15,6 @@ export interface IDtoOptionsAddressSelectResItem extends IDecoratorDtoOptions {}
     ZovaRender.block('basic-page:blockPage', {
       blocks: [
         ZovaRender.block('basic-page:blockFilter'),
-        ZovaRender.block('basic-page:blockToolbarBulk', {
-          actions: [ZovaRender.tableActionBulk('basic-table:actionCreate')],
-        }),
         ZovaRender.block('basic-page:blockTable'),
         ZovaRender.block('basic-page:blockPager'),
       ],
@@ -43,10 +40,7 @@ export class DtoAddressSelectResItem extends $Dto.get(() => ModelAddress, {
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),
     ZovaRender.cell('basic-table:actionOperationsRow', {
-      actions: [
-        ZovaRender.tableActionRow('basic-table:actionUpdate'),
-        ZovaRender.tableActionRow('basic-table:actionDelete'),
-      ],
+      actions: [ZovaRender.tableActionRow('basic-table:actionView')],
     }),
   )
   _operationsRow?: unknown;

@@ -111,10 +111,6 @@ declare module 'vona-module-commerce-member' {
       getById<T extends IModelGetOptions<EntityAddress,ModelAddress>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityAddress, ModelAddress, T> | undefined>;
 updateById<T extends IModelUpdateOptions<EntityAddress,ModelAddress>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityAddress,ModelAddress, T>, options?: T): Promise<TypeModelMutateRelationData<EntityAddress,ModelAddress, T>>;
 deleteById<T extends IModelDeleteOptions<EntityAddress,ModelAddress>>(id: TableIdentity, options?: T): Promise<void>;
-getByName<T extends IModelGetOptions<EntityAddress,ModelAddress>>(name?: string, options?: T): Promise<TypeModelRelationResult<EntityAddress, ModelAddress, T> | undefined>;
-getByNameEqI<T extends IModelGetOptions<EntityAddress,ModelAddress>>(name?: string, options?: T): Promise<TypeModelRelationResult<EntityAddress, ModelAddress, T> | undefined>;
-selectByName<T extends IModelSelectParams<EntityAddress,ModelAddress,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityAddress, ModelAddress, T>[]>;
-selectByNameEqI<T extends IModelSelectParams<EntityAddress,ModelAddress,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityAddress, ModelAddress, T>[]>;
     }
 }
 declare module 'vona-module-a-orm' {
@@ -204,27 +200,39 @@ declare module 'vona-module-commerce-member' {
 }
 /** meta: end */
 /** dto: begin */
-export * from '../dto/addressCreate.tsx';
+export * from '../dto/addressMineCreate.tsx';
+export * from '../dto/addressMineItem.tsx';
+export * from '../dto/addressMineReq.tsx';
+export * from '../dto/addressMineRes.tsx';
+export * from '../dto/addressMineUpdate.tsx';
+export * from '../dto/addressMineView.tsx';
 export * from '../dto/addressSelectReq.tsx';
 export * from '../dto/addressSelectRes.tsx';
 export * from '../dto/addressSelectResItem.tsx';
-export * from '../dto/addressUpdate.tsx';
 export * from '../dto/addressView.tsx';
-import type { IDtoOptionsAddressCreate } from '../dto/addressCreate.tsx';
+import type { IDtoOptionsAddressMineCreate } from '../dto/addressMineCreate.tsx';
+import type { IDtoOptionsAddressMineItem } from '../dto/addressMineItem.tsx';
+import type { IDtoOptionsAddressMineReq } from '../dto/addressMineReq.tsx';
+import type { IDtoOptionsAddressMineRes } from '../dto/addressMineRes.tsx';
+import type { IDtoOptionsAddressMineUpdate } from '../dto/addressMineUpdate.tsx';
+import type { IDtoOptionsAddressMineView } from '../dto/addressMineView.tsx';
 import type { IDtoOptionsAddressSelectReq } from '../dto/addressSelectReq.tsx';
 import type { IDtoOptionsAddressSelectRes } from '../dto/addressSelectRes.tsx';
 import type { IDtoOptionsAddressSelectResItem } from '../dto/addressSelectResItem.tsx';
-import type { IDtoOptionsAddressUpdate } from '../dto/addressUpdate.tsx';
 import type { IDtoOptionsAddressView } from '../dto/addressView.tsx';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
 
     export interface IDtoRecord {
-      'commerce-member:addressCreate': IDtoOptionsAddressCreate;
+      'commerce-member:addressMineCreate': IDtoOptionsAddressMineCreate;
+'commerce-member:addressMineItem': IDtoOptionsAddressMineItem;
+'commerce-member:addressMineReq': IDtoOptionsAddressMineReq;
+'commerce-member:addressMineRes': IDtoOptionsAddressMineRes;
+'commerce-member:addressMineUpdate': IDtoOptionsAddressMineUpdate;
+'commerce-member:addressMineView': IDtoOptionsAddressMineView;
 'commerce-member:addressSelectReq': IDtoOptionsAddressSelectReq;
 'commerce-member:addressSelectRes': IDtoOptionsAddressSelectRes;
 'commerce-member:addressSelectResItem': IDtoOptionsAddressSelectResItem;
-'commerce-member:addressUpdate': IDtoOptionsAddressUpdate;
 'commerce-member:addressView': IDtoOptionsAddressView;
     }
 
@@ -235,16 +243,40 @@ declare module 'vona-module-commerce-member' {
 }
 /** dto: end */
 /** dto: begin */
-import type { DtoAddressCreate } from '../dto/addressCreate.tsx';
+import type { DtoAddressMineCreate } from '../dto/addressMineCreate.tsx';
+import type { DtoAddressMineItem } from '../dto/addressMineItem.tsx';
+import type { DtoAddressMineReq } from '../dto/addressMineReq.tsx';
+import type { DtoAddressMineRes } from '../dto/addressMineRes.tsx';
+import type { DtoAddressMineUpdate } from '../dto/addressMineUpdate.tsx';
+import type { DtoAddressMineView } from '../dto/addressMineView.tsx';
 import type { DtoAddressSelectReq } from '../dto/addressSelectReq.tsx';
 import type { DtoAddressSelectRes } from '../dto/addressSelectRes.tsx';
 import type { DtoAddressSelectResItem } from '../dto/addressSelectResItem.tsx';
-import type { DtoAddressUpdate } from '../dto/addressUpdate.tsx';
 import type { DtoAddressView } from '../dto/addressView.tsx';
 declare module 'vona-module-commerce-member' {
 
-    export interface IDtoOptionsAddressCreate {
-      fields?: TypeEntityOptionsFields<DtoAddressCreate, IDtoOptionsAddressCreate[TypeSymbolKeyFieldsMore]>;
+    export interface IDtoOptionsAddressMineCreate {
+      fields?: TypeEntityOptionsFields<DtoAddressMineCreate, IDtoOptionsAddressMineCreate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAddressMineItem {
+      fields?: TypeEntityOptionsFields<DtoAddressMineItem, IDtoOptionsAddressMineItem[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAddressMineReq {
+      fields?: TypeEntityOptionsFields<DtoAddressMineReq, IDtoOptionsAddressMineReq[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAddressMineRes {
+      fields?: TypeEntityOptionsFields<DtoAddressMineRes, IDtoOptionsAddressMineRes[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAddressMineUpdate {
+      fields?: TypeEntityOptionsFields<DtoAddressMineUpdate, IDtoOptionsAddressMineUpdate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAddressMineView {
+      fields?: TypeEntityOptionsFields<DtoAddressMineView, IDtoOptionsAddressMineView[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsAddressSelectReq {
@@ -257,10 +289,6 @@ declare module 'vona-module-commerce-member' {
 
     export interface IDtoOptionsAddressSelectResItem {
       fields?: TypeEntityOptionsFields<DtoAddressSelectResItem, IDtoOptionsAddressSelectResItem[TypeSymbolKeyFieldsMore]>;
-    }
-
-    export interface IDtoOptionsAddressUpdate {
-      fields?: TypeEntityOptionsFields<DtoAddressUpdate, IDtoOptionsAddressUpdate[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsAddressView {
@@ -304,18 +332,20 @@ declare module 'vona-module-commerce-member' {
     }
 }
 declare module 'vona-module-a-web' {
-  export interface IApiPathPostRecord{
-        '/commerce/member/address': undefined;
-    }
-export interface IApiPathGetRecord{
-        '/commerce/member/address': undefined;
+  export interface IApiPathGetRecord{
+        '/commerce/member/address/mine': undefined;
+'/commerce/member/address/viewMine/:id': undefined;
+'/commerce/member/address': undefined;
 '/commerce/member/address/:id': undefined;
     }
+export interface IApiPathPostRecord{
+        '/commerce/member/address/createMine': undefined;
+    }
 export interface IApiPathPatchRecord{
-        '/commerce/member/address/:id': undefined;
+        '/commerce/member/address/updateMine/:id': undefined;
     }
 export interface IApiPathDeleteRecord{
-        '/commerce/member/address/:id': undefined;
+        '/commerce/member/address/deleteMine/:id': undefined;
     }
 
 }
@@ -327,6 +357,32 @@ import 'vona-module-a-openapi';
   }
 
 /** controller: end */
+/** ssrMenu: begin */
+export * from '../bean/ssrMenu.address.ts';
+import type { ISsrMenuOptionsAddress } from '../bean/ssrMenu.address.ts';
+import 'vona-module-a-ssr';
+declare module 'vona-module-a-ssr' {
+
+    export interface ISsrMenuRecord {
+      'commerce-member:address': ISsrMenuOptionsAddress;
+    }
+
+
+}
+declare module 'vona-module-commerce-member' {
+
+        export interface SsrMenuAddress {
+          /** @internal */
+          get scope(): ScopeModuleCommerceMember;
+        }
+
+          export interface SsrMenuAddress {
+            get $beanFullName(): 'commerce-member.ssrMenu.address';
+            get $onionName(): 'commerce-member:address';
+            get $onionOptions(): ISsrMenuOptionsAddress;
+          }
+}
+/** ssrMenu: end */
 /** locale: begin */
 import { locales } from './locales.ts';
 /** locale: end */

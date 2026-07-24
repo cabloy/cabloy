@@ -4,32 +4,42 @@ import { BeanBase } from 'zova';
 import { ApiSchema } from 'zova-module-a-api';
 
 import {
+  ApiApiCommerceMemberAddressminePath,
+  ApiApiCommerceMemberAddressviewMinePath,
+  ApiApiCommerceMemberAddresscreateMinePath,
+  ApiApiCommerceMemberAddressupdateMinePath,
+  ApiApiCommerceMemberAddressdeleteMinePath,
   ApiApiCommerceMemberAddressselectPath,
-  ApiApiCommerceMemberAddresscreatePath,
   ApiApiCommerceMemberAddressviewPath,
-  ApiApiCommerceMemberAddressdeletePath,
-  ApiApiCommerceMemberAddressupdatePath,
 } from '../api/commerceMemberAddress.js';
 
 @ApiSchema()
 export class ApiSchemaCommerceMemberAddress extends BeanBase {
+  mine(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCommerceMemberAddressminePath, 'get', options);
+  }
+
+  viewMine(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCommerceMemberAddressviewMinePath, 'get', options);
+  }
+
+  createMine(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCommerceMemberAddresscreateMinePath, 'post', options);
+  }
+
+  updateMine(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCommerceMemberAddressupdateMinePath, 'patch', options);
+  }
+
+  deleteMine(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCommerceMemberAddressdeleteMinePath, 'delete', options);
+  }
+
   select(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiCommerceMemberAddressselectPath, 'get', options);
   }
 
-  create(options?: IApiSchemaOptions) {
-    return this.$sdk.createApiSchemas(ApiApiCommerceMemberAddresscreatePath, 'post', options);
-  }
-
   view(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiCommerceMemberAddressviewPath, 'get', options);
-  }
-
-  delete(options?: IApiSchemaOptions) {
-    return this.$sdk.createApiSchemas(ApiApiCommerceMemberAddressdeletePath, 'delete', options);
-  }
-
-  update(options?: IApiSchemaOptions) {
-    return this.$sdk.createApiSchemas(ApiApiCommerceMemberAddressupdatePath, 'patch', options);
   }
 }

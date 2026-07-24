@@ -1,12 +1,15 @@
 // eslint-disable
 /** model: begin */
 export * from '../model/address.js';
+export * from '../model/addressMine.js';
 import { IModelOptionsAddress } from '../model/address.js';
+import { IModelOptionsAddressMine } from '../model/addressMine.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
   
     export interface IModelRecord {
       'commerce-member:address': IModelOptionsAddress;
+'commerce-member:addressMine': IModelOptionsAddressMine;
     }
 
   
@@ -22,15 +25,28 @@ declare module 'zova-module-commerce-member' {
           get $beanFullName(): 'commerce-member.model.address';
           get $onionName(): 'commerce-member:address';
           get $onionOptions(): IModelOptionsAddress;
+        }
+
+        export interface ModelAddressMine {
+          /** @internal */
+          get scope(): ScopeModuleCommerceMember;
+        }
+
+        export interface ModelAddressMine {
+          get $beanFullName(): 'commerce-member.model.addressMine';
+          get $onionName(): 'commerce-member:addressMine';
+          get $onionOptions(): IModelOptionsAddressMine;
         } 
 }
 /** model: end */
 /** model: begin */
 import { ModelAddress } from '../model/address.js';
+import { ModelAddressMine } from '../model/addressMine.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
     'commerce-member.model.address': ModelAddress;
+'commerce-member.model.addressMine': ModelAddressMine;
   }
 }
 /** model: end */

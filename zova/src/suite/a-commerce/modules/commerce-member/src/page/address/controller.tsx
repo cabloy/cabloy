@@ -6,19 +6,19 @@ import { Controller } from 'zova-module-a-bean';
 import { ZPage } from 'zova-module-home-base';
 
 import type {
-  ApiApiCommerceMemberAddresscreateRequestBody,
-  ApiApiCommerceMemberAddressselectResponseBody,
+  ApiApiCommerceMemberAddresscreateMineRequestBody,
+  ApiApiCommerceMemberAddressmineResponseBody,
 } from '../../api/commerceMemberAddress.js';
 
-import { ModelAddress } from '../../model/address.js';
+import { ModelAddressMine } from '../../model/addressMine.js';
 
 export const ControllerPageAddressSchemaParams = z.object({
   locale: z.string().optional(),
 });
 export const ControllerPageAddressSchemaQuery = z.object({});
 
-type AddressDraft = ApiApiCommerceMemberAddresscreateRequestBody;
-type AddressItem = ApiApiCommerceMemberAddressselectResponseBody['list'][number];
+type AddressDraft = ApiApiCommerceMemberAddresscreateMineRequestBody;
+type AddressItem = ApiApiCommerceMemberAddressmineResponseBody['list'][number];
 
 const emptyDraft = (): AddressDraft => ({
   recipientName: '',
@@ -34,14 +34,14 @@ const emptyDraft = (): AddressDraft => ({
 @Controller()
 export class ControllerPageAddress extends BeanControllerPageBase {
   @Use()
-  $$modelAddress: ModelAddress;
+  $$modelAddressMine: ModelAddressMine;
 
   editingId?: TableIdentity;
   draft: AddressDraft = emptyDraft();
 
   get queryAddresses() {
-    if (process.env.SERVER) return;
-    return this.$$modelAddress.select({ pageNo: 1, pageSize: 100 });
+    if (!this.$ssr.isRuntimeSsrHydrated) return;
+    return this.$$modelAddressMine.mine({ pageNo: 1, pageSize: 100 });
   }
 
   edit(item: AddressItem) {
@@ -65,19 +65,29 @@ export class ControllerPageAddress extends BeanControllerPageBase {
 
   async submit() {
     if (this.editingId === undefined) {
-      await this.$$modelAddress.create().mutateAsync(this.draft);
+      await this.$$modelAddressMine.createMine().mutateAsync(this.draft);
     } else {
-      await this.$$modelAddress.update(this.editingId).mutateAsync(this.draft);
+      await this.$$modelAddressMine.updateMine().mutateAsync({
+        id: this.editingId,
+        body: this.draft,
+      });
     }
     this.resetDraft();
   }
 
   async delete(item: AddressItem) {
-    await this.$$modelAddress.delete(item.id).mutateAsync();
+    await this.$$modelAddressMine.deleteMine().mutateAsync(item.id);
     if (this.editingId === item.id) this.resetDraft();
   }
 
   protected render() {
+    if (!this.$ssr.isRuntimeSsrHydrated) {
+      return (
+        <ZPage>
+          <section class="mx-auto max-w-4xl p-6" aria-busy="true" />
+        </ZPage>
+      );
+    }
     const query = this.queryAddresses;
     const items = query?.data?.list ?? [];
     return (

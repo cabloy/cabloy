@@ -6,6 +6,7 @@ const menuNames = [
   'commerce-catalog:category#category',
   'commerce-catalog:product#product',
   'commerce-catalog:sku#sku',
+  'commerce-member:address#address',
   'commerce-trade:stockBalance#stockBalance',
   'commerce-trade:stockAudit#stockAudit',
   'commerce-trade:order#order',
@@ -53,6 +54,12 @@ describe('ssrMenu.test.ts', () => {
         );
         assert.equal(menuSku?.group, catalog.name);
         assert.equal(menuSku?.meta?.params?.resource, 'commerce-catalog:sku');
+
+        const menuAddress = menusSystemAdmin.menus?.find(
+          menu => menu.name === 'commerce-member:address#address',
+        );
+        assert.equal(menuAddress?.group, catalog.name);
+        assert.equal(menuAddress?.meta?.params?.resource, 'commerce-member:address');
 
         const inventory = menusSystemAdmin.groups?.find(
           group => group.name === 'commerce-siteadmin:inventory',

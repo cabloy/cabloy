@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
-import { ModelAddress } from 'zova-module-commerce-member';
+import { ModelAddressMine } from 'zova-module-commerce-member';
 import { ModelCoupon } from 'zova-module-commerce-promotion';
 import { ZPage } from 'zova-module-home-base';
 
@@ -18,7 +18,7 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
   $$modelCart: ModelCart;
 
   @Use()
-  $$modelAddress: ModelAddress;
+  $$modelAddressMine: ModelAddressMine;
 
   @Use()
   $$modelCoupon: ModelCoupon;
@@ -29,7 +29,7 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
 
   get queryAddresses() {
     if (!this.$ssr.isRuntimeSsrHydrated) return;
-    return this.$$modelAddress.select({ pageNo: 1, pageSize: 100 });
+    return this.$$modelAddressMine.mine({ pageNo: 1, pageSize: 100 });
   }
 
   get queryCoupons() {
