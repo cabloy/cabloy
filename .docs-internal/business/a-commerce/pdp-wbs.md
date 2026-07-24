@@ -108,6 +108,8 @@ Acceptance checks:
 - a changed Commerce frontend contract builds its matching SSR and REST artifacts before `npm run deps:vona`;
 - no manually edited generated REST artifact is required.
 
+The [SRS](./srs.md) owns the Commerce contract constraints and workflow guards. The [test plan](./test-plan.md) owns executable build, browser, and retained-evidence procedures.
+
 ### Phase 30: Tenant-scoped catalogue and stock foundation
 
 Dependencies: `WBS-20-*`.
@@ -408,4 +410,3 @@ A future task that changes `meta.version.ts` must run `npm run test`, because it
 - [ADR 0001: Establish A-Commerce MVP Boundaries](./decisions/0001-mvp-boundaries.md)
 - [Suite and module guidance](../../../cabloy-docs/fullstack/suites-and-modules.md)
 - [Contract-loop playbook](../../../cabloy-docs/fullstack/contract-loop-playbook.md)
-- [Phase 20 Contract Loop](./phase-20-contract-loop.md)

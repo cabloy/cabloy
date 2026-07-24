@@ -61,4 +61,3 @@
 - [Software Requirements Specification](./srs.md)
 - [Product Delivery Plan and Work Breakdown Structure](./pdp-wbs.md)
 - [Test Strategy and Acceptance Plan](./test-plan.md)
-- [Phase 20 Contract Loop](./phase-20-contract-loop.md)

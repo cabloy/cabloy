@@ -5,13 +5,12 @@ This directory records the agreed product, system, and delivery baseline for the
 ## Reading Order
 
 1. [Product Requirements Document](./prd.md) defines the MVP outcomes, users, scope, and acceptance expectations.
-2. [Software Requirements Specification](./srs.md) defines the implementation contracts, ownership boundaries, state machines, and invariants.
+2. [Software Requirements Specification](./srs.md) defines the implementation contracts, ownership boundaries, state machines, invariants, and Commerce contract-loop requirements.
 3. [Product Delivery Plan and Work Breakdown Structure](./pdp-wbs.md) sequences the work and defines completion checks.
-4. [Test Strategy and Acceptance Plan](./test-plan.md) defines executable acceptance scenarios, evidence, and release proof.
+4. [Test Strategy and Acceptance Plan](./test-plan.md) defines executable acceptance scenarios, Phase 20 build/browser procedure, evidence, and release proof.
 5. [Delivery Progress](./progress.md) is the derived execution-status index for WBS state, evidence pointers, blockers, and next proof; it does not redefine authoritative requirements or acceptance.
-6. [Phase 20 Contract Loop](./phase-20-contract-loop.md) defines the paired Commerce SSR/REST build and synchronization workflow.
-7. [ADR 0001](./decisions/0001-mvp-boundaries.md) records the accepted MVP architecture and scope decisions behind this plan.
-8. [ADR 0002](./decisions/0002-multi-merchant-within-one-vona-instance.md) records proposed guardrails for a future multi-merchant boundary within one Vona instance.
+6. [ADR 0001](./decisions/0001-mvp-boundaries.md) records the accepted MVP architecture and scope decisions behind this plan.
+7. [ADR 0002](./decisions/0002-multi-merchant-within-one-vona-instance.md) records proposed guardrails for a future multi-merchant boundary within one Vona instance.
 
 ## Confirmed MVP Baseline
 
@@ -55,9 +54,9 @@ Inventory reservation starts as a `commerce-trade` aggregate behavior. The SRS k
 ## Document Authority
 
 - The PRD owns customer and operator outcomes, scope, and business acceptance.
-- The SRS owns system contracts, state transitions, data ownership, security, and technical acceptance.
-- The PDP/WBS owns delivery order, dependencies, and verification steps.
-- The test plan owns acceptance strategy, traceability evidence, and release proof.
+- The SRS owns system contracts, state transitions, data ownership, security, technical acceptance, and Commerce contract-loop requirements.
+- The PDP/WBS owns delivery order, dependencies, and completion checks.
+- The test plan owns acceptance strategy, executable build/browser procedures, traceability evidence, and release proof.
 - ADR 0001 owns the accepted MVP scope and architecture choices.
 - ADR 0002 owns proposed guardrails for any future multi-merchant boundary inside one Vona instance.
 - [ADR 0010](../../decisions/0010-repository-native-planning-documents.md) owns the repository-wide decision to retain internal planning documents and not adopt OpenSpec as a parallel planning authority.

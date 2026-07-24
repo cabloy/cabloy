@@ -20,6 +20,7 @@ It runs two independent Zova SSR applications and Vona SSR sites:
 | SSR site ID          | `commerce`                                                                                     | `commerceAdmin`                                                         |
 | Public path          | `commerce` (`/commerce`)                                                                       | `commerce-admin` (`/commerce-admin`)                                    |
 | Zova flavor          | `cabloyCommerce`                                                                               | `cabloyCommerceAdmin`                                                   |
+| Paired root build    | `npm run build:zova:commerce:web`                                                              | `npm run build:zova:commerce:admin`                                     |
 | Primary audience     | Authenticated customers, with public catalogue browsing                                        | Authorized tenant operators                                             |
 | SSR privacy baseline | Anonymous shell for private data unless a later decision requires cookie-aware personalization | Cookie-aware SSR may be enabled only when the site contract requires it |
 
@@ -181,8 +182,8 @@ State names in this section are canonical. A later implementation may use intege
 
 ## API and Frontend State Contracts
 
-- **SRS-API-01**: Vona is the contract truth. Backend DTO/controller/API changes follow the forward contract loop; Zova consumers are regenerated rather than manually patched.
-- **SRS-API-02**: A reverse change to frontend metadata/routes requires the matching Commerce flavor SSR + REST build before `npm run deps:vona`. A REST-only build is insufficient because the SSR bundle and generated contract must move together.
+- **SRS-API-01**: Vona is the contract truth. For a Commerce DTO, controller, validation, or OpenAPI change, update and verify Vona first; start local Vona when Swagger generation requires it; configure the owning Zova module with `npm run zova :openapi:config <module>` when it exposes operations; require non-empty `operations.match` or `operations.ignore`; then run `npm run zova :openapi:generate <module>`. Regenerate Zova consumers rather than manually patching generated output, and consume the result through a thin Zova Model facade.
+- **SRS-API-02**: A reverse change to frontend metadata/routes requires the matching Commerce flavor SSR + REST build before `npm run deps:vona`: `npm run build:zova:commerce:web` for Customer, `npm run build:zova:commerce:admin` for Operator, or `npm run build:zova:commerce` when both surfaces or generated contract output changed. A REST-only build is insufficient because the SSR bundle and generated contract must move together. Generated `vona/.zova-rest/` directories are build artifacts and must not be edited manually.
 - **SRS-API-03**: APIs expose semantic resource and action boundaries. A customer action never accepts an arbitrary customer, tenant, total, discount, or state transition from the browser.
 - **SRS-UI-01**: Reusable async product, cart, order, coupon, and operator query state belongs to a Zova Model. Controllers orchestrate scenes rather than becoming shared fetch/cache owners.
 - **SRS-UI-02**: A custom endpoint in the same Admin Resource boundary reuses the existing `rest-resource.model.resource` state and invalidation tree rather than creating a competing module-local cache owner. A genuinely separate customer self-service contract may own its dedicated Web state boundary as specified by `SRS-ADR-06`.

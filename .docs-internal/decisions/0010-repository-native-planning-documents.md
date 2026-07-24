@@ -74,6 +74,5 @@ The following alternatives are deferred:
 - [A-Commerce SRS](../business/a-commerce/srs.md)
 - [A-Commerce PDP/WBS](../business/a-commerce/pdp-wbs.md)
 - [A-Commerce test strategy and acceptance plan](../business/a-commerce/test-plan.md)
-- [Phase 20 Contract Loop](../business/a-commerce/phase-20-contract-loop.md)
 - [A-Commerce ADR 0001: Establish A-Commerce MVP Boundaries](../business/a-commerce/decisions/0001-mvp-boundaries.md)
 - [A-Commerce ADR 0002: Preserve a Path to Multiple Merchants Within One Vona Instance](../business/a-commerce/decisions/0002-multi-merchant-within-one-vona-instance.md)
