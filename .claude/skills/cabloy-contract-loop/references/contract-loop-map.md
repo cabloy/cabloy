@@ -92,6 +92,19 @@ Practical check after generation:
 - confirm the generated API files only contain the intended resource operations
 - confirm the module metadata and exports were not polluted by unrelated APIs
 
+### Dual-audience resource ownership
+
+One persisted domain may deliberately own both conventional Admin Resource operations and explicit Web self-service operations. Include every intended operation in the constrained `operations.match` slice; this remains one forward-chain contract, not competing generated contracts or consumer drift.
+
+After generation, choose the consumer shape by boundary:
+
+| Consumer | Generated-contract follow-up |
+| --- | --- |
+| Admin custom operation with the same authority, projection, and Resource page semantics | thin module facade → `rest-resource.model.resource` → schema-driven Resource UI |
+| Web self-service operation with different authority, server-derived owner scope, DTO projection, or page/SSR semantics | dedicated Web model → purpose-built self-service pages |
+
+The Web model is valid only for the separate self-service state domain. It must not become a parallel owner for Admin `select`/`view`, schemas, permissions, or generic Resource page state. See `../../../../cabloy-docs/fullstack/admin-resource-and-web-self-service.md` for the complete architecture.
+
 ## Forward chain artifact map
 
 1. backend contract source

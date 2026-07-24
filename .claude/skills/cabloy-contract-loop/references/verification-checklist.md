@@ -21,6 +21,18 @@ After a contract-loop change, verify the branch that actually applies.
 - `npm run tsc`
 - `npm run build`
 
+### Dual-audience resource verification
+
+When one persisted domain has both Admin Resource and Web self-service consumers, also verify:
+
+- every intended Admin and Web operation appears in emitted OpenAPI and the constrained generated SDK slice
+- Admin controller authorization and the intended read-only or CRUD action surface remain independent of menu visibility
+- Web requests cannot choose owner or tenant scope; the service applies owner and visibility predicates before count, sorting, and pagination
+- Web DTOs omit owner, tenant, and operational-only fields
+- Admin custom state remains in `ModelResource`; a dedicated Web model owns only the distinct self-service cache domain
+- private Web SSR keeps a hydration-equivalent neutral shell until an explicit admission or post-hydration boundary
+- targeted Admin and authenticated Web flow checks cover both audiences when both contracts changed
+
 ## Reverse chain verification
 
 - frontend-owned source is correct

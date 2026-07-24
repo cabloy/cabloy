@@ -361,6 +361,8 @@ Use a resource-owner model when:
 
 This pattern is especially strong for admin-style, resource-driven UIs.
 
+When the same persisted domain also has a genuinely different customer self-service contract, keep this owner for the Admin Resource boundary and use a dedicated model for the distinct self-service state. See [Admin Resource and Web Self-Service](/fullstack/admin-resource-and-web-self-service) for the cross-stack decision rule and Commerce Order specimen.
+
 ## When not to use this pattern
 
 Do not reach for this pattern by default when:

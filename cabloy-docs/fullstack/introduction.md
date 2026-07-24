@@ -45,6 +45,7 @@ Use this path when the task is about how backend and frontend stay aligned insid
 - [Framework Performance](/fullstack/framework-performance)
 - [Vona + Zova Integration](/fullstack/vona-zova-integration)
 - [Contract Loop Playbook](/fullstack/contract-loop-playbook)
+- [Admin Resource and Web Self-Service](/fullstack/admin-resource-and-web-self-service)
 - [Backend Metadata to Frontend Table Actions](/fullstack/backend-metadata-to-frontend-table-actions)
 - [Fullstack Image Workflow](/fullstack/image-workflow)
 - [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)

@@ -117,6 +117,7 @@ For deeper reference material, read:
 - `references/contract-loop-map.md`
 - `references/verification-checklist.md`
 - `references/resource-custom-state-pattern.md`
+- `../../../cabloy-docs/fullstack/admin-resource-and-web-self-service.md`
 
 ## Step 3: Identify the contract source of truth deliberately
 
@@ -237,9 +238,14 @@ After generation, inspect whether the frontend still needs follow-up in:
 Keep frontend follow-up thin:
 
 - use thin semantic model facades over generated consumers instead of re-declaring the contract
-- if a custom endpoint still belongs to an existing resource, prefer one resource-state owner instead of letting a module-local model create a second cache tree
+- if a custom endpoint still belongs to an existing Admin Resource state boundary, prefer one resource-state owner instead of letting a module-local model create a second cache tree
 
-Reuse the resource-owned custom state pattern in `references/resource-custom-state-pattern.md`.
+For one persisted domain with both Admin Resource and Web self-service consumers, choose the state boundary deliberately after backend contract truth and regeneration are established:
+
+- **Admin/custom-resource branch:** the endpoint remains part of the Admin Resource authority, projection, and generic page state, so reuse `rest-resource.model.resource` through a thin semantic facade.
+- **Separate Web self-service branch:** the consumer has different authority, server-derived owner scope, DTO projection, operation names, UX, or SSR behavior, so expose explicit self-service operations and use a dedicated Web model and purpose-built pages.
+
+Share domain persistence and lifecycle logic, not necessarily HTTP projections or frontend state ownership. Read `../../../cabloy-docs/fullstack/admin-resource-and-web-self-service.md` for the complete architecture. Reuse the resource-owned custom state pattern in `references/resource-custom-state-pattern.md` for the Admin/custom-resource branch.
 
 ## Step 6: Keep edition-aware differences explicit
 

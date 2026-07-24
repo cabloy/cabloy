@@ -143,6 +143,13 @@ Use this quick rule:
 - full explanation → [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
 - workflow steering → skill and rules can point to the docs and choose the right CLI path
 
+### Example: “How should one persisted resource serve Admin and Web users?”
+
+- full architecture explanation → [Admin Resource and Web Self-Service](/fullstack/admin-resource-and-web-self-service)
+- concise repo-wide default → `CLAUDE.md`
+- contract regeneration, consumer-boundary choice, and verification routing → `cabloy-contract-loop`
+- extend the existing contract-loop skill references and evals; do not create an Order-specific skill
+
 ### Example: “How should AI remove an existing module cleanly?”
 
 - public operational explanation → [Playbook: Module Removal](/ai/playbook-module-removal)

@@ -24,6 +24,12 @@
       "prompt": "The frontend model and generated SDK in Cabloy Basic look stale after a backend response change, but I am not sure whether the real bug is in backend OpenAPI output or in skipped frontend regeneration. Diagnose the contract loop the Cabloy way.",
       "expected_output": "Handles reverse stale-consumer detection, checks backend source-of-truth first, avoids hand-patching frontend types as the primary fix, and proposes regeneration or backend correction based on the contract path.",
       "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "One persisted Order domain needs read-only Admin select/view operations through presetResource and customer Web list/detail reads. Should Admin and Web share one API and ModelResource, or should I use mine/viewMine-style Web operations and a separate Web model? Include the Cabloy contract-loop steps.",
+      "expected_output": "Keeps one domain and persistence boundary while separating Admin select/view and explicit owner-scoped Web operations with audience-specific DTOs. Keeps ModelResource as the Admin Resource owner and accepts a dedicated Web model/pages only for the distinct self-service state. Requires backend-first OpenAPI inspection, constrained regeneration for all owned operations, and verification of Admin authorization, Web owner scope before pagination, SSR admission where relevant, and both consumer paths. Rejects forcing Web through presetResource and rejects a parallel Admin cache owner for an ordinary custom Admin action.",
+      "files": []
     }
   ]
 }

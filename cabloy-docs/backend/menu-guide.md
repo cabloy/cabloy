@@ -73,7 +73,7 @@ In the current repo implementation, the out-of-the-box menu controller is public
 - Omit `roles`, or use `roles: []`, to make an item visible to anonymous and authenticated callers.
 - A nonempty `roles` array is visible when the current Passport has at least one matching role name.
 - `roles` is server-only declaration metadata. It is filtered out before the API response and is not part of `IMenuItem`, OpenAPI, or generated frontend clients.
-- This controls navigation disclosure only. It never grants access to a page, controller action, API, or resource; those boundaries retain their own route and Passport/permission guards.
+- This controls navigation disclosure only. It never grants access to a page, controller action, API, or resource; those boundaries retain their own route and Passport/permission guards. For the fullstack pattern that pairs an Admin `presetResource` entry with independently authorized Admin APIs and separately scoped Web self-service APIs, see [Admin Resource and Web Self-Service](/fullstack/admin-resource-and-web-self-service).
 
 SSR Site menu definitions are cached structurally by Site and locale. The framework keeps static role policy in that prepared cache, then creates a filtered response for each request without mutating the cached definition.
 

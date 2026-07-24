@@ -14,13 +14,13 @@ Typical examples:
 
 ## The ownership rule
 
-Prefer one owner for all resource-bound server state.
+Prefer one owner for all server state in the same Admin Resource boundary.
 
-In this codebase, the preferred owner is:
+In this codebase, the preferred Admin Resource owner is:
 
 - `rest-resource.model.resource`
 
-Do not let a module-local model become a second state owner for the same resource rows unless the boundary is explicitly intentional.
+Do not let a module-local model become a second state owner for the same Admin resource rows unless the boundary is explicitly intentional.
 
 ## The split to avoid
 
@@ -135,6 +135,19 @@ A separate owner may still be fine when the data is not really part of the resou
 - intentionally unsynchronized auxiliary data
 
 Even then, be explicit about the boundary.
+
+## Admin Resource and Web self-service boundary
+
+A dedicated Web model is also valid when one persisted domain exposes a genuinely separate, customer-scoped self-service contract.
+
+Use that branch only when all of these are true:
+
+- the Web operations and DTOs are distinct from Admin `select`/`view` semantics;
+- the server derives owner scope from the authenticated user and preserves normal instance scope;
+- the Web model owns only its self-service query keys and purpose-built page state, not Admin Resource schemas, permissions, or generic page state;
+- Web UX or private SSR behavior needs a dedicated admission and post-hydration boundary.
+
+This does not justify a parallel owner for a custom Admin endpoint. It establishes a separate Web state domain beside the Admin Resource boundary. Read `../../../../cabloy-docs/fullstack/admin-resource-and-web-self-service.md` for the complete cross-stack pattern.
 
 ## Quick checklist
 

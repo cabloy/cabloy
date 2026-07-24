@@ -21,9 +21,9 @@ This pattern exists to prevent a common state inconsistency:
 
 The durable rule is:
 
-- resource-bound server state should have one owner
-- in this codebase, that owner should be `rest-resource.model.resource`
-- module-local models may stay as semantic facades, but they should not become competing state owners for the same resource
+- server state in the same Admin Resource boundary should have one owner
+- in this codebase, that Admin owner should be `rest-resource.model.resource`
+- module-local models may stay as semantic facades, but they should not become competing state owners for the same Admin Resource
 
 ## The ownership split to avoid
 
@@ -184,6 +184,8 @@ A separate owner may still be acceptable when the data is not really part of the
 - data that is intentionally not synchronized with the generic resource page model
 
 Even then, be explicit about the boundary. Do not create a second owner by accident.
+
+A shared persistence domain may still have a genuinely separate, customer-scoped Web self-service contract. In that case, a dedicated Web state owner is legitimate because it does not compete with the Admin Resource boundary. Keep its operations, DTOs, owner scope, cache domain, pages, and SSR admission behavior explicitly separate; see [Admin Resource and Web Self-Service](../../cabloy-docs/fullstack/admin-resource-and-web-self-service.md) for the public architecture guide.
 
 ## Implementation checklist
 
