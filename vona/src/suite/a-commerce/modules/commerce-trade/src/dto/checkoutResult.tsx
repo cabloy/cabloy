@@ -15,11 +15,11 @@ export class DtoCheckoutResult {
   @Api.field(v.tableIdentity())
   paymentAttemptId: TableIdentity;
 
-  @Api.field(z.literal('awaiting_payment'))
-  state: 'awaiting_payment';
+  @Api.field(z.enum(['awaiting_payment', 'paid', 'cancelled', 'expired']))
+  state: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
 
-  @Api.field(z.literal('created'))
-  paymentAttemptState: 'created';
+  @Api.field(z.enum(['created', 'succeeded', 'failed', 'cancelled']))
+  paymentAttemptState: 'created' | 'succeeded' | 'failed' | 'cancelled';
 
   @Api.field(z.literal('USD'))
   currency: 'USD';

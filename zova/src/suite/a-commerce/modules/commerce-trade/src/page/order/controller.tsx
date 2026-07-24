@@ -21,11 +21,18 @@ export class ControllerPageOrder extends BeanControllerPageBase {
   }
 
   get queryOrder() {
-    if (process.env.SERVER) return;
+    if (!this.$ssr.isRuntimeSsrHydrated) return;
     return this.$$modelOrder.view(this.orderId);
   }
 
   protected render() {
+    if (!this.$ssr.isRuntimeSsrHydrated) {
+      return (
+        <ZPage>
+          <section class="mx-auto max-w-4xl p-6" aria-busy="true" />
+        </ZPage>
+      );
+    }
     const query = this.queryOrder;
     const order = query?.data;
     return (

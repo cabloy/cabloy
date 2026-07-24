@@ -44,6 +44,13 @@ export class ControllerPagePayment extends BeanControllerPageBase {
   }
 
   protected render() {
+    if (!this.$ssr.isRuntimeSsrHydrated) {
+      return (
+        <ZPage>
+          <section class="mx-auto max-w-xl p-6" aria-busy="true" />
+        </ZPage>
+      );
+    }
     return (
       <ZPage>
         <section class="mx-auto max-w-xl p-6">

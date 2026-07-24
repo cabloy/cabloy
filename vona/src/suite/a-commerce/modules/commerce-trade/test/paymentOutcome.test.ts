@@ -16,6 +16,7 @@ interface IFixture {
   cartId?: number;
   userId?: number;
   customerName?: string;
+  checkoutCorrelationId?: string;
   orderId?: number;
   paymentAttemptId?: number;
 }
@@ -141,10 +142,11 @@ async function createCheckoutFixture(suffix: string, withCoupon = true): Promise
     skuId: fixture.skuId,
     quantity: 1,
   });
+  fixture.checkoutCorrelationId = `payment-checkout-${suffix}`;
   const checkout = await app.scope('commerce-trade').service.order.checkout({
     addressId: fixture.addressId,
     couponGrantId: fixture.grantId,
-    correlationId: `payment-checkout-${suffix}`,
+    correlationId: fixture.checkoutCorrelationId,
   });
   fixture.orderId = checkout.orderId as number;
   fixture.paymentAttemptId = checkout.paymentAttemptId as number;
@@ -330,6 +332,271 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
     }
   });
 
+  it('rolls back every payment outcome stage without durable terminal effects', async () => {
+    const stages = [
+      'afterOrderState',
+      'afterPaymentAttempt',
+      'afterResourceTransition',
+      'afterPaymentAudit',
+      'afterOrderAudit',
+    ] as const;
+    await app.bean.executor.mockCtx(async () => {
+      for (const stage of stages) {
+        const fixture: IFixture = {};
+        try {
+          Object.assign(
+            fixture,
+            await createCheckoutFixture(`${randomUUID().slice(0, 8)}-${stage}`),
+          );
+          await assert.rejects(
+            app.scope('commerce-trade').service.order.applyPaymentOutcomeForTest(
+              fixture.paymentAttemptId!,
+              {
+                outcome: 'succeeded',
+                idempotencyKey: `rollback-${stage}`,
+              },
+              currentStage => {
+                if (currentStage === stage) throw new Error(`payment rollback proof: ${stage}`);
+              },
+            ),
+            new RegExp(`payment rollback proof: ${stage}`),
+          );
+
+          const order = await app.scope('commerce-trade').model.order.getById(fixture.orderId!);
+          const attempt = await app
+            .scope('commerce-payment')
+            .model.paymentAttempt.getById(fixture.paymentAttemptId!);
+          const line = await app.scope('commerce-trade').model.orderLine.get({
+            orderId: fixture.orderId,
+          });
+          const reservation = await app.scope('commerce-trade').model.stockReservation.get({
+            orderLineId: line?.id,
+          });
+          const balance = await app
+            .scope('commerce-trade')
+            .model.stockBalance.getById(fixture.balanceId!);
+          const grant = await app
+            .scope('commerce-promotion')
+            .model.couponGrant.getById(fixture.grantId!);
+          const paymentAudits = await app.scope('commerce-payment').model.paymentAudit.select({
+            where: { paymentAttemptId: fixture.paymentAttemptId },
+          });
+          const orderAudits = await app.scope('commerce-trade').model.orderAudit.select({
+            where: { orderId: fixture.orderId },
+            orders: [['id', 'asc']],
+          });
+          const stockAudits = await app.scope('commerce-trade').model.stockAudit.select({
+            where: { skuId: fixture.skuId },
+            orders: [['id', 'asc']],
+          });
+          const couponAudits = await app.scope('commerce-promotion').model.couponAudit.select({
+            where: { couponGrantId: fixture.grantId },
+            orders: [['id', 'asc']],
+          });
+          assert.deepEqual(
+            [order?.state, attempt?.state, reservation?.state],
+            ['awaiting_payment', 'created', 'reserved'],
+          );
+          assert.deepEqual([balance?.onHand, balance?.reserved, balance?.available], [1, 1, 0]);
+          assert.equal(grant?.state, 'reserved');
+          assert.equal(paymentAudits.length, 0);
+          assert.deepEqual(
+            orderAudits.map(audit => audit.operation),
+            ['created'],
+          );
+          assert.deepEqual(
+            stockAudits.map(audit => audit.operation),
+            ['adjust', 'reserve'],
+          );
+          assert.deepEqual(
+            couponAudits.map(audit => audit.operation),
+            ['issue', 'reserve'],
+          );
+        } finally {
+          await cleanup(fixture);
+        }
+      }
+      await app.bean.passport.signout();
+    });
+  });
+
+  it('denies anonymous customer payment and order actions', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const requests = [
+        () =>
+          app.bean.executor.performAction('get', '/commerce/trade/order/mine', {
+            innerAccess: false,
+          }),
+        () =>
+          app.bean.executor.performAction('get', '/commerce/trade/order/1', {
+            innerAccess: false,
+          }),
+        () =>
+          app.bean.executor.performAction('post', '/commerce/trade/payment/1/outcome', {
+            innerAccess: false,
+            body: { outcome: 'succeeded', idempotencyKey: 'anonymous-payment-1' },
+          }),
+      ];
+      for (const request of requests) {
+        await assert.rejects(request(), (error: any) => error.code === 401);
+      }
+    });
+  });
+
+  it('hides a customer order and payment attempt from another customer', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture: IFixture = {};
+      try {
+        Object.assign(fixture, await createCheckoutFixture(randomUUID().slice(0, 12)));
+        const foreignName = `payment-foreign-${randomUUID().slice(0, 12)}`;
+        const foreign = await app.bean.user.register({ name: foreignName }, true);
+        try {
+          await app.bean.passport.signout();
+          await app.bean.passport.signinMock(foreignName as any);
+          assert.equal(
+            await app.scope('commerce-trade').service.order.view(fixture.orderId!),
+            undefined,
+          );
+          assert.equal(
+            (await app.scope('commerce-trade').service.order.mine()).some(
+              order => String(order.id) === String(fixture.orderId),
+            ),
+            false,
+          );
+          await assert.rejects(
+            app
+              .scope('commerce-trade')
+              .service.order.applyPaymentOutcome(fixture.paymentAttemptId!, {
+                outcome: 'succeeded',
+                idempotencyKey: 'foreign-payment-1',
+              }),
+            (error: any) => error.code === 404,
+          );
+          const order = await app.scope('commerce-trade').model.order.getById(fixture.orderId!);
+          const attempt = await app
+            .scope('commerce-payment')
+            .model.paymentAttempt.getById(fixture.paymentAttemptId!);
+          const paymentAudits = await app.scope('commerce-payment').model.paymentAudit.select({
+            where: { paymentAttemptId: fixture.paymentAttemptId },
+          });
+          assert.deepEqual([order?.state, attempt?.state], ['awaiting_payment', 'created']);
+          assert.equal(paymentAudits.length, 0);
+        } finally {
+          await app.bean.passport.signout();
+          await app.scope('home-user').model.roleUser.delete({ userId: foreign.id });
+          await app.bean.user.removeById(foreign.id);
+        }
+      } finally {
+        await app.bean.passport.signinMock(fixture.customerName as any);
+        await cleanup(fixture);
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
+  it('treats a foreign-instance order and payment attempt as absent', async () => {
+    const fixture: IFixture = {};
+    let foreignUserId: number | undefined;
+    try {
+      await app.bean.executor.mockCtx(async () => {
+        Object.assign(fixture, await createCheckoutFixture(randomUUID().slice(0, 12)));
+        await app.bean.passport.signout();
+      });
+      await app.bean.executor.mockCtx(
+        async () => {
+          const foreignName = `payment-instance-${randomUUID().slice(0, 12)}`;
+          const foreign = await app.bean.user.register({ name: foreignName }, true);
+          foreignUserId = foreign.id as number;
+          await app.bean.passport.signinMock(foreignName as any);
+          try {
+            assert.equal(
+              await app.scope('commerce-trade').service.order.view(fixture.orderId!),
+              undefined,
+            );
+            assert.equal(
+              (await app.scope('commerce-trade').service.order.mine()).some(
+                order => String(order.id) === String(fixture.orderId),
+              ),
+              false,
+            );
+            await assert.rejects(
+              app
+                .scope('commerce-trade')
+                .service.order.applyPaymentOutcome(fixture.paymentAttemptId!, {
+                  outcome: 'succeeded',
+                  idempotencyKey: 'foreign-instance-payment-1',
+                }),
+              (error: any) => error.code === 404,
+            );
+            assert.equal(
+              (
+                await app.scope('commerce-payment').model.paymentAudit.select({
+                  where: { paymentAttemptId: fixture.paymentAttemptId },
+                })
+              ).length,
+              0,
+            );
+          } finally {
+            await app.bean.passport.signout();
+          }
+        },
+        { instanceName: 'shareTest' as any },
+      );
+      await app.bean.executor.mockCtx(async () => {
+        const order = await app.scope('commerce-trade').model.order.getById(fixture.orderId!);
+        const attempt = await app
+          .scope('commerce-payment')
+          .model.paymentAttempt.getById(fixture.paymentAttemptId!);
+        assert.deepEqual([order?.state, attempt?.state], ['awaiting_payment', 'created']);
+      });
+    } finally {
+      await app.bean.executor.mockCtx(
+        async () => {
+          if (foreignUserId !== undefined) {
+            await app.scope('home-user').model.roleUser.delete({ userId: foreignUserId });
+            await app.bean.user.removeById(foreignUserId);
+          }
+        },
+        { instanceName: 'shareTest' as any },
+      );
+      await app.bean.executor.mockCtx(async () => {
+        await cleanup(fixture);
+      });
+    }
+  });
+
+  it('replays checkout correlation with its terminal payment result', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture: IFixture = {};
+      try {
+        Object.assign(fixture, await createCheckoutFixture(randomUUID().slice(0, 12)));
+        const settled = await app
+          .scope('commerce-trade')
+          .service.order.applyPaymentOutcome(fixture.paymentAttemptId!, {
+            outcome: 'succeeded',
+            idempotencyKey: 'terminal-checkout-replay-1',
+          });
+        const replay = await app.scope('commerce-trade').service.order.checkout({
+          addressId: fixture.addressId!,
+          couponGrantId: fixture.grantId,
+          correlationId: fixture.checkoutCorrelationId!,
+        });
+        assert.deepEqual(
+          [replay.orderId, replay.paymentAttemptId, replay.state, replay.paymentAttemptState],
+          [
+            settled.orderId,
+            settled.paymentAttemptId,
+            settled.orderState,
+            settled.paymentAttemptState,
+          ],
+        );
+      } finally {
+        await cleanup(fixture);
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
   it('rejects conflicting payment event reuse without another transition', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixture: IFixture = {};
@@ -352,6 +619,43 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
           where: { paymentAttemptId: fixture.paymentAttemptId },
         });
         assert.equal(paymentAudits.length, 1);
+      } finally {
+        await cleanup(fixture);
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
+  it('cancels payment exactly once and releases the unpaid order resources', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture: IFixture = {};
+      try {
+        Object.assign(fixture, await createCheckoutFixture(randomUUID().slice(0, 12)));
+        const first = await app
+          .scope('commerce-trade')
+          .service.order.applyPaymentOutcome(fixture.paymentAttemptId!, {
+            outcome: 'cancelled',
+            idempotencyKey: 'cancel-1',
+          });
+        const replay = await app
+          .scope('commerce-trade')
+          .service.order.applyPaymentOutcome(fixture.paymentAttemptId!, {
+            outcome: 'cancelled',
+            idempotencyKey: 'cancel-1',
+          });
+        assert.deepEqual(replay, first);
+        assert.deepEqual([first.orderState, first.paymentAttemptState], ['cancelled', 'cancelled']);
+        const line = await app.scope('commerce-trade').model.orderLine.get({
+          orderId: fixture.orderId,
+        });
+        const reservation = await app.scope('commerce-trade').model.stockReservation.get({
+          orderLineId: line?.id,
+        });
+        const grant = await app
+          .scope('commerce-promotion')
+          .model.couponGrant.getById(fixture.grantId!);
+        assert.equal(reservation?.state, 'released');
+        assert.equal(grant?.state, 'available');
       } finally {
         await cleanup(fixture);
         await app.bean.passport.signout();

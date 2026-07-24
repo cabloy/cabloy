@@ -92,6 +92,10 @@ export class CtxSSR extends BeanSimple {
     return this[SymbolIsRuntimeSsrPreHydration].value;
   }
 
+  get isRuntimeSsrHydrated() {
+    return process.env.CLIENT && !this.isRuntimeSsrPreHydration;
+  }
+
   set isRuntimeSsrPreHydration(value) {
     this[SymbolIsRuntimeSsrPreHydration].value = value;
   }

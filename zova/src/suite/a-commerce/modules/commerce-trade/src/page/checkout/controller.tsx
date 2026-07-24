@@ -28,12 +28,12 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
   submitting = false;
 
   get queryAddresses() {
-    if (process.env.SERVER) return;
+    if (!this.$ssr.isRuntimeSsrHydrated) return;
     return this.$$modelAddress.select({ pageNo: 1, pageSize: 100 });
   }
 
   get queryCoupons() {
-    if (process.env.SERVER) return;
+    if (!this.$ssr.isRuntimeSsrHydrated) return;
     return this.$$modelCoupon.mine();
   }
 
@@ -56,6 +56,13 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
   }
 
   protected render() {
+    if (!this.$ssr.isRuntimeSsrHydrated) {
+      return (
+        <ZPage>
+          <section class="mx-auto max-w-3xl p-6" aria-busy="true" />
+        </ZPage>
+      );
+    }
     const addresses = this.queryAddresses?.data?.list ?? [];
     const coupons = this.queryCoupons?.data ?? [];
     return (

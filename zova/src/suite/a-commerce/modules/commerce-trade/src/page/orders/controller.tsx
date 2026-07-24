@@ -16,7 +16,7 @@ export class ControllerPageOrders extends BeanControllerPageBase {
   $$modelOrder: ModelOrder;
 
   get queryOrders() {
-    if (process.env.SERVER) return;
+    if (!this.$ssr.isRuntimeSsrHydrated) return;
     return this.$$modelOrder.mine();
   }
 
@@ -25,6 +25,13 @@ export class ControllerPageOrders extends BeanControllerPageBase {
   }
 
   protected render() {
+    if (!this.$ssr.isRuntimeSsrHydrated) {
+      return (
+        <ZPage>
+          <section class="mx-auto max-w-4xl p-6" aria-busy="true" />
+        </ZPage>
+      );
+    }
     const query = this.queryOrders;
     const orders = query?.data ?? [];
     return (

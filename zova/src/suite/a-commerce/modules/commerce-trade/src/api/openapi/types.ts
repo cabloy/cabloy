@@ -2289,9 +2289,9 @@ export interface components {
       orderId: number | string;
       paymentAttemptId: number | string;
       /** @enum {string} */
-      state: 'awaiting_payment';
+      state: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
       /** @enum {string} */
-      paymentAttemptState: 'created';
+      paymentAttemptState: 'created' | 'succeeded' | 'failed' | 'cancelled';
       /** @enum {string} */
       currency: 'USD';
       payableTotalCents: number;

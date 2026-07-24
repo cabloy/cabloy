@@ -162,6 +162,40 @@ test(
 );
 
 test(
+  'Phase 50: anonymous payment and order routes remain SSR-neutral and protected',
+  { tag: ['@web', '@flow'] },
+  async ({ page, request }) => {
+    const routes = [
+      ['/commerce/checkout', '/checkout'],
+      ['/commerce/payment/1', '/payment/1'],
+      ['/commerce/orders', '/orders'],
+      ['/commerce/order/1', '/order/1'],
+    ] as const;
+    for (const [path, routePath] of routes) {
+      const response = await request.get(path, { maxRedirects: 0 });
+      expect(response.status(), path).toBe(200);
+      expect(response.headers().location, path).toBeUndefined();
+      const html = await response.text();
+      expect(html.toLowerCase(), path).not.toContain('data-zova-hydrated');
+      expect(html, path).not.toContain('Payment Customer');
+      expect(html, path).not.toContain('Payment succeeded');
+      expect(html, path).not.toContain('Order #');
+      expect(html, path).not.toContain('Checkout');
+      expect(html, path).not.toContain('Mock payment');
+      expect(html, path).not.toContain('My orders');
+
+      const pageErrors = collectPageErrors(page);
+      const documentResponse = await page.goto(path, { waitUntil: 'load' });
+      expect(documentResponse?.ok(), path).toBeTruthy();
+      await expect(page, path).toHaveURL(/\/commerce\/login\?(?:.*&)?returnTo=/);
+      const loginUrl = new URL(page.url());
+      expect(loginUrl.searchParams.getAll('returnTo'), path).toEqual([routePath]);
+      expect(pageErrors, path).toEqual([]);
+    }
+  },
+);
+
+test(
   'ATP-SSR-02: Commerce Admin is an independent SSR site',
   { tag: ['@admin', '@smoke'] },
   async ({ page, request }) => {

@@ -60,6 +60,15 @@ export type CheckoutFailureStage =
 
 type CheckoutStageCallback = (stage: CheckoutFailureStage) => void | Promise<void>;
 
+export type PaymentOutcomeFailureStage =
+  | 'afterOrderState'
+  | 'afterPaymentAttempt'
+  | 'afterResourceTransition'
+  | 'afterPaymentAudit'
+  | 'afterOrderAudit';
+
+type PaymentOutcomeStageCallback = (stage: PaymentOutcomeFailureStage) => void | Promise<void>;
+
 interface IPreparedOrderLine {
   index: number;
   skuId: TableIdentity;
@@ -286,6 +295,24 @@ export class ServiceOrder extends BeanBase {
     paymentAttemptId: TableIdentity,
     command: DtoPaymentOutcomeCreate,
   ): Promise<DtoPaymentOutcomeResult> {
+    return await this._applyPaymentOutcome(paymentAttemptId, command);
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async applyPaymentOutcomeForTest(
+    paymentAttemptId: TableIdentity,
+    command: DtoPaymentOutcomeCreate,
+    onStage: PaymentOutcomeStageCallback,
+  ): Promise<DtoPaymentOutcomeResult> {
+    return await this._applyPaymentOutcome(paymentAttemptId, command, onStage);
+  }
+
+  private async _applyPaymentOutcome(
+    paymentAttemptId: TableIdentity,
+    command: DtoPaymentOutcomeCreate,
+    onStage?: PaymentOutcomeStageCallback,
+  ): Promise<DtoPaymentOutcomeResult> {
     if (!command.idempotencyKey.trim()) this.app.throw(400, 'payment idempotencyKey is required');
     const userId = this.bean.passport.currentUser!.id;
     const attempt =
@@ -335,16 +362,19 @@ export class ServiceOrder extends BeanBase {
     // Publish the aggregate terminal states before taking line/coupon locks. Concurrent
     // expiry or payment outcomes serialize on this order lock and then observe the winner.
     await this.scope.model.order.updateById(order.id, { state: orderState });
+    await onStage?.('afterOrderState');
     const finalizedAttempt = await this.$scope.commercePayment.service.paymentAttempt.finalize(
       order.id,
       normalizedOutcome,
     );
     if (!finalizedAttempt) this.app.throw(404, 'payment attempt not found');
+    await onStage?.('afterPaymentAttempt');
     if (normalizedOutcome === 'succeeded') {
       await this._consumeReservedOrderResources(order, correlationId, reason);
     } else {
       await this._releaseReservedOrderResources(order, correlationId, reason);
     }
+    await onStage?.('afterResourceTransition');
     await this.$scope.commercePayment.model.paymentAudit.insert({
       paymentAttemptId: finalizedAttempt.id,
       orderId: order.id,
@@ -359,6 +389,7 @@ export class ServiceOrder extends BeanBase {
       actorId: userId,
       processedAt: new Date(),
     });
+    await onStage?.('afterPaymentAudit');
     await this._appendAudit({
       orderId: order.id,
       operation: orderState === 'paid' ? 'paid' : 'cancelled',
@@ -367,6 +398,7 @@ export class ServiceOrder extends BeanBase {
       correlationId,
       reason,
     });
+    await onStage?.('afterOrderAudit');
     return this._paymentOutcomeResult({ ...order, state: orderState }, finalizedAttempt);
   }
 
@@ -539,14 +571,20 @@ export class ServiceOrder extends BeanBase {
     const paymentAttempt = await this.$scope.commercePayment.model.paymentAttempt.get({
       orderId: order.id,
     });
-    if (!paymentAttempt || paymentAttempt.state !== 'created') {
-      this.app.throw(409, 'checkout payment attempt is no longer available');
+    if (!paymentAttempt) this.app.throw(404, 'checkout payment attempt not found');
+    if (
+      order.state !== 'awaiting_payment' &&
+      order.state !== 'paid' &&
+      order.state !== 'cancelled' &&
+      order.state !== 'expired'
+    ) {
+      this.app.throw(409, 'checkout order state is not available');
     }
     return {
       orderId: order.id,
       paymentAttemptId: paymentAttempt.id,
-      state: 'awaiting_payment',
-      paymentAttemptState: 'created',
+      state: order.state,
+      paymentAttemptState: paymentAttempt.state,
       currency: order.currency,
       payableTotalCents: order.payableTotalCents,
       reservationExpiresAt: order.reservationExpiresAt,
