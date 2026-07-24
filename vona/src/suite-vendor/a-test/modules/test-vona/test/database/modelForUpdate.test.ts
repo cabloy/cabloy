@@ -3,11 +3,11 @@ import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
 describe('modelForUpdate.test.ts', () => {
-  it('action:modelForUpdate', async () => {
+  it('requires an active transaction', async () => {
     await app.bean.executor.mockCtx(async () => {
       const scopeTest = app.scope('test-vona');
       const modelTest = scopeTest.model.test;
-      const entityTest = await modelTest.insert({ title: 'action:modelForUpdate' });
+      const entityTest = await modelTest.insert({ title: 'requires an active transaction' });
       try {
         await assert.rejects(async () => {
           await modelTest.getForUpdate({ id: entityTest.id });
@@ -15,7 +15,20 @@ describe('modelForUpdate.test.ts', () => {
         await assert.rejects(async () => {
           await modelTest.getByIdForUpdate(entityTest.id);
         }, /getForUpdate requires an active transaction/);
+      } finally {
+        await modelTest.delete({ id: entityTest.id }, { disableDeleted: true });
+      }
+    });
+  });
 
+  it('retrieves rows within an active transaction', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const scopeTest = app.scope('test-vona');
+      const modelTest = scopeTest.model.test;
+      const entityTest = await modelTest.insert({
+        title: 'retrieves rows within an active transaction',
+      });
+      try {
         await app.ctx.db.transaction.begin(async () => {
           const byTitle = await modelTest.getForUpdate({ title: entityTest.title });
           assert.equal(byTitle?.id, entityTest.id);
@@ -36,7 +49,7 @@ describe('modelForUpdate.test.ts', () => {
     });
   });
 
-  it('action:modelForUpdate:relations', async () => {
+  it('loads relations within an active transaction', async () => {
     await app.bean.executor.mockCtx(async () => {
       const scopeTest = app.scope('test-vona');
       const testData = await scopeTest.service.testData.create('action:modelForUpdate');
@@ -54,7 +67,7 @@ describe('modelForUpdate.test.ts', () => {
     });
   });
 
-  it('action:modelForUpdate:cache', async () => {
+  it('bypasses caches within an active transaction', async () => {
     await app.bean.executor.mockCtx(async () => {
       const scopeTest = app.scope('test-vona');
       const modelTest = scopeTest.model.test;

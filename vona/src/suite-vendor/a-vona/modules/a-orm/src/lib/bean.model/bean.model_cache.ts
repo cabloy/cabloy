@@ -465,6 +465,12 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
     return item;
   }
 
+  /**
+   * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+   *
+   * Requires an active transaction. The lock is released when that transaction completes.
+   * Entity and query caches are bypassed.
+   */
   async getForUpdate<T extends IModelGetOptions<TRecord>>(
     where: TypeModelWhere<TRecord>,
     options?: T,
@@ -494,6 +500,12 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
     return item;
   }
 
+  /**
+   * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+   *
+   * Delegates to getForUpdate, so it requires an active transaction, bypasses caches, and
+   * releases the lock when that transaction completes.
+   */
   async getByIdForUpdate<T extends IModelGetOptions<TRecord>>(
     id: TableIdentity,
     options?: T,
