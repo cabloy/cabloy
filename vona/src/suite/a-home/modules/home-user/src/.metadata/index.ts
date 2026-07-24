@@ -473,12 +473,15 @@ declare module 'vona-module-home-user' {
 /** dto: end */
 /** controller: begin */
 export * from '../controller/passport.ts';
+export * from '../controller/passportTest.ts';
 import type { IControllerOptionsPassport } from '../controller/passport.ts';
+import type { IControllerOptionsPassportTest } from '../controller/passportTest.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
   
     export interface IControllerRecord {
       'home-user:passport': IControllerOptionsPassport;
+'home-user:passportTest': IControllerOptionsPassportTest;
     }
 
   
@@ -494,16 +497,33 @@ declare module 'vona-module-home-user' {
             get $beanFullName(): 'home-user.controller.passport';
             get $onionName(): 'home-user:passport';
             get $onionOptions(): IControllerOptionsPassport;
+          }
+
+        export interface ControllerPassportTest {
+          /** @internal */
+          get scope(): ScopeModuleHomeUser;
+        }
+
+          export interface ControllerPassportTest {
+            get $beanFullName(): 'home-user.controller.passportTest';
+            get $onionName(): 'home-user:passportTest';
+            get $onionOptions(): IControllerOptionsPassportTest;
           } 
 }
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
 import type { ControllerPassport } from '../controller/passport.ts';
+// @ts-ignore ignore
+import type { ControllerPassportTest } from '../controller/passportTest.ts';
 declare module 'vona-module-home-user' {
   
     export interface IControllerOptionsPassport {
       actions?: TypeControllerOptionsActions<ControllerPassport>;
+    }
+
+    export interface IControllerOptionsPassportTest {
+      actions?: TypeControllerOptionsActions<ControllerPassportTest>;
     }
 }
 declare module 'vona-module-a-web' {
@@ -520,6 +540,7 @@ export interface IApiPathPostRecord{
 '/home/user/passport/refreshAuthToken': undefined;
 '/home/user/passport/createPassportJwtFromOauthCode': undefined;
 '/home/user/passport/createTempAuthToken': undefined;
+'/home/user/passportTest/activateCurrent': undefined;
     }
 
 }

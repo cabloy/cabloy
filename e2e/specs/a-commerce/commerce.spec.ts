@@ -1,13 +1,163 @@
+import type { APIRequestContext, Browser, Page, TestInfo } from '@playwright/test';
+
 import { expect, test } from '@playwright/test';
 
 const privateMarkers = ['cart', 'address', 'order', 'coupon', 'payment'];
+const addressResourceUrl =
+  /\/commerce-admin\/rest\/resource\/commerce-member(?:%3A|:|%253A)address(?:[/?#]|$)/;
+const addressMinePath = '/api/commerce/member/address/mine';
+const addressActionPath = '/api/commerce/member/address';
+const passportTestActivateCurrentPath = '/api/home/user/passportTest/activateCurrent';
 
-function collectPageErrors(page) {
+interface IAddressFixture {
+  addressLine1: string;
+  city: string;
+  recipientName: string;
+  updatedCity: string;
+}
+
+function collectPageErrors(page: Page) {
   const errors: Error[] = [];
   page.on('pageerror', error => {
     errors.push(error);
   });
   return errors;
+}
+
+function waitForAddressResponse(page: Page, method: string, path: string | RegExp) {
+  return page.waitForResponse(response => {
+    const url = new URL(response.url());
+    return (
+      response.request().method() === method &&
+      response.ok() &&
+      (typeof path === 'string' ? url.pathname === path : path.test(url.pathname)) &&
+      !response.request().headers()['x-vona-openapi-schema']
+    );
+  });
+}
+
+function waitForAddressMine(page: Page) {
+  return waitForAddressResponse(page, 'GET', addressMinePath);
+}
+
+async function login(
+  page: Page,
+  path: string,
+  username: string,
+  password: string,
+  hydratedSite: string,
+) {
+  await page.goto(path, { waitUntil: 'load' });
+  await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', hydratedSite);
+  if (!page.url().includes('/login')) {
+    await page.waitForURL(/\/login(?:\?|$)/);
+  }
+  if (page.url().includes('/login')) {
+    const usernameInput = page.getByPlaceholder('Your Username');
+    const passwordInput = page.getByPlaceholder('Your Password');
+    await usernameInput.fill(username);
+    await passwordInput.fill(password);
+    await expect(usernameInput).toHaveValue(username);
+    await expect(passwordInput).toHaveValue(password);
+    await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
+    await page.getByRole('button', { name: 'Login', exact: true }).click();
+    await expect(page).not.toHaveURL(/\/login(?:\?|$)/);
+  }
+}
+
+async function registerCustomer(
+  request: APIRequestContext,
+  testInfo: TestInfo,
+): Promise<{ password: string; username: string }> {
+  const id = `${testInfo.workerIndex}-${testInfo.parallelIndex ?? testInfo.retry}-${Date.now()}`;
+  const username = `e2e-address-${id}`;
+  const password = 'address-e2e-password';
+  const captchaResponse = await request.post('/api/captcha/create', {
+    data: { scene: 'captcha-simple:simple' },
+  });
+  expect(captchaResponse.ok()).toBeTruthy();
+  const captcha = (await captchaResponse.json()).data;
+  expect(captcha?.id).toEqual(expect.any(String));
+  expect(captcha?.token).toEqual(expect.any(String));
+
+  const registerResponse = await request.post('/api/home/user/passport/register', {
+    data: {
+      username,
+      email: `${username}@example.test`,
+      password,
+      passwordConfirm: password,
+      captcha: { id: captcha.id, token: captcha.token },
+    },
+  });
+  expect(registerResponse.ok()).toBeTruthy();
+  const registration = (await registerResponse.json()).data;
+  expect(registration?.jwt?.accessToken).toEqual(expect.any(String));
+  const activateResponse = await request.post(passportTestActivateCurrentPath, {
+    headers: { Authorization: `Bearer ${registration.jwt.accessToken}` },
+  });
+  expect(activateResponse.ok()).toBeTruthy();
+  return { username, password };
+}
+
+function createAddressFixture(testInfo: TestInfo): IAddressFixture {
+  const id = `${testInfo.workerIndex}-${testInfo.parallelIndex ?? testInfo.retry}-${Date.now()}`;
+  return {
+    recipientName: `E2E Address ${id}`,
+    addressLine1: `1 Test Street ${id}`,
+    city: `Original City ${id}`,
+    updatedCity: `Updated City ${id}`,
+  };
+}
+
+async function fillAddressForm(page: Page, fixture: IAddressFixture) {
+  await page.getByPlaceholder('Recipient name').fill(fixture.recipientName);
+  await page.getByPlaceholder('Phone').fill('15555550123');
+  await page.getByPlaceholder('Country code').fill('US');
+  await page.getByPlaceholder('Region').fill('California');
+  await page.getByPlaceholder('City').fill(fixture.city);
+  await page.getByPlaceholder('Postal code').fill('94105');
+  await page.getByPlaceholder('Address line 1').fill(fixture.addressLine1);
+  await page.getByPlaceholder('Address line 2').fill('Suite E2E');
+}
+
+async function createAddressThroughCustomerPage(
+  browser: Browser,
+  request: APIRequestContext,
+  testInfo: TestInfo,
+) {
+  const customer = await registerCustomer(request, testInfo);
+  const fixture = createAddressFixture(testInfo);
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  const pageErrors = collectPageErrors(page);
+
+  await login(page, '/commerce/address', customer.username, customer.password, 'commerce');
+  await expect(page).toHaveURL(/\/commerce\/address(?:\?|$)/);
+  await expect(page.getByRole('heading', { name: 'Addresses' })).toBeVisible();
+  await expect(page.getByText('No addresses yet.')).toBeVisible();
+
+  await fillAddressForm(page, fixture);
+  const createResponse = waitForAddressResponse(page, 'POST', `${addressActionPath}/createMine`);
+  const mineResponse = waitForAddressMine(page);
+  await page.getByRole('button', { name: 'Save address', exact: true }).click();
+  await createResponse;
+  await mineResponse;
+  await expect(page.getByRole('heading', { name: fixture.recipientName })).toBeVisible();
+
+  return { context, fixture, page, pageErrors };
+}
+
+async function deleteAddressThroughCustomerPage(page: Page, fixture: IAddressFixture) {
+  const card = page
+    .locator('article')
+    .filter({ has: page.getByRole('heading', { name: fixture.recipientName }) });
+  const deleteResponse = waitForAddressResponse(page, 'DELETE', /\/deleteMine\/[^/]+$/);
+  const mineResponse = waitForAddressMine(page);
+  await card.getByRole('button', { name: 'Delete', exact: true }).click();
+  await deleteResponse;
+  await mineResponse;
+  await expect(page.getByRole('heading', { name: fixture.recipientName })).toHaveCount(0);
+  await expect(page.getByText('No addresses yet.')).toBeVisible();
 }
 
 test(
@@ -141,6 +291,104 @@ test(
     await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Addresses' })).toHaveCount(0);
     expect(pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-ADDR-01: authenticated customer manages Address through Web self-service',
+  { tag: ['@web', '@flow', '@address'] },
+  async ({ browser, request }, testInfo) => {
+    const { context, fixture, page, pageErrors } = await createAddressThroughCustomerPage(
+      browser,
+      request,
+      testInfo,
+    );
+    try {
+      const card = page
+        .locator('article')
+        .filter({ has: page.getByRole('heading', { name: fixture.recipientName }) });
+      await card.getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(page.getByRole('heading', { name: 'Add address' })).toHaveCount(0);
+      await expect(page.getByPlaceholder('City')).toHaveValue(fixture.city);
+      await page.getByPlaceholder('City').fill(fixture.updatedCity);
+
+      const updateResponse = waitForAddressResponse(page, 'PATCH', /\/updateMine\/[^/]+$/);
+      const mineResponse = waitForAddressMine(page);
+      await page.getByRole('button', { name: 'Save address', exact: true }).click();
+      await updateResponse;
+      await mineResponse;
+      await expect(card).toContainText(fixture.updatedCity);
+      await expect(card).not.toContainText(fixture.city);
+
+      await deleteAddressThroughCustomerPage(page, fixture);
+      await expect(page.getByRole('alert')).toHaveCount(0);
+      expect(pageErrors).toEqual([]);
+    } finally {
+      await context.close();
+    }
+  },
+);
+
+test(
+  'ATP-ADDR-01: systemAdmin inspects Address Resource without mutation controls',
+  { tag: ['@admin', '@flow', '@address'] },
+  async ({ browser, request }, testInfo) => {
+    test.setTimeout(60_000);
+    const customer = await createAddressThroughCustomerPage(browser, request, testInfo);
+    const adminContext = await browser.newContext();
+    const adminPage = await adminContext.newPage();
+    const adminPageErrors = collectPageErrors(adminPage);
+    const addressMutationMethods: string[] = [];
+    adminPage.on('request', request => {
+      const url = new URL(request.url());
+      if (
+        url.pathname.startsWith(addressActionPath) &&
+        ['POST', 'PATCH', 'DELETE'].includes(request.method())
+      ) {
+        addressMutationMethods.push(request.method());
+      }
+    });
+
+    try {
+      await adminPage.setViewportSize({ width: 1440, height: 900 });
+      await login(adminPage, '/commerce-admin/', 'admin', '123456', 'commerceAdmin');
+      await adminPage.goto('/commerce-admin/rest/resource/commerce-member%3Aaddress', {
+        waitUntil: 'load',
+      });
+      await expect(adminPage).toHaveURL(addressResourceUrl);
+      const fixtureRow = adminPage.getByRole('row', { name: customer.fixture.recipientName });
+      await expect(fixtureRow).toBeVisible();
+      await expect(adminPage.getByRole('button', { name: 'Create', exact: true })).toHaveCount(0);
+      await expect(
+        adminPage.locator('a[href*="/rest/resource/"]').filter({ hasText: 'Create' }),
+      ).toHaveCount(0);
+
+      const addressId = await fixtureRow.getByRole('cell').first().textContent();
+      expect(addressId).toMatch(/^\d+$/);
+      await adminPage.goto(`/commerce-admin/rest/resource/commerce-member%3Aaddress/${addressId}`, {
+        waitUntil: 'load',
+      });
+      await expect(adminPage).toHaveURL(
+        /\/commerce-admin\/rest\/resource\/commerce-member(?:%3A|:|%253A)address\/\d+(?:[/?#]|$)/,
+      );
+      await expect(
+        adminPage.getByRole('group', { name: 'Address Line 1 *' }).getByRole('textbox'),
+      ).toHaveValue(customer.fixture.addressLine1);
+      await expect(
+        adminPage.getByRole('group', { name: 'City *' }).getByRole('textbox'),
+      ).toHaveValue(customer.fixture.city);
+      await expect(adminPage.getByRole('button', { name: 'Back', exact: true })).toBeVisible();
+      await expect(adminPage.getByRole('button', { name: 'Submit', exact: true })).toHaveCount(0);
+      expect(addressMutationMethods).toEqual([]);
+      expect(adminPageErrors).toEqual([]);
+
+      await deleteAddressThroughCustomerPage(customer.page, customer.fixture);
+      await expect(customer.page.getByRole('alert')).toHaveCount(0);
+      expect(customer.pageErrors).toEqual([]);
+    } finally {
+      await adminContext.close().catch(() => {});
+      await customer.context.close().catch(() => {});
+    }
   },
 );
 
