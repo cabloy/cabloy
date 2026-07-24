@@ -10,7 +10,7 @@ This PRD defines product outcomes and business acceptance. The technical source 
 
 - Let authenticated customers browse available goods, apply one eligible coupon, place an order, pay through a mock payment flow, and track their own orders.
 - Protect sellable stock by reserving it at order creation rather than after payment.
-- Let tenant operators manage catalogue availability, stock, coupons, orders, manual shipment, and pre-shipment whole-order refunds.
+- Let tenant operators manage catalogue availability, stock, coupons, orders, manual shipment, and pre-shipment whole-order refunds, and inspect tenant-local customer delivery addresses through a read-only operational surface.
 - Keep every customer, operator, record, and operation within Cabloy's existing tenant boundary.
 - Establish a clean domain boundary that can later support real payment providers and additional sales channels without implementing them now.
 
@@ -34,7 +34,7 @@ A tenant operator authorized to approve or reject a customer refund request befo
 
 ### Tenant Administrator
 
-A tenant operator who assigns commerce roles. Framework-wide administrative authority is not automatically a commerce permission.
+A tenant operator who assigns commerce roles. Framework-wide administrative authority is not automatically a commerce permission. The current MVP deliberately uses action-level `systemAdmin` authorization for the read-only Address operational surface; site admission and menu visibility do not grant that API authority.
 
 ## Scope
 
@@ -42,6 +42,7 @@ A tenant operator who assigns commerce roles. Framework-wide administrative auth
 
 - Customer catalogue browsing, SKU selection, and availability display.
 - Customer address management, cart, authenticated checkout, and order history/detail.
+- Read-only tenant-operator Address inspection through a separate Admin Resource surface; operators do not create, edit, or delete customer addresses in this MVP.
 - Catalogue, SKU, price, publication, and one-warehouse stock management for tenant operators.
 - A single fixed-amount coupon per order with eligibility, minimum spend, validity, issuance limits, and per-customer limits.
 - Atomic order creation with inventory and coupon reservation.
@@ -108,6 +109,12 @@ A tenant operator who assigns commerce roles. Framework-wide administrative auth
 - **PRD-INV-03**: Cancellation, failed payment, and 30-minute unpaid expiry release a reservation exactly once.
 - **PRD-INV-04**: A successful eligible refund restores the refunded order's stock exactly once.
 
+### Address management
+
+- **PRD-ADR-01**: Customers can create, list, view, update, and delete only their own live delivery addresses within the active tenant.
+- **PRD-ADR-02**: An action-level `systemAdmin` operator can list and view live customer addresses only within the active tenant through a read-only operational surface. The MVP exposes no Admin Address create, update, or delete action.
+- **PRD-ADR-03**: Customer and Admin Address consumers use audience-appropriate contracts and pages while sharing one live Address domain; an order continues to snapshot its selected delivery address as a historical fact.
+
 ### Checkout and orders
 
 - **PRD-ORD-01**: Checkout requires authentication and a customer-owned delivery address.
@@ -155,21 +162,22 @@ The MVP is ready for acceptance when:
 
 - the customer purchase, payment, shipment, and eligible refund journeys complete end to end in both development and SSR production-like modes;
 - automated tests cover stock contention, repeated payment/refund notification, tenant isolation, coupon misuse, payment expiry, and shipment/refund conflicts;
-- operators cannot read or mutate another tenant's catalogue, orders, stock, coupon, payment, shipment, or refund data;
+- operators cannot read or mutate another tenant's catalogue, live Address, orders, stock, coupon, payment, shipment, or refund data;
 - order snapshots remain historically stable after later catalogue, price, address, and coupon-template edits; and
 - all PRD requirements map to SRS contracts and delivery tasks.
 
 ## Requirement Traceability
 
-| Product area        | PRD requirements | SRS contracts            | PDP/WBS tasks          | Test-plan evidence                        |
-| ------------------- | ---------------- | ------------------------ | ---------------------- | ----------------------------------------- |
-| Catalogue           | `PRD-CAT-*`      | `SRS-CAT-*`              | `WBS-30-*`             | `ATP-SNAP-01`                             |
-| Inventory           | `PRD-INV-*`      | `SRS-INV-*`              | `WBS-30-*`, `WBS-40-*` | `ATP-INV-01`, `ATP-TXN-01`, `ATP-EXP-01`  |
-| Checkout and orders | `PRD-ORD-*`      | `SRS-ORD-*`, `SRS-TXN-*` | `WBS-40-*`             | `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SNAP-01` |
-| Coupons             | `PRD-CPN-*`      | `SRS-CPN-*`              | `WBS-40-*`             | `ATP-CPN-01`                              |
-| Payment             | `PRD-PAY-*`      | `SRS-PAY-*`              | `WBS-50-*`             | `ATP-PAY-01`, `ATP-EXP-01`                |
-| Shipment            | `PRD-SHP-*`      | `SRS-SHP-*`              | `WBS-60-*`             | `ATP-SHP-01`, `ATP-RACE-01`               |
-| Refunds             | `PRD-RFD-*`      | `SRS-RFD-*`              | `WBS-60-*`             | `ATP-RFD-01`, `ATP-RACE-01`               |
+| Product area        | PRD requirements | SRS contracts            | PDP/WBS tasks          | Test-plan evidence                                                                  |
+| ------------------- | ---------------- | ------------------------ | ---------------------- | ----------------------------------------------------------------------------------- |
+| Catalogue           | `PRD-CAT-*`      | `SRS-CAT-*`              | `WBS-30-*`             | `ATP-SNAP-01`                                                                       |
+| Inventory           | `PRD-INV-*`      | `SRS-INV-*`              | `WBS-30-*`, `WBS-40-*` | `ATP-INV-01`, `ATP-TXN-01`, `ATP-EXP-01`                                            |
+| Address management  | `PRD-ADR-*`      | `SRS-ADR-*`, `SRS-AUT-*` | `WBS-40-04`            | `ATP-ADDR-01`, `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SSR-01`, `ATP-SSR-02`, `ATP-CTR-01` |
+| Checkout and orders | `PRD-ORD-*`      | `SRS-ORD-*`, `SRS-TXN-*` | `WBS-40-*`             | `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SNAP-01`                                           |
+| Coupons             | `PRD-CPN-*`      | `SRS-CPN-*`              | `WBS-40-*`             | `ATP-CPN-01`                                                                        |
+| Payment             | `PRD-PAY-*`      | `SRS-PAY-*`              | `WBS-50-*`             | `ATP-PAY-01`, `ATP-EXP-01`                                                          |
+| Shipment            | `PRD-SHP-*`      | `SRS-SHP-*`              | `WBS-60-*`             | `ATP-SHP-01`, `ATP-RACE-01`                                                         |
+| Refunds             | `PRD-RFD-*`      | `SRS-RFD-*`              | `WBS-60-*`             | `ATP-RFD-01`, `ATP-RACE-01`                                                         |
 
 ## Related Records
 

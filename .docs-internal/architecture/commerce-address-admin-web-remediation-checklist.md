@@ -1,8 +1,10 @@
 # Commerce Address Admin/Web Remediation Checklist
 
-This note records the required remediation for the A-Commerce Address boundary.
+This planned note records the required remediation for the A-Commerce Address boundary.
 
-Use it before changing Address controller contracts, DTOs, state owners, Admin menus, customer pages, or their generated consumers. It is maintainer-facing implementation guidance; the durable cross-stack rule is [Admin Resource and Web Self-Service](../../cabloy-docs/fullstack/admin-resource-and-web-self-service.md).
+Use it before changing Address controller contracts, DTOs, state owners, Admin menus, customer pages, or their generated consumers. It is derived maintainer-facing implementation guidance, not a product or system-contract authority: the [PRD](../business/a-commerce/prd.md) owns outcomes, the [SRS](../business/a-commerce/srs.md) owns the approved contract, the [PDP/WBS](../business/a-commerce/pdp-wbs.md) owns delivery, the [test plan](../business/a-commerce/test-plan.md) owns proof, and [progress](../business/a-commerce/progress.md) records derived status. The durable cross-stack rule is [Admin Resource and Web Self-Service](../../cabloy-docs/fullstack/admin-resource-and-web-self-service.md).
+
+Traceability: `PRD-ADR-01`–`PRD-ADR-03`; `SRS-ADR-01`–`SRS-ADR-07`; `WBS-40-04`; `ATP-ADDR-01`.
 
 ## Problem recorded by the resource audit
 
@@ -23,9 +25,9 @@ Keep one `commerce-member:address` entity, model, active-instance persistence bo
 ```text
 Address domain / persistence
 ├── Admin Resource
-│   ├── systemAdmin operations and independently authorized scope
+│   ├── independently authorized, read-only systemAdmin select/view scope
 │   ├── Admin request and response DTO family
-│   ├── presetResource menu and generic Resource page
+│   ├── read-only presetResource menu and generic Resource page
 │   └── selector-scoped ModelResource (optional thin Admin facade)
 └── Web self-service
     ├── explicit mine/viewMine/createMine/updateMine/deleteMine operations
@@ -61,8 +63,8 @@ This remediation must not:
 
 ### 1. Confirm the audience contracts before coding
 
-- [ ] Define the Admin action surface explicitly: retain `select` and `view`; decide separately whether Admin create, update, or delete actions are permitted for operational support and document the reason for every mutation.
-- [ ] Define the Web self-service surface with unambiguous names: `mine`, `viewMine`, `createMine`, `updateMine`, and `deleteMine`.
+- [ ] Keep the approved Admin action surface read-only: expose only `select` and `view`; do not register Admin `create`, `update`, or `delete` actions, metadata, or UI controls.
+- [ ] Define the Web self-service surface with the approved unambiguous names: `mine`, `viewMine`, `createMine`, `updateMine`, and `deleteMine`.
 - [ ] Confirm whether each audience needs list paging, filtering, sorting, or detail retrieval; do not carry Admin table/filter semantics into the customer contract by default.
 - [ ] List each field that Admin may see but Web must not receive; ensure the customer contract contains only customer-needed Address data.
 - [ ] Keep `userId`, tenant/instance authority, and Admin-only metadata out of Web request and response DTOs.
@@ -75,8 +77,8 @@ Primary areas:
 - `vona/src/suite/a-commerce/modules/commerce-member/src/service/address.ts`
 - `vona/src/suite/a-commerce/modules/commerce-member/src/dto/`
 
-- [ ] Make Admin Resource actions independently `@Passport.systemAdmin()`-protected.
-- [ ] Make Admin service methods operate under the intended active-instance operational scope rather than the current customer-only predicate.
+- [ ] Make only the approved Admin `select` and `view` actions independently `@Passport.systemAdmin()`-protected; this action-level authorization remains separate from Commerce site admission and menu visibility.
+- [ ] Make Admin service methods operate under the intended active-instance operational scope rather than the current customer-only predicate, and do not add Admin mutation service paths.
 - [ ] Move customer operations to their explicit self-service routes and DTOs; do not rely on role-dependent response shapes for an unqualified action.
 - [ ] Derive the Web owner only from `this.bean.passport.currentUser` in the service path.
 - [ ] Apply Web owner and any customer-visible predicates inside the database query before `selectAndCount(...)` calculates totals, ordering, offsets, or limits.
@@ -89,7 +91,7 @@ Primary areas:
 - [ ] Confirm that Admin menu visibility remains independent from Admin controller authorization.
 - [ ] Preserve generic Resource metadata, schemas, permissions, invalidation, and form behavior under selector-scoped `rest-resource.model.resource`.
 - [ ] If Commerce Member needs an Admin model facade, keep it thin and delegate each Admin operation to `ModelResource`.
-- [ ] Ensure the Admin list, entry, and permitted mutation actions describe the actual operational contract; do not expose unsupported standard actions merely because DTO files exist.
+- [ ] Ensure the Admin list and entry describe the approved read-only operational contract; do not expose standard mutation actions merely because DTO files exist.
 
 ### 4. Establish the Web self-service state and page boundary
 
@@ -115,8 +117,8 @@ Primary areas:
 - [ ] Update the thin Admin facade or generic Resource integration only for Admin operations.
 - [ ] Update the dedicated Web model and customer page only for Web self-service operations.
 - [ ] Build both affected Commerce flavors before syncing frontend output to Vona:
-  - [ ] `npm run build:zova:commerce`
-  - [ ] `npm run build:zova:commerce-admin` when the Admin flavor is affected
+  - [ ] `npm run build:zova:commerce:web`
+  - [ ] `npm run build:zova:commerce:admin`
   - [ ] `npm run deps:vona`
 - [ ] If Vona still resolves stale generated types after the correct flavor builds and dependency sync, diagnose local dependency drift before hand-patching types.
 
@@ -129,7 +131,8 @@ Backend ownership and authorization, extending `vona/src/suite/a-commerce/module
 - [ ] a customer list/detail/update/delete path can observe or mutate only that customer's addresses in the active instance;
 - [ ] a foreign customer and a caller in another instance observe target rows as absent and leave no mutation behind;
 - [ ] an unauthorized authenticated caller cannot use Admin operations;
-- [ ] a `systemAdmin` can use exactly the approved Admin action surface in the active instance;
+- [ ] a `systemAdmin` can use exactly the approved read-only Admin `select`/`view` surface in the active instance;
+- [ ] Admin create/update/delete operations and mutation controls are absent;
 - [ ] an Admin operation never silently inherits customer-owner scope;
 - [ ] every test-owned persisted Address is deleted in `finally` using exact owned identities.
 
@@ -148,8 +151,8 @@ Run the narrowest checks first, then the shared checks required by the changed c
 
 - [ ] focused Commerce Member ownership/action tests;
 - [ ] focused Commerce browser flow covering customer Address management and Admin Address entry;
-- [ ] `npm run build:zova:commerce`;
-- [ ] `npm run build:zova:commerce-admin`;
+- [ ] `npm run build:zova:commerce:web`;
+- [ ] `npm run build:zova:commerce:admin`;
 - [ ] `npm run deps:vona`;
 - [ ] `npm run tsc`;
 - [ ] `npm run test` when the final change touches `meta.version.ts` or requires the shared test database to be recreated;

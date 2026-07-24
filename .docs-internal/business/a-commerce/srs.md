@@ -29,15 +29,15 @@ Every Commerce flavor must have a root build wrapper that builds its SSR bundle 
 
 ## Capability Ownership
 
-| Module               | Owns                                                                                        | Does not own                                                    |
-| -------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `commerce-catalog`   | Categories, products, SKUs, publication, catalogue read models                              | Historical order price or SKU snapshots                         |
-| `commerce-trade`     | Carts, checkout, orders, order lines, address snapshots, reservation lifecycle, order state | Coupon policy definitions or payment-provider implementation    |
-| `commerce-promotion` | Coupon templates, customer coupon grants, eligibility, reservation, redemption              | Order amount authority after snapshot persistence               |
-| `commerce-payment`   | Commerce payment attempts, mock payment outcomes, idempotency records, mock refunds         | Order aggregate ownership or external provider selection policy |
-| `commerce-member`    | Customer addresses, member commerce extensions, personal-centre aggregation                 | Framework authentication and Passport identity                  |
-| `commerce-siteweb`   | Customer SSR site registration and site-level composition                                   | Commerce domain data                                            |
-| `commerce-siteadmin` | Operator SSR site registration and site-level composition                                   | Commerce domain data                                            |
+| Module               | Owns                                                                                                                 | Does not own                                                                        |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `commerce-catalog`   | Categories, products, SKUs, publication, catalogue read models                                                       | Historical order price or SKU snapshots                                             |
+| `commerce-trade`     | Carts, checkout, orders, order lines, address snapshots, reservation lifecycle, order state                          | Coupon policy definitions or payment-provider implementation                        |
+| `commerce-promotion` | Coupon templates, customer coupon grants, eligibility, reservation, redemption                                       | Order amount authority after snapshot persistence                                   |
+| `commerce-payment`   | Commerce payment attempts, mock payment outcomes, idempotency records, mock refunds                                  | Order aggregate ownership or external provider selection policy                     |
+| `commerce-member`    | One live Address domain with Admin and customer projections, member commerce extensions, personal-centre aggregation | Immutable order Address snapshots or framework authentication and Passport identity |
+| `commerce-siteweb`   | Customer SSR site registration and site-level composition                                                            | Commerce domain data                                                                |
+| `commerce-siteadmin` | Operator SSR site registration and site-level composition                                                            | Commerce domain data                                                                |
 
 Inventory reservation is initially a `commerce-trade` aggregate behavior. The persisted reservation and stock mutation contracts must remain explicit enough that a dedicated inventory module can later own stock operations without changing checkout behavior.
 
@@ -54,7 +54,7 @@ Inventory reservation is initially a `commerce-trade` aggregate behavior. The pe
 
 - **SRS-AUT-01**: Checkout, carts, addresses, orders, payment attempts, and refund requests require authentication. Guest checkout is not available.
 - **SRS-AUT-02**: Customer operations verify that the target resource belongs to the current authenticated customer in the active tenant.
-- **SRS-AUT-03**: Operator operations require explicit commerce permissions for catalogue, stock, order, shipment, coupon, payment, and refund actions as applicable.
+- **SRS-AUT-03**: Operator operations require explicit server-side authorization for catalogue, stock, Address, order, shipment, coupon, payment, and refund actions as applicable. The current read-only Admin Address actions use `@Passport.systemAdmin()`; Commerce site admission and menu visibility do not grant that API authority.
 - **SRS-AUT-04**: Zova `SITE_ID` and route admission determine site access only. Vona API and service authorization independently enforce tenant and resource permissions.
 - **SRS-AUT-05**: A refund request and an approval are separate actions. The MVP allows the same authorized operator to perform both, but no customer can approve or execute a refund.
 
@@ -66,6 +66,16 @@ Inventory reservation is initially a `commerce-trade` aggregate behavior. The pe
 - **SRS-DAT-02**: Mutations that affect order, stock, coupon, payment, shipment, or refund state append an audit record containing the actor, action, prior and next state where applicable, correlation ID, reason when supplied, and timestamp.
 - **SRS-DAT-03**: Business uniqueness is enforced through tenant-aware service logic and transactional checks. Do not use `table.unique(...)` for tenant-scoped business uniqueness.
 - **SRS-DAT-04**: Ordinary indexes support tenant-scoped lookup, active-state lookup, and idempotency lookup.
+
+### Live Address Admin/Web contracts
+
+- **SRS-ADR-01**: `commerce-member` owns one live Address entity, model, active-instance persistence boundary, and lifecycle. It does not duplicate Address persistence for Admin and Web consumers. `commerce-trade` owns immutable Address snapshots persisted with orders.
+- **SRS-ADR-02**: The Admin Resource surface is read-only: conventional `select` and `view` actions are independently protected by `@Passport.systemAdmin()`, operate within the active instance, and never inherit the current-customer owner predicate. Admin `create`, `update`, and `delete` actions are absent from the MVP contract, metadata, and UI.
+- **SRS-ADR-03**: The customer self-service surface uses explicit `mine`, `viewMine`, `createMine`, `updateMine`, and `deleteMine` actions with customer-specific request and response DTOs. It does not use one unqualified action with role-dependent response shapes.
+- **SRS-ADR-04**: Every Web service path derives the authoritative customer owner only from the current Passport. Web request and response DTOs exclude authoritative `userId`, tenant/instance identity, and Admin-only metadata. Owner and customer-visible predicates are applied in the database query before count, ordering, offset, or limit; every Web detail/update/delete lookup includes that owner, so foreign-customer and cross-instance rows are absent.
+- **SRS-ADR-05**: Admin DTOs may carry the operational Resource metadata required by the generic page. Web DTOs contain only customer-needed Address fields and never alias the Admin projection. Both operation families are emitted as separate generated contracts from Vona contract truth.
+- **SRS-ADR-06**: Admin Address state remains selector-scoped under `rest-resource.model.resource`, with only an optional thin semantic facade. Customer Address state belongs to a dedicated model such as `ModelAddressMine`, with distinct `$useStateData(...)` keys, mutations, and invalidation for the Web contract; this is a separate audience state domain, not a competing Admin cache owner.
+- **SRS-ADR-07**: An Admin `presetResource` menu may disclose the approved read-only Resource surface, and the customer route remains protected, but neither menu nor route admission authorizes Address APIs. Anonymous Web SSR and hydration-time initial rendering remain an equivalent neutral shell until the browser authentication/admission boundary creates private Address queries.
 
 ### Monetary values and snapshots
 
@@ -175,27 +185,28 @@ State names in this section are canonical. A later implementation may use intege
 - **SRS-API-02**: A reverse change to frontend metadata/routes requires the matching Commerce flavor SSR + REST build before `npm run deps:vona`. A REST-only build is insufficient because the SSR bundle and generated contract must move together.
 - **SRS-API-03**: APIs expose semantic resource and action boundaries. A customer action never accepts an arbitrary customer, tenant, total, discount, or state transition from the browser.
 - **SRS-UI-01**: Reusable async product, cart, order, coupon, and operator query state belongs to a Zova Model. Controllers orchestrate scenes rather than becoming shared fetch/cache owners.
-- **SRS-UI-02**: A custom endpoint belonging to an existing resource reuses the existing resource Model's state and invalidation tree where possible rather than creating a competing module-local cache owner.
+- **SRS-UI-02**: A custom endpoint in the same Admin Resource boundary reuses the existing `rest-resource.model.resource` state and invalidation tree rather than creating a competing module-local cache owner. A genuinely separate customer self-service contract may own its dedicated Web state boundary as specified by `SRS-ADR-06`.
 - **SRS-UI-03**: Customer SSR renders no private cart, address, order, coupon, or payment information in an anonymous response. Final client theme and authenticated state remain hydration-tolerant.
 
 ## Non-Functional Requirements
 
 - **SRS-NFR-01**: Order, payment, inventory, coupon, shipment, and refund state changes are attributable and diagnosable through audit records and correlation IDs.
-- **SRS-NFR-02**: Customer addresses and tracking data are treated as tenant-scoped personal data and are returned only to the owning customer or authorized tenant operator.
+- **SRS-NFR-02**: Customer addresses and tracking data are tenant-scoped personal data. Live Address data is returned only through the owner-scoped Web projection or the independently authorized, read-only Admin projection; it is never exposed through a browser-supplied owner/tenant claim or an Admin mutation action.
 - **SRS-NFR-03**: Tests cover tenant isolation, stock contention, duplicate payment/refund event delivery, expiry, coupon limits, shipment/refund conflict, and historical snapshot stability.
 - **SRS-NFR-04**: Any schema change in a future implementation follows the repository migration rules. Before adding a persisted field to an existing resource, the implementer asks whether `vonaModule.fileVersion` should increase; every `meta.version.ts` change requires `npm run test`.
 
 ## Acceptance Mapping
 
-| SRS area                 | PRD source               | Required evidence                                          | Test-plan scenarios                       |
-| ------------------------ | ------------------------ | ---------------------------------------------------------- | ----------------------------------------- |
-| `SRS-TEN-*`, `SRS-AUT-*` | `PRD-ORD-04`             | Cross-tenant and cross-customer negative API tests         | `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SSR-02`  |
-| `SRS-CAT-*`, `SRS-INV-*` | `PRD-CAT-*`, `PRD-INV-*` | SKU publication and concurrent checkout tests              | `ATP-INV-01`, `ATP-SNAP-01`               |
-| `SRS-ORD-*`, `SRS-TXN-*` | `PRD-ORD-*`, `PRD-INV-*` | Transaction rollback, expiry, and snapshot tests           | `ATP-TXN-01`, `ATP-EXP-01`, `ATP-SNAP-01` |
-| `SRS-CPN-*`, `SRS-MNY-*` | `PRD-CPN-*`              | Coupon eligibility, integer-cent, and release tests        | `ATP-CPN-01`                              |
-| `SRS-PAY-*`              | `PRD-PAY-*`              | Idempotent mock event tests                                | `ATP-PAY-01`, `ATP-RFD-01`                |
-| `SRS-SHP-*`, `SRS-RFD-*` | `PRD-SHP-*`, `PRD-RFD-*` | Shipment/refund lifecycle tests                            | `ATP-SHP-01`, `ATP-RACE-01`               |
-| `SRS-API-*`, `SRS-UI-*`  | All PRD areas            | Flavor build, REST contract, and end-to-end browser checks | `ATP-CTR-01`, `ATP-SSR-01`, `ATP-SSR-02`  |
+| SRS area                 | PRD source                | Required evidence                                                                                                 | Test-plan scenarios                                                                 |
+| ------------------------ | ------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `SRS-TEN-*`, `SRS-AUT-*` | `PRD-ORD-04`, `PRD-ADR-*` | Cross-tenant and cross-customer negative API tests                                                                | `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SSR-02`                                            |
+| `SRS-ADR-*`              | `PRD-ADR-*`               | Separate generated Admin/Web contracts, action authorization, owner scope, state ownership, and SSR/browser proof | `ATP-ADDR-01`, `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SSR-01`, `ATP-SSR-02`, `ATP-CTR-01` |
+| `SRS-CAT-*`, `SRS-INV-*` | `PRD-CAT-*`, `PRD-INV-*`  | SKU publication and concurrent checkout tests                                                                     | `ATP-INV-01`, `ATP-SNAP-01`                                                         |
+| `SRS-ORD-*`, `SRS-TXN-*` | `PRD-ORD-*`, `PRD-INV-*`  | Transaction rollback, expiry, and snapshot tests                                                                  | `ATP-TXN-01`, `ATP-EXP-01`, `ATP-SNAP-01`                                           |
+| `SRS-CPN-*`, `SRS-MNY-*` | `PRD-CPN-*`               | Coupon eligibility, integer-cent, and release tests                                                               | `ATP-CPN-01`                                                                        |
+| `SRS-PAY-*`              | `PRD-PAY-*`               | Idempotent mock event tests                                                                                       | `ATP-PAY-01`, `ATP-RFD-01`                                                          |
+| `SRS-SHP-*`, `SRS-RFD-*` | `PRD-SHP-*`, `PRD-RFD-*`  | Shipment/refund lifecycle tests                                                                                   | `ATP-SHP-01`, `ATP-RACE-01`                                                         |
+| `SRS-API-*`, `SRS-UI-*`  | All PRD areas             | Flavor build, REST contract, and end-to-end browser checks                                                        | `ATP-CTR-01`, `ATP-SSR-01`, `ATP-SSR-02`                                            |
 
 ## Related Records
 

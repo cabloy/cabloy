@@ -173,6 +173,8 @@ Acceptance checks:
 - no customer-facing API accepts a browser-supplied tenant/customer as authority;
 - shared query invalidation stays under a single resource/model owner.
 
+This verified historical item covers the customer contract that existed when it was delivered. The separate Admin and Web Address contract/state split is owned by `WBS-40-04` and must not be inferred from this item's evidence.
+
 #### WBS-40-02: Implement fixed-amount coupon lifecycle
 
 Primary areas:
@@ -211,6 +213,33 @@ Acceptance checks:
 - concurrent checkout cannot oversell;
 - an error leaves no partial order, stock reservation, coupon reservation, payment attempt, or cached mutation;
 - every still-unpaid order expires at or after 30 minutes and releases stock/coupon once without crossing tenant scope.
+
+#### WBS-40-04: Split Address into read-only Admin Resource and Web self-service contracts
+
+Dependencies: `WBS-20-03`, `WBS-40-01`.
+
+Primary areas:
+
+- `commerce-member` controller, service, DTOs, and ownership tests
+- Commerce Admin menu and selector-scoped generic Resource integration
+- customer Address model, page, route admission, and browser coverage
+- generated Commerce contract consumers and flavor artifacts
+
+Tasks:
+
+- preserve one live Address persistence/lifecycle domain while separating Admin Resource and Web self-service operations and DTO projections;
+- expose only Admin `select` and `view`, independently guarded by `@Passport.systemAdmin()`, and add the approved read-only `presetResource` Admin entry without enabling mutation actions;
+- replace the current generic Resource-shaped customer contract with explicit owner-derived Web operations and move customer query/mutation state to a dedicated Web model;
+- preserve active-instance isolation, owner-scoped Web absence semantics, anonymous SSR neutrality, and hydration-safe customer query admission;
+- change Vona contract truth first, regenerate both audience contract consumers, then build the Web and Admin Commerce flavor pairs before `npm run deps:vona`.
+
+Acceptance checks:
+
+- Admin `select` and `view` require `systemAdmin`, return only active-instance rows, and never silently inherit customer-owner scope;
+- Admin `create`, `update`, and `delete` actions, metadata, and UI controls are absent;
+- Web create/list/view/update/delete derive customer ownership only on the server and treat foreign or cross-instance rows as absent;
+- Admin `ModelResource` and dedicated Web Address state retain separate cache ownership, DTO projections, and page architecture;
+- focused API, generated-contract, SSR, and browser evidence satisfies `ATP-ADDR-01` and its linked shared scenarios.
 
 ### Phase 50: Mock payment and customer order experience
 
@@ -361,14 +390,14 @@ A future task that changes `meta.version.ts` must run `npm run test`, because it
 
 ## Traceability Matrix
 
-| WBS task group | PRD requirements                      | SRS contracts                                                   | Completion evidence                                                                                                          |
-| -------------- | ------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `WBS-20-*`     | Site isolation launch criterion       | `SRS-API-*`, `SRS-UI-03`                                        | `ATP-SSR-01`, `ATP-SSR-02`, `ATP-CTR-01`                                                                                     |
-| `WBS-30-*`     | `PRD-CAT-*`, `PRD-INV-*`              | `SRS-CAT-*`, `SRS-INV-*`, `SRS-TEN-*`                           | `ATP-TEN-01`, `ATP-INV-01`, `ATP-SNAP-01`                                                                                    |
-| `WBS-40-*`     | `PRD-ORD-*`, `PRD-CPN-*`, `PRD-INV-*` | `SRS-ORD-*`, `SRS-CPN-*`, `SRS-TEN-*`, `SRS-TXN-*`, `SRS-MNY-*` | Phase-40-owned branches of `ATP-TEN-01`, `ATP-AUT-01`, `ATP-INV-01`, `ATP-TXN-01`, `ATP-CPN-01`, `ATP-EXP-01`, `ATP-SNAP-01` |
-| `WBS-50-*`     | `PRD-PAY-*`, `PRD-ORD-*`              | `SRS-PAY-*`, `SRS-AUT-*`                                        | `ATP-PAY-01`, `ATP-EXP-01`                                                                                                   |
-| `WBS-60-*`     | `PRD-SHP-*`, `PRD-RFD-*`              | `SRS-SHP-*`, `SRS-RFD-*`, `SRS-PAY-*`                           | `ATP-SHP-01`, `ATP-RFD-01`, `ATP-RACE-01`                                                                                    |
-| `WBS-70-*`     | All PRD requirements                  | All applicable SRS contracts                                    | All applicable `ATP-*` evidence and release gates                                                                            |
+| WBS task group | PRD requirements                                   | SRS contracts                                                                | Completion evidence                                                                                                                                                                   |
+| -------------- | -------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `WBS-20-*`     | Site isolation launch criterion                    | `SRS-API-*`, `SRS-UI-03`                                                     | `ATP-SSR-01`, `ATP-SSR-02`, `ATP-CTR-01`                                                                                                                                              |
+| `WBS-30-*`     | `PRD-CAT-*`, `PRD-INV-*`                           | `SRS-CAT-*`, `SRS-INV-*`, `SRS-TEN-*`                                        | `ATP-TEN-01`, `ATP-INV-01`, `ATP-SNAP-01`                                                                                                                                             |
+| `WBS-40-*`     | `PRD-ADR-*`, `PRD-ORD-*`, `PRD-CPN-*`, `PRD-INV-*` | `SRS-ADR-*`, `SRS-ORD-*`, `SRS-CPN-*`, `SRS-TEN-*`, `SRS-TXN-*`, `SRS-MNY-*` | Phase-40-owned branches of `ATP-ADDR-01`, `ATP-TEN-01`, `ATP-AUT-01`, `ATP-INV-01`, `ATP-TXN-01`, `ATP-CPN-01`, `ATP-EXP-01`, `ATP-SNAP-01`, `ATP-SSR-01`, `ATP-SSR-02`, `ATP-CTR-01` |
+| `WBS-50-*`     | `PRD-PAY-*`, `PRD-ORD-*`                           | `SRS-PAY-*`, `SRS-AUT-*`                                                     | `ATP-PAY-01`, `ATP-EXP-01`                                                                                                                                                            |
+| `WBS-60-*`     | `PRD-SHP-*`, `PRD-RFD-*`                           | `SRS-SHP-*`, `SRS-RFD-*`, `SRS-PAY-*`                                        | `ATP-SHP-01`, `ATP-RFD-01`, `ATP-RACE-01`                                                                                                                                             |
+| `WBS-70-*`     | All PRD requirements                               | All applicable SRS contracts                                                 | All applicable `ATP-*` evidence and release gates                                                                                                                                     |
 
 ## Related Records
 
