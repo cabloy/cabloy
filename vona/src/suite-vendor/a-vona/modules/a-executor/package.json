@@ -47,6 +47,8 @@
   },
   "title": "a-executor",
   "vonaModule": {
-    "dependencies": {}
+    "dependencies": {
+      "a-telemetry": "5.0.0"
+    }
   }
 }

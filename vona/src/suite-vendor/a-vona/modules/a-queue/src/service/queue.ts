@@ -222,6 +222,25 @@ export class ServiceQueue extends BeanBase {
   }
 
   async _queuePush<DATA, RESULT>(info: IQueueJobContext<DATA>, isAsync: boolean): Promise<RESULT> {
+    const telemetry = this.$scope.telemetry.service.telemetry;
+    const span = telemetry.enabled
+      ? telemetry.startSpan(`queue send ${String(info.queueName)}`, {
+          kind: 3,
+          attributes: {
+            'messaging.operation.name': 'send',
+            'messaging.destination.name': String(info.queueName),
+          },
+        })
+      : undefined;
+    if (span) {
+      info = {
+        ...info,
+        options: {
+          ...info.options,
+          telemetry: telemetry.injectCarrier(telemetry.createContext(span)),
+        },
+      };
+    }
     // queue config
     const queueConfig = this.bean.onion.queue.getOnionOptions(info.queueName);
     // queueConfig.options: queue/worker/job/limiter
@@ -235,32 +254,39 @@ export class ServiceQueue extends BeanBase {
     const jobOptions = deepExtend({ jobId }, jobOptionsBase, info.options?.jobOptions);
     // should not change info, hold original info.options?.jobName, info.options?.jobOptions
     // info = deepExtend({}, info, { options: { jobName, jobOptions } });
-    // not async
-    if (!isAsync) {
-      // add job
-      queue.add(jobName, info, jobOptions);
-      return undefined as any;
+    try {
+      // not async
+      if (!isAsync) {
+        // add job
+        await queue.add(jobName, info, jobOptions);
+        return undefined as any;
+      }
+      // async
+      return await new Promise((resolve, reject) => {
+        // queue events
+        return this._queueEventsReady(queueQueue)
+          .then(() => {
+            // callback
+            this._queueCallbacks[jobId] = {
+              info,
+              callback: (err, data) => {
+                if (err) return reject(err);
+                resolve(data as unknown as RESULT);
+              },
+            };
+            // add job
+            return queue.add(jobName, info, jobOptions);
+          })
+          .catch(err => {
+            return reject(err);
+          });
+      });
+    } catch (err) {
+      if (span) telemetry.recordException(span, err);
+      throw err;
+    } finally {
+      span?.end();
     }
-    // async
-    return new Promise((resolve, reject) => {
-      // queue events
-      return this._queueEventsReady(queueQueue)
-        .then(() => {
-          // callback
-          this._queueCallbacks[jobId] = {
-            info,
-            callback: (err, data) => {
-              if (err) return reject(err);
-              resolve(data as unknown as RESULT);
-            },
-          };
-          // add job
-          return queue.add(jobName, info, jobOptions);
-        })
-        .catch(err => {
-          return reject(err);
-        });
-    });
   }
 
   async _queueEventsReady(queueQueue: IQueueQueue) {
@@ -276,25 +302,57 @@ export class ServiceQueue extends BeanBase {
 
   async _performTask<DATA, RESULT>(job: TypeQueueJob<DATA, RESULT>) {
     const info = job.data;
+    const telemetry = this.$scope.telemetry.service.telemetry;
+    const parent = telemetry.extractCarrier(info.options?.telemetry);
+    const span = telemetry.enabled
+      ? telemetry.startSpan(
+          `queue process ${String(info.queueName)}`,
+          {
+            kind: 4,
+            attributes: {
+              'messaging.operation.name': 'process',
+              'messaging.destination.name': String(info.queueName),
+              'messaging.message.retry.count': job.attemptsMade,
+            },
+          },
+          parent,
+        )
+      : undefined;
     // queue config
     const queueItem = this.bean.onion.queue.getOnionSlice(info.queueName);
     const queueConfig = this.bean.onion.queue.getOnionOptions(info.queueName);
-    // execute
-    return await this.bean.executor.newCtx(
-      async () => {
-        const beanFullName = queueItem.beanOptions.beanFullName;
-        const beanInstance = <IQueueExecute<DATA>>this.app.bean._getBean(beanFullName as any);
-        return await beanInstance.execute(info.data, info.options, job);
-      },
-      {
-        dbInfo: info.options?.dbInfo,
-        locale: info.options?.locale,
-        tz: info.options?.tz,
-        instanceName: info.options?.instanceName,
-        extraData: info.options?.extraData,
-        transaction: queueConfig?.transaction,
-      },
-    );
+    const execute = () =>
+      this.bean.executor.newCtx(
+        async () => {
+          const beanFullName = queueItem.beanOptions.beanFullName;
+          const beanInstance = <IQueueExecute<DATA>>this.app.bean._getBean(beanFullName as any);
+          return await beanInstance.execute(info.data, info.options, job);
+        },
+        {
+          dbInfo: info.options?.dbInfo,
+          locale: info.options?.locale,
+          tz: info.options?.tz,
+          instanceName: info.options?.instanceName,
+          extraData: {
+            ...info.options?.extraData,
+            state: {
+              ...info.options?.extraData?.state,
+              telemetry: span
+                ? { context: telemetry.createContext(span, parent), span }
+                : undefined,
+            },
+          },
+          transaction: queueConfig?.transaction,
+        },
+      );
+    try {
+      return await (span ? telemetry.withSpan(span, execute) : execute());
+    } catch (err) {
+      if (span) telemetry.recordException(span, err);
+      throw err;
+    } finally {
+      span?.end();
+    }
   }
 
   getRepeatKey(jobName: string, repeat: Bull.RepeatOptions) {

@@ -48,7 +48,9 @@
   },
   "title": "a-queue",
   "vonaModule": {
-    "dependencies": {},
+    "dependencies": {
+      "a-telemetry": "5.0.0"
+    },
     "globalDependencies": {
       "bullmq": true
     },

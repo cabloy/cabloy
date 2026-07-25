@@ -19,64 +19,79 @@ export class ServiceExecutor extends BeanBase {
   ): Promise<any> {
     // app
     const app = this.app;
-    // new ctx
-    return await this.bean.executor.newCtx(
-      async () => {
-        const ctx = this.ctx;
-        // default status code
-        ctx.res.statusCode = 404;
-        ctx.req.method = method.toUpperCase();
-        // url
-        ctx.req.url = combineParamsAndQuery(url, {
-          params: options?.params,
-          query: options?.query,
-        });
-        // headers
-        ctx.req.headers = Object.assign({}, ctx.req.headers, options?.headers);
-        // json
-        if (!ctx.req.headers.accept) {
-          ctx.req.headers.accept = 'application/json';
-        }
-        // authToken
-        if (options?.authToken) {
-          ctx.req.headers.authorization = `Bearer ${options?.authToken}`;
-        }
-        // // query
-        // if (options?.query !== undefined) {
-        //   cast(ctx.req).query = cast(ctx.request).query = options?.query;
-        // }
-        // body
-        cast(ctx.req).body = ctx.request.body = options?.body ?? {}; // body should set {} if undefined/null
-        // onion
-        ctx.onionsDynamic = options?.onions;
-        // invoke middleware
-        await app[SymbolRouterMiddleware](ctx);
-        // check result
-        if (ctx.status === 200) {
-          if (!ctx.body || (ctx.body as any).code === undefined) {
-            // not check code, e.g. text/xml
-            return ctx.body;
+    const telemetry = this.$scope.telemetry.service.telemetry;
+    const span = telemetry.enabled
+      ? telemetry.startSpan(`vona.action ${method.toUpperCase()}`, {
+          attributes: { 'vona.action.internal': true, 'http.request.method': method.toUpperCase() },
+        })
+      : undefined;
+    const execute = () =>
+      this.bean.executor.newCtx(
+        async () => {
+          const ctx = this.ctx;
+          // default status code
+          ctx.res.statusCode = 404;
+          ctx.req.method = method.toUpperCase();
+          // url
+          ctx.req.url = combineParamsAndQuery(url, {
+            params: options?.params,
+            query: options?.query,
+          });
+          // headers
+          ctx.req.headers = Object.assign({}, ctx.req.headers, options?.headers);
+          // json
+          if (!ctx.req.headers.accept) {
+            ctx.req.headers.accept = 'application/json';
           }
-          if ((ctx.body as any).code === 0) {
-            return (ctx.body as any).data;
+          // authToken
+          if (options?.authToken) {
+            ctx.req.headers.authorization = `Bearer ${options?.authToken}`;
           }
-          throw app.util.createError(ctx.body);
-        } else {
+          // body
+          cast(ctx.req).body = ctx.request.body = options?.body ?? {};
+          // onion
+          ctx.onionsDynamic = options?.onions;
+          // invoke middleware
+          await app[SymbolRouterMiddleware](ctx);
+          // check result
+          if (ctx.status === 200) {
+            if (!ctx.body || (ctx.body as any).code === undefined) {
+              return ctx.body;
+            }
+            if ((ctx.body as any).code === 0) {
+              return (ctx.body as any).data;
+            }
+            throw app.util.createError(ctx.body);
+          }
           if (ctx.body && typeof ctx.body === 'object') {
             throw app.util.createError(ctx.body);
-          } else {
-            throw app.util.createError({
-              code: ctx.status,
-              message: ctx.message,
-            });
           }
-        }
-      },
-      {
-        innerAccess: options?.innerAccess,
-        extraData: options?.extraData,
-      },
-    );
+          throw app.util.createError({
+            code: ctx.status,
+            message: ctx.message,
+          });
+        },
+        {
+          innerAccess: options?.innerAccess,
+          extraData: {
+            ...options?.extraData,
+            state: {
+              ...options?.extraData?.state,
+              telemetry: span
+                ? { context: telemetry.createContext(span), span, internalAction: true }
+                : undefined,
+            },
+          },
+        },
+      );
+    try {
+      return await (span ? telemetry.withSpan(span, execute) : execute());
+    } catch (err) {
+      if (span) telemetry.recordException(span, err);
+      throw err;
+    } finally {
+      span?.end();
+    }
   }
 
   prepareGeneralInfo(options?: IGeneralInfoOptions): IGeneralInfoOptions {

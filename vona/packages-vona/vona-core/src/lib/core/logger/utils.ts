@@ -47,6 +47,15 @@ export const formatLoggerCtx = Winston.format((info, _opts: any) => {
   if (!app.ctx || !app.ctx.method || !app.ctx.path) return info;
   info.method = app.ctx.method;
   info.path = app.ctx.path;
+  const telemetry = (app.ctx.state as any).telemetry;
+  if (telemetry?.requestId) info.request_id = telemetry.requestId;
+  const span = telemetry?.span ?? telemetry?.serverSpan;
+  const spanContext = span?.spanContext();
+  if (spanContext?.traceId && spanContext?.spanId) {
+    info.trace_id = spanContext.traceId;
+    info.span_id = spanContext.spanId;
+    info.trace_flags = spanContext.traceFlags;
+  }
   return info;
 });
 

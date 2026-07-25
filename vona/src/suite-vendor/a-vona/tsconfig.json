@@ -163,6 +163,9 @@
     },
     {
       "path": "modules/a-retryable/tsconfig.build.json"
+    },
+    {
+      "path": "modules/a-telemetry/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]

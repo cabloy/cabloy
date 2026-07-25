@@ -6,6 +6,11 @@ import type { ServiceOnion, TypeOnionOptionsEnableSimple } from 'vona-module-a-o
 import type { IRedlockClientOptions } from 'vona-module-a-redlock';
 
 export interface IQueuePushOptions extends IGeneralInfoOptions {
+  telemetry?: {
+    version: 1;
+    traceparent?: string;
+    tracestate?: string;
+  };
   queueNameSub?: string;
   jobName?: string;
   jobOptions?: Bull.JobsOptions;

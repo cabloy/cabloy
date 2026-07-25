@@ -2,7 +2,13 @@ import type { OmitNever } from 'vona';
 import type { IGeneralInfoOptions } from 'vona-module-a-executor';
 import type { ServiceOnion } from 'vona-module-a-onion';
 
-export interface IBroadcastEmitOptions extends IGeneralInfoOptions {}
+export interface IBroadcastEmitOptions extends IGeneralInfoOptions {
+  telemetry?: {
+    version: 1;
+    traceparent?: string;
+    tracestate?: string;
+  };
+}
 
 export interface IBroadcastExecute<DATA = unknown> {
   execute(data?: DATA, isEmitter?: boolean): Promise<void>;
