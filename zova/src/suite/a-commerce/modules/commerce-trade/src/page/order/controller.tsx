@@ -17,7 +17,7 @@ export class ControllerPageOrder extends BeanControllerPageBase {
   $$modelOrderMine: ModelOrderMine;
 
   get orderId() {
-    return this.$router.currentRoute.value.params.id as string;
+    return this.$params.id;
   }
 
   get queryOrder() {

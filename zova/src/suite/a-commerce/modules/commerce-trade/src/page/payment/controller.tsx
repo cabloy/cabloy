@@ -20,7 +20,7 @@ export class ControllerPagePayment extends BeanControllerPageBase {
   idempotencyKeys: Partial<Record<'succeeded' | 'failed' | 'cancelled', string>> = {};
 
   get attemptId() {
-    return this.$router.currentRoute.value.params.attemptId as string;
+    return this.$params.attemptId;
   }
 
   async settle(outcome: 'succeeded' | 'failed' | 'cancelled') {
