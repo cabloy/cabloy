@@ -10,12 +10,22 @@ interface TelemetryEnv {
   TELEMETRY_EXPORT_DELAY_MS?: string;
   TELEMETRY_EXPORT_TIMEOUT_MS?: string;
   TELEMETRY_SHUTDOWN_TIMEOUT_MS?: string;
+  TELEMETRY_INGRESS_TRUSTED_PROXY_CIDRS?: string;
+  TELEMETRY_INGRESS_INTERNAL_HEADER?: string;
+  TELEMETRY_INGRESS_INTERNAL_HEADER_VALUE?: string;
+}
+
+export interface ITelemetryIngressConfig {
+  trustedProxyCidrs: string[];
+  internalHeader: string;
+  internalHeaderValue: string;
 }
 
 export interface ITelemetryConfig {
   enabled: boolean;
   serviceName: string;
   requestIdHeader: string;
+  ingress: ITelemetryIngressConfig;
   sampling: { rootRatio: number };
   exporter: {
     url: string;
@@ -33,6 +43,11 @@ export function config(app: VonaApplication): ITelemetryConfig {
     enabled: env.TELEMETRY_ENABLED === 'true',
     serviceName: env.TELEMETRY_SERVICE_NAME || app.name,
     requestIdHeader: 'x-request-id',
+    ingress: {
+      trustedProxyCidrs: parseList(env.TELEMETRY_INGRESS_TRUSTED_PROXY_CIDRS),
+      internalHeader: env.TELEMETRY_INGRESS_INTERNAL_HEADER || 'x-vona-telemetry-ingress',
+      internalHeaderValue: env.TELEMETRY_INGRESS_INTERNAL_HEADER_VALUE || 'internal',
+    },
     sampling: {
       rootRatio: Number.parseFloat(env.TELEMETRY_SAMPLING_ROOT_RATIO || '0.1'),
     },
@@ -47,6 +62,14 @@ export function config(app: VonaApplication): ITelemetryConfig {
       timeoutMillis: Number.parseInt(env.TELEMETRY_SHUTDOWN_TIMEOUT_MS || '5000'),
     },
   };
+}
+
+function parseList(value?: string) {
+  if (!value) return [];
+  return value
+    .split(',')
+    .map(item => item.trim())
+    .filter(Boolean);
 }
 
 function parseHeaders(value?: string) {

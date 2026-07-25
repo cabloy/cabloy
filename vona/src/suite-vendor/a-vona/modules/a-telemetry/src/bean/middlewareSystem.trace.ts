@@ -20,9 +20,14 @@ export class MiddlewareSystemTrace extends BeanBase implements IMiddlewareSystem
     if (!telemetry.enabled || this.ctx.state.telemetry?.internalAction) return next();
 
     const ctx = this.ctx;
-    const requestIdHeader = telemetry.scope.config.requestIdHeader;
+    const config = telemetry.scope.config;
+    const requestIdHeader = config.requestIdHeader;
     const requestId = normalizeRequestId(ctx.get(requestIdHeader)) ?? uuidv4();
-    const parent = telemetry.extractCarrier({
+    const trustedIngress = telemetry.isTrustedIngress(
+      ctx.req.socket.remoteAddress,
+      ctx.get(config.ingress.internalHeader),
+    );
+    const parent = telemetry.extractHttpIngressCarrier(trustedIngress, {
       version: 1,
       traceparent: ctx.get('traceparent') || undefined,
       tracestate: ctx.get('tracestate') || undefined,

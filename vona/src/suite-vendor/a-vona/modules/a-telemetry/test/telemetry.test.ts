@@ -1,9 +1,16 @@
+import { context, SpanKind, TraceFlags, trace } from '@opentelemetry/api';
+import {
+  AlwaysOffSampler,
+  ParentBasedSampler,
+  SamplingDecision,
+} from '@opentelemetry/sdk-trace-base';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
 import { formatLoggerCtx } from '../../../../../../packages-vona/vona-core/src/lib/core/logger/utils.ts';
 import { config } from '../src/config/config.ts';
+import { createIngressTrustChecker } from '../src/lib/ingress.ts';
 
 function createSpan() {
   const calls = {
@@ -33,6 +40,9 @@ describe('telemetry.test.ts', () => {
     assert.equal(defaults.serviceName, 'test-service');
     assert.equal(defaults.sampling.rootRatio, 0.1);
     assert.equal(defaults.exporter.url, 'http://127.0.0.1:4318/v1/traces');
+    assert.deepEqual(defaults.ingress.trustedProxyCidrs, []);
+    assert.equal(defaults.ingress.internalHeader, 'x-vona-telemetry-ingress');
+    assert.equal(defaults.ingress.internalHeaderValue, 'internal');
 
     const configured = config({
       meta: {
@@ -41,6 +51,9 @@ describe('telemetry.test.ts', () => {
           TELEMETRY_SERVICE_NAME: 'telemetry-test',
           TELEMETRY_SAMPLING_ROOT_RATIO: '0.5',
           TELEMETRY_OTLP_HTTP_HEADERS: 'authorization=Bearer%20token,x-tenant=internal',
+          TELEMETRY_INGRESS_TRUSTED_PROXY_CIDRS: '10.0.0.0/8, ::1 ,',
+          TELEMETRY_INGRESS_INTERNAL_HEADER: 'x-internal-ingress',
+          TELEMETRY_INGRESS_INTERNAL_HEADER_VALUE: 'trusted',
         },
       },
       name: 'test-service',
@@ -48,10 +61,66 @@ describe('telemetry.test.ts', () => {
     assert.equal(configured.enabled, true);
     assert.equal(configured.serviceName, 'telemetry-test');
     assert.equal(configured.sampling.rootRatio, 0.5);
+    assert.deepEqual(configured.ingress.trustedProxyCidrs, ['10.0.0.0/8', '::1']);
+    assert.equal(configured.ingress.internalHeader, 'x-internal-ingress');
+    assert.equal(configured.ingress.internalHeaderValue, 'trusted');
     assert.deepEqual(configured.exporter.headers, {
       'authorization': 'Bearer%20token',
       'x-tenant': 'internal',
     });
+  });
+
+  it('trusts only classified ingress peers', () => {
+    const isTrustedIngress = createIngressTrustChecker({
+      trustedProxyCidrs: ['10.0.0.0/8', '::1'],
+      internalHeader: 'x-vona-telemetry-ingress',
+      internalHeaderValue: 'internal',
+    });
+
+    assert.equal(isTrustedIngress('10.2.3.4', 'internal'), true);
+    assert.equal(isTrustedIngress('::1', 'internal'), true);
+    assert.equal(isTrustedIngress('::ffff:10.2.3.4', 'internal'), true);
+    assert.equal(isTrustedIngress('10.2.3.4', 'public'), false);
+    assert.equal(isTrustedIngress('198.51.100.9', 'internal'), false);
+    assert.equal(isTrustedIngress(undefined, 'internal'), false);
+    assert.equal(
+      createIngressTrustChecker({
+        trustedProxyCidrs: ['not-a-cidr'],
+        internalHeader: 'x-vona-telemetry-ingress',
+        internalHeaderValue: 'internal',
+      })('10.2.3.4', 'internal'),
+      false,
+    );
+  });
+
+  it('applies root sampling when public ingress has no accepted parent', () => {
+    const sampler = new ParentBasedSampler({ root: new AlwaysOffSampler() });
+    const sampledParent = trace.setSpanContext(context.active(), {
+      traceId: '4bf92f3577b34da6a3ce929d0e0e4736',
+      spanId: '00f067aa0ba902b7',
+      traceFlags: TraceFlags.SAMPLED,
+      isRemote: true,
+    });
+
+    const trustedDecision = sampler.shouldSample(
+      sampledParent,
+      '4bf92f3577b34da6a3ce929d0e0e4737',
+      'HTTP GET',
+      SpanKind.SERVER,
+      {},
+      [],
+    );
+    const publicDecision = sampler.shouldSample(
+      context.active(),
+      '4bf92f3577b34da6a3ce929d0e0e4737',
+      'HTTP GET',
+      SpanKind.SERVER,
+      {},
+      [],
+    );
+
+    assert.equal(trustedDecision.decision, SamplingDecision.RECORD_AND_SAMPLED);
+    assert.equal(publicDecision.decision, SamplingDecision.NOT_RECORD);
   });
 
   it('does not create spans or carriers when telemetry is disabled', async () => {

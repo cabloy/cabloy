@@ -16,6 +16,8 @@ import { Service } from 'vona-module-a-bean';
 
 import type { ITelemetryCarrier } from '../types/telemetry.ts';
 
+import { createIngressTrustChecker } from '../lib/ingress.ts';
+
 const carrierGetter = {
   get(carrier: ITelemetryCarrier, key: string) {
     if (key === 'traceparent' || key === 'tracestate') return carrier[key];
@@ -38,6 +40,7 @@ const carrierSetter = {
 export class ServiceTelemetry extends BeanBase {
   private _provider?: NodeTracerProvider;
   private _contextManager?: AsyncLocalStorageContextManager;
+  private _isTrustedIngress?: (peerAddress?: string, internalHeaderValue?: string) => boolean;
   private _enabled = false;
 
   get enabled() {
@@ -47,6 +50,7 @@ export class ServiceTelemetry extends BeanBase {
   init() {
     if (this._provider || this._enabled) return;
     const config = this.scope.config;
+    this._isTrustedIngress = createIngressTrustChecker(config.ingress);
     if (!config.enabled) return;
 
     const exporter = new OTLPTraceExporter({
@@ -98,6 +102,15 @@ export class ServiceTelemetry extends BeanBase {
   extractCarrier(carrier?: ITelemetryCarrier) {
     if (!carrier) return context.active();
     return propagation.extract(context.active(), carrier, carrierGetter);
+  }
+
+  isTrustedIngress(peerAddress?: string, internalHeaderValue?: string) {
+    this._isTrustedIngress ??= createIngressTrustChecker(this.scope.config.ingress);
+    return this._isTrustedIngress(peerAddress, internalHeaderValue);
+  }
+
+  extractHttpIngressCarrier(trusted: boolean, carrier: ITelemetryCarrier) {
+    return trusted ? this.extractCarrier(carrier) : this.extractCarrier();
   }
 
   injectCarrier(source = this.activeContext): ITelemetryCarrier {

@@ -12,6 +12,11 @@ TELEMETRY_SERVICE_NAME=cabloy-basic
 TELEMETRY_OTLP_HTTP_URL=https://collector.example.com/v1/traces
 TELEMETRY_OTLP_HTTP_HEADERS=authorization=Bearer%20token
 TELEMETRY_SAMPLING_ROOT_RATIO=0.1
+
+# Optional: continue trusted internal HTTP traces only
+TELEMETRY_INGRESS_TRUSTED_PROXY_CIDRS=10.0.0.0/8
+TELEMETRY_INGRESS_INTERNAL_HEADER=x-vona-telemetry-ingress
+TELEMETRY_INGRESS_INTERNAL_HEADER_VALUE=internal
 ```
 
 The module exports traces through OTLP/HTTP protobuf. Use an OpenTelemetry Collector as the stable integration boundary; the Collector may export to Tempo, Jaeger, or a managed observability platform.
@@ -22,10 +27,13 @@ The module exports traces through OTLP/HTTP protobuf. Use an OpenTelemetry Colle
 
 The module uses W3C Trace Context:
 
-- inbound HTTP extracts `traceparent` and `tracestate`
+- public HTTP ingress ignores caller-supplied `traceparent` and `tracestate`, so local root sampling always applies
+- a trusted internal ingress may continue W3C trace context only when its direct socket peer matches `TELEMETRY_INGRESS_TRUSTED_PROXY_CIDRS` and the protected classification header has the configured value
 - outgoing queue jobs and Redis Broadcast messages carry a versioned technical trace carrier
 - queue and Broadcast consumers create child spans in a new Vona context
 - internal `performAction(...)` calls create an internal child span
+
+The trusted-CIDR list defaults to empty. Keep it empty unless a controlled reverse proxy or gateway is responsible for classifying internal traffic. The application evaluates the direct socket peer, not `ctx.innerAccess`, `ctx.ip`, or generic proxy settings. A trusted proxy must remove any client-provided copy of the classification header and overwrite it with its own decision before forwarding the request. When public and internal traffic use the same proxy, CIDR matching alone is insufficient; the protected header is required as the second trust condition.
 
 Vona emits `x-request-id` for HTTP requests. It is a request diagnostic identifier and is different from OpenTelemetry `trace_id` and `span_id`.
 

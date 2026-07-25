@@ -42,7 +42,9 @@ spans per second ≈ root requests per second × root sampling ratio × average 
 
 Start with a low rate in non-production and production canaries. Raising the application exporter queue size is not the primary response to dropped spans: it can exchange loss for application memory pressure. Prefer reducing sampling, diagnosing Collector/network/backend throughput, and scaling the telemetry pipeline before increasing local buffering.
 
-The intended policy is that a trusted internal ingress may retain an upstream sampling decision, while a public or otherwise untrusted ingress must not use a caller-supplied `traceparent` to force this service to sample. This policy is not yet enforced by the initial implementation. Until it is, do not treat public ingress as trusted; remove or replace inbound `traceparent` and `tracestate` at the edge, or keep tracing restricted to controlled internal traffic.
+The enforced policy is that public or otherwise untrusted HTTP ingress ignores caller-supplied `traceparent` and `tracestate`, so the service applies its own root sampling decision. A trusted internal ingress may retain an upstream sampling decision only when both conditions hold: the direct socket peer matches `TELEMETRY_INGRESS_TRUSTED_PROXY_CIDRS`, and the protected header named by `TELEMETRY_INGRESS_INTERNAL_HEADER` exactly equals `TELEMETRY_INGRESS_INTERNAL_HEADER_VALUE`. The trusted CIDR list defaults to empty, which fails closed for all HTTP ingress.
+
+The proxy must remove any client-supplied classification header and overwrite it after making its own route, listener, or authenticated-identity decision. CIDR matching alone cannot distinguish public from internal traffic when both share a proxy. This policy intentionally does not infer trust from `ctx.innerAccess`, `ctx.ip`, generic proxy configuration, or forwarded headers. Queue and Broadcast carriers remain internal technical envelopes and are not subject to this HTTP ingress rule.
 
 ## Privacy contract
 

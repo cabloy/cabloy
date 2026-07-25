@@ -2754,6 +2754,9 @@ importers:
 
   src/suite-vendor/a-vona/modules/a-telemetry:
     dependencies:
+      '@eggjs/ip':
+        specifier: ^2.1.0
+        version: 2.1.0
       '@opentelemetry/api':
         specifier: ^1.9.1
         version: 1.9.1
