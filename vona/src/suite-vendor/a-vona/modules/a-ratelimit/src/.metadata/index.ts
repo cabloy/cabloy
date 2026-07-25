@@ -21,8 +21,7 @@ declare module 'vona-module-a-ratelimit' {
 }
 /** interceptor: end */
 /** service: begin */
-export * from '../service/rateLimit_.ts';
-import type { ServiceRateLimit } from '../service/rateLimit_.ts';
+export * from '../service/rateLimit.ts';
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
   export interface IServiceRecord {
@@ -39,8 +38,19 @@ declare module 'vona-module-a-ratelimit' {
     get $onionName(): 'a-ratelimit:rateLimit';
   }
 }
+/** service: end */
+/** service: begin */
+import type { ServiceRateLimit } from '../service/rateLimit.ts';
 export interface IModuleService {
   rateLimit: ServiceRateLimit;
+}
+/** service: end */
+/** service: begin */
+import 'vona';
+declare module 'vona' {
+  export interface IBeanRecordGeneral {
+    'a-ratelimit.service.rateLimit': ServiceRateLimit;
+  }
 }
 /** service: end */
 /** main: begin */
@@ -49,17 +59,21 @@ export * from '../main.ts';
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil } from 'vona';
 import { Scope } from 'vona-module-a-bean';
+
 @Scope()
 export class ScopeModuleARatelimit extends BeanScopeBase {}
+
 export interface ScopeModuleARatelimit {
   util: BeanScopeUtil;
   service: IModuleService;
 }
+
 import 'vona';
 declare module 'vona' {
   export interface IBeanScopeRecord {
     'a-ratelimit': ScopeModuleARatelimit;
   }
+
   export interface IBeanScopeContainer {
     ratelimit: ScopeModuleARatelimit;
   }
