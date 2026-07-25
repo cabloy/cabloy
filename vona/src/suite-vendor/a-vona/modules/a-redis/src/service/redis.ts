@@ -12,7 +12,6 @@ export class ServiceRedis extends BeanBase {
   async clearAllData() {
     const app = this.app;
     // clear keys
-    // await this._clearRedisKeys(app.bean.redis.get('limiter'), `b_${app.name}:*`);
     await this._clearRedisKeys(
       app.bean.redis.get('queue'),
       `${getRedisClientKeyPrefix('bull', app)}*`,
@@ -21,7 +20,7 @@ export class ServiceRedis extends BeanBase {
     // await _clearRedisKeys(app.redis.get('broadcast'), `${getRedisClientKeyPrefix('broadcast', app)}*`);
     for (const _clientName in app.config.redis.clients) {
       const clientName = _clientName as keyof IRedisClientRecord;
-      if (['limiter', 'queue', 'broadcast'].includes(clientName)) continue;
+      if (['queue', 'broadcast'].includes(clientName)) continue;
       if (clientName.startsWith('redlock')) {
         await this._clearRedisKeys(
           app.bean.redis.get(clientName),
