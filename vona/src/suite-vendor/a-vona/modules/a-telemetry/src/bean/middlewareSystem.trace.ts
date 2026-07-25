@@ -63,6 +63,6 @@ export class MiddlewareSystemTrace extends BeanBase implements IMiddlewareSystem
 }
 
 function normalizeRequestId(value?: string) {
-  if (!value || value.length > 128 || !/^[\w.-]+$/i.test(value)) return;
+  if (!value || value.length > 128 || !/^[\w.-]+$/.test(value)) return;
   return value;
 }

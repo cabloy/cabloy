@@ -241,52 +241,43 @@ export class ServiceQueue extends BeanBase {
         },
       };
     }
-    // queue config
-    const queueConfig = this.bean.onion.queue.getOnionOptions(info.queueName);
-    // queueConfig.options: queue/worker/job/limiter
-    const jobOptionsBase = queueConfig?.options?.job;
-    // queue
-    const queueQueue = this._ensureQueue(info);
-    const queue = queueQueue.queue;
-    // job
-    const jobId = info.options?.jobOptions?.jobId || uuidv4();
-    const jobName = info.options?.jobName || jobId;
-    const jobOptions = deepExtend({ jobId }, jobOptionsBase, info.options?.jobOptions);
-    // should not change info, hold original info.options?.jobName, info.options?.jobOptions
-    // info = deepExtend({}, info, { options: { jobName, jobOptions } });
+    let callback: Promise<RESULT> | undefined;
     try {
-      // not async
+      // queue config
+      const queueConfig = this.bean.onion.queue.getOnionOptions(info.queueName);
+      // queueConfig.options: queue/worker/job/limiter
+      const jobOptionsBase = queueConfig?.options?.job;
+      // queue
+      const queueQueue = this._ensureQueue(info);
+      const queue = queueQueue.queue;
+      // job
+      const jobId = info.options?.jobOptions?.jobId || uuidv4();
+      const jobName = info.options?.jobName || jobId;
+      const jobOptions = deepExtend({ jobId }, jobOptionsBase, info.options?.jobOptions);
+      // should not change info, hold original info.options?.jobName, info.options?.jobOptions
+      // info = deepExtend({}, info, { options: { jobName, jobOptions } });
       if (!isAsync) {
-        // add job
         await queue.add(jobName, info, jobOptions);
         return undefined as any;
       }
-      // async
-      return await new Promise((resolve, reject) => {
-        // queue events
-        return this._queueEventsReady(queueQueue)
-          .then(() => {
-            // callback
-            this._queueCallbacks[jobId] = {
-              info,
-              callback: (err, data) => {
-                if (err) return reject(err);
-                resolve(data as unknown as RESULT);
-              },
-            };
-            // add job
-            return queue.add(jobName, info, jobOptions);
-          })
-          .catch(err => {
-            return reject(err);
-          });
+      await this._queueEventsReady(queueQueue);
+      callback = new Promise((resolve, reject) => {
+        this._queueCallbacks[jobId] = {
+          info,
+          callback: (err, data) => {
+            if (err) return reject(err);
+            resolve(data as unknown as RESULT);
+          },
+        };
       });
+      await queue.add(jobName, info, jobOptions);
     } catch (err) {
       if (span) telemetry.recordException(span, err);
       throw err;
     } finally {
       span?.end();
     }
+    return await callback!;
   }
 
   async _queueEventsReady(queueQueue: IQueueQueue) {

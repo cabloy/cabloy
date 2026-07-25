@@ -1,0 +1,118 @@
+import assert from 'node:assert';
+import { describe, it } from 'node:test';
+import { app } from 'vona-mock';
+
+import { formatLoggerCtx } from '../../../../../../packages-vona/vona-core/src/lib/core/logger/utils.ts';
+import { config } from '../src/config/config.ts';
+
+function createSpan() {
+  const calls = {
+    attributes: [] as Array<[string, unknown]>,
+    exceptions: [] as unknown[],
+    statuses: [] as unknown[],
+    ended: 0,
+  };
+  const span = {
+    spanContext: () => ({
+      traceId: '4bf92f3577b34da6a3ce929d0e0e4736',
+      spanId: '00f067aa0ba902b7',
+      traceFlags: 1,
+    }),
+    recordException: (error: unknown) => calls.exceptions.push(error),
+    setStatus: (status: unknown) => calls.statuses.push(status),
+    setAttribute: (key: string, value: unknown) => calls.attributes.push([key, value]),
+    end: () => calls.ended++,
+  };
+  return { calls, span };
+}
+
+describe('telemetry.test.ts', () => {
+  it('parses telemetry configuration with safe defaults', () => {
+    const defaults = config({ meta: { env: {} }, name: 'test-service' } as never);
+    assert.equal(defaults.enabled, false);
+    assert.equal(defaults.serviceName, 'test-service');
+    assert.equal(defaults.sampling.rootRatio, 0.1);
+    assert.equal(defaults.exporter.url, 'http://127.0.0.1:4318/v1/traces');
+
+    const configured = config({
+      meta: {
+        env: {
+          TELEMETRY_ENABLED: 'true',
+          TELEMETRY_SERVICE_NAME: 'telemetry-test',
+          TELEMETRY_SAMPLING_ROOT_RATIO: '0.5',
+          TELEMETRY_OTLP_HTTP_HEADERS: 'authorization=Bearer%20token,x-tenant=internal',
+        },
+      },
+      name: 'test-service',
+    } as never);
+    assert.equal(configured.enabled, true);
+    assert.equal(configured.serviceName, 'telemetry-test');
+    assert.equal(configured.sampling.rootRatio, 0.5);
+    assert.deepEqual(configured.exporter.headers, {
+      'authorization': 'Bearer%20token',
+      'x-tenant': 'internal',
+    });
+  });
+
+  it('does not create spans or carriers when telemetry is disabled', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const telemetry = app.scope('a-telemetry').service.telemetry;
+      assert.equal(telemetry.enabled, false);
+      assert.deepEqual(telemetry.injectCarrier(), { version: 1 });
+    });
+  });
+
+  it('preserves valid carriers without throwing for malformed input', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const telemetry = app.scope('a-telemetry').service.telemetry;
+      const carrier = {
+        version: 1 as const,
+        traceparent: '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01',
+      };
+      assert.doesNotThrow(() => telemetry.extractCarrier(carrier));
+      assert.doesNotThrow(() =>
+        telemetry.extractCarrier({
+          version: 1,
+          traceparent: 'invalid',
+        }),
+      );
+    });
+  });
+
+  it('records exceptions and completes HTTP spans without request data', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const telemetry = app.scope('a-telemetry').service.telemetry;
+      const { calls, span } = createSpan();
+
+      telemetry.recordException(span as never, new Error('boom'));
+      telemetry.endHttpSpan(span as never, 503);
+
+      assert.equal(calls.exceptions.length, 1);
+      assert.deepEqual(calls.statuses, [
+        { code: 2, message: 'boom' },
+        { code: 2, message: undefined },
+      ]);
+      assert.deepEqual(calls.attributes, [['http.response.status_code', 503]]);
+      assert.equal(calls.ended, 1);
+    });
+  });
+
+  it('correlates logs in a pathless Vona context with an active span', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const { span } = createSpan();
+      app.ctx.req.url = '';
+      app.ctx.state.telemetry = {
+        requestId: 'test-request-id',
+        span: span as never,
+      };
+      const info = formatLoggerCtx().transform(
+        { level: 'info', message: 'test' },
+        {} as never,
+      ) as Record<string, unknown>;
+      assert.equal(info.request_id, 'test-request-id');
+      assert.equal(info.trace_id, span.spanContext().traceId);
+      assert.equal(info.span_id, span.spanContext().spanId);
+      assert.equal(info.trace_flags, span.spanContext().traceFlags);
+    });
+  });
+});

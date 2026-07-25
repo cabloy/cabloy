@@ -12,7 +12,22 @@ interface TelemetryEnv {
   TELEMETRY_SHUTDOWN_TIMEOUT_MS?: string;
 }
 
-export function config(app: VonaApplication) {
+export interface ITelemetryConfig {
+  enabled: boolean;
+  serviceName: string;
+  requestIdHeader: string;
+  sampling: { rootRatio: number };
+  exporter: {
+    url: string;
+    headers?: Record<string, string>;
+    maxQueueSize: number;
+    scheduledDelayMillis: number;
+    exportTimeoutMillis: number;
+  };
+  shutdown: { timeoutMillis: number };
+}
+
+export function config(app: VonaApplication): ITelemetryConfig {
   const env = app.meta.env as TelemetryEnv;
   return {
     enabled: env.TELEMETRY_ENABLED === 'true',
