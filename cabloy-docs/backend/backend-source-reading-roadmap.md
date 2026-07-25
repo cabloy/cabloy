@@ -77,6 +77,30 @@ Start here when your question is about:
 - if the question is “which scripts drive normal backend dev/build/start/test workflows?” -> read [Backend Scripts](/backend/scripts)
 - if the question is “which source files should I open first?” -> read [Vona Source Reading Map](/backend/vona-source-reading-map)
 
+## Topic cluster: controller request path and controller AOP
+
+Start here when your question is about:
+
+- what runs before route matching, after route matching, or after Passport authentication
+- whether a concern belongs in system/global/local middleware, a guard, an interceptor, a pipe, or a filter
+- why a global-onion decorator configures a route without changing its execution stage
+- how controller/action options merge with application, instance, and dynamic onion configuration
+- why an error is transformed or logged through filters
+
+### Concept pages first
+
+- [AOP Overview](/backend/aop-overview)
+- [Controller Guide](/backend/controller-guide)
+- [Controller AOP Guide](/backend/controller-aop-guide)
+- [Rate Limit Guide](/backend/rate-limit-guide) when request admission or quotas are involved
+
+### Best next step
+
+- if the question is “how can this run before route matching?” -> read the system-middleware path in [Vona Source Reading Map](/backend/vona-source-reading-map)
+- if the question is “does this run before or after Passport?” -> read the controller request pipeline path in [Vona Source Reading Map](/backend/vona-source-reading-map)
+- if the question is “why does a route override retain other settings?” -> trace onion option composition in [Vona Source Reading Map](/backend/vona-source-reading-map)
+- if the question is “why is an error transformed or logged?” -> follow the filter error-path follow-up in [Vona Source Reading Map](/backend/vona-source-reading-map)
+
 ## Topic cluster: resource and module CRUD chain
 
 Start here when your question is about:
@@ -110,11 +134,11 @@ It does **not** try to become the new entry page for every backend subsystem suc
 - workers
 - queues
 - websockets
-- auth
+- the complete auth subsystem
 - cache
 - distributed runtime internals
 
-Those topics already have their own concept docs. This roadmap is only the first navigation layer for common source-reading tasks.
+The controller request-path cluster covers where guards and Passport sit in route execution, not the complete authentication subsystem. Those topics already have their own concept docs. This roadmap is only the first navigation layer for common source-reading tasks.
 
 ## Final rule
 

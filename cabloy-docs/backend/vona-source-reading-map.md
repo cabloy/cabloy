@@ -128,7 +128,50 @@ If the next question becomes specifically about explicit DTOs, inferred DTO help
 
 If the next question becomes specifically about how those controller, DTO, and entity surfaces become emitted backend contract, continue with [Backend Contract Emission Source Reading Map](/backend/backend-contract-emission-source-reading-map).
 
-## 3. A compact reading strategy
+## 3. Controller request pipeline, onion configuration, and rate limiting
+
+Use this path when you are asking questions like:
+
+- what runs before route matching, after route matching, or after Passport authentication?
+- should this concern be system/global/local middleware, guard, interceptor, pipe, or filter?
+- why does a controller/action override preserve some global onion options?
+- why does `@Core.rateLimit(...)` configure a global interceptor instead of adding a local one?
+
+### Read the docs first
+
+- [AOP Overview](/backend/aop-overview)
+- [Controller AOP Guide](/backend/controller-aop-guide)
+- [Controller Guide](/backend/controller-guide)
+- [Rate Limit Guide](/backend/rate-limit-guide) when the concern is request admission
+
+### Then read source in this order
+
+1. `vona/src/suite-vendor/a-vona/modules/a-web/src/main.ts`
+2. `vona/src/suite-vendor/a-vona/modules/a-web/src/bean/bean.router.ts`
+3. `vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewareGuard.ts`
+4. `vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewareInterceptor.ts`
+5. `vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts`
+6. `vona/src/suite-vendor/a-vona/modules/a-onion/src/service/onion_.ts`
+7. `vona/src/suite-vendor/a-vona/modules/a-aspect/src/lib/use/useOnionBase.ts`
+8. `vona/src/suite-vendor/a-vona/modules/a-aspect/src/lib/use/useOnionGlobalBase.ts`
+9. `vona/src/suite-vendor/a-vona/modules/a-ratelimit/src/bean/interceptor.rateLimit.ts` when tracing rate-limit policy consumption
+
+### What each file clarifies
+
+- `main.ts` proves that system middleware is composed before router lookup.
+- `bean.router.ts` establishes the matched-route sequence: global middleware, guard, interceptor, pipe, local middleware, then action.
+- The guard, interceptor, and pipe middleware files show the fixed middle stages independently.
+- `onion_.ts` proves global/local onion composition and the effective deep merge of defaults, configuration, route metadata, and dynamic overrides.
+- `useOnionBase.ts` shows how a local use decorator joins the local execution chain; `useOnionGlobalBase.ts` shows how a global use decorator writes route options for an already-global onion.
+- `interceptor.rateLimit.ts` is the concrete post-Passport policy consumer and shows why `rateLimit` is owned by that interceptor’s options.
+
+For exception behavior only, continue to `a-error/src/config/config.ts` and `a-aspectutils/src/service/filter.ts`. Do not treat filters as part of the normal successful request path.
+
+### Stop condition
+
+Do not infer placement from an aspect/decorator name alone. Prove both the outer route stage in `bean.router.ts` and the inner global/local composition and option merge in `onion_.ts` before changing request-path behavior.
+
+## 4. A compact reading strategy
 
 When in doubt, use this order:
 

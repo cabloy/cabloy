@@ -10,6 +10,7 @@ export interface IRedisClientRecord {
   summer: never;
   model: never;
   worker: never;
+  limiter: never;
 }
 
 export interface IRedisClientOptions extends Omit<RedisOptions, 'keyPrefix'> {
