@@ -8,10 +8,11 @@ It protects controller APIs. Put volumetric, static-file, unknown-route, and net
 
 ## Enablement and rollout
 
-The framework ships with rate limiting disabled to preserve compatibility. Configure the module in stages:
+The interceptor ships with `enable: false` to preserve compatibility. Enable the global interceptor through standard onion configuration and begin in observe mode:
 
 ```ts
-config.modules['a-ratelimit'] = {
+config.onions.interceptor['a-ratelimit:rateLimit'] = {
+  enable: true,
   rateLimit: {
     mode: 'observe',
     limit: 120,
@@ -23,7 +24,8 @@ config.modules['a-ratelimit'] = {
 `observe` records requests that would exceed the policy but does not reject them. Review `rate_limit.would_reject` events and Redis health, then deliberately enable enforcement:
 
 ```ts
-config.modules['a-ratelimit'] = {
+config.onions.interceptor['a-ratelimit:rateLimit'] = {
+  enable: true,
   rateLimit: {
     mode: 'enforce',
     limit: 120,
@@ -39,23 +41,31 @@ Use instance configuration when tenants require different policy values. Each li
 
 ## Route policies
 
-Use `Core.rateLimit(...)` for a stricter action policy, an intentional shared bucket, or an explicit exemption:
+Use `Core.rateLimit(...)` on a controller for its baseline policy, or on an action for a stricter policy, an intentional shared bucket, or an explicit exemption:
 
 ```ts
 import { Core } from 'vona-module-a-core';
 
-@Core.rateLimit({ mode: 'enforce', limit: 5, windowMs: 60_000, name: 'password-reset' })
+@Core.rateLimit({
+  enable: true,
+  rateLimit: {
+    mode: 'enforce',
+    limit: 5,
+    windowMs: 60_000,
+    name: 'password-reset',
+  },
+})
 @Web.post('request-reset')
 @Passport.public()
 async requestReset() {}
 
-@Core.rateLimit({ mode: 'disabled' })
+@Core.rateLimit({ enable: false })
 @Web.get('health')
 @Passport.public()
 health() {}
 ```
 
-Policy values are merged using normal Vona onion precedence: module defaults and project config, active-instance config, controller/action decorators, then controlled dynamic onion overrides used by tests. Treat every disabled route as a reviewed security exception.
+`enable`, matching, and ordering remain outer interceptor options. The nested `rateLimit` object contains the quota policy, so partial controller/action overrides inherit the remaining policy fields through normal Vona onion merging. Interceptor options use normal Vona precedence: application config, active-instance config, controller/action decorators, then controlled dynamic onion overrides used by tests. A controller/action can enable a narrower policy while the global interceptor is disabled, or set `enable: false` as a reviewed exemption after global activation. Do not put this policy in another middleware’s options: only `a-ratelimit:rateLimit` consumes the `rateLimit` object at the post-Passport interceptor stage.
 
 ## Identity and Redis storage
 
@@ -83,6 +93,6 @@ If the limiter Redis operation fails during enforce mode, Cabloy returns `503`, 
 
 The primary structured events are `rate_limit.would_reject`, `rate_limit.rejected`, and `rate_limit.redis_error`. They contain only route/policy/instance and error-class information; do not add raw identities, full URLs, or Redis keys to logs or metric labels.
 
-The `limiter` client may initially use the same Redis deployment as other Vona clients, but it is separately configured so production can isolate its endpoint, timeout, and capacity. Ensure Redis remains available before applying `mode: 'enforce'` to all public APIs.
+The `limiter` client may initially use the same Redis deployment as other Vona clients, but it is separately configured so production can isolate its endpoint, timeout, and capacity. Ensure Redis remains available before globally setting `enable: true` with `rateLimit.mode: 'enforce'`.
 
 See [Controller AOP Guide](/backend/controller-aop-guide), [Config Guide](/backend/config-guide), [Redis Guide](/backend/redis-guide), and [Multi-Instance and Instance Resolution](/backend/multi-instance-and-instance-resolution).

@@ -2,7 +2,7 @@
 
 ## Invariants
 
-- `a-ratelimit:rateLimit` is a global interceptor, so it runs after the Passport guard and before body parsing, pipes, local middleware, and actions.
+- `a-ratelimit:rateLimit` is a global interceptor, so it runs after the Passport guard and before body parsing, pipes, local middleware, and actions. Its decorator default is `enable: false`; activation is controlled through the outer standard interceptor options, while quota behavior is contained in the nested `rateLimit` option rather than module configuration.
 - Inbound admission is one atomic Redis Lua operation. Do not replace it with `a-cache` get/set calls or a distributed lock on every request.
 - Redis keys must include the active Cabloy instance, stable policy/action identity, normalized route template, window start, and a one-way identity digest. Do not put raw IPs, user/auth IDs, query values, or concrete URL parameters in a key.
 - The primary route identity is `ctx.route.routePathRaw`, not a concrete request URL.

@@ -8,6 +8,13 @@ import { Arg, Controller, Web } from 'vona-module-a-web';
 
 export interface IControllerOptionsPerformAction extends IDecoratorControllerOptions {}
 
+@Core.rateLimit({
+  enable: true,
+  rateLimit: {
+    limit: 3,
+    name: 'test-rate-limit-controller',
+  },
+})
 @Controller<IControllerOptionsPerformAction>({ path: 'performAction', meta: { mode: 'test' } })
 @Api.exclude()
 export class ControllerPerformAction extends BeanBase {
@@ -18,16 +25,30 @@ export class ControllerPerformAction extends BeanBase {
     return { id, url };
   }
 
+  @Web.get('rateLimitController')
+  @Passport.public()
+  rateLimitController() {
+    return 'allowed-controller';
+  }
+
   @Web.get('rateLimit')
   @Passport.public()
-  @Core.rateLimit({ mode: 'enforce', limit: 2, windowMs: 60_000, name: 'test-rate-limit' })
+  @Core.rateLimit({
+    enable: true,
+    rateLimit: {
+      mode: 'enforce',
+      limit: 2,
+      windowMs: 60_000,
+      name: 'test-rate-limit',
+    },
+  })
   rateLimit() {
     return 'allowed';
   }
 
   @Web.get('rateLimitExempt')
   @Passport.public()
-  @Core.rateLimit({ mode: 'disabled' })
+  @Core.rateLimit({ enable: false })
   rateLimitExempt() {
     return 'exempt';
   }

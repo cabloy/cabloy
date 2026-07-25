@@ -43,18 +43,13 @@ export interface IModuleService {
   rateLimit: ServiceRateLimit;
 }
 /** service: end */
-/** config: begin */
-export * from '../config/config.ts';
-import type { config } from '../config/config.ts';
-/** config: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig } from 'vona';
+import { BeanScopeBase, type BeanScopeUtil } from 'vona';
 import { Scope } from 'vona-module-a-bean';
 @Scope()
 export class ScopeModuleARatelimit extends BeanScopeBase {}
 export interface ScopeModuleARatelimit {
   util: BeanScopeUtil;
-  config: TypeModuleConfig<typeof config>;
   service: IModuleService;
 }
 import 'vona';
@@ -64,9 +59,6 @@ declare module 'vona' {
   }
   export interface IBeanScopeContainer {
     ratelimit: ScopeModuleARatelimit;
-  }
-  export interface IBeanScopeConfig {
-    'a-ratelimit': ReturnType<typeof config>;
   }
 }
 /** scope: end */

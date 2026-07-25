@@ -4,6 +4,7 @@ import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
 const RateLimitPath = '/test/vona/performAction/rateLimit' as any;
+const RateLimitControllerPath = '/test/vona/performAction/rateLimitController' as any;
 
 describe('rateLimit.test.ts', { concurrency: false }, () => {
   it('action:rateLimit:disabled', async () => {
@@ -12,12 +13,45 @@ describe('rateLimit.test.ts', { concurrency: false }, () => {
         innerAccess: false,
         onions: {
           interceptor: {
-            'a-ratelimit:rateLimit': { mode: 'disabled' },
+            'a-ratelimit:rateLimit': { enable: false },
           },
         },
       });
       assert.equal(result, 'allowed');
     });
+  });
+
+  it('controller:rateLimit:enforce', async () => {
+    const redis = app.bean.redis;
+    const get = redis.get.bind(redis);
+    let requests = 0;
+    (redis as any).get = (clientName: string) => {
+      if (clientName !== 'limiter') return get(clientName as any);
+      return {
+        async eval() {
+          requests++;
+          return [requests, 60_000];
+        },
+      };
+    };
+    try {
+      await app.bean.executor.mockCtx(async () => {
+        for (let index = 0; index < 3; index++) {
+          const result = await app.bean.executor.performAction('get', RateLimitControllerPath, {
+            innerAccess: false,
+          });
+          assert.equal(result, 'allowed-controller');
+        }
+        const [_, error] = await catchError(() => {
+          return app.bean.executor.performAction('get', RateLimitControllerPath, {
+            innerAccess: false,
+          });
+        });
+        assert.equal(error?.code, 429);
+      });
+    } finally {
+      (redis as any).get = get;
+    }
   });
 
   it('action:rateLimit:enforce', async () => {

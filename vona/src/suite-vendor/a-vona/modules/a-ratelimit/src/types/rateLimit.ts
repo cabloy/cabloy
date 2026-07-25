@@ -1,7 +1,7 @@
 import type { IRedisClientRecord } from 'vona-module-a-redis';
 
 export type RateLimitRedisClient = keyof IRedisClientRecord | 'limiter';
-export type RateLimitMode = 'disabled' | 'observe' | 'enforce';
+export type RateLimitMode = 'observe' | 'enforce';
 export type RateLimitKey = 'identity' | 'ip' | 'subject';
 export type RateLimitFailureMode = 'closed';
 
