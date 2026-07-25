@@ -1,33 +1,23 @@
-import type { IRedisClientRecord } from 'vona-module-a-redis';
-
 import { createHash } from 'node:crypto';
-import { BeanBase } from 'vona';
+import { BeanBase, cast } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
 import type { IRateLimitPolicy, IRateLimitResult } from '../types/rateLimit.ts';
 
-const LUA_ADMIT = `
-local current = redis.call('INCR', KEYS[1])
-if current == 1 then
-  redis.call('PEXPIRE', KEYS[1], ARGV[1])
-end
-local ttl = redis.call('PTTL', KEYS[1])
-if ttl < 0 then
-  redis.call('PEXPIRE', KEYS[1], ARGV[1])
-  ttl = tonumber(ARGV[1])
-end
-return { current, ttl }
-`;
-
 @Service()
 export class ServiceRateLimit extends BeanBase {
+  private get clientRedis() {
+    return this.bean.redis.get('limiter');
+  }
+
   async admit(policy: IRateLimitPolicy): Promise<IRateLimitResult> {
     this._validatePolicy(policy);
     const now = Date.now();
     const key = this._createKey(policy, now);
-    const result = (await this.bean.redis
-      .get(policy.client as keyof IRedisClientRecord)
-      .eval(LUA_ADMIT, 1, key, String(policy.windowMs))) as [number | string, number | string];
+    const result = (await cast(this.clientRedis).rateLimitAdmit(key, String(policy.windowMs))) as [
+      number | string,
+      number | string,
+    ];
     const current = Number(result[0]);
     const resetAfterMs = Math.max(0, Number(result[1]));
     return {

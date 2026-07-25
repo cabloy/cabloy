@@ -15,12 +15,10 @@ export interface IInterceptorOptionsRateLimit extends IDecoratorInterceptorOptio
   dependents: 'a-body:bodyReq',
   rateLimit: {
     mode: 'enforce',
-    client: 'limiter',
     limit: 120,
     windowMs: 60_000,
     key: 'identity',
     headers: true,
-    failureMode: 'closed',
   },
 })
 @Global()
@@ -38,7 +36,6 @@ export class InterceptorRateLimit extends BeanBase implements IInterceptorExecut
         route: this.ctx.route.routePathRaw,
         instanceName: this.ctx.instanceName,
         mode: policy.mode,
-        failureMode: policy.failureMode,
         error: error instanceof Error ? error.message : String(error),
       });
       if (policy.mode === 'observe') return next();

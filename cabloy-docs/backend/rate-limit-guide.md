@@ -32,7 +32,6 @@ config.onions.interceptor['a-ratelimit:rateLimit'] = {
     windowMs: 60_000,
     key: 'identity',
     headers: true,
-    failureMode: 'closed',
   },
 };
 ```
@@ -73,7 +72,7 @@ The default `key: 'identity'` combines the proxy-trusted `ctx.ip` with the authe
 
 Do not parse `X-Forwarded-For` in application code. Vona resolves `ctx.ip` according to its configured proxy trust settings. The trusted reverse proxy must replace client-supplied forwarding headers before forwarding a request.
 
-The limiter uses the dedicated `limiter` Redis client and one atomic Lua fixed-window counter operation. Redis keys contain the instance, policy, normalized route, window start, and a SHA-256 digest of the identity; raw IP addresses and subject IDs are not stored in key text.
+The limiter always uses the dedicated `limiter` Redis client; this infrastructure choice is not a route-policy field. It registers one atomic Lua fixed-window counter command during module startup and invokes that command for each request. Redis keys contain the instance, policy, normalized route, window start, and a SHA-256 digest of the identity; raw IP addresses and subject IDs are not stored in key text.
 
 Fixed windows provide one low-cost atomic operation per request. A limit can burst around a window boundary; choose lower limits or shorter windows for especially sensitive actions.
 
