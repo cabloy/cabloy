@@ -44,9 +44,9 @@ export const formatLoggerErrors = (opts: ILoggerFormatOpts) => {
 
 export const formatLoggerCtx = Winston.format((info, _opts: any) => {
   const app = useApp();
-  if (!app.ctx || !app.ctx.method || !app.ctx.path) return info;
-  info.method = app.ctx.method;
-  info.path = app.ctx.path;
+  if (!app.ctx) return info;
+  if (app.ctx.method) info.method = app.ctx.method;
+  if (app.ctx.path) info.path = app.ctx.path;
   const telemetry = (app.ctx.state as any).telemetry;
   if (telemetry?.requestId) info.request_id = telemetry.requestId;
   const span = telemetry?.span ?? telemetry?.serverSpan;
