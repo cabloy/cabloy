@@ -24,16 +24,19 @@ function collectPageErrors(page: Page) {
   return errors;
 }
 
-function waitForAddressResponse(page: Page, method: string, path: string | RegExp) {
+function waitForApiResponse(page: Page, method: string, path: string | RegExp) {
   return page.waitForResponse(response => {
     const url = new URL(response.url());
     return (
       response.request().method() === method &&
-      response.ok() &&
       (typeof path === 'string' ? url.pathname === path : path.test(url.pathname)) &&
       !response.request().headers()['x-vona-openapi-schema']
     );
   });
+}
+
+function waitForAddressResponse(page: Page, method: string, path: string | RegExp) {
+  return waitForApiResponse(page, method, path);
 }
 
 function waitForAddressMine(page: Page) {
@@ -325,6 +328,146 @@ test(
       expect(pageErrors).toEqual([]);
     } finally {
       await context.close();
+    }
+  },
+);
+
+test(
+  'Phase 50: authenticated customer completes checkout, mock payment, and order history',
+  { tag: ['@web', '@flow', '@payment'] },
+  async ({ browser, request }, testInfo) => {
+    test.setTimeout(60_000);
+    const { context, fixture, page, pageErrors } = await createAddressThroughCustomerPage(
+      browser,
+      request,
+      testInfo,
+    );
+    try {
+      await page.goto('/commerce', { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+      await expect(page.getByRole('heading', { name: 'Commerce catalogue' })).toBeVisible();
+
+      const productLink = page.getByRole('link', { name: 'Pour-Over Coffee Set', exact: true });
+      await expect(productLink).toBeVisible();
+      await productLink.click();
+      await expect(page).toHaveURL(/\/commerce\/product\/\d+(?:\/|$)/);
+      await expect(page.getByRole('heading', { name: 'Pour-Over Coffee Set' })).toBeVisible();
+      await expect(page.getByText('COF-SET-01')).toBeVisible();
+      await expect(page.getByText('$45.99')).toBeVisible();
+
+      const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
+      await page.getByRole('button', { name: 'Add to cart', exact: true }).click();
+      await addResponse;
+
+      await page.getByRole('link', { name: /^Cart/ }).click();
+      await expect(page).toHaveURL(/\/commerce\/cart(?:\/|$)/);
+      await expect(page.getByRole('heading', { name: 'Cart' })).toBeVisible();
+      const cartItem = page.locator('article').filter({ has: page.getByRole('spinbutton') });
+      await expect(cartItem).toContainText('COF-SET-01');
+      await expect(cartItem).toContainText('$45.99');
+      await expect(cartItem.getByRole('spinbutton')).toHaveValue('1');
+
+      await page.getByRole('link', { name: 'Checkout', exact: true }).click();
+      await expect(page).toHaveURL(/\/commerce\/checkout(?:\/|$)/);
+      await expect(page.getByRole('heading', { name: 'Checkout' })).toBeVisible();
+      const addressChoice = page.getByRole('radio', { name: new RegExp(fixture.recipientName) });
+      await expect(addressChoice).toBeVisible();
+      await addressChoice.check();
+      const noCouponChoice = page.getByRole('radio', { name: 'No coupon', exact: true });
+      await noCouponChoice.check();
+      await expect(noCouponChoice).toBeChecked();
+      await expect(page.getByRole('button', { name: 'Create order', exact: true })).toBeEnabled();
+
+      const checkoutResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/checkout');
+      await page.getByRole('button', { name: 'Create order', exact: true }).click();
+      const checkoutResponseValue = await checkoutResponse;
+      expect(checkoutResponseValue.ok()).toBeTruthy();
+      const checkout = (await checkoutResponseValue.json()).data;
+      expect(checkout.orderId).toEqual(expect.any(Number));
+      expect(checkout.paymentAttemptId).toEqual(expect.any(Number));
+      expect(checkout.state).toBe('awaiting_payment');
+      expect(checkout.paymentAttemptState).toBe('created');
+      expect(checkout.currency).toBe('USD');
+      expect(checkout.payableTotalCents).toBe(4599);
+      await expect(page).toHaveURL(
+        new RegExp(`/commerce/payment/${checkout.paymentAttemptId}(?:/|$)`),
+      );
+      await expect(page.getByRole('heading', { name: 'Mock payment' })).toBeVisible();
+
+      const paymentResponse = waitForApiResponse(
+        page,
+        'POST',
+        new RegExp(`/api/commerce/trade/payment/${checkout.paymentAttemptId}/outcome$`),
+      );
+      const orderDetailResponse = waitForApiResponse(
+        page,
+        'GET',
+        new RegExp('/api/commerce/trade/order/viewMine/\\d+$'),
+      );
+      await page.getByRole('button', { name: 'Payment succeeded', exact: true }).click();
+      const paymentResponseValue = await paymentResponse;
+      expect(paymentResponseValue.ok()).toBeTruthy();
+      const payment = (await paymentResponseValue.json()).data;
+      expect(payment.orderId).toBe(checkout.orderId);
+      expect(payment.paymentAttemptId).toBe(checkout.paymentAttemptId);
+      expect(payment.orderState).toBe('paid');
+      expect(payment.paymentAttemptState).toBe('succeeded');
+      expect(payment.currency).toBe('USD');
+      expect(payment.payableTotalCents).toBe(4599);
+      await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`));
+      const orderDetailResponseValue = await orderDetailResponse;
+      expect(orderDetailResponseValue.ok()).toBeTruthy();
+      const order = (await orderDetailResponseValue.json()).data;
+      expect(order.id).toBe(checkout.orderId);
+      expect(order.state).toBe('paid');
+      expect(order.currency).toBe('USD');
+      expect(order.discountCents).toBe(0);
+      expect(order.payableTotalCents).toBe(4599);
+      expect(order.addressSnapshot.recipientName).toBe(fixture.recipientName);
+      expect(order.addressSnapshot.addressLine1).toBe(fixture.addressLine1);
+      expect(order.lines).toEqual([
+        expect.objectContaining({
+          titleSnapshot: 'Pour-Over Coffee Set',
+          skuCodeSnapshot: 'COF-SET-01',
+          unitPriceCents: 4599,
+          quantity: 1,
+          lineTotalCents: 4599,
+        }),
+      ]);
+
+      await expect(page.getByRole('heading', { name: `Order #${checkout.orderId}` })).toBeVisible();
+      await expect(page.getByText('paid · $45.99')).toBeVisible();
+      await expect(page.getByText(fixture.recipientName)).toBeVisible();
+      await expect(page.getByText(fixture.addressLine1)).toBeVisible();
+      await expect(page.getByText('Discount: $0.00')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Pour-Over Coffee Set' })).toBeVisible();
+      await expect(page.getByText('COF-SET-01')).toBeVisible();
+      await expect(page.getByText('1 × $45.99 = $45.99')).toBeVisible();
+
+      const ordersResponse = waitForApiResponse(page, 'GET', '/api/commerce/trade/order/mine');
+      await page.goto('/commerce/orders', { waitUntil: 'load' });
+      await expect(page).toHaveURL(/\/commerce\/orders(?:\/|$)/);
+      await ordersResponse;
+      await expect(page.getByRole('heading', { name: 'My orders' })).toBeVisible();
+      const orderCard = page
+        .locator('article')
+        .filter({ has: page.getByRole('heading', { name: `Order #${checkout.orderId}` }) });
+      await expect(orderCard).toContainText('paid · $45.99');
+
+      const historyDetailResponse = waitForApiResponse(
+        page,
+        'GET',
+        new RegExp(`/api/commerce/trade/order/viewMine/${checkout.orderId}$`),
+      );
+      await orderCard.getByRole('button', { name: 'View', exact: true }).click();
+      await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`));
+      await historyDetailResponse;
+      await expect(page.getByRole('heading', { name: `Order #${checkout.orderId}` })).toBeVisible();
+      await expect(page.getByText('1 × $45.99 = $45.99')).toBeVisible();
+      await expect(page.getByRole('alert')).toHaveCount(0);
+      expect(pageErrors).toEqual([]);
+    } finally {
+      await context.close().catch(() => {});
     }
   },
 );

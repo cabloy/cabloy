@@ -810,7 +810,7 @@ export class ServiceOrder extends BeanBase {
       productId: sku.product.id,
       skuCodeSnapshot: sku.code,
       titleSnapshot: sku.product.title,
-      skuAttributesSnapshot: sku.attributes.map(
+      skuAttributesSnapshot: (sku.attributes ?? []).map(
         attribute =>
           ({
             name: attribute.name,
