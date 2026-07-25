@@ -128,6 +128,7 @@ export default async function (app: VonaApplication) {
       summer: { keyPrefix: true },
       model: { keyPrefix: true },
       worker: { keyPrefix: true },
+      limiter: { keyPrefix: true },
       redlock: {},
       queue: {},
       broadcast: {},

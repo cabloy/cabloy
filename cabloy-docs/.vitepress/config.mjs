@@ -229,6 +229,7 @@ export default defineConfig({
           items: [
             { text: 'Auth Guide', link: '/backend/auth-guide' },
             { text: 'Captcha Guide', link: '/backend/captcha-guide' },
+            { text: 'Rate Limit Guide', link: '/backend/rate-limit-guide' },
             { text: 'User Access Guide', link: '/backend/user-access-guide' },
             { text: 'JWT Guide', link: '/backend/jwt-guide' },
             { text: 'Validation Guide', link: '/backend/validation-guide' },

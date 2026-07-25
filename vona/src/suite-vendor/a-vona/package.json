@@ -42,6 +42,7 @@
     "vona-module-a-play": "workspace:^",
     "vona-module-a-printtip": "workspace:^",
     "vona-module-a-queue": "workspace:^",
+    "vona-module-a-ratelimit": "workspace:^",
     "vona-module-a-redis": "workspace:^",
     "vona-module-a-redlock": "workspace:^",
     "vona-module-a-retryable": "workspace:^",

@@ -3,6 +3,7 @@ import type { IFilterOptionsError } from 'vona-module-a-error';
 import type { IAopMethodOptionsLog } from 'vona-module-a-logger';
 import type { TypeUseOnionOmitOptionsGlobal } from 'vona-module-a-onion';
 import type { IAopMethodOptionsTransaction } from 'vona-module-a-orm';
+import type { IInterceptorOptionsRateLimit } from 'vona-module-a-ratelimit';
 import type { IAopMethodOptionsRetryable } from 'vona-module-a-retryable';
 import type { IInterceptorOptionsUpload } from 'vona-module-a-upload';
 
@@ -46,6 +47,12 @@ function Serializer(enable: boolean = true): ClassDecorator & MethodDecorator {
   return Aspect.interceptor('a-serialization:serializer', { enable });
 }
 
+function RateLimit(
+  options?: Partial<IInterceptorOptionsRateLimit>,
+): ClassDecorator & MethodDecorator {
+  return Aspect.interceptorGlobal('a-ratelimit:rateLimit', options);
+}
+
 export const Core = {
   gate: Gate,
   error: Error,
@@ -55,4 +62,5 @@ export const Core = {
   captchaVerify: CaptchaVerify,
   fileUpload: FileUpload,
   serializer: Serializer,
+  rateLimit: RateLimit,
 };
