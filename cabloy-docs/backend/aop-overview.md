@@ -28,39 +28,31 @@ These families work together to shape request execution, parameter handling, err
 
 ## Execution model
 
-Two controller AOP families use an onion-style execution model:
+Middleware and interceptors use onion-style execution: they can run logic before `next()` and after downstream controller work returns. Guards check access preconditions, pipes transform or validate request values, and filters handle exceptions on the error path.
 
-- **middleware**
-- **interceptor**
+For a matched controller route, the inbound order is:
 
-That means they can run logic both before and after the controller action.
+1. **system middleware** before route matching
+2. **route matching**
+3. **global middleware** after a route matches and before authentication
+4. **guards**, including Passport authentication and authorization
+5. **interceptors**
+6. **argument extraction and pipes**
+7. **local middleware**
+8. **controller action**
 
-Other controller AOP families participate in more specialized stages:
+After the action, middleware and interceptor after-`next()` work unwinds in reverse: local middleware, interceptors, then global middleware. Filters are not another successful inbound stage; they compose the exception-handling path when request execution throws.
 
-- **guard** checks access or execution preconditions
-- **pipe** transforms or validates request values
-- **filter** handles exceptions and logging behavior
-
-A practical controller-path mental model is:
-
-1. system middleware runs before route matching
-2. route matching happens
-3. global and local middleware wrap the matched route
-4. guards enforce access preconditions
-5. pipes transform and validate incoming values
-6. interceptors wrap controller execution
-7. the controller action runs
-8. filters handle thrown exceptions and logging customization when failures occur
-
-That model is the fastest way to decide which aspect family should own a change.
+Choose the family by the state the concern needs: use system middleware for route-independent transport behavior, global middleware for matched-route work before authentication, a global interceptor for post-auth admission before body parsing, and local middleware for action-side wrapping after pipes.
 
 ## System, global, and local scope
 
 Controller AOP also varies by scope:
 
-- **system** middleware runs before route matching
-- **global** aspects are auto-loaded and can be applied broadly with runtime filters such as `match`, `ignore`, `mode`, or `flavor`
-- **local** aspects are attached directly to a controller class or action
+- **system middleware** runs before route matching and has no matched-route metadata
+- **global middleware** is auto-loaded after route matching but before guards; it can use runtime filters such as `match`, `ignore`, `mode`, or `flavor`
+- **local middleware** is attached directly to a controller class or action and runs after pipes, immediately around the action-side suffix
+- **global/local guards, interceptors, pipes, and filters** remain in their own family stages rather than sharing middleware placement
 
 Built-in aspects and shorthand decorators sit on top of the same general model.
 

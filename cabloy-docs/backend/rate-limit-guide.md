@@ -2,7 +2,7 @@
 
 ## Overview
 
-`a-ratelimit` limits matched Vona HTTP API actions across all application workers. It runs as the global `a-ratelimit:rateLimit` interceptor after Passport has resolved an authenticated or anonymous subject, and before request-body parsing, pipes, local middleware, and controller code.
+`a-ratelimit` limits matched Vona HTTP API actions across all application workers. It runs as the global `a-ratelimit:rateLimit` interceptor after Passport has resolved an authenticated or anonymous subject, and before request-body parsing, pipes, local middleware, and controller code. See [Controller AOP Guide](/backend/controller-aop-guide) for the general request-stage diagram and the distinction between a local aspect and a route override of an existing global onion.
 
 It protects controller APIs. Put volumetric, static-file, unknown-route, and network-edge protection in the reverse proxy, WAF, or gateway.
 

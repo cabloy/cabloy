@@ -32,15 +32,25 @@ These commands all go through the shared `:create:bean` entrypoint, but they tar
 
 ### Scope variants
 
-- **system middleware** runs before route matching
-- **global middleware** is auto-loaded and applied broadly
-- **local middleware** is attached directly to a controller class or action
+- **system middleware** runs before route matching and has no matched-route metadata
+- **global middleware** is auto-loaded after a route matches but before guards and Passport authentication
+- **local middleware** is attached directly to a controller class or action and runs after pipes, around the action-side suffix
+
+### Inbound execution order
+
+For a matched controller route, Vona enters these stages in order:
+
+```text
+system middleware → route matching → global middleware → guard → interceptor → pipe → local middleware → action
+```
+
+Middleware and interceptors use onion execution. Their after-`next()` work unwinds in reverse, so local middleware returns before interceptors, which return before global middleware. Filters are selected from the error path when request execution throws; they are not a normal inbound stage.
 
 ### Why system middleware is different
 
 System middleware executes before route matching, so it is the earliest controller-facing interception stage.
 
-This is where Vona places concerns such as not-found handling, request override behavior, app initialization, instance initialization, HTTP logging, CORS, and static-resource handling.
+This is where Vona places concerns such as not-found handling, request override behavior, app initialization, instance initialization, HTTP logging, CORS, and static-resource handling. Use global middleware instead when the concern needs a matched route but must still run before authentication. Use local middleware when the concern is controller/action-specific and should see pipe-processed arguments.
 
 ### Representative local usage
 
@@ -53,6 +63,8 @@ This is where Vona places concerns such as not-found handling, request override 
 ```typescript
 @Aspect.middlewareGlobal('training-student:logger', { prefix: 'elapsed' })
 ```
+
+`@Aspect.middlewareGlobal(...)` writes route options for an already registered global middleware. It does not add a local middleware or change that middleware’s pre-guard execution stage. The same distinction applies to `@Aspect.interceptorGlobal(...)`: it configures an existing global interceptor for the controller/action while the interceptor remains in the post-guard stage.
 
 ### Representative built-in usage
 
@@ -125,8 +137,10 @@ Typical jobs include:
 
 ### Scope variants
 
-- **global interceptor** is auto-loaded and broadly configurable
-- **local interceptor** is attached directly to a controller class or action
+- **global interceptor** is auto-loaded after guards and before pipes, local middleware, and controller execution
+- **local interceptor** is attached directly to a controller class or action, runs inside global interceptors, and still precedes pipes
+
+A global interceptor is the correct placement for post-auth admission that must reject before body parsing. For example, [`a-ratelimit:rateLimit`](/backend/rate-limit-guide) uses Passport-resolved identity, then runs before the request-body interceptor, pipes, local middleware, and action code.
 
 ### Representative local usage
 
@@ -140,7 +154,7 @@ Built-in interceptors can be used for framework-level response behavior, such as
 
 ## Pipe
 
-Pipes transform or validate request values before they reach controller logic.
+Pipes transform or validate request values after interceptor entry and before local middleware and controller logic.
 
 ### Scope variants
 
@@ -190,7 +204,7 @@ For broader validation guidance, see [Validation Guide](/backend/validation-guid
 
 ## Filter
 
-Filters handle exceptions and logging behavior.
+Filters handle exceptions and logging behavior on the error path. They are selected when request execution throws, rather than forming another successful inbound stage after the action.
 
 This is where request-path error customization becomes explicit.
 
@@ -230,15 +244,25 @@ Most controller aspect families support the same configuration ideas:
 
 That consistency is one of the most important reasons controller AOP stays scalable in Vona.
 
-### Representative precedence model
+### Global-onion override and option ownership
 
-A representative precedence pattern is:
+A local use decorator such as `@Aspect.interceptor(...)` adds an onion to the local execution chain. A global use decorator such as `@Aspect.interceptorGlobal(...)` or `@Core.rateLimit(...)` instead writes controller/action route options for the named, already-global onion. It does not move that onion into a local stage.
 
-- usage-site override
-- then app-config override in `config.onions`
-- then decorator default values
+Put concern-specific fields under the exact onion that consumes them. For example, `rateLimit` belongs to `a-ratelimit:rateLimit` options; putting that object in another middleware or interceptor’s options does not transfer the quota policy or activate the limiter.
 
-For example, global middleware can define defaults in the bean, be overridden in app config, and then be overridden again at a specific controller action.
+### Effective option precedence
+
+For normal object-valued onion options, lower-precedence values are deep-merged with later values in this order:
+
+```text
+aspect defaults and application config.onions
+→ active-instance config.onions
+→ controller route options
+→ action route options
+→ controlled dynamic request or test overrides
+```
+
+An action can therefore override only `rateLimit.limit` and inherit the rest of the controller or application policy. An action `enable: false` is an explicit exemption from a globally or controller-enabled onion. Primitive option scenes use the highest-precedence value instead of deep merging.
 
 ### Representative inspect patterns
 
