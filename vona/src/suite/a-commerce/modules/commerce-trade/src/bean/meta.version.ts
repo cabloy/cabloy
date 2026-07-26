@@ -136,6 +136,22 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         .comment(entityOrderLine.$comment.lineTotalCents);
     });
 
+    const entityShipment = this.scope.entity.shipment;
+    await this.bean.model.createTable(entityShipment.$table, table => {
+      table.comment(entityShipment.$comment.$table);
+      table.basicFields();
+      table.tableIdentity(entityShipment.orderId).comment(entityShipment.$comment.orderId);
+      table.string(entityShipment.carrier, 100).comment(entityShipment.$comment.carrier);
+      table
+        .string(entityShipment.trackingNumber, 100)
+        .comment(entityShipment.$comment.trackingNumber);
+      table.userId(entityShipment.operatorId).comment(entityShipment.$comment.operatorId);
+      table.dateTime(entityShipment.shippedAt).comment(entityShipment.$comment.shippedAt);
+      table
+        .string(entityShipment.correlationId, 100)
+        .comment(entityShipment.$comment.correlationId);
+    });
+
     // This v1 schema is intentionally rebuild-only while Commerce is pre-deployment.
     const entityOrderAudit = this.scope.entity.orderAudit;
     await this.bean.model.createTable(entityOrderAudit.$table, table => {

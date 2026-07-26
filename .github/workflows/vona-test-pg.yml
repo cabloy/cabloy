@@ -42,8 +42,8 @@ jobs:
           DATABASE_DEFAULT_CLIENT=pg npm run vona :bin:test -- commerce-trade/test/orderSnapshot.test.ts --flavor=normal
           DATABASE_DEFAULT_CLIENT=pg npm run vona :bin:test -- commerce-trade/test/reservationExpiry.test.ts --flavor=normal
         working-directory: vona
-      - name: run Commerce payment lifecycle gate
-        run: DATABASE_DEFAULT_CLIENT=pg npm run vona :bin:test -- commerce-trade/test/paymentOutcome.test.ts commerce-trade/test/reservationExpiry.test.ts --flavor=normal
+      - name: run Commerce payment and shipment lifecycle gate
+        run: DATABASE_DEFAULT_CLIENT=pg npm run vona :bin:test -- commerce-trade/test/paymentOutcome.test.ts commerce-trade/test/reservationExpiry.test.ts commerce-trade/test/shipment.test.ts --flavor=normal
         working-directory: vona
       - run: DATABASE_DEFAULT_CLIENT=pg npm run test
         working-directory: vona

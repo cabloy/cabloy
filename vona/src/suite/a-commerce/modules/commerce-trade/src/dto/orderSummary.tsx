@@ -12,8 +12,8 @@ export class DtoOrderSummary {
   @Api.field(v.tableIdentity())
   id: TableIdentity;
 
-  @Api.field(z.enum(['awaiting_payment', 'paid', 'cancelled', 'expired']))
-  state: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
+  @Api.field(z.enum(['awaiting_payment', 'paid', 'shipped', 'cancelled', 'expired']))
+  state: 'awaiting_payment' | 'paid' | 'shipped' | 'cancelled' | 'expired';
 
   @Api.field(z.literal('USD'))
   currency: 'USD';

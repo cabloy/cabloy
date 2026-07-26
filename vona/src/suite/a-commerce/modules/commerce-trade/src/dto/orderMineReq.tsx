@@ -11,7 +11,10 @@ export interface IDtoOptionsOrderMineReq extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsOrderMineReq>({
   fields: {
-    state: $makeSchema(v.optional(), z.enum(['awaiting_payment', 'paid', 'cancelled', 'expired'])),
+    state: $makeSchema(
+      v.optional(),
+      z.enum(['awaiting_payment', 'paid', 'shipped', 'cancelled', 'expired']),
+    ),
     createdAt: $makeSchema(v.optional(), v.filterTransform('a-web:dateRange'), z.string()),
   },
 })

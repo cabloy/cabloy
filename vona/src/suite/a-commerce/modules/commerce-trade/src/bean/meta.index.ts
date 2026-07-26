@@ -14,6 +14,8 @@ import { $tableColumns } from 'vona-module-a-ormutils';
     ...$tableColumns('commerceTradeOrder', 'state'),
     ...$tableColumns('commerceTradeOrder', 'reservationExpiresAt'),
     ...$tableColumns('commerceTradeOrderLine', 'orderId'),
+    ...$tableColumns('commerceTradeShipment', 'orderId'),
+    ...$tableColumns('commerceTradeShipment', 'correlationId'),
     ...$tableColumns('commerceTradeOrderAudit', 'orderId'),
     ...$tableColumns('commerceTradeOrderAudit', 'correlationId'),
     ...$tableColumns('commerceTradeOrderLine', 'skuId'),

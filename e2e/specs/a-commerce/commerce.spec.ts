@@ -333,8 +333,8 @@ test(
 );
 
 test(
-  'Phase 50: authenticated customer completes checkout, mock payment, and order history',
-  { tag: ['@web', '@flow', '@payment'] },
+  'Phase 50/60: authenticated customer completes payment and observes operator shipment',
+  { tag: ['@web', '@admin', '@flow', '@payment', '@shipment'] },
   async ({ browser, request }, testInfo) => {
     test.setTimeout(60_000);
     const { context, fixture, page, pageErrors } = await createAddressThroughCustomerPage(
@@ -444,6 +444,59 @@ test(
       await expect(page.getByText('COF-SET-01')).toBeVisible();
       await expect(page.getByText('1 × $45.99 = $45.99')).toBeVisible();
 
+      const shipmentCarrier = 'Cabloy Express';
+      const shipmentTrackingNumber = `E2E-${checkout.orderId}`;
+      const adminContext = await browser.newContext();
+      const adminPage = await adminContext.newPage();
+      const adminPageErrors = collectPageErrors(adminPage);
+      try {
+        await adminPage.setViewportSize({ width: 1440, height: 900 });
+        await login(adminPage, '/commerce-admin/', 'admin', '123456', 'commerceAdmin');
+        await adminPage.goto('/commerce-admin/rest/resource/commerce-trade%3Aorder', {
+          waitUntil: 'load',
+        });
+        await expect(adminPage.locator('html')).toHaveAttribute(
+          'data-zova-hydrated',
+          'commerceAdmin',
+        );
+        const orderRow = adminPage
+          .getByRole('cell', { name: String(checkout.orderId), exact: true })
+          .locator('..');
+        await expect(orderRow).toBeVisible();
+        const carrierInput = orderRow.getByPlaceholder('Carrier');
+        const trackingNumberInput = orderRow.getByPlaceholder('Tracking number');
+        const confirmationCheckbox = orderRow.getByRole('checkbox');
+        await carrierInput.fill(shipmentCarrier);
+        await trackingNumberInput.fill(shipmentTrackingNumber);
+        await confirmationCheckbox.check();
+        await expect(carrierInput).toHaveValue(shipmentCarrier);
+        await expect(trackingNumberInput).toHaveValue(shipmentTrackingNumber);
+        await expect(confirmationCheckbox).toBeChecked();
+        const shipmentResponse = waitForApiResponse(
+          adminPage,
+          'POST',
+          `/api/commerce/trade/order/${checkout.orderId}/ship`,
+        );
+        await orderRow.getByRole('button', { name: 'Ship order', exact: true }).click();
+        expect((await shipmentResponse).ok()).toBeTruthy();
+        await expect(orderRow).toContainText('shipped');
+        expect(adminPageErrors).toEqual([]);
+      } finally {
+        await adminContext.close().catch(() => {});
+      }
+
+      const shippedDetailResponse = waitForApiResponse(
+        page,
+        'GET',
+        new RegExp(`/api/commerce/trade/order/viewMine/${checkout.orderId}$`),
+      );
+      await page.reload({ waitUntil: 'load' });
+      await shippedDetailResponse;
+      await expect(page.getByText('shipped · $45.99')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Shipment' })).toBeVisible();
+      await expect(page.getByText(shipmentCarrier)).toBeVisible();
+      await expect(page.getByText(shipmentTrackingNumber)).toBeVisible();
+
       const ordersResponse = waitForApiResponse(page, 'GET', '/api/commerce/trade/order/mine');
       await page.goto('/commerce/orders', { waitUntil: 'load' });
       await expect(page).toHaveURL(/\/commerce\/orders(?:\/|$)/);
@@ -452,7 +505,7 @@ test(
       const orderCard = page
         .locator('article')
         .filter({ has: page.getByRole('heading', { name: `Order #${checkout.orderId}` }) });
-      await expect(orderCard).toContainText('paid · $45.99');
+      await expect(orderCard).toContainText('shipped · $45.99');
 
       const historyDetailResponse = waitForApiResponse(
         page,

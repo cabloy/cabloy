@@ -8,10 +8,26 @@ export type ApiSchemaTestVonaEntityProduct = components['schemas']['test-vona.en
 export type ApiSchemaTestVonaEntityProductPartial = Partial<ApiSchemaTestVonaEntityProduct>;
 export type ApiSchemaACaptchaDtoCaptchaData = components['schemas']['a-captcha.dto.captchaData'];
 export type ApiSchemaACaptchaDtoCaptchaDataPartial = Partial<ApiSchemaACaptchaDtoCaptchaData>;
-export type ApiSchemaCommerceMemberDtoAddressCreate =
-  components['schemas']['commerce-member.dto.addressCreate'];
-export type ApiSchemaCommerceMemberDtoAddressCreatePartial =
-  Partial<ApiSchemaCommerceMemberDtoAddressCreate>;
+export type ApiSchemaCommerceMemberDtoAddressMineRes =
+  components['schemas']['commerce-member.dto.addressMineRes'];
+export type ApiSchemaCommerceMemberDtoAddressMineResPartial =
+  Partial<ApiSchemaCommerceMemberDtoAddressMineRes>;
+export type ApiSchemaCommerceMemberDtoAddressMineItem =
+  components['schemas']['commerce-member.dto.addressMineItem'];
+export type ApiSchemaCommerceMemberDtoAddressMineItemPartial =
+  Partial<ApiSchemaCommerceMemberDtoAddressMineItem>;
+export type ApiSchemaCommerceMemberDtoAddressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
+  components['schemas']['commerce-member.dto.addressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+export type ApiSchemaCommerceMemberDtoAddressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
+  Partial<ApiSchemaCommerceMemberDtoAddressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
+export type ApiSchemaCommerceMemberDtoAddressMineCreate =
+  components['schemas']['commerce-member.dto.addressMineCreate'];
+export type ApiSchemaCommerceMemberDtoAddressMineCreatePartial =
+  Partial<ApiSchemaCommerceMemberDtoAddressMineCreate>;
+export type ApiSchemaCommerceMemberDtoAddressMineUpdate =
+  components['schemas']['commerce-member.dto.addressMineUpdate'];
+export type ApiSchemaCommerceMemberDtoAddressMineUpdatePartial =
+  Partial<ApiSchemaCommerceMemberDtoAddressMineUpdate>;
 export type ApiSchemaCommerceMemberDtoAddressSelectRes =
   components['schemas']['commerce-member.dto.addressSelectRes'];
 export type ApiSchemaCommerceMemberDtoAddressSelectResPartial =
@@ -24,10 +40,6 @@ export type ApiSchemaCommerceMemberDtoAddressView_2d063d28bc7243bed02ebd8bddf121
   components['schemas']['commerce-member.dto.addressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
 export type ApiSchemaCommerceMemberDtoAddressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =
   Partial<ApiSchemaCommerceMemberDtoAddressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875>;
-export type ApiSchemaCommerceMemberDtoAddressUpdate =
-  components['schemas']['commerce-member.dto.addressUpdate'];
-export type ApiSchemaCommerceMemberDtoAddressUpdatePartial =
-  Partial<ApiSchemaCommerceMemberDtoAddressUpdate>;
 export type ApiSchemaHomeUserDtoPassport_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
   components['schemas']['home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
 export type ApiSchemaHomeUserDtoPassport_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
@@ -130,10 +142,21 @@ export type ApiSchemaCommerceTradeDtoOrderCouponSnapshot_2d063d28bc7243bed02ebd8
   components['schemas']['commerce-trade.dto.orderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
 export type ApiSchemaCommerceTradeDtoOrderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
   Partial<ApiSchemaCommerceTradeDtoOrderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
+export type ApiSchemaCommerceTradeDtoShipmentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
+  components['schemas']['commerce-trade.dto.shipmentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+export type ApiSchemaCommerceTradeDtoShipmentView_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
+  Partial<ApiSchemaCommerceTradeDtoShipmentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
 export type ApiSchemaCommerceTradeDtoOrderLineSkuAttributeSnapshot =
   components['schemas']['commerce-trade.dto.orderLineSkuAttributeSnapshot'];
 export type ApiSchemaCommerceTradeDtoOrderLineSkuAttributeSnapshotPartial =
   Partial<ApiSchemaCommerceTradeDtoOrderLineSkuAttributeSnapshot>;
+export type ApiSchemaCommerceTradeDtoShipmentView =
+  components['schemas']['commerce-trade.dto.shipmentView'];
+export type ApiSchemaCommerceTradeDtoShipmentViewPartial =
+  Partial<ApiSchemaCommerceTradeDtoShipmentView>;
+export type ApiSchemaCommerceTradeDtoOrderShip =
+  components['schemas']['commerce-trade.dto.orderShip'];
+export type ApiSchemaCommerceTradeDtoOrderShipPartial = Partial<ApiSchemaCommerceTradeDtoOrderShip>;
 export type ApiSchemaCommerceTradeDtoOrderSelectRes =
   components['schemas']['commerce-trade.dto.orderSelectRes'];
 export type ApiSchemaCommerceTradeDtoOrderSelectResPartial =

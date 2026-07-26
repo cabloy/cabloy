@@ -13,6 +13,7 @@ export default function (): ZovaOpenapiConfigModule {
         'CommerceTradePayment_outcome',
         'CommerceTradeOrder_select',
         'CommerceTradeOrder_view',
+        'CommerceTradeOrder_ship',
         'CommerceTradeOrder_mine',
         'CommerceTradeOrder_viewMine',
       ],

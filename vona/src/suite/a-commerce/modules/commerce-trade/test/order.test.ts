@@ -3,11 +3,11 @@ import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
 describe('order.test.ts', () => {
-  it('action:order permits system-admin read actions only', async () => {
+  it('action:order permits system-admin read and shipment actions only', async () => {
     await app.bean.executor.mockCtx(async () => {
       await app.bean.passport.signinMock();
       try {
-        const actions = ['select', 'view'];
+        const actions = ['select', 'view', 'ship'];
         const permissions = await Promise.all(
           actions.map(action =>
             app.bean.permission.retrievePermissionAction('commerce-trade:order', action),

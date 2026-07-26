@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 import type { TypeOrderState } from './order.tsx';
 
-export type TypeOrderAuditOperation = 'created' | 'paid' | 'cancelled' | 'expired';
+export type TypeOrderAuditOperation = 'created' | 'paid' | 'cancelled' | 'expired' | 'shipped';
 
 export interface IEntityOptionsOrderAudit extends IDecoratorEntityOptions {}
 
@@ -16,14 +16,20 @@ export class EntityOrderAudit extends EntityBase {
   @Api.field(v.tableIdentity())
   orderId: TableIdentity;
 
-  @Api.field(z.enum(['created', 'paid', 'cancelled', 'expired']))
+  @Api.field(z.enum(['created', 'paid', 'cancelled', 'expired', 'shipped']))
   operation: TypeOrderAuditOperation;
 
-  @Api.field(v.optional(), z.enum(['awaiting_payment', 'paid', 'cancelled', 'expired']))
-  fromState?: Extract<TypeOrderState, 'awaiting_payment' | 'paid' | 'cancelled' | 'expired'>;
+  @Api.field(v.optional(), z.enum(['awaiting_payment', 'paid', 'cancelled', 'expired', 'shipped']))
+  fromState?: Extract<
+    TypeOrderState,
+    'awaiting_payment' | 'paid' | 'cancelled' | 'expired' | 'shipped'
+  >;
 
-  @Api.field(z.enum(['awaiting_payment', 'paid', 'cancelled', 'expired']))
-  toState: Extract<TypeOrderState, 'awaiting_payment' | 'paid' | 'cancelled' | 'expired'>;
+  @Api.field(z.enum(['awaiting_payment', 'paid', 'cancelled', 'expired', 'shipped']))
+  toState: Extract<
+    TypeOrderState,
+    'awaiting_payment' | 'paid' | 'cancelled' | 'expired' | 'shipped'
+  >;
 
   @Api.field(v.optional(), v.tableIdentity())
   actorId?: TableIdentity;

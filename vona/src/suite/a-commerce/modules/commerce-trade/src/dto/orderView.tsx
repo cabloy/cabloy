@@ -22,4 +22,6 @@ export interface IDtoOptionsOrderView extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoOrderView extends $Dto.get(() => ModelOrder) {}
+export class DtoOrderView extends $Dto.get(() => ModelOrder, {
+  include: { shipment: true },
+}) {}

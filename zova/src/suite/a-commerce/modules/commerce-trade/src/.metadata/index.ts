@@ -385,6 +385,41 @@ $query: NSControllerPagePayment.QueryOutput;
 }
 /** pages: end */
 
+/** tableCell: begin */
+export * from '../bean/tableCell.actionShip.jsx';
+import { ITableCellOptionsActionShip } from '../bean/tableCell.actionShip.jsx';
+import 'zova-module-a-table';
+declare module 'zova-module-a-table' {
+  
+    export interface ITableCellRecord {
+      'commerce-trade:actionShip': ITableCellOptionsActionShip;
+    }
+
+  
+}
+declare module 'zova-module-commerce-trade' {
+  
+        export interface TableCellActionShip {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+        export interface TableCellActionShip {
+          get $beanFullName(): 'commerce-trade.tableCell.actionShip';
+          get $onionName(): 'commerce-trade:actionShip';
+          get $onionOptions(): ITableCellOptionsActionShip;
+        } 
+}
+/** tableCell: end */
+/** tableCell: begin */
+import { TableCellActionShip } from '../bean/tableCell.actionShip.jsx';
+import 'zova';
+declare module 'zova' {
+  export interface IBeanRecordGeneral {
+    'commerce-trade.tableCell.actionShip': TableCellActionShip;
+  }
+}
+/** tableCell: end */
 /** locale: begin */
 import { locales } from './locales.js';
 /** locale: end */

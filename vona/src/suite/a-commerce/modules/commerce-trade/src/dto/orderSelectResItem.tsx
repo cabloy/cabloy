@@ -26,7 +26,12 @@ export class DtoOrderSelectResItem extends $Dto.get(() => ModelOrder) {
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),
     ZovaRender.cell('basic-table:actionOperationsRow', {
-      actions: [ZovaRender.tableActionRow('basic-table:actionView')],
+      actions: [
+        ZovaRender.tableActionRow('commerce-trade:actionShip', {
+          permission: { public: true },
+        }),
+        ZovaRender.tableActionRow('basic-table:actionView'),
+      ],
     }),
   )
   _operationsRow?: unknown;

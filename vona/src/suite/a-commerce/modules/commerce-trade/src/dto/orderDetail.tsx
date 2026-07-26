@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { DtoOrderAddressSnapshot } from './orderAddressSnapshot.tsx';
 import { DtoOrderCouponSnapshot } from './orderCouponSnapshot.tsx';
 import { DtoOrderLineSkuAttributeSnapshot } from './orderLineSkuAttributeSnapshot.tsx';
+import { DtoShipmentView } from './shipmentView.tsx';
 
 export interface IDtoOptionsOrderDetail extends IDecoratorDtoOptions {}
 
@@ -39,8 +40,8 @@ export class DtoOrderDetail {
   @Api.field(v.tableIdentity())
   id: TableIdentity;
 
-  @Api.field(z.enum(['awaiting_payment', 'paid', 'cancelled', 'expired']))
-  state: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
+  @Api.field(z.enum(['awaiting_payment', 'paid', 'shipped', 'cancelled', 'expired']))
+  state: 'awaiting_payment' | 'paid' | 'shipped' | 'cancelled' | 'expired';
 
   @Api.field(z.literal('USD'))
   currency: 'USD';
@@ -62,6 +63,9 @@ export class DtoOrderDetail {
 
   @Api.field(v.optional(), v.object(DtoOrderCouponSnapshot))
   couponSnapshot?: DtoOrderCouponSnapshot;
+
+  @Api.field(v.optional(), v.object(DtoShipmentView))
+  shipment?: DtoShipmentView;
 
   @Api.field(v.array(DtoOrderDetailLine))
   lines: DtoOrderDetailLine[];

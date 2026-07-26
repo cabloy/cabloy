@@ -2,7 +2,7 @@ import type { IApiActionOptions } from 'zova-module-a-api';
 
 import { Api, BeanApiBase } from 'zova-module-a-api';
 
-import type { paths } from './openapi/index.js';
+import type { components, paths } from './openapi/index.js';
 
 import { OpenApiBaseURL } from './openapi/index.js';
 
@@ -23,6 +23,17 @@ export type ApiApiCommerceTradeOrderviewMineRequestParams =
   paths[ApiApiCommerceTradeOrderviewMinePath][ApiApiCommerceTradeOrderviewMineMethod]['parameters']['path'];
 export type ApiApiCommerceTradeOrderviewMineResponseBody =
   paths[ApiApiCommerceTradeOrderviewMinePath][ApiApiCommerceTradeOrderviewMineMethod]['responses']['200']['content']['application/json']['data'];
+
+/** CommerceTradeOrder_ship */
+export const ApiApiCommerceTradeOrdershipPath = '/api/commerce/trade/order/{id}/ship';
+export type ApiApiCommerceTradeOrdershipPath = '/api/commerce/trade/order/{id}/ship';
+export type ApiApiCommerceTradeOrdershipMethod = 'post';
+export type ApiApiCommerceTradeOrdershipRequestParams =
+  paths[ApiApiCommerceTradeOrdershipPath][ApiApiCommerceTradeOrdershipMethod]['parameters']['path'];
+export type ApiApiCommerceTradeOrdershipRequestBody =
+  components['schemas']['commerce-trade.dto.orderShip'];
+export type ApiApiCommerceTradeOrdershipResponseBody =
+  paths[ApiApiCommerceTradeOrdershipPath][ApiApiCommerceTradeOrdershipMethod]['responses']['200']['content']['application/json']['data'];
 
 /** CommerceTradeOrder_select */
 export const ApiApiCommerceTradeOrderselectPath = '/api/commerce/trade/order';
@@ -62,6 +73,19 @@ export class ApiCommerceTradeOrder extends BeanApiBase {
   ) {
     return this.$fetch.get<any, ApiApiCommerceTradeOrderviewMineResponseBody>(
       this.$pathTranslate(ApiApiCommerceTradeOrderviewMinePath, options.params),
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
+  ship(
+    body: ApiApiCommerceTradeOrdershipRequestBody,
+    options: {
+      params: ApiApiCommerceTradeOrdershipRequestParams;
+    } & IApiActionOptions,
+  ) {
+    return this.$fetch.post<any, ApiApiCommerceTradeOrdershipResponseBody>(
+      this.$pathTranslate(ApiApiCommerceTradeOrdershipPath, options.params),
+      body,
       this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
     );
   }

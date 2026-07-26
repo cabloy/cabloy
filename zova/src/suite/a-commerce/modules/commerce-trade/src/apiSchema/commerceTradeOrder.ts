@@ -6,6 +6,7 @@ import { ApiSchema } from 'zova-module-a-api';
 import {
   ApiApiCommerceTradeOrderminePath,
   ApiApiCommerceTradeOrderviewMinePath,
+  ApiApiCommerceTradeOrdershipPath,
   ApiApiCommerceTradeOrderselectPath,
   ApiApiCommerceTradeOrderviewPath,
 } from '../api/commerceTradeOrder.js';
@@ -18,6 +19,10 @@ export class ApiSchemaCommerceTradeOrder extends BeanBase {
 
   viewMine(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiCommerceTradeOrderviewMinePath, 'get', options);
+  }
+
+  ship(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCommerceTradeOrdershipPath, 'post', options);
   }
 
   select(options?: IApiSchemaOptions) {

@@ -1,5 +1,5 @@
 // eslint-disable
-import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore,IModelRelationHasMany } from 'vona-module-a-orm';
+import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore,IModelRelationHasOne,IModelRelationHasMany } from 'vona-module-a-orm';
 import type { TypeEntityOptionsFields,TypeControllerOptionsActions } from 'vona-module-a-openapi';
 import type { TableIdentity } from 'table-identity';
 /** entity: begin */
@@ -8,6 +8,7 @@ export * from '../entity/cartItem.tsx';
 export * from '../entity/order.tsx';
 export * from '../entity/orderAudit.tsx';
 export * from '../entity/orderLine.tsx';
+export * from '../entity/shipment.tsx';
 export * from '../entity/stockAudit.tsx';
 export * from '../entity/stockBalance.tsx';
 export * from '../entity/stockReservation.tsx';
@@ -16,6 +17,7 @@ import type { IEntityOptionsCartItem } from '../entity/cartItem.tsx';
 import type { IEntityOptionsOrder } from '../entity/order.tsx';
 import type { IEntityOptionsOrderAudit } from '../entity/orderAudit.tsx';
 import type { IEntityOptionsOrderLine } from '../entity/orderLine.tsx';
+import type { IEntityOptionsShipment } from '../entity/shipment.tsx';
 import type { IEntityOptionsStockAudit } from '../entity/stockAudit.tsx';
 import type { IEntityOptionsStockBalance } from '../entity/stockBalance.tsx';
 import type { IEntityOptionsStockReservation } from '../entity/stockReservation.tsx';
@@ -28,6 +30,7 @@ declare module 'vona-module-a-orm' {
 'commerce-trade:order': IEntityOptionsOrder;
 'commerce-trade:orderAudit': IEntityOptionsOrderAudit;
 'commerce-trade:orderLine': IEntityOptionsOrderLine;
+'commerce-trade:shipment': IEntityOptionsShipment;
 'commerce-trade:stockAudit': IEntityOptionsStockAudit;
 'commerce-trade:stockBalance': IEntityOptionsStockBalance;
 'commerce-trade:stockReservation': IEntityOptionsStockReservation;
@@ -45,6 +48,7 @@ import type { EntityCartItem } from '../entity/cartItem.tsx';
 import type { EntityOrder } from '../entity/order.tsx';
 import type { EntityOrderAudit } from '../entity/orderAudit.tsx';
 import type { EntityOrderLine } from '../entity/orderLine.tsx';
+import type { EntityShipment } from '../entity/shipment.tsx';
 import type { EntityStockAudit } from '../entity/stockAudit.tsx';
 import type { EntityStockBalance } from '../entity/stockBalance.tsx';
 import type { EntityStockReservation } from '../entity/stockReservation.tsx';
@@ -54,6 +58,7 @@ export interface IModuleEntity {
 'order': EntityOrderMeta;
 'orderAudit': EntityOrderAuditMeta;
 'orderLine': EntityOrderLineMeta;
+'shipment': EntityShipmentMeta;
 'stockAudit': EntityStockAuditMeta;
 'stockBalance': EntityStockBalanceMeta;
 'stockReservation': EntityStockReservationMeta;
@@ -65,6 +70,7 @@ export type EntityCartItemTableName = 'commerceTradeCartItem';
 export type EntityOrderTableName = 'commerceTradeOrder';
 export type EntityOrderAuditTableName = 'commerceTradeOrderAudit';
 export type EntityOrderLineTableName = 'commerceTradeOrderLine';
+export type EntityShipmentTableName = 'commerceTradeShipment';
 export type EntityStockAuditTableName = 'commerceTradeStockAudit';
 export type EntityStockBalanceTableName = 'commerceTradeStockBalance';
 export type EntityStockReservationTableName = 'commerceTradeStockReservation';
@@ -73,6 +79,7 @@ export type EntityCartItemMeta=TypeEntityMeta<EntityCartItem,EntityCartItemTable
 export type EntityOrderMeta=TypeEntityMeta<EntityOrder,EntityOrderTableName>;
 export type EntityOrderAuditMeta=TypeEntityMeta<EntityOrderAudit,EntityOrderAuditTableName>;
 export type EntityOrderLineMeta=TypeEntityMeta<EntityOrderLine,EntityOrderLineTableName>;
+export type EntityShipmentMeta=TypeEntityMeta<EntityShipment,EntityShipmentTableName>;
 export type EntityStockAuditMeta=TypeEntityMeta<EntityStockAudit,EntityStockAuditTableName>;
 export type EntityStockBalanceMeta=TypeEntityMeta<EntityStockBalance,EntityStockBalanceTableName>;
 export type EntityStockReservationMeta=TypeEntityMeta<EntityStockReservation,EntityStockReservationTableName>;
@@ -83,6 +90,7 @@ declare module 'vona-module-a-orm' {
 'commerceTradeOrder': EntityOrderMeta;
 'commerceTradeOrderAudit': EntityOrderAuditMeta;
 'commerceTradeOrderLine': EntityOrderLineMeta;
+'commerceTradeShipment': EntityShipmentMeta;
 'commerceTradeStockAudit': EntityStockAuditMeta;
 'commerceTradeStockBalance': EntityStockBalanceMeta;
 'commerceTradeStockReservation': EntityStockReservationMeta;
@@ -110,6 +118,10 @@ declare module 'vona-module-commerce-trade' {
       fields?: TypeEntityOptionsFields<EntityOrderLine, IEntityOptionsOrderLine[TypeSymbolKeyFieldsMore]>;
     }
 
+    export interface IEntityOptionsShipment {
+      fields?: TypeEntityOptionsFields<EntityShipment, IEntityOptionsShipment[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IEntityOptionsStockAudit {
       fields?: TypeEntityOptionsFields<EntityStockAudit, IEntityOptionsStockAudit[TypeSymbolKeyFieldsMore]>;
     }
@@ -129,6 +141,7 @@ export * from '../model/cartItem.ts';
 export * from '../model/order.ts';
 export * from '../model/orderAudit.ts';
 export * from '../model/orderLine.ts';
+export * from '../model/shipment.ts';
 export * from '../model/stockAudit.ts';
 export * from '../model/stockBalance.ts';
 export * from '../model/stockReservation.ts';
@@ -137,6 +150,7 @@ import type { IModelOptionsCartItem } from '../model/cartItem.ts';
 import type { IModelOptionsOrder } from '../model/order.ts';
 import type { IModelOptionsOrderAudit } from '../model/orderAudit.ts';
 import type { IModelOptionsOrderLine } from '../model/orderLine.ts';
+import type { IModelOptionsShipment } from '../model/shipment.ts';
 import type { IModelOptionsStockAudit } from '../model/stockAudit.ts';
 import type { IModelOptionsStockBalance } from '../model/stockBalance.ts';
 import type { IModelOptionsStockReservation } from '../model/stockReservation.ts';
@@ -149,6 +163,7 @@ declare module 'vona-module-a-orm' {
 'commerce-trade:order': IModelOptionsOrder;
 'commerce-trade:orderAudit': IModelOptionsOrderAudit;
 'commerce-trade:orderLine': IModelOptionsOrderLine;
+'commerce-trade:shipment': IModelOptionsShipment;
 'commerce-trade:stockAudit': IModelOptionsStockAudit;
 'commerce-trade:stockBalance': IModelOptionsStockBalance;
 'commerce-trade:stockReservation': IModelOptionsStockReservation;
@@ -213,6 +228,17 @@ declare module 'vona-module-commerce-trade' {
             get $onionOptions(): IModelOptionsOrderLine;
           }
 
+        export interface ModelShipment {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ModelShipment {
+            get $beanFullName(): 'commerce-trade.model.shipment';
+            get $onionName(): 'commerce-trade:shipment';
+            get $onionOptions(): IModelOptionsShipment;
+          }
+
         export interface ModelStockAudit {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -253,6 +279,7 @@ import type { ModelCartItem } from '../model/cartItem.ts';
 import type { ModelOrder } from '../model/order.ts';
 import type { ModelOrderAudit } from '../model/orderAudit.ts';
 import type { ModelOrderLine } from '../model/orderLine.ts';
+import type { ModelShipment } from '../model/shipment.ts';
 import type { ModelStockAudit } from '../model/stockAudit.ts';
 import type { ModelStockBalance } from '../model/stockBalance.ts';
 import type { ModelStockReservation } from '../model/stockReservation.ts';
@@ -262,6 +289,7 @@ export interface IModuleModel {
 'order': ModelOrder;
 'orderAudit': ModelOrderAudit;
 'orderLine': ModelOrderLine;
+'shipment': ModelShipment;
 'stockAudit': ModelStockAudit;
 'stockBalance': ModelStockBalance;
 'stockReservation': ModelStockReservation;
@@ -277,6 +305,7 @@ declare module 'vona' {
 'commerce-trade.model.order': ModelOrder;
 'commerce-trade.model.orderAudit': ModelOrderAudit;
 'commerce-trade.model.orderLine': ModelOrderLine;
+'commerce-trade.model.shipment': ModelShipment;
 'commerce-trade.model.stockAudit': ModelStockAudit;
 'commerce-trade.model.stockBalance': ModelStockBalance;
 'commerce-trade.model.stockReservation': ModelStockReservation;
@@ -295,6 +324,7 @@ declare module 'vona-module-commerce-trade' {
 export interface IModelOptionsOrder {
         relations: {
           lines: IModelRelationHasMany<'commerce-trade:orderLine', 'orderId', false, '*', undefined, undefined, undefined>;
+shipment: IModelRelationHasOne<'commerce-trade:shipment', 'orderId', false, '*'>;
         };
       }
   export interface ModelCart {
@@ -302,7 +332,17 @@ export interface IModelOptionsOrder {
       [SymbolKeyEntityMeta]: EntityCartMeta;
       [SymbolKeyModelOptions]: IModelOptionsCart;
       get<T extends IModelGetOptions<EntityCart,ModelCart>>(where: TypeModelWhere<EntityCart>, options?: T): Promise<TypeModelRelationResult<EntityCart, ModelCart, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityCart,ModelCart>>(where: TypeModelWhere<EntityCart>, options?: T): Promise<TypeModelRelationResult<EntityCart, ModelCart, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityCart,ModelCart>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityCart, ModelCart, T> | undefined>;
       mget<T extends IModelGetOptions<EntityCart,ModelCart>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityCart, ModelCart, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityCart,ModelCart,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityCart, ModelCart, T>>;
@@ -329,7 +369,17 @@ export interface ModelCartItem {
       [SymbolKeyEntityMeta]: EntityCartItemMeta;
       [SymbolKeyModelOptions]: IModelOptionsCartItem;
       get<T extends IModelGetOptions<EntityCartItem,ModelCartItem>>(where: TypeModelWhere<EntityCartItem>, options?: T): Promise<TypeModelRelationResult<EntityCartItem, ModelCartItem, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityCartItem,ModelCartItem>>(where: TypeModelWhere<EntityCartItem>, options?: T): Promise<TypeModelRelationResult<EntityCartItem, ModelCartItem, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityCartItem,ModelCartItem>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityCartItem, ModelCartItem, T> | undefined>;
       mget<T extends IModelGetOptions<EntityCartItem,ModelCartItem>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityCartItem, ModelCartItem, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityCartItem,ModelCartItem,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityCartItem, ModelCartItem, T>>;
@@ -356,7 +406,17 @@ export interface ModelOrder {
       [SymbolKeyEntityMeta]: EntityOrderMeta;
       [SymbolKeyModelOptions]: IModelOptionsOrder;
       get<T extends IModelGetOptions<EntityOrder,ModelOrder>>(where: TypeModelWhere<EntityOrder>, options?: T): Promise<TypeModelRelationResult<EntityOrder, ModelOrder, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityOrder,ModelOrder>>(where: TypeModelWhere<EntityOrder>, options?: T): Promise<TypeModelRelationResult<EntityOrder, ModelOrder, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityOrder,ModelOrder>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityOrder, ModelOrder, T> | undefined>;
       mget<T extends IModelGetOptions<EntityOrder,ModelOrder>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityOrder, ModelOrder, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityOrder,ModelOrder,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityOrder, ModelOrder, T>>;
@@ -383,7 +443,17 @@ export interface ModelOrderAudit {
       [SymbolKeyEntityMeta]: EntityOrderAuditMeta;
       [SymbolKeyModelOptions]: IModelOptionsOrderAudit;
       get<T extends IModelGetOptions<EntityOrderAudit,ModelOrderAudit>>(where: TypeModelWhere<EntityOrderAudit>, options?: T): Promise<TypeModelRelationResult<EntityOrderAudit, ModelOrderAudit, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityOrderAudit,ModelOrderAudit>>(where: TypeModelWhere<EntityOrderAudit>, options?: T): Promise<TypeModelRelationResult<EntityOrderAudit, ModelOrderAudit, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityOrderAudit,ModelOrderAudit>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityOrderAudit, ModelOrderAudit, T> | undefined>;
       mget<T extends IModelGetOptions<EntityOrderAudit,ModelOrderAudit>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityOrderAudit, ModelOrderAudit, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityOrderAudit,ModelOrderAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityOrderAudit, ModelOrderAudit, T>>;
@@ -410,7 +480,17 @@ export interface ModelOrderLine {
       [SymbolKeyEntityMeta]: EntityOrderLineMeta;
       [SymbolKeyModelOptions]: IModelOptionsOrderLine;
       get<T extends IModelGetOptions<EntityOrderLine,ModelOrderLine>>(where: TypeModelWhere<EntityOrderLine>, options?: T): Promise<TypeModelRelationResult<EntityOrderLine, ModelOrderLine, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityOrderLine,ModelOrderLine>>(where: TypeModelWhere<EntityOrderLine>, options?: T): Promise<TypeModelRelationResult<EntityOrderLine, ModelOrderLine, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityOrderLine,ModelOrderLine>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityOrderLine, ModelOrderLine, T> | undefined>;
       mget<T extends IModelGetOptions<EntityOrderLine,ModelOrderLine>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityOrderLine, ModelOrderLine, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityOrderLine,ModelOrderLine,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityOrderLine, ModelOrderLine, T>>;
@@ -432,12 +512,59 @@ export interface ModelOrderLine {
 updateById<T extends IModelUpdateOptions<EntityOrderLine,ModelOrderLine>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityOrderLine,ModelOrderLine, T>, options?: T): Promise<TypeModelMutateRelationData<EntityOrderLine,ModelOrderLine, T>>;
 deleteById<T extends IModelDeleteOptions<EntityOrderLine,ModelOrderLine>>(id: TableIdentity, options?: T): Promise<void>;
     }
+export interface ModelShipment {
+      [SymbolKeyEntity]: EntityShipment;
+      [SymbolKeyEntityMeta]: EntityShipmentMeta;
+      [SymbolKeyModelOptions]: IModelOptionsShipment;
+      get<T extends IModelGetOptions<EntityShipment,ModelShipment>>(where: TypeModelWhere<EntityShipment>, options?: T): Promise<TypeModelRelationResult<EntityShipment, ModelShipment, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
+      getForUpdate<T extends IModelGetOptions<EntityShipment,ModelShipment>>(where: TypeModelWhere<EntityShipment>, options?: T): Promise<TypeModelRelationResult<EntityShipment, ModelShipment, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
+      getByIdForUpdate<T extends IModelGetOptions<EntityShipment,ModelShipment>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityShipment, ModelShipment, T> | undefined>;
+      mget<T extends IModelGetOptions<EntityShipment,ModelShipment>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityShipment, ModelShipment, T>[]>;
+      selectAndCount<T extends IModelSelectParams<EntityShipment,ModelShipment,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityShipment, ModelShipment, T>>;
+      select<T extends IModelSelectParams<EntityShipment,ModelShipment,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityShipment, ModelShipment, T>[]>;
+      insert<T extends IModelInsertOptions<EntityShipment,ModelShipment>>(data?: TypeModelMutateRelationData<EntityShipment,ModelShipment, T>, options?: T): Promise<TypeModelMutateRelationData<EntityShipment,ModelShipment, T, true>>;
+      insertBulk<T extends IModelInsertOptions<EntityShipment,ModelShipment>>(items: TypeModelMutateRelationData<EntityShipment,ModelShipment, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityShipment,ModelShipment, T, true>[]>;
+      update<T extends IModelUpdateOptions<EntityShipment,ModelShipment>>(data: TypeModelMutateRelationData<EntityShipment,ModelShipment, T>, options?: T): Promise<TypeModelMutateRelationData<EntityShipment,ModelShipment, T>>;
+      updateBulk<T extends IModelUpdateOptions<EntityShipment,ModelShipment>>(items: TypeModelMutateRelationData<EntityShipment,ModelShipment, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityShipment,ModelShipment, T>[]>;
+      delete<T extends IModelDeleteOptions<EntityShipment,ModelShipment>>(where?: TypeModelWhere<EntityShipment>, options?: T): Promise<void>;
+      deleteBulk<T extends IModelDeleteOptions<EntityShipment,ModelShipment>>(ids: TableIdentity[], options?: T): Promise<void>;
+      mutate<T extends IModelMutateOptions<EntityShipment,ModelShipment>>(data?: TypeModelMutateRelationData<EntityShipment,ModelShipment, T>, options?: T): Promise<TypeModelMutateRelationData<EntityShipment,ModelShipment, T>>;
+      mutateBulk<T extends IModelMutateOptions<EntityShipment,ModelShipment>>(items: TypeModelMutateRelationData<EntityShipment,ModelShipment, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityShipment,ModelShipment, T>[]>;
+      count<T extends IModelSelectCountParams<EntityShipment,ModelShipment,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<string | undefined>;
+      increment<T extends IModelIncrementParams<EntityShipment,ModelShipment,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      decrement<T extends IModelIncrementParams<EntityShipment,ModelShipment,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      aggregate<T extends IModelSelectAggrParams<EntityShipment,ModelShipment,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelAggrRelationResult<T>>;
+      group<T extends IModelSelectGroupParams<EntityShipment,ModelShipment,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelGroupRelationResult<EntityShipment, T>[]>;
+      getById<T extends IModelGetOptions<EntityShipment,ModelShipment>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityShipment, ModelShipment, T> | undefined>;
+updateById<T extends IModelUpdateOptions<EntityShipment,ModelShipment>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityShipment,ModelShipment, T>, options?: T): Promise<TypeModelMutateRelationData<EntityShipment,ModelShipment, T>>;
+deleteById<T extends IModelDeleteOptions<EntityShipment,ModelShipment>>(id: TableIdentity, options?: T): Promise<void>;
+    }
 export interface ModelStockAudit {
       [SymbolKeyEntity]: EntityStockAudit;
       [SymbolKeyEntityMeta]: EntityStockAuditMeta;
       [SymbolKeyModelOptions]: IModelOptionsStockAudit;
       get<T extends IModelGetOptions<EntityStockAudit,ModelStockAudit>>(where: TypeModelWhere<EntityStockAudit>, options?: T): Promise<TypeModelRelationResult<EntityStockAudit, ModelStockAudit, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityStockAudit,ModelStockAudit>>(where: TypeModelWhere<EntityStockAudit>, options?: T): Promise<TypeModelRelationResult<EntityStockAudit, ModelStockAudit, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityStockAudit,ModelStockAudit>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityStockAudit, ModelStockAudit, T> | undefined>;
       mget<T extends IModelGetOptions<EntityStockAudit,ModelStockAudit>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityStockAudit, ModelStockAudit, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityStockAudit,ModelStockAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityStockAudit, ModelStockAudit, T>>;
@@ -464,7 +591,17 @@ export interface ModelStockBalance {
       [SymbolKeyEntityMeta]: EntityStockBalanceMeta;
       [SymbolKeyModelOptions]: IModelOptionsStockBalance;
       get<T extends IModelGetOptions<EntityStockBalance,ModelStockBalance>>(where: TypeModelWhere<EntityStockBalance>, options?: T): Promise<TypeModelRelationResult<EntityStockBalance, ModelStockBalance, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityStockBalance,ModelStockBalance>>(where: TypeModelWhere<EntityStockBalance>, options?: T): Promise<TypeModelRelationResult<EntityStockBalance, ModelStockBalance, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityStockBalance,ModelStockBalance>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityStockBalance, ModelStockBalance, T> | undefined>;
       mget<T extends IModelGetOptions<EntityStockBalance,ModelStockBalance>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityStockBalance, ModelStockBalance, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityStockBalance,ModelStockBalance,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityStockBalance, ModelStockBalance, T>>;
@@ -491,7 +628,17 @@ export interface ModelStockReservation {
       [SymbolKeyEntityMeta]: EntityStockReservationMeta;
       [SymbolKeyModelOptions]: IModelOptionsStockReservation;
       get<T extends IModelGetOptions<EntityStockReservation,ModelStockReservation>>(where: TypeModelWhere<EntityStockReservation>, options?: T): Promise<TypeModelRelationResult<EntityStockReservation, ModelStockReservation, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityStockReservation,ModelStockReservation>>(where: TypeModelWhere<EntityStockReservation>, options?: T): Promise<TypeModelRelationResult<EntityStockReservation, ModelStockReservation, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityStockReservation,ModelStockReservation>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityStockReservation, ModelStockReservation, T> | undefined>;
       mget<T extends IModelGetOptions<EntityStockReservation,ModelStockReservation>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityStockReservation, ModelStockReservation, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityStockReservation,ModelStockReservation,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityStockReservation, ModelStockReservation, T>>;
@@ -521,6 +668,7 @@ declare module 'vona-module-a-orm' {
 'commerce-trade:order': ModelOrder;
 'commerce-trade:orderAudit': ModelOrderAudit;
 'commerce-trade:orderLine': ModelOrderLine;
+'commerce-trade:shipment': ModelShipment;
 'commerce-trade:stockAudit': ModelStockAudit;
 'commerce-trade:stockBalance': ModelStockBalance;
 'commerce-trade:stockReservation': ModelStockReservation;
@@ -696,10 +844,12 @@ export * from '../dto/orderMineRes.tsx';
 export * from '../dto/orderSelectReq.tsx';
 export * from '../dto/orderSelectRes.tsx';
 export * from '../dto/orderSelectResItem.tsx';
+export * from '../dto/orderShip.tsx';
 export * from '../dto/orderSummary.tsx';
 export * from '../dto/orderView.tsx';
 export * from '../dto/paymentOutcomeCreate.tsx';
 export * from '../dto/paymentOutcomeResult.tsx';
+export * from '../dto/shipmentView.tsx';
 export * from '../dto/stockAdjust.tsx';
 export * from '../dto/stockAuditCreate.tsx';
 export * from '../dto/stockAuditSelectReq.tsx';
@@ -728,10 +878,12 @@ import type { IDtoOptionsOrderMineRes } from '../dto/orderMineRes.tsx';
 import type { IDtoOptionsOrderSelectReq } from '../dto/orderSelectReq.tsx';
 import type { IDtoOptionsOrderSelectRes } from '../dto/orderSelectRes.tsx';
 import type { IDtoOptionsOrderSelectResItem } from '../dto/orderSelectResItem.tsx';
+import type { IDtoOptionsOrderShip } from '../dto/orderShip.tsx';
 import type { IDtoOptionsOrderSummary } from '../dto/orderSummary.tsx';
 import type { IDtoOptionsOrderView } from '../dto/orderView.tsx';
 import type { IDtoOptionsPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
 import type { IDtoOptionsPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
+import type { IDtoOptionsShipmentView } from '../dto/shipmentView.tsx';
 import type { IDtoOptionsStockAdjust } from '../dto/stockAdjust.tsx';
 import type { IDtoOptionsStockAuditCreate } from '../dto/stockAuditCreate.tsx';
 import type { IDtoOptionsStockAuditSelectReq } from '../dto/stockAuditSelectReq.tsx';
@@ -764,10 +916,12 @@ declare module 'vona-module-a-web' {
 'commerce-trade:orderSelectReq': IDtoOptionsOrderSelectReq;
 'commerce-trade:orderSelectRes': IDtoOptionsOrderSelectRes;
 'commerce-trade:orderSelectResItem': IDtoOptionsOrderSelectResItem;
+'commerce-trade:orderShip': IDtoOptionsOrderShip;
 'commerce-trade:orderSummary': IDtoOptionsOrderSummary;
 'commerce-trade:orderView': IDtoOptionsOrderView;
 'commerce-trade:paymentOutcomeCreate': IDtoOptionsPaymentOutcomeCreate;
 'commerce-trade:paymentOutcomeResult': IDtoOptionsPaymentOutcomeResult;
+'commerce-trade:shipmentView': IDtoOptionsShipmentView;
 'commerce-trade:stockAdjust': IDtoOptionsStockAdjust;
 'commerce-trade:stockAuditCreate': IDtoOptionsStockAuditCreate;
 'commerce-trade:stockAuditSelectReq': IDtoOptionsStockAuditSelectReq;
@@ -805,10 +959,12 @@ import type { DtoOrderMineRes } from '../dto/orderMineRes.tsx';
 import type { DtoOrderSelectReq } from '../dto/orderSelectReq.tsx';
 import type { DtoOrderSelectRes } from '../dto/orderSelectRes.tsx';
 import type { DtoOrderSelectResItem } from '../dto/orderSelectResItem.tsx';
+import type { DtoOrderShip } from '../dto/orderShip.tsx';
 import type { DtoOrderSummary } from '../dto/orderSummary.tsx';
 import type { DtoOrderView } from '../dto/orderView.tsx';
 import type { DtoPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
 import type { DtoPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
+import type { DtoShipmentView } from '../dto/shipmentView.tsx';
 import type { DtoStockAdjust } from '../dto/stockAdjust.tsx';
 import type { DtoStockAuditCreate } from '../dto/stockAuditCreate.tsx';
 import type { DtoStockAuditSelectReq } from '../dto/stockAuditSelectReq.tsx';
@@ -884,6 +1040,10 @@ declare module 'vona-module-commerce-trade' {
       fields?: TypeEntityOptionsFields<DtoOrderSelectResItem, IDtoOptionsOrderSelectResItem[TypeSymbolKeyFieldsMore]>;
     }
 
+    export interface IDtoOptionsOrderShip {
+      fields?: TypeEntityOptionsFields<DtoOrderShip, IDtoOptionsOrderShip[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsOrderSummary {
       fields?: TypeEntityOptionsFields<DtoOrderSummary, IDtoOptionsOrderSummary[TypeSymbolKeyFieldsMore]>;
     }
@@ -898,6 +1058,10 @@ declare module 'vona-module-commerce-trade' {
 
     export interface IDtoOptionsPaymentOutcomeResult {
       fields?: TypeEntityOptionsFields<DtoPaymentOutcomeResult, IDtoOptionsPaymentOutcomeResult[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsShipmentView {
+      fields?: TypeEntityOptionsFields<DtoShipmentView, IDtoOptionsShipmentView[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsStockAdjust {
@@ -1103,6 +1267,7 @@ declare module 'vona-module-a-web' {
 export interface IApiPathPostRecord{
         '/commerce/trade/cart/items': undefined;
 '/commerce/trade/checkout': undefined;
+'/commerce/trade/order/:id/ship': undefined;
 '/commerce/trade/payment/:attemptId/outcome': undefined;
 '/commerce/trade/stockBalance/adjustStock': undefined;
     }
