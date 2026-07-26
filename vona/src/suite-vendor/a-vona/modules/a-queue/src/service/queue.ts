@@ -222,45 +222,62 @@ export class ServiceQueue extends BeanBase {
   }
 
   async _queuePush<DATA, RESULT>(info: IQueueJobContext<DATA>, isAsync: boolean): Promise<RESULT> {
-    // queue config
-    const queueConfig = this.bean.onion.queue.getOnionOptions(info.queueName);
-    // queueConfig.options: queue/worker/job/limiter
-    const jobOptionsBase = queueConfig?.options?.job;
-    // queue
-    const queueQueue = this._ensureQueue(info);
-    const queue = queueQueue.queue;
-    // job
-    const jobId = info.options?.jobOptions?.jobId || uuidv4();
-    const jobName = info.options?.jobName || jobId;
-    const jobOptions = deepExtend({ jobId }, jobOptionsBase, info.options?.jobOptions);
-    // should not change info, hold original info.options?.jobName, info.options?.jobOptions
-    // info = deepExtend({}, info, { options: { jobName, jobOptions } });
-    // not async
-    if (!isAsync) {
-      // add job
-      queue.add(jobName, info, jobOptions);
-      return undefined as any;
-    }
-    // async
-    return new Promise((resolve, reject) => {
-      // queue events
-      return this._queueEventsReady(queueQueue)
-        .then(() => {
-          // callback
-          this._queueCallbacks[jobId] = {
-            info,
-            callback: (err, data) => {
-              if (err) return reject(err);
-              resolve(data as unknown as RESULT);
-            },
-          };
-          // add job
-          return queue.add(jobName, info, jobOptions);
+    const telemetry = this.$scope.telemetry.service.telemetry;
+    const span = telemetry.enabled
+      ? telemetry.startSpan(`queue send ${String(info.queueName)}`, {
+          kind: 3,
+          attributes: {
+            'messaging.operation.name': 'send',
+            'messaging.destination.name': String(info.queueName),
+          },
         })
-        .catch(err => {
-          return reject(err);
-        });
-    });
+      : undefined;
+    if (span) {
+      info = {
+        ...info,
+        options: {
+          ...info.options,
+          telemetry: telemetry.injectCarrier(telemetry.createContext(span)),
+        },
+      };
+    }
+    let callback: Promise<RESULT> | undefined;
+    try {
+      // queue config
+      const queueConfig = this.bean.onion.queue.getOnionOptions(info.queueName);
+      // queueConfig.options: queue/worker/job/limiter
+      const jobOptionsBase = queueConfig?.options?.job;
+      // queue
+      const queueQueue = this._ensureQueue(info);
+      const queue = queueQueue.queue;
+      // job
+      const jobId = info.options?.jobOptions?.jobId || uuidv4();
+      const jobName = info.options?.jobName || jobId;
+      const jobOptions = deepExtend({ jobId }, jobOptionsBase, info.options?.jobOptions);
+      // should not change info, hold original info.options?.jobName, info.options?.jobOptions
+      // info = deepExtend({}, info, { options: { jobName, jobOptions } });
+      if (!isAsync) {
+        await queue.add(jobName, info, jobOptions);
+        return undefined as any;
+      }
+      await this._queueEventsReady(queueQueue);
+      callback = new Promise((resolve, reject) => {
+        this._queueCallbacks[jobId] = {
+          info,
+          callback: (err, data) => {
+            if (err) return reject(err);
+            resolve(data as unknown as RESULT);
+          },
+        };
+      });
+      await queue.add(jobName, info, jobOptions);
+    } catch (err) {
+      if (span) telemetry.recordException(span, err);
+      throw err;
+    } finally {
+      span?.end();
+    }
+    return await callback!;
   }
 
   async _queueEventsReady(queueQueue: IQueueQueue) {
@@ -276,25 +293,57 @@ export class ServiceQueue extends BeanBase {
 
   async _performTask<DATA, RESULT>(job: TypeQueueJob<DATA, RESULT>) {
     const info = job.data;
+    const telemetry = this.$scope.telemetry.service.telemetry;
+    const parent = telemetry.extractCarrier(info.options?.telemetry);
+    const span = telemetry.enabled
+      ? telemetry.startSpan(
+          `queue process ${String(info.queueName)}`,
+          {
+            kind: 4,
+            attributes: {
+              'messaging.operation.name': 'process',
+              'messaging.destination.name': String(info.queueName),
+              'messaging.message.retry.count': job.attemptsMade,
+            },
+          },
+          parent,
+        )
+      : undefined;
     // queue config
     const queueItem = this.bean.onion.queue.getOnionSlice(info.queueName);
     const queueConfig = this.bean.onion.queue.getOnionOptions(info.queueName);
-    // execute
-    return await this.bean.executor.newCtx(
-      async () => {
-        const beanFullName = queueItem.beanOptions.beanFullName;
-        const beanInstance = <IQueueExecute<DATA>>this.app.bean._getBean(beanFullName as any);
-        return await beanInstance.execute(info.data, info.options, job);
-      },
-      {
-        dbInfo: info.options?.dbInfo,
-        locale: info.options?.locale,
-        tz: info.options?.tz,
-        instanceName: info.options?.instanceName,
-        extraData: info.options?.extraData,
-        transaction: queueConfig?.transaction,
-      },
-    );
+    const execute = () =>
+      this.bean.executor.newCtx(
+        async () => {
+          const beanFullName = queueItem.beanOptions.beanFullName;
+          const beanInstance = <IQueueExecute<DATA>>this.app.bean._getBean(beanFullName as any);
+          return await beanInstance.execute(info.data, info.options, job);
+        },
+        {
+          dbInfo: info.options?.dbInfo,
+          locale: info.options?.locale,
+          tz: info.options?.tz,
+          instanceName: info.options?.instanceName,
+          extraData: {
+            ...info.options?.extraData,
+            state: {
+              ...info.options?.extraData?.state,
+              telemetry: span
+                ? { context: telemetry.createContext(span, parent), span }
+                : undefined,
+            },
+          },
+          transaction: queueConfig?.transaction,
+        },
+      );
+    try {
+      return await (span ? telemetry.withSpan(span, execute) : execute());
+    } catch (err) {
+      if (span) telemetry.recordException(span, err);
+      throw err;
+    } finally {
+      span?.end();
+    }
   }
 
   getRepeatKey(jobName: string, repeat: Bull.RepeatOptions) {

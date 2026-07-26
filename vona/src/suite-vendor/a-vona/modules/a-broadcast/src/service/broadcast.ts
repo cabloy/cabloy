@@ -41,11 +41,54 @@ export class ServiceBroadcast extends BeanBase {
   }
 
   emit<DATA>(info: IBroadcastJobContext<DATA>) {
-    info.callerId = this.__callerId;
-    this.__pub.publish(this.__channelName, JSON.stringify(info));
+    const telemetry = this.$scope.telemetry.service.telemetry;
+    let infoWithCaller = {
+      ...info,
+      callerId: this.__callerId,
+    };
+    const span = telemetry.enabled
+      ? telemetry.startSpan(`broadcast publish ${String(info.broadcastName)}`, {
+          kind: 3,
+          attributes: {
+            'messaging.operation.name': 'publish',
+            'messaging.destination.name': String(info.broadcastName),
+          },
+        })
+      : undefined;
+    if (span) {
+      infoWithCaller = {
+        ...infoWithCaller,
+        options: {
+          ...info.options,
+          telemetry: telemetry.injectCarrier(telemetry.createContext(span)),
+        },
+      };
+    }
+    this.__pub
+      .publish(this.__channelName, JSON.stringify(infoWithCaller))
+      .catch(err => {
+        if (span) telemetry.recordException(span, err);
+        this.app.handleError(err);
+      })
+      .finally(() => span?.end());
   }
 
   async _performTask<DATA>(info: IBroadcastJobContext<DATA>) {
+    const telemetry = this.$scope.telemetry.service.telemetry;
+    const parent = telemetry.extractCarrier(info.options?.telemetry);
+    const span = telemetry.enabled
+      ? telemetry.startSpan(
+          `broadcast receive ${String(info.broadcastName)}`,
+          {
+            kind: 4,
+            attributes: {
+              'messaging.operation.name': 'process',
+              'messaging.destination.name': String(info.broadcastName),
+            },
+          },
+          parent,
+        )
+      : undefined;
     // isEmitter
     const isEmitter = info.callerId === this.__callerId;
     // broadcast config
@@ -54,27 +97,45 @@ export class ServiceBroadcast extends BeanBase {
     // instance
     const instanceName = info.options?.instanceName;
     const instance = broadcastConfig?.instance !== false;
-    // check
-    if ((!isNil(instanceName) || instance) && !this.app.meta.appReady) {
-      // ignore
-      return;
+    try {
+      // check
+      if ((!isNil(instanceName) || instance) && !this.app.meta.appReady) {
+        // ignore
+        return;
+      }
+      const execute = () =>
+        this.bean.executor.newCtx(
+          async () => {
+            const beanFullName = broadcastItem.beanOptions.beanFullName;
+            const beanInstance = <IBroadcastExecute<DATA>>(
+              this.app.bean._getBean(beanFullName as any)
+            );
+            return await beanInstance.execute(info.data, isEmitter);
+          },
+          {
+            dbInfo: info.options?.dbInfo,
+            locale: info.options?.locale,
+            tz: info.options?.tz,
+            instanceName,
+            extraData: {
+              ...info.options?.extraData,
+              state: {
+                ...info.options?.extraData?.state,
+                telemetry: span
+                  ? { context: telemetry.createContext(span, parent), span }
+                  : undefined,
+              },
+            },
+            transaction: broadcastConfig?.transaction,
+            instance,
+          },
+        );
+      return await (span ? telemetry.withSpan(span, execute) : execute());
+    } catch (err) {
+      if (span) telemetry.recordException(span, err);
+      throw err;
+    } finally {
+      span?.end();
     }
-    // execute
-    return await this.bean.executor.newCtx(
-      async () => {
-        const beanFullName = broadcastItem.beanOptions.beanFullName;
-        const beanInstance = <IBroadcastExecute<DATA>>this.app.bean._getBean(beanFullName as any);
-        return await beanInstance.execute(info.data, isEmitter);
-      },
-      {
-        dbInfo: info.options?.dbInfo,
-        locale: info.options?.locale,
-        tz: info.options?.tz,
-        instanceName,
-        extraData: info.options?.extraData,
-        transaction: broadcastConfig?.transaction,
-        instance,
-      },
-    );
   }
 }

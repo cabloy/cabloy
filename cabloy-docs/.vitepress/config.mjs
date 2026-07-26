@@ -243,6 +243,7 @@ export default defineConfig({
             { text: 'Error Guide', link: '/backend/error-guide' },
             { text: 'Event Guide', link: '/backend/event-guide' },
             { text: 'Logger Guide', link: '/backend/logger-guide' },
+            { text: 'Telemetry Guide', link: '/backend/telemetry-guide' },
             { text: 'Upload Guide', link: '/backend/upload-guide' },
             { text: 'Image Guide', link: '/backend/image-guide' },
             { text: 'File Guide', link: '/backend/file-guide' },

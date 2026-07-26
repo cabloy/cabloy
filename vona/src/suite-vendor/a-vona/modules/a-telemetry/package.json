@@ -1,7 +1,6 @@
 {
-  "name": "vona-module-a-broadcast",
-  "version": "5.1.11",
-  "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
+  "name": "vona-module-a-telemetry",
+  "version": "5.0.0",
   "description": "",
   "keywords": [
     "Vona Module"
@@ -9,7 +8,6 @@
   "author": "",
   "files": [
     "assets",
-    "cli",
     "dist",
     "src"
   ],
@@ -32,6 +30,17 @@
     "prepack": "clean-package",
     "postpack": "clean-package restore"
   },
+  "dependencies": {
+    "@eggjs/ip": "^2.1.0",
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/context-async-hooks": "^2.10.0",
+    "@opentelemetry/core": "^2.10.0",
+    "@opentelemetry/exporter-trace-otlp-proto": "^0.221.0",
+    "@opentelemetry/resources": "^2.10.0",
+    "@opentelemetry/sdk-trace-base": "^2.10.0",
+    "@opentelemetry/sdk-trace-node": "^2.10.0",
+    "@opentelemetry/semantic-conventions": "^1.43.0"
+  },
   "devDependencies": {
     "clean-package": "^2.2.0",
     "rimraf": "^6.1.3"
@@ -40,25 +49,15 @@
     "indent": 2,
     "remove": [
       "clean-package",
+      "devDependencies",
       "exports.\\..import"
     ]
   },
-  "title": "a-broadcast",
+  "title": "a-telemetry",
   "vonaModule": {
     "dependencies": {
-      "a-telemetry": "5.0.0",
-      "a-worker": "5.0.0"
-    },
-    "onions": {
-      "broadcast": {
-        "optionsGlobalInterfaceName": "IDecoratorBroadcastOptions",
-        "optionsGlobalInterfaceFrom": "vona-module-a-broadcast",
-        "scopeResource": true,
-        "boilerplate": "boilerplate"
-      }
-    },
-    "capabilities": {
-      "monkey": true
+      "a-aspect": "5.0.0",
+      "a-logger": "5.0.0"
     }
   }
 }
