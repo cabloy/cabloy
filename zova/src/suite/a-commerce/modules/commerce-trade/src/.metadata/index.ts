@@ -250,6 +250,7 @@ declare module 'zova' {
 }
 /** apiSchema: end */
 /** controller: begin */
+export * from '../component/tableCellActionShip/controller.jsx';
 export * from '../page/cart/controller.jsx';
 export * from '../page/checkout/controller.jsx';
 export * from '../page/order/controller.jsx';
@@ -263,6 +264,11 @@ declare module 'zova' {
 }
 declare module 'zova-module-commerce-trade' {
   
+        export interface ControllerTableCellActionShip {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
         export interface ControllerPageCart {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -290,6 +296,7 @@ declare module 'zova-module-commerce-trade' {
 }
 /** controller: end */
 /** controller: begin */
+import { ControllerTableCellActionShip } from '../component/tableCellActionShip/controller.jsx';
 import { ControllerPageCart } from '../page/cart/controller.jsx';
 import { ControllerPageCheckout } from '../page/checkout/controller.jsx';
 import { ControllerPageOrder } from '../page/order/controller.jsx';
@@ -298,7 +305,8 @@ import { ControllerPagePayment } from '../page/payment/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
-    'commerce-trade.controller.pageCart': ControllerPageCart;
+    'commerce-trade.controller.tableCellActionShip': ControllerTableCellActionShip;
+'commerce-trade.controller.pageCart': ControllerPageCart;
 'commerce-trade.controller.pageCheckout': ControllerPageCheckout;
 'commerce-trade.controller.pageOrder': ControllerPageOrder;
 'commerce-trade.controller.pageOrders': ControllerPageOrders;
@@ -385,6 +393,22 @@ $query: NSControllerPagePayment.QueryOutput;
 }
 /** pages: end */
 
+/** components: begin */
+export * from './component/tableCellActionShip.js';
+import { ZTableCellActionShip } from './component/tableCellActionShip.js';
+export const components = {
+  'tableCellActionShip': ZTableCellActionShip,
+};
+import 'zova';
+declare module 'zova' {
+export interface IComponentRecord {
+  'commerce-trade:tableCellActionShip': ControllerTableCellActionShip;
+}
+export interface IZovaComponentRecord {
+  'commerce-trade:tableCellActionShip': typeof ZTableCellActionShip;
+}
+}
+/** components: end */
 /** tableCell: begin */
 export * from '../bean/tableCell.actionShip.jsx';
 import { ITableCellOptionsActionShip } from '../bean/tableCell.actionShip.jsx';
