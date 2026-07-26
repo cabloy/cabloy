@@ -1,6 +1,7 @@
 import type { IFileProviderCloudflareClientOptions } from 'vona-module-file-cloudflare';
 
 import assert from 'node:assert';
+import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
@@ -17,12 +18,12 @@ describe('fileProvider.test.ts', () => {
       assert.equal(nativeRes.clientOptions?.signedDeliveryKind, 'proxy');
       assert.equal(nativeRes.clientOptions?.public, false);
 
-      const cloudflare = await app.bean.fileProvider.get({
-        providerName: 'file-cloudflare:cloudflare',
-        clientName: 'default',
-      });
-      const clientOptionsRaw = cloudflare.clientOptions;
+      const clientName = `provider-options-${randomUUID()}`;
       try {
+        const cloudflare = await app.bean.fileProvider.get({
+          providerName: 'file-cloudflare:cloudflare',
+          clientName,
+        });
         const cloudflareClientOptions: IFileProviderCloudflareClientOptions = {
           endpoint: 'https://account123.r2.cloudflarestorage.com',
           accessKeyId: 'access-key',
@@ -36,15 +37,16 @@ describe('fileProvider.test.ts', () => {
         });
         const cloudflareRes = await app.bean.fileProvider.getClientOptions({
           providerName: 'file-cloudflare:cloudflare',
-          clientName: 'default',
+          clientName,
         });
         assert.equal(cloudflareRes.clientOptions?.signedDeliveryKind, 'provider');
         assert.equal(cloudflareRes.clientOptions?.bucket, 'bucket-a');
         assert.equal(cloudflareRes.clientOptions?.deliveryBaseUrl, 'https://cdn.example.com/files');
         assert.equal(cloudflareRes.clientOptions?.public, true);
       } finally {
-        await app.bean.fileProvider.scope.model.fileProvider.updateById(cloudflare.id, {
-          clientOptions: clientOptionsRaw ?? null,
+        await app.bean.fileProvider.scope.model.fileProvider.delete({
+          providerName: 'file-cloudflare:cloudflare',
+          clientName,
         });
       }
     });

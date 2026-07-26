@@ -33,7 +33,7 @@ function createSpan() {
   return { calls, span };
 }
 
-describe('telemetry.test.ts', () => {
+describe('telemetry.test.ts', { concurrency: false }, () => {
   it('parses telemetry configuration with safe defaults', () => {
     const defaults = config({ meta: { env: {} }, name: 'test-service' } as never);
     assert.equal(defaults.enabled, false);
