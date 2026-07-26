@@ -4,6 +4,11 @@
 
 The initial scope is HTTP server spans, log correlation, internal `performAction`, BullMQ queue producer/consumer spans, and Redis Broadcast producer/consumer spans. The module is disabled by default.
 
+## Related documentation
+
+- [Telemetry Guide](../../cabloy-docs/backend/telemetry-guide.md) covers user-facing deployment configuration and custom-span usage.
+- [Logger Guide](../../cabloy-docs/backend/logger-guide.md) covers logger clients, levels, rotation, and operational logging behavior.
+
 ## Context rules
 
 - `request_id` is a diagnostic request identifier.

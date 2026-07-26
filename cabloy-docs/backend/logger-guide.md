@@ -210,6 +210,7 @@ Logging is closely connected to:
 
 - [Internal AOP Guide](/backend/internal-aop-guide) through built-in AOP helpers such as `@Core.log(...)`
 - [Runtime and Flavors](/backend/runtime-and-flavors) because log location, level, and operational behavior often vary by environment
+- [Telemetry Guide](/backend/telemetry-guide) for distributed trace and span correlation in log entries; continue to use `$logger` and `$loggerChild(...)` as the logging APIs
 
 ## Implementation checks for backend logging changes
 
