@@ -483,7 +483,9 @@ export class ServiceOrder extends BeanBase {
       reason: 'order shipped',
     });
     await onStage?.('afterOrderAudit');
-    return this._shipmentView(shipment);
+    const persistedShipment = await this.scope.model.shipment.getByIdForUpdate(shipment.id);
+    if (!persistedShipment) this.app.throw(500, 'persisted shipment not found');
+    return this._shipmentView(persistedShipment);
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
