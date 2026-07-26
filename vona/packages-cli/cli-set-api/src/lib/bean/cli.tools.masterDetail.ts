@@ -36,6 +36,9 @@ declare module '@cabloy/cli' {
     detailDialogTitleCapitalize: string;
     createdDetailModule?: boolean;
     createdDetailResource?: boolean;
+    restAdminNpm: string;
+    detailsModuleName: string;
+    detailCrudCommand: string;
   }
 }
 
@@ -82,6 +85,12 @@ export class CliToolsMasterDetail extends BeanCliBase {
     argv.detailDtoResItemName = `detail${argv.detailResourceNameCapitalize}ResItem`;
     argv.detailFieldPrivateName = `_${argv.relationName}`;
     argv.detailDialogTitleCapitalize = argv.detailModuleCapitalize;
+    const editionName = fs.existsSync(path.join(argv.projectPath, '__CABLOY_START__'))
+      ? 'start'
+      : 'basic';
+    argv.restAdminNpm = `zova-rest-cabloy-${editionName}-admin`;
+    argv.detailsModuleName = `${editionName}-details`;
+    argv.detailCrudCommand = `:tools:crud${this._capitalize(editionName)}`;
   }
 
   private async _ensureDetailModule() {
@@ -437,8 +446,8 @@ export class CliToolsMasterDetail extends BeanCliBase {
     if (!content.includes("import { $locale } from '../.metadata/locales.ts';")) {
       content = this._replaceStrict(
         content,
-        "import { ZovaRender } from 'zova-rest-cabloy-basic-admin';\n",
-        "import { ZovaRender } from 'zova-rest-cabloy-basic-admin';\n\nimport { $locale } from '../.metadata/locales.ts';\n",
+        `import { ZovaRender } from '${argv.restAdminNpm}';\n`,
+        `import { ZovaRender } from '${argv.restAdminNpm}';\n\nimport { $locale } from '../.metadata/locales.ts';\n`,
         fileName,
       );
     }
@@ -498,7 +507,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
 
   private _masterDtoFieldCode(scene: MasterDtoScene) {
     const { argv } = this.context;
-    return `    ${argv.relationName}: $makeMetadata(\n      v.title($locale('${argv.relationNameCapitalize}')),\n      ZovaRender.order(5),\n      ZovaRender.field('basic-details:formFieldDetails'),\n${scene === 'Create' ? '      v.optional(),\n' : ''}    ),\n`;
+    return `    ${argv.relationName}: $makeMetadata(\n      v.title($locale('${argv.relationNameCapitalize}')),\n      ZovaRender.order(5),\n      ZovaRender.field('${argv.detailsModuleName}:formFieldDetails'),\n${scene === 'Create' ? '      v.optional(),\n' : ''}    ),\n`;
   }
 
   private _masterDtoClassReplaceSource(scene: MasterDtoScene) {
@@ -546,7 +555,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
     const { argv } = this.context;
     await this.helper.invokeCli(
       [
-        ':tools:crudBasic',
+        argv.detailCrudCommand,
         argv.detailResourceName,
         `--module=${argv.detailModule}`,
         '--nometadata',
