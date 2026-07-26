@@ -1,5 +1,26 @@
 # Changelog
 
+## 5.1.117
+
+### Features
+
+- Add detailed CLI output.
+- Add telemetry support, including secure ingress propagation.
+- Add tracing capabilities.
+- Add Redis-backed rate limiting.
+- Add dual-audience resource guidance.
+
+### Bug Fixes
+
+- Fix REST module subpath bundle declarations.
+- Complete Commerce payment flow validation and evidence coverage.
+
+### Improvements
+
+- Simplify the Redis rate-limit command implementation.
+- Clarify the Vona AOP request path documentation.
+- Update dependency lockfiles and package metadata.
+
 ## 5.1.116
 
 ### Features
