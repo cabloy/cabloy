@@ -62,7 +62,21 @@ return await this.bean.telemetry.withNamedSpan('payment.validate', async () => {
 });
 ```
 
-`withNamedSpan(...)` is the preferred API: it creates an active child span, records thrown errors, and always ends the span. For an operation whose lifecycle must be controlled manually, use `startSpan(...)`, `withSpan(...)`, `recordException(...)`, and end the span in `finally`.
+All facade methods are safe to call without checking `enabled`. When telemetry is disabled, `startSpan(...)` returns a non-recording span, `withSpan(...)` directly invokes its callback, and `recordException(...)` does nothing; no trace is created, activated, propagated, or exported.
+
+`withNamedSpan(...)` is the preferred API: it creates an active child span, records thrown errors, and always attempts to end the span. For an operation whose lifecycle must be controlled manually, use `startSpan(...)`, `withSpan(...)`, and `recordException(...)` without an `enabled` branch:
+
+```ts
+const span = this.bean.telemetry.startSpan('payment.validate');
+try {
+  return await this.bean.telemetry.withSpan(span, () => this._validatePayment());
+} catch (error) {
+  this.bean.telemetry.recordException(span, error);
+  throw error;
+} finally {
+  span.end();
+}
+```
 
 The facade intentionally does not expose carrier propagation, HTTP ingress trust, HTTP span handling, or provider lifecycle. Use a stable, bounded operation name and follow the privacy and cardinality rules below.
 

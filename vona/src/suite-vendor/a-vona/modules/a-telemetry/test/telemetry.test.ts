@@ -131,14 +131,41 @@ describe('telemetry.test.ts', () => {
     });
   });
 
-  it('exposes disabled telemetry through the global facade', async () => {
+  it('keeps every global facade method safe while telemetry is disabled', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const telemetry = app.bean.telemetry;
-      assert.equal(telemetry.enabled, false);
-      assert.equal(
-        telemetry.withNamedSpan('telemetry.test.disabled', () => 'result'),
-        'result',
-      );
+      const facade = app.bean.telemetry;
+      const service = app.scope('a-telemetry').service.telemetry;
+      const originalStartSpan = service.startSpan;
+      const originalWithSpan = service.withSpan;
+      const originalRecordException = service.recordException;
+      let serviceCalls = 0;
+      try {
+        service.startSpan = (() => serviceCalls++) as never;
+        service.withSpan = (() => serviceCalls++) as never;
+        service.recordException = (() => serviceCalls++) as never;
+
+        assert.equal(facade.enabled, false);
+        const span = facade.startSpan('telemetry.test.disabled');
+        assert.equal(span.isRecording(), false);
+        assert.doesNotThrow(() => {
+          span.setAttribute('vona.operation', 'test');
+          span.end();
+          facade.recordException(span, new Error('ignored'));
+        });
+        assert.equal(
+          facade.withSpan(span, () => 'result'),
+          'result',
+        );
+        assert.equal(
+          facade.withNamedSpan('telemetry.test.disabled', () => 'managed-result'),
+          'managed-result',
+        );
+        assert.equal(serviceCalls, 0);
+      } finally {
+        service.startSpan = originalStartSpan;
+        service.withSpan = originalWithSpan;
+        service.recordException = originalRecordException;
+      }
     });
   });
 
@@ -215,6 +242,37 @@ describe('telemetry.test.ts', () => {
           caught => caught === error,
         );
         assert.deepEqual(calls.exceptions, [[span, error]]);
+        assert.equal(calls.ended, 1);
+
+        calls.exceptions.length = 0;
+        calls.ended = 0;
+        service.recordException = (() => {
+          throw new Error('telemetry failed');
+        }) as never;
+        assert.throws(
+          () =>
+            app.bean.telemetry.withNamedSpan('telemetry.test.cleanup', () => {
+              throw error;
+            }),
+          caught => caught === error,
+        );
+        assert.equal(calls.ended, 1);
+
+        calls.ended = 0;
+        service.recordException = ((recordedSpan: unknown, recordedError: unknown) => {
+          calls.exceptions.push([recordedSpan, recordedError]);
+        }) as never;
+        span.end = () => {
+          calls.ended++;
+          throw new Error('span end failed');
+        };
+        assert.throws(
+          () =>
+            app.bean.telemetry.withNamedSpan('telemetry.test.end-failure', () => {
+              throw error;
+            }),
+          caught => caught === error,
+        );
         assert.equal(calls.ended, 1);
       } finally {
         delete (service as any).enabled;
