@@ -5,6 +5,8 @@ import type { ModelResource } from 'zova-module-rest-resource';
 import { Use, usePrepareArg } from 'zova';
 import { BeanModelBase, Model } from 'zova-module-a-model';
 
+import type { ApiApiCommerceTradeOrdershipRequestBody } from '../api/commerceTradeOrder.js';
+
 export interface IModelOptionsOrder extends IDecoratorModelOptions {}
 
 const OrderResource = 'commerce-trade:order';
@@ -22,5 +24,15 @@ export class ModelOrder extends BeanModelBase {
 
   view(id: TableIdentity) {
     return this.$$modelResource.view(id);
+  }
+
+  ship(id: TableIdentity) {
+    return this.$$modelResource.mutationItem<unknown, ApiApiCommerceTradeOrdershipRequestBody>({
+      id,
+      action: 'ship',
+      mutationFn: async payload => {
+        return await this.scope.api.commerceTradeOrder.ship(payload, { params: { id } });
+      },
+    });
   }
 }

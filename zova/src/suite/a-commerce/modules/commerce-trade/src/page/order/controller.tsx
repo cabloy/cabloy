@@ -64,6 +64,18 @@ export class ControllerPageOrder extends BeanControllerPageBase {
                     <p>Discount: ${(order.discountCents / 100).toFixed(2)}</p>
                   </div>
                 </article>
+                {order.shipment && (
+                  <article class="card border border-base-300 bg-base-100 shadow-sm">
+                    <div class="card-body">
+                      <h2 class="card-title">Shipment</h2>
+                      <p>{order.shipment.carrier}</p>
+                      <p>{order.shipment.trackingNumber}</p>
+                      <p class="text-sm text-base-content/70">
+                        {new Date(order.shipment.shippedAt).toLocaleString()}
+                      </p>
+                    </div>
+                  </article>
+                )}
               </div>
               <div class="mt-6 space-y-3">
                 {order.lines.map(line => (

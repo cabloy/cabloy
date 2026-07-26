@@ -10,6 +10,7 @@ export interface IModelOptionsOrder extends IDecoratorModelOptions<EntityOrder> 
   entity: EntityOrder,
   relations: {
     lines: $relation.hasMany('commerce-trade:orderLine', 'orderId'),
+    shipment: $relation.hasOne('commerce-trade:shipment', 'orderId'),
   },
 })
 export class ModelOrder extends BeanModelBase<EntityOrder> {}

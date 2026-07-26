@@ -14,18 +14,22 @@ import type { DtoOrderDetail } from '../dto/orderDetail.tsx';
 import type { DtoOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
 import type { DtoOrderMineRes } from '../dto/orderMineRes.tsx';
 import type { DtoOrderSelectRes } from '../dto/orderSelectRes.tsx';
+import type { DtoOrderShip } from '../dto/orderShip.tsx';
 import type { DtoOrderSummary } from '../dto/orderSummary.tsx';
 import type { DtoOrderView } from '../dto/orderView.tsx';
 import type { DtoPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
 import type { DtoPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
+import type { DtoShipmentView } from '../dto/shipmentView.tsx';
 import type { EntityOrder } from '../entity/order.tsx';
 import type { EntityOrderLine } from '../entity/orderLine.tsx';
+import type { EntityShipment } from '../entity/shipment.tsx';
 import type { ModelOrder } from '../model/order.ts';
 
 const maxOrderCents = 2_147_483_647;
 const customerVisibleOrderStates: EntityOrder['state'][] = [
   'awaiting_payment',
   'paid',
+  'shipped',
   'cancelled',
   'expired',
 ];
@@ -79,6 +83,10 @@ export type PaymentOutcomeFailureStage =
   | 'afterOrderAudit';
 
 type PaymentOutcomeStageCallback = (stage: PaymentOutcomeFailureStage) => void | Promise<void>;
+
+export type ShipmentFailureStage = 'afterShipmentInsert' | 'afterOrderState' | 'afterOrderAudit';
+
+type ShipmentStageCallback = (stage: ShipmentFailureStage) => void | Promise<void>;
 
 interface IPreparedOrderLine {
   index: number;
@@ -415,6 +423,71 @@ export class ServiceOrder extends BeanBase {
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
   @Core.retryable(serializationRetryOptions)
+  async ship(orderId: TableIdentity, command: DtoOrderShip): Promise<DtoShipmentView> {
+    return await this._ship(orderId, command);
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async shipForTest(
+    orderId: TableIdentity,
+    command: DtoOrderShip,
+    onStage: ShipmentStageCallback,
+  ): Promise<DtoShipmentView> {
+    return await this._ship(orderId, command, onStage);
+  }
+
+  private async _ship(
+    orderId: TableIdentity,
+    command: DtoOrderShip,
+    onStage?: ShipmentStageCallback,
+  ): Promise<DtoShipmentView> {
+    const carrier = command.carrier.trim();
+    const trackingNumber = command.trackingNumber.trim();
+    if (!carrier) this.app.throw(400, 'shipment carrier is required');
+    if (!trackingNumber) this.app.throw(400, 'shipment trackingNumber is required');
+
+    const order = await this.scope.model.order.getByIdForUpdate(orderId);
+    if (!order) this.app.throw(404, 'order not found');
+    const existingShipment = await this.scope.model.shipment.get({ orderId: order.id });
+    if (order.state === 'shipped' && existingShipment) {
+      if (
+        existingShipment.carrier !== carrier ||
+        existingShipment.trackingNumber !== trackingNumber
+      ) {
+        this.app.throw(409, 'shipment conflicts with the existing shipment');
+      }
+      return this._shipmentView(existingShipment);
+    }
+    if (order.state !== 'paid') this.app.throw(409, 'order is not available for shipment');
+    if (existingShipment) this.app.throw(409, 'order already has a shipment');
+
+    const correlationId = `${order.correlationId}:shipment`;
+    const shipment = await this.scope.model.shipment.insert({
+      orderId: order.id,
+      carrier,
+      trackingNumber,
+      operatorId: this.bean.passport.currentUser!.id,
+      shippedAt: new Date(),
+      correlationId,
+    });
+    await onStage?.('afterShipmentInsert');
+    await this.scope.model.order.updateById(order.id, { state: 'shipped' });
+    await onStage?.('afterOrderState');
+    await this._appendAudit({
+      orderId: order.id,
+      operation: 'shipped',
+      fromState: 'paid',
+      toState: 'shipped',
+      correlationId,
+      reason: 'order shipped',
+    });
+    await onStage?.('afterOrderAudit');
+    return this._shipmentView(shipment);
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async expireIfDue(orderId: TableIdentity, now = new Date()): Promise<boolean> {
     const order = await this.scope.model.order.getByIdForUpdate(orderId);
     if (!order || order.state !== 'awaiting_payment' || order.reservationExpiresAt > now)
@@ -432,7 +505,7 @@ export class ServiceOrder extends BeanBase {
   }
 
   async view(id: TableIdentity): Promise<DtoOrderView | undefined> {
-    return await this.scope.model.order.getById(id);
+    return await this.scope.model.order.getById(id, { include: { shipment: true } });
   }
 
   async mine(params?: IQueryParams<ModelOrder>): Promise<DtoOrderMineRes> {
@@ -462,11 +535,13 @@ export class ServiceOrder extends BeanBase {
     if (
       order.state !== 'awaiting_payment' &&
       order.state !== 'paid' &&
+      order.state !== 'shipped' &&
       order.state !== 'cancelled' &&
       order.state !== 'expired'
     ) {
       this.app.throw(409, 'order state is not available to customers');
     }
+    const shipment = await this.scope.model.shipment.get({ orderId: order.id });
     return {
       id: order.id,
       state: order.state,
@@ -477,6 +552,7 @@ export class ServiceOrder extends BeanBase {
       reservationExpiresAt: order.reservationExpiresAt,
       addressSnapshot: order.addressSnapshot,
       couponSnapshot: order.couponSnapshot,
+      shipment: shipment ? this._shipmentView(shipment) : undefined,
       lines: lines.map(line => ({
         id: line.id,
         skuCodeSnapshot: line.skuCodeSnapshot,
@@ -732,9 +808,9 @@ export class ServiceOrder extends BeanBase {
     reason,
   }: {
     orderId: TableIdentity;
-    operation: 'created' | 'paid' | 'cancelled' | 'expired';
-    fromState?: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
-    toState: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
+    operation: 'created' | 'paid' | 'cancelled' | 'expired' | 'shipped';
+    fromState?: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired' | 'shipped';
+    toState: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired' | 'shipped';
     correlationId: string;
     reason: string;
   }) {
@@ -749,6 +825,15 @@ export class ServiceOrder extends BeanBase {
       correlationId,
       reason,
     });
+  }
+
+  private _shipmentView(shipment: EntityShipment): DtoShipmentView {
+    return {
+      id: shipment.id,
+      carrier: shipment.carrier,
+      trackingNumber: shipment.trackingNumber,
+      shippedAt: shipment.shippedAt,
+    };
   }
 
   private async _viewSnapshot(order: EntityOrder): Promise<IOrderSnapshotCreateResult> {

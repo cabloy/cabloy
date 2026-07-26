@@ -14,7 +14,9 @@ import { DtoOrderMineReq } from '../dto/orderMineReq.tsx';
 import { DtoOrderMineRes } from '../dto/orderMineRes.tsx';
 import { DtoOrderSelectReq } from '../dto/orderSelectReq.tsx';
 import { DtoOrderSelectRes } from '../dto/orderSelectRes.tsx';
+import { DtoOrderShip } from '../dto/orderShip.tsx';
 import { DtoOrderView } from '../dto/orderView.tsx';
+import { DtoShipmentView } from '../dto/shipmentView.tsx';
 
 export interface IControllerOptionsOrder extends IDecoratorControllerOptions {}
 
@@ -35,6 +37,16 @@ export class ControllerOrder extends BeanBase {
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoOrderDetail | undefined> {
     return await this.scope.service.order.viewMine(id);
+  }
+
+  @Web.post(':id/ship')
+  @Api.body(DtoShipmentView)
+  @Passport.systemAdmin()
+  async ship(
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+    @Arg.body(DtoOrderShip) command: DtoOrderShip,
+  ): Promise<DtoShipmentView> {
+    return await this.scope.service.order.ship(id, command);
   }
 
   @Web.get()

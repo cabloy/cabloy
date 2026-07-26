@@ -95,6 +95,86 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/commerce/member/address/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceMemberAddress_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/member/address/viewMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceMemberAddress_viewMine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/member/address/createMine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceMemberAddress_createMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/member/address/updateMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch: operations['CommerceMemberAddress_updateMine'];
+    trace?: never;
+  };
+  '/api/commerce/member/address/deleteMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['CommerceMemberAddress_deleteMine'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/commerce/member/address': {
     parameters: {
       query?: never;
@@ -104,7 +184,7 @@ export interface paths {
     };
     get: operations['CommerceMemberAddress_select'];
     put?: never;
-    post: operations['CommerceMemberAddress_create'];
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -121,10 +201,10 @@ export interface paths {
     get: operations['CommerceMemberAddress_view'];
     put?: never;
     post?: never;
-    delete: operations['CommerceMemberAddress_delete'];
+    delete?: never;
     options?: never;
     head?: never;
-    patch: operations['CommerceMemberAddress_update'];
+    patch?: never;
     trace?: never;
   };
   '/api/home/user/passport/current': {
@@ -457,6 +537,22 @@ export interface paths {
     get: operations['CommerceTradeOrder_viewMine'];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/ship': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_ship'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1874,7 +1970,72 @@ export interface components {
       token?: unknown;
       payload?: unknown;
     };
-    'commerce-member.dto.addressCreate': {
+    'commerce-member.dto.addressMineRes': {
+      list: components['schemas']['commerce-member.dto.addressMineItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'commerce-member.dto.addressMineItem': {
+      id: number | string;
+      /** @description Recipient Name */
+      recipientName: string;
+      /** @description Phone */
+      phone: string;
+      /** @description Country Code */
+      countryCode: string;
+      /** @description Region */
+      region: string;
+      /** @description City */
+      city: string;
+      /** @description Postal Code */
+      postalCode: string;
+      /** @description Address Line 1 */
+      addressLine1: string;
+      /** @description Address Line 2 */
+      addressLine2?: string | undefined;
+    };
+    'commerce-member.dto.addressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          id: number | string;
+          /** @description Recipient Name */
+          recipientName: string;
+          /** @description Phone */
+          phone: string;
+          /** @description Country Code */
+          countryCode: string;
+          /** @description Region */
+          region: string;
+          /** @description City */
+          city: string;
+          /** @description Postal Code */
+          postalCode: string;
+          /** @description Address Line 1 */
+          addressLine1: string;
+          /** @description Address Line 2 */
+          addressLine2?: string | undefined;
+        }
+      | undefined;
+    'commerce-member.dto.addressMineCreate': {
+      /** @description Recipient Name */
+      recipientName: string;
+      /** @description Phone */
+      phone: string;
+      /** @description Country Code */
+      countryCode: string;
+      /** @description Region */
+      region: string;
+      /** @description City */
+      city: string;
+      /** @description Postal Code */
+      postalCode: string;
+      /** @description Address Line 1 */
+      addressLine1: string;
+      /** @description Address Line 2 */
+      addressLine2?: string | undefined;
+    };
+    'commerce-member.dto.addressMineUpdate': {
       /** @description Recipient Name */
       recipientName: string;
       /** @description Phone */
@@ -1963,24 +2124,6 @@ export interface components {
           addressLine2?: string | undefined;
         }
       | undefined;
-    'commerce-member.dto.addressUpdate': {
-      /** @description Recipient Name */
-      recipientName: string;
-      /** @description Phone */
-      phone: string;
-      /** @description Country Code */
-      countryCode: string;
-      /** @description Region */
-      region: string;
-      /** @description City */
-      city: string;
-      /** @description Postal Code */
-      postalCode: string;
-      /** @description Address Line 1 */
-      addressLine1: string;
-      /** @description Address Line 2 */
-      addressLine2?: string | undefined;
-    };
     'home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           user: components['schemas']['home-user.entity.user'];
@@ -2345,7 +2488,7 @@ export interface components {
     'commerce-trade.dto.orderSummary': {
       id: number | string;
       /** @enum {string} */
-      state: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
+      state: 'awaiting_payment' | 'paid' | 'shipped' | 'cancelled' | 'expired';
       /** @enum {string} */
       currency: 'USD';
       payableTotalCents: number;
@@ -2356,7 +2499,7 @@ export interface components {
       | {
           id: number | string;
           /** @enum {string} */
-          state: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
+          state: 'awaiting_payment' | 'paid' | 'shipped' | 'cancelled' | 'expired';
           /** @enum {string} */
           currency: 'USD';
           eligibleSubtotalCents: number;
@@ -2366,6 +2509,7 @@ export interface components {
           reservationExpiresAt: Date;
           addressSnapshot: components['schemas']['commerce-trade.dto.orderAddressSnapshot'];
           couponSnapshot?: components['schemas']['commerce-trade.dto.orderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          shipment?: components['schemas']['commerce-trade.dto.shipmentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
           lines: {
             id: number | string;
             skuCodeSnapshot: string;
@@ -2400,9 +2544,29 @@ export interface components {
           appliedDiscountCents: number;
         }
       | undefined;
+    'commerce-trade.dto.shipmentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          id: number | string;
+          carrier: string;
+          trackingNumber: string;
+          /** Format: date-time */
+          shippedAt: Date;
+        }
+      | undefined;
     'commerce-trade.dto.orderLineSkuAttributeSnapshot': {
       name: string;
       value: string;
+    };
+    'commerce-trade.dto.shipmentView': {
+      id: number | string;
+      carrier: string;
+      trackingNumber: string;
+      /** Format: date-time */
+      shippedAt: Date;
+    };
+    'commerce-trade.dto.orderShip': {
+      carrier: string;
+      trackingNumber: string;
     };
     'commerce-trade.dto.orderSelectRes': {
       list: components['schemas']['commerce-trade.dto.orderSelectResItem'][];
@@ -2507,6 +2671,37 @@ export interface components {
           payableTotalCents: number;
           /** Format: date-time */
           reservationExpiresAt: Date;
+          shipment?: {
+            /**
+             * Format: date-time
+             * @description Created At
+             */
+            createdAt: Date;
+            /**
+             * Format: date-time
+             * @description Updated At
+             */
+            updatedAt: Date;
+            /**
+             * @description Deleted
+             * @default false
+             */
+            deleted?: boolean;
+            /**
+             * @description Instance ID
+             * @default 0
+             */
+            iid?: number;
+            /** @description ID */
+            id: number | string;
+            orderId: number | string;
+            carrier: string;
+            trackingNumber: string;
+            operatorId: number | string;
+            /** Format: date-time */
+            shippedAt: Date;
+            correlationId: string;
+          };
         }
       | undefined;
     'commerce-trade.dto.paymentOutcomeResult': {
@@ -4744,6 +4939,150 @@ export interface operations {
       };
     };
   };
+  CommerceMemberAddress_mine: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-member.dto.addressMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_viewMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-member.dto.addressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_createMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-member.dto.addressMineCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_updateMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-member.dto.addressMineUpdate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_deleteMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   CommerceMemberAddress_select: {
     parameters: {
       query?: {
@@ -4781,34 +5120,6 @@ export interface operations {
     };
     authToken: true;
   };
-  CommerceMemberAddress_create: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['commerce-member.dto.addressCreate'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: number | string;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
   CommerceMemberAddress_view: {
     parameters: {
       query?: never;
@@ -4829,62 +5140,6 @@ export interface operations {
             code: string;
             message: string;
             data?: components['schemas']['commerce-member.dto.addressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  CommerceMemberAddress_delete: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: undefined;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  CommerceMemberAddress_update: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['commerce-member.dto.addressUpdate'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: undefined;
           };
         };
       };
@@ -5560,7 +5815,14 @@ export interface operations {
         pageNo?: number;
         pageSize?: number;
         createdAt?: string | undefined;
-        state?: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired' | null | undefined;
+        state?:
+          | 'awaiting_payment'
+          | 'paid'
+          | 'shipped'
+          | 'cancelled'
+          | 'expired'
+          | null
+          | undefined;
       };
       header?: never;
       path?: never;
@@ -5603,6 +5865,36 @@ export interface operations {
             code: string;
             message: string;
             data?: components['schemas']['commerce-trade.dto.orderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_ship: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.orderShip'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.shipmentView'];
           };
         };
       };
