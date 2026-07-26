@@ -55,10 +55,10 @@ export class ControllerTableCellActionShip extends BeanControllerBase {
             type="checkbox"
             v-model={this.confirmed}
           />
-          <span class="label-text text-xs">Confirm</span>
+          <span class="label-text text-xs">{this.scope.locale.Confirm()}</span>
         </label>
         <button class={props.class} type="button" onClick={() => this._ship()}>
-          Ship order
+          {this.scope.locale.ShipOrder()}
         </button>
       </div>
     );
