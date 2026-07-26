@@ -182,8 +182,9 @@ export class CliBinBuildRest extends BeanCliBase {
       plugins: [svgResolverPlugin()],
       deps: {
         alwaysBundle: (id: string) => {
-          if (bundleModules!.includes(id)) return true;
-          return false;
+          return bundleModules!.some(moduleName => {
+            return id === moduleName || id.startsWith(`${moduleName}/`);
+          });
         },
       },
       // minify: true,

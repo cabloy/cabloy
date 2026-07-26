@@ -22,9 +22,414 @@ importers:
 
   .:
     dependencies:
+      '@babel/core':
+        specifier: ^7.29.0
+        version: 7.29.7
+      '@babel/traverse':
+        specifier: ^7.29.0
+        version: 7.29.7
+      '@cabloy/deps':
+        specifier: workspace:^
+        version: link:packages-utils/deps
+      '@cabloy/json5':
+        specifier: workspace:^
+        version: link:packages-utils/json5
+      '@cabloy/module-info':
+        specifier: ^2.0.3
+        version: 2.0.3
+      '@cabloy/socket':
+        specifier: workspace:^
+        version: link:packages-utils/socket
+      '@cabloy/type-fest':
+        specifier: ^5.3.1
+        version: 5.3.1
+      '@cabloy/utils':
+        specifier: workspace:^
+        version: link:packages-utils/utils
+      '@cabloy/word-utils':
+        specifier: ^2.1.8
+        version: 2.1.14
+      '@cabloy/zod-openapi':
+        specifier: workspace:^
+        version: link:packages-utils/zod-openapi
+      '@cabloy/zod-to-openapi':
+        specifier: ^8.1.6
+        version: 8.1.6
+      '@sesamecare-oss/redlock':
+        specifier: ^1.4.0
+        version: 1.4.0(ioredis@5.11.1)
+      better-sqlite3:
+        specifier: ^12.9.0
+        version: 12.11.1
+      bignumber.js:
+        specifier: ^9.3.1
+        version: 9.3.1
+      boxen:
+        specifier: ^8.0.1
+        version: 8.0.1
+      bullmq:
+        specifier: ^5.74.1
+        version: 5.79.1
+      chalk:
+        specifier: ^5.6.2
+        version: 5.6.2
+      cli-table3:
+        specifier: ^0.6.5
+        version: 0.6.5
+      fs-extra:
+        specifier: ^11.3.4
+        version: 11.3.5
+      ioredis:
+        specifier: ^5.10.1
+        version: 5.11.1
+      knex:
+        specifier: ^3.3.0
+        version: 3.3.0(better-sqlite3@12.11.1)
+      luxon:
+        specifier: ^3.7.2
+        version: 3.7.2
+      mutate-on-copy:
+        specifier: ^1.1.8
+        version: 1.1.13
+      openapi3-ts:
+        specifier: ^4.5.0
+        version: 4.6.0
+      passport-oauth2:
+        specifier: ^1.8.0
+        version: 1.8.0
+      react:
+        specifier: ^19.2.5
+        version: 19.2.7
+      retry:
+        specifier: ^0.13.1
+        version: 0.13.1
+      sharp:
+        specifier: ^0.35.2
+        version: 0.35.2
+      table-identity:
+        specifier: workspace:^
+        version: link:packages-utils/table-identity
+      typestyle:
+        specifier: ^2.4.0
+        version: 2.4.0
+      uuid:
+        specifier: ^11.1.0
+        version: 11.1.1
       vona:
         specifier: workspace:^
         version: link:packages-vona/vona
+      vona-module-a-aspect:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-aspect
+      vona-module-a-aspectutils:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-aspectutils
+      vona-module-a-auth:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-auth/modules/a-auth
+      vona-module-a-bean:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-bean
+      vona-module-a-beanmutate:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-beanmutate
+      vona-module-a-body:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-body
+      vona-module-a-broadcast:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-broadcast
+      vona-module-a-cabloy:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-cabloy
+      vona-module-a-cache:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-cache
+      vona-module-a-caching:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-caching
+      vona-module-a-captcha:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-captcha/modules/a-captcha
+      vona-module-a-core:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-core
+      vona-module-a-datasharding:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-datasharding
+      vona-module-a-datasource:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-datasource
+      vona-module-a-election:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-election
+      vona-module-a-error:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-error
+      vona-module-a-event:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-event
+      vona-module-a-executor:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-executor
+      vona-module-a-file:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-file/modules/a-file
+      vona-module-a-hmr:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-hmr
+      vona-module-a-hmrbase:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-hmrbase
+      vona-module-a-image:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-image/modules/a-image
+      vona-module-a-index:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-index
+      vona-module-a-instance:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-instance
+      vona-module-a-jwt:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-jwt
+      vona-module-a-locale:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-locale
+      vona-module-a-logger:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-logger
+      vona-module-a-mail:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-mail
+      vona-module-a-mailconfirm:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-mailconfirm
+      vona-module-a-menu:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-menu
+      vona-module-a-meta:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-meta
+      vona-module-a-onion:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-onion
+      vona-module-a-openapi:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-openapi
+      vona-module-a-openapischema:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-openapischema
+      vona-module-a-openapiutils:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-openapiutils
+      vona-module-a-orm:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-orm
+      vona-module-a-ormdialect:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-ormdialect
+      vona-module-a-ormutils:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-ormutils
+      vona-module-a-paypal:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-paypal/modules/a-paypal
+      vona-module-a-permission:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-permission
+      vona-module-a-play:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-play
+      vona-module-a-printtip:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-printtip
+      vona-module-a-queue:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-queue
+      vona-module-a-ratelimit:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-ratelimit
+      vona-module-a-redis:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-redis
+      vona-module-a-redlock:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-redlock
+      vona-module-a-retryable:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-retryable
+      vona-module-a-runtime:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-runtime
+      vona-module-a-schedule:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-schedule
+      vona-module-a-security:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-security
+      vona-module-a-serialization:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-serialization
+      vona-module-a-socket:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-socket
+      vona-module-a-ssr:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-ssr
+      vona-module-a-ssrhmr:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-ssrhmr
+      vona-module-a-startup:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-startup
+      vona-module-a-static:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-static
+      vona-module-a-status:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-status
+      vona-module-a-summer:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-summer
+      vona-module-a-swagger:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-swagger
+      vona-module-a-telemetry:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-telemetry
+      vona-module-a-upload:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-upload
+      vona-module-a-user:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-user
+      vona-module-a-validation:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-validation
+      vona-module-a-version:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-version
+      vona-module-a-vona:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-vona
+      vona-module-a-web:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-web
+      vona-module-a-worker:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-worker
+      vona-module-a-zod:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-zod
+      vona-module-auth-oauth:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-auth/modules/auth-oauth
+      vona-module-auth-simple:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-auth/modules/auth-simple
+      vona-module-basic-siteadmin:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-siteadmin
+      vona-module-basic-siteweb:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-siteweb
+      vona-module-captcha-simple:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-captcha/modules/captcha-simple
+      vona-module-commerce-catalog:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-catalog
+      vona-module-commerce-member:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-member
+      vona-module-commerce-payment:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-payment
+      vona-module-commerce-promotion:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-promotion
+      vona-module-commerce-seed:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-seed
+      vona-module-commerce-siteadmin:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-siteadmin
+      vona-module-commerce-siteweb:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-siteweb
+      vona-module-commerce-trade:
+        specifier: workspace:^
+        version: link:src/suite/a-commerce/modules/commerce-trade
+      vona-module-demo-basic:
+        specifier: workspace:^
+        version: link:src/suite/a-demo/modules/demo-basic
+      vona-module-file-cloudflare:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-file/modules/file-cloudflare
+      vona-module-file-native:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-file/modules/file-native
+      vona-module-home-base:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-base
+      vona-module-home-index:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-index
+      vona-module-home-user:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-user
+      vona-module-image-cloudflare:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-image/modules/image-cloudflare
+      vona-module-image-native:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-image/modules/image-native
+      vona-module-test-auth:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-auth
+      vona-module-test-cabloy:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-cabloy
+      vona-module-test-captcha:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-captcha
+      vona-module-test-file:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-file
+      vona-module-test-image:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-image
+      vona-module-test-rest:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-rest
+      vona-module-test-ssr:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-ssr
+      vona-module-test-vona:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-vona
+      vona-module-training-record:
+        specifier: workspace:^
+        version: link:src/suite/a-training/modules/training-record
+      vona-module-training-recordsubject:
+        specifier: workspace:^
+        version: link:src/suite/a-training/modules/training-recordsubject
+      vona-module-training-student:
+        specifier: workspace:^
+        version: link:src/suite/a-training/modules/training-student
+      vona-shared:
+        specifier: workspace:^
+        version: link:packages-vona/vona-shared
+      winston:
+        specifier: ^3.19.0
+        version: 3.19.0
+      winston-transport:
+        specifier: ^4.9.0
+        version: 4.9.0
+      zod:
+        specifier: npm:@cabloy/zod@4.3.8
+        version: '@cabloy/zod@4.3.8'
       zova-rest-cabloy-basic-admin:
         specifier: workspace:^
         version: link:.zova-rest/cabloy-basic-admin
@@ -38,9 +443,45 @@ importers:
         specifier: workspace:^
         version: link:.zova-rest/cabloy-commerce-admin
     devDependencies:
+      '@cabloy/cli':
+        specifier: workspace:^
+        version: link:packages-cli/cabloy-cli
       '@cabloy/lint':
         specifier: workspace:^
         version: link:packages-utils/lint
+      '@swc/core':
+        specifier: ^1.15.26
+        version: 1.15.43(@swc/helpers@0.5.23)
+      '@swc/helpers':
+        specifier: ^0.5.21
+        version: 0.5.23
+      '@types/babel__core':
+        specifier: ^7.20.5
+        version: 7.20.5
+      '@types/babel__traverse':
+        specifier: ^7.28.0
+        version: 7.28.0
+      '@types/koa':
+        specifier: ^3.0.2
+        version: 3.0.3
+      '@types/luxon':
+        specifier: ^3.7.1
+        version: 3.7.2
+      '@types/node':
+        specifier: ^22.19.17
+        version: 22.20.0
+      '@types/react':
+        specifier: npm:@cabloy/types-react@^19.2.16
+        version: '@cabloy/types-react@19.2.16'
+      '@types/retry':
+        specifier: ^0.12.5
+        version: 0.12.5
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
+      gogocode:
+        specifier: ^1.0.55
+        version: 1.0.55(vue@3.5.39(typescript@5.9.3))
       oxfmt:
         specifier: ^0.45.0
         version: 0.45.0
@@ -62,6 +503,21 @@ importers:
       textlint-rule-period-in-list-item:
         specifier: ^1.0.1
         version: 1.0.1
+      ts-node-maintained:
+        specifier: ^10.9.6
+        version: 10.9.6(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@22.20.0)(typescript@5.9.3)
+      tslib:
+        specifier: ^2.8.1
+        version: 2.8.1
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vona-mock:
+        specifier: workspace:^
+        version: link:packages-vona/vona-mock
+      why-is-node-running:
+        specifier: ^3.2.2
+        version: 3.2.2
 
   .zova-rest/cabloy-basic-admin:
     dependencies:
@@ -2145,7 +2601,7 @@ importers:
     dependencies:
       bullmq:
         specifier: ^5.74.1
-        version: 5.79.1(supports-color@5.5.0)
+        version: 5.79.1
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -2167,7 +2623,7 @@ importers:
     dependencies:
       ioredis:
         specifier: ^5.10.1
-        version: 5.11.1(supports-color@5.5.0)
+        version: 5.11.1
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -9309,7 +9765,7 @@ snapshots:
 
   '@sesamecare-oss/redlock@1.4.0(ioredis@5.11.1)':
     dependencies:
-      ioredis: 5.11.1(supports-color@5.5.0)
+      ioredis: 5.11.1
 
   '@sindresorhus/merge-streams@2.3.0': {}
 
@@ -10215,10 +10671,10 @@ snapshots:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
-  bullmq@5.79.1(supports-color@5.5.0):
+  bullmq@5.79.1:
     dependencies:
       cron-parser: 4.9.0
-      ioredis: 5.10.1(supports-color@5.5.0)
+      ioredis: 5.10.1
       msgpackr: 2.0.2
       node-abort-controller: 3.1.1
       semver: 7.8.1
@@ -11361,7 +11817,7 @@ snapshots:
 
   interpret@2.2.0: {}
 
-  ioredis@5.10.1(supports-color@5.5.0):
+  ioredis@5.10.1:
     dependencies:
       '@ioredis/commands': 1.5.1
       cluster-key-slot: 1.1.2
@@ -11375,7 +11831,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ioredis@5.11.1(supports-color@5.5.0):
+  ioredis@5.11.1:
     dependencies:
       '@ioredis/commands': 1.10.0
       cluster-key-slot: 1.1.1
