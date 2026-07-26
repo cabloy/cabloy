@@ -131,6 +131,100 @@ describe('telemetry.test.ts', () => {
     });
   });
 
+  it('exposes disabled telemetry through the global facade', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const telemetry = app.bean.telemetry;
+      assert.equal(telemetry.enabled, false);
+      assert.equal(
+        telemetry.withNamedSpan('telemetry.test.disabled', () => 'result'),
+        'result',
+      );
+    });
+  });
+
+  it('manages successful custom spans through the global facade', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const service = app.scope('a-telemetry').service.telemetry;
+      const { calls, span } = createSpan();
+      const originalStartSpan = service.startSpan;
+      const originalWithSpan = service.withSpan;
+      const originalRecordException = service.recordException;
+      const names: string[] = [];
+      const options = { attributes: { 'vona.operation': 'test' } };
+      try {
+        Object.defineProperty(service, 'enabled', { configurable: true, value: true });
+        service.startSpan = ((name: string, receivedOptions: unknown) => {
+          names.push(name);
+          assert.equal(receivedOptions, options);
+          return span;
+        }) as never;
+        service.withSpan = ((_span, fn) => fn()) as never;
+        service.recordException = ((...args: unknown[]) => calls.exceptions.push(args)) as never;
+
+        const result = await app.bean.telemetry.withNamedSpan(
+          'telemetry.test.success',
+          async () => 'result',
+          options,
+        );
+
+        assert.equal(result, 'result');
+        assert.deepEqual(names, ['telemetry.test.success']);
+        assert.equal(calls.ended, 1);
+        assert.deepEqual(calls.exceptions, []);
+      } finally {
+        delete (service as any).enabled;
+        service.startSpan = originalStartSpan;
+        service.withSpan = originalWithSpan;
+        service.recordException = originalRecordException;
+      }
+    });
+  });
+
+  it('records and rethrows custom span failures through the global facade', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const service = app.scope('a-telemetry').service.telemetry;
+      const { calls, span } = createSpan();
+      const originalStartSpan = service.startSpan;
+      const originalWithSpan = service.withSpan;
+      const originalRecordException = service.recordException;
+      const error = new Error('boom');
+      try {
+        Object.defineProperty(service, 'enabled', { configurable: true, value: true });
+        service.startSpan = (() => span) as never;
+        service.withSpan = ((_span, fn) => fn()) as never;
+        service.recordException = ((recordedSpan: unknown, recordedError: unknown) => {
+          calls.exceptions.push([recordedSpan, recordedError]);
+        }) as never;
+
+        assert.throws(
+          () =>
+            app.bean.telemetry.withNamedSpan('telemetry.test.failure.sync', () => {
+              throw error;
+            }),
+          caught => caught === error,
+        );
+        assert.deepEqual(calls.exceptions, [[span, error]]);
+        assert.equal(calls.ended, 1);
+
+        calls.exceptions.length = 0;
+        calls.ended = 0;
+        await assert.rejects(
+          app.bean.telemetry.withNamedSpan('telemetry.test.failure.async', async () => {
+            throw error;
+          }),
+          caught => caught === error,
+        );
+        assert.deepEqual(calls.exceptions, [[span, error]]);
+        assert.equal(calls.ended, 1);
+      } finally {
+        delete (service as any).enabled;
+        service.startSpan = originalStartSpan;
+        service.withSpan = originalWithSpan;
+        service.recordException = originalRecordException;
+      }
+    });
+  });
+
   it('preserves valid carriers without throwing for malformed input', async () => {
     await app.bean.executor.mockCtx(async () => {
       const telemetry = app.scope('a-telemetry').service.telemetry;

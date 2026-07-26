@@ -25,6 +25,31 @@ declare module 'vona-module-a-telemetry' {
           } 
 }
 /** middlewareSystem: end */
+/** bean: begin */
+export * from '../bean/bean.telemetry.ts';
+
+import 'vona';
+declare module 'vona' {
+  
+  
+}
+declare module 'vona-module-a-telemetry' {
+  
+        export interface BeanTelemetry {
+          /** @internal */
+          get scope(): ScopeModuleATelemetry;
+        } 
+}
+/** bean: end */
+/** bean: begin */
+import type { BeanTelemetry } from '../bean/bean.telemetry.ts';
+import 'vona';
+declare module 'vona' {
+  export interface IBeanRecordGlobal {
+    'telemetry': BeanTelemetry;
+  }
+}
+/** bean: end */
 /** service: begin */
 export * from '../service/telemetry.ts';
 

@@ -52,6 +52,20 @@ trace_flags
 
 Continue to use `$logger` and `$loggerChild(...)`. Do not create request-specific cached loggers.
 
+## Custom module spans
+
+Use the global telemetry facade from a container-managed bean when adding a bounded custom operation:
+
+```ts
+return await this.bean.telemetry.withNamedSpan('payment.validate', async () => {
+  return await this._validatePayment();
+});
+```
+
+`withNamedSpan(...)` is the preferred API: it creates an active child span, records thrown errors, and always ends the span. For an operation whose lifecycle must be controlled manually, use `startSpan(...)`, `withSpan(...)`, `recordException(...)`, and end the span in `finally`.
+
+The facade intentionally does not expose carrier propagation, HTTP ingress trust, HTTP span handling, or provider lifecycle. Use a stable, bounded operation name and follow the privacy and cardinality rules below.
+
 ## Privacy and cardinality
 
 The built-in spans use HTTP method, route templates, status codes, module/controller/action names, queue names, Broadcast names, and retry counts. They do not record request or response bodies, cookies, authorization headers, raw query values, user IDs, tenant names, or business document IDs.
