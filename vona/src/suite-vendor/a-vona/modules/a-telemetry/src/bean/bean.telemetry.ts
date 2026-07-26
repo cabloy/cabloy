@@ -66,8 +66,6 @@ export class BeanTelemetry extends BeanBase {
 }
 
 function isPromiseLike<RESULT>(value: RESULT): value is RESULT & PromiseLike<Awaited<RESULT>> {
-  return (
-    ((typeof value === 'object' && value !== null) || typeof value === 'function') &&
-    typeof value.then === 'function'
-  );
+  if (!((typeof value === 'object' && value !== null) || typeof value === 'function')) return false;
+  return typeof (value as { then?: unknown }).then === 'function';
 }
