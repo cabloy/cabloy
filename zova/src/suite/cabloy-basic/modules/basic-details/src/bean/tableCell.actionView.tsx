@@ -51,7 +51,7 @@ export class TableCellActionView extends BeanBase implements ITableCellRender {
             formScene: 'view',
             schemaScene: 'form-view',
             icon: options.dialogOptions?.icon,
-            title: options.dialogOptions?.title ?? this.scope.locale.EditDetail(),
+            title: options.dialogOptions?.title ?? this.scope.locale.ViewDetail(),
             dialogOptions: options.dialogOptions,
           } satisfies IDialogFormOptions);
           serverDetail.openDialogForm();

@@ -30,9 +30,10 @@ export class CommandDelete extends BeanBase implements ICommandExecute {
     const row = cellContext?.row;
     if (!row) throw new Error('should provide row in cell context');
     const detailItem = row.original as DetailItem;
-    const detailItemIndex = row.index;
-    const detailItemId = detailItem.id;
     const detailItems = $$details.data as DetailItem[];
+    const detailItemIndex = detailItems.indexOf(detailItem);
+    if (detailItemIndex === -1) throw new Error('detail item is no longer available');
+    const detailItemId = detailItem.id;
     if (!isNil(detailItemId)) {
       $$details.data = detailItems.map(item => {
         return item.id === detailItemId ? { ...item, deleted: true } : item;

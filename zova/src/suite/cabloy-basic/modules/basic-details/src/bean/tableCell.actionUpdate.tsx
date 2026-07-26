@@ -42,7 +42,8 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
           const $$details = $celScope.$$details;
           if (!$$details) throw new Error('should provide $$details in cell scope');
           const detailItem = cellContext.row.original as Record<string, any>;
-          const detailItemIndex = cellContext.row.index;
+          const detailItemIndex = $$details.data.indexOf(detailItem);
+          if (detailItemIndex === -1) throw new Error('detail item is no longer available');
           const serverDetail = await ctx.bean._newBean(ServiceDetail, true, {
             locale: this.scope.locale,
             schema: $$details.schemaForm,
