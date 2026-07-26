@@ -5,4 +5,6 @@ export default {
   Quantity: 'Quantity',
   ClearCart: 'Clear cart',
   RemoveCartItem: 'Remove',
+  Confirm: 'Confirm',
+  ShipOrder: 'Ship order',
 };

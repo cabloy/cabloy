@@ -5,4 +5,6 @@ export default {
   Quantity: '数量',
   ClearCart: '清空购物车',
   RemoveCartItem: '移除',
+  Confirm: '确认',
+  ShipOrder: '发货',
 };
