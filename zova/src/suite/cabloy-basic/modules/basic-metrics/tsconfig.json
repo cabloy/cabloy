@@ -1,5 +1,5 @@
 {
   "extends": "../../tsconfig.base",
-  "compilerOptions": { "noEmit": true },
-  "include": ["src", "src/.metadata/*.ts", "src/**/*.json", "test"]
+  "compilerOptions": {},
+  "include": ["src", "src/.metadata/**/*"]
 }

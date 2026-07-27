@@ -49,10 +49,5 @@
       "exports.\\..import"
     ]
   },
-  "title": "basic-metrics",
-  "zovaModule": {
-    "dependencies": {
-      "a-model": "5.0.0"
-    }
-  }
+  "title": "basic-metrics"
 }
