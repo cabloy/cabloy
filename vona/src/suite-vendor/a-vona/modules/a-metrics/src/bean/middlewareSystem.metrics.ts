@@ -9,9 +9,7 @@ import { MiddlewareSystem } from 'vona-module-a-aspect';
 
 export interface IMiddlewareSystemOptionsMetrics extends IDecoratorMiddlewareSystemOptions {}
 
-@MiddlewareSystem<IMiddlewareSystemOptionsMetrics>({
-  dependencies: 'a-telemetry:trace',
-})
+@MiddlewareSystem<IMiddlewareSystemOptionsMetrics>()
 export class MiddlewareSystemMetrics extends BeanBase implements IMiddlewareSystemExecute {
   async execute(_options: IMiddlewareSystemOptionsMetrics, next: Next) {
     const metrics = this.$scope.metrics.service.metrics;

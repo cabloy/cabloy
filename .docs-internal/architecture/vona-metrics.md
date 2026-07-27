@@ -4,6 +4,23 @@
 
 Metrics is a dedicated `a-metrics` infrastructure module. It uses OpenTelemetry Metrics and OTLP/HTTP to a private OpenTelemetry Collector. Prometheus scrapes the Collector exporter; Vona has no `/metrics` application endpoint.
 
+## Metrics and tracing independence
+
+`a-metrics` and `a-telemetry` are separate infrastructure modules with separate providers, exporters, configuration, lifecycle ownership, and failure boundaries. Their signals can be enabled in any combination:
+
+| `TELEMETRY_ENABLED` | `METRICS_ENABLED` | Result                                                                                           |
+| ------------------- | ----------------- | ------------------------------------------------------------------------------------------------ |
+| `false`             | `false`           | Neither tracing nor metrics work is created.                                                     |
+| `true`              | `false`           | Tracing exports spans without creating Metrics instruments, timers, or an OTLP Metrics exporter. |
+| `false`             | `true`            | Metrics exports operational signals without creating spans or requiring trace context.           |
+| `true`              | `true`            | Both signal pipelines run independently for the same request lifecycle.                          |
+
+Do not add `a-telemetry` as an `a-metrics` module dependency and do not make `a-metrics:metrics` depend on `a-telemetry:trace`. HTTP Metrics only requires the Vona request lifecycle, route metadata, and final response state; it must not require a trace provider or a trace context. Middleware enumeration order is not a coupling contract between these modules.
+
+The Metrics middleware must exclude infrastructure probes directly from `ctx.path` before starting an observation. Do not use a resolved route as the only health-path exclusion: infrastructure middleware can respond before normal router resolution, in which case the route is absent and would be mislabelled as `unmatched`.
+
+If a future cross-signal feature is genuinely needed, keep it optional and one-way through a narrow, privacy-reviewed interface. It must preserve the ability to enable either module alone and must never turn trace IDs, request IDs, or other correlation data into metric attributes.
+
 ## Why not an application Prometheus registry
 
 Vona cluster workers have isolated memory. A shared application listener distributes a scrape to one arbitrary worker, so an in-process pull registry is not an application aggregate. Master-process IPC, extra worker ports, and Redis aggregation add framework-specific failure modes that the Collector already addresses.
