@@ -9,11 +9,19 @@ import { MiddlewareSystem } from 'vona-module-a-aspect';
 
 export interface IMiddlewareSystemOptionsMetrics extends IDecoratorMiddlewareSystemOptions {}
 
-@MiddlewareSystem<IMiddlewareSystemOptionsMetrics>()
+@MiddlewareSystem<IMiddlewareSystemOptionsMetrics>({
+  dependencies: 'a-telemetry:trace',
+})
 export class MiddlewareSystemMetrics extends BeanBase implements IMiddlewareSystemExecute {
   async execute(_options: IMiddlewareSystemOptionsMetrics, next: Next) {
     const metrics = this.$scope.metrics.service.metrics;
-    if (!metrics.enabled || this.ctx.state.metrics?.internal) return next();
+    if (
+      !metrics.enabled ||
+      this.ctx.path.startsWith('/health/') ||
+      this.ctx.state.metrics?.internal
+    ) {
+      return next();
+    }
 
     const startedAt = process.hrtime.bigint();
     const ctx = this.ctx;
@@ -23,7 +31,7 @@ export class MiddlewareSystemMetrics extends BeanBase implements IMiddlewareSyst
       if (completed) return;
       completed = true;
       const route = ctx.route?.routePathRaw || 'unmatched';
-      const ignore = route.startsWith('/health/') || route.includes('metricsAdmin');
+      const ignore = route.includes('metricsAdmin');
       if (ignore) {
         metrics.recordHttpEnd();
         return;
