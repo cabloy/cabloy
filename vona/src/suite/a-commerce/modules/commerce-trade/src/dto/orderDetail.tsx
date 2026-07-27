@@ -40,8 +40,29 @@ export class DtoOrderDetail {
   @Api.field(v.tableIdentity())
   id: TableIdentity;
 
-  @Api.field(z.enum(['awaiting_payment', 'paid', 'shipped', 'cancelled', 'expired']))
-  state: 'awaiting_payment' | 'paid' | 'shipped' | 'cancelled' | 'expired';
+  @Api.field(
+    z.enum([
+      'awaiting_payment',
+      'paid',
+      'refund_requested',
+      'refund_approved',
+      'refund_rejected',
+      'shipped',
+      'refunded',
+      'cancelled',
+      'expired',
+    ]),
+  )
+  state:
+    | 'awaiting_payment'
+    | 'paid'
+    | 'refund_requested'
+    | 'refund_approved'
+    | 'refund_rejected'
+    | 'shipped'
+    | 'refunded'
+    | 'cancelled'
+    | 'expired';
 
   @Api.field(z.literal('USD'))
   currency: 'USD';

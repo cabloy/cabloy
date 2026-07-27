@@ -849,6 +849,10 @@ export * from '../dto/orderSummary.tsx';
 export * from '../dto/orderView.tsx';
 export * from '../dto/paymentOutcomeCreate.tsx';
 export * from '../dto/paymentOutcomeResult.tsx';
+export * from '../dto/refundOutcomeCreate.tsx';
+export * from '../dto/refundRequestCreate.tsx';
+export * from '../dto/refundResult.tsx';
+export * from '../dto/refundReview.tsx';
 export * from '../dto/shipmentView.tsx';
 export * from '../dto/stockAdjust.tsx';
 export * from '../dto/stockAuditCreate.tsx';
@@ -883,6 +887,10 @@ import type { IDtoOptionsOrderSummary } from '../dto/orderSummary.tsx';
 import type { IDtoOptionsOrderView } from '../dto/orderView.tsx';
 import type { IDtoOptionsPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
 import type { IDtoOptionsPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
+import type { IDtoOptionsRefundOutcomeCreate } from '../dto/refundOutcomeCreate.tsx';
+import type { IDtoOptionsRefundRequestCreate } from '../dto/refundRequestCreate.tsx';
+import type { IDtoOptionsRefundResult } from '../dto/refundResult.tsx';
+import type { IDtoOptionsRefundReview } from '../dto/refundReview.tsx';
 import type { IDtoOptionsShipmentView } from '../dto/shipmentView.tsx';
 import type { IDtoOptionsStockAdjust } from '../dto/stockAdjust.tsx';
 import type { IDtoOptionsStockAuditCreate } from '../dto/stockAuditCreate.tsx';
@@ -921,6 +929,10 @@ declare module 'vona-module-a-web' {
 'commerce-trade:orderView': IDtoOptionsOrderView;
 'commerce-trade:paymentOutcomeCreate': IDtoOptionsPaymentOutcomeCreate;
 'commerce-trade:paymentOutcomeResult': IDtoOptionsPaymentOutcomeResult;
+'commerce-trade:refundOutcomeCreate': IDtoOptionsRefundOutcomeCreate;
+'commerce-trade:refundRequestCreate': IDtoOptionsRefundRequestCreate;
+'commerce-trade:refundResult': IDtoOptionsRefundResult;
+'commerce-trade:refundReview': IDtoOptionsRefundReview;
 'commerce-trade:shipmentView': IDtoOptionsShipmentView;
 'commerce-trade:stockAdjust': IDtoOptionsStockAdjust;
 'commerce-trade:stockAuditCreate': IDtoOptionsStockAuditCreate;
@@ -964,6 +976,10 @@ import type { DtoOrderSummary } from '../dto/orderSummary.tsx';
 import type { DtoOrderView } from '../dto/orderView.tsx';
 import type { DtoPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
 import type { DtoPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
+import type { DtoRefundOutcomeCreate } from '../dto/refundOutcomeCreate.tsx';
+import type { DtoRefundRequestCreate } from '../dto/refundRequestCreate.tsx';
+import type { DtoRefundResult } from '../dto/refundResult.tsx';
+import type { DtoRefundReview } from '../dto/refundReview.tsx';
 import type { DtoShipmentView } from '../dto/shipmentView.tsx';
 import type { DtoStockAdjust } from '../dto/stockAdjust.tsx';
 import type { DtoStockAuditCreate } from '../dto/stockAuditCreate.tsx';
@@ -1058,6 +1074,22 @@ declare module 'vona-module-commerce-trade' {
 
     export interface IDtoOptionsPaymentOutcomeResult {
       fields?: TypeEntityOptionsFields<DtoPaymentOutcomeResult, IDtoOptionsPaymentOutcomeResult[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsRefundOutcomeCreate {
+      fields?: TypeEntityOptionsFields<DtoRefundOutcomeCreate, IDtoOptionsRefundOutcomeCreate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsRefundRequestCreate {
+      fields?: TypeEntityOptionsFields<DtoRefundRequestCreate, IDtoOptionsRefundRequestCreate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsRefundResult {
+      fields?: TypeEntityOptionsFields<DtoRefundResult, IDtoOptionsRefundResult[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsRefundReview {
+      fields?: TypeEntityOptionsFields<DtoRefundReview, IDtoOptionsRefundReview[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsShipmentView {
@@ -1267,6 +1299,10 @@ declare module 'vona-module-a-web' {
 export interface IApiPathPostRecord{
         '/commerce/trade/cart/items': undefined;
 '/commerce/trade/checkout': undefined;
+'/commerce/trade/order/:id/requestRefund': undefined;
+'/commerce/trade/order/:id/approveRefund': undefined;
+'/commerce/trade/order/:id/rejectRefund': undefined;
+'/commerce/trade/order/:id/refundOutcome': undefined;
 '/commerce/trade/order/:id/ship': undefined;
 '/commerce/trade/payment/:attemptId/outcome': undefined;
 '/commerce/trade/stockBalance/adjustStock': undefined;

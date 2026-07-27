@@ -68,5 +68,96 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         .dateTime(entityPaymentAudit.processedAt)
         .comment(entityPaymentAudit.$comment.processedAt);
     });
+
+    const entityRefundRequest = this.scope.entity.refundRequest;
+    await this.bean.model.createTable(entityRefundRequest.$table, table => {
+      table.comment(entityRefundRequest.$comment.$table);
+      table.basicFields();
+      table
+        .tableIdentity(entityRefundRequest.orderId)
+        .comment(entityRefundRequest.$comment.orderId);
+      table.userId(entityRefundRequest.userId).comment(entityRefundRequest.$comment.userId);
+      table.string(entityRefundRequest.state, 20).comment(entityRefundRequest.$comment.state);
+      table.string(entityRefundRequest.currency, 3).comment(entityRefundRequest.$comment.currency);
+      table
+        .integer(entityRefundRequest.amountCents)
+        .comment(entityRefundRequest.$comment.amountCents);
+      table
+        .string(entityRefundRequest.correlationId, 100)
+        .comment(entityRefundRequest.$comment.correlationId);
+      table.string(entityRefundRequest.reason, 255).comment(entityRefundRequest.$comment.reason);
+      table
+        .userId(entityRefundRequest.reviewedBy)
+        .nullable()
+        .comment(entityRefundRequest.$comment.reviewedBy);
+      table
+        .dateTime(entityRefundRequest.reviewedAt)
+        .nullable()
+        .comment(entityRefundRequest.$comment.reviewedAt);
+      table
+        .dateTime(entityRefundRequest.finalizedAt)
+        .nullable()
+        .comment(entityRefundRequest.$comment.finalizedAt);
+    });
+
+    const entityRefundAttempt = this.scope.entity.refundAttempt;
+    await this.bean.model.createTable(entityRefundAttempt.$table, table => {
+      table.comment(entityRefundAttempt.$comment.$table);
+      table.basicFields();
+      table
+        .tableIdentity(entityRefundAttempt.refundRequestId)
+        .comment(entityRefundAttempt.$comment.refundRequestId);
+      table
+        .tableIdentity(entityRefundAttempt.orderId)
+        .comment(entityRefundAttempt.$comment.orderId);
+      table.userId(entityRefundAttempt.userId).comment(entityRefundAttempt.$comment.userId);
+      table.string(entityRefundAttempt.state, 20).comment(entityRefundAttempt.$comment.state);
+      table.string(entityRefundAttempt.currency, 3).comment(entityRefundAttempt.$comment.currency);
+      table
+        .integer(entityRefundAttempt.amountCents)
+        .comment(entityRefundAttempt.$comment.amountCents);
+      table
+        .string(entityRefundAttempt.correlationId, 100)
+        .comment(entityRefundAttempt.$comment.correlationId);
+      table
+        .dateTime(entityRefundAttempt.finalizedAt)
+        .nullable()
+        .comment(entityRefundAttempt.$comment.finalizedAt);
+    });
+
+    const entityRefundAudit = this.scope.entity.refundAudit;
+    await this.bean.model.createTable(entityRefundAudit.$table, table => {
+      table.comment(entityRefundAudit.$comment.$table);
+      table.basicFields();
+      table
+        .tableIdentity(entityRefundAudit.refundRequestId)
+        .comment(entityRefundAudit.$comment.refundRequestId);
+      table
+        .tableIdentity(entityRefundAudit.refundAttemptId)
+        .nullable()
+        .comment(entityRefundAudit.$comment.refundAttemptId);
+      table.tableIdentity(entityRefundAudit.orderId).comment(entityRefundAudit.$comment.orderId);
+      table.userId(entityRefundAudit.userId).comment(entityRefundAudit.$comment.userId);
+      table
+        .string(entityRefundAudit.toRefundState, 20)
+        .comment(entityRefundAudit.$comment.toRefundState);
+      table
+        .string(entityRefundAudit.attemptState, 20)
+        .nullable()
+        .comment(entityRefundAudit.$comment.attemptState);
+      table
+        .string(entityRefundAudit.idempotencyKey, 100)
+        .nullable()
+        .comment(entityRefundAudit.$comment.idempotencyKey);
+      table
+        .string(entityRefundAudit.correlationId, 100)
+        .comment(entityRefundAudit.$comment.correlationId);
+      table.string(entityRefundAudit.reason, 255).comment(entityRefundAudit.$comment.reason);
+      table
+        .userId(entityRefundAudit.actorId)
+        .nullable()
+        .comment(entityRefundAudit.$comment.actorId);
+      table.dateTime(entityRefundAudit.processedAt).comment(entityRefundAudit.$comment.processedAt);
+    });
   }
 }

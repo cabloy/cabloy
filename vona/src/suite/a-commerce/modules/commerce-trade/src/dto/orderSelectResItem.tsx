@@ -30,6 +30,9 @@ export class DtoOrderSelectResItem extends $Dto.get(() => ModelOrder) {
         ZovaRender.tableActionRow('commerce-trade:actionShip', {
           permission: { public: true },
         }),
+        ZovaRender.tableActionRow('commerce-trade:actionRefund', {
+          permission: { public: true },
+        }),
         ZovaRender.tableActionRow('basic-table:actionView'),
       ],
     }),

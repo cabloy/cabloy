@@ -24,7 +24,7 @@ async function createCatalog(
   }
 }
 
-describe('catalog.test.ts', () => {
+describe('catalog.test.ts', { concurrency: false }, () => {
   it('enforces operator access and category/product relations', async () => {
     await app.bean.executor.mockCtx(async () => {
       await app.bean.passport.signinMock();

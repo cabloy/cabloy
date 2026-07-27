@@ -250,6 +250,7 @@ declare module 'zova' {
 }
 /** apiSchema: end */
 /** controller: begin */
+export * from '../component/tableCellActionRefund/controller.jsx';
 export * from '../component/tableCellActionShip/controller.jsx';
 export * from '../page/cart/controller.jsx';
 export * from '../page/checkout/controller.jsx';
@@ -264,6 +265,11 @@ declare module 'zova' {
 }
 declare module 'zova-module-commerce-trade' {
   
+        export interface ControllerTableCellActionRefund {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
         export interface ControllerTableCellActionShip {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -296,6 +302,7 @@ declare module 'zova-module-commerce-trade' {
 }
 /** controller: end */
 /** controller: begin */
+import { ControllerTableCellActionRefund } from '../component/tableCellActionRefund/controller.jsx';
 import { ControllerTableCellActionShip } from '../component/tableCellActionShip/controller.jsx';
 import { ControllerPageCart } from '../page/cart/controller.jsx';
 import { ControllerPageCheckout } from '../page/checkout/controller.jsx';
@@ -305,7 +312,8 @@ import { ControllerPagePayment } from '../page/payment/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
-    'commerce-trade.controller.tableCellActionShip': ControllerTableCellActionShip;
+    'commerce-trade.controller.tableCellActionRefund': ControllerTableCellActionRefund;
+'commerce-trade.controller.tableCellActionShip': ControllerTableCellActionShip;
 'commerce-trade.controller.pageCart': ControllerPageCart;
 'commerce-trade.controller.pageCheckout': ControllerPageCheckout;
 'commerce-trade.controller.pageOrder': ControllerPageOrder;
@@ -394,35 +402,54 @@ $query: NSControllerPagePayment.QueryOutput;
 /** pages: end */
 
 /** components: begin */
+export * from './component/tableCellActionRefund.js';
+import { ZTableCellActionRefund } from './component/tableCellActionRefund.js';
 export * from './component/tableCellActionShip.js';
 import { ZTableCellActionShip } from './component/tableCellActionShip.js';
 export const components = {
-  'tableCellActionShip': ZTableCellActionShip,
+  'tableCellActionRefund': ZTableCellActionRefund,
+'tableCellActionShip': ZTableCellActionShip,
 };
 import 'zova';
 declare module 'zova' {
 export interface IComponentRecord {
-  'commerce-trade:tableCellActionShip': ControllerTableCellActionShip;
+  'commerce-trade:tableCellActionRefund': ControllerTableCellActionRefund;
+'commerce-trade:tableCellActionShip': ControllerTableCellActionShip;
 }
 export interface IZovaComponentRecord {
-  'commerce-trade:tableCellActionShip': typeof ZTableCellActionShip;
+  'commerce-trade:tableCellActionRefund': typeof ZTableCellActionRefund;
+'commerce-trade:tableCellActionShip': typeof ZTableCellActionShip;
 }
 }
 /** components: end */
 /** tableCell: begin */
+export * from '../bean/tableCell.actionRefund.jsx';
 export * from '../bean/tableCell.actionShip.jsx';
+import { ITableCellOptionsActionRefund } from '../bean/tableCell.actionRefund.jsx';
 import { ITableCellOptionsActionShip } from '../bean/tableCell.actionShip.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
   
     export interface ITableCellRecord {
-      'commerce-trade:actionShip': ITableCellOptionsActionShip;
+      'commerce-trade:actionRefund': ITableCellOptionsActionRefund;
+'commerce-trade:actionShip': ITableCellOptionsActionShip;
     }
 
   
 }
 declare module 'zova-module-commerce-trade' {
   
+        export interface TableCellActionRefund {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+        export interface TableCellActionRefund {
+          get $beanFullName(): 'commerce-trade.tableCell.actionRefund';
+          get $onionName(): 'commerce-trade:actionRefund';
+          get $onionOptions(): ITableCellOptionsActionRefund;
+        }
+
         export interface TableCellActionShip {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -436,11 +463,13 @@ declare module 'zova-module-commerce-trade' {
 }
 /** tableCell: end */
 /** tableCell: begin */
+import { TableCellActionRefund } from '../bean/tableCell.actionRefund.jsx';
 import { TableCellActionShip } from '../bean/tableCell.actionShip.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
-    'commerce-trade.tableCell.actionShip': TableCellActionShip;
+    'commerce-trade.tableCell.actionRefund': TableCellActionRefund;
+'commerce-trade.tableCell.actionShip': TableCellActionShip;
   }
 }
 /** tableCell: end */

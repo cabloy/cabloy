@@ -28,7 +28,7 @@ This directory records the agreed product, system, and delivery baseline for the
 | Shipment         | One whole-order shipment entered manually with carrier and tracking number                                                       |
 | Refund           | Customer-requested, operator-approved, whole-order only, before shipment only; mock refund restores inventory but not the coupon |
 
-## Planned Topology
+## Current Topology
 
 `a-commerce` is a suite-first domain. Its Vona and Zova modules belong beneath the suite rather than being loose standalone packages:
 
@@ -37,7 +37,7 @@ vona/src/suite/a-commerce/modules/
 zova/src/suite/a-commerce/modules/
 ```
 
-The planned capability boundaries are:
+The capability boundaries are:
 
 - `commerce-catalog`: categories, products, SKU publication, and catalogue read models;
 - `commerce-trade`: carts, checkout, order snapshots, inventory reservation, and order lifecycle;

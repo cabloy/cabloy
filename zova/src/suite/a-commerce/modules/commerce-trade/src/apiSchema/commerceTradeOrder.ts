@@ -6,6 +6,10 @@ import { ApiSchema } from 'zova-module-a-api';
 import {
   ApiApiCommerceTradeOrderminePath,
   ApiApiCommerceTradeOrderviewMinePath,
+  ApiApiCommerceTradeOrderrequestRefundPath,
+  ApiApiCommerceTradeOrderapproveRefundPath,
+  ApiApiCommerceTradeOrderrejectRefundPath,
+  ApiApiCommerceTradeOrderrefundOutcomePath,
   ApiApiCommerceTradeOrdershipPath,
   ApiApiCommerceTradeOrderselectPath,
   ApiApiCommerceTradeOrderviewPath,
@@ -19,6 +23,22 @@ export class ApiSchemaCommerceTradeOrder extends BeanBase {
 
   viewMine(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiCommerceTradeOrderviewMinePath, 'get', options);
+  }
+
+  requestRefund(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCommerceTradeOrderrequestRefundPath, 'post', options);
+  }
+
+  approveRefund(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCommerceTradeOrderapproveRefundPath, 'post', options);
+  }
+
+  rejectRefund(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCommerceTradeOrderrejectRefundPath, 'post', options);
+  }
+
+  refundOutcome(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCommerceTradeOrderrefundOutcomePath, 'post', options);
   }
 
   ship(options?: IApiSchemaOptions) {
