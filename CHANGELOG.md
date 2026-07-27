@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.119
+
+### Improvements
+
+- Update the upgrade script.
+
 ## 5.1.118
 
 ### Features
