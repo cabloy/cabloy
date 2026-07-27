@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.120
+
+### Features
+
+- Update functionality.
+
 ## 5.1.119
 
 ### Improvements
