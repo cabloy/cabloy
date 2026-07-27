@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.1.118
+
+### Features
+
+- Complete refund lifecycle coverage for commerce workflows.
+- Add metrics support.
+- Update application functionality and dependencies.
+
+### Improvements
+
+- Extract the scene test lock into `vona-mock`.
+- Update the pnPM lockfile and environment configuration.
+
 ## 5.1.117
 
 ### Features
