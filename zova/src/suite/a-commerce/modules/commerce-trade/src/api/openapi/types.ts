@@ -2644,7 +2644,7 @@ export interface components {
       refundRequestId: number | string;
       refundAttemptId?: number | string | undefined;
       /** @enum {string} */
-      orderState: 'refund_requested' | 'refund_approved' | 'refund_rejected' | 'refunded';
+      orderState: 'paid' | 'refund_requested' | 'refund_approved' | 'refund_rejected' | 'refunded';
       /** @enum {string} */
       refundState: 'requested' | 'approved' | 'rejected' | 'refunded' | 'failed';
       /** @enum {string|null} */
@@ -2655,9 +2655,11 @@ export interface components {
     };
     'commerce-trade.dto.refundRequestCreate': {
       reason: string;
+      idempotencyKey: string;
     };
     'commerce-trade.dto.refundReview': {
       reason: string;
+      idempotencyKey: string;
     };
     'commerce-trade.dto.refundOutcomeCreate': {
       /** @enum {string} */

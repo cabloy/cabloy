@@ -526,6 +526,117 @@ test(
 );
 
 test(
+  'Phase 60: customer requests and operator executes a whole-order refund',
+  { tag: ['@web', '@admin', '@flow', '@payment', '@refund'] },
+  async ({ browser, request }, testInfo) => {
+    test.setTimeout(120_000);
+    const { context, fixture, page, pageErrors } = await createAddressThroughCustomerPage(
+      browser,
+      request,
+      testInfo,
+    );
+    try {
+      await page.goto('/commerce', { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+      await expect(page.getByRole('heading', { name: 'Commerce catalogue' })).toBeVisible();
+      const productLink = page.getByRole('link', { name: 'Pour-Over Coffee Set', exact: true });
+      await expect(productLink).toBeVisible();
+      await productLink.click();
+      await expect(page).toHaveURL(/\/commerce\/product\/\d+(?:\/|$)/);
+      await expect(page.getByRole('heading', { name: 'Pour-Over Coffee Set' })).toBeVisible();
+      await expect(page.getByText('COF-SET-01')).toBeVisible();
+      await expect(page.getByText('$45.99')).toBeVisible();
+      const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
+      await page.getByRole('button', { name: 'Add to cart', exact: true }).click();
+      await addResponse;
+      await page.getByRole('link', { name: /^Cart/ }).click();
+      await expect(page).toHaveURL(/\/commerce\/cart(?:\/|$)/);
+      await page.getByRole('link', { name: 'Checkout', exact: true }).click();
+      await expect(page).toHaveURL(/\/commerce\/checkout(?:\/|$)/);
+      const addressChoice = page.getByRole('radio', { name: new RegExp(fixture.recipientName) });
+      await addressChoice.check();
+      await page.getByRole('radio', { name: 'No coupon', exact: true }).check();
+      const checkoutResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/checkout');
+      await page.getByRole('button', { name: 'Create order', exact: true }).click();
+      const checkout = (await (await checkoutResponse).json()).data;
+      const paymentResponse = waitForApiResponse(
+        page,
+        'POST',
+        new RegExp(`/api/commerce/trade/payment/${checkout.paymentAttemptId}/outcome$`),
+      );
+      await page.getByRole('button', { name: 'Payment succeeded', exact: true }).click();
+      expect((await paymentResponse).ok()).toBeTruthy();
+      await expect(page.getByText('paid · $45.99')).toBeVisible();
+
+      const requestResponse = waitForApiResponse(
+        page,
+        'POST',
+        `/api/commerce/trade/order/${checkout.orderId}/requestRefund`,
+      );
+      await page.getByPlaceholder('Reason for refund').fill('E2E refund request');
+      await page.getByRole('button', { name: 'Request refund', exact: true }).click();
+      expect((await requestResponse).ok()).toBeTruthy();
+      await expect(page.getByText('refund_requested · $45.99')).toBeVisible();
+
+      const adminContext = await browser.newContext();
+      const adminPage = await adminContext.newPage();
+      const adminPageErrors = collectPageErrors(adminPage);
+      try {
+        await adminPage.setViewportSize({ width: 1440, height: 900 });
+        await login(adminPage, '/commerce-admin/', 'admin', '123456', 'commerceAdmin');
+        await adminPage.goto('/commerce-admin/rest/resource/commerce-trade%3Aorder', {
+          waitUntil: 'load',
+        });
+        await expect(adminPage.locator('html')).toHaveAttribute(
+          'data-zova-hydrated',
+          'commerceAdmin',
+        );
+        const orderRow = adminPage
+          .getByRole('cell', { name: String(checkout.orderId), exact: true })
+          .locator('..');
+        await expect(orderRow).toBeVisible();
+        await orderRow.getByPlaceholder('Decision reason').fill('E2E approval');
+        await orderRow.getByRole('checkbox').check();
+        const approveResponse = waitForApiResponse(
+          adminPage,
+          'POST',
+          `/api/commerce/trade/order/${checkout.orderId}/approveRefund`,
+        );
+        await orderRow.getByRole('button', { name: 'Approve refund', exact: true }).click();
+        expect((await approveResponse).ok()).toBeTruthy();
+        await expect(orderRow).toContainText('refund_approved');
+        const executeResponse = waitForApiResponse(
+          adminPage,
+          'POST',
+          `/api/commerce/trade/order/${checkout.orderId}/refundOutcome`,
+        );
+        await orderRow.getByRole('button', { name: 'Execute refund', exact: true }).click();
+        expect((await executeResponse).ok()).toBeTruthy();
+        await expect(orderRow).toContainText('refunded');
+        expect(adminPageErrors).toEqual([]);
+      } finally {
+        await adminContext.close().catch(() => {});
+      }
+
+      const refundedDetailResponse = waitForApiResponse(
+        page,
+        'GET',
+        new RegExp(`/api/commerce/trade/order/viewMine/${checkout.orderId}$`),
+      );
+      await page.reload({ waitUntil: 'load' });
+      await refundedDetailResponse;
+      await expect(page.getByText('refunded · $45.99')).toBeVisible();
+      await expect(page.getByText('1 × $45.99 = $45.99')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Shipment' })).toHaveCount(0);
+      await expect(page.getByRole('alert')).toHaveCount(0);
+      expect(pageErrors).toEqual([]);
+    } finally {
+      await context.close().catch(() => {});
+    }
+  },
+);
+
+test(
   'ATP-ADDR-01: systemAdmin inspects Address Resource without mutation controls',
   { tag: ['@admin', '@flow', '@address'] },
   async ({ browser, request }, testInfo) => {

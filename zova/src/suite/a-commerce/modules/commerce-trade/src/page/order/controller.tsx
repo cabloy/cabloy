@@ -30,12 +30,16 @@ export class ControllerPageOrder extends BeanControllerPageBase {
   }
 
   refundReason = '';
+  refundRequestIdempotencyKey?: string;
 
   private async _requestRefund() {
     const reason = this.refundReason.trim();
     if (!reason) return;
-    await this.mutationRequestRefund.mutateAsync({ reason });
+    const idempotencyKey = this.refundRequestIdempotencyKey ?? crypto.randomUUID();
+    this.refundRequestIdempotencyKey = idempotencyKey;
+    await this.mutationRequestRefund.mutateAsync({ reason, idempotencyKey });
     this.refundReason = '';
+    this.refundRequestIdempotencyKey = undefined;
   }
 
   protected render() {
@@ -61,14 +65,14 @@ export class ControllerPageOrder extends BeanControllerPageBase {
               {order.state === 'paid' && !order.shipment && (
                 <article class="card mt-6 border border-base-300 bg-base-100 shadow-sm">
                   <div class="card-body">
-                    <h2 class="card-title">Request refund</h2>
+                    <h2 class="card-title">{this.scope.locale.RequestRefund()}</h2>
                     <p class="text-sm text-base-content/70">
-                      Refunds are for the whole unshipped order only.
+                      {this.scope.locale.RefundRequestHelp()}
                     </p>
                     <textarea
                       class="textarea textarea-bordered"
                       name="refundReason"
-                      placeholder="Reason for refund"
+                      placeholder={this.scope.locale.RefundReason()}
                       v-model={this.refundReason}
                     />
                     <button
@@ -77,7 +81,7 @@ export class ControllerPageOrder extends BeanControllerPageBase {
                       disabled={!this.refundReason.trim() || this.mutationRequestRefund.isPending}
                       onClick={() => this._requestRefund()}
                     >
-                      Request refund
+                      {this.scope.locale.RequestRefund()}
                     </button>
                   </div>
                 </article>

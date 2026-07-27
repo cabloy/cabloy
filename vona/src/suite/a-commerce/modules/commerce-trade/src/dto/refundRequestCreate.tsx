@@ -9,4 +9,7 @@ export interface IDtoOptionsRefundRequestCreate extends IDecoratorDtoOptions {}
 export class DtoRefundRequestCreate {
   @Api.field(v.required(), v.min(1), v.max(255))
   reason: string;
+
+  @Api.field(v.required(), v.min(1), v.max(100))
+  idempotencyKey: string;
 }

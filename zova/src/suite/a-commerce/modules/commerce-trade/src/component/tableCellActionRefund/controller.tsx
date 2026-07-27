@@ -22,28 +22,40 @@ export class ControllerTableCellActionRefund extends BeanControllerBase {
 
   reason = '';
   confirmed = false;
+  approveIdempotencyKey?: string;
+  rejectIdempotencyKey?: string;
+  outcomeIdempotencyKey?: string;
 
   private async _approve() {
     const reason = this.reason.trim();
     if (!reason || !this.confirmed) return;
     const orderId = this.$$renderContext.cellContext.row.id as TableIdentity;
-    await this.$$modelOrder.approveRefund(orderId).mutateAsync({ reason });
+    const idempotencyKey = this.approveIdempotencyKey ?? crypto.randomUUID();
+    this.approveIdempotencyKey = idempotencyKey;
+    await this.$$modelOrder.approveRefund(orderId).mutateAsync({ reason, idempotencyKey });
+    this.approveIdempotencyKey = undefined;
   }
 
   private async _reject() {
     const reason = this.reason.trim();
     if (!reason || !this.confirmed) return;
     const orderId = this.$$renderContext.cellContext.row.id as TableIdentity;
-    await this.$$modelOrder.rejectRefund(orderId).mutateAsync({ reason });
+    const idempotencyKey = this.rejectIdempotencyKey ?? crypto.randomUUID();
+    this.rejectIdempotencyKey = idempotencyKey;
+    await this.$$modelOrder.rejectRefund(orderId).mutateAsync({ reason, idempotencyKey });
+    this.rejectIdempotencyKey = undefined;
   }
 
   private async _execute() {
     if (!this.confirmed) return;
     const orderId = this.$$renderContext.cellContext.row.id as TableIdentity;
+    const idempotencyKey = this.outcomeIdempotencyKey ?? crypto.randomUUID();
+    this.outcomeIdempotencyKey = idempotencyKey;
     await this.$$modelOrder.refundOutcome(orderId).mutateAsync({
       outcome: 'succeeded',
-      idempotencyKey: crypto.randomUUID(),
+      idempotencyKey,
     });
+    this.outcomeIdempotencyKey = undefined;
   }
 
   protected render() {
@@ -57,7 +69,7 @@ export class ControllerTableCellActionRefund extends BeanControllerBase {
           <input
             class="input input-bordered input-sm join-item w-40"
             name="reason"
-            placeholder="Decision reason"
+            placeholder={this.scope.locale.RefundDecisionReason()}
             v-model={this.reason}
           />
         )}
@@ -68,24 +80,24 @@ export class ControllerTableCellActionRefund extends BeanControllerBase {
             type="checkbox"
             v-model={this.confirmed}
           />
-          <span class="label-text text-xs">Confirm</span>
+          <span class="label-text text-xs">{this.scope.locale.Confirm()}</span>
         </label>
         {requested ? (
           <>
             <button class={props.class} type="button" onClick={() => this._approve()}>
-              Approve refund
+              {this.scope.locale.ApproveRefund()}
             </button>
             <button
               class="btn btn-outline btn-error join-item"
               type="button"
               onClick={() => this._reject()}
             >
-              Reject refund
+              {this.scope.locale.RejectRefund()}
             </button>
           </>
         ) : (
           <button class={props.class} type="button" onClick={() => this._execute()}>
-            Execute refund
+            {this.scope.locale.ExecuteRefund()}
           </button>
         )}
       </div>
