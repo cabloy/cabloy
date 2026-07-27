@@ -1,9 +1,7 @@
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { after, before, describe, it } from 'node:test';
-import { app } from 'vona-mock';
-
-import { acquireTestLock } from '../../commerce-trade/test/testLock.ts';
+import { acquireTestLock, app } from 'vona-mock';
 
 async function createCatalog(
   prefix: string,
@@ -30,7 +28,7 @@ describe('catalog.test.ts', { concurrency: false }, () => {
   let releaseTestLock: (() => void) | undefined;
 
   before(async () => {
-    releaseTestLock = await acquireTestLock();
+    releaseTestLock = await acquireTestLock('a-commerce');
   });
 
   after(() => {

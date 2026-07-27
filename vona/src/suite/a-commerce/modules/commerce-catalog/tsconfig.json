@@ -3,11 +3,5 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "include": [
-    "src",
-    "src/.metadata/*.ts",
-    "src/**/*.json",
-    "test",
-    "../commerce-trade/test/testLock.ts"
-  ]
+  "include": ["src", "src/.metadata/*.ts", "src/**/*.json", "test"]
 }

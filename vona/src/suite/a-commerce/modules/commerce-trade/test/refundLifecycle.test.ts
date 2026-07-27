@@ -1,9 +1,7 @@
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { after, before, describe, it } from 'node:test';
-import { app } from 'vona-mock';
-
-import { acquireTestLock } from './testLock.ts';
+import { acquireTestLock, app } from 'vona-mock';
 
 interface IFixture {
   categoryId?: number;
@@ -165,7 +163,7 @@ describe('refundLifecycle.test.ts', { concurrency: false, sequential: true }, ()
   let releaseTestLock: (() => void) | undefined;
 
   before(async () => {
-    releaseTestLock = await acquireTestLock();
+    releaseTestLock = await acquireTestLock('a-commerce');
   });
 
   after(() => {
