@@ -21,7 +21,7 @@ async function _closeInner() {
 }
 
 export function handleProcessWork() {
-  ['SIGINT', 'SIGUSR2'].forEach(signal => {
+  ['SIGINT', 'SIGTERM', 'SIGUSR2'].forEach(signal => {
     process.on(signal, async () => {
       if (__closing) return;
       __closing = true;

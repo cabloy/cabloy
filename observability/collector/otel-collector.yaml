@@ -1,0 +1,34 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 256
+  batch:
+    timeout: 5s
+  transform/metrics_allowlist:
+    error_mode: ignore
+    metric_statements:
+      - context: datapoint
+        statements:
+          - delete_key(attributes, "http.target") where attributes["http.target"] != nil
+          - delete_key(attributes, "url.full") where attributes["url.full"] != nil
+          - delete_key(attributes, "user.id") where attributes["user.id"] != nil
+          - delete_key(attributes, "enduser.id") where attributes["enduser.id"] != nil
+
+exporters:
+  prometheus:
+    endpoint: 0.0.0.0:9464
+    resource_to_telemetry_conversion:
+      enabled: true
+
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, transform/metrics_allowlist, batch]
+      exporters: [prometheus]

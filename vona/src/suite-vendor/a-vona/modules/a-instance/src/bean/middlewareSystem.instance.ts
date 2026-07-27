@@ -12,6 +12,8 @@ export interface IMiddlewareSystemOptionsInstance extends IDecoratorMiddlewareSy
 @MiddlewareSystem<IMiddlewareSystemOptionsInstance>({ dependencies: 'a-instance:app' })
 export class MiddlewareSystemInstance extends BeanBase implements IMiddlewareSystemExecute {
   async execute(_options: IMiddlewareSystemOptionsInstance, next: Next) {
+    // health probes must not select or initialize a tenant instance
+    if (this.ctx.path.startsWith('/health/')) return next();
     // init instance
     await this.scope.service.instance.initInstance();
     // next

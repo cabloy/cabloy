@@ -1,0 +1,62 @@
+{
+  "name": "vona-module-a-metrics",
+  "version": "5.0.0",
+  "description": "",
+  "keywords": [
+    "Vona Module"
+  ],
+  "author": "",
+  "files": [
+    "assets",
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": [
+        "./src/index.ts",
+        "./dist/index.d.ts"
+      ],
+      "import": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "clean": "rimraf dist tsconfig.build.tsbuildinfo",
+    "tsc:publish": "npm run clean && node ../../../../../packages-cli/cli/src/bin/vona.ts :bin:buildModule --sourcemap && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run tsc:publish",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/exporter-metrics-otlp-proto": "^0.221.0",
+    "@opentelemetry/resources": "^2.10.0",
+    "@opentelemetry/sdk-metrics": "^2.10.0"
+  },
+  "devDependencies": {
+    "clean-package": "^2.2.0",
+    "rimraf": "^6.1.3"
+  },
+  "clean-package": {
+    "indent": 2,
+    "remove": [
+      "clean-package",
+      "devDependencies",
+      "exports.\\..import"
+    ]
+  },
+  "title": "a-metrics",
+  "vonaModule": {
+    "dependencies": {
+      "a-aspect": "5.0.0",
+      "a-election": "5.0.0",
+      "a-orm": "5.0.0",
+      "a-queue": "5.0.0",
+      "a-redis": "5.0.0",
+      "a-worker": "5.0.0"
+    }
+  }
+}

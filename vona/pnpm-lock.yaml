@@ -540,8 +540,8 @@ importers:
         specifier: npm:@cabloy/zod@4.3.8
         version: '@cabloy/zod@4.3.8'
       zova:
-        specifier: ^5.1.140
-        version: 5.1.140(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
+        specifier: ^5.1.141
+        version: 5.1.141(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
       zova-jsx:
         specifier: ^1.1.79
         version: 1.1.79(typescript@5.9.3)
@@ -579,8 +579,8 @@ importers:
         specifier: ^5.1.33
         version: 5.1.33
       zova-module-a-ssr:
-        specifier: ^5.1.31
-        version: 5.1.31
+        specifier: ^5.1.32
+        version: 5.1.32
       zova-module-a-style:
         specifier: ^5.1.32
         version: 5.1.32
@@ -1039,7 +1039,7 @@ importers:
     dependencies:
       '@babel/core':
         specifier: ^7.29.0
-        version: 7.29.7
+        version: 7.29.7(supports-color@5.5.0)
       '@babel/traverse':
         specifier: ^7.29.0
         version: 7.29.7
@@ -1808,7 +1808,7 @@ importers:
   src/suite-vendor/a-test:
     dependencies:
       vona-module-test-file:
-        specifier: ^5.0.7
+        specifier: ^5.0.8
         version: link:modules/test-file
 
   src/suite-vendor/a-test/modules/test-auth:
@@ -1961,6 +1961,9 @@ importers:
       vona-module-a-meta:
         specifier: workspace:^
         version: link:modules/a-meta
+      vona-module-a-metrics:
+        specifier: workspace:^
+        version: link:modules/a-metrics
       vona-module-a-onion:
         specifier: workspace:^
         version: link:modules/a-onion
@@ -2031,7 +2034,7 @@ importers:
         specifier: workspace:^
         version: link:modules/a-swagger
       vona-module-a-telemetry:
-        specifier: ^5.0.0
+        specifier: ^5.0.1
         version: link:modules/a-telemetry
       vona-module-a-upload:
         specifier: workspace:^
@@ -2461,6 +2464,28 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
 
+  src/suite-vendor/a-vona/modules/a-metrics:
+    dependencies:
+      '@opentelemetry/api':
+        specifier: ^1.9.1
+        version: 1.9.1
+      '@opentelemetry/exporter-metrics-otlp-proto':
+        specifier: ^0.221.0
+        version: 0.221.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/resources':
+        specifier: ^2.10.0
+        version: 2.10.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/sdk-metrics':
+        specifier: ^2.10.0
+        version: 2.10.0(@opentelemetry/api@1.9.1)
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
   src/suite-vendor/a-vona/modules/a-onion:
     devDependencies:
       clean-package:
@@ -2601,7 +2626,7 @@ importers:
     dependencies:
       bullmq:
         specifier: ^5.74.1
-        version: 5.79.1
+        version: 5.79.1(supports-color@5.5.0)
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -2623,7 +2648,7 @@ importers:
     dependencies:
       ioredis:
         specifier: ^5.10.1
-        version: 5.11.1
+        version: 5.11.1(supports-color@5.5.0)
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -3069,6 +3094,9 @@ importers:
 
   src/suite/cabloy-basic:
     dependencies:
+      vona-module-basic-metrics:
+        specifier: workspace:^
+        version: link:modules/basic-metrics
       vona-module-basic-siteadmin:
         specifier: workspace:^
         version: link:modules/basic-siteadmin
@@ -3078,6 +3106,15 @@ importers:
       vona-suite-a-cabloy:
         specifier: ^5.1.25
         version: link:../../suite-vendor/a-cabloy
+
+  src/suite/cabloy-basic/modules/basic-metrics:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
 
   src/suite/cabloy-basic/modules/basic-siteadmin:
     devDependencies:
@@ -3860,6 +3897,18 @@ packages:
     engines: {node: ^18.19.0 || >=20.6.0}
     peerDependencies:
       '@opentelemetry/api': '>=1.0.0 <1.10.0'
+
+  '@opentelemetry/exporter-metrics-otlp-http@0.221.0':
+    resolution: {integrity: sha512-sRfCKbOzgy8xZQV2as0RzIZlnCmCseCKZGLfRcrpo2CBngJDr+rPtX0zkG0+oUCV5kfQPUoW3W3C96Ag3Y/Clg==}
+    engines: {node: ^18.19.0 || >=20.6.0}
+    peerDependencies:
+      '@opentelemetry/api': ^1.3.0
+
+  '@opentelemetry/exporter-metrics-otlp-proto@0.221.0':
+    resolution: {integrity: sha512-YMF4LveY2I3yhw61rn6nmC9FE8U24IZHPeKU1Duc5+sbwjMd8FwZAwba318ImdThCg/HuVQvhm2y6bfgNPnfYg==}
+    engines: {node: ^18.19.0 || >=20.6.0}
+    peerDependencies:
+      '@opentelemetry/api': ^1.3.0
 
   '@opentelemetry/exporter-trace-otlp-proto@0.221.0':
     resolution: {integrity: sha512-Z9i2T7vgZbWe9rSLYxXVIbeW+XyzUq4rZanW3ZyVNwVDqCsh0EJKUgBWWQ0CZfeuUA+RQPzKgJQHMuWAUnKqXw==}
@@ -8435,6 +8484,9 @@ packages:
   zova-module-a-ssr@5.1.31:
     resolution: {integrity: sha512-gXCPOr2QPASNeIrM2mP4n63p/xDGvAZeOdL+DFzbcW4O79KW9lUX1FEZL7XYtLhIQQeL/9JHNL0UYq7nK2ukmw==}
 
+  zova-module-a-ssr@5.1.32:
+    resolution: {integrity: sha512-TYtjG0+1ueFW+c3mVAidvZ0yK3cMDThKkJf3Crv9npzU50im//o49nAGeZ6XpeFZs9Lyi1AU217x/UqIWimfMA==}
+
   zova-module-a-ssrhmr@5.1.22:
     resolution: {integrity: sha512-K9D0DqCPuABvESyuAY8tQ7RukMpMEaMol0SV08ixVyed7Zd/b+Ugh49WEC2b5Y5iZCJliW9JJekvzS9Y0DilTA==}
 
@@ -8459,8 +8511,14 @@ packages:
   zova-suite-a-zova@5.1.139:
     resolution: {integrity: sha512-LZzCJOXj6njLL91cBgyzThRo+1aOvkBag1XIq4QR6R28t2mrFEdhnvPXBIqcvPpalyZJYwwD+8H/eyE2V/biNg==}
 
+  zova-suite-a-zova@5.1.140:
+    resolution: {integrity: sha512-X3CSsgXtOWzj4PSR9KzVBgQrRgGU6KC48XXBWWuCLOfbF2FeUHz6dl5+EiDwbk9r0Mz8yCnrZR3iBTy6o41OGg==}
+
   zova@5.1.140:
     resolution: {integrity: sha512-T8x4YEvkX32lGeeP5rgw7/Y4au10gxqaIHl2nvZlD5Cn9EoLvHfEENpPov8a4cWeQtActoxSTNb3D3WYHE/zpg==}
+
+  zova@5.1.141:
+    resolution: {integrity: sha512-K549iOY3YFQ5al/nAWNAHzf2Zzn8yiU+g/590paulR3g80aY/wPViA8IhpNT7mhEqP5NiGHEiWacK2MLKrvg0A==}
 
   zwitch@1.0.5:
     resolution: {integrity: sha512-V50KMwwzqJV0NpZIZFwfOD5/lyny3WlSzRiXgA0G7VUnRlqttta1L6UQIHzd6EuBY/cHGfwTIck7w1yH6Q5zUw==}
@@ -8486,7 +8544,7 @@ snapshots:
       '@apimatic/http-query': 0.3.9
       '@apimatic/json-bigint': 1.2.0
       '@apimatic/proxy': 0.1.4(supports-color@5.5.0)
-      axios: 1.18.1
+      axios: 1.18.1(supports-color@5.5.0)
       detect-browser: 5.3.0
       detect-node: 2.1.0
       form-data: 4.0.6
@@ -8766,6 +8824,26 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/core@7.29.7(supports-color@5.5.0)':
+    dependencies:
+      '@babel/code-frame': 7.29.7
+      '@babel/generator': 7.29.7
+      '@babel/helper-compilation-targets': 7.29.7
+      '@babel/helper-module-transforms': 7.29.7(@babel/core@7.29.7(supports-color@5.5.0))
+      '@babel/helpers': 7.29.7
+      '@babel/parser': 7.29.7
+      '@babel/template': 7.29.7
+      '@babel/traverse': 7.29.7
+      '@babel/types': 7.29.7
+      '@jridgewell/remapping': 2.3.5
+      convert-source-map: 2.0.0
+      debug: 4.4.3(supports-color@5.5.0)
+      gensync: 1.0.0-beta.2
+      json5: 2.2.3
+      semver: 6.3.1
+    transitivePeerDependencies:
+      - supports-color
+
   '@babel/generator@7.29.7':
     dependencies:
       '@babel/parser': 7.29.7
@@ -8812,6 +8890,15 @@ snapshots:
     dependencies:
       '@babel/traverse': 7.29.7
       '@babel/types': 7.29.7
+    transitivePeerDependencies:
+      - supports-color
+
+  '@babel/helper-module-transforms@7.29.7(@babel/core@7.29.7(supports-color@5.5.0))':
+    dependencies:
+      '@babel/core': 7.29.7(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.29.7
+      '@babel/helper-validator-identifier': 7.29.7
+      '@babel/traverse': 7.29.7
     transitivePeerDependencies:
       - supports-color
 
@@ -9428,6 +9515,22 @@ snapshots:
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/semantic-conventions': 1.43.0
 
+  '@opentelemetry/exporter-metrics-otlp-http@0.221.0(@opentelemetry/api@1.9.1)':
+    dependencies:
+      '@opentelemetry/api': 1.9.1
+      '@opentelemetry/core': 2.10.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/otlp-exporter-base': 0.221.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/otlp-transformer': 0.221.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/resources': 2.10.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/sdk-metrics': 2.10.0(@opentelemetry/api@1.9.1)
+
+  '@opentelemetry/exporter-metrics-otlp-proto@0.221.0(@opentelemetry/api@1.9.1)':
+    dependencies:
+      '@opentelemetry/api': 1.9.1
+      '@opentelemetry/exporter-metrics-otlp-http': 0.221.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/otlp-exporter-base': 0.221.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/otlp-transformer': 0.221.0(@opentelemetry/api@1.9.1)
+
   '@opentelemetry/exporter-trace-otlp-proto@0.221.0(@opentelemetry/api@1.9.1)':
     dependencies:
       '@opentelemetry/api': 1.9.1
@@ -9765,7 +9868,7 @@ snapshots:
 
   '@sesamecare-oss/redlock@1.4.0(ioredis@5.11.1)':
     dependencies:
-      ioredis: 5.11.1
+      ioredis: 5.11.1(supports-color@5.5.0)
 
   '@sindresorhus/merge-streams@2.3.0': {}
 
@@ -10451,7 +10554,7 @@ snapshots:
 
   acorn@8.17.0: {}
 
-  agent-base@6.0.2:
+  agent-base@6.0.2(supports-color@5.5.0):
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
     transitivePeerDependencies:
@@ -10531,11 +10634,11 @@ snapshots:
 
   aws-ssl-profiles@1.1.2: {}
 
-  axios@1.18.1:
+  axios@1.18.1(supports-color@5.5.0):
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.6
-      https-proxy-agent: 5.0.1
+      https-proxy-agent: 5.0.1(supports-color@5.5.0)
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
@@ -10675,6 +10778,17 @@ snapshots:
     dependencies:
       cron-parser: 4.9.0
       ioredis: 5.10.1
+      msgpackr: 2.0.2
+      node-abort-controller: 3.1.1
+      semver: 7.8.1
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
+
+  bullmq@5.79.1(supports-color@5.5.0):
+    dependencies:
+      cron-parser: 4.9.0
+      ioredis: 5.10.1(supports-color@5.5.0)
       msgpackr: 2.0.2
       node-abort-controller: 3.1.1
       semver: 7.8.1
@@ -11744,9 +11858,9 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  https-proxy-agent@5.0.1:
+  https-proxy-agent@5.0.1(supports-color@5.5.0):
     dependencies:
-      agent-base: 6.0.2
+      agent-base: 6.0.2(supports-color@5.5.0)
       debug: 4.4.3(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
@@ -11831,7 +11945,33 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  ioredis@5.10.1(supports-color@5.5.0):
+    dependencies:
+      '@ioredis/commands': 1.5.1
+      cluster-key-slot: 1.1.2
+      debug: 4.4.3(supports-color@5.5.0)
+      denque: 2.1.0
+      lodash.defaults: 4.2.0
+      lodash.isarguments: 3.1.0
+      redis-errors: 1.2.0
+      redis-parser: 3.0.0
+      standard-as-callback: 2.1.0
+    transitivePeerDependencies:
+      - supports-color
+
   ioredis@5.11.1:
+    dependencies:
+      '@ioredis/commands': 1.10.0
+      cluster-key-slot: 1.1.1
+      debug: 4.4.3(supports-color@5.5.0)
+      denque: 2.1.0
+      redis-errors: 1.2.0
+      redis-parser: 3.0.0
+      standard-as-callback: 2.1.0
+    transitivePeerDependencies:
+      - supports-color
+
+  ioredis@5.11.1(supports-color@5.5.0):
     dependencies:
       '@ioredis/commands': 1.10.0
       cluster-key-slot: 1.1.1
@@ -14390,7 +14530,7 @@ snapshots:
 
   zova-module-a-fetch@5.1.24:
     dependencies:
-      axios: 1.18.1
+      axios: 1.18.1(supports-color@5.5.0)
     transitivePeerDependencies:
       - debug
       - supports-color
@@ -14438,6 +14578,11 @@ snapshots:
   zova-module-a-routertabs@5.1.33: {}
 
   zova-module-a-ssr@5.1.31:
+    dependencies:
+      devalue: 5.8.1
+      ms: 2.1.3
+
+  zova-module-a-ssr@5.1.32:
     dependencies:
       devalue: 5.8.1
       ms: 2.1.3
@@ -14522,10 +14667,55 @@ snapshots:
       - typescript
       - vue
 
+  zova-suite-a-zova@5.1.140(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3)):
+    dependencies:
+      zova-module-a-api: 5.1.21
+      zova-module-a-app: 5.1.25
+      zova-module-a-bean: 5.1.32
+      zova-module-a-behavior: 5.1.25
+      zova-module-a-behaviors: 5.1.21
+      zova-module-a-boundary: 5.1.21
+      zova-module-a-command: 5.1.33
+      zova-module-a-fetch: 5.1.24
+      zova-module-a-form: 5.1.45(vue@3.5.39(typescript@5.9.3))
+      zova-module-a-icon: 5.1.26
+      zova-module-a-interceptor: 5.1.29
+      zova-module-a-logger: 5.1.26
+      zova-module-a-meta: 5.1.21
+      zova-module-a-model: 5.1.33(vue@3.5.39(typescript@5.9.3))
+      zova-module-a-openapi: 5.1.46
+      zova-module-a-router: 5.1.31
+      zova-module-a-routerstack: 5.1.26
+      zova-module-a-routertabs: 5.1.33
+      zova-module-a-ssr: 5.1.32
+      zova-module-a-ssrhmr: 5.1.22
+      zova-module-a-ssrserver: 5.1.23
+      zova-module-a-style: 5.1.32
+      zova-module-a-table: 5.1.37(vue@3.5.39(typescript@5.9.3))
+      zova-module-a-zod: 5.1.36
+      zova-module-a-zova: 5.1.94(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - debug
+      - supports-color
+      - typescript
+      - vue
+
   zova@5.1.140(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3)):
     dependencies:
       zova-core: 5.1.79(patch_hash=ff659aa5f659be32501f56841b72f148c24acf1546f79cce551586e27fcde2ce)(typescript@5.9.3)
       zova-suite-a-zova: 5.1.139(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - debug
+      - supports-color
+      - typescript
+      - vue
+
+  zova@5.1.141(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3)):
+    dependencies:
+      zova-core: 5.1.79(patch_hash=ff659aa5f659be32501f56841b72f148c24acf1546f79cce551586e27fcde2ce)(typescript@5.9.3)
+      zova-suite-a-zova: 5.1.140(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - debug

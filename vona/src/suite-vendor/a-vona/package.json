@@ -31,6 +31,7 @@
     "vona-module-a-mailconfirm": "workspace:^",
     "vona-module-a-menu": "workspace:^",
     "vona-module-a-meta": "workspace:^",
+    "vona-module-a-metrics": "workspace:^",
     "vona-module-a-onion": "workspace:^",
     "vona-module-a-openapi": "workspace:^",
     "vona-module-a-openapischema": "workspace:^",
