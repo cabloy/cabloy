@@ -7,4 +7,11 @@ export default {
   RemoveCartItem: '移除',
   Confirm: '确认',
   ShipOrder: '发货',
+  RequestRefund: '申请退款',
+  RefundRequestHelp: '退款仅适用于整单且尚未发货的订单。',
+  RefundReason: '退款原因',
+  RefundDecisionReason: '审批原因',
+  ApproveRefund: '批准退款',
+  RejectRefund: '拒绝退款',
+  ExecuteRefund: '执行退款',
 };

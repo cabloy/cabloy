@@ -1,10 +1,9 @@
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { after, before, describe, it } from 'node:test';
-import { app } from 'vona-mock';
+import { acquireTestLock, app } from 'vona-mock';
 
 import { BeanScheduleOrderExpiry } from '../src/bean/bean.scheduleOrderExpiry.ts';
-import { acquireTestLock } from './testLock.ts';
 
 interface IFixture {
   categoryId?: number;
@@ -149,7 +148,7 @@ describe('reservationExpiry.test.ts', { concurrency: false, sequential: true }, 
   let releaseTestLock: (() => void) | undefined;
 
   before(async () => {
-    releaseTestLock = await acquireTestLock();
+    releaseTestLock = await acquireTestLock('a-commerce');
   });
 
   after(() => {

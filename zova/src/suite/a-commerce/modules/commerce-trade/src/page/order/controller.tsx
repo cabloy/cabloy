@@ -25,6 +25,23 @@ export class ControllerPageOrder extends BeanControllerPageBase {
     return this.$$modelOrderMine.viewMine(this.orderId);
   }
 
+  get mutationRequestRefund() {
+    return this.$$modelOrderMine.requestRefund(this.orderId);
+  }
+
+  refundReason = '';
+  refundRequestIdempotencyKey?: string;
+
+  private async _requestRefund() {
+    const reason = this.refundReason.trim();
+    if (!reason) return;
+    const idempotencyKey = this.refundRequestIdempotencyKey ?? crypto.randomUUID();
+    this.refundRequestIdempotencyKey = idempotencyKey;
+    await this.mutationRequestRefund.mutateAsync({ reason, idempotencyKey });
+    this.refundReason = '';
+    this.refundRequestIdempotencyKey = undefined;
+  }
+
   protected render() {
     if (!this.$ssr.isRuntimeSsrHydrated) {
       return (
@@ -45,6 +62,30 @@ export class ControllerPageOrder extends BeanControllerPageBase {
               <p class="mt-2 text-base-content/70">
                 {order.state} · ${(order.payableTotalCents / 100).toFixed(2)}
               </p>
+              {order.state === 'paid' && !order.shipment && (
+                <article class="card mt-6 border border-base-300 bg-base-100 shadow-sm">
+                  <div class="card-body">
+                    <h2 class="card-title">{this.scope.locale.RequestRefund()}</h2>
+                    <p class="text-sm text-base-content/70">
+                      {this.scope.locale.RefundRequestHelp()}
+                    </p>
+                    <textarea
+                      class="textarea textarea-bordered"
+                      name="refundReason"
+                      placeholder={this.scope.locale.RefundReason()}
+                      v-model={this.refundReason}
+                    />
+                    <button
+                      class="btn btn-outline btn-warning self-start"
+                      type="button"
+                      disabled={!this.refundReason.trim() || this.mutationRequestRefund.isPending}
+                      onClick={() => this._requestRefund()}
+                    >
+                      {this.scope.locale.RequestRefund()}
+                    </button>
+                  </div>
+                </article>
+              )}
               <div class="mt-6 grid gap-6 md:grid-cols-2">
                 <article class="card border border-base-300 bg-base-100 shadow-sm">
                   <div class="card-body">

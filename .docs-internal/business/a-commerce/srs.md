@@ -159,7 +159,7 @@ State names in this section are canonical. A later implementation may use intege
 
 - **SRS-RFD-01**: A refund request records the requesting customer, order, reason, requested time, decision actor, decision reason, and execution attempt. It is created only from the order's current `paid` state.
 - **SRS-RFD-02**: Approval must recheck tenant ownership and that no shipment exists. A refund attempt may run only from `refund_approved`; a rejection returns the order to `paid` without changing stock or coupon redemption.
-- **SRS-RFD-03**: Successful refund execution restores each consumed reservation exactly once, transitions the order to `refunded`, and leaves the coupon in `redeemed` state.
+- **SRS-RFD-03**: Successful refund execution restores each consumed reservation exactly once, transitions the order to `refunded`, and leaves the coupon in `redeemed` state. A failed mock attempt is retained in the refund audit trail and returns the order to `paid`, where the customer may create a new refund request.
 
 - **SRS-PAY-01**: A payment or refund event has a durable idempotency key scoped to its attempt and tenant.
 - **SRS-PAY-02**: Replaying a successful event returns the existing final result and must not reapply any stock, coupon, order, or audit mutation.

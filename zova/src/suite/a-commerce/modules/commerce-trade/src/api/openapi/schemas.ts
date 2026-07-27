@@ -150,6 +150,22 @@ export type ApiSchemaCommerceTradeDtoOrderLineSkuAttributeSnapshot =
   components['schemas']['commerce-trade.dto.orderLineSkuAttributeSnapshot'];
 export type ApiSchemaCommerceTradeDtoOrderLineSkuAttributeSnapshotPartial =
   Partial<ApiSchemaCommerceTradeDtoOrderLineSkuAttributeSnapshot>;
+export type ApiSchemaCommerceTradeDtoRefundResult =
+  components['schemas']['commerce-trade.dto.refundResult'];
+export type ApiSchemaCommerceTradeDtoRefundResultPartial =
+  Partial<ApiSchemaCommerceTradeDtoRefundResult>;
+export type ApiSchemaCommerceTradeDtoRefundRequestCreate =
+  components['schemas']['commerce-trade.dto.refundRequestCreate'];
+export type ApiSchemaCommerceTradeDtoRefundRequestCreatePartial =
+  Partial<ApiSchemaCommerceTradeDtoRefundRequestCreate>;
+export type ApiSchemaCommerceTradeDtoRefundReview =
+  components['schemas']['commerce-trade.dto.refundReview'];
+export type ApiSchemaCommerceTradeDtoRefundReviewPartial =
+  Partial<ApiSchemaCommerceTradeDtoRefundReview>;
+export type ApiSchemaCommerceTradeDtoRefundOutcomeCreate =
+  components['schemas']['commerce-trade.dto.refundOutcomeCreate'];
+export type ApiSchemaCommerceTradeDtoRefundOutcomeCreatePartial =
+  Partial<ApiSchemaCommerceTradeDtoRefundOutcomeCreate>;
 export type ApiSchemaCommerceTradeDtoShipmentView =
   components['schemas']['commerce-trade.dto.shipmentView'];
 export type ApiSchemaCommerceTradeDtoShipmentViewPartial =

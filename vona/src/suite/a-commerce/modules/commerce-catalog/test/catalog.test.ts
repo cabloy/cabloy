@@ -1,7 +1,7 @@
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
-import { describe, it } from 'node:test';
-import { app } from 'vona-mock';
+import { after, before, describe, it } from 'node:test';
+import { acquireTestLock, app } from 'vona-mock';
 
 async function createCatalog(
   prefix: string,
@@ -24,7 +24,17 @@ async function createCatalog(
   }
 }
 
-describe('catalog.test.ts', () => {
+describe('catalog.test.ts', { concurrency: false }, () => {
+  let releaseTestLock: (() => void) | undefined;
+
+  before(async () => {
+    releaseTestLock = await acquireTestLock('a-commerce');
+  });
+
+  after(() => {
+    releaseTestLock?.();
+  });
+
   it('enforces operator access and category/product relations', async () => {
     await app.bean.executor.mockCtx(async () => {
       await app.bean.passport.signinMock();

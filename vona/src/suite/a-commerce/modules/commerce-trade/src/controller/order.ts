@@ -16,6 +16,10 @@ import { DtoOrderSelectReq } from '../dto/orderSelectReq.tsx';
 import { DtoOrderSelectRes } from '../dto/orderSelectRes.tsx';
 import { DtoOrderShip } from '../dto/orderShip.tsx';
 import { DtoOrderView } from '../dto/orderView.tsx';
+import { DtoRefundOutcomeCreate } from '../dto/refundOutcomeCreate.tsx';
+import { DtoRefundRequestCreate } from '../dto/refundRequestCreate.tsx';
+import { DtoRefundResult } from '../dto/refundResult.tsx';
+import { DtoRefundReview } from '../dto/refundReview.tsx';
 import { DtoShipmentView } from '../dto/shipmentView.tsx';
 
 export interface IControllerOptionsOrder extends IDecoratorControllerOptions {}
@@ -37,6 +41,45 @@ export class ControllerOrder extends BeanBase {
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoOrderDetail | undefined> {
     return await this.scope.service.order.viewMine(id);
+  }
+
+  @Web.post(':id/requestRefund')
+  @Api.body(DtoRefundResult)
+  async requestRefund(
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+    @Arg.body() command: DtoRefundRequestCreate,
+  ): Promise<DtoRefundResult> {
+    return await this.scope.service.order.requestRefund(id, command);
+  }
+
+  @Web.post(':id/approveRefund')
+  @Api.body(DtoRefundResult)
+  @Passport.systemAdmin()
+  async approveRefund(
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+    @Arg.body() command: DtoRefundReview,
+  ): Promise<DtoRefundResult> {
+    return await this.scope.service.order.approveRefund(id, command);
+  }
+
+  @Web.post(':id/rejectRefund')
+  @Api.body(DtoRefundResult)
+  @Passport.systemAdmin()
+  async rejectRefund(
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+    @Arg.body() command: DtoRefundReview,
+  ): Promise<DtoRefundResult> {
+    return await this.scope.service.order.rejectRefund(id, command);
+  }
+
+  @Web.post(':id/refundOutcome')
+  @Api.body(DtoRefundResult)
+  @Passport.systemAdmin()
+  async refundOutcome(
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+    @Arg.body() command: DtoRefundOutcomeCreate,
+  ): Promise<DtoRefundResult> {
+    return await this.scope.service.order.applyRefundOutcome(id, command);
   }
 
   @Web.post(':id/ship')

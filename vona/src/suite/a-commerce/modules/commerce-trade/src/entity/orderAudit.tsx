@@ -7,7 +7,17 @@ import { z } from 'zod';
 
 import type { TypeOrderState } from './order.tsx';
 
-export type TypeOrderAuditOperation = 'created' | 'paid' | 'cancelled' | 'expired' | 'shipped';
+export type TypeOrderAuditOperation =
+  | 'created'
+  | 'paid'
+  | 'cancelled'
+  | 'expired'
+  | 'shipped'
+  | 'refund_requested'
+  | 'refund_approved'
+  | 'refund_rejected'
+  | 'refund_failed'
+  | 'refunded';
 
 export interface IEntityOptionsOrderAudit extends IDecoratorEntityOptions {}
 
@@ -16,20 +26,52 @@ export class EntityOrderAudit extends EntityBase {
   @Api.field(v.tableIdentity())
   orderId: TableIdentity;
 
-  @Api.field(z.enum(['created', 'paid', 'cancelled', 'expired', 'shipped']))
+  @Api.field(
+    z.enum([
+      'created',
+      'paid',
+      'cancelled',
+      'expired',
+      'shipped',
+      'refund_requested',
+      'refund_approved',
+      'refund_rejected',
+      'refund_failed',
+      'refunded',
+    ]),
+  )
   operation: TypeOrderAuditOperation;
 
-  @Api.field(v.optional(), z.enum(['awaiting_payment', 'paid', 'cancelled', 'expired', 'shipped']))
-  fromState?: Extract<
-    TypeOrderState,
-    'awaiting_payment' | 'paid' | 'cancelled' | 'expired' | 'shipped'
-  >;
+  @Api.field(
+    v.optional(),
+    z.enum([
+      'awaiting_payment',
+      'paid',
+      'refund_requested',
+      'refund_approved',
+      'refund_rejected',
+      'shipped',
+      'refunded',
+      'cancelled',
+      'expired',
+    ]),
+  )
+  fromState?: TypeOrderState;
 
-  @Api.field(z.enum(['awaiting_payment', 'paid', 'cancelled', 'expired', 'shipped']))
-  toState: Extract<
-    TypeOrderState,
-    'awaiting_payment' | 'paid' | 'cancelled' | 'expired' | 'shipped'
-  >;
+  @Api.field(
+    z.enum([
+      'awaiting_payment',
+      'paid',
+      'refund_requested',
+      'refund_approved',
+      'refund_rejected',
+      'shipped',
+      'refunded',
+      'cancelled',
+      'expired',
+    ]),
+  )
+  toState: TypeOrderState;
 
   @Api.field(v.optional(), v.tableIdentity())
   actorId?: TableIdentity;

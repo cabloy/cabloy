@@ -7,4 +7,11 @@ export default {
   RemoveCartItem: 'Remove',
   Confirm: 'Confirm',
   ShipOrder: 'Ship order',
+  RequestRefund: 'Request refund',
+  RefundRequestHelp: 'Refunds are for the whole unshipped order only.',
+  RefundReason: 'Reason for refund',
+  RefundDecisionReason: 'Decision reason',
+  ApproveRefund: 'Approve refund',
+  RejectRefund: 'Reject refund',
+  ExecuteRefund: 'Execute refund',
 };

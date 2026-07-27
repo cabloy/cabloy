@@ -543,6 +543,70 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/commerce/trade/order/{id}/requestRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_requestRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/approveRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_approveRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/rejectRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_rejectRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/refundOutcome': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_refundOutcome'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/commerce/trade/order/{id}/ship': {
     parameters: {
       query?: never;
@@ -2488,7 +2552,16 @@ export interface components {
     'commerce-trade.dto.orderSummary': {
       id: number | string;
       /** @enum {string} */
-      state: 'awaiting_payment' | 'paid' | 'shipped' | 'cancelled' | 'expired';
+      state:
+        | 'awaiting_payment'
+        | 'paid'
+        | 'refund_requested'
+        | 'refund_approved'
+        | 'refund_rejected'
+        | 'shipped'
+        | 'refunded'
+        | 'cancelled'
+        | 'expired';
       /** @enum {string} */
       currency: 'USD';
       payableTotalCents: number;
@@ -2499,7 +2572,16 @@ export interface components {
       | {
           id: number | string;
           /** @enum {string} */
-          state: 'awaiting_payment' | 'paid' | 'shipped' | 'cancelled' | 'expired';
+          state:
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired';
           /** @enum {string} */
           currency: 'USD';
           eligibleSubtotalCents: number;
@@ -2556,6 +2638,33 @@ export interface components {
     'commerce-trade.dto.orderLineSkuAttributeSnapshot': {
       name: string;
       value: string;
+    };
+    'commerce-trade.dto.refundResult': {
+      orderId: number | string;
+      refundRequestId: number | string;
+      refundAttemptId?: number | string | undefined;
+      /** @enum {string} */
+      orderState: 'paid' | 'refund_requested' | 'refund_approved' | 'refund_rejected' | 'refunded';
+      /** @enum {string} */
+      refundState: 'requested' | 'approved' | 'rejected' | 'refunded' | 'failed';
+      /** @enum {string|null} */
+      refundAttemptState?: 'created' | 'succeeded' | 'failed' | null | undefined;
+      /** @enum {string} */
+      currency: 'USD';
+      amountCents: number;
+    };
+    'commerce-trade.dto.refundRequestCreate': {
+      reason: string;
+      idempotencyKey: string;
+    };
+    'commerce-trade.dto.refundReview': {
+      reason: string;
+      idempotencyKey: string;
+    };
+    'commerce-trade.dto.refundOutcomeCreate': {
+      /** @enum {string} */
+      outcome: 'succeeded' | 'failed';
+      idempotencyKey: string;
     };
     'commerce-trade.dto.shipmentView': {
       id: number | string;
@@ -5865,6 +5974,126 @@ export interface operations {
             code: string;
             message: string;
             data?: components['schemas']['commerce-trade.dto.orderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_requestRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundRequestCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundResult'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_approveRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundReview'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundResult'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_rejectRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundReview'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundResult'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_refundOutcome: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundOutcomeCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundResult'];
           };
         };
       };

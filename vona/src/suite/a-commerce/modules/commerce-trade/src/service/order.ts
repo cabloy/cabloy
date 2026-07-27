@@ -1,6 +1,11 @@
 import type { TableIdentity } from 'table-identity';
 import type { IQueryParams } from 'vona-module-a-orm';
 import type { EntityPaymentAttempt } from 'vona-module-commerce-payment';
+import type {
+  EntityRefundAttempt,
+  EntityRefundAudit,
+  EntityRefundRequest,
+} from 'vona-module-commerce-payment';
 
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
@@ -19,6 +24,10 @@ import type { DtoOrderSummary } from '../dto/orderSummary.tsx';
 import type { DtoOrderView } from '../dto/orderView.tsx';
 import type { DtoPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
 import type { DtoPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
+import type { DtoRefundOutcomeCreate } from '../dto/refundOutcomeCreate.tsx';
+import type { DtoRefundRequestCreate } from '../dto/refundRequestCreate.tsx';
+import type { DtoRefundResult } from '../dto/refundResult.tsx';
+import type { DtoRefundReview } from '../dto/refundReview.tsx';
 import type { DtoShipmentView } from '../dto/shipmentView.tsx';
 import type { EntityOrder } from '../entity/order.tsx';
 import type { EntityOrderLine } from '../entity/orderLine.tsx';
@@ -29,7 +38,11 @@ const maxOrderCents = 2_147_483_647;
 const customerVisibleOrderStates: EntityOrder['state'][] = [
   'awaiting_payment',
   'paid',
+  'refund_requested',
+  'refund_approved',
+  'refund_rejected',
   'shipped',
+  'refunded',
   'cancelled',
   'expired',
 ];
@@ -87,6 +100,25 @@ type PaymentOutcomeStageCallback = (stage: PaymentOutcomeFailureStage) => void |
 export type ShipmentFailureStage = 'afterShipmentInsert' | 'afterOrderState' | 'afterOrderAudit';
 
 type ShipmentStageCallback = (stage: ShipmentFailureStage) => void | Promise<void>;
+
+export type RefundFailureStage =
+  | 'afterRefundRequestInsert'
+  | 'afterRefundRequestOrderState'
+  | 'afterRefundRequestAudit'
+  | 'afterRefundRequestOrderAudit'
+  | 'afterRefundReviewRequestState'
+  | 'afterRefundAttemptInsert'
+  | 'afterRefundReviewOrderState'
+  | 'afterRefundReviewAudit'
+  | 'afterRefundReviewOrderAudit'
+  | 'afterRefundAttemptState'
+  | 'afterRefundOutcomeRequestState'
+  | 'afterRefundOutcomeOrderState'
+  | 'afterRefundStockRestore'
+  | 'afterRefundOutcomeOrderAudit'
+  | 'afterRefundOutcomeAudit';
+
+type RefundStageCallback = (stage: RefundFailureStage) => void | Promise<void>;
 
 interface IPreparedOrderLine {
   index: number;
@@ -423,6 +455,205 @@ export class ServiceOrder extends BeanBase {
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
   @Core.retryable(serializationRetryOptions)
+  async requestRefund(
+    orderId: TableIdentity,
+    command: DtoRefundRequestCreate,
+  ): Promise<DtoRefundResult> {
+    return await this._requestRefund(orderId, command);
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async requestRefundForTest(
+    orderId: TableIdentity,
+    command: DtoRefundRequestCreate,
+    onStage: RefundStageCallback,
+  ): Promise<DtoRefundResult> {
+    return await this._requestRefund(orderId, command, onStage);
+  }
+
+  private async _requestRefund(
+    orderId: TableIdentity,
+    command: DtoRefundRequestCreate,
+    onStage?: RefundStageCallback,
+  ): Promise<DtoRefundResult> {
+    const reason = command.reason.trim();
+    const idempotencyKey = command.idempotencyKey.trim();
+    if (!reason) this.app.throw(400, 'refund reason is required');
+    if (!idempotencyKey) this.app.throw(400, 'refund idempotencyKey is required');
+    const userId = this.bean.passport.currentUser!.id;
+    const order = await this.scope.model.order.getByIdForUpdate(orderId);
+    if (!order || String(order.userId) !== String(userId)) this.app.throw(404, 'order not found');
+
+    const existingAudit = await this.$scope.commercePayment.model.refundAudit.get({
+      orderId: order.id,
+      idempotencyKey,
+    });
+    if (existingAudit) return await this._requestReplayResult(order, existingAudit, reason);
+
+    const activeRequest = await this.$scope.commercePayment.model.refundRequest.getForUpdate({
+      orderId: order.id,
+      state: ['requested', 'approved'],
+    });
+    if (activeRequest) this.app.throw(409, 'order already has an active refund request');
+    if (order.state !== 'paid') this.app.throw(409, 'order is not available for refund');
+
+    const correlationId = `${order.correlationId}:refund:${idempotencyKey}`;
+    const refundRequest = await this.$scope.commercePayment.model.refundRequest.insert({
+      orderId: order.id,
+      userId,
+      state: 'requested',
+      currency: order.currency,
+      amountCents: order.payableTotalCents,
+      correlationId,
+      reason,
+    });
+    await onStage?.('afterRefundRequestInsert');
+    await this.scope.model.order.updateById(order.id, { state: 'refund_requested' });
+    await onStage?.('afterRefundRequestOrderState');
+    await this._appendRefundAudit({
+      refundRequest,
+      order,
+      toRefundState: 'requested',
+      idempotencyKey,
+      correlationId,
+      reason,
+    });
+    await onStage?.('afterRefundRequestAudit');
+    await this._appendAudit({
+      orderId: order.id,
+      operation: 'refund_requested',
+      fromState: 'paid',
+      toState: 'refund_requested',
+      correlationId,
+      reason,
+    });
+    await onStage?.('afterRefundRequestOrderAudit');
+    return this._refundResult({ ...order, state: 'refund_requested' }, refundRequest);
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async approveRefund(orderId: TableIdentity, command: DtoRefundReview): Promise<DtoRefundResult> {
+    return await this._reviewRefund(orderId, command, 'approved');
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async rejectRefund(orderId: TableIdentity, command: DtoRefundReview): Promise<DtoRefundResult> {
+    return await this._reviewRefund(orderId, command, 'rejected');
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async reviewRefundForTest(
+    orderId: TableIdentity,
+    command: DtoRefundReview,
+    decision: 'approved' | 'rejected',
+    onStage: RefundStageCallback,
+  ): Promise<DtoRefundResult> {
+    return await this._reviewRefund(orderId, command, decision, onStage);
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async applyRefundOutcome(
+    orderId: TableIdentity,
+    command: DtoRefundOutcomeCreate,
+  ): Promise<DtoRefundResult> {
+    return await this._applyRefundOutcome(orderId, command);
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async applyRefundOutcomeForTest(
+    orderId: TableIdentity,
+    command: DtoRefundOutcomeCreate,
+    onStage: RefundStageCallback,
+  ): Promise<DtoRefundResult> {
+    return await this._applyRefundOutcome(orderId, command, onStage);
+  }
+
+  private async _applyRefundOutcome(
+    orderId: TableIdentity,
+    command: DtoRefundOutcomeCreate,
+    onStage?: RefundStageCallback,
+  ): Promise<DtoRefundResult> {
+    const idempotencyKey = command.idempotencyKey.trim();
+    if (!idempotencyKey) this.app.throw(400, 'refund idempotencyKey is required');
+    const order = await this.scope.model.order.getByIdForUpdate(orderId);
+    if (!order) this.app.throw(404, 'order not found');
+    const existingAudit = await this.$scope.commercePayment.model.refundAudit.get({
+      orderId: order.id,
+      idempotencyKey,
+    });
+    if (existingAudit)
+      return await this._outcomeReplayResult(order, existingAudit, command.outcome);
+
+    const refundRequest = await this.$scope.commercePayment.model.refundRequest.getForUpdate({
+      orderId: order.id,
+      state: 'approved',
+    });
+    if (!refundRequest) this.app.throw(404, 'approved refund request not found');
+    const refundAttempt = await this.$scope.commercePayment.model.refundAttempt.getForUpdate({
+      refundRequestId: refundRequest.id,
+    });
+    if (!refundAttempt) this.app.throw(404, 'refund attempt not found');
+    if (order.state !== 'refund_approved' || refundAttempt.state !== 'created') {
+      this.app.throw(409, 'refund is not available for execution');
+    }
+
+    const correlationId = `${order.correlationId}:refund:${idempotencyKey}`;
+    const now = new Date();
+    const isSucceeded = command.outcome === 'succeeded';
+    const refundState = isSucceeded ? 'refunded' : 'failed';
+    const orderState = isSucceeded ? 'refunded' : 'paid';
+    const reason = isSucceeded ? 'mock refund succeeded' : 'mock refund failed';
+    await this.$scope.commercePayment.model.refundAttempt.updateById(refundAttempt.id, {
+      state: command.outcome,
+      finalizedAt: now,
+    });
+    await onStage?.('afterRefundAttemptState');
+    await this.$scope.commercePayment.model.refundRequest.updateById(refundRequest.id, {
+      state: refundState,
+      finalizedAt: now,
+    });
+    await onStage?.('afterRefundOutcomeRequestState');
+    await this.scope.model.order.updateById(order.id, { state: orderState });
+    await onStage?.('afterRefundOutcomeOrderState');
+    if (isSucceeded) {
+      await this._restoreConsumedOrderStock(order, reason);
+      await onStage?.('afterRefundStockRestore');
+    }
+    await this._appendAudit({
+      orderId: order.id,
+      operation: isSucceeded ? 'refunded' : 'refund_failed',
+      fromState: 'refund_approved',
+      toState: orderState,
+      correlationId,
+      reason,
+    });
+    await onStage?.('afterRefundOutcomeOrderAudit');
+    await this._appendRefundAudit({
+      refundRequest,
+      refundAttempt,
+      order,
+      toRefundState: refundState,
+      attemptState: command.outcome,
+      idempotencyKey,
+      correlationId,
+      reason,
+    });
+    await onStage?.('afterRefundOutcomeAudit');
+    return this._refundResult(
+      { ...order, state: orderState },
+      { ...refundRequest, state: refundState },
+      { ...refundAttempt, state: command.outcome },
+    );
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async ship(orderId: TableIdentity, command: DtoOrderShip): Promise<DtoShipmentView> {
     return await this._ship(orderId, command);
   }
@@ -534,13 +765,7 @@ export class ServiceOrder extends BeanBase {
     const snapshot = await this._viewMineSnapshot(id);
     if (!snapshot) return undefined;
     const { order, lines } = snapshot;
-    if (
-      order.state !== 'awaiting_payment' &&
-      order.state !== 'paid' &&
-      order.state !== 'shipped' &&
-      order.state !== 'cancelled' &&
-      order.state !== 'expired'
-    ) {
+    if (!customerVisibleOrderStates.includes(order.state)) {
       this.app.throw(409, 'order state is not available to customers');
     }
     const shipment = await this.scope.model.shipment.get({ orderId: order.id });
@@ -582,6 +807,220 @@ export class ServiceOrder extends BeanBase {
     });
     if (!order) return undefined;
     return await this._viewSnapshot(order);
+  }
+
+  private async _reviewRefund(
+    orderId: TableIdentity,
+    command: DtoRefundReview,
+    decision: 'approved' | 'rejected',
+    onStage?: RefundStageCallback,
+  ): Promise<DtoRefundResult> {
+    const reason = command.reason.trim();
+    const idempotencyKey = command.idempotencyKey.trim();
+    if (!reason) this.app.throw(400, 'refund review reason is required');
+    if (!idempotencyKey) this.app.throw(400, 'refund idempotencyKey is required');
+    const order = await this.scope.model.order.getByIdForUpdate(orderId);
+    if (!order) this.app.throw(404, 'order not found');
+
+    const existingAudit = await this.$scope.commercePayment.model.refundAudit.get({
+      orderId: order.id,
+      idempotencyKey,
+    });
+    if (existingAudit)
+      return await this._reviewReplayResult(order, existingAudit, decision, reason);
+
+    const refundRequest = await this.$scope.commercePayment.model.refundRequest.getForUpdate({
+      orderId: order.id,
+      state: 'requested',
+    });
+    if (!refundRequest) this.app.throw(404, 'refund request is not available for review');
+    if (order.state !== 'refund_requested')
+      this.app.throw(409, 'refund is not available for review');
+    if (await this.scope.model.shipment.get({ orderId: order.id })) {
+      this.app.throw(409, 'shipped order is not available for refund');
+    }
+
+    const actorId = this.bean.passport.currentUser!.id;
+    const now = new Date();
+    const correlationId = `${order.correlationId}:refund:${decision}:${idempotencyKey}`;
+    const orderState = decision === 'approved' ? 'refund_approved' : 'paid';
+    await this.$scope.commercePayment.model.refundRequest.updateById(refundRequest.id, {
+      state: decision,
+      reviewedBy: actorId,
+      reviewedAt: now,
+    });
+    await onStage?.('afterRefundReviewRequestState');
+    let refundAttempt:
+      | Awaited<ReturnType<typeof this.$scope.commercePayment.model.refundAttempt.insert>>
+      | undefined;
+    if (decision === 'approved') {
+      refundAttempt = await this.$scope.commercePayment.model.refundAttempt.insert({
+        refundRequestId: refundRequest.id,
+        orderId: order.id,
+        userId: refundRequest.userId,
+        state: 'created',
+        currency: refundRequest.currency,
+        amountCents: refundRequest.amountCents,
+        correlationId,
+      });
+      await onStage?.('afterRefundAttemptInsert');
+    }
+    await this.scope.model.order.updateById(order.id, { state: orderState });
+    await onStage?.('afterRefundReviewOrderState');
+    await this._appendRefundAudit({
+      refundRequest,
+      refundAttempt,
+      order,
+      toRefundState: decision,
+      attemptState: refundAttempt?.state,
+      idempotencyKey,
+      correlationId,
+      reason,
+    });
+    await onStage?.('afterRefundReviewAudit');
+    await this._appendAudit({
+      orderId: order.id,
+      operation: decision === 'approved' ? 'refund_approved' : 'refund_rejected',
+      fromState: 'refund_requested',
+      toState: orderState,
+      correlationId,
+      reason,
+    });
+    await onStage?.('afterRefundReviewOrderAudit');
+    return this._refundResult(
+      { ...order, state: orderState },
+      { ...refundRequest, state: decision },
+      refundAttempt,
+    );
+  }
+
+  private async _requestReplayResult(
+    order: EntityOrder,
+    audit: EntityRefundAudit,
+    reason: string,
+  ): Promise<DtoRefundResult> {
+    if (audit.toRefundState !== 'requested' || audit.reason !== reason) {
+      this.app.throw(409, 'refund idempotency key conflicts with an existing request');
+    }
+    const refundRequest = await this.$scope.commercePayment.model.refundRequest.getById(
+      audit.refundRequestId,
+    );
+    if (!refundRequest) this.app.throw(404, 'refund request not found');
+    const refundAttempt = await this.$scope.commercePayment.model.refundAttempt.get({
+      refundRequestId: refundRequest.id,
+    });
+    return this._refundResult(order, refundRequest, refundAttempt);
+  }
+
+  private async _reviewReplayResult(
+    order: EntityOrder,
+    audit: EntityRefundAudit,
+    decision: 'approved' | 'rejected',
+    reason: string,
+  ): Promise<DtoRefundResult> {
+    if (audit.toRefundState !== decision || audit.reason !== reason) {
+      this.app.throw(409, 'refund idempotency key conflicts with an existing review');
+    }
+    const refundRequest = await this.$scope.commercePayment.model.refundRequest.getById(
+      audit.refundRequestId,
+    );
+    if (!refundRequest) this.app.throw(404, 'refund request not found');
+    const refundAttempt = audit.refundAttemptId
+      ? await this.$scope.commercePayment.model.refundAttempt.getById(audit.refundAttemptId)
+      : undefined;
+    return this._refundResult(order, refundRequest, refundAttempt);
+  }
+
+  private async _outcomeReplayResult(
+    order: EntityOrder,
+    audit: EntityRefundAudit,
+    outcome: 'succeeded' | 'failed',
+  ): Promise<DtoRefundResult> {
+    if (audit.attemptState !== outcome) {
+      this.app.throw(409, 'refund idempotency key conflicts with an existing outcome');
+    }
+    const refundRequest = await this.$scope.commercePayment.model.refundRequest.getById(
+      audit.refundRequestId,
+    );
+    const refundAttempt = audit.refundAttemptId
+      ? await this.$scope.commercePayment.model.refundAttempt.getById(audit.refundAttemptId)
+      : undefined;
+    if (!refundRequest || !refundAttempt) this.app.throw(404, 'refund attempt not found');
+    return this._refundResult(order, refundRequest, refundAttempt);
+  }
+
+  private async _restoreConsumedOrderStock(order: EntityOrder, reason: string) {
+    const lines = await this.scope.model.orderLine.select({
+      where: { orderId: order.id },
+      orders: [['skuId', 'asc']],
+    });
+    for (const line of lines) {
+      const reservation = await this.scope.model.stockReservation.get({ orderLineId: line.id });
+      if (reservation)
+        await this.scope.service.stockBalance.restore({ reservationId: reservation.id, reason });
+    }
+  }
+
+  private _refundResult(
+    order: Pick<EntityOrder, 'id' | 'state' | 'currency'>,
+    refundRequest: Pick<EntityRefundRequest, 'id' | 'state' | 'amountCents'>,
+    refundAttempt?: Pick<EntityRefundAttempt, 'id' | 'state'>,
+  ): DtoRefundResult {
+    if (
+      order.state !== 'paid' &&
+      order.state !== 'refund_requested' &&
+      order.state !== 'refund_approved' &&
+      order.state !== 'refund_rejected' &&
+      order.state !== 'refunded'
+    ) {
+      this.app.throw(409, 'refund result is not available');
+    }
+    return {
+      orderId: order.id,
+      refundRequestId: refundRequest.id,
+      refundAttemptId: refundAttempt?.id,
+      orderState: order.state,
+      refundState: refundRequest.state,
+      refundAttemptState: refundAttempt?.state,
+      currency: order.currency,
+      amountCents: refundRequest.amountCents,
+    };
+  }
+
+  private async _appendRefundAudit({
+    refundRequest,
+    refundAttempt,
+    order,
+    toRefundState,
+    attemptState,
+    idempotencyKey,
+    correlationId,
+    reason,
+  }: {
+    refundRequest: Pick<EntityRefundRequest, 'id' | 'userId'>;
+    refundAttempt?: Pick<EntityRefundAttempt, 'id'>;
+    order: Pick<EntityOrder, 'id'>;
+    toRefundState: 'requested' | 'approved' | 'rejected' | 'refunded' | 'failed';
+    attemptState?: 'created' | 'succeeded' | 'failed';
+    idempotencyKey?: string;
+    correlationId: string;
+    reason: string;
+  }) {
+    await this.$scope.commercePayment.model.refundAudit.insert({
+      refundRequestId: refundRequest.id,
+      refundAttemptId: refundAttempt?.id,
+      orderId: order.id,
+      userId: refundRequest.userId,
+      toRefundState,
+      attemptState,
+      idempotencyKey,
+      correlationId,
+      reason,
+      actorId: this.bean.passport.currentUser?.anonymous
+        ? undefined
+        : this.bean.passport.currentUser?.id,
+      processedAt: new Date(),
+    });
   }
 
   private async _expireLockedOrder(order: EntityOrder) {
@@ -810,9 +1249,19 @@ export class ServiceOrder extends BeanBase {
     reason,
   }: {
     orderId: TableIdentity;
-    operation: 'created' | 'paid' | 'cancelled' | 'expired' | 'shipped';
-    fromState?: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired' | 'shipped';
-    toState: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired' | 'shipped';
+    operation:
+      | 'created'
+      | 'paid'
+      | 'cancelled'
+      | 'expired'
+      | 'shipped'
+      | 'refund_requested'
+      | 'refund_approved'
+      | 'refund_rejected'
+      | 'refund_failed'
+      | 'refunded';
+    fromState?: EntityOrder['state'];
+    toState: EntityOrder['state'];
     correlationId: string;
     reason: string;
   }) {

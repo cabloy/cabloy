@@ -24,6 +24,58 @@ export type ApiApiCommerceTradeOrderviewMineRequestParams =
 export type ApiApiCommerceTradeOrderviewMineResponseBody =
   paths[ApiApiCommerceTradeOrderviewMinePath][ApiApiCommerceTradeOrderviewMineMethod]['responses']['200']['content']['application/json']['data'];
 
+/** CommerceTradeOrder_requestRefund */
+export const ApiApiCommerceTradeOrderrequestRefundPath =
+  '/api/commerce/trade/order/{id}/requestRefund';
+export type ApiApiCommerceTradeOrderrequestRefundPath =
+  '/api/commerce/trade/order/{id}/requestRefund';
+export type ApiApiCommerceTradeOrderrequestRefundMethod = 'post';
+export type ApiApiCommerceTradeOrderrequestRefundRequestParams =
+  paths[ApiApiCommerceTradeOrderrequestRefundPath][ApiApiCommerceTradeOrderrequestRefundMethod]['parameters']['path'];
+export type ApiApiCommerceTradeOrderrequestRefundRequestBody =
+  components['schemas']['commerce-trade.dto.refundRequestCreate'];
+export type ApiApiCommerceTradeOrderrequestRefundResponseBody =
+  paths[ApiApiCommerceTradeOrderrequestRefundPath][ApiApiCommerceTradeOrderrequestRefundMethod]['responses']['200']['content']['application/json']['data'];
+
+/** CommerceTradeOrder_approveRefund */
+export const ApiApiCommerceTradeOrderapproveRefundPath =
+  '/api/commerce/trade/order/{id}/approveRefund';
+export type ApiApiCommerceTradeOrderapproveRefundPath =
+  '/api/commerce/trade/order/{id}/approveRefund';
+export type ApiApiCommerceTradeOrderapproveRefundMethod = 'post';
+export type ApiApiCommerceTradeOrderapproveRefundRequestParams =
+  paths[ApiApiCommerceTradeOrderapproveRefundPath][ApiApiCommerceTradeOrderapproveRefundMethod]['parameters']['path'];
+export type ApiApiCommerceTradeOrderapproveRefundRequestBody =
+  components['schemas']['commerce-trade.dto.refundReview'];
+export type ApiApiCommerceTradeOrderapproveRefundResponseBody =
+  paths[ApiApiCommerceTradeOrderapproveRefundPath][ApiApiCommerceTradeOrderapproveRefundMethod]['responses']['200']['content']['application/json']['data'];
+
+/** CommerceTradeOrder_rejectRefund */
+export const ApiApiCommerceTradeOrderrejectRefundPath =
+  '/api/commerce/trade/order/{id}/rejectRefund';
+export type ApiApiCommerceTradeOrderrejectRefundPath =
+  '/api/commerce/trade/order/{id}/rejectRefund';
+export type ApiApiCommerceTradeOrderrejectRefundMethod = 'post';
+export type ApiApiCommerceTradeOrderrejectRefundRequestParams =
+  paths[ApiApiCommerceTradeOrderrejectRefundPath][ApiApiCommerceTradeOrderrejectRefundMethod]['parameters']['path'];
+export type ApiApiCommerceTradeOrderrejectRefundRequestBody =
+  components['schemas']['commerce-trade.dto.refundReview'];
+export type ApiApiCommerceTradeOrderrejectRefundResponseBody =
+  paths[ApiApiCommerceTradeOrderrejectRefundPath][ApiApiCommerceTradeOrderrejectRefundMethod]['responses']['200']['content']['application/json']['data'];
+
+/** CommerceTradeOrder_refundOutcome */
+export const ApiApiCommerceTradeOrderrefundOutcomePath =
+  '/api/commerce/trade/order/{id}/refundOutcome';
+export type ApiApiCommerceTradeOrderrefundOutcomePath =
+  '/api/commerce/trade/order/{id}/refundOutcome';
+export type ApiApiCommerceTradeOrderrefundOutcomeMethod = 'post';
+export type ApiApiCommerceTradeOrderrefundOutcomeRequestParams =
+  paths[ApiApiCommerceTradeOrderrefundOutcomePath][ApiApiCommerceTradeOrderrefundOutcomeMethod]['parameters']['path'];
+export type ApiApiCommerceTradeOrderrefundOutcomeRequestBody =
+  components['schemas']['commerce-trade.dto.refundOutcomeCreate'];
+export type ApiApiCommerceTradeOrderrefundOutcomeResponseBody =
+  paths[ApiApiCommerceTradeOrderrefundOutcomePath][ApiApiCommerceTradeOrderrefundOutcomeMethod]['responses']['200']['content']['application/json']['data'];
+
 /** CommerceTradeOrder_ship */
 export const ApiApiCommerceTradeOrdershipPath = '/api/commerce/trade/order/{id}/ship';
 export type ApiApiCommerceTradeOrdershipPath = '/api/commerce/trade/order/{id}/ship';
@@ -73,6 +125,58 @@ export class ApiCommerceTradeOrder extends BeanApiBase {
   ) {
     return this.$fetch.get<any, ApiApiCommerceTradeOrderviewMineResponseBody>(
       this.$pathTranslate(ApiApiCommerceTradeOrderviewMinePath, options.params),
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
+  requestRefund(
+    body: ApiApiCommerceTradeOrderrequestRefundRequestBody,
+    options: {
+      params: ApiApiCommerceTradeOrderrequestRefundRequestParams;
+    } & IApiActionOptions,
+  ) {
+    return this.$fetch.post<any, ApiApiCommerceTradeOrderrequestRefundResponseBody>(
+      this.$pathTranslate(ApiApiCommerceTradeOrderrequestRefundPath, options.params),
+      body,
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
+  approveRefund(
+    body: ApiApiCommerceTradeOrderapproveRefundRequestBody,
+    options: {
+      params: ApiApiCommerceTradeOrderapproveRefundRequestParams;
+    } & IApiActionOptions,
+  ) {
+    return this.$fetch.post<any, ApiApiCommerceTradeOrderapproveRefundResponseBody>(
+      this.$pathTranslate(ApiApiCommerceTradeOrderapproveRefundPath, options.params),
+      body,
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
+  rejectRefund(
+    body: ApiApiCommerceTradeOrderrejectRefundRequestBody,
+    options: {
+      params: ApiApiCommerceTradeOrderrejectRefundRequestParams;
+    } & IApiActionOptions,
+  ) {
+    return this.$fetch.post<any, ApiApiCommerceTradeOrderrejectRefundResponseBody>(
+      this.$pathTranslate(ApiApiCommerceTradeOrderrejectRefundPath, options.params),
+      body,
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
+  refundOutcome(
+    body: ApiApiCommerceTradeOrderrefundOutcomeRequestBody,
+    options: {
+      params: ApiApiCommerceTradeOrderrefundOutcomeRequestParams;
+    } & IApiActionOptions,
+  ) {
+    return this.$fetch.post<any, ApiApiCommerceTradeOrderrefundOutcomeResponseBody>(
+      this.$pathTranslate(ApiApiCommerceTradeOrderrefundOutcomePath, options.params),
+      body,
       this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
     );
   }
