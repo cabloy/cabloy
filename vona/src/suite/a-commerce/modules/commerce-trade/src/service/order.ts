@@ -106,6 +106,7 @@ export type ShipmentFailureStage =
 type ShipmentStageCallback = (stage: ShipmentFailureStage) => void | Promise<void>;
 
 export type RefundFailureStage =
+  | 'beforeRefundOutcomeOrderLock'
   | 'afterRefundRequestInsert'
   | 'afterRefundRequestOrderState'
   | 'afterRefundRequestAudit'
@@ -585,6 +586,7 @@ export class ServiceOrder extends BeanBase {
   ): Promise<DtoRefundResult> {
     const idempotencyKey = command.idempotencyKey.trim();
     if (!idempotencyKey) this.app.throw(400, 'refund idempotencyKey is required');
+    await onStage?.('beforeRefundOutcomeOrderLock');
     const order = await this.scope.model.order.getByIdForUpdate(orderId);
     if (!order) this.app.throw(404, 'order not found');
     const existingAudit = await this.$scope.commercePayment.model.refundAudit.get({

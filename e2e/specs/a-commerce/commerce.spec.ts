@@ -1,4 +1,4 @@
-import type { APIRequestContext, Browser, Page, TestInfo } from '@playwright/test';
+import type { APIRequestContext, Browser, Locator, Page, TestInfo } from '@playwright/test';
 
 import { expect, test } from '@playwright/test';
 
@@ -43,6 +43,12 @@ function waitForAddressMine(page: Page) {
   return waitForAddressResponse(page, 'GET', addressMinePath);
 }
 
+async function getAdminOrderRow(page: Page, orderId: number): Promise<Locator> {
+  const row = page.locator(`tr:has(td:first-child:text-is("${orderId}"))`);
+  await expect(row).toHaveCount(1);
+  return row;
+}
+
 async function login(
   page: Page,
   path: string,
@@ -63,7 +69,14 @@ async function login(
     await expect(usernameInput).toHaveValue(username);
     await expect(passwordInput).toHaveValue(password);
     await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
+    const loginResponse = waitForApiResponse(page, 'POST', '/api/home/user/passport/login');
     await page.getByRole('button', { name: 'Login', exact: true }).click();
+    const loginResponseValue = await loginResponse;
+    if (!loginResponseValue.ok()) {
+      throw new Error(
+        `login failed: ${loginResponseValue.status()} ${await loginResponseValue.text()}`,
+      );
+    }
     await expect(page).not.toHaveURL(/\/login(?:\?|$)/);
   }
 }
@@ -459,9 +472,7 @@ test(
           'data-zova-hydrated',
           'commerceAdmin',
         );
-        const orderRow = adminPage
-          .getByRole('cell', { name: String(checkout.orderId), exact: true })
-          .locator('..');
+        const orderRow = await getAdminOrderRow(adminPage, checkout.orderId);
         await expect(orderRow).toBeVisible();
         const carrierInput = orderRow.getByPlaceholder('Carrier');
         const trackingNumberInput = orderRow.getByPlaceholder('Tracking number');
@@ -558,7 +569,11 @@ test(
       await page.getByRole('radio', { name: 'No coupon', exact: true }).check();
       const checkoutResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/checkout');
       await page.getByRole('button', { name: 'Create order', exact: true }).click();
-      const checkout = (await (await checkoutResponse).json()).data;
+      const checkoutResponseValue = await checkoutResponse;
+      expect(checkoutResponseValue.ok()).toBeTruthy();
+      const checkout = (await checkoutResponseValue.json()).data;
+      expect(checkout.orderId).toEqual(expect.any(Number));
+      expect(checkout.paymentAttemptId).toEqual(expect.any(Number));
       const paymentResponse = waitForApiResponse(
         page,
         'POST',
@@ -591,9 +606,7 @@ test(
           'data-zova-hydrated',
           'commerceAdmin',
         );
-        const orderRow = adminPage
-          .getByRole('cell', { name: String(checkout.orderId), exact: true })
-          .locator('..');
+        const orderRow = await getAdminOrderRow(adminPage, checkout.orderId);
         await expect(orderRow).toBeVisible();
         await orderRow.getByPlaceholder('Decision reason').fill('E2E approval');
         await orderRow.getByRole('checkbox').check();
