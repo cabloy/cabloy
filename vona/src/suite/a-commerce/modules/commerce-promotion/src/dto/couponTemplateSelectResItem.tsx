@@ -14,7 +14,29 @@ export interface IDtoOptionsCouponTemplateSelectResItem extends IDecoratorDtoOpt
   blocks: [
     ZovaRender.block('basic-page:blockPage', {
       blocks: [
-        ZovaRender.block('basic-page:blockFilter'),
+        ZovaRender.block('basic-page:blockFilter', {
+          formFieldLayout: { inline: true },
+          blocks: [
+            ZovaRender.block('basic-form:blockFormLayout', {
+              formLayout: {
+                children: [
+                  {
+                    type: 'section',
+                    layout: 'flow',
+                    children: [
+                      { type: 'field', name: 'name' },
+                      { type: 'field', name: 'createdAt' },
+                      {
+                        type: 'block',
+                        block: ZovaRender.block('basic-page:blockFilterActions'),
+                      },
+                    ],
+                  },
+                ],
+              },
+            }),
+          ],
+        }),
         ZovaRender.block('basic-page:blockToolbarBulk', {
           actions: [ZovaRender.tableActionBulk('basic-table:actionCreate')],
         }),

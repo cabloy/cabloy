@@ -152,12 +152,12 @@ A practical reading takeaway is:
 
 Table actions do not live in isolation. They appear inside a resource-page block composition.
 
-Representative shape:
+Representative abbreviated page-chain shape (the filter’s internal Form Layout is omitted here because this page focuses on table actions):
 
 ```tsx
 ZovaRender.block('basic-page:blockPage', {
   blocks: [
-    ZovaRender.block('basic-page:blockFilter'),
+    /* basic-page:blockFilter with its resource-specific filter layout */
     ZovaRender.block('basic-page:blockToolbarBulk', {
       actions: [ZovaRender.tableActionBulk('basic-table:actionCreate')],
     }),

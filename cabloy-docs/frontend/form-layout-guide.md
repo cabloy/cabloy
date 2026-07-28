@@ -101,7 +101,7 @@ blocks: [
 ];
 ```
 
-Use either the embedded layout block or the legacy sibling action block, never both; otherwise Search and Reset are rendered twice. See [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook#use-blocks-for-a-structural-filter-layout) for the filter ownership model.
+Use either the embedded layout block or the legacy sibling action block, never both; otherwise Search and Reset are rendered twice. Maintained Cabloy Basic list DTOs and current Basic CRUD output prefer the embedded flow, while a bare filter remains the minimal/default form when structural placement is unnecessary. See [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook#use-blocks-for-a-structural-filter-layout) for the filter ownership model.
 
 ## Layout node grammar
 
@@ -333,9 +333,10 @@ Here `formFieldLayout.inline: true` controls how each field wrapper is presented
 1. Start with DTO or resource metadata; do not hand-patch generated `.zova-rest` artifacts.
 2. Use `formLayout` when the requirement is field placement, Grid or flow structure, groups, or tabs.
 3. Use `layout`, `formFieldLayout`, `options`, or provider behaviors when the requirement is one field's wrapper or renderer.
-4. Keep entry actions in page-entry toolbar blocks. Keep filter action semantics in `basic-page:blockFilterActions`; place that block inside Form Layout only when actions must share structural Grid or flow placement with fields.
-5. Review field names against the scene-specific schema. Unlisted visible fields are appended; unknown and duplicate declarations are silently pruned from the rendered plan.
-6. Use the smallest layout that communicates the form structure; reserve tabs for genuinely separate field groups.
+4. Keep entry actions in page-entry toolbar blocks. Keep filter action semantics in `basic-page:blockFilterActions`; place that block inside Form Layout when the actions must share structural Grid or flow placement with fields.
+5. For maintained Cabloy Basic list filters, prefer one inline flow section that explicitly lists every real filter-schema field in schema order and ends with one embedded `basic-page:blockFilterActions` block. Do not add virtual request fields, alter filter transforms, or combine it with a sibling action block.
+6. Review field names against the scene-specific schema. Unlisted visible fields are appended; unknown and duplicate declarations are silently pruned from the rendered plan.
+7. Use the smallest layout that communicates the form structure; reserve tabs for genuinely separate field groups.
 
 ## Source-reading and verification path
 

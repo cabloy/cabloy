@@ -8,8 +8,37 @@ import type {
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
+import { DtoProductSelectResItem } from 'vona-module-test-rest';
 
 describe('product.test.ts', () => {
+  it('metadata:product filter form layout', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const apiJson = await app.bean.openapi.generateJsonOfClass(DtoProductSelectResItem);
+      const component = Object.values(apiJson.components!.schemas as any).find(item => {
+        return (item as any).properties?._operationsRow;
+      });
+      const filterBlock = (component as any)?.rest?.blocks?.[0]?.options?.blocks?.[0];
+      assert.equal(filterBlock?.render, 'basic-page:blockFilter');
+      assert.deepEqual(filterBlock?.options?.formFieldLayout, { inline: true });
+      assert.deepEqual(
+        filterBlock?.options?.blocks?.map(item => item.render),
+        ['basic-form:blockFormLayout'],
+      );
+      const formLayout = filterBlock?.options?.blocks?.[0]?.options?.formLayout;
+      const filterLayoutChildren = formLayout?.children?.[0]?.children;
+      assert.equal(formLayout?.children?.[0]?.layout, 'flow');
+      assert.deepEqual(
+        filterLayoutChildren?.map(item => item.type),
+        ['field', 'field', 'block'],
+      );
+      assert.deepEqual(
+        filterLayoutChildren?.slice(0, 2).map(item => item.name),
+        ['name', 'createdAt'],
+      );
+      assert.equal(filterLayoutChildren?.[2]?.block?.render, 'basic-page:blockFilterActions');
+    });
+  });
+
   it('action:product', async () => {
     await app.bean.executor.mockCtx(async () => {
       // data
