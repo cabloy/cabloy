@@ -160,7 +160,8 @@ A tenant operator who assigns commerce roles. Framework-wide administrative auth
 
 The MVP is ready for acceptance when:
 
-- the customer purchase, payment, shipment, and eligible refund journeys complete end to end in both development and SSR production-like modes;
+- the customer purchase, payment, shipment, and eligible refund journeys complete end to end through the repository-managed Commerce SSR browser acceptance path with current paired Commerce SSR/REST artifacts;
+- acceptance of a particular deployed production environment follows that environment's deployment procedure and is not an additional repository browser gate;
 - automated tests cover stock contention, repeated payment/refund notification, tenant isolation, coupon misuse, payment expiry, and shipment/refund conflicts;
 - operators cannot read or mutate another tenant's catalogue, live Address, orders, stock, coupon, payment, shipment, or refund data;
 - order snapshots remain historically stable after later catalogue, price, address, and coupon-template edits; and

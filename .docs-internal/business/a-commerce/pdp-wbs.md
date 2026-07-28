@@ -355,13 +355,14 @@ Tasks:
 
 - execute the focused, transaction, API, SSR, browser, and release evidence defined in `test-plan.md`;
 - exercise concurrent checkout, duplicate payment/refund, unpaid expiry, coupon recovery, shipment/refund conflict, and snapshot stability;
-- build both Commerce flavors and inspect their deployed site artifacts.
+- build both Commerce SSR/REST flavor pairs and inspect their generated site artifacts;
+- run `npm run test:e2e:commerce:clean` after the relevant Commerce artifacts and Vona dependencies are current; treat `COMMERCE_E2E_BASE_URL` runs as deployment-specific supplemental validation owned by the target operator.
 
 Acceptance checks:
 
 - every PRD and SRS traceability entry has observed evidence;
 - affected flavor builds, contract synchronization, type checks, linting, formatting, and test suite checks pass;
-- the complete customer and operator flow works against the intended SSR sites.
+- the complete customer and operator flow passes through the repository-managed Commerce SSR sites (`/commerce` and `/commerce-admin`) using `npm run test:e2e:commerce:clean` after current artifact preparation; externally managed-target E2E is not a WBS-70-02 prerequisite or blocker.
 
 ## Deferred Work Guardrail
 
