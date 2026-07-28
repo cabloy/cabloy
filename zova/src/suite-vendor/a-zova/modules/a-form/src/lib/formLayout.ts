@@ -1,6 +1,7 @@
 import type {
   IFormLayout,
   IFormLayoutField,
+  IFormLayoutLeaf,
   IFormLayoutNode,
   IFormLayoutTab,
   IFormLayoutTabs,
@@ -11,6 +12,7 @@ import type {
   IFormLayoutDiagnostic,
   IResolvedFormLayout,
   IResolvedFormLayoutField,
+  IResolvedFormLayoutLeaf,
   IResolvedFormLayoutGroup,
   IResolvedFormLayoutNode,
   IResolvedFormLayoutSection,
@@ -68,6 +70,9 @@ function resolveNode(
   if (node.type === 'field') {
     return resolveField(node, tabPath, propertyNames, fieldNames, diagnostics, fieldTabPaths);
   }
+  if (node.type === 'block') {
+    return node;
+  }
   if (node.type === 'tabs') {
     return resolveTabs(
       node,
@@ -84,9 +89,9 @@ function resolveNode(
   if (node.type === 'section') {
     const children = node.children
       .map(item =>
-        resolveField(item, tabPath, propertyNames, fieldNames, diagnostics, fieldTabPaths),
+        resolveLeaf(item, tabPath, propertyNames, fieldNames, diagnostics, fieldTabPaths),
       )
-      .filter(Boolean) as IResolvedFormLayoutField[];
+      .filter(Boolean) as IResolvedFormLayoutLeaf[];
     return children.length ? { ...node, id, children } : undefined;
   }
   const children = node.children
@@ -103,9 +108,21 @@ function resolveNode(
       ),
     )
     .filter(Boolean) as Array<
-    IResolvedFormLayoutField | IResolvedFormLayoutGroup | IResolvedFormLayoutSection
+    IResolvedFormLayoutLeaf | IResolvedFormLayoutGroup | IResolvedFormLayoutSection
   >;
   return children.length ? { ...node, id, children } : undefined;
+}
+
+function resolveLeaf(
+  node: IFormLayoutLeaf,
+  tabPath: IResolvedFormLayout['fieldTabPaths'][string],
+  propertyNames: Set<string>,
+  fieldNames: Set<string>,
+  diagnostics: IFormLayoutDiagnostic[],
+  fieldTabPaths: IResolvedFormLayout['fieldTabPaths'],
+): IResolvedFormLayoutLeaf | undefined {
+  if (node.type === 'block') return node;
+  return resolveField(node, tabPath, propertyNames, fieldNames, diagnostics, fieldTabPaths);
 }
 
 function resolveTabs(
@@ -163,7 +180,7 @@ function resolveTab(
       ),
     )
     .filter(Boolean) as Array<
-    IResolvedFormLayoutField | IResolvedFormLayoutGroup | IResolvedFormLayoutSection
+    IResolvedFormLayoutLeaf | IResolvedFormLayoutGroup | IResolvedFormLayoutSection
   >;
   return children.length ? { ...node, id, children } : undefined;
 }

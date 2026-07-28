@@ -1,5 +1,6 @@
 import type {
   IFormLayoutResponsiveColumns,
+  IResourceRenderBlockOptionsBlock,
   TypeFormLayoutSectionLayout,
 } from 'zova-module-a-openapi';
 
@@ -15,12 +16,20 @@ export interface IResolvedFormLayoutField {
   span?: IFormLayoutResponsiveColumns;
 }
 
+export interface IResolvedFormLayoutBlock {
+  type: 'block';
+  block: IResourceRenderBlockOptionsBlock;
+  span?: IFormLayoutResponsiveColumns;
+}
+
+export type IResolvedFormLayoutLeaf = IResolvedFormLayoutField | IResolvedFormLayoutBlock;
+
 export interface IResolvedFormLayoutGroup {
   type: 'group';
   id: string;
   title?: string;
   description?: string;
-  children: Array<IResolvedFormLayoutField | IResolvedFormLayoutGroup | IResolvedFormLayoutSection>;
+  children: Array<IResolvedFormLayoutLeaf | IResolvedFormLayoutGroup | IResolvedFormLayoutSection>;
 }
 
 export interface IResolvedFormLayoutSection {
@@ -30,7 +39,7 @@ export interface IResolvedFormLayoutSection {
   description?: string;
   layout?: TypeFormLayoutSectionLayout;
   columns?: IFormLayoutResponsiveColumns;
-  children: IResolvedFormLayoutField[];
+  children: IResolvedFormLayoutLeaf[];
 }
 
 export interface IResolvedFormLayoutTabs {
@@ -43,7 +52,7 @@ export interface IResolvedFormLayoutTab {
   type: 'tab';
   id: string;
   title: string;
-  children: Array<IResolvedFormLayoutField | IResolvedFormLayoutGroup | IResolvedFormLayoutSection>;
+  children: Array<IResolvedFormLayoutLeaf | IResolvedFormLayoutGroup | IResolvedFormLayoutSection>;
 }
 
 export interface IResolvedFormLayoutTabRef {
@@ -52,7 +61,7 @@ export interface IResolvedFormLayoutTabRef {
 }
 
 export type IResolvedFormLayoutNode =
-  | IResolvedFormLayoutField
+  | IResolvedFormLayoutLeaf
   | IResolvedFormLayoutGroup
   | IResolvedFormLayoutSection
   | IResolvedFormLayoutTabs;

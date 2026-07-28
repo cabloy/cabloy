@@ -209,6 +209,8 @@ test(
     await expect(name).toBeVisible();
     await expect(level).toBeVisible();
     await expect(dates).toHaveCount(2);
+    await expect(search).toHaveCount(1);
+    await expect(reset).toHaveCount(1);
     await expect(search).toBeVisible();
     await expect(reset).toBeVisible();
 
@@ -223,6 +225,13 @@ test(
     for (const geometry of wideGeometry) {
       expect(geometry.field.right).toBeLessThanOrEqual(geometry.container.right + 1);
     }
+    const actionFlowMatchesFieldFlow = await search.evaluate(element => {
+      const actionFlow = element.parentElement?.parentElement?.parentElement;
+      const fieldFlow = element.closest('section')?.querySelector('label')
+        ?.parentElement?.parentElement;
+      return actionFlow === fieldFlow;
+    });
+    expect(actionFlowMatchesFieldFlow).toBeTruthy();
 
     await page.setViewportSize({ width: 700, height: 900 });
     const drawer = page.locator('.drawer').first();

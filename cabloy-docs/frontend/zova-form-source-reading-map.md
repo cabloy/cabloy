@@ -223,7 +223,7 @@ Use this path when you are asking questions like:
 Use this path when you are asking questions like:
 
 - where does `formLayout` come from in a resource DTO?
-- how are fields, sections, groups, and tabs normalized before rendering?
+- how are fields, embedded blocks, sections, groups, and tabs normalized before rendering?
 - why are omitted visible fields appended or duplicate fields removed?
 - where does Cabloy Basic render responsive grids and tab error badges?
 
@@ -240,15 +240,17 @@ Use this path when you are asking questions like:
 3. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/types/resource/formLayout.ts`
 4. `zova/src/suite-vendor/a-zova/modules/a-form/src/lib/formLayout.ts`
 5. `zova/src/suite/cabloy-basic/modules/basic-form/src/component/blockFormLayout/controller.tsx`
-6. `vona/src/suite/a-training/modules/training-student/test/student.test.ts`
+6. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockFilterActions/controller.tsx`
+7. `vona/src/suite/a-training/modules/training-student/test/student.test.ts`
 
 ### What each file clarifies
 
 - the Student DTOs show the entry and filter block composition that supplies layout metadata
 - the OpenAPI type contract defines the legal node grammar and responsive values
-- the resolver reconciles metadata with visible schema fields, generated IDs, and diagnostics
-- the Basic block controller renders sections, groups, tabs, and field spans while delegating widgets to `$$form.renderField(...)`
-- the Student test verifies emitted metadata nesting, columns, spans, and optional IDs; it is not a browser rendering test
+- the resolver reconciles field metadata with visible schema fields, generated IDs, diagnostics, and preserved embedded blocks
+- the Basic block controller renders sections, groups, tabs, field spans, and embedded blocks while delegating fields to `$$form.renderField(...)`
+- `blockFilterActions` shows how a block rendered inside Form Layout reuses the inherited form CEL scope to invoke `$$filter`
+- the Student test verifies emitted metadata nesting, columns, spans, embedded action blocks, and optional IDs; it is not a browser rendering test
 
 ## 8. Resource-driven CRUD page integration
 

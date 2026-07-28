@@ -2,7 +2,9 @@ import type { IComponentOptions } from 'zova';
 import type {
   IJsxRenderContextForm,
   IResolvedFormLayout,
+  IResolvedFormLayoutBlock,
   IResolvedFormLayoutField,
+  IResolvedFormLayoutLeaf,
   IResolvedFormLayoutGroup,
   IResolvedFormLayoutNode,
   IResolvedFormLayoutSection,
@@ -78,6 +80,8 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
     switch (node.type) {
       case 'field':
         return this._renderField(node);
+      case 'block':
+        return this._renderBlock(node);
       case 'group':
         return this._renderGroup(node);
       case 'section':
@@ -87,11 +91,28 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
     }
   }
 
-  private _renderField(node: IResolvedFormLayoutField, sectionLayout?: 'grid' | 'flow') {
-    const { $$form } = this.$$renderContext;
+  private _renderLeaf(node: IResolvedFormLayoutLeaf, sectionLayout?: 'grid' | 'flow') {
     const className =
       sectionLayout === 'flow' ? 'min-w-0 max-w-full' : this._gridClasses('col-span', node.span);
-    return <div class={className}>{$$form.renderField(node.name)}</div>;
+    return <div class={className}>{this._renderLeafContent(node)}</div>;
+  }
+
+  private _renderLeafContent(node: IResolvedFormLayoutLeaf) {
+    if (node.type === 'field') return this.$$renderContext.$$form.renderField(node.name);
+    return this._renderBlockContent(node);
+  }
+
+  private _renderField(node: IResolvedFormLayoutField) {
+    return this._renderLeaf(node);
+  }
+
+  private _renderBlock(node: IResolvedFormLayoutBlock) {
+    return this._renderLeaf(node);
+  }
+
+  private _renderBlockContent(node: IResolvedFormLayoutBlock) {
+    const { $celScope, $jsx } = this.$$renderContext;
+    return $jsx.render(node.block.render!, node.block.options, $celScope, this.$$renderContext);
   }
 
   private _renderGroup(node: IResolvedFormLayoutGroup) {
@@ -114,7 +135,7 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
       <section>
         {!!node.title && <h3 class="mb-1 text-lg font-semibold">{node.title}</h3>}
         {!!node.description && <p class="mb-4 text-sm text-base-content/70">{node.description}</p>}
-        <div class={className}>{node.children.map(child => this._renderField(child, layout))}</div>
+        <div class={className}>{node.children.map(child => this._renderLeaf(child, layout))}</div>
       </section>
     );
   }

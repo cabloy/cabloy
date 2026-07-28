@@ -13,8 +13,8 @@ Several APIs contain the word “layout,” but they own different concerns:
 
 | Surface                                        | Owns                                                                                                           | Does not own                                              |
 | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `formLayout`                                   | Field placement, Grid/flow sections, groups, responsive spans, and tabs                                        | Field renderer selection, validation rules, submit policy |
-| `basic-form:blockFormLayout`                   | Resolving and rendering a structural `formLayout` tree in Cabloy Basic                                         | Page-entry or filter actions                              |
+| `formLayout`                                   | Field and renderable-block placement, Grid/flow sections, groups, responsive spans, and tabs                   | Field renderer selection, validation rules, submit policy |
+| `basic-form:blockFormLayout`                   | Resolving and rendering a structural `formLayout` tree in Cabloy Basic, including embedded renderable blocks   | Page-entry or filter action semantics                     |
 | `layout`, `formFieldLayout`, `FormFieldLayout` | One field's label and wrapper presentation: inline/block mode, icons, borders, header/footer, class, and style | Sections, Grid/flow placement, groups, or tabs            |
 
 For example, `formFieldLayout: { inline: false }` makes each field use a block-style wrapper. It does not create a grid. Pair it with `basic-form:blockFormLayout` when the fields also need structural placement.
@@ -63,7 +63,7 @@ Form Layout changes neither readonly behavior nor actions. Create, update, and v
 
 ### Filter form composition
 
-A filter uses the filter block as its host and keeps filter actions as an explicit sibling block:
+A filter uses the filter block as its host. Place Search/Reset inside the structural layout when they should participate in the same Grid or flow as filter fields:
 
 ```tsx
 ZovaRender.block('basic-page:blockFilter', {
@@ -72,16 +72,36 @@ ZovaRender.block('basic-page:blockFilter', {
     ZovaRender.block('basic-form:blockFormLayout', {
       formLayout: {
         children: [
-          /* structural nodes */
+          {
+            type: 'section',
+            layout: 'flow',
+            children: [
+              /* filter fields */
+              {
+                type: 'block',
+                block: ZovaRender.block('basic-page:blockFilterActions'),
+              },
+            ],
+          },
         ],
       },
     }),
-    ZovaRender.block('basic-page:blockFilterActions'),
   ],
 });
 ```
 
-A nonempty `blocks` list replaces `ZForm`'s automatic body and footer. Therefore a structured filter must explicitly include `basic-page:blockFilterActions`; it owns Search and Reset and keeps the filter's existing normalization and page-query handoff. See [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook#use-blocks-for-a-structural-filter-layout) for the filter ownership model.
+The renderable block node controls only structural placement. `basic-page:blockFilterActions` still owns Search/Reset and obtains the filter command surface from the inherited form scope, preserving normalization and page-query handoff. A nonempty `blocks` list replaces `ZForm`'s automatic body and footer.
+
+The legacy sibling composition remains supported when actions do not need to share a structural section:
+
+```tsx
+blocks: [
+  ZovaRender.block('basic-form:blockFormLayout', { formLayout }),
+  ZovaRender.block('basic-page:blockFilterActions'),
+];
+```
+
+Use either the embedded layout block or the legacy sibling action block, never both; otherwise Search and Reset are rendered twice. See [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook#use-blocks-for-a-structural-filter-layout) for the filter ownership model.
 
 ## Layout node grammar
 
@@ -90,28 +110,35 @@ A nonempty `blocks` list replaces `ZForm`'s automatic body and footer. Therefore
 ```text
 formLayout
 ├─ field
+├─ block
 ├─ section
-│  └─ field
+│  ├─ field
+│  └─ block
 ├─ group
 │  ├─ field
+│  ├─ block
 │  ├─ group
 │  └─ section
 └─ tabs
    └─ tab
       ├─ field
+      ├─ block
       ├─ group
       └─ section
 ```
 
-| Node      | Key properties                                             | Allowed children         | Use it for                                |
-| --------- | ---------------------------------------------------------- | ------------------------ | ----------------------------------------- |
-| `field`   | required `name`; optional `span`                           | none                     | Place one resolved schema field           |
-| `section` | optional `id`, `title`, `description`, `layout`, `columns` | fields only              | A Grid or wrapping flow field layout      |
-| `group`   | optional `id`, `title`, `description`                      | fields, groups, sections | A semantic, bordered fieldset-style group |
-| `tabs`    | optional `id`                                              | tabs only                | One tab container                         |
-| `tab`     | optional `id`; required `title`                            | fields, groups, sections | One tab panel                             |
+| Node      | Key properties                                             | Allowed children                 | Use it for                                  |
+| --------- | ---------------------------------------------------------- | -------------------------------- | ------------------------------------------- |
+| `field`   | required `name`; optional `span`                           | none                             | Place one resolved schema field             |
+| `block`   | required `block`; optional `span`                          | none                             | Place an existing renderable resource block |
+| `section` | optional `id`, `title`, `description`, `layout`, `columns` | fields and blocks                | A Grid or wrapping flow layout              |
+| `group`   | optional `id`, `title`, `description`                      | fields, blocks, groups, sections | A semantic, bordered fieldset-style group   |
+| `tabs`    | optional `id`                                              | tabs only                        | One tab container                           |
+| `tab`     | optional `id`; required `title`                            | fields, blocks, groups, sections | One tab panel                               |
 
-A section is a layout boundary. It uses the Grid strategy by default; set `layout: 'flow'` for compact, left-packed fields that wrap at their intrinsic widths. Use a group when the fields need a semantic or visual boundary, and place a section inside that group when it also needs Grid columns or flow placement. There is no separate `row` node: Grid and flow placement create rows automatically.
+A section is a layout boundary. It uses the Grid strategy by default; set `layout: 'flow'` for compact, left-packed fields and blocks that wrap at their intrinsic widths. Use a group when the fields need a semantic or visual boundary, and place a section inside that group when it also needs Grid columns or flow placement. There is no separate `row` node: Grid and flow placement create rows automatically.
+
+A `block` node is not a schema field and does not add a request, response, validation, or query value. It wraps an existing `ZovaRender.block(...)` descriptor and renders it with the current form JSX/CEL context. This lets a filter action block participate in a flow section without transferring filter-action behavior into Form Layout.
 
 Nested tabs are not part of the current contract. Likewise, a section cannot contain a group or another section.
 
@@ -286,24 +313,27 @@ ZovaRender.block('basic-page:blockFilter', {
               { type: 'field', name: 'name' },
               { type: 'field', name: 'level' },
               { type: 'field', name: 'createdAt' },
+              {
+                type: 'block',
+                block: ZovaRender.block('basic-page:blockFilterActions'),
+              },
             ],
           },
         ],
       },
     }),
-    ZovaRender.block('basic-page:blockFilterActions'),
   ],
 });
 ```
 
-Here `formFieldLayout.inline: true` controls how each field wrapper is presented. The flow section keeps those compact wrappers left-packed and wraps them when necessary. `basic-page:blockFilterActions` remains required because the custom blocks replace automatic filter body/footer content.
+Here `formFieldLayout.inline: true` controls how each field wrapper is presented. The flow section keeps fields and the action block left-packed and wraps them together when necessary. `basic-page:blockFilterActions` remains required because the custom blocks replace automatic filter body/footer content, but it is now placed through the structural layout rather than as a sibling block.
 
 ## Authoring checklist
 
 1. Start with DTO or resource metadata; do not hand-patch generated `.zova-rest` artifacts.
 2. Use `formLayout` when the requirement is field placement, Grid or flow structure, groups, or tabs.
 3. Use `layout`, `formFieldLayout`, `options`, or provider behaviors when the requirement is one field's wrapper or renderer.
-4. Keep entry actions in page-entry toolbar blocks and filter actions in `basic-page:blockFilterActions`.
+4. Keep entry actions in page-entry toolbar blocks. Keep filter action semantics in `basic-page:blockFilterActions`; place that block inside Form Layout only when actions must share structural Grid or flow placement with fields.
 5. Review field names against the scene-specific schema. Unlisted visible fields are appended; unknown and duplicate declarations are silently pruned from the rendered plan.
 6. Use the smallest layout that communicates the form structure; reserve tabs for genuinely separate field groups.
 

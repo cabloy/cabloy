@@ -414,11 +414,14 @@ That means automatic schema-driven rendering is not happening magically in the w
 
 When `ZForm` receives a nonempty block list, the render bean delegates body rendering to those blocks instead of iterating schema fields directly. For Cabloy Basic structural forms, `basic-form:blockFormLayout` resolves `formLayout` against the form's current schema properties and calls `$$form.renderField(...)` for each surviving layout field.
 
+Form Layout also supports a leaf `block` node. It wraps an existing resource block descriptor and the Basic renderer invokes it with the inherited `IJsxRenderContextForm`, including the same JSX runtime and CEL scope. The node has no schema property or field value; for example, a filter can place `basic-page:blockFilterActions` inside a flow section while that action block continues to read `$$filter` from the filter-owned form scope.
+
 This keeps ownership separate:
 
 - the form controller owns schema properties, field state, validation, and field rendering
-- the shared form-layout resolver normalizes field placement metadata
-- the Basic layout block renders sections, groups, grids, and tabs
+- the shared form-layout resolver normalizes field placement metadata while preserving non-field block nodes
+- the Basic layout block renders sections, groups, grids, tabs, and embedded blocks
+- embedded blocks own their behavior; Form Layout owns only their placement
 - field-layout behaviors still own each field wrapper and its visible validation message
 
 Read [Form Layout Guide](/frontend/form-layout-guide) for the DTO authoring grammar, resolver behavior, and Basic-specific responsive/tab behavior.

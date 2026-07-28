@@ -180,7 +180,7 @@ A practical rule is:
 
 ### Use blocks for a structural filter layout
 
-A bare `basic-page:blockFilter` keeps the default schema field rendering and adds Search/Reset controls automatically. For a structured filter, compose the existing form layout block with the filter-specific action block:
+A bare `basic-page:blockFilter` keeps the default schema field rendering and adds Search/Reset controls automatically. For a structured filter whose actions should share the flow with filter fields, embed the existing action block in Form Layout:
 
 ```tsx
 ZovaRender.block('basic-page:blockFilter', {
@@ -196,17 +196,20 @@ ZovaRender.block('basic-page:blockFilter', {
               { type: 'field', name: 'name' },
               { type: 'field', name: 'level' },
               { type: 'field', name: 'createdAt' },
+              {
+                type: 'block',
+                block: ZovaRender.block('basic-page:blockFilterActions'),
+              },
             ],
           },
         ],
       },
     }),
-    ZovaRender.block('basic-page:blockFilterActions'),
   ],
 });
 ```
 
-`basic-form:blockFormLayout` only places schema fields. `basic-page:blockFilterActions` owns Search/Reset placement and invokes the filter command surface supplied through the form scope, so it preserves filter normalization and page-query behavior. A nonempty `blocks` list replaces the automatic body and footer; include the action block explicitly to make the filter operable.
+`basic-form:blockFormLayout` owns structural placement only. `basic-page:blockFilterActions` still owns Search/Reset behavior and invokes the filter command surface supplied through the inherited form scope, preserving filter normalization and page-query behavior. A nonempty `blocks` list replaces the automatic body and footer; include the action block explicitly to make the filter operable. The older sibling action-block composition remains supported, but do not combine it with an embedded action block.
 
 `ZForm.inline` is no longer a form API. Use `formFieldLayout.inline` for field-level compact layout, or use blocks plus `basic-form:blockFormLayout` for structural layout. The flow section above keeps compact filters left-packed and wrapping; use the default Grid section when fields need responsive columns and spans. Read [Form Layout Guide](/frontend/form-layout-guide) for the full node grammar, section layout rules, resolver behavior, tabs, and entry-form composition.
 

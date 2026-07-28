@@ -411,6 +411,7 @@ export class ControllerForm<
     if (node.type === 'field') {
       return this.formState.fieldMeta[node.name]?.errors?.length ? 1 : 0;
     }
+    if (node.type === 'block') return 0;
     return node.children.reduce((count, child) => {
       return count + this._getFormLayoutErrorFieldCount(child);
     }, 0);

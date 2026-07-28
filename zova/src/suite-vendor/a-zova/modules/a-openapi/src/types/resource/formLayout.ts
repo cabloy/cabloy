@@ -1,3 +1,5 @@
+import type { IResourceRenderBlockOptionsBlock } from './block.js';
+
 export interface IFormLayout {
   children: IFormLayoutNode[];
 }
@@ -18,12 +20,20 @@ export interface IFormLayoutField {
   span?: IFormLayoutResponsiveColumns;
 }
 
+export interface IFormLayoutBlock {
+  type: 'block';
+  block: IResourceRenderBlockOptionsBlock;
+  span?: IFormLayoutResponsiveColumns;
+}
+
+export type IFormLayoutLeaf = IFormLayoutField | IFormLayoutBlock;
+
 export interface IFormLayoutGroup {
   type: 'group';
   id?: string;
   title?: string;
   description?: string;
-  children: Array<IFormLayoutField | IFormLayoutGroup | IFormLayoutSection>;
+  children: Array<IFormLayoutLeaf | IFormLayoutGroup | IFormLayoutSection>;
 }
 
 export interface IFormLayoutSection {
@@ -33,7 +43,7 @@ export interface IFormLayoutSection {
   description?: string;
   layout?: TypeFormLayoutSectionLayout;
   columns?: IFormLayoutResponsiveColumns;
-  children: IFormLayoutField[];
+  children: IFormLayoutLeaf[];
 }
 
 export interface IFormLayoutTabs {
@@ -46,11 +56,11 @@ export interface IFormLayoutTab {
   type: 'tab';
   id?: string;
   title: string;
-  children: Array<IFormLayoutField | IFormLayoutGroup | IFormLayoutSection>;
+  children: Array<IFormLayoutLeaf | IFormLayoutGroup | IFormLayoutSection>;
 }
 
 export type IFormLayoutNode =
-  | IFormLayoutField
+  | IFormLayoutLeaf
   | IFormLayoutGroup
   | IFormLayoutSection
   | IFormLayoutTabs;

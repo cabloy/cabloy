@@ -28,12 +28,15 @@ export interface IDtoOptionsStudentSelectResItem extends IDecoratorDtoOptions {}
                       { type: 'field', name: 'name' },
                       { type: 'field', name: 'level' },
                       { type: 'field', name: 'createdAt' },
+                      {
+                        type: 'block',
+                        block: ZovaRender.block('basic-page:blockFilterActions'),
+                      },
                     ],
                   },
                 ],
               },
             }),
-            ZovaRender.block('basic-page:blockFilterActions'),
           ],
         }),
         ZovaRender.block('basic-page:blockToolbarBulk', {
