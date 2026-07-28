@@ -97,7 +97,11 @@ export type PaymentOutcomeFailureStage =
 
 type PaymentOutcomeStageCallback = (stage: PaymentOutcomeFailureStage) => void | Promise<void>;
 
-export type ShipmentFailureStage = 'afterShipmentInsert' | 'afterOrderState' | 'afterOrderAudit';
+export type ShipmentFailureStage =
+  | 'beforeOrderLock'
+  | 'afterShipmentInsert'
+  | 'afterOrderState'
+  | 'afterOrderAudit';
 
 type ShipmentStageCallback = (stage: ShipmentFailureStage) => void | Promise<void>;
 
@@ -678,6 +682,7 @@ export class ServiceOrder extends BeanBase {
     if (!carrier) this.app.throw(400, 'shipment carrier is required');
     if (!trackingNumber) this.app.throw(400, 'shipment trackingNumber is required');
 
+    await onStage?.('beforeOrderLock');
     const order = await this.scope.model.order.getByIdForUpdate(orderId);
     if (!order) this.app.throw(404, 'order not found');
     const existingShipment = await this.scope.model.shipment.get({ orderId: order.id });
