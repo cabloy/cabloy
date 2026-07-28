@@ -31,7 +31,7 @@ export interface IDtoOptionsStudentSelectResItem extends IDecoratorDtoOptions {}
                       {
                         type: 'block',
                         block: ZovaRender.block('basic-page:blockFilterActions'),
-                      } as any,
+                      },
                     ],
                   },
                 ],
