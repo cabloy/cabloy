@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.122
+
+### Features
+
+- Update functionality and dependencies.
+
 ## 5.1.121
 
 ### Features
