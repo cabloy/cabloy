@@ -51,7 +51,10 @@ export class Dto<%=argv.resourceNameCapitalize%>SelectResItem extends $Dto.get((
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),
     ZovaRender.cell('basic-table:actionOperationsRow', {
-      actions: [ZovaRender.tableActionRow('basic-table:actionUpdate'), ZovaRender.tableActionRow('basic-table:actionDelete')],
+      actions: [
+        ZovaRender.tableActionRow('basic-table:actionUpdate'),
+        ZovaRender.tableActionRow('basic-table:actionDelete'),
+      ],
     }),
   )
   _operationsRow?: unknown;
