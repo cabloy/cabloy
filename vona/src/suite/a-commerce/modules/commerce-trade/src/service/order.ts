@@ -337,6 +337,7 @@ export class ServiceOrder extends BeanBase {
     return {
       orderId: order.id,
       paymentAttemptId: paymentAttempt.id,
+      paymentSessionId: paymentAttempt.paymentSessionId!,
       state: 'awaiting_payment',
       paymentAttemptState: 'created',
       currency: order.currency,
@@ -1134,6 +1135,7 @@ export class ServiceOrder extends BeanBase {
     return {
       orderId: order.id,
       paymentAttemptId: paymentAttempt.id,
+      paymentSessionId: paymentAttempt.paymentSessionId!,
       state: order.state,
       paymentAttemptState: paymentAttempt.state,
       currency: order.currency,
