@@ -22,7 +22,7 @@ export type TypePaymentAttemptFinalState = Extract<
 @Service()
 export class ServicePaymentAttempt extends BeanBase {
   async create(command: IPaymentAttemptCreateCommand): Promise<EntityPaymentAttempt> {
-    return await this.scope.model.paymentAttempt.insert({
+    const attempt = await this.scope.model.paymentAttempt.insert({
       orderId: command.orderId,
       userId: command.userId,
       state: 'created',
@@ -30,6 +30,12 @@ export class ServicePaymentAttempt extends BeanBase {
       amountCents: command.amountCents,
       correlationId: command.correlationId,
     });
+    const session = await this.scope.service.commercePayScene.createSession(attempt);
+    return {
+      ...attempt,
+      paymentSessionId: session.id,
+      providerName: session.providerName,
+    };
   }
 
   async finalize(

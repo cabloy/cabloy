@@ -29,6 +29,15 @@ export class EntityPaymentAttempt extends EntityBase {
   @Api.field(v.required(), v.min(1), v.max(100))
   correlationId: string;
 
+  @Api.field(v.optional(), v.tableIdentity())
+  paymentSessionId?: TableIdentity;
+
+  @Api.field(v.optional(), v.max(100))
+  providerName?: string;
+
+  @Api.field(v.optional(), v.max(255))
+  providerCaptureId?: string;
+
   @Api.field(v.optional())
   finalizedAt?: Date;
 
