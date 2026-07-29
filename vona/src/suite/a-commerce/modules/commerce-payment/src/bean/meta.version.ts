@@ -27,6 +27,18 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         .string(entityPaymentAttempt.correlationId, 100)
         .comment(entityPaymentAttempt.$comment.correlationId);
       table
+        .tableIdentity(entityPaymentAttempt.paymentSessionId)
+        .nullable()
+        .comment(entityPaymentAttempt.$comment.paymentSessionId);
+      table
+        .string(entityPaymentAttempt.providerName, 100)
+        .nullable()
+        .comment(entityPaymentAttempt.$comment.providerName);
+      table
+        .string(entityPaymentAttempt.providerCaptureId, 255)
+        .nullable()
+        .comment(entityPaymentAttempt.$comment.providerCaptureId);
+      table
         .dateTime(entityPaymentAttempt.finalizedAt)
         .nullable()
         .comment(entityPaymentAttempt.$comment.finalizedAt);
@@ -119,6 +131,14 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table
         .string(entityRefundAttempt.correlationId, 100)
         .comment(entityRefundAttempt.$comment.correlationId);
+      table
+        .tableIdentity(entityRefundAttempt.refundOperationId)
+        .nullable()
+        .comment(entityRefundAttempt.$comment.refundOperationId);
+      table
+        .string(entityRefundAttempt.providerRefundId, 255)
+        .nullable()
+        .comment(entityRefundAttempt.$comment.providerRefundId);
       table
         .dateTime(entityRefundAttempt.finalizedAt)
         .nullable()

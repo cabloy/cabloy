@@ -32,6 +32,12 @@ export class EntityRefundAttempt extends EntityBase {
   @Api.field(v.required(), v.min(1), v.max(100))
   correlationId: string;
 
+  @Api.field(v.optional(), v.tableIdentity())
+  refundOperationId?: TableIdentity;
+
+  @Api.field(v.optional(), v.max(255))
+  providerRefundId?: string;
+
   @Api.field(v.optional())
   finalizedAt?: Date;
 }

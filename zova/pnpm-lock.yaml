@@ -183,6 +183,9 @@ importers:
       zova-module-a-openapi:
         specifier: workspace:^
         version: link:src/suite-vendor/a-zova/modules/a-openapi
+      zova-module-a-pay:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-pay/modules/a-pay
       zova-module-a-router:
         specifier: workspace:^
         version: link:src/suite-vendor/a-zova/modules/a-router
@@ -333,6 +336,15 @@ importers:
       zova-module-home-theme:
         specifier: workspace:^
         version: link:src/suite/a-home/modules/home-theme
+      zova-module-pay-mock:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-pay/modules/pay-mock
+      zova-module-pay-paypal:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-pay/modules/pay-paypal
+      zova-module-pay-stripe:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-pay/modules/pay-stripe
       zova-module-rest-resource:
         specifier: workspace:^
         version: link:src/suite-vendor/a-cabloy/modules/rest-resource
@@ -951,6 +963,57 @@ importers:
         version: link:modules/rest-resource
 
   src/suite-vendor/a-cabloy/modules/rest-resource:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-pay:
+    dependencies:
+      zova-module-a-pay:
+        specifier: ^5.0.0
+        version: link:modules/a-pay
+      zova-module-pay-mock:
+        specifier: ^5.0.0
+        version: link:modules/pay-mock
+      zova-module-pay-paypal:
+        specifier: ^5.0.0
+        version: link:modules/pay-paypal
+      zova-module-pay-stripe:
+        specifier: ^5.0.0
+        version: link:modules/pay-stripe
+
+  src/suite-vendor/a-pay/modules/a-pay:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-pay/modules/pay-mock:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-pay/modules/pay-paypal:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-pay/modules/pay-stripe:
     devDependencies:
       clean-package:
         specifier: ^2.2.0

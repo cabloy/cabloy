@@ -46,11 +46,11 @@ A tenant operator who assigns commerce roles. Framework-wide administrative auth
 - Catalogue, SKU, price, publication, and one-warehouse stock management for tenant operators.
 - A single fixed-amount coupon per order with eligibility, minimum spend, validity, issuance limits, and per-customer limits.
 - Atomic order creation with inventory and coupon reservation.
-- A mock payment flow with success, failure, cancellation, and duplicate-notification handling.
+- Provider-neutral payment sessions with a test/development mock provider, verified provider outcomes, and duplicate-notification handling.
 - Automatic release of unpaid order stock and coupon reservations after 30 minutes, explicit cancellation, or failed payment.
 - Tenant-operator manual shipment for the whole order with a carrier and tracking number.
-- Customer-requested, operator-approved, pre-shipment whole-order refunds through the mock payment flow.
-- Inventory restoration after a successful refund; the redeemed coupon is not restored.
+- Customer-requested, operator-approved, pre-shipment full or partial monetary refunds through the payment-provider boundary.
+- Inventory restoration only after a successful full refund; a partial refund is a monetary adjustment and the redeemed coupon is not restored.
 - Separate customer and operator SSR applications at `/commerce` and `/commerce-admin`.
 
 ### Deferred
@@ -58,10 +58,10 @@ A tenant operator who assigns commerce roles. Framework-wide administrative auth
 - Multi-merchant marketplaces, store onboarding, seller settlement, and merchant-to-merchant data boundaries.
 - Multiple warehouses, transfer, replenishment, stocktake, backorders, split allocation, and split shipment.
 - Guest checkout, guest order lookup, order claiming, and unauthenticated payment continuation.
-- Real payment service providers, webhooks from external providers, reconciliation, disputes, chargebacks, and payment routing.
+- Payment disputes, chargebacks, multi-provider routing policy, subscriptions, and saved payment methods. PayPal automatic capture, verified webhooks, reconciliation, and full/partial refunds move to the `a-pay` delivery scope.
 - External marketplace/channel catalogue mapping, order ingestion, and channel-specific inventory.
 - Percentage coupons, coupon stacking, product-level promotion engines, loyalty points, gift cards, subscriptions, and campaigns.
-- Partial refunds, post-shipment returns, return logistics, inspection, and RMA workflows.
+- Post-shipment returns, return logistics, inspection, and RMA workflows. Partial refunds are limited to pre-shipment monetary adjustments and do not imply partial inventory returns.
 - Tax engines, shipping-rate engines, internationalization of selling currency, and multi-currency pricing.
 
 ## Primary User Journeys

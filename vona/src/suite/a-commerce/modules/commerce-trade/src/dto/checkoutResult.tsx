@@ -15,6 +15,9 @@ export class DtoCheckoutResult {
   @Api.field(v.tableIdentity())
   paymentAttemptId: TableIdentity;
 
+  @Api.field(v.tableIdentity())
+  paymentSessionId: TableIdentity;
+
   @Api.field(z.enum(['awaiting_payment', 'paid', 'cancelled', 'expired']))
   state: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
 

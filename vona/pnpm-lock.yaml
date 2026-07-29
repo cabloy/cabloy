@@ -235,6 +235,9 @@ importers:
       vona-module-a-ormutils:
         specifier: workspace:^
         version: link:src/suite-vendor/a-vona/modules/a-ormutils
+      vona-module-a-pay:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-pay/modules/a-pay
       vona-module-a-paypal:
         specifier: workspace:^
         version: link:src/suite-vendor/a-paypal/modules/a-paypal
@@ -391,6 +394,15 @@ importers:
       vona-module-image-native:
         specifier: workspace:^
         version: link:src/suite-vendor/a-image/modules/image-native
+      vona-module-pay-mock:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-pay/modules/pay-mock
+      vona-module-pay-paypal:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-pay/modules/pay-paypal
+      vona-module-pay-stripe:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-pay/modules/pay-stripe
       vona-module-test-auth:
         specifier: workspace:^
         version: link:src/suite-vendor/a-test/modules/test-auth
@@ -1792,6 +1804,69 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
 
+  src/suite-vendor/a-pay:
+    dependencies:
+      vona-module-a-pay:
+        specifier: ^5.0.0
+        version: link:modules/a-pay
+      vona-module-pay-mock:
+        specifier: ^5.0.0
+        version: link:modules/pay-mock
+      vona-module-pay-paypal:
+        specifier: ^5.0.0
+        version: link:modules/pay-paypal
+      vona-module-pay-stripe:
+        specifier: ^5.0.0
+        version: link:modules/pay-stripe
+
+  src/suite-vendor/a-pay/modules/a-pay:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-pay/modules/pay-mock:
+    dependencies:
+      vona-module-a-pay:
+        specifier: workspace:*
+        version: link:../a-pay
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-pay/modules/pay-paypal:
+    dependencies:
+      vona-module-a-pay:
+        specifier: workspace:*
+        version: link:../a-pay
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-pay/modules/pay-stripe:
+    dependencies:
+      vona-module-a-pay:
+        specifier: workspace:*
+        version: link:../a-pay
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
   src/suite-vendor/a-paypal:
     dependencies:
       vona-module-a-paypal:
@@ -2952,6 +3027,10 @@ importers:
         version: 6.1.3
 
   src/suite/a-commerce/modules/commerce-payment:
+    dependencies:
+      vona-module-a-pay:
+        specifier: workspace:*
+        version: link:../../../../suite-vendor/a-pay/modules/a-pay
     devDependencies:
       clean-package:
         specifier: ^2.2.0

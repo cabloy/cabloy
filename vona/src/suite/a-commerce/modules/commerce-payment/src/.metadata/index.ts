@@ -398,6 +398,7 @@ declare module 'vona-module-a-orm' {
 }
 /** model: end */
 /** service: begin */
+export * from '../service/commercePayScene.ts';
 export * from '../service/mockPaymentAdapter.ts';
 export * from '../service/paymentAttempt.ts';
 
@@ -405,7 +406,8 @@ import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
   
     export interface IServiceRecord {
-      'commerce-payment:mockPaymentAdapter': never;
+      'commerce-payment:commercePayScene': never;
+'commerce-payment:mockPaymentAdapter': never;
 'commerce-payment:paymentAttempt': never;
     }
 
@@ -413,6 +415,17 @@ declare module 'vona-module-a-bean' {
 }
 declare module 'vona-module-commerce-payment' {
   
+        export interface ServiceCommercePayScene {
+          /** @internal */
+          get scope(): ScopeModuleCommercePayment;
+        }
+
+          export interface ServiceCommercePayScene {
+            get $beanFullName(): 'commerce-payment.service.commercePayScene';
+            get $onionName(): 'commerce-payment:commercePayScene';
+            
+          }
+
         export interface ServiceMockPaymentAdapter {
           /** @internal */
           get scope(): ScopeModuleCommercePayment;
@@ -437,10 +450,12 @@ declare module 'vona-module-commerce-payment' {
 }
 /** service: end */
 /** service: begin */
+import type { ServiceCommercePayScene } from '../service/commercePayScene.ts';
 import type { ServiceMockPaymentAdapter } from '../service/mockPaymentAdapter.ts';
 import type { ServicePaymentAttempt } from '../service/paymentAttempt.ts';
 export interface IModuleService {
-  'mockPaymentAdapter': ServiceMockPaymentAdapter;
+  'commercePayScene': ServiceCommercePayScene;
+'mockPaymentAdapter': ServiceMockPaymentAdapter;
 'paymentAttempt': ServicePaymentAttempt;
 }
 /** service: end */
@@ -449,7 +464,8 @@ export interface IModuleService {
 import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
-    'commerce-payment.service.mockPaymentAdapter': ServiceMockPaymentAdapter;
+    'commerce-payment.service.commercePayScene': ServiceCommercePayScene;
+'commerce-payment.service.mockPaymentAdapter': ServiceMockPaymentAdapter;
 'commerce-payment.service.paymentAttempt': ServicePaymentAttempt;
   }
 }

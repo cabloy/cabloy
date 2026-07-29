@@ -116,17 +116,18 @@ State names in this section are canonical. A later implementation may use intege
 
 ### Order
 
-| State              | Meaning                                                         | Allowed next states                          |
-| ------------------ | --------------------------------------------------------------- | -------------------------------------------- |
-| `awaiting_payment` | Order and reservations created; payment not accepted            | `paid`, `cancelled`, `expired`               |
-| `paid`             | Payment accepted; shipment not yet recorded                     | `shipped`, `refund_requested`                |
-| `refund_requested` | Customer has requested an eligible refund                       | `paid`, `refund_approved`, `refund_rejected` |
-| `refund_approved`  | Operator approved; mock refund is being executed                | `refunded`                                   |
-| `refund_rejected`  | Operator rejected the request; order remains paid and unshipped | `paid`                                       |
-| `shipped`          | Whole-order carrier/tracking information recorded               | none                                         |
-| `refunded`         | Whole-order mock refund succeeded and stock was restored        | none                                         |
-| `cancelled`        | Customer/operator cancellation before payment completion        | none                                         |
-| `expired`          | 30-minute unpaid timeout released reservations                  | none                                         |
+| State                | Meaning                                                         | Allowed next states                          |
+| -------------------- | --------------------------------------------------------------- | -------------------------------------------- |
+| `awaiting_payment`   | Order and reservations created; payment not accepted            | `paid`, `cancelled`, `expired`               |
+| `paid`               | Payment accepted; shipment not yet recorded                     | `shipped`, `refund_requested`                |
+| `refund_requested`   | Customer has requested an eligible refund                       | `paid`, `refund_approved`, `refund_rejected` |
+| `refund_approved`    | Operator approved; provider refund is being executed            | `paid`, `partially_refunded`, `refunded`     |
+| `refund_rejected`    | Operator rejected the request; order remains paid and unshipped | `paid`                                       |
+| `partially_refunded` | Pre-shipment monetary adjustment completed; stock is unchanged  | `refund_requested`, `refunded`               |
+| `shipped`            | Whole-order carrier/tracking information recorded               | none                                         |
+| `refunded`           | Whole-order provider refund succeeded and stock was restored    | none                                         |
+| `cancelled`          | Customer/operator cancellation before payment completion        | none                                         |
+| `expired`            | 30-minute unpaid timeout released reservations                  | none                                         |
 
 - **SRS-ORD-01**: `paid`, `refund_requested`, `refund_approved`, or `refund_rejected` must not transition to `shipped` unless the current state is `paid` at the transaction boundary.
 - **SRS-ORD-02**: `shipped`, `refunded`, `cancelled`, and `expired` are final in the MVP.
@@ -147,23 +148,25 @@ State names in this section are canonical. A later implementation may use intege
 
 ### Payment and refund attempts
 
-| Record          | State       | Meaning                                                   |
-| --------------- | ----------- | --------------------------------------------------------- |
-| Payment attempt | `created`   | Order created a mock payment attempt                      |
-| Payment attempt | `succeeded` | A validated mock success completed exactly once           |
-| Payment attempt | `failed`    | Mock payment failed                                       |
-| Payment attempt | `cancelled` | Mock payment cancelled or order expired/cancelled         |
-| Refund attempt  | `created`   | Approved refund is ready for mock execution               |
-| Refund attempt  | `succeeded` | Mock refund completed exactly once                        |
-| Refund attempt  | `failed`    | Mock refund failed and the paid order remains recoverable |
+| Record          | State       | Meaning                                                      |
+| --------------- | ----------- | ------------------------------------------------------------ |
+| Payment attempt | `created`   | Order created a provider-neutral payment session             |
+| Payment attempt | `succeeded` | A verified provider success completed exactly once           |
+| Payment attempt | `failed`    | Verified provider payment failed                             |
+| Payment attempt | `cancelled` | Verified provider cancellation or order expiry/cancel        |
+| Refund attempt  | `created`   | Approved refund is ready for provider execution              |
+| Refund attempt  | `succeeded` | Verified provider refund completed exactly once              |
+| Refund attempt  | `failed`    | Verified provider refund failed and the order is recoverable |
 
 - **SRS-RFD-01**: A refund request records the requesting customer, order, reason, requested time, decision actor, decision reason, and execution attempt. It is created only from the order's current `paid` state.
 - **SRS-RFD-02**: Approval must recheck tenant ownership and that no shipment exists. A refund attempt may run only from `refund_approved`; a rejection returns the order to `paid` without changing stock or coupon redemption.
-- **SRS-RFD-03**: Successful refund execution restores each consumed reservation exactly once, transitions the order to `refunded`, and leaves the coupon in `redeemed` state. A failed mock attempt is retained in the refund audit trail and returns the order to `paid`, where the customer may create a new refund request.
+- **SRS-RFD-03**: A successful full refund restores each consumed reservation exactly once, transitions the order to `refunded`, and leaves the coupon in `redeemed` state. A successful partial refund is a pre-shipment monetary adjustment, transitions the order to `partially_refunded`, and does not restore stock. A failed provider attempt is retained in the refund audit trail and returns the order to `paid`, where the customer may create a new refund request.
 
 - **SRS-PAY-01**: A payment or refund event has a durable idempotency key scoped to its attempt and tenant.
 - **SRS-PAY-02**: Replaying a successful event returns the existing final result and must not reapply any stock, coupon, order, or audit mutation.
-- **SRS-PAY-03**: Payment success consumes reservations and changes the order from `awaiting_payment` to `paid` atomically. Refund success restores stock and changes the order from `refund_approved` to `refunded` atomically.
+- **SRS-PAY-03**: Payment success consumes reservations and changes the order from `awaiting_payment` to `paid` atomically. Full refund success restores stock and changes the order from `refund_approved` to `refunded` atomically.
+- **SRS-PAY-04**: Browser redirects and callbacks are advisory only. The Provider result must be verified through a signed webhook, Provider query, or reconciliation before it changes Commerce state.
+- **SRS-PAY-05**: Provider side effects are driven by durable operations and an outbox. No external payment call runs inside a retryable Commerce database transaction.
 
 ### Shipment
 
@@ -216,6 +219,7 @@ State names in this section are canonical. A later implementation may use intege
 - [Product Delivery Plan and Work Breakdown Structure](./pdp-wbs.md)
 - [Test Strategy and Acceptance Plan](./test-plan.md)
 - [ADR 0001: Establish A-Commerce MVP Boundaries](./decisions/0001-mvp-boundaries.md)
+- [A-Pay payment architecture](../../architecture/a-pay-payment-architecture.md)
 - [Transaction guide](../../../cabloy-docs/backend/transaction-guide.md)
 - [Contract-loop playbook](../../../cabloy-docs/fullstack/contract-loop-playbook.md)
 - [SSR Vona/Zova boundary and call chain](../../architecture/ssr-vona-zova-boundary-and-call-chain.md)

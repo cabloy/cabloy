@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.base",
+  "compilerOptions": {},
+  "references": [
+    {
+      "path": "modules/a-pay/tsconfig.build.json"
+    },
+    {
+      "path": "modules/pay-mock/tsconfig.build.json"
+    },
+    {
+      "path": "modules/pay-paypal/tsconfig.build.json"
+    },
+    {
+      "path": "modules/pay-stripe/tsconfig.build.json"
+    }
+  ],
+  "exclude": ["modules"]
+}
