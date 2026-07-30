@@ -10,7 +10,7 @@ import type {
   IPayProviderWebhookInput,
 } from 'vona-module-a-pay';
 
-import { timingSafeEqual } from 'node:crypto';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import { BeanBase } from 'vona';
 import { PayProvider } from 'vona-module-a-pay';
 import { z } from 'zod';
@@ -46,7 +46,7 @@ export interface IPayProviderOptionsMock extends IDecoratorPayProviderOptions<
     credentialRef: 'env://PAY_MOCK',
   },
 })
-export class BeanPayProviderMock extends BeanBase implements IPayProviderExecute {
+export class PayProviderMock extends BeanBase implements IPayProviderExecute {
   getCapabilities(): IPayProviderCapabilities {
     return {
       redirectCheckout: false,
@@ -84,7 +84,12 @@ export class BeanPayProviderMock extends BeanBase implements IPayProviderExecute
   async verifyWebhook(input: IPayProviderWebhookInput): Promise<IPayProviderVerifiedWebhook> {
     const signature = input.headers['x-pay-mock-signature'];
     const actual = Array.isArray(signature) ? signature[0] : signature;
-    const expected = process.env.PAY_MOCK_WEBHOOK_SECRET;
+    const secret = process.env.PAY_MOCK_WEBHOOK_SECRET;
+    const rawBody = input.rawBody;
+    const expected =
+      secret && rawBody !== undefined
+        ? createHmac('sha256', secret).update(rawBody).digest('hex')
+        : undefined;
     if (!expected || !actual || !safeEqual(actual, expected)) {
       this.app.throw(401, 'mock webhook signature is invalid');
     }
@@ -116,10 +121,4 @@ function safeEqual(actual: string, expected: string) {
   return (
     actualBuffer.length === expectedBuffer.length && timingSafeEqual(actualBuffer, expectedBuffer)
   );
-}
-
-declare module 'vona-module-a-pay' {
-  export interface IPayProviderRecord {
-    'pay-mock:mock': IPayProviderOptionsMock;
-  }
 }

@@ -1,6 +1,13 @@
 // eslint-disable
 /** bean: begin */
-export * from '../bean/bean.payProviderMock.ts';
+export * from '../bean/payProvider.mock.ts';
+import type { IPayProviderOptionsMock } from '../bean/payProvider.mock.ts';
+import 'vona-module-a-pay';
+declare module 'vona-module-a-pay' {
+  export interface IPayProviderRecord {
+    'pay-mock:mock': IPayProviderOptionsMock;
+  }
+}
 
 import 'vona';
 declare module 'vona' {
@@ -9,18 +16,18 @@ declare module 'vona' {
 }
 declare module 'vona-module-pay-mock' {
   
-        export interface BeanPayProviderMock {
+        export interface PayProviderMock {
           /** @internal */
           get scope(): ScopeModulePayMock;
         } 
 }
 /** bean: end */
 /** bean: begin */
-import type { BeanPayProviderMock } from '../bean/bean.payProviderMock.ts';
+import type { PayProviderMock } from '../bean/payProvider.mock.ts';
 import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
-    'payProviderMock': BeanPayProviderMock;
+    'payProviderMock': PayProviderMock;
   }
 }
 /** bean: end */

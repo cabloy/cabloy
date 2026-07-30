@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { randomUUID } from 'node:crypto';
+import { createHmac, randomUUID } from 'node:crypto';
 import { after, before, describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
 
@@ -167,13 +167,90 @@ async function createCheckoutFixture(suffix: string, withCoupon = true): Promise
 
 describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () => {
   let releaseTestLock: (() => void) | undefined;
+  let previousWebhookSecret: string | undefined;
 
   before(async () => {
     releaseTestLock = await acquireTestLock('a-commerce');
+    previousWebhookSecret = process.env.PAY_MOCK_WEBHOOK_SECRET;
+    process.env.PAY_MOCK_WEBHOOK_SECRET = 'pay-mock-test-secret';
   });
 
   after(() => {
+    if (previousWebhookSecret === undefined) delete process.env.PAY_MOCK_WEBHOOK_SECRET;
+    else process.env.PAY_MOCK_WEBHOOK_SECRET = previousWebhookSecret;
     releaseTestLock?.();
+  });
+
+  it('delivers a signed webhook through the durable outbox to Commerce exactly once', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture: IFixture = {};
+      try {
+        Object.assign(fixture, await createCheckoutFixture(randomUUID().slice(0, 12)));
+        const eventId = `provider-${randomUUID().slice(0, 12)}`;
+        const rawBody = JSON.stringify({
+          paymentSessionId: String(fixture.paymentSessionId),
+          currency: 'USD',
+          amountMinor: 799,
+          eventType: 'payment.succeeded',
+          eventId,
+          state: 'succeeded',
+          providerPaymentId: `payment-${eventId}`,
+          providerCaptureId: `capture-${eventId}`,
+        });
+        const signature = createHmac('sha256', process.env.PAY_MOCK_WEBHOOK_SECRET!)
+          .update(rawBody)
+          .digest('hex');
+        const webhookPath = app.util.getAbsoluteUrlByApiPath('/pay/webhook/mock');
+        const webhookUrl = webhookPath.startsWith('http')
+          ? webhookPath
+          : `http://127.0.0.1:${app.config.server.listen.port}${webhookPath}`;
+        const response = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-pay-mock-signature': signature,
+          },
+          body: rawBody,
+        });
+        assert.equal(response.status, 200);
+        const pay = app.scope('a-pay');
+        const outbox = await pay.model.outboxEvent.get({
+          paymentSessionId: fixture.paymentSessionId,
+        });
+        assert.ok(outbox);
+        await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outbox.id });
+        await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outbox.id });
+        const [dispatched, order, attempt, line, balance, grant, paymentAudits] = await Promise.all(
+          [
+            pay.model.outboxEvent.getById(outbox.id),
+            app.scope('commerce-trade').model.order.getById(fixture.orderId!),
+            app.scope('commerce-payment').model.paymentAttempt.getById(fixture.paymentAttemptId!),
+            app.scope('commerce-trade').model.orderLine.get({ orderId: fixture.orderId }),
+            app.scope('commerce-trade').model.stockBalance.getById(fixture.balanceId!),
+            app.scope('commerce-promotion').model.couponGrant.getById(fixture.grantId!),
+            app.scope('commerce-payment').model.paymentAudit.select({
+              where: { paymentAttemptId: fixture.paymentAttemptId },
+            }),
+          ],
+        );
+        const reservation = await app.scope('commerce-trade').model.stockReservation.get({
+          orderLineId: line?.id,
+        });
+        assert.deepEqual([dispatched?.state, dispatched?.attemptCount], ['dispatched', 1]);
+        assert.equal(dispatched?.claimToken, undefined);
+        assert.deepEqual(
+          [order?.state, attempt?.state, reservation?.state],
+          ['paid', 'succeeded', 'consumed'],
+        );
+        assert.deepEqual([balance?.onHand, balance?.reserved, balance?.available], [0, 0, 0]);
+        assert.equal(grant?.state, 'redeemed');
+        assert.equal(paymentAudits.length, 1);
+        assert.equal(paymentAudits[0]?.providerEventId, eventId);
+      } finally {
+        await cleanup(fixture);
+        await app.bean.passport.signout();
+      }
+    });
   });
 
   it('settles a successful payment exactly once with stock and coupon consumption', async () => {

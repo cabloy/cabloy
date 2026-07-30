@@ -13,7 +13,7 @@ export function config(app: VonaApplication) {
     webhooks: {
       endpoints: {
         mock: {
-          instanceName: 'default',
+          instanceName: '',
           providerName: 'pay-mock:mock',
           clientName: 'default',
           environment: 'sandbox',

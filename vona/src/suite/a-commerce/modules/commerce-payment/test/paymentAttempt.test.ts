@@ -9,8 +9,11 @@ describe('paymentAttempt.test.ts', { concurrency: false }, () => {
       const scope = app.scope('commerce-payment');
       const suffix = randomUUID().slice(0, 12);
       let attemptId: number | undefined;
+      let paymentSessionId: number | undefined;
+      let userId: number | undefined;
       try {
         const user = await app.bean.user.register({ name: `payment-${suffix}` }, true);
+        userId = user.id as number;
         const created = await scope.service.paymentAttempt.create({
           orderId: 900_001,
           userId: user.id,
@@ -19,6 +22,7 @@ describe('paymentAttempt.test.ts', { concurrency: false }, () => {
           correlationId: `payment-${suffix}`,
         });
         attemptId = created.id as number;
+        paymentSessionId = created.paymentSessionId as number;
         assert.equal(created.state, 'created');
         const cancelled = await scope.service.paymentAttempt.cancel(created.orderId);
         assert.equal(cancelled?.state, 'cancelled');
@@ -26,7 +30,18 @@ describe('paymentAttempt.test.ts', { concurrency: false }, () => {
         assert.equal(replay?.id, created.id);
         assert.equal(replay?.state, 'cancelled');
       } finally {
+        if (paymentSessionId !== undefined) {
+          const pay = app.scope('a-pay');
+          await pay.model.outboxEvent.delete({ paymentSessionId });
+          await pay.model.paymentAudit.delete({ paymentSessionId });
+          await pay.model.webhookInbox.delete({ paymentSessionId });
+          await pay.model.paymentSession.delete({ id: paymentSessionId });
+        }
         if (attemptId !== undefined) await scope.model.paymentAttempt.delete({ id: attemptId });
+        if (userId !== undefined) {
+          await app.scope('home-user').model.roleUser.delete({ userId });
+          await app.bean.user.removeById(userId);
+        }
       }
     });
   });

@@ -24,7 +24,7 @@ export class ControllerWebhook extends BeanBase {
     const endpoint = this.scope.config.webhooks.endpoints[endpointKey] as
       | IPayWebhookEndpointOptions
       | undefined;
-    if (!endpoint?.enabled || this.ctx.instanceName !== endpoint.instanceName) {
+    if (!endpoint?.enabled || (this.ctx.instanceName ?? '') !== endpoint.instanceName) {
       this.app.throw(404, 'payment webhook endpoint not found');
     }
     const provider = this.bean.payProvider.get(endpoint.providerName as never);

@@ -60,15 +60,26 @@ export class ServicePaymentSession extends BeanBase {
       providerCaptureId?: string;
       webhookInboxId: TableIdentity;
     },
-  ): Promise<{ session: EntityPaymentSession; changed: boolean }> {
+  ): Promise<{
+    session: EntityPaymentSession;
+    changed: boolean;
+    ignoredReason?: string;
+  }> {
     const session = await this.scope.model.paymentSession.getByIdForUpdate(paymentSessionId);
     if (!session) this.app.throw(404, 'payment session not found');
-    if (session.state === options.state) return { session, changed: false };
-    if (session.expiresAt <= new Date()) {
-      this.app.throw(409, 'payment session is expired');
+    if (session.state === options.state) {
+      this._assertWebhookProviderFactsConsistent(session, options);
+      return { session, changed: false };
     }
     if (['succeeded', 'failed', 'cancelled', 'expired'].includes(session.state)) {
-      this.app.throw(409, 'payment session terminal state conflicts with the webhook');
+      return {
+        session,
+        changed: false,
+        ignoredReason: `terminal payment state ${options.state} ignored after ${session.state}`,
+      };
+    }
+    if (session.expiresAt <= new Date()) {
+      this.app.throw(409, 'payment session is expired');
     }
     const finalizedAt = new Date();
     await this.scope.model.paymentSession.updateById(session.id, {
@@ -90,6 +101,25 @@ export class ServicePaymentSession extends BeanBase {
       session: { ...session, ...options, state: options.state, finalizedAt },
       changed: true,
     };
+  }
+
+  private _assertWebhookProviderFactsConsistent(
+    session: EntityPaymentSession,
+    options: {
+      providerPaymentId?: string;
+      providerCaptureId?: string;
+    },
+  ) {
+    if (
+      (session.providerPaymentId &&
+        options.providerPaymentId &&
+        session.providerPaymentId !== options.providerPaymentId) ||
+      (session.providerCaptureId &&
+        options.providerCaptureId &&
+        session.providerCaptureId !== options.providerCaptureId)
+    ) {
+      this.app.throw(409, 'payment webhook provider facts conflict with the payment session');
+    }
   }
 
   @Core.transaction()

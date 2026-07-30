@@ -365,7 +365,8 @@ export class ServiceOrder extends BeanBase {
     if (
       lockedAttempt.amountCents !== event.amountMinor ||
       lockedAttempt.currency !== event.currency ||
-      String(lockedAttempt.paymentSessionId) !== String(event.paymentSessionId)
+      String(lockedAttempt.paymentSessionId) !== String(event.paymentSessionId) ||
+      lockedAttempt.providerName !== event.providerName
     ) {
       this.app.throw(409, 'provider event conflicts with the commerce payment attempt');
     }

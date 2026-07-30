@@ -111,10 +111,17 @@ export class ServiceWebhook extends BeanBase {
       };
       await this.scope.service.outbox.enqueue(session.id, 'payment.outcome.v1', { ...event });
     }
+    const processedAt = new Date();
     await this.scope.model.webhookInbox.updateById(inbox.id, {
       state: 'processed',
-      processedAt: new Date(),
+      processedAt,
+      errorSummary: transition.ignoredReason,
     });
-    return { ...inbox, state: 'processed' as const, processedAt: new Date() };
+    return {
+      ...inbox,
+      state: 'processed' as const,
+      processedAt,
+      errorSummary: transition.ignoredReason,
+    };
   }
 }
