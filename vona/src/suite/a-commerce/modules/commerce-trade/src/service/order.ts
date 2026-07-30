@@ -1,5 +1,6 @@
 import type { TableIdentity } from 'table-identity';
 import type { IQueryParams } from 'vona-module-a-orm';
+import type { IPaymentOutcomeEvent } from 'vona-module-a-pay';
 import type { EntityPaymentAttempt } from 'vona-module-commerce-payment';
 import type {
   EntityRefundAttempt,
@@ -344,6 +345,79 @@ export class ServiceOrder extends BeanBase {
       payableTotalCents: order.payableTotalCents,
       reservationExpiresAt: order.reservationExpiresAt,
     };
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async settlePaymentFromProvider(event: IPaymentOutcomeEvent): Promise<DtoPaymentOutcomeResult> {
+    const attempt = await this.$scope.commercePayment.model.paymentAttempt.get({
+      paymentSessionId: event.paymentSessionId,
+    });
+    if (!attempt || String(attempt.id) !== event.businessReference) {
+      this.app.throw(404, 'commerce payment attempt not found');
+    }
+    const order = await this.scope.model.order.getByIdForUpdate(attempt.orderId);
+    if (!order) this.app.throw(404, 'order not found');
+    const lockedAttempt = await this.$scope.commercePayment.model.paymentAttempt.getByIdForUpdate(
+      attempt.id,
+    );
+    if (!lockedAttempt) this.app.throw(404, 'commerce payment attempt not found');
+    if (
+      lockedAttempt.amountCents !== event.amountMinor ||
+      lockedAttempt.currency !== event.currency ||
+      String(lockedAttempt.paymentSessionId) !== String(event.paymentSessionId)
+    ) {
+      this.app.throw(409, 'provider event conflicts with the commerce payment attempt');
+    }
+    const existingAudit = await this.$scope.commercePayment.model.paymentAudit.get({
+      paymentAttemptId: lockedAttempt.id,
+      providerEventId: event.eventId,
+    });
+    if (existingAudit) return this._paymentOutcomeResult(order, lockedAttempt);
+    if (order.state !== 'awaiting_payment' || lockedAttempt.state !== 'created') {
+      this.app.throw(409, 'payment attempt is no longer available');
+    }
+    const correlationId = `${order.correlationId}:provider:${event.eventId}`;
+    const orderState = event.state === 'succeeded' ? 'paid' : 'cancelled';
+    const reason = `provider payment ${event.state}`;
+    await this.scope.model.order.updateById(order.id, { state: orderState });
+    const finalizedAttempt = await this.$scope.commercePayment.service.paymentAttempt.finalize(
+      order.id,
+      event.state,
+    );
+    if (!finalizedAttempt) this.app.throw(404, 'commerce payment attempt not found');
+    await this.$scope.commercePayment.model.paymentAttempt.updateById(finalizedAttempt.id, {
+      providerName: event.providerName,
+      providerCaptureId: event.providerCaptureId,
+    });
+    if (event.state === 'succeeded') {
+      await this._consumeReservedOrderResources(order, correlationId, reason);
+    } else {
+      await this._releaseReservedOrderResources(order, correlationId, reason);
+    }
+    await this.$scope.commercePayment.model.paymentAudit.insert({
+      paymentAttemptId: finalizedAttempt.id,
+      orderId: order.id,
+      userId: order.userId,
+      provider: event.providerName,
+      providerEventId: event.eventId,
+      outcome: event.state,
+      fromAttemptState: 'created',
+      toOrderState: orderState,
+      idempotencyKey: event.eventId.slice(0, 100),
+      correlationId,
+      reason,
+      processedAt: new Date(),
+    });
+    await this._appendAudit({
+      orderId: order.id,
+      operation: orderState === 'paid' ? 'paid' : 'cancelled',
+      fromState: 'awaiting_payment',
+      toState: orderState,
+      correlationId,
+      reason,
+    });
+    return this._paymentOutcomeResult({ ...order, state: orderState }, finalizedAttempt);
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })

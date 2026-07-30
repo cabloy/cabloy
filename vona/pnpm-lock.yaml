@@ -3076,6 +3076,10 @@ importers:
         version: 6.1.3
 
   src/suite/a-commerce/modules/commerce-trade:
+    dependencies:
+      vona-module-a-pay:
+        specifier: workspace:*
+        version: link:../../../../suite-vendor/a-pay/modules/a-pay
     devDependencies:
       clean-package:
         specifier: ^2.2.0

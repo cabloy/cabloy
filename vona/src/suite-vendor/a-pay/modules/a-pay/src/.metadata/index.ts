@@ -493,6 +493,7 @@ declare module 'vona' {
 export * from '../service/outbox.ts';
 export * from '../service/paymentSession.ts';
 export * from '../service/providerOperation.ts';
+export * from '../service/webhook.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
@@ -501,6 +502,7 @@ declare module 'vona-module-a-bean' {
       'a-pay:outbox': never;
 'a-pay:paymentSession': never;
 'a-pay:providerOperation': never;
+'a-pay:webhook': never;
     }
 
   
@@ -538,6 +540,17 @@ declare module 'vona-module-a-pay' {
             get $beanFullName(): 'a-pay.service.providerOperation';
             get $onionName(): 'a-pay:providerOperation';
             
+          }
+
+        export interface ServiceWebhook {
+          /** @internal */
+          get scope(): ScopeModuleAPay;
+        }
+
+          export interface ServiceWebhook {
+            get $beanFullName(): 'a-pay.service.webhook';
+            get $onionName(): 'a-pay:webhook';
+            
           } 
 }
 /** service: end */
@@ -545,10 +558,12 @@ declare module 'vona-module-a-pay' {
 import type { ServiceOutbox } from '../service/outbox.ts';
 import type { ServicePaymentSession } from '../service/paymentSession.ts';
 import type { ServiceProviderOperation } from '../service/providerOperation.ts';
+import type { ServiceWebhook } from '../service/webhook.ts';
 export interface IModuleService {
   'outbox': ServiceOutbox;
 'paymentSession': ServicePaymentSession;
 'providerOperation': ServiceProviderOperation;
+'webhook': ServiceWebhook;
 }
 /** service: end */
 /** service: begin */
@@ -559,11 +574,50 @@ declare module 'vona' {
     'a-pay.service.outbox': ServiceOutbox;
 'a-pay.service.paymentSession': ServicePaymentSession;
 'a-pay.service.providerOperation': ServiceProviderOperation;
+'a-pay.service.webhook': ServiceWebhook;
   }
 }
 /** service: end */
+/** event: begin */
+export * from '../bean/event.paymentOutcome.ts';
+
+import 'vona';
+declare module 'vona' {
+  
+  
+}
+declare module 'vona-module-a-pay' {
+  
+        export interface EventPaymentOutcome {
+          /** @internal */
+          get scope(): ScopeModuleAPay;
+        }
+
+          export interface EventPaymentOutcome {
+            get $beanFullName(): 'a-pay.event.paymentOutcome';
+            get $onionName(): 'a-pay:paymentOutcome';
+            
+          } 
+}
+/** event: end */
+/** event: begin */
+import type { EventPaymentOutcome } from '../bean/event.paymentOutcome.ts';
+export interface IModuleEvent {
+  'paymentOutcome': EventPaymentOutcome;
+}
+/** event: end */
+/** event: begin */
+import type { TypeEventPaymentOutcomeData, TypeEventPaymentOutcomeResult } from '../bean/event.paymentOutcome.ts';
+import type { EventOn } from 'vona-module-a-event'; 
+declare module 'vona-module-a-event' {
+  export interface IEventRecord {
+    'a-pay:paymentOutcome': EventOn<TypeEventPaymentOutcomeData, TypeEventPaymentOutcomeResult>;
+  }
+}
+/** event: end */
 /** meta: begin */
 export * from '../bean/meta.index.ts';
+export * from '../bean/meta.redlock.ts';
 export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
@@ -571,6 +625,7 @@ declare module 'vona-module-a-meta' {
   
     export interface IMetaRecord {
       'a-pay:index': IMetaOptionsIndex;
+'a-pay:redlock': never;
 'a-pay:version': never;
     }
 
@@ -589,6 +644,17 @@ declare module 'vona-module-a-pay' {
             get $onionOptions(): IMetaOptionsIndex;
           }
 
+        export interface MetaRedlock {
+          /** @internal */
+          get scope(): ScopeModuleAPay;
+        }
+
+          export interface MetaRedlock {
+            get $beanFullName(): 'a-pay.meta.redlock';
+            get $onionName(): 'a-pay:redlock';
+            
+          }
+
         export interface MetaVersion {
           /** @internal */
           get scope(): ScopeModuleAPay;
@@ -601,6 +667,67 @@ declare module 'vona-module-a-pay' {
           } 
 }
 /** meta: end */
+/** meta redlock: begin */
+import type { MetaRedlock } from '../bean/meta.redlock.ts';
+/** meta redlock: end */
+/** queue: begin */
+export * from '../bean/queue.outboxDispatch.ts';
+
+import { type IDecoratorQueueOptions } from 'vona-module-a-queue';
+declare module 'vona-module-a-queue' {
+  
+    export interface IQueueRecord {
+      'a-pay:outboxDispatch': IDecoratorQueueOptions;
+    }
+
+  
+}
+declare module 'vona-module-a-pay' {
+  
+        export interface QueueOutboxDispatch {
+          /** @internal */
+          get scope(): ScopeModuleAPay;
+        }
+
+          export interface QueueOutboxDispatch {
+            get $beanFullName(): 'a-pay.queue.outboxDispatch';
+            get $onionName(): 'a-pay:outboxDispatch';
+            get $onionOptions(): IDecoratorQueueOptions;
+          } 
+}
+/** queue: end */
+/** queue: begin */
+import type { QueueOutboxDispatch } from '../bean/queue.outboxDispatch.ts';
+export interface IModuleQueue {
+  'outboxDispatch': QueueOutboxDispatch;
+}
+/** queue: end */
+/** schedule: begin */
+export * from '../bean/schedule.outboxDispatch.ts';
+
+import { type IDecoratorScheduleOptions } from 'vona-module-a-schedule';
+declare module 'vona-module-a-schedule' {
+  
+    export interface IScheduleRecord {
+      'a-pay:outboxDispatch': IDecoratorScheduleOptions;
+    }
+
+  
+}
+declare module 'vona-module-a-pay' {
+  
+        export interface ScheduleOutboxDispatch {
+          /** @internal */
+          get scope(): ScopeModuleAPay;
+        }
+
+          export interface ScheduleOutboxDispatch {
+            get $beanFullName(): 'a-pay.schedule.outboxDispatch';
+            get $onionName(): 'a-pay:outboxDispatch';
+            get $onionOptions(): IDecoratorScheduleOptions;
+          } 
+}
+/** schedule: end */
 /** dto: begin */
 export * from '../dto/paymentSessionStart.tsx';
 export * from '../dto/paymentSessionView.tsx';
@@ -700,6 +827,7 @@ declare module 'vona-module-a-pay' {
 declare module 'vona-module-a-web' {
   export interface IApiPathPostRecord{
         '/payment-session/:id/start': undefined;
+'/pay/webhook/:endpointKey': undefined;
     }
 export interface IApiPathGetRecord{
         '/payment-session/:id': undefined;
@@ -725,6 +853,9 @@ config: TypeModuleConfig<typeof config>;
 entity: IModuleEntity;
 model: IModuleModel;
 service: IModuleService;
+event: IModuleEvent;
+redlock: MetaRedlock;
+queue: IModuleQueue;
 }
 
 import 'vona';

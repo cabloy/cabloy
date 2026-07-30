@@ -57,7 +57,11 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         .comment(entityPaymentAudit.$comment.paymentAttemptId);
       table.tableIdentity(entityPaymentAudit.orderId).comment(entityPaymentAudit.$comment.orderId);
       table.userId(entityPaymentAudit.userId).comment(entityPaymentAudit.$comment.userId);
-      table.string(entityPaymentAudit.provider, 20).comment(entityPaymentAudit.$comment.provider);
+      table.string(entityPaymentAudit.provider, 100).comment(entityPaymentAudit.$comment.provider);
+      table
+        .string(entityPaymentAudit.providerEventId, 255)
+        .nullable()
+        .comment(entityPaymentAudit.$comment.providerEventId);
       table.string(entityPaymentAudit.outcome, 20).comment(entityPaymentAudit.$comment.outcome);
       table
         .string(entityPaymentAudit.fromAttemptState, 20)

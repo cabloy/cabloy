@@ -789,6 +789,32 @@ declare module 'vona' {
   }
 }
 /** service: end */
+/** eventListener: begin */
+export * from '../bean/eventListener.paymentOutcome.ts';
+
+import { type IDecoratorEventListenerOptions } from 'vona-module-a-event';
+declare module 'vona-module-a-event' {
+  
+    export interface IEventListenerRecord {
+      'commerce-trade:paymentOutcome': IDecoratorEventListenerOptions;
+    }
+
+  
+}
+declare module 'vona-module-commerce-trade' {
+  
+        export interface EventListenerPaymentOutcome {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface EventListenerPaymentOutcome {
+            get $beanFullName(): 'commerce-trade.eventListener.paymentOutcome';
+            get $onionName(): 'commerce-trade:paymentOutcome';
+            get $onionOptions(): IDecoratorEventListenerOptions;
+          } 
+}
+/** eventListener: end */
 /** meta: begin */
 export * from '../bean/meta.index.ts';
 export * from '../bean/meta.version.ts';

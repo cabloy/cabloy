@@ -17,6 +17,7 @@ interface IFixture {
   checkoutCorrelationId?: string;
   orderId?: number;
   paymentAttemptId?: number;
+  paymentSessionId?: number;
 }
 
 async function cleanup(fixture: IFixture) {
@@ -25,10 +26,18 @@ async function cleanup(fixture: IFixture) {
   const promotion = app.scope('commerce-promotion');
   const catalog = app.scope('commerce-catalog');
   const member = app.scope('commerce-member');
+  const pay = app.scope('a-pay');
+  if (fixture.paymentSessionId !== undefined) {
+    await pay.model.outboxEvent.delete({ paymentSessionId: fixture.paymentSessionId });
+    await pay.model.paymentAudit.delete({ paymentSessionId: fixture.paymentSessionId });
+    await pay.model.webhookInbox.delete({ paymentSessionId: fixture.paymentSessionId });
+  }
   if (fixture.paymentAttemptId !== undefined)
     await payment.model.paymentAudit.delete({ paymentAttemptId: fixture.paymentAttemptId });
   if (fixture.paymentAttemptId !== undefined)
     await payment.model.paymentAttempt.delete({ id: fixture.paymentAttemptId });
+  if (fixture.paymentSessionId !== undefined)
+    await pay.model.paymentSession.delete({ id: fixture.paymentSessionId });
   if (fixture.orderId !== undefined)
     await trade.model.orderAudit.delete({ orderId: fixture.orderId });
   if (fixture.skuId !== undefined) await trade.model.stockAudit.delete({ skuId: fixture.skuId });
@@ -152,6 +161,7 @@ async function createCheckoutFixture(suffix: string, withCoupon = true): Promise
   });
   fixture.orderId = checkout.orderId as number;
   fixture.paymentAttemptId = checkout.paymentAttemptId as number;
+  fixture.paymentSessionId = checkout.paymentSessionId as number;
   return fixture;
 }
 
@@ -207,6 +217,43 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
         assert.deepEqual([balance?.onHand, balance?.reserved, balance?.available], [0, 0, 0]);
         assert.equal(grant?.state, 'redeemed');
         assert.equal(paymentAudits.length, 1);
+      } finally {
+        await cleanup(fixture);
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
+  it('settles a provider event without customer Passport authority', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture: IFixture = {};
+      try {
+        Object.assign(fixture, await createCheckoutFixture(randomUUID().slice(0, 12)));
+        await app.bean.passport.signout();
+        const event = {
+          eventId: `provider-${randomUUID().slice(0, 12)}`,
+          paymentSessionId: fixture.paymentSessionId!,
+          businessReference: String(fixture.paymentAttemptId),
+          providerName: 'pay-mock:mock',
+          state: 'succeeded' as const,
+          providerCaptureId: `capture-${randomUUID().slice(0, 12)}`,
+          amountMinor: 799,
+          currency: 'USD',
+        };
+        const first = await app
+          .scope('commerce-trade')
+          .service.order.settlePaymentFromProvider(event);
+        const replay = await app
+          .scope('commerce-trade')
+          .service.order.settlePaymentFromProvider(event);
+        assert.deepEqual(replay, first);
+        assert.deepEqual([first.orderState, first.paymentAttemptState], ['paid', 'succeeded']);
+        const audits = await app.scope('commerce-payment').model.paymentAudit.select({
+          where: { paymentAttemptId: fixture.paymentAttemptId },
+        });
+        assert.equal(audits.length, 1);
+        assert.equal(audits[0]?.providerEventId, event.eventId);
+        assert.equal(audits[0]?.actorId, undefined);
       } finally {
         await cleanup(fixture);
         await app.bean.passport.signout();

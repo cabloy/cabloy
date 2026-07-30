@@ -11,6 +11,7 @@ import { $tableColumns } from 'vona-module-a-ormutils';
     ...$tableColumns('commercePaymentAttempt', 'state'),
     ...$tableColumns('commercePaymentAttempt', 'correlationId'),
     ...$tableColumns('commercePaymentAudit', 'paymentAttemptId'),
+    ...$tableColumns('commercePaymentAudit', 'providerEventId'),
     ...$tableColumns('commercePaymentAudit', 'orderId'),
     ...$tableColumns('commercePaymentAudit', 'idempotencyKey'),
     ...$tableColumns('commercePaymentRefundRequest', 'orderId'),

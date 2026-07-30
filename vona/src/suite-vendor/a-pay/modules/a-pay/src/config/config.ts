@@ -1,5 +1,25 @@
 import type { VonaApplication } from 'vona';
 
-export function config(_app: VonaApplication) {
-  return {};
+export interface IPayWebhookEndpointOptions {
+  instanceName: string;
+  providerName: string;
+  clientName: string;
+  environment: 'sandbox' | 'live';
+  enabled: boolean;
+}
+
+export function config(app: VonaApplication) {
+  return {
+    webhooks: {
+      endpoints: {
+        mock: {
+          instanceName: 'default',
+          providerName: 'pay-mock:mock',
+          clientName: 'default',
+          environment: 'sandbox',
+          enabled: app.meta.env.META_MODE !== 'prod',
+        } satisfies IPayWebhookEndpointOptions,
+      },
+    },
+  };
 }

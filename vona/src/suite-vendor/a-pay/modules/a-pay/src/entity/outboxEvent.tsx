@@ -29,6 +29,12 @@ export class EntityOutboxEvent extends EntityBase {
   @Api.field(v.optional())
   claimedAt?: Date;
 
+  @Api.field(v.optional(), v.max(100))
+  claimToken?: string;
+
+  @Api.field(v.optional())
+  claimExpiresAt?: Date;
+
   @Api.field(v.optional())
   nextAttemptAt?: Date;
 

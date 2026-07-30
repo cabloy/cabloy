@@ -35,15 +35,15 @@ Provider calls use two short local transaction phases:
 3. call the Provider outside database transaction and retry AOP boundaries;
 4. lock again, persist a sanitized response, transition the session, append audit, and insert an outbox event atomically.
 
-The database outbox, not a synchronous Vona event or a queue push, is the durable source of pending delivery. A queue nudge is allowed after commit for latency; a bounded recovery schedule must scan and redeliver pending outbox work. Consumers must accept duplicate delivery safely.
+The database outbox, not a synchronous Vona event or a queue push, is the durable source of pending delivery. A queue nudge is allowed after commit for latency; a bounded recovery schedule scans due and expired-lease rows. Each worker claim carries a token and lease, and completion compares that token so a stale worker cannot overwrite a reclaimed delivery. Consumers must accept duplicate delivery safely.
 
 ## Webhooks
 
 Webhook endpoints are `@Passport.public()` only to bypass end-user Passport. Provider signature verification, endpoint-to-client mapping, account validation, and event identity are the authentication boundary.
 
-The controller must use `ctx.request.rawBody`; it must not reserialize parsed JSON for signature verification. A verified event is stored in `WebhookInbox`, deduplicated by active instance/provider/client/event ID, normalized, and then causes atomic session/audit/outbox updates. Request `iid`, query fields, and unsigned body fields never select an instance or merchant secret.
+The controller must use `ctx.request.rawBody`; it must not reserialize parsed JSON for signature verification. An opaque configured endpoint key selects one enabled instance/provider/client/environment mapping before verification; the handler rejects any request context whose instance does not equal that configured binding, and request `iid`, query fields, and unsigned body fields never select an instance or merchant secret. A verified event is stored in `WebhookInbox`, deduplicated by active instance/provider/client/event ID, normalized, and then causes atomic session/audit/outbox updates. The current `pay-mock` verifier requires `PAY_MOCK_WEBHOOK_SECRET` and accepts only signed terminal payment facts.
 
-Browser redirects are notification inputs. A return/cancel page can request server reconciliation but cannot declare payment success.
+Browser redirects are notification inputs. A return/cancel page can request server reconciliation but cannot declare payment success. A verified terminal session fact emits `payment.outcome.v1` through the durable outbox; Commerce consumes the stable provider event ID idempotently under its existing serializable Order lock, without a customer Passport context.
 
 ## PayPal v1 and refunds
 

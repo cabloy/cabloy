@@ -70,6 +70,10 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.string(webhookInbox.eventType, 100);
       table.tableIdentity(webhookInbox.paymentSessionId);
       table.tableIdentity(webhookInbox.refundOperationId);
+      table.string(webhookInbox.paymentState, 32);
+      table.integer(webhookInbox.amountMinor);
+      table.string(webhookInbox.currency, 3);
+      table.string(webhookInbox.providerCaptureId, 255);
       table.string(webhookInbox.payloadHash, 64);
       table.string(webhookInbox.state, 32);
       table.integer(webhookInbox.retryCount);
@@ -99,6 +103,8 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.string(outboxEvent.state, 32);
       table.integer(outboxEvent.attemptCount);
       table.dateTime(outboxEvent.claimedAt);
+      table.string(outboxEvent.claimToken, 100);
+      table.dateTime(outboxEvent.claimExpiresAt);
       table.dateTime(outboxEvent.nextAttemptAt);
       table.dateTime(outboxEvent.dispatchedAt);
       table.string(outboxEvent.errorSummary, 255);

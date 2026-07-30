@@ -18,9 +18,11 @@ import { $tableColumns } from 'vona-module-a-ormutils';
     ...$tableColumns('payRefundOperation', 'state'),
     ...$tableColumns('payWebhookInbox', 'providerName+clientName'),
     ...$tableColumns('payWebhookInbox', 'providerEventId'),
+    ...$tableColumns('payWebhookInbox', 'paymentSessionId'),
     ...$tableColumns('payWebhookInbox', 'state'),
     ...$tableColumns('payPaymentAudit', 'paymentSessionId'),
     ...$tableColumns('payOutboxEvent', 'state+nextAttemptAt'),
+    ...$tableColumns('payOutboxEvent', 'state+claimExpiresAt'),
   },
 })
 export class MetaIndex extends BeanBase {}

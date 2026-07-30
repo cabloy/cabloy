@@ -18,6 +18,9 @@ export class ControllerPayment extends BeanBase {
     @Arg.param('attemptId', v.tableIdentity()) attemptId: TableIdentity,
     @Arg.body() command: DtoPaymentOutcomeCreate,
   ): Promise<DtoPaymentOutcomeResult> {
+    if (this.app.meta.env.META_MODE === 'prod') {
+      this.app.throw(404, 'payment outcome endpoint is disabled');
+    }
     return await this.scope.service.order.applyPaymentOutcome(attemptId, command);
   }
 }

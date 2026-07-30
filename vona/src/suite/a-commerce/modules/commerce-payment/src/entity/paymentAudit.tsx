@@ -25,8 +25,11 @@ export class EntityPaymentAudit extends EntityBase {
   @Api.field(v.tableIdentity())
   userId: TableIdentity;
 
-  @Api.field(z.literal('mock'))
-  provider: 'mock';
+  @Api.field(v.required(), v.min(1), v.max(100))
+  provider: string;
+
+  @Api.field(v.optional(), v.min(1), v.max(255))
+  providerEventId?: string;
 
   @Api.field(z.enum(['succeeded', 'failed', 'cancelled']))
   outcome: TypePaymentOutcome;

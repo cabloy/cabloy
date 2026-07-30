@@ -54,6 +54,7 @@
       "a-orm": "5.0.0",
       "a-ormutils": "5.0.0",
       "a-queue": "5.0.0",
+      "a-redlock": "5.0.0",
       "a-schedule": "5.0.0",
       "a-user": "5.0.0",
       "a-vona": "5.0.0",
