@@ -13,7 +13,10 @@ export interface ISsrMenuOptionsHome extends IDecoratorSsrMenuOptions<ISsrSiteOp
     title: 'Commerce',
     order: $order(1),
     icon: undefined,
-    link: '/',
+    link: '/:locale' as never,
+    meta: {
+      params: { locale: true },
+    },
   },
   site: ['commerce-siteweb:commerce'],
 })
