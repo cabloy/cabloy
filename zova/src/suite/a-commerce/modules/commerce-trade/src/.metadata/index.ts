@@ -3,11 +3,9 @@
 export * from '../model/cart.js';
 export * from '../model/order.js';
 export * from '../model/orderMine.js';
-export * from '../model/payment.js';
 import { IModelOptionsCart } from '../model/cart.js';
 import { IModelOptionsOrder } from '../model/order.js';
 import { IModelOptionsOrderMine } from '../model/orderMine.js';
-import { IModelOptionsPayment } from '../model/payment.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
   
@@ -15,7 +13,6 @@ declare module 'zova-module-a-model' {
       'commerce-trade:cart': IModelOptionsCart;
 'commerce-trade:order': IModelOptionsOrder;
 'commerce-trade:orderMine': IModelOptionsOrderMine;
-'commerce-trade:payment': IModelOptionsPayment;
     }
 
   
@@ -53,17 +50,6 @@ declare module 'zova-module-commerce-trade' {
           get $beanFullName(): 'commerce-trade.model.orderMine';
           get $onionName(): 'commerce-trade:orderMine';
           get $onionOptions(): IModelOptionsOrderMine;
-        }
-
-        export interface ModelPayment {
-          /** @internal */
-          get scope(): ScopeModuleCommerceTrade;
-        }
-
-        export interface ModelPayment {
-          get $beanFullName(): 'commerce-trade.model.payment';
-          get $onionName(): 'commerce-trade:payment';
-          get $onionOptions(): IModelOptionsPayment;
         } 
 }
 /** model: end */
@@ -71,14 +57,12 @@ declare module 'zova-module-commerce-trade' {
 import { ModelCart } from '../model/cart.js';
 import { ModelOrder } from '../model/order.js';
 import { ModelOrderMine } from '../model/orderMine.js';
-import { ModelPayment } from '../model/payment.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
     'commerce-trade.model.cart': ModelCart;
 'commerce-trade.model.order': ModelOrder;
 'commerce-trade.model.orderMine': ModelOrderMine;
-'commerce-trade.model.payment': ModelPayment;
   }
 }
 /** model: end */
@@ -86,7 +70,6 @@ declare module 'zova' {
 export * from '../api/commerceTradeCart.js';
 export * from '../api/commerceTradeCheckout.js';
 export * from '../api/commerceTradeOrder.js';
-export * from '../api/commerceTradePayment.js';
 
 import 'zova';
 declare module 'zova' {
@@ -126,17 +109,6 @@ declare module 'zova-module-commerce-trade' {
           get $beanFullName(): 'commerce-trade.api.commerceTradeOrder';
           get $onionName(): 'commerce-trade:commerceTradeOrder';
           
-        }
-
-        export interface ApiCommerceTradePayment {
-          /** @internal */
-          get scope(): ScopeModuleCommerceTrade;
-        }
-
-        export interface ApiCommerceTradePayment {
-          get $beanFullName(): 'commerce-trade.api.commerceTradePayment';
-          get $onionName(): 'commerce-trade:commerceTradePayment';
-          
         } 
 }
 /** api: end */
@@ -144,12 +116,10 @@ declare module 'zova-module-commerce-trade' {
 import { ApiCommerceTradeCart } from '../api/commerceTradeCart.js';
 import { ApiCommerceTradeCheckout } from '../api/commerceTradeCheckout.js';
 import { ApiCommerceTradeOrder } from '../api/commerceTradeOrder.js';
-import { ApiCommerceTradePayment } from '../api/commerceTradePayment.js';
 export interface IModuleApi {
   'commerceTradeCart': ApiCommerceTradeCart;
 'commerceTradeCheckout': ApiCommerceTradeCheckout;
 'commerceTradeOrder': ApiCommerceTradeOrder;
-'commerceTradePayment': ApiCommerceTradePayment;
 }
 /** api: end */
 /** api: begin */
@@ -160,7 +130,6 @@ declare module 'zova' {
     'commerce-trade.api.commerceTradeCart': ApiCommerceTradeCart;
 'commerce-trade.api.commerceTradeCheckout': ApiCommerceTradeCheckout;
 'commerce-trade.api.commerceTradeOrder': ApiCommerceTradeOrder;
-'commerce-trade.api.commerceTradePayment': ApiCommerceTradePayment;
   }
 }
 /** api: end */
@@ -171,7 +140,6 @@ export * from '../api/openapi/index.js';
 export * from '../apiSchema/commerceTradeCart.js';
 export * from '../apiSchema/commerceTradeCheckout.js';
 export * from '../apiSchema/commerceTradeOrder.js';
-export * from '../apiSchema/commerceTradePayment.js';
 
 import 'zova';
 declare module 'zova' {
@@ -211,17 +179,6 @@ declare module 'zova-module-commerce-trade' {
           get $beanFullName(): 'commerce-trade.apiSchema.commerceTradeOrder';
           get $onionName(): 'commerce-trade:commerceTradeOrder';
           
-        }
-
-        export interface ApiSchemaCommerceTradePayment {
-          /** @internal */
-          get scope(): ScopeModuleCommerceTrade;
-        }
-
-        export interface ApiSchemaCommerceTradePayment {
-          get $beanFullName(): 'commerce-trade.apiSchema.commerceTradePayment';
-          get $onionName(): 'commerce-trade:commerceTradePayment';
-          
         } 
 }
 /** apiSchema: end */
@@ -229,12 +186,10 @@ declare module 'zova-module-commerce-trade' {
 import { ApiSchemaCommerceTradeCart } from '../apiSchema/commerceTradeCart.js';
 import { ApiSchemaCommerceTradeCheckout } from '../apiSchema/commerceTradeCheckout.js';
 import { ApiSchemaCommerceTradeOrder } from '../apiSchema/commerceTradeOrder.js';
-import { ApiSchemaCommerceTradePayment } from '../apiSchema/commerceTradePayment.js';
 export interface IModuleApiSchema {
   'commerceTradeCart': ApiSchemaCommerceTradeCart;
 'commerceTradeCheckout': ApiSchemaCommerceTradeCheckout;
 'commerceTradeOrder': ApiSchemaCommerceTradeOrder;
-'commerceTradePayment': ApiSchemaCommerceTradePayment;
 }
 /** apiSchema: end */
 /** apiSchema: begin */
@@ -245,7 +200,6 @@ declare module 'zova' {
     'commerce-trade.apiSchema.commerceTradeCart': ApiSchemaCommerceTradeCart;
 'commerce-trade.apiSchema.commerceTradeCheckout': ApiSchemaCommerceTradeCheckout;
 'commerce-trade.apiSchema.commerceTradeOrder': ApiSchemaCommerceTradeOrder;
-'commerce-trade.apiSchema.commerceTradePayment': ApiSchemaCommerceTradePayment;
   }
 }
 /** apiSchema: end */
@@ -342,7 +296,7 @@ export interface IPagePathRecord {
 '/commerce/trade/checkout/:locale?': TypePagePathSchema<NSControllerPageCheckout.ParamsInput,NSControllerPageCheckout.QueryInput>;
 '/commerce/trade/order/:id/:locale?': TypePagePathSchema<NSControllerPageOrder.ParamsInput,NSControllerPageOrder.QueryInput>;
 '/commerce/trade/orders/:locale?': TypePagePathSchema<NSControllerPageOrders.ParamsInput,NSControllerPageOrders.QueryInput>;
-'/commerce/trade/payment/:attemptId/:locale?': TypePagePathSchema<NSControllerPagePayment.ParamsInput,NSControllerPagePayment.QueryInput>;
+'/commerce/trade/payment/:paymentSessionId/:orderId/:locale?': TypePagePathSchema<NSControllerPagePayment.ParamsInput,NSControllerPagePayment.QueryInput>;
 }
 export interface IPageNameRecord {
   'commerce-trade:cart': TypePagePathSchema<NSControllerPageCart.ParamsInput,NSControllerPageCart.QueryInput>;

@@ -1179,13 +1179,11 @@ declare module 'vona-module-commerce-trade' {
 export * from '../controller/cart.ts';
 export * from '../controller/checkout.ts';
 export * from '../controller/order.ts';
-export * from '../controller/payment.ts';
 export * from '../controller/stockAudit.ts';
 export * from '../controller/stockBalance.ts';
 import type { IControllerOptionsCart } from '../controller/cart.ts';
 import type { IControllerOptionsCheckout } from '../controller/checkout.ts';
 import type { IControllerOptionsOrder } from '../controller/order.ts';
-import type { IControllerOptionsPayment } from '../controller/payment.ts';
 import type { IControllerOptionsStockAudit } from '../controller/stockAudit.ts';
 import type { IControllerOptionsStockBalance } from '../controller/stockBalance.ts';
 import 'vona-module-a-web';
@@ -1195,7 +1193,6 @@ declare module 'vona-module-a-web' {
       'commerce-trade:cart': IControllerOptionsCart;
 'commerce-trade:checkout': IControllerOptionsCheckout;
 'commerce-trade:order': IControllerOptionsOrder;
-'commerce-trade:payment': IControllerOptionsPayment;
 'commerce-trade:stockAudit': IControllerOptionsStockAudit;
 'commerce-trade:stockBalance': IControllerOptionsStockBalance;
     }
@@ -1237,17 +1234,6 @@ declare module 'vona-module-commerce-trade' {
             get $onionOptions(): IControllerOptionsOrder;
           }
 
-        export interface ControllerPayment {
-          /** @internal */
-          get scope(): ScopeModuleCommerceTrade;
-        }
-
-          export interface ControllerPayment {
-            get $beanFullName(): 'commerce-trade.controller.payment';
-            get $onionName(): 'commerce-trade:payment';
-            get $onionOptions(): IControllerOptionsPayment;
-          }
-
         export interface ControllerStockAudit {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -1279,8 +1265,6 @@ import type { ControllerCheckout } from '../controller/checkout.ts';
 // @ts-ignore ignore
 import type { ControllerOrder } from '../controller/order.ts';
 // @ts-ignore ignore
-import type { ControllerPayment } from '../controller/payment.ts';
-// @ts-ignore ignore
 import type { ControllerStockAudit } from '../controller/stockAudit.ts';
 // @ts-ignore ignore
 import type { ControllerStockBalance } from '../controller/stockBalance.ts';
@@ -1296,10 +1280,6 @@ declare module 'vona-module-commerce-trade' {
 
     export interface IControllerOptionsOrder {
       actions?: TypeControllerOptionsActions<ControllerOrder>;
-    }
-
-    export interface IControllerOptionsPayment {
-      actions?: TypeControllerOptionsActions<ControllerPayment>;
     }
 
     export interface IControllerOptionsStockAudit {
@@ -1330,7 +1310,6 @@ export interface IApiPathPostRecord{
 '/commerce/trade/order/:id/rejectRefund': undefined;
 '/commerce/trade/order/:id/refundOutcome': undefined;
 '/commerce/trade/order/:id/ship': undefined;
-'/commerce/trade/payment/:attemptId/outcome': undefined;
 '/commerce/trade/stockBalance/adjustStock': undefined;
     }
 export interface IApiPathPatchRecord{

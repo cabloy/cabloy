@@ -1,6 +1,6 @@
 {
   "name": "zova-module-a-pay",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "",
   "keywords": [
     "Zova Module"
@@ -11,6 +11,7 @@
     "dist",
     "src",
     "icons",
+    "cli",
     "assets"
   ],
   "type": "module",

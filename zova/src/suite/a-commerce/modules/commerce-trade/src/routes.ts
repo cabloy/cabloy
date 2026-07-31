@@ -21,7 +21,7 @@ export const routes: IModuleRoute[] = [
   },
   {
     name: 'payment',
-    path: 'payment/:attemptId/:locale?',
+    path: 'payment/:paymentSessionId/:orderId/:locale?',
     component: ZPagePayment,
     meta: { locale: true, requiresAuth: true },
   },

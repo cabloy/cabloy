@@ -13,7 +13,7 @@ export default function (_sys: ZovaSys) {
       'commerce-member:address': { alias: '/:locale(zh-cn)?/address' },
       'commerce-trade:cart': { alias: '/:locale(zh-cn)?/cart' },
       'commerce-trade:checkout': { alias: '/:locale(zh-cn)?/checkout' },
-      'commerce-trade:payment': { alias: '/:locale(zh-cn)?/payment/:attemptId' },
+      'commerce-trade:payment': { alias: '/:locale(zh-cn)?/payment/:paymentSessionId/:orderId' },
       'commerce-trade:orders': { alias: '/:locale(zh-cn)?/orders' },
       'commerce-trade:order': { alias: '/:locale(zh-cn)?/order/:id' },
       'home-indexweb:home': undefined,

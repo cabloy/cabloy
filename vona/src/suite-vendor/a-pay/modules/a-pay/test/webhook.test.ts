@@ -106,7 +106,7 @@ describe('webhook.test.ts', { concurrency: false, sequential: true }, () => {
   let previousWebhookSecret: string | undefined;
 
   before(async () => {
-    releaseTestLock = await acquireTestLock('a-pay');
+    releaseTestLock = await acquireTestLock('payment-webhook-secret');
     previousWebhookSecret = process.env.PAY_MOCK_WEBHOOK_SECRET;
     process.env.PAY_MOCK_WEBHOOK_SECRET = 'pay-mock-test-secret';
   });

@@ -170,7 +170,7 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
   let previousWebhookSecret: string | undefined;
 
   before(async () => {
-    releaseTestLock = await acquireTestLock('a-commerce');
+    releaseTestLock = await acquireTestLock('payment-webhook-secret');
     previousWebhookSecret = process.env.PAY_MOCK_WEBHOOK_SECRET;
     process.env.PAY_MOCK_WEBHOOK_SECRET = 'pay-mock-test-secret';
   });
@@ -562,9 +562,8 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
             innerAccess: false,
           }),
         () =>
-          app.bean.executor.performAction('post', '/commerce/trade/payment/1/outcome', {
+          app.bean.executor.performAction('get', '/payment-session/1', {
             innerAccess: false,
-            body: { outcome: 'succeeded', idempotencyKey: 'anonymous-payment-1' },
           }),
       ];
       for (const request of requests) {

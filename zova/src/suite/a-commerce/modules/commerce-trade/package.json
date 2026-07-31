@@ -33,7 +33,10 @@
     "prepack": "clean-package",
     "postpack": "clean-package restore"
   },
-  "dependencies": {},
+  "dependencies": {
+    "zova-module-a-pay": "workspace:^",
+    "zova-module-pay-mock": "workspace:^"
+  },
   "devDependencies": {
     "clean-package": "^2.2.0",
     "rimraf": "^6.1.3"
