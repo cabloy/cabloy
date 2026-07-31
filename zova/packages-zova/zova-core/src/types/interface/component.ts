@@ -1,6 +1,7 @@
 import 'vue';
 import 'vue/jsx-runtime';
 import '@vue/runtime-dom';
+import { VNode } from '@vue/runtime-dom';
 
 declare module 'vue' {
   export interface ComponentCustomOptions {
@@ -45,6 +46,10 @@ declare module 'vue/jsx-runtime' {
 }
 
 declare module '@vue/runtime-dom' {
+  export interface HTMLAttributes {
+    onVnodeMounted?: (vnode: VNode) => void;
+  }
+
   export interface LabelHTMLAttributes {
     htmlFor?: string;
   }
