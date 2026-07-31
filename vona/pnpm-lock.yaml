@@ -734,6 +734,9 @@ importers:
       zova-module-a-openapi:
         specifier: ^5.1.47
         version: 5.1.47
+      zova-module-a-pay:
+        specifier: ^5.0.0
+        version: 5.0.0
       zova-module-a-router:
         specifier: ^5.1.31
         version: 5.1.31
@@ -749,6 +752,9 @@ importers:
       zova-module-a-table:
         specifier: ^5.1.37
         version: 5.1.37(vue@3.5.39(typescript@5.9.3))
+      zova-module-pay-mock:
+        specifier: ^5.0.0
+        version: 5.0.0
       zova-module-rest-resource:
         specifier: ^5.1.42
         version: 5.1.42
@@ -806,6 +812,9 @@ importers:
       zova-module-a-openapi:
         specifier: ^5.1.47
         version: 5.1.47
+      zova-module-a-pay:
+        specifier: ^5.0.0
+        version: 5.0.0
       zova-module-a-router:
         specifier: ^5.1.31
         version: 5.1.31
@@ -821,6 +830,9 @@ importers:
       zova-module-a-table:
         specifier: ^5.1.37
         version: 5.1.37(vue@3.5.39(typescript@5.9.3))
+      zova-module-pay-mock:
+        specifier: ^5.0.0
+        version: 5.0.0
       zova-module-rest-resource:
         specifier: ^5.1.42
         version: 5.1.42
@@ -8561,6 +8573,9 @@ packages:
   zova-module-a-openapi@5.1.47:
     resolution: {integrity: sha512-iar4YR9GGdCQ9N60yt9yV+RkiM1seKlmbhoyZqLAZ7aR5tLnw2ZL7ElamHEGO5iBtFXRU8QH8RaU+8PnnyaLkg==}
 
+  zova-module-a-pay@5.0.0:
+    resolution: {integrity: sha512-jt9acZZPKnkJs8t4qOBOmqO7gyOGnByujCyNsuohAYLQSXkjdTKOJqXDe6dj0KcdayHry0ZvJiaErzQJsiNbWA==}
+
   zova-module-a-router@5.1.31:
     resolution: {integrity: sha512-bTtj3JmJKGZwUYwWpsuhigXYseYab/gOmT18WyNw0KetZGY03Y+JnU74oidrK1KtIY384+my1ZQefBlbIZjNeg==}
 
@@ -8590,6 +8605,9 @@ packages:
 
   zova-module-a-zova@5.1.94:
     resolution: {integrity: sha512-c2qbu3YiNYRSMpprPkBbZ9RaQ9KKF4Y/cEumDJaCpPoZEbJClI/WBZMrY/ZpG9Rsp/87DJ63Vkbu+iSTOh7csg==}
+
+  zova-module-pay-mock@5.0.0:
+    resolution: {integrity: sha512-WORyFqRNkrcGZCzLaesu4BDziQ2iOUIeRMVbwXx/Wzp2W0EpwMvqqAPqO8U3PKjvWtAw3YwTJFsXs1Qh66l4zQ==}
 
   zova-module-rest-resource@5.1.42:
     resolution: {integrity: sha512-eMWhc4428U5Hs4BHqFJoF7yaH+bK8t71scIrCnpLbQS7M80lNkoHxY9s/Kl4i8Uo3+lVWbSbuaXWtR+zVLNqpA==}
@@ -14617,6 +14635,8 @@ snapshots:
       openapi3-ts: 4.6.0
       typestyle: 2.4.0
 
+  zova-module-a-pay@5.0.0: {}
+
   zova-module-a-router@5.1.31: {}
 
   zova-module-a-routerstack@5.1.26: {}
@@ -14671,6 +14691,8 @@ snapshots:
     transitivePeerDependencies:
       - typescript
       - vue
+
+  zova-module-pay-mock@5.0.0: {}
 
   zova-module-rest-resource@5.1.42: {}
 
