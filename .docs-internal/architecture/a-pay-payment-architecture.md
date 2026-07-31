@@ -45,6 +45,12 @@ The controller must use `ctx.request.rawBody`; it must not reserialize parsed JS
 
 Browser redirects are notification inputs. A return/cancel page can request server reconciliation but cannot declare payment success. A verified terminal session fact emits `payment.outcome.v1` through the durable outbox; Commerce consumes the stable provider event ID idempotently under its existing serializable Order lock, without a customer Passport context.
 
+## Current pay-mock boundary
+
+The current customer flow is deliberately limited to the `pay-mock` provider. Its completion controls are a development/test simulator, not a production payment capability: the server restricts them to the enabled mock provider, the default instance, authenticated session ownership, and signed mock webhooks. The browser must never declare a Commerce payment outcome directly.
+
+The `PaymentSession.nextAction` contract is provider-neutral, but live-provider work remains incomplete. A live provider must add its own redirect or embedded UI adapter, durable provider-operation recovery, authoritative `queryPayment()` reconciliation, captured-payment versus expired-order compensation, and stronger webhook-event convergence for abnormal lock-topology failures. Until those pieces exist, do not enable a live provider for Commerce checkout.
+
 ## PayPal v1 and refunds
 
 PayPal v1 supports hosted approval, automatic capture, verified status/webhook reconciliation, and full or partial refunds against a stored capture ID. Manual authorization/capture, subscriptions, vaulted methods, disputes, and chargebacks are deferred.

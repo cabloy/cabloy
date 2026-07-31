@@ -35,6 +35,10 @@ function waitForApiResponse(page: Page, method: string, path: string | RegExp) {
   });
 }
 
+function expectTableIdentity(value: unknown) {
+  expect(['string', 'number']).toContain(typeof value);
+}
+
 function waitForAddressResponse(page: Page, method: string, path: string | RegExp) {
   return waitForApiResponse(page, method, path);
 }
@@ -396,38 +400,43 @@ test(
       const checkoutResponseValue = await checkoutResponse;
       expect(checkoutResponseValue.ok()).toBeTruthy();
       const checkout = (await checkoutResponseValue.json()).data;
-      expect(checkout.orderId).toEqual(expect.any(Number));
-      expect(checkout.paymentAttemptId).toEqual(expect.any(Number));
+      expectTableIdentity(checkout.orderId);
+      expectTableIdentity(checkout.paymentAttemptId);
+      expectTableIdentity(checkout.paymentSessionId);
       expect(checkout.state).toBe('awaiting_payment');
       expect(checkout.paymentAttemptState).toBe('created');
       expect(checkout.currency).toBe('USD');
       expect(checkout.payableTotalCents).toBe(4599);
       await expect(page).toHaveURL(
-        new RegExp(`/commerce/payment/${checkout.paymentAttemptId}(?:/|$)`),
+        new RegExp(`/commerce/payment/${checkout.paymentSessionId}/${checkout.orderId}(?:/|$)`),
       );
-      await expect(page.getByRole('heading', { name: 'Mock payment' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Payment', exact: true })).toBeVisible();
 
-      const paymentResponse = waitForApiResponse(
+      const startResponse = waitForApiResponse(
         page,
         'POST',
-        new RegExp(`/api/commerce/trade/payment/${checkout.paymentAttemptId}/outcome$`),
+        new RegExp(`/api/payment-session/${checkout.paymentSessionId}/start$`),
       );
+      await page.getByRole('button', { name: 'Start payment', exact: true }).click();
+      expect((await startResponse).ok()).toBeTruthy();
+      await expect(page.getByText('Payment is being prepared.')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Mock payment simulator' })).toBeVisible();
+      const completeResponse = waitForApiResponse(
+        page,
+        'POST',
+        new RegExp(`/api/pay/mock/payment-session/${checkout.paymentSessionId}/complete$`),
+      );
+      await page.getByRole('button', { name: 'Payment succeeded', exact: true }).click();
+      expect((await completeResponse).ok()).toBeTruthy();
+      await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`), {
+        timeout: 40_000,
+      });
       const orderDetailResponse = waitForApiResponse(
         page,
         'GET',
-        new RegExp('/api/commerce/trade/order/viewMine/\\d+$'),
+        new RegExp(`/api/commerce/trade/order/viewMine/${checkout.orderId}$`),
       );
-      await page.getByRole('button', { name: 'Payment succeeded', exact: true }).click();
-      const paymentResponseValue = await paymentResponse;
-      expect(paymentResponseValue.ok()).toBeTruthy();
-      const payment = (await paymentResponseValue.json()).data;
-      expect(payment.orderId).toBe(checkout.orderId);
-      expect(payment.paymentAttemptId).toBe(checkout.paymentAttemptId);
-      expect(payment.orderState).toBe('paid');
-      expect(payment.paymentAttemptState).toBe('succeeded');
-      expect(payment.currency).toBe('USD');
-      expect(payment.payableTotalCents).toBe(4599);
-      await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`));
+      await page.reload({ waitUntil: 'load' });
       const orderDetailResponseValue = await orderDetailResponse;
       expect(orderDetailResponseValue.ok()).toBeTruthy();
       const order = (await orderDetailResponseValue.json()).data;
@@ -537,6 +546,70 @@ test(
 );
 
 test(
+  'Payment cancellation: customer observes the cancelled order after verified provider confirmation',
+  { tag: ['@web', '@flow', '@payment'] },
+  async ({ browser, request }, testInfo) => {
+    test.setTimeout(60_000);
+    const { context, fixture, page, pageErrors } = await createAddressThroughCustomerPage(
+      browser,
+      request,
+      testInfo,
+    );
+    try {
+      await page.goto('/commerce', { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+      const productLink = page.getByRole('link', { name: 'Pour-Over Coffee Set', exact: true });
+      await expect(productLink).toBeVisible();
+      await productLink.click();
+      await expect(page).toHaveURL(/\/commerce\/product\/\d+(?:\/|$)/);
+      await expect(page.getByRole('heading', { name: 'Pour-Over Coffee Set' })).toBeVisible();
+      const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
+      await page.getByRole('button', { name: 'Add to cart', exact: true }).click();
+      expect((await addResponse).ok()).toBeTruthy();
+      await page.getByRole('link', { name: /^Cart/ }).click();
+      await expect(page).toHaveURL(/\/commerce\/cart(?:\/|$)/);
+      await page.getByRole('link', { name: 'Checkout', exact: true }).click();
+      await expect(page).toHaveURL(/\/commerce\/checkout(?:\/|$)/);
+      const addressChoice = page.getByRole('radio', { name: new RegExp(fixture.recipientName) });
+      await expect(addressChoice).toBeVisible();
+      await addressChoice.check();
+      await page.getByRole('radio', { name: 'No coupon', exact: true }).check();
+      const checkoutResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/checkout');
+      await page.getByRole('button', { name: 'Create order', exact: true }).click();
+      const checkoutResponseValue = await checkoutResponse;
+      expect(checkoutResponseValue.ok()).toBeTruthy();
+      const checkout = (await checkoutResponseValue.json()).data;
+      expectTableIdentity(checkout.orderId);
+      expectTableIdentity(checkout.paymentSessionId);
+      const startResponse = waitForApiResponse(
+        page,
+        'POST',
+        new RegExp(`/api/payment-session/${checkout.paymentSessionId}/start$`),
+      );
+      await page.getByRole('button', { name: 'Start payment', exact: true }).click();
+      expect((await startResponse).ok()).toBeTruthy();
+      await expect(page.getByText('Payment is being prepared.')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Mock payment simulator' })).toBeVisible();
+      const cancelResponse = waitForApiResponse(
+        page,
+        'POST',
+        new RegExp(`/api/pay/mock/payment-session/${checkout.paymentSessionId}/complete$`),
+      );
+      await page.getByRole('button', { name: 'Cancel payment', exact: true }).click();
+      expect((await cancelResponse).ok()).toBeTruthy();
+      await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`), {
+        timeout: 40_000,
+      });
+      await expect(page.getByText('cancelled · $45.99')).toBeVisible();
+      await expect(page.getByRole('alert')).toHaveCount(0);
+      expect(pageErrors).toEqual([]);
+    } finally {
+      await context.close().catch(() => {});
+    }
+  },
+);
+
+test(
   'Phase 60: customer requests and operator executes a whole-order refund',
   { tag: ['@web', '@admin', '@flow', '@payment', '@refund'] },
   async ({ browser, request }, testInfo) => {
@@ -572,16 +645,27 @@ test(
       const checkoutResponseValue = await checkoutResponse;
       expect(checkoutResponseValue.ok()).toBeTruthy();
       const checkout = (await checkoutResponseValue.json()).data;
-      expect(checkout.orderId).toEqual(expect.any(Number));
-      expect(checkout.paymentAttemptId).toEqual(expect.any(Number));
-      const paymentResponse = waitForApiResponse(
+      expectTableIdentity(checkout.orderId);
+      expectTableIdentity(checkout.paymentAttemptId);
+      expectTableIdentity(checkout.paymentSessionId);
+      await expect(page.getByRole('heading', { name: 'Payment', exact: true })).toBeVisible();
+      const startResponse = waitForApiResponse(
         page,
         'POST',
-        new RegExp(`/api/commerce/trade/payment/${checkout.paymentAttemptId}/outcome$`),
+        new RegExp(`/api/payment-session/${checkout.paymentSessionId}/start$`),
+      );
+      await page.getByRole('button', { name: 'Start payment', exact: true }).click();
+      expect((await startResponse).ok()).toBeTruthy();
+      await expect(page.getByText('Payment is being prepared.')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Mock payment simulator' })).toBeVisible();
+      const completeResponse = waitForApiResponse(
+        page,
+        'POST',
+        new RegExp(`/api/pay/mock/payment-session/${checkout.paymentSessionId}/complete$`),
       );
       await page.getByRole('button', { name: 'Payment succeeded', exact: true }).click();
-      expect((await paymentResponse).ok()).toBeTruthy();
-      await expect(page.getByText('paid · $45.99')).toBeVisible();
+      expect((await completeResponse).ok()).toBeTruthy();
+      await expect(page.getByText('paid · $45.99')).toBeVisible({ timeout: 40_000 });
 
       const requestResponse = waitForApiResponse(
         page,
@@ -735,7 +819,7 @@ test(
   async ({ page, request }) => {
     const routes = [
       ['/commerce/checkout', '/checkout'],
-      ['/commerce/payment/1', '/payment/1'],
+      ['/commerce/payment/1/1', '/payment/1/1'],
       ['/commerce/orders', '/orders'],
       ['/commerce/order/1', '/order/1'],
     ] as const;
@@ -749,7 +833,7 @@ test(
       expect(html, path).not.toContain('Payment succeeded');
       expect(html, path).not.toContain('Order #');
       expect(html, path).not.toContain('Checkout');
-      expect(html, path).not.toContain('Mock payment');
+      expect(html, path).not.toContain('Mock payment simulator');
       expect(html, path).not.toContain('My orders');
 
       const pageErrors = collectPageErrors(page);
