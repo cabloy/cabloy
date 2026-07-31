@@ -1,9 +1,10 @@
-import type { IModule } from '@cabloy/module-info';
+import type { IModule, ZovaConfigMeta } from '@cabloy/module-info';
 
 import fse from 'fs-extra';
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { createConfigUtils } from 'zova-vite';
 
 export function getControllerFileName(module: IModule, type: 'page' | 'component', beanName) {
   const controllerFile = path.join(module.root, `src/${type}/${beanName}/controller.ts`);
@@ -21,6 +22,14 @@ export function copyTemplateIfNeed(fileSrc, fileDest) {
 
 export function pathToHref(fileName: string): string {
   return pathToFileURL(fileName).href;
+}
+
+export function loadZovaEnvs(appDir: string, configMeta: ZovaConfigMeta) {
+  const configUtils = createConfigUtils(configMeta, {
+    appDir,
+    runtimeDir: '.zova',
+  });
+  return configUtils.loadEnvs();
 }
 
 export async function loadJSONFile(fileName: string) {

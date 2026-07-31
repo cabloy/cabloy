@@ -1,9 +1,13 @@
 import type { ZovaOpenapiConfig } from 'zova-openapi';
 
 export default function (): ZovaOpenapiConfig {
+  const apiBaseURL = process.env.API_BASE_URL;
+  if (!apiBaseURL) {
+    throw new Error('Missing API_BASE_URL');
+  }
   return {
     default: {
-      source: 'http://localhost:7102/swagger/json?version=V31',
+      source: `${apiBaseURL.replace(/\/$/, '')}/swagger/json?version=V31`,
     },
     modules: {},
   };

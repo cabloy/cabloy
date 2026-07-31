@@ -1,12 +1,12 @@
 import type { CmdOptions, NameMeta } from '@cabloy/cli';
-import type { IModuleInfo, ZovaConfigMeta } from '@cabloy/module-info';
+import type { IModuleInfo } from '@cabloy/module-info';
 
 import { BeanCliBase } from '@cabloy/cli';
 import fs from 'node:fs';
 import path from 'node:path';
-import { createConfigUtils } from 'zova-vite';
 
 import { __ThisSetName__ } from '../this.ts';
+import { loadZovaEnvs } from './utils.ts';
 
 declare module '@cabloy/cli' {
   interface ICommandArgv {
@@ -69,7 +69,11 @@ export class CliCreatePageBase extends BeanCliBase {
   }
 
   async logUrl(argv) {
-    const env = await this.loadEnvs();
+    const env = loadZovaEnvs(argv.projectPath, {
+      flavor: 'admin',
+      mode: 'development',
+      appMode: 'spa',
+    });
     const host =
       !env.DEV_SERVER_HOSTNAME || env.DEV_SERVER_HOSTNAME === 'true'
         ? 'localhost'
@@ -78,26 +82,5 @@ export class CliCreatePageBase extends BeanCliBase {
     const url = `http://${host}:${port}/${argv.moduleInfo.pid}/${argv.moduleInfo.name}/${argv.pageName}`;
     const message = `Page URL: ${url}`;
     await this.console.log(message);
-  }
-
-  async loadEnvs() {
-    const configMeta: ZovaConfigMeta = {
-      flavor: 'admin',
-      mode: 'development',
-      appMode: 'spa',
-    };
-    const configOptions = {
-      appDir: process.cwd(),
-      runtimeDir: '.zova',
-      zovaManualChunk: {
-        debug: false,
-        vendors: [],
-      },
-    };
-    // config utils
-    const configUtils = createConfigUtils(configMeta, configOptions);
-    // env
-    const env = configUtils.loadEnvs();
-    return env;
   }
 }

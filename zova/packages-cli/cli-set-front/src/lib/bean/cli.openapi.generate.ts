@@ -19,6 +19,8 @@ import path from 'node:path';
 import { rimraf } from 'rimraf';
 import ts from 'typescript';
 
+import { loadZovaEnvs } from '../common/utils.ts';
+
 declare module '@cabloy/cli' {
   interface ICommandArgv {}
 }
@@ -49,6 +51,12 @@ export class CliOpenapiGenerate extends BeanCliBase {
     const { argv } = this.context;
     // super
     await super.execute();
+    // env
+    loadZovaEnvs(argv.projectPath, {
+      flavor: 'admin',
+      mode: 'development',
+      appMode: 'spa',
+    });
     // config file
     const configFile = path.join(argv.projectPath, 'openapi.config.ts');
     if (!fse.existsSync(configFile)) {
