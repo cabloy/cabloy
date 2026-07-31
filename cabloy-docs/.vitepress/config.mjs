@@ -75,6 +75,10 @@ const fullstackGroups = [
     text: 'Tooling & Workflow',
     items: [
       { text: 'CLI', link: '/fullstack/cli' },
+      {
+        text: 'Parallel Worktree Environment',
+        link: '/fullstack/parallel-worktree-environment',
+      },
       { text: 'VS Code Extensions', link: '/fullstack/vscode-extensions' },
     ],
   },

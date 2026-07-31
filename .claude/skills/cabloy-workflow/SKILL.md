@@ -98,6 +98,12 @@ For deeper reference material, read:
 
 The reason is simple: these files are where Cabloy already encodes its real workflows.
 
+### Parallel worktree environment setup
+
+When a request involves a second worktree, concurrent Vona/Zova development, isolated ordinary tests, or managed clean E2E, classify it as fullstack workflow setup. Read [Parallel Worktree Environment](../../../cabloy-docs/fullstack/parallel-worktree-environment.md) for the canonical Cabloy Basic recipe.
+
+Before applying the broad `.env.local` recipe, check for more-specific `.env.*.local` overrides. Keep Vona and Zova `APP_NAME` values aligned, use the required matching API target, and add database, Redis, external-service, mock, or SSR-preview isolation only when the work actually uses those shared resources. For Cabloy Start, inspect the active Start repository rather than reusing the Basic recipe unchanged.
+
 ## Step 4: Prefer CLI-first workflows
 
 Whenever the task maps to an existing generator, initializer, refactor, or metadata command, prefer the CLI.

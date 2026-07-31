@@ -30,6 +30,12 @@
       "prompt": "I want to update the public guidance for Cabloy contributors about using CLI generators first, but I also think Claude should follow the same rule automatically. Where should each part of that knowledge live?",
       "expected_output": "Splits the guidance across public docs and Claude rules/skills appropriately, keeping maintainer rationale out of public docs unless needed.",
       "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "I created a second Cabloy Basic worktree and need to run Vona, Zova, and test:e2e:basic:clean in parallel with the first worktree. Which environment files and exact variables should I configure without changing shared defaults?",
+      "expected_output": "Classifies this as fullstack parallel-worktree environment setup and routes to the canonical Parallel Worktree Environment guide. Checks for more-specific local overrides, uses Vona vona/env/.env.local with APP_NAME and SERVER_LISTEN_PORT, and Zova zova/env/.env.local with the same APP_NAME plus API_BASE_URL pointing to that Vona port, DEV_SERVER_PORT, and DEV_SERVER_HMR_PORT. Keeps SSR_API_BASE_URL inherited from API_BASE_URL unless a more-specific override changes it, and adds database, Redis, external-service, mock, or SSR-preview settings only when those resources are actually used.",
+      "files": []
     }
   ]
 }
