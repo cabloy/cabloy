@@ -1,4 +1,4 @@
-import { BeanBase, deepExtend } from 'vona';
+import { BeanBase, beanFullNameFromOnionName, deepExtend } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
 import type { IPayProviderExecute } from '../types/payment.ts';
@@ -14,10 +14,8 @@ import type {
 @Bean()
 export class BeanPayProvider extends BeanBase {
   get<N extends keyof IPayProviderRecord>(providerName: N): TypePayProviderExecuteByName<N> {
-    const onionSlice = this._getOnionSlice(providerName);
-    return this.app.bean._getBean<TypePayProviderExecuteByName<N>>(
-      onionSlice.beanOptions.beanFullName as never,
-    );
+    const beanFullName = beanFullNameFromOnionName(providerName, 'payProvider');
+    return this.app.bean._getBean<TypePayProviderExecuteByName<N>>(beanFullName as never);
   }
 
   getOptions<N extends keyof IPayProviderRecord>(
@@ -75,15 +73,8 @@ export class BeanPayProvider extends BeanBase {
 
   private _getOnionSlice<N extends keyof IPayProviderRecord>(providerName: N) {
     const onionSlice = this.bean.onion.payProvider.getOnionSliceEnabled(true, providerName);
-    if (onionSlice) return onionSlice;
-    const legacyProviderName = `${String(providerName).replace(':', ':payProvider')}` as N;
-    const legacyOnionSlice = this.bean.onion.payProvider.getOnionSliceEnabled(
-      true,
-      legacyProviderName,
-    );
-    if (!legacyOnionSlice)
-      this.app.throw(404, `payment provider not found: ${String(providerName)}`);
-    return legacyOnionSlice;
+    if (!onionSlice) this.app.throw(404, `payment provider not found: ${String(providerName)}`);
+    return onionSlice;
   }
 }
 

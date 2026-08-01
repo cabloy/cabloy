@@ -12,7 +12,7 @@ const MaxAttempts = 10;
 export class ServiceOutbox extends BeanBase {
   async enqueue(
     paymentSessionId: TableIdentity,
-    eventType: string,
+    eventType: 'payment.outcome.v1',
     payload: Record<string, unknown>,
   ) {
     const event = await this.scope.model.outboxEvent.insert({
@@ -23,9 +23,11 @@ export class ServiceOutbox extends BeanBase {
       attemptCount: 0,
       nextAttemptAt: new Date(),
     });
-    this.ctx.db.commit(() => {
-      this.scope.queue.outboxDispatch.push({ outboxEventId: event.id });
-    });
+    if (!this.app.meta.isTest) {
+      this.ctx.db.commit(() => {
+        this.scope.queue.outboxDispatch.push({ outboxEventId: event.id });
+      });
+    }
     return event;
   }
 

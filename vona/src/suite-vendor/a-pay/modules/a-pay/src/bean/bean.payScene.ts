@@ -1,6 +1,6 @@
 import type { TableIdentity } from 'table-identity';
 
-import { BeanBase } from 'vona';
+import { BeanBase, beanFullNameFromOnionName } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
 import type {
@@ -13,10 +13,8 @@ import type {
 @Bean()
 export class BeanPayScene extends BeanBase {
   get<N extends keyof IPaySceneRecord>(paySceneName: N): TypePaySceneExecuteByName<N> {
-    const onionSlice = this._getOnionSlice(paySceneName);
-    return this.app.bean._getBean<TypePaySceneExecuteByName<N>>(
-      onionSlice.beanOptions.beanFullName as never,
-    );
+    const beanFullName = beanFullNameFromOnionName(paySceneName, 'payScene');
+    return this.app.bean._getBean<TypePaySceneExecuteByName<N>>(beanFullName as never);
   }
 
   getOptions<N extends keyof IPaySceneRecord>(paySceneName: N): IDecoratorPaySceneOptions {

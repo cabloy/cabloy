@@ -1,4 +1,5 @@
 import type { TableIdentity } from 'table-identity';
+import type { IUser } from 'vona-module-a-user';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
@@ -14,10 +15,11 @@ export class ControllerPaymentSession extends BeanBase {
   @Web.post(':id/start')
   @Api.body(DtoPaymentSessionView)
   async start(
+    @Arg.user() user: IUser,
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoPaymentSessionView> {
     const session = await this.scope.model.paymentSession.getById(id);
-    if (!session || String(session.userId) !== String(this.bean.passport.currentUser!.id)) {
+    if (!session || String(session.userId) !== String(user.id)) {
       this.app.throw(404, 'payment session not found');
     }
     const started = await this.scope.service.paymentSession.start(session.id);
@@ -34,10 +36,11 @@ export class ControllerPaymentSession extends BeanBase {
   @Web.get(':id')
   @Api.body(DtoPaymentSessionView)
   async view(
+    @Arg.user() user: IUser,
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoPaymentSessionView> {
     const session = await this.scope.model.paymentSession.getById(id);
-    if (!session || String(session.userId) !== String(this.bean.passport.currentUser!.id)) {
+    if (!session || String(session.userId) !== String(user.id)) {
       this.app.throw(404, 'payment session not found');
     }
     return {

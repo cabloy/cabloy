@@ -5,43 +5,100 @@ import { Service } from 'vona-module-a-bean';
 import { Core } from 'vona-module-a-core';
 
 import type { EntityPaymentSession } from '../entity/paymentSession.tsx';
-import type { TypePaymentNextAction, TypePaymentSessionState } from '../types/payment.ts';
+import type {
+  IPayProviderCapabilities,
+  IPayProviderPaymentSnapshot,
+  TypePaymentNextAction,
+  TypePaymentSessionState,
+} from '../types/payment.ts';
+import type { IDecoratorPaySceneOptions } from '../types/payScene.ts';
 
 export interface IPaymentSessionCreateCommand {
   userId: TableIdentity;
   payScene: string;
   businessReference: string;
-  providerName: string;
-  clientName: string;
-  environment: 'sandbox' | 'live';
   amountMinor: number;
   currency: string;
   correlationId: string;
-  expiresAt: Date;
 }
 
 @Service()
 export class ServicePaymentSession extends BeanBase {
   async create(command: IPaymentSessionCreateCommand): Promise<EntityPaymentSession> {
+    const sceneOptions = this.bean.payScene.getOptions(command.payScene as never);
+    this._assertCreateCommand(command, sceneOptions);
+    const provider = await this.bean.payScene.resolveProvider(command.payScene as never, command);
+    this._assertProviderCapabilities(provider.capabilities, sceneOptions);
+    const sessionExpiresIn = sceneOptions.sessionExpiresIn;
+    if (!Number.isSafeInteger(sessionExpiresIn) || !sessionExpiresIn || sessionExpiresIn < 0) {
+      this.app.throw(500, 'payment scene has an invalid session expiration');
+    }
     return await this.scope.model.paymentSession.insert({
       ...command,
+      providerName: provider.providerName,
+      clientName: provider.clientName,
+      environment: provider.environment,
+      expiresAt: new Date(Date.now() + sessionExpiresIn),
       state: 'created',
     });
   }
 
+  private _assertCreateCommand(
+    command: IPaymentSessionCreateCommand,
+    sceneOptions: IDecoratorPaySceneOptions,
+  ) {
+    if (!Number.isSafeInteger(command.amountMinor) || command.amountMinor < 0) {
+      this.app.throw(422, 'payment amount is invalid');
+    }
+    if (sceneOptions.currencies && !sceneOptions.currencies.includes(command.currency)) {
+      this.app.throw(422, 'payment currency is not allowed by the payment scene');
+    }
+  }
+
+  private _assertProviderCapabilities(
+    capabilities: IPayProviderCapabilities,
+    sceneOptions: IDecoratorPaySceneOptions,
+  ) {
+    if (
+      (sceneOptions.captureMode === 'automatic' && !capabilities.automaticCapture) ||
+      (sceneOptions.captureMode === 'manual' && !capabilities.manualCapture)
+    ) {
+      this.app.throw(500, 'payment scene capture mode is not supported by the payment provider');
+    }
+    if (sceneOptions.refund?.enabled && !capabilities.refunds) {
+      this.app.throw(500, 'payment scene refunds are not supported by the payment provider');
+    }
+    if (sceneOptions.refund?.allowPartial && !capabilities.partialRefunds) {
+      this.app.throw(
+        500,
+        'payment scene partial refunds are not supported by the payment provider',
+      );
+    }
+  }
+
   async start(paymentSessionId: TableIdentity): Promise<EntityPaymentSession> {
-    const session = await this.transition(paymentSessionId, 'starting', {
-      source: 'paymentSession.start',
-    });
-    const provider = this.bean.payProvider.get(session.providerName as never);
-    const snapshot = await provider.startPayment({
-      paymentSessionId: session.id,
-      businessReference: session.businessReference,
-      idempotencyKey: `${session.correlationId}:start`,
-      amountMinor: session.amountMinor,
-      currency: session.currency,
-      providerOrderId: session.providerOrderId,
-    });
+    const session = await this.beginStart(paymentSessionId);
+    const { provider, clientOptions } = this.bean.payProvider.resolveByName(
+      session.providerName,
+      session.clientName,
+    );
+    if (clientOptions.environment !== session.environment) {
+      this.app.throw(500, 'payment session provider environment is inconsistent');
+    }
+    const snapshot = await provider.startPayment(
+      {
+        paymentSessionId: session.id,
+        businessReference: session.businessReference,
+        idempotencyKey: `${session.correlationId}:start`,
+        amountMinor: session.amountMinor,
+        currency: session.currency,
+        providerOrderId: session.providerOrderId,
+      },
+      clientOptions,
+    );
+    if (isTerminalPaymentSnapshot(snapshot)) {
+      return await this.settleStartSnapshot(session.id, snapshot);
+    }
     return await this.transition(session.id, snapshot.state, {
       nextAction: snapshot.nextAction,
       providerPaymentId: snapshot.providerPaymentId,
@@ -49,6 +106,55 @@ export class ServicePaymentSession extends BeanBase {
       providerCaptureId: snapshot.providerCaptureId,
       source: 'paymentSession.startProvider',
     });
+  }
+
+  @Core.transaction()
+  async beginStart(paymentSessionId: TableIdentity): Promise<EntityPaymentSession> {
+    const session = await this.scope.model.paymentSession.getByIdForUpdate(paymentSessionId);
+    if (!session) this.app.throw(404, 'payment session not found');
+    if (session.state !== 'created') this.app.throw(409, 'payment session is not ready to start');
+    if (session.expiresAt <= new Date()) this.app.throw(409, 'payment session is expired');
+    return await this.transition(session.id, 'starting', { source: 'paymentSession.start' });
+  }
+
+  @Core.transaction()
+  async settleStartSnapshot(
+    paymentSessionId: TableIdentity,
+    snapshot: IPayProviderPaymentSnapshot & {
+      state: 'succeeded' | 'failed' | 'cancelled';
+    },
+  ): Promise<EntityPaymentSession> {
+    const session = await this.scope.model.paymentSession.getByIdForUpdate(paymentSessionId);
+    if (!session) this.app.throw(404, 'payment session not found');
+    if (session.state !== 'starting') this.app.throw(409, 'payment session is not starting');
+    const finalizedAt = new Date();
+    await this.scope.model.paymentSession.updateById(session.id, {
+      state: snapshot.state,
+      nextAction: snapshot.nextAction,
+      providerPaymentId: snapshot.providerPaymentId,
+      providerOrderId: snapshot.providerOrderId,
+      providerCaptureId: snapshot.providerCaptureId,
+      finalizedAt,
+    });
+    await this.scope.model.paymentAudit.insert({
+      paymentSessionId: session.id,
+      fromState: session.state,
+      toState: snapshot.state,
+      correlationId: session.correlationId,
+      source: 'paymentSession.startProvider',
+      occurredAt: finalizedAt,
+    });
+    await this.scope.service.outbox.enqueue(session.id, 'payment.outcome.v1', {
+      eventId: `${session.correlationId}:start`,
+      paymentSessionId: session.id,
+      businessReference: session.businessReference,
+      providerName: session.providerName,
+      state: snapshot.state,
+      providerCaptureId: snapshot.providerCaptureId,
+      amountMinor: session.amountMinor,
+      currency: session.currency,
+    });
+    return { ...session, ...snapshot, state: snapshot.state, finalizedAt };
   }
 
   @Core.transaction()
@@ -161,4 +267,12 @@ export class ServicePaymentSession extends BeanBase {
     });
     return { ...session, ...options, state, finalizedAt };
   }
+}
+
+function isTerminalPaymentSnapshot(
+  snapshot: IPayProviderPaymentSnapshot,
+): snapshot is IPayProviderPaymentSnapshot & {
+  state: 'succeeded' | 'failed' | 'cancelled';
+} {
+  return ['succeeded', 'failed', 'cancelled'].includes(snapshot.state);
 }
