@@ -48,7 +48,11 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
       });
       this.$router.push({
         name: 'commerce-trade:payment',
-        params: { attemptId: String(result.paymentAttemptId) },
+        params: {
+          paymentSessionId: String(result.paymentSessionId),
+          orderId: String(result.orderId),
+          locale: this.$params.locale,
+        },
       });
     } finally {
       this.submitting = false;

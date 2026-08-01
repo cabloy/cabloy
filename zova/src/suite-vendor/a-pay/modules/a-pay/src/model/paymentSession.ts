@@ -1,3 +1,4 @@
+import type { TableIdentity } from 'table-identity';
 import type { IDecoratorModelOptions } from 'zova-module-a-model';
 
 import { BeanModelBase, Model } from 'zova-module-a-model';
@@ -6,5 +7,26 @@ export interface IModelOptionsPaymentSession extends IDecoratorModelOptions {}
 
 @Model<IModelOptionsPaymentSession>()
 export class ModelPaymentSession extends BeanModelBase {
-  protected async __init__() {}
+  view(id: TableIdentity) {
+    if (!process.env.CLIENT || !this.$passport.isAuthenticated) return;
+    return this.$useStateData({
+      queryKey: ['view', id],
+      queryFn: async () => {
+        return await this.scope.api.paymentSession.view({ params: { id } });
+      },
+      meta: { disableSuspenseOnInit: true },
+    });
+  }
+
+  start(id: TableIdentity) {
+    return this.$useMutationData({
+      mutationKey: ['start', id],
+      mutationFn: async () => {
+        return await this.scope.api.paymentSession.start(undefined, { params: { id } });
+      },
+      onSuccess: async () => {
+        await this.$invalidateQueries({ queryKey: ['view', id] });
+      },
+    });
+  }
 }
