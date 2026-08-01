@@ -1,6 +1,7 @@
 import type {
   IDecoratorPayProviderOptions,
-  IPayProviderCapabilities,
+  IPayProviderClientOptions,
+  IPayProviderClientRecord,
   IPayProviderExecute,
   IPayProviderPaymentInput,
   IPayProviderPaymentSnapshot,
@@ -11,7 +12,7 @@ import type {
 } from 'vona-module-a-pay';
 
 import { createHmac, timingSafeEqual } from 'node:crypto';
-import { BeanBase } from 'vona';
+import { BeanBase, useApp } from 'vona';
 import { PayProvider } from 'vona-module-a-pay';
 import { z } from 'zod';
 
@@ -26,14 +27,16 @@ const WebhookBodySchema = z.object({
   providerCaptureId: z.string().min(1).max(255).optional(),
 });
 
-export interface IPayProviderMockClientRecord {
-  default: never;
+export interface IPayProviderMockClientRecord extends IPayProviderClientRecord {
+  secondary: never;
 }
 
-export interface IPayProviderMockClientOptions {
-  environment: 'sandbox' | 'live';
-  credentialRef: string;
+export interface IPayProviderMockClientOptions extends IPayProviderClientOptions {
+  secretCredential: string | undefined;
+  secretWebhook: string | undefined;
 }
+
+const app = useApp();
 
 export interface IPayProviderOptionsMock extends IDecoratorPayProviderOptions<
   IPayProviderMockClientRecord,
@@ -41,16 +44,8 @@ export interface IPayProviderOptionsMock extends IDecoratorPayProviderOptions<
 > {}
 
 @PayProvider<IPayProviderOptionsMock>({
-  clients: {
-    default: {
-      environment: 'sandbox',
-      credentialRef: 'env://PAY_MOCK',
-    },
-  },
-})
-export class PayProviderMock extends BeanBase implements IPayProviderExecute {
-  getCapabilities(): IPayProviderCapabilities {
-    return {
+  base: {
+    capabilities: {
       redirectCheckout: false,
       embeddedCheckout: true,
       automaticCapture: true,
@@ -58,10 +53,29 @@ export class PayProviderMock extends BeanBase implements IPayProviderExecute {
       refunds: true,
       partialRefunds: true,
       webhooks: true,
-    };
-  }
-
-  async startPayment(input: IPayProviderPaymentInput): Promise<IPayProviderPaymentSnapshot> {
+    },
+  },
+  clients: {
+    default: {
+      environment: 'sandbox',
+      secretCredential: app.meta.env.PAY_MOCK_DEFAULT_CREDENTIAL,
+      secretWebhook: app.meta.env.PAY_MOCK_DEFAULT_WEBHOOK,
+    },
+    secondary: {
+      environment: 'sandbox',
+      secretCredential: app.meta.env.PAY_MOCK_SECONDARY_CREDENTIAL,
+      secretWebhook: app.meta.env.PAY_MOCK_SECONDARY_WEBHOOK,
+    },
+  },
+})
+export class PayProviderMock
+  extends BeanBase
+  implements IPayProviderExecute<IPayProviderMockClientOptions>
+{
+  async startPayment(
+    input: IPayProviderPaymentInput,
+    _clientOptions: IPayProviderMockClientOptions,
+  ): Promise<IPayProviderPaymentSnapshot> {
     return {
       state: 'requires_action',
       providerPaymentId: `mock-payment-${input.paymentSessionId}`,
@@ -69,27 +83,36 @@ export class PayProviderMock extends BeanBase implements IPayProviderExecute {
     };
   }
 
-  async queryPayment(input: IPayProviderPaymentInput): Promise<IPayProviderPaymentSnapshot> {
+  async queryPayment(
+    input: IPayProviderPaymentInput,
+    _clientOptions: IPayProviderMockClientOptions,
+  ): Promise<IPayProviderPaymentSnapshot> {
     return {
       state: 'processing',
       providerPaymentId: `mock-payment-${input.paymentSessionId}`,
     };
   }
 
-  async createRefund(input: IPayProviderRefundInput): Promise<IPayProviderRefundSnapshot> {
+  async createRefund(
+    input: IPayProviderRefundInput,
+    _clientOptions: IPayProviderMockClientOptions,
+  ): Promise<IPayProviderRefundSnapshot> {
     return {
       state: 'pending',
       providerRefundId: `mock-refund-${input.refundOperationId}`,
     };
   }
 
-  async verifyWebhook(input: IPayProviderWebhookInput): Promise<IPayProviderVerifiedWebhook> {
+  async verifyWebhook(
+    input: IPayProviderWebhookInput,
+    clientOptions: IPayProviderMockClientOptions,
+  ): Promise<IPayProviderVerifiedWebhook> {
     const signature = input.headers['x-pay-mock-signature'];
     const actual = Array.isArray(signature) ? signature[0] : signature;
-    const secret = process.env.PAY_MOCK_WEBHOOK_SECRET;
+    const secret = clientOptions.secretWebhook;
     const rawBody = input.rawBody;
     const expected =
-      secret && rawBody !== undefined
+      typeof secret === 'string' && secret && rawBody !== undefined
         ? createHmac('sha256', secret).update(rawBody).digest('hex')
         : undefined;
     if (!expected || !actual || !safeEqual(actual, expected)) {

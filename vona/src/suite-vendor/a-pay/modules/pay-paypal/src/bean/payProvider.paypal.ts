@@ -1,6 +1,7 @@
 import type {
   IDecoratorPayProviderOptions,
   IPayProviderClientOptions,
+  IPayProviderClientRecord,
   IPayProviderExecute,
   IPayProviderPaymentInput,
   IPayProviderPaymentSnapshot,
@@ -13,9 +14,7 @@ import type {
 import { BeanBase, useApp } from 'vona';
 import { PayProvider } from 'vona-module-a-pay';
 
-export interface IPayProviderPaypalClientRecord {
-  default: never;
-}
+export interface IPayProviderPaypalClientRecord extends IPayProviderClientRecord {}
 
 export interface IPayProviderPaypalClientOptions extends IPayProviderClientOptions {
   secretCredential: { clientId: string | undefined; clientSecret: string | undefined };

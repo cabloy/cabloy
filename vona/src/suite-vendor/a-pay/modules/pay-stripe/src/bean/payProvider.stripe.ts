@@ -1,6 +1,7 @@
 import type {
   IDecoratorPayProviderOptions,
   IPayProviderClientOptions,
+  IPayProviderClientRecord,
   IPayProviderExecute,
   IPayProviderPaymentInput,
   IPayProviderPaymentSnapshot,
@@ -13,9 +14,7 @@ import type {
 import { BeanBase, useApp } from 'vona';
 import { PayProvider } from 'vona-module-a-pay';
 
-export interface IPayProviderStripeClientRecord {
-  default: never;
-}
+export interface IPayProviderStripeClientRecord extends IPayProviderClientRecord {}
 
 export interface IPayProviderStripeClientOptions extends IPayProviderClientOptions {
   secretCredential: string | undefined;
@@ -30,7 +29,6 @@ export interface IPayProviderOptionsStripe extends IDecoratorPayProviderOptions<
 > {}
 
 @PayProvider<IPayProviderOptionsStripe>({
-  enable: false,
   base: {
     capabilities: {
       redirectCheckout: false,
