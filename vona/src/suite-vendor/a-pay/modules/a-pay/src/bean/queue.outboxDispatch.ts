@@ -3,8 +3,6 @@ import type { IQueueExecute, IQueuePushOptions } from 'vona-module-a-queue';
 
 import { BeanQueueBase, Queue } from 'vona-module-a-queue';
 
-import type { IPaymentOutcomeEvent } from '../types/payment.ts';
-
 export interface IOutboxDispatchJobData {
   outboxEventId: TableIdentity;
 }
@@ -24,7 +22,7 @@ export class QueueOutboxDispatch
       const session = await this.scope.model.paymentSession.getById(event.paymentSessionId);
       if (!session) this.app.throw(404, 'payment session not found');
       const payScene = this.bean.payScene.get(session.payScene as never);
-      await payScene.onPaymentOutcome(event.payload as unknown as IPaymentOutcomeEvent);
+      await payScene.onPaymentOutcome(event.payload);
       await this.scope.service.outbox.markDispatched(event.id, event.claimToken!);
     } catch (error) {
       await this.scope.service.outbox.release(event.id, event.claimToken!, error);

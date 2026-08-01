@@ -5,7 +5,7 @@ import { Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
 import { z } from 'zod';
 
-import type { TypeOutboxEventState } from '../types/payment.ts';
+import type { IPaymentOutcomeEvent, TypeOutboxEventState } from '../types/payment.ts';
 
 export interface IEntityOptionsOutboxEvent extends IDecoratorEntityOptions {}
 
@@ -18,7 +18,7 @@ export class EntityOutboxEvent extends EntityBase {
   paymentSessionId: TableIdentity;
 
   @Api.field(v.required())
-  payload: Record<string, unknown>;
+  payload: IPaymentOutcomeEvent;
 
   @Api.field(z.enum(['pending', 'claimed', 'dispatched', 'failed']))
   state: TypeOutboxEventState;

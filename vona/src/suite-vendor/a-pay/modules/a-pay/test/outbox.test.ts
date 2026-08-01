@@ -3,6 +3,8 @@ import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
+import type { IPaymentOutcomeEvent } from '../src/types/payment.ts';
+
 interface IFixture {
   userId?: number;
   paymentSessionId?: number;
@@ -23,6 +25,18 @@ async function createFixture(suffix: string): Promise<IFixture> {
   return { userId: user.id as number, paymentSessionId: session.id as number, outboxEventIds: [] };
 }
 
+function createOutcomePayload(fixture: IFixture): IPaymentOutcomeEvent {
+  return {
+    eventId: randomUUID(),
+    paymentSessionId: fixture.paymentSessionId!,
+    businessReference: 'outbox-test',
+    providerName: 'test-provider',
+    state: 'succeeded',
+    amountMinor: 1299,
+    currency: 'USD',
+  };
+}
+
 async function insertOutbox(
   fixture: IFixture,
   overrides?: Partial<{
@@ -38,7 +52,7 @@ async function insertOutbox(
   const event = await app.scope('a-pay').model.outboxEvent.insert({
     eventType: overrides?.eventType ?? 'payment.outcome.v1',
     paymentSessionId: fixture.paymentSessionId!,
-    payload: {},
+    payload: createOutcomePayload(fixture),
     state: overrides?.state ?? 'pending',
     attemptCount: overrides?.attemptCount ?? 0,
     nextAttemptAt: overrides?.nextAttemptAt ?? new Date(Date.now() - 1_000),
@@ -174,7 +188,7 @@ describe('outbox.test.ts', { concurrency: false }, () => {
             const event = await scope.service.outbox.enqueue(
               fixture.paymentSessionId!,
               'payment.outcome.v1',
-              { test: true },
+              createOutcomePayload(fixture),
             );
             fixture.outboxEventIds.push(event.id as number);
             throw new Error(String(event.id));
