@@ -49,7 +49,6 @@
     "fileVersion": 1,
     "dependencies": {
       "a-core": "5.0.0",
-      "a-event": "5.0.0",
       "a-index": "5.0.0",
       "a-orm": "5.0.0",
       "a-ormutils": "5.0.0",

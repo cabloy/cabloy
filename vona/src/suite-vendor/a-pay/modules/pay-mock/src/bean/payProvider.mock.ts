@@ -41,9 +41,11 @@ export interface IPayProviderOptionsMock extends IDecoratorPayProviderOptions<
 > {}
 
 @PayProvider<IPayProviderOptionsMock>({
-  base: {
-    environment: 'sandbox',
-    credentialRef: 'env://PAY_MOCK',
+  clients: {
+    default: {
+      environment: 'sandbox',
+      credentialRef: 'env://PAY_MOCK',
+    },
   },
 })
 export class PayProviderMock extends BeanBase implements IPayProviderExecute {

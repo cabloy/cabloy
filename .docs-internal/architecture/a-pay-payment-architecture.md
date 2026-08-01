@@ -23,7 +23,23 @@ A Commerce `PaymentAttempt` has one initial `a-pay` `PaymentSession`; future ret
 
 - `@PayProvider()` supplies a typed capability and execution contract with `base + clients` configuration.
 - Provider credentials are references such as `env://PAYPAL_CLIENT_SECRET`, never ordinary persisted client options or public DTO data.
-- `@PayScene()` declares allowed providers, currency, capture policy, expiry, and refund policy. A scene does not provide arbitrary merchant credentials, arbitrary return URLs, or business settlement callbacks.
+- `@PayScene()` declares an allowlist of named `providerName + clientName` candidates, currency, capture policy, expiry, and refund policy. Its optional resolver chooses only a declared candidate key; it cannot supply an arbitrary provider, client, environment, credential, or return URL. `a-pay` resolves the selected Provider client, derives its environment and the scene-defined absolute expiry, and persists those values as the immutable `PaymentSession` execution snapshot. A scene also owns the single `onPaymentOutcome` callback selected by the persisted `PaymentSession.payScene`; the callback may use Vona scope lookup to delegate to the aggregate owner, but it is not a global broadcast mechanism.
+
+### Deferred customer provider selection
+
+A multi-candidate scene may eventually allow a customer to select a payment method, but Cabloy Basic does not add a Checkout selector until a second Provider is fully usable in Commerce. The current Commerce scene has exactly one `pay-mock/default` candidate, so server-side automatic selection remains the only active flow.
+
+When a live PayPal or Stripe Provider completes its execution, verified webhook/reconciliation, and Zova UI adapter work, implement the selector together with that Provider integration:
+
+- `providers` remains the scene's static Provider-Client allowlist; each candidate has a stable, scene-local `key`.
+- Server policy resolves the current order/user/instance/currency context into an `availableKeys` subset and one `defaultKey`. A candidate's presence in `providers` alone does not guarantee present-time availability.
+- Checkout receives only a public payment-method projection (candidate key, label, description, icon, display order, and interaction kind). It does not receive raw Provider options, `credentialRef`, merchant configuration, webhook configuration, or an environment value.
+- Checkout submits only an optional `providerCandidateKey`; it never submits `providerName`, `clientName`, `environment`, credentials, or return URLs.
+- `PaymentSession.create()` must recompute the server-side availability decision and reject a submitted key outside `availableKeys`. An omitted key selects `defaultKey`; a previously rendered choice is never trusted without this creation-time revalidation.
+- PayScene owns eligibility, defaulting, and selection validation. Provider modules own their payment-method presentation metadata and redirect/embedded UI adapters. Commerce Checkout renders generic options and dispatches the persisted `PaymentSession.nextAction` to the selected Provider adapter rather than hard-coding Provider-specific branches.
+
+This deferred work must be delivered with focused API, Zova, and lifecycle tests for default selection, invalid or stale submitted candidate keys, changed availability, and the selected Provider's redirect or embedded completion path.
+
 - Amount and currency are immutable minor-unit values set by the business domain before a Provider operation is created.
 
 ## Side effects and durable delivery
@@ -43,7 +59,7 @@ Webhook endpoints are `@Passport.public()` only to bypass end-user Passport. Pro
 
 The controller must use `ctx.request.rawBody`; it must not reserialize parsed JSON for signature verification. An opaque configured endpoint key selects one enabled instance/provider/client/environment mapping before verification; the handler rejects any request context whose instance does not equal that configured binding, and request `iid`, query fields, and unsigned body fields never select an instance or merchant secret. A verified event is stored in `WebhookInbox`, deduplicated by active instance/provider/client/event ID, normalized, and then causes atomic session/audit/outbox updates. The current `pay-mock` verifier requires `PAY_MOCK_WEBHOOK_SECRET` and accepts only signed terminal payment facts.
 
-Browser redirects are notification inputs. A return/cancel page can request server reconciliation but cannot declare payment success. A verified terminal session fact emits `payment.outcome.v1` through the durable outbox; Commerce consumes the stable provider event ID idempotently under its existing serializable Order lock, without a customer Passport context.
+Browser redirects are notification inputs. A return/cancel page can request server reconciliation but cannot declare payment success. A verified terminal session fact creates `payment.outcome.v1` through the durable outbox; the dispatch worker resolves the persisted `PaymentSession.payScene` and invokes its `onPaymentOutcome` callback. The Commerce scene delegates through Vona scope lookup to the Commerce Order owner, which consumes the stable provider event ID idempotently under its existing serializable Order lock, without a customer Passport context.
 
 ## Current pay-mock boundary
 

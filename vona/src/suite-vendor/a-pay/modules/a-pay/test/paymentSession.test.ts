@@ -14,16 +14,13 @@ async function createFixture(expiresAt: Date): Promise<IFixture> {
   const user = await app.bean.user.register({ name: `payment-session-${suffix}` }, true);
   const session = await scope.service.paymentSession.create({
     userId: user.id,
-    payScene: 'test-payment',
+    payScene: 'commerce-payment:commerceOrder',
     businessReference: `business-${suffix}`,
-    providerName: 'pay-mock:mock',
-    clientName: 'default',
-    environment: 'sandbox',
     amountMinor: 1299,
     currency: 'USD',
     correlationId: `payment-${suffix}`,
-    expiresAt,
   });
+  await scope.model.paymentSession.updateById(session.id, { expiresAt });
   return { userId: user.id as number, paymentSessionId: session.id as number };
 }
 
@@ -40,6 +37,64 @@ async function cleanup(fixture: IFixture) {
 }
 
 describe('paymentSession.test.ts', { concurrency: false }, () => {
+  it('derives provider facts and expiry from the payment scene', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const scope = app.scope('a-pay');
+      const suffix = randomUUID().slice(0, 12);
+      const user = await app.bean.user.register({ name: `payment-session-${suffix}` }, true);
+      const fixture: IFixture = { userId: user.id as number };
+      try {
+        const createdAt = Date.now();
+        const session = await scope.service.paymentSession.create({
+          userId: user.id,
+          payScene: 'commerce-payment:commerceOrder',
+          businessReference: `business-${suffix}`,
+          amountMinor: 1299,
+          currency: 'USD',
+          correlationId: `payment-${suffix}`,
+        });
+        fixture.paymentSessionId = session.id as number;
+        assert.equal(session.providerName, 'pay-mock:mock');
+        assert.equal(session.clientName, 'default');
+        assert.equal(session.environment, 'sandbox');
+        assert.ok(session.expiresAt.getTime() >= createdAt + 30 * 60 * 1000);
+        assert.ok(session.expiresAt.getTime() <= Date.now() + 30 * 60 * 1000);
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
+  it('rejects a currency outside the payment scene policy', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const scope = app.scope('a-pay');
+      const suffix = randomUUID().slice(0, 12);
+      const user = await app.bean.user.register({ name: `payment-session-${suffix}` }, true);
+      const fixture: IFixture = { userId: user.id as number };
+      try {
+        await assert.rejects(
+          scope.service.paymentSession.create({
+            userId: user.id,
+            payScene: 'commerce-payment:commerceOrder',
+            businessReference: `business-${suffix}`,
+            amountMinor: 1299,
+            currency: 'EUR',
+            correlationId: `payment-${suffix}`,
+          }),
+          { status: 422 },
+        );
+        assert.deepEqual(
+          await scope.model.paymentSession.select({
+            where: { correlationId: `payment-${suffix}` },
+          }),
+          [],
+        );
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
   it('starts only an unexpired created payment session', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixture = await createFixture(new Date(Date.now() + 60_000));

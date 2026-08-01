@@ -13,15 +13,11 @@ async function createFixture(suffix: string): Promise<IFixture> {
   const user = await app.bean.user.register({ name: `pay-webhook-${suffix}` }, true);
   const session = await scope.service.paymentSession.create({
     userId: user.id,
-    payScene: 'test-payment',
+    payScene: 'commerce-payment:commerceOrder',
     businessReference: `business-${suffix}`,
-    providerName: 'pay-mock:mock',
-    clientName: 'default',
-    environment: 'sandbox',
     amountMinor: 1299,
     currency: 'USD',
     correlationId: `payment-${suffix}`,
-    expiresAt: new Date(Date.now() + 60_000),
   });
   return { userId: user.id as number, paymentSessionId: session.id as number };
 }

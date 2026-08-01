@@ -12,6 +12,7 @@ import { DtoWebhookReceipt } from '../dto/webhookReceipt.tsx';
 export interface IControllerOptionsWebhook extends IDecoratorControllerOptions {}
 
 @Controller<IControllerOptionsWebhook>('webhook')
+@Api.exclude()
 export class ControllerWebhook extends BeanBase {
   @Web.post(':endpointKey')
   @Passport.public()
@@ -19,7 +20,6 @@ export class ControllerWebhook extends BeanBase {
   async receive(
     @Arg.param('endpointKey') endpointKey: string,
     @Arg.body() body: unknown,
-    @Arg.headers() headers: Record<string, string | string[] | undefined>,
   ): Promise<DtoWebhookReceipt> {
     const endpoint = this.scope.config.webhooks.endpoints[endpointKey] as
       | IPayWebhookEndpointOptions
@@ -32,7 +32,7 @@ export class ControllerWebhook extends BeanBase {
       endpointKey,
       rawBody: this.ctx.request.rawBody,
       body,
-      headers,
+      headers: this.ctx.request.headers as Record<string, string | string[] | undefined>,
     });
     await this.scope.service.webhook.receive({
       ...endpoint,

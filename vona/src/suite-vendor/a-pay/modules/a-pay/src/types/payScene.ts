@@ -1,12 +1,42 @@
-import type { OmitNever } from 'vona';
+import type { TableIdentity } from 'table-identity';
+import type { OmitNever, VonaContext } from 'vona';
 import type { ServiceOnion } from 'vona-module-a-onion';
 
+import type { IPaymentOutcomeEvent } from './payment.ts';
 import type { IPayProviderRecord } from './payProvider.ts';
+
+export interface IPaySceneExecute {
+  onPaymentOutcome(event: IPaymentOutcomeEvent): Promise<void>;
+}
 
 export interface IPaySceneRecord {}
 
+export type TypePaySceneExecuteByName<N extends keyof IPaySceneRecord> =
+  IPaySceneRecord[N] extends IDecoratorPaySceneOptions ? IPaySceneExecute : never;
+
+export interface IPaySceneProviderCandidate {
+  key: string;
+  providerName: keyof IPayProviderRecord;
+  clientName: string;
+}
+
+export interface IPaySceneResolveProviderInput {
+  payScene: keyof IPaySceneRecord;
+  userId: TableIdentity;
+  businessReference: string;
+  amountMinor: number;
+  currency: string;
+  providers: readonly IPaySceneProviderCandidate[];
+}
+
+export type TypePaySceneResolveProvider = (
+  ctx: VonaContext,
+  input: IPaySceneResolveProviderInput,
+) => string | Promise<string>;
+
 export interface IDecoratorPaySceneOptions {
-  providers?: readonly (keyof IPayProviderRecord)[];
+  providers?: readonly IPaySceneProviderCandidate[];
+  resolveProvider?: TypePaySceneResolveProvider;
   currencies?: readonly string[];
   captureMode?: 'automatic' | 'manual';
   sessionExpiresIn?: number;

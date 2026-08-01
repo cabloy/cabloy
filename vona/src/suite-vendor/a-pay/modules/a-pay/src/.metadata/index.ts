@@ -466,6 +466,7 @@ declare module 'vona-module-a-orm' {
 /** model: end */
 /** bean: begin */
 export * from '../bean/bean.payProvider.ts';
+export * from '../bean/bean.payScene.ts';
 
 import 'vona';
 declare module 'vona' {
@@ -477,15 +478,22 @@ declare module 'vona-module-a-pay' {
         export interface BeanPayProvider {
           /** @internal */
           get scope(): ScopeModuleAPay;
+        }
+
+        export interface BeanPayScene {
+          /** @internal */
+          get scope(): ScopeModuleAPay;
         } 
 }
 /** bean: end */
 /** bean: begin */
 import type { BeanPayProvider } from '../bean/bean.payProvider.ts';
+import type { BeanPayScene } from '../bean/bean.payScene.ts';
 import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'payProvider': BeanPayProvider;
+    'payScene': BeanPayScene;
   }
 }
 /** bean: end */
@@ -578,43 +586,6 @@ declare module 'vona' {
   }
 }
 /** service: end */
-/** event: begin */
-export * from '../bean/event.paymentOutcome.ts';
-
-import 'vona';
-declare module 'vona' {
-  
-  
-}
-declare module 'vona-module-a-pay' {
-  
-        export interface EventPaymentOutcome {
-          /** @internal */
-          get scope(): ScopeModuleAPay;
-        }
-
-          export interface EventPaymentOutcome {
-            get $beanFullName(): 'a-pay.event.paymentOutcome';
-            get $onionName(): 'a-pay:paymentOutcome';
-            
-          } 
-}
-/** event: end */
-/** event: begin */
-import type { EventPaymentOutcome } from '../bean/event.paymentOutcome.ts';
-export interface IModuleEvent {
-  'paymentOutcome': EventPaymentOutcome;
-}
-/** event: end */
-/** event: begin */
-import type { TypeEventPaymentOutcomeData, TypeEventPaymentOutcomeResult } from '../bean/event.paymentOutcome.ts';
-import type { EventOn } from 'vona-module-a-event'; 
-declare module 'vona-module-a-event' {
-  export interface IEventRecord {
-    'a-pay:paymentOutcome': EventOn<TypeEventPaymentOutcomeData, TypeEventPaymentOutcomeResult>;
-  }
-}
-/** event: end */
 /** meta: begin */
 export * from '../bean/meta.index.ts';
 export * from '../bean/meta.redlock.ts';
@@ -853,7 +824,6 @@ config: TypeModuleConfig<typeof config>;
 entity: IModuleEntity;
 model: IModuleModel;
 service: IModuleService;
-event: IModuleEvent;
 redlock: MetaRedlock;
 queue: IModuleQueue;
 }

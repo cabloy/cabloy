@@ -534,6 +534,32 @@ declare module 'vona-module-commerce-payment' {
     }
 }
 /** dto: end */
+/** payScene: begin */
+export * from '../bean/payScene.commerceOrder.ts';
+
+import { type IDecoratorPaySceneOptions } from 'vona-module-a-pay';
+declare module 'vona-module-a-pay' {
+  
+    export interface IPaySceneRecord {
+      'commerce-payment:commerceOrder': IDecoratorPaySceneOptions;
+    }
+
+  
+}
+declare module 'vona-module-commerce-payment' {
+  
+        export interface PaySceneCommerceOrder {
+          /** @internal */
+          get scope(): ScopeModuleCommercePayment;
+        }
+
+          export interface PaySceneCommerceOrder {
+            get $beanFullName(): 'commerce-payment.payScene.commerceOrder';
+            get $onionName(): 'commerce-payment:commerceOrder';
+            get $onionOptions(): IDecoratorPaySceneOptions;
+          } 
+}
+/** payScene: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil } from 'vona';
 import { Scope } from 'vona-module-a-bean';
