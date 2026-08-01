@@ -1,4 +1,5 @@
 import assert from 'node:assert';
+import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
@@ -83,6 +84,39 @@ describe('payMock.test.ts', { concurrency: false }, () => {
         await cleanup(fixture);
       }
     });
+  });
+
+  it('completes a payment session in the active named instance', async () => {
+    await app.bean.executor.mockCtx(
+      async () => {
+        const fixture: IFixture = {};
+        try {
+          Object.assign(fixture, await createFixture(`named-${randomUUID().slice(0, 12)}`));
+          const receipt = await app
+            .scope('pay-mock')
+            .service.payMock.completePaymentSession(fixture.paymentSessionId!, 'succeeded');
+          assert.deepEqual(receipt, { paymentSessionId: fixture.paymentSessionId, accepted: true });
+          const pay = app.scope('a-pay');
+          const [session, inboxes, audits, outbox] = await Promise.all([
+            pay.model.paymentSession.getById(fixture.paymentSessionId!),
+            pay.model.webhookInbox.select({
+              where: { paymentSessionId: fixture.paymentSessionId },
+            }),
+            pay.model.paymentAudit.select({
+              where: { paymentSessionId: fixture.paymentSessionId },
+            }),
+            pay.model.outboxEvent.select({ where: { paymentSessionId: fixture.paymentSessionId } }),
+          ]);
+          assert.equal(session?.state, 'succeeded');
+          assert.equal(inboxes.length, 1);
+          assert.equal(audits.filter(item => item.source === 'webhook').length, 1);
+          assert.equal(outbox.length, 1);
+        } finally {
+          await cleanup(fixture);
+        }
+      },
+      { instanceName: 'shareTest' as any },
+    );
   });
 
   it('does not simulate a session that is no longer actionable', async () => {

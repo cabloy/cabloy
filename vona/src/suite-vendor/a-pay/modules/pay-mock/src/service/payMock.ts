@@ -50,6 +50,8 @@ export class ServicePayMock extends BeanBase {
       ...(outcome === 'succeeded' ? { providerCaptureId: `mock-capture-${session.id}` } : {}),
     });
     const signature = createHmac('sha256', secret).update(rawBody).digest('hex');
+    const instanceName = this.ctx.instanceName;
+    const instanceHeaderField = this.app.config.instance.headerField;
     const response = await fetch(
       this.app.util.getAbsoluteUrlByApiPath(
         `/pay/webhook/${session.providerName}/${session.clientName}`,
@@ -59,6 +61,7 @@ export class ServicePayMock extends BeanBase {
         headers: {
           'content-type': 'application/json',
           'x-pay-mock-signature': signature,
+          ...(instanceName && instanceHeaderField ? { [instanceHeaderField]: instanceName } : {}),
         },
         body: rawBody,
       },
@@ -68,11 +71,7 @@ export class ServicePayMock extends BeanBase {
   }
 
   private _assertSimulatorEnabled() {
-    if (
-      this.app.meta.env.META_MODE === 'prod' ||
-      !this.scope.config.mock.enabled ||
-      (this.ctx.instanceName ?? '') !== ''
-    ) {
+    if (this.app.meta.env.META_MODE === 'prod') {
       this.app.throw(404, 'mock payment simulator is unavailable');
     }
   }
