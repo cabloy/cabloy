@@ -1,29 +1,4 @@
 // eslint-disable
-/** bean: begin */
-export * from '../bean/bean.payProviderPaypal.ts';
-
-import 'vona';
-declare module 'vona' {
-  
-  
-}
-declare module 'vona-module-pay-paypal' {
-  
-        export interface BeanPayProviderPaypal {
-          /** @internal */
-          get scope(): ScopeModulePayPaypal;
-        } 
-}
-/** bean: end */
-/** bean: begin */
-import type { BeanPayProviderPaypal } from '../bean/bean.payProviderPaypal.ts';
-import 'vona';
-declare module 'vona' {
-  export interface IBeanRecordGlobal {
-    'payProviderPaypal': BeanPayProviderPaypal;
-  }
-}
-/** bean: end */
 /** service: begin */
 export * from '../service/payPaypal.ts';
 
@@ -65,12 +40,40 @@ declare module 'vona' {
   }
 }
 /** service: end */
-/** config: begin */
-export * from '../config/config.ts';
-import type { config } from '../config/config.ts';
-/** config: end */
+/** payProvider: begin */
+export * from '../bean/payProvider.paypal.ts';
+import type { IPayProviderOptionsPaypal } from '../bean/payProvider.paypal.ts';
+import 'vona-module-a-pay';
+declare module 'vona-module-a-pay' {
+  
+    export interface IPayProviderRecord {
+      'pay-paypal:paypal': IPayProviderOptionsPaypal;
+    }
+
+  
+}
+declare module 'vona-module-pay-paypal' {
+  
+        export interface PayProviderPaypal {
+          /** @internal */
+          get scope(): ScopeModulePayPaypal;
+        }
+
+          export interface PayProviderPaypal {
+            get $beanFullName(): 'pay-paypal.payProvider.paypal';
+            get $onionName(): 'pay-paypal:paypal';
+            get $onionOptions(): IPayProviderOptionsPaypal;
+          } 
+}
+/** payProvider: end */
+/** payProvider: begin */
+import type { PayProviderPaypal } from '../bean/payProvider.paypal.ts';
+export interface IModulePayProvider {
+  'paypal': PayProviderPaypal;
+}
+/** payProvider: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig } from 'vona';
+import { BeanScopeBase, type BeanScopeUtil } from 'vona';
 import { Scope } from 'vona-module-a-bean';
 
 @Scope()
@@ -78,8 +81,8 @@ export class ScopeModulePayPaypal extends BeanScopeBase {}
 
 export interface ScopeModulePayPaypal {
   util: BeanScopeUtil;
-config: TypeModuleConfig<typeof config>;
 service: IModuleService;
+payProvider: IModulePayProvider;
 }
 
 import 'vona';
@@ -92,9 +95,7 @@ declare module 'vona' {
     payPaypal: ScopeModulePayPaypal;
   }
   
-  export interface IBeanScopeConfig {
-    'pay-paypal': ReturnType<typeof config>;
-  }
+  
 
   
 

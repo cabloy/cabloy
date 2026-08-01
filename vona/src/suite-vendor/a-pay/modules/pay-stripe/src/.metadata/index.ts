@@ -1,35 +1,38 @@
 // eslint-disable
-/** bean: begin */
-export * from '../bean/bean.payProviderStripe.ts';
-
-import 'vona';
-declare module 'vona' {
+/** payProvider: begin */
+export * from '../bean/payProvider.stripe.ts';
+import type { IPayProviderOptionsStripe } from '../bean/payProvider.stripe.ts';
+import 'vona-module-a-pay';
+declare module 'vona-module-a-pay' {
   
+    export interface IPayProviderRecord {
+      'pay-stripe:stripe': IPayProviderOptionsStripe;
+    }
+
   
 }
 declare module 'vona-module-pay-stripe' {
   
-        export interface BeanPayProviderStripe {
+        export interface PayProviderStripe {
           /** @internal */
           get scope(): ScopeModulePayStripe;
-        } 
+        }
+
+          export interface PayProviderStripe {
+            get $beanFullName(): 'pay-stripe.payProvider.stripe';
+            get $onionName(): 'pay-stripe:stripe';
+            get $onionOptions(): IPayProviderOptionsStripe;
+          } 
 }
-/** bean: end */
-/** bean: begin */
-import type { BeanPayProviderStripe } from '../bean/bean.payProviderStripe.ts';
-import 'vona';
-declare module 'vona' {
-  export interface IBeanRecordGlobal {
-    'payProviderStripe': BeanPayProviderStripe;
-  }
+/** payProvider: end */
+/** payProvider: begin */
+import type { PayProviderStripe } from '../bean/payProvider.stripe.ts';
+export interface IModulePayProvider {
+  'stripe': PayProviderStripe;
 }
-/** bean: end */
-/** config: begin */
-export * from '../config/config.ts';
-import type { config } from '../config/config.ts';
-/** config: end */
+/** payProvider: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig } from 'vona';
+import { BeanScopeBase, type BeanScopeUtil } from 'vona';
 import { Scope } from 'vona-module-a-bean';
 
 @Scope()
@@ -37,7 +40,7 @@ export class ScopeModulePayStripe extends BeanScopeBase {}
 
 export interface ScopeModulePayStripe {
   util: BeanScopeUtil;
-config: TypeModuleConfig<typeof config>;
+payProvider: IModulePayProvider;
 }
 
 import 'vona';
@@ -50,9 +53,7 @@ declare module 'vona' {
     payStripe: ScopeModulePayStripe;
   }
   
-  export interface IBeanScopeConfig {
-    'pay-stripe': ReturnType<typeof config>;
-  }
+  
 
   
 

@@ -1,7 +1,7 @@
 import type { OmitNever } from 'vona';
 import type { ServiceOnion, TypeOnionOptionsEnableSimple } from 'vona-module-a-onion';
 
-import type { IPayProviderExecute } from './payment.ts';
+import type { IPayProviderCapabilities, IPayProviderExecute } from './payment.ts';
 
 export interface IPayProviderRecord {}
 
@@ -11,6 +11,7 @@ export interface IPayProviderClientRecord {
 
 export interface IPayProviderClientOptions {
   environment: 'sandbox' | 'live';
+  capabilities: IPayProviderCapabilities;
   secretCredential: unknown;
   secretWebhook?: unknown;
   merchantReference?: string;
@@ -22,12 +23,20 @@ export type TypePayProviderClientOptions<T> =
 export type TypePayProviderClientName<T> =
   T extends IDecoratorPayProviderOptions<infer R, any> ? keyof R & string : never;
 
+export type TypePayProviderClientOptionsInput<T extends IPayProviderClientOptions> = Omit<
+  T,
+  'capabilities'
+> &
+  Partial<Pick<T, 'capabilities'>>;
+
 export interface IDecoratorPayProviderOptions<
   R extends IPayProviderClientRecord = IPayProviderClientRecord,
   T extends IPayProviderClientOptions = IPayProviderClientOptions,
 > extends TypeOnionOptionsEnableSimple {
   base?: Partial<T>;
-  clients?: { [K in keyof R]?: R[K] extends undefined ? T : R[K] };
+  clients?: {
+    [K in keyof R]?: R[K] extends undefined ? TypePayProviderClientOptionsInput<T> : R[K];
+  };
 }
 
 export type TypePayProviderOptionsByName<N extends keyof IPayProviderRecord> =

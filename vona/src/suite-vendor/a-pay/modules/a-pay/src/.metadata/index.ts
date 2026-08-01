@@ -798,7 +798,7 @@ declare module 'vona-module-a-pay' {
 declare module 'vona-module-a-web' {
   export interface IApiPathPostRecord{
         '/payment-session/:id/start': undefined;
-'/pay/webhook/:endpointKey': undefined;
+'/pay/webhook/:providerName/:clientName': undefined;
     }
 export interface IApiPathGetRecord{
         '/payment-session/:id': undefined;
@@ -807,12 +807,8 @@ export interface IApiPathGetRecord{
 }
 
 /** controller: end */
-/** config: begin */
-export * from '../config/config.ts';
-import type { config } from '../config/config.ts';
-/** config: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig } from 'vona';
+import { BeanScopeBase, type BeanScopeUtil } from 'vona';
 import { Scope } from 'vona-module-a-bean';
 
 @Scope()
@@ -820,7 +816,6 @@ export class ScopeModuleAPay extends BeanScopeBase {}
 
 export interface ScopeModuleAPay {
   util: BeanScopeUtil;
-config: TypeModuleConfig<typeof config>;
 entity: IModuleEntity;
 model: IModuleModel;
 service: IModuleService;
@@ -838,9 +833,7 @@ declare module 'vona' {
     pay: ScopeModuleAPay;
   }
   
-  export interface IBeanScopeConfig {
-    'a-pay': ReturnType<typeof config>;
-  }
+  
 
   
 

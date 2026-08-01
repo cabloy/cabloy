@@ -185,7 +185,7 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
         const options = app.bean.payProvider.getOptions('pay-mock:mock', 'default');
         assert.equal(typeof options.secretWebhook, 'string');
         const signature = createHmac('sha256', options.secretWebhook).update(rawBody).digest('hex');
-        const webhookPath = app.util.getAbsoluteUrlByApiPath('/pay/webhook/mock');
+        const webhookPath = app.util.getAbsoluteUrlByApiPath('/pay/webhook/pay-mock:mock/default');
         const webhookUrl = webhookPath.startsWith('http')
           ? webhookPath
           : `http://127.0.0.1:${app.config.server.listen.port}${webhookPath}`;

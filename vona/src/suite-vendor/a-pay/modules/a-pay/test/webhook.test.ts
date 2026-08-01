@@ -84,8 +84,8 @@ function sign(rawBody: string, clientName: 'default' | 'secondary' = 'default') 
   return createHmac('sha256', options.secretWebhook).update(rawBody).digest('hex');
 }
 
-function webhookUrl(endpointKey = 'mock') {
-  const url = app.util.getAbsoluteUrlByApiPath(`/pay/webhook/${endpointKey}`);
+function webhookUrl(providerName = 'pay-mock:mock', clientName = 'default') {
+  const url = app.util.getAbsoluteUrlByApiPath(`/pay/webhook/${providerName}/${clientName}`);
   return url.startsWith('http') ? url : `http://127.0.0.1:${app.config.server.listen.port}${url}`;
 }
 
@@ -149,14 +149,14 @@ describe('webhook.test.ts', { concurrency: false, sequential: true }, () => {
     }
   });
 
-  it('uses the endpoint client webhook secret and preserves session client binding', async () => {
+  it('uses the route client webhook secret and preserves session client binding', async () => {
     const fixture: IFixture = {};
     try {
       await app.bean.executor.mockCtx(async () => {
         Object.assign(fixture, await createFixture(randomUUID().slice(0, 12)));
       });
       const rawBody = createRawBody(fixture, randomUUID().slice(0, 12));
-      const url = webhookUrl('mockSecondary');
+      const url = webhookUrl('pay-mock:mock', 'secondary');
       const wrongClient = await fetch(url, {
         method: 'POST',
         headers: {

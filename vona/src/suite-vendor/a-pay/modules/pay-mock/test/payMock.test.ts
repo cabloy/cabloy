@@ -44,6 +44,19 @@ describe('payMock.test.ts', { concurrency: false }, () => {
     assert.equal(options.secretWebhook, app.meta.env.PAY_MOCK_DEFAULT_WEBHOOK);
     assert.equal(String(options.secretCredential).startsWith('env:' + '//'), false);
     assert.equal(String(options.secretWebhook).startsWith('env:' + '//'), false);
+    assert.deepEqual(options.capabilities, {
+      redirectCheckout: false,
+      embeddedCheckout: true,
+      automaticCapture: true,
+      manualCapture: false,
+      refunds: true,
+      partialRefunds: true,
+      webhooks: true,
+    });
+    assert.deepEqual(
+      app.bean.payProvider.resolveByName('pay-mock:mock', 'secondary').clientOptions.capabilities,
+      options.capabilities,
+    );
   });
 
   it('submits server-derived mock payment facts through the signed webhook', async () => {

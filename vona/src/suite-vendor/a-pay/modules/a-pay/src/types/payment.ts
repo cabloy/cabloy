@@ -91,7 +91,6 @@ export interface IPayProviderRefundSnapshot {
 }
 
 export interface IPayProviderWebhookInput {
-  endpointKey: string;
   rawBody?: string;
   body: unknown;
   headers: Record<string, string | string[] | undefined>;
@@ -110,7 +109,6 @@ export interface IPayProviderVerifiedWebhook {
 export interface IPayProviderExecute<
   TClientOptions extends IPayProviderClientOptions = IPayProviderClientOptions,
 > {
-  getCapabilities(): IPayProviderCapabilities;
   startPayment(
     input: IPayProviderPaymentInput,
     clientOptions: TClientOptions,

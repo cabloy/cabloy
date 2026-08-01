@@ -1,6 +1,6 @@
 import type {
   IDecoratorPayProviderOptions,
-  IPayProviderCapabilities,
+  IPayProviderClientOptions,
   IPayProviderExecute,
   IPayProviderPaymentInput,
   IPayProviderPaymentSnapshot,
@@ -10,18 +10,19 @@ import type {
   IPayProviderWebhookInput,
 } from 'vona-module-a-pay';
 
-import { BeanBase } from 'vona';
+import { BeanBase, useApp } from 'vona';
 import { PayProvider } from 'vona-module-a-pay';
 
 export interface IPayProviderStripeClientRecord {
   default: never;
 }
 
-export interface IPayProviderStripeClientOptions {
-  environment: 'sandbox' | 'live';
-  credentialRef: string;
-  webhookSecretRef?: string;
+export interface IPayProviderStripeClientOptions extends IPayProviderClientOptions {
+  secretCredential: string | undefined;
+  secretWebhook: string | undefined;
 }
+
+const app = useApp();
 
 export interface IPayProviderOptionsStripe extends IDecoratorPayProviderOptions<
   IPayProviderStripeClientRecord,
@@ -31,14 +32,7 @@ export interface IPayProviderOptionsStripe extends IDecoratorPayProviderOptions<
 @PayProvider<IPayProviderOptionsStripe>({
   enable: false,
   base: {
-    environment: 'sandbox',
-    credentialRef: 'env://STRIPE_SECRET_KEY',
-    webhookSecretRef: 'env://STRIPE_WEBHOOK_SECRET',
-  },
-})
-export class BeanPayProviderStripe extends BeanBase implements IPayProviderExecute {
-  getCapabilities(): IPayProviderCapabilities {
-    return {
+    capabilities: {
       redirectCheckout: false,
       embeddedCheckout: true,
       automaticCapture: true,
@@ -46,22 +40,45 @@ export class BeanPayProviderStripe extends BeanBase implements IPayProviderExecu
       refunds: true,
       partialRefunds: true,
       webhooks: true,
-    };
-  }
-
-  async startPayment(_input: IPayProviderPaymentInput): Promise<IPayProviderPaymentSnapshot> {
+    },
+  },
+  clients: {
+    default: {
+      environment: 'sandbox',
+      secretCredential: app.meta.env.STRIPE_SECRET_KEY,
+      secretWebhook: app.meta.env.STRIPE_WEBHOOK_SECRET,
+    },
+  },
+})
+export class PayProviderStripe
+  extends BeanBase
+  implements IPayProviderExecute<IPayProviderStripeClientOptions>
+{
+  async startPayment(
+    _input: IPayProviderPaymentInput,
+    _clientOptions: IPayProviderStripeClientOptions,
+  ): Promise<IPayProviderPaymentSnapshot> {
     this.app.throw(501, 'Stripe provider is not implemented');
   }
 
-  async queryPayment(_input: IPayProviderPaymentInput): Promise<IPayProviderPaymentSnapshot> {
+  async queryPayment(
+    _input: IPayProviderPaymentInput,
+    _clientOptions: IPayProviderStripeClientOptions,
+  ): Promise<IPayProviderPaymentSnapshot> {
     this.app.throw(501, 'Stripe provider is not implemented');
   }
 
-  async createRefund(_input: IPayProviderRefundInput): Promise<IPayProviderRefundSnapshot> {
+  async createRefund(
+    _input: IPayProviderRefundInput,
+    _clientOptions: IPayProviderStripeClientOptions,
+  ): Promise<IPayProviderRefundSnapshot> {
     this.app.throw(501, 'Stripe provider is not implemented');
   }
 
-  async verifyWebhook(_input: IPayProviderWebhookInput): Promise<IPayProviderVerifiedWebhook> {
+  async verifyWebhook(
+    _input: IPayProviderWebhookInput,
+    _clientOptions: IPayProviderStripeClientOptions,
+  ): Promise<IPayProviderVerifiedWebhook> {
     this.app.throw(501, 'Stripe provider is not implemented');
   }
 }

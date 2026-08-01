@@ -44,6 +44,12 @@ export class BeanPayProvider extends BeanBase {
         `payment provider client has an invalid environment: ${String(providerName)}:${clientName}`,
       );
     }
+    if (!isPayProviderCapabilities(resolvedOptions.capabilities)) {
+      this.app.throw(
+        500,
+        `payment provider client has invalid capabilities: ${String(providerName)}:${clientName}`,
+      );
+    }
     return resolvedOptions;
   }
 
@@ -79,4 +85,17 @@ export class BeanPayProvider extends BeanBase {
       this.app.throw(404, `payment provider not found: ${String(providerName)}`);
     return legacyOnionSlice;
   }
+}
+
+function isPayProviderCapabilities(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false;
+  return [
+    'redirectCheckout',
+    'embeddedCheckout',
+    'automaticCapture',
+    'manualCapture',
+    'refunds',
+    'partialRefunds',
+    'webhooks',
+  ].every(key => typeof (value as Record<string, unknown>)[key] === 'boolean');
 }

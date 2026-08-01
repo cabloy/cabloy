@@ -55,6 +55,7 @@ export class BeanPayScene extends BeanBase {
     return {
       ...candidate,
       environment: providerOptions.environment,
+      capabilities: providerOptions.capabilities,
     };
   }
 
