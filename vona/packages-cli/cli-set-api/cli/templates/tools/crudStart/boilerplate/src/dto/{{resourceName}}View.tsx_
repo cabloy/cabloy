@@ -4,6 +4,7 @@ import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
 import { ZovaRender } from 'zova-rest-cabloy-start-admin';
 
+import { $locale } from '../.metadata/locales.ts';
 import { Model<%=argv.resourceNameCapitalize%> } from '../model/<%=argv.resourceName%>.ts';
 
 export interface IDtoOptions<%=argv.resourceNameCapitalize%>View extends IDecoratorDtoOptions {}
@@ -12,7 +13,24 @@ export interface IDtoOptions<%=argv.resourceNameCapitalize%>View extends IDecora
   blocks: [
     ZovaRender.block('start-pageentry:blockPageEntry', {
       blocks: [
-        ZovaRender.block('start-pageentry:blockForm'),
+        ZovaRender.block('start-pageentry:blockForm', {
+          blocks: [
+            ZovaRender.block('start-form:blockFormLayout', {
+              formLayout: {
+                children: [
+                  {
+                    type: 'group',
+                    title: $locale('BasicInformation'),
+                    children: [
+                      { type: 'field', name: 'name' },
+                      { type: 'field', name: 'description' },
+                    ],
+                  },
+                ],
+              },
+            }),
+          ],
+        }),
         ZovaRender.block('start-pageentry:blockToolbarRow', {
           actions: [ZovaRender.formActionRow('start-form:actionBack', { permission: { public: true } })],
         }),
