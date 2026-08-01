@@ -14,15 +14,11 @@ async function createFixture(suffix: string): Promise<IFixture> {
   const user = await app.bean.user.register({ name: `pay-outbox-${suffix}` }, true);
   const session = await scope.service.paymentSession.create({
     userId: user.id,
-    payScene: 'test-payment',
+    payScene: 'commerce-payment:commerceOrder',
     businessReference: `business-${suffix}`,
-    providerName: 'pay-mock:mock',
-    clientName: 'default',
-    environment: 'sandbox',
     amountMinor: 1299,
     currency: 'USD',
     correlationId: `payment-${suffix}`,
-    expiresAt: new Date(Date.now() + 60_000),
   });
   return { userId: user.id as number, paymentSessionId: session.id as number, outboxEventIds: [] };
 }
@@ -30,7 +26,7 @@ async function createFixture(suffix: string): Promise<IFixture> {
 async function insertOutbox(
   fixture: IFixture,
   overrides?: Partial<{
-    eventType: string;
+    eventType: 'payment.outcome.v1';
     state: 'pending' | 'claimed';
     attemptCount: number;
     nextAttemptAt: Date;
@@ -106,6 +102,26 @@ describe('outbox.test.ts', { concurrency: false }, () => {
         const exhausted = await insertOutbox(fixture, { attemptCount: 10 });
         assert.equal(await scope.service.outbox.claim(exhausted.id), undefined);
         assert.equal((await scope.model.outboxEvent.getById(exhausted.id))?.state, 'failed');
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
+  it('retries a dispatch when the persisted payment scene is unavailable', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture = await createFixture(randomUUID().slice(0, 12));
+      try {
+        const scope = app.scope('a-pay');
+        await scope.model.paymentSession.updateById(fixture.paymentSessionId!, {
+          payScene: 'test-payment',
+        });
+        const event = await insertOutbox(fixture);
+        await scope.queue.outboxDispatch.pushAsync({ outboxEventId: event.id });
+        const persisted = await scope.model.outboxEvent.getById(event.id);
+        assert.equal(persisted?.state, 'pending');
+        assert.equal(persisted?.attemptCount, 1);
+        assert.match(persisted?.errorSummary ?? '', /payment scene not found/);
       } finally {
         await cleanup(fixture);
       }

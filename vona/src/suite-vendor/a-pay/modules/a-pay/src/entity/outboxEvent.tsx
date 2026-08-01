@@ -11,8 +11,8 @@ export interface IEntityOptionsOutboxEvent extends IDecoratorEntityOptions {}
 
 @Entity<IEntityOptionsOutboxEvent>('payOutboxEvent')
 export class EntityOutboxEvent extends EntityBase {
-  @Api.field(v.required(), v.min(1), v.max(100))
-  eventType: string;
+  @Api.field(z.literal('payment.outcome.v1'))
+  eventType: 'payment.outcome.v1';
 
   @Api.field(v.tableIdentity())
   paymentSessionId: TableIdentity;

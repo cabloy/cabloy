@@ -1,5 +1,7 @@
 import type { TableIdentity } from 'table-identity';
 
+import type { IPayProviderClientOptions } from './payProvider.ts';
+
 export type TypePayEnvironment = 'sandbox' | 'live';
 
 export type TypePaymentSessionState =
@@ -105,13 +107,30 @@ export interface IPayProviderVerifiedWebhook {
   summary?: Record<string, string | number | boolean | null>;
 }
 
-export interface IPayProviderExecute {
+export interface IPayProviderExecute<
+  TClientOptions extends IPayProviderClientOptions = IPayProviderClientOptions,
+> {
   getCapabilities(): IPayProviderCapabilities;
-  startPayment(input: IPayProviderPaymentInput): Promise<IPayProviderPaymentSnapshot>;
-  queryPayment(input: IPayProviderPaymentInput): Promise<IPayProviderPaymentSnapshot>;
-  createRefund(input: IPayProviderRefundInput): Promise<IPayProviderRefundSnapshot>;
-  queryRefund?(input: IPayProviderRefundInput): Promise<IPayProviderRefundSnapshot>;
-  verifyWebhook(input: IPayProviderWebhookInput): Promise<IPayProviderVerifiedWebhook>;
+  startPayment(
+    input: IPayProviderPaymentInput,
+    clientOptions: TClientOptions,
+  ): Promise<IPayProviderPaymentSnapshot>;
+  queryPayment(
+    input: IPayProviderPaymentInput,
+    clientOptions: TClientOptions,
+  ): Promise<IPayProviderPaymentSnapshot>;
+  createRefund(
+    input: IPayProviderRefundInput,
+    clientOptions: TClientOptions,
+  ): Promise<IPayProviderRefundSnapshot>;
+  queryRefund?(
+    input: IPayProviderRefundInput,
+    clientOptions: TClientOptions,
+  ): Promise<IPayProviderRefundSnapshot>;
+  verifyWebhook(
+    input: IPayProviderWebhookInput,
+    clientOptions: TClientOptions,
+  ): Promise<IPayProviderVerifiedWebhook>;
 }
 
 export interface IPaymentOutcomeEvent extends IPayMoney {

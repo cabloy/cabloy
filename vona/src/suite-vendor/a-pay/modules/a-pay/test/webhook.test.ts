@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { createHmac, randomUUID } from 'node:crypto';
-import { after, before, describe, it } from 'node:test';
-import { acquireTestLock, app } from 'vona-mock';
+import { describe, it } from 'node:test';
+import { app } from 'vona-mock';
 
 interface IFixture {
   userId?: number;
@@ -78,12 +78,14 @@ function createCommand(rawBody: string) {
   };
 }
 
-function sign(rawBody: string) {
-  return createHmac('sha256', process.env.PAY_MOCK_WEBHOOK_SECRET!).update(rawBody).digest('hex');
+function sign(rawBody: string, clientName: 'default' | 'secondary' = 'default') {
+  const options = app.bean.payProvider.getOptions('pay-mock:mock', clientName);
+  assert.equal(typeof options.secretWebhook, 'string');
+  return createHmac('sha256', options.secretWebhook).update(rawBody).digest('hex');
 }
 
-function webhookUrl() {
-  const url = app.util.getAbsoluteUrlByApiPath('/pay/webhook/mock');
+function webhookUrl(endpointKey = 'mock') {
+  const url = app.util.getAbsoluteUrlByApiPath(`/pay/webhook/${endpointKey}`);
   return url.startsWith('http') ? url : `http://127.0.0.1:${app.config.server.listen.port}${url}`;
 }
 
@@ -98,21 +100,6 @@ async function countFacts(paymentSessionId: number) {
 }
 
 describe('webhook.test.ts', { concurrency: false, sequential: true }, () => {
-  let releaseTestLock: (() => void) | undefined;
-  let previousWebhookSecret: string | undefined;
-
-  before(async () => {
-    releaseTestLock = await acquireTestLock('payment-webhook-secret');
-    previousWebhookSecret = process.env.PAY_MOCK_WEBHOOK_SECRET;
-    process.env.PAY_MOCK_WEBHOOK_SECRET = 'pay-mock-test-secret';
-  });
-
-  after(() => {
-    if (previousWebhookSecret === undefined) delete process.env.PAY_MOCK_WEBHOOK_SECRET;
-    else process.env.PAY_MOCK_WEBHOOK_SECRET = previousWebhookSecret;
-    releaseTestLock?.();
-  });
-
   it('accepts a raw-body signed HTTP webhook and rejects an invalid signature without mutation', async () => {
     const fixture: IFixture = {};
     try {
@@ -156,6 +143,44 @@ describe('webhook.test.ts', { concurrency: false, sequential: true }, () => {
           [facts.inboxes.length, facts.audits.length, facts.outbox.length],
           [1, 1, 1],
         );
+      });
+    } finally {
+      await app.bean.executor.mockCtx(async () => await cleanup(fixture));
+    }
+  });
+
+  it('uses the endpoint client webhook secret and preserves session client binding', async () => {
+    const fixture: IFixture = {};
+    try {
+      await app.bean.executor.mockCtx(async () => {
+        Object.assign(fixture, await createFixture(randomUUID().slice(0, 12)));
+      });
+      const rawBody = createRawBody(fixture, randomUUID().slice(0, 12));
+      const url = webhookUrl('mockSecondary');
+      const wrongClient = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-pay-mock-signature': sign(rawBody, 'default'),
+        },
+        body: rawBody,
+      });
+      assert.equal(wrongClient.status, 401, await wrongClient.text());
+      const selectedClient = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-pay-mock-signature': sign(rawBody, 'secondary'),
+        },
+        body: rawBody,
+      });
+      assert.equal(selectedClient.status, 409, await selectedClient.text());
+      await app.bean.executor.mockCtx(async () => {
+        assert.deepEqual(await countFacts(fixture.paymentSessionId!), {
+          inboxes: [],
+          audits: [],
+          outbox: [],
+        });
       });
     } finally {
       await app.bean.executor.mockCtx(async () => await cleanup(fixture));

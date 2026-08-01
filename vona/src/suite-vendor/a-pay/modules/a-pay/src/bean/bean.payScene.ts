@@ -48,7 +48,7 @@ export class BeanPayScene extends BeanBase {
         `payment scene selected an unavailable provider candidate: ${candidateKey}`,
       );
     }
-    const providerOptions = this.bean.payProvider.getOptions(
+    const { clientOptions: providerOptions } = this.bean.payProvider.resolveByName(
       candidate.providerName,
       candidate.clientName,
     );

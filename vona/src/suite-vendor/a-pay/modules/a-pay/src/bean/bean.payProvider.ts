@@ -2,39 +2,68 @@ import { BeanBase, deepExtend } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
 import type { IPayProviderExecute } from '../types/payment.ts';
-import type { IPayProviderRecord } from '../types/payProvider.ts';
+import type {
+  IPayProviderClientOptions,
+  IPayProviderRecord,
+  TypePayProviderClientNameByName,
+  TypePayProviderClientOptionsByName,
+  TypePayProviderExecuteByName,
+  TypePayProviderOptionsByName,
+} from '../types/payProvider.ts';
 
 @Bean()
 export class BeanPayProvider extends BeanBase {
-  get<N extends keyof IPayProviderRecord>(providerName: N): IPayProviderExecute {
+  get<N extends keyof IPayProviderRecord>(providerName: N): TypePayProviderExecuteByName<N> {
     const onionSlice = this._getOnionSlice(providerName);
-    return this.app.bean._getBean<IPayProviderExecute>(
+    return this.app.bean._getBean<TypePayProviderExecuteByName<N>>(
       onionSlice.beanOptions.beanFullName as never,
     );
   }
 
-  getOptions<N extends keyof IPayProviderRecord>(providerName: N, clientName = 'default') {
+  getOptions<N extends keyof IPayProviderRecord>(
+    providerName: N,
+    clientName: TypePayProviderClientNameByName<N>,
+  ) {
     const onionSlice = this._getOnionSlice(providerName);
-    const options = onionSlice.beanOptions.options as {
-      base?: Record<string, unknown>;
-      clients?: Record<string, Record<string, unknown>>;
-    };
-    const clientOptions = options.clients?.[clientName];
+    const options = onionSlice.beanOptions.options as TypePayProviderOptionsByName<N>;
+    const clientOptions = options.clients?.[clientName as keyof typeof options.clients];
     if (!clientOptions) {
       this.app.throw(
         404,
         `payment provider client not found: ${String(providerName)}:${clientName}`,
       );
     }
-    const resolvedOptions = deepExtend({}, options.base, clientOptions) as Record<string, unknown>;
+    const resolvedOptions = deepExtend(
+      {},
+      options.base,
+      clientOptions,
+    ) as TypePayProviderClientOptionsByName<N>;
     if (resolvedOptions.environment !== 'sandbox' && resolvedOptions.environment !== 'live') {
       this.app.throw(
         500,
         `payment provider client has an invalid environment: ${String(providerName)}:${clientName}`,
       );
     }
-    return resolvedOptions as typeof resolvedOptions & {
-      environment: 'sandbox' | 'live';
+    return resolvedOptions;
+  }
+
+  resolve<N extends keyof IPayProviderRecord>(
+    providerName: N,
+    clientName: TypePayProviderClientNameByName<N>,
+  ) {
+    return {
+      provider: this.get(providerName),
+      clientOptions: this.getOptions(providerName, clientName),
+    };
+  }
+
+  resolveByName(providerName: string, clientName: string) {
+    return this.resolve(
+      providerName as keyof IPayProviderRecord,
+      clientName as TypePayProviderClientNameByName<keyof IPayProviderRecord>,
+    ) as {
+      provider: IPayProviderExecute<IPayProviderClientOptions>;
+      clientOptions: IPayProviderClientOptions;
     };
   }
 

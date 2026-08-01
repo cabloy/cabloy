@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { createHmac, randomUUID } from 'node:crypto';
-import { after, before, describe, it } from 'node:test';
-import { acquireTestLock, app } from 'vona-mock';
+import { describe, it } from 'node:test';
+import { app } from 'vona-mock';
 
 interface IFixture {
   categoryId?: number;
@@ -166,21 +166,6 @@ async function createCheckoutFixture(suffix: string, withCoupon = true): Promise
 }
 
 describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () => {
-  let releaseTestLock: (() => void) | undefined;
-  let previousWebhookSecret: string | undefined;
-
-  before(async () => {
-    releaseTestLock = await acquireTestLock('payment-webhook-secret');
-    previousWebhookSecret = process.env.PAY_MOCK_WEBHOOK_SECRET;
-    process.env.PAY_MOCK_WEBHOOK_SECRET = 'pay-mock-test-secret';
-  });
-
-  after(() => {
-    if (previousWebhookSecret === undefined) delete process.env.PAY_MOCK_WEBHOOK_SECRET;
-    else process.env.PAY_MOCK_WEBHOOK_SECRET = previousWebhookSecret;
-    releaseTestLock?.();
-  });
-
   it('delivers a signed webhook through the durable outbox to Commerce exactly once', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixture: IFixture = {};
@@ -197,9 +182,9 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
           providerPaymentId: `payment-${eventId}`,
           providerCaptureId: `capture-${eventId}`,
         });
-        const signature = createHmac('sha256', process.env.PAY_MOCK_WEBHOOK_SECRET!)
-          .update(rawBody)
-          .digest('hex');
+        const options = app.bean.payProvider.getOptions('pay-mock:mock', 'default');
+        assert.equal(typeof options.secretWebhook, 'string');
+        const signature = createHmac('sha256', options.secretWebhook).update(rawBody).digest('hex');
         const webhookPath = app.util.getAbsoluteUrlByApiPath('/pay/webhook/mock');
         const webhookUrl = webhookPath.startsWith('http')
           ? webhookPath

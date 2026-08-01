@@ -1,6 +1,6 @@
 import assert from 'node:assert';
-import { after, before, describe, it } from 'node:test';
-import { acquireTestLock, app } from 'vona-mock';
+import { describe, it } from 'node:test';
+import { app } from 'vona-mock';
 
 interface IFixture {
   userId?: number;
@@ -38,19 +38,12 @@ async function cleanup(fixture: IFixture) {
 }
 
 describe('payMock.test.ts', { concurrency: false }, () => {
-  let releaseTestLock: (() => void) | undefined;
-  let previousWebhookSecret: string | undefined;
-
-  before(async () => {
-    releaseTestLock = await acquireTestLock('payment-webhook-secret');
-    previousWebhookSecret = process.env.PAY_MOCK_WEBHOOK_SECRET;
-    process.env.PAY_MOCK_WEBHOOK_SECRET = 'pay-mock-test-secret';
-  });
-
-  after(() => {
-    if (previousWebhookSecret === undefined) delete process.env.PAY_MOCK_WEBHOOK_SECRET;
-    else process.env.PAY_MOCK_WEBHOOK_SECRET = previousWebhookSecret;
-    releaseTestLock?.();
+  it('captures Vona env secrets in the mock Provider options', () => {
+    const options = app.bean.payProvider.getOptions('pay-mock:mock', 'default');
+    assert.equal(options.secretCredential, app.meta.env.PAY_MOCK_DEFAULT_CREDENTIAL);
+    assert.equal(options.secretWebhook, app.meta.env.PAY_MOCK_DEFAULT_WEBHOOK);
+    assert.equal(String(options.secretCredential).startsWith('env:' + '//'), false);
+    assert.equal(String(options.secretWebhook).startsWith('env:' + '//'), false);
   });
 
   it('submits server-derived mock payment facts through the signed webhook', async () => {

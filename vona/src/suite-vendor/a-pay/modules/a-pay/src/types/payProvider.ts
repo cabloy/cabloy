@@ -11,10 +11,16 @@ export interface IPayProviderClientRecord {
 
 export interface IPayProviderClientOptions {
   environment: 'sandbox' | 'live';
-  credentialRef: string;
-  webhookSecretRef?: string;
+  secretCredential: unknown;
+  secretWebhook?: unknown;
   merchantReference?: string;
 }
+
+export type TypePayProviderClientOptions<T> =
+  T extends IDecoratorPayProviderOptions<any, infer O> ? O : never;
+
+export type TypePayProviderClientName<T> =
+  T extends IDecoratorPayProviderOptions<infer R, any> ? keyof R & string : never;
 
 export interface IDecoratorPayProviderOptions<
   R extends IPayProviderClientRecord = IPayProviderClientRecord,
@@ -27,9 +33,19 @@ export interface IDecoratorPayProviderOptions<
 export type TypePayProviderOptionsByName<N extends keyof IPayProviderRecord> =
   IPayProviderRecord[N];
 
+export type TypePayProviderClientOptionsByName<N extends keyof IPayProviderRecord> =
+  TypePayProviderOptionsByName<N> extends IDecoratorPayProviderOptions<any, any>
+    ? TypePayProviderClientOptions<TypePayProviderOptionsByName<N>>
+    : never;
+
+export type TypePayProviderClientNameByName<N extends keyof IPayProviderRecord> =
+  TypePayProviderOptionsByName<N> extends IDecoratorPayProviderOptions<any, any>
+    ? TypePayProviderClientName<TypePayProviderOptionsByName<N>>
+    : never;
+
 export type TypePayProviderExecuteByName<N extends keyof IPayProviderRecord> =
   TypePayProviderOptionsByName<N> extends IDecoratorPayProviderOptions<any, any>
-    ? IPayProviderExecute
+    ? IPayProviderExecute<TypePayProviderClientOptionsByName<N>>
     : never;
 
 declare module 'vona-module-a-onion' {
