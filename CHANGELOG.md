@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.125
+
+### Features
+
+- Update payment functionality.
+
 ## 5.1.124
 
 ### Improvements
