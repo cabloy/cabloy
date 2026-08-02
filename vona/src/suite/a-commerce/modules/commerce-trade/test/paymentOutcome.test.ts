@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { createHmac, randomUUID } from 'node:crypto';
-import { describe, it } from 'node:test';
-import { app } from 'vona-mock';
+import { after, before, describe, it } from 'node:test';
+import { acquireTestLock, app } from 'vona-mock';
 
 interface IFixture {
   categoryId?: number;
@@ -166,6 +166,16 @@ async function createCheckoutFixture(suffix: string, withCoupon = true): Promise
 }
 
 describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () => {
+  let releaseTestLock: (() => void) | undefined;
+
+  before(async () => {
+    releaseTestLock = await acquireTestLock('a-commerce');
+  });
+
+  after(() => {
+    releaseTestLock?.();
+  });
+
   it('delivers a signed webhook through the durable outbox to Commerce exactly once', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixture: IFixture = {};

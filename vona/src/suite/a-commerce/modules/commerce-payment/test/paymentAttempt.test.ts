@@ -1,9 +1,19 @@
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
-import { describe, it } from 'node:test';
-import { app } from 'vona-mock';
+import { after, before, describe, it } from 'node:test';
+import { acquireTestLock, app } from 'vona-mock';
 
 describe('paymentAttempt.test.ts', { concurrency: false }, () => {
+  let releaseTestLock: (() => void) | undefined;
+
+  before(async () => {
+    releaseTestLock = await acquireTestLock('a-commerce');
+  });
+
+  after(() => {
+    releaseTestLock?.();
+  });
+
   it('creates and internally cancels an attempt exactly once', async () => {
     await app.bean.executor.mockCtx(async () => {
       const scope = app.scope('commerce-payment');
