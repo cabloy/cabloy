@@ -1,9 +1,9 @@
+import type { IPaymentOutcomeEvent } from 'vona-module-a-pay';
+
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
-
-import type { IPaymentOutcomeEvent } from '../src/types/payment.ts';
 
 interface IFixture {
   userId?: number;
