@@ -25,6 +25,7 @@ const aiItems = [
   { text: 'Playbook: Contract Regeneration', link: '/ai/playbook-contract-regeneration' },
   { text: 'Playbook: Module Removal', link: '/ai/playbook-module-removal' },
   { text: 'Playbook: Metadata Refresh', link: '/ai/playbook-metadata-refresh' },
+  { text: 'Playbook: Technical Blog Authoring', link: '/ai/playbook-technical-blog-authoring' },
   { text: 'CLI for Agents', link: '/ai/cli-for-agents' },
   { text: 'Rules and Config', link: '/ai/rules-and-config' },
   { text: 'Edition Detection', link: '/ai/edition-detection' },
