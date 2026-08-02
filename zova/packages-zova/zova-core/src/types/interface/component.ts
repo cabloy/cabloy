@@ -1,7 +1,7 @@
 import 'vue';
 import 'vue/jsx-runtime';
 import '@vue/runtime-dom';
-import { VNode } from '@vue/runtime-dom';
+import type { VNode } from '@vue/runtime-dom';
 
 declare module 'vue' {
   export interface ComponentCustomOptions {
