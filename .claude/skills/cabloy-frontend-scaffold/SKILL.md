@@ -36,6 +36,14 @@ Then classify the request:
 
 Default to frontend-first. Only escalate mentally to a broader fullstack workflow when the frontend task obviously crosses the contract boundary.
 
+### Decide a form layout or ask
+
+When the task changes a schema-driven form, inspect the generated baseline, operation-specific DTO/schema, nearby Cabloy forms, the active edition and UI adapter, field relationships, and the user's stated workflow before choosing a layout.
+
+Proceed autonomously when that evidence establishes the form purpose and field relationships. Choose the smallest fitting structure: no explicit layout for a short conventional form, flow for compact filters, Grid for responsive related fields, a group for one meaningful business boundary, or tabs for genuinely independent domains or workflows. State the consequential business assumptions with the implementation.
+
+Ask one focused business question only when the layout would encode an unresolved semantic or authority decision: whether areas are independent or one workflow, which audience or task has priority, whether a form is a compact filter or a full entry workflow, or whether staged responsibilities are intended. Do not ask merely because several visual arrangements are technically valid.
+
 If the user is still deciding a new business-domain boundary or suite/module naming, use the root `cabloy-domain-planning` skill before scaffolding.
 
 If the task is really a broad cross-stack workflow, consider whether the root `cabloy-workflow` skill is the better primary router.
@@ -205,6 +213,7 @@ Especially relevant pages include:
 - `cabloy-docs/frontend/route-alias-guide.md`
 - `cabloy-docs/frontend/navigation-guards-guide.md`
 - `cabloy-docs/frontend/component-guide.md`
+- `cabloy-docs/frontend/form-layout-guide.md` for schema-driven field placement, Grid/flow selection, groups, tabs, or embedded filter actions
 - `cabloy-docs/frontend/component-props-guide.md`
 - `cabloy-docs/frontend/component-v-model-guide.md`
 - `cabloy-docs/frontend/generic-component-guide.md`
@@ -249,8 +258,9 @@ When helpful, structure the response around these points:
 1. detected edition
 2. frontend-first or clearly fullstack-sensitive classification
 3. recommended Zova CLI path
-4. required frontend follow-up layers to check
-5. optional backend-contract reminder if applicable
-6. verification steps
+4. form-layout decision, consequential business assumptions, and any user-confirmed boundary when the task is layout-sensitive
+5. required frontend follow-up layers to check
+6. optional backend-contract reminder if applicable
+7. verification steps
 
 Keep the response practical. The value of this skill is turning Cabloy frontend requests into the right generation + refactor + verification workflow, not writing more prose than necessary.

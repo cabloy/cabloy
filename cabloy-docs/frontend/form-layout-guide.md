@@ -7,6 +7,27 @@ This guide covers the **structural** layout contract authored in DTO metadata an
 > [!TIP]
 > Cabloy Basic implements the renderer described here with DaisyUI and Tailwind CSS. The `formLayout` contract and its resolver are shared Zova surfaces, but group, Grid, flow, and tab presentation are Basic-specific. Do not assume Cabloy Start uses identical markup or styling.
 
+## Choose the layout from the business form
+
+Start with the user's task, information hierarchy, and audience—not with the available layout node types or the number of fields. The generated CRUD layout is a valid baseline to review and refine, not a requirement to preserve unchanged.
+
+Choose the smallest structure that communicates the business form:
+
+| Business shape                                                                              | Recommended structure                                                          |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| A short, conventional form whose schema order is already clear                              | No explicit `formLayout`, or a flat field list when placement must be explicit |
+| One meaningful business subsection                                                          | A `group` with a title that explains the boundary                              |
+| Related fields users complete or compare together and that need responsive density or spans | A Grid `section`, normally inside the relevant group                           |
+| Compact scan-and-act controls, especially a list filter with Search/Reset                   | A `section` with `layout: 'flow'` and one embedded filter-actions block        |
+| Genuinely separate business domains or workflows                                            | `tabs` with one `tab` per independent area                                     |
+| A nested detail collection                                                                  | One normal `field`; its field renderer owns the detail UI                      |
+
+Do not select tabs merely because a form has many fields, and do not add a structural tree merely because the API supports one. A `group` communicates a semantic boundary; a `section` solves Grid or flow placement. Field renderer and wrapper requirements remain separate concerns, as explained in the next section.
+
+Create, update, and view can reuse one layout when they present the same information hierarchy. When their tasks differ—for example, a focused creation workflow versus a review-oriented view—author scene-specific DTO layouts instead of forcing a shared tree. Likewise, choose entry-form and filter layouts independently: a compact filter is not a smaller entry form.
+
+When the business grouping is unknown, keep the simpler layout or clarify the grouping before introducing groups or tabs. See the [complete entry-form example](#complete-entry-form-example) for a justified tabbed business form and the [complete filter-form example](#complete-filter-form-example) for the maintained compact filter convention.
+
 ## The layout layers are different
 
 Several APIs contain the word “layout,” but they own different concerns:
@@ -330,13 +351,14 @@ Here `formFieldLayout.inline: true` controls how each field wrapper is presented
 
 ## Authoring checklist
 
-1. Start with DTO or resource metadata; do not hand-patch generated `.zova-rest` artifacts.
-2. Use `formLayout` when the requirement is field placement, Grid or flow structure, groups, or tabs.
-3. Use `layout`, `formFieldLayout`, `options`, or provider behaviors when the requirement is one field's wrapper or renderer.
-4. Keep entry actions in page-entry toolbar blocks. Keep filter action semantics in `basic-page:blockFilterActions`; place that block inside Form Layout when the actions must share structural Grid or flow placement with fields.
-5. For maintained Cabloy Basic list filters, prefer one inline flow section that explicitly lists every real filter-schema field in schema order and ends with one embedded `basic-page:blockFilterActions` block. Do not add virtual request fields, alter filter transforms, or combine it with a sibling action block.
-6. Review field names against the scene-specific schema. Unlisted visible fields are appended; unknown and duplicate declarations are silently pruned from the rendered plan.
-7. Use the smallest layout that communicates the form structure; reserve tabs for genuinely separate field groups.
+1. Identify the audience, task, and meaningful field groupings for the operation-specific DTO before choosing a structural tree.
+2. Start with DTO or resource metadata; do not hand-patch generated `.zova-rest` artifacts.
+3. Use no structural layout when schema order is sufficient. Otherwise use the smallest layout that communicates the business structure; reserve tabs for genuinely separate business domains or workflows.
+4. Use `formLayout` when the requirement is field placement, Grid or flow structure, groups, or tabs.
+5. Use `layout`, `formFieldLayout`, `options`, or provider behaviors when the requirement is one field's wrapper or renderer.
+6. Keep entry actions in page-entry toolbar blocks. Keep filter action semantics in `basic-page:blockFilterActions`; place that block inside Form Layout when the actions must share structural Grid or flow placement with fields.
+7. For maintained Cabloy Basic list filters, prefer one inline flow section that explicitly lists every real filter-schema field in schema order and ends with one embedded `basic-page:blockFilterActions` block. Do not add virtual request fields, alter filter transforms, or combine it with a sibling action block.
+8. Review field names against the scene-specific schema. Unlisted visible fields are appended; unknown and duplicate declarations are silently pruned from the rendered plan.
 
 ## Source-reading and verification path
 
