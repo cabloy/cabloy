@@ -1,5 +1,6 @@
 export default {
   ActorId: 'Actor ID',
+  BasicInformation: 'Basic Information',
   CouponAudit: 'Coupon Audit',
   CouponCode: 'Coupon Code',
   CouponGrant: 'Coupon Grant',
@@ -13,6 +14,7 @@ export default {
   Currency: 'Currency',
   Description: 'Description',
   DiscountCents: 'Fixed Discount (Cents)',
+  DiscountPolicy: 'Discount Policy',
   FromState: 'Previous State',
   IssuedCount: 'Issued Count',
   MinSpendCents: 'Minimum Spend (Cents)',
@@ -31,7 +33,9 @@ export default {
   ToState: 'New State',
   TotalIssueLimit: 'Total Issue Limit',
   TotalUsageLimit: 'Total Usage Limit',
+  UsageLimits: 'Usage Limits',
   UserId: 'User ID',
   ValidFrom: 'Valid From',
+  ValidityWindow: 'Validity Window',
   ValidUntil: 'Valid Until',
 };

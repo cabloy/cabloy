@@ -148,7 +148,17 @@ declare module 'vona-module-commerce-promotion' {
       [SymbolKeyEntityMeta]: EntityCouponAuditMeta;
       [SymbolKeyModelOptions]: IModelOptionsCouponAudit;
       get<T extends IModelGetOptions<EntityCouponAudit,ModelCouponAudit>>(where: TypeModelWhere<EntityCouponAudit>, options?: T): Promise<TypeModelRelationResult<EntityCouponAudit, ModelCouponAudit, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityCouponAudit,ModelCouponAudit>>(where: TypeModelWhere<EntityCouponAudit>, options?: T): Promise<TypeModelRelationResult<EntityCouponAudit, ModelCouponAudit, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityCouponAudit,ModelCouponAudit>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityCouponAudit, ModelCouponAudit, T> | undefined>;
       mget<T extends IModelGetOptions<EntityCouponAudit,ModelCouponAudit>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityCouponAudit, ModelCouponAudit, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityCouponAudit,ModelCouponAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityCouponAudit, ModelCouponAudit, T>>;
@@ -175,7 +185,17 @@ export interface ModelCouponGrant {
       [SymbolKeyEntityMeta]: EntityCouponGrantMeta;
       [SymbolKeyModelOptions]: IModelOptionsCouponGrant;
       get<T extends IModelGetOptions<EntityCouponGrant,ModelCouponGrant>>(where: TypeModelWhere<EntityCouponGrant>, options?: T): Promise<TypeModelRelationResult<EntityCouponGrant, ModelCouponGrant, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityCouponGrant,ModelCouponGrant>>(where: TypeModelWhere<EntityCouponGrant>, options?: T): Promise<TypeModelRelationResult<EntityCouponGrant, ModelCouponGrant, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityCouponGrant,ModelCouponGrant>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityCouponGrant, ModelCouponGrant, T> | undefined>;
       mget<T extends IModelGetOptions<EntityCouponGrant,ModelCouponGrant>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityCouponGrant, ModelCouponGrant, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityCouponGrant,ModelCouponGrant,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityCouponGrant, ModelCouponGrant, T>>;
@@ -202,7 +222,17 @@ export interface ModelCouponTemplate {
       [SymbolKeyEntityMeta]: EntityCouponTemplateMeta;
       [SymbolKeyModelOptions]: IModelOptionsCouponTemplate;
       get<T extends IModelGetOptions<EntityCouponTemplate,ModelCouponTemplate>>(where: TypeModelWhere<EntityCouponTemplate>, options?: T): Promise<TypeModelRelationResult<EntityCouponTemplate, ModelCouponTemplate, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityCouponTemplate,ModelCouponTemplate>>(where: TypeModelWhere<EntityCouponTemplate>, options?: T): Promise<TypeModelRelationResult<EntityCouponTemplate, ModelCouponTemplate, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityCouponTemplate,ModelCouponTemplate>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityCouponTemplate, ModelCouponTemplate, T> | undefined>;
       mget<T extends IModelGetOptions<EntityCouponTemplate,ModelCouponTemplate>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityCouponTemplate, ModelCouponTemplate, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityCouponTemplate,ModelCouponTemplate,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityCouponTemplate, ModelCouponTemplate, T>>;

@@ -364,6 +364,30 @@ Acceptance checks:
 - affected flavor builds, contract synchronization, type checks, linting, formatting, and test suite checks pass;
 - the complete customer and operator flow passes through the repository-managed Commerce SSR sites (`/commerce` and `/commerce-admin`) using `npm run test:e2e:commerce:clean` after current artifact preparation; externally managed-target E2E is not a WBS-70-02 prerequisite or blocker.
 
+#### WBS-70-03: Establish the Coupon Template semantic form-layout reference
+
+Dependencies: `WBS-40-02`, `WBS-70-01`.
+
+Primary areas:
+
+- A-Commerce PRD/SRS semantic information-architecture requirements
+- `commerce-promotion` Coupon Template Admin DTO render metadata and locales
+- Coupon Template emitted-metadata contract test and Commerce Admin consumer regeneration
+
+Tasks:
+
+- align the Coupon Template operator scenes with `PRD-CPN-04` and `SRS-UI-04`;
+- express the approved Create, Update, View, and compact list/filter information areas in Vona DTO render metadata;
+- preserve the existing API, persistence, validation, authorization, and customer coupon-selection boundaries;
+- add focused emitted-metadata coverage and regenerate the affected Commerce Admin contract consumer through the normal forward chain.
+
+Acceptance checks:
+
+- Create, Update, View, and list/filter metadata preserve their approved scene-specific information areas and field placement;
+- the list filter retains one embedded filter-actions block;
+- no DTO layout change alters Coupon Template API fields, persistence, authorization, or customer-page ownership;
+- `ATP-FIA-01` records focused test and Commerce Admin contract-loop evidence.
+
 ## Deferred Work Guardrail
 
 The following are intentionally excluded from this WBS: marketplace/multi-merchant behavior, multiple warehouses, external payment providers, real provider callbacks/reconciliation, external sales channels, percentage or stacked promotions, partial shipment, partial refund, post-shipment returns/RMA, tax and shipping-rate engines, and multi-currency selling. A later plan must introduce each as an explicit domain contract rather than silently extending an MVP workflow.

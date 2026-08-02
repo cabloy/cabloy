@@ -1,5 +1,6 @@
 export default {
   ActorId: '操作人 ID',
+  BasicInformation: '基本信息',
   CouponAudit: '优惠券审计',
   CouponCode: '优惠券代码',
   CouponGrant: '优惠券发放',
@@ -13,6 +14,7 @@ export default {
   Currency: '币种',
   Description: '描述',
   DiscountCents: '固定优惠（分）',
+  DiscountPolicy: '优惠策略',
   FromState: '原状态',
   IssuedCount: '已发放数',
   MinSpendCents: '最低消费（分）',
@@ -31,7 +33,9 @@ export default {
   ToState: '新状态',
   TotalIssueLimit: '总发放上限',
   TotalUsageLimit: '总使用上限',
+  UsageLimits: '使用限制',
   UserId: '用户 ID',
   ValidFrom: '开始时间',
+  ValidityWindow: '有效期',
   ValidUntil: '结束时间',
 };

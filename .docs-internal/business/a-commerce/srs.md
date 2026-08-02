@@ -116,18 +116,17 @@ State names in this section are canonical. A later implementation may use intege
 
 ### Order
 
-| State                | Meaning                                                         | Allowed next states                          |
-| -------------------- | --------------------------------------------------------------- | -------------------------------------------- |
-| `awaiting_payment`   | Order and reservations created; payment not accepted            | `paid`, `cancelled`, `expired`               |
-| `paid`               | Payment accepted; shipment not yet recorded                     | `shipped`, `refund_requested`                |
-| `refund_requested`   | Customer has requested an eligible refund                       | `paid`, `refund_approved`, `refund_rejected` |
-| `refund_approved`    | Operator approved; provider refund is being executed            | `paid`, `partially_refunded`, `refunded`     |
-| `refund_rejected`    | Operator rejected the request; order remains paid and unshipped | `paid`                                       |
-| `partially_refunded` | Pre-shipment monetary adjustment completed; stock is unchanged  | `refund_requested`, `refunded`               |
-| `shipped`            | Whole-order carrier/tracking information recorded               | none                                         |
-| `refunded`           | Whole-order provider refund succeeded and stock was restored    | none                                         |
-| `cancelled`          | Customer/operator cancellation before payment completion        | none                                         |
-| `expired`            | 30-minute unpaid timeout released reservations                  | none                                         |
+| State              | Meaning                                                         | Allowed next states                          |
+| ------------------ | --------------------------------------------------------------- | -------------------------------------------- |
+| `awaiting_payment` | Order and reservations created; payment not accepted            | `paid`, `cancelled`, `expired`               |
+| `paid`             | Payment accepted; shipment not yet recorded                     | `shipped`, `refund_requested`                |
+| `refund_requested` | Customer has requested an eligible refund                       | `paid`, `refund_approved`, `refund_rejected` |
+| `refund_approved`  | Operator approved; provider refund is being executed            | `paid`, `refunded`                           |
+| `refund_rejected`  | Operator rejected the request; order remains paid and unshipped | `paid`                                       |
+| `shipped`          | Whole-order carrier/tracking information recorded               | none                                         |
+| `refunded`         | Whole-order provider refund succeeded and stock was restored    | none                                         |
+| `cancelled`        | Customer/operator cancellation before payment completion        | none                                         |
+| `expired`          | 30-minute unpaid timeout released reservations                  | none                                         |
 
 - **SRS-ORD-01**: `paid`, `refund_requested`, `refund_approved`, or `refund_rejected` must not transition to `shipped` unless the current state is `paid` at the transaction boundary.
 - **SRS-ORD-02**: `shipped`, `refunded`, `cancelled`, and `expired` are final in the MVP.
@@ -160,7 +159,7 @@ State names in this section are canonical. A later implementation may use intege
 
 - **SRS-RFD-01**: A refund request records the requesting customer, order, reason, requested time, decision actor, decision reason, and execution attempt. It is created only from the order's current `paid` state.
 - **SRS-RFD-02**: Approval must recheck tenant ownership and that no shipment exists. A refund attempt may run only from `refund_approved`; a rejection returns the order to `paid` without changing stock or coupon redemption.
-- **SRS-RFD-03**: A successful full refund restores each consumed reservation exactly once, transitions the order to `refunded`, and leaves the coupon in `redeemed` state. A successful partial refund is a pre-shipment monetary adjustment, transitions the order to `partially_refunded`, and does not restore stock. A failed provider attempt is retained in the refund audit trail and returns the order to `paid`, where the customer may create a new refund request.
+- **SRS-RFD-03**: A successful whole-order refund restores each consumed reservation exactly once, transitions the order to `refunded`, and leaves the coupon in `redeemed` state. A failed provider attempt is retained in the refund audit trail and returns the order to `paid`, where the customer may create a new refund request.
 
 - **SRS-PAY-01**: A payment or refund event has a durable idempotency key scoped to its attempt and tenant.
 - **SRS-PAY-02**: Replaying a successful event returns the existing final result and must not reapply any stock, coupon, order, or audit mutation.
@@ -191,6 +190,16 @@ State names in this section are canonical. A later implementation may use intege
 - **SRS-UI-01**: Reusable async product, cart, order, coupon, and operator query state belongs to a Zova Model. Controllers orchestrate scenes rather than becoming shared fetch/cache owners.
 - **SRS-UI-02**: A custom endpoint in the same Admin Resource boundary reuses the existing `rest-resource.model.resource` state and invalidation tree rather than creating a competing module-local cache owner. A genuinely separate customer self-service contract may own its dedicated Web state boundary as specified by `SRS-ADR-06`.
 - **SRS-UI-03**: Customer SSR renders no private cart, address, order, coupon, or payment information in an anonymous response. Final client theme and authenticated state remain hydration-tolerant.
+- **SRS-UI-04**: Coupon Template Admin DTO render metadata expresses the semantic information areas in the Coupon Template Admin scene matrix without changing validation, authorization, server-authoritative values, or the separate customer coupon-selection flow. Layouts may differ by scene when their DTO fields differ.
+
+### Coupon Template Admin scene matrix
+
+| Scene       | Audience and task                                    | Information areas                                                                           | Editable / readonly boundary                                                                                                      |
+| ----------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Create      | Operator defines a reusable coupon policy            | basic identity and activation; monetary eligibility; validity window; issuance/usage limits | All policy fields are inputs; `description` is optional                                                                           |
+| Update      | Operator makes the currently permitted template edit | basic identity and activation                                                               | Only `name`, `state`, and `description` are editable; monetary, validity, and limit policy fields are outside the update contract |
+| View        | Operator inspects the complete template and its use  | basic identity and activation; monetary eligibility; validity window; issuance/usage limits | All fields are readonly; issued and redeemed counters appear with limits                                                          |
+| List/filter | Operator finds templates                             | compact name and created-date controls                                                      | The filter ends with one filter-actions block; it is independent from entry-form structure                                        |
 
 ## Non-Functional Requirements
 
@@ -208,6 +217,7 @@ State names in this section are canonical. A later implementation may use intege
 | `SRS-CAT-*`, `SRS-INV-*` | `PRD-CAT-*`, `PRD-INV-*`  | SKU publication and concurrent checkout tests                                                                     | `ATP-INV-01`, `ATP-SNAP-01`                                                         |
 | `SRS-ORD-*`, `SRS-TXN-*` | `PRD-ORD-*`, `PRD-INV-*`  | Transaction rollback, expiry, and snapshot tests                                                                  | `ATP-TXN-01`, `ATP-EXP-01`, `ATP-SNAP-01`                                           |
 | `SRS-CPN-*`, `SRS-MNY-*` | `PRD-CPN-*`               | Coupon eligibility, integer-cent, and release tests                                                               | `ATP-CPN-01`                                                                        |
+| `SRS-UI-04`              | `PRD-CPN-04`              | Coupon Template Admin render metadata preserves the approved scene information areas and compact filter contract  | `ATP-FIA-01`                                                                        |
 | `SRS-PAY-*`              | `PRD-PAY-*`               | Idempotent mock event tests                                                                                       | `ATP-PAY-01`, `ATP-RFD-01`                                                          |
 | `SRS-SHP-*`, `SRS-RFD-*` | `PRD-SHP-*`, `PRD-RFD-*`  | Shipment/refund lifecycle tests                                                                                   | `ATP-SHP-01`, `ATP-RACE-01`                                                         |
 | `SRS-API-*`, `SRS-UI-*`  | All PRD areas             | Flavor build, REST contract, and end-to-end browser checks                                                        | `ATP-CTR-01`, `ATP-SSR-01`, `ATP-SSR-02`                                            |

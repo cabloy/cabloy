@@ -49,8 +49,7 @@ A tenant operator who assigns commerce roles. Framework-wide administrative auth
 - Provider-neutral payment sessions with a test/development mock provider, verified provider outcomes, and duplicate-notification handling.
 - Automatic release of unpaid order stock and coupon reservations after 30 minutes, explicit cancellation, or failed payment.
 - Tenant-operator manual shipment for the whole order with a carrier and tracking number.
-- Customer-requested, operator-approved, pre-shipment full or partial monetary refunds through the payment-provider boundary.
-- Inventory restoration only after a successful full refund; a partial refund is a monetary adjustment and the redeemed coupon is not restored.
+- Customer-requested, operator-approved, pre-shipment whole-order refunds through the payment-provider boundary; a successful refund restores inventory and does not restore the redeemed coupon.
 - Separate customer and operator SSR applications at `/commerce` and `/commerce-admin`.
 
 ### Deferred
@@ -58,10 +57,10 @@ A tenant operator who assigns commerce roles. Framework-wide administrative auth
 - Multi-merchant marketplaces, store onboarding, seller settlement, and merchant-to-merchant data boundaries.
 - Multiple warehouses, transfer, replenishment, stocktake, backorders, split allocation, and split shipment.
 - Guest checkout, guest order lookup, order claiming, and unauthenticated payment continuation.
-- Payment disputes, chargebacks, multi-provider routing policy, subscriptions, and saved payment methods. PayPal automatic capture, verified webhooks, reconciliation, and full/partial refunds move to the `a-pay` delivery scope.
+- Payment disputes, chargebacks, multi-provider routing policy, subscriptions, and saved payment methods. PayPal automatic capture, verified webhooks, reconciliation, and partial refunds move to the `a-pay` delivery scope.
 - External marketplace/channel catalogue mapping, order ingestion, and channel-specific inventory.
 - Percentage coupons, coupon stacking, product-level promotion engines, loyalty points, gift cards, subscriptions, and campaigns.
-- Post-shipment returns, return logistics, inspection, and RMA workflows. Partial refunds are limited to pre-shipment monetary adjustments and do not imply partial inventory returns.
+- Partial refunds, post-shipment returns, return logistics, inspection, and RMA workflows.
 - Tax engines, shipping-rate engines, internationalization of selling currency, and multi-currency pricing.
 
 ## Primary User Journeys
@@ -127,6 +126,7 @@ A tenant operator who assigns commerce roles. Framework-wide administrative auth
 - **PRD-CPN-01**: A customer can apply no more than one eligible fixed-amount coupon to an order.
 - **PRD-CPN-02**: Coupon evaluation enforces minimum spend, validity period, total issuance/usage limits, and per-customer limits.
 - **PRD-CPN-03**: Coupon reservation and release follow the order lifecycle; a paid-and-refunded order does not reissue its coupon.
+- **PRD-CPN-04**: Coupon Template maintenance distinguishes basic identity and activation, monetary eligibility, the validity window, and issuance/usage limits, while its operator list keeps finding templates compact. These are business information areas, not a prescribed UI component tree.
 
 ### Payment
 
@@ -169,16 +169,16 @@ The MVP is ready for acceptance when:
 
 ## Requirement Traceability
 
-| Product area        | PRD requirements | SRS contracts            | PDP/WBS tasks          | Test-plan evidence                                                                  |
-| ------------------- | ---------------- | ------------------------ | ---------------------- | ----------------------------------------------------------------------------------- |
-| Catalogue           | `PRD-CAT-*`      | `SRS-CAT-*`              | `WBS-30-*`             | `ATP-SNAP-01`                                                                       |
-| Inventory           | `PRD-INV-*`      | `SRS-INV-*`              | `WBS-30-*`, `WBS-40-*` | `ATP-INV-01`, `ATP-TXN-01`, `ATP-EXP-01`                                            |
-| Address management  | `PRD-ADR-*`      | `SRS-ADR-*`, `SRS-AUT-*` | `WBS-40-04`            | `ATP-ADDR-01`, `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SSR-01`, `ATP-SSR-02`, `ATP-CTR-01` |
-| Checkout and orders | `PRD-ORD-*`      | `SRS-ORD-*`, `SRS-TXN-*` | `WBS-40-*`             | `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SNAP-01`                                           |
-| Coupons             | `PRD-CPN-*`      | `SRS-CPN-*`              | `WBS-40-*`             | `ATP-CPN-01`                                                                        |
-| Payment             | `PRD-PAY-*`      | `SRS-PAY-*`              | `WBS-50-*`             | `ATP-PAY-01`, `ATP-EXP-01`                                                          |
-| Shipment            | `PRD-SHP-*`      | `SRS-SHP-*`              | `WBS-60-*`             | `ATP-SHP-01`, `ATP-RACE-01`                                                         |
-| Refunds             | `PRD-RFD-*`      | `SRS-RFD-*`              | `WBS-60-*`             | `ATP-RFD-01`, `ATP-RACE-01`                                                         |
+| Product area        | PRD requirements | SRS contracts            | PDP/WBS tasks           | Test-plan evidence                                                                  |
+| ------------------- | ---------------- | ------------------------ | ----------------------- | ----------------------------------------------------------------------------------- |
+| Catalogue           | `PRD-CAT-*`      | `SRS-CAT-*`              | `WBS-30-*`              | `ATP-SNAP-01`                                                                       |
+| Inventory           | `PRD-INV-*`      | `SRS-INV-*`              | `WBS-30-*`, `WBS-40-*`  | `ATP-INV-01`, `ATP-TXN-01`, `ATP-EXP-01`                                            |
+| Address management  | `PRD-ADR-*`      | `SRS-ADR-*`, `SRS-AUT-*` | `WBS-40-04`             | `ATP-ADDR-01`, `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SSR-01`, `ATP-SSR-02`, `ATP-CTR-01` |
+| Checkout and orders | `PRD-ORD-*`      | `SRS-ORD-*`, `SRS-TXN-*` | `WBS-40-*`              | `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SNAP-01`                                           |
+| Coupons             | `PRD-CPN-*`      | `SRS-CPN-*`, `SRS-UI-04` | `WBS-40-*`, `WBS-70-03` | `ATP-CPN-01`, `ATP-FIA-01`                                                          |
+| Payment             | `PRD-PAY-*`      | `SRS-PAY-*`              | `WBS-50-*`              | `ATP-PAY-01`, `ATP-EXP-01`                                                          |
+| Shipment            | `PRD-SHP-*`      | `SRS-SHP-*`              | `WBS-60-*`              | `ATP-SHP-01`, `ATP-RACE-01`                                                         |
+| Refunds             | `PRD-RFD-*`      | `SRS-RFD-*`              | `WBS-60-*`              | `ATP-RFD-01`, `ATP-RACE-01`                                                         |
 
 ## Related Records
 

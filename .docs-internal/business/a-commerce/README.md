@@ -28,6 +28,10 @@ This directory records the agreed product, system, and delivery baseline for the
 | Shipment         | One whole-order shipment entered manually with carrier and tracking number                                                       |
 | Refund           | Customer-requested, operator-approved, whole-order only, before shipment only; mock refund restores inventory but not the coupon |
 
+## Semantic Information Architecture Baseline
+
+A-Commerce is also a reference for semantic information architecture. The PRD and SRS define the audience, task, scene, and business information areas that must remain distinct; Vona DTO render metadata translates that intent into field placement, groups, sections, or tabs. `formLayout` syntax is implementation metadata, not product authority. A separate audience, API contract, state owner, or page boundary must not be reduced to a visual grouping decision.
+
 ## Current Topology
 
 `a-commerce` is a suite-first domain. Its Vona and Zova modules belong beneath the suite rather than being loose standalone packages:
