@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
-import { describe, it } from 'node:test';
-import { app } from 'vona-mock';
+import { after, before, describe, it } from 'node:test';
+import { acquireTestLock, app } from 'vona-mock';
 
 interface IFixture {
   userId?: number;
@@ -37,6 +37,16 @@ async function cleanup(fixture: IFixture) {
 }
 
 describe('paymentSession.test.ts', { concurrency: false }, () => {
+  let releaseTestLock: (() => void) | undefined;
+
+  before(async () => {
+    releaseTestLock = await acquireTestLock('a-pay');
+  });
+
+  after(() => {
+    releaseTestLock?.();
+  });
+
   it('derives provider facts and expiry from the payment scene', async () => {
     await app.bean.executor.mockCtx(async () => {
       const scope = app.scope('a-pay');
@@ -113,7 +123,7 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
 
   it('does not start an expired payment session', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const fixture = await createFixture(new Date(Date.now() - 1));
+      const fixture = await createFixture(new Date(Date.now() - 1_000));
       try {
         const scope = app.scope('a-pay');
         await assert.rejects(scope.service.paymentSession.start(fixture.paymentSessionId!), {

@@ -2,8 +2,8 @@ import type { IPaymentOutcomeEvent } from 'vona-module-a-pay';
 
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
-import { describe, it } from 'node:test';
-import { app } from 'vona-mock';
+import { after, before, describe, it } from 'node:test';
+import { acquireTestLock, app } from 'vona-mock';
 
 interface IFixture {
   userId?: number;
@@ -79,6 +79,16 @@ async function cleanup(fixture: IFixture) {
 }
 
 describe('outbox.test.ts', { concurrency: false }, () => {
+  let releaseTestLock: (() => void) | undefined;
+
+  before(async () => {
+    releaseTestLock = await acquireTestLock('a-pay');
+  });
+
+  after(() => {
+    releaseTestLock?.();
+  });
+
   it('claims, backs off, and exhausts durable delivery attempts', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixture = await createFixture(randomUUID().slice(0, 12));
@@ -100,7 +110,7 @@ describe('outbox.test.ts', { concurrency: false }, () => {
         assert.ok((persisted?.nextAttemptAt?.getTime() ?? 0) >= releaseStart + 900);
         assert.equal(await scope.service.outbox.claim(event.id), undefined);
         await scope.model.outboxEvent.updateById(event.id, {
-          nextAttemptAt: new Date(Date.now() - 1),
+          nextAttemptAt: new Date(Date.now() - 1_000),
         });
         const second = await scope.service.outbox.claim(event.id);
         assert.equal(second?.attemptCount, 2);
@@ -150,7 +160,7 @@ describe('outbox.test.ts', { concurrency: false }, () => {
         const scope = app.scope('a-pay');
         const first = await scope.service.outbox.claim(event.id);
         await scope.model.outboxEvent.updateById(event.id, {
-          claimExpiresAt: new Date(Date.now() - 1),
+          claimExpiresAt: new Date(Date.now() - 1_000),
         });
         const second = await scope.service.outbox.claim(event.id);
         assert.ok(second?.claimToken);
