@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { createHmac, randomUUID } from 'node:crypto';
-import { describe, it } from 'node:test';
-import { app } from 'vona-mock';
+import { after, before, describe, it } from 'node:test';
+import { acquireTestLock, app } from 'vona-mock';
 
 interface IFixture {
   userId?: number;
@@ -100,6 +100,16 @@ async function countFacts(paymentSessionId: number) {
 }
 
 describe('webhook.test.ts', { concurrency: false, sequential: true }, () => {
+  let releaseTestLock: (() => void) | undefined;
+
+  before(async () => {
+    releaseTestLock = await acquireTestLock('a-pay');
+  });
+
+  after(() => {
+    releaseTestLock?.();
+  });
+
   it('accepts a raw-body signed HTTP webhook and rejects an invalid signature without mutation', async () => {
     const fixture: IFixture = {};
     try {

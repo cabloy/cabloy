@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
-import { describe, it } from 'node:test';
-import { app } from 'vona-mock';
+import { after, before, describe, it } from 'node:test';
+import { acquireTestLock, app } from 'vona-mock';
 
 interface IFixture {
   userId?: number;
@@ -38,7 +38,17 @@ async function cleanup(fixture: IFixture) {
   await app.bean.passport.signout();
 }
 
-describe('payMock.test.ts', { concurrency: false }, () => {
+describe('payMock.test.ts', { concurrency: false, sequential: true }, () => {
+  let releaseTestLock: (() => void) | undefined;
+
+  before(async () => {
+    releaseTestLock = await acquireTestLock('a-pay');
+  });
+
+  after(() => {
+    releaseTestLock?.();
+  });
+
   it('captures Vona env secrets in the mock Provider options', () => {
     const options = app.bean.payProvider.getOptions('pay-mock:mock', 'default');
     assert.equal(options.secretCredential, app.meta.env.PAY_MOCK_DEFAULT_CREDENTIAL);
