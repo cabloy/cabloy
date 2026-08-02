@@ -4,14 +4,21 @@ import { after, before, describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
 
 describe('paymentAttempt.test.ts', { concurrency: false }, () => {
-  let releaseTestLock: (() => void) | undefined;
+  const releaseTestLocks: Array<() => void> = [];
 
   before(async () => {
-    releaseTestLock = await acquireTestLock('a-commerce');
+    try {
+      for (const scene of ['a-commerce', 'a-pay']) {
+        releaseTestLocks.push(await acquireTestLock(scene));
+      }
+    } catch (error) {
+      for (const release of releaseTestLocks.reverse()) release();
+      throw error;
+    }
   });
 
   after(() => {
-    releaseTestLock?.();
+    for (const release of releaseTestLocks.reverse()) release();
   });
 
   it('creates and internally cancels an attempt exactly once', async () => {

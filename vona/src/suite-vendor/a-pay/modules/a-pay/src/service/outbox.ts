@@ -23,7 +23,8 @@ export class ServiceOutbox extends BeanBase {
       payload,
       state: 'pending',
       attemptCount: 0,
-      nextAttemptAt: new Date(),
+      // Keep newly committed events due after database timestamp precision is applied.
+      nextAttemptAt: new Date(Date.now() - 1_000),
     });
     if (!this.app.meta.isTest) {
       this.ctx.db.commit(() => {
@@ -102,7 +103,9 @@ export class ServiceOutbox extends BeanBase {
       });
       return { ...event, state: 'failed' as const, errorSummary };
     }
-    const nextAttemptAt = new Date(Date.now() + retryDelayMilliseconds(event.attemptCount));
+    const nextAttemptAt = new Date(
+      Math.ceil((Date.now() + retryDelayMilliseconds(event.attemptCount)) / 1_000) * 1_000,
+    );
     await this.scope.model.outboxEvent.updateById(event.id, {
       state: 'pending',
       claimedAt: undefined,
