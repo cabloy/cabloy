@@ -1,5 +1,23 @@
 # Changelog
 
+## 5.1.123
+
+### Features
+
+- Add payment payload handling and A-Pay integration updates.
+- Add OpenAPI configuration support.
+- Add configurable E2E test port support.
+- Update payment scene and session view capabilities.
+
+### Bug Fixes
+
+- Import `VNode` as a type in `zova-core`.
+
+### Improvements
+
+- Align commerce documentation with the acceptance gate.
+- Update application components, SSR menu configuration, package metadata, and dependencies.
+
 ## 5.1.122
 
 ### Features
