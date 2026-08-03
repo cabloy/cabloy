@@ -106,12 +106,117 @@ A practical reading takeaway is:
 
 > the best default is often not “handwritten DTO or no DTO.” It is “named DTO class backed by the right inferred helper.”
 
+## Default-first three-layer DTO authoring
+
+The three DTO shapes above classify the public artifact: explicit named DTO, inline inference, or a named class that wraps inference. They do not describe how to author an inferred contract.
+
+When an Entity, Model, relation, or query shape already owns stable contract truth, start from that truth instead of redeclaring its fields. Define the DTO projection first, then add only the smallest DTO-local difference. This preserves inherited validation, titles, OpenAPI metadata, and render metadata wherever they still apply.
+
+### Layer 1: project upstream truth
+
+Use the operation-appropriate `$Dto.*` helper to establish the baseline contract. Then choose the narrowest projection mechanism:
+
+- use the default inferred shape when all relevant model-aware fields belong in the DTO
+- use `columns` for a simple local field subset, including the exclusion of server-owned fields
+- use `include` to bring a relation-aware shape into the DTO
+- use `dtoClass` when a top-level or nested relation needs a reusable, named field surface
+
+For example, `DtoStudentSelectReq` starts from an Entity-backed query projection:
+
+```typescript
+export class DtoStudentSelectReq extends $Dto.queryPage(EntityStudent, [
+  'name',
+  'level',
+  'createdAt',
+]) {}
+```
+
+A relation-aware DTO can use `columns` and `include` to curate its baseline without restating each field decorator:
+
+```typescript
+export class DtoDetailRecordBase extends $Dto.get(() => ModelRecord, {
+  columns: ['id', 'name', 'subjectCount', 'totalScore', 'averageScore'],
+  include: { trainingRecordSubjects: true },
+}) {}
+```
+
+Use `dtoClass` when that curated surface is itself reusable. For example, a detail mutate DTO can take its field surface from `DtoDetailRecordBase`, and a parent create DTO can include that named detail contract:
+
+```typescript
+export class DtoDetailRecordMutate extends $Dto.mutate(() => ModelRecord, {
+  dtoClass: DtoDetailRecordBase,
+  include: { trainingRecordSubjects: { dtoClass: DtoDetailRecordSubjectMutate } },
+}) {}
+
+export class DtoStudentCreate extends $Dto.create(() => ModelStudent, {
+  include: { trainingRecords: { dtoClass: DtoDetailRecordMutate } },
+}) {}
+```
+
+Do not expose a server-owned field merely because it exists on the Entity. Exclude it through the projection; do not rely on visibility metadata to hide a field that the API must not accept or return.
+
+### Layer 2: overlay metadata or refine the schema
+
+For a field already supplied by the projection, use the `fields` map on `@Dto(...)` rather than redeclaring the property:
+
+- use `$makeMetadata(...)` when only field metadata changes, such as title, order, visibility, serialization, or render behavior; the inherited schema and validation remain authoritative
+- use `$makeSchema(...)` when optionality, validation, enum members, preprocess/transform behavior, or another schema structure must change; it replaces or refines the runtime field schema while preserving the framework's inherited OpenAPI metadata merge
+
+`DtoStudentSelectReq` demonstrates schema refinement for query input:
+
+```typescript
+@Dto({
+  fields: {
+    name: $makeSchema(v.optional(), z.string()),
+    level: $makeSchema(v.optional(), z.number()),
+    createdAt: $makeSchema(v.filterTransform('a-web:dateRange'), v.optional(), z.string()),
+  },
+})
+export class DtoStudentSelectReq extends $Dto.queryPage(EntityStudent, [
+  'name',
+  'level',
+  'createdAt',
+]) {}
+```
+
+`$makeSchema(...)` applies schema-like arguments right-to-left. Keep the final structure-defining schema, such as `z.string()`, `z.number()`, `v.object(...)`, or `v.array(...)`, last in authoring order. Treat optionality, nullability, defaults, preprocess/transform wrappers, objects, and arrays as structure-shaping rather than metadata-only, and verify emitted schema/OpenAPI output after changing them.
+
+`@Dto({ fields })` changes the runtime contract and metadata. It does not rewrite the TypeScript property type inferred from the `$Dto.*` base class. Do not add a duplicate `declare` field or a second field decorator solely to mirror a runtime schema restriction unless a separate static contract is genuinely required and is type-compatible with the inferred base.
+
+### Layer 3: add contract-only fields
+
+Declare a class member with `@Api.field(...)` only when the field is absent from the inferred projection. Typical examples are serializer-produced response fields, operation-local helper fields, or a separate nested representation.
+
+```typescript
+export class DtoStudentCreate extends $Dto.create(() => ModelStudent, {
+  include: { trainingRecords: { dtoClass: DtoDetailRecordMutate } },
+}) {
+  @Api.field(v.optional(), v.array(DtoDetailRecordResItem))
+  _trainingRecords?: DtoDetailRecordResItem[];
+}
+```
+
+Do not manually redeclare an inferred field merely to adjust its title, renderer, validation, or schema. Use Layer 2 instead.
+
+### When to use an explicit DTO from scratch
+
+Inference first is a default strategy, not a requirement to force every DTO through `$Dto.*`. Use an explicit DTO deliberately when no stable upstream Entity, Model, relation, or query shape is suitable, for example:
+
+- authentication, captcha, or behavior-focused commands
+- webhook and third-party protocol payloads
+- aggregate commands assembled from unrelated resources
+- a public contract that must stay intentionally decoupled from persistence structure
+
+If the inferred baseline would require pervasive exceptions or no longer makes the contract clearer, an explicit DTO is the better design.
+
 ## `training-student` as the decision specimen
 
 The current `training-student` module is a strong specimen because it shows several different DTO choices in one compact family.
 
 Relevant source files include:
 
+- `vona/src/suite/a-training/modules/training-student/src/dto/detailRecordBase.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/dto/detailRecordMutate.tsx`
 - `vona/src/suite/a-training/modules/training-student/src/dto/studentCreate.tsx`
 - `vona/src/suite/a-training/modules/training-student/src/dto/studentUpdate.tsx`
 - `vona/src/suite/a-training/modules/training-student/src/dto/studentView.tsx`
@@ -163,10 +268,12 @@ Representative source facts:
 
 This makes it a strong specimen of a **query DTO that still wraps inference, but adds operation-specific shaping**.
 
+Its `fields` entries use `$makeSchema(...)` because the query contract changes the projected fields' runtime schema: query values become optional, `level` is normalized before validation, and `createdAt` accepts the date-range filter representation. Keep the final structure-defining schema last in each `$makeSchema(...)` call, then verify the emitted schema/OpenAPI result after a structure-shaping change.
+
 A practical reading takeaway is:
 
 - inference gives the structural baseline
-- explicit field metadata adds the operation-specific contract behavior
+- `$makeSchema(...)` refines projected fields when their query contract behavior differs
 
 ### Row-item response DTO
 
@@ -241,7 +348,7 @@ A practical rule is:
 
 ## Use `dtoClass` to shape inferred fields
 
-When inferred DTOs should still follow a reusable named field surface, pass `dtoClass` to the helper options.
+When inferred DTOs should still follow a reusable named field surface, pass `dtoClass` to the helper options. This is the reusable projection choice from [Layer 1: project upstream truth](#layer-1-project-upstream-truth).
 
 This is useful when:
 
@@ -357,11 +464,14 @@ For the bridge step that carries this backend-authored contract across the stack
 
 When evaluating a return shape or input contract that closely follows model structure, ask:
 
-1. should this DTO be inferred instead of handwritten?
-2. does model relationship structure already contain enough information?
-3. is the contract get/list/query/create/update/aggregate/group oriented?
+1. does an Entity, Model, relation, or query shape already provide stable upstream contract truth?
+2. is the contract get/list/query/create/update/aggregate/group oriented, and which `$Dto.*` helper matches it?
+3. should `columns`, `include`, `with`, or `dtoClass` define the projection boundary?
 4. should the inferred DTO stay inline or be wrapped in a named DTO class?
-5. does the resulting DTO also affect OpenAPI and frontend generation paths?
-6. is CRUD generation already giving enough contract structure that another handwritten DTO would be redundant?
+5. for every local difference, is it metadata-only (`$makeMetadata(...)`) or schema-affecting (`$makeSchema(...)`)?
+6. is every `@Api.field(...)` member genuinely new instead of a redeclared inferred field?
+7. if `$makeSchema(...)` is used, is the structure-defining schema last and is emitted schema/OpenAPI verification planned?
+8. does the resulting DTO also affect OpenAPI and frontend generation paths?
+9. is CRUD generation already giving enough contract structure that another handwritten DTO would be redundant, or is an explicit DTO clearer?
 
 That helps reduce redundant type work and keeps contracts closer to the model truth.

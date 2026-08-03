@@ -148,7 +148,9 @@ A practical split is:
 - use inferred DTOs when the contract closely follows model structure or query shape
 - wrap inferred DTOs in a named DTO class when reuse or discoverability becomes more important
 
-Advanced inferred DTO shaping can also stay named and reusable through helper options such as `dtoClass`, especially for relation-aware contracts and nested DTO surfaces. For the inference side, see [DTO Infer and Generation](/backend/dto-infer-generation).
+When stable Entity, Model, relation, or query truth already exists, prefer inference first: use `$Dto.*` with `columns`, `include`, or `dtoClass` to define the projection; use `@Dto({ fields })` with `$makeMetadata(...)` for metadata-only differences or `$makeSchema(...)` for schema and validation differences; add an `@Api.field(...)` member only for a genuinely new field absent from the inferred contract. Keep an explicit DTO as a deliberate fallback when no suitable upstream truth exists or the inferred composition is less clear.
+
+Advanced inferred DTO shaping can also stay named and reusable through helper options such as `dtoClass`, especially for relation-aware contracts and nested DTO surfaces. For the canonical authoring sequence, see [Default-first three-layer DTO authoring](/backend/dto-infer-generation#default-first-three-layer-dto-authoring).
 
 ## Relationship to ORM and controller contracts
 
@@ -166,12 +168,13 @@ That means DTO design should often be read together with:
 
 When creating DTOs:
 
-1. prefer reuse through mapped-class helpers when the shape is derived from existing classes
-2. keep DTO validation and OpenAPI concerns aligned through `@Api.field`
-3. decide whether the contract should be an explicit DTO class or an inferred DTO
-4. avoid re-declaring fields manually if Vona’s DTO-generation or class-derivation tools already solve the problem
-5. treat DTO design as part of the contract between backend handlers, models, and frontend integration
-6. choose explicit DTOs when named long-lived contracts matter, and inferred DTOs when the model/query shape already expresses the contract clearly
+1. check whether an Entity, Model, relation, or query shape already provides suitable upstream contract truth
+2. define the inferred projection before redeclaring fields: choose the `$Dto.*` helper and, where needed, `columns`, `include`, or `dtoClass`
+3. use `$makeMetadata(...)` for metadata-only refinement and `$makeSchema(...)` for schema or validation refinement of an inferred field
+4. use `@Api.field(...)` for a genuinely new field, not as a second declaration of an inferred field
+5. keep DTO validation and OpenAPI concerns aligned, and keep the final structure-defining schema last when using schema-like composition
+6. decide whether the contract should remain inferred, be wrapped in a named inferred DTO, or deliberately fall back to an explicit DTO
+7. treat DTO design as part of the contract between backend handlers, models, and frontend integration
 
 ## Where to read next
 

@@ -14,6 +14,9 @@ After generating or extending a backend thread, check which follow-up layers app
 - validation rules
 - OpenAPI metadata
 - inferred DTO opportunities
+- when stable Entity, Model, relation, or query truth exists, define the DTO projection first with `$Dto.*` and, where needed, `columns`, `include`, or `dtoClass`
+- for an inferred field, use `$makeMetadata(...)` for metadata-only refinement and `$makeSchema(...)` for schema or validation refinement; use a class-body `@Api.field(...)` member only for a genuinely new field
+- when inference cannot express the contract clearly, choose an explicit DTO deliberately; see [Default-first three-layer DTO authoring](../../../../cabloy-docs/backend/dto-infer-generation.md#default-first-three-layer-dto-authoring)
 - frontend contract impact
 - `@Api.field(...)` / `$makeSchema(...)` ordering: framework guards now preserve previously attached OpenAPI metadata across schema rebuilds, but structure-shaping schemaLike is still order-sensitive
 - when an explicit zod/custom schema or other structure-defining schemaLike is present, put that structure-defining schemaLike last because `makeSchemaLikes(...)` applies arguments right-to-left and later structure changes can otherwise alter or replace the intended schema
