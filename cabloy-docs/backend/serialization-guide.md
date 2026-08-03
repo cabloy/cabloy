@@ -51,6 +51,12 @@ A practical debugging rule is:
 
 - if a field-level serializer appears correct but the response still returns the raw value, first check whether the controller action uses `@Core.serializer()`
 
+### Declared response shape versus physical output fields
+
+A DTO or `@Api.body(...)` schema declares the response contract and emitted OpenAPI shape. It is not, by itself, an unknown-field stripping pass over an object that a controller action has already returned.
+
+When an API must physically omit fields from its payload, deliberately return the intended projection or apply a verified response-output policy, then verify the action response. Field-level serializer metadata is part of such output behavior only when the action enables `@Core.serializer()`; do not assume a narrower DTO declaration alone sanitizes a response. For deciding whether a read DTO itself needs a narrower business projection, see [Default read shape versus a public projection](/backend/dto-infer-generation#default-read-shape-versus-a-public-projection).
+
 ## Serializer transforms
 
 Vona supports custom serializer transforms through `@SerializerTransform(...)`.

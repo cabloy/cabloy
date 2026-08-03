@@ -94,6 +94,16 @@ A practical mental model is:
 
 This matters because different ORM operations naturally produce different API contracts.
 
+## Default read shape versus a public projection
+
+`$Dto.get(() => ModelX)` defaults to the complete model-aware Entity read shape, including inherited framework fields such as `iid` and `deleted` when the Entity defines them. This is the ordinary read baseline, not an automatic public-payload minimization policy.
+
+Use `columns` when an endpoint genuinely needs a smaller one-off business, query, or response projection. Use `dtoClass` when that curated read surface is named and reusable, especially for nested relation contracts. Do not add either solely to remove `iid` or `deleted` from an otherwise complete `$Dto.get(...)` shape.
+
+This differs from top-level `$Dto.create(...)` and `$Dto.update(...)`. Their default omission of identity, active-instance, soft-deletion, and lifecycle fields establishes a write-input authorization boundary: callers must not supply those framework-owned values. That write policy does not imply that ordinary read DTOs need the same narrowing.
+
+A narrowed DTO or emitted OpenAPI schema declares the supported contract, but does not by itself prove that an already-built HTTP response object is projected or stripped at runtime. When actual payload minimization is required, deliberately shape the returned data or apply a verified response-output policy, then verify the action response. See [Serialization Guide](/backend/serialization-guide) for response transformation behavior.
+
 ## When inference should replace handwritten DTOs
 
 A practical rule is:
@@ -153,7 +163,7 @@ export class DtoStudentCreate extends $Dto.create(() => ModelStudent, {
 }) {}
 ```
 
-Do not expose a server-owned field merely because it exists on the Entity. Exclude it through the projection; do not rely on visibility metadata to hide a field that the API must not accept or return.
+When a field genuinely does not belong to an API's business read or write contract, exclude it through the projection; do not rely on visibility metadata to hide a field that the API must not accept or return. Do not add a projection solely to remove framework read fields such as `iid` or `deleted` from an otherwise complete `$Dto.get(...)` shape; see [Default read shape versus a public projection](#default-read-shape-versus-a-public-projection).
 
 ### Layer 2: overlay metadata or refine the schema
 

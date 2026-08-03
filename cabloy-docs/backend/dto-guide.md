@@ -150,7 +150,7 @@ A practical split is:
 
 When stable Entity, Model, relation, or query truth already exists, prefer inference first: use `$Dto.*` with `columns`, `include`, or `dtoClass` to define the projection; use `@Dto({ fields })` with `$makeMetadata(...)` for metadata-only differences or `$makeSchema(...)` for schema and validation differences; add an `@Api.field(...)` member only for a genuinely new field absent from the inferred contract. Keep an explicit DTO as a deliberate fallback when no suitable upstream truth exists or the inferred composition is less clear.
 
-Advanced inferred DTO shaping can also stay named and reusable through helper options such as `dtoClass`, especially for relation-aware contracts and nested DTO surfaces. For the canonical authoring sequence, see [Default-first three-layer DTO authoring](/backend/dto-infer-generation#default-first-three-layer-dto-authoring).
+Advanced inferred DTO shaping can also stay named and reusable through helper options such as `dtoClass`, especially for relation-aware contracts and nested DTO surfaces. `$Dto.get(...)` otherwise keeps the complete model-aware read shape by default; use `columns` or `dtoClass` for a genuine business projection, not merely to remove `iid` or `deleted`. For the canonical authoring sequence, see [Default-first three-layer DTO authoring](/backend/dto-infer-generation#default-first-three-layer-dto-authoring) and [Default read shape versus a public projection](/backend/dto-infer-generation#default-read-shape-versus-a-public-projection).
 
 ## Relationship to ORM and controller contracts
 
