@@ -49,7 +49,9 @@ export interface IDtoOptionsRecordSelectResItem extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoRecordSelectResItem extends $Dto.get(() => ModelRecord) {
+export class DtoRecordSelectResItem extends $Dto.get(() => ModelRecord, {
+  include: { student: true },
+}) {
   @Api.field(
     ZovaRender.visible(false),
     v.optional(),

@@ -3689,6 +3689,12 @@ export interface components {
       dossierFileIds?: (number | string)[] | undefined;
       /** @description Description */
       description?: string | undefined;
+      student?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Student Name */
+        name: string;
+      };
       sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
       /** @description Dossier Files */
       dossierFiles?: components['schemas']['a-file.dto.fileView'][] | undefined;
@@ -3762,6 +3768,12 @@ export interface components {
           dossierFileIds?: (number | string)[] | undefined;
           /** @description Description */
           description?: string | undefined;
+          student?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Student Name */
+            name: string;
+          };
           /** @description Student Training Record Details */
           trainingRecordSubjects: {
             /**

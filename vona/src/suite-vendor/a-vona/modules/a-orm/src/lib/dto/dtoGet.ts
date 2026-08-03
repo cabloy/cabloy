@@ -82,7 +82,6 @@ function _DtoGet_relation_handle<TRecord extends {}>(
     return;
   }
   const { type, model, options } = relationReal;
-  const modelTarget = prepareClassModel(model);
   const optionsReal = Object.assign({}, options, { include: includeReal, with: withReal });
   if (mutateTypeTopLevel) {
     if (type === 'belongsTo') {
@@ -94,7 +93,7 @@ function _DtoGet_relation_handle<TRecord extends {}>(
       schema = v.array(z.object({ id: v.tableIdentity()(), deleted: z.boolean().optional() }));
     } else if (type === 'hasOne') {
       const schemaLazy = _DtoGet_relation_handle_schemaLazy(
-        modelTarget,
+        model,
         optionsReal,
         autoload,
         mutateTypeTopLevel,
@@ -105,7 +104,7 @@ function _DtoGet_relation_handle<TRecord extends {}>(
     } else {
       // hasMany
       const schemaLazy = _DtoGet_relation_handle_schemaLazy(
-        modelTarget,
+        model,
         optionsReal,
         autoload,
         mutateTypeTopLevel,
@@ -116,7 +115,7 @@ function _DtoGet_relation_handle<TRecord extends {}>(
     Api.field(v.optional(), schema)(entityClass.prototype, relationName);
   } else {
     const schemaLazy = _DtoGet_relation_handle_schemaLazy(
-      modelTarget,
+      model,
       optionsReal,
       autoload,
       mutateTypeTopLevel,
@@ -146,13 +145,14 @@ function _DtoGet_relation_handle<TRecord extends {}>(
 }
 
 function _DtoGet_relation_handle_schemaLazy(
-  modelTarget,
+  modelLike,
   optionsReal,
   autoload,
   mutateTypeTopLevel?: TypeDtoMutateType,
   relation?: IRelationItem,
 ) {
   return () => {
+    const modelTarget = prepareClassModel(modelLike);
     if (!autoload) {
       return _DtoGet_relation_handle_schemaLazy_raw(
         modelTarget,

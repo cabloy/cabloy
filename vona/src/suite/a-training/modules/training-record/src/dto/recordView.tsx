@@ -37,7 +37,10 @@ export interface IDtoOptionsRecordView extends IDecoratorDtoOptions {}
   },
 })
 export class DtoRecordView extends $Dto.get(() => ModelRecord, {
-  include: { trainingRecordSubjects: { dtoClass: DtoDetailRecordSubjectView } },
+  include: {
+    student: true,
+    trainingRecordSubjects: { dtoClass: DtoDetailRecordSubjectView },
+  },
 }) {
   @Api.field(
     ZovaRender.visible(false),
