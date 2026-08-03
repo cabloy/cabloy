@@ -263,7 +263,7 @@ Using `this.$scope.<fixedModule>`, `app.scope(...)`, or `this.app.scope(...)` do
 
 Scope lookup also does not compose, install, load, or order an absent module. The target must already be available through suite/application composition. Declare `vonaModule.dependencies` only when the caller has a genuine requirement for a target module's availability, dependency-first ordering, or minimum compatible version—not merely because it looks up that module's service, model, config, locale, or another resource.
 
-For the package, suite, and module dependency distinction, see [Package Map](/reference/package-map).
+For the canonical availability, ordering, and version decision guide, see [Vona Module Dependencies](/backend/module-dependencies). For the package, suite, and module topology distinction, see [Package Map](/reference/package-map).
 
 ## Suite / module / package boundaries
 

@@ -56,10 +56,13 @@ After generating or extending a backend thread, check which follow-up layers app
 
 ## Module composition and dependency intent
 
-- target module is already composed into the application when code uses cross-module scope lookup
-- cross-module `this.$scope.<module>` or `app.scope(...)` lookup alone does not require `vonaModule.dependencies`
-- `vonaModule.dependencies` is added only for a genuine target-module availability, dependency-first ordering, or minimum-version requirement
-- do not create speculative dependency edges or circular declarations merely to document a lookup
+- confirm package, suite, or application composition already supplies a target before using cross-module lookup; lookup cannot compose an absent module
+- choose the narrowest lookup form first: `this.scope` for local resources, `this.$scope.<module>` for a fixed cross-module target, and `app.scope(...)` when an application reference or genuinely dynamic target is required
+- cross-module scope lookup, a named ORM relation, or `$Dto.get(..., { include })` alone does not require `vonaModule.dependencies`
+- add `vonaModule.dependencies` only for a genuine target-module availability, dependency-first ordering, or minimum-version requirement
+- startup, lifecycle, or `monkey.ts` integration can require dependency-first ordering, but are not the only valid dependency case
+- when adding an edge, verify package/suite composition, the target relative module name, the minimum compatible version, and that the graph remains acyclic
+- do not create speculative dependency edges or circular declarations merely to document a lookup; read [Vona Module Dependencies](../../../../cabloy-docs/backend/module-dependencies.md) for the canonical decision guide
 
 ## Verification follow-up
 

@@ -81,6 +81,7 @@ Use this package map together with:
 - [Suites and Modules](/fullstack/suites-and-modules)
 - [Backend Essentials](/backend/backend-essentials)
 - [Backend Foundation](/backend/foundation)
+- [Vona Module Dependencies](/backend/module-dependencies)
 - [Backend CLI](/backend/cli)
 - [Backend Scripts](/backend/scripts)
 - [Backend Directory Structure](/reference/backend-directory-structure)

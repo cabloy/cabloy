@@ -24,6 +24,12 @@
       "prompt": "I changed a model relation and some entity fields in Cabloy Basic. Before you tell me anything else, I want the Cabloy backend done-checklist, not a broad explanation of ORM theory.",
       "expected_output": "Must give a concrete backend completion checklist, must include relation-aware follow-up and metadata or migration review, and must stay practical rather than drifting into generic ORM explanation.",
       "files": []
+    },
+    {
+      "id": 15,
+      "prompt": "My Vona service reads another module through this.$scope. Should I add vonaModule.dependencies? In a separate feature, my monkey.ts must extend a target module during startup. Explain the decision for both cases.",
+      "expected_output": "Must distinguish scope lookup from a module dependency edge, state that lookup alone does not require vonaModule.dependencies, and identify required availability, dependency-first ordering, or minimum compatible version as the criteria. Must recognize startup or monkey integration as a possible ordering case, verify composition separately, and reject speculative or circular edges.",
+      "files": []
     }
   ]
 }

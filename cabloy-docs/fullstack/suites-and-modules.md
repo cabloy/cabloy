@@ -297,6 +297,7 @@ For most real business scenarios, the correct answer is to create the suite firs
 This guide should be read together with:
 
 - [Package Map](/reference/package-map)
+- [Vona Module Dependencies](/backend/module-dependencies)
 - [Backend Directory Structure](/reference/backend-directory-structure)
 - [Frontend Directory Structure](/reference/frontend-directory-structure)
 - [Backend CLI](/backend/cli)

@@ -168,7 +168,7 @@ Then distinguish runtime lookup from a true module dependency:
 - do not add a dependency declaration merely because code looks up another module's service, model, config, locale, or other resource
 - scope lookup cannot make an absent module available; validate application/suite composition separately when the target must exist
 
-For the canonical distinction, read [Backend Foundation](../../../cabloy-docs/backend/foundation.md#scope-lookup-vs-module-dependencies) and [Package Map](../../../cabloy-docs/reference/package-map.md).
+For the canonical decision guide, read [Vona Module Dependencies](../../../cabloy-docs/backend/module-dependencies.md), with [Backend Foundation](../../../cabloy-docs/backend/foundation.md#scope-lookup-vs-module-dependencies) and [Package Map](../../../cabloy-docs/reference/package-map.md) as companions.
 
 ### Verification
 

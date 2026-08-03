@@ -30,6 +30,7 @@ Use this page as the main backend hub, then choose the family that matches your 
 Start here when you need the core backend mental model first:
 
 - [Backend Foundation](/backend/foundation)
+- [Vona Module Dependencies](/backend/module-dependencies)
 - [Backend Essentials](/backend/backend-essentials)
 - [Backend CLI](/backend/cli)
 - [Service Guide](/backend/service-guide)

@@ -198,6 +198,7 @@ export default defineConfig({
           items: [
             { text: 'Introduction', link: '/backend/introduction' },
             { text: 'Foundation', link: '/backend/foundation' },
+            { text: 'Module Dependencies', link: '/backend/module-dependencies' },
             { text: 'Backend Essentials', link: '/backend/backend-essentials' },
             { text: 'Quickstart', link: '/backend/quickstart' },
             {
