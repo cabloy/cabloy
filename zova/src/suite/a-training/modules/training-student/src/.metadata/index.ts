@@ -254,5 +254,5 @@ declare module 'zova' {
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `training-student::${K}` {
   return `training-student::${key}`;
-}  
+}
 /** scope: end */

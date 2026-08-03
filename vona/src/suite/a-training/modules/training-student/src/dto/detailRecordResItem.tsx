@@ -39,7 +39,12 @@ export class DtoDetailRecordResItem extends $Dto.get(() => ModelRecord, {
   dtoClass: DtoDetailRecordBase,
   include: { trainingRecordSubjects: false },
 }) {
-  @Api.field(v.title('#'), ZovaRender.order(1, 'core'), ZovaRender.cell('basic-details:lineNumber'))
+  @Api.field(
+    v.title('#'),
+    ZovaRender.order(1, 'core'),
+    ZovaRender.cell('basic-details:lineNumber'),
+    v.optional(),
+  )
   _lineNumber?: number;
 
   @Api.field(

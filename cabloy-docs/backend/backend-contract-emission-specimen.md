@@ -101,8 +101,8 @@ The next source to read is:
 Representative source facts:
 
 - `@Dto<IDtoOptionsStudentSummary>()`
-- fields such as `id`, `name`, `mobile`, `level`, `levelTitle`, `description`, `descriptionLength`, and `summaryText`
-- `@Api.field(...)` metadata on each field
+- the `ModelStudent` projection supplies `id`, `name`, `mobile`, `level`, and `description`
+- direct `@Api.field(...)` metadata declares the computed `levelTitle`, `descriptionLength`, and `summaryText` fields
 
 This file answers the second emission question:
 

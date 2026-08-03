@@ -1,8 +1,4 @@
-import type {
-  DtoStudentSelectRes,
-  DtoStudentSummary,
-  EntityStudent,
-} from 'vona-module-training-student';
+import type { DtoStudentSelectRes, EntityStudent } from 'vona-module-training-student';
 
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
@@ -13,6 +9,9 @@ import {
   DtoStudentUpdate,
   DtoStudentView,
 } from 'vona-module-training-student';
+
+import { DtoDetailRecordResItem } from '../src/dto/detailRecordResItem.tsx';
+import { DtoStudentSummary } from '../src/dto/studentSummary.tsx';
 
 describe('student.test.ts', () => {
   it('action:student:formLayoutMetadata', async () => {
@@ -74,6 +73,39 @@ describe('student.test.ts', () => {
       );
       assert.equal(filterLayoutChildren?.[2]?.span, undefined);
       assert.equal(filterLayoutChildren?.[3]?.block?.render, 'basic-page:blockFilterActions');
+    });
+  });
+
+  it('action:student:emittedDtoSchemas', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const summaryApiJson = await app.bean.openapi.generateJsonOfClass(DtoStudentSummary);
+      const summaryComponent = Object.values(summaryApiJson.components!.schemas as any).find(
+        item => {
+          return (item as any).properties?.summaryText;
+        },
+      ) as any;
+      assert.ok(summaryComponent);
+      assert.deepEqual(
+        Object.keys(summaryComponent.properties).sort(),
+        [
+          'id',
+          'name',
+          'mobile',
+          'level',
+          'description',
+          'levelTitle',
+          'descriptionLength',
+          'summaryText',
+        ].sort(),
+      );
+
+      const detailRecordApiJson =
+        await app.bean.openapi.generateJsonOfClass(DtoDetailRecordResItem);
+      const detailRecordComponent = Object.values(
+        detailRecordApiJson.components!.schemas as any,
+      ).find(item => (item as any).properties?._lineNumber) as any;
+      assert.ok(detailRecordComponent?.properties?._lineNumber);
+      assert.equal(detailRecordComponent.required?.includes('_lineNumber'), false);
     });
   });
 

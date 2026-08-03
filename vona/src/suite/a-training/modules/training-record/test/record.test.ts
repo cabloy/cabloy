@@ -8,10 +8,23 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
+import { DtoDetailRecordSubjectResItem } from '../src/dto/detailRecordSubjectResItem.tsx';
+
 const dossierTextAttendance = Buffer.from('attendance dossier file');
 const dossierTextAssessment = Buffer.from('assessment dossier file');
 
 describe('record.test.ts', () => {
+  it('action:record:emittedDtoSchemas', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const apiJson = await app.bean.openapi.generateJsonOfClass(DtoDetailRecordSubjectResItem);
+      const component = Object.values(apiJson.components!.schemas as any).find(
+        item => (item as any).properties?._lineNumber,
+      ) as any;
+      assert.ok(component?.properties?._lineNumber);
+      assert.equal(component.required?.includes('_lineNumber'), false);
+    });
+  });
+
   it('action:record', async () => {
     await app.bean.executor.mockCtx(async () => {
       const studentData: DtoStudentCreate = {
