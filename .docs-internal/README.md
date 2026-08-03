@@ -72,6 +72,7 @@ Those concerns should live elsewhere.
 - [a-status Module Architecture](./architecture/a-status-module-architecture.md)
 - [Backend Resource Field Update Workflow](./architecture/backend-resource-field-workflow.md)
 - [DTO Render Field-Name Typing Boundary](./architecture/dto-render-field-name-typing.md)
+- [DTO/Model Contract Projection Evolution](./architecture/dto-model-contract-projection-evolution.md)
 - [a-image Cloudflare Integration and Signed Delivery Architecture](./architecture/a-image-cloudflare-signed-delivery-architecture.md)
 - [a-image Refactor Checklist](./architecture/a-image-refactor-checklist.md)
 - [a-image Public Contract Follow-up Checklist](./architecture/a-image-public-contract-followup-checklist.md)
