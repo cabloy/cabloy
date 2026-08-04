@@ -191,6 +191,16 @@ State names in this section are canonical. A later implementation may use intege
 - **SRS-UI-02**: A custom endpoint in the same Admin Resource boundary reuses the existing `rest-resource.model.resource` state and invalidation tree rather than creating a competing module-local cache owner. A genuinely separate customer self-service contract may own its dedicated Web state boundary as specified by `SRS-ADR-06`.
 - **SRS-UI-03**: Customer SSR renders no private cart, address, order, coupon, or payment information in an anonymous response. Final client theme and authenticated state remain hydration-tolerant.
 - **SRS-UI-04**: Coupon Template Admin DTO render metadata expresses the semantic information areas in the Coupon Template Admin scene matrix without changing validation, authorization, server-authoritative values, or the separate customer coupon-selection flow. Layouts may differ by scene when their DTO fields differ.
+- **SRS-UI-05**: Semantic presentation starts from the PRD/SRS audience, task, scene, information-area, and operation-DTO contract. Vona DTO render metadata may translate only eligible scene fields into order, groups, sections, tabs, Grid/flow placement, visibility, and shared or Commerce-specific renderer identity. It must not add API authority, change persistence or validation, turn browser input into server authority, replace authorization or SSR privacy, merge distinct audience DTO contracts, or replace separate Model and page ownership. Scene layouts may differ when their operation DTO fields or tasks differ.
+
+### Semantic presentation authority matrix
+
+| Layer                 | Authority                | May define                                                                              | Must not redefine                                                                        |
+| --------------------- | ------------------------ | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| PRD                   | Business outcome         | Audience, task, and meaningful information areas                                        | DTO syntax or component tree                                                             |
+| SRS and operation DTO | System scene contract    | API fields, editable/readonly/derived/hidden boundary, ownership constraints            | Product scope                                                                            |
+| DTO render metadata   | Presentation translation | Field order, groups, sections, tabs, Grid/flow placement, visibility, renderer identity | API authority, persistence, validation, authorization, state/page ownership, SSR privacy |
+| Zova renderer         | Runtime presentation     | Basic-specific markup, input conversion, and interaction                                | Business and security boundaries                                                         |
 
 ### Coupon Template Admin scene matrix
 
@@ -218,6 +228,7 @@ State names in this section are canonical. A later implementation may use intege
 | `SRS-ORD-*`, `SRS-TXN-*` | `PRD-ORD-*`, `PRD-INV-*`  | Transaction rollback, expiry, and snapshot tests                                                                  | `ATP-TXN-01`, `ATP-EXP-01`, `ATP-SNAP-01`                                           |
 | `SRS-CPN-*`, `SRS-MNY-*` | `PRD-CPN-*`               | Coupon eligibility, integer-cent, and release tests                                                               | `ATP-CPN-01`                                                                        |
 | `SRS-UI-04`              | `PRD-CPN-04`              | Coupon Template Admin render metadata preserves the approved scene information areas and compact filter contract  | `ATP-FIA-01`                                                                        |
+| `SRS-UI-05`              | `PRD-UI-01`               | Presentation authority matrix, scene-specific DTO metadata, and proof that metadata preserves system boundaries   | `ATP-SPC-01`                                                                        |
 | `SRS-PAY-*`              | `PRD-PAY-*`               | Idempotent mock event tests                                                                                       | `ATP-PAY-01`, `ATP-RFD-01`                                                          |
 | `SRS-SHP-*`, `SRS-RFD-*` | `PRD-SHP-*`, `PRD-RFD-*`  | Shipment/refund lifecycle tests                                                                                   | `ATP-SHP-01`, `ATP-RACE-01`                                                         |
 | `SRS-API-*`, `SRS-UI-*`  | All PRD areas             | Flavor build, REST contract, and end-to-end browser checks                                                        | `ATP-CTR-01`, `ATP-SSR-01`, `ATP-SSR-02`                                            |
@@ -229,6 +240,9 @@ State names in this section are canonical. A later implementation may use intege
 - [Product Delivery Plan and Work Breakdown Structure](./pdp-wbs.md)
 - [Test Strategy and Acceptance Plan](./test-plan.md)
 - [ADR 0001: Establish A-Commerce MVP Boundaries](./decisions/0001-mvp-boundaries.md)
+- [ADR 0003: Establish Semantic Presentation Contracts](./decisions/0003-semantic-presentation-contracts.md)
+- [Presentation contracts](./presentation-contracts.md)
+- [Form Layout Guide](../../../cabloy-docs/frontend/form-layout-guide.md)
 - [A-Pay payment architecture](../../architecture/a-pay-payment-architecture.md)
 - [Transaction guide](../../../cabloy-docs/backend/transaction-guide.md)
 - [Contract-loop playbook](../../../cabloy-docs/fullstack/contract-loop-playbook.md)

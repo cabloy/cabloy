@@ -9,6 +9,18 @@ import { $locale } from '../.metadata/locales.ts';
 
 export type TypeCouponTemplateState = 'draft' | 'active' | 'disabled';
 
+export const couponTemplateStateItems = [
+  { value: 'draft', title: $locale('CouponTemplateStateDraft') },
+  { value: 'active', title: $locale('CouponTemplateStateActive') },
+  { value: 'disabled', title: $locale('CouponTemplateStateDisabled') },
+];
+
+export const couponTemplateStateItemsCreate = couponTemplateStateItems.slice(0, 2);
+
+const currencyRendererOptions = { fixed: 2, exp: 2, zero: 2 };
+const dateFieldRendererOptions = { inputType: 'date' as const, preset: 'DATE_SHORT' as const };
+const dateCellRendererOptions = { preset: 'DATE_SHORT' as const };
+
 export interface IEntityOptionsCouponTemplate extends IDecoratorEntityOptions {}
 
 @Entity<IEntityOptionsCouponTemplate>('commercePromotionCouponTemplate', {
@@ -43,6 +55,8 @@ export class EntityCouponTemplate extends EntityBase {
   @Api.field(
     v.title($locale('CouponTemplateState')),
     v.required(),
+    ZovaRender.field('basic-select:formFieldSelect', { items: couponTemplateStateItems }),
+    ZovaRender.cell('basic-select:select', { items: couponTemplateStateItems }),
     z.enum(['draft', 'active', 'disabled']),
   )
   state: TypeCouponTemplateState;
@@ -50,16 +64,38 @@ export class EntityCouponTemplate extends EntityBase {
   @Api.field(v.title($locale('Currency')), v.required(), z.literal('USD'))
   currency: 'USD';
 
-  @Api.field(v.title($locale('DiscountCents')), v.required(), z.number().int().positive())
+  @Api.field(
+    v.title($locale('DiscountCents')),
+    v.required(),
+    ZovaRender.field('basic-currency:formFieldCurrency', currencyRendererOptions),
+    ZovaRender.cell('basic-currency:currency', currencyRendererOptions),
+    z.number().int().positive(),
+  )
   discountCents: number;
 
-  @Api.field(v.title($locale('MinSpendCents')), v.required(), z.number().int().nonnegative())
+  @Api.field(
+    v.title($locale('MinSpendCents')),
+    v.required(),
+    ZovaRender.field('basic-currency:formFieldCurrency', currencyRendererOptions),
+    ZovaRender.cell('basic-currency:currency', currencyRendererOptions),
+    z.number().int().nonnegative(),
+  )
   minSpendCents: number;
 
-  @Api.field(v.title($locale('ValidFrom')), v.required())
+  @Api.field(
+    v.title($locale('ValidFrom')),
+    v.required(),
+    ZovaRender.field('basic-date:formFieldDate', dateFieldRendererOptions),
+    ZovaRender.cell('basic-date:date', dateCellRendererOptions),
+  )
   validFrom: Date;
 
-  @Api.field(v.title($locale('ValidUntil')), v.required())
+  @Api.field(
+    v.title($locale('ValidUntil')),
+    v.required(),
+    ZovaRender.field('basic-date:formFieldDate', dateFieldRendererOptions),
+    ZovaRender.cell('basic-date:date', dateCellRendererOptions),
+  )
   validUntil: Date;
 
   @Api.field(v.title($locale('TotalIssueLimit')), v.optional(), z.number().int().positive())

@@ -797,6 +797,95 @@ test(
 );
 
 test(
+  'ATP-SPC-01: Coupon Template renders semantic Admin field controls',
+  { tag: ['@admin', '@flow', '@fia'] },
+  async ({ browser }) => {
+    test.setTimeout(60_000);
+    const adminContext = await browser.newContext();
+    const adminPage = await adminContext.newPage();
+    const adminPageErrors = collectPageErrors(adminPage);
+    try {
+      await adminPage.setViewportSize({ width: 1440, height: 900 });
+      await login(adminPage, '/commerce-admin/', 'admin', '123456', 'commerceAdmin');
+      await adminPage.goto(
+        '/commerce-admin/rest/resource/commerce-promotion%3AcouponTemplate/create',
+        {
+          waitUntil: 'load',
+        },
+      );
+      await expect(adminPage).toHaveURL(
+        /\/commerce-admin\/rest\/resource\/commerce-promotion(?:%3A|:|%253A)couponTemplate\/create(?:[/?#]|$)/,
+      );
+
+      for (const groupName of [
+        'Basic Information',
+        'Discount Policy',
+        'Validity Window',
+        'Usage Limits',
+      ]) {
+        await expect(adminPage.getByRole('group', { name: groupName })).toBeVisible();
+      }
+
+      const state = adminPage
+        .getByRole('group', { name: 'Template State *' })
+        .getByRole('combobox');
+      await expect(state).toBeVisible();
+      await state.selectOption({ label: 'Active' });
+      await expect(state).toHaveValue('active');
+
+      const discountInput = adminPage
+        .getByRole('group', { name: 'Fixed Discount *' })
+        .getByRole('textbox');
+      const minSpendInput = adminPage
+        .getByRole('group', { name: 'Minimum Spend *' })
+        .getByRole('textbox');
+      await discountInput.fill('12.34');
+      await minSpendInput.fill('45.67');
+      await expect(discountInput).toHaveValue('12.34');
+      await expect(minSpendInput).toHaveValue('45.67');
+      await expect(
+        adminPage.getByRole('group', { name: 'Valid From *' }).locator('input[type="date"]'),
+      ).toBeVisible();
+      await expect(
+        adminPage.getByRole('group', { name: 'Valid Until *' }).locator('input[type="date"]'),
+      ).toBeVisible();
+
+      await adminPage
+        .getByRole('group', { name: 'Name *' })
+        .getByRole('textbox')
+        .fill('E2E Coupon Template');
+      await adminPage.getByRole('group', { name: 'Currency *' }).getByRole('textbox').fill('USD');
+      await adminPage
+        .getByRole('group', { name: 'Valid From *' })
+        .getByRole('textbox')
+        .fill('2026-08-04');
+      await adminPage
+        .getByRole('group', { name: 'Valid Until *' })
+        .getByRole('textbox')
+        .fill('2026-12-31');
+      await adminPage
+        .getByRole('group', { name: 'Total Issue Limit' })
+        .getByRole('textbox')
+        .fill('10');
+      await adminPage
+        .getByRole('group', { name: 'Total Usage Limit' })
+        .getByRole('textbox')
+        .fill('10');
+      await adminPage
+        .getByRole('group', { name: 'Per-customer Issue Limit' })
+        .getByRole('textbox')
+        .fill('1');
+
+      await expect(adminPage.getByRole('button', { name: 'Submit', exact: true })).toBeVisible();
+      await expect(adminPage.getByRole('button', { name: 'Back', exact: true })).toBeVisible();
+      expect(adminPageErrors).toEqual([]);
+    } finally {
+      await adminContext.close().catch(() => {});
+    }
+  },
+);
+
+test(
   'Commerce Cart: anonymous browser is redirected to login',
   { tag: ['@web', '@cart'] },
   async ({ page, request }) => {

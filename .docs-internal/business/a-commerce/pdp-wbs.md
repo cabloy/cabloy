@@ -388,6 +388,32 @@ Acceptance checks:
 - no DTO layout change alters Coupon Template API fields, persistence, authorization, or customer-page ownership;
 - `ATP-FIA-01` records focused test and Commerce Admin contract-loop evidence.
 
+#### WBS-70-04: Codify the reusable semantic-presentation contract
+
+Dependencies: `WBS-10-01`, `WBS-70-03`.
+
+Primary areas:
+
+- A-Commerce semantic-presentation authority and traceability contracts;
+- resource/scene presentation matrix and Coupon Template renderer conformance reference;
+- emitted-metadata and Commerce Admin browser proof.
+
+Tasks:
+
+- record ADR 0003 and establish `PRD-UI-01` / `SRS-UI-05` without changing the completed Coupon Template requirement chain;
+- maintain a resource/scene matrix that separates business information areas, operation DTO boundaries, render metadata, and renderer behavior;
+- add semantic render metadata to the Coupon Template reference using existing shared resources where they preserve the documented meaning;
+- add focused metadata and browser evidence that shared select, cents, and date controls render in the documented scenes and that presentation changes preserve API, validation, authorization, persistence, state-owner, page-owner, customer-flow, and SSR boundaries;
+- regenerate paired Commerce artifacts and generated dependencies through the normal contract loop without hand-editing generated output.
+
+Acceptance checks:
+
+- each presentation decision names its audience, task, scene, and authoritative information area before renderer selection;
+- scene-specific field differences originate in operation DTO contracts rather than visual hiding;
+- Coupon Template metadata emits the approved select, cents, and date renderer semantics while retaining its existing Create, Update, View, and list/filter boundaries;
+- focused emitted-schema and browser evidence pass, with `ATP-FIA-01` retained as the Coupon Template layout reference and `ATP-SPC-01` proving the reusable boundary;
+- no presentation-only change alters API authority, persistence, validation, authorization, Model ownership, page ownership, customer flow, or SSR privacy.
+
 ## Deferred Work Guardrail
 
 The following are intentionally excluded from this WBS: marketplace/multi-merchant behavior, multiple warehouses, external payment providers, real provider callbacks/reconciliation, external sales channels, percentage or stacked promotions, partial shipment, partial refund, post-shipment returns/RMA, tax and shipping-rate engines, and multi-currency selling. A later plan must introduce each as an explicit domain contract rather than silently extending an MVP workflow.
@@ -424,6 +450,8 @@ A future task that changes `meta.version.ts` must run `npm run test`, because it
 | `WBS-40-*`     | `PRD-ADR-*`, `PRD-ORD-*`, `PRD-CPN-*`, `PRD-INV-*` | `SRS-ADR-*`, `SRS-ORD-*`, `SRS-CPN-*`, `SRS-TEN-*`, `SRS-TXN-*`, `SRS-MNY-*` | Phase-40-owned branches of `ATP-ADDR-01`, `ATP-TEN-01`, `ATP-AUT-01`, `ATP-INV-01`, `ATP-TXN-01`, `ATP-CPN-01`, `ATP-EXP-01`, `ATP-SNAP-01`, `ATP-SSR-01`, `ATP-SSR-02`, `ATP-CTR-01` |
 | `WBS-50-*`     | `PRD-PAY-*`, `PRD-ORD-*`                           | `SRS-PAY-*`, `SRS-AUT-*`                                                     | `ATP-PAY-01`, `ATP-EXP-01`                                                                                                                                                            |
 | `WBS-60-*`     | `PRD-SHP-*`, `PRD-RFD-*`                           | `SRS-SHP-*`, `SRS-RFD-*`, `SRS-PAY-*`                                        | `ATP-SHP-01`, `ATP-RFD-01`, `ATP-RACE-01`                                                                                                                                             |
+| `WBS-70-03`    | `PRD-CPN-04`                                       | `SRS-UI-04`                                                                  | `ATP-FIA-01`                                                                                                                                                                          |
+| `WBS-70-04`    | `PRD-UI-01`                                        | `SRS-UI-05`                                                                  | `ATP-SPC-01`, with `ATP-FIA-01` as the Coupon Template reference                                                                                                                      |
 | `WBS-70-*`     | All PRD requirements                               | All applicable SRS contracts                                                 | All applicable `ATP-*` evidence and release gates                                                                                                                                     |
 
 ## Related Records
@@ -433,5 +461,8 @@ A future task that changes `meta.version.ts` must run `npm run test`, because it
 - [Software Requirements Specification](./srs.md)
 - [Test Strategy and Acceptance Plan](./test-plan.md)
 - [ADR 0001: Establish A-Commerce MVP Boundaries](./decisions/0001-mvp-boundaries.md)
+- [ADR 0003: Establish Semantic Presentation Contracts](./decisions/0003-semantic-presentation-contracts.md)
+- [Presentation contracts](./presentation-contracts.md)
+- [Form Layout Guide](../../../cabloy-docs/frontend/form-layout-guide.md)
 - [Suite and module guidance](../../../cabloy-docs/fullstack/suites-and-modules.md)
 - [Contract-loop playbook](../../../cabloy-docs/fullstack/contract-loop-playbook.md)

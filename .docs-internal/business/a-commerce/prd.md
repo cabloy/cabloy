@@ -128,6 +128,10 @@ A tenant operator who assigns commerce roles. Framework-wide administrative auth
 - **PRD-CPN-03**: Coupon reservation and release follow the order lifecycle; a paid-and-refunded order does not reissue its coupon.
 - **PRD-CPN-04**: Coupon Template maintenance distinguishes basic identity and activation, monetary eligibility, the validity window, and issuance/usage limits, while its operator list keeps finding templates compact. These are business information areas, not a prescribed UI component tree.
 
+### Semantic presentation
+
+- **PRD-UI-01**: Each customer and operator scene identifies its audience, task, and meaningful business information areas before choosing visual structure. Lists support finding and comparison; create and update scenes support only permitted input; detail scenes show the complete audience-appropriate business facts. State, money, availability, time, and immutable snapshots are understandable business meanings rather than raw storage values. Groups, sections, tabs, grids, flows, and renderer keys translate this requirement but do not define it; a distinct audience, API contract, authorization boundary, state owner, or page is never reduced to visual grouping.
+
 ### Payment
 
 - **PRD-PAY-01**: The MVP provides a mock payment experience that can finish successfully, fail, or be cancelled.
@@ -169,16 +173,17 @@ The MVP is ready for acceptance when:
 
 ## Requirement Traceability
 
-| Product area        | PRD requirements | SRS contracts            | PDP/WBS tasks           | Test-plan evidence                                                                  |
-| ------------------- | ---------------- | ------------------------ | ----------------------- | ----------------------------------------------------------------------------------- |
-| Catalogue           | `PRD-CAT-*`      | `SRS-CAT-*`              | `WBS-30-*`              | `ATP-SNAP-01`                                                                       |
-| Inventory           | `PRD-INV-*`      | `SRS-INV-*`              | `WBS-30-*`, `WBS-40-*`  | `ATP-INV-01`, `ATP-TXN-01`, `ATP-EXP-01`                                            |
-| Address management  | `PRD-ADR-*`      | `SRS-ADR-*`, `SRS-AUT-*` | `WBS-40-04`             | `ATP-ADDR-01`, `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SSR-01`, `ATP-SSR-02`, `ATP-CTR-01` |
-| Checkout and orders | `PRD-ORD-*`      | `SRS-ORD-*`, `SRS-TXN-*` | `WBS-40-*`              | `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SNAP-01`                                           |
-| Coupons             | `PRD-CPN-*`      | `SRS-CPN-*`, `SRS-UI-04` | `WBS-40-*`, `WBS-70-03` | `ATP-CPN-01`, `ATP-FIA-01`                                                          |
-| Payment             | `PRD-PAY-*`      | `SRS-PAY-*`              | `WBS-50-*`              | `ATP-PAY-01`, `ATP-EXP-01`                                                          |
-| Shipment            | `PRD-SHP-*`      | `SRS-SHP-*`              | `WBS-60-*`              | `ATP-SHP-01`, `ATP-RACE-01`                                                         |
-| Refunds             | `PRD-RFD-*`      | `SRS-RFD-*`              | `WBS-60-*`              | `ATP-RFD-01`, `ATP-RACE-01`                                                         |
+| Product area          | PRD requirements | SRS contracts            | PDP/WBS tasks           | Test-plan evidence                                                                  |
+| --------------------- | ---------------- | ------------------------ | ----------------------- | ----------------------------------------------------------------------------------- |
+| Catalogue             | `PRD-CAT-*`      | `SRS-CAT-*`              | `WBS-30-*`              | `ATP-SNAP-01`                                                                       |
+| Inventory             | `PRD-INV-*`      | `SRS-INV-*`              | `WBS-30-*`, `WBS-40-*`  | `ATP-INV-01`, `ATP-TXN-01`, `ATP-EXP-01`                                            |
+| Address management    | `PRD-ADR-*`      | `SRS-ADR-*`, `SRS-AUT-*` | `WBS-40-04`             | `ATP-ADDR-01`, `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SSR-01`, `ATP-SSR-02`, `ATP-CTR-01` |
+| Checkout and orders   | `PRD-ORD-*`      | `SRS-ORD-*`, `SRS-TXN-*` | `WBS-40-*`              | `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SNAP-01`                                           |
+| Coupons               | `PRD-CPN-*`      | `SRS-CPN-*`, `SRS-UI-04` | `WBS-40-*`, `WBS-70-03` | `ATP-CPN-01`, `ATP-FIA-01`                                                          |
+| Semantic presentation | `PRD-UI-01`      | `SRS-UI-05`              | `WBS-70-04`             | `ATP-SPC-01`                                                                        |
+| Payment               | `PRD-PAY-*`      | `SRS-PAY-*`              | `WBS-50-*`              | `ATP-PAY-01`, `ATP-EXP-01`                                                          |
+| Shipment              | `PRD-SHP-*`      | `SRS-SHP-*`              | `WBS-60-*`              | `ATP-SHP-01`, `ATP-RACE-01`                                                         |
+| Refunds               | `PRD-RFD-*`      | `SRS-RFD-*`              | `WBS-60-*`              | `ATP-RFD-01`, `ATP-RACE-01`                                                         |
 
 ## Related Records
 
@@ -187,3 +192,4 @@ The MVP is ready for acceptance when:
 - [Product Delivery Plan and Work Breakdown Structure](./pdp-wbs.md)
 - [Test Strategy and Acceptance Plan](./test-plan.md)
 - [ADR 0001: Establish A-Commerce MVP Boundaries](./decisions/0001-mvp-boundaries.md)
+- [ADR 0003: Establish Semantic Presentation Contracts](./decisions/0003-semantic-presentation-contracts.md)

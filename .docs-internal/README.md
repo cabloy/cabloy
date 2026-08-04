@@ -65,7 +65,7 @@ Those concerns should live elsewhere.
 
 ### Business planning
 
-- [A-Commerce Internal Planning](./business/a-commerce/README.md), including its [ADR 0001: Establish MVP Boundaries](./business/a-commerce/decisions/0001-mvp-boundaries.md)
+- [A-Commerce Internal Planning](./business/a-commerce/README.md), including its local decisions such as [ADR 0001: Establish MVP Boundaries](./business/a-commerce/decisions/0001-mvp-boundaries.md) and [ADR 0003: Establish Semantic Presentation Contracts](./business/a-commerce/decisions/0003-semantic-presentation-contracts.md)
 
 ### Architecture notes
 

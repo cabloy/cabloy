@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
+import { couponTemplateStateItems } from '../entity/couponTemplate.tsx';
 
 export interface IDtoOptionsCouponTemplateUpdate extends IDecoratorDtoOptions {}
 
@@ -54,7 +55,11 @@ export class DtoCouponTemplateUpdate {
   @Api.field(v.optional(), v.min(2), v.max(100))
   name?: string;
 
-  @Api.field(v.optional(), z.enum(['draft', 'active', 'disabled']))
+  @Api.field(
+    v.optional(),
+    ZovaRender.field('basic-select:formFieldSelect', { items: couponTemplateStateItems }),
+    z.enum(['draft', 'active', 'disabled']),
+  )
   state?: 'draft' | 'active' | 'disabled';
 
   @Api.field(v.optional(), v.max(255))

@@ -11,6 +11,8 @@ This directory records the agreed product, system, and delivery baseline for the
 5. [Delivery Progress](./progress.md) is the derived execution-status index for WBS state, evidence pointers, blockers, and next proof; it does not redefine authoritative requirements or acceptance.
 6. [ADR 0001](./decisions/0001-mvp-boundaries.md) records the accepted MVP architecture and scope decisions behind this plan.
 7. [ADR 0002](./decisions/0002-multi-merchant-within-one-vona-instance.md) records proposed guardrails for a future multi-merchant boundary within one Vona instance.
+8. [ADR 0003](./decisions/0003-semantic-presentation-contracts.md) records the semantic-presentation authority and boundary convention.
+9. [Presentation contracts](./presentation-contracts.md) is the living resource/scene matrix that applies the PRD and SRS to renderer selection.
 
 ## Confirmed MVP Baseline
 
@@ -30,7 +32,7 @@ This directory records the agreed product, system, and delivery baseline for the
 
 ## Semantic Information Architecture Baseline
 
-A-Commerce is also a reference for semantic information architecture. The PRD and SRS define the audience, task, scene, and business information areas that must remain distinct; Vona DTO render metadata translates that intent into field placement, groups, sections, or tabs. `formLayout` syntax is implementation metadata, not product authority. A separate audience, API contract, state owner, or page boundary must not be reduced to a visual grouping decision.
+A-Commerce is also a reference for semantic information architecture. [PRD-UI-01](./prd.md) and [SRS-UI-05](./srs.md) define the audience, task, scene, and business information areas that must remain distinct; [ADR 0003](./decisions/0003-semantic-presentation-contracts.md) defines the authority boundary; and the [presentation contracts](./presentation-contracts.md) matrix records resource/scene application. Vona DTO render metadata translates that intent into field placement, groups, sections, tabs, or renderer identities. `formLayout` syntax is implementation metadata, not product authority. A separate audience, API contract, state owner, or page boundary must not be reduced to a visual grouping decision.
 
 ## Current Topology
 
@@ -63,6 +65,7 @@ Inventory reservation starts as a `commerce-trade` aggregate behavior. The SRS k
 - The test plan owns acceptance strategy, executable build/browser procedures, traceability evidence, and release proof.
 - ADR 0001 owns the accepted MVP scope and architecture choices.
 - ADR 0002 owns proposed guardrails for any future multi-merchant boundary inside one Vona instance.
+- ADR 0003 owns the durable semantic-presentation translation and boundary convention.
 - [ADR 0010](../../decisions/0010-repository-native-planning-documents.md) owns the repository-wide decision to retain internal planning documents and not adopt OpenSpec as a parallel planning authority.
 - [ADR 0009](../../decisions/0009-homepage-module-naming-boundary.md) owns the cross-suite naming and ownership boundary between reusable A-Home entry modules and Commerce site modules.
 

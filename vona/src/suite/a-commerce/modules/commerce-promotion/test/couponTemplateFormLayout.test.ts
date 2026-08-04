@@ -110,6 +110,73 @@ describe('couponTemplateFormLayout.test.ts', () => {
     });
   });
 
+  it('action:couponTemplate:fieldRenderMetadata', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const createJson = await app.bean.openapi.generateJsonOfClass(DtoCouponTemplateCreate);
+      const createComponent = findComponent(createJson, properties => {
+        return properties?.discountCents && properties?.totalIssueLimit;
+      }) as any;
+      const createProperties = createComponent.properties;
+      const expectedCurrencyOptions = { fixed: 2, exp: 2, zero: 2 };
+      const expectedCreateStateValues = ['draft', 'active'];
+      const expectedStateValues = ['draft', 'active', 'disabled'];
+      const stateItems = createProperties.state.rest.form.options.items;
+
+      assert.equal(createProperties.state.rest.form.render, 'basic-select:formFieldSelect');
+      assert.deepEqual(
+        stateItems.map((item: any) => item.value),
+        expectedCreateStateValues,
+      );
+      assert.ok(stateItems.every((item: any) => item.title?.toJSON && item.title?.toString));
+      assert.equal(createProperties.state.rest.table.render, 'basic-select:select');
+      assert.deepEqual(
+        createProperties.state.rest.table.columnProps.items.map((item: any) => item.value),
+        expectedStateValues,
+      );
+
+      for (const fieldName of ['discountCents', 'minSpendCents']) {
+        const field = createProperties[fieldName];
+        assert.equal(field.rest.form.render, 'basic-currency:formFieldCurrency');
+        assert.deepEqual(field.rest.form.options, expectedCurrencyOptions);
+        assert.equal(field.rest.table.render, 'basic-currency:currency');
+        assert.deepEqual(field.rest.table.columnProps, expectedCurrencyOptions);
+      }
+
+      for (const fieldName of ['validFrom', 'validUntil']) {
+        const field = createProperties[fieldName];
+        assert.equal(field.rest.form.render, 'basic-date:formFieldDate');
+        assert.deepEqual(field.rest.form.options, { inputType: 'date', preset: 'DATE_SHORT' });
+        assert.equal(field.rest.table.render, 'basic-date:date');
+        assert.deepEqual(field.rest.table.columnProps, { preset: 'DATE_SHORT' });
+      }
+
+      const viewJson = await app.bean.openapi.generateJsonOfClass(DtoCouponTemplateView);
+      const viewComponent = findComponent(viewJson, properties => {
+        return properties?.issuedCount && properties?.redeemedCount;
+      }) as any;
+      assert.equal(
+        viewComponent.properties.discountCents.rest.form.render,
+        'basic-currency:formFieldCurrency',
+      );
+      assert.equal(
+        viewComponent.properties.validUntil.rest.form.render,
+        'basic-date:formFieldDate',
+      );
+
+      const updateJson = await app.bean.openapi.generateJsonOfClass(DtoCouponTemplateUpdate);
+      const updateComponent = findComponent(updateJson, properties => {
+        return (
+          properties?.name && properties?.state && properties?.description && !properties?.currency
+        );
+      }) as any;
+      assert.equal(
+        updateComponent.properties.state.rest.form.render,
+        'basic-select:formFieldSelect',
+      );
+      assert.equal(updateComponent.properties.discountCents, undefined);
+    });
+  });
+
   it('action:couponTemplate:filterFormLayoutMetadata', async () => {
     await app.bean.executor.mockCtx(async () => {
       const apiJson = await app.bean.openapi.generateJsonOfClass(DtoCouponTemplateSelectResItem);

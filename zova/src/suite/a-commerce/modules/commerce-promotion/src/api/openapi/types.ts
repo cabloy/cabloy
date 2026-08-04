@@ -2446,9 +2446,9 @@ export interface components {
        * @enum {string}
        */
       currency: 'USD';
-      /** @description Fixed Discount (Cents) */
+      /** @description Fixed Discount */
       discountCents: number;
-      /** @description Minimum Spend (Cents) */
+      /** @description Minimum Spend */
       minSpendCents: number;
       /**
        * Format: date-time
@@ -2511,9 +2511,9 @@ export interface components {
        * @enum {string}
        */
       currency: 'USD';
-      /** @description Fixed Discount (Cents) */
+      /** @description Fixed Discount */
       discountCents: number;
-      /** @description Minimum Spend (Cents) */
+      /** @description Minimum Spend */
       minSpendCents: number;
       /**
        * Format: date-time
@@ -2576,9 +2576,9 @@ export interface components {
            * @enum {string}
            */
           currency: 'USD';
-          /** @description Fixed Discount (Cents) */
+          /** @description Fixed Discount */
           discountCents: number;
-          /** @description Minimum Spend (Cents) */
+          /** @description Minimum Spend */
           minSpendCents: number;
           /**
            * Format: date-time

@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
+import { couponTemplateStateItemsCreate } from '../entity/couponTemplate.tsx';
 import { ModelCouponTemplate } from '../model/couponTemplate.ts';
 
 export interface IDtoOptionsCouponTemplateCreate extends IDecoratorDtoOptions {}
@@ -96,7 +97,11 @@ export interface IDtoOptionsCouponTemplateCreate extends IDecoratorDtoOptions {}
     }),
   ],
   fields: {
-    state: $makeSchema(v.required(), z.enum(['draft', 'active'])),
+    state: $makeSchema(
+      v.required(),
+      ZovaRender.field('basic-select:formFieldSelect', { items: couponTemplateStateItemsCreate }),
+      z.enum(['draft', 'active']),
+    ),
   },
 })
 export class DtoCouponTemplateCreate extends $Dto.create(() => ModelCouponTemplate, {
