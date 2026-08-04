@@ -1,0 +1,53 @@
+{
+  "skill_name": "cabloy-worktree-environment",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I explicitly invoke /cabloy-worktree-environment in my second Cabloy Basic worktree. I need Vona, Zova Admin, and test:e2e:basic:clean to run alongside my primary checkout. Please configure the isolated environment.",
+      "expected_output": "Validates that the current checkout is a linked Cabloy Basic worktree before any write, inspects applicable local override precedence, and asks the user to provide one APP_NAME plus Vona and Zova development ports. It requires API_BASE_URL to target the selected Vona port, previews only current-worktree local env changes, and waits for final confirmation before writing. It does not treat DEV_SERVER_HMR_PORT as an isolating listener without a verified runtime consumer. After successful validation it asks separately whether to run npm run init and does not run it automatically.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I explicitly invoke /cabloy-worktree-environment from the main Cabloy Basic checkout. Set up a second local runtime here so I can avoid the port already in use.",
+      "expected_output": "Rejects the request without writing because the current checkout is the primary checkout rather than a linked worktree. It does not modify shared identity or ports merely to bypass a busy resource.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I explicitly invoke /cabloy-worktree-environment in cabloy-start and want to use APP_NAME, SERVER_LISTEN_PORT, API_BASE_URL, and the Basic ports from the public guide.",
+      "expected_output": "Stops before any write because the Basic recipe cannot be reused unchanged for Cabloy Start. It directs inspection of the active Start repository's scripts, flavors, and environment paths.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "I explicitly invoke /cabloy-worktree-environment for a linked Cabloy Basic worktree. Vona has an applicable .env.dev.local that already defines SERVER_LISTEN_PORT. Please put my requested port in .env.local and continue.",
+      "expected_output": "Identifies that the more-specific applicable local override wins and asks the user whether to reconcile that file. It does not silently write an ineffective broad .env.local setting.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "I explicitly invoke /cabloy-worktree-environment in a linked Cabloy Basic worktree. I only need ordinary backend tests and test:e2e:basic:clean; I am not starting Zova, mock build, or SSR preview.",
+      "expected_output": "Requests only a shared APP_NAME and SERVER_LISTEN_PORT, writes only the Vona local override after final confirmation, and does not request or add Zova, mock, or SSR-preview ports. It explains that explicitly configured databases, custom Redis keys, and external providers need separate isolation decisions.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "I explicitly invoke /cabloy-worktree-environment in a linked Cabloy Basic worktree. I need Vona, concurrently running Zova Admin and Web development, and SSR preview. I have chosen all required distinct ports.",
+      "expected_output": "Inspects the actual selected entrypoints before choosing variables. It uses flavor-specific applicable local overrides with distinct effective DEV_SERVER_PORT values for concurrent Admin and Web development, and it requires MOCK_BUILD_PORT for current SSR preview scripts because they also start dist-mock. It does not claim SSR_PROD_PORT or DEV_SERVER_HMR_PORT isolates a listener without a verified runtime consumer, preserves SSR_API_BASE_URL inheritance unless a more-specific override requires an explicit value, verifies every exact target path is ignored before writing, and requires final confirmation before modifying only current-worktree local env files.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "I explicitly invoke /cabloy-worktree-environment for concurrent Zova Admin and Web development in a linked Cabloy Basic worktree, but one proposed flavor-specific local override file is tracked or not ignored.",
+      "expected_output": "Runs one independent git check-ignore -v -- target command for each exact proposed target path and rejects the write before confirmation because every worktree-local override target must be ignored. It does not fall back to a broad file or modify the tracked target.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "I explicitly invoke /cabloy-worktree-environment for Vona plus concurrent Zova Admin and Web development in a linked Cabloy Basic worktree. Writing the second flavor-specific Zova override fails after earlier target files were changed.",
+      "expected_output": "Snapshots the content and existence state of every target before editing, restores every previously changed target to its exact prior content when any write fails, removes newly created target files, and reports the failure without leaving a partial configuration.",
+      "files": []
+    }
+  ]
+}

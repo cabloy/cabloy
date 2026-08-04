@@ -34,7 +34,7 @@
     {
       "id": 6,
       "prompt": "I created a second Cabloy Basic worktree and need to run Vona, Zova, and test:e2e:basic:clean in parallel with the first worktree. Which environment files and exact variables should I configure without changing shared defaults?",
-      "expected_output": "Classifies this as fullstack parallel-worktree environment setup and routes to the canonical Parallel Worktree Environment guide. Checks for more-specific local overrides, uses Vona vona/env/.env.local with APP_NAME and SERVER_LISTEN_PORT, and Zova zova/env/.env.local with the same APP_NAME plus API_BASE_URL pointing to that Vona port, DEV_SERVER_PORT, and DEV_SERVER_HMR_PORT. Keeps SSR_API_BASE_URL inherited from API_BASE_URL unless a more-specific override changes it, and adds database, Redis, external-service, mock, or SSR-preview settings only when those resources are actually used.",
+      "expected_output": "Classifies this as fullstack parallel-worktree environment setup and routes to the canonical Parallel Worktree Environment guide. Explains that generic routing is read-only: it must not infer APP_NAME or ports, edit local env files, or run npm run init. Directs the user to explicitly invoke /cabloy-worktree-environment for confirmation-gated setup, where more-specific local overrides, aligned Vona/Zova APP_NAME values, matching API_BASE_URL, conditional shared-resource isolation, and the separate initialization decision are handled.",
       "files": []
     }
   ]
