@@ -1,6 +1,6 @@
 import type { TableIdentity } from 'table-identity';
 import type { IQueryParams } from 'vona-module-a-orm';
-import type { IPaymentOutcomeEvent } from 'vona-module-a-pay';
+import type { IPaymentOutcomeEvent, IRefundOutcomeEvent } from 'vona-module-a-pay';
 import type { EntityPaymentAttempt } from 'vona-module-commerce-payment';
 import type {
   EntityRefundAttempt,
@@ -423,6 +423,87 @@ export class ServiceOrder extends BeanBase {
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
   @Core.retryable(serializationRetryOptions)
+  async settleRefundFromProvider(event: IRefundOutcomeEvent): Promise<DtoRefundResult> {
+    const refundAttempt = await this.$scope.commercePayment.model.refundAttempt.get({
+      refundOperationId: event.refundOperationId,
+    });
+    if (!refundAttempt || String(refundAttempt.id) !== event.businessReference) {
+      this.app.throw(404, 'commerce refund attempt not found');
+    }
+    const order = await this.scope.model.order.getByIdForUpdate(refundAttempt.orderId);
+    if (!order) this.app.throw(404, 'order not found');
+    const request = await this.$scope.commercePayment.model.refundRequest.getByIdForUpdate(
+      refundAttempt.refundRequestId,
+    );
+    const lockedAttempt = await this.$scope.commercePayment.model.refundAttempt.getByIdForUpdate(
+      refundAttempt.id,
+    );
+    if (!request || !lockedAttempt) this.app.throw(404, 'commerce refund request not found');
+    if (
+      lockedAttempt.amountCents !== event.amountMinor ||
+      lockedAttempt.currency !== event.currency ||
+      String(lockedAttempt.refundOperationId) !== String(event.refundOperationId)
+    ) {
+      this.app.throw(409, 'provider event conflicts with the commerce refund attempt');
+    }
+    const existingAudit = await this.$scope.commercePayment.model.refundAudit.get({
+      refundAttemptId: lockedAttempt.id,
+      idempotencyKey: event.eventId.slice(0, 100),
+    });
+    if (existingAudit) return this._refundResult(order, request, lockedAttempt);
+    if (
+      order.state !== 'refund_approved' ||
+      request.state !== 'approved' ||
+      lockedAttempt.state !== 'created'
+    ) {
+      this.app.throw(409, 'refund attempt is no longer available');
+    }
+
+    const now = new Date();
+    const isSucceeded = event.state === 'succeeded';
+    const attemptState = isSucceeded ? 'succeeded' : 'failed';
+    const refundState = isSucceeded ? 'refunded' : 'failed';
+    const orderState = isSucceeded ? 'refunded' : 'paid';
+    const correlationId = `${order.correlationId}:provider-refund:${event.eventId}`;
+    const reason = `provider refund ${event.state}`;
+    await this.$scope.commercePayment.model.refundAttempt.updateById(lockedAttempt.id, {
+      state: attemptState,
+      providerRefundId: event.providerRefundId,
+      finalizedAt: now,
+    });
+    await this.$scope.commercePayment.model.refundRequest.updateById(request.id, {
+      state: refundState,
+      finalizedAt: now,
+    });
+    await this.scope.model.order.updateById(order.id, { state: orderState });
+    if (isSucceeded) await this._restoreConsumedOrderStock(order, reason);
+    await this._appendAudit({
+      orderId: order.id,
+      operation: isSucceeded ? 'refunded' : 'refund_failed',
+      fromState: 'refund_approved',
+      toState: orderState,
+      correlationId,
+      reason,
+    });
+    await this._appendRefundAudit({
+      refundRequest: request,
+      refundAttempt: lockedAttempt,
+      order,
+      toRefundState: refundState,
+      attemptState,
+      idempotencyKey: event.eventId.slice(0, 100),
+      correlationId,
+      reason,
+    });
+    return this._refundResult(
+      { ...order, state: orderState },
+      { ...request, state: refundState },
+      { ...lockedAttempt, state: attemptState },
+    );
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async applyPaymentOutcome(
     paymentAttemptId: TableIdentity,
     command: DtoPaymentOutcomeCreate,
@@ -634,6 +715,41 @@ export class ServiceOrder extends BeanBase {
     onStage: RefundStageCallback,
   ): Promise<DtoRefundResult> {
     return await this._reviewRefund(orderId, command, decision, onStage);
+  }
+
+  async executeRefund(orderId: TableIdentity): Promise<DtoRefundResult> {
+    const prepared = await this._prepareRefundExecution(orderId);
+    await this.$scope.commercePayment.service.commercePayScene.createRefundOperation(prepared.id);
+    const linked = await this.$scope.commercePayment.model.refundAttempt.getById(prepared.id);
+    if (!linked?.refundOperationId) this.app.throw(500, 'commerce refund operation was not linked');
+    await this.$scope.pay.service.refundOperation.submit(linked.refundOperationId);
+    const order = await this.scope.model.order.getById(orderId);
+    const request = await this.$scope.commercePayment.model.refundRequest.getById(
+      prepared.refundRequestId,
+    );
+    const attempt = await this.$scope.commercePayment.model.refundAttempt.getById(prepared.id);
+    if (!order || !request || !attempt) this.app.throw(404, 'commerce refund attempt not found');
+    return this._refundResult(order, request, attempt);
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  private async _prepareRefundExecution(orderId: TableIdentity) {
+    const order = await this.scope.model.order.getByIdForUpdate(orderId);
+    if (!order) this.app.throw(404, 'order not found');
+    const request = await this.$scope.commercePayment.model.refundRequest.getForUpdate({
+      orderId: order.id,
+      state: 'approved',
+    });
+    if (!request) this.app.throw(404, 'approved refund request not found');
+    const attempt = await this.$scope.commercePayment.model.refundAttempt.getForUpdate({
+      refundRequestId: request.id,
+    });
+    if (!attempt) this.app.throw(404, 'refund attempt not found');
+    if (order.state !== 'refund_approved' || attempt.state !== 'created') {
+      this.app.throw(409, 'refund is not available for execution');
+    }
+    return attempt;
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })

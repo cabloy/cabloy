@@ -16,7 +16,6 @@ import { DtoOrderSelectReq } from '../dto/orderSelectReq.tsx';
 import { DtoOrderSelectRes } from '../dto/orderSelectRes.tsx';
 import { DtoOrderShip } from '../dto/orderShip.tsx';
 import { DtoOrderView } from '../dto/orderView.tsx';
-import { DtoRefundOutcomeCreate } from '../dto/refundOutcomeCreate.tsx';
 import { DtoRefundRequestCreate } from '../dto/refundRequestCreate.tsx';
 import { DtoRefundResult } from '../dto/refundResult.tsx';
 import { DtoRefundReview } from '../dto/refundReview.tsx';
@@ -72,14 +71,13 @@ export class ControllerOrder extends BeanBase {
     return await this.scope.service.order.rejectRefund(id, command);
   }
 
-  @Web.post(':id/refundOutcome')
+  @Web.post(':id/executeRefund')
   @Api.body(DtoRefundResult)
   @Passport.systemAdmin()
-  async refundOutcome(
+  async executeRefund(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
-    @Arg.body() command: DtoRefundOutcomeCreate,
   ): Promise<DtoRefundResult> {
-    return await this.scope.service.order.applyRefundOutcome(id, command);
+    return await this.scope.service.order.executeRefund(id);
   }
 
   @Web.post(':id/ship')

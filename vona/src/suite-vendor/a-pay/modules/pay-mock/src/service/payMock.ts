@@ -5,6 +5,7 @@ import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
 export type TypeMockPaymentOutcome = 'succeeded' | 'failed' | 'cancelled';
+export type TypeMockRefundOutcome = 'succeeded' | 'failed' | 'cancelled';
 
 @Service()
 export class ServicePayMock extends BeanBase {
@@ -68,6 +69,61 @@ export class ServicePayMock extends BeanBase {
     );
     if (!response.ok) this.app.throw(502, 'mock payment webhook was rejected');
     return { paymentSessionId: session.id, accepted: true as const };
+  }
+
+  async completeRefundOperation(refundOperationId: TableIdentity, outcome: TypeMockRefundOutcome) {
+    this._assertSimulatorEnabled();
+    const refund = await this.$scope.pay.model.refundOperation.getById(refundOperationId);
+    if (!refund) this.app.throw(404, 'mock refund operation not found');
+    const session = await this.$scope.pay.model.paymentSession.getById(refund.paymentSessionId);
+    if (!session) this.app.throw(404, 'mock refund operation not found');
+    if (!(await this.bean.passport.isSystemAdmin())) {
+      this.app.throw(403, 'mock refund completion requires system administrator authority');
+    }
+    if (
+      session.providerName !== 'pay-mock:mock' ||
+      session.clientName !== 'default' ||
+      session.environment !== 'sandbox' ||
+      refund.state !== 'pending'
+    ) {
+      this.app.throw(409, 'mock refund operation is not actionable');
+    }
+    const { clientOptions } = this.bean.payProvider.resolveByName(
+      session.providerName,
+      session.clientName,
+    );
+    const secret = clientOptions.secretWebhook;
+    if (typeof secret !== 'string' || !secret) {
+      this.app.throw(500, 'mock webhook secret is not configured');
+    }
+    const rawBody = JSON.stringify({
+      eventId: `mock-refund-${randomUUID()}`,
+      eventType: `refund.${outcome}`,
+      refundOperationId: String(refund.id),
+      state: outcome,
+      amountMinor: refund.amountMinor,
+      currency: refund.currency,
+      providerRefundId: refund.providerRefundId ?? `mock-refund-${refund.id}`,
+    });
+    const signature = createHmac('sha256', secret).update(rawBody).digest('hex');
+    const instanceName = this.ctx.instanceName;
+    const instanceHeaderField = this.app.config.instance.headerField;
+    const response = await fetch(
+      this.app.util.getAbsoluteUrlByApiPath(
+        `/pay/webhook/${session.providerName}/${session.clientName}`,
+      ),
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-pay-mock-signature': signature,
+          ...(instanceName && instanceHeaderField ? { [instanceHeaderField]: instanceName } : {}),
+        },
+        body: rawBody,
+      },
+    );
+    if (!response.ok) this.app.throw(502, 'mock refund webhook was rejected');
+    return { refundOperationId: refund.id, accepted: true as const };
   }
 
   private _assertSimulatorEnabled() {
