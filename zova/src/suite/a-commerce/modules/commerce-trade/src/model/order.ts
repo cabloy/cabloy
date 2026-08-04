@@ -67,11 +67,11 @@ export class ModelOrder extends BeanModelBase {
   }
 
   executeRefund(id: TableIdentity) {
-    return this.$$modelResource.mutationItem<void, unknown>({
+    return this.$$modelResource.mutationItem<unknown, undefined>({
       id,
       action: 'executeRefund',
       mutationFn: async () => {
-        return await this.scope.api.commerceTradeOrder.executeRefund({ params: { id } });
+        return await this.scope.api.commerceTradeOrder.executeRefund(undefined, { params: { id } });
       },
     });
   }

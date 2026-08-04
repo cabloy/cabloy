@@ -9,7 +9,7 @@ import {
   ApiApiCommerceTradeOrderrequestRefundPath,
   ApiApiCommerceTradeOrderapproveRefundPath,
   ApiApiCommerceTradeOrderrejectRefundPath,
-  ApiApiCommerceTradeOrderrefundOutcomePath,
+  ApiApiCommerceTradeOrderexecuteRefundPath,
   ApiApiCommerceTradeOrdershipPath,
   ApiApiCommerceTradeOrderselectPath,
   ApiApiCommerceTradeOrderviewPath,
@@ -37,8 +37,8 @@ export class ApiSchemaCommerceTradeOrder extends BeanBase {
     return this.$sdk.createApiSchemas(ApiApiCommerceTradeOrderrejectRefundPath, 'post', options);
   }
 
-  refundOutcome(options?: IApiSchemaOptions) {
-    return this.$sdk.createApiSchemas(ApiApiCommerceTradeOrderrefundOutcomePath, 'post', options);
+  executeRefund(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCommerceTradeOrderexecuteRefundPath, 'post', options);
   }
 
   ship(options?: IApiSchemaOptions) {

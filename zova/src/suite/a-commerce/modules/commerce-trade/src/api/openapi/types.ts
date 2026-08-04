@@ -623,7 +623,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/commerce/trade/order/{id}/refundOutcome': {
+  '/api/commerce/trade/order/{id}/executeRefund': {
     parameters: {
       query?: never;
       header?: never;
@@ -632,7 +632,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    post: operations['CommerceTradeOrder_refundOutcome'];
+    post: operations['CommerceTradeOrder_executeRefund'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1258,6 +1258,22 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['PayMockPayment_complete'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/pay/mock/payment-session/refund-operation/{id}/complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PayMockPayment_completeRefund'];
     delete?: never;
     options?: never;
     head?: never;
@@ -2519,7 +2535,7 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+    'commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b':
       | {
           /**
            * Format: date-time
@@ -2751,11 +2767,6 @@ export interface components {
     };
     'commerce-trade.dto.refundReview': {
       reason: string;
-      idempotencyKey: string;
-    };
-    'commerce-trade.dto.refundOutcomeCreate': {
-      /** @enum {string} */
-      outcome: 'succeeded' | 'failed';
       idempotencyKey: string;
     };
     'commerce-trade.dto.shipmentView': {
@@ -3634,7 +3645,7 @@ export interface components {
       /** @description Description */
       description?: string | undefined;
       /** @description # */
-      _lineNumber: number;
+      _lineNumber?: number | undefined;
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3689,6 +3700,12 @@ export interface components {
       dossierFileIds?: (number | string)[] | undefined;
       /** @description Description */
       description?: string | undefined;
+      student?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Student Name */
+        name: string;
+      };
       sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
       /** @description Dossier Files */
       dossierFiles?: components['schemas']['a-file.dto.fileView'][] | undefined;
@@ -3762,6 +3779,12 @@ export interface components {
           dossierFileIds?: (number | string)[] | undefined;
           /** @description Description */
           description?: string | undefined;
+          student?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Student Name */
+            name: string;
+          };
           /** @description Student Training Record Details */
           trainingRecordSubjects: {
             /**
@@ -3974,7 +3997,7 @@ export interface components {
           }[]
         | undefined;
       /** @description # */
-      _lineNumber: number;
+      _lineNumber?: number | undefined;
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -4245,17 +4268,18 @@ export interface components {
     };
     'training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
+          /** @description ID */
           id: number | string;
           /** @description Student Name */
           name: string;
+          /** @description Description */
+          description?: string | undefined;
           /** @description Mobile */
           mobile: string;
           /** @description Training Stage */
-          level: number;
+          level: 1 | 2 | 3;
           /** @description Level Title */
           levelTitle: string;
-          /** @description Description */
-          description?: string | undefined;
           /** @description Description Length */
           descriptionLength: number;
           /** @description Summary */
@@ -4440,6 +4464,14 @@ export interface components {
       accepted: boolean;
     };
     'pay-mock.dto.mockPaymentComplete': {
+      /** @enum {string} */
+      outcome: 'succeeded' | 'failed' | 'cancelled';
+    };
+    'pay-mock.dto.mockRefundReceipt': {
+      refundOperationId: number | string;
+      accepted: boolean;
+    };
+    'pay-mock.dto.mockRefundComplete': {
       /** @enum {string} */
       outcome: 'succeeded' | 'failed' | 'cancelled';
     };
@@ -5851,7 +5883,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+            data?: components['schemas']['commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b'];
           };
         };
       };
@@ -6233,7 +6265,7 @@ export interface operations {
     };
     authToken: true;
   };
-  CommerceTradeOrder_refundOutcome: {
+  CommerceTradeOrder_executeRefund: {
     parameters: {
       query?: never;
       header?: never;
@@ -6242,11 +6274,7 @@ export interface operations {
       };
       cookie?: never;
     };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['commerce-trade.dto.refundOutcomeCreate'];
-      };
-    };
+    requestBody?: never;
     responses: {
       200: {
         headers: {
@@ -7808,6 +7836,36 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['pay-mock.dto.mockPaymentReceipt'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  PayMockPayment_completeRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['pay-mock.dto.mockRefundComplete'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['pay-mock.dto.mockRefundReceipt'];
           };
         };
       };

@@ -95,10 +95,10 @@ export type ApiSchemaCommercePromotionDtoCouponTemplateSelectResItem =
   components['schemas']['commerce-promotion.dto.couponTemplateSelectResItem'];
 export type ApiSchemaCommercePromotionDtoCouponTemplateSelectResItemPartial =
   Partial<ApiSchemaCommercePromotionDtoCouponTemplateSelectResItem>;
-export type ApiSchemaCommercePromotionDtoCouponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875 =
-  components['schemas']['commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
-export type ApiSchemaCommercePromotionDtoCouponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =
-  Partial<ApiSchemaCommercePromotionDtoCouponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875>;
+export type ApiSchemaCommercePromotionDtoCouponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b =
+  components['schemas']['commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b'];
+export type ApiSchemaCommercePromotionDtoCouponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178bPartial =
+  Partial<ApiSchemaCommercePromotionDtoCouponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b>;
 export type ApiSchemaCommercePromotionDtoCouponTemplateUpdate =
   components['schemas']['commerce-promotion.dto.couponTemplateUpdate'];
 export type ApiSchemaCommercePromotionDtoCouponTemplateUpdatePartial =
@@ -165,10 +165,6 @@ export type ApiSchemaCommerceTradeDtoRefundReview =
   components['schemas']['commerce-trade.dto.refundReview'];
 export type ApiSchemaCommerceTradeDtoRefundReviewPartial =
   Partial<ApiSchemaCommerceTradeDtoRefundReview>;
-export type ApiSchemaCommerceTradeDtoRefundOutcomeCreate =
-  components['schemas']['commerce-trade.dto.refundOutcomeCreate'];
-export type ApiSchemaCommerceTradeDtoRefundOutcomeCreatePartial =
-  Partial<ApiSchemaCommerceTradeDtoRefundOutcomeCreate>;
 export type ApiSchemaCommerceTradeDtoShipmentView =
   components['schemas']['commerce-trade.dto.shipmentView'];
 export type ApiSchemaCommerceTradeDtoShipmentViewPartial =
@@ -461,6 +457,14 @@ export type ApiSchemaPayMockDtoMockPaymentComplete =
   components['schemas']['pay-mock.dto.mockPaymentComplete'];
 export type ApiSchemaPayMockDtoMockPaymentCompletePartial =
   Partial<ApiSchemaPayMockDtoMockPaymentComplete>;
+export type ApiSchemaPayMockDtoMockRefundReceipt =
+  components['schemas']['pay-mock.dto.mockRefundReceipt'];
+export type ApiSchemaPayMockDtoMockRefundReceiptPartial =
+  Partial<ApiSchemaPayMockDtoMockRefundReceipt>;
+export type ApiSchemaPayMockDtoMockRefundComplete =
+  components['schemas']['pay-mock.dto.mockRefundComplete'];
+export type ApiSchemaPayMockDtoMockRefundCompletePartial =
+  Partial<ApiSchemaPayMockDtoMockRefundComplete>;
 export type ApiSchemaAPaypalEntityPaypalRecord =
   components['schemas']['a-paypal.entity.paypalRecord'];
 export type ApiSchemaAPaypalEntityPaypalRecordPartial = Partial<ApiSchemaAPaypalEntityPaypalRecord>;
