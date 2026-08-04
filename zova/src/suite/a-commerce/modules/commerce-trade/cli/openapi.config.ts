@@ -16,7 +16,7 @@ export default function (): ZovaOpenapiConfigModule {
         'CommerceTradeOrder_requestRefund',
         'CommerceTradeOrder_approveRefund',
         'CommerceTradeOrder_rejectRefund',
-        'CommerceTradeOrder_refundOutcome',
+        'CommerceTradeOrder_executeRefund',
         'CommerceTradeOrder_mine',
         'CommerceTradeOrder_viewMine',
       ],

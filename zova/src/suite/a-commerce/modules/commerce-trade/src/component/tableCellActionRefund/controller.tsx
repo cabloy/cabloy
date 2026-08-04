@@ -24,7 +24,6 @@ export class ControllerTableCellActionRefund extends BeanControllerBase {
   confirmed = false;
   approveIdempotencyKey?: string;
   rejectIdempotencyKey?: string;
-  outcomeIdempotencyKey?: string;
 
   private async _approve() {
     const reason = this.reason.trim();
@@ -49,13 +48,7 @@ export class ControllerTableCellActionRefund extends BeanControllerBase {
   private async _execute() {
     if (!this.confirmed) return;
     const orderId = this.$$renderContext.cellContext.row.id as TableIdentity;
-    const idempotencyKey = this.outcomeIdempotencyKey ?? crypto.randomUUID();
-    this.outcomeIdempotencyKey = idempotencyKey;
-    await this.$$modelOrder.refundOutcome(orderId).mutateAsync({
-      outcome: 'succeeded',
-      idempotencyKey,
-    });
-    this.outcomeIdempotencyKey = undefined;
+    await this.$$modelOrder.executeRefund(orderId).mutateAsync();
   }
 
   protected render() {

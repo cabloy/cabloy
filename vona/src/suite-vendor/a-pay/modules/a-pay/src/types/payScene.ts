@@ -2,11 +2,12 @@ import type { TableIdentity } from 'table-identity';
 import type { OmitNever, VonaContext } from 'vona';
 import type { ServiceOnion } from 'vona-module-a-onion';
 
-import type { IPaymentOutcomeEvent } from './payment.ts';
+import type { IPaymentOutcomeEvent, IRefundOutcomeEvent } from './payment.ts';
 import type { IPayProviderRecord } from './payProvider.ts';
 
 export interface IPaySceneExecute {
   onPaymentOutcome(event: IPaymentOutcomeEvent): Promise<void>;
+  onRefundOutcome(event: IRefundOutcomeEvent): Promise<void>;
 }
 
 export interface IPaySceneRecord {}

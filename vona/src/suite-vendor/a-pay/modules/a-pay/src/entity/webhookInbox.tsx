@@ -33,6 +33,9 @@ export class EntityWebhookInbox extends EntityBase {
   @Api.field(v.optional(), z.enum(['succeeded', 'failed', 'cancelled']))
   paymentState?: 'succeeded' | 'failed' | 'cancelled';
 
+  @Api.field(v.optional(), z.enum(['pending', 'succeeded', 'failed', 'cancelled']))
+  refundState?: 'pending' | 'succeeded' | 'failed' | 'cancelled';
+
   @Api.field(v.optional(), z.number().int().nonnegative())
   amountMinor?: number;
 
@@ -41,6 +44,9 @@ export class EntityWebhookInbox extends EntityBase {
 
   @Api.field(v.optional(), v.max(255))
   providerCaptureId?: string;
+
+  @Api.field(v.optional(), v.max(255))
+  providerRefundId?: string;
 
   @Api.field(v.required(), v.min(64), v.max(64))
   payloadHash: string;

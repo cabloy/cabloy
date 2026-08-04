@@ -31,7 +31,8 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "vona-module-a-pay": "workspace:*"
+    "vona-module-a-pay": "workspace:*",
+    "vona-module-pay-paypal": "workspace:*"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",

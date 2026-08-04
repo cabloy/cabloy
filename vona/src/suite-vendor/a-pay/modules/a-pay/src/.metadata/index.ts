@@ -501,6 +501,7 @@ declare module 'vona' {
 export * from '../service/outbox.ts';
 export * from '../service/paymentSession.ts';
 export * from '../service/providerOperation.ts';
+export * from '../service/refundOperation.ts';
 export * from '../service/webhook.ts';
 
 import 'vona-module-a-bean';
@@ -510,6 +511,7 @@ declare module 'vona-module-a-bean' {
       'a-pay:outbox': never;
 'a-pay:paymentSession': never;
 'a-pay:providerOperation': never;
+'a-pay:refundOperation': never;
 'a-pay:webhook': never;
     }
 
@@ -550,6 +552,17 @@ declare module 'vona-module-a-pay' {
             
           }
 
+        export interface ServiceRefundOperation {
+          /** @internal */
+          get scope(): ScopeModuleAPay;
+        }
+
+          export interface ServiceRefundOperation {
+            get $beanFullName(): 'a-pay.service.refundOperation';
+            get $onionName(): 'a-pay:refundOperation';
+            
+          }
+
         export interface ServiceWebhook {
           /** @internal */
           get scope(): ScopeModuleAPay;
@@ -566,11 +579,13 @@ declare module 'vona-module-a-pay' {
 import type { ServiceOutbox } from '../service/outbox.ts';
 import type { ServicePaymentSession } from '../service/paymentSession.ts';
 import type { ServiceProviderOperation } from '../service/providerOperation.ts';
+import type { ServiceRefundOperation } from '../service/refundOperation.ts';
 import type { ServiceWebhook } from '../service/webhook.ts';
 export interface IModuleService {
   'outbox': ServiceOutbox;
 'paymentSession': ServicePaymentSession;
 'providerOperation': ServiceProviderOperation;
+'refundOperation': ServiceRefundOperation;
 'webhook': ServiceWebhook;
 }
 /** service: end */
@@ -582,6 +597,7 @@ declare module 'vona' {
     'a-pay.service.outbox': ServiceOutbox;
 'a-pay.service.paymentSession': ServicePaymentSession;
 'a-pay.service.providerOperation': ServiceProviderOperation;
+'a-pay.service.refundOperation': ServiceRefundOperation;
 'a-pay.service.webhook': ServiceWebhook;
   }
 }
@@ -675,12 +691,14 @@ export interface IModuleQueue {
 /** queue: end */
 /** schedule: begin */
 export * from '../bean/schedule.outboxDispatch.ts';
+export * from '../bean/schedule.providerOperationDispatch.ts';
 
 import { type IDecoratorScheduleOptions } from 'vona-module-a-schedule';
 declare module 'vona-module-a-schedule' {
   
     export interface IScheduleRecord {
       'a-pay:outboxDispatch': IDecoratorScheduleOptions;
+'a-pay:providerOperationDispatch': IDecoratorScheduleOptions;
     }
 
   
@@ -695,6 +713,17 @@ declare module 'vona-module-a-pay' {
           export interface ScheduleOutboxDispatch {
             get $beanFullName(): 'a-pay.schedule.outboxDispatch';
             get $onionName(): 'a-pay:outboxDispatch';
+            get $onionOptions(): IDecoratorScheduleOptions;
+          }
+
+        export interface ScheduleProviderOperationDispatch {
+          /** @internal */
+          get scope(): ScopeModuleAPay;
+        }
+
+          export interface ScheduleProviderOperationDispatch {
+            get $beanFullName(): 'a-pay.schedule.providerOperationDispatch';
+            get $onionName(): 'a-pay:providerOperationDispatch';
             get $onionOptions(): IDecoratorScheduleOptions;
           } 
 }

@@ -33,6 +33,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
     await this.bean.model.createTable(providerOperation.$table, table => {
       table.basicFields();
       table.tableIdentity(providerOperation.paymentSessionId);
+      table.tableIdentity(providerOperation.refundOperationId);
       table.string(providerOperation.kind, 32);
       table.string(providerOperation.state, 32);
       table.string(providerOperation.idempotencyKey, 100);
@@ -41,6 +42,9 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.string(providerOperation.providerResourceId, 255);
       table.integer(providerOperation.attemptCount);
       table.dateTime(providerOperation.claimedAt);
+      table.string(providerOperation.claimToken, 100);
+      table.dateTime(providerOperation.claimExpiresAt);
+      table.dateTime(providerOperation.submittedAt);
       table.dateTime(providerOperation.nextAttemptAt);
       table.string(providerOperation.errorCode, 100);
       table.string(providerOperation.errorSummary, 255);
@@ -71,9 +75,11 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.tableIdentity(webhookInbox.paymentSessionId);
       table.tableIdentity(webhookInbox.refundOperationId);
       table.string(webhookInbox.paymentState, 32);
+      table.string(webhookInbox.refundState, 32);
       table.integer(webhookInbox.amountMinor);
       table.string(webhookInbox.currency, 3);
       table.string(webhookInbox.providerCaptureId, 255);
+      table.string(webhookInbox.providerRefundId, 255);
       table.string(webhookInbox.payloadHash, 64);
       table.string(webhookInbox.state, 32);
       table.integer(webhookInbox.retryCount);
@@ -99,6 +105,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.basicFields();
       table.string(outboxEvent.eventType, 100);
       table.tableIdentity(outboxEvent.paymentSessionId);
+      table.tableIdentity(outboxEvent.refundOperationId);
       table.json(outboxEvent.payload);
       table.string(outboxEvent.state, 32);
       table.integer(outboxEvent.attemptCount);
