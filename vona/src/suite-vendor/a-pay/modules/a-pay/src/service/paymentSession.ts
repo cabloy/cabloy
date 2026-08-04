@@ -77,35 +77,7 @@ export class ServicePaymentSession extends BeanBase {
   }
 
   async start(paymentSessionId: TableIdentity): Promise<EntityPaymentSession> {
-    const session = await this.beginStart(paymentSessionId);
-    const { provider, clientOptions } = this.bean.payProvider.resolveByName(
-      session.providerName,
-      session.clientName,
-    );
-    if (clientOptions.environment !== session.environment) {
-      this.app.throw(500, 'payment session provider environment is inconsistent');
-    }
-    const snapshot = await provider.startPayment(
-      {
-        paymentSessionId: session.id,
-        businessReference: session.businessReference,
-        idempotencyKey: `${session.correlationId}:start`,
-        amountMinor: session.amountMinor,
-        currency: session.currency,
-        providerOrderId: session.providerOrderId,
-      },
-      clientOptions,
-    );
-    if (isTerminalPaymentSnapshot(snapshot)) {
-      return await this.settleStartSnapshot(session.id, snapshot);
-    }
-    return await this.transition(session.id, snapshot.state, {
-      nextAction: snapshot.nextAction,
-      providerPaymentId: snapshot.providerPaymentId,
-      providerOrderId: snapshot.providerOrderId,
-      providerCaptureId: snapshot.providerCaptureId,
-      source: 'paymentSession.startProvider',
-    });
+    return await this.scope.service.providerOperation.start(paymentSessionId);
   }
 
   @Core.transaction()
@@ -267,12 +239,4 @@ export class ServicePaymentSession extends BeanBase {
     });
     return { ...session, ...options, state, finalizedAt };
   }
-}
-
-function isTerminalPaymentSnapshot(
-  snapshot: IPayProviderPaymentSnapshot,
-): snapshot is IPayProviderPaymentSnapshot & {
-  state: 'succeeded' | 'failed' | 'cancelled';
-} {
-  return ['succeeded', 'failed', 'cancelled'].includes(snapshot.state);
 }

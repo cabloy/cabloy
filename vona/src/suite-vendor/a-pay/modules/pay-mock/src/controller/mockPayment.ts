@@ -7,6 +7,8 @@ import { Arg, Controller, Web } from 'vona-module-a-web';
 
 import { DtoMockPaymentComplete } from '../dto/mockPaymentComplete.tsx';
 import { DtoMockPaymentReceipt } from '../dto/mockPaymentReceipt.tsx';
+import { DtoMockRefundComplete } from '../dto/mockRefundComplete.tsx';
+import { DtoMockRefundReceipt } from '../dto/mockRefundReceipt.tsx';
 
 export interface IControllerOptionsMockPayment extends IDecoratorControllerOptions {}
 
@@ -21,5 +23,14 @@ export class ControllerMockPayment extends BeanBase {
     @Arg.body() command: DtoMockPaymentComplete,
   ): Promise<DtoMockPaymentReceipt> {
     return await this.scope.service.payMock.completePaymentSession(id, command.outcome);
+  }
+
+  @Web.post('refund-operation/:id/complete')
+  @Api.body(DtoMockRefundReceipt)
+  async completeRefund(
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+    @Arg.body() command: DtoMockRefundComplete,
+  ): Promise<DtoMockRefundReceipt> {
+    return await this.scope.service.payMock.completeRefundOperation(id, command.outcome);
   }
 }
