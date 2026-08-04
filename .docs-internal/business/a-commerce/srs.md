@@ -242,6 +242,7 @@ State names in this section are canonical. A later implementation may use intege
 - [ADR 0001: Establish A-Commerce MVP Boundaries](./decisions/0001-mvp-boundaries.md)
 - [ADR 0003: Establish Semantic Presentation Contracts](./decisions/0003-semantic-presentation-contracts.md)
 - [Presentation contracts](./presentation-contracts.md)
+- [Semantic-presentation rollout](./semantic-presentation-rollout.md)
 - [Form Layout Guide](../../../cabloy-docs/frontend/form-layout-guide.md)
 - [A-Pay payment architecture](../../architecture/a-pay-payment-architecture.md)
 - [Transaction guide](../../../cabloy-docs/backend/transaction-guide.md)

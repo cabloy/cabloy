@@ -13,6 +13,7 @@ This directory records the agreed product, system, and delivery baseline for the
 7. [ADR 0002](./decisions/0002-multi-merchant-within-one-vona-instance.md) records proposed guardrails for a future multi-merchant boundary within one Vona instance.
 8. [ADR 0003](./decisions/0003-semantic-presentation-contracts.md) records the semantic-presentation authority and boundary convention.
 9. [Presentation contracts](./presentation-contracts.md) is the living resource/scene matrix that applies the PRD and SRS to renderer selection.
+10. [Semantic-presentation rollout](./semantic-presentation-rollout.md) is the resumable execution runbook for the staged follow-on work; it does not replace the authoritative WBS, test plan, or matrix.
 
 ## Confirmed MVP Baseline
 

@@ -414,6 +414,124 @@ Acceptance checks:
 - focused emitted-schema and browser evidence pass, with `ATP-FIA-01` retained as the Coupon Template layout reference and `ATP-SPC-01` proving the reusable boundary;
 - no presentation-only change alters API authority, persistence, validation, authorization, Model ownership, page ownership, customer flow, or SSR privacy.
 
+### Phase 80: Staged semantic-presentation rollout
+
+Dependencies: `WBS-70-03`, `WBS-70-04` local implementation completion. Each Phase-80 source slice additionally depends on retained CI evidence that verifies its predecessor; documentation-only scene-authority preparation may continue while CI evidence is pending.
+
+This phase applies the reusable contract from ADR 0003 serially. It does not reopen Coupon Template scope or authorize presentation metadata to change API membership, persistence, validation, authorization, Model/page ownership, customer flow, or SSR privacy. The [semantic-presentation rollout runbook](./semantic-presentation-rollout.md) owns session handoff detail only; this WBS remains the delivery authority.
+
+#### WBS-80-00: Establish resumable rollout controls
+
+Dependencies: `WBS-70-04`.
+
+Primary areas:
+
+- A-Commerce planning index, WBS, test plan, progress index, and presentation-contract matrix;
+- semantic-presentation rollout runbook.
+
+Tasks:
+
+- establish the serial Admin-first delivery sequence: Catalogue, Order, Stock, then Address;
+- require a documented scene-authority and renderer-decision gate before each resource source change;
+- record exact WBS status, working-tree classification, source revision, completed evidence, blocker, and one next action after every session;
+- preserve baseline working-tree changes and generated-artifact ownership without cleanup, reset, stash, or hand edits.
+
+Acceptance checks:
+
+- every Phase-80 batch has stable WBS and ATP identifiers, explicit exclusions, local-versus-CI closure rules, and a resumable handoff record;
+- the matrix, WBS, test plan, progress index, and runbook agree without creating a parallel requirements authority;
+- `WBS-70-03` and `WBS-70-04` retain their actual `implementation-complete` CI closure requirement.
+
+#### WBS-80-01: Deliver the Catalogue Admin semantic-presentation wave
+
+Dependencies: `WBS-80-00` and retained CI evidence for `WBS-70-03` / `WBS-70-04`.
+
+Primary areas:
+
+- `commerce-catalog` Category, Product, and SKU Admin entities and operation DTOs;
+- generic Admin Resource generated contract consumers;
+- Catalogue metadata and Commerce Admin browser evidence.
+
+Tasks:
+
+- execute Category, then Product, then SKU as serial sub-slices; complete each resource's local runtime gate before starting the next resource's source work;
+- document each Create, Update, View, and List/filter scene before renderer selection, including information areas, operation DTO membership, relation identity meaning, editable/readonly/derived/hidden boundaries, and customer-surface non-regression;
+- use shared Basic renderers where they preserve relation, publication/lifecycle, USD-cent, date, or structured-detail semantics; follow the reverse contract loop before naming a new Commerce renderer in Vona;
+- retain separate public Product DTO/API/model/page ownership and server-authoritative catalogue sellability;
+- add emitted-metadata and tagged Admin-browser proof through the normal Vona-first contract loop.
+
+Acceptance checks:
+
+- Category, Product, and SKU Admin scenes show only the approved DTO fields in documented semantic information areas;
+- SKU lifecycle and USD-cent semantics use approved localized/shared renderers without changing the lifecycle state machine or money persistence;
+- relations and SKU attributes do not silently broaden DTO/API contracts; absent labels or summaries become separate contract decisions;
+- focused metadata/lifecycle tests, paired Commerce Admin artifacts, dependency synchronization, typecheck, tagged browser evidence, and batch-closing clean Commerce browser evidence are recorded under `ATP-SPC-02`;
+- no customer catalogue DTO, state/page owner, sellability, stock, persistence, validation, or authorization boundary changes without its own authoritative approval.
+
+#### WBS-80-02: Deliver the Order Admin semantic workbench
+
+Dependencies: `WBS-80-01`.
+
+Primary areas:
+
+- `commerce-trade` Order Admin list/filter/View DTOs and their immutable snapshot projections;
+- existing shipment/refund action renderers and Admin generic Resource consumer.
+
+Tasks:
+
+- establish approved Admin information areas for identity/lifecycle, money, reservation deadline, immutable address/coupon/line snapshots, shipment, and refund state;
+- decide and record whether Admin View already contains the approved complete line projection before any layout work; treat a new relation/DTO field as an API-contract decision;
+- preserve existing action renderers and independent server-side authorization; keep customer order state/pages and SSR-private-query behavior out of scope;
+- add focused metadata/browser proof while retaining order, snapshot, shipment, refund, and race invariants.
+
+Acceptance checks:
+
+- presentation preserves immutable snapshots rather than substituting current related data;
+- action visibility is not authorization, and no list/view change broadens an action API;
+- `ATP-SPC-03` records emitted-contract, Admin runtime, and relevant lifecycle/snapshot evidence.
+
+#### WBS-80-03: Deliver Stock Balance and Stock Audit Admin presentation
+
+Dependencies: `WBS-80-02`.
+
+Primary areas:
+
+- `commerce-trade` Stock Balance and Stock Audit Admin list/filter/View DTOs;
+- existing authorized stock-adjustment command and stock invariant tests.
+
+Tasks:
+
+- document and render SKU identity, on-hand/reserved/derived available quantities, audit operation/delta/before/after values, actor, reason, correlation, and time;
+- keep Stock Audit readonly and keep Stock Balance mutation confined to the existing adjustment command;
+- do not expose generated Create/Update DTOs as actions merely because they exist;
+- retain focused metadata/browser proof and stock invariant coverage, including PostgreSQL contention proof whenever touched paths reach reservation/mutation behavior.
+
+Acceptance checks:
+
+- derived availability and immutable audit semantics remain explicit and cannot become browser authority;
+- `ATP-SPC-04` records Admin contract/runtime and applicable stock regression evidence.
+
+#### WBS-80-04: Deliver read-only Address Admin presentation
+
+Dependencies: `WBS-80-03`.
+
+Primary areas:
+
+- `commerce-member` Admin Address select/view DTOs and generic Resource consumer;
+- existing separate Web Address DTO/model/page contract and ownership evidence.
+
+Tasks:
+
+- document Admin list/filter/View information areas for recipient/contact/address summary, complete readonly detail, and dates;
+- improve only the approved read-only Admin projection;
+- retain the separate Web `AddressMine` DTO, model, page, route-admission, and SSR/hydration ownership unchanged;
+- add emitted-metadata and browser negative proof that Admin creates no mutation controls or requests.
+
+Acceptance checks:
+
+- the Admin Resource remains `select`/`view` only and never merges into the Web contract;
+- `ATP-SPC-05` records metadata, browser, and Address-ownership regression evidence.
+
 ## Deferred Work Guardrail
 
 The following are intentionally excluded from this WBS: marketplace/multi-merchant behavior, multiple warehouses, external payment providers, real provider callbacks/reconciliation, external sales channels, percentage or stacked promotions, partial shipment, partial refund, post-shipment returns/RMA, tax and shipping-rate engines, and multi-currency selling. A later plan must introduce each as an explicit domain contract rather than silently extending an MVP workflow.
@@ -452,6 +570,11 @@ A future task that changes `meta.version.ts` must run `npm run test`, because it
 | `WBS-60-*`     | `PRD-SHP-*`, `PRD-RFD-*`                           | `SRS-SHP-*`, `SRS-RFD-*`, `SRS-PAY-*`                                        | `ATP-SHP-01`, `ATP-RFD-01`, `ATP-RACE-01`                                                                                                                                             |
 | `WBS-70-03`    | `PRD-CPN-04`                                       | `SRS-UI-04`                                                                  | `ATP-FIA-01`                                                                                                                                                                          |
 | `WBS-70-04`    | `PRD-UI-01`                                        | `SRS-UI-05`                                                                  | `ATP-SPC-01`, with `ATP-FIA-01` as the Coupon Template reference                                                                                                                      |
+| `WBS-80-00`    | `PRD-UI-01`                                        | `SRS-UI-05`                                                                  | Runbook, aligned WBS/matrix/test/progress controls, and retained CI closure state for the Coupon Template reference                                                                   |
+| `WBS-80-01`    | `PRD-CAT-*`, `PRD-UI-01`                           | `SRS-CAT-*`, `SRS-MNY-01`, `SRS-UI-05`                                       | `ATP-SPC-02`, plus preserved catalogue/tenant/lifecycle evidence                                                                                                                      |
+| `WBS-80-02`    | `PRD-ORD-*`, `PRD-UI-01`                           | `SRS-ORD-*`, `SRS-MNY-02`–`SRS-MNY-04`, `SRS-UI-05`                          | `ATP-SPC-03`, plus preserved order/snapshot/shipment/refund evidence                                                                                                                  |
+| `WBS-80-03`    | `PRD-INV-*`, `PRD-UI-01`                           | `SRS-INV-*`, `SRS-DAT-02`, `SRS-UI-05`                                       | `ATP-SPC-04`, plus preserved stock balance/audit/reservation evidence                                                                                                                 |
+| `WBS-80-04`    | `PRD-ADR-*`, `PRD-UI-01`                           | `SRS-ADR-01`–`SRS-ADR-07`, `SRS-UI-05`                                       | `ATP-SPC-05`, plus `ATP-ADDR-01`                                                                                                                                                      |
 | `WBS-70-*`     | All PRD requirements                               | All applicable SRS contracts                                                 | All applicable `ATP-*` evidence and release gates                                                                                                                                     |
 
 ## Related Records
@@ -463,6 +586,7 @@ A future task that changes `meta.version.ts` must run `npm run test`, because it
 - [ADR 0001: Establish A-Commerce MVP Boundaries](./decisions/0001-mvp-boundaries.md)
 - [ADR 0003: Establish Semantic Presentation Contracts](./decisions/0003-semantic-presentation-contracts.md)
 - [Presentation contracts](./presentation-contracts.md)
+- [Semantic-presentation rollout](./semantic-presentation-rollout.md)
 - [Form Layout Guide](../../../cabloy-docs/frontend/form-layout-guide.md)
 - [Suite and module guidance](../../../cabloy-docs/fullstack/suites-and-modules.md)
 - [Contract-loop playbook](../../../cabloy-docs/fullstack/contract-loop-playbook.md)
