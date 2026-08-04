@@ -33,8 +33,14 @@
     },
     {
       "id": 6,
-      "prompt": "I created a second Cabloy Basic worktree and need to run Vona, Zova, and test:e2e:basic:clean in parallel with the first worktree. Which environment files and exact variables should I configure without changing shared defaults?",
-      "expected_output": "Classifies this as fullstack parallel-worktree environment setup and routes to the canonical Parallel Worktree Environment guide. Explains that generic routing is read-only: it must not infer APP_NAME or ports, edit local env files, or run npm run init. Directs the user to explicitly invoke /cabloy-worktree-environment for confirmation-gated setup, where more-specific local overrides, aligned Vona/Zova APP_NAME values, matching API_BASE_URL, conditional shared-resource isolation, and the separate initialization decision are handled.",
+      "prompt": "I created a second Cabloy Basic worktree and need to run Vona, Zova Admin, and test:e2e:basic:clean in parallel with the first worktree. Which environment files and exact variables should I configure without changing shared defaults?",
+      "expected_output": "Classifies this as fullstack parallel-worktree environment setup and routes to the canonical shared Parallel Worktree Environment guide. Explains that generic routing is read-only: it must not infer APP_NAME or ports, edit local env files, or run npm run init. Directs the user to explicitly invoke /cabloy-worktree-environment for confirmation-gated setup using only vona/env/.env.local and zova/env/.env.local. It does not require DEV_SERVER_HMR_PORT, does not use a flavor-specific local file, and treats Admin and Web as separate-worktree development choices.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "I created a linked Cabloy Start worktree and need isolated Vona, Zova Web, and managed clean E2E. Which workflow should I use?",
+      "expected_output": "Routes to the canonical shared guide and explicitly invoked /cabloy-worktree-environment skill. It recognizes that the invoked skill selects the Start command npm run test:e2e:start:clean while retaining the two broad local-file model, read-only generic routing, no automatic initialization, and one Zova development flavor per worktree.",
       "files": []
     }
   ]

@@ -100,11 +100,11 @@ The reason is simple: these files are where Cabloy already encodes its real work
 
 ### Parallel worktree environment setup
 
-When a request involves a second worktree, concurrent Vona/Zova development, isolated ordinary tests, or managed clean E2E, classify it as fullstack workflow setup. Read [Parallel Worktree Environment](../../../cabloy-docs/fullstack/parallel-worktree-environment.md) for the canonical Cabloy Basic recipe.
+When a request involves a second worktree, concurrent Vona/Zova development, isolated ordinary tests, or managed clean E2E, classify it as fullstack workflow setup. Read [Parallel Worktree Environment](../../../cabloy-docs/fullstack/parallel-worktree-environment.md), the canonical shared recipe maintained in Cabloy Basic for both editions.
 
 This routing skill provides read-only guidance only. Do not infer an `APP_NAME` or ports, edit local overrides, or run `npm run init` from a generic worktree request. When the user wants confirmation-gated local environment setup, ask them to explicitly invoke `/cabloy-worktree-environment`.
 
-For Cabloy Start, inspect the active Start repository rather than reusing the Basic recipe unchanged.
+The invoked skill detects Basic or Start to select the active root scripts and managed clean-E2E command. It may write only `vona/env/.env.local` and `zova/env/.env.local`; never use flavor-, mode-, app-mode-, or runtime-specific `.env.*.local` files. A worktree runs one Zova development flavor, Admin or Web. Concurrent Admin and Web development requires separately configured linked worktrees.
 
 ## Step 4: Prefer CLI-first workflows
 
