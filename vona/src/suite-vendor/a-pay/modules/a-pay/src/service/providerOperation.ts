@@ -15,11 +15,16 @@ const MaxAttempts = 10;
 @Service()
 export class ServiceProviderOperation extends BeanBase {
   async start(paymentSessionId: TableIdentity): Promise<EntityPaymentSession> {
-    const operation = await this.ensureStart(paymentSessionId);
-    await this.execute(operation.id);
-    const session = await this.scope.model.paymentSession.getById(paymentSessionId);
-    if (!session) this.app.throw(404, 'payment session not found');
-    return session;
+    return await this.scope.redlock.lock(
+      `pay.providerOperation.start.${paymentSessionId}`,
+      async () => {
+        const operation = await this.ensureStart(paymentSessionId);
+        await this.execute(operation.id);
+        const session = await this.scope.model.paymentSession.getById(paymentSessionId);
+        if (!session) this.app.throw(404, 'payment session not found');
+        return session;
+      },
+    );
   }
 
   @Core.transaction()

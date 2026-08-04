@@ -156,14 +156,12 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
         }),
       ]);
       assert.equal(results.filter(result => result.status === 'fulfilled').length, 2);
-      assert.equal(
-        (
-          await app.scope('a-pay').model.providerOperation.select({
-            where: { paymentSessionId: fixture.paymentSessionId, kind: 'start' },
-          })
-        ).length,
-        1,
-      );
+      const operations = await app.bean.executor.mockCtx(async () => {
+        return await app.scope('a-pay').model.providerOperation.select({
+          where: { paymentSessionId: fixture.paymentSessionId, kind: 'start' },
+        });
+      });
+      assert.equal(operations.length, 1);
     } finally {
       await app.bean.executor.mockCtx(async () => {
         await cleanup(fixture);
