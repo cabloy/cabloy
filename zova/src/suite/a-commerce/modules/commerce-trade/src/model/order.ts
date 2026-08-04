@@ -7,7 +7,6 @@ import { BeanModelBase, Model } from 'zova-module-a-model';
 
 import type {
   ApiApiCommerceTradeOrderapproveRefundRequestBody,
-  ApiApiCommerceTradeOrderrefundOutcomeRequestBody,
   ApiApiCommerceTradeOrderrejectRefundRequestBody,
   ApiApiCommerceTradeOrdershipRequestBody,
 } from '../api/commerceTradeOrder.js';
@@ -67,15 +66,12 @@ export class ModelOrder extends BeanModelBase {
     });
   }
 
-  refundOutcome(id: TableIdentity) {
-    return this.$$modelResource.mutationItem<
-      unknown,
-      ApiApiCommerceTradeOrderrefundOutcomeRequestBody
-    >({
+  executeRefund(id: TableIdentity) {
+    return this.$$modelResource.mutationItem<unknown, undefined>({
       id,
-      action: 'refundOutcome',
-      mutationFn: async payload => {
-        return await this.scope.api.commerceTradeOrder.refundOutcome(payload, { params: { id } });
+      action: 'executeRefund',
+      mutationFn: async () => {
+        return await this.scope.api.commerceTradeOrder.executeRefund(undefined, { params: { id } });
       },
     });
   }

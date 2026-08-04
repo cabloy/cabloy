@@ -165,10 +165,6 @@ export type ApiSchemaCommerceTradeDtoRefundReview =
   components['schemas']['commerce-trade.dto.refundReview'];
 export type ApiSchemaCommerceTradeDtoRefundReviewPartial =
   Partial<ApiSchemaCommerceTradeDtoRefundReview>;
-export type ApiSchemaCommerceTradeDtoRefundOutcomeCreate =
-  components['schemas']['commerce-trade.dto.refundOutcomeCreate'];
-export type ApiSchemaCommerceTradeDtoRefundOutcomeCreatePartial =
-  Partial<ApiSchemaCommerceTradeDtoRefundOutcomeCreate>;
 export type ApiSchemaCommerceTradeDtoShipmentView =
   components['schemas']['commerce-trade.dto.shipmentView'];
 export type ApiSchemaCommerceTradeDtoShipmentViewPartial =
@@ -461,6 +457,14 @@ export type ApiSchemaPayMockDtoMockPaymentComplete =
   components['schemas']['pay-mock.dto.mockPaymentComplete'];
 export type ApiSchemaPayMockDtoMockPaymentCompletePartial =
   Partial<ApiSchemaPayMockDtoMockPaymentComplete>;
+export type ApiSchemaPayMockDtoMockRefundReceipt =
+  components['schemas']['pay-mock.dto.mockRefundReceipt'];
+export type ApiSchemaPayMockDtoMockRefundReceiptPartial =
+  Partial<ApiSchemaPayMockDtoMockRefundReceipt>;
+export type ApiSchemaPayMockDtoMockRefundComplete =
+  components['schemas']['pay-mock.dto.mockRefundComplete'];
+export type ApiSchemaPayMockDtoMockRefundCompletePartial =
+  Partial<ApiSchemaPayMockDtoMockRefundComplete>;
 export type ApiSchemaAPaypalEntityPaypalRecord =
   components['schemas']['a-paypal.entity.paypalRecord'];
 export type ApiSchemaAPaypalEntityPaypalRecordPartial = Partial<ApiSchemaAPaypalEntityPaypalRecord>;

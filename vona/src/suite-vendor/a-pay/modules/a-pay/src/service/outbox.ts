@@ -5,7 +5,7 @@ import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { Core } from 'vona-module-a-core';
 
-import type { IPaymentOutcomeEvent } from '../types/payment.ts';
+import type { IPaymentOutcomeEvent, IRefundOutcomeEvent } from '../types/payment.ts';
 
 const ClaimLeaseMilliseconds = 60_000;
 const MaxAttempts = 10;
@@ -14,12 +14,16 @@ const MaxAttempts = 10;
 export class ServiceOutbox extends BeanBase {
   async enqueue(
     paymentSessionId: TableIdentity,
-    eventType: 'payment.outcome.v1',
-    payload: IPaymentOutcomeEvent,
+    eventType: 'payment.outcome.v1' | 'refund.outcome.v1',
+    payload: IPaymentOutcomeEvent | IRefundOutcomeEvent,
   ) {
     const event = await this.scope.model.outboxEvent.insert({
       eventType,
       paymentSessionId,
+      refundOperationId:
+        eventType === 'refund.outcome.v1'
+          ? (payload as IRefundOutcomeEvent).refundOperationId
+          : undefined,
       payload,
       state: 'pending',
       attemptCount: 0,

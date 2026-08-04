@@ -1870,6 +1870,9 @@ importers:
 
   src/suite-vendor/a-pay/modules/pay-paypal:
     dependencies:
+      '@cabloy/paypal-server-sdk':
+        specifier: 2.2.0
+        version: 2.2.0(supports-color@5.5.0)
       vona-module-a-pay:
         specifier: workspace:*
         version: link:../a-pay
@@ -3077,6 +3080,9 @@ importers:
       vona-module-a-pay:
         specifier: workspace:*
         version: link:../../../../suite-vendor/a-pay/modules/a-pay
+      vona-module-pay-paypal:
+        specifier: workspace:*
+        version: link:../../../../suite-vendor/a-pay/modules/pay-paypal
     devDependencies:
       clean-package:
         specifier: ^2.2.0

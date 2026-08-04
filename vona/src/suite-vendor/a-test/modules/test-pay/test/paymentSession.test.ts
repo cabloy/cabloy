@@ -27,6 +27,10 @@ async function createFixture(expiresAt: Date): Promise<IFixture> {
 async function cleanup(fixture: IFixture) {
   const scope = app.scope('a-pay');
   if (fixture.paymentSessionId !== undefined) {
+    await scope.model.outboxEvent.delete({ paymentSessionId: fixture.paymentSessionId });
+    await scope.model.webhookInbox.delete({ paymentSessionId: fixture.paymentSessionId });
+    await scope.model.providerOperation.delete({ paymentSessionId: fixture.paymentSessionId });
+    await scope.model.refundOperation.delete({ paymentSessionId: fixture.paymentSessionId });
     await scope.model.paymentAudit.delete({ paymentSessionId: fixture.paymentSessionId });
     await scope.model.paymentSession.delete({ id: fixture.paymentSessionId });
   }
@@ -112,9 +116,8 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
         const scope = app.scope('a-pay');
         const session = await scope.service.paymentSession.start(fixture.paymentSessionId!);
         assert.equal(session.state, 'requires_action');
-        await assert.rejects(scope.service.paymentSession.start(fixture.paymentSessionId!), {
-          status: 409,
-        });
+        const replayed = await scope.service.paymentSession.start(fixture.paymentSessionId!);
+        assert.equal(replayed.state, 'requires_action');
       } finally {
         await cleanup(fixture);
       }
@@ -152,8 +155,13 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
           return await app.scope('a-pay').service.paymentSession.start(fixture.paymentSessionId!);
         }),
       ]);
-      assert.equal(results.filter(result => result.status === 'fulfilled').length, 1);
-      assert.equal(results.filter(result => result.status === 'rejected').length, 1);
+      assert.equal(results.filter(result => result.status === 'fulfilled').length, 2);
+      const operations = await app.bean.executor.mockCtx(async () => {
+        return await app.scope('a-pay').model.providerOperation.select({
+          where: { paymentSessionId: fixture.paymentSessionId, kind: 'start' },
+        });
+      });
+      assert.equal(operations.length, 1);
     } finally {
       await app.bean.executor.mockCtx(async () => {
         await cleanup(fixture);

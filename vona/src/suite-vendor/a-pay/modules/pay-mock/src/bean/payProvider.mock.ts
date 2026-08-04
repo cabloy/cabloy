@@ -16,7 +16,7 @@ import { BeanBase, useApp } from 'vona';
 import { PayProvider } from 'vona-module-a-pay';
 import { z } from 'zod';
 
-const WebhookBodySchema = z.object({
+const PaymentWebhookBodySchema = z.object({
   eventId: z.string().min(1).max(255),
   eventType: z.enum(['payment.succeeded', 'payment.failed', 'payment.cancelled']),
   paymentSessionId: z.string().min(1),
@@ -25,6 +25,16 @@ const WebhookBodySchema = z.object({
   currency: z.string().length(3),
   providerPaymentId: z.string().min(1).max(255).optional(),
   providerCaptureId: z.string().min(1).max(255).optional(),
+});
+
+const RefundWebhookBodySchema = z.object({
+  eventId: z.string().min(1).max(255),
+  eventType: z.enum(['refund.pending', 'refund.succeeded', 'refund.failed', 'refund.cancelled']),
+  refundOperationId: z.string().min(1),
+  state: z.enum(['pending', 'succeeded', 'failed', 'cancelled']),
+  amountMinor: z.number().int().positive(),
+  currency: z.string().length(3),
+  providerRefundId: z.string().min(1).max(255).optional(),
 });
 
 export interface IPayProviderMockClientRecord extends IPayProviderClientRecord {
@@ -118,23 +128,42 @@ export class PayProviderMock
     if (!expected || !actual || !safeEqual(actual, expected)) {
       this.app.throw(401, 'mock webhook signature is invalid');
     }
-    const body = WebhookBodySchema.safeParse(input.body);
-    if (!body.success) this.app.throw(400, 'mock webhook is invalid');
-    const eventType = `payment.${body.data.state}`;
-    if (body.data.eventType !== eventType)
+    const payment = PaymentWebhookBodySchema.safeParse(input.body);
+    if (payment.success) {
+      const eventType = `payment.${payment.data.state}`;
+      if (payment.data.eventType !== eventType)
+        this.app.throw(400, 'mock webhook event type is invalid');
+      return {
+        eventId: payment.data.eventId,
+        eventType,
+        paymentSessionId: payment.data.paymentSessionId,
+        payment: {
+          state: payment.data.state,
+          providerPaymentId: payment.data.providerPaymentId,
+          providerCaptureId: payment.data.providerCaptureId,
+        },
+        summary: {
+          amountMinor: payment.data.amountMinor,
+          currency: payment.data.currency,
+        },
+      };
+    }
+    const refund = RefundWebhookBodySchema.safeParse(input.body);
+    if (!refund.success) this.app.throw(400, 'mock webhook is invalid');
+    const eventType = `refund.${refund.data.state}`;
+    if (refund.data.eventType !== eventType)
       this.app.throw(400, 'mock webhook event type is invalid');
     return {
-      eventId: body.data.eventId,
+      eventId: refund.data.eventId,
       eventType,
-      paymentSessionId: body.data.paymentSessionId,
-      payment: {
-        state: body.data.state,
-        providerPaymentId: body.data.providerPaymentId,
-        providerCaptureId: body.data.providerCaptureId,
+      refundOperationId: refund.data.refundOperationId,
+      refund: {
+        state: refund.data.state,
+        providerRefundId: refund.data.providerRefundId,
       },
       summary: {
-        amountMinor: body.data.amountMinor,
-        currency: body.data.currency,
+        amountMinor: refund.data.amountMinor,
+        currency: refund.data.currency,
       },
     };
   }

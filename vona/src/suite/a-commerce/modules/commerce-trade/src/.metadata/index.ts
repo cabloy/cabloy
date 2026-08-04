@@ -1282,7 +1282,7 @@ export interface IApiPathPostRecord{
 '/commerce/trade/order/:id/requestRefund': undefined;
 '/commerce/trade/order/:id/approveRefund': undefined;
 '/commerce/trade/order/:id/rejectRefund': undefined;
-'/commerce/trade/order/:id/refundOutcome': undefined;
+'/commerce/trade/order/:id/executeRefund': undefined;
 '/commerce/trade/order/:id/ship': undefined;
 '/commerce/trade/stockBalance/adjustStock': undefined;
     }

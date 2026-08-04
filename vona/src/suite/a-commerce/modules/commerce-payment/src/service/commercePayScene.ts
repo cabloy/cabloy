@@ -29,8 +29,34 @@ export class ServiceCommercePayScene extends BeanBase {
   async linkRefundOperation(refundAttemptId: TableIdentity, refundOperationId: TableIdentity) {
     const refundAttempt = await this.scope.model.refundAttempt.getByIdForUpdate(refundAttemptId);
     if (!refundAttempt) this.app.throw(404, 'commerce refund attempt not found');
+    if (
+      refundAttempt.refundOperationId &&
+      String(refundAttempt.refundOperationId) !== String(refundOperationId)
+    ) {
+      this.app.throw(409, 'commerce refund attempt is linked to another refund operation');
+    }
     await this.scope.model.refundAttempt.updateById(refundAttempt.id, { refundOperationId });
     return { ...refundAttempt, refundOperationId };
+  }
+
+  async createRefundOperation(refundAttemptId: TableIdentity) {
+    const refundAttempt = await this.scope.model.refundAttempt.getById(refundAttemptId);
+    if (!refundAttempt) this.app.throw(404, 'commerce refund attempt not found');
+    const paymentAttempt = await this.scope.model.paymentAttempt.get({
+      orderId: refundAttempt.orderId,
+    });
+    if (!paymentAttempt?.paymentSessionId)
+      this.app.throw(409, 'commerce payment session is unavailable');
+    const refund = await this.$scope.pay.service.refundOperation.create({
+      paymentSessionId: paymentAttempt.paymentSessionId,
+      businessReference: String(refundAttempt.id),
+      amountMinor: refundAttempt.amountCents,
+      currency: refundAttempt.currency,
+      idempotencyKey: `${refundAttempt.correlationId}:refund`,
+      correlationId: refundAttempt.correlationId,
+    });
+    await this.linkRefundOperation(refundAttempt.id, refund.id);
+    return refund;
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })

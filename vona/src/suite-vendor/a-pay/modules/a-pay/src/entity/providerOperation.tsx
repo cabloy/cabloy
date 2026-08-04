@@ -14,6 +14,9 @@ export class EntityProviderOperation extends EntityBase {
   @Api.field(v.tableIdentity())
   paymentSessionId: TableIdentity;
 
+  @Api.field(v.optional(), v.tableIdentity())
+  refundOperationId?: TableIdentity;
+
   @Api.field(z.enum(['start', 'confirm', 'query', 'refund']))
   kind: TypeProviderOperationKind;
 
@@ -39,6 +42,15 @@ export class EntityProviderOperation extends EntityBase {
 
   @Api.field(v.optional())
   claimedAt?: Date;
+
+  @Api.field(v.optional(), v.max(100))
+  claimToken?: string;
+
+  @Api.field(v.optional())
+  claimExpiresAt?: Date;
+
+  @Api.field(v.optional())
+  submittedAt?: Date;
 
   @Api.field(v.optional())
   nextAttemptAt?: Date;
