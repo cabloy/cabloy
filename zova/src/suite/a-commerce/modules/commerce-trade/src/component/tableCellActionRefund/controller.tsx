@@ -48,7 +48,7 @@ export class ControllerTableCellActionRefund extends BeanControllerBase {
   private async _execute() {
     if (!this.confirmed) return;
     const orderId = this.$$renderContext.cellContext.row.id as TableIdentity;
-    await this.$$modelOrder.executeRefund(orderId).mutateAsync();
+    await this.$$modelOrder.executeRefund(orderId).mutateAsync({});
   }
 
   protected render() {
