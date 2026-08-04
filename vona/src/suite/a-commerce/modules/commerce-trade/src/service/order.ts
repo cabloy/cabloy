@@ -21,7 +21,6 @@ import type { DtoOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttrib
 import type { DtoOrderMineRes } from '../dto/orderMineRes.tsx';
 import type { DtoOrderSelectRes } from '../dto/orderSelectRes.tsx';
 import type { DtoOrderShip } from '../dto/orderShip.tsx';
-import type { DtoOrderSummary } from '../dto/orderSummary.tsx';
 import type { DtoOrderView } from '../dto/orderView.tsx';
 import type { DtoPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
 import type { DtoPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
@@ -34,6 +33,8 @@ import type { EntityOrder } from '../entity/order.tsx';
 import type { EntityOrderLine } from '../entity/orderLine.tsx';
 import type { EntityShipment } from '../entity/shipment.tsx';
 import type { ModelOrder } from '../model/order.ts';
+
+import { orderSummaryColumns } from '../lib/order.ts';
 
 const maxOrderCents = 2_147_483_647;
 const customerVisibleOrderStates: EntityOrder['state'][] = [
@@ -825,9 +826,9 @@ export class ServiceOrder extends BeanBase {
   }
 
   async mine(params?: IQueryParams<ModelOrder>): Promise<DtoOrderMineRes> {
-    const result = await this.scope.model.order.selectAndCount({
+    return await this.scope.model.order.selectAndCount({
       ...params,
-      columns: ['id', 'state', 'currency', 'payableTotalCents', 'createdAt'],
+      columns: orderSummaryColumns,
       where: {
         ...params?.where,
         userId: this.bean.passport.currentUser!.id,
@@ -835,13 +836,6 @@ export class ServiceOrder extends BeanBase {
       },
       orders: params?.orders ?? [['id', 'desc']],
     });
-    return {
-      ...result,
-      list: result.list.map(order => ({
-        ...order,
-        state: order.state as DtoOrderSummary['state'],
-      })),
-    };
   }
 
   async viewMine(id: TableIdentity): Promise<DtoOrderDetail | undefined> {

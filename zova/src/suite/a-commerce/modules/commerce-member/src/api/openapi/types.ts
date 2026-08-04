@@ -95,6 +95,38 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/payment-session/{id}/start': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PaymentSession_start'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/payment-session/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['PaymentSession_view'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/commerce/member/address/mine': {
     parameters: {
       query?: never;
@@ -543,6 +575,86 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/commerce/trade/order/{id}/requestRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_requestRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/approveRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_approveRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/rejectRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_rejectRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/refundOutcome': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_refundOutcome'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/ship': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_ship'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/commerce/trade/order': {
     parameters: {
       query?: never;
@@ -569,22 +681,6 @@ export interface paths {
     get: operations['CommerceTradeOrder_view'];
     put?: never;
     post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/commerce/trade/payment/{attemptId}/outcome': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['CommerceTradePayment_outcome'];
     delete?: never;
     options?: never;
     head?: never;
@@ -944,6 +1040,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/basic/metrics/snapshot': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['BasicMetrics_snapshot'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/file/upload-policy': {
     parameters: {
       query?: never;
@@ -1130,6 +1242,22 @@ export interface paths {
     get: operations['Image_delivery'];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/pay/mock/payment-session/{id}/complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PayMockPayment_complete'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1954,6 +2082,49 @@ export interface components {
       token?: unknown;
       payload?: unknown;
     };
+    'a-pay.dto.paymentSessionView': {
+      id: number | string;
+      /** @enum {string} */
+      state:
+        | 'created'
+        | 'starting'
+        | 'requires_action'
+        | 'processing'
+        | 'succeeded'
+        | 'failed'
+        | 'cancelled'
+        | 'expired';
+      providerName: string;
+      nextAction?:
+        | {
+            /** @enum {string} */
+            kind: 'redirect';
+            /** Format: uri */
+            url: string;
+          }
+        | {
+            /** @enum {string} */
+            kind: 'embedded';
+            clientToken: string;
+            publishableConfig?:
+              | {
+                  [key: string]: string;
+                }
+              | undefined;
+          }
+        | {
+            /** @enum {string} */
+            kind: 'pending';
+            retryAfterSeconds?: number | undefined;
+          }
+        | {
+            /** @enum {string} */
+            kind: 'completed';
+          }
+        | undefined;
+      amountMinor: number;
+      currency: string;
+    };
     'commerce-member.dto.addressMineRes': {
       list: components['schemas']['commerce-member.dto.addressMineItem'][];
       total: string;
@@ -1962,6 +2133,7 @@ export interface components {
       pageNo: number;
     };
     'commerce-member.dto.addressMineItem': {
+      /** @description ID */
       id: number | string;
       /** @description Recipient Name */
       recipientName: string;
@@ -1982,6 +2154,7 @@ export interface components {
     };
     'commerce-member.dto.addressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
+          /** @description ID */
           id: number | string;
           /** @description Recipient Name */
           recipientName: string;
@@ -2261,20 +2434,39 @@ export interface components {
       reason: string;
     };
     'commerce-promotion.dto.couponTemplateCreate': {
+      /** @description Name */
       name: string;
-      /** @enum {string} */
+      /**
+       * @description Template State
+       * @enum {string}
+       */
       state: 'draft' | 'active';
-      /** @enum {string} */
+      /**
+       * @description Currency
+       * @enum {string}
+       */
       currency: 'USD';
+      /** @description Fixed Discount (Cents) */
       discountCents: number;
+      /** @description Minimum Spend (Cents) */
       minSpendCents: number;
-      /** Format: date-time */
+      /**
+       * Format: date-time
+       * @description Valid From
+       */
       validFrom: Date;
-      /** Format: date-time */
+      /**
+       * Format: date-time
+       * @description Valid Until
+       */
       validUntil: Date;
+      /** @description Total Issue Limit */
       totalIssueLimit?: number | undefined;
+      /** @description Total Usage Limit */
       totalUsageLimit?: number | undefined;
+      /** @description Per-customer Issue Limit */
       perCustomerIssueLimit?: number | undefined;
+      /** @description Description */
       description?: string | undefined;
     };
     'commerce-promotion.dto.couponTemplateSelectRes': {
@@ -2348,7 +2540,7 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+    'commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b':
       | {
           /**
            * Format: date-time
@@ -2447,6 +2639,7 @@ export interface components {
     'commerce-trade.dto.checkoutResult': {
       orderId: number | string;
       paymentAttemptId: number | string;
+      paymentSessionId: number | string;
       /** @enum {string} */
       state: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
       /** @enum {string} */
@@ -2470,20 +2663,42 @@ export interface components {
       pageNo: number;
     };
     'commerce-trade.dto.orderSummary': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /** @description ID */
       id: number | string;
       /** @enum {string} */
-      state: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
+      state:
+        | 'awaiting_payment'
+        | 'paid'
+        | 'refund_requested'
+        | 'refund_approved'
+        | 'refund_rejected'
+        | 'shipped'
+        | 'refunded'
+        | 'cancelled'
+        | 'expired';
       /** @enum {string} */
       currency: 'USD';
       payableTotalCents: number;
-      /** Format: date-time */
-      createdAt: Date;
     };
     'commerce-trade.dto.orderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           id: number | string;
           /** @enum {string} */
-          state: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
+          state:
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired';
           /** @enum {string} */
           currency: 'USD';
           eligibleSubtotalCents: number;
@@ -2493,6 +2708,7 @@ export interface components {
           reservationExpiresAt: Date;
           addressSnapshot: components['schemas']['commerce-trade.dto.orderAddressSnapshot'];
           couponSnapshot?: components['schemas']['commerce-trade.dto.orderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          shipment?: components['schemas']['commerce-trade.dto.shipmentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
           lines: {
             id: number | string;
             skuCodeSnapshot: string;
@@ -2527,9 +2743,58 @@ export interface components {
           appliedDiscountCents: number;
         }
       | undefined;
+    'commerce-trade.dto.shipmentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          /** @description ID */
+          id: number | string;
+          carrier: string;
+          trackingNumber: string;
+          /** Format: date-time */
+          shippedAt: Date;
+        }
+      | undefined;
     'commerce-trade.dto.orderLineSkuAttributeSnapshot': {
       name: string;
       value: string;
+    };
+    'commerce-trade.dto.refundResult': {
+      orderId: number | string;
+      refundRequestId: number | string;
+      refundAttemptId?: number | string | undefined;
+      /** @enum {string} */
+      orderState: 'paid' | 'refund_requested' | 'refund_approved' | 'refund_rejected' | 'refunded';
+      /** @enum {string} */
+      refundState: 'requested' | 'approved' | 'rejected' | 'refunded' | 'failed';
+      /** @enum {string|null} */
+      refundAttemptState?: 'created' | 'succeeded' | 'failed' | null | undefined;
+      /** @enum {string} */
+      currency: 'USD';
+      amountCents: number;
+    };
+    'commerce-trade.dto.refundRequestCreate': {
+      reason: string;
+      idempotencyKey: string;
+    };
+    'commerce-trade.dto.refundReview': {
+      reason: string;
+      idempotencyKey: string;
+    };
+    'commerce-trade.dto.refundOutcomeCreate': {
+      /** @enum {string} */
+      outcome: 'succeeded' | 'failed';
+      idempotencyKey: string;
+    };
+    'commerce-trade.dto.shipmentView': {
+      /** @description ID */
+      id: number | string;
+      carrier: string;
+      trackingNumber: string;
+      /** Format: date-time */
+      shippedAt: Date;
+    };
+    'commerce-trade.dto.orderShip': {
+      carrier: string;
+      trackingNumber: string;
     };
     'commerce-trade.dto.orderSelectRes': {
       list: components['schemas']['commerce-trade.dto.orderSelectResItem'][];
@@ -2634,24 +2899,39 @@ export interface components {
           payableTotalCents: number;
           /** Format: date-time */
           reservationExpiresAt: Date;
+          shipment?: {
+            /**
+             * Format: date-time
+             * @description Created At
+             */
+            createdAt: Date;
+            /**
+             * Format: date-time
+             * @description Updated At
+             */
+            updatedAt: Date;
+            /**
+             * @description Deleted
+             * @default false
+             */
+            deleted?: boolean;
+            /**
+             * @description Instance ID
+             * @default 0
+             */
+            iid?: number;
+            /** @description ID */
+            id: number | string;
+            orderId: number | string;
+            carrier: string;
+            trackingNumber: string;
+            operatorId: number | string;
+            /** Format: date-time */
+            shippedAt: Date;
+            correlationId: string;
+          };
         }
       | undefined;
-    'commerce-trade.dto.paymentOutcomeResult': {
-      orderId: number | string;
-      paymentAttemptId: number | string;
-      /** @enum {string} */
-      orderState: 'paid' | 'cancelled' | 'expired';
-      /** @enum {string} */
-      paymentAttemptState: 'succeeded' | 'failed' | 'cancelled';
-      /** @enum {string} */
-      currency: 'USD';
-      payableTotalCents: number;
-    };
-    'commerce-trade.dto.paymentOutcomeCreate': {
-      /** @enum {string} */
-      outcome: 'succeeded' | 'failed' | 'cancelled';
-      idempotencyKey: string;
-    };
     'commerce-trade.dto.stockAuditSelectRes': {
       list: components['schemas']['commerce-trade.dto.stockAuditSelectResItem'][];
       total: string;
@@ -3381,7 +3661,7 @@ export interface components {
       /** @description Description */
       description?: string | undefined;
       /** @description # */
-      _lineNumber: number;
+      _lineNumber?: number | undefined;
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3436,6 +3716,12 @@ export interface components {
       dossierFileIds?: (number | string)[] | undefined;
       /** @description Description */
       description?: string | undefined;
+      student?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Student Name */
+        name: string;
+      };
       sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
       /** @description Dossier Files */
       dossierFiles?: components['schemas']['a-file.dto.fileView'][] | undefined;
@@ -3509,6 +3795,12 @@ export interface components {
           dossierFileIds?: (number | string)[] | undefined;
           /** @description Description */
           description?: string | undefined;
+          student?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Student Name */
+            name: string;
+          };
           /** @description Student Training Record Details */
           trainingRecordSubjects: {
             /**
@@ -3721,7 +4013,7 @@ export interface components {
           }[]
         | undefined;
       /** @description # */
-      _lineNumber: number;
+      _lineNumber?: number | undefined;
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3992,23 +4284,51 @@ export interface components {
     };
     'training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
+          /** @description ID */
           id: number | string;
           /** @description Student Name */
           name: string;
+          /** @description Description */
+          description?: string | undefined;
           /** @description Mobile */
           mobile: string;
           /** @description Training Stage */
-          level: number;
+          level: 1 | 2 | 3;
           /** @description Level Title */
           levelTitle: string;
-          /** @description Description */
-          description?: string | undefined;
           /** @description Description Length */
           descriptionLength: number;
           /** @description Summary */
           summaryText: string;
         }
       | undefined;
+    'basic-metrics.dto.metricsSnapshot': {
+      enabled: boolean;
+      runtime: components['schemas']['basic-metrics.dto.metricsRuntime'];
+      queues: components['schemas']['basic-metrics.dto.metricsQueue'][];
+    };
+    'basic-metrics.dto.metricsRuntime': {
+      state: string;
+      observedAt?: string | undefined;
+      uptimeSeconds?: number | undefined;
+      rssBytes?: number | undefined;
+      heapUsedBytes?: number | undefined;
+      heapTotalBytes?: number | undefined;
+      externalBytes?: number | undefined;
+      eventLoopDelayMaxSeconds?: number | undefined;
+      activeContexts?: number | undefined;
+    };
+    'basic-metrics.dto.metricsQueue': {
+      name: string;
+      state: string;
+      observedAt?: string | undefined;
+      jobs?:
+        | {
+            [key: string]: number;
+          }
+        | undefined;
+      schedulers?: number | undefined;
+    };
     'a-file.dto.fileUploadPolicyResponse': {
       fileScene: string;
       maxSize?: number | undefined;
@@ -4155,6 +4475,14 @@ export interface components {
           sharpen?: number | undefined;
         }
       | undefined;
+    'pay-mock.dto.mockPaymentReceipt': {
+      paymentSessionId: number | string;
+      accepted: boolean;
+    };
+    'pay-mock.dto.mockPaymentComplete': {
+      /** @enum {string} */
+      outcome: 'succeeded' | 'failed' | 'cancelled';
+    };
     'a-paypal.entity.paypalRecord': {
       /**
        * Format: date-time
@@ -4871,6 +5199,58 @@ export interface operations {
       };
     };
   };
+  PaymentSession_start: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-pay.dto.paymentSessionView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  PaymentSession_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-pay.dto.paymentSessionView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   CommerceMemberAddress_mine: {
     parameters: {
       query?: {
@@ -5511,7 +5891,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+            data?: components['schemas']['commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b'];
           };
         };
       };
@@ -5747,7 +6127,14 @@ export interface operations {
         pageNo?: number;
         pageSize?: number;
         createdAt?: string | undefined;
-        state?: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired' | null | undefined;
+        state?:
+          | 'awaiting_payment'
+          | 'paid'
+          | 'shipped'
+          | 'cancelled'
+          | 'expired'
+          | null
+          | undefined;
       };
       header?: never;
       path?: never;
@@ -5790,6 +6177,156 @@ export interface operations {
             code: string;
             message: string;
             data?: components['schemas']['commerce-trade.dto.orderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_requestRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundRequestCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundResult'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_approveRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundReview'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundResult'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_rejectRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundReview'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundResult'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_refundOutcome: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundOutcomeCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundResult'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_ship: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.orderShip'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.shipmentView'];
           };
         };
       };
@@ -5852,36 +6389,6 @@ export interface operations {
             code: string;
             message: string;
             data?: components['schemas']['commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  CommerceTradePayment_outcome: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        attemptId: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['commerce-trade.dto.paymentOutcomeCreate'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['commerce-trade.dto.paymentOutcomeResult'];
           };
         };
       };
@@ -6951,6 +7458,30 @@ export interface operations {
     };
     authToken: true;
   };
+  BasicMetrics_snapshot: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['basic-metrics.dto.metricsSnapshot'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   File_getUploadPolicy: {
     parameters: {
       query?: never;
@@ -7292,6 +7823,36 @@ export interface operations {
         };
       };
     };
+  };
+  PayMockPayment_complete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['pay-mock.dto.mockPaymentComplete'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['pay-mock.dto.mockPaymentReceipt'];
+          };
+        };
+      };
+    };
+    authToken: true;
   };
   Paypal_getRecord: {
     parameters: {

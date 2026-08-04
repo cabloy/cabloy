@@ -1,10 +1,14 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
+import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
 
-import { DtoAddressMineCreate } from './addressMineCreate.tsx';
+import { addressMineWriteColumns } from '../lib/addressMine.ts';
+import { ModelAddress } from '../model/address.ts';
 
 export interface IDtoOptionsAddressMineUpdate extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsAddressMineUpdate>()
-export class DtoAddressMineUpdate extends DtoAddressMineCreate {}
+export class DtoAddressMineUpdate extends $Dto.update(() => ModelAddress, {
+  columns: addressMineWriteColumns,
+}) {}

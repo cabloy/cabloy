@@ -2133,6 +2133,7 @@ export interface components {
       pageNo: number;
     };
     'commerce-member.dto.addressMineItem': {
+      /** @description ID */
       id: number | string;
       /** @description Recipient Name */
       recipientName: string;
@@ -2153,6 +2154,7 @@ export interface components {
     };
     'commerce-member.dto.addressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
+          /** @description ID */
           id: number | string;
           /** @description Recipient Name */
           recipientName: string;
@@ -2432,20 +2434,39 @@ export interface components {
       reason: string;
     };
     'commerce-promotion.dto.couponTemplateCreate': {
+      /** @description Name */
       name: string;
-      /** @enum {string} */
+      /**
+       * @description Template State
+       * @enum {string}
+       */
       state: 'draft' | 'active';
-      /** @enum {string} */
+      /**
+       * @description Currency
+       * @enum {string}
+       */
       currency: 'USD';
+      /** @description Fixed Discount (Cents) */
       discountCents: number;
+      /** @description Minimum Spend (Cents) */
       minSpendCents: number;
-      /** Format: date-time */
+      /**
+       * Format: date-time
+       * @description Valid From
+       */
       validFrom: Date;
-      /** Format: date-time */
+      /**
+       * Format: date-time
+       * @description Valid Until
+       */
       validUntil: Date;
+      /** @description Total Issue Limit */
       totalIssueLimit?: number | undefined;
+      /** @description Total Usage Limit */
       totalUsageLimit?: number | undefined;
+      /** @description Per-customer Issue Limit */
       perCustomerIssueLimit?: number | undefined;
+      /** @description Description */
       description?: string | undefined;
     };
     'commerce-promotion.dto.couponTemplateSelectRes': {
@@ -2519,7 +2540,7 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+    'commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b':
       | {
           /**
            * Format: date-time
@@ -2642,6 +2663,12 @@ export interface components {
       pageNo: number;
     };
     'commerce-trade.dto.orderSummary': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /** @description ID */
       id: number | string;
       /** @enum {string} */
       state:
@@ -2657,8 +2684,6 @@ export interface components {
       /** @enum {string} */
       currency: 'USD';
       payableTotalCents: number;
-      /** Format: date-time */
-      createdAt: Date;
     };
     'commerce-trade.dto.orderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
@@ -2720,6 +2745,7 @@ export interface components {
       | undefined;
     'commerce-trade.dto.shipmentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
+          /** @description ID */
           id: number | string;
           carrier: string;
           trackingNumber: string;
@@ -2759,6 +2785,7 @@ export interface components {
       idempotencyKey: string;
     };
     'commerce-trade.dto.shipmentView': {
+      /** @description ID */
       id: number | string;
       carrier: string;
       trackingNumber: string;
@@ -3634,7 +3661,7 @@ export interface components {
       /** @description Description */
       description?: string | undefined;
       /** @description # */
-      _lineNumber: number;
+      _lineNumber?: number | undefined;
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3689,6 +3716,12 @@ export interface components {
       dossierFileIds?: (number | string)[] | undefined;
       /** @description Description */
       description?: string | undefined;
+      student?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Student Name */
+        name: string;
+      };
       sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
       /** @description Dossier Files */
       dossierFiles?: components['schemas']['a-file.dto.fileView'][] | undefined;
@@ -3762,6 +3795,12 @@ export interface components {
           dossierFileIds?: (number | string)[] | undefined;
           /** @description Description */
           description?: string | undefined;
+          student?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Student Name */
+            name: string;
+          };
           /** @description Student Training Record Details */
           trainingRecordSubjects: {
             /**
@@ -3974,7 +4013,7 @@ export interface components {
           }[]
         | undefined;
       /** @description # */
-      _lineNumber: number;
+      _lineNumber?: number | undefined;
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -4245,17 +4284,18 @@ export interface components {
     };
     'training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
+          /** @description ID */
           id: number | string;
           /** @description Student Name */
           name: string;
+          /** @description Description */
+          description?: string | undefined;
           /** @description Mobile */
           mobile: string;
           /** @description Training Stage */
-          level: number;
+          level: 1 | 2 | 3;
           /** @description Level Title */
           levelTitle: string;
-          /** @description Description */
-          description?: string | undefined;
           /** @description Description Length */
           descriptionLength: number;
           /** @description Summary */
@@ -5851,7 +5891,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+            data?: components['schemas']['commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b'];
           };
         };
       };

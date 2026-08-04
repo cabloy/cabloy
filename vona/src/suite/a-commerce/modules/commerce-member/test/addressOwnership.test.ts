@@ -1,14 +1,14 @@
-import type {
-  DtoAddressMineCreate,
-  DtoAddressMineUpdate,
-  EntityAddress,
-} from 'vona-module-commerce-member';
-
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
+import {
+  DtoAddressMineCreate,
+  DtoAddressMineItem,
+  DtoAddressMineUpdate,
+  DtoAddressMineView,
+} from 'vona-module-commerce-member';
 
 const actionPath = '/commerce/member/address';
 const minePath = `${actionPath}/mine`;
@@ -16,6 +16,7 @@ const viewMinePath = `${actionPath}/viewMine/:id`;
 const createMinePath = `${actionPath}/createMine`;
 const updateMinePath = `${actionPath}/updateMine/:id`;
 const deleteMinePath = `${actionPath}/deleteMine/:id`;
+const addressMineExcludedFields = ['userId', 'iid', 'deleted', 'createdAt', 'updatedAt'] as const;
 
 function createTestId() {
   return randomUUID().slice(0, 12);
@@ -57,6 +58,38 @@ async function deleteOwnedAddresses(ids: Array<number | string | undefined>) {
 }
 
 describe('addressOwnership.test.ts', () => {
+  it('emits aligned Mine DTO schemas', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const expectedWriteFields = [
+        'recipientName',
+        'phone',
+        'countryCode',
+        'region',
+        'city',
+        'postalCode',
+        'addressLine1',
+        'addressLine2',
+      ].sort();
+      const expectedRequiredFields = expectedWriteFields.filter(name => name !== 'addressLine2');
+      for (const DtoClass of [DtoAddressMineCreate, DtoAddressMineUpdate]) {
+        const apiJson = await app.bean.openapi.generateJsonOfClass(DtoClass);
+        const component = Object.values(apiJson.components!.schemas as any).find(item => {
+          return (item as any).properties?.recipientName && (item as any).properties?.addressLine1;
+        }) as any;
+        assert.deepEqual(Object.keys(component.properties).sort(), expectedWriteFields);
+        assert.deepEqual(component.required?.sort(), expectedRequiredFields);
+      }
+      const expectedReadFields = ['id', ...expectedWriteFields].sort();
+      for (const DtoClass of [DtoAddressMineItem, DtoAddressMineView]) {
+        const apiJson = await app.bean.openapi.generateJsonOfClass(DtoClass);
+        const component = Object.values(apiJson.components!.schemas as any).find(item => {
+          return (item as any).properties?.id && (item as any).properties?.recipientName;
+        }) as any;
+        assert.deepEqual(Object.keys(component.properties).sort(), expectedReadFields);
+      }
+    });
+  });
+
   it('denies anonymous Admin and Web Address actions', async () => {
     await app.bean.executor.mockCtx(async () => {
       for (const [method, path, options] of [
@@ -97,14 +130,12 @@ describe('addressOwnership.test.ts', () => {
           ownList.list.some(item => String(item.id) === String(addressId)),
           true,
         );
-        assert.equal(
-          ownList.list.every(item => !Object.hasOwn(item, 'userId')),
-          true,
-        );
-        assert.equal(
-          ownList.list.every(item => !Object.hasOwn(item, 'iid')),
-          true,
-        );
+        for (const field of addressMineExcludedFields) {
+          assert.equal(
+            ownList.list.every(item => !Object.hasOwn(item, field)),
+            true,
+          );
+        }
 
         const { addressLine2: _, ...update } = {
           ...addressData,
@@ -117,13 +148,26 @@ describe('addressOwnership.test.ts', () => {
           }),
           null,
         );
-        const ownAddress: EntityAddress = await performAs(customerA.token, 'get', viewMinePath, {
-          params: { id: addressId },
-        });
+        const ownAddress: DtoAddressMineView = await performAs(
+          customerA.token,
+          'get',
+          viewMinePath,
+          {
+            params: { id: addressId },
+          },
+        );
         assert.equal(ownAddress.city, update.city);
         assert.equal(ownAddress.addressLine2, addressData.addressLine2);
-        assert.equal(Object.hasOwn(ownAddress, 'userId'), false);
-        assert.equal(Object.hasOwn(ownAddress, 'iid'), false);
+        for (const field of addressMineExcludedFields) {
+          assert.equal(Object.hasOwn(ownAddress, field), false);
+        }
+        const [, incompleteUpdateError] = await catchError(() =>
+          performAs(customerA.token, 'patch', updateMinePath, {
+            params: { id: addressId },
+            body: { city: 'Berkeley' },
+          }),
+        );
+        assert.equal(incompleteUpdateError?.code, 422);
 
         const foreignList = await performAs(customerB.token, 'get', minePath);
         assert.equal(

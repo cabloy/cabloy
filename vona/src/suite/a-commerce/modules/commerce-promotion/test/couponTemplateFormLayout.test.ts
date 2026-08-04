@@ -52,6 +52,23 @@ describe('couponTemplateFormLayout.test.ts', () => {
         ],
       );
       assert.deepEqual(getGroupFields(createLayout?.children[0])?.[2]?.span, { default: 1, md: 2 });
+      assert.deepEqual(
+        Object.keys((createComponent as any).properties).sort(),
+        [
+          'name',
+          'state',
+          'currency',
+          'discountCents',
+          'minSpendCents',
+          'validFrom',
+          'validUntil',
+          'totalIssueLimit',
+          'totalUsageLimit',
+          'perCustomerIssueLimit',
+          'description',
+        ].sort(),
+      );
+      assert.deepEqual((createComponent as any).properties.state.enum, ['draft', 'active']);
 
       const updateJson = await app.bean.openapi.generateJsonOfClass(DtoCouponTemplateUpdate);
       const updateComponent = findComponent(updateJson, properties => {
@@ -66,6 +83,7 @@ describe('couponTemplateFormLayout.test.ts', () => {
         ['name', 'state', 'description'],
       );
       assert.deepEqual(getGroupFields(updateLayout?.children[0])?.[2]?.span, { default: 1, md: 2 });
+      assert.deepEqual((updateComponent as any).required ?? [], []);
 
       const viewJson = await app.bean.openapi.generateJsonOfClass(DtoCouponTemplateView);
       const viewComponent = findComponent(viewJson, properties => {
