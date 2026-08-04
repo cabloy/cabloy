@@ -34,13 +34,19 @@
     {
       "id": 6,
       "prompt": "I created a second Cabloy Basic worktree and need to run Vona, Zova Admin, and test:e2e:basic:clean in parallel with the first worktree. Which environment files and exact variables should I configure without changing shared defaults?",
-      "expected_output": "Classifies this as fullstack parallel-worktree environment setup and routes to the canonical shared Parallel Worktree Environment guide. Explains that generic routing is read-only: it must not inspect env content, infer or write local values, or run npm run init. Directs the user to explicitly invoke /cabloy-worktree-environment for confirmation-gated setup using only vona/env/.env.local and zova/env/.env.local. The invoked skill uses Git worktree metadata, the worktree basename, and fixed baseline ports to recommend the shared Vona + Zova development identity and listener tuple, including DEV_SERVER_PORT and DEV_SERVER_HMR_PORT; it does not use a flavor-specific local file or reserve ports. Admin and Web remain separate-worktree development choices.",
+      "expected_output": "Classifies this as fullstack parallel-worktree environment setup and routes to the canonical shared Parallel Worktree Environment guide. Explains that generic routing is read-only: it must not inspect env content, infer or write local values, or run npm run init. Directs the user to explicitly invoke /cabloy-worktree-environment for confirmation-gated setup. The invoked skill uses Git worktree metadata, the worktree basename, and fixed baseline ports to recommend APP_NAME, SERVER_LISTEN_PORT, DEV_SERVER_PORT, DEV_SERVER_HMR_PORT, and a derived API_BASE_URL, then writes only vona/env/.env.local and zova/env/.env.local after confirmation. It does not use a flavor-specific local file or reserve ports; Admin and Web are alternative non-concurrent commands using the shared tuple.",
       "files": []
     },
     {
       "id": 7,
       "prompt": "I created a linked Cabloy Start worktree and need isolated Vona, Zova Web, and managed clean E2E. Which workflow should I use?",
-      "expected_output": "Routes to the canonical shared guide and explicitly invoked /cabloy-worktree-environment skill. It recognizes that the invoked skill selects the Start command npm run test:e2e:start:clean while retaining the two broad local-file model, read-only generic routing, deterministic Git-metadata recommendation, no environment-content inspection, no automatic initialization, and one Zova development flavor per worktree.",
+      "expected_output": "Routes to the canonical shared guide and explicitly invoked /cabloy-worktree-environment skill. It recognizes that the invoked skill selects the Start command npm run test:e2e:start:clean while retaining read-only generic routing, a deterministic Git-metadata recommendation, no environment-content inspection, no automatic initialization, and the universal five-setting tuple written to both permitted broad local files only after confirmation.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "I created a linked Cabloy Basic worktree and only need backend tests. What should I do for local environment isolation?",
+      "expected_output": "Keeps generic routing read-only and directs the user to the canonical guide plus explicit /cabloy-worktree-environment invocation. It explains that the invoked skill still generates the universal APP_NAME, SERVER_LISTEN_PORT, DEV_SERVER_PORT, DEV_SERVER_HMR_PORT, and derived API_BASE_URL tuple in both broad local files after confirmation; it does not provide a backend-only one-file path.",
       "files": []
     }
   ]

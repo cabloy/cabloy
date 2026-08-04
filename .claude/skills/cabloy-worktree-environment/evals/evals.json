@@ -3,14 +3,14 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "I explicitly invoke /cabloy-worktree-environment in the first linked Cabloy Basic worktree. I need Vona, one Zova Admin development process, and test:e2e:basic:clean. Please configure the isolated environment.",
-      "expected_output": "Validates that the current checkout is a linked Cabloy Basic worktree before any write, uses Git worktree metadata only, and recommends APP_NAME from the worktree basename. As the first linked worktree and first batch, it proposes SERVER_LISTEN_PORT 7103, DEV_SERVER_PORT 9001, DEV_SERVER_HMR_PORT 24680, and an API_BASE_URL targeting port 7103. It labels the selected configuration as 环境隔离信息：Vona 开发 + Zova 开发, proposes only vona/env/.env.local and zova/env/.env.local, waits for final confirmation before writing, and separately asks whether to run npm run init after success.",
+      "prompt": "I explicitly invoke /cabloy-worktree-environment in the first linked Cabloy Basic worktree. Configure the local environment.",
+      "expected_output": "Validates that the current checkout is a linked Cabloy Basic worktree before any write. Without asking which processes or frontend flavor will run, it uses Git worktree metadata only and recommends APP_NAME from the worktree basename, SERVER_LISTEN_PORT 7103, DEV_SERVER_PORT 9001, DEV_SERVER_HMR_PORT 24680, and API_BASE_URL http://localhost:7103. It labels the configuration as 环境隔离信息：Vona 开发 + Zova 开发, previews both vona/env/.env.local and zova/env/.env.local, waits for final confirmation before writing, and separately asks whether to run npm run init after success.",
       "files": []
     },
     {
       "id": 2,
-      "prompt": "I explicitly invoke /cabloy-worktree-environment in the second linked Cabloy Start worktree. I need Vona, one Zova Web development process, and managed clean E2E.",
-      "expected_output": "Detects __CABLOY_START__, selects npm run test:e2e:start:clean, and uses the shared canonical workflow. It derives APP_NAME from the worktree basename and, for ordinal 2 batch 0, recommends 7104, 9002, and 24681 with API_BASE_URL pointing at 7104. It uses only the two broad local targets, labels the environment as 环境隔离信息：Vona 开发 + Zova 开发, and waits for final confirmation before writing.",
+      "prompt": "I explicitly invoke /cabloy-worktree-environment in the second linked Cabloy Start worktree. Set up the standard local environment.",
+      "expected_output": "Detects __CABLOY_START__, selects npm run test:e2e:start:clean for later verification, and uses the shared canonical workflow. Without a process-selection question, it derives APP_NAME from the worktree basename and, for ordinal 2 batch 0, recommends SERVER_LISTEN_PORT 7104, DEV_SERVER_PORT 9002, DEV_SERVER_HMR_PORT 24681, and API_BASE_URL http://localhost:7104. It uses only the two broad local targets and waits for final confirmation before writing both.",
       "files": []
     },
     {
@@ -21,44 +21,56 @@
     },
     {
       "id": 4,
-      "prompt": "I explicitly invoke /cabloy-worktree-environment in a linked Cabloy Basic worktree. I only need ordinary backend tests and test:e2e:basic:clean; I am not starting Zova, mock build, or SSR preview.",
-      "expected_output": "Uses Git worktree metadata and fixed defaults to recommend only the worktree-basename APP_NAME and SERVER_LISTEN_PORT. It writes only vona/env/.env.local after final confirmation and does not request or add Zova, mock, preview, or HMR settings. It explains that explicitly configured databases, custom Redis keys, and external providers need separate isolation decisions.",
+      "prompt": "I explicitly invoke /cabloy-worktree-environment in a linked Cabloy Basic worktree. I only plan to run ordinary backend tests.",
+      "expected_output": "Does not ask the user to select processes and still recommends the universal five-setting tuple: worktree-basename APP_NAME, SERVER_LISTEN_PORT, DEV_SERVER_PORT, DEV_SERVER_HMR_PORT, and an API_BASE_URL derived from the server port. After confirmation it writes both vona/env/.env.local and zova/env/.env.local, while explaining that external services require separate isolation decisions.",
       "files": []
     },
     {
       "id": 5,
-      "prompt": "I explicitly invoke /cabloy-worktree-environment in a linked Cabloy Basic worktree and need to run both Zova Admin and Web development servers at the same time.",
-      "expected_output": "Rejects the request before generating values or proposing files. It explains that one worktree may run Admin or Web, not both, and directs the user to configure a separate linked worktree for the second flavor. It does not suggest a flavor-specific .env.XXX.local workaround.",
+      "prompt": "I explicitly invoke /cabloy-worktree-environment in a linked Cabloy Basic worktree and later want to use Admin and Web frontend commands.",
+      "expected_output": "Generates the same shared standard tuple without asking for a frontend flavor and never proposes a flavor-specific .env.XXX.local file. It explains that Admin and Web use the generated Zova configuration but must not run concurrently in one worktree; another linked worktree is required for concurrent use.",
       "files": []
     },
     {
       "id": 6,
-      "prompt": "I explicitly invoke /cabloy-worktree-environment in a linked Cabloy Start worktree. I need Vona, one selected Zova Admin development process, and SSR preview.",
-      "expected_output": "Uses only the two broad local targets and the ordinal-based recommendation for the selected Vona and Zova development listeners, including DEV_SERVER_PORT and DEV_SERVER_HMR_PORT. It labels the development environment as 环境隔离信息：Vona 开发 + Zova 开发, inspects the selected preview entrypoint rather than any env file, requests MOCK_BUILD_PORT because current preview scripts also start dist-mock, and manages SSR_PROD_PORT only after confirming the selected entrypoint consumes it. It requires final confirmation before writing.",
+      "prompt": "I explicitly invoke /cabloy-worktree-environment in a linked Cabloy Start worktree and also intend to use SSR preview later.",
+      "expected_output": "Generates only the universal five-setting Vona and Zova tuple in the two broad local files. It does not add MOCK_BUILD_PORT, SSR_PROD_PORT, SSR_API_BASE_URL, or another runtime-specific local file; those require a separately designed workflow.",
       "files": []
     },
     {
       "id": 7,
       "prompt": "I explicitly invoke /cabloy-worktree-environment in a linked Cabloy Basic worktree, but zova/env/.env.local is tracked or not ignored.",
-      "expected_output": "Runs an independent git check-ignore -v -- target command for each proposed broad target and rejects the write before confirmation because every target must be ignored. It does not fall back to a specific local file or modify the tracked target.",
+      "expected_output": "Runs an independent git check-ignore -v -- target command for both broad targets and rejects the write before confirmation because every target must be ignored. It does not fall back to a specific local file or modify the tracked target.",
       "files": []
     },
     {
       "id": 8,
-      "prompt": "I explicitly invoke /cabloy-worktree-environment for Vona plus one Zova Admin process in the first linked Cabloy Basic worktree. The initial proposal is 7103, 9001, and 24680. 再换一批。",
-      "expected_output": "Keeps the same worktree APP_NAME, increases the shared batch by one, and proposes 7104, 9002, and 24681. API_BASE_URL changes to http://localhost:7104. It does not write, inspect ports, inspect environment files, or treat either batch as reserved before final confirmation.",
+      "prompt": "I explicitly invoke /cabloy-worktree-environment in the first linked Cabloy Basic worktree. The initial proposal is 7103, 9001, and 24680. 再换一批。",
+      "expected_output": "Keeps the same worktree APP_NAME, increases the shared batch by one, and proposes SERVER_LISTEN_PORT 7104, DEV_SERVER_PORT 9002, DEV_SERVER_HMR_PORT 24681, and API_BASE_URL http://localhost:7104. It does not write, inspect ports, inspect environment files, or treat either batch as reserved before final confirmation.",
       "files": []
     },
     {
       "id": 9,
-      "prompt": "I explicitly invoke /cabloy-worktree-environment for a linked Cabloy Basic worktree. My local .env.local files may contain credentials. Recommend an isolated Vona plus Zova development configuration.",
-      "expected_output": "Uses only Git worktree metadata, fixed port baselines, and the worktree basename. It does not read, parse, source, expand, print, log, or send any .env* contents, process environment, listener table, or sibling configuration to the model. If a target broad local file exists and is non-empty at the confirmed write stage, it stops without reading or modifying that file.",
+      "prompt": "I explicitly invoke /cabloy-worktree-environment for a linked Cabloy Basic worktree. My local .env.local files may contain credentials. Set up the standard local environment.",
+      "expected_output": "Uses only Git worktree metadata, fixed port baselines, and the worktree basename. It does not read, parse, source, expand, print, log, or send any .env* contents, process environment, listener table, or sibling configuration to the model. If either target broad local file exists and is non-empty at the confirmed write stage, it stops without reading or modifying either file.",
       "files": []
     },
     {
       "id": 10,
-      "prompt": "I explicitly invoke /cabloy-worktree-environment for Vona plus one Zova Admin process in a linked Cabloy Basic worktree. Writing zova/env/.env.local fails after vona/env/.env.local was created.",
+      "prompt": "I explicitly invoke /cabloy-worktree-environment for a linked Cabloy Basic worktree. Writing zova/env/.env.local fails after vona/env/.env.local was created.",
       "expected_output": "Uses only absent or empty permitted targets, snapshots their existence and empty-file state without reading content, removes every target newly created during the failed operation, restores any originally empty target to empty state, and reports the failure without leaving a partial configuration or exposing environment-file content.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "/cabloy-worktree-environment",
+      "expected_output": "After validating that the current checkout is a linked Cabloy worktree, immediately proposes the complete universal tuple and previews both broad local files. It does not ask the user to choose Vona, tests, E2E, Admin, or Web before the final confirmation.",
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "I confirm the proposed standard tuple in a valid linked worktree.",
+      "expected_output": "Rechecks ignore rules and absent-or-empty state for both permitted targets, then writes vona/env/.env.local and zova/env/.env.local together. It validates their generated assignments without reading prior content and only then asks the exact separate npm run init question.",
       "files": []
     }
   ]
