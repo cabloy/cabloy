@@ -4,13 +4,13 @@
     {
       "id": 1,
       "prompt": "I explicitly invoke /cabloy-worktree-environment in my second Cabloy Basic worktree. I need Vona, Zova Admin, and test:e2e:basic:clean to run alongside my primary checkout. Please configure the isolated environment.",
-      "expected_output": "Validates that the current checkout is a linked Cabloy Basic worktree before any write, inspects local precedence, and asks the user to provide one APP_NAME plus Vona and one Zova development port. It requires API_BASE_URL to target the selected Vona port, proposes only vona/env/.env.local and zova/env/.env.local, waits for final confirmation before writing, does not request DEV_SERVER_HMR_PORT, and separately asks whether to run npm run init after successful setup.",
+      "expected_output": "Validates that the current checkout is a linked Cabloy Basic worktree before any write, inspects local precedence, and asks the user to provide one APP_NAME plus Vona, Zova development, and Zova HMR ports. It requires API_BASE_URL to target the selected Vona port, proposes only vona/env/.env.local and zova/env/.env.local, validates all selected listener ports are distinct, waits for final confirmation before writing, and separately asks whether to run npm run init after successful setup.",
       "files": []
     },
     {
       "id": 2,
       "prompt": "I explicitly invoke /cabloy-worktree-environment in a linked Cabloy Start worktree. I need Vona, Zova Web, and the managed clean E2E flow to run in isolation.",
-      "expected_output": "When this finalized skill has been synchronized into the Start repository, detects __CABLOY_START__ and continues with the shared canonical workflow instead of rejecting Start. It proposes only vona/env/.env.local and zova/env/.env.local, selects npm run test:e2e:start:clean, does not reuse Basic clean-E2E names or flavor assumptions, and waits for final confirmation before writing.",
+      "expected_output": "Detects __CABLOY_START__ and continues with the shared canonical workflow instead of rejecting Start. It proposes only vona/env/.env.local and zova/env/.env.local, selects npm run test:e2e:start:clean, requires distinct Zova development and HMR ports, does not reuse Basic clean-E2E names or flavor assumptions, and waits for final confirmation before writing.",
       "files": []
     },
     {
@@ -40,7 +40,7 @@
     {
       "id": 7,
       "prompt": "I explicitly invoke /cabloy-worktree-environment in a linked Cabloy Start worktree. I need Vona, one selected Zova Admin development process, and SSR preview.",
-      "expected_output": "Uses only the two broad local targets, inspects the selected preview entrypoint, and requests MOCK_BUILD_PORT because current preview scripts also start dist-mock. It manages SSR_PROD_PORT only after confirming the selected entrypoint consumes it, does not request DEV_SERVER_HMR_PORT, and requires final confirmation before writing.",
+      "expected_output": "Uses only the two broad local targets, requires distinct DEV_SERVER_PORT and DEV_SERVER_HMR_PORT values for the selected Zova Admin development server, inspects the selected preview entrypoint, and requests MOCK_BUILD_PORT because current preview scripts also start dist-mock. It manages SSR_PROD_PORT only after confirming the selected entrypoint consumes it and requires final confirmation before writing.",
       "files": []
     },
     {
@@ -51,6 +51,12 @@
     },
     {
       "id": 9,
+      "prompt": "I explicitly invoke /cabloy-worktree-environment for Vona plus one Zova Admin process in a linked Cabloy Basic worktree. Another running worktree already listens on my selected DEV_SERVER_HMR_PORT, although its DEV_SERVER_PORT is different.",
+      "expected_output": "Reports the HMR listener collision and stops for the user to choose a different DEV_SERVER_HMR_PORT. It does not auto-allocate a replacement, omit HMR isolation, or propose a flavor-specific local file.",
+      "files": []
+    },
+    {
+      "id": 10,
       "prompt": "I explicitly invoke /cabloy-worktree-environment for Vona plus one Zova Admin process in a linked Cabloy Basic worktree. Writing zova/env/.env.local fails after vona/env/.env.local was changed.",
       "expected_output": "Snapshots the content and existence state of both broad targets before editing, restores every previously changed target to its exact prior content when any write fails, removes newly created target files, and reports the failure without leaving a partial configuration.",
       "files": []

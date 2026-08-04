@@ -104,7 +104,7 @@ When a request involves a second worktree, concurrent Vona/Zova development, iso
 
 This routing skill provides read-only guidance only. Do not infer an `APP_NAME` or ports, edit local overrides, or run `npm run init` from a generic worktree request. When the user wants confirmation-gated local environment setup, ask them to explicitly invoke `/cabloy-worktree-environment`.
 
-The invoked skill detects Basic or Start to select the active root scripts and managed clean-E2E command. It may write only `vona/env/.env.local` and `zova/env/.env.local`; never use flavor-, mode-, app-mode-, or runtime-specific `.env.*.local` files. A worktree runs one Zova development flavor, Admin or Web. Concurrent Admin and Web development requires separately configured linked worktrees.
+The invoked skill detects Basic or Start to select the active root scripts and managed clean-E2E command. It may write only `vona/env/.env.local` and `zova/env/.env.local`; never use flavor-, mode-, app-mode-, or runtime-specific `.env.*.local` files. A selected Zova development process requires isolated `DEV_SERVER_PORT` and `DEV_SERVER_HMR_PORT` listeners. A worktree runs one Zova development flavor, Admin or Web. Concurrent Admin and Web development requires separately configured linked worktrees.
 
 ## Step 4: Prefer CLI-first workflows
 

@@ -1,6 +1,6 @@
 ---
 name: cabloy-worktree-environment
-description: This Cabloy Basic-hosted skill must be used only when the user explicitly invokes /cabloy-worktree-environment or explicitly asks to perform the named Cabloy worktree-environment setup. It defines a confirmation-gated, worktree-local isolated runtime environment for a linked Cabloy Basic worktree and for Cabloy Start after this skill is synchronized there. Do not use it merely because a request mentions worktrees, parallel work, ports, development, tests, or E2E; route those requests to cabloy-workflow for read-only guidance instead.
+description: This skill must be used only when the user explicitly invokes /cabloy-worktree-environment or explicitly asks to perform the named Cabloy worktree-environment setup. It configures a confirmation-gated, worktree-local isolated runtime environment for a linked Cabloy Basic or Cabloy Start Git worktree. Do not use it merely because a request mentions worktrees, parallel work, ports, development, tests, or E2E; route those requests to cabloy-workflow for read-only guidance instead.
 ---
 
 # Cabloy Worktree Environment
@@ -53,6 +53,7 @@ For managed keys, report only the effective precedence and relevant values:
 - `API_BASE_URL`
 - `SSR_API_BASE_URL`
 - `DEV_SERVER_PORT`
+- `DEV_SERVER_HMR_PORT`
 - `MOCK_BUILD_PORT`
 - `SSR_PROD_PORT`, only after verifying that the selected preview entrypoint consumes it
 
@@ -60,7 +61,7 @@ Do not display unrelated local configuration or secrets. If an applicable specif
 
 If either permitted broad target contains duplicate definitions for a managed key, stop and ask the user to resolve the ambiguity.
 
-`DEV_SERVER_HMR_PORT` is not a managed setting. Do not request, write, or validate it unless a future source inspection confirms an active runtime listener consumer.
+`DEV_SERVER_HMR_PORT` is a managed Zova development setting. The enabled `quasar-app-extension-zova` maps it to Vite's client HMR/WebSocket listener, so every concurrently running Zova development worktree needs a user-selected unique value.
 
 ## Step 3: Collect an explicit configuration choice
 
@@ -73,14 +74,14 @@ Required settings by selected process:
 | Selected process | Required settings |
 | --- | --- |
 | Vona development, ordinary tests, or managed clean E2E | Shared `APP_NAME` and Vona `SERVER_LISTEN_PORT` |
-| One Zova Admin or Web development process | The same `APP_NAME`, `API_BASE_URL`, and `DEV_SERVER_PORT` |
+| One Zova Admin or Web development process | The same `APP_NAME`, `API_BASE_URL`, `DEV_SERVER_PORT`, and `DEV_SERVER_HMR_PORT` |
 | Standalone mock-build | `MOCK_BUILD_PORT`, only when selected |
 | SSR preview | Inspect the selected preview entrypoint and require every verified listener it starts; current preview scripts also start `dist-mock`, so require `MOCK_BUILD_PORT` when it is consumed |
 
 Require the user to provide and explicitly confirm:
 
 1. one non-empty, unique `APP_NAME`
-2. integer TCP ports from 1 through 65535 for all selected listeners
+2. integer TCP ports from 1 through 65535 for all selected listeners, including both Zova development listeners
 3. no duplicate selected listener ports
 4. when Zova is selected, an `API_BASE_URL` that targets the selected local Vona port
 
@@ -127,7 +128,7 @@ After writing, re-read the targeted local files and confirm:
 
 - Vona and Zova use the same `APP_NAME` when Zova is selected
 - `API_BASE_URL` targets the selected Vona port
-- selected listener ports are distinct
+- selected listener ports, including `DEV_SERVER_PORT` and `DEV_SERVER_HMR_PORT` when Zova development is selected, are distinct
 - no applicable specific local file masks a required broad assignment
 - mock and preview values exist only for selected runtime entrypoints
 - the selected edition's development and managed clean-E2E commands still exist

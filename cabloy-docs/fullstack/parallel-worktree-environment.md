@@ -2,7 +2,7 @@
 
 Use worktree-local environment overrides when two Cabloy Basic or Cabloy Start worktrees need to run ordinary local development or managed E2E checks at the same time.
 
-This Cabloy Basic page is the canonical shared recipe for both editions. The Cabloy Start documentation copy is synchronized from this page manually in a later release. Detect the active edition before selecting commands, but keep the same two-file isolation model.
+This Cabloy Basic page is the canonical shared recipe for both editions. Detect the active edition before selecting commands, but keep the same two-file isolation model.
 
 This workflow creates an isolated local runtime without changing committed environment defaults. It covers normal Vona development, one selected Zova development flavor, `npm run test`, and the edition-appropriate managed clean E2E command. It does not automatically isolate every external dependency.
 
@@ -10,7 +10,7 @@ This workflow creates an isolated local runtime without changing committed envir
 
 1. Confirm that the checkout is a separate linked worktree.
 2. Check `vona/env/` and `zova/env/` for applicable, more-specific `.env.*.local` files. They can mask a broad `.env.local` setting.
-3. Choose one unique worktree name and unused listener ports for the selected processes.
+3. Choose one unique worktree name and unused Vona, Zova development, and Zova HMR listener ports for the selected processes.
 4. Choose one Zova development flavor: Admin or Web. To run the other flavor concurrently, create and configure another linked worktree.
 
 The repository ignores `**/env/.env*.local`, but this workflow may create or change only these broad files:
@@ -43,18 +43,19 @@ Use this only when the worktree runs one selected Admin or Web development proce
 APP_NAME = cabloy-worktree-name
 API_BASE_URL = http://localhost:7113
 DEV_SERVER_PORT = 9013
+DEV_SERVER_HMR_PORT = 24693
 ```
 
 Keep these invariants:
 
 - Vona and Zova use the same unique `APP_NAME`.
 - `API_BASE_URL` points to the selected Vona `SERVER_LISTEN_PORT`.
-- Selected listener ports, including `SERVER_LISTEN_PORT` and one `DEV_SERVER_PORT`, are unique among concurrently running worktrees.
+- Selected listener ports, including `SERVER_LISTEN_PORT`, `DEV_SERVER_PORT`, and `DEV_SERVER_HMR_PORT`, are unique among concurrently running worktrees.
 - A worktree runs Admin or Web frontend development, not both. Use a separate linked worktree for concurrent development of the other flavor.
 
 The base Zova environment defines `SSR_API_BASE_URL = $API_BASE_URL`, so SSR uses the same Vona target in the normal baseline. Add an explicit local `SSR_API_BASE_URL` only after confirming that the selected runtime requires it and that no applicable specific local file masks it.
 
-`DEV_SERVER_HMR_PORT` is not part of this recipe because the current runtime does not consume it as a separate listener setting.
+The enabled Zova Quasar extension maps `DEV_SERVER_HMR_PORT` to Vite's client HMR/WebSocket listener. It is a separate listener when it differs from `DEV_SERVER_PORT`, so every concurrently running Zova development worktree needs its own unique HMR port.
 
 ## Edition-aware commands
 
@@ -71,7 +72,7 @@ Both managed clean E2E workflows read Vona's effective local `SERVER_LISTEN_PORT
 
 A unique `APP_NAME` separates the application identity used by ordinary framework-managed local resources, including managed test database names and Redis-related key prefixes. Worktree-local generated files, runtime files, build output, and coverage output are already separated by their worktree paths.
 
-The selected Vona and Zova development ports let worktrees run their ordinary local processes concurrently. The matching Zova API URL prevents the frontend in one worktree from calling the Vona process in another.
+The selected Vona, Zova development HTTP, and Zova HMR ports let worktrees run their ordinary local processes concurrently. The matching Zova API URL prevents the frontend in one worktree from calling the Vona process in another.
 
 This is sufficient for the normal local workflows:
 
@@ -99,7 +100,7 @@ Current SSR preview scripts also start `dist-mock`; configure `MOCK_BUILD_PORT` 
 
 ## Guided setup and initialization
 
-When the active repository has the synchronized `/cabloy-worktree-environment` skill, explicitly invoke it for confirmation-gated setup. The skill validates the linked worktree and edition, checks broad-file precedence, requires user-chosen values, and writes only the two allowed broad local files after final confirmation. Until Cabloy Start receives that later skill synchronization, follow this page manually in the Start worktree and preserve the same constraints.
+For confirmation-gated setup, explicitly invoke `/cabloy-worktree-environment`. The skill validates the linked worktree and edition, checks broad-file precedence, requires user-chosen values, and writes only the two allowed broad local files after final confirmation.
 
 After local overrides are validated, decide separately whether to run `npm run init`. It is not an environment allocator: it installs dependencies, runs generation/build-related work, and rewrites the base `APP_NAME` values in `vona/env/.env` and `zova/env/.env`.
 

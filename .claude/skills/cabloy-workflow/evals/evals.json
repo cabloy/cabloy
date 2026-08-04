@@ -34,7 +34,7 @@
     {
       "id": 6,
       "prompt": "I created a second Cabloy Basic worktree and need to run Vona, Zova Admin, and test:e2e:basic:clean in parallel with the first worktree. Which environment files and exact variables should I configure without changing shared defaults?",
-      "expected_output": "Classifies this as fullstack parallel-worktree environment setup and routes to the canonical shared Parallel Worktree Environment guide. Explains that generic routing is read-only: it must not infer APP_NAME or ports, edit local env files, or run npm run init. Directs the user to explicitly invoke /cabloy-worktree-environment for confirmation-gated setup using only vona/env/.env.local and zova/env/.env.local. It does not require DEV_SERVER_HMR_PORT, does not use a flavor-specific local file, and treats Admin and Web as separate-worktree development choices.",
+      "expected_output": "Classifies this as fullstack parallel-worktree environment setup and routes to the canonical shared Parallel Worktree Environment guide. Explains that generic routing is read-only: it must not infer APP_NAME or ports, edit local env files, or run npm run init. Directs the user to explicitly invoke /cabloy-worktree-environment for confirmation-gated setup using only vona/env/.env.local and zova/env/.env.local. For the selected Zova Admin process, the setup must collect and isolate both DEV_SERVER_PORT and DEV_SERVER_HMR_PORT, does not use a flavor-specific local file, and treats Admin and Web as separate-worktree development choices.",
       "files": []
     },
     {
