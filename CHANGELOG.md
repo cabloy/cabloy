@@ -1,5 +1,20 @@
 # Changelog
 
+## 5.1.126
+
+### Features
+
+- Add and update skills for the cabloy worktree environment.
+- Add payment capabilities and related tests.
+- Add DTO inference support.
+- Add `$Dto.get` rules.
+- Update application capabilities and workflows.
+
+### Improvements
+
+- Refactor DTO inference handling.
+- Refactor training-related modules.
+
 ## 5.1.125
 
 ### Features
