@@ -17,7 +17,7 @@ import type { IEntityOptionsRefundOperation } from '../entity/refundOperation.ts
 import type { IEntityOptionsWebhookInbox } from '../entity/webhookInbox.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'a-pay:outboxEvent': IEntityOptionsOutboxEvent;
 'a-pay:paymentAudit': IEntityOptionsPaymentAudit;
@@ -27,10 +27,10 @@ declare module 'vona-module-a-orm' {
 'a-pay:webhookInbox': IEntityOptionsWebhookInbox;
     }
 
-  
+
 }
 declare module 'vona-module-a-pay' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -73,7 +73,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-a-pay' {
-  
+
     export interface IEntityOptionsOutboxEvent {
       fields?: TypeEntityOptionsFields<EntityOutboxEvent, IEntityOptionsOutboxEvent[TypeSymbolKeyFieldsMore]>;
     }
@@ -114,7 +114,7 @@ import type { IModelOptionsRefundOperation } from '../model/refundOperation.ts';
 import type { IModelOptionsWebhookInbox } from '../model/webhookInbox.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'a-pay:outboxEvent': IModelOptionsOutboxEvent;
 'a-pay:paymentAudit': IModelOptionsPaymentAudit;
@@ -124,10 +124,10 @@ declare module 'vona-module-a-orm' {
 'a-pay:webhookInbox': IModelOptionsWebhookInbox;
     }
 
-  
+
 }
 declare module 'vona-module-a-pay' {
-  
+
         export interface ModelOutboxEvent {
           /** @internal */
           get scope(): ScopeModuleAPay;
@@ -192,7 +192,7 @@ declare module 'vona-module-a-pay' {
             get $beanFullName(): 'a-pay.model.webhookInbox';
             get $onionName(): 'a-pay:webhookInbox';
             get $onionOptions(): IModelOptionsWebhookInbox;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -229,7 +229,7 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-a-pay' {
-  
+
   export interface ModelOutboxEvent {
       [SymbolKeyEntity]: EntityOutboxEvent;
       [SymbolKeyEntityMeta]: EntityOutboxEventMeta;
@@ -470,11 +470,11 @@ export * from '../bean/bean.payScene.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-pay' {
-  
+
         export interface BeanPayProvider {
           /** @internal */
           get scope(): ScopeModuleAPay;
@@ -483,7 +483,7 @@ declare module 'vona-module-a-pay' {
         export interface BeanPayScene {
           /** @internal */
           get scope(): ScopeModuleAPay;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -499,6 +499,7 @@ declare module 'vona' {
 /** bean: end */
 /** service: begin */
 export * from '../service/outbox.ts';
+export * from '../service/paymentCallback.ts';
 export * from '../service/paymentSession.ts';
 export * from '../service/providerOperation.ts';
 export * from '../service/refundOperation.ts';
@@ -506,19 +507,20 @@ export * from '../service/webhook.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-pay:outbox': never;
+'a-pay:paymentCallback': never;
 'a-pay:paymentSession': never;
 'a-pay:providerOperation': never;
 'a-pay:refundOperation': never;
 'a-pay:webhook': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-pay' {
-  
+
         export interface ServiceOutbox {
           /** @internal */
           get scope(): ScopeModuleAPay;
@@ -527,7 +529,18 @@ declare module 'vona-module-a-pay' {
           export interface ServiceOutbox {
             get $beanFullName(): 'a-pay.service.outbox';
             get $onionName(): 'a-pay:outbox';
-            
+
+          }
+
+        export interface ServicePaymentCallback {
+          /** @internal */
+          get scope(): ScopeModuleAPay;
+        }
+
+          export interface ServicePaymentCallback {
+            get $beanFullName(): 'a-pay.service.paymentCallback';
+            get $onionName(): 'a-pay:paymentCallback';
+
           }
 
         export interface ServicePaymentSession {
@@ -538,7 +551,7 @@ declare module 'vona-module-a-pay' {
           export interface ServicePaymentSession {
             get $beanFullName(): 'a-pay.service.paymentSession';
             get $onionName(): 'a-pay:paymentSession';
-            
+
           }
 
         export interface ServiceProviderOperation {
@@ -549,7 +562,7 @@ declare module 'vona-module-a-pay' {
           export interface ServiceProviderOperation {
             get $beanFullName(): 'a-pay.service.providerOperation';
             get $onionName(): 'a-pay:providerOperation';
-            
+
           }
 
         export interface ServiceRefundOperation {
@@ -560,7 +573,7 @@ declare module 'vona-module-a-pay' {
           export interface ServiceRefundOperation {
             get $beanFullName(): 'a-pay.service.refundOperation';
             get $onionName(): 'a-pay:refundOperation';
-            
+
           }
 
         export interface ServiceWebhook {
@@ -571,18 +584,20 @@ declare module 'vona-module-a-pay' {
           export interface ServiceWebhook {
             get $beanFullName(): 'a-pay.service.webhook';
             get $onionName(): 'a-pay:webhook';
-            
-          } 
+
+          }
 }
 /** service: end */
 /** service: begin */
 import type { ServiceOutbox } from '../service/outbox.ts';
+import type { ServicePaymentCallback } from '../service/paymentCallback.ts';
 import type { ServicePaymentSession } from '../service/paymentSession.ts';
 import type { ServiceProviderOperation } from '../service/providerOperation.ts';
 import type { ServiceRefundOperation } from '../service/refundOperation.ts';
 import type { ServiceWebhook } from '../service/webhook.ts';
 export interface IModuleService {
   'outbox': ServiceOutbox;
+'paymentCallback': ServicePaymentCallback;
 'paymentSession': ServicePaymentSession;
 'providerOperation': ServiceProviderOperation;
 'refundOperation': ServiceRefundOperation;
@@ -595,6 +610,7 @@ import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
     'a-pay.service.outbox': ServiceOutbox;
+'a-pay.service.paymentCallback': ServicePaymentCallback;
 'a-pay.service.paymentSession': ServicePaymentSession;
 'a-pay.service.providerOperation': ServiceProviderOperation;
 'a-pay.service.refundOperation': ServiceRefundOperation;
@@ -609,17 +625,17 @@ export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'a-pay:index': IMetaOptionsIndex;
 'a-pay:redlock': never;
 'a-pay:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-pay' {
-  
+
         export interface MetaIndex {
           /** @internal */
           get scope(): ScopeModuleAPay;
@@ -639,7 +655,7 @@ declare module 'vona-module-a-pay' {
           export interface MetaRedlock {
             get $beanFullName(): 'a-pay.meta.redlock';
             get $onionName(): 'a-pay:redlock';
-            
+
           }
 
         export interface MetaVersion {
@@ -650,8 +666,8 @@ declare module 'vona-module-a-pay' {
           export interface MetaVersion {
             get $beanFullName(): 'a-pay.meta.version';
             get $onionName(): 'a-pay:version';
-            
-          } 
+
+          }
 }
 /** meta: end */
 /** meta redlock: begin */
@@ -662,15 +678,15 @@ export * from '../bean/queue.outboxDispatch.ts';
 
 import { type IDecoratorQueueOptions } from 'vona-module-a-queue';
 declare module 'vona-module-a-queue' {
-  
+
     export interface IQueueRecord {
       'a-pay:outboxDispatch': IDecoratorQueueOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-pay' {
-  
+
         export interface QueueOutboxDispatch {
           /** @internal */
           get scope(): ScopeModuleAPay;
@@ -680,7 +696,7 @@ declare module 'vona-module-a-pay' {
             get $beanFullName(): 'a-pay.queue.outboxDispatch';
             get $onionName(): 'a-pay:outboxDispatch';
             get $onionOptions(): IDecoratorQueueOptions;
-          } 
+          }
 }
 /** queue: end */
 /** queue: begin */
@@ -695,16 +711,16 @@ export * from '../bean/schedule.providerOperationDispatch.ts';
 
 import { type IDecoratorScheduleOptions } from 'vona-module-a-schedule';
 declare module 'vona-module-a-schedule' {
-  
+
     export interface IScheduleRecord {
       'a-pay:outboxDispatch': IDecoratorScheduleOptions;
 'a-pay:providerOperationDispatch': IDecoratorScheduleOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-pay' {
-  
+
         export interface ScheduleOutboxDispatch {
           /** @internal */
           get scope(): ScopeModuleAPay;
@@ -725,7 +741,7 @@ declare module 'vona-module-a-pay' {
             get $beanFullName(): 'a-pay.schedule.providerOperationDispatch';
             get $onionName(): 'a-pay:providerOperationDispatch';
             get $onionOptions(): IDecoratorScheduleOptions;
-          } 
+          }
 }
 /** schedule: end */
 /** dto: begin */
@@ -737,17 +753,17 @@ import type { IDtoOptionsPaymentSessionView } from '../dto/paymentSessionView.ts
 import type { IDtoOptionsWebhookReceipt } from '../dto/webhookReceipt.tsx';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'a-pay:paymentSessionStart': IDtoOptionsPaymentSessionStart;
 'a-pay:paymentSessionView': IDtoOptionsPaymentSessionView;
 'a-pay:webhookReceipt': IDtoOptionsWebhookReceipt;
     }
 
-  
+
 }
 declare module 'vona-module-a-pay' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
@@ -755,7 +771,7 @@ import type { DtoPaymentSessionStart } from '../dto/paymentSessionStart.tsx';
 import type { DtoPaymentSessionView } from '../dto/paymentSessionView.tsx';
 import type { DtoWebhookReceipt } from '../dto/webhookReceipt.tsx';
 declare module 'vona-module-a-pay' {
-  
+
     export interface IDtoOptionsPaymentSessionStart {
       fields?: TypeEntityOptionsFields<DtoPaymentSessionStart, IDtoOptionsPaymentSessionStart[TypeSymbolKeyFieldsMore]>;
     }
@@ -770,22 +786,36 @@ declare module 'vona-module-a-pay' {
 }
 /** dto: end */
 /** controller: begin */
+export * from '../controller/paymentCallback.ts';
 export * from '../controller/paymentSession.ts';
 export * from '../controller/webhook.ts';
+import type { IControllerOptionsPaymentCallback } from '../controller/paymentCallback.ts';
 import type { IControllerOptionsPaymentSession } from '../controller/paymentSession.ts';
 import type { IControllerOptionsWebhook } from '../controller/webhook.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
-      'a-pay:paymentSession': IControllerOptionsPaymentSession;
+      'a-pay:paymentCallback': IControllerOptionsPaymentCallback;
+'a-pay:paymentSession': IControllerOptionsPaymentSession;
 'a-pay:webhook': IControllerOptionsWebhook;
     }
 
-  
+
 }
 declare module 'vona-module-a-pay' {
-  
+
+        export interface ControllerPaymentCallback {
+          /** @internal */
+          get scope(): ScopeModuleAPay;
+        }
+
+          export interface ControllerPaymentCallback {
+            get $beanFullName(): 'a-pay.controller.paymentCallback';
+            get $onionName(): 'a-pay:paymentCallback';
+            get $onionOptions(): IControllerOptionsPaymentCallback;
+          }
+
         export interface ControllerPaymentSession {
           /** @internal */
           get scope(): ScopeModuleAPay;
@@ -806,16 +836,22 @@ declare module 'vona-module-a-pay' {
             get $beanFullName(): 'a-pay.controller.webhook';
             get $onionName(): 'a-pay:webhook';
             get $onionOptions(): IControllerOptionsWebhook;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
+// @ts-ignore ignore
+import type { ControllerPaymentCallback } from '../controller/paymentCallback.ts';
 // @ts-ignore ignore
 import type { ControllerPaymentSession } from '../controller/paymentSession.ts';
 // @ts-ignore ignore
 import type { ControllerWebhook } from '../controller/webhook.ts';
 declare module 'vona-module-a-pay' {
-  
+
+    export interface IControllerOptionsPaymentCallback {
+      actions?: TypeControllerOptionsActions<ControllerPaymentCallback>;
+    }
+
     export interface IControllerOptionsPaymentSession {
       actions?: TypeControllerOptionsActions<ControllerPaymentSession>;
     }
@@ -825,12 +861,15 @@ declare module 'vona-module-a-pay' {
     }
 }
 declare module 'vona-module-a-web' {
-  export interface IApiPathPostRecord{
-        '/payment-session/:id/start': undefined;
-'/pay/webhook/:providerName/:clientName': undefined;
+  export interface IApiPathGetRecord{
+        '/payment-callback/return': undefined;
+'/payment-callback/cancel': undefined;
+'/payment-session/:id': undefined;
     }
-export interface IApiPathGetRecord{
-        '/payment-session/:id': undefined;
+export interface IApiPathPostRecord{
+        '/payment-session/:id/start': undefined;
+'/payment-session/:id/reconcile': undefined;
+'/pay/webhook/:providerName/:clientName': undefined;
     }
 
 }
@@ -861,11 +900,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     pay: ScopeModuleAPay;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

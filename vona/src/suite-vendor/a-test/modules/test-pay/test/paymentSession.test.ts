@@ -79,6 +79,31 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('rejects an unavailable provider candidate instead of falling back', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const scope = app.scope('a-pay');
+      const suffix = randomUUID().slice(0, 12);
+      const user = await app.bean.user.register({ name: `payment-candidate-${suffix}` }, true);
+      const fixture: IFixture = { userId: user.id as number };
+      try {
+        await assert.rejects(
+          scope.service.paymentSession.create({
+            userId: user.id,
+            payScene: 'commerce-payment:commerceOrder',
+            businessReference: `business-${suffix}`,
+            amountMinor: 1299,
+            currency: 'USD',
+            correlationId: `payment-${suffix}`,
+            providerCandidateKey: 'paypal',
+          }),
+          { status: 422 },
+        );
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
   it('rejects a currency outside the payment scene policy', async () => {
     await app.bean.executor.mockCtx(async () => {
       const scope = app.scope('a-pay');

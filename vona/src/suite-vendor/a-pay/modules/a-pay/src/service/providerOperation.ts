@@ -7,7 +7,12 @@ import { Core } from 'vona-module-a-core';
 
 import type { EntityPaymentSession } from '../entity/paymentSession.tsx';
 import type { EntityProviderOperation } from '../entity/providerOperation.tsx';
-import type { IPayProviderPaymentSnapshot } from '../types/payment.ts';
+import type {
+  IPayProviderPaymentInput,
+  IPayProviderPaymentSnapshot,
+  IPayProviderRefundInput,
+  TypeProviderOperationKind,
+} from '../types/payment.ts';
 
 const ClaimLeaseMilliseconds = 60_000;
 const MaxAttempts = 10;
@@ -20,9 +25,29 @@ export class ServiceProviderOperation extends BeanBase {
       async () => {
         const operation = await this.ensureStart(paymentSessionId);
         await this.execute(operation.id);
-        const session = await this.scope.model.paymentSession.getById(paymentSessionId);
-        if (!session) this.app.throw(404, 'payment session not found');
-        return session;
+        return await this._getSession(paymentSessionId);
+      },
+    );
+  }
+
+  async confirm(paymentSessionId: TableIdentity): Promise<EntityPaymentSession> {
+    return await this.scope.redlock.lock(
+      `pay.providerOperation.confirm.${paymentSessionId}`,
+      async () => {
+        const operation = await this.ensureConfirm(paymentSessionId);
+        await this.execute(operation.id);
+        return await this._getSession(paymentSessionId);
+      },
+    );
+  }
+
+  async reconcile(paymentSessionId: TableIdentity): Promise<EntityPaymentSession> {
+    return await this.scope.redlock.lock(
+      `pay.providerOperation.query.${paymentSessionId}`,
+      async () => {
+        const operation = await this.ensureQuery(paymentSessionId);
+        await this.execute(operation.id);
+        return await this._getSession(paymentSessionId);
       },
     );
   }
@@ -31,7 +56,6 @@ export class ServiceProviderOperation extends BeanBase {
   async ensureStart(paymentSessionId: TableIdentity): Promise<EntityProviderOperation> {
     const session = await this.scope.model.paymentSession.getByIdForUpdate(paymentSessionId);
     if (!session) this.app.throw(404, 'payment session not found');
-
     const existing = await this.scope.model.providerOperation.getForUpdate({
       paymentSessionId: session.id,
       kind: 'start',
@@ -50,23 +74,62 @@ export class ServiceProviderOperation extends BeanBase {
       source: 'providerOperation.start',
       occurredAt: now,
     });
-    return await this.scope.model.providerOperation.insert({
+    return await this._insertOperation(session, 'start', `${session.correlationId}:start`, now);
+  }
+
+  @Core.transaction()
+  async ensureConfirm(paymentSessionId: TableIdentity): Promise<EntityProviderOperation> {
+    const session = await this.scope.model.paymentSession.getByIdForUpdate(paymentSessionId);
+    if (!session) this.app.throw(404, 'payment session not found');
+    if (!session.providerOrderId) this.app.throw(409, 'payment session has no provider order');
+    if (['succeeded', 'failed', 'cancelled', 'expired'].includes(session.state)) {
+      this.app.throw(409, 'payment session is already finalized');
+    }
+    if (session.providerCaptureId || session.state === 'processing') {
+      return await this._ensureQueryLocked(session);
+    }
+    const existing = await this.scope.model.providerOperation.getForUpdate({
       paymentSessionId: session.id,
-      kind: 'start',
-      state: 'created',
-      idempotencyKey: `${session.correlationId}:start`,
-      correlationId: session.correlationId,
-      attemptCount: 0,
-      nextAttemptAt: new Date(now.getTime() - 1_000),
+      kind: 'confirm',
     });
+    if (existing && !['succeeded', 'failed'].includes(existing.state)) return existing;
+    return await this._insertOperation(
+      session,
+      'confirm',
+      `${session.correlationId}:confirm`,
+      new Date(),
+    );
+  }
+
+  @Core.transaction()
+  async ensureQuery(paymentSessionId: TableIdentity): Promise<EntityProviderOperation> {
+    const session = await this.scope.model.paymentSession.getByIdForUpdate(paymentSessionId);
+    if (!session) this.app.throw(404, 'payment session not found');
+    if (!session.providerOrderId && !session.providerCaptureId) {
+      this.app.throw(409, 'payment session has no provider resource to reconcile');
+    }
+    return await this._ensureQueryLocked(session);
+  }
+
+  private async _ensureQueryLocked(session: EntityPaymentSession) {
+    const existing = await this.scope.model.providerOperation.getForUpdate({
+      paymentSessionId: session.id,
+      kind: 'query',
+    });
+    if (existing && !['succeeded', 'failed'].includes(existing.state)) return existing;
+    return await this._insertOperation(
+      session,
+      'query',
+      `${session.correlationId}:query`,
+      new Date(),
+    );
   }
 
   async execute(providerOperationId: TableIdentity) {
     const operation = await this.claim(providerOperationId);
     if (!operation) return undefined;
     try {
-      const session = await this.scope.model.paymentSession.getById(operation.paymentSessionId);
-      if (!session) this.app.throw(404, 'payment session not found');
+      const session = await this._getSession(operation.paymentSessionId);
       const { provider, clientOptions } = this.bean.payProvider.resolveByName(
         session.providerName,
         session.clientName,
@@ -74,56 +137,83 @@ export class ServiceProviderOperation extends BeanBase {
       if (clientOptions.environment !== session.environment) {
         this.app.throw(500, 'payment session provider environment is inconsistent');
       }
-      const isReconciliation =
-        operation.state === 'reconciliation_required' ||
-        operation.state === 'claimed' ||
-        operation.state === 'submitted';
       await this.markSubmitted(operation.id, operation.claimToken!);
       if (operation.kind === 'refund') {
-        const refundOperationId = operation.refundOperationId;
-        if (!refundOperationId) this.app.throw(500, 'refund provider operation is not linked');
-        const refund = await this.scope.model.refundOperation.getById(refundOperationId);
-        if (!refund) this.app.throw(404, 'refund operation not found');
-        if (!session.providerCaptureId)
-          this.app.throw(409, 'payment session has no provider capture');
-        const input = {
-          paymentSessionId: session.id,
-          refundOperationId: refund.id,
-          businessReference: refund.businessReference,
-          idempotencyKey: operation.idempotencyKey,
-          amountMinor: refund.amountMinor,
-          currency: refund.currency,
-          providerCaptureId: session.providerCaptureId,
-        };
-        const snapshot =
-          isReconciliation && provider.queryRefund
-            ? await provider.queryRefund(input, clientOptions)
-            : await provider.createRefund(input, clientOptions);
-        await this.scope.service.refundOperation.settleProviderSnapshot(
-          operation.id,
-          operation.claimToken!,
-          snapshot,
-        );
-        return snapshot;
+        return await this._executeRefund(operation, session, provider, clientOptions);
       }
-      const input = {
-        paymentSessionId: session.id,
-        businessReference: session.businessReference,
-        idempotencyKey: operation.idempotencyKey,
-        amountMinor: session.amountMinor,
-        currency: session.currency,
-        providerOrderId: session.providerOrderId,
-      };
-      const snapshot =
-        operation.state === 'reconciliation_required'
-          ? await provider.queryPayment(input, clientOptions)
-          : await provider.startPayment(input, clientOptions);
+      const snapshot = await this._executePayment(operation, session, provider, clientOptions);
       await this.settlePaymentSnapshot(operation.id, operation.claimToken!, snapshot);
       return snapshot;
     } catch (error) {
       await this.releaseForReconciliation(operation.id, operation.claimToken!, error);
       return undefined;
     }
+  }
+
+  private async _executePayment(
+    operation: EntityProviderOperation,
+    session: EntityPaymentSession,
+    provider: ReturnType<typeof this.bean.payProvider.resolveByName>['provider'],
+    clientOptions: ReturnType<typeof this.bean.payProvider.resolveByName>['clientOptions'],
+  ) {
+    const callbackUrls =
+      operation.kind === 'start' && clientOptions.capabilities.redirectCheckout
+        ? await this.scope.service.paymentCallback.createUrls(session)
+        : undefined;
+    const input: IPayProviderPaymentInput = {
+      paymentSessionId: session.id,
+      businessReference: session.businessReference,
+      idempotencyKey: operation.idempotencyKey,
+      amountMinor: session.amountMinor,
+      currency: session.currency,
+      providerOrderId: session.providerOrderId,
+      ...callbackUrls,
+    };
+    if (operation.kind === 'start') {
+      return session.providerOrderId
+        ? await provider.queryPayment(input, clientOptions)
+        : await provider.startPayment(input, clientOptions);
+    }
+    if (operation.kind === 'confirm') {
+      return session.providerCaptureId
+        ? await provider.queryPayment(input, clientOptions)
+        : await provider.confirmPayment(input, clientOptions);
+    }
+    if (operation.kind === 'query') return await provider.queryPayment(input, clientOptions);
+    this.app.throw(500, `unsupported payment provider operation: ${operation.kind}`);
+  }
+
+  private async _executeRefund(
+    operation: EntityProviderOperation,
+    session: EntityPaymentSession,
+    provider: ReturnType<typeof this.bean.payProvider.resolveByName>['provider'],
+    clientOptions: ReturnType<typeof this.bean.payProvider.resolveByName>['clientOptions'],
+  ) {
+    const refundOperationId = operation.refundOperationId;
+    if (!refundOperationId) this.app.throw(500, 'refund provider operation is not linked');
+    const refund = await this.scope.model.refundOperation.getById(refundOperationId);
+    if (!refund) this.app.throw(404, 'refund operation not found');
+    if (!session.providerCaptureId) this.app.throw(409, 'payment session has no provider capture');
+    const input: IPayProviderRefundInput = {
+      paymentSessionId: session.id,
+      refundOperationId: refund.id,
+      businessReference: refund.businessReference,
+      idempotencyKey: operation.idempotencyKey,
+      amountMinor: refund.amountMinor,
+      currency: refund.currency,
+      providerCaptureId: session.providerCaptureId,
+      providerRefundId: refund.providerRefundId,
+    };
+    const snapshot =
+      refund.providerRefundId && provider.queryRefund
+        ? await provider.queryRefund(input, clientOptions)
+        : await provider.createRefund(input, clientOptions);
+    await this.scope.service.refundOperation.settleProviderSnapshot(
+      operation.id,
+      operation.claimToken!,
+      snapshot,
+    );
+    return snapshot;
   }
 
   @Core.transaction()
@@ -161,7 +251,6 @@ export class ServiceProviderOperation extends BeanBase {
     });
     return {
       ...operation,
-      state: operation.state,
       claimedAt: now,
       claimToken,
       claimExpiresAt,
@@ -207,14 +296,18 @@ export class ServiceProviderOperation extends BeanBase {
       return session;
     }
 
+    const nextAction = snapshot.nextAction ?? session.nextAction;
+    const providerPaymentId = snapshot.providerPaymentId ?? session.providerPaymentId;
+    const providerOrderId = snapshot.providerOrderId ?? session.providerOrderId;
+    const providerCaptureId = snapshot.providerCaptureId ?? session.providerCaptureId;
     if (isTerminalPaymentState(snapshot.state)) {
       const finalizedAt = new Date();
       await this.scope.model.paymentSession.updateById(session.id, {
         state: snapshot.state,
-        nextAction: snapshot.nextAction,
-        providerPaymentId: snapshot.providerPaymentId,
-        providerOrderId: snapshot.providerOrderId,
-        providerCaptureId: snapshot.providerCaptureId,
+        nextAction,
+        providerPaymentId,
+        providerOrderId,
+        providerCaptureId,
         finalizedAt,
       });
       await this.scope.model.paymentAudit.insert({
@@ -223,7 +316,7 @@ export class ServiceProviderOperation extends BeanBase {
         fromState: session.state,
         toState: snapshot.state,
         correlationId: session.correlationId,
-        source: 'providerOperation',
+        source: `providerOperation.${operation.kind}`,
         occurredAt: finalizedAt,
       });
       await this.scope.service.outbox.enqueue(session.id, 'payment.outcome.v1', {
@@ -232,17 +325,17 @@ export class ServiceProviderOperation extends BeanBase {
         businessReference: session.businessReference,
         providerName: session.providerName,
         state: snapshot.state,
-        providerCaptureId: snapshot.providerCaptureId,
+        providerCaptureId,
         amountMinor: session.amountMinor,
         currency: session.currency,
       });
     } else {
       await this.scope.model.paymentSession.updateById(session.id, {
         state: snapshot.state,
-        nextAction: snapshot.nextAction,
-        providerPaymentId: snapshot.providerPaymentId,
-        providerOrderId: snapshot.providerOrderId,
-        providerCaptureId: snapshot.providerCaptureId,
+        nextAction,
+        providerPaymentId,
+        providerOrderId,
+        providerCaptureId,
       });
       await this.scope.model.paymentAudit.insert({
         paymentSessionId: session.id,
@@ -250,14 +343,23 @@ export class ServiceProviderOperation extends BeanBase {
         fromState: session.state,
         toState: snapshot.state,
         correlationId: session.correlationId,
-        source: 'providerOperation',
+        source: `providerOperation.${operation.kind}`,
         occurredAt: new Date(),
       });
     }
-    await this._complete(operation, {
-      providerResourceId: snapshot.providerCaptureId ?? snapshot.providerOrderId,
-    });
-    return { ...session, ...snapshot };
+    if (snapshot.state === 'processing' && ['confirm', 'query'].includes(operation.kind)) {
+      await this._scheduleReconciliation(operation, providerCaptureId ?? providerOrderId);
+    } else {
+      await this._complete(operation, { providerResourceId: providerCaptureId ?? providerOrderId });
+    }
+    return {
+      ...session,
+      ...snapshot,
+      nextAction,
+      providerPaymentId,
+      providerOrderId,
+      providerCaptureId,
+    };
   }
 
   @Core.transaction()
@@ -298,10 +400,7 @@ export class ServiceProviderOperation extends BeanBase {
   async queueDue(limit = 100) {
     const now = new Date();
     const due = await this.scope.model.providerOperation.select({
-      where: {
-        state: ['created', 'reconciliation_required'],
-        nextAttemptAt: { _lte_: now },
-      },
+      where: { state: ['created', 'reconciliation_required'], nextAttemptAt: { _lte_: now } },
       orders: [
         ['nextAttemptAt', 'asc'],
         ['id', 'asc'],
@@ -309,10 +408,7 @@ export class ServiceProviderOperation extends BeanBase {
       limit,
     });
     const expiredClaims = await this.scope.model.providerOperation.select({
-      where: {
-        state: ['claimed', 'submitted'],
-        claimExpiresAt: { _lte_: now },
-      },
+      where: { state: ['claimed', 'submitted'], claimExpiresAt: { _lte_: now } },
       orders: [
         ['claimExpiresAt', 'asc'],
         ['id', 'asc'],
@@ -320,10 +416,46 @@ export class ServiceProviderOperation extends BeanBase {
       limit: Math.max(0, limit - due.length),
     });
     const operations = [...due, ...expiredClaims];
-    for (const operation of operations) {
-      await this.execute(operation.id);
-    }
+    for (const operation of operations) await this.execute(operation.id);
     return operations.length;
+  }
+
+  private async _insertOperation(
+    session: EntityPaymentSession,
+    kind: Exclude<TypeProviderOperationKind, 'refund'>,
+    idempotencyKey: string,
+    now: Date,
+  ) {
+    return await this.scope.model.providerOperation.insert({
+      paymentSessionId: session.id,
+      kind,
+      state: 'created',
+      idempotencyKey,
+      correlationId: session.correlationId,
+      attemptCount: 0,
+      nextAttemptAt: new Date(now.getTime() - 1_000),
+    });
+  }
+
+  private async _getSession(paymentSessionId: TableIdentity) {
+    const session = await this.scope.model.paymentSession.getById(paymentSessionId);
+    if (!session) this.app.throw(404, 'payment session not found');
+    return session;
+  }
+
+  private async _scheduleReconciliation(
+    operation: EntityProviderOperation,
+    providerResourceId?: string,
+  ) {
+    await this.scope.model.providerOperation.updateById(operation.id, {
+      state: 'reconciliation_required',
+      providerResourceId,
+      claimToken: undefined,
+      claimExpiresAt: undefined,
+      nextAttemptAt: new Date(Date.now() + 5_000),
+      errorCode: undefined,
+      errorSummary: undefined,
+    });
   }
 
   private async _complete(

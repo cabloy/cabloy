@@ -93,6 +93,13 @@ export class PayProviderMock
     };
   }
 
+  async confirmPayment(
+    input: IPayProviderPaymentInput,
+    clientOptions: IPayProviderMockClientOptions,
+  ): Promise<IPayProviderPaymentSnapshot> {
+    return await this.queryPayment(input, clientOptions);
+  }
+
   async queryPayment(
     input: IPayProviderPaymentInput,
     _clientOptions: IPayProviderMockClientOptions,

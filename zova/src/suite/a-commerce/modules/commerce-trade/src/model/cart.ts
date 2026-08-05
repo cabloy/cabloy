@@ -65,6 +65,17 @@ export class ModelCart extends BeanModelBase {
     });
   }
 
+  paymentMethods() {
+    if (!process.env.CLIENT || !this.$passport.isAuthenticated) return;
+    return this.$useStateData({
+      queryKey: ['paymentMethods'],
+      queryFn: async () => {
+        return await this.scope.api.commerceTradeCheckout.paymentMethods();
+      },
+      meta: { disableSuspenseOnInit: true },
+    });
+  }
+
   checkout() {
     return this.$useMutationData({
       mutationKey: ['checkout'],

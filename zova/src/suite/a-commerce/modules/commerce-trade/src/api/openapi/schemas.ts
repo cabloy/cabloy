@@ -117,6 +117,14 @@ export type ApiSchemaCommerceTradeDtoCartUpdateItem =
   components['schemas']['commerce-trade.dto.cartUpdateItem'];
 export type ApiSchemaCommerceTradeDtoCartUpdateItemPartial =
   Partial<ApiSchemaCommerceTradeDtoCartUpdateItem>;
+export type ApiSchemaCommerceTradeDtoCheckoutPaymentMethods =
+  components['schemas']['commerce-trade.dto.checkoutPaymentMethods'];
+export type ApiSchemaCommerceTradeDtoCheckoutPaymentMethodsPartial =
+  Partial<ApiSchemaCommerceTradeDtoCheckoutPaymentMethods>;
+export type ApiSchemaCommerceTradeDtoCheckoutPaymentMethod =
+  components['schemas']['commerce-trade.dto.checkoutPaymentMethod'];
+export type ApiSchemaCommerceTradeDtoCheckoutPaymentMethodPartial =
+  Partial<ApiSchemaCommerceTradeDtoCheckoutPaymentMethod>;
 export type ApiSchemaCommerceTradeDtoCheckoutResult =
   components['schemas']['commerce-trade.dto.checkoutResult'];
 export type ApiSchemaCommerceTradeDtoCheckoutResultPartial =

@@ -5,6 +5,7 @@ import { ApiSchema } from 'zova-module-a-api';
 
 import {
   ApiApiPaymentSessionstartPath,
+  ApiApiPaymentSessionreconcilePath,
   ApiApiPaymentSessionviewPath,
 } from '../api/paymentSession.js';
 
@@ -12,6 +13,10 @@ import {
 export class ApiSchemaPaymentSession extends BeanBase {
   start(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiPaymentSessionstartPath, 'post', options);
+  }
+
+  reconcile(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiPaymentSessionreconcilePath, 'post', options);
   }
 
   view(options?: IApiSchemaOptions) {

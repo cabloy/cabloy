@@ -24,6 +24,24 @@ export class BeanPayScene extends BeanBase {
     return onionSlice.beanOptions.options as IDecoratorPaySceneOptions;
   }
 
+  async getAvailableProviderCandidates<N extends keyof IPaySceneRecord>(
+    paySceneName: N,
+    input: {
+      userId: TableIdentity;
+      businessReference: string;
+      amountMinor: number;
+      currency: string;
+      providerCandidateKey?: string;
+    },
+  ) {
+    const options = this.getOptions(paySceneName);
+    return await this._getAvailableProviderCandidates(options, {
+      payScene: paySceneName,
+      ...input,
+      providers: this._getProviderCandidates(options),
+    });
+  }
+
   async resolveProvider<N extends keyof IPaySceneRecord>(
     paySceneName: N,
     input: {
@@ -31,10 +49,15 @@ export class BeanPayScene extends BeanBase {
       businessReference: string;
       amountMinor: number;
       currency: string;
+      providerCandidateKey?: string;
     },
   ) {
     const options = this.getOptions(paySceneName);
-    const providers = this._getProviderCandidates(options);
+    const providers = await this._getAvailableProviderCandidates(options, {
+      payScene: paySceneName,
+      ...input,
+      providers: this._getProviderCandidates(options),
+    });
     const candidateKey = await this._resolveProviderCandidateKey(
       paySceneName,
       options,
@@ -57,6 +80,27 @@ export class BeanPayScene extends BeanBase {
       environment: providerOptions.environment,
       capabilities: providerOptions.capabilities,
     };
+  }
+
+  private async _getAvailableProviderCandidates(
+    options: IDecoratorPaySceneOptions,
+    input: Omit<
+      Parameters<NonNullable<IDecoratorPaySceneOptions['isProviderAvailable']>>[1],
+      'candidate'
+    >,
+  ) {
+    const providers = input.providers;
+    const available = await Promise.all(
+      providers.map(async candidate => ({
+        candidate,
+        available: options.isProviderAvailable
+          ? await options.isProviderAvailable(this.ctx, { ...input, candidate })
+          : true,
+      })),
+    );
+    const result = available.filter(item => item.available).map(item => item.candidate);
+    if (!result.length) this.app.throw(409, 'payment scene has no available provider candidates');
+    return result;
   }
 
   private _getProviderCandidates(options: IDecoratorPaySceneOptions) {
@@ -84,8 +128,15 @@ export class BeanPayScene extends BeanBase {
       businessReference: string;
       amountMinor: number;
       currency: string;
+      providerCandidateKey?: string;
     },
   ) {
+    if (input.providerCandidateKey) {
+      if (!providers.some(item => item.key === input.providerCandidateKey)) {
+        this.app.throw(422, 'payment provider candidate is unavailable');
+      }
+      return input.providerCandidateKey;
+    }
     if (providers.length === 1 && !options.resolveProvider) return providers[0]!.key;
     if (!options.resolveProvider) {
       this.app.throw(500, 'payment scene requires a provider resolver for multiple candidates');

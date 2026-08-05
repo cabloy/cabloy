@@ -23,14 +23,21 @@ export class ControllerPaymentSession extends BeanBase {
       this.app.throw(404, 'payment session not found');
     }
     const started = await this.scope.service.paymentSession.start(session.id);
-    return {
-      id: started.id,
-      state: started.state,
-      providerName: started.providerName,
-      nextAction: started.nextAction,
-      amountMinor: started.amountMinor,
-      currency: started.currency,
-    };
+    return this._toView(started);
+  }
+
+  @Web.post(':id/reconcile')
+  @Api.body(DtoPaymentSessionView)
+  async reconcile(
+    @Arg.user() user: IUser,
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+  ): Promise<DtoPaymentSessionView> {
+    const session = await this.scope.model.paymentSession.getById(id);
+    if (!session || String(session.userId) !== String(user.id)) {
+      this.app.throw(404, 'payment session not found');
+    }
+    const reconciled = await this.scope.service.providerOperation.reconcile(session.id);
+    return this._toView(reconciled);
   }
 
   @Web.get(':id')
@@ -43,6 +50,17 @@ export class ControllerPaymentSession extends BeanBase {
     if (!session || String(session.userId) !== String(user.id)) {
       this.app.throw(404, 'payment session not found');
     }
+    return this._toView(session);
+  }
+
+  private _toView(session: {
+    id: TableIdentity;
+    state: DtoPaymentSessionView['state'];
+    providerName: string;
+    nextAction?: DtoPaymentSessionView['nextAction'];
+    amountMinor: number;
+    currency: string;
+  }): DtoPaymentSessionView {
     return {
       id: session.id,
       state: session.state,

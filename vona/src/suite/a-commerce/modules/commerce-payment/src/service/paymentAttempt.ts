@@ -12,6 +12,7 @@ export interface IPaymentAttemptCreateCommand {
   currency: 'USD';
   amountCents: number;
   correlationId: string;
+  providerCandidateKey?: string;
 }
 
 export type TypePaymentAttemptFinalState = Extract<
@@ -30,7 +31,10 @@ export class ServicePaymentAttempt extends BeanBase {
       amountCents: command.amountCents,
       correlationId: command.correlationId,
     });
-    const session = await this.scope.service.commercePayScene.createSession(attempt);
+    const session = await this.scope.service.commercePayScene.createSession(
+      attempt,
+      command.providerCandidateKey,
+    );
     return {
       ...attempt,
       paymentSessionId: session.id,

@@ -26,11 +26,13 @@ A Commerce `PaymentAttempt` has one initial `a-pay` `PaymentSession`; future ret
 - `secretWebhook` is client-level by default. Put it in `base` only when every declared client intentionally shares the identical value. Provider operations receive the selected merged `base + client` options; operation code must not reread Vona env or `process.env`.
 - `@PayScene()` declares an allowlist of named `providerName + clientName` candidates, currency, capture policy, expiry, and refund policy. Its optional resolver chooses only a declared candidate key; it cannot supply an arbitrary provider, client, environment, credential, or return URL. `a-pay` resolves the selected Provider client, derives its environment and the scene-defined absolute expiry, and persists those values as the immutable `PaymentSession` execution snapshot. A scene also owns the single `onPaymentOutcome` callback selected by the persisted `PaymentSession.payScene`; the callback may use Vona scope lookup to delegate to the aggregate owner, but it is not a global broadcast mechanism.
 
-### Deferred customer provider selection
+### Customer provider selection
 
-A multi-candidate scene may eventually allow a customer to select a payment method, but Cabloy Basic does not add a Checkout selector until a second Provider is fully usable in Commerce. The current Commerce scene has exactly one `pay-mock/default` candidate, so server-side automatic selection remains the only active flow.
+The Commerce scene declares `mock` and `paypal` candidates. `mock` remains the deterministic default for development and ordinary tests. PayPal uses the exact `PAYPAL_ENVIRONMENT` value resolved from Vona's environment cascade (`sandbox` or `live`) and is available only when same-environment credentials, webhook ID, merchant reference, and trusted public server origin are configured. A configured provider module is not automatically selectable.
 
-When a live PayPal or Stripe Provider completes its execution, verified webhook/reconciliation, and Zova UI adapter work, implement the selector together with that Provider integration:
+Checkout exposes a public payment-method projection and submits only an optional scene-local `providerCandidateKey`. Creation recomputes availability, so an unknown, stale, disabled, or otherwise ineligible choice is rejected rather than silently falling back. The browser never submits `providerName`, `clientName`, environment, credentials, or callback URLs.
+
+When a provider becomes available, the selector follows these rules:
 
 - `providers` remains the scene's static Provider-Client allowlist; each candidate has a stable, scene-local `key`.
 - Server policy resolves the current order/user/instance/currency context into an `availableKeys` subset and one `defaultKey`. A candidate's presence in `providers` alone does not guarantee present-time availability.
@@ -66,7 +68,7 @@ Browser redirects are notification inputs. A return/cancel page can request serv
 
 The current customer flow is deliberately limited to the `pay-mock` provider. Its completion controls are a development/test simulator, not a production payment capability: the server restricts them to the active instance, authenticated session ownership, actionable `pay-mock/default` sandbox sessions, and signed mock webhooks. The simulator forwards the active instance selector with its internal webhook so finalization remains tenant-scoped. The browser must never declare a Commerce payment outcome directly.
 
-The `PaymentSession.nextAction` contract is provider-neutral, but live-provider work remains incomplete. A live provider must add its own redirect or embedded UI adapter, durable provider-operation recovery, authoritative `queryPayment()` reconciliation, captured-payment versus expired-order compensation, and stronger webhook-event convergence for abnormal lock-topology failures. Until those pieces exist, do not enable a live provider for Commerce checkout.
+The `PaymentSession.nextAction` contract is provider-neutral. PayPal uses redirect checkout, durable provider-operation recovery, authoritative `queryPayment()` reconciliation, verified webhook convergence, and late-capture compensation. Its selected environment is fixed in the persisted session. Switching the single `default` PayPal client between Sandbox and Live requires a coordinated rebuild and deployment after in-flight work and delayed webhook delivery for the old environment are drained; historical Sandbox refunds require a separately retained Sandbox client.
 
 ## PayPal v1 and refunds
 

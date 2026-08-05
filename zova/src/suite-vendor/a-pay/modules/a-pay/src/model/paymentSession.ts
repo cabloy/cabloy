@@ -18,6 +18,18 @@ export class ModelPaymentSession extends BeanModelBase {
     });
   }
 
+  reconcile(id: TableIdentity) {
+    return this.$useMutationData({
+      mutationKey: ['reconcile', id],
+      mutationFn: async () => {
+        return await this.scope.api.paymentSession.reconcile(undefined, { params: { id } });
+      },
+      onSuccess: async () => {
+        await this.$invalidateQueries({ queryKey: ['view', id] });
+      },
+    });
+  }
+
   start(id: TableIdentity) {
     return this.$useMutationData({
       mutationKey: ['start', id],

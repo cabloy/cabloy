@@ -834,6 +834,8 @@ export * from '../dto/cartItem.tsx';
 export * from '../dto/cartUpdateItem.tsx';
 export * from '../dto/cartView.tsx';
 export * from '../dto/checkoutCreate.tsx';
+export * from '../dto/checkoutPaymentMethod.tsx';
+export * from '../dto/checkoutPaymentMethods.tsx';
 export * from '../dto/checkoutResult.tsx';
 export * from '../dto/orderAddressSnapshot.tsx';
 export * from '../dto/orderCouponSnapshot.tsx';
@@ -872,6 +874,8 @@ import type { IDtoOptionsCartItem } from '../dto/cartItem.tsx';
 import type { IDtoOptionsCartUpdateItem } from '../dto/cartUpdateItem.tsx';
 import type { IDtoOptionsCartView } from '../dto/cartView.tsx';
 import type { IDtoOptionsCheckoutCreate } from '../dto/checkoutCreate.tsx';
+import type { IDtoOptionsCheckoutPaymentMethod } from '../dto/checkoutPaymentMethod.tsx';
+import type { IDtoOptionsCheckoutPaymentMethods } from '../dto/checkoutPaymentMethods.tsx';
 import type { IDtoOptionsCheckoutResult } from '../dto/checkoutResult.tsx';
 import type { IDtoOptionsOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
 import type { IDtoOptionsOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
@@ -914,6 +918,8 @@ declare module 'vona-module-a-web' {
 'commerce-trade:cartUpdateItem': IDtoOptionsCartUpdateItem;
 'commerce-trade:cartView': IDtoOptionsCartView;
 'commerce-trade:checkoutCreate': IDtoOptionsCheckoutCreate;
+'commerce-trade:checkoutPaymentMethod': IDtoOptionsCheckoutPaymentMethod;
+'commerce-trade:checkoutPaymentMethods': IDtoOptionsCheckoutPaymentMethods;
 'commerce-trade:checkoutResult': IDtoOptionsCheckoutResult;
 'commerce-trade:orderAddressSnapshot': IDtoOptionsOrderAddressSnapshot;
 'commerce-trade:orderCouponSnapshot': IDtoOptionsOrderCouponSnapshot;
@@ -961,6 +967,8 @@ import type { DtoCartItem } from '../dto/cartItem.tsx';
 import type { DtoCartUpdateItem } from '../dto/cartUpdateItem.tsx';
 import type { DtoCartView } from '../dto/cartView.tsx';
 import type { DtoCheckoutCreate } from '../dto/checkoutCreate.tsx';
+import type { DtoCheckoutPaymentMethod } from '../dto/checkoutPaymentMethod.tsx';
+import type { DtoCheckoutPaymentMethods } from '../dto/checkoutPaymentMethods.tsx';
 import type { DtoCheckoutResult } from '../dto/checkoutResult.tsx';
 import type { DtoOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
 import type { DtoOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
@@ -1014,6 +1022,14 @@ declare module 'vona-module-commerce-trade' {
 
     export interface IDtoOptionsCheckoutCreate {
       fields?: TypeEntityOptionsFields<DtoCheckoutCreate, IDtoOptionsCheckoutCreate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsCheckoutPaymentMethod {
+      fields?: TypeEntityOptionsFields<DtoCheckoutPaymentMethod, IDtoOptionsCheckoutPaymentMethod[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsCheckoutPaymentMethods {
+      fields?: TypeEntityOptionsFields<DtoCheckoutPaymentMethods, IDtoOptionsCheckoutPaymentMethods[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsCheckoutResult {
@@ -1267,6 +1283,7 @@ declare module 'vona-module-commerce-trade' {
 declare module 'vona-module-a-web' {
   export interface IApiPathGetRecord{
         '/commerce/trade/cart': undefined;
+'/commerce/trade/checkout/payment-methods': undefined;
 '/commerce/trade/order/mine': undefined;
 '/commerce/trade/order/viewMine/:id': undefined;
 '/commerce/trade/order': undefined;

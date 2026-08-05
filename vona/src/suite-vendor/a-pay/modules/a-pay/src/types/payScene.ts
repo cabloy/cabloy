@@ -2,12 +2,14 @@ import type { TableIdentity } from 'table-identity';
 import type { OmitNever, VonaContext } from 'vona';
 import type { ServiceOnion } from 'vona-module-a-onion';
 
+import type { EntityPaymentSession } from '../entity/paymentSession.tsx';
 import type { IPaymentOutcomeEvent, IRefundOutcomeEvent } from './payment.ts';
 import type { IPayProviderRecord } from './payProvider.ts';
 
 export interface IPaySceneExecute {
   onPaymentOutcome(event: IPaymentOutcomeEvent): Promise<void>;
   onRefundOutcome(event: IRefundOutcomeEvent): Promise<void>;
+  getPaymentCallbackPath(session: EntityPaymentSession): Promise<string>;
 }
 
 export interface IPaySceneRecord {}
@@ -27,6 +29,7 @@ export interface IPaySceneResolveProviderInput {
   businessReference: string;
   amountMinor: number;
   currency: string;
+  providerCandidateKey?: string;
   providers: readonly IPaySceneProviderCandidate[];
 }
 
@@ -35,8 +38,14 @@ export type TypePaySceneResolveProvider = (
   input: IPaySceneResolveProviderInput,
 ) => string | Promise<string>;
 
+export type TypePaySceneIsProviderAvailable = (
+  ctx: VonaContext,
+  input: IPaySceneResolveProviderInput & { candidate: IPaySceneProviderCandidate },
+) => boolean | Promise<boolean>;
+
 export interface IDecoratorPaySceneOptions {
   providers?: readonly IPaySceneProviderCandidate[];
+  isProviderAvailable?: TypePaySceneIsProviderAvailable;
   resolveProvider?: TypePaySceneResolveProvider;
   currencies?: readonly string[];
   captureMode?: 'automatic' | 'manual';

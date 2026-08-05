@@ -20,6 +20,7 @@ export interface IPaymentSessionCreateCommand {
   amountMinor: number;
   currency: string;
   correlationId: string;
+  providerCandidateKey?: string;
 }
 
 @Service()
@@ -150,14 +151,36 @@ export class ServicePaymentSession extends BeanBase {
       return { session, changed: false };
     }
     if (['succeeded', 'failed', 'cancelled', 'expired'].includes(session.state)) {
+      if (
+        session.state === 'expired' &&
+        options.state === 'succeeded' &&
+        options.providerCaptureId
+      ) {
+        const finalizedAt = new Date();
+        await this.scope.model.paymentSession.updateById(session.id, {
+          providerPaymentId: options.providerPaymentId,
+          providerCaptureId: options.providerCaptureId,
+        });
+        await this.scope.model.paymentAudit.insert({
+          paymentSessionId: session.id,
+          webhookInboxId: options.webhookInboxId,
+          fromState: 'expired',
+          toState: 'expired',
+          correlationId: session.correlationId,
+          source: 'webhook.lateCapture',
+          occurredAt: finalizedAt,
+        });
+        return {
+          session: { ...session, ...options },
+          changed: true,
+          ignoredReason: 'late successful capture requires compensation',
+        };
+      }
       return {
         session,
         changed: false,
         ignoredReason: `terminal payment state ${options.state} ignored after ${session.state}`,
       };
-    }
-    if (session.expiresAt <= new Date()) {
-      this.app.throw(409, 'payment session is expired');
     }
     const finalizedAt = new Date();
     await this.scope.model.paymentSession.updateById(session.id, {

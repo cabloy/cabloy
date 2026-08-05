@@ -25,6 +25,7 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
 
   addressId?: string;
   couponGrantId?: string;
+  providerCandidateKey?: string;
   submitting = false;
 
   get queryAddresses() {
@@ -37,6 +38,10 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
     return this.$$modelCoupon.mine();
   }
 
+  get queryPaymentMethods() {
+    return this.$$modelCart.paymentMethods();
+  }
+
   async checkout() {
     if (!this.addressId || this.submitting) return;
     this.submitting = true;
@@ -45,6 +50,7 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
         addressId: this.addressId,
         couponGrantId: this.couponGrantId,
         correlationId: `${Date.now()}-${Math.random().toString(36).slice(2, 12)}`,
+        providerCandidateKey: this.providerCandidateKey,
       });
       this.$router.push({
         name: 'commerce-trade:payment',
@@ -69,6 +75,10 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
     }
     const addresses = this.queryAddresses?.data?.list ?? [];
     const coupons = this.queryCoupons?.data ?? [];
+    const paymentMethods = this.queryPaymentMethods?.data;
+    if (!this.providerCandidateKey && paymentMethods?.defaultKey) {
+      this.providerCandidateKey = paymentMethods.defaultKey;
+    }
     return (
       <ZPage>
         <section class="mx-auto max-w-3xl p-6">
@@ -94,6 +104,20 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
               )}
             </fieldset>
             <fieldset class="space-y-2">
+              <legend class="font-semibold">Payment method</legend>
+              {paymentMethods?.items.map(method => (
+                <label class="flex cursor-pointer gap-3 rounded border border-base-300 p-3">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value={method.key}
+                    v-model={this.providerCandidateKey}
+                  />
+                  <span>{method.label}</span>
+                </label>
+              ))}
+            </fieldset>
+            <fieldset class="space-y-2">
               <legend class="font-semibold">Coupon</legend>
               <label class="flex cursor-pointer gap-3 rounded border border-base-300 p-3">
                 <input type="radio" name="coupon" value="" v-model={this.couponGrantId} />
@@ -115,7 +139,7 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
             </fieldset>
             <button
               class="btn btn-primary"
-              disabled={!this.addressId || this.submitting}
+              disabled={!this.addressId || !this.providerCandidateKey || this.submitting}
               onClick={() => this.checkout()}
             >
               Create order

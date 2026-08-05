@@ -27,12 +27,20 @@ export class ServiceRefundOperation extends BeanBase {
       command.paymentSessionId,
     );
     if (!session) this.app.throw(404, 'payment session not found');
-    if (session.state !== 'succeeded' || !session.providerCaptureId) {
+    const isLateCaptureCompensation = command.businessReference.startsWith('late-capture:');
+    if (
+      (session.state !== 'succeeded' &&
+        !(session.state === 'expired' && isLateCaptureCompensation)) ||
+      !session.providerCaptureId
+    ) {
       this.app.throw(409, 'payment session is not refundable');
     }
     if (session.currency !== command.currency) this.app.throw(409, 'refund currency conflicts');
     const scene = this.bean.payScene.getOptions(session.payScene as never);
     if (!scene.refund?.enabled) this.app.throw(409, 'payment scene refunds are disabled');
+    if (isLateCaptureCompensation && command.amountMinor !== session.amountMinor) {
+      this.app.throw(422, 'late capture compensation must refund the full captured amount');
+    }
     if (!scene.refund.allowPartial && command.amountMinor !== session.amountMinor) {
       this.app.throw(422, 'payment scene does not allow partial refunds');
     }

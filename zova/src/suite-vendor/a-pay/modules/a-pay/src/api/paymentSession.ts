@@ -15,6 +15,15 @@ export type ApiApiPaymentSessionstartRequestParams =
 export type ApiApiPaymentSessionstartResponseBody =
   paths[ApiApiPaymentSessionstartPath][ApiApiPaymentSessionstartMethod]['responses']['200']['content']['application/json']['data'];
 
+/** PaymentSession_reconcile */
+export const ApiApiPaymentSessionreconcilePath = '/api/payment-session/{id}/reconcile';
+export type ApiApiPaymentSessionreconcilePath = '/api/payment-session/{id}/reconcile';
+export type ApiApiPaymentSessionreconcileMethod = 'post';
+export type ApiApiPaymentSessionreconcileRequestParams =
+  paths[ApiApiPaymentSessionreconcilePath][ApiApiPaymentSessionreconcileMethod]['parameters']['path'];
+export type ApiApiPaymentSessionreconcileResponseBody =
+  paths[ApiApiPaymentSessionreconcilePath][ApiApiPaymentSessionreconcileMethod]['responses']['200']['content']['application/json']['data'];
+
 /** PaymentSession_view */
 export const ApiApiPaymentSessionviewPath = '/api/payment-session/{id}';
 export type ApiApiPaymentSessionviewPath = '/api/payment-session/{id}';
@@ -34,6 +43,19 @@ export class ApiPaymentSession extends BeanApiBase {
   ) {
     return this.$fetch.post<any, ApiApiPaymentSessionstartResponseBody>(
       this.$pathTranslate(ApiApiPaymentSessionstartPath, options.params),
+      body,
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
+  reconcile(
+    body: undefined,
+    options: {
+      params: ApiApiPaymentSessionreconcileRequestParams;
+    } & IApiActionOptions,
+  ) {
+    return this.$fetch.post<any, ApiApiPaymentSessionreconcileResponseBody>(
+      this.$pathTranslate(ApiApiPaymentSessionreconcilePath, options.params),
       body,
       this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
     );
