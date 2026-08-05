@@ -22,4 +22,6 @@ export interface IDtoOptionsCategoryView extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoCategoryView extends $Dto.get(() => ModelCategory) {}
+export class DtoCategoryView extends $Dto.get(() => ModelCategory, {
+  include: { parent: true },
+}) {}

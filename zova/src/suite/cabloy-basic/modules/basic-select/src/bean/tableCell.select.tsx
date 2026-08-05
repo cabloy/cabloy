@@ -26,13 +26,19 @@ export class TableCellSelect extends BeanBase implements ITableCellRender {
   render(
     options: ITableCellOptionsSelect,
     _renderContext: IJsxRenderContextTableCell,
-    next: NextTableCellRender,
+    _next: NextTableCellRender,
   ) {
-    const value = next();
-    const item = options.items?.find(
-      item => String(item[String(options.itemValue)]) === String(value),
-    );
-    const value2 = item?.[String(options.itemTitle)];
+    const value = _next();
+    const items = options.items;
+    const itemValue = options.itemValue;
+    const itemTitle = options.itemTitle;
+    const item = items?.find(item => {
+      const itemValue2 = item[String(itemValue)];
+      if (String(itemValue2) === String(value)) return true;
+      if (typeof itemValue2 !== 'boolean') return false;
+      return itemValue2 ? value === 1 || value === '1' : value === 0 || value === '0';
+    });
+    const value2 = item?.[String(itemTitle)];
     if (!options.class) return value2;
     return <div class={options.class}>{value2}</div>;
   }

@@ -46,7 +46,9 @@ export interface IDtoOptionsCategorySelectResItem extends IDecoratorDtoOptions {
     }),
   ],
 })
-export class DtoCategorySelectResItem extends $Dto.get(() => ModelCategory) {
+export class DtoCategorySelectResItem extends $Dto.get(() => ModelCategory, {
+  include: { parent: true },
+}) {
   @Api.field(
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),

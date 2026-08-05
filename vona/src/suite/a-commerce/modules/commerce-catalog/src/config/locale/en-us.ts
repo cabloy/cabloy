@@ -9,6 +9,7 @@ export default {
   Product: 'Product',
   ProductTitle: 'Product title',
   Published: 'Published',
+  Unpublished: 'Unpublished',
   Sku: 'SKU',
   SkuAttributeName: 'SKU attribute name',
   SkuAttributeValue: 'SKU attribute value',

@@ -9,6 +9,7 @@ export default {
   Product: '商品',
   ProductTitle: '商品标题',
   Published: '已发布',
+  Unpublished: '未发布',
   Sku: 'SKU',
   SkuAttributeName: 'SKU 属性名',
   SkuAttributeValue: 'SKU 属性值',

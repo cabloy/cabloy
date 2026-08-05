@@ -104,9 +104,12 @@ export class ControllerFormFieldSelect extends BeanControllerBase {
 
   private _getValueByItems() {
     const value = this.$props.value;
-    const item = this.$props.options.items?.find(
-      item => String(item[String(this.$props.options.itemValue)]) === String(value),
-    );
+    const item = this.$props.options.items?.find(item => {
+      const itemValue = item[String(this.$props.options.itemValue)];
+      if (String(itemValue) === String(value)) return true;
+      if (typeof itemValue !== 'boolean') return false;
+      return itemValue ? value === 1 || value === '1' : value === 0 || value === '0';
+    });
     return item?.[String(this.$props.options.itemTitle)];
   }
 }

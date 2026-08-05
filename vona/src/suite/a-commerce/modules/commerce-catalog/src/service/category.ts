@@ -19,11 +19,16 @@ export class ServiceCategory extends BeanBase {
   }
 
   async select(params?: IQueryParams<ModelCategory>): Promise<DtoCategorySelectRes> {
-    return await this.scope.model.category.selectAndCount(params);
+    return await this.scope.model.category.selectAndCount({
+      ...params,
+      include: { parent: true },
+    });
   }
 
   async view(id: TableIdentity): Promise<DtoCategoryView | undefined> {
-    return await this.scope.model.category.getById(id);
+    return await this.scope.model.category.getById(id, {
+      include: { parent: true },
+    });
   }
 
   async update(id: TableIdentity, category: DtoCategoryUpdate) {

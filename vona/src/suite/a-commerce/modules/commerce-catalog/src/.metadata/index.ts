@@ -142,7 +142,12 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-commerce-catalog' {
-  export interface IModelOptionsProduct {
+  export interface IModelOptionsCategory {
+        relations: {
+          parent: IModelRelationBelongsTo<'commerce-catalog:category', 'commerce-catalog:category', false, 'id'|'name'>;
+        };
+      }
+export interface IModelOptionsProduct {
         relations: {
           category: IModelRelationBelongsTo<'commerce-catalog:product', 'commerce-catalog:category', false, '*'>;
 skus: IModelRelationHasMany<'commerce-catalog:sku', 'productId', false, '*', undefined, undefined, undefined>;
@@ -159,7 +164,17 @@ export interface IModelOptionsSku {
       [SymbolKeyEntityMeta]: EntityCategoryMeta;
       [SymbolKeyModelOptions]: IModelOptionsCategory;
       get<T extends IModelGetOptions<EntityCategory,ModelCategory>>(where: TypeModelWhere<EntityCategory>, options?: T): Promise<TypeModelRelationResult<EntityCategory, ModelCategory, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityCategory,ModelCategory>>(where: TypeModelWhere<EntityCategory>, options?: T): Promise<TypeModelRelationResult<EntityCategory, ModelCategory, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityCategory,ModelCategory>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityCategory, ModelCategory, T> | undefined>;
       mget<T extends IModelGetOptions<EntityCategory,ModelCategory>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityCategory, ModelCategory, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityCategory,ModelCategory,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityCategory, ModelCategory, T>>;
@@ -190,7 +205,17 @@ export interface ModelProduct {
       [SymbolKeyEntityMeta]: EntityProductMeta;
       [SymbolKeyModelOptions]: IModelOptionsProduct;
       get<T extends IModelGetOptions<EntityProduct,ModelProduct>>(where: TypeModelWhere<EntityProduct>, options?: T): Promise<TypeModelRelationResult<EntityProduct, ModelProduct, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityProduct,ModelProduct>>(where: TypeModelWhere<EntityProduct>, options?: T): Promise<TypeModelRelationResult<EntityProduct, ModelProduct, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityProduct,ModelProduct>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityProduct, ModelProduct, T> | undefined>;
       mget<T extends IModelGetOptions<EntityProduct,ModelProduct>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityProduct, ModelProduct, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityProduct,ModelProduct,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityProduct, ModelProduct, T>>;
@@ -217,7 +242,17 @@ export interface ModelSku {
       [SymbolKeyEntityMeta]: EntitySkuMeta;
       [SymbolKeyModelOptions]: IModelOptionsSku;
       get<T extends IModelGetOptions<EntitySku,ModelSku>>(where: TypeModelWhere<EntitySku>, options?: T): Promise<TypeModelRelationResult<EntitySku, ModelSku, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntitySku,ModelSku>>(where: TypeModelWhere<EntitySku>, options?: T): Promise<TypeModelRelationResult<EntitySku, ModelSku, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntitySku,ModelSku>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntitySku, ModelSku, T> | undefined>;
       mget<T extends IModelGetOptions<EntitySku,ModelSku>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntitySku, ModelSku, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntitySku,ModelSku,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntitySku, ModelSku, T>>;
