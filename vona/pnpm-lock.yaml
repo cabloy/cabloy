@@ -1834,16 +1834,16 @@ importers:
   src/suite-vendor/a-pay:
     dependencies:
       vona-module-a-pay:
-        specifier: ^5.0.2
+        specifier: ^5.0.3
         version: link:modules/a-pay
       vona-module-pay-mock:
-        specifier: ^5.0.2
+        specifier: ^5.0.3
         version: link:modules/pay-mock
       vona-module-pay-paypal:
-        specifier: ^5.0.2
+        specifier: ^5.0.3
         version: link:modules/pay-paypal
       vona-module-pay-stripe:
-        specifier: ^5.0.2
+        specifier: ^5.0.3
         version: link:modules/pay-stripe
 
   src/suite-vendor/a-pay/modules/a-pay:
@@ -1922,7 +1922,7 @@ importers:
         specifier: ^5.0.8
         version: link:modules/test-file
       vona-module-test-pay:
-        specifier: ^5.0.1
+        specifier: ^5.0.2
         version: link:modules/test-pay
 
   src/suite-vendor/a-test/modules/test-auth:

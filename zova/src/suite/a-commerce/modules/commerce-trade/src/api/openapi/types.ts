@@ -2462,9 +2462,9 @@ export interface components {
        * @enum {string}
        */
       currency: 'USD';
-      /** @description Fixed Discount (Cents) */
+      /** @description Fixed Discount */
       discountCents: number;
-      /** @description Minimum Spend (Cents) */
+      /** @description Minimum Spend */
       minSpendCents: number;
       /**
        * Format: date-time
@@ -2527,9 +2527,9 @@ export interface components {
        * @enum {string}
        */
       currency: 'USD';
-      /** @description Fixed Discount (Cents) */
+      /** @description Fixed Discount */
       discountCents: number;
-      /** @description Minimum Spend (Cents) */
+      /** @description Minimum Spend */
       minSpendCents: number;
       /**
        * Format: date-time
@@ -2592,9 +2592,9 @@ export interface components {
            * @enum {string}
            */
           currency: 'USD';
-          /** @description Fixed Discount (Cents) */
+          /** @description Fixed Discount */
           discountCents: number;
-          /** @description Minimum Spend (Cents) */
+          /** @description Minimum Spend */
           minSpendCents: number;
           /**
            * Format: date-time
@@ -2777,6 +2777,7 @@ export interface components {
       orderId: number | string;
       refundRequestId: number | string;
       refundAttemptId?: number | string | undefined;
+      refundOperationId?: number | string | undefined;
       /** @enum {string} */
       orderState: 'paid' | 'refund_requested' | 'refund_approved' | 'refund_rejected' | 'refunded';
       /** @enum {string} */

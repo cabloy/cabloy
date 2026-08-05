@@ -623,7 +623,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/commerce/trade/order/{id}/refundOutcome': {
+  '/api/commerce/trade/order/{id}/executeRefund': {
     parameters: {
       query?: never;
       header?: never;
@@ -632,7 +632,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    post: operations['CommerceTradeOrder_refundOutcome'];
+    post: operations['CommerceTradeOrder_executeRefund'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1258,6 +1258,22 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['PayMockPayment_complete'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/pay/mock/payment-session/refund-operation/{id}/complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PayMockPayment_completeRefund'];
     delete?: never;
     options?: never;
     head?: never;
@@ -2446,9 +2462,9 @@ export interface components {
        * @enum {string}
        */
       currency: 'USD';
-      /** @description Fixed Discount (Cents) */
+      /** @description Fixed Discount */
       discountCents: number;
-      /** @description Minimum Spend (Cents) */
+      /** @description Minimum Spend */
       minSpendCents: number;
       /**
        * Format: date-time
@@ -2511,9 +2527,9 @@ export interface components {
        * @enum {string}
        */
       currency: 'USD';
-      /** @description Fixed Discount (Cents) */
+      /** @description Fixed Discount */
       discountCents: number;
-      /** @description Minimum Spend (Cents) */
+      /** @description Minimum Spend */
       minSpendCents: number;
       /**
        * Format: date-time
@@ -2576,9 +2592,9 @@ export interface components {
            * @enum {string}
            */
           currency: 'USD';
-          /** @description Fixed Discount (Cents) */
+          /** @description Fixed Discount */
           discountCents: number;
-          /** @description Minimum Spend (Cents) */
+          /** @description Minimum Spend */
           minSpendCents: number;
           /**
            * Format: date-time
@@ -2761,6 +2777,7 @@ export interface components {
       orderId: number | string;
       refundRequestId: number | string;
       refundAttemptId?: number | string | undefined;
+      refundOperationId?: number | string | undefined;
       /** @enum {string} */
       orderState: 'paid' | 'refund_requested' | 'refund_approved' | 'refund_rejected' | 'refunded';
       /** @enum {string} */
@@ -2777,11 +2794,6 @@ export interface components {
     };
     'commerce-trade.dto.refundReview': {
       reason: string;
-      idempotencyKey: string;
-    };
-    'commerce-trade.dto.refundOutcomeCreate': {
-      /** @enum {string} */
-      outcome: 'succeeded' | 'failed';
       idempotencyKey: string;
     };
     'commerce-trade.dto.shipmentView': {
@@ -4480,6 +4492,14 @@ export interface components {
       accepted: boolean;
     };
     'pay-mock.dto.mockPaymentComplete': {
+      /** @enum {string} */
+      outcome: 'succeeded' | 'failed' | 'cancelled';
+    };
+    'pay-mock.dto.mockRefundReceipt': {
+      refundOperationId: number | string;
+      accepted: boolean;
+    };
+    'pay-mock.dto.mockRefundComplete': {
       /** @enum {string} */
       outcome: 'succeeded' | 'failed' | 'cancelled';
     };
@@ -6273,7 +6293,7 @@ export interface operations {
     };
     authToken: true;
   };
-  CommerceTradeOrder_refundOutcome: {
+  CommerceTradeOrder_executeRefund: {
     parameters: {
       query?: never;
       header?: never;
@@ -6282,11 +6302,7 @@ export interface operations {
       };
       cookie?: never;
     };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['commerce-trade.dto.refundOutcomeCreate'];
-      };
-    };
+    requestBody?: never;
     responses: {
       200: {
         headers: {
@@ -7848,6 +7864,36 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['pay-mock.dto.mockPaymentReceipt'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  PayMockPayment_completeRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['pay-mock.dto.mockRefundComplete'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['pay-mock.dto.mockRefundReceipt'];
           };
         };
       };

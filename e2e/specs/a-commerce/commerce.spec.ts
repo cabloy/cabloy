@@ -705,11 +705,39 @@ test(
         const executeResponse = waitForApiResponse(
           adminPage,
           'POST',
-          `/api/commerce/trade/order/${checkout.orderId}/refundOutcome`,
+          `/api/commerce/trade/order/${checkout.orderId}/executeRefund`,
         );
         await orderRow.getByRole('button', { name: 'Execute refund', exact: true }).click();
-        expect((await executeResponse).ok()).toBeTruthy();
-        await expect(orderRow).toContainText('refunded');
+        const executeResponseValue = await executeResponse;
+        expect(executeResponseValue.ok()).toBeTruthy();
+        const executeResult = (await executeResponseValue.json()).data;
+        const authorization = executeResponseValue.request().headers()['authorization'];
+        expect(authorization).toMatch(/^Bearer /);
+        const authHeaders = { Authorization: authorization };
+        expectTableIdentity(executeResult.refundAttemptId);
+        expectTableIdentity(executeResult.refundOperationId);
+        expect([
+          executeResult.orderState,
+          executeResult.refundState,
+          executeResult.refundAttemptState,
+        ]).toEqual(['refund_approved', 'approved', 'created']);
+        const completeRefundResponse = await adminPage.request.post(
+          `/api/pay/mock/payment-session/refund-operation/${executeResult.refundOperationId}/complete`,
+          { headers: authHeaders, data: { outcome: 'succeeded' } },
+        );
+        expect(completeRefundResponse.ok()).toBeTruthy();
+        await expect
+          .poll(
+            async () => {
+              await adminPage.reload({ waitUntil: 'load' });
+              const currentOrderRow = await getAdminOrderRow(adminPage, checkout.orderId);
+              return (await currentOrderRow.textContent()) ?? '';
+            },
+            { timeout: 40_000 },
+          )
+          .toContain('refunded');
+        const refundedOrderRow = await getAdminOrderRow(adminPage, checkout.orderId);
+        await expect(refundedOrderRow).toContainText('refunded');
         expect(adminPageErrors).toEqual([]);
       } finally {
         await adminContext.close().catch(() => {});

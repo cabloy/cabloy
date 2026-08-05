@@ -16,6 +16,7 @@ interface IFixture {
   customerName?: string;
   orderId?: number;
   paymentAttemptId?: number;
+  paymentSessionId?: number;
 }
 
 async function cleanup(fixture: IFixture) {
@@ -24,6 +25,21 @@ async function cleanup(fixture: IFixture) {
   const promotion = app.scope('commerce-promotion');
   const catalog = app.scope('commerce-catalog');
   const member = app.scope('commerce-member');
+  const pay = app.scope('a-pay');
+  if (fixture.paymentSessionId !== undefined) {
+    const refundOperations = await pay.model.refundOperation.select({
+      where: { paymentSessionId: fixture.paymentSessionId },
+    });
+    for (const refundOperation of refundOperations) {
+      await pay.model.providerOperation.delete({ refundOperationId: refundOperation.id });
+      await pay.model.outboxEvent.delete({ refundOperationId: refundOperation.id });
+      await pay.model.webhookInbox.delete({ refundOperationId: refundOperation.id });
+      await pay.model.refundOperation.delete({ id: refundOperation.id });
+    }
+    await pay.model.outboxEvent.delete({ paymentSessionId: fixture.paymentSessionId });
+    await pay.model.webhookInbox.delete({ paymentSessionId: fixture.paymentSessionId });
+    await pay.model.providerOperation.delete({ paymentSessionId: fixture.paymentSessionId });
+  }
   if (fixture.orderId !== undefined) {
     const requests = await payment.model.refundRequest.select({
       where: { orderId: fixture.orderId },
@@ -39,6 +55,8 @@ async function cleanup(fixture: IFixture) {
     await payment.model.paymentAudit.delete({ paymentAttemptId: fixture.paymentAttemptId });
     await payment.model.paymentAttempt.delete({ id: fixture.paymentAttemptId });
   }
+  if (fixture.paymentSessionId !== undefined)
+    await pay.model.paymentSession.delete({ id: fixture.paymentSessionId });
   if (fixture.orderId !== undefined)
     await trade.model.orderAudit.delete({ orderId: fixture.orderId });
   if (fixture.skuId !== undefined) await trade.model.stockAudit.delete({ skuId: fixture.skuId });
@@ -152,10 +170,17 @@ async function createPaidOrder(suffix: string): Promise<IFixture> {
   });
   fixture.orderId = checkout.orderId as number;
   fixture.paymentAttemptId = checkout.paymentAttemptId as number;
-  await app.scope('commerce-trade').service.order.applyPaymentOutcome(fixture.paymentAttemptId, {
-    outcome: 'succeeded',
-    idempotencyKey: `refund-payment-${suffix}`,
+  fixture.paymentSessionId = checkout.paymentSessionId as number;
+  const pay = app.scope('a-pay');
+  await pay.service.paymentSession.start(fixture.paymentSessionId);
+  await app
+    .scope('pay-mock')
+    .service.payMock.completePaymentSession(fixture.paymentSessionId, 'succeeded');
+  const outbox = await pay.model.outboxEvent.get({
+    paymentSessionId: fixture.paymentSessionId,
+    eventType: 'payment.outcome.v1',
   });
+  await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outbox!.id });
   return fixture;
 }
 
@@ -303,6 +328,89 @@ describe('refundLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           'refunded',
           'requested',
         ]);
+      } finally {
+        await app.bean.passport.signout();
+        await cleanup(fixture);
+      }
+    });
+  });
+
+  it('settles an executed mock-provider refund through the durable outbox', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture: IFixture = {};
+      try {
+        Object.assign(fixture, await createPaidOrder(randomUUID().slice(0, 12)));
+        const order = app.scope('commerce-trade').service.order;
+        await order.requestRefund(fixture.orderId!, {
+          reason: 'provider-backed refund',
+          idempotencyKey: 'provider-backed-request-1',
+        });
+        await app.bean.passport.signout();
+        await app.bean.passport.signinMock();
+        await order.approveRefund(fixture.orderId!, {
+          reason: 'provider-backed approval',
+          idempotencyKey: 'provider-backed-approve-1',
+        });
+        const executed = await order.executeRefund(fixture.orderId!);
+        assert.ok(executed.refundAttemptId);
+        assert.ok(executed.refundOperationId);
+        assert.deepEqual(
+          [executed.orderState, executed.refundState, executed.refundAttemptState],
+          ['refund_approved', 'approved', 'created'],
+        );
+        const pay = app.scope('a-pay');
+        const refundOperation = await pay.model.refundOperation.getById(executed.refundOperationId);
+        const refundAttempt = await app
+          .scope('commerce-payment')
+          .model.refundAttempt.getById(executed.refundAttemptId);
+        assert.equal(String(refundAttempt?.refundOperationId), String(executed.refundOperationId));
+        assert.equal(refundOperation?.state, 'pending');
+        const receipt = await app
+          .scope('pay-mock')
+          .service.payMock.completeRefundOperation(executed.refundOperationId, 'succeeded');
+        assert.deepEqual(receipt, {
+          refundOperationId: executed.refundOperationId,
+          accepted: true,
+        });
+        const outbox = await pay.model.outboxEvent.get({
+          refundOperationId: executed.refundOperationId,
+          eventType: 'refund.outcome.v1',
+        });
+        assert.ok(outbox);
+        await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outbox.id });
+        await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outbox.id });
+        const [
+          dispatched,
+          settledOrder,
+          settledRequest,
+          settledAttempt,
+          line,
+          balance,
+          grant,
+          audits,
+        ] = await Promise.all([
+          pay.model.outboxEvent.getById(outbox.id),
+          app.scope('commerce-trade').model.order.getById(fixture.orderId!),
+          app.scope('commerce-payment').model.refundRequest.getById(executed.refundRequestId),
+          app.scope('commerce-payment').model.refundAttempt.getById(executed.refundAttemptId),
+          app.scope('commerce-trade').model.orderLine.get({ orderId: fixture.orderId }),
+          app.scope('commerce-trade').model.stockBalance.getById(fixture.balanceId!),
+          app.scope('commerce-promotion').model.couponGrant.getById(fixture.grantId!),
+          app
+            .scope('commerce-payment')
+            .model.refundAudit.select({ where: { orderId: fixture.orderId } }),
+        ]);
+        const reservation = await app
+          .scope('commerce-trade')
+          .model.stockReservation.get({ orderLineId: line?.id });
+        assert.deepEqual([dispatched?.state, dispatched?.attemptCount], ['dispatched', 1]);
+        assert.deepEqual(
+          [settledOrder?.state, settledRequest?.state, settledAttempt?.state, reservation?.state],
+          ['refunded', 'refunded', 'succeeded', 'restored'],
+        );
+        assert.deepEqual([balance?.onHand, balance?.reserved, balance?.available], [1, 0, 1]);
+        assert.equal(grant?.state, 'redeemed');
+        assert.equal(audits.filter(audit => audit.toRefundState === 'refunded').length, 1);
       } finally {
         await app.bean.passport.signout();
         await cleanup(fixture);
