@@ -81,7 +81,7 @@ Do not infer a completed gate from memory. Link each completed command to retain
 
 ## WBS-80-01 Catalogue sub-slice controls
 
-Run Category, Product, and SKU serially. Each resource must reach its local runtime gate before metadata work starts for the next resource.
+Run Category, Product, and SKU serially. Each resource must retain CI evidence before source or metadata work starts for the next resource; `WBS-80-01` is verified only after all three and the batch-closing regression.
 
 | Resource | In-scope Admin semantic areas                                                   | Required preservation                                                                     |
 | -------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
@@ -118,9 +118,9 @@ At a WBS batch closure, build both Commerce flavor pairs and run `npm run test:e
 
 ```text
 WBS / resource: WBS-80-01 / Category Admin semantic-presentation sub-slice
-Status: in-progress; Category local implementation/runtime gate passed; WBS-80-01 is not verified without retained CI evidence
-Current revision: 3d7905cb45af550af629bcb4a0fd0f7c9d7dc41d plus the current working tree
-Working-tree classification: current WBS source of truth (Category entity/model/DTO/service/locales and shared Basic select normalization); current WBS generated output (`commerce-catalog/src/.metadata/index.ts`); current WBS tests/evidence/documentation (Category metadata/runtime test, tagged Commerce E2E, contracts, test plan, progress).
+Status: in-progress; Category CI-backed sub-slice passed; WBS-80-01 is not verified until Product/SKU and batch closure complete
+Current revision: a3fb481767b8badae538dea33bb238c192498518
+Working-tree classification: baseline is clean after publishing the Category source of truth (Category entity/model/DTO/service/locales and shared Basic select normalization), generated output (`commerce-catalog/src/.metadata/index.ts`), and tests/evidence/documentation (Category metadata/runtime test, tagged Commerce E2E, contracts, test plan, progress).
 Scope and explicit exclusions: Category-only, Commerce Admin-only. No Product/SKU source work; no generic Resource model/controller/page/route ownership change; no persisted field, migration, `meta.version.ts`, `fileVersion`, filter, indirect-cycle validation, or hand-edited generated REST/OpenAPI artifact.
 Audience / task / scene: Commerce Admin `systemAdmin` maintains or finds active-instance Categories through the existing generic Resource Create, Update, View, and List/filter scenes.
 Operation DTO boundary: Create/Update remain `name`, optional `parentId`, defaulted `published`, optional `description`; filters remain exactly `name`, `createdAt`; readonly View/List add `parent: { id, name }`, with root Categories omitting `parent`.
@@ -128,12 +128,12 @@ Information areas and field order: identity; hierarchy; publication; description
 Editable / readonly / derived / hidden / snapshot / server-authority boundaries: Create/Update inputs are unchanged; View/List facts and `parent` projection are readonly; `iid` and `deleted` stay hidden. `systemAdmin`, active-instance scope, name validation, parent existence, and direct self-parent rejection remain server-side; no snapshot or derived authority is introduced.
 Shared/custom renderer decision: reuse `basic-resource:formFieldResourcePicker`/`resourcePicker` for the `parent` relation and `basic-select:formFieldSelect`/`select` for localized `Unpublished`/`Published`. Shared Basic select rendering normalizes SQLite numeric `0`/`1` values against boolean renderer items.
 Vona source-of-truth paths: `commerce-catalog` Category entity, model, View/Select DTOs, service, and locales; generic Zova `ModelResource` and Resource pages remain the state/page owner.
-Expected generated and Zova handoff: generated Category metadata was refreshed by the supported flow; Commerce Admin SSR/REST build and `deps:vona` completed without hand edits.
-Completed gate and evidence: focused `categoryPresentation.test.ts` passed 2 tests; Commerce Admin paired SSR/REST build, `deps:vona`, and root `tsc` passed; tagged clean `@category` browser scenario passed with semantic Create controls, List labels, readonly View labels/no Submit action, no page errors, and child-before-parent cleanup. Fixtures use authenticated direct API setup, so Create Submit serialization is not proven.
-Commands passed: `npm run vona :bin:test -- commerce-catalog/test/categoryPresentation.test.ts --flavor=normal`; `npm run build:zova:commerce:admin`; `npm run deps:vona`; `npm run tsc`; `npm run test:e2e:commerce:clean -- --grep @category`; `git diff --check`.
-Commands still required: Category batch regression and clean Commerce browser gate at WBS closure; retained CI evidence before status may become `verified`.
-Known blocker / decision needed: no Category local runtime blocker. Serial Product source work remains prohibited until WBS-80-01 is verified by retained CI evidence.
-Next single action: retain the Category command results in CI; do not open Product/SKU source work before WBS-80-01 verification.
+Expected generated and Zova handoff: generated Category metadata was refreshed by the supported flow; CI Commerce artifacts were built and `deps:vona` completed without hand edits.
+Completed gate and evidence: focused `categoryPresentation.test.ts` passed 2 local tests and passed inside both CI full suites (SQLite 244 pass/10 expected skips; PostgreSQL 254 pass); Commerce CI built paired artifacts, synchronized Vona dependencies, and passed all 15 clean browser scenarios including tagged `ATP-SPC-02`; Vona TypeScript CI passed. [SQLite CI job](https://github.com/cabloy/cabloy/actions/runs/31009315004/job/92317082686), [PostgreSQL CI job](https://github.com/cabloy/cabloy/actions/runs/31009315129/job/92317083264), [Commerce CI job](https://github.com/cabloy/cabloy/actions/runs/31009315183/job/92317083585), and [Vona TypeScript CI job](https://github.com/cabloy/cabloy/actions/runs/31009314978/job/92317082540) retain the evidence. Fixtures use authenticated direct API setup, so Create Submit serialization is not proven.
+Commands passed: local `npm run vona :bin:test -- commerce-catalog/test/categoryPresentation.test.ts --flavor=normal`; `npm run build:zova:commerce:admin`; `npm run deps:vona`; `npm run tsc`; `npm run test:e2e:commerce:clean -- --grep @category`; `git diff --check`. CI: SQLite/PG `npm run test`; Commerce `npm run build:zova:commerce`, `npm run deps:vona`, `npm run test:e2e:commerce:clean`; Vona `tsc`.
+Commands still required: Product and SKU local gates, then Category batch regression and clean Commerce browser gate at WBS closure.
+Known blocker / decision needed: no Category runtime or CI blocker. The approved per-resource CI gate allows Category evidence to unlock Product source work; `WBS-80-01` remains in-progress until Product, SKU, and batch closure complete.
+Next single action: complete Product scene authority and renderer decisions before Product source work.
 ```
 
 ## Related records

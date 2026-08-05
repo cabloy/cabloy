@@ -454,7 +454,7 @@ Primary areas:
 
 Tasks:
 
-- execute Category, then Product, then SKU as serial sub-slices; complete each resource's local runtime gate before starting the next resource's source work;
+- execute Category, then Product, then SKU as serial sub-slices; retain CI evidence for each resource before starting the next resource's source work; `WBS-80-01` remains `in-progress` until all three resources and the batch-closing regression have retained evidence;
 - document each Create, Update, View, and List/filter scene before renderer selection, including information areas, operation DTO membership, relation identity meaning, editable/readonly/derived/hidden boundaries, and customer-surface non-regression;
 - use shared Basic renderers where they preserve relation, publication/lifecycle, USD-cent, date, or structured-detail semantics; follow the reverse contract loop before naming a new Commerce renderer in Vona;
 - retain separate public Product DTO/API/model/page ownership and server-authoritative catalogue sellability;
