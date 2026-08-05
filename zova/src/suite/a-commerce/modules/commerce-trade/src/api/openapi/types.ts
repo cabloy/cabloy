@@ -2852,6 +2852,7 @@ export interface components {
       orderId: number | string;
       refundRequestId: number | string;
       refundAttemptId?: number | string | undefined;
+      refundOperationId?: number | string | undefined;
       /** @enum {string} */
       orderState: 'paid' | 'refund_requested' | 'refund_approved' | 'refund_rejected' | 'refunded';
       /** @enum {string} */

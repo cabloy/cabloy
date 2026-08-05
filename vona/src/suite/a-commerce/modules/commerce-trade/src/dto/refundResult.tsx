@@ -18,6 +18,9 @@ export class DtoRefundResult {
   @Api.field(v.optional(), v.tableIdentity())
   refundAttemptId?: TableIdentity;
 
+  @Api.field(v.optional(), v.tableIdentity())
+  refundOperationId?: TableIdentity;
+
   @Api.field(z.enum(['paid', 'refund_requested', 'refund_approved', 'refund_rejected', 'refunded']))
   orderState: 'paid' | 'refund_requested' | 'refund_approved' | 'refund_rejected' | 'refunded';
 

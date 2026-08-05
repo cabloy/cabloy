@@ -1165,7 +1165,7 @@ export class ServiceOrder extends BeanBase {
   private _refundResult(
     order: Pick<EntityOrder, 'id' | 'state' | 'currency'>,
     refundRequest: Pick<EntityRefundRequest, 'id' | 'state' | 'amountCents'>,
-    refundAttempt?: Pick<EntityRefundAttempt, 'id' | 'state'>,
+    refundAttempt?: Pick<EntityRefundAttempt, 'id' | 'state' | 'refundOperationId'>,
   ): DtoRefundResult {
     if (
       order.state !== 'paid' &&
@@ -1180,6 +1180,7 @@ export class ServiceOrder extends BeanBase {
       orderId: order.id,
       refundRequestId: refundRequest.id,
       refundAttemptId: refundAttempt?.id,
+      refundOperationId: refundAttempt?.refundOperationId,
       orderState: order.state,
       refundState: refundRequest.state,
       refundAttemptState: refundAttempt?.state,
