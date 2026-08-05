@@ -152,7 +152,7 @@ Then ask exactly:
 
 > The local environment overrides are configured. Do you want to run `npm run init` now?
 
-Do not run it without an affirmative answer. Explain that `npm run init` is not an environment allocator: it installs dependencies, runs generation/build-related work, and rewrites the base `APP_NAME` in `vona/env/.env` and `zova/env/.env`.
+Do not run it without an affirmative answer. Explain that `npm run init` is not an environment allocator: it installs dependencies and runs generation/build-related work. In this linked worktree, it preserves the tracked base `APP_NAME` defaults in `vona/env/.env` and `zova/env/.env`; the generated broad `.env.local` files remain the worktree-specific identity source. Primary-checkout and non-Git project initialization may still establish base `APP_NAME` from the project directory.
 
 ## Verification
 

@@ -9,9 +9,10 @@ import {
   rmSync,
   writeFileSync,
 } from 'node:fs';
-import { basename } from 'node:path';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { updateBaseAppName } from './initAppName.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = resolve(__dirname, '..');
@@ -141,19 +142,13 @@ function seedVonaZovaRestWorkspaceDependencies(pkgPath: string): void {
   console.log('[init] Seeded Vona .zova-rest dependencies');
 }
 
-// --- Step 0: Set APP_NAME in .env files ---
+// --- Step 0: Set APP_NAME in base .env files ---
 
 function setAppName(): void {
-  const projectName = basename(ROOT_DIR);
-  const envFiles = [resolve(ROOT_DIR, 'vona/env/.env'), resolve(ROOT_DIR, 'zova/env/.env')];
-  for (const filePath of envFiles) {
-    if (!existsSync(filePath)) continue;
-    let content = readFileSync(filePath, 'utf-8');
-    content = content.replace(/^APP_NAME.*/m, `APP_NAME = ${projectName}`);
-    writeFileSync(filePath, content);
-    // eslint-disable-next-line
-    console.log(`[init] Set APP_NAME = ${projectName} in ${filePath}`);
-  }
+  updateBaseAppName(ROOT_DIR);
+  // if (updateBaseAppName(ROOT_DIR)) return;
+  // eslint-disable-next-line
+  // console.log('[init] Linked Git worktree detected; preserving base APP_NAME defaults');
 }
 
 // --- Step A: Generate vona/env/.env.prod.local ---

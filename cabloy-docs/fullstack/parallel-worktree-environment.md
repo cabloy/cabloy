@@ -113,7 +113,7 @@ For example, `APP_NAME` namespaces ordinary framework Redis keys, but it does no
 
 For confirmation-gated setup, explicitly invoke `/cabloy-worktree-environment`. The skill validates the linked worktree and edition, derives a secret-safe proposal from Git metadata and fixed port baselines, and writes both allowed broad local files after final confirmation.
 
-After local overrides are validated, decide separately whether to run `npm run init`. It is not an environment allocator: it installs dependencies, runs generation/build-related work, and rewrites the base `APP_NAME` values in `vona/env/.env` and `zova/env/.env`.
+After local overrides are validated, decide separately whether to run `npm run init`. It is not an environment allocator: it installs dependencies and runs generation/build-related work. When it runs from a linked Git worktree rooted at the project, it preserves the tracked base `APP_NAME` defaults in `vona/env/.env` and `zova/env/.env`; the generated broad `.env.local` files supply the worktree-specific identity. Primary-checkout and non-Git project initialization may still establish base `APP_NAME` from the project directory.
 
 ## Read together with
 

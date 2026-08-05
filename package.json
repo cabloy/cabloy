@@ -23,6 +23,7 @@
   "scripts": {
     "init": "node scripts/init.ts",
     "init:test-data": "node scripts/initTestData.ts",
+    "test:scripts": "node --test scripts/initAppName.test.ts",
     "upgrade": "node scripts/upgrade.ts",
     "upgrade:dry-run": "node scripts/upgrade.ts --dry-run",
     "vona": "node ./vona/packages-cli/cli/src/bin/vona.ts --projectPath=vona",
