@@ -4,7 +4,7 @@
 
 This is the maintainer execution runbook for the rollout that follows the Coupon Template conformance reference. It implements the delivery sequence in the [PDP/WBS](./pdp-wbs.md), the acceptance requirements in the [test plan](./test-plan.md), and the resource/scene decisions in the [presentation-contract matrix](./presentation-contracts.md). It does not replace the PRD, SRS, ADR 0003, PDP/WBS, test plan, or matrix as an authority source.
 
-Coupon Template remains the first executable reference under `WBS-70-03` and `WBS-70-04`. Its local evidence is complete; retained post-commit CI evidence remains required before those WBS items become `verified`.
+Coupon Template remains the first executable reference under `WBS-70-03` and `WBS-70-04`. The retained post-commit CI evidence at [`a93b4c8759056a057f6ddac28c8f54069eb7f10d`](https://github.com/cabloy/cabloy/commit/a93b4c8759056a057f6ddac28c8f54069eb7f10d) is recorded in the [test plan](./test-plan.md#phase-70-semantic-presentation-ci-evidence); both WBS items are `verified`.
 
 ## Scope and execution order
 
@@ -32,7 +32,7 @@ Every resource slice passes these gates in order:
 | D — forward handoff   | Normal metadata/OpenAPI generation updates consumers with no generated-file edits.                                                           | Diagnose contract or dependency drift.                                |
 | E — Admin runtime     | Paired Admin SSR/REST build, dependency synchronization, typecheck, and tagged clean browser scenario pass.                                  | Keep the WBS item `in-progress`.                                      |
 | F — regression        | Relevant ownership, lifecycle, snapshot, or stock-invariant tests and the batch-closing clean Commerce browser gate pass.                    | Keep the WBS item `in-progress`.                                      |
-| G — durable closure   | Test-plan evidence records revision, database/flavor, commands, results, and CI/job link.                                                    | `implementation-complete`, not `verified`.                            |
+| G — durable closure   | Test-plan evidence records revision, database/flavor, commands, results, and CI/job link.                                                    | `implementation-complete`, not `verified` until retained.             |
 
 Use renderer metadata only as a presentation translation. It must not redefine API membership, persistence, validation, authorization, Model ownership, page ownership, customer flow, or SSR privacy. Renderer/action visibility never authorizes a server operation, and visual hiding never substitutes for operation DTO membership.
 
@@ -118,9 +118,9 @@ At a WBS batch closure, build both Commerce flavor pairs and run `npm run test:e
 
 ```text
 WBS / resource: WBS-80-00 / rollout controls; Category documentation preparation for WBS-80-01
-Status: implementation-complete; WBS-80-01 remains not-started and source-blocked
-Current revision: 36b77633b811ca11419767e0357d873ded32d84d
-Working-tree classification: baseline is clean; Phase-80 Category authority/evidence documentation is the current WBS evidence/documentation change.
+Status: implementation-complete; WBS-70-03 and WBS-70-04 are verified; WBS-80-01 remains not-started and source-blocked
+Current revision: a93b4c8759056a057f6ddac28c8f54069eb7f10d
+Working-tree classification: baseline is clean at the retained-evidence revision; Phase-70 CI retention documentation is the current WBS evidence/documentation change.
 Scope and explicit exclusions: Documentation and authoritative Category scope only; no Category entity, DTO, controller/service, locale, Vona/Zova renderer, generic Resource owner/page, persistence, generated artifact, or E2E change.
 Audience / task / scene: Commerce Admin `systemAdmin` maintains or finds tenant-local Categories through the existing generic Resource Create, Update, View, and List/filter scenes.
 Operation DTO boundary: Create/Update remain `name`, optional `parentId`, defaulted `published`, optional `description`; View/List retain existing identity, parent ID, publication, description, dates, hidden `iid`/`deleted`, and compact `name`/`createdAt` filter boundaries.
@@ -131,9 +131,9 @@ Vona source-of-truth paths: `commerce-catalog` Category entity, Create/Update/Vi
 Expected generated and Zova handoff: none in this documentation-only session. After all gates clear: focused tests, Vona metadata/OpenAPI generation, Commerce Admin paired build, `deps:vona`, typecheck, tagged browser proof, batch clean browser gate, and retained CI.
 Completed gate and evidence: Category Create/Update/View/List-filter authority records, explicit `PRD-CAT-03` Category scope, and future `ATP-SPC-02` evidence contract are documented only.
 Commands passed: `npm run docs:build` and `git diff --check`.
-Commands still required: retained post-commit CI evidence for WBS-70-03/WBS-70-04 and all later Category source/runtime gates.
-Known blocker / decision needed: WBS-70-03 and WBS-70-04 require retained CI evidence. Before Category source work, approve the parent relation DTO projection and localized publication renderer/options source.
-Next single action: Retain the Phase-70 CI evidence and resolve the two Category renderer/contract decisions before opening Category source work.
+Commands still required: all later Category source/runtime gates, after both renderer/contract decisions are approved.
+Known blocker / decision needed: Before Category source work, approve the parent relation DTO projection and localized publication renderer/options source.
+Next single action: Resolve the two Category renderer/contract decisions before opening Category source work.
 ```
 
 ## Related records
