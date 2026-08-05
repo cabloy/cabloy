@@ -99,7 +99,7 @@ A tenant operator who assigns commerce roles. Framework-wide administrative auth
 
 - **PRD-CAT-01**: Customers can browse categories, active products, and active SKUs available to the current tenant.
 - **PRD-CAT-02**: Customers see the price and current sellable availability for a selected SKU, but the display is not the final checkout authority.
-- **PRD-CAT-03**: Catalogue operators can create, edit, publish, unpublish, and inspect products and SKUs within their tenant.
+- **PRD-CAT-03**: Catalogue operators can create, edit, publish, unpublish, inspect, list, filter, and delete Categories, Products, and SKUs within their tenant through their approved Admin Resource contracts.
 
 ### Inventory
 

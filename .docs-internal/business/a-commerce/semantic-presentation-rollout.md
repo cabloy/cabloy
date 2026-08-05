@@ -117,16 +117,23 @@ At a WBS batch closure, build both Commerce flavor pairs and run `npm run test:e
 ## Current handoff
 
 ```text
-WBS / resource: WBS-80-00 / rollout controls
-Status: implementation-complete
-Current revision: 3d5a72a6f3cbe7e0acd1d4e81afa1bf9fbbf100e
-Working-tree classification: baseline changes predate this rollout; Phase-80 documentation is the current WBS evidence/documentation change.
-Scope and explicit exclusions: Documentation/runbook only; no Vona/Zova renderer, DTO, API, persistence, or generated artifact change.
-Completed gate and evidence: Plan and source inventory complete; this runbook establishes the required gate and handoff structure.
-Commands passed: `npm run docs:build`, `git diff --check`, and root Vona/Zova command-family checks.
-Commands still required: Retain post-commit CI evidence for the Coupon Template reference.
-Known blocker / decision needed: WBS-70-03 and WBS-70-04 still require post-commit CI evidence before they are verified.
-Next single action: Retain the required CI evidence, then prepare the Category concrete Admin scene-authority record.
+WBS / resource: WBS-80-00 / rollout controls; Category documentation preparation for WBS-80-01
+Status: implementation-complete; WBS-80-01 remains not-started and source-blocked
+Current revision: 36b77633b811ca11419767e0357d873ded32d84d
+Working-tree classification: baseline is clean; Phase-80 Category authority/evidence documentation is the current WBS evidence/documentation change.
+Scope and explicit exclusions: Documentation and authoritative Category scope only; no Category entity, DTO, controller/service, locale, Vona/Zova renderer, generic Resource owner/page, persistence, generated artifact, or E2E change.
+Audience / task / scene: Commerce Admin `systemAdmin` maintains or finds tenant-local Categories through the existing generic Resource Create, Update, View, and List/filter scenes.
+Operation DTO boundary: Create/Update remain `name`, optional `parentId`, defaulted `published`, optional `description`; View/List retain existing identity, parent ID, publication, description, dates, hidden `iid`/`deleted`, and compact `name`/`createdAt` filter boundaries.
+Information areas and field order: identity; hierarchy; publication; description; business dates only in readonly View/List scenes.
+Editable / readonly / derived / hidden / snapshot / server-authority boundaries: Create/Update inputs remain current DTO fields; View/List facts are readonly; `iid` and `deleted` stay hidden. `systemAdmin`, active-instance scope, name validation, parent existence, and direct self-parent rejection remain server-side; no snapshots or derived authority are introduced.
+Shared/custom renderer decision: default text/detail and existing shared date treatment are retained. Parent label/resource-picker treatment is blocked pending an approved DTO projection; localized publication select/cell semantics are blocked pending approved shared renderer/options and locale source.
+Vona source-of-truth paths: `commerce-catalog` Category entity, Create/Update/View/Select DTOs, controller, and service remain unchanged; generic Zova `ModelResource` and Resource pages remain the state/page owner.
+Expected generated and Zova handoff: none in this documentation-only session. After all gates clear: focused tests, Vona metadata/OpenAPI generation, Commerce Admin paired build, `deps:vona`, typecheck, tagged browser proof, batch clean browser gate, and retained CI.
+Completed gate and evidence: Category Create/Update/View/List-filter authority records, explicit `PRD-CAT-03` Category scope, and future `ATP-SPC-02` evidence contract are documented only.
+Commands passed: `npm run docs:build` and `git diff --check`.
+Commands still required: retained post-commit CI evidence for WBS-70-03/WBS-70-04 and all later Category source/runtime gates.
+Known blocker / decision needed: WBS-70-03 and WBS-70-04 require retained CI evidence. Before Category source work, approve the parent relation DTO projection and localized publication renderer/options source.
+Next single action: Retain the Phase-70 CI evidence and resolve the two Category renderer/contract decisions before opening Category source work.
 ```
 
 ## Related records
