@@ -11,23 +11,21 @@ import type {
   IPayProviderWebhookInput,
 } from 'vona-module-a-pay';
 
-import {
-  CheckoutPaymentIntent,
-  Client,
-  Environment,
-  OrdersController,
-  OrderStatus,
-  PaymentsController,
-} from '@cabloy/paypal-server-sdk';
+import { CheckoutPaymentIntent, OrderStatus } from '@cabloy/paypal-server-sdk';
 import { BeanBase, useApp } from 'vona';
 import { PayProvider } from 'vona-module-a-pay';
 import { z } from 'zod';
+
+import type { IPaypalGateway, IPaypalGatewayOptions } from '../lib/paypalGateway.ts';
+
+import { createPaypalGateway, PaypalGatewayError } from '../lib/paypalGateway.ts';
 
 export interface IPayProviderPaypalClientRecord extends IPayProviderClientRecord {}
 
 export interface IPayProviderPaypalClientOptions extends IPayProviderClientOptions {
   secretCredential: { clientId: string | undefined; clientSecret: string | undefined };
   webhookId: string | undefined;
+  gateway?: IPaypalGateway;
 }
 
 const app = useApp();
@@ -79,31 +77,38 @@ export class PayProviderPaypal
       this.app.throw(422, 'PayPal payment requires return and cancel URLs');
     }
     this._assertReady(clientOptions);
-    const orders = new OrdersController(this._createClient(clientOptions));
-    const response = await orders.createOrder({
-      paypalRequestId: input.idempotencyKey,
-      body: {
-        intent: CheckoutPaymentIntent.Capture,
-        applicationContext: { returnUrl: input.returnUrl, cancelUrl: input.cancelUrl },
-        purchaseUnits: [
-          {
-            customId: String(input.paymentSessionId),
-            invoiceId: input.businessReference,
-            amount: {
-              currencyCode: input.currency,
-              value: formatMinorAmount(input.amountMinor, input.currency),
+    const order = await this._gateway(clientOptions).createOrder(
+      this._gatewayOptions(clientOptions),
+      {
+        paypalRequestId: input.idempotencyKey,
+        body: {
+          intent: CheckoutPaymentIntent.Capture,
+          applicationContext: { returnUrl: input.returnUrl, cancelUrl: input.cancelUrl },
+          purchaseUnits: [
+            {
+              customId: String(input.paymentSessionId),
+              invoiceId: input.businessReference,
+              amount: {
+                currencyCode: input.currency,
+                value: formatMinorAmount(input.amountMinor, input.currency),
+              },
             },
-          },
-        ],
+          ],
+        },
       },
-    } as never);
-    const order = response.result;
-    const approvalUrl = order?.links?.find(item => item.rel === 'approve')?.href;
-    if (!order?.id || !approvalUrl) this.app.throw(502, 'PayPal did not return an approval order');
+    );
+    const orderRecord = asRecord(order);
+    const approvalUrl = readString(
+      asArray(orderRecord.links)
+        .map(asRecord)
+        .find(item => item.rel === 'approve')?.href,
+    );
+    const orderId = readString(orderRecord.id);
+    if (!orderId || !approvalUrl) this.app.throw(502, 'PayPal did not return an approval order');
     return {
       state: 'requires_action',
-      providerPaymentId: order.id,
-      providerOrderId: order.id,
+      providerPaymentId: orderId,
+      providerOrderId: orderId,
       nextAction: { kind: 'redirect', url: approvalUrl },
     };
   }
@@ -114,12 +119,14 @@ export class PayProviderPaypal
   ): Promise<IPayProviderPaymentSnapshot> {
     this._assertReady(clientOptions);
     if (!input.providerOrderId) this.app.throw(409, 'PayPal payment has no provider order');
-    const orders = new OrdersController(this._createClient(clientOptions));
-    const response = await orders.captureOrder({
-      id: input.providerOrderId,
-      paypalRequestId: input.idempotencyKey,
-    } as never);
-    return this._mapOrder(response.result, input, clientOptions);
+    const order = await this._gateway(clientOptions).captureOrder(
+      this._gatewayOptions(clientOptions),
+      {
+        id: input.providerOrderId,
+        paypalRequestId: input.idempotencyKey,
+      },
+    );
+    return this._mapOrder(order, input, clientOptions);
   }
 
   async queryPayment(
@@ -128,9 +135,10 @@ export class PayProviderPaypal
   ): Promise<IPayProviderPaymentSnapshot> {
     this._assertReady(clientOptions);
     if (!input.providerOrderId) this.app.throw(409, 'PayPal payment has no provider order');
-    const orders = new OrdersController(this._createClient(clientOptions));
-    const response = await orders.getOrder({ id: input.providerOrderId });
-    return this._mapOrder(response.result, input, clientOptions);
+    const order = await this._gateway(clientOptions).getOrder(this._gatewayOptions(clientOptions), {
+      id: input.providerOrderId,
+    });
+    return this._mapOrder(order, input, clientOptions);
   }
 
   async createRefund(
@@ -138,20 +146,22 @@ export class PayProviderPaypal
     clientOptions: IPayProviderPaypalClientOptions,
   ): Promise<IPayProviderRefundSnapshot> {
     this._assertReady(clientOptions);
-    const payments = new PaymentsController(this._createClient(clientOptions));
-    const response = await payments.refundCapturedPayment({
-      captureId: input.providerCaptureId,
-      paypalRequestId: input.idempotencyKey,
-      body: {
-        amount: {
-          currencyCode: input.currency,
-          value: formatMinorAmount(input.amountMinor, input.currency),
+    const refund = await this._gateway(clientOptions).refundCapturedPayment(
+      this._gatewayOptions(clientOptions),
+      {
+        captureId: input.providerCaptureId,
+        paypalRequestId: input.idempotencyKey,
+        body: {
+          amount: {
+            currencyCode: input.currency,
+            value: formatMinorAmount(input.amountMinor, input.currency),
+          },
+          customId: String(input.refundOperationId),
+          invoiceId: input.businessReference,
         },
-        customId: String(input.refundOperationId),
-        invoiceId: input.businessReference,
       },
-    } as never);
-    return this._mapRefund(response.result, input, clientOptions);
+    );
+    return this._mapRefund(refund, input, clientOptions);
   }
 
   async queryRefund(
@@ -161,9 +171,13 @@ export class PayProviderPaypal
     this._assertReady(clientOptions);
     if (!input.providerRefundId)
       this.app.throw(409, 'PayPal refund has no provider refund identifier');
-    const payments = new PaymentsController(this._createClient(clientOptions));
-    const response = await payments.getRefund({ refundId: input.providerRefundId });
-    return this._mapRefund(response.result, input, clientOptions);
+    const refund = await this._gateway(clientOptions).getRefund(
+      this._gatewayOptions(clientOptions),
+      {
+        refundId: input.providerRefundId,
+      },
+    );
+    return this._mapRefund(refund, input, clientOptions);
   }
 
   async verifyWebhook(
@@ -173,7 +187,14 @@ export class PayProviderPaypal
     this._assertReady(clientOptions);
     const webhook = PaypalWebhookSchema.safeParse(input.body);
     if (!webhook.success) this.app.throw(400, 'PayPal webhook is invalid');
-    await this._verifyWebhookSignature(input, clientOptions);
+    try {
+      await this._gateway(clientOptions).verifyWebhookSignature(
+        this._gatewayOptions(clientOptions),
+        input,
+      );
+    } catch (error) {
+      this._throwGatewayError(error);
+    }
     return await this._mapWebhook(webhook.data, clientOptions);
   }
 
@@ -188,7 +209,7 @@ export class PayProviderPaypal
     if (!resourceId || !amount || !currency)
       this.app.throw(400, 'PayPal webhook has invalid resource');
 
-    if (event.event_type.startsWith('PAYMENT.CAPTURE.REFUND_')) {
+    if (isRefundEvent(event.event_type)) {
       const refundOperationId = readString(readField(resource, 'customId', 'custom_id'));
       const captureId = readNestedString(resource, [
         'supplementary_data',
@@ -231,8 +252,12 @@ export class PayProviderPaypal
     if (event.event_type.startsWith('PAYMENT.CAPTURE.')) {
       const orderId = readNestedString(resource, ['supplementaryData', 'relatedIds', 'orderId']);
       if (!orderId) this.app.throw(400, 'PayPal capture webhook has no order identifier');
-      const orders = new OrdersController(this._createClient(clientOptions));
-      const order = (await orders.getOrder({ id: orderId })).result;
+      const order = await this._gateway(clientOptions).getOrder(
+        this._gatewayOptions(clientOptions),
+        {
+          id: orderId,
+        },
+      );
       const input = this._inputFromOrder(order, orderId);
       const payment = this._mapOrder(order, input, clientOptions);
       if (!['succeeded', 'failed', 'cancelled'].includes(payment.state)) {
@@ -350,7 +375,7 @@ export class PayProviderPaypal
     if (
       (input.providerRefundId && input.providerRefundId !== providerRefundId) ||
       readString(readField(record, 'customId', 'custom_id')) !== String(input.refundOperationId) ||
-      readString(record.invoice_id) !== input.businessReference ||
+      readString(readField(record, 'invoiceId', 'invoice_id')) !== input.businessReference ||
       parsePaypalAmount(record.amount) !== input.amountMinor ||
       parsePaypalCurrency(record.amount) !== input.currency
     ) {
@@ -360,58 +385,27 @@ export class PayProviderPaypal
     return mapRefund(readString(record.status), providerRefundId);
   }
 
-  private async _verifyWebhookSignature(
-    input: IPayProviderWebhookInput,
-    clientOptions: IPayProviderPaypalClientOptions,
-  ) {
-    const webhookId = clientOptions.webhookId;
-    if (!webhookId) this.app.throw(503, 'PayPal webhook ID is not configured');
-    const headers = input.headers;
-    const transmissionId = getHeader(headers, 'paypal-transmission-id');
-    const transmissionTime = getHeader(headers, 'paypal-transmission-time');
-    const certUrl = getHeader(headers, 'paypal-cert-url');
-    const authAlgo = getHeader(headers, 'paypal-auth-algo');
-    const transmissionSig = getHeader(headers, 'paypal-transmission-sig');
-    if (!transmissionId || !transmissionTime || !certUrl || !authAlgo || !transmissionSig) {
-      this.app.throw(401, 'PayPal webhook transmission headers are invalid');
-    }
+  private _gateway(clientOptions: IPayProviderPaypalClientOptions) {
+    return clientOptions.gateway ?? createPaypalGateway(this.bean.core.fetch);
+  }
+
+  private _gatewayOptions(clientOptions: IPayProviderPaypalClientOptions): IPaypalGatewayOptions {
     const { clientId, clientSecret } = clientOptions.secretCredential;
-    const apiBaseUrl =
-      clientOptions.environment === 'sandbox'
-        ? 'https://api-m.sandbox.paypal.com'
-        : 'https://api-m.paypal.com';
-    const tokenResponse = await fetch(`${apiBaseUrl}/v1/oauth2/token`, {
-      method: 'POST',
-      headers: {
-        'authorization': `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-      body: 'grant_type=client_credentials',
-    });
-    const token = asRecord(tokenResponse.ok ? await tokenResponse.json() : undefined);
-    const accessToken = readString(token.access_token);
-    if (!accessToken) this.app.throw(401, 'PayPal webhook verification authentication failed');
-    const response = await fetch(`${apiBaseUrl}/v1/notifications/verify-webhook-signature`, {
-      method: 'POST',
-      headers: {
-        'authorization': `Bearer ${accessToken}`,
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        auth_algo: authAlgo,
-        cert_url: certUrl,
-        transmission_id: transmissionId,
-        transmission_sig: transmissionSig,
-        transmission_time: transmissionTime,
-        webhook_id: webhookId,
-        webhook_event: input.body,
-      }),
-    });
-    if (!response.ok) this.app.throw(401, 'PayPal webhook verification failed');
-    const result = asRecord(await response.json());
-    if (readString(result.verification_status) !== 'SUCCESS') {
-      this.app.throw(401, 'PayPal webhook signature is invalid');
+    const webhookId = clientOptions.webhookId;
+    if (!clientId || !clientSecret || !webhookId) {
+      this.app.throw(503, 'PayPal is not fully configured');
     }
+    return {
+      environment: clientOptions.environment,
+      clientId,
+      clientSecret,
+      webhookId,
+    };
+  }
+
+  private _throwGatewayError(error: unknown): never {
+    if (error instanceof PaypalGatewayError) this.app.throw(error.status, error.message);
+    throw error;
   }
 
   private _assertReady(clientOptions: IPayProviderPaypalClientOptions) {
@@ -438,21 +432,6 @@ export class PayProviderPaypal
     if (!merchantId || merchantId !== clientOptions.merchantReference) {
       this.app.throw(409, 'PayPal merchant reference conflicts');
     }
-  }
-
-  private _createClient(clientOptions: IPayProviderPaypalClientOptions) {
-    const { clientId, clientSecret } = clientOptions.secretCredential;
-    if (!clientId || !clientSecret)
-      this.app.throw(503, 'PayPal client credentials are not configured');
-    return new Client({
-      clientCredentialsAuthCredentials: {
-        oAuthClientId: clientId,
-        oAuthClientSecret: clientSecret,
-      },
-      timeout: 0,
-      environment:
-        clientOptions.environment === 'live' ? Environment.Production : Environment.Sandbox,
-    });
   }
 }
 
@@ -507,7 +486,7 @@ function camelToSnake(value: string) {
 
 function parsePaypalAmount(value: unknown): number | undefined {
   const amount = asRecord(value);
-  if (readString(amount.currency_code) !== 'USD') return undefined;
+  if (readString(readField(amount, 'currencyCode', 'currency_code')) !== 'USD') return undefined;
   const decimal = readString(amount.value);
   if (!decimal || !/^\d+\.\d{2}$/.test(decimal)) return undefined;
   const [whole, fractional] = decimal.split('.');
@@ -516,13 +495,13 @@ function parsePaypalAmount(value: unknown): number | undefined {
 }
 
 function parsePaypalCurrency(value: unknown) {
-  const currency = readString(asRecord(value).currency_code);
+  const amount = asRecord(value);
+  const currency = readString(readField(amount, 'currencyCode', 'currency_code'));
   return currency === 'USD' ? currency : undefined;
 }
 
-function getHeader(headers: Record<string, string | string[] | undefined>, key: string) {
-  const value = headers[key];
-  return Array.isArray(value) ? value[0] : value;
+function isRefundEvent(eventType: string) {
+  return eventType === 'PAYMENT.CAPTURE.REFUNDED' || eventType.startsWith('PAYMENT.REFUND.');
 }
 
 declare module 'vona-module-a-pay' {

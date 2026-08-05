@@ -151,8 +151,10 @@ export class ServiceRefundOperation extends BeanBase {
         amountMinor: refund.amountMinor,
         currency: refund.currency,
       });
+      await this._completeProviderOperation(providerOperation, snapshot.providerRefundId);
+    } else {
+      await this._scheduleReconciliation(providerOperation, snapshot.providerRefundId);
     }
-    await this._completeProviderOperation(providerOperation, snapshot.providerRefundId);
     return { ...refund, ...snapshot, finalizedAt };
   }
 
@@ -208,6 +210,21 @@ export class ServiceRefundOperation extends BeanBase {
       },
       changed: true,
     };
+  }
+
+  private async _scheduleReconciliation(
+    providerOperation: { id: TableIdentity },
+    providerResourceId?: string,
+  ) {
+    await this.scope.model.providerOperation.updateById(providerOperation.id, {
+      state: 'reconciliation_required',
+      providerResourceId,
+      claimToken: undefined,
+      claimExpiresAt: undefined,
+      nextAttemptAt: new Date(Date.now() + 5_000),
+      errorCode: undefined,
+      errorSummary: undefined,
+    });
   }
 
   private async _completeProviderOperation(

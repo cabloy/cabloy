@@ -1,1 +1,1 @@
-export {};
+export * from './paypalGateway.ts';

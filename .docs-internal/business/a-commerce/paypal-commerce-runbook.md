@@ -29,7 +29,7 @@ The server must be publicly reachable at the configured origin. Callback URLs ar
 1. Create the application, merchant account, buyer account, credentials, and webhook in the selected PayPal environment.
 2. Register the backend webhook endpoint:
    `POST https://<public-host>/api/pay/webhook/pay-paypal:paypal/default`.
-3. Subscribe only to the capture and refund event types supported by the adapter. Unsupported event families intentionally receive a non-success response.
+3. Subscribe to terminal capture events plus `PAYMENT.CAPTURE.REFUNDED` and the supported `PAYMENT.REFUND.*` lifecycle events. Unsupported event families intentionally receive a non-success response.
 4. Set `PAYPAL_WEBHOOK_ID` and `PAYPAL_MERCHANT_REFERENCE` from the same selected PayPal environment as the credentials.
 5. Verify endpoint reachability and configuration before allowing eligible Checkout users to select PayPal.
 
@@ -42,7 +42,8 @@ The server must be publicly reachable at the configured origin. Callback URLs ar
 5. Confirm the server creates or reuses the durable confirm operation, captures the persisted PayPal order, and reaches a provider-neutral PaymentSession terminal state.
 6. Confirm a verified webhook is stored, one payment outbox event is dispatched, and Commerce receives exactly one payment outcome.
 7. Submit full and partial refunds; confirm provider refund IDs persist and webhook/query races converge to one outcome.
-8. Repeat a callback and webhook delivery to verify idempotency.
+8. Repeat the exact valid return callback after the PaymentSession is terminal; it must redirect to the same trusted continuation path without another capture or a `409` response. Repeat a webhook delivery to verify idempotency.
+9. If a refund first reports pending, verify its linked `payProviderOperation` enters `reconciliation_required` and is resolved by durable refund query reconciliation or by a verified terminal refund webhook.
 
 ## Environment cutover
 

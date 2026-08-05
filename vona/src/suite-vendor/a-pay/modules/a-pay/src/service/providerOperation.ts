@@ -35,7 +35,7 @@ export class ServiceProviderOperation extends BeanBase {
       `pay.providerOperation.confirm.${paymentSessionId}`,
       async () => {
         const operation = await this.ensureConfirm(paymentSessionId);
-        await this.execute(operation.id);
+        if (operation) await this.execute(operation.id);
         return await this._getSession(paymentSessionId);
       },
     );
@@ -78,13 +78,13 @@ export class ServiceProviderOperation extends BeanBase {
   }
 
   @Core.transaction()
-  async ensureConfirm(paymentSessionId: TableIdentity): Promise<EntityProviderOperation> {
+  async ensureConfirm(
+    paymentSessionId: TableIdentity,
+  ): Promise<EntityProviderOperation | undefined> {
     const session = await this.scope.model.paymentSession.getByIdForUpdate(paymentSessionId);
     if (!session) this.app.throw(404, 'payment session not found');
+    if (['succeeded', 'failed', 'cancelled', 'expired'].includes(session.state)) return undefined;
     if (!session.providerOrderId) this.app.throw(409, 'payment session has no provider order');
-    if (['succeeded', 'failed', 'cancelled', 'expired'].includes(session.state)) {
-      this.app.throw(409, 'payment session is already finalized');
-    }
     if (session.providerCaptureId || session.state === 'processing') {
       return await this._ensureQueryLocked(session);
     }
