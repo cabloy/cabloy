@@ -535,7 +535,9 @@ test(
       await orderCard.getByRole('button', { name: 'View', exact: true }).click();
       await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`));
       await historyDetailResponse;
-      await expect(page.getByRole('heading', { name: `Order #${checkout.orderId}` })).toBeVisible();
+      await expect(
+        page.getByRole('heading', { name: `Order #${checkout.orderId}`, level: 1 }),
+      ).toBeVisible();
       await expect(page.getByText('1 × $45.99 = $45.99')).toBeVisible();
       await expect(page.getByRole('alert')).toHaveCount(0);
       expect(pageErrors).toEqual([]);
