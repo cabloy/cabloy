@@ -127,17 +127,96 @@ declare module 'vona' {
 
 In the VSCode workflow, the `recordlocale` snippet can generate the augmentation skeleton.
 
-## Plural support
+## Formatting locale text
 
-Locale resources can express plural-aware strings through naming conventions such as:
+Locale values use printf-style placeholders. Pass formatting values after the locale key:
 
-- `TestApples_`
-- `TestApples_0`
-- `TestApples_1`
+```typescript
+// en-us.ts
+export default {
+  Apples_: '%d apples',
+  Greeting: '%s has %d apples',
+};
+```
 
-Multiple-parameter variants are also supported through ordinal-aware suffix conventions.
+```typescript
+this.scope.locale.Apples_.locale('en-us', 2);
+// 2 apples
 
-This makes plural handling part of the localization model instead of forcing each project to invent its own formatting layer.
+this.scope.locale.Greeting.locale('en-us', 'Mike', 2);
+// Mike has 2 apples
+```
+
+Common placeholders include:
+
+- `%s`: string
+- `%d`: number
+- `%i`: integer
+- `%f`: floating-point number
+- `%j`: JSON
+- `%%`: literal percent sign
+
+## Plural and value-specific support
+
+Locale resources can express special messages for exact numeric values through key suffixes:
+
+```typescript
+export default {
+  Apples_: '%d apples',
+  Apples_0: 'no apples',
+  Apples_1: 'one apple',
+};
+```
+
+The suffix selects a special message based on the first formatting argument:
+
+```typescript
+this.scope.locale.Apples_.locale('en-us', 0);
+// no apples
+
+this.scope.locale.Apples_.locale('en-us', 1);
+// one apple
+
+this.scope.locale.Apples_.locale('en-us', 2);
+// 2 apples
+```
+
+The base key is used when no value-specific key matches. Therefore, it is not necessary to define a special key for every possible number.
+
+For a numeric value that is not the first formatting argument, use this naming convention:
+
+```text
+<baseKey>_<matchedValue>_<argumentIndex>
+```
+
+The argument index is zero-based. For example:
+
+```typescript
+export default {
+  NameApples_: '%s has %d apples',
+  NameApples_0_1: '%s has no apples',
+  NameApples_1_1: '%s has one apple',
+};
+```
+
+Here:
+
+- `NameApples_0_1` matches `args[1] === 0`, the second formatting argument;
+- `NameApples_1_1` matches `args[1] === 1`, the second formatting argument;
+- `NameApples_` is used for other values.
+
+```typescript
+this.scope.locale.NameApples_.locale('en-us', 'Mike', 0);
+// Mike has no apples
+
+this.scope.locale.NameApples_.locale('en-us', 'Mike', 1);
+// Mike has one apple
+
+this.scope.locale.NameApples_.locale('en-us', 'Mike', 2);
+// Mike has 2 apples
+```
+
+This is exact numeric-value selection, not automatic `Intl.PluralRules` or CLDR plural-category resolution. It makes common plural handling part of the localization model while allowing each locale to define its own wording.
 
 ## Timezone support
 
