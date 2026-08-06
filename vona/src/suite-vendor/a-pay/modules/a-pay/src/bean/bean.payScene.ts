@@ -21,7 +21,7 @@ export class BeanPayScene extends BeanBase {
 
   getOptions<N extends keyof IPaySceneRecord>(paySceneName: N): IDecoratorPaySceneOptions {
     const onionSlice = this._getOnionSlice(paySceneName);
-    return onionSlice.beanOptions.options as IDecoratorPaySceneOptions;
+    return onionSlice.beanOptions.options as unknown as IDecoratorPaySceneOptions;
   }
 
   async getAvailableProviderCandidates<N extends keyof IPaySceneRecord>(
