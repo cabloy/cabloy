@@ -88,6 +88,7 @@ describe('productPresentation.test.ts', () => {
       assert.deepEqual(Object.keys(viewComponent.properties.category.properties).sort(), [
         'id',
         'name',
+        'published',
       ]);
       assert.equal(viewComponent.properties.iid.rest.visible, false);
       assert.equal(viewComponent.properties.deleted.rest.visible, false);
@@ -114,6 +115,7 @@ describe('productPresentation.test.ts', () => {
       assert.deepEqual(Object.keys(listComponent.properties.category.properties).sort(), [
         'id',
         'name',
+        'published',
       ]);
       assert.equal(
         listComponent.properties.categoryId.rest.table.render,
@@ -179,6 +181,7 @@ describe('productPresentation.test.ts', () => {
         assert.deepEqual(view.category, {
           id: categoryId,
           name: `presentation-product-category-${suffix}`,
+          published: true,
         });
 
         const select: any = await app.bean.executor.performAction(
@@ -190,6 +193,7 @@ describe('productPresentation.test.ts', () => {
         assert.deepEqual(item.category, {
           id: categoryId,
           name: `presentation-product-category-${suffix}`,
+          published: true,
         });
         assert.equal(item.published, false);
       } finally {
