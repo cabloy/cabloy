@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.131
+
+### Features
+
+- Update functionality and behavior.
+- Add oxfmt support.
+
 ## 5.1.130
 
 ### Improvements
