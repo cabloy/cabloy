@@ -1017,6 +1017,94 @@ test(
 );
 
 test(
+  'ATP-SPC-02: Product renders semantic Admin relation and publication controls',
+  { tag: ['@admin', '@flow', '@product'] },
+  async ({ browser }, testInfo) => {
+    test.setTimeout(60_000);
+    const suffix = `${testInfo.workerIndex}-${testInfo.parallelIndex ?? testInfo.retry}-${Date.now()}`;
+    const categoryName = `E2E Product Category ${suffix}`;
+    const productTitle = `E2E Product ${suffix}`;
+    const adminContext = await browser.newContext();
+    const adminPage = await adminContext.newPage();
+    const adminPageErrors = collectPageErrors(adminPage);
+    const productCreatePath = '/commerce-admin/rest/resource/commerce-catalog%3Aproduct/create';
+    const productListPath = '/commerce-admin/rest/resource/commerce-catalog%3Aproduct';
+    const categoryActionPath = '/api/commerce/catalog/category';
+    const productActionPath = '/api/commerce/catalog/product';
+    let categoryId: number | string | undefined;
+    let productId: number | string | undefined;
+    let headers: { Authorization: string } | undefined;
+    try {
+      await adminPage.setViewportSize({ width: 1440, height: 900 });
+      await login(adminPage, '/commerce-admin/', 'admin', '123456', 'commerceAdmin');
+      const accessToken = (await adminContext.cookies()).find(
+        cookie => cookie.name === 'token',
+      )?.value;
+      expect(accessToken).toBeTruthy();
+      headers = { Authorization: `Bearer ${accessToken}` };
+
+      const categoryResponse = await adminPage.request.post(categoryActionPath, {
+        data: { name: categoryName, published: true },
+        headers,
+      });
+      expect(categoryResponse.ok()).toBeTruthy();
+      categoryId = (await categoryResponse.json()).data;
+      expectTableIdentity(categoryId);
+
+      await adminPage.goto(productCreatePath, { waitUntil: 'load' });
+      const categoryPicker = adminPage
+        .getByRole('group', { name: 'Category' })
+        .getByRole('combobox');
+      await expect(categoryPicker).toBeVisible();
+      await categoryPicker.selectOption({ label: categoryName });
+      await expect(categoryPicker).toHaveValue(String(categoryId));
+      const publication = adminPage.getByRole('group', { name: 'Published' }).getByRole('combobox');
+      await expect(publication).toBeVisible();
+      await publication.selectOption({ label: 'Unpublished' });
+      await expect(publication).toHaveValue('false');
+
+      const productResponse = await adminPage.request.post(productActionPath, {
+        data: { categoryId, title: productTitle, published: false },
+        headers,
+      });
+      expect(productResponse.ok()).toBeTruthy();
+      productId = (await productResponse.json()).data;
+      expectTableIdentity(productId);
+
+      await adminPage.goto(productListPath, { waitUntil: 'load' });
+      const productRow = adminPage.getByRole('row', { name: new RegExp(productTitle) });
+      await expect(productRow).toBeVisible();
+      await expect(productRow.getByText(categoryName, { exact: true })).toBeVisible();
+      await expect(productRow.getByText('Unpublished', { exact: true })).toBeVisible();
+
+      await adminPage.goto(`${productListPath}/${productId}`, { waitUntil: 'load' });
+      await expect(
+        adminPage.getByRole('group', { name: 'Category' }).getByRole('textbox'),
+      ).toHaveValue(categoryName);
+      await expect(
+        adminPage.getByRole('group', { name: 'Published' }).getByRole('textbox'),
+      ).toHaveValue('Unpublished');
+      await expect(adminPage.getByRole('button', { name: 'Submit', exact: true })).toHaveCount(0);
+      expect(adminPageErrors).toEqual([]);
+    } finally {
+      if (productId && headers) {
+        const response = await adminPage.request.delete(`${productActionPath}/${productId}`, {
+          headers,
+        });
+        expect(response.ok()).toBeTruthy();
+      }
+      if (categoryId && headers) {
+        const response = await adminPage.request.delete(`${categoryActionPath}/${categoryId}`, {
+          headers,
+        });
+        expect(response.ok()).toBeTruthy();
+      }
+      await adminContext.close().catch(() => {});
+    }
+  },
+);
+
+test(
   'Commerce Cart: anonymous browser is redirected to login',
   { tag: ['@web', '@cart'] },
   async ({ page, request }) => {
