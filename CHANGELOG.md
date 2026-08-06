@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.132
+
+### Features
+
+- Update functionality.
+
 ## 5.1.131
 
 ### Features
