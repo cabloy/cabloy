@@ -22,4 +22,6 @@ export interface IDtoOptionsProductView extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoProductView extends $Dto.get(() => ModelProduct) {}
+export class DtoProductView extends $Dto.get(() => ModelProduct, {
+  include: { category: true },
+}) {}

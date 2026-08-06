@@ -13,6 +13,7 @@ export interface IModelOptionsProduct extends IDecoratorModelOptions<EntityProdu
       'commerce-catalog:product',
       'commerce-catalog:category',
       'categoryId',
+      { columns: ['id', 'name'] },
     ),
     skus: $relation.hasMany('commerce-catalog:sku', 'productId'),
     skuAvailables: $relation.hasMany(

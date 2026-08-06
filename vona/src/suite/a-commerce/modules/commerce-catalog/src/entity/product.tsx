@@ -1,11 +1,12 @@
 import type { TableIdentity } from 'table-identity';
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
-import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
+import { $makeMetadata, $resourceName, Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
+import { categoryPublicationItems } from './category.tsx';
 
 export interface IEntityOptionsProduct extends IDecoratorEntityOptions {}
 
@@ -37,10 +38,29 @@ export class EntityProduct extends EntityBase {
   )
   title: string;
 
-  @Api.field(v.title($locale('Category')), v.required(), ZovaRender.order(2), v.tableIdentity())
+  @Api.field(
+    v.title($locale('Category')),
+    v.required(),
+    ZovaRender.order(2),
+    ZovaRender.field('basic-resource:formFieldResourcePicker', {
+      resource: $resourceName('commerce-catalog:category'),
+      relationName: 'category',
+    }),
+    ZovaRender.cell('basic-resource:resourcePicker', {
+      resource: $resourceName('commerce-catalog:category'),
+      relationName: 'category',
+    }),
+    v.tableIdentity(),
+  )
   categoryId: TableIdentity;
 
-  @Api.field(v.title($locale('Published')), v.default(false), ZovaRender.order(3))
+  @Api.field(
+    v.title($locale('Published')),
+    v.default(false),
+    ZovaRender.order(3),
+    ZovaRender.field('basic-select:formFieldSelect', { items: categoryPublicationItems }),
+    ZovaRender.cell('basic-select:select', { items: categoryPublicationItems }),
+  )
   published: boolean;
 
   @Api.field(v.title($locale('Description')), v.optional(), ZovaRender.order(4))

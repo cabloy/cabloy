@@ -22,7 +22,10 @@ export class ServiceProduct extends BeanBase {
   }
 
   async select(params?: IQueryParams<ModelProduct>): Promise<DtoProductSelectRes> {
-    return await this.scope.model.product.selectAndCount(params);
+    return await this.scope.model.product.selectAndCount({
+      ...params,
+      include: { ...params?.include, category: true },
+    });
   }
 
   async selectPublic(params: IQueryParams<ModelProduct>): Promise<DtoProductPublicSelectRes> {
@@ -50,7 +53,9 @@ export class ServiceProduct extends BeanBase {
   }
 
   async view(id: TableIdentity): Promise<DtoProductView | undefined> {
-    return await this.scope.model.product.getById(id);
+    return await this.scope.model.product.getById(id, {
+      include: { category: true },
+    });
   }
 
   async viewPublic(id: TableIdentity): Promise<DtoProductPublic | undefined> {
