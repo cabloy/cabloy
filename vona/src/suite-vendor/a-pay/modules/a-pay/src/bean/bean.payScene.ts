@@ -53,11 +53,24 @@ export class BeanPayScene extends BeanBase {
     },
   ) {
     const options = this.getOptions(paySceneName);
+    const allProviders = this._getProviderCandidates(options);
+    if (
+      input.providerCandidateKey &&
+      !allProviders.some(item => item.key === input.providerCandidateKey)
+    ) {
+      this.app.throw(422, 'payment provider candidate is unavailable');
+    }
     const providers = await this._getAvailableProviderCandidates(options, {
       payScene: paySceneName,
       ...input,
-      providers: this._getProviderCandidates(options),
+      providers: allProviders,
     });
+    if (
+      input.providerCandidateKey &&
+      !providers.some(item => item.key === input.providerCandidateKey)
+    ) {
+      this.app.throw(422, 'payment provider candidate is unavailable');
+    }
     const candidateKey = await this._resolveProviderCandidateKey(
       paySceneName,
       options,

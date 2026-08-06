@@ -550,6 +550,7 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
 
   it('denies anonymous customer payment and order actions', async () => {
     await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signout();
       const requests = [
         () =>
           app.bean.executor.performAction('get', '/commerce/trade/order/mine', {
@@ -564,7 +565,7 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
             innerAccess: false,
           }),
         () =>
-          app.bean.executor.performAction('get', '/payment-session/1', {
+          app.bean.executor.performAction('get', '/pay/payment-session/1', {
             innerAccess: false,
           }),
       ];

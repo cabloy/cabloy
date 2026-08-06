@@ -94,7 +94,7 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
             amountMinor: 1299,
             currency: 'USD',
             correlationId: `payment-${suffix}`,
-            providerCandidateKey: 'paypal',
+            providerCandidateKey: 'stripe',
           }),
           { status: 422 },
         );

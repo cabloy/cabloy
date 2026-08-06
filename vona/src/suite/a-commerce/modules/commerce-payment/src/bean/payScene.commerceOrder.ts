@@ -34,8 +34,11 @@ import { PayScene } from 'vona-module-a-pay';
       server.host
     );
   },
-  resolveProvider: (_ctx, input) =>
-    input.providers.find(item => item.key === 'mock')?.key ?? input.providers[0]!.key,
+  resolveProvider: (_ctx, input) => {
+    const mock = input.providers.find(item => item.key === 'mock');
+    if (!mock) return input.providers[0]!.key;
+    return mock.key;
+  },
   currencies: ['USD'],
   captureMode: 'automatic',
   sessionExpiresIn: 30 * 60 * 1000,
