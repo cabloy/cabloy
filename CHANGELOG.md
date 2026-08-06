@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.130
+
+### Improvements
+
+- Update package metadata and the pnpm lockfile.
+
 ## 5.1.129
 
 ### Improvements
