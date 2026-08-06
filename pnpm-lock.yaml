@@ -12,8 +12,8 @@ importers:
         specifier: ^1.2.8
         version: 1.2.8
       '@cabloy/lint':
-        specifier: ^5.1.27
-        version: 5.1.27(@typescript-eslint/eslint-plugin@8.60.0(@typescript-eslint/parser@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/rule-tester@8.60.0(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.60.0(typescript@5.9.3))(@typescript-eslint/utils@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(oxfmt@0.62.0)(oxlint@1.77.0)(typescript@5.9.3)(vue-eslint-parser@10.4.0(eslint@10.4.0))
+        specifier: ^5.1.31
+        version: 5.1.31(@typescript-eslint/eslint-plugin@8.60.0(@typescript-eslint/parser@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/rule-tester@8.60.0(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.60.0(typescript@5.9.3))(@typescript-eslint/utils@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(oxfmt@0.62.0)(oxlint@1.77.0)(typescript@5.9.3)(vue-eslint-parser@10.4.0(eslint@10.4.0))
       '@cabloy/process-helper':
         specifier: ^3.1.3
         version: 3.1.5
@@ -88,11 +88,11 @@ packages:
   '@cabloy/extend@3.2.8':
     resolution: {integrity: sha512-BrXYUtlC1kFY33hNxL/hEaS7wW8TsOuu22k0VCEtzg2iw+USkb4BqONth5Uv2pJcIlDMeWx8A8aUIRF3WQ2ckQ==}
 
-  '@cabloy/lint@5.1.27':
-    resolution: {integrity: sha512-YrRcvXVGdImHL2sz+cyfwkfk7Ach8imvF+MaB9OejdsLRNCgj2ohvlbGwc/SH3nHQG/ksy0oPSHR2fcvFS/hjQ==}
+  '@cabloy/lint@5.1.31':
+    resolution: {integrity: sha512-tlWIyTifvpZjQ/G0GICnGsPmHBLAm2qp58eFwNu8bMAA/+TkSrpzod2A/Vj1OK9m4j3aC6j7Hwa03bWD73N6mg==}
     peerDependencies:
-      oxfmt: '>=0.45.0'
-      oxlint: '>=1.65.0'
+      oxfmt: '>=0.62.0'
+      oxlint: '>=1.77.0'
 
   '@cabloy/process-helper@3.1.5':
     resolution: {integrity: sha512-OYouQjOLTlPrnNH/nCvUigoNQA5zjf5cTGD3IcZjSRTPTz3rHW7ynt5d7yIBmNxuXpSmanp/Hlh0Mt9FrAv5GQ==}
@@ -4089,7 +4089,7 @@ snapshots:
 
   '@cabloy/extend@3.2.8': {}
 
-  '@cabloy/lint@5.1.27(@typescript-eslint/eslint-plugin@8.60.0(@typescript-eslint/parser@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/rule-tester@8.60.0(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.60.0(typescript@5.9.3))(@typescript-eslint/utils@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(oxfmt@0.62.0)(oxlint@1.77.0)(typescript@5.9.3)(vue-eslint-parser@10.4.0(eslint@10.4.0))':
+  '@cabloy/lint@5.1.31(@typescript-eslint/eslint-plugin@8.60.0(@typescript-eslint/parser@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/rule-tester@8.60.0(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.60.0(typescript@5.9.3))(@typescript-eslint/utils@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(oxfmt@0.62.0)(oxlint@1.77.0)(typescript@5.9.3)(vue-eslint-parser@10.4.0(eslint@10.4.0))':
     dependencies:
       '@e18e/eslint-plugin': 0.2.0(eslint@10.4.0)(oxlint@1.77.0)
       '@eslint/json': 1.2.0
