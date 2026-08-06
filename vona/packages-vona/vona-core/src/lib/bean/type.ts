@@ -29,12 +29,14 @@ export type TypeBeanScopeLocaleKeys = keyof IBeanScopeLocale;
 export interface IBeanScopeErrors {}
 export type TypeBeanScopeErrorsKeys = keyof IBeanScopeErrors;
 
+type TypeErrorDeclarationCode<T> = T extends { code: infer Code } ? Code : T;
+
 export type TypeScopesErrorsHelper<
   ModuleName extends keyof IBeanScopeErrors,
   Errors extends IBeanScopeErrors[ModuleName],
 > = {
   // @ts-ignore: ignore
-  [K in keyof Errors as `${ModuleName}:${Errors[K]}`]: K;
+  [K in keyof Errors as `${ModuleName}:${TypeErrorDeclarationCode<Errors[K]>}`]: K;
 };
 export type TypeScopesErrorCodes = TypeRecordValues<{
   [ModuleName in keyof IBeanScopeErrors]: keyof TypeScopesErrorsHelper<

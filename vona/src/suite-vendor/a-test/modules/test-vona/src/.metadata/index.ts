@@ -2275,6 +2275,9 @@ declare module 'vona-module-a-web' {
 '/test/vona/order/findMany': undefined;
 '/test/vona/passport/echo/:name': undefined;
 '/test/vona/passport/isAuthenticated': undefined;
+'/test/vona/performAction/rateLimitController': undefined;
+'/test/vona/performAction/rateLimit': undefined;
+'/test/vona/performAction/rateLimitExempt': undefined;
 '/test/vona/post/group': undefined;
 '/test/vona/post/aggregate': undefined;
 '/test/vona/post/findManyEcho': undefined;
@@ -2327,8 +2330,12 @@ import type { config } from '../config/config.ts';
 /** locale: begin */
 import { locales } from './locales.ts';
 /** locale: end */
+/** error: begin */
+export * from '../config/errors.ts';
+import type { errors } from '../config/errors.ts';
+/** error: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig, type TypeModuleLocales, type TypeLocaleBase } from 'vona';
+import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig, type TypeModuleErrors, type TypeModuleLocales, type TypeLocaleBase } from 'vona';
 import { Scope } from 'vona-module-a-bean';
 
 @Scope()
@@ -2337,6 +2344,7 @@ export class ScopeModuleTestVona extends BeanScopeBase {}
 export interface ScopeModuleTestVona {
   util: BeanScopeUtil;
 config: TypeModuleConfig<typeof config>;
+error: TypeModuleErrors<typeof errors>;
 locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 entity: IModuleEntity;
 model: IModuleModel;
@@ -2369,6 +2377,8 @@ declare module 'vona' {
     'test-vona': (typeof locales)[TypeLocaleBase];
   }
 
-  
+  export interface IBeanScopeErrors {
+    'test-vona': typeof errors;
+  }
 }
 /** scope: end */

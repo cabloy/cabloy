@@ -18,4 +18,6 @@ export default {
   Quantity: 'Quantity',
   Amount: 'Amount',
   Title: 'Title',
+  LegacyBusinessError: 'Legacy business error',
+  StructuredConflict: 'Structured conflict',
 };

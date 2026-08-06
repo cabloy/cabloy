@@ -4,7 +4,12 @@ import type { IModuleMain, IMonkeyModule, IMonkeySystem } from './monkey.ts';
 
 export type TypeModuleResourceLocales = Record<string, object>;
 export type TypeModuleResourceLocaleModules = Record<string, TypeModuleResourceLocales>;
-export type TypeModuleResourceErrors = Record<string, number>;
+export interface IModuleResourceErrorDescriptor {
+  code: number;
+  status: number;
+}
+export type TypeModuleResourceError = number | IModuleResourceErrorDescriptor;
+export type TypeModuleResourceErrors = Record<string, TypeModuleResourceError>;
 export type TypeModuleResourceErrorModules = Record<string, TypeModuleResourceErrors>;
 export type TypeModuleResourceConfig = (app: VonaApplication) => object | Promise<object>;
 

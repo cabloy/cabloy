@@ -16,4 +16,6 @@ export default {
   Quantity: '数量',
   Amount: '金额',
   Title: '标题',
+  LegacyBusinessError: '旧版业务错误',
+  StructuredConflict: '结构化冲突',
 };

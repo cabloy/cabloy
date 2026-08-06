@@ -21,7 +21,7 @@ export class ErrorClass extends BeanSimple {
   fail(module, code, ...args) {
     const body = this.parseFail(module, code, ...args);
 
-    this.ctx.response.status = __calcStatus(body.code);
+    this.ctx.response.status = body.status;
     this.ctx.response.type = 'application/json';
     this.ctx.response.body = { code: body.code, message: body.message }; // body maybe Error
   }
@@ -32,7 +32,7 @@ export class ErrorClass extends BeanSimple {
     const err = new Error();
     err.code = body.code;
     err.message = body.message;
-    err.status = __calcStatus(body.code);
+    err.status = body.status;
     throw err;
   }
 
@@ -58,9 +58,16 @@ export class ErrorClass extends BeanSimple {
 
     // convert from enum
     let text;
+    let status;
     if (ebError && code && typeof code === 'string') {
       text = code;
-      code = ebError[code];
+      const declaration = ebError[code];
+      if (__isErrorDescriptor(declaration)) {
+        code = declaration.code;
+        status = declaration.status;
+      } else {
+        code = declaration;
+      }
     }
 
     if (code === undefined || code === null || code === '') {
@@ -75,8 +82,18 @@ export class ErrorClass extends BeanSimple {
     }
 
     code = __combineErrorCode(module, code);
-    return { code, message };
+    status ??= __calcStatus(code);
+    return { code, status, message };
   }
+}
+
+function __isErrorDescriptor(value) {
+  return (
+    value &&
+    typeof value === 'object' &&
+    typeof value.code === 'number' &&
+    typeof value.status === 'number'
+  );
 }
 
 function __combineErrorCode(module, code) {
