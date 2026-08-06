@@ -1,5 +1,26 @@
 # Changelog
 
+## 5.1.127
+
+### Features
+
+- Separate module error codes from HTTP status codes.
+- Complete the commerce payment refund flow.
+- Update feature functionality.
+
+### Bug Fixes
+
+- Harden the commerce order detail locator.
+
+### Improvements
+
+- Refactor error handling.
+- Record the first phase of error status evolution.
+- Define product presentation authority.
+- Retain category semantic CI evidence.
+- Retain semantic presentation CI evidence.
+- Prepare the category presentation rollout.
+
 ## 5.1.126
 
 ### Features
