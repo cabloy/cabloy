@@ -1,5 +1,21 @@
 # Changelog
 
+## 5.1.128
+
+### Features
+
+- Add payment session support.
+- Combine resource name components.
+- Add a PayPal Commerce runbook.
+- Implement the product semantic presentation contract.
+- Complete the PayPal Commerce payment flow.
+
+### Bug Fixes
+
+- Preserve changes when resolving main branch conflicts.
+- Enforce payment provider availability.
+- Harden PayPal Commerce reconciliation.
+
 ## 5.1.127
 
 ### Features
