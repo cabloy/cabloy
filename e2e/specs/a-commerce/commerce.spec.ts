@@ -415,7 +415,7 @@ test(
       const startResponse = waitForApiResponse(
         page,
         'POST',
-        new RegExp(`/api/payment-session/${checkout.paymentSessionId}/start$`),
+        new RegExp(`/api/pay/payment-session/${checkout.paymentSessionId}/start$`),
       );
       await page.getByRole('button', { name: 'Start payment', exact: true }).click();
       expect((await startResponse).ok()).toBeTruthy();
@@ -584,7 +584,7 @@ test(
       const startResponse = waitForApiResponse(
         page,
         'POST',
-        new RegExp(`/api/payment-session/${checkout.paymentSessionId}/start$`),
+        new RegExp(`/api/pay/payment-session/${checkout.paymentSessionId}/start$`),
       );
       await page.getByRole('button', { name: 'Start payment', exact: true }).click();
       expect((await startResponse).ok()).toBeTruthy();
@@ -652,7 +652,7 @@ test(
       const startResponse = waitForApiResponse(
         page,
         'POST',
-        new RegExp(`/api/payment-session/${checkout.paymentSessionId}/start$`),
+        new RegExp(`/api/pay/payment-session/${checkout.paymentSessionId}/start$`),
       );
       await page.getByRole('button', { name: 'Start payment', exact: true }).click();
       expect((await startResponse).ok()).toBeTruthy();
