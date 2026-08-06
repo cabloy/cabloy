@@ -1,8 +1,9 @@
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
-import type { ServicePaymentCoordinator } from '../../service/paymentCoordinator.js';
 import type { TypePaymentNextAction } from '../../types/payment.js';
+
+import { ServicePaymentCoordinator } from '../../service/paymentCoordinator.js';
 
 export interface ControllerPaymentNextActionProps {
   action?: TypePaymentNextAction;

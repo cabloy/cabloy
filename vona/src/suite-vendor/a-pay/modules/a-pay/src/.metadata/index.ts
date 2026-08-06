@@ -862,13 +862,13 @@ declare module 'vona-module-a-pay' {
 }
 declare module 'vona-module-a-web' {
   export interface IApiPathGetRecord{
-        '/payment-callback/return': undefined;
-'/payment-callback/cancel': undefined;
-'/payment-session/:id': undefined;
+        '/pay/payment-callback/return': undefined;
+'/pay/payment-callback/cancel': undefined;
+'/pay/payment-session/:id': undefined;
     }
 export interface IApiPathPostRecord{
-        '/payment-session/:id/start': undefined;
-'/payment-session/:id/reconcile': undefined;
+        '/pay/payment-session/:id/start': undefined;
+'/pay/payment-session/:id/reconcile': undefined;
 '/pay/webhook/:providerName/:clientName': undefined;
     }
 
