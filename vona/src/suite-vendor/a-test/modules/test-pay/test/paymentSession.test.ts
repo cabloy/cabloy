@@ -79,6 +79,31 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('rejects an unavailable provider candidate instead of falling back', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const scope = app.scope('a-pay');
+      const suffix = randomUUID().slice(0, 12);
+      const user = await app.bean.user.register({ name: `payment-candidate-${suffix}` }, true);
+      const fixture: IFixture = { userId: user.id as number };
+      try {
+        await assert.rejects(
+          scope.service.paymentSession.create({
+            userId: user.id,
+            payScene: 'commerce-payment:commerceOrder',
+            businessReference: `business-${suffix}`,
+            amountMinor: 1299,
+            currency: 'USD',
+            correlationId: `payment-${suffix}`,
+            providerCandidateKey: 'stripe',
+          }),
+          { status: 422 },
+        );
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
   it('rejects a currency outside the payment scene policy', async () => {
     await app.bean.executor.mockCtx(async () => {
       const scope = app.scope('a-pay');
@@ -136,6 +161,83 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
           (await scope.model.paymentSession.getById(fixture.paymentSessionId!))?.state,
           'created',
         );
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
+  it('returns a terminal payment session when confirmation is replayed', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture = await createFixture(new Date(Date.now() + 60_000));
+      try {
+        const scope = app.scope('a-pay');
+        await scope.model.paymentSession.updateById(fixture.paymentSessionId!, {
+          state: 'succeeded',
+          finalizedAt: new Date(),
+        });
+        const session = await scope.service.providerOperation.confirm(fixture.paymentSessionId!);
+        assert.equal(session.state, 'succeeded');
+        assert.deepEqual(
+          await scope.model.providerOperation.select({
+            where: { paymentSessionId: fixture.paymentSessionId!, kind: 'confirm' },
+          }),
+          [],
+        );
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
+  it('schedules a pending refund for durable reconciliation', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture = await createFixture(new Date(Date.now() + 60_000));
+      try {
+        const scope = app.scope('a-pay');
+        await scope.model.paymentSession.updateById(fixture.paymentSessionId!, {
+          state: 'succeeded',
+          providerCaptureId: `capture-${randomUUID().slice(0, 12)}`,
+          finalizedAt: new Date(),
+        });
+        const refund = await scope.service.refundOperation.create({
+          paymentSessionId: fixture.paymentSessionId!,
+          businessReference: `refund-${randomUUID().slice(0, 12)}`,
+          amountMinor: 1299,
+          currency: 'USD',
+          idempotencyKey: `refund-${randomUUID()}`,
+          correlationId: `refund-${randomUUID()}`,
+        });
+        const providerOperation = await scope.model.providerOperation.get({
+          refundOperationId: refund.id,
+          kind: 'refund',
+        });
+        assert.ok(providerOperation);
+        const claimed = await scope.service.providerOperation.claim(providerOperation.id);
+        assert.ok(claimed?.claimToken);
+        await scope.service.providerOperation.markSubmitted(
+          providerOperation.id,
+          claimed.claimToken,
+        );
+        await scope.service.refundOperation.settleProviderSnapshot(
+          providerOperation.id,
+          claimed.claimToken,
+          { state: 'pending', providerRefundId: `refund-${randomUUID().slice(0, 12)}` },
+        );
+        const [storedRefund, storedOperation, outbox] = await Promise.all([
+          scope.model.refundOperation.getById(refund.id),
+          scope.model.providerOperation.getById(providerOperation.id),
+          scope.model.outboxEvent.select({
+            where: { paymentSessionId: fixture.paymentSessionId! },
+          }),
+        ]);
+        assert.equal(storedRefund?.state, 'pending');
+        assert.equal(storedOperation?.state, 'reconciliation_required');
+        assert.equal(storedOperation?.providerResourceId, storedRefund?.providerRefundId);
+        assert.equal(storedOperation?.claimToken, undefined);
+        assert.equal(storedOperation?.claimExpiresAt, undefined);
+        assert.ok(storedOperation?.nextAttemptAt && storedOperation.nextAttemptAt > new Date());
+        assert.deepEqual(outbox, []);
       } finally {
         await cleanup(fixture);
       }

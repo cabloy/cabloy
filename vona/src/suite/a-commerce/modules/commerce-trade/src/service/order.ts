@@ -322,6 +322,7 @@ export class ServiceOrder extends BeanBase {
       currency: order.currency,
       amountCents: order.payableTotalCents,
       correlationId: `${command.correlationId}:payment`,
+      providerCandidateKey: command.providerCandidateKey,
     });
     await onStage?.('afterPaymentAttempt');
     await this._appendAudit({
@@ -376,6 +377,13 @@ export class ServiceOrder extends BeanBase {
       providerEventId: event.eventId,
     });
     if (existingAudit) return this._paymentOutcomeResult(order, lockedAttempt);
+    if (
+      order.state === 'expired' &&
+      lockedAttempt.state === 'cancelled' &&
+      event.state === 'succeeded'
+    ) {
+      return await this._scheduleLateCaptureCompensation(order, lockedAttempt, event);
+    }
     if (order.state !== 'awaiting_payment' || lockedAttempt.state !== 'created') {
       this.app.throw(409, 'payment attempt is no longer available');
     }
@@ -1215,6 +1223,49 @@ export class ServiceOrder extends BeanBase {
         : this.bean.passport.currentUser?.id,
       processedAt: new Date(),
     });
+  }
+
+  private async _scheduleLateCaptureCompensation(
+    order: EntityOrder,
+    attempt: EntityPaymentAttempt,
+    event: IPaymentOutcomeEvent,
+  ) {
+    if (!event.providerCaptureId)
+      this.app.throw(409, 'late payment outcome has no provider capture');
+    await this.$scope.commercePayment.model.paymentAttempt.updateById(attempt.id, {
+      providerCaptureId: event.providerCaptureId,
+    });
+    const correlationId = `${order.correlationId}:late-capture:${event.eventId}`;
+    const existingAudit = await this.$scope.commercePayment.model.paymentAudit.get({
+      paymentAttemptId: attempt.id,
+      providerEventId: event.eventId,
+    });
+    if (existingAudit) return this._paymentOutcomeResult(order, attempt);
+    await this.$scope.commercePayment.model.paymentAudit.insert({
+      paymentAttemptId: attempt.id,
+      orderId: order.id,
+      userId: order.userId,
+      provider: event.providerName,
+      providerEventId: event.eventId,
+      outcome: 'succeeded',
+      fromAttemptState: attempt.state,
+      toOrderState: 'expired',
+      idempotencyKey: event.eventId.slice(0, 100),
+      correlationId,
+      reason: 'late provider capture requires automatic compensation',
+      processedAt: new Date(),
+    });
+    const session = await this.$scope.pay.model.paymentSession.getById(event.paymentSessionId);
+    if (!session) this.app.throw(404, 'payment session not found');
+    await this.$scope.pay.service.refundOperation.create({
+      paymentSessionId: session.id,
+      businessReference: `late-capture:${attempt.id}`,
+      amountMinor: event.amountMinor,
+      currency: event.currency,
+      idempotencyKey: `${correlationId}:refund`,
+      correlationId,
+    });
+    return this._paymentOutcomeResult(order, attempt);
   }
 
   private async _expireLockedOrder(order: EntityOrder) {

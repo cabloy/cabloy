@@ -59,6 +59,13 @@ export class PayProviderStripe
     this.app.throw(501, 'Stripe provider is not implemented');
   }
 
+  async confirmPayment(
+    _input: IPayProviderPaymentInput,
+    _clientOptions: IPayProviderStripeClientOptions,
+  ): Promise<IPayProviderPaymentSnapshot> {
+    this.app.throw(501, 'Stripe provider is not implemented');
+  }
+
   async queryPayment(
     _input: IPayProviderPaymentInput,
     _clientOptions: IPayProviderStripeClientOptions,

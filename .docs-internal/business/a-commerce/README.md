@@ -14,6 +14,7 @@ This directory records the agreed product, system, and delivery baseline for the
 8. [ADR 0003](./decisions/0003-semantic-presentation-contracts.md) records the semantic-presentation authority and boundary convention.
 9. [Presentation contracts](./presentation-contracts.md) is the living resource/scene matrix that applies the PRD and SRS to renderer selection.
 10. [Semantic-presentation rollout](./semantic-presentation-rollout.md) is the resumable execution runbook for the staged follow-on work; it does not replace the authoritative WBS, test plan, or matrix.
+11. [PayPal Commerce runbook](./paypal-commerce-runbook.md) is the internal Sandbox/Live, webhook, tunnel, and reconciliation reference for the `pay-paypal` Commerce path.
 
 ## Confirmed MVP Baseline
 

@@ -15,7 +15,9 @@ export const ControllerPagePaymentSchemaParams = z.object({
   orderId: z.string(),
   locale: z.string().optional(),
 });
-export const ControllerPagePaymentSchemaQuery = z.object({});
+export const ControllerPagePaymentSchemaQuery = z.object({
+  providerResult: z.enum(['return', 'cancel']).optional(),
+});
 
 type TypeMockPaymentOutcome = 'succeeded' | 'failed' | 'cancelled';
 
@@ -42,6 +44,7 @@ export class ControllerPagePayment extends BeanControllerPageBase {
     if (this.$ssr.isRuntimeSsrHydrated) {
       await $QueryEnsureLoaded(() => this.queryPaymentSession);
       await $QueryEnsureLoaded(() => this.queryOrder);
+      if (this.$query.providerResult) await this.reconcile();
     }
   }
 
@@ -51,6 +54,20 @@ export class ControllerPagePayment extends BeanControllerPageBase {
 
   get queryOrder() {
     return this.$$modelOrderMine.viewMine(this.orderId!);
+  }
+
+  async reconcile() {
+    if (!this.paymentSessionId || this.submitting) return;
+    this.submitting = true;
+    this.message = undefined;
+    try {
+      await this.$$modelPaymentSession.reconcile(this.paymentSessionId).mutateAsync();
+      await this._waitForSettlement();
+    } catch (error: any) {
+      this.message = error.message;
+    } finally {
+      this.submitting = false;
+    }
   }
 
   async start() {
@@ -81,17 +98,23 @@ export class ControllerPagePayment extends BeanControllerPageBase {
     }
   }
 
-  private async _waitForSettlement(outcome: TypeMockPaymentOutcome) {
+  private async _waitForSettlement(outcome?: TypeMockPaymentOutcome) {
     this.waitingForOrder = true;
     const terminalSessionState = outcome;
-    const terminalOrderState = outcome === 'succeeded' ? 'paid' : 'cancelled';
+    const terminalOrderState = outcome === 'succeeded' ? 'paid' : outcome ? 'cancelled' : undefined;
     try {
       for (let attempt = 0; attempt < 60; attempt++) {
         const session = await this.queryPaymentSession?.refetch();
         const order = await this.scope.api.commerceTradeOrder.viewMine({
           params: { id: this.orderId! },
         });
-        if (session?.data?.state === terminalSessionState && order?.state === terminalOrderState) {
+        const settled =
+          terminalSessionState && terminalOrderState
+            ? session?.data?.state === terminalSessionState && order?.state === terminalOrderState
+            : ['succeeded', 'failed', 'cancelled', 'expired'].includes(
+                session?.data?.state ?? '',
+              ) && ['paid', 'cancelled', 'expired'].includes(order?.state ?? '');
+        if (settled) {
           await this.queryOrder?.refetch();
           await this.$router.push({
             name: 'commerce-trade:order',

@@ -9,7 +9,19 @@ import type { EntityPaymentAttempt } from '../entity/paymentAttempt.tsx';
 
 @Service()
 export class ServiceCommercePayScene extends BeanBase {
-  async createSession(attempt: EntityPaymentAttempt) {
+  async availableProviderCandidates(userId: TableIdentity) {
+    return await this.bean.payScene.getAvailableProviderCandidates(
+      'commerce-payment:commerceOrder',
+      {
+        userId,
+        businessReference: 'checkout-preview',
+        amountMinor: 0,
+        currency: 'USD',
+      },
+    );
+  }
+
+  async createSession(attempt: EntityPaymentAttempt, providerCandidateKey?: string) {
     const session = await this.$scope.pay.service.paymentSession.create({
       userId: attempt.userId,
       payScene: 'commerce-payment:commerceOrder',
@@ -17,6 +29,7 @@ export class ServiceCommercePayScene extends BeanBase {
       amountMinor: attempt.amountCents,
       currency: attempt.currency,
       correlationId: `${attempt.correlationId}:session`,
+      providerCandidateKey,
     });
     await this.scope.model.paymentAttempt.updateById(attempt.id, {
       paymentSessionId: session.id,

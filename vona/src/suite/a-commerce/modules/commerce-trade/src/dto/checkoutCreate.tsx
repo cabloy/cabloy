@@ -16,4 +16,7 @@ export class DtoCheckoutCreate {
 
   @Api.field(v.required(), v.min(1), v.max(80))
   correlationId: string;
+
+  @Api.field(v.optional(), v.min(1), v.max(100))
+  providerCandidateKey?: string;
 }

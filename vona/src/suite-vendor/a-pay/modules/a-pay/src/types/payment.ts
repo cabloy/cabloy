@@ -70,6 +70,7 @@ export interface IPayProviderRefundInput extends IPayMoney {
   businessReference: string;
   idempotencyKey: string;
   providerCaptureId: string;
+  providerRefundId?: string;
 }
 
 export interface IPayProviderPaymentSnapshot {
@@ -110,6 +111,10 @@ export interface IPayProviderExecute<
   TClientOptions extends IPayProviderClientOptions = IPayProviderClientOptions,
 > {
   startPayment(
+    input: IPayProviderPaymentInput,
+    clientOptions: TClientOptions,
+  ): Promise<IPayProviderPaymentSnapshot>;
+  confirmPayment(
     input: IPayProviderPaymentInput,
     clientOptions: TClientOptions,
   ): Promise<IPayProviderPaymentSnapshot>;

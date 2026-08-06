@@ -17,7 +17,14 @@ export function combineResourceNameParts(
   // path
   const res: string[] = [];
   if (!simplifyProviderId || parts[0] !== 'a') res.push(parts[0]);
-  if (!simplify || !resourceName.startsWith(parts[1])) res.push(parts[1]);
+  if (
+    !simplify ||
+    (resourceName !== parts[1] &&
+      !resourceName.startsWith(`${parts[1]}-`) &&
+      !resourceName.startsWith(`${parts[1]}/`))
+  ) {
+    res.push(parts[1]);
+  }
   if (resourceName) res.push(resourceName);
   return res;
 }
