@@ -127,7 +127,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/payment-session/{id}/start': {
+  '/api/pay/payment-session/{id}/start': {
     parameters: {
       query?: never;
       header?: never;
@@ -143,7 +143,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/payment-session/{id}/reconcile': {
+  '/api/pay/payment-session/{id}/reconcile': {
     parameters: {
       query?: never;
       header?: never;
@@ -159,7 +159,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/payment-session/{id}': {
+  '/api/pay/payment-session/{id}': {
     parameters: {
       query?: never;
       header?: never;
