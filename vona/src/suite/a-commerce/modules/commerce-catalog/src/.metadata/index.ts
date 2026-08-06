@@ -149,7 +149,7 @@ declare module 'vona-module-commerce-catalog' {
       }
 export interface IModelOptionsProduct {
         relations: {
-          category: IModelRelationBelongsTo<'commerce-catalog:product', 'commerce-catalog:category', false, 'id'|'name'>;
+          category: IModelRelationBelongsTo<'commerce-catalog:product', 'commerce-catalog:category', false, 'id'|'name'|'published'>;
 skus: IModelRelationHasMany<'commerce-catalog:sku', 'productId', false, '*', undefined, undefined, undefined>;
 skuAvailables: IModelRelationHasMany<'commerce-catalog:sku', 'productId', false, 'id'|'code'|'productId'|'priceCents', ['commerce-trade:stockBalance'], undefined, undefined>;
         };
