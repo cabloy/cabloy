@@ -38,6 +38,7 @@ Representative examples:
 - `anonymous-token-route-pattern.md` records the invariants for temporary-token anonymous HTTP routes, including the need for `@Passport.public()`, exact sign/verify path matching, and HTTP-level verification of signed URLs
 - `vona-cross-model-query-cache-dependencies.md` records Vona source-to-target query-cache dependency direction, transitive propagation, target callback replacement semantics, and the no-duplicate/no-cycle graph safety rules
 - `vona-telemetry.md` records the `a-telemetry` module boundary, Vona and OpenTelemetry context ownership, trusted ingress and propagation rules, bounded OTLP export, privacy constraints, and rollout and incident safeguards
+- `vona-error-status-evolution.md` records the compatibility path from scalar module errors to explicit `{ code, status }` descriptors, the separation of namespaced business identity from HTTP transport status, final-filter ownership, and the Basic → Start upgrade → Start migration sequence
 - `backend-test-resource-lifecycle.md` records ownership, cleanup order, tenant scope, and durable-seed boundaries for persisted backend test data
 - `node-test-isolation-lifecycle.md` records why `node:test` summary reporting and Vona host-application shutdown must remain separate lifecycle boundaries in isolated CLI test runs
 

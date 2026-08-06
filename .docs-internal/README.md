@@ -90,5 +90,6 @@ Those concerns should live elsewhere.
 - [User Workspace SSR Strategy](./architecture/user-workspace-ssr-strategy.md)
 - [Vona Cross-Model Query-Cache Dependencies](./architecture/vona-cross-model-query-cache-dependencies.md)
 - [Vona Telemetry Architecture](./architecture/vona-telemetry.md)
+- [Vona Error Code and HTTP Status Evolution](./architecture/vona-error-status-evolution.md)
 - [Zova `$goto...()` Navigation Control-Flow Semantics](./architecture/zova-goto-navigation-control-flow-semantics.md)
 - [Backend Test Resource Lifecycle](./architecture/backend-test-resource-lifecycle.md)
