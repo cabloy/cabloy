@@ -37,6 +37,23 @@ export const errors = {
 
 A useful convention is that business error codes should stay above `1000`.
 
+### Structured declarations and HTTP status
+
+Legacy numeric declarations remain supported. When a business error needs a stable namespaced application code and an intentional HTTP status, use a descriptor:
+
+```typescript
+export const errors = {
+  ErrorTest: {
+    code: 1001,
+    status: 409,
+  },
+} as const;
+```
+
+The descriptor produces an application error code such as `training-student:1001` and an HTTP response status of `409`. The `code` is the stable business identity; `status` is the initial transport decision. The standard JSON response remains `{ code, message }`, with the HTTP status carried by the response envelope.
+
+Use statuses that describe the API meaning: `404` for an absent resource, `409` for a resource-state or uniqueness conflict, and `422` for unacceptable business content. Existing final error filters may still revise the initial status for request-context policy, such as converting unauthenticated authorization failures from `403` to `401`.
+
 ### 2. Define the localized error messages
 
 Representative locale pattern:

@@ -169,7 +169,15 @@ The structured form must improve new or migrated contracts without changing the 
 
 ### Phase 1: Basic core implementation and release
 
-Implement the compatibility union, descriptor normalization, independent status propagation, generated typing support, and focused runtime tests in Cabloy Basic. Before publishing:
+The Basic core implementation is complete in commit `2bd105ad58`:
+
+- compatibility union for scalar and structured module error declarations;
+- descriptor normalization with independent application code and HTTP status;
+- status propagation through `fail()` and `throw()`;
+- generated scoped error-code typing support; and
+- focused runtime and compatibility coverage.
+
+The implementation has passed the focused error tests, Vona type checking, and the complete Basic test suite. The release gate is still open until the corresponding Basic/Vona package version is published. Before publishing:
 
 - prove legacy scalar behavior remains unchanged;
 - prove structured declarations produce namespaced business code plus explicit HTTP status;
