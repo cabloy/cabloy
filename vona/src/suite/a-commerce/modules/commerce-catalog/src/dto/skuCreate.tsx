@@ -25,4 +25,6 @@ export interface IDtoOptionsSkuCreate extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoSkuCreate extends $Dto.create(() => ModelSku) {}
+export class DtoSkuCreate extends $Dto.create(() => ModelSku, {
+  columns: ['code', 'productId', 'priceCents', 'lifecycle'],
+}) {}

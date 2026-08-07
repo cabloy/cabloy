@@ -1102,6 +1102,119 @@ test(
 );
 
 test(
+  'ATP-SPC-02: SKU renders semantic Admin currency and lifecycle controls',
+  { tag: ['@admin', '@flow', '@sku'] },
+  async ({ browser }, testInfo) => {
+    test.setTimeout(60_000);
+    const suffix = `${testInfo.workerIndex}-${testInfo.parallelIndex ?? testInfo.retry}-${Date.now()}`;
+    const categoryName = `E2E SKU Category ${suffix}`;
+    const productTitle = `E2E SKU Product ${suffix}`;
+    const skuCode = `E2E-SKU-${suffix}`;
+    const adminContext = await browser.newContext();
+    const adminPage = await adminContext.newPage();
+    const adminPageErrors = collectPageErrors(adminPage);
+    const skuCreatePath = '/commerce-admin/rest/resource/commerce-catalog%3Asku/create';
+    const skuListPath = '/commerce-admin/rest/resource/commerce-catalog%3Asku';
+    const categoryActionPath = '/api/commerce/catalog/category';
+    const productActionPath = '/api/commerce/catalog/product';
+    const skuActionPath = '/api/commerce/catalog/sku';
+    let categoryId: number | string | undefined;
+    let productId: number | string | undefined;
+    let skuId: number | string | undefined;
+    let headers: { Authorization: string } | undefined;
+    try {
+      await adminPage.setViewportSize({ width: 1440, height: 900 });
+      await login(adminPage, '/commerce-admin/', 'admin', '123456', 'commerceAdmin');
+      const accessToken = (await adminContext.cookies()).find(
+        cookie => cookie.name === 'token',
+      )?.value;
+      expect(accessToken).toBeTruthy();
+      headers = { Authorization: `Bearer ${accessToken}` };
+
+      const categoryResponse = await adminPage.request.post(categoryActionPath, {
+        data: { name: categoryName, published: true },
+        headers,
+      });
+      expect(categoryResponse.ok()).toBeTruthy();
+      categoryId = (await categoryResponse.json()).data;
+      expectTableIdentity(categoryId);
+
+      const productResponse = await adminPage.request.post(productActionPath, {
+        data: { categoryId, title: productTitle, published: true },
+        headers,
+      });
+      expect(productResponse.ok()).toBeTruthy();
+      productId = (await productResponse.json()).data;
+      expectTableIdentity(productId);
+
+      await adminPage.goto(skuCreatePath, { waitUntil: 'load' });
+      const productField = adminPage.getByRole('group', { name: 'Product' });
+      await expect(productField).toBeVisible();
+      await expect(productField.getByRole('combobox')).toHaveCount(0);
+      await expect(productField.getByRole('textbox')).toBeVisible();
+      const lifecycle = adminPage
+        .getByRole('group', { name: 'SKU lifecycle' })
+        .getByRole('combobox');
+      await expect(lifecycle).toBeVisible();
+      await expect(lifecycle.locator('option')).toHaveText([
+        '',
+        'Draft',
+        'Active',
+        'Inactive',
+        'Archived',
+      ]);
+      await expect(adminPage.getByRole('group', { name: 'Price (cents)' })).toBeVisible();
+
+      const skuResponse = await adminPage.request.post(skuActionPath, {
+        data: { code: skuCode, productId, priceCents: 1234, lifecycle: 'draft' },
+        headers,
+      });
+      expect(skuResponse.ok()).toBeTruthy();
+      skuId = (await skuResponse.json()).data;
+      expectTableIdentity(skuId);
+
+      await adminPage.goto(skuListPath, { waitUntil: 'load' });
+      const skuRow = adminPage.getByRole('row', { name: new RegExp(skuCode) });
+      await expect(skuRow).toBeVisible();
+      await expect(skuRow.getByText('12.34', { exact: true })).toBeVisible();
+      await expect(skuRow.getByText('Draft', { exact: true })).toBeVisible();
+      await expect(skuRow.getByRole('link', { name: skuCode, exact: true })).toBeVisible();
+      await expect(
+        adminPage.locator('section').getByText('SKU code', { exact: true }),
+      ).toBeVisible();
+      await expect(adminPage.getByText('Created At', { exact: true })).toHaveCount(1);
+      await expect(adminPage.getByRole('group', { name: 'Attributes' })).toHaveCount(0);
+
+      await adminPage.goto(`${skuListPath}/${skuId}`, { waitUntil: 'load' });
+      await expect(
+        adminPage.getByRole('group', { name: 'SKU lifecycle' }).getByRole('textbox'),
+      ).toHaveValue('Draft');
+      await expect(adminPage.getByRole('button', { name: 'Submit', exact: true })).toHaveCount(0);
+      await expect(adminPage.getByRole('button', { name: 'Back', exact: true })).toBeVisible();
+      expect(adminPageErrors).toEqual([]);
+    } finally {
+      if (skuId && headers) {
+        const response = await adminPage.request.delete(`${skuActionPath}/${skuId}`, { headers });
+        expect(response.ok()).toBeTruthy();
+      }
+      if (productId && headers) {
+        const response = await adminPage.request.delete(`${productActionPath}/${productId}`, {
+          headers,
+        });
+        expect(response.ok()).toBeTruthy();
+      }
+      if (categoryId && headers) {
+        const response = await adminPage.request.delete(`${categoryActionPath}/${categoryId}`, {
+          headers,
+        });
+        expect(response.ok()).toBeTruthy();
+      }
+      await adminContext.close().catch(() => {});
+    }
+  },
+);
+
+test(
   'Commerce Cart: anonymous browser is redirected to login',
   { tag: ['@web', '@cart'] },
   async ({ page, request }) => {

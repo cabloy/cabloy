@@ -9,6 +9,8 @@ import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 import { $locale } from '../.metadata/locales.ts';
 import { DtoSkuAttribute } from '../dto/skuAttribute.tsx';
 
+const currencyRendererOptions = { fixed: 2, exp: 2, zero: 2 };
+
 export const skuLifecycleItems = [
   { value: 'draft', title: $locale('SkuLifecycleDraft') },
   { value: 'active', title: $locale('SkuLifecycleActive') },
@@ -53,6 +55,8 @@ export class EntitySku extends EntityBase {
     v.title($locale('PriceCents')),
     v.required(),
     ZovaRender.order(3),
+    ZovaRender.field('basic-currency:formFieldCurrency', currencyRendererOptions),
+    ZovaRender.cell('basic-currency:currency', currencyRendererOptions),
     z.number().int().nonnegative(),
   )
   priceCents: number;
@@ -69,6 +73,8 @@ export class EntitySku extends EntityBase {
     v.title($locale('SkuLifecycle')),
     v.default('draft'),
     ZovaRender.order(5),
+    ZovaRender.field('basic-select:formFieldSelect', { items: skuLifecycleItems }),
+    ZovaRender.cell('basic-select:select', { items: skuLifecycleItems }),
     z.enum(['draft', 'active', 'inactive', 'archived']),
   )
   lifecycle: 'draft' | 'active' | 'inactive' | 'archived';

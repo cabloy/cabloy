@@ -25,4 +25,6 @@ export interface IDtoOptionsSkuUpdate extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoSkuUpdate extends $Dto.update(() => ModelSku) {}
+export class DtoSkuUpdate extends $Dto.update(() => ModelSku, {
+  columns: ['code', 'productId', 'priceCents', 'lifecycle'],
+}) {}

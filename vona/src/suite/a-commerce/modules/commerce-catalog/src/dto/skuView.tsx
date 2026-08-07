@@ -22,4 +22,16 @@ export interface IDtoOptionsSkuView extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoSkuView extends $Dto.get(() => ModelSku) {}
+export class DtoSkuView extends $Dto.get(() => ModelSku, {
+  columns: [
+    'id',
+    'code',
+    'productId',
+    'priceCents',
+    'lifecycle',
+    'iid',
+    'deleted',
+    'createdAt',
+    'updatedAt',
+  ],
+}) {}

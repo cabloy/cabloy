@@ -46,7 +46,19 @@ export interface IDtoOptionsSkuSelectResItem extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoSkuSelectResItem extends $Dto.get(() => ModelSku) {
+export class DtoSkuSelectResItem extends $Dto.get(() => ModelSku, {
+  columns: [
+    'id',
+    'code',
+    'productId',
+    'priceCents',
+    'lifecycle',
+    'iid',
+    'deleted',
+    'createdAt',
+    'updatedAt',
+  ],
+}) {
   @Api.field(
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),
