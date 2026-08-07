@@ -426,15 +426,15 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
             },
           },
         );
-        fixture.skuId = await app.bean.executor.performAction('post', '/commerce/catalog/sku', {
-          body: {
+        fixture.skuId = (
+          await app.scope('commerce-catalog').model.sku.insert({
             productId: fixture.productId,
             code: `checkout-snapshot-sku-${suffix}`,
             priceCents: 1299,
             attributes: [{ name: 'Color', value: 'Black' }],
             lifecycle: 'active',
-          },
-        });
+          })
+        ).id as number;
         fixture.balanceId = (
           await app.scope('commerce-trade').service.stockBalance.adjustStock({
             skuId: fixture.skuId,

@@ -110,15 +110,15 @@ describe('orderSnapshot.test.ts', { concurrency: false }, () => {
             },
           },
         );
-        fixture.skuId = await app.bean.executor.performAction('post', '/commerce/catalog/sku', {
-          body: {
+        fixture.skuId = (
+          await app.scope('commerce-catalog').model.sku.insert({
             productId: fixture.productId,
             code: `snapshot-sku-${suffix}`,
             priceCents: 1299,
             attributes: [{ name: 'Color', value: 'Black' }],
             lifecycle: 'active',
-          },
-        });
+          })
+        ).id as number;
         await app.scope('commerce-trade').service.stockBalance.adjustStock({
           skuId: fixture.skuId,
           delta: 2,
@@ -272,15 +272,15 @@ describe('orderSnapshot.test.ts', { concurrency: false }, () => {
             body: { categoryId: fixture.categoryId, title: original.productTitle, published: true },
           },
         );
-        fixture.skuId = await app.bean.executor.performAction('post', '/commerce/catalog/sku', {
-          body: {
+        fixture.skuId = (
+          await app.scope('commerce-catalog').model.sku.insert({
             productId: fixture.productId,
             code: original.skuCode,
             priceCents: 1299,
             attributes: original.attributes,
             lifecycle: 'active',
-          },
-        });
+          })
+        ).id as number;
         await app.scope('commerce-trade').service.stockBalance.adjustStock({
           skuId: fixture.skuId,
           delta: 1,
