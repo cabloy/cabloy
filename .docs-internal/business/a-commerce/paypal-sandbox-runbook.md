@@ -8,15 +8,17 @@ This runbook enables the `pay-paypal` Commerce path only for Sandbox verificatio
 
 Provide these values through the deployed environment secret source, never through frontend environment files:
 
-- `PAYPAL_SANDBOX_ENABLED=true`
+- `PAYPAL_ENVIRONMENT=sandbox` — the authoritative PayPal environment selector (`sandbox` or `live`)
 - `PAYPAL_CLIENT_ID`
 - `PAYPAL_CLIENT_SECRET`
 - `PAYPAL_WEBHOOK_ID`
-- `PAYPAL_MERCHANT_REFERENCE` — the expected Sandbox merchant/payee ID
+- `PAYPAL_MERCHANT_REFERENCE` — the expected Sandbox merchant/payee ID for the selected environment
 - `SERVER_SERVE_PROTOCOL=https`
 - `SERVER_SERVE_HOST=<public HTTPS host>`
 
-The server must be publicly reachable at the configured origin. Callback URLs are generated from this trusted origin; a browser `Host`, `Origin`, or arbitrary return URL cannot alter them.
+The server must be publicly reachable at the configured origin. Callback URLs are generated from this trusted origin; a browser `Host`, `Origin`, or arbitrary return URL cannot alter them. The credentials, webhook ID, and merchant reference must all belong to the environment selected by `PAYPAL_ENVIRONMENT`.
+
+`PAYPAL_SANDBOX_ENABLED` is an obsolete configuration name and is unsupported/ignored. Use `PAYPAL_ENVIRONMENT=sandbox` for Sandbox verification or `PAYPAL_ENVIRONMENT=live` only through a separately approved live rollout.
 
 ## PayPal application setup
 
@@ -24,8 +26,8 @@ The server must be publicly reachable at the configured origin. Callback URLs ar
 2. Register the backend webhook endpoint:
    `POST https://<public-host>/api/pay/webhook/pay-paypal:paypal/default`.
 3. Subscribe only to the capture and refund event types supported by the adapter. Do not subscribe to broad unrelated event families because unsupported events intentionally receive a non-success response.
-4. Set `PAYPAL_WEBHOOK_ID` to the registered webhook ID and `PAYPAL_MERCHANT_REFERENCE` to the merchant payee ID.
-5. Keep `PAYPAL_SANDBOX_ENABLED=false` until all values and endpoint reachability are verified.
+4. Set `PAYPAL_WEBHOOK_ID` to the registered webhook ID and `PAYPAL_MERCHANT_REFERENCE` to the Sandbox merchant payee ID.
+5. Set `PAYPAL_ENVIRONMENT=sandbox` only after all values are present, environment-matched, and endpoint reachability is verified.
 
 ## Verification flow
 
