@@ -55,7 +55,13 @@ const serializationRetryOptions = {
   minTimeout: 0,
   maxTimeout: 0,
   randomize: false,
-  errorCodes: ['40001', 'ER_LOCK_DEADLOCK', 'ER_LOCK_WAIT_TIMEOUT'],
+  errorCodes: [
+    '40001',
+    'ER_LOCK_DEADLOCK',
+    'ER_LOCK_WAIT_TIMEOUT',
+    'SQLITE_BUSY',
+    'SQLITE_BUSY_SNAPSHOT',
+  ],
 };
 
 const checkoutSerializationRetryOptions = {

@@ -193,7 +193,6 @@ export class ModelPassport extends BeanModelBase {
   }
 
   async ensurePassport() {
-    if (process.env.CLIENT) return this.passport;
     if (!this.sys.config.ssr.cookieDisabledOnServer && !this.isAuthenticated && this.accessToken) {
       this.passport = await this.$api.homeUserPassport.current();
       this._setLocaleTz();

@@ -21,6 +21,8 @@ export const ControllerPagePaymentSchemaQuery = z.object({
 
 type TypeMockPaymentOutcome = 'succeeded' | 'failed' | 'cancelled';
 
+const SettlementPollDelaysMilliseconds = [0, 1_000, 2_000, 4_000, 5_000, 5_000, 5_000, 5_000];
+
 @Controller()
 export class ControllerPagePayment extends BeanControllerPageBase {
   @Use({ beanFullName: 'a-pay.model.paymentSession' })
@@ -105,17 +107,22 @@ export class ControllerPagePayment extends BeanControllerPageBase {
     const terminalSessionState = outcome;
     const terminalOrderState = outcome === 'succeeded' ? 'paid' : outcome ? 'cancelled' : undefined;
     try {
-      for (let attempt = 0; attempt < 60; attempt++) {
+      for (const [attempt, delay] of SettlementPollDelaysMilliseconds.entries()) {
+        if (delay > 0) await new Promise(resolve => setTimeout(resolve, delay));
         const session = await this.queryPaymentSession?.refetch();
+        const sessionState = session?.data?.state;
+        const isSessionTerminal = ['succeeded', 'failed', 'cancelled', 'expired'].includes(
+          sessionState ?? '',
+        );
+        if (!isSessionTerminal) continue;
+
         const order = await this.scope.api.commerceTradeOrder.viewMine({
           params: { id: this.orderId! },
         });
         const settled =
           terminalSessionState && terminalOrderState
-            ? session?.data?.state === terminalSessionState && order?.state === terminalOrderState
-            : ['succeeded', 'failed', 'cancelled', 'expired'].includes(
-                session?.data?.state ?? '',
-              ) && ['paid', 'cancelled', 'expired'].includes(order?.state ?? '');
+            ? sessionState === terminalSessionState && order?.state === terminalOrderState
+            : ['paid', 'cancelled', 'expired'].includes(order?.state ?? '');
         if (settled) {
           await this.queryOrder?.refetch();
           await this.$router.push({
@@ -124,7 +131,7 @@ export class ControllerPagePayment extends BeanControllerPageBase {
           });
           return;
         }
-        await new Promise(resolve => setTimeout(resolve, 500));
+        if (attempt === SettlementPollDelaysMilliseconds.length - 1) break;
       }
       this.message =
         'Payment confirmation is still pending. Open the order to check its latest status.';

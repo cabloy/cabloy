@@ -596,6 +596,10 @@ test(
       });
 
       const callbackPath = `/commerce/payment/${checkout.paymentSessionId}/${checkout.orderId}?providerResult=return`;
+      await page.evaluate(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+      });
       const callbackResponse = await context.request.get(callbackPath);
       expect(callbackResponse.ok()).toBeTruthy();
       const callbackHtml = (await callbackResponse.text()).toLowerCase();
@@ -605,10 +609,19 @@ test(
       const reconcilePath = new RegExp(
         `/api/pay/payment-session/${checkout.paymentSessionId}/reconcile$`,
       );
+      const paymentViewPath = new RegExp(`/api/pay/payment-session/${checkout.paymentSessionId}$`);
+      const orderViewPath = new RegExp(`/api/commerce/trade/order/viewMine/${checkout.orderId}$`);
       let reconcileCount = 0;
+      let paymentViewCount = 0;
+      let orderViewCount = 0;
       page.on('request', request => {
         const url = new URL(request.url());
-        if (request.method() === 'POST' && reconcilePath.test(url.pathname)) reconcileCount++;
+        if (request.method() !== 'GET') {
+          if (request.method() === 'POST' && reconcilePath.test(url.pathname)) reconcileCount++;
+          return;
+        }
+        if (paymentViewPath.test(url.pathname)) paymentViewCount++;
+        if (orderViewPath.test(url.pathname)) orderViewCount++;
       });
       const reconcileResponse = waitForApiResponse(page, 'POST', reconcilePath);
       const documentResponse = await page.goto(callbackPath, { waitUntil: 'load' });
@@ -617,6 +630,8 @@ test(
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
       await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`));
       expect(reconcileCount).toBe(1);
+      expect(paymentViewCount).toBeLessThanOrEqual(10);
+      expect(orderViewCount).toBeLessThanOrEqual(5);
       await expect(page.getByText('paid · $45.99')).toBeVisible();
       await expect(page.getByRole('alert')).toHaveCount(0);
       expect(pageErrors).toEqual([]);
