@@ -35,6 +35,7 @@ export class BeanPayProvider extends BeanBase {
       {},
       options.base,
       clientOptions,
+      this.ctx.state.payProviderClientOptions?.[`${String(providerName)}/${String(clientName)}`],
     ) as TypePayProviderClientOptionsByName<N>;
     if (resolvedOptions.environment !== 'sandbox' && resolvedOptions.environment !== 'live') {
       this.app.throw(
