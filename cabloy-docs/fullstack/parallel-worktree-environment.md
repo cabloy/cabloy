@@ -50,9 +50,9 @@ DEV_SERVER_HMR_PORT = 24680
 
 The user-facing summary is:
 
-> 环境隔离信息：Vona 开发 + Zova 开发
+> Environment isolation: Vona development + Zova development
 
-If the proposal is unsuitable, say **“再换一批”**. The skill increases every listener port by exactly `+1`, regenerates `API_BASE_URL` from the new Vona port, and presents the next tuple for confirmation. It never writes during this step.
+If the proposal is unsuitable, say **“Try another batch”**. The skill increases every listener port by exactly `+1`, regenerates `API_BASE_URL` from the new Vona port, and presents the next tuple for confirmation. It never writes during this step.
 
 This deterministic scheme is not a port reservation or a live collision check. If an application later reports that a port is occupied, request another batch before setup or create another linked worktree; successful application startup remains the final authority.
 

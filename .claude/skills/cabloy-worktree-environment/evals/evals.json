@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "I explicitly invoke /cabloy-worktree-environment in the first linked Cabloy Basic worktree. Configure the local environment.",
-      "expected_output": "Validates that the current checkout is a linked Cabloy Basic worktree before any write. Without asking which processes or frontend flavor will run, it uses Git worktree metadata only and recommends APP_NAME from the worktree basename, SERVER_LISTEN_PORT 7103, DEV_SERVER_PORT 9001, DEV_SERVER_HMR_PORT 24680, and API_BASE_URL http://localhost:7103. It labels the configuration as 环境隔离信息：Vona 开发 + Zova 开发, previews both vona/env/.env.local and zova/env/.env.local, waits for final confirmation before writing, and separately asks whether to run npm run init after success.",
+      "expected_output": "Validates that the current checkout is a linked Cabloy Basic worktree before any write. Without asking which processes or frontend flavor will run, it uses Git worktree metadata only and recommends APP_NAME from the worktree basename, SERVER_LISTEN_PORT 7103, DEV_SERVER_PORT 9001, DEV_SERVER_HMR_PORT 24680, and API_BASE_URL http://localhost:7103. It labels the configuration as Environment isolation: Vona development + Zova development, previews both vona/env/.env.local and zova/env/.env.local, waits for final confirmation before writing, and separately asks whether to run npm run init after success.",
       "files": []
     },
     {
@@ -45,7 +45,7 @@
     },
     {
       "id": 8,
-      "prompt": "I explicitly invoke /cabloy-worktree-environment in the first linked Cabloy Basic worktree. The initial proposal is 7103, 9001, and 24680. 再换一批。",
+      "prompt": "I explicitly invoke /cabloy-worktree-environment in the first linked Cabloy Basic worktree. The initial proposal is 7103, 9001, and 24680. Try another batch.",
       "expected_output": "Keeps the same worktree APP_NAME, increases the shared batch by one, and proposes SERVER_LISTEN_PORT 7104, DEV_SERVER_PORT 9002, DEV_SERVER_HMR_PORT 24681, and API_BASE_URL http://localhost:7104. It does not write, inspect ports, inspect environment files, or treat either batch as reserved before final confirmation.",
       "files": []
     },

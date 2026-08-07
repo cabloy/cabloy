@@ -44,7 +44,7 @@ After validation, immediately generate the standard core tuple. Do not ask which
 
 For user-facing summaries, write exactly:
 
-> 环境隔离信息：Vona 开发 + Zova 开发
+> Environment isolation: Vona development + Zova development
 
 Admin and Web use this same Zova environment. The user may later run either frontend command, but must not run both concurrently in one worktree. Use another linked worktree for concurrent development of the other flavor. Do not create a flavor-specific local override.
 
@@ -52,11 +52,11 @@ Admin and Web use this same Zova environment. The user may later run either fron
 
 Recommendation generation uses Git worktree metadata and the fixed constants below only. It must not inspect any `.env`, `.env.local`, `.env.*.local`, sibling worktree configuration, process environment, listener table, `lsof` output, process command line, or external service. Do not use `Read`, `cat`, `grep`, `source`, `dotenv`, `printenv`, `env`, or diagnostics that expose env-file content for this workflow.
 
-This means the proposal is deterministic convenience, not a live port reservation. If an application later reports a port collision, the user may say **“再换一批”** before setup or create another linked worktree; the actual application bind remains authoritative.
+This means the proposal is deterministic convenience, not a live port reservation. If an application later reports a port collision, the user may say **“Try another batch”** before setup or create another linked worktree; the actual application bind remains authoritative.
 
 ### Deterministic proposal
 
-Treat the primary checkout as ordinal `0`. From the validated `git worktree list --porcelain -z` order, assign each linked worktree the next ordinal: the first linked worktree is `1`, the second is `2`, and so on. Let `batch` be `0` for the first proposal, and increase it only when the user says **“再换一批”**.
+Treat the primary checkout as ordinal `0`. From the validated `git worktree list --porcelain -z` order, assign each linked worktree the next ordinal: the first linked worktree is `1`, the second is `2`, and so on. Let `batch` be `0` for the first proposal, and increase it only when the user says **“Try another batch”**.
 
 Use one shared offset for every generated listener:
 
@@ -92,7 +92,7 @@ DEV_SERVER_HMR_PORT = <24679 + offset>
 
 All generated listener ports must be integers from `1` through `65535` and distinct within the tuple. If a batch would exceed that range, stop and require a different linked-worktree arrangement.
 
-When the user says **“再换一批”**, set `batch = batch + 1`, recompute the entire tuple, and show it again. Every recommended listener advances by exactly `+1`, and `API_BASE_URL` is regenerated from the new Vona port. Do not write during a batch change. This deterministic setup does not accept user-substituted values.
+When the user says **“Try another batch”**, set `batch = batch + 1`, recompute the entire tuple, and show it again. Every recommended listener advances by exactly `+1`, and `API_BASE_URL` is regenerated from the new Vona port. Do not write during a batch change. This deterministic setup does not accept user-substituted values.
 
 A unique `APP_NAME` separates ordinary framework-managed test database names and framework Redis prefixes. It does not isolate explicitly named databases, unprefixed custom Redis keys, mail, payment, webhooks, object storage, or other external services. Require a separate explicit design before claiming that any of those resources are isolated.
 
@@ -100,7 +100,7 @@ A unique `APP_NAME` separates ordinary framework-managed test database names and
 
 Before making any edit:
 
-1. show `环境隔离信息：Vona 开发 + Zova 开发`, the worktree ordinal, batch, and exact non-secret identity/port tuple
+1. show `Environment isolation: Vona development + Zova development`, the worktree ordinal, batch, and exact non-secret identity/port tuple
 2. show a file-by-file preview containing only the managed assignments that will be written to both broad local files
 3. run one independent `git check-ignore -v -- "$target"` command for each target and require each command to succeed with a matching ignore rule
 4. recheck current root, linked-worktree identity, edition, ordinal, generated port range, tuple uniqueness, and both target states
@@ -199,7 +199,7 @@ git status --short
 When this skill completes a stage, report:
 
 1. validated worktree root and detected edition
-2. `环境隔离信息：Vona 开发 + Zova 开发`
+2. `Environment isolation: Vona development + Zova development`
 3. worktree ordinal, batch, and generated non-secret identity/ports
 4. both exact broad local files proposed or changed
 5. the privacy boundary and external resources that still require separate isolation

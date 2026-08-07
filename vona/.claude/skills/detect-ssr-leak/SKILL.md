@@ -1,6 +1,6 @@
 ---
 name: detect-ssr-leak
-description: Detect server-side memory leaks in Node.js SSR services. Use when user asks to "check for memory leak", "detect leak", "SSR memory leak", "内存泄漏", or wants to diagnose growing memory usage on a Node.js server. TRIGGER when user mentions memory leak detection, especially for SSR/Vue/React server-side rendering.
+description: Detect server-side memory leaks in Node.js SSR services. Use when user asks to "check for memory leak", "detect leak", "SSR memory leak", "memory leak", or wants to diagnose growing memory usage on a Node.js server. TRIGGER when user mentions memory leak detection, especially for SSR/Vue/React server-side rendering.
 allowed-tools: Bash(fetch *) Bash(curl *) Bash(ps *) Bash(node *) Bash(npm *) Bash(npx *) Bash(pkill *) Bash(kill *) Bash(lsof *) Bash(wc *) Bash(ls *) Bash(rm *) Bash(cat *) Bash(mkdir *) Bash(cp *) Bash(sleep *)
 ---
 
