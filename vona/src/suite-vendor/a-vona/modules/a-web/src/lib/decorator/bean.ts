@@ -14,7 +14,7 @@ import {
   getTargetDecoratorDtoOpenapi,
   getTargetDecoratorDtoPipes,
   mergeDtoFieldsOpenapiMetadata,
-  setTargetDecoratorDtoOpenapi,
+  mergeTargetDecoratorDtoOpenapi,
   setTargetDecoratorDtoPipes,
   SymbolControllerResource,
 } from 'vona-module-a-openapiutils';
@@ -121,11 +121,14 @@ export function mergeDtoBlocksOpenapiMetadata(target: Constructable) {
       rest: { blocks },
     });
   }
+  if (onionOptions?.schemaScene) {
+    onionOptions.openapi = deepExtend({}, onionOptions.openapi, {
+      rest: { schemaScene: onionOptions.schemaScene },
+    });
+  }
   // always
   getTargetDecoratorDtoOpenapi(target.prototype);
-  if (onionOptions?.openapi) {
-    setTargetDecoratorDtoOpenapi(onionOptions?.openapi, target.prototype);
-  }
+  mergeTargetDecoratorDtoOpenapi(onionOptions?.openapi, target.prototype);
 }
 
 export function mergeDtoPipesOpenapiMetadata(target: Constructable) {

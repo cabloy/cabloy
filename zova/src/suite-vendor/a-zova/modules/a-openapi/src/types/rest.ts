@@ -17,6 +17,7 @@ export interface ISchemaRenderComponentPresetRecord extends IResourceFormFieldRe
 
 export interface ISchemaObjectExtensionFieldRest {
   'blocks'?: IResourceRenderBlockOptionsBlock[];
+  'schemaScene'?: TypeSchemaScene;
   //
   'fieldSource'?: string;
   'visible'?: boolean;

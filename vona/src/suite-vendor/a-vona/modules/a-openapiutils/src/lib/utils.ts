@@ -48,6 +48,18 @@ export function setTargetDecoratorDtoOpenapi(
   appMetadata.defineMetadata(SymbolDecoratorDtoOpenapi, openapi, target);
 }
 
+export function mergeTargetDecoratorDtoOpenapi(
+  openapi: ISchemaObjectExtensionField | undefined,
+  target: object,
+) {
+  if (!openapi) return;
+  const previous = appMetadata.getMetadata<ISchemaObjectExtensionField>(
+    SymbolDecoratorDtoOpenapi,
+    target,
+  );
+  setTargetDecoratorDtoOpenapi(deepExtend({}, previous, openapi), target);
+}
+
 export function getTargetDecoratorDtoPipes(
   target: object,
   disableRegisterMetadata?: boolean,

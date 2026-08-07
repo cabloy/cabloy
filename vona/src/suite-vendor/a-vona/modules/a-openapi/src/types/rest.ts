@@ -18,6 +18,7 @@ export interface ISchemaObjectExtensionFieldRestProps {
 }
 
 export interface ISchemaObjectExtensionFieldRest extends ISchemaObjectExtensionFieldRestProps {
+  'schemaScene'?: TypeSchemaScene;
   'render'?: TypeRenderComponent;
   'table'?: ISchemaObjectExtensionFieldRestScene;
   'form'?: ISchemaObjectExtensionFieldRestScene;

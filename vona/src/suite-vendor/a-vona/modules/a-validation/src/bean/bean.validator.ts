@@ -1,6 +1,8 @@
 import type { Constructable } from 'vona';
+import type { ISchemaObjectExtensionFieldRest, TypeSchemaScene } from 'vona-module-a-openapi';
 
 import { isNil } from '@cabloy/utils';
+import { ZodMetadata } from '@cabloy/zod-openapi';
 import { coerceWithNil } from '@cabloy/zod-query';
 import { BeanBase } from 'vona';
 import { Bean } from 'vona-module-a-bean';
@@ -55,7 +57,7 @@ export class BeanValidator extends BeanBase {
     const errorHttpStatusCode = options?.errorHttpStatusCode ?? 400;
     if (!schema) return value as any;
     const result = await schema?.safeParseAsync(value);
-    if (result.success) return result.data as any;
+    if (result.success) return this._sanitizeReadonly(schema, result.data) as any;
     // error
     if (options?.disableErrorMessages) {
       this.app.throw(errorHttpStatusCode);
@@ -74,6 +76,63 @@ export class BeanValidator extends BeanBase {
       };
     }
     return this.app.throw(422, issues);
+  }
+
+  private _sanitizeReadonly(schema: z.ZodType, value: unknown, inheritedScene?: TypeSchemaScene) {
+    if (value === null || typeof value !== 'object') return value;
+
+    const schemaResolved = ZodMetadata.resolveLazySchema(schema);
+    const schemaUnwrapped = ZodMetadata.unwrapChained(schemaResolved);
+    const metadata = ZodMetadata.getOpenapiMetadata(schemaResolved) as
+      | { rest?: ISchemaObjectExtensionFieldRest }
+      | undefined;
+    const scene = metadata?.rest?.schemaScene ?? inheritedScene;
+
+    if (schemaUnwrapped.def.type === 'array' && Array.isArray(value)) {
+      const element = (schemaUnwrapped as z.ZodArray).def.element as z.ZodType;
+      return value.map(item => this._sanitizeReadonly(element, item, scene));
+    }
+
+    if (schemaUnwrapped.def.type !== 'object' || Array.isArray(value)) return value;
+
+    const result: Record<string, unknown> = {};
+    const shape = (schemaUnwrapped as z.ZodObject).shape;
+    for (const key in value as Record<string, unknown>) {
+      const keySchema = shape[key] as z.ZodType | undefined;
+      if (!keySchema) {
+        result[key] = (value as Record<string, unknown>)[key];
+        continue;
+      }
+      const keyResolved = ZodMetadata.resolveLazySchema(keySchema);
+      const keyMetadata = ZodMetadata.getOpenapiMetadata(keyResolved) as
+        | { rest?: ISchemaObjectExtensionFieldRest }
+        | undefined;
+      const rest = this._resolveReadonlyRest(keyMetadata?.rest, scene);
+      if (rest.readonly === true) continue;
+      result[key] = this._sanitizeReadonly(
+        keyResolved,
+        (value as Record<string, unknown>)[key],
+        scene,
+      );
+    }
+    return result;
+  }
+
+  private _resolveReadonlyRest(
+    rest: ISchemaObjectExtensionFieldRest | undefined,
+    scene: TypeSchemaScene | undefined,
+  ): ISchemaObjectExtensionFieldRest {
+    if (!rest) return {};
+    const result: ISchemaObjectExtensionFieldRest = { ...rest };
+    const formRest = rest.form;
+    if (scene && ['form-view', 'form-create', 'filter'].includes(scene) && formRest) {
+      Object.assign(result, formRest);
+    }
+    if (scene) {
+      const sceneRest = rest[scene];
+      if (sceneRest) Object.assign(result, sceneRest);
+    }
+    return result;
   }
 
   // private _isPrimitiveValue(value: unknown): boolean {
