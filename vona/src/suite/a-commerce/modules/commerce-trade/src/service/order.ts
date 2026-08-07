@@ -15,6 +15,7 @@ import { Core } from 'vona-module-a-core';
 import type { DtoCheckoutCreate } from '../dto/checkoutCreate.tsx';
 import type { DtoCheckoutResult } from '../dto/checkoutResult.tsx';
 import type { DtoOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
+import type { DtoOrderAdminLineResItem } from '../dto/orderAdminLineResItem.tsx';
 import type { DtoOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
 import type { DtoOrderDetail } from '../dto/orderDetail.tsx';
 import type { DtoOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
@@ -939,14 +940,43 @@ export class ServiceOrder extends BeanBase {
   }
 
   async select(params?: IQueryParams<ModelOrder>): Promise<DtoOrderSelectRes> {
-    return await this.scope.model.order.selectAndCount({
+    const result = await this.scope.model.order.selectAndCount({
       ...params,
+      columns: ['id', 'state', 'payableTotalCents', 'reservationExpiresAt', 'createdAt'],
       orders: params?.orders ?? [['id', 'desc']],
     });
+    return result as DtoOrderSelectRes;
   }
 
   async view(id: TableIdentity): Promise<DtoOrderView | undefined> {
-    return await this.scope.model.order.getById(id, { include: { shipment: true } });
+    const order = await this.scope.model.order.getById(id, {
+      columns: [
+        'id',
+        'state',
+        'currency',
+        'eligibleSubtotalCents',
+        'discountCents',
+        'payableTotalCents',
+        'reservationExpiresAt',
+        'addressSnapshot',
+        'couponSnapshot',
+        'createdAt',
+        'updatedAt',
+      ],
+      include: { shipment: true, lines: true },
+    });
+    if (!order) return;
+    const lines: DtoOrderAdminLineResItem[] = order.lines.map(line => ({
+      id: line.id,
+      skuCodeSnapshot: line.skuCodeSnapshot,
+      titleSnapshot: line.titleSnapshot,
+      skuAttributesSnapshot: line.skuAttributesSnapshot,
+      unitPriceCents: line.unitPriceCents,
+      quantity: line.quantity,
+      eligibleSubtotalCents: line.eligibleSubtotalCents,
+      lineTotalCents: line.lineTotalCents,
+    }));
+    return { ...order, lines } as DtoOrderView;
   }
 
   async mine(params?: IQueryParams<ModelOrder>): Promise<DtoOrderMineRes> {

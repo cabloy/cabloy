@@ -10,6 +10,18 @@ import { $locale } from '../.metadata/locales.ts';
 import { DtoOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
 import { DtoOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
 
+export const orderStateItems = [
+  { value: 'awaiting_payment', title: $locale('OrderStateAwaitingPayment') },
+  { value: 'paid', title: $locale('OrderStatePaid') },
+  { value: 'refund_requested', title: $locale('OrderStateRefundRequested') },
+  { value: 'refund_approved', title: $locale('OrderStateRefundApproved') },
+  { value: 'refund_rejected', title: $locale('OrderStateRefundRejected') },
+  { value: 'shipped', title: $locale('OrderStateShipped') },
+  { value: 'refunded', title: $locale('OrderStateRefunded') },
+  { value: 'cancelled', title: $locale('OrderStateCancelled') },
+  { value: 'expired', title: $locale('OrderStateExpired') },
+];
+
 export type TypeOrderState =
   | 'awaiting_payment'
   | 'paid'

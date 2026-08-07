@@ -9,8 +9,21 @@ export interface IModelOptionsOrder extends IDecoratorModelOptions<EntityOrder> 
 @Model<IModelOptionsOrder>({
   entity: EntityOrder,
   relations: {
-    lines: $relation.hasMany('commerce-trade:orderLine', 'orderId'),
-    shipment: $relation.hasOne('commerce-trade:shipment', 'orderId'),
+    lines: $relation.hasMany('commerce-trade:orderLine', 'orderId', {
+      columns: [
+        'id',
+        'skuCodeSnapshot',
+        'titleSnapshot',
+        'skuAttributesSnapshot',
+        'unitPriceCents',
+        'quantity',
+        'eligibleSubtotalCents',
+        'lineTotalCents',
+      ],
+    }),
+    shipment: $relation.hasOne('commerce-trade:shipment', 'orderId', {
+      columns: ['id', 'carrier', 'trackingNumber', 'shippedAt'],
+    }),
   },
 })
 export class ModelOrder extends BeanModelBase<EntityOrder> {}

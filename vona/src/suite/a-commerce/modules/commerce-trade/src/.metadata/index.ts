@@ -323,8 +323,8 @@ declare module 'vona-module-commerce-trade' {
       }
 export interface IModelOptionsOrder {
         relations: {
-          lines: IModelRelationHasMany<'commerce-trade:orderLine', 'orderId', false, '*', undefined, undefined, undefined>;
-shipment: IModelRelationHasOne<'commerce-trade:shipment', 'orderId', false, '*'>;
+          lines: IModelRelationHasMany<'commerce-trade:orderLine', 'orderId', false, 'id'|'skuCodeSnapshot'|'titleSnapshot'|'skuAttributesSnapshot'|'unitPriceCents'|'quantity'|'eligibleSubtotalCents'|'lineTotalCents', undefined, undefined, undefined>;
+shipment: IModelRelationHasOne<'commerce-trade:shipment', 'orderId', false, 'id'|'carrier'|'trackingNumber'|'shippedAt'>;
         };
       }
   export interface ModelCart {
@@ -838,6 +838,9 @@ export * from '../dto/checkoutPaymentMethod.tsx';
 export * from '../dto/checkoutPaymentMethods.tsx';
 export * from '../dto/checkoutResult.tsx';
 export * from '../dto/orderAddressSnapshot.tsx';
+export * from '../dto/orderAdminLineBase.tsx';
+export * from '../dto/orderAdminLineResItem.tsx';
+export * from '../dto/orderAdminLineView.tsx';
 export * from '../dto/orderCouponSnapshot.tsx';
 export * from '../dto/orderDetail.tsx';
 export * from '../dto/orderLineSkuAttributeSnapshot.tsx';
@@ -878,6 +881,9 @@ import type { IDtoOptionsCheckoutPaymentMethod } from '../dto/checkoutPaymentMet
 import type { IDtoOptionsCheckoutPaymentMethods } from '../dto/checkoutPaymentMethods.tsx';
 import type { IDtoOptionsCheckoutResult } from '../dto/checkoutResult.tsx';
 import type { IDtoOptionsOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
+import type { IDtoOptionsOrderAdminLineBase } from '../dto/orderAdminLineBase.tsx';
+import type { IDtoOptionsOrderAdminLineResItem } from '../dto/orderAdminLineResItem.tsx';
+import type { IDtoOptionsOrderAdminLineView } from '../dto/orderAdminLineView.tsx';
 import type { IDtoOptionsOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
 import type { IDtoOptionsOrderDetail } from '../dto/orderDetail.tsx';
 import type { IDtoOptionsOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
@@ -922,6 +928,9 @@ declare module 'vona-module-a-web' {
 'commerce-trade:checkoutPaymentMethods': IDtoOptionsCheckoutPaymentMethods;
 'commerce-trade:checkoutResult': IDtoOptionsCheckoutResult;
 'commerce-trade:orderAddressSnapshot': IDtoOptionsOrderAddressSnapshot;
+'commerce-trade:orderAdminLineBase': IDtoOptionsOrderAdminLineBase;
+'commerce-trade:orderAdminLineResItem': IDtoOptionsOrderAdminLineResItem;
+'commerce-trade:orderAdminLineView': IDtoOptionsOrderAdminLineView;
 'commerce-trade:orderCouponSnapshot': IDtoOptionsOrderCouponSnapshot;
 'commerce-trade:orderDetail': IDtoOptionsOrderDetail;
 'commerce-trade:orderLineSkuAttributeSnapshot': IDtoOptionsOrderLineSkuAttributeSnapshot;
@@ -971,6 +980,9 @@ import type { DtoCheckoutPaymentMethod } from '../dto/checkoutPaymentMethod.tsx'
 import type { DtoCheckoutPaymentMethods } from '../dto/checkoutPaymentMethods.tsx';
 import type { DtoCheckoutResult } from '../dto/checkoutResult.tsx';
 import type { DtoOrderAddressSnapshot } from '../dto/orderAddressSnapshot.tsx';
+import type { DtoOrderAdminLineBase } from '../dto/orderAdminLineBase.tsx';
+import type { DtoOrderAdminLineResItem } from '../dto/orderAdminLineResItem.tsx';
+import type { DtoOrderAdminLineView } from '../dto/orderAdminLineView.tsx';
 import type { DtoOrderCouponSnapshot } from '../dto/orderCouponSnapshot.tsx';
 import type { DtoOrderDetail } from '../dto/orderDetail.tsx';
 import type { DtoOrderLineSkuAttributeSnapshot } from '../dto/orderLineSkuAttributeSnapshot.tsx';
@@ -1038,6 +1050,18 @@ declare module 'vona-module-commerce-trade' {
 
     export interface IDtoOptionsOrderAddressSnapshot {
       fields?: TypeEntityOptionsFields<DtoOrderAddressSnapshot, IDtoOptionsOrderAddressSnapshot[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsOrderAdminLineBase {
+      fields?: TypeEntityOptionsFields<DtoOrderAdminLineBase, IDtoOptionsOrderAdminLineBase[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsOrderAdminLineResItem {
+      fields?: TypeEntityOptionsFields<DtoOrderAdminLineResItem, IDtoOptionsOrderAdminLineResItem[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsOrderAdminLineView {
+      fields?: TypeEntityOptionsFields<DtoOrderAdminLineView, IDtoOptionsOrderAdminLineView[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsOrderCouponSnapshot {

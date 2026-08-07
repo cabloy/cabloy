@@ -48,7 +48,7 @@ function waitForAddressMine(page: Page) {
 }
 
 async function getAdminOrderRow(page: Page, orderId: number): Promise<Locator> {
-  const row = page.locator(`tr:has(td:first-child:text-is("${orderId}"))`);
+  const row = page.locator(`tr:has(td a:text-is("${orderId}"))`);
   await expect(row).toHaveCount(1);
   return row;
 }
@@ -483,6 +483,27 @@ test(
         );
         const orderRow = await getAdminOrderRow(adminPage, checkout.orderId);
         await expect(orderRow).toBeVisible();
+        await expect(orderRow.locator('td')).toHaveCount(6);
+        await expect(orderRow).toContainText('Paid');
+        await expect(orderRow).toContainText('45.99');
+        await expect(orderRow).not.toContainText(fixture.recipientName);
+        const orderViewResponse = waitForApiResponse(
+          adminPage,
+          'GET',
+          `/api/commerce/trade/order/${checkout.orderId}`,
+        );
+        await orderRow.getByRole('link', { name: String(checkout.orderId), exact: true }).click();
+        expect((await orderViewResponse).ok()).toBeTruthy();
+        await expect(adminPage.getByText('Money summary').first()).toBeVisible();
+        await expect(adminPage.getByText('Delivery address').first()).toBeVisible();
+        await expect(adminPage.getByText('Purchased lines').first()).toBeVisible();
+        await expect(adminPage.getByText('addressSnapshot').first()).toBeVisible();
+        await expect(adminPage.getByText('couponSnapshot').first()).toBeVisible();
+        await expect(adminPage.getByText('Pour-Over Coffee Set')).toBeVisible();
+        await expect(adminPage.getByText('COF-SET-01')).toBeVisible();
+        await expect(adminPage.getByRole('button', { name: 'Submit', exact: true })).toHaveCount(0);
+        await adminPage.getByRole('button', { name: 'Back', exact: true }).click();
+        await expect(orderRow).toBeVisible();
         const carrierInput = orderRow.getByPlaceholder('Carrier');
         const trackingNumberInput = orderRow.getByPlaceholder('Tracking number');
         const confirmationCheckbox = orderRow.getByRole('checkbox');
@@ -499,7 +520,7 @@ test(
         );
         await orderRow.getByRole('button', { name: 'Ship order', exact: true }).click();
         expect((await shipmentResponse).ok()).toBeTruthy();
-        await expect(orderRow).toContainText('shipped');
+        await expect(orderRow).toContainText('Shipped');
         expect(adminPageErrors).toEqual([]);
       } finally {
         await adminContext.close().catch(() => {});
@@ -701,7 +722,7 @@ test(
         );
         await orderRow.getByRole('button', { name: 'Approve refund', exact: true }).click();
         expect((await approveResponse).ok()).toBeTruthy();
-        await expect(orderRow).toContainText('refund_approved');
+        await expect(orderRow).toContainText('Refund approved');
         const executeResponse = waitForApiResponse(
           adminPage,
           'POST',
@@ -735,8 +756,8 @@ test(
             },
             { timeout: 40_000 },
           )
-          .toContain('refunded');
-        await expect(await getAdminOrderRow(adminPage, checkout.orderId)).toContainText('refunded');
+          .toContain('Refunded');
+        await expect(await getAdminOrderRow(adminPage, checkout.orderId)).toContainText('Refunded');
         expect(adminPageErrors).toEqual([]);
       } finally {
         await adminContext.close().catch(() => {});
