@@ -118,7 +118,7 @@ At a WBS batch closure, build both Commerce flavor pairs and run `npm run test:e
 
 ```text
 WBS / resource: WBS-80-01 / SKU Admin semantic-presentation sub-slice
-Status: implementation-complete locally; SKU Gates C/E/F pass locally, while retained CI evidence and the batch-closing regression remain open
+Status: implementation-complete locally; SKU Gates C/E/F and the local batch-closing regression pass, while retained CI evidence remains open
 Current revision: `eed22e2f76`
 Working-tree classification: baseline contains the CI-closed Category/Product source, generated output, tests, and retained evidence; the current revision contains the approved SKU entity/DTO source, focused metadata/runtime test, tagged Commerce Admin browser scenario, and regenerated handoff. No environment file or persisted schema/version path changed.
 Scope and explicit exclusions: SKU-only, Commerce Admin semantic-presentation authority and renderer decisions. No generic Resource model/controller/page/route ownership change; no public catalogue or customer UI change; no stock, sellability, persistence, migration, `meta.version.ts`, `fileVersion`, filter expansion, Product-label relation projection, attribute DTO expansion, or hand-edited generated artifact.
@@ -129,11 +129,11 @@ Editable / readonly / derived / hidden / snapshot / server-authority boundaries:
 Shared/custom renderer decision: `priceCents` reuses the Coupon Template minor-unit currency configuration `{ fixed: 2, exp: 2, zero: 2 }` with shared form/table currency renderers. `lifecycle` reuses the shared localized select/cell renderers and the existing four-state items. Product ID remains plain ID-valued treatment; `product: { id, title }` remains deferred. `attributes` remains absent; no attribute editor, summary, or custom renderer is approved. No reverse-chain prerequisite was required.
 Vona source-of-truth paths: `commerce-catalog/src/entity/sku.tsx`; `commerce-catalog/src/dto/skuCreate.tsx`; `skuUpdate.tsx`; `skuView.tsx`; `skuSelectResItem.tsx`; and `commerce-catalog/test/skuPresentation.test.ts`. Generic Zova `ModelResource` and Resource pages remain the state/page owner.
 Expected generated and Zova handoff: metadata was regenerated through the normal Vona command; Commerce Admin paired SSR/REST artifacts were built and `npm run deps:vona` completed without hand-editing generated output.
-Completed gate and evidence: SKU Gates A/B are documented; local Gate C emitted-metadata/runtime tests pass 2/2; local Gate E paired build, dependency synchronization, typecheck, and tagged clean Admin browser scenario pass; local Gate F SKU/lifecycle regressions pass 2/2. Gate G is not closed because no SKU CI evidence or batch-closing regression evidence is retained.
+Completed gate and evidence: SKU Gates A/B are documented; local Gate C emitted-metadata/runtime tests pass 2/2; local Gate E paired build, dependency synchronization, typecheck, and tagged clean Admin browser scenario pass; local Gate F SKU/lifecycle regressions pass 2/2; the local batch-closing Commerce Web/Admin artifact build, dependency synchronization, and 17-scenario clean browser baseline pass. Gate G is not closed because no SKU CI evidence is retained.
 Commands passed: `npm run vona :bin:test -- commerce-catalog/test/skuPresentation.test.ts --flavor=normal`; SKU regression test command; `npm run vona :tools:metadata commerce-catalog`; `npm run build:zova:commerce:admin`; `npm run deps:vona`; `npm run tsc`; `npm run test:e2e:commerce:clean -- --grep @sku` (1 passed); `git diff --check`.
-Commands still required: retain SQLite/PostgreSQL/Vona TypeScript/Commerce CI evidence for SKU; run the batch-closing Commerce artifact/browser regression; then update the evidence rows before WBS closure.
+Commands still required: retain SQLite/PostgreSQL/Vona TypeScript/Commerce CI evidence for SKU and the batch-closing Commerce regression; then update the evidence rows before WBS closure.
 Known blocker / decision needed: no source blocker. CI and batch-closing evidence are required; WBS-80-01 stays in-progress until Category, Product, and SKU evidence plus the batch regression are retained.
-Next single action: run the SKU CI workflow and retain its exact job links; do not start WBS-80-02.
+Next single action: retain the SKU CI workflow job links; do not start WBS-80-02.
 ```
 
 ## Related records
