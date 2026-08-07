@@ -3,6 +3,8 @@ import type { IIconRecord, IPagePathRecord } from 'zova-rest-cabloy-basic-admin'
 
 import { BeanSsrSiteBase, SsrSite } from 'vona-module-a-ssr';
 
+import { $locale } from '../.metadata/locales.ts';
+
 declare module 'vona-module-a-ssr' {
   export interface ISsrSiteIdRecord {
     admin: never;
@@ -25,6 +27,7 @@ export interface ISsrSiteOptionsAdmin extends IDecoratorSsrSiteOptions<
 
 @SsrSite<ISsrSiteOptionsAdmin>({
   siteId: 'admin',
+  title: $locale('SiteTitle'),
   publicPath: 'admin',
   bundlePath: 'ssr-cabloyBasicAdmin-5.0.0',
   diagnostics: {

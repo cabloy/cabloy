@@ -21,6 +21,7 @@ export interface ISsrSiteOptions<%=argv.beanNameCapitalize%> extends IDecoratorS
 
 @SsrSite<ISsrSiteOptions<%=argv.beanNameCapitalize%>>({
   siteId: 'some',
+  title: 'Some Site',
   publicPath: 'some',
   bundlePath: 'front-bundle-path',
 })

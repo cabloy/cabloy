@@ -1,5 +1,5 @@
 import type http from 'node:http';
-import type { IInstanceRecord, OmitNever } from 'vona';
+import type { IInstanceRecord, ILocaleMagic, OmitNever } from 'vona';
 import type {
   IOnionOptionsEnable,
   IOnionOptionsMatch,
@@ -70,6 +70,7 @@ export interface IDecoratorSsrSiteOptions<
     IOnionOptionsEnable,
     IOnionOptionsMatch<TypeOnionOptionsMatchRule<keyof IInstanceRecord>> {
   siteId: keyof ISsrSiteIdRecord;
+  title: string | ILocaleMagic;
   publicPath: keyof ISsrSitePublicPathRecord;
   bundlePath: string;
   diagnostics?: ISsrSiteDiagnosticsOptions;
