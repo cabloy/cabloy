@@ -256,7 +256,7 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
   let originalServe: { protocol?: string; host?: string };
 
   before(async () => {
-    for (const scene of ['a-pay', 'a-commerce']) releases.push(await acquireTestLock(scene));
+    for (const scene of ['a-commerce', 'a-pay']) releases.push(await acquireTestLock(scene));
     originalServe = { ...app.config.server.serve };
     (app.config.server.serve as any).protocol = 'http';
     (app.config.server.serve as any).host = 'localhost';
