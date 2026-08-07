@@ -114,6 +114,10 @@ function providerState(gateway: ReturnType<typeof createGateway>) {
   } as never;
 }
 
+function providerExtraData(gateway: ReturnType<typeof createGateway>) {
+  return { state: { payProviderClientOptions: providerState(gateway) } as never };
+}
+
 async function cleanup(fixture: IFixture) {
   const trade = app.scope('commerce-trade');
   const payment = app.scope('commerce-payment');
@@ -407,6 +411,269 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
         }
       },
       { extraData: { state: { payProviderClientOptions: providerState(gateway) } as never } },
+    );
+  });
+
+  it('settles a VOIDED PayPal cancel callback through Commerce and releases stock', async () => {
+    const state: IGatewayState = {
+      orderStatus: 'CREATED',
+      refundStatus: 'PENDING',
+      calls: [],
+    };
+    const gateway = createGateway(state);
+    await app.bean.executor.mockCtx(
+      async () => {
+        const fixture: IFixture = {};
+        try {
+          Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
+          const pay = app.scope('a-pay');
+          const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
+          assert.ok(session);
+          state.businessReference = String(fixture.paymentAttemptId);
+          const started = await pay.service.paymentSession.start(session.id);
+          state.orderStatus = 'VOIDED';
+          const cancelUrl = await callbackToken(started.id as number, 'cancel');
+          const cancelState = new URL(cancelUrl).searchParams.get('state');
+          assert.ok(cancelState);
+          await assert.rejects(
+            app.bean.executor.performAction('get', '/pay/payment-callback/cancel', {
+              query: { state: cancelState },
+              extraData: providerExtraData(gateway),
+            }),
+            { status: 302 },
+          );
+          const operation = await pay.model.providerOperation.get({
+            paymentSessionId: started.id,
+            kind: 'query',
+          });
+          assert.equal(operation?.state, 'succeeded');
+          const outbox = await pay.model.outboxEvent.get({
+            paymentSessionId: started.id,
+            eventType: 'payment.outcome.v1',
+          });
+          assert.ok(outbox);
+          await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outbox.id });
+          await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outbox.id });
+          const order = await app.scope('commerce-trade').model.order.getById(fixture.orderId!);
+          const attempt = await app
+            .scope('commerce-payment')
+            .model.paymentAttempt.getById(fixture.paymentAttemptId!);
+          const line = await app
+            .scope('commerce-trade')
+            .model.orderLine.get({ orderId: fixture.orderId! });
+          assert.equal(order?.state, 'cancelled');
+          assert.equal(attempt?.state, 'cancelled');
+          assert.equal(
+            (
+              await app
+                .scope('commerce-trade')
+                .model.stockReservation.get({ orderLineId: line!.id })
+            )?.state,
+            'released',
+          );
+          assert.equal(state.calls.filter(call => call.kind === 'getOrder').length, 1);
+          assert.equal(state.calls.filter(call => call.kind === 'captureOrder').length, 0);
+        } finally {
+          await cleanup(fixture);
+          await app.bean.passport.signout();
+        }
+      },
+      { extraData: providerExtraData(gateway) },
+    );
+  });
+
+  it('keeps a PayPal cancel callback nonterminal while the order remains CREATED', async () => {
+    const state: IGatewayState = {
+      orderStatus: 'CREATED',
+      refundStatus: 'PENDING',
+      calls: [],
+    };
+    const gateway = createGateway(state);
+    await app.bean.executor.mockCtx(
+      async () => {
+        const fixture: IFixture = {};
+        try {
+          Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
+          const pay = app.scope('a-pay');
+          const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
+          assert.ok(session);
+          state.businessReference = String(fixture.paymentAttemptId);
+          const started = await pay.service.paymentSession.start(session.id);
+          const cancelUrl = await callbackToken(started.id as number, 'cancel');
+          const cancelState = new URL(cancelUrl).searchParams.get('state');
+          assert.ok(cancelState);
+          await assert.rejects(
+            app.bean.executor.performAction('get', '/pay/payment-callback/cancel', {
+              query: { state: cancelState },
+              extraData: providerExtraData(gateway),
+            }),
+            { status: 302 },
+          );
+          assert.equal(
+            (await pay.model.paymentSession.getById(started.id))?.state,
+            'requires_action',
+          );
+          assert.equal(
+            (await app.scope('commerce-trade').model.order.getById(fixture.orderId!))?.state,
+            'awaiting_payment',
+          );
+          assert.equal(
+            (
+              await app
+                .scope('commerce-payment')
+                .model.paymentAttempt.getById(fixture.paymentAttemptId!)
+            )?.state,
+            'created',
+          );
+          assert.equal(
+            (await pay.model.outboxEvent.get({
+              paymentSessionId: started.id,
+              eventType: 'payment.outcome.v1',
+            })) as any,
+            undefined,
+          );
+          assert.equal(state.calls.filter(call => call.kind === 'getOrder').length, 1);
+        } finally {
+          await cleanup(fixture);
+          await app.bean.passport.signout();
+        }
+      },
+      { extraData: providerExtraData(gateway) },
+    );
+  });
+
+  it('rejects invalid PayPal callback state before provider or durable mutation', async () => {
+    const state: IGatewayState = {
+      orderStatus: 'CREATED',
+      refundStatus: 'PENDING',
+      calls: [],
+    };
+    const gateway = createGateway(state);
+    await app.bean.executor.mockCtx(
+      async () => {
+        const fixture: IFixture = {};
+        try {
+          Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
+          const pay = app.scope('a-pay');
+          const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
+          assert.ok(session);
+          state.businessReference = String(fixture.paymentAttemptId);
+          const started = await pay.service.paymentSession.start(session.id);
+          const returnUrl = await callbackToken(started.id as number, 'return');
+          const token = new URL(returnUrl).searchParams.get('state');
+          assert.ok(token);
+          const unsafeState = await app.bean.jwt.get('oauthstate').sign(
+            {
+              paymentSessionId: started.id,
+              providerName: started.providerName,
+              clientName: started.clientName,
+              environment: started.environment,
+              purpose: 'cancel',
+              continuationPath: '//untrusted.example/providerResult=cancel',
+            },
+            { path: '/pay/payment-callback/cancel', expiresIn: '15m' },
+          );
+          await assert.rejects(
+            app.bean.executor.performAction('get', '/pay/payment-callback/cancel', {
+              query: { state: unsafeState },
+              extraData: providerExtraData(gateway),
+            }),
+            { status: 401 },
+          );
+          await assert.rejects(
+            app.bean.executor.performAction('get', '/pay/payment-callback/cancel', {
+              query: { state: token },
+              extraData: providerExtraData(gateway),
+            }),
+            { status: 401 },
+          );
+          assert.equal(state.calls.filter(call => call.kind === 'getOrder').length, 0);
+          assert.equal(
+            (await pay.model.providerOperation.select({ where: { paymentSessionId: started.id } }))
+              .length,
+            1,
+          );
+          assert.equal(
+            (await pay.model.outboxEvent.select({ where: { paymentSessionId: started.id } }))
+              .length,
+            0,
+          );
+        } finally {
+          await cleanup(fixture);
+          await app.bean.passport.signout();
+        }
+      },
+      { extraData: providerExtraData(gateway) },
+    );
+  });
+
+  it('forwards raw PayPal webhook body and headers through the controller', async () => {
+    const state: IGatewayState = {
+      orderStatus: 'COMPLETED',
+      captureStatus: 'COMPLETED',
+      refundStatus: 'PENDING',
+      calls: [],
+    };
+    const gateway = createGateway(state);
+    await app.bean.executor.mockCtx(
+      async () => {
+        const fixture: IFixture = {};
+        try {
+          Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
+          const pay = app.scope('a-pay');
+          const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
+          assert.ok(session);
+          state.orderId = `paypal-order-${session.id}`;
+          state.captureId = `paypal-capture-${session.id}`;
+          state.businessReference = String(fixture.paymentAttemptId);
+          const rawBody = JSON.stringify({
+            id: `paypal-controller-event-${session.id}`,
+            event_type: 'PAYMENT.CAPTURE.COMPLETED',
+            resource: {
+              id: state.captureId,
+              amount: { currency_code: 'USD', value: '12.99' },
+              supplementary_data: { related_ids: { order_id: state.orderId } },
+            },
+          });
+          const headers = {
+            'paypal-transmission-id': 'controller-transmission-test',
+            'content-type': 'application/json',
+          };
+          app.ctx.request.rawBody = rawBody;
+          app.ctx.req.headers = { ...app.ctx.req.headers, ...headers };
+          const controller = app.bean._getBean('a-pay.controller.webhook' as never) as any;
+          const result = await controller.receive(
+            'pay-paypal:paypal',
+            'default',
+            JSON.parse(rawBody),
+          );
+          assert.deepEqual(result, { accepted: true });
+          const verifyCall = state.calls.find(
+            call => call.kind === 'verifyWebhookSignature',
+          ) as any;
+          assert.equal(verifyCall.input.rawBody, rawBody);
+          assert.deepEqual(verifyCall.input.body, JSON.parse(rawBody));
+          assert.equal(
+            verifyCall.input.headers['paypal-transmission-id'],
+            headers['paypal-transmission-id'],
+          );
+          const outbox = await pay.model.outboxEvent.get({
+            paymentSessionId: session.id,
+            eventType: 'payment.outcome.v1',
+          });
+          assert.ok(outbox);
+          await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outbox.id });
+          await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outbox.id });
+          assert.equal(
+            (await app.scope('commerce-trade').model.order.getById(fixture.orderId!))?.state,
+            'paid',
+          );
+        } finally {
+          await cleanup(fixture);
+          await app.bean.passport.signout();
+        }
+      },
+      { extraData: providerExtraData(gateway) },
     );
   });
 
