@@ -329,6 +329,9 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
             [order?.state, attempt?.state, (await pay.model.outboxEvent.getById(outbox.id))?.state],
             ['paid', 'succeeded', 'dispatched'],
           );
+          const captureCall = state.calls.find(call => call.kind === 'captureOrder') as any;
+          assert.equal(captureCall.input.id, started.providerOrderId);
+          assert.equal(captureCall.input.prefer, 'return=representation');
           assert.equal(state.calls.filter(call => call.kind === 'captureOrder').length, 1);
         } finally {
           await cleanup(fixture);
@@ -509,10 +512,9 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
             }),
             { status: 302 },
           );
-          assert.equal(
-            (await pay.model.paymentSession.getById(started.id))?.state,
-            'requires_action',
-          );
+          const reconciled = await pay.model.paymentSession.getById(started.id);
+          assert.equal(reconciled?.state, 'requires_action');
+          assert.equal(reconciled?.nextAction, undefined);
           assert.equal(
             (await app.scope('commerce-trade').model.order.getById(fixture.orderId!))?.state,
             'awaiting_payment',

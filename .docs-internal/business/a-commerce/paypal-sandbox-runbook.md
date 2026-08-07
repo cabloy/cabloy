@@ -34,8 +34,8 @@ The server must be publicly reachable at the configured origin. Callback URLs ar
 1. Fetch Checkout payment methods while authenticated. PayPal appears only when the complete Sandbox configuration is valid.
 2. Create an order selecting the `paypal` candidate key.
 3. Start payment and verify the approval redirect comes from PayPal.
-4. Approve with the Sandbox buyer. The browser returns through `/api/pay/payment-callback/return`; it cannot settle the order directly.
-5. Confirm that the server creates/reuses the durable confirm operation, captures the persisted PayPal order, and reaches the provider-neutral PaymentSession terminal state.
+4. Approve with the Sandbox buyer. The browser returns through `/api/pay/payment-callback/return`; it triggers durable server capture/reconciliation but is not payment settlement itself.
+5. Confirm that the server creates/reuses the durable confirm operation, captures the persisted PayPal order with `Prefer: return=representation`, and reaches the provider-neutral PaymentSession terminal state.
 6. Confirm a verified webhook is stored, a single payment outbox event is dispatched, and Commerce receives exactly one payment outcome.
 7. Submit both full and partial refunds; confirm provider refund IDs persist and webhook/query races converge to one outcome.
 8. Repeat a callback and webhook delivery to verify idempotency.
@@ -49,6 +49,8 @@ Monitor and investigate:
 - webhook verification errors, merchant mismatches, amount/currency mismatches, and replay conflicts;
 - pending `payOutboxEvent` rows;
 - expired Commerce orders with a late payment audit and an automatic `late-capture:` refund operation.
+
+If the callback redirects normally but PaymentSession remains actionable, inspect its linked `payProviderOperation` state and redacted `errorSummary`; do not reopen a consumed PayPal approval URL or manually mark the Commerce order paid.
 
 For a late verified capture after an order expired, retain the expired order. The system records the capture and creates a full compensation refund. Do not manually mark the order paid or recreate stock/coupon effects.
 

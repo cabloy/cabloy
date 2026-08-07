@@ -152,6 +152,31 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('requests a complete PayPal capture representation', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const calls: unknown[] = [];
+      const gateway = {
+        async captureOrder(_options: unknown, input: unknown) {
+          calls.push(input);
+          return orderRecord('COMPLETED', 'COMPLETED');
+        },
+      };
+      const { provider } = app.bean.payProvider.resolveByName('pay-paypal:paypal', 'default');
+      const payment = await provider.confirmPayment(paymentInput, createOptions(gateway));
+
+      assert.equal(payment.state, 'succeeded');
+      assert.equal(payment.providerCaptureId, 'capture-1');
+      assert.deepEqual(payment.nextAction, { kind: 'completed' });
+      assert.deepEqual(calls, [
+        {
+          id: 'order-1',
+          paypalRequestId: 'payment-key',
+          prefer: 'return=representation',
+        },
+      ]);
+    });
+  });
+
   it('maps PayPal capture states and rejects conflicting order facts', async () => {
     await app.bean.executor.mockCtx(async () => {
       let result: unknown = orderRecord('CREATED');

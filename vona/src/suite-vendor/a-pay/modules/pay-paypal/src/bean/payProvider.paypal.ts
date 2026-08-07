@@ -124,6 +124,7 @@ export class PayProviderPaypal
       {
         id: input.providerOrderId,
         paypalRequestId: input.idempotencyKey,
+        prefer: 'return=representation',
       },
     );
     return this._mapOrder(order, input, clientOptions);

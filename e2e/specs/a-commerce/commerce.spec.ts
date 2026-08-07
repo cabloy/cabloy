@@ -546,6 +546,87 @@ test(
 );
 
 test(
+  'Payment callback: authenticated direct route reconciles after hydration',
+  { tag: ['@web', '@flow', '@payment'] },
+  async ({ browser, request }, testInfo) => {
+    test.setTimeout(60_000);
+    const { context, fixture, page, pageErrors } = await createAddressThroughCustomerPage(
+      browser,
+      request,
+      testInfo,
+    );
+    try {
+      await page.goto('/commerce', { waitUntil: 'load' });
+      const productLink = page.getByRole('link', { name: 'Pour-Over Coffee Set', exact: true });
+      await expect(productLink).toBeVisible();
+      await productLink.click();
+      const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
+      await page.getByRole('button', { name: 'Add to cart', exact: true }).click();
+      expect((await addResponse).ok()).toBeTruthy();
+      await page.getByRole('link', { name: /^Cart/ }).click();
+      await page.getByRole('link', { name: 'Checkout', exact: true }).click();
+      const addressChoice = page.getByRole('radio', { name: new RegExp(fixture.recipientName) });
+      await expect(addressChoice).toBeVisible();
+      await addressChoice.check();
+      await page.getByRole('radio', { name: 'No coupon', exact: true }).check();
+      const checkoutResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/checkout');
+      await page.getByRole('button', { name: 'Create order', exact: true }).click();
+      const checkoutResponseValue = await checkoutResponse;
+      expect(checkoutResponseValue.ok()).toBeTruthy();
+      const checkout = (await checkoutResponseValue.json()).data;
+      expectTableIdentity(checkout.orderId);
+      expectTableIdentity(checkout.paymentSessionId);
+      const startResponse = waitForApiResponse(
+        page,
+        'POST',
+        new RegExp(`/api/pay/payment-session/${checkout.paymentSessionId}/start$`),
+      );
+      await page.getByRole('button', { name: 'Start payment', exact: true }).click();
+      expect((await startResponse).ok()).toBeTruthy();
+      await expect(page.getByRole('heading', { name: 'Mock payment simulator' })).toBeVisible();
+      const completeResponse = waitForApiResponse(
+        page,
+        'POST',
+        new RegExp(`/api/pay/mock/payment-session/${checkout.paymentSessionId}/complete$`),
+      );
+      await page.getByRole('button', { name: 'Payment succeeded', exact: true }).click();
+      expect((await completeResponse).ok()).toBeTruthy();
+      await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`), {
+        timeout: 40_000,
+      });
+
+      const callbackPath = `/commerce/payment/${checkout.paymentSessionId}/${checkout.orderId}?providerResult=return`;
+      const callbackResponse = await context.request.get(callbackPath);
+      expect(callbackResponse.ok()).toBeTruthy();
+      const callbackHtml = (await callbackResponse.text()).toLowerCase();
+      expect(callbackHtml).not.toContain('data-zova-hydrated');
+      expect(callbackHtml).not.toContain('mock payment simulator');
+
+      const reconcilePath = new RegExp(
+        `/api/pay/payment-session/${checkout.paymentSessionId}/reconcile$`,
+      );
+      let reconcileCount = 0;
+      page.on('request', request => {
+        const url = new URL(request.url());
+        if (request.method() === 'POST' && reconcilePath.test(url.pathname)) reconcileCount++;
+      });
+      const reconcileResponse = waitForApiResponse(page, 'POST', reconcilePath);
+      const documentResponse = await page.goto(callbackPath, { waitUntil: 'load' });
+      expect(documentResponse?.ok()).toBeTruthy();
+      expect((await reconcileResponse).ok()).toBeTruthy();
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+      await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`));
+      expect(reconcileCount).toBe(1);
+      await expect(page.getByText('paid · $45.99')).toBeVisible();
+      await expect(page.getByRole('alert')).toHaveCount(0);
+      expect(pageErrors).toEqual([]);
+    } finally {
+      await context.close().catch(() => {});
+    }
+  },
+);
+
+test(
   'Payment cancellation: customer observes the cancelled order after verified provider confirmation',
   { tag: ['@web', '@flow', '@payment'] },
   async ({ browser, request }, testInfo) => {

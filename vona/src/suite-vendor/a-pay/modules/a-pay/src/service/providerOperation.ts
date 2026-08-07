@@ -296,7 +296,7 @@ export class ServiceProviderOperation extends BeanBase {
       return session;
     }
 
-    const nextAction = snapshot.nextAction ?? session.nextAction;
+    const nextAction = snapshot.nextAction;
     const providerPaymentId = snapshot.providerPaymentId ?? session.providerPaymentId;
     const providerOrderId = snapshot.providerOrderId ?? session.providerOrderId;
     const providerCaptureId = snapshot.providerCaptureId ?? session.providerCaptureId;
