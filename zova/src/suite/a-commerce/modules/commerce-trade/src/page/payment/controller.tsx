@@ -43,7 +43,9 @@ export class ControllerPagePayment extends BeanControllerPageBase {
   protected async __init__() {
     this.paymentSessionId = this.$computed(() => this.$params.paymentSessionId);
     this.orderId = this.$computed(() => this.$params.orderId);
-    await this.$ssr.handleDirectOrOnHydrated(() => this._initClient());
+    if (process.env.CLIENT) {
+      await this.$ssr.handleDirectOrOnHydrated(() => this._initClient());
+    }
   }
 
   private async _initClient() {
