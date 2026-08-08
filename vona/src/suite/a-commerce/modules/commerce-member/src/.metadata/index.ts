@@ -7,15 +7,15 @@ export * from '../entity/address.tsx';
 import type { IEntityOptionsAddress } from '../entity/address.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-
+  
     export interface IEntityRecord {
       'commerce-member:address': IEntityOptionsAddress;
     }
 
-
+  
 }
 declare module 'vona-module-commerce-member' {
-
+   
 }
 /** entity: end */
 /** entity: begin */
@@ -33,7 +33,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-commerce-member' {
-
+  
     export interface IEntityOptionsAddress {
       fields?: TypeEntityOptionsFields<EntityAddress, IEntityOptionsAddress[TypeSymbolKeyFieldsMore]>;
     }
@@ -44,15 +44,15 @@ export * from '../model/address.ts';
 import type { IModelOptionsAddress } from '../model/address.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-
+  
     export interface IModelRecord {
       'commerce-member:address': IModelOptionsAddress;
     }
 
-
+  
 }
 declare module 'vona-module-commerce-member' {
-
+  
         export interface ModelAddress {
           /** @internal */
           get scope(): ScopeModuleCommerceMember;
@@ -62,7 +62,7 @@ declare module 'vona-module-commerce-member' {
             get $beanFullName(): 'commerce-member.model.address';
             get $onionName(): 'commerce-member:address';
             get $onionOptions(): IModelOptionsAddress;
-          }
+          } 
 }
 /** model: end */
 /** model: begin */
@@ -84,13 +84,23 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-commerce-member' {
-
+  
   export interface ModelAddress {
       [SymbolKeyEntity]: EntityAddress;
       [SymbolKeyEntityMeta]: EntityAddressMeta;
       [SymbolKeyModelOptions]: IModelOptionsAddress;
       get<T extends IModelGetOptions<EntityAddress,ModelAddress>>(where: TypeModelWhere<EntityAddress>, options?: T): Promise<TypeModelRelationResult<EntityAddress, ModelAddress, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityAddress,ModelAddress>>(where: TypeModelWhere<EntityAddress>, options?: T): Promise<TypeModelRelationResult<EntityAddress, ModelAddress, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityAddress,ModelAddress>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityAddress, ModelAddress, T> | undefined>;
       mget<T extends IModelGetOptions<EntityAddress,ModelAddress>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityAddress, ModelAddress, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityAddress,ModelAddress,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityAddress, ModelAddress, T>>;
@@ -124,15 +134,15 @@ export * from '../service/address.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-
+  
     export interface IServiceRecord {
       'commerce-member:address': never;
     }
 
-
+  
 }
 declare module 'vona-module-commerce-member' {
-
+  
         export interface ServiceAddress {
           /** @internal */
           get scope(): ScopeModuleCommerceMember;
@@ -141,8 +151,8 @@ declare module 'vona-module-commerce-member' {
           export interface ServiceAddress {
             get $beanFullName(): 'commerce-member.service.address';
             get $onionName(): 'commerce-member:address';
-
-          }
+            
+          } 
 }
 /** service: end */
 /** service: begin */
@@ -166,16 +176,16 @@ export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-
+  
     export interface IMetaRecord {
       'commerce-member:index': IMetaOptionsIndex;
 'commerce-member:version': never;
     }
 
-
+  
 }
 declare module 'vona-module-commerce-member' {
-
+  
         export interface MetaIndex {
           /** @internal */
           get scope(): ScopeModuleCommerceMember;
@@ -195,8 +205,8 @@ declare module 'vona-module-commerce-member' {
           export interface MetaVersion {
             get $beanFullName(): 'commerce-member.meta.version';
             get $onionName(): 'commerce-member:version';
-
-          }
+            
+          } 
 }
 /** meta: end */
 /** dto: begin */
@@ -222,7 +232,7 @@ import type { IDtoOptionsAddressSelectResItem } from '../dto/addressSelectResIte
 import type { IDtoOptionsAddressView } from '../dto/addressView.tsx';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-
+  
     export interface IDtoRecord {
       'commerce-member:addressMineCreate': IDtoOptionsAddressMineCreate;
 'commerce-member:addressMineItem': IDtoOptionsAddressMineItem;
@@ -236,10 +246,10 @@ declare module 'vona-module-a-web' {
 'commerce-member:addressView': IDtoOptionsAddressView;
     }
 
-
+  
 }
 declare module 'vona-module-commerce-member' {
-
+   
 }
 /** dto: end */
 /** dto: begin */
@@ -254,7 +264,7 @@ import type { DtoAddressSelectRes } from '../dto/addressSelectRes.tsx';
 import type { DtoAddressSelectResItem } from '../dto/addressSelectResItem.tsx';
 import type { DtoAddressView } from '../dto/addressView.tsx';
 declare module 'vona-module-commerce-member' {
-
+  
     export interface IDtoOptionsAddressMineCreate {
       fields?: TypeEntityOptionsFields<DtoAddressMineCreate, IDtoOptionsAddressMineCreate[TypeSymbolKeyFieldsMore]>;
     }
@@ -301,15 +311,15 @@ export * from '../controller/address.ts';
 import type { IControllerOptionsAddress } from '../controller/address.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-
+  
     export interface IControllerRecord {
       'commerce-member:address': IControllerOptionsAddress;
     }
 
-
+  
 }
 declare module 'vona-module-commerce-member' {
-
+  
         export interface ControllerAddress {
           /** @internal */
           get scope(): ScopeModuleCommerceMember;
@@ -319,14 +329,14 @@ declare module 'vona-module-commerce-member' {
             get $beanFullName(): 'commerce-member.controller.address';
             get $onionName(): 'commerce-member:address';
             get $onionOptions(): IControllerOptionsAddress;
-          }
+          } 
 }
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
 import type { ControllerAddress } from '../controller/address.ts';
 declare module 'vona-module-commerce-member' {
-
+  
     export interface IControllerOptionsAddress {
       actions?: TypeControllerOptionsActions<ControllerAddress>;
     }
@@ -355,22 +365,22 @@ import 'vona-module-a-openapi';
       'commerce-member:address': never;
     }
   }
-
+  
 /** controller: end */
 /** ssrMenu: begin */
 export * from '../bean/ssrMenu.address.ts';
 import type { ISsrMenuOptionsAddress } from '../bean/ssrMenu.address.ts';
 import 'vona-module-a-ssr';
 declare module 'vona-module-a-ssr' {
-
+  
     export interface ISsrMenuRecord {
       'commerce-member:address': ISsrMenuOptionsAddress;
     }
 
-
+  
 }
 declare module 'vona-module-commerce-member' {
-
+  
         export interface SsrMenuAddress {
           /** @internal */
           get scope(): ScopeModuleCommerceMember;
@@ -380,7 +390,7 @@ declare module 'vona-module-commerce-member' {
             get $beanFullName(): 'commerce-member.ssrMenu.address';
             get $onionName(): 'commerce-member:address';
             get $onionOptions(): ISsrMenuOptionsAddress;
-          }
+          } 
 }
 /** ssrMenu: end */
 /** locale: begin */
@@ -410,13 +420,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     commerceMember: ScopeModuleCommerceMember;
   }
-
-
+  
+  
 
   export interface IBeanScopeLocale {
     'commerce-member': (typeof locales)[TypeLocaleBase];
   }
 
-
+  
 }
 /** scope: end */

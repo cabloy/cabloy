@@ -19,12 +19,27 @@ export class ServiceAddress extends BeanBase {
   async select(params?: IQueryParams<ModelAddress>): Promise<DtoAddressSelectRes> {
     return await this.scope.model.address.selectAndCount({
       ...params,
+      columns: ['id', 'recipientName', 'phone', 'countryCode', 'city', 'createdAt'],
       orders: params?.orders ?? [['id', 'asc']],
     });
   }
 
   async view(id: TableIdentity): Promise<DtoAddressView | undefined> {
-    return await this.scope.model.address.getById(id);
+    return await this.scope.model.address.getById(id, {
+      columns: [
+        'id',
+        'recipientName',
+        'phone',
+        'countryCode',
+        'region',
+        'city',
+        'postalCode',
+        'addressLine1',
+        'addressLine2',
+        'createdAt',
+        'updatedAt',
+      ],
+    });
   }
 
   async mine(params?: IQueryParams<ModelAddress>): Promise<DtoAddressMineRes> {

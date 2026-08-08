@@ -95,14 +95,14 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/payment-callback/return': {
+  '/api/pay/payment-callback/return': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get: operations['PaymentCallback_returned'];
+    get: operations['PayPaymentCallback_returned'];
     put?: never;
     post?: never;
     delete?: never;
@@ -111,14 +111,14 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/payment-callback/cancel': {
+  '/api/pay/payment-callback/cancel': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get: operations['PaymentCallback_cancelled'];
+    get: operations['PayPaymentCallback_cancelled'];
     put?: never;
     post?: never;
     delete?: never;
@@ -127,7 +127,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/payment-session/{id}/start': {
+  '/api/pay/payment-session/{id}/start': {
     parameters: {
       query?: never;
       header?: never;
@@ -136,14 +136,14 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    post: operations['PaymentSession_start'];
+    post: operations['PayPaymentSession_start'];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  '/api/payment-session/{id}/reconcile': {
+  '/api/pay/payment-session/{id}/reconcile': {
     parameters: {
       query?: never;
       header?: never;
@@ -152,21 +152,21 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    post: operations['PaymentSession_reconcile'];
+    post: operations['PayPaymentSession_reconcile'];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  '/api/payment-session/{id}': {
+  '/api/pay/payment-session/{id}': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get: operations['PaymentSession_view'];
+    get: operations['PayPaymentSession_view'];
     put?: never;
     post?: never;
     delete?: never;
@@ -991,6 +991,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/home/base/siteCatalog': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['HomeBaseSiteCatalog_select'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/': {
     parameters: {
       query?: never;
@@ -1321,7 +1337,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    post: operations['PayMockPayment_complete'];
+    post: operations['PayMockMockPayment_complete'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1337,7 +1353,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    post: operations['PayMockPayment_completeRefund'];
+    post: operations['PayMockMockPayment_completeRefund'];
     delete?: never;
     options?: never;
     head?: never;
@@ -2303,29 +2319,16 @@ export interface components {
        * @description Created At
        */
       createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
       /** @description ID */
-      id: number | string;
+      id?: unknown;
       /** @description Recipient Name */
       recipientName: string;
       /** @description Phone */
       phone: string;
       /** @description Country Code */
       countryCode: string;
-      /** @description Region */
-      region: string;
       /** @description City */
       city: string;
-      /** @description Postal Code */
-      postalCode: string;
-      /** @description Address Line 1 */
-      addressLine1: string;
-      /** @description Address Line 2 */
-      addressLine2?: string | undefined;
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -2896,29 +2899,12 @@ export interface components {
        * @description Created At
        */
       createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
-      /**
-       * @description Deleted
-       * @default false
-       */
-      deleted?: boolean;
-      /**
-       * @description Instance ID
-       * @default 0
-       */
-      iid?: number;
       /** @description ID */
       id: number | string;
-      userId: number | string;
-      addressId: number | string;
-      correlationId: string;
-      addressSnapshot: components['schemas']['commerce-trade.dto.orderAddressSnapshot'];
-      couponSnapshot?: components['schemas']['commerce-trade.dto.orderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
-      /** @enum {string} */
+      /**
+       * @description Order state
+       * @enum {string}
+       */
       state:
         | 'awaiting_payment'
         | 'paid'
@@ -2929,17 +2915,17 @@ export interface components {
         | 'refunded'
         | 'cancelled'
         | 'expired';
-      /** @enum {string} */
-      currency: 'USD';
-      eligibleSubtotalCents: number;
-      discountCents: number;
+      /** @description Payable total (cents) */
       payableTotalCents: number;
-      /** Format: date-time */
+      /**
+       * Format: date-time
+       * @description Reservation deadline
+       */
       reservationExpiresAt: Date;
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+    'commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0':
       | {
           /**
            * Format: date-time
@@ -2951,74 +2937,56 @@ export interface components {
            * @description Updated At
            */
           updatedAt: Date;
-          /**
-           * @description Deleted
-           * @default false
-           */
-          deleted?: boolean;
-          /**
-           * @description Instance ID
-           * @default 0
-           */
-          iid?: number;
           /** @description ID */
           id: number | string;
-          userId: number | string;
-          addressId: number | string;
-          correlationId: string;
           addressSnapshot: components['schemas']['commerce-trade.dto.orderAddressSnapshot'];
           couponSnapshot?: components['schemas']['commerce-trade.dto.orderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
-          /** @enum {string} */
-          state:
-            | 'awaiting_payment'
-            | 'paid'
-            | 'refund_requested'
-            | 'refund_approved'
-            | 'refund_rejected'
-            | 'shipped'
-            | 'refunded'
-            | 'cancelled'
-            | 'expired';
-          /** @enum {string} */
-          currency: 'USD';
+          /** @description Order state */
+          state?: unknown;
+          /** @description Currency */
+          currency?: unknown;
+          /** @description Eligible subtotal (cents) */
           eligibleSubtotalCents: number;
+          /** @description Discount (cents) */
           discountCents: number;
+          /** @description Payable total (cents) */
           payableTotalCents: number;
-          /** Format: date-time */
+          /**
+           * Format: date-time
+           * @description Reservation deadline
+           */
           reservationExpiresAt: Date;
+          /** @description Purchased lines */
+          lines: unknown[];
           shipment?: {
-            /**
-             * Format: date-time
-             * @description Created At
-             */
-            createdAt: Date;
-            /**
-             * Format: date-time
-             * @description Updated At
-             */
-            updatedAt: Date;
-            /**
-             * @description Deleted
-             * @default false
-             */
-            deleted?: boolean;
-            /**
-             * @description Instance ID
-             * @default 0
-             */
-            iid?: number;
             /** @description ID */
             id: number | string;
-            orderId: number | string;
             carrier: string;
             trackingNumber: string;
-            operatorId: number | string;
             /** Format: date-time */
             shippedAt: Date;
-            correlationId: string;
           };
+          _lines?: components['schemas']['commerce-trade.dto.orderAdminLineResItem'][] | undefined;
         }
       | undefined;
+    'commerce-trade.dto.orderAdminLineResItem': {
+      /** @description ID */
+      id: number | string;
+      /** @description SKU code */
+      skuCodeSnapshot: string;
+      /** @description Product title */
+      titleSnapshot: string;
+      /** @description SKU attributes */
+      skuAttributesSnapshot: components['schemas']['commerce-trade.dto.orderLineSkuAttributeSnapshot'][];
+      /** @description Unit price (cents) */
+      unitPriceCents: number;
+      /** @description Quantity */
+      quantity: number;
+      /** @description Eligible subtotal (cents) */
+      eligibleSubtotalCents: number;
+      /** @description Line total (cents) */
+      lineTotalCents: number;
+    };
     'commerce-trade.dto.stockAuditSelectRes': {
       list: components['schemas']['commerce-trade.dto.stockAuditSelectResItem'][];
       total: string;
@@ -3032,31 +3000,10 @@ export interface components {
        * @description Created At
        */
       createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
-      /**
-       * @description Deleted
-       * @default false
-       */
-      deleted?: boolean;
-      /**
-       * @description Instance ID
-       * @default 0
-       */
-      iid?: number;
       /** @description ID */
-      id: number | string;
-      /** @description Stock Balance ID */
-      stockBalanceId: number | string;
+      id?: unknown;
       /** @description SKU ID */
       skuId: number | string;
-      /** @description Stock Reservation ID */
-      stockReservationId?: number | string | undefined;
-      /** @description Actor ID */
-      actorId?: number | string | undefined;
       /**
        * @description Stock Operation
        * @enum {string}
@@ -3064,22 +3011,6 @@ export interface components {
       operation: 'adjust' | 'reserve' | 'consume' | 'release' | 'restore';
       /** @description Delta */
       delta: number;
-      /** @description Reason */
-      reason: string;
-      /** @description Correlation ID */
-      correlationId: string;
-      /** @description Prior On Hand */
-      priorOnHand: number;
-      /** @description Prior Reserved */
-      priorReserved: number;
-      /** @description Prior Available */
-      priorAvailable: number;
-      /** @description On Hand */
-      onHand: number;
-      /** @description Reserved */
-      reserved: number;
-      /** @description Available */
-      available: number;
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3095,16 +3026,6 @@ export interface components {
            * @description Updated At
            */
           updatedAt: Date;
-          /**
-           * @description Deleted
-           * @default false
-           */
-          deleted?: boolean;
-          /**
-           * @description Instance ID
-           * @default 0
-           */
-          iid?: number;
           /** @description ID */
           id: number | string;
           /** @description Stock Balance ID */
@@ -3191,28 +3112,8 @@ export interface components {
       pageNo: number;
     };
     'commerce-trade.dto.stockBalanceSelectResItem': {
-      /**
-       * Format: date-time
-       * @description Created At
-       */
-      createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
-      /**
-       * @description Deleted
-       * @default false
-       */
-      deleted?: boolean;
-      /**
-       * @description Instance ID
-       * @default 0
-       */
-      iid?: number;
       /** @description ID */
-      id: number | string;
+      id?: unknown;
       /** @description SKU ID */
       skuId: number | string;
       /** @description On Hand */
@@ -3236,16 +3137,6 @@ export interface components {
            * @description Updated At
            */
           updatedAt: Date;
-          /**
-           * @description Deleted
-           * @default false
-           */
-          deleted?: boolean;
-          /**
-           * @description Instance ID
-           * @default 0
-           */
-          iid?: number;
           /** @description ID */
           id: number | string;
           /** @description SKU ID */
@@ -3312,6 +3203,12 @@ export interface components {
       published?: boolean;
       /** @description Description */
       description?: string | undefined;
+      parent?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Name */
+        name: string;
+      };
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3350,6 +3247,12 @@ export interface components {
           published?: boolean;
           /** @description Description */
           description?: string | undefined;
+          parent?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Name */
+            name: string;
+          };
         }
       | undefined;
     'commerce-catalog.dto.categoryUpdate': {
@@ -3419,6 +3322,17 @@ export interface components {
       published?: boolean;
       /** @description Description */
       description?: string | undefined;
+      category?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Name */
+        name: string;
+        /**
+         * @description Published
+         * @default false
+         */
+        published?: boolean;
+      };
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3507,6 +3421,17 @@ export interface components {
           published?: boolean;
           /** @description Description */
           description?: string | undefined;
+          category?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Name */
+            name: string;
+            /**
+             * @description Published
+             * @default false
+             */
+            published?: boolean;
+          };
         }
       | undefined;
     'commerce-catalog.dto.productUpdate': {
@@ -3530,22 +3455,11 @@ export interface components {
       /** @description Price (cents) */
       priceCents: number;
       /**
-       * @description SKU attributes
-       * @default []
-       */
-      attributes?: components['schemas']['commerce-catalog.dto.skuAttribute'][];
-      /**
        * @description SKU lifecycle
        * @default draft
        * @enum {string}
        */
       lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
-    };
-    'commerce-catalog.dto.skuAttribute': {
-      /** @description SKU attribute name */
-      name: string;
-      /** @description SKU attribute value */
-      value: string;
     };
     'commerce-catalog.dto.skuSelectRes': {
       list: components['schemas']['commerce-catalog.dto.skuSelectResItem'][];
@@ -3583,11 +3497,6 @@ export interface components {
       productId: number | string;
       /** @description Price (cents) */
       priceCents: number;
-      /**
-       * @description SKU attributes
-       * @default []
-       */
-      attributes?: components['schemas']['commerce-catalog.dto.skuAttribute'][];
       /**
        * @description SKU lifecycle
        * @default draft
@@ -3628,11 +3537,6 @@ export interface components {
           /** @description Price (cents) */
           priceCents: number;
           /**
-           * @description SKU attributes
-           * @default []
-           */
-          attributes?: components['schemas']['commerce-catalog.dto.skuAttribute'][];
-          /**
            * @description SKU lifecycle
            * @default draft
            * @enum {string}
@@ -3647,11 +3551,6 @@ export interface components {
       productId: number | string;
       /** @description Price (cents) */
       priceCents: number;
-      /**
-       * @description SKU attributes
-       * @default []
-       */
-      attributes?: components['schemas']['commerce-catalog.dto.skuAttribute'][];
       /**
        * @description SKU lifecycle
        * @default draft
@@ -3695,6 +3594,17 @@ export interface components {
       roleIds?: (number | string)[] | undefined;
       roleNames?: string[] | undefined;
       actions?: unknown;
+    };
+    'home-base.dto.siteCatalogSelectRes': {
+      list: components['schemas']['home-base.dto.siteCatalogSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'home-base.dto.siteCatalogSelectResItem': {
+      siteId: string;
+      title: string;
     };
     'training-record.dto.recordCreate': {
       /** @description Training Record Name */
@@ -5294,7 +5204,7 @@ export interface operations {
       };
     };
   };
-  PaymentCallback_returned: {
+  PayPaymentCallback_returned: {
     parameters: {
       query: {
         state: string;
@@ -5319,7 +5229,7 @@ export interface operations {
       };
     };
   };
-  PaymentCallback_cancelled: {
+  PayPaymentCallback_cancelled: {
     parameters: {
       query: {
         state: string;
@@ -5344,7 +5254,7 @@ export interface operations {
       };
     };
   };
-  PaymentSession_start: {
+  PayPaymentSession_start: {
     parameters: {
       query?: never;
       header?: never;
@@ -5370,7 +5280,7 @@ export interface operations {
     };
     authToken: true;
   };
-  PaymentSession_reconcile: {
+  PayPaymentSession_reconcile: {
     parameters: {
       query?: never;
       header?: never;
@@ -5396,7 +5306,7 @@ export interface operations {
     };
     authToken: true;
   };
-  PaymentSession_view: {
+  PayPaymentSession_view: {
     parameters: {
       query?: never;
       header?: never;
@@ -6579,7 +6489,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+            data?: components['schemas']['commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0'];
           };
         };
       };
@@ -7274,6 +7184,30 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['a-permission.dto.permissions'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  HomeBaseSiteCatalog_select: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['home-base.dto.siteCatalogSelectRes'];
           };
         };
       };
@@ -8015,7 +7949,7 @@ export interface operations {
       };
     };
   };
-  PayMockPayment_complete: {
+  PayMockMockPayment_complete: {
     parameters: {
       query?: never;
       header?: never;
@@ -8045,7 +7979,7 @@ export interface operations {
     };
     authToken: true;
   };
-  PayMockPayment_completeRefund: {
+  PayMockMockPayment_completeRefund: {
     parameters: {
       query?: never;
       header?: never;

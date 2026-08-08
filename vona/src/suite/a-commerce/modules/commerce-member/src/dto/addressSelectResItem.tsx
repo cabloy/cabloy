@@ -6,6 +6,7 @@ import { Dto } from 'vona-module-a-web';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
+import { EntityAddress } from '../entity/address.tsx';
 import { ModelAddress } from '../model/address.ts';
 
 export interface IDtoOptionsAddressSelectResItem extends IDecoratorDtoOptions {}
@@ -45,20 +46,11 @@ export interface IDtoOptionsAddressSelectResItem extends IDecoratorDtoOptions {}
   ],
 })
 export class DtoAddressSelectResItem extends $Dto.get(() => ModelAddress, {
-  columns: [
-    'id',
-    'recipientName',
-    'phone',
-    'countryCode',
-    'region',
-    'city',
-    'postalCode',
-    'addressLine1',
-    'addressLine2',
-    'createdAt',
-    'updatedAt',
-  ],
+  columns: ['id', 'recipientName', 'phone', 'countryCode', 'city', 'createdAt'],
 }) {
+  @Api.field(ZovaRender.order(1, 'core'), ZovaRender.cell('basic-table:actionView'))
+  declare id: EntityAddress['id'];
+
   @Api.field(
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),

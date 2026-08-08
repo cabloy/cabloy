@@ -11,8 +11,13 @@ const passportTestActivateCurrentPath = '/api/home/user/passportTest/activateCur
 
 interface IAddressFixture {
   addressLine1: string;
+  addressLine2: string;
   city: string;
+  countryCode: string;
+  phone: string;
+  postalCode: string;
   recipientName: string;
+  region: string;
   updatedCity: string;
 }
 
@@ -123,21 +128,26 @@ function createAddressFixture(testInfo: TestInfo): IAddressFixture {
   const id = `${testInfo.workerIndex}-${testInfo.parallelIndex ?? testInfo.retry}-${Date.now()}`;
   return {
     recipientName: `E2E Address ${id}`,
-    addressLine1: `1 Test Street ${id}`,
+    phone: '15555550123',
+    countryCode: 'US',
+    region: 'California',
     city: `Original City ${id}`,
+    postalCode: '94105',
+    addressLine1: `1 Test Street ${id}`,
+    addressLine2: 'Suite E2E',
     updatedCity: `Updated City ${id}`,
   };
 }
 
 async function fillAddressForm(page: Page, fixture: IAddressFixture) {
   await page.getByPlaceholder('Recipient name').fill(fixture.recipientName);
-  await page.getByPlaceholder('Phone').fill('15555550123');
-  await page.getByPlaceholder('Country code').fill('US');
-  await page.getByPlaceholder('Region').fill('California');
+  await page.getByPlaceholder('Phone').fill(fixture.phone);
+  await page.getByPlaceholder('Country code').fill(fixture.countryCode);
+  await page.getByPlaceholder('Region').fill(fixture.region);
   await page.getByPlaceholder('City').fill(fixture.city);
-  await page.getByPlaceholder('Postal code').fill('94105');
+  await page.getByPlaceholder('Postal code').fill(fixture.postalCode);
   await page.getByPlaceholder('Address line 1').fill(fixture.addressLine1);
-  await page.getByPlaceholder('Address line 2').fill('Suite E2E');
+  await page.getByPlaceholder('Address line 2').fill(fixture.addressLine2);
 }
 
 async function createAddressThroughCustomerPage(
@@ -782,7 +792,7 @@ test(
 );
 
 test(
-  'ATP-ADDR-01: systemAdmin inspects Address Resource without mutation controls',
+  'ATP-SPC-05: systemAdmin inspects readonly Address Resource without mutation controls',
   { tag: ['@admin', '@flow', '@address'] },
   async ({ browser, request }, testInfo) => {
     test.setTimeout(60_000);
@@ -795,7 +805,7 @@ test(
       const url = new URL(request.url());
       if (
         url.pathname.startsWith(addressActionPath) &&
-        ['POST', 'PATCH', 'DELETE'].includes(request.method())
+        ['POST', 'PATCH', 'PUT', 'DELETE'].includes(request.method())
       ) {
         addressMutationMethods.push(request.method());
       }
@@ -810,6 +820,14 @@ test(
       await expect(adminPage).toHaveURL(addressResourceUrl);
       const fixtureRow = adminPage.getByRole('row', { name: customer.fixture.recipientName });
       await expect(fixtureRow).toBeVisible();
+      await expect(fixtureRow).toContainText(customer.fixture.recipientName);
+      await expect(fixtureRow).toContainText(customer.fixture.phone);
+      await expect(fixtureRow).toContainText(customer.fixture.countryCode);
+      await expect(fixtureRow).toContainText(customer.fixture.city);
+      await expect(fixtureRow).not.toContainText(customer.fixture.region);
+      await expect(fixtureRow).not.toContainText(customer.fixture.postalCode);
+      await expect(fixtureRow).not.toContainText(customer.fixture.addressLine1);
+      await expect(fixtureRow).not.toContainText(customer.fixture.addressLine2);
       await expect(adminPage.getByRole('button', { name: 'Create', exact: true })).toHaveCount(0);
       await expect(
         adminPage.locator('a[href*="/rest/resource/"]').filter({ hasText: 'Create' }),
@@ -817,6 +835,7 @@ test(
 
       const addressId = await fixtureRow.getByRole('cell').first().textContent();
       expect(addressId).toMatch(/^\d+$/);
+      await expect(fixtureRow.getByRole('link', { name: addressId! })).toHaveCount(1);
       await adminPage.goto(`/commerce-admin/rest/resource/commerce-member%3Aaddress/${addressId}`, {
         waitUntil: 'load',
       });

@@ -188,10 +188,14 @@ export type ApiSchemaCommerceTradeDtoOrderSelectResItem =
   components['schemas']['commerce-trade.dto.orderSelectResItem'];
 export type ApiSchemaCommerceTradeDtoOrderSelectResItemPartial =
   Partial<ApiSchemaCommerceTradeDtoOrderSelectResItem>;
-export type ApiSchemaCommerceTradeDtoOrderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875 =
-  components['schemas']['commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
-export type ApiSchemaCommerceTradeDtoOrderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =
-  Partial<ApiSchemaCommerceTradeDtoOrderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875>;
+export type ApiSchemaCommerceTradeDtoOrderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0 =
+  components['schemas']['commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0'];
+export type ApiSchemaCommerceTradeDtoOrderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0Partial =
+  Partial<ApiSchemaCommerceTradeDtoOrderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0>;
+export type ApiSchemaCommerceTradeDtoOrderAdminLineResItem =
+  components['schemas']['commerce-trade.dto.orderAdminLineResItem'];
+export type ApiSchemaCommerceTradeDtoOrderAdminLineResItemPartial =
+  Partial<ApiSchemaCommerceTradeDtoOrderAdminLineResItem>;
 export type ApiSchemaCommerceTradeDtoStockAuditSelectRes =
   components['schemas']['commerce-trade.dto.stockAuditSelectRes'];
 export type ApiSchemaCommerceTradeDtoStockAuditSelectResPartial =
@@ -284,10 +288,6 @@ export type ApiSchemaCommerceCatalogDtoSkuCreate =
   components['schemas']['commerce-catalog.dto.skuCreate'];
 export type ApiSchemaCommerceCatalogDtoSkuCreatePartial =
   Partial<ApiSchemaCommerceCatalogDtoSkuCreate>;
-export type ApiSchemaCommerceCatalogDtoSkuAttribute =
-  components['schemas']['commerce-catalog.dto.skuAttribute'];
-export type ApiSchemaCommerceCatalogDtoSkuAttributePartial =
-  Partial<ApiSchemaCommerceCatalogDtoSkuAttribute>;
 export type ApiSchemaCommerceCatalogDtoSkuSelectRes =
   components['schemas']['commerce-catalog.dto.skuSelectRes'];
 export type ApiSchemaCommerceCatalogDtoSkuSelectResPartial =
@@ -317,6 +317,14 @@ export type ApiSchemaAMenuDtoMenuGroupPartial = Partial<ApiSchemaAMenuDtoMenuGro
 export type ApiSchemaAPermissionDtoPermissions =
   components['schemas']['a-permission.dto.permissions'];
 export type ApiSchemaAPermissionDtoPermissionsPartial = Partial<ApiSchemaAPermissionDtoPermissions>;
+export type ApiSchemaHomeBaseDtoSiteCatalogSelectRes =
+  components['schemas']['home-base.dto.siteCatalogSelectRes'];
+export type ApiSchemaHomeBaseDtoSiteCatalogSelectResPartial =
+  Partial<ApiSchemaHomeBaseDtoSiteCatalogSelectRes>;
+export type ApiSchemaHomeBaseDtoSiteCatalogSelectResItem =
+  components['schemas']['home-base.dto.siteCatalogSelectResItem'];
+export type ApiSchemaHomeBaseDtoSiteCatalogSelectResItemPartial =
+  Partial<ApiSchemaHomeBaseDtoSiteCatalogSelectResItem>;
 export type ApiSchemaTrainingRecordDtoRecordCreate =
   components['schemas']['training-record.dto.recordCreate'];
 export type ApiSchemaTrainingRecordDtoRecordCreatePartial =
