@@ -118,9 +118,9 @@ At a WBS batch closure, build both Commerce flavor pairs and run `npm run test:e
 
 ```text
 WBS / resource: WBS-80-03 / Stock Balance and Stock Audit Admin semantic-presentation sub-slice
-Status: implementation-complete locally; CI evidence and commit closure remain required before verification
-Current revision: `79b12658d427c76c09126921552389b0ad89ddc9`
-Working-tree classification: current uncommitted Stock source truth, focused test, browser acceptance, and evidence documentation. Generated metadata/artifacts were produced through the normal toolchain and were not hand-edited. No environment file, persisted schema/version path, or payment worktree changed.
+Status: implementation-complete; committed locally; CI evidence remains required before verification
+Current revision: `9660f121bb490ca6fa30b2732b7c9f7682e0eebd`
+Working-tree classification: committed Stock source truth, focused test, browser acceptance, and evidence documentation. Generated metadata/artifacts were produced through the normal toolchain and were not hand-edited. The working tree is clean; no environment file, persisted schema/version path, or payment worktree changed.
 Scope and explicit exclusions: Commerce Admin Stock Balance/Audit List/View presentation only. No persisted field, migration, `meta.version.ts`, `fileVersion`, controller/API expansion, generic CRUD activation, SKU relation lookup, adjustment UI, customer/page/route/SSR change, or stock/reservation/checkout/payment/refund/expiry business-logic change.
 Audience / task / scene: active-instance `systemAdmin` finds Stock Balance and Stock Audit through generic Resource List/filter scenes, opens readonly Views, and retains the separate authorized Balance `adjustStock` command outside the Resource UI.
 Operation DTO boundary: Balance List is exactly `id`, `skuId`, `onHand`, `reserved`, `available`, and View; Balance View adds `createdAt`/`updatedAt`. Audit List is exactly `id`, `skuId`, `operation`, `delta`, `createdAt`, and View; Audit View retains identity/event, actor, reason/correlation, immutable before/after counters, and dates. Both filters are exactly `skuId`, `createdAt`.
@@ -131,9 +131,9 @@ Vona source-of-truth paths: `commerce-trade/src/dto/stockBalanceSelectResItem.ts
 Expected generated and Zova handoff: normal metadata generation, paired Commerce Admin SSR/REST build, and `npm run deps:vona` completed without generated-file edits.
 Completed gate and evidence: focused metadata/runtime proof passed 2/2; SQLite Stock/reservation regression selection passed 17 with 2 expected PostgreSQL-only contention skips; PostgreSQL Balance/Reservation selection passed 11/11 with no skips; tagged clean `@stock` browser acceptance passed 1/1 with no Stock mutation requests; formatting and diff hygiene passed. Durable local details are in the Stock ATP evidence row of `test-plan.md`.
 Commands passed: `npm run vona :bin:test -- commerce-trade/test/stockPresentation.test.ts --flavor=normal`; `npm run vona :tools:metadata commerce-trade`; `npm run build:zova:commerce:admin`; `npm run deps:vona`; `npm run tsc`; the targeted SQLite Stock/reservation suite; `DATABASE_DEFAULT_CLIENT=pg npm run vona :bin:test -- commerce-trade/test/stockBalance.test.ts commerce-trade/test/stockReservation.test.ts --flavor=normal`; `npm run test:e2e:commerce:clean -- --grep @stock`; `oxfmt --check`; and `git diff --check`.
-Commands still required: commit the current Stock slice when authorized, then run the serial CI workflows and retain their links; do not begin Address source work before CI-backed Stock closure.
-Known blocker / decision needed: no implementation blocker; CI evidence and commit authorization remain open.
-Next single action: commit the current Stock implementation/evidence slice when explicitly authorized, then execute the repository Stock CI gate.
+Commands still required: run the serial CI workflows for revision `9660f121bb490ca6fa30b2732b7c9f7682e0eebd` and retain their links; do not begin Address source work before CI-backed Stock closure.
+Known blocker / decision needed: no implementation blocker; CI evidence remains open.
+Next single action: monitor the Stock commit CI gate, then promote `WBS-80-03` to `verified` only after all applicable jobs pass.
 ```
 
 ## Related records
