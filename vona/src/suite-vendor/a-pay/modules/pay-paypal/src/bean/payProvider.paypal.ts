@@ -11,7 +11,7 @@ import type {
   IPayProviderWebhookInput,
 } from 'vona-module-a-pay';
 
-import { CheckoutPaymentIntent, OrderStatus } from '@cabloy/paypal-server-sdk';
+import { ApiError, CheckoutPaymentIntent, OrderStatus } from '@cabloy/paypal-server-sdk';
 import { BeanBase, useApp } from 'vona';
 import { PayProvider } from 'vona-module-a-pay';
 import { z } from 'zod';
@@ -143,22 +143,27 @@ export class PayProviderPaypal
     clientOptions: IPayProviderPaypalClientOptions,
   ): Promise<IPayProviderRefundSnapshot> {
     this._assertReady(clientOptions);
-    const refund = await this._gateway(clientOptions).refundCapturedPayment(
-      this._gatewayOptions(clientOptions),
-      {
-        captureId: input.providerCaptureId,
-        paypalRequestId: input.idempotencyKey,
-        body: {
-          amount: {
-            currencyCode: input.currency,
-            value: formatMinorAmount(input.amountMinor, input.currency),
+    try {
+      const refund = await this._gateway(clientOptions).refundCapturedPayment(
+        this._gatewayOptions(clientOptions),
+        {
+          captureId: input.providerCaptureId,
+          paypalRequestId: input.idempotencyKey,
+          body: {
+            amount: {
+              currencyCode: input.currency,
+              value: formatMinorAmount(input.amountMinor, input.currency),
+            },
+            customId: String(input.refundOperationId),
+            invoiceId: input.businessReference,
           },
-          customId: String(input.refundOperationId),
-          invoiceId: input.businessReference,
         },
-      },
-    );
-    return this._mapRefund(refund, input, clientOptions);
+      );
+      return this._mapRefund(refund, input, clientOptions);
+    } catch (error) {
+      if (this._isDefinitiveRefundRejection(error)) return { state: 'failed' };
+      throw error;
+    }
   }
 
   async queryRefund(
@@ -249,7 +254,7 @@ export class PayProviderPaypal
   private async _mapCaptureRefundedWebhook(
     event: z.infer<typeof PaypalWebhookSchema>,
     resource: Record<string, unknown>,
-    captureId: string,
+    resourceId: string,
     clientOptions: IPayProviderPaypalClientOptions,
   ): Promise<IPayProviderVerifiedWebhook> {
     const relatedCaptureId = readNestedString(resource, [
@@ -257,26 +262,105 @@ export class PayProviderPaypal
       'related_ids',
       'capture_id',
     ]);
-    if (relatedCaptureId && relatedCaptureId !== captureId) {
-      this.app.throw(409, 'PayPal capture refund webhook capture conflicts');
-    }
     const relatedRefundId = readNestedString(resource, [
       'supplementary_data',
       'related_ids',
       'refund_id',
     ]);
     if (relatedRefundId) {
-      const refundResource = await this._gateway(clientOptions).getRefund(
-        this._gatewayOptions(clientOptions),
-        { refundId: relatedRefundId },
-      );
-      return await this._mapRefundWebhook(
-        { ...event, resource: asRecord(refundResource) },
-        asRecord(refundResource),
+      return await this._mapCaptureRefundedRefund(
+        event,
+        await this._gateway(clientOptions).getRefund(this._gatewayOptions(clientOptions), {
+          refundId: relatedRefundId,
+        }),
         relatedRefundId,
+        relatedCaptureId,
         clientOptions,
       );
     }
+    try {
+      const capture = asRecord(
+        await this._gateway(clientOptions).getCapturedPayment(this._gatewayOptions(clientOptions), {
+          captureId: resourceId,
+        }),
+      );
+      const captureId = readString(capture.id);
+      if (!captureId || captureId !== resourceId) {
+        this.app.throw(409, 'PayPal capture refund webhook capture conflicts');
+      }
+      if (relatedCaptureId && relatedCaptureId !== captureId) {
+        this.app.throw(409, 'PayPal capture refund webhook capture conflicts');
+      }
+      return this._ignoredCaptureRefund(event, resource, captureId);
+    } catch (error) {
+      if (!this._isPaypalNotFound(error)) throw error;
+    }
+    return await this._mapCaptureRefundedRefund(
+      event,
+      await this._gateway(clientOptions).getRefund(this._gatewayOptions(clientOptions), {
+        refundId: resourceId,
+      }),
+      resourceId,
+      relatedCaptureId,
+      clientOptions,
+    );
+  }
+
+  private async _mapCaptureRefundedRefund(
+    event: z.infer<typeof PaypalWebhookSchema>,
+    refundResource: unknown,
+    refundId: string,
+    relatedCaptureId: string | undefined,
+    clientOptions: IPayProviderPaypalClientOptions,
+  ): Promise<IPayProviderVerifiedWebhook> {
+    const refundRecord = asRecord(refundResource);
+    if (readString(refundRecord.id) !== refundId) {
+      this.app.throw(409, 'PayPal capture refund webhook refund conflicts');
+    }
+    const customId = readString(readField(refundRecord, 'customId', 'custom_id'));
+    const invoiceId = readString(readField(refundRecord, 'invoiceId', 'invoice_id'));
+    if (!customId || !invoiceId) {
+      this.app.throw(400, 'PayPal capture refund webhook is not correlated');
+    }
+    const refund = await this.$scope.pay.model.refundOperation.getById(customId as never);
+    if (!refund || refund.businessReference !== invoiceId) {
+      this.app.throw(400, 'PayPal capture refund webhook is not correlated');
+    }
+    const session = await this.$scope.pay.model.paymentSession.getById(refund.paymentSessionId);
+    if (!session?.providerCaptureId) {
+      this.app.throw(409, 'PayPal capture refund webhook payment session conflicts');
+    }
+    if (relatedCaptureId && session.providerCaptureId !== relatedCaptureId) {
+      this.app.throw(409, 'PayPal capture refund webhook capture conflicts');
+    }
+    const snapshot = this._mapRefund(
+      refundRecord,
+      {
+        paymentSessionId: session.id,
+        refundOperationId: refund.id,
+        businessReference: refund.businessReference,
+        idempotencyKey: '',
+        amountMinor: refund.amountMinor,
+        currency: refund.currency,
+        providerCaptureId: session.providerCaptureId,
+        providerRefundId: refundId,
+      },
+      clientOptions,
+    );
+    return {
+      eventId: event.id,
+      eventType: event.event_type,
+      refundOperationId: refund.id,
+      refund: snapshot,
+      summary: { amountMinor: refund.amountMinor, currency: refund.currency },
+    };
+  }
+
+  private _ignoredCaptureRefund(
+    event: z.infer<typeof PaypalWebhookSchema>,
+    resource: Record<string, unknown>,
+    captureId: string,
+  ): IPayProviderVerifiedWebhook {
     return {
       eventId: event.id,
       eventType: event.event_type,
@@ -460,6 +544,14 @@ export class PayProviderPaypal
     }
     this._assertMerchant(record, clientOptions);
     return mapRefund(readString(record.status), providerRefundId);
+  }
+
+  private _isDefinitiveRefundRejection(error: unknown) {
+    return error instanceof ApiError && error.statusCode === 422;
+  }
+
+  private _isPaypalNotFound(error: unknown) {
+    return error instanceof ApiError && error.statusCode === 404;
   }
 
   private _gateway(clientOptions: IPayProviderPaypalClientOptions) {

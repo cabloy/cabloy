@@ -1,3 +1,4 @@
+import { ApiError } from '@cabloy/paypal-server-sdk';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { after, before, describe, it } from 'node:test';
@@ -25,6 +26,9 @@ interface IGatewayState {
   captureStatus?: string;
   captureFailuresRemaining?: number;
   refundStatus: string;
+  refundError?: Error;
+  captureLookupError?: Error;
+  refundAmount?: string;
   businessReference?: string;
   refundOperationId?: string;
   refundBusinessReference?: string;
@@ -58,8 +62,14 @@ function createGateway(state: IGatewayState) {
     },
     async refundCapturedPayment(_options: unknown, input: any) {
       state.calls.push({ kind: 'refundCapturedPayment', input });
+      if (state.refundError) throw state.refundError;
       state.refundId = state.refundId ?? `paypal-refund-${input.body.customId}`;
       return refundRecord(state);
+    },
+    async getCapturedPayment(_options: unknown, input: any) {
+      state.calls.push({ kind: 'getCapturedPayment', input });
+      if (state.captureLookupError) throw state.captureLookupError;
+      return { id: state.captureId };
     },
     async getRefund(_options: unknown, input: any) {
       state.calls.push({ kind: 'getRefund', input });
@@ -103,10 +113,20 @@ function refundRecord(state: IGatewayState) {
     id: state.refundId,
     customId: state.refundOperationId,
     invoiceId: state.refundBusinessReference,
-    amount: { currencyCode: 'USD', value: '5.00' },
+    amount: { currencyCode: 'USD', value: state.refundAmount ?? '5.00' },
     status: state.refundStatus,
     payee: { merchantId: 'merchant-test' },
   };
+}
+
+function paypalApiError(statusCode: number) {
+  return new ApiError(
+    {
+      request: {} as never,
+      response: { statusCode, headers: {}, body: '' } as never,
+    },
+    'opaque provider error',
+  );
 }
 
 function providerState(gateway: ReturnType<typeof createGateway>) {
@@ -135,6 +155,15 @@ async function cleanup(fixture: IFixture) {
       where: { paymentSessionId: fixture.paymentSessionId },
     });
     for (const refund of refunds) {
+      const providerOperation = await pay.model.providerOperation.get({
+        refundOperationId: refund.id,
+        kind: 'refund',
+      });
+      if (providerOperation) {
+        await pay.model.providerOperationRecoveryAudit.delete({
+          providerOperationId: providerOperation.id,
+        });
+      }
       await pay.model.providerOperation.delete({ refundOperationId: refund.id });
       await pay.model.outboxEvent.delete({ refundOperationId: refund.id });
       await pay.model.webhookInbox.delete({ refundOperationId: refund.id });
@@ -958,6 +987,239 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
         }
       },
       { extraData: { state: { payProviderClientOptions: providerState(gateway) } as never } },
+    );
+  });
+
+  it('settles a capture-refunded webhook with an alternate refund resource ID through Commerce', async () => {
+    const state: IGatewayState = {
+      orderStatus: 'COMPLETED',
+      captureStatus: 'COMPLETED',
+      refundStatus: 'COMPLETED',
+      refundError: new Error('response lost after refund submission'),
+      captureLookupError: paypalApiError(404),
+      refundAmount: '12.99',
+      calls: [],
+    };
+    const gateway = createGateway(state);
+    await app.bean.executor.mockCtx(
+      async () => {
+        const fixture: IFixture = {};
+        try {
+          Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
+          const pay = app.scope('a-pay');
+          const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
+          assert.ok(session);
+          state.orderId = `paypal-order-${session.id}`;
+          state.captureId = `paypal-capture-${session.id}`;
+          state.businessReference = String(fixture.paymentAttemptId);
+          await pay.model.paymentSession.updateById(session.id, {
+            state: 'succeeded',
+            providerOrderId: state.orderId,
+            providerCaptureId: state.captureId,
+            finalizedAt: new Date(),
+          });
+          await app.scope('commerce-trade').service.order.settlePaymentFromProvider({
+            eventId: `paypal-paid-${session.id}`,
+            paymentSessionId: session.id,
+            businessReference: String(fixture.paymentAttemptId),
+            providerName: 'pay-paypal:paypal',
+            state: 'succeeded',
+            providerCaptureId: state.captureId,
+            amountMinor: 1299,
+            currency: 'USD',
+          });
+          const order = app.scope('commerce-trade').service.order;
+          await order.requestRefund(fixture.orderId!, {
+            reason: 'PayPal capture-refunded webhook',
+            idempotencyKey: `paypal-webhook-request-${session.id}`,
+          });
+          await app.bean.passport.signout();
+          await app.bean.passport.signinMock();
+          await order.approveRefund(fixture.orderId!, {
+            reason: 'approved for provider submission',
+            idempotencyKey: `paypal-webhook-approve-${session.id}`,
+          });
+          const executed = await order.executeRefund(fixture.orderId!);
+          const refundOperation = await pay.model.refundOperation.getById(
+            executed.refundOperationId!,
+          );
+          assert.ok(refundOperation);
+          state.refundOperationId = String(refundOperation.id);
+          state.refundBusinessReference = refundOperation.businessReference;
+          state.refundId = `paypal-refund-${refundOperation.id}`;
+          const rawBody = JSON.stringify({
+            id: `paypal-capture-refunded-${session.id}`,
+            event_type: 'PAYMENT.CAPTURE.REFUNDED',
+            resource: {
+              id: state.refundId,
+              amount: { currency_code: 'USD', value: '12.99' },
+              status: 'REFUNDED',
+              supplementary_data: { related_ids: { capture_id: state.captureId } },
+            },
+          });
+          const verified = await pay.bean.payProvider.get('pay-paypal:paypal').verifyWebhook(
+            {
+              rawBody,
+              body: JSON.parse(rawBody),
+              headers: { 'paypal-transmission-id': 'webhook-refunded-test' },
+            },
+            pay.bean.payProvider.getOptions('pay-paypal:paypal', 'default'),
+          );
+          assert.equal(verified.refundOperationId, executed.refundOperationId);
+          await pay.service.webhook.receive({
+            providerName: 'pay-paypal:paypal',
+            clientName: 'default',
+            environment: 'sandbox',
+            rawBody,
+            verified,
+          });
+          await pay.service.webhook.receive({
+            providerName: 'pay-paypal:paypal',
+            clientName: 'default',
+            environment: 'sandbox',
+            rawBody,
+            verified,
+          });
+          const outboxes = await pay.model.outboxEvent.select({
+            where: {
+              refundOperationId: executed.refundOperationId,
+              eventType: 'refund.outcome.v1',
+            },
+          });
+          assert.equal(outboxes.length, 1);
+          await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outboxes[0]!.id });
+          await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outboxes[0]!.id });
+          const [settledOrder, request, attempt, reservation] = await Promise.all([
+            app.scope('commerce-trade').model.order.getById(fixture.orderId!),
+            app.scope('commerce-payment').model.refundRequest.getById(executed.refundRequestId!),
+            app.scope('commerce-payment').model.refundAttempt.getById(executed.refundAttemptId!),
+            app.scope('commerce-trade').model.stockReservation.get({
+              orderLineId: (await app
+                .scope('commerce-trade')
+                .model.orderLine.get({ orderId: fixture.orderId! }))!.id,
+            }),
+          ]);
+          assert.deepEqual(
+            [settledOrder?.state, request?.state, attempt?.state, reservation?.state],
+            ['refunded', 'refunded', 'succeeded', 'restored'],
+          );
+          assert.equal(state.calls.filter(call => call.kind === 'refundCapturedPayment').length, 1);
+          assert.equal(state.calls.filter(call => call.kind === 'getCapturedPayment').length, 1);
+          assert.equal(state.calls.filter(call => call.kind === 'getRefund').length, 1);
+        } finally {
+          await cleanup(fixture);
+          await app.bean.passport.signout();
+        }
+      },
+      { extraData: providerExtraData(gateway) },
+    );
+  });
+
+  it('settles a definitive PayPal refund rejection through Commerce without restoring stock', async () => {
+    const state: IGatewayState = {
+      orderStatus: 'COMPLETED',
+      captureStatus: 'COMPLETED',
+      refundStatus: 'PENDING',
+      refundError: paypalApiError(422),
+      calls: [],
+    };
+    const gateway = createGateway(state);
+    await app.bean.executor.mockCtx(
+      async () => {
+        const fixture: IFixture = {};
+        try {
+          Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
+          const pay = app.scope('a-pay');
+          const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
+          assert.ok(session);
+          state.orderId = `paypal-order-${session.id}`;
+          state.captureId = `paypal-capture-${session.id}`;
+          state.businessReference = String(fixture.paymentAttemptId);
+          await pay.model.paymentSession.updateById(session.id, {
+            state: 'succeeded',
+            providerOrderId: state.orderId,
+            providerCaptureId: state.captureId,
+            finalizedAt: new Date(),
+          });
+          await app.scope('commerce-trade').service.order.settlePaymentFromProvider({
+            eventId: `paypal-paid-${session.id}`,
+            paymentSessionId: session.id,
+            businessReference: String(fixture.paymentAttemptId),
+            providerName: 'pay-paypal:paypal',
+            state: 'succeeded',
+            providerCaptureId: state.captureId,
+            amountMinor: 1299,
+            currency: 'USD',
+          });
+          const order = app.scope('commerce-trade').service.order;
+          await order.requestRefund(fixture.orderId!, {
+            reason: 'PayPal rejected refund',
+            idempotencyKey: `paypal-reject-request-${session.id}`,
+          });
+          await app.bean.passport.signout();
+          await app.bean.passport.signinMock();
+          const approved = await order.approveRefund(fixture.orderId!, {
+            reason: 'approved for provider submission',
+            idempotencyKey: `paypal-reject-approve-${session.id}`,
+          });
+          const executed = await order.executeRefund(fixture.orderId!);
+          assert.deepEqual(
+            [executed.orderState, executed.refundState, executed.refundAttemptState],
+            ['refund_approved', 'approved', 'created'],
+          );
+          const [refund, providerOperation, outboxes] = await Promise.all([
+            pay.model.refundOperation.getById(executed.refundOperationId!),
+            pay.model.providerOperation.get({
+              refundOperationId: executed.refundOperationId,
+              kind: 'refund',
+            }),
+            pay.model.outboxEvent.select({
+              where: {
+                refundOperationId: executed.refundOperationId,
+                eventType: 'refund.outcome.v1',
+              },
+            }),
+          ]);
+          assert.deepEqual([refund?.state, refund?.providerRefundId], ['failed', null]);
+          assert.deepEqual(
+            [
+              providerOperation?.state,
+              providerOperation?.errorCode,
+              providerOperation?.errorSummary,
+            ],
+            ['succeeded', null, null],
+          );
+          assert.equal(outboxes.length, 1);
+          assert.equal(outboxes[0]?.payload.state, 'failed');
+          await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outboxes[0]!.id });
+          await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outboxes[0]!.id });
+          const [settledOrder, request, attempt, line, balance] = await Promise.all([
+            app.scope('commerce-trade').model.order.getById(fixture.orderId!),
+            app.scope('commerce-payment').model.refundRequest.getById(executed.refundRequestId!),
+            app.scope('commerce-payment').model.refundAttempt.getById(executed.refundAttemptId!),
+            app.scope('commerce-trade').model.orderLine.get({ orderId: fixture.orderId! }),
+            app.scope('commerce-trade').model.stockBalance.getById(fixture.balanceId!),
+          ]);
+          const reservation = await app
+            .scope('commerce-trade')
+            .model.stockReservation.get({ orderLineId: line!.id });
+          const audits = await app
+            .scope('commerce-trade')
+            .model.orderAudit.select({ where: { orderId: fixture.orderId } });
+          assert.deepEqual(
+            [settledOrder?.state, request?.state, attempt?.state, reservation?.state],
+            ['paid', 'failed', 'failed', 'consumed'],
+          );
+          assert.deepEqual([balance?.onHand, balance?.reserved, balance?.available], [0, 0, 0]);
+          assert.equal(audits.filter(item => item.operation === 'refund_failed').length, 1);
+          assert.equal(state.calls.filter(call => call.kind === 'refundCapturedPayment').length, 1);
+          assert.ok(approved.refundAttemptId);
+        } finally {
+          await cleanup(fixture);
+          await app.bean.passport.signout();
+        }
+      },
+      { extraData: providerExtraData(gateway) },
     );
   });
 });

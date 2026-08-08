@@ -1,3 +1,4 @@
+import { ApiError } from '@cabloy/paypal-server-sdk';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
@@ -62,6 +63,16 @@ const refundInput = {
   currency: 'USD',
   providerCaptureId: 'capture-1',
 };
+
+function paypalApiError(statusCode: number) {
+  return new ApiError(
+    {
+      request: {} as never,
+      response: { statusCode, headers: {}, body: '' } as never,
+    },
+    'opaque provider error',
+  );
+}
 
 describe('paypalProvider.test.ts', { concurrency: false }, () => {
   it('resolves the authoritative Sandbox environment and creates an approval order', async () => {
@@ -278,10 +289,37 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
     });
   });
 
-  it('accepts capture-refunded notifications without pretending the capture is a refund', async () => {
+  it('treats a definitive PayPal refund rejection as terminal but preserves ambiguous errors', async () => {
     await app.bean.executor.mockCtx(async () => {
+      let error: Error = paypalApiError(422);
+      const gateway = {
+        async refundCapturedPayment() {
+          throw error;
+        },
+      };
+      const { provider } = app.bean.payProvider.resolveByName('pay-paypal:paypal', 'default');
+      const options = createOptions(gateway);
+
+      assert.deepEqual(await provider.createRefund(refundInput, options), { state: 'failed' });
+      error = paypalApiError(409);
+      await assert.rejects(provider.createRefund(refundInput, options), { statusCode: 409 });
+      error = new Error('transport failure');
+      await assert.rejects(provider.createRefund(refundInput, options), /transport failure/);
+    });
+  });
+
+  it('keeps capture-only refund notifications unresolved without posting another refund', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const calls: string[] = [];
       const gateway = {
         async verifyWebhookSignature() {},
+        async getCapturedPayment() {
+          calls.push('getCapturedPayment');
+          return { id: 'capture-1' };
+        },
+        async refundCapturedPayment() {
+          calls.push('refundCapturedPayment');
+        },
       };
       const { provider } = app.bean.payProvider.resolveByName('pay-paypal:paypal', 'default');
       const verified = await provider.verifyWebhook(
@@ -305,6 +343,48 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
       assert.equal(verified.providerCaptureId, 'capture-1');
       assert.equal(verified.refund, undefined);
       assert.equal(verified.refundOperationId, undefined);
+      assert.deepEqual(calls, ['getCapturedPayment']);
+    });
+  });
+
+  it('resolves an alternate capture-refunded resource ID only with refund metadata', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const gateway = {
+        async verifyWebhookSignature() {},
+        async getCapturedPayment() {
+          throw paypalApiError(404);
+        },
+        async getRefund() {
+          return {
+            id: 'refund-1',
+            customId: 'not-a-local-refund',
+            invoiceId: 'refund-business-1',
+            amount: { currencyCode: 'USD', value: '5.00' },
+            status: 'COMPLETED',
+            payee: { merchantId: 'merchant-1' },
+          };
+        },
+      };
+      const { provider } = app.bean.payProvider.resolveByName('pay-paypal:paypal', 'default');
+      await assert.rejects(
+        provider.verifyWebhook(
+          {
+            rawBody: '{"id":"event-refunded-alternate"}',
+            body: {
+              id: 'event-refunded-alternate',
+              event_type: 'PAYMENT.CAPTURE.REFUNDED',
+              resource: {
+                id: 'refund-1',
+                status: 'REFUNDED',
+                amount: { currency_code: 'USD', value: '5.00' },
+              },
+            },
+            headers: {},
+          },
+          createOptions(gateway),
+        ),
+        { status: 400 },
+      );
     });
   });
 
