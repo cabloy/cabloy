@@ -14,4 +14,11 @@ export default {
   ApproveRefund: '批准退款',
   RejectRefund: '拒绝退款',
   ExecuteRefund: '执行退款',
+  InspectRefundRecovery: '查看退款恢复',
+  ReconcileProviderRefund: '对账支付服务商退款',
+  RetryRefund: '重试退款',
+  RefundRecoveryReason: '恢复原因',
+  AcknowledgeRefundRetryRisk: '我了解本次重试会复用原支付服务商请求。',
+  RefundRecoveryState: '服务商操作：{state}；尝试次数：{attemptCount}',
+  RefundRecoveryProviderRefundId: '服务商退款 ID：{providerRefundId}',
 };

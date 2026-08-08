@@ -45,6 +45,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.string(providerOperation.claimToken, 100);
       table.dateTime(providerOperation.claimExpiresAt);
       table.dateTime(providerOperation.submittedAt);
+      table.dateTime(providerOperation.recoveryRetryGrantedAt);
       table.dateTime(providerOperation.nextAttemptAt);
       table.string(providerOperation.errorCode, 100);
       table.string(providerOperation.errorSummary, 255);
@@ -62,6 +63,23 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.string(refundOperation.idempotencyKey, 100);
       table.string(refundOperation.providerRefundId, 255);
       table.dateTime(refundOperation.finalizedAt);
+    });
+
+    const providerOperationRecoveryAudit = this.scope.entity.providerOperationRecoveryAudit;
+    await this.bean.model.createTable(providerOperationRecoveryAudit.$table, table => {
+      table.basicFields();
+      table.tableIdentity(providerOperationRecoveryAudit.providerOperationId);
+      table.tableIdentity(providerOperationRecoveryAudit.actorId);
+      table.string(providerOperationRecoveryAudit.action, 32);
+      table.string(providerOperationRecoveryAudit.actionIdempotencyKey, 100);
+      table.string(providerOperationRecoveryAudit.reason, 255);
+      table.string(providerOperationRecoveryAudit.beforeState, 32);
+      table.string(providerOperationRecoveryAudit.afterState, 32);
+      table.integer(providerOperationRecoveryAudit.beforeAttemptCount);
+      table.integer(providerOperationRecoveryAudit.afterAttemptCount);
+      table.string(providerOperationRecoveryAudit.resolution, 32);
+      table.string(providerOperationRecoveryAudit.providerRefundId, 255);
+      table.dateTime(providerOperationRecoveryAudit.occurredAt);
     });
 
     const webhookInbox = this.scope.entity.webhookInbox;

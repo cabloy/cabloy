@@ -30,6 +30,9 @@ export class ServiceWebhook extends BeanBase {
   async receiveLocked(command: IWebhookReceiveCommand) {
     const payment = command.verified.payment;
     const refund = command.verified.refund;
+    if (command.verified.ignored) {
+      return await this._receiveIgnored(command);
+    }
     if (!!payment === !!refund)
       this.app.throw(400, 'webhook must contain exactly one payment or refund');
     const amountMinor = command.verified.summary?.amountMinor;
@@ -47,6 +50,37 @@ export class ServiceWebhook extends BeanBase {
       return await this._receivePayment(command, payment, amountMinor, currency);
     }
     return await this._receiveRefund(command, refund!, amountMinor, currency);
+  }
+
+  private async _receiveIgnored(command: IWebhookReceiveCommand) {
+    const amountMinor = command.verified.summary?.amountMinor;
+    const currency = command.verified.summary?.currency;
+    if (
+      typeof amountMinor !== 'number' ||
+      !Number.isInteger(amountMinor) ||
+      typeof currency !== 'string'
+    ) {
+      this.app.throw(400, 'ignored webhook amount is incomplete');
+    }
+    const existing = await this._getExistingInbox(command);
+    if (existing) return existing;
+    const inbox = await this.scope.model.webhookInbox.insert({
+      providerName: command.providerName,
+      clientName: command.clientName,
+      environment: command.environment,
+      providerEventId: command.verified.eventId,
+      eventType: command.verified.eventType,
+      amountMinor,
+      currency,
+      providerCaptureId: command.verified.providerCaptureId,
+      payloadHash: this._payloadHash(command),
+      state: 'received',
+      retryCount: 0,
+    });
+    return await this._markProcessed(
+      inbox.id,
+      'capture-level refund requires refund reconciliation',
+    );
   }
 
   private async _receivePayment(

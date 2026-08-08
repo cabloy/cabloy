@@ -53,6 +53,9 @@ export class EntityProviderOperation extends EntityBase {
   submittedAt?: Date;
 
   @Api.field(v.optional())
+  recoveryRetryGrantedAt?: Date;
+
+  @Api.field(v.optional())
   nextAttemptAt?: Date;
 
   @Api.field(v.optional(), v.max(100))

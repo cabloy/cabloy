@@ -23,6 +23,7 @@ interface IGatewayState {
   refundId?: string;
   orderStatus: string;
   captureStatus?: string;
+  captureFailuresRemaining?: number;
   refundStatus: string;
   businessReference?: string;
   refundOperationId?: string;
@@ -42,9 +43,13 @@ function createGateway(state: IGatewayState) {
     },
     async captureOrder(_options: unknown, input: any) {
       state.calls.push({ kind: 'captureOrder', input });
+      if (state.captureFailuresRemaining) {
+        state.captureFailuresRemaining -= 1;
+        throw new Error('transient PayPal capture failure');
+      }
       state.captureId = state.captureId ?? `paypal-capture-${state.orderId}`;
       state.orderStatus = 'COMPLETED';
-      state.captureStatus = 'COMPLETED';
+      state.captureStatus ??= 'COMPLETED';
       return orderRecord(state);
     },
     async getOrder(_options: unknown, input: any) {
@@ -342,6 +347,146 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
     );
   });
 
+  it('reconciles a pending PayPal return through the durable provider operation', async () => {
+    const state: IGatewayState = {
+      orderStatus: 'CREATED',
+      captureStatus: 'PENDING',
+      refundStatus: 'PENDING',
+      calls: [],
+    };
+    const gateway = createGateway(state);
+    await app.bean.executor.mockCtx(
+      async () => {
+        const fixture: IFixture = {};
+        try {
+          Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
+          const pay = app.scope('a-pay');
+          state.businessReference = String(fixture.paymentAttemptId);
+          const started = await pay.service.paymentSession.start(fixture.paymentSessionId!);
+          const returnState = new URL(
+            await callbackToken(started.id as number, 'return'),
+          ).searchParams.get('state');
+          assert.ok(returnState);
+          await assert.rejects(
+            app.bean.executor.performAction('get', '/pay/payment-callback/return', {
+              query: { state: returnState },
+              extraData: providerExtraData(gateway),
+            }),
+            { status: 302 },
+          );
+          const pendingSession = await pay.model.paymentSession.getById(started.id);
+          const operation = await pay.model.providerOperation.get({
+            paymentSessionId: started.id,
+            kind: 'confirm',
+          });
+          assert.equal(pendingSession?.state, 'processing');
+          assert.equal(operation?.state, 'reconciliation_required');
+          assert.ok(operation?.nextAttemptAt);
+          assert.equal(
+            await pay.model.outboxEvent.get({
+              paymentSessionId: started.id,
+              eventType: 'payment.outcome.v1',
+            }),
+            undefined,
+          );
+          assert.equal(
+            (await app.scope('commerce-trade').model.order.getById(fixture.orderId!))?.state,
+            'awaiting_payment',
+          );
+
+          state.captureStatus = 'COMPLETED';
+          await pay.model.providerOperation.updateById(operation!.id, {
+            nextAttemptAt: new Date(Date.now() - 1_000),
+          });
+          assert.equal(await pay.service.providerOperation.queueDue(), 1);
+          const settledSession = await pay.model.paymentSession.getById(started.id);
+          const outbox = await pay.model.outboxEvent.get({
+            paymentSessionId: started.id,
+            eventType: 'payment.outcome.v1',
+          });
+          assert.equal(settledSession?.state, 'succeeded');
+          assert.ok(outbox);
+          await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outbox.id });
+          await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outbox.id });
+          assert.equal(
+            (await app.scope('commerce-trade').model.order.getById(fixture.orderId!))?.state,
+            'paid',
+          );
+        } finally {
+          await cleanup(fixture);
+          await app.bean.passport.signout();
+        }
+      },
+      { extraData: providerExtraData(gateway) },
+    );
+  });
+
+  it('recovers a transient PayPal capture failure through the durable provider operation', async () => {
+    const state: IGatewayState = {
+      orderStatus: 'CREATED',
+      captureFailuresRemaining: 1,
+      refundStatus: 'PENDING',
+      calls: [],
+    };
+    const gateway = createGateway(state);
+    await app.bean.executor.mockCtx(
+      async () => {
+        const fixture: IFixture = {};
+        try {
+          Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
+          const pay = app.scope('a-pay');
+          state.businessReference = String(fixture.paymentAttemptId);
+          const started = await pay.service.paymentSession.start(fixture.paymentSessionId!);
+          const returnState = new URL(
+            await callbackToken(started.id as number, 'return'),
+          ).searchParams.get('state');
+          assert.ok(returnState);
+          await assert.rejects(
+            app.bean.executor.performAction('get', '/pay/payment-callback/return', {
+              query: { state: returnState },
+              extraData: providerExtraData(gateway),
+            }),
+            { status: 302 },
+          );
+          const operation = await pay.model.providerOperation.get({
+            paymentSessionId: started.id,
+            kind: 'confirm',
+          });
+          assert.equal(operation?.state, 'reconciliation_required');
+          assert.equal(operation?.errorSummary, 'Provider operation failed and will be reconciled');
+          assert.equal(
+            await pay.model.outboxEvent.get({
+              paymentSessionId: started.id,
+              eventType: 'payment.outcome.v1',
+            }),
+            undefined,
+          );
+
+          await pay.model.providerOperation.updateById(operation!.id, {
+            nextAttemptAt: new Date(Date.now() - 1_000),
+          });
+          assert.equal(await pay.service.providerOperation.queueDue(), 1);
+          const outbox = await pay.model.outboxEvent.get({
+            paymentSessionId: started.id,
+            eventType: 'payment.outcome.v1',
+          });
+          assert.equal((await pay.model.paymentSession.getById(started.id))?.state, 'succeeded');
+          assert.ok(outbox);
+          await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outbox.id });
+          assert.equal(
+            (await app.scope('commerce-trade').model.order.getById(fixture.orderId!))?.state,
+            'paid',
+          );
+          assert.equal(state.calls.filter(call => call.kind === 'captureOrder').length, 2);
+        } finally {
+          await cleanup(fixture);
+          await app.bean.passport.signout();
+        }
+      },
+      { extraData: providerExtraData(gateway) },
+    );
+  });
+
   it('verifies a PayPal capture webhook and creates one durable payment outcome', async () => {
     const state: IGatewayState = {
       orderStatus: 'COMPLETED',
@@ -535,6 +680,65 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
             undefined,
           );
           assert.equal(state.calls.filter(call => call.kind === 'getOrder').length, 1);
+        } finally {
+          await cleanup(fixture);
+          await app.bean.passport.signout();
+        }
+      },
+      { extraData: providerExtraData(gateway) },
+    );
+  });
+
+  it('keeps a pending PayPal cancel callback in durable reconciliation', async () => {
+    const state: IGatewayState = {
+      orderStatus: 'CREATED',
+      captureId: 'paypal-capture-pending',
+      captureStatus: 'PENDING',
+      refundStatus: 'PENDING',
+      calls: [],
+    };
+    const gateway = createGateway(state);
+    await app.bean.executor.mockCtx(
+      async () => {
+        const fixture: IFixture = {};
+        try {
+          Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
+          const pay = app.scope('a-pay');
+          state.businessReference = String(fixture.paymentAttemptId);
+          const started = await pay.service.paymentSession.start(fixture.paymentSessionId!);
+          const cancelState = new URL(
+            await callbackToken(started.id as number, 'cancel'),
+          ).searchParams.get('state');
+          assert.ok(cancelState);
+          await assert.rejects(
+            app.bean.executor.performAction('get', '/pay/payment-callback/cancel', {
+              query: { state: cancelState },
+              extraData: providerExtraData(gateway),
+            }),
+            { status: 302 },
+          );
+          const reconciled = await pay.model.paymentSession.getById(started.id);
+          const operation = await pay.model.providerOperation.get({
+            paymentSessionId: started.id,
+            kind: 'query',
+          });
+          assert.equal(reconciled?.state, 'processing');
+          assert.equal(reconciled?.nextAction, undefined);
+          assert.equal(operation?.state, 'reconciliation_required');
+          assert.ok(operation?.nextAttemptAt);
+          assert.equal(
+            await pay.model.outboxEvent.get({
+              paymentSessionId: started.id,
+              eventType: 'payment.outcome.v1',
+            }),
+            undefined,
+          );
+          assert.equal(
+            (await app.scope('commerce-trade').model.order.getById(fixture.orderId!))?.state,
+            'awaiting_payment',
+          );
+          assert.equal(state.calls.filter(call => call.kind === 'getOrder').length, 1);
+          assert.equal(state.calls.filter(call => call.kind === 'captureOrder').length, 0);
         } finally {
           await cleanup(fixture);
           await app.bean.passport.signout();

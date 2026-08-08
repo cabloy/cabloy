@@ -27,6 +27,20 @@ async function createFixture(expiresAt: Date): Promise<IFixture> {
 async function cleanup(fixture: IFixture) {
   const scope = app.scope('a-pay');
   if (fixture.paymentSessionId !== undefined) {
+    const refunds = await scope.model.refundOperation.select({
+      where: { paymentSessionId: fixture.paymentSessionId },
+    });
+    for (const refund of refunds) {
+      const providerOperation = await scope.model.providerOperation.get({
+        refundOperationId: refund.id,
+        kind: 'refund',
+      });
+      if (providerOperation) {
+        await scope.model.providerOperationRecoveryAudit.delete({
+          providerOperationId: providerOperation.id,
+        });
+      }
+    }
     await scope.model.outboxEvent.delete({ paymentSessionId: fixture.paymentSessionId });
     await scope.model.webhookInbox.delete({ paymentSessionId: fixture.paymentSessionId });
     await scope.model.providerOperation.delete({ paymentSessionId: fixture.paymentSessionId });
@@ -238,6 +252,100 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
         assert.equal(storedOperation?.claimExpiresAt, undefined);
         assert.ok(storedOperation?.nextAttemptAt && storedOperation.nextAttemptAt > new Date());
         assert.deepEqual(outbox, []);
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
+  it('fences an ambiguous refund submission until audited recovery', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture = await createFixture(new Date(Date.now() + 60_000));
+      try {
+        const scope = app.scope('a-pay');
+        await scope.model.paymentSession.updateById(fixture.paymentSessionId!, {
+          state: 'succeeded',
+          providerCaptureId: `capture-${randomUUID().slice(0, 12)}`,
+          finalizedAt: new Date(),
+        });
+        const refund = await scope.service.refundOperation.create({
+          paymentSessionId: fixture.paymentSessionId!,
+          businessReference: `refund-${randomUUID().slice(0, 12)}`,
+          amountMinor: 1299,
+          currency: 'USD',
+          idempotencyKey: `refund-${randomUUID()}`,
+          correlationId: `refund-${randomUUID()}`,
+        });
+        const operation = await scope.model.providerOperation.get({
+          refundOperationId: refund.id,
+          kind: 'refund',
+        });
+        assert.ok(operation);
+        const claimed = await scope.service.providerOperation.claim(operation.id);
+        assert.ok(claimed?.claimToken);
+        await scope.service.providerOperation.markSubmitted(operation.id, claimed.claimToken);
+        await scope.service.providerOperation.releaseForReconciliation(
+          operation.id,
+          claimed.claimToken,
+          new Error('provider secret token must never persist'),
+        );
+        const failed = await scope.model.providerOperation.getById(operation.id);
+        assert.equal(failed?.state, 'reconciliation_required');
+        assert.equal(failed?.attemptCount, 1);
+        assert.equal(failed?.errorCode, 'refund_submission_outcome_unknown');
+        assert.equal(failed?.errorSummary, 'Provider refund submission outcome is unknown');
+        assert.equal(failed?.errorSummary?.includes('secret'), false);
+        await scope.model.providerOperation.updateById(operation.id, {
+          nextAttemptAt: new Date(0),
+        });
+        await scope.service.providerOperation.queueDue();
+        const fenced = await scope.model.providerOperation.getById(operation.id);
+        assert.equal(fenced?.attemptCount, 1);
+        await scope.service.providerOperation.reconcileRefund(operation.id, {
+          actionIdempotencyKey: randomUUID(),
+          reason: 'Provider outcome could not be verified',
+        });
+        const audits = await scope.model.providerOperationRecoveryAudit.select({
+          where: { providerOperationId: operation.id },
+        });
+        assert.equal(audits.length, 1);
+        assert.equal(audits[0].action, 'reconcile');
+        assert.equal(audits[0].resolution, 'unresolved');
+        await assert.rejects(
+          scope.service.providerOperation.retryRefund(operation.id, {
+            actionIdempotencyKey: randomUUID(),
+            reason: 'Retry without acknowledgement',
+          }),
+          { status: 409 },
+        );
+        const retryKey = randomUUID();
+        await scope.service.providerOperation.retryRefund(operation.id, {
+          actionIdempotencyKey: retryKey,
+          reason: 'Retry the original provider request after reconciliation',
+          acknowledgeRetryRisk: true,
+        });
+        const retried = await scope.model.providerOperation.getById(operation.id);
+        assert.equal(retried?.attemptCount, 2);
+        const retryAudit = await scope.model.providerOperationRecoveryAudit.get({
+          providerOperationId: operation.id,
+          actionIdempotencyKey: retryKey,
+        });
+        assert.equal(retryAudit?.action, 'retry');
+        assert.equal(retryAudit?.resolution, 'retried');
+        await scope.service.providerOperation.retryRefund(operation.id, {
+          actionIdempotencyKey: retryKey,
+          reason: 'Retry the original provider request after reconciliation',
+          acknowledgeRetryRisk: true,
+        });
+        assert.equal((await scope.model.providerOperation.getById(operation.id))?.attemptCount, 2);
+        await assert.rejects(
+          scope.service.providerOperation.retryRefund(operation.id, {
+            actionIdempotencyKey: randomUUID(),
+            reason: 'A second retry must be denied',
+            acknowledgeRetryRisk: true,
+          }),
+          { status: 409 },
+        );
       } finally {
         await cleanup(fixture);
       }

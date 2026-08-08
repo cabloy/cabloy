@@ -7,12 +7,14 @@ export * from '../entity/outboxEvent.tsx';
 export * from '../entity/paymentAudit.tsx';
 export * from '../entity/paymentSession.tsx';
 export * from '../entity/providerOperation.tsx';
+export * from '../entity/providerOperationRecoveryAudit.tsx';
 export * from '../entity/refundOperation.tsx';
 export * from '../entity/webhookInbox.tsx';
 import type { IEntityOptionsOutboxEvent } from '../entity/outboxEvent.tsx';
 import type { IEntityOptionsPaymentAudit } from '../entity/paymentAudit.tsx';
 import type { IEntityOptionsPaymentSession } from '../entity/paymentSession.tsx';
 import type { IEntityOptionsProviderOperation } from '../entity/providerOperation.tsx';
+import type { IEntityOptionsProviderOperationRecoveryAudit } from '../entity/providerOperationRecoveryAudit.tsx';
 import type { IEntityOptionsRefundOperation } from '../entity/refundOperation.tsx';
 import type { IEntityOptionsWebhookInbox } from '../entity/webhookInbox.tsx';
 import 'vona-module-a-orm';
@@ -23,6 +25,7 @@ declare module 'vona-module-a-orm' {
 'a-pay:paymentAudit': IEntityOptionsPaymentAudit;
 'a-pay:paymentSession': IEntityOptionsPaymentSession;
 'a-pay:providerOperation': IEntityOptionsProviderOperation;
+'a-pay:providerOperationRecoveryAudit': IEntityOptionsProviderOperationRecoveryAudit;
 'a-pay:refundOperation': IEntityOptionsRefundOperation;
 'a-pay:webhookInbox': IEntityOptionsWebhookInbox;
     }
@@ -38,6 +41,7 @@ import type { EntityOutboxEvent } from '../entity/outboxEvent.tsx';
 import type { EntityPaymentAudit } from '../entity/paymentAudit.tsx';
 import type { EntityPaymentSession } from '../entity/paymentSession.tsx';
 import type { EntityProviderOperation } from '../entity/providerOperation.tsx';
+import type { EntityProviderOperationRecoveryAudit } from '../entity/providerOperationRecoveryAudit.tsx';
 import type { EntityRefundOperation } from '../entity/refundOperation.tsx';
 import type { EntityWebhookInbox } from '../entity/webhookInbox.tsx';
 export interface IModuleEntity {
@@ -45,6 +49,7 @@ export interface IModuleEntity {
 'paymentAudit': EntityPaymentAuditMeta;
 'paymentSession': EntityPaymentSessionMeta;
 'providerOperation': EntityProviderOperationMeta;
+'providerOperationRecoveryAudit': EntityProviderOperationRecoveryAuditMeta;
 'refundOperation': EntityRefundOperationMeta;
 'webhookInbox': EntityWebhookInboxMeta;
 }
@@ -54,12 +59,14 @@ export type EntityOutboxEventTableName = 'payOutboxEvent';
 export type EntityPaymentAuditTableName = 'payPaymentAudit';
 export type EntityPaymentSessionTableName = 'payPaymentSession';
 export type EntityProviderOperationTableName = 'payProviderOperation';
+export type EntityProviderOperationRecoveryAuditTableName = 'payProviderOperationRecoveryAudit';
 export type EntityRefundOperationTableName = 'payRefundOperation';
 export type EntityWebhookInboxTableName = 'payWebhookInbox';
 export type EntityOutboxEventMeta=TypeEntityMeta<EntityOutboxEvent,EntityOutboxEventTableName>;
 export type EntityPaymentAuditMeta=TypeEntityMeta<EntityPaymentAudit,EntityPaymentAuditTableName>;
 export type EntityPaymentSessionMeta=TypeEntityMeta<EntityPaymentSession,EntityPaymentSessionTableName>;
 export type EntityProviderOperationMeta=TypeEntityMeta<EntityProviderOperation,EntityProviderOperationTableName>;
+export type EntityProviderOperationRecoveryAuditMeta=TypeEntityMeta<EntityProviderOperationRecoveryAudit,EntityProviderOperationRecoveryAuditTableName>;
 export type EntityRefundOperationMeta=TypeEntityMeta<EntityRefundOperation,EntityRefundOperationTableName>;
 export type EntityWebhookInboxMeta=TypeEntityMeta<EntityWebhookInbox,EntityWebhookInboxTableName>;
 declare module 'vona-module-a-orm' {
@@ -68,6 +75,7 @@ declare module 'vona-module-a-orm' {
 'payPaymentAudit': EntityPaymentAuditMeta;
 'payPaymentSession': EntityPaymentSessionMeta;
 'payProviderOperation': EntityProviderOperationMeta;
+'payProviderOperationRecoveryAudit': EntityProviderOperationRecoveryAuditMeta;
 'payRefundOperation': EntityRefundOperationMeta;
 'payWebhookInbox': EntityWebhookInboxMeta;
   }
@@ -90,6 +98,10 @@ declare module 'vona-module-a-pay' {
       fields?: TypeEntityOptionsFields<EntityProviderOperation, IEntityOptionsProviderOperation[TypeSymbolKeyFieldsMore]>;
     }
 
+    export interface IEntityOptionsProviderOperationRecoveryAudit {
+      fields?: TypeEntityOptionsFields<EntityProviderOperationRecoveryAudit, IEntityOptionsProviderOperationRecoveryAudit[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IEntityOptionsRefundOperation {
       fields?: TypeEntityOptionsFields<EntityRefundOperation, IEntityOptionsRefundOperation[TypeSymbolKeyFieldsMore]>;
     }
@@ -104,12 +116,14 @@ export * from '../model/outboxEvent.ts';
 export * from '../model/paymentAudit.ts';
 export * from '../model/paymentSession.ts';
 export * from '../model/providerOperation.ts';
+export * from '../model/providerOperationRecoveryAudit.ts';
 export * from '../model/refundOperation.ts';
 export * from '../model/webhookInbox.ts';
 import type { IModelOptionsOutboxEvent } from '../model/outboxEvent.ts';
 import type { IModelOptionsPaymentAudit } from '../model/paymentAudit.ts';
 import type { IModelOptionsPaymentSession } from '../model/paymentSession.ts';
 import type { IModelOptionsProviderOperation } from '../model/providerOperation.ts';
+import type { IModelOptionsProviderOperationRecoveryAudit } from '../model/providerOperationRecoveryAudit.ts';
 import type { IModelOptionsRefundOperation } from '../model/refundOperation.ts';
 import type { IModelOptionsWebhookInbox } from '../model/webhookInbox.ts';
 import 'vona-module-a-orm';
@@ -120,6 +134,7 @@ declare module 'vona-module-a-orm' {
 'a-pay:paymentAudit': IModelOptionsPaymentAudit;
 'a-pay:paymentSession': IModelOptionsPaymentSession;
 'a-pay:providerOperation': IModelOptionsProviderOperation;
+'a-pay:providerOperationRecoveryAudit': IModelOptionsProviderOperationRecoveryAudit;
 'a-pay:refundOperation': IModelOptionsRefundOperation;
 'a-pay:webhookInbox': IModelOptionsWebhookInbox;
     }
@@ -172,6 +187,17 @@ declare module 'vona-module-a-pay' {
             get $onionOptions(): IModelOptionsProviderOperation;
           }
 
+        export interface ModelProviderOperationRecoveryAudit {
+          /** @internal */
+          get scope(): ScopeModuleAPay;
+        }
+
+          export interface ModelProviderOperationRecoveryAudit {
+            get $beanFullName(): 'a-pay.model.providerOperationRecoveryAudit';
+            get $onionName(): 'a-pay:providerOperationRecoveryAudit';
+            get $onionOptions(): IModelOptionsProviderOperationRecoveryAudit;
+          }
+
         export interface ModelRefundOperation {
           /** @internal */
           get scope(): ScopeModuleAPay;
@@ -200,6 +226,7 @@ import type { ModelOutboxEvent } from '../model/outboxEvent.ts';
 import type { ModelPaymentAudit } from '../model/paymentAudit.ts';
 import type { ModelPaymentSession } from '../model/paymentSession.ts';
 import type { ModelProviderOperation } from '../model/providerOperation.ts';
+import type { ModelProviderOperationRecoveryAudit } from '../model/providerOperationRecoveryAudit.ts';
 import type { ModelRefundOperation } from '../model/refundOperation.ts';
 import type { ModelWebhookInbox } from '../model/webhookInbox.ts';
 export interface IModuleModel {
@@ -207,6 +234,7 @@ export interface IModuleModel {
 'paymentAudit': ModelPaymentAudit;
 'paymentSession': ModelPaymentSession;
 'providerOperation': ModelProviderOperation;
+'providerOperationRecoveryAudit': ModelProviderOperationRecoveryAudit;
 'refundOperation': ModelRefundOperation;
 'webhookInbox': ModelWebhookInbox;
 }
@@ -220,6 +248,7 @@ declare module 'vona' {
 'a-pay.model.paymentAudit': ModelPaymentAudit;
 'a-pay.model.paymentSession': ModelPaymentSession;
 'a-pay.model.providerOperation': ModelProviderOperation;
+'a-pay.model.providerOperationRecoveryAudit': ModelProviderOperationRecoveryAudit;
 'a-pay.model.refundOperation': ModelRefundOperation;
 'a-pay.model.webhookInbox': ModelWebhookInbox;
   }
@@ -378,6 +407,43 @@ export interface ModelProviderOperation {
 updateById<T extends IModelUpdateOptions<EntityProviderOperation,ModelProviderOperation>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityProviderOperation,ModelProviderOperation, T>, options?: T): Promise<TypeModelMutateRelationData<EntityProviderOperation,ModelProviderOperation, T>>;
 deleteById<T extends IModelDeleteOptions<EntityProviderOperation,ModelProviderOperation>>(id: TableIdentity, options?: T): Promise<void>;
     }
+export interface ModelProviderOperationRecoveryAudit {
+      [SymbolKeyEntity]: EntityProviderOperationRecoveryAudit;
+      [SymbolKeyEntityMeta]: EntityProviderOperationRecoveryAuditMeta;
+      [SymbolKeyModelOptions]: IModelOptionsProviderOperationRecoveryAudit;
+      get<T extends IModelGetOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(where: TypeModelWhere<EntityProviderOperationRecoveryAudit>, options?: T): Promise<TypeModelRelationResult<EntityProviderOperationRecoveryAudit, ModelProviderOperationRecoveryAudit, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
+      getForUpdate<T extends IModelGetOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(where: TypeModelWhere<EntityProviderOperationRecoveryAudit>, options?: T): Promise<TypeModelRelationResult<EntityProviderOperationRecoveryAudit, ModelProviderOperationRecoveryAudit, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
+      getByIdForUpdate<T extends IModelGetOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityProviderOperationRecoveryAudit, ModelProviderOperationRecoveryAudit, T> | undefined>;
+      mget<T extends IModelGetOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityProviderOperationRecoveryAudit, ModelProviderOperationRecoveryAudit, T>[]>;
+      selectAndCount<T extends IModelSelectParams<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityProviderOperationRecoveryAudit, ModelProviderOperationRecoveryAudit, T>>;
+      select<T extends IModelSelectParams<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityProviderOperationRecoveryAudit, ModelProviderOperationRecoveryAudit, T>[]>;
+      insert<T extends IModelInsertOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(data?: TypeModelMutateRelationData<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit, T>, options?: T): Promise<TypeModelMutateRelationData<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit, T, true>>;
+      insertBulk<T extends IModelInsertOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(items: TypeModelMutateRelationData<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit, T, true>[]>;
+      update<T extends IModelUpdateOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(data: TypeModelMutateRelationData<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit, T>, options?: T): Promise<TypeModelMutateRelationData<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit, T>>;
+      updateBulk<T extends IModelUpdateOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(items: TypeModelMutateRelationData<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit, T>[]>;
+      delete<T extends IModelDeleteOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(where?: TypeModelWhere<EntityProviderOperationRecoveryAudit>, options?: T): Promise<void>;
+      deleteBulk<T extends IModelDeleteOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(ids: TableIdentity[], options?: T): Promise<void>;
+      mutate<T extends IModelMutateOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(data?: TypeModelMutateRelationData<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit, T>, options?: T): Promise<TypeModelMutateRelationData<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit, T>>;
+      mutateBulk<T extends IModelMutateOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(items: TypeModelMutateRelationData<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit, T>[]>;
+      count<T extends IModelSelectCountParams<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<string | undefined>;
+      increment<T extends IModelIncrementParams<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      decrement<T extends IModelIncrementParams<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      aggregate<T extends IModelSelectAggrParams<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelAggrRelationResult<T>>;
+      group<T extends IModelSelectGroupParams<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelGroupRelationResult<EntityProviderOperationRecoveryAudit, T>[]>;
+      getById<T extends IModelGetOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityProviderOperationRecoveryAudit, ModelProviderOperationRecoveryAudit, T> | undefined>;
+updateById<T extends IModelUpdateOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit, T>, options?: T): Promise<TypeModelMutateRelationData<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit, T>>;
+deleteById<T extends IModelDeleteOptions<EntityProviderOperationRecoveryAudit,ModelProviderOperationRecoveryAudit>>(id: TableIdentity, options?: T): Promise<void>;
+    }
 export interface ModelRefundOperation {
       [SymbolKeyEntity]: EntityRefundOperation;
       [SymbolKeyEntityMeta]: EntityRefundOperationMeta;
@@ -459,6 +525,7 @@ declare module 'vona-module-a-orm' {
 'a-pay:paymentAudit': ModelPaymentAudit;
 'a-pay:paymentSession': ModelPaymentSession;
 'a-pay:providerOperation': ModelProviderOperation;
+'a-pay:providerOperationRecoveryAudit': ModelProviderOperationRecoveryAudit;
 'a-pay:refundOperation': ModelRefundOperation;
 'a-pay:webhookInbox': ModelWebhookInbox;
   }

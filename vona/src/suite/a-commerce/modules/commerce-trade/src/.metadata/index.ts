@@ -852,6 +852,8 @@ export * from '../dto/orderView.tsx';
 export * from '../dto/paymentOutcomeCreate.tsx';
 export * from '../dto/paymentOutcomeResult.tsx';
 export * from '../dto/refundOutcomeCreate.tsx';
+export * from '../dto/refundRecoveryAction.tsx';
+export * from '../dto/refundRecoveryView.tsx';
 export * from '../dto/refundRequestCreate.tsx';
 export * from '../dto/refundResult.tsx';
 export * from '../dto/refundReview.tsx';
@@ -892,6 +894,8 @@ import type { IDtoOptionsOrderView } from '../dto/orderView.tsx';
 import type { IDtoOptionsPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
 import type { IDtoOptionsPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
 import type { IDtoOptionsRefundOutcomeCreate } from '../dto/refundOutcomeCreate.tsx';
+import type { IDtoOptionsRefundRecoveryAction } from '../dto/refundRecoveryAction.tsx';
+import type { IDtoOptionsRefundRecoveryView } from '../dto/refundRecoveryView.tsx';
 import type { IDtoOptionsRefundRequestCreate } from '../dto/refundRequestCreate.tsx';
 import type { IDtoOptionsRefundResult } from '../dto/refundResult.tsx';
 import type { IDtoOptionsRefundReview } from '../dto/refundReview.tsx';
@@ -936,6 +940,8 @@ declare module 'vona-module-a-web' {
 'commerce-trade:paymentOutcomeCreate': IDtoOptionsPaymentOutcomeCreate;
 'commerce-trade:paymentOutcomeResult': IDtoOptionsPaymentOutcomeResult;
 'commerce-trade:refundOutcomeCreate': IDtoOptionsRefundOutcomeCreate;
+'commerce-trade:refundRecoveryAction': IDtoOptionsRefundRecoveryAction;
+'commerce-trade:refundRecoveryView': IDtoOptionsRefundRecoveryView;
 'commerce-trade:refundRequestCreate': IDtoOptionsRefundRequestCreate;
 'commerce-trade:refundResult': IDtoOptionsRefundResult;
 'commerce-trade:refundReview': IDtoOptionsRefundReview;
@@ -985,6 +991,8 @@ import type { DtoOrderView } from '../dto/orderView.tsx';
 import type { DtoPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
 import type { DtoPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
 import type { DtoRefundOutcomeCreate } from '../dto/refundOutcomeCreate.tsx';
+import type { DtoRefundRecoveryAction } from '../dto/refundRecoveryAction.tsx';
+import type { DtoRefundRecoveryView } from '../dto/refundRecoveryView.tsx';
 import type { DtoRefundRequestCreate } from '../dto/refundRequestCreate.tsx';
 import type { DtoRefundResult } from '../dto/refundResult.tsx';
 import type { DtoRefundReview } from '../dto/refundReview.tsx';
@@ -1094,6 +1102,14 @@ declare module 'vona-module-commerce-trade' {
 
     export interface IDtoOptionsRefundOutcomeCreate {
       fields?: TypeEntityOptionsFields<DtoRefundOutcomeCreate, IDtoOptionsRefundOutcomeCreate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsRefundRecoveryAction {
+      fields?: TypeEntityOptionsFields<DtoRefundRecoveryAction, IDtoOptionsRefundRecoveryAction[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsRefundRecoveryView {
+      fields?: TypeEntityOptionsFields<DtoRefundRecoveryView, IDtoOptionsRefundRecoveryView[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsRefundRequestCreate {
@@ -1286,6 +1302,7 @@ declare module 'vona-module-a-web' {
 '/commerce/trade/checkout/payment-methods': undefined;
 '/commerce/trade/order/mine': undefined;
 '/commerce/trade/order/viewMine/:id': undefined;
+'/commerce/trade/order/:id/refundRecovery': undefined;
 '/commerce/trade/order': undefined;
 '/commerce/trade/order/:id': undefined;
 '/commerce/trade/stockAudit': undefined;
@@ -1300,6 +1317,8 @@ export interface IApiPathPostRecord{
 '/commerce/trade/order/:id/approveRefund': undefined;
 '/commerce/trade/order/:id/rejectRefund': undefined;
 '/commerce/trade/order/:id/executeRefund': undefined;
+'/commerce/trade/order/:id/reconcileRefund': undefined;
+'/commerce/trade/order/:id/retryRefund': undefined;
 '/commerce/trade/order/:id/ship': undefined;
 '/commerce/trade/stockBalance/adjustStock': undefined;
     }

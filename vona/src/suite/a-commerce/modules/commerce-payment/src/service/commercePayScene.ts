@@ -52,8 +52,9 @@ export class ServiceCommercePayScene extends BeanBase {
     return { ...refundAttempt, refundOperationId };
   }
 
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
   async createRefundOperation(refundAttemptId: TableIdentity) {
-    const refundAttempt = await this.scope.model.refundAttempt.getById(refundAttemptId);
+    const refundAttempt = await this.scope.model.refundAttempt.getByIdForUpdate(refundAttemptId);
     if (!refundAttempt) this.app.throw(404, 'commerce refund attempt not found');
     const paymentAttempt = await this.scope.model.paymentAttempt.get({
       orderId: refundAttempt.orderId,
@@ -68,7 +69,17 @@ export class ServiceCommercePayScene extends BeanBase {
       idempotencyKey: `${refundAttempt.correlationId}:refund`,
       correlationId: refundAttempt.correlationId,
     });
-    await this.linkRefundOperation(refundAttempt.id, refund.id);
+    if (
+      refundAttempt.refundOperationId &&
+      String(refundAttempt.refundOperationId) !== String(refund.id)
+    ) {
+      this.app.throw(409, 'commerce refund attempt is linked to another refund operation');
+    }
+    if (!refundAttempt.refundOperationId) {
+      await this.scope.model.refundAttempt.updateById(refundAttempt.id, {
+        refundOperationId: refund.id,
+      });
+    }
     return refund;
   }
 

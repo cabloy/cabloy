@@ -100,6 +100,8 @@ export interface IPayProviderWebhookInput {
 export interface IPayProviderVerifiedWebhook {
   eventId: string;
   eventType: string;
+  ignored?: boolean;
+  providerCaptureId?: string;
   paymentSessionId?: TableIdentity;
   refundOperationId?: TableIdentity;
   payment?: IPayProviderPaymentSnapshot;

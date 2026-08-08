@@ -12,6 +12,8 @@ export interface IPaypalGatewayOptions {
   webhookId: string;
 }
 
+export const PaypalRequestTimeoutMilliseconds = 15_000;
+
 export interface IPaypalGateway {
   createOrder(options: IPaypalGatewayOptions, input: unknown): Promise<unknown>;
   captureOrder(options: IPaypalGatewayOptions, input: unknown): Promise<unknown>;
@@ -110,7 +112,7 @@ function createClient(options: IPaypalGatewayOptions) {
       oAuthClientId: options.clientId,
       oAuthClientSecret: options.clientSecret,
     },
-    timeout: 0,
+    timeout: PaypalRequestTimeoutMilliseconds,
     environment: options.environment === 'live' ? Environment.Production : Environment.Sandbox,
   });
 }

@@ -16,6 +16,14 @@ import type {
 
 const ClaimLeaseMilliseconds = 60_000;
 const MaxAttempts = 10;
+const PaypalRefundIdempotencyRetentionMilliseconds = 45 * 24 * 60 * 60 * 1_000;
+
+export interface IRefundRecoveryCommand {
+  actionIdempotencyKey: string;
+  reason: string;
+  acknowledgeRetryRisk?: boolean;
+  actorId?: TableIdentity;
+}
 
 @Service()
 export class ServiceProviderOperation extends BeanBase {
@@ -125,6 +133,20 @@ export class ServiceProviderOperation extends BeanBase {
     );
   }
 
+  async reconcileRefund(providerOperationId: TableIdentity, command: IRefundRecoveryCommand) {
+    const prepared = await this._prepareRefundRecovery(providerOperationId, command, 'reconcile');
+    if (prepared.replay || prepared.resolution === 'unresolved') return prepared;
+    await this.execute(providerOperationId);
+    return await this._refundRecoveryResult(providerOperationId, prepared.auditId);
+  }
+
+  async retryRefund(providerOperationId: TableIdentity, command: IRefundRecoveryCommand) {
+    const prepared = await this._prepareRefundRecovery(providerOperationId, command, 'retry');
+    if (prepared.replay || prepared.resolution === 'unresolved') return prepared;
+    await this.execute(providerOperationId);
+    return await this._refundRecoveryResult(providerOperationId, prepared.auditId);
+  }
+
   async execute(providerOperationId: TableIdentity) {
     const operation = await this.claim(providerOperationId);
     if (!operation) return undefined;
@@ -204,10 +226,13 @@ export class ServiceProviderOperation extends BeanBase {
       providerCaptureId: session.providerCaptureId,
       providerRefundId: refund.providerRefundId,
     };
-    const snapshot =
-      refund.providerRefundId && provider.queryRefund
+    const snapshot = refund.providerRefundId
+      ? provider.queryRefund
         ? await provider.queryRefund(input, clientOptions)
-        : await provider.createRefund(input, clientOptions);
+        : this.app.throw(409, 'payment provider cannot reconcile a known refund')
+      : operation.attemptCount === 1 || operation.recoveryRetryGrantedAt
+        ? await provider.createRefund(input, clientOptions)
+        : this.app.throw(409, 'refund submission outcome requires audited recovery');
     await this.scope.service.refundOperation.settleProviderSnapshot(
       operation.id,
       operation.claimToken!,
@@ -230,11 +255,24 @@ export class ServiceProviderOperation extends BeanBase {
         !!operation.claimExpiresAt &&
         operation.claimExpiresAt <= now);
     if (!eligible) return undefined;
+    const refund =
+      operation.kind === 'refund' && operation.refundOperationId
+        ? await this.scope.model.refundOperation.getByIdForUpdate(operation.refundOperationId)
+        : undefined;
+    if (
+      operation.kind === 'refund' &&
+      operation.submittedAt &&
+      operation.errorCode === 'refund_submission_outcome_unknown' &&
+      !operation.recoveryRetryGrantedAt &&
+      !operation.providerResourceId &&
+      !refund?.providerRefundId
+    ) {
+      return undefined;
+    }
     if (operation.attemptCount >= MaxAttempts) {
       await this.scope.model.providerOperation.updateById(operation.id, {
         state: 'failed',
         finalizedAt: now,
-        errorSummary: 'provider operation attempts exhausted',
       });
       return undefined;
     }
@@ -246,8 +284,6 @@ export class ServiceProviderOperation extends BeanBase {
       claimToken,
       claimExpiresAt,
       attemptCount: operation.attemptCount + 1,
-      errorCode: undefined,
-      errorSummary: undefined,
     });
     return {
       ...operation,
@@ -267,7 +303,17 @@ export class ServiceProviderOperation extends BeanBase {
     await this.scope.model.providerOperation.updateById(operation.id, {
       state: 'submitted',
       submittedAt,
+      recoveryRetryGrantedAt: undefined,
     });
+    if (operation.kind === 'refund' && operation.refundOperationId) {
+      const refund = await this.scope.model.refundOperation.getByIdForUpdate(
+        operation.refundOperationId,
+      );
+      if (!refund) this.app.throw(404, 'refund operation not found');
+      if (refund.state === 'created') {
+        await this.scope.model.refundOperation.updateById(refund.id, { state: 'submitting' });
+      }
+    }
     return { ...operation, state: 'submitted' as const, submittedAt };
   }
 
@@ -372,16 +418,22 @@ export class ServiceProviderOperation extends BeanBase {
     ) {
       return undefined;
     }
-    const errorSummary = summarizeError(error);
+    const failure = classifyProviderFailure(error, operation.kind);
     const now = new Date();
-    if (operation.attemptCount >= MaxAttempts) {
+    const isAmbiguousRefundSubmission =
+      operation.kind === 'refund' &&
+      operation.submittedAt &&
+      failure.code === 'refund_submission_outcome_unknown';
+    if (operation.attemptCount >= MaxAttempts && !isAmbiguousRefundSubmission) {
       await this.scope.model.providerOperation.updateById(operation.id, {
         state: 'failed',
         claimToken: undefined,
         claimExpiresAt: undefined,
         finalizedAt: now,
-        errorSummary,
+        errorCode: failure.code,
+        errorSummary: failure.summary,
       });
+      this._logProviderFailure(operation, failure, 'failed');
       return undefined;
     }
     const nextAttemptAt = new Date(
@@ -392,9 +444,17 @@ export class ServiceProviderOperation extends BeanBase {
       claimToken: undefined,
       claimExpiresAt: undefined,
       nextAttemptAt,
-      errorSummary,
+      errorCode: failure.code,
+      errorSummary: failure.summary,
     });
-    return { ...operation, state: 'reconciliation_required' as const, nextAttemptAt, errorSummary };
+    this._logProviderFailure(operation, failure, 'reconciliation_required');
+    return {
+      ...operation,
+      state: 'reconciliation_required' as const,
+      nextAttemptAt,
+      errorCode: failure.code,
+      errorSummary: failure.summary,
+    };
   }
 
   async queueDue(limit = 100) {
@@ -418,6 +478,147 @@ export class ServiceProviderOperation extends BeanBase {
     const operations = [...due, ...expiredClaims];
     for (const operation of operations) await this.execute(operation.id);
     return operations.length;
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  private async _prepareRefundRecovery(
+    providerOperationId: TableIdentity,
+    command: IRefundRecoveryCommand,
+    action: 'reconcile' | 'retry',
+  ) {
+    const actionIdempotencyKey = command.actionIdempotencyKey.trim();
+    const reason = command.reason.trim();
+    if (!actionIdempotencyKey) this.app.throw(400, 'refund recovery idempotency key is required');
+    if (!reason) this.app.throw(400, 'refund recovery reason is required');
+    const operation =
+      await this.scope.model.providerOperation.getByIdForUpdate(providerOperationId);
+    if (!operation || operation.kind !== 'refund' || !operation.refundOperationId) {
+      this.app.throw(404, 'refund provider operation not found');
+    }
+    const existing = await this.scope.model.providerOperationRecoveryAudit.getForUpdate({
+      providerOperationId: operation.id,
+      actionIdempotencyKey,
+    });
+    if (existing) {
+      if (existing.action !== action || existing.reason !== reason) {
+        this.app.throw(409, 'refund recovery idempotency key conflicts with an existing action');
+      }
+      return { auditId: existing.id, resolution: existing.resolution, replay: true };
+    }
+    const refund = await this.scope.model.refundOperation.getByIdForUpdate(
+      operation.refundOperationId,
+    );
+    if (!refund) this.app.throw(404, 'refund operation not found');
+    const now = new Date();
+    let afterState = operation.state;
+    let resolution: 'reconciled' | 'unresolved' | 'retried' = 'unresolved';
+    if (action === 'retry') {
+      if (!command.acknowledgeRetryRisk) {
+        this.app.throw(409, 'refund retry requires explicit risk acknowledgement');
+      }
+      if (refund.providerRefundId) {
+        this.app.throw(409, 'a known provider refund must be reconciled without resubmission');
+      }
+      if (
+        !operation.submittedAt ||
+        now.getTime() - operation.submittedAt.getTime() >
+          PaypalRefundIdempotencyRetentionMilliseconds
+      ) {
+        this.app.throw(409, 'refund retry is outside the provider idempotency window');
+      }
+      if (
+        operation.errorCode !== 'refund_submission_outcome_unknown' ||
+        ['succeeded', 'claimed', 'submitted'].includes(operation.state)
+      ) {
+        this.app.throw(409, 'refund retry is not available');
+      }
+      const reconciliations = await this.scope.model.providerOperationRecoveryAudit.select({
+        where: { providerOperationId: operation.id, action: 'reconcile', resolution: 'unresolved' },
+        limit: 1,
+      });
+      if (!reconciliations.length) {
+        this.app.throw(409, 'refund retry requires a preceding unresolved reconciliation');
+      }
+      const retries = await this.scope.model.providerOperationRecoveryAudit.select({
+        where: { providerOperationId: operation.id, action: 'retry' },
+        limit: 1,
+      });
+      if (retries.length) this.app.throw(409, 'refund retry has already been used');
+      afterState = 'reconciliation_required';
+      resolution = 'retried';
+      await this.scope.model.providerOperation.updateById(operation.id, {
+        state: afterState,
+        claimToken: undefined,
+        claimExpiresAt: undefined,
+        nextAttemptAt: new Date(now.getTime() - 1_000),
+        recoveryRetryGrantedAt: now,
+      });
+    } else if (refund.providerRefundId && operation.state !== 'succeeded') {
+      afterState = 'reconciliation_required';
+      resolution = 'reconciled';
+      await this.scope.model.providerOperation.updateById(operation.id, {
+        state: afterState,
+        claimToken: undefined,
+        claimExpiresAt: undefined,
+        nextAttemptAt: new Date(now.getTime() - 1_000),
+      });
+    }
+    const audit = await this.scope.model.providerOperationRecoveryAudit.insert({
+      providerOperationId: operation.id,
+      actorId: command.actorId,
+      action,
+      actionIdempotencyKey,
+      reason,
+      beforeState: operation.state,
+      afterState,
+      beforeAttemptCount: operation.attemptCount,
+      afterAttemptCount: operation.attemptCount,
+      resolution,
+      providerRefundId: refund.providerRefundId,
+      occurredAt: now,
+    });
+    return { auditId: audit.id, resolution };
+  }
+
+  @Core.transaction()
+  private async _refundRecoveryResult(providerOperationId: TableIdentity, auditId: TableIdentity) {
+    const operation =
+      await this.scope.model.providerOperation.getByIdForUpdate(providerOperationId);
+    const audit = await this.scope.model.providerOperationRecoveryAudit.getByIdForUpdate(auditId);
+    if (!operation || !audit) this.app.throw(404, 'refund recovery audit not found');
+    const refund = operation.refundOperationId
+      ? await this.scope.model.refundOperation.getByIdForUpdate(operation.refundOperationId)
+      : undefined;
+    await this.scope.model.providerOperationRecoveryAudit.updateById(audit.id, {
+      afterState: operation.state,
+      afterAttemptCount: operation.attemptCount,
+      providerRefundId: refund?.providerRefundId,
+    });
+    return {
+      auditId: audit.id,
+      resolution: audit.resolution,
+      providerOperationState: operation.state,
+      providerOperationAttemptCount: operation.attemptCount,
+      providerRefundId: refund?.providerRefundId,
+    };
+  }
+
+  private _logProviderFailure(
+    operation: EntityProviderOperation,
+    failure: { code: string; summary: string },
+    state: 'failed' | 'reconciliation_required',
+  ) {
+    this.$logger.warn({
+      event: 'pay.provider_operation_failed',
+      providerOperationId: operation.id,
+      paymentSessionId: operation.paymentSessionId,
+      refundOperationId: operation.refundOperationId,
+      kind: operation.kind,
+      attemptCount: operation.attemptCount,
+      state,
+      errorCode: failure.code,
+      errorSummary: failure.summary,
+    });
   }
 
   private async _insertOperation(
@@ -485,7 +686,18 @@ function retryDelayMilliseconds(attemptCount: number) {
   return Math.min(60_000, 1_000 * 2 ** Math.max(0, attemptCount - 1));
 }
 
-function summarizeError(error: unknown) {
-  const message = error instanceof Error ? error.message : String(error);
-  return message.slice(0, 255);
+function classifyProviderFailure(
+  _error: unknown,
+  kind: TypeProviderOperationKind,
+): { code: string; summary: string } {
+  if (kind === 'refund') {
+    return {
+      code: 'refund_submission_outcome_unknown',
+      summary: 'Provider refund submission outcome is unknown',
+    };
+  }
+  return {
+    code: 'provider_operation_failed',
+    summary: 'Provider operation failed and will be reconciled',
+  };
 }

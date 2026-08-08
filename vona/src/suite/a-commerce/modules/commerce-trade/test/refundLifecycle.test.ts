@@ -31,9 +31,18 @@ async function cleanup(fixture: IFixture) {
       where: { paymentSessionId: fixture.paymentSessionId },
     });
     for (const refundOperation of refundOperations) {
-      await pay.model.providerOperation.delete({ refundOperationId: refundOperation.id });
+      const providerOperation = await pay.model.providerOperation.get({
+        refundOperationId: refundOperation.id,
+        kind: 'refund',
+      });
+      if (providerOperation) {
+        await pay.model.providerOperationRecoveryAudit.delete({
+          providerOperationId: providerOperation.id,
+        });
+      }
       await pay.model.outboxEvent.delete({ refundOperationId: refundOperation.id });
       await pay.model.webhookInbox.delete({ refundOperationId: refundOperation.id });
+      await pay.model.providerOperation.delete({ refundOperationId: refundOperation.id });
       await pay.model.refundOperation.delete({ id: refundOperation.id });
     }
     await pay.model.outboxEvent.delete({ paymentSessionId: fixture.paymentSessionId });
@@ -328,6 +337,46 @@ describe('refundLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           'refunded',
           'requested',
         ]);
+      } finally {
+        await app.bean.passport.signout();
+        await cleanup(fixture);
+      }
+    });
+  });
+
+  it('requires recovery instead of creating a second refund operation', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture: IFixture = {};
+      try {
+        Object.assign(fixture, await createPaidOrder(randomUUID().slice(0, 12)));
+        const order = app.scope('commerce-trade').service.order;
+        await order.requestRefund(fixture.orderId!, {
+          reason: 'provider recovery',
+          idempotencyKey: 'provider-recovery-request-1',
+        });
+        await app.bean.passport.signout();
+        await app.bean.passport.signinMock();
+        await order.approveRefund(fixture.orderId!, {
+          reason: 'provider recovery approved',
+          idempotencyKey: 'provider-recovery-approve-1',
+        });
+        const executed = await order.executeRefund(fixture.orderId!);
+        await assert.rejects(order.executeRefund(fixture.orderId!), { status: 409 });
+        const pay = app.scope('a-pay');
+        const refundOperation = await pay.model.refundOperation.getById(executed.refundOperationId);
+        const providerOperation = await pay.model.providerOperation.get({
+          refundOperationId: refundOperation?.id,
+          kind: 'refund',
+        });
+        assert.ok(providerOperation);
+        assert.equal(
+          (
+            await pay.model.refundOperation.select({
+              where: { paymentSessionId: fixture.paymentSessionId },
+            })
+          ).length,
+          1,
+        );
       } finally {
         await app.bean.passport.signout();
         await cleanup(fixture);

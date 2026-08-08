@@ -10,6 +10,9 @@ import {
   ApiApiCommerceTradeOrderapproveRefundPath,
   ApiApiCommerceTradeOrderrejectRefundPath,
   ApiApiCommerceTradeOrderexecuteRefundPath,
+  ApiApiCommerceTradeOrderrefundRecoveryPath,
+  ApiApiCommerceTradeOrderreconcileRefundPath,
+  ApiApiCommerceTradeOrderretryRefundPath,
   ApiApiCommerceTradeOrdershipPath,
   ApiApiCommerceTradeOrderselectPath,
   ApiApiCommerceTradeOrderviewPath,
@@ -39,6 +42,18 @@ export class ApiSchemaCommerceTradeOrder extends BeanBase {
 
   executeRefund(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiCommerceTradeOrderexecuteRefundPath, 'post', options);
+  }
+
+  refundRecovery(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCommerceTradeOrderrefundRecoveryPath, 'get', options);
+  }
+
+  reconcileRefund(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCommerceTradeOrderreconcileRefundPath, 'post', options);
+  }
+
+  retryRefund(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCommerceTradeOrderretryRefundPath, 'post', options);
   }
 
   ship(options?: IApiSchemaOptions) {

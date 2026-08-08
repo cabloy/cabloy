@@ -7,7 +7,10 @@ import { BeanModelBase, Model } from 'zova-module-a-model';
 
 import type {
   ApiApiCommerceTradeOrderapproveRefundRequestBody,
+  ApiApiCommerceTradeOrderreconcileRefundRequestBody,
+  ApiApiCommerceTradeOrderrefundRecoveryResponseBody,
   ApiApiCommerceTradeOrderrejectRefundRequestBody,
+  ApiApiCommerceTradeOrderretryRefundRequestBody,
   ApiApiCommerceTradeOrdershipRequestBody,
 } from '../api/commerceTradeOrder.js';
 
@@ -72,6 +75,45 @@ export class ModelOrder extends BeanModelBase {
       action: 'executeRefund',
       mutationFn: async () => {
         return await this.scope.api.commerceTradeOrder.executeRefund(undefined, { params: { id } });
+      },
+    });
+  }
+
+  refundRecovery(id: TableIdentity) {
+    return this.$$modelResource.queryItem<ApiApiCommerceTradeOrderrefundRecoveryResponseBody>({
+      id,
+      action: 'refundRecovery',
+      queryFn: async () => {
+        return await this.scope.api.commerceTradeOrder.refundRecovery({ params: { id } });
+      },
+      meta: {
+        disableSuspenseOnInit: true,
+      },
+    });
+  }
+
+  reconcileRefund(id: TableIdentity) {
+    return this.$$modelResource.mutationItem<
+      unknown,
+      ApiApiCommerceTradeOrderreconcileRefundRequestBody
+    >({
+      id,
+      action: 'reconcileRefund',
+      mutationFn: async payload => {
+        return await this.scope.api.commerceTradeOrder.reconcileRefund(payload, { params: { id } });
+      },
+    });
+  }
+
+  retryRefund(id: TableIdentity) {
+    return this.$$modelResource.mutationItem<
+      unknown,
+      ApiApiCommerceTradeOrderretryRefundRequestBody
+    >({
+      id,
+      action: 'retryRefund',
+      mutationFn: async payload => {
+        return await this.scope.api.commerceTradeOrder.retryRefund(payload, { params: { id } });
       },
     });
   }

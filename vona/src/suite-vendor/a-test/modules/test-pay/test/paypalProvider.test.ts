@@ -261,6 +261,36 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('accepts capture-refunded notifications without pretending the capture is a refund', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const gateway = {
+        async verifyWebhookSignature() {},
+      };
+      const { provider } = app.bean.payProvider.resolveByName('pay-paypal:paypal', 'default');
+      const verified = await provider.verifyWebhook(
+        {
+          rawBody: '{"id":"event-refunded"}',
+          body: {
+            id: 'event-refunded',
+            event_type: 'PAYMENT.CAPTURE.REFUNDED',
+            resource: {
+              id: 'capture-1',
+              status: 'REFUNDED',
+              amount: { currency_code: 'USD', value: '12.99' },
+              supplementary_data: { related_ids: { capture_id: 'capture-1' } },
+            },
+          },
+          headers: {},
+        },
+        createOptions(gateway),
+      );
+      assert.equal(verified.ignored, true);
+      assert.equal(verified.providerCaptureId, 'capture-1');
+      assert.equal(verified.refund, undefined);
+      assert.equal(verified.refundOperationId, undefined);
+    });
+  });
+
   it('passes webhook facts to the gateway and maps verified capture events', async () => {
     await app.bean.executor.mockCtx(async () => {
       const calls: unknown[] = [];

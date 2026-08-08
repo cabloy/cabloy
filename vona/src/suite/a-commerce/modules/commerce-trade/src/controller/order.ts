@@ -16,6 +16,8 @@ import { DtoOrderSelectReq } from '../dto/orderSelectReq.tsx';
 import { DtoOrderSelectRes } from '../dto/orderSelectRes.tsx';
 import { DtoOrderShip } from '../dto/orderShip.tsx';
 import { DtoOrderView } from '../dto/orderView.tsx';
+import { DtoRefundRecoveryAction } from '../dto/refundRecoveryAction.tsx';
+import { DtoRefundRecoveryView } from '../dto/refundRecoveryView.tsx';
 import { DtoRefundRequestCreate } from '../dto/refundRequestCreate.tsx';
 import { DtoRefundResult } from '../dto/refundResult.tsx';
 import { DtoRefundReview } from '../dto/refundReview.tsx';
@@ -78,6 +80,35 @@ export class ControllerOrder extends BeanBase {
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoRefundResult> {
     return await this.scope.service.order.executeRefund(id);
+  }
+
+  @Web.get(':id/refundRecovery')
+  @Api.body(DtoRefundRecoveryView)
+  @Passport.systemAdmin()
+  async refundRecovery(
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+  ): Promise<DtoRefundRecoveryView> {
+    return await this.scope.service.order.refundRecovery(id);
+  }
+
+  @Web.post(':id/reconcileRefund')
+  @Api.body(DtoRefundRecoveryView)
+  @Passport.systemAdmin()
+  async reconcileRefund(
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+    @Arg.body(DtoRefundRecoveryAction) command: DtoRefundRecoveryAction,
+  ): Promise<DtoRefundRecoveryView> {
+    return await this.scope.service.order.reconcileRefund(id, command);
+  }
+
+  @Web.post(':id/retryRefund')
+  @Api.body(DtoRefundRecoveryView)
+  @Passport.systemAdmin()
+  async retryRefund(
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+    @Arg.body(DtoRefundRecoveryAction) command: DtoRefundRecoveryAction,
+  ): Promise<DtoRefundRecoveryView> {
+    return await this.scope.service.order.retryRefund(id, command);
   }
 
   @Web.post(':id/ship')
