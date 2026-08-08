@@ -191,6 +191,8 @@ export class DtoStudentSelectReq extends $Dto.queryPage(EntityStudent, [
 
 `$makeSchema(...)` applies schema-like arguments right-to-left. Keep the final structure-defining schema, such as `z.string()`, `z.number()`, `v.object(...)`, or `v.array(...)`, last in authoring order. Treat optionality, nullability, defaults, preprocess/transform wrappers, objects, and arrays as structure-shaping rather than metadata-only, and verify emitted schema/OpenAPI output after changing them.
 
+Framework DTO composition preserves inherited OpenAPI metadata when a field schema is refined. That includes metadata such as titles, render information, and scene identity. It does **not** make structure-shaping schema-like arguments order-independent: keep the final structure-defining argument last and verify the effective schema rather than assuming a metadata merge can repair a reordered schema.
+
 `@Dto({ fields })` changes the runtime contract and metadata. It does not rewrite the TypeScript property type inferred from the `$Dto.*` base class. Do not add a duplicate `declare` field or a second field decorator solely to mirror a runtime schema restriction unless a separate static contract is genuinely required and is type-compatible with the inferred base.
 
 ### Layer 3: add contract-only fields
@@ -243,6 +245,33 @@ Representative source facts:
 - `DtoStudentUpdate` extends `$Dto.update(() => ModelStudent)`
 
 These are good examples of **named DTO classes that wrap inference**.
+
+The mutation helpers also carry their conventional schema-scene identity into the DTO's Cabloy OpenAPI metadata:
+
+| Helper             | Effective schema scene | Practical effect                                                    |
+| ------------------ | ---------------------- | ------------------------------------------------------------------- |
+| `$Dto.create(...)` | `form-create`          | Create-specific field metadata applies after the shared form layer. |
+| `$Dto.update(...)` | `form`                 | Shared form field metadata applies directly.                        |
+
+For `form-view`, `form-create`, and `filter`, field metadata resolves in this order: base `rest`, then the shared `rest.form` overlay, then the exact scene overlay. `table` has no shared-form overlay. For example, a field can remain read-only in normal form contracts while being enabled specifically for creation:
+
+```typescript
+@Dto({
+  fields: {
+    referenceNo: $makeMetadata(
+      v.openapi({
+        rest: {
+          'form': { readonly: true },
+          'form-create': { readonly: false },
+        },
+      }),
+    ),
+  },
+})
+export class DtoOrderCreate extends $Dto.create(() => ModelOrder) {}
+```
+
+The effective `form-create` rule makes `referenceNo` writable for this create contract. An update DTO using the shared `form` scene keeps it read-only unless its own scene metadata changes that result. DTO options such as `fields`, `blocks`, `openapi`, and `schemaScene` merge with metadata supplied by inferred helpers or inheritance; they do not erase the helper-provided scene identity.
 
 Why this is a good fit:
 

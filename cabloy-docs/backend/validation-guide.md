@@ -44,6 +44,49 @@ Inferred schemas can also be extended through helper tools like:
 
 That is important because many real validation cases need augmentation rather than total replacement.
 
+## Scene-aware readonly input sanitization
+
+DTO and field OpenAPI metadata can identify a Cabloy schema scene and its scene-specific field behavior. After a schema parses successfully, Vona removes each known property whose **effective** `rest` metadata resolves to `readonly: true` for that scene.
+
+This is server-side input sanitization, not a browser-only disabled control and not a validation error. A caller cannot turn a read-only field into a write channel by bypassing a Zova form.
+
+For `form-view`, `form-create`, and `filter`, Vona resolves field metadata in this order:
+
+1. base `rest` metadata
+2. shared `rest.form` metadata
+3. the exact scene metadata, such as `rest['form-create']`
+
+For `table` and `form`, only the base metadata and exact-scene metadata apply. A nested DTO inherits the containing scene unless it declares its own `rest.schemaScene`.
+
+The sanitization traverses nested DTO/object values and array elements, including framework lazy and chained schema composition. For example, a create request can prevent callers from supplying a line-item price while still accepting its quantity:
+
+```typescript
+class DtoLineItem {
+  @Api.field(v.openapi({ rest: { form: { readonly: true } } }))
+  price: number;
+
+  @Api.field()
+  quantity: number;
+}
+
+export class DtoOrderCreate extends $Dto.create(() => ModelOrder) {
+  @Api.field(v.array(DtoLineItem))
+  items: DtoLineItem[];
+}
+
+// request input
+{
+  items: [{ price: 99, quantity: 2 }];
+}
+
+// validated value delivered to the handler
+{
+  items: [{ quantity: 2 }];
+}
+```
+
+Use DTO projection to omit a field that the API must never accept or return. Use scene-aware `readonly` when a field belongs to the schema but must be removed from write input for one contract scene. This sanitization is not response serialization; response payload shaping remains a separate concern in the [Serialization Guide](/backend/serialization-guide). General object parsing and unknown-key behavior still belong to the supplied Zod schema; readonly sanitization removes known protected fields only after successful parsing.
+
 A useful distinction is:
 
 - `v.optional` means the field may be omitted
@@ -82,6 +125,8 @@ When changing request contracts, ask:
 2. does the contract need explicit extension through the `v` helpers?
 3. does the same validation surface also feed OpenAPI and DTO behavior?
 4. is the validation logic better expressed at the controller, DTO, or entity layer?
+5. for a scene-aware DTO, what is its effective schema scene and does each protected field resolve to read-only there?
+6. when protected fields can be nested, have object and array inputs been tested separately?
 
 That produces more consistent backend contracts.
 

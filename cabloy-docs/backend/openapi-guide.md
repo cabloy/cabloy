@@ -60,6 +60,22 @@ That means:
 
 This tight linkage is one of the reasons the Cabloy contract story can stay productive at scale.
 
+## Schema scenes are Cabloy contract metadata
+
+A DTO can emit its semantic schema scene through Cabloy's `rest.schemaScene` extension metadata. The scene vocabulary is `table`, `form`, `form-view`, `form-create`, and `filter`. This is Cabloy metadata carried by the emitted schema, not a field defined by the OpenAPI specification itself.
+
+The same emitted metadata has coordinated but distinct consumers:
+
+| Consumer                 | Responsibility                                                                                           |
+| ------------------------ | -------------------------------------------------------------------------------------------------------- |
+| Vona validation          | Resolves a field's effective scene metadata and removes read-only properties from validated write input. |
+| OpenAPI emission         | Carries DTO and field scene metadata through the backend contract.                                       |
+| Zova schema/form runtime | Applies shared-form and exact-scene property overlays while loading fields for the active schema scene.  |
+
+For the form-derived scenes `form-view`, `form-create`, and `filter`, a field's base `rest` metadata is followed by the shared `rest.form` overlay and then the exact scene overlay. This lets one contract describe common form behavior while still declaring a create- or filter-specific exception.
+
+The end-to-end rule is therefore not “the frontend hides a field.” Vona uses the DTO contract to sanitize read-only request input, while Zova uses compatible metadata to render the relevant scene. See [DTO Guide](/backend/dto-guide) for declaring a DTO scene, [Validation Guide](/backend/validation-guide) for server-side readonly handling, [OpenAPI Runtime Under the Hood](/frontend/a-openapi-under-the-hood) for Zova schema loading, and [Form Scene to Page Meta Guide](/frontend/form-scene-to-page-meta-guide) for frontend form-scene flow.
+
 ## Controllers, DTOs, entities, and examples all contribute
 
 OpenAPI output is not owned by one layer only.

@@ -73,6 +73,7 @@ Those concerns should live elsewhere.
 - [Backend Resource Field Update Workflow](./architecture/backend-resource-field-workflow.md)
 - [DTO Render Field-Name Typing Boundary](./architecture/dto-render-field-name-typing.md)
 - [DTO/Model Contract Projection Evolution](./architecture/dto-model-contract-projection-evolution.md)
+- [DTO Schema Scenes and Readonly Sanitization](./architecture/dto-schema-scenes-and-readonly-sanitization.md)
 - [`$Dto.get` Named Relation Lazy-Resolution Invariant](./architecture/vona-dto-get-relation-resolution.md)
 - [a-image Cloudflare Integration and Signed Delivery Architecture](./architecture/a-image-cloudflare-signed-delivery-architecture.md)
 - [a-image Refactor Checklist](./architecture/a-image-refactor-checklist.md)

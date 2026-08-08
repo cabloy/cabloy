@@ -73,11 +73,13 @@ class DtoStudentCreate {
 }
 ```
 
-When mixing helper metadata and an explicit zod schema in `@Api.field(...)`, apply the same ordering rule used by entities:
+When mixing helper metadata and a structure-defining schema-like argument in `@Api.field(...)`, apply the same ordering rule used by entities:
 
-- place `z.xxx(...)` as the **last argument** because it returns the zod schema instance
-- keep helper metadata such as `v.xxx(...)` and `ZovaRender.xxx(...)` before the zod schema
-- otherwise helpers written after the zod schema may stop taking effect
+- place the final structure-defining argument, such as `z.xxx(...)`, `v.object(...)`, or `v.array(...)`, **last**
+- keep helper metadata such as `v.xxx(...)` and `ZovaRender.xxx(...)` before it
+- optionality, nullability, defaults, and preprocess/transform wrappers are also structure-shaping; do not assume their order is interchangeable
+
+Framework DTO composition preserves inherited OpenAPI metadata, but that preservation does not make structure-shaping schema-like composition order-independent. Verify emitted schema/OpenAPI output after changing those arguments.
 
 For query-oriented DTOs, another important distinction is optional vs nullable:
 
@@ -85,6 +87,39 @@ For query-oriented DTOs, another important distinction is optional vs nullable:
 - `v.nullable()` means the field may carry a real `null`
 
 That becomes especially important for DTO query filters. A field declared with `v.optional(), v.nullable()` can preserve real `null` through query parsing so the downstream ORM filter can express SQL `IS NULL` instead of silently treating the value as omitted.
+
+## DTO schema scenes
+
+A DTO can declare the contract scene that its schema represents:
+
+```typescript
+@Dto({
+  schemaScene: 'filter',
+  fields: {
+    status: $makeSchema(v.optional(), z.string()),
+  },
+})
+export class DtoOrderFilter extends $Dto.query(EntityOrder, ['status']) {}
+```
+
+The shared scene vocabulary is:
+
+- `table`
+- `form`
+- `form-view`
+- `form-create`
+- `filter`
+
+`schemaScene` is emitted through Cabloy's `rest.schemaScene` OpenAPI extension metadata. It is not a standard OpenAPI field. The same metadata can therefore guide Vona request validation and Zova schema-driven consumers.
+
+The inferred mutation helpers already declare the usual write intent:
+
+- `$Dto.create(...)` uses `form-create`
+- `$Dto.update(...)` uses `form`
+
+Use `@Dto({ schemaScene })` when a named DTO has a deliberately different request-contract scene. Do not restate the normal create or update scene only because a DTO wraps one of those helpers.
+
+Choose the scene from the API contract, not from the particular screen that happens to call it. A scene does not decide which fields the DTO contains: use `$Dto.*`, `columns`, `include`, and `dtoClass` to define the supported projection first. For the inferred authoring sequence, see [DTO Infer and Generation](/backend/dto-infer-generation); for scene-aware write handling, see [Validation Guide](/backend/validation-guide) and [OpenAPI Guide](/backend/openapi-guide).
 
 ## DTO options
 
