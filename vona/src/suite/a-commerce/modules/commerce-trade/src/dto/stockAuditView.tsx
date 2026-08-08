@@ -22,4 +22,24 @@ export interface IDtoOptionsStockAuditView extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoStockAuditView extends $Dto.get(() => ModelStockAudit) {}
+export class DtoStockAuditView extends $Dto.get(() => ModelStockAudit, {
+  columns: [
+    'id',
+    'stockBalanceId',
+    'skuId',
+    'stockReservationId',
+    'actorId',
+    'operation',
+    'delta',
+    'reason',
+    'correlationId',
+    'priorOnHand',
+    'priorReserved',
+    'priorAvailable',
+    'onHand',
+    'reserved',
+    'available',
+    'createdAt',
+    'updatedAt',
+  ],
+}) {}

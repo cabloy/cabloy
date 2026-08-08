@@ -6,6 +6,7 @@ import { Dto } from 'vona-module-a-web';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
+import { EntityStockAudit } from '../entity/stockAudit.tsx';
 import { ModelStockAudit } from '../model/stockAudit.ts';
 
 export interface IDtoOptionsStockAuditSelectResItem extends IDecoratorDtoOptions {}
@@ -43,7 +44,12 @@ export interface IDtoOptionsStockAuditSelectResItem extends IDecoratorDtoOptions
     }),
   ],
 })
-export class DtoStockAuditSelectResItem extends $Dto.get(() => ModelStockAudit) {
+export class DtoStockAuditSelectResItem extends $Dto.get(() => ModelStockAudit, {
+  columns: ['id', 'skuId', 'operation', 'delta', 'createdAt'],
+}) {
+  @Api.field(ZovaRender.order(1, 'core'), ZovaRender.cell('basic-table:actionView'))
+  declare id: EntityStockAudit['id'];
+
   @Api.field(
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),

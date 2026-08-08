@@ -1236,6 +1236,57 @@ test(
 );
 
 test(
+  'ATP-SPC-04: Stock Admin resources remain readonly and mutation-free',
+  { tag: ['@admin', '@flow', '@stock'] },
+  async ({ browser }) => {
+    test.setTimeout(60_000);
+    const adminContext = await browser.newContext();
+    const adminPage = await adminContext.newPage();
+    const adminPageErrors = collectPageErrors(adminPage);
+    const mutationMethods: string[] = [];
+    adminPage.on('request', request => {
+      const url = new URL(request.url());
+      if (
+        url.pathname.includes('/api/commerce/trade/stock') &&
+        ['POST', 'PATCH', 'PUT', 'DELETE'].includes(request.method())
+      ) {
+        mutationMethods.push(request.method());
+      }
+    });
+
+    try {
+      await adminPage.setViewportSize({ width: 1440, height: 900 });
+      await login(adminPage, '/commerce-admin/', 'admin', '123456', 'commerceAdmin');
+
+      for (const [resourcePath, title] of [
+        ['commerce-trade%3AstockBalance', 'Stock Balance'],
+        ['commerce-trade%3AstockAudit', 'Stock Audit'],
+      ] as const) {
+        await adminPage.goto(`/commerce-admin/rest/resource/${resourcePath}`, {
+          waitUntil: 'load',
+        });
+        await expect(adminPage).toHaveURL(
+          new RegExp(
+            `/commerce-admin/rest/resource/commerce-trade(?:%3A|:|%253A)${title === 'Stock Balance' ? 'stockBalance' : 'stockAudit'}(?:[/?#]|$)`,
+          ),
+        );
+        await expect(adminPage.getByText(title, { exact: true }).first()).toBeVisible();
+        await expect(adminPage.getByRole('button', { name: 'Create', exact: true })).toHaveCount(0);
+        await expect(
+          adminPage.locator('a[href*="/rest/resource/"]').filter({ hasText: 'Create' }),
+        ).toHaveCount(0);
+        await expect(adminPage.getByRole('button', { name: 'Submit', exact: true })).toHaveCount(0);
+      }
+
+      expect(mutationMethods).toEqual([]);
+      expect(adminPageErrors).toEqual([]);
+    } finally {
+      await adminContext.close().catch(() => {});
+    }
+  },
+);
+
+test(
   'Commerce Cart: anonymous browser is redirected to login',
   { tag: ['@web', '@cart'] },
   async ({ page, request }) => {

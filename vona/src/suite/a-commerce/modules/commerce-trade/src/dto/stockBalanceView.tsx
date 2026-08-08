@@ -22,4 +22,6 @@ export interface IDtoOptionsStockBalanceView extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoStockBalanceView extends $Dto.get(() => ModelStockBalance) {}
+export class DtoStockBalanceView extends $Dto.get(() => ModelStockBalance, {
+  columns: ['id', 'skuId', 'onHand', 'reserved', 'available', 'createdAt', 'updatedAt'],
+}) {}

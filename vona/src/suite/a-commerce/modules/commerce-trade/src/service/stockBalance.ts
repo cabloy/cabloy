@@ -41,11 +41,16 @@ const serializationRetryOptions = {
 @Service()
 export class ServiceStockBalance extends BeanBase {
   async select(params?: IQueryParams<ModelStockBalance>): Promise<DtoStockBalanceSelectRes> {
-    return await this.scope.model.stockBalance.selectAndCount(params);
+    return await this.scope.model.stockBalance.selectAndCount({
+      ...params,
+      columns: ['id', 'skuId', 'onHand', 'reserved', 'available'],
+    });
   }
 
   async view(id: TableIdentity): Promise<DtoStockBalanceView | undefined> {
-    return await this.scope.model.stockBalance.getById(id);
+    return await this.scope.model.stockBalance.getById(id, {
+      columns: ['id', 'skuId', 'onHand', 'reserved', 'available', 'createdAt', 'updatedAt'],
+    });
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
