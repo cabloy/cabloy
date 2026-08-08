@@ -75,6 +75,7 @@ function orderRecord(state: IGatewayState) {
   return {
     id: state.orderId,
     status: state.orderStatus,
+    links: [{ rel: 'approve', href: `https://sandbox.paypal.test/${state.orderId}` }],
     purchaseUnits: [
       {
         customId: state.orderId?.replace('paypal-order-', ''),
@@ -659,7 +660,10 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           );
           const reconciled = await pay.model.paymentSession.getById(started.id);
           assert.equal(reconciled?.state, 'requires_action');
-          assert.equal(reconciled?.nextAction, undefined);
+          assert.deepEqual(reconciled?.nextAction, {
+            kind: 'redirect',
+            url: `https://sandbox.paypal.test/${state.orderId}`,
+          });
           assert.equal(
             (await app.scope('commerce-trade').model.order.getById(fixture.orderId!))?.state,
             'awaiting_payment',

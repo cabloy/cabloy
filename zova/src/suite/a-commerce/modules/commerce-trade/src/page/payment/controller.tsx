@@ -206,8 +206,10 @@ export class ControllerPagePayment extends BeanControllerPageBase {
     const isMockSession = session?.providerName === 'pay-mock:mock';
     const isCreated = session?.state === 'created';
     const isActionable = session?.state === 'requires_action';
-    const isResumableCancelReturn =
+    const isActionableCancelReturn =
       this.$query.providerResult === 'cancel' && this.cancelReturnReconciled && isActionable;
+    const hasResumableCancelRedirect =
+      isActionableCancelReturn && session?.nextAction?.kind === 'redirect';
     const isPendingTerminalState = ['succeeded', 'failed', 'cancelled', 'expired'].includes(
       this.pendingSessionState ?? '',
     );
@@ -231,11 +233,12 @@ export class ControllerPagePayment extends BeanControllerPageBase {
               Start payment
             </button>
           )}
-          {isResumableCancelReturn && (
+          {isActionableCancelReturn && (
             <section class="mt-6 rounded border border-base-300 p-4" aria-live="polite">
               <p class="text-base-content/70">
-                You returned from the payment provider without completing payment. Your payment
-                status has been refreshed. You can continue to payment or open your order.
+                {hasResumableCancelRedirect
+                  ? 'You returned from the payment provider without completing payment. Your payment status has been refreshed. You can continue to payment or open your order.'
+                  : 'You returned from the payment provider without completing payment. Your payment status has been refreshed. You can open your order.'}
               </p>
             </section>
           )}
@@ -248,7 +251,7 @@ export class ControllerPagePayment extends BeanControllerPageBase {
               }}
             />
           )}
-          {isResumableCancelReturn && (
+          {isActionableCancelReturn && (
             <button class="btn btn-outline mt-3" type="button" onClick={() => this.openOrder()}>
               Open order
             </button>

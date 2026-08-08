@@ -98,11 +98,7 @@ export class PayProviderPaypal
       },
     );
     const orderRecord = asRecord(order);
-    const approvalUrl = readString(
-      asArray(orderRecord.links)
-        .map(asRecord)
-        .find(item => item.rel === 'approve')?.href,
-    );
+    const approvalUrl = this._approvalUrl(orderRecord);
     const orderId = readString(orderRecord.id);
     if (!orderId || !approvalUrl) this.app.throw(502, 'PayPal did not return an approval order');
     return {
@@ -424,7 +420,21 @@ export class PayProviderPaypal
     if (orderRecord.status === OrderStatus.Voided) {
       return { state: 'cancelled', providerPaymentId: orderId, providerOrderId: orderId };
     }
-    return { state: 'requires_action', providerPaymentId: orderId, providerOrderId: orderId };
+    const approvalUrl = this._approvalUrl(orderRecord);
+    return {
+      state: 'requires_action',
+      providerPaymentId: orderId,
+      providerOrderId: orderId,
+      ...(approvalUrl && { nextAction: { kind: 'redirect' as const, url: approvalUrl } }),
+    };
+  }
+
+  private _approvalUrl(order: Record<string, unknown>) {
+    return readString(
+      asArray(order.links)
+        .map(asRecord)
+        .find(item => item.rel === 'approve')?.href,
+    );
   }
 
   private _mapRefund(

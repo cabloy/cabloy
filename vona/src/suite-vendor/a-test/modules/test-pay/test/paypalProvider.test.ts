@@ -200,8 +200,25 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
       }
       result = orderRecord('VOIDED');
       assert.equal((await provider.queryPayment(paymentInput, options)).state, 'cancelled');
-      result = orderRecord('CREATED', undefined);
-      assert.equal((await provider.queryPayment(paymentInput, options)).state, 'requires_action');
+      result = {
+        ...orderRecord('CREATED'),
+        links: [
+          { rel: 'approve', href: 'https://www.sandbox.paypal.com/checkoutnow?token=order-1' },
+        ],
+      };
+      assert.deepEqual(await provider.queryPayment(paymentInput, options), {
+        state: 'requires_action',
+        providerPaymentId: 'order-1',
+        providerOrderId: 'order-1',
+        nextAction: {
+          kind: 'redirect',
+          url: 'https://www.sandbox.paypal.com/checkoutnow?token=order-1',
+        },
+      });
+      result = orderRecord('CREATED');
+      const missingApproval = await provider.queryPayment(paymentInput, options);
+      assert.equal(missingApproval.state, 'requires_action');
+      assert.equal(missingApproval.nextAction, undefined);
 
       result = orderRecord('CREATED', 'COMPLETED', {
         amount: { currencyCode: 'USD', value: '13.99' },
