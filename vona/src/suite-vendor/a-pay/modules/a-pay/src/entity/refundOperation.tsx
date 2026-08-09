@@ -17,6 +17,12 @@ export class EntityRefundOperation extends EntityBase {
   @Api.field(v.required(), v.min(1), v.max(100))
   businessReference: string;
 
+  @Api.field(v.required(), v.min(1), v.max(100))
+  providerInvoiceReference: string;
+
+  @Api.field(v.required(), v.min(1), v.max(100))
+  providerCorrelationReference: string;
+
   @Api.field(z.number().int().positive())
   amountMinor: number;
 

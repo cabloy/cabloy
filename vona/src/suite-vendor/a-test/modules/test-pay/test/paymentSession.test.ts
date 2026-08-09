@@ -85,6 +85,18 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
         assert.equal(session.providerName, 'pay-mock:mock');
         assert.equal(session.clientName, 'default');
         assert.equal(session.environment, 'sandbox');
+        assert.match(
+          session.providerInvoiceReference,
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
+        assert.match(
+          session.providerCorrelationReference,
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
+        assert.notEqual(session.providerInvoiceReference, session.providerCorrelationReference);
+        const reloaded = await scope.model.paymentSession.getById(session.id);
+        assert.equal(reloaded?.providerInvoiceReference, session.providerInvoiceReference);
+        assert.equal(reloaded?.providerCorrelationReference, session.providerCorrelationReference);
         assert.ok(session.expiresAt.getTime() >= createdAt + 30 * 60 * 1000);
         assert.ok(session.expiresAt.getTime() <= Date.now() + 30 * 60 * 1000);
       } finally {
@@ -227,6 +239,19 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
           kind: 'refund',
         });
         assert.ok(providerOperation);
+        assert.match(
+          refund.providerInvoiceReference,
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
+        assert.match(
+          refund.providerCorrelationReference,
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
+        assert.notEqual(refund.providerInvoiceReference, refund.providerCorrelationReference);
+        assert.match(
+          providerOperation.idempotencyKey,
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
         const claimed = await scope.service.providerOperation.claim(providerOperation.id);
         assert.ok(claimed?.claimToken);
         await scope.service.providerOperation.markSubmitted(
@@ -281,6 +306,11 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
           kind: 'refund',
         });
         assert.ok(operation);
+        const providerRequestId = operation.idempotencyKey;
+        assert.match(
+          providerRequestId,
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
         const claimed = await scope.service.providerOperation.claim(operation.id);
         assert.ok(claimed?.claimToken);
         await scope.service.providerOperation.markSubmitted(operation.id, claimed.claimToken);
@@ -294,6 +324,8 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
         assert.equal(failed?.attemptCount, 1);
         assert.equal(failed?.errorCode, 'refund_submission_outcome_unknown');
         assert.equal(failed?.errorSummary, 'Provider refund submission outcome is unknown');
+        assert.equal(failed?.providerRequestId, providerRequestId);
+        assert.equal(failed?.idempotencyKey, providerRequestId);
         assert.equal(failed?.errorSummary?.includes('secret'), false);
         await scope.model.providerOperation.updateById(operation.id, {
           nextAttemptAt: new Date(0),
@@ -326,6 +358,8 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
         });
         const retried = await scope.model.providerOperation.getById(operation.id);
         assert.equal(retried?.attemptCount, 2);
+        assert.equal(retried?.providerRequestId, providerRequestId);
+        assert.equal(retried?.idempotencyKey, providerRequestId);
         const retryAudit = await scope.model.providerOperationRecoveryAudit.get({
           providerOperationId: operation.id,
           actionIdempotencyKey: retryKey,

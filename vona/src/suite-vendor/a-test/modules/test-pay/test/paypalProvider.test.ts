@@ -24,8 +24,8 @@ function orderRecord(
     status,
     purchaseUnits: [
       {
-        customId: '101',
-        invoiceId: 'business-1',
+        customId: 'payment-correlation-reference',
+        invoiceId: 'payment-invoice-reference',
         amount: { currencyCode: 'USD', value: '12.99' },
         payee: { merchantId: 'merchant-1' },
         payments: captureStatus
@@ -48,6 +48,8 @@ function orderRecord(
 const paymentInput = {
   paymentSessionId: 101,
   businessReference: 'business-1',
+  providerInvoiceReference: 'payment-invoice-reference',
+  providerCorrelationReference: 'payment-correlation-reference',
   idempotencyKey: 'payment-key',
   amountMinor: 1299,
   currency: 'USD',
@@ -58,6 +60,8 @@ const refundInput = {
   paymentSessionId: 101,
   refundOperationId: 201,
   businessReference: 'refund-business-1',
+  providerInvoiceReference: 'refund-invoice-reference',
+  providerCorrelationReference: 'refund-correlation-reference',
   idempotencyKey: 'refund-key',
   amountMinor: 500,
   currency: 'USD',
@@ -121,8 +125,8 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
           },
           purchaseUnits: [
             {
-              customId: '101',
-              invoiceId: 'business-1',
+              customId: 'payment-correlation-reference',
+              invoiceId: 'payment-invoice-reference',
               amount: { currencyCode: 'USD', value: '12.99' },
             },
           ],
@@ -238,6 +242,56 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('logs only allowlisted merchant diagnostics before rejecting order and refund conflicts', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const warnings: unknown[] = [];
+      const gateway = {
+        async getOrder() {
+          return orderRecord('COMPLETED', 'COMPLETED', {
+            payee: { merchantId: 'merchant-order-observed' },
+          });
+        },
+        async refundCapturedPayment() {
+          return {
+            id: 'refund-1',
+            customId: 'refund-correlation-reference',
+            invoiceId: 'refund-invoice-reference',
+            amount: { currencyCode: 'USD', value: '5.00' },
+            status: 'COMPLETED',
+            sellerReceivableBreakdown: { payee: { merchantId: 'merchant-refund-observed' } },
+          };
+        },
+      };
+      const { provider } = app.bean.payProvider.resolveByName('pay-paypal:paypal', 'default');
+      const warn = (provider as any).$logger.warn;
+      (provider as any).$logger.warn = (message: unknown) => warnings.push(message);
+      try {
+        await assert.rejects(provider.queryPayment(paymentInput, createOptions(gateway)), {
+          status: 409,
+        });
+        await assert.rejects(provider.createRefund(refundInput, createOptions(gateway)), {
+          status: 409,
+        });
+      } finally {
+        (provider as any).$logger.warn = warn;
+      }
+      assert.deepEqual(warnings, [
+        {
+          event: 'paypal.merchant_reference_conflict',
+          expectedMerchantReference: 'merchant-1',
+          observedMerchantReference: 'merchant-order-observed',
+          observedMerchantSource: 'payee.merchant_id',
+        },
+        {
+          event: 'paypal.merchant_reference_conflict',
+          expectedMerchantReference: 'merchant-1',
+          observedMerchantReference: 'merchant-refund-observed',
+          observedMerchantSource: 'seller_receivable_breakdown.payee.merchant_id',
+        },
+      ]);
+    });
+  });
+
   it('maps refund statuses and preserves refund request facts', async () => {
     await app.bean.executor.mockCtx(async () => {
       const calls: unknown[] = [];
@@ -245,8 +299,8 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
       function refundRecord() {
         return {
           id: 'refund-1',
-          customId: '201',
-          invoiceId: 'refund-business-1',
+          customId: 'refund-correlation-reference',
+          invoiceId: 'refund-invoice-reference',
           amount: { currencyCode: 'USD', value: '5.00' },
           status,
           payee: { merchantId: 'merchant-1' },
@@ -282,8 +336,8 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
         paypalRequestId: 'refund-key',
         body: {
           amount: { currencyCode: 'USD', value: '5.00' },
-          customId: '201',
-          invoiceId: 'refund-business-1',
+          customId: 'refund-correlation-reference',
+          invoiceId: 'refund-invoice-reference',
         },
       });
     });
@@ -358,7 +412,7 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
           return {
             id: 'refund-1',
             customId: 'not-a-local-refund',
-            invoiceId: 'refund-business-1',
+            invoiceId: 'refund-invoice-reference',
             amount: { currencyCode: 'USD', value: '5.00' },
             status: 'COMPLETED',
             payee: { merchantId: 'merchant-1' },
@@ -388,7 +442,7 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
     });
   });
 
-  it('passes webhook facts to the gateway and maps verified capture events', async () => {
+  it('passes webhook facts to the gateway and rejects uncorrelated capture events', async () => {
     await app.bean.executor.mockCtx(async () => {
       const calls: unknown[] = [];
       const gateway = {
@@ -414,10 +468,7 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
         },
         headers: { 'paypal-transmission-id': 'transmission-1' },
       };
-      const verified = await provider.verifyWebhook(webhookInput, options);
-      assert.equal(verified.eventId, 'event-1');
-      assert.equal(verified.payment?.state, 'succeeded');
-      assert.equal(verified.payment?.providerCaptureId, 'capture-1');
+      await assert.rejects(provider.verifyWebhook(webhookInput, options), { status: 400 });
       assert.deepEqual(calls[0], {
         options: {
           environment: 'sandbox',

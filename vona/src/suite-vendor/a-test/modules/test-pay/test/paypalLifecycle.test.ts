@@ -29,9 +29,10 @@ interface IGatewayState {
   refundError?: Error;
   captureLookupError?: Error;
   refundAmount?: string;
-  businessReference?: string;
-  refundOperationId?: string;
-  refundBusinessReference?: string;
+  providerInvoiceReference?: string;
+  providerCorrelationReference?: string;
+  refundProviderInvoiceReference?: string;
+  refundProviderCorrelationReference?: string;
   calls: Array<{ kind: string; input: unknown }>;
 }
 
@@ -39,7 +40,10 @@ function createGateway(state: IGatewayState) {
   return {
     async createOrder(_options: unknown, input: any) {
       state.calls.push({ kind: 'createOrder', input });
-      state.orderId = `paypal-order-${String(input.body.purchaseUnits[0].customId)}`;
+      const unit = input.body.purchaseUnits[0];
+      state.providerCorrelationReference = unit.customId;
+      state.providerInvoiceReference = unit.invoiceId;
+      state.orderId = `paypal-order-${String(unit.customId)}`;
       return {
         id: state.orderId,
         links: [{ rel: 'approve', href: `https://sandbox.paypal.test/${state.orderId}` }],
@@ -63,6 +67,8 @@ function createGateway(state: IGatewayState) {
     async refundCapturedPayment(_options: unknown, input: any) {
       state.calls.push({ kind: 'refundCapturedPayment', input });
       if (state.refundError) throw state.refundError;
+      state.refundProviderCorrelationReference = input.body.customId;
+      state.refundProviderInvoiceReference = input.body.invoiceId;
       state.refundId = state.refundId ?? `paypal-refund-${input.body.customId}`;
       return refundRecord(state);
     },
@@ -88,8 +94,8 @@ function orderRecord(state: IGatewayState) {
     links: [{ rel: 'approve', href: `https://sandbox.paypal.test/${state.orderId}` }],
     purchaseUnits: [
       {
-        customId: state.orderId?.replace('paypal-order-', ''),
-        invoiceId: state.businessReference,
+        customId: state.providerCorrelationReference,
+        invoiceId: state.providerInvoiceReference,
         amount: { currencyCode: 'USD', value: '12.99' },
         payee: { merchantId: 'merchant-test' },
         payments: state.captureStatus
@@ -111,8 +117,8 @@ function orderRecord(state: IGatewayState) {
 function refundRecord(state: IGatewayState) {
   return {
     id: state.refundId,
-    customId: state.refundOperationId,
-    invoiceId: state.refundBusinessReference,
+    customId: state.refundProviderCorrelationReference,
+    invoiceId: state.refundProviderInvoiceReference,
     amount: { currencyCode: 'USD', value: state.refundAmount ?? '5.00' },
     status: state.refundStatus,
     payee: { merchantId: 'merchant-test' },
@@ -323,7 +329,6 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
           assert.equal(session?.providerName, 'pay-paypal:paypal');
           assert.equal(session?.environment, 'sandbox');
-          state.businessReference = String(fixture.paymentAttemptId);
           const started = await pay.service.paymentSession.start(fixture.paymentSessionId!);
           assert.equal(started.state, 'requires_action');
           assert.equal(started.nextAction?.kind, 'redirect');
@@ -332,12 +337,27 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
               ?.state,
             'succeeded',
           );
+          const startOperation = await pay.model.providerOperation.get({
+            paymentSessionId: started.id,
+            kind: 'start',
+          });
+          assert.match(
+            startOperation?.idempotencyKey ?? '',
+            /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+          );
+          assert.equal(startOperation?.providerRequestId, startOperation?.idempotencyKey);
           const createCall = state.calls.find(call => call.kind === 'createOrder') as any;
-          assert.equal(createCall.input.body.purchaseUnits[0].customId, String(started.id));
+          assert.equal(createCall.input.paypalRequestId, startOperation?.idempotencyKey);
+          assert.equal(
+            createCall.input.body.purchaseUnits[0].customId,
+            started.providerCorrelationReference,
+          );
           assert.equal(
             createCall.input.body.purchaseUnits[0].invoiceId,
-            String(fixture.paymentAttemptId),
+            started.providerInvoiceReference,
           );
+          assert.notEqual(started.providerCorrelationReference, String(started.id));
+          assert.notEqual(started.providerInvoiceReference, String(fixture.paymentAttemptId));
 
           const returnUrl = await callbackToken(started.id as number, 'return');
           const returnState = new URL(returnUrl).searchParams.get('state');
@@ -391,7 +411,6 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
         try {
           Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
           const pay = app.scope('a-pay');
-          state.businessReference = String(fixture.paymentAttemptId);
           const started = await pay.service.paymentSession.start(fixture.paymentSessionId!);
           const returnState = new URL(
             await callbackToken(started.id as number, 'return'),
@@ -465,7 +484,6 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
         try {
           Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
           const pay = app.scope('a-pay');
-          state.businessReference = String(fixture.paymentAttemptId);
           const started = await pay.service.paymentSession.start(fixture.paymentSessionId!);
           const returnState = new URL(
             await callbackToken(started.id as number, 'return'),
@@ -538,9 +556,10 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           const pay = app.scope('a-pay');
           const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
           assert.ok(session);
-          state.orderId = `paypal-order-${session.id}`;
+          state.providerCorrelationReference = session.providerCorrelationReference;
+          state.providerInvoiceReference = session.providerInvoiceReference;
+          state.orderId = `paypal-order-${session.providerCorrelationReference}`;
           state.captureId = `paypal-capture-${session.id}`;
-          state.businessReference = String(fixture.paymentAttemptId);
           const rawBody = JSON.stringify({
             id: `paypal-event-${session.id}`,
             event_type: 'PAYMENT.CAPTURE.COMPLETED',
@@ -607,7 +626,6 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           const pay = app.scope('a-pay');
           const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
           assert.ok(session);
-          state.businessReference = String(fixture.paymentAttemptId);
           const started = await pay.service.paymentSession.start(session.id);
           state.orderStatus = 'VOIDED';
           const cancelUrl = await callbackToken(started.id as number, 'cancel');
@@ -675,7 +693,6 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           const pay = app.scope('a-pay');
           const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
           assert.ok(session);
-          state.businessReference = String(fixture.paymentAttemptId);
           const started = await pay.service.paymentSession.start(session.id);
           const cancelUrl = await callbackToken(started.id as number, 'cancel');
           const cancelState = new URL(cancelUrl).searchParams.get('state');
@@ -737,7 +754,6 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
         try {
           Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
           const pay = app.scope('a-pay');
-          state.businessReference = String(fixture.paymentAttemptId);
           const started = await pay.service.paymentSession.start(fixture.paymentSessionId!);
           const cancelState = new URL(
             await callbackToken(started.id as number, 'cancel'),
@@ -796,7 +812,6 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           const pay = app.scope('a-pay');
           const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
           assert.ok(session);
-          state.businessReference = String(fixture.paymentAttemptId);
           const started = await pay.service.paymentSession.start(session.id);
           const returnUrl = await callbackToken(started.id as number, 'return');
           const token = new URL(returnUrl).searchParams.get('state');
@@ -862,9 +877,10 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           const pay = app.scope('a-pay');
           const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
           assert.ok(session);
-          state.orderId = `paypal-order-${session.id}`;
+          state.providerCorrelationReference = session.providerCorrelationReference;
+          state.providerInvoiceReference = session.providerInvoiceReference;
+          state.orderId = `paypal-order-${session.providerCorrelationReference}`;
           state.captureId = `paypal-capture-${session.id}`;
-          state.businessReference = String(fixture.paymentAttemptId);
           const rawBody = JSON.stringify({
             id: `paypal-controller-event-${session.id}`,
             event_type: 'PAYMENT.CAPTURE.COMPLETED',
@@ -937,9 +953,10 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           const pay = app.scope('a-pay');
           const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
           assert.ok(session);
-          state.orderId = `paypal-order-${session.id}`;
+          state.providerCorrelationReference = session.providerCorrelationReference;
+          state.providerInvoiceReference = session.providerInvoiceReference;
+          state.orderId = `paypal-order-${session.providerCorrelationReference}`;
           state.captureId = `paypal-capture-${session.id}`;
-          state.businessReference = String(fixture.paymentAttemptId);
           await pay.model.paymentSession.updateById(session.id, {
             state: 'succeeded',
             providerOrderId: state.orderId,
@@ -964,20 +981,35 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
             idempotencyKey: `paypal-refund-${session.id}`,
             correlationId: `paypal-refund-correlation-${session.id}`,
           });
-          state.refundOperationId = String(refund.id);
-          state.refundBusinessReference = refund.businessReference;
+          state.refundProviderCorrelationReference = refund.providerCorrelationReference;
+          state.refundProviderInvoiceReference = refund.providerInvoiceReference;
           await pay.service.refundOperation.submit(refund.id);
           const outbox = await pay.model.outboxEvent.get({
             refundOperationId: refund.id,
             eventType: 'refund.outcome.v1',
           });
           assert.ok(outbox);
+          const refundProviderOperation = await pay.model.providerOperation.get({
+            refundOperationId: refund.id,
+            kind: 'refund',
+          });
+          assert.match(
+            refundProviderOperation?.idempotencyKey ?? '',
+            /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+          );
+          assert.equal(
+            refundProviderOperation?.providerRequestId,
+            refundProviderOperation?.idempotencyKey,
+          );
           const refundCall = state.calls.find(call => call.kind === 'refundCapturedPayment') as any;
+          assert.equal(refundCall.input.paypalRequestId, refundProviderOperation?.idempotencyKey);
           assert.deepEqual(refundCall.input.body, {
             amount: { currencyCode: 'USD', value: '5.00' },
-            customId: String(refund.id),
-            invoiceId: refund.businessReference,
+            customId: refund.providerCorrelationReference,
+            invoiceId: refund.providerInvoiceReference,
           });
+          assert.notEqual(refund.providerCorrelationReference, String(refund.id));
+          assert.notEqual(refund.providerInvoiceReference, refund.businessReference);
           await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outbox.id });
           await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outbox.id });
           assert.equal((await pay.model.refundOperation.getById(refund.id))?.state, 'succeeded');
@@ -1009,9 +1041,10 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           const pay = app.scope('a-pay');
           const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
           assert.ok(session);
-          state.orderId = `paypal-order-${session.id}`;
+          state.providerCorrelationReference = session.providerCorrelationReference;
+          state.providerInvoiceReference = session.providerInvoiceReference;
+          state.orderId = `paypal-order-${session.providerCorrelationReference}`;
           state.captureId = `paypal-capture-${session.id}`;
-          state.businessReference = String(fixture.paymentAttemptId);
           await pay.model.paymentSession.updateById(session.id, {
             state: 'succeeded',
             providerOrderId: state.orderId,
@@ -1044,9 +1077,9 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
             executed.refundOperationId!,
           );
           assert.ok(refundOperation);
-          state.refundOperationId = String(refundOperation.id);
-          state.refundBusinessReference = refundOperation.businessReference;
-          state.refundId = `paypal-refund-${refundOperation.id}`;
+          state.refundProviderCorrelationReference = refundOperation.providerCorrelationReference;
+          state.refundProviderInvoiceReference = refundOperation.providerInvoiceReference;
+          state.refundId = `paypal-refund-${refundOperation.providerCorrelationReference}`;
           const rawBody = JSON.stringify({
             id: `paypal-capture-refunded-${session.id}`,
             event_type: 'PAYMENT.CAPTURE.REFUNDED',
@@ -1132,9 +1165,10 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           const pay = app.scope('a-pay');
           const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
           assert.ok(session);
-          state.orderId = `paypal-order-${session.id}`;
+          state.providerCorrelationReference = session.providerCorrelationReference;
+          state.providerInvoiceReference = session.providerInvoiceReference;
+          state.orderId = `paypal-order-${session.providerCorrelationReference}`;
           state.captureId = `paypal-capture-${session.id}`;
-          state.businessReference = String(fixture.paymentAttemptId);
           await pay.model.paymentSession.updateById(session.id, {
             state: 'succeeded',
             providerOrderId: state.orderId,

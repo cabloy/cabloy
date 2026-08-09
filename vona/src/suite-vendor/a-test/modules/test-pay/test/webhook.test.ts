@@ -6,6 +6,7 @@ import { acquireTestLock, app } from 'vona-mock';
 interface IFixture {
   userId?: number;
   paymentSessionId?: number;
+  providerCorrelationReference?: string;
 }
 
 async function createFixture(suffix: string): Promise<IFixture> {
@@ -19,7 +20,11 @@ async function createFixture(suffix: string): Promise<IFixture> {
     currency: 'USD',
     correlationId: `payment-${suffix}`,
   });
-  return { userId: user.id as number, paymentSessionId: session.id as number };
+  return {
+    userId: user.id as number,
+    paymentSessionId: session.id as number,
+    providerCorrelationReference: session.providerCorrelationReference,
+  };
 }
 
 async function cleanup(fixture: IFixture) {
@@ -46,7 +51,7 @@ function createRawBody(
     state,
     amountMinor: 1299,
     eventType: `payment.${state}`,
-    paymentSessionId: String(fixture.paymentSessionId),
+    providerCorrelationReference: fixture.providerCorrelationReference,
     eventId: options?.eventId ?? `mock-${suffix}`,
     providerPaymentId: options?.providerPaymentId ?? `payment-${suffix}`,
     providerCaptureId: options?.providerCaptureId ?? `capture-${suffix}`,
@@ -54,7 +59,7 @@ function createRawBody(
   });
 }
 
-function createCommand(rawBody: string) {
+function createCommand(rawBody: string, paymentSessionId: number) {
   const body = JSON.parse(rawBody);
   return {
     providerName: 'pay-mock:mock',
@@ -64,7 +69,7 @@ function createCommand(rawBody: string) {
     verified: {
       eventId: body.eventId,
       eventType: body.eventType,
-      paymentSessionId: body.paymentSessionId,
+      paymentSessionId,
       payment: {
         state: body.state,
         providerPaymentId: body.providerPaymentId,
@@ -202,8 +207,12 @@ describe('webhook.test.ts', { concurrency: false, sequential: true }, () => {
       const fixture = await createFixture(randomUUID().slice(0, 12));
       try {
         const rawBody = createRawBody(fixture, randomUUID().slice(0, 12));
-        const first = await app.scope('a-pay').service.webhook.receive(createCommand(rawBody));
-        const replay = await app.scope('a-pay').service.webhook.receive(createCommand(rawBody));
+        const first = await app
+          .scope('a-pay')
+          .service.webhook.receive(createCommand(rawBody, fixture.paymentSessionId!));
+        const replay = await app
+          .scope('a-pay')
+          .service.webhook.receive(createCommand(rawBody, fixture.paymentSessionId!));
         assert.equal(replay.id, first.id);
         assert.equal(replay.state, 'processed');
         const session = await app
@@ -231,7 +240,9 @@ describe('webhook.test.ts', { concurrency: false, sequential: true }, () => {
       const rawBody = createRawBody(fixture, randomUUID().slice(0, 12));
       const receive = async () => {
         return await app.bean.executor.mockCtx(async () => {
-          return await app.scope('a-pay').service.webhook.receive(createCommand(rawBody));
+          return await app
+            .scope('a-pay')
+            .service.webhook.receive(createCommand(rawBody, fixture.paymentSessionId!));
         });
       };
       const results = await Promise.allSettled([receive(), receive()]);
@@ -244,7 +255,7 @@ describe('webhook.test.ts', { concurrency: false, sequential: true }, () => {
         const failedRawBody = createRawBody(fixture, randomUUID().slice(0, 12), 'failed');
         const ignored = await app
           .scope('a-pay')
-          .service.webhook.receive(createCommand(failedRawBody));
+          .service.webhook.receive(createCommand(failedRawBody, fixture.paymentSessionId!));
         const session = await app
           .scope('a-pay')
           .model.paymentSession.getById(fixture.paymentSessionId!);
@@ -267,12 +278,16 @@ describe('webhook.test.ts', { concurrency: false, sequential: true }, () => {
       const fixture = await createFixture(randomUUID().slice(0, 12));
       try {
         const first = createRawBody(fixture, randomUUID().slice(0, 12));
-        await app.scope('a-pay').service.webhook.receive(createCommand(first));
+        await app
+          .scope('a-pay')
+          .service.webhook.receive(createCommand(first, fixture.paymentSessionId!));
         const conflict = createRawBody(fixture, randomUUID().slice(0, 12), 'succeeded', {
           providerCaptureId: `other-capture-${randomUUID().slice(0, 12)}`,
         });
         await assert.rejects(
-          app.scope('a-pay').service.webhook.receive(createCommand(conflict)),
+          app
+            .scope('a-pay')
+            .service.webhook.receive(createCommand(conflict, fixture.paymentSessionId!)),
           (error: any) => error.code === 409,
         );
         const facts = await countFacts(fixture.paymentSessionId!);

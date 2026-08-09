@@ -82,7 +82,7 @@ export class ServiceProviderOperation extends BeanBase {
       source: 'providerOperation.start',
       occurredAt: now,
     });
-    return await this._insertOperation(session, 'start', `${session.correlationId}:start`, now);
+    return await this._insertOperation(session, 'start', now);
   }
 
   @Core.transaction()
@@ -101,12 +101,7 @@ export class ServiceProviderOperation extends BeanBase {
       kind: 'confirm',
     });
     if (existing && !['succeeded', 'failed'].includes(existing.state)) return existing;
-    return await this._insertOperation(
-      session,
-      'confirm',
-      `${session.correlationId}:confirm`,
-      new Date(),
-    );
+    return await this._insertOperation(session, 'confirm', new Date());
   }
 
   @Core.transaction()
@@ -125,12 +120,7 @@ export class ServiceProviderOperation extends BeanBase {
       kind: 'query',
     });
     if (existing && !['succeeded', 'failed'].includes(existing.state)) return existing;
-    return await this._insertOperation(
-      session,
-      'query',
-      `${session.correlationId}:query`,
-      new Date(),
-    );
+    return await this._insertOperation(session, 'query', new Date());
   }
 
   async reconcileRefund(providerOperationId: TableIdentity, command: IRefundRecoveryCommand) {
@@ -185,6 +175,8 @@ export class ServiceProviderOperation extends BeanBase {
     const input: IPayProviderPaymentInput = {
       paymentSessionId: session.id,
       businessReference: session.businessReference,
+      providerInvoiceReference: session.providerInvoiceReference,
+      providerCorrelationReference: session.providerCorrelationReference,
       idempotencyKey: operation.idempotencyKey,
       amountMinor: session.amountMinor,
       currency: session.currency,
@@ -220,6 +212,8 @@ export class ServiceProviderOperation extends BeanBase {
       paymentSessionId: session.id,
       refundOperationId: refund.id,
       businessReference: refund.businessReference,
+      providerInvoiceReference: refund.providerInvoiceReference,
+      providerCorrelationReference: refund.providerCorrelationReference,
       idempotencyKey: operation.idempotencyKey,
       amountMinor: refund.amountMinor,
       currency: refund.currency,
@@ -302,6 +296,7 @@ export class ServiceProviderOperation extends BeanBase {
     const submittedAt = new Date();
     await this.scope.model.providerOperation.updateById(operation.id, {
       state: 'submitted',
+      providerRequestId: operation.providerRequestId ?? operation.idempotencyKey,
       submittedAt,
       recoveryRetryGrantedAt: undefined,
     });
@@ -624,14 +619,13 @@ export class ServiceProviderOperation extends BeanBase {
   private async _insertOperation(
     session: EntityPaymentSession,
     kind: Exclude<TypeProviderOperationKind, 'refund'>,
-    idempotencyKey: string,
     now: Date,
   ) {
     return await this.scope.model.providerOperation.insert({
       paymentSessionId: session.id,
       kind,
       state: 'created',
-      idempotencyKey,
+      idempotencyKey: randomUUID(),
       correlationId: session.correlationId,
       attemptCount: 0,
       nextAttemptAt: new Date(now.getTime() - 1_000),

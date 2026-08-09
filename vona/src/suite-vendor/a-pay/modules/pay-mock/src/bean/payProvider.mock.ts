@@ -19,7 +19,7 @@ import { z } from 'zod';
 const PaymentWebhookBodySchema = z.object({
   eventId: z.string().min(1).max(255),
   eventType: z.enum(['payment.succeeded', 'payment.failed', 'payment.cancelled']),
-  paymentSessionId: z.string().min(1),
+  providerCorrelationReference: z.string().uuid(),
   state: z.enum(['succeeded', 'failed', 'cancelled']),
   amountMinor: z.number().int().nonnegative(),
   currency: z.string().length(3),
@@ -30,7 +30,7 @@ const PaymentWebhookBodySchema = z.object({
 const RefundWebhookBodySchema = z.object({
   eventId: z.string().min(1).max(255),
   eventType: z.enum(['refund.pending', 'refund.succeeded', 'refund.failed', 'refund.cancelled']),
-  refundOperationId: z.string().min(1),
+  providerCorrelationReference: z.string().uuid(),
   state: z.enum(['pending', 'succeeded', 'failed', 'cancelled']),
   amountMinor: z.number().int().positive(),
   currency: z.string().length(3),
@@ -88,7 +88,7 @@ export class PayProviderMock
   ): Promise<IPayProviderPaymentSnapshot> {
     return {
       state: 'requires_action',
-      providerPaymentId: `mock-payment-${input.paymentSessionId}`,
+      providerPaymentId: `mock-payment-${input.providerCorrelationReference}`,
       nextAction: { kind: 'pending' },
     };
   }
@@ -106,7 +106,7 @@ export class PayProviderMock
   ): Promise<IPayProviderPaymentSnapshot> {
     return {
       state: 'processing',
-      providerPaymentId: `mock-payment-${input.paymentSessionId}`,
+      providerPaymentId: `mock-payment-${input.providerCorrelationReference}`,
     };
   }
 
@@ -116,7 +116,7 @@ export class PayProviderMock
   ): Promise<IPayProviderRefundSnapshot> {
     return {
       state: 'pending',
-      providerRefundId: `mock-refund-${input.refundOperationId}`,
+      providerRefundId: `mock-refund-${input.providerCorrelationReference}`,
     };
   }
 
@@ -140,10 +140,14 @@ export class PayProviderMock
       const eventType = `payment.${payment.data.state}`;
       if (payment.data.eventType !== eventType)
         this.app.throw(400, 'mock webhook event type is invalid');
+      const session = await this.$scope.pay.model.paymentSession.get({
+        providerCorrelationReference: payment.data.providerCorrelationReference,
+      });
+      if (!session) this.app.throw(400, 'mock payment webhook is not correlated');
       return {
         eventId: payment.data.eventId,
         eventType,
-        paymentSessionId: payment.data.paymentSessionId,
+        paymentSessionId: session.id,
         payment: {
           state: payment.data.state,
           providerPaymentId: payment.data.providerPaymentId,
@@ -160,10 +164,14 @@ export class PayProviderMock
     const eventType = `refund.${refund.data.state}`;
     if (refund.data.eventType !== eventType)
       this.app.throw(400, 'mock webhook event type is invalid');
+    const refundOperation = await this.$scope.pay.model.refundOperation.get({
+      providerCorrelationReference: refund.data.providerCorrelationReference,
+    });
+    if (!refundOperation) this.app.throw(400, 'mock refund webhook is not correlated');
     return {
       eventId: refund.data.eventId,
       eventType,
-      refundOperationId: refund.data.refundOperationId,
+      refundOperationId: refundOperation.id,
       refund: {
         state: refund.data.state,
         providerRefundId: refund.data.providerRefundId,

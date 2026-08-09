@@ -1,5 +1,6 @@
 import type { TableIdentity } from 'table-identity';
 
+import { randomUUID } from 'node:crypto';
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { Core } from 'vona-module-a-core';
@@ -36,6 +37,8 @@ export class ServicePaymentSession extends BeanBase {
     }
     return await this.scope.model.paymentSession.insert({
       ...command,
+      providerInvoiceReference: randomUUID(),
+      providerCorrelationReference: randomUUID(),
       providerName: provider.providerName,
       clientName: provider.clientName,
       environment: provider.environment,

@@ -46,6 +46,18 @@ describe('paymentAttempt.test.ts', { concurrency: false }, () => {
         assert.equal(session?.providerName, 'pay-mock:mock');
         assert.equal(session?.clientName, 'default');
         assert.equal(session?.environment, 'sandbox');
+        assert.match(
+          session?.providerInvoiceReference ?? '',
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
+        assert.match(
+          session?.providerCorrelationReference ?? '',
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
+        assert.notEqual(session?.providerInvoiceReference, session?.providerCorrelationReference);
+        const reloaded = await app.scope('a-pay').model.paymentSession.getById(paymentSessionId);
+        assert.equal(reloaded?.providerInvoiceReference, session?.providerInvoiceReference);
+        assert.equal(reloaded?.providerCorrelationReference, session?.providerCorrelationReference);
         assert.ok((session?.expiresAt.getTime() ?? 0) > Date.now() + 29 * 60 * 1000);
         const cancelled = await scope.service.paymentAttempt.cancel(created.orderId);
         assert.equal(cancelled?.state, 'cancelled');

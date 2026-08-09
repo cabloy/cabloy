@@ -14,6 +14,8 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.userId(paymentSession.userId);
       table.string(paymentSession.payScene, 100);
       table.string(paymentSession.businessReference, 100);
+      table.string(paymentSession.providerInvoiceReference, 100);
+      table.string(paymentSession.providerCorrelationReference, 100);
       table.string(paymentSession.providerName, 100);
       table.string(paymentSession.clientName, 100);
       table.string(paymentSession.environment, 16);
@@ -57,6 +59,8 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.basicFields();
       table.tableIdentity(refundOperation.paymentSessionId);
       table.string(refundOperation.businessReference, 100);
+      table.string(refundOperation.providerInvoiceReference, 100);
+      table.string(refundOperation.providerCorrelationReference, 100);
       table.integer(refundOperation.amountMinor);
       table.string(refundOperation.currency, 3);
       table.string(refundOperation.state, 32);

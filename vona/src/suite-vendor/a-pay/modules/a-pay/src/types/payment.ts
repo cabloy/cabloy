@@ -58,6 +58,8 @@ export interface IPayProviderCapabilities {
 export interface IPayProviderPaymentInput extends IPayMoney {
   paymentSessionId: TableIdentity;
   businessReference: string;
+  providerInvoiceReference: string;
+  providerCorrelationReference: string;
   idempotencyKey: string;
   returnUrl?: string;
   cancelUrl?: string;
@@ -68,6 +70,8 @@ export interface IPayProviderRefundInput extends IPayMoney {
   paymentSessionId: TableIdentity;
   refundOperationId: TableIdentity;
   businessReference: string;
+  providerInvoiceReference: string;
+  providerCorrelationReference: string;
   idempotencyKey: string;
   providerCaptureId: string;
   providerRefundId?: string;
