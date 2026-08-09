@@ -8,6 +8,18 @@ interface IFixture {
   paymentSessionId?: number;
 }
 
+function isZodCustomError(error: unknown, path: string[], message: string) {
+  assert.equal((error as any).code, 422);
+  assert.deepEqual((error as any).message, [
+    {
+      code: 'custom',
+      path,
+      message,
+    },
+  ]);
+  return true;
+}
+
 async function createFixture(expiresAt: Date): Promise<IFixture> {
   const scope = app.scope('a-pay');
   const suffix = randomUUID().slice(0, 12);
@@ -122,7 +134,12 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
             correlationId: `payment-${suffix}`,
             providerCandidateKey: 'stripe',
           }),
-          { status: 422 },
+          error =>
+            isZodCustomError(
+              error,
+              ['providerCandidateKey'],
+              'payment provider candidate is unavailable',
+            ),
         );
       } finally {
         await cleanup(fixture);
@@ -146,7 +163,42 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
             currency: 'EUR',
             correlationId: `payment-${suffix}`,
           }),
-          { status: 422 },
+          error =>
+            isZodCustomError(
+              error,
+              ['currency'],
+              'payment currency is not allowed by the payment scene',
+            ),
+        );
+        assert.deepEqual(
+          await scope.model.paymentSession.select({
+            where: { correlationId: `payment-${suffix}` },
+          }),
+          [],
+        );
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
+  it('reports an invalid payment amount as a field error', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const scope = app.scope('a-pay');
+      const suffix = randomUUID().slice(0, 12);
+      const user = await app.bean.user.register({ name: `payment-session-${suffix}` }, true);
+      const fixture: IFixture = { userId: user.id as number };
+      try {
+        await assert.rejects(
+          scope.service.paymentSession.create({
+            userId: user.id,
+            payScene: 'commerce-payment:commerceOrder',
+            businessReference: `business-${suffix}`,
+            amountMinor: -1,
+            currency: 'USD',
+            correlationId: `payment-${suffix}`,
+          }),
+          error => isZodCustomError(error, ['amountMinor'], 'payment amount is invalid'),
         );
         assert.deepEqual(
           await scope.model.paymentSession.select({
@@ -209,6 +261,58 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
             where: { paymentSessionId: fixture.paymentSessionId!, kind: 'confirm' },
           }),
           [],
+        );
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
+  it('rejects refund commands that conflict with the payment state', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture = await createFixture(new Date(Date.now() + 60_000));
+      try {
+        const scope = app.scope('a-pay');
+        await scope.model.paymentSession.updateById(fixture.paymentSessionId!, {
+          state: 'succeeded',
+          providerCaptureId: `capture-${randomUUID().slice(0, 12)}`,
+          finalizedAt: new Date(),
+        });
+        const command = {
+          paymentSessionId: fixture.paymentSessionId!,
+          businessReference: `refund-${randomUUID().slice(0, 12)}`,
+          currency: 'USD',
+          idempotencyKey: `refund-${randomUUID()}`,
+          correlationId: `refund-${randomUUID()}`,
+        };
+        await assert.rejects(scope.service.refundOperation.create({ ...command, amountMinor: 0 }), {
+          code: 409,
+          status: 409,
+        });
+        assert.deepEqual(
+          await scope.model.refundOperation.select({
+            where: { paymentSessionId: fixture.paymentSessionId! },
+          }),
+          [],
+        );
+        await scope.service.refundOperation.create({ ...command, amountMinor: 1_000 });
+        await assert.rejects(
+          scope.service.refundOperation.create({
+            ...command,
+            amountMinor: 300,
+            businessReference: `refund-${randomUUID().slice(0, 12)}`,
+            idempotencyKey: `refund-${randomUUID()}`,
+            correlationId: `refund-${randomUUID()}`,
+          }),
+          { code: 409, status: 409 },
+        );
+        assert.equal(
+          (
+            await scope.model.refundOperation.select({
+              where: { paymentSessionId: fixture.paymentSessionId! },
+            })
+          ).length,
+          1,
         );
       } finally {
         await cleanup(fixture);

@@ -1,5 +1,6 @@
 import type { TableIdentity } from 'table-identity';
 
+import { zodCustomError } from '@cabloy/utils';
 import { randomUUID } from 'node:crypto';
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
@@ -52,10 +53,10 @@ export class ServicePaymentSession extends BeanBase {
     sceneOptions: IDecoratorPaySceneOptions,
   ) {
     if (!Number.isSafeInteger(command.amountMinor) || command.amountMinor < 0) {
-      this.app.throw(422, 'payment amount is invalid');
+      throw zodCustomError(['amountMinor'], 'payment amount is invalid');
     }
     if (sceneOptions.currencies && !sceneOptions.currencies.includes(command.currency)) {
-      this.app.throw(422, 'payment currency is not allowed by the payment scene');
+      throw zodCustomError(['currency'], 'payment currency is not allowed by the payment scene');
     }
   }
 

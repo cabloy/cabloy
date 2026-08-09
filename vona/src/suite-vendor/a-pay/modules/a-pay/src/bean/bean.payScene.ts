@@ -1,5 +1,6 @@
 import type { TableIdentity } from 'table-identity';
 
+import { zodCustomError } from '@cabloy/utils';
 import { BeanBase } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
@@ -58,7 +59,7 @@ export class BeanPayScene extends BeanBase {
       input.providerCandidateKey &&
       !allProviders.some(item => item.key === input.providerCandidateKey)
     ) {
-      this.app.throw(422, 'payment provider candidate is unavailable');
+      throw zodCustomError(['providerCandidateKey'], 'payment provider candidate is unavailable');
     }
     const providers = await this._getAvailableProviderCandidates(options, {
       payScene: paySceneName,
@@ -69,7 +70,7 @@ export class BeanPayScene extends BeanBase {
       input.providerCandidateKey &&
       !providers.some(item => item.key === input.providerCandidateKey)
     ) {
-      this.app.throw(422, 'payment provider candidate is unavailable');
+      throw zodCustomError(['providerCandidateKey'], 'payment provider candidate is unavailable');
     }
     const candidateKey = await this._resolveProviderCandidateKey(
       paySceneName,
@@ -146,7 +147,7 @@ export class BeanPayScene extends BeanBase {
   ) {
     if (input.providerCandidateKey) {
       if (!providers.some(item => item.key === input.providerCandidateKey)) {
-        this.app.throw(422, 'payment provider candidate is unavailable');
+        throw zodCustomError(['providerCandidateKey'], 'payment provider candidate is unavailable');
       }
       return input.providerCandidateKey;
     }

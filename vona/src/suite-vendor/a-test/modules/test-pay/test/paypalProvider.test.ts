@@ -155,7 +155,7 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
       const options = createOptions(gateway) as any;
       await assert.rejects(
         provider.startPayment({ ...paymentInput, providerOrderId: undefined }, options),
-        { status: 422 },
+        { code: 500, status: 500 },
       );
       await assert.rejects(
         provider.queryPayment(paymentInput, {

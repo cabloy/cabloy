@@ -74,7 +74,7 @@ export class PayProviderPaypal
   ): Promise<IPayProviderPaymentSnapshot> {
     if (input.providerOrderId) return await this.queryPayment(input, clientOptions);
     if (!input.returnUrl || !input.cancelUrl) {
-      this.app.throw(422, 'PayPal payment requires return and cancel URLs');
+      this.app.throw(500, 'PayPal payment requires return and cancel URLs');
     }
     this._assertReady(clientOptions);
     const order = await this._gateway(clientOptions).createOrder(
