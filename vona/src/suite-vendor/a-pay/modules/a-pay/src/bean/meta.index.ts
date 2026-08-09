@@ -7,6 +7,7 @@ import { $tableColumns } from 'vona-module-a-ormutils';
 @Meta<IMetaOptionsIndex>({
   indexes: {
     ...$tableColumns('payPaymentSession', 'businessReference'),
+    ...$tableColumns('payPaymentSession', 'providerCorrelationReference'),
     ...$tableColumns('payPaymentSession', 'state+expiresAt'),
     ...$tableColumns('payPaymentSession', 'providerPaymentId'),
     ...$tableColumns('payPaymentSession', 'providerOrderId'),
@@ -16,7 +17,14 @@ import { $tableColumns } from 'vona-module-a-ormutils';
     ...$tableColumns('payProviderOperation', 'state+nextAttemptAt'),
     ...$tableColumns('payProviderOperation', 'state+claimExpiresAt'),
     ...$tableColumns('payProviderOperation', 'idempotencyKey'),
+    ...$tableColumns(
+      'payProviderOperationRecoveryAudit',
+      'providerOperationId+actionIdempotencyKey',
+    ),
+    ...$tableColumns('payProviderOperationRecoveryAudit', 'providerOperationId+occurredAt'),
     ...$tableColumns('payRefundOperation', 'paymentSessionId'),
+    ...$tableColumns('payRefundOperation', 'providerCorrelationReference'),
+    ...$tableColumns('payRefundOperation', 'providerRefundId'),
     ...$tableColumns('payRefundOperation', 'state'),
     ...$tableColumns('payWebhookInbox', 'providerName+clientName'),
     ...$tableColumns('payWebhookInbox', 'providerEventId'),

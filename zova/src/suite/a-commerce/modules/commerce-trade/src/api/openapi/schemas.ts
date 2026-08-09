@@ -173,6 +173,14 @@ export type ApiSchemaCommerceTradeDtoRefundReview =
   components['schemas']['commerce-trade.dto.refundReview'];
 export type ApiSchemaCommerceTradeDtoRefundReviewPartial =
   Partial<ApiSchemaCommerceTradeDtoRefundReview>;
+export type ApiSchemaCommerceTradeDtoRefundRecoveryView =
+  components['schemas']['commerce-trade.dto.refundRecoveryView'];
+export type ApiSchemaCommerceTradeDtoRefundRecoveryViewPartial =
+  Partial<ApiSchemaCommerceTradeDtoRefundRecoveryView>;
+export type ApiSchemaCommerceTradeDtoRefundRecoveryAction =
+  components['schemas']['commerce-trade.dto.refundRecoveryAction'];
+export type ApiSchemaCommerceTradeDtoRefundRecoveryActionPartial =
+  Partial<ApiSchemaCommerceTradeDtoRefundRecoveryAction>;
 export type ApiSchemaCommerceTradeDtoShipmentView =
   components['schemas']['commerce-trade.dto.shipmentView'];
 export type ApiSchemaCommerceTradeDtoShipmentViewPartial =

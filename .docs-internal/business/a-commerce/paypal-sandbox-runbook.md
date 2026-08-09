@@ -8,15 +8,17 @@ This runbook enables the `pay-paypal` Commerce path only for Sandbox verificatio
 
 Provide these values through the deployed environment secret source, never through frontend environment files:
 
-- `PAYPAL_SANDBOX_ENABLED=true`
+- `PAYPAL_ENVIRONMENT=sandbox` — the authoritative PayPal environment selector (`sandbox` or `live`)
 - `PAYPAL_CLIENT_ID`
 - `PAYPAL_CLIENT_SECRET`
 - `PAYPAL_WEBHOOK_ID`
-- `PAYPAL_MERCHANT_REFERENCE` — the expected Sandbox merchant/payee ID
+- `PAYPAL_MERCHANT_REFERENCE` — the expected Sandbox merchant/payee ID for the selected environment
 - `SERVER_SERVE_PROTOCOL=https`
 - `SERVER_SERVE_HOST=<public HTTPS host>`
 
-The server must be publicly reachable at the configured origin. Callback URLs are generated from this trusted origin; a browser `Host`, `Origin`, or arbitrary return URL cannot alter them.
+The server must be publicly reachable at the configured origin. Callback URLs are generated from this trusted origin; a browser `Host`, `Origin`, or arbitrary return URL cannot alter them. The credentials, webhook ID, and merchant reference must all belong to the environment selected by `PAYPAL_ENVIRONMENT`.
+
+`PAYPAL_SANDBOX_ENABLED` is an obsolete configuration name and is unsupported/ignored. Use `PAYPAL_ENVIRONMENT=sandbox` for Sandbox verification or `PAYPAL_ENVIRONMENT=live` only through a separately approved live rollout.
 
 ## PayPal application setup
 
@@ -24,16 +26,16 @@ The server must be publicly reachable at the configured origin. Callback URLs ar
 2. Register the backend webhook endpoint:
    `POST https://<public-host>/api/pay/webhook/pay-paypal:paypal/default`.
 3. Subscribe only to the capture and refund event types supported by the adapter. Do not subscribe to broad unrelated event families because unsupported events intentionally receive a non-success response.
-4. Set `PAYPAL_WEBHOOK_ID` to the registered webhook ID and `PAYPAL_MERCHANT_REFERENCE` to the merchant payee ID.
-5. Keep `PAYPAL_SANDBOX_ENABLED=false` until all values and endpoint reachability are verified.
+4. Set `PAYPAL_WEBHOOK_ID` to the registered webhook ID and `PAYPAL_MERCHANT_REFERENCE` to the Sandbox merchant payee ID.
+5. Set `PAYPAL_ENVIRONMENT=sandbox` only after all values are present, environment-matched, and endpoint reachability is verified.
 
 ## Verification flow
 
 1. Fetch Checkout payment methods while authenticated. PayPal appears only when the complete Sandbox configuration is valid.
 2. Create an order selecting the `paypal` candidate key.
 3. Start payment and verify the approval redirect comes from PayPal.
-4. Approve with the Sandbox buyer. The browser returns through `/api/pay/payment-callback/return`; it cannot settle the order directly.
-5. Confirm that the server creates/reuses the durable confirm operation, captures the persisted PayPal order, and reaches the provider-neutral PaymentSession terminal state.
+4. Approve with the Sandbox buyer. The browser returns through `/api/pay/payment-callback/return`; it triggers durable server capture/reconciliation but is not payment settlement itself.
+5. Confirm that the server creates/reuses the durable confirm operation, captures the persisted PayPal order with `Prefer: return=representation`, and reaches the provider-neutral PaymentSession terminal state.
 6. Confirm a verified webhook is stored, a single payment outbox event is dispatched, and Commerce receives exactly one payment outcome.
 7. Submit both full and partial refunds; confirm provider refund IDs persist and webhook/query races converge to one outcome.
 8. Repeat a callback and webhook delivery to verify idempotency.
@@ -47,6 +49,8 @@ Monitor and investigate:
 - webhook verification errors, merchant mismatches, amount/currency mismatches, and replay conflicts;
 - pending `payOutboxEvent` rows;
 - expired Commerce orders with a late payment audit and an automatic `late-capture:` refund operation.
+
+If the callback redirects normally but PaymentSession remains actionable, inspect its linked `payProviderOperation` state and redacted `errorSummary`; do not reopen a consumed PayPal approval URL or manually mark the Commerce order paid.
 
 For a late verified capture after an order expired, retain the expired order. The system records the capture and creates a full compensation refund. Do not manually mark the order paid or recreate stock/coupon effects.
 

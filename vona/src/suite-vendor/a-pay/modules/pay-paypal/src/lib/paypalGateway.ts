@@ -12,11 +12,14 @@ export interface IPaypalGatewayOptions {
   webhookId: string;
 }
 
+export const PaypalRequestTimeoutMilliseconds = 15_000;
+
 export interface IPaypalGateway {
   createOrder(options: IPaypalGatewayOptions, input: unknown): Promise<unknown>;
   captureOrder(options: IPaypalGatewayOptions, input: unknown): Promise<unknown>;
   getOrder(options: IPaypalGatewayOptions, input: unknown): Promise<unknown>;
   refundCapturedPayment(options: IPaypalGatewayOptions, input: unknown): Promise<unknown>;
+  getCapturedPayment(options: IPaypalGatewayOptions, input: unknown): Promise<unknown>;
   getRefund(options: IPaypalGatewayOptions, input: unknown): Promise<unknown>;
   verifyWebhookSignature(
     options: IPaypalGatewayOptions,
@@ -48,6 +51,11 @@ export function createPaypalGateway(fetcher: typeof fetch): IPaypalGateway {
     async refundCapturedPayment(options, input) {
       return (
         await new PaymentsController(createClient(options)).refundCapturedPayment(input as never)
+      ).result;
+    },
+    async getCapturedPayment(options, input) {
+      return (
+        await new PaymentsController(createClient(options)).getCapturedPayment(input as never)
       ).result;
     },
     async getRefund(options, input) {
@@ -110,7 +118,7 @@ function createClient(options: IPaypalGatewayOptions) {
       oAuthClientId: options.clientId,
       oAuthClientSecret: options.clientSecret,
     },
-    timeout: 0,
+    timeout: PaypalRequestTimeoutMilliseconds,
     environment: options.environment === 'live' ? Environment.Production : Environment.Sandbox,
   });
 }

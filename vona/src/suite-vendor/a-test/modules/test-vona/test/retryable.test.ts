@@ -92,6 +92,28 @@ describe('retryable.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('retries SQLite busy errors at the transaction boundary', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const retryable = app.scope('test-vona').service.retryable;
+      const tableName = `__tempSqliteRetryable${randomUUID().replaceAll('-', '')}`;
+      try {
+        await app.bean.model.createTable(tableName, table => {
+          table.basicFields();
+          table.string('name');
+        });
+        for (const errorCode of ['SQLITE_BUSY', 'SQLITE_BUSY_SNAPSHOT']) {
+          const key = `${errorCode}-${randomUUID()}`;
+          assert.equal(await retryable.sqliteTransaction(tableName, key, 1, errorCode), 2);
+          assert.equal(retryable.attempts(key), 2);
+        }
+        const items = await app.bean.model.select(tableName as any, { orders: [['id', 'asc']] });
+        assert.equal(items.length, 2);
+      } finally {
+        await app.bean.model.dropTable(tableName);
+      }
+    });
+  });
+
   it('retries owner-only operations only when they own the transaction', async () => {
     await app.bean.executor.mockCtx(async () => {
       const retryable = app.scope('test-vona').service.retryable;

@@ -1,4 +1,4 @@
-import type { ModelPaymentSession } from 'zova-module-a-pay';
+import type { ModelPaymentSession, TypePaymentNextAction } from 'zova-module-a-pay';
 import type { ModelPayMockPayment } from 'zova-module-pay-mock';
 
 import { z } from 'zod';
@@ -21,6 +21,8 @@ export const ControllerPagePaymentSchemaQuery = z.object({
 
 type TypeMockPaymentOutcome = 'succeeded' | 'failed' | 'cancelled';
 
+const SettlementPollDelaysMilliseconds = [0, 1_000, 2_000, 4_000, 5_000, 5_000, 5_000, 5_000];
+
 @Controller()
 export class ControllerPagePayment extends BeanControllerPageBase {
   @Use({ beanFullName: 'a-pay.model.paymentSession' })
@@ -36,15 +38,28 @@ export class ControllerPagePayment extends BeanControllerPageBase {
   orderId?: string;
   submitting = false;
   waitingForOrder = false;
+  pendingConfirmation = false;
+  pendingSessionState?: string;
+  pendingOrderState?: string;
+  pendingNextAction?: TypePaymentNextAction;
+  cancelReturnReconciled = false;
   message?: string;
 
   protected async __init__() {
     this.paymentSessionId = this.$computed(() => this.$params.paymentSessionId);
     this.orderId = this.$computed(() => this.$params.orderId);
-    if (this.$ssr.isRuntimeSsrHydrated) {
-      await $QueryEnsureLoaded(() => this.queryPaymentSession);
-      await $QueryEnsureLoaded(() => this.queryOrder);
-      if (this.$query.providerResult) await this.reconcile();
+    if (process.env.CLIENT) {
+      await this.$ssr.handleDirectOrOnHydrated(() => this._initClient());
+    }
+  }
+
+  private async _initClient() {
+    await $QueryEnsureLoaded(() => this.queryPaymentSession);
+    await $QueryEnsureLoaded(() => this.queryOrder);
+    if (this.$query.providerResult === 'return') {
+      await this.reconcile();
+    } else if (this.$query.providerResult === 'cancel') {
+      await this.reconcile({ waitForSettlement: false });
     }
   }
 
@@ -56,13 +71,23 @@ export class ControllerPagePayment extends BeanControllerPageBase {
     return this.$$modelOrderMine.viewMine(this.orderId!);
   }
 
-  async reconcile() {
+  async reconcile({ waitForSettlement = true }: { waitForSettlement?: boolean } = {}) {
     if (!this.paymentSessionId || this.submitting) return;
     this.submitting = true;
+    this.cancelReturnReconciled = false;
+    this.pendingConfirmation = false;
+    this.pendingSessionState = undefined;
+    this.pendingOrderState = undefined;
+    this.pendingNextAction = undefined;
     this.message = undefined;
     try {
       await this.$$modelPaymentSession.reconcile(this.paymentSessionId).mutateAsync();
-      await this._waitForSettlement();
+      if (waitForSettlement) {
+        await this._waitForSettlement();
+      } else {
+        await this.queryPaymentSession?.refetch();
+        this.cancelReturnReconciled = true;
+      }
     } catch (error: any) {
       this.message = error.message;
     } finally {
@@ -84,6 +109,18 @@ export class ControllerPagePayment extends BeanControllerPageBase {
     }
   }
 
+  async openOrder() {
+    await this.$router.push({
+      name: 'commerce-trade:order',
+      params: { id: this.orderId, locale: this.$params.locale },
+    });
+  }
+
+  async refreshOrderStatus() {
+    if (this.waitingForOrder) return;
+    await this.queryOrder?.refetch();
+  }
+
   async settle(outcome: TypeMockPaymentOutcome) {
     if (!this.paymentSessionId || this.submitting) return;
     this.submitting = true;
@@ -103,17 +140,26 @@ export class ControllerPagePayment extends BeanControllerPageBase {
     const terminalSessionState = outcome;
     const terminalOrderState = outcome === 'succeeded' ? 'paid' : outcome ? 'cancelled' : undefined;
     try {
-      for (let attempt = 0; attempt < 60; attempt++) {
+      for (const [attempt, delay] of SettlementPollDelaysMilliseconds.entries()) {
+        if (delay > 0) await new Promise(resolve => setTimeout(resolve, delay));
         const session = await this.queryPaymentSession?.refetch();
+        const sessionState = session?.data?.state;
+        this.pendingSessionState = sessionState;
+        this.pendingNextAction = session?.data?.nextAction;
+        const isSessionTerminal = ['succeeded', 'failed', 'cancelled', 'expired'].includes(
+          sessionState ?? '',
+        );
+        if (!isSessionTerminal) continue;
+
         const order = await this.scope.api.commerceTradeOrder.viewMine({
           params: { id: this.orderId! },
         });
+        this.pendingSessionState = sessionState;
+        this.pendingOrderState = order?.state;
         const settled =
           terminalSessionState && terminalOrderState
-            ? session?.data?.state === terminalSessionState && order?.state === terminalOrderState
-            : ['succeeded', 'failed', 'cancelled', 'expired'].includes(
-                session?.data?.state ?? '',
-              ) && ['paid', 'cancelled', 'expired'].includes(order?.state ?? '');
+            ? sessionState === terminalSessionState && order?.state === terminalOrderState
+            : ['paid', 'cancelled', 'expired'].includes(order?.state ?? '');
         if (settled) {
           await this.queryOrder?.refetch();
           await this.$router.push({
@@ -122,13 +168,30 @@ export class ControllerPagePayment extends BeanControllerPageBase {
           });
           return;
         }
-        await new Promise(resolve => setTimeout(resolve, 500));
+        if (attempt === SettlementPollDelaysMilliseconds.length - 1) break;
       }
-      this.message =
-        'Payment confirmation is still pending. Open the order to check its latest status.';
+      this.pendingConfirmation = true;
+      this.pendingSessionState = this.queryPaymentSession?.data?.state ?? this.pendingSessionState;
+      this.pendingOrderState = this.queryOrder?.data?.state ?? this.pendingOrderState;
+      this.message = this._pendingMessage();
     } finally {
       this.waitingForOrder = false;
     }
+  }
+
+  private _pendingMessage() {
+    if (this.pendingSessionState === 'requires_action') {
+      return this.$query.providerResult === 'cancel'
+        ? 'You returned from PayPal without completing payment. The order is still awaiting payment.'
+        : 'Payment still needs your approval.';
+    }
+    if (this.pendingSessionState === 'processing') {
+      return 'Your payment is still being processed. We will continue to verify it with the provider.';
+    }
+    if (['succeeded', 'failed', 'cancelled', 'expired'].includes(this.pendingSessionState ?? '')) {
+      return 'Payment outcome is verified. Commerce is still updating the order.';
+    }
+    return 'Payment confirmation is still pending. We will continue to verify it with the provider.';
   }
 
   protected render() {
@@ -143,6 +206,17 @@ export class ControllerPagePayment extends BeanControllerPageBase {
     const isMockSession = session?.providerName === 'pay-mock:mock';
     const isCreated = session?.state === 'created';
     const isActionable = session?.state === 'requires_action';
+    const isActionableCancelReturn =
+      this.$query.providerResult === 'cancel' && this.cancelReturnReconciled && isActionable;
+    const hasResumableCancelRedirect =
+      isActionableCancelReturn && session?.nextAction?.kind === 'redirect';
+    const isPendingTerminalState = ['succeeded', 'failed', 'cancelled', 'expired'].includes(
+      this.pendingSessionState ?? '',
+    );
+    const hasPendingRedirect =
+      this.pendingConfirmation &&
+      this.pendingSessionState === 'requires_action' &&
+      this.pendingNextAction?.kind === 'redirect';
     return (
       <ZPage>
         <section class="mx-auto max-w-xl p-6">
@@ -159,7 +233,16 @@ export class ControllerPagePayment extends BeanControllerPageBase {
               Start payment
             </button>
           )}
-          {!isCreated && !this.waitingForOrder && (
+          {isActionableCancelReturn && (
+            <section class="mt-6 rounded border border-base-300 p-4" aria-live="polite">
+              <p class="text-base-content/70">
+                {hasResumableCancelRedirect
+                  ? 'You returned from the payment provider without completing payment. Your payment status has been refreshed. You can continue to payment or open your order.'
+                  : 'You returned from the payment provider without completing payment. Your payment status has been refreshed. You can open your order.'}
+              </p>
+            </section>
+          )}
+          {!isCreated && !this.waitingForOrder && !this.pendingConfirmation && (
             <ZPaymentNextAction
               action={session?.nextAction}
               disabled={this.submitting}
@@ -167,6 +250,11 @@ export class ControllerPagePayment extends BeanControllerPageBase {
                 await this.queryPaymentSession?.refetch();
               }}
             />
+          )}
+          {isActionableCancelReturn && (
+            <button class="btn btn-outline mt-3" type="button" onClick={() => this.openOrder()}>
+              Open order
+            </button>
           )}
           {isMockSession && isActionable && (
             <section class="mt-6 rounded border border-dashed border-base-300 p-4">
@@ -208,8 +296,52 @@ export class ControllerPagePayment extends BeanControllerPageBase {
             <p class="mt-6 text-base-content/70">Payment session state: {session.state}</p>
           )}
           {this.message && (
-            <div class="alert alert-error mt-6" role="alert">
-              <span>{this.message}</span>
+            <div
+              class={
+                this.pendingConfirmation ? 'alert alert-warning mt-6' : 'alert alert-error mt-6'
+              }
+              role="alert"
+            >
+              <div>
+                <span>{this.message}</span>
+                {this.pendingConfirmation && (
+                  <p class="mt-1 text-sm">
+                    Payment session: {this.pendingSessionState ?? 'unknown'}; order:{' '}
+                    {this.pendingOrderState ?? 'unknown'}.
+                  </p>
+                )}
+              </div>
+              {this.pendingConfirmation && (
+                <div class="flex shrink-0 flex-wrap gap-2">
+                  {hasPendingRedirect ? (
+                    <ZPaymentNextAction
+                      action={this.pendingNextAction}
+                      disabled={this.submitting || this.waitingForOrder}
+                    />
+                  ) : isPendingTerminalState ? (
+                    <button
+                      class="btn btn-sm btn-primary"
+                      type="button"
+                      disabled={this.waitingForOrder}
+                      onClick={() => this.refreshOrderStatus()}
+                    >
+                      Refresh order status
+                    </button>
+                  ) : (
+                    <button
+                      class="btn btn-sm btn-primary"
+                      type="button"
+                      disabled={this.submitting || this.waitingForOrder}
+                      onClick={() => this.reconcile()}
+                    >
+                      Check payment status
+                    </button>
+                  )}
+                  <button class="btn btn-sm" type="button" onClick={() => this.openOrder()}>
+                    Open order
+                  </button>
+                </div>
+              )}
             </div>
           )}
           {this.queryPaymentSession?.error && (

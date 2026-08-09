@@ -1,5 +1,6 @@
 import type { TableIdentity } from 'table-identity';
 
+import { randomUUID } from 'node:crypto';
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { Core } from 'vona-module-a-core';
@@ -21,7 +22,7 @@ export class ServiceRefundOperation extends BeanBase {
   @Core.transaction()
   async create(command: IRefundOperationCreateCommand): Promise<EntityRefundOperation> {
     if (!Number.isSafeInteger(command.amountMinor) || command.amountMinor <= 0) {
-      this.app.throw(422, 'refund amount is invalid');
+      this.app.throw(409, 'refund amount is invalid');
     }
     const session = await this.scope.model.paymentSession.getByIdForUpdate(
       command.paymentSessionId,
@@ -39,10 +40,10 @@ export class ServiceRefundOperation extends BeanBase {
     const scene = this.bean.payScene.getOptions(session.payScene as never);
     if (!scene.refund?.enabled) this.app.throw(409, 'payment scene refunds are disabled');
     if (isLateCaptureCompensation && command.amountMinor !== session.amountMinor) {
-      this.app.throw(422, 'late capture compensation must refund the full captured amount');
+      this.app.throw(409, 'late capture compensation must refund the full captured amount');
     }
     if (!scene.refund.allowPartial && command.amountMinor !== session.amountMinor) {
-      this.app.throw(422, 'payment scene does not allow partial refunds');
+      this.app.throw(409, 'payment scene does not allow partial refunds');
     }
 
     const existing = await this.scope.model.refundOperation.getForUpdate({
@@ -66,11 +67,13 @@ export class ServiceRefundOperation extends BeanBase {
       .filter(item => ['created', 'submitting', 'pending', 'succeeded'].includes(item.state))
       .reduce((total, item) => total + item.amountMinor, 0);
     if (committedAmount + command.amountMinor > session.amountMinor) {
-      this.app.throw(422, 'refund amount exceeds the remaining captured amount');
+      this.app.throw(409, 'refund amount exceeds the remaining captured amount');
     }
     const refund = await this.scope.model.refundOperation.insert({
       paymentSessionId: session.id,
       businessReference: command.businessReference,
+      providerInvoiceReference: randomUUID(),
+      providerCorrelationReference: randomUUID(),
       amountMinor: command.amountMinor,
       currency: command.currency,
       state: 'created',
@@ -81,7 +84,7 @@ export class ServiceRefundOperation extends BeanBase {
       refundOperationId: refund.id,
       kind: 'refund',
       state: 'created',
-      idempotencyKey: `${command.idempotencyKey}:provider`,
+      idempotencyKey: randomUUID(),
       correlationId: command.correlationId,
       attemptCount: 0,
       nextAttemptAt: new Date(Date.now() - 1_000),

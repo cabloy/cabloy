@@ -26,6 +26,8 @@ import type { DtoOrderView } from '../dto/orderView.tsx';
 import type { DtoPaymentOutcomeCreate } from '../dto/paymentOutcomeCreate.tsx';
 import type { DtoPaymentOutcomeResult } from '../dto/paymentOutcomeResult.tsx';
 import type { DtoRefundOutcomeCreate } from '../dto/refundOutcomeCreate.tsx';
+import type { DtoRefundRecoveryAction } from '../dto/refundRecoveryAction.tsx';
+import type { DtoRefundRecoveryView } from '../dto/refundRecoveryView.tsx';
 import type { DtoRefundRequestCreate } from '../dto/refundRequestCreate.tsx';
 import type { DtoRefundResult } from '../dto/refundResult.tsx';
 import type { DtoRefundReview } from '../dto/refundReview.tsx';
@@ -56,7 +58,13 @@ const serializationRetryOptions = {
   minTimeout: 0,
   maxTimeout: 0,
   randomize: false,
-  errorCodes: ['40001', 'ER_LOCK_DEADLOCK', 'ER_LOCK_WAIT_TIMEOUT'],
+  errorCodes: [
+    '40001',
+    'ER_LOCK_DEADLOCK',
+    'ER_LOCK_WAIT_TIMEOUT',
+    'SQLITE_BUSY',
+    'SQLITE_BUSY_SNAPSHOT',
+  ],
 };
 
 const checkoutSerializationRetryOptions = {
@@ -727,6 +735,43 @@ export class ServiceOrder extends BeanBase {
     return await this._reviewRefund(orderId, command, decision, onStage);
   }
 
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async refundRecovery(orderId: TableIdentity): Promise<DtoRefundRecoveryView> {
+    const linked = await this.refundRecoveryLinkage(orderId);
+    return this._refundRecoveryView(linked);
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async reconcileRefund(
+    orderId: TableIdentity,
+    command: DtoRefundRecoveryAction,
+  ): Promise<DtoRefundRecoveryView> {
+    const linked = await this.refundRecoveryLinkage(orderId);
+    await this.$scope.pay.service.providerOperation.reconcileRefund(linked.providerOperation.id, {
+      ...command,
+      actorId: this.bean.passport.currentUser!.id,
+    });
+    return await this.refundRecovery(orderId);
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
+  async retryRefund(
+    orderId: TableIdentity,
+    command: DtoRefundRecoveryAction,
+  ): Promise<DtoRefundRecoveryView> {
+    const linked = await this.refundRecoveryLinkage(orderId);
+    await this.$scope.pay.service.providerOperation.retryRefund(linked.providerOperation.id, {
+      ...command,
+      actorId: this.bean.passport.currentUser!.id,
+    });
+    return await this.refundRecovery(orderId);
+  }
+
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async executeRefund(orderId: TableIdentity): Promise<DtoRefundResult> {
     const prepared = await this._prepareRefundExecution(orderId);
     await this.$scope.commercePayment.service.commercePayScene.createRefundOperation(prepared.id);
@@ -744,6 +789,140 @@ export class ServiceOrder extends BeanBase {
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
   @Core.retryable(serializationRetryOptions)
+  async refundRecoveryLinkage(orderId: TableIdentity) {
+    const order = await this.scope.model.order.getByIdForUpdate(orderId);
+    if (!order) this.app.throw(404, 'order not found');
+    const refundRequest = await this.$scope.commercePayment.model.refundRequest.getForUpdate({
+      orderId: order.id,
+      state: 'approved',
+    });
+    if (!refundRequest) this.app.throw(404, 'approved refund request not found');
+    const refundAttempt = await this.$scope.commercePayment.model.refundAttempt.getForUpdate({
+      refundRequestId: refundRequest.id,
+    });
+    if (!refundAttempt?.refundOperationId) this.app.throw(404, 'refund recovery is not available');
+    const paymentAttempt = await this.$scope.commercePayment.model.paymentAttempt.getForUpdate({
+      orderId: order.id,
+    });
+    if (!paymentAttempt?.paymentSessionId)
+      this.app.throw(404, 'commerce payment session not found');
+    const refundOperation = await this.$scope.pay.model.refundOperation.getByIdForUpdate(
+      refundAttempt.refundOperationId,
+    );
+    if (!refundOperation) this.app.throw(404, 'refund operation not found');
+    const paymentSession = await this.$scope.pay.model.paymentSession.getByIdForUpdate(
+      paymentAttempt.paymentSessionId,
+    );
+    if (!paymentSession) this.app.throw(404, 'payment session not found');
+    const providerOperation = await this.$scope.pay.model.providerOperation.getForUpdate({
+      refundOperationId: refundOperation.id,
+      kind: 'refund',
+    });
+    if (!providerOperation) this.app.throw(404, 'refund provider operation not found');
+    const unresolvedReconciliations =
+      await this.$scope.pay.model.providerOperationRecoveryAudit.select({
+        where: {
+          providerOperationId: providerOperation.id,
+          action: 'reconcile',
+          resolution: 'unresolved',
+        },
+        limit: 1,
+      });
+    if (
+      order.state !== 'refund_approved' ||
+      refundRequest.state !== 'approved' ||
+      refundAttempt.state !== 'created' ||
+      String(refundAttempt.orderId) !== String(order.id) ||
+      String(refundAttempt.refundRequestId) !== String(refundRequest.id) ||
+      String(refundOperation.paymentSessionId) !== String(paymentSession.id) ||
+      String(providerOperation.paymentSessionId) !== String(paymentSession.id) ||
+      refundOperation.businessReference !== String(refundAttempt.id) ||
+      refundAttempt.amountCents !== refundRequest.amountCents ||
+      refundAttempt.currency !== refundRequest.currency ||
+      refundOperation.amountMinor !== refundAttempt.amountCents ||
+      refundOperation.currency !== refundAttempt.currency ||
+      paymentSession.currency !== refundOperation.currency ||
+      !paymentSession.providerCaptureId
+    ) {
+      this.app.throw(409, 'refund recovery linkage conflicts with immutable payment facts');
+    }
+    return {
+      order,
+      refundRequest,
+      refundAttempt,
+      paymentAttempt,
+      paymentSession,
+      refundOperation,
+      providerOperation,
+      hasUnresolvedReconciliation: unresolvedReconciliations.length > 0,
+    };
+  }
+
+  private _refundRecoveryView(
+    linked: Awaited<ReturnType<typeof this.refundRecoveryLinkage>>,
+  ): DtoRefundRecoveryView {
+    const {
+      order,
+      refundRequest,
+      refundAttempt,
+      paymentSession,
+      refundOperation,
+      providerOperation,
+      hasUnresolvedReconciliation,
+    } = linked;
+    const canQuery = Boolean(
+      refundOperation.providerRefundId && providerOperation.state !== 'succeeded',
+    );
+    const canRetry =
+      !refundOperation.providerRefundId &&
+      providerOperation.state === 'reconciliation_required' &&
+      providerOperation.errorCode === 'refund_submission_outcome_unknown' &&
+      Boolean(providerOperation.submittedAt) &&
+      !providerOperation.recoveryRetryGrantedAt &&
+      hasUnresolvedReconciliation &&
+      providerOperation.submittedAt!.getTime() + 45 * 24 * 60 * 60 * 1_000 >= Date.now();
+    const canReconcile =
+      !refundOperation.providerRefundId &&
+      providerOperation.state === 'reconciliation_required' &&
+      providerOperation.errorCode === 'refund_submission_outcome_unknown' &&
+      Boolean(providerOperation.submittedAt) &&
+      !hasUnresolvedReconciliation;
+    const recoveryDisposition = canQuery
+      ? 'query_only'
+      : canRetry
+        ? 'retry_same_key'
+        : canReconcile
+          ? 'reconcile_only'
+          : 'none';
+    const recoveryMessage =
+      recoveryDisposition === 'query_only'
+        ? 'A verified provider refund identifier is available. Reconcile without resubmitting.'
+        : recoveryDisposition === 'reconcile_only'
+          ? 'Provider refund outcome is unknown. Record reconciliation before considering a retry.'
+          : recoveryDisposition === 'retry_same_key'
+            ? 'Reconciliation was unresolved. A single acknowledged retry may reuse the original provider request.'
+            : 'No provider refund submission is available. Do not create or manually declare a replacement refund.';
+    return {
+      orderId: order.id,
+      refundRequestId: refundRequest.id,
+      refundAttemptId: refundAttempt.id,
+      refundOperationId: refundOperation.id,
+      providerOperationId: providerOperation.id,
+      providerName: paymentSession.providerName,
+      environment: paymentSession.environment,
+      refundOperationState: refundOperation.state,
+      providerOperationState: providerOperation.state,
+      attemptCount: providerOperation.attemptCount,
+      providerRefundId: refundOperation.providerRefundId,
+      errorCode: providerOperation.errorCode,
+      errorSummary: providerOperation.errorSummary,
+      submittedAt: providerOperation.submittedAt,
+      finalizedAt: refundOperation.finalizedAt ?? providerOperation.finalizedAt,
+      recoveryDisposition,
+      recoveryMessage,
+    };
+  }
+
   private async _prepareRefundExecution(orderId: TableIdentity) {
     const order = await this.scope.model.order.getByIdForUpdate(orderId);
     if (!order) this.app.throw(404, 'order not found');
@@ -758,6 +937,9 @@ export class ServiceOrder extends BeanBase {
     if (!attempt) this.app.throw(404, 'refund attempt not found');
     if (order.state !== 'refund_approved' || attempt.state !== 'created') {
       this.app.throw(409, 'refund is not available for execution');
+    }
+    if (attempt.refundOperationId) {
+      this.app.throw(409, 'refund submission requires recovery inspection');
     }
     return attempt;
   }

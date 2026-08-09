@@ -64,6 +64,10 @@ declare module 'vona-module-a-onion' {
 }
 
 declare module 'vona' {
+  export interface ContextState {
+    payProviderClientOptions?: Record<string, Partial<IPayProviderClientOptions>>;
+  }
+
   export interface ConfigOnions {
     payProvider: OmitNever<IPayProviderRecord>;
   }

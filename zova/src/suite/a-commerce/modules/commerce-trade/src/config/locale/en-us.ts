@@ -14,4 +14,11 @@ export default {
   ApproveRefund: 'Approve refund',
   RejectRefund: 'Reject refund',
   ExecuteRefund: 'Execute refund',
+  InspectRefundRecovery: 'Inspect refund recovery',
+  ReconcileProviderRefund: 'Reconcile provider refund',
+  RetryRefund: 'Retry refund',
+  RefundRecoveryReason: 'Recovery reason',
+  AcknowledgeRefundRetryRisk: 'I understand this retry reuses the original provider request.',
+  RefundRecoveryState: 'Provider operation: {state}; attempts: {attemptCount}',
+  RefundRecoveryProviderRefundId: 'Provider refund ID: {providerRefundId}',
 };

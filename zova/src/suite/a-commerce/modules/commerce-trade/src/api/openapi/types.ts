@@ -95,14 +95,14 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/payment-callback/return': {
+  '/api/pay/payment-callback/return': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get: operations['PaymentCallback_returned'];
+    get: operations['PayPaymentCallback_returned'];
     put?: never;
     post?: never;
     delete?: never;
@@ -111,14 +111,14 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/payment-callback/cancel': {
+  '/api/pay/payment-callback/cancel': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get: operations['PaymentCallback_cancelled'];
+    get: operations['PayPaymentCallback_cancelled'];
     put?: never;
     post?: never;
     delete?: never;
@@ -136,7 +136,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    post: operations['PaymentSession_start'];
+    post: operations['PayPaymentSession_start'];
     delete?: never;
     options?: never;
     head?: never;
@@ -152,7 +152,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    post: operations['PaymentSession_reconcile'];
+    post: operations['PayPaymentSession_reconcile'];
     delete?: never;
     options?: never;
     head?: never;
@@ -166,7 +166,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    get: operations['PaymentSession_view'];
+    get: operations['PayPaymentSession_view'];
     put?: never;
     post?: never;
     delete?: never;
@@ -697,6 +697,54 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['CommerceTradeOrder_executeRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/refundRecovery': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeOrder_refundRecovery'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/reconcileRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_reconcileRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/retryRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_retryRefund'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1321,7 +1369,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    post: operations['PayMockPayment_complete'];
+    post: operations['PayMockMockPayment_complete'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1337,7 +1385,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    post: operations['PayMockPayment_completeRefund'];
+    post: operations['PayMockMockPayment_completeRefund'];
     delete?: never;
     options?: never;
     head?: never;
@@ -2871,6 +2919,48 @@ export interface components {
       reason: string;
       idempotencyKey: string;
     };
+    'commerce-trade.dto.refundRecoveryView': {
+      orderId: number | string;
+      refundRequestId: number | string;
+      refundAttemptId: number | string;
+      refundOperationId: number | string;
+      providerOperationId: number | string;
+      providerName: string;
+      /** @enum {string} */
+      environment: 'sandbox' | 'live';
+      /** @enum {string} */
+      refundOperationState:
+        | 'created'
+        | 'submitting'
+        | 'pending'
+        | 'succeeded'
+        | 'failed'
+        | 'cancelled';
+      /** @enum {string} */
+      providerOperationState:
+        | 'created'
+        | 'claimed'
+        | 'submitted'
+        | 'succeeded'
+        | 'failed'
+        | 'reconciliation_required';
+      attemptCount: number;
+      providerRefundId?: string | undefined;
+      errorCode?: string | undefined;
+      errorSummary?: string | undefined;
+      /** Format: date-time */
+      submittedAt?: Date;
+      /** Format: date-time */
+      finalizedAt?: Date;
+      /** @enum {string} */
+      recoveryDisposition: 'none' | 'reconcile_only' | 'query_only' | 'retry_same_key';
+      recoveryMessage: string;
+    };
+    'commerce-trade.dto.refundRecoveryAction': {
+      reason: string;
+      actionIdempotencyKey: string;
+      acknowledgeRetryRisk?: boolean | undefined;
+    };
     'commerce-trade.dto.shipmentView': {
       /** @description ID */
       id: number | string;
@@ -3312,6 +3402,12 @@ export interface components {
       published?: boolean;
       /** @description Description */
       description?: string | undefined;
+      parent?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Name */
+        name: string;
+      };
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3350,6 +3446,12 @@ export interface components {
           published?: boolean;
           /** @description Description */
           description?: string | undefined;
+          parent?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Name */
+            name: string;
+          };
         }
       | undefined;
     'commerce-catalog.dto.categoryUpdate': {
@@ -3419,6 +3521,17 @@ export interface components {
       published?: boolean;
       /** @description Description */
       description?: string | undefined;
+      category?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Name */
+        name: string;
+        /**
+         * @description Published
+         * @default false
+         */
+        published?: boolean;
+      };
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3507,6 +3620,17 @@ export interface components {
           published?: boolean;
           /** @description Description */
           description?: string | undefined;
+          category?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Name */
+            name: string;
+            /**
+             * @description Published
+             * @default false
+             */
+            published?: boolean;
+          };
         }
       | undefined;
     'commerce-catalog.dto.productUpdate': {
@@ -5294,7 +5418,7 @@ export interface operations {
       };
     };
   };
-  PaymentCallback_returned: {
+  PayPaymentCallback_returned: {
     parameters: {
       query: {
         state: string;
@@ -5319,7 +5443,7 @@ export interface operations {
       };
     };
   };
-  PaymentCallback_cancelled: {
+  PayPaymentCallback_cancelled: {
     parameters: {
       query: {
         state: string;
@@ -5344,7 +5468,7 @@ export interface operations {
       };
     };
   };
-  PaymentSession_start: {
+  PayPaymentSession_start: {
     parameters: {
       query?: never;
       header?: never;
@@ -5370,7 +5494,7 @@ export interface operations {
     };
     authToken: true;
   };
-  PaymentSession_reconcile: {
+  PayPaymentSession_reconcile: {
     parameters: {
       query?: never;
       header?: never;
@@ -5396,7 +5520,7 @@ export interface operations {
     };
     authToken: true;
   };
-  PaymentSession_view: {
+  PayPaymentSession_view: {
     parameters: {
       query?: never;
       header?: never;
@@ -6488,6 +6612,92 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['commerce-trade.dto.refundResult'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_refundRecovery: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundRecoveryView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_reconcileRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundRecoveryAction'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundRecoveryView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_retryRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundRecoveryAction'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundRecoveryView'];
           };
         };
       };
@@ -8015,7 +8225,7 @@ export interface operations {
       };
     };
   };
-  PayMockPayment_complete: {
+  PayMockMockPayment_complete: {
     parameters: {
       query?: never;
       header?: never;
@@ -8045,7 +8255,7 @@ export interface operations {
     };
     authToken: true;
   };
-  PayMockPayment_completeRefund: {
+  PayMockMockPayment_completeRefund: {
     parameters: {
       query?: never;
       header?: never;

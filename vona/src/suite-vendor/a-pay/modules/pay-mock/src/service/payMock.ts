@@ -43,12 +43,15 @@ export class ServicePayMock extends BeanBase {
     const rawBody = JSON.stringify({
       eventId: `mock-payment-${randomUUID()}`,
       eventType: `payment.${outcome}`,
-      paymentSessionId: String(session.id),
+      providerCorrelationReference: session.providerCorrelationReference,
       state: outcome,
       amountMinor: session.amountMinor,
       currency: session.currency,
-      providerPaymentId: session.providerPaymentId ?? `mock-payment-${session.id}`,
-      ...(outcome === 'succeeded' ? { providerCaptureId: `mock-capture-${session.id}` } : {}),
+      providerPaymentId:
+        session.providerPaymentId ?? `mock-payment-${session.providerCorrelationReference}`,
+      ...(outcome === 'succeeded'
+        ? { providerCaptureId: `mock-capture-${session.providerCorrelationReference}` }
+        : {}),
     });
     const signature = createHmac('sha256', secret).update(rawBody).digest('hex');
     const instanceName = this.ctx.instanceName;
@@ -99,11 +102,12 @@ export class ServicePayMock extends BeanBase {
     const rawBody = JSON.stringify({
       eventId: `mock-refund-${randomUUID()}`,
       eventType: `refund.${outcome}`,
-      refundOperationId: String(refund.id),
+      providerCorrelationReference: refund.providerCorrelationReference,
       state: outcome,
       amountMinor: refund.amountMinor,
       currency: refund.currency,
-      providerRefundId: refund.providerRefundId ?? `mock-refund-${refund.id}`,
+      providerRefundId:
+        refund.providerRefundId ?? `mock-refund-${refund.providerCorrelationReference}`,
     });
     const signature = createHmac('sha256', secret).update(rawBody).digest('hex');
     const instanceName = this.ctx.instanceName;

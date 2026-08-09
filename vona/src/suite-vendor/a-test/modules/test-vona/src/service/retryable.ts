@@ -17,6 +17,11 @@ const OwnerOnlyRetryOptions = {
   ownerOnly: true,
 };
 
+const SqliteRetryOptions = {
+  ...RetryOptions,
+  errorCodes: ['SQLITE_BUSY', 'SQLITE_BUSY_SNAPSHOT'],
+};
+
 @Service()
 export class ServiceRetryable extends BeanBase {
   private _attempts = new Map<string, number>();
@@ -54,6 +59,15 @@ export class ServiceRetryable extends BeanBase {
     const attempt = this._nextAttempt(key);
     await this.bean.model.insert(tableName as any, { name: `${key}-${attempt}` });
     if (attempt <= failures) this._throw('RETRYABLE');
+    return attempt;
+  }
+
+  @Core.transaction()
+  @Core.retryable(SqliteRetryOptions)
+  async sqliteTransaction(tableName: string, key: string, failures: number, errorCode: string) {
+    const attempt = this._nextAttempt(key);
+    await this.bean.model.insert(tableName as any, { name: `${key}-${attempt}` });
+    if (attempt <= failures) this._throw(errorCode);
     return attempt;
   }
 

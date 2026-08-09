@@ -189,8 +189,12 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
       try {
         Object.assign(fixture, await createCheckoutFixture(randomUUID().slice(0, 12)));
         const eventId = `provider-${randomUUID().slice(0, 12)}`;
+        const paymentSession = await app
+          .scope('a-pay')
+          .model.paymentSession.getById(fixture.paymentSessionId!);
+        assert.ok(paymentSession);
         const rawBody = JSON.stringify({
-          paymentSessionId: String(fixture.paymentSessionId),
+          providerCorrelationReference: paymentSession.providerCorrelationReference,
           currency: 'USD',
           amountMinor: 799,
           eventType: 'payment.succeeded',

@@ -8,6 +8,18 @@ interface IFixture {
   paymentSessionId?: number;
 }
 
+function isZodCustomError(error: unknown, path: string[], message: string) {
+  assert.equal((error as any).code, 422);
+  assert.deepEqual((error as any).message, [
+    {
+      code: 'custom',
+      path,
+      message,
+    },
+  ]);
+  return true;
+}
+
 async function createFixture(expiresAt: Date): Promise<IFixture> {
   const scope = app.scope('a-pay');
   const suffix = randomUUID().slice(0, 12);
@@ -27,6 +39,20 @@ async function createFixture(expiresAt: Date): Promise<IFixture> {
 async function cleanup(fixture: IFixture) {
   const scope = app.scope('a-pay');
   if (fixture.paymentSessionId !== undefined) {
+    const refunds = await scope.model.refundOperation.select({
+      where: { paymentSessionId: fixture.paymentSessionId },
+    });
+    for (const refund of refunds) {
+      const providerOperation = await scope.model.providerOperation.get({
+        refundOperationId: refund.id,
+        kind: 'refund',
+      });
+      if (providerOperation) {
+        await scope.model.providerOperationRecoveryAudit.delete({
+          providerOperationId: providerOperation.id,
+        });
+      }
+    }
     await scope.model.outboxEvent.delete({ paymentSessionId: fixture.paymentSessionId });
     await scope.model.webhookInbox.delete({ paymentSessionId: fixture.paymentSessionId });
     await scope.model.providerOperation.delete({ paymentSessionId: fixture.paymentSessionId });
@@ -71,6 +97,18 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
         assert.equal(session.providerName, 'pay-mock:mock');
         assert.equal(session.clientName, 'default');
         assert.equal(session.environment, 'sandbox');
+        assert.match(
+          session.providerInvoiceReference,
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
+        assert.match(
+          session.providerCorrelationReference,
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
+        assert.notEqual(session.providerInvoiceReference, session.providerCorrelationReference);
+        const reloaded = await scope.model.paymentSession.getById(session.id);
+        assert.equal(reloaded?.providerInvoiceReference, session.providerInvoiceReference);
+        assert.equal(reloaded?.providerCorrelationReference, session.providerCorrelationReference);
         assert.ok(session.expiresAt.getTime() >= createdAt + 30 * 60 * 1000);
         assert.ok(session.expiresAt.getTime() <= Date.now() + 30 * 60 * 1000);
       } finally {
@@ -96,7 +134,12 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
             correlationId: `payment-${suffix}`,
             providerCandidateKey: 'stripe',
           }),
-          { status: 422 },
+          error =>
+            isZodCustomError(
+              error,
+              ['providerCandidateKey'],
+              'payment provider candidate is unavailable',
+            ),
         );
       } finally {
         await cleanup(fixture);
@@ -120,7 +163,42 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
             currency: 'EUR',
             correlationId: `payment-${suffix}`,
           }),
-          { status: 422 },
+          error =>
+            isZodCustomError(
+              error,
+              ['currency'],
+              'payment currency is not allowed by the payment scene',
+            ),
+        );
+        assert.deepEqual(
+          await scope.model.paymentSession.select({
+            where: { correlationId: `payment-${suffix}` },
+          }),
+          [],
+        );
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
+  it('reports an invalid payment amount as a field error', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const scope = app.scope('a-pay');
+      const suffix = randomUUID().slice(0, 12);
+      const user = await app.bean.user.register({ name: `payment-session-${suffix}` }, true);
+      const fixture: IFixture = { userId: user.id as number };
+      try {
+        await assert.rejects(
+          scope.service.paymentSession.create({
+            userId: user.id,
+            payScene: 'commerce-payment:commerceOrder',
+            businessReference: `business-${suffix}`,
+            amountMinor: -1,
+            currency: 'USD',
+            correlationId: `payment-${suffix}`,
+          }),
+          error => isZodCustomError(error, ['amountMinor'], 'payment amount is invalid'),
         );
         assert.deepEqual(
           await scope.model.paymentSession.select({
@@ -190,6 +268,58 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('rejects refund commands that conflict with the payment state', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture = await createFixture(new Date(Date.now() + 60_000));
+      try {
+        const scope = app.scope('a-pay');
+        await scope.model.paymentSession.updateById(fixture.paymentSessionId!, {
+          state: 'succeeded',
+          providerCaptureId: `capture-${randomUUID().slice(0, 12)}`,
+          finalizedAt: new Date(),
+        });
+        const command = {
+          paymentSessionId: fixture.paymentSessionId!,
+          businessReference: `refund-${randomUUID().slice(0, 12)}`,
+          currency: 'USD',
+          idempotencyKey: `refund-${randomUUID()}`,
+          correlationId: `refund-${randomUUID()}`,
+        };
+        await assert.rejects(scope.service.refundOperation.create({ ...command, amountMinor: 0 }), {
+          code: 409,
+          status: 409,
+        });
+        assert.deepEqual(
+          await scope.model.refundOperation.select({
+            where: { paymentSessionId: fixture.paymentSessionId! },
+          }),
+          [],
+        );
+        await scope.service.refundOperation.create({ ...command, amountMinor: 1_000 });
+        await assert.rejects(
+          scope.service.refundOperation.create({
+            ...command,
+            amountMinor: 300,
+            businessReference: `refund-${randomUUID().slice(0, 12)}`,
+            idempotencyKey: `refund-${randomUUID()}`,
+            correlationId: `refund-${randomUUID()}`,
+          }),
+          { code: 409, status: 409 },
+        );
+        assert.equal(
+          (
+            await scope.model.refundOperation.select({
+              where: { paymentSessionId: fixture.paymentSessionId! },
+            })
+          ).length,
+          1,
+        );
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
   it('schedules a pending refund for durable reconciliation', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixture = await createFixture(new Date(Date.now() + 60_000));
@@ -213,6 +343,19 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
           kind: 'refund',
         });
         assert.ok(providerOperation);
+        assert.match(
+          refund.providerInvoiceReference,
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
+        assert.match(
+          refund.providerCorrelationReference,
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
+        assert.notEqual(refund.providerInvoiceReference, refund.providerCorrelationReference);
+        assert.match(
+          providerOperation.idempotencyKey,
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
         const claimed = await scope.service.providerOperation.claim(providerOperation.id);
         assert.ok(claimed?.claimToken);
         await scope.service.providerOperation.markSubmitted(
@@ -238,6 +381,109 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
         assert.equal(storedOperation?.claimExpiresAt, undefined);
         assert.ok(storedOperation?.nextAttemptAt && storedOperation.nextAttemptAt > new Date());
         assert.deepEqual(outbox, []);
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
+  it('fences an ambiguous refund submission until audited recovery', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture = await createFixture(new Date(Date.now() + 60_000));
+      try {
+        const scope = app.scope('a-pay');
+        await scope.model.paymentSession.updateById(fixture.paymentSessionId!, {
+          state: 'succeeded',
+          providerCaptureId: `capture-${randomUUID().slice(0, 12)}`,
+          finalizedAt: new Date(),
+        });
+        const refund = await scope.service.refundOperation.create({
+          paymentSessionId: fixture.paymentSessionId!,
+          businessReference: `refund-${randomUUID().slice(0, 12)}`,
+          amountMinor: 1299,
+          currency: 'USD',
+          idempotencyKey: `refund-${randomUUID()}`,
+          correlationId: `refund-${randomUUID()}`,
+        });
+        const operation = await scope.model.providerOperation.get({
+          refundOperationId: refund.id,
+          kind: 'refund',
+        });
+        assert.ok(operation);
+        const providerRequestId = operation.idempotencyKey;
+        assert.match(
+          providerRequestId,
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
+        const claimed = await scope.service.providerOperation.claim(operation.id);
+        assert.ok(claimed?.claimToken);
+        await scope.service.providerOperation.markSubmitted(operation.id, claimed.claimToken);
+        await scope.service.providerOperation.releaseForReconciliation(
+          operation.id,
+          claimed.claimToken,
+          new Error('provider secret token must never persist'),
+        );
+        const failed = await scope.model.providerOperation.getById(operation.id);
+        assert.equal(failed?.state, 'reconciliation_required');
+        assert.equal(failed?.attemptCount, 1);
+        assert.equal(failed?.errorCode, 'refund_submission_outcome_unknown');
+        assert.equal(failed?.errorSummary, 'Provider refund submission outcome is unknown');
+        assert.equal(failed?.providerRequestId, providerRequestId);
+        assert.equal(failed?.idempotencyKey, providerRequestId);
+        assert.equal(failed?.errorSummary?.includes('secret'), false);
+        await scope.model.providerOperation.updateById(operation.id, {
+          nextAttemptAt: new Date(0),
+        });
+        await scope.service.providerOperation.queueDue();
+        const fenced = await scope.model.providerOperation.getById(operation.id);
+        assert.equal(fenced?.attemptCount, 1);
+        await scope.service.providerOperation.reconcileRefund(operation.id, {
+          actionIdempotencyKey: randomUUID(),
+          reason: 'Provider outcome could not be verified',
+        });
+        const audits = await scope.model.providerOperationRecoveryAudit.select({
+          where: { providerOperationId: operation.id },
+        });
+        assert.equal(audits.length, 1);
+        assert.equal(audits[0].action, 'reconcile');
+        assert.equal(audits[0].resolution, 'unresolved');
+        await assert.rejects(
+          scope.service.providerOperation.retryRefund(operation.id, {
+            actionIdempotencyKey: randomUUID(),
+            reason: 'Retry without acknowledgement',
+          }),
+          { status: 409 },
+        );
+        const retryKey = randomUUID();
+        await scope.service.providerOperation.retryRefund(operation.id, {
+          actionIdempotencyKey: retryKey,
+          reason: 'Retry the original provider request after reconciliation',
+          acknowledgeRetryRisk: true,
+        });
+        const retried = await scope.model.providerOperation.getById(operation.id);
+        assert.equal(retried?.attemptCount, 2);
+        assert.equal(retried?.providerRequestId, providerRequestId);
+        assert.equal(retried?.idempotencyKey, providerRequestId);
+        const retryAudit = await scope.model.providerOperationRecoveryAudit.get({
+          providerOperationId: operation.id,
+          actionIdempotencyKey: retryKey,
+        });
+        assert.equal(retryAudit?.action, 'retry');
+        assert.equal(retryAudit?.resolution, 'retried');
+        await scope.service.providerOperation.retryRefund(operation.id, {
+          actionIdempotencyKey: retryKey,
+          reason: 'Retry the original provider request after reconciliation',
+          acknowledgeRetryRisk: true,
+        });
+        assert.equal((await scope.model.providerOperation.getById(operation.id))?.attemptCount, 2);
+        await assert.rejects(
+          scope.service.providerOperation.retryRefund(operation.id, {
+            actionIdempotencyKey: randomUUID(),
+            reason: 'A second retry must be denied',
+            acknowledgeRetryRisk: true,
+          }),
+          { status: 409 },
+        );
       } finally {
         await cleanup(fixture);
       }
