@@ -228,5 +228,6 @@ Verification must also ensure that no local status wrapper remains necessary for
 - [Resource Public Contract Exposure](./resource-public-contract-exposure.md) — public application-code and runtime-response boundaries.
 - [DTO/Model Contract Projection Evolution](./dto-model-contract-projection-evolution.md) — declared contract versus runtime response verification.
 - [Vona HTTP Rate Limit Architecture](./vona-http-rate-limit-architecture.md) — deliberate `429` and `503` transport semantics.
+- [Vona Validation Error Message Normalization](./vona-validation-error-message-normalization.md) — validation payload propagation and final presentation-time message normalization.
 - [Resource Mutation Response Contract](../decisions/0007-resource-mutation-response-contract.md) — standard Vona HTTP response ownership.
 - [Vona Telemetry Architecture](./vona-telemetry.md) — separation of technical telemetry context from business identifiers.
