@@ -83,6 +83,8 @@ The server-rendered HTML must not contain private user data. This preserves the 
 
 The hydration-time first client tree must remain that same anonymous shell. Browser Passport restoration, Site admission, and private query initialization may replace the shell only after an explicit client boundary; they must not create a private or differently shaped loading branch during hydration itself. Avoiding private HTML leakage is necessary but insufficient when the initial client render still differs from the server output.
 
+An external payment-provider return is a concrete protected-route case. The continuation page must keep the same neutral shell through SSR and first hydration, then recover Passport in the browser when a valid token remains but the browser Passport projection is missing, before issuing customer-owned payment or order requests. The detailed callback-to-continuation flow is recorded in [Zova SSR Payment Return and Passport Recovery](zova-ssr-payment-return-passport-recovery.md).
+
 This is still SSR:
 
 ```text

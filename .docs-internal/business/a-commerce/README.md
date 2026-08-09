@@ -80,4 +80,5 @@ If the documents disagree, update the authoritative document first and then upda
 - [SSR site access and role model ADR](../../decisions/0006-ssr-site-access-and-role-model.md) — proposed guidance
 - [SSR Vona/Zova boundary and call chain](../../architecture/ssr-vona-zova-boundary-and-call-chain.md)
 - [User workspace SSR strategy](../../architecture/user-workspace-ssr-strategy.md)
+- [Zova SSR payment return and Passport recovery](../../architecture/zova-ssr-payment-return-passport-recovery.md)
 - [Resource custom-API state ownership](../../architecture/resource-custom-api-state-ownership.md)

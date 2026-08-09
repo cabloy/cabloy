@@ -28,6 +28,7 @@ Representative examples:
 - `class-placement-a-b1-b2.md` records the durable rule for placing backend base classes in `src/lib`, `src/service`, or the global bean shorthand surface
 - `router-tabs-design-boundaries.md` records the design intent, workspace-vs-instance identity split, anchor-item role, layout boundary, cache boundary, and refactor safety rules for the router-tabs workbench mechanism
 - `zova-goto-navigation-control-flow-semantics.md` records why Zova `$goto...()` helpers preserve synchronous SSR redirect throws, asynchronous Client router promises, browser/no-op `void` outcomes, and the guard-safe `$getPagePath...()` boundary
+- `zova-ssr-payment-return-passport-recovery.md` records the external-provider return continuation, neutral SSR and hydration shell, browser Passport recovery, protected-route admission, and payment-settlement authority boundary
 - `a-ssr-module-architecture.md` records the Vona-side `a-ssr` module boundaries, request-resolution flow, handler-loading bridge, render/redirect integration, cache/HMR rules, and diagnostics surface
 - `ssr-retrieve-menus-role-aware-cache-evaluation.md` records the SSR structural menu-cache identity, request-local Passport projection, navigation-disclosure boundary, freshness ownership, current test limitations, and gates for any future caller-specific menu cache
 - `ssr-vona-zova-boundary-and-call-chain.md` records the fullstack SSR call chain from Vona request resolution into the generated Zova bundle, clarifies the Vona/Zova ownership split, and preserves the hydration handoff boundary

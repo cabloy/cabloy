@@ -64,6 +64,8 @@ The controller must use `ctx.request.rawBody`; it must not reserialize parsed JS
 
 Browser redirects are notification inputs. A return/cancel page can request server reconciliation but cannot declare payment success. A verified terminal session fact creates `payment.outcome.v1` through the durable outbox; the dispatch worker resolves the persisted `PaymentSession.payScene` and invokes its `onPaymentOutcome` callback. The Commerce scene delegates through Vona scope lookup to the Commerce Order owner, which consumes the stable provider event ID idempotently under its existing serializable Order lock, without a customer Passport context.
 
+The provider-return continuation's SSR neutral-shell and browser Passport-recovery behavior is documented separately in [Zova SSR Payment Return and Passport Recovery](zova-ssr-payment-return-passport-recovery.md). That record does not change this document's server-owned settlement authority.
+
 ## Current pay-mock boundary
 
 The current customer flow is deliberately limited to the `pay-mock` provider. Its completion controls are a development/test simulator, not a production payment capability: the server restricts them to the active instance, authenticated session ownership, actionable `pay-mock/default` sandbox sessions, and signed mock webhooks. The simulator forwards the active instance selector with its internal webhook so finalization remains tenant-scoped. The browser must never declare a Commerce payment outcome directly.
