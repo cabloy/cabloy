@@ -485,7 +485,7 @@ export class PayProviderPaypal
     ) {
       this.app.throw(409, 'PayPal order facts conflict with the payment session');
     }
-    this._assertMerchant(unit, clientOptions);
+    this._assertMerchant(unit, clientOptions, 'order');
     const captures = asArray(readField(asRecord(readField(unit, 'payments')), 'captures'));
     if (captures.length > 1) this.app.throw(409, 'PayPal order has multiple captures');
     const capture = asRecord(captures[0]);
@@ -565,7 +565,7 @@ export class PayProviderPaypal
     ) {
       this.app.throw(409, 'PayPal refund facts conflict with the refund operation');
     }
-    this._assertMerchant(record, clientOptions);
+    this._assertMerchant(record, clientOptions, 'refund');
     return mapRefund(readString(record.status), providerRefundId);
   }
 
@@ -615,42 +615,30 @@ export class PayProviderPaypal
   private _assertMerchant(
     value: Record<string, unknown>,
     clientOptions: IPayProviderPaypalClientOptions,
+    resourceType: 'order' | 'refund',
   ) {
-    const merchant = this._merchantReference(value);
+    const merchant = this._merchantReference(value, resourceType);
     if (
       !merchant.observedMerchantReference ||
       merchant.observedMerchantReference !== clientOptions.merchantReference
     ) {
       this.$logger.warn({
         event: 'paypal.merchant_reference_conflict',
-        expectedMerchantReference: clientOptions.merchantReference,
-        observedMerchantReference: merchant.observedMerchantReference ?? null,
         observedMerchantSource: merchant.observedMerchantSource,
       });
       this.app.throw(409, 'PayPal merchant reference conflicts');
     }
   }
 
-  private _merchantReference(value: Record<string, unknown>) {
-    const payeeMerchantReference =
-      readNestedString(value, ['payee', 'merchantId']) ??
-      readNestedString(value, ['payee', 'merchant_id']);
-    if (payeeMerchantReference) {
-      return {
-        observedMerchantReference: payeeMerchantReference,
-        observedMerchantSource: 'payee.merchant_id',
-      };
-    }
-    const sellerReceivableMerchantReference =
-      readNestedString(value, ['sellerReceivableBreakdown', 'payee', 'merchantId']) ??
-      readNestedString(value, ['seller_receivable_breakdown', 'payee', 'merchant_id']);
-    if (sellerReceivableMerchantReference) {
-      return {
-        observedMerchantReference: sellerReceivableMerchantReference,
-        observedMerchantSource: 'seller_receivable_breakdown.payee.merchant_id',
-      };
-    }
-    return { observedMerchantReference: undefined, observedMerchantSource: 'missing' };
+  private _merchantReference(value: Record<string, unknown>, resourceType: 'order' | 'refund') {
+    const field = resourceType === 'order' ? 'payee' : 'payer';
+    const merchantReference =
+      readNestedString(value, [field, 'merchantId']) ??
+      readNestedString(value, [field, 'merchant_id']);
+    return {
+      observedMerchantReference: merchantReference,
+      observedMerchantSource: merchantReference ? `${field}.merchant_id` : 'missing',
+    };
   }
 }
 

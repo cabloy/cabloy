@@ -121,7 +121,7 @@ function refundRecord(state: IGatewayState) {
     invoiceId: state.refundProviderInvoiceReference,
     amount: { currencyCode: 'USD', value: state.refundAmount ?? '5.00' },
     status: state.refundStatus,
-    payee: { merchantId: 'merchant-test' },
+    payer: { merchantId: 'merchant-test' },
   };
 }
 

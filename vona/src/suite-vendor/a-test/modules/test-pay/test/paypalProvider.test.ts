@@ -249,6 +249,7 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
         async getOrder() {
           return orderRecord('COMPLETED', 'COMPLETED', {
             payee: { merchantId: 'merchant-order-observed' },
+            payer: { merchantId: 'merchant-1' },
           });
         },
         async refundCapturedPayment() {
@@ -258,7 +259,8 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
             invoiceId: 'refund-invoice-reference',
             amount: { currencyCode: 'USD', value: '5.00' },
             status: 'COMPLETED',
-            sellerReceivableBreakdown: { payee: { merchantId: 'merchant-refund-observed' } },
+            payee: { merchantId: 'merchant-1' },
+            payer: { merchantId: 'merchant-refund-observed' },
           };
         },
       };
@@ -278,15 +280,11 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
       assert.deepEqual(warnings, [
         {
           event: 'paypal.merchant_reference_conflict',
-          expectedMerchantReference: 'merchant-1',
-          observedMerchantReference: 'merchant-order-observed',
           observedMerchantSource: 'payee.merchant_id',
         },
         {
           event: 'paypal.merchant_reference_conflict',
-          expectedMerchantReference: 'merchant-1',
-          observedMerchantReference: 'merchant-refund-observed',
-          observedMerchantSource: 'seller_receivable_breakdown.payee.merchant_id',
+          observedMerchantSource: 'payer.merchant_id',
         },
       ]);
     });
@@ -303,7 +301,7 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
           invoiceId: 'refund-invoice-reference',
           amount: { currencyCode: 'USD', value: '5.00' },
           status,
-          payee: { merchantId: 'merchant-1' },
+          payer: { merchantId: 'merchant-1' },
         };
       }
       const gateway = {
@@ -415,7 +413,7 @@ describe('paypalProvider.test.ts', { concurrency: false }, () => {
             invoiceId: 'refund-invoice-reference',
             amount: { currencyCode: 'USD', value: '5.00' },
             status: 'COMPLETED',
-            payee: { merchantId: 'merchant-1' },
+            payer: { merchantId: 'merchant-1' },
           };
         },
       };
