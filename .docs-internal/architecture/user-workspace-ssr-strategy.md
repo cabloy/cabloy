@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This note records how Cabloy Basic should place and render authenticated user-facing pages such as personal center, orders, account profile, addresses, notifications, and similar private workspace features.
+This note records how Cabloy Basic should place and render authenticated user-facing pages such as personal center, orders, account profile, addresses, notifications, and similar private workspace features. The approved request-local `public` / `session` implementation and migration plan is maintained in [SSR Request-Local Profiles](ssr-request-local-profiles.md).
 
 It exists to prevent an incorrect coupling between business ownership and SSR cookie strategy:
 

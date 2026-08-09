@@ -32,6 +32,7 @@ Representative examples:
 - `a-ssr-module-architecture.md` records the Vona-side `a-ssr` module boundaries, request-resolution flow, handler-loading bridge, render/redirect integration, cache/HMR rules, and diagnostics surface
 - `ssr-retrieve-menus-role-aware-cache-evaluation.md` records the SSR structural menu-cache identity, request-local Passport projection, navigation-disclosure boundary, freshness ownership, current test limitations, and gates for any future caller-specific menu cache
 - `ssr-vona-zova-boundary-and-call-chain.md` records the fullstack SSR call chain from Vona request resolution into the generated Zova bundle, clarifies the Vona/Zova ownership split, and preserves the hydration handoff boundary
+- `ssr-request-local-profiles.md` records the approved `public` / `session` SSR profile model, request-local state handoff, consumer migration matrix, cache invariant, and staged refactor plan
 - `ssr-memory-leak-investigation-guide.md` records the confirmed SSR leak root cause, the formal runtime-core fix, the SSR `ssrRender -> instance.render` fallback bridge used by Zova, and the residual-runtime findings that future memory investigations should reuse
 - `ssr-leak-experiment-flags-inventory.md` records the historical `SSR_LEAK_EXPERIMENT_*` surface and confirms that those investigation flags were ultimately removed from active source
 - `ssr-leak-experiment-cleanup-checklist.md` records the execution order and verification path used to fully remove the old SSR leak investigation flags from source

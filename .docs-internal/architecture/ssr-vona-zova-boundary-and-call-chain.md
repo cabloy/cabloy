@@ -11,7 +11,7 @@ Use it when future work needs to:
 
 ## Why this note exists
 
-For the Vona-side `a-ssr` module boundary itself, first read `.docs-internal/architecture/a-ssr-module-architecture.md`.
+For the Vona-side `a-ssr` module boundary itself, first read `.docs-internal/architecture/a-ssr-module-architecture.md`. For the approved request-local `public` / `session` profile refactor, read [SSR Request-Local Profiles](ssr-request-local-profiles.md).
 
 The internal `a-ssr` architecture note explains the Vona-side module itself.
 

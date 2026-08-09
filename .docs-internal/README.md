@@ -86,6 +86,7 @@ Those concerns should live elsewhere.
 - [SSR Leak Experiment Cleanup Checklist](./architecture/ssr-leak-experiment-cleanup-checklist.md)
 - [Vona/Zova Install-Time Type Patch](./architecture/vona-zova-install-time-type-patch.md)
 - [SSR Route Typing and Zova Rest Declaration Visibility](./architecture/ssr-route-typing-zova-rest-declaration-visibility.md)
+- [SSR Request-Local Profiles](./architecture/ssr-request-local-profiles.md)
 - [Anonymous Token Route Pattern](./architecture/anonymous-token-route-pattern.md)
 - [AI Enablement Architecture](./architecture/ai-enablement.md)
 - [User Workspace SSR Strategy](./architecture/user-workspace-ssr-strategy.md)

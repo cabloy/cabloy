@@ -11,7 +11,7 @@ Use it when future work needs to:
 
 ## Why this note exists
 
-For the cross-layer Vona/Zova handoff after `handler.js`, also read `.docs-internal/architecture/ssr-vona-zova-boundary-and-call-chain.md`.
+For the cross-layer Vona/Zova handoff after `handler.js`, also read `.docs-internal/architecture/ssr-vona-zova-boundary-and-call-chain.md`. For request-local `public` / `session` profile behavior, read [SSR Request-Local Profiles](ssr-request-local-profiles.md).
 
 The public SSR docs under `cabloy-docs/frontend/` explain SSR capabilities and usage patterns.
 
