@@ -8,13 +8,17 @@ import { BeanSimple } from 'zova';
 
 import type { SysSsrState } from '../bean/sys.ssrState.js';
 import type {
+  ISsrProfileOptions,
+  ISsrRouteProfileOptions,
   OnHydratePropHasMismatch,
   OnHydratePropHasMismatchResult,
   SSRContext,
+  TypeSsrProfile,
   TypeSsrSitePerformAction,
 } from '../types/ssr.js';
 
 import { CtxSSRMetaStore } from './ssrMetaStore.js';
+import { resolveSsrProfile, resolveSsrProfileOptions } from './ssrProfile.js';
 
 const SymbolIsRuntimeSsrPreHydration = Symbol('SymbolIsRuntimeSsrPreHydration');
 const SymbolSSRContext = Symbol('SymbolSSRContext');
@@ -125,6 +129,35 @@ export class CtxSSR extends BeanSimple {
     } else {
       return this[SymbolSSRState].stateDefer;
     }
+  }
+
+  get profile(): TypeSsrProfile {
+    return resolveSsrProfile(this.state.ssrProfile, this.sys.env.SSR_PROFILE);
+  }
+
+  get profileOptions(): Readonly<ISsrProfileOptions> {
+    const profileOptions = this.state.ssrProfileOptions;
+    if (profileOptions) return profileOptions;
+    return resolveSsrProfileOptions(this.profile, this.sys.config.ssr.profiles);
+  }
+
+  /** @internal */
+  public _setProfile(
+    routeProfile: TypeSsrProfile | undefined,
+    routeProfileOptions?: Readonly<ISsrRouteProfileOptions>,
+  ) {
+    const ssrProfile = resolveSsrProfile(routeProfile, this.sys.env.SSR_PROFILE);
+    const ssrProfileOptions = resolveSsrProfileOptions(
+      ssrProfile,
+      this.sys.config.ssr.profiles,
+      routeProfileOptions,
+    );
+    this.state.ssrProfile = ssrProfile;
+    this.state.ssrProfileOptions = ssrProfileOptions;
+  }
+
+  get cookieDisabledOnServer(): boolean {
+    return process.env.SERVER && !this.profileOptions.useCookie;
   }
 
   get renderSSRError() {

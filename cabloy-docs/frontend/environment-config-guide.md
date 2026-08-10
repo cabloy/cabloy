@@ -103,29 +103,22 @@ The config side follows the same merge pattern with `config.ts`, `config.[meta].
 
 Different SSR flavors can intentionally expose different runtime capabilities rather than behaving identically.
 
-A concrete example in the current Cabloy Basic frontend setup is SSR theme resolution:
+A concrete example in the current Cabloy Basic frontend setup is the default SSR profile:
 
-- Web SSR uses a cookie-disabled path
-- Admin SSR uses a cookie-capable path
+- Web defaults to `SSR_PROFILE=public`
+- Admin defaults to `SSR_PROFILE=session`
 
-That means the two flavors should not be treated as providing the same guarantee for theme-sensitive SSR output.
+The effective profile is request-local: the active flavor's `SSR_PROFILE` supplies its default, and `route.meta.ssrProfile` can override it after route resolution. `public` keeps cookie-derived identity and theme state out of the server render; `session` permits normal cookie-backed Passport recovery and theme resolution, while forcing a private, non-storable response. Profiles define request-cookie capability, not a locale source: existing `route.meta.locale` controls URL-locale participation.
 
-In practice:
+That means flavor selection is not only a packaging choice. It establishes the default capability boundary, while individual routes remain able to select the profile their rendering contract requires.
 
-- Web SSR is the stricter path and should treat theme-sensitive SSR reads as lower-authority
-- Admin SSR can provide a stronger server/client theme match guarantee
+Before assuming how SSR theme state is handed off and finalized, combine:
 
-This is exactly why flavor selection is not only a packaging choice. It can also define the supported capability boundary for runtime-sensitive behavior.
-
-A second practical rule is that flavor alone is not the full story. Contributors should combine:
-
-- flavor and `SSR_COOKIE` capability
+- the effective SSR profile
 - edition marker
 - active UI-library adapter
 
-before assuming how SSR theme state is handed off and finalized.
-
-For the theme-side contract and edition-aware checklist, see [Theme Guide](/frontend/theme-guide). For the env-side explanation of `SSR_COOKIE`, see [SSR Environment Variables](/frontend/ssr-env).
+For the theme-side contract and edition-aware checklist, see [Theme Guide](/frontend/theme-guide). For the env-side explanation of `SSR_PROFILE`, see [SSR Environment Variables](/frontend/ssr-env).
 
 ## Scripts and runtime variants
 

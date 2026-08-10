@@ -111,12 +111,12 @@ For current Cache Rule settings, see [Cache Rules settings](https://developers.c
 
 ## SSR cache contract
 
-Zova SSR writes the cache contract during rendering through `SSR_TRANSFERCACHE` and `SSR_TRANSFERCACHE_EXPIRES`. The current public Cabloy Basic baseline uses these defaults:
+Zova SSR writes the public response-cache contract during rendering from the resolved profile and any public route-level `meta.ssrProfileOptions.responseCache` override. The effective SSR profile is authoritative: a `session` response always sets `Cache-Control: private, no-store` before route or profile response-cache policy is considered.
 
-| Flavor | Default settings                                          | SSR response header                                  | Cloudflare result with this rule                                |
-| ------ | --------------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------- |
-| Web    | `SSR_TRANSFERCACHE=true`, `SSR_TRANSFERCACHE_EXPIRES=10m` | `Cache-Control: public, max-age=600`                 | Eligible to cache for ten minutes, subject to Cloudflare policy |
-| Admin  | `SSR_TRANSFERCACHE=true`, `SSR_TRANSFERCACHE_EXPIRES=0`   | `Cache-Control: no-cache, no-store, must-revalidate` | Not stored                                                      |
+| Flavor | Default profile | SSR response header                                 | Cloudflare result with this rule                                |
+| ------ | --------------- | --------------------------------------------------- | --------------------------------------------------------------- |
+| Web    | `public`        | `Cache-Control: public, max-age=600` when cacheable | Eligible to cache for ten minutes, subject to Cloudflare policy |
+| Admin  | `session`       | `Cache-Control: private, no-store`                  | Not stored                                                      |
 
 For Cabloy Start, verify the effective Web and Admin values in the licensed Start repository before creating the Cloudflare rule. The rule design remains the same: preserve and follow the origin `Cache-Control` response instead of replacing it.
 
@@ -132,5 +132,5 @@ After the origin is running, verify the following before relying on Cloudflare t
 2. Each configured subdomain resolves to its expected enabled instance.
 3. Nginx forwards the browser hostname instead of the literal value `localhost`.
 4. Web SSR returns the `Cache-Control` header expected from the active edition and flavor configuration. In the current Basic baseline, it is `public, max-age=600`.
-5. Admin SSR returns the `Cache-Control` header expected from the active edition and flavor configuration. In the current Basic baseline, it is `no-cache, no-store, must-revalidate`.
+5. Admin SSR returns the `Cache-Control` header expected from the active edition and flavor configuration. In the current Basic baseline, it is `private, no-store`.
 6. After Cloudflare proxying is enabled, responses intended to be public-cacheable can be cached at the edge while responses marked `no-store` are not stored.

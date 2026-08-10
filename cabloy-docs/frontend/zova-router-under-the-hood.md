@@ -355,7 +355,7 @@ The framework service focuses on routing mechanics such as:
 The `home-base` service focuses on application policy such as:
 
 - auth enforcement through `meta.requiresAuth`
-- locale initialization through `meta.locale`
+- URL-locale participation and initialization through `meta.locale`
 
 A practical reading takeaway is:
 

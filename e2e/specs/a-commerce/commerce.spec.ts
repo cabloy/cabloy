@@ -196,6 +196,7 @@ test(
   async ({ page, request }) => {
     const response = await request.get('/commerce');
     expect(response.ok()).toBeTruthy();
+    expect(response.headers()['cache-control']).toBe('public, max-age=600');
     const html = await response.text();
     const normalizedHtml = html.toLowerCase();
     expect(normalizedHtml).not.toContain('data-zova-hydrated');
@@ -302,15 +303,18 @@ test(
 );
 
 test(
-  'Commerce Address: cookie-disabled SSR renders a neutral protected entry',
+  'Commerce Address: session SSR protects an anonymous document request',
   { tag: ['@web', '@cart'] },
   async ({ page, request }) => {
     const path = '/commerce/address';
     const routePath = '/address';
     const response = await request.get(path, { maxRedirects: 0 });
-    expect(response.status()).toBe(200);
-    expect(response.headers().location).toBeUndefined();
-    expect((await response.text()).toLowerCase()).not.toContain('data-zova-hydrated');
+    expect(response.status()).toBe(302);
+    expect(response.headers()['cache-control']).toBe('private, no-store');
+    const html = await response.text();
+    expect(html).not.toContain('ssr-body-ready-observer');
+    expect(html).not.toContain('__leftDrawerOpenJS');
+    expect(response.headers().location).toMatch(/^\/commerce\/login\?(?:.*&)?returnTo=/);
 
     const pageErrors = collectPageErrors(page);
     const documentResponse = await page.goto(path, { waitUntil: 'load' });
@@ -334,6 +338,13 @@ test(
       testInfo,
     );
     try {
+      const addressResponse = await context.request.get('/commerce/address');
+      expect(addressResponse.ok()).toBeTruthy();
+      expect(addressResponse.headers()['cache-control']).toBe('private, no-store');
+      const addressHtml = await addressResponse.text();
+      expect(addressHtml).not.toContain('ssr-body-ready-observer');
+      expect(addressHtml).not.toContain('__leftDrawerOpenJS');
+
       const card = page
         .locator('article')
         .filter({ has: page.getByRole('heading', { name: fixture.recipientName }) });

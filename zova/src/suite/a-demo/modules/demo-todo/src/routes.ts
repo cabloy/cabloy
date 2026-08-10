@@ -4,6 +4,6 @@ import { ZPageItem } from './.metadata/page/item.js';
 import { ZPageTodo } from './.metadata/page/todo.js';
 
 export const routes: IModuleRoute[] = [
-  { path: 'todo', component: ZPageTodo },
-  { name: 'item', path: 'item/:id', component: ZPageItem },
+  { path: 'todo', component: ZPageTodo, meta: { ssrProfile: 'session' } },
+  { name: 'item', path: 'item/:id', component: ZPageItem, meta: { ssrProfile: 'session' } },
 ];

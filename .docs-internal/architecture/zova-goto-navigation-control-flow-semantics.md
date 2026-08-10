@@ -124,7 +124,7 @@ For access denied, return a route location with `replace: true` when replacement
 return { path: this.app.$getPagePathAccessDenied(), replace: true };
 ```
 
-Cookie-enabled SSR remains different: it must use `$redirect(pagePath)` so the SSR pipeline produces the established HTTP redirect response. With `SSR_COOKIE=false`, `cookieDisabledOnServer` deliberately bypasses admission during server rendering; the Client evaluates admission after hydration using browser Passport state.
+Session-profile SSR remains different: it must use `$redirect(pagePath)` so the SSR pipeline produces the established HTTP redirect response. With the `public` profile, the server deliberately bypasses admission during server rendering; the Client evaluates admission after hydration using browser Passport state.
 
 ## SSR and error-flow interaction
 

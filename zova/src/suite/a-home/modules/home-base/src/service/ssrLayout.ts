@@ -1,16 +1,16 @@
-import { BeanBase, UseScope } from 'zova';
+import { BeanBase } from 'zova';
 import { Service } from 'zova-module-a-bean';
-import { ScopeModuleASsr } from 'zova-module-a-ssr';
+import { getBodyReadyObserverScript } from 'zova-module-a-ssr';
 
 export interface IServiceSsrLayoutOptions {
-  sidebarLeftOpenPC?: boolean;
+  bodyReadyObserver?: boolean;
+  sidebarBreakpoint?: number;
+  sidebarLeftOpenPCCapability?: boolean;
+  sidebarLeftOpenPCFallback?: boolean;
 }
 
 @Service()
 export class ServiceSsrLayout extends BeanBase {
-  @UseScope()
-  $$scopeSsr: ScopeModuleASsr;
-
   options?: IServiceSsrLayoutOptions;
 
   protected async __init__(options?: IServiceSsrLayoutOptions) {
@@ -19,7 +19,7 @@ export class ServiceSsrLayout extends BeanBase {
     if (process.env.SERVER) {
       this.ctx.meta.$ssr.context.onRendered((err?: Error) => {
         if (err) return;
-        if (!this.sys.config.ssr.cookie) {
+        if (!this.$ssr.profileOptions.useCookie) {
           // Apply the final browser-selected theme from the SSR dual markers as early as possible.
           this.ctx.meta.$ssr.context._meta.bodyTags += `<script id="__prefersColorSchemeDarkJS">
             document.body.setAttribute('data-theme', window.ssr_themedark_data);
@@ -29,12 +29,16 @@ export class ServiceSsrLayout extends BeanBase {
             document.querySelector('#__prefersColorSchemeDarkJS').remove();
           </script>`.replaceAll('\n', '');
         }
-        if (this.$$scopeSsr.config.optimization.bodyReadyObserver) {
-          this.ctx.meta.$ssr.context._meta.bodyTags += `<script id="__leftDrawerOpenJS">
-  ${this.options?.sidebarLeftOpenPC ? this._getJsHandlerSidebar() : ''}
+        if (this.options?.bodyReadyObserver) {
+          this.ctx.meta.$ssr.context.__qMetaList.push({
+            bodyStyle: { display: 'none' },
+          });
+          this.ctx.meta.$ssr.context._meta.bodyTags +=
+            `<script id="__leftDrawerOpenJS">
+  ${this.options?.sidebarLeftOpenPCCapability ? this._getJsHandlerSidebar() : ''}
   ${this._getJsHandlerPageContainer()}
   window.ssr_body_ready_handler=()=>{
-    ${this.options?.sidebarLeftOpenPC ? 'window.ssr_body_ready_handler_sidebar();' : ''}
+    ${this.options?.sidebarLeftOpenPCCapability ? 'window.ssr_body_ready_handler_sidebar();' : ''}
     window.ssr_body_ready_handler_pageContainer();
   };
   window.ssr_body_ready_condition=()=>{
@@ -45,7 +49,7 @@ export class ServiceSsrLayout extends BeanBase {
     window.ssr_body_ready_handler();
     document.querySelector('#__leftDrawerOpenJS').remove();
   };
-</script>`.replaceAll('\n', '');
+</script>`.replaceAll('\n', '') + getBodyReadyObserverScript();
         }
       });
     }
@@ -58,13 +62,13 @@ export class ServiceSsrLayout extends BeanBase {
 
   private _getJsHandlerSidebar() {
     return `window.ssr_body_ready_handler_sidebar=()=>{
-      const __belowBreakpoint=document.documentElement.clientWidth <= ${this.sys.config.layout.sidebar.breakpoint};
+      const __belowBreakpoint=document.documentElement.clientWidth <= ${this.options?.sidebarBreakpoint};
       let __leftDrawerOpen;
       if(__belowBreakpoint){
         __leftDrawerOpen=false;
       }else{
         const __leftDrawerOpenPC=window.ssr_load_local('sidebarLeftOpenPC');
-        __leftDrawerOpen=__leftDrawerOpenPC!==undefined?__leftDrawerOpenPC:${this.sys.config.layout.sidebar.leftOpenPC};
+        __leftDrawerOpen=__leftDrawerOpenPC!==undefined?__leftDrawerOpenPC:${this.options?.sidebarLeftOpenPCFallback ?? false};
       }
       const __domDrawerContainer=document.querySelector('#q-app>.drawer');
       const __domDrawer=document.querySelector('#q-app>.drawer>.drawer-side');

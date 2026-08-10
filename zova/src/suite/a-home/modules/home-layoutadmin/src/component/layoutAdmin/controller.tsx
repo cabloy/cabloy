@@ -1,6 +1,6 @@
 import type { ModelTabs, ModelTabsOptions } from 'zova-module-a-routertabs';
 
-import { BeanControllerBase, Use } from 'zova';
+import { BeanControllerBase, Use, usePrepareArg } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { IServiceSsrLayoutOptions, ServiceLocale, ServiceSsrLayout } from 'zova-module-home-base';
@@ -22,8 +22,16 @@ export class ControllerLayoutAdmin extends BeanControllerBase {
   @Use()
   $$modelLayout: ModelLayout;
 
-  @Use({ init: { arg: { sidebarLeftOpenPC: true } as IServiceSsrLayoutOptions } })
-  $$serviceSsrLayout: ServiceSsrLayout;
+  @Use()
+  get $$serviceSsrLayout(): ServiceSsrLayout {
+    const sidebar = this.scope.config.layout.sidebar;
+    return usePrepareArg({
+      bodyReadyObserver: sidebar.bodyReadyObserver,
+      sidebarBreakpoint: sidebar.breakpoint,
+      sidebarLeftOpenPCCapability: sidebar.leftOpenPCCapability,
+      sidebarLeftOpenPCFallback: sidebar.leftOpenPCFallback,
+    } satisfies IServiceSsrLayoutOptions);
+  }
 
   @Use()
   $$serviceLocale: ServiceLocale;
@@ -45,7 +53,7 @@ export class ControllerLayoutAdmin extends BeanControllerBase {
     }
     // belowBreakpoint
     this.belowBreakpoint = this.$computed(() => {
-      return this.viewportWidth <= this.sys.config.layout.sidebar.breakpoint;
+      return this.viewportWidth <= this.scope.config.layout.sidebar.breakpoint;
     });
     // leftDrawerOpen
     this.leftDrawerOpen = this.$customRef(() => {

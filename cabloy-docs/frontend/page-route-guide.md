@@ -59,10 +59,10 @@ The route meta surface includes important behavior such as:
 - absolute-path behavior
 - layout choice
 - authentication requirement
-- locale handling
+- URL-locale handling through `meta.locale`
 - component key behavior
 - keepAlive behavior
-- SSR transfer-cache behavior
+- SSR profile and nested `meta.ssrProfileOptions.responseCache` behavior
 
 This is one reason route records matter so much: they are not just URL declarations. They are an application-behavior surface.
 
@@ -148,6 +148,6 @@ It should also check whether the route change affects:
 - params typing
 - auth behavior
 - layout behavior
-- locale behavior
-- SSR behavior
+- whether `meta.locale` should participate in URL-locale behavior
+- SSR profile and nested `meta.ssrProfileOptions.responseCache` behavior
 - metadata regeneration

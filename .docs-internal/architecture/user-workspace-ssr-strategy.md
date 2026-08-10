@@ -7,7 +7,7 @@ This note records how Cabloy Basic should place and render authenticated user-fa
 It exists to prevent an incorrect coupling between business ownership and SSR cookie strategy:
 
 - user-facing features must not move into Admin merely because Admin currently enables cookie-aware SSR;
-- `SSR_COOKIE=false` for Web does not mean Web cannot SSR; and
+- a `public` profile for Web does not mean Web cannot SSR; and
 - a Site should be added only when its business and rendering boundaries justify it.
 
 The Site and role terminology in this note follows [ADR 0006](../decisions/0006-ssr-site-access-and-role-model.md).
@@ -16,14 +16,12 @@ The Site and role terminology in this note follows [ADR 0006](../decisions/0006-
 
 Cabloy Basic has these relevant Zova flavor settings:
 
-| Flavor             | Site  | `SSR_COOKIE` | Current rendering intent                                               |
-| ------------------ | ----- | -----------: | ---------------------------------------------------------------------- |
-| `cabloyBasicWeb`   | Web   |      `false` | Anonymous/public SSR, suitable for cacheable and SEO-oriented content. |
-| `cabloyBasicAdmin` | Admin |       `true` | Cookie-aware SSR for internal management and operations.               |
+| Flavor             | Site  | `SSR_PROFILE` | Current rendering intent                                               |
+| ------------------ | ----- | ------------- | ---------------------------------------------------------------------- |
+| `cabloyBasicWeb`   | Web   | `public`      | Anonymous/public SSR, suitable for cacheable and SEO-oriented content. |
+| `cabloyBasicAdmin` | Admin | `session`     | Session-profile SSR for internal management and operations.            |
 
-`SSR_COOKIE=false` sets `cookieDisabledOnServer` during server rendering. Router guards therefore cannot use a request cookie to construct a complete server-side Passport for authenticated-route admission. Browser hydration can still obtain Passport state and run the same route policy.
-
-`SSR_COOKIE=true` permits the server-side Passport flow during SSR initial navigation, so a route can perform authenticated Site admission and fetch/render personalized data before the response is sent.
+The `public` profile renders without request-cookie credentials. Router guards therefore defer authenticated Site admission to browser hydration, where Passport state is available. The `session` profile permits the server-side Passport flow during SSR initial navigation, so normal route admission can redirect or deny before the response is sent.
 
 ## Problem
 
@@ -51,8 +49,8 @@ Choose a rendering strategy per page class, not by treating every authenticated 
 | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------- |
 | Public content                                              | home, content detail, product list, search, login, registration                                                               | Web                           | Anonymous SSR. These routes declare `requiresAuth: false`.                                |
 | Private user workspace without personalized SSR requirement | profile shell, order shell, account settings, notifications shell                                                             | Web                           | Anonymous SSR shell followed by browser Passport/site admission and private data loading. |
-| Private user workspace requiring personalized SSR           | personalized order list, account dashboard with required server first paint, user workspace with strict server route decision | Dedicated Member/Account Site | Cookie-aware SSR with `SSR_COOKIE=true`.                                                  |
-| Internal back office                                        | user management, content operations, system settings                                                                          | Admin                         | Cookie-aware SSR with `SSR_COOKIE=true`.                                                  |
+| Private user workspace requiring personalized SSR           | personalized order list, account dashboard with required server first paint, user workspace with strict server route decision | Dedicated Member/Account Site | Session-profile SSR with a `session` profile.                                             |
+| Internal back office                                        | user management, content operations, system settings                                                                          | Admin                         | Session-profile SSR with a `session` profile.                                             |
 
 The default is the second row: a user workspace page remains in Web and uses anonymous SSR plus client-side private-data loading.
 
@@ -70,7 +68,7 @@ The rendering flow is:
 
 ```text
 Request /account or /orders
-  -> Web SSR with SSR_COOKIE=false
+  -> Web SSR with the public profile
   -> render a generic shell, skeleton, or non-private route frame
   -> browser hydration
   -> Router Guard obtains Passport state
@@ -110,7 +108,7 @@ requiresAuth not false
   -> otherwise continue
 ```
 
-For Web with `SSR_COOKIE=false`, the authenticated portion is completed after hydration. For a cookie-enabled Site, it can be completed during SSR initial navigation.
+For Web with a `public` profile, the authenticated portion is completed after hydration. For a cookie-enabled Site, it can be completed during SSR initial navigation.
 
 The client-side check is a navigation and user-experience control. It does not replace Vona API/resource guards, which remain mandatory for every private data request and mutation.
 
@@ -141,9 +139,9 @@ systemAdmin.siteIds = ['web', 'member', 'admin']
 
 The exact Site ID should be selected before implementation and then remain stable. Do not use `admin` for a user workspace merely to reuse Cookie SSR.
 
-## Why Not Enable `SSR_COOKIE=true` for All Web Pages
+## Why Not Enable a `session` profile for All Web Pages
 
-Changing the Web flavor to `SSR_COOKIE=true` is technically possible but is not the default recommendation.
+Changing the Web flavor to a `session` profile is technically possible but is not the default recommendation.
 
 It makes the entire Web SSR output potentially cookie- and user-state-aware, including public pages. Before choosing it, evaluate:
 
@@ -177,7 +175,7 @@ A same-domain cookie only proves authentication. It never grants Admin, Member, 
 1. Keep user-facing account/order/profile routes in the Web flavor.
 2. Leave public routes explicitly marked `requiresAuth: false`.
 3. Keep user workspace routes authenticated by default.
-4. Ensure Web SSR output for authenticated routes contains no private data when `SSR_COOKIE=false`.
+4. Ensure Web SSR output for authenticated routes contains no private data when a `public` profile.
 5. Keep the client's hydration-time initial render equivalent to that anonymous SSR shell; do not start a private query or render a private/loading branch until an explicit post-hydration, admission, mounted, or interaction boundary.
 6. In the browser, complete Passport and `SITE_ID=web` role-policy checks before private data interaction.
 7. Protect every private data API with Vona Passport/resource guards.
@@ -186,7 +184,7 @@ A same-domain cookie only proves authentication. It never grants Admin, Member, 
 ### Dedicated Member/Account Site, when justified
 
 1. Add a stable `siteId` and explicit Zova flavor `SITE_ID` mapping.
-2. Enable `SSR_COOKIE=true` only for that Site's flavor.
+2. Enable a `session` profile only for that Site's flavor.
 3. Add the Site ID explicitly to intended role `siteIds`.
 4. Keep public Web and Member cache/deployment behavior separate.
 5. Verify personalized SSR, server-side redirect/403 handling, browser navigation, and API authorization.

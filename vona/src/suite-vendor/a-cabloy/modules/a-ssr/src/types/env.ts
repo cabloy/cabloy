@@ -18,9 +18,7 @@ export interface ZovaConfigEnv {
   API_BASE_URL: string | undefined;
   API_PREFIX: string | undefined;
   API_JWT: string | undefined;
-  SSR_COOKIE_THEMENAME: string | undefined;
-  SSR_COOKIE_THEMEDARK: string | undefined;
   SSR_COOKIE_THEMEDARK_DEFAULT: string | undefined;
-  SSR_BODYREADYOBSERVER: string | undefined;
   SSR_WITH_VONA: string | undefined;
+  SSR_PROFILE: 'public' | 'session' | undefined;
 }

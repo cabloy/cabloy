@@ -25,7 +25,7 @@ export class BeanTheme extends BeanModelBase {
   $$scopeSsr: ScopeModuleASsr;
 
   protected async __init__() {
-    const cookieTheme = this.sys.config.ssr.cookie;
+    const cookieTheme = this.$ssr.profileOptions.useCookie;
     const cookieThemeDarkDefault = this.$$scopeSsr.config.cookieThemeDarkDefault;
     // support admin
     this.name = this.$useState(cookieTheme ? 'cookie' : 'local', {
@@ -82,7 +82,7 @@ export class BeanTheme extends BeanModelBase {
     // server emits both data-ssr-theme-dark-false/true markers and the browser can resolve the
     // final data-theme during bootstrap.
     await this._applyTheme();
-    if (this.sys.config.ssr.cookieDisabledOnServer) {
+    if (this.$ssr.cookieDisabledOnServer) {
       this.toggleDark();
       await this._applyTheme();
     }

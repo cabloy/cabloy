@@ -178,7 +178,7 @@ The generated environment surface includes values such as:
 - `SSR_PROD_HOST`
 - `SSR_WITH_VONA`
 - `META_MODE`
-- theme-related cookie/env names such as `SSR_COOKIE_THEMENAME` and `SSR_COOKIE_THEMEDARK`
+- theme-related defaults such as `SSR_COOKIE_THEMEDARK_DEFAULT`; request credential capability is selected by `SSR_PROFILE`
 
 For Cabloy Basic, this note should be read together with the repo-level rule that frontend/UI assumptions are edition-sensitive.
 

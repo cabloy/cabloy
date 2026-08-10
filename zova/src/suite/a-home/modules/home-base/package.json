@@ -54,6 +54,7 @@
       "monkey": true
     },
     "dependencies": {
+      "a-ssr": "5.0.0",
       "a-zova": "5.0.0"
     }
   }

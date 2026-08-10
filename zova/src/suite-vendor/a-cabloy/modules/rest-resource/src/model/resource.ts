@@ -62,7 +62,7 @@ export class ModelResource<
     await super.__init__(resource);
     this.resource = resource;
     this.permissions = this.$computed(() => {
-      if (this.sys.config.ssr.cookieDisabledOnServer) return;
+      if (this.$ssr.cookieDisabledOnServer) return;
       const permissions = this.$sdk.getPermissions(this.resource);
       return permissions.data;
     });

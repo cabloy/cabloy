@@ -28,6 +28,16 @@ export class Monkey
   }
 
   async appInitialize() {
+    this.app.meta.event.on('a-router:routerGuards', async (router, next) => {
+      if (process.env.CLIENT) {
+        router.afterEach((to, _from, failure) => {
+          if (!failure) {
+            this.ctx.meta.$ssr._setProfile(to.meta.ssrProfile, to.meta.ssrProfileOptions);
+          }
+        });
+      }
+      return await next();
+    });
     if (process.env.CLIENT && this.ctx.meta.$ssr.isRuntimeSsrPreHydration) {
       this.ctx.meta.$ssr.onHydrated(() => {
         document.documentElement.setAttribute('data-zova-hydrated', this.sys.env.SITE_ID);

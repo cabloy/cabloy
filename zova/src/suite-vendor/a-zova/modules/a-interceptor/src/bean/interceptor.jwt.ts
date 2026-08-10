@@ -55,7 +55,7 @@ export class InterceptorJwt
     authToken: string | boolean | undefined,
   ): Promise<string | undefined> {
     if (!this.sys.config.api.jwt) return;
-    if (this.sys.config.ssr.cookieDisabledOnServer) return;
+    if (this.$ssr.cookieDisabledOnServer) return;
     // use default in scope.config rather than IInterceptorOptionsJwt.options
     const authTokenCurrent = authToken ?? this.scope.config.authToken.default;
     // authToken = authToken ?? this.scope.config.authToken.default;

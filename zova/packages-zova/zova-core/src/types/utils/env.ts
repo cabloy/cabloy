@@ -20,7 +20,6 @@ export interface ZovaConfigEnv {
   DEV_SERVER_PORT: string | undefined;
   LAYOUT_COMPONENT_EMPTY: keyof TypeComponentLayoutRecord | undefined;
   LAYOUT_COMPONENT_DEFAULT: keyof TypeComponentLayoutRecord | undefined;
-  LAYOUT_SIDEBAR_LEFTOPENPC: string | undefined;
   STYLE_DEFAULT_THEME: string | undefined;
   SSR_API_BASE_URL: string | undefined;
   API_BASE_URL: string | undefined;
@@ -30,7 +29,10 @@ export interface ZovaConfigEnv {
   SSR_PROD_PROTOCOL: string | undefined;
   SSR_PROD_HOST: string | undefined;
   SSR_WITH_VONA: string | undefined;
-  SSR_COOKIE: string | undefined;
+  SSR_PROFILE: 'public' | 'session' | undefined;
+  SSR_PROFILE_PUBLIC_RESPONSE_CACHE_EXPIRES: string | undefined;
+  SSR_PROFILE_SESSION_RESPONSE_CACHE_EXPIRES: string | undefined;
+  SSR_COOKIE_THEMEDARK_DEFAULT: string | undefined;
   OPENAPI_BASE_URL_DEFAULT: string | undefined;
   OPENAPI_BASE_URL_HOME_API: string | undefined;
   MOCK_ENABLED: string | undefined;

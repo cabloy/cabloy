@@ -15,7 +15,7 @@ export class ServiceRouterGuards extends BeanRouterGuardsBase {
   protected onRouterGuards(router: BeanRouter) {
     router.beforeEach(async to => {
       if (to.meta.requiresAuth === false) return;
-      if (this.sys.config.ssr.cookieDisabledOnServer) return;
+      if (this.$ssr.cookieDisabledOnServer) return;
       if (!this.$passport.isAuthenticated) {
         const [_res, err] = await catchError(() => {
           return this.$passport.ensurePassport();

@@ -1,5 +1,5 @@
 import type { ComponentInternalInstance, VNode } from 'vue';
-import type { ZovaConfigEnv } from 'zova';
+import type { ZovaConfigEnv, ZovaConfigSsrProfile, ZovaConfigSsrResponseCachePolicy } from 'zova';
 
 import type { CtxSSR } from '../lib/ssr.js';
 import 'zova';
@@ -44,11 +44,27 @@ export interface SSRContextMeta {
   renderError: ErrorSSR | string;
 }
 
+export type TypeSsrProfile = 'public' | 'session';
+
+export type ISsrResponseCachePolicy = ZovaConfigSsrResponseCachePolicy;
+
+export interface ISsrRouteProfileOptions {
+  responseCache?: false | Readonly<ISsrResponseCachePolicy>;
+}
+
+export type ISsrProfileOptions = Readonly<
+  Omit<ZovaConfigSsrProfile, 'responseCache'> & {
+    responseCache: false | Readonly<ISsrResponseCachePolicy>;
+  }
+>;
+
 export interface SSRContextState {
   envClient?: ZovaConfigEnv;
   pagePathFull?: string;
   pagePath?: string;
   pageData?: unknown;
+  ssrProfile?: TypeSsrProfile;
+  ssrProfileOptions?: Readonly<ISsrProfileOptions>;
 }
 export interface SSRContextStateDefer {}
 
@@ -114,13 +130,6 @@ declare module 'zova' {
   export interface BeanBase {
     $ssr: CtxSSR;
     $useMeta(options: SSRMetaOptions | (() => SSRMetaOptions)): void;
-  }
-
-  export interface ZovaConfigEnv {
-    SSR_COOKIE_THEMEDARK_DEFAULT: string | undefined;
-    SSR_BODYREADYOBSERVER: string | undefined;
-    SSR_TRANSFERCACHE: string | undefined;
-    SSR_TRANSFERCACHE_EXPIRES: string | undefined;
   }
 }
 

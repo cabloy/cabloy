@@ -1,4 +1,9 @@
-import type { ILocaleRecord, ZovaConfigOptional, ZovaSys } from 'zova';
+import type {
+  ILocaleRecord,
+  ZovaConfigOptional,
+  ZovaConfigSsrResponseCachePolicy,
+  ZovaSys,
+} from 'zova';
 import type { IThemeRecord } from 'zova-module-a-style';
 
 import { colorizer, combine, errors, splatter, timestamp } from '@cabloy/logger';
@@ -37,10 +42,24 @@ export default function (sys: ZovaSys) {
 
   // ssr
   config.ssr = {
-    cookie: env.SSR_COOKIE === 'true',
     withVona: env.SSR_WITH_VONA === 'true',
-    cookieDisabledOnServer: process.env.SERVER && env.SSR_COOKIE === 'false',
     hmr: env.SSR_WITH_VONA === 'true' && env.META_MODE === 'development',
+    profiles: {
+      public: {
+        useCookie: false,
+        responseCache: {
+          expires:
+            env.SSR_PROFILE_PUBLIC_RESPONSE_CACHE_EXPIRES as ZovaConfigSsrResponseCachePolicy['expires'],
+        },
+      },
+      session: {
+        useCookie: true,
+        responseCache: {
+          expires:
+            env.SSR_PROFILE_SESSION_RESPONSE_CACHE_EXPIRES as ZovaConfigSsrResponseCachePolicy['expires'],
+        },
+      },
+    },
   };
 
   // ws
@@ -72,10 +91,6 @@ export default function (sys: ZovaSys) {
     component: {
       empty: env.LAYOUT_COMPONENT_EMPTY,
       default: env.LAYOUT_COMPONENT_DEFAULT,
-    },
-    sidebar: {
-      leftOpenPC: env.LAYOUT_SIDEBAR_LEFTOPENPC === 'true',
-      breakpoint: 1023,
     },
   };
 

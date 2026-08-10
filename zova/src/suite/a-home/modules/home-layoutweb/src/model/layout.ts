@@ -1,8 +1,6 @@
 import type { IDecoratorModelOptions } from 'zova-module-a-model';
 
-import { UseScope } from 'zova';
 import { BeanModelBase, Model } from 'zova-module-a-model';
-import { ScopeModuleASsr } from 'zova-module-a-ssr';
 
 export interface IModelOptionsLayout extends IDecoratorModelOptions {}
 
@@ -10,17 +8,16 @@ export interface IModelOptionsLayout extends IDecoratorModelOptions {}
 export class ModelLayout extends BeanModelBase {
   leftDrawerOpenPC: boolean;
 
-  @UseScope()
-  $$scopeSsr: ScopeModuleASsr;
-
   protected async __init__() {
+    const sidebar = this.scope.config.layout.sidebar;
+    const leftOpenPCFallback = sidebar.leftOpenPCFallback;
     this.leftDrawerOpenPC =
-      process.env.SSR && !this.$$scopeSsr.config.optimization.bodyReadyObserver
-        ? this.sys.config.layout.sidebar.leftOpenPC
+      process.env.SSR && !sidebar.bodyReadyObserver
+        ? leftOpenPCFallback
         : this.$useStateLocal({
             queryKey: ['sidebarLeftOpenPC'],
             meta: {
-              defaultData: this.sys.config.layout.sidebar.leftOpenPC,
+              defaultData: leftOpenPCFallback,
             },
           });
   }

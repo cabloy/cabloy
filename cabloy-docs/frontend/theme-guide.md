@@ -166,13 +166,13 @@ A practical split is:
 - Web SSR is usually the lower-authority path for final browser theme when cookie-backed SSR resolution is unavailable
 - Admin SSR is the stronger path for SSR-stable theme-sensitive rendering when cookie-backed SSR resolution is available
 
-In practice, always check `SSR_COOKIE` and the active adapter behavior before assuming that server-rendered theme-sensitive output can exactly match the hydrated client state.
+In practice, check the request-local `$ssr.profile` and the active adapter behavior before assuming that server-rendered theme-sensitive output can exactly match the hydrated client state.
 
-With `SSR_COOKIE=false`, server reads of `$theme.dark`, `$theme.darkMode`, and `$token` should be treated as non-authoritative for the browser's final theme unless the active adapter explicitly documents a stronger guarantee.
+With a `public` profile, server reads of `$theme.dark`, `$theme.darkMode`, and `$token` should be treated as non-authoritative for the browser's final theme unless the active adapter explicitly documents a stronger guarantee.
 
-With `SSR_COOKIE=true`, SSR theme-sensitive branching can rely on a stronger server/client match guarantee, but should still stay inside the established theme handler and hydration pipeline.
+With a `session` profile, SSR theme-sensitive branching can use cookie-backed state and rely on a stronger server/client match guarantee, but should still stay inside the established theme handler and hydration pipeline.
 
-For the env-side explanation of `SSR_COOKIE`, see [SSR Environment Variables](/frontend/ssr-env). For the flavor/runtime selection model, see [Environment and Config Guide](/frontend/environment-config-guide).
+For the env-side explanation of `SSR_PROFILE`, see [SSR Environment Variables](/frontend/ssr-env). For the flavor/runtime selection model, see [Environment and Config Guide](/frontend/environment-config-guide).
 
 ## Shared development rules
 

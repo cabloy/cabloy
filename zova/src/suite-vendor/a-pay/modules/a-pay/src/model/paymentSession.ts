@@ -8,13 +8,13 @@ export interface IModelOptionsPaymentSession extends IDecoratorModelOptions {}
 @Model<IModelOptionsPaymentSession>()
 export class ModelPaymentSession extends BeanModelBase {
   view(id: TableIdentity) {
-    if (!process.env.CLIENT || !this.$passport.isAuthenticated) return;
+    if (this.$ssr.cookieDisabledOnServer) return;
+    if (!this.$passport.isAuthenticated) return;
     return this.$useStateData({
       queryKey: ['view', id],
       queryFn: async () => {
         return await this.scope.api.paymentSession.view({ params: { id } });
       },
-      meta: { disableSuspenseOnInit: true },
     });
   }
 

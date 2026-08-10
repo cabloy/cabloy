@@ -39,6 +39,9 @@ async function loginAsAdmin(page: Page) {
   }
 
   await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+  const dashboardResponse = await page.goto('/admin/', { waitUntil: 'load' });
+  await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+  return dashboardResponse;
 }
 
 function waitForStudentSelect(page: Page) {
@@ -112,7 +115,15 @@ test(
   async ({ page, request }) => {
     const response = await request.get('/');
     expect(response.ok()).toBeTruthy();
-    expect((await response.text()).toLowerCase()).not.toContain('data-zova-hydrated');
+    expect(response.headers()['cache-control']).toBe('public, max-age=600');
+    const html = await response.text();
+    expect(html.toLowerCase()).not.toContain('data-zova-hydrated');
+    expect(html).not.toContain('ssr-body-ready-observer');
+    expect(html).not.toContain('__leftDrawerOpenJS');
+
+    const routeOverrideResponse = await request.get('/demo/basic/routeQueryB');
+    expect(routeOverrideResponse.ok()).toBeTruthy();
+    expect(routeOverrideResponse.headers()['cache-control']).toBe('public, max-age=300');
 
     const pageErrors = collectPageErrors(page);
     const documentResponse = await page.goto('/', { waitUntil: 'load' });
@@ -133,12 +144,16 @@ test(
   async ({ page, request }) => {
     const response = await request.get('/admin/', { maxRedirects: 0 });
     expect(response.status()).toBe(302);
+    expect(response.headers()['cache-control']).toBe('private, no-store');
     const loginPath = response.headers().location;
     expect(loginPath).toMatch(/^\/admin\/login(?:\?|$)/);
 
     const loginResponse = await request.get(loginPath!);
     expect(loginResponse.ok()).toBeTruthy();
-    expect((await loginResponse.text()).toLowerCase()).not.toContain('data-zova-hydrated');
+    const loginHtml = await loginResponse.text();
+    expect(loginHtml.toLowerCase()).not.toContain('data-zova-hydrated');
+    expect(loginHtml).not.toContain('ssr-body-ready-observer');
+    expect(loginHtml).not.toContain('__leftDrawerOpenJS');
 
     let releaseRequest: (() => void) | undefined;
     const requestHeld = new Promise<void>(resolve => {
@@ -190,7 +205,13 @@ test(
     await page.setViewportSize({ width: 1440, height: 900 });
     const pageErrors = collectPageErrors(page);
 
-    await loginAsAdmin(page);
+    const dashboardResponse = await loginAsAdmin(page);
+    expect(dashboardResponse?.ok()).toBeTruthy();
+    expect(dashboardResponse?.headers()['cache-control']).toBe('private, no-store');
+    const dashboardHtml = await dashboardResponse!.text();
+    expect(dashboardHtml).toMatch(/<body[^>]+style="[^"]*display:none;/);
+    expect(dashboardHtml).toContain('__leftDrawerOpenJS');
+    expect(dashboardHtml).toContain('ssr-body-ready-observer');
 
     const initialSelect = waitForStudentSelect(page);
     await page.getByRole('link', { name: 'Student', exact: true }).click();
@@ -233,8 +254,10 @@ test(
     });
     expect(actionFlowMatchesFieldFlow).toBeTruthy();
 
-    await page.setViewportSize({ width: 700, height: 900 });
     const drawer = page.locator('.drawer').first();
+    await expect(drawer).toHaveClass(/\bdrawer-open\b/);
+
+    await page.setViewportSize({ width: 1023, height: 900 });
     await expect(drawer).not.toHaveClass(/\bdrawer-open\b/);
     await expect
       .poll(
@@ -259,8 +282,10 @@ test(
     expect(createdAtEndBox!.x + createdAtEndBox!.width).toBeLessThanOrEqual(viewport.width + 1);
     await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
 
-    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.setViewportSize({ width: 1024, height: 900 });
     await expect(drawer).toHaveClass(/\bdrawer-open\b/);
+
+    await page.setViewportSize({ width: 1440, height: 900 });
     await name.fill('Flow E2E');
     await level.selectOption('2');
     await createdAtStart.fill('2026-01-10');

@@ -65,7 +65,7 @@ export class ModelSdk extends BeanModelBase {
         const bootstrap = await this.$$sysSdk.loadBootstrap(this.$fetch, resource);
         if (!bootstrap) throw new Error('load bootstrap error');
         if (process.env.SERVER) {
-          if (!this.sys.config.ssr.cookieDisabledOnServer) {
+          if (!this.$ssr.cookieDisabledOnServer) {
             await $QueryEnsureLoaded(() => this.getPermissions(resource));
           }
         } else {

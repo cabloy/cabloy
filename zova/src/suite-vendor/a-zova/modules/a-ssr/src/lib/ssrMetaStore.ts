@@ -15,11 +15,6 @@ export class CtxSSRMetaStore extends BeanSimple {
     if (process.env.SERVER) {
       const ssrContext = this.ctx.meta.$ssr.context;
       ssrContext.__qMetaList = [];
-      if (this.sys.env.SSR_BODYREADYOBSERVER === 'true') {
-        ssrContext.__qMetaList.push({
-          bodyStyle: { display: 'none' },
-        });
-      }
       ssrContext.rendered = () => {
         this._onRenderedLast();
         ssrContext.rendered = () => {};
@@ -155,7 +150,8 @@ export class CtxSSRMetaStore extends BeanSimple {
         '',
       )}<script${nonce} id="ssr-meta-init">window.__Q_META__=${delete data.bodyStyle && delete data.bodyClass && delete data.noscript && unevalPatch(data)}</script>`;
 
-    let ssr_local_themedark = this.sys.config.ssr.cookie
+    const cookieTheme = this.ctx.meta.$ssr.profileOptions.useCookie;
+    let ssr_local_themedark = cookieTheme
       ? `let ssr_cookie_themedark=document.cookie.split('; ')?.find(item=>item.indexOf('themedark=')>-1)?.split('=')[1];
         ssr_cookie_themedark=ssr_cookie_themedark==='true'?true:ssr_cookie_themedark==='false'?false:${this.sys.env.SSR_COOKIE_THEMEDARK_DEFAULT};
         window.ssr_themedark=window.ssr_cookie_themedark=ssr_cookie_themedark;`
@@ -174,7 +170,7 @@ export class CtxSSRMetaStore extends BeanSimple {
             return _data;
           },
         });`;
-    const ssr_local_themename = this.sys.config.ssr.cookie
+    const ssr_local_themename = cookieTheme
       ? ''
       : `window.ssr_local_themename=window.ssr_load_local('themename','${this.sys.env.STYLE_DEFAULT_THEME}');`;
     ctx.endingHeadTags += `<script id="ssr-prefers-color-schema-dark">
@@ -187,34 +183,6 @@ export class CtxSSRMetaStore extends BeanSimple {
         ${ssr_local_themename}
         document.querySelector('#ssr-prefers-color-schema-dark').remove();
     </script>`.replaceAll('\n', '');
-
-    if (this.sys.env.SSR_BODYREADYOBSERVER === 'true') {
-      ctx.bodyTags += `<script id="ssr-body-ready-observer">
-        window.ssr_bodyReadyObserverClear=()=>{
-          if(window.ssr_bodyReadyObserver){
-            window.ssr_body_ready_condition=undefined;
-            window.ssr_body_ready_callback=undefined;
-            window.ssr_bodyReadyObserver.disconnect();
-            window.ssr_bodyReadyObserver=undefined;
-            document.body.style.display='block';
-            document.querySelector('#ssr-body-ready-observer').remove();
-          }
-        };
-        window.ssr_bodyReadyObserver = new MutationObserver(() => {
-          if(window.ssr_body_ready_condition && window.ssr_body_ready_condition()){
-            window.ssr_body_ready_callback();
-            window.ssr_bodyReadyObserverClear();
-          }
-        });
-        window.ssr_bodyReadyObserver.observe(document.body, {
-          subtree: true,
-          childList: true,
-        });
-        document.addEventListener("DOMContentLoaded", () => {
-          window.ssr_bodyReadyObserverClear();
-        });
-      </script>`.replaceAll('\n', '');
-    }
   }
 
   private _injectContextState(ssrContext: SSRContext) {

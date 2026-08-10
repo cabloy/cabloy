@@ -4,5 +4,5 @@ import { ZPageDashboard } from './.metadata/page/dashboard.js';
 
 export const routes: IModuleRoute[] = [
   //
-  { path: 'dashboard', component: ZPageDashboard },
+  { path: 'dashboard', component: ZPageDashboard, meta: { ssrProfile: 'session' } },
 ];

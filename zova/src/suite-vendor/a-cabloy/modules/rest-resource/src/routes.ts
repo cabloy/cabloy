@@ -11,6 +11,7 @@ export const routes: IModuleRoute[] = [
     component: ZPageResource,
     meta: {
       tabKey,
+      ssrProfile: 'session',
     },
   },
   {
@@ -19,6 +20,7 @@ export const routes: IModuleRoute[] = [
     component: ZPageEntryCreate,
     meta: {
       tabKey,
+      ssrProfile: 'session',
     },
   },
   {
@@ -27,6 +29,7 @@ export const routes: IModuleRoute[] = [
     component: ZPageEntry,
     meta: {
       tabKey,
+      ssrProfile: 'session',
     },
   },
 ];

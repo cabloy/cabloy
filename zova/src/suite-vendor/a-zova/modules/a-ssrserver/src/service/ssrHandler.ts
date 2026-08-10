@@ -1,13 +1,14 @@
+import type { ISsrProfileOptions } from 'zova-module-a-ssr';
+
 import { catchError } from '@cabloy/utils';
-import { RouteLocationResolvedGeneric } from '@cabloy/vue-router';
 import fse from 'fs-extra';
 import ms from 'ms';
 import path, { basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { BeanBase, cast, Use, UseScope } from 'zova';
+import { BeanBase, cast, Use } from 'zova';
 import { Service } from 'zova-module-a-bean';
 import { SysRouter } from 'zova-module-a-router';
-import { ScopeModuleASsr } from 'zova-module-a-ssr';
+import { resolveSsrProfile, resolveSsrProfileOptions } from 'zova-module-a-ssr';
 
 import { ISsrHandlerRenderOptionsInner, TypeEventResolvePathResult } from '../types/ssr.js';
 
@@ -29,9 +30,6 @@ export class ServiceSsrHandler extends BeanBase {
 
   @Use()
   $$sysRouter: SysRouter;
-
-  @UseScope()
-  $$scopeSsr: ScopeModuleASsr;
 
   protected __init__(siteAssetDir: string) {
     this._siteAssetDir = siteAssetDir;
@@ -61,12 +59,27 @@ export class ServiceSsrHandler extends BeanBase {
       options.state?.pagePathFull ?? this.sys.util.getPagePathFromAbsoluteUrl(options.req.url!);
     const route = await this.$$sysRouter.resolveRoute(pagePathFull, true, false);
     if (!route) return;
+    const ssrProfile = resolveSsrProfile(route.meta.ssrProfile, this.sys.env.SSR_PROFILE);
+    const ssrProfileOptions = resolveSsrProfileOptions(
+      ssrProfile,
+      this.sys.config.ssr.profiles,
+      route.meta.ssrProfileOptions,
+    );
+    if (ssrProfile === 'session') {
+      options.res.setHeader('cache-control', 'private, no-store');
+    }
+    const state = {
+      ...options.state,
+      ssrProfile,
+      ssrProfileOptions,
+    };
     // handler
     const { serverEntry, renderToString, renderTemplate } = this._handlerInstance;
     // ssrContext
     const onRenderedList: Function[] = [];
     const ssrContext = {
       ...options,
+      state,
       _meta: {} as any,
       onRendered: fn => {
         onRenderedList.push(fn);
@@ -117,8 +130,10 @@ export class ServiceSsrHandler extends BeanBase {
 
       const html = renderTemplate(ssrContext);
 
-      // transferCache
-      await this._renderTransferCache(options, route);
+      // responseCache
+      if (ssrProfile === 'public') {
+        await this._renderPublicResponseCache(options, ssrProfileOptions);
+      }
 
       // todo: ssg
 
@@ -267,23 +282,23 @@ export class ServiceSsrHandler extends BeanBase {
     return '';
   }
 
-  private async _renderTransferCache(
+  private async _renderPublicResponseCache(
     options: ISsrHandlerRenderOptionsInner,
-    route: RouteLocationResolvedGeneric,
+    ssrProfileOptions: Readonly<ISsrProfileOptions>,
   ) {
     const { res } = options;
-    const transferCache = route.meta.transferCache ?? this.$$scopeSsr.config.transferCache;
-    if (transferCache === false) return;
+    const responseCache = ssrProfileOptions.responseCache;
+    if (responseCache === false) return;
     // expires
-    const transferCacheExpires = transferCache.expires ?? 0;
+    const responseCacheExpires = responseCache.expires ?? 0;
     const expires =
-      typeof transferCacheExpires === 'string'
-        ? ms(transferCacheExpires) / 1000
-        : transferCacheExpires;
+      typeof responseCacheExpires === 'string'
+        ? ms(responseCacheExpires) / 1000
+        : responseCacheExpires;
     if (expires === 0) {
-      res.appendHeader('cache-control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('cache-control', 'no-cache, no-store, must-revalidate');
     } else {
-      res.appendHeader('cache-control', `public, max-age=${expires}`);
+      res.setHeader('cache-control', `public, max-age=${expires}`);
     }
   }
 }

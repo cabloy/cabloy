@@ -25,7 +25,7 @@ class ServiceRouterGuards {
   protected onRouterGuards(router: BeanRouter) {
     router.beforeEach(async to => {
       if (to.meta.requiresAuth === false) return;
-      if (this.sys.config.ssr.cookieDisabledOnServer) return;
+      if (process.env.SERVER && this.$ssr.profile === 'public') return;
 
       if (!this.$passport.isAuthenticated) {
         const [_res, err] = await catchError(() => this.$passport.ensurePassport());
@@ -57,9 +57,9 @@ That means route configuration and guard behavior should be read together, not a
 
 ## SSR-sensitive detail
 
-The example also references SSR-related configuration such as cookie handling on the server side.
+The example uses the request-local `$ssr.profile` selected after route resolution and before the SSR app initializes.
 
-When `SSR_COOKIE=false`, `cookieDisabledOnServer` is true only during server rendering. The guard deliberately allows the protected route's neutral SSR entry, then the browser restores Passport state and applies the same admission policy after hydration. This preserves equivalent server and hydration-time initial rendering without weakening Client-side protection.
+When the effective profile is `public`, the server deliberately allows the protected route's neutral SSR entry. The browser restores Passport state and applies the same admission policy after hydration. A `session` profile permits the server to recover Passport and make the normal redirect or access-denied decision during the initial render. This preserves equivalent server and hydration-time initial rendering without weakening Client-side protection.
 
 For cookie-enabled SSR, a rejected request must still use `$redirect(...)` so the SSR layer returns its HTTP redirect response. On the Client, return a route path or route-location object from the guard instead of using an imperative `$goto...()` helper.
 

@@ -75,7 +75,7 @@ Browser Passport recovery only restores frontend route admission. It is neither 
 
 ### 3. Anonymous SSR neutral shell
 
-For a Web-style SSR Site with `SSR_COOKIE=false`, `cookieDisabledOnServer` prevents server-side Passport recovery and route admission defers to the browser. The continuation route therefore must not initiate private payment-session, order, or reconciliation work while rendering on the server.
+For a Web-style SSR request with the `public` profile, the server does not recover Passport and route admission defers to the browser. The continuation route therefore must not initiate private payment-session, order, or reconciliation work while rendering on the server.
 
 The payment page follows this rule:
 
@@ -94,7 +94,7 @@ Relevant source path:
 The Home router guard admits protected routes in this order:
 
 1. allow routes explicitly marked `requiresAuth: false`;
-2. bypass authenticated admission on the server when `cookieDisabledOnServer` is active;
+2. bypass authenticated admission on the server when the effective profile is `public`;
 3. when browser Passport is absent, call `ensurePassport()`;
 4. redirect to the Site login route if Passport is still absent;
 5. enforce the current `SITE_ID` role admission policy.
@@ -102,7 +102,7 @@ The Home router guard admits protected routes in this order:
 `ModelPassport.ensurePassport()` intentionally has no unconditional `process.env.CLIENT` early return. When the runtime can access cookies, Passport is absent, and an access token exists, it calls `homeUserPassport.current()` and stores the resulting Passport projection.
 
 ```ts
-if (!this.sys.config.ssr.cookieDisabledOnServer && !this.isAuthenticated && this.accessToken) {
+if (this.$ssr.profile === 'session' && !this.isAuthenticated && this.accessToken) {
   this.passport = await this.$api.homeUserPassport.current();
 }
 ```

@@ -10,10 +10,10 @@ This document is the maintainer source of truth for the SSR profile refactor. It
 
 Cabloy Basic currently has two SSR flavor defaults:
 
-| Flavor/Site     | Current cookie behavior | Existing intent                                    |
-| --------------- | ----------------------- | -------------------------------------------------- |
-| Web / `web`     | `SSR_COOKIE=false`      | Anonymous, SEO-oriented, potentially cacheable SSR |
-| Admin / `admin` | `SSR_COOKIE=true`       | Cookie-aware, internal authenticated SSR           |
+| Flavor/Site     | Default profile | Existing intent                                    |
+| --------------- | --------------- | -------------------------------------------------- |
+| Web / `web`     | `public`        | Anonymous, SEO-oriented, potentially cacheable SSR |
+| Admin / `admin` | `session`       | Cookie-aware, internal authenticated SSR           |
 
 This makes Web personal-center features awkward. Address books, orders, account information, coupons, checkout, and payment continuation pages belong to the Web business boundary, but some of them may benefit from authenticated server rendering. Moving them to Admin would confuse business ownership with SSR rendering capability.
 
@@ -94,53 +94,57 @@ Required behavior:
 
 ## Configuration and selection contract
 
-Add an explicit `ssrProfile` default to SSR Site options and a canonical `SSR_PROFILE` environment value for standalone flavors.
+Use the canonical `SSR_PROFILE` environment value as the SSR flavor default.
 
 Initial defaults:
 
-| Runtime                       | Default               |
-| ----------------------------- | --------------------- |
-| Web SSR Site                  | `public`              |
-| Admin SSR Site                | `session`             |
-| Basic Web standalone flavor   | `SSR_PROFILE=public`  |
-| Basic Admin standalone flavor | `SSR_PROFILE=session` |
+| Flavor/Site         | Default               |
+| ------------------- | --------------------- |
+| Web / Basic Web     | `SSR_PROFILE=public`  |
+| Admin / Basic Admin | `SSR_PROFILE=session` |
 
-Route metadata gains:
+SSR route metadata is intentionally narrow:
 
 ```ts
 interface RouteMeta {
   ssrProfile?: TypeSsrProfile;
-  ssrProfileOptions?: Partial<SsrProfileOptions>;
+  ssrProfileOptions?: Readonly<ISsrRouteProfileOptions>;
+  locale?: boolean;
+}
+
+interface ISsrRouteProfileOptions {
+  responseCache?: false | Readonly<ISsrResponseCachePolicy>;
 }
 ```
+
+`meta.ssrProfile` selects the SSR profile and `meta.ssrProfileOptions.responseCache` can refine the HTTP response-cache policy for a public document. The route profile-options surface is deliberately allowlisted; it is not a partial copy of the full profile snapshot. `meta.locale` remains the existing route-level opt-in for URL-locale parsing and canonicalization; it does not select a profile or configure profile options.
 
 The effective profile is resolved with this precedence:
 
 ```text
 route.meta.ssrProfile
-  > selected SSR Site default
-  > standalone flavor SSR_PROFILE
+  > SSR_PROFILE
+  > public
 ```
 
-There is no legacy `SSR_COOKIE` fallback. Once the refactor is implemented, `SSR_COOKIE` is removed as an authoritative configuration field. Direct reads of `sys.config.ssr.cookie` and `cookieDisabledOnServer` are removed or replaced by `$ssr` profile access.
+There is no legacy cookie-profile fallback. `SSR_PROFILE` is authoritative, and direct reads of static SSR cookie configuration are replaced by request-local `$ssr.profile` or `$ssr.profileOptions` access.
 
-Profile options are a typed, narrow policy surface, not an arbitrary environment overlay. Route options may refine behavior only where the profile contract explicitly allows it. No option can relax the `session` no-store invariant or enable private data in `public`.
+Profile options are a typed, narrow policy surface, not an arbitrary environment overlay. Routes may select a profile and provide only the public-only `ssrProfileOptions.responseCache` override, using `false | policy` semantics. The resolver copies that allowlisted override into a fresh immutable request snapshot; server cache-header generation and hydration consumers observe the same snapshot. Layout/sidebar defaults are deliberately excluded from that snapshot: the selected layout owns its desktop fallback, while the layout model owns the browser-local preference. Routes cannot alter cookie capability, body-ready behavior, or layout/sidebar defaults. No route setting can relax the `session` no-store invariant or enable private data in `public`.
 
 ## Request lifecycle and state handoff
 
 The implementation sequence is:
 
 1. Vona selects the SSR Site and constructs the normal per-request state.
-2. The Vona Site places its immutable default profile name in that request state. Cached Site options are not mutated.
-3. Zova `ServiceSsrHandler.render()` derives the page path and resolves the route.
-4. The handler computes `route.meta.ssrProfile` or the incoming Site/flavor default.
-5. It copies the state and attaches the effective profile snapshot to the per-render `ssrContext`.
-6. It calls `serverEntry` only after `$ssr` can observe the selected profile.
-7. Router guards and all profile-sensitive beans/models consume the snapshot.
-8. The same snapshot is serialized into initial SSR state and used for response-cache enforcement.
-9. Existing `finally` cleanup clears state, deferred state, callbacks, modules, and profile references.
-10. On initial browser hydration, `SysSsrState` reads the serialized profile. The client keeps it stable through hydration.
-11. On later SPA navigation, a route-level explicit profile may update the current client profile after route resolution; global config is never mutated.
+2. Zova `ServiceSsrHandler.render()` derives the page path and resolves the route.
+3. The handler computes `route.meta.ssrProfile` or the flavor `SSR_PROFILE` default.
+4. It copies the state and attaches the effective profile snapshot to the per-render `ssrContext`.
+5. It calls `serverEntry` only after `$ssr` can observe the selected profile.
+6. Router guards and all profile-sensitive beans/models consume the snapshot.
+7. The same snapshot is serialized into initial SSR state and used for response-cache enforcement.
+8. Existing `finally` cleanup clears state, deferred state, callbacks, modules, and profile references.
+9. On initial browser hydration, `SysSsrState` reads the serialized profile. The client keeps it stable through hydration.
+10. After a successful later SPA navigation commits, the router updates the current client profile from the destination route metadata and the same flavor-default fallback. Aborted, redirected, and failed navigations retain the previous profile; global config is never mutated.
 
 The serialized state must contain only safe profile identity/options. It must never contain cookies, access tokens, Passport credentials, request/response objects, or arbitrary server configuration.
 
@@ -155,7 +159,7 @@ The existing `isRuntimeSsrPreHydration`, `isRuntimeSsrHydrated`, and `onHydrated
 
 ## Response cache terminology and invariant
 
-The current `transferCache` name is misleading because the field controls HTTP `Cache-Control` response headers, while Query dehydration is a separate mechanism. Rename it directly to `responseCache` and rename the route metadata accordingly.
+`responseCache` controls HTTP `Cache-Control` response headers, while Query dehydration is a separate mechanism. Source, configuration, routes, generated artifacts, and documentation use this single cache name.
 
 Keep these mechanisms separate:
 
@@ -163,11 +167,11 @@ Keep these mechanisms separate:
 2. Query SSR transfer: `stateDefer.query`, `__INITIAL_STATE_DEFER__`, and TanStack Query hydration;
 3. router tabs/KeepAlive persistence: browser instance and navigation state.
 
-Response-header enforcement must run before any public cache policy:
+Immediately after server route resolution selects `session`, Zova sets `Cache-Control: private, no-store` before `serverEntry`, router guards, redirects, or rendering can terminate the request. Public cache policy is evaluated only after a successful public document render:
 
 ```text
-session -> set private/no-store and stop
-public  -> apply resolved responseCache policy
+session -> set private/no-store immediately
+public  -> apply resolved responseCache policy after successful render
 ```
 
 A session response must never receive `public, max-age=...`, even if route metadata requests it. Avoid contradictory appended headers. Public behavior may use a finite `max-age` only after confirming that HTML and dehydrated state are user-independent.
@@ -176,19 +180,19 @@ A session response must never receive `public, max-age=...`, even if route metad
 
 | Consumer                          | Current dependency                                          | Required change                                                                                                                         |
 | --------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `home-base` `routerGuards`        | `cookieDisabledOnServer`                                    | Read `$ssr.profile`; preserve `requiresAuth`, login redirect, `SITE_ID` role admission, and browser behavior.                           |
+| `home-base` `routerGuards`        | static server-cookie capability                             | Read `$ssr.profile`; preserve `requiresAuth`, login redirect, `SITE_ID` role admission, and browser behavior.                           |
 | `home-passport` `ModelPassport`   | cookie-disabled token/current-Passport branches             | Read profile capability; preserve client local state, server memory state, token refresh, locale, and timezone behavior.                |
 | JWT interceptor                   | cookie-disabled forwarding guard                            | Forward request credentials only for `session`; preserve explicit unauthenticated API calls.                                            |
 | OpenAPI SDK permission model      | cookie-disabled server prefetch guard                       | Enable safe permission prefetch under `session`; keep permission query ownership and authorization boundaries.                          |
 | Resource model                    | cookie-disabled permission projection                       | Make permission state profile-aware without changing Vona resource authorization.                                                       |
-| SSR meta store                    | static cookie and body-ready env reads                      | Use profile for cookie-backed theme/bootstrap; keep body-ready optimization independently configured.                                   |
-| Basic theme handler               | `sys.config.ssr.cookie`                                     | Public emits browser-resolved theme markers; session may emit cookie-resolved final theme.                                              |
-| Style theme bean                  | `cookieDisabledOnServer`                                    | Make dual theme application profile-aware and hydration-equivalent.                                                                     |
-| Web/Admin layouts and `ssrLayout` | body-ready/cookie-disabled branches                         | Consume profile where behavior is identity/theme-sensitive; preserve neutral-shell hydration.                                           |
+| SSR meta store                    | static cookie and body-ready env reads                      | Use profile for cookie-backed theme/bootstrap; let the selected layout register body-ready metadata and scripts.                        |
+| Basic theme handler               | static SSR cookie capability                                | Public emits browser-resolved theme markers; session may emit cookie-resolved final theme.                                              |
+| Style theme bean                  | static server-cookie capability                             | Make dual theme application profile-aware and hydration-equivalent.                                                                     |
+| Web/Admin layouts and `ssrLayout` | body-ready/cookie-disabled branches                         | Use the layout config to opt into pre-reveal restoration; consume profile only for identity/theme-sensitive behavior.                   |
 | Commerce private pages/models     | post-hydration `$ssr` gates and client-only private queries | Retain gates for public fallback; migrate selected pages to session SSR only after query transfer and hydration equivalence are proven. |
-| Locale service/route guards       | URL locale plus cookie/user preference                      | Keep explicit URL locale authoritative; snapshot session preference before render or defer it until hydration.                          |
+| Locale service/route guards       | URL locale plus cookie/user preference                      | Keep explicit URL locale authoritative; resolve it in `beforeResolve` before the initial hydration render.                              |
 
-Repository-wide searches for `SSR_COOKIE`, `cookieDisabledOnServer`, `SSR_BODYREADYOBSERVER`, `SSR_TRANSFERCACHE`, `SSR_TRANSFERCACHE_EXPIRES`, and `transferCache` are required before implementation is considered complete. Each match must be classified as profile-sensitive, static optimization, or response-cache policy.
+Repository-wide searches for obsolete profile and cache names are required before implementation is considered complete. `SSR_COOKIE_THEMEDARK_DEFAULT` remains only as a static theme default. HTTP response-cache defaults are resolved from the request-local profile snapshot; body-ready behavior is selected by the layout module and must not be restored through a profile or environment switch. Each remaining legacy env match must be classified or removed.
 
 ## Route and page rollout
 
@@ -203,19 +207,19 @@ Use one representative commerce route first, such as address or order list. For 
 
 ## Locale policy
 
-Explicit URL locale remains authoritative in both profiles. Preserve current route normalization and omission of the default locale from canonical optional segments.
+`route.meta.locale` remains the route-level opt-in for URL-locale parsing, normalization, and omission of the default locale from canonical optional segments. An explicit URL locale remains authoritative in both profiles.
 
-Recommended order:
+The router resolves locale in `beforeResolve`, before the initial hydration render:
 
 ```text
 explicit URL locale
-  > session cookie/user preference, only if resolved and serialized before render
+  > validated server cookie when the resolved profile permits server cookie reads
   > configured default locale
 ```
 
-Public pages use path locale for canonical SEO URLs and cache keys. Session pages may use cookie/user preference when the effective locale and timezone are included in initial state. If that state cannot be guaranteed during hydration, defer preference promotion to `onHydrated`.
+Public pages use path locale for canonical SEO URLs and cache keys. Browser navigation and hydration use the same route guard to set the active locale before rendering. Recovered `user.locale` remains an ordinary preference fallback when no locale cookie exists; it is not serialized as SSR state.
 
-No server-only locale or timezone decision may change the server tree without an equivalent client initial state.
+Timezone remains runtime-local. The browser determines its timezone through `Intl.DateTimeFormat().resolvedOptions().timeZone`; SSR does not serialize a server timezone snapshot.
 
 ## Hydration and private data safety
 
@@ -236,10 +240,10 @@ For `session` pages, server models may initialize authenticated queries, but onl
 ### Stage A: contract and configuration
 
 - Add profile types and route metadata.
-- Add explicit Web/Admin Site and flavor defaults.
+- Add explicit Web/Admin flavor defaults.
 - Add request-state profile field and resolver.
-- Rename `transferCache` to `responseCache` throughout types, config, route metadata, handler logic, and documentation.
-- Remove `SSR_COOKIE` and related compatibility branches instead of preserving aliases.
+- Use `responseCache` throughout types, config, route metadata, handler logic, generated artifacts, and documentation.
+- Remove the former SSR cookie capability switch and related compatibility branches instead of preserving aliases.
 
 ### Stage B: runtime boundary
 
@@ -253,14 +257,14 @@ For `session` pages, server models may initialize authenticated queries, but onl
 
 - Migrate Passport, router guards, JWT, permission models, theme, SSR metadata, layouts, and all remaining direct consumers.
 - Remove static request-time assumptions from `sys.config.ssr`.
-- Keep `SSR_BODYREADYOBSERVER` as an independent optimization setting.
+- Move body-ready behavior to the selected layout module; keep the generic SSR meta store profile-independent.
 
 ### Stage D: route/page adoption
 
 - Audit and annotate all Web/Admin routes.
 - Preserve public neutral shells where personalized SSR is not required.
 - Migrate selected commerce pages to session SSR.
-- Implement locale snapshot/defer behavior.
+- Keep locale initialization in the existing route guard and timezone runtime-local.
 - Add page-specific private-query and hydration tests.
 
 ### Stage E: cleanup and regeneration
@@ -286,17 +290,17 @@ For `session` pages, server models may initialize authenticated queries, but onl
 
 Focused tests must cover:
 
-- route metadata versus Site/flavor default precedence;
+- route metadata versus flavor `SSR_PROFILE` default precedence;
 - invalid profile configuration;
 - per-request isolation and no shared env/config mutation;
 - SSR state serialization and client restoration;
 - `$ssr` profile visibility before bean/model initialization;
 - Passport/JWT/theme/layout/meta/permission behavior under both profiles;
-- session no-store overriding route/site `responseCache` settings;
+- session no-store overriding route/profile `responseCache` settings;
 - public response-cache behavior remaining unchanged;
 - public neutral-shell hydration equivalence;
 - session private-query transfer and hydration equivalence;
-- explicit URL locale, cookie locale, user locale, and default locale;
+- explicit URL locale, profile-permitted cookie locale, user preference fallback, and default locale;
 - unauthenticated redirects, Site admission/access denial, and independent API/resource denial;
 - alternating and concurrent public/session renders without profile leakage.
 

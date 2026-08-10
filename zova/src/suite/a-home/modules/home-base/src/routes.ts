@@ -13,6 +13,7 @@ export const routes: IModuleRoute[] = [
       absolute: true,
       layout: 'empty',
       requiresAuth: false,
+      ssrProfile: 'public',
     },
   },
   {
@@ -21,6 +22,7 @@ export const routes: IModuleRoute[] = [
     meta: {
       layout: 'empty',
       requiresAuth: false,
+      ssrProfile: 'public',
     },
   },
   {
@@ -29,6 +31,7 @@ export const routes: IModuleRoute[] = [
     meta: {
       layout: 'empty',
       requiresAuth: false,
+      ssrProfile: 'public',
     },
   },
   {
@@ -37,6 +40,7 @@ export const routes: IModuleRoute[] = [
     meta: {
       layout: 'empty',
       requiresAuth: false,
+      ssrProfile: 'public',
     },
   },
   {
@@ -45,6 +49,7 @@ export const routes: IModuleRoute[] = [
     meta: {
       layout: 'empty',
       requiresAuth: false,
+      ssrProfile: 'public',
     },
   },
 ];

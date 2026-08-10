@@ -12,11 +12,19 @@ import { ZPageToolOne } from './.metadata/page/toolOne.js';
 import { ZPageToolTwo } from './.metadata/page/toolTwo.js';
 
 export const routes: IModuleRoute[] = [
-  { path: 'state', component: ZPageState, meta: { requiresAuth: false } },
-  { path: 'component', component: ZPageComponent, meta: { requiresAuth: false } },
-  { path: 'locale', component: ZPageLocale, meta: { requiresAuth: false } },
-  { path: 'style', component: ZPageStyle, meta: { requiresAuth: false } },
-  { path: 'routeQuery', component: ZPageRouteQuery, meta: { requiresAuth: false } },
+  { path: 'state', component: ZPageState, meta: { requiresAuth: false, ssrProfile: 'public' } },
+  {
+    path: 'component',
+    component: ZPageComponent,
+    meta: { requiresAuth: false, ssrProfile: 'public' },
+  },
+  { path: 'locale', component: ZPageLocale, meta: { requiresAuth: false, ssrProfile: 'public' } },
+  { path: 'style', component: ZPageStyle, meta: { requiresAuth: false, ssrProfile: 'public' } },
+  {
+    path: 'routeQuery',
+    component: ZPageRouteQuery,
+    meta: { requiresAuth: false, ssrProfile: 'public' },
+  },
   {
     name: 'routeParams',
     path: 'routeParams/:id?',
@@ -24,9 +32,18 @@ export const routes: IModuleRoute[] = [
     meta: {
       componentKeyMode: 'nameOnly',
       requiresAuth: false,
+      ssrProfile: 'public',
     },
   },
-  { path: 'routeQueryB', component: ZPageRouteQueryB, meta: { requiresAuth: false } },
+  {
+    path: 'routeQueryB',
+    component: ZPageRouteQueryB,
+    meta: {
+      requiresAuth: false,
+      ssrProfile: 'public',
+      ssrProfileOptions: { responseCache: { expires: '5m' } },
+    },
+  },
   {
     name: 'toolMinimal',
     path: 'toolMinimal',
@@ -34,13 +51,14 @@ export const routes: IModuleRoute[] = [
     meta: {
       layout: 'empty',
       requiresAuth: false,
+      ssrProfile: 'public',
     },
   },
   {
     name: 'toolOne',
     path: 'toolOne/:id?',
     component: ZPageToolOne,
-    meta: { requiresAuth: false },
+    meta: { requiresAuth: false, ssrProfile: 'public' },
   },
   {
     name: 'toolTwo',
@@ -49,6 +67,7 @@ export const routes: IModuleRoute[] = [
     meta: {
       layout: 'empty',
       requiresAuth: false,
+      ssrProfile: 'public',
     },
   },
 ];
