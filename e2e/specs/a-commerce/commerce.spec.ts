@@ -472,32 +472,25 @@ test(
       await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`), {
         timeout: 40_000,
       });
-      const orderDetailResponse = waitForApiResponse(
-        page,
-        'GET',
-        new RegExp(`/api/commerce/trade/order/viewMine/${checkout.orderId}$`),
-      );
-      await page.reload({ waitUntil: 'load' });
-      const orderDetailResponseValue = await orderDetailResponse;
-      expect(orderDetailResponseValue.ok()).toBeTruthy();
-      const order = (await orderDetailResponseValue.json()).data;
-      expect(order.id).toBe(checkout.orderId);
-      expect(order.state).toBe('paid');
-      expect(order.currency).toBe('USD');
-      expect(order.discountCents).toBe(0);
-      expect(order.payableTotalCents).toBe(4599);
-      expect(order.addressSnapshot.recipientName).toBe(fixture.recipientName);
-      expect(order.addressSnapshot.addressLine1).toBe(fixture.addressLine1);
-      expect(order.lines).toEqual([
-        expect.objectContaining({
-          titleSnapshot: 'Pour-Over Coffee Set',
-          skuCodeSnapshot: 'COF-SET-01',
-          unitPriceCents: 4599,
-          quantity: 1,
-          lineTotalCents: 4599,
-        }),
-      ]);
+      const orderPath = `/commerce/order/${checkout.orderId}`;
+      const orderResponse = await context.request.get(orderPath);
+      expect(orderResponse.ok()).toBeTruthy();
+      expect(orderResponse.headers()['cache-control']).toBe('private, no-store');
+      const orderHtml = await orderResponse.text();
+      expect(orderHtml.toLowerCase()).not.toContain('data-zova-hydrated');
+      expect(orderHtml).toContain(`Order #${checkout.orderId}`);
+      expect(orderHtml).toContain('paid · $45.99');
+      expect(orderHtml).toContain('USD');
+      expect(orderHtml).toContain(fixture.recipientName);
+      expect(orderHtml).toContain(fixture.addressLine1);
+      expect(orderHtml).toContain('Discount: $0.00');
+      expect(orderHtml).toContain('Pour-Over Coffee Set');
+      expect(orderHtml).toContain('COF-SET-01');
+      expect(orderHtml).toContain('1 × $45.99 = $45.99');
 
+      const orderDocumentResponse = await page.reload({ waitUntil: 'load' });
+      expect(orderDocumentResponse?.ok()).toBeTruthy();
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
       await expect(page.getByRole('heading', { name: `Order #${checkout.orderId}` })).toBeVisible();
       await expect(page.getByText('paid · $45.99')).toBeVisible();
       await expect(page.getByText(fixture.recipientName)).toBeVisible();
@@ -567,22 +560,18 @@ test(
         await adminContext.close().catch(() => {});
       }
 
-      const shippedDetailResponse = waitForApiResponse(
-        page,
-        'GET',
-        new RegExp(`/api/commerce/trade/order/viewMine/${checkout.orderId}$`),
-      );
-      await page.reload({ waitUntil: 'load' });
-      await shippedDetailResponse;
+      const shippedDocumentResponse = await page.reload({ waitUntil: 'load' });
+      expect(shippedDocumentResponse?.ok()).toBeTruthy();
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
       await expect(page.getByText('shipped · $45.99')).toBeVisible();
       await expect(page.getByRole('heading', { name: 'Shipment' })).toBeVisible();
       await expect(page.getByText(shipmentCarrier)).toBeVisible();
       await expect(page.getByText(shipmentTrackingNumber)).toBeVisible();
 
-      const ordersResponse = waitForApiResponse(page, 'GET', '/api/commerce/trade/order/mine');
-      await page.goto('/commerce/orders', { waitUntil: 'load' });
+      const ordersDocumentResponse = await page.goto('/commerce/orders', { waitUntil: 'load' });
+      expect(ordersDocumentResponse?.ok()).toBeTruthy();
       await expect(page).toHaveURL(/\/commerce\/orders(?:\/|$)/);
-      await ordersResponse;
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
       await expect(page.getByRole('heading', { name: 'My orders' })).toBeVisible();
       const orderCard = page
         .locator('article')
