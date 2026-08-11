@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
+import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPage } from 'zova-module-home-base';
 
 import { ModelOrderMine } from '../../model/orderMine.js';
@@ -18,8 +19,11 @@ export class ControllerPageOrders extends BeanControllerPageBase {
   pageNo = 1;
   readonly pageSize = 10;
 
+  protected async __init__() {
+    await $QueryEnsureLoaded(() => this.queryOrders);
+  }
+
   get queryOrders() {
-    if (!this.$ssr.isRuntimeSsrHydrated) return;
     return this.$$modelOrderMine.mine({ pageNo: this.pageNo, pageSize: this.pageSize });
   }
 
@@ -28,13 +32,6 @@ export class ControllerPageOrders extends BeanControllerPageBase {
   }
 
   protected render() {
-    if (!this.$ssr.isRuntimeSsrHydrated) {
-      return (
-        <ZPage>
-          <section class="mx-auto max-w-4xl p-6" aria-busy="true" />
-        </ZPage>
-      );
-    }
     const query = this.queryOrders;
     const orders = query?.data?.list ?? [];
     const pageCount = query?.data?.pageCount ?? 0;

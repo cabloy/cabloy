@@ -7,6 +7,6 @@ export const routes: IModuleRoute[] = [
     name: 'address',
     path: 'address/:locale?',
     component: ZPageAddress,
-    meta: { locale: true, requiresAuth: true },
+    meta: { locale: true, requiresAuth: true, ssrProfile: 'session' },
   },
 ];

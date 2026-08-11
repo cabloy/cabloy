@@ -48,6 +48,9 @@ export class ControllerPagePayment extends BeanControllerPageBase {
   protected async __init__() {
     this.paymentSessionId = this.$computed(() => this.$params.paymentSessionId);
     this.orderId = this.$computed(() => this.$params.orderId);
+    if (process.env.SERVER) {
+      await $QueryEnsureLoaded(() => this.queryPaymentSession);
+    }
     if (process.env.CLIENT) {
       await this.$ssr.handleDirectOrOnHydrated(() => this._initClient());
     }
@@ -55,7 +58,6 @@ export class ControllerPagePayment extends BeanControllerPageBase {
 
   private async _initClient() {
     await $QueryEnsureLoaded(() => this.queryPaymentSession);
-    await $QueryEnsureLoaded(() => this.queryOrder);
     if (this.$query.providerResult === 'return') {
       await this.reconcile();
     } else if (this.$query.providerResult === 'cancel') {
@@ -195,13 +197,6 @@ export class ControllerPagePayment extends BeanControllerPageBase {
   }
 
   protected render() {
-    if (!this.$ssr.isRuntimeSsrHydrated) {
-      return (
-        <ZPage>
-          <section class="mx-auto max-w-xl p-6" aria-busy="true" />
-        </ZPage>
-      );
-    }
     const session = this.queryPaymentSession?.data;
     const isMockSession = session?.providerName === 'pay-mock:mock';
     const isCreated = session?.state === 'created';

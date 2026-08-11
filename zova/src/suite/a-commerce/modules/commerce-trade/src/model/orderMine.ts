@@ -10,24 +10,22 @@ export interface IModelOptionsOrderMine extends IDecoratorModelOptions {}
 @Model<IModelOptionsOrderMine>()
 export class ModelOrderMine extends BeanModelBase {
   mine(query: { pageNo: number; pageSize: number }) {
-    if (!process.env.CLIENT || !this.$passport.isAuthenticated) return;
+    if (!this.$passport.isAuthenticated) return;
     return this.$useStateData({
       queryKey: ['mine', query],
       queryFn: async () => {
         return await this.scope.api.commerceTradeOrder.mine({ query });
       },
-      meta: { disableSuspenseOnInit: true },
     });
   }
 
   viewMine(id: TableIdentity) {
-    if (!process.env.CLIENT || !this.$passport.isAuthenticated) return;
+    if (!this.$passport.isAuthenticated) return;
     return this.$useStateData({
       queryKey: ['viewMine', id],
       queryFn: async () => {
         return await this.scope.api.commerceTradeOrder.viewMine({ params: { id } });
       },
-      meta: { disableSuspenseOnInit: true },
     });
   }
 

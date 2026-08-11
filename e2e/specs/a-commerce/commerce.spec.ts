@@ -342,8 +342,28 @@ test(
       expect(addressResponse.ok()).toBeTruthy();
       expect(addressResponse.headers()['cache-control']).toBe('private, no-store');
       const addressHtml = await addressResponse.text();
+      expect(addressHtml.toLowerCase()).not.toContain('data-zova-hydrated');
       expect(addressHtml).not.toContain('ssr-body-ready-observer');
       expect(addressHtml).not.toContain('__leftDrawerOpenJS');
+      expect(addressHtml).toContain(fixture.recipientName);
+      expect(addressHtml).toContain(fixture.addressLine1);
+
+      const coldPage = await context.newPage();
+      try {
+        const coldPageErrors = collectPageErrors(coldPage);
+        const coldResponse = await coldPage.goto('/commerce/address', { waitUntil: 'load' });
+        expect(coldResponse?.ok()).toBeTruthy();
+        await expect(coldPage.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+        await expect(coldPage.getByRole('heading', { name: 'Addresses' })).toBeVisible();
+        const coldCard = coldPage
+          .locator('article')
+          .filter({ has: coldPage.getByRole('heading', { name: fixture.recipientName }) });
+        await expect(coldCard).toContainText(fixture.addressLine1);
+        await expect(coldPage.getByRole('alert')).toHaveCount(0);
+        expect(coldPageErrors).toEqual([]);
+      } finally {
+        await coldPage.close();
+      }
 
       const card = page
         .locator('article')

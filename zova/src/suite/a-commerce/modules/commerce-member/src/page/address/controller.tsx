@@ -3,6 +3,7 @@ import type { TableIdentity } from 'table-identity';
 import { z } from 'zod';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
+import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPage } from 'zova-module-home-base';
 
 import type {
@@ -39,8 +40,11 @@ export class ControllerPageAddress extends BeanControllerPageBase {
   editingId?: TableIdentity;
   draft: AddressDraft = emptyDraft();
 
+  protected async __init__() {
+    await $QueryEnsureLoaded(() => this.queryAddresses);
+  }
+
   get queryAddresses() {
-    if (!this.$ssr.isRuntimeSsrHydrated) return;
     return this.$$modelAddressMine.mine({ pageNo: 1, pageSize: 100 });
   }
 
@@ -81,13 +85,6 @@ export class ControllerPageAddress extends BeanControllerPageBase {
   }
 
   protected render() {
-    if (!this.$ssr.isRuntimeSsrHydrated) {
-      return (
-        <ZPage>
-          <section class="mx-auto max-w-4xl p-6" aria-busy="true" />
-        </ZPage>
-      );
-    }
     const query = this.queryAddresses;
     const items = query?.data?.list ?? [];
     return (

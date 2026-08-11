@@ -2,6 +2,7 @@ import { RouterLink } from '@cabloy/vue-router';
 import { z } from 'zod';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
+import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPage } from 'zova-module-home-base';
 
 import { ModelCart } from '../../model/cart.js';
@@ -16,8 +17,11 @@ export class ControllerPageCart extends BeanControllerPageBase {
   @Use()
   $$modelCart: ModelCart;
 
+  protected async __init__() {
+    await $QueryEnsureLoaded(() => this.queryCurrent);
+  }
+
   get queryCurrent() {
-    if (process.env.SERVER) return;
     return this.$$modelCart.current();
   }
 

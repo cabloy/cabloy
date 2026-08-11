@@ -13,13 +13,13 @@ export interface IModelOptionsCart extends IDecoratorModelOptions {}
 @Model<IModelOptionsCart>()
 export class ModelCart extends BeanModelBase {
   current() {
-    if (!process.env.CLIENT || !this.$passport.isAuthenticated) return;
+    if (this.$ssr.cookieDisabledOnServer) return;
+    if (!this.$passport.isAuthenticated) return;
     return this.$useStateData({
       queryKey: ['current'],
       queryFn: async () => {
         return await this.scope.api.commerceTradeCart.current();
       },
-      meta: { disableSuspenseOnInit: true },
     });
   }
 
@@ -66,13 +66,12 @@ export class ModelCart extends BeanModelBase {
   }
 
   paymentMethods() {
-    if (!process.env.CLIENT || !this.$passport.isAuthenticated) return;
+    if (!this.$passport.isAuthenticated) return;
     return this.$useStateData({
       queryKey: ['paymentMethods'],
       queryFn: async () => {
         return await this.scope.api.commerceTradeCheckout.paymentMethods();
       },
-      meta: { disableSuspenseOnInit: true },
     });
   }
 

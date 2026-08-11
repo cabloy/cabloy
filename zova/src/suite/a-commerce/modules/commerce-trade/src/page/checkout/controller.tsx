@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
+import { $QueriesEnsureLoaded } from 'zova-module-a-model';
 import { ModelAddressMine } from 'zova-module-commerce-member';
 import { ModelCoupon } from 'zova-module-commerce-promotion';
 import { ZPage } from 'zova-module-home-base';
@@ -28,13 +29,19 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
   providerCandidateKey?: string;
   submitting = false;
 
+  protected async __init__() {
+    await $QueriesEnsureLoaded(
+      () => this.queryAddresses,
+      () => this.queryCoupons,
+      () => this.queryPaymentMethods,
+    );
+  }
+
   get queryAddresses() {
-    if (!this.$ssr.isRuntimeSsrHydrated) return;
     return this.$$modelAddressMine.mine({ pageNo: 1, pageSize: 100 });
   }
 
   get queryCoupons() {
-    if (!this.$ssr.isRuntimeSsrHydrated) return;
     return this.$$modelCoupon.mine();
   }
 
@@ -66,17 +73,14 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
   }
 
   protected render() {
-    if (!this.$ssr.isRuntimeSsrHydrated) {
-      return (
-        <ZPage>
-          <section class="mx-auto max-w-3xl p-6" aria-busy="true" />
-        </ZPage>
-      );
-    }
     const addresses = this.queryAddresses?.data?.list ?? [];
     const coupons = this.queryCoupons?.data ?? [];
     const paymentMethods = this.queryPaymentMethods?.data;
-    if (!this.providerCandidateKey && paymentMethods?.defaultKey) {
+    if (
+      this.$ssr.isRuntimeSsrHydrated &&
+      !this.providerCandidateKey &&
+      paymentMethods?.defaultKey
+    ) {
       this.providerCandidateKey = paymentMethods.defaultKey;
     }
     return (

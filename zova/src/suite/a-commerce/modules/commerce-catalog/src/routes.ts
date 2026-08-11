@@ -8,12 +8,12 @@ export const routes: IModuleRoute[] = [
     name: 'catalogue',
     path: 'catalogue/:locale?',
     component: ZPageCatalogue,
-    meta: { requiresAuth: false, locale: true },
+    meta: { requiresAuth: false, locale: true, ssrProfile: 'public' },
   },
   {
     name: 'product',
     path: 'product/:id/:locale?',
     component: ZPageProduct,
-    meta: { requiresAuth: false, locale: true },
+    meta: { requiresAuth: false, locale: true, ssrProfile: 'public' },
   },
 ];

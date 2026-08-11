@@ -13,13 +13,12 @@ export interface IModelOptionsAddressMine extends IDecoratorModelOptions {}
 @Model<IModelOptionsAddressMine>()
 export class ModelAddressMine extends BeanModelBase {
   mine(query: { pageNo: number; pageSize: number }) {
-    if (!process.env.CLIENT || !this.$passport.isAuthenticated) return;
+    if (!this.$passport.isAuthenticated) return;
     return this.$useStateData({
       queryKey: ['mine', query],
       queryFn: async () => {
         return await this.scope.api.commerceMemberAddress.mine({ query });
       },
-      meta: { disableSuspenseOnInit: true },
     });
   }
 
