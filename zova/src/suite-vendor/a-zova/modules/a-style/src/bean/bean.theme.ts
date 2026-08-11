@@ -30,8 +30,8 @@ export class BeanTheme extends BeanModelBase {
     const cookieThemeDarkDefault = this.$$scopeSsr.config.cookieThemeDarkDefault;
     const darkModeDefault = cookieTheme
       ? cookieThemeDarkDefault
-      : process.env.CLIENT && window.ssr_local_themedark !== undefined
-        ? window.ssr_local_themedark
+      : process.env.CLIENT
+        ? (window.ssr_load_local<ThemeDarkMode>('themedark') ?? 'auto')
         : 'auto';
     // support admin
     this.name = this.$useState(cookieTheme ? 'cookie' : 'local', {
