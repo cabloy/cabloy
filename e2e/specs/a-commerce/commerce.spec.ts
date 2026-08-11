@@ -29,6 +29,16 @@ function collectPageErrors(page: Page) {
   return errors;
 }
 
+function collectConsoleErrors(page: Page) {
+  const errors: string[] = [];
+  page.on('console', message => {
+    if (message.type() === 'error' || /hydration mismatch/i.test(message.text())) {
+      errors.push(message.text());
+    }
+  });
+  return errors;
+}
+
 function waitForApiResponse(page: Page, method: string, path: string | RegExp) {
   return page.waitForResponse(response => {
     const url = new URL(response.url());
@@ -248,6 +258,153 @@ test(
       await expect(page.locator('body')).toHaveAttribute('data-theme', 'dark');
       expect(pageErrors).toEqual([]);
       expect(consoleErrors).toEqual([]);
+    } finally {
+      await context.close();
+    }
+  },
+);
+
+test(
+  'Commerce theme: session cookie mirrors public local preference without hydration mismatch',
+  { tag: ['@web', '@ssr', '@theme'] },
+  async ({ browser, request }, testInfo) => {
+    const customer = await registerCustomer(request, testInfo);
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    const pageErrors = collectPageErrors(page);
+    const consoleErrors = collectConsoleErrors(page);
+    try {
+      await login(page, '/commerce/address', customer.username, customer.password, 'commerce');
+      await context.addCookies([
+        {
+          name: 'themedark',
+          value: 'false',
+          url: new URL(page.url()).origin,
+        },
+      ]);
+      await page.reload({ waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+      await expect(page.locator('body')).toHaveAttribute('data-theme', 'light');
+      await expect.poll(() => page.evaluate(() => localStorage.getItem('themedark'))).toBe('false');
+      expect(pageErrors).toEqual([]);
+      expect(consoleErrors).toEqual([]);
+
+      const publicContext = await browser.newContext();
+      await publicContext.addInitScript(() => localStorage.setItem('themedark', 'false'));
+      const publicPage = await publicContext.newPage();
+      const publicPageErrors = collectPageErrors(publicPage);
+      const publicConsoleErrors = collectConsoleErrors(publicPage);
+      try {
+        await publicPage.goto('/commerce', { waitUntil: 'load' });
+        await expect(publicPage.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+        await expect(publicPage.locator('body')).toHaveAttribute('data-theme', 'light');
+        await expect
+          .poll(() => publicPage.evaluate(() => localStorage.getItem('themedark')))
+          .toBe('false');
+        expect(
+          (await publicContext.cookies()).find(cookie => cookie.name === 'themedark')?.value,
+        ).toBe('false');
+        expect(publicPageErrors).toEqual([]);
+        expect(publicConsoleErrors).toEqual([]);
+      } finally {
+        await publicContext.close();
+      }
+    } finally {
+      await context.close();
+    }
+  },
+);
+
+test(
+  'Commerce theme: public auto preference mirrors resolved media value without hydration mismatch',
+  { tag: ['@web', '@ssr', '@theme'] },
+  async ({ browser }) => {
+    const context = await browser.newContext();
+    await context.addInitScript(() => localStorage.setItem('themedark', JSON.stringify('auto')));
+    const page = await context.newPage();
+    await page.emulateMedia({ colorScheme: 'dark' });
+    const pageErrors = collectPageErrors(page);
+    const consoleErrors = collectConsoleErrors(page);
+    try {
+      await page.goto('/commerce', { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+      await expect(page.locator('body')).toHaveAttribute('data-theme', 'dark');
+      await expect
+        .poll(() => page.evaluate(() => localStorage.getItem('themedark')))
+        .toBe('"auto"');
+      expect((await context.cookies()).find(cookie => cookie.name === 'themedark')?.value).toBe(
+        'true',
+      );
+      expect(pageErrors).toEqual([]);
+      expect(consoleErrors).toEqual([]);
+    } finally {
+      await context.close();
+    }
+  },
+);
+
+test(
+  'Commerce public SSR: theme cookie does not change cacheable HTML',
+  { tag: ['@web', '@ssr', '@theme'] },
+  async ({ request }) => {
+    const responses = await Promise.all([
+      request.get('/commerce'),
+      request.get('/commerce', { headers: { Cookie: 'themedark=true' } }),
+      request.get('/commerce', { headers: { Cookie: 'themedark=false' } }),
+    ]);
+    const html = await Promise.all(responses.map(response => response.text()));
+    for (const [index, response] of responses.entries()) {
+      expect(response.status(), `public response ${index}`).toBe(200);
+      expect(response.headers()['cache-control'], `public response ${index}`).toBe(
+        'public, max-age=600',
+      );
+      expect(html[index].toLowerCase()).not.toContain('data-zova-hydrated');
+      expect(html[index]).toContain('data-ssr-theme-dark-false="light"');
+      expect(html[index]).toContain('data-ssr-theme-dark-true="dark"');
+      expect(html[index]).not.toContain('ssr_cookie_themedark');
+      expect(html[index]).toContain("window.matchMedia('(prefers-color-scheme: dark)')");
+      expect(html[index]).not.toMatch(/<body[^>]*data-theme="(?:dark|light)"/);
+    }
+  },
+);
+
+test(
+  'Commerce session SSR: theme cookie selects raw server theme',
+  { tag: ['@web', '@ssr', '@theme'] },
+  async ({ browser, request }, testInfo) => {
+    const customer = await registerCustomer(request, testInfo);
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    try {
+      await login(page, '/commerce/address', customer.username, customer.password, 'commerce');
+      const origin = new URL(page.url()).origin;
+      const authCookies = (await context.cookies()).filter(cookie => cookie.name !== 'themedark');
+      const getSessionHtml = async (value: string) => {
+        const sessionContext = await browser.newContext();
+        try {
+          await sessionContext.addCookies([
+            ...authCookies.map(({ domain, path, ...cookie }) => ({ ...cookie, url: origin })),
+            { name: 'themedark', value, url: origin },
+          ]);
+          const response = await sessionContext.request.get('/commerce/address');
+          return { response, html: await response.text() };
+        } finally {
+          await sessionContext.close();
+        }
+      };
+      for (const [value, theme] of [
+        ['true', 'dark'],
+        ['false', 'light'],
+      ] as const) {
+        const { response, html } = await getSessionHtml(value);
+        expect(response.status()).toBe(200);
+        expect(response.headers()['cache-control']).toBe('private, no-store');
+        expect(html).toContain(`data-theme="${theme}"`);
+        expect(html).not.toContain('data-ssr-theme-dark-false');
+        expect(html).not.toContain('data-ssr-theme-dark-true');
+        expect(html).not.toContain("window.matchMedia('(prefers-color-scheme: dark)')");
+        expect(html).toContain('Addresses');
+      }
     } finally {
       await context.close();
     }
@@ -1056,13 +1213,9 @@ test(
         await adminContext.close().catch(() => {});
       }
 
-      const refundedDetailResponse = waitForApiResponse(
-        page,
-        'GET',
-        new RegExp(`/api/commerce/trade/order/viewMine/${checkout.orderId}$`),
-      );
+      // The session SSR reload serializes the refreshed order detail, so no browser API request is
+      // required before the page renders the refunded state.
       await page.reload({ waitUntil: 'load' });
-      await refundedDetailResponse;
       await expect(page.getByText('refunded · $45.99')).toBeVisible();
       await expect(page.getByText('1 × $45.99 = $45.99')).toBeVisible();
       await expect(page.getByRole('heading', { name: 'Shipment' })).toHaveCount(0);
@@ -1617,8 +1770,9 @@ test(
     ] as const;
     for (const [path, routePath] of routes) {
       const response = await request.get(path, { maxRedirects: 0 });
-      expect(response.status(), path).toBe(200);
-      expect(response.headers().location, path).toBeUndefined();
+      expect(response.status(), path).toBe(302);
+      expect(response.headers()['cache-control'], path).toBe('private, no-store');
+      expect(response.headers().location, path).toMatch(/^\/commerce\/login\?(?:.*&)?returnTo=/);
       const html = await response.text();
       expect(html.toLowerCase(), path).not.toContain('data-zova-hydrated');
       expect(html, path).not.toContain('Payment Customer');
