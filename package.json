@@ -85,7 +85,7 @@
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^26.1.2",
     "husky": "^9.1.7",
-    "lerna": "^9.0.7",
+    "lerna": "^10.0.0",
     "lint-staged": "^17.0.5",
     "minimist": "^1.2.8",
     "oxfmt": "^0.62.0",
