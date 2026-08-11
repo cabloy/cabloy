@@ -50,7 +50,9 @@ The key ownership split is:
 - Zova `a-ssr` owns `$ssr`, SSR state/meta accumulation, hydration handoff, theme/bootstrap scripts, and server-context cleanup.
 - Generated Zova application code owns route/page/model behavior.
 
-The profile must be selected in the Zova SSR handler after route resolution and before `serverEntry`. Selecting it for the first time inside `router.beforeEach` is too late for consumers that initialize theme, meta, layout, or state before or alongside router guards.
+Production SSR must select the profile in the Zova SSR handler after route resolution and before `serverEntry`. The handler resolves the effective profile/options, writes the safe immutable snapshot to request-local `ssrContext.state`, and immediately applies `Cache-Control: private, no-store` for `session`. This establishes both the production HTTP policy and the initial SSR-state contract for consumers that initialize before or alongside router guards.
+
+That production pre-resolution intentionally coexists with router synchronization. Zova `a-ssr` registers a first `router.beforeEach` that resolves the destination route profile through the same `$ssr._setProfile(...)` path before the router event chain continues to downstream guards. It keeps router-driven initialization and later client navigation aligned, and it supplies the missing early handoff in direct Vite/Quasar dev SSR. It does not replace the production handler as the source of initial production SSR state or response-cache policy.
 
 Primary source paths:
 
@@ -136,15 +138,15 @@ Profile options are a typed, narrow policy surface, not an arbitrary environment
 The implementation sequence is:
 
 1. Vona selects the SSR Site and constructs the normal per-request state.
-2. Zova `ServiceSsrHandler.render()` derives the page path and resolves the route.
-3. The handler computes `route.meta.ssrProfile` or the flavor `SSR_PROFILE` default.
-4. It copies the state and attaches the effective profile snapshot to the per-render `ssrContext`.
-5. It calls `serverEntry` only after `$ssr` can observe the selected profile.
-6. Router guards and all profile-sensitive beans/models consume the snapshot.
-7. The same snapshot is serialized into initial SSR state and used for response-cache enforcement.
-8. Existing `finally` cleanup clears state, deferred state, callbacks, modules, and profile references.
-9. On initial browser hydration, `SysSsrState` reads the serialized profile. The client keeps it stable through hydration.
-10. After a successful later SPA navigation commits, the router updates the current client profile from the destination route metadata and the same flavor-default fallback. Aborted, redirected, and failed navigations retain the previous profile; global config is never mutated.
+2. In the built production handler path, Zova `ServiceSsrHandler.render()` derives the page path and resolves the route.
+3. The handler resolves `route.meta.ssrProfile` or the flavor `SSR_PROFILE` default and resolves the allowlisted immutable options snapshot.
+4. It copies the state and attaches the effective profile/options snapshot to the per-render `ssrContext`.
+5. When the profile is `session`, the handler immediately sets `Cache-Control: private, no-store`, before `serverEntry`, router guards, redirects, or rendering can terminate the request.
+6. It calls `serverEntry` only after `$ssr` can observe the selected profile/options.
+7. During router initialization, the first `router.beforeEach` synchronizes the destination route profile before downstream guards consume `$ssr`; this is a navigation-level safeguard, not the production handler's replacement.
+8. The same safe snapshot is serialized into initial SSR state. For `public`, the resolved `responseCache` policy is applied only after a successful document render.
+9. Existing `finally` cleanup clears state, deferred state, callbacks, modules, and profile references.
+10. On initial browser hydration, `SysSsrState` reads the serialized profile. The client keeps it stable through hydration; router-driven navigation synchronizes its destination profile early through `beforeEach` without mutating global configuration.
 
 The serialized state must contain only safe profile identity/options. It must never contain cookies, access tokens, Passport credentials, request/response objects, or arbitrary server configuration.
 

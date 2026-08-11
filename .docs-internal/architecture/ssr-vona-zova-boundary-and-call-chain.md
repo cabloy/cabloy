@@ -83,9 +83,11 @@ Owns:
 - registering `sys.meta.$getSsrHandler(siteAssetDir)`
 - resolving frontend routes for SSR render
 - serving built client assets under the bundle directory
+- resolving the effective SSR profile/options for production renders and attaching the request-local snapshot before `serverEntry`
+- setting `Cache-Control: private, no-store` immediately for a `session` profile
 - calling `serverEntry`, `renderToString`, and `renderTemplate`
 - generating preload links from the client manifest
-- applying transfer-cache response headers
+- applying public HTTP `responseCache` headers only after a successful render
 
 ### Layer 4: Zova SSR application/runtime semantics
 
@@ -142,11 +144,15 @@ Browser
                -> zova sys.meta.$getSsrHandler(siteAssetDir)
           -> zova ServiceSsrHandler.render
                -> resolveRoute(pagePathFull)
+               -> resolve ssrProfile/options into request-local SSR state
+               -> [session] set Cache-Control: private, no-store
                -> serverEntry(ssrContext)
+               -> router initialization: beforeEach synchronizes destination profile before downstream guards
                -> renderToString(renderFn, ssrContext)
                -> onRendered callbacks
                -> inject state/meta/preloads
                -> renderTemplate(ssrContext)
+               -> [public] apply resolved responseCache after successful render
           -> Vona res.end(html)
 Browser
   <- HTML with SSR state/meta/preloads
@@ -186,7 +192,7 @@ Decision order:
 3. ask the handler whether a built static asset exists
 4. if not, perform SSR render
 
-This ordering is an important invariant.
+This ordering is an important invariant. The dev-proxy branch bypasses the built Zova `ServiceSsrHandler.render()` path, including its production route/profile pre-resolution and HTTP response-cache handling. Direct Vite/Quasar dev SSR therefore relies on Zova `a-ssr`'s first router `beforeEach` to synchronize the destination profile before downstream guards; it cannot validate the production handler's response-header behavior.
 
 The Vona-side site bean remains the outer orchestrator even after the frontend bundle is involved.
 
@@ -250,14 +256,19 @@ This is why built static assets are still served through the SSR handler boundar
 
 - derives `pagePathFull` from SSR state or request URL
 - resolves the route through `SysRouter`
+- resolves the effective profile/options and copies that safe snapshot into request-local SSR state
+- immediately sets `Cache-Control: private, no-store` for `session`
 - creates `ssrContext`
 - calls `serverEntry(ssrContext)`
+- lets router initialization use its early `beforeEach` profile synchronization before downstream guards run
 - calls `renderToString(renderFn, ssrContext)`
 - flushes `onRendered` callbacks
 - records render errors through SSR meta state
 - generates module preload tags from `quasar.manifest.json`
 - renders final HTML through `renderTemplate(ssrContext)`
-- applies transfer-cache headers to the Vona response
+- applies resolved public HTTP `responseCache` headers to the Vona response only after successful rendering
+
+Production handler pre-resolution is authoritative for the initial SSR profile and HTTP policy. Router `beforeEach` synchronization is deliberately retained as an in-app navigation safeguard, including for dev-server SSR paths that bypass this handler.
 
 This layer owns the server-side HTML assembly model.
 
@@ -392,7 +403,7 @@ Primary type surface:
 - creating SSR context
 - calling generated `serverEntry`, `renderToString`, and `renderTemplate`
 - module preload generation from manifest
-- transfer-cache response header policy
+- HTTP response-cache header policy
 
 ### Zova SSR application/runtime owns
 
@@ -427,7 +438,7 @@ Use this rule when triaging SSR bugs.
 - `handler.js` loads but route resolution fails
 - built assets exist but static resolution is wrong
 - HTML render fails after entering the handler
-- module preload tags or transfer-cache behavior are wrong
+- module preload tags or HTTP response-cache behavior are wrong
 
 ### Start in Zova `a-ssr` when
 
