@@ -52,7 +52,7 @@ The key ownership split is:
 
 Production SSR must select the profile in the Zova SSR handler after route resolution and before `serverEntry`. The handler resolves the effective profile/options, writes the safe immutable snapshot to request-local `ssrContext.state`, and immediately applies `Cache-Control: private, no-store` for `session`. This establishes both the production HTTP policy and the initial SSR-state contract for consumers that initialize before or alongside router guards.
 
-That production pre-resolution intentionally coexists with router synchronization. Zova `a-ssr` registers a first `router.beforeEach` that resolves the destination route profile through the same `$ssr._setProfile(...)` path before the router event chain continues to downstream guards. It keeps router-driven initialization and later client navigation aligned, and it supplies the missing early handoff in direct Vite/Quasar dev SSR. It does not replace the production handler as the source of initial production SSR state or response-cache policy.
+That production pre-resolution intentionally coexists with two narrower fallback/synchronization mechanisms. For direct Vite/Quasar server rendering where no outer handler seeded the state, `a-router.appInitialize()` resolves the request route and sets `$ssr` before profile-sensitive application initialization. Zova `a-ssr` registers a first client `router.beforeEach` that resolves the destination route profile through the same `$ssr._setProfile(...)` path before the router event chain continues to downstream guards. The former supplies the missing direct-server initial handoff; the latter keeps client navigation aligned. Neither replaces the production handler as the source of initial production SSR state or response-cache policy.
 
 Primary source paths:
 
@@ -143,10 +143,10 @@ The implementation sequence is:
 4. It copies the state and attaches the effective profile/options snapshot to the per-render `ssrContext`.
 5. When the profile is `session`, the handler immediately sets `Cache-Control: private, no-store`, before `serverEntry`, router guards, redirects, or rendering can terminate the request.
 6. It calls `serverEntry` only after `$ssr` can observe the selected profile/options.
-7. During router initialization, the first `router.beforeEach` synchronizes the destination route profile before downstream guards consume `$ssr`; this is a navigation-level safeguard, not the production handler's replacement.
+7. For direct Vite/Quasar server rendering that lacks the outer handler handoff, `a-router.appInitialize()` resolves the request route and prepares the same profile/options before profile-sensitive application initialization. It does nothing when the handler has already seeded the snapshot.
 8. The same safe snapshot is serialized into initial SSR state. For `public`, the resolved `responseCache` policy is applied only after a successful document render.
 9. Existing `finally` cleanup clears state, deferred state, callbacks, modules, and profile references.
-10. On initial browser hydration, `SysSsrState` reads the serialized profile. The client keeps it stable through hydration; router-driven navigation synchronizes its destination profile early through `beforeEach` without mutating global configuration.
+10. On initial browser hydration, `SysSsrState` reads the serialized profile. The client keeps it stable through hydration; client `router.beforeEach` synchronizes a destination profile before downstream navigation guards and restores the committed route profile when navigation fails, without mutating global configuration.
 
 The serialized state must contain only safe profile identity/options. It must never contain cookies, access tokens, Passport credentials, request/response objects, or arbitrary server configuration.
 

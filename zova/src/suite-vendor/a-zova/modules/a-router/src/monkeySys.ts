@@ -22,7 +22,7 @@ export class MonkeySys
 
   async getSysRouter() {
     if (!this._sysRouter) {
-      this._sysRouter = (await this.bean._getBean('a-router.sys.router', false)) as SysRouter;
+      this._sysRouter = (await this.sys.bean._getBean('a-router.sys.router', false)) as SysRouter;
     }
     return this._sysRouter;
   }

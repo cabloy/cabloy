@@ -22,6 +22,7 @@ import { shallowReactive } from 'vue';
 import { BeanControllerPageBase, BeanSimple, cast, useComputed } from 'zova';
 
 import type { BeanRouter } from './bean/bean.router.js';
+import type { SysRouter } from './bean/sys.router.js';
 import type { TypePageSchema } from './types/router.js';
 
 import { routerViewKey } from './lib/const.js';
@@ -40,7 +41,15 @@ export class Monkey
     IMonkeyController
 {
   private _beanRouter: BeanRouter;
+  private _sysRouter: SysRouter;
   serviceRouterGuards: ServiceRouterGuards;
+
+  private async _getSysRouter() {
+    if (!this._sysRouter) {
+      this._sysRouter = (await this.sys.bean._getBean('a-router.sys.router', false)) as SysRouter;
+    }
+    return this._sysRouter;
+  }
 
   async getBeanRouter() {
     if (!this._beanRouter) {
@@ -55,6 +64,20 @@ export class Monkey
   }
 
   async appInitialize() {
+    const ssrState = this.ctx.meta.$ssr.state;
+    if (
+      process.env.SERVER &&
+      (ssrState.ssrProfile === undefined || ssrState.ssrProfileOptions === undefined)
+    ) {
+      const pagePathFull = this.app.$getCurrentPagePath();
+      if (pagePathFull) {
+        const sysRouter = await this._getSysRouter();
+        const route = await sysRouter.resolveRoute(pagePathFull, true, false);
+        if (route) {
+          this.ctx.meta.$ssr._setProfile(route.meta.ssrProfile, route.meta.ssrProfileOptions);
+        }
+      }
+    }
     // router
     this.serviceRouterGuards = await this.bean._newBean(ServiceRouterGuards, false);
     //  ssr errorHandler
