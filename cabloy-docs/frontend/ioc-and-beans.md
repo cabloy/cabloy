@@ -133,6 +133,26 @@ class ControllerLayout {
 
 In practice, Zova can still preserve the ergonomic class-based development experience while compiling cross-module usage back toward bean-identifier-based resolution.
 
+### Getter-based parameterized injection
+
+Use a getter when injection arguments must be prepared dynamically. The getter must explicitly identify the target bean with `beanFullName`; `usePrepareArg(...)` supplies initialization arguments only and does not resolve the target bean.
+
+```typescript
+import { Use, usePrepareArg } from 'zova';
+import type { ServiceSsrLayout } from 'zova-module-home-base';
+
+class ControllerLayout {
+  @Use({ beanFullName: 'home-base.service.ssrLayout' })
+  get $$serviceSsrLayout(): ServiceSsrLayout {
+    return usePrepareArg({
+      bodyReadyObserver: this.scope.config.layout.sidebar.bodyReadyObserver,
+    });
+  }
+}
+```
+
+Do not rely on the getter return type for implicit class resolution. Unlike a field declaration, a decorated getter does not reliably expose its return bean class as runtime type metadata, and build-time cross-module `@Use()` transforms do not provide a replacement target for getter injection.
+
 ### Hierarchical injection patterns
 
 Hierarchical injection replaces many common cases where a generic Vue app would fall back to `provide/inject`.
