@@ -1,5 +1,27 @@
 # Changelog
 
+## 5.1.133
+
+### Features
+
+- Add SSR profiles for core and commerce applications.
+- Add payment UUIDs, refund support, and refunded-payment handling.
+- Add administrative semantic presentations for addresses, orders, stock, and SKUs.
+- Add payment capabilities and PayPal payment lifecycle coverage.
+- Add SSR site title support and a home-page base.
+- Preserve DTO OpenAPI schema scenarios.
+- Add custom Zod error handling.
+- Ensure passport availability for authenticated flows.
+
+### Bug Fixes
+
+- Preserve SSR locale cookie typings.
+- Harden PayPal refund recovery.
+
+### Improvements
+
+- Upgrade Lerna to v10.
+
 ## 5.1.132
 
 ### Features
