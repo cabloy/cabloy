@@ -1,5 +1,5 @@
 import type { ZovaConfigMeta } from '@cabloy/module-info';
-import type { StringValue } from 'ms';
+import type ms from 'ms';
 
 import type {
   ILayoutRecord,
@@ -25,7 +25,7 @@ export function configDefault(env: ZovaConfigEnv): PowerPartial<ZovaConfig> {
 }
 
 export interface ZovaConfigSsrResponseCachePolicy {
-  expires?: number | StringValue;
+  expires?: number | ms.StringValue;
 }
 
 export interface ZovaConfigSsrProfile {

@@ -64,6 +64,7 @@
     "@cabloy/zod-openapi": "^1.1.10",
     "@cabloy/zod-query": "^2.1.13",
     "@types/js-cookie": "^3.0.6",
+    "@types/ms": "^2.1.0",
     "@vue/shared": "^3.5.32",
     "deep-equal": "^2.2.3",
     "ms": "^2.1.3",
