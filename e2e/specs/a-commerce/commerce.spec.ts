@@ -748,46 +748,72 @@ test(
       expectTableIdentity(checkout.paymentSessionId);
       expect(checkout.state).toBe('awaiting_payment');
 
+      const callbackPath = `/commerce/payment/${checkout.paymentSessionId}/${checkout.orderId}?providerResult=cancel`;
       const paymentSessionPath = new RegExp(
         `/api/pay/payment-session/${checkout.paymentSessionId}$`,
       );
       const reconcilePath = new RegExp(
         `/api/pay/payment-session/${checkout.paymentSessionId}/reconcile$`,
       );
+      const requiresActionSession = {
+        id: checkout.paymentSessionId,
+        state: 'requires_action',
+        providerName: 'pay-paypal:paypal',
+        nextAction: { kind: 'redirect', url: 'https://example.test/paypal-approval' },
+        amountMinor: 4599,
+        currency: 'USD',
+      };
+      const callbackResponse = await context.request.get(callbackPath);
+      expect(callbackResponse.ok()).toBeTruthy();
+      const callbackHtml = await callbackResponse.text();
+      expect(callbackHtml).toContain('Start payment');
+      expect(callbackHtml).not.toContain(
+        'You returned from the payment provider without completing payment.',
+      );
+
       let reconcileCount = 0;
+      let reconcileSeen = false;
+      let resolvePaymentSessionRefresh: () => void;
+      const paymentSessionRefresh = new Promise<void>(resolve => {
+        resolvePaymentSessionRefresh = resolve;
+      });
       await page.route(
         url => paymentSessionPath.test(url.pathname) || reconcilePath.test(url.pathname),
         async route => {
           const request = route.request();
-          if (request.method() === 'POST' && reconcilePath.test(new URL(request.url()).pathname)) {
+          const pathname = new URL(request.url()).pathname;
+          if (request.method() === 'POST' && reconcilePath.test(pathname)) {
             reconcileCount++;
+            reconcileSeen = true;
+          } else if (
+            reconcileSeen &&
+            request.method() === 'GET' &&
+            paymentSessionPath.test(pathname)
+          ) {
+            resolvePaymentSessionRefresh();
           }
           await route.fulfill({
             contentType: 'application/json',
             body: JSON.stringify({
-              data: {
-                id: checkout.paymentSessionId,
-                state: 'requires_action',
-                providerName: 'pay-paypal:paypal',
-                nextAction: { kind: 'redirect', url: 'https://example.test/paypal-approval' },
-                amountMinor: 4599,
-                currency: 'USD',
-              },
+              code: 0,
+              message: '',
+              data: requiresActionSession,
             }),
           });
         },
       );
 
-      await page.goto(
-        `/commerce/payment/${checkout.paymentSessionId}/${checkout.orderId}?providerResult=cancel`,
-        { waitUntil: 'load' },
-      );
+      const reconcileResponse = waitForApiResponse(page, 'POST', reconcilePath);
+      await page.goto(callbackPath, { waitUntil: 'load' });
+      expect((await reconcileResponse).ok()).toBeTruthy();
+      await paymentSessionRefresh;
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
       await expect(
         page.getByText(
           'You returned from the payment provider without completing payment. Your payment status has been refreshed. You can continue to payment or open your order.',
         ),
       ).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Start payment', exact: true })).toHaveCount(0);
       await expect(
         page.getByRole('button', { name: 'Continue to payment', exact: true }),
       ).toBeVisible();
