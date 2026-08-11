@@ -11,6 +11,7 @@ import type {
 
 import { BeanSimple } from '../../bean/beanSimple.ts';
 import { LocaleModuleNameSeparator } from '../../bean/resource/locale/type.ts';
+import { cast } from '../../types/index.ts';
 
 const SymbolLocaleCurrent = Symbol('SymbolLocaleCurrent');
 const SymbolTzCurrent = Symbol('SymbolTzCurrent');
@@ -41,7 +42,7 @@ export class AppLocale extends BeanSimple {
   }
 
   private _cookieEnabled() {
-    return !process.env.SERVER || this.ctx.meta.$ssr.profileOptions.useCookie;
+    return !process.env.SERVER || cast(this.ctx.meta).$ssr.profileOptions.useCookie;
   }
 
   get tz(): string {
