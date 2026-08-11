@@ -136,7 +136,7 @@ importers:
         specifier: workspace:^
         version: link:packages-zova/zova
       zova-jsx:
-        specifier: ^1.1.82
+        specifier: ^1.1.83
         version: link:packages-utils/zova-jsx
       zova-module-a-api:
         specifier: workspace:^
@@ -717,7 +717,7 @@ importers:
         specifier: ^3.5.38
         version: 3.5.38(typescript@5.9.3)
       zova-core:
-        specifier: ^5.1.82
+        specifier: ^5.1.83
         version: link:../../packages-zova/zova-core
     devDependencies:
       clean-package:
@@ -858,10 +858,10 @@ importers:
   packages-zova/zova:
     dependencies:
       zova-core:
-        specifier: ^5.1.82
+        specifier: ^5.1.83
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.144
+        specifier: ^5.1.145
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -927,6 +927,9 @@ importers:
       '@types/js-cookie':
         specifier: ^3.0.6
         version: 3.0.6
+      '@types/ms':
+        specifier: ^2.1.0
+        version: 2.1.0
       '@vue/shared':
         specifier: 3.5.13
         version: 3.5.13
@@ -962,7 +965,7 @@ importers:
   src/suite-vendor/a-cabloy:
     dependencies:
       zova-module-rest-resource:
-        specifier: ^5.1.42
+        specifier: ^5.1.43
         version: link:modules/rest-resource
 
   src/suite-vendor/a-cabloy/modules/rest-resource:
@@ -977,7 +980,7 @@ importers:
   src/suite-vendor/a-pay:
     dependencies:
       zova-module-a-pay:
-        specifier: ^5.0.3
+        specifier: ^5.0.4
         version: link:modules/a-pay
       zova-module-pay-mock:
         specifier: ^5.0.2
@@ -1058,7 +1061,7 @@ importers:
         specifier: ^5.1.26
         version: link:modules/a-icon
       zova-module-a-interceptor:
-        specifier: ^5.1.29
+        specifier: ^5.1.30
         version: link:modules/a-interceptor
       zova-module-a-logger:
         specifier: ^5.1.26
@@ -1070,7 +1073,7 @@ importers:
         specifier: ^5.1.33
         version: link:modules/a-model
       zova-module-a-openapi:
-        specifier: ^5.1.47
+        specifier: ^5.1.48
         version: link:modules/a-openapi
       zova-module-a-router:
         specifier: ^5.1.31
@@ -1082,16 +1085,16 @@ importers:
         specifier: ^5.1.33
         version: link:modules/a-routertabs
       zova-module-a-ssr:
-        specifier: ^5.1.32
+        specifier: ^5.1.33
         version: link:modules/a-ssr
       zova-module-a-ssrhmr:
         specifier: ^5.1.22
         version: link:modules/a-ssrhmr
       zova-module-a-ssrserver:
-        specifier: ^5.1.23
+        specifier: ^5.1.24
         version: link:modules/a-ssrserver
       zova-module-a-style:
-        specifier: ^5.1.32
+        specifier: ^5.1.33
         version: link:modules/a-style
       zova-module-a-table:
         specifier: ^5.1.37
@@ -1100,7 +1103,7 @@ importers:
         specifier: ^5.1.36
         version: link:modules/a-zod
       zova-module-a-zova:
-        specifier: ^5.1.97
+        specifier: ^5.1.98
         version: link:modules/a-zova
 
   src/suite-vendor/a-zova/modules/a-api:
@@ -1442,7 +1445,7 @@ importers:
         specifier: ^3.7.2
         version: 3.7.2
       zova-jsx:
-        specifier: ^1.1.82
+        specifier: ^1.1.83
         version: link:../../../../../packages-utils/zova-jsx
     devDependencies:
       '@cabloy/cli':
