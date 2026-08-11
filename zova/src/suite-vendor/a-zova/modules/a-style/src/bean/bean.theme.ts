@@ -18,6 +18,7 @@ export class BeanTheme extends BeanModelBase {
   }
 
   token: unknown;
+  private _cookieTheme: boolean;
   private _mediaDark?: MediaQueryList;
   private _onMediaDarkChange?;
 
@@ -25,8 +26,13 @@ export class BeanTheme extends BeanModelBase {
   $$scopeSsr: ScopeModuleASsr;
 
   protected async __init__() {
-    const cookieTheme = this.$ssr.profileOptions.useCookie;
+    const cookieTheme = (this._cookieTheme = this.$ssr.profileOptions.useCookie);
     const cookieThemeDarkDefault = this.$$scopeSsr.config.cookieThemeDarkDefault;
+    const darkModeDefault = cookieTheme
+      ? cookieThemeDarkDefault
+      : process.env.CLIENT && window.ssr_local_themedark !== undefined
+        ? window.ssr_local_themedark
+        : 'auto';
     // support admin
     this.name = this.$useState(cookieTheme ? 'cookie' : 'local', {
       queryKey: ['themename'],
@@ -47,7 +53,7 @@ export class BeanTheme extends BeanModelBase {
             return deserializeDefault(value);
           },
         },
-        defaultData: cookieTheme ? cookieThemeDarkDefault : 'auto',
+        defaultData: darkModeDefault,
       },
     });
     this._updateDark();
@@ -67,6 +73,7 @@ export class BeanTheme extends BeanModelBase {
 
     // not use watch.immediate for await done
     await this._applyInitialThemeAndSsrDualOutput();
+    this._syncDarkModePersistence();
   }
 
   protected __dispose__() {
@@ -75,6 +82,7 @@ export class BeanTheme extends BeanModelBase {
 
   private _updateDark() {
     this._dark = this._getDarkFromDarkMode(this.darkMode);
+    this._syncDarkModePersistence();
   }
 
   async _applyInitialThemeAndSsrDualOutput() {
@@ -117,6 +125,17 @@ export class BeanTheme extends BeanModelBase {
     const moduleName = parts[0];
     if (!this.app.meta.module.exists(moduleName)) return;
     return (await this.bean._getBean(beanFullNameFromOnionName(name, 'theme'), true)) as IThemeBase;
+  }
+
+  private _syncDarkModePersistence() {
+    if (!process.env.CLIENT || this._dark === undefined) return;
+    const queryKey = ['themedark'];
+    const target = this._cookieTheme ? 'local' : 'cookie';
+    try {
+      this.$persisterSaveTo(queryKey, target, this._dark);
+    } catch (err) {
+      if (process.env.DEV) console.warn('Failed to mirror themedark persistence', err);
+    }
   }
 
   toggleDark() {

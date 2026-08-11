@@ -75,11 +75,38 @@ export class BeanModelPersister extends BeanModelLast {
     if (!query) return;
     const options = this._adjustPersisterOptions(query.meta?.persister);
     if (!options) return;
+    this._persisterSave(query, options);
+  }
+
+  $persisterSaveTo(queryKey: QueryKey, storageTarget: 'cookie' | 'local', value?: unknown) {
+    const query = this.self.$queryFind({ queryKey });
+    if (!query) {
+      if (process.env.DEV) {
+        console.warn('Cannot save persisted query because it was not found', queryKey);
+      }
+      return;
+    }
+    const persister =
+      query.meta?.persister && typeof query.meta.persister === 'object' ? query.meta.persister : {};
+    const options = this._adjustPersisterOptions({
+      ...persister,
+      storage: storageTarget,
+      sync: true,
+      serializeDefault: (obj?: Query) =>
+        storageTarget === 'cookie'
+          ? String(obj?.state?.data ?? '')
+          : JSON.stringify(obj?.state?.data),
+    });
+    if (!options) return;
+    this._persisterSave(query, options, value);
+  }
+
+  private _persisterSave(query: Query, options: QueryMetaPersister, value?: unknown) {
     const storage = this._getPersisterStorage(options, query);
     if (!storage) return;
     const storageKey = this._getPersisterStorageKey(options, query);
     const params = {
-      state: query.state,
+      state: value === undefined ? query.state : { ...query.state, data: value },
       queryKey: query.queryKey,
       queryHash: query.queryHash,
       buster: options.buster,

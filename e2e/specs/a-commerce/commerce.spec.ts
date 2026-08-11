@@ -219,6 +219,42 @@ test(
 );
 
 test(
+  'Commerce theme: public local preference mirrors session cookie without hydration mismatch',
+  { tag: ['@web', '@ssr', '@theme'] },
+  async ({ browser, request }, testInfo) => {
+    const customer = await registerCustomer(request, testInfo);
+    const context = await browser.newContext();
+    await context.addInitScript(() => localStorage.setItem('themedark', 'true'));
+    const page = await context.newPage();
+    const pageErrors = collectPageErrors(page);
+    const consoleErrors: string[] = [];
+    page.on('console', message => {
+      if (message.type() === 'error' || /hydration mismatch/i.test(message.text())) {
+        consoleErrors.push(message.text());
+      }
+    });
+    try {
+      await page.goto('/commerce', { waitUntil: 'load' });
+      await page.evaluate(() => localStorage.setItem('themedark', 'true'));
+      await page.reload({ waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+      await expect(page.locator('body')).toHaveAttribute('data-theme', 'dark');
+      expect((await context.cookies()).find(cookie => cookie.name === 'themedark')?.value).toBe(
+        'true',
+      );
+
+      await login(page, '/commerce/address', customer.username, customer.password, 'commerce');
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+      await expect(page.locator('body')).toHaveAttribute('data-theme', 'dark');
+      expect(pageErrors).toEqual([]);
+      expect(consoleErrors).toEqual([]);
+    } finally {
+      await context.close();
+    }
+  },
+);
+
+test(
   'Commerce catalogue: public sellable inventory renders after hydration',
   { tag: ['@web', '@flow'] },
   async ({ page }) => {

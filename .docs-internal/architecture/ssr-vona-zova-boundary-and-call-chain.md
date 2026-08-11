@@ -147,7 +147,9 @@ Browser
                -> resolve ssrProfile/options into request-local SSR state
                -> [session] set Cache-Control: private, no-store
                -> serverEntry(ssrContext)
-               -> [direct Quasar/Vite SSR only] a-router appInitialize seeds an unprepared request profile
+                    -> app initialization
+                    -> [direct Quasar/Vite SSR only, without a handler snapshot]
+                       a-router.appInitialize seeds the request profile
                -> renderToString(renderFn, ssrContext)
                -> onRendered callbacks
                -> inject state/meta/preloads
