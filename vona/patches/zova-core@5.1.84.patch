@@ -32,10 +32,10 @@ index 838e299407218b7bfac469d42a12d6ab59820380..e8b61cc231e39ee3a270ee513ab43ff5
  //# sourceMappingURL=module.d.ts.map
 \ No newline at end of file
 diff --git a/dist/types/utils/env.d.ts b/dist/types/utils/env.d.ts
-index 7eb5fa0c4d5c23e046b1cebb64cf8ce85c0302fa..5f6aa470d4a88262e2108ff086923c673fdfbf67 100644
+index a25f8af9d4be43730ecaeaacce63646687fa8198..989fae4e0eed932fe36d9a874902ab6a2bb711fe 100644
 --- a/dist/types/utils/env.d.ts
 +++ b/dist/types/utils/env.d.ts
-@@ -35,19 +35,4 @@ export interface ZovaConfigEnv {
+@@ -37,19 +37,4 @@ export interface ZovaConfigEnv {
      MOCK_BUILD: string | undefined;
      MOCK_BUILD_PORT: string | undefined;
  }
