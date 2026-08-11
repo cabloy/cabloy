@@ -21,7 +21,7 @@ export class ControllerLayoutWeb extends BeanControllerBase {
   @Use()
   $$modelLayout: ModelLayout;
 
-  @Use()
+  @Use({ beanFullName: 'home-base.service.ssrLayout' })
   get $$serviceSsrLayout(): ServiceSsrLayout {
     const sidebar = this.scope.config.layout.sidebar;
     return usePrepareArg({
