@@ -1,5 +1,23 @@
 # Changelog
 
+## 5.1.134
+
+### Features
+
+- Add SSR profile support, including cookie-based profile handling.
+- Add SSR layout support.
+- Add `this.ctx.meta.$ssr.cookieDisabledOnServer` metadata.
+- Update the `ms` type definitions.
+
+### Bug Fixes
+
+- Correct SSR profile behavior between server and client.
+
+### Improvements
+
+- Update the Bean theme configuration.
+- Update IoC and Beans documentation.
+
 ## 5.1.133
 
 ### Features
