@@ -57,7 +57,7 @@ export function format(f) {
   let a = 1;
   let lastPos = 0;
 
-  for (let i = 0; i < f.length; ) {
+  for (let i = 0; i < f.length;) {
     if (f.charCodeAt(i) === 37 /* '%'*/ && i + 1 < f.length) {
       if (f.charCodeAt(i + 1) !== 37 /* '%'*/ && a >= arguments.length) {
         ++i;

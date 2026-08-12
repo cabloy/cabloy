@@ -2,6 +2,7 @@ import type { IPageEntryScope } from 'zova-module-a-openapi';
 
 import 'zova-module-a-form';
 import 'zova-module-a-openapi';
+
 import { ControllerBlockPageEntry } from '../component/blockPageEntry/controller.jsx';
 
 declare module 'zova-module-a-openapi' {
