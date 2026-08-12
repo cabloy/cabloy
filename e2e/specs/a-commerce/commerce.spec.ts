@@ -1587,9 +1587,12 @@ test(
       productId = (await productResponse.json()).data;
       expectTableIdentity(productId);
 
-      await adminPage.goto(`${productListPath}/${productId}`, { waitUntil: 'load' });
+      await adminPage.goto(`${productListPath}/${productId}/edit`, { waitUntil: 'load' });
       const editor = adminPage.locator('[contenteditable="true"]');
       await expect(editor).toBeVisible();
+      const editorSurface = editor.locator('..');
+      await editorSurface.click({ position: { x: 20, y: 280 } });
+      await expect(editor).toBeFocused();
       await editor.fill(markdown);
       await adminPage.getByRole('button', { name: 'Submit', exact: true }).click();
 
@@ -1598,9 +1601,9 @@ test(
         { headers },
       );
       expect(productResponseAfterUpdate.ok()).toBeTruthy();
-      expect(
-        (await productResponseAfterUpdate.json()).data.productContentForm.descriptionMarkdown,
-      ).toBe(markdown);
+      expect((await productResponseAfterUpdate.json()).productContentForm.descriptionMarkdown).toBe(
+        markdown,
+      );
       expect(adminPageErrors).toEqual([]);
     } finally {
       if (productId && headers) {

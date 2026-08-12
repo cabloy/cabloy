@@ -94,6 +94,7 @@ describe('productContent.test.ts', { concurrency: false }, () => {
             body: {
               title: product.title,
               categoryId: product.categoryId,
+              published: product.published,
               productContentForm: { descriptionMarkdown: markdown },
             },
           },
@@ -151,6 +152,7 @@ describe('productContent.test.ts', { concurrency: false }, () => {
           body: {
             title: product.title,
             categoryId: product.categoryId,
+            published: product.published,
             productContentForm: { descriptionMarkdown: '  \n\t' },
           },
         });

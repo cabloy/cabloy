@@ -17,14 +17,38 @@ function findComponent(apiJson: any, predicate: (properties: any) => boolean) {
   }) as any;
 }
 
-function getEntryForm(component: any) {
+function getEntryBlocks(component: any) {
   const pageEntry = component?.rest?.blocks?.[0];
   const formBlock = pageEntry?.options?.blocks?.[0];
   const toolbarBlock = pageEntry?.options?.blocks?.[1];
   assert.equal(pageEntry?.render, 'basic-pageentry:blockPageEntry');
   assert.equal(formBlock?.render, 'basic-pageentry:blockForm');
   assert.equal(toolbarBlock?.render, 'basic-pageentry:blockToolbarRow');
-  return toolbarBlock;
+  return { formBlock, toolbarBlock };
+}
+
+function getEntryForm(component: any) {
+  return getEntryBlocks(component).toolbarBlock;
+}
+
+function assertProductFormGroups(component: any, productFields: string[]) {
+  const { formBlock } = getEntryBlocks(component);
+  const layoutBlock = formBlock?.options?.blocks?.[0];
+  assert.equal(layoutBlock?.render, 'basic-form:blockFormLayout');
+  const groups = layoutBlock?.options?.formLayout?.children;
+  assert.equal(groups?.length, 2);
+  assert.deepEqual(
+    groups.map((group: any) => group.type),
+    ['group', 'group'],
+  );
+  assert.deepEqual(
+    groups[0].children[0].children.map((field: any) => field.name),
+    productFields,
+  );
+  assert.deepEqual(
+    groups[1].children[0].children.map((field: any) => field.name),
+    ['productContentForm'],
+  );
 }
 
 describe('productPresentation.test.ts', () => {
@@ -65,6 +89,8 @@ describe('productPresentation.test.ts', () => {
         createComponent.properties.productContentForm.rest.form.render,
         'commerce-catalog:formFieldMarkdown',
       );
+      assert.equal(createComponent.properties.published.default, false);
+      assertProductFormGroups(createComponent, ['title', 'categoryId', 'published', 'description']);
       const createToolbar = getEntryForm(createComponent);
       assert.deepEqual(
         createToolbar.options.actions.map((action: any) => action.render),
@@ -98,6 +124,7 @@ describe('productPresentation.test.ts', () => {
         updateComponent.properties.productContentForm.rest.form.render,
         'commerce-catalog:formFieldMarkdown',
       );
+      assertProductFormGroups(updateComponent, ['title', 'categoryId', 'published', 'description']);
 
       const viewJson = await app.bean.openapi.generateJsonOfClass(DtoProductView);
       const viewComponent = findComponent(viewJson, properties => {
@@ -132,6 +159,15 @@ describe('productPresentation.test.ts', () => {
         viewComponent.properties.productContentForm.rest.form.render,
         'commerce-catalog:formFieldMarkdown',
       );
+      assertProductFormGroups(viewComponent, [
+        'id',
+        'title',
+        'categoryId',
+        'published',
+        'description',
+        'createdAt',
+        'updatedAt',
+      ]);
       const viewToolbar = getEntryForm(viewComponent);
       assert.deepEqual(
         viewToolbar.options.actions.map((action: any) => action.render),

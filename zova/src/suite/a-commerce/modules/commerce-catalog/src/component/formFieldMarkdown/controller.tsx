@@ -52,6 +52,11 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
         content: this.value,
         contentType: 'markdown',
         editable: !this.readonly,
+        editorProps: {
+          attributes: {
+            class: 'min-h-96 p-4 outline-none',
+          },
+        },
         onUpdate: ({ editor }) => {
           if (this._syncing) return;
           this._setValue?.(editor.getMarkdown());
@@ -100,13 +105,21 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
             <div class={props.class}>
               <div
                 class={[
-                  'rounded-box border border-base-300 bg-base-100 p-4',
+                  'rounded-box border border-base-300 bg-base-100',
                   !$$formField.field.state.meta.isValid && 'border-error',
                 ]}
+                onClick={() => {
+                  if (!this.readonly) {
+                    this.editor?.commands.focus();
+                  }
+                }}
               >
-                <ClientOnly>
-                  <EditorContent editor={this.editor} class="prose min-h-96 max-w-none" />
-                </ClientOnly>
+                <ClientOnly
+                  v-slots={{
+                    default: () => <EditorContent editor={this.editor} class="prose max-w-none" />,
+                    placeholder: () => <div class="min-h-96 p-4" aria-hidden="true"></div>,
+                  }}
+                ></ClientOnly>
               </div>
             </div>
           );
