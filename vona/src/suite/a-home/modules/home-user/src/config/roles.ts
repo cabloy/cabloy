@@ -1,22 +1,22 @@
-import type { ILocaleRecord } from 'vona';
+import type { LocalizedTextMap } from 'vona-module-a-user';
 
 export interface IRoleConfig {
   title: string;
-  locales?: Partial<Record<keyof ILocaleRecord, string>>;
+  titleLocales?: LocalizedTextMap;
   siteIds: string[];
 }
 
 export const builtinRoles: Record<string, IRoleConfig> = {
   registeredUser: {
     title: 'Registered User',
-    locales: {
+    titleLocales: {
       'zh-cn': '注册用户',
     },
     siteIds: ['web'],
   },
   systemAdmin: {
     title: 'System Administrator',
-    locales: {
+    titleLocales: {
       'zh-cn': '系统管理员',
     },
     siteIds: ['web', 'admin'],

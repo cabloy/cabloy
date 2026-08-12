@@ -19,7 +19,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
         table.basicFields();
         table.string(entityRole.name, 255).comment(entityRole.$comment.name);
         table.string(entityRole.title, 255).comment(entityRole.$comment.title);
-        table.json(entityRole.locales).comment(entityRole.$comment.locales);
+        table.json(entityRole.titleLocales).comment(entityRole.$comment.titleLocales);
         table.json(entityRole.siteIds).comment(entityRole.$comment.siteIds);
       });
       // homeUser
@@ -55,7 +55,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
         await this.scope.model.role.insert({
           name,
           title: role.title,
-          locales: role.locales ?? {},
+          titleLocales: role.titleLocales ?? {},
           siteIds: role.siteIds,
         });
       }
