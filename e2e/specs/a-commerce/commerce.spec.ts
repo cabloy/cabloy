@@ -171,8 +171,14 @@ async function createAddressThroughCustomerPage(
   const page = await context.newPage();
   const pageErrors = collectPageErrors(page);
 
-  await login(page, '/commerce/address', customer.username, customer.password, 'commerce');
-  await expect(page).toHaveURL(/\/commerce\/address(?:\?|$)/);
+  await login(
+    page,
+    '/commerce/commerce/member/address',
+    customer.username,
+    customer.password,
+    'commerce',
+  );
+  await expect(page).toHaveURL(/\/commerce\/commerce\/member\/address(?:\?|$)/);
   await expect(page.getByRole('heading', { name: 'Addresses' })).toBeVisible();
   await expect(page.getByText('No addresses yet.')).toBeVisible();
 
@@ -253,7 +259,13 @@ test(
         'true',
       );
 
-      await login(page, '/commerce/address', customer.username, customer.password, 'commerce');
+      await login(
+        page,
+        '/commerce/commerce/member/address',
+        customer.username,
+        customer.password,
+        'commerce',
+      );
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
       await expect(page.locator('body')).toHaveAttribute('data-theme', 'dark');
       expect(pageErrors).toEqual([]);
@@ -274,7 +286,13 @@ test(
     const pageErrors = collectPageErrors(page);
     const consoleErrors = collectConsoleErrors(page);
     try {
-      await login(page, '/commerce/address', customer.username, customer.password, 'commerce');
+      await login(
+        page,
+        '/commerce/commerce/member/address',
+        customer.username,
+        customer.password,
+        'commerce',
+      );
       await context.addCookies([
         {
           name: 'themedark',
@@ -376,7 +394,13 @@ test(
     const context = await browser.newContext();
     const page = await context.newPage();
     try {
-      await login(page, '/commerce/address', customer.username, customer.password, 'commerce');
+      await login(
+        page,
+        '/commerce/commerce/member/address',
+        customer.username,
+        customer.password,
+        'commerce',
+      );
       const origin = new URL(page.url()).origin;
       const authCookies = (await context.cookies()).filter(cookie => cookie.name !== 'themedark');
       const getSessionHtml = async (value: string) => {
@@ -386,7 +410,7 @@ test(
             ...authCookies.map(({ domain, path, ...cookie }) => ({ ...cookie, url: origin })),
             { name: 'themedark', value, url: origin },
           ]);
-          const response = await sessionContext.request.get('/commerce/address');
+          const response = await sessionContext.request.get('/commerce/commerce/member/address');
           return { response, html: await response.text() };
         } finally {
           await sessionContext.close();
@@ -464,7 +488,7 @@ test(
     await expect(page.getByText('库存 24 件')).toBeVisible();
     await expect(page.getByRole('link', { name: '购物车' })).toHaveAttribute(
       'href',
-      '/commerce/cart',
+      '/commerce/commerce/trade/cart',
     );
     expect(pageErrors).toEqual([]);
   },
@@ -488,7 +512,7 @@ test(
     await expect(page).toHaveURL(productPath);
     await expect(page.getByRole('heading', { name: 'Wireless Headphones' })).toBeVisible();
 
-    const cartLink = page.locator('a[href="/commerce/cart"]');
+    const cartLink = page.locator('a[href="/commerce/commerce/trade/cart"]');
     await expect(cartLink).toHaveCount(1);
     await expect(cartLink.locator('.badge')).toHaveCount(0);
     expect(pageErrors).toEqual([]);
@@ -499,8 +523,8 @@ test(
   'Commerce Address: session SSR protects an anonymous document request',
   { tag: ['@web', '@cart'] },
   async ({ page, request }) => {
-    const path = '/commerce/address';
-    const routePath = '/address';
+    const path = '/commerce/commerce/member/address';
+    const routePath = '/commerce/member/address';
     const response = await request.get(path, { maxRedirects: 0 });
     expect(response.status()).toBe(302);
     expect(response.headers()['cache-control']).toBe('private, no-store');
@@ -531,7 +555,7 @@ test(
       testInfo,
     );
     try {
-      const addressResponse = await context.request.get('/commerce/address');
+      const addressResponse = await context.request.get('/commerce/commerce/member/address');
       expect(addressResponse.ok()).toBeTruthy();
       expect(addressResponse.headers()['cache-control']).toBe('private, no-store');
       const addressHtml = await addressResponse.text();
@@ -544,7 +568,9 @@ test(
       const coldPage = await context.newPage();
       try {
         const coldPageErrors = collectPageErrors(coldPage);
-        const coldResponse = await coldPage.goto('/commerce/address', { waitUntil: 'load' });
+        const coldResponse = await coldPage.goto('/commerce/commerce/member/address', {
+          waitUntil: 'load',
+        });
         expect(coldResponse?.ok()).toBeTruthy();
         await expect(coldPage.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
         await expect(coldPage.getByRole('heading', { name: 'Addresses' })).toBeVisible();
@@ -642,7 +668,9 @@ test(
       expect(checkout.currency).toBe('USD');
       expect(checkout.payableTotalCents).toBe(4599);
       await expect(page).toHaveURL(
-        new RegExp(`/commerce/payment/${checkout.paymentSessionId}/${checkout.orderId}(?:/|$)`),
+        new RegExp(
+          `/commerce/commerce/trade/payment/${checkout.paymentSessionId}/${checkout.orderId}(?:/|$)`,
+        ),
       );
       await expect(page.getByRole('heading', { name: 'Payment', exact: true })).toBeVisible();
 
@@ -662,10 +690,13 @@ test(
       );
       await page.getByRole('button', { name: 'Payment succeeded', exact: true }).click();
       expect((await completeResponse).ok()).toBeTruthy();
-      await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`), {
-        timeout: 40_000,
-      });
-      const orderPath = `/commerce/order/${checkout.orderId}`;
+      await expect(page).toHaveURL(
+        new RegExp(`/commerce/commerce/trade/order/${checkout.orderId}(?:/|$)`),
+        {
+          timeout: 40_000,
+        },
+      );
+      const orderPath = `/commerce/commerce/trade/order/${checkout.orderId}`;
       const orderResponse = await context.request.get(orderPath);
       expect(orderResponse.ok()).toBeTruthy();
       expect(orderResponse.headers()['cache-control']).toBe('private, no-store');
@@ -761,7 +792,9 @@ test(
       await expect(page.getByText(shipmentCarrier)).toBeVisible();
       await expect(page.getByText(shipmentTrackingNumber)).toBeVisible();
 
-      const ordersDocumentResponse = await page.goto('/commerce/orders', { waitUntil: 'load' });
+      const ordersDocumentResponse = await page.goto('/commerce/commerce/trade/orders', {
+        waitUntil: 'load',
+      });
       expect(ordersDocumentResponse?.ok()).toBeTruthy();
       await expect(page).toHaveURL(/\/commerce\/orders(?:\/|$)/);
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
@@ -777,7 +810,9 @@ test(
         new RegExp(`/api/commerce/trade/order/viewMine/${checkout.orderId}$`),
       );
       await orderCard.getByRole('button', { name: 'View', exact: true }).click();
-      await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`));
+      await expect(page).toHaveURL(
+        new RegExp(`/commerce/commerce/trade/order/${checkout.orderId}(?:/|$)`),
+      );
       await historyDetailResponse;
       await expect(page.getByRole('heading', { name: `Order #${checkout.orderId}` })).toBeVisible();
       await expect(page.getByText('1 × $45.99 = $45.99')).toBeVisible();
@@ -841,11 +876,14 @@ test(
       );
       await page.getByRole('button', { name: 'Payment succeeded', exact: true }).click();
       expect((await completeResponse).ok()).toBeTruthy();
-      await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`), {
-        timeout: 40_000,
-      });
+      await expect(page).toHaveURL(
+        new RegExp(`/commerce/commerce/trade/order/${checkout.orderId}(?:/|$)`),
+        {
+          timeout: 40_000,
+        },
+      );
 
-      const callbackPath = `/commerce/payment/${checkout.paymentSessionId}/${checkout.orderId}?providerResult=return`;
+      const callbackPath = `/commerce/commerce/trade/payment/${checkout.paymentSessionId}/${checkout.orderId}?providerResult=return`;
       await page.evaluate(() => {
         localStorage.clear();
         sessionStorage.clear();
@@ -878,7 +916,9 @@ test(
       expect(documentResponse?.ok()).toBeTruthy();
       expect((await reconcileResponse).ok()).toBeTruthy();
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
-      await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`));
+      await expect(page).toHaveURL(
+        new RegExp(`/commerce/commerce/trade/order/${checkout.orderId}(?:/|$)`),
+      );
       expect(reconcileCount).toBe(1);
       expect(paymentViewCount).toBeLessThanOrEqual(10);
       expect(orderViewCount).toBeLessThanOrEqual(5);
@@ -930,7 +970,7 @@ test(
       expectTableIdentity(checkout.paymentSessionId);
       expect(checkout.state).toBe('awaiting_payment');
 
-      const callbackPath = `/commerce/payment/${checkout.paymentSessionId}/${checkout.orderId}?providerResult=cancel`;
+      const callbackPath = `/commerce/commerce/trade/payment/${checkout.paymentSessionId}/${checkout.orderId}?providerResult=cancel`;
       const paymentSessionPath = new RegExp(
         `/api/pay/payment-session/${checkout.paymentSessionId}$`,
       );
@@ -1007,7 +1047,9 @@ test(
       expect(reconcileCount).toBe(1);
 
       await page.getByRole('button', { name: 'Open order', exact: true }).click();
-      await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`));
+      await expect(page).toHaveURL(
+        new RegExp(`/commerce/commerce/trade/order/${checkout.orderId}(?:/|$)`),
+      );
       await expect(page.getByText('awaiting_payment · $45.99')).toBeVisible();
       expect(pageErrors).toEqual([]);
     } finally {
@@ -1068,9 +1110,12 @@ test(
       );
       await page.getByRole('button', { name: 'Cancel payment', exact: true }).click();
       expect((await cancelResponse).ok()).toBeTruthy();
-      await expect(page).toHaveURL(new RegExp(`/commerce/order/${checkout.orderId}(?:/|$)`), {
-        timeout: 40_000,
-      });
+      await expect(page).toHaveURL(
+        new RegExp(`/commerce/commerce/trade/order/${checkout.orderId}(?:/|$)`),
+        {
+          timeout: 40_000,
+        },
+      );
       await expect(page.getByText('cancelled · $45.99')).toBeVisible();
       await expect(page.getByRole('alert')).toHaveCount(0);
       expect(pageErrors).toEqual([]);
@@ -1745,7 +1790,7 @@ test(
   'Commerce Cart: anonymous browser is redirected to login',
   { tag: ['@web', '@cart'] },
   async ({ page, request }) => {
-    const path = '/commerce/cart';
+    const path = '/commerce/commerce/trade/cart';
     const response = await request.get(path);
     expect(response.ok()).toBeTruthy();
     expect((await response.text()).toLowerCase()).not.toContain('data-zova-hydrated');
@@ -1763,10 +1808,10 @@ test(
   { tag: ['@web', '@flow'] },
   async ({ page, request }) => {
     const routes = [
-      ['/commerce/checkout', '/checkout'],
-      ['/commerce/payment/1/1', '/payment/1/1'],
-      ['/commerce/orders', '/orders'],
-      ['/commerce/order/1', '/order/1'],
+      ['/commerce/commerce/trade/checkout', '/commerce/trade/checkout'],
+      ['/commerce/commerce/trade/payment/1/1', '/commerce/trade/payment/1/1'],
+      ['/commerce/commerce/trade/orders', '/commerce/trade/orders'],
+      ['/commerce/commerce/trade/order/1', '/commerce/trade/order/1'],
     ] as const;
     for (const [path, routePath] of routes) {
       const response = await request.get(path, { maxRedirects: 0 });
