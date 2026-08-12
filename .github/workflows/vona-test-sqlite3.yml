@@ -28,7 +28,7 @@ jobs:
       - name: init
         run: npm run init
       - name: run A-Pay focused gate
-        run: DATABASE_DEFAULT_CLIENT=sqlite3 npm run vona :bin:test -- test-pay/test/paymentSession.test.ts test-pay/test/payMock.test.ts test-pay/test/paypalProvider.test.ts test-pay/test/paypalLifecycle.test.ts test-pay/test/outbox.test.ts test-pay/test/webhook.test.ts --flavor=normal
+        run: DATABASE_DEFAULT_CLIENT=sqlite3 npm run vona :bin:test -- test-pay/test/paymentSession.test.ts test-pay/test/payMock.test.ts test-pay/test/paypalProvider.test.ts test-pay/test/paypalLifecycle.test.ts test-pay/test/stripeProvider.test.ts test-pay/test/outbox.test.ts test-pay/test/webhook.test.ts --flavor=normal
         working-directory: vona
       - name: run Commerce payment, shipment, and refund lifecycle gate
         run: DATABASE_DEFAULT_CLIENT=sqlite3 npm run vona :bin:test -- commerce-trade/test/paymentOutcome.test.ts commerce-trade/test/reservationExpiry.test.ts commerce-trade/test/shipment.test.ts commerce-trade/test/refundLifecycle.test.ts --flavor=normal

@@ -32,7 +32,8 @@
   },
   "dependencies": {
     "vona-module-a-pay": "workspace:*",
-    "vona-module-pay-mock": "workspace:*"
+    "vona-module-pay-mock": "workspace:*",
+    "vona-module-pay-stripe": "workspace:*"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",

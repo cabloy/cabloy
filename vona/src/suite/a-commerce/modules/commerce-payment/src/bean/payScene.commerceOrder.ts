@@ -3,6 +3,8 @@ import type {
   IPaymentOutcomeEvent,
   IRefundOutcomeEvent,
 } from 'vona-module-a-pay';
+import type { IPayProviderPaypalClientOptions } from 'vona-module-pay-paypal';
+import type { IPayProviderStripeClientOptions } from 'vona-module-pay-stripe';
 
 import { BeanBase } from 'vona';
 import { PayScene } from 'vona-module-a-pay';
@@ -11,28 +13,31 @@ import { PayScene } from 'vona-module-a-pay';
   providers: [
     { key: 'mock', providerName: 'pay-mock:mock', clientName: 'default' },
     { key: 'paypal', providerName: 'pay-paypal:paypal', clientName: 'default' },
+    { key: 'stripe', providerName: 'pay-stripe:stripe', clientName: 'default' },
   ],
   isProviderAvailable: (_ctx, input) => {
     if (input.candidate.key === 'mock') return true;
-    if (input.candidate.key !== 'paypal') return false;
     const { clientOptions } = _ctx.bean.payProvider.resolveByName(
       input.candidate.providerName,
       input.candidate.clientName,
     );
-    const options = clientOptions as {
-      secretCredential?: { clientId?: string; clientSecret?: string };
-      webhookId?: string;
-      merchantReference?: string;
-    };
     const server = _ctx.app.config.server.serve;
-    return !!(
-      options.secretCredential?.clientId &&
-      options.secretCredential.clientSecret &&
-      options.webhookId &&
-      options.merchantReference &&
-      server.protocol &&
-      server.host
-    );
+    const hasPublicServer = !!(server.protocol && server.host);
+    if (input.candidate.key === 'paypal') {
+      const options = clientOptions as IPayProviderPaypalClientOptions;
+      return !!(
+        options.secretCredential?.clientId &&
+        options.secretCredential.clientSecret &&
+        options.webhookId &&
+        options.merchantReference &&
+        hasPublicServer
+      );
+    }
+    if (input.candidate.key === 'stripe') {
+      const options = clientOptions as IPayProviderStripeClientOptions;
+      return !!(options.secretCredential && options.secretWebhook && hasPublicServer);
+    }
+    return false;
   },
   resolveProvider: (_ctx, input) => {
     const mock = input.providers.find(item => item.key === 'mock');

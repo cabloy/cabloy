@@ -706,9 +706,3 @@ function parsePaypalCurrency(value: unknown) {
   const currency = readString(readField(amount, 'currencyCode', 'currency_code'));
   return currency === 'USD' ? currency : undefined;
 }
-
-declare module 'vona-module-a-pay' {
-  export interface IPayProviderRecord {
-    'pay-paypal:paypal': IPayProviderOptionsPaypal;
-  }
-}
