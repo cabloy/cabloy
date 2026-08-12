@@ -35,6 +35,11 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
           .boolean(entityUser.activated)
           .defaultTo(entityUser.$default.activated)
           .comment(entityUser.$comment.activated);
+        table
+          .string(entityUser.accountStatus, 255)
+          .notNullable()
+          .defaultTo(entityUser.$default.accountStatus)
+          .comment(entityUser.$comment.accountStatus);
         table.string(entityUser.locale, 255).comment(entityUser.$comment.locale);
         table.string(entityUser.tz, 255).comment(entityUser.$comment.tz);
       });

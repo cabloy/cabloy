@@ -1,5 +1,6 @@
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
-import type { IRole, LocalizedTextMap } from 'vona-module-a-user';
+import type { LocalizedTextMap } from 'vona-module-a-user';
+import type { IRole } from 'vona-module-a-user';
 
 import { Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
