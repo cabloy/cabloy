@@ -111,7 +111,10 @@ describe('stripeProvider.test.ts', { concurrency: false }, () => {
         state: 'requires_action',
         providerPaymentId: 'cs_1',
         providerOrderId: 'cs_1',
-        nextAction: { kind: 'redirect', url: 'https://checkout.stripe.test/c/pay/cs_1' },
+        nextAction: {
+          kind: 'redirect',
+          url: 'https://checkout.stripe.test/c/pay/cs_1',
+        },
       });
       assert.deepEqual(calls, [
         {
@@ -151,7 +154,9 @@ describe('stripeProvider.test.ts', { concurrency: false }, () => {
 
   it('maps Checkout and PaymentIntent facts without trusting conflicting resources', async () => {
     await app.bean.executor.mockCtx(async () => {
-      let result: unknown = checkoutSession({ payment_intent: paymentIntent('succeeded') });
+      let result: unknown = checkoutSession({
+        payment_intent: paymentIntent('succeeded'),
+      });
       const gateway = {
         async retrieveCheckoutSession() {
           return result;
@@ -169,7 +174,9 @@ describe('stripeProvider.test.ts', { concurrency: false }, () => {
         nextAction: { kind: 'completed' },
       });
       result = checkoutSession({ amount_total: 1399 });
-      await assert.rejects(provider.queryPayment(paymentInput, options), { status: 409 });
+      await assert.rejects(provider.queryPayment(paymentInput, options), {
+        status: 409,
+      });
     });
   });
 
@@ -179,7 +186,11 @@ describe('stripeProvider.test.ts', { concurrency: false }, () => {
       let error: Error | undefined;
       const gateway = {
         async createRefund(_options: unknown, input: unknown) {
-          if (error) throw new Error('Stripe gateway failed', { cause: error });
+          if (error) {
+            throw new Error(`Stripe gateway failed: ${error.message}`, {
+              cause: error,
+            });
+          }
           assert.deepEqual(input, {
             idempotencyKey: 'refund-key',
             body: {
@@ -246,7 +257,11 @@ describe('stripeProvider.test.ts', { concurrency: false }, () => {
       try {
         const { provider } = app.bean.payProvider.resolveByName('pay-stripe:stripe', 'default');
         const verified = await provider.verifyWebhook(
-          { rawBody: '{"id":"evt_1"}', body: {}, headers: { 'stripe-signature': 'sig' } },
+          {
+            rawBody: '{"id":"evt_1"}',
+            body: {},
+            headers: { 'stripe-signature': 'sig' },
+          },
           createOptions(gateway),
         );
         assert.equal(verified.paymentSessionId, 101);

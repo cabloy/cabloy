@@ -1227,6 +1227,8 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           assert.equal(outboxes[0]?.payload.state, 'failed');
           await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outboxes[0]!.id });
           await pay.queue.outboxDispatch.pushAsync({ outboxEventId: outboxes[0]!.id });
+          const dispatched = await pay.model.outboxEvent.getById(outboxes[0]!.id);
+          assert.equal(dispatched?.state, 'dispatched', dispatched?.errorSummary);
           const [settledOrder, request, attempt, line, balance] = await Promise.all([
             app.scope('commerce-trade').model.order.getById(fixture.orderId!),
             app.scope('commerce-payment').model.refundRequest.getById(executed.refundRequestId!),
