@@ -30,8 +30,19 @@
     "prepack": "clean-package",
     "postpack": "clean-package restore"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@tiptap/core": "^3.30.0",
+    "@tiptap/extension-highlight": "^3.30.0",
+    "@tiptap/extension-image": "^3.30.0",
+    "@tiptap/extension-list": "^3.30.0",
+    "@tiptap/extension-table": "^3.30.0",
+    "@tiptap/markdown": "^3.30.0",
+    "@tiptap/starter-kit": "^3.30.0",
+    "@tiptap/static-renderer": "^3.30.0",
+    "sanitize-html": "^2.17.6"
+  },
   "devDependencies": {
+    "@types/sanitize-html": "^2.16.1",
     "clean-package": "^2.2.0",
     "rimraf": "^6.1.3"
   },

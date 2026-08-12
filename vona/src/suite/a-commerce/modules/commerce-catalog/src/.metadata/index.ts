@@ -1,13 +1,15 @@
 // eslint-disable
-import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore,IModelRelationBelongsTo,IModelRelationHasMany } from 'vona-module-a-orm';
+import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore,IModelRelationHasOne,IModelRelationBelongsTo,IModelRelationHasMany } from 'vona-module-a-orm';
 import type { TypeEntityOptionsFields,TypeControllerOptionsActions } from 'vona-module-a-openapi';
 import type { TableIdentity } from 'table-identity';
 /** entity: begin */
 export * from '../entity/category.tsx';
 export * from '../entity/product.tsx';
+export * from '../entity/productContent.tsx';
 export * from '../entity/sku.tsx';
 import type { IEntityOptionsCategory } from '../entity/category.tsx';
 import type { IEntityOptionsProduct } from '../entity/product.tsx';
+import type { IEntityOptionsProductContent } from '../entity/productContent.tsx';
 import type { IEntityOptionsSku } from '../entity/sku.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
@@ -15,6 +17,7 @@ declare module 'vona-module-a-orm' {
     export interface IEntityRecord {
       'commerce-catalog:category': IEntityOptionsCategory;
 'commerce-catalog:product': IEntityOptionsProduct;
+'commerce-catalog:productContent': IEntityOptionsProductContent;
 'commerce-catalog:sku': IEntityOptionsSku;
     }
 
@@ -27,24 +30,29 @@ declare module 'vona-module-commerce-catalog' {
 /** entity: begin */
 import type { EntityCategory } from '../entity/category.tsx';
 import type { EntityProduct } from '../entity/product.tsx';
+import type { EntityProductContent } from '../entity/productContent.tsx';
 import type { EntitySku } from '../entity/sku.tsx';
 export interface IModuleEntity {
   'category': EntityCategoryMeta;
 'product': EntityProductMeta;
+'productContent': EntityProductContentMeta;
 'sku': EntitySkuMeta;
 }
 /** entity: end */
 /** entity: begin */
 export type EntityCategoryTableName = 'commerceCatalogCategory';
 export type EntityProductTableName = 'commerceCatalogProduct';
+export type EntityProductContentTableName = 'commerceCatalogProductContent';
 export type EntitySkuTableName = 'commerceCatalogSku';
 export type EntityCategoryMeta=TypeEntityMeta<EntityCategory,EntityCategoryTableName>;
 export type EntityProductMeta=TypeEntityMeta<EntityProduct,EntityProductTableName>;
+export type EntityProductContentMeta=TypeEntityMeta<EntityProductContent,EntityProductContentTableName>;
 export type EntitySkuMeta=TypeEntityMeta<EntitySku,EntitySkuTableName>;
 declare module 'vona-module-a-orm' {
   export interface ITableRecord {
     'commerceCatalogCategory': EntityCategoryMeta;
 'commerceCatalogProduct': EntityProductMeta;
+'commerceCatalogProductContent': EntityProductContentMeta;
 'commerceCatalogSku': EntitySkuMeta;
   }
 }
@@ -58,6 +66,10 @@ declare module 'vona-module-commerce-catalog' {
       fields?: TypeEntityOptionsFields<EntityProduct, IEntityOptionsProduct[TypeSymbolKeyFieldsMore]>;
     }
 
+    export interface IEntityOptionsProductContent {
+      fields?: TypeEntityOptionsFields<EntityProductContent, IEntityOptionsProductContent[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IEntityOptionsSku {
       fields?: TypeEntityOptionsFields<EntitySku, IEntityOptionsSku[TypeSymbolKeyFieldsMore]>;
     }
@@ -66,9 +78,11 @@ declare module 'vona-module-commerce-catalog' {
 /** model: begin */
 export * from '../model/category.ts';
 export * from '../model/product.ts';
+export * from '../model/productContent.ts';
 export * from '../model/sku.ts';
 import type { IModelOptionsCategory } from '../model/category.ts';
 import type { IModelOptionsProduct } from '../model/product.ts';
+import type { IModelOptionsProductContent } from '../model/productContent.ts';
 import type { IModelOptionsSku } from '../model/sku.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
@@ -76,6 +90,7 @@ declare module 'vona-module-a-orm' {
     export interface IModelRecord {
       'commerce-catalog:category': IModelOptionsCategory;
 'commerce-catalog:product': IModelOptionsProduct;
+'commerce-catalog:productContent': IModelOptionsProductContent;
 'commerce-catalog:sku': IModelOptionsSku;
     }
 
@@ -105,6 +120,17 @@ declare module 'vona-module-commerce-catalog' {
             get $onionOptions(): IModelOptionsProduct;
           }
 
+        export interface ModelProductContent {
+          /** @internal */
+          get scope(): ScopeModuleCommerceCatalog;
+        }
+
+          export interface ModelProductContent {
+            get $beanFullName(): 'commerce-catalog.model.productContent';
+            get $onionName(): 'commerce-catalog:productContent';
+            get $onionOptions(): IModelOptionsProductContent;
+          }
+
         export interface ModelSku {
           /** @internal */
           get scope(): ScopeModuleCommerceCatalog;
@@ -120,10 +146,12 @@ declare module 'vona-module-commerce-catalog' {
 /** model: begin */
 import type { ModelCategory } from '../model/category.ts';
 import type { ModelProduct } from '../model/product.ts';
+import type { ModelProductContent } from '../model/productContent.ts';
 import type { ModelSku } from '../model/sku.ts';
 export interface IModuleModel {
   'category': ModelCategory;
 'product': ModelProduct;
+'productContent': ModelProductContent;
 'sku': ModelSku;
 }
 /** model: end */
@@ -134,6 +162,7 @@ declare module 'vona' {
   export interface IBeanRecordGeneral {
     'commerce-catalog.model.category': ModelCategory;
 'commerce-catalog.model.product': ModelProduct;
+'commerce-catalog.model.productContent': ModelProductContent;
 'commerce-catalog.model.sku': ModelSku;
   }
 }
@@ -150,8 +179,15 @@ declare module 'vona-module-commerce-catalog' {
 export interface IModelOptionsProduct {
         relations: {
           category: IModelRelationBelongsTo<'commerce-catalog:product', 'commerce-catalog:category', false, 'id'|'name'|'published'>;
+productContent: IModelRelationHasOne<'commerce-catalog:productContent', 'productId', false, 'id'|'productId'|'descriptionMarkdown'|'descriptionHtml'>;
+productContentForm: IModelRelationHasOne<'commerce-catalog:productContent', 'productId', false, 'id'|'productId'|'descriptionMarkdown'>;
 skus: IModelRelationHasMany<'commerce-catalog:sku', 'productId', false, '*', undefined, undefined, undefined>;
 skuAvailables: IModelRelationHasMany<'commerce-catalog:sku', 'productId', false, 'id'|'code'|'productId'|'priceCents', ['commerce-trade:stockBalance'], undefined, undefined>;
+        };
+      }
+export interface IModelOptionsProductContent {
+        relations: {
+          product: IModelRelationBelongsTo<'commerce-catalog:productContent', 'commerce-catalog:product', false, '*'>;
         };
       }
 export interface IModelOptionsSku {
@@ -237,6 +273,43 @@ export interface ModelProduct {
 updateById<T extends IModelUpdateOptions<EntityProduct,ModelProduct>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityProduct,ModelProduct, T>, options?: T): Promise<TypeModelMutateRelationData<EntityProduct,ModelProduct, T>>;
 deleteById<T extends IModelDeleteOptions<EntityProduct,ModelProduct>>(id: TableIdentity, options?: T): Promise<void>;
     }
+export interface ModelProductContent {
+      [SymbolKeyEntity]: EntityProductContent;
+      [SymbolKeyEntityMeta]: EntityProductContentMeta;
+      [SymbolKeyModelOptions]: IModelOptionsProductContent;
+      get<T extends IModelGetOptions<EntityProductContent,ModelProductContent>>(where: TypeModelWhere<EntityProductContent>, options?: T): Promise<TypeModelRelationResult<EntityProductContent, ModelProductContent, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
+      getForUpdate<T extends IModelGetOptions<EntityProductContent,ModelProductContent>>(where: TypeModelWhere<EntityProductContent>, options?: T): Promise<TypeModelRelationResult<EntityProductContent, ModelProductContent, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
+      getByIdForUpdate<T extends IModelGetOptions<EntityProductContent,ModelProductContent>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityProductContent, ModelProductContent, T> | undefined>;
+      mget<T extends IModelGetOptions<EntityProductContent,ModelProductContent>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityProductContent, ModelProductContent, T>[]>;
+      selectAndCount<T extends IModelSelectParams<EntityProductContent,ModelProductContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityProductContent, ModelProductContent, T>>;
+      select<T extends IModelSelectParams<EntityProductContent,ModelProductContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityProductContent, ModelProductContent, T>[]>;
+      insert<T extends IModelInsertOptions<EntityProductContent,ModelProductContent>>(data?: TypeModelMutateRelationData<EntityProductContent,ModelProductContent, T>, options?: T): Promise<TypeModelMutateRelationData<EntityProductContent,ModelProductContent, T, true>>;
+      insertBulk<T extends IModelInsertOptions<EntityProductContent,ModelProductContent>>(items: TypeModelMutateRelationData<EntityProductContent,ModelProductContent, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityProductContent,ModelProductContent, T, true>[]>;
+      update<T extends IModelUpdateOptions<EntityProductContent,ModelProductContent>>(data: TypeModelMutateRelationData<EntityProductContent,ModelProductContent, T>, options?: T): Promise<TypeModelMutateRelationData<EntityProductContent,ModelProductContent, T>>;
+      updateBulk<T extends IModelUpdateOptions<EntityProductContent,ModelProductContent>>(items: TypeModelMutateRelationData<EntityProductContent,ModelProductContent, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityProductContent,ModelProductContent, T>[]>;
+      delete<T extends IModelDeleteOptions<EntityProductContent,ModelProductContent>>(where?: TypeModelWhere<EntityProductContent>, options?: T): Promise<void>;
+      deleteBulk<T extends IModelDeleteOptions<EntityProductContent,ModelProductContent>>(ids: TableIdentity[], options?: T): Promise<void>;
+      mutate<T extends IModelMutateOptions<EntityProductContent,ModelProductContent>>(data?: TypeModelMutateRelationData<EntityProductContent,ModelProductContent, T>, options?: T): Promise<TypeModelMutateRelationData<EntityProductContent,ModelProductContent, T>>;
+      mutateBulk<T extends IModelMutateOptions<EntityProductContent,ModelProductContent>>(items: TypeModelMutateRelationData<EntityProductContent,ModelProductContent, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityProductContent,ModelProductContent, T>[]>;
+      count<T extends IModelSelectCountParams<EntityProductContent,ModelProductContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<string | undefined>;
+      increment<T extends IModelIncrementParams<EntityProductContent,ModelProductContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      decrement<T extends IModelIncrementParams<EntityProductContent,ModelProductContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      aggregate<T extends IModelSelectAggrParams<EntityProductContent,ModelProductContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelAggrRelationResult<T>>;
+      group<T extends IModelSelectGroupParams<EntityProductContent,ModelProductContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelGroupRelationResult<EntityProductContent, T>[]>;
+      getById<T extends IModelGetOptions<EntityProductContent,ModelProductContent>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityProductContent, ModelProductContent, T> | undefined>;
+updateById<T extends IModelUpdateOptions<EntityProductContent,ModelProductContent>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityProductContent,ModelProductContent, T>, options?: T): Promise<TypeModelMutateRelationData<EntityProductContent,ModelProductContent, T>>;
+deleteById<T extends IModelDeleteOptions<EntityProductContent,ModelProductContent>>(id: TableIdentity, options?: T): Promise<void>;
+    }
 export interface ModelSku {
       [SymbolKeyEntity]: EntitySku;
       [SymbolKeyEntityMeta]: EntitySkuMeta;
@@ -279,6 +352,7 @@ declare module 'vona-module-a-orm' {
   export interface IModelClassRecord {
     'commerce-catalog:category': ModelCategory;
 'commerce-catalog:product': ModelProduct;
+'commerce-catalog:productContent': ModelProductContent;
 'commerce-catalog:sku': ModelSku;
   }
 }
@@ -402,8 +476,11 @@ export * from '../dto/categorySelectRes.tsx';
 export * from '../dto/categorySelectResItem.tsx';
 export * from '../dto/categoryUpdate.tsx';
 export * from '../dto/categoryView.tsx';
+export * from '../dto/productContentUpdate.tsx';
+export * from '../dto/productContentView.tsx';
 export * from '../dto/productCreate.tsx';
 export * from '../dto/productPublic.tsx';
+export * from '../dto/productPublicDetail.tsx';
 export * from '../dto/productPublicSelectReq.tsx';
 export * from '../dto/productPublicSelectRes.tsx';
 export * from '../dto/productPublicSku.tsx';
@@ -425,8 +502,11 @@ import type { IDtoOptionsCategorySelectRes } from '../dto/categorySelectRes.tsx'
 import type { IDtoOptionsCategorySelectResItem } from '../dto/categorySelectResItem.tsx';
 import type { IDtoOptionsCategoryUpdate } from '../dto/categoryUpdate.tsx';
 import type { IDtoOptionsCategoryView } from '../dto/categoryView.tsx';
+import type { IDtoOptionsProductContentUpdate } from '../dto/productContentUpdate.tsx';
+import type { IDtoOptionsProductContentView } from '../dto/productContentView.tsx';
 import type { IDtoOptionsProductCreate } from '../dto/productCreate.tsx';
 import type { IDtoOptionsProductPublic } from '../dto/productPublic.tsx';
+import type { IDtoOptionsProductPublicDetail } from '../dto/productPublicDetail.tsx';
 import type { IDtoOptionsProductPublicSelectReq } from '../dto/productPublicSelectReq.tsx';
 import type { IDtoOptionsProductPublicSelectRes } from '../dto/productPublicSelectRes.tsx';
 import type { IDtoOptionsProductPublicSku } from '../dto/productPublicSku.tsx';
@@ -452,8 +532,11 @@ declare module 'vona-module-a-web' {
 'commerce-catalog:categorySelectResItem': IDtoOptionsCategorySelectResItem;
 'commerce-catalog:categoryUpdate': IDtoOptionsCategoryUpdate;
 'commerce-catalog:categoryView': IDtoOptionsCategoryView;
+'commerce-catalog:productContentUpdate': IDtoOptionsProductContentUpdate;
+'commerce-catalog:productContentView': IDtoOptionsProductContentView;
 'commerce-catalog:productCreate': IDtoOptionsProductCreate;
 'commerce-catalog:productPublic': IDtoOptionsProductPublic;
+'commerce-catalog:productPublicDetail': IDtoOptionsProductPublicDetail;
 'commerce-catalog:productPublicSelectReq': IDtoOptionsProductPublicSelectReq;
 'commerce-catalog:productPublicSelectRes': IDtoOptionsProductPublicSelectRes;
 'commerce-catalog:productPublicSku': IDtoOptionsProductPublicSku;
@@ -484,8 +567,11 @@ import type { DtoCategorySelectRes } from '../dto/categorySelectRes.tsx';
 import type { DtoCategorySelectResItem } from '../dto/categorySelectResItem.tsx';
 import type { DtoCategoryUpdate } from '../dto/categoryUpdate.tsx';
 import type { DtoCategoryView } from '../dto/categoryView.tsx';
+import type { DtoProductContentUpdate } from '../dto/productContentUpdate.tsx';
+import type { DtoProductContentView } from '../dto/productContentView.tsx';
 import type { DtoProductCreate } from '../dto/productCreate.tsx';
 import type { DtoProductPublic } from '../dto/productPublic.tsx';
+import type { DtoProductPublicDetail } from '../dto/productPublicDetail.tsx';
 import type { DtoProductPublicSelectReq } from '../dto/productPublicSelectReq.tsx';
 import type { DtoProductPublicSelectRes } from '../dto/productPublicSelectRes.tsx';
 import type { DtoProductPublicSku } from '../dto/productPublicSku.tsx';
@@ -527,12 +613,24 @@ declare module 'vona-module-commerce-catalog' {
       fields?: TypeEntityOptionsFields<DtoCategoryView, IDtoOptionsCategoryView[TypeSymbolKeyFieldsMore]>;
     }
 
+    export interface IDtoOptionsProductContentUpdate {
+      fields?: TypeEntityOptionsFields<DtoProductContentUpdate, IDtoOptionsProductContentUpdate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsProductContentView {
+      fields?: TypeEntityOptionsFields<DtoProductContentView, IDtoOptionsProductContentView[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsProductCreate {
       fields?: TypeEntityOptionsFields<DtoProductCreate, IDtoOptionsProductCreate[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsProductPublic {
       fields?: TypeEntityOptionsFields<DtoProductPublic, IDtoOptionsProductPublic[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsProductPublicDetail {
+      fields?: TypeEntityOptionsFields<DtoProductPublicDetail, IDtoOptionsProductPublicDetail[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsProductPublicSelectReq {

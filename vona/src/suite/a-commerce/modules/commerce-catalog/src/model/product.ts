@@ -15,6 +15,12 @@ export interface IModelOptionsProduct extends IDecoratorModelOptions<EntityProdu
       'categoryId',
       { columns: ['id', 'name', 'published'] },
     ),
+    productContent: $relation.hasOne('commerce-catalog:productContent', 'productId', {
+      columns: ['id', 'productId', 'descriptionMarkdown', 'descriptionHtml'],
+    }),
+    productContentForm: $relation.hasOne('commerce-catalog:productContent', 'productId', {
+      columns: ['id', 'productId', 'descriptionMarkdown'],
+    }),
     skus: $relation.hasMany('commerce-catalog:sku', 'productId'),
     skuAvailables: $relation.hasMany(
       'commerce-catalog:sku',

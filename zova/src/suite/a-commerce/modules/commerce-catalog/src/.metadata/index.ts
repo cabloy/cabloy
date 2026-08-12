@@ -112,6 +112,7 @@ declare module 'zova' {
 }
 /** apiSchema: end */
 /** controller: begin */
+export * from '../component/formFieldMarkdown/controller.jsx';
 export * from '../page/catalogue/controller.jsx';
 export * from '../page/product/controller.jsx';
 
@@ -122,6 +123,11 @@ declare module 'zova' {
 }
 declare module 'zova-module-commerce-catalog' {
   
+        export interface ControllerFormFieldMarkdown {
+          /** @internal */
+          get scope(): ScopeModuleCommerceCatalog;
+        }
+
         export interface ControllerPageCatalogue {
           /** @internal */
           get scope(): ScopeModuleCommerceCatalog;
@@ -134,12 +140,14 @@ declare module 'zova-module-commerce-catalog' {
 }
 /** controller: end */
 /** controller: begin */
+import { ControllerFormFieldMarkdown } from '../component/formFieldMarkdown/controller.jsx';
 import { ControllerPageCatalogue } from '../page/catalogue/controller.jsx';
 import { ControllerPageProduct } from '../page/product/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
-    'commerce-catalog.controller.pageCatalogue': ControllerPageCatalogue;
+    'commerce-catalog.controller.formFieldMarkdown': ControllerFormFieldMarkdown;
+'commerce-catalog.controller.pageCatalogue': ControllerPageCatalogue;
 'commerce-catalog.controller.pageProduct': ControllerPageProduct;
   }
 }
@@ -187,6 +195,22 @@ $query: NSControllerPageProduct.QueryOutput;
 }
 /** pages: end */
 
+/** components: begin */
+export * from './component/formFieldMarkdown.js';
+import { ZFormFieldMarkdown } from './component/formFieldMarkdown.js';
+export const components = {
+  'formFieldMarkdown': ZFormFieldMarkdown,
+};
+import 'zova';
+declare module 'zova' {
+export interface IComponentRecord {
+  'commerce-catalog:formFieldMarkdown': ControllerFormFieldMarkdown;
+}
+export interface IZovaComponentRecord {
+  'commerce-catalog:formFieldMarkdown': typeof ZFormFieldMarkdown;
+}
+}
+/** components: end */
 /** locale: begin */
 import { locales } from './locales.js';
 /** locale: end */

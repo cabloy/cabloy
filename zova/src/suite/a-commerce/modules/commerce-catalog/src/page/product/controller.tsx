@@ -69,6 +69,12 @@ export class ControllerPageProduct extends BeanControllerPageBase {
                 {query.data.description && (
                   <p class="text-base-content/70">{query.data.description}</p>
                 )}
+                {query.data.descriptionHtml && (
+                  <div
+                    class="product-description prose prose-sm mt-6 max-w-none text-base-content"
+                    innerHTML={query.data.descriptionHtml}
+                  ></div>
+                )}
                 <div class="mt-4 flex justify-end">
                   <RouterLink class="btn btn-outline btn-sm gap-2" to={this._getCartPagePath()}>
                     {this.scope.locale.Cart()}
