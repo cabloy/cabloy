@@ -160,20 +160,19 @@ import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
 export interface IPagePathRecord {
-  '/commerce/member/address/:locale?': TypePagePathSchema<NSControllerPageAddress.ParamsInput,NSControllerPageAddress.QueryInput>;
+  '/commerce/member/address': TypePagePathSchema<NSControllerPageAddress.ParamsInput,NSControllerPageAddress.QueryInput>;
 }
 export interface IPageNameRecord {
-  'commerce-member:address': TypePagePathSchema<NSControllerPageAddress.ParamsInput,NSControllerPageAddress.QueryInput>;
+  
 }
 }
 export const pagePathSchemas = {
-
-};
-export const pageNameSchemas = {
-'commerce-member:address': {
-          params: NSControllerPageAddress.paramsSchema,
+'/commerce/member/address': {
           query: NSControllerPageAddress.querySchema,
         },
+};
+export const pageNameSchemas = {
+
 };
 declare module 'zova-module-commerce-member' {
   export interface ControllerPageAddress {

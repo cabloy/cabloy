@@ -464,7 +464,7 @@ test(
     await expect(page.getByText('库存 24 件')).toBeVisible();
     await expect(page.getByRole('link', { name: '购物车' })).toHaveAttribute(
       'href',
-      '/commerce/zh-cn/cart',
+      '/commerce/cart',
     );
     expect(pageErrors).toEqual([]);
   },

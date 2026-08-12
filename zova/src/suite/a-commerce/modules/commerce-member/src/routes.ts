@@ -4,9 +4,8 @@ import { ZPageAddress } from './.metadata/page/address.js';
 
 export const routes: IModuleRoute[] = [
   {
-    name: 'address',
-    path: 'address/:locale?',
+    path: 'address',
     component: ZPageAddress,
-    meta: { locale: true, requiresAuth: true, ssrProfile: 'session' },
+    meta: { requiresAuth: true, ssrProfile: 'session' },
   },
 ];

@@ -8,33 +8,28 @@ import { ZPagePayment } from './.metadata/page/payment.js';
 
 export const routes: IModuleRoute[] = [
   {
-    name: 'cart',
-    path: 'cart/:locale?',
+    path: 'cart',
     component: ZPageCart,
-    meta: { locale: true, requiresAuth: true, ssrProfile: 'session' },
+    meta: { requiresAuth: true, ssrProfile: 'session' },
   },
   {
-    name: 'checkout',
-    path: 'checkout/:locale?',
+    path: 'checkout',
     component: ZPageCheckout,
-    meta: { locale: true, requiresAuth: true, ssrProfile: 'session' },
+    meta: { requiresAuth: true, ssrProfile: 'session' },
   },
   {
-    name: 'payment',
-    path: 'payment/:paymentSessionId/:orderId/:locale?',
+    path: 'payment/:paymentSessionId/:orderId',
     component: ZPagePayment,
-    meta: { locale: true, requiresAuth: true, ssrProfile: 'session' },
+    meta: { requiresAuth: true, ssrProfile: 'session' },
   },
   {
-    name: 'orders',
-    path: 'orders/:locale?',
+    path: 'orders',
     component: ZPageOrders,
-    meta: { locale: true, requiresAuth: true, ssrProfile: 'session' },
+    meta: { requiresAuth: true, ssrProfile: 'session' },
   },
   {
-    name: 'order',
-    path: 'order/:id/:locale?',
+    path: 'order/:id',
     component: ZPageOrder,
-    meta: { locale: true, requiresAuth: true, ssrProfile: 'session' },
+    meta: { requiresAuth: true, ssrProfile: 'session' },
   },
 ];

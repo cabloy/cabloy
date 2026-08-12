@@ -45,9 +45,7 @@ export class ControllerPageProduct extends BeanControllerPageBase {
   }
 
   private _getCartPagePath(): string {
-    return this.$router.getAliasPath('commerce-trade:cart', {
-      params: { locale: true },
-    })!;
+    return this.$router.getPagePath('/commerce/trade/cart');
   }
 
   private _renderCartBadge() {

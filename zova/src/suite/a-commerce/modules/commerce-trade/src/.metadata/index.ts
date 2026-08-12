@@ -292,44 +292,35 @@ import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
 export interface IPagePathRecord {
-  '/commerce/trade/cart/:locale?': TypePagePathSchema<NSControllerPageCart.ParamsInput,NSControllerPageCart.QueryInput>;
-'/commerce/trade/checkout/:locale?': TypePagePathSchema<NSControllerPageCheckout.ParamsInput,NSControllerPageCheckout.QueryInput>;
-'/commerce/trade/order/:id/:locale?': TypePagePathSchema<NSControllerPageOrder.ParamsInput,NSControllerPageOrder.QueryInput>;
-'/commerce/trade/orders/:locale?': TypePagePathSchema<NSControllerPageOrders.ParamsInput,NSControllerPageOrders.QueryInput>;
-'/commerce/trade/payment/:paymentSessionId/:orderId/:locale?': TypePagePathSchema<NSControllerPagePayment.ParamsInput,NSControllerPagePayment.QueryInput>;
+  '/commerce/trade/cart': TypePagePathSchema<NSControllerPageCart.ParamsInput,NSControllerPageCart.QueryInput>;
+'/commerce/trade/checkout': TypePagePathSchema<NSControllerPageCheckout.ParamsInput,NSControllerPageCheckout.QueryInput>;
+'/commerce/trade/order/:id': TypePagePathSchema<NSControllerPageOrder.ParamsInput,NSControllerPageOrder.QueryInput>;
+'/commerce/trade/orders': TypePagePathSchema<NSControllerPageOrders.ParamsInput,NSControllerPageOrders.QueryInput>;
+'/commerce/trade/payment/:paymentSessionId/:orderId': TypePagePathSchema<NSControllerPagePayment.ParamsInput,NSControllerPagePayment.QueryInput>;
 }
 export interface IPageNameRecord {
-  'commerce-trade:cart': TypePagePathSchema<NSControllerPageCart.ParamsInput,NSControllerPageCart.QueryInput>;
-'commerce-trade:checkout': TypePagePathSchema<NSControllerPageCheckout.ParamsInput,NSControllerPageCheckout.QueryInput>;
-'commerce-trade:order': TypePagePathSchema<NSControllerPageOrder.ParamsInput,NSControllerPageOrder.QueryInput>;
-'commerce-trade:orders': TypePagePathSchema<NSControllerPageOrders.ParamsInput,NSControllerPageOrders.QueryInput>;
-'commerce-trade:payment': TypePagePathSchema<NSControllerPagePayment.ParamsInput,NSControllerPagePayment.QueryInput>;
+  
 }
 }
 export const pagePathSchemas = {
-
-};
-export const pageNameSchemas = {
-'commerce-trade:cart': {
-          params: NSControllerPageCart.paramsSchema,
+'/commerce/trade/cart': {
           query: NSControllerPageCart.querySchema,
         },
-'commerce-trade:checkout': {
-          params: NSControllerPageCheckout.paramsSchema,
+'/commerce/trade/checkout': {
           query: NSControllerPageCheckout.querySchema,
         },
-'commerce-trade:order': {
-          params: NSControllerPageOrder.paramsSchema,
+'/commerce/trade/order/:id': {
           query: NSControllerPageOrder.querySchema,
         },
-'commerce-trade:orders': {
-          params: NSControllerPageOrders.paramsSchema,
+'/commerce/trade/orders': {
           query: NSControllerPageOrders.querySchema,
         },
-'commerce-trade:payment': {
-          params: NSControllerPagePayment.paramsSchema,
+'/commerce/trade/payment/:paymentSessionId/:orderId': {
           query: NSControllerPagePayment.querySchema,
         },
+};
+export const pageNameSchemas = {
+
 };
 declare module 'zova-module-commerce-trade' {
   export interface ControllerPageCart {

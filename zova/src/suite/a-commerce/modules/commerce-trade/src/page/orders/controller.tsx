@@ -6,9 +6,7 @@ import { ZPage } from 'zova-module-home-base';
 
 import { ModelOrderMine } from '../../model/orderMine.js';
 
-export const ControllerPageOrdersSchemaParams = z.object({
-  locale: z.string().optional(),
-});
+export const ControllerPageOrdersSchemaParams = z.object({});
 export const ControllerPageOrdersSchemaQuery = z.object({});
 
 @Controller()
@@ -28,7 +26,11 @@ export class ControllerPageOrders extends BeanControllerPageBase {
   }
 
   viewOrder(id: string) {
-    this.$router.push({ name: 'commerce-trade:order', params: { id } });
+    this.$router.push(
+      this.$router.getPagePath('/commerce/trade/order/:id', {
+        params: { id },
+      }),
+    );
   }
 
   protected render() {
