@@ -1450,6 +1450,7 @@ test(
     const webContext = await browser.newContext();
     const webPage = await webContext.newPage();
     const webPageErrors = collectPageErrors(webPage);
+    const webConsoleErrors = collectConsoleErrors(webPage);
     const categoryActionPath = '/api/commerce/catalog/category';
     const productActionPath = '/api/commerce/catalog/product';
     const skuActionPath = '/api/commerce/catalog/sku';
@@ -1475,7 +1476,14 @@ test(
       expectTableIdentity(categoryId);
 
       const productResponse = await adminPage.request.post(productActionPath, {
-        data: { categoryId, title: productTitle, published: true },
+        data: {
+          categoryId,
+          title: productTitle,
+          published: true,
+          productContentForm: {
+            descriptionMarkdown: `${markdown}\n\n${unsafeHtml}`,
+          },
+        },
         headers,
       });
       expect(productResponse.ok()).toBeTruthy();
@@ -1501,18 +1509,6 @@ test(
       });
       expect(stockResponse.ok()).toBeTruthy();
 
-      const contentResponse = await adminPage.request.patch(`${productActionPath}/${productId}`, {
-        data: {
-          categoryId,
-          title: productTitle,
-          productContentForm: {
-            descriptionMarkdown: `${markdown}\n\n${unsafeHtml}`,
-          },
-        },
-        headers,
-      });
-      expect(contentResponse.ok()).toBeTruthy();
-
       const productPath = `/commerce/product/${productId}`;
       const ssrResponse = await webPage.request.get(productPath);
       expect(ssrResponse.ok()).toBeTruthy();
@@ -1530,7 +1526,10 @@ test(
         `Product details ${suffix}`,
       );
       await expect(webPage.locator('.product-description strong')).toHaveText('durable');
+      const description = webPage.locator('.product-description');
+      await expect(description).not.toHaveClass(/\bprose\b/);
       expect(webPageErrors).toEqual([]);
+      expect(webConsoleErrors).toEqual([]);
     } finally {
       if (skuId && headers) {
         const response = await adminPage.request.delete(`${skuActionPath}/${skuId}`, { headers });
@@ -1641,6 +1640,7 @@ const product = '${suffix}';
       await expect(editor.locator('table th')).toHaveCount(2);
       await expect(editor.locator('table td')).toHaveCount(2);
       await expect(editor.locator('h1')).toHaveCSS('font-weight', '700');
+      await expect(editor.locator('ul')).toHaveCSS('list-style-type', 'disc');
       await expect(editor.locator('blockquote')).toHaveCSS('border-left-width', '4px');
       await expect(editor.locator('pre')).toHaveCSS('overflow-x', 'auto');
       await expect(editor.locator('table th').first()).toHaveCSS('font-weight', '600');

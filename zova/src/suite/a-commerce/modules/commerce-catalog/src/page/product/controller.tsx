@@ -7,6 +7,7 @@ import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPage } from 'zova-module-home-base';
 
+import { richTextContentStyle } from '../../lib/richTextContentStyle.js';
 import { ModelCatalogue } from '../../model/catalogue.js';
 
 export const ControllerPageProductSchemaParams = z.object({
@@ -24,8 +25,10 @@ export class ControllerPageProduct extends BeanControllerPageBase {
   $$modelCart: ModelCart;
 
   currentProductId?: string;
+  cDescription: string;
 
   protected async __init__() {
+    this.cDescription = this.$style(richTextContentStyle());
     this.currentProductId = this.$computed(() => {
       return this.$params.id;
     });
@@ -71,7 +74,10 @@ export class ControllerPageProduct extends BeanControllerPageBase {
                 )}
                 {query.data.descriptionHtml && (
                   <div
-                    class="product-description prose prose-sm mt-6 max-w-none text-base-content"
+                    class={[
+                      'product-description mt-6 max-w-none text-base-content',
+                      this.cDescription,
+                    ]}
                     innerHTML={query.data.descriptionHtml}
                   ></div>
                 )}
