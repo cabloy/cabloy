@@ -1,5 +1,9 @@
 import type { IComponentOptions } from 'zova';
-import type { IFormFieldComponentOptions } from 'zova-module-a-form';
+import type {
+  ControllerFormField,
+  IFormFieldComponentOptions,
+  IFormFieldRenderContextPropsBucket,
+} from 'zova-module-a-form';
 import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
 
 import { Highlight } from '@tiptap/extension-highlight';
@@ -8,12 +12,9 @@ import { TaskItem, TaskList } from '@tiptap/extension-list';
 import { TableKit } from '@tiptap/extension-table';
 import { Markdown } from '@tiptap/markdown';
 import StarterKit from '@tiptap/starter-kit';
-import { Editor, EditorContent } from '@tiptap/vue-3';
-import { BeanControllerBase, ClientOnly, Use } from 'zova';
+import { Editor } from '@tiptap/vue-3';
+import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
-import { ZFormField } from 'zova-module-a-form';
-
-import type { StyleFormFieldMarkdown } from './style.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {
@@ -31,9 +32,6 @@ export interface ControllerFormFieldMarkdownProps extends IFormFieldComponentOpt
 export class ControllerFormFieldMarkdown extends BeanControllerBase {
   static $propsDefault = {};
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
-
-  @Use('commerce-catalog.style.formFieldMarkdown')
-  $$style: StyleFormFieldMarkdown;
 
   editor?: Editor;
   value = '';
@@ -92,46 +90,20 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
     this.editor?.destroy();
   }
 
-  protected render() {
-    const propsFormField = this.$props as ControllerFormFieldMarkdownProps;
-    return (
-      <ZFormField
-        {...propsFormField}
-        slotDefault={({ propsBucket, props }, $$formField) => {
-          this.value = propsBucket.value ?? '';
-          this.readonly = propsBucket.readonly ?? false;
-          this._setValue = (value, disableNotifyChanged) => {
-            $$formField.setValue(value, disableNotifyChanged);
-          };
-          this._handleBlur = () => {
-            $$formField.handleBlur();
-          };
-          return (
-            <div class={props.class}>
-              <div
-                class={[
-                  'rounded-box border border-base-300 bg-base-100',
-                  !$$formField.field.state.meta.isValid && 'border-error',
-                ]}
-                onClick={() => {
-                  if (!this.readonly) {
-                    this.editor?.commands.focus();
-                  }
-                }}
-              >
-                <ClientOnly
-                  v-slots={{
-                    default: () => (
-                      <EditorContent editor={this.editor} class={this.$$style.cMarkdown} />
-                    ),
-                    placeholder: () => <div class="min-h-96 p-4" aria-hidden="true"></div>,
-                  }}
-                ></ClientOnly>
-              </div>
-            </div>
-          );
-        }}
-      ></ZFormField>
-    );
+  public bindFormField(
+    propsBucket: IFormFieldRenderContextPropsBucket,
+    formField: ControllerFormField,
+  ) {
+    const value = propsBucket.value ?? '';
+    const readonly = propsBucket.readonly ?? false;
+    if (this.value !== value) this.value = value;
+    if (this.readonly !== readonly) this.readonly = readonly;
+    if (this._setValue && this._handleBlur) return;
+    this._setValue = (value, disableNotifyChanged) => {
+      formField.setValue(value, disableNotifyChanged);
+    };
+    this._handleBlur = () => {
+      formField.handleBlur();
+    };
   }
 }
