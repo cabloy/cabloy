@@ -27,6 +27,8 @@ export interface IEntityOptions<%=argv.resourceNameCapitalize%> extends IDecorat
   },
 })
 export class Entity<%=argv.resourceNameCapitalize%> extends EntityBase {
+  // AI guidance: Ordinary text fields intentionally use the implicit default Input renderer.
+  // Add ZovaRender.field(...) only when field semantics need a specialized renderer.
   @Api.field(
     v.title($locale('Name')),
     v.required(),

@@ -117,6 +117,15 @@ Typical backend thread pieces include:
 
 Do not throw away the generated structure and rewrite it from scratch unless the generator clearly does not match the task.
 
+### Generated renderer decision
+
+When refining generated entity fields, choose form and table controls from business semantics, not only from the primitive TypeScript type:
+
+- keep ordinary Cabloy Basic text fields, such as generated `name` and `description`, on the implicit default `Input` renderer; do not mechanically add `basic-input:formFieldInput`
+- add explicit `ZovaRender.field(...)` when semantics require a specialized control, such as an enum/select, resource relation, date/time, boolean choice, money, image, or file
+- add `ZovaRender.cell(...)` when that field also needs specialized table presentation
+- reuse a shared renderer first, configure it with field-level options next, and create a custom renderer only when the shared surface cannot express the required behavior; follow `cabloy-resource-field-update` for the edition-aware renderer branch
+
 ## Step 5: Apply backend follow-up logic deliberately
 
 Backend scaffolding is rarely complete after file generation alone. Treat this follow-up review as mandatory.
