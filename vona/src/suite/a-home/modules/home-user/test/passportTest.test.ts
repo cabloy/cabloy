@@ -15,6 +15,7 @@ describe('passportTest.test.ts', () => {
         });
         userId = user.id as string;
         assert.equal(user.activated, false);
+        assert.equal(user.accountStatus, 'active');
 
         const [_, error] = await catchError(() => {
           return app.bean.executor.performAction('post', activateCurrentPath, {

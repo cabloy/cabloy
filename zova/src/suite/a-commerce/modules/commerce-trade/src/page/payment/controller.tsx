@@ -13,7 +13,6 @@ import { ModelOrderMine } from '../../model/orderMine.js';
 export const ControllerPagePaymentSchemaParams = z.object({
   paymentSessionId: z.string(),
   orderId: z.string(),
-  locale: z.string().optional(),
 });
 export const ControllerPagePaymentSchemaQuery = z.object({
   providerResult: z.enum(['return', 'cancel']).optional(),
@@ -123,10 +122,11 @@ export class ControllerPagePayment extends BeanControllerPageBase {
   }
 
   async openOrder() {
-    await this.$router.push({
-      name: 'commerce-trade:order',
-      params: { id: this.orderId, locale: this.$params.locale },
-    });
+    await this.$router.push(
+      this.$router.getPagePath('/commerce/trade/order/:id', {
+        params: { id: this.orderId! },
+      }),
+    );
   }
 
   async refreshOrderStatus() {
@@ -190,10 +190,11 @@ export class ControllerPagePayment extends BeanControllerPageBase {
         if (settled) {
           await this.queryOrder?.refetch();
           if (!this._isCurrentSettlementPoll(pollVersion)) return;
-          await this.$router.push({
-            name: 'commerce-trade:order',
-            params: { id: this.orderId, locale: this.$params.locale },
-          });
+          await this.$router.push(
+            this.$router.getPagePath('/commerce/trade/order/:id', {
+              params: { id: this.orderId! },
+            }),
+          );
           return;
         }
         if (attempt === SettlementPollDelaysMilliseconds.length - 1) break;

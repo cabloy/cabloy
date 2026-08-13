@@ -1,5 +1,5 @@
 import type { TableIdentity } from 'table-identity';
-import type { IAuthUserProfile, IUser, IUserAdapter } from 'vona-module-a-user';
+import type { IAuthUserProfile, IUser, IUserAdapter, TypeAccountStatus } from 'vona-module-a-user';
 
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
@@ -7,7 +7,7 @@ import { Service } from 'vona-module-a-bean';
 @Service()
 export class ServiceUserAdapter extends BeanBase implements IUserAdapter {
   async create(user: Partial<IUser>): Promise<IUser> {
-    return await this.scope.model.user.insert(user);
+    return await this.scope.model.user.insert({ accountStatus: 'active', ...user });
   }
 
   async userOfProfile(profile: IAuthUserProfile): Promise<Partial<IUser>> {
@@ -42,5 +42,9 @@ export class ServiceUserAdapter extends BeanBase implements IUserAdapter {
 
   async setActivated(id: TableIdentity, activated: boolean): Promise<void> {
     await this.scope.model.user.update({ id, activated });
+  }
+
+  async setAccountStatus(id: TableIdentity, accountStatus: TypeAccountStatus): Promise<void> {
+    await this.scope.model.user.update({ id, accountStatus });
   }
 }

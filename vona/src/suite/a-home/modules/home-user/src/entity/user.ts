@@ -1,6 +1,6 @@
 import type { ILocaleRecord } from 'vona';
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
-import type { IUser } from 'vona-module-a-user';
+import type { IUser, TypeAccountStatus } from 'vona-module-a-user';
 
 import { Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
@@ -26,6 +26,13 @@ export class EntityUser extends EntityBase implements IUser {
 
   @Api.field(v.title($locale('UserActivated')), v.default(false))
   activated?: boolean;
+
+  @Api.field(
+    v.title($locale('UserAccountStatus')),
+    v.default('active'),
+    z.enum(['active', 'disabled']),
+  )
+  accountStatus: TypeAccountStatus;
 
   @Api.field(v.title($locale('UserLocale')), z.string().optional())
   locale?: keyof ILocaleRecord | undefined;

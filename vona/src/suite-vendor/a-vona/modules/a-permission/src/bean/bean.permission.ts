@@ -153,6 +153,7 @@ export class BeanPermission extends BeanBase {
     const isAuthenticated = this.bean.passport.isAuthenticated;
     if (!options.public && !isAuthenticated) return false;
     if (!isAuthenticated) return true;
+    if (!this.bean.passport.isAccountActive) return false;
     if (options.activated === true && !this.bean.passport.isActivated) return false;
     if (options.activated === false && this.bean.passport.isActivated) return false;
     return true;

@@ -8,7 +8,6 @@ import { ModelOrderMine } from '../../model/orderMine.js';
 
 export const ControllerPageOrderSchemaParams = z.object({
   id: z.string(),
-  locale: z.string().optional(),
 });
 export const ControllerPageOrderSchemaQuery = z.object({});
 

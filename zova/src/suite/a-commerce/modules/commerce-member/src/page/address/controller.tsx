@@ -13,9 +13,7 @@ import type {
 
 import { ModelAddressMine } from '../../model/addressMine.js';
 
-export const ControllerPageAddressSchemaParams = z.object({
-  locale: z.string().optional(),
-});
+export const ControllerPageAddressSchemaParams = z.object({});
 export const ControllerPageAddressSchemaQuery = z.object({});
 
 type AddressDraft = ApiApiCommerceMemberAddresscreateMineRequestBody;

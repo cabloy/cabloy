@@ -8,9 +8,7 @@ import { ZPage } from 'zova-module-home-base';
 
 import { ModelCart } from '../../model/cart.js';
 
-export const ControllerPageCheckoutSchemaParams = z.object({
-  locale: z.string().optional(),
-});
+export const ControllerPageCheckoutSchemaParams = z.object({});
 export const ControllerPageCheckoutSchemaQuery = z.object({});
 
 @Controller()
@@ -59,14 +57,14 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
         correlationId: `${Date.now()}-${Math.random().toString(36).slice(2, 12)}`,
         providerCandidateKey: this.providerCandidateKey,
       });
-      this.$router.push({
-        name: 'commerce-trade:payment',
-        params: {
-          paymentSessionId: String(result.paymentSessionId),
-          orderId: String(result.orderId),
-          locale: this.$params.locale,
-        },
-      });
+      this.$router.push(
+        this.$router.getPagePath('/commerce/trade/payment/:paymentSessionId/:orderId', {
+          params: {
+            paymentSessionId: String(result.paymentSessionId),
+            orderId: String(result.orderId),
+          },
+        }),
+      );
     } finally {
       this.submitting = false;
     }

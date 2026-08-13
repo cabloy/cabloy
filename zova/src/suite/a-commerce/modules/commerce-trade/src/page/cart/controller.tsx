@@ -7,9 +7,7 @@ import { ZPage } from 'zova-module-home-base';
 
 import { ModelCart } from '../../model/cart.js';
 
-export const ControllerPageCartSchemaParams = z.object({
-  locale: z.string().optional(),
-});
+export const ControllerPageCartSchemaParams = z.object({});
 export const ControllerPageCartSchemaQuery = z.object({});
 
 @Controller()
@@ -40,15 +38,11 @@ export class ControllerPageCart extends BeanControllerPageBase {
   }
 
   private _getAddressPagePath(): string {
-    return this.$router.getAliasPath('commerce-member:address', {
-      params: { locale: true },
-    })!;
+    return this.$router.getPagePath('/commerce/member/address');
   }
 
   private _getCheckoutPagePath(): string {
-    return this.$router.getAliasPath('commerce-trade:checkout', {
-      params: { locale: true },
-    })!;
+    return this.$router.getPagePath('/commerce/trade/checkout');
   }
 
   protected render() {

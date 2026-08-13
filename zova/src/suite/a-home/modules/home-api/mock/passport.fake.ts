@@ -239,7 +239,7 @@ const __sdkSchemaPassportLogin = {
               type: 'string',
               title: '角色标题',
             },
-            locales: {
+            titleLocales: {
               type: 'object',
               additionalProperties: {
                 type: 'string',
@@ -415,14 +415,14 @@ export default defineFakeRoute([
                 id: 1,
                 name: 'registeredUser',
                 title: 'Registered User',
-                locales: { 'zh-cn': '注册用户' },
+                titleLocales: { 'zh-cn': '注册用户' },
                 siteIds: ['web'],
               },
               {
                 id: 2,
                 name: 'systemAdmin',
                 title: 'System Administrator',
-                locales: { 'zh-cn': '系统管理员' },
+                titleLocales: { 'zh-cn': '系统管理员' },
                 siteIds: ['web', 'admin'],
               },
             ],

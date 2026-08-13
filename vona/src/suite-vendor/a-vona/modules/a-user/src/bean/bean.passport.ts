@@ -53,6 +53,18 @@ export class BeanPassport extends BeanBase {
     return !!user && !!user.activated;
   }
 
+  public get isAccountActive(): boolean {
+    const user = this.currentUser;
+    return !!user && !user.anonymous && user.accountStatus !== 'disabled';
+  }
+
+  public ensureAccountActive(passport?: IPassport): void {
+    const user = passport?.user ?? this.currentUser;
+    if (user && !user.anonymous && user.accountStatus === 'disabled') {
+      this.app.throw(403);
+    }
+  }
+
   public async isSystemAdmin(): Promise<boolean> {
     const passport = this.current;
     return await this.passportAdapter.isSystemAdmin(passport);
@@ -80,6 +92,7 @@ export class BeanPassport extends BeanBase {
 
   public async signin(passport: IPassport, options?: ISigninOptions): Promise<IJwtToken> {
     if (isNil(this.ctx.instanceName)) throw new Error('should specify instance');
+    this.ensureAccountActive(passport);
     // current
     await this.setCurrent(passport);
     // event
@@ -163,6 +176,7 @@ export class BeanPassport extends BeanBase {
     if (!payloadData) return; // no jwt token
     const passport = await this.passportAdapter.deserialize(payloadData);
     if (!passport) return this.app.throw(401);
+    this.ensureAccountActive(passport);
     // verified
     const authTokenOptions = await this._combineAuthTokenOptions(
       passport.auth!.authProviderId,
