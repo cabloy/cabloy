@@ -51,8 +51,11 @@ declare module 'vona-module-commerce-siteweb' {
           } 
 }
 /** ssrMenu: end */
+/** locale: begin */
+import { locales } from './locales.ts';
+/** locale: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil } from 'vona';
+import { BeanScopeBase, type BeanScopeUtil, type TypeModuleLocales, type TypeLocaleBase } from 'vona';
 import { Scope } from 'vona-module-a-bean';
 
 @Scope()
@@ -60,6 +63,7 @@ export class ScopeModuleCommerceSiteweb extends BeanScopeBase {}
 
 export interface ScopeModuleCommerceSiteweb {
   util: BeanScopeUtil;
+locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 }
 
 import 'vona';
@@ -74,7 +78,9 @@ declare module 'vona' {
   
   
 
-  
+  export interface IBeanScopeLocale {
+    'commerce-siteweb': (typeof locales)[TypeLocaleBase];
+  }
 
   
 }
