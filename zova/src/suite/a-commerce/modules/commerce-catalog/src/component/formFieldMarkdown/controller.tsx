@@ -100,9 +100,11 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
     if (this.readonly !== readonly) this.readonly = readonly;
     if (this._setValue && this._handleBlur) return;
     this._setValue = (value, disableNotifyChanged) => {
+      if (this.readonly) return;
       formField.setValue(value, disableNotifyChanged);
     };
     this._handleBlur = () => {
+      if (this.readonly) return;
       formField.handleBlur();
     };
   }

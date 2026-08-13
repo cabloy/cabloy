@@ -67,6 +67,7 @@ export class StyleFormFieldMarkdown extends BeanStyleBase {
         },
         '& .tiptap ul[data-type="taskList"] li > label': {
           lineHeight: 1.65,
+          paddingTop: '0.2rem',
         },
         '& .tiptap ul[data-type="taskList"] li > div': {
           flex: 1,
