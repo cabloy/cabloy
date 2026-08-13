@@ -82,6 +82,9 @@ Start from the public frontend reading docs in `cabloy-docs/frontend/`.
 - `cabloy-docs/frontend/zova-vs-vue3-comparison.md`
 - `cabloy-docs/frontend/zova-reactivity-under-the-hood.md`
 - `cabloy-docs/frontend/zova-source-reading-map.md`
+- `cabloy-docs/frontend/page-guide.md`
+- `cabloy-docs/frontend/component-guide.md`
+- `cabloy-docs/frontend/css-in-js-guide.md`
 
 For compact procedural summaries inside the skill bundle, also use:
 
@@ -142,7 +145,27 @@ Do **not** lead with statements like:
 
 Those translations can erase the actual Zova architecture.
 
-For component-wrapper questions specifically, remember that `controllerRef` exposes the controller instance, not a generic DOM ref, and should not be treated as a generic Vue component-ref substitute without checking the current wrapper/controller source path.
+For component-wrapper questions specifically, remember that `controllerRef` exposes the controller instance to the component consumer, not a generic DOM ref, and should not be treated as a generic Vue component-ref substitute without checking the current wrapper/controller source path.
+
+### Split Controller, Render, and Style access
+
+When explaining a split page or component, establish role ownership before discussing access:
+
+- Controller owns state, actions, and lifecycle work.
+- Render owns TSX composition.
+- Style owns scoped CSS-in-JS setup.
+
+The source-confirmed direct member lookup order is:
+
+| Current bean | Direct member lookup order |
+| --- | --- |
+| Controller | Controller only |
+| Style | Style, then Controller |
+| Render | Render, then Controller, then Style |
+
+State the shadowing caveat: an own member on the current bean takes precedence over each fallback surface. Recommend `this.member` for ordinary same-component companion access, such as Render reading Controller state or a Style-generated class.
+
+Distinguish this normal fallback from explicit `@Use()` or bean/container access. Use explicit access only when the task needs a named or specific instance, selector or scope boundary, identity passing, lifecycle control, or other interop. Do not confuse generated type augmentation with runtime behavior: generated interfaces expose the type surface, while proxy fallback supplies missing companion members at runtime.
 
 ## Step 6: Distinguish source-confirmed behavior from interpretive comparison
 

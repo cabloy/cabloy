@@ -56,6 +56,12 @@ A practical rule is:
 
 This is an organizational split, not a different styling engine. Zova still uses the same CSS-in-JS model; it simply gives larger pages and components a better place to hold their style concerns.
 
+### Style beans in a split Controller/Render/Style component
+
+A Style Bean owns generated class setup. It can directly read its companion Controller's state through `this.member`; a Render Bean can consume the Style Bean's generated class through the same direct access surface, for example `this.cClass`. Keep Style class names distinct from Controller state and actions, because a same-name member on the current bean takes precedence.
+
+For the complete lookup order and the boundary between ordinary companion access and explicit bean identity/interop access, see [Page Guide: Companion-member access](/frontend/page-guide#companion-member-access-in-a-split-page).
+
 ## Shared/global styles with `@Css()` and `$cssBase`
 
 Not every style should stay local.

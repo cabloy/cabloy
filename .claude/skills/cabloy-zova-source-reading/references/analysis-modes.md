@@ -46,6 +46,7 @@ Use this mode when the user is mainly asking:
    - model
    - behavior
    - SSR
+   - split Controller/Render/Style delegation
 3. trace the smallest current-source path that confirms the runtime behavior
 4. distinguish source-confirmed behavior from interpretation
 5. only after the Zova-native explanation is clear, add Vue analogy if helpful
@@ -56,6 +57,17 @@ Use this mode when the user is mainly asking:
 - intermediate runtime files
 - what triggers the behavior
 - what is source-confirmed
+
+### Companion delegation response sequence
+
+For questions about a split Controller, Render, and Style implementation:
+
+1. establish role ownership: Controller for state/actions/lifecycle, Render for TSX composition, Style for scoped CSS-in-JS
+2. give the direct lookup order: Controller only; Style then Controller; Render then Controller then Style
+3. state that an own member shadows the next fallback surface
+4. recommend direct `this.member` access for ordinary same-component access
+5. distinguish generated type augmentation from proxy-based runtime fallback
+6. reserve `@Use()` or explicit bean/container access for named/specific identity, selectors/scopes, lifecycle control, or interop
 
 ## Mode C: Vue-vs-Zova comparison mode
 

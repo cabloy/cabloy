@@ -103,6 +103,12 @@ class RenderPageCounter {
 }
 ```
 
+## `controllerRef` and internal companion access
+
+`controllerRef` is a consumer-side mechanism: it exposes this component's Controller instance to the component's caller. It is distinct from the internal companion-member access used by a split Controller, Render, and Style implementation.
+
+Inside one component, use direct `this.member` access for ordinary companion state, actions, and generated style classes. For the lookup order, shadowing rule, and cases that require explicit identity or interop access instead, see [Page Guide: Companion-member access](/frontend/page-guide#companion-member-access-in-a-split-page).
+
 ## Practical implications for component implementation
 
 When working on Zova components, do not automatically fall back to generic Vue component habits.

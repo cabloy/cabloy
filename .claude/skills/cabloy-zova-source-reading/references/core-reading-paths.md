@@ -37,6 +37,34 @@ Use when the question is about:
 - `controllerRef`
 - component-local controller behavior
 
+## Split Controller, Render, and Style companion path
+
+Read in this order:
+
+1. `home-layoutadmin/src/.metadata/component/layoutAdmin.ts`
+2. `zova-core/src/composables/useController.ts`
+3. `zova-core/src/bean/beanStyleBase.ts`
+4. `zova-core/src/bean/beanControllerLike.ts`
+5. `zova-core/src/bean/beanRenderLike.ts`
+6. `zova-core/src/bean/beanContainer.ts`
+7. `zova-core/src/core/context/component.ts`
+
+Use when the question is about:
+
+- Render reading Controller state or actions through `this.member`
+- Style reading Controller state through `this.member`
+- Render consuming a Style-generated class such as `this.cClass`
+- generated typing versus runtime fallback
+- companion-member shadowing or explicit `@Use()` boundaries
+
+Expected conclusion:
+
+- generated metadata types Style as Controller and Render as Style, but that type composition is not the runtime mechanism
+- `useController(...)` creates Controller, Style, then Render in one context
+- Controller has no companion fallback; Style falls back to Controller; Render falls back to Controller, then Style
+- a locally declared member wins before fallback, so same-name members shadow companion members
+- use direct `this.member` for normal companion access; reserve explicit identity/container access for named instances, selector/scope boundaries, lifecycle control, or interop
+
 ## Bean lifecycle and helper API path
 
 Read in this order:

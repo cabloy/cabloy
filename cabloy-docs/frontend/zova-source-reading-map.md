@@ -107,7 +107,51 @@ Use this path when you are asking questions like:
 - `component.ts` shows how render is patched toward controller/render beans
 - the concrete component controller shows the public authoring pattern for the case you care about
 
-## 3. Bean lifecycle, instance scope, and helper APIs
+## 3. Split Controller, Render, and Style companion access
+
+Use this path when you are asking questions like:
+
+- why can a Render Bean read Controller state with `this.member`?
+- why can a Style Bean read Controller state, or a Render Bean read a generated Style class?
+- does generated type augmentation create the runtime fallback behavior?
+- when is `@Use()` or an explicit bean lookup actually needed?
+
+### Read the docs first
+
+- [Page Guide](/frontend/page-guide#companion-member-access-in-a-split-page)
+- [Component Guide](/frontend/component-guide#controllerref-and-internal-companion-access)
+- [CSS-in-JS Guide](/frontend/css-in-js-guide#style-beans-in-a-split-controllerrenderstyle-component)
+
+### Then read source in this order
+
+1. `zova/src/suite/a-home/modules/home-layoutadmin/src/.metadata/component/layoutAdmin.ts`
+2. `zova/packages-zova/zova-core/src/composables/useController.ts`
+3. `zova/packages-zova/zova-core/src/bean/beanStyleBase.ts`
+4. `zova/packages-zova/zova-core/src/bean/beanControllerLike.ts`
+5. `zova/packages-zova/zova-core/src/bean/beanRenderLike.ts`
+6. `zova/packages-zova/zova-core/src/bean/beanContainer.ts`
+7. `zova/packages-zova/zova-core/src/core/context/component.ts`
+
+### What each file clarifies
+
+- `layoutAdmin.ts` shows generated type augmentation: Style extends Controller and Render extends Style, so TypeScript exposes the companion members.
+- `useController.ts` creates the Controller first, then Style, then Render in one component context.
+- `beanStyleBase.ts` and `beanControllerLike.ts` show Style's runtime fallback from Style to Controller.
+- `beanRenderLike.ts` extends that fallback so Render resolves Render, then Controller, then Style.
+- `beanContainer.ts` shows that proxy handling keeps locally declared members local and asks `__get__`/`__set__` only for a missing member; this produces own-member shadowing.
+- `component.ts` shows that the runtime uses the Controller's render when it has one and otherwise selects the Render Bean.
+
+The source-confirmed direct lookup order is:
+
+| Current bean | Direct member lookup order          |
+| ------------ | ----------------------------------- |
+| Controller   | Controller only                     |
+| Style        | Style, then Controller              |
+| Render       | Render, then Controller, then Style |
+
+Use `this.member` for normal same-component access. Use explicit `@Use()` or a bean/container lookup only when you need a named or specific instance, selector or scope boundary, identity passing, lifecycle control, or other interop. Generated type augmentation makes this authoring surface type-safe; the proxy fallback is the separate runtime mechanism that supplies missing companion members.
+
+## 4. Bean lifecycle, instance scope, and helper APIs
 
 Use this path when you are asking questions like:
 
@@ -134,7 +178,7 @@ Use this path when you are asking questions like:
 - `beanContainer.ts` shows init, inject, and dispose flow
 - `context/util.ts` shows how instance scope is applied around framework operations
 
-## 4. Page routing, params, query, and layout-oriented route behavior
+## 5. Page routing, params, query, and layout-oriented route behavior
 
 Use this path when you are asking questions like:
 
@@ -180,9 +224,9 @@ If your next question becomes any of these:
 then continue immediately with:
 
 - [Router View Hosts Guide](/frontend/router-view-hosts-guide)
-- section 5 on this page for the compact source-reading path
+- section 6 on this page for the compact source-reading path
 
-## 5. Router-view hosts, routertabs, and routerstack
+## 6. Router-view hosts, routertabs, and routerstack
 
 Use this path when you are asking questions like:
 
@@ -225,7 +269,7 @@ If your next question becomes specifically about task-level title, dirty state, 
 - `model/stack.ts` shows the fullPath-based stack identity model and recency-based pruning
 - active layout consumers show how the current shell turns host state into visible Admin or Web behavior
 
-## 6. Model state, cache-oriented state, and broader data ownership
+## 7. Model state, cache-oriented state, and broader data ownership
 
 Use this path when you are asking questions like:
 
@@ -253,7 +297,7 @@ Use this path when you are asking questions like:
 - built-in model beans show how the architecture is used in nontrivial cases
 - consuming code shows whether the state really belongs in the model or only uses the model result
 
-## 7. Command scene and command-bean invocation
+## 8. Command scene and command-bean invocation
 
 Use this path when you are asking questions like:
 
@@ -318,7 +362,7 @@ Use this path when you are asking questions like:
 - `controller.tsx` shows app-level meta setup, behavior-holder initialization, and behavior-wrapped `RouterView` render
 - `config.ts` shows the root behavior injection point through `scope.config.behaviors`
 
-## 8. Behavior scene and render-time interception
+## 9. Behavior scene and render-time interception
 
 Use this path when you are asking questions like:
 
@@ -345,7 +389,7 @@ Use this path when you are asking questions like:
 - composer/service files show how behavior chains are normalized and executed
 - host dependencies show why host-scoped injection is part of the behavior design
 
-## 9. SSR runtime and hydration handoff
+## 10. SSR runtime and hydration handoff
 
 Use this path when you are asking questions like:
 
@@ -374,7 +418,7 @@ Use this path when you are asking questions like:
 - page/controller/model files show whether the bug is actually page-level logic
 - the Vona side shows whether the problem happens before the Zova runtime is even entered
 
-## 10. Modules, suites, and architectural placement
+## 11. Modules, suites, and architectural placement
 
 Use this path when you are asking questions like:
 
