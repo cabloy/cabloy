@@ -1443,7 +1443,7 @@ test(
     const categoryName = `E2E Product Content Web Category ${suffix}`;
     const productTitle = `E2E Product Content Web ${suffix}`;
     const skuCode = `E2E-PC-WEB-${suffix}`;
-    const markdown = `# Product details ${suffix}\n\nA **durable** product.`;
+    const markdown = `# Product details ${suffix}\n\nA **durable** product.\n\n- [ ] Open task\n- [x] Completed task`;
     const unsafeHtml = '<a href="javascript:alert(\'unsafe\')">unsafe</a>';
     const adminContext = await browser.newContext();
     const adminPage = await adminContext.newPage();
@@ -1516,6 +1516,9 @@ test(
       expect(ssrHtml.toLowerCase()).not.toContain('data-zova-hydrated');
       expect(ssrHtml).toContain(`<h1>Product details ${suffix}</h1>`);
       expect(ssrHtml).toContain('<strong>durable</strong>');
+      expect(ssrHtml).toContain('<ul data-type="taskList">');
+      expect(ssrHtml).toContain('<input type="checkbox" disabled="disabled" />');
+      expect(ssrHtml).toContain('<input type="checkbox" checked="checked" disabled="disabled" />');
       expect(ssrHtml).not.toMatch(/<a[^>]+javascript:/i);
 
       const documentResponse = await webPage.goto(productPath, { waitUntil: 'load' });
@@ -1528,6 +1531,12 @@ test(
       await expect(webPage.locator('.product-description strong')).toHaveText('durable');
       const description = webPage.locator('.product-description');
       await expect(description).not.toHaveClass(/\bprose\b/);
+      await expect(description.locator('ul[data-type="taskList"]')).toHaveCount(1);
+      await expect(description.locator('input[type="checkbox"]')).toHaveCount(2);
+      await expect(description.locator('input[type="checkbox"]').nth(0)).not.toBeChecked();
+      await expect(description.locator('input[type="checkbox"]').nth(0)).toBeDisabled();
+      await expect(description.locator('input[type="checkbox"]').nth(1)).toBeChecked();
+      await expect(description.locator('input[type="checkbox"]').nth(1)).toBeDisabled();
       expect(webPageErrors).toEqual([]);
       expect(webConsoleErrors).toEqual([]);
     } finally {
@@ -1565,6 +1574,9 @@ test(
 
 - First benefit
 - Second benefit
+
+- [ ] Open task
+- [x] Completed task
 
 > Product quote
 
@@ -1633,14 +1645,21 @@ const product = '${suffix}';
       await editorSurface.click({ position: { x: 20, y: 280 } });
       await expect(editor).toBeFocused();
       await expect(editor.locator('h1')).toHaveText(`Product content ${suffix}`);
-      await expect(editor.locator('ul')).toHaveCount(1);
+      await expect(editor.locator('ul:not([data-type="taskList"])')).toHaveCount(1);
       await expect(editor.locator('blockquote')).toHaveText('Product quote');
       await expect(editor.locator('pre code')).toHaveText(`const product = '${suffix}';`);
       await expect(editor.locator('mark')).toHaveText('highlighted text');
       await expect(editor.locator('table th')).toHaveCount(2);
       await expect(editor.locator('table td')).toHaveCount(2);
       await expect(editor.locator('h1')).toHaveCSS('font-weight', '700');
-      await expect(editor.locator('ul')).toHaveCSS('list-style-type', 'disc');
+      await expect(editor.locator('ul:not([data-type="taskList"])')).toHaveCSS(
+        'list-style-type',
+        'disc',
+      );
+      await expect(editor.locator('ul[data-type="taskList"]')).toHaveCount(1);
+      await expect(editor.locator('input[type="checkbox"]')).toHaveCount(2);
+      await expect(editor.locator('input[type="checkbox"]').nth(0)).not.toBeChecked();
+      await expect(editor.locator('input[type="checkbox"]').nth(1)).toBeChecked();
       await expect(editor.locator('blockquote')).toHaveCSS('border-left-width', '4px');
       await expect(editor.locator('pre')).toHaveCSS('overflow-x', 'auto');
       await expect(editor.locator('table th').first()).toHaveCSS('font-weight', '600');

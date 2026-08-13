@@ -85,7 +85,7 @@ describe('productContent.test.ts', { concurrency: false }, () => {
         });
 
         const markdown =
-          '# Product details\n\nA **durable** product.\n\n<a href="javascript:alert(\'unsafe\')">unsafe</a>';
+          '# Product details\n\nA **durable** product.\n\n- [ ] Open task\n- [x] Completed task\n\n<a href="javascript:alert(\'unsafe\')">unsafe</a>';
         const updateResult = await app.bean.executor.performAction(
           'patch',
           '/commerce/catalog/product/:id',
@@ -107,6 +107,12 @@ describe('productContent.test.ts', { concurrency: false }, () => {
         assert.equal(stored.descriptionHtml, renderProductContentMarkdown(markdown));
         assert.match(stored.descriptionHtml!, /<h1>Product details<\/h1>/);
         assert.match(stored.descriptionHtml!, /<strong>durable<\/strong>/);
+        assert.match(stored.descriptionHtml!, /<ul data-type="taskList">/);
+        assert.match(stored.descriptionHtml!, /<input type="checkbox" disabled="disabled" \/>/);
+        assert.match(
+          stored.descriptionHtml!,
+          /<input type="checkbox" checked="checked" disabled="disabled" \/>/,
+        );
         assert.doesNotMatch(stored.descriptionHtml!, /<a[^>]+javascript:/i);
 
         const adminProduct: any = await app.bean.executor.performAction(
@@ -115,6 +121,14 @@ describe('productContent.test.ts', { concurrency: false }, () => {
           { params: { id: product.id } },
         );
         assert.equal(adminProduct.productContentForm.descriptionMarkdown, markdown);
+
+        const publicDetailWithTasks: any = await app.bean.executor.performAction(
+          'get',
+          '/commerce/catalog/product/public/:id',
+          { params: { id: product.id }, innerAccess: false },
+        );
+        assert.equal(publicDetailWithTasks.descriptionMarkdown, undefined);
+        assert.equal(publicDetailWithTasks.descriptionHtml, stored.descriptionHtml);
 
         await scopeCatalog.service.product.update(product.id, {
           productContentForm: {

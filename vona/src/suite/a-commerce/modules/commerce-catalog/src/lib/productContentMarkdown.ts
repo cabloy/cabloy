@@ -32,6 +32,7 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
     'br',
     'code',
     'del',
+    'div',
     'em',
     'h1',
     'h2',
@@ -41,6 +42,8 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
     'h6',
     'hr',
     'img',
+    'input',
+    'label',
     'li',
     'ol',
     'p',
@@ -60,7 +63,10 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
     a: ['href', 'rel', 'target', 'title'],
     code: ['class'],
     img: ['alt', 'height', 'src', 'title', 'width'],
+    input: ['checked', 'disabled', 'type'],
+    li: ['data-checked', 'data-type'],
     span: ['class'],
+    ul: ['data-type'],
   },
   allowedClasses: {
     code: ['language-*'],
@@ -74,6 +80,36 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
   allowProtocolRelative: false,
   transformTags: {
     a: sanitizeHtml.simpleTransform('a', { rel: 'noopener noreferrer' }),
+    input: (_tagName, attribs) => {
+      if (attribs.type !== 'checkbox') {
+        return { tagName: 'span', attribs: {} };
+      }
+      return {
+        tagName: 'input',
+        attribs: {
+          type: 'checkbox',
+          ...(attribs.checked !== undefined ? { checked: 'checked' } : {}),
+          disabled: 'disabled',
+        },
+      };
+    },
+    li: (_tagName, attribs) => {
+      const taskAttribs: sanitizeHtml.Attributes = {};
+      if (attribs['data-type'] === 'taskItem') {
+        taskAttribs['data-type'] = 'taskItem';
+        if (attribs['data-checked'] === 'true' || attribs['data-checked'] === 'false') {
+          taskAttribs['data-checked'] = attribs['data-checked'];
+        }
+      }
+      return { tagName: 'li', attribs: taskAttribs };
+    },
+    ul: (_tagName, attribs) => {
+      const taskAttribs: sanitizeHtml.Attributes = {};
+      if (attribs['data-type'] === 'taskList') {
+        taskAttribs['data-type'] = 'taskList';
+      }
+      return { tagName: 'ul', attribs: taskAttribs };
+    },
   },
 };
 

@@ -35,6 +35,26 @@ const sku = 'SKU-1';
     );
   });
 
+  it('preserves disabled task-list checkboxes and their checked state', () => {
+    const html = renderProductContentMarkdown(`
+- [ ] Open task
+- [x] Completed task
+  - [ ] Nested task
+`);
+
+    assert.match(html, /<ul data-type="taskList">/);
+    assert.match(html, /<li data-type="taskItem" data-checked="false">/);
+    assert.match(html, /<li data-type="taskItem" data-checked="true">/);
+    assert.match(
+      html,
+      /<label><input type="checkbox" disabled="disabled" \/><span><\/span><\/label>/,
+    );
+    assert.match(html, /<input type="checkbox" checked="checked" disabled="disabled" \/>/);
+    assert.match(html, /<div><p>Open task<\/p><\/div>/);
+    assert.doesNotMatch(html, /<input(?![^>]*type="checkbox")/);
+    assert.doesNotMatch(html, /<input[^>]+(?:on\w+|style|value|name|id|form)=/i);
+  });
+
   it('strips unsafe HTML and URLs from rendered output', () => {
     const html = renderProductContentMarkdown(`
 <script>alert('script')</script>

@@ -51,6 +51,26 @@ export function richTextContentStyle(): NestedCSSProperties {
       '& li > ul, & li > ol': {
         margin: '0.25rem 0',
       },
+      '& ul[data-type="taskList"]': {
+        listStyle: 'none',
+        paddingInlineStart: 0,
+      },
+      '& ul[data-type="taskList"] li': {
+        alignItems: 'flex-start',
+        display: 'flex',
+        gap: '0.5rem',
+      },
+      '& ul[data-type="taskList"] li > label': {
+        lineHeight: 1.65,
+        paddingTop: '0.2rem',
+      },
+      '& ul[data-type="taskList"] li > div': {
+        flex: 1,
+        minWidth: 0,
+      },
+      '& ul[data-type="taskList"] li > div > p': {
+        margin: 0,
+      },
       '& blockquote': {
         borderInlineStart: '0.25rem solid var(--color-base-300)',
         color: 'color-mix(in srgb, var(--color-base-content) 75%, transparent)',
