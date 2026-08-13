@@ -44,6 +44,12 @@ export class StyleFormFieldMarkdown extends BeanStyleBase {
           margin: '0.75rem 0',
           paddingInlineStart: '1.5rem',
         },
+        '& .tiptap ul': {
+          listStyleType: 'disc',
+        },
+        '& .tiptap ol': {
+          listStyleType: 'decimal',
+        },
         '& .tiptap li + li': {
           marginTop: '0.25rem',
         },
@@ -65,6 +71,9 @@ export class StyleFormFieldMarkdown extends BeanStyleBase {
         '& .tiptap ul[data-type="taskList"] li > div': {
           flex: 1,
           minWidth: 0,
+        },
+        '& .tiptap ul[data-type="taskList"] li > div > p': {
+          margin: 0,
         },
         '& .tiptap blockquote': {
           borderInlineStart: '0.25rem solid var(--color-base-300)',
