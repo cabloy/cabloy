@@ -16,7 +16,7 @@ import {
   createWebHashHistory,
   createWebHistory,
 } from '@cabloy/vue-router';
-import { BeanBase, cast, deepExtend } from 'zova';
+import { BeanBase, cast, deepExtend, isHttpUrl } from 'zova';
 import { Sys } from 'zova-module-a-bean';
 
 import { getCurrentRoute, getRealRouteName, getRouteMatched, isRouterName } from '../lib/utils.js';
@@ -108,7 +108,8 @@ export class SysRouter extends BeanBase {
     check404?: boolean,
     checkAliasOf?: boolean,
   ): Promise<RouteLocationResolvedGeneric | undefined> {
-    const pagePath = this.sys.util.getPagePathFromAbsoluteUrl(url);
+    // url: should not has APP_PUBLIC_PATH prefix when not http url
+    const pagePath = isHttpUrl(url) ? this.sys.util.getPagePathFromAbsoluteUrl(url) : url;
     let route = await this.ensureRoute(pagePath);
     if (check404 && route.name === '$:/:catchAll(.*)*') return;
     // aliasOf
