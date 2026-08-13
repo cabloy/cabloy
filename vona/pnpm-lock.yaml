@@ -1887,8 +1887,8 @@ importers:
   src/suite-vendor/a-pay/modules/pay-stripe:
     dependencies:
       stripe:
-        specifier: ^20.0.0
-        version: 20.4.1(@types/node@22.20.0)
+        specifier: ^22.5.0
+        version: 22.5.0(@types/node@22.20.0)
       vona-module-a-pay:
         specifier: workspace:*
         version: link:../a-pay
@@ -8083,11 +8083,11 @@ packages:
     resolution: {integrity: sha512-4gB8na07fecVVkOI6Rs4e7T6NOTki5EmL7TUduTs6bu3EdnSycntVJ4re8kgZA+wx9IueI2Y11bfbgwtzuE0KQ==}
     engines: {node: '>=0.10.0'}
 
-  stripe@20.4.1:
-    resolution: {integrity: sha512-axCguHItc8Sxt0HC6aSkdVRPffjYPV7EQqZRb2GkIa8FzWDycE7nHJM19C6xAIynH1Qp1/BHiopSi96jGBxT0w==}
-    engines: {node: '>=16'}
+  stripe@22.5.0:
+    resolution: {integrity: sha512-QVwMwriC0bbySx6R4dpsvJ0W//GojC1kwWVS6rPSoVqDUIZX4Hy3TaUrd2AZeXEAaKbfWIjQjvo3vKAReHZ0vQ==}
+    engines: {node: '>=18'}
     peerDependencies:
-      '@types/node': '>=16'
+      '@types/node': '>=18'
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -8708,7 +8708,7 @@ snapshots:
       '@apimatic/http-query': 0.3.9
       '@apimatic/json-bigint': 1.2.0
       '@apimatic/proxy': 0.1.4(supports-color@5.5.0)
-      axios: 1.18.1
+      axios: 1.18.1(supports-color@5.5.0)
       detect-browser: 5.3.0
       detect-node: 2.1.0
       form-data: 4.0.6
@@ -10718,7 +10718,7 @@ snapshots:
 
   acorn@8.17.0: {}
 
-  agent-base@6.0.2:
+  agent-base@6.0.2(supports-color@5.5.0):
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
     transitivePeerDependencies:
@@ -10798,11 +10798,11 @@ snapshots:
 
   aws-ssl-profiles@1.1.2: {}
 
-  axios@1.18.1:
+  axios@1.18.1(supports-color@5.5.0):
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.6
-      https-proxy-agent: 5.0.1
+      https-proxy-agent: 5.0.1(supports-color@5.5.0)
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
@@ -12014,9 +12014,9 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  https-proxy-agent@5.0.1:
+  https-proxy-agent@5.0.1(supports-color@5.5.0):
     dependencies:
-      agent-base: 6.0.2
+      agent-base: 6.0.2(supports-color@5.5.0)
       debug: 4.4.3(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
@@ -14038,7 +14038,7 @@ snapshots:
 
   strip-json-comments@2.0.1: {}
 
-  stripe@20.4.1(@types/node@22.20.0):
+  stripe@22.5.0(@types/node@22.20.0):
     optionalDependencies:
       '@types/node': 22.20.0
 
@@ -14666,7 +14666,7 @@ snapshots:
 
   zova-module-a-fetch@5.1.24:
     dependencies:
-      axios: 1.18.1
+      axios: 1.18.1(supports-color@5.5.0)
     transitivePeerDependencies:
       - debug
       - supports-color

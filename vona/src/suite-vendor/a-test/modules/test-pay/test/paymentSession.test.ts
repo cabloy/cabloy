@@ -132,7 +132,7 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
             amountMinor: 1299,
             currency: 'USD',
             correlationId: `payment-${suffix}`,
-            providerCandidateKey: 'stripe',
+            providerCandidateKey: 'unavailable-provider',
           }),
           error =>
             isZodCustomError(
@@ -484,6 +484,97 @@ describe('paymentSession.test.ts', { concurrency: false }, () => {
           }),
           { status: 409 },
         );
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
+  it('finalizes an exhausted payment start operation from provider failure', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture = await createFixture(new Date(Date.now() + 60_000));
+      try {
+        const scope = app.scope('a-pay');
+        const operation = await scope.service.providerOperation.ensureStart(
+          fixture.paymentSessionId!,
+        );
+        const claimed = await scope.service.providerOperation.claim(operation.id);
+        assert.ok(claimed?.claimToken);
+        await scope.service.providerOperation.markSubmitted(operation.id, claimed.claimToken);
+        await scope.model.providerOperation.updateById(operation.id, { attemptCount: 10 });
+
+        await scope.service.providerOperation.releaseForReconciliation(
+          operation.id,
+          claimed.claimToken,
+          new Error('provider start failed'),
+        );
+
+        const [storedSession, storedOperation, audits, outbox] = await Promise.all([
+          scope.model.paymentSession.getById(fixture.paymentSessionId!),
+          scope.model.providerOperation.getById(operation.id),
+          scope.model.paymentAudit.select({
+            where: { paymentSessionId: fixture.paymentSessionId! },
+          }),
+          scope.model.outboxEvent.select({
+            where: { paymentSessionId: fixture.paymentSessionId! },
+          }),
+        ]);
+        assert.equal(storedSession?.state, 'failed');
+        assert.ok(storedSession?.finalizedAt);
+        assert.equal(storedOperation?.state, 'failed');
+        assert.equal(storedOperation?.claimToken, undefined);
+        assert.equal(storedOperation?.nextAttemptAt, undefined);
+        assert.equal(storedOperation?.errorCode, 'provider_operation_failed');
+        assert.equal(
+          storedOperation?.errorSummary,
+          'Provider operation failed and will be reconciled',
+        );
+        assert.equal(audits.length, 2);
+        assert.equal(audits[1].providerOperationId, operation.id);
+        assert.equal(audits[1].fromState, 'starting');
+        assert.equal(audits[1].toState, 'failed');
+        assert.equal(audits[1].source, 'providerOperation.start.attemptsExhausted');
+        assert.equal(outbox.length, 1);
+        assert.equal(outbox[0].eventType, 'payment.outcome.v1');
+        assert.deepEqual((outbox[0].payload as any).state, 'failed');
+      } finally {
+        await cleanup(fixture);
+      }
+    });
+  });
+
+  it('finalizes an exhausted eligible payment operation only once', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const fixture = await createFixture(new Date(Date.now() + 60_000));
+      try {
+        const scope = app.scope('a-pay');
+        const operation = await scope.service.providerOperation.ensureStart(
+          fixture.paymentSessionId!,
+        );
+        await scope.model.providerOperation.updateById(operation.id, {
+          attemptCount: 10,
+          nextAttemptAt: new Date(0),
+          errorCode: 'provider_operation_failed',
+          errorSummary: 'Provider operation failed and will be reconciled',
+        });
+
+        assert.equal(await scope.service.providerOperation.claim(operation.id), undefined);
+        assert.equal(await scope.service.providerOperation.claim(operation.id), undefined);
+
+        const [storedSession, storedOperation, audits, outbox] = await Promise.all([
+          scope.model.paymentSession.getById(fixture.paymentSessionId!),
+          scope.model.providerOperation.getById(operation.id),
+          scope.model.paymentAudit.select({
+            where: { paymentSessionId: fixture.paymentSessionId! },
+          }),
+          scope.model.outboxEvent.select({
+            where: { paymentSessionId: fixture.paymentSessionId! },
+          }),
+        ]);
+        assert.equal(storedSession?.state, 'failed');
+        assert.equal(storedOperation?.state, 'failed');
+        assert.equal(audits.length, 2);
+        assert.equal(outbox.length, 1);
       } finally {
         await cleanup(fixture);
       }

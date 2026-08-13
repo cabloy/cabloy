@@ -22,6 +22,7 @@ interface IGatewayState {
   paymentIntentId?: string;
   providerInvoiceReference?: string;
   providerCorrelationReference?: string;
+  createFailuresRemaining?: number;
   retrieveFailuresRemaining?: number;
   calls: Array<{ kind: string; input: unknown }>;
 }
@@ -32,6 +33,10 @@ function createGateway(state: IGatewayState) {
       state.calls.push({ kind: 'createCheckoutSession', input });
       state.providerCorrelationReference = input.body.client_reference_id;
       state.providerInvoiceReference = input.body.metadata.providerInvoiceReference;
+      if (state.createFailuresRemaining) {
+        state.createFailuresRemaining -= 1;
+        throw new Error('transient Stripe Checkout creation failure');
+      }
       state.checkoutSessionId = `stripe-checkout-${state.providerCorrelationReference}`;
       state.paymentIntentId = `stripe-payment-${state.providerCorrelationReference}`;
       return checkoutSessionRecord(state);
@@ -356,6 +361,47 @@ describe('stripeLifecycle.test.ts', { concurrency: false, sequential: true }, ()
             state.calls.filter(call => call.kind === 'retrieveCheckoutSession').length,
             1,
           );
+        } finally {
+          await cleanup(fixture);
+          await app.bean.passport.signout();
+        }
+      },
+      { extraData: providerExtraData(gateway) },
+    );
+  });
+
+  it('reuses an immutable Checkout request after a transient creation failure', async () => {
+    const state: IGatewayState = { createFailuresRemaining: 1, calls: [] };
+    const gateway = createGateway(state);
+    await app.bean.executor.mockCtx(
+      async () => {
+        const fixture: IFixture = {};
+        try {
+          Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)));
+          const pay = app.scope('a-pay');
+          const started = await pay.service.paymentSession.start(fixture.paymentSessionId!);
+          assert.equal(started.state, 'starting');
+          const operation = await pay.model.providerOperation.get({
+            paymentSessionId: started.id,
+            kind: 'start',
+          });
+          assert.equal(operation?.state, 'reconciliation_required');
+          assert.ok(operation?.startInputSnapshot);
+          assert.match(operation?.startInputSnapshot?.returnUrl ?? '', /payment-callback\/return/);
+          assert.match(operation?.startInputSnapshot?.cancelUrl ?? '', /payment-callback\/cancel/);
+          await pay.model.providerOperation.updateById(operation!.id, {
+            nextAttemptAt: new Date(Date.now() - 1_000),
+          });
+          assert.equal(await pay.service.providerOperation.queueDue(), 1);
+          const retried = await pay.model.paymentSession.getById(started.id);
+          assert.equal(retried?.state, 'requires_action');
+          const createCalls = state.calls.filter(
+            call => call.kind === 'createCheckoutSession',
+          ) as any[];
+          assert.equal(createCalls.length, 2);
+          assert.deepEqual(createCalls[1]?.input, createCalls[0]?.input);
+          assert.equal(createCalls[0]?.input.idempotencyKey, operation?.idempotencyKey);
+          assert.deepEqual(createCalls[0]?.input.body.managed_payments, { enabled: false });
         } finally {
           await cleanup(fixture);
           await app.bean.passport.signout();

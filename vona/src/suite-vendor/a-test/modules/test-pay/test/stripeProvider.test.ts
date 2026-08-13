@@ -136,6 +136,7 @@ describe('stripeProvider.test.ts', { concurrency: false }, () => {
                 providerInvoiceReference: 'payment-invoice-reference',
               },
             },
+            managed_payments: { enabled: false },
             line_items: [
               {
                 quantity: 1,
@@ -149,6 +150,31 @@ describe('stripeProvider.test.ts', { concurrency: false }, () => {
           },
         },
       ]);
+    });
+  });
+
+  it('treats a definitive Stripe Checkout rejection as terminal', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const gateway = {
+        async createCheckoutSession() {
+          const error = new Error('Stripe rejected the request');
+          (error as Error & { type: string }).type = 'StripeInvalidRequestError';
+          throw error;
+        },
+      };
+      const { provider } = app.bean.payProvider.resolveByName('pay-stripe:stripe', 'default');
+      await assert.rejects(
+        provider.startPayment(
+          {
+            ...paymentInput,
+            providerOrderId: undefined,
+            returnUrl: 'https://shop.test/pay/return',
+            cancelUrl: 'https://shop.test/pay/cancel',
+          },
+          createOptions(gateway),
+        ),
+        { failureCode: 'stripe_request_rejected' },
+      );
     });
   });
 

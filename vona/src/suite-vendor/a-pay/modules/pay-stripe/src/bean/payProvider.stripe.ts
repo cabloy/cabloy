@@ -11,8 +11,9 @@ import type {
   IPayProviderWebhookInput,
 } from 'vona-module-a-pay';
 
+import Stripe from 'stripe';
 import { BeanBase, useApp } from 'vona';
-import { PayProvider } from 'vona-module-a-pay';
+import { PayProvider, ProviderOperationFailure } from 'vona-module-a-pay';
 
 import type { IStripeGateway, IStripeGatewayOptions } from '../lib/stripeGateway.ts';
 
@@ -68,30 +69,34 @@ export class PayProviderStripe
     }
     const gatewayOptions = this._gatewayOptions(clientOptions);
     assertStripeMoney(input.amountMinor, input.currency);
-    const checkoutSession = await this._gateway(clientOptions).createCheckoutSession(
-      gatewayOptions,
-      {
-        idempotencyKey: input.idempotencyKey,
-        body: {
-          mode: 'payment',
-          success_url: input.returnUrl,
-          cancel_url: input.cancelUrl,
-          client_reference_id: input.providerCorrelationReference,
-          metadata: this._paymentMetadata(input),
-          payment_intent_data: { metadata: this._paymentMetadata(input) },
-          line_items: [
-            {
-              quantity: 1,
-              price_data: {
-                currency: input.currency.toLowerCase(),
-                unit_amount: input.amountMinor,
-                product_data: { name: `Payment ${input.providerInvoiceReference}` },
-              },
-            },
-          ],
+    const body = {
+      mode: 'payment',
+      success_url: input.returnUrl,
+      cancel_url: input.cancelUrl,
+      client_reference_id: input.providerCorrelationReference,
+      metadata: this._paymentMetadata(input),
+      payment_intent_data: { metadata: this._paymentMetadata(input) },
+      managed_payments: { enabled: false },
+      line_items: [
+        {
+          quantity: 1,
+          price_data: {
+            currency: input.currency.toLowerCase(),
+            unit_amount: input.amountMinor,
+            product_data: { name: `Payment ${input.providerInvoiceReference}` },
+          },
         },
-      },
-    );
+      ],
+    } satisfies Stripe.Checkout.SessionCreateParams;
+    let checkoutSession: unknown;
+    try {
+      checkoutSession = await this._gateway(clientOptions).createCheckoutSession(gatewayOptions, {
+        idempotencyKey: input.idempotencyKey,
+        body,
+      });
+    } catch (error) {
+      this._throwTerminalPaymentFailure(error);
+    }
     return this._mapCheckoutSession(checkoutSession, input, clientOptions, true);
   }
 
@@ -477,13 +482,34 @@ export class PayProviderStripe
   }
 
   private _isDefinitiveRefundRejection(error: unknown): boolean {
-    return error instanceof StripeGatewayError && error.status >= 400 && error.status < 500;
+    return isStripeDefinitiveRejection(error);
+  }
+
+  private _throwTerminalPaymentFailure(error: unknown): never {
+    if (isStripeDefinitiveRejection(error)) {
+      throw new ProviderOperationFailure(
+        'stripe_request_rejected',
+        'Stripe rejected the payment request',
+      );
+    }
+    throw error;
   }
 
   private _throwGatewayError(error: unknown): never {
     if (error instanceof StripeGatewayError) this.app.throw(error.status, error.message);
     throw error;
   }
+}
+
+function isStripeDefinitiveRejection(error: unknown): boolean {
+  if (error instanceof StripeGatewayError) return error.status >= 400 && error.status < 500;
+  const type = (error as Record<string, unknown> | undefined)?.type;
+  return [
+    'StripeInvalidRequestError',
+    'StripeIdempotencyError',
+    'StripeAuthenticationError',
+    'StripePermissionError',
+  ].includes(type as string);
 }
 
 function assertStripeMoney(amountMinor: number, currency: string) {

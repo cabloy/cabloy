@@ -31,7 +31,7 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "stripe": "^20.0.0",
+    "stripe": "^22.5.0",
     "vona-module-a-pay": "workspace:*"
   },
   "devDependencies": {
