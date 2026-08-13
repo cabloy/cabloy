@@ -6,6 +6,7 @@ import { prepareComponentOptions, useController } from 'zova';
 import type { ControllerFormFieldMarkdownProps } from '../../component/formFieldMarkdown/controller.jsx';
 
 import { ControllerFormFieldMarkdown } from '../../component/formFieldMarkdown/controller.jsx';
+import { StyleFormFieldMarkdown } from '../../component/formFieldMarkdown/style.js';
 export type ZFormFieldMarkdownProps = {
   controllerRef?: (ref: ControllerFormFieldMarkdown) => void;
 } & ControllerFormFieldMarkdownProps;
@@ -19,9 +20,11 @@ declare module 'zova-module-commerce-catalog' {
     $props: ControllerInnerProps;
   }
 }
-
+declare module 'zova-module-commerce-catalog' {
+  export interface StyleFormFieldMarkdown extends ControllerFormFieldMarkdown {}
+}
 export const ZFormFieldMarkdown = defineComponent((_props: ZFormFieldMarkdownProps) => {
-  useController(ControllerFormFieldMarkdown, undefined, undefined);
+  useController(ControllerFormFieldMarkdown, undefined, StyleFormFieldMarkdown);
   return () => {};
 }, prepareComponentOptions(ControllerFormFieldMarkdown.$componentOptions));
 declare module 'zova-module-a-bean' {

@@ -9,9 +9,11 @@ import { TableKit } from '@tiptap/extension-table';
 import { Markdown } from '@tiptap/markdown';
 import StarterKit from '@tiptap/starter-kit';
 import { Editor, EditorContent } from '@tiptap/vue-3';
-import { BeanControllerBase, ClientOnly } from 'zova';
+import { BeanControllerBase, ClientOnly, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField } from 'zova-module-a-form';
+
+import type { StyleFormFieldMarkdown } from './style.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {
@@ -29,6 +31,9 @@ export interface ControllerFormFieldMarkdownProps extends IFormFieldComponentOpt
 export class ControllerFormFieldMarkdown extends BeanControllerBase {
   static $propsDefault = {};
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
+
+  @Use('commerce-catalog.style.formFieldMarkdown')
+  $$style: StyleFormFieldMarkdown;
 
   editor?: Editor;
   value = '';
@@ -116,7 +121,9 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
               >
                 <ClientOnly
                   v-slots={{
-                    default: () => <EditorContent editor={this.editor} class="prose max-w-none" />,
+                    default: () => (
+                      <EditorContent editor={this.editor} class={this.$$style.cMarkdown} />
+                    ),
                     placeholder: () => <div class="min-h-96 p-4" aria-hidden="true"></div>,
                   }}
                 ></ClientOnly>

@@ -29,6 +29,16 @@ function collectPageErrors(page: Page) {
   return errors;
 }
 
+function collectConsoleErrors(page: Page) {
+  const errors: string[] = [];
+  page.on('console', message => {
+    if (message.type() === 'error') {
+      errors.push(message.text());
+    }
+  });
+  return errors;
+}
+
 function waitForApiResponse(page: Page, method: string, path: string | RegExp) {
   return page.waitForResponse(response => {
     const url = new URL(response.url());
@@ -1552,10 +1562,26 @@ test(
     const suffix = `${testInfo.workerIndex}-${testInfo.parallelIndex ?? testInfo.retry}-${Date.now()}`;
     const categoryName = `E2E Product Content Category ${suffix}`;
     const productTitle = `E2E Product Content ${suffix}`;
-    const markdown = `Product content ${suffix}`;
+    const markdown = `# Product content ${suffix}
+
+- First benefit
+- Second benefit
+
+> Product quote
+
+\`\`\`ts
+const product = '${suffix}';
+\`\`\`
+
+==highlighted text==
+
+| Feature | Value |
+| --- | --- |
+| Material | Durable |`;
     const adminContext = await browser.newContext();
     const adminPage = await adminContext.newPage();
     const adminPageErrors = collectPageErrors(adminPage);
+    const adminConsoleErrors = collectConsoleErrors(adminPage);
     const productListPath = '/commerce-admin/rest/resource/commerce-catalog%3Aproduct';
     const categoryActionPath = '/api/commerce/catalog/category';
     const productActionPath = '/api/commerce/catalog/product';
@@ -1580,7 +1606,12 @@ test(
       expectTableIdentity(categoryId);
 
       const productResponse = await adminPage.request.post(productActionPath, {
-        data: { categoryId, title: productTitle, published: false },
+        data: {
+          categoryId,
+          title: productTitle,
+          published: false,
+          productContentForm: { descriptionMarkdown: markdown },
+        },
         headers,
       });
       expect(productResponse.ok()).toBeTruthy();
@@ -1588,12 +1619,31 @@ test(
       expectTableIdentity(productId);
 
       await adminPage.goto(`${productListPath}/${productId}/edit`, { waitUntil: 'load' });
+      await expect(adminPage.locator('html')).toHaveAttribute(
+        'data-zova-hydrated',
+        'commerceAdmin',
+      );
+      expect(adminPageErrors).toEqual([]);
+      expect(adminConsoleErrors).toEqual([]);
       const editor = adminPage.locator('[contenteditable="true"]');
       await expect(editor).toBeVisible();
       const editorSurface = editor.locator('..');
+      await expect(editorSurface).not.toHaveClass(/\bprose\b/);
+      const editorSurfaceClass = await editorSurface.getAttribute('class');
+      expect(editorSurfaceClass?.trim()).toBeTruthy();
       await editorSurface.click({ position: { x: 20, y: 280 } });
       await expect(editor).toBeFocused();
-      await editor.fill(markdown);
+      await expect(editor.locator('h1')).toHaveText(`Product content ${suffix}`);
+      await expect(editor.locator('ul')).toHaveCount(1);
+      await expect(editor.locator('blockquote')).toHaveText('Product quote');
+      await expect(editor.locator('pre code')).toHaveText(`const product = '${suffix}';`);
+      await expect(editor.locator('mark')).toHaveText('highlighted text');
+      await expect(editor.locator('table th')).toHaveCount(2);
+      await expect(editor.locator('table td')).toHaveCount(2);
+      await expect(editor.locator('h1')).toHaveCSS('font-weight', '700');
+      await expect(editor.locator('blockquote')).toHaveCSS('border-left-width', '4px');
+      await expect(editor.locator('pre')).toHaveCSS('overflow-x', 'auto');
+      await expect(editor.locator('table th').first()).toHaveCSS('font-weight', '600');
       await adminPage.getByRole('button', { name: 'Submit', exact: true }).click();
 
       const productResponseAfterUpdate = await adminPage.request.get(

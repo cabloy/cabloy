@@ -211,6 +211,31 @@ export interface IZovaComponentRecord {
 }
 }
 /** components: end */
+/** style: begin */
+export * from '../component/formFieldMarkdown/style.js';
+
+import 'zova';
+declare module 'zova' {
+  
+  
+}
+declare module 'zova-module-commerce-catalog' {
+  
+        export interface StyleFormFieldMarkdown {
+          /** @internal */
+          get scope(): ScopeModuleCommerceCatalog;
+        } 
+}
+/** style: end */
+/** style: begin */
+import { StyleFormFieldMarkdown } from '../component/formFieldMarkdown/style.js';
+import 'zova';
+declare module 'zova' {
+  export interface IBeanRecordLocal {
+    'commerce-catalog.style.formFieldMarkdown': StyleFormFieldMarkdown;
+  }
+}
+/** style: end */
 /** locale: begin */
 import { locales } from './locales.js';
 /** locale: end */

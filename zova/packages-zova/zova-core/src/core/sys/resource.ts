@@ -43,7 +43,7 @@ export class AppResource {
     uses[options.prop] = options;
     if (process.env.DEV) {
       if (typeof options.prop === 'string' && !options.prop.startsWith('$$')) {
-        console.error(`inject prop name should start with $$: ${options.prop}`);
+        throw new Error(`inject prop name should start with $$: ${options.prop}`);
       }
     }
   }
