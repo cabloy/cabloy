@@ -223,11 +223,12 @@ describe('productContent.test.ts', { concurrency: false }, () => {
   });
 
   it('keeps the final Markdown and HTML pair consistent across competing updates', async () => {
-    await app.bean.executor.mockCtx(async () => {
-      const fixture: IFixture = { productIds: [], skuIds: [] };
-      const suffix = randomUUID().slice(0, 12);
-      const scopeCatalog = app.scope('commerce-catalog');
-      try {
+    const fixture: IFixture = { productIds: [], skuIds: [] };
+    const suffix = randomUUID().slice(0, 12);
+    const markdowns = ['# First update', '## Second update'];
+    try {
+      const productId = await runInMockCtx(async () => {
+        const scopeCatalog = app.scope('commerce-catalog');
         const category = await scopeCatalog.model.category.insert({
           name: `__ProductContentRaceCategory-${suffix}__`,
           published: false,
@@ -239,28 +240,32 @@ describe('productContent.test.ts', { concurrency: false }, () => {
           published: false,
         });
         fixture.productIds.push(product.id);
-        const markdowns = ['# First update', '## Second update'];
+        return product.id;
+      });
 
-        await Promise.all(
-          markdowns.map(descriptionMarkdown =>
-            runInMockCtx(async () => {
-              await app.scope('commerce-catalog').service.product.update(product.id, {
-                productContentForm: { descriptionMarkdown },
-              } as any);
-            }),
-          ),
-        );
+      await Promise.all(
+        markdowns.map(descriptionMarkdown =>
+          runInMockCtx(async () => {
+            await app.scope('commerce-catalog').service.product.update(productId, {
+              productContentForm: { descriptionMarkdown },
+            } as any);
+          }),
+        ),
+      );
 
-        const stored = await scopeCatalog.model.productContent.get({ productId: product.id });
+      await runInMockCtx(async () => {
+        const stored = await app.scope('commerce-catalog').model.productContent.get({ productId });
         assert.ok(stored);
         assert.ok(markdowns.includes(stored.descriptionMarkdown!));
         assert.equal(
           stored.descriptionHtml,
           app.bean.markdown.renderHtml(stored.descriptionMarkdown),
         );
-      } finally {
+      });
+    } finally {
+      await runInMockCtx(async () => {
         await cleanupFixture(fixture);
-      }
-    });
+      });
+    }
   });
 });

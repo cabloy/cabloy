@@ -362,6 +362,7 @@ describe('reservationExpiry.test.ts', { concurrency: false, sequential: true }, 
           .execute();
         const audits = await app.scope('commerce-trade').model.orderAudit.select({
           where: { orderId: defaultFixture!.orderId! },
+          orders: [['id', 'asc']],
         });
         assert.deepEqual(
           audits.map(audit => audit.operation),
@@ -412,6 +413,7 @@ describe('reservationExpiry.test.ts', { concurrency: false, sequential: true }, 
             .execute();
           const audits = await app.scope('commerce-trade').model.orderAudit.select({
             where: { orderId: shareFixture!.orderId! },
+            orders: [['id', 'asc']],
           });
           assert.deepEqual(
             audits.map(audit => audit.operation),
