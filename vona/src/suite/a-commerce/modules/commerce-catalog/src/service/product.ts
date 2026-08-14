@@ -16,6 +16,22 @@ import type { DtoProductView } from '../dto/productView.tsx';
 import type { EntityProduct } from '../entity/product.tsx';
 import type { ModelProduct } from '../model/product.ts';
 
+const serializationRetryOptions = {
+  retries: 3,
+  factor: 1,
+  minTimeout: 10,
+  maxTimeout: 10,
+  randomize: false,
+  errorCodes: [
+    '40001',
+    'ER_LOCK_DEADLOCK',
+    'ER_LOCK_WAIT_TIMEOUT',
+    'SQLITE_BUSY',
+    'SQLITE_BUSY_SNAPSHOT',
+  ],
+  ownerOnly: true,
+};
+
 @Service()
 export class ServiceProduct extends BeanBase {
   @Core.transaction()
@@ -93,6 +109,7 @@ export class ServiceProduct extends BeanBase {
   }
 
   @Core.transaction()
+  @Core.retryable(serializationRetryOptions)
   async update(id: TableIdentity, product: DtoProductUpdate) {
     const productForUpdate = await this.scope.model.product.getByIdForUpdate(id);
     if (!productForUpdate) {
