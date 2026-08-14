@@ -11,7 +11,7 @@ import { z } from 'zod';
 import type { ModelProduct } from '../model/product.ts';
 
 import { DtoProductCreate } from '../dto/productCreate.tsx';
-import { DtoProductPublic } from '../dto/productPublic.tsx';
+import { DtoProductPublicDetail } from '../dto/productPublicDetail.tsx';
 import { DtoProductPublicSelectReq } from '../dto/productPublicSelectReq.tsx';
 import { DtoProductPublicSelectRes } from '../dto/productPublicSelectRes.tsx';
 import { DtoProductSelectReq } from '../dto/productSelectReq.tsx';
@@ -50,11 +50,11 @@ export class ControllerProduct extends BeanBase {
   }
 
   @Web.get('public/:id')
-  @Api.body(v.optional(), v.object(DtoProductPublic))
+  @Api.body(v.optional(), v.object(DtoProductPublicDetail))
   @Passport.public()
   async viewPublic(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
-  ): Promise<DtoProductPublic | undefined> {
+  ): Promise<DtoProductPublicDetail | undefined> {
     return await this.scope.service.product.viewPublic(id);
   }
 

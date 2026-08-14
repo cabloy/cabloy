@@ -19,6 +19,7 @@
     "zova-module-basic-form": "^5.0.7",
     "zova-module-basic-image": "^5.0.0",
     "zova-module-basic-input": "^5.0.7",
+    "zova-module-basic-markdown": "^5.0.0",
     "zova-module-basic-metrics": "workspace:",
     "zova-module-basic-page": "^5.0.7",
     "zova-module-basic-pageentry": "^5.0.7",

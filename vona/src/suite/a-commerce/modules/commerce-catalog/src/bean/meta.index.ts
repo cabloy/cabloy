@@ -8,6 +8,7 @@ import { $tableColumns } from 'vona-module-a-ormutils';
   indexes: {
     ...$tableColumns('commerceCatalogSku', ['code', 'productId', 'lifecycle']),
     ...$tableColumns('commerceCatalogProduct', ['title', 'categoryId']),
+    ...$tableColumns('commerceCatalogProductContent', ['productId']),
     ...$tableColumns('commerceCatalogCategory', ['name', 'parentId']),
   },
 })

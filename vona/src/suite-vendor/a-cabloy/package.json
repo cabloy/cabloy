@@ -8,6 +8,7 @@
   "type": "module",
   "dependencies": {
     "vona-module-a-cabloy": "workspace:^",
+    "vona-module-a-markdown": "^5.0.0",
     "vona-module-a-socket": "workspace:^",
     "vona-module-a-ssr": "workspace:^",
     "vona-module-a-ssrhmr": "workspace:^"

@@ -4,9 +4,11 @@ import type { IQueryParams } from 'vona-module-a-orm';
 
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
+import { Core } from 'vona-module-a-core';
 
 import type { DtoProductCreate } from '../dto/productCreate.tsx';
 import type { DtoProductPublic } from '../dto/productPublic.tsx';
+import type { DtoProductPublicDetail } from '../dto/productPublicDetail.tsx';
 import type { DtoProductPublicSelectRes } from '../dto/productPublicSelectRes.tsx';
 import type { DtoProductSelectRes } from '../dto/productSelectRes.tsx';
 import type { DtoProductUpdate } from '../dto/productUpdate.tsx';
@@ -16,9 +18,17 @@ import type { ModelProduct } from '../model/product.ts';
 
 @Service()
 export class ServiceProduct extends BeanBase {
+  @Core.transaction()
   async create(product: DtoProductCreate): Promise<EntityProduct> {
     await this._ensureCategoryExists(product.categoryId);
-    return await this.scope.model.product.insert(product);
+    const { productContentForm, ...productFields } = product as DtoProductCreate & {
+      productContentForm?: { descriptionMarkdown?: string };
+    };
+    const created = await this.scope.model.product.insert(productFields);
+    if (productContentForm !== undefined) {
+      await this._updateProductContent(created.id, productContentForm.descriptionMarkdown);
+    }
+    return created;
   }
 
   async select(params?: IQueryParams<ModelProduct>): Promise<DtoProductSelectRes> {
@@ -54,15 +64,19 @@ export class ServiceProduct extends BeanBase {
 
   async view(id: TableIdentity): Promise<DtoProductView | undefined> {
     return await this.scope.model.product.getById(id, {
-      include: { category: true },
+      include: {
+        category: true,
+        productContentForm: { columns: ['id', 'productId', 'descriptionMarkdown'] },
+      },
     });
   }
 
-  async viewPublic(id: TableIdentity): Promise<DtoProductPublic | undefined> {
+  async viewPublic(id: TableIdentity): Promise<DtoProductPublicDetail | undefined> {
     const product = await this.scope.model.product.get(this._getPublicProductWhere({ id }), {
       columns: ['id', 'title', 'description', 'categoryId'],
       include: {
         category: { columns: ['id', 'name'] },
+        productContent: { columns: ['descriptionHtml'] },
         skuAvailables: true,
       },
     });
@@ -70,16 +84,36 @@ export class ServiceProduct extends BeanBase {
     const balancesBySkuId = await this._getBalancesBySkuId(
       product.skuAvailables.map(sku => sku.id),
     );
-    return this._toPublicProduct(product, balancesBySkuId);
+    const publicProduct = this._toPublicProduct(product, balancesBySkuId);
+    if (!publicProduct) return undefined;
+    return {
+      ...publicProduct,
+      descriptionHtml: product.productContent?.descriptionHtml,
+    };
   }
 
+  @Core.transaction()
   async update(id: TableIdentity, product: DtoProductUpdate) {
+    const productForUpdate = await this.scope.model.product.getByIdForUpdate(id);
+    if (!productForUpdate) {
+      this.app.throw(404, 'Product not found');
+    }
     if (product.categoryId !== undefined) await this._ensureCategoryExists(product.categoryId);
-    return await this.scope.model.product.updateById(id, product);
+    const { productContentForm, ...productFields } = product as DtoProductUpdate & {
+      productContentForm?: { descriptionMarkdown?: string };
+    };
+    await this.scope.model.product.updateById(id, productFields);
+    if (productContentForm !== undefined) {
+      await this._updateProductContent(id, productContentForm.descriptionMarkdown);
+    }
   }
 
+  @Core.transaction()
   async delete(id: TableIdentity) {
-    return await this.scope.model.product.deleteById(id);
+    const product = await this.scope.model.product.getByIdForUpdate(id);
+    if (!product) return;
+    await this.scope.model.productContent.delete({ productId: id });
+    return await this.scope.model.product.deleteById(product.id);
   }
 
   private _getPublicProductWhere(where?: Record<string, unknown>) {
@@ -157,6 +191,31 @@ export class ServiceProduct extends BeanBase {
       available: skuAvailables.reduce((total: number, sku: any) => total + sku.available, 0),
       skuAvailables,
     };
+  }
+
+  private async _updateProductContent(
+    productId: TableIdentity,
+    descriptionMarkdown?: string,
+  ): Promise<void> {
+    const markdown = descriptionMarkdown?.trim();
+    const productContent = await this.scope.model.productContent.getForUpdate({ productId });
+    if (!markdown) {
+      if (productContent) await this.scope.model.productContent.deleteById(productContent.id);
+      return;
+    }
+    const descriptionHtml = this.bean.markdown.renderHtml(markdown);
+    if (productContent) {
+      await this.scope.model.productContent.updateById(productContent.id, {
+        descriptionMarkdown: markdown,
+        descriptionHtml,
+      });
+    } else {
+      await this.scope.model.productContent.insert({
+        productId,
+        descriptionMarkdown: markdown,
+        descriptionHtml,
+      });
+    }
   }
 
   private async _ensureCategoryExists(categoryId: TableIdentity) {

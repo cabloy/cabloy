@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
+import { ZMarkdownHtml } from 'zova-module-basic-markdown';
 import { ZPage } from 'zova-module-home-base';
 
 import { ModelCatalogue } from '../../model/catalogue.js';
@@ -66,6 +67,12 @@ export class ControllerPageProduct extends BeanControllerPageBase {
                 <h1 class="card-title text-3xl">{query.data.title}</h1>
                 {query.data.description && (
                   <p class="text-base-content/70">{query.data.description}</p>
+                )}
+                {query.data.descriptionHtml && (
+                  <ZMarkdownHtml
+                    class="product-description mt-6 max-w-none text-base-content"
+                    html={query.data.descriptionHtml}
+                  />
                 )}
                 <div class="mt-4 flex justify-end">
                   <RouterLink class="btn btn-outline btn-sm gap-2" to={this._getCartPagePath()}>

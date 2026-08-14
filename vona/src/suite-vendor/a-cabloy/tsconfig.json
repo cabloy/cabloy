@@ -22,6 +22,9 @@
     },
     {
       "path": "modules/a-ssrhmr/tsconfig.build.json"
+    },
+    {
+      "path": "modules/a-markdown/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]

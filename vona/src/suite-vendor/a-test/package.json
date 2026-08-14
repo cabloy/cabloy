@@ -7,6 +7,7 @@
   "type": "module",
   "dependencies": {
     "vona-module-test-file": "^5.0.8",
+    "vona-module-test-markdown": "^5.0.0",
     "vona-module-test-pay": "^5.0.4"
   },
   "title": "a-test"

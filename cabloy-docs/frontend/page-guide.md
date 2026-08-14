@@ -164,6 +164,54 @@ class StylePageCounter extends BeanStyleBase {
 }
 ```
 
+### Companion-member access in a split page
+
+The three files have distinct primary ownership:
+
+- **Controller** owns state, actions, and lifecycle work.
+- **Render** owns TSX composition.
+- **Style** owns scoped CSS-in-JS setup.
+
+Within one split page or component, ordinary access to a companion member uses `this.member`; it does not require `@Use()` or a container lookup. Runtime lookup proceeds in this order:
+
+| Current bean | Direct member lookup order          |
+| ------------ | ----------------------------------- |
+| Controller   | Controller only                     |
+| Style        | Style, then Controller              |
+| Render       | Render, then Controller, then Style |
+
+A member declared on the current bean shadows the next fallback surface. Keep names distinct when a Style class name and a Controller state/action could otherwise collide.
+
+For example, the Render bean can read Controller state and actions directly, while it receives the generated Style class through the same direct access surface:
+
+```typescript
+@Render()
+class RenderPageCounter extends BeanRenderBase {
+  public render() {
+    return <div class={this.cTextCenter}>count: {this.count}</div>;
+  }
+}
+```
+
+The Style bean can likewise read Controller state while owning the generated class name:
+
+```typescript
+@Style()
+class StylePageCounter extends BeanStyleBase {
+  cTextCenter: string;
+
+  protected async __init__() {
+    this.cTextCenter = this.$style({
+      opacity: this.count > 0 ? 1 : 0.6,
+    });
+  }
+}
+```
+
+Use explicit `@Use()` or bean/container lookup when the task needs a specific named instance, selector or scope boundary, identity passing, lifecycle control, or other interop. Those mechanisms are not the default for same-component companion access.
+
+For the generated typing and runtime evidence behind this rule, see [Zova Source Reading Map](/frontend/zova-source-reading-map#3-split-controller-render-and-style-companion-access).
+
 ### More-file growth
 
 When the page continues to grow, you can keep splitting responsibilities instead of forcing one large controller or render bean to absorb everything.

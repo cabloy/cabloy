@@ -1623,6 +1623,264 @@ test(
 );
 
 test(
+  'Commerce Product Content: SSR renders stored safe HTML and hydrates without errors',
+  { tag: ['@web', '@flow', '@product'] },
+  async ({ browser }, testInfo) => {
+    test.setTimeout(60_000);
+    const suffix = `${testInfo.workerIndex}-${testInfo.parallelIndex ?? testInfo.retry}-${Date.now()}`;
+    const categoryName = `E2E Product Content Web Category ${suffix}`;
+    const productTitle = `E2E Product Content Web ${suffix}`;
+    const skuCode = `E2E-PC-WEB-${suffix}`;
+    const markdown = `# Product details ${suffix}\n\nA **durable** product.\n\n- [ ] Open task\n- [x] Completed task`;
+    const unsafeHtml = '<a href="javascript:alert(\'unsafe\')">unsafe</a>';
+    const adminContext = await browser.newContext();
+    const adminPage = await adminContext.newPage();
+    const webContext = await browser.newContext();
+    const webPage = await webContext.newPage();
+    const webPageErrors = collectPageErrors(webPage);
+    const webConsoleErrors = collectConsoleErrors(webPage);
+    const categoryActionPath = '/api/commerce/catalog/category';
+    const productActionPath = '/api/commerce/catalog/product';
+    const skuActionPath = '/api/commerce/catalog/sku';
+    const stockAdjustPath = '/api/commerce/trade/stockBalance/adjustStock';
+    let categoryId: number | string | undefined;
+    let productId: number | string | undefined;
+    let skuId: number | string | undefined;
+    let headers: { Authorization: string } | undefined;
+    try {
+      await login(adminPage, '/commerce-admin/', 'admin', '123456', 'commerceAdmin');
+      const accessToken = (await adminContext.cookies()).find(
+        cookie => cookie.name === 'token',
+      )?.value;
+      expect(accessToken).toBeTruthy();
+      headers = { Authorization: `Bearer ${accessToken}` };
+
+      const categoryResponse = await adminPage.request.post(categoryActionPath, {
+        data: { name: categoryName, published: true },
+        headers,
+      });
+      expect(categoryResponse.ok()).toBeTruthy();
+      categoryId = (await categoryResponse.json()).data;
+      expectTableIdentity(categoryId);
+
+      const productResponse = await adminPage.request.post(productActionPath, {
+        data: {
+          categoryId,
+          title: productTitle,
+          published: true,
+          productContentForm: {
+            descriptionMarkdown: `${markdown}\n\n${unsafeHtml}`,
+          },
+        },
+        headers,
+      });
+      expect(productResponse.ok()).toBeTruthy();
+      productId = (await productResponse.json()).data;
+      expectTableIdentity(productId);
+
+      const skuResponse = await adminPage.request.post(skuActionPath, {
+        data: { code: skuCode, productId, priceCents: 1999, lifecycle: 'active' },
+        headers,
+      });
+      expect(skuResponse.ok()).toBeTruthy();
+      skuId = (await skuResponse.json()).data;
+      expectTableIdentity(skuId);
+
+      const stockResponse = await adminPage.request.post(stockAdjustPath, {
+        data: {
+          skuId,
+          delta: 1,
+          reason: 'Product content SSR E2E fixture',
+          correlationId: `product-content-web-${suffix}`,
+        },
+        headers,
+      });
+      expect(stockResponse.ok()).toBeTruthy();
+
+      const productPath = `/commerce/product/${productId}`;
+      const ssrResponse = await webPage.request.get(productPath);
+      expect(ssrResponse.ok()).toBeTruthy();
+      const ssrHtml = await ssrResponse.text();
+      expect(ssrHtml.toLowerCase()).not.toContain('data-zova-hydrated');
+      expect(ssrHtml).toContain(`<h1>Product details ${suffix}</h1>`);
+      expect(ssrHtml).toContain('<strong>durable</strong>');
+      expect(ssrHtml).toContain('<ul data-type="taskList">');
+      expect(ssrHtml).toContain('<input type="checkbox" disabled="disabled" />');
+      expect(ssrHtml).toContain('<input type="checkbox" checked="checked" disabled="disabled" />');
+      expect(ssrHtml).not.toMatch(/<a[^>]+javascript:/i);
+
+      const documentResponse = await webPage.goto(productPath, { waitUntil: 'load' });
+      expect(documentResponse?.ok()).toBeTruthy();
+      await expect(webPage.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
+      await expect(webPage.getByRole('heading', { name: productTitle })).toBeVisible();
+      await expect(webPage.locator('.product-description h1')).toHaveText(
+        `Product details ${suffix}`,
+      );
+      await expect(webPage.locator('.product-description strong')).toHaveText('durable');
+      const description = webPage.locator('.product-description');
+      await expect(description).not.toHaveClass(/\bprose\b/);
+      await expect(description.locator('ul[data-type="taskList"]')).toHaveCount(1);
+      await expect(description.locator('input[type="checkbox"]')).toHaveCount(2);
+      await expect(description.locator('input[type="checkbox"]').nth(0)).not.toBeChecked();
+      await expect(description.locator('input[type="checkbox"]').nth(0)).toBeDisabled();
+      await expect(description.locator('input[type="checkbox"]').nth(1)).toBeChecked();
+      await expect(description.locator('input[type="checkbox"]').nth(1)).toBeDisabled();
+      expect(webPageErrors).toEqual([]);
+      expect(webConsoleErrors).toEqual([]);
+    } finally {
+      if (skuId && headers) {
+        const response = await adminPage.request.delete(`${skuActionPath}/${skuId}`, { headers });
+        expect(response.ok()).toBeTruthy();
+      }
+      if (productId && headers) {
+        const response = await adminPage.request.delete(`${productActionPath}/${productId}`, {
+          headers,
+        });
+        expect(response.ok()).toBeTruthy();
+      }
+      if (categoryId && headers) {
+        const response = await adminPage.request.delete(`${categoryActionPath}/${categoryId}`, {
+          headers,
+        });
+        expect(response.ok()).toBeTruthy();
+      }
+      await webContext.close().catch(() => {});
+      await adminContext.close().catch(() => {});
+    }
+  },
+);
+
+test(
+  'ATP-SPC-02: Product Content opens the rich-text editor and saves Markdown',
+  { tag: ['@admin', '@flow', '@product'] },
+  async ({ browser }, testInfo) => {
+    test.setTimeout(60_000);
+    const suffix = `${testInfo.workerIndex}-${testInfo.parallelIndex ?? testInfo.retry}-${Date.now()}`;
+    const categoryName = `E2E Product Content Category ${suffix}`;
+    const productTitle = `E2E Product Content ${suffix}`;
+    const markdown = `# Product content ${suffix}
+
+- First benefit
+- Second benefit
+
+- [ ] Open task
+- [x] Completed task
+
+> Product quote
+
+\`\`\`ts
+const product = '${suffix}';
+\`\`\`
+
+==highlighted text==
+
+| Feature | Value |
+| --- | --- |
+| Material | Durable |`;
+    const adminContext = await browser.newContext();
+    const adminPage = await adminContext.newPage();
+    const adminPageErrors = collectPageErrors(adminPage);
+    const adminConsoleErrors = collectConsoleErrors(adminPage);
+    const productListPath = '/commerce-admin/rest/resource/commerce-catalog%3Aproduct';
+    const categoryActionPath = '/api/commerce/catalog/category';
+    const productActionPath = '/api/commerce/catalog/product';
+    let categoryId: number | string | undefined;
+    let productId: number | string | undefined;
+    let headers: { Authorization: string } | undefined;
+    try {
+      await adminPage.setViewportSize({ width: 1440, height: 900 });
+      await login(adminPage, '/commerce-admin/', 'admin', '123456', 'commerceAdmin');
+      const accessToken = (await adminContext.cookies()).find(
+        cookie => cookie.name === 'token',
+      )?.value;
+      expect(accessToken).toBeTruthy();
+      headers = { Authorization: `Bearer ${accessToken}` };
+
+      const categoryResponse = await adminPage.request.post(categoryActionPath, {
+        data: { name: categoryName, published: false },
+        headers,
+      });
+      expect(categoryResponse.ok()).toBeTruthy();
+      categoryId = (await categoryResponse.json()).data;
+      expectTableIdentity(categoryId);
+
+      const productResponse = await adminPage.request.post(productActionPath, {
+        data: {
+          categoryId,
+          title: productTitle,
+          published: false,
+          productContentForm: { descriptionMarkdown: markdown },
+        },
+        headers,
+      });
+      expect(productResponse.ok()).toBeTruthy();
+      productId = (await productResponse.json()).data;
+      expectTableIdentity(productId);
+
+      await adminPage.goto(`${productListPath}/${productId}/edit`, { waitUntil: 'load' });
+      await expect(adminPage.locator('html')).toHaveAttribute(
+        'data-zova-hydrated',
+        'commerceAdmin',
+      );
+      expect(adminPageErrors).toEqual([]);
+      expect(adminConsoleErrors).toEqual([]);
+      const editor = adminPage.locator('[contenteditable="true"]');
+      await expect(editor).toBeVisible();
+      const editorSurface = editor.locator('..');
+      await expect(editorSurface).not.toHaveClass(/\bprose\b/);
+      const editorSurfaceClass = await editorSurface.getAttribute('class');
+      expect(editorSurfaceClass?.trim()).toBeTruthy();
+      await editorSurface.click({ position: { x: 20, y: 280 } });
+      await expect(editor).toBeFocused();
+      await expect(editor.locator('h1')).toHaveText(`Product content ${suffix}`);
+      await expect(editor.locator('ul:not([data-type="taskList"])')).toHaveCount(1);
+      await expect(editor.locator('blockquote')).toHaveText('Product quote');
+      await expect(editor.locator('pre code')).toHaveText(`const product = '${suffix}';`);
+      await expect(editor.locator('mark')).toHaveText('highlighted text');
+      await expect(editor.locator('table th')).toHaveCount(2);
+      await expect(editor.locator('table td')).toHaveCount(2);
+      await expect(editor.locator('h1')).toHaveCSS('font-weight', '700');
+      await expect(editor.locator('ul:not([data-type="taskList"])')).toHaveCSS(
+        'list-style-type',
+        'disc',
+      );
+      await expect(editor.locator('ul[data-type="taskList"]')).toHaveCount(1);
+      await expect(editor.locator('input[type="checkbox"]')).toHaveCount(2);
+      await expect(editor.locator('input[type="checkbox"]').nth(0)).not.toBeChecked();
+      await expect(editor.locator('input[type="checkbox"]').nth(1)).toBeChecked();
+      await expect(editor.locator('blockquote')).toHaveCSS('border-left-width', '4px');
+      await expect(editor.locator('pre')).toHaveCSS('overflow-x', 'auto');
+      await expect(editor.locator('table th').first()).toHaveCSS('font-weight', '600');
+      await adminPage.getByRole('button', { name: 'Submit', exact: true }).click();
+
+      const productResponseAfterUpdate = await adminPage.request.get(
+        `${productActionPath}/${productId}`,
+        { headers },
+      );
+      expect(productResponseAfterUpdate.ok()).toBeTruthy();
+      expect((await productResponseAfterUpdate.json()).productContentForm.descriptionMarkdown).toBe(
+        markdown,
+      );
+      expect(adminPageErrors).toEqual([]);
+    } finally {
+      if (productId && headers) {
+        const response = await adminPage.request.delete(`${productActionPath}/${productId}`, {
+          headers,
+        });
+        expect(response.ok()).toBeTruthy();
+      }
+      if (categoryId && headers) {
+        const response = await adminPage.request.delete(`${categoryActionPath}/${categoryId}`, {
+          headers,
+        });
+        expect(response.ok()).toBeTruthy();
+      }
+      await adminContext.close().catch(() => {});
+    }
+  },
+);
+
+test(
   'ATP-SPC-02: SKU renders semantic Admin currency and lifecycle controls',
   { tag: ['@admin', '@flow', '@sku'] },
   async ({ browser }, testInfo) => {

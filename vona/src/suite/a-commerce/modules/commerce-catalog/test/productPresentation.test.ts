@@ -4,6 +4,8 @@ import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 import {
   DtoProductCreate,
+  DtoProductPublic,
+  DtoProductPublicDetail,
   DtoProductSelectResItem,
   DtoProductUpdate,
   DtoProductView,
@@ -15,14 +17,38 @@ function findComponent(apiJson: any, predicate: (properties: any) => boolean) {
   }) as any;
 }
 
-function getEntryForm(component: any) {
+function getEntryBlocks(component: any) {
   const pageEntry = component?.rest?.blocks?.[0];
   const formBlock = pageEntry?.options?.blocks?.[0];
   const toolbarBlock = pageEntry?.options?.blocks?.[1];
   assert.equal(pageEntry?.render, 'basic-pageentry:blockPageEntry');
   assert.equal(formBlock?.render, 'basic-pageentry:blockForm');
   assert.equal(toolbarBlock?.render, 'basic-pageentry:blockToolbarRow');
-  return toolbarBlock;
+  return { formBlock, toolbarBlock };
+}
+
+function getEntryForm(component: any) {
+  return getEntryBlocks(component).toolbarBlock;
+}
+
+function assertProductFormGroups(component: any, productFields: string[]) {
+  const { formBlock } = getEntryBlocks(component);
+  const layoutBlock = formBlock?.options?.blocks?.[0];
+  assert.equal(layoutBlock?.render, 'basic-form:blockFormLayout');
+  const groups = layoutBlock?.options?.formLayout?.children;
+  assert.equal(groups?.length, 2);
+  assert.deepEqual(
+    groups.map((group: any) => group.type),
+    ['group', 'group'],
+  );
+  assert.deepEqual(
+    groups[0].children[0].children.map((field: any) => field.name),
+    productFields,
+  );
+  assert.deepEqual(
+    groups[1].children[0].children.map((field: any) => field.name),
+    ['productContentForm'],
+  );
 }
 
 describe('productPresentation.test.ts', () => {
@@ -35,6 +61,7 @@ describe('productPresentation.test.ts', () => {
       assert.deepEqual(Object.keys(createComponent.properties).sort(), [
         'categoryId',
         'description',
+        'productContentForm',
         'published',
         'title',
       ]);
@@ -54,6 +81,16 @@ describe('productPresentation.test.ts', () => {
         createComponent.properties.published.rest.form.options.items.map((item: any) => item.value),
         [false, true],
       );
+      assert.equal(
+        createComponent.properties.productContentForm.rest.fieldSource,
+        'productContentForm.descriptionMarkdown',
+      );
+      assert.equal(
+        createComponent.properties.productContentForm.rest.form.render,
+        'basic-markdown:formFieldMarkdown',
+      );
+      assert.equal(createComponent.properties.published.default, false);
+      assertProductFormGroups(createComponent, ['title', 'categoryId', 'published', 'description']);
       const createToolbar = getEntryForm(createComponent);
       assert.deepEqual(
         createToolbar.options.actions.map((action: any) => action.render),
@@ -67,6 +104,7 @@ describe('productPresentation.test.ts', () => {
       assert.deepEqual(Object.keys(updateComponent.properties).sort(), [
         'categoryId',
         'description',
+        'productContentForm',
         'published',
         'title',
       ]);
@@ -78,6 +116,15 @@ describe('productPresentation.test.ts', () => {
         updateComponent.properties.published.rest.form.render,
         'basic-select:formFieldSelect',
       );
+      assert.equal(
+        updateComponent.properties.productContentForm.rest.fieldSource,
+        'productContentForm.descriptionMarkdown',
+      );
+      assert.equal(
+        updateComponent.properties.productContentForm.rest.form.render,
+        'basic-markdown:formFieldMarkdown',
+      );
+      assertProductFormGroups(updateComponent, ['title', 'categoryId', 'published', 'description']);
 
       const viewJson = await app.bean.openapi.generateJsonOfClass(DtoProductView);
       const viewComponent = findComponent(viewJson, properties => {
@@ -104,6 +151,23 @@ describe('productPresentation.test.ts', () => {
         viewComponent.properties.published.rest.form.render,
         'basic-select:formFieldSelect',
       );
+      assert.equal(
+        viewComponent.properties.productContentForm.rest.fieldSource,
+        'productContentForm.descriptionMarkdown',
+      );
+      assert.equal(
+        viewComponent.properties.productContentForm.rest.form.render,
+        'basic-markdown:formFieldMarkdown',
+      );
+      assertProductFormGroups(viewComponent, [
+        'id',
+        'title',
+        'categoryId',
+        'published',
+        'description',
+        'createdAt',
+        'updatedAt',
+      ]);
       const viewToolbar = getEntryForm(viewComponent);
       assert.deepEqual(
         viewToolbar.options.actions.map((action: any) => action.render),
@@ -138,6 +202,21 @@ describe('productPresentation.test.ts', () => {
         ),
         ['basic-table:actionUpdate', 'basic-table:actionDelete'],
       );
+
+      const publicProductJson = await app.bean.openapi.generateJsonOfClass(DtoProductPublic);
+      const publicProductComponent = findComponent(
+        publicProductJson,
+        properties => properties?.skuAvailables && properties?.description,
+      );
+      assert.equal(publicProductComponent.properties.descriptionHtml, undefined);
+
+      const publicDetailJson = await app.bean.openapi.generateJsonOfClass(DtoProductPublicDetail);
+      const publicDetailComponent = findComponent(
+        publicDetailJson,
+        properties => properties?.skuAvailables && properties?.descriptionHtml,
+      );
+      assert.deepEqual(publicDetailComponent.properties.descriptionHtml.type, ['string', 'null']);
+      assert.equal(publicDetailComponent.properties.descriptionMarkdown, undefined);
 
       const filterBlock = listComponent.rest.blocks[0].options.blocks[0];
       const filterLayout = filterBlock.options.blocks[0].options.formLayout;
