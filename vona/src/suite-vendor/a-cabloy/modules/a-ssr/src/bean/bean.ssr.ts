@@ -1,3 +1,4 @@
+import type { IParamsAndQuery } from '@cabloy/utils';
 import type { IMenus } from 'vona-module-a-menu';
 import type { TypeEventResolvePathResult } from 'vona-module-a-static';
 
@@ -13,6 +14,22 @@ import type {
 
 @Bean()
 export class BeanSsr extends BeanBase {
+  getPagePath<
+    SITE extends keyof ISsrSiteRecord,
+    PAGEPATH extends keyof ISsrSiteRecord[SITE]['pages'],
+    PAGEOPTIONS extends Omit<ISsrSiteRecord[SITE]['pages'][PAGEPATH], 'data'>,
+  >(site: SITE, pagePath: PAGEPATH, pageOptions?: PAGEOPTIONS): string | undefined;
+  getPagePath(site: string, pagePath: string, pageOptions?: IParamsAndQuery): string | undefined;
+  getPagePath(site: string, pagePath: string, pageOptions?: IParamsAndQuery): string | undefined {
+    // site bean
+    const beanInstance = this.bean._getBean(
+      beanFullNameFromOnionName(site as any, 'ssrSite'),
+    ) as BeanSsrSiteBase;
+    if (!beanInstance) return;
+    // page path
+    return beanInstance.getPagePath(pagePath as any, pageOptions as any);
+  }
+
   async redirect<
     SITE extends keyof ISsrSiteRecord,
     PAGEPATH extends keyof ISsrSiteRecord[SITE]['pages'],

@@ -3232,6 +3232,9 @@ importers:
       vona-module-a-pay:
         specifier: workspace:*
         version: link:../../../../suite-vendor/a-pay/modules/a-pay
+      vona-module-a-ssr:
+        specifier: workspace:*
+        version: link:../../../../suite-vendor/a-cabloy/modules/a-ssr
       vona-module-pay-paypal:
         specifier: workspace:*
         version: link:../../../../suite-vendor/a-pay/modules/pay-paypal

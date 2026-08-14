@@ -8,6 +8,7 @@ import type { IPayProviderStripeClientOptions } from 'vona-module-pay-stripe';
 
 import { BeanBase } from 'vona';
 import { PayScene } from 'vona-module-a-pay';
+import 'vona-module-a-ssr';
 
 @PayScene({
   providers: [
@@ -56,7 +57,18 @@ export class PaySceneCommerceOrder extends BeanBase {
   async getPaymentCallbackPath(session: EntityPaymentSession): Promise<string> {
     const attempt = await this.scope.model.paymentAttempt.get({ paymentSessionId: session.id });
     if (!attempt) this.app.throw(404, 'commerce payment attempt not found');
-    return `/commerce/commerce/trade/payment/${session.id}/${attempt.orderId}`;
+    const pagePath = this.bean.ssr.getPagePath(
+      'commerce-siteweb:commerce',
+      '/commerce/trade/payment/:paymentSessionId/:orderId',
+      {
+        params: {
+          paymentSessionId: session.id,
+          orderId: attempt.orderId,
+        },
+      },
+    );
+    if (!pagePath) this.app.throw(500, 'commerce SSR Site is unavailable');
+    return pagePath;
   }
 
   async onPaymentOutcome(event: IPaymentOutcomeEvent): Promise<void> {

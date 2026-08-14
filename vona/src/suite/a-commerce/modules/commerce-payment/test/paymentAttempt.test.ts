@@ -42,8 +42,14 @@ describe('paymentAttempt.test.ts', { concurrency: false }, () => {
         paymentSessionId = created.paymentSessionId as number;
         assert.equal(created.state, 'created');
         const session = await app.scope('a-pay').model.paymentSession.getById(paymentSessionId);
-        assert.equal(session?.payScene, 'commerce-payment:commerceOrder');
-        assert.equal(session?.providerName, 'pay-mock:mock');
+        assert.ok(session);
+        assert.equal(session.payScene, 'commerce-payment:commerceOrder');
+        assert.equal(session.providerName, 'pay-mock:mock');
+        const payScene = app.bean.payScene.get('commerce-payment:commerceOrder');
+        assert.equal(
+          await payScene.getPaymentCallbackPath(session),
+          `/commerce/commerce/trade/payment/${paymentSessionId}/${created.orderId}`,
+        );
         assert.equal(session?.clientName, 'default');
         assert.equal(session?.environment, 'sandbox');
         assert.match(

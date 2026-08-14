@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "vona-module-a-pay": "workspace:*",
+    "vona-module-a-ssr": "workspace:*",
     "vona-module-pay-paypal": "workspace:*",
     "vona-module-pay-stripe": "workspace:*"
   },
@@ -51,6 +52,7 @@
   "vonaModule": {
     "dependencies": {
       "a-pay": "5.0.0",
+      "a-ssr": "5.0.0",
       "a-vona": "5.0.0"
     },
     "fileVersion": 1

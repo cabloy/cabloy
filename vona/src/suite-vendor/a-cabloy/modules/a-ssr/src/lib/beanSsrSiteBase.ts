@@ -66,10 +66,10 @@ export class BeanSsrSiteBase<
     return await this.render(undefined, undefined, { req, res });
   }
 
-  async redirect<
+  getPagePath<
     PAGEPATH extends keyof SsrSiteOptions['pages'],
     PAGEOPTIONS extends Omit<SsrSiteOptions['pages'][PAGEPATH], 'data'>,
-  >(pagePath?: PAGEPATH, pageOptions?: PAGEOPTIONS): Promise<undefined | never> {
+  >(pagePath?: PAGEPATH, pageOptions?: PAGEOPTIONS): string {
     // pagePath
     pagePath = this.$scope.ssr.service.ssr.prepareMenuLink(pagePath as any) as any;
     // pagePathFull
@@ -77,11 +77,19 @@ export class BeanSsrSiteBase<
     if (this.siteOptions.publicPath) {
       pagePathFull = `/${this.siteOptions.publicPath}${pagePathFull as string}`;
     }
+    return pagePathFull as string;
+  }
+
+  async redirect<
+    PAGEPATH extends keyof SsrSiteOptions['pages'],
+    PAGEOPTIONS extends Omit<SsrSiteOptions['pages'][PAGEPATH], 'data'>,
+  >(pagePath?: PAGEPATH, pageOptions?: PAGEOPTIONS): Promise<undefined | never> {
+    const pagePathFull = this.getPagePath(pagePath, pageOptions);
     if (this.siteOptions.apiType === 'dev') {
       const url = `${this.siteOptions.dev.host}${pagePathFull}`;
       this.ctx.redirect(url);
     } else {
-      this.ctx.redirect(pagePathFull as string);
+      this.ctx.redirect(pagePathFull);
     }
   }
 
