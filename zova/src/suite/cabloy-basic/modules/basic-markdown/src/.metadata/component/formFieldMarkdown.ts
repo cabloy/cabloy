@@ -16,12 +16,12 @@ type ControllerInnerProps = TypeControllerInnerProps<
   ControllerFormFieldMarkdownProps,
   keyof typeof ControllerFormFieldMarkdown.$propsDefault
 >;
-declare module 'zova-module-commerce-catalog' {
+declare module 'zova-module-basic-markdown' {
   export interface ControllerFormFieldMarkdown {
     $props: ControllerInnerProps;
   }
 }
-declare module 'zova-module-commerce-catalog' {
+declare module 'zova-module-basic-markdown' {
   export interface StyleFormFieldMarkdown extends ControllerFormFieldMarkdown {}
   export interface RenderFormFieldMarkdown extends StyleFormFieldMarkdown {}
 }
@@ -31,6 +31,6 @@ export const ZFormFieldMarkdown = defineComponent((_props: ZFormFieldMarkdownPro
 }, prepareComponentOptions(ControllerFormFieldMarkdown.$componentOptions));
 declare module 'zova-module-a-bean' {
   export interface IVonaComponentRecord {
-    'commerce-catalog:formFieldMarkdown': ControllerFormFieldMarkdownProps;
+    'basic-markdown:formFieldMarkdown': ControllerFormFieldMarkdownProps;
   }
 }

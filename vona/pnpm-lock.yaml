@@ -205,6 +205,9 @@ importers:
       vona-module-a-mailconfirm:
         specifier: workspace:^
         version: link:src/suite-vendor/a-vona/modules/a-mailconfirm
+      vona-module-a-markdown:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-markdown
       vona-module-a-menu:
         specifier: workspace:^
         version: link:src/suite-vendor/a-vona/modules/a-menu
@@ -418,6 +421,9 @@ importers:
       vona-module-test-image:
         specifier: workspace:^
         version: link:src/suite-vendor/a-test/modules/test-image
+      vona-module-test-markdown:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-markdown
       vona-module-test-pay:
         specifier: workspace:^
         version: link:src/suite-vendor/a-test/modules/test-pay
@@ -1612,6 +1618,9 @@ importers:
       vona-module-a-cabloy:
         specifier: workspace:^
         version: link:modules/a-cabloy
+      vona-module-a-markdown:
+        specifier: ^5.0.0
+        version: link:modules/a-markdown
       vona-module-a-socket:
         specifier: workspace:^
         version: link:modules/a-socket
@@ -1642,6 +1651,46 @@ importers:
 
   src/suite-vendor/a-cabloy/modules/a-datasource:
     devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-cabloy/modules/a-markdown:
+    dependencies:
+      '@tiptap/core':
+        specifier: ^3.30.0
+        version: 3.30.0(@tiptap/pm@3.30.0)
+      '@tiptap/extension-highlight':
+        specifier: ^3.30.0
+        version: 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))
+      '@tiptap/extension-image':
+        specifier: ^3.30.0
+        version: 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))
+      '@tiptap/extension-list':
+        specifier: ^3.30.0
+        version: 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0)
+      '@tiptap/extension-table':
+        specifier: ^3.30.0
+        version: 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0)
+      '@tiptap/markdown':
+        specifier: ^3.30.0
+        version: 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0)
+      '@tiptap/starter-kit':
+        specifier: ^3.30.0
+        version: 3.30.0
+      '@tiptap/static-renderer':
+        specifier: ^3.30.0
+        version: 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0)(react-dom@19.2.8(react@19.2.7))(react@19.2.7)
+      sanitize-html:
+        specifier: ^2.17.6
+        version: 2.17.6
+    devDependencies:
+      '@types/sanitize-html':
+        specifier: ^2.16.1
+        version: 2.16.1
       clean-package:
         specifier: ^2.2.0
         version: 2.2.0
@@ -1921,6 +1970,9 @@ importers:
       vona-module-test-file:
         specifier: ^5.0.8
         version: link:modules/test-file
+      vona-module-test-markdown:
+        specifier: ^5.0.0
+        version: link:modules/test-markdown
       vona-module-test-pay:
         specifier: ^5.0.4
         version: link:modules/test-pay
@@ -1962,6 +2014,19 @@ importers:
         version: 6.1.3
 
   src/suite-vendor/a-test/modules/test-image:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-test/modules/test-markdown:
+    dependencies:
+      vona-module-a-markdown:
+        specifier: ^5.0.0
+        version: link:../../../a-cabloy/modules/a-markdown
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -3058,38 +3123,7 @@ importers:
         version: link:modules/commerce-trade
 
   src/suite/a-commerce/modules/commerce-catalog:
-    dependencies:
-      '@tiptap/core':
-        specifier: ^3.30.0
-        version: 3.30.0(@tiptap/pm@3.30.0)
-      '@tiptap/extension-highlight':
-        specifier: ^3.30.0
-        version: 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))
-      '@tiptap/extension-image':
-        specifier: ^3.30.0
-        version: 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))
-      '@tiptap/extension-list':
-        specifier: ^3.30.0
-        version: 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0)
-      '@tiptap/extension-table':
-        specifier: ^3.30.0
-        version: 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0)
-      '@tiptap/markdown':
-        specifier: ^3.30.0
-        version: 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0)
-      '@tiptap/starter-kit':
-        specifier: ^3.30.0
-        version: 3.30.0
-      '@tiptap/static-renderer':
-        specifier: ^3.30.0
-        version: 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0)(react-dom@19.2.8(react@19.2.7))(react@19.2.7)
-      sanitize-html:
-        specifier: ^2.17.6
-        version: 2.17.6
     devDependencies:
-      '@types/sanitize-html':
-        specifier: ^2.16.1
-        version: 2.16.1
       clean-package:
         specifier: ^2.2.0
         version: 2.2.0
@@ -9002,7 +9036,7 @@ snapshots:
       '@apimatic/http-query': 0.3.9
       '@apimatic/json-bigint': 1.2.0
       '@apimatic/proxy': 0.1.4(supports-color@5.5.0)
-      axios: 1.18.1(supports-color@5.5.0)
+      axios: 1.18.1
       detect-browser: 5.3.0
       detect-node: 2.1.0
       form-data: 4.0.6
@@ -11184,7 +11218,7 @@ snapshots:
 
   acorn@8.17.0: {}
 
-  agent-base@6.0.2(supports-color@5.5.0):
+  agent-base@6.0.2:
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
     transitivePeerDependencies:
@@ -11264,11 +11298,11 @@ snapshots:
 
   aws-ssl-profiles@1.1.2: {}
 
-  axios@1.18.1(supports-color@5.5.0):
+  axios@1.18.1:
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.6
-      https-proxy-agent: 5.0.1(supports-color@5.5.0)
+      https-proxy-agent: 5.0.1
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
@@ -12534,9 +12568,9 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  https-proxy-agent@5.0.1(supports-color@5.5.0):
+  https-proxy-agent@5.0.1:
     dependencies:
-      agent-base: 6.0.2(supports-color@5.5.0)
+      agent-base: 6.0.2
       debug: 4.4.3(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
@@ -15291,7 +15325,7 @@ snapshots:
 
   zova-module-a-fetch@5.1.24:
     dependencies:
-      axios: 1.18.1(supports-color@5.5.0)
+      axios: 1.18.1
     transitivePeerDependencies:
       - debug
       - supports-color

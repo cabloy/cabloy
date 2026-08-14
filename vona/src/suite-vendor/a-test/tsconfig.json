@@ -28,6 +28,9 @@
     },
     {
       "path": "modules/test-pay/tsconfig.build.json"
+    },
+    {
+      "path": "modules/test-markdown/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]

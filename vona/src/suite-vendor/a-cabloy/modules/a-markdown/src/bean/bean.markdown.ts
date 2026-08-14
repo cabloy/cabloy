@@ -8,6 +8,8 @@ import { Markdown, MarkdownManager } from '@tiptap/markdown';
 import StarterKit from '@tiptap/starter-kit';
 import { renderToHTMLString } from '@tiptap/static-renderer';
 import sanitizeHtml from 'sanitize-html';
+import { BeanBase } from 'vona';
+import { Bean } from 'vona-module-a-bean';
 
 const extensions: AnyExtension[] = [
   Markdown,
@@ -113,9 +115,12 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
   },
 };
 
-export function renderProductContentMarkdown(markdown?: string): string {
-  if (!markdown?.trim()) return '';
-  const json = markdownManager.parse(markdown);
-  const html = renderToHTMLString({ content: json, extensions });
-  return sanitizeHtml(html, sanitizeOptions);
+@Bean()
+export class BeanMarkdown extends BeanBase {
+  renderHtml(markdown?: string): string {
+    if (!markdown?.trim()) return '';
+    const json = markdownManager.parse(markdown);
+    const html = renderToHTMLString({ content: json, extensions });
+    return sanitizeHtml(html, sanitizeOptions);
+  }
 }

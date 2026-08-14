@@ -1,18 +1,15 @@
 {
-  "name": "zova-module-commerce-catalog",
+  "name": "vona-module-a-markdown",
   "version": "5.0.0",
   "description": "",
   "keywords": [
-    "Zova Module"
+    "Vona Module"
   ],
   "author": "",
   "files": [
-    "mock",
-    "dist",
-    "src",
-    "icons",
     "assets",
-    "cli"
+    "dist",
+    "src"
   ],
   "type": "module",
   "exports": {
@@ -24,32 +21,43 @@
       "import": "./src/index.ts",
       "default": "./dist/index.js"
     },
-    "./*": "./*"
+    "./package.json": "./package.json"
   },
   "scripts": {
     "clean": "rimraf dist tsconfig.build.tsbuildinfo",
-    "tsc:publish": "npm run clean && node ../../../../../packages-cli/cli/src/bin/zova.ts :bin:buildModule --sourcemap && tsc -p tsconfig.build.json",
+    "tsc:publish": "npm run clean && node ../../../../../packages-cli/cli/src/bin/vona.ts :bin:buildModule --sourcemap && tsc -p tsconfig.build.json",
     "prepublishOnly": "npm run tsc:publish",
     "prepack": "clean-package",
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "zova-module-basic-markdown": "^5.0.0"
+    "@tiptap/core": "^3.30.0",
+    "@tiptap/extension-highlight": "^3.30.0",
+    "@tiptap/extension-image": "^3.30.0",
+    "@tiptap/extension-list": "^3.30.0",
+    "@tiptap/extension-table": "^3.30.0",
+    "@tiptap/markdown": "^3.30.0",
+    "@tiptap/starter-kit": "^3.30.0",
+    "@tiptap/static-renderer": "^3.30.0",
+    "sanitize-html": "^2.17.6"
   },
   "devDependencies": {
+    "@types/sanitize-html": "^2.16.1",
     "clean-package": "^2.2.0",
     "rimraf": "^6.1.3"
   },
   "clean-package": {
     "indent": 2,
-    "replace": {
-      "exports.\\..types": "./dist/index.d.ts"
-    },
     "remove": [
       "clean-package",
       "devDependencies",
       "exports.\\..import"
     ]
   },
-  "title": "commerce-catalog"
+  "title": "a-markdown",
+  "vonaModule": {
+    "dependencies": {
+      "a-vona": "5.0.0"
+    }
+  }
 }

@@ -3,8 +3,6 @@ import { randomUUID } from 'node:crypto';
 import { after, before, describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
 
-import { renderProductContentMarkdown } from '../src/lib/productContentMarkdown.ts';
-
 interface IFixture {
   categoryId?: number | string;
   productIds: Array<number | string>;
@@ -104,7 +102,7 @@ describe('productContent.test.ts', { concurrency: false }, () => {
         const stored = await scopeCatalog.model.productContent.get({ productId: product.id });
         assert.ok(stored);
         assert.equal(stored.descriptionMarkdown, markdown);
-        assert.equal(stored.descriptionHtml, renderProductContentMarkdown(markdown));
+        assert.equal(stored.descriptionHtml, app.bean.markdown.renderHtml(markdown));
         assert.match(stored.descriptionHtml!, /<h1>Product details<\/h1>/);
         assert.match(stored.descriptionHtml!, /<strong>durable<\/strong>/);
         assert.match(stored.descriptionHtml!, /<ul data-type="taskList">/);
@@ -258,7 +256,7 @@ describe('productContent.test.ts', { concurrency: false }, () => {
         assert.ok(markdowns.includes(stored.descriptionMarkdown!));
         assert.equal(
           stored.descriptionHtml,
-          renderProductContentMarkdown(stored.descriptionMarkdown),
+          app.bean.markdown.renderHtml(stored.descriptionMarkdown),
         );
       } finally {
         await cleanupFixture(fixture);

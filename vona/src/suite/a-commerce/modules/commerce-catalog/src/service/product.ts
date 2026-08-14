@@ -16,8 +16,6 @@ import type { DtoProductView } from '../dto/productView.tsx';
 import type { EntityProduct } from '../entity/product.tsx';
 import type { ModelProduct } from '../model/product.ts';
 
-import { renderProductContentMarkdown } from '../lib/productContentMarkdown.ts';
-
 @Service()
 export class ServiceProduct extends BeanBase {
   @Core.transaction()
@@ -205,7 +203,7 @@ export class ServiceProduct extends BeanBase {
       if (productContent) await this.scope.model.productContent.deleteById(productContent.id);
       return;
     }
-    const descriptionHtml = renderProductContentMarkdown(markdown);
+    const descriptionHtml = this.app.bean.markdown.renderHtml(markdown);
     if (productContent) {
       await this.scope.model.productContent.updateById(productContent.id, {
         descriptionMarkdown: markdown,

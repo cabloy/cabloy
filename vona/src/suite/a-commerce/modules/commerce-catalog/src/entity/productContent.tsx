@@ -27,7 +27,7 @@ export class EntityProductContent extends EntityBase {
     v.title($locale('DescriptionMarkdown')),
     v.optional(),
     ZovaRender.order(1),
-    ZovaRender.field('commerce-catalog:formFieldMarkdown'),
+    ZovaRender.field('basic-markdown:formFieldMarkdown'),
   )
   descriptionMarkdown?: string;
 

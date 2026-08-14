@@ -14,7 +14,7 @@ export interface IDtoOptionsProductView extends IDecoratorDtoOptions<'productCon
   fields: {
     productContentForm: $makeMetadata(
       ZovaRender.fieldSource('productContentForm.descriptionMarkdown'),
-      ZovaRender.field('commerce-catalog:formFieldMarkdown'),
+      ZovaRender.field('basic-markdown:formFieldMarkdown'),
     ),
   },
   blocks: [

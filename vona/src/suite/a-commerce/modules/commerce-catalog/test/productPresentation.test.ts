@@ -87,7 +87,7 @@ describe('productPresentation.test.ts', () => {
       );
       assert.equal(
         createComponent.properties.productContentForm.rest.form.render,
-        'commerce-catalog:formFieldMarkdown',
+        'basic-markdown:formFieldMarkdown',
       );
       assert.equal(createComponent.properties.published.default, false);
       assertProductFormGroups(createComponent, ['title', 'categoryId', 'published', 'description']);
@@ -122,7 +122,7 @@ describe('productPresentation.test.ts', () => {
       );
       assert.equal(
         updateComponent.properties.productContentForm.rest.form.render,
-        'commerce-catalog:formFieldMarkdown',
+        'basic-markdown:formFieldMarkdown',
       );
       assertProductFormGroups(updateComponent, ['title', 'categoryId', 'published', 'description']);
 
@@ -157,7 +157,7 @@ describe('productPresentation.test.ts', () => {
       );
       assert.equal(
         viewComponent.properties.productContentForm.rest.form.render,
-        'commerce-catalog:formFieldMarkdown',
+        'basic-markdown:formFieldMarkdown',
       );
       assertProductFormGroups(viewComponent, [
         'id',

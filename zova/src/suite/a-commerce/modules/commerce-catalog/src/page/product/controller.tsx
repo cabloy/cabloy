@@ -5,9 +5,9 @@ import { z } from 'zod';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
+import { ZMarkdownHtml } from 'zova-module-basic-markdown';
 import { ZPage } from 'zova-module-home-base';
 
-import { richTextContentStyle } from '../../lib/richTextContentStyle.js';
 import { ModelCatalogue } from '../../model/catalogue.js';
 
 export const ControllerPageProductSchemaParams = z.object({
@@ -25,10 +25,8 @@ export class ControllerPageProduct extends BeanControllerPageBase {
   $$modelCart: ModelCart;
 
   currentProductId?: string;
-  cDescription: string;
 
   protected async __init__() {
-    this.cDescription = this.$style(richTextContentStyle());
     this.currentProductId = this.$computed(() => {
       return this.$params.id;
     });
@@ -73,13 +71,10 @@ export class ControllerPageProduct extends BeanControllerPageBase {
                   <p class="text-base-content/70">{query.data.description}</p>
                 )}
                 {query.data.descriptionHtml && (
-                  <div
-                    class={[
-                      'product-description mt-6 max-w-none text-base-content',
-                      this.cDescription,
-                    ]}
-                    innerHTML={query.data.descriptionHtml}
-                  ></div>
+                  <ZMarkdownHtml
+                    class="product-description mt-6 max-w-none text-base-content"
+                    html={query.data.descriptionHtml}
+                  />
                 )}
                 <div class="mt-4 flex justify-end">
                   <RouterLink class="btn btn-outline btn-sm gap-2" to={this._getCartPagePath()}>

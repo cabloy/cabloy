@@ -10,7 +10,7 @@ export interface IDtoOptionsProductContentView extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsProductContentView>({
   fields: {
-    descriptionMarkdown: $makeMetadata(ZovaRender.field('commerce-catalog:formFieldMarkdown')),
+    descriptionMarkdown: $makeMetadata(ZovaRender.field('basic-markdown:formFieldMarkdown')),
   },
 })
 export class DtoProductContentView {

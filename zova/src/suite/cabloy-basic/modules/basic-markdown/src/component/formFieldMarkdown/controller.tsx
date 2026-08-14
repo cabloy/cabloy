@@ -18,7 +18,7 @@ import { Controller } from 'zova-module-a-bean';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {
-    'commerce-catalog:formFieldMarkdown'?: IResourceFormFieldMarkdownOptions;
+    'basic-markdown:formFieldMarkdown'?: IResourceFormFieldMarkdownOptions;
   }
 }
 
