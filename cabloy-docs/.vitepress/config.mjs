@@ -92,6 +92,7 @@ const fullstackGroups = [
       },
       { text: 'Framework Performance', link: '/fullstack/framework-performance' },
       { text: 'Vona + Zova Integration', link: '/fullstack/vona-zova-integration' },
+      { text: 'A-Pay Payment Suite', link: '/fullstack/a-pay-payment-suite' },
       { text: 'Contract Loop Playbook', link: '/fullstack/contract-loop-playbook' },
       {
         text: 'Admin Resource and Web Self-Service',
