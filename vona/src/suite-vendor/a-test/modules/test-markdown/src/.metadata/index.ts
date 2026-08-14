@@ -19,11 +19,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     testMarkdown: ScopeModuleTestMarkdown;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

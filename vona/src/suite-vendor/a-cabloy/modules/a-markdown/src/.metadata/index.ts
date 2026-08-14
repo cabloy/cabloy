@@ -4,15 +4,15 @@ export * from '../bean/bean.markdown.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-markdown' {
-  
+
         export interface BeanMarkdown {
           /** @internal */
           get scope(): ScopeModuleAMarkdown;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -44,11 +44,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     markdown: ScopeModuleAMarkdown;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

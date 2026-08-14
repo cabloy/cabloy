@@ -5,11 +5,11 @@ export * from '../component/markdownHtml/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-markdown' {
-  
+
         export interface ControllerFormFieldMarkdown {
           /** @internal */
           get scope(): ScopeModuleBasicMarkdown;
@@ -18,7 +18,7 @@ declare module 'zova-module-basic-markdown' {
         export interface ControllerMarkdownHtml {
           /** @internal */
           get scope(): ScopeModuleBasicMarkdown;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -60,11 +60,11 @@ export * from '../component/markdownHtml/render.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-markdown' {
-  
+
         export interface RenderFormFieldMarkdown {
           /** @internal */
           get scope(): ScopeModuleBasicMarkdown;
@@ -73,7 +73,7 @@ declare module 'zova-module-basic-markdown' {
         export interface RenderMarkdownHtml {
           /** @internal */
           get scope(): ScopeModuleBasicMarkdown;
-        } 
+        }
 }
 /** render: end */
 /** render: begin */
@@ -93,11 +93,11 @@ export * from '../component/markdownHtml/style.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-markdown' {
-  
+
         export interface StyleFormFieldMarkdown {
           /** @internal */
           get scope(): ScopeModuleBasicMarkdown;
@@ -106,7 +106,7 @@ declare module 'zova-module-basic-markdown' {
         export interface StyleMarkdownHtml {
           /** @internal */
           get scope(): ScopeModuleBasicMarkdown;
-        } 
+        }
 }
 /** style: end */
 /** style: begin */
@@ -136,12 +136,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-markdown': ScopeModuleBasicMarkdown;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 
 /** scope: end */
