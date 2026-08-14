@@ -254,6 +254,7 @@ export default defineConfig({
             { text: 'Upload Guide', link: '/backend/upload-guide' },
             { text: 'Image Guide', link: '/backend/image-guide' },
             { text: 'File Guide', link: '/backend/file-guide' },
+            { text: 'Markdown Guide', link: '/backend/markdown-guide' },
             { text: 'Mail Guide', link: '/backend/mail-guide' },
             { text: 'Serialization Guide', link: '/backend/serialization-guide' },
           ],
@@ -445,6 +446,7 @@ export default defineConfig({
             { text: 'Form Layout Guide', link: '/frontend/form-layout-guide' },
             { text: 'Image Guide', link: '/frontend/image-guide' },
             { text: 'File Guide', link: '/frontend/file-guide' },
+            { text: 'Markdown Guide', link: '/frontend/markdown-guide' },
             {
               text: 'Zova Form Under the Hood',
               link: '/frontend/zova-form-under-the-hood',
