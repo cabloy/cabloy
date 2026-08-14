@@ -9,7 +9,7 @@ It is a source-oriented architecture guide for:
 - Zova developers consuming payment-session state and next actions;
 - maintainers tracing callbacks, webhooks, settlement, and SSR return flows.
 
-This is **not** a provider-credential guide, production rollout manual, or payment-provider compliance guide. Provider secrets, webhook registration, tunnel setup, sandbox procedures, and live-operation decisions belong in maintainer or operational documentation.
+This is **not** a production rollout manual or payment-provider compliance guide. It does not include real credentials, account identifiers, domains, tunnel commands, or internal operational diagnostics. For sanitized PayPal and Stripe Sandbox setup, trusted public-origin configuration, webhook registration templates, and validation guidance, see [Payment Provider Sandbox Configuration](/fullstack/payment-sandbox-configuration).
 
 ## The short version
 
@@ -140,12 +140,7 @@ The following flow is source-confirmed by the current Commerce and A-Pay impleme
 3. Checkout submits order data and, at most, a scene-local `providerCandidateKey` through `POST /api/commerce/trade/checkout`.
 4. Commerce creates the order in `awaiting_payment`, creates a `PaymentAttempt`, and creates the associated A-Pay `PaymentSession` in `created` state.
 5. A-Pay re-evaluates provider availability and the submitted candidate on the server. It resolves a declared provider/client pair, snapshots its execution context and expiry, and rejects stale or ineligible choices.
-6. Commerce navigates to the authenticated payment route:
-
-   ```text
-   /commerce/trade/payment/:paymentSessionId/:orderId
-   ```
-
+6. Commerce navigates to an authenticated Commerce payment route with the payment-session and order identifiers. Callback continuation remains server-selected and allowlisted; do not derive it from provider or browser input.
 7. The customer starts the session. Zova calls `POST /api/pay/payment-session/{id}/start`; A-Pay claims a provider operation with a stable idempotency key before making the external provider call.
 8. The provider adapter returns a normalized snapshot and optional `nextAction`. Redirect-capable providers normally return `requires_action` with a redirect action.
 9. Zova renders the generic next-action component. On the client, the redirect coordinator uses `window.location.assign(...)`; it does not call a provider SDK or decide whether the order is paid.
@@ -321,6 +316,7 @@ For the generated contract handoff, follow the backend DTO/OpenAPI source to the
 ## Relationship to other guides
 
 - [Suites and Modules](/fullstack/suites-and-modules) explains the suite-first source-tree model.
+- [Payment Provider Sandbox Configuration](/fullstack/payment-sandbox-configuration) explains sanitized PayPal and Stripe Sandbox setup, public-origin configuration, and end-to-end validation.
 - [Vona + Zova Integration](/fullstack/vona-zova-integration) explains the cross-framework integration boundary.
 - [Contract Loop Playbook](/fullstack/contract-loop-playbook) explains how backend contracts become generated frontend consumers.
 - [Reading Zova for Vue Developers](/frontend/reading-zova-for-vue-developers) explains controller, model, service, and IoC roles in Zova-native terms.
