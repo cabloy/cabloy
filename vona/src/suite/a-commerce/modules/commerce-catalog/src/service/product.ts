@@ -203,7 +203,7 @@ export class ServiceProduct extends BeanBase {
       if (productContent) await this.scope.model.productContent.deleteById(productContent.id);
       return;
     }
-    const descriptionHtml = this.app.bean.markdown.renderHtml(markdown);
+    const descriptionHtml = this.bean.markdown.renderHtml(markdown);
     if (productContent) {
       await this.scope.model.productContent.updateById(productContent.id, {
         descriptionMarkdown: markdown,
