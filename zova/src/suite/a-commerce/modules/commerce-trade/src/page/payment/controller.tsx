@@ -37,8 +37,6 @@ export class ControllerPagePayment extends BeanControllerPageBase {
   @Use()
   $$modelOrderMine: ModelOrderMine;
 
-  paymentSessionId?: string;
-  orderId?: string;
   submitting = false;
   waitingForOrder = false;
   pendingConfirmation = false;
@@ -55,8 +53,6 @@ export class ControllerPagePayment extends BeanControllerPageBase {
   }
 
   protected async __init__() {
-    this.paymentSessionId = this.$computed(() => this.$params.paymentSessionId);
-    this.orderId = this.$computed(() => this.$params.orderId);
     if (process.env.SERVER) {
       await $QueryEnsureLoaded(() => this.queryPaymentSession);
     }
@@ -74,12 +70,20 @@ export class ControllerPagePayment extends BeanControllerPageBase {
     }
   }
 
+  get paymentSessionId() {
+    return this.$params.paymentSessionId;
+  }
+
+  get orderId() {
+    return this.$params.orderId;
+  }
+
   get queryPaymentSession() {
-    return this.$$modelPaymentSession.view(this.paymentSessionId!);
+    return this.$$modelPaymentSession.view(this.paymentSessionId);
   }
 
   get queryOrder() {
-    return this.$$modelOrderMine.viewMine(this.orderId!);
+    return this.$$modelOrderMine.viewMine(this.orderId);
   }
 
   async reconcile({ waitForSettlement = true }: { waitForSettlement?: boolean } = {}) {

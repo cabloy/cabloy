@@ -56,7 +56,7 @@ export class PaySceneCommerceOrder extends BeanBase {
   async getPaymentCallbackPath(session: EntityPaymentSession): Promise<string> {
     const attempt = await this.scope.model.paymentAttempt.get({ paymentSessionId: session.id });
     if (!attempt) this.app.throw(404, 'commerce payment attempt not found');
-    return `/commerce/payment/${session.id}/${attempt.orderId}`;
+    return `/commerce/commerce/trade/payment/${session.id}/${attempt.orderId}`;
   }
 
   async onPaymentOutcome(event: IPaymentOutcomeEvent): Promise<void> {

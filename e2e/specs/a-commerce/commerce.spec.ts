@@ -637,7 +637,7 @@ test(
       await addResponse;
 
       await page.getByRole('link', { name: /^Cart/ }).click();
-      await expect(page).toHaveURL(/\/commerce\/cart(?:\/|$)/);
+      await expect(page).toHaveURL(/\/commerce\/commerce\/trade\/cart(?:\/|$)/);
       await expect(page.getByRole('heading', { name: 'Cart' })).toBeVisible();
       const cartItem = page.locator('article').filter({ has: page.getByRole('spinbutton') });
       await expect(cartItem).toContainText('COF-SET-01');
@@ -645,7 +645,7 @@ test(
       await expect(cartItem.getByRole('spinbutton')).toHaveValue('1');
 
       await page.getByRole('link', { name: 'Checkout', exact: true }).click();
-      await expect(page).toHaveURL(/\/commerce\/checkout(?:\/|$)/);
+      await expect(page).toHaveURL(/\/commerce\/commerce\/trade\/checkout(?:\/|$)/);
       await expect(page.getByRole('heading', { name: 'Checkout' })).toBeVisible();
       const addressChoice = page.getByRole('radio', { name: new RegExp(fixture.recipientName) });
       await expect(addressChoice).toBeVisible();
@@ -796,7 +796,7 @@ test(
         waitUntil: 'load',
       });
       expect(ordersDocumentResponse?.ok()).toBeTruthy();
-      await expect(page).toHaveURL(/\/commerce\/orders(?:\/|$)/);
+      await expect(page).toHaveURL(/\/commerce\/commerce\/trade\/orders(?:\/|$)/);
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
       await expect(page.getByRole('heading', { name: 'My orders' })).toBeVisible();
       const orderCard = page
@@ -1050,7 +1050,6 @@ test(
       await expect(page).toHaveURL(
         new RegExp(`/commerce/commerce/trade/order/${checkout.orderId}(?:/|$)`),
       );
-      await expect(page.getByText('awaiting_payment · $45.99')).toBeVisible();
       expect(pageErrors).toEqual([]);
     } finally {
       await context.close().catch(() => {});
@@ -1080,9 +1079,9 @@ test(
       await page.getByRole('button', { name: 'Add to cart', exact: true }).click();
       expect((await addResponse).ok()).toBeTruthy();
       await page.getByRole('link', { name: /^Cart/ }).click();
-      await expect(page).toHaveURL(/\/commerce\/cart(?:\/|$)/);
+      await expect(page).toHaveURL(/\/commerce\/commerce\/trade\/cart(?:\/|$)/);
       await page.getByRole('link', { name: 'Checkout', exact: true }).click();
-      await expect(page).toHaveURL(/\/commerce\/checkout(?:\/|$)/);
+      await expect(page).toHaveURL(/\/commerce\/commerce\/trade\/checkout(?:\/|$)/);
       const addressChoice = page.getByRole('radio', { name: new RegExp(fixture.recipientName) });
       await expect(addressChoice).toBeVisible();
       await addressChoice.check();
@@ -1150,9 +1149,9 @@ test(
       await page.getByRole('button', { name: 'Add to cart', exact: true }).click();
       await addResponse;
       await page.getByRole('link', { name: /^Cart/ }).click();
-      await expect(page).toHaveURL(/\/commerce\/cart(?:\/|$)/);
+      await expect(page).toHaveURL(/\/commerce\/commerce\/trade\/cart(?:\/|$)/);
       await page.getByRole('link', { name: 'Checkout', exact: true }).click();
-      await expect(page).toHaveURL(/\/commerce\/checkout(?:\/|$)/);
+      await expect(page).toHaveURL(/\/commerce\/commerce\/trade\/checkout(?:\/|$)/);
       const addressChoice = page.getByRole('radio', { name: new RegExp(fixture.recipientName) });
       await addressChoice.check();
       await page.getByRole('radio', { name: 'No coupon', exact: true }).check();

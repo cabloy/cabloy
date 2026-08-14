@@ -362,6 +362,11 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           const returnUrl = await callbackToken(started.id as number, 'return');
           const returnState = new URL(returnUrl).searchParams.get('state');
           assert.ok(returnState);
+          const callback = await pay.service.paymentCallback.consume('return', returnState);
+          assert.equal(
+            callback.continuationPath,
+            `/commerce/commerce/trade/payment/${started.id}/${fixture.orderId}?providerResult=return`,
+          );
           await assert.rejects(
             app.bean.executor.performAction('get', '/pay/payment-callback/return', {
               query: { state: returnState },
