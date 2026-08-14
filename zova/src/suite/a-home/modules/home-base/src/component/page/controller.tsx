@@ -12,6 +12,7 @@ export class ControllerPage extends BeanControllerBase {
   protected async __init__() {
     this.cPage = this.$style({
       padding: '16px',
+      height: '100%',
     });
   }
 

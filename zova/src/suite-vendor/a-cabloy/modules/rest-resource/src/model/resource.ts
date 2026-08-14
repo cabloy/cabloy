@@ -108,6 +108,13 @@ export class ModelResource<
     return this.selectGeneral(undefined, query);
   }
 
+  query<TData>(action: string, queryFn: () => Promise<TData>) {
+    return this.$useStateData({
+      queryKey: this.keySelect(action),
+      queryFn,
+    });
+  }
+
   queryItem<TData>(options: IModelResourceQueryItemOptions<TData>) {
     const { id, action, queryFn, meta } = options;
     if (isNil(id)) throw new Error('row id cannot empty');
