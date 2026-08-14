@@ -30,7 +30,7 @@ jobs:
         run: npm run test:e2e:basic:clean
       - name: upload Playwright artifacts
         if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-artifacts-basic
           path: |
@@ -68,7 +68,7 @@ jobs:
         run: npm run test:e2e:commerce:clean
       - name: upload Playwright artifacts
         if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-artifacts-commerce
           path: |
