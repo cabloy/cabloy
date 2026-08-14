@@ -3,6 +3,7 @@ import type { IPageScope } from 'zova-module-a-openapi';
 import 'zova-module-a-form';
 import 'zova-module-a-table';
 import 'zova-module-a-openapi';
+
 import { ControllerBlockFilter } from '../component/blockFilter/controller.jsx';
 import { ControllerBlockPage } from '../component/blockPage/controller.jsx';
 

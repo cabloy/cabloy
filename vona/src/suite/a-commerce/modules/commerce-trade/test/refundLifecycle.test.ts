@@ -384,6 +384,79 @@ describe('refundLifecycle.test.ts', { concurrency: false, sequential: true }, ()
     });
   });
 
+  it('keeps long provider refund event references distinct and replays the same event once', async () => {
+    const sharedPrefix = 'provider-refund-event-'.padEnd(100, 'x');
+    const eventIds = [`${sharedPrefix}A`, `${sharedPrefix}B`];
+    const fixtures: IFixture[] = [];
+    try {
+      for (const [index, eventId] of eventIds.entries()) {
+        await app.bean.executor.mockCtx(async () => {
+          const fixture = await createPaidOrder(randomUUID().slice(0, 12));
+          fixtures.push(fixture);
+          const order = app.scope('commerce-trade').service.order;
+          await order.requestRefund(fixture.orderId!, {
+            reason: 'long provider event',
+            idempotencyKey: `long-event-request-${index}`,
+          });
+          await app.bean.passport.signout();
+          await app.bean.passport.signinMock();
+          const approved = await order.approveRefund(fixture.orderId!, {
+            reason: 'long provider event approved',
+            idempotencyKey: `long-event-approve-${index}`,
+          });
+          const executed = await order.executeRefund(fixture.orderId!);
+          const event = {
+            eventId,
+            paymentSessionId: fixture.paymentSessionId!,
+            refundOperationId: executed.refundOperationId!,
+            businessReference: String(executed.refundAttemptId),
+            providerName: 'pay-mock:mock',
+            state: 'failed' as const,
+            providerRefundId: `provider-refund-${index}`,
+            amountMinor: 799,
+            currency: 'USD',
+          };
+          const first = await order.settleRefundFromProvider(event);
+          const replay = await order.settleRefundFromProvider(event);
+          assert.deepEqual(replay, first);
+          assert.deepEqual(
+            [first.orderState, first.refundState, first.refundAttemptState],
+            ['paid', 'failed', 'failed'],
+          );
+          const audits = await app.scope('commerce-payment').model.refundAudit.select({
+            where: { refundRequestId: approved.refundRequestId },
+          });
+          const [audit] = audits.filter(item => item.toRefundState === 'failed');
+          assert.equal(audit?.idempotencyKey.length <= 100, true);
+          assert.equal(audit?.correlationId.length <= 100, true);
+        });
+      }
+      await app.bean.executor.mockCtx(async () => {
+        const failedAudits = await Promise.all(
+          fixtures.map(async fixture => {
+            const request = await app.scope('commerce-payment').model.refundRequest.get({
+              orderId: fixture.orderId,
+            });
+            return (
+              await app.scope('commerce-payment').model.refundAudit.select({
+                where: { refundRequestId: request?.id },
+              })
+            ).find(item => item.toRefundState === 'failed');
+          }),
+        );
+        assert.notEqual(failedAudits[0]?.idempotencyKey, failedAudits[1]?.idempotencyKey);
+        assert.notEqual(failedAudits[0]?.correlationId, failedAudits[1]?.correlationId);
+      });
+    } finally {
+      for (const fixture of fixtures.reverse()) {
+        await app.bean.executor.mockCtx(async () => {
+          await app.bean.passport.signout();
+          await cleanup(fixture);
+        });
+      }
+    }
+  });
+
   it('settles an executed mock-provider refund through the durable outbox', async () => {
     await app.bean.executor.mockCtx(async () => {
       const fixture: IFixture = {};

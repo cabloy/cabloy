@@ -66,6 +66,10 @@ export interface IPayProviderPaymentInput extends IPayMoney {
   providerOrderId?: string;
 }
 
+export interface IPayProviderOperationStartInputSnapshot extends IPayProviderPaymentInput {
+  version: 1;
+}
+
 export interface IPayProviderRefundInput extends IPayMoney {
   paymentSessionId: TableIdentity;
   refundOperationId: TableIdentity;

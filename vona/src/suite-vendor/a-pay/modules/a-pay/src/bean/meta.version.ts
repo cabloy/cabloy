@@ -40,6 +40,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.string(providerOperation.state, 32);
       table.string(providerOperation.idempotencyKey, 100);
       table.string(providerOperation.correlationId, 100);
+      table.json(providerOperation.startInputSnapshot);
       table.string(providerOperation.providerRequestId, 255);
       table.string(providerOperation.providerResourceId, 255);
       table.integer(providerOperation.attemptCount);

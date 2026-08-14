@@ -38,6 +38,10 @@ export class GuardPassport extends BeanBase implements IGuardExecute {
     if (!this.bean.passport.current) {
       await this.bean.passport.signinWithAnonymous();
     }
+    // check account status
+    if (this.bean.passport.isAuthenticated && !this.bean.passport.isAccountActive) {
+      return this.app.throw(403);
+    }
     // check activated
     if (this.bean.passport.isAuthenticated) {
       if (options.activated === true && !this.bean.passport.isActivated) {

@@ -38,8 +38,12 @@ import type { EntityShipment } from '../entity/shipment.tsx';
 import type { ModelOrder } from '../model/order.ts';
 
 import { orderSummaryColumns } from '../lib/order.ts';
+import { compactProviderReference } from '../lib/providerReference.ts';
 
 const maxOrderCents = 2_147_483_647;
+const maxProviderReferenceLength = 100;
+const couponCorrelationSuffix = ':coupon';
+const lateCaptureRefundSuffix = ':refund';
 const customerVisibleOrderStates: EntityOrder['state'][] = [
   'awaiting_payment',
   'paid',
@@ -396,7 +400,16 @@ export class ServiceOrder extends BeanBase {
     if (order.state !== 'awaiting_payment' || lockedAttempt.state !== 'created') {
       this.app.throw(409, 'payment attempt is no longer available');
     }
-    const correlationId = `${order.correlationId}:provider:${event.eventId}`;
+    const idempotencyKey = compactProviderReference(
+      'payment-event',
+      event.eventId,
+      maxProviderReferenceLength,
+    );
+    const correlationId = compactProviderReference(
+      'payment-correlation',
+      `${order.correlationId}:provider:${event.eventId}`,
+      maxProviderReferenceLength - couponCorrelationSuffix.length,
+    );
     const orderState = event.state === 'succeeded' ? 'paid' : 'cancelled';
     const reason = `provider payment ${event.state}`;
     await this.scope.model.order.updateById(order.id, { state: orderState });
@@ -423,7 +436,7 @@ export class ServiceOrder extends BeanBase {
       outcome: event.state,
       fromAttemptState: 'created',
       toOrderState: orderState,
-      idempotencyKey: event.eventId.slice(0, 100),
+      idempotencyKey,
       correlationId,
       reason,
       processedAt: new Date(),
@@ -464,9 +477,14 @@ export class ServiceOrder extends BeanBase {
     ) {
       this.app.throw(409, 'provider event conflicts with the commerce refund attempt');
     }
+    const idempotencyKey = compactProviderReference(
+      'refund-event',
+      event.eventId,
+      maxProviderReferenceLength,
+    );
     const existingAudit = await this.$scope.commercePayment.model.refundAudit.get({
       refundAttemptId: lockedAttempt.id,
-      idempotencyKey: event.eventId.slice(0, 100),
+      idempotencyKey,
     });
     if (existingAudit) return this._refundResult(order, request, lockedAttempt);
     if (
@@ -482,7 +500,11 @@ export class ServiceOrder extends BeanBase {
     const attemptState = isSucceeded ? 'succeeded' : 'failed';
     const refundState = isSucceeded ? 'refunded' : 'failed';
     const orderState = isSucceeded ? 'refunded' : 'paid';
-    const correlationId = `${order.correlationId}:provider-refund:${event.eventId}`;
+    const correlationId = compactProviderReference(
+      'refund-correlation',
+      `${order.correlationId}:provider-refund:${event.eventId}`,
+      maxProviderReferenceLength,
+    );
     const reason = `provider refund ${event.state}`;
     await this.$scope.commercePayment.model.refundAttempt.updateById(lockedAttempt.id, {
       state: attemptState,
@@ -509,7 +531,7 @@ export class ServiceOrder extends BeanBase {
       order,
       toRefundState: refundState,
       attemptState,
-      idempotencyKey: event.eventId.slice(0, 100),
+      idempotencyKey,
       correlationId,
       reason,
     });
@@ -1447,7 +1469,16 @@ export class ServiceOrder extends BeanBase {
     await this.$scope.commercePayment.model.paymentAttempt.updateById(attempt.id, {
       providerCaptureId: event.providerCaptureId,
     });
-    const correlationId = `${order.correlationId}:late-capture:${event.eventId}`;
+    const idempotencyKey = compactProviderReference(
+      'payment-event',
+      event.eventId,
+      maxProviderReferenceLength,
+    );
+    const correlationId = compactProviderReference(
+      'late-capture-correlation',
+      `${order.correlationId}:late-capture:${event.eventId}`,
+      maxProviderReferenceLength - lateCaptureRefundSuffix.length,
+    );
     const existingAudit = await this.$scope.commercePayment.model.paymentAudit.get({
       paymentAttemptId: attempt.id,
       providerEventId: event.eventId,
@@ -1462,7 +1493,7 @@ export class ServiceOrder extends BeanBase {
       outcome: 'succeeded',
       fromAttemptState: attempt.state,
       toOrderState: 'expired',
-      idempotencyKey: event.eventId.slice(0, 100),
+      idempotencyKey,
       correlationId,
       reason: 'late provider capture requires automatic compensation',
       processedAt: new Date(),
@@ -1474,7 +1505,11 @@ export class ServiceOrder extends BeanBase {
       businessReference: `late-capture:${attempt.id}`,
       amountMinor: event.amountMinor,
       currency: event.currency,
-      idempotencyKey: `${correlationId}:refund`,
+      idempotencyKey: compactProviderReference(
+        'late-capture-refund',
+        `${order.correlationId}:late-capture:${event.eventId}${lateCaptureRefundSuffix}`,
+        maxProviderReferenceLength,
+      ),
       correlationId,
     });
     return this._paymentOutcomeResult(order, attempt);

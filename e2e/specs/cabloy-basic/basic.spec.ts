@@ -139,6 +139,36 @@ test(
 );
 
 test(
+  'ATP-BASIC-SSR-03: concurrent public routes retain their own cache policy',
+  { tag: ['@web', '@smoke'] },
+  async ({ request }) => {
+    const responses = await Promise.all(
+      Array.from({ length: 8 }, (_, index) =>
+        request.get(index % 2 === 0 ? '/' : '/demo/basic/routeQueryB'),
+      ),
+    );
+
+    for (const [index, response] of responses.entries()) {
+      expect(response.ok(), `response ${index}`).toBeTruthy();
+      expect(response.headers()['cache-control'], `response ${index}`).toBe(
+        index % 2 === 0 ? 'public, max-age=600' : 'public, max-age=300',
+      );
+    }
+  },
+);
+
+test(
+  'ATP-BASIC-SSR-04: anonymous Admin redirect is private before rendering',
+  { tag: ['@admin', '@smoke'] },
+  async ({ request }) => {
+    const response = await request.get('/admin/', { maxRedirects: 0 });
+    expect(response.status()).toBe(302);
+    expect(response.headers()['cache-control']).toBe('private, no-store');
+    expect(response.headers().location).toMatch(/^\/admin\/login(?:\?|$)/);
+  },
+);
+
+test(
   'ATP-BASIC-SSR-02: Admin waits for nested hydration before ready',
   { tag: ['@admin', '@smoke'] },
   async ({ page, request }) => {

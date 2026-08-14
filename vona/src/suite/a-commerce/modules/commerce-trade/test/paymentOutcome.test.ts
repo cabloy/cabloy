@@ -28,9 +28,28 @@ async function cleanup(fixture: IFixture) {
   const member = app.scope('commerce-member');
   const pay = app.scope('a-pay');
   if (fixture.paymentSessionId !== undefined) {
+    const refundOperations = await pay.model.refundOperation.select({
+      where: { paymentSessionId: fixture.paymentSessionId },
+    });
+    for (const refundOperation of refundOperations) {
+      const providerOperation = await pay.model.providerOperation.get({
+        refundOperationId: refundOperation.id,
+        kind: 'refund',
+      });
+      if (providerOperation) {
+        await pay.model.providerOperationRecoveryAudit.delete({
+          providerOperationId: providerOperation.id,
+        });
+      }
+      await pay.model.outboxEvent.delete({ refundOperationId: refundOperation.id });
+      await pay.model.webhookInbox.delete({ refundOperationId: refundOperation.id });
+      await pay.model.providerOperation.delete({ refundOperationId: refundOperation.id });
+      await pay.model.refundOperation.delete({ id: refundOperation.id });
+    }
     await pay.model.outboxEvent.delete({ paymentSessionId: fixture.paymentSessionId });
     await pay.model.paymentAudit.delete({ paymentSessionId: fixture.paymentSessionId });
     await pay.model.webhookInbox.delete({ paymentSessionId: fixture.paymentSessionId });
+    await pay.model.providerOperation.delete({ paymentSessionId: fixture.paymentSessionId });
   }
   if (fixture.paymentAttemptId !== undefined)
     await payment.model.paymentAudit.delete({ paymentAttemptId: fixture.paymentAttemptId });
@@ -305,6 +324,61 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
         await app.bean.passport.signout();
       }
     });
+  });
+
+  it('keeps long provider event references distinct and replays the same event once', async () => {
+    const sharedPrefix = 'provider-event-'.padEnd(100, 'x');
+    const firstEventId = `${sharedPrefix}A`;
+    const secondEventId = `${sharedPrefix}B`;
+    const fixtures: IFixture[] = [];
+    try {
+      for (const [index, eventId] of [firstEventId, secondEventId].entries()) {
+        await app.bean.executor.mockCtx(async () => {
+          const fixture = await createCheckoutFixture(randomUUID().slice(0, 12));
+          fixtures.push(fixture);
+          await app.bean.passport.signout();
+          const event = {
+            eventId,
+            paymentSessionId: fixture.paymentSessionId!,
+            businessReference: String(fixture.paymentAttemptId),
+            providerName: 'pay-mock:mock',
+            state: 'succeeded' as const,
+            providerCaptureId: `capture-${index}`,
+            amountMinor: 799,
+            currency: 'USD',
+          };
+          const order = app.scope('commerce-trade').service.order;
+          await order.settlePaymentFromProvider(event);
+          await order.settlePaymentFromProvider(event);
+          const [audit] = await app.scope('commerce-payment').model.paymentAudit.select({
+            where: { paymentAttemptId: fixture.paymentAttemptId },
+          });
+          assert.equal(audit?.providerEventId, eventId);
+          assert.ok(audit?.idempotencyKey.length <= 100);
+          assert.ok(audit?.correlationId.length <= 100);
+        });
+      }
+      await app.bean.executor.mockCtx(async () => {
+        const audits = await Promise.all(
+          fixtures.map(async fixture => {
+            return (
+              await app.scope('commerce-payment').model.paymentAudit.select({
+                where: { paymentAttemptId: fixture.paymentAttemptId },
+              })
+            )[0];
+          }),
+        );
+        assert.equal(audits.filter(Boolean).length, 2);
+        assert.notEqual(audits[0]?.idempotencyKey, audits[1]?.idempotencyKey);
+        assert.notEqual(audits[0]?.correlationId, audits[1]?.correlationId);
+      });
+    } finally {
+      for (const fixture of fixtures.reverse()) {
+        await app.bean.executor.mockCtx(async () => {
+          await cleanup(fixture);
+        });
+      }
+    }
   });
 
   it('settles a provider event without customer Passport authority', async () => {

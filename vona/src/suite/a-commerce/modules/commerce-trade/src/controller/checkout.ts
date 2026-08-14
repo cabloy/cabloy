@@ -11,6 +11,17 @@ import { DtoCheckoutResult } from '../dto/checkoutResult.tsx';
 
 export interface IControllerOptionsCheckout extends IDecoratorControllerOptions {}
 
+function getPaymentMethodLabel(key: string): string {
+  switch (key) {
+    case 'paypal':
+      return 'PayPal';
+    case 'stripe':
+      return 'Stripe';
+    default:
+      return 'Mock payment';
+  }
+}
+
 @Controller<IControllerOptionsCheckout>('checkout')
 export class ControllerCheckout extends BeanBase {
   @Web.get('payment-methods')
@@ -22,8 +33,8 @@ export class ControllerCheckout extends BeanBase {
       );
     const items = candidates.map(candidate => ({
       key: candidate.key,
-      label: candidate.key === 'paypal' ? 'PayPal' : 'Mock payment',
-      interaction: candidate.key === 'paypal' ? ('redirect' as const) : ('embedded' as const),
+      label: getPaymentMethodLabel(candidate.key),
+      interaction: candidate.key === 'mock' ? ('embedded' as const) : ('redirect' as const),
     }));
     const defaultKey = items.find(item => item.key === 'mock')?.key ?? items[0]!.key;
     return { items, defaultKey };

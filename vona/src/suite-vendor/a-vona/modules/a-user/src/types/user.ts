@@ -3,6 +3,8 @@ import type { ILocaleRecord } from 'vona';
 
 import type { IAuthUserProfile } from './authProfile.ts';
 
+export type TypeAccountStatus = 'active' | 'disabled';
+
 export interface IUserNameRecord {
   admin: never;
 }
@@ -18,6 +20,7 @@ export interface IUser {
   email?: string;
   mobile?: string;
   activated?: boolean;
+  accountStatus?: TypeAccountStatus;
   locale?: keyof ILocaleRecord;
   tz?: string;
   anonymous?: boolean;
@@ -32,4 +35,5 @@ export interface IUserAdapter {
   update(user: Partial<IUser>): Promise<void>;
   remove(user: Partial<IUser>): Promise<void>;
   setActivated(id: TableIdentity, activated: boolean): Promise<void>;
+  setAccountStatus(id: TableIdentity, accountStatus: TypeAccountStatus): Promise<void>;
 }

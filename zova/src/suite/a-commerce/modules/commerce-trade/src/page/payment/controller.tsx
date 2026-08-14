@@ -13,7 +13,6 @@ import { ModelOrderMine } from '../../model/orderMine.js';
 export const ControllerPagePaymentSchemaParams = z.object({
   paymentSessionId: z.string(),
   orderId: z.string(),
-  locale: z.string().optional(),
 });
 export const ControllerPagePaymentSchemaQuery = z.object({
   providerResult: z.enum(['return', 'cancel']).optional(),
@@ -22,6 +21,10 @@ export const ControllerPagePaymentSchemaQuery = z.object({
 type TypeMockPaymentOutcome = 'succeeded' | 'failed' | 'cancelled';
 
 const SettlementPollDelaysMilliseconds = [0, 1_000, 2_000, 4_000, 5_000, 5_000, 5_000, 5_000];
+
+function isNotFoundError(error: unknown) {
+  return (error as { status?: unknown } | undefined)?.status === 404;
+}
 
 @Controller()
 export class ControllerPagePayment extends BeanControllerPageBase {
@@ -43,7 +46,13 @@ export class ControllerPagePayment extends BeanControllerPageBase {
   pendingOrderState?: string;
   pendingNextAction?: TypePaymentNextAction;
   cancelReturnReconciled = false;
+  paymentSessionUnavailable = false;
   message?: string;
+  private _settlementPollVersion = 0;
+
+  protected __dispose__() {
+    this._settlementPollVersion += 1;
+  }
 
   protected async __init__() {
     this.paymentSessionId = this.$computed(() => this.$params.paymentSessionId);
@@ -81,6 +90,7 @@ export class ControllerPagePayment extends BeanControllerPageBase {
     this.pendingSessionState = undefined;
     this.pendingOrderState = undefined;
     this.pendingNextAction = undefined;
+    this.paymentSessionUnavailable = false;
     this.message = undefined;
     try {
       await this.$$modelPaymentSession.reconcile(this.paymentSessionId).mutateAsync();
@@ -112,10 +122,11 @@ export class ControllerPagePayment extends BeanControllerPageBase {
   }
 
   async openOrder() {
-    await this.$router.push({
-      name: 'commerce-trade:order',
-      params: { id: this.orderId, locale: this.$params.locale },
-    });
+    await this.$router.push(
+      this.$router.getPagePath('/commerce/trade/order/:id', {
+        params: { id: this.orderId! },
+      }),
+    );
   }
 
   async refreshOrderStatus() {
@@ -138,13 +149,26 @@ export class ControllerPagePayment extends BeanControllerPageBase {
   }
 
   private async _waitForSettlement(outcome?: TypeMockPaymentOutcome) {
+    const pollVersion = ++this._settlementPollVersion;
     this.waitingForOrder = true;
     const terminalSessionState = outcome;
     const terminalOrderState = outcome === 'succeeded' ? 'paid' : outcome ? 'cancelled' : undefined;
     try {
       for (const [attempt, delay] of SettlementPollDelaysMilliseconds.entries()) {
         if (delay > 0) await new Promise(resolve => setTimeout(resolve, delay));
-        const session = await this.queryPaymentSession?.refetch();
+        if (!this._isCurrentSettlementPoll(pollVersion)) return;
+        let session;
+        try {
+          session = await this.queryPaymentSession?.refetch();
+        } catch (error) {
+          if (isNotFoundError(error)) {
+            this.paymentSessionUnavailable = true;
+            this.message = 'Payment session is unavailable. You can open your order.';
+            return;
+          }
+          throw error;
+        }
+        if (!this._isCurrentSettlementPoll(pollVersion)) return;
         const sessionState = session?.data?.state;
         this.pendingSessionState = sessionState;
         this.pendingNextAction = session?.data?.nextAction;
@@ -156,6 +180,7 @@ export class ControllerPagePayment extends BeanControllerPageBase {
         const order = await this.scope.api.commerceTradeOrder.viewMine({
           params: { id: this.orderId! },
         });
+        if (!this._isCurrentSettlementPoll(pollVersion)) return;
         this.pendingSessionState = sessionState;
         this.pendingOrderState = order?.state;
         const settled =
@@ -164,21 +189,28 @@ export class ControllerPagePayment extends BeanControllerPageBase {
             : ['paid', 'cancelled', 'expired'].includes(order?.state ?? '');
         if (settled) {
           await this.queryOrder?.refetch();
-          await this.$router.push({
-            name: 'commerce-trade:order',
-            params: { id: this.orderId, locale: this.$params.locale },
-          });
+          if (!this._isCurrentSettlementPoll(pollVersion)) return;
+          await this.$router.push(
+            this.$router.getPagePath('/commerce/trade/order/:id', {
+              params: { id: this.orderId! },
+            }),
+          );
           return;
         }
         if (attempt === SettlementPollDelaysMilliseconds.length - 1) break;
       }
+      if (!this._isCurrentSettlementPoll(pollVersion)) return;
       this.pendingConfirmation = true;
       this.pendingSessionState = this.queryPaymentSession?.data?.state ?? this.pendingSessionState;
       this.pendingOrderState = this.queryOrder?.data?.state ?? this.pendingOrderState;
       this.message = this._pendingMessage();
     } finally {
-      this.waitingForOrder = false;
+      if (this._isCurrentSettlementPoll(pollVersion)) this.waitingForOrder = false;
     }
+  }
+
+  private _isCurrentSettlementPoll(pollVersion: number) {
+    return this._settlementPollVersion === pollVersion;
   }
 
   private _pendingMessage() {
@@ -200,6 +232,7 @@ export class ControllerPagePayment extends BeanControllerPageBase {
     const session = this.queryPaymentSession?.data;
     const isMockSession = session?.providerName === 'pay-mock:mock';
     const isCreated = session?.state === 'created';
+    const isStarting = session?.state === 'starting';
     const isActionable = session?.state === 'requires_action';
     const isActionableCancelReturn =
       this.$query.providerResult === 'cancel' && this.cancelReturnReconciled && isActionable;
@@ -227,6 +260,30 @@ export class ControllerPagePayment extends BeanControllerPageBase {
             >
               Start payment
             </button>
+          )}
+          {(isStarting || this.paymentSessionUnavailable) && (
+            <section class="mt-6 rounded border border-base-300 p-4" aria-live="polite">
+              <p class="text-base-content/70">
+                {this.paymentSessionUnavailable
+                  ? 'Payment session is unavailable. You can open your order.'
+                  : 'Payment preparation is being verified safely in the background.'}
+              </p>
+              <div class="mt-3 flex flex-wrap gap-3">
+                {!this.paymentSessionUnavailable && (
+                  <button
+                    class="btn btn-primary"
+                    type="button"
+                    disabled={this.submitting || this.waitingForOrder}
+                    onClick={() => this.reconcile()}
+                  >
+                    Check payment status
+                  </button>
+                )}
+                <button class="btn btn-outline" type="button" onClick={() => this.openOrder()}>
+                  Open order
+                </button>
+              </div>
+            </section>
           )}
           {isActionableCancelReturn && (
             <section class="mt-6 rounded border border-base-300 p-4" aria-live="polite">

@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted for Cabloy Basic implementation. The first vertical slice is `pay-mock`; PayPal is the first live-provider target. Stripe is scaffolded but intentionally unavailable until the generic session, webhook, and recovery path is proven.
+Accepted for Cabloy Basic implementation. The first vertical slice is `pay-mock`; PayPal Sandbox has completed its normal manual payment/refund validation. Stripe Hosted Checkout is implemented with deterministic injected-gateway coverage. Stripe Sandbox and any live rollout remain separate operational approvals.
 
 ## Ownership
 
@@ -28,7 +28,7 @@ A Commerce `PaymentAttempt` has one initial `a-pay` `PaymentSession`; future ret
 
 ### Customer provider selection
 
-The Commerce scene declares `mock` and `paypal` candidates. `mock` remains the deterministic default for development and ordinary tests. PayPal uses the exact `PAYPAL_ENVIRONMENT` value resolved from Vona's environment cascade (`sandbox` or `live`) and is available only when same-environment credentials, webhook ID, merchant reference, and trusted public server origin are configured. A configured provider module is not automatically selectable.
+The Commerce scene declares `mock`, `paypal`, and `stripe` candidates. `mock` remains the deterministic default for development and ordinary tests. PayPal uses the exact `PAYPAL_ENVIRONMENT` value resolved from Vona's environment cascade (`sandbox` or `live`) and is available only when same-environment credentials, webhook ID, merchant reference, and trusted public server origin are configured. Stripe Hosted Checkout uses `STRIPE_ENVIRONMENT` and is available only when its server-side API key, webhook signing secret, and trusted public server origin are configured. A configured provider module is not automatically selectable.
 
 Checkout exposes a public payment-method projection and submits only an optional scene-local `providerCandidateKey`. Creation recomputes availability, so an unknown, stale, disabled, or otherwise ineligible choice is rejected rather than silently falling back. The browser never submits `providerName`, `clientName`, environment, credentials, or callback URLs.
 
@@ -70,7 +70,7 @@ The provider-return continuation's SSR neutral-shell and browser Passport-recove
 
 The current customer flow is deliberately limited to the `pay-mock` provider. Its completion controls are a development/test simulator, not a production payment capability: the server restricts them to the active instance, authenticated session ownership, actionable `pay-mock/default` sandbox sessions, and signed mock webhooks. The simulator forwards the active instance selector with its internal webhook so finalization remains tenant-scoped. The browser must never declare a Commerce payment outcome directly.
 
-The `PaymentSession.nextAction` contract is provider-neutral. PayPal Sandbox uses signed, short-lived server callback state bound to the persisted session/provider/client/environment and an allowlisted Commerce continuation. Browser return/cancel inputs can only request server confirmation or reconciliation; they cannot assert a payment outcome. PayPal order creation, capture, query, refund query, and verified webhook paths use operation-specific recovery with durable idempotency keys. A late verified capture after Commerce expiry keeps the order expired and creates a full automatic compensation refund; it never revives stock, coupon, or order effects. Production/live PayPal remains disabled and requires a separate rollout review.
+The `PaymentSession.nextAction` contract is provider-neutral. PayPal Sandbox and Stripe Hosted Checkout use signed, short-lived server callback state bound to the persisted session/provider/client/environment and an allowlisted Commerce continuation. Browser return/cancel inputs can only request server confirmation or reconciliation; they cannot assert a payment outcome. Stripe creates one `mode: payment` Checkout Session with the durable provider-operation idempotency key, stores its Checkout Session ID as the provider order ID, and records the PaymentIntent ID as the successful payment/capture ID. Its signed webhook verifier consumes the exact raw body and normalizes Checkout Session, PaymentIntent, and Refund facts only after correlation, amount, currency, and environment checks. PayPal order creation, capture, query, refund query, and verified webhook paths use operation-specific recovery with durable idempotency keys. A late verified capture after Commerce expiry keeps the order expired and creates a full automatic compensation refund; it never revives stock, coupon, or order effects. Production/live PayPal and all Stripe live operation remain disabled pending separate rollout reviews.
 
 ## PayPal v1 and refunds
 

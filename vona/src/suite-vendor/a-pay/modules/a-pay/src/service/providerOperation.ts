@@ -8,11 +8,14 @@ import { Core } from 'vona-module-a-core';
 import type { EntityPaymentSession } from '../entity/paymentSession.tsx';
 import type { EntityProviderOperation } from '../entity/providerOperation.tsx';
 import type {
+  IPayProviderOperationStartInputSnapshot,
   IPayProviderPaymentInput,
   IPayProviderPaymentSnapshot,
   IPayProviderRefundInput,
   TypeProviderOperationKind,
 } from '../types/payment.ts';
+
+import { ProviderOperationFailure } from '../lib/providerOperationFailure.ts';
 
 const ClaimLeaseMilliseconds = 60_000;
 const MaxAttempts = 10;
@@ -73,6 +76,16 @@ export class ServiceProviderOperation extends BeanBase {
     if (session.expiresAt <= new Date()) this.app.throw(409, 'payment session is expired');
 
     const now = new Date();
+    const { clientOptions } = this.bean.payProvider.resolveByName(
+      session.providerName,
+      session.clientName,
+    );
+    if (clientOptions.environment !== session.environment) {
+      this.app.throw(500, 'payment session provider environment is inconsistent');
+    }
+    const callbackUrls = clientOptions.capabilities.redirectCheckout
+      ? await this.scope.service.paymentCallback.createUrls(session)
+      : undefined;
     await this.scope.model.paymentSession.updateById(session.id, { state: 'starting' });
     await this.scope.model.paymentAudit.insert({
       paymentSessionId: session.id,
@@ -82,7 +95,7 @@ export class ServiceProviderOperation extends BeanBase {
       source: 'providerOperation.start',
       occurredAt: now,
     });
-    return await this._insertOperation(session, 'start', now);
+    return await this._insertOperation(session, 'start', now, callbackUrls);
   }
 
   @Core.transaction()
@@ -168,21 +181,10 @@ export class ServiceProviderOperation extends BeanBase {
     provider: ReturnType<typeof this.bean.payProvider.resolveByName>['provider'],
     clientOptions: ReturnType<typeof this.bean.payProvider.resolveByName>['clientOptions'],
   ) {
-    const callbackUrls =
-      operation.kind === 'start' && clientOptions.capabilities.redirectCheckout
-        ? await this.scope.service.paymentCallback.createUrls(session)
-        : undefined;
-    const input: IPayProviderPaymentInput = {
-      paymentSessionId: session.id,
-      businessReference: session.businessReference,
-      providerInvoiceReference: session.providerInvoiceReference,
-      providerCorrelationReference: session.providerCorrelationReference,
-      idempotencyKey: operation.idempotencyKey,
-      amountMinor: session.amountMinor,
-      currency: session.currency,
-      providerOrderId: session.providerOrderId,
-      ...callbackUrls,
-    };
+    const input =
+      operation.kind === 'start' && !session.providerOrderId
+        ? this._getStartInputSnapshot(operation, session)
+        : this._createPaymentInput(operation, session);
     if (operation.kind === 'start') {
       return session.providerOrderId
         ? await provider.queryPayment(input, clientOptions)
@@ -195,6 +197,53 @@ export class ServiceProviderOperation extends BeanBase {
     }
     if (operation.kind === 'query') return await provider.queryPayment(input, clientOptions);
     this.app.throw(500, `unsupported payment provider operation: ${operation.kind}`);
+  }
+
+  private _getStartInputSnapshot(
+    operation: EntityProviderOperation,
+    session: EntityPaymentSession,
+  ): IPayProviderPaymentInput {
+    const snapshot = operation.startInputSnapshot;
+    if (!snapshot) {
+      throw new ProviderOperationFailure(
+        'start_input_snapshot_missing',
+        'Payment start request cannot be replayed safely',
+      );
+    }
+    if (
+      snapshot.version !== 1 ||
+      snapshot.paymentSessionId !== session.id ||
+      snapshot.businessReference !== session.businessReference ||
+      snapshot.providerInvoiceReference !== session.providerInvoiceReference ||
+      snapshot.providerCorrelationReference !== session.providerCorrelationReference ||
+      snapshot.idempotencyKey !== operation.idempotencyKey ||
+      snapshot.amountMinor !== session.amountMinor ||
+      snapshot.currency !== session.currency ||
+      snapshot.providerOrderId ||
+      Boolean(snapshot.returnUrl) !== Boolean(snapshot.cancelUrl)
+    ) {
+      throw new ProviderOperationFailure(
+        'start_input_snapshot_invalid',
+        'Payment start request cannot be replayed safely',
+      );
+    }
+    return snapshot;
+  }
+
+  private _createPaymentInput(
+    operation: EntityProviderOperation,
+    session: EntityPaymentSession,
+  ): IPayProviderPaymentInput {
+    return {
+      paymentSessionId: session.id,
+      businessReference: session.businessReference,
+      providerInvoiceReference: session.providerInvoiceReference,
+      providerCorrelationReference: session.providerCorrelationReference,
+      idempotencyKey: operation.idempotencyKey,
+      amountMinor: session.amountMinor,
+      currency: session.currency,
+      providerOrderId: session.providerOrderId,
+    };
   }
 
   private async _executeRefund(
@@ -264,9 +313,11 @@ export class ServiceProviderOperation extends BeanBase {
       return undefined;
     }
     if (operation.attemptCount >= MaxAttempts) {
-      await this.scope.model.providerOperation.updateById(operation.id, {
-        state: 'failed',
+      await this._finalizeFailedOperation(operation, {
         finalizedAt: now,
+        errorCode: operation.errorCode,
+        errorSummary: operation.errorSummary,
+        source: 'attemptsExhausted',
       });
       return undefined;
     }
@@ -419,16 +470,17 @@ export class ServiceProviderOperation extends BeanBase {
       operation.kind === 'refund' &&
       operation.submittedAt &&
       failure.code === 'refund_submission_outcome_unknown';
-    if (operation.attemptCount >= MaxAttempts && !isAmbiguousRefundSubmission) {
-      await this.scope.model.providerOperation.updateById(operation.id, {
-        state: 'failed',
-        claimToken: undefined,
-        claimExpiresAt: undefined,
+    if (
+      failure.terminal ||
+      (operation.attemptCount >= MaxAttempts && !isAmbiguousRefundSubmission)
+    ) {
+      await this._finalizeFailedOperation(operation, {
         finalizedAt: now,
         errorCode: failure.code,
         errorSummary: failure.summary,
+        source: failure.terminal ? 'providerRejected' : 'attemptsExhausted',
       });
-      this._logProviderFailure(operation, failure, 'failed');
+      this._logProviderFailure(operation, failure, 'failed', error);
       return undefined;
     }
     const nextAttemptAt = new Date(
@@ -442,7 +494,7 @@ export class ServiceProviderOperation extends BeanBase {
       errorCode: failure.code,
       errorSummary: failure.summary,
     });
-    this._logProviderFailure(operation, failure, 'reconciliation_required');
+    this._logProviderFailure(operation, failure, 'reconciliation_required', error);
     return {
       ...operation,
       state: 'reconciliation_required' as const,
@@ -598,12 +650,63 @@ export class ServiceProviderOperation extends BeanBase {
     };
   }
 
+  private async _finalizeFailedOperation(
+    operation: EntityProviderOperation,
+    options: {
+      finalizedAt: Date;
+      errorCode?: string;
+      errorSummary?: string;
+      source: 'attemptsExhausted' | 'providerRejected';
+    },
+  ) {
+    await this.scope.model.providerOperation.updateById(operation.id, {
+      state: 'failed',
+      claimToken: undefined,
+      claimExpiresAt: undefined,
+      nextAttemptAt: undefined,
+      finalizedAt: options.finalizedAt,
+      errorCode: options.errorCode,
+      errorSummary: options.errorSummary,
+    });
+    if (operation.kind === 'refund') return;
+
+    const session = await this.scope.model.paymentSession.getByIdForUpdate(
+      operation.paymentSessionId,
+    );
+    if (!session || ['succeeded', 'failed', 'cancelled', 'expired'].includes(session.state)) return;
+    await this.scope.model.paymentSession.updateById(session.id, {
+      state: 'failed',
+      nextAction: undefined,
+      finalizedAt: options.finalizedAt,
+    });
+    await this.scope.model.paymentAudit.insert({
+      paymentSessionId: session.id,
+      providerOperationId: operation.id,
+      fromState: session.state,
+      toState: 'failed',
+      correlationId: session.correlationId,
+      source: `providerOperation.${operation.kind}.${options.source}`,
+      occurredAt: options.finalizedAt,
+    });
+    await this.scope.service.outbox.enqueue(session.id, 'payment.outcome.v1', {
+      eventId: `${operation.correlationId}:${operation.kind}:${options.source}`,
+      paymentSessionId: session.id,
+      businessReference: session.businessReference,
+      providerName: session.providerName,
+      state: 'failed',
+      providerCaptureId: session.providerCaptureId,
+      amountMinor: session.amountMinor,
+      currency: session.currency,
+    });
+  }
+
   private _logProviderFailure(
     operation: EntityProviderOperation,
     failure: { code: string; summary: string },
     state: 'failed' | 'reconciliation_required',
+    error: unknown,
   ) {
-    this.$logger.warn({
+    this.$logger.warn(failure.summary, {
       event: 'pay.provider_operation_failed',
       providerOperationId: operation.id,
       paymentSessionId: operation.paymentSessionId,
@@ -613,6 +716,7 @@ export class ServiceProviderOperation extends BeanBase {
       state,
       errorCode: failure.code,
       errorSummary: failure.summary,
+      ...providerErrorLogFields(error),
     });
   }
 
@@ -620,16 +724,41 @@ export class ServiceProviderOperation extends BeanBase {
     session: EntityPaymentSession,
     kind: Exclude<TypeProviderOperationKind, 'refund'>,
     now: Date,
+    callbackUrls?: { returnUrl: string; cancelUrl: string },
   ) {
+    const idempotencyKey = randomUUID();
+    const startInputSnapshot =
+      kind === 'start'
+        ? this._createStartInputSnapshot(session, idempotencyKey, callbackUrls)
+        : undefined;
     return await this.scope.model.providerOperation.insert({
       paymentSessionId: session.id,
       kind,
       state: 'created',
-      idempotencyKey: randomUUID(),
+      idempotencyKey,
       correlationId: session.correlationId,
+      startInputSnapshot,
       attemptCount: 0,
       nextAttemptAt: new Date(now.getTime() - 1_000),
     });
+  }
+
+  private _createStartInputSnapshot(
+    session: EntityPaymentSession,
+    idempotencyKey: string,
+    callbackUrls?: { returnUrl: string; cancelUrl: string },
+  ): IPayProviderOperationStartInputSnapshot {
+    return {
+      version: 1,
+      paymentSessionId: session.id,
+      businessReference: session.businessReference,
+      providerInvoiceReference: session.providerInvoiceReference,
+      providerCorrelationReference: session.providerCorrelationReference,
+      idempotencyKey,
+      amountMinor: session.amountMinor,
+      currency: session.currency,
+      ...callbackUrls,
+    };
   }
 
   private async _getSession(paymentSessionId: TableIdentity) {
@@ -670,6 +799,30 @@ export class ServiceProviderOperation extends BeanBase {
   }
 }
 
+function providerErrorLogFields(error: unknown) {
+  const value = error as Record<string, unknown> | undefined;
+  const message = error instanceof Error ? redactProviderErrorMessage(error.message) : undefined;
+  return {
+    ...(message && { providerErrorMessage: message }),
+    ...(typeof value?.type === 'string' && { providerErrorType: value.type.slice(0, 100) }),
+    ...(typeof value?.code === 'string' && { providerErrorCode: value.code.slice(0, 100) }),
+    ...(typeof value?.requestId === 'string' && {
+      providerRequestId: value.requestId.slice(0, 100),
+    }),
+  };
+}
+
+function redactProviderErrorMessage(message: string) {
+  return message
+    .slice(0, 500)
+    .replace(/\b(?:sk_(?:test|live)_\w+|whsec_\w+)\b/g, '<redacted>')
+    .replace(/\b(Bearer\s+)\S+/gi, '$1<redacted>')
+    .replace(
+      /([?&](?:state|client_secret|api_key|key|token|authorization)=)[^&\s]+/gi,
+      '$1<redacted>',
+    );
+}
+
 function isTerminalPaymentState(
   state: IPayProviderPaymentSnapshot['state'],
 ): state is 'succeeded' | 'failed' | 'cancelled' {
@@ -681,17 +834,22 @@ function retryDelayMilliseconds(attemptCount: number) {
 }
 
 function classifyProviderFailure(
-  _error: unknown,
+  error: unknown,
   kind: TypeProviderOperationKind,
-): { code: string; summary: string } {
+): { code: string; summary: string; terminal: boolean } {
   if (kind === 'refund') {
     return {
       code: 'refund_submission_outcome_unknown',
       summary: 'Provider refund submission outcome is unknown',
+      terminal: false,
     };
+  }
+  if (error instanceof ProviderOperationFailure) {
+    return { code: error.failureCode, summary: error.summary, terminal: true };
   }
   return {
     code: 'provider_operation_failed',
     summary: 'Provider operation failed and will be reconciled',
+    terminal: false,
   };
 }

@@ -29,7 +29,6 @@ export class RenderHeader extends BeanRenderBase {
             <ul class="menu menu-horizontal">
               {this.$$r.$$renderLocale.render()}
               {this.$$r.$$renderTheme.renderThemeDark()}
-              {this.$ssr.profileOptions.useCookie && this.$$r.$$renderTheme.renderThemeName()}
             </ul>
           </div>
         </div>
