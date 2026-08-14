@@ -1,6 +1,7 @@
 import { extend } from '@cabloy/extend';
 import {
   combineApiPathControllerAndAction,
+  combineQueries,
   defaultPathSerializer,
   isEmptyObject,
 } from '@cabloy/utils';
@@ -98,6 +99,13 @@ export class SysUtil extends BeanSimple {
     // custom
     const optionsCustom: any = {
       params: options?.query,
+      paramsSerializer: {
+        serialize: params => {
+          const query = combineQueries(undefined, params);
+          const index = query.indexOf('?');
+          return index === -1 ? '' : query.substring(index + 1);
+        },
+      },
       query: undefined,
     };
     const interceptors = {};

@@ -28,6 +28,7 @@ export interface ControllerBlockPageProps extends IResourceBlockOptionsBase {
   blocks?: IResourceRenderBlockOptionsBlock[];
   resource?: string;
   pageSize?: number;
+  queryFixed?: ITableQuery;
 }
 
 @Controller()
@@ -46,7 +47,8 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
   jsxCelScope: IPageScope;
   jsxRenderContext: IJsxRenderContextPage<TData>;
 
-  queryFilterData: {};
+  queryFixedData: ITableQuery;
+  queryFilterData: ITableQuery;
   queryPaged: ITablePaged;
   query: ITableQuery;
 
@@ -61,10 +63,24 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
     // jsx
     this._prepareJsx();
     // query
+    this.queryFixedData = this.$props.queryFixed ?? {};
     this.queryFilterData = {};
+    this.$watch(
+      () => this.$props.queryFixed,
+      queryFixed => {
+        this.setQueryFixed(queryFixed);
+      },
+    );
     this.queryPaged = { pageNo: 1, pageSize: this.$props.pageSize };
     this.query = this.$computed(() => {
-      return Object.assign({}, this.queryFilterData, this.queryPaged);
+      const { where: whereFixed, ...queryFixed } = this.queryFixedData;
+      const { where: whereFilter, ...queryFilter } = this.queryFilterData;
+      return {
+        ...queryFixed,
+        ...queryFilter,
+        where: { ...whereFilter, ...whereFixed },
+        ...this.queryPaged,
+      };
     });
     // load schema/data
     await $QueriesEnsureLoaded(
@@ -121,8 +137,14 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
     }
   }
 
-  onFilter(data: any) {
+  setQueryFixed(queryFixed?: ITableQuery) {
+    this.queryFixedData = queryFixed ?? {};
+    this.queryPaged.pageNo = 1;
+  }
+
+  onFilter(data: ITableQuery) {
     this.queryFilterData = data;
+    this.queryPaged.pageNo = 1;
   }
 
   public setTableRef(tableRef: BeanControllerTableBase<TData> | undefined) {
