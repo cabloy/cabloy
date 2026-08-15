@@ -1,6 +1,6 @@
 {
   "name": "vona-module-test-markdown",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "",
   "keywords": [
     "Vona Module"
@@ -31,7 +31,7 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "vona-module-a-markdown": "^5.0.0"
+    "vona-module-a-markdown": "^5.0.1"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",

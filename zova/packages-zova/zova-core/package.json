@@ -1,6 +1,6 @@
 {
   "name": "zova-core",
-  "version": "5.1.84",
+  "version": "5.1.85",
   "gitHead": "2c5c19284bab738e492856189acb6fad74b8a7b7",
   "description": "A vue3 framework with ioc",
   "keywords": [
@@ -49,8 +49,8 @@
     "@cabloy/compose": "^2.1.9",
     "@cabloy/extend": "^3.2.8",
     "@cabloy/json5": "^1.1.9",
-    "@cabloy/localeutil": "^2.1.8",
-    "@cabloy/logger": "^1.1.24",
+    "@cabloy/localeutil": "^2.1.9",
+    "@cabloy/logger": "^1.1.25",
     "@cabloy/module-info": "^2.0.3",
     "@cabloy/utils": "^2.1.27",
     "@cabloy/vue-compiler-sfc": "^3.5.14",
