@@ -17,6 +17,15 @@ function findComponent(apiJson: any, predicate: (properties: any) => boolean) {
   }) as any;
 }
 
+function assertStockSkuRef(apiJson: any, schema: any) {
+  const ref = schema?.$ref;
+  assert.equal(typeof ref, 'string');
+  const componentName = ref.slice('#/components/schemas/'.length);
+  const component = apiJson.components?.schemas?.[componentName];
+  assert.ok(component);
+  assert.deepEqual(Object.keys(component.properties).sort(), ['code', 'id']);
+}
+
 function getListFilter(component: any) {
   const page = component?.rest?.blocks?.[0];
   const [filter, table, pager] = page?.options?.blocks ?? [];
@@ -129,12 +138,18 @@ describe('stockPresentation.test.ts', { concurrency: false }, () => {
 
   it('action:stock:presentationMetadata', async () => {
     await app.bean.executor.mockCtx(async () => {
+      const skuPickerOptions = {
+        resource: 'commerce-catalog:sku',
+        relationName: 'sku',
+        selectOptions: { itemValue: 'id', itemTitle: 'code' },
+      };
       const balanceListJson = await app.bean.openapi.generateJsonOfClass(
         DtoStockBalanceSelectResItem,
       );
       const balanceList = findComponent(
         balanceListJson,
-        properties => properties?._operationsRow && properties?.skuId && properties?.onHand,
+        properties =>
+          properties?._operationsRow && properties?.skuId && properties?.sku && properties?.onHand,
       );
       assert.deepEqual(Object.keys(balanceList.properties).sort(), [
         '_operationsRow',
@@ -142,8 +157,12 @@ describe('stockPresentation.test.ts', { concurrency: false }, () => {
         'id',
         'onHand',
         'reserved',
+        'sku',
         'skuId',
       ]);
+      assertStockSkuRef(balanceListJson, balanceList.properties.sku);
+      assert.equal(balanceList.properties.skuId.rest.table.render, 'basic-resource:resourcePicker');
+      assert.deepEqual(balanceList.properties.skuId.rest.table.columnProps, skuPickerOptions);
       assert.deepEqual(
         balanceList.properties._operationsRow.rest.table.columnProps.actions.map(
           (action: any) => action.render,
@@ -154,7 +173,9 @@ describe('stockPresentation.test.ts', { concurrency: false }, () => {
 
       const balanceViewJson = await app.bean.openapi.generateJsonOfClass(DtoStockBalanceView);
       const balanceView = findComponent(balanceViewJson, properties => {
-        return properties?.available && properties?.createdAt && properties?.updatedAt;
+        return (
+          properties?.sku && properties?.available && properties?.createdAt && properties?.updatedAt
+        );
       });
       assert.deepEqual(Object.keys(balanceView.properties).sort(), [
         'available',
@@ -162,9 +183,16 @@ describe('stockPresentation.test.ts', { concurrency: false }, () => {
         'id',
         'onHand',
         'reserved',
+        'sku',
         'skuId',
         'updatedAt',
       ]);
+      assertStockSkuRef(balanceViewJson, balanceView.properties.sku);
+      assert.equal(
+        balanceView.properties.skuId.rest.form.render,
+        'basic-resource:formFieldResourcePicker',
+      );
+      assert.deepEqual(balanceView.properties.skuId.rest.form.options, skuPickerOptions);
       assert.equal(balanceView.properties.createdAt.rest.table.render, 'basic-date:date');
       assert.equal(balanceView.properties.updatedAt.rest.table.render, 'basic-date:date');
       assert.equal(updatedAtVisible(balanceView), true);
@@ -176,7 +204,11 @@ describe('stockPresentation.test.ts', { concurrency: false }, () => {
       const auditListJson = await app.bean.openapi.generateJsonOfClass(DtoStockAuditSelectResItem);
       const auditList = findComponent(
         auditListJson,
-        properties => properties?._operationsRow && properties?.skuId && properties?.operation,
+        properties =>
+          properties?._operationsRow &&
+          properties?.skuId &&
+          properties?.sku &&
+          properties?.operation,
       );
       assert.deepEqual(Object.keys(auditList.properties).sort(), [
         '_operationsRow',
@@ -184,8 +216,12 @@ describe('stockPresentation.test.ts', { concurrency: false }, () => {
         'delta',
         'id',
         'operation',
+        'sku',
         'skuId',
       ]);
+      assertStockSkuRef(auditListJson, auditList.properties.sku);
+      assert.equal(auditList.properties.skuId.rest.table.render, 'basic-resource:resourcePicker');
+      assert.deepEqual(auditList.properties.skuId.rest.table.columnProps, skuPickerOptions);
       assert.equal(auditList.properties.id.rest.table.render, 'basic-table:actionView');
       assert.deepEqual(
         auditList.properties._operationsRow.rest.table.columnProps.actions.map(
@@ -197,7 +233,12 @@ describe('stockPresentation.test.ts', { concurrency: false }, () => {
 
       const auditViewJson = await app.bean.openapi.generateJsonOfClass(DtoStockAuditView);
       const auditView = findComponent(auditViewJson, properties => {
-        return properties?.stockBalanceId && properties?.priorAvailable && properties?.actorId;
+        return (
+          properties?.sku &&
+          properties?.stockBalanceId &&
+          properties?.priorAvailable &&
+          properties?.actorId
+        );
       });
       assert.deepEqual(Object.keys(auditView.properties).sort(), [
         'actorId',
@@ -213,11 +254,18 @@ describe('stockPresentation.test.ts', { concurrency: false }, () => {
         'priorReserved',
         'reason',
         'reserved',
+        'sku',
         'skuId',
         'stockBalanceId',
         'stockReservationId',
         'updatedAt',
       ]);
+      assertStockSkuRef(auditViewJson, auditView.properties.sku);
+      assert.equal(
+        auditView.properties.skuId.rest.form.render,
+        'basic-resource:formFieldResourcePicker',
+      );
+      assert.deepEqual(auditView.properties.skuId.rest.form.options, skuPickerOptions);
       assert.equal(auditView.properties.createdAt.rest.form.render, 'basic-date:formFieldDate');
       assert.equal(auditView.properties.updatedAt.rest.form.render, 'basic-date:formFieldDate');
       assert.deepEqual(
@@ -247,6 +295,7 @@ describe('stockPresentation.test.ts', { concurrency: false }, () => {
         assert.equal(balance.onHand, 7);
         assert.equal(balance.reserved, 0);
         assert.equal(balance.available, 7);
+        assert.equal(balance.sku, undefined);
 
         const balanceView: any = await app.bean.executor.performAction(
           'get',
@@ -259,10 +308,34 @@ describe('stockPresentation.test.ts', { concurrency: false }, () => {
           'id',
           'onHand',
           'reserved',
+          'sku',
           'skuId',
           'updatedAt',
         ]);
         assert.equal(balanceView.available, balanceView.onHand - balanceView.reserved);
+        assert.deepEqual(balanceView.sku, {
+          id: fixture.skuId,
+          code: `presentation-stock-sku-${suffix}`,
+        });
+
+        const balanceList: any = await app.bean.executor.performAction(
+          'get',
+          '/commerce/trade/stockBalance',
+          { query: { skuId: fixture.skuId } },
+        );
+        assert.equal(balanceList.list.length, 1);
+        assert.deepEqual(Object.keys(balanceList.list[0]).sort(), [
+          'available',
+          'id',
+          'onHand',
+          'reserved',
+          'sku',
+          'skuId',
+        ]);
+        assert.deepEqual(balanceList.list[0].sku, {
+          id: fixture.skuId,
+          code: `presentation-stock-sku-${suffix}`,
+        });
 
         const auditList: any = await app.bean.executor.performAction(
           'get',
@@ -277,8 +350,13 @@ describe('stockPresentation.test.ts', { concurrency: false }, () => {
           'delta',
           'id',
           'operation',
+          'sku',
           'skuId',
         ]);
+        assert.deepEqual(auditList.list[0].sku, {
+          id: fixture.skuId,
+          code: `presentation-stock-sku-${suffix}`,
+        });
 
         const auditView: any = await app.bean.executor.performAction(
           'get',
@@ -299,6 +377,7 @@ describe('stockPresentation.test.ts', { concurrency: false }, () => {
           'priorReserved',
           'reason',
           'reserved',
+          'sku',
           'skuId',
           'stockBalanceId',
           'stockReservationId',
@@ -310,6 +389,38 @@ describe('stockPresentation.test.ts', { concurrency: false }, () => {
         assert.equal(auditView.correlationId, `presentation-stock-${suffix}`);
         assert.equal(auditView.reason, `presentation stock ${suffix}`);
         assert.equal(String(auditView.actorId), String(app.bean.passport.currentUser!.id));
+        assert.deepEqual(auditView.sku, {
+          id: fixture.skuId,
+          code: `presentation-stock-sku-${suffix}`,
+        });
+
+        const renamedSkuCode = `presentation-stock-sku-renamed-${suffix}`;
+        await app.bean.executor.performAction('patch', '/commerce/catalog/sku/:id', {
+          params: { id: fixture.skuId },
+          body: {
+            code: renamedSkuCode,
+            productId: fixture.productId,
+            priceCents: 100,
+            lifecycle: 'active',
+          },
+        });
+        const renamedAuditList: any = await app.bean.executor.performAction(
+          'get',
+          '/commerce/trade/stockAudit',
+          { query: { skuId: fixture.skuId } },
+        );
+        assert.equal(renamedAuditList.list.length, 1);
+        assert.deepEqual(renamedAuditList.list[0].sku, { id: fixture.skuId, code: renamedSkuCode });
+        const renamedAuditView: any = await app.bean.executor.performAction(
+          'get',
+          '/commerce/trade/stockAudit/:id',
+          { params: { id: auditView.id } },
+        );
+        assert.equal(renamedAuditView.skuId, auditView.skuId);
+        assert.equal(renamedAuditView.delta, auditView.delta);
+        assert.equal(renamedAuditView.reason, auditView.reason);
+        assert.equal(renamedAuditView.correlationId, auditView.correlationId);
+        assert.deepEqual(renamedAuditView.sku, { id: fixture.skuId, code: renamedSkuCode });
         for (const field of ['iid', 'deleted']) assert.equal(auditView[field], undefined);
       } finally {
         await dropStockFixture(fixture);

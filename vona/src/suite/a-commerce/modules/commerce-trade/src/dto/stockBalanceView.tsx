@@ -1,10 +1,12 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
+import { Api, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { ModelStockBalance } from '../model/stockBalance.ts';
+import { DtoStockSkuRef } from './stockSkuRef.tsx';
 
 export interface IDtoOptionsStockBalanceView extends IDecoratorDtoOptions {}
 
@@ -24,4 +26,7 @@ export interface IDtoOptionsStockBalanceView extends IDecoratorDtoOptions {}
 })
 export class DtoStockBalanceView extends $Dto.get(() => ModelStockBalance, {
   columns: ['id', 'skuId', 'onHand', 'reserved', 'available', 'createdAt', 'updatedAt'],
-}) {}
+}) {
+  @Api.field(v.optional(), v.object(DtoStockSkuRef))
+  sku?: DtoStockSkuRef;
+}

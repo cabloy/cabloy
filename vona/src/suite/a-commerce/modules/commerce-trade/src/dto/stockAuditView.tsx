@@ -1,10 +1,12 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
+import { Api, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { ModelStockAudit } from '../model/stockAudit.ts';
+import { DtoStockSkuRef } from './stockSkuRef.tsx';
 
 export interface IDtoOptionsStockAuditView extends IDecoratorDtoOptions {}
 
@@ -42,4 +44,7 @@ export class DtoStockAuditView extends $Dto.get(() => ModelStockAudit, {
     'createdAt',
     'updatedAt',
   ],
-}) {}
+}) {
+  @Api.field(v.optional(), v.object(DtoStockSkuRef))
+  sku?: DtoStockSkuRef;
+}

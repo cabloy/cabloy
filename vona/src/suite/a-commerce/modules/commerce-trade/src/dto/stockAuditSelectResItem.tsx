@@ -8,6 +8,7 @@ import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 import { $locale } from '../.metadata/locales.ts';
 import { EntityStockAudit } from '../entity/stockAudit.tsx';
 import { ModelStockAudit } from '../model/stockAudit.ts';
+import { DtoStockSkuRef } from './stockSkuRef.tsx';
 
 export interface IDtoOptionsStockAuditSelectResItem extends IDecoratorDtoOptions {}
 
@@ -49,6 +50,9 @@ export class DtoStockAuditSelectResItem extends $Dto.get(() => ModelStockAudit, 
 }) {
   @Api.field(ZovaRender.order(1, 'core'), ZovaRender.cell('basic-table:actionView'))
   declare id: EntityStockAudit['id'];
+
+  @Api.field(v.optional(), v.object(DtoStockSkuRef))
+  sku?: DtoStockSkuRef;
 
   @Api.field(
     v.title($locale('Operations')),

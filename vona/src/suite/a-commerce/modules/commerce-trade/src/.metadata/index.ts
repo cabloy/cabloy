@@ -874,6 +874,7 @@ export * from '../dto/stockBalanceSelectRes.tsx';
 export * from '../dto/stockBalanceSelectResItem.tsx';
 export * from '../dto/stockBalanceUpdate.tsx';
 export * from '../dto/stockBalanceView.tsx';
+export * from '../dto/stockSkuRef.tsx';
 import type { IDtoOptionsCartAddItem } from '../dto/cartAddItem.tsx';
 import type { IDtoOptionsCartItem } from '../dto/cartItem.tsx';
 import type { IDtoOptionsCartUpdateItem } from '../dto/cartUpdateItem.tsx';
@@ -919,6 +920,7 @@ import type { IDtoOptionsStockBalanceSelectRes } from '../dto/stockBalanceSelect
 import type { IDtoOptionsStockBalanceSelectResItem } from '../dto/stockBalanceSelectResItem.tsx';
 import type { IDtoOptionsStockBalanceUpdate } from '../dto/stockBalanceUpdate.tsx';
 import type { IDtoOptionsStockBalanceView } from '../dto/stockBalanceView.tsx';
+import type { IDtoOptionsStockSkuRef } from '../dto/stockSkuRef.tsx';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
   
@@ -968,6 +970,7 @@ declare module 'vona-module-a-web' {
 'commerce-trade:stockBalanceSelectResItem': IDtoOptionsStockBalanceSelectResItem;
 'commerce-trade:stockBalanceUpdate': IDtoOptionsStockBalanceUpdate;
 'commerce-trade:stockBalanceView': IDtoOptionsStockBalanceView;
+'commerce-trade:stockSkuRef': IDtoOptionsStockSkuRef;
     }
 
   
@@ -1022,6 +1025,7 @@ import type { DtoStockBalanceSelectRes } from '../dto/stockBalanceSelectRes.tsx'
 import type { DtoStockBalanceSelectResItem } from '../dto/stockBalanceSelectResItem.tsx';
 import type { DtoStockBalanceUpdate } from '../dto/stockBalanceUpdate.tsx';
 import type { DtoStockBalanceView } from '../dto/stockBalanceView.tsx';
+import type { DtoStockSkuRef } from '../dto/stockSkuRef.tsx';
 declare module 'vona-module-commerce-trade' {
   
     export interface IDtoOptionsCartAddItem {
@@ -1202,6 +1206,10 @@ declare module 'vona-module-commerce-trade' {
 
     export interface IDtoOptionsStockBalanceView {
       fields?: TypeEntityOptionsFields<DtoStockBalanceView, IDtoOptionsStockBalanceView[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsStockSkuRef {
+      fields?: TypeEntityOptionsFields<DtoStockSkuRef, IDtoOptionsStockSkuRef[TypeSymbolKeyFieldsMore]>;
     }
 }
 /** dto: end */

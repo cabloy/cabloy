@@ -1,7 +1,7 @@
 import type { TableIdentity } from 'table-identity';
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
-import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
+import { $makeMetadata, $resourceName, Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
 import { z } from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
@@ -37,7 +37,22 @@ export class EntityStockAudit extends EntityBase {
   )
   stockBalanceId: TableIdentity;
 
-  @Api.field(v.title($locale('SkuId')), v.required(), v.tableIdentity(), ZovaRender.order(2))
+  @Api.field(
+    v.title($locale('SkuId')),
+    v.required(),
+    v.tableIdentity(),
+    ZovaRender.order(2),
+    ZovaRender.field('basic-resource:formFieldResourcePicker', {
+      resource: $resourceName('commerce-catalog:sku'),
+      relationName: 'sku',
+      selectOptions: { itemValue: 'id', itemTitle: 'code' },
+    }),
+    ZovaRender.cell('basic-resource:resourcePicker', {
+      resource: $resourceName('commerce-catalog:sku'),
+      relationName: 'sku',
+      selectOptions: { itemValue: 'id', itemTitle: 'code' },
+    }),
+  )
   skuId: TableIdentity;
 
   @Api.field(

@@ -8,6 +8,7 @@ import { Core } from 'vona-module-a-core';
 import type { DtoStockAdjust } from '../dto/stockAdjust.tsx';
 import type { DtoStockBalanceSelectRes } from '../dto/stockBalanceSelectRes.tsx';
 import type { DtoStockBalanceView } from '../dto/stockBalanceView.tsx';
+import type { DtoStockSkuRef } from '../dto/stockSkuRef.tsx';
 import type { EntityStockBalance } from '../entity/stockBalance.tsx';
 import type {
   EntityStockReservation,
@@ -47,16 +48,27 @@ const serializationRetryOptions = {
 @Service()
 export class ServiceStockBalance extends BeanBase {
   async select(params?: IQueryParams<ModelStockBalance>): Promise<DtoStockBalanceSelectRes> {
-    return await this.scope.model.stockBalance.selectAndCount({
+    const result = await this.scope.model.stockBalance.selectAndCount({
       ...params,
       columns: ['id', 'skuId', 'onHand', 'reserved', 'available'],
     });
+    const skuRefs = await this._getSkuRefs(result.list.map(item => item.skuId));
+    return {
+      ...result,
+      list: result.list.map(item => ({
+        ...item,
+        sku: skuRefs.get(String(item.skuId)),
+      })),
+    };
   }
 
   async view(id: TableIdentity): Promise<DtoStockBalanceView | undefined> {
-    return await this.scope.model.stockBalance.getById(id, {
+    const stockBalance = await this.scope.model.stockBalance.getById(id, {
       columns: ['id', 'skuId', 'onHand', 'reserved', 'available', 'createdAt', 'updatedAt'],
     });
+    if (!stockBalance) return;
+    const sku = await this._getSkuRef(stockBalance.skuId);
+    return { ...stockBalance, sku };
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
@@ -276,6 +288,23 @@ export class ServiceStockBalance extends BeanBase {
       correlationId: reservation.correlationId,
     });
     return updatedReservation;
+  }
+
+  private async _getSkuRefs(skuIds: TableIdentity[]): Promise<Map<string, DtoStockSkuRef>> {
+    const uniqueSkuIds = [...new Map(skuIds.map(skuId => [String(skuId), skuId])).values()];
+    if (!uniqueSkuIds.length) return new Map();
+    const skus = await this.$scope.commerceCatalog.model.sku.select({
+      where: { id: uniqueSkuIds },
+      columns: ['id', 'code'],
+    });
+    return new Map(skus.map(sku => [String(sku.id), { id: sku.id, code: sku.code }]));
+  }
+
+  private async _getSkuRef(skuId: TableIdentity): Promise<DtoStockSkuRef | undefined> {
+    const sku = await this.$scope.commerceCatalog.model.sku.getById(skuId, {
+      columns: ['id', 'code'],
+    });
+    return sku && { id: sku.id, code: sku.code };
   }
 
   private async _getLockedBalance(skuId: TableIdentity): Promise<EntityStockBalance | undefined> {

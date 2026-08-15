@@ -1039,6 +1039,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/home/base/siteCatalog': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['HomeBaseSiteCatalog_select'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/': {
     parameters: {
       query?: never;
@@ -2351,29 +2367,16 @@ export interface components {
        * @description Created At
        */
       createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
       /** @description ID */
-      id: number | string;
+      id?: unknown;
       /** @description Recipient Name */
       recipientName: string;
       /** @description Phone */
       phone: string;
       /** @description Country Code */
       countryCode: string;
-      /** @description Region */
-      region: string;
       /** @description City */
       city: string;
-      /** @description Postal Code */
-      postalCode: string;
-      /** @description Address Line 1 */
-      addressLine1: string;
-      /** @description Address Line 2 */
-      addressLine2?: string | undefined;
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -2448,10 +2451,16 @@ export interface components {
       /** @description Mobile */
       mobile?: string | undefined;
       /**
-       * @description Activated
+       * @description Identity Activated
        * @default false
        */
       activated?: boolean;
+      /**
+       * @description Account Status
+       * @default active
+       * @enum {string}
+       */
+      accountStatus?: 'active' | 'disabled';
       /** @description Language */
       locale?: string | undefined;
       /** @description Timezone */
@@ -2496,7 +2505,7 @@ export interface components {
       /** @description Role Title */
       title: string;
       /** @description Role Locales */
-      locales?:
+      titleLocales?:
         | {
             [key: string]: string;
           }
@@ -2986,29 +2995,12 @@ export interface components {
        * @description Created At
        */
       createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
-      /**
-       * @description Deleted
-       * @default false
-       */
-      deleted?: boolean;
-      /**
-       * @description Instance ID
-       * @default 0
-       */
-      iid?: number;
       /** @description ID */
       id: number | string;
-      userId: number | string;
-      addressId: number | string;
-      correlationId: string;
-      addressSnapshot: components['schemas']['commerce-trade.dto.orderAddressSnapshot'];
-      couponSnapshot?: components['schemas']['commerce-trade.dto.orderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
-      /** @enum {string} */
+      /**
+       * @description Order state
+       * @enum {string}
+       */
       state:
         | 'awaiting_payment'
         | 'paid'
@@ -3019,17 +3011,17 @@ export interface components {
         | 'refunded'
         | 'cancelled'
         | 'expired';
-      /** @enum {string} */
-      currency: 'USD';
-      eligibleSubtotalCents: number;
-      discountCents: number;
+      /** @description Payable total (cents) */
       payableTotalCents: number;
-      /** Format: date-time */
+      /**
+       * Format: date-time
+       * @description Reservation deadline
+       */
       reservationExpiresAt: Date;
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+    'commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0':
       | {
           /**
            * Format: date-time
@@ -3041,74 +3033,56 @@ export interface components {
            * @description Updated At
            */
           updatedAt: Date;
-          /**
-           * @description Deleted
-           * @default false
-           */
-          deleted?: boolean;
-          /**
-           * @description Instance ID
-           * @default 0
-           */
-          iid?: number;
           /** @description ID */
           id: number | string;
-          userId: number | string;
-          addressId: number | string;
-          correlationId: string;
           addressSnapshot: components['schemas']['commerce-trade.dto.orderAddressSnapshot'];
           couponSnapshot?: components['schemas']['commerce-trade.dto.orderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
-          /** @enum {string} */
-          state:
-            | 'awaiting_payment'
-            | 'paid'
-            | 'refund_requested'
-            | 'refund_approved'
-            | 'refund_rejected'
-            | 'shipped'
-            | 'refunded'
-            | 'cancelled'
-            | 'expired';
-          /** @enum {string} */
-          currency: 'USD';
+          /** @description Order state */
+          state?: unknown;
+          /** @description Currency */
+          currency?: unknown;
+          /** @description Eligible subtotal (cents) */
           eligibleSubtotalCents: number;
+          /** @description Discount (cents) */
           discountCents: number;
+          /** @description Payable total (cents) */
           payableTotalCents: number;
-          /** Format: date-time */
+          /**
+           * Format: date-time
+           * @description Reservation deadline
+           */
           reservationExpiresAt: Date;
+          /** @description Purchased lines */
+          lines: unknown[];
           shipment?: {
-            /**
-             * Format: date-time
-             * @description Created At
-             */
-            createdAt: Date;
-            /**
-             * Format: date-time
-             * @description Updated At
-             */
-            updatedAt: Date;
-            /**
-             * @description Deleted
-             * @default false
-             */
-            deleted?: boolean;
-            /**
-             * @description Instance ID
-             * @default 0
-             */
-            iid?: number;
             /** @description ID */
             id: number | string;
-            orderId: number | string;
             carrier: string;
             trackingNumber: string;
-            operatorId: number | string;
             /** Format: date-time */
             shippedAt: Date;
-            correlationId: string;
           };
+          _lines?: components['schemas']['commerce-trade.dto.orderAdminLineResItem'][] | undefined;
         }
       | undefined;
+    'commerce-trade.dto.orderAdminLineResItem': {
+      /** @description ID */
+      id: number | string;
+      /** @description SKU code */
+      skuCodeSnapshot: string;
+      /** @description Product title */
+      titleSnapshot: string;
+      /** @description SKU attributes */
+      skuAttributesSnapshot: components['schemas']['commerce-trade.dto.orderLineSkuAttributeSnapshot'][];
+      /** @description Unit price (cents) */
+      unitPriceCents: number;
+      /** @description Quantity */
+      quantity: number;
+      /** @description Eligible subtotal (cents) */
+      eligibleSubtotalCents: number;
+      /** @description Line total (cents) */
+      lineTotalCents: number;
+    };
     'commerce-trade.dto.stockAuditSelectRes': {
       list: components['schemas']['commerce-trade.dto.stockAuditSelectResItem'][];
       total: string;
@@ -3122,31 +3096,10 @@ export interface components {
        * @description Created At
        */
       createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
-      /**
-       * @description Deleted
-       * @default false
-       */
-      deleted?: boolean;
-      /**
-       * @description Instance ID
-       * @default 0
-       */
-      iid?: number;
       /** @description ID */
-      id: number | string;
-      /** @description Stock Balance ID */
-      stockBalanceId: number | string;
+      id?: unknown;
       /** @description SKU ID */
       skuId: number | string;
-      /** @description Stock Reservation ID */
-      stockReservationId?: number | string | undefined;
-      /** @description Actor ID */
-      actorId?: number | string | undefined;
       /**
        * @description Stock Operation
        * @enum {string}
@@ -3154,25 +3107,16 @@ export interface components {
       operation: 'adjust' | 'reserve' | 'consume' | 'release' | 'restore';
       /** @description Delta */
       delta: number;
-      /** @description Reason */
-      reason: string;
-      /** @description Correlation ID */
-      correlationId: string;
-      /** @description Prior On Hand */
-      priorOnHand: number;
-      /** @description Prior Reserved */
-      priorReserved: number;
-      /** @description Prior Available */
-      priorAvailable: number;
-      /** @description On Hand */
-      onHand: number;
-      /** @description Reserved */
-      reserved: number;
-      /** @description Available */
-      available: number;
+      sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          id: number | string;
+          code: string;
+        }
+      | undefined;
     'commerce-trade.dto.stockAuditView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -3185,16 +3129,6 @@ export interface components {
            * @description Updated At
            */
           updatedAt: Date;
-          /**
-           * @description Deleted
-           * @default false
-           */
-          deleted?: boolean;
-          /**
-           * @description Instance ID
-           * @default 0
-           */
-          iid?: number;
           /** @description ID */
           id: number | string;
           /** @description Stock Balance ID */
@@ -3228,6 +3162,7 @@ export interface components {
           reserved: number;
           /** @description Available */
           available: number;
+          sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
         }
       | undefined;
     'commerce-trade.entity.stockBalance': {
@@ -3281,28 +3216,8 @@ export interface components {
       pageNo: number;
     };
     'commerce-trade.dto.stockBalanceSelectResItem': {
-      /**
-       * Format: date-time
-       * @description Created At
-       */
-      createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
-      /**
-       * @description Deleted
-       * @default false
-       */
-      deleted?: boolean;
-      /**
-       * @description Instance ID
-       * @default 0
-       */
-      iid?: number;
       /** @description ID */
-      id: number | string;
+      id?: unknown;
       /** @description SKU ID */
       skuId: number | string;
       /** @description On Hand */
@@ -3311,6 +3226,7 @@ export interface components {
       reserved: number;
       /** @description Available */
       available: number;
+      sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3326,16 +3242,6 @@ export interface components {
            * @description Updated At
            */
           updatedAt: Date;
-          /**
-           * @description Deleted
-           * @default false
-           */
-          deleted?: boolean;
-          /**
-           * @description Instance ID
-           * @default 0
-           */
-          iid?: number;
           /** @description ID */
           id: number | string;
           /** @description SKU ID */
@@ -3346,6 +3252,7 @@ export interface components {
           reserved: number;
           /** @description Available */
           available: number;
+          sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
         }
       | undefined;
     'commerce-catalog.dto.categoryCreate': {
@@ -3479,6 +3386,10 @@ export interface components {
       published?: boolean;
       /** @description Description */
       description?: string | undefined;
+      productContentForm?: {
+        /** @description Product description (Markdown) */
+        descriptionMarkdown?: string | undefined;
+      };
     };
     'commerce-catalog.dto.productSelectRes': {
       list: components['schemas']['commerce-catalog.dto.productSelectResItem'][];
@@ -3567,7 +3478,7 @@ export interface components {
       /** @description Available */
       available: number;
     };
-    'commerce-catalog.dto.productPublic_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+    'commerce-catalog.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           id: number | string;
           /** @description Product title */
@@ -3583,9 +3494,11 @@ export interface components {
           /** @description Available */
           available: number;
           skuAvailables: components['schemas']['commerce-catalog.dto.productPublicSku'][];
+          /** @description Product description (HTML) */
+          descriptionHtml?: string | undefined;
         }
       | undefined;
-    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7':
       | {
           /**
            * Format: date-time
@@ -3631,6 +3544,13 @@ export interface components {
              */
             published?: boolean;
           };
+          productContentForm?: {
+            /** @description ID */
+            id: number | string;
+            productId: number | string;
+            /** @description Product description (Markdown) */
+            descriptionMarkdown?: string | undefined;
+          };
         }
       | undefined;
     'commerce-catalog.dto.productUpdate': {
@@ -3645,6 +3565,17 @@ export interface components {
       published?: boolean;
       /** @description Description */
       description?: string | undefined;
+      productContentForm?: {
+        /**
+         * @description Deleted
+         * @default false
+         */
+        deleted?: boolean | undefined;
+        /** @description ID */
+        id?: number | string | undefined;
+        /** @description Product description (Markdown) */
+        descriptionMarkdown?: string | undefined;
+      };
     };
     'commerce-catalog.dto.skuCreate': {
       /** @description SKU code */
@@ -3654,22 +3585,11 @@ export interface components {
       /** @description Price (cents) */
       priceCents: number;
       /**
-       * @description SKU attributes
-       * @default []
-       */
-      attributes?: components['schemas']['commerce-catalog.dto.skuAttribute'][];
-      /**
        * @description SKU lifecycle
        * @default draft
        * @enum {string}
        */
       lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
-    };
-    'commerce-catalog.dto.skuAttribute': {
-      /** @description SKU attribute name */
-      name: string;
-      /** @description SKU attribute value */
-      value: string;
     };
     'commerce-catalog.dto.skuSelectRes': {
       list: components['schemas']['commerce-catalog.dto.skuSelectResItem'][];
@@ -3708,16 +3628,17 @@ export interface components {
       /** @description Price (cents) */
       priceCents: number;
       /**
-       * @description SKU attributes
-       * @default []
-       */
-      attributes?: components['schemas']['commerce-catalog.dto.skuAttribute'][];
-      /**
        * @description SKU lifecycle
        * @default draft
        * @enum {string}
        */
       lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
+      product?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Product title */
+        title: string;
+      };
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3752,16 +3673,17 @@ export interface components {
           /** @description Price (cents) */
           priceCents: number;
           /**
-           * @description SKU attributes
-           * @default []
-           */
-          attributes?: components['schemas']['commerce-catalog.dto.skuAttribute'][];
-          /**
            * @description SKU lifecycle
            * @default draft
            * @enum {string}
            */
           lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
+          product?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Product title */
+            title: string;
+          };
         }
       | undefined;
     'commerce-catalog.dto.skuUpdate': {
@@ -3771,11 +3693,6 @@ export interface components {
       productId: number | string;
       /** @description Price (cents) */
       priceCents: number;
-      /**
-       * @description SKU attributes
-       * @default []
-       */
-      attributes?: components['schemas']['commerce-catalog.dto.skuAttribute'][];
       /**
        * @description SKU lifecycle
        * @default draft
@@ -3819,6 +3736,17 @@ export interface components {
       roleIds?: (number | string)[] | undefined;
       roleNames?: string[] | undefined;
       actions?: unknown;
+    };
+    'home-base.dto.siteCatalogSelectRes': {
+      list: components['schemas']['home-base.dto.siteCatalogSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'home-base.dto.siteCatalogSelectResItem': {
+      siteId: string;
+      title: string;
     };
     'training-record.dto.recordCreate': {
       /** @description Training Record Name */
@@ -6789,7 +6717,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+            data?: components['schemas']['commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0'];
           };
         };
       };
@@ -7205,7 +7133,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-catalog.dto.productPublic_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+            data?: components['schemas']['commerce-catalog.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
           };
         };
       };
@@ -7230,7 +7158,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7'];
           };
         };
       };
@@ -7484,6 +7412,30 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['a-permission.dto.permissions'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  HomeBaseSiteCatalog_select: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['home-base.dto.siteCatalogSelectRes'];
           };
         };
       };
