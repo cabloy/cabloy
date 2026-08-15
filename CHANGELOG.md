@@ -1,5 +1,36 @@
 # Changelog
 
+## 5.1.136
+
+### Features
+
+- Add route name support.
+- Support YouTube embeds in Markdown.
+- Update retryable behavior.
+- Add `getPagePath`.
+- Add block page support.
+- Render fields with improved support.
+- Add commerce locale support.
+- Add Markdown task lists, HTML, and CSS support.
+- Split Controller, Render, and Style companion access.
+- Add payment and Stripe integrations.
+- Add Stripe-hosted checkout payments.
+- Support disabled users.
+- Add locale support for SSR profiles and sessions.
+- Add locale support for role titles.
+
+### Bug Fixes
+
+- Fix end-to-end test issues.
+- Fix test error handling.
+- Resolve route resolution issues.
+
+### Improvements
+
+- Refactor Markdown handling.
+- Remove trailing whitespace from generated metadata.
+- Update Playwright workflows and dependencies.
+
 ## 5.1.135
 
 ### Improvements
