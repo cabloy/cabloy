@@ -417,6 +417,8 @@ When `_initControllerRoute(...)` updates a page controller, it resolves the rout
 - `pageNameSchemas` for named routes
 - `pagePathSchemas` for path-keyed routes
 
+For page routes with dynamic params, define `route.name` and use the named-route metadata path. Do not rely on an unnamed parameterized route: the generated path-keyed record does not establish the typed controller `$params` contract.
+
 Those schema records are generated into module metadata.
 
 Representative generator source:

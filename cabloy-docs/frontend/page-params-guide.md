@@ -30,7 +30,9 @@ Because route params arrive as strings at the URL level, the schema is also wher
 
 ## Route record requirements
 
-One important rule is that if a page supports params, the route should expose the proper route structure and route name.
+A page route that declares or consumes dynamic params **must** define `route.name`. Do not use an unnamed route with params.
+
+The route name is required because Zova uses the named route identity to generate and resolve the page's typed `params` schema at runtime. This initializes the controller's `$params` surface during SSR and client navigation. A params schema declaration alone does not make `$params` available if the route is unnamed.
 
 Representative route idea:
 
@@ -82,6 +84,6 @@ this.$router.push(url);
 When adding or editing param-driven page behavior:
 
 1. use the Zova refactor command when possible
-2. update the route record and route name deliberately
+2. define `route.name` whenever the route has dynamic params
 3. regenerate metadata when route typing depends on it
 4. use `this.$params` and typed router helpers instead of manual parsing

@@ -42,7 +42,7 @@ This matters because path generation is modular by default.
 
 ## `name`
 
-If a page uses params, the route name becomes especially important because typed param-aware routing depends on it.
+A route with dynamic params must define `name`. Typed param-aware routing uses the named route identity to generate and resolve the page's runtime params schema; an unnamed parameterized route does not provide the required `$params` contract.
 
 ## `component`
 
@@ -145,7 +145,7 @@ When editing page routing, do not only change the URL string.
 
 It should also check whether the route change affects:
 
-- params typing
+- params typing and the required `route.name` for dynamic params
 - auth behavior
 - layout behavior
 - whether `meta.locale` should participate in URL-locale behavior
