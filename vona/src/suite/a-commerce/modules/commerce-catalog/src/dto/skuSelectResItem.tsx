@@ -58,6 +58,9 @@ export class DtoSkuSelectResItem extends $Dto.get(() => ModelSku, {
     'createdAt',
     'updatedAt',
   ],
+  include: {
+    product: { columns: ['id', 'title'] },
+  },
 }) {
   @Api.field(
     v.title($locale('Operations')),

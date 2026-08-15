@@ -37,6 +37,11 @@ describe('skuPresentation.test.ts', () => {
   it('action:sku:presentationMetadata', async () => {
     await app.bean.executor.mockCtx(async () => {
       const currencyOptions = { fixed: 2, exp: 2, zero: 2 };
+      const productPickerOptions = {
+        resource: 'commerce-catalog:product',
+        relationName: 'product',
+        selectOptions: { itemValue: 'id', itemTitle: 'title' },
+      };
 
       const createJson = await app.bean.openapi.generateJsonOfClass(DtoSkuCreate);
       const createComponent = findComponent(createJson, properties => {
@@ -50,6 +55,14 @@ describe('skuPresentation.test.ts', () => {
       ]);
       assert.equal(createComponent.properties.attributes, undefined);
       assert.equal(createComponent.properties.product, undefined);
+      assert.equal(
+        createComponent.properties.productId.rest.form.render,
+        'basic-resource:formFieldResourcePicker',
+      );
+      assert.deepEqual(
+        createComponent.properties.productId.rest.form.options,
+        productPickerOptions,
+      );
       assert.equal(
         createComponent.properties.priceCents.rest.form.render,
         'basic-currency:formFieldCurrency',
@@ -85,6 +98,15 @@ describe('skuPresentation.test.ts', () => {
         'productId',
       ]);
       assert.equal(updateComponent.properties.attributes, undefined);
+      assert.equal(updateComponent.properties.product, undefined);
+      assert.equal(
+        updateComponent.properties.productId.rest.form.render,
+        'basic-resource:formFieldResourcePicker',
+      );
+      assert.deepEqual(
+        updateComponent.properties.productId.rest.form.options,
+        productPickerOptions,
+      );
       assert.equal(
         updateComponent.properties.lifecycle.rest.form.render,
         'basic-select:formFieldSelect',
@@ -101,6 +123,7 @@ describe('skuPresentation.test.ts', () => {
         return (
           properties?.id &&
           properties?.productId &&
+          properties?.product &&
           properties?.priceCents &&
           properties?.lifecycle &&
           properties?.iid &&
@@ -108,6 +131,15 @@ describe('skuPresentation.test.ts', () => {
         );
       });
       assert.equal(Object.hasOwn(viewComponent.properties, 'attributes'), false);
+      assert.deepEqual(Object.keys(viewComponent.properties.product.properties).sort(), [
+        'id',
+        'title',
+      ]);
+      assert.equal(
+        viewComponent.properties.productId.rest.form.render,
+        'basic-resource:formFieldResourcePicker',
+      );
+      assert.deepEqual(viewComponent.properties.productId.rest.form.options, productPickerOptions);
       assert.equal(viewComponent.properties.iid.rest.visible, false);
       assert.equal(viewComponent.properties.deleted.rest.visible, false);
       assert.equal(
@@ -126,6 +158,10 @@ describe('skuPresentation.test.ts', () => {
       const listJson = await app.bean.openapi.generateJsonOfClass(DtoSkuSelectResItem);
       const listComponent = findComponent(listJson, properties => properties?._operationsRow);
       assert.equal(Object.hasOwn(listComponent.properties, 'attributes'), false);
+      assert.deepEqual(Object.keys(listComponent.properties.product.properties).sort(), [
+        'id',
+        'title',
+      ]);
       assert.equal(listComponent.properties.code.rest.table.render, 'basic-table:actionView');
       assert.equal(
         listComponent.properties.priceCents.rest.table.render,
@@ -134,8 +170,14 @@ describe('skuPresentation.test.ts', () => {
       assert.deepEqual(listComponent.properties.priceCents.rest.table.columnProps, currencyOptions);
       assert.equal(listComponent.properties.lifecycle.rest.table.render, 'basic-select:select');
       assertLifecycleItems(listComponent.properties.lifecycle.rest.table.columnProps.items);
-      assert.equal(listComponent.properties.productId.rest?.form?.render, undefined);
-      assert.equal(listComponent.properties.productId.rest?.table?.render, undefined);
+      assert.equal(
+        listComponent.properties.productId.rest?.table?.render,
+        'basic-resource:resourcePicker',
+      );
+      assert.deepEqual(
+        listComponent.properties.productId.rest?.table?.columnProps,
+        productPickerOptions,
+      );
       assert.deepEqual(
         listComponent.properties._operationsRow.rest.table.columnProps.actions.map(
           (action: any) => action.render,
@@ -194,7 +236,10 @@ describe('skuPresentation.test.ts', () => {
         assert.equal(String(view.productId), String(productId));
         assert.equal(view.priceCents, 1234);
         assert.equal(view.lifecycle, 'draft');
-        assert.equal(view.product, undefined);
+        assert.deepEqual(view.product, {
+          id: productId,
+          title: `presentation-sku-product-${suffix}`,
+        });
         assert.equal(view.attributes, undefined);
 
         const select: any = await app.bean.executor.performAction('get', '/commerce/catalog/sku', {
@@ -202,7 +247,10 @@ describe('skuPresentation.test.ts', () => {
         });
         assert.equal(select.list.length, 1);
         assert.equal(String(select.list[0].id), String(skuId));
-        assert.equal(select.list[0].product, undefined);
+        assert.deepEqual(select.list[0].product, {
+          id: productId,
+          title: `presentation-sku-product-${suffix}`,
+        });
         assert.equal(select.list[0].attributes, undefined);
       } finally {
         if (skuId) {

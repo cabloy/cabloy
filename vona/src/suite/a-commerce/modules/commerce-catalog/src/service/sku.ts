@@ -28,11 +28,21 @@ export class ServiceSku extends BeanBase {
   }
 
   async select(params?: IQueryParams<ModelSku>): Promise<DtoSkuSelectRes> {
-    return await this.scope.model.sku.selectAndCount(params);
+    return await this.scope.model.sku.selectAndCount({
+      ...params,
+      include: {
+        ...params?.include,
+        product: { columns: ['id', 'title'] },
+      },
+    });
   }
 
   async view(id: TableIdentity): Promise<DtoSkuView | undefined> {
-    return await this.scope.model.sku.getById(id);
+    return await this.scope.model.sku.getById(id, {
+      include: {
+        product: { columns: ['id', 'title'] },
+      },
+    });
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })

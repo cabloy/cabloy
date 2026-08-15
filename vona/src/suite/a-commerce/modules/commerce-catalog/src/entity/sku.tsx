@@ -1,7 +1,7 @@
 import type { TableIdentity } from 'table-identity';
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
-import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
+import { $makeMetadata, $resourceName, Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
 import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
@@ -48,7 +48,22 @@ export class EntitySku extends EntityBase {
   )
   code: string;
 
-  @Api.field(v.title($locale('Product')), v.required(), ZovaRender.order(2), v.tableIdentity())
+  @Api.field(
+    v.title($locale('Product')),
+    v.required(),
+    ZovaRender.order(2),
+    ZovaRender.field('basic-resource:formFieldResourcePicker', {
+      resource: $resourceName('commerce-catalog:product'),
+      relationName: 'product',
+      selectOptions: { itemValue: 'id', itemTitle: 'title' },
+    }),
+    ZovaRender.cell('basic-resource:resourcePicker', {
+      resource: $resourceName('commerce-catalog:product'),
+      relationName: 'product',
+      selectOptions: { itemValue: 'id', itemTitle: 'title' },
+    }),
+    v.tableIdentity(),
+  )
   productId: TableIdentity;
 
   @Api.field(

@@ -34,4 +34,7 @@ export class DtoSkuView extends $Dto.get(() => ModelSku, {
     'createdAt',
     'updatedAt',
   ],
+  include: {
+    product: { columns: ['id', 'title'] },
+  },
 }) {}

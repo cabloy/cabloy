@@ -2451,10 +2451,16 @@ export interface components {
       /** @description Mobile */
       mobile?: string | undefined;
       /**
-       * @description Activated
+       * @description Identity Activated
        * @default false
        */
       activated?: boolean;
+      /**
+       * @description Account Status
+       * @default active
+       * @enum {string}
+       */
+      accountStatus?: 'active' | 'disabled';
       /** @description Language */
       locale?: string | undefined;
       /** @description Timezone */
@@ -2499,7 +2505,7 @@ export interface components {
       /** @description Role Title */
       title: string;
       /** @description Role Locales */
-      locales?:
+      titleLocales?:
         | {
             [key: string]: string;
           }
@@ -3482,7 +3488,7 @@ export interface components {
           descriptionHtml?: string | undefined;
         }
       | undefined;
-    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7':
       | {
           /**
            * Format: date-time
@@ -3617,6 +3623,12 @@ export interface components {
        * @enum {string}
        */
       lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
+      product?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Product title */
+        title: string;
+      };
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3656,6 +3668,12 @@ export interface components {
            * @enum {string}
            */
           lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
+          product?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Product title */
+            title: string;
+          };
         }
       | undefined;
     'commerce-catalog.dto.skuUpdate': {
@@ -7130,7 +7148,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7'];
           };
         };
       };
