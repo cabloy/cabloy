@@ -98,6 +98,10 @@ The decision preserves the existing Admin `select`/`view` API and its independen
 
 Use the default renderer for ordinary text and simple values when it preserves business meaning. Use a shared renderer for dates, enum labels/selects, cents, resource identities, and reusable details. Introduce a Commerce-specific renderer only when those shared resources cannot preserve the documented meaning or interaction, and then follow the reverse contract loop before backend metadata references it.
 
+## Form Layout Authority
+
+This matrix defines the A-Commerce resource/scene information areas and presentation decisions; it does not define a separate form-layout grammar. Author `tabs`, `groups`, `sections`, `fields`, and renderable `blocks` with the repository [Form Layout Guide](../../../cabloy-docs/frontend/form-layout-guide.md). Apply the semantic authority boundary in [ADR 0003](./decisions/0003-semantic-presentation-contracts.md): groups express business information areas, sections provide local Grid/flow placement, and tabs are reserved for genuinely independent areas. Layout metadata remains a presentation translation and must not become product, DTO/API, authorization, state/page, or SSR authority.
+
 ## Related Records
 
 - [A-Commerce internal planning index](./README.md)
