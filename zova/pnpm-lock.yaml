@@ -31,7 +31,7 @@ importers:
         specifier: ^1.1.9
         version: 1.1.9
       '@cabloy/logger':
-        specifier: ^1.1.24
+        specifier: ^1.1.25
         version: link:packages-utils/logger
       '@cabloy/module-info':
         specifier: ^2.0.3
@@ -77,7 +77,7 @@ importers:
         version: 10.5.2(postcss@8.5.15)
       axios:
         specifier: ^1.18.1
-        version: 1.18.1(supports-color@10.2.2)
+        version: 1.18.1
       compression:
         specifier: ^1.8.1
         version: 1.8.1
@@ -136,7 +136,7 @@ importers:
         specifier: workspace:^
         version: link:packages-zova/zova
       zova-jsx:
-        specifier: ^1.1.84
+        specifier: ^1.1.85
         version: link:packages-utils/zova-jsx
       zova-module-a-api:
         specifier: workspace:^
@@ -357,7 +357,7 @@ importers:
     devDependencies:
       '@cabloy/cli':
         specifier: ^3.1.29
-        version: 3.1.29(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.29(vue@3.5.38(typescript@5.9.3))
       '@cabloy/lint':
         specifier: ^5.1.31
         version: 5.1.31(@typescript-eslint/eslint-plugin@8.62.1(@typescript-eslint/parser@8.62.1(eslint@10.6.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.6.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.62.1(eslint@10.6.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.62.1(typescript@5.9.3))(@typescript-eslint/utils@8.62.1(eslint@10.6.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.6.0(jiti@2.7.0))(oxfmt@0.62.0)(oxlint@1.77.0)(supports-color@10.2.2)(typescript@5.9.3)(vue-eslint-parser@10.4.1(eslint@10.6.0(jiti@2.7.0)))
@@ -432,7 +432,7 @@ importers:
     dependencies:
       '@cabloy/cli':
         specifier: ^3.1.29
-        version: 3.1.29(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.29(vue@3.5.38(typescript@5.9.3))
       '@cabloy/process-helper':
         specifier: ^3.1.8
         version: 3.1.8
@@ -466,7 +466,7 @@ importers:
         version: 7.29.7(@babel/core@7.29.7)
       '@cabloy/cli':
         specifier: ^3.1.29
-        version: 3.1.29(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.29(vue@3.5.38(typescript@5.9.3))
       '@cabloy/extend':
         specifier: ^3.2.8
         version: 3.2.8
@@ -671,8 +671,8 @@ importers:
   packages-utils/logger:
     dependencies:
       '@cabloy/localeutil':
-        specifier: ^2.1.8
-        version: 2.1.8
+        specifier: ^2.1.9
+        version: 2.1.9
       fecha:
         specifier: ^4.2.3
         version: 4.2.3
@@ -720,7 +720,7 @@ importers:
         specifier: ^3.5.38
         version: 3.5.38(typescript@5.9.3)
       zova-core:
-        specifier: ^5.1.84
+        specifier: ^5.1.85
         version: link:../../packages-zova/zova-core
     devDependencies:
       clean-package:
@@ -861,10 +861,10 @@ importers:
   packages-zova/zova:
     dependencies:
       zova-core:
-        specifier: ^5.1.84
+        specifier: ^5.1.85
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.146
+        specifier: ^5.1.147
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -886,10 +886,10 @@ importers:
         specifier: ^1.1.9
         version: 1.1.9
       '@cabloy/localeutil':
-        specifier: ^2.1.8
-        version: 2.1.8
+        specifier: ^2.1.9
+        version: 2.1.9
       '@cabloy/logger':
-        specifier: ^1.1.24
+        specifier: ^1.1.25
         version: link:../../packages-utils/logger
       '@cabloy/module-info':
         specifier: ^2.0.3
@@ -968,7 +968,7 @@ importers:
   src/suite-vendor/a-cabloy:
     dependencies:
       zova-module-rest-resource:
-        specifier: ^5.1.43
+        specifier: ^5.1.44
         version: link:modules/rest-resource
 
   src/suite-vendor/a-cabloy/modules/rest-resource:
@@ -1067,7 +1067,7 @@ importers:
         specifier: ^5.1.30
         version: link:modules/a-interceptor
       zova-module-a-logger:
-        specifier: ^5.1.26
+        specifier: ^5.1.27
         version: link:modules/a-logger
       zova-module-a-meta:
         specifier: ^5.1.21
@@ -1079,7 +1079,7 @@ importers:
         specifier: ^5.1.49
         version: link:modules/a-openapi
       zova-module-a-router:
-        specifier: ^5.1.32
+        specifier: ^5.1.33
         version: link:modules/a-router
       zova-module-a-routerstack:
         specifier: ^5.1.26
@@ -1088,7 +1088,7 @@ importers:
         specifier: ^5.1.33
         version: link:modules/a-routertabs
       zova-module-a-ssr:
-        specifier: ^5.1.34
+        specifier: ^5.1.35
         version: link:modules/a-ssr
       zova-module-a-ssrhmr:
         specifier: ^5.1.22
@@ -1106,7 +1106,7 @@ importers:
         specifier: ^5.1.36
         version: link:modules/a-zod
       zova-module-a-zova:
-        specifier: ^5.1.99
+        specifier: ^5.1.100
         version: link:modules/a-zova
 
   src/suite-vendor/a-zova/modules/a-api:
@@ -1180,7 +1180,7 @@ importers:
     dependencies:
       axios:
         specifier: ^1.18.1
-        version: 1.18.1(supports-color@10.2.2)
+        version: 1.18.1
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -1226,7 +1226,7 @@ importers:
   src/suite-vendor/a-zova/modules/a-logger:
     dependencies:
       '@cabloy/logger':
-        specifier: ^1.1.24
+        specifier: ^1.1.25
         version: link:../../../../../packages-utils/logger
     devDependencies:
       clean-package:
@@ -1448,12 +1448,12 @@ importers:
         specifier: ^3.7.2
         version: 3.7.2
       zova-jsx:
-        specifier: ^1.1.84
+        specifier: ^1.1.85
         version: link:../../../../../packages-utils/zova-jsx
     devDependencies:
       '@cabloy/cli':
         specifier: ^3.1.29
-        version: 3.1.29(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.29(vue@3.5.38(typescript@5.9.3))
       '@types/luxon':
         specifier: ^3.7.1
         version: 3.7.2
@@ -2268,8 +2268,8 @@ packages:
       oxfmt: '>=0.62.0'
       oxlint: '>=1.77.0'
 
-  '@cabloy/localeutil@2.1.8':
-    resolution: {integrity: sha512-haHUf245W2hmMrTw4UE23kOLcCPFj3XYWkjVYA643C/qhSGD7/ztMPf0VQL/AvmDnvIsjvKWdt79M4vjgOyD/A==}
+  '@cabloy/localeutil@2.1.9':
+    resolution: {integrity: sha512-77kvjOkRtRQ/eBuzzPYz8Zg09qRMb2ZAhq0admDK0BnS/OzLWs42rHENm0X1GNDlaSYr6ayD746SIeQHmD+j3Q==}
 
   '@cabloy/module-glob@5.3.18':
     resolution: {integrity: sha512-8O5nTC8qgtqq1HjKJGkf2VRIhVFtEvPezro9s/XBj/fDn7aWU1iBLNFYnjSriqjj4Y6QP4QMEA8IYYSfDZ3l5Q==}
@@ -8712,7 +8712,7 @@ snapshots:
 
   '@bufbuild/protobuf@2.12.1': {}
 
-  '@cabloy/cli@3.1.29(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))':
+  '@cabloy/cli@3.1.29(vue@3.5.38(typescript@5.9.3))':
     dependencies:
       '@babel/parser': 7.29.7
       '@cabloy/module-glob': 5.3.18
@@ -8721,7 +8721,7 @@ snapshots:
       '@cabloy/utils': 2.1.27
       '@cabloy/word-utils': link:packages-utils/word-utils
       '@npmcli/config': 10.11.0
-      '@zhennann/common-bin': 4.0.1(supports-color@10.2.2)
+      '@zhennann/common-bin': 4.0.1
       '@zhennann/ejs': 3.0.1
       boxen: 4.2.0
       chalk: 3.0.0
@@ -8790,7 +8790,7 @@ snapshots:
       - typescript
       - vue-eslint-parser
 
-  '@cabloy/localeutil@2.1.8': {}
+  '@cabloy/localeutil@2.1.9': {}
 
   '@cabloy/module-glob@5.3.18':
     dependencies:
@@ -10943,7 +10943,7 @@ snapshots:
 
   '@vue/shared@3.5.13': {}
 
-  '@zhennann/common-bin@4.0.1(supports-color@10.2.2)':
+  '@zhennann/common-bin@4.0.1':
     dependencies:
       chalk: 4.1.2
       change-case: 4.1.2
@@ -10977,7 +10977,7 @@ snapshots:
 
   acorn@8.17.0: {}
 
-  agent-base@6.0.2(supports-color@10.2.2):
+  agent-base@6.0.2:
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
@@ -11089,11 +11089,11 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axios@1.18.1(supports-color@10.2.2):
+  axios@1.18.1:
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.6
-      https-proxy-agent: 5.0.1(supports-color@10.2.2)
+      https-proxy-agent: 5.0.1
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
@@ -12504,9 +12504,9 @@ snapshots:
       statuses: 2.0.2
       toidentifier: 1.0.1
 
-  https-proxy-agent@5.0.1(supports-color@10.2.2):
+  https-proxy-agent@5.0.1:
     dependencies:
-      agent-base: 6.0.2(supports-color@10.2.2)
+      agent-base: 6.0.2
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
