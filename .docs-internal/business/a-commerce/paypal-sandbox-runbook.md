@@ -2,7 +2,7 @@
 
 ## Scope
 
-This runbook enables the `pay-paypal` Commerce path only for Sandbox verification. It does not authorize a live PayPal rollout or removal of legacy `a-paypal`.
+This concise runbook enables the `pay-paypal` Commerce path only for Sandbox verification. Use the [canonical PayPal Commerce Runbook](./paypal-commerce-runbook.md) for shared environment setup, tunnel/webhook details, diagnostics, and cutover constraints. It does not authorize a live PayPal rollout or removal of legacy `a-paypal`.
 
 ## Required non-committed configuration
 
@@ -37,7 +37,7 @@ The server must be publicly reachable at the configured origin. Callback URLs ar
 4. Approve with the Sandbox buyer. The browser returns through `/api/pay/payment-callback/return`; it triggers durable server capture/reconciliation but is not payment settlement itself.
 5. Confirm that the server creates/reuses the durable confirm operation, captures the persisted PayPal order with `Prefer: return=representation`, and reaches the provider-neutral PaymentSession terminal state.
 6. Confirm a verified webhook is stored, a single payment outbox event is dispatched, and Commerce receives exactly one payment outcome.
-7. Submit both full and partial refunds; confirm provider refund IDs persist and webhook/query races converge to one outcome.
+7. Submit provider-level full and partial refunds; confirm provider refund IDs persist and webhook/query races converge to one outcome. This validates A-Pay/PayPal reconciliation only: the A-Commerce MVP remains pre-shipment and whole-order refund only. Provider refund facts must not create a Commerce partial-refund API, state transition, stock/coupon rule, or UI path without separately approved PRD/SRS/WBS scope.
 8. Repeat a callback and webhook delivery to verify idempotency.
 
 ## Operational checks

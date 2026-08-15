@@ -416,7 +416,7 @@ Acceptance checks:
 
 ### Phase 80: Staged semantic-presentation rollout
 
-Dependencies: `WBS-70-03`, `WBS-70-04` local implementation completion. Each Phase-80 source slice additionally depends on retained CI evidence that verifies its predecessor; documentation-only scene-authority preparation may continue while CI evidence is pending.
+Dependencies: verified retained CI evidence for `WBS-70-03` and `WBS-70-04`. Each Phase-80 source slice additionally depends on retained CI evidence that verifies its predecessor; documentation-only scene-authority preparation may continue while a predecessor's CI evidence is pending.
 
 This phase applies the reusable contract from ADR 0003 serially. It does not reopen Coupon Template scope or authorize presentation metadata to change API membership, persistence, validation, authorization, Model/page ownership, customer flow, or SSR privacy. The [semantic-presentation rollout runbook](./semantic-presentation-rollout.md) owns session handoff detail only; this WBS remains the delivery authority.
 
@@ -440,7 +440,7 @@ Acceptance checks:
 
 - every Phase-80 batch has stable WBS and ATP identifiers, explicit exclusions, local-versus-CI closure rules, and a resumable handoff record;
 - the matrix, WBS, test plan, progress index, and runbook agree without creating a parallel requirements authority;
-- `WBS-70-03` and `WBS-70-04` retain their actual `implementation-complete` CI closure requirement.
+- `WBS-70-03` and `WBS-70-04` retain their verified CI closure; future presentation work must meet the same retained-evidence standard before dependent source work begins.
 
 #### WBS-80-01: Deliver the Catalogue Admin semantic-presentation wave
 

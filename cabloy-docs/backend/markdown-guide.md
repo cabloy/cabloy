@@ -181,7 +181,7 @@ Use this checklist when adding Markdown-backed content:
 3. Call `this.bean.markdown.renderHtml(...)` on every authoritative write path.
 4. Define a business policy for blank Markdown; do not assume `renderHtml('')` deletes records.
 5. Expose the source and projection separately according to the consumer's authority.
-6. Use `basic-markdown:formFieldMarkdown` for the Markdown form field.
+6. Use the edition-specific Markdown form field: `basic-markdown:formFieldMarkdown` in Cabloy Basic or `start-markdown:formFieldMarkdown` in Cabloy Start.
 7. Use `ZMarkdownHtml` only for HTML produced by the trusted server rendering path.
 8. Add tests for blank values, invalid URL schemes, task-list output, derived HTML consistency, and forged output fields.
 9. Treat external-image policy, CSP, authorization, and content lifecycle cleanup as application concerns beyond this renderer.

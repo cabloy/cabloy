@@ -7,6 +7,9 @@ This guide explains how Markdown works across the Cabloy Basic frontend and back
 
 The Zova frontend provides the editor and the trusted-HTML display component. The Vona backend owns Markdown parsing, HTML rendering, and sanitization.
 
+> [!NOTE]
+> The module identity is edition-specific: Cabloy Basic uses `basic-markdown` and `zova-module-basic-markdown`; Cabloy Start uses `start-markdown` and `zova-module-start-markdown`. Substitute the matching renderer ID and import path in every example below.
+
 Use this page together with:
 
 - [Form Guide](/frontend/form-guide)

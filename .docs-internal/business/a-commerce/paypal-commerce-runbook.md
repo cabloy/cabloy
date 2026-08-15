@@ -2,7 +2,7 @@
 
 ## Scope and documentation boundary
 
-This is a maintainer-facing operational reference for the `pay-paypal` Commerce path. It covers PayPal Sandbox/Live configuration, local HTTPS tunnel testing, webhook registration, and runtime diagnostics. It does not authorize removal of the legacy `a-paypal` module, replace the payment architecture or test plan, or make Live rollout decisions.
+This is the canonical maintainer-facing operational reference for the `pay-paypal` Commerce path. It covers PayPal Sandbox/Live configuration, local HTTPS tunnel testing, webhook registration, and runtime diagnostics. The shorter [PayPal Sandbox Commerce Runbook](./paypal-sandbox-runbook.md) is a Sandbox-only checklist; this document owns the detailed shared setup and diagnostics. It does not authorize removal of the legacy `a-paypal` module, replace the payment architecture or test plan, or make Live rollout decisions.
 
 User-facing setup guidance belongs in `cabloy-docs/`; this runbook records repository-specific wiring and operational checks.
 
@@ -153,7 +153,7 @@ Webhook delivery is asynchronous and at-least-once. Duplicate deliveries, webhoo
 4. Approve with the corresponding Sandbox buyer account. The browser returns through `/api/pay/payment-callback/return`; it triggers durable server capture/reconciliation but is not payment settlement itself.
 5. Confirm the server creates or reuses the durable confirm operation, captures the persisted PayPal order with `Prefer: return=representation`, and reaches a provider-neutral PaymentSession terminal state. The complete representation is required to verify order, purchase-unit, capture, amount/currency, and payee facts.
 6. Confirm a verified webhook is stored, one payment outbox event is dispatched, and Commerce receives exactly one payment outcome.
-7. Submit full and partial refunds; confirm provider refund IDs persist and webhook/query races converge to one outcome.
+7. Submit provider-level full and partial refunds; confirm provider refund IDs persist and webhook/query races converge to one outcome. This validates A-Pay/PayPal reconciliation only: the A-Commerce MVP remains pre-shipment and whole-order refund only. Provider refund facts must not create a Commerce partial-refund API, state transition, stock/coupon rule, or UI path without separately approved PRD/SRS/WBS scope.
 8. Repeat the exact valid return callback after the PaymentSession is terminal; it must redirect to the same trusted continuation path without another capture or a `409` response. Repeat a webhook delivery to verify idempotency.
 9. If a refund first reports pending, verify its linked `payProviderOperation` enters `reconciliation_required` and is resolved by durable refund query reconciliation or by a verified terminal refund webhook.
 
