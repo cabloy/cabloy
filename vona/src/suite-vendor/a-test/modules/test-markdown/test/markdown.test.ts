@@ -36,6 +36,26 @@ const sku = 'SKU-1';
     });
   });
 
+  it('renders explicit YouTube embeds without enabling bare URLs', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const html = app.bean.markdown.renderHtml(`
+:::youtube {src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" start="30" width="720" height="405"}
+:::
+
+https://www.youtube.com/watch?v=dQw4w9WgXcQ
+`);
+
+      assert.match(html, /<div data-youtube-video><iframe/);
+      assert.match(
+        html,
+        /src="https:\/\/www\.youtube-nocookie\.com\/embed\/dQw4w9WgXcQ\?[^"]*start=30[^"]*"/,
+      );
+      assert.match(html, /width="720" height="405"/);
+      assert.match(html, /allowfullscreen="true"/);
+      assert.doesNotMatch(html, /<iframe[^>]+src="https:\/\/www\.youtube\.com\/watch/);
+    });
+  });
+
   it('preserves disabled task-list checkboxes and their checked state', async () => {
     await app.bean.executor.mockCtx(async () => {
       const html = app.bean.markdown.renderHtml(`
@@ -71,6 +91,15 @@ const sku = 'SKU-1';
       assert.doesNotMatch(html, /<script/i);
       assert.doesNotMatch(html, /<iframe/i);
       assert.doesNotMatch(html, /<img[^>]+onerror|<a[^>]+onclick|<a[^>]+style=/i);
+
+      const unsafeEmbedHtml = app.bean.markdown.renderHtml(`
+:::youtube {src="https://attacker.example/embed/video"}
+:::
+
+<iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"></iframe>
+`);
+      assert.doesNotMatch(unsafeEmbedHtml, /attacker\.example/);
+      assert.doesNotMatch(unsafeEmbedHtml, /<iframe/i);
       assert.doesNotMatch(html, /<a[^>]+javascript:/i);
       assert.match(
         html,

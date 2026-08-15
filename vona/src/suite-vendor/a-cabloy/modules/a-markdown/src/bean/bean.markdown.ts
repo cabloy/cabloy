@@ -4,6 +4,7 @@ import { Highlight } from '@tiptap/extension-highlight';
 import { Image } from '@tiptap/extension-image';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
 import { TableKit } from '@tiptap/extension-table';
+import Youtube from '@tiptap/extension-youtube';
 import { Markdown, MarkdownManager } from '@tiptap/markdown';
 import StarterKit from '@tiptap/starter-kit';
 import { renderToHTMLString } from '@tiptap/static-renderer';
@@ -19,6 +20,10 @@ const extensions: AnyExtension[] = [
   Image,
   TableKit,
   Highlight,
+  Youtube.configure({
+    addPasteHandler: false,
+    nocookie: true,
+  }),
 ];
 
 const markdownManager = new MarkdownManager({
@@ -36,6 +41,7 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
     'del',
     'div',
     'em',
+    'iframe',
     'h1',
     'h2',
     'h3',
@@ -64,6 +70,8 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
   allowedAttributes: {
     a: ['href', 'rel', 'target', 'title'],
     code: ['class'],
+    div: ['data-youtube-video'],
+    iframe: ['allowfullscreen', 'height', 'src', 'width'],
     img: ['alt', 'height', 'src', 'title', 'width'],
     input: ['checked', 'disabled', 'type'],
     li: ['data-checked', 'data-type'],
@@ -76,10 +84,13 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
   },
   allowedSchemes: ['http', 'https', 'mailto'],
   allowedSchemesByTag: {
+    iframe: ['https'],
     img: ['http', 'https'],
   },
+  allowedIframeHostnames: ['www.youtube-nocookie.com'],
   allowedSchemesAppliedToAttributes: ['href', 'src'],
   allowProtocolRelative: false,
+  exclusiveFilter: frame => frame.tag === 'iframe' && !frame.attribs.src,
   transformTags: {
     a: sanitizeHtml.simpleTransform('a', { rel: 'noopener noreferrer' }),
     input: (_tagName, attribs) => {
