@@ -19,6 +19,7 @@ export const routes: IModuleRoute[] = [
   },
   {
     path: 'payment/:paymentSessionId/:orderId',
+    name: 'payment',
     component: ZPagePayment,
     meta: { requiresAuth: true, ssrProfile: 'session' },
   },
@@ -29,6 +30,7 @@ export const routes: IModuleRoute[] = [
   },
   {
     path: 'order/:id',
+    name: 'order',
     component: ZPageOrder,
     meta: { requiresAuth: true, ssrProfile: 'session' },
   },

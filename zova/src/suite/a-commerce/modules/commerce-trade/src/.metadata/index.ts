@@ -299,7 +299,8 @@ export interface IPagePathRecord {
 '/commerce/trade/payment/:paymentSessionId/:orderId': TypePagePathSchema<NSControllerPagePayment.ParamsInput,NSControllerPagePayment.QueryInput>;
 }
 export interface IPageNameRecord {
-  
+  'commerce-trade:order': TypePagePathSchema<NSControllerPageOrder.ParamsInput,NSControllerPageOrder.QueryInput>;
+'commerce-trade:payment': TypePagePathSchema<NSControllerPagePayment.ParamsInput,NSControllerPagePayment.QueryInput>;
 }
 }
 export const pagePathSchemas = {
@@ -309,18 +310,19 @@ export const pagePathSchemas = {
 '/commerce/trade/checkout': {
           query: NSControllerPageCheckout.querySchema,
         },
-'/commerce/trade/order/:id': {
-          query: NSControllerPageOrder.querySchema,
-        },
 '/commerce/trade/orders': {
           query: NSControllerPageOrders.querySchema,
         },
-'/commerce/trade/payment/:paymentSessionId/:orderId': {
-          query: NSControllerPagePayment.querySchema,
-        },
 };
 export const pageNameSchemas = {
-
+'commerce-trade:order': {
+          params: NSControllerPageOrder.paramsSchema,
+          query: NSControllerPageOrder.querySchema,
+        },
+'commerce-trade:payment': {
+          params: NSControllerPagePayment.paramsSchema,
+          query: NSControllerPagePayment.querySchema,
+        },
 };
 declare module 'zova-module-commerce-trade' {
   export interface ControllerPageCart {
