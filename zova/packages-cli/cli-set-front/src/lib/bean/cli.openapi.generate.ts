@@ -338,7 +338,7 @@ export const OpenApiBaseURL = (sys: ZovaSys) => {
         : `options${_q(contentOptionsQuestion)}: IApiActionOptions,`;
     // content: request body
     let contentRequestBody = '';
-    if (!['get', 'delete'].includes(pathInfo.method)) {
+    if (pathInfo.method !== 'get' && (pathInfo.method !== 'delete' || nameRequestBody)) {
       if (!nameRequestBody) {
         contentRequestBody = `body${_q(contentOptionsQuestion)}: undefined,`;
       } else {
@@ -357,15 +357,26 @@ export const OpenApiBaseURL = (sys: ZovaSys) => {
     const contentComments =
       pathInfo.comments && pathInfo.comments.length > 0 ? `/*${pathInfo.comments.join()}*/\n` : '';
     // content: body
-    const contentBodyParams = isUpload ? 'this.$formData(body)' : 'body';
+    const contentBodyParams = isUpload
+      ? nameRequestBodyQuestion
+        ? 'body ? this.$formData(body) : undefined'
+        : 'this.$formData(body)'
+      : 'body';
+    const contentConfig =
+      pathInfo.method === 'delete' && contentRequestBody
+        ? `{
+          ...this.$configPrepare(OpenApiBaseURL(this.sys), options${contentAuthToken}),
+          data: ${contentBodyParams},
+        }`
+        : `this.$configPrepare(OpenApiBaseURL(this.sys), options${contentAuthToken})`;
     // content: signature
     const contentSignature = `${contentComments}${nodeActionInfo.action}(
       ${contentRequestBody}
       ${contentOptions2}
     ) {
       return this.$fetch.${pathInfo.method}<any, ${nameResponseBody}>(
-        ${contentPathTranslate} ${contentRequestBody ? `${contentBodyParams},` : ''}
-        this.$configPrepare(OpenApiBaseURL(this.sys), options${contentAuthToken}),
+        ${contentPathTranslate} ${contentRequestBody && pathInfo.method !== 'delete' ? `${contentBodyParams},` : ''}
+        ${contentConfig},
       );
     }\n`;
     return [

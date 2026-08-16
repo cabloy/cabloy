@@ -21,7 +21,7 @@ export interface IInterceptorOptionsBodyReq extends IDecoratorInterceptorOptions
     xmlLimit: '20mb',
     jsonStrict: true,
     detectJSON: undefined,
-    parsedMethods: ['POST', 'PUT', 'PATCH'],
+    parsedMethods: ['POST', 'PUT', 'PATCH', 'DELETE'],
     extendTypes: {},
   },
 })
