@@ -27,6 +27,6 @@ export interface IDtoOptionsStockBalanceView extends IDecoratorDtoOptions {}
 export class DtoStockBalanceView extends $Dto.get(() => ModelStockBalance, {
   columns: ['id', 'skuId', 'onHand', 'reserved', 'available', 'createdAt', 'updatedAt'],
 }) {
-  @Api.field(v.optional(), v.object(DtoStockSkuRef))
+  @Api.field(ZovaRender.visible(false), v.optional(), v.object(DtoStockSkuRef))
   sku?: DtoStockSkuRef;
 }

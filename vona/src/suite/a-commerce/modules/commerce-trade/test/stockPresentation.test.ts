@@ -24,6 +24,7 @@ function assertStockSkuRef(apiJson: any, schema: any) {
   const component = apiJson.components?.schemas?.[componentName];
   assert.ok(component);
   assert.deepEqual(Object.keys(component.properties).sort(), ['code', 'id']);
+  assert.equal(component.rest.visible, false);
 }
 
 function getListFilter(component: any) {

@@ -45,6 +45,6 @@ export class DtoStockAuditView extends $Dto.get(() => ModelStockAudit, {
     'updatedAt',
   ],
 }) {
-  @Api.field(v.optional(), v.object(DtoStockSkuRef))
+  @Api.field(ZovaRender.visible(false), v.optional(), v.object(DtoStockSkuRef))
   sku?: DtoStockSkuRef;
 }

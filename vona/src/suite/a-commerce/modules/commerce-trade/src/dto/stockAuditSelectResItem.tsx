@@ -51,7 +51,7 @@ export class DtoStockAuditSelectResItem extends $Dto.get(() => ModelStockAudit, 
   @Api.field(ZovaRender.order(1, 'core'), ZovaRender.cell('basic-table:actionView'))
   declare id: EntityStockAudit['id'];
 
-  @Api.field(v.optional(), v.object(DtoStockSkuRef))
+  @Api.field(ZovaRender.visible(false), v.optional(), v.object(DtoStockSkuRef))
   sku?: DtoStockSkuRef;
 
   @Api.field(
