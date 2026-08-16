@@ -3107,9 +3107,16 @@ export interface components {
       operation: 'adjust' | 'reserve' | 'consume' | 'release' | 'restore';
       /** @description Delta */
       delta: number;
+      sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849':
+      | {
+          id: number | string;
+          code: string;
+        }
+      | undefined;
     'commerce-trade.dto.stockAuditView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -3155,6 +3162,7 @@ export interface components {
           reserved: number;
           /** @description Available */
           available: number;
+          sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
         }
       | undefined;
     'commerce-trade.entity.stockBalance': {
@@ -3218,6 +3226,7 @@ export interface components {
       reserved: number;
       /** @description Available */
       available: number;
+      sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3243,6 +3252,7 @@ export interface components {
           reserved: number;
           /** @description Available */
           available: number;
+          sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
         }
       | undefined;
     'commerce-catalog.dto.categoryCreate': {
@@ -3376,6 +3386,10 @@ export interface components {
       published?: boolean;
       /** @description Description */
       description?: string | undefined;
+      productContentForm?: {
+        /** @description Product description (Markdown) */
+        descriptionMarkdown?: string | undefined;
+      };
     };
     'commerce-catalog.dto.productSelectRes': {
       list: components['schemas']['commerce-catalog.dto.productSelectResItem'][];
@@ -3464,7 +3478,7 @@ export interface components {
       /** @description Available */
       available: number;
     };
-    'commerce-catalog.dto.productPublic_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+    'commerce-catalog.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           id: number | string;
           /** @description Product title */
@@ -3480,9 +3494,11 @@ export interface components {
           /** @description Available */
           available: number;
           skuAvailables: components['schemas']['commerce-catalog.dto.productPublicSku'][];
+          /** @description Product description (HTML) */
+          descriptionHtml?: string | undefined;
         }
       | undefined;
-    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7':
       | {
           /**
            * Format: date-time
@@ -3528,6 +3544,13 @@ export interface components {
              */
             published?: boolean;
           };
+          productContentForm?: {
+            /** @description ID */
+            id: number | string;
+            productId: number | string;
+            /** @description Product description (Markdown) */
+            descriptionMarkdown?: string | undefined;
+          };
         }
       | undefined;
     'commerce-catalog.dto.productUpdate': {
@@ -3542,6 +3565,17 @@ export interface components {
       published?: boolean;
       /** @description Description */
       description?: string | undefined;
+      productContentForm?: {
+        /**
+         * @description Deleted
+         * @default false
+         */
+        deleted?: boolean | undefined;
+        /** @description ID */
+        id?: number | string | undefined;
+        /** @description Product description (Markdown) */
+        descriptionMarkdown?: string | undefined;
+      };
     };
     'commerce-catalog.dto.skuCreate': {
       /** @description SKU code */
@@ -3599,6 +3633,12 @@ export interface components {
        * @enum {string}
        */
       lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
+      product?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Product title */
+        title: string;
+      };
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3638,6 +3678,12 @@ export interface components {
            * @enum {string}
            */
           lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
+          product?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Product title */
+            title: string;
+          };
         }
       | undefined;
     'commerce-catalog.dto.skuUpdate': {
@@ -7087,7 +7133,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-catalog.dto.productPublic_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+            data?: components['schemas']['commerce-catalog.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
           };
         };
       };
@@ -7112,7 +7158,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7'];
           };
         };
       };

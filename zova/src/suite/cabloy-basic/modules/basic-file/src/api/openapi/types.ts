@@ -95,14 +95,14 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/home/base/menu/{publicPath?}': {
+  '/api/pay/payment-callback/return': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get: operations['HomeBaseMenu_retrieveMenus'];
+    get: operations['PayPaymentCallback_returned'];
     put?: never;
     post?: never;
     delete?: never;
@@ -111,14 +111,14 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/home/base/permission/{resource}': {
+  '/api/pay/payment-callback/cancel': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get: operations['HomeBasePermission_retrievePermissions'];
+    get: operations['PayPaymentCallback_cancelled'];
     put?: never;
     post?: never;
     delete?: never;
@@ -127,15 +127,158 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/': {
+  '/api/pay/payment-session/{id}/start': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** @description Home */
-    get: operations['Home_index'];
+    get?: never;
+    put?: never;
+    post: operations['PayPaymentSession_start'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/pay/payment-session/{id}/reconcile': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PayPaymentSession_reconcile'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/pay/payment-session/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['PayPaymentSession_view'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/member/address/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceMemberAddress_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/member/address/viewMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceMemberAddress_viewMine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/member/address/createMine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceMemberAddress_createMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/member/address/updateMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch: operations['CommerceMemberAddress_updateMine'];
+    trace?: never;
+  };
+  '/api/commerce/member/address/deleteMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['CommerceMemberAddress_deleteMine'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/member/address': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceMemberAddress_select'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/member/address/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceMemberAddress_view'];
     put?: never;
     post?: never;
     delete?: never;
@@ -304,6 +447,631 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/commerce/siteadmin/operator/context': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceSiteadminOperator_context'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/promotion/coupon/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommercePromotionCoupon_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/promotion/coupon/issue': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommercePromotionCoupon_issue'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/promotion/couponTemplate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommercePromotionCouponTemplate_select'];
+    put?: never;
+    post: operations['CommercePromotionCouponTemplate_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/promotion/couponTemplate/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommercePromotionCouponTemplate_view'];
+    put?: never;
+    post?: never;
+    delete: operations['CommercePromotionCouponTemplate_delete'];
+    options?: never;
+    head?: never;
+    patch: operations['CommercePromotionCouponTemplate_update'];
+    trace?: never;
+  };
+  '/api/commerce/trade/cart': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeCart_current'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/cart/items': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeCart_addItem'];
+    delete: operations['CommerceTradeCart_clear'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/cart/items/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['CommerceTradeCart_deleteItem'];
+    options?: never;
+    head?: never;
+    patch: operations['CommerceTradeCart_updateItem'];
+    trace?: never;
+  };
+  '/api/commerce/trade/checkout/payment-methods': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeCheckout_paymentMethods'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/checkout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeCheckout_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeOrder_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/viewMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeOrder_viewMine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/requestRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_requestRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/approveRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_approveRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/rejectRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_rejectRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/executeRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_executeRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/refundRecovery': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeOrder_refundRecovery'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/reconcileRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_reconcileRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/retryRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_retryRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/ship': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_ship'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeOrder_select'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeOrder_view'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/stockAudit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeStockAudit_select'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/stockAudit/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeStockAudit_view'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/stockBalance/adjustStock': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeStockBalance_adjustStock'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/stockBalance': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeStockBalance_select'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/stockBalance/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeStockBalance_view'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/catalog/category': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceCatalogCategory_select'];
+    put?: never;
+    post: operations['CommerceCatalogCategory_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/catalog/category/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceCatalogCategory_view'];
+    put?: never;
+    post?: never;
+    delete: operations['CommerceCatalogCategory_delete'];
+    options?: never;
+    head?: never;
+    patch: operations['CommerceCatalogCategory_update'];
+    trace?: never;
+  };
+  '/api/commerce/catalog/product': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceCatalogProduct_select'];
+    put?: never;
+    post: operations['CommerceCatalogProduct_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/catalog/product/public': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceCatalogProduct_selectPublic'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/catalog/product/public/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceCatalogProduct_viewPublic'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/catalog/product/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceCatalogProduct_view'];
+    put?: never;
+    post?: never;
+    delete: operations['CommerceCatalogProduct_delete'];
+    options?: never;
+    head?: never;
+    patch: operations['CommerceCatalogProduct_update'];
+    trace?: never;
+  };
+  '/api/commerce/catalog/sku': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceCatalogSku_select'];
+    put?: never;
+    post: operations['CommerceCatalogSku_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/catalog/sku/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceCatalogSku_view'];
+    put?: never;
+    post?: never;
+    delete: operations['CommerceCatalogSku_delete'];
+    options?: never;
+    head?: never;
+    patch: operations['CommerceCatalogSku_update'];
+    trace?: never;
+  };
+  '/api/home/base/menu/{publicPath?}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['HomeBaseMenu_retrieveMenus'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/home/base/permission/{resource}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['HomeBasePermission_retrievePermissions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/home/base/siteCatalog': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['HomeBaseSiteCatalog_select'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Home */
+    get: operations['Home_index'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/training/record': {
     parameters: {
       query?: never;
@@ -395,6 +1163,22 @@ export interface paths {
     put?: never;
     post?: never;
     delete: operations['TrainingStudent_deleteForce'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/basic/metrics/snapshot': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['BasicMetrics_snapshot'];
+    put?: never;
+    post?: never;
+    delete?: never;
     options?: never;
     head?: never;
     patch?: never;
@@ -586,6 +1370,38 @@ export interface paths {
     get: operations['Image_delivery'];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/pay/mock/payment-session/{id}/complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PayMockMockPayment_complete'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/pay/mock/payment-session/refund-operation/{id}/complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PayMockMockPayment_completeRefund'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1410,43 +2226,192 @@ export interface components {
       token?: unknown;
       payload?: unknown;
     };
-    'a-menu.dto.menus': {
-      menus?: components['schemas']['a-menu.dto.menuItem'][] | undefined;
-      groups?: components['schemas']['a-menu.dto.menuGroup'][] | undefined;
+    'a-pay.dto.paymentSessionView': {
+      id: number | string;
+      /** @enum {string} */
+      state:
+        | 'created'
+        | 'starting'
+        | 'requires_action'
+        | 'processing'
+        | 'succeeded'
+        | 'failed'
+        | 'cancelled'
+        | 'expired';
+      providerName: string;
+      nextAction?:
+        | {
+            /** @enum {string} */
+            kind: 'redirect';
+            /** Format: uri */
+            url: string;
+          }
+        | {
+            /** @enum {string} */
+            kind: 'embedded';
+            clientToken: string;
+            publishableConfig?:
+              | {
+                  [key: string]: string;
+                }
+              | undefined;
+          }
+        | {
+            /** @enum {string} */
+            kind: 'pending';
+            retryAfterSeconds?: number | undefined;
+          }
+        | {
+            /** @enum {string} */
+            kind: 'completed';
+          }
+        | undefined;
+      amountMinor: number;
+      currency: string;
     };
-    'a-menu.dto.menuItem': {
-      name: string;
-      title?: string | undefined;
-      description?: string | undefined;
-      icon?: string | undefined;
-      order?: number | undefined;
-      group?: string | string[] | undefined;
-      separator?: boolean | undefined;
-      link?: string | undefined;
-      external?: boolean | undefined;
-      target?: string | undefined;
-      meta?: components['schemas']['a-menu.dto.menuItemMeta_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+    'commerce-member.dto.addressMineRes': {
+      list: components['schemas']['commerce-member.dto.addressMineItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
     };
-    'a-menu.dto.menuItemMeta_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+    'commerce-member.dto.addressMineItem': {
+      /** @description ID */
+      id: number | string;
+      /** @description Recipient Name */
+      recipientName: string;
+      /** @description Phone */
+      phone: string;
+      /** @description Country Code */
+      countryCode: string;
+      /** @description Region */
+      region: string;
+      /** @description City */
+      city: string;
+      /** @description Postal Code */
+      postalCode: string;
+      /** @description Address Line 1 */
+      addressLine1: string;
+      /** @description Address Line 2 */
+      addressLine2?: string | undefined;
+    };
+    'commerce-member.dto.addressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
-          params?: unknown;
-          query?: unknown;
+          /** @description ID */
+          id: number | string;
+          /** @description Recipient Name */
+          recipientName: string;
+          /** @description Phone */
+          phone: string;
+          /** @description Country Code */
+          countryCode: string;
+          /** @description Region */
+          region: string;
+          /** @description City */
+          city: string;
+          /** @description Postal Code */
+          postalCode: string;
+          /** @description Address Line 1 */
+          addressLine1: string;
+          /** @description Address Line 2 */
+          addressLine2?: string | undefined;
         }
       | undefined;
-    'a-menu.dto.menuGroup': {
-      name: string;
-      title?: string | undefined;
-      description?: string | undefined;
-      icon?: string | undefined;
-      order?: number | undefined;
-      group?: string | string[] | undefined;
-      collapsed?: boolean | undefined;
+    'commerce-member.dto.addressMineCreate': {
+      /** @description Recipient Name */
+      recipientName: string;
+      /** @description Phone */
+      phone: string;
+      /** @description Country Code */
+      countryCode: string;
+      /** @description Region */
+      region: string;
+      /** @description City */
+      city: string;
+      /** @description Postal Code */
+      postalCode: string;
+      /** @description Address Line 1 */
+      addressLine1: string;
+      /** @description Address Line 2 */
+      addressLine2?: string | undefined;
     };
-    'a-permission.dto.permissions': {
-      roleIds?: (number | string)[] | undefined;
-      roleNames?: string[] | undefined;
-      actions?: unknown;
+    'commerce-member.dto.addressMineUpdate': {
+      /** @description Recipient Name */
+      recipientName: string;
+      /** @description Phone */
+      phone: string;
+      /** @description Country Code */
+      countryCode: string;
+      /** @description Region */
+      region: string;
+      /** @description City */
+      city: string;
+      /** @description Postal Code */
+      postalCode: string;
+      /** @description Address Line 1 */
+      addressLine1: string;
+      /** @description Address Line 2 */
+      addressLine2?: string | undefined;
     };
+    'commerce-member.dto.addressSelectRes': {
+      list: components['schemas']['commerce-member.dto.addressSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'commerce-member.dto.addressSelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /** @description ID */
+      id?: unknown;
+      /** @description Recipient Name */
+      recipientName: string;
+      /** @description Phone */
+      phone: string;
+      /** @description Country Code */
+      countryCode: string;
+      /** @description City */
+      city: string;
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'commerce-member.dto.addressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+      | {
+          /**
+           * Format: date-time
+           * @description Created At
+           */
+          createdAt: Date;
+          /**
+           * Format: date-time
+           * @description Updated At
+           */
+          updatedAt: Date;
+          /** @description ID */
+          id: number | string;
+          /** @description Recipient Name */
+          recipientName: string;
+          /** @description Phone */
+          phone: string;
+          /** @description Country Code */
+          countryCode: string;
+          /** @description Region */
+          region: string;
+          /** @description City */
+          city: string;
+          /** @description Postal Code */
+          postalCode: string;
+          /** @description Address Line 1 */
+          addressLine1: string;
+          /** @description Address Line 2 */
+          addressLine2?: string | undefined;
+        }
+      | undefined;
     'home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           user: components['schemas']['home-user.entity.user'];
@@ -1486,10 +2451,16 @@ export interface components {
       /** @description Mobile */
       mobile?: string | undefined;
       /**
-       * @description Activated
+       * @description Identity Activated
        * @default false
        */
       activated?: boolean;
+      /**
+       * @description Account Status
+       * @default active
+       * @enum {string}
+       */
+      accountStatus?: 'active' | 'disabled';
       /** @description Language */
       locale?: string | undefined;
       /** @description Timezone */
@@ -1534,7 +2505,7 @@ export interface components {
       /** @description Role Title */
       title: string;
       /** @description Role Locales */
-      locales?:
+      titleLocales?:
         | {
             [key: string]: string;
           }
@@ -1575,6 +2546,1207 @@ export interface components {
     'a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661': {
       id: string;
       token: string;
+    };
+    'commerce-siteadmin.dto.operatorContext': {
+      instanceId: string;
+      instanceName: string;
+      userId: string;
+      userName: string;
+    };
+    'commerce-promotion.dto.couponMineItem': {
+      id: number | string;
+      couponCode: string;
+      templateName: string;
+      /** @enum {string} */
+      currency: 'USD';
+      discountCents: number;
+      minSpendCents: number;
+      /** Format: date-time */
+      validUntil: Date;
+    };
+    'commerce-promotion.dto.couponIssue': {
+      templateId: number | string;
+      userId: number | string;
+      correlationId: string;
+      reason: string;
+    };
+    'commerce-promotion.dto.couponTemplateCreate': {
+      /** @description Name */
+      name: string;
+      /**
+       * @description Template State
+       * @enum {string}
+       */
+      state: 'draft' | 'active';
+      /**
+       * @description Currency
+       * @enum {string}
+       */
+      currency: 'USD';
+      /** @description Fixed Discount */
+      discountCents: number;
+      /** @description Minimum Spend */
+      minSpendCents: number;
+      /**
+       * Format: date-time
+       * @description Valid From
+       */
+      validFrom: Date;
+      /**
+       * Format: date-time
+       * @description Valid Until
+       */
+      validUntil: Date;
+      /** @description Total Issue Limit */
+      totalIssueLimit?: number | undefined;
+      /** @description Total Usage Limit */
+      totalUsageLimit?: number | undefined;
+      /** @description Per-customer Issue Limit */
+      perCustomerIssueLimit?: number | undefined;
+      /** @description Description */
+      description?: string | undefined;
+    };
+    'commerce-promotion.dto.couponTemplateSelectRes': {
+      list: components['schemas']['commerce-promotion.dto.couponTemplateSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'commerce-promotion.dto.couponTemplateSelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /**
+       * @description Instance ID
+       * @default 0
+       */
+      iid?: number;
+      /** @description ID */
+      id: number | string;
+      /** @description Name */
+      name: string;
+      /**
+       * @description Template State
+       * @enum {string}
+       */
+      state: 'draft' | 'active' | 'disabled';
+      /**
+       * @description Currency
+       * @enum {string}
+       */
+      currency: 'USD';
+      /** @description Fixed Discount */
+      discountCents: number;
+      /** @description Minimum Spend */
+      minSpendCents: number;
+      /**
+       * Format: date-time
+       * @description Valid From
+       */
+      validFrom: Date;
+      /**
+       * Format: date-time
+       * @description Valid Until
+       */
+      validUntil: Date;
+      /** @description Total Issue Limit */
+      totalIssueLimit?: number | undefined;
+      /** @description Total Usage Limit */
+      totalUsageLimit?: number | undefined;
+      /** @description Per-customer Issue Limit */
+      perCustomerIssueLimit?: number | undefined;
+      /** @description Issued Count */
+      issuedCount: number;
+      /** @description Redeemed Count */
+      redeemedCount: number;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b':
+      | {
+          /**
+           * Format: date-time
+           * @description Created At
+           */
+          createdAt: Date;
+          /**
+           * Format: date-time
+           * @description Updated At
+           */
+          updatedAt: Date;
+          /**
+           * @description Deleted
+           * @default false
+           */
+          deleted?: boolean;
+          /**
+           * @description Instance ID
+           * @default 0
+           */
+          iid?: number;
+          /** @description ID */
+          id: number | string;
+          /** @description Name */
+          name: string;
+          /**
+           * @description Template State
+           * @enum {string}
+           */
+          state: 'draft' | 'active' | 'disabled';
+          /**
+           * @description Currency
+           * @enum {string}
+           */
+          currency: 'USD';
+          /** @description Fixed Discount */
+          discountCents: number;
+          /** @description Minimum Spend */
+          minSpendCents: number;
+          /**
+           * Format: date-time
+           * @description Valid From
+           */
+          validFrom: Date;
+          /**
+           * Format: date-time
+           * @description Valid Until
+           */
+          validUntil: Date;
+          /** @description Total Issue Limit */
+          totalIssueLimit?: number | undefined;
+          /** @description Total Usage Limit */
+          totalUsageLimit?: number | undefined;
+          /** @description Per-customer Issue Limit */
+          perCustomerIssueLimit?: number | undefined;
+          /** @description Issued Count */
+          issuedCount: number;
+          /** @description Redeemed Count */
+          redeemedCount: number;
+          /** @description Description */
+          description?: string | undefined;
+        }
+      | undefined;
+    'commerce-promotion.dto.couponTemplateUpdate': {
+      name?: string | undefined;
+      /** @enum {string|null} */
+      state?: 'draft' | 'active' | 'disabled' | null | undefined;
+      description?: string | undefined;
+    };
+    'commerce-trade.dto.cartView': {
+      id?: number | string | undefined;
+      items: components['schemas']['commerce-trade.dto.cartItem'][];
+    };
+    /** @description Cart Item */
+    'commerce-trade.dto.cartItem': {
+      id: number | string;
+      skuId: number | string;
+      quantity: number;
+      skuCode: string;
+      productTitle: string;
+      priceCents: number;
+      available: number;
+    };
+    /** @description Add Cart Item */
+    'commerce-trade.dto.cartAddItem': {
+      /** @description SKU ID */
+      skuId: number | string;
+      /** @description Quantity */
+      quantity: number;
+    };
+    /** @description Update Cart Item */
+    'commerce-trade.dto.cartUpdateItem': {
+      /** @description Quantity */
+      quantity: number;
+    };
+    'commerce-trade.dto.checkoutPaymentMethods': {
+      items: components['schemas']['commerce-trade.dto.checkoutPaymentMethod'][];
+      defaultKey: string;
+    };
+    'commerce-trade.dto.checkoutPaymentMethod': {
+      key: string;
+      label: string;
+      /** @enum {string} */
+      interaction: 'redirect' | 'embedded';
+    };
+    'commerce-trade.dto.checkoutResult': {
+      orderId: number | string;
+      paymentAttemptId: number | string;
+      paymentSessionId: number | string;
+      /** @enum {string} */
+      state: 'awaiting_payment' | 'paid' | 'cancelled' | 'expired';
+      /** @enum {string} */
+      paymentAttemptState: 'created' | 'succeeded' | 'failed' | 'cancelled';
+      /** @enum {string} */
+      currency: 'USD';
+      payableTotalCents: number;
+      /** Format: date-time */
+      reservationExpiresAt: Date;
+    };
+    'commerce-trade.dto.checkoutCreate': {
+      addressId: number | string;
+      couponGrantId?: number | string | undefined;
+      correlationId: string;
+      providerCandidateKey?: string | undefined;
+    };
+    'commerce-trade.dto.orderMineRes': {
+      list: components['schemas']['commerce-trade.dto.orderSummary'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'commerce-trade.dto.orderSummary': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /** @description ID */
+      id: number | string;
+      /** @enum {string} */
+      state:
+        | 'awaiting_payment'
+        | 'paid'
+        | 'refund_requested'
+        | 'refund_approved'
+        | 'refund_rejected'
+        | 'shipped'
+        | 'refunded'
+        | 'cancelled'
+        | 'expired';
+      /** @enum {string} */
+      currency: 'USD';
+      payableTotalCents: number;
+    };
+    'commerce-trade.dto.orderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          id: number | string;
+          /** @enum {string} */
+          state:
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired';
+          /** @enum {string} */
+          currency: 'USD';
+          eligibleSubtotalCents: number;
+          discountCents: number;
+          payableTotalCents: number;
+          /** Format: date-time */
+          reservationExpiresAt: Date;
+          addressSnapshot: components['schemas']['commerce-trade.dto.orderAddressSnapshot'];
+          couponSnapshot?: components['schemas']['commerce-trade.dto.orderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          shipment?: components['schemas']['commerce-trade.dto.shipmentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          lines: {
+            id: number | string;
+            skuCodeSnapshot: string;
+            titleSnapshot: string;
+            skuAttributesSnapshot: components['schemas']['commerce-trade.dto.orderLineSkuAttributeSnapshot'][];
+            unitPriceCents: number;
+            quantity: number;
+            lineTotalCents: number;
+          }[];
+        }
+      | undefined;
+    'commerce-trade.dto.orderAddressSnapshot': {
+      recipientName: string;
+      phone: string;
+      countryCode: string;
+      region: string;
+      city: string;
+      postalCode: string;
+      addressLine1: string;
+      addressLine2?: string | undefined;
+    };
+    'commerce-trade.dto.orderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          couponGrantId: number | string;
+          couponTemplateId: number | string;
+          couponCode: string;
+          templateName: string;
+          /** @enum {string} */
+          currency: 'USD';
+          fixedDiscountCents: number;
+          minSpendCents: number;
+          appliedDiscountCents: number;
+        }
+      | undefined;
+    'commerce-trade.dto.shipmentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          /** @description ID */
+          id: number | string;
+          carrier: string;
+          trackingNumber: string;
+          /** Format: date-time */
+          shippedAt: Date;
+        }
+      | undefined;
+    'commerce-trade.dto.orderLineSkuAttributeSnapshot': {
+      name: string;
+      value: string;
+    };
+    'commerce-trade.dto.refundResult': {
+      orderId: number | string;
+      refundRequestId: number | string;
+      refundAttemptId?: number | string | undefined;
+      refundOperationId?: number | string | undefined;
+      /** @enum {string} */
+      orderState: 'paid' | 'refund_requested' | 'refund_approved' | 'refund_rejected' | 'refunded';
+      /** @enum {string} */
+      refundState: 'requested' | 'approved' | 'rejected' | 'refunded' | 'failed';
+      /** @enum {string|null} */
+      refundAttemptState?: 'created' | 'succeeded' | 'failed' | null | undefined;
+      /** @enum {string} */
+      currency: 'USD';
+      amountCents: number;
+    };
+    'commerce-trade.dto.refundRequestCreate': {
+      reason: string;
+      idempotencyKey: string;
+    };
+    'commerce-trade.dto.refundReview': {
+      reason: string;
+      idempotencyKey: string;
+    };
+    'commerce-trade.dto.refundRecoveryView': {
+      orderId: number | string;
+      refundRequestId: number | string;
+      refundAttemptId: number | string;
+      refundOperationId: number | string;
+      providerOperationId: number | string;
+      providerName: string;
+      /** @enum {string} */
+      environment: 'sandbox' | 'live';
+      /** @enum {string} */
+      refundOperationState:
+        | 'created'
+        | 'submitting'
+        | 'pending'
+        | 'succeeded'
+        | 'failed'
+        | 'cancelled';
+      /** @enum {string} */
+      providerOperationState:
+        | 'created'
+        | 'claimed'
+        | 'submitted'
+        | 'succeeded'
+        | 'failed'
+        | 'reconciliation_required';
+      attemptCount: number;
+      providerRefundId?: string | undefined;
+      errorCode?: string | undefined;
+      errorSummary?: string | undefined;
+      /** Format: date-time */
+      submittedAt?: Date;
+      /** Format: date-time */
+      finalizedAt?: Date;
+      /** @enum {string} */
+      recoveryDisposition: 'none' | 'reconcile_only' | 'query_only' | 'retry_same_key';
+      recoveryMessage: string;
+    };
+    'commerce-trade.dto.refundRecoveryAction': {
+      reason: string;
+      actionIdempotencyKey: string;
+      acknowledgeRetryRisk?: boolean | undefined;
+    };
+    'commerce-trade.dto.shipmentView': {
+      /** @description ID */
+      id: number | string;
+      carrier: string;
+      trackingNumber: string;
+      /** Format: date-time */
+      shippedAt: Date;
+    };
+    'commerce-trade.dto.orderShip': {
+      carrier: string;
+      trackingNumber: string;
+    };
+    'commerce-trade.dto.orderSelectRes': {
+      list: components['schemas']['commerce-trade.dto.orderSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'commerce-trade.dto.orderSelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /** @description ID */
+      id: number | string;
+      /**
+       * @description Order state
+       * @enum {string}
+       */
+      state:
+        | 'awaiting_payment'
+        | 'paid'
+        | 'refund_requested'
+        | 'refund_approved'
+        | 'refund_rejected'
+        | 'shipped'
+        | 'refunded'
+        | 'cancelled'
+        | 'expired';
+      /** @description Payable total (cents) */
+      payableTotalCents: number;
+      /**
+       * Format: date-time
+       * @description Reservation deadline
+       */
+      reservationExpiresAt: Date;
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0':
+      | {
+          /**
+           * Format: date-time
+           * @description Created At
+           */
+          createdAt: Date;
+          /**
+           * Format: date-time
+           * @description Updated At
+           */
+          updatedAt: Date;
+          /** @description ID */
+          id: number | string;
+          addressSnapshot: components['schemas']['commerce-trade.dto.orderAddressSnapshot'];
+          couponSnapshot?: components['schemas']['commerce-trade.dto.orderCouponSnapshot_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          /** @description Order state */
+          state?: unknown;
+          /** @description Currency */
+          currency?: unknown;
+          /** @description Eligible subtotal (cents) */
+          eligibleSubtotalCents: number;
+          /** @description Discount (cents) */
+          discountCents: number;
+          /** @description Payable total (cents) */
+          payableTotalCents: number;
+          /**
+           * Format: date-time
+           * @description Reservation deadline
+           */
+          reservationExpiresAt: Date;
+          /** @description Purchased lines */
+          lines: unknown[];
+          shipment?: {
+            /** @description ID */
+            id: number | string;
+            carrier: string;
+            trackingNumber: string;
+            /** Format: date-time */
+            shippedAt: Date;
+          };
+          _lines?: components['schemas']['commerce-trade.dto.orderAdminLineResItem'][] | undefined;
+        }
+      | undefined;
+    'commerce-trade.dto.orderAdminLineResItem': {
+      /** @description ID */
+      id: number | string;
+      /** @description SKU code */
+      skuCodeSnapshot: string;
+      /** @description Product title */
+      titleSnapshot: string;
+      /** @description SKU attributes */
+      skuAttributesSnapshot: components['schemas']['commerce-trade.dto.orderLineSkuAttributeSnapshot'][];
+      /** @description Unit price (cents) */
+      unitPriceCents: number;
+      /** @description Quantity */
+      quantity: number;
+      /** @description Eligible subtotal (cents) */
+      eligibleSubtotalCents: number;
+      /** @description Line total (cents) */
+      lineTotalCents: number;
+    };
+    'commerce-trade.dto.stockAuditSelectRes': {
+      list: components['schemas']['commerce-trade.dto.stockAuditSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'commerce-trade.dto.stockAuditSelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /** @description ID */
+      id?: unknown;
+      /** @description SKU ID */
+      skuId: number | string;
+      /**
+       * @description Stock Operation
+       * @enum {string}
+       */
+      operation: 'adjust' | 'reserve' | 'consume' | 'release' | 'restore';
+      /** @description Delta */
+      delta: number;
+      sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849':
+      | {
+          id: number | string;
+          code: string;
+        }
+      | undefined;
+    'commerce-trade.dto.stockAuditView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+      | {
+          /**
+           * Format: date-time
+           * @description Created At
+           */
+          createdAt: Date;
+          /**
+           * Format: date-time
+           * @description Updated At
+           */
+          updatedAt: Date;
+          /** @description ID */
+          id: number | string;
+          /** @description Stock Balance ID */
+          stockBalanceId: number | string;
+          /** @description SKU ID */
+          skuId: number | string;
+          /** @description Stock Reservation ID */
+          stockReservationId?: number | string | undefined;
+          /** @description Actor ID */
+          actorId?: number | string | undefined;
+          /**
+           * @description Stock Operation
+           * @enum {string}
+           */
+          operation: 'adjust' | 'reserve' | 'consume' | 'release' | 'restore';
+          /** @description Delta */
+          delta: number;
+          /** @description Reason */
+          reason: string;
+          /** @description Correlation ID */
+          correlationId: string;
+          /** @description Prior On Hand */
+          priorOnHand: number;
+          /** @description Prior Reserved */
+          priorReserved: number;
+          /** @description Prior Available */
+          priorAvailable: number;
+          /** @description On Hand */
+          onHand: number;
+          /** @description Reserved */
+          reserved: number;
+          /** @description Available */
+          available: number;
+          sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
+        }
+      | undefined;
+    'commerce-trade.entity.stockBalance': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /**
+       * @description Instance ID
+       * @default 0
+       */
+      iid?: number;
+      /** @description ID */
+      id: number | string;
+      /** @description SKU ID */
+      skuId: number | string;
+      /** @description On Hand */
+      onHand: number;
+      /** @description Reserved */
+      reserved: number;
+      /** @description Available */
+      available: number;
+    };
+    /** @description Adjust Stock */
+    'commerce-trade.dto.stockAdjust_0aab216abd3467dd07f61c69172266c2441af477': {
+      /** @description SKU ID */
+      skuId: number | string;
+      /** @description Delta */
+      delta: number;
+      /** @description Reason */
+      reason: string;
+      /** @description Correlation ID */
+      correlationId: string;
+    };
+    'commerce-trade.dto.stockBalanceSelectRes': {
+      list: components['schemas']['commerce-trade.dto.stockBalanceSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'commerce-trade.dto.stockBalanceSelectResItem': {
+      /** @description ID */
+      id?: unknown;
+      /** @description SKU ID */
+      skuId: number | string;
+      /** @description On Hand */
+      onHand: number;
+      /** @description Reserved */
+      reserved: number;
+      /** @description Available */
+      available: number;
+      sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'commerce-trade.dto.stockBalanceView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+      | {
+          /**
+           * Format: date-time
+           * @description Created At
+           */
+          createdAt: Date;
+          /**
+           * Format: date-time
+           * @description Updated At
+           */
+          updatedAt: Date;
+          /** @description ID */
+          id: number | string;
+          /** @description SKU ID */
+          skuId: number | string;
+          /** @description On Hand */
+          onHand: number;
+          /** @description Reserved */
+          reserved: number;
+          /** @description Available */
+          available: number;
+          sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
+        }
+      | undefined;
+    'commerce-catalog.dto.categoryCreate': {
+      /** @description Name */
+      name: string;
+      /** @description Parent category */
+      parentId?: number | string | undefined;
+      /**
+       * @description Published
+       * @default false
+       */
+      published?: boolean;
+      /** @description Description */
+      description?: string | undefined;
+    };
+    'commerce-catalog.dto.categorySelectRes': {
+      list: components['schemas']['commerce-catalog.dto.categorySelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'commerce-catalog.dto.categorySelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /**
+       * @description Instance ID
+       * @default 0
+       */
+      iid?: number;
+      /** @description ID */
+      id: number | string;
+      /** @description Name */
+      name: string;
+      /** @description Parent category */
+      parentId?: number | string | undefined;
+      /**
+       * @description Published
+       * @default false
+       */
+      published?: boolean;
+      /** @description Description */
+      description?: string | undefined;
+      parent?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Name */
+        name: string;
+      };
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'commerce-catalog.dto.categoryView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+      | {
+          /**
+           * Format: date-time
+           * @description Created At
+           */
+          createdAt: Date;
+          /**
+           * Format: date-time
+           * @description Updated At
+           */
+          updatedAt: Date;
+          /**
+           * @description Deleted
+           * @default false
+           */
+          deleted?: boolean;
+          /**
+           * @description Instance ID
+           * @default 0
+           */
+          iid?: number;
+          /** @description ID */
+          id: number | string;
+          /** @description Name */
+          name: string;
+          /** @description Parent category */
+          parentId?: number | string | undefined;
+          /**
+           * @description Published
+           * @default false
+           */
+          published?: boolean;
+          /** @description Description */
+          description?: string | undefined;
+          parent?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Name */
+            name: string;
+          };
+        }
+      | undefined;
+    'commerce-catalog.dto.categoryUpdate': {
+      /** @description Name */
+      name: string;
+      /** @description Parent category */
+      parentId?: number | string | undefined;
+      /**
+       * @description Published
+       * @default false
+       */
+      published?: boolean;
+      /** @description Description */
+      description?: string | undefined;
+    };
+    'commerce-catalog.dto.productCreate': {
+      /** @description Product title */
+      title: string;
+      /** @description Category */
+      categoryId: number | string;
+      /**
+       * @description Published
+       * @default false
+       */
+      published?: boolean;
+      /** @description Description */
+      description?: string | undefined;
+      productContentForm?: {
+        /** @description Product description (Markdown) */
+        descriptionMarkdown?: string | undefined;
+      };
+    };
+    'commerce-catalog.dto.productSelectRes': {
+      list: components['schemas']['commerce-catalog.dto.productSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'commerce-catalog.dto.productSelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /**
+       * @description Instance ID
+       * @default 0
+       */
+      iid?: number;
+      /** @description ID */
+      id: number | string;
+      /** @description Product title */
+      title: string;
+      /** @description Category */
+      categoryId: number | string;
+      /**
+       * @description Published
+       * @default false
+       */
+      published?: boolean;
+      /** @description Description */
+      description?: string | undefined;
+      category?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Name */
+        name: string;
+        /**
+         * @description Published
+         * @default false
+         */
+        published?: boolean;
+      };
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'commerce-catalog.dto.productPublicSelectRes': {
+      list: components['schemas']['commerce-catalog.dto.productPublic'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'commerce-catalog.dto.productPublic': {
+      id: number | string;
+      /** @description Product title */
+      title: string;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Category */
+      categoryId: number | string;
+      /** @description Name */
+      categoryName: string;
+      /** @description Price (cents) */
+      priceCents: number;
+      /** @description Available */
+      available: number;
+      skuAvailables: components['schemas']['commerce-catalog.dto.productPublicSku'][];
+    };
+    'commerce-catalog.dto.productPublicSku': {
+      id: number | string;
+      /** @description SKU code */
+      code: string;
+      /** @description Price (cents) */
+      priceCents: number;
+      /** @description Available */
+      available: number;
+    };
+    'commerce-catalog.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          id: number | string;
+          /** @description Product title */
+          title: string;
+          /** @description Description */
+          description?: string | undefined;
+          /** @description Category */
+          categoryId: number | string;
+          /** @description Name */
+          categoryName: string;
+          /** @description Price (cents) */
+          priceCents: number;
+          /** @description Available */
+          available: number;
+          skuAvailables: components['schemas']['commerce-catalog.dto.productPublicSku'][];
+          /** @description Product description (HTML) */
+          descriptionHtml?: string | undefined;
+        }
+      | undefined;
+    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7':
+      | {
+          /**
+           * Format: date-time
+           * @description Created At
+           */
+          createdAt: Date;
+          /**
+           * Format: date-time
+           * @description Updated At
+           */
+          updatedAt: Date;
+          /**
+           * @description Deleted
+           * @default false
+           */
+          deleted?: boolean;
+          /**
+           * @description Instance ID
+           * @default 0
+           */
+          iid?: number;
+          /** @description ID */
+          id: number | string;
+          /** @description Product title */
+          title: string;
+          /** @description Category */
+          categoryId: number | string;
+          /**
+           * @description Published
+           * @default false
+           */
+          published?: boolean;
+          /** @description Description */
+          description?: string | undefined;
+          category?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Name */
+            name: string;
+            /**
+             * @description Published
+             * @default false
+             */
+            published?: boolean;
+          };
+          productContentForm?: {
+            /** @description ID */
+            id: number | string;
+            productId: number | string;
+            /** @description Product description (Markdown) */
+            descriptionMarkdown?: string | undefined;
+          };
+        }
+      | undefined;
+    'commerce-catalog.dto.productUpdate': {
+      /** @description Product title */
+      title: string;
+      /** @description Category */
+      categoryId: number | string;
+      /**
+       * @description Published
+       * @default false
+       */
+      published?: boolean;
+      /** @description Description */
+      description?: string | undefined;
+      productContentForm?: {
+        /**
+         * @description Deleted
+         * @default false
+         */
+        deleted?: boolean | undefined;
+        /** @description ID */
+        id?: number | string | undefined;
+        /** @description Product description (Markdown) */
+        descriptionMarkdown?: string | undefined;
+      };
+    };
+    'commerce-catalog.dto.skuCreate': {
+      /** @description SKU code */
+      code: string;
+      /** @description Product */
+      productId: number | string;
+      /** @description Price (cents) */
+      priceCents: number;
+      /**
+       * @description SKU lifecycle
+       * @default draft
+       * @enum {string}
+       */
+      lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
+    };
+    'commerce-catalog.dto.skuSelectRes': {
+      list: components['schemas']['commerce-catalog.dto.skuSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'commerce-catalog.dto.skuSelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /**
+       * @description Instance ID
+       * @default 0
+       */
+      iid?: number;
+      /** @description ID */
+      id: number | string;
+      /** @description SKU code */
+      code: string;
+      /** @description Product */
+      productId: number | string;
+      /** @description Price (cents) */
+      priceCents: number;
+      /**
+       * @description SKU lifecycle
+       * @default draft
+       * @enum {string}
+       */
+      lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
+      product?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Product title */
+        title: string;
+      };
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'commerce-catalog.dto.skuView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+      | {
+          /**
+           * Format: date-time
+           * @description Created At
+           */
+          createdAt: Date;
+          /**
+           * Format: date-time
+           * @description Updated At
+           */
+          updatedAt: Date;
+          /**
+           * @description Deleted
+           * @default false
+           */
+          deleted?: boolean;
+          /**
+           * @description Instance ID
+           * @default 0
+           */
+          iid?: number;
+          /** @description ID */
+          id: number | string;
+          /** @description SKU code */
+          code: string;
+          /** @description Product */
+          productId: number | string;
+          /** @description Price (cents) */
+          priceCents: number;
+          /**
+           * @description SKU lifecycle
+           * @default draft
+           * @enum {string}
+           */
+          lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
+          product?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Product title */
+            title: string;
+          };
+        }
+      | undefined;
+    'commerce-catalog.dto.skuUpdate': {
+      /** @description SKU code */
+      code: string;
+      /** @description Product */
+      productId: number | string;
+      /** @description Price (cents) */
+      priceCents: number;
+      /**
+       * @description SKU lifecycle
+       * @default draft
+       * @enum {string}
+       */
+      lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
+    };
+    'a-menu.dto.menus': {
+      menus?: components['schemas']['a-menu.dto.menuItem'][] | undefined;
+      groups?: components['schemas']['a-menu.dto.menuGroup'][] | undefined;
+    };
+    'a-menu.dto.menuItem': {
+      name: string;
+      title?: string | undefined;
+      description?: string | undefined;
+      icon?: string | undefined;
+      order?: number | undefined;
+      group?: string | string[] | undefined;
+      separator?: boolean | undefined;
+      link?: string | undefined;
+      external?: boolean | undefined;
+      target?: string | undefined;
+      meta?: components['schemas']['a-menu.dto.menuItemMeta_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+    };
+    'a-menu.dto.menuItemMeta_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          params?: unknown;
+          query?: unknown;
+        }
+      | undefined;
+    'a-menu.dto.menuGroup': {
+      name: string;
+      title?: string | undefined;
+      description?: string | undefined;
+      icon?: string | undefined;
+      order?: number | undefined;
+      group?: string | string[] | undefined;
+      collapsed?: boolean | undefined;
+    };
+    'a-permission.dto.permissions': {
+      roleIds?: (number | string)[] | undefined;
+      roleNames?: string[] | undefined;
+      actions?: unknown;
+    };
+    'home-base.dto.siteCatalogSelectRes': {
+      list: components['schemas']['home-base.dto.siteCatalogSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'home-base.dto.siteCatalogSelectResItem': {
+      siteId: string;
+      title: string;
     };
     'training-record.dto.recordCreate': {
       /** @description Training Record Name */
@@ -1628,7 +3800,7 @@ export interface components {
       /** @description Description */
       description?: string | undefined;
       /** @description # */
-      _lineNumber: number;
+      _lineNumber?: number | undefined;
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -1683,6 +3855,12 @@ export interface components {
       dossierFileIds?: (number | string)[] | undefined;
       /** @description Description */
       description?: string | undefined;
+      student?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Student Name */
+        name: string;
+      };
       sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
       /** @description Dossier Files */
       dossierFiles?: components['schemas']['a-file.dto.fileView'][] | undefined;
@@ -1756,6 +3934,12 @@ export interface components {
           dossierFileIds?: (number | string)[] | undefined;
           /** @description Description */
           description?: string | undefined;
+          student?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Student Name */
+            name: string;
+          };
           /** @description Student Training Record Details */
           trainingRecordSubjects: {
             /**
@@ -1968,7 +4152,7 @@ export interface components {
           }[]
         | undefined;
       /** @description # */
-      _lineNumber: number;
+      _lineNumber?: number | undefined;
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -2028,7 +4212,7 @@ export interface components {
           signed?: boolean;
         }
       | undefined;
-    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4e7e5941f704425ce1be04de1885c36427ccc436':
       | {
           /**
            * Format: date-time
@@ -2239,23 +4423,51 @@ export interface components {
     };
     'training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
+          /** @description ID */
           id: number | string;
           /** @description Student Name */
           name: string;
+          /** @description Description */
+          description?: string | undefined;
           /** @description Mobile */
           mobile: string;
           /** @description Training Stage */
-          level: number;
+          level: 1 | 2 | 3;
           /** @description Level Title */
           levelTitle: string;
-          /** @description Description */
-          description?: string | undefined;
           /** @description Description Length */
           descriptionLength: number;
           /** @description Summary */
           summaryText: string;
         }
       | undefined;
+    'basic-metrics.dto.metricsSnapshot': {
+      enabled: boolean;
+      runtime: components['schemas']['basic-metrics.dto.metricsRuntime'];
+      queues: components['schemas']['basic-metrics.dto.metricsQueue'][];
+    };
+    'basic-metrics.dto.metricsRuntime': {
+      state: string;
+      observedAt?: string | undefined;
+      uptimeSeconds?: number | undefined;
+      rssBytes?: number | undefined;
+      heapUsedBytes?: number | undefined;
+      heapTotalBytes?: number | undefined;
+      externalBytes?: number | undefined;
+      eventLoopDelayMaxSeconds?: number | undefined;
+      activeContexts?: number | undefined;
+    };
+    'basic-metrics.dto.metricsQueue': {
+      name: string;
+      state: string;
+      observedAt?: string | undefined;
+      jobs?:
+        | {
+            [key: string]: number;
+          }
+        | undefined;
+      schedulers?: number | undefined;
+    };
     'a-file.dto.fileUploadPolicyResponse': {
       fileScene: string;
       maxSize?: number | undefined;
@@ -2402,6 +4614,22 @@ export interface components {
           sharpen?: number | undefined;
         }
       | undefined;
+    'pay-mock.dto.mockPaymentReceipt': {
+      paymentSessionId: number | string;
+      accepted: boolean;
+    };
+    'pay-mock.dto.mockPaymentComplete': {
+      /** @enum {string} */
+      outcome: 'succeeded' | 'failed' | 'cancelled';
+    };
+    'pay-mock.dto.mockRefundReceipt': {
+      refundOperationId: number | string;
+      accepted: boolean;
+    };
+    'pay-mock.dto.mockRefundComplete': {
+      /** @enum {string} */
+      outcome: 'succeeded' | 'failed' | 'cancelled';
+    };
     'a-paypal.entity.paypalRecord': {
       /**
        * Format: date-time
@@ -3118,60 +5346,11 @@ export interface operations {
       };
     };
   };
-  HomeBaseMenu_retrieveMenus: {
+  PayPaymentCallback_returned: {
     parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        publicPath: ((string | undefined) | undefined) | undefined;
+      query: {
+        state: string;
       };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['a-menu.dto.menus'];
-          };
-        };
-      };
-    };
-  };
-  HomeBasePermission_retrievePermissions: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        resource: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['a-permission.dto.permissions'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  Home_index: {
-    parameters: {
-      query?: never;
       header?: never;
       path?: never;
       cookie?: never;
@@ -3191,6 +5370,316 @@ export interface operations {
         };
       };
     };
+  };
+  PayPaymentCallback_cancelled: {
+    parameters: {
+      query: {
+        state: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+  };
+  PayPaymentSession_start: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-pay.dto.paymentSessionView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  PayPaymentSession_reconcile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-pay.dto.paymentSessionView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  PayPaymentSession_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-pay.dto.paymentSessionView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_mine: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-member.dto.addressMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_viewMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-member.dto.addressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_createMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-member.dto.addressMineCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_updateMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-member.dto.addressMineUpdate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_deleteMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_select: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        recipientName?: string | undefined;
+        phone?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-member.dto.addressSelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceMemberAddress_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-member.dto.addressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+          };
+        };
+      };
+    };
+    authToken: true;
   };
   HomeUserPassport_current: {
     parameters: {
@@ -3466,6 +5955,1516 @@ export interface operations {
     };
     authToken: true;
   };
+  CommerceSiteadminOperator_context: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-siteadmin.dto.operatorContext'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommercePromotionCoupon_mine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-promotion.dto.couponMineItem'][];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommercePromotionCoupon_issue: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-promotion.dto.couponIssue'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommercePromotionCouponTemplate_select: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        name?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-promotion.dto.couponTemplateSelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommercePromotionCouponTemplate_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-promotion.dto.couponTemplateCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommercePromotionCouponTemplate_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommercePromotionCouponTemplate_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommercePromotionCouponTemplate_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-promotion.dto.couponTemplateUpdate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeCart_current: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.cartView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeCart_addItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.cartAddItem'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.cartView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeCart_clear: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.cartView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeCart_deleteItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.cartView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeCart_updateItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.cartUpdateItem'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.cartView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeCheckout_paymentMethods: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.checkoutPaymentMethods'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeCheckout_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.checkoutCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.checkoutResult'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_mine: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        state?:
+          | 'awaiting_payment'
+          | 'paid'
+          | 'shipped'
+          | 'cancelled'
+          | 'expired'
+          | null
+          | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.orderMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_viewMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-trade.dto.orderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_requestRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundRequestCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundResult'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_approveRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundReview'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundResult'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_rejectRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundReview'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundResult'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_executeRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundResult'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_refundRecovery: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundRecoveryView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_reconcileRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundRecoveryAction'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundRecoveryView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_retryRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundRecoveryAction'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundRecoveryView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_ship: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.orderShip'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.shipmentView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_select: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        state?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.orderSelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeStockAudit_select: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        skuId?: number | string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.stockAuditSelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeStockAudit_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-trade.dto.stockAuditView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeStockBalance_adjustStock: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.stockAdjust_0aab216abd3467dd07f61c69172266c2441af477'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.entity.stockBalance'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeStockBalance_select: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        skuId?: number | string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.stockBalanceSelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeStockBalance_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-trade.dto.stockBalanceView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogCategory_select: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        name?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-catalog.dto.categorySelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogCategory_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-catalog.dto.categoryCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogCategory_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-catalog.dto.categoryView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogCategory_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogCategory_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-catalog.dto.categoryUpdate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogProduct_select: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        title?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-catalog.dto.productSelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogProduct_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-catalog.dto.productCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogProduct_selectPublic: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+        categoryId?: number | string | undefined;
+        title?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-catalog.dto.productPublicSelectRes'];
+          };
+        };
+      };
+    };
+  };
+  CommerceCatalogProduct_viewPublic: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-catalog.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+  };
+  CommerceCatalogProduct_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogProduct_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogProduct_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-catalog.dto.productUpdate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogSku_select: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        code?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-catalog.dto.skuSelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogSku_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-catalog.dto.skuCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogSku_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['commerce-catalog.dto.skuView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogSku_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceCatalogSku_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-catalog.dto.skuUpdate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  HomeBaseMenu_retrieveMenus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        publicPath: ((string | undefined) | undefined) | undefined;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-menu.dto.menus'];
+          };
+        };
+      };
+    };
+  };
+  HomeBasePermission_retrievePermissions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        resource: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-permission.dto.permissions'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  HomeBaseSiteCatalog_select: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['home-base.dto.siteCatalogSelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Home_index: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+  };
   TrainingRecord_select: {
     parameters: {
       query?: {
@@ -3697,7 +7696,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4e7e5941f704425ce1be04de1885c36427ccc436'];
           };
         };
       };
@@ -3806,6 +7805,30 @@ export interface operations {
             code: string;
             message: string;
             data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  BasicMetrics_snapshot: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['basic-metrics.dto.metricsSnapshot'];
           };
         };
       };
@@ -4153,6 +8176,66 @@ export interface operations {
         };
       };
     };
+  };
+  PayMockMockPayment_complete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['pay-mock.dto.mockPaymentComplete'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['pay-mock.dto.mockPaymentReceipt'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  PayMockMockPayment_completeRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['pay-mock.dto.mockRefundComplete'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['pay-mock.dto.mockRefundReceipt'];
+          };
+        };
+      };
+    };
+    authToken: true;
   };
   Paypal_getRecord: {
     parameters: {

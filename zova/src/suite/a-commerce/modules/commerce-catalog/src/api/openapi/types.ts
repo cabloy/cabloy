@@ -3107,9 +3107,16 @@ export interface components {
       operation: 'adjust' | 'reserve' | 'consume' | 'release' | 'restore';
       /** @description Delta */
       delta: number;
+      sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849':
+      | {
+          id: number | string;
+          code: string;
+        }
+      | undefined;
     'commerce-trade.dto.stockAuditView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -3155,6 +3162,7 @@ export interface components {
           reserved: number;
           /** @description Available */
           available: number;
+          sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
         }
       | undefined;
     'commerce-trade.entity.stockBalance': {
@@ -3218,6 +3226,7 @@ export interface components {
       reserved: number;
       /** @description Available */
       available: number;
+      sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3243,6 +3252,7 @@ export interface components {
           reserved: number;
           /** @description Available */
           available: number;
+          sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
         }
       | undefined;
     'commerce-catalog.dto.categoryCreate': {

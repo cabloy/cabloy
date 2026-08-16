@@ -194,5 +194,5 @@ declare module 'zova' {
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `commerce-siteadmin::${K}` {
   return `commerce-siteadmin::${key}`;
-}  
+}
 /** scope: end */

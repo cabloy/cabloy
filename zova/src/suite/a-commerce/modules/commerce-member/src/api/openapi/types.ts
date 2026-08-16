@@ -703,6 +703,54 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/commerce/trade/order/{id}/refundRecovery': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CommerceTradeOrder_refundRecovery'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/reconcileRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_reconcileRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/commerce/trade/order/{id}/retryRefund': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CommerceTradeOrder_retryRefund'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/commerce/trade/order/{id}/ship': {
     parameters: {
       query?: never;
@@ -2403,10 +2451,16 @@ export interface components {
       /** @description Mobile */
       mobile?: string | undefined;
       /**
-       * @description Activated
+       * @description Identity Activated
        * @default false
        */
       activated?: boolean;
+      /**
+       * @description Account Status
+       * @default active
+       * @enum {string}
+       */
+      accountStatus?: 'active' | 'disabled';
       /** @description Language */
       locale?: string | undefined;
       /** @description Timezone */
@@ -2451,7 +2505,7 @@ export interface components {
       /** @description Role Title */
       title: string;
       /** @description Role Locales */
-      locales?:
+      titleLocales?:
         | {
             [key: string]: string;
           }
@@ -2874,6 +2928,48 @@ export interface components {
       reason: string;
       idempotencyKey: string;
     };
+    'commerce-trade.dto.refundRecoveryView': {
+      orderId: number | string;
+      refundRequestId: number | string;
+      refundAttemptId: number | string;
+      refundOperationId: number | string;
+      providerOperationId: number | string;
+      providerName: string;
+      /** @enum {string} */
+      environment: 'sandbox' | 'live';
+      /** @enum {string} */
+      refundOperationState:
+        | 'created'
+        | 'submitting'
+        | 'pending'
+        | 'succeeded'
+        | 'failed'
+        | 'cancelled';
+      /** @enum {string} */
+      providerOperationState:
+        | 'created'
+        | 'claimed'
+        | 'submitted'
+        | 'succeeded'
+        | 'failed'
+        | 'reconciliation_required';
+      attemptCount: number;
+      providerRefundId?: string | undefined;
+      errorCode?: string | undefined;
+      errorSummary?: string | undefined;
+      /** Format: date-time */
+      submittedAt?: Date;
+      /** Format: date-time */
+      finalizedAt?: Date;
+      /** @enum {string} */
+      recoveryDisposition: 'none' | 'reconcile_only' | 'query_only' | 'retry_same_key';
+      recoveryMessage: string;
+    };
+    'commerce-trade.dto.refundRecoveryAction': {
+      reason: string;
+      actionIdempotencyKey: string;
+      acknowledgeRetryRisk?: boolean | undefined;
+    };
     'commerce-trade.dto.shipmentView': {
       /** @description ID */
       id: number | string;
@@ -3011,9 +3107,16 @@ export interface components {
       operation: 'adjust' | 'reserve' | 'consume' | 'release' | 'restore';
       /** @description Delta */
       delta: number;
+      sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849':
+      | {
+          id: number | string;
+          code: string;
+        }
+      | undefined;
     'commerce-trade.dto.stockAuditView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -3059,6 +3162,7 @@ export interface components {
           reserved: number;
           /** @description Available */
           available: number;
+          sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
         }
       | undefined;
     'commerce-trade.entity.stockBalance': {
@@ -3122,6 +3226,7 @@ export interface components {
       reserved: number;
       /** @description Available */
       available: number;
+      sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3147,6 +3252,7 @@ export interface components {
           reserved: number;
           /** @description Available */
           available: number;
+          sku?: components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
         }
       | undefined;
     'commerce-catalog.dto.categoryCreate': {
@@ -3280,6 +3386,10 @@ export interface components {
       published?: boolean;
       /** @description Description */
       description?: string | undefined;
+      productContentForm?: {
+        /** @description Product description (Markdown) */
+        descriptionMarkdown?: string | undefined;
+      };
     };
     'commerce-catalog.dto.productSelectRes': {
       list: components['schemas']['commerce-catalog.dto.productSelectResItem'][];
@@ -3368,7 +3478,7 @@ export interface components {
       /** @description Available */
       available: number;
     };
-    'commerce-catalog.dto.productPublic_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+    'commerce-catalog.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           id: number | string;
           /** @description Product title */
@@ -3384,9 +3494,11 @@ export interface components {
           /** @description Available */
           available: number;
           skuAvailables: components['schemas']['commerce-catalog.dto.productPublicSku'][];
+          /** @description Product description (HTML) */
+          descriptionHtml?: string | undefined;
         }
       | undefined;
-    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7':
       | {
           /**
            * Format: date-time
@@ -3432,6 +3544,13 @@ export interface components {
              */
             published?: boolean;
           };
+          productContentForm?: {
+            /** @description ID */
+            id: number | string;
+            productId: number | string;
+            /** @description Product description (Markdown) */
+            descriptionMarkdown?: string | undefined;
+          };
         }
       | undefined;
     'commerce-catalog.dto.productUpdate': {
@@ -3446,6 +3565,17 @@ export interface components {
       published?: boolean;
       /** @description Description */
       description?: string | undefined;
+      productContentForm?: {
+        /**
+         * @description Deleted
+         * @default false
+         */
+        deleted?: boolean | undefined;
+        /** @description ID */
+        id?: number | string | undefined;
+        /** @description Product description (Markdown) */
+        descriptionMarkdown?: string | undefined;
+      };
     };
     'commerce-catalog.dto.skuCreate': {
       /** @description SKU code */
@@ -3503,6 +3633,12 @@ export interface components {
        * @enum {string}
        */
       lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
+      product?: {
+        /** @description ID */
+        id: number | string;
+        /** @description Product title */
+        title: string;
+      };
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -3542,6 +3678,12 @@ export interface components {
            * @enum {string}
            */
           lifecycle?: 'draft' | 'active' | 'inactive' | 'archived';
+          product?: {
+            /** @description ID */
+            id: number | string;
+            /** @description Product title */
+            title: string;
+          };
         }
       | undefined;
     'commerce-catalog.dto.skuUpdate': {
@@ -6404,6 +6546,92 @@ export interface operations {
     };
     authToken: true;
   };
+  CommerceTradeOrder_refundRecovery: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundRecoveryView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_reconcileRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundRecoveryAction'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundRecoveryView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CommerceTradeOrder_retryRefund: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['commerce-trade.dto.refundRecoveryAction'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['commerce-trade.dto.refundRecoveryView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   CommerceTradeOrder_ship: {
     parameters: {
       query?: never;
@@ -6905,7 +7133,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-catalog.dto.productPublic_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+            data?: components['schemas']['commerce-catalog.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
           };
         };
       };
@@ -6930,7 +7158,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7'];
           };
         };
       };

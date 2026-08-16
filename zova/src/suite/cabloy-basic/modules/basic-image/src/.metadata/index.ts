@@ -222,5 +222,5 @@ declare module 'zova' {
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `basic-image::${K}` {
   return `basic-image::${key}`;
-}  
+}
 /** scope: end */
