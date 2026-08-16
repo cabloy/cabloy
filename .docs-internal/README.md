@@ -66,6 +66,7 @@ Those concerns should live elsewhere.
 ### Business planning
 
 - [A-Commerce Internal Planning](./business/a-commerce/README.md), including its local decisions such as [ADR 0001: Establish MVP Boundaries](./business/a-commerce/decisions/0001-mvp-boundaries.md) and [ADR 0003: Establish Semantic Presentation Contracts](./business/a-commerce/decisions/0003-semantic-presentation-contracts.md)
+- [Home User Account Settings Planning](./business/home-user/README.md), covering the self-service Account boundary, Web/Admin composition, password-change and OAuth-only `password-set` delivery planning
 
 ### Architecture notes
 
