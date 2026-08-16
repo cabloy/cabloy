@@ -99,12 +99,13 @@ export class ModelResource<
   Entity = any,
   EntityCreate = Partial<Entity>,
   EntityUpdate = Partial<Entity>,
+  EntityDelete = void,
 > extends BeanModelBase {}
 ```
 
 That already tells you something important.
 
-This model is designed to be reused across many resource types rather than tied to one page.
+This model is designed to be reused across many resource types rather than tied to one page. `EntityDelete` defaults to `void`, so standard Resource deletion remains bodyless. A resource-specific model can supply a DELETE request-body type without changing the other three generic positions.
 
 ## Why `enableSelector` is essential
 
@@ -246,6 +247,30 @@ Instead, it builds a reusable mutation layer:
 - `mutationItem(...)`
 
 This gives the model one place to enforce mutation-key conventions and invalidation rules.
+
+### DELETE request bodies remain an explicit semantic operation
+
+The default `delete(id)` mutation has no variable and sends the existing bodyless DELETE request:
+
+```typescript
+await modelResource.delete(id).mutateAsync();
+```
+
+When the backend DELETE contract declares a request body, declare the fourth generic in a typed resource facade and pass the body to the mutation:
+
+```typescript
+type DeleteReason = { reason: string };
+
+declare const modelResource: ModelResource<Entity, EntityCreate, EntityUpdate, DeleteReason>;
+
+await modelResource.delete(id).mutateAsync({ reason: 'duplicate' });
+```
+
+`ModelResource` forwards a supplied variable through Axios `config.data`; `null` remains an intentional body, while an omitted variable preserves the bodyless request shape. For a DELETE body that is optional, use `DeleteReason | void`, not `DeleteReason | undefined`, so `mutateAsync()` remains callable without an argument.
+
+The generic Resource table delete command only confirms and executes a bodyless delete. It does not generate a delete form or invent a payload. A resource that needs a required DELETE body must provide a resource-specific action or dialog that collects the value and calls the typed mutation. It should not expose the standard generic delete action for that operation.
+
+The owner also exposes `apiSchemasDelete` lazily for a semantic caller that needs DELETE OpenAPI metadata. Loading that metadata or rendering a delete-body form remains the responsibility of that explicit caller.
 
 That is an important architectural advantage.
 

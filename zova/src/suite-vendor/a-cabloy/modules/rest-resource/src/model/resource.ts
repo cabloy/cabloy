@@ -16,6 +16,8 @@ import { formSceneFromFormMeta } from 'zova-module-a-form';
 import { $QueryEnsureLoaded, BeanModelBase, Model } from 'zova-module-a-model';
 import { ScopeModuleAOpenapi, SymbolOpenapiSchemaName } from 'zova-module-a-openapi';
 
+import { prepareDeleteRequestConfig } from '../lib/deleteRequest.js';
+
 export interface IModelOptionsResource extends IDecoratorModelOptions {}
 
 interface IModelResourceQueryItemOptions<TData> {
@@ -42,6 +44,7 @@ export class ModelResource<
   Entity = any,
   EntityCreate = Partial<Entity>,
   EntityUpdate = Partial<Entity>,
+  EntityDelete = void,
 > extends BeanModelBase {
   public resource: string;
   public resourceApi: string;
@@ -188,14 +191,13 @@ export class ModelResource<
   }
 
   delete(id: TableIdentity) {
-    return this.mutationItem<void, void>({
+    return this.mutationItem<void, EntityDelete>({
       id,
       action: 'delete',
-      mutationFn: async () => {
-        return this.$fetch.delete<any, void, void>(
-          this.sys.util.apiActionPathTranslate(`${this.resourceApi}/:id`, { id }),
-          this.sys.util.apiActionConfigPrepare(),
-        );
+      mutationFn: async body => {
+        const apiPath = this.sys.util.apiActionPathTranslate(`${this.resourceApi}/:id`, { id });
+        const apiConfig = prepareDeleteRequestConfig(this.sys.util.apiActionConfigPrepare(), body);
+        return this.$fetch.delete<any, void, EntityDelete>(apiPath, apiConfig);
       },
     });
   }
@@ -214,6 +216,10 @@ export class ModelResource<
 
   public get apiSchemasUpdate() {
     return this.$sdk.createApiSchemas(`${this.resourceApi}/:id`, 'patch');
+  }
+
+  public get apiSchemasDelete() {
+    return this.$sdk.createApiSchemas(`${this.resourceApi}/:id`, 'delete');
   }
 
   public getFormSchema(formMeta: IFormMeta) {
