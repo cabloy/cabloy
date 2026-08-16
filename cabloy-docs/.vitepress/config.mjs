@@ -188,6 +188,7 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
+      { text: 'Blogs', link: '/blogs/', activeMatch: '^/blogs/' },
       { text: 'Fullstack', link: '/fullstack/introduction', activeMatch: '^/fullstack/' },
       { text: 'Backend (Vona)', link: '/backend/introduction', activeMatch: '^/backend/' },
       { text: 'Frontend (Zova)', link: '/frontend/introduction', activeMatch: '^/frontend/' },
