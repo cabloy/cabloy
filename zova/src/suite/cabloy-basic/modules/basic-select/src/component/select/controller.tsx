@@ -3,6 +3,8 @@ import { VNode } from 'vue';
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
+import { isSelectValueEqual } from '../../lib/utils.js';
+
 export interface ControllerSelectProps {
   placeholder?: string;
   items?: any[] | undefined;
@@ -60,19 +62,16 @@ export class ControllerSelect extends BeanControllerBase {
       color: selectColor,
     };
     const domOptions: VNode[] = [];
-    const modelValueDom = isNil(this.modelValue) ? '' : String(this.modelValue);
+    let modelValueDom = '';
     if (items) {
       for (const item of items) {
         const title = item[itemTitle];
         const value = item[itemValue];
         const valueDom = isNil(value) ? '' : String(value);
+        const selected = isSelectValueEqual(value, this.modelValue);
+        if (selected) modelValueDom = valueDom;
         domOptions.push(
-          <option
-            key={valueDom}
-            value={valueDom}
-            selected={modelValueDom === valueDom}
-            style={optionStyle}
-          >
+          <option key={valueDom} value={valueDom} selected={selected} style={optionStyle}>
             {title}
           </option>,
         );
@@ -81,6 +80,7 @@ export class ControllerSelect extends BeanControllerBase {
     return (
       <select
         {...props}
+        value={modelValueDom}
         style={selectStyle}
         onChange={(e: Event) => {
           const selectedValue = (e.target as HTMLSelectElement).value;

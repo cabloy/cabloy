@@ -9,6 +9,7 @@ import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 
 import { ZSelectProps } from '../.metadata/index.js';
+import { isSelectValueEqual } from '../lib/utils.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableCellRecord {
@@ -34,9 +35,7 @@ export class TableCellSelect extends BeanBase implements ITableCellRender {
     const itemTitle = options.itemTitle;
     const item = items?.find(item => {
       const itemValue2 = item[String(itemValue)];
-      if (String(itemValue2) === String(value)) return true;
-      if (typeof itemValue2 !== 'boolean') return false;
-      return itemValue2 ? value === 1 || value === '1' : value === 0 || value === '0';
+      return isSelectValueEqual(itemValue2, value);
     });
     const value2 = item?.[String(itemTitle)];
     if (!options.class) return value2;

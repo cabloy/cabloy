@@ -1506,6 +1506,16 @@ test(
       await expect(childRow.getByText(parentName, { exact: true })).toBeVisible();
       await expect(childRow.getByText('Published', { exact: true })).toBeVisible();
 
+      await adminPage.goto(`${categoryListPath}/${parentId}/edit`, { waitUntil: 'load' });
+      await expect(
+        adminPage.getByRole('group', { name: 'Published' }).getByRole('combobox'),
+      ).toHaveValue('false');
+
+      await adminPage.goto(`${categoryListPath}/${childId}/edit`, { waitUntil: 'load' });
+      await expect(
+        adminPage.getByRole('group', { name: 'Published' }).getByRole('combobox'),
+      ).toHaveValue('true');
+
       await adminPage.goto(`${categoryListPath}/${childId}`, { waitUntil: 'load' });
       await expect(
         adminPage.getByRole('group', { name: 'Parent category' }).getByRole('textbox'),

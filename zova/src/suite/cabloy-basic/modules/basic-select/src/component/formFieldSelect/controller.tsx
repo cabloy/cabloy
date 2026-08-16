@@ -8,6 +8,7 @@ import { Controller } from 'zova-module-a-bean';
 import { ZFormField, ZFormFieldPreset } from 'zova-module-a-form';
 
 import { ZSelect, ZSelectProps } from '../../.metadata/component/select.js';
+import { isSelectValueEqual } from '../../lib/utils.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {
@@ -106,9 +107,7 @@ export class ControllerFormFieldSelect extends BeanControllerBase {
     const value = this.$props.value;
     const item = this.$props.options.items?.find(item => {
       const itemValue = item[String(this.$props.options.itemValue)];
-      if (String(itemValue) === String(value)) return true;
-      if (typeof itemValue !== 'boolean') return false;
-      return itemValue ? value === 1 || value === '1' : value === 0 || value === '0';
+      return isSelectValueEqual(itemValue, value);
     });
     return item?.[String(this.$props.options.itemTitle)];
   }
