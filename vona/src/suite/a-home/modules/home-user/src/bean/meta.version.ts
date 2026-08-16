@@ -70,7 +70,6 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
           clientOptions: {
             username: 'admin',
             password: options.password || this.scope.config.passwordDefault.admin,
-            avatar: ':emoji:flower',
             confirmed: true,
           },
           state: { intention: 'register' },

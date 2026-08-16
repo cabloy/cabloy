@@ -1,6 +1,6 @@
 import { defineFakeRoute } from 'vite-plugin-fake-server-turbo/client';
 
-const __users = [{ name: 'admin', password: '123456', avatar: ':emoji:flower' }];
+const __users = [{ name: 'admin', password: '123456', avatar: null }];
 
 const __sdkSchemaPassportLogin = {
   doc: {

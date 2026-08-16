@@ -1,6 +1,5 @@
 import { BeanRenderBase } from 'zova';
 import { Render } from 'zova-module-a-bean';
-import { $icon } from 'zova-module-a-icon';
 import { closeNearestDetails } from 'zova-module-home-base';
 
 @Render()
@@ -10,8 +9,12 @@ export class RenderUser extends BeanRenderBase {
       <li>
         <details>
           <summary>
+            <img
+              class="h-6 w-6 rounded-full object-cover"
+              alt="avatar"
+              src={this.$passport.user?.avatar || this.$scopeBase.config.avatar.empty}
+            />
             {this.$passport.user?.name}
-            {$icon(this.$passport.user?.avatar as any, 24)}
           </summary>
           <ul class="bg-base-100 rounded-t-none p-2 w-32">
             <li>
