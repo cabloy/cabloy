@@ -35,6 +35,7 @@ After generating or extending a frontend thread, check which follow-up layers ap
 - `:tools:metadata`
 - route/component/icon regeneration-sensitive changes
 - edition-specific generated output review
+- for a `this.scope.locale` missing-key or type error: inspect `src/config/locale/`; if it is absent, run `npm run zova :init:locale <module>` (which refreshes metadata in its normal path), add the key to all required locale files, and run `npm run zova :tools:metadata <module>` if generated typing remains stale; do not cast around the error or add a local locale compatibility helper
 
 ## Verification follow-up
 

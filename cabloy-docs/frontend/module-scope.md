@@ -85,6 +85,30 @@ const message2 = this.scope.locale.HelloWorld.locale('en-us');
 
 Project-level locale resources can override module-level locale values, which is one of the key reasons scope stays useful even when the final app wants customized wording.
 
+### Diagnose locale typing at its source
+
+Use `this.scope.locale.SomeKey()` directly. Its type is generated from the module locale source and module metadata; do not add a local type assertion, compatibility helper, or cast merely to silence a missing-key error.
+
+When a locale key is missing or incorrectly typed:
+
+1. Inspect `src/config/locale/` for the module.
+2. If that directory does not exist, initialize it through the standard command:
+
+   ```bash
+   npm run zova :init:locale <module>
+   ```
+
+   The normal initializer path also refreshes module metadata.
+
+3. Add the key to every required locale source file.
+4. If locale sources are complete but `this.scope.locale` is still stale, run the focused metadata refresh:
+
+   ```bash
+   npm run zova :tools:metadata <module>
+   ```
+
+Then return to direct `this.scope.locale.SomeKey()` usage. Repairing the locale source and generated metadata preserves the module contract for every consumer.
+
 ## `error`
 
 Module-specific errors are exposed through scope so business code can throw namespaced error definitions without inventing ad hoc exception patterns.
