@@ -32,8 +32,8 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "@types/nodemailer": "^8.0.0",
-    "nodemailer": "^8.0.7"
+    "@types/nodemailer": "^8.0.1",
+    "nodemailer": "^9.0.5"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",

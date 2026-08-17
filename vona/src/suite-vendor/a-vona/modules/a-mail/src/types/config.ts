@@ -11,6 +11,7 @@ export type TypeMailTransportService =
   | 'Aruba'
   | 'Bluewin'
   | 'BOL'
+  | 'Brevo'
   | 'DebugMail'
   | 'Disroot'
   | 'DynectEmail'

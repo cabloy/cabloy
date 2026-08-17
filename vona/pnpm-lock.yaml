@@ -2709,11 +2709,11 @@ importers:
   src/suite-vendor/a-vona/modules/a-mail:
     dependencies:
       '@types/nodemailer':
-        specifier: ^8.0.0
+        specifier: ^8.0.1
         version: 8.0.1
       nodemailer:
-        specifier: ^8.0.7
-        version: 8.0.11
+        specifier: ^9.0.5
+        version: 9.0.5
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -7648,8 +7648,8 @@ packages:
     resolution: {integrity: sha512-J6l92tKHX6w8Jy5nO1Vuc01NoIiRGi/d6qBKVxh+IQ8Cr3b6HbVNfKiF8ZpFKufTwpwxMmce2W3iQZ861ZRyTg==}
     engines: {node: '>=18'}
 
-  nodemailer@8.0.11:
-    resolution: {integrity: sha512-nrO/pDAUKl+wXX+lx16tDLbnm0fW6sK/x8mgohaCpg+CdCEl482bD4tCuAZk2DyliruiNTIZxRCoWkDqJEnAiA==}
+  nodemailer@9.0.5:
+    resolution: {integrity: sha512-wvjiKvjczmsN7U/8006JOdXubgBk2XFAbioDMbT+sM7cPs0QrhJTa6KBRX7P5REGGkDcLUz/EarWidb8G8C1jQ==}
     engines: {node: '>=6.0.0'}
 
   nodemon@3.1.14:
@@ -13811,7 +13811,7 @@ snapshots:
 
   node-releases@2.0.50: {}
 
-  nodemailer@8.0.11: {}
+  nodemailer@9.0.5: {}
 
   nodemon@3.1.14:
     dependencies:
