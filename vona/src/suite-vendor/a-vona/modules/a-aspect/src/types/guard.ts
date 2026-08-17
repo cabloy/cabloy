@@ -15,7 +15,10 @@ export interface IGuardExecute {
   execute(options: IDecoratorGuardOptions, next: Next): Promise<boolean>;
 }
 
-export interface IDecoratorGuardOptions extends TypeOnionOptionsEnableSimple {}
+export interface IDecoratorGuardOptions extends TypeOnionOptionsEnableSimple {
+  passWhenMatched?: boolean;
+  rejectWhenDismatched?: boolean;
+}
 
 export interface IDecoratorGuardOptionsGlobal
   extends
