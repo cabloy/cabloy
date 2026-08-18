@@ -1,4 +1,4 @@
-import { beanFullNameFromOnionName, cast, UseScope } from 'zova';
+import { beanFullNameFromOnionName, cast, ssr_load_local, UseScope } from 'zova';
 import { Bean } from 'zova-module-a-bean';
 import { BeanModelBase } from 'zova-module-a-model';
 import { ScopeModuleASsr } from 'zova-module-a-ssr';
@@ -31,7 +31,7 @@ export class BeanTheme extends BeanModelBase {
     const darkModeDefault = cookieTheme
       ? cookieThemeDarkDefault
       : process.env.CLIENT
-        ? (window.ssr_load_local<ThemeDarkMode>('themedark') ?? 'auto')
+        ? (ssr_load_local('themedark') ?? 'auto')
         : 'auto';
     // support admin
     this.name = this.$useState(cookieTheme ? 'cookie' : 'local', {

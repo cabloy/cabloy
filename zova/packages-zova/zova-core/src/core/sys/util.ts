@@ -263,3 +263,9 @@ export function throwErrorComponentUnmounted() {
   error.code = 600;
   throw error;
 }
+
+export function ssr_load_local(key, defaultValue?) {
+  const __ssr_local = localStorage.getItem(key);
+  const value = __ssr_local ? JSON.parse(__ssr_local) : undefined;
+  return value ?? defaultValue;
+}
