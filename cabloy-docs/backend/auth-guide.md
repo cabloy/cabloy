@@ -131,6 +131,14 @@ The `home-user` module exposes out-of-the-box Passport APIs for common account f
 
 In the current repo implementation, these flows live in `home-user/src/controller/passport.ts`, where register/login call `bean.auth.authenticate(...)`, OAuth login uses provider/module path parameters, and token-oriented follow-up endpoints stay concentrated in one controller surface.
 
+## Registration and password recovery in Cabloy Basic
+
+The Home Login experience uses the Passport registration flow for new users. Registration collects the standard username, email, password, confirmation, and CAPTCHA fields, then continues through the ordinary signed-in navigation flow after it succeeds.
+
+If a user has lost an existing local password, the Login page also provides **Forgot password?**. The request form asks for an email address and CAPTCHA. After valid CAPTCHA verification, it always shows the same generic confirmation, whether or not a reset email can be sent. This protects account privacy and avoids exposing account eligibility through the interface.
+
+When a reset email is available, its link opens a public page where the user chooses a new local password. Completing the reset signs the user out of existing server-side sessions, so they must sign in again with the new password. Password reset replaces an existing local password; it is not a way for an OAuth-only account to add its first local password. That journey remains the authenticated **Set password** account-security action.
+
 This guide focuses on the framework-level auth model. For the user/passport side, see [User Access Guide](/backend/user-access-guide).
 
 ## Relationship to controller AOP

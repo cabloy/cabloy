@@ -128,10 +128,26 @@ Frontend scaffolding is rarely complete after generation alone. Treat this follo
 
 ### Route and metadata follow-up
 
+Before finalizing every new or changed route, resolve the effective route defaults rather than relying on an unexamined omission:
+
+- **layout** — omitted `meta.layout` inherits the logical default layout;
+- **authentication** — omitted `requiresAuth` remains protected by the current guard, and only `requiresAuth: false` opts out;
+- **SSR profile** — omitted `meta.ssrProfile` inherits the active flavor's `SSR_PROFILE`, while route metadata overrides it.
+
+For Zova page routes, also apply these authoring defaults:
+
+- routes with dynamic params require `route.name`; static routes should omit `route.name` unless a documented named-route requirement exists;
+- ordinary business routes without `locale` params should omit app-config aliases unless a documented system, compatibility, or user-facing URL exception requires one;
+- routes without `locale` params should use `ssrProfile: 'session'` when they participate in the locale-sensitive page surface, while anonymous admission remains an explicit `requiresAuth: false` decision.
+
+Verify the active edition and flavor before applying concrete SSR defaults, and do not add all three fields redundantly when intentional inheritance is the desired behavior.
+
 Check whether the feature needs:
 
 - page route review
 - params/query schema alignment
+- effective layout, authentication, and SSR-profile default resolution
+- static-name and ordinary-alias exception review
 - alias or guard review
 - metadata regeneration
 

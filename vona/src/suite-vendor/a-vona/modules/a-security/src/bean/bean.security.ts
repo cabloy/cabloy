@@ -6,9 +6,20 @@ import type { IMiddlewareSystemOptionsCors } from './middlewareSystem.cors.ts';
 
 import { isSafeDomain } from '../lib/utils.ts';
 
+export interface ICheckOriginOptions {
+  exact?: boolean;
+  allowSameOrigin?: boolean;
+  allowLocalhost?: boolean;
+}
+
 @Bean()
 export class BeanSecurity extends BeanBase {
-  checkOrigin(origin: string | undefined | null, hostCurrent?: string): string {
+  checkOrigin(
+    origin: string | undefined | null,
+    hostCurrent?: string,
+    options?: ICheckOriginOptions,
+  ): string {
+    if (options?.exact) return this._checkOriginExact(origin, hostCurrent, options);
     if (!origin || origin === 'null' || origin === null) origin = 'null';
     // origin is {protocol}{hostname}{port}...
     if (this.isSafeDomain(origin, hostCurrent)) {
@@ -29,6 +40,13 @@ export class BeanSecurity extends BeanBase {
     }
 
     if (parsedUrl.host === hostCurrent) return true;
+    if (
+      (this.app.meta.isDev || this.app.meta.isTest) &&
+      this._isLocalhostOrigin(parsedUrl.origin) &&
+      this._isLocalhostHost(hostCurrent)
+    ) {
+      return true;
+    }
 
     // whiteList
     // todo: combine app config
@@ -44,6 +62,82 @@ export class BeanSecurity extends BeanBase {
       return true;
     }
     return false;
+  }
+
+  private _checkOriginExact(
+    origin: string | undefined | null,
+    hostCurrent: string | undefined,
+    options: ICheckOriginOptions,
+  ): string {
+    const originNormalized = this._normalizeOrigin(origin);
+    if (!originNormalized) return '';
+
+    if (
+      options.allowSameOrigin &&
+      originNormalized === this._normalizeOriginFromHost(hostCurrent, this.ctx.protocol)
+    ) {
+      return originNormalized;
+    }
+
+    const onionCors = this.bean.onion.middlewareSystem.getOnionSlice('a-security:cors');
+    let whiteListCors = (<IMiddlewareSystemOptionsCors>onionCors.beanOptions.options).whiteList;
+    if (whiteListCors && whiteListCors !== '*') {
+      if (typeof whiteListCors === 'string') {
+        whiteListCors = whiteListCors.split(',');
+      }
+      for (const item of whiteListCors) {
+        if (this._normalizeOrigin(item.trim()) === originNormalized) return originNormalized;
+      }
+    }
+    if (
+      options.allowLocalhost &&
+      (this.app.meta.isDev || this.app.meta.isTest) &&
+      this._isLocalhostOrigin(originNormalized) &&
+      this._isLocalhostHost(hostCurrent)
+    ) {
+      return originNormalized;
+    }
+    return '';
+  }
+
+  private _isLocalhostOrigin(origin: string): boolean {
+    try {
+      return new URL(origin).hostname === 'localhost';
+    } catch {
+      return false;
+    }
+  }
+
+  private _isLocalhostHost(hostCurrent: string | undefined): boolean {
+    const origin = this._normalizeOriginFromHost(hostCurrent, 'http');
+    return !!origin && this._isLocalhostOrigin(origin);
+  }
+
+  private _normalizeOriginFromHost(host: string | undefined, protocol: string): string | undefined {
+    if (!host || (protocol !== 'http' && protocol !== 'https')) return;
+    return this._normalizeOrigin(`${protocol}://${host}`);
+  }
+
+  private _normalizeOrigin(origin: string | undefined | null): string | undefined {
+    if (!origin || origin === 'null') return;
+    let url: URL;
+    try {
+      url = new URL(origin);
+    } catch {
+      return;
+    }
+    if (
+      (url.protocol !== 'http:' && url.protocol !== 'https:') ||
+      url.username ||
+      url.password ||
+      url.pathname !== '/' ||
+      url.search ||
+      url.hash ||
+      url.origin === 'null'
+    ) {
+      return;
+    }
+    return url.origin;
   }
 }
 

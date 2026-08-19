@@ -96,7 +96,6 @@ export const routes: IModuleRoute[] = [
     },
   },
   {
-    name: 'toolMinimal',
     path: 'toolMinimal',
     component: ZPageToolMinimal,
     meta: {
@@ -112,7 +111,7 @@ What matters here is not only the route strings.
 What matters is that:
 
 - the module declares routes relative to the module boundary by default
-- route `name` controls named routing and typed params/query schema selection
+- dynamic-parameter routes require `name` for typed params; static routes normally remain path-keyed
 - route `meta` controls shell-facing behavior such as layout and component reuse strategy
 - the route record is only the first layer; config, guards, startup timing, and router-view hosting still cooperate afterward
 
@@ -231,7 +230,7 @@ This is one reason route authoring stays compact while runtime routing stays glo
 
 Before adding the route, the runtime checks `sys.config.routes.name` or `sys.config.routes.path` and deep-merges the config route on top of the module declaration.
 
-That is why alias and route-policy changes belong in config instead of being hand-spread across module route files.
+That is why an approved alias or shared route-policy override belongs in config instead of being hand-spread across module route files. An alias is an explicit public-URL contract, not a routine convenience: ordinary business routes without `locale` params keep their canonical module path unless a documented system entry, compatibility path, or designed user-facing URL requires an exception.
 
 Representative config source:
 
@@ -263,7 +262,7 @@ This detail is important because:
 - the runtime can still preserve named-route identity and params-aware resolution
 - alias handling remains a router concern instead of leaking into page code
 
-`$alias:<name>` and `/__alias__` are private runtime machinery. Application code should use `$router.getAliasPath('module:page', { params, query }, absolute?)`, which accepts the canonical route name and returns the configured public alias path (or `undefined` when no alias is configured). Its optional `absolute` argument uses the same origin and public-path conversion as `getPagePath(...)`.
+`$alias:<name>` and `/__alias__` are private runtime machinery. Application code should use `$router.getAliasPath('module:page', { params, query }, absolute?)` only when it intentionally needs a configured public alias; the helper accepts the canonical route name and returns that alias path (or `undefined` when no alias is configured). Its optional `absolute` argument uses the same origin and public-path conversion as `getPagePath(...)`. For a known canonical static page path, use path-keyed `$router.getPagePath(...)` instead of adding a route name or alias solely for URL generation.
 
 #### Layout wrapping
 
@@ -417,7 +416,7 @@ When `_initControllerRoute(...)` updates a page controller, it resolves the rout
 - `pageNameSchemas` for named routes
 - `pagePathSchemas` for path-keyed routes
 
-For page routes with dynamic params, define `route.name` and use the named-route metadata path. Do not rely on an unnamed parameterized route: the generated path-keyed record does not establish the typed controller `$params` contract.
+For page routes with dynamic params, define `route.name` and use the named-route metadata path. Do not rely on an unnamed parameterized route: the generated path-keyed record does not establish the typed controller `$params` contract. Conversely, a static route should not acquire a name merely for typing, canonical URL generation, or alias convenience; keep it path-keyed unless a documented named-route contract requires otherwise.
 
 Those schema records are generated into module metadata.
 

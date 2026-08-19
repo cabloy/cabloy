@@ -49,6 +49,8 @@ class ServiceRouterGuards {
 
 `$getPagePathLogin(to.fullPath)` preserves the protected destination as `returnTo` without starting navigation. On the Client, returning that path lets Vue Router redirect the current navigation atomically. On the Server, `$redirect(...)` preserves the SSR HTTP redirect flow.
 
+`requiresAuth` is independent of `ssrProfile`. A route such as Login or password recovery can use `meta: { requiresAuth: false, ssrProfile: 'session' }`: the guard allows anonymous admission, while SSR can still resolve request-cookie locale state and produce a hydration-equivalent first render. The profile does not authenticate the visitor or bypass API authorization.
+
 ## Why route meta matters here
 
 The example makes a key architectural point: navigation guards are tightly coupled to route metadata such as `requiresAuth`.

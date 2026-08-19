@@ -23,7 +23,7 @@ export interface IMiddlewareSystemOptionsCors extends IDecoratorMiddlewareSystem
 
 @MiddlewareSystem<IMiddlewareSystemOptionsCors>({
   dependencies: 'a-instance:instance',
-  whiteList: '*',
+  whiteList: [],
   origin: _corsOrigin,
   allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
   exposeHeaders: '',

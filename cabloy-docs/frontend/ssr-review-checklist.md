@@ -41,6 +41,7 @@ Use this short checklist for PR review, AI review, or self-review.
 - [ ] I verified that the change uses existing SSR abstractions rather than inventing a parallel workaround.
 - [ ] I checked whether the change needs verification in built mode rather than only in dev mode.
 - [ ] I reviewed whether the change depends on edition-specific UI or theme assumptions.
+- [ ] For each new or changed route, I resolved static-versus-dynamic `route.name`, ordinary no-locale alias, locale-sensitive `session` profile, and independent `requiresAuth` decisions.
 
 ## Layer-by-layer review checklist
 

@@ -44,6 +44,10 @@ This matters because path generation is modular by default.
 
 A route with dynamic params must define `name`. Typed param-aware routing uses the named route identity to generate and resolve the page's runtime params schema; an unnamed parameterized route does not provide the required `$params` contract.
 
+A static route should normally omit `name`. Do not add a name merely for typing, canonical URL generation, or alias convenience: use the path-keyed `$router.getPagePath(...)` helper for a known static path. Keep a static name only when a documented named-route or public-URL contract genuinely requires it.
+
+For ordinary business routes without a `locale` path parameter, omit app-config aliases by default. A system entry, compatibility URL, or explicitly designed user-facing URL may still opt into an alias; record that exception in the route design rather than treating aliases as routine.
+
 ## `component`
 
 `component` points to the generated page wrapper such as `ZPageCounter`.
@@ -63,6 +67,8 @@ The route meta surface includes important behavior such as:
 - component key behavior
 - keepAlive behavior
 - SSR profile and nested `meta.ssrProfileOptions.responseCache` behavior
+
+For a route without `locale` params, explicitly select `meta.ssrProfile: 'session'` when the page renders locale-sensitive content. This lets SSR use the same cookie-backed locale input as hydration and makes the response private and non-storable. This is separate from route admission: use `requiresAuth: false` for an anonymous route, and do not select `public` merely to avoid a login redirect.
 
 This is one reason route records matter so much: they are not just URL declarations. They are an application-behavior surface.
 
@@ -145,9 +151,10 @@ When editing page routing, do not only change the URL string.
 
 It should also check whether the route change affects:
 
-- params typing and the required `route.name` for dynamic params
-- auth behavior
+- params typing and the required `route.name` for dynamic params, plus static-route name omission
+- auth behavior, including whether anonymous admission explicitly requires `requiresAuth: false`
 - layout behavior
 - whether `meta.locale` should participate in URL-locale behavior
-- SSR profile and nested `meta.ssrProfileOptions.responseCache` behavior
+- whether an alias is an explicit system, compatibility, or user-facing URL exception rather than an ordinary business-route default
+- SSR profile and nested `meta.ssrProfileOptions.responseCache` behavior, including `session` for locale-sensitive routes without locale params
 - metadata regeneration

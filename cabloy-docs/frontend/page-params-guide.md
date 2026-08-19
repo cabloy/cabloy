@@ -34,6 +34,8 @@ A page route that declares or consumes dynamic params **must** define `route.nam
 
 The route name is required because Zova uses the named route identity to generate and resolve the page's typed `params` schema at runtime. This initializes the controller's `$params` surface during SSR and client navigation. A params schema declaration alone does not make `$params` available if the route is unnamed.
 
+Conversely, a static route should not add a name merely for typing, canonical URL generation, or alias convenience. Use the path-keyed `$router.getPagePath(...)` helper for a known canonical static path; keep a static name only for a documented named-route requirement.
+
 Representative route idea:
 
 ```typescript

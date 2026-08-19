@@ -13,6 +13,8 @@ A home-page example shows this clearly:
 
 Route aliases bridge that gap.
 
+Aliases are an explicit public-URL contract, not a default convenience layer. Ordinary business routes without `locale` params should keep their canonical module path and omit an app-config alias. Use an alias when the route is a documented system entry, compatibility path, or intentionally designed user-facing URL; locale-aware public routes are another common exception.
+
 ## Basic routing flow
 
 The navigation flow can be described in terms of:
@@ -45,10 +47,12 @@ config.routes = {
 
 ## `path` vs `name`
 
-The distinction matters:
+The distinction matters after an alias has a documented reason:
 
-- use `routes.path` for normal path-based aliases
-- use `routes.name` when the route depends on params-aware naming
+- use `routes.path` for an approved static path-based alias;
+- use `routes.name` when the approved alias depends on params-aware naming.
+
+Do not introduce a static route name solely to use `routes.name`: a static exception can use `routes.path` instead.
 
 ## Generate a configured alias path
 
@@ -79,10 +83,12 @@ Use `$router.getPagePath(...)` for a known canonical path template, `$router.get
 When changing user-facing routes, ask:
 
 1. is this a real route change or just an alias change?
-2. does the alias belong in global config?
-3. is the page params-aware, meaning the name-based alias path is the correct layer?
+2. does the alias have an explicit system, compatibility, locale-aware, or user-facing URL reason?
+3. does the alias belong in global config?
+4. is the page params-aware, meaning the name-based alias path is the correct layer?
+5. if the route is static, can `getPagePath(...)` and a path-keyed alias preserve the canonical route without adding a name?
 
-That helps avoid breaking modular routing semantics.
+That helps avoid breaking modular routing semantics and keeps ordinary business routes on their canonical paths.
 
 ## Where to read next
 

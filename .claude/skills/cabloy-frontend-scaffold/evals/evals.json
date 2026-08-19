@@ -16,7 +16,7 @@
     {
       "id": 3,
       "prompt": "I changed a route and component structure in Cabloy Basic and now I am not sure what else I should update. What should Claude check before saying the frontend work is done?",
-      "expected_output": "Identifies likely frontend follow-up such as metadata regeneration, page/component/API/model or SSR impact, and verification commands.",
+      "expected_output": "Resolves the effective layout, authentication, and SSR-profile defaults for each changed route; confirms static-name and ordinary-alias decisions, params/name implications, metadata regeneration, page/component/API/model or SSR impact, and route/SSR verification commands.",
       "files": []
     },
     {
