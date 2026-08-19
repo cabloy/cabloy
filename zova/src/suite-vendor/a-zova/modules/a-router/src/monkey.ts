@@ -75,6 +75,9 @@ export class Monkey
         const route = await sysRouter.resolveRoute(pagePathFull, true, false);
         if (route) {
           this.ctx.meta.$ssr._setProfile(route.meta.ssrProfile, route.meta.ssrProfileOptions);
+        } else {
+          // not found
+          this.ctx.meta.$ssr._setProfile('session');
         }
       }
     }
