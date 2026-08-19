@@ -12,18 +12,18 @@ import { ZPageToolOne } from './.metadata/page/toolOne.js';
 import { ZPageToolTwo } from './.metadata/page/toolTwo.js';
 
 export const routes: IModuleRoute[] = [
-  { path: 'state', component: ZPageState, meta: { requiresAuth: false, ssrProfile: 'public' } },
+  { path: 'state', component: ZPageState, meta: { requiresAuth: false, ssrProfile: 'session' } },
   {
     path: 'component',
     component: ZPageComponent,
-    meta: { requiresAuth: false, ssrProfile: 'public' },
+    meta: { requiresAuth: false, ssrProfile: 'session' },
   },
-  { path: 'locale', component: ZPageLocale, meta: { requiresAuth: false, ssrProfile: 'public' } },
-  { path: 'style', component: ZPageStyle, meta: { requiresAuth: false, ssrProfile: 'public' } },
+  { path: 'locale', component: ZPageLocale, meta: { requiresAuth: false, ssrProfile: 'session' } },
+  { path: 'style', component: ZPageStyle, meta: { requiresAuth: false, ssrProfile: 'session' } },
   {
     path: 'routeQuery',
     component: ZPageRouteQuery,
-    meta: { requiresAuth: false, ssrProfile: 'public' },
+    meta: { requiresAuth: false, ssrProfile: 'session' },
   },
   {
     name: 'routeParams',
@@ -32,7 +32,7 @@ export const routes: IModuleRoute[] = [
     meta: {
       componentKeyMode: 'nameOnly',
       requiresAuth: false,
-      ssrProfile: 'public',
+      ssrProfile: 'session',
     },
   },
   {
@@ -40,25 +40,23 @@ export const routes: IModuleRoute[] = [
     component: ZPageRouteQueryB,
     meta: {
       requiresAuth: false,
-      ssrProfile: 'public',
-      ssrProfileOptions: { responseCache: { expires: '5m' } },
+      ssrProfile: 'session',
     },
   },
   {
-    name: 'toolMinimal',
     path: 'toolMinimal',
     component: ZPageToolMinimal,
     meta: {
       layout: 'empty',
       requiresAuth: false,
-      ssrProfile: 'public',
+      ssrProfile: 'session',
     },
   },
   {
     name: 'toolOne',
     path: 'toolOne/:id?',
     component: ZPageToolOne,
-    meta: { requiresAuth: false, ssrProfile: 'public' },
+    meta: { requiresAuth: false, ssrProfile: 'session' },
   },
   {
     name: 'toolTwo',
@@ -67,7 +65,7 @@ export const routes: IModuleRoute[] = [
     meta: {
       layout: 'empty',
       requiresAuth: false,
-      ssrProfile: 'public',
+      ssrProfile: 'session',
     },
   },
 ];

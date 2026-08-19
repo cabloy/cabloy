@@ -123,7 +123,7 @@ test(
 
     const routeOverrideResponse = await request.get('/demo/basic/routeQueryB');
     expect(routeOverrideResponse.ok()).toBeTruthy();
-    expect(routeOverrideResponse.headers()['cache-control']).toBe('public, max-age=300');
+    expect(routeOverrideResponse.headers()['cache-control']).toBe('private, no-store');
 
     const pageErrors = collectPageErrors(page);
     const documentResponse = await page.goto('/', { waitUntil: 'load' });
@@ -139,7 +139,7 @@ test(
 );
 
 test(
-  'ATP-BASIC-SSR-03: concurrent public routes retain their own cache policy',
+  'ATP-BASIC-SSR-03: concurrent routes retain their own cache policy',
   { tag: ['@web', '@smoke'] },
   async ({ request }) => {
     const responses = await Promise.all(
@@ -151,7 +151,7 @@ test(
     for (const [index, response] of responses.entries()) {
       expect(response.ok(), `response ${index}`).toBeTruthy();
       expect(response.headers()['cache-control'], `response ${index}`).toBe(
-        index % 2 === 0 ? 'public, max-age=600' : 'public, max-age=300',
+        index % 2 === 0 ? 'public, max-age=600' : 'private, no-store',
       );
     }
   },

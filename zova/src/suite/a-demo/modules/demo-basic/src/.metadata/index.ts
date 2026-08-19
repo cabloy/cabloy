@@ -197,7 +197,6 @@ export interface IPagePathRecord {
 }
 export interface IPageNameRecord {
   'demo-basic:routeParams': TypePagePathSchema<NSControllerPageRouteParams.ParamsInput,NSControllerPageRouteParams.QueryInput>;
-'demo-basic:toolMinimal': TypePagePathSchema<undefined,undefined>;
 'demo-basic:toolOne': TypePagePathSchema<NSControllerPageToolOne.ParamsInput,NSControllerPageToolOne.QueryInput>;
 'demo-basic:toolTwo': TypePagePathSchema<NSControllerPageToolTwo.ParamsInput,NSControllerPageToolTwo.QueryInput>;
 }
