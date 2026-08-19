@@ -87,12 +87,13 @@ export async function generateOnions(
           get scope(): ${scopeModuleName};
         }`);
       if (!isBeanGlobal) {
-        const contentOnionOptions = onionOptions ? `get $onionOptions(): ${onionOptions};` : '';
+        const contentOnionOptions = onionOptions
+          ? `\n            get $onionOptions(): ${onionOptions};`
+          : '';
         contentScopes.push(`
           export interface ${className} {
             get $beanFullName(): '${beanFullNameFromOnionName(beanNameFull, sceneName as never)}';
-            get $onionName(): '${beanNameFull}';
-            ${contentOnionOptions}
+            get $onionName(): '${beanNameFull}';${contentOnionOptions}
           }`);
       }
     }
