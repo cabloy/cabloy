@@ -32,10 +32,14 @@ export class Monkey
       if (process.env.CLIENT) {
         // Server profile state is prepared before appInitialize; this synchronizes client navigation.
         router.beforeEach(to => {
+          // ssr profile
           this.ctx.meta.$ssr._setProfile(to.meta.ssrProfile, to.meta.ssrProfileOptions);
+          // locale
+          this.ctx.meta.$ssr._setLocale(to);
         });
         router.afterEach((_to, from, failure) => {
           if (failure) {
+            // ssr profile
             this.ctx.meta.$ssr._setProfile(from.meta.ssrProfile, from.meta.ssrProfileOptions);
           }
         });

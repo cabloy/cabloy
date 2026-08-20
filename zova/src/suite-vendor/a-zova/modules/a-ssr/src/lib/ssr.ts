@@ -1,6 +1,7 @@
 import type { ComponentInternalInstance, Ref, VNode } from 'vue';
-import type { Functionable, ZovaContext } from 'zova';
+import type { Functionable, ILocaleRecord, ZovaContext } from 'zova';
 
+import { RouteLocationNormalizedGeneric, RouteLocationResolvedGeneric } from '@cabloy/vue-router';
 import { includeBooleanAttr, isBooleanAttr, isString, stringifyStyle } from '@vue/shared';
 import { defu } from 'defu';
 import { normalizeClass, normalizeStyle, ref, useSSRContext } from 'vue';
@@ -154,6 +155,13 @@ export class CtxSSR extends BeanSimple {
     );
     this.state.ssrProfile = ssrProfile;
     this.state.ssrProfileOptions = ssrProfileOptions;
+  }
+
+  /** @internal */
+  public _setLocale(route: RouteLocationResolvedGeneric | RouteLocationNormalizedGeneric) {
+    if (route.meta.locale) {
+      this.app.meta.locale.current = route.params?.locale as unknown as keyof ILocaleRecord;
+    }
   }
 
   get cookieDisabledOnServer(): boolean {

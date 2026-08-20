@@ -74,10 +74,10 @@ export class Monkey
         const sysRouter = await this._getSysRouter();
         const route = await sysRouter.resolveRoute(pagePathFull, true, false);
         if (route) {
+          // ssr profile
           this.ctx.meta.$ssr._setProfile(route.meta.ssrProfile, route.meta.ssrProfileOptions);
-        } else {
-          // not found
-          this.ctx.meta.$ssr._setProfile('session');
+          // locale
+          this.ctx.meta.$ssr._setLocale(route);
         }
       }
     }

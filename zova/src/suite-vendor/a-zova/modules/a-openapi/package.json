@@ -59,7 +59,8 @@
       "monkey": true
     },
     "dependencies": {
-      "a-model": "5.0.0"
+      "a-model": "5.0.0",
+      "a-router": "5.0.0"
     },
     "globalDependencies": {
       "openapi3-ts": true,
