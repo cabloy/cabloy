@@ -21,7 +21,7 @@ Cabloy Basic has these relevant Zova flavor settings:
 | `cabloyBasicWeb`   | Web   | `public`      | Anonymous/public SSR, suitable for cacheable and SEO-oriented content. |
 | `cabloyBasicAdmin` | Admin | `session`     | Session-profile SSR for internal management and operations.            |
 
-The `public` profile renders without request-cookie credentials. It remains appropriate only for a route with an explicit URL locale or a deliberately locale-neutral, cache-safe, hydration-equivalent public contract. The `session` profile permits cookie-backed locale resolution and the server-side Passport flow during SSR initial navigation, so normal route admission can redirect or deny before the response is sent. Web retains `public` as its flavor fallback, but a locale-sensitive route without `locale` params explicitly selects `session` rather than rendering the server in the default locale and hydrating in a browser-selected locale.
+The `public` profile renders without request-cookie credentials and remains appropriate for anonymous-safe, cache-safe, hydration-equivalent Web contracts, including a deliberately neutral shell. An explicit URL locale is one way to supply a public-language input, but the lack of a locale parameter does not require another profile. The `session` profile permits cookie-backed state and the server-side Passport flow during SSR initial navigation, so normal route admission can redirect or deny before the response is sent. Web retains `public` as its flavor fallback; a route selects `session` only when its own rendering contract genuinely requires that capability.
 
 ## Problem
 
@@ -45,18 +45,18 @@ The conflict is false when SSR rendering strategy is separated from business own
 
 Choose a rendering strategy per page class, not by treating every authenticated page as an Admin page.
 
-| Page class                                                     | Examples                                                                                                              | Business Site                        | SSR strategy                                                                                                                                                         |
-| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Public content with explicit locale or locale-neutral contract | canonical public content, cacheable error/not-found pages                                                             | Web                                  | `public` only when the explicit URL locale or locale-neutral contract makes the server and hydration trees equivalent; declare `requiresAuth: false` when anonymous. |
-| No-locale public or private shell                              | login, registration, recovery, profile shell, order shell, notifications shell                                        | Web                                  | Route-level `session` for cookie-backed locale; anonymous admission uses `requiresAuth: false`; private data may remain neutral until an explicit client boundary.   |
-| Private user workspace requiring personalized SSR              | Account Settings at `/home/user/account`, personalized order list, account dashboard with required server first paint | Web or Dedicated Member/Account Site | Route-level `session` SSR with normal protected-route admission and, where appropriate, authorized private-query transfer.                                           |
-| Internal back office                                           | user management, content operations, system settings                                                                  | Admin                                | Session-profile SSR with a `session` profile.                                                                                                                        |
+| Page class                                                     | Examples                                                                                                              | Business Site                        | SSR strategy                                                                                                                                                                                                           |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Public content with explicit locale or locale-neutral contract | canonical public content, cacheable error/not-found pages                                                             | Web                                  | `public` only when the explicit URL locale or locale-neutral contract makes the server and hydration trees equivalent; declare `requiresAuth: false` when anonymous.                                                   |
+| Public or private neutral shell                                | login, registration, recovery, profile shell, order shell, notifications shell                                        | Web                                  | Use `public` when the shell is anonymous-safe, cache-safe, and hydration-equivalent; select `session` only when cookie-backed state is part of the rendering contract. Anonymous admission uses `requiresAuth: false`. |
+| Private user workspace requiring personalized SSR              | Account Settings at `/home/user/account`, personalized order list, account dashboard with required server first paint | Web or Dedicated Member/Account Site | Route-level `session` SSR with normal protected-route admission and, where appropriate, authorized private-query transfer.                                                                                             |
+| Internal back office                                           | user management, content operations, system settings                                                                  | Admin                                | Session-profile SSR with a `session` profile.                                                                                                                                                                          |
 
-The default route decision for a locale-sensitive page without `locale` params is `session`, while Web remains `public` as the flavor fallback. A Web user workspace stays in the Web business boundary whether it renders only a neutral private-data shell or requires personalized first paint. Account Settings is one protected Web example: it uses cookie-aware `session` SSR without becoming an Admin feature.
+Web remains `public` as the flavor fallback. A route selects `session` when its rendering contract requires cookie-backed state, protected admission, personalized first paint, or private SSR data; the lack of a `locale` parameter alone does not decide the profile. A Web user workspace stays in the Web business boundary whether it renders a public neutral shell or requires personalized first paint. Account Settings is one protected Web example: it uses cookie-aware `session` SSR without becoming an Admin feature.
 
-## Recommended Default: Web Session SSR with a Neutral Private-Data Shell
+## Recommended Default: Web Public Neutral Shell
 
-Personal center, orders, account profile, and similar end-user pages remain in the Web Site unless there is a concrete product requirement for a dedicated Site. A locale-sensitive route without `locale` params explicitly uses `meta.ssrProfile: 'session'`, whether it needs personalized first paint or only needs locale-equivalent SSR. The latter may retain a neutral shell and defer private data without changing its rendering profile.
+Personal center, orders, account profile, and similar end-user pages remain in the Web Site unless there is a concrete product requirement for personalized SSR or a dedicated Site. When personalized data is unnecessary, use an anonymous-safe neutral shell with public SSR and defer private data or admission to an explicit client boundary. Use route-level `session` when server-side admission, cookie-backed state, or personalized first paint is genuinely required.
 
 A protected Web route uses the default `requiresAuth` behavior and the `web` Site policy:
 
@@ -68,15 +68,14 @@ The rendering flow is:
 
 ```text
 Request a profile shell or orders shell
-  -> Web SSR with the route-level session profile
-  -> resolve cookie-backed locale and normal protected-route admission
+  -> Web SSR with the route's public or explicitly selected session profile
   -> render a generic shell, skeleton, or non-private route frame when private data is deferred
   -> browser hydration
-  -> browser requests private profile/order data at an explicit client boundary
+  -> browser admission or requests private profile/order data at an explicit client boundary
   -> Vona API/resource guards verify identity and resource permissions
 ```
 
-The server-rendered HTML may omit private user data when personalized first paint is unnecessary. The `session` response remains private and non-storable, while Vona API authorization continues to protect every later private-data request.
+The server-rendered HTML may omit private user data when personalized first paint is unnecessary. A public response may be cacheable only when the complete page and transferred state are user-independent; a `session` response remains private and non-storable. Vona API authorization continues to protect every later private-data request.
 
 The hydration-time first client tree must remain that same neutral shell. Private query initialization may replace the shell only after an explicit client boundary; it must not create a private or differently shaped loading branch during hydration itself. Avoiding private HTML leakage is necessary but insufficient when the initial client render still differs from the server output.
 
@@ -107,13 +106,13 @@ requiresAuth not false
   -> otherwise continue
 ```
 
-For the explicit `public`-contract exception, a protected route completes its authenticated portion after hydration. For a `session` route, normal protected-route admission can complete during SSR initial navigation. An anonymous `session` route sets `requiresAuth: false`, which exits the guard before Passport recovery or Site admission; the profile itself never authenticates or authorizes the visitor.
+For a protected route using a public neutral-shell contract, the authenticated portion completes after hydration. For a `session` route, normal protected-route admission can complete during SSR initial navigation. An anonymous route sets `requiresAuth: false`, which exits the guard before Passport recovery or Site admission; the profile itself never authenticates or authorizes the visitor.
 
 The client-side check is a navigation and user-experience control. It does not replace Vona API/resource guards, which remain mandatory for every private data request and mutation.
 
 ## Route-Level Session SSR and Dedicated Member or Account Sites
 
-A Web-owned route can opt into `meta.ssrProfile: 'session'` without converting the entire Web flavor. Every locale-sensitive Web route without `locale` params does so to make the server locale input equivalent to hydration. Account Settings additionally uses the profile for protected-route admission: its route guard establishes request-cookie Passport and Web Site admission before rendering, the page's model-owned Account query is prepared for SSR, and anonymous requests redirect to the Web login route. This does not justify a separate Site.
+A Web-owned route can opt into `meta.ssrProfile: 'session'` without converting the entire Web flavor. Account Settings uses the profile for protected-route admission: its route guard establishes request-cookie Passport and Web Site admission before rendering, the page's model-owned Account query is prepared for SSR, and anonymous requests redirect to the Web login route. Other Web routes may remain public when their neutral shell and hydration contract are intentionally anonymous-safe and cache-safe. This does not justify a separate Site.
 
 The response policy for a route-level session page must follow the configured session profile rather than public shared-cache assumptions. Its server HTML and hydration-time client tree must remain equivalent through locale state and, where private state is server-rendered, Passport/session state and query dehydration.
 
@@ -129,11 +128,11 @@ Create a new cookie-aware SSR Site only when one or more of these requirements a
 
 Recommended identity and policy if this Site is introduced:
 
-| SSR Site          | `siteId`              | Flavor fallback | Responsibility                                                                   |
-| ----------------- | --------------------- | --------------- | -------------------------------------------------------------------------------- |
-| Web               | `web`                 | `public`        | User-facing content and workspace routes; no-locale routes may select `session`. |
-| Member or Account | `member` or `account` | `session`       | Personalized end-user workspace when a separate Site is justified.               |
-| Admin             | `admin`               | `session`       | Internal administration and operations.                                          |
+| SSR Site          | `siteId`              | Flavor fallback | Responsibility                                                                                                   |
+| ----------------- | --------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Web               | `web`                 | `public`        | User-facing content and workspace routes; routes may select `session` when their rendering contract requires it. |
+| Member or Account | `member` or `account` | `session`       | Personalized end-user workspace when a separate Site is justified.                                               |
+| Admin             | `admin`               | `session`       | Internal administration and operations.                                                                          |
 
 Example initial role policy:
 
@@ -178,13 +177,13 @@ A same-domain cookie only proves authentication. It never grants Admin, Member, 
 ### Default Web user workspace
 
 1. Keep user-facing account/order/profile routes in the Web flavor.
-2. Use `session` explicitly for every locale-sensitive route without `locale` params; use `public` only for an explicit URL-locale or deliberately locale-neutral, cache-safe exception.
+2. Choose `session` explicitly when a route needs cookie-backed state, protected admission, personalized first paint, or private SSR data; use `public` for an anonymous-safe, cache-safe, hydration-equivalent neutral contract. A missing locale parameter alone does not decide the profile.
 3. Declare anonymous admission explicitly with `requiresAuth: false`; keep user workspace routes authenticated by default.
-4. Keep a no-private-data route's server HTML and hydration-time tree equivalent even when its `session` profile later supports protected-route admission.
+4. Keep a no-private-data route's server HTML and hydration-time tree equivalent regardless of whether its rendering profile is public or session.
 5. Do not start a deferred private query or render a private/loading branch until an explicit post-hydration, admission, mounted, or interaction boundary.
 6. Verify Passport and `SITE_ID=web` role-policy checks before private data interaction where that data is not server-rendered.
 7. Protect every private data API with Vona Passport/resource guards.
-8. Test locale-equivalent SSR/hydration, anonymous admission, protected-route redirect, role denial, private-data timing, and direct API denial separately.
+8. Test the selected SSR profile, hydration equivalence, anonymous admission, protected-route redirect, role denial, private-data timing, and direct API denial separately.
 
 ### Dedicated Member/Account Site, when justified
 

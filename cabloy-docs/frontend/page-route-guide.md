@@ -68,7 +68,7 @@ The route meta surface includes important behavior such as:
 - keepAlive behavior
 - SSR profile and nested `meta.ssrProfileOptions.responseCache` behavior
 
-For a route without `locale` params, explicitly select `meta.ssrProfile: 'session'` when the page renders locale-sensitive content. This lets SSR use the same cookie-backed locale input as hydration and makes the response private and non-storable. This is separate from route admission: use `requiresAuth: false` for an anonymous route, and do not select `public` merely to avoid a login redirect.
+Choose `meta.ssrProfile` from the page's rendering contract. Use `session` when the server needs cookie-backed state, protected admission, personalized first paint, or private SSR data; use `public` for an explicit URL-locale or deliberately locale-neutral, cache-safe, hydration-equivalent public contract. A missing `locale` parameter alone does not determine the profile. This is separate from route admission: use `requiresAuth: false` for an anonymous route, and do not treat either profile as an authentication decision.
 
 This is one reason route records matter so much: they are not just URL declarations. They are an application-behavior surface.
 
@@ -156,5 +156,5 @@ It should also check whether the route change affects:
 - layout behavior
 - whether `meta.locale` should participate in URL-locale behavior
 - whether an alias is an explicit system, compatibility, or user-facing URL exception rather than an ordinary business-route default
-- SSR profile and nested `meta.ssrProfileOptions.responseCache` behavior, including `session` for locale-sensitive routes without locale params
+- SSR profile and nested `meta.ssrProfileOptions.responseCache` behavior, selected from the page's rendering and cache contract
 - metadata regeneration

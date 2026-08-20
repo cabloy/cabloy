@@ -201,12 +201,12 @@ Repository-wide searches for obsolete profile and cache names are required befor
 Authorization, locale input, and rendering profile remain separate dimensions.
 
 - A route with dynamic params defines `route.name`; a static route remains path-keyed unless a documented named-route contract requires otherwise. Ordinary business routes without `locale` params do not receive an app-config alias merely for convenience.
-- A locale-sensitive route without `locale` params explicitly uses `session`, including an anonymous route that declares `requiresAuth: false`. The profile lets SSR read the locale cookie that hydration uses and therefore prevents a default-locale server tree from diverging from the browser tree. It does not grant Passport, Site admission, role membership, or API authority.
-- Public home/catalogue/product/content, login, registration, callback, error, and not-found routes may use `public` only when their URL locale is explicit or their public contract is deliberately locale-neutral, cache-safe, and hydration-equivalent. Anonymous admission remains a `requiresAuth: false` decision, not a `public` profile effect.
-- Admin inherits `session`; a static/help route opts into `public` only when it meets that explicit public-contract exception.
-- Web authenticated address, cart, checkout, payment, orders, and order-detail routes select `session` whenever they have no locale params and render locale-sensitive content. A neutral private-data shell can still defer user data until an explicit client boundary when personalized server data is unnecessary.
+- Choose the profile from each page's rendering contract. Public home/catalogue/product/content, login, registration, callback, error, and not-found routes may use `public` when their contract is anonymous-safe, cache-safe, and hydration-equivalent; an explicit URL locale is one way to provide the public-language input, but a missing locale parameter does not prohibit `public`.
+- Select `session` only where SSR genuinely needs cookie-backed state, protected admission, personalized first paint, or private SSR data. It does not grant Passport, Site admission, role membership, or API authority.
+- `requiresAuth` remains independent: `requiresAuth: false` chooses anonymous admission, while the normal omitted value remains protected regardless of profile.
+- Admin inherits `session`; Web inherits `public`. A protected Web route may remain `public` with a neutral shell and post-hydration admission when its product contract does not need server-side admission or personalized rendering.
 
-Use one representative commerce route first, such as address or order list. For each session route, verify locale-equivalent first render, Passport admission where required, private Query dehydration where used, and no-store headers before expanding to order detail, checkout, and payment continuation.
+Use one representative commerce route first, such as address or order list. For each session route, verify the reason for cookie-capable SSR, Passport admission where required, private Query dehydration where used, no-store headers, and first-render equivalence before expanding to order detail, checkout, and payment continuation.
 
 ## Locale policy
 

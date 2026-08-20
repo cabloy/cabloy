@@ -10,7 +10,7 @@ After generating or extending a frontend thread, check which follow-up layers ap
 - params/query schema alignment
 - [ ] resolve the route-default triad: effective `layout`, `requiresAuth`, and `ssrProfile`; confirm every omitted field intentionally inherits the active default
 - [ ] static routes omit `route.name` unless a documented named-route requirement exists; ordinary business routes without `locale` params omit app-config aliases unless an explicit exception applies
-- [ ] routes without `locale` params use `ssrProfile: 'session'` when they participate in the locale-sensitive page surface, and anonymous access is chosen independently with explicit `requiresAuth: false`
+- [ ] choose `ssrProfile` from the route's rendering contract (Web remains `public` by default; `session` is explicit for cookie-backed state, protected admission, personalized first paint, or private SSR data); a missing `locale` parameter alone does not determine it, and anonymous access is chosen independently with explicit `requiresAuth: false`
 
 ## Data and contract follow-up
 

@@ -138,7 +138,7 @@ For Zova page routes, also apply these authoring defaults:
 
 - routes with dynamic params require `route.name`; static routes should omit `route.name` unless a documented named-route requirement exists;
 - ordinary business routes without `locale` params should omit app-config aliases unless a documented system, compatibility, or user-facing URL exception requires one;
-- routes without `locale` params should use `ssrProfile: 'session'` when they participate in the locale-sensitive page surface, while anonymous admission remains an explicit `requiresAuth: false` decision.
+- choose `ssrProfile` from the route's rendering contract: Web remains `public` by default, while `session` is explicit for cookie-backed state, protected admission, personalized first paint, or private SSR data; a missing `locale` parameter alone does not determine the profile; anonymous admission remains an explicit `requiresAuth: false` decision.
 
 Verify the active edition and flavor before applying concrete SSR defaults, and do not add all three fields redundantly when intentional inheritance is the desired behavior.
 
