@@ -57,6 +57,18 @@ export class BeanSecurity extends BeanBase {
     const originNormalized = this._normalizeOrigin(origin);
     if (!originNormalized) return '';
 
+    if (originNormalized === this._normalizeOriginFromHost(hostCurrent, this.ctx.protocol)) {
+      return originNormalized;
+    }
+
+    if (
+      (this.app.meta.isDev || this.app.meta.isTest) &&
+      this._isLocalhostOrigin(originNormalized) &&
+      this._isLocalhostHost(hostCurrent)
+    ) {
+      return originNormalized;
+    }
+
     const onionCors = this.bean.onion.middlewareSystem.getOnionSlice('a-security:cors');
     let whiteListCors = (<IMiddlewareSystemOptionsCors>onionCors.beanOptions.options).whiteList;
     if (whiteListCors && whiteListCors !== '*') {
@@ -67,13 +79,7 @@ export class BeanSecurity extends BeanBase {
         if (this._normalizeOrigin(item.trim()) === originNormalized) return originNormalized;
       }
     }
-    if (
-      (this.app.meta.isDev || this.app.meta.isTest) &&
-      this._isLocalhostOrigin(originNormalized) &&
-      this._isLocalhostHost(hostCurrent)
-    ) {
-      return originNormalized;
-    }
+
     return '';
   }
 

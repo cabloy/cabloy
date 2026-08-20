@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
 describe('origin.test.ts', { concurrency: false }, () => {
-  it('keeps the normal CORS policy while credential-link mode requires explicit exact origins', async () => {
+  it('keeps normal CORS separate from exact credential-link authorization', async () => {
     await withWhiteList('*', async () => {
       assert.equal(
         app.bean.security.checkOrigin('https://untrusted.example.test', 'api.example.test'),
@@ -15,9 +15,10 @@ describe('origin.test.ts', { concurrency: false }, () => {
       );
       assert.equal(app.bean.security.checkOrigin(undefined, 'api.example.test'), 'null');
       assert.equal(app.bean.security.checkOriginExact(undefined, 'api.example.test'), '');
+      const sameOrigin = `${app.ctx.protocol}://api.example.test`;
       assert.equal(
-        app.bean.security.checkOriginExact('https://api.example.test', 'api.example.test'),
-        '',
+        app.bean.security.checkOriginExact(sameOrigin, 'api.example.test'),
+        new URL(sameOrigin).origin,
       );
     });
   });
@@ -58,10 +59,48 @@ describe('origin.test.ts', { concurrency: false }, () => {
     });
   });
 
-  it('requires a configured origin or dev/test loopback pair in checkOriginExact', async () => {
+  it('supports exact same-origin authorization alongside whitelist and loopback policies', async () => {
     await withWhiteList([], async () => {
       const sameOrigin = `${app.ctx.protocol}://app.example.test`;
-      assert.equal(app.bean.security.checkOriginExact(sameOrigin, 'app.example.test'), '');
+      assert.equal(
+        app.bean.security.checkOriginExact(sameOrigin, 'app.example.test'),
+        new URL(sameOrigin).origin,
+      );
+      assert.equal(
+        app.bean.security.checkOriginExact(
+          `${app.ctx.protocol}://APP.EXAMPLE.TEST`,
+          'app.example.test',
+        ),
+        new URL(sameOrigin).origin,
+      );
+      const defaultPort = app.ctx.protocol === 'https' ? 443 : 80;
+      assert.equal(
+        app.bean.security.checkOriginExact(sameOrigin, `app.example.test:${defaultPort}`),
+        new URL(sameOrigin).origin,
+      );
+      assert.equal(
+        app.bean.security.checkOriginExact(
+          app.ctx.protocol === 'https' ? 'http://app.example.test' : 'https://app.example.test',
+          'app.example.test',
+        ),
+        '',
+      );
+      assert.equal(
+        app.bean.security.checkOriginExact(
+          `${app.ctx.protocol}://app.example.test:444`,
+          'app.example.test',
+        ),
+        '',
+      );
+      assert.equal(
+        app.bean.security.checkOriginExact(
+          `${app.ctx.protocol}://app.example.test.evil.test`,
+          'app.example.test',
+        ),
+        '',
+      );
+      assert.equal(app.bean.security.checkOriginExact(sameOrigin, undefined), '');
+      assert.equal(app.bean.security.checkOriginExact(sameOrigin, 'app.example.test/path'), '');
 
       for (const origin of [
         'http://localhost:9000',
