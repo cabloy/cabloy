@@ -10,20 +10,13 @@ describe('origin.test.ts', { concurrency: false }, () => {
         'https://untrusted.example.test',
       );
       assert.equal(
-        app.bean.security.checkOrigin('https://untrusted.example.test', 'api.example.test', {
-          exact: true,
-        }),
+        app.bean.security.checkOriginExact('https://untrusted.example.test', 'api.example.test'),
         '',
       );
       assert.equal(app.bean.security.checkOrigin(undefined, 'api.example.test'), 'null');
+      assert.equal(app.bean.security.checkOriginExact(undefined, 'api.example.test'), '');
       assert.equal(
-        app.bean.security.checkOrigin(undefined, 'api.example.test', { exact: true }),
-        '',
-      );
-      assert.equal(
-        app.bean.security.checkOrigin('https://api.example.test', 'api.example.test', {
-          exact: true,
-        }),
+        app.bean.security.checkOriginExact('https://api.example.test', 'api.example.test'),
         '',
       );
     });
@@ -53,96 +46,46 @@ describe('origin.test.ts', { concurrency: false }, () => {
   it('accepts normalized explicit HTTP(S) origins only', async () => {
     await withWhiteList(['http://localhost:9000', 'https://App.Example.Test:443/'], async () => {
       assert.equal(
-        app.bean.security.checkOrigin('http://localhost:9000', undefined, { exact: true }),
+        app.bean.security.checkOriginExact('http://localhost:9000'),
         'http://localhost:9000',
       );
       assert.equal(
-        app.bean.security.checkOrigin('https://app.example.test', undefined, { exact: true }),
+        app.bean.security.checkOriginExact('https://app.example.test'),
         'https://app.example.test',
       );
-      assert.equal(
-        app.bean.security.checkOrigin('https://app.example.test:444', undefined, { exact: true }),
-        '',
-      );
-      assert.equal(
-        app.bean.security.checkOrigin('https://other.example.test', undefined, { exact: true }),
-        '',
-      );
+      assert.equal(app.bean.security.checkOriginExact('https://app.example.test:444'), '');
+      assert.equal(app.bean.security.checkOriginExact('https://other.example.test'), '');
     });
   });
 
-  it('allows an opt-in canonical same origin without a whitelist entry', async () => {
+  it('requires a configured origin or dev/test loopback pair in checkOriginExact', async () => {
     await withWhiteList([], async () => {
-      const protocol = app.ctx.protocol;
-      const origin = `${protocol}://app.example.test`;
-      const defaultPort = protocol === 'https' ? ':443' : ':80';
-      const otherProtocol = protocol === 'https' ? 'http' : 'https';
-      assert.equal(
-        app.bean.security.checkOrigin(origin, `app.example.test${defaultPort}`, {
-          exact: true,
-          allowSameOrigin: true,
-        }),
-        origin,
-      );
-      assert.equal(
-        app.bean.security.checkOrigin(origin, 'app.example.test', {
-          exact: true,
-          allowSameOrigin: true,
-        }),
-        origin,
-      );
-      assert.equal(
-        app.bean.security.checkOrigin(origin, 'app.example.test:8443', {
-          exact: true,
-          allowSameOrigin: true,
-        }),
-        '',
-      );
-      assert.equal(
-        app.bean.security.checkOrigin(`${otherProtocol}://app.example.test`, 'app.example.test', {
-          exact: true,
-          allowSameOrigin: true,
-        }),
-        '',
-      );
-      assert.equal(app.bean.security.checkOrigin(origin, 'app.example.test', { exact: true }), '');
-    });
-  });
+      const sameOrigin = `${app.ctx.protocol}://app.example.test`;
+      assert.equal(app.bean.security.checkOriginExact(sameOrigin, 'app.example.test'), '');
 
-  it('allows loopback consumer origins only in dev/test mode with a loopback API host', async () => {
-    await withWhiteList([], async () => {
       for (const origin of [
         'http://localhost:9000',
         'http://127.0.0.1:9000',
         'http://[::1]:9000',
       ]) {
         for (const host of ['localhost:7102', '127.0.0.1:7102', '[::1]:7102']) {
-          assert.equal(
-            app.bean.security.checkOrigin(origin, host, {
-              exact: true,
-              allowLocalhost: true,
-            }),
-            new URL(origin).origin,
-          );
+          assert.equal(app.bean.security.checkOriginExact(origin, host), new URL(origin).origin);
         }
       }
       assert.equal(
-        app.bean.security.checkOrigin('http://localhost:9000', 'localhost.evil.test:7102', {
-          exact: true,
-          allowLocalhost: true,
-        }),
+        app.bean.security.checkOriginExact('http://localhost:9000', 'localhost.evil.test:7102'),
         '',
       );
       assert.equal(
-        app.bean.security.checkOrigin('http://localhost:9000', '192.168.1.10:7102', {
-          exact: true,
-          allowLocalhost: true,
-        }),
+        app.bean.security.checkOriginExact('http://localhost:9000', '192.168.1.10:7102'),
         '',
       );
+    });
+
+    await withWhiteList(['https://app.example.test'], async () => {
       assert.equal(
-        app.bean.security.checkOrigin('http://localhost:9000', 'localhost:7102', { exact: true }),
-        '',
+        app.bean.security.checkOriginExact('https://app.example.test'),
+        'https://app.example.test',
       );
     });
   });
@@ -157,10 +100,7 @@ describe('origin.test.ts', { concurrency: false }, () => {
       ['https://user@app.example.test'],
     ]) {
       await withWhiteList(whiteList, async () => {
-        assert.equal(
-          app.bean.security.checkOrigin('https://app.example.test', undefined, { exact: true }),
-          '',
-        );
+        assert.equal(app.bean.security.checkOriginExact('https://app.example.test'), '');
       });
     }
   });
@@ -178,7 +118,7 @@ describe('origin.test.ts', { concurrency: false }, () => {
         'javascript:alert(1)',
         'file:///account/password-reset',
       ]) {
-        assert.equal(app.bean.security.checkOrigin(origin, undefined, { exact: true }), '');
+        assert.equal(app.bean.security.checkOriginExact(origin), '');
       }
     });
   });

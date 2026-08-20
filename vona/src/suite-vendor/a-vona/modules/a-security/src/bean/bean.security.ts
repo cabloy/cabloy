@@ -6,20 +6,9 @@ import type { IMiddlewareSystemOptionsCors } from './middlewareSystem.cors.ts';
 
 import { isSafeDomain } from '../lib/utils.ts';
 
-export interface ICheckOriginOptions {
-  exact?: boolean;
-  allowSameOrigin?: boolean;
-  allowLocalhost?: boolean;
-}
-
 @Bean()
 export class BeanSecurity extends BeanBase {
-  checkOrigin(
-    origin: string | undefined | null,
-    hostCurrent?: string,
-    options?: ICheckOriginOptions,
-  ): string {
-    if (options?.exact) return this._checkOriginExact(origin, hostCurrent, options);
+  checkOrigin(origin: string | undefined | null, hostCurrent?: string): string {
     if (!origin || origin === 'null' || origin === null) origin = 'null';
     // origin is {protocol}{hostname}{port}...
     if (this.isSafeDomain(origin, hostCurrent)) {
@@ -64,20 +53,9 @@ export class BeanSecurity extends BeanBase {
     return false;
   }
 
-  private _checkOriginExact(
-    origin: string | undefined | null,
-    hostCurrent: string | undefined,
-    options: ICheckOriginOptions,
-  ): string {
+  checkOriginExact(origin: string | undefined | null, hostCurrent?: string): string {
     const originNormalized = this._normalizeOrigin(origin);
     if (!originNormalized) return '';
-
-    if (
-      options.allowSameOrigin &&
-      originNormalized === this._normalizeOriginFromHost(hostCurrent, this.ctx.protocol)
-    ) {
-      return originNormalized;
-    }
 
     const onionCors = this.bean.onion.middlewareSystem.getOnionSlice('a-security:cors');
     let whiteListCors = (<IMiddlewareSystemOptionsCors>onionCors.beanOptions.options).whiteList;
@@ -90,7 +68,6 @@ export class BeanSecurity extends BeanBase {
       }
     }
     if (
-      options.allowLocalhost &&
       (this.app.meta.isDev || this.app.meta.isTest) &&
       this._isLocalhostOrigin(originNormalized) &&
       this._isLocalhostHost(hostCurrent)
