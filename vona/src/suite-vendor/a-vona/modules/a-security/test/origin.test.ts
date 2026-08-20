@@ -29,17 +29,20 @@ describe('origin.test.ts', { concurrency: false }, () => {
     });
   });
 
-  it('allows localhost origins across development ports while default CORS remains closed', async () => {
+  it('allows loopback origins across development ports while default CORS remains closed', async () => {
     await withWhiteList([], async () => {
-      assert.equal(
-        app.bean.security.checkOrigin('http://localhost:9000', 'localhost:7102'),
-        'http://localhost:9000',
-      );
+      for (const [origin, host] of [
+        ['http://localhost:9000', 'localhost:7102'],
+        ['http://127.0.0.1:9000', 'localhost:7102'],
+        ['http://[::1]:9000', '127.0.0.1:7102'],
+      ]) {
+        assert.equal(app.bean.security.checkOrigin(origin, host), new URL(origin).origin);
+      }
       assert.equal(
         app.bean.security.checkOrigin('http://localhost.evil.test:9000', 'localhost:7102'),
         '',
       );
-      assert.equal(app.bean.security.checkOrigin('http://127.0.0.1:9000', 'localhost:7102'), '');
+      assert.equal(app.bean.security.checkOrigin('http://127.0.0.2:9000', 'localhost:7102'), '');
       assert.equal(
         app.bean.security.checkOrigin('https://untrusted.example.test', 'api.example.test'),
         '',
@@ -106,22 +109,23 @@ describe('origin.test.ts', { concurrency: false }, () => {
     });
   });
 
-  it('allows localhost consumer origins only in dev/test mode with a localhost API host', async () => {
+  it('allows loopback consumer origins only in dev/test mode with a loopback API host', async () => {
     await withWhiteList([], async () => {
-      assert.equal(
-        app.bean.security.checkOrigin('http://localhost:9000', 'localhost:7102', {
-          exact: true,
-          allowLocalhost: true,
-        }),
+      for (const origin of [
         'http://localhost:9000',
-      );
-      assert.equal(
-        app.bean.security.checkOrigin('http://localhost:9001', 'localhost', {
-          exact: true,
-          allowLocalhost: true,
-        }),
-        'http://localhost:9001',
-      );
+        'http://127.0.0.1:9000',
+        'http://[::1]:9000',
+      ]) {
+        for (const host of ['localhost:7102', '127.0.0.1:7102', '[::1]:7102']) {
+          assert.equal(
+            app.bean.security.checkOrigin(origin, host, {
+              exact: true,
+              allowLocalhost: true,
+            }),
+            new URL(origin).origin,
+          );
+        }
+      }
       assert.equal(
         app.bean.security.checkOrigin('http://localhost:9000', 'localhost.evil.test:7102', {
           exact: true,
@@ -130,7 +134,7 @@ describe('origin.test.ts', { concurrency: false }, () => {
         '',
       );
       assert.equal(
-        app.bean.security.checkOrigin('http://127.0.0.1:9000', 'localhost:7102', {
+        app.bean.security.checkOrigin('http://localhost:9000', '192.168.1.10:7102', {
           exact: true,
           allowLocalhost: true,
         }),

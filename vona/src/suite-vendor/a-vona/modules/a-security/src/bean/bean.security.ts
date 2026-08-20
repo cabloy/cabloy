@@ -102,7 +102,8 @@ export class BeanSecurity extends BeanBase {
 
   private _isLocalhostOrigin(origin: string): boolean {
     try {
-      return new URL(origin).hostname === 'localhost';
+      const hostname = new URL(origin).hostname.replace(/^\[|\]$/g, '');
+      return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
     } catch {
       return false;
     }
