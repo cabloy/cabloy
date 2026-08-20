@@ -38,7 +38,7 @@ test('SSR profiles reject invalid values', () => {
 });
 
 test('SSR profile options enforce the public cookie boundary', () => {
-  const publicOptions = resolveSsrProfileOptions('public', profiles);
+  const publicOptions = resolveSsrProfileOptions('public', profiles, undefined, true);
   const sessionOptions = resolveSsrProfileOptions('session', profiles);
 
   assert.equal(publicOptions.useCookie, false);
@@ -47,14 +47,33 @@ test('SSR profile options enforce the public cookie boundary', () => {
   assert.deepEqual(sessionOptions.responseCache, { expires: 0 });
 });
 
-test('SSR route options override only the response-cache policy', () => {
-  const override = resolveSsrProfileOptions('public', profiles, {
+test('SSR public profiles disable default caching without URL locale metadata', () => {
+  const missingLocale = resolveSsrProfileOptions('public', profiles);
+  const falseLocale = resolveSsrProfileOptions('public', profiles, undefined, false);
+  const sessionOptions = resolveSsrProfileOptions('session', profiles);
+
+  assert.deepEqual(missingLocale.responseCache, { expires: 0 });
+  assert.deepEqual(falseLocale.responseCache, { expires: 0 });
+  assert.deepEqual(sessionOptions.responseCache, { expires: 0 });
+  assert.ok(Object.isFrozen(missingLocale.responseCache));
+  assert.notEqual(missingLocale.responseCache, falseLocale.responseCache);
+});
+
+test('SSR route options override locale-aware cache defaults', () => {
+  const unlocalizedOverride = resolveSsrProfileOptions('public', profiles, {
     responseCache: { expires: '5m' },
   });
-  const disabled = resolveSsrProfileOptions('public', profiles, { responseCache: false });
+  const localeAwareOverride = resolveSsrProfileOptions(
+    'public',
+    profiles,
+    { responseCache: { expires: '5m' } },
+    true,
+  );
+  const disabled = resolveSsrProfileOptions('public', profiles, { responseCache: false }, true);
 
-  assert.equal(override.useCookie, false);
-  assert.deepEqual(override.responseCache, { expires: '5m' });
+  assert.equal(unlocalizedOverride.useCookie, false);
+  assert.deepEqual(unlocalizedOverride.responseCache, { expires: '5m' });
+  assert.deepEqual(localeAwareOverride.responseCache, { expires: '5m' });
   assert.equal(disabled.responseCache, false);
 });
 

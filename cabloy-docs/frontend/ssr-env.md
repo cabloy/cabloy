@@ -36,16 +36,23 @@ The selected layout also supplies its own desktop sidebar fallback and responsiv
 
 ## SSR response cache control
 
-After Zova resolves the route profile, a `session` response immediately receives `Cache-Control: private, no-store`, before router guards or rendering can terminate it. A successfully rendered public route receives the profile default cache header, which `meta.ssrProfileOptions.responseCache` can refine.
+After Zova resolves the route profile, a `session` response immediately receives `Cache-Control: private, no-store`, before router guards or rendering can terminate it. A successfully rendered public route receives a response-cache header according to the route's locale metadata and any explicit `meta.ssrProfileOptions.responseCache` policy.
+
+For a public route, the default policy is:
+
+- `meta.locale: true`: use the configured public profile cache policy;
+- missing or false `meta.locale`: use `expires: 0`, which emits `Cache-Control: no-cache, no-store, must-revalidate`.
+
+The second case prevents a CDN from sharing HTML whose hydration-time locale may still come from a browser cookie while the URL does not identify the locale. A route-level `meta.ssrProfileOptions.responseCache` override remains authoritative, including `false`; use an explicit override only when the route's complete SSR HTML is safe to share for that URL.
 
 Cabloy Basic uses different flavor defaults:
 
-| Flavor | Default profile | SSR response header                  |
-| ------ | --------------- | ------------------------------------ |
-| Web    | `public`        | `public, max-age=600` when cacheable |
-| Admin  | `session`       | `private, no-store`                  |
+| Flavor | Default profile | SSR response header                           |
+| ------ | --------------- | --------------------------------------------- |
+| Web    | `public`        | locale-aware routes use `public, max-age=600` |
+| Admin  | `session`       | `private, no-store`                           |
 
-A route can override the flavor profile through `meta.ssrProfile` and can define a public response-cache policy through `meta.ssrProfileOptions.responseCache`. Set the nested value to `false` to disable public cache-header generation for that route. For Cloudflare cache-rule alignment that preserves these origin headers, see [Docker + Cloudflare Deployment](/fullstack/deploy-cloudflare-docker).
+A route can override the flavor profile through `meta.ssrProfile` and can define a public response-cache policy through `meta.ssrProfileOptions.responseCache`. For Cloudflare cache-rule alignment that preserves these origin headers, see [Docker + Cloudflare Deployment](/fullstack/deploy-cloudflare-docker).
 
 ## Theme implications of `SSR_PROFILE`
 

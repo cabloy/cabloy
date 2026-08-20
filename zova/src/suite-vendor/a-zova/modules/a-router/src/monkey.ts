@@ -75,7 +75,11 @@ export class Monkey
         const route = await sysRouter.resolveRoute(pagePathFull, true, false);
         if (route) {
           // ssr profile
-          this.ctx.meta.$ssr._setProfile(route.meta.ssrProfile, route.meta.ssrProfileOptions);
+          this.ctx.meta.$ssr._setProfile(
+            route.meta.ssrProfile,
+            route.meta.ssrProfileOptions,
+            route.meta.locale,
+          );
           // locale
           this.ctx.meta.$ssr._setLocale(route);
         }

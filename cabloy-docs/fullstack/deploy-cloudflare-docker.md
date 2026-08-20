@@ -111,16 +111,19 @@ For current Cache Rule settings, see [Cache Rules settings](https://developers.c
 
 ## SSR cache contract
 
-Zova SSR writes the public response-cache contract during rendering from the resolved profile and any public route-level `meta.ssrProfileOptions.responseCache` override. The effective SSR profile is authoritative: a `session` response always sets `Cache-Control: private, no-store` before route or profile response-cache policy is considered.
+Zova SSR writes the public response-cache contract during rendering from the resolved profile, route locale metadata, and any public route-level `meta.ssrProfileOptions.responseCache` override. The effective SSR profile is authoritative: a `session` response always sets `Cache-Control: private, no-store` before route or profile response-cache policy is considered.
 
-| Flavor | Default profile | SSR response header                                 | Cloudflare result with this rule                                |
-| ------ | --------------- | --------------------------------------------------- | --------------------------------------------------------------- |
-| Web    | `public`        | `Cache-Control: public, max-age=600` when cacheable | Eligible to cache for ten minutes, subject to Cloudflare policy |
-| Admin  | `session`       | `Cache-Control: private, no-store`                  | Not stored                                                      |
+For a public route, the default response header depends on whether the URL identifies locale:
+
+| Route condition                | Default SSR response header                                              | Cloudflare result with this rule  |
+| ------------------------------ | ------------------------------------------------------------------------ | --------------------------------- |
+| `meta.locale: true`            | `Cache-Control: public, max-age=600` using the Basic Web profile default | Eligible to cache for ten minutes |
+| missing or false `meta.locale` | `Cache-Control: no-cache, no-store, must-revalidate`                     | Not stored                        |
+| `session` profile              | `Cache-Control: private, no-store`                                       | Not stored                        |
 
 For Cabloy Start, verify the effective Web and Admin values in the licensed Start repository before creating the Cloudflare rule. The rule design remains the same: preserve and follow the origin `Cache-Control` response instead of replacing it.
 
-A route can override the flavor default through SSR route metadata. The Cloudflare rule follows the response contract; it does not replace it.
+A route can override the flavor default through SSR route metadata. An explicit public `meta.ssrProfileOptions.responseCache` policy remains authoritative; the Cloudflare rule follows the resulting response contract and does not replace it.
 
 For the public Basic environment-variable details, see [SSR Environment Variables](/frontend/ssr-env).
 
@@ -131,6 +134,6 @@ After the origin is running, verify the following before relying on Cloudflare t
 1. The base hostname returns the expected default instance.
 2. Each configured subdomain resolves to its expected enabled instance.
 3. Nginx forwards the browser hostname instead of the literal value `localhost`.
-4. Web SSR returns the `Cache-Control` header expected from the active edition and flavor configuration. In the current Basic baseline, it is `public, max-age=600`.
+4. Web SSR returns the `Cache-Control` header expected from the active edition, route metadata, and flavor configuration: locale-aware public routes use the configured public cache default, while public routes without `meta.locale: true` use `no-cache, no-store, must-revalidate` unless they have an explicit cache override.
 5. Admin SSR returns the `Cache-Control` header expected from the active edition and flavor configuration. In the current Basic baseline, it is `private, no-store`.
-6. After Cloudflare proxying is enabled, responses intended to be public-cacheable can be cached at the edge while responses marked `no-store` are not stored.
+6. After Cloudflare proxying is enabled, only responses whose origin policy permits public caching are cached at the edge; responses marked `no-store` are not stored.

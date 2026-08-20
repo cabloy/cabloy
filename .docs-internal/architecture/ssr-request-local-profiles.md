@@ -76,6 +76,7 @@ Required behavior:
 - server-rendered HTML is anonymous-safe;
 - public response caching is permitted only when the page and transferred state are user-independent;
 - public routes continue to use URL locale as the canonical public-language input;
+- a public route without `meta.locale: true` defaults to `responseCache.expires: 0` so cookie-locale HTML is not shared by a CDN;
 - browser-only theme and private state remain hydration-safe.
 
 A protected route may still use `public` when it has an explicit URL locale or deliberately locale-neutral public contract and its product behavior is an anonymous shell followed by browser admission and private-data loading. `public` does not mean the route is anonymous; `requiresAuth` remains a separate route-admission rule.
@@ -119,7 +120,7 @@ interface ISsrRouteProfileOptions {
 }
 ```
 
-`meta.ssrProfile` selects the SSR profile and `meta.ssrProfileOptions.responseCache` can refine the HTTP response-cache policy for a public document. The route profile-options surface is deliberately allowlisted; it is not a partial copy of the full profile snapshot. `meta.locale` remains the existing route-level opt-in for URL-locale parsing and canonicalization; it does not select a profile or configure profile options.
+`meta.ssrProfile` selects the SSR profile and `meta.ssrProfileOptions.responseCache` can refine the HTTP response-cache policy for a public document. The route profile-options surface is deliberately allowlisted; it is not a partial copy of the full profile snapshot. `meta.locale` remains the existing route-level opt-in for URL-locale parsing and canonicalization; it does not select a profile. However, for a public route, omitting `meta.locale` (or setting it to `false`) defaults the response-cache policy to `expires: 0` because the URL does not identify the locale. A route-level `responseCache` override remains authoritative.
 
 The effective profile is resolved with this precedence:
 
@@ -131,7 +132,7 @@ route.meta.ssrProfile
 
 There is no legacy cookie-profile fallback. `SSR_PROFILE` is authoritative, and direct reads of static SSR cookie configuration are replaced by request-local `$ssr.profile` or `$ssr.profileOptions` access.
 
-Profile options are a typed, narrow policy surface, not an arbitrary environment overlay. Routes may select a profile and provide only the public-only `ssrProfileOptions.responseCache` override, using `false | policy` semantics. The resolver copies that allowlisted override into a fresh immutable request snapshot; server cache-header generation and hydration consumers observe the same snapshot. Layout/sidebar defaults are deliberately excluded from that snapshot: the selected layout owns its desktop fallback, while the layout model owns the browser-local preference. Routes cannot alter cookie capability, body-ready behavior, or layout/sidebar defaults. No route setting can relax the `session` no-store invariant or enable private data in `public`.
+Profile options are a typed, narrow policy surface, not an arbitrary environment overlay. Routes may select a profile and provide only the public-only `ssrProfileOptions.responseCache` override, using `false | policy` semantics. The resolver gives that override precedence; otherwise it supplies `{ expires: 0 }` for a `public` route whose `meta.locale` is not `true`, then falls back to the selected profile policy. The resolver copies the effective policy into a fresh immutable request snapshot; server cache-header generation and hydration consumers observe the same snapshot. Layout/sidebar defaults are deliberately excluded from that snapshot: the selected layout owns its desktop fallback, while the layout model owns the browser-local preference. Routes cannot alter cookie capability, body-ready behavior, or layout/sidebar defaults. No route setting can relax the `session` no-store invariant or enable private data in `public`.
 
 ## Request lifecycle and state handoff
 
@@ -173,10 +174,13 @@ Immediately after server route resolution selects `session`, Zova sets `Cache-Co
 
 ```text
 session -> set private/no-store immediately
-public  -> apply resolved responseCache policy after successful render
+public  -> explicit route responseCache, if present
+        -> expires: 0 when meta.locale is not true
+        -> selected profile responseCache otherwise
+        -> apply the resolved policy after successful render
 ```
 
-A session response must never receive `public, max-age=...`, even if route metadata requests it. Avoid contradictory appended headers. Public behavior may use a finite `max-age` only after confirming that HTML and dehydrated state are user-independent.
+A session response must never receive `public, max-age=...`, even if route metadata requests it. Avoid contradictory appended headers. A public route with `meta.locale: true` may use a finite `max-age` only after confirming that its URL-locale HTML and dehydrated state are user-independent. A public route without that metadata is non-cacheable by default because its HTML may vary by cookie locale.
 
 ## Consumer migration matrix
 
@@ -210,7 +214,7 @@ Use one representative commerce route first, such as address or order list. For 
 
 ## Locale policy
 
-`route.meta.locale` remains the route-level opt-in for URL-locale parsing, normalization, and omission of the default locale from canonical optional segments. An explicit URL locale remains authoritative in both profiles.
+`route.meta.locale` remains the route-level opt-in for URL-locale parsing, normalization, and omission of the default locale from canonical optional segments. An explicit URL locale remains authoritative in both profiles. For `meta.locale: true` routes with an optional locale parameter, a missing segment resolves as `params.locale === ''` and is normalized to the configured default locale, so the route retains a canonical default-locale SSR state. The response-cache resolver therefore treats the metadata flag—not the non-empty value of the optional parameter—as the public-cache eligibility signal.
 
 The router resolves locale in `beforeResolve`, before the initial hydration render:
 
@@ -300,7 +304,8 @@ Focused tests must cover:
 - `$ssr` profile visibility before bean/model initialization;
 - Passport/JWT/theme/layout/meta/permission behavior under both profiles;
 - session no-store overriding route/profile `responseCache` settings;
-- public response-cache behavior remaining unchanged;
+- locale-aware public routes retaining their configured response-cache policy;
+- public routes with missing or false `meta.locale` defaulting to `expires: 0` unless an explicit route override wins;
 - public neutral-shell hydration equivalence;
 - session private-query transfer and hydration equivalence;
 - explicit URL locale, profile-permitted cookie locale, user preference fallback, and default locale;

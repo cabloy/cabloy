@@ -146,12 +146,14 @@ export class CtxSSR extends BeanSimple {
   public _setProfile(
     routeProfile: TypeSsrProfile | undefined,
     routeProfileOptions?: Readonly<ISsrRouteProfileOptions>,
+    metaLocale?: boolean,
   ) {
     const ssrProfile = resolveSsrProfile(routeProfile, this.sys.env.SSR_PROFILE);
     const ssrProfileOptions = resolveSsrProfileOptions(
       ssrProfile,
       this.sys.config.ssr.profiles,
       routeProfileOptions,
+      metaLocale,
     );
     this.state.ssrProfile = ssrProfile;
     this.state.ssrProfileOptions = ssrProfileOptions;

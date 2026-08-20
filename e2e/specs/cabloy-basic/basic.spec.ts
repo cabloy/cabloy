@@ -125,6 +125,12 @@ test(
     expect(routeOverrideResponse.ok()).toBeTruthy();
     expect(routeOverrideResponse.headers()['cache-control']).toBe('public, max-age=300');
 
+    const unlocalizedResponse = await request.get('/demo/basic/state');
+    expect(unlocalizedResponse.ok()).toBeTruthy();
+    expect(unlocalizedResponse.headers()['cache-control']).toBe(
+      'no-cache, no-store, must-revalidate',
+    );
+
     const pageErrors = collectPageErrors(page);
     const documentResponse = await page.goto('/', { waitUntil: 'load' });
     expect(documentResponse?.ok()).toBeTruthy();
@@ -143,15 +149,21 @@ test(
   { tag: ['@web', '@smoke'] },
   async ({ request }) => {
     const responses = await Promise.all(
-      Array.from({ length: 8 }, (_, index) =>
-        request.get(index % 2 === 0 ? '/' : '/demo/basic/routeQueryB'),
+      Array.from({ length: 9 }, (_, index) =>
+        request.get(
+          index % 3 === 0 ? '/' : index % 3 === 1 ? '/demo/basic/routeQueryB' : '/demo/basic/state',
+        ),
       ),
     );
 
     for (const [index, response] of responses.entries()) {
       expect(response.ok(), `response ${index}`).toBeTruthy();
       expect(response.headers()['cache-control'], `response ${index}`).toBe(
-        index % 2 === 0 ? 'public, max-age=600' : 'public, max-age=300',
+        index % 3 === 0
+          ? 'public, max-age=600'
+          : index % 3 === 1
+            ? 'public, max-age=300'
+            : 'no-cache, no-store, must-revalidate',
       );
     }
   },

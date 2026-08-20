@@ -22,12 +22,17 @@ export function resolveSsrProfileOptions(
   ssrProfile: TypeSsrProfile,
   profiles: Readonly<Record<TypeSsrProfile, ZovaConfigSsrProfile>>,
   routeProfileOptions?: Readonly<ISsrRouteProfileOptions>,
+  metaLocale?: boolean,
 ): Readonly<ISsrProfileOptions> {
   const profileOptions = profiles[ssrProfile];
   if (!profileOptions) {
     throw new Error(`invalid SSR profile: ${ssrProfile}`);
   }
-  const responseCache = routeProfileOptions?.responseCache ?? profileOptions.responseCache;
+  const responseCache =
+    routeProfileOptions?.responseCache ??
+    (ssrProfile === 'public' && metaLocale !== true
+      ? { expires: 0 }
+      : profileOptions.responseCache);
   return Object.freeze({
     useCookie: ssrProfile === 'session' && profileOptions.useCookie,
     responseCache:
