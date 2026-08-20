@@ -53,11 +53,11 @@ declare module 'zova' {
       pagePath: K,
       options?: IPagePathRecord[K] & IGetPagePathOptions,
     ): string;
-    $getPagePathLogin(returnTo?: string, cause?: string): string;
+    $getPagePathLogin(returnTo?: string | boolean, cause?: string): string;
     $getPagePathAccessDenied(): string;
     $gotoPage(pagePath: string, options?: IGotoPageOptions): TypeGotoPageResult;
     $gotoHome(options?: IGotoPageOptions): TypeGotoPageResult;
-    $gotoLogin(returnTo?: string, cause?: string): TypeGotoPageResult;
+    $gotoLogin(returnTo?: string | boolean, cause?: string): TypeGotoPageResult;
     $gotoAccessDenied(): TypeGotoPageResult;
     $gotoReturnTo(returnTo?: string): TypeGotoPageResult;
     $getReturnTo(returnTo?: string): string;

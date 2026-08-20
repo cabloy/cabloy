@@ -69,12 +69,12 @@ export class MonkeySys
         } as never,
       );
     };
-    app.$getPagePathLogin = (returnTo?: string, cause?: string) => {
+    app.$getPagePathLogin = (returnTo?: string | boolean, cause?: string) => {
       const query: any = {};
       if (cause) {
         query.cause = cause;
       }
-      const returnTo2 = returnTo === app.sys.env.ROUTER_PAGE_LOGIN ? undefined : returnTo;
+      const returnTo2 = _fixReturnTo(app, returnTo);
       return app.$getPagePath(
         app.sys.env.ROUTER_PAGE_LOGIN as never,
         {
@@ -103,14 +103,14 @@ export class MonkeySys
       const pagePath = app.$getPagePathHome(options);
       return app.$gotoPage(pagePath, { ...options, params: undefined });
     };
-    app.$gotoLogin = (returnTo?: string, cause?: string) => {
+    app.$gotoLogin = (returnTo?: string | boolean, cause?: string) => {
+      const returnTo2 = _fixReturnTo(app, returnTo);
       if (
-        !returnTo &&
+        !returnTo2 &&
         cast(app.meta.$router.currentRoute)?.path === app.sys.env.ROUTER_PAGE_LOGIN
       ) {
         return;
       }
-      const returnTo2 = returnTo ?? app.$getCurrentPagePath();
       const pagePath = app.$getPagePathLogin(returnTo2, cause);
       return app.$gotoPage(pagePath);
     };
@@ -152,4 +152,14 @@ export class MonkeySys
       );
     };
   }
+}
+
+function _fixReturnTo(app: ZovaApplication, returnTo?: string | boolean) {
+  const returnTo2 =
+    returnTo === false
+      ? false
+      : typeof returnTo === 'string'
+        ? returnTo
+        : app.$getCurrentPagePath();
+  return returnTo2 === app.sys.env.ROUTER_PAGE_LOGIN ? false : returnTo2;
 }
