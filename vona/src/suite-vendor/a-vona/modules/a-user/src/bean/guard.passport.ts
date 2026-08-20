@@ -6,9 +6,11 @@ import { BeanBase, Global } from 'vona';
 import { Guard } from 'vona-module-a-aspect';
 import { checkErrorJwtExpiredAndThrow } from 'vona-module-a-jwt';
 
+import type { TypePassportActivated } from '../lib/passport.ts';
+
 export interface IGuardOptionsPassport extends IDecoratorGuardOptionsGlobal {
   public: boolean;
-  activated?: boolean;
+  activated?: TypePassportActivated;
   checkAuthToken: boolean; // default is true
 }
 
