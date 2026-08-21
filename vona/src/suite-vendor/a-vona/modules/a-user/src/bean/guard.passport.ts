@@ -45,7 +45,7 @@ export class GuardPassport extends BeanBase implements IGuardExecute {
       return this.app.throw(403);
     }
     // check activated
-    if (this.bean.passport.isAuthenticated) {
+    if (!options.public && this.bean.passport.isAuthenticated) {
       if (options.activated === true && !this.bean.passport.isActivated) {
         return this.app.throw(403);
       }
