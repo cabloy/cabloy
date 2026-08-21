@@ -105,7 +105,9 @@ export class ServiceDatabaseDialectBase extends BeanBase {
         const column = columns[columnName];
         if (Object.prototype.hasOwnProperty.call(data, columnName)) {
           const value = data[columnName];
-          if (column.type === 'json' && !isNil(value) && typeof value === 'string') {
+          if (BOOLEAN_COLUMN_TYPES.includes(column.type) && !isNil(value)) {
+            data[columnName] = safeBoolean(value);
+          } else if (column.type === 'json' && !isNil(value) && typeof value === 'string') {
             data[columnName] = JSON.parse(value);
           } else if (column.type === 'datetime' && !isNil(value)) {
             data[columnName] = new Date(value);
