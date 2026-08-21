@@ -149,7 +149,10 @@ function __getTz(ctx: VonaContext, options: I18nConfigTz): string | undefined {
   let tz: string | undefined = '';
   let tzOrigin: string = '';
 
-  const cookieTz = cookieField && ctx.cookies.get(cookieField, { signed: false });
+  let cookieTz = cookieField && ctx.cookies.get(cookieField, { signed: false });
+  if (cookieTz) {
+    cookieTz = decodeURIComponent(cookieTz);
+  }
 
   // 1. Query
   if (!tz && queryField) {
