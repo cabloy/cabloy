@@ -71,8 +71,6 @@ export class ServiceSsrHandler extends BeanBase {
     }
     const state = {
       ...options.state,
-      ssrProfile,
-      ssrProfileOptions,
     };
     // handler
     const { serverEntry, renderToString, renderTemplate } = this._handlerInstance;

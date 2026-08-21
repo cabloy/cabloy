@@ -50,9 +50,9 @@ The key ownership split is:
 - Zova `a-ssr` owns `$ssr`, SSR state/meta accumulation, hydration handoff, theme/bootstrap scripts, and server-context cleanup.
 - Generated Zova application code owns route/page/model behavior.
 
-Production SSR must select the profile in the Zova SSR handler after route resolution and before `serverEntry`. The handler resolves the effective profile/options, writes the safe immutable snapshot to request-local `ssrContext.state`, and immediately applies `Cache-Control: private, no-store` for `session`. This establishes both the production HTTP policy and the initial SSR-state contract for consumers that initialize before or alongside router guards.
+Production SSR resolves the route in the Zova SSR handler before `serverEntry` so it can determine HTTP response policy. The handler resolves the effective profile/options and immediately applies `Cache-Control: private, no-store` for `session`, but it does not pre-seed `ssrContext.state` with route-specific profile fields.
 
-That production pre-resolution intentionally coexists with two narrower fallback/synchronization mechanisms. For direct Vite/Quasar server rendering where no outer handler seeded the state, `a-router.appInitialize()` resolves the request route and sets `$ssr` before profile-sensitive application initialization. Zova `a-ssr` registers a first client `router.beforeEach` that resolves the destination route profile through the same `$ssr._setProfile(...)` path before the router event chain continues to downstream guards. The former supplies the missing direct-server initial handoff; the latter keeps client navigation aligned. Neither replaces the production handler as the source of initial production SSR state or response-cache policy.
+`a-router.appInitialize()` is the unified app-side initialization boundary for route-specific SSR profile and locale state. It resolves the current server route and calls `$ssr._setProfile(...)` and `$ssr._setLocale(...)` for both built Vona SSR (which has an outer handler) and direct Vite/Quasar SSR (which does not). Route-specific profile state must not be consumed before this boundary; `$ssr` fallback values before initialization are flavor/default values, not route-specific truth. Zova `a-ssr` registers a first client `router.beforeEach` that applies the destination profile and locale before downstream guards, and restores both committed values when navigation fails.
 
 Primary source paths:
 
@@ -140,14 +140,14 @@ The implementation sequence is:
 
 1. Vona selects the SSR Site and constructs the normal per-request state.
 2. In the built production handler path, Zova `ServiceSsrHandler.render()` derives the page path and resolves the route.
-3. The handler resolves `route.meta.ssrProfile` or the flavor `SSR_PROFILE` default and resolves the allowlisted immutable options snapshot.
-4. It copies the state and attaches the effective profile/options snapshot to the per-render `ssrContext`.
+3. The handler resolves `route.meta.ssrProfile` or the flavor `SSR_PROFILE` default and resolves the allowlisted immutable options snapshot for HTTP policy.
+4. It copies the incoming state into the per-render `ssrContext` without attaching route-specific profile fields.
 5. When the profile is `session`, the handler immediately sets `Cache-Control: private, no-store`, before `serverEntry`, router guards, redirects, or rendering can terminate the request.
-6. It calls `serverEntry` only after `$ssr` can observe the selected profile/options.
-7. For direct Vite/Quasar server rendering that lacks the outer handler handoff, `a-router.appInitialize()` resolves the request route and prepares the same profile/options before profile-sensitive application initialization. It does nothing when the handler has already seeded the snapshot.
-8. The same safe snapshot is serialized into initial SSR state. For `public`, the resolved `responseCache` policy is applied only after a successful document render.
+6. `a-router.appInitialize()` resolves the current route and calls `$ssr._setProfile(...)` and `$ssr._setLocale(...)` before later profile-sensitive application initialization. This is the same app-side boundary for built Vona SSR and direct Vite/Quasar SSR.
+7. The app-side setters write the route-derived profile/options into request-local state, which is serialized into initial SSR state. For `public`, the handler's resolved `responseCache` policy is applied only after a successful document render.
+8. Route-specific profile state is not a supported input for consumers before `a-router.appInitialize()`; `$ssr` values before that boundary are only flavor/default fallbacks.
 9. Existing `finally` cleanup clears state, deferred state, callbacks, modules, and profile references.
-10. On initial browser hydration, `SysSsrState` reads the serialized profile. The client keeps it stable through hydration; client `router.beforeEach` synchronizes a destination profile before downstream navigation guards and restores the committed route profile when navigation fails, without mutating global configuration.
+10. On initial browser hydration, `SysSsrState` reads the serialized profile. The client keeps it stable through hydration; client `router.beforeEach` synchronizes destination profile and locale before downstream navigation guards and restores both the committed profile and exact prior locale when navigation fails, without mutating global configuration.
 
 The serialized state must contain only safe profile identity/options. It must never contain cookies, access tokens, Passport credentials, request/response objects, or arbitrary server configuration.
 
@@ -254,11 +254,11 @@ For `session` pages, server models may initialize authenticated queries, but onl
 
 ### Stage B: runtime boundary
 
-- Resolve profile after route resolution and before `serverEntry`.
-- Initialize `$ssr.profile`/`profileOptions` from request context.
-- Transfer the safe snapshot through initial SSR state.
+- Resolve profile after route resolution and before `serverEntry` for HTTP response policy.
+- Initialize route-specific `$ssr.profile`/`profileOptions` and locale in `a-router.appInitialize()` for both built and direct SSR.
+- Transfer the app-initialized safe snapshot through initial SSR state.
 - Enforce session no-store before response-cache evaluation.
-- Add concurrent isolation and shared-config immutability tests.
+- Add concurrent isolation, shared-config immutability, and client profile/locale rollback tests.
 
 ### Stage C: framework consumers
 

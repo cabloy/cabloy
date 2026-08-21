@@ -83,7 +83,7 @@ Owns:
 - registering `sys.meta.$getSsrHandler(siteAssetDir)`
 - resolving frontend routes for SSR render
 - serving built client assets under the bundle directory
-- resolving the effective SSR profile/options for production renders and attaching the request-local snapshot before `serverEntry`
+- resolving the effective SSR profile/options for production HTTP response policy before `serverEntry`
 - setting `Cache-Control: private, no-store` immediately for a `session` profile
 - calling `serverEntry`, `renderToString`, and `renderTemplate`
 - generating preload links from the client manifest
@@ -144,12 +144,12 @@ Browser
                -> zova sys.meta.$getSsrHandler(siteAssetDir)
           -> zova ServiceSsrHandler.render
                -> resolveRoute(pagePathFull)
-               -> resolve ssrProfile/options into request-local SSR state
+               -> resolve ssrProfile/options for HTTP response policy
                -> [session] set Cache-Control: private, no-store
                -> serverEntry(ssrContext)
                     -> app initialization
-                    -> [direct Quasar/Vite SSR only, without a handler snapshot]
-                       a-router.appInitialize seeds the request profile
+                    -> a-router.appInitialize resolves the current route
+                       and seeds request-local profile/options and locale
                -> renderToString(renderFn, ssrContext)
                -> onRendered callbacks
                -> inject state/meta/preloads
@@ -194,7 +194,7 @@ Decision order:
 3. ask the handler whether a built static asset exists
 4. if not, perform SSR render
 
-This ordering is an important invariant. The dev-proxy branch bypasses the built Zova `ServiceSsrHandler.render()` path, including its production route/profile pre-resolution and HTTP response-cache handling. Direct Vite/Quasar dev SSR therefore uses `a-router.appInitialize()` to prepare an otherwise-unseeded request profile before profile-sensitive application initialization; client `a-ssr` `router.beforeEach` remains responsible for later navigation synchronization. Direct dev SSR cannot validate the production handler's response-header behavior.
+This ordering is an important invariant. The dev-proxy branch bypasses the built Zova `ServiceSsrHandler.render()` path, including its production HTTP response-policy resolution and response-cache handling. Direct Vite/Quasar dev SSR therefore reaches the same `a-router.appInitialize()` boundary that resolves the current route and prepares request-local profile/options and locale before profile-sensitive application initialization; client `a-ssr` `router.beforeEach` remains responsible for later navigation synchronization. Direct dev SSR cannot validate the production handler's response-header behavior.
 
 The Vona-side site bean remains the outer orchestrator even after the frontend bundle is involved.
 
@@ -258,11 +258,11 @@ This is why built static assets are still served through the SSR handler boundar
 
 - derives `pagePathFull` from SSR state or request URL
 - resolves the route through `SysRouter`
-- resolves the effective profile/options and copies that safe snapshot into request-local SSR state
+- resolves the effective profile/options for HTTP response policy
 - immediately sets `Cache-Control: private, no-store` for `session`
-- creates `ssrContext`
+- creates `ssrContext` with the caller's request-local state copy, without pre-seeding route profile fields
 - calls `serverEntry(ssrContext)`
-- for direct Quasar/Vite SSR without a handler snapshot, lets `a-router.appInitialize()` prepare the request profile before profile-sensitive application initialization
+- lets `a-router.appInitialize()` resolve the current route and prepare request-local profile/options and locale before profile-sensitive application initialization, for both built and direct SSR
 - calls `renderToString(renderFn, ssrContext)`
 - flushes `onRendered` callbacks
 - records render errors through SSR meta state
@@ -270,7 +270,7 @@ This is why built static assets are still served through the SSR handler boundar
 - renders final HTML through `renderTemplate(ssrContext)`
 - applies resolved public HTTP `responseCache` headers to the Vona response only after successful rendering
 
-Production handler pre-resolution is authoritative for the initial SSR profile and HTTP policy. Direct server entries without that snapshot use the `a-router.appInitialize()` fallback before profile-sensitive initialization. Client router `beforeEach` synchronization is deliberately retained as the in-app navigation safeguard.
+The handler's route/profile resolution is authoritative only for HTTP response policy. `a-router.appInitialize()` is authoritative for route-derived application profile/options and locale state in both built and direct SSR; consumers must not depend on route-specific profile state before that boundary. Client router `beforeEach` applies destination profile and locale before downstream guards, while failed navigation restores both the committed profile and the exact prior locale.
 
 This layer owns the server-side HTML assembly model.
 
@@ -402,6 +402,7 @@ Primary type surface:
 
 - bundle-local static asset layout under `client/`
 - route resolution for SSR page render
+- resolving profile/options for HTTP response policy without owning route-derived application state
 - creating SSR context
 - calling generated `serverEntry`, `renderToString`, and `renderTemplate`
 - module preload generation from manifest

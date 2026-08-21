@@ -64,11 +64,7 @@ export class Monkey
   }
 
   async appInitialize() {
-    const ssrState = this.ctx.meta.$ssr.state;
-    if (
-      process.env.SERVER &&
-      (ssrState.ssrProfile === undefined || ssrState.ssrProfileOptions === undefined)
-    ) {
+    if (process.env.SERVER) {
       const pagePathFull = this.app.$getCurrentPagePath();
       if (pagePathFull) {
         const sysRouter = await this._getSysRouter();
