@@ -226,6 +226,22 @@ Important Cabloy Basic reverse-sync rule:
 
 For Cabloy Start, verify the exact Start-specific flavor names, paths, SSR site baselines, and project assets in the licensed Start repo.
 
+### Schema-driven UI decision branch
+
+When the regenerated contract feeds a form or another metadata-driven UI, decide the ownership path before adding frontend field definitions:
+
+1. Put reusable field meaning, validation, titles, ordering, and renderer metadata on the backend entity or inferred contract when those semantics are shared; put operation-specific projection or composition in the DTO.
+2. Identify the frontend consumer surface:
+   - generated `$api` for executing an operation;
+   - generated `$apiSchema` for a named schema facade;
+   - `$sdk` or `ModelResource` for dynamic schema/resource access;
+   - a direct page form for a local, non-resource workflow.
+3. Prefer automatic `ZForm` rendering when the resolved schema already carries the field metadata. A `ZForm` with `schema` and no default body slot iterates schema properties automatically; use `slotFooter` for page-specific actions without replacing the automatic body.
+4. Keep reusable query, cache, mutation, invalidation, and resource state in `ModelResource` or a model. A page-specific action may call generated `$api` directly when it has no shared state or cache ownership; do not add an infrequently used operation to a shared model only for API indirection.
+5. If the page needs a custom renderer, layout, or behavior, determine whether that resource is frontend-owned and referenced by backend metadata. If so, follow the reverse-chain flavor build and `deps:vona` handoff rather than treating the change as frontend-only.
+
+Read the [API Schema Guide](../../../cabloy-docs/frontend/api-schema-guide.md), [Form Guide](../../../cabloy-docs/frontend/form-guide.md), and [Model Resource Owner Pattern](../../../cabloy-docs/frontend/model-resource-owner-pattern.md) for the ownership and runtime details. Use `references/contract-loop-map.md` and `references/verification-checklist.md` for the contract-loop proof steps.
+
 ### Path C: Downstream frontend alignment
 
 After generation, inspect whether the frontend still needs follow-up in:
