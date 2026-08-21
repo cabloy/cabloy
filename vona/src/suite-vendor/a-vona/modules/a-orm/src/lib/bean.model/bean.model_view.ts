@@ -62,10 +62,12 @@ export class BeanModelView<TRecord extends {}> extends BeanModelKnex<TRecord> {
     callback: (tableBuilder: Knex.CreateTableBuilder) => any,
   ): Promise<void> {
     await this.schema.createTable(tableName, callback);
+    this.db.columns.columnsClear(tableName);
   }
 
   async dropTable(tableName: string) {
     await this.schema.dropTable(tableName);
+    this.db.columns.columnsClear(tableName);
   }
 
   async alterTable(
@@ -75,15 +77,17 @@ export class BeanModelView<TRecord extends {}> extends BeanModelKnex<TRecord> {
   ): Promise<void> {
     if (!alterViewAuto) {
       // alter table
-      return await this.schema.alterTable(tableName, table => {
-        return callback(table);
-      });
-    }
-    await this._viewDependentsAll_handle(tableName, async () => {
       await this.schema.alterTable(tableName, table => {
         return callback(table);
       });
-    });
+    } else {
+      await this._viewDependentsAll_handle(tableName, async () => {
+        await this.schema.alterTable(tableName, table => {
+          return callback(table);
+        });
+      });
+    }
+    this.db.columns.columnsClear(tableName);
   }
 
   async viewDependents(viewName: string): Promise<string[]> {

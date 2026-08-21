@@ -32,8 +32,7 @@ export class ServiceColumns extends BeanBase {
     let columns = this.serviceColumnsCache.getColumnsCache(tableName);
     if (!columns) {
       const dialect = this.db.dialect;
-      const connection = this.db.connection;
-      const map = await connection(tableName).columnInfo();
+      const map = await dialect.fetchColumns(this.db.connection, tableName);
       columns = {};
       for (const name in map) {
         columns[name] = dialect.coerceColumn(map[name]);

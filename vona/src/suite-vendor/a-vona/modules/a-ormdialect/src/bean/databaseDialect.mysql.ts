@@ -5,6 +5,7 @@ import type {
   IDatabaseDialectCapabilities,
   IDecoratorDatabaseDialectOptions,
   IFetchDatabasesResultItem,
+  TypeDatabaseDialectTableColumnsFn,
   IFetchIndexesResultItem,
 } from 'vona-module-a-orm';
 
@@ -72,6 +73,33 @@ export class DatabaseDialectMysql extends ServiceDatabaseDialectBase {
     datas: any[],
   ): Promise<[TableIdentity[], Knex.QueryBuilder]> {
     return await this.insertAsMysql(builder, datas);
+  }
+
+  async select(
+    builder: Knex.QueryBuilder,
+    datas: any[],
+    fn: TypeDatabaseDialectTableColumnsFn,
+  ): Promise<any[]> {
+    return await this.selectAsMysql(builder, datas, fn);
+  }
+
+  async fetchColumns(
+    connection: Knex,
+    tableName: string,
+  ): Promise<Record<string, Knex.ColumnInfo>> {
+    const columns = await super.fetchColumns(connection, tableName);
+    const result = await connection.raw(
+      `SELECT COLUMN_NAME AS columnName, COLUMN_TYPE AS columnType
+       FROM information_schema.columns
+       WHERE table_schema = database() AND table_name = ?`,
+      [tableName],
+    );
+    for (const item of result[0]) {
+      const column = columns[item.columnName];
+      if (column)
+        (column as Knex.ColumnInfo & { columnType?: string }).columnType = item.columnType;
+    }
+    return columns;
   }
 
   query(result) {

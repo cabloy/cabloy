@@ -79,6 +79,13 @@ export class ServiceDatabaseDialectBase extends BeanBase {
     return datas;
   }
 
+  async fetchColumns(
+    connection: Knex,
+    tableName: string,
+  ): Promise<Record<string, Knex.ColumnInfo>> {
+    return await connection(tableName).columnInfo();
+  }
+
   query(_result) {
     throw new Error('Not Implemented');
   }
@@ -90,7 +97,34 @@ export class ServiceDatabaseDialectBase extends BeanBase {
   coerceColumn(column: Knex.ColumnInfo): ITableColumn {
     const result = { type: column.type } as ITableColumn;
     result.default = this._coerceColumnValue(column.type, column.defaultValue);
+    const columnType = (column as Knex.ColumnInfo & { columnType?: string }).columnType;
+    if (columnType) result.columnType = columnType;
     return result;
+  }
+
+  protected _isMysqlBooleanColumn(column: ITableColumn) {
+    return column.columnType?.trim().toLowerCase() === 'tinyint(1)';
+  }
+
+  protected async selectAsMysql(
+    _builder: Knex.QueryBuilder,
+    datas: any[],
+    fn: TypeDatabaseDialectTableColumnsFn,
+  ): Promise<any[]> {
+    const columns = await fn();
+    for (const data of datas) {
+      for (const columnName in columns) {
+        const column = columns[columnName];
+        if (
+          Object.prototype.hasOwnProperty.call(data, columnName) &&
+          this._isMysqlBooleanColumn(column)
+        ) {
+          const value = data[columnName];
+          if (!isNil(value)) data[columnName] = safeBoolean(value);
+        }
+      }
+    }
+    return datas;
   }
 
   protected async selectAsSqlite3(

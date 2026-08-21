@@ -129,4 +129,64 @@ describe('database.test.ts', () => {
       await app.bean.model.dropTable(tableName);
     });
   });
+
+  it('action:model:mysqlBooleanResult', async () => {
+    const tableName = `__tempMysqlBoolean_${crypto.randomUUID().replaceAll('-', '')}`;
+    let clientName: any;
+    let created = false;
+    try {
+      await app.bean.executor.mockCtx(async () => {
+        clientName = app.ctx.db.clientName;
+        await app.bean.model.createTable(tableName, table => {
+          table.basicFields();
+          table.boolean('flag');
+          table.boolean('nullableFlag').nullable();
+          table.tinyint('numberValue', 4);
+        });
+        created = true;
+        const model = app.bean.model;
+        const itemFalse = await model.insert(tableName as any, {
+          flag: false,
+          nullableFlag: null,
+          numberValue: 0,
+        });
+        const itemTrue = await model.insert(tableName as any, {
+          flag: true,
+          nullableFlag: false,
+          numberValue: 1,
+        });
+        const itemNumber = await model.insert(tableName as any, {
+          flag: true,
+          nullableFlag: true,
+          numberValue: 2,
+        });
+        const selectedFalse = await model.get(tableName as any, { id: itemFalse.id });
+        const selectedTrue = await model.get(tableName as any, { id: itemTrue.id });
+        const selectedNumber = await model.get(tableName as any, { id: itemNumber.id });
+        assert.strictEqual(selectedFalse?.flag, false);
+        assert.strictEqual(typeof selectedFalse?.flag, 'boolean');
+        assert.strictEqual(selectedFalse?.nullableFlag, null);
+        assert.strictEqual(selectedTrue?.flag, true);
+        assert.strictEqual(selectedTrue?.nullableFlag, false);
+        assert.strictEqual(selectedNumber?.nullableFlag, true);
+        assert.strictEqual(selectedFalse?.numberValue, 0);
+        assert.strictEqual(selectedTrue?.numberValue, 1);
+        assert.strictEqual(selectedNumber?.numberValue, 2);
+        assert.strictEqual(typeof selectedNumber?.numberValue, 'number');
+        const columns = await app.ctx.db.columns.columns(tableName);
+        const columnsAgain = await app.ctx.db.columns.columns(tableName);
+        assert.strictEqual(columnsAgain, columns);
+        if (app.ctx.db.dialectName === 'mysql' || app.ctx.db.dialectName === 'mysql2') {
+          assert.strictEqual(columns.flag.columnType, 'tinyint(1)');
+          assert.strictEqual(columns.numberValue.columnType, 'tinyint(4)');
+        }
+      });
+    } finally {
+      await app.bean.executor.mockCtx(async () => {
+        clientName ??= app.ctx.db.clientName;
+        if (created) await app.bean.model.dropTable(tableName);
+        app.bean.database.getDb(clientName).columns.columnsClear(tableName);
+      });
+    }
+  });
 });
