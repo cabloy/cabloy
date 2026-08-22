@@ -79,8 +79,8 @@ For a Web-style SSR request with the `public` profile, the server does not recov
 
 The payment page follows this rule:
 
-- `__init__()` invokes initialization only in the browser;
-- `$ssr.handleDirectOrOnHydrated(...)` delays client work until after an SSR document has hydrated;
+- `__init__()` may retain server-required preparation, while `$ssr.handleDirectOrOnHydrated(...)` owns browser-only initialization;
+- `$ssr.handleDirectOrOnHydrated(...)` does not invoke its callback on the server, delays it until after an SSR document has hydrated, and invokes it immediately for SPA startup or later client navigation;
 - while `isRuntimeSsrHydrated` is false, `render()` returns the same neutral busy shell for server render and the browser's first hydration render.
 
 This is stronger than merely avoiding private HTML. The server HTML and hydration-time first client tree must be equivalent; a private request or a differently shaped loading branch during hydration can still produce incorrect control flow or hydration mismatch.

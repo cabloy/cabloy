@@ -261,7 +261,7 @@ provider return or cancel
   -> durable order settlement observation
 ```
 
-The Commerce payment route requires authentication and uses the session SSR profile. Its controller defers client initialization through `$ssr.handleDirectOrOnHydrated(...)`. The payment-session model avoids creating private server-side query state when cookies are unavailable or the Passport is not authenticated. After hydration and admission, the controller can reconcile, poll, and navigate using customer-authorized reads.
+The Commerce payment route requires authentication and uses the session SSR profile. Its controller keeps server-required preparation separate from browser-only initialization and passes the latter through `$ssr.handleDirectOrOnHydrated(...)`. This helper returns without invoking its callback on the server, queues it until initial SSR hydration completes, and runs it immediately for SPA startup or later client navigation. The payment-session model avoids creating private server-side query state when cookies are unavailable or the Passport is not authenticated. After hydration and admission, the controller can reconcile, poll, and navigate using customer-authorized reads.
 
 The invariant is more important than a particular visual shell: server HTML and the hydration-time initial render must agree about private payment/order data. Do not render customer-owned payment state on the server when the request cannot authorize it, and do not let the provider return itself settle Commerce.
 

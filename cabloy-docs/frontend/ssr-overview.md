@@ -34,6 +34,16 @@ For browser work that must wait for the initial SSR handoff, register `this.$ssr
 
 This lifecycle applies only to the initial client hydration of SSR HTML. It is not an SPA-startup or later client-navigation readiness signal. Do not render a client-ready marker into server HTML; add it from an `onHydrated(...)` callback when browser-visible evidence is required.
 
+For work that is safe to run immediately in an SPA, but must wait until hydration in an SSR document, use `this.$ssr.handleDirectOrOnHydrated(...)`:
+
+```ts
+this.$ssr.handleDirectOrOnHydrated(() => {
+  // browser-only work
+});
+```
+
+The helper is a client-only boundary. It returns without invoking the callback on the server; during the browser's initial SSR hydration it queues the callback through `onHydrated(...)`; and for SPA startup or after hydration it invokes the callback immediately. Callers should not wrap this helper in a second `process.env.CLIENT` guard. Do not put server-required initialization inside the callback; keep server work outside the helper and use the helper only for browser-only work.
+
 For a render-time branch, use `this.$ssr.isRuntimeSsrHydrated`. It is reactive and is `false` during server rendering and the browser's initial hydration render, then `true` after that hydration completes. It is also immediately `true` for SPA startup and later client navigation. Use it to retain the same neutral shell before hydration and begin private or browser-only queries and UI afterward. It indicates only SSR-hydration lifecycle readiness, not completed route admission, authentication, or data loading.
 
 ### SEO meta
