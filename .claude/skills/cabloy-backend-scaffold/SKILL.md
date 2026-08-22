@@ -141,6 +141,19 @@ Check whether the feature needs:
 - OpenAPI metadata
 - inferred DTO generation
 
+### Conditional RBAC metadata
+
+When the active edition and installed modules provide `@Passport.rbac(...)` and the task adds or changes a decorated action:
+
+- verify the decorator, RBAC catalog, and any policy-catalog/editor consumer in the active source before making availability claims
+- provide locale-aware `summary` metadata at both the controller and action levels; these scopes are independent and must be authored explicitly
+- add locale-aware `description` metadata only when the business or administrative experience needs explanatory text
+- keep action keys, controller bean names, action names, routes, and other authorization/integration identifiers stable and nonlocalized
+- treat summary/description as presentation metadata, not authorization identity or enforcement
+- verify the explicit server-side catalog/editor projection; do not assume OpenAPI metadata is automatically displayed by a policy editor
+
+For the authoring example and metadata boundary, read [Controller Guide](../../../cabloy-docs/backend/controller-guide.md#rbac-presentation-metadata) and [Controller AOP Guide](../../../cabloy-docs/backend/controller-aop-guide.md#rbac-presentation-metadata).
+
 ### Persistence and schema lifecycle
 
 Check whether the feature needs:

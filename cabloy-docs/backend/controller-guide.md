@@ -341,6 +341,8 @@ Representative pattern:
 
 ```typescript
 @Controller('student', {
+  description: 'Student controller',
+  summary: 'Student API',
   exclude: false,
   tags: ['Student'],
 })
@@ -349,13 +351,44 @@ class ControllerStudent {}
 
 Representative controller-option areas include:
 
+- `description`
+- `summary`
 - `exclude`
 - `tags`
 - `actions`
 - `enable`
 - `meta`
 
+`description` and `summary` at the controller level are controller metadata. They are independent from the operation metadata supplied to `@Web.*`: controller values do not become defaults for an action's OpenAPI `description` or `summary`. Set those fields on the action when documenting a specific operation.
+
 This is especially important because the controller surface can also be tuned from app config through onion/config override patterns.
+
+## RBAC presentation metadata
+
+Some Cabloy editions or module sets provide `@Passport.rbac(...)` for dynamic RBAC actions. Verify that the active edition and installed modules provide this decorator before applying the following convention.
+
+For every action decorated with `@Passport.rbac(...)`, provide a locale-aware `summary` at both the controller and action levels:
+
+```typescript
+@Controller('student', {
+  summary: $locale('StudentControllerSummary'),
+})
+class ControllerStudent extends BeanBase {
+  @Web.get(':id', {
+    summary: $locale('StudentViewSummary'),
+  })
+  @Passport.rbac({ dataScope: true })
+  async view(@Arg.param('id') id: number) {
+    // ...
+  }
+}
+```
+
+Controller and action `summary` values are independent metadata. A controller summary does not automatically become the action's OpenAPI summary, so define both explicitly. Add locale-aware `description` metadata at either level when the business or administrative experience needs additional explanation; descriptions are optional.
+
+A policy catalog or editor may project these fields as localized display labels, but only through an explicit server-side projection. `summary` and `description` are presentation metadata: they do not define the RBAC action key, select a policy, change a route or `operationId`, or grant authorization. Keep action keys, controller bean names, action names, routes, and other integration identifiers stable and nonlocalized. Do not assume that OpenAPI metadata is automatically included in a policy catalog; inspect the active implementation.
+
+See [Controller AOP Guide](/backend/controller-aop-guide) for the guard boundary and edition-aware RBAC notes.
 
 ## Relationship to the backend contract loop
 

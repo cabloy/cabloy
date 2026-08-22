@@ -125,6 +125,14 @@ The CRUD generator applies `@Passport.systemAdmin()` to each generated CRUD acti
 
 For the underlying auth, passport, and user-access model, see [Auth Guide](/backend/auth-guide) and [User Access Guide](/backend/user-access-guide).
 
+### RBAC presentation metadata
+
+Some Cabloy editions or module sets provide `@Passport.rbac(...)` for dynamic RBAC actions. Verify the active edition and installed modules first; this decorator is not a Basic baseline assumption.
+
+When an action uses `@Passport.rbac(...)`, provide a locale-aware `summary` on both the controller metadata and the action's `@Web.*` metadata. These scopes are independent, so the controller summary does not supply the action summary. Add locale-aware `description` values only when the business or administrative experience needs explanatory text.
+
+These fields are for human-facing documentation and optional policy-catalog or policy-editor presentation. They are not authorization identity or enforcement inputs. Keep action keys and other machine identifiers stable and nonlocalized, and verify that the active server explicitly projects summary/description into a policy catalog before expecting an editor to display them. See [Controller Guide](/backend/controller-guide#rbac-presentation-metadata) for the authoring example.
+
 ## Interceptor
 
 Interceptors provide onion-style around-execution behavior for controller actions.

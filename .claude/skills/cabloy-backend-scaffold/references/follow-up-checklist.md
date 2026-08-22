@@ -26,6 +26,17 @@ After generating or extending a backend thread, check which follow-up layers app
 - treat `v.object(...)`, `v.array(...)`, `v.optional()`, `v.nullable()`, `v.default(...)`, and preprocess/transform wrappers as structure-shaping rather than metadata-only
 - after touching structure-shaping schemaLike, verify the emitted schema/OpenAPI result explicitly
 
+### Conditional RBAC metadata follow-up
+
+When the active edition and installed modules provide `@Passport.rbac(...)` and a task adds or changes a decorated action:
+
+- verify the decorator, RBAC catalog, and any policy-catalog/editor consumer in the active source before making availability claims
+- provide locale-aware `summary` metadata at both the controller and action levels; these scopes are independent and must be authored explicitly
+- add locale-aware `description` metadata only when the business or administrative experience needs explanatory text
+- keep action keys, controller bean names, action names, routes, and other authorization/integration identifiers stable and nonlocalized
+- treat summary/description as presentation metadata, not authorization identity or enforcement
+- verify the explicit server-side catalog/editor projection; do not assume OpenAPI metadata is automatically displayed by a policy editor
+
 ## Persistence follow-up
 
 - migration/version changes
