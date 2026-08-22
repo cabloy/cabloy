@@ -213,7 +213,8 @@ export class CtxSSR extends BeanSimple {
   }
 
   handleDirectOrOnHydrated(fn: Functionable) {
-    if (process.env.CLIENT && this.isRuntimeSsrPreHydration) {
+    if (!process.env.CLIENT) return;
+    if (this.isRuntimeSsrPreHydration) {
       this.onHydrated(fn);
     } else {
       return fn();

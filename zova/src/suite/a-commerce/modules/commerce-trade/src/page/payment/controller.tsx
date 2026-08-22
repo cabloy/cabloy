@@ -56,9 +56,7 @@ export class ControllerPagePayment extends BeanControllerPageBase {
     if (process.env.SERVER) {
       await $QueryEnsureLoaded(() => this.queryPaymentSession);
     }
-    if (process.env.CLIENT) {
-      await this.$ssr.handleDirectOrOnHydrated(() => this._initClient());
-    }
+    await this.$ssr.handleDirectOrOnHydrated(() => this._initClient());
   }
 
   private async _initClient() {
