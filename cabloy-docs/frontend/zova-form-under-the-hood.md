@@ -233,6 +233,12 @@ A practical reading takeaway is:
 - **schema is not only validation truth**
 - **schema also drives ordering, render metadata, and scene-specific field behavior**
 
+### The form owner supplies the schema lifetime
+
+`ZForm` derives `properties` and `zodSchema` from the schema it receives. Its runtime does not own `$apiSchema` locale selection or refresh a facade retained by the page/controller. If the owner supplies a schema object created under an earlier locale, the form will faithfully render that object's titles and metadata.
+
+Automatic rendering also has an explicit composition boundary: when the form has no default body slot, `RenderForm` iterates the resolved schema properties; `slotHeader` and `slotFooter` can add structure without replacing that body. A default body slot replaces automatic iteration, so manual or mixed composition must render the required fields intentionally. See [Form Guide](/frontend/form-guide) and [API Schema Guide](/frontend/api-schema-guide) for the recommended live-schema pattern.
+
 ## 5. The form controller creates the field render context
 
 Still inside `form/controller.tsx`, the form controller prepares the field runtime support used later by every field:

@@ -52,15 +52,19 @@ The generated API bean, API-schema bean, and static OpenAPI types are separate f
 
 ### Direct schema-driven form pattern
 
-For a page-specific form whose request-body schema is already exposed by a generated API-schema bean, load that schema and pass it directly to `ZForm`:
+For a page-specific form whose request-body schema is already exposed by a generated API-schema bean, expose a getter that obtains the current facade, load its SDK query, and derive the schema reactively:
 
 ```ts
-const apiSchemas = this.$apiSchema.homeUserPassport.register({ authToken: false });
-await $QueryEnsureLoaded(() => apiSchemas.sdk);
+get apiSchemasRegister() {
+  return this.$apiSchema.homeUserPassport.register({ authToken: false });
+}
 
-this.schemaRegister = this.$computed(() => {
-  return apiSchemas.requestBody;
-});
+protected async __init__() {
+  await $QueryEnsureLoaded(() => this.apiSchemasRegister.sdk);
+  this.schemaRegister = this.$computed(() => {
+    return this.apiSchemasRegister.requestBody;
+  });
+}
 ```
 
 ```tsx
@@ -75,6 +79,20 @@ this.schemaRegister = this.$computed(() => {
 ```
 
 When `ZForm` receives a schema without a default body slot, it iterates the schema properties and resolves each field from the contract metadata. `slotFooter` is independent of body rendering, so page-specific submit actions can remain in the form without replacing automatic field rendering. Adding default children to the form changes the body path to explicit composition and should be reserved for manual or mixed forms.
+
+### Locale-aware schema lifetime
+
+OpenAPI schema metadata can include localized titles, descriptions, validation messages, and renderer metadata. Obtain it through the current `$apiSchema`/`$sdk` runtime rather than retaining a one-time `apiSchemas` facade or `requestBody` snapshot across a locale change. A `$computed` only helps when its callback rereads a live getter or owning resource; wrapping a facade created before the locale change still reads that earlier schema.
+
+Apply page-specific schema derivation in the same reactive callback:
+
+```ts
+this.schemaPasswordSet = this.$computed(() => {
+  return omitSchemaProperty(this.apiSchemasPasswordSet.requestBody, 'token');
+});
+```
+
+This keeps both the source schema and the filtered view current. The same rule applies to `pick`, property ordering, or any other schema transformation. `staleTime: Infinity` is cache behavior within the selected runtime; it does not make a schema facade locale-neutral.
 
 For a reusable resource, prefer the owning `ModelResource` to supply `formSchema`, `formData`, `formMeta`, and mutation policy. For a low-reuse page action with no shared query, cache, mutation, or invalidation state, the page controller may call the generated `$api` directly. A model should not wrap an API merely to add an extra indirection.
 

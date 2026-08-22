@@ -99,6 +99,32 @@ Use when the question is about:
 - layout shell implications
 - route-aware controller state
 
+## Locale-sensitive OpenAPI schema and ZForm path
+
+Read in this order:
+
+1. `cabloy-docs/frontend/api-schema-guide.md`
+2. `cabloy-docs/frontend/a-openapi-under-the-hood.md`
+3. `cabloy-docs/frontend/form-guide.md` and `cabloy-docs/frontend/zova-form-under-the-hood.md` when a form consumes the schema
+4. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/monkey.ts`
+5. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/model/sdk.ts`
+6. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/bean/sys.sdk.ts`
+7. the generated API-schema bean for the operation
+8. the consumer controller/model and, only then, `a-form` controller/render sources
+
+Use when the question is about:
+
+- translated form titles, descriptions, validation, or renderer metadata that remain stale after a locale switch
+- whether an `$apiSchema` facade, `requestBody`, or transformed schema may be stored across locale changes
+- whether a stale result is generated-contract drift or consumer-side capture
+- whether automatic `ZForm` rendering remains active or a default body slot intentionally replaced it
+
+Expected conclusion:
+
+- `a-openapi` selects a locale-scoped runtime, so `createApiSchemas(...)` facades created before a locale change can retain an earlier schema query
+- the consumer must reacquire the schema through a live getter/computed owner and apply schema transforms in that same derivation
+- `ZForm` resolves properties from the supplied schema; it does not refresh a stale caller-owned facade
+
 ## Model/state ownership path
 
 Read in this order:

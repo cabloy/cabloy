@@ -91,6 +91,13 @@ For compact procedural summaries inside the skill bundle, also use:
 - `references/analysis-modes.md`
 - `references/core-reading-paths.md`
 
+For locale-sensitive schema/form questions, also read:
+
+- `cabloy-docs/frontend/api-schema-guide.md`
+- `cabloy-docs/frontend/a-openapi-under-the-hood.md`
+- `cabloy-docs/frontend/form-guide.md`
+- `cabloy-docs/frontend/zova-form-under-the-hood.md`
+
 ### Core architecture surfaces
 
 Use these when the question needs broader architectural context:
@@ -116,6 +123,20 @@ Use these bundled references to keep the workflow compact:
 - `references/core-reading-paths.md`
 
 Use the public `cabloy-docs/frontend/zova-source-reading-map.md` as the fuller explanation layer, but use the bundled references first when they are enough for the current task.
+
+### Locale-sensitive schema and form path
+
+When a translated schema title, renderer, or validation surface remains stale after a locale change, read in this order:
+
+1. the public API Schema Guide and A-OpenAPI Under the Hood guide;
+2. the public Form Guide and Zova Form Under the Hood guide when a `ZForm` consumes the schema;
+3. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/monkey.ts` to verify that the active locale replaces the selected `ModelSdk`;
+4. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/model/sdk.ts` to inspect selector-scoped schema queries and `createApiSchemas(...)` facade lifetime;
+5. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/bean/sys.sdk.ts` to verify locale headers and schema caches;
+6. the generated API-schema bean and the actual page/model consumer that stores or derives the facade;
+7. `zova/src/suite-vendor/a-zova/modules/a-form/` only after confirming which schema the form owner supplies, and whether automatic body iteration was replaced by a default body slot.
+
+The key distinction is between a genuinely stale generated contract and a valid schema facade captured from an earlier locale. `$computed` is only locale-safe when its dependency path reacquires the current schema source; wrapping an old facade or transformed snapshot does not make it current.
 
 ## Step 5: Explain Zova-native meaning first
 

@@ -70,6 +70,19 @@ That means `$sdk` is not a static global object.
 
 It is a runtime-injected, locale-scoped model surface.
 
+### Locale switches and API-schema facade lifetime
+
+A locale switch changes the active runtime, not merely a display string:
+
+1. the `a-openapi` monkey observes `app.meta.locale.current` and replaces the selected `ModelSdk`;
+2. `ModelSdk` is selector-backed by locale;
+3. `SysSdk` uses its locale when requesting OpenAPI schema data, including the configured locale header;
+4. each `createApiSchemas(...)` call creates a facade around the SDK query selected at that moment.
+
+Consequently, a controller or model should not keep an `apiSchemas` facade, its `requestBody`, or a transformed schema object as a locale-independent long-lived value. Obtain the current facade through a getter or owning resource inside the reactive schema derivation. See [API Schema Guide](/frontend/api-schema-guide) for the public authoring pattern.
+
+This is also a useful diagnostic boundary: if emitted OpenAPI metadata and generated consumers are correct but a mounted form keeps the previous language, inspect the consumer's schema-facade lifetime before regenerating the contract.
+
 ## `ModelSdk` responsibilities
 
 The selector-backed model lives in:

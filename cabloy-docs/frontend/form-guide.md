@@ -312,6 +312,43 @@ Schema-driven rendering is a strong fit when:
 - frontend and backend should stay close to the same Student contract truth
 - you want to reduce duplicated Student field configuration
 
+### Keep an OpenAPI schema current across locale changes
+
+When the form schema comes from `$apiSchema`, titles, descriptions, validation messages, and renderer metadata can change with the active locale. Derive the schema from a live getter inside `$computed`; do not retain an `apiSchemas` facade created before the locale changes:
+
+```ts
+get apiSchemasStudentCreate() {
+  return this.$apiSchema.trainingStudent.create();
+}
+
+protected async __init__() {
+  await $QueryEnsureLoaded(() => this.apiSchemasStudentCreate.sdk);
+  this.studentFormSchema = this.$computed(() => {
+    return this.apiSchemasStudentCreate.requestBody;
+  });
+}
+```
+
+If the page removes or rearranges contract fields, perform that work inside the same computed callback so the derived schema changes with the source schema:
+
+```ts
+this.studentFormSchema = this.$computed(() => {
+  return omitSchemaProperty(this.apiSchemasStudentCreate.requestBody, 'internalField');
+});
+```
+
+### Preserve the automatic/custom rendering boundary
+
+| Need                                                                     | Recommended approach                                                                                   |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| The contract already defines the fields and render metadata              | Pass the current schema to `ZForm` and leave the default body slot empty for automatic rendering.      |
+| Only page actions are custom                                             | Use `slotHeader`, `slotFooter`, or another structural slot without replacing the automatic field body. |
+| One field needs custom UI                                                | Use `ZFormFieldPreset`, `ZFormField`, or a registered renderer while keeping the rest schema-driven.   |
+| A reusable renderer is frontend-owned but referenced by backend metadata | Treat it as reverse-chain work: build the relevant Zova flavor and run `npm run deps:vona`.            |
+| The page needs unusual local composition                                 | Use manual or mixed form composition deliberately, and render every required field explicitly.         |
+
+A nonempty default body slot is an intentional boundary: it replaces automatic schema-property iteration. Custom field composition still consumes the schema that the form owner provides, so it must use the current locale's schema as well. Read [API Schema Guide](/frontend/api-schema-guide) for the schema ownership and locale-lifetime pattern, and [Tutorial 4: Custom Form/Table Renderers for Level](/fullstack/tutorial-4-custom-level-renderers) when the contract needs a reusable custom renderer.
+
 A practical expression example is a schema-driven field display that formats a numeric value through CEL:
 
 ```text

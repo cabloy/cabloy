@@ -76,6 +76,30 @@ zova/src/suite-vendor/a-zova/modules/a-openapi/src/lib/schema.ts
 
 `loadSchemaProperties(...)` applies the shared `form` overlay for `form-view`, `form-create`, and `filter`, then applies the exact scene override. The backend's readonly resolver and the frontend property loader must not drift in this precedence rule, or a form can present one behavior while Vona accepts a different input shape.
 
+## Locale-scoped OpenAPI schema lifetime
+
+Localized OpenAPI metadata has a runtime lifetime boundary in Zova:
+
+```text
+app.meta.locale.current
+  -> a-openapi monkey replaces the selected ModelSdk
+  -> selector-backed ModelSdk uses the current locale
+  -> locale-specific SysSdk requests and caches OpenAPI schema data
+  -> generated API-schema operation facade exposes requestBody/properties
+  -> page/model supplies that schema to ZForm
+```
+
+The important closure boundary is `ModelSdk.createApiSchemas(...)`: the returned facade captures the SDK query and `ModelSdk` instance used when it is created. It is therefore not a locale-neutral handle. A controller or model must not retain that facade, its `requestBody`, or an `omit`/`pick`/other transformed schema snapshot across a locale change. Reacquire the current facade through a getter, `$computed`, or the owning `ModelResource`, and perform transformations inside that reactive derivation.
+
+Keep two failure classes separate:
+
+- **Generated contract drift:** emitted OpenAPI metadata or generated API/API-schema consumers are wrong; follow the forward contract chain and regenerate.
+- **Consumer facade capture:** emitted metadata is correct, but a mounted consumer still displays the prior locale; inspect the locale-scoped SDK selection and the lifetime of the stored schema facade before changing generated output.
+
+`ZForm` owns binding, validation, and field rendering, but its owner supplies the schema, data, provider, and metadata. Without a default body slot, it iterates the supplied schema properties automatically; a default body slot intentionally replaces that path. The form cannot refresh an old-locale schema object retained by its owner.
+
+For runtime changes or regressions, exercise at least two locales after a schema facade has already been created. Verify the locale-specific OpenAPI request/header and rendered metadata, and cover both automatic body rendering and intentional explicit-body composition where applicable.
+
 ## Source-reading order
 
 For a future change, trace the following order:
