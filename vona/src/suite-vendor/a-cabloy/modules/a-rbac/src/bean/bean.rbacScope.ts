@@ -38,7 +38,7 @@ export class BeanRbacScope extends BeanBase {
         this.scope.config.adapter.rbacScope,
         'service',
       );
-      this._scopeAdapter = this.bean._getBean(beanFullName) as IRbacScopeAdapter;
+      this._scopeAdapter = this.bean._getBean(beanFullName) as unknown as IRbacScopeAdapter;
     }
     return this._scopeAdapter;
   }
