@@ -8,7 +8,7 @@ import type {
 import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 
-import type { ApiSchemaCommerceTradeDtoOrderSelectResItem } from '../api/openapi/schemas.ts';
+import type { ApiSchemaCommerceTradeDtoOrderSelectResItem } from '../api/openapi/schemas.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableActionRowRecord {

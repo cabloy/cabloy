@@ -9,7 +9,7 @@ import { TableIdentity } from 'table-identity';
 import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 
-import type { ModelStudent } from '../model/student.ts';
+import type { ModelStudent } from '../model/student.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableActionRowRecord {
