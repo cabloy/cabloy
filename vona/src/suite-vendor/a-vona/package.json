@@ -1,6 +1,6 @@
 {
   "name": "vona-suite-a-vona",
-  "version": "5.1.80",
+  "version": "5.1.81",
   "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
   "description": "",
   "author": "",
@@ -54,7 +54,7 @@
     "vona-module-a-static": "workspace:^",
     "vona-module-a-summer": "workspace:^",
     "vona-module-a-swagger": "workspace:^",
-    "vona-module-a-telemetry": "^5.0.1",
+    "vona-module-a-telemetry": "^5.0.2",
     "vona-module-a-upload": "workspace:^",
     "vona-module-a-user": "workspace:^",
     "vona-module-a-validation": "workspace:^",
