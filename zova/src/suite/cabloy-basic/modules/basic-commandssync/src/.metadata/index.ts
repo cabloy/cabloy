@@ -6,16 +6,16 @@ import { ICommandOptionsExpr } from '../bean/command.expr.jsx';
 import { ICommandOptionsLog } from '../bean/command.log.jsx';
 import 'zova-module-a-command';
 declare module 'zova-module-a-command' {
-  
+
     export interface ICommandRecord {
       'basic-commandssync:expr': ICommandOptionsExpr;
 'basic-commandssync:log': ICommandOptionsLog;
     }
 
-  
+
 }
 declare module 'zova-module-basic-commandssync' {
-  
+
         export interface CommandExpr {
           /** @internal */
           get scope(): ScopeModuleBasicCommandssync;
@@ -36,7 +36,7 @@ declare module 'zova-module-basic-commandssync' {
           get $beanFullName(): 'basic-commandssync.command.log';
           get $onionName(): 'basic-commandssync:log';
           get $onionOptions(): ICommandOptionsLog;
-        } 
+        }
 }
 /** command: end */
 /** command: begin */
@@ -66,12 +66,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-commandssync': ScopeModuleBasicCommandssync;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

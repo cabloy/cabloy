@@ -47,7 +47,6 @@ declare module 'vona-module-a-ratelimit' {
           export interface ServiceRateLimit {
             get $beanFullName(): 'a-ratelimit.service.rateLimit';
             get $onionName(): 'a-ratelimit:rateLimit';
-
           }
 }
 /** service: end */

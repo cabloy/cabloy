@@ -4,15 +4,15 @@ export * from '../page/dashboard/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-home-indexadmin' {
-  
+
         export interface ControllerPageDashboard {
           /** @internal */
           get scope(): ScopeModuleHomeIndexadmin;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -34,7 +34,7 @@ export interface IPagePathRecord {
   '/home/indexadmin/dashboard': TypePagePathSchema<undefined,undefined>;
 }
 export interface IPageNameRecord {
-  
+
 }
 }
 export const pagePathSchemas = {
@@ -44,7 +44,7 @@ export const pageNameSchemas = {
 
 };
 declare module 'zova-module-home-indexadmin' {
-  
+
 }
 /** pages: end */
 
@@ -64,12 +64,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'home-indexadmin': ScopeModuleHomeIndexadmin;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

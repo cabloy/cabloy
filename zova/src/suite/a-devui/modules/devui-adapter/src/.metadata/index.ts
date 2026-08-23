@@ -4,15 +4,15 @@ export * from '../bean/meta.themeHandler.js';
 
 import 'zova-module-a-meta';
 declare module 'zova-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'devui-adapter:themeHandler': never;
     }
 
-  
+
 }
 declare module 'zova-module-devui-adapter' {
-  
+
         export interface MetaThemeHandler {
           /** @internal */
           get scope(): ScopeModuleDevuiAdapter;
@@ -21,8 +21,8 @@ declare module 'zova-module-devui-adapter' {
         export interface MetaThemeHandler {
           get $beanFullName(): 'devui-adapter.meta.themeHandler';
           get $onionName(): 'devui-adapter:themeHandler';
-          
-        } 
+
+        }
 }
 /** meta: end */
 /** meta: begin */
@@ -53,12 +53,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'devui-adapter': ScopeModuleDevuiAdapter;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

@@ -4,11 +4,11 @@ export * from '../bean/bean.apiBase.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-api' {
-   
+
 }
 /** bean: end */
 /** bean: begin */
@@ -44,14 +44,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-api': ScopeModuleAApi;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-api': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
-  
+
 /** scope: end */

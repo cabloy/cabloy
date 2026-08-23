@@ -4,15 +4,15 @@ export * from '../model/todo.js';
 import { IModelOptionsTodo } from '../model/todo.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'demo-todo:todo': IModelOptionsTodo;
     }
 
-  
+
 }
 declare module 'zova-module-demo-todo' {
-  
+
         export interface ModelTodo {
           /** @internal */
           get scope(): ScopeModuleDemoTodo;
@@ -22,7 +22,7 @@ declare module 'zova-module-demo-todo' {
           get $beanFullName(): 'demo-todo.model.todo';
           get $onionName(): 'demo-todo:todo';
           get $onionOptions(): IModelOptionsTodo;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -39,11 +39,11 @@ export * from '../api/todo.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-demo-todo' {
-  
+
         export interface ApiTodo {
           /** @internal */
           get scope(): ScopeModuleDemoTodo;
@@ -52,8 +52,8 @@ declare module 'zova-module-demo-todo' {
         export interface ApiTodo {
           get $beanFullName(): 'demo-todo.api.todo';
           get $onionName(): 'demo-todo:todo';
-          
-        } 
+
+        }
 }
 /** api: end */
 /** api: begin */
@@ -80,11 +80,11 @@ export * from '../page/todo/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-demo-todo' {
-  
+
         export interface ControllerPageItem {
           /** @internal */
           get scope(): ScopeModuleDemoTodo;
@@ -93,7 +93,7 @@ declare module 'zova-module-demo-todo' {
         export interface ControllerPageTodo {
           /** @internal */
           get scope(): ScopeModuleDemoTodo;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -157,12 +157,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'demo-todo': ScopeModuleDemoTodo;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 
 /** scope: end */

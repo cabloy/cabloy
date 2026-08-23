@@ -596,7 +596,6 @@ declare module 'vona-module-a-pay' {
           export interface ServiceOutbox {
             get $beanFullName(): 'a-pay.service.outbox';
             get $onionName(): 'a-pay:outbox';
-
           }
 
         export interface ServicePaymentCallback {
@@ -607,7 +606,6 @@ declare module 'vona-module-a-pay' {
           export interface ServicePaymentCallback {
             get $beanFullName(): 'a-pay.service.paymentCallback';
             get $onionName(): 'a-pay:paymentCallback';
-
           }
 
         export interface ServicePaymentSession {
@@ -618,7 +616,6 @@ declare module 'vona-module-a-pay' {
           export interface ServicePaymentSession {
             get $beanFullName(): 'a-pay.service.paymentSession';
             get $onionName(): 'a-pay:paymentSession';
-
           }
 
         export interface ServiceProviderOperation {
@@ -629,7 +626,6 @@ declare module 'vona-module-a-pay' {
           export interface ServiceProviderOperation {
             get $beanFullName(): 'a-pay.service.providerOperation';
             get $onionName(): 'a-pay:providerOperation';
-
           }
 
         export interface ServiceRefundOperation {
@@ -640,7 +636,6 @@ declare module 'vona-module-a-pay' {
           export interface ServiceRefundOperation {
             get $beanFullName(): 'a-pay.service.refundOperation';
             get $onionName(): 'a-pay:refundOperation';
-
           }
 
         export interface ServiceWebhook {
@@ -651,7 +646,6 @@ declare module 'vona-module-a-pay' {
           export interface ServiceWebhook {
             get $beanFullName(): 'a-pay.service.webhook';
             get $onionName(): 'a-pay:webhook';
-
           }
 }
 /** service: end */
@@ -722,7 +716,6 @@ declare module 'vona-module-a-pay' {
           export interface MetaRedlock {
             get $beanFullName(): 'a-pay.meta.redlock';
             get $onionName(): 'a-pay:redlock';
-
           }
 
         export interface MetaVersion {
@@ -733,7 +726,6 @@ declare module 'vona-module-a-pay' {
           export interface MetaVersion {
             get $beanFullName(): 'a-pay.meta.version';
             get $onionName(): 'a-pay:version';
-
           }
 }
 /** meta: end */

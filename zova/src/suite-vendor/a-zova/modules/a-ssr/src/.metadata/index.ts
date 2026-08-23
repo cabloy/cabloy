@@ -4,11 +4,11 @@ export * from '../bean/sys.ssrState.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-ssr' {
-  
+
         export interface SysSsrState {
           /** @internal */
           get scope(): ScopeModuleASsr;
@@ -17,8 +17,8 @@ declare module 'zova-module-a-ssr' {
         export interface SysSsrState {
           get $beanFullName(): 'a-ssr.sys.ssrState';
           get $onionName(): 'a-ssr:ssrState';
-          
-        } 
+
+        }
 }
 /** sys: end */
 /** sys: begin */
@@ -57,14 +57,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-ssr': ScopeModuleASsr;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-ssr': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
-  
+
 /** scope: end */

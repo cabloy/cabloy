@@ -20,7 +20,7 @@ import { ICommandOptionsSetValue } from '../bean/command.setValue.jsx';
 import { ICommandOptionsView } from '../bean/command.view.jsx';
 import 'zova-module-a-command';
 declare module 'zova-module-a-command' {
-  
+
     export interface ICommandRecord {
       'basic-commands:alert': ICommandOptionsAlert;
 'basic-commands:confirm': ICommandOptionsConfirm;
@@ -33,10 +33,10 @@ declare module 'zova-module-a-command' {
 'basic-commands:view': ICommandOptionsView;
     }
 
-  
+
 }
 declare module 'zova-module-basic-commands' {
-  
+
         export interface CommandAlert {
           /** @internal */
           get scope(): ScopeModuleBasicCommands;
@@ -134,7 +134,7 @@ declare module 'zova-module-basic-commands' {
           get $beanFullName(): 'basic-commands.command.view';
           get $onionName(): 'basic-commands:view';
           get $onionOptions(): ICommandOptionsView;
-        } 
+        }
 }
 /** command: end */
 /** command: begin */
@@ -178,12 +178,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-commands': ScopeModuleBasicCommands;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

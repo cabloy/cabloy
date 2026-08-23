@@ -6,15 +6,15 @@ export * from '../bean/bean.jwt.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-jwt' {
-  
+
         export interface BeanJwt {
           /** @internal */
           get scope(): ScopeModuleAJwt;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -32,16 +32,16 @@ export * from '../service/jwtExtract.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-jwt:jwtClient': never;
 'a-jwt:jwtExtract': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-jwt' {
-  
+
         export interface ServiceJwtClient {
           /** @internal */
           get scope(): ScopeModuleAJwt;
@@ -50,7 +50,6 @@ declare module 'vona-module-a-jwt' {
           export interface ServiceJwtClient {
             get $beanFullName(): 'a-jwt.service.jwtClient';
             get $onionName(): 'a-jwt:jwtClient';
-            
           }
 
         export interface ServiceJwtExtract {
@@ -61,8 +60,7 @@ declare module 'vona-module-a-jwt' {
           export interface ServiceJwtExtract {
             get $beanFullName(): 'a-jwt.service.jwtExtract';
             get $onionName(): 'a-jwt:jwtExtract';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -88,21 +86,21 @@ export * from '../dto/jwtToken.ts';
 import type { IDtoOptionsJwtToken } from '../dto/jwtToken.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'a-jwt:jwtToken': IDtoOptionsJwtToken;
     }
 
-  
+
 }
 declare module 'vona-module-a-jwt' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
 import type { DtoJwtToken } from '../dto/jwtToken.ts';
 declare module 'vona-module-a-jwt' {
-  
+
     export interface IDtoOptionsJwtToken {
       fields?: TypeEntityOptionsFields<DtoJwtToken, IDtoOptionsJwtToken[TypeSymbolKeyFieldsMore]>;
     }
@@ -134,13 +132,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     jwt: ScopeModuleAJwt;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-jwt': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

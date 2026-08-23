@@ -186,6 +186,9 @@ importers:
       zova-module-a-pay:
         specifier: workspace:^
         version: link:src/suite-vendor/a-pay/modules/a-pay
+      zova-module-a-rbac:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-rbac
       zova-module-a-router:
         specifier: workspace:^
         version: link:src/suite-vendor/a-zova/modules/a-router
@@ -970,9 +973,21 @@ importers:
 
   src/suite-vendor/a-cabloy:
     dependencies:
+      zova-module-a-rbac:
+        specifier: ^5.0.0
+        version: link:modules/a-rbac
       zova-module-rest-resource:
         specifier: ^5.1.44
         version: link:modules/rest-resource
+
+  src/suite-vendor/a-cabloy/modules/a-rbac:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
 
   src/suite-vendor/a-cabloy/modules/rest-resource:
     devDependencies:

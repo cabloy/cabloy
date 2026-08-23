@@ -4,15 +4,15 @@ export * from '../service/queue.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-queue:queue': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-queue' {
-  
+
         export interface ServiceQueue {
           /** @internal */
           get scope(): ScopeModuleAQueue;
@@ -21,8 +21,7 @@ declare module 'vona-module-a-queue' {
           export interface ServiceQueue {
             get $beanFullName(): 'a-queue.service.queue';
             get $onionName(): 'a-queue:queue';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -45,15 +44,15 @@ export * from '../bean/hmr.queue.ts';
 
 import 'vona';
 declare module 'vona' {
-  
+
     export interface IHmrRecord {
       'a-queue:queue': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-queue' {
-  
+
         export interface HmrQueue {
           /** @internal */
           get scope(): ScopeModuleAQueue;
@@ -62,8 +61,7 @@ declare module 'vona-module-a-queue' {
           export interface HmrQueue {
             get $beanFullName(): 'a-queue.hmr.queue';
             get $onionName(): 'a-queue:queue';
-            
-          } 
+          }
 }
 /** hmr: end */
 /** startup: begin */
@@ -71,15 +69,15 @@ export * from '../bean/startup.loadQueueWorkers.ts';
 
 import { type IDecoratorStartupOptions } from 'vona-module-a-startup';
 declare module 'vona-module-a-startup' {
-  
+
     export interface IStartupRecord {
       'a-queue:loadQueueWorkers': IDecoratorStartupOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-queue' {
-  
+
         export interface StartupLoadQueueWorkers {
           /** @internal */
           get scope(): ScopeModuleAQueue;
@@ -89,7 +87,7 @@ declare module 'vona-module-a-queue' {
             get $beanFullName(): 'a-queue.startup.loadQueueWorkers';
             get $onionName(): 'a-queue:loadQueueWorkers';
             get $onionOptions(): IDecoratorStartupOptions;
-          } 
+          }
 }
 /** startup: end */
 /** config: begin */
@@ -121,13 +119,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     queue: ScopeModuleAQueue;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-queue': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

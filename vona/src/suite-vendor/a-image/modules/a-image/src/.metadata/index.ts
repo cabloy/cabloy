@@ -9,16 +9,16 @@ import type { IEntityOptionsImage } from '../entity/image.ts';
 import type { IEntityOptionsImageProvider } from '../entity/imageProvider.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'a-image:image': IEntityOptionsImage;
 'a-image:imageProvider': IEntityOptionsImageProvider;
     }
 
-  
+
 }
 declare module 'vona-module-a-image' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -41,7 +41,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-a-image' {
-  
+
     export interface IEntityOptionsImage {
       fields?: TypeEntityOptionsFields<EntityImage, IEntityOptionsImage[TypeSymbolKeyFieldsMore]>;
     }
@@ -58,16 +58,16 @@ import type { IModelOptionsImage } from '../model/image.ts';
 import type { IModelOptionsImageProvider } from '../model/imageProvider.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'a-image:image': IModelOptionsImage;
 'a-image:imageProvider': IModelOptionsImageProvider;
     }
 
-  
+
 }
 declare module 'vona-module-a-image' {
-  
+
         export interface ModelImage {
           /** @internal */
           get scope(): ScopeModuleAImage;
@@ -88,7 +88,7 @@ declare module 'vona-module-a-image' {
             get $beanFullName(): 'a-image.model.imageProvider';
             get $onionName(): 'a-image:imageProvider';
             get $onionOptions(): IModelOptionsImageProvider;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -113,13 +113,23 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-a-image' {
-  
+
   export interface ModelImage {
       [SymbolKeyEntity]: EntityImage;
       [SymbolKeyEntityMeta]: EntityImageMeta;
       [SymbolKeyModelOptions]: IModelOptionsImage;
       get<T extends IModelGetOptions<EntityImage,ModelImage>>(where: TypeModelWhere<EntityImage>, options?: T): Promise<TypeModelRelationResult<EntityImage, ModelImage, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityImage,ModelImage>>(where: TypeModelWhere<EntityImage>, options?: T): Promise<TypeModelRelationResult<EntityImage, ModelImage, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityImage,ModelImage>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityImage, ModelImage, T> | undefined>;
       mget<T extends IModelGetOptions<EntityImage,ModelImage>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityImage, ModelImage, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityImage,ModelImage,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityImage, ModelImage, T>>;
@@ -146,7 +156,17 @@ export interface ModelImageProvider {
       [SymbolKeyEntityMeta]: EntityImageProviderMeta;
       [SymbolKeyModelOptions]: IModelOptionsImageProvider;
       get<T extends IModelGetOptions<EntityImageProvider,ModelImageProvider>>(where: TypeModelWhere<EntityImageProvider>, options?: T): Promise<TypeModelRelationResult<EntityImageProvider, ModelImageProvider, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityImageProvider,ModelImageProvider>>(where: TypeModelWhere<EntityImageProvider>, options?: T): Promise<TypeModelRelationResult<EntityImageProvider, ModelImageProvider, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityImageProvider,ModelImageProvider>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityImageProvider, ModelImageProvider, T> | undefined>;
       mget<T extends IModelGetOptions<EntityImageProvider,ModelImageProvider>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityImageProvider, ModelImageProvider, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityImageProvider,ModelImageProvider,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityImageProvider, ModelImageProvider, T>>;
@@ -185,11 +205,11 @@ export * from '../bean/bean.imageUploadPolicy.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-image' {
-  
+
         export interface BeanImage {
           /** @internal */
           get scope(): ScopeModuleAImage;
@@ -203,7 +223,7 @@ declare module 'vona-module-a-image' {
         export interface BeanImageUploadPolicy {
           /** @internal */
           get scope(): ScopeModuleAImage;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -226,17 +246,17 @@ export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'a-image:index': IMetaOptionsIndex;
 'a-image:redlock': never;
 'a-image:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-image' {
-  
+
         export interface MetaIndex {
           /** @internal */
           get scope(): ScopeModuleAImage;
@@ -256,7 +276,6 @@ declare module 'vona-module-a-image' {
           export interface MetaRedlock {
             get $beanFullName(): 'a-image.meta.redlock';
             get $onionName(): 'a-image:redlock';
-            
           }
 
         export interface MetaVersion {
@@ -267,8 +286,7 @@ declare module 'vona-module-a-image' {
           export interface MetaVersion {
             get $beanFullName(): 'a-image.meta.version';
             get $onionName(): 'a-image:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** meta redlock: begin */
@@ -279,15 +297,15 @@ export * from '../bean/schedule.imageDraftPrune.ts';
 
 import { type IDecoratorScheduleOptions } from 'vona-module-a-schedule';
 declare module 'vona-module-a-schedule' {
-  
+
     export interface IScheduleRecord {
       'a-image:imageDraftPrune': IDecoratorScheduleOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-image' {
-  
+
         export interface ScheduleImageDraftPrune {
           /** @internal */
           get scope(): ScopeModuleAImage;
@@ -297,7 +315,7 @@ declare module 'vona-module-a-image' {
             get $beanFullName(): 'a-image.schedule.imageDraftPrune';
             get $onionName(): 'a-image:imageDraftPrune';
             get $onionOptions(): IDecoratorScheduleOptions;
-          } 
+          }
 }
 /** schedule: end */
 /** serializerTransform: begin */
@@ -307,16 +325,16 @@ import type { ISerializerTransformOptionsResolveView } from '../bean/serializerT
 import type { ISerializerTransformOptionsResolveViews } from '../bean/serializerTransform.resolveViews.ts';
 import 'vona-module-a-serialization';
 declare module 'vona-module-a-serialization' {
-  
+
     export interface ISerializerTransformRecord {
       'a-image:resolveView': ISerializerTransformOptionsResolveView;
 'a-image:resolveViews': ISerializerTransformOptionsResolveViews;
     }
 
-  
+
 }
 declare module 'vona-module-a-image' {
-  
+
         export interface SerializerTransformResolveView {
           /** @internal */
           get scope(): ScopeModuleAImage;
@@ -337,7 +355,7 @@ declare module 'vona-module-a-image' {
             get $beanFullName(): 'a-image.serializerTransform.resolveViews';
             get $onionName(): 'a-image:resolveViews';
             get $onionOptions(): ISerializerTransformOptionsResolveViews;
-          } 
+          }
 }
 /** serializerTransform: end */
 /** dto: begin */
@@ -365,7 +383,7 @@ import type { IDtoOptionsImageUploadUrlRequest } from '../dto/imageUploadUrlRequ
 import type { IDtoOptionsImageView } from '../dto/imageView.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'a-image:imageDeliveryRequest': IDtoOptionsImageDeliveryRequest;
 'a-image:imageDirectUploadFinalizeRequest': IDtoOptionsImageDirectUploadFinalizeRequest;
@@ -380,10 +398,10 @@ declare module 'vona-module-a-web' {
 'a-image:imageView': IDtoOptionsImageView;
     }
 
-  
+
 }
 declare module 'vona-module-a-image' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
@@ -399,7 +417,7 @@ import type { DtoImageUploadResponse } from '../dto/imageUploadResponse.ts';
 import type { DtoImageUploadUrlRequest } from '../dto/imageUploadUrlRequest.ts';
 import type { DtoImageView } from '../dto/imageView.ts';
 declare module 'vona-module-a-image' {
-  
+
     export interface IDtoOptionsImageDeliveryRequest {
       fields?: TypeEntityOptionsFields<DtoImageDeliveryRequest, IDtoOptionsImageDeliveryRequest[TypeSymbolKeyFieldsMore]>;
     }
@@ -450,15 +468,15 @@ export * from '../controller/image.ts';
 import type { IControllerOptionsImage } from '../controller/image.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'a-image:image': IControllerOptionsImage;
     }
 
-  
+
 }
 declare module 'vona-module-a-image' {
-  
+
         export interface ControllerImage {
           /** @internal */
           get scope(): ScopeModuleAImage;
@@ -468,14 +486,14 @@ declare module 'vona-module-a-image' {
             get $beanFullName(): 'a-image.controller.image';
             get $onionName(): 'a-image:image';
             get $onionOptions(): IControllerOptionsImage;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
 import type { ControllerImage } from '../controller/image.ts';
 declare module 'vona-module-a-image' {
-  
+
     export interface IControllerOptionsImage {
       actions?: TypeControllerOptionsActions<ControllerImage>;
     }
@@ -527,7 +545,7 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     image: ScopeModuleAImage;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-image': ReturnType<typeof config>;
   }
@@ -536,6 +554,6 @@ declare module 'vona' {
     'a-image': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 /** scope: end */

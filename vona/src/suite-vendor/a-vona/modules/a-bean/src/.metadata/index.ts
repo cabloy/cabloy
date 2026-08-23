@@ -19,11 +19,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     bean: ScopeModuleABean;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

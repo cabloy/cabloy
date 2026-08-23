@@ -8,17 +8,17 @@ import { IModelOptionsOrder } from '../model/order.js';
 import { IModelOptionsOrderMine } from '../model/orderMine.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'commerce-trade:cart': IModelOptionsCart;
 'commerce-trade:order': IModelOptionsOrder;
 'commerce-trade:orderMine': IModelOptionsOrderMine;
     }
 
-  
+
 }
 declare module 'zova-module-commerce-trade' {
-  
+
         export interface ModelCart {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -50,7 +50,7 @@ declare module 'zova-module-commerce-trade' {
           get $beanFullName(): 'commerce-trade.model.orderMine';
           get $onionName(): 'commerce-trade:orderMine';
           get $onionOptions(): IModelOptionsOrderMine;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -73,11 +73,11 @@ export * from '../api/commerceTradeOrder.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-commerce-trade' {
-  
+
         export interface ApiCommerceTradeCart {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -86,7 +86,7 @@ declare module 'zova-module-commerce-trade' {
         export interface ApiCommerceTradeCart {
           get $beanFullName(): 'commerce-trade.api.commerceTradeCart';
           get $onionName(): 'commerce-trade:commerceTradeCart';
-          
+
         }
 
         export interface ApiCommerceTradeCheckout {
@@ -97,7 +97,7 @@ declare module 'zova-module-commerce-trade' {
         export interface ApiCommerceTradeCheckout {
           get $beanFullName(): 'commerce-trade.api.commerceTradeCheckout';
           get $onionName(): 'commerce-trade:commerceTradeCheckout';
-          
+
         }
 
         export interface ApiCommerceTradeOrder {
@@ -108,8 +108,8 @@ declare module 'zova-module-commerce-trade' {
         export interface ApiCommerceTradeOrder {
           get $beanFullName(): 'commerce-trade.api.commerceTradeOrder';
           get $onionName(): 'commerce-trade:commerceTradeOrder';
-          
-        } 
+
+        }
 }
 /** api: end */
 /** api: begin */
@@ -143,11 +143,11 @@ export * from '../apiSchema/commerceTradeOrder.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-commerce-trade' {
-  
+
         export interface ApiSchemaCommerceTradeCart {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -156,7 +156,7 @@ declare module 'zova-module-commerce-trade' {
         export interface ApiSchemaCommerceTradeCart {
           get $beanFullName(): 'commerce-trade.apiSchema.commerceTradeCart';
           get $onionName(): 'commerce-trade:commerceTradeCart';
-          
+
         }
 
         export interface ApiSchemaCommerceTradeCheckout {
@@ -167,7 +167,7 @@ declare module 'zova-module-commerce-trade' {
         export interface ApiSchemaCommerceTradeCheckout {
           get $beanFullName(): 'commerce-trade.apiSchema.commerceTradeCheckout';
           get $onionName(): 'commerce-trade:commerceTradeCheckout';
-          
+
         }
 
         export interface ApiSchemaCommerceTradeOrder {
@@ -178,8 +178,8 @@ declare module 'zova-module-commerce-trade' {
         export interface ApiSchemaCommerceTradeOrder {
           get $beanFullName(): 'commerce-trade.apiSchema.commerceTradeOrder';
           get $onionName(): 'commerce-trade:commerceTradeOrder';
-          
-        } 
+
+        }
 }
 /** apiSchema: end */
 /** apiSchema: begin */
@@ -214,11 +214,11 @@ export * from '../page/payment/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-commerce-trade' {
-  
+
         export interface ControllerTableCellActionRefund {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -252,7 +252,7 @@ declare module 'zova-module-commerce-trade' {
         export interface ControllerPagePayment {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -376,16 +376,16 @@ import { ITableCellOptionsActionRefund } from '../bean/tableCell.actionRefund.js
 import { ITableCellOptionsActionShip } from '../bean/tableCell.actionShip.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
-  
+
     export interface ITableCellRecord {
       'commerce-trade:actionRefund': ITableCellOptionsActionRefund;
 'commerce-trade:actionShip': ITableCellOptionsActionShip;
     }
 
-  
+
 }
 declare module 'zova-module-commerce-trade' {
-  
+
         export interface TableCellActionRefund {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -406,7 +406,7 @@ declare module 'zova-module-commerce-trade' {
           get $beanFullName(): 'commerce-trade.tableCell.actionShip';
           get $onionName(): 'commerce-trade:actionShip';
           get $onionOptions(): ITableCellOptionsActionShip;
-        } 
+        }
 }
 /** tableCell: end */
 /** tableCell: begin */
@@ -442,14 +442,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'commerce-trade': ScopeModuleCommerceTrade;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'commerce-trade': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `commerce-trade::${K}` {

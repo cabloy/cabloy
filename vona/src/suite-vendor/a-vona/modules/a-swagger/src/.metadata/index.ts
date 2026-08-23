@@ -5,15 +5,15 @@ export * from '../bean/meta.printTip.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'a-swagger:printTip': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-swagger' {
-  
+
         export interface MetaPrintTip {
           /** @internal */
           get scope(): ScopeModuleASwagger;
@@ -22,8 +22,7 @@ declare module 'vona-module-a-swagger' {
           export interface MetaPrintTip {
             get $beanFullName(): 'a-swagger.meta.printTip';
             get $onionName(): 'a-swagger:printTip';
-            
-          } 
+          }
 }
 /** meta: end */
 /** summerCache: begin */
@@ -32,16 +31,16 @@ export * from '../bean/summerCache.swagger.ts';
 
 import { type IDecoratorSummerCacheOptions } from 'vona-module-a-summer';
 declare module 'vona-module-a-summer' {
-  
+
     export interface ISummerCacheRecord {
       'a-swagger:rapidoc': IDecoratorSummerCacheOptions;
 'a-swagger:swagger': IDecoratorSummerCacheOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-swagger' {
-  
+
         export interface SummerCacheRapidoc {
           /** @internal */
           get scope(): ScopeModuleASwagger;
@@ -62,7 +61,7 @@ declare module 'vona-module-a-swagger' {
             get $beanFullName(): 'a-swagger.summerCache.swagger';
             get $onionName(): 'a-swagger:swagger';
             get $onionOptions(): IDecoratorSummerCacheOptions;
-          } 
+          }
 }
 /** summerCache: end */
 /** summerCache: begin */
@@ -80,16 +79,16 @@ import type { IControllerOptionsRapidoc } from '../controller/rapidoc.ts';
 import type { IControllerOptionsSwagger } from '../controller/swagger.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'a-swagger:rapidoc': IControllerOptionsRapidoc;
 'a-swagger:swagger': IControllerOptionsSwagger;
     }
 
-  
+
 }
 declare module 'vona-module-a-swagger' {
-  
+
         export interface ControllerRapidoc {
           /** @internal */
           get scope(): ScopeModuleASwagger;
@@ -110,7 +109,7 @@ declare module 'vona-module-a-swagger' {
             get $beanFullName(): 'a-swagger.controller.swagger';
             get $onionName(): 'a-swagger:swagger';
             get $onionOptions(): IControllerOptionsSwagger;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
@@ -119,7 +118,7 @@ import type { ControllerRapidoc } from '../controller/rapidoc.ts';
 // @ts-ignore ignore
 import type { ControllerSwagger } from '../controller/swagger.ts';
 declare module 'vona-module-a-swagger' {
-  
+
     export interface IControllerOptionsRapidoc {
       actions?: TypeControllerOptionsActions<ControllerRapidoc>;
     }
@@ -164,13 +163,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     swagger: ScopeModuleASwagger;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-swagger': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

@@ -6,16 +6,16 @@ import { IModelOptionsAddress } from '../model/address.js';
 import { IModelOptionsAddressMine } from '../model/addressMine.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'commerce-member:address': IModelOptionsAddress;
 'commerce-member:addressMine': IModelOptionsAddressMine;
     }
 
-  
+
 }
 declare module 'zova-module-commerce-member' {
-  
+
         export interface ModelAddress {
           /** @internal */
           get scope(): ScopeModuleCommerceMember;
@@ -36,7 +36,7 @@ declare module 'zova-module-commerce-member' {
           get $beanFullName(): 'commerce-member.model.addressMine';
           get $onionName(): 'commerce-member:addressMine';
           get $onionOptions(): IModelOptionsAddressMine;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -55,11 +55,11 @@ export * from '../api/commerceMemberAddress.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-commerce-member' {
-  
+
         export interface ApiCommerceMemberAddress {
           /** @internal */
           get scope(): ScopeModuleCommerceMember;
@@ -68,8 +68,8 @@ declare module 'zova-module-commerce-member' {
         export interface ApiCommerceMemberAddress {
           get $beanFullName(): 'commerce-member.api.commerceMemberAddress';
           get $onionName(): 'commerce-member:commerceMemberAddress';
-          
-        } 
+
+        }
 }
 /** api: end */
 /** api: begin */
@@ -95,11 +95,11 @@ export * from '../apiSchema/commerceMemberAddress.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-commerce-member' {
-  
+
         export interface ApiSchemaCommerceMemberAddress {
           /** @internal */
           get scope(): ScopeModuleCommerceMember;
@@ -108,8 +108,8 @@ declare module 'zova-module-commerce-member' {
         export interface ApiSchemaCommerceMemberAddress {
           get $beanFullName(): 'commerce-member.apiSchema.commerceMemberAddress';
           get $onionName(): 'commerce-member:commerceMemberAddress';
-          
-        } 
+
+        }
 }
 /** apiSchema: end */
 /** apiSchema: begin */
@@ -132,15 +132,15 @@ export * from '../page/address/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-commerce-member' {
-  
+
         export interface ControllerPageAddress {
           /** @internal */
           get scope(): ScopeModuleCommerceMember;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -163,7 +163,7 @@ export interface IPagePathRecord {
   '/commerce/member/address': TypePagePathSchema<NSControllerPageAddress.ParamsInput,NSControllerPageAddress.QueryInput>;
 }
 export interface IPageNameRecord {
-  
+
 }
 }
 export const pagePathSchemas = {
@@ -204,14 +204,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'commerce-member': ScopeModuleCommerceMember;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'commerce-member': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `commerce-member::${K}` {

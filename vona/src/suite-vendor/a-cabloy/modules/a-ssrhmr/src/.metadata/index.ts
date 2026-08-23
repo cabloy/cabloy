@@ -4,15 +4,15 @@ export * from '../bean/bean.ssrHmr.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-ssrhmr' {
-  
+
         export interface BeanSsrHmr {
           /** @internal */
           get scope(): ScopeModuleASsrhmr;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -29,15 +29,15 @@ export * from '../bean/socketNamespace.ssrHmr.ts';
 import type { ISocketNamespaceOptionsSsrHmr } from '../bean/socketNamespace.ssrHmr.ts';
 import 'vona-module-a-socket';
 declare module 'vona-module-a-socket' {
-  
+
     export interface ISocketNamespaceRecord {
       'a-ssrhmr:ssrHmr': ISocketNamespaceOptionsSsrHmr;
     }
 
-  
+
 }
 declare module 'vona-module-a-ssrhmr' {
-  
+
         export interface SocketNamespaceSsrHmr {
           /** @internal */
           get scope(): ScopeModuleASsrhmr;
@@ -47,7 +47,7 @@ declare module 'vona-module-a-ssrhmr' {
             get $beanFullName(): 'a-ssrhmr.socketNamespace.ssrHmr';
             get $onionName(): 'a-ssrhmr:ssrHmr';
             get $onionOptions(): ISocketNamespaceOptionsSsrHmr;
-          } 
+          }
 }
 /** socketNamespace: end */
 /** socketNamespace: begin */
@@ -77,11 +77,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     ssrhmr: ScopeModuleASsrhmr;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

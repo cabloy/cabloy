@@ -4,15 +4,15 @@ export * from '../service/fileCloudflare.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'file-cloudflare:fileCloudflare': never;
     }
 
-  
+
 }
 declare module 'vona-module-file-cloudflare' {
-  
+
         export interface ServiceFileCloudflare {
           /** @internal */
           get scope(): ScopeModuleFileCloudflare;
@@ -21,8 +21,7 @@ declare module 'vona-module-file-cloudflare' {
           export interface ServiceFileCloudflare {
             get $beanFullName(): 'file-cloudflare.service.fileCloudflare';
             get $onionName(): 'file-cloudflare:fileCloudflare';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -45,15 +44,15 @@ export * from '../bean/fileProvider.cloudflare.ts';
 import type { IFileProviderOptionsCloudflare } from '../bean/fileProvider.cloudflare.ts';
 import 'vona-module-a-file';
 declare module 'vona-module-a-file' {
-  
+
     export interface IFileProviderRecord {
       'file-cloudflare:cloudflare': IFileProviderOptionsCloudflare;
     }
 
-  
+
 }
 declare module 'vona-module-file-cloudflare' {
-  
+
         export interface FileProviderCloudflare {
           /** @internal */
           get scope(): ScopeModuleFileCloudflare;
@@ -63,7 +62,7 @@ declare module 'vona-module-file-cloudflare' {
             get $beanFullName(): 'file-cloudflare.fileProvider.cloudflare';
             get $onionName(): 'file-cloudflare:cloudflare';
             get $onionOptions(): IFileProviderOptionsCloudflare;
-          } 
+          }
 }
 /** fileProvider: end */
 /** fileProvider: begin */
@@ -94,11 +93,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     fileCloudflare: ScopeModuleFileCloudflare;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

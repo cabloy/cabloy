@@ -6,11 +6,11 @@ export * from '../component/blockToolbarRow/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-pageentry' {
-  
+
         export interface ControllerBlockForm {
           /** @internal */
           get scope(): ScopeModuleBasicPageentry;
@@ -24,7 +24,7 @@ declare module 'zova-module-basic-pageentry' {
         export interface ControllerBlockToolbarRow {
           /** @internal */
           get scope(): ScopeModuleBasicPageentry;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -87,17 +87,17 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-pageentry': ScopeModuleBasicPageentry;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'basic-pageentry': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `basic-pageentry::${K}` {
   return `basic-pageentry::${key}`;
-}  
+}
 /** scope: end */

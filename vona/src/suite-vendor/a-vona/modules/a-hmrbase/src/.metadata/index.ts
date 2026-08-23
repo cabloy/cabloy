@@ -19,11 +19,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     hmrbase: ScopeModuleAHmrbase;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

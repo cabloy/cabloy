@@ -7,11 +7,11 @@ export * from '../component/formFieldDateRange/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-date' {
-  
+
         export interface ControllerDate {
           /** @internal */
           get scope(): ScopeModuleBasicDate;
@@ -30,7 +30,7 @@ declare module 'zova-module-basic-date' {
         export interface ControllerFormFieldDateRange {
           /** @internal */
           get scope(): ScopeModuleBasicDate;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -85,15 +85,15 @@ export * from '../bean/tableCell.date.jsx';
 import { ITableCellOptionsDate } from '../bean/tableCell.date.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
-  
+
     export interface ITableCellRecord {
       'basic-date:date': ITableCellOptionsDate;
     }
 
-  
+
 }
 declare module 'zova-module-basic-date' {
-  
+
         export interface TableCellDate {
           /** @internal */
           get scope(): ScopeModuleBasicDate;
@@ -103,7 +103,7 @@ declare module 'zova-module-basic-date' {
           get $beanFullName(): 'basic-date.tableCell.date';
           get $onionName(): 'basic-date:date';
           get $onionOptions(): ITableCellOptionsDate;
-        } 
+        }
 }
 /** tableCell: end */
 /** tableCell: begin */
@@ -131,12 +131,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-date': ScopeModuleBasicDate;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

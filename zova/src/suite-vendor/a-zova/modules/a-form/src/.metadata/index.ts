@@ -7,11 +7,11 @@ export * from '../component/formFieldPreset/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-form' {
-  
+
         export interface ControllerForm {
           /** @internal */
           get scope(): ScopeModuleAForm;
@@ -30,7 +30,7 @@ declare module 'zova-module-a-form' {
         export interface ControllerFormFieldPreset {
           /** @internal */
           get scope(): ScopeModuleAForm;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -86,11 +86,11 @@ export * from '../component/formField/render.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-form' {
-  
+
         export interface RenderForm {
           /** @internal */
           get scope(): ScopeModuleAForm;
@@ -99,7 +99,7 @@ declare module 'zova-module-a-form' {
         export interface RenderFormField {
           /** @internal */
           get scope(): ScopeModuleAForm;
-        } 
+        }
 }
 /** render: end */
 /** render: begin */
@@ -134,14 +134,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-form': ScopeModuleAForm;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-form': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
-  
+
 /** scope: end */

@@ -4,15 +4,15 @@ export * from '../bean/hmr.metaRuntime.ts';
 
 import 'vona';
 declare module 'vona' {
-  
+
     export interface IHmrRecord {
       'a-runtime:metaRuntime': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-runtime' {
-  
+
         export interface HmrMetaRuntime {
           /** @internal */
           get scope(): ScopeModuleARuntime;
@@ -21,8 +21,7 @@ declare module 'vona-module-a-runtime' {
           export interface HmrMetaRuntime {
             get $beanFullName(): 'a-runtime.hmr.metaRuntime';
             get $onionName(): 'a-runtime:metaRuntime';
-            
-          } 
+          }
 }
 /** hmr: end */
 /** startup: begin */
@@ -30,15 +29,15 @@ export * from '../bean/startup.runtime.ts';
 
 import { type IDecoratorStartupOptions } from 'vona-module-a-startup';
 declare module 'vona-module-a-startup' {
-  
+
     export interface IStartupRecord {
       'a-runtime:runtime': IDecoratorStartupOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-runtime' {
-  
+
         export interface StartupRuntime {
           /** @internal */
           get scope(): ScopeModuleARuntime;
@@ -48,7 +47,7 @@ declare module 'vona-module-a-runtime' {
             get $beanFullName(): 'a-runtime.startup.runtime';
             get $onionName(): 'a-runtime:runtime';
             get $onionOptions(): IDecoratorStartupOptions;
-          } 
+          }
 }
 /** startup: end */
 /** scope: begin */
@@ -71,11 +70,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     runtime: ScopeModuleARuntime;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

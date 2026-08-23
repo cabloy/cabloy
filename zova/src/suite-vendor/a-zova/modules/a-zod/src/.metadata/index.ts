@@ -4,11 +4,11 @@ export * from '../bean/tool.v.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-zod' {
-  
+
         export interface ToolV {
           /** @internal */
           get scope(): ScopeModuleAZod;
@@ -17,8 +17,8 @@ declare module 'zova-module-a-zod' {
         export interface ToolV {
           get $beanFullName(): 'a-zod.tool.v';
           get $onionName(): 'a-zod:v';
-          
-        } 
+
+        }
 }
 /** tool: end */
 /** tool: begin */
@@ -50,17 +50,17 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-zod': ScopeModuleAZod;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'a-zod': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `a-zod::${K}` {
   return `a-zod::${key}`;
-}  
+}
 /** scope: end */

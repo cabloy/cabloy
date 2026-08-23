@@ -6,21 +6,21 @@ export * from '../dto/play.ts';
 import type { IDtoOptionsPlay } from '../dto/play.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'a-play:play': IDtoOptionsPlay;
     }
 
-  
+
 }
 declare module 'vona-module-a-play' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
 import type { DtoPlay } from '../dto/play.ts';
 declare module 'vona-module-a-play' {
-  
+
     export interface IDtoOptionsPlay {
       fields?: TypeEntityOptionsFields<DtoPlay, IDtoOptionsPlay[TypeSymbolKeyFieldsMore]>;
     }
@@ -33,16 +33,16 @@ import type { IControllerOptionsMemoryDiag } from '../controller/memoryDiag.ts';
 import type { IControllerOptionsPlay } from '../controller/play.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'a-play:memoryDiag': IControllerOptionsMemoryDiag;
 'a-play:play': IControllerOptionsPlay;
     }
 
-  
+
 }
 declare module 'vona-module-a-play' {
-  
+
         export interface ControllerMemoryDiag {
           /** @internal */
           get scope(): ScopeModuleAPlay;
@@ -63,7 +63,7 @@ declare module 'vona-module-a-play' {
             get $beanFullName(): 'a-play.controller.play';
             get $onionName(): 'a-play:play';
             get $onionOptions(): IControllerOptionsPlay;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
@@ -72,7 +72,7 @@ import type { ControllerMemoryDiag } from '../controller/memoryDiag.ts';
 // @ts-ignore ignore
 import type { ControllerPlay } from '../controller/play.ts';
 declare module 'vona-module-a-play' {
-  
+
     export interface IControllerOptionsMemoryDiag {
       actions?: TypeControllerOptionsActions<ControllerMemoryDiag>;
     }
@@ -114,11 +114,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     play: ScopeModuleAPlay;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

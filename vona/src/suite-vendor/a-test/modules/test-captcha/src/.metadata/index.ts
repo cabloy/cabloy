@@ -6,21 +6,21 @@ export * from '../dto/signin.ts';
 import type { IDtoOptionsSignin } from '../dto/signin.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'test-captcha:signin': IDtoOptionsSignin;
     }
 
-  
+
 }
 declare module 'vona-module-test-captcha' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
 import type { DtoSignin } from '../dto/signin.ts';
 declare module 'vona-module-test-captcha' {
-  
+
     export interface IDtoOptionsSignin {
       fields?: TypeEntityOptionsFields<DtoSignin, IDtoOptionsSignin[TypeSymbolKeyFieldsMore]>;
     }
@@ -31,15 +31,15 @@ export * from '../controller/captcha.ts';
 import type { IControllerOptionsCaptcha } from '../controller/captcha.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'test-captcha:captcha': IControllerOptionsCaptcha;
     }
 
-  
+
 }
 declare module 'vona-module-test-captcha' {
-  
+
         export interface ControllerCaptcha {
           /** @internal */
           get scope(): ScopeModuleTestCaptcha;
@@ -49,14 +49,14 @@ declare module 'vona-module-test-captcha' {
             get $beanFullName(): 'test-captcha.controller.captcha';
             get $onionName(): 'test-captcha:captcha';
             get $onionOptions(): IControllerOptionsCaptcha;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
 import type { ControllerCaptcha } from '../controller/captcha.ts';
 declare module 'vona-module-test-captcha' {
-  
+
     export interface IControllerOptionsCaptcha {
       actions?: TypeControllerOptionsActions<ControllerCaptcha>;
     }
@@ -89,11 +89,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     testCaptcha: ScopeModuleTestCaptcha;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

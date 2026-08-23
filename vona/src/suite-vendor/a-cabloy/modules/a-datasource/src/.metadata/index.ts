@@ -7,15 +7,15 @@ export * from '../entity/datasource.ts';
 import type { IEntityOptionsDatasource } from '../entity/datasource.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'a-datasource:datasource': IEntityOptionsDatasource;
     }
 
-  
+
 }
 declare module 'vona-module-a-datasource' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -33,7 +33,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-a-datasource' {
-  
+
     export interface IEntityOptionsDatasource {
       fields?: TypeEntityOptionsFields<EntityDatasource, IEntityOptionsDatasource[TypeSymbolKeyFieldsMore]>;
     }
@@ -44,15 +44,15 @@ export * from '../model/datasource.ts';
 import type { IModelOptionsDatasource } from '../model/datasource.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'a-datasource:datasource': IModelOptionsDatasource;
     }
 
-  
+
 }
 declare module 'vona-module-a-datasource' {
-  
+
         export interface ModelDatasource {
           /** @internal */
           get scope(): ScopeModuleADatasource;
@@ -62,7 +62,7 @@ declare module 'vona-module-a-datasource' {
             get $beanFullName(): 'a-datasource.model.datasource';
             get $onionName(): 'a-datasource:datasource';
             get $onionOptions(): IModelOptionsDatasource;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -84,13 +84,23 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-a-datasource' {
-  
+
   export interface ModelDatasource {
       [SymbolKeyEntity]: EntityDatasource;
       [SymbolKeyEntityMeta]: EntityDatasourceMeta;
       [SymbolKeyModelOptions]: IModelOptionsDatasource;
       get<T extends IModelGetOptions<EntityDatasource,ModelDatasource>>(where: TypeModelWhere<EntityDatasource>, options?: T): Promise<TypeModelRelationResult<EntityDatasource, ModelDatasource, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityDatasource,ModelDatasource>>(where: TypeModelWhere<EntityDatasource>, options?: T): Promise<TypeModelRelationResult<EntityDatasource, ModelDatasource, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityDatasource,ModelDatasource>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityDatasource, ModelDatasource, T> | undefined>;
       mget<T extends IModelGetOptions<EntityDatasource,ModelDatasource>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityDatasource, ModelDatasource, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityDatasource,ModelDatasource,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityDatasource, ModelDatasource, T>>;
@@ -128,15 +138,15 @@ export * from '../bean/bean.datasource.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-datasource' {
-  
+
         export interface BeanDatasource {
           /** @internal */
           get scope(): ScopeModuleADatasource;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -153,15 +163,15 @@ export * from '../bean/meta.version.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'a-datasource:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-datasource' {
-  
+
         export interface MetaVersion {
           /** @internal */
           get scope(): ScopeModuleADatasource;
@@ -170,8 +180,7 @@ declare module 'vona-module-a-datasource' {
           export interface MetaVersion {
             get $beanFullName(): 'a-datasource.meta.version';
             get $onionName(): 'a-datasource:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** scope: begin */
@@ -196,11 +205,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     datasource: ScopeModuleADatasource;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

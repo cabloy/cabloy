@@ -7,8 +7,8 @@ import type { IInterceptorOptionsSsrRedirect } from '../bean/interceptor.ssrRedi
 import type { IInterceptorOptionsSsrRender } from '../bean/interceptor.ssrRender.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
-  
+
+
 export interface IInterceptorRecordLocal {
   'a-ssr:ssrRedirect': IInterceptorOptionsSsrRedirect;
 'a-ssr:ssrRender': IInterceptorOptionsSsrRender;
@@ -16,7 +16,7 @@ export interface IInterceptorRecordLocal {
 
 }
 declare module 'vona-module-a-ssr' {
-  
+
         export interface InterceptorSsrRedirect {
           /** @internal */
           get scope(): ScopeModuleASsr;
@@ -37,7 +37,7 @@ declare module 'vona-module-a-ssr' {
             get $beanFullName(): 'a-ssr.interceptor.ssrRender';
             get $onionName(): 'a-ssr:ssrRender';
             get $onionOptions(): IInterceptorOptionsSsrRender;
-          } 
+          }
 }
 /** interceptor: end */
 /** middleware: begin */
@@ -45,15 +45,15 @@ export * from '../bean/middleware.ssrPassport.ts';
 import type { IMiddlewareOptionsSsrPassport } from '../bean/middleware.ssrPassport.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
+
     export interface IMiddlewareRecordGlobal {
       'a-ssr:ssrPassport': IMiddlewareOptionsSsrPassport;
     }
 
-  
+
 }
 declare module 'vona-module-a-ssr' {
-  
+
         export interface MiddlewareSsrPassport {
           /** @internal */
           get scope(): ScopeModuleASsr;
@@ -63,7 +63,7 @@ declare module 'vona-module-a-ssr' {
             get $beanFullName(): 'a-ssr.middleware.ssrPassport';
             get $onionName(): 'a-ssr:ssrPassport';
             get $onionOptions(): IMiddlewareOptionsSsrPassport;
-          } 
+          }
 }
 /** middleware: end */
 /** bean: begin */
@@ -71,15 +71,15 @@ export * from '../bean/bean.ssr.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-ssr' {
-  
+
         export interface BeanSsr {
           /** @internal */
           get scope(): ScopeModuleASsr;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -98,17 +98,17 @@ export * from '../service/ssrHandler.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-ssr:devProxy': never;
 'a-ssr:ssr': never;
 'a-ssr:ssrHandler': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-ssr' {
-  
+
         export interface ServiceDevProxy {
           /** @internal */
           get scope(): ScopeModuleASsr;
@@ -117,7 +117,6 @@ declare module 'vona-module-a-ssr' {
           export interface ServiceDevProxy {
             get $beanFullName(): 'a-ssr.service.devProxy';
             get $onionName(): 'a-ssr:devProxy';
-            
           }
 
         export interface ServiceSsr {
@@ -128,7 +127,6 @@ declare module 'vona-module-a-ssr' {
           export interface ServiceSsr {
             get $beanFullName(): 'a-ssr.service.ssr';
             get $onionName(): 'a-ssr:ssr';
-            
           }
 
         export interface ServiceSsrHandler {
@@ -139,8 +137,7 @@ declare module 'vona-module-a-ssr' {
           export interface ServiceSsrHandler {
             get $beanFullName(): 'a-ssr.service.ssrHandler';
             get $onionName(): 'a-ssr:ssrHandler';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -170,11 +167,11 @@ export * from '../bean/event.retrieveMenusSite.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-ssr' {
-  
+
         export interface EventRetrieveMenus {
           /** @internal */
           get scope(): ScopeModuleASsr;
@@ -183,7 +180,6 @@ declare module 'vona-module-a-ssr' {
           export interface EventRetrieveMenus {
             get $beanFullName(): 'a-ssr.event.retrieveMenus';
             get $onionName(): 'a-ssr:retrieveMenus';
-            
           }
 
         export interface EventRetrieveMenusSite {
@@ -194,8 +190,7 @@ declare module 'vona-module-a-ssr' {
           export interface EventRetrieveMenusSite {
             get $beanFullName(): 'a-ssr.event.retrieveMenusSite';
             get $onionName(): 'a-ssr:retrieveMenusSite';
-            
-          } 
+          }
 }
 /** event: end */
 /** event: begin */
@@ -209,7 +204,7 @@ export interface IModuleEvent {
 /** event: begin */
 import type { TypeEventRetrieveMenusData, TypeEventRetrieveMenusResult } from '../bean/event.retrieveMenus.ts';
 import type { TypeEventRetrieveMenusSiteData, TypeEventRetrieveMenusSiteResult } from '../bean/event.retrieveMenusSite.ts';
-import type { EventOn } from 'vona-module-a-event'; 
+import type { EventOn } from 'vona-module-a-event';
 declare module 'vona-module-a-event' {
   export interface IEventRecord {
     'a-ssr:retrieveMenus': EventOn<TypeEventRetrieveMenusData, TypeEventRetrieveMenusResult>;
@@ -223,16 +218,16 @@ export * from '../bean/eventListener.resolvePath.ts';
 
 import { type IDecoratorEventListenerOptions } from 'vona-module-a-event';
 declare module 'vona-module-a-event' {
-  
+
     export interface IEventListenerRecord {
       'a-ssr:hmrReload': IDecoratorEventListenerOptions;
 'a-ssr:resolvePath': IDecoratorEventListenerOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-ssr' {
-  
+
         export interface EventListenerHmrReload {
           /** @internal */
           get scope(): ScopeModuleASsr;
@@ -253,7 +248,7 @@ declare module 'vona-module-a-ssr' {
             get $beanFullName(): 'a-ssr.eventListener.resolvePath';
             get $onionName(): 'a-ssr:resolvePath';
             get $onionOptions(): IDecoratorEventListenerOptions;
-          } 
+          }
 }
 /** eventListener: end */
 /** hmr: begin */
@@ -263,17 +258,17 @@ export * from '../bean/hmr.ssrSite.ts';
 
 import 'vona';
 declare module 'vona' {
-  
+
     export interface IHmrRecord {
       'a-ssr:ssrMenu': never;
 'a-ssr:ssrMenuGroup': never;
 'a-ssr:ssrSite': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-ssr' {
-  
+
         export interface HmrSsrMenu {
           /** @internal */
           get scope(): ScopeModuleASsr;
@@ -282,7 +277,6 @@ declare module 'vona-module-a-ssr' {
           export interface HmrSsrMenu {
             get $beanFullName(): 'a-ssr.hmr.ssrMenu';
             get $onionName(): 'a-ssr:ssrMenu';
-            
           }
 
         export interface HmrSsrMenuGroup {
@@ -293,7 +287,6 @@ declare module 'vona-module-a-ssr' {
           export interface HmrSsrMenuGroup {
             get $beanFullName(): 'a-ssr.hmr.ssrMenuGroup';
             get $onionName(): 'a-ssr:ssrMenuGroup';
-            
           }
 
         export interface HmrSsrSite {
@@ -304,8 +297,7 @@ declare module 'vona-module-a-ssr' {
           export interface HmrSsrSite {
             get $beanFullName(): 'a-ssr.hmr.ssrSite';
             get $onionName(): 'a-ssr:ssrSite';
-            
-          } 
+          }
 }
 /** hmr: end */
 /** controller: begin */
@@ -313,15 +305,15 @@ export * from '../controller/memoryDiag.ts';
 import type { IControllerOptionsMemoryDiag } from '../controller/memoryDiag.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'a-ssr:memoryDiag': IControllerOptionsMemoryDiag;
     }
 
-  
+
 }
 declare module 'vona-module-a-ssr' {
-  
+
         export interface ControllerMemoryDiag {
           /** @internal */
           get scope(): ScopeModuleASsr;
@@ -331,14 +323,14 @@ declare module 'vona-module-a-ssr' {
             get $beanFullName(): 'a-ssr.controller.memoryDiag';
             get $onionName(): 'a-ssr:memoryDiag';
             get $onionOptions(): IControllerOptionsMemoryDiag;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
 import type { ControllerMemoryDiag } from '../controller/memoryDiag.ts';
 declare module 'vona-module-a-ssr' {
-  
+
     export interface IControllerOptionsMemoryDiag {
       actions?: TypeControllerOptionsActions<ControllerMemoryDiag>;
     }
@@ -385,13 +377,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     ssr: ScopeModuleASsr;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-ssr': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

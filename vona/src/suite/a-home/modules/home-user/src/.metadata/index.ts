@@ -11,17 +11,17 @@ import type { IEntityOptionsRoleUser } from '../entity/roleUser.ts';
 import type { IEntityOptionsUser } from '../entity/user.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'home-user:role': IEntityOptionsRole;
 'home-user:roleUser': IEntityOptionsRoleUser;
 'home-user:user': IEntityOptionsUser;
     }
 
-  
+
 }
 declare module 'vona-module-home-user' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -49,7 +49,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-home-user' {
-  
+
     export interface IEntityOptionsRole {
       fields?: TypeEntityOptionsFields<EntityRole, IEntityOptionsRole[TypeSymbolKeyFieldsMore]>;
     }
@@ -72,17 +72,17 @@ import type { IModelOptionsRoleUser } from '../model/roleUser.ts';
 import type { IModelOptionsUser } from '../model/user.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'home-user:role': IModelOptionsRole;
 'home-user:roleUser': IModelOptionsRoleUser;
 'home-user:user': IModelOptionsUser;
     }
 
-  
+
 }
 declare module 'vona-module-home-user' {
-  
+
         export interface ModelRole {
           /** @internal */
           get scope(): ScopeModuleHomeUser;
@@ -114,7 +114,7 @@ declare module 'vona-module-home-user' {
             get $beanFullName(): 'home-user.model.user';
             get $onionName(): 'home-user:user';
             get $onionOptions(): IModelOptionsUser;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -283,7 +283,7 @@ export * from '../service/userAdapter.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'home-user:account': never;
 'home-user:passportAdapter': never;
@@ -291,10 +291,10 @@ declare module 'vona-module-a-bean' {
 'home-user:userAdapter': never;
     }
 
-  
+
 }
 declare module 'vona-module-home-user' {
-  
+
         export interface ServiceAccount {
           /** @internal */
           get scope(): ScopeModuleHomeUser;
@@ -333,7 +333,7 @@ declare module 'vona-module-home-user' {
           export interface ServiceUserAdapter {
             get $beanFullName(): 'home-user.service.userAdapter';
             get $onionName(): 'home-user:userAdapter';
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -371,7 +371,7 @@ export * from '../bean/cacheRedis.passwordSetCurrent.ts';
 
 import { type IDecoratorCacheRedisOptions } from 'vona-module-a-cache';
 declare module 'vona-module-a-cache' {
-  
+
     export interface ICacheRedisRecord {
       'home-user:activation': IDecoratorCacheRedisOptions;
 'home-user:activationCurrent': IDecoratorCacheRedisOptions;
@@ -382,10 +382,10 @@ declare module 'vona-module-a-cache' {
 'home-user:passwordSetCurrent': IDecoratorCacheRedisOptions;
     }
 
-  
+
 }
 declare module 'vona-module-home-user' {
-  
+
         export interface CacheRedisActivation {
           /** @internal */
           get scope(): ScopeModuleHomeUser;
@@ -461,7 +461,7 @@ declare module 'vona-module-home-user' {
             get $beanFullName(): 'home-user.cacheRedis.passwordSetCurrent';
             get $onionName(): 'home-user:passwordSetCurrent';
             get $onionOptions(): IDecoratorCacheRedisOptions;
-          } 
+          }
 }
 /** cacheRedis: end */
 /** cacheRedis: begin */
@@ -487,15 +487,15 @@ export * from '../bean/eventListener.activate.ts';
 
 import { type IDecoratorEventListenerOptions } from 'vona-module-a-event';
 declare module 'vona-module-a-event' {
-  
+
     export interface IEventListenerRecord {
       'home-user:activate': IDecoratorEventListenerOptions;
     }
 
-  
+
 }
 declare module 'vona-module-home-user' {
-  
+
         export interface EventListenerActivate {
           /** @internal */
           get scope(): ScopeModuleHomeUser;
@@ -505,7 +505,7 @@ declare module 'vona-module-home-user' {
             get $beanFullName(): 'home-user.eventListener.activate';
             get $onionName(): 'home-user:activate';
             get $onionOptions(): IDecoratorEventListenerOptions;
-          } 
+          }
 }
 /** eventListener: end */
 /** meta: begin */
@@ -515,17 +515,17 @@ export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'home-user:index': IMetaOptionsIndex;
 'home-user:redlock': never;
 'home-user:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-home-user' {
-  
+
         export interface MetaIndex {
           /** @internal */
           get scope(): ScopeModuleHomeUser;
@@ -555,7 +555,7 @@ declare module 'vona-module-home-user' {
           export interface MetaVersion {
             get $beanFullName(): 'home-user.meta.version';
             get $onionName(): 'home-user:version';
-          } 
+          }
 }
 /** meta: end */
 /** meta redlock: begin */
@@ -594,7 +594,7 @@ import type { IDtoOptionsPassportUser } from '../dto/passportUser.ts';
 import type { IDtoOptionsRegister } from '../dto/register.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'home-user:accountActivation': IDtoOptionsAccountActivation;
 'home-user:accountCurrent': IDtoOptionsAccountCurrent;
@@ -613,10 +613,10 @@ declare module 'vona-module-a-web' {
 'home-user:register': IDtoOptionsRegister;
     }
 
-  
+
 }
 declare module 'vona-module-home-user' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
@@ -636,7 +636,7 @@ import type { DtoPassportJwt } from '../dto/passportJwt.ts';
 import type { DtoPassportUser } from '../dto/passportUser.ts';
 import type { DtoRegister } from '../dto/register.ts';
 declare module 'vona-module-home-user' {
-  
+
     export interface IDtoOptionsAccountActivation {
       fields?: TypeEntityOptionsFields<DtoAccountActivation, IDtoOptionsAccountActivation[TypeSymbolKeyFieldsMore]>;
     }
@@ -707,17 +707,17 @@ import type { IControllerOptionsPassport } from '../controller/passport.ts';
 import type { IControllerOptionsPassportTest } from '../controller/passportTest.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'home-user:account': IControllerOptionsAccount;
 'home-user:passport': IControllerOptionsPassport;
 'home-user:passportTest': IControllerOptionsPassportTest;
     }
 
-  
+
 }
 declare module 'vona-module-home-user' {
-  
+
         export interface ControllerAccount {
           /** @internal */
           get scope(): ScopeModuleHomeUser;
@@ -749,7 +749,7 @@ declare module 'vona-module-home-user' {
             get $beanFullName(): 'home-user.controller.passportTest';
             get $onionName(): 'home-user:passportTest';
             get $onionOptions(): IControllerOptionsPassportTest;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
@@ -760,7 +760,7 @@ import type { ControllerPassport } from '../controller/passport.ts';
 // @ts-ignore ignore
 import type { ControllerPassportTest } from '../controller/passportTest.ts';
 declare module 'vona-module-home-user' {
-  
+
     export interface IControllerOptionsAccount {
       actions?: TypeControllerOptionsActions<ControllerAccount>;
     }
@@ -812,17 +812,17 @@ import type { IZodRefineOptionsPasswordConfirm } from '../bean/zodRefine.passwor
 import type { IZodRefineOptionsUsernameUnique } from '../bean/zodRefine.usernameUnique.ts';
 import 'vona-module-a-zod';
 declare module 'vona-module-a-zod' {
-  
+
     export interface IZodRefineRecord {
       'home-user:emailUnique': IZodRefineOptionsEmailUnique;
 'home-user:passwordConfirm': IZodRefineOptionsPasswordConfirm;
 'home-user:usernameUnique': IZodRefineOptionsUsernameUnique;
     }
 
-  
+
 }
 declare module 'vona-module-home-user' {
-  
+
         export interface ZodRefineEmailUnique {
           /** @internal */
           get scope(): ScopeModuleHomeUser;
@@ -854,7 +854,7 @@ declare module 'vona-module-home-user' {
             get $beanFullName(): 'home-user.zodRefine.usernameUnique';
             get $onionName(): 'home-user:usernameUnique';
             get $onionOptions(): IZodRefineOptionsUsernameUnique;
-          } 
+          }
 }
 /** zodRefine: end */
 /** imageScene: begin */
@@ -862,15 +862,15 @@ export * from '../bean/imageScene.homeUserAvatar.ts';
 
 import { type IDecoratorImageSceneOptions } from 'vona-module-a-image';
 declare module 'vona-module-a-image' {
-  
+
     export interface IImageSceneRecord {
       'home-user:homeUserAvatar': IDecoratorImageSceneOptions;
     }
 
-  
+
 }
 declare module 'vona-module-home-user' {
-  
+
         export interface ImageSceneHomeUserAvatar {
           /** @internal */
           get scope(): ScopeModuleHomeUser;
@@ -880,7 +880,7 @@ declare module 'vona-module-home-user' {
             get $beanFullName(): 'home-user.imageScene.homeUserAvatar';
             get $onionName(): 'home-user:homeUserAvatar';
             get $onionOptions(): IDecoratorImageSceneOptions;
-          } 
+          }
 }
 /** imageScene: end */
 /** config: begin */
@@ -917,7 +917,7 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     homeUser: ScopeModuleHomeUser;
   }
-  
+
   export interface IBeanScopeConfig {
     'home-user': ReturnType<typeof config>;
   }
@@ -926,6 +926,6 @@ declare module 'vona' {
     'home-user': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 /** scope: end */

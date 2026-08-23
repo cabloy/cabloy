@@ -291,12 +291,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'home-icon': ScopeModuleHomeIcon;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

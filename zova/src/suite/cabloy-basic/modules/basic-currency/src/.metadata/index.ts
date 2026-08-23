@@ -4,15 +4,15 @@ export * from '../component/formFieldCurrency/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-currency' {
-  
+
         export interface ControllerFormFieldCurrency {
           /** @internal */
           get scope(): ScopeModuleBasicCurrency;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -46,15 +46,15 @@ export * from '../bean/tableCell.currency.jsx';
 import { ITableCellOptionsCurrency } from '../bean/tableCell.currency.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
-  
+
     export interface ITableCellRecord {
       'basic-currency:currency': ITableCellOptionsCurrency;
     }
 
-  
+
 }
 declare module 'zova-module-basic-currency' {
-  
+
         export interface TableCellCurrency {
           /** @internal */
           get scope(): ScopeModuleBasicCurrency;
@@ -64,7 +64,7 @@ declare module 'zova-module-basic-currency' {
           get $beanFullName(): 'basic-currency.tableCell.currency';
           get $onionName(): 'basic-currency:currency';
           get $onionOptions(): ITableCellOptionsCurrency;
-        } 
+        }
 }
 /** tableCell: end */
 /** tableCell: begin */
@@ -92,12 +92,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-currency': ScopeModuleBasicCurrency;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

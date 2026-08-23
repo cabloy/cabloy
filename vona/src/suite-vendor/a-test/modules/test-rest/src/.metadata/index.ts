@@ -7,15 +7,15 @@ export * from '../entity/product.tsx';
 import type { IEntityOptionsProduct } from '../entity/product.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'test-rest:product': IEntityOptionsProduct;
     }
 
-  
+
 }
 declare module 'vona-module-test-rest' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -33,7 +33,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-test-rest' {
-  
+
     export interface IEntityOptionsProduct {
       fields?: TypeEntityOptionsFields<EntityProduct, IEntityOptionsProduct[TypeSymbolKeyFieldsMore]>;
     }
@@ -44,15 +44,15 @@ export * from '../model/product.ts';
 import type { IModelOptionsProduct } from '../model/product.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'test-rest:product': IModelOptionsProduct;
     }
 
-  
+
 }
 declare module 'vona-module-test-rest' {
-  
+
         export interface ModelProduct {
           /** @internal */
           get scope(): ScopeModuleTestRest;
@@ -62,7 +62,7 @@ declare module 'vona-module-test-rest' {
             get $beanFullName(): 'test-rest.model.product';
             get $onionName(): 'test-rest:product';
             get $onionOptions(): IModelOptionsProduct;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -84,13 +84,23 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-test-rest' {
-  
+
   export interface ModelProduct {
       [SymbolKeyEntity]: EntityProduct;
       [SymbolKeyEntityMeta]: EntityProductMeta;
       [SymbolKeyModelOptions]: IModelOptionsProduct;
       get<T extends IModelGetOptions<EntityProduct,ModelProduct>>(where: TypeModelWhere<EntityProduct>, options?: T): Promise<TypeModelRelationResult<EntityProduct, ModelProduct, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityProduct,ModelProduct>>(where: TypeModelWhere<EntityProduct>, options?: T): Promise<TypeModelRelationResult<EntityProduct, ModelProduct, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityProduct,ModelProduct>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityProduct, ModelProduct, T> | undefined>;
       mget<T extends IModelGetOptions<EntityProduct,ModelProduct>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityProduct, ModelProduct, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityProduct,ModelProduct,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityProduct, ModelProduct, T>>;
@@ -128,15 +138,15 @@ export * from '../service/product.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'test-rest:product': never;
     }
 
-  
+
 }
 declare module 'vona-module-test-rest' {
-  
+
         export interface ServiceProduct {
           /** @internal */
           get scope(): ScopeModuleTestRest;
@@ -145,8 +155,7 @@ declare module 'vona-module-test-rest' {
           export interface ServiceProduct {
             get $beanFullName(): 'test-rest.service.product';
             get $onionName(): 'test-rest:product';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -169,15 +178,15 @@ export * from '../bean/meta.version.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'test-rest:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-test-rest' {
-  
+
         export interface MetaVersion {
           /** @internal */
           get scope(): ScopeModuleTestRest;
@@ -186,8 +195,7 @@ declare module 'vona-module-test-rest' {
           export interface MetaVersion {
             get $beanFullName(): 'test-rest.meta.version';
             get $onionName(): 'test-rest:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** dto: begin */
@@ -205,7 +213,7 @@ import type { IDtoOptionsProductUpdate } from '../dto/productUpdate.tsx';
 import type { IDtoOptionsProductView } from '../dto/productView.tsx';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'test-rest:productCreate': IDtoOptionsProductCreate;
 'test-rest:productSelectReq': IDtoOptionsProductSelectReq;
@@ -215,10 +223,10 @@ declare module 'vona-module-a-web' {
 'test-rest:productView': IDtoOptionsProductView;
     }
 
-  
+
 }
 declare module 'vona-module-test-rest' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
@@ -229,7 +237,7 @@ import type { DtoProductSelectResItem } from '../dto/productSelectResItem.tsx';
 import type { DtoProductUpdate } from '../dto/productUpdate.tsx';
 import type { DtoProductView } from '../dto/productView.tsx';
 declare module 'vona-module-test-rest' {
-  
+
     export interface IDtoOptionsProductCreate {
       fields?: TypeEntityOptionsFields<DtoProductCreate, IDtoOptionsProductCreate[TypeSymbolKeyFieldsMore]>;
     }
@@ -260,15 +268,15 @@ export * from '../controller/product.tsx';
 import type { IControllerOptionsProduct } from '../controller/product.tsx';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'test-rest:product': IControllerOptionsProduct;
     }
 
-  
+
 }
 declare module 'vona-module-test-rest' {
-  
+
         export interface ControllerProduct {
           /** @internal */
           get scope(): ScopeModuleTestRest;
@@ -278,14 +286,14 @@ declare module 'vona-module-test-rest' {
             get $beanFullName(): 'test-rest.controller.product';
             get $onionName(): 'test-rest:product';
             get $onionOptions(): IControllerOptionsProduct;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
 import type { ControllerProduct } from '../controller/product.tsx';
 declare module 'vona-module-test-rest' {
-  
+
     export interface IControllerOptionsProduct {
       actions?: TypeControllerOptionsActions<ControllerProduct>;
     }
@@ -312,22 +320,22 @@ import 'vona-module-a-openapi';
       'test-rest:product': never;
     }
   }
-  
+
 /** controller: end */
 /** ssrMenu: begin */
 export * from '../bean/ssrMenu.product.ts';
 import type { ISsrMenuOptionsProduct } from '../bean/ssrMenu.product.ts';
 import 'vona-module-a-ssr';
 declare module 'vona-module-a-ssr' {
-  
+
     export interface ISsrMenuRecord {
       'test-rest:product': ISsrMenuOptionsProduct;
     }
 
-  
+
 }
 declare module 'vona-module-test-rest' {
-  
+
         export interface SsrMenuProduct {
           /** @internal */
           get scope(): ScopeModuleTestRest;
@@ -337,7 +345,7 @@ declare module 'vona-module-test-rest' {
             get $beanFullName(): 'test-rest.ssrMenu.product';
             get $onionName(): 'test-rest:product';
             get $onionOptions(): ISsrMenuOptionsProduct;
-          } 
+          }
 }
 /** ssrMenu: end */
 /** locale: begin */
@@ -367,13 +375,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     testRest: ScopeModuleTestRest;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'test-rest': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 /** scope: end */

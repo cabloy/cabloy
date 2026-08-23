@@ -4,15 +4,15 @@ export * from '../bean/meta.version.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'test-file:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-test-file' {
-  
+
         export interface MetaVersion {
           /** @internal */
           get scope(): ScopeModuleTestFile;
@@ -21,8 +21,7 @@ declare module 'vona-module-test-file' {
           export interface MetaVersion {
             get $beanFullName(): 'test-file.meta.version';
             get $onionName(): 'test-file:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** fileScene: begin */
@@ -32,17 +31,17 @@ export * from '../bean/fileScene.publicFile.ts';
 
 import { type IDecoratorFileSceneOptions } from 'vona-module-a-file';
 declare module 'vona-module-a-file' {
-  
+
     export interface IFileSceneRecord {
       'test-file:cloudflareFile': IDecoratorFileSceneOptions;
 'test-file:privateFile': IDecoratorFileSceneOptions;
 'test-file:publicFile': IDecoratorFileSceneOptions;
     }
 
-  
+
 }
 declare module 'vona-module-test-file' {
-  
+
         export interface FileSceneCloudflareFile {
           /** @internal */
           get scope(): ScopeModuleTestFile;
@@ -74,7 +73,7 @@ declare module 'vona-module-test-file' {
             get $beanFullName(): 'test-file.fileScene.publicFile';
             get $onionName(): 'test-file:publicFile';
             get $onionOptions(): IDecoratorFileSceneOptions;
-          } 
+          }
 }
 /** fileScene: end */
 /** scope: begin */
@@ -97,11 +96,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     testFile: ScopeModuleTestFile;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

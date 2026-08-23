@@ -4,15 +4,15 @@ export * from '../service/redlock.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-redlock:redlock': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-redlock' {
-  
+
         export interface ServiceRedlock {
           /** @internal */
           get scope(): ScopeModuleARedlock;
@@ -21,8 +21,7 @@ declare module 'vona-module-a-redlock' {
           export interface ServiceRedlock {
             get $beanFullName(): 'a-redlock.service.redlock';
             get $onionName(): 'a-redlock:redlock';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -66,13 +65,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     redlock: ScopeModuleARedlock;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-redlock': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

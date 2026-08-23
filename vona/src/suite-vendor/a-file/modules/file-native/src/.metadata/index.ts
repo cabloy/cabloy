@@ -4,15 +4,15 @@ export * from '../service/fileNative.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'file-native:fileNative': never;
     }
 
-  
+
 }
 declare module 'vona-module-file-native' {
-  
+
         export interface ServiceFileNative {
           /** @internal */
           get scope(): ScopeModuleFileNative;
@@ -21,8 +21,7 @@ declare module 'vona-module-file-native' {
           export interface ServiceFileNative {
             get $beanFullName(): 'file-native.service.fileNative';
             get $onionName(): 'file-native:fileNative';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -45,15 +44,15 @@ export * from '../bean/fileProvider.native.ts';
 import type { IFileProviderOptionsNative } from '../bean/fileProvider.native.ts';
 import 'vona-module-a-file';
 declare module 'vona-module-a-file' {
-  
+
     export interface IFileProviderRecord {
       'file-native:native': IFileProviderOptionsNative;
     }
 
-  
+
 }
 declare module 'vona-module-file-native' {
-  
+
         export interface FileProviderNative {
           /** @internal */
           get scope(): ScopeModuleFileNative;
@@ -63,7 +62,7 @@ declare module 'vona-module-file-native' {
             get $beanFullName(): 'file-native.fileProvider.native';
             get $onionName(): 'file-native:native';
             get $onionOptions(): IFileProviderOptionsNative;
-          } 
+          }
 }
 /** fileProvider: end */
 /** fileProvider: begin */
@@ -99,13 +98,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     fileNative: ScopeModuleFileNative;
   }
-  
+
   export interface IBeanScopeConfig {
     'file-native': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

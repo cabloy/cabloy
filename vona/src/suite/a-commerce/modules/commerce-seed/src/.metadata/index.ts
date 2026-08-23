@@ -4,15 +4,15 @@ export * from '../bean/meta.version.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'commerce-seed:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-seed' {
-  
+
         export interface MetaVersion {
           /** @internal */
           get scope(): ScopeModuleCommerceSeed;
@@ -21,8 +21,7 @@ declare module 'vona-module-commerce-seed' {
           export interface MetaVersion {
             get $beanFullName(): 'commerce-seed.meta.version';
             get $onionName(): 'commerce-seed:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** scope: begin */
@@ -45,11 +44,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     commerceSeed: ScopeModuleCommerceSeed;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

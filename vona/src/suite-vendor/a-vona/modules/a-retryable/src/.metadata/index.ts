@@ -4,15 +4,15 @@ export * from '../bean/aopMethod.retryable.ts';
 import type { IAopMethodOptionsRetryable } from '../bean/aopMethod.retryable.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
+
     export interface IAopMethodRecord {
       'a-retryable:retryable': IAopMethodOptionsRetryable;
     }
 
-  
+
 }
 declare module 'vona-module-a-retryable' {
-  
+
         export interface AopMethodRetryable {
           /** @internal */
           get scope(): ScopeModuleARetryable;
@@ -22,7 +22,7 @@ declare module 'vona-module-a-retryable' {
             get $beanFullName(): 'a-retryable.aopMethod.retryable';
             get $onionName(): 'a-retryable:retryable';
             get $onionOptions(): IAopMethodOptionsRetryable;
-          } 
+          }
 }
 /** aopMethod: end */
 /** scope: begin */
@@ -45,11 +45,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     retryable: ScopeModuleARetryable;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

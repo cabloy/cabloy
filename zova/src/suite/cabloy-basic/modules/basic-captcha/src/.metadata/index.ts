@@ -4,15 +4,15 @@ export * from '../component/formFieldCaptcha/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-captcha' {
-  
+
         export interface ControllerFormFieldCaptcha {
           /** @internal */
           get scope(): ScopeModuleBasicCaptcha;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -61,17 +61,17 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-captcha': ScopeModuleBasicCaptcha;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'basic-captcha': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `basic-captcha::${K}` {
   return `basic-captcha::${key}`;
-}  
+}
 /** scope: end */

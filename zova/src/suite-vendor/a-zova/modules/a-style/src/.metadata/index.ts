@@ -4,11 +4,11 @@ export * from '../bean/bean.theme.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-style' {
-  
+
         export interface BeanTheme {
           /** @internal */
           get scope(): ScopeModuleAStyle;
@@ -17,8 +17,8 @@ declare module 'zova-module-a-style' {
         export interface BeanTheme {
           get $beanFullName(): 'a-style.bean.theme';
           get $onionName(): 'a-style:theme';
-          
-        } 
+
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -54,14 +54,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-style': ScopeModuleAStyle;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-style': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
-  
+
 /** scope: end */

@@ -15,12 +15,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'pay-stripe': ScopeModulePayStripe;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 
 /** scope: end */

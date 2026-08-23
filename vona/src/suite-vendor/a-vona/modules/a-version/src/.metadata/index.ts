@@ -11,17 +11,17 @@ import type { IEntityOptionsVersionInit } from '../entity/versionInit.ts';
 import type { IEntityOptionsViewRecord } from '../entity/viewRecord.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'a-version:version': IEntityOptionsVersion;
 'a-version:versionInit': IEntityOptionsVersionInit;
 'a-version:viewRecord': IEntityOptionsViewRecord;
     }
 
-  
+
 }
 declare module 'vona-module-a-version' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -49,7 +49,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-a-version' {
-  
+
     export interface IEntityOptionsVersion {
       fields?: TypeEntityOptionsFields<EntityVersion, IEntityOptionsVersion[TypeSymbolKeyFieldsMore]>;
     }
@@ -72,17 +72,17 @@ import type { IModelOptionsVersionInit } from '../model/versionInit.ts';
 import type { IModelOptionsViewRecord } from '../model/viewRecord.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'a-version:version': IModelOptionsVersion;
 'a-version:versionInit': IModelOptionsVersionInit;
 'a-version:viewRecord': IModelOptionsViewRecord;
     }
 
-  
+
 }
 declare module 'vona-module-a-version' {
-  
+
         export interface ModelVersion {
           /** @internal */
           get scope(): ScopeModuleAVersion;
@@ -114,7 +114,7 @@ declare module 'vona-module-a-version' {
             get $beanFullName(): 'a-version.model.viewRecord';
             get $onionName(): 'a-version:viewRecord';
             get $onionOptions(): IModelOptionsViewRecord;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -142,13 +142,23 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-a-version' {
-  
+
   export interface ModelVersion {
       [SymbolKeyEntity]: EntityVersion;
       [SymbolKeyEntityMeta]: EntityVersionMeta;
       [SymbolKeyModelOptions]: IModelOptionsVersion;
       get<T extends IModelGetOptions<EntityVersion,ModelVersion>>(where: TypeModelWhere<EntityVersion>, options?: T): Promise<TypeModelRelationResult<EntityVersion, ModelVersion, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityVersion,ModelVersion>>(where: TypeModelWhere<EntityVersion>, options?: T): Promise<TypeModelRelationResult<EntityVersion, ModelVersion, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityVersion,ModelVersion>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityVersion, ModelVersion, T> | undefined>;
       mget<T extends IModelGetOptions<EntityVersion,ModelVersion>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityVersion, ModelVersion, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityVersion,ModelVersion,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityVersion, ModelVersion, T>>;
@@ -175,7 +185,17 @@ export interface ModelVersionInit {
       [SymbolKeyEntityMeta]: EntityVersionInitMeta;
       [SymbolKeyModelOptions]: IModelOptionsVersionInit;
       get<T extends IModelGetOptions<EntityVersionInit,ModelVersionInit>>(where: TypeModelWhere<EntityVersionInit>, options?: T): Promise<TypeModelRelationResult<EntityVersionInit, ModelVersionInit, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityVersionInit,ModelVersionInit>>(where: TypeModelWhere<EntityVersionInit>, options?: T): Promise<TypeModelRelationResult<EntityVersionInit, ModelVersionInit, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityVersionInit,ModelVersionInit>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityVersionInit, ModelVersionInit, T> | undefined>;
       mget<T extends IModelGetOptions<EntityVersionInit,ModelVersionInit>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityVersionInit, ModelVersionInit, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityVersionInit,ModelVersionInit,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityVersionInit, ModelVersionInit, T>>;
@@ -202,7 +222,17 @@ export interface ModelViewRecord {
       [SymbolKeyEntityMeta]: EntityViewRecordMeta;
       [SymbolKeyModelOptions]: IModelOptionsViewRecord;
       get<T extends IModelGetOptions<EntityViewRecord,ModelViewRecord>>(where: TypeModelWhere<EntityViewRecord>, options?: T): Promise<TypeModelRelationResult<EntityViewRecord, ModelViewRecord, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityViewRecord,ModelViewRecord>>(where: TypeModelWhere<EntityViewRecord>, options?: T): Promise<TypeModelRelationResult<EntityViewRecord, ModelViewRecord, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityViewRecord,ModelViewRecord>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityViewRecord, ModelViewRecord, T> | undefined>;
       mget<T extends IModelGetOptions<EntityViewRecord,ModelViewRecord>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityViewRecord, ModelViewRecord, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityViewRecord,ModelViewRecord,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityViewRecord, ModelViewRecord, T>>;
@@ -239,16 +269,16 @@ export * from '../service/version.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-version:database': never;
 'a-version:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-version' {
-  
+
         export interface ServiceDatabase {
           /** @internal */
           get scope(): ScopeModuleAVersion;
@@ -257,7 +287,6 @@ declare module 'vona-module-a-version' {
           export interface ServiceDatabase {
             get $beanFullName(): 'a-version.service.database';
             get $onionName(): 'a-version:database';
-            
           }
 
         export interface ServiceVersion {
@@ -268,8 +297,7 @@ declare module 'vona-module-a-version' {
           export interface ServiceVersion {
             get $beanFullName(): 'a-version.service.version';
             get $onionName(): 'a-version:version';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -295,11 +323,11 @@ export * from '../bean/event.versionDone.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-version' {
-  
+
         export interface EventVersionDone {
           /** @internal */
           get scope(): ScopeModuleAVersion;
@@ -308,8 +336,7 @@ declare module 'vona-module-a-version' {
           export interface EventVersionDone {
             get $beanFullName(): 'a-version.event.versionDone';
             get $onionName(): 'a-version:versionDone';
-            
-          } 
+          }
 }
 /** event: end */
 /** event: begin */
@@ -320,7 +347,7 @@ export interface IModuleEvent {
 /** event: end */
 /** event: begin */
 import type { TypeEventVersionDoneData, TypeEventVersionDoneResult } from '../bean/event.versionDone.ts';
-import type { EventOn } from 'vona-module-a-event'; 
+import type { EventOn } from 'vona-module-a-event';
 declare module 'vona-module-a-event' {
   export interface IEventRecord {
     'a-version:versionDone': EventOn<TypeEventVersionDoneData, TypeEventVersionDoneResult>;
@@ -332,15 +359,15 @@ export * from '../bean/hmr.metaVersion.ts';
 
 import 'vona';
 declare module 'vona' {
-  
+
     export interface IHmrRecord {
       'a-version:metaVersion': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-version' {
-  
+
         export interface HmrMetaVersion {
           /** @internal */
           get scope(): ScopeModuleAVersion;
@@ -349,8 +376,7 @@ declare module 'vona-module-a-version' {
           export interface HmrMetaVersion {
             get $beanFullName(): 'a-version.hmr.metaVersion';
             get $onionName(): 'a-version:metaVersion';
-            
-          } 
+          }
 }
 /** hmr: end */
 /** meta: begin */
@@ -358,15 +384,15 @@ export * from '../bean/meta.version.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'a-version:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-version' {
-  
+
         export interface MetaVersion {
           /** @internal */
           get scope(): ScopeModuleAVersion;
@@ -375,8 +401,7 @@ declare module 'vona-module-a-version' {
           export interface MetaVersion {
             get $beanFullName(): 'a-version.meta.version';
             get $onionName(): 'a-version:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** startup: begin */
@@ -386,17 +411,17 @@ export * from '../bean/startup.instanceInit.ts';
 
 import { type IDecoratorStartupOptions } from 'vona-module-a-startup';
 declare module 'vona-module-a-startup' {
-  
+
     export interface IStartupRecord {
       'a-version:databaseInit': IDecoratorStartupOptions;
 'a-version:databaseName': IDecoratorStartupOptions;
 'a-version:instanceInit': IDecoratorStartupOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-version' {
-  
+
         export interface StartupDatabaseInit {
           /** @internal */
           get scope(): ScopeModuleAVersion;
@@ -428,7 +453,7 @@ declare module 'vona-module-a-version' {
             get $beanFullName(): 'a-version.startup.instanceInit';
             get $onionName(): 'a-version:instanceInit';
             get $onionOptions(): IDecoratorStartupOptions;
-          } 
+          }
 }
 /** startup: end */
 /** locale: begin */
@@ -464,8 +489,8 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     version: ScopeModuleAVersion;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'a-version': (typeof locales)[TypeLocaleBase];

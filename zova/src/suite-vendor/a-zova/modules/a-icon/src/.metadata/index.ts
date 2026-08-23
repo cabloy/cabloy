@@ -4,11 +4,11 @@ export * from '../bean/sys.icon.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-icon' {
-  
+
         export interface SysIcon {
           /** @internal */
           get scope(): ScopeModuleAIcon;
@@ -17,8 +17,8 @@ declare module 'zova-module-a-icon' {
         export interface SysIcon {
           get $beanFullName(): 'a-icon.sys.icon';
           get $onionName(): 'a-icon:icon';
-          
-        } 
+
+        }
 }
 /** sys: end */
 /** sys: begin */
@@ -35,11 +35,11 @@ export * from '../bean/tool.icon.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-icon' {
-  
+
         export interface ToolIcon {
           /** @internal */
           get scope(): ScopeModuleAIcon;
@@ -48,8 +48,8 @@ declare module 'zova-module-a-icon' {
         export interface ToolIcon {
           get $beanFullName(): 'a-icon.tool.icon';
           get $onionName(): 'a-icon:icon';
-          
-        } 
+
+        }
 }
 /** tool: end */
 /** tool: begin */
@@ -66,15 +66,15 @@ export * from '../component/icon/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-icon' {
-  
+
         export interface ControllerIcon {
           /** @internal */
           get scope(): ScopeModuleAIcon;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -127,14 +127,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-icon': ScopeModuleAIcon;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-icon': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
-  
+
 /** scope: end */

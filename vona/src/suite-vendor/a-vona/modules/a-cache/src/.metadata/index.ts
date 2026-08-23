@@ -4,15 +4,15 @@ export * from '../bean/bean.cache.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-cache' {
-  
+
         export interface BeanCache {
           /** @internal */
           get scope(): ScopeModuleACache;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -30,11 +30,11 @@ export * from '../service/cacheRedisBase_.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
-  
+
+
 }
 declare module 'vona-module-a-cache' {
-   
+
 }
 /** service: end */
 /** broadcast: begin */
@@ -46,7 +46,7 @@ export * from '../bean/broadcast.memSet.ts';
 
 import { type IDecoratorBroadcastOptions } from 'vona-module-a-broadcast';
 declare module 'vona-module-a-broadcast' {
-  
+
     export interface IBroadcastRecord {
       'a-cache:memClear': IDecoratorBroadcastOptions;
 'a-cache:memDel': IDecoratorBroadcastOptions;
@@ -55,10 +55,10 @@ declare module 'vona-module-a-broadcast' {
 'a-cache:memSet': IDecoratorBroadcastOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-cache' {
-  
+
         export interface BroadcastMemClear {
           /** @internal */
           get scope(): ScopeModuleACache;
@@ -112,7 +112,7 @@ declare module 'vona-module-a-cache' {
             get $beanFullName(): 'a-cache.broadcast.memSet';
             get $onionName(): 'a-cache:memSet';
             get $onionOptions(): IDecoratorBroadcastOptions;
-          } 
+          }
 }
 /** broadcast: end */
 /** broadcast: begin */
@@ -155,13 +155,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     cache: ScopeModuleACache;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-cache': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

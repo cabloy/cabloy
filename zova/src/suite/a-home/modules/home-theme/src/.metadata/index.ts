@@ -4,15 +4,15 @@ export * from '../bean/css.base.js';
 import { ICssOptionsBase } from '../bean/css.base.js';
 import 'zova-module-a-style';
 declare module 'zova-module-a-style' {
-  
+
     export interface ICssRecord {
       'home-theme:base': ICssOptionsBase;
     }
 
-  
+
 }
 declare module 'zova-module-home-theme' {
-  
+
         export interface CssBase {
           /** @internal */
           get scope(): ScopeModuleHomeTheme;
@@ -22,7 +22,7 @@ declare module 'zova-module-home-theme' {
           get $beanFullName(): 'home-theme.css.base';
           get $onionName(): 'home-theme:base';
           get $onionOptions(): ICssOptionsBase;
-        } 
+        }
 }
 /** css: end */
 /** css: begin */
@@ -41,16 +41,16 @@ import { IThemeOptionsDefault } from '../bean/theme.default.js';
 import { IThemeOptionsOrange } from '../bean/theme.orange.js';
 import 'zova-module-a-style';
 declare module 'zova-module-a-style' {
-  
+
     export interface IThemeRecord {
       'home-theme:default': IThemeOptionsDefault;
 'home-theme:orange': IThemeOptionsOrange;
     }
 
-  
+
 }
 declare module 'zova-module-home-theme' {
-  
+
         export interface ThemeDefault {
           /** @internal */
           get scope(): ScopeModuleHomeTheme;
@@ -71,7 +71,7 @@ declare module 'zova-module-home-theme' {
           get $beanFullName(): 'home-theme.theme.orange';
           get $onionName(): 'home-theme:orange';
           get $onionOptions(): IThemeOptionsOrange;
-        } 
+        }
 }
 /** theme: end */
 /** theme: begin */
@@ -101,12 +101,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'home-theme': ScopeModuleHomeTheme;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

@@ -15,12 +15,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'commerce-siteweb': ScopeModuleCommerceSiteweb;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

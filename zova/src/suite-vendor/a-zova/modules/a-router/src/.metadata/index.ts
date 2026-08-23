@@ -4,15 +4,15 @@ export * from '../model/pageData.js';
 import { IModelOptionsPageData } from '../model/pageData.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'a-router:pageData': IModelOptionsPageData;
     }
 
-  
+
 }
 declare module 'zova-module-a-router' {
-  
+
         export interface ModelPageData {
           /** @internal */
           get scope(): ScopeModuleARouter;
@@ -22,7 +22,7 @@ declare module 'zova-module-a-router' {
           get $beanFullName(): 'a-router.model.pageData';
           get $onionName(): 'a-router:pageData';
           get $onionOptions(): IModelOptionsPageData;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -39,11 +39,11 @@ export * from '../bean/sys.router.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-router' {
-  
+
         export interface SysRouter {
           /** @internal */
           get scope(): ScopeModuleARouter;
@@ -52,8 +52,8 @@ declare module 'zova-module-a-router' {
         export interface SysRouter {
           get $beanFullName(): 'a-router.sys.router';
           get $onionName(): 'a-router:router';
-          
-        } 
+
+        }
 }
 /** sys: end */
 /** sys: begin */
@@ -71,11 +71,11 @@ export * from '../bean/bean.routerGuardsBase.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-router' {
-  
+
         export interface BeanRouter {
           /** @internal */
           get scope(): ScopeModuleARouter;
@@ -84,8 +84,8 @@ declare module 'zova-module-a-router' {
         export interface BeanRouter {
           get $beanFullName(): 'a-router.bean.router';
           get $onionName(): 'a-router:router';
-          
-        } 
+
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -104,15 +104,15 @@ export * from '../service/routerGuards.js';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-router:routerGuards': never;
     }
 
-  
+
 }
 declare module 'zova-module-a-router' {
-  
+
         export interface ServiceRouterGuards {
           /** @internal */
           get scope(): ScopeModuleARouter;
@@ -121,8 +121,8 @@ declare module 'zova-module-a-router' {
         export interface ServiceRouterGuards {
           get $beanFullName(): 'a-router.service.routerGuards';
           get $onionName(): 'a-router:routerGuards';
-          
-        } 
+
+        }
 }
 /** service: end */
 /** service: begin */
@@ -139,15 +139,15 @@ export * from '../component/routerViewEmpty/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-router' {
-  
+
         export interface ControllerRouterViewEmpty {
           /** @internal */
           get scope(): ScopeModuleARouter;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -203,14 +203,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-router': ScopeModuleARouter;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-router': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
-  
+
 /** scope: end */

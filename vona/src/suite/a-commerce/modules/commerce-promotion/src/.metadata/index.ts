@@ -11,17 +11,17 @@ import type { IEntityOptionsCouponGrant } from '../entity/couponGrant.tsx';
 import type { IEntityOptionsCouponTemplate } from '../entity/couponTemplate.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'commerce-promotion:couponAudit': IEntityOptionsCouponAudit;
 'commerce-promotion:couponGrant': IEntityOptionsCouponGrant;
 'commerce-promotion:couponTemplate': IEntityOptionsCouponTemplate;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-promotion' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -49,7 +49,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-commerce-promotion' {
-  
+
     export interface IEntityOptionsCouponAudit {
       fields?: TypeEntityOptionsFields<EntityCouponAudit, IEntityOptionsCouponAudit[TypeSymbolKeyFieldsMore]>;
     }
@@ -72,17 +72,17 @@ import type { IModelOptionsCouponGrant } from '../model/couponGrant.ts';
 import type { IModelOptionsCouponTemplate } from '../model/couponTemplate.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'commerce-promotion:couponAudit': IModelOptionsCouponAudit;
 'commerce-promotion:couponGrant': IModelOptionsCouponGrant;
 'commerce-promotion:couponTemplate': IModelOptionsCouponTemplate;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-promotion' {
-  
+
         export interface ModelCouponAudit {
           /** @internal */
           get scope(): ScopeModuleCommercePromotion;
@@ -114,7 +114,7 @@ declare module 'vona-module-commerce-promotion' {
             get $beanFullName(): 'commerce-promotion.model.couponTemplate';
             get $onionName(): 'commerce-promotion:couponTemplate';
             get $onionOptions(): IModelOptionsCouponTemplate;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -142,7 +142,7 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-commerce-promotion' {
-  
+
   export interface ModelCouponAudit {
       [SymbolKeyEntity]: EntityCouponAudit;
       [SymbolKeyEntityMeta]: EntityCouponAuditMeta;
@@ -273,16 +273,16 @@ export * from '../service/couponTemplate.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'commerce-promotion:coupon': never;
 'commerce-promotion:couponTemplate': never;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-promotion' {
-  
+
         export interface ServiceCoupon {
           /** @internal */
           get scope(): ScopeModuleCommercePromotion;
@@ -291,7 +291,6 @@ declare module 'vona-module-commerce-promotion' {
           export interface ServiceCoupon {
             get $beanFullName(): 'commerce-promotion.service.coupon';
             get $onionName(): 'commerce-promotion:coupon';
-            
           }
 
         export interface ServiceCouponTemplate {
@@ -302,8 +301,7 @@ declare module 'vona-module-commerce-promotion' {
           export interface ServiceCouponTemplate {
             get $beanFullName(): 'commerce-promotion.service.couponTemplate';
             get $onionName(): 'commerce-promotion:couponTemplate';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -330,16 +328,16 @@ export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'commerce-promotion:index': IMetaOptionsIndex;
 'commerce-promotion:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-promotion' {
-  
+
         export interface MetaIndex {
           /** @internal */
           get scope(): ScopeModuleCommercePromotion;
@@ -359,8 +357,7 @@ declare module 'vona-module-commerce-promotion' {
           export interface MetaVersion {
             get $beanFullName(): 'commerce-promotion.meta.version';
             get $onionName(): 'commerce-promotion:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** dto: begin */
@@ -382,7 +379,7 @@ import type { IDtoOptionsCouponTemplateUpdate } from '../dto/couponTemplateUpdat
 import type { IDtoOptionsCouponTemplateView } from '../dto/couponTemplateView.tsx';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'commerce-promotion:couponIssue': IDtoOptionsCouponIssue;
 'commerce-promotion:couponMineItem': IDtoOptionsCouponMineItem;
@@ -394,10 +391,10 @@ declare module 'vona-module-a-web' {
 'commerce-promotion:couponTemplateView': IDtoOptionsCouponTemplateView;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-promotion' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
@@ -410,7 +407,7 @@ import type { DtoCouponTemplateSelectResItem } from '../dto/couponTemplateSelect
 import type { DtoCouponTemplateUpdate } from '../dto/couponTemplateUpdate.tsx';
 import type { DtoCouponTemplateView } from '../dto/couponTemplateView.tsx';
 declare module 'vona-module-commerce-promotion' {
-  
+
     export interface IDtoOptionsCouponIssue {
       fields?: TypeEntityOptionsFields<DtoCouponIssue, IDtoOptionsCouponIssue[TypeSymbolKeyFieldsMore]>;
     }
@@ -451,16 +448,16 @@ import type { IControllerOptionsCoupon } from '../controller/coupon.ts';
 import type { IControllerOptionsCouponTemplate } from '../controller/couponTemplate.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'commerce-promotion:coupon': IControllerOptionsCoupon;
 'commerce-promotion:couponTemplate': IControllerOptionsCouponTemplate;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-promotion' {
-  
+
         export interface ControllerCoupon {
           /** @internal */
           get scope(): ScopeModuleCommercePromotion;
@@ -481,7 +478,7 @@ declare module 'vona-module-commerce-promotion' {
             get $beanFullName(): 'commerce-promotion.controller.couponTemplate';
             get $onionName(): 'commerce-promotion:couponTemplate';
             get $onionOptions(): IControllerOptionsCouponTemplate;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
@@ -490,7 +487,7 @@ import type { ControllerCoupon } from '../controller/coupon.ts';
 // @ts-ignore ignore
 import type { ControllerCouponTemplate } from '../controller/couponTemplate.ts';
 declare module 'vona-module-commerce-promotion' {
-  
+
     export interface IControllerOptionsCoupon {
       actions?: TypeControllerOptionsActions<ControllerCoupon>;
     }
@@ -523,22 +520,22 @@ import 'vona-module-a-openapi';
       'commerce-promotion:couponTemplate': never;
     }
   }
-  
+
 /** controller: end */
 /** ssrMenu: begin */
 export * from '../bean/ssrMenu.couponTemplate.ts';
 import type { ISsrMenuOptionsCouponTemplate } from '../bean/ssrMenu.couponTemplate.ts';
 import 'vona-module-a-ssr';
 declare module 'vona-module-a-ssr' {
-  
+
     export interface ISsrMenuRecord {
       'commerce-promotion:couponTemplate': ISsrMenuOptionsCouponTemplate;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-promotion' {
-  
+
         export interface SsrMenuCouponTemplate {
           /** @internal */
           get scope(): ScopeModuleCommercePromotion;
@@ -548,7 +545,7 @@ declare module 'vona-module-commerce-promotion' {
             get $beanFullName(): 'commerce-promotion.ssrMenu.couponTemplate';
             get $onionName(): 'commerce-promotion:couponTemplate';
             get $onionOptions(): ISsrMenuOptionsCouponTemplate;
-          } 
+          }
 }
 /** ssrMenu: end */
 /** locale: begin */
@@ -578,13 +575,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     commercePromotion: ScopeModuleCommercePromotion;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'commerce-promotion': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 /** scope: end */

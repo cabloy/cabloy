@@ -4,15 +4,15 @@ export * from '../bean/interceptor.serializer.ts';
 import type { IInterceptorOptionsSerializer } from '../bean/interceptor.serializer.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
-  
+
+
 export interface IInterceptorRecordLocal {
   'a-serialization:serializer': IInterceptorOptionsSerializer;
 }
 
 }
 declare module 'vona-module-a-serialization' {
-  
+
         export interface InterceptorSerializer {
           /** @internal */
           get scope(): ScopeModuleASerialization;
@@ -22,7 +22,7 @@ declare module 'vona-module-a-serialization' {
             get $beanFullName(): 'a-serialization.interceptor.serializer';
             get $onionName(): 'a-serialization:serializer';
             get $onionOptions(): IInterceptorOptionsSerializer;
-          } 
+          }
 }
 /** interceptor: end */
 /** bean: begin */
@@ -30,15 +30,15 @@ export * from '../bean/bean.serializer.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-serialization' {
-  
+
         export interface BeanSerializer {
           /** @internal */
           get scope(): ScopeModuleASerialization;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -61,7 +61,7 @@ import type { ISerializerTransformOptionsGetter } from '../bean/serializerTransf
 import type { ISerializerTransformOptionsReplace } from '../bean/serializerTransform.replace.ts';
 import 'vona-module-a-serialization';
 declare module 'vona-module-a-serialization' {
-  
+
     export interface ISerializerTransformRecord {
       'a-serialization:custom': ISerializerTransformOptionsCustom;
 'a-serialization:exclude': ISerializerTransformOptionsExclude;
@@ -69,10 +69,10 @@ declare module 'vona-module-a-serialization' {
 'a-serialization:replace': ISerializerTransformOptionsReplace;
     }
 
-  
+
 }
 declare module 'vona-module-a-serialization' {
-  
+
         export interface SerializerTransformCustom {
           /** @internal */
           get scope(): ScopeModuleASerialization;
@@ -115,7 +115,7 @@ declare module 'vona-module-a-serialization' {
             get $beanFullName(): 'a-serialization.serializerTransform.replace';
             get $onionName(): 'a-serialization:replace';
             get $onionOptions(): ISerializerTransformOptionsReplace;
-          } 
+          }
 }
 /** serializerTransform: end */
 /** scope: begin */
@@ -138,11 +138,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     serialization: ScopeModuleASerialization;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

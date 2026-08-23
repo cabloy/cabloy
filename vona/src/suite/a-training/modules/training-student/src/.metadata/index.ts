@@ -7,15 +7,15 @@ export * from '../entity/student.tsx';
 import type { IEntityOptionsStudent } from '../entity/student.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'training-student:student': IEntityOptionsStudent;
     }
 
-  
+
 }
 declare module 'vona-module-training-student' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -33,7 +33,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-training-student' {
-  
+
     export interface IEntityOptionsStudent {
       fields?: TypeEntityOptionsFields<EntityStudent, IEntityOptionsStudent[TypeSymbolKeyFieldsMore]>;
     }
@@ -44,15 +44,15 @@ export * from '../model/student.ts';
 import type { IModelOptionsStudent } from '../model/student.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'training-student:student': IModelOptionsStudent;
     }
 
-  
+
 }
 declare module 'vona-module-training-student' {
-  
+
         export interface ModelStudent {
           /** @internal */
           get scope(): ScopeModuleTrainingStudent;
@@ -62,7 +62,7 @@ declare module 'vona-module-training-student' {
             get $beanFullName(): 'training-student.model.student';
             get $onionName(): 'training-student:student';
             get $onionOptions(): IModelOptionsStudent;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -94,7 +94,17 @@ declare module 'vona-module-training-student' {
       [SymbolKeyEntityMeta]: EntityStudentMeta;
       [SymbolKeyModelOptions]: IModelOptionsStudent;
       get<T extends IModelGetOptions<EntityStudent,ModelStudent>>(where: TypeModelWhere<EntityStudent>, options?: T): Promise<TypeModelRelationResult<EntityStudent, ModelStudent, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityStudent,ModelStudent>>(where: TypeModelWhere<EntityStudent>, options?: T): Promise<TypeModelRelationResult<EntityStudent, ModelStudent, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityStudent,ModelStudent>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityStudent, ModelStudent, T> | undefined>;
       mget<T extends IModelGetOptions<EntityStudent,ModelStudent>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityStudent, ModelStudent, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityStudent,ModelStudent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityStudent, ModelStudent, T>>;
@@ -132,15 +142,15 @@ export * from '../service/student.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'training-student:student': never;
     }
 
-  
+
 }
 declare module 'vona-module-training-student' {
-  
+
         export interface ServiceStudent {
           /** @internal */
           get scope(): ScopeModuleTrainingStudent;
@@ -149,8 +159,7 @@ declare module 'vona-module-training-student' {
           export interface ServiceStudent {
             get $beanFullName(): 'training-student.service.student';
             get $onionName(): 'training-student:student';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -174,16 +183,16 @@ export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'training-student:index': IMetaOptionsIndex;
 'training-student:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-training-student' {
-  
+
         export interface MetaIndex {
           /** @internal */
           get scope(): ScopeModuleTrainingStudent;
@@ -203,8 +212,7 @@ declare module 'vona-module-training-student' {
           export interface MetaVersion {
             get $beanFullName(): 'training-student.meta.version';
             get $onionName(): 'training-student:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** dto: begin */
@@ -232,7 +240,7 @@ import type { IDtoOptionsStudentUpdate } from '../dto/studentUpdate.tsx';
 import type { IDtoOptionsStudentView } from '../dto/studentView.tsx';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'training-student:detailRecordBase': IDtoOptionsDetailRecordBase;
 'training-student:detailRecordMutate': IDtoOptionsDetailRecordMutate;
@@ -247,10 +255,10 @@ declare module 'vona-module-a-web' {
 'training-student:studentView': IDtoOptionsStudentView;
     }
 
-  
+
 }
 declare module 'vona-module-training-student' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
@@ -266,7 +274,7 @@ import type { DtoStudentSummary } from '../dto/studentSummary.tsx';
 import type { DtoStudentUpdate } from '../dto/studentUpdate.tsx';
 import type { DtoStudentView } from '../dto/studentView.tsx';
 declare module 'vona-module-training-student' {
-  
+
     export interface IDtoOptionsDetailRecordBase {
       fields?: TypeEntityOptionsFields<DtoDetailRecordBase, IDtoOptionsDetailRecordBase[TypeSymbolKeyFieldsMore]>;
     }
@@ -317,15 +325,15 @@ export * from '../controller/student.ts';
 import type { IControllerOptionsStudent } from '../controller/student.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'training-student:student': IControllerOptionsStudent;
     }
 
-  
+
 }
 declare module 'vona-module-training-student' {
-  
+
         export interface ControllerStudent {
           /** @internal */
           get scope(): ScopeModuleTrainingStudent;
@@ -335,14 +343,14 @@ declare module 'vona-module-training-student' {
             get $beanFullName(): 'training-student.controller.student';
             get $onionName(): 'training-student:student';
             get $onionOptions(): IControllerOptionsStudent;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
 import type { ControllerStudent } from '../controller/student.ts';
 declare module 'vona-module-training-student' {
-  
+
     export interface IControllerOptionsStudent {
       actions?: TypeControllerOptionsActions<ControllerStudent>;
     }
@@ -371,22 +379,22 @@ import 'vona-module-a-openapi';
       'training-student:student': never;
     }
   }
-  
+
 /** controller: end */
 /** ssrMenu: begin */
 export * from '../bean/ssrMenu.student.ts';
 import type { ISsrMenuOptionsStudent } from '../bean/ssrMenu.student.ts';
 import 'vona-module-a-ssr';
 declare module 'vona-module-a-ssr' {
-  
+
     export interface ISsrMenuRecord {
       'training-student:student': ISsrMenuOptionsStudent;
     }
 
-  
+
 }
 declare module 'vona-module-training-student' {
-  
+
         export interface SsrMenuStudent {
           /** @internal */
           get scope(): ScopeModuleTrainingStudent;
@@ -396,7 +404,7 @@ declare module 'vona-module-training-student' {
             get $beanFullName(): 'training-student.ssrMenu.student';
             get $onionName(): 'training-student:student';
             get $onionOptions(): ISsrMenuOptionsStudent;
-          } 
+          }
 }
 /** ssrMenu: end */
 /** imageScene: begin */
@@ -404,15 +412,15 @@ export * from '../bean/imageScene.studentImage.ts';
 
 import { type IDecoratorImageSceneOptions } from 'vona-module-a-image';
 declare module 'vona-module-a-image' {
-  
+
     export interface IImageSceneRecord {
       'training-student:studentImage': IDecoratorImageSceneOptions;
     }
 
-  
+
 }
 declare module 'vona-module-training-student' {
-  
+
         export interface ImageSceneStudentImage {
           /** @internal */
           get scope(): ScopeModuleTrainingStudent;
@@ -422,7 +430,7 @@ declare module 'vona-module-training-student' {
             get $beanFullName(): 'training-student.imageScene.studentImage';
             get $onionName(): 'training-student:studentImage';
             get $onionOptions(): IDecoratorImageSceneOptions;
-          } 
+          }
 }
 /** imageScene: end */
 /** locale: begin */
@@ -452,13 +460,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     trainingStudent: ScopeModuleTrainingStudent;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'training-student': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 /** scope: end */

@@ -27,13 +27,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     locale: ScopeModuleALocale;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-locale': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

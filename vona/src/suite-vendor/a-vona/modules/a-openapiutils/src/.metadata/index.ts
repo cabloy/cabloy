@@ -23,13 +23,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     openapiutils: ScopeModuleAOpenapiutils;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'a-openapiutils': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 /** scope: end */

@@ -6,11 +6,11 @@ export * from '../page/register/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-home-login' {
-  
+
         export interface ControllerPageLogin {
           /** @internal */
           get scope(): ScopeModuleHomeLogin;
@@ -24,7 +24,7 @@ declare module 'zova-module-home-login' {
         export interface ControllerPageRegister {
           /** @internal */
           get scope(): ScopeModuleHomeLogin;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -54,7 +54,7 @@ export interface IPagePathRecord {
 '/home/login/register': TypePagePathSchema<undefined,undefined>;
 }
 export interface IPageNameRecord {
-  
+
 }
 }
 export const pagePathSchemas = {
@@ -64,7 +64,7 @@ export const pageNameSchemas = {
 
 };
 declare module 'zova-module-home-login' {
-  
+
 }
 /** pages: end */
 
@@ -73,15 +73,15 @@ export * from '../page/login/render.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-home-login' {
-  
+
         export interface RenderPageLogin {
           /** @internal */
           get scope(): ScopeModuleHomeLogin;
-        } 
+        }
 }
 /** render: end */
 /** render: begin */
@@ -98,15 +98,15 @@ export * from '../bean/behavior.formFieldLayoutLogin.jsx';
 import { IBehaviorOptionsFormFieldLayoutLogin } from '../bean/behavior.formFieldLayoutLogin.jsx';
 import 'zova-module-a-behavior';
 declare module 'zova-module-a-behavior' {
-  
+
     export interface IBehaviorRecord {
       'home-login:formFieldLayoutLogin': IBehaviorOptionsFormFieldLayoutLogin;
     }
 
-  
+
 }
 declare module 'zova-module-home-login' {
-  
+
         export interface BehaviorFormFieldLayoutLogin {
           /** @internal */
           get scope(): ScopeModuleHomeLogin;
@@ -116,7 +116,7 @@ declare module 'zova-module-home-login' {
           get $beanFullName(): 'home-login.behavior.formFieldLayoutLogin';
           get $onionName(): 'home-login:formFieldLayoutLogin';
           get $onionOptions(): IBehaviorOptionsFormFieldLayoutLogin;
-        } 
+        }
 }
 /** behavior: end */
 /** behavior: begin */
@@ -167,14 +167,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'home-login': ScopeModuleHomeLogin;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'home-login': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `home-login::${K}` {

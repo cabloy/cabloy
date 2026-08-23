@@ -15,12 +15,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'pay-paypal': ScopeModulePayPaypal;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 
 /** scope: end */

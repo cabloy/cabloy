@@ -6,16 +6,16 @@ import type { IMiddlewareSystemOptionsCors } from '../bean/middlewareSystem.cors
 import type { IMiddlewareSystemOptionsSecurities } from '../bean/middlewareSystem.securities.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
+
     export interface IMiddlewareSystemRecord {
       'a-security:cors': IMiddlewareSystemOptionsCors;
 'a-security:securities': IMiddlewareSystemOptionsSecurities;
     }
 
-  
+
 }
 declare module 'vona-module-a-security' {
-  
+
         export interface MiddlewareSystemCors {
           /** @internal */
           get scope(): ScopeModuleASecurity;
@@ -36,7 +36,7 @@ declare module 'vona-module-a-security' {
             get $beanFullName(): 'a-security.middlewareSystem.securities';
             get $onionName(): 'a-security:securities';
             get $onionOptions(): IMiddlewareSystemOptionsSecurities;
-          } 
+          }
 }
 /** middlewareSystem: end */
 /** bean: begin */
@@ -44,15 +44,15 @@ export * from '../bean/bean.security.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-security' {
-  
+
         export interface BeanSecurity {
           /** @internal */
           get scope(): ScopeModuleASecurity;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -84,11 +84,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     security: ScopeModuleASecurity;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

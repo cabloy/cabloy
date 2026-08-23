@@ -5,11 +5,11 @@ export * from '../component/select/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-select' {
-  
+
         export interface ControllerFormFieldSelect {
           /** @internal */
           get scope(): ScopeModuleBasicSelect;
@@ -18,7 +18,7 @@ declare module 'zova-module-basic-select' {
         export interface ControllerSelect {
           /** @internal */
           get scope(): ScopeModuleBasicSelect;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -59,15 +59,15 @@ export * from '../bean/tableCell.select.jsx';
 import { ITableCellOptionsSelect } from '../bean/tableCell.select.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
-  
+
     export interface ITableCellRecord {
       'basic-select:select': ITableCellOptionsSelect;
     }
 
-  
+
 }
 declare module 'zova-module-basic-select' {
-  
+
         export interface TableCellSelect {
           /** @internal */
           get scope(): ScopeModuleBasicSelect;
@@ -77,7 +77,7 @@ declare module 'zova-module-basic-select' {
           get $beanFullName(): 'basic-select.tableCell.select';
           get $onionName(): 'basic-select:select';
           get $onionOptions(): ITableCellOptionsSelect;
-        } 
+        }
 }
 /** tableCell: end */
 /** tableCell: begin */
@@ -105,12 +105,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-select': ScopeModuleBasicSelect;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

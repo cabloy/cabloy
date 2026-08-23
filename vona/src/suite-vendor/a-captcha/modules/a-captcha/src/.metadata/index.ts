@@ -6,15 +6,15 @@ export * from '../bean/interceptor.captchaVerify.ts';
 import type { IInterceptorOptionsCaptchaVerify } from '../bean/interceptor.captchaVerify.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
-  
+
+
 export interface IInterceptorRecordLocal {
   'a-captcha:captchaVerify': IInterceptorOptionsCaptchaVerify;
 }
 
 }
 declare module 'vona-module-a-captcha' {
-  
+
         export interface InterceptorCaptchaVerify {
           /** @internal */
           get scope(): ScopeModuleACaptcha;
@@ -24,7 +24,7 @@ declare module 'vona-module-a-captcha' {
             get $beanFullName(): 'a-captcha.interceptor.captchaVerify';
             get $onionName(): 'a-captcha:captchaVerify';
             get $onionOptions(): IInterceptorOptionsCaptchaVerify;
-          } 
+          }
 }
 /** interceptor: end */
 /** bean: begin */
@@ -32,15 +32,15 @@ export * from '../bean/bean.captcha.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-captcha' {
-  
+
         export interface BeanCaptcha {
           /** @internal */
           get scope(): ScopeModuleACaptcha;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -57,15 +57,15 @@ export * from '../bean/cacheRedis.captcha.ts';
 
 import { type IDecoratorCacheRedisOptions } from 'vona-module-a-cache';
 declare module 'vona-module-a-cache' {
-  
+
     export interface ICacheRedisRecord {
       'a-captcha:captcha': IDecoratorCacheRedisOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-captcha' {
-  
+
         export interface CacheRedisCaptcha {
           /** @internal */
           get scope(): ScopeModuleACaptcha;
@@ -75,7 +75,7 @@ declare module 'vona-module-a-captcha' {
             get $beanFullName(): 'a-captcha.cacheRedis.captcha';
             get $onionName(): 'a-captcha:captcha';
             get $onionOptions(): IDecoratorCacheRedisOptions;
-          } 
+          }
 }
 /** cacheRedis: end */
 /** cacheRedis: begin */
@@ -90,16 +90,16 @@ export * from '../bean/hmr.captchaScene.ts';
 
 import 'vona';
 declare module 'vona' {
-  
+
     export interface IHmrRecord {
       'a-captcha:captchaProvider': never;
 'a-captcha:captchaScene': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-captcha' {
-  
+
         export interface HmrCaptchaProvider {
           /** @internal */
           get scope(): ScopeModuleACaptcha;
@@ -108,7 +108,6 @@ declare module 'vona-module-a-captcha' {
           export interface HmrCaptchaProvider {
             get $beanFullName(): 'a-captcha.hmr.captchaProvider';
             get $onionName(): 'a-captcha:captchaProvider';
-            
           }
 
         export interface HmrCaptchaScene {
@@ -119,8 +118,7 @@ declare module 'vona-module-a-captcha' {
           export interface HmrCaptchaScene {
             get $beanFullName(): 'a-captcha.hmr.captchaScene';
             get $onionName(): 'a-captcha:captchaScene';
-            
-          } 
+          }
 }
 /** hmr: end */
 /** dto: begin */
@@ -130,23 +128,23 @@ import type { IDtoOptionsCaptchaData } from '../dto/captchaData.ts';
 import type { IDtoOptionsCaptchaVerify } from '../dto/captchaVerify.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'a-captcha:captchaData': IDtoOptionsCaptchaData;
 'a-captcha:captchaVerify': IDtoOptionsCaptchaVerify;
     }
 
-  
+
 }
 declare module 'vona-module-a-captcha' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
 import type { DtoCaptchaData } from '../dto/captchaData.ts';
 import type { DtoCaptchaVerify } from '../dto/captchaVerify.ts';
 declare module 'vona-module-a-captcha' {
-  
+
     export interface IDtoOptionsCaptchaData {
       fields?: TypeEntityOptionsFields<DtoCaptchaData, IDtoOptionsCaptchaData[TypeSymbolKeyFieldsMore]>;
     }
@@ -161,15 +159,15 @@ export * from '../controller/captcha.ts';
 import type { IControllerOptionsCaptcha } from '../controller/captcha.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'a-captcha:captcha': IControllerOptionsCaptcha;
     }
 
-  
+
 }
 declare module 'vona-module-a-captcha' {
-  
+
         export interface ControllerCaptcha {
           /** @internal */
           get scope(): ScopeModuleACaptcha;
@@ -179,14 +177,14 @@ declare module 'vona-module-a-captcha' {
             get $beanFullName(): 'a-captcha.controller.captcha';
             get $onionName(): 'a-captcha:captcha';
             get $onionOptions(): IControllerOptionsCaptcha;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
 import type { ControllerCaptcha } from '../controller/captcha.ts';
 declare module 'vona-module-a-captcha' {
-  
+
     export interface IControllerOptionsCaptcha {
       actions?: TypeControllerOptionsActions<ControllerCaptcha>;
     }
@@ -231,7 +229,7 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     captcha: ScopeModuleACaptcha;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-captcha': ReturnType<typeof config>;
   }
@@ -240,6 +238,6 @@ declare module 'vona' {
     'a-captcha': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 /** scope: end */

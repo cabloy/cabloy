@@ -7,15 +7,15 @@ export * from '../entity/mail.ts';
 import type { IEntityOptionsMail } from '../entity/mail.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'a-mail:mail': IEntityOptionsMail;
     }
 
-  
+
 }
 declare module 'vona-module-a-mail' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -33,7 +33,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-a-mail' {
-  
+
     export interface IEntityOptionsMail {
       fields?: TypeEntityOptionsFields<EntityMail, IEntityOptionsMail[TypeSymbolKeyFieldsMore]>;
     }
@@ -44,15 +44,15 @@ export * from '../model/mail.ts';
 import type { IModelOptionsMail } from '../model/mail.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'a-mail:mail': IModelOptionsMail;
     }
 
-  
+
 }
 declare module 'vona-module-a-mail' {
-  
+
         export interface ModelMail {
           /** @internal */
           get scope(): ScopeModuleAMail;
@@ -62,7 +62,7 @@ declare module 'vona-module-a-mail' {
             get $beanFullName(): 'a-mail.model.mail';
             get $onionName(): 'a-mail:mail';
             get $onionOptions(): IModelOptionsMail;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -84,13 +84,23 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-a-mail' {
-  
+
   export interface ModelMail {
       [SymbolKeyEntity]: EntityMail;
       [SymbolKeyEntityMeta]: EntityMailMeta;
       [SymbolKeyModelOptions]: IModelOptionsMail;
       get<T extends IModelGetOptions<EntityMail,ModelMail>>(where: TypeModelWhere<EntityMail>, options?: T): Promise<TypeModelRelationResult<EntityMail, ModelMail, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityMail,ModelMail>>(where: TypeModelWhere<EntityMail>, options?: T): Promise<TypeModelRelationResult<EntityMail, ModelMail, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityMail,ModelMail>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityMail, ModelMail, T> | undefined>;
       mget<T extends IModelGetOptions<EntityMail,ModelMail>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityMail, ModelMail, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityMail,ModelMail,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityMail, ModelMail, T>>;
@@ -124,15 +134,15 @@ export * from '../bean/bean.mail.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-mail' {
-  
+
         export interface BeanMail {
           /** @internal */
           get scope(): ScopeModuleAMail;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -149,15 +159,15 @@ export * from '../service/mail.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-mail:mail': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-mail' {
-  
+
         export interface ServiceMail {
           /** @internal */
           get scope(): ScopeModuleAMail;
@@ -166,8 +176,7 @@ declare module 'vona-module-a-mail' {
           export interface ServiceMail {
             get $beanFullName(): 'a-mail.service.mail';
             get $onionName(): 'a-mail:mail';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -190,15 +199,15 @@ export * from '../bean/meta.version.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'a-mail:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-mail' {
-  
+
         export interface MetaVersion {
           /** @internal */
           get scope(): ScopeModuleAMail;
@@ -207,8 +216,7 @@ declare module 'vona-module-a-mail' {
           export interface MetaVersion {
             get $beanFullName(): 'a-mail.meta.version';
             get $onionName(): 'a-mail:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** queue: begin */
@@ -216,15 +224,15 @@ export * from '../bean/queue.mail.ts';
 
 import { type IDecoratorQueueOptions } from 'vona-module-a-queue';
 declare module 'vona-module-a-queue' {
-  
+
     export interface IQueueRecord {
       'a-mail:mail': IDecoratorQueueOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-mail' {
-  
+
         export interface QueueMail {
           /** @internal */
           get scope(): ScopeModuleAMail;
@@ -234,7 +242,7 @@ declare module 'vona-module-a-mail' {
             get $beanFullName(): 'a-mail.queue.mail';
             get $onionName(): 'a-mail:mail';
             get $onionOptions(): IDecoratorQueueOptions;
-          } 
+          }
 }
 /** queue: end */
 /** queue: begin */
@@ -272,13 +280,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     mail: ScopeModuleAMail;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-mail': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

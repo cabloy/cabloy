@@ -4,15 +4,15 @@ export * from '../component/app/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-app' {
-  
+
         export interface ControllerApp {
           /** @internal */
           get scope(): ScopeModuleAApp;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -62,14 +62,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-app': ScopeModuleAApp;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-app': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
-  
+
 /** scope: end */

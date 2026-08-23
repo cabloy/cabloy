@@ -15,7 +15,7 @@ import type { IEntityOptionsRefundAudit } from '../entity/refundAudit.tsx';
 import type { IEntityOptionsRefundRequest } from '../entity/refundRequest.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'commerce-payment:paymentAttempt': IEntityOptionsPaymentAttempt;
 'commerce-payment:paymentAudit': IEntityOptionsPaymentAudit;
@@ -24,10 +24,10 @@ declare module 'vona-module-a-orm' {
 'commerce-payment:refundRequest': IEntityOptionsRefundRequest;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-payment' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -65,7 +65,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-commerce-payment' {
-  
+
     export interface IEntityOptionsPaymentAttempt {
       fields?: TypeEntityOptionsFields<EntityPaymentAttempt, IEntityOptionsPaymentAttempt[TypeSymbolKeyFieldsMore]>;
     }
@@ -100,7 +100,7 @@ import type { IModelOptionsRefundAudit } from '../model/refundAudit.ts';
 import type { IModelOptionsRefundRequest } from '../model/refundRequest.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'commerce-payment:paymentAttempt': IModelOptionsPaymentAttempt;
 'commerce-payment:paymentAudit': IModelOptionsPaymentAudit;
@@ -109,10 +109,10 @@ declare module 'vona-module-a-orm' {
 'commerce-payment:refundRequest': IModelOptionsRefundRequest;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-payment' {
-  
+
         export interface ModelPaymentAttempt {
           /** @internal */
           get scope(): ScopeModuleCommercePayment;
@@ -166,7 +166,7 @@ declare module 'vona-module-commerce-payment' {
             get $beanFullName(): 'commerce-payment.model.refundRequest';
             get $onionName(): 'commerce-payment:refundRequest';
             get $onionOptions(): IModelOptionsRefundRequest;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -200,7 +200,7 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-commerce-payment' {
-  
+
   export interface ModelPaymentAttempt {
       [SymbolKeyEntity]: EntityPaymentAttempt;
       [SymbolKeyEntityMeta]: EntityPaymentAttemptMeta;
@@ -404,17 +404,17 @@ export * from '../service/paymentAttempt.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'commerce-payment:commercePayScene': never;
 'commerce-payment:mockPaymentAdapter': never;
 'commerce-payment:paymentAttempt': never;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-payment' {
-  
+
         export interface ServiceCommercePayScene {
           /** @internal */
           get scope(): ScopeModuleCommercePayment;
@@ -423,7 +423,6 @@ declare module 'vona-module-commerce-payment' {
           export interface ServiceCommercePayScene {
             get $beanFullName(): 'commerce-payment.service.commercePayScene';
             get $onionName(): 'commerce-payment:commercePayScene';
-            
           }
 
         export interface ServiceMockPaymentAdapter {
@@ -434,7 +433,6 @@ declare module 'vona-module-commerce-payment' {
           export interface ServiceMockPaymentAdapter {
             get $beanFullName(): 'commerce-payment.service.mockPaymentAdapter';
             get $onionName(): 'commerce-payment:mockPaymentAdapter';
-            
           }
 
         export interface ServicePaymentAttempt {
@@ -445,8 +443,7 @@ declare module 'vona-module-commerce-payment' {
           export interface ServicePaymentAttempt {
             get $beanFullName(): 'commerce-payment.service.paymentAttempt';
             get $onionName(): 'commerce-payment:paymentAttempt';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -476,16 +473,16 @@ export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'commerce-payment:index': IMetaOptionsIndex;
 'commerce-payment:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-payment' {
-  
+
         export interface MetaIndex {
           /** @internal */
           get scope(): ScopeModuleCommercePayment;
@@ -505,8 +502,7 @@ declare module 'vona-module-commerce-payment' {
           export interface MetaVersion {
             get $beanFullName(): 'commerce-payment.meta.version';
             get $onionName(): 'commerce-payment:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** dto: begin */
@@ -514,21 +510,21 @@ export * from '../dto/paymentAttemptView.tsx';
 import type { IDtoOptionsPaymentAttemptView } from '../dto/paymentAttemptView.tsx';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'commerce-payment:paymentAttemptView': IDtoOptionsPaymentAttemptView;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-payment' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
 import type { DtoPaymentAttemptView } from '../dto/paymentAttemptView.tsx';
 declare module 'vona-module-commerce-payment' {
-  
+
     export interface IDtoOptionsPaymentAttemptView {
       fields?: TypeEntityOptionsFields<DtoPaymentAttemptView, IDtoOptionsPaymentAttemptView[TypeSymbolKeyFieldsMore]>;
     }
@@ -539,15 +535,15 @@ export * from '../bean/payScene.commerceOrder.ts';
 
 import { type IDecoratorPaySceneOptions } from 'vona-module-a-pay';
 declare module 'vona-module-a-pay' {
-  
+
     export interface IPaySceneRecord {
       'commerce-payment:commerceOrder': IDecoratorPaySceneOptions;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-payment' {
-  
+
         export interface PaySceneCommerceOrder {
           /** @internal */
           get scope(): ScopeModuleCommercePayment;
@@ -557,7 +553,7 @@ declare module 'vona-module-commerce-payment' {
             get $beanFullName(): 'commerce-payment.payScene.commerceOrder';
             get $onionName(): 'commerce-payment:commerceOrder';
             get $onionOptions(): IDecoratorPaySceneOptions;
-          } 
+          }
 }
 /** payScene: end */
 /** scope: begin */
@@ -583,11 +579,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     commercePayment: ScopeModuleCommercePayment;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

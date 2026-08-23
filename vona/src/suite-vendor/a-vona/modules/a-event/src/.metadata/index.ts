@@ -4,15 +4,15 @@ export * from '../bean/bean.event.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-event' {
-  
+
         export interface BeanEvent {
           /** @internal */
           get scope(): ScopeModuleAEvent;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -29,15 +29,15 @@ export * from '../service/eventListener.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-event:eventListener': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-event' {
-  
+
         export interface ServiceEventListener {
           /** @internal */
           get scope(): ScopeModuleAEvent;
@@ -46,8 +46,7 @@ declare module 'vona-module-a-event' {
           export interface ServiceEventListener {
             get $beanFullName(): 'a-event.service.eventListener';
             get $onionName(): 'a-event:eventListener';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -70,15 +69,15 @@ export * from '../bean/hmr.eventListener.ts';
 
 import 'vona';
 declare module 'vona' {
-  
+
     export interface IHmrRecord {
       'a-event:eventListener': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-event' {
-  
+
         export interface HmrEventListener {
           /** @internal */
           get scope(): ScopeModuleAEvent;
@@ -87,8 +86,7 @@ declare module 'vona-module-a-event' {
           export interface HmrEventListener {
             get $beanFullName(): 'a-event.hmr.eventListener';
             get $onionName(): 'a-event:eventListener';
-            
-          } 
+          }
 }
 /** hmr: end */
 /** scope: begin */
@@ -112,11 +110,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     event: ScopeModuleAEvent;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

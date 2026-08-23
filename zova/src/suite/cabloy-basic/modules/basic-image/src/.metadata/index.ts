@@ -4,15 +4,15 @@ export * from '../model/image.js';
 import { IModelOptionsImage } from '../model/image.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'basic-image:image': IModelOptionsImage;
     }
 
-  
+
 }
 declare module 'zova-module-basic-image' {
-  
+
         export interface ModelImage {
           /** @internal */
           get scope(): ScopeModuleBasicImage;
@@ -22,7 +22,7 @@ declare module 'zova-module-basic-image' {
           get $beanFullName(): 'basic-image.model.image';
           get $onionName(): 'basic-image:image';
           get $onionOptions(): IModelOptionsImage;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -39,11 +39,11 @@ export * from '../api/image.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-image' {
-  
+
         export interface ApiImage {
           /** @internal */
           get scope(): ScopeModuleBasicImage;
@@ -52,8 +52,8 @@ declare module 'zova-module-basic-image' {
         export interface ApiImage {
           get $beanFullName(): 'basic-image.api.image';
           get $onionName(): 'basic-image:image';
-          
-        } 
+
+        }
 }
 /** api: end */
 /** api: begin */
@@ -79,11 +79,11 @@ export * from '../apiSchema/image.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-image' {
-  
+
         export interface ApiSchemaImage {
           /** @internal */
           get scope(): ScopeModuleBasicImage;
@@ -92,8 +92,8 @@ declare module 'zova-module-basic-image' {
         export interface ApiSchemaImage {
           get $beanFullName(): 'basic-image.apiSchema.image';
           get $onionName(): 'basic-image:image';
-          
-        } 
+
+        }
 }
 /** apiSchema: end */
 /** apiSchema: begin */
@@ -117,11 +117,11 @@ export * from '../component/imageUploader/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-image' {
-  
+
         export interface ControllerFormFieldImage {
           /** @internal */
           get scope(): ScopeModuleBasicImage;
@@ -130,7 +130,7 @@ declare module 'zova-module-basic-image' {
         export interface ControllerImageUploader {
           /** @internal */
           get scope(): ScopeModuleBasicImage;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -171,15 +171,15 @@ export * from '../bean/tableCell.image.jsx';
 import { ITableCellOptionsImage } from '../bean/tableCell.image.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
-  
+
     export interface ITableCellRecord {
       'basic-image:image': ITableCellOptionsImage;
     }
 
-  
+
 }
 declare module 'zova-module-basic-image' {
-  
+
         export interface TableCellImage {
           /** @internal */
           get scope(): ScopeModuleBasicImage;
@@ -189,7 +189,7 @@ declare module 'zova-module-basic-image' {
           get $beanFullName(): 'basic-image.tableCell.image';
           get $onionName(): 'basic-image:image';
           get $onionOptions(): ITableCellOptionsImage;
-        } 
+        }
 }
 /** tableCell: end */
 /** tableCell: begin */
@@ -223,14 +223,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-image': ScopeModuleBasicImage;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'basic-image': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `basic-image::${K}` {

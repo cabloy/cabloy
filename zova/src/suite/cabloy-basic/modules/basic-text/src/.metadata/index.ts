@@ -4,15 +4,15 @@ export * from '../component/formFieldTextarea/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-text' {
-  
+
         export interface ControllerFormFieldTextarea {
           /** @internal */
           get scope(): ScopeModuleBasicText;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -48,16 +48,16 @@ import { ITableCellOptionsText } from '../bean/tableCell.text.jsx';
 import { ITableCellOptionsTextarea } from '../bean/tableCell.textarea.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
-  
+
     export interface ITableCellRecord {
       'basic-text:text': ITableCellOptionsText;
 'basic-text:textarea': ITableCellOptionsTextarea;
     }
 
-  
+
 }
 declare module 'zova-module-basic-text' {
-  
+
         export interface TableCellText {
           /** @internal */
           get scope(): ScopeModuleBasicText;
@@ -78,7 +78,7 @@ declare module 'zova-module-basic-text' {
           get $beanFullName(): 'basic-text.tableCell.textarea';
           get $onionName(): 'basic-text:textarea';
           get $onionOptions(): ITableCellOptionsTextarea;
-        } 
+        }
 }
 /** tableCell: end */
 /** tableCell: begin */
@@ -108,12 +108,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-text': ScopeModuleBasicText;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

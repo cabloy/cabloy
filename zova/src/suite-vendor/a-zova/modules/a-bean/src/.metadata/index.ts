@@ -4,11 +4,11 @@ export * from '../bean/sys.onion.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-bean' {
-  
+
         export interface SysOnion {
           /** @internal */
           get scope(): ScopeModuleABean;
@@ -17,8 +17,8 @@ declare module 'zova-module-a-bean' {
         export interface SysOnion {
           get $beanFullName(): 'a-bean.sys.onion';
           get $onionName(): 'a-bean:onion';
-          
-        } 
+
+        }
 }
 /** sys: end */
 /** sys: begin */
@@ -36,15 +36,15 @@ export * from '../service/onion_.js';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-bean:aop': never;
     }
 
-  
+
 }
 declare module 'zova-module-a-bean' {
-  
+
         export interface ServiceAop {
           /** @internal */
           get scope(): ScopeModuleABean;
@@ -53,8 +53,8 @@ declare module 'zova-module-a-bean' {
         export interface ServiceAop {
           get $beanFullName(): 'a-bean.service.aop';
           get $onionName(): 'a-bean:aop';
-          
-        } 
+
+        }
 }
 /** service: end */
 /** service: begin */
@@ -85,12 +85,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-bean': ScopeModuleABean;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

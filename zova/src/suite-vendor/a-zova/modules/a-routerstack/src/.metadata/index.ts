@@ -4,15 +4,15 @@ export * from '../model/stack.js';
 import { IModelOptionsStack } from '../model/stack.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'a-routerstack:stack': IModelOptionsStack;
     }
 
-  
+
 }
 declare module 'zova-module-a-routerstack' {
-  
+
         export interface ModelStack {
           /** @internal */
           get scope(): ScopeModuleARouterstack;
@@ -22,7 +22,7 @@ declare module 'zova-module-a-routerstack' {
           get $beanFullName(): 'a-routerstack.model.stack';
           get $onionName(): 'a-routerstack:stack';
           get $onionOptions(): IModelOptionsStack;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -39,15 +39,15 @@ export * from '../component/routerViewStack/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-routerstack' {
-  
+
         export interface ControllerRouterViewStack {
           /** @internal */
           get scope(): ScopeModuleARouterstack;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -92,12 +92,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-routerstack': ScopeModuleARouterstack;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

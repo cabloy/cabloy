@@ -12,7 +12,7 @@ import { IInterceptorOptionsMock } from '../bean/interceptor.mock.js';
 import { IInterceptorOptionsPerformAction } from '../bean/interceptor.performAction.js';
 import 'zova-module-a-fetch';
 declare module 'zova-module-a-fetch' {
-  
+
     export interface IInterceptorRecord {
       'a-interceptor:body': IInterceptorOptionsBody;
 'a-interceptor:headers': IInterceptorOptionsHeaders;
@@ -21,10 +21,10 @@ declare module 'zova-module-a-fetch' {
 'a-interceptor:performAction': IInterceptorOptionsPerformAction;
     }
 
-  
+
 }
 declare module 'zova-module-a-interceptor' {
-  
+
         export interface InterceptorBody {
           /** @internal */
           get scope(): ScopeModuleAInterceptor;
@@ -78,7 +78,7 @@ declare module 'zova-module-a-interceptor' {
           get $beanFullName(): 'a-interceptor.interceptor.performAction';
           get $onionName(): 'a-interceptor:performAction';
           get $onionOptions(): IInterceptorOptionsPerformAction;
-        } 
+        }
 }
 /** interceptor: end */
 /** interceptor: begin */
@@ -119,14 +119,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-interceptor': ScopeModuleAInterceptor;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-interceptor': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
-  
+
 /** scope: end */

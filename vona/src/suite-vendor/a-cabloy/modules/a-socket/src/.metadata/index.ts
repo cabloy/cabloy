@@ -4,15 +4,15 @@ export * from '../bean/bean.socket.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-socket' {
-  
+
         export interface BeanSocket {
           /** @internal */
           get scope(): ScopeModuleASocket;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -30,16 +30,16 @@ export * from '../service/socketEvent.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-socket:socket': never;
 'a-socket:socketEvent': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-socket' {
-  
+
         export interface ServiceSocket {
           /** @internal */
           get scope(): ScopeModuleASocket;
@@ -48,7 +48,6 @@ declare module 'vona-module-a-socket' {
           export interface ServiceSocket {
             get $beanFullName(): 'a-socket.service.socket';
             get $onionName(): 'a-socket:socket';
-            
           }
 
         export interface ServiceSocketEvent {
@@ -59,8 +58,7 @@ declare module 'vona-module-a-socket' {
           export interface ServiceSocketEvent {
             get $beanFullName(): 'a-socket.service.socketEvent';
             get $onionName(): 'a-socket:socketEvent';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -87,16 +85,16 @@ export * from '../bean/broadcast.send.ts';
 
 import { type IDecoratorBroadcastOptions } from 'vona-module-a-broadcast';
 declare module 'vona-module-a-broadcast' {
-  
+
     export interface IBroadcastRecord {
       'a-socket:broadcast': IDecoratorBroadcastOptions;
 'a-socket:send': IDecoratorBroadcastOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-socket' {
-  
+
         export interface BroadcastBroadcast {
           /** @internal */
           get scope(): ScopeModuleASocket;
@@ -117,7 +115,7 @@ declare module 'vona-module-a-socket' {
             get $beanFullName(): 'a-socket.broadcast.send';
             get $onionName(): 'a-socket:send';
             get $onionOptions(): IDecoratorBroadcastOptions;
-          } 
+          }
 }
 /** broadcast: end */
 /** broadcast: begin */
@@ -134,16 +132,16 @@ export * from '../bean/hmr.socketPacket.ts';
 
 import 'vona';
 declare module 'vona' {
-  
+
     export interface IHmrRecord {
       'a-socket:socketConnection': never;
 'a-socket:socketPacket': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-socket' {
-  
+
         export interface HmrSocketConnection {
           /** @internal */
           get scope(): ScopeModuleASocket;
@@ -152,7 +150,6 @@ declare module 'vona-module-a-socket' {
           export interface HmrSocketConnection {
             get $beanFullName(): 'a-socket.hmr.socketConnection';
             get $onionName(): 'a-socket:socketConnection';
-            
           }
 
         export interface HmrSocketPacket {
@@ -163,8 +160,7 @@ declare module 'vona-module-a-socket' {
           export interface HmrSocketPacket {
             get $beanFullName(): 'a-socket.hmr.socketPacket';
             get $onionName(): 'a-socket:socketPacket';
-            
-          } 
+          }
 }
 /** hmr: end */
 /** socketConnection: begin */
@@ -184,7 +180,7 @@ import type { ISocketConnectionOptionsPassport } from '../bean/socketConnection.
 import type { ISocketConnectionOptionsReady } from '../bean/socketConnection.ready.ts';
 import 'vona-module-a-socket';
 declare module 'vona-module-a-socket' {
-  
+
     export interface ISocketConnectionRecord {
       'a-socket:alive': ISocketConnectionOptionsAlive;
 'a-socket:app': ISocketConnectionOptionsApp;
@@ -195,10 +191,10 @@ declare module 'vona-module-a-socket' {
 'a-socket:ready': ISocketConnectionOptionsReady;
     }
 
-  
+
 }
 declare module 'vona-module-a-socket' {
-  
+
         export interface SocketConnectionAlive {
           /** @internal */
           get scope(): ScopeModuleASocket;
@@ -274,7 +270,7 @@ declare module 'vona-module-a-socket' {
             get $beanFullName(): 'a-socket.socketConnection.ready';
             get $onionName(): 'a-socket:ready';
             get $onionOptions(): ISocketConnectionOptionsReady;
-          } 
+          }
 }
 /** socketConnection: end */
 /** socketPacket: begin */
@@ -284,16 +280,16 @@ import type { ISocketPacketOptionsEvent } from '../bean/socketPacket.event.ts';
 import type { ISocketPacketOptionsPerformAction } from '../bean/socketPacket.performAction.ts';
 import 'vona-module-a-socket';
 declare module 'vona-module-a-socket' {
-  
+
     export interface ISocketPacketRecord {
       'a-socket:event': ISocketPacketOptionsEvent;
 'a-socket:performAction': ISocketPacketOptionsPerformAction;
     }
 
-  
+
 }
 declare module 'vona-module-a-socket' {
-  
+
         export interface SocketPacketEvent {
           /** @internal */
           get scope(): ScopeModuleASocket;
@@ -314,7 +310,7 @@ declare module 'vona-module-a-socket' {
             get $beanFullName(): 'a-socket.socketPacket.performAction';
             get $onionName(): 'a-socket:performAction';
             get $onionOptions(): ISocketPacketOptionsPerformAction;
-          } 
+          }
 }
 /** socketPacket: end */
 /** config: begin */
@@ -347,13 +343,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     socket: ScopeModuleASocket;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-socket': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

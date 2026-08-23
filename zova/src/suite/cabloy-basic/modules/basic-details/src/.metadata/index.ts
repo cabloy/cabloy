@@ -4,15 +4,15 @@ export * from '../service/detail.jsx';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'basic-details:detail': never;
     }
 
-  
+
 }
 declare module 'zova-module-basic-details' {
-  
+
         export interface ServiceDetail {
           /** @internal */
           get scope(): ScopeModuleBasicDetails;
@@ -21,8 +21,8 @@ declare module 'zova-module-basic-details' {
         export interface ServiceDetail {
           get $beanFullName(): 'basic-details.service.detail';
           get $onionName(): 'basic-details:detail';
-          
-        } 
+
+        }
 }
 /** service: end */
 /** service: begin */
@@ -44,11 +44,11 @@ export * from '../component/formFieldDetails/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-details' {
-  
+
         export interface ControllerActionCreate {
           /** @internal */
           get scope(): ScopeModuleBasicDetails;
@@ -77,7 +77,7 @@ declare module 'zova-module-basic-details' {
         export interface ControllerFormFieldDetails {
           /** @internal */
           get scope(): ScopeModuleBasicDetails;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -154,7 +154,7 @@ import { ITableCellOptionsActionView } from '../bean/tableCell.actionView.jsx';
 import { ITableCellOptionsLineNumber } from '../bean/tableCell.lineNumber.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
-  
+
     export interface ITableCellRecord {
       'basic-details:actionDelete': ITableCellOptionsActionDelete;
 'basic-details:actionOperationsRow': ITableCellOptionsActionOperationsRow;
@@ -163,10 +163,10 @@ declare module 'zova-module-a-table' {
 'basic-details:lineNumber': ITableCellOptionsLineNumber;
     }
 
-  
+
 }
 declare module 'zova-module-basic-details' {
-  
+
         export interface TableCellActionDelete {
           /** @internal */
           get scope(): ScopeModuleBasicDetails;
@@ -220,7 +220,7 @@ declare module 'zova-module-basic-details' {
           get $beanFullName(): 'basic-details.tableCell.lineNumber';
           get $onionName(): 'basic-details:lineNumber';
           get $onionOptions(): ITableCellOptionsLineNumber;
-        } 
+        }
 }
 /** tableCell: end */
 /** tableCell: begin */
@@ -245,15 +245,15 @@ export * from '../bean/command.delete.jsx';
 import { ICommandOptionsDelete } from '../bean/command.delete.jsx';
 import 'zova-module-a-command';
 declare module 'zova-module-a-command' {
-  
+
     export interface ICommandRecord {
       'basic-details:delete': ICommandOptionsDelete;
     }
 
-  
+
 }
 declare module 'zova-module-basic-details' {
-  
+
         export interface CommandDelete {
           /** @internal */
           get scope(): ScopeModuleBasicDetails;
@@ -263,7 +263,7 @@ declare module 'zova-module-basic-details' {
           get $beanFullName(): 'basic-details.command.delete';
           get $onionName(): 'basic-details:delete';
           get $onionOptions(): ICommandOptionsDelete;
-        } 
+        }
 }
 /** command: end */
 /** command: begin */
@@ -295,17 +295,17 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-details': ScopeModuleBasicDetails;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'basic-details': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `basic-details::${K}` {
   return `basic-details::${key}`;
-}  
+}
 /** scope: end */

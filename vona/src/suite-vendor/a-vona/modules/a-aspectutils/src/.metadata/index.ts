@@ -5,16 +5,16 @@ export * from '../service/filter.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-aspectutils:aop': never;
 'a-aspectutils:filter': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-aspectutils' {
-  
+
         export interface ServiceAop {
           /** @internal */
           get scope(): ScopeModuleAAspectutils;
@@ -23,7 +23,6 @@ declare module 'vona-module-a-aspectutils' {
           export interface ServiceAop {
             get $beanFullName(): 'a-aspectutils.service.aop';
             get $onionName(): 'a-aspectutils:aop';
-            
           }
 
         export interface ServiceFilter {
@@ -34,8 +33,7 @@ declare module 'vona-module-a-aspectutils' {
           export interface ServiceFilter {
             get $beanFullName(): 'a-aspectutils.service.filter';
             get $onionName(): 'a-aspectutils:filter';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -77,11 +75,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     aspectutils: ScopeModuleAAspectutils;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

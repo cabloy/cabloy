@@ -6,15 +6,15 @@ export * from '../service/metrics.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'basic-metrics:metrics': never;
     }
 
-  
+
 }
 declare module 'vona-module-basic-metrics' {
-  
+
         export interface ServiceMetrics {
           /** @internal */
           get scope(): ScopeModuleBasicMetrics;
@@ -23,8 +23,7 @@ declare module 'vona-module-basic-metrics' {
           export interface ServiceMetrics {
             get $beanFullName(): 'basic-metrics.service.metrics';
             get $onionName(): 'basic-metrics:metrics';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -51,17 +50,17 @@ import type { IDtoOptionsMetricsRuntime } from '../dto/metricsRuntime.ts';
 import type { IDtoOptionsMetricsSnapshot } from '../dto/metricsSnapshot.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'basic-metrics:metricsQueue': IDtoOptionsMetricsQueue;
 'basic-metrics:metricsRuntime': IDtoOptionsMetricsRuntime;
 'basic-metrics:metricsSnapshot': IDtoOptionsMetricsSnapshot;
     }
 
-  
+
 }
 declare module 'vona-module-basic-metrics' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
@@ -69,7 +68,7 @@ import type { DtoMetricsQueue } from '../dto/metricsQueue.ts';
 import type { DtoMetricsRuntime } from '../dto/metricsRuntime.ts';
 import type { DtoMetricsSnapshot } from '../dto/metricsSnapshot.ts';
 declare module 'vona-module-basic-metrics' {
-  
+
     export interface IDtoOptionsMetricsQueue {
       fields?: TypeEntityOptionsFields<DtoMetricsQueue, IDtoOptionsMetricsQueue[TypeSymbolKeyFieldsMore]>;
     }
@@ -88,15 +87,15 @@ export * from '../controller/metrics.ts';
 import type { IControllerOptionsMetrics } from '../controller/metrics.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'basic-metrics:metrics': IControllerOptionsMetrics;
     }
 
-  
+
 }
 declare module 'vona-module-basic-metrics' {
-  
+
         export interface ControllerMetrics {
           /** @internal */
           get scope(): ScopeModuleBasicMetrics;
@@ -106,14 +105,14 @@ declare module 'vona-module-basic-metrics' {
             get $beanFullName(): 'basic-metrics.controller.metrics';
             get $onionName(): 'basic-metrics:metrics';
             get $onionOptions(): IControllerOptionsMetrics;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
 import type { ControllerMetrics } from '../controller/metrics.ts';
 declare module 'vona-module-basic-metrics' {
-  
+
     export interface IControllerOptionsMetrics {
       actions?: TypeControllerOptionsActions<ControllerMetrics>;
     }
@@ -130,22 +129,22 @@ import 'vona-module-a-openapi';
       'basic-metrics:metrics': never;
     }
   }
-  
+
 /** controller: end */
 /** ssrMenu: begin */
 export * from '../bean/ssrMenu.metrics.ts';
 import type { ISsrMenuOptionsMetrics } from '../bean/ssrMenu.metrics.ts';
 import 'vona-module-a-ssr';
 declare module 'vona-module-a-ssr' {
-  
+
     export interface ISsrMenuRecord {
       'basic-metrics:metrics': ISsrMenuOptionsMetrics;
     }
 
-  
+
 }
 declare module 'vona-module-basic-metrics' {
-  
+
         export interface SsrMenuMetrics {
           /** @internal */
           get scope(): ScopeModuleBasicMetrics;
@@ -155,7 +154,7 @@ declare module 'vona-module-basic-metrics' {
             get $beanFullName(): 'basic-metrics.ssrMenu.metrics';
             get $onionName(): 'basic-metrics:metrics';
             get $onionOptions(): ISsrMenuOptionsMetrics;
-          } 
+          }
 }
 /** ssrMenu: end */
 /** scope: begin */
@@ -179,11 +178,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     basicMetrics: ScopeModuleBasicMetrics;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

@@ -23,7 +23,7 @@ import type { IEntityOptionsStockBalance } from '../entity/stockBalance.tsx';
 import type { IEntityOptionsStockReservation } from '../entity/stockReservation.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'commerce-trade:cart': IEntityOptionsCart;
 'commerce-trade:cartItem': IEntityOptionsCartItem;
@@ -36,10 +36,10 @@ declare module 'vona-module-a-orm' {
 'commerce-trade:stockReservation': IEntityOptionsStockReservation;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-trade' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -97,7 +97,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-commerce-trade' {
-  
+
     export interface IEntityOptionsCart {
       fields?: TypeEntityOptionsFields<EntityCart, IEntityOptionsCart[TypeSymbolKeyFieldsMore]>;
     }
@@ -156,7 +156,7 @@ import type { IModelOptionsStockBalance } from '../model/stockBalance.ts';
 import type { IModelOptionsStockReservation } from '../model/stockReservation.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'commerce-trade:cart': IModelOptionsCart;
 'commerce-trade:cartItem': IModelOptionsCartItem;
@@ -169,10 +169,10 @@ declare module 'vona-module-a-orm' {
 'commerce-trade:stockReservation': IModelOptionsStockReservation;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-trade' {
-  
+
         export interface ModelCart {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -270,7 +270,7 @@ declare module 'vona-module-commerce-trade' {
             get $beanFullName(): 'commerce-trade.model.stockReservation';
             get $onionName(): 'commerce-trade:stockReservation';
             get $onionOptions(): IModelOptionsStockReservation;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -680,15 +680,15 @@ export * from '../bean/bean.scheduleOrderExpiry.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-commerce-trade' {
-  
+
         export interface BeanScheduleOrderExpiry {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -708,7 +708,7 @@ export * from '../service/stockBalance.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'commerce-trade:cart': never;
 'commerce-trade:order': never;
@@ -716,10 +716,10 @@ declare module 'vona-module-a-bean' {
 'commerce-trade:stockBalance': never;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-trade' {
-  
+
         export interface ServiceCart {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -728,7 +728,6 @@ declare module 'vona-module-commerce-trade' {
           export interface ServiceCart {
             get $beanFullName(): 'commerce-trade.service.cart';
             get $onionName(): 'commerce-trade:cart';
-            
           }
 
         export interface ServiceOrder {
@@ -739,7 +738,6 @@ declare module 'vona-module-commerce-trade' {
           export interface ServiceOrder {
             get $beanFullName(): 'commerce-trade.service.order';
             get $onionName(): 'commerce-trade:order';
-            
           }
 
         export interface ServiceStockAudit {
@@ -750,7 +748,6 @@ declare module 'vona-module-commerce-trade' {
           export interface ServiceStockAudit {
             get $beanFullName(): 'commerce-trade.service.stockAudit';
             get $onionName(): 'commerce-trade:stockAudit';
-            
           }
 
         export interface ServiceStockBalance {
@@ -761,8 +758,7 @@ declare module 'vona-module-commerce-trade' {
           export interface ServiceStockBalance {
             get $beanFullName(): 'commerce-trade.service.stockBalance';
             get $onionName(): 'commerce-trade:stockBalance';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -795,16 +791,16 @@ export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'commerce-trade:index': IMetaOptionsIndex;
 'commerce-trade:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-trade' {
-  
+
         export interface MetaIndex {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -824,8 +820,7 @@ declare module 'vona-module-commerce-trade' {
           export interface MetaVersion {
             get $beanFullName(): 'commerce-trade.meta.version';
             get $onionName(): 'commerce-trade:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** dto: begin */
@@ -923,7 +918,7 @@ import type { IDtoOptionsStockBalanceView } from '../dto/stockBalanceView.tsx';
 import type { IDtoOptionsStockSkuRef } from '../dto/stockSkuRef.tsx';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'commerce-trade:cartAddItem': IDtoOptionsCartAddItem;
 'commerce-trade:cartItem': IDtoOptionsCartItem;
@@ -973,10 +968,10 @@ declare module 'vona-module-a-web' {
 'commerce-trade:stockSkuRef': IDtoOptionsStockSkuRef;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-trade' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
@@ -1027,7 +1022,7 @@ import type { DtoStockBalanceUpdate } from '../dto/stockBalanceUpdate.tsx';
 import type { DtoStockBalanceView } from '../dto/stockBalanceView.tsx';
 import type { DtoStockSkuRef } from '../dto/stockSkuRef.tsx';
 declare module 'vona-module-commerce-trade' {
-  
+
     export interface IDtoOptionsCartAddItem {
       fields?: TypeEntityOptionsFields<DtoCartAddItem, IDtoOptionsCartAddItem[TypeSymbolKeyFieldsMore]>;
     }
@@ -1226,7 +1221,7 @@ import type { IControllerOptionsStockAudit } from '../controller/stockAudit.ts';
 import type { IControllerOptionsStockBalance } from '../controller/stockBalance.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'commerce-trade:cart': IControllerOptionsCart;
 'commerce-trade:checkout': IControllerOptionsCheckout;
@@ -1235,10 +1230,10 @@ declare module 'vona-module-a-web' {
 'commerce-trade:stockBalance': IControllerOptionsStockBalance;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-trade' {
-  
+
         export interface ControllerCart {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -1292,7 +1287,7 @@ declare module 'vona-module-commerce-trade' {
             get $beanFullName(): 'commerce-trade.controller.stockBalance';
             get $onionName(): 'commerce-trade:stockBalance';
             get $onionOptions(): IControllerOptionsStockBalance;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
@@ -1307,7 +1302,7 @@ import type { ControllerStockAudit } from '../controller/stockAudit.ts';
 // @ts-ignore ignore
 import type { ControllerStockBalance } from '../controller/stockBalance.ts';
 declare module 'vona-module-commerce-trade' {
-  
+
     export interface IControllerOptionsCart {
       actions?: TypeControllerOptionsActions<ControllerCart>;
     }
@@ -1371,7 +1366,7 @@ import 'vona-module-a-openapi';
 'commerce-trade:stockBalance': never;
     }
   }
-  
+
 /** controller: end */
 /** ssrMenu: begin */
 export * from '../bean/ssrMenu.order.ts';
@@ -1382,17 +1377,17 @@ import type { ISsrMenuOptionsStockAudit } from '../bean/ssrMenu.stockAudit.ts';
 import type { ISsrMenuOptionsStockBalance } from '../bean/ssrMenu.stockBalance.ts';
 import 'vona-module-a-ssr';
 declare module 'vona-module-a-ssr' {
-  
+
     export interface ISsrMenuRecord {
       'commerce-trade:order': ISsrMenuOptionsOrder;
 'commerce-trade:stockAudit': ISsrMenuOptionsStockAudit;
 'commerce-trade:stockBalance': ISsrMenuOptionsStockBalance;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-trade' {
-  
+
         export interface SsrMenuOrder {
           /** @internal */
           get scope(): ScopeModuleCommerceTrade;
@@ -1424,7 +1419,7 @@ declare module 'vona-module-commerce-trade' {
             get $beanFullName(): 'commerce-trade.ssrMenu.stockBalance';
             get $onionName(): 'commerce-trade:stockBalance';
             get $onionOptions(): ISsrMenuOptionsStockBalance;
-          } 
+          }
 }
 /** ssrMenu: end */
 /** locale: begin */
@@ -1454,13 +1449,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     commerceTrade: ScopeModuleCommerceTrade;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'commerce-trade': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 /** scope: end */

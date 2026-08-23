@@ -7,15 +7,15 @@ export * from '../entity/status.ts';
 import type { IEntityOptionsStatus } from '../entity/status.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'a-status:status': IEntityOptionsStatus;
     }
 
-  
+
 }
 declare module 'vona-module-a-status' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -33,7 +33,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-a-status' {
-  
+
     export interface IEntityOptionsStatus {
       fields?: TypeEntityOptionsFields<EntityStatus, IEntityOptionsStatus[TypeSymbolKeyFieldsMore]>;
     }
@@ -44,15 +44,15 @@ export * from '../model/status.ts';
 import type { IModelOptionsStatus } from '../model/status.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'a-status:status': IModelOptionsStatus;
     }
 
-  
+
 }
 declare module 'vona-module-a-status' {
-  
+
         export interface ModelStatus {
           /** @internal */
           get scope(): ScopeModuleAStatus;
@@ -62,7 +62,7 @@ declare module 'vona-module-a-status' {
             get $beanFullName(): 'a-status.model.status';
             get $onionName(): 'a-status:status';
             get $onionOptions(): IModelOptionsStatus;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -84,13 +84,23 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-a-status' {
-  
+
   export interface ModelStatus {
       [SymbolKeyEntity]: EntityStatus;
       [SymbolKeyEntityMeta]: EntityStatusMeta;
       [SymbolKeyModelOptions]: IModelOptionsStatus;
       get<T extends IModelGetOptions<EntityStatus,ModelStatus>>(where: TypeModelWhere<EntityStatus>, options?: T): Promise<TypeModelRelationResult<EntityStatus, ModelStatus, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityStatus,ModelStatus>>(where: TypeModelWhere<EntityStatus>, options?: T): Promise<TypeModelRelationResult<EntityStatus, ModelStatus, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityStatus,ModelStatus>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityStatus, ModelStatus, T> | undefined>;
       mget<T extends IModelGetOptions<EntityStatus,ModelStatus>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityStatus, ModelStatus, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityStatus,ModelStatus,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityStatus, ModelStatus, T>>;
@@ -129,16 +139,16 @@ export * from '../bean/meta.version.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'a-status:redlock': never;
 'a-status:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-status' {
-  
+
         export interface MetaRedlock {
           /** @internal */
           get scope(): ScopeModuleAStatus;
@@ -147,7 +157,6 @@ declare module 'vona-module-a-status' {
           export interface MetaRedlock {
             get $beanFullName(): 'a-status.meta.redlock';
             get $onionName(): 'a-status:redlock';
-            
           }
 
         export interface MetaVersion {
@@ -158,8 +167,7 @@ declare module 'vona-module-a-status' {
           export interface MetaVersion {
             get $beanFullName(): 'a-status.meta.version';
             get $onionName(): 'a-status:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** meta redlock: begin */
@@ -188,11 +196,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     status: ScopeModuleAStatus;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

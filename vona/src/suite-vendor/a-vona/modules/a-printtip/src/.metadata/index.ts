@@ -4,15 +4,15 @@ export * from '../bean/hmr.metaPrintTip.ts';
 
 import 'vona';
 declare module 'vona' {
-  
+
     export interface IHmrRecord {
       'a-printtip:metaPrintTip': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-printtip' {
-  
+
         export interface HmrMetaPrintTip {
           /** @internal */
           get scope(): ScopeModuleAPrinttip;
@@ -21,8 +21,7 @@ declare module 'vona-module-a-printtip' {
           export interface HmrMetaPrintTip {
             get $beanFullName(): 'a-printtip.hmr.metaPrintTip';
             get $onionName(): 'a-printtip:metaPrintTip';
-            
-          } 
+          }
 }
 /** hmr: end */
 /** startup: begin */
@@ -30,15 +29,15 @@ export * from '../bean/startup.printTip.ts';
 
 import { type IDecoratorStartupOptions } from 'vona-module-a-startup';
 declare module 'vona-module-a-startup' {
-  
+
     export interface IStartupRecord {
       'a-printtip:printTip': IDecoratorStartupOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-printtip' {
-  
+
         export interface StartupPrintTip {
           /** @internal */
           get scope(): ScopeModuleAPrinttip;
@@ -48,7 +47,7 @@ declare module 'vona-module-a-printtip' {
             get $beanFullName(): 'a-printtip.startup.printTip';
             get $onionName(): 'a-printtip:printTip';
             get $onionOptions(): IDecoratorStartupOptions;
-          } 
+          }
 }
 /** startup: end */
 /** config: begin */
@@ -76,13 +75,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     printtip: ScopeModuleAPrinttip;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-printtip': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

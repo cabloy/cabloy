@@ -23,14 +23,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-ssrhmr': ScopeModuleASsrhmr;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-ssrhmr': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
-  
+
 /** scope: end */

@@ -4,15 +4,15 @@ export * from '../model/tabs.js';
 import { IModelOptionsTabs } from '../model/tabs.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'a-routertabs:tabs': IModelOptionsTabs;
     }
 
-  
+
 }
 declare module 'zova-module-a-routertabs' {
-  
+
         export interface ModelTabs {
           /** @internal */
           get scope(): ScopeModuleARoutertabs;
@@ -22,7 +22,7 @@ declare module 'zova-module-a-routertabs' {
           get $beanFullName(): 'a-routertabs.model.tabs';
           get $onionName(): 'a-routertabs:tabs';
           get $onionOptions(): IModelOptionsTabs;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -39,15 +39,15 @@ export * from '../component/routerViewTabs/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-routertabs' {
-  
+
         export interface ControllerRouterViewTabs {
           /** @internal */
           get scope(): ScopeModuleARoutertabs;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -92,12 +92,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-routertabs': ScopeModuleARoutertabs;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

@@ -6,11 +6,11 @@ export * from '../component/blockFormLayout/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-form' {
-  
+
         export interface ControllerActionBack {
           /** @internal */
           get scope(): ScopeModuleBasicForm;
@@ -24,7 +24,7 @@ declare module 'zova-module-basic-form' {
         export interface ControllerBlockFormLayout {
           /** @internal */
           get scope(): ScopeModuleBasicForm;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -74,16 +74,16 @@ import { IBehaviorOptionsFormField } from '../bean/behavior.formField.js';
 import { IBehaviorOptionsFormFieldLayout } from '../bean/behavior.formFieldLayout.jsx';
 import 'zova-module-a-behavior';
 declare module 'zova-module-a-behavior' {
-  
+
     export interface IBehaviorRecord {
       'basic-form:formField': IBehaviorOptionsFormField;
 'basic-form:formFieldLayout': IBehaviorOptionsFormFieldLayout;
     }
 
-  
+
 }
 declare module 'zova-module-basic-form' {
-  
+
         export interface BehaviorFormField {
           /** @internal */
           get scope(): ScopeModuleBasicForm;
@@ -104,7 +104,7 @@ declare module 'zova-module-basic-form' {
           get $beanFullName(): 'basic-form.behavior.formFieldLayout';
           get $onionName(): 'basic-form:formFieldLayout';
           get $onionOptions(): IBehaviorOptionsFormFieldLayout;
-        } 
+        }
 }
 /** behavior: end */
 /** behavior: begin */
@@ -159,17 +159,17 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-form': ScopeModuleBasicForm;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'basic-form': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `basic-form::${K}` {
   return `basic-form::${key}`;
-}  
+}
 /** scope: end */

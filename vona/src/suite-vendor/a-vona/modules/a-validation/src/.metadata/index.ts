@@ -4,15 +4,15 @@ export * from '../bean/bean.validator.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-validation' {
-  
+
         export interface BeanValidator {
           /** @internal */
           get scope(): ScopeModuleAValidation;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -48,13 +48,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     validation: ScopeModuleAValidation;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'a-validation': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 /** scope: end */

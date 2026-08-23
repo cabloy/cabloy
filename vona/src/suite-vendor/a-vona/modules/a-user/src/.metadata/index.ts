@@ -6,19 +6,19 @@ import type { IGuardOptionsPassport } from '../bean/guard.passport.ts';
 import type { IGuardOptionsRoleName } from '../bean/guard.roleName.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
+
     export interface IGuardRecordGlobal {
       'a-user:passport': IGuardOptionsPassport;
     }
 
-  
+
 export interface IGuardRecordLocal {
   'a-user:roleName': IGuardOptionsRoleName;
 }
 
 }
 declare module 'vona-module-a-user' {
-  
+
         export interface GuardPassport {
           /** @internal */
           get scope(): ScopeModuleAUser;
@@ -39,7 +39,7 @@ declare module 'vona-module-a-user' {
             get $beanFullName(): 'a-user.guard.roleName';
             get $onionName(): 'a-user:roleName';
             get $onionOptions(): IGuardOptionsRoleName;
-          } 
+          }
 }
 /** guard: end */
 /** bean: begin */
@@ -49,11 +49,11 @@ export * from '../bean/bean.user.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-user' {
-  
+
         export interface BeanPassport {
           /** @internal */
           get scope(): ScopeModuleAUser;
@@ -67,7 +67,7 @@ declare module 'vona-module-a-user' {
         export interface BeanUser {
           /** @internal */
           get scope(): ScopeModuleAUser;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -89,16 +89,16 @@ export * from '../service/redisToken.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-user:authTokenAdapter': never;
 'a-user:redisToken': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-user' {
-  
+
         export interface ServiceAuthTokenAdapter {
           /** @internal */
           get scope(): ScopeModuleAUser;
@@ -107,7 +107,6 @@ declare module 'vona-module-a-user' {
           export interface ServiceAuthTokenAdapter {
             get $beanFullName(): 'a-user.service.authTokenAdapter';
             get $onionName(): 'a-user:authTokenAdapter';
-            
           }
 
         export interface ServiceRedisToken {
@@ -118,8 +117,7 @@ declare module 'vona-module-a-user' {
           export interface ServiceRedisToken {
             get $beanFullName(): 'a-user.service.redisToken';
             get $onionName(): 'a-user:redisToken';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -145,15 +143,15 @@ export * from '../bean/cacheRedis.authToken.ts';
 
 import { type IDecoratorCacheRedisOptions } from 'vona-module-a-cache';
 declare module 'vona-module-a-cache' {
-  
+
     export interface ICacheRedisRecord {
       'a-user:authToken': IDecoratorCacheRedisOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-user' {
-  
+
         export interface CacheRedisAuthToken {
           /** @internal */
           get scope(): ScopeModuleAUser;
@@ -163,7 +161,7 @@ declare module 'vona-module-a-user' {
             get $beanFullName(): 'a-user.cacheRedis.authToken';
             get $onionName(): 'a-user:authToken';
             get $onionOptions(): IDecoratorCacheRedisOptions;
-          } 
+          }
 }
 /** cacheRedis: end */
 /** cacheRedis: begin */
@@ -181,11 +179,11 @@ export * from '../bean/event.signout.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-user' {
-  
+
         export interface EventActivate {
           /** @internal */
           get scope(): ScopeModuleAUser;
@@ -194,7 +192,6 @@ declare module 'vona-module-a-user' {
           export interface EventActivate {
             get $beanFullName(): 'a-user.event.activate';
             get $onionName(): 'a-user:activate';
-            
           }
 
         export interface EventCreateAnonymous {
@@ -205,7 +202,6 @@ declare module 'vona-module-a-user' {
           export interface EventCreateAnonymous {
             get $beanFullName(): 'a-user.event.createAnonymous';
             get $onionName(): 'a-user:createAnonymous';
-            
           }
 
         export interface EventRegister {
@@ -216,7 +212,6 @@ declare module 'vona-module-a-user' {
           export interface EventRegister {
             get $beanFullName(): 'a-user.event.register';
             get $onionName(): 'a-user:register';
-            
           }
 
         export interface EventSignin {
@@ -227,7 +222,6 @@ declare module 'vona-module-a-user' {
           export interface EventSignin {
             get $beanFullName(): 'a-user.event.signin';
             get $onionName(): 'a-user:signin';
-            
           }
 
         export interface EventSignout {
@@ -238,8 +232,7 @@ declare module 'vona-module-a-user' {
           export interface EventSignout {
             get $beanFullName(): 'a-user.event.signout';
             get $onionName(): 'a-user:signout';
-            
-          } 
+          }
 }
 /** event: end */
 /** event: begin */
@@ -262,7 +255,7 @@ import type { TypeEventCreateAnonymousData, TypeEventCreateAnonymousResult } fro
 import type { TypeEventRegisterData, TypeEventRegisterResult } from '../bean/event.register.ts';
 import type { TypeEventSigninData, TypeEventSigninResult } from '../bean/event.signin.ts';
 import type { TypeEventSignoutData, TypeEventSignoutResult } from '../bean/event.signout.ts';
-import type { EventOn } from 'vona-module-a-event'; 
+import type { EventOn } from 'vona-module-a-event';
 declare module 'vona-module-a-event' {
   export interface IEventRecord {
     'a-user:activate': EventOn<TypeEventActivateData, TypeEventActivateResult>;
@@ -279,16 +272,16 @@ export * from '../bean/meta.runtime.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'a-user:printTip': never;
 'a-user:runtime': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-user' {
-  
+
         export interface MetaPrintTip {
           /** @internal */
           get scope(): ScopeModuleAUser;
@@ -297,7 +290,6 @@ declare module 'vona-module-a-user' {
           export interface MetaPrintTip {
             get $beanFullName(): 'a-user.meta.printTip';
             get $onionName(): 'a-user:printTip';
-            
           }
 
         export interface MetaRuntime {
@@ -308,8 +300,7 @@ declare module 'vona-module-a-user' {
           export interface MetaRuntime {
             get $beanFullName(): 'a-user.meta.runtime';
             get $onionName(): 'a-user:runtime';
-            
-          } 
+          }
 }
 /** meta: end */
 /** config: begin */
@@ -352,7 +343,7 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     user: ScopeModuleAUser;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-user': ReturnType<typeof config>;
   }

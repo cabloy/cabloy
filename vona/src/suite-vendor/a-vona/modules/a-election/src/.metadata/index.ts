@@ -4,15 +4,15 @@ export * from '../service/election.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-election:election': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-election' {
-  
+
         export interface ServiceElection {
           /** @internal */
           get scope(): ScopeModuleAElection;
@@ -21,8 +21,7 @@ declare module 'vona-module-a-election' {
           export interface ServiceElection {
             get $beanFullName(): 'a-election.service.election';
             get $onionName(): 'a-election:election';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -45,15 +44,15 @@ export * from '../bean/broadcast.release.ts';
 
 import { type IDecoratorBroadcastOptions } from 'vona-module-a-broadcast';
 declare module 'vona-module-a-broadcast' {
-  
+
     export interface IBroadcastRecord {
       'a-election:release': IDecoratorBroadcastOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-election' {
-  
+
         export interface BroadcastRelease {
           /** @internal */
           get scope(): ScopeModuleAElection;
@@ -63,7 +62,7 @@ declare module 'vona-module-a-election' {
             get $beanFullName(): 'a-election.broadcast.release';
             get $onionName(): 'a-election:release';
             get $onionOptions(): IDecoratorBroadcastOptions;
-          } 
+          }
 }
 /** broadcast: end */
 /** broadcast: begin */
@@ -77,15 +76,15 @@ export * from '../bean/eventListener.hmrReload.ts';
 
 import { type IDecoratorEventListenerOptions } from 'vona-module-a-event';
 declare module 'vona-module-a-event' {
-  
+
     export interface IEventListenerRecord {
       'a-election:hmrReload': IDecoratorEventListenerOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-election' {
-  
+
         export interface EventListenerHmrReload {
           /** @internal */
           get scope(): ScopeModuleAElection;
@@ -95,7 +94,7 @@ declare module 'vona-module-a-election' {
             get $beanFullName(): 'a-election.eventListener.hmrReload';
             get $onionName(): 'a-election:hmrReload';
             get $onionOptions(): IDecoratorEventListenerOptions;
-          } 
+          }
 }
 /** eventListener: end */
 /** config: begin */
@@ -131,13 +130,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     election: ScopeModuleAElection;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-election': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

@@ -4,15 +4,15 @@ export * from '../component/formFieldInput/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-input' {
-  
+
         export interface ControllerFormFieldInput {
           /** @internal */
           get scope(): ScopeModuleBasicInput;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -57,12 +57,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-input': ScopeModuleBasicInput;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

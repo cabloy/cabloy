@@ -27,7 +27,6 @@ declare module 'vona-module-home-base' {
           export interface ServiceMenu {
             get $beanFullName(): 'home-base.service.menu';
             get $onionName(): 'home-base:menu';
-
           }
 
         export interface ServicePermission {
@@ -38,7 +37,6 @@ declare module 'vona-module-home-base' {
           export interface ServicePermission {
             get $beanFullName(): 'home-base.service.permission';
             get $onionName(): 'home-base:permission';
-
           }
 
         export interface ServiceSiteCatalog {
@@ -49,7 +47,6 @@ declare module 'vona-module-home-base' {
           export interface ServiceSiteCatalog {
             get $beanFullName(): 'home-base.service.siteCatalog';
             get $onionName(): 'home-base:siteCatalog';
-
           }
 }
 /** service: end */

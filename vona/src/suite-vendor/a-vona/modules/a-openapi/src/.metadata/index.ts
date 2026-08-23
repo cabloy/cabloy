@@ -4,15 +4,15 @@ export * from '../bean/bean.openapi.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-openapi' {
-  
+
         export interface BeanOpenapi {
           /** @internal */
           get scope(): ScopeModuleAOpenapi;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -29,15 +29,15 @@ export * from '../service/openapi.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-openapi:openapi': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-openapi' {
-  
+
         export interface ServiceOpenapi {
           /** @internal */
           get scope(): ScopeModuleAOpenapi;
@@ -46,8 +46,7 @@ declare module 'vona-module-a-openapi' {
           export interface ServiceOpenapi {
             get $beanFullName(): 'a-openapi.service.openapi';
             get $onionName(): 'a-openapi:openapi';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -70,15 +69,15 @@ export * from '../bean/summerCache.json.ts';
 
 import { type IDecoratorSummerCacheOptions } from 'vona-module-a-summer';
 declare module 'vona-module-a-summer' {
-  
+
     export interface ISummerCacheRecord {
       'a-openapi:json': IDecoratorSummerCacheOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-openapi' {
-  
+
         export interface SummerCacheJson {
           /** @internal */
           get scope(): ScopeModuleAOpenapi;
@@ -88,7 +87,7 @@ declare module 'vona-module-a-openapi' {
             get $beanFullName(): 'a-openapi.summerCache.json';
             get $onionName(): 'a-openapi:json';
             get $onionOptions(): IDecoratorSummerCacheOptions;
-          } 
+          }
 }
 /** summerCache: end */
 /** summerCache: begin */
@@ -127,13 +126,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     openapi: ScopeModuleAOpenapi;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-openapi': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

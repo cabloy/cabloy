@@ -11,7 +11,7 @@ export * from '../bean/hmr.pipe.ts';
 
 import 'vona';
 declare module 'vona' {
-  
+
     export interface IHmrRecord {
       'a-aspect:aop': never;
 'a-aspect:aopMethod': never;
@@ -23,10 +23,10 @@ declare module 'vona' {
 'a-aspect:pipe': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-aspect' {
-  
+
         export interface HmrAop {
           /** @internal */
           get scope(): ScopeModuleAAspect;
@@ -35,7 +35,6 @@ declare module 'vona-module-a-aspect' {
           export interface HmrAop {
             get $beanFullName(): 'a-aspect.hmr.aop';
             get $onionName(): 'a-aspect:aop';
-            
           }
 
         export interface HmrAopMethod {
@@ -46,7 +45,6 @@ declare module 'vona-module-a-aspect' {
           export interface HmrAopMethod {
             get $beanFullName(): 'a-aspect.hmr.aopMethod';
             get $onionName(): 'a-aspect:aopMethod';
-            
           }
 
         export interface HmrFilter {
@@ -57,7 +55,6 @@ declare module 'vona-module-a-aspect' {
           export interface HmrFilter {
             get $beanFullName(): 'a-aspect.hmr.filter';
             get $onionName(): 'a-aspect:filter';
-            
           }
 
         export interface HmrGuard {
@@ -68,7 +65,6 @@ declare module 'vona-module-a-aspect' {
           export interface HmrGuard {
             get $beanFullName(): 'a-aspect.hmr.guard';
             get $onionName(): 'a-aspect:guard';
-            
           }
 
         export interface HmrInterceptor {
@@ -79,7 +75,6 @@ declare module 'vona-module-a-aspect' {
           export interface HmrInterceptor {
             get $beanFullName(): 'a-aspect.hmr.interceptor';
             get $onionName(): 'a-aspect:interceptor';
-            
           }
 
         export interface HmrMiddleware {
@@ -90,7 +85,6 @@ declare module 'vona-module-a-aspect' {
           export interface HmrMiddleware {
             get $beanFullName(): 'a-aspect.hmr.middleware';
             get $onionName(): 'a-aspect:middleware';
-            
           }
 
         export interface HmrMiddlewareSystem {
@@ -101,7 +95,6 @@ declare module 'vona-module-a-aspect' {
           export interface HmrMiddlewareSystem {
             get $beanFullName(): 'a-aspect.hmr.middlewareSystem';
             get $onionName(): 'a-aspect:middlewareSystem';
-            
           }
 
         export interface HmrPipe {
@@ -112,8 +105,7 @@ declare module 'vona-module-a-aspect' {
           export interface HmrPipe {
             get $beanFullName(): 'a-aspect.hmr.pipe';
             get $onionName(): 'a-aspect:pipe';
-            
-          } 
+          }
 }
 /** hmr: end */
 /** scope: begin */
@@ -136,11 +128,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     aspect: ScopeModuleAAspect;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

@@ -4,15 +4,15 @@ export * from '../model/passport.js';
 import { IModelOptionsPassport } from '../model/passport.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'home-passport:passport': IModelOptionsPassport;
     }
 
-  
+
 }
 declare module 'zova-module-home-passport' {
-  
+
         export interface ModelPassport {
           /** @internal */
           get scope(): ScopeModuleHomePassport;
@@ -22,7 +22,7 @@ declare module 'zova-module-home-passport' {
           get $beanFullName(): 'home-passport.model.passport';
           get $onionName(): 'home-passport:passport';
           get $onionOptions(): IModelOptionsPassport;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -58,14 +58,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'home-passport': ScopeModuleHomePassport;
   }
-  
+
   export interface IBeanScopeConfig {
     'home-passport': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
-  
+
 /** scope: end */

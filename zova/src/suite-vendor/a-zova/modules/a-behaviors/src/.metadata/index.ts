@@ -4,15 +4,15 @@ export * from '../bean/behavior.focus.js';
 import { IBehaviorOptionsFocus } from '../bean/behavior.focus.js';
 import 'zova-module-a-behavior';
 declare module 'zova-module-a-behavior' {
-  
+
     export interface IBehaviorRecord {
       'a-behaviors:focus': IBehaviorOptionsFocus;
     }
 
-  
+
 }
 declare module 'zova-module-a-behaviors' {
-  
+
         export interface BehaviorFocus {
           /** @internal */
           get scope(): ScopeModuleABehaviors;
@@ -22,7 +22,7 @@ declare module 'zova-module-a-behaviors' {
           get $beanFullName(): 'a-behaviors.behavior.focus';
           get $onionName(): 'a-behaviors:focus';
           get $onionOptions(): IBehaviorOptionsFocus;
-        } 
+        }
 }
 /** behavior: end */
 /** behavior: begin */
@@ -69,12 +69,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-behaviors': ScopeModuleABehaviors;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

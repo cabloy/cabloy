@@ -6,15 +6,15 @@ export * from '../service/operator.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'commerce-siteadmin:operator': never;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-siteadmin' {
-  
+
         export interface ServiceOperator {
           /** @internal */
           get scope(): ScopeModuleCommerceSiteadmin;
@@ -23,8 +23,7 @@ declare module 'vona-module-commerce-siteadmin' {
           export interface ServiceOperator {
             get $beanFullName(): 'commerce-siteadmin.service.operator';
             get $onionName(): 'commerce-siteadmin:operator';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -47,15 +46,15 @@ export * from '../bean/meta.version.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'commerce-siteadmin:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-siteadmin' {
-  
+
         export interface MetaVersion {
           /** @internal */
           get scope(): ScopeModuleCommerceSiteadmin;
@@ -64,8 +63,7 @@ declare module 'vona-module-commerce-siteadmin' {
           export interface MetaVersion {
             get $beanFullName(): 'commerce-siteadmin.meta.version';
             get $onionName(): 'commerce-siteadmin:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** dto: begin */
@@ -73,21 +71,21 @@ export * from '../dto/operatorContext.ts';
 import type { IDtoOptionsOperatorContext } from '../dto/operatorContext.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'commerce-siteadmin:operatorContext': IDtoOptionsOperatorContext;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-siteadmin' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
 import type { DtoOperatorContext } from '../dto/operatorContext.ts';
 declare module 'vona-module-commerce-siteadmin' {
-  
+
     export interface IDtoOptionsOperatorContext {
       fields?: TypeEntityOptionsFields<DtoOperatorContext, IDtoOptionsOperatorContext[TypeSymbolKeyFieldsMore]>;
     }
@@ -98,15 +96,15 @@ export * from '../controller/operator.ts';
 import type { IControllerOptionsOperator } from '../controller/operator.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'commerce-siteadmin:operator': IControllerOptionsOperator;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-siteadmin' {
-  
+
         export interface ControllerOperator {
           /** @internal */
           get scope(): ScopeModuleCommerceSiteadmin;
@@ -116,14 +114,14 @@ declare module 'vona-module-commerce-siteadmin' {
             get $beanFullName(): 'commerce-siteadmin.controller.operator';
             get $onionName(): 'commerce-siteadmin:operator';
             get $onionOptions(): IControllerOptionsOperator;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
 import type { ControllerOperator } from '../controller/operator.ts';
 declare module 'vona-module-commerce-siteadmin' {
-  
+
     export interface IControllerOptionsOperator {
       actions?: TypeControllerOptionsActions<ControllerOperator>;
     }
@@ -140,22 +138,22 @@ import 'vona-module-a-openapi';
       'commerce-siteadmin:operator': never;
     }
   }
-  
+
 /** controller: end */
 /** ssrSite: begin */
 export * from '../bean/ssrSite.commerceAdmin.ts';
 import type { ISsrSiteOptionsCommerceAdmin } from '../bean/ssrSite.commerceAdmin.ts';
 import 'vona-module-a-ssr';
 declare module 'vona-module-a-ssr' {
-  
+
     export interface ISsrSiteRecord {
       'commerce-siteadmin:commerceAdmin': ISsrSiteOptionsCommerceAdmin;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-siteadmin' {
-  
+
         export interface SsrSiteCommerceAdmin {
           /** @internal */
           get scope(): ScopeModuleCommerceSiteadmin;
@@ -165,7 +163,7 @@ declare module 'vona-module-commerce-siteadmin' {
             get $beanFullName(): 'commerce-siteadmin.ssrSite.commerceAdmin';
             get $onionName(): 'commerce-siteadmin:commerceAdmin';
             get $onionOptions(): ISsrSiteOptionsCommerceAdmin;
-          } 
+          }
 }
 /** ssrSite: end */
 /** ssrMenu: begin */
@@ -173,15 +171,15 @@ export * from '../bean/ssrMenu.home.ts';
 import type { ISsrMenuOptionsHome } from '../bean/ssrMenu.home.ts';
 import 'vona-module-a-ssr';
 declare module 'vona-module-a-ssr' {
-  
+
     export interface ISsrMenuRecord {
       'commerce-siteadmin:home': ISsrMenuOptionsHome;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-siteadmin' {
-  
+
         export interface SsrMenuHome {
           /** @internal */
           get scope(): ScopeModuleCommerceSiteadmin;
@@ -191,7 +189,7 @@ declare module 'vona-module-commerce-siteadmin' {
             get $beanFullName(): 'commerce-siteadmin.ssrMenu.home';
             get $onionName(): 'commerce-siteadmin:home';
             get $onionOptions(): ISsrMenuOptionsHome;
-          } 
+          }
 }
 /** ssrMenu: end */
 /** ssrMenuGroup: begin */
@@ -201,16 +199,16 @@ import type { ISsrMenuGroupOptionsCatalog } from '../bean/ssrMenuGroup.catalog.t
 import type { ISsrMenuGroupOptionsInventory } from '../bean/ssrMenuGroup.inventory.ts';
 import 'vona-module-a-ssr';
 declare module 'vona-module-a-ssr' {
-  
+
     export interface ISsrMenuGroupRecord {
       'commerce-siteadmin:catalog': ISsrMenuGroupOptionsCatalog;
 'commerce-siteadmin:inventory': ISsrMenuGroupOptionsInventory;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-siteadmin' {
-  
+
         export interface SsrMenuGroupCatalog {
           /** @internal */
           get scope(): ScopeModuleCommerceSiteadmin;
@@ -231,7 +229,7 @@ declare module 'vona-module-commerce-siteadmin' {
             get $beanFullName(): 'commerce-siteadmin.ssrMenuGroup.inventory';
             get $onionName(): 'commerce-siteadmin:inventory';
             get $onionOptions(): ISsrMenuGroupOptionsInventory;
-          } 
+          }
 }
 /** ssrMenuGroup: end */
 /** locale: begin */
@@ -259,13 +257,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     commerceSiteadmin: ScopeModuleCommerceSiteadmin;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'commerce-siteadmin': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 /** scope: end */

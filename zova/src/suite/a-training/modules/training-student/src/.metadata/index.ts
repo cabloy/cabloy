@@ -4,15 +4,15 @@ export * from '../model/student.js';
 import { IModelOptionsStudent } from '../model/student.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'training-student:student': IModelOptionsStudent;
     }
 
-  
+
 }
 declare module 'zova-module-training-student' {
-  
+
         export interface ModelStudent {
           /** @internal */
           get scope(): ScopeModuleTrainingStudent;
@@ -22,7 +22,7 @@ declare module 'zova-module-training-student' {
           get $beanFullName(): 'training-student.model.student';
           get $onionName(): 'training-student:student';
           get $onionOptions(): IModelOptionsStudent;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -39,11 +39,11 @@ export * from '../api/trainingStudent.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-training-student' {
-  
+
         export interface ApiTrainingStudent {
           /** @internal */
           get scope(): ScopeModuleTrainingStudent;
@@ -52,8 +52,8 @@ declare module 'zova-module-training-student' {
         export interface ApiTrainingStudent {
           get $beanFullName(): 'training-student.api.trainingStudent';
           get $onionName(): 'training-student:trainingStudent';
-          
-        } 
+
+        }
 }
 /** api: end */
 /** api: begin */
@@ -79,11 +79,11 @@ export * from '../apiSchema/trainingStudent.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-training-student' {
-  
+
         export interface ApiSchemaTrainingStudent {
           /** @internal */
           get scope(): ScopeModuleTrainingStudent;
@@ -92,8 +92,8 @@ declare module 'zova-module-training-student' {
         export interface ApiSchemaTrainingStudent {
           get $beanFullName(): 'training-student.apiSchema.trainingStudent';
           get $onionName(): 'training-student:trainingStudent';
-          
-        } 
+
+        }
 }
 /** apiSchema: end */
 /** apiSchema: begin */
@@ -116,15 +116,15 @@ export * from '../component/formFieldLevel/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-training-student' {
-  
+
         export interface ControllerFormFieldLevel {
           /** @internal */
           get scope(): ScopeModuleTrainingStudent;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -162,17 +162,17 @@ import { ITableCellOptionsActionSummary } from '../bean/tableCell.actionSummary.
 import { ITableCellOptionsLevel } from '../bean/tableCell.level.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
-  
+
     export interface ITableCellRecord {
       'training-student:actionDeleteForce': ITableCellOptionsActionDeleteForce;
 'training-student:actionSummary': ITableCellOptionsActionSummary;
 'training-student:level': ITableCellOptionsLevel;
     }
 
-  
+
 }
 declare module 'zova-module-training-student' {
-  
+
         export interface TableCellActionDeleteForce {
           /** @internal */
           get scope(): ScopeModuleTrainingStudent;
@@ -204,7 +204,7 @@ declare module 'zova-module-training-student' {
           get $beanFullName(): 'training-student.tableCell.level';
           get $onionName(): 'training-student:level';
           get $onionOptions(): ITableCellOptionsLevel;
-        } 
+        }
 }
 /** tableCell: end */
 /** tableCell: begin */
@@ -242,14 +242,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'training-student': ScopeModuleTrainingStudent;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'training-student': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `training-student::${K}` {

@@ -9,16 +9,16 @@ import type { IEntityOptionsAuth } from '../entity/auth.ts';
 import type { IEntityOptionsAuthProvider } from '../entity/authProvider.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'a-auth:auth': IEntityOptionsAuth;
 'a-auth:authProvider': IEntityOptionsAuthProvider;
     }
 
-  
+
 }
 declare module 'vona-module-a-auth' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -41,7 +41,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-a-auth' {
-  
+
     export interface IEntityOptionsAuth {
       fields?: TypeEntityOptionsFields<EntityAuth, IEntityOptionsAuth[TypeSymbolKeyFieldsMore]>;
     }
@@ -58,16 +58,16 @@ import type { IModelOptionsAuth } from '../model/auth.ts';
 import type { IModelOptionsAuthProvider } from '../model/authProvider.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'a-auth:auth': IModelOptionsAuth;
 'a-auth:authProvider': IModelOptionsAuthProvider;
     }
 
-  
+
 }
 declare module 'vona-module-a-auth' {
-  
+
         export interface ModelAuth {
           /** @internal */
           get scope(): ScopeModuleAAuth;
@@ -88,7 +88,7 @@ declare module 'vona-module-a-auth' {
             get $beanFullName(): 'a-auth.model.authProvider';
             get $onionName(): 'a-auth:authProvider';
             get $onionOptions(): IModelOptionsAuthProvider;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -123,7 +123,17 @@ declare module 'vona-module-a-auth' {
       [SymbolKeyEntityMeta]: EntityAuthMeta;
       [SymbolKeyModelOptions]: IModelOptionsAuth;
       get<T extends IModelGetOptions<EntityAuth,ModelAuth>>(where: TypeModelWhere<EntityAuth>, options?: T): Promise<TypeModelRelationResult<EntityAuth, ModelAuth, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityAuth,ModelAuth>>(where: TypeModelWhere<EntityAuth>, options?: T): Promise<TypeModelRelationResult<EntityAuth, ModelAuth, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityAuth,ModelAuth>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityAuth, ModelAuth, T> | undefined>;
       mget<T extends IModelGetOptions<EntityAuth,ModelAuth>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityAuth, ModelAuth, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityAuth,ModelAuth,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityAuth, ModelAuth, T>>;
@@ -150,7 +160,17 @@ export interface ModelAuthProvider {
       [SymbolKeyEntityMeta]: EntityAuthProviderMeta;
       [SymbolKeyModelOptions]: IModelOptionsAuthProvider;
       get<T extends IModelGetOptions<EntityAuthProvider,ModelAuthProvider>>(where: TypeModelWhere<EntityAuthProvider>, options?: T): Promise<TypeModelRelationResult<EntityAuthProvider, ModelAuthProvider, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityAuthProvider,ModelAuthProvider>>(where: TypeModelWhere<EntityAuthProvider>, options?: T): Promise<TypeModelRelationResult<EntityAuthProvider, ModelAuthProvider, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityAuthProvider,ModelAuthProvider>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityAuthProvider, ModelAuthProvider, T> | undefined>;
       mget<T extends IModelGetOptions<EntityAuthProvider,ModelAuthProvider>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityAuthProvider, ModelAuthProvider, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityAuthProvider,ModelAuthProvider,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityAuthProvider, ModelAuthProvider, T>>;
@@ -188,11 +208,11 @@ export * from '../bean/bean.authProvider.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-auth' {
-  
+
         export interface BeanAuth {
           /** @internal */
           get scope(): ScopeModuleAAuth;
@@ -201,7 +221,7 @@ declare module 'vona-module-a-auth' {
         export interface BeanAuthProvider {
           /** @internal */
           get scope(): ScopeModuleAAuth;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -220,15 +240,15 @@ export * from '../service/auth.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-auth:auth': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-auth' {
-  
+
         export interface ServiceAuth {
           /** @internal */
           get scope(): ScopeModuleAAuth;
@@ -237,8 +257,7 @@ declare module 'vona-module-a-auth' {
           export interface ServiceAuth {
             get $beanFullName(): 'a-auth.service.auth';
             get $onionName(): 'a-auth:auth';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -262,11 +281,11 @@ export * from '../bean/event.issuePassport.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-auth' {
-  
+
         export interface EventAccountMigration {
           /** @internal */
           get scope(): ScopeModuleAAuth;
@@ -275,7 +294,6 @@ declare module 'vona-module-a-auth' {
           export interface EventAccountMigration {
             get $beanFullName(): 'a-auth.event.accountMigration';
             get $onionName(): 'a-auth:accountMigration';
-            
           }
 
         export interface EventIssuePassport {
@@ -286,8 +304,7 @@ declare module 'vona-module-a-auth' {
           export interface EventIssuePassport {
             get $beanFullName(): 'a-auth.event.issuePassport';
             get $onionName(): 'a-auth:issuePassport';
-            
-          } 
+          }
 }
 /** event: end */
 /** event: begin */
@@ -301,7 +318,7 @@ export interface IModuleEvent {
 /** event: begin */
 import type { TypeEventAccountMigrationData, TypeEventAccountMigrationResult } from '../bean/event.accountMigration.ts';
 import type { TypeEventIssuePassportData, TypeEventIssuePassportResult } from '../bean/event.issuePassport.ts';
-import type { EventOn } from 'vona-module-a-event'; 
+import type { EventOn } from 'vona-module-a-event';
 declare module 'vona-module-a-event' {
   export interface IEventRecord {
     'a-auth:accountMigration': EventOn<TypeEventAccountMigrationData, TypeEventAccountMigrationResult>;
@@ -316,17 +333,17 @@ export * from '../bean/meta.version.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'a-auth:printTip': never;
 'a-auth:redlock': never;
 'a-auth:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-auth' {
-  
+
         export interface MetaPrintTip {
           /** @internal */
           get scope(): ScopeModuleAAuth;
@@ -335,7 +352,6 @@ declare module 'vona-module-a-auth' {
           export interface MetaPrintTip {
             get $beanFullName(): 'a-auth.meta.printTip';
             get $onionName(): 'a-auth:printTip';
-            
           }
 
         export interface MetaRedlock {
@@ -346,7 +362,6 @@ declare module 'vona-module-a-auth' {
           export interface MetaRedlock {
             get $beanFullName(): 'a-auth.meta.redlock';
             get $onionName(): 'a-auth:redlock';
-            
           }
 
         export interface MetaVersion {
@@ -357,8 +372,7 @@ declare module 'vona-module-a-auth' {
           export interface MetaVersion {
             get $beanFullName(): 'a-auth.meta.version';
             get $onionName(): 'a-auth:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** meta redlock: begin */
@@ -369,21 +383,21 @@ export * from '../dto/auth.ts';
 import type { IDtoOptionsAuth } from '../dto/auth.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'a-auth:auth': IDtoOptionsAuth;
     }
 
-  
+
 }
 declare module 'vona-module-a-auth' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
 import type { DtoAuth } from '../dto/auth.ts';
 declare module 'vona-module-a-auth' {
-  
+
     export interface IDtoOptionsAuth {
       fields?: TypeEntityOptionsFields<DtoAuth, IDtoOptionsAuth[TypeSymbolKeyFieldsMore]>;
     }
@@ -396,16 +410,16 @@ import type { IControllerOptionsMock } from '../controller/mock.ts';
 import type { IControllerOptionsPassport } from '../controller/passport.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'a-auth:mock': IControllerOptionsMock;
 'a-auth:passport': IControllerOptionsPassport;
     }
 
-  
+
 }
 declare module 'vona-module-a-auth' {
-  
+
         export interface ControllerMock {
           /** @internal */
           get scope(): ScopeModuleAAuth;
@@ -426,7 +440,7 @@ declare module 'vona-module-a-auth' {
             get $beanFullName(): 'a-auth.controller.passport';
             get $onionName(): 'a-auth:passport';
             get $onionOptions(): IControllerOptionsPassport;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
@@ -435,7 +449,7 @@ import type { ControllerMock } from '../controller/mock.ts';
 // @ts-ignore ignore
 import type { ControllerPassport } from '../controller/passport.ts';
 declare module 'vona-module-a-auth' {
-  
+
     export interface IControllerOptionsMock {
       actions?: TypeControllerOptionsActions<ControllerMock>;
     }
@@ -495,7 +509,7 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     auth: ScopeModuleAAuth;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-auth': ReturnType<typeof config>;
   }

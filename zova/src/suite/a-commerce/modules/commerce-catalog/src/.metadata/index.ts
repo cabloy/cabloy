@@ -4,15 +4,15 @@ export * from '../model/catalogue.js';
 import { IModelOptionsCatalogue } from '../model/catalogue.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'commerce-catalog:catalogue': IModelOptionsCatalogue;
     }
 
-  
+
 }
 declare module 'zova-module-commerce-catalog' {
-  
+
         export interface ModelCatalogue {
           /** @internal */
           get scope(): ScopeModuleCommerceCatalog;
@@ -22,7 +22,7 @@ declare module 'zova-module-commerce-catalog' {
           get $beanFullName(): 'commerce-catalog.model.catalogue';
           get $onionName(): 'commerce-catalog:catalogue';
           get $onionOptions(): IModelOptionsCatalogue;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -39,11 +39,11 @@ export * from '../api/commerceCatalogProduct.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-commerce-catalog' {
-  
+
         export interface ApiCommerceCatalogProduct {
           /** @internal */
           get scope(): ScopeModuleCommerceCatalog;
@@ -52,8 +52,8 @@ declare module 'zova-module-commerce-catalog' {
         export interface ApiCommerceCatalogProduct {
           get $beanFullName(): 'commerce-catalog.api.commerceCatalogProduct';
           get $onionName(): 'commerce-catalog:commerceCatalogProduct';
-          
-        } 
+
+        }
 }
 /** api: end */
 /** api: begin */
@@ -79,11 +79,11 @@ export * from '../apiSchema/commerceCatalogProduct.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-commerce-catalog' {
-  
+
         export interface ApiSchemaCommerceCatalogProduct {
           /** @internal */
           get scope(): ScopeModuleCommerceCatalog;
@@ -92,8 +92,8 @@ declare module 'zova-module-commerce-catalog' {
         export interface ApiSchemaCommerceCatalogProduct {
           get $beanFullName(): 'commerce-catalog.apiSchema.commerceCatalogProduct';
           get $onionName(): 'commerce-catalog:commerceCatalogProduct';
-          
-        } 
+
+        }
 }
 /** apiSchema: end */
 /** apiSchema: begin */
@@ -117,11 +117,11 @@ export * from '../page/product/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-commerce-catalog' {
-  
+
         export interface ControllerPageCatalogue {
           /** @internal */
           get scope(): ScopeModuleCommerceCatalog;
@@ -130,7 +130,7 @@ declare module 'zova-module-commerce-catalog' {
         export interface ControllerPageProduct {
           /** @internal */
           get scope(): ScopeModuleCommerceCatalog;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -209,14 +209,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'commerce-catalog': ScopeModuleCommerceCatalog;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'commerce-catalog': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `commerce-catalog::${K}` {

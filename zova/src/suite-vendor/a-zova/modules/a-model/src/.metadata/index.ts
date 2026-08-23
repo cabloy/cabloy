@@ -4,11 +4,11 @@ export * from '../bean/bean.modelBase.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-model' {
-   
+
 }
 /** bean: end */
 /** bean: begin */
@@ -25,15 +25,15 @@ export * from '../service/storage.js';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-model:storage': never;
     }
 
-  
+
 }
 declare module 'zova-module-a-model' {
-  
+
         export interface ServiceStorage {
           /** @internal */
           get scope(): ScopeModuleAModel;
@@ -42,8 +42,8 @@ declare module 'zova-module-a-model' {
         export interface ServiceStorage {
           get $beanFullName(): 'a-model.service.storage';
           get $onionName(): 'a-model:storage';
-          
-        } 
+
+        }
 }
 /** service: end */
 /** service: begin */
@@ -79,14 +79,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-model': ScopeModuleAModel;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-model': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
-  
+
 /** scope: end */

@@ -4,15 +4,15 @@ export * from '../service/imageCloudflare.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'image-cloudflare:imageCloudflare': never;
     }
 
-  
+
 }
 declare module 'vona-module-image-cloudflare' {
-  
+
         export interface ServiceImageCloudflare {
           /** @internal */
           get scope(): ScopeModuleImageCloudflare;
@@ -21,8 +21,7 @@ declare module 'vona-module-image-cloudflare' {
           export interface ServiceImageCloudflare {
             get $beanFullName(): 'image-cloudflare.service.imageCloudflare';
             get $onionName(): 'image-cloudflare:imageCloudflare';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -45,15 +44,15 @@ export * from '../bean/imageProvider.cloudflare.ts';
 import type { IImageProviderOptionsCloudflare } from '../bean/imageProvider.cloudflare.ts';
 import 'vona-module-a-image';
 declare module 'vona-module-a-image' {
-  
+
     export interface IImageProviderRecord {
       'image-cloudflare:cloudflare': IImageProviderOptionsCloudflare;
     }
 
-  
+
 }
 declare module 'vona-module-image-cloudflare' {
-  
+
         export interface ImageProviderCloudflare {
           /** @internal */
           get scope(): ScopeModuleImageCloudflare;
@@ -63,7 +62,7 @@ declare module 'vona-module-image-cloudflare' {
             get $beanFullName(): 'image-cloudflare.imageProvider.cloudflare';
             get $onionName(): 'image-cloudflare:cloudflare';
             get $onionOptions(): IImageProviderOptionsCloudflare;
-          } 
+          }
 }
 /** imageProvider: end */
 /** imageProvider: begin */
@@ -94,11 +93,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     imageCloudflare: ScopeModuleImageCloudflare;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

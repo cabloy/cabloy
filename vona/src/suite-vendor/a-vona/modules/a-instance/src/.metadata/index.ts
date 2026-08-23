@@ -9,16 +9,16 @@ import type { IMiddlewareSystemOptionsApp } from '../bean/middlewareSystem.app.t
 import type { IMiddlewareSystemOptionsInstance } from '../bean/middlewareSystem.instance.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
+
     export interface IMiddlewareSystemRecord {
       'a-instance:app': IMiddlewareSystemOptionsApp;
 'a-instance:instance': IMiddlewareSystemOptionsInstance;
     }
 
-  
+
 }
 declare module 'vona-module-a-instance' {
-  
+
         export interface MiddlewareSystemApp {
           /** @internal */
           get scope(): ScopeModuleAInstance;
@@ -39,7 +39,7 @@ declare module 'vona-module-a-instance' {
             get $beanFullName(): 'a-instance.middlewareSystem.instance';
             get $onionName(): 'a-instance:instance';
             get $onionOptions(): IMiddlewareSystemOptionsInstance;
-          } 
+          }
 }
 /** middlewareSystem: end */
 /** entity: begin */
@@ -47,15 +47,15 @@ export * from '../entity/instance.ts';
 import type { IEntityOptionsInstance } from '../entity/instance.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'a-instance:instance': IEntityOptionsInstance;
     }
 
-  
+
 }
 declare module 'vona-module-a-instance' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -73,7 +73,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-a-instance' {
-  
+
     export interface IEntityOptionsInstance {
       fields?: TypeEntityOptionsFields<EntityInstance, IEntityOptionsInstance[TypeSymbolKeyFieldsMore]>;
     }
@@ -84,15 +84,15 @@ export * from '../model/instance.ts';
 import type { IModelOptionsInstance } from '../model/instance.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'a-instance:instance': IModelOptionsInstance;
     }
 
-  
+
 }
 declare module 'vona-module-a-instance' {
-  
+
         export interface ModelInstance {
           /** @internal */
           get scope(): ScopeModuleAInstance;
@@ -102,7 +102,7 @@ declare module 'vona-module-a-instance' {
             get $beanFullName(): 'a-instance.model.instance';
             get $onionName(): 'a-instance:instance';
             get $onionOptions(): IModelOptionsInstance;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -124,13 +124,23 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-a-instance' {
-  
+
   export interface ModelInstance {
       [SymbolKeyEntity]: EntityInstance;
       [SymbolKeyEntityMeta]: EntityInstanceMeta;
       [SymbolKeyModelOptions]: IModelOptionsInstance;
       get<T extends IModelGetOptions<EntityInstance,ModelInstance>>(where: TypeModelWhere<EntityInstance>, options?: T): Promise<TypeModelRelationResult<EntityInstance, ModelInstance, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityInstance,ModelInstance>>(where: TypeModelWhere<EntityInstance>, options?: T): Promise<TypeModelRelationResult<EntityInstance, ModelInstance, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityInstance,ModelInstance>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityInstance, ModelInstance, T> | undefined>;
       mget<T extends IModelGetOptions<EntityInstance,ModelInstance>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityInstance, ModelInstance, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityInstance,ModelInstance,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityInstance, ModelInstance, T>>;
@@ -170,15 +180,15 @@ export * from '../bean/bean.instance.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-instance' {
-  
+
         export interface BeanInstance {
           /** @internal */
           get scope(): ScopeModuleAInstance;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -195,15 +205,15 @@ export * from '../service/instance.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-instance:instance': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-instance' {
-  
+
         export interface ServiceInstance {
           /** @internal */
           get scope(): ScopeModuleAInstance;
@@ -212,8 +222,7 @@ declare module 'vona-module-a-instance' {
           export interface ServiceInstance {
             get $beanFullName(): 'a-instance.service.instance';
             get $onionName(): 'a-instance:instance';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -237,16 +246,16 @@ export * from '../bean/broadcast.resetCache.ts';
 
 import { type IDecoratorBroadcastOptions } from 'vona-module-a-broadcast';
 declare module 'vona-module-a-broadcast' {
-  
+
     export interface IBroadcastRecord {
       'a-instance:reload': IDecoratorBroadcastOptions;
 'a-instance:resetCache': IDecoratorBroadcastOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-instance' {
-  
+
         export interface BroadcastReload {
           /** @internal */
           get scope(): ScopeModuleAInstance;
@@ -267,7 +276,7 @@ declare module 'vona-module-a-instance' {
             get $beanFullName(): 'a-instance.broadcast.resetCache';
             get $onionName(): 'a-instance:resetCache';
             get $onionOptions(): IDecoratorBroadcastOptions;
-          } 
+          }
 }
 /** broadcast: end */
 /** broadcast: begin */
@@ -285,17 +294,17 @@ export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'a-instance:index': IMetaOptionsIndex;
 'a-instance:redlock': never;
 'a-instance:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-instance' {
-  
+
         export interface MetaIndex {
           /** @internal */
           get scope(): ScopeModuleAInstance;
@@ -315,7 +324,6 @@ declare module 'vona-module-a-instance' {
           export interface MetaRedlock {
             get $beanFullName(): 'a-instance.meta.redlock';
             get $onionName(): 'a-instance:redlock';
-            
           }
 
         export interface MetaVersion {
@@ -326,8 +334,7 @@ declare module 'vona-module-a-instance' {
           export interface MetaVersion {
             get $beanFullName(): 'a-instance.meta.version';
             get $onionName(): 'a-instance:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** meta redlock: begin */
@@ -365,13 +372,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     instance: ScopeModuleAInstance;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'a-instance': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 /** scope: end */

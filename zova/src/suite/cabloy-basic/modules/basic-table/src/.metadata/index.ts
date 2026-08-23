@@ -5,11 +5,11 @@ export * from '../component/table/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-table' {
-  
+
         export interface ControllerActionCreate {
           /** @internal */
           get scope(): ScopeModuleBasicTable;
@@ -18,7 +18,7 @@ declare module 'zova-module-basic-table' {
         export interface ControllerTable {
           /** @internal */
           get scope(): ScopeModuleBasicTable;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -59,15 +59,15 @@ export * from '../component/table/render.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-table' {
-  
+
         export interface RenderTable {
           /** @internal */
           get scope(): ScopeModuleBasicTable;
-        } 
+        }
 }
 /** render: end */
 /** render: begin */
@@ -90,7 +90,7 @@ import { ITableCellOptionsActionUpdate } from '../bean/tableCell.actionUpdate.js
 import { ITableCellOptionsActionView } from '../bean/tableCell.actionView.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
-  
+
     export interface ITableCellRecord {
       'basic-table:actionDelete': ITableCellOptionsActionDelete;
 'basic-table:actionOperationsRow': ITableCellOptionsActionOperationsRow;
@@ -98,10 +98,10 @@ declare module 'zova-module-a-table' {
 'basic-table:actionView': ITableCellOptionsActionView;
     }
 
-  
+
 }
 declare module 'zova-module-basic-table' {
-  
+
         export interface TableCellActionDelete {
           /** @internal */
           get scope(): ScopeModuleBasicTable;
@@ -144,7 +144,7 @@ declare module 'zova-module-basic-table' {
           get $beanFullName(): 'basic-table.tableCell.actionView';
           get $onionName(): 'basic-table:actionView';
           get $onionOptions(): ITableCellOptionsActionView;
-        } 
+        }
 }
 /** tableCell: end */
 /** tableCell: begin */
@@ -182,17 +182,17 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-table': ScopeModuleBasicTable;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'basic-table': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `basic-table::${K}` {
   return `basic-table::${key}`;
-}  
+}
 /** scope: end */

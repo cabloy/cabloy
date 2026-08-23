@@ -4,15 +4,15 @@ export * from '../model/paymentSession.js';
 import { IModelOptionsPaymentSession } from '../model/paymentSession.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'a-pay:paymentSession': IModelOptionsPaymentSession;
     }
 
-  
+
 }
 declare module 'zova-module-a-pay' {
-  
+
         export interface ModelPaymentSession {
           /** @internal */
           get scope(): ScopeModuleAPay;
@@ -22,7 +22,7 @@ declare module 'zova-module-a-pay' {
           get $beanFullName(): 'a-pay.model.paymentSession';
           get $onionName(): 'a-pay:paymentSession';
           get $onionOptions(): IModelOptionsPaymentSession;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -39,11 +39,11 @@ export * from '../api/payPaymentSession.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-pay' {
-  
+
         export interface ApiPayPaymentSession {
           /** @internal */
           get scope(): ScopeModuleAPay;
@@ -52,8 +52,8 @@ declare module 'zova-module-a-pay' {
         export interface ApiPayPaymentSession {
           get $beanFullName(): 'a-pay.api.payPaymentSession';
           get $onionName(): 'a-pay:payPaymentSession';
-          
-        } 
+
+        }
 }
 /** api: end */
 /** api: begin */
@@ -79,11 +79,11 @@ export * from '../apiSchema/payPaymentSession.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-pay' {
-  
+
         export interface ApiSchemaPayPaymentSession {
           /** @internal */
           get scope(): ScopeModuleAPay;
@@ -92,8 +92,8 @@ declare module 'zova-module-a-pay' {
         export interface ApiSchemaPayPaymentSession {
           get $beanFullName(): 'a-pay.apiSchema.payPaymentSession';
           get $onionName(): 'a-pay:payPaymentSession';
-          
-        } 
+
+        }
 }
 /** apiSchema: end */
 /** apiSchema: begin */
@@ -116,15 +116,15 @@ export * from '../service/paymentCoordinator.js';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-pay:paymentCoordinator': never;
     }
 
-  
+
 }
 declare module 'zova-module-a-pay' {
-  
+
         export interface ServicePaymentCoordinator {
           /** @internal */
           get scope(): ScopeModuleAPay;
@@ -133,8 +133,8 @@ declare module 'zova-module-a-pay' {
         export interface ServicePaymentCoordinator {
           get $beanFullName(): 'a-pay.service.paymentCoordinator';
           get $onionName(): 'a-pay:paymentCoordinator';
-          
-        } 
+
+        }
 }
 /** service: end */
 /** service: begin */
@@ -151,15 +151,15 @@ export * from '../component/paymentNextAction/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-pay' {
-  
+
         export interface ControllerPaymentNextAction {
           /** @internal */
           get scope(): ScopeModuleAPay;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -206,12 +206,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-pay': ScopeModuleAPay;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 
 /** scope: end */

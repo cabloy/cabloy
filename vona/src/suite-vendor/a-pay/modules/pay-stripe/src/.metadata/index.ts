@@ -4,15 +4,15 @@ export * from '../bean/payProvider.stripe.ts';
 import type { IPayProviderOptionsStripe } from '../bean/payProvider.stripe.ts';
 import 'vona-module-a-pay';
 declare module 'vona-module-a-pay' {
-  
+
     export interface IPayProviderRecord {
       'pay-stripe:stripe': IPayProviderOptionsStripe;
     }
 
-  
+
 }
 declare module 'vona-module-pay-stripe' {
-  
+
         export interface PayProviderStripe {
           /** @internal */
           get scope(): ScopeModulePayStripe;
@@ -22,7 +22,7 @@ declare module 'vona-module-pay-stripe' {
             get $beanFullName(): 'pay-stripe.payProvider.stripe';
             get $onionName(): 'pay-stripe:stripe';
             get $onionOptions(): IPayProviderOptionsStripe;
-          } 
+          }
 }
 /** payProvider: end */
 /** payProvider: begin */
@@ -52,11 +52,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     payStripe: ScopeModulePayStripe;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

@@ -256,6 +256,9 @@ importers:
       vona-module-a-ratelimit:
         specifier: workspace:^
         version: link:src/suite-vendor/a-vona/modules/a-ratelimit
+      vona-module-a-rbac:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-rbac
       vona-module-a-redis:
         specifier: workspace:^
         version: link:src/suite-vendor/a-vona/modules/a-redis
@@ -1699,6 +1702,9 @@ importers:
       vona-module-a-markdown:
         specifier: ^5.0.1
         version: link:modules/a-markdown
+      vona-module-a-rbac:
+        specifier: ^5.0.0
+        version: link:modules/a-rbac
       vona-module-a-socket:
         specifier: workspace:^
         version: link:modules/a-socket
@@ -1772,6 +1778,31 @@ importers:
       '@types/sanitize-html':
         specifier: ^2.16.1
         version: 2.16.1
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-cabloy/modules/a-rbac:
+    dependencies:
+      vona-module-a-aspect:
+        specifier: workspace:^
+        version: link:../../../a-vona/modules/a-aspect
+      vona-module-a-openapi:
+        specifier: workspace:^
+        version: link:../../../a-vona/modules/a-openapi
+      vona-module-a-orm:
+        specifier: workspace:^
+        version: link:../../../a-vona/modules/a-orm
+      vona-module-a-user:
+        specifier: workspace:^
+        version: link:../../../a-vona/modules/a-user
+      vona-module-a-web:
+        specifier: workspace:^
+        version: link:../../../a-vona/modules/a-web
+    devDependencies:
       clean-package:
         specifier: ^2.2.0
         version: 2.2.0
@@ -2862,6 +2893,10 @@ importers:
         version: 6.1.3
 
   src/suite-vendor/a-vona/modules/a-permission:
+    dependencies:
+      vona-module-a-rbac:
+        specifier: workspace:^
+        version: link:../../../a-cabloy/modules/a-rbac
     devDependencies:
       clean-package:
         specifier: ^2.2.0

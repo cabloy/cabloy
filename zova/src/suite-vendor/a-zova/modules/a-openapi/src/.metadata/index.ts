@@ -4,15 +4,15 @@ export * from '../model/sdk.js';
 import { IModelOptionsSdk } from '../model/sdk.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'a-openapi:sdk': IModelOptionsSdk;
     }
 
-  
+
 }
 declare module 'zova-module-a-openapi' {
-  
+
         export interface ModelSdk {
           /** @internal */
           get scope(): ScopeModuleAOpenapi;
@@ -22,7 +22,7 @@ declare module 'zova-module-a-openapi' {
           get $beanFullName(): 'a-openapi.model.sdk';
           get $onionName(): 'a-openapi:sdk';
           get $onionOptions(): IModelOptionsSdk;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -39,11 +39,11 @@ export * from '../bean/sys.sdk.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-openapi' {
-  
+
         export interface SysSdk {
           /** @internal */
           get scope(): ScopeModuleAOpenapi;
@@ -52,8 +52,8 @@ declare module 'zova-module-a-openapi' {
         export interface SysSdk {
           get $beanFullName(): 'a-openapi.sys.sdk';
           get $onionName(): 'a-openapi:sdk';
-          
-        } 
+
+        }
 }
 /** sys: end */
 /** sys: begin */
@@ -89,14 +89,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-openapi': ScopeModuleAOpenapi;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-openapi': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
-  
+
 /** scope: end */

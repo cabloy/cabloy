@@ -4,15 +4,15 @@ export * from '../bean/payProvider.paypal.ts';
 import type { IPayProviderOptionsPaypal } from '../bean/payProvider.paypal.ts';
 import 'vona-module-a-pay';
 declare module 'vona-module-a-pay' {
-  
+
     export interface IPayProviderRecord {
       'pay-paypal:paypal': IPayProviderOptionsPaypal;
     }
 
-  
+
 }
 declare module 'vona-module-pay-paypal' {
-  
+
         export interface PayProviderPaypal {
           /** @internal */
           get scope(): ScopeModulePayPaypal;
@@ -22,7 +22,7 @@ declare module 'vona-module-pay-paypal' {
             get $beanFullName(): 'pay-paypal.payProvider.paypal';
             get $onionName(): 'pay-paypal:paypal';
             get $onionOptions(): IPayProviderOptionsPaypal;
-          } 
+          }
 }
 /** payProvider: end */
 /** payProvider: begin */
@@ -52,11 +52,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     payPaypal: ScopeModulePayPaypal;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

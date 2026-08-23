@@ -4,15 +4,15 @@ export * from '../model/resource.js';
 import { IModelOptionsResource } from '../model/resource.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'rest-resource:resource': IModelOptionsResource;
     }
 
-  
+
 }
 declare module 'zova-module-rest-resource' {
-  
+
         export interface ModelResource {
           /** @internal */
           get scope(): ScopeModuleRestResource;
@@ -22,7 +22,7 @@ declare module 'zova-module-rest-resource' {
           get $beanFullName(): 'rest-resource.model.resource';
           get $onionName(): 'rest-resource:resource';
           get $onionOptions(): IModelOptionsResource;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -41,11 +41,11 @@ export * from '../page/resource/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-rest-resource' {
-  
+
         export interface ControllerPageEntry {
           /** @internal */
           get scope(): ScopeModuleRestResource;
@@ -54,7 +54,7 @@ declare module 'zova-module-rest-resource' {
         export interface ControllerPageResource {
           /** @internal */
           get scope(): ScopeModuleRestResource;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -98,15 +98,15 @@ export const pagePathSchemas = {
 export const pageNameSchemas = {
 'rest-resource:entry': {
           params: NSControllerPageEntry.paramsSchema,
-          
+
         },
 'rest-resource:entryCreate': {
           params: NSControllerPageEntryCreate.paramsSchema,
-          
+
         },
 'rest-resource:resource': {
           params: NSControllerPageResource.paramsSchema,
-          
+
         },
 };
 declare module 'zova-module-rest-resource' {
@@ -138,12 +138,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'rest-resource': ScopeModuleRestResource;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 
 /** scope: end */

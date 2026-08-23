@@ -6,11 +6,11 @@ export * from '../bean/bean.behaviorsHolder.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-behavior' {
-  
+
         export interface BeanBehavior {
           /** @internal */
           get scope(): ScopeModuleABehavior;
@@ -19,7 +19,7 @@ declare module 'zova-module-a-behavior' {
         export interface BeanBehavior {
           get $beanFullName(): 'a-behavior.bean.behavior';
           get $onionName(): 'a-behavior:behavior';
-          
+
         }
 
         export interface BeanBehaviorsHolder {
@@ -30,8 +30,8 @@ declare module 'zova-module-a-behavior' {
         export interface BeanBehaviorsHolder {
           get $beanFullName(): 'a-behavior.bean.behaviorsHolder';
           get $onionName(): 'a-behavior:behaviorsHolder';
-          
-        } 
+
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -52,15 +52,15 @@ export * from '../service/composer.js';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-behavior:composer': never;
     }
 
-  
+
 }
 declare module 'zova-module-a-behavior' {
-  
+
         export interface ServiceComposer {
           /** @internal */
           get scope(): ScopeModuleABehavior;
@@ -69,8 +69,8 @@ declare module 'zova-module-a-behavior' {
         export interface ServiceComposer {
           get $beanFullName(): 'a-behavior.service.composer';
           get $onionName(): 'a-behavior:composer';
-          
-        } 
+
+        }
 }
 /** service: end */
 /** service: begin */
@@ -87,15 +87,15 @@ export * from '../component/behavior/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-behavior' {
-  
+
         export interface ControllerBehavior {
           /** @internal */
           get scope(): ScopeModuleABehavior;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -129,11 +129,11 @@ export * from '../bean/behavior.root_.js';
 
 import 'zova-module-a-behavior';
 declare module 'zova-module-a-behavior' {
-  
-  
+
+
 }
 declare module 'zova-module-a-behavior' {
-   
+
 }
 /** behavior: end */
 /** behaviors: begin */
@@ -142,7 +142,7 @@ import 'vue/jsx-runtime';
 
 declare module 'vue' {
   export interface InputHTMLAttributes {
-    
+
   }
 }
 
@@ -150,7 +150,7 @@ declare module 'vue/jsx-runtime' {
   namespace JSX {
     // need define class/style in IntrinsicAttributes
     export interface IntrinsicAttributes {
-      
+
     }
   }
 }
@@ -171,12 +171,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-behavior': ScopeModuleABehavior;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

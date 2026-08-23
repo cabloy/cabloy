@@ -4,15 +4,15 @@ export * from '../service/ssrHandler.js';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-ssrserver:ssrHandler': never;
     }
 
-  
+
 }
 declare module 'zova-module-a-ssrserver' {
-  
+
         export interface ServiceSsrHandler {
           /** @internal */
           get scope(): ScopeModuleASsrserver;
@@ -21,8 +21,8 @@ declare module 'zova-module-a-ssrserver' {
         export interface ServiceSsrHandler {
           get $beanFullName(): 'a-ssrserver.service.ssrHandler';
           get $onionName(): 'a-ssrserver:ssrHandler';
-          
-        } 
+
+        }
 }
 /** service: end */
 /** service: begin */
@@ -53,12 +53,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-ssrserver': ScopeModuleASsrserver;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

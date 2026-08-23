@@ -4,15 +4,15 @@ export * from '../component/formFieldResourcePicker/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-resource' {
-  
+
         export interface ControllerFormFieldResourcePicker {
           /** @internal */
           get scope(): ScopeModuleBasicResource;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -46,15 +46,15 @@ export * from '../bean/tableCell.resourcePicker.jsx';
 import { ITableCellOptionsResourcePicker } from '../bean/tableCell.resourcePicker.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
-  
+
     export interface ITableCellRecord {
       'basic-resource:resourcePicker': ITableCellOptionsResourcePicker;
     }
 
-  
+
 }
 declare module 'zova-module-basic-resource' {
-  
+
         export interface TableCellResourcePicker {
           /** @internal */
           get scope(): ScopeModuleBasicResource;
@@ -64,7 +64,7 @@ declare module 'zova-module-basic-resource' {
           get $beanFullName(): 'basic-resource.tableCell.resourcePicker';
           get $onionName(): 'basic-resource:resourcePicker';
           get $onionOptions(): ITableCellOptionsResourcePicker;
-        } 
+        }
 }
 /** tableCell: end */
 /** tableCell: begin */
@@ -92,12 +92,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-resource': ScopeModuleBasicResource;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
-  
+
 /** scope: end */

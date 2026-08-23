@@ -4,15 +4,15 @@ export * from '../bean/middlewareSystem.httpLog.ts';
 import type { IMiddlewareSystemOptionsHttpLog } from '../bean/middlewareSystem.httpLog.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
+
     export interface IMiddlewareSystemRecord {
       'a-logger:httpLog': IMiddlewareSystemOptionsHttpLog;
     }
 
-  
+
 }
 declare module 'vona-module-a-logger' {
-  
+
         export interface MiddlewareSystemHttpLog {
           /** @internal */
           get scope(): ScopeModuleALogger;
@@ -22,7 +22,7 @@ declare module 'vona-module-a-logger' {
             get $beanFullName(): 'a-logger.middlewareSystem.httpLog';
             get $onionName(): 'a-logger:httpLog';
             get $onionOptions(): IMiddlewareSystemOptionsHttpLog;
-          } 
+          }
 }
 /** middlewareSystem: end */
 /** aopMethod: begin */
@@ -30,15 +30,15 @@ export * from '../bean/aopMethod.log.ts';
 import type { IAopMethodOptionsLog } from '../bean/aopMethod.log.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
+
     export interface IAopMethodRecord {
       'a-logger:log': IAopMethodOptionsLog;
     }
 
-  
+
 }
 declare module 'vona-module-a-logger' {
-  
+
         export interface AopMethodLog {
           /** @internal */
           get scope(): ScopeModuleALogger;
@@ -48,7 +48,7 @@ declare module 'vona-module-a-logger' {
             get $beanFullName(): 'a-logger.aopMethod.log';
             get $onionName(): 'a-logger:log';
             get $onionOptions(): IAopMethodOptionsLog;
-          } 
+          }
 }
 /** aopMethod: end */
 /** bean: begin */
@@ -56,15 +56,15 @@ export * from '../bean/bean.logger.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-logger' {
-  
+
         export interface BeanLogger {
           /** @internal */
           get scope(): ScopeModuleALogger;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -82,16 +82,16 @@ export * from '../bean/broadcast.setFilterLevel.ts';
 
 import { type IDecoratorBroadcastOptions } from 'vona-module-a-broadcast';
 declare module 'vona-module-a-broadcast' {
-  
+
     export interface IBroadcastRecord {
       'a-logger:setFilterChild': IDecoratorBroadcastOptions;
 'a-logger:setFilterLevel': IDecoratorBroadcastOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-logger' {
-  
+
         export interface BroadcastSetFilterChild {
           /** @internal */
           get scope(): ScopeModuleALogger;
@@ -112,7 +112,7 @@ declare module 'vona-module-a-logger' {
             get $beanFullName(): 'a-logger.broadcast.setFilterLevel';
             get $onionName(): 'a-logger:setFilterLevel';
             get $onionOptions(): IDecoratorBroadcastOptions;
-          } 
+          }
 }
 /** broadcast: end */
 /** broadcast: begin */
@@ -147,11 +147,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     logger: ScopeModuleALogger;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

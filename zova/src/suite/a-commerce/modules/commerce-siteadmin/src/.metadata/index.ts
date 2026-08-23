@@ -4,15 +4,15 @@ export * from '../model/operator.js';
 import { IModelOptionsOperator } from '../model/operator.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'commerce-siteadmin:operator': IModelOptionsOperator;
     }
 
-  
+
 }
 declare module 'zova-module-commerce-siteadmin' {
-  
+
         export interface ModelOperator {
           /** @internal */
           get scope(): ScopeModuleCommerceSiteadmin;
@@ -22,7 +22,7 @@ declare module 'zova-module-commerce-siteadmin' {
           get $beanFullName(): 'commerce-siteadmin.model.operator';
           get $onionName(): 'commerce-siteadmin:operator';
           get $onionOptions(): IModelOptionsOperator;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -39,11 +39,11 @@ export * from '../api/commerceSiteadminOperator.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-commerce-siteadmin' {
-  
+
         export interface ApiCommerceSiteadminOperator {
           /** @internal */
           get scope(): ScopeModuleCommerceSiteadmin;
@@ -52,8 +52,8 @@ declare module 'zova-module-commerce-siteadmin' {
         export interface ApiCommerceSiteadminOperator {
           get $beanFullName(): 'commerce-siteadmin.api.commerceSiteadminOperator';
           get $onionName(): 'commerce-siteadmin:commerceSiteadminOperator';
-          
-        } 
+
+        }
 }
 /** api: end */
 /** api: begin */
@@ -79,11 +79,11 @@ export * from '../apiSchema/commerceSiteadminOperator.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-commerce-siteadmin' {
-  
+
         export interface ApiSchemaCommerceSiteadminOperator {
           /** @internal */
           get scope(): ScopeModuleCommerceSiteadmin;
@@ -92,8 +92,8 @@ declare module 'zova-module-commerce-siteadmin' {
         export interface ApiSchemaCommerceSiteadminOperator {
           get $beanFullName(): 'commerce-siteadmin.apiSchema.commerceSiteadminOperator';
           get $onionName(): 'commerce-siteadmin:commerceSiteadminOperator';
-          
-        } 
+
+        }
 }
 /** apiSchema: end */
 /** apiSchema: begin */
@@ -116,15 +116,15 @@ export * from '../page/dashboard/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-commerce-siteadmin' {
-  
+
         export interface ControllerPageDashboard {
           /** @internal */
           get scope(): ScopeModuleCommerceSiteadmin;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -146,7 +146,7 @@ export interface IPagePathRecord {
   '/commerce/siteadmin/dashboard': TypePagePathSchema<undefined,undefined>;
 }
 export interface IPageNameRecord {
-  
+
 }
 }
 export const pagePathSchemas = {
@@ -156,7 +156,7 @@ export const pageNameSchemas = {
 
 };
 declare module 'zova-module-commerce-siteadmin' {
-  
+
 }
 /** pages: end */
 
@@ -182,14 +182,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'commerce-siteadmin': ScopeModuleCommerceSiteadmin;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'commerce-siteadmin': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `commerce-siteadmin::${K}` {

@@ -4,15 +4,15 @@ export * from '../service/broadcast.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-broadcast:broadcast': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-broadcast' {
-  
+
         export interface ServiceBroadcast {
           /** @internal */
           get scope(): ScopeModuleABroadcast;
@@ -21,8 +21,7 @@ declare module 'vona-module-a-broadcast' {
           export interface ServiceBroadcast {
             get $beanFullName(): 'a-broadcast.service.broadcast';
             get $onionName(): 'a-broadcast:broadcast';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -67,11 +66,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     broadcast: ScopeModuleABroadcast;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

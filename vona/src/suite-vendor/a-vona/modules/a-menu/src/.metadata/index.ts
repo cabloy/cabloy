@@ -16,7 +16,7 @@ import type { IDtoOptionsMenuItemMetaQuery } from '../dto/menuItemMetaQuery.ts';
 import type { IDtoOptionsMenus } from '../dto/menus.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'a-menu:menuGroup': IDtoOptionsMenuGroup;
 'a-menu:menuItem': IDtoOptionsMenuItem;
@@ -26,10 +26,10 @@ declare module 'vona-module-a-web' {
 'a-menu:menus': IDtoOptionsMenus;
     }
 
-  
+
 }
 declare module 'vona-module-a-menu' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
@@ -40,7 +40,7 @@ import type { DtoMenuItemMetaParams } from '../dto/menuItemMetaParams.ts';
 import type { DtoMenuItemMetaQuery } from '../dto/menuItemMetaQuery.ts';
 import type { DtoMenus } from '../dto/menus.ts';
 declare module 'vona-module-a-menu' {
-  
+
     export interface IDtoOptionsMenuGroup {
       fields?: TypeEntityOptionsFields<DtoMenuGroup, IDtoOptionsMenuGroup[TypeSymbolKeyFieldsMore]>;
     }
@@ -86,11 +86,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     menu: ScopeModuleAMenu;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

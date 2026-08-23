@@ -4,15 +4,15 @@ export * from '../bean/bean.summer.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-summer' {
-  
+
         export interface BeanSummer {
           /** @internal */
           get scope(): ScopeModuleASummer;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -32,11 +32,11 @@ export * from '../service/summerCacheBase_.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
-  
+
+
 }
 declare module 'vona-module-a-summer' {
-   
+
 }
 /** service: end */
 /** config: begin */
@@ -64,13 +64,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     summer: ScopeModuleASummer;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-summer': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

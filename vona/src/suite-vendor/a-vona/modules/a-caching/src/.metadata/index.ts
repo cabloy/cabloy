@@ -10,7 +10,7 @@ import type { IAopMethodOptionsCachingGet } from '../bean/aopMethod.cachingGet.t
 import type { IAopMethodOptionsCachingSet } from '../bean/aopMethod.cachingSet.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
+
     export interface IAopMethodRecord {
       'a-caching:cachingClear': IAopMethodOptionsCachingClear;
 'a-caching:cachingDel': IAopMethodOptionsCachingDel;
@@ -18,10 +18,10 @@ declare module 'vona-module-a-aspect' {
 'a-caching:cachingSet': IAopMethodOptionsCachingSet;
     }
 
-  
+
 }
 declare module 'vona-module-a-caching' {
-  
+
         export interface AopMethodCachingClear {
           /** @internal */
           get scope(): ScopeModuleACaching;
@@ -64,7 +64,7 @@ declare module 'vona-module-a-caching' {
             get $beanFullName(): 'a-caching.aopMethod.cachingSet';
             get $onionName(): 'a-caching:cachingSet';
             get $onionOptions(): IAopMethodOptionsCachingSet;
-          } 
+          }
 }
 /** aopMethod: end */
 /** scope: begin */
@@ -87,11 +87,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     caching: ScopeModuleACaching;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

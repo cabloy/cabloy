@@ -7,7 +7,7 @@ export * from '../service/ssrLayout.js';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'home-base:locale': never;
 'home-base:routerGuards': never;
@@ -15,10 +15,10 @@ declare module 'zova-module-a-bean' {
 'home-base:ssrLayout': never;
     }
 
-  
+
 }
 declare module 'zova-module-home-base' {
-  
+
         export interface ServiceLocale {
           /** @internal */
           get scope(): ScopeModuleHomeBase;
@@ -27,7 +27,7 @@ declare module 'zova-module-home-base' {
         export interface ServiceLocale {
           get $beanFullName(): 'home-base.service.locale';
           get $onionName(): 'home-base:locale';
-          
+
         }
 
         export interface ServiceRouterGuards {
@@ -38,7 +38,7 @@ declare module 'zova-module-home-base' {
         export interface ServiceRouterGuards {
           get $beanFullName(): 'home-base.service.routerGuards';
           get $onionName(): 'home-base:routerGuards';
-          
+
         }
 
         export interface ServiceSsr {
@@ -49,7 +49,7 @@ declare module 'zova-module-home-base' {
         export interface ServiceSsr {
           get $beanFullName(): 'home-base.service.ssr';
           get $onionName(): 'home-base:ssr';
-          
+
         }
 
         export interface ServiceSsrLayout {
@@ -60,8 +60,8 @@ declare module 'zova-module-home-base' {
         export interface ServiceSsrLayout {
           get $beanFullName(): 'home-base.service.ssrLayout';
           get $onionName(): 'home-base:ssrLayout';
-          
-        } 
+
+        }
 }
 /** service: end */
 /** service: begin */
@@ -89,11 +89,11 @@ export * from '../page/errorNotFound/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-home-base' {
-  
+
         export interface ControllerItemLink {
           /** @internal */
           get scope(): ScopeModuleHomeBase;
@@ -122,7 +122,7 @@ declare module 'zova-module-home-base' {
         export interface ControllerPageErrorNotFound {
           /** @internal */
           get scope(): ScopeModuleHomeBase;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -162,7 +162,7 @@ export interface IPagePathRecord {
 '/home/base//:catchAll(.*)*': TypePagePathSchema<undefined,undefined>;
 }
 export interface IPageNameRecord {
-  
+
 }
 }
 export const pagePathSchemas = {
@@ -241,7 +241,7 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'home-base': ScopeModuleHomeBase;
   }
-  
+
   export interface IBeanScopeConfig {
     'home-base': ReturnType<typeof config>;
   }
@@ -250,7 +250,7 @@ declare module 'zova' {
     'home-base': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `home-base::${K}` {

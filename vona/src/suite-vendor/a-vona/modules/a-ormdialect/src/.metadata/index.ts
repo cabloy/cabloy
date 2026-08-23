@@ -10,7 +10,7 @@ import type { IDatabaseDialectOptionsMysql3 } from '../bean/databaseDialect.mysq
 import type { IDatabaseDialectOptionsPg } from '../bean/databaseDialect.pg.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IDatabaseDialectRecord {
       'a-ormdialect:betterSqlite3': IDatabaseDialectOptionsBetterSqlite3;
 'a-ormdialect:mysql': IDatabaseDialectOptionsMysql;
@@ -18,10 +18,10 @@ declare module 'vona-module-a-orm' {
 'a-ormdialect:pg': IDatabaseDialectOptionsPg;
     }
 
-  
+
 }
 declare module 'vona-module-a-ormdialect' {
-  
+
         export interface DatabaseDialectBetterSqlite3 {
           /** @internal */
           get scope(): ScopeModuleAOrmdialect;
@@ -53,7 +53,7 @@ declare module 'vona-module-a-ormdialect' {
             get $beanFullName(): 'a-ormdialect.databaseDialect.pg';
             get $onionName(): 'a-ormdialect:pg';
             get $onionOptions(): IDatabaseDialectOptionsPg;
-          } 
+          }
 }
 /** databaseDialect: end */
 /** databaseDialect: begin */
@@ -91,11 +91,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     ormdialect: ScopeModuleAOrmdialect;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

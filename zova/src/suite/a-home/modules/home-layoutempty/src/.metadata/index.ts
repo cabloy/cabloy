@@ -4,15 +4,15 @@ export * from '../component/layoutEmpty/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-home-layoutempty' {
-  
+
         export interface ControllerLayoutEmpty {
           /** @internal */
           get scope(): ScopeModuleHomeLayoutempty;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -62,14 +62,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'home-layoutempty': ScopeModuleHomeLayoutempty;
   }
-  
+
   export interface IBeanScopeConfig {
     'home-layoutempty': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 
 /** scope: end */

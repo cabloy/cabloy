@@ -4,15 +4,15 @@ export * from '../bean/bean.onion.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-onion' {
-  
+
         export interface BeanOnion {
           /** @internal */
           get scope(): ScopeModuleAOnion;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -29,11 +29,11 @@ export * from '../service/onion_.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
-  
+
+
 }
 declare module 'vona-module-a-onion' {
-   
+
 }
 /** service: end */
 /** main: begin */
@@ -59,11 +59,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     onion: ScopeModuleAOnion;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

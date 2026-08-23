@@ -4,15 +4,15 @@ export * from '../bean/bean.worker.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-worker' {
-  
+
         export interface BeanWorker {
           /** @internal */
           get scope(): ScopeModuleAWorker;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -30,16 +30,16 @@ export * from '../bean/broadcast.reloadAll.ts';
 
 import { type IDecoratorBroadcastOptions } from 'vona-module-a-broadcast';
 declare module 'vona-module-a-broadcast' {
-  
+
     export interface IBroadcastRecord {
       'a-worker:exitAll': IDecoratorBroadcastOptions;
 'a-worker:reloadAll': IDecoratorBroadcastOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-worker' {
-  
+
         export interface BroadcastExitAll {
           /** @internal */
           get scope(): ScopeModuleAWorker;
@@ -60,7 +60,7 @@ declare module 'vona-module-a-worker' {
             get $beanFullName(): 'a-worker.broadcast.reloadAll';
             get $onionName(): 'a-worker:reloadAll';
             get $onionOptions(): IDecoratorBroadcastOptions;
-          } 
+          }
 }
 /** broadcast: end */
 /** broadcast: begin */
@@ -76,15 +76,15 @@ export * from '../bean/cacheRedis.workerAlive.ts';
 
 import { type IDecoratorCacheRedisOptions } from 'vona-module-a-cache';
 declare module 'vona-module-a-cache' {
-  
+
     export interface ICacheRedisRecord {
       'a-worker:workerAlive': IDecoratorCacheRedisOptions;
     }
 
-  
+
 }
 declare module 'vona-module-a-worker' {
-  
+
         export interface CacheRedisWorkerAlive {
           /** @internal */
           get scope(): ScopeModuleAWorker;
@@ -94,7 +94,7 @@ declare module 'vona-module-a-worker' {
             get $beanFullName(): 'a-worker.cacheRedis.workerAlive';
             get $onionName(): 'a-worker:workerAlive';
             get $onionOptions(): IDecoratorCacheRedisOptions;
-          } 
+          }
 }
 /** cacheRedis: end */
 /** cacheRedis: begin */
@@ -133,13 +133,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     worker: ScopeModuleAWorker;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-worker': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

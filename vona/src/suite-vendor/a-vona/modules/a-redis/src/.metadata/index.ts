@@ -4,15 +4,15 @@ export * from '../bean/bean.redis.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-redis' {
-  
+
         export interface BeanRedis {
           /** @internal */
           get scope(): ScopeModuleARedis;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -30,15 +30,15 @@ export * from '../service/redisClient_.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-redis:redis': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-redis' {
-  
+
         export interface ServiceRedis {
           /** @internal */
           get scope(): ScopeModuleARedis;
@@ -47,8 +47,7 @@ declare module 'vona-module-a-redis' {
           export interface ServiceRedis {
             get $beanFullName(): 'a-redis.service.redis';
             get $onionName(): 'a-redis:redis';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -90,11 +89,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     redis: ScopeModuleARedis;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

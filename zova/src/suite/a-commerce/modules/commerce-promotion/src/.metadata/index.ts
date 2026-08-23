@@ -4,15 +4,15 @@ export * from '../model/coupon.js';
 import { IModelOptionsCoupon } from '../model/coupon.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'commerce-promotion:coupon': IModelOptionsCoupon;
     }
 
-  
+
 }
 declare module 'zova-module-commerce-promotion' {
-  
+
         export interface ModelCoupon {
           /** @internal */
           get scope(): ScopeModuleCommercePromotion;
@@ -22,7 +22,7 @@ declare module 'zova-module-commerce-promotion' {
           get $beanFullName(): 'commerce-promotion.model.coupon';
           get $onionName(): 'commerce-promotion:coupon';
           get $onionOptions(): IModelOptionsCoupon;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -39,11 +39,11 @@ export * from '../api/commercePromotionCoupon.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-commerce-promotion' {
-  
+
         export interface ApiCommercePromotionCoupon {
           /** @internal */
           get scope(): ScopeModuleCommercePromotion;
@@ -52,8 +52,8 @@ declare module 'zova-module-commerce-promotion' {
         export interface ApiCommercePromotionCoupon {
           get $beanFullName(): 'commerce-promotion.api.commercePromotionCoupon';
           get $onionName(): 'commerce-promotion:commercePromotionCoupon';
-          
-        } 
+
+        }
 }
 /** api: end */
 /** api: begin */
@@ -79,11 +79,11 @@ export * from '../apiSchema/commercePromotionCoupon.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-commerce-promotion' {
-  
+
         export interface ApiSchemaCommercePromotionCoupon {
           /** @internal */
           get scope(): ScopeModuleCommercePromotion;
@@ -92,8 +92,8 @@ declare module 'zova-module-commerce-promotion' {
         export interface ApiSchemaCommercePromotionCoupon {
           get $beanFullName(): 'commerce-promotion.apiSchema.commercePromotionCoupon';
           get $onionName(): 'commerce-promotion:commercePromotionCoupon';
-          
-        } 
+
+        }
 }
 /** apiSchema: end */
 /** apiSchema: begin */
@@ -129,12 +129,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'commerce-promotion': ScopeModuleCommercePromotion;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 
 /** scope: end */

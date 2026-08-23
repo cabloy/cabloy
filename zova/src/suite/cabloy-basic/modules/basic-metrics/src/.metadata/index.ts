@@ -4,15 +4,15 @@ export * from '../model/metrics.js';
 import { IModelOptionsMetrics } from '../model/metrics.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'basic-metrics:metrics': IModelOptionsMetrics;
     }
 
-  
+
 }
 declare module 'zova-module-basic-metrics' {
-  
+
         export interface ModelMetrics {
           /** @internal */
           get scope(): ScopeModuleBasicMetrics;
@@ -22,7 +22,7 @@ declare module 'zova-module-basic-metrics' {
           get $beanFullName(): 'basic-metrics.model.metrics';
           get $onionName(): 'basic-metrics:metrics';
           get $onionOptions(): IModelOptionsMetrics;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -39,11 +39,11 @@ export * from '../api/basicMetricsMetrics.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-metrics' {
-  
+
         export interface ApiBasicMetricsMetrics {
           /** @internal */
           get scope(): ScopeModuleBasicMetrics;
@@ -52,8 +52,8 @@ declare module 'zova-module-basic-metrics' {
         export interface ApiBasicMetricsMetrics {
           get $beanFullName(): 'basic-metrics.api.basicMetricsMetrics';
           get $onionName(): 'basic-metrics:basicMetricsMetrics';
-          
-        } 
+
+        }
 }
 /** api: end */
 /** api: begin */
@@ -79,15 +79,15 @@ export * from '../page/dashboard/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-metrics' {
-  
+
         export interface ControllerPageDashboard {
           /** @internal */
           get scope(): ScopeModuleBasicMetrics;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -109,7 +109,7 @@ export interface IPagePathRecord {
   '/basic/metrics/dashboard': TypePagePathSchema<undefined,undefined>;
 }
 export interface IPageNameRecord {
-  
+
 }
 }
 export const pagePathSchemas = {
@@ -119,7 +119,7 @@ export const pageNameSchemas = {
 
 };
 declare module 'zova-module-basic-metrics' {
-  
+
 }
 /** pages: end */
 
@@ -140,12 +140,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-metrics': ScopeModuleBasicMetrics;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 
 /** scope: end */

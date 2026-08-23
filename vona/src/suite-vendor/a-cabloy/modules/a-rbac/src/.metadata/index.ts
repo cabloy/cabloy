@@ -4,15 +4,15 @@ export * from '../bean/guard.rbac.ts';
 import type { IGuardOptionsRbac } from '../bean/guard.rbac.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
-  
+
+
 export interface IGuardRecordLocal {
   'a-rbac:rbac': IGuardOptionsRbac;
 }
 
 }
 declare module 'vona-module-a-rbac' {
-  
+
         export interface GuardRbac {
           /** @internal */
           get scope(): ScopeModuleARbac;
@@ -22,7 +22,7 @@ declare module 'vona-module-a-rbac' {
             get $beanFullName(): 'a-rbac.guard.rbac';
             get $onionName(): 'a-rbac:rbac';
             get $onionOptions(): IGuardOptionsRbac;
-          } 
+          }
 }
 /** guard: end */
 /** bean: begin */
@@ -31,11 +31,11 @@ export * from '../bean/bean.rbacScope.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-rbac' {
-  
+
         export interface BeanRbacCatalog {
           /** @internal */
           get scope(): ScopeModuleARbac;
@@ -44,7 +44,7 @@ declare module 'vona-module-a-rbac' {
         export interface BeanRbacScope {
           /** @internal */
           get scope(): ScopeModuleARbac;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -64,11 +64,11 @@ export * from '../bean/event.resolvePolicy.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-rbac' {
-  
+
         export interface EventPolicyInvalidated {
           /** @internal */
           get scope(): ScopeModuleARbac;
@@ -87,7 +87,7 @@ declare module 'vona-module-a-rbac' {
           export interface EventResolvePolicy {
             get $beanFullName(): 'a-rbac.event.resolvePolicy';
             get $onionName(): 'a-rbac:resolvePolicy';
-          } 
+          }
 }
 /** event: end */
 /** event: begin */
@@ -101,7 +101,7 @@ export interface IModuleEvent {
 /** event: begin */
 import type { TypeEventPolicyInvalidatedData, TypeEventPolicyInvalidatedResult } from '../bean/event.policyInvalidated.ts';
 import type { TypeEventResolvePolicyData, TypeEventResolvePolicyResult } from '../bean/event.resolvePolicy.ts';
-import type { EventOn } from 'vona-module-a-event'; 
+import type { EventOn } from 'vona-module-a-event';
 declare module 'vona-module-a-event' {
   export interface IEventRecord {
     'a-rbac:policyInvalidated': EventOn<TypeEventPolicyInvalidatedData, TypeEventPolicyInvalidatedResult>;
@@ -135,13 +135,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     rbac: ScopeModuleARbac;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-rbac': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

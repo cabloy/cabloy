@@ -6,16 +6,16 @@ import type { ISsrMenuOptionsAdmin } from '../bean/ssrMenu.admin.ts';
 import type { ISsrMenuOptionsDemo } from '../bean/ssrMenu.demo.ts';
 import 'vona-module-a-ssr';
 declare module 'vona-module-a-ssr' {
-  
+
     export interface ISsrMenuRecord {
       'demo-basic:admin': ISsrMenuOptionsAdmin;
 'demo-basic:demo': ISsrMenuOptionsDemo;
     }
 
-  
+
 }
 declare module 'vona-module-demo-basic' {
-  
+
         export interface SsrMenuAdmin {
           /** @internal */
           get scope(): ScopeModuleDemoBasic;
@@ -36,7 +36,7 @@ declare module 'vona-module-demo-basic' {
             get $beanFullName(): 'demo-basic.ssrMenu.demo';
             get $onionName(): 'demo-basic:demo';
             get $onionOptions(): ISsrMenuOptionsDemo;
-          } 
+          }
 }
 /** ssrMenu: end */
 /** ssrMenuGroup: begin */
@@ -44,15 +44,15 @@ export * from '../bean/ssrMenuGroup.demo.ts';
 import type { ISsrMenuGroupOptionsDemo } from '../bean/ssrMenuGroup.demo.ts';
 import 'vona-module-a-ssr';
 declare module 'vona-module-a-ssr' {
-  
+
     export interface ISsrMenuGroupRecord {
       'demo-basic:demo': ISsrMenuGroupOptionsDemo;
     }
 
-  
+
 }
 declare module 'vona-module-demo-basic' {
-  
+
         export interface SsrMenuGroupDemo {
           /** @internal */
           get scope(): ScopeModuleDemoBasic;
@@ -62,7 +62,7 @@ declare module 'vona-module-demo-basic' {
             get $beanFullName(): 'demo-basic.ssrMenuGroup.demo';
             get $onionName(): 'demo-basic:demo';
             get $onionOptions(): ISsrMenuGroupOptionsDemo;
-          } 
+          }
 }
 /** ssrMenuGroup: end */
 /** locale: begin */
@@ -89,13 +89,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     demoBasic: ScopeModuleDemoBasic;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'demo-basic': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 /** scope: end */

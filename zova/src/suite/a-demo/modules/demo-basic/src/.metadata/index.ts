@@ -4,15 +4,15 @@ export * from '../model/test.js';
 import { IModelOptionsTest } from '../model/test.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'demo-basic:test': IModelOptionsTest;
     }
 
-  
+
 }
 declare module 'zova-module-demo-basic' {
-  
+
         export interface ModelTest {
           /** @internal */
           get scope(): ScopeModuleDemoBasic;
@@ -22,7 +22,7 @@ declare module 'zova-module-demo-basic' {
           get $beanFullName(): 'demo-basic.model.test';
           get $onionName(): 'demo-basic:test';
           get $onionOptions(): IModelOptionsTest;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -52,11 +52,11 @@ export * from '../page/toolTwo/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-demo-basic' {
-  
+
         export interface ControllerActionView {
           /** @internal */
           get scope(): ScopeModuleDemoBasic;
@@ -125,7 +125,7 @@ declare module 'zova-module-demo-basic' {
         export interface ControllerPageToolTwo {
           /** @internal */
           get scope(): ScopeModuleDemoBasic;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -284,15 +284,15 @@ export * from '../page/toolOne/render.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-demo-basic' {
-  
+
         export interface RenderPageToolOne {
           /** @internal */
           get scope(): ScopeModuleDemoBasic;
-        } 
+        }
 }
 /** render: end */
 /** render: begin */
@@ -309,15 +309,15 @@ export * from '../bean/behavior.formFieldLayout.jsx';
 import { IBehaviorOptionsFormFieldLayout } from '../bean/behavior.formFieldLayout.jsx';
 import 'zova-module-a-behavior';
 declare module 'zova-module-a-behavior' {
-  
+
     export interface IBehaviorRecord {
       'demo-basic:formFieldLayout': IBehaviorOptionsFormFieldLayout;
     }
 
-  
+
 }
 declare module 'zova-module-demo-basic' {
-  
+
         export interface BehaviorFormFieldLayout {
           /** @internal */
           get scope(): ScopeModuleDemoBasic;
@@ -327,7 +327,7 @@ declare module 'zova-module-demo-basic' {
           get $beanFullName(): 'demo-basic.behavior.formFieldLayout';
           get $onionName(): 'demo-basic:formFieldLayout';
           get $onionOptions(): IBehaviorOptionsFormFieldLayout;
-        } 
+        }
 }
 /** behavior: end */
 /** behavior: begin */
@@ -363,15 +363,15 @@ export * from '../bean/tableCell.test.jsx';
 import { ITableCellOptionsTest } from '../bean/tableCell.test.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
-  
+
     export interface ITableCellRecord {
       'demo-basic:test': ITableCellOptionsTest;
     }
 
-  
+
 }
 declare module 'zova-module-demo-basic' {
-  
+
         export interface TableCellTest {
           /** @internal */
           get scope(): ScopeModuleDemoBasic;
@@ -381,7 +381,7 @@ declare module 'zova-module-demo-basic' {
           get $beanFullName(): 'demo-basic.tableCell.test';
           get $onionName(): 'demo-basic:test';
           get $onionOptions(): ITableCellOptionsTest;
-        } 
+        }
 }
 /** tableCell: end */
 /** tableCell: begin */
@@ -413,14 +413,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'demo-basic': ScopeModuleDemoBasic;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'demo-basic': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `demo-basic::${K}` {

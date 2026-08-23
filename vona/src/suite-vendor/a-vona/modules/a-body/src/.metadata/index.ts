@@ -6,16 +6,16 @@ import type { IInterceptorOptionsBodyReq } from '../bean/interceptor.bodyReq.ts'
 import type { IInterceptorOptionsBodyRes } from '../bean/interceptor.bodyRes.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
+
     export interface IInterceptorRecordGlobal {
       'a-body:bodyReq': IInterceptorOptionsBodyReq;
 'a-body:bodyRes': IInterceptorOptionsBodyRes;
     }
 
-  
+
 }
 declare module 'vona-module-a-body' {
-  
+
         export interface InterceptorBodyReq {
           /** @internal */
           get scope(): ScopeModuleABody;
@@ -36,7 +36,7 @@ declare module 'vona-module-a-body' {
             get $beanFullName(): 'a-body.interceptor.bodyRes';
             get $onionName(): 'a-body:bodyRes';
             get $onionOptions(): IInterceptorOptionsBodyRes;
-          } 
+          }
 }
 /** interceptor: end */
 /** bean: begin */
@@ -45,11 +45,11 @@ export * from '../bean/bean.bodyRes.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-body' {
-  
+
         export interface BeanBodyReq {
           /** @internal */
           get scope(): ScopeModuleABody;
@@ -58,7 +58,7 @@ declare module 'vona-module-a-body' {
         export interface BeanBodyRes {
           /** @internal */
           get scope(): ScopeModuleABody;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -92,11 +92,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     body: ScopeModuleABody;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

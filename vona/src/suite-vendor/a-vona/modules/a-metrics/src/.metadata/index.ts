@@ -6,16 +6,16 @@ import type { IMiddlewareSystemOptionsHealth } from '../bean/middlewareSystem.he
 import type { IMiddlewareSystemOptionsMetrics } from '../bean/middlewareSystem.metrics.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
+
     export interface IMiddlewareSystemRecord {
       'a-metrics:health': IMiddlewareSystemOptionsHealth;
 'a-metrics:metrics': IMiddlewareSystemOptionsMetrics;
     }
 
-  
+
 }
 declare module 'vona-module-a-metrics' {
-  
+
         export interface MiddlewareSystemHealth {
           /** @internal */
           get scope(): ScopeModuleAMetrics;
@@ -36,7 +36,7 @@ declare module 'vona-module-a-metrics' {
             get $beanFullName(): 'a-metrics.middlewareSystem.metrics';
             get $onionName(): 'a-metrics:metrics';
             get $onionOptions(): IMiddlewareSystemOptionsMetrics;
-          } 
+          }
 }
 /** middlewareSystem: end */
 /** bean: begin */
@@ -44,15 +44,15 @@ export * from '../bean/bean.metrics.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-metrics' {
-  
+
         export interface BeanMetrics {
           /** @internal */
           get scope(): ScopeModuleAMetrics;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -71,17 +71,17 @@ export * from '../service/metricsRuntime.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-metrics:health': never;
 'a-metrics:metrics': never;
 'a-metrics:metricsRuntime': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-metrics' {
-  
+
         export interface ServiceHealth {
           /** @internal */
           get scope(): ScopeModuleAMetrics;
@@ -90,7 +90,6 @@ declare module 'vona-module-a-metrics' {
           export interface ServiceHealth {
             get $beanFullName(): 'a-metrics.service.health';
             get $onionName(): 'a-metrics:health';
-            
           }
 
         export interface ServiceMetrics {
@@ -101,7 +100,6 @@ declare module 'vona-module-a-metrics' {
           export interface ServiceMetrics {
             get $beanFullName(): 'a-metrics.service.metrics';
             get $onionName(): 'a-metrics:metrics';
-            
           }
 
         export interface ServiceMetricsRuntime {
@@ -112,8 +110,7 @@ declare module 'vona-module-a-metrics' {
           export interface ServiceMetricsRuntime {
             get $beanFullName(): 'a-metrics.service.metricsRuntime';
             get $onionName(): 'a-metrics:metricsRuntime';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -166,13 +163,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     metrics: ScopeModuleAMetrics;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-metrics': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

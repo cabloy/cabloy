@@ -7,15 +7,15 @@ export * from '../entity/paypalRecord.tsx';
 import type { IEntityOptionsPaypalRecord } from '../entity/paypalRecord.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'a-paypal:paypalRecord': IEntityOptionsPaypalRecord;
     }
 
-  
+
 }
 declare module 'vona-module-a-paypal' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -33,7 +33,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-a-paypal' {
-  
+
     export interface IEntityOptionsPaypalRecord {
       fields?: TypeEntityOptionsFields<EntityPaypalRecord, IEntityOptionsPaypalRecord[TypeSymbolKeyFieldsMore]>;
     }
@@ -44,15 +44,15 @@ export * from '../model/paypalRecord.ts';
 import type { IModelOptionsPaypalRecord } from '../model/paypalRecord.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'a-paypal:paypalRecord': IModelOptionsPaypalRecord;
     }
 
-  
+
 }
 declare module 'vona-module-a-paypal' {
-  
+
         export interface ModelPaypalRecord {
           /** @internal */
           get scope(): ScopeModuleAPaypal;
@@ -62,7 +62,7 @@ declare module 'vona-module-a-paypal' {
             get $beanFullName(): 'a-paypal.model.paypalRecord';
             get $onionName(): 'a-paypal:paypalRecord';
             get $onionOptions(): IModelOptionsPaypalRecord;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -84,13 +84,23 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-a-paypal' {
-  
+
   export interface ModelPaypalRecord {
       [SymbolKeyEntity]: EntityPaypalRecord;
       [SymbolKeyEntityMeta]: EntityPaypalRecordMeta;
       [SymbolKeyModelOptions]: IModelOptionsPaypalRecord;
       get<T extends IModelGetOptions<EntityPaypalRecord,ModelPaypalRecord>>(where: TypeModelWhere<EntityPaypalRecord>, options?: T): Promise<TypeModelRelationResult<EntityPaypalRecord, ModelPaypalRecord, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getForUpdate<T extends IModelGetOptions<EntityPaypalRecord,ModelPaypalRecord>>(where: TypeModelWhere<EntityPaypalRecord>, options?: T): Promise<TypeModelRelationResult<EntityPaypalRecord, ModelPaypalRecord, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
       getByIdForUpdate<T extends IModelGetOptions<EntityPaypalRecord,ModelPaypalRecord>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityPaypalRecord, ModelPaypalRecord, T> | undefined>;
       mget<T extends IModelGetOptions<EntityPaypalRecord,ModelPaypalRecord>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityPaypalRecord, ModelPaypalRecord, T>[]>;
       selectAndCount<T extends IModelSelectParams<EntityPaypalRecord,ModelPaypalRecord,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityPaypalRecord, ModelPaypalRecord, T>>;
@@ -124,15 +134,15 @@ export * from '../bean/bean.paypal.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-paypal' {
-  
+
         export interface BeanPaypal {
           /** @internal */
           get scope(): ScopeModuleAPaypal;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -149,15 +159,15 @@ export * from '../service/paypal.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-paypal:paypal': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-paypal' {
-  
+
         export interface ServicePaypal {
           /** @internal */
           get scope(): ScopeModuleAPaypal;
@@ -166,8 +176,7 @@ declare module 'vona-module-a-paypal' {
           export interface ServicePaypal {
             get $beanFullName(): 'a-paypal.service.paypal';
             get $onionName(): 'a-paypal:paypal';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -191,11 +200,11 @@ export * from '../bean/event.paypalCaptureOrder.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-paypal' {
-  
+
         export interface EventPaypalCancelOrder {
           /** @internal */
           get scope(): ScopeModuleAPaypal;
@@ -204,7 +213,6 @@ declare module 'vona-module-a-paypal' {
           export interface EventPaypalCancelOrder {
             get $beanFullName(): 'a-paypal.event.paypalCancelOrder';
             get $onionName(): 'a-paypal:paypalCancelOrder';
-            
           }
 
         export interface EventPaypalCaptureOrder {
@@ -215,8 +223,7 @@ declare module 'vona-module-a-paypal' {
           export interface EventPaypalCaptureOrder {
             get $beanFullName(): 'a-paypal.event.paypalCaptureOrder';
             get $onionName(): 'a-paypal:paypalCaptureOrder';
-            
-          } 
+          }
 }
 /** event: end */
 /** event: begin */
@@ -230,7 +237,7 @@ export interface IModuleEvent {
 /** event: begin */
 import type { TypeEventPaypalCancelOrderData, TypeEventPaypalCancelOrderResult } from '../bean/event.paypalCancelOrder.ts';
 import type { TypeEventPaypalCaptureOrderData, TypeEventPaypalCaptureOrderResult } from '../bean/event.paypalCaptureOrder.ts';
-import type { EventOn } from 'vona-module-a-event'; 
+import type { EventOn } from 'vona-module-a-event';
 declare module 'vona-module-a-event' {
   export interface IEventRecord {
     'a-paypal:paypalCancelOrder': EventOn<TypeEventPaypalCancelOrderData, TypeEventPaypalCancelOrderResult>;
@@ -243,15 +250,15 @@ export * from '../bean/meta.version.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'a-paypal:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-paypal' {
-  
+
         export interface MetaVersion {
           /** @internal */
           get scope(): ScopeModuleAPaypal;
@@ -260,8 +267,7 @@ declare module 'vona-module-a-paypal' {
           export interface MetaVersion {
             get $beanFullName(): 'a-paypal.meta.version';
             get $onionName(): 'a-paypal:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** dto: begin */
@@ -271,23 +277,23 @@ import type { IDtoOptionsPaypalOrderRecordOptions } from '../dto/paypalOrderReco
 import type { IDtoOptionsPaypalOrderRecordPayload } from '../dto/paypalOrderRecordPayload.tsx';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'a-paypal:paypalOrderRecordOptions': IDtoOptionsPaypalOrderRecordOptions;
 'a-paypal:paypalOrderRecordPayload': IDtoOptionsPaypalOrderRecordPayload;
     }
 
-  
+
 }
 declare module 'vona-module-a-paypal' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
 import type { DtoPaypalOrderRecordOptions } from '../dto/paypalOrderRecordOptions.tsx';
 import type { DtoPaypalOrderRecordPayload } from '../dto/paypalOrderRecordPayload.tsx';
 declare module 'vona-module-a-paypal' {
-  
+
     export interface IDtoOptionsPaypalOrderRecordOptions {
       fields?: TypeEntityOptionsFields<DtoPaypalOrderRecordOptions, IDtoOptionsPaypalOrderRecordOptions[TypeSymbolKeyFieldsMore]>;
     }
@@ -302,15 +308,15 @@ export * from '../controller/paypal.ts';
 import type { IControllerOptionsPaypal } from '../controller/paypal.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'a-paypal:paypal': IControllerOptionsPaypal;
     }
 
-  
+
 }
 declare module 'vona-module-a-paypal' {
-  
+
         export interface ControllerPaypal {
           /** @internal */
           get scope(): ScopeModuleAPaypal;
@@ -320,14 +326,14 @@ declare module 'vona-module-a-paypal' {
             get $beanFullName(): 'a-paypal.controller.paypal';
             get $onionName(): 'a-paypal:paypal';
             get $onionOptions(): IControllerOptionsPaypal;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
 import type { ControllerPaypal } from '../controller/paypal.ts';
 declare module 'vona-module-a-paypal' {
-  
+
     export interface IControllerOptionsPaypal {
       actions?: TypeControllerOptionsActions<ControllerPaypal>;
     }
@@ -382,7 +388,7 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     paypal: ScopeModuleAPaypal;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-paypal': ReturnType<typeof config>;
   }

@@ -4,15 +4,15 @@ export * from '../bean/meta.version.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'test-image:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-test-image' {
-  
+
         export interface MetaVersion {
           /** @internal */
           get scope(): ScopeModuleTestImage;
@@ -21,8 +21,7 @@ declare module 'vona-module-test-image' {
           export interface MetaVersion {
             get $beanFullName(): 'test-image.meta.version';
             get $onionName(): 'test-image:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** scope: begin */
@@ -45,11 +44,11 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     testImage: ScopeModuleTestImage;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 /** scope: end */

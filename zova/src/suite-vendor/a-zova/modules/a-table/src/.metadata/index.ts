@@ -4,15 +4,15 @@ export * from '../component/table/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-table' {
-  
+
         export interface ControllerTable {
           /** @internal */
           get scope(): ScopeModuleATable;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -46,15 +46,15 @@ export * from '../component/table/render.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-a-table' {
-  
+
         export interface RenderTable {
           /** @internal */
           get scope(): ScopeModuleATable;
-        } 
+        }
 }
 /** render: end */
 /** render: begin */
@@ -87,14 +87,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'a-table': ScopeModuleATable;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-table': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
-  
+
 /** scope: end */

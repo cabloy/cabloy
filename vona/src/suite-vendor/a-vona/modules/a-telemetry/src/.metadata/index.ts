@@ -4,15 +4,15 @@ export * from '../bean/middlewareSystem.trace.ts';
 import type { IMiddlewareSystemOptionsTrace } from '../bean/middlewareSystem.trace.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
+
     export interface IMiddlewareSystemRecord {
       'a-telemetry:trace': IMiddlewareSystemOptionsTrace;
     }
 
-  
+
 }
 declare module 'vona-module-a-telemetry' {
-  
+
         export interface MiddlewareSystemTrace {
           /** @internal */
           get scope(): ScopeModuleATelemetry;
@@ -22,7 +22,7 @@ declare module 'vona-module-a-telemetry' {
             get $beanFullName(): 'a-telemetry.middlewareSystem.trace';
             get $onionName(): 'a-telemetry:trace';
             get $onionOptions(): IMiddlewareSystemOptionsTrace;
-          } 
+          }
 }
 /** middlewareSystem: end */
 /** bean: begin */
@@ -30,15 +30,15 @@ export * from '../bean/bean.telemetry.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-telemetry' {
-  
+
         export interface BeanTelemetry {
           /** @internal */
           get scope(): ScopeModuleATelemetry;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -55,15 +55,15 @@ export * from '../service/telemetry.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-telemetry:telemetry': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-telemetry' {
-  
+
         export interface ServiceTelemetry {
           /** @internal */
           get scope(): ScopeModuleATelemetry;
@@ -72,8 +72,7 @@ declare module 'vona-module-a-telemetry' {
           export interface ServiceTelemetry {
             get $beanFullName(): 'a-telemetry.service.telemetry';
             get $onionName(): 'a-telemetry:telemetry';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -120,13 +119,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     telemetry: ScopeModuleATelemetry;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-telemetry': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

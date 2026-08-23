@@ -4,15 +4,15 @@ export * from '../page/home/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-home-indexweb' {
-  
+
         export interface ControllerPageHome {
           /** @internal */
           get scope(): ScopeModuleHomeIndexweb;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -44,7 +44,7 @@ export const pagePathSchemas = {
 export const pageNameSchemas = {
 'home-indexweb:home': {
           params: NSControllerPageHome.paramsSchema,
-          
+
         },
 };
 declare module 'zova-module-home-indexweb' {
@@ -70,12 +70,12 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'home-indexweb': ScopeModuleHomeIndexweb;
   }
-  
-  
 
-  
 
-  
+
+
+
+
 }
 
 /** scope: end */

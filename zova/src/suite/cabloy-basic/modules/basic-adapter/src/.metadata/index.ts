@@ -23,14 +23,14 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-adapter': ScopeModuleBasicAdapter;
   }
-  
+
   export interface IBeanScopeConfig {
     'basic-adapter': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
-  
+
 /** scope: end */

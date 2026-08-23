@@ -13,7 +13,7 @@ import type { IEntityOptionsProductContent } from '../entity/productContent.tsx'
 import type { IEntityOptionsSku } from '../entity/sku.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'commerce-catalog:category': IEntityOptionsCategory;
 'commerce-catalog:product': IEntityOptionsProduct;
@@ -21,10 +21,10 @@ declare module 'vona-module-a-orm' {
 'commerce-catalog:sku': IEntityOptionsSku;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-catalog' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -57,7 +57,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-commerce-catalog' {
-  
+
     export interface IEntityOptionsCategory {
       fields?: TypeEntityOptionsFields<EntityCategory, IEntityOptionsCategory[TypeSymbolKeyFieldsMore]>;
     }
@@ -86,7 +86,7 @@ import type { IModelOptionsProductContent } from '../model/productContent.ts';
 import type { IModelOptionsSku } from '../model/sku.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'commerce-catalog:category': IModelOptionsCategory;
 'commerce-catalog:product': IModelOptionsProduct;
@@ -94,10 +94,10 @@ declare module 'vona-module-a-orm' {
 'commerce-catalog:sku': IModelOptionsSku;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-catalog' {
-  
+
         export interface ModelCategory {
           /** @internal */
           get scope(): ScopeModuleCommerceCatalog;
@@ -140,7 +140,7 @@ declare module 'vona-module-commerce-catalog' {
             get $beanFullName(): 'commerce-catalog.model.sku';
             get $onionName(): 'commerce-catalog:sku';
             get $onionOptions(): IModelOptionsSku;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -364,17 +364,17 @@ export * from '../service/sku.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'commerce-catalog:category': never;
 'commerce-catalog:product': never;
 'commerce-catalog:sku': never;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-catalog' {
-  
+
         export interface ServiceCategory {
           /** @internal */
           get scope(): ScopeModuleCommerceCatalog;
@@ -383,7 +383,6 @@ declare module 'vona-module-commerce-catalog' {
           export interface ServiceCategory {
             get $beanFullName(): 'commerce-catalog.service.category';
             get $onionName(): 'commerce-catalog:category';
-            
           }
 
         export interface ServiceProduct {
@@ -394,7 +393,6 @@ declare module 'vona-module-commerce-catalog' {
           export interface ServiceProduct {
             get $beanFullName(): 'commerce-catalog.service.product';
             get $onionName(): 'commerce-catalog:product';
-            
           }
 
         export interface ServiceSku {
@@ -405,8 +403,7 @@ declare module 'vona-module-commerce-catalog' {
           export interface ServiceSku {
             get $beanFullName(): 'commerce-catalog.service.sku';
             get $onionName(): 'commerce-catalog:sku';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -436,16 +433,16 @@ export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'commerce-catalog:index': IMetaOptionsIndex;
 'commerce-catalog:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-catalog' {
-  
+
         export interface MetaIndex {
           /** @internal */
           get scope(): ScopeModuleCommerceCatalog;
@@ -465,8 +462,7 @@ declare module 'vona-module-commerce-catalog' {
           export interface MetaVersion {
             get $beanFullName(): 'commerce-catalog.meta.version';
             get $onionName(): 'commerce-catalog:version';
-            
-          } 
+          }
 }
 /** meta: end */
 /** dto: begin */
@@ -524,7 +520,7 @@ import type { IDtoOptionsSkuUpdate } from '../dto/skuUpdate.tsx';
 import type { IDtoOptionsSkuView } from '../dto/skuView.tsx';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
       'commerce-catalog:categoryCreate': IDtoOptionsCategoryCreate;
 'commerce-catalog:categorySelectReq': IDtoOptionsCategorySelectReq;
@@ -554,10 +550,10 @@ declare module 'vona-module-a-web' {
 'commerce-catalog:skuView': IDtoOptionsSkuView;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-catalog' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
@@ -588,7 +584,7 @@ import type { DtoSkuSelectResItem } from '../dto/skuSelectResItem.tsx';
 import type { DtoSkuUpdate } from '../dto/skuUpdate.tsx';
 import type { DtoSkuView } from '../dto/skuView.tsx';
 declare module 'vona-module-commerce-catalog' {
-  
+
     export interface IDtoOptionsCategoryCreate {
       fields?: TypeEntityOptionsFields<DtoCategoryCreate, IDtoOptionsCategoryCreate[TypeSymbolKeyFieldsMore]>;
     }
@@ -703,17 +699,17 @@ import type { IControllerOptionsProduct } from '../controller/product.ts';
 import type { IControllerOptionsSku } from '../controller/sku.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'commerce-catalog:category': IControllerOptionsCategory;
 'commerce-catalog:product': IControllerOptionsProduct;
 'commerce-catalog:sku': IControllerOptionsSku;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-catalog' {
-  
+
         export interface ControllerCategory {
           /** @internal */
           get scope(): ScopeModuleCommerceCatalog;
@@ -745,7 +741,7 @@ declare module 'vona-module-commerce-catalog' {
             get $beanFullName(): 'commerce-catalog.controller.sku';
             get $onionName(): 'commerce-catalog:sku';
             get $onionOptions(): IControllerOptionsSku;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
@@ -756,7 +752,7 @@ import type { ControllerProduct } from '../controller/product.ts';
 // @ts-ignore ignore
 import type { ControllerSku } from '../controller/sku.ts';
 declare module 'vona-module-commerce-catalog' {
-  
+
     export interface IControllerOptionsCategory {
       actions?: TypeControllerOptionsActions<ControllerCategory>;
     }
@@ -805,7 +801,7 @@ import 'vona-module-a-openapi';
 'commerce-catalog:sku': never;
     }
   }
-  
+
 /** controller: end */
 /** ssrMenu: begin */
 export * from '../bean/ssrMenu.category.ts';
@@ -816,17 +812,17 @@ import type { ISsrMenuOptionsProduct } from '../bean/ssrMenu.product.ts';
 import type { ISsrMenuOptionsSku } from '../bean/ssrMenu.sku.ts';
 import 'vona-module-a-ssr';
 declare module 'vona-module-a-ssr' {
-  
+
     export interface ISsrMenuRecord {
       'commerce-catalog:category': ISsrMenuOptionsCategory;
 'commerce-catalog:product': ISsrMenuOptionsProduct;
 'commerce-catalog:sku': ISsrMenuOptionsSku;
     }
 
-  
+
 }
 declare module 'vona-module-commerce-catalog' {
-  
+
         export interface SsrMenuCategory {
           /** @internal */
           get scope(): ScopeModuleCommerceCatalog;
@@ -858,7 +854,7 @@ declare module 'vona-module-commerce-catalog' {
             get $beanFullName(): 'commerce-catalog.ssrMenu.sku';
             get $onionName(): 'commerce-catalog:sku';
             get $onionOptions(): ISsrMenuOptionsSku;
-          } 
+          }
 }
 /** ssrMenu: end */
 /** locale: begin */
@@ -888,13 +884,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     commerceCatalog: ScopeModuleCommerceCatalog;
   }
-  
-  
+
+
 
   export interface IBeanScopeLocale {
     'commerce-catalog': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 /** scope: end */
