@@ -1,5 +1,29 @@
 # Changelog
 
+## 5.1.138
+
+### Features
+
+- Add a role-based access control (RBAC) system with permission and scope support.
+- Add user home pages, avatar support, and activation handling.
+- Add return-to redirect support for login flows.
+- Add mail capabilities and a base authentication guard.
+- Add basic image and select field support, including boolean field values.
+- Add SKU product and identifier support.
+- Add API and model resource deletion capabilities.
+- Add SSR profile metadata localization, public session handling, and local loading support.
+
+### Bug Fixes
+
+- Fix transaction handling.
+- Fix locale handling.
+- Fix internal SSR disposal method casting.
+
+### Improvements
+
+- Enhance deletion behavior.
+- Update database dialect, controller, authentication guard, locale, and application initialization components.
+
 ## 5.1.137
 
 ### Improvements
