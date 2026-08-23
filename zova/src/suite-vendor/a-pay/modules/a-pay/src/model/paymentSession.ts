@@ -13,7 +13,7 @@ export class ModelPaymentSession extends BeanModelBase {
     return this.$useStateData({
       queryKey: ['view', id],
       queryFn: async () => {
-        return await this.scope.api.paymentSession.view({ params: { id } });
+        return await this.scope.api.payPaymentSession.view({ params: { id } });
       },
     });
   }
@@ -22,7 +22,7 @@ export class ModelPaymentSession extends BeanModelBase {
     return this.$useMutationData({
       mutationKey: ['reconcile', id],
       mutationFn: async () => {
-        return await this.scope.api.paymentSession.reconcile(undefined, { params: { id } });
+        return await this.scope.api.payPaymentSession.reconcile(undefined, { params: { id } });
       },
       onSuccess: async () => {
         await this.$invalidateQueries({ queryKey: ['view', id] });
@@ -34,7 +34,7 @@ export class ModelPaymentSession extends BeanModelBase {
     return this.$useMutationData({
       mutationKey: ['start', id],
       mutationFn: async () => {
-        return await this.scope.api.paymentSession.start(undefined, { params: { id } });
+        return await this.scope.api.payPaymentSession.start(undefined, { params: { id } });
       },
       onSuccess: async () => {
         await this.$invalidateQueries({ queryKey: ['view', id] });

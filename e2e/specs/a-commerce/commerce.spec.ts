@@ -115,12 +115,16 @@ async function registerCustomer(
   expect(captcha?.id).toEqual(expect.any(String));
   expect(captcha?.token).toEqual(expect.any(String));
 
+  const baseURL = testInfo.project.use.baseURL;
+  if (!baseURL) throw new Error('commerce E2E base URL is unavailable');
+  const consumerUrl = new URL('/home/user/activation', baseURL).toString();
   const registerResponse = await request.post('/api/home/user/passport/register', {
     data: {
       username,
       email: `${username}@example.test`,
       password,
       passwordConfirm: password,
+      consumerUrl,
       captcha: { id: captcha.id, token: captcha.token },
     },
   });

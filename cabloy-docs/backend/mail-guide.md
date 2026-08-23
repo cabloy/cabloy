@@ -165,7 +165,7 @@ Read this guide together with:
 
 Those guides explain the flows where mail often becomes a downstream effect rather than the initiating business action.
 
-In the current repo, the `a-mailconfirm` flow is a representative example: user-access events can trigger mail-confirm behavior, and that bean ultimately delegates delivery through `bean.mail.send(...)` instead of embedding transport details directly into the user workflow.
+In the current repo, the `home-user` activation flow is a representative example: its account service issues a purpose-bound activation link and delegates delivery through `bean.mail.send(...)`, keeping transport details out of the user workflow.
 
 ## When to use a dedicated mail client
 

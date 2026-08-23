@@ -150,10 +150,10 @@ Representative examples include:
 
 - registration events
 - activation events
-- post-registration follow-up such as email confirmation
+- post-registration follow-up such as account activation-link issuance
 - role-assignment follow-up logic
 
-Mail delivery is a common downstream effect in these flows; see [Mail Guide](/backend/mail-guide).
+Mail delivery is a common downstream effect in these flows; see [Mail Guide](/backend/mail-guide). Account activation-link issuance may be owned by the account service rather than an event listener.
 
 Read this together with [User Access Guide](/backend/user-access-guide) when the event flow is tied to identity lifecycle behavior.
 
@@ -169,7 +169,7 @@ Use direct calls when:
 
 - the behavior is tightly bound to the core logic and should not be extensible as a chain
 
-A practical example from the user-access layer is registration and activation: the core user flow can stay small, while follow-up concerns such as mail confirmation or role assignment move into listeners.
+A practical example from the user-access layer is activation: the core user flow can stay small, while follow-up concerns such as role assignment move into listeners. Account-specific activation-link issuance remains owned by the home-user account service.
 
 ## Implementation checks for event-driven backend changes
 

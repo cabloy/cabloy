@@ -28,7 +28,6 @@
     "vona-module-a-locale": "workspace:^",
     "vona-module-a-logger": "workspace:^",
     "vona-module-a-mail": "workspace:^",
-    "vona-module-a-mailconfirm": "workspace:^",
     "vona-module-a-menu": "workspace:^",
     "vona-module-a-meta": "workspace:^",
     "vona-module-a-metrics": "workspace:^",

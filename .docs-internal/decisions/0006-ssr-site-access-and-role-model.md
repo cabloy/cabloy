@@ -124,7 +124,7 @@ roles: systemAdmin, registeredUser
 
 Every activated account receives `registeredUser`. The activated bootstrap account whose username is exactly `admin`, when bootstrap administration is enabled, receives `systemAdmin` in addition.
 
-Role assignment occurs on activation, not merely on registration. This preserves existing email-confirmation and automatic-activation semantics. The registration flow must refresh the issued passport when an immediate response must include the roles assigned by activation.
+Role assignment occurs on activation, not merely on registration. This preserves the established activation lifecycle and automatic-activation semantics. The registration flow must refresh the issued passport when an immediate response must include the roles assigned by activation.
 
 No role inheritance is introduced. Assigning `systemAdmin` to another account does not implicitly assign `registeredUser`; both memberships remain explicit account-level decisions.
 
@@ -252,7 +252,7 @@ Rejected because future Sites require deliberate authorization. Explicit `siteId
 
 ### Assign `registeredUser` at registration before activation
 
-Rejected because role membership should follow the established activation lifecycle and email-confirmation semantics. Existing activated/passport guards remain coherent when the role is added on activation.
+Rejected because role membership should follow the established activation lifecycle. Existing activated/passport guards remain coherent when the role is added on activation.
 
 ## Implementation Plan
 

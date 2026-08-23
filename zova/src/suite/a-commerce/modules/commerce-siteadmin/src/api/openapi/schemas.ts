@@ -43,12 +43,90 @@ export type ApiSchemaCommerceMemberDtoAddressView_2d063d28bc7243bed02ebd8bddf121
   components['schemas']['commerce-member.dto.addressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
 export type ApiSchemaCommerceMemberDtoAddressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =
   Partial<ApiSchemaCommerceMemberDtoAddressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875>;
+export type ApiSchemaAImageDtoImageUploadPolicyResponse =
+  components['schemas']['a-image.dto.imageUploadPolicyResponse'];
+export type ApiSchemaAImageDtoImageUploadPolicyResponsePartial =
+  Partial<ApiSchemaAImageDtoImageUploadPolicyResponse>;
+export type ApiSchemaAImageDtoImageUploadPolicyRequest =
+  components['schemas']['a-image.dto.imageUploadPolicyRequest'];
+export type ApiSchemaAImageDtoImageUploadPolicyRequestPartial =
+  Partial<ApiSchemaAImageDtoImageUploadPolicyRequest>;
+export type ApiSchemaAImageDtoImageUploadResponse =
+  components['schemas']['a-image.dto.imageUploadResponse'];
+export type ApiSchemaAImageDtoImageUploadResponsePartial =
+  Partial<ApiSchemaAImageDtoImageUploadResponse>;
+export type ApiSchemaAImageDtoImageDirectUploadResponse =
+  components['schemas']['a-image.dto.imageDirectUploadResponse'];
+export type ApiSchemaAImageDtoImageDirectUploadResponsePartial =
+  Partial<ApiSchemaAImageDtoImageDirectUploadResponse>;
+export type ApiSchemaAImageDtoImageDirectUploadRequest =
+  components['schemas']['a-image.dto.imageDirectUploadRequest'];
+export type ApiSchemaAImageDtoImageDirectUploadRequestPartial =
+  Partial<ApiSchemaAImageDtoImageDirectUploadRequest>;
+export type ApiSchemaAImageDtoImageDirectUploadFinalizeResponse =
+  components['schemas']['a-image.dto.imageDirectUploadFinalizeResponse'];
+export type ApiSchemaAImageDtoImageDirectUploadFinalizeResponsePartial =
+  Partial<ApiSchemaAImageDtoImageDirectUploadFinalizeResponse>;
+export type ApiSchemaAImageDtoImageDirectUploadFinalizeRequest =
+  components['schemas']['a-image.dto.imageDirectUploadFinalizeRequest'];
+export type ApiSchemaAImageDtoImageDirectUploadFinalizeRequestPartial =
+  Partial<ApiSchemaAImageDtoImageDirectUploadFinalizeRequest>;
+export type ApiSchemaAImageDtoImageUploadUrlRequest =
+  components['schemas']['a-image.dto.imageUploadUrlRequest'];
+export type ApiSchemaAImageDtoImageUploadUrlRequestPartial =
+  Partial<ApiSchemaAImageDtoImageUploadUrlRequest>;
+export type ApiSchemaAImageDtoImageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
+  components['schemas']['a-image.dto.imageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+export type ApiSchemaAImageDtoImageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
+  Partial<ApiSchemaAImageDtoImageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
+export type ApiSchemaHomeUserDtoAccountCurrent =
+  components['schemas']['home-user.dto.accountCurrent'];
+export type ApiSchemaHomeUserDtoAccountCurrentPartial = Partial<ApiSchemaHomeUserDtoAccountCurrent>;
+export type ApiSchemaHomeUserDtoAccountProfileUpdate =
+  components['schemas']['home-user.dto.accountProfileUpdate'];
+export type ApiSchemaHomeUserDtoAccountProfileUpdatePartial =
+  Partial<ApiSchemaHomeUserDtoAccountProfileUpdate>;
+export type ApiSchemaHomeUserDtoAccountActivation =
+  components['schemas']['home-user.dto.accountActivation'];
+export type ApiSchemaHomeUserDtoAccountActivationPartial =
+  Partial<ApiSchemaHomeUserDtoAccountActivation>;
+export type ApiSchemaHomeUserDtoAccountRelogin =
+  components['schemas']['home-user.dto.accountRelogin'];
+export type ApiSchemaHomeUserDtoAccountReloginPartial = Partial<ApiSchemaHomeUserDtoAccountRelogin>;
+export type ApiSchemaHomeUserDtoAccountPasswordChange =
+  components['schemas']['home-user.dto.accountPasswordChange'];
+export type ApiSchemaHomeUserDtoAccountPasswordChangePartial =
+  Partial<ApiSchemaHomeUserDtoAccountPasswordChange>;
+export type ApiSchemaHomeUserDtoAccountPasswordSetIssue =
+  components['schemas']['home-user.dto.accountPasswordSetIssue'];
+export type ApiSchemaHomeUserDtoAccountPasswordSetIssuePartial =
+  Partial<ApiSchemaHomeUserDtoAccountPasswordSetIssue>;
+export type ApiSchemaHomeUserDtoAccountPasswordSet =
+  components['schemas']['home-user.dto.accountPasswordSet'];
+export type ApiSchemaHomeUserDtoAccountPasswordSetPartial =
+  Partial<ApiSchemaHomeUserDtoAccountPasswordSet>;
+export type ApiSchemaHomeUserDtoAccountPasswordResetRequestResult =
+  components['schemas']['home-user.dto.accountPasswordResetRequestResult'];
+export type ApiSchemaHomeUserDtoAccountPasswordResetRequestResultPartial =
+  Partial<ApiSchemaHomeUserDtoAccountPasswordResetRequestResult>;
+export type ApiSchemaHomeUserDtoAccountPasswordResetRequest =
+  components['schemas']['home-user.dto.accountPasswordResetRequest'];
+export type ApiSchemaHomeUserDtoAccountPasswordResetRequestPartial =
+  Partial<ApiSchemaHomeUserDtoAccountPasswordResetRequest>;
+export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_626802c24df1498cec99aab0854fedf90c9b6dd3_43998cdb3349d6c975ac80a4a27a0c532758260d =
+  components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_626802c24df1498cec99aab0854fedf90c9b6dd3_43998cdb3349d6c975ac80a4a27a0c532758260d'];
+export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_626802c24df1498cec99aab0854fedf90c9b6dd3_43998cdb3349d6c975ac80a4a27a0c532758260dPartial =
+  Partial<ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_626802c24df1498cec99aab0854fedf90c9b6dd3_43998cdb3349d6c975ac80a4a27a0c532758260d>;
+export type ApiSchemaHomeUserDtoAccountPasswordReset =
+  components['schemas']['home-user.dto.accountPasswordReset'];
+export type ApiSchemaHomeUserDtoAccountPasswordResetPartial =
+  Partial<ApiSchemaHomeUserDtoAccountPasswordReset>;
 export type ApiSchemaHomeUserDtoPassport_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
   components['schemas']['home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
 export type ApiSchemaHomeUserDtoPassport_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
   Partial<ApiSchemaHomeUserDtoPassport_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
-export type ApiSchemaHomeUserEntityUser = components['schemas']['home-user.entity.user'];
-export type ApiSchemaHomeUserEntityUserPartial = Partial<ApiSchemaHomeUserEntityUser>;
+export type ApiSchemaHomeUserDtoPassportUser = components['schemas']['home-user.dto.passportUser'];
+export type ApiSchemaHomeUserDtoPassportUserPartial = Partial<ApiSchemaHomeUserDtoPassportUser>;
 export type ApiSchemaAAuthDtoAuth = components['schemas']['a-auth.dto.auth'];
 export type ApiSchemaAAuthDtoAuthPartial = Partial<ApiSchemaAAuthDtoAuth>;
 export type ApiSchemaHomeUserEntityRole = components['schemas']['home-user.entity.role'];
@@ -61,10 +139,10 @@ export type ApiSchemaAJwtDtoJwtToken = components['schemas']['a-jwt.dto.jwtToken
 export type ApiSchemaAJwtDtoJwtTokenPartial = Partial<ApiSchemaAJwtDtoJwtToken>;
 export type ApiSchemaHomeUserDtoRegister = components['schemas']['home-user.dto.register'];
 export type ApiSchemaHomeUserDtoRegisterPartial = Partial<ApiSchemaHomeUserDtoRegister>;
-export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9 =
-  components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9'];
-export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9Partial =
-  Partial<ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9>;
+export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_626802c24df1498cec99aab0854fedf90c9b6dd3_43998cdb3349d6c975ac80a4a27a0c532758260d_0aab216abd3467dd07f61c69172266c2441af477_c71101e3440ceef7046f6139eb85312cacf75933 =
+  components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_626802c24df1498cec99aab0854fedf90c9b6dd3_43998cdb3349d6c975ac80a4a27a0c532758260d_0aab216abd3467dd07f61c69172266c2441af477_c71101e3440ceef7046f6139eb85312cacf75933'];
+export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_626802c24df1498cec99aab0854fedf90c9b6dd3_43998cdb3349d6c975ac80a4a27a0c532758260d_0aab216abd3467dd07f61c69172266c2441af477_c71101e3440ceef7046f6139eb85312cacf75933Partial =
+  Partial<ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_626802c24df1498cec99aab0854fedf90c9b6dd3_43998cdb3349d6c975ac80a4a27a0c532758260d_0aab216abd3467dd07f61c69172266c2441af477_c71101e3440ceef7046f6139eb85312cacf75933>;
 export type ApiSchemaHomeUserDtoLogin = components['schemas']['home-user.dto.login'];
 export type ApiSchemaHomeUserDtoLoginPartial = Partial<ApiSchemaHomeUserDtoLogin>;
 export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661 =
@@ -441,42 +519,6 @@ export type ApiSchemaAFileDtoFileUploadUrlRequest =
   components['schemas']['a-file.dto.fileUploadUrlRequest'];
 export type ApiSchemaAFileDtoFileUploadUrlRequestPartial =
   Partial<ApiSchemaAFileDtoFileUploadUrlRequest>;
-export type ApiSchemaAImageDtoImageUploadPolicyResponse =
-  components['schemas']['a-image.dto.imageUploadPolicyResponse'];
-export type ApiSchemaAImageDtoImageUploadPolicyResponsePartial =
-  Partial<ApiSchemaAImageDtoImageUploadPolicyResponse>;
-export type ApiSchemaAImageDtoImageUploadPolicyRequest =
-  components['schemas']['a-image.dto.imageUploadPolicyRequest'];
-export type ApiSchemaAImageDtoImageUploadPolicyRequestPartial =
-  Partial<ApiSchemaAImageDtoImageUploadPolicyRequest>;
-export type ApiSchemaAImageDtoImageUploadResponse =
-  components['schemas']['a-image.dto.imageUploadResponse'];
-export type ApiSchemaAImageDtoImageUploadResponsePartial =
-  Partial<ApiSchemaAImageDtoImageUploadResponse>;
-export type ApiSchemaAImageDtoImageDirectUploadResponse =
-  components['schemas']['a-image.dto.imageDirectUploadResponse'];
-export type ApiSchemaAImageDtoImageDirectUploadResponsePartial =
-  Partial<ApiSchemaAImageDtoImageDirectUploadResponse>;
-export type ApiSchemaAImageDtoImageDirectUploadRequest =
-  components['schemas']['a-image.dto.imageDirectUploadRequest'];
-export type ApiSchemaAImageDtoImageDirectUploadRequestPartial =
-  Partial<ApiSchemaAImageDtoImageDirectUploadRequest>;
-export type ApiSchemaAImageDtoImageDirectUploadFinalizeResponse =
-  components['schemas']['a-image.dto.imageDirectUploadFinalizeResponse'];
-export type ApiSchemaAImageDtoImageDirectUploadFinalizeResponsePartial =
-  Partial<ApiSchemaAImageDtoImageDirectUploadFinalizeResponse>;
-export type ApiSchemaAImageDtoImageDirectUploadFinalizeRequest =
-  components['schemas']['a-image.dto.imageDirectUploadFinalizeRequest'];
-export type ApiSchemaAImageDtoImageDirectUploadFinalizeRequestPartial =
-  Partial<ApiSchemaAImageDtoImageDirectUploadFinalizeRequest>;
-export type ApiSchemaAImageDtoImageUploadUrlRequest =
-  components['schemas']['a-image.dto.imageUploadUrlRequest'];
-export type ApiSchemaAImageDtoImageUploadUrlRequestPartial =
-  Partial<ApiSchemaAImageDtoImageUploadUrlRequest>;
-export type ApiSchemaAImageDtoImageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
-  components['schemas']['a-image.dto.imageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
-export type ApiSchemaAImageDtoImageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
-  Partial<ApiSchemaAImageDtoImageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
 export type ApiSchemaPayMockDtoMockPaymentReceipt =
   components['schemas']['pay-mock.dto.mockPaymentReceipt'];
 export type ApiSchemaPayMockDtoMockPaymentReceiptPartial =

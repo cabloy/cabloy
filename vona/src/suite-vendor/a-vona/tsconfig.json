@@ -132,9 +132,6 @@
       "path": "modules/a-mail/tsconfig.build.json"
     },
     {
-      "path": "modules/a-mailconfirm/tsconfig.build.json"
-    },
-    {
       "path": "modules/a-zod/tsconfig.build.json"
     },
     {

@@ -3,7 +3,7 @@ import type { IDecoratorModelOptions } from 'zova-module-a-model';
 
 import { BeanModelBase, Model } from 'zova-module-a-model';
 
-import type { ApiApiPayMockPaymentcompleteRequestBody } from '../api/payMockPayment.js';
+import { ApiApiPayMockMockPaymentcompleteRequestBody } from '../api/payMockMockPayment.js';
 
 export interface IModelOptionsPayMockPayment extends IDecoratorModelOptions {}
 
@@ -12,8 +12,8 @@ export class ModelPayMockPayment extends BeanModelBase {
   complete(id: TableIdentity) {
     return this.$useMutationData({
       mutationKey: ['complete', id],
-      mutationFn: async (body: ApiApiPayMockPaymentcompleteRequestBody) => {
-        return await this.scope.api.payMockPayment.complete(body, { params: { id } });
+      mutationFn: async (body: ApiApiPayMockMockPaymentcompleteRequestBody) => {
+        return await this.scope.api.payMockMockPayment.complete(body, { params: { id } });
       },
     });
   }

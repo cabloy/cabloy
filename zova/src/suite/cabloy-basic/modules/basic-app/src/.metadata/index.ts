@@ -4,15 +4,15 @@ export * from '../service/appModal.js';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'basic-app:appModal': never;
     }
 
-  
+
 }
 declare module 'zova-module-basic-app' {
-  
+
         export interface ServiceAppModal {
           /** @internal */
           get scope(): ScopeModuleBasicApp;
@@ -21,8 +21,8 @@ declare module 'zova-module-basic-app' {
         export interface ServiceAppModal {
           get $beanFullName(): 'basic-app.service.appModal';
           get $onionName(): 'basic-app:appModal';
-          
-        } 
+
+        }
 }
 /** service: end */
 /** service: begin */
@@ -39,15 +39,15 @@ export * from '../bean/behavior.appModal.jsx';
 import { IBehaviorOptionsAppModal } from '../bean/behavior.appModal.jsx';
 import 'zova-module-a-behavior';
 declare module 'zova-module-a-behavior' {
-  
+
     export interface IBehaviorRecord {
       'basic-app:appModal': IBehaviorOptionsAppModal;
     }
 
-  
+
 }
 declare module 'zova-module-basic-app' {
-  
+
         export interface BehaviorAppModal {
           /** @internal */
           get scope(): ScopeModuleBasicApp;
@@ -57,7 +57,7 @@ declare module 'zova-module-basic-app' {
           get $beanFullName(): 'basic-app.behavior.appModal';
           get $onionName(): 'basic-app:appModal';
           get $onionOptions(): IBehaviorOptionsAppModal;
-        } 
+        }
 }
 /** behavior: end */
 /** behavior: begin */
@@ -119,7 +119,7 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'basic-app': ScopeModuleBasicApp;
   }
-  
+
   export interface IBeanScopeConfig {
     'basic-app': ReturnType<typeof config>;
   }
@@ -128,10 +128,10 @@ declare module 'zova' {
     'basic-app': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `basic-app::${K}` {
   return `basic-app::${key}`;
-}  
+}
 /** scope: end */

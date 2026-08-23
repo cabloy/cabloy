@@ -5,8 +5,10 @@ import type {
 } from 'vona-module-a-aspect';
 
 import koaCors from '@koa/cors';
-import { BeanBase } from 'vona';
+import { BeanBase, useApp } from 'vona';
 import { MiddlewareSystem } from 'vona-module-a-aspect';
+
+const app = useApp();
 
 export interface IMiddlewareSystemOptionsCors extends IDecoratorMiddlewareSystemOptions {
   whiteList: string | string[];
@@ -23,7 +25,7 @@ export interface IMiddlewareSystemOptionsCors extends IDecoratorMiddlewareSystem
 
 @MiddlewareSystem<IMiddlewareSystemOptionsCors>({
   dependencies: 'a-instance:instance',
-  whiteList: [],
+  whiteList: app.meta.env.CORS_WHITE_LIST || [],
   origin: _corsOrigin,
   allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
   exposeHeaders: '',

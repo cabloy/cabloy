@@ -4,15 +4,15 @@ export * from '../bean/filter.error.ts';
 import type { IFilterOptionsError } from '../bean/filter.error.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
-  
+
     export interface IFilterRecordGlobal {
       'a-error:error': IFilterOptionsError;
     }
 
-  
+
 }
 declare module 'vona-module-a-error' {
-  
+
         export interface FilterError {
           /** @internal */
           get scope(): ScopeModuleAError;
@@ -22,7 +22,7 @@ declare module 'vona-module-a-error' {
             get $beanFullName(): 'a-error.filter.error';
             get $onionName(): 'a-error:error';
             get $onionOptions(): IFilterOptionsError;
-          } 
+          }
 }
 /** filter: end */
 /** bean: begin */
@@ -30,15 +30,15 @@ export * from '../bean/bean.error.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-error' {
-  
+
         export interface BeanError {
           /** @internal */
           get scope(): ScopeModuleAError;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -55,15 +55,15 @@ export * from '../service/errorView.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
-  
+
     export interface IServiceRecord {
       'a-error:errorView': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-error' {
-  
+
         export interface ServiceErrorView {
           /** @internal */
           get scope(): ScopeModuleAError;
@@ -72,8 +72,7 @@ declare module 'vona-module-a-error' {
           export interface ServiceErrorView {
             get $beanFullName(): 'a-error.service.errorView';
             get $onionName(): 'a-error:errorView';
-            
-          } 
+          }
 }
 /** service: end */
 /** service: begin */
@@ -96,15 +95,15 @@ export * from '../bean/meta.asset.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'a-error:asset': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-error' {
-  
+
         export interface MetaAsset {
           /** @internal */
           get scope(): ScopeModuleAError;
@@ -113,8 +112,7 @@ declare module 'vona-module-a-error' {
           export interface MetaAsset {
             get $beanFullName(): 'a-error.meta.asset';
             get $onionName(): 'a-error:asset';
-            
-          } 
+          }
 }
 /** meta: end */
 /** meta asset: begin */
@@ -150,13 +148,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     error: ScopeModuleAError;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-error': ReturnType<typeof config>;
   }
 
-  
 
-  
+
+
 }
 /** scope: end */

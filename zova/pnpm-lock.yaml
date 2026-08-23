@@ -1765,6 +1765,9 @@ importers:
       zova-module-basic-file:
         specifier: ^5.0.0
         version: link:../../../cabloy-basic/modules/basic-file
+      zova-module-basic-image:
+        specifier: ^5.0.0
+        version: link:../../../cabloy-basic/modules/basic-image
       zova-module-home-api:
         specifier: ^5.0.0
         version: link:../home-api

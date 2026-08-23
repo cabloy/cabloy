@@ -202,9 +202,6 @@ importers:
       vona-module-a-mail:
         specifier: workspace:^
         version: link:src/suite-vendor/a-vona/modules/a-mail
-      vona-module-a-mailconfirm:
-        specifier: workspace:^
-        version: link:src/suite-vendor/a-vona/modules/a-mailconfirm
       vona-module-a-markdown:
         specifier: workspace:^
         version: link:src/suite-vendor/a-cabloy/modules/a-markdown
@@ -2237,9 +2234,6 @@ importers:
       vona-module-a-mail:
         specifier: workspace:^
         version: link:modules/a-mail
-      vona-module-a-mailconfirm:
-        specifier: workspace:^
-        version: link:modules/a-mailconfirm
       vona-module-a-menu:
         specifier: workspace:^
         version: link:modules/a-menu
@@ -2714,15 +2708,6 @@ importers:
       nodemailer:
         specifier: ^9.0.5
         version: 9.0.5
-    devDependencies:
-      clean-package:
-        specifier: ^2.2.0
-        version: 2.2.0
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.3
-
-  src/suite-vendor/a-vona/modules/a-mailconfirm:
     devDependencies:
       clean-package:
         specifier: ^2.2.0

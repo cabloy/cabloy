@@ -123,7 +123,7 @@ Representative flows include:
 - registration
 - activation
 - assigning default roles
-- sending email confirmation or similar follow-up logic
+- issuing account activation links or other follow-up logic
 
 Those follow-up email behaviors often connect directly to queue-backed mail delivery; see [Mail Guide](/backend/mail-guide).
 
@@ -131,7 +131,7 @@ The framework-level user APIs stay stable while project-specific modules can cus
 
 The legacy user docs showed this especially clearly:
 
-- registration can trigger follow-up mail-confirm flows
+- registration can issue an account activation link through the account service
 - activation can assign default roles such as `admin`
 - `autoActivate` can suppress the extra activation step when the business flow allows it
 

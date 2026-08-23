@@ -49,7 +49,9 @@
   "vonaModule": {
     "fileVersion": 1,
     "dependencies": {
-      "a-auth": "5.0.0"
+      "a-auth": "5.0.0",
+      "a-core": "5.0.0",
+      "a-redlock": "5.0.0"
     }
   }
 }

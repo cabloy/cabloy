@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/paymentSession.js';
+export * from '../api/payPaymentSession.js';
 
 import 'zova';
 declare module 'zova' {
@@ -44,22 +44,22 @@ declare module 'zova' {
 }
 declare module 'zova-module-a-pay' {
   
-        export interface ApiPaymentSession {
+        export interface ApiPayPaymentSession {
           /** @internal */
           get scope(): ScopeModuleAPay;
         }
 
-        export interface ApiPaymentSession {
-          get $beanFullName(): 'a-pay.api.paymentSession';
-          get $onionName(): 'a-pay:paymentSession';
+        export interface ApiPayPaymentSession {
+          get $beanFullName(): 'a-pay.api.payPaymentSession';
+          get $onionName(): 'a-pay:payPaymentSession';
           
         } 
 }
 /** api: end */
 /** api: begin */
-import { ApiPaymentSession } from '../api/paymentSession.js';
+import { ApiPayPaymentSession } from '../api/payPaymentSession.js';
 export interface IModuleApi {
-  'paymentSession': ApiPaymentSession;
+  'payPaymentSession': ApiPayPaymentSession;
 }
 /** api: end */
 /** api: begin */
@@ -67,7 +67,7 @@ export interface IModuleApi {
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
-    'a-pay.api.paymentSession': ApiPaymentSession;
+    'a-pay.api.payPaymentSession': ApiPayPaymentSession;
   }
 }
 /** api: end */
@@ -75,7 +75,7 @@ declare module 'zova' {
 export * from '../api/openapi/index.js';
 /** openapi: end */
 /** apiSchema: begin */
-export * from '../apiSchema/paymentSession.js';
+export * from '../apiSchema/payPaymentSession.js';
 
 import 'zova';
 declare module 'zova' {
@@ -84,22 +84,22 @@ declare module 'zova' {
 }
 declare module 'zova-module-a-pay' {
   
-        export interface ApiSchemaPaymentSession {
+        export interface ApiSchemaPayPaymentSession {
           /** @internal */
           get scope(): ScopeModuleAPay;
         }
 
-        export interface ApiSchemaPaymentSession {
-          get $beanFullName(): 'a-pay.apiSchema.paymentSession';
-          get $onionName(): 'a-pay:paymentSession';
+        export interface ApiSchemaPayPaymentSession {
+          get $beanFullName(): 'a-pay.apiSchema.payPaymentSession';
+          get $onionName(): 'a-pay:payPaymentSession';
           
         } 
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import { ApiSchemaPaymentSession } from '../apiSchema/paymentSession.js';
+import { ApiSchemaPayPaymentSession } from '../apiSchema/payPaymentSession.js';
 export interface IModuleApiSchema {
-  'paymentSession': ApiSchemaPaymentSession;
+  'payPaymentSession': ApiSchemaPayPaymentSession;
 }
 /** apiSchema: end */
 /** apiSchema: begin */
@@ -107,7 +107,7 @@ export interface IModuleApiSchema {
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
-    'a-pay.apiSchema.paymentSession': ApiSchemaPaymentSession;
+    'a-pay.apiSchema.payPaymentSession': ApiSchemaPayPaymentSession;
   }
 }
 /** apiSchema: end */

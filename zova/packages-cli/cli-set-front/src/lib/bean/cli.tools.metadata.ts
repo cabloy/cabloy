@@ -193,6 +193,7 @@ export class CliToolsMetadata extends BeanCliBase {
       content = `// eslint-disable\n${content}`;
     }
     // save
+    content = content.replace(/[^\S\r\n]+$/gm, '');
     await fse.writeFile(metaIndexFile, content);
     // locales
     await this._generateLocales(modulePath, contentLocales1);
