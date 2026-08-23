@@ -86,9 +86,9 @@ export class CtxSSR extends BeanSimple {
     for (const serverContext of serverContexts) {
       if (serverContext.disposed) continue;
       if (serverContext.bean && serverContext.bean !== serverContext.app?.bean) {
-        serverContext.bean.dispose();
+        (<any>serverContext.bean).dispose();
       }
-      serverContext.dispose();
+      (<any>serverContext).dispose();
     }
     serverContexts.clear();
   }
