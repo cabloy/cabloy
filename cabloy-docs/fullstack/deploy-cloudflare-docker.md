@@ -89,7 +89,10 @@ After the origin is reachable with its TLS configuration:
    SERVER_SERVE_PROTOCOL=https
    SERVER_SERVE_HOST=example.com
    SERVER_SUBDOMAINOFFSET=2
+   CORS_WHITE_LIST=https://app.example.com
    ```
+
+`SERVER_SERVE_PROTOCOL` and `SERVER_SERVE_HOST` define the backend's canonical public origin; they do not automatically authorize a separately hosted browser frontend. When the frontend or another browser consumer uses a different origin, set `CORS_WHITE_LIST` to explicit comma-separated origins, as shown above. Keep this list limited to the origins that require browser access; do not use a wildcard as the production default. The normal CORS allowlist is also used by the built-in WebSocket origin check, while account credential-link flows require exact normalized HTTP(S) origins.
 
 The base hostname resolves to the empty-name/default instance. For example, `acme.example.com` resolves to `acme`; a deeper hostname such as `eu.acme.example.com` resolves to `acme.eu` and requires that explicitly configured instance.
 

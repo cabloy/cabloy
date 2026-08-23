@@ -218,6 +218,8 @@ A useful backend mental model is:
 
 This layered model is the safest way to reason about config changes in Cabloy.
 
+`CORS_WHITE_LIST` is an example of a deployable environment value consumed directly by a framework middleware default. Configure deployment-specific browser origins in the active env layer; it is not a `config.modules[...]` field or instance-specific config. Use explicit `a-security:cors` configuration only when the application needs middleware behavior beyond the environment-provided origin list. See [Runtime and Flavors](/backend/runtime-and-flavors#configure-browser-cors-origins) for its format, browser-origin behavior, and env-file precedence.
+
 ## Relationship to startup, model, and datasource behavior
 
 Config does not live in isolation. In many backend tasks, config interacts directly with:

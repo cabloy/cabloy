@@ -120,6 +120,7 @@ The current repo uses many env variables, but these are the most important ones 
 | Runtime meta           | `META_MODE`, `META_FLAVOR`, `NODE_ENV`                                                                                                       | chooses the active runtime and flavor shape                                                   |
 | Worker/runtime process | `SERVER_WORKERS`                                                                                                                             | controls worker count and is normalized by the CLI/bootstrap path                             |
 | HTTP server            | `SERVER_LISTEN_HOSTNAME`, `SERVER_LISTEN_PORT`, `SERVER_LISTEN_DISABLE`, `SERVER_SERVE_PROTOCOL`, `SERVER_SERVE_HOST`, `SERVER_GLOBALPREFIX` | controls listen/serve behavior and URL shaping                                                |
+| CORS                   | `CORS_WHITE_LIST`                                                                                                                            | supplies the default allowed-origin whitelist for the `a-security:cors` middleware            |
 | Database               | `DATABASE_DEFAULT_CLIENT`, `DATABASE_CLIENT_SQLITE3_FILENAME`, `DATABASE_CLIENT_PG_*`, `DATABASE_CLIENT_MYSQL_*`                             | controls datasource defaults and concrete client connection settings                          |
 | Redis                  | `REDIS_DEFAULT_HOST`, `REDIS_DEFAULT_PORT`, `REDIS_DEFAULT_DB`                                                                               | controls the backend Redis baseline used by queue, cache, broadcast, and related capabilities |
 | Logger                 | `LOGGER_DIR`, `LOGGER_ROTATE_*`                                                                                                              | controls log path and rotation behavior                                                       |
@@ -132,7 +133,27 @@ Use this page as the runtime-facing overview, then inspect the current app confi
 
 When configured, `SERVER_SERVE_PROTOCOL` and `SERVER_SERVE_HOST` define Vona's canonical public origin for backend APIs and backend-hosted SSR sites. If either serve value is not configured, Vona resolves the effective protocol and host from the current proxy-aware request context; background work that needs a stable backend public origin should configure both serve values explicitly.
 
-A browser consumer can be deployed on a different origin and pathname. Account password-set and password-reset delivery therefore does not derive its destination from `SERVER_SERVE_*`, SSR Site metadata, `publicPath`, `siteId`, `Referer`, or browser-selected mount data: Zova supplies the complete token-free absolute public page URL, and Vona validates only HTTP(S), absence of userinfo/query/fragment, and an exact trusted origin. `checkOriginExact` permits the exact current origin when protocol, host, and effective port all match; request or proxy Host values are not a general cross-origin allowlist and cannot authorize lookalike, suffix, alternate-scheme, or alternate-port destinations. Other production consumer origins must exactly match an explicit `a-security:cors` `whiteList` entry. In `dev/test`, exact credential-link authorization additionally accepts different ports only when both API and consumer hostnames are loopback (`localhost`, `127.0.0.1`, or `::1`). Vona preserves the frontend pathname and alone adds the raw token as the `token` URL query parameter. Query transport reaches the initial request; Referrer-Policy and Vona, edge, or APM query-log redaction are intentionally outside this flow's current scope. Normal CORS defaults to an empty `whiteList`: in `dev/test`, loopback requests may cross ports; elsewhere, cross-origin CORS requires an explicit whitelist entry. Normal CORS wildcard and suffix matching remain available when configured but are not credential-link authorization.
+A browser consumer can be deployed on a different origin and pathname. Account password-set and password-reset delivery therefore does not derive its destination from `SERVER_SERVE_*`, SSR Site metadata, `publicPath`, `siteId`, `Referer`, or browser-selected mount data: Zova supplies the complete token-free absolute public page URL, and Vona validates only HTTP(S), absence of userinfo/query/fragment, and an exact trusted origin. `checkOriginExact` permits the exact current origin when protocol, host, and effective port all match; request or proxy Host values are not a general cross-origin allowlist and cannot authorize lookalike, suffix, alternate-scheme, or alternate-port destinations. Other production consumer origins must exactly match an explicit `a-security:cors` `whiteList` entry. In `dev/test`, exact credential-link authorization additionally accepts different ports only when both API and consumer hostnames are loopback (`localhost`, `127.0.0.1`, or `::1`). Vona preserves the frontend pathname and alone adds the raw token as the `token` URL query parameter. Query transport reaches the initial request; Referrer-Policy and Vona, edge, or APM query-log redaction are intentionally outside this flow's current scope. Normal CORS defaults to an empty `whiteList`; configure `CORS_WHITE_LIST` with the permitted browser origins, or explicitly configure `a-security:cors`. In `dev/test`, loopback requests may cross ports; elsewhere, cross-origin CORS requires an allowed entry. Normal CORS wildcard and suffix matching remain available when configured but are not credential-link authorization.
+
+## Configure browser CORS origins
+
+`CORS_WHITE_LIST` supplies the default `whiteList` for the app-wide `a-security:cors` middleware. It controls normal HTTP CORS and the built-in WebSocket origin check; it does not authenticate or authorize requests.
+
+Set it to a comma-separated list of allowed browser origins. Use complete origins, including the scheme and a non-default port when applicable:
+
+```dotenv
+CORS_WHITE_LIST=https://app.example.com,https://admin.example.com
+```
+
+```dotenv
+CORS_WHITE_LIST=https://app.example.com,http://localhost:5173
+```
+
+When `CORS_WHITE_LIST` is absent or empty, Vona retains the closed empty-whitelist default. The existing `dev/test` loopback exception remains available for local development, so ordinary loopback clients on different ports do not require this setting.
+
+Set deployment-specific origins in the active `vona/env/.env*` layer or inject them through the deployment environment. See [Env-file resolution and precedence](#env-file-resolution-and-precedence) for the active-file chain and precedence rules. Applications that need middleware behavior beyond this default origin list can configure `a-security:cors` explicitly.
+
+Normal CORS may use its configured wildcard or suffix matching behavior. Do not use that behavior to authorize account credential links: `checkOriginExact(...)` accepts only an exact normalized HTTP(S) origin and rejects wildcard and suffix entries.
 
 ## How to determine runtime metadata in code
 
