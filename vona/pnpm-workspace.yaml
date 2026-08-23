@@ -53,4 +53,4 @@ allowBuilds:
   vue-demi: true
 
 patchedDependencies:
-  zova-core@5.1.85: patches/zova-core@5.1.85.patch
+  zova-core@5.1.86: patches/zova-core@5.1.86.patch
