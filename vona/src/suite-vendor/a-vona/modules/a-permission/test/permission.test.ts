@@ -8,16 +8,11 @@ import { getRbacDecision, setRbacDecision, SymbolRbacDecision } from 'vona-modul
 
 import { BeanPermission } from '../src/bean/bean.permission.ts';
 
-function createPermission(options: {
-  instanceName?: string;
-  userId?: string;
-  roleIds?: Array<string | number>;
-}) {
+function createPermission(options: { userId?: string; roleIds?: Array<string | number> }) {
   const permission = Object.create(BeanPermission.prototype) as BeanPermission;
   Object.defineProperties(permission, {
     ctx: {
       value: {
-        instanceName: options.instanceName,
         passport: { user: options.userId ? { id: options.userId } : undefined },
       },
     },
@@ -57,41 +52,29 @@ function createCachePermission(clearedCacheNames: string[]) {
 }
 
 describe('permission.test.ts', { concurrency: false }, () => {
-  it('normalizes role cache keys and isolates them by instance', () => {
+  it('normalizes role cache keys by role identity', () => {
     const first = createPermission({
-      instanceName: 'instance-a',
       userId: 'user-1',
       roleIds: ['role-b', 'role-a', 'role-a'],
     });
     const sameRolesDifferentOrder = createPermission({
-      instanceName: 'instance-a',
       userId: 'user-2',
-      roleIds: ['role-a', 'role-b'],
-    });
-    const otherInstance = createPermission({
-      instanceName: 'instance-b',
-      userId: 'user-1',
       roleIds: ['role-a', 'role-b'],
     });
 
     const info = cacheInfo('training-student:student', 'select');
     assert.equal(
       (first as any).retrievePermissionActionByRolesCacheKey(info),
-      'action:training-student:student:select:instance:instance-a:roles:role-a,role-b',
+      'action:training-student:student:select:roles:role-a,role-b',
     );
     assert.equal(
       (first as any).retrievePermissionActionByRolesCacheKey(info),
       (sameRolesDifferentOrder as any).retrievePermissionActionByRolesCacheKey(info),
     );
-    assert.notEqual(
-      (first as any).retrievePermissionActionByRolesCacheKey(info),
-      (otherInstance as any).retrievePermissionActionByRolesCacheKey(info),
-    );
   });
 
   it('keeps role and user action cache identities distinct', () => {
     const permission = createPermission({
-      instanceName: 'instance-a',
       userId: 'user-1',
       roleIds: ['role-a'],
     });
@@ -103,32 +86,24 @@ describe('permission.test.ts', { concurrency: false }, () => {
     );
   });
 
-  it('isolates RBAC action cache keys by user, roles, and instance', () => {
+  it('isolates RBAC action cache keys by user and roles', () => {
     const first = createPermission({
-      instanceName: 'instance-a',
       userId: 'user-1',
       roleIds: ['role-a'],
     });
     const otherUser = createPermission({
-      instanceName: 'instance-a',
       userId: 'user-2',
       roleIds: ['role-a'],
     });
     const changedRoles = createPermission({
-      instanceName: 'instance-a',
       userId: 'user-1',
       roleIds: ['role-b'],
-    });
-    const otherInstance = createPermission({
-      instanceName: 'instance-b',
-      userId: 'user-1',
-      roleIds: ['role-a'],
     });
 
     const info = cacheInfo('training-student:student', 'select');
     assert.equal(
       (first as any).retrievePermissionActionByUserCacheKey(info),
-      'action:training-student:student:select:instance:instance-a:user:user-1:roles:role-a',
+      'action:training-student:student:select:user:user-1:roles:role-a',
     );
     assert.notEqual(
       (first as any).retrievePermissionActionByUserCacheKey(info),
@@ -137,10 +112,6 @@ describe('permission.test.ts', { concurrency: false }, () => {
     assert.notEqual(
       (first as any).retrievePermissionActionByUserCacheKey(info),
       (changedRoles as any).retrievePermissionActionByUserCacheKey(info),
-    );
-    assert.notEqual(
-      (first as any).retrievePermissionActionByUserCacheKey(info),
-      (otherInstance as any).retrievePermissionActionByUserCacheKey(info),
     );
   });
 
@@ -191,23 +162,18 @@ describe('permission.test.ts', { concurrency: false }, () => {
     assert.deepEqual(calls, ['roles', 'user']);
   });
 
-  it('isolates resource permission snapshots by user and instance', () => {
-    const first = createPermission({ instanceName: 'instance-a', userId: 'user-1' });
-    const otherUser = createPermission({ instanceName: 'instance-a', userId: 'user-2' });
-    const otherInstance = createPermission({ instanceName: 'instance-b', userId: 'user-1' });
+  it('isolates resource permission snapshots by user', () => {
+    const first = createPermission({ userId: 'user-1' });
+    const otherUser = createPermission({ userId: 'user-2' });
     const info = cacheInfo('training-student:student');
 
     assert.equal(
       (first as any).retrievePermissionsCacheKey(info),
-      'user:training-student:student:instance:instance-a:user:user-1',
+      'user:training-student:student:user:user-1',
     );
     assert.notEqual(
       (first as any).retrievePermissionsCacheKey(info),
       (otherUser as any).retrievePermissionsCacheKey(info),
-    );
-    assert.notEqual(
-      (first as any).retrievePermissionsCacheKey(info),
-      (otherInstance as any).retrievePermissionsCacheKey(info),
     );
   });
 

@@ -110,7 +110,9 @@ describe('guardPassport.test.ts', () => {
 
   it('action:guardPassport:cacheKeyByRoleIds', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const cacheKeyAnonymous = (app.bean.permission as any).retrievePermissionActionCacheKey({
+      const cacheKeyAnonymous = (
+        app.bean.permission as any
+      ).retrievePermissionActionByRolesCacheKey({
         args: [ResourceGuardPassport, 'testRoleName'],
       });
       assert.equal(cacheKeyAnonymous, 'action:test-vona:guardPassport:testRoleName:roles:none');
@@ -123,7 +125,7 @@ describe('guardPassport.test.ts', () => {
           { id: '1', name: 'role1' },
           { id: '2', name: 'role2' },
         ] as any;
-        const cacheKeyAdmin = (app.bean.permission as any).retrievePermissionActionCacheKey({
+        const cacheKeyAdmin = (app.bean.permission as any).retrievePermissionActionByRolesCacheKey({
           args: [ResourceGuardPassport, 'testRoleName'],
         });
         assert.equal(cacheKeyAdmin, 'action:test-vona:guardPassport:testRoleName:roles:1,2');

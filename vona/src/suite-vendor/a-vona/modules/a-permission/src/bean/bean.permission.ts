@@ -48,23 +48,20 @@ export class BeanPermission extends BeanBase {
   protected retrievePermissionsCacheKey(info: ICachingActionKeyInfo): string {
     const resource = info.args[0];
     const userId = this.ctx.passport.user?.id;
-    const instanceName = this.ctx.instanceName ?? 'default';
-    return `user:${resource}:instance:${instanceName}:user:${userId ?? 'anonymous'}`;
+    return `user:${resource}:user:${userId ?? 'anonymous'}`;
   }
 
   protected retrievePermissionActionByRolesCacheKey(info: ICachingActionKeyInfo): string {
     const [resource, actionKey] = info.args as [keyof IResourceRecord, string];
     const roleIdsKey = this._extractCurrentRoleIdsSorted().join(',') || 'none';
-    const instanceName = this.ctx.instanceName ?? 'default';
-    return `action:${resource}:${actionKey}:instance:${instanceName}:roles:${roleIdsKey}`;
+    return `action:${resource}:${actionKey}:roles:${roleIdsKey}`;
   }
 
   protected retrievePermissionActionByUserCacheKey(info: ICachingActionKeyInfo): string {
     const [resource, actionKey] = info.args as [keyof IResourceRecord, string];
     const userId = this.ctx.passport.user?.id;
     const roleIdsKey = this._extractCurrentRoleIdsSorted().join(',') || 'none';
-    const instanceName = this.ctx.instanceName ?? 'default';
-    return `action:${resource}:${actionKey}:instance:${instanceName}:user:${userId ?? 'anonymous'}:roles:${roleIdsKey}`;
+    return `action:${resource}:${actionKey}:user:${userId ?? 'anonymous'}:roles:${roleIdsKey}`;
   }
 
   @Caching.get({
