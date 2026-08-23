@@ -10,6 +10,7 @@ import { Arg, Controller, Web } from 'vona-module-a-web';
 
 import type { Model<%=argv.resourceNameCapitalize%> } from '../model/<%=argv.resourceName%>.ts';
 
+import { $locale } from '../.metadata/locales.ts';
 import { Dto<%=argv.resourceNameCapitalize%>Create } from '../dto/<%=argv.resourceName%>Create.tsx';
 import { Dto<%=argv.resourceNameCapitalize%>SelectReq } from '../dto/<%=argv.resourceName%>SelectReq.tsx';
 import { Dto<%=argv.resourceNameCapitalize%>SelectRes } from '../dto/<%=argv.resourceName%>SelectRes.tsx';
@@ -18,40 +19,42 @@ import { Dto<%=argv.resourceNameCapitalize%>View } from '../dto/<%=argv.resource
 
 export interface IControllerOptions<%=argv.resourceNameCapitalize%> extends IDecoratorControllerOptions {}
 
-@Controller<IControllerOptions<%=argv.resourceNameCapitalize%>>('<%=argv.resourceName%>')
+@Controller<IControllerOptions<%=argv.resourceNameCapitalize%>>('<%=argv.resourceName%>', {
+  summary: $locale('<%=argv.resourceNameCapitalize%>Controller'),
+})
 @Resource()
 export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
-  @Web.post()
+  @Web.post({ summary: $locale('<%=argv.resourceNameCapitalize%>Create') })
   @Api.body(v.tableIdentity())
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async create(@Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Create): Promise<TableIdentity> {
     return (await this.scope.service.<%=argv.resourceName%>.create(<%=argv.resourceName%>)).id;
   }
 
-  @Web.get()
+  @Web.get({ summary: $locale('<%=argv.resourceNameCapitalize%>Select') })
   @Api.body(Dto<%=argv.resourceNameCapitalize%>SelectRes)
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async select(@Arg.filter(Dto<%=argv.resourceNameCapitalize%>SelectReq) params: IQueryParams<Model<%=argv.resourceNameCapitalize%>>): Promise<Dto<%=argv.resourceNameCapitalize%>SelectRes> {
     return await this.scope.service.<%=argv.resourceName%>.select(params);
   }
 
-  @Web.get(':id')
+  @Web.get(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>View') })
   @Api.body(v.optional(), v.object(Dto<%=argv.resourceNameCapitalize%>View))
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async view(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<Dto<%=argv.resourceNameCapitalize%>View | undefined> {
     return await this.scope.service.<%=argv.resourceName%>.view(id);
   }
 
-  @Web.patch(':id')
+  @Web.patch(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>Update') })
   @Api.body(z.null())
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async update(@Arg.param('id', v.tableIdentity()) id: TableIdentity, @Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Update): Promise<void> {
     await this.scope.service.<%=argv.resourceName%>.update(id, <%=argv.resourceName%>);
   }
 
-  @Web.delete(':id')
+  @Web.delete(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>Delete') })
   @Api.body(z.null())
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
     await this.scope.service.<%=argv.resourceName%>.delete(id);
   }
