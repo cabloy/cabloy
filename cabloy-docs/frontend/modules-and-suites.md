@@ -107,6 +107,27 @@ project
 
 A practical convention from the legacy guidance is that `a-demo` can host demo or disposable exploratory code, while suites such as `a-home` act as the normal starting point for real application growth.
 
+## Import suffixes in Zova modules
+
+Zova application modules are authored in TypeScript and TSX, but their relative ESM
+specifiers name emitted runtime files. In module source, use `.js` for a `.ts` target
+and `.jsx` for a `.tsx` target:
+
+```ts
+import type { ModelStudent } from '../model/student.js';
+import { RenderCard } from './render.card.jsx';
+```
+
+This applies to relative imports, type-only imports, re-exports, module tests, and
+module metadata that imports application code. Bare package imports are unchanged.
+
+The scope is intentionally limited to module packages under `zova/src/module/**`,
+`zova/src/module-vendor/**`, `zova/src/suite/**/modules/**`, and
+`zova/src/suite-vendor/**/modules/**`. Do not copy this convention into
+`zova/packages-utils/**` or `zova/packages-zova/**`: those package sources have
+intentional `.ts`/`.tsx` imports. Do not use a repository-wide replacement across
+Vona, CLI or template source, dependencies, generated output, or build artifacts.
+
 ## Module and suite boundaries in practice
 
 A practical mental model is:
@@ -175,6 +196,7 @@ When editing or creates frontend code, ask:
 1. does this belong in an existing module or a new one?
 2. is this really one feature unit, or should it become part of a suite?
 3. does the naming follow Zova’s module/suite conventions?
-4. will the chosen placement preserve the intended architectural and bundle boundaries?
+4. do relative imports and re-exports use emitted `.js`/`.jsx` suffixes within the affected module, without changing excluded package source?
+5. will the chosen placement preserve the intended architectural and bundle boundaries?
 
 That helps AI keep frontend growth aligned with Zova’s modular system instead of falling back to generic folder expansion.

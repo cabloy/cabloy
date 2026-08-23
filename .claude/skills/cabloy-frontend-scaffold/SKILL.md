@@ -122,6 +122,24 @@ Typical frontend thread pieces may include:
 
 Do not throw away the generated structure and rewrite it from scratch unless the generator clearly does not match the task.
 
+### Relative import suffix follow-up
+
+For Zova application modules under `zova/src/module/**`, `zova/src/module-vendor/**`,
+`zova/src/suite/**/modules/**`, and `zova/src/suite-vendor/**/modules/**`, relative
+imports and exports name the emitted ESM file:
+
+- a `.ts` target uses `.js`
+- a `.tsx` target uses `.jsx`
+
+Apply this to ordinary and type-only imports, relative re-exports, and module tests.
+Keep the generated `.js`/`.jsx` specifiers as the baseline after CLI generation or
+metadata refresh; manual follow-up imports must use the same emitted suffix.
+
+Do not apply this rule globally. Preserve deliberate `.ts`/`.tsx` imports in
+`zova/packages-utils/**` and `zova/packages-zova/**`; do not normalize Vona, CLI or
+template source, dependencies, generated output, or build artifacts. Never use a
+repository-wide suffix replacement: inspect only the affected module thread.
+
 ## Step 5: Apply frontend follow-up logic deliberately
 
 Frontend scaffolding is rarely complete after generation alone. Treat this follow-up review as mandatory.
@@ -191,6 +209,7 @@ Check whether the feature needs:
 - typecheck
 - build
 - metadata regeneration verification
+- scoped relative-import verification: check the affected Zova module tree for accidental `.ts`/`.tsx` relative specifiers, while excluding intentional package source under `zova/packages-utils/**` and `zova/packages-zova/**`
 - SSR or route-path verification
 - hydration-time initial-render equivalence when SSR, private state, browser-only state, or async model state changes
 - edition-specific flavor, SSR site baseline, and project-asset verification
