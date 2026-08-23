@@ -113,6 +113,7 @@ declare module 'zova' {
 /** apiSchema: end */
 /** controller: begin */
 export * from '../component/formFieldImage/controller.jsx';
+export * from '../component/imageUploader/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
@@ -124,15 +125,22 @@ declare module 'zova-module-basic-image' {
         export interface ControllerFormFieldImage {
           /** @internal */
           get scope(): ScopeModuleBasicImage;
+        }
+
+        export interface ControllerImageUploader {
+          /** @internal */
+          get scope(): ScopeModuleBasicImage;
         } 
 }
 /** controller: end */
 /** controller: begin */
 import { ControllerFormFieldImage } from '../component/formFieldImage/controller.jsx';
+import { ControllerImageUploader } from '../component/imageUploader/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
     'basic-image.controller.formFieldImage': ControllerFormFieldImage;
+'basic-image.controller.imageUploader': ControllerImageUploader;
   }
 }
 /** controller: end */
@@ -140,16 +148,21 @@ declare module 'zova' {
 /** components: begin */
 export * from './component/formFieldImage.js';
 import { ZFormFieldImage } from './component/formFieldImage.js';
+export * from './component/imageUploader.js';
+import { ZImageUploader } from './component/imageUploader.js';
 export const components = {
   'formFieldImage': ZFormFieldImage,
+'imageUploader': ZImageUploader,
 };
 import 'zova';
 declare module 'zova' {
 export interface IComponentRecord {
   'basic-image:formFieldImage': ControllerFormFieldImage;
+'basic-image:imageUploader': ControllerImageUploader;
 }
 export interface IZovaComponentRecord {
   'basic-image:formFieldImage': typeof ZFormFieldImage;
+'basic-image:imageUploader': typeof ZImageUploader;
 }
 }
 /** components: end */

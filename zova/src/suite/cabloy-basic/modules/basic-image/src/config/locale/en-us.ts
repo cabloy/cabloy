@@ -7,6 +7,7 @@ export default {
   ImageTooLarge: 'Image size exceeds the limit: {0}',
   ImageTooSmall: 'Image size is smaller than the limit: {0}',
   ImageUploadFailed: 'Image upload failed',
+  ImageUploadSceneRequired: 'Image upload scene is required',
   InvalidImageType: 'Unsupported image type',
   NoImageSelected: 'No image selected',
   PreviewImage: 'Preview',

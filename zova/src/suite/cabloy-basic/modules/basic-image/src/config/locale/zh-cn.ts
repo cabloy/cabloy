@@ -7,6 +7,7 @@ export default {
   ImageTooLarge: '图片大小超过限制：{0}',
   ImageTooSmall: '图片大小小于限制：{0}',
   ImageUploadFailed: '图片上传失败',
+  ImageUploadSceneRequired: '必须指定图片上传场景',
   InvalidImageType: '图片类型不受支持',
   NoImageSelected: '尚未选择图片',
   PreviewImage: '预览',
