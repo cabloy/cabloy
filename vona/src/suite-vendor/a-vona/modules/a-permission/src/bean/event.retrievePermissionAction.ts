@@ -1,4 +1,4 @@
-import type { IResourceRecord } from 'vona-module-a-openapi';
+import type { IOpenapiPermissionAction, IResourceRecord } from 'vona-module-a-openapi';
 
 import { BeanEventBase, Event } from 'vona-module-a-event';
 
@@ -7,7 +7,7 @@ export interface TypeEventRetrievePermissionActionData {
   actionKey: string;
 }
 
-export type TypeEventRetrievePermissionActionResult = boolean;
+export type TypeEventRetrievePermissionActionResult = IOpenapiPermissionAction;
 
 @Event()
 export class EventRetrievePermissionAction extends BeanEventBase<

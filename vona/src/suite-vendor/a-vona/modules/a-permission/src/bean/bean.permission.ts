@@ -1,5 +1,6 @@
 import type { ICachingActionKeyInfo } from 'vona-module-a-caching';
 import type {
+  IOpenapiPermissionAction,
   IOpenapiPermissionModeActionActions,
   IOpenapiPermissions,
   IResourceRecord,
@@ -10,6 +11,7 @@ import type { ContextRoute, IRecordResourceNameToRoutePathItem } from 'vona-modu
 import { appResource, BeanBase, beanFullNameFromOnionName } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 import { Caching } from 'vona-module-a-caching';
+import { clearRbacDecision, setRbacDecision, SymbolRbacDecision } from 'vona-module-a-rbac';
 import {
   composeGuards,
   getCacheControllerRoutes,
@@ -17,6 +19,7 @@ import {
 } from 'vona-module-a-web';
 
 const BeanFullNameGuardPassport = beanFullNameFromOnionName('a-user:passport', 'guard');
+const BeanFullNameGuardRbac = beanFullNameFromOnionName('a-rbac:rbac', 'guard');
 const GuardOptionsPassportDefault: IGuardOptionsPassport = {
   public: false,
   activated: true,
@@ -34,20 +37,34 @@ export class BeanPermission extends BeanBase {
     const cachePermissionActionByRoles = this.bean.summer.cache(
       beanFullNameFromOnionName('a-permission:permissionActionByRoles', 'summerCache'),
     );
+    const cachePermissionActionByUser = this.bean.summer.cache(
+      beanFullNameFromOnionName('a-permission:permissionActionByUser', 'summerCache'),
+    );
     await cachePermissionUser.clear();
     await cachePermissionActionByRoles.clear();
+    await cachePermissionActionByUser.clear();
   }
 
   protected retrievePermissionsCacheKey(info: ICachingActionKeyInfo): string {
     const resource = info.args[0];
     const userId = this.ctx.passport.user?.id;
-    return `user:${resource}_${userId}`;
+    const instanceName = this.ctx.instanceName ?? 'default';
+    return `user:${resource}:instance:${instanceName}:user:${userId ?? 'anonymous'}`;
   }
 
-  protected retrievePermissionActionCacheKey(info: ICachingActionKeyInfo): string {
+  protected retrievePermissionActionByRolesCacheKey(info: ICachingActionKeyInfo): string {
     const [resource, actionKey] = info.args as [keyof IResourceRecord, string];
     const roleIdsKey = this._extractCurrentRoleIdsSorted().join(',') || 'none';
-    return `action:${resource}:${actionKey}:roles:${roleIdsKey}`;
+    const instanceName = this.ctx.instanceName ?? 'default';
+    return `action:${resource}:${actionKey}:instance:${instanceName}:roles:${roleIdsKey}`;
+  }
+
+  protected retrievePermissionActionByUserCacheKey(info: ICachingActionKeyInfo): string {
+    const [resource, actionKey] = info.args as [keyof IResourceRecord, string];
+    const userId = this.ctx.passport.user?.id;
+    const roleIdsKey = this._extractCurrentRoleIdsSorted().join(',') || 'none';
+    const instanceName = this.ctx.instanceName ?? 'default';
+    return `action:${resource}:${actionKey}:instance:${instanceName}:user:${userId ?? 'anonymous'}:roles:${roleIdsKey}`;
   }
 
   @Caching.get({
@@ -81,29 +98,57 @@ export class BeanPermission extends BeanBase {
     return { actions: permissionsActions };
   }
 
-  public async retrievePermissionAction(
+  /**
+   * Returns only the final boolean permission result for server-side callers that
+   * do not need the browser-safe RBAC matcher projection.
+   */
+  public async checkPermissionAction(
     resource: keyof IResourceRecord,
     actionKey: string,
   ): Promise<boolean> {
+    const permission = await this.retrievePermissionAction(resource, actionKey);
+    return typeof permission === 'boolean' ? permission : permission.allowed;
+  }
+
+  public async retrievePermissionAction(
+    resource: keyof IResourceRecord,
+    actionKey: string,
+  ): Promise<IOpenapiPermissionAction> {
     const route = this._getControllerActionRoute(resource, actionKey);
     if (!route?.route?.meta) return false;
     if (!this._matchPassportMeta(route.route.meta)) return false;
     return await this.scope.event.retrievePermissionAction.emit(
       { resource, actionKey },
       async () => {
-        return await this.retrievePermissionActionByRoles(resource, actionKey);
+        const isRbac = Boolean(route.route.meta?.[BeanFullNameGuardRbac]);
+        return isRbac
+          ? await this.retrievePermissionActionByUser(resource, actionKey)
+          : await this.retrievePermissionActionByRoles(resource, actionKey);
       },
     );
   }
 
   @Caching.get({
     cacheName: 'a-permission:permissionActionByRoles',
-    cacheKeyFn: 'retrievePermissionActionCacheKey',
+    cacheKeyFn: 'retrievePermissionActionByRolesCacheKey',
   })
   protected async retrievePermissionActionByRoles(
     resource: keyof IResourceRecord,
     actionKey: string,
-  ): Promise<boolean> {
+  ): Promise<IOpenapiPermissionAction> {
+    const route = this._getControllerActionRoute(resource, actionKey);
+    if (!route?.route?.meta) return false;
+    return await this._evaluatePermissionAction(route);
+  }
+
+  @Caching.get({
+    cacheName: 'a-permission:permissionActionByUser',
+    cacheKeyFn: 'retrievePermissionActionByUserCacheKey',
+  })
+  protected async retrievePermissionActionByUser(
+    resource: keyof IResourceRecord,
+    actionKey: string,
+  ): Promise<IOpenapiPermissionAction> {
     const route = this._getControllerActionRoute(resource, actionKey);
     if (!route?.route?.meta) return false;
     return await this._evaluatePermissionAction(route);
@@ -159,19 +204,30 @@ export class BeanPermission extends BeanBase {
     return true;
   }
 
-  private async _evaluatePermissionAction(route: ContextRoute): Promise<boolean> {
+  private async _evaluatePermissionAction(route: ContextRoute): Promise<IOpenapiPermissionAction> {
     const ctx = this.ctx as any;
     const routePrevious = ctx.route;
     const innerAccessPrevious = ctx.innerAccess;
+    const rbacDecisionHadOwnProperty = Object.hasOwn(ctx, SymbolRbacDecision);
+    const rbacDecisionPrevious = ctx[SymbolRbacDecision];
     try {
       ctx.route = route;
       ctx.innerAccess = false;
+      clearRbacDecision(ctx);
       const result = await composeGuards(this.app, route)(this.ctx);
-      return result !== false;
+      if (result === false) return false;
+      if (!route.route.meta?.[BeanFullNameGuardRbac]) return true;
+      const rbacScopeCurrent = await this.bean.rbacScope.current();
+      return rbacScopeCurrent.permissionProjection();
     } catch (err: any) {
       if ([401, 403].includes(err?.code)) return false;
       throw err;
     } finally {
+      if (rbacDecisionHadOwnProperty) {
+        setRbacDecision(ctx, rbacDecisionPrevious);
+      } else {
+        clearRbacDecision(ctx);
+      }
       ctx.route = routePrevious;
       ctx.innerAccess = innerAccessPrevious;
     }

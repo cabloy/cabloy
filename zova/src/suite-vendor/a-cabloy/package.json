@@ -7,6 +7,7 @@
   "files": [],
   "type": "module",
   "dependencies": {
+    "zova-module-a-rbac": "^5.0.0",
     "zova-module-rest-resource": "^5.1.44"
   },
   "title": "a-cabloy"

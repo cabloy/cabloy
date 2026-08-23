@@ -59,14 +59,16 @@ export class TableCellActionOperationsRow extends BeanBase implements ITableCell
     const permissions = $celScope.permissions;
     const actions = options.actions;
     if (!actions || actions.length === 0) return;
+    const data = renderContext.cellContext.row.original as Record<string, unknown>;
     const domActions: VNode[] = [];
     actions.forEach((action, index) => {
       const actionName = action.name;
       const permissionHint = action.options?.permission;
-      if (!$host.$passport.checkPermission(permissions, actionName, permissionHint)) return;
+      if (!$host.$passport.checkPermission(permissions, actionName, permissionHint, data)) return;
       const options2 = Object.assign({ key: index }, action.options);
       domActions.push($$table.cellRender(action.render!, options2, renderContext));
     });
+    if (domActions.length === 0) return;
     return <div class={options.class}>{domActions}</div>;
   }
 }

@@ -67,6 +67,10 @@ function User(...schemaLikes: SchemaLike[]): ParameterDecorator {
   return createPipesArgumentDecorator('user')(undefined, ...schemaLikes);
 }
 
+function RbacScopeCurrent(): ParameterDecorator {
+  return createPipesArgumentDecorator('rbacScopeCurrent')();
+}
+
 function ArgFilter(schemaLike: z.ZodType | Constructable): any {
   return function (target: object, prop: MetadataKey | undefined, index: number) {
     const schema = $schema(schemaLike as any);
@@ -84,5 +88,6 @@ export const Arg = {
   files: Files,
   file: File,
   user: User,
+  rbacScopeCurrent: RbacScopeCurrent,
   filter: ArgFilter,
 };

@@ -1,7 +1,6 @@
 {
-  "name": "vona-module-a-permission",
-  "version": "5.1.16",
-  "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
+  "name": "vona-module-a-rbac",
+  "version": "5.0.0",
   "description": "",
   "keywords": [
     "Vona Module"
@@ -32,7 +31,11 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "vona-module-a-rbac": "workspace:^"
+    "vona-module-a-aspect": "workspace:^",
+    "vona-module-a-openapi": "workspace:^",
+    "vona-module-a-orm": "workspace:^",
+    "vona-module-a-user": "workspace:^",
+    "vona-module-a-web": "workspace:^"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",
@@ -46,8 +49,10 @@
       "exports.\\..import"
     ]
   },
-  "title": "a-permission",
+  "title": "a-rbac",
   "vonaModule": {
-    "dependencies": {}
+    "dependencies": {
+      "a-vona": "5.0.0"
+    }
   }
 }

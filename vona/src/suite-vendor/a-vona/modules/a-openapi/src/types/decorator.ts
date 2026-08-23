@@ -40,7 +40,8 @@ export type RouteHandlerArgumentType =
   | 'ip'
   | 'rawBody'
   | 'string'
-  | 'user';
+  | 'user'
+  | 'rbacScopeCurrent';
 
 export type TypeExtractValue = (
   ctx: VonaContext,

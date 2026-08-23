@@ -1,16 +1,17 @@
 {
-  "name": "vona-module-a-permission",
-  "version": "5.1.16",
-  "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
+  "name": "zova-module-a-rbac",
+  "version": "5.0.0",
   "description": "",
   "keywords": [
-    "Vona Module"
+    "Zova Module"
   ],
   "author": "",
   "files": [
-    "assets",
+    "mock",
     "dist",
-    "src"
+    "src",
+    "icons",
+    "assets"
   ],
   "type": "module",
   "exports": {
@@ -22,32 +23,30 @@
       "import": "./src/index.ts",
       "default": "./dist/index.js"
     },
-    "./package.json": "./package.json"
+    "./*": "./*"
   },
   "scripts": {
     "clean": "rimraf dist tsconfig.build.tsbuildinfo",
-    "tsc:publish": "npm run clean && node ../../../../../packages-cli/cli/src/bin/vona.ts :bin:buildModule --sourcemap && tsc -p tsconfig.build.json",
+    "tsc:publish": "npm run clean && node ../../../../../packages-cli/cli/src/bin/zova.ts :bin:buildModule --sourcemap && tsc -p tsconfig.build.json",
     "prepublishOnly": "npm run tsc:publish",
     "prepack": "clean-package",
     "postpack": "clean-package restore"
   },
-  "dependencies": {
-    "vona-module-a-rbac": "workspace:^"
-  },
+  "dependencies": {},
   "devDependencies": {
     "clean-package": "^2.2.0",
     "rimraf": "^6.1.3"
   },
   "clean-package": {
     "indent": 2,
+    "replace": {
+      "exports.\\..types": "./dist/index.d.ts"
+    },
     "remove": [
       "clean-package",
       "devDependencies",
       "exports.\\..import"
     ]
   },
-  "title": "a-permission",
-  "vonaModule": {
-    "dependencies": {}
-  }
+  "title": "a-rbac"
 }

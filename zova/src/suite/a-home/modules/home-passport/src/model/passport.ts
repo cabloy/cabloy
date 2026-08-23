@@ -18,6 +18,8 @@ import {
 } from 'zova-module-a-openapi';
 import { ApiApiHomeUserPassportloginOauthPath, OpenApiBaseURL } from 'zova-module-home-api';
 
+import { matchPermissionAction } from '../lib/permissionActionMatcher.js';
+
 export interface IModelOptionsPassport extends IDecoratorModelOptions {}
 
 @Model<IModelOptionsPassport>()
@@ -272,6 +274,7 @@ export class ModelPassport extends BeanModelBase {
     permissions: TypeOpenapiPermissions | undefined,
     actionName?: keyof (IResourceTableActionNameRecord & IResourceFormActionRowNameRecord),
     permissionHint?: IPermissionHintGeneral,
+    currentData?: Record<string, unknown> | readonly Record<string, unknown>[],
   ): boolean {
     if (permissionHint?.public) return true;
     const permissionAction = permissionHint?.actionInherit ?? actionName;
@@ -279,23 +282,25 @@ export class ModelPassport extends BeanModelBase {
     if (isNil(permissions)) return false;
     if (permissions === false) return false;
     if (permissions === true) return true;
-    // roleIds
+
+    const actionPermission = permissions.actions?.[permissionAction];
+    if (actionPermission !== undefined) {
+      if (typeof actionPermission === 'boolean') return actionPermission;
+      return matchPermissionAction(actionPermission, currentData);
+    }
+
     if (
       permissions.roleIds &&
       permissions.roleIds.some(roleId => this.roles?.some(role => role.id === roleId))
     ) {
       return true;
     }
-    // roleNames
     if (
       permissions.roleNames &&
       permissions.roleNames.some(roleName => this.roles?.some(role => role.name === roleName))
     ) {
       return true;
     }
-    // actions
-    if (permissions.actions && !!permissions.actions[permissionAction]) return true;
-    // others
     return false;
   }
 }

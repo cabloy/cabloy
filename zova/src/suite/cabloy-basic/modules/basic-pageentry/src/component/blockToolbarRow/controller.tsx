@@ -45,8 +45,12 @@ export class ControllerBlockToolbarRow extends BeanControllerBase {
   }
 
   private _renderActions() {
-    const { $jsx, $celScope } = this.$$renderContext;
+    const { $jsx, $celScope, $$pageEntry } = this.$$renderContext;
     const actions = this.$props.actions;
+    const currentData =
+      $$pageEntry.formMeta.editMode === 'create'
+        ? undefined
+        : ($$pageEntry.formData as Record<string, unknown> | undefined);
     if (!actions || actions.length === 0) return;
     const domActions: VNode[] = [];
     actions.forEach((action, index) => {
@@ -55,7 +59,10 @@ export class ControllerBlockToolbarRow extends BeanControllerBase {
       // check formScene
       if (!this._checkFormScene(permissionHint)) return;
       // check permission
-      if (!this.$passport.checkPermission(this.permissions, actionName, permissionHint)) return;
+      if (
+        !this.$passport.checkPermission(this.permissions, actionName, permissionHint, currentData)
+      )
+        return;
       const options = Object.assign({ key: index }, action.options);
       const domAction = $jsx.render(action.render!, options, $celScope, this.$$renderContext);
       if (!domAction) return;

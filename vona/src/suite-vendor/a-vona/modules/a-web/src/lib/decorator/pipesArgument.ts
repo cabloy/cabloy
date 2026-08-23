@@ -21,7 +21,9 @@ export function createPipesArgumentDecorator(
 
       const paramtypes = appMetadata.getMetadata<any[]>('design:paramtypes', target, prop)!;
       let metaType;
-      if (paramType === 'file') {
+      if (paramType === 'rbacScopeCurrent') {
+        metaType = undefined;
+      } else if (paramType === 'file') {
         metaType = z.string().openapi({ format: 'binary' });
       } else if (paramType === 'files') {
         metaType = z.array(z.string().openapi({ format: 'binary' }));

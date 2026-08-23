@@ -33,6 +33,11 @@ export function exchangeKeyForValue(
     ip: () => req.ip,
     rawBody: () => req.rawBody,
     user: () => ctx.app.bean.passport.currentUser,
+    rbacScopeCurrent: async () => {
+      const rbacScope = ctx.app.bean.rbacScope;
+      if (!rbacScope) ctx.app.throw(403);
+      return await rbacScope.current();
+    },
     fields: () => {
       const uploadValue: IUploadValue = ctx[SymbolUploadValue];
       if (!uploadValue) throw new Error('should use interceptor: a-upload:upload');

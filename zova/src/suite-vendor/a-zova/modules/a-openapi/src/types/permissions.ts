@@ -6,8 +6,25 @@ import type { IResourceTableActionRecord } from './resource/tableAction.js';
 import type { IResourceTableActionBulkNameRecord } from './resource/tableActionBulk.js';
 import type { IResourceTableActionRowNameRecord } from './resource/tableActionRow.js';
 
+export interface IOpenapiPermissionActionMatcherRule {
+  field: string;
+  values: string[];
+}
+
+export type IOpenapiPermissionActionMatcher =
+  | { mode: 'all' }
+  | { mode: 'any'; rules: IOpenapiPermissionActionMatcherRule[] };
+
+export interface IOpenapiPermissionActionRbac {
+  key: string;
+  allowed: boolean;
+  matcher: IOpenapiPermissionActionMatcher;
+}
+
+export type IOpenapiPermissionAction = boolean | IOpenapiPermissionActionRbac;
+
 export type IOpenapiPermissionModeActionActions = {
-  [K in keyof IResourceTableActionRecord]?: boolean; // IResourceTableActionRecord[K];
+  [K in keyof IResourceTableActionRecord]?: IOpenapiPermissionAction; // IResourceTableActionRecord[K];
 };
 
 export interface IOpenapiPermissions {

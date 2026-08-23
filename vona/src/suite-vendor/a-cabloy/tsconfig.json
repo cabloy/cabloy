@@ -25,6 +25,9 @@
     },
     {
       "path": "modules/a-markdown/tsconfig.build.json"
+    },
+    {
+      "path": "modules/a-rbac/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]
