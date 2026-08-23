@@ -15,6 +15,7 @@ export class RenderPageLogin extends BeanRenderBase {
               <h2 class="text-2xl font-semibold mb-2 text-center">{this.scope.locale.Login()}</h2>
               <div class="mb-4">
                 {this._renderForm()}
+                {this._renderRecoveryActions()}
                 <div class="divider">OR</div>
                 {this._renderGithub()}
               </div>
@@ -88,6 +89,19 @@ export class RenderPageLogin extends BeanRenderBase {
           }}
         ></ZFormFieldBlank>
       </ZForm>
+    );
+  }
+
+  _renderRecoveryActions() {
+    return (
+      <div class="mt-4 flex items-center justify-between text-sm">
+        <button class="link link-primary" type="button" onClick={() => this.gotoRegister()}>
+          {this.scope.locale.CreateAccount()}
+        </button>
+        <button class="link" type="button" onClick={() => this.gotoPasswordResetRequest()}>
+          {this.scope.locale.ForgotPassword()}
+        </button>
+      </div>
     );
   }
 

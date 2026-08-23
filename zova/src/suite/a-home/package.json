@@ -16,7 +16,8 @@
     "zova-module-home-layoutweb": "^5.0.0",
     "zova-module-home-login": "^5.0.8",
     "zova-module-home-passport": "^5.0.6",
-    "zova-module-home-theme": "^5.0.5"
+    "zova-module-home-theme": "^5.0.5",
+    "zova-module-home-user": "^5.0.0"
   },
   "title": "Home"
 }

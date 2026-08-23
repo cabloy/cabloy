@@ -276,6 +276,7 @@ declare module 'vona-module-a-orm' {
 }
 /** model: end */
 /** service: begin */
+export * from '../service/account.ts';
 export * from '../service/passportAdapter.ts';
 export * from '../service/roleAdapter.ts';
 export * from '../service/userAdapter.ts';
@@ -284,7 +285,8 @@ import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
   
     export interface IServiceRecord {
-      'home-user:passportAdapter': never;
+      'home-user:account': never;
+'home-user:passportAdapter': never;
 'home-user:roleAdapter': never;
 'home-user:userAdapter': never;
     }
@@ -293,6 +295,16 @@ declare module 'vona-module-a-bean' {
 }
 declare module 'vona-module-home-user' {
   
+        export interface ServiceAccount {
+          /** @internal */
+          get scope(): ScopeModuleHomeUser;
+        }
+
+          export interface ServiceAccount {
+            get $beanFullName(): 'home-user.service.account';
+            get $onionName(): 'home-user:account';
+          }
+
         export interface ServicePassportAdapter {
           /** @internal */
           get scope(): ScopeModuleHomeUser;
@@ -301,7 +313,6 @@ declare module 'vona-module-home-user' {
           export interface ServicePassportAdapter {
             get $beanFullName(): 'home-user.service.passportAdapter';
             get $onionName(): 'home-user:passportAdapter';
-            
           }
 
         export interface ServiceRoleAdapter {
@@ -312,7 +323,6 @@ declare module 'vona-module-home-user' {
           export interface ServiceRoleAdapter {
             get $beanFullName(): 'home-user.service.roleAdapter';
             get $onionName(): 'home-user:roleAdapter';
-            
           }
 
         export interface ServiceUserAdapter {
@@ -323,16 +333,17 @@ declare module 'vona-module-home-user' {
           export interface ServiceUserAdapter {
             get $beanFullName(): 'home-user.service.userAdapter';
             get $onionName(): 'home-user:userAdapter';
-            
           } 
 }
 /** service: end */
 /** service: begin */
+import type { ServiceAccount } from '../service/account.ts';
 import type { ServicePassportAdapter } from '../service/passportAdapter.ts';
 import type { ServiceRoleAdapter } from '../service/roleAdapter.ts';
 import type { ServiceUserAdapter } from '../service/userAdapter.ts';
 export interface IModuleService {
-  'passportAdapter': ServicePassportAdapter;
+  'account': ServiceAccount;
+'passportAdapter': ServicePassportAdapter;
 'roleAdapter': ServiceRoleAdapter;
 'userAdapter': ServiceUserAdapter;
 }
@@ -342,26 +353,143 @@ export interface IModuleService {
 import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
-    'home-user.service.passportAdapter': ServicePassportAdapter;
+    'home-user.service.account': ServiceAccount;
+'home-user.service.passportAdapter': ServicePassportAdapter;
 'home-user.service.roleAdapter': ServiceRoleAdapter;
 'home-user.service.userAdapter': ServiceUserAdapter;
   }
 }
 /** service: end */
+/** cacheRedis: begin */
+export * from '../bean/cacheRedis.activation.ts';
+export * from '../bean/cacheRedis.activationCurrent.ts';
+export * from '../bean/cacheRedis.passwordReset.ts';
+export * from '../bean/cacheRedis.passwordResetCurrent.ts';
+export * from '../bean/cacheRedis.passwordResetRecipient.ts';
+export * from '../bean/cacheRedis.passwordSet.ts';
+export * from '../bean/cacheRedis.passwordSetCurrent.ts';
+
+import { type IDecoratorCacheRedisOptions } from 'vona-module-a-cache';
+declare module 'vona-module-a-cache' {
+  
+    export interface ICacheRedisRecord {
+      'home-user:activation': IDecoratorCacheRedisOptions;
+'home-user:activationCurrent': IDecoratorCacheRedisOptions;
+'home-user:passwordReset': IDecoratorCacheRedisOptions;
+'home-user:passwordResetCurrent': IDecoratorCacheRedisOptions;
+'home-user:passwordResetRecipient': IDecoratorCacheRedisOptions;
+'home-user:passwordSet': IDecoratorCacheRedisOptions;
+'home-user:passwordSetCurrent': IDecoratorCacheRedisOptions;
+    }
+
+  
+}
+declare module 'vona-module-home-user' {
+  
+        export interface CacheRedisActivation {
+          /** @internal */
+          get scope(): ScopeModuleHomeUser;
+        }
+
+          export interface CacheRedisActivation {
+            get $beanFullName(): 'home-user.cacheRedis.activation';
+            get $onionName(): 'home-user:activation';
+            get $onionOptions(): IDecoratorCacheRedisOptions;
+          }
+
+        export interface CacheRedisActivationCurrent {
+          /** @internal */
+          get scope(): ScopeModuleHomeUser;
+        }
+
+          export interface CacheRedisActivationCurrent {
+            get $beanFullName(): 'home-user.cacheRedis.activationCurrent';
+            get $onionName(): 'home-user:activationCurrent';
+            get $onionOptions(): IDecoratorCacheRedisOptions;
+          }
+
+        export interface CacheRedisPasswordReset {
+          /** @internal */
+          get scope(): ScopeModuleHomeUser;
+        }
+
+          export interface CacheRedisPasswordReset {
+            get $beanFullName(): 'home-user.cacheRedis.passwordReset';
+            get $onionName(): 'home-user:passwordReset';
+            get $onionOptions(): IDecoratorCacheRedisOptions;
+          }
+
+        export interface CacheRedisPasswordResetCurrent {
+          /** @internal */
+          get scope(): ScopeModuleHomeUser;
+        }
+
+          export interface CacheRedisPasswordResetCurrent {
+            get $beanFullName(): 'home-user.cacheRedis.passwordResetCurrent';
+            get $onionName(): 'home-user:passwordResetCurrent';
+            get $onionOptions(): IDecoratorCacheRedisOptions;
+          }
+
+        export interface CacheRedisPasswordResetRecipient {
+          /** @internal */
+          get scope(): ScopeModuleHomeUser;
+        }
+
+          export interface CacheRedisPasswordResetRecipient {
+            get $beanFullName(): 'home-user.cacheRedis.passwordResetRecipient';
+            get $onionName(): 'home-user:passwordResetRecipient';
+            get $onionOptions(): IDecoratorCacheRedisOptions;
+          }
+
+        export interface CacheRedisPasswordSet {
+          /** @internal */
+          get scope(): ScopeModuleHomeUser;
+        }
+
+          export interface CacheRedisPasswordSet {
+            get $beanFullName(): 'home-user.cacheRedis.passwordSet';
+            get $onionName(): 'home-user:passwordSet';
+            get $onionOptions(): IDecoratorCacheRedisOptions;
+          }
+
+        export interface CacheRedisPasswordSetCurrent {
+          /** @internal */
+          get scope(): ScopeModuleHomeUser;
+        }
+
+          export interface CacheRedisPasswordSetCurrent {
+            get $beanFullName(): 'home-user.cacheRedis.passwordSetCurrent';
+            get $onionName(): 'home-user:passwordSetCurrent';
+            get $onionOptions(): IDecoratorCacheRedisOptions;
+          } 
+}
+/** cacheRedis: end */
+/** cacheRedis: begin */
+import type { CacheRedisActivation } from '../bean/cacheRedis.activation.ts';
+import type { CacheRedisActivationCurrent } from '../bean/cacheRedis.activationCurrent.ts';
+import type { CacheRedisPasswordReset } from '../bean/cacheRedis.passwordReset.ts';
+import type { CacheRedisPasswordResetCurrent } from '../bean/cacheRedis.passwordResetCurrent.ts';
+import type { CacheRedisPasswordResetRecipient } from '../bean/cacheRedis.passwordResetRecipient.ts';
+import type { CacheRedisPasswordSet } from '../bean/cacheRedis.passwordSet.ts';
+import type { CacheRedisPasswordSetCurrent } from '../bean/cacheRedis.passwordSetCurrent.ts';
+export interface IModuleCacheRedis {
+  'activation': CacheRedisActivation;
+'activationCurrent': CacheRedisActivationCurrent;
+'passwordReset': CacheRedisPasswordReset;
+'passwordResetCurrent': CacheRedisPasswordResetCurrent;
+'passwordResetRecipient': CacheRedisPasswordResetRecipient;
+'passwordSet': CacheRedisPasswordSet;
+'passwordSetCurrent': CacheRedisPasswordSetCurrent;
+}
+/** cacheRedis: end */
 /** eventListener: begin */
 export * from '../bean/eventListener.activate.ts';
-export * from '../bean/eventListener.emailConfirmCallback.ts';
-export * from '../bean/eventListener.passwordResetCallback.ts';
-export * from '../bean/eventListener.register.ts';
 
 import { type IDecoratorEventListenerOptions } from 'vona-module-a-event';
 declare module 'vona-module-a-event' {
   
     export interface IEventListenerRecord {
       'home-user:activate': IDecoratorEventListenerOptions;
-'home-user:emailConfirmCallback': IDecoratorEventListenerOptions;
-'home-user:passwordResetCallback': IDecoratorEventListenerOptions;
-'home-user:register': IDecoratorEventListenerOptions;
     }
 
   
@@ -377,44 +505,12 @@ declare module 'vona-module-home-user' {
             get $beanFullName(): 'home-user.eventListener.activate';
             get $onionName(): 'home-user:activate';
             get $onionOptions(): IDecoratorEventListenerOptions;
-          }
-
-        export interface EventListenerEmailConfirmCallback {
-          /** @internal */
-          get scope(): ScopeModuleHomeUser;
-        }
-
-          export interface EventListenerEmailConfirmCallback {
-            get $beanFullName(): 'home-user.eventListener.emailConfirmCallback';
-            get $onionName(): 'home-user:emailConfirmCallback';
-            get $onionOptions(): IDecoratorEventListenerOptions;
-          }
-
-        export interface EventListenerPasswordResetCallback {
-          /** @internal */
-          get scope(): ScopeModuleHomeUser;
-        }
-
-          export interface EventListenerPasswordResetCallback {
-            get $beanFullName(): 'home-user.eventListener.passwordResetCallback';
-            get $onionName(): 'home-user:passwordResetCallback';
-            get $onionOptions(): IDecoratorEventListenerOptions;
-          }
-
-        export interface EventListenerRegister {
-          /** @internal */
-          get scope(): ScopeModuleHomeUser;
-        }
-
-          export interface EventListenerRegister {
-            get $beanFullName(): 'home-user.eventListener.register';
-            get $onionName(): 'home-user:register';
-            get $onionOptions(): IDecoratorEventListenerOptions;
           } 
 }
 /** eventListener: end */
 /** meta: begin */
 export * from '../bean/meta.index.ts';
+export * from '../bean/meta.redlock.ts';
 export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
@@ -422,6 +518,7 @@ declare module 'vona-module-a-meta' {
   
     export interface IMetaRecord {
       'home-user:index': IMetaOptionsIndex;
+'home-user:redlock': never;
 'home-user:version': never;
     }
 
@@ -440,6 +537,16 @@ declare module 'vona-module-home-user' {
             get $onionOptions(): IMetaOptionsIndex;
           }
 
+        export interface MetaRedlock {
+          /** @internal */
+          get scope(): ScopeModuleHomeUser;
+        }
+
+          export interface MetaRedlock {
+            get $beanFullName(): 'home-user.meta.redlock';
+            get $onionName(): 'home-user:redlock';
+          }
+
         export interface MetaVersion {
           /** @internal */
           get scope(): ScopeModuleHomeUser;
@@ -448,26 +555,61 @@ declare module 'vona-module-home-user' {
           export interface MetaVersion {
             get $beanFullName(): 'home-user.meta.version';
             get $onionName(): 'home-user:version';
-            
           } 
 }
 /** meta: end */
+/** meta redlock: begin */
+import type { MetaRedlock } from '../bean/meta.redlock.ts';
+/** meta redlock: end */
 /** dto: begin */
+export * from '../dto/accountActivation.ts';
+export * from '../dto/accountCurrent.ts';
+export * from '../dto/accountPasswordChange.ts';
+export * from '../dto/accountPasswordReset.ts';
+export * from '../dto/accountPasswordResetRequest.ts';
+export * from '../dto/accountPasswordResetRequestResult.ts';
+export * from '../dto/accountPasswordSet.ts';
+export * from '../dto/accountPasswordSetIssue.ts';
+export * from '../dto/accountProfileUpdate.ts';
+export * from '../dto/accountRelogin.ts';
 export * from '../dto/login.ts';
 export * from '../dto/passport.ts';
 export * from '../dto/passportJwt.ts';
+export * from '../dto/passportUser.ts';
 export * from '../dto/register.ts';
+import type { IDtoOptionsAccountActivation } from '../dto/accountActivation.ts';
+import type { IDtoOptionsAccountCurrent } from '../dto/accountCurrent.ts';
+import type { IDtoOptionsAccountPasswordChange } from '../dto/accountPasswordChange.ts';
+import type { IDtoOptionsAccountPasswordReset } from '../dto/accountPasswordReset.ts';
+import type { IDtoOptionsAccountPasswordResetRequest } from '../dto/accountPasswordResetRequest.ts';
+import type { IDtoOptionsAccountPasswordResetRequestResult } from '../dto/accountPasswordResetRequestResult.ts';
+import type { IDtoOptionsAccountPasswordSet } from '../dto/accountPasswordSet.ts';
+import type { IDtoOptionsAccountPasswordSetIssue } from '../dto/accountPasswordSetIssue.ts';
+import type { IDtoOptionsAccountProfileUpdate } from '../dto/accountProfileUpdate.ts';
+import type { IDtoOptionsAccountRelogin } from '../dto/accountRelogin.ts';
 import type { IDtoOptionsLogin } from '../dto/login.ts';
 import type { IDtoOptionsPassport } from '../dto/passport.ts';
 import type { IDtoOptionsPassportJwt } from '../dto/passportJwt.ts';
+import type { IDtoOptionsPassportUser } from '../dto/passportUser.ts';
 import type { IDtoOptionsRegister } from '../dto/register.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
   
     export interface IDtoRecord {
-      'home-user:login': IDtoOptionsLogin;
+      'home-user:accountActivation': IDtoOptionsAccountActivation;
+'home-user:accountCurrent': IDtoOptionsAccountCurrent;
+'home-user:accountPasswordChange': IDtoOptionsAccountPasswordChange;
+'home-user:accountPasswordReset': IDtoOptionsAccountPasswordReset;
+'home-user:accountPasswordResetRequest': IDtoOptionsAccountPasswordResetRequest;
+'home-user:accountPasswordResetRequestResult': IDtoOptionsAccountPasswordResetRequestResult;
+'home-user:accountPasswordSet': IDtoOptionsAccountPasswordSet;
+'home-user:accountPasswordSetIssue': IDtoOptionsAccountPasswordSetIssue;
+'home-user:accountProfileUpdate': IDtoOptionsAccountProfileUpdate;
+'home-user:accountRelogin': IDtoOptionsAccountRelogin;
+'home-user:login': IDtoOptionsLogin;
 'home-user:passport': IDtoOptionsPassport;
 'home-user:passportJwt': IDtoOptionsPassportJwt;
+'home-user:passportUser': IDtoOptionsPassportUser;
 'home-user:register': IDtoOptionsRegister;
     }
 
@@ -478,12 +620,63 @@ declare module 'vona-module-home-user' {
 }
 /** dto: end */
 /** dto: begin */
+import type { DtoAccountActivation } from '../dto/accountActivation.ts';
+import type { DtoAccountCurrent } from '../dto/accountCurrent.ts';
+import type { DtoAccountPasswordChange } from '../dto/accountPasswordChange.ts';
+import type { DtoAccountPasswordReset } from '../dto/accountPasswordReset.ts';
+import type { DtoAccountPasswordResetRequest } from '../dto/accountPasswordResetRequest.ts';
+import type { DtoAccountPasswordResetRequestResult } from '../dto/accountPasswordResetRequestResult.ts';
+import type { DtoAccountPasswordSet } from '../dto/accountPasswordSet.ts';
+import type { DtoAccountPasswordSetIssue } from '../dto/accountPasswordSetIssue.ts';
+import type { DtoAccountProfileUpdate } from '../dto/accountProfileUpdate.ts';
+import type { DtoAccountRelogin } from '../dto/accountRelogin.ts';
 import type { DtoLogin } from '../dto/login.ts';
 import type { DtoPassport } from '../dto/passport.ts';
 import type { DtoPassportJwt } from '../dto/passportJwt.ts';
+import type { DtoPassportUser } from '../dto/passportUser.ts';
 import type { DtoRegister } from '../dto/register.ts';
 declare module 'vona-module-home-user' {
   
+    export interface IDtoOptionsAccountActivation {
+      fields?: TypeEntityOptionsFields<DtoAccountActivation, IDtoOptionsAccountActivation[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAccountCurrent {
+      fields?: TypeEntityOptionsFields<DtoAccountCurrent, IDtoOptionsAccountCurrent[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAccountPasswordChange {
+      fields?: TypeEntityOptionsFields<DtoAccountPasswordChange, IDtoOptionsAccountPasswordChange[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAccountPasswordReset {
+      fields?: TypeEntityOptionsFields<DtoAccountPasswordReset, IDtoOptionsAccountPasswordReset[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAccountPasswordResetRequest {
+      fields?: TypeEntityOptionsFields<DtoAccountPasswordResetRequest, IDtoOptionsAccountPasswordResetRequest[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAccountPasswordResetRequestResult {
+      fields?: TypeEntityOptionsFields<DtoAccountPasswordResetRequestResult, IDtoOptionsAccountPasswordResetRequestResult[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAccountPasswordSet {
+      fields?: TypeEntityOptionsFields<DtoAccountPasswordSet, IDtoOptionsAccountPasswordSet[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAccountPasswordSetIssue {
+      fields?: TypeEntityOptionsFields<DtoAccountPasswordSetIssue, IDtoOptionsAccountPasswordSetIssue[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAccountProfileUpdate {
+      fields?: TypeEntityOptionsFields<DtoAccountProfileUpdate, IDtoOptionsAccountProfileUpdate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAccountRelogin {
+      fields?: TypeEntityOptionsFields<DtoAccountRelogin, IDtoOptionsAccountRelogin[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsLogin {
       fields?: TypeEntityOptionsFields<DtoLogin, IDtoOptionsLogin[TypeSymbolKeyFieldsMore]>;
     }
@@ -496,21 +689,28 @@ declare module 'vona-module-home-user' {
       fields?: TypeEntityOptionsFields<DtoPassportJwt, IDtoOptionsPassportJwt[TypeSymbolKeyFieldsMore]>;
     }
 
+    export interface IDtoOptionsPassportUser {
+      fields?: TypeEntityOptionsFields<DtoPassportUser, IDtoOptionsPassportUser[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsRegister {
       fields?: TypeEntityOptionsFields<DtoRegister, IDtoOptionsRegister[TypeSymbolKeyFieldsMore]>;
     }
 }
 /** dto: end */
 /** controller: begin */
+export * from '../controller/account.ts';
 export * from '../controller/passport.ts';
 export * from '../controller/passportTest.ts';
+import type { IControllerOptionsAccount } from '../controller/account.ts';
 import type { IControllerOptionsPassport } from '../controller/passport.ts';
 import type { IControllerOptionsPassportTest } from '../controller/passportTest.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
   
     export interface IControllerRecord {
-      'home-user:passport': IControllerOptionsPassport;
+      'home-user:account': IControllerOptionsAccount;
+'home-user:passport': IControllerOptionsPassport;
 'home-user:passportTest': IControllerOptionsPassportTest;
     }
 
@@ -518,6 +718,17 @@ declare module 'vona-module-a-web' {
 }
 declare module 'vona-module-home-user' {
   
+        export interface ControllerAccount {
+          /** @internal */
+          get scope(): ScopeModuleHomeUser;
+        }
+
+          export interface ControllerAccount {
+            get $beanFullName(): 'home-user.controller.account';
+            get $onionName(): 'home-user:account';
+            get $onionOptions(): IControllerOptionsAccount;
+          }
+
         export interface ControllerPassport {
           /** @internal */
           get scope(): ScopeModuleHomeUser;
@@ -543,11 +754,17 @@ declare module 'vona-module-home-user' {
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
+import type { ControllerAccount } from '../controller/account.ts';
+// @ts-ignore ignore
 import type { ControllerPassport } from '../controller/passport.ts';
 // @ts-ignore ignore
 import type { ControllerPassportTest } from '../controller/passportTest.ts';
 declare module 'vona-module-home-user' {
   
+    export interface IControllerOptionsAccount {
+      actions?: TypeControllerOptionsActions<ControllerAccount>;
+    }
+
     export interface IControllerOptionsPassport {
       actions?: TypeControllerOptionsActions<ControllerPassport>;
     }
@@ -558,13 +775,23 @@ declare module 'vona-module-home-user' {
 }
 declare module 'vona-module-a-web' {
   export interface IApiPathGetRecord{
-        '/home/user/passport/current': undefined;
+        '/home/user/account/current': undefined;
+'/home/user/passport/current': undefined;
 '/home/user/passport/login/:module/:providerName/:clientName?': undefined;
 '/home/user/passport/associate/:module/:providerName/:clientName?': undefined;
 '/home/user/passport/migrate/:module/:providerName/:clientName?': undefined;
     }
+export interface IApiPathPatchRecord{
+        '/home/user/account/profile': undefined;
+    }
 export interface IApiPathPostRecord{
-        '/home/user/passport/logout': undefined;
+        '/home/user/account/activation/consume': undefined;
+'/home/user/account/password/change': undefined;
+'/home/user/account/password-set/issue': undefined;
+'/home/user/account/password-set/consume': undefined;
+'/home/user/account/password-reset/request': undefined;
+'/home/user/account/password-reset/consume': undefined;
+'/home/user/passport/logout': undefined;
 '/home/user/passport/register': undefined;
 '/home/user/passport/login': undefined;
 '/home/user/passport/refreshAuthToken': undefined;
@@ -630,6 +857,32 @@ declare module 'vona-module-home-user' {
           } 
 }
 /** zodRefine: end */
+/** imageScene: begin */
+export * from '../bean/imageScene.homeUserAvatar.ts';
+
+import { type IDecoratorImageSceneOptions } from 'vona-module-a-image';
+declare module 'vona-module-a-image' {
+  
+    export interface IImageSceneRecord {
+      'home-user:homeUserAvatar': IDecoratorImageSceneOptions;
+    }
+
+  
+}
+declare module 'vona-module-home-user' {
+  
+        export interface ImageSceneHomeUserAvatar {
+          /** @internal */
+          get scope(): ScopeModuleHomeUser;
+        }
+
+          export interface ImageSceneHomeUserAvatar {
+            get $beanFullName(): 'home-user.imageScene.homeUserAvatar';
+            get $onionName(): 'home-user:homeUserAvatar';
+            get $onionOptions(): IDecoratorImageSceneOptions;
+          } 
+}
+/** imageScene: end */
 /** config: begin */
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';
@@ -651,6 +904,8 @@ locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 entity: IModuleEntity;
 model: IModuleModel;
 service: IModuleService;
+cacheRedis: IModuleCacheRedis;
+redlock: MetaRedlock;
 }
 
 import 'vona';

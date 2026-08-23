@@ -1,6 +1,7 @@
 export default {
   'Home': 'Home',
   'Logout': 'Logout',
+  'Account Settings': 'Account Settings',
   'LanguageEnglish': 'English',
   'LanguageChinese': 'Chinese',
   'ThemeLight': 'Light',

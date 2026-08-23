@@ -46,7 +46,15 @@
   "vonaModule": {
     "fileVersion": 1,
     "dependencies": {
-      "a-vona": "5.0.0"
+      "a-auth": "5.0.0",
+      "a-cache": "5.0.0",
+      "a-core": "5.0.0",
+      "a-image": "5.0.0",
+      "a-mail": "5.0.0",
+      "a-ratelimit": "5.0.0",
+      "a-redlock": "5.0.0",
+      "a-vona": "5.0.0",
+      "auth-simple": "5.0.0"
     }
   }
 }

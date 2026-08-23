@@ -5,7 +5,16 @@ import { builtinRoles } from './roles.ts';
 export { builtinRoles } from './roles.ts';
 export type { IRoleConfig } from './roles.ts';
 
-export function config(_app: VonaApplication) {
+export interface IHomeUserConfig {
+  passwordDefault: {
+    admin: string;
+  };
+  disableBootstrapSystemAdmin: boolean;
+  disableUserAdmin: boolean;
+  builtinRoles: typeof builtinRoles;
+}
+
+export function config(_app: VonaApplication): IHomeUserConfig {
   return {
     passwordDefault: {
       admin: '123456',

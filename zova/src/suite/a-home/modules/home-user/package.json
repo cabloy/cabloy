@@ -1,0 +1,60 @@
+{
+  "name": "zova-module-home-user",
+  "version": "5.0.0",
+  "description": "",
+  "keywords": [
+    "Zova Module"
+  ],
+  "author": "",
+  "files": [
+    "mock",
+    "dist",
+    "src",
+    "icons",
+    "assets"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": [
+        "./src/index.ts",
+        "./dist/index.d.ts"
+      ],
+      "import": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./*": "./*"
+  },
+  "scripts": {
+    "clean": "rimraf dist tsconfig.build.tsbuildinfo",
+    "tsc:publish": "npm run clean && node ../../../../../packages-cli/cli/src/bin/zova.ts :bin:buildModule --sourcemap && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run tsc:publish",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore"
+  },
+  "dependencies": {
+    "zova-module-a-bean": "^5.0.0",
+    "zova-module-a-model": "^5.0.0",
+    "zova-module-a-router": "^5.0.0",
+    "zova-module-basic-file": "^5.0.0",
+    "zova-module-basic-image": "^5.0.0",
+    "zova-module-home-api": "^5.0.0",
+    "zova-module-home-base": "^5.0.0"
+  },
+  "devDependencies": {
+    "clean-package": "^2.2.0",
+    "rimraf": "^6.1.3"
+  },
+  "clean-package": {
+    "indent": 2,
+    "replace": {
+      "exports.\\..types": "./dist/index.d.ts"
+    },
+    "remove": [
+      "clean-package",
+      "devDependencies",
+      "exports.\\..import"
+    ]
+  },
+  "title": "home-user"
+}

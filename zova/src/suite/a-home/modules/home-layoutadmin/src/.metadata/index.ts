@@ -6,16 +6,16 @@ import { IModelOptionsLayout } from '../model/layout.js';
 import { IModelOptionsMenu } from '../model/menu.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'home-layoutadmin:layout': IModelOptionsLayout;
 'home-layoutadmin:menu': IModelOptionsMenu;
     }
 
-  
+
 }
 declare module 'zova-module-home-layoutadmin' {
-  
+
         export interface ModelLayout {
           /** @internal */
           get scope(): ScopeModuleHomeLayoutadmin;
@@ -36,7 +36,7 @@ declare module 'zova-module-home-layoutadmin' {
           get $beanFullName(): 'home-layoutadmin.model.menu';
           get $onionName(): 'home-layoutadmin:menu';
           get $onionOptions(): IModelOptionsMenu;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -55,15 +55,15 @@ export * from '../component/layoutAdmin/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-home-layoutadmin' {
-  
+
         export interface ControllerLayoutAdmin {
           /** @internal */
           get scope(): ScopeModuleHomeLayoutadmin;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -105,11 +105,11 @@ export * from '../component/layoutAdmin/render.user.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-home-layoutadmin' {
-  
+
         export interface RenderContent {
           /** @internal */
           get scope(): ScopeModuleHomeLayoutadmin;
@@ -153,7 +153,7 @@ declare module 'zova-module-home-layoutadmin' {
         export interface RenderUser {
           /** @internal */
           get scope(): ScopeModuleHomeLayoutadmin;
-        } 
+        }
 }
 /** render: end */
 /** render: begin */
@@ -186,15 +186,15 @@ export * from '../component/layoutAdmin/style.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-home-layoutadmin' {
-  
+
         export interface StyleLayoutAdmin {
           /** @internal */
           get scope(): ScopeModuleHomeLayoutadmin;
-        } 
+        }
 }
 /** style: end */
 /** style: begin */
@@ -231,7 +231,7 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'home-layoutadmin': ScopeModuleHomeLayoutadmin;
   }
-  
+
   export interface IBeanScopeConfig {
     'home-layoutadmin': ReturnType<typeof config>;
   }
@@ -240,10 +240,10 @@ declare module 'zova' {
     'home-layoutadmin': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `home-layoutadmin::${K}` {
   return `home-layoutadmin::${key}`;
-}  
+}
 /** scope: end */

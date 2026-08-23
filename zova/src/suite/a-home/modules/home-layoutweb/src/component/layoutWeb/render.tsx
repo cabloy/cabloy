@@ -7,6 +7,7 @@ import { RenderHeader } from './render.header.jsx';
 import { RenderLocale } from './render.locale.jsx';
 import { RenderTabs } from './render.tabs.jsx';
 import { RenderTheme } from './render.theme.jsx';
+import { RenderUser } from './render.user.jsx';
 
 @Render()
 export class RenderLayoutWeb extends BeanRenderBase {
@@ -18,6 +19,9 @@ export class RenderLayoutWeb extends BeanRenderBase {
 
   @Use()
   $$renderTabs: RenderTabs;
+
+  @Use()
+  $$renderUser: RenderUser;
 
   @Use()
   $$renderContent: RenderContent;

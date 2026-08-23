@@ -5,6 +5,7 @@ export * from '../api/home.js';
 export * from '../api/homeBaseMenu.js';
 export * from '../api/homeBasePermission.js';
 export * from '../api/homeBaseSiteCatalog.js';
+export * from '../api/homeUserAccount.js';
 export * from '../api/homeUserPassport.js';
 export * from '../api/testSsrToolOne.js';
 
@@ -70,6 +71,17 @@ declare module 'zova-module-home-api' {
           
         }
 
+        export interface ApiHomeUserAccount {
+          /** @internal */
+          get scope(): ScopeModuleHomeApi;
+        }
+
+        export interface ApiHomeUserAccount {
+          get $beanFullName(): 'home-api.api.homeUserAccount';
+          get $onionName(): 'home-api:homeUserAccount';
+          
+        }
+
         export interface ApiHomeUserPassport {
           /** @internal */
           get scope(): ScopeModuleHomeApi;
@@ -99,6 +111,7 @@ import { ApiHome } from '../api/home.js';
 import { ApiHomeBaseMenu } from '../api/homeBaseMenu.js';
 import { ApiHomeBasePermission } from '../api/homeBasePermission.js';
 import { ApiHomeBaseSiteCatalog } from '../api/homeBaseSiteCatalog.js';
+import { ApiHomeUserAccount } from '../api/homeUserAccount.js';
 import { ApiHomeUserPassport } from '../api/homeUserPassport.js';
 import { ApiTestSsrToolOne } from '../api/testSsrToolOne.js';
 export interface IModuleApi {
@@ -107,6 +120,7 @@ export interface IModuleApi {
 'homeBaseMenu': ApiHomeBaseMenu;
 'homeBasePermission': ApiHomeBasePermission;
 'homeBaseSiteCatalog': ApiHomeBaseSiteCatalog;
+'homeUserAccount': ApiHomeUserAccount;
 'homeUserPassport': ApiHomeUserPassport;
 'testSsrToolOne': ApiTestSsrToolOne;
 }
@@ -121,6 +135,7 @@ declare module 'zova' {
 'home-api.api.homeBaseMenu': ApiHomeBaseMenu;
 'home-api.api.homeBasePermission': ApiHomeBasePermission;
 'home-api.api.homeBaseSiteCatalog': ApiHomeBaseSiteCatalog;
+'home-api.api.homeUserAccount': ApiHomeUserAccount;
 'home-api.api.homeUserPassport': ApiHomeUserPassport;
 'home-api.api.testSsrToolOne': ApiTestSsrToolOne;
   }
@@ -135,6 +150,7 @@ export * from '../apiSchema/home.js';
 export * from '../apiSchema/homeBaseMenu.js';
 export * from '../apiSchema/homeBasePermission.js';
 export * from '../apiSchema/homeBaseSiteCatalog.js';
+export * from '../apiSchema/homeUserAccount.js';
 export * from '../apiSchema/homeUserPassport.js';
 export * from '../apiSchema/testSsrToolOne.js';
 
@@ -200,6 +216,17 @@ declare module 'zova-module-home-api' {
           
         }
 
+        export interface ApiSchemaHomeUserAccount {
+          /** @internal */
+          get scope(): ScopeModuleHomeApi;
+        }
+
+        export interface ApiSchemaHomeUserAccount {
+          get $beanFullName(): 'home-api.apiSchema.homeUserAccount';
+          get $onionName(): 'home-api:homeUserAccount';
+          
+        }
+
         export interface ApiSchemaHomeUserPassport {
           /** @internal */
           get scope(): ScopeModuleHomeApi;
@@ -229,6 +256,7 @@ import { ApiSchemaHome } from '../apiSchema/home.js';
 import { ApiSchemaHomeBaseMenu } from '../apiSchema/homeBaseMenu.js';
 import { ApiSchemaHomeBasePermission } from '../apiSchema/homeBasePermission.js';
 import { ApiSchemaHomeBaseSiteCatalog } from '../apiSchema/homeBaseSiteCatalog.js';
+import { ApiSchemaHomeUserAccount } from '../apiSchema/homeUserAccount.js';
 import { ApiSchemaHomeUserPassport } from '../apiSchema/homeUserPassport.js';
 import { ApiSchemaTestSsrToolOne } from '../apiSchema/testSsrToolOne.js';
 export interface IModuleApiSchema {
@@ -237,6 +265,7 @@ export interface IModuleApiSchema {
 'homeBaseMenu': ApiSchemaHomeBaseMenu;
 'homeBasePermission': ApiSchemaHomeBasePermission;
 'homeBaseSiteCatalog': ApiSchemaHomeBaseSiteCatalog;
+'homeUserAccount': ApiSchemaHomeUserAccount;
 'homeUserPassport': ApiSchemaHomeUserPassport;
 'testSsrToolOne': ApiSchemaTestSsrToolOne;
 }
@@ -251,6 +280,7 @@ declare module 'zova' {
 'home-api.apiSchema.homeBaseMenu': ApiSchemaHomeBaseMenu;
 'home-api.apiSchema.homeBasePermission': ApiSchemaHomeBasePermission;
 'home-api.apiSchema.homeBaseSiteCatalog': ApiSchemaHomeBaseSiteCatalog;
+'home-api.apiSchema.homeUserAccount': ApiSchemaHomeUserAccount;
 'home-api.apiSchema.homeUserPassport': ApiSchemaHomeUserPassport;
 'home-api.apiSchema.testSsrToolOne': ApiSchemaTestSsrToolOne;
   }

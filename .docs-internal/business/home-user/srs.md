@@ -12,28 +12,28 @@ PRD requirement -> SRS contract -> PDP/WBS task -> ATP scenario -> observed evid
 
 ## 系统背景和现有归属
 
-| 关注点          | 当前源代码事实                                                                  | 本规格要求                                                                 |
-| --------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| 后端身份入口    | `home-user` 提供 Passport 导向的 current、login、register、OAuth、logout 等接口 | 自助账户须形成明确的 Account 契约，不能把内部 adapter 能力直接暴露给浏览器 |
-| 当前身份状态    | Zova `home-passport` 拥有 Passport/JWT 状态与 locale/tz 同步                    | Account 成功资料变更后必须按明确契约刷新或替换 Passport 投影               |
-| Admin 入口      | `home-layoutadmin` 的身份菜单当前只提供退出登录                                 | 布局仅接入导航，不能拥有账户领域或账户 API                                 |
-| Web 入口        | `home-layoutweb` 当前没有身份/账户入口                                          | Web 需要独立决定并实现其入口，不从 Admin 继承布局假设                      |
-| 本地密码原语    | `auth-simple` 有哈希和密码验证能力                                              | 密码更新应复用经批准的原语，但当前尚无已交付的修改密码用例                 |
-| token 失效      | `a-user` 有按用户移除全部认证 token 的 server-side 原语                         | 具体密码变更/设置后的当前与其他会话失效政策必须显式确定                    |
-| 旧重置 callback | `home-user` password-reset listener 当前为 `Not Implemented`                    | 本期不能将它视为可用恢复闭环；未来恢复与 `password-set` 保持独立           |
-| Home API 生成   | `home-api` 当前匹配 `HomeUserPassport` 操作                                     | 新 Account 操作必须显式选择 controller/tag/matcher 归属，避免生成漂移      |
+| 关注点          | 当前源代码事实                                                                  | 本规格要求                                                                                                        |
+| --------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 后端身份入口    | `home-user` 提供 Passport 导向的 current、login、register、OAuth、logout 等接口 | 自助账户须形成明确的 Account 契约，不能把内部 adapter 能力直接暴露给浏览器                                        |
+| 当前身份状态    | Zova `home-passport` 拥有 Passport/JWT 状态与 locale/tz 同步                    | Account 成功资料变更后必须按明确契约刷新或替换 Passport 投影                                                      |
+| Admin 入口      | `home-layoutadmin` 的身份菜单当前只提供退出登录                                 | 布局仅接入导航，不能拥有账户领域或账户 API                                                                        |
+| Web 入口        | `home-layoutweb` 当前没有身份/账户入口                                          | Web 需要独立决定并实现其入口，不从 Admin 继承布局假设                                                             |
+| 本地密码原语    | `auth-simple` 有哈希和密码验证能力                                              | 密码更新应复用经批准的原语，但当前尚无已交付的修改密码用例                                                        |
+| token 失效      | `a-user` 有按用户移除全部认证 token 的 server-side 原语                         | 具体密码变更/设置后的当前与其他会话失效政策必须显式确定                                                           |
+| 旧重置 callback | `home-user` password-reset listener 当前为 `Not Implemented`                    | 当前 recovery 使用独立 Account reset contract；旧 listener 不参与，且 `password-reset` 与 `password-set` 保持独立 |
+| Home API 生成   | `home-api` 当前匹配 `HomeUserPassport` 操作                                     | 新 Account 操作必须显式选择 controller/tag/matcher 归属，避免生成漂移                                             |
 
 ## 能力与模块归属
 
-| 责任                                          | 归属                                                                   |
-| --------------------------------------------- | ---------------------------------------------------------------------- |
-| 当前用户的自助账户语义、DTO、服务端范围和 API | Vona `home-user`                                                       |
-| 认证凭据哈希、验证和 provider 原语            | 现有认证模块，例如 `auth-simple`；新用例的归属由实现前决策门确定       |
-| 当前 Passport/JWT 会话状态                    | Zova `home-passport`                                                   |
-| 账户资料和安全能力的异步查询/mutation 状态    | 共享 Account Model，使用 `$useStateData(...)` 建立渲染相关的模型级状态 |
-| 账户设置页面、表单草稿和局部交互              | 前端 `home-user` 页面/Controller/Render 边界                           |
-| Admin/Web 导航入口和 Site 组合                | 各自布局模块；不取得 Account 领域所有权                                |
-| 邮件、一次性 token 和审计基础设施             | 复用或扩展既有通用能力，但 `password-set` 契约由 `home-user` 定义      |
+| 责任                                          | 归属                                                                                 |
+| --------------------------------------------- | ------------------------------------------------------------------------------------ |
+| 当前用户的自助账户语义、DTO、服务端范围和 API | Vona `home-user`                                                                     |
+| 认证凭据哈希、验证和 provider 原语            | 现有认证模块，例如 `auth-simple`；新用例的归属由实现前决策门确定                     |
+| 当前 Passport/JWT 会话状态                    | Zova `home-passport`                                                                 |
+| 账户资料和安全能力的异步查询/mutation 状态    | 共享 Account Model，使用 `$useStateData(...)` 建立渲染相关的模型级状态               |
+| 账户设置页面、表单草稿和局部交互              | 前端 `home-user` 页面/Controller/Render 边界                                         |
+| Admin/Web 导航入口和 Site 组合                | 各自布局模块；不取得 Account 领域所有权                                              |
+| 邮件、一次性 token 和审计基础设施             | 复用或扩展既有通用能力，`password-set` 与 `password-reset` 契约均由 `home-user` 定义 |
 
 共享 Account Model 不替代 `$passport`：前者拥有账户设置数据和 mutation 生命周期，后者持续拥有登录态和当前身份快照。
 
@@ -49,7 +49,7 @@ Zova Router Guard、菜单可见性和 Web/Admin Site role 准入只负责导航
 
 ### SRS-ACC-03：Account capability 是消费者投影
 
-页面初始化响应必须提供产品所需能力，例如：允许展示的 profile、`hasSimpleAuth`、`canSendSetPasswordLink` 与脱敏的可验证邮箱。不得直接返回 auth row、provider profile、密码 hash、token、内部认证 ID 或可由浏览器推断安全状态的非必要字段。
+页面初始化响应必须提供产品所需能力，例如：允许展示的 profile、`hasSimpleAuth`、`canSendSetPasswordLink` 与脱敏的账户邮箱。不得直接返回 auth row、provider profile、密码 hash、token、内部认证 ID 或可由浏览器推断安全状态的非必要字段。
 
 ### SRS-ACC-04：Web 与 Admin 使用同一账户领域、不同 Site 组合
 
@@ -109,37 +109,59 @@ locale/tz 成功保存后，应复用现有 Passport 偏好同步机制，使运
 
 ### SRS-SET-01：服务端资格判定
 
-`password-set` link 只能由已登录、尚无 `auth-simple` 凭据的当前账户请求。资格由服务端基于当前账户、可信 provider 状态和合格 email 派生；浏览器不提交或选择 recipient email、provider ID 或 verified 标志。
+`password-set` link 只能由已登录、尚无 `auth-simple` 凭据的当前账户请求，且 subject 始终只由当前 Passport 派生。浏览器必须提交受验证格式的 email，但它不得选择 user、provider、认证记录或 verified 标志。若当前 scoped `EntityUser.email` 非空，提交值必须经 trim/lowercase 规范化后匹配；服务端仅向既有字段投递且不得改写它。若该字段为空，服务端可向规范化输入投递，并仅在短时 password-set token state 保存该 candidate；不得从 auth provider 记录推导收件人。
 
-已有 `auth-simple` 的账户不得以该流程重置或并行覆盖密码，应回到修改密码流程。
+Zova 生成 token-free 的完整绝对 consumer URL；Account 仅接受 HTTP(S)、无 userinfo/query/fragment，且 origin 必须通过 `this.bean.security.checkOriginExact(...)` 严格授权：精确同源（协议、host、有效端口均匹配）或精确匹配服务端配置的 `a-security:cors` `whiteList`。`dev/test` 中 API request host 与 consumer origin 均为 loopback hostname 时允许不同端口。请求或 proxy host 只能证明精确同源，不能授权 lookalike、suffix、异协议或异端口跨源目的地。Vona 不读取 SSR Site、`publicPath` 或 `siteId`，保留前端提供的 pathname，并独自添加 `token` URL query。`SERVER_SERVE_*`、`Referer`、浏览器输入的 pathname、CORS wildcard 或 suffix 规则均不得授权该邮件目的地。已有 `auth-simple` 的账户不得以该流程重置或并行覆盖密码，应回到修改密码流程。
 
-### SRS-SET-02：合格邮箱和脱敏呈现
+### SRS-SET-02：账户邮箱和脱敏呈现
 
-合格 email 必须是账户已有且已验证、可投递的 email，或可信 OAuth provider 显式声明验证过的 email claim。Account capability 仅返回脱敏显示值。若不存在合格 email，则 `canSendSetPasswordLink` 为 false；页面显示不可用和独立邮箱绑定/验证前置提示，但不得创建 token 或发送邮件。
+Account capability 仅返回既有 `EntityUser.email` 的脱敏显示值，并以无 `auth-simple` 表示可进入 password-set issue flow；它绝不返回完整既有地址或 candidate。页面必须显式输入 email，初始值在 SSR 与 hydration 均为空，既有地址最多作为脱敏提示；输入、成功/失败反馈、API response、SSR/model/browser persistent state 和审计不得回显完整地址。
 
-email 来源可信级别、provider 允许列表、email 变化后的资格失效和投递失败重试策略须在实现前决策门确定。
+签发 state 保存 recipient snapshot；空字段签发时另保存 `pendingEmail`。消费时先重验 token/current pointer 和 scoped subject：若已存在的账户 email 与 snapshot 不再匹配则失败；若存在 `pendingEmail`，在 opaque candidate-email lock 下通过 current-instance case-insensitive lookup 拒绝另一用户已拥有的地址。只有 valid/current/one-time token 成功创建首个凭据时，才在同一事务将仍为空的 `EntityUser.email` 写为该 candidate。签发失败、过期、重放、superseded、冲突、资格失效或事务失败均不得持久化 candidate；不引入通用 email edit、pending 持久字段或数据库 unique constraint。
 
 ### SRS-SET-03：发链限制和审计
 
 请求设置密码链接必须具有服务端限流和审计。限流维度、窗口、成功/拒绝/重试记录及对可观察错误的策略必须在实现前明确。外部邮件投递不能成为可重放的事务副作用；发送与 token 持久化的失败/重试/幂等边界必须可审计。
 
+## 登录注册与未登录密码恢复契约
+
+### SRS-REG-01：Passport-owned registration
+
+`home-login` 注册页必须加载生成的 Passport registration schema，并通过 `home-passport` 的 mutation 调用公开 register operation（禁用 auth token）；不得复制或另建平行的注册后端契约。若注册结果已获当前 Site 准入，可复用 Passport JWT 持久化和安全 return navigation。默认 `autoActivate: false` 且 simple registration 未声明 confirmed 时，页面不得写入该未激活 Passport/JWT 或导航到受保护 return destination；必须保留已验证的 `returnTo`，显示激活邮件待确认状态，并返回 Login 以待确认后重新登录。角色只在 activation 时分配，不能为该页面提前授予 Site 准入。
+
+### SRS-RST-01：匿名申请与枚举防护
+
+`POST /home/user/account/password-reset/request` 是 public operation，使用现有 CAPTCHA scene、IP enforce rate limit 和 normalized-recipient digest cooldown。CAPTCHA 成功后无论账户是否存在、是否 active/activated、是否具有 canonical local credential、是否处于 cooldown、邮件是否排队或提交的 consumer URL 是否可用，都返回 `{ accepted: true }`。无效、不受信任或不可用的 consumer URL 必须在收件人查询前中性失败：不发送邮件、不创建 reset state，仅可写入批准的脱敏审计 reason；审计不得记录完整 email、原始 token 或可用链接。
+
+### SRS-RST-02：收件人、链接和 token 状态
+
+服务端只在当前 instance scope 内解析 email，并仅为 active、activated、含非空 `EntityUser.email` 且已有 canonical `auth-simple` 凭据的用户签发。当前产品认可该 email 与激活状态为收件权依据；地址级验证 provenance、验证时间/来源与旧数据迁移不属于本交付。Zova 提交 token-free 的完整绝对 consumer URL；Account 只接受 HTTP(S)、无 userinfo/query/fragment 且 origin 经 `this.bean.security.checkOriginExact(...)` 严格授权：精确同源（协议、host、有效端口均匹配）或精确匹配服务端 `a-security:cors` `whiteList` 的值。Vona 不读取或校验 SSR Site、`publicPath` 或 `siteId`，保留提交的 pathname，并独自添加 `token` URL query。无效 consumer URL 必须在收件人查询前中性失败，且不得发送邮件、创建 state 或 cooldown。请求或 proxy host 只能证明精确同源，不能授权 lookalike、suffix、异协议或异端口跨源目的地；`SERVER_SERVE_*`、`Referer`、浏览器输入的 pathname、CORS wildcard 或 suffix 规则均不得授权邮件目的地。生产必须显式配置 HTTPS consumer origin；`dev/test` 中 `checkOriginExact` policy 还允许 API request host 与 consumer origin 的 hostname 都是 loopback（`localhost`、`127.0.0.1` 或 `::1`）时使用不同端口。状态使用 purpose-specific Redis cache：raw UUID v4 仅用于构造该 link，Redis 只保存 SHA-256 digest、`purpose: 'password-reset'`、user ID 和逻辑 consumer path；current pointer 覆盖旧 token，TTL 为 15 分钟。
+
+### SRS-RST-03：公开消费、并发和会话结果
+
+`POST /home/user/account/password-reset/consume` 是 public operation。它在 digest lock 后取得共同的 per-user password-mutation lock，并在该 lock 内重新验证 state、purpose、path、current pointer、scoped user 资格与 local credential；事务只包含 durable password replacement。事务提交后、锁仍持有时，执行 session revocation 和 token cleanup。消费只能调用 `replacePassword()`，不得调用 `createForUser()`；无效、过期、replay、superseded 或资格失效均返回同一 non-diagnostic failure。密码变更和 reset 共享 mutation lock，防止提交前释放锁导致的凭据竞态。
+
+### SRS-RST-04：公开页面与客户端状态
+
+`/home/user/password-reset` 使用 `public` SSR 和空布局。SSR HTML 与 hydration-time 初始树必须保持 token-free 的中性 shell；token 不进入 SSR state、local/session storage、model state 或可保留的浏览器证据。controller 仅在 hydration 后从 route query 读取 `token`，立即使用 router replacement 恢复 token-free canonical URL，并只在 controller 内存保留；成功后清除临时 token、由 Passport model 清理本地登录态并前往 Login。URL query 会到达初始请求和可能的日志或 referrer 层；Referrer-Policy 与 Vona、edge、APM 日志 redaction 不属于本次迁移范围。
+
 ## 一次性 token 和公开消费契约
 
 ### SRS-TOK-01：用途隔离
 
-`password-set` token 必须带有不可替换的 `password-set` purpose，并与未来 `password-reset` 隔离。token 消费时必须验证 purpose、subject、有效期、未消费状态和必要的资格状态；不得将任一 purpose 的 token 用于另一流程。
+`password-set` token 必须带有不可替换的 `password-set` purpose，并与 `password-reset` 隔离。token 消费时必须验证 purpose、subject、有效期、未消费状态和必要的资格状态；不得将任一 purpose 的 token 用于另一流程。
 
 ### SRS-TOK-02：短时、单次和竞争安全
 
 每个 `password-set` token 必须短时有效、只能成功消费一次，并支持安全处理 malformed、expired、revoked、superseded、replayed 和并发消费。并发竞争中最多一个请求创建首个 `auth-simple` 凭据并写入成功审计；其他请求得到安全失败结果，不能造成重复凭据或未定义会话状态。
 
-TTL、存储/哈希表示、撤销/覆盖规则和原子消费实现须在实施前明确。现有 mail-confirm callback 在读取后删除 token 的行为可以是参考输入，但不能替代这个目的专属契约。
+TTL、存储/哈希表示、撤销/覆盖规则和原子消费实现须在实施前明确。旧 mail-confirm callback 的读取后删除 token 行为仅是历史输入，不能替代这个目的专属契约。
 
 ### SRS-TOK-03：公开 token 页面
 
 公开设置密码页可标记 `requiresAuth: false`，因为 token 而非浏览器会话是授权证明。该路由与消费 API 必须：
 
-- 只通过安全传输读取 token，并避免将 token 写入长期客户端状态、日志、浏览器分析、截图或保留证据；
+- 从公开页面 URL 的 `token` query 参数读取 token；不得支持或依赖 URL fragment/hash 传递，并避免将 token 写入长期客户端状态、浏览器分析、截图或保留证据；
 - 以 canonical path/用途约束 token，防止错误页面或 URL 被接受；
 - 提供不泄露内部诊断的有效、过期、无效和已使用错误界面；
 - 在成功设置密码后按 `SRS-SES-01` 处理认证状态；
@@ -187,25 +209,25 @@ Admin 头像菜单在退出登录前添加账户设置入口；Web 由 Web 布�
 
 账户设置 route 默认受认证保护。若将来存在动态 params，route 必须定义 `route.name` 并重新生成页面 metadata；当前 Account route 不应因便捷性引入可指定他人身份的动态 params。
 
-### SRS-SSR-01：Web public SSR
+### SRS-SSR-01：Web Account session SSR
 
-Web 保持 user-workspace 的默认策略：`public` SSR 只输出匿名安全的 shell、skeleton 或非私有 route frame，不能包含 `$passport.user`、profile、密码能力、脱敏邮箱或其他私有账户事实。
+Account 是已登录用户能力。静态 `/home/user/account` route 必须标记 `requiresAuth: true` 和 `ssrProfile: 'session'`，且不含 dynamic params 时不得仅为类型或 alias 目的增加 route name。server-side Passport/Site admission 处理匿名访问；该 route 不提供 `/account` alias。
 
-浏览器 hydration-time 的初始树必须与该服务器 shell 等价。只有显式 post-hydration、Passport admission、mounted 或交互边界之后，才可初始化私有 Account 查询或渲染私有分支。浏览器随后完成 Passport 与 `SITE_ID=web` 准入，Vona API 仍独立授权。
+已确认 Account session SSR 与浏览器 hydration-time 初始树必须等价，并可呈现必要的私有 Account 界面。匿名请求必须转入 Login 并仅保留安全的 return destination；Site admission 不替代 Vona API 授权。匿名 `password-set`/`password-reset` token route 明确声明 `requiresAuth: false`，使用 public SSR 的无 token 中性 shell，并在 hydration 后捕获和 scrub token；缺少 locale params 本身不得改变其 public profile。
 
 ### SRS-SSR-02：Admin session SSR
 
 Admin 沿用 `session` SSR profile 的实际 Passport/Site 准入行为。页面可在已确认的 session 条件下呈现必要私有界面，但不得因为 SSR 成功或 Admin 菜单可见而放松 Account API 的服务端授权、缓存控制或敏感资料禁止面。
 
-### SRS-SSR-03：公开设置密码页
+### SRS-SSR-03：公开 password-set/reset 页面
 
-公开 token 页面在 server 和 hydration 首渲间保持无 token 泄露的一致结构。密码字段永不 SSR 预填；token 验证和私有成功信息不得形成与 server HTML 不等价的 hydration 分支。
+公开 token 页面在 server 和 hydration 首渲间保持无 token 泄露的一致结构。密码字段永不 SSR 预填；token 验证和私有成功信息不得形成与 server HTML 不等价的 hydration 分支。`password-set` 与 `password-reset` 仅在 hydration 后从 `token` query 捕获 token，随即通过 router replacement scrub URL；两者不共享 token purpose 或 consumer state。
 
 ## 错误、隐私和审计契约
 
 ### SRS-AUD-01：安全审计
 
-至少对 password change、set-link issue、set-token consume 和安全相关拒绝结果记录可追溯事件。事件应包含批准的 actor/subject、动作、结果、时间和必要 correlation/security context；不得包含密码、hash、原始 token、完整敏感 email 或未经批准的认证内部数据。
+至少对 password change、password-set issue/consume、password-reset request/consume 和安全相关拒绝结果记录可追溯事件。事件应包含批准的 actor/subject、动作、结果、时间和必要 correlation/security context；不得包含密码、hash、原始 token、完整敏感 email 或未经批准的认证内部数据。
 
 ### SRS-AUD-02：客户端安全错误
 
@@ -238,6 +260,9 @@ Admin 沿用 `session` SSR profile 的实际 Passport/Site 准入行为。页面
 | `SRS-UI-*`, `SRS-SSR-*`   | `PRD-ACC-02`, `PRD-UX-*`  | `WBS-HUA-60-01`–`WBS-HUA-60-03`                   | `ATP-HUA-SSR-01`, `ATP-HUA-SSR-02`, `ATP-HUA-UI-01`  |
 | `SRS-AUD-*`, `SRS-NFR-*`  | `PRD-SEC-*`               | `WBS-HUA-30-02`, `WBS-HUA-40-02`, `WBS-HUA-70-01` | `ATP-HUA-AUD-01`, `ATP-HUA-RATE-01`                  |
 | `SRS-API-*`               | `PRD-ACC-03`, `PRD-UX-03` | `WBS-HUA-20-03`, `WBS-HUA-70-01`                  | `ATP-HUA-CTR-01`                                     |
+| `SRS-REG-01`              | `PRD-REG-01`              | `WBS-HUA-80-01`                                   | `ATP-HUA-REG-01`                                     |
+| `SRS-RST-01`–`SRS-RST-02` | `PRD-RST-01`–`PRD-RST-02` | `WBS-HUA-80-02`, `WBS-HUA-80-03`                  | `ATP-HUA-RST-01`, `ATP-HUA-RST-02`                   |
+| `SRS-RST-03`–`SRS-RST-04` | `PRD-RST-03`–`PRD-RST-04` | `WBS-HUA-80-03`, `WBS-HUA-80-04`                  | `ATP-HUA-RST-02`, `ATP-HUA-RST-03`                   |
 
 ## 相关记录
 

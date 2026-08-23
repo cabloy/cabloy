@@ -2,16 +2,16 @@
 
 ## 交付目标
 
-以安全前置、可追溯的垂直增量交付已登录 Web/Admin 用户共享的账户设置能力：个人资料、自助本地密码修改、OAuth-only 的首个本地密码设置，以及各自 Site 的入口组合。
+以安全前置、可追溯的垂直增量交付账户能力闭环：已登录 Web/Admin 用户共享的账户设置、个人资料、自助本地密码修改、OAuth-only 的首个本地密码设置，以及 Login 注册和未登录密码恢复。
 
-本计划严格遵循 [PRD](./prd.md) 的八步顺序：先建立 Account 契约和资料边界，再完成凭据/token 安全路径，随后才创建共享页面与入口；未登录忘记密码恢复保持单独延后。本文件拥有交付顺序和完成检查；[SRS](./srs.md) 拥有技术契约，[测试计划](./test-plan.md) 拥有可执行验收与证据。
+本计划严格遵循 [PRD](./prd.md) 的八步顺序：先建立 Account 契约和资料边界，再完成凭据/token 安全路径，随后创建共享页面与入口，并以独立的注册/reset 契约关闭 Login 能力闭环。`password-set` 与 `password-reset` 始终保持独立。本文件拥有交付顺序和完成检查；[SRS](./srs.md) 拥有技术契约，[测试计划](./test-plan.md) 拥有可执行验收与证据。
 
 ## 交付原则
 
 - 当前 Passport 是每项自助操作的唯一 subject authority；浏览器不能指定目标用户、认证记录、Site 或验证状态。
 - Vona 先定义 DTO/controller/OpenAPI 真相，再生成 Zova 消费者；不得手改生成 REST/API 产物。
-- 共享账户页面不将 Web 用户工作区误移到 Admin。Web 保持匿名安全 SSR shell，Admin 保持其 session SSR 责任。
-- `password-set` 与未来 `password-reset` 的目的、初始授权、token 和审计必须分离。
+- 共享账户页面不将 Web 用户工作区误移到 Admin。Account 是已登录用户能力，使用 session SSR 的实际 Passport/Site 准入；Admin 保持其 session SSR 基线，公开 Login/注册/reset 页面保持 public 中性 SSR shell。
+- `password-set` 与 `password-reset` 的目的、初始授权、token 和审计必须分离。
 - 个人资料与账户安全区块各自拥有草稿、loading、success 与 error 状态。
 - 每个安全断言都必须有直接后端/API 证明；菜单、Route Guard、SSR 或浏览器 UI 不能代替服务端授权证明。
 - 若现有持久资源需要新增字段或修改 `meta.version.ts`，先取得 `vonaModule.fileVersion` 是否增加的决定；所有 `meta.version.ts` 变更后运行 `npm run test`。
@@ -33,10 +33,10 @@
 
 任务：
 
-- 保持 PRD、SRS、WBS、ATP 和 ADR 的身份、密码、token、SSR 与延后范围一致；
+- 保持 PRD、SRS、WBS、ATP 和 ADR 的身份、密码、token、SSR、注册与 reset 范围一致；
 - 决定 Account controller/tag 与 Home API OpenAPI matcher 的归属；
-- 决定可编辑资料白名单、头像归属证明、合格验证邮箱来源、密码策略、会话失效精度、token 生命周期、审计/限流和是否涉及 schema/fileVersion；
-- 明确 future password-reset 不随本期 password-set 便利性被提前实现。
+- 决定可编辑资料白名单、首个密码的账户 email 来源、密码策略、会话失效精度、token 生命周期、审计/限流和是否涉及 schema/fileVersion；
+- 明确 `password-reset` 不因可复用 `password-set` 基础设施而混淆目的、初始授权或 replacement/enrollment 语义。
 
 验收检查：
 
@@ -161,25 +161,24 @@
 
 依赖：`WBS-HUA-20-*`、`WBS-HUA-30-02`。
 
-#### WBS-HUA-40-01：实现 server-derived 资格与 set-link issue
+#### WBS-HUA-40-01：实现 Passport 资格与前端 consumer URL set-link issue
 
 主要区域：
 
 - Vona `home-user` Account capability/service/controller
-- 认证 provider profile 适配器
 - 邮件、token、审计与限流基础设施
 
 任务：
 
-- 判断当前账户是否无 `auth-simple` 且拥有合格验证邮箱；
-- 在 capability projection 中提供脱敏邮箱和可用性，不暴露 provider 内部记录；
-- 实现受保护的 set-link issue action，收件人只由服务端推导；
-- 实施限流、审计、邮件投递失败/重试和资格状态变化规则。
+- 判断当前账户是否无 `auth-simple`；浏览器显式提交 email 但 subject 始终只由 Passport 派生；
+- 在 capability projection 中提供既有账户邮箱的脱敏提示和可进入 flow 的能力，不暴露 provider 内部记录或完整 email；
+- 实现受保护的 set-link issue action：既有 `EntityUser.email` 必须规范化匹配且保持权威；空字段只将输入作为短时 token-bound candidate；
+- 实施限流、审计、邮件投递失败/重试、candidate 冲突和资格状态变化规则。
 
 验收检查：
 
-- 有 `auth-simple`、无验证邮箱或客户端伪造 recipient/provider/verified state 均不可签发不当链接；
-- 只有合格账户既有邮箱可接收 link；
+- 有 `auth-simple`、无效输入、已有地址 mismatch 或客户端伪造 user/provider/verified state 均不可签发不当链接；
+- 既有 `EntityUser.email` 只可在规范化匹配时接收 link；空字段可使用短时 candidate，但不得在签发时持久化，且服务端不读取 auth provider 记录推导收件人；
 - `SRS-SET-01`–`SRS-SET-03` 与 `ATP-HUA-SET-01`、`ATP-HUA-SET-02`、`ATP-HUA-RATE-01` 可追溯。
 
 #### WBS-HUA-40-02：建立 password-set purpose-bound token 生命周期
@@ -192,9 +191,9 @@
 
 任务：
 
-- 设计和实现 `password-set` 的 TTL、purpose、subject 绑定、单次消费、撤销、覆盖和 canonical path 规则；
+- 设计和实现 `password-set` 的 TTL、purpose、subject 绑定、单次消费、撤销、覆盖、canonical path 与邮件链接 `token` URL query transport 规则；不得使用 fragment/hash 传递；
 - 将 token issue 与可审计的邮件投递策略衔接，避免未定义的重放或外部副作用；
-- 显式隔离未来 `password-reset`，不通过旧 reset listener 偷渡实现。
+- 与独立的 `password-reset` 隔离；不得通过旧 reset listener 将任一流程伪装为另一流程。
 
 验收检查：
 
@@ -217,7 +216,7 @@
 任务：
 
 - 创建明确 `requiresAuth: false` 的 token 授权公开 route；
-- 以一致的 server/hydration shell 显示密码设置表单、有效/无效/过期状态；
+- 以一致的 server/hydration shell 显示密码设置表单、有效/无效/过期状态；在 hydration 后从 `token` URL query 捕获 token、立即通过 router replacement 恢复 token-free canonical URL，且不支持 fragment/hash；
 - 通过 token 而非浏览器会话授权消费 action，并执行新密码/确认密码校验；
 - 防止 token 出现在长期状态、日志、分析、截图或保留测试证据。
 
@@ -237,9 +236,10 @@
 
 任务：
 
-- 在成功的有效 token 消费中创建第一个 `auth-simple` 凭据；
+- 在成功的有效 token 消费中创建第一个 `auth-simple` 凭据；空账户 email 的 token 必须在同一事务写入 token-bound candidate；
+- 对 candidate 使用 opaque email-digest lock 和 scoped business ownership lookup；不得添加 unique index 或持久 pending 字段；
 - 应用 `SRS-SES-01` 会话/token 策略，记录安全审计并返回安全的成功结果；
-- 证明并发消费、已创建凭据、失败和重试不会重复创建凭据或留下模糊状态。
+- 证明并发消费、已创建凭据、失败和重试不会重复创建凭据、错误绑定 email 或留下模糊状态。
 
 验收检查：
 
@@ -264,7 +264,7 @@
 - 用 Zova CLI 支持的模块/page/model 工作流建立 `home-user` 页面结构；
 - 创建 Account Model，并通过 `$useStateData(...)` 所有 profile/capability 与独立 mutation 状态；
 - 组合个人资料和账户安全两个独立区块，依据 `hasSimpleAuth` 呈现修改密码或设置密码；
-- 加入现有支持语言的 labels、错误、链接签发、无合格邮箱和 session 影响文案；
+- 加入现有支持语言的 labels、错误、显式 email 输入、既有地址脱敏提示和 session 影响文案；
 - 成功 profile 保存后更新/刷新 `$passport`。
 
 验收检查：
@@ -274,7 +274,7 @@
 - 没有生成 API/类型的手工副本；
 - `SRS-UI-01` 与 `ATP-HUA-UI-01`、`ATP-HUA-PAS-01` 可追溯。
 
-#### WBS-HUA-60-02：实现 Web public-SSR 账户 workspace shell
+#### WBS-HUA-60-02：实现 Web Account session-SSR route
 
 主要区域：
 
@@ -284,16 +284,15 @@
 
 任务：
 
-- 保持账户 route 的认证默认行为和 Web Site admission；
-- server SSR 与 hydration 初渲输出无私有账户事实的等价 shell；
-- 在明确 post-hydration/admission/mounted 边界后加载 Passport 与 Account 私有数据；
-- 直接 API 继续独立验证 Passport/account ownership。
+- 将静态 canonical `/home/user/account` route 标记为 `requiresAuth: true` 和 `ssrProfile: 'session'`，不为无 params route 增加 route name 或 alias；
+- 让 server-side Passport/Site admission 拒绝匿名请求，并让已确认 session 的 SSR 与 hydration 初渲呈现等价的私有 Account 结构；
+- 直接 API 继续独立验证 Passport/account ownership，不把 route admission 或菜单可见性视为授权。
 
 验收检查：
 
-- 匿名 Web HTML 没有私有 profile、能力、邮箱或密码数据；
-- hydration 不出现私有/不同结构的首渲分支；
-- 未认证 redirect、Site deny 和 direct API deny 分别可证；
+- 匿名请求在 server/browser route admission 中转入 Login，并保留受验证的 canonical return destination；
+- 已登录硬刷新由 session SSR 首屏渲染 Account，hydration 不出现结构不一致；
+- Site deny 和 direct API deny 分别可证；
 - `SRS-SSR-01` 与 `ATP-HUA-SSR-01` 可追溯。
 
 #### WBS-HUA-60-03：接入 Admin 与 Web 的账户设置入口
@@ -314,7 +313,7 @@
 验收检查：
 
 - Web/Admin 均到达共享账户能力，同时保留自身布局；
-- Admin session SSR 和 Web public SSR 各自符合规定；
+- Admin 与 Web 的 session SSR 和公开 token/reset 页的中性 SSR 各自符合规定；
 - `SRS-UI-02`、`SRS-SSR-02` 与 `ATP-HUA-SSR-02`、`ATP-HUA-UI-01` 可追溯。
 
 ### Phase 70：集成、证据与发布关闭
@@ -344,15 +343,90 @@
 - 所有生成、SSR、token、会话和直接授权路径符合规格；
 - WBS 状态只有在证据完整时才能标记 `verified`。
 
-### Phase 80：未来未登录 password-reset 恢复（延后）
+### Phase 80：Login 注册与未登录 password-reset 闭环
 
-依赖：本期功能已完成且另有批准的产品/技术记录。
+依赖：`WBS-HUA-20-03`、`WBS-HUA-30-02`、`WBS-HUA-40-02`、`WBS-HUA-50-*`。
 
-#### WBS-HUA-80-01：单独规划和交付 forgot-password recovery
+#### WBS-HUA-80-01：接入 Passport 注册入口
 
-本项明确延后，不属于本期实现。
+主要区域：
 
-未来任务必须定义未登录申请、枚举防护、captcha/限流、`password-reset` 目的、公开设置密码、会话撤销、审计和登录页入口；可复用经过验证的邮件/token/表单基础，但不能将 `password-set` 或当前未完成 callback 直接视为满足该能力。
+- 前端 `home-login`
+- Zova `home-passport`
+- 已有 Passport registration contract
+
+任务：
+
+- 在 Login 页面提供注册入口和独立公开注册页面；
+- 加载生成的 registration schema，复用 username、email、password、confirmation 和 CAPTCHA 契约；
+- 在 Passport Model 中复用 generated register mutation；仅当返回 Passport 已获当前 Site 准入时复用正常 JWT 写入和 return navigation。默认 activation-pending 结果保留安全 return destination、显示确认邮件提示并返回 Login，不能复制平行注册 API 或状态，也不得提前赋予 `registeredUser`。
+
+验收检查：
+
+- 注册页使用 generated contract，并以禁用 bearer token 的公开调用完成；
+- 成功注册后，已获当前 Site 准入的结果建立 Passport 状态并仅导航到经验证的 return destination；默认 activation-pending 结果保持公开确认状态，不出现 Access denied 页面，并带回安全 return destination 供确认后的重新登录使用；
+- `SRS-REG-01`、`PRD-REG-01` 与 `ATP-HUA-REG-01` 可追溯。
+
+#### WBS-HUA-80-02：实现匿名 reset 申请与中性反馈
+
+主要区域：
+
+- Vona `home-user` Account DTO/controller/service
+- `home-login` reset-request 页面
+- CAPTCHA、rate-limit、mail 与 Redis cooldown 基础设施
+
+任务：
+
+- 建立公开的 email + CAPTCHA reset request contract；
+- 以 active、activated、非空 `EntityUser.email` 和 canonical `auth-simple` 作为当前服务端收件资格；
+- 实施 IP enforce rate limit、normalized-recipient digest cooldown、脱敏审计和邮件失败清理；
+- 对 CAPTCHA 已成功的所有 eligible/suppressed/unavailable 结果返回同一 `{ accepted: true }`，页面只显示通用反馈。
+
+验收检查：
+
+- 浏览器不得提交 user、auth record、provider、verified state 或收件资格；
+- 不合格账户、未知地址、cooldown、邮件/配置失败不会签发有效 reset state，也不会改变外部响应；
+- `SRS-RST-01`–`SRS-RST-02`、`PRD-RST-01`–`PRD-RST-02` 与 `ATP-HUA-RST-01` 可追溯。
+
+#### WBS-HUA-80-03：实现 purpose-isolated reset token 和 replacement
+
+主要区域：
+
+- Vona `home-user` Account service/cache beans
+- `auth-simple`、Passport token adapter、mail 基础设施
+
+任务：
+
+- 使用独立 `password-reset` digest-only state、15 分钟 TTL、current pointer 和 recipient cooldown；Zova 提交 token-free 的完整绝对 consumer URL，Vona 仅接受 HTTP(S)、无 userinfo/query/fragment，且由 `checkOriginExact(...)` 允许精确同源（协议、host、有效端口）或精确匹配既有 `a-security:cors` `whiteList`；Vona 保留前端提供的 pathname，不读取或校验 SSR Site、`publicPath` 或 `siteId`，并仅添加 `token` URL query。请求/proxy host 不能授权 lookalike、suffix、异协议或异端口跨源目的地；生产部署显式配置 HTTPS consumer origin；`dev/test` 仅在 API 与 consumer 都为 loopback hostname 时允许不同端口；
+- 将 raw UUID 仅放入由 Vona 添加的邮件 `token` URL query，严格绑定逻辑 `/home/user/password-reset` leaf；请求/proxy header 仅可参与精确同源（协议、host、有效端口）判断，不得以其授权 lookalike、suffix、异协议或异端口跨源，也不得以 `SERVER_SERVE_*`、`Referer`、客户端输入的 mount path 或 CORS wildcard/suffix 语义授权 consumer URL；不持久化 raw token；query 到达请求、日志或 referrer 层的防护由后续 Referrer-Policy 和日志 redaction 工作处理；
+- 在 digest lock 后取得共同 per-user password-mutation lock，在 lock 内重验 state/current pointer/资格，在事务中仅调用 `replacePassword()`；
+- 事务提交后、lock 仍持有时撤销 server-side session 并清理 reset state；reset 不得创建 OAuth-only 用户的首个 local credential。
+
+验收检查：
+
+- supersession、过期、replay、错误 payload、资格变化、同 token 并发和 reissue/consume 交错安全失败；
+- 只有成功 token replacement 后的新密码可用，旧会话被撤销；
+- `SRS-RST-02`–`SRS-RST-03`、`PRD-RST-03` 与 `ATP-HUA-RST-02` 可追溯。
+
+#### WBS-HUA-80-04：实现公开 reset 页面和 Login 闭环验收
+
+主要区域：
+
+- 前端 `home-user` public reset page/route
+- canonical route 与 browser acceptance
+
+任务：
+
+- 提供 public、empty-layout `/home/user/password-reset` 页面；
+- 在 hydration 后从 route query 读取 `token`，立即通过 router replacement 恢复 token-free canonical URL，并仅在 controller 内存保留临时 token；
+- 成功后清除浏览器 Passport 状态并明确回到 Login；
+- 覆盖 Login 导航、注册、neutral request、SSR/hydration、query scrub、invalid/reused 以及强制重新登录的脱敏 browser evidence。
+
+验收检查：
+
+- SSR 与 hydration 初树均不包含 token、私有身份或预填密码；
+- reset 页面只短暂从 route query 捕获 token，随即 router-scrub；不得写入 storage、Model state 或可保留 artifact；
+- `SRS-RST-04`、`PRD-RST-03`–`PRD-RST-04` 与 `ATP-HUA-RST-03` 可追溯。
 
 ## 依赖与 contract-loop 规则
 
@@ -388,7 +462,10 @@ npm run deps:vona
 | `WBS-HUA-40-*`, `WBS-HUA-50-*` | `PRD-SET-*`, `PRD-SEC-02`–`PRD-SEC-03`              | `SRS-SET-*`, `SRS-TOK-*`, `SRS-SES-01` | `ATP-HUA-SET-01`, `ATP-HUA-SET-02`, `ATP-HUA-TOK-01`, `ATP-HUA-SSR-03`                   |
 | `WBS-HUA-60-*`                 | `PRD-ACC-02`, `PRD-PRO-04`–`PRD-PRO-05`, `PRD-UX-*` | `SRS-UI-*`, `SRS-SSR-*`                | `ATP-HUA-UI-01`, `ATP-HUA-SSR-01`, `ATP-HUA-SSR-02`, `ATP-HUA-PAS-01`                    |
 | `WBS-HUA-70-01`                | 全部本期 `PRD-*`                                    | 全部本期 `SRS-*`                       | 全部适用 `ATP-HUA-*`                                                                     |
-| `WBS-HUA-80-01`                | PRD 延后范围                                        | 后续单独 SRS                           | 后续单独 ATP                                                                             |
+| `WBS-HUA-80-01`                | `PRD-REG-01`                                        | `SRS-REG-01`                           | `ATP-HUA-REG-01`                                                                         |
+| `WBS-HUA-80-02`                | `PRD-RST-01`–`PRD-RST-02`                           | `SRS-RST-01`–`SRS-RST-02`              | `ATP-HUA-RST-01`                                                                         |
+| `WBS-HUA-80-03`                | `PRD-RST-03`                                        | `SRS-RST-02`–`SRS-RST-03`              | `ATP-HUA-RST-02`                                                                         |
+| `WBS-HUA-80-04`                | `PRD-RST-03`–`PRD-RST-04`                           | `SRS-RST-04`                           | `ATP-HUA-RST-03`                                                                         |
 
 ## 完成和证据规则
 

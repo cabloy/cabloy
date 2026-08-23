@@ -6,16 +6,16 @@ import { IModelOptionsLayout } from '../model/layout.js';
 import { IModelOptionsMenu } from '../model/menu.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  
+
     export interface IModelRecord {
       'home-layoutweb:layout': IModelOptionsLayout;
 'home-layoutweb:menu': IModelOptionsMenu;
     }
 
-  
+
 }
 declare module 'zova-module-home-layoutweb' {
-  
+
         export interface ModelLayout {
           /** @internal */
           get scope(): ScopeModuleHomeLayoutweb;
@@ -36,7 +36,7 @@ declare module 'zova-module-home-layoutweb' {
           get $beanFullName(): 'home-layoutweb.model.menu';
           get $onionName(): 'home-layoutweb:menu';
           get $onionOptions(): IModelOptionsMenu;
-        } 
+        }
 }
 /** model: end */
 /** model: begin */
@@ -55,15 +55,15 @@ export * from '../component/layoutWeb/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-home-layoutweb' {
-  
+
         export interface ControllerLayoutWeb {
           /** @internal */
           get scope(): ScopeModuleHomeLayoutweb;
-        } 
+        }
 }
 /** controller: end */
 /** controller: begin */
@@ -99,14 +99,15 @@ export * from '../component/layoutWeb/render.locale.jsx';
 export * from '../component/layoutWeb/render.tabs.jsx';
 export * from '../component/layoutWeb/render.theme.jsx';
 export * from '../component/layoutWeb/render.jsx';
+export * from '../component/layoutWeb/render.user.jsx';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-home-layoutweb' {
-  
+
         export interface RenderContent {
           /** @internal */
           get scope(): ScopeModuleHomeLayoutweb;
@@ -135,7 +136,12 @@ declare module 'zova-module-home-layoutweb' {
         export interface RenderLayoutWeb {
           /** @internal */
           get scope(): ScopeModuleHomeLayoutweb;
-        } 
+        }
+
+        export interface RenderUser {
+          /** @internal */
+          get scope(): ScopeModuleHomeLayoutweb;
+        }
 }
 /** render: end */
 /** render: begin */
@@ -145,6 +151,7 @@ import { RenderLocale } from '../component/layoutWeb/render.locale.jsx';
 import { RenderTabs } from '../component/layoutWeb/render.tabs.jsx';
 import { RenderTheme } from '../component/layoutWeb/render.theme.jsx';
 import { RenderLayoutWeb } from '../component/layoutWeb/render.jsx';
+import { RenderUser } from '../component/layoutWeb/render.user.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -154,6 +161,7 @@ declare module 'zova' {
 'home-layoutweb.render.tabs': RenderTabs;
 'home-layoutweb.render.theme': RenderTheme;
 'home-layoutweb.render.layoutWeb': RenderLayoutWeb;
+'home-layoutweb.render.user': RenderUser;
   }
 }
 /** render: end */
@@ -182,7 +190,7 @@ declare module 'zova' {
   export interface IBeanScopeRecord {
     'home-layoutweb': ScopeModuleHomeLayoutweb;
   }
-  
+
   export interface IBeanScopeConfig {
     'home-layoutweb': ReturnType<typeof config>;
   }
@@ -191,10 +199,10 @@ declare module 'zova' {
     'home-layoutweb': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 
 export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `home-layoutweb::${K}` {
   return `home-layoutweb::${key}`;
-}  
+}
 /** scope: end */

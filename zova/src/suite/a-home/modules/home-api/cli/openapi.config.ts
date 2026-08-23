@@ -8,6 +8,7 @@ export default function (): ZovaOpenapiConfigModule {
         /^HomeBaseMenu_*/,
         /^HomeBasePermission_*/,
         /^HomeUserPassport_*/,
+        /^HomeUserAccount_*/,
         /^TestSsrToolOne_*/,
         /^Captcha_*/,
       ],

@@ -35,4 +35,14 @@ export class ControllerPageLogin extends BeanControllerPageBase {
     const apiUrl = this.$passport.getOauthLoginUrl('auth-oauth', 'oauth', 'github');
     window.location.assign(apiUrl);
   }
+
+  gotoRegister() {
+    return this.app.$gotoPage('/home/login/register', {
+      query: { [this.sys.env.ROUTER_KEY_RETURNTO]: this.app.$getReturnTo() },
+    });
+  }
+
+  gotoPasswordResetRequest() {
+    return this.app.$gotoPage('/home/login/password-reset');
+  }
 }

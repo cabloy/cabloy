@@ -1,6 +1,18 @@
 export default {
   YourUsername: '您的用户名',
   YourPassword: '您的密码',
+  YourEmail: '您的邮箱地址',
+  PasswordConfirm: '确认密码',
   Login: '登录',
   LoginGitHub: '使用GitHub登录',
+  CreateAccount: '注册新用户',
+  ForgotPassword: '忘记密码？',
+  Register: '注册新用户',
+  RegisterHelp: '创建账户以开始使用。',
+  RegisterActivationPending: '请先查收邮件并激活账户，然后再登录。',
+  AlreadyHaveAccount: '已有账户？',
+  PasswordReset: '重置密码',
+  PasswordResetHelp: '请输入邮箱地址；如果账户符合条件，我们将发送重置链接。',
+  PasswordResetRequestAccepted: '如果该地址对应符合条件的账户，重置链接将很快发送。',
+  BackToLogin: '返回登录',
 };

@@ -27,6 +27,7 @@ declare module 'zova-module-home-layoutweb' {
   export interface RenderLocale extends ControllerLayoutWeb {}
   export interface RenderTabs extends ControllerLayoutWeb {}
   export interface RenderTheme extends ControllerLayoutWeb {}
+  export interface RenderUser extends ControllerLayoutWeb {}
 }
 export const ZLayoutWeb = defineComponent((_props: ZLayoutWebProps) => {
   useController(ControllerLayoutWeb, RenderLayoutWeb, undefined);

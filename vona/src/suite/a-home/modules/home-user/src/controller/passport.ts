@@ -1,5 +1,6 @@
 import type { DtoAuth, IAuthenticateOptions, IAuthProviderRecord } from 'vona-module-a-auth';
 import type { IJwtToken } from 'vona-module-a-jwt';
+import type { IUser } from 'vona-module-a-user';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
@@ -25,11 +26,12 @@ export class ControllerPassport extends BeanBase {
   @Web.get('current')
   @Passport.public()
   @Api.body(v.optional(), v.object(DtoPassport))
-  current(): DtoPassport | undefined {
-    return this._combineDtoPassport();
+  async current(): Promise<DtoPassport | undefined> {
+    return await this._combineDtoPassport();
   }
 
   @Web.post('logout')
+  @Passport.activated('noCheck')
   async logout() {
     return await this.bean.passport.signout();
   }
@@ -44,6 +46,10 @@ export class ControllerPassport extends BeanBase {
       state: { intention: 'register' },
       clientName: 'default',
     });
+    const user = this.bean.passport.current?.user as EntityUser | undefined;
+    if (user && !user.activated && user.email) {
+      await this.scope.service.account.issueActivationLink(user.id, data.consumerUrl);
+    }
     return this._combineDtoPassportJwt(jwt);
   }
 
@@ -132,19 +138,33 @@ export class ControllerPassport extends BeanBase {
     return await this.bean.passport.createTempAuthToken({ path });
   }
 
-  private _combineDtoPassportJwt(jwt?: IJwtToken): DtoPassportJwt {
+  private async _combineDtoPassportJwt(jwt?: IJwtToken): Promise<DtoPassportJwt> {
     if (!jwt) this.app.throw(403);
+    const passport = await this._combineDtoPassport();
+    if (!passport) this.app.throw(403);
     return {
-      passport: this._combineDtoPassport()!,
+      passport,
       jwt: jwt as DtoJwtToken,
     };
   }
 
-  private _combineDtoPassport(): DtoPassport | undefined {
+  private async _combineDtoPassport(): Promise<DtoPassport | undefined> {
     const passport = this.bean.passport.current;
-    if (!passport || !passport.auth) return;
+    const user = passport?.user as (EntityUser & IUser) | undefined;
+    if (!passport || !passport.auth || !user) return;
     return {
-      user: passport.user as EntityUser,
+      user: {
+        id: user.id,
+        name: user.name,
+        avatar: user.avatar,
+        email: user.email,
+        mobile: user.mobile,
+        activated: user.activated,
+        accountStatus: user.accountStatus,
+        locale: user.locale,
+        tz: user.tz,
+        anonymous: user.anonymous,
+      },
       auth: passport.auth as DtoAuth,
       roles: passport.roles as EntityRole[],
     };

@@ -140,6 +140,11 @@ export class ModelPassport extends BeanModelBase {
     this.app.$gotoReturnTo();
   }
 
+  isPassportSiteAdmitted(passport?: ApiApiHomeUserPassportloginResponseBody['passport']) {
+    const siteId = this.sys.env.SITE_ID;
+    return !!siteId && !!passport?.roles.some(role => role.siteIds.includes(siteId));
+  }
+
   logout() {
     return this.$useMutationData<void, void>({
       mutationKey: ['logout'],
@@ -147,11 +152,7 @@ export class ModelPassport extends BeanModelBase {
         await this.$api.homeUserPassport.logout();
       },
       onSuccess: async () => {
-        this._setPassportJwt();
-        // page: login
-        await this.app.$gotoLogin();
-        // clear: should after goto login page, avoid home-layoutadmin use some cache data
-        this.$clear(); // not await
+        await this.requireRelogin();
       },
     });
   }
@@ -194,10 +195,24 @@ export class ModelPassport extends BeanModelBase {
 
   async ensurePassport() {
     if (!this.$ssr.cookieDisabledOnServer && !this.isAuthenticated && this.accessToken) {
-      this.passport = await this.$api.homeUserPassport.current();
-      this._setLocaleTz();
+      await this.refreshCurrent();
     }
     return this.passport;
+  }
+
+  async refreshCurrent() {
+    if (this.$ssr.cookieDisabledOnServer || !this.accessToken) return;
+    this.passport = await this.$api.homeUserPassport.current();
+    this._setLocaleTz();
+    return this.passport;
+  }
+
+  async requireRelogin(returnTo?: string | boolean, cause?: string) {
+    this._setPassportJwt();
+    // page: login
+    await this.app.$gotoLogin(returnTo, cause);
+    // clear: should after goto login page, avoid home-layoutadmin use some cache data
+    this.$clear(); // not await
   }
 
   private _isTempAuthTokenExpired(

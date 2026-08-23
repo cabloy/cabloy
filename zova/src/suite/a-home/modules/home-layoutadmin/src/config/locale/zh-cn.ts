@@ -1,6 +1,7 @@
 export default {
   'Home': '首页',
   'Logout': '退出登录',
+  'Account Settings': '账户设置',
   'LanguageEnglish': '英语',
   'LanguageChinese': '简体中文',
   'ThemeLight': '亮色',
