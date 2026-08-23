@@ -131,9 +131,9 @@ export class ControllerFormFieldImage extends BeanControllerBase {
               maxSize={this.currentOptions.maxSize}
               minSize={this.currentOptions.minSize}
               multiple={this.currentOptions.multiple !== false}
-              onBeforeUpload={(fileCount, policy) =>
-                this._validateUploadCount(fileCount, policy.multiple)
-              }
+              onBeforeUpload={(fileCount, policy) => {
+                return this._validateUploadCount(fileCount, policy.multiple);
+              }}
               crop={this._getCropOptions(this.currentOptions)}
               resize={this.currentOptions.resize}
               onUploadedBatch={(uploaded, policy) => {
