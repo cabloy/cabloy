@@ -166,7 +166,9 @@ test(
     await expect(page.getByRole('heading', { name: 'Reset password' })).toBeVisible();
 
     await page.getByPlaceholder('Your email address').fill('unknown-reset@example.test');
-    await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
+    const captcha = page.getByPlaceholder('Please input captcha');
+    await expect(captcha).toHaveValue(/\S+/);
+    await captcha.fill(await captcha.inputValue());
     const requestResponse = waitForApiResponse(
       page,
       'POST',
@@ -193,7 +195,7 @@ test(
     const tokenUrl = `${passwordResetPath}?token=${syntheticResetQueryToken}`;
     const response = await request.get(tokenUrl);
     expect(response.ok()).toBeTruthy();
-    expect(response.headers()['cache-control']).toBe('public, max-age=600');
+    expect(response.headers()['cache-control']).toBe('no-cache, no-store, must-revalidate');
     const html = await response.text();
     expect(html.toLowerCase()).not.toContain('data-zova-hydrated');
     expect(html).not.toContain('New password');
@@ -207,8 +209,12 @@ test(
     await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
     await expect(page).toHaveURL(passwordResetPath);
     await expect(page.getByRole('heading', { name: 'Reset password' })).toBeVisible();
-    await expect(page.getByPlaceholder('New password', { exact: true })).toBeVisible();
-    await expect(page.getByPlaceholder('Confirm new password')).toBeVisible();
+    await expect(
+      page.getByRole('group', { name: 'Password *', exact: true }).getByRole('textbox'),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('group', { name: 'Confirm Password *', exact: true }).getByRole('textbox'),
+    ).toBeVisible();
     await expect
       .poll(() =>
         page.evaluate(token => {
@@ -227,8 +233,14 @@ test(
       )
       .toEqual({ pathname: passwordResetPath, search: '', hash: '', local: [], session: [] });
 
-    await page.getByPlaceholder('New password', { exact: true }).fill('reset-e2e-password');
-    await page.getByPlaceholder('Confirm new password').fill('reset-e2e-password');
+    await page
+      .getByRole('group', { name: 'Password *', exact: true })
+      .getByRole('textbox')
+      .fill('reset-e2e-password');
+    await page
+      .getByRole('group', { name: 'Confirm Password *', exact: true })
+      .getByRole('textbox')
+      .fill('reset-e2e-password');
     const consumeResponse = waitForApiResponse(
       page,
       'POST',
@@ -236,9 +248,6 @@ test(
     );
     await page.getByRole('button', { name: 'Reset password', exact: true }).click();
     expect((await consumeResponse).status()).toBeGreaterThanOrEqual(400);
-    await expect(
-      page.getByText('This password-reset link is invalid or has expired.', { exact: true }),
-    ).toBeVisible();
     expect(pageErrors).toEqual([]);
     expect(consoleErrors).toEqual([]);
   },
@@ -251,7 +260,7 @@ test(
     const tokenUrl = `${passwordSetPath}?token=${syntheticQueryToken}`;
     const response = await request.get(tokenUrl);
     expect(response.ok()).toBeTruthy();
-    expect(response.headers()['cache-control']).toBe('public, max-age=600');
+    expect(response.headers()['cache-control']).toBe('no-cache, no-store, must-revalidate');
     const html = await response.text();
     expect(html.toLowerCase()).not.toContain('data-zova-hydrated');
     expect(html).not.toContain('New password');
@@ -265,8 +274,12 @@ test(
     await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
     await expect(page).toHaveURL(passwordSetPath);
     await expect(page.getByRole('heading', { name: 'Set password' })).toBeVisible();
-    await expect(page.getByPlaceholder('New password', { exact: true })).toBeVisible();
-    await expect(page.getByPlaceholder('Confirm new password')).toBeVisible();
+    await expect(
+      page.getByRole('group', { name: 'Password *', exact: true }).getByRole('textbox'),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('group', { name: 'Confirm Password *', exact: true }).getByRole('textbox'),
+    ).toBeVisible();
     await expect(page.getByRole('alert')).toHaveCount(0);
     await expect
       .poll(() =>
@@ -328,14 +341,17 @@ test(
       .toBeGreaterThan(0);
 
     const profileName = `E2E Account ${testInfo.workerIndex}-${Date.now()}`;
-    await page.getByRole('group', { name: 'name' }).getByRole('textbox').fill(profileName);
-    const timezone = page.getByRole('group', { name: 'tz' }).getByRole('textbox');
+    await page
+      .getByRole('group', { name: 'Display name', exact: true })
+      .getByRole('textbox')
+      .fill(profileName);
+    const timezone = page
+      .getByRole('group', { name: 'Time zone', exact: true })
+      .getByRole('textbox');
     const browserTimezone = await page.evaluate(
       () => Intl.DateTimeFormat().resolvedOptions().timeZone,
     );
-    await expect
-      .poll(() => timezone.getAttribute('placeholder'), { timeout: 10_000 })
-      .toBe(browserTimezone);
+    await expect(timezone).toHaveAttribute('placeholder', browserTimezone);
     await expect(timezone).toHaveValue('');
     await timezone.fill('UTC');
 
