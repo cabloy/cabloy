@@ -1942,8 +1942,9 @@ test(
       await adminPage.goto(skuCreatePath, { waitUntil: 'load' });
       const productField = adminPage.getByRole('group', { name: 'Product' });
       await expect(productField).toBeVisible();
-      await expect(productField.getByRole('combobox')).toHaveCount(0);
-      await expect(productField.getByRole('textbox')).toBeVisible();
+      const productPicker = productField.getByRole('combobox');
+      await expect(productPicker).toBeVisible();
+      await expect(productPicker).toHaveValue('');
       const lifecycle = adminPage
         .getByRole('group', { name: 'SKU lifecycle' })
         .getByRole('combobox');

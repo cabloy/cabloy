@@ -2,9 +2,10 @@ import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
-describe('transaction.test.ts', () => {
+describe('transaction.test.ts', { concurrency: false }, () => {
   const tableNameFail = '__tempTransactionFail';
   const tableNameSuccess = '__tempTransactionSuccess';
+  const tableNameCommit = '__tempTransactionCommit';
 
   it('action:transaction:fail', async () => {
     // transaction
@@ -72,6 +73,32 @@ describe('transaction.test.ts', () => {
 
       // drop table
       await app.bean.model.dropTable(tableNameFail);
+    });
+  });
+
+  it('action:transaction:commit', async () => {
+    const scopeTest = app.scope('test-vona');
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.model.createTable(tableNameCommit, table => {
+        table.basicFields();
+        table.string('name');
+      });
+      try {
+        let callbackCalled = false;
+        await scopeTest.service.transaction.commit(async () => {
+          await new Promise<void>(resolve => setImmediate(resolve));
+          assert.equal(app.bean.database.current.inTransaction, false);
+          const item = await app.bean.model.get(tableNameCommit as any, { name: 'transaction' });
+          assert.equal(item.name, 'transaction');
+          await app.bean.model.insert(tableNameCommit as any, { name: 'commit' });
+          callbackCalled = true;
+        });
+        assert.equal(callbackCalled, true);
+        const items = await app.bean.model.select(tableNameCommit as any, {});
+        assert.equal(items.length, 2);
+      } finally {
+        await app.bean.model.dropTable(tableNameCommit);
+      }
     });
   });
 

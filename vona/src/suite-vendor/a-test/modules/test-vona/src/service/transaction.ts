@@ -4,6 +4,7 @@ import { Core } from 'vona-module-a-core';
 
 const tableNameFail = '__tempTransactionFail';
 const tableNameSuccess = '__tempTransactionSuccess';
+const tableNameCommit = '__tempTransactionCommit';
 
 @Service()
 export class ServiceTransaction extends BeanBase {
@@ -16,5 +17,11 @@ export class ServiceTransaction extends BeanBase {
   @Core.transaction()
   async success(item: object) {
     await this.bean.model.update(tableNameSuccess as any, item);
+  }
+
+  @Core.transaction()
+  async commit(callback: () => Promise<void>) {
+    await this.bean.model.insert(tableNameCommit as any, { name: 'transaction' });
+    await this.ctx.db.commit(callback);
   }
 }

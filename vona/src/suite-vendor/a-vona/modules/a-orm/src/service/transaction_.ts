@@ -127,20 +127,17 @@ export class ServiceTransaction extends BeanBase {
       if (fiber) {
         await fiber.doRollback();
         this.transactionState.remove(this._db);
+        await fiber.compensatesDone();
       }
       throw err;
     }
-    try {
-      if (fiber) {
+    if (fiber) {
+      try {
         await fiber.doCommit();
+      } finally {
         this.transactionState.remove(this._db);
       }
-    } catch (err) {
-      if (fiber) {
-        await fiber.doRollback();
-        this.transactionState.remove(this._db);
-      }
-      throw err;
+      await fiber.commitsDone();
     }
     return res;
   }
