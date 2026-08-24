@@ -78,9 +78,9 @@ PayPal v1 supports hosted approval, automatic capture, verified status/webhook r
 
 Partial refunds are a pre-shipment monetary adjustment. They do not restore stock. Stock restoration occurs only once after the order has been fully refunded. Refund amount cannot exceed captured amount minus successful and active approved refund amounts.
 
-## Legacy a-paypal
+## Legacy a-paypal removal
 
-Legacy `a-paypal` is not a migration base. It remains only until `pay-paypal` has completed sandbox Commerce cutover and active legacy records have an explicit archive/migration/disposal decision. Then remove its source, dependency, callback routes, SDK residue, and old credentials. Rotate all legacy credentials before any live cutover.
+The legacy `a-paypal` module was removed after `pay-paypal` completed Sandbox Commerce cutover and active legacy records received an archive/migration/disposal decision. `pay-paypal` is the only PayPal provider implementation in the active payment architecture. Rotate any retired legacy credentials before a Live cutover.
 
 ## Acceptance requirements
 

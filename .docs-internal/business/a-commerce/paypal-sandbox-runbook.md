@@ -2,7 +2,7 @@
 
 ## Scope
 
-This concise runbook enables the `pay-paypal` Commerce path only for Sandbox verification. Use the [canonical PayPal Commerce Runbook](./paypal-commerce-runbook.md) for shared environment setup, tunnel/webhook details, diagnostics, and cutover constraints. It does not authorize a live PayPal rollout or removal of legacy `a-paypal`.
+This concise runbook enables the `pay-paypal` Commerce path only for Sandbox verification. Use the [canonical PayPal Commerce Runbook](./paypal-commerce-runbook.md) for shared environment setup, tunnel/webhook details, diagnostics, and cutover constraints. It does not authorize a live PayPal rollout.
 
 ## Required non-committed configuration
 
@@ -59,4 +59,4 @@ For a late verified capture after an order expired, retain the expired order. Th
 - Keep Mock as the default in normal development and deterministic CI.
 - Enable Sandbox PayPal only for internal validation cohorts.
 - Do not configure a live client or enable live selection in this change.
-- Do not remove legacy `a-paypal` until Sandbox cutover has passed and the active legacy-record archive/migration/disposal decision is recorded.
+- The legacy `a-paypal` module has been removed after Sandbox cutover and the active legacy-record archive/migration/disposal decision; use `pay-paypal` for Sandbox verification.

@@ -535,17 +535,6 @@ export type ApiSchemaPayMockDtoMockRefundComplete =
   components['schemas']['pay-mock.dto.mockRefundComplete'];
 export type ApiSchemaPayMockDtoMockRefundCompletePartial =
   Partial<ApiSchemaPayMockDtoMockRefundComplete>;
-export type ApiSchemaAPaypalEntityPaypalRecord =
-  components['schemas']['a-paypal.entity.paypalRecord'];
-export type ApiSchemaAPaypalEntityPaypalRecordPartial = Partial<ApiSchemaAPaypalEntityPaypalRecord>;
-export type ApiSchemaAPaypalDtoPaypalOrderRecordPayload =
-  components['schemas']['a-paypal.dto.paypalOrderRecordPayload'];
-export type ApiSchemaAPaypalDtoPaypalOrderRecordPayloadPartial =
-  Partial<ApiSchemaAPaypalDtoPaypalOrderRecordPayload>;
-export type ApiSchemaAPaypalDtoPaypalOrderRecordOptions =
-  components['schemas']['a-paypal.dto.paypalOrderRecordOptions'];
-export type ApiSchemaAPaypalDtoPaypalOrderRecordOptionsPartial =
-  Partial<ApiSchemaAPaypalDtoPaypalOrderRecordOptions>;
 export type ApiSchemaTestCaptchaDtoSignin = components['schemas']['test-captcha.dto.signin'];
 export type ApiSchemaTestCaptchaDtoSigninPartial = Partial<ApiSchemaTestCaptchaDtoSignin>;
 export type ApiSchemaTestRestDtoProductCreate =

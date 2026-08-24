@@ -1504,54 +1504,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/paypal/getRecord/{recordId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['Paypal_getRecord'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/paypal/captureOrder/{recordId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['Paypal_captureOrder'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/paypal/cancelOrder/{recordId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['Paypal_cancelOrder'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/test/auth/passport/isAuthenticated': {
     parameters: {
       query?: never;
@@ -3954,7 +3906,29 @@ export interface components {
     'a-permission.dto.permissions': {
       roleIds?: (number | string)[] | undefined;
       roleNames?: string[] | undefined;
-      actions?: unknown;
+      actions?:
+        | {
+            [key: string]:
+              | boolean
+              | {
+                  key: string;
+                  allowed: boolean;
+                  matcher:
+                    | {
+                        /** @enum {string} */
+                        mode: 'all';
+                      }
+                    | {
+                        /** @enum {string} */
+                        mode: 'any';
+                        rules: {
+                          field: string;
+                          values: string[];
+                        }[];
+                      };
+                };
+          }
+        | undefined;
     };
     'home-base.dto.siteCatalogSelectRes': {
       list: components['schemas']['home-base.dto.siteCatalogSelectResItem'][];
@@ -4770,49 +4744,6 @@ export interface components {
     'pay-mock.dto.mockRefundComplete': {
       /** @enum {string} */
       outcome: 'succeeded' | 'failed' | 'cancelled';
-    };
-    'a-paypal.entity.paypalRecord': {
-      /**
-       * Format: date-time
-       * @description Created At
-       */
-      createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
-      /**
-       * @description Deleted
-       * @default false
-       */
-      deleted?: boolean;
-      /**
-       * @description Instance ID
-       * @default 0
-       */
-      iid?: number;
-      /** @description ID */
-      id: number | string;
-      userId: number | string;
-      /** @default 0 */
-      status?: number;
-      prepayId: string;
-      payload: components['schemas']['a-paypal.dto.paypalOrderRecordPayload'];
-      options: components['schemas']['a-paypal.dto.paypalOrderRecordOptions'];
-    };
-    'a-paypal.dto.paypalOrderRecordPayload': {
-      remark: string;
-      total: string;
-      currencyCode: string;
-    };
-    'a-paypal.dto.paypalOrderRecordOptions': {
-      brandName: string;
-      returnUrl: string;
-      cancelUrl: string;
-      returnTo: string;
-      scene: string;
-      orderId: number | string;
     };
     'test-captcha.dto.signin': {
       username: string;
@@ -8538,84 +8469,6 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['pay-mock.dto.mockRefundReceipt'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  Paypal_getRecord: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        recordId: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['a-paypal.entity.paypalRecord'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  Paypal_captureOrder: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        recordId: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  Paypal_cancelOrder: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        recordId: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
           };
         };
       };

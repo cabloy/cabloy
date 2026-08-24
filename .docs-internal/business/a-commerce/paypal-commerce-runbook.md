@@ -2,7 +2,7 @@
 
 ## Scope and documentation boundary
 
-This is the canonical maintainer-facing operational reference for the `pay-paypal` Commerce path. It covers PayPal Sandbox/Live configuration, local HTTPS tunnel testing, webhook registration, and runtime diagnostics. The shorter [PayPal Sandbox Commerce Runbook](./paypal-sandbox-runbook.md) is a Sandbox-only checklist; this document owns the detailed shared setup and diagnostics. It does not authorize removal of the legacy `a-paypal` module, replace the payment architecture or test plan, or make Live rollout decisions.
+This is the canonical maintainer-facing operational reference for the `pay-paypal` Commerce path. It covers PayPal Sandbox/Live configuration, local HTTPS tunnel testing, webhook registration, and runtime diagnostics. The shorter [PayPal Sandbox Commerce Runbook](./paypal-sandbox-runbook.md) is a Sandbox-only checklist; this document owns the detailed shared setup and diagnostics. It does not replace the payment architecture or test plan, or make Live rollout decisions.
 
 User-facing setup guidance belongs in `cabloy-docs/`; this runbook records repository-specific wiring and operational checks.
 
@@ -206,4 +206,4 @@ For a late verified capture after an order expired, retain the expired order. Th
 
 - Mock remains the default for ordinary development and deterministic CI.
 - `PAYPAL_ENVIRONMENT` is an exact allowlist; invalid values must be corrected rather than silently choosing an endpoint.
-- Do not remove legacy `a-paypal` until the active legacy-record archive/migration/disposal decision is recorded.
+- The legacy `a-paypal` module has been removed after the active legacy-record archive/migration/disposal decision was recorded; use `pay-paypal` for all PayPal operations.
