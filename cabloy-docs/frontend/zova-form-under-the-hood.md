@@ -293,6 +293,31 @@ A practical reading takeaway is:
 - **the form owns the cross-field runtime**
 - **each field controller owns one field’s TanStack binding and render context**
 
+### Field-state readiness and custom synchronization
+
+The field options contract declares `onFieldStateReady` in:
+
+```text
+zova/src/suite-vendor/a-zova/modules/a-form/src/types/formField.ts
+```
+
+Its callback receives the current `ControllerFormField<TParentData>` instance. The callback is owned by the field controller; it is not a DOM ref, a VNode mounted event, or a notification that an external API has completed.
+
+`ControllerFormField.__init__()` invokes the callback at the end of field initialization, after the field binding, computed props, behavior holder, and optional client-side `onEffect` watcher have been prepared. The same controller also watches the field's schema property. When that property changes materially, the sequence is:
+
+```text
+_getFormFieldOptions()
+  -> _formField.api.update(options)
+  -> form.resetField(name)
+  -> onFieldStateReady(formField)
+```
+
+The callback must follow `resetField(...)`. A custom field may hold a value outside the form controller—for example, a widget value or an externally created challenge object—and a value written before the reset can be replaced by the reset's default value. The callback provides the replay point where the custom field can write its current external value back through `formField.setValue(...)` or the owning form setter.
+
+This lifecycle is separate from external data changes. If an API creates or refreshes the external value later, synchronize that result in the API completion path too. Likewise, user input should continue to update the field through `formField.setValue(...)`, while value-change effects belong to the normal field effect/input surfaces. `onFieldStateReady` is not a per-value-change listener and does not fetch, retry, or wait for a renderer DOM node.
+
+For the public authoring shape and a renderer-neutral example, see [Initialize external state with `onFieldStateReady`](/frontend/form-guide#initialize-external-state-with-onfieldstateready).
+
 ## 7. How one field is configured
 
 The field controller builds its runtime configuration mainly through:

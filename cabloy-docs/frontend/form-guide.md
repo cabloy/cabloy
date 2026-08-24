@@ -200,6 +200,53 @@ Use this when you need to:
 - intercept input and blur behavior yourself
 - mix Zova form state with a custom render contract
 
+### Initialize external state with `onFieldStateReady`
+
+A custom field sometimes has two state surfaces:
+
+- the `ControllerFormField` state owned by `ZForm`
+- state owned by the custom renderer or an external resource, such as a widget value or a challenge response
+
+Use `onFieldStateReady` when the custom field needs to synchronize those surfaces after Zova has prepared or reset the field:
+
+```tsx
+<ZFormField
+  name="externalValue"
+  onFieldStateReady={formField => {
+    if (this.externalValue !== undefined) {
+      formField.setValue(this.externalValue);
+    }
+  }}
+  slotDefault={({ props }, formField) => {
+    return (
+      <input
+        {...props}
+        value={formField.field.state.value ?? ''}
+        onInput={e => {
+          const value = (e.target as HTMLInputElement).value;
+          this.externalValue = value;
+          formField.setValue(value);
+        }}
+        onBlur={() => formField.handleBlur()}
+      ></input>
+    );
+  }}
+></ZFormField>
+```
+
+The callback receives the current `ControllerFormField` instance. It is a field-state lifecycle notification, not a DOM or VNode mounted hook, an asynchronous API-completion callback, or a general replacement for `nextTick`.
+
+Zova invokes it in two important situations:
+
+1. after the field controller has created its field binding and finished its initialization;
+2. after a schema-property change updates the field options and calls `resetField(this.name)`.
+
+The second timing is important: write the external value in the callback **after** the reset, because a write made before `resetField(...)` can be overwritten. If an external API later creates or refreshes the value, synchronize that API result explicitly as well; `onFieldStateReady` does not fetch, retry, or observe external resources for you.
+
+Use input handlers or `formField.setValue(...)` for ordinary value changes, `formField.handleBlur()` for blur state, and `onEffect` when the field needs a value-change effect. `onFieldStateReady` is a replay point for external state after field initialization or reset, not a per-value-change listener.
+
+For the source-level ordering and the relationship between field readiness and rendering, see [Zova Form Under the Hood](/frontend/zova-form-under-the-hood).
+
 ### `ZFormFieldBlank`
 
 Use `ZFormFieldBlank` when the row is **not** a real data field.
