@@ -130,7 +130,7 @@ export class ServiceSsrHandler extends BeanBase {
       const html = renderTemplate(ssrContext);
 
       // responseCache
-      if (ssrProfile === 'public') {
+      if (this.sys.env.META_MODE === 'production' && ssrProfile === 'public') {
         await this._renderPublicResponseCache(options, ssrProfileOptions);
       }
 
