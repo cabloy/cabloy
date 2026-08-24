@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.141
+
+### Features
+
+- Update framework functionality and SSR handling.
+
+### Improvements
+
+- Update framework performance documentation.
+- Refactor payment integration code by removing PayPal support.
+
 ## 5.1.140
 
 ### Improvements
