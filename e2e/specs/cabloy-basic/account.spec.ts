@@ -168,7 +168,6 @@ test(
     await page.getByPlaceholder('Your email address').fill('unknown-reset@example.test');
     const captcha = page.getByPlaceholder('Please input captcha');
     await expect(captcha).toHaveValue(/\S+/);
-    await captcha.fill(await captcha.inputValue());
     const requestResponse = waitForApiResponse(
       page,
       'POST',

@@ -61,6 +61,7 @@ export class ControllerFormField<TParentData extends {} = {}> extends BeanContro
         const options = this._getFormFieldOptions();
         this._formField.api.update(options as any);
         this.form.resetField(this.name);
+        this.$props.onFieldStateReady?.(this);
       },
     );
     // behaviors
@@ -80,6 +81,7 @@ export class ControllerFormField<TParentData extends {} = {}> extends BeanContro
         },
       );
     }
+    this.$props.onFieldStateReady?.(this);
   }
 
   public get form() {

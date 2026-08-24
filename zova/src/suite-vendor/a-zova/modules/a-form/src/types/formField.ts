@@ -29,7 +29,7 @@ export type HTMLInputElementType =
   | 'email';
 export const constFieldProps = '$$FieldProps';
 
-export interface IFormFieldScope<TParentData = {}> {
+export interface IFormFieldScope<TParentData extends {} = {}> {
   name: string;
   value: any;
   property?: SchemaObject;
@@ -51,7 +51,7 @@ export interface IFormFieldValidatorsOptionsBase {
 }
 
 export interface IFormFieldOptionsBase<
-  TParentData = {},
+  TParentData extends {} = {},
   TName extends DeepKeys<TParentData> = DeepKeys<TParentData>,
 > {
   name?: TName;
@@ -63,6 +63,7 @@ export interface IFormFieldOptionsBase<
   required?: boolean;
   disableNotifyChanged?: boolean;
   onEffect?: TypeFormFieldOnEffect;
+  onFieldStateReady?: (formField: ControllerFormField<TParentData>) => void;
   validators?: IFormFieldValidatorsOptionsBase;
   // onChange?: (e: Event) => void; // allow set to null, but not provide null type
   // onInput?: (e: Event) => void; // allow set to null, but not provide null type
@@ -77,12 +78,12 @@ export interface IFormFieldPresetOptions<
 }
 
 export interface IFormFieldComponentOptions<
-  TParentData = {},
+  TParentData extends {} = {},
 > extends IFormFieldOptions<TParentData> {
   options?: any;
 }
 
-export interface IFormFieldOptions<TParentData = {}>
+export interface IFormFieldOptions<TParentData extends {} = {}>
   extends
     IFormFieldSysOptionsBase<TParentData>,
     IFormFieldOptionsBase<TParentData>,
@@ -113,7 +114,7 @@ export interface IFormFieldRenderContextProps {
 //   onBlur?: (e: Event) => void;
 // }
 
-export interface IFormFieldRenderContextPropsBucket<TParentData = {}> extends Omit<
+export interface IFormFieldRenderContextPropsBucket<TParentData extends {} = {}> extends Omit<
   IFormFieldOptions<TParentData>,
   'render'
 > {
@@ -123,7 +124,7 @@ export interface IFormFieldRenderContextPropsBucket<TParentData = {}> extends Om
   needHandleBorder?: boolean;
 }
 
-export interface IFormFieldRenderContext<TParentData = {}> {
+export interface IFormFieldRenderContext<TParentData extends {} = {}> {
   propsBucket: IFormFieldRenderContextPropsBucket<TParentData>;
   props: IFormFieldRenderContextProps;
   celScope: IFormFieldScope<TParentData>;
