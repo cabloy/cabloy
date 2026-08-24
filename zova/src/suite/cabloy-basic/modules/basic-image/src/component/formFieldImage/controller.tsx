@@ -9,14 +9,7 @@ import { classes } from 'typestyle';
 import { BeanControllerBase, ClientOnly, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField } from 'zova-module-a-form';
-import {
-  buildImagePreviewTitle,
-  inferImageRelationName,
-  openImagePreviewDialog,
-  resolveImagePreviewUrl,
-} from 'zova-module-basic-image';
 
-import type { IImageTransformOptions } from '../../types/image.js';
 import type {
   IImageUploaderRenderState,
   IImageUploaderResult,
@@ -25,20 +18,21 @@ import type {
 import { ZImageUploader } from '../../.metadata/component/imageUploader.js';
 import 'vue-advanced-cropper/dist/style.css';
 
+import { IImageResizeOptions } from '../../lib/imageTransform.jsx';
+import {
+  buildImagePreviewTitle,
+  inferImageRelationName,
+  resolveImagePreviewUrl,
+} from '../../lib/preview.js';
+import { openImagePreviewDialog } from '../../lib/previewDialog.jsx';
+
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {
     'basic-image:formFieldImage'?: IResourceFormFieldImageOptions;
   }
 }
 
-export interface IResourceFormFieldImageResizeOptions {
-  width?: number;
-  height?: number;
-  fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad';
-  background?: string;
-  quality?: number;
-  format?: IImageTransformOptions['format'];
-}
+export interface IResourceFormFieldImageResizeOptions extends IImageResizeOptions {}
 
 export interface IResourceFormFieldImageOptions extends IResourceFormFieldOptionsBase {
   imageScene?: keyof IImageSceneRecord | string;
