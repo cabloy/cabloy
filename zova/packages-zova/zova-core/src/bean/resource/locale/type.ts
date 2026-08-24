@@ -1,4 +1,5 @@
 export const LocaleModuleNameSeparator = '::';
+export const LocalePattern = '[a-z]{2}(?:-[a-z]{2})?';
 
 export interface IModuleLocale {
   (...args: any[]): string;

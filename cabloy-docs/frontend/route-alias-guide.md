@@ -54,6 +54,26 @@ The distinction matters after an alias has a documented reason:
 
 Do not introduce a static route name solely to use `routes.name`: a static exception can use `routes.path` instead.
 
+## Locale-aware aliases
+
+For a public route whose URL includes an optional locale segment, use the shared `LocalePattern` exported by Zova instead of hard-coding one language or copying a regular expression:
+
+```typescript
+import { LocalePattern } from 'zova';
+
+config.routes = {
+  name: {
+    'commerce-catalog:product': {
+      alias: `/:locale(${LocalePattern})?/product/:id`,
+    },
+  },
+};
+```
+
+The current pattern accepts the common `xx` and `xx-yy` forms, such as `en-us`, `zh-cn`, and `fr-fr`. It defines the URL shape; it is not a whitelist of installed languages. The languages that the application actually offers still come from `config.locale.items` and the corresponding locale resources. When adding a language, update those locale registrations and resources, but do not duplicate the language in each route alias.
+
+When the route declares `meta.locale: true`, `$router.getAliasPath(..., { params: { locale: true } })` uses the current locale and omits the configured default locale from an optional locale segment. Thus, with `en-us` as the default, the same alias can produce `/product/42` for `en-us` and `/zh-cn/product/42` for `zh-cn`.
+
 ## Generate a configured alias path
 
 When application code needs a user-facing URL for a named route, use the canonical route name with `$router.getAliasPath(...)`:
