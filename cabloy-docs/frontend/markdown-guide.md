@@ -90,11 +90,11 @@ The exact persistence and DTO design belongs to the business module. Markdown do
 
 `ZFormFieldMarkdown` is a Zova component with the normal Controller/Render/Style split.
 
-| Zova role  | Responsibility in this component                                                            |
-| ---------- | ------------------------------------------------------------------------------------------- |
-| Controller | Owns the TipTap `Editor`, Markdown `value`, `readonly` state, form callbacks, and lifecycle |
-| Render     | Composes the standard `ZFormField`, field shell, `ClientOnly`, and `EditorContent`          |
-| Style      | Creates the shared rich-text CSS class used by the editor and HTML display component        |
+| Zova role  | Responsibility in this component                                                                                    |
+| ---------- | ------------------------------------------------------------------------------------------------------------------- |
+| Controller | Owns the TipTap `Editor`, Markdown `value`, `readonly` state, toolbar commands/state, form callbacks, and lifecycle |
+| Render     | Composes the standard `ZFormField`, field shell, client-only toolbar, and `EditorContent`                           |
+| Style      | Creates the shared rich-text CSS class used by the editor and HTML display component                                |
 
 This is a Markdown editor integrated with `ZFormField`; it is not a generic HTML editor API.
 
@@ -118,6 +118,23 @@ editable: !this.readonly,
 ```
 
 The editor DOM receives the current component style class and a minimum-height/padding class. The outer field shell uses Cabloy Basic's DaisyUI-oriented classes and adds an error border when the host form field is invalid.
+
+### Toolbar
+
+When the field is editable, the same `ClientOnly` boundary renders a toolbar above the editor. It provides controls for:
+
+- undo and redo;
+- paragraph and heading levels 1–6;
+- bold, italic, strike-through, inline code, and highlight;
+- bullet, ordered, and task lists;
+- blockquotes, code blocks, and horizontal rules;
+- inserting a table through an 8 × 8 floating size picker. Moving over a cell previews the rectangle from the top-left cell to that cell (for example, 2 × 3); clicking inserts that many rows and columns. Inserted tables retain a header row.
+
+The toolbar uses native buttons and a labelled block-style select, preserves the current editor selection while buttons are clicked, exposes active and unavailable states accessibly, and runs commands on the existing TipTap editor. The table picker also supports keyboard navigation, Enter/Space to insert, and Escape to cancel. Those commands still serialize through `getMarkdown()`; they do not introduce an HTML value path. In readonly mode, TipTap remains visible but the toolbar and picker are omitted.
+
+When the selection is inside an editable table, a separate contextual toolbar appears above that table. It adds and deletes rows or columns around the current cell, and can delete the table. The menu shares the same `ClientOnly`, selection-preservation, accessibility, readonly, and Markdown-serialization guarantees as the persistent toolbar. Column resizing remains out of scope.
+
+The toolbars intentionally do not include image upload, image import, link insertion, a color picker, or a configurable plugin registry. Those workflows need separate URL, upload, authorization, and persistence contracts.
 
 ### Editor-to-form flow
 
@@ -148,8 +165,8 @@ When the component is disposed, the controller calls `editor.destroy()` so TipTa
 TipTap's `EditorContent` is browser-dependent. The editor is therefore inside Zova's `ClientOnly` component:
 
 - SSR renders a minimum-height placeholder;
-- the browser creates the editor after mounting;
-- the editor should not be described as an SSR-rendered interactive control.
+- the browser creates the toolbar and editor after mounting;
+- the editor and toolbar should not be described as SSR-rendered interactive controls.
 
 The read-only HTML display path is different: it does not need TipTap or `ClientOnly` because it receives already-generated HTML.
 
@@ -239,8 +256,8 @@ The exact HTML output is governed by the backend renderer and sanitizer. Do not 
 4. **Expecting task checkboxes to be interactive**
    - The backend transforms rendered task inputs into disabled checkboxes for display.
 
-5. **Expecting a toolbar or upload workflow from this module**
-   - The module supplies an editor surface, not a toolbar specification, image upload service, remote image importer, or configurable plugin registry.
+5. **Expecting image upload or link workflows from the toolbar**
+   - The toolbars cover the documented local formatting and table-structure commands only. They do not supply image upload, remote image import, link insertion, a color picker, or a configurable plugin registry.
 
 6. **Treating browser validation or presentation CSS as security**
    - The backend renderer/sanitizer is the relevant content boundary. External image availability, privacy, CSP, and application authorization remain separate concerns.
@@ -252,10 +269,11 @@ Before integrating Markdown into a Zova feature, verify:
 1. The editable field is a string containing Markdown.
 2. The field metadata uses `basic-markdown:formFieldMarkdown`.
 3. The form value is updated through the editor's Markdown API, not HTML.
-4. Blur and readonly behavior still pass through the standard `ZFormField` contract.
-5. The interactive editor is inside the expected `ClientOnly` boundary.
-6. Public display uses `ZMarkdownHtml` only with server-derived sanitized HTML.
-7. Public DTOs do not expose editable Markdown unless that is intentional.
-8. The backend write path regenerates the HTML projection for every create, update, import, or backfill path that can change Markdown.
+4. Blur and readonly behavior still pass through the standard `ZFormField` contract, and readonly mode omits toolbar controls.
+5. Toolbar commands keep the value in Markdown through the editor API rather than creating an HTML submission path.
+6. The interactive toolbar and editor are inside the expected `ClientOnly` boundary.
+7. Public display uses `ZMarkdownHtml` only with server-derived sanitized HTML.
+8. Public DTOs do not expose editable Markdown unless that is intentional.
+9. The backend write path regenerates the HTML projection for every create, update, import, or backfill path that can change Markdown.
 
 For the backend API and security details, continue with [Backend Markdown Guide](/backend/markdown-guide).
