@@ -205,6 +205,14 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
           { active: state.code, disabled: !state.canCode },
         )}
         {this._toolbarButton(
+          ':editor:insert-link-outline',
+          this.scope.locale.Link(),
+          () => {
+            void this.editLink();
+          },
+          { active: state.link, disabled: !state.canLink },
+        )}
+        {this._toolbarButton(
           ':editor:bookmark',
           this.scope.locale.Highlight(),
           () => this.toggleHighlight(),

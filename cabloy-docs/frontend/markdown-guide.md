@@ -128,13 +128,14 @@ When the field is editable, the same `ClientOnly` boundary renders a toolbar abo
 - bold, italic, strike-through, inline code, and highlight;
 - bullet, ordered, and task lists;
 - blockquotes, code blocks, and horizontal rules;
+- applying, updating, and removing links on the current text selection through a URL prompt;
 - inserting a table through an 8 × 8 floating size picker. Moving over a cell previews the rectangle from the top-left cell to that cell (for example, 2 × 3); clicking inserts that many rows and columns. Inserted tables retain a header row.
 
-The toolbar uses native buttons and a labelled block-style select, preserves the current editor selection while buttons are clicked, exposes active and unavailable states accessibly, and runs commands on the existing TipTap editor. The table picker also supports keyboard navigation, Enter/Space to insert, and Escape to cancel. Those commands still serialize through `getMarkdown()`; they do not introduce an HTML value path. In readonly mode, TipTap remains visible but the toolbar and picker are omitted.
+The toolbar uses native buttons and a labelled block-style select, preserves the current editor selection while buttons are clicked, exposes active and unavailable states accessibly, and runs commands on the existing TipTap editor. To add a link, select text and enter a URL; when the cursor is in an existing link, the same action edits its URL. Submitting an empty URL removes an existing link, while cancelling leaves the document unchanged. TipTap validates the URL before applying it, but backend Markdown rendering and sanitization remain the authoritative display security boundary. The table picker also supports keyboard navigation, Enter/Space to insert, and Escape to cancel. Those commands still serialize through `getMarkdown()`; they do not introduce an HTML value path. In readonly mode, TipTap remains visible but the toolbar and picker are omitted.
 
 When the selection is inside an editable table, a separate contextual toolbar appears above that table. It adds and deletes rows or columns around the current cell, and can delete the table. The menu shares the same `ClientOnly`, selection-preservation, accessibility, readonly, and Markdown-serialization guarantees as the persistent toolbar. Column resizing remains out of scope.
 
-The toolbars intentionally do not include image upload, image import, link insertion, a color picker, or a configurable plugin registry. Those workflows need separate URL, upload, authorization, and persistence contracts.
+The toolbars intentionally do not include image upload, image import, a color picker, or a configurable plugin registry. Image workflows still need separate upload, authorization, and persistence contracts; link editing uses the existing Markdown link and backend sanitization contracts.
 
 ### Editor-to-form flow
 
@@ -256,8 +257,8 @@ The exact HTML output is governed by the backend renderer and sanitizer. Do not 
 4. **Expecting task checkboxes to be interactive**
    - The backend transforms rendered task inputs into disabled checkboxes for display.
 
-5. **Expecting image upload or link workflows from the toolbar**
-   - The toolbars cover the documented local formatting and table-structure commands only. They do not supply image upload, remote image import, link insertion, a color picker, or a configurable plugin registry.
+5. **Expecting image upload or unrelated plugin workflows from the toolbar**
+   - The toolbar supports Markdown link editing through a URL prompt, but it does not supply image upload, remote image import, a color picker, or a configurable plugin registry.
 
 6. **Treating browser validation or presentation CSS as security**
    - The backend renderer/sanitizer is the relevant content boundary. External image availability, privacy, CSP, and application authorization remain separate concerns.

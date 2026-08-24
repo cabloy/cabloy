@@ -2005,6 +2005,135 @@ const product = '${suffix}';
 );
 
 test(
+  'ATP-SPC-02: Product Content link toolbar edits Markdown',
+  { tag: ['@admin', '@flow', '@product'] },
+  async ({ browser }, testInfo) => {
+    test.setTimeout(180_000);
+    const suffix = `${testInfo.workerIndex}-${testInfo.parallelIndex ?? testInfo.retry}-${Date.now()}`;
+    const categoryName = `E2E Product Link Category ${suffix}`;
+    const productTitle = `E2E Product Link ${suffix}`;
+    const markdown = `# Product content ${suffix}\n\nA product description.`;
+    const adminContext = await browser.newContext();
+    const adminPage = await adminContext.newPage();
+    const adminPageErrors = collectPageErrors(adminPage);
+    const adminConsoleErrors = collectConsoleErrors(adminPage);
+    const productListPath = '/commerce-admin/rest/resource/commerce-catalog%3Aproduct';
+    const categoryActionPath = '/api/commerce/catalog/category';
+    const productActionPath = '/api/commerce/catalog/product';
+    let categoryId: number | string | undefined;
+    let productId: number | string | undefined;
+    let headers: { Authorization: string } | undefined;
+    try {
+      await adminPage.setViewportSize({ width: 1440, height: 900 });
+      await login(adminPage, '/commerce-admin/', 'admin', '123456', 'commerceAdmin');
+      const accessToken = (await adminContext.cookies()).find(
+        cookie => cookie.name === 'token',
+      )?.value;
+      expect(accessToken).toBeTruthy();
+      headers = { Authorization: `Bearer ${accessToken}` };
+
+      const categoryResponse = await adminPage.request.post(categoryActionPath, {
+        data: { name: categoryName, published: false },
+        headers,
+      });
+      expect(categoryResponse.ok()).toBeTruthy();
+      categoryId = (await categoryResponse.json()).data;
+      expectTableIdentity(categoryId);
+
+      const productResponse = await adminPage.request.post(productActionPath, {
+        data: {
+          categoryId,
+          title: productTitle,
+          published: false,
+          productContentForm: { descriptionMarkdown: markdown },
+        },
+        headers,
+      });
+      expect(productResponse.ok()).toBeTruthy();
+      productId = (await productResponse.json()).data;
+      expectTableIdentity(productId);
+
+      await adminPage.goto(`${productListPath}/${productId}/edit`, { waitUntil: 'load' });
+      await expect(adminPage.locator('html')).toHaveAttribute(
+        'data-zova-hydrated',
+        'commerceAdmin',
+      );
+      const editor = adminPage.locator('[contenteditable="true"]');
+      await expect(editor).toBeVisible();
+      const toolbar = adminPage.getByRole('toolbar', { name: 'Markdown toolbar' });
+      await expect(toolbar).toBeVisible();
+      const linkButton = toolbar.getByRole('button', { name: 'Link' });
+      await expect(linkButton).toHaveAttribute('type', 'button');
+      await expect(linkButton).toBeDisabled();
+
+      await editor.locator('h1').selectText();
+      await expect(linkButton).toBeEnabled();
+      await linkButton.click();
+      const linkPrompt = adminPage.locator('.fixed.inset-0.z-50');
+      await expect(linkPrompt).toBeVisible();
+      const linkInput = linkPrompt.locator('input[type="text"]');
+      await linkInput.fill('https://example.com/docs');
+      await linkInput.press('Enter');
+      await expect(editor.locator('h1 a[href="https://example.com/docs"]')).toHaveText(
+        `Product content ${suffix}`,
+      );
+      await expect(linkButton).toHaveAttribute('aria-pressed', 'true');
+      await editor.press('ArrowLeft');
+      await expect(linkButton).toHaveAttribute('aria-pressed', 'true');
+
+      await linkButton.click();
+      await expect(linkPrompt).toBeVisible();
+      await expect(linkInput).toHaveValue('https://example.com/docs');
+      await linkInput.fill('https://example.com/updated');
+      await linkPrompt.getByRole('button', { name: 'OK' }).click();
+      await expect(editor.locator('h1 a[href="https://example.com/updated"]')).toHaveText(
+        `Product content ${suffix}`,
+      );
+
+      await linkButton.click();
+      await expect(linkPrompt).toBeVisible();
+      await linkPrompt.getByRole('button', { name: 'Cancel' }).click();
+      await expect(editor.locator('h1 a[href="https://example.com/updated"]')).toHaveText(
+        `Product content ${suffix}`,
+      );
+
+      await editor.locator('h1').selectText();
+      await expect(linkButton).toHaveAttribute('aria-pressed', 'true');
+      await linkButton.click();
+      await expect(linkPrompt).toBeVisible();
+      await linkInput.fill('');
+      await linkInput.press('Enter');
+      await expect(editor.locator('h1 a')).toHaveCount(0);
+      await adminPage.getByRole('button', { name: 'Submit', exact: true }).click();
+      const productResponseAfterLinkRemoval = await adminPage.request.get(
+        `${productActionPath}/${productId}`,
+        { headers },
+      );
+      expect(productResponseAfterLinkRemoval.ok()).toBeTruthy();
+      expect(
+        (await productResponseAfterLinkRemoval.json()).productContentForm.descriptionMarkdown,
+      ).not.toContain('https://example.com/updated');
+      expect(adminPageErrors).toEqual([]);
+      expect(adminConsoleErrors).toEqual([]);
+    } finally {
+      if (productId && headers) {
+        const response = await adminPage.request.delete(`${productActionPath}/${productId}`, {
+          headers,
+        });
+        expect(response.ok()).toBeTruthy();
+      }
+      if (categoryId && headers) {
+        const response = await adminPage.request.delete(`${categoryActionPath}/${categoryId}`, {
+          headers,
+        });
+        expect(response.ok()).toBeTruthy();
+      }
+      await adminContext.close().catch(() => {});
+    }
+  },
+);
+
+test(
   'ATP-SPC-02: SKU renders semantic Admin currency and lifecycle controls',
   { tag: ['@admin', '@flow', '@sku'] },
   async ({ browser }, testInfo) => {

@@ -15,6 +15,8 @@ export default {
   InlineCode: 'Inline code',
   InsertTable: 'Insert table',
   Italic: 'Italic',
+  Link: 'Link',
+  LinkUrl: 'Link URL',
   MarkdownToolbar: 'Markdown toolbar',
   OrderedList: 'Ordered list',
   Paragraph: 'Paragraph',

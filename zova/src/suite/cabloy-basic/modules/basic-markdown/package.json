@@ -57,5 +57,10 @@
       "exports.\\..import"
     ]
   },
-  "title": "basic-markdown"
+  "title": "basic-markdown",
+  "zovaModule": {
+    "dependencies": {
+      "basic-app": "5.0.0"
+    }
+  }
 }

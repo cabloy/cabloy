@@ -15,6 +15,8 @@ export default {
   InlineCode: '行内代码',
   InsertTable: '插入表格',
   Italic: '斜体',
+  Link: '链接',
+  LinkUrl: '链接地址',
   MarkdownToolbar: 'Markdown 工具栏',
   OrderedList: '有序列表',
   Paragraph: '段落',

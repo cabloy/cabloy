@@ -42,6 +42,7 @@ interface IMarkdownToolbarState {
   taskList: boolean;
   blockquote: boolean;
   codeBlock: boolean;
+  link: boolean;
   headingLevel: IMarkdownHeadingLevel | undefined;
   canUndo: boolean;
   canRedo: boolean;
@@ -55,6 +56,7 @@ interface IMarkdownToolbarState {
   canTaskList: boolean;
   canBlockquote: boolean;
   canCodeBlock: boolean;
+  canLink: boolean;
   canHorizontalRule: boolean;
   canTable: boolean;
   canAddTableRowBefore: boolean;
@@ -114,6 +116,7 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
       taskList: false,
       blockquote: false,
       codeBlock: false,
+      link: false,
       headingLevel: undefined,
       canUndo: false,
       canRedo: false,
@@ -127,6 +130,7 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
       canTaskList: false,
       canBlockquote: false,
       canCodeBlock: false,
+      canLink: false,
       canHorizontalRule: false,
       canTable: false,
       canAddTableRowBefore: false,
@@ -160,6 +164,7 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
       taskList: editor.isActive('taskList'),
       blockquote: editor.isActive('blockquote'),
       codeBlock: editor.isActive('codeBlock'),
+      link: editor.isActive('link'),
       headingLevel:
         heading === 1 ||
         heading === 2 ||
@@ -181,6 +186,9 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
       canTaskList: can.toggleTaskList(),
       canBlockquote: can.toggleBlockquote(),
       canCodeBlock: can.toggleCodeBlock(),
+      canLink:
+        editor.isActive('link') ||
+        (!editor.state.selection.empty && can.setLink({ href: 'https://example.com' })),
       canHorizontalRule: can.setHorizontalRule(),
       canTable: can.insertTable({ rows: 3, cols: 3, withHeaderRow: true }),
       canAddTableRowBefore: tableActive ? can.addRowBefore() : false,
@@ -413,6 +421,40 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
 
   public toggleCode() {
     this._runCommand(editor => editor.chain().focus().toggleCode().run());
+  }
+
+  public async editLink() {
+    const editor = this.editor;
+    if (this.readonly || !editor) return;
+    const selection = editor.state.selection;
+    const linkActive = editor.isActive('link');
+    const canEditLink = linkActive
+      ? editor.can().unsetLink()
+      : !selection.empty && editor.can().setLink({ href: 'https://example.com' });
+    if (!canEditLink) return;
+
+    const href = editor.getAttributes('link').href ?? '';
+    const result = await this.$appModal.prompt({
+      icon: ':editor:insert-link-outline',
+      title: this.scope.locale.Link(),
+      text: this.scope.locale.LinkUrl(),
+      defaultValue: href,
+    });
+    if (this.readonly || this.editor !== editor || result === undefined) return;
+
+    const value = result.trim();
+    const chain = editor.chain().focus().setTextSelection({
+      from: selection.from,
+      to: selection.to,
+    });
+    if (linkActive) {
+      chain.extendMarkRange('link');
+    }
+    if (!value) {
+      if (linkActive) chain.unsetLink().run();
+      return;
+    }
+    chain.setLink({ href: value }).run();
   }
 
   public toggleHighlight() {
