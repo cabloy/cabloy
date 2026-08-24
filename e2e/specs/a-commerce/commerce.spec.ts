@@ -216,7 +216,7 @@ test(
   async ({ page, request }) => {
     const response = await request.get('/commerce');
     expect(response.ok()).toBeTruthy();
-    expect(response.headers()['cache-control']).toBe('public, max-age=600');
+    expect(response.headers()['cache-control']).toBe('no-cache, no-store, must-revalidate');
     const html = await response.text();
     const normalizedHtml = html.toLowerCase();
     expect(normalizedHtml).not.toContain('data-zova-hydrated');
@@ -366,7 +366,7 @@ test(
 );
 
 test(
-  'Commerce public SSR: theme cookie does not change cacheable HTML',
+  'Commerce public SSR: theme cookie does not change SSR HTML',
   { tag: ['@web', '@ssr', '@theme'] },
   async ({ request }) => {
     const responses = await Promise.all([
@@ -378,7 +378,7 @@ test(
     for (const [index, response] of responses.entries()) {
       expect(response.status(), `public response ${index}`).toBe(200);
       expect(response.headers()['cache-control'], `public response ${index}`).toBe(
-        'public, max-age=600',
+        'no-cache, no-store, must-revalidate',
       );
       expect(html[index].toLowerCase()).not.toContain('data-zova-hydrated');
       expect(html[index]).toContain('data-ssr-theme-dark-false="light"');

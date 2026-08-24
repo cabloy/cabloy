@@ -115,7 +115,7 @@ test(
   async ({ page, request }) => {
     const response = await request.get('/');
     expect(response.ok()).toBeTruthy();
-    expect(response.headers()['cache-control']).toBe('public, max-age=600');
+    expect(response.headers()['cache-control']).toBe('no-cache, no-store, must-revalidate');
     const html = await response.text();
     expect(html.toLowerCase()).not.toContain('data-zova-hydrated');
     expect(html).not.toContain('ssr-body-ready-observer');
@@ -123,7 +123,9 @@ test(
 
     const routeOverrideResponse = await request.get('/demo/basic/routeQueryB');
     expect(routeOverrideResponse.ok()).toBeTruthy();
-    expect(routeOverrideResponse.headers()['cache-control']).toBe('public, max-age=300');
+    expect(routeOverrideResponse.headers()['cache-control']).toBe(
+      'no-cache, no-store, must-revalidate',
+    );
 
     const unlocalizedResponse = await request.get('/demo/basic/state');
     expect(unlocalizedResponse.ok()).toBeTruthy();
@@ -145,7 +147,7 @@ test(
 );
 
 test(
-  'ATP-BASIC-SSR-03: concurrent public routes retain their own cache policy',
+  'ATP-BASIC-SSR-03: concurrent public routes are non-cacheable in development',
   { tag: ['@web', '@smoke'] },
   async ({ request }) => {
     const responses = await Promise.all(
@@ -159,11 +161,7 @@ test(
     for (const [index, response] of responses.entries()) {
       expect(response.ok(), `response ${index}`).toBeTruthy();
       expect(response.headers()['cache-control'], `response ${index}`).toBe(
-        index % 3 === 0
-          ? 'public, max-age=600'
-          : index % 3 === 1
-            ? 'public, max-age=300'
-            : 'no-cache, no-store, must-revalidate',
+        'no-cache, no-store, must-revalidate',
       );
     }
   },
