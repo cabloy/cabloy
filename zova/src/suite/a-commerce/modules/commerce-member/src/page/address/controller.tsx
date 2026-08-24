@@ -1,8 +1,11 @@
+import type { SchemaObject } from 'openapi3-ts/oas31';
 import type { TableIdentity } from 'table-identity';
+import type { TypeFormOnSubmitData } from 'zova-module-a-form';
 
 import { z } from 'zod';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
+import { ZForm } from 'zova-module-a-form';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPage } from 'zova-module-home-base';
 
@@ -37,9 +40,27 @@ export class ControllerPageAddress extends BeanControllerPageBase {
 
   editingId?: TableIdentity;
   draft: AddressDraft = emptyDraft();
+  schemaAddress?: SchemaObject;
+
+  get apiSchemasAddressCreate() {
+    return this.scope.apiSchema.commerceMemberAddress.createMine();
+  }
+
+  get apiSchemasAddressUpdate() {
+    return this.scope.apiSchema.commerceMemberAddress.updateMine();
+  }
 
   protected async __init__() {
-    await $QueryEnsureLoaded(() => this.queryAddresses);
+    await Promise.all([
+      $QueryEnsureLoaded(() => this.queryAddresses),
+      $QueryEnsureLoaded(() => this.apiSchemasAddressCreate.sdk),
+      $QueryEnsureLoaded(() => this.apiSchemasAddressUpdate.sdk),
+    ]);
+    this.schemaAddress = this.$computed(() => {
+      return this.editingId === undefined
+        ? this.apiSchemasAddressCreate.requestBody
+        : this.apiSchemasAddressUpdate.requestBody;
+    });
   }
 
   get queryAddresses() {
@@ -65,13 +86,13 @@ export class ControllerPageAddress extends BeanControllerPageBase {
     this.draft = emptyDraft();
   }
 
-  async submit() {
+  async submit(data: TypeFormOnSubmitData<AddressDraft>) {
     if (this.editingId === undefined) {
-      await this.$$modelAddressMine.createMine().mutateAsync(this.draft);
+      await this.$$modelAddressMine.createMine().mutateAsync(data.value);
     } else {
       await this.$$modelAddressMine.updateMine().mutateAsync({
         id: this.editingId,
-        body: this.draft,
+        body: data.value,
       });
     }
     this.resetDraft();
@@ -124,68 +145,48 @@ export class ControllerPageAddress extends BeanControllerPageBase {
                 </article>
               ))}
             </div>
-            <form
-              class="card bg-base-100 border border-base-300 shadow-sm"
-              onSubmit={event => event.preventDefault()}
-            >
+            <div class="card bg-base-100 border border-base-300 shadow-sm">
               <div class="card-body gap-3">
-                <h2 class="card-title">
-                  {this.editingId === undefined
-                    ? this.scope.locale.AddAddress()
-                    : this.scope.locale.EditAddress()}
-                </h2>
-                <input
-                  class="input input-bordered"
-                  placeholder={this.scope.locale.RecipientName()}
-                  v-model={this.draft.recipientName}
-                />
-                <input
-                  class="input input-bordered"
-                  placeholder={this.scope.locale.Phone()}
-                  v-model={this.draft.phone}
-                />
-                <input
-                  class="input input-bordered"
-                  placeholder={this.scope.locale.CountryCode()}
-                  v-model={this.draft.countryCode}
-                />
-                <input
-                  class="input input-bordered"
-                  placeholder={this.scope.locale.Region()}
-                  v-model={this.draft.region}
-                />
-                <input
-                  class="input input-bordered"
-                  placeholder={this.scope.locale.City()}
-                  v-model={this.draft.city}
-                />
-                <input
-                  class="input input-bordered"
-                  placeholder={this.scope.locale.PostalCode()}
-                  v-model={this.draft.postalCode}
-                />
-                <input
-                  class="input input-bordered"
-                  placeholder={this.scope.locale.AddressLine1()}
-                  v-model={this.draft.addressLine1}
-                />
-                <input
-                  class="input input-bordered"
-                  placeholder={this.scope.locale.AddressLine2()}
-                  v-model={this.draft.addressLine2}
-                />
-                <div class="flex gap-2">
-                  <button class="btn btn-primary" type="submit" onClick={() => this.submit()}>
-                    {this.scope.locale.SaveAddress()}
-                  </button>
-                  {this.editingId !== undefined && (
-                    <button class="btn btn-outline" type="button" onClick={() => this.resetDraft()}>
-                      {this.scope.locale.CancelAddressEdit()}
-                    </button>
+                <ZForm
+                  data={this.draft}
+                  schema={this.schemaAddress}
+                  onSubmitData={data => this.submit(data)}
+                  onShowError={async ({ error }) => {
+                    await this.$performCommand('basic-commands:alert', {
+                      type: 'error',
+                      text: error.message,
+                    });
+                  }}
+                  slotHeader={() => (
+                    <h2 class="card-title">
+                      {this.editingId === undefined
+                        ? this.scope.locale.AddAddress()
+                        : this.scope.locale.EditAddress()}
+                    </h2>
                   )}
-                </div>
+                  slotFooter={$$form => (
+                    <div class="flex gap-2">
+                      <button
+                        class="btn btn-primary"
+                        disabled={$$form.formState.isSubmitting}
+                        type="submit"
+                      >
+                        {this.scope.locale.SaveAddress()}
+                      </button>
+                      {this.editingId !== undefined && (
+                        <button
+                          class="btn btn-outline"
+                          type="button"
+                          onClick={() => this.resetDraft()}
+                        >
+                          {this.scope.locale.CancelAddressEdit()}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                ></ZForm>
               </div>
-            </form>
+            </div>
           </div>
           {query?.error && (
             <div role="alert" class="alert alert-error mt-6">

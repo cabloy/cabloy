@@ -60,7 +60,7 @@ export class ControllerPageCart extends BeanControllerPageBase {
               {items.length > 0 && (
                 <>
                   <RouterLink class="btn btn-primary btn-sm" to={this._getCheckoutPagePath()}>
-                    Checkout
+                    {this.scope.locale.Checkout()}
                   </RouterLink>
                   <button class="btn btn-outline btn-sm" onClick={() => this.clear()}>
                     {this.scope.locale.ClearCart()}

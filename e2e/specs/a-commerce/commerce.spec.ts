@@ -153,15 +153,19 @@ function createAddressFixture(testInfo: TestInfo): IAddressFixture {
   };
 }
 
+function getAddressTextbox(page: Page, name: string): Locator {
+  return page.getByRole('group', { name, exact: true }).getByRole('textbox');
+}
+
 async function fillAddressForm(page: Page, fixture: IAddressFixture) {
-  await page.getByPlaceholder('Recipient name').fill(fixture.recipientName);
-  await page.getByPlaceholder('Phone').fill(fixture.phone);
-  await page.getByPlaceholder('Country code').fill(fixture.countryCode);
-  await page.getByPlaceholder('Region').fill(fixture.region);
-  await page.getByPlaceholder('City').fill(fixture.city);
-  await page.getByPlaceholder('Postal code').fill(fixture.postalCode);
-  await page.getByPlaceholder('Address line 1').fill(fixture.addressLine1);
-  await page.getByPlaceholder('Address line 2').fill(fixture.addressLine2);
+  await getAddressTextbox(page, 'Recipient Name *').fill(fixture.recipientName);
+  await getAddressTextbox(page, 'Phone *').fill(fixture.phone);
+  await getAddressTextbox(page, 'Country Code *').fill(fixture.countryCode);
+  await getAddressTextbox(page, 'Region *').fill(fixture.region);
+  await getAddressTextbox(page, 'City *').fill(fixture.city);
+  await getAddressTextbox(page, 'Postal Code *').fill(fixture.postalCode);
+  await getAddressTextbox(page, 'Address Line 1 *').fill(fixture.addressLine1);
+  await getAddressTextbox(page, 'Address Line 2').fill(fixture.addressLine2);
 }
 
 async function createAddressThroughCustomerPage(
@@ -593,8 +597,9 @@ test(
         .filter({ has: page.getByRole('heading', { name: fixture.recipientName }) });
       await card.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(page.getByRole('heading', { name: 'Add address' })).toHaveCount(0);
-      await expect(page.getByPlaceholder('City')).toHaveValue(fixture.city);
-      await page.getByPlaceholder('City').fill(fixture.updatedCity);
+      const cityTextbox = getAddressTextbox(page, 'City *');
+      await expect(cityTextbox).toHaveValue(fixture.city);
+      await cityTextbox.fill(fixture.updatedCity);
 
       const updateResponse = waitForAddressResponse(page, 'PATCH', /\/updateMine\/[^/]+$/);
       const mineResponse = waitForAddressMine(page);

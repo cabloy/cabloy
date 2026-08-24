@@ -4,6 +4,7 @@ export default {
   CartEmpty: 'Your cart is empty.',
   Quantity: 'Quantity',
   ClearCart: 'Clear cart',
+  Checkout: 'Checkout',
   RemoveCartItem: 'Remove',
   Confirm: 'Confirm',
   ShipOrder: 'Ship order',

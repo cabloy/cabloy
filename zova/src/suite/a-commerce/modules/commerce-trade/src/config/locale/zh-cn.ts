@@ -4,6 +4,7 @@ export default {
   CartEmpty: '购物车为空。',
   Quantity: '数量',
   ClearCart: '清空购物车',
+  Checkout: '结算',
   RemoveCartItem: '移除',
   Confirm: '确认',
   ShipOrder: '发货',
