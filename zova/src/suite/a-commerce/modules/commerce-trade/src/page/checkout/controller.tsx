@@ -84,10 +84,10 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
     return (
       <ZPage>
         <section class="mx-auto max-w-3xl p-6">
-          <h1 class="text-3xl font-semibold">Checkout</h1>
+          <h1 class="text-3xl font-semibold">{this.scope.locale.Checkout()}</h1>
           <div class="mt-6 space-y-6">
             <fieldset class="space-y-2">
-              <legend class="font-semibold">Delivery address</legend>
+              <legend class="font-semibold">{this.scope.locale.DeliveryAddress()}</legend>
               {addresses.map(address => (
                 <label class="flex cursor-pointer gap-3 rounded border border-base-300 p-3">
                   <input
@@ -102,11 +102,11 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
                 </label>
               ))}
               {addresses.length === 0 && (
-                <p class="text-base-content/70">Add an address before checking out.</p>
+                <p class="text-base-content/70">{this.scope.locale.AddAddressBeforeCheckout()}</p>
               )}
             </fieldset>
             <fieldset class="space-y-2">
-              <legend class="font-semibold">Payment method</legend>
+              <legend class="font-semibold">{this.scope.locale.PaymentMethod()}</legend>
               {paymentMethods?.items.map(method => (
                 <label class="flex cursor-pointer gap-3 rounded border border-base-300 p-3">
                   <input
@@ -120,10 +120,10 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
               ))}
             </fieldset>
             <fieldset class="space-y-2">
-              <legend class="font-semibold">Coupon</legend>
+              <legend class="font-semibold">{this.scope.locale.Coupon()}</legend>
               <label class="flex cursor-pointer gap-3 rounded border border-base-300 p-3">
                 <input type="radio" name="coupon" value="" v-model={this.couponGrantId} />
-                <span>No coupon</span>
+                <span>{this.scope.locale.NoCoupon()}</span>
               </label>
               {coupons.map(coupon => (
                 <label class="flex cursor-pointer gap-3 rounded border border-base-300 p-3">
@@ -144,7 +144,7 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
               disabled={!this.addressId || !this.providerCandidateKey || this.submitting}
               onClick={() => this.checkout()}
             >
-              Create order
+              {this.scope.locale.CreateOrder()}
             </button>
           </div>
         </section>

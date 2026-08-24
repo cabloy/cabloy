@@ -165,7 +165,7 @@ export class ControllerPagePayment extends BeanControllerPageBase {
         } catch (error) {
           if (isNotFoundError(error)) {
             this.paymentSessionUnavailable = true;
-            this.message = 'Payment session is unavailable. You can open your order.';
+            this.message = this.scope.locale.PaymentSessionUnavailable();
             return;
           }
           throw error;
@@ -218,16 +218,16 @@ export class ControllerPagePayment extends BeanControllerPageBase {
   private _pendingMessage() {
     if (this.pendingSessionState === 'requires_action') {
       return this.$query.providerResult === 'cancel'
-        ? 'You returned from PayPal without completing payment. The order is still awaiting payment.'
-        : 'Payment still needs your approval.';
+        ? this.scope.locale.PaymentCancelledByProvider()
+        : this.scope.locale.PaymentApprovalRequired();
     }
     if (this.pendingSessionState === 'processing') {
-      return 'Your payment is still being processed. We will continue to verify it with the provider.';
+      return this.scope.locale.PaymentProcessing();
     }
     if (['succeeded', 'failed', 'cancelled', 'expired'].includes(this.pendingSessionState ?? '')) {
-      return 'Payment outcome is verified. Commerce is still updating the order.';
+      return this.scope.locale.PaymentOutcomeVerified();
     }
-    return 'Payment confirmation is still pending. We will continue to verify it with the provider.';
+    return this.scope.locale.PaymentConfirmationPending();
   }
 
   protected render() {
@@ -250,25 +250,23 @@ export class ControllerPagePayment extends BeanControllerPageBase {
     return (
       <ZPage>
         <section class="mx-auto max-w-xl p-6">
-          <h1 class="text-3xl font-semibold">Payment</h1>
-          <p class="mt-3 text-base-content/70">
-            Payment status is verified before Commerce updates the order.
-          </p>
+          <h1 class="text-3xl font-semibold">{this.scope.locale.Payment()}</h1>
+          <p class="mt-3 text-base-content/70">{this.scope.locale.PaymentStatusVerification()}</p>
           {isCreated && (
             <button
               class="btn btn-primary mt-6"
               disabled={this.submitting}
               onClick={() => this.start()}
             >
-              Start payment
+              {this.scope.locale.StartPayment()}
             </button>
           )}
           {(isStarting || this.paymentSessionUnavailable) && (
             <section class="mt-6 rounded border border-base-300 p-4" aria-live="polite">
               <p class="text-base-content/70">
                 {this.paymentSessionUnavailable
-                  ? 'Payment session is unavailable. You can open your order.'
-                  : 'Payment preparation is being verified safely in the background.'}
+                  ? this.scope.locale.PaymentSessionUnavailable()
+                  : this.scope.locale.PaymentPreparationVerification()}
               </p>
               <div class="mt-3 flex flex-wrap gap-3">
                 {!this.paymentSessionUnavailable && (
@@ -278,11 +276,11 @@ export class ControllerPagePayment extends BeanControllerPageBase {
                     disabled={this.submitting || this.waitingForOrder}
                     onClick={() => this.reconcile()}
                   >
-                    Check payment status
+                    {this.scope.locale.CheckPaymentStatus()}
                   </button>
                 )}
                 <button class="btn btn-outline" type="button" onClick={() => this.openOrder()}>
-                  Open order
+                  {this.scope.locale.OpenOrder()}
                 </button>
               </div>
             </section>
@@ -291,8 +289,8 @@ export class ControllerPagePayment extends BeanControllerPageBase {
             <section class="mt-6 rounded border border-base-300 p-4" aria-live="polite">
               <p class="text-base-content/70">
                 {hasResumableCancelRedirect
-                  ? 'You returned from the payment provider without completing payment. Your payment status has been refreshed. You can continue to payment or open your order.'
-                  : 'You returned from the payment provider without completing payment. Your payment status has been refreshed. You can open your order.'}
+                  ? this.scope.locale.PaymentProviderReturnCanResume()
+                  : this.scope.locale.PaymentProviderReturn()}
               </p>
             </section>
           )}
@@ -300,6 +298,15 @@ export class ControllerPagePayment extends BeanControllerPageBase {
             <ZPaymentNextAction
               action={session?.nextAction}
               disabled={this.submitting}
+              continueToPaymentHelpText={this.scope.locale.ContinueToPaymentHelp()}
+              continueToPaymentText={this.scope.locale.ContinueToPayment()}
+              embeddedCheckoutUnavailableText={this.scope.locale.EmbeddedCheckoutUnavailable()}
+              paymentCompletedText={this.scope.locale.PaymentCompleted()}
+              paymentPreparingText={this.scope.locale.PaymentPreparing()}
+              paymentPreparingRetryText={retryAfterSeconds =>
+                this.scope.locale.PaymentPreparingRetry({ retryAfterSeconds })
+              }
+              refreshPaymentStatusText={this.scope.locale.RefreshPaymentStatus()}
               onRefresh={async () => {
                 await this.queryPaymentSession?.refetch();
               }}
@@ -307,14 +314,14 @@ export class ControllerPagePayment extends BeanControllerPageBase {
           )}
           {isActionableCancelReturn && (
             <button class="btn btn-outline mt-3" type="button" onClick={() => this.openOrder()}>
-              Open order
+              {this.scope.locale.OpenOrder()}
             </button>
           )}
           {isMockSession && isActionable && (
             <section class="mt-6 rounded border border-dashed border-base-300 p-4">
-              <h2 class="font-semibold">Mock payment simulator</h2>
+              <h2 class="font-semibold">{this.scope.locale.MockPaymentSimulator()}</h2>
               <p class="mt-1 text-sm text-base-content/70">
-                Available only when the server enables the development/test mock provider.
+                {this.scope.locale.MockPaymentSimulatorHelp()}
               </p>
               <div class="mt-3 flex flex-wrap gap-3">
                 <button
@@ -322,32 +329,34 @@ export class ControllerPagePayment extends BeanControllerPageBase {
                   disabled={this.submitting || this.waitingForOrder}
                   onClick={() => this.settle('succeeded')}
                 >
-                  Payment succeeded
+                  {this.scope.locale.PaymentSucceeded()}
                 </button>
                 <button
                   class="btn btn-outline"
                   disabled={this.submitting || this.waitingForOrder}
                   onClick={() => this.settle('failed')}
                 >
-                  Payment failed
+                  {this.scope.locale.PaymentFailed()}
                 </button>
                 <button
                   class="btn btn-error btn-outline"
                   disabled={this.submitting || this.waitingForOrder}
                   onClick={() => this.settle('cancelled')}
                 >
-                  Cancel payment
+                  {this.scope.locale.CancelPayment()}
                 </button>
               </div>
             </section>
           )}
           {this.waitingForOrder && (
             <p class="mt-6 text-base-content/70" aria-live="polite">
-              Waiting for verified provider confirmation and order settlement…
+              {this.scope.locale.WaitingForPaymentSettlement()}
             </p>
           )}
           {session && !isCreated && !isActionable && !this.waitingForOrder && (
-            <p class="mt-6 text-base-content/70">Payment session state: {session.state}</p>
+            <p class="mt-6 text-base-content/70">
+              {this.scope.locale.PaymentSessionState({ state: session.state })}
+            </p>
           )}
           {this.message && (
             <div
@@ -360,8 +369,10 @@ export class ControllerPagePayment extends BeanControllerPageBase {
                 <span>{this.message}</span>
                 {this.pendingConfirmation && (
                   <p class="mt-1 text-sm">
-                    Payment session: {this.pendingSessionState ?? 'unknown'}; order:{' '}
-                    {this.pendingOrderState ?? 'unknown'}.
+                    {this.scope.locale.PaymentSessionAndOrderState({
+                      paymentSessionState: this.pendingSessionState ?? this.scope.locale.Unknown(),
+                      orderState: this.pendingOrderState ?? this.scope.locale.Unknown(),
+                    })}
                   </p>
                 )}
               </div>
@@ -371,6 +382,15 @@ export class ControllerPagePayment extends BeanControllerPageBase {
                     <ZPaymentNextAction
                       action={this.pendingNextAction}
                       disabled={this.submitting || this.waitingForOrder}
+                      continueToPaymentHelpText={this.scope.locale.ContinueToPaymentHelp()}
+                      continueToPaymentText={this.scope.locale.ContinueToPayment()}
+                      embeddedCheckoutUnavailableText={this.scope.locale.EmbeddedCheckoutUnavailable()}
+                      paymentCompletedText={this.scope.locale.PaymentCompleted()}
+                      paymentPreparingText={this.scope.locale.PaymentPreparing()}
+                      paymentPreparingRetryText={retryAfterSeconds =>
+                        this.scope.locale.PaymentPreparingRetry({ retryAfterSeconds })
+                      }
+                      refreshPaymentStatusText={this.scope.locale.RefreshPaymentStatus()}
                     />
                   ) : isPendingTerminalState ? (
                     <button
@@ -379,7 +399,7 @@ export class ControllerPagePayment extends BeanControllerPageBase {
                       disabled={this.waitingForOrder}
                       onClick={() => this.refreshOrderStatus()}
                     >
-                      Refresh order status
+                      {this.scope.locale.RefreshOrderStatus()}
                     </button>
                   ) : (
                     <button
@@ -388,11 +408,11 @@ export class ControllerPagePayment extends BeanControllerPageBase {
                       disabled={this.submitting || this.waitingForOrder}
                       onClick={() => this.reconcile()}
                     >
-                      Check payment status
+                      {this.scope.locale.CheckPaymentStatus()}
                     </button>
                   )}
                   <button class="btn btn-sm" type="button" onClick={() => this.openOrder()}>
-                    Open order
+                    {this.scope.locale.OpenOrder()}
                   </button>
                 </div>
               )}
