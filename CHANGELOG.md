@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.144
+
+### Features
+
+- Update project functionality.
+
+### Improvements
+
+- Update the Oxlint configuration.
+
 ## 5.1.143
 
 ### Improvements
