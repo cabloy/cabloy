@@ -1,5 +1,26 @@
 # Changelog
 
+## 5.1.142
+
+### Features
+
+- Add commerce specifications and refund support.
+- Add address form and consumer URL support.
+- Add captcha support.
+- Add `LocalePattern` support.
+- Add Markdown code blocks, images, links, basic formatting, and tables.
+- Add `onFieldStateReady` documentation.
+
+### Bug Fixes
+
+- Fix JSX linting issues.
+
+### Improvements
+
+- Refactor end-to-end tests.
+- Regenerate the Vona lockfile.
+- Update account and type definitions.
+
 ## 5.1.141
 
 ### Features
