@@ -53,6 +53,7 @@
       "a-mail": "5.0.0",
       "a-ratelimit": "5.0.0",
       "a-redlock": "5.0.0",
+      "a-ssr": "5.0.0",
       "a-vona": "5.0.0",
       "auth-simple": "5.0.0"
     }

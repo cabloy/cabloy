@@ -5,6 +5,7 @@ import { acquireTestLock, app } from 'vona-mock';
 
 const activationConsumePath = '/home/user/account/activation/consume';
 const activationConsumerUrl = 'https://account.example.test/home/user/activation';
+const activationConsumerUrlAdmin = 'https://account.example.test/admin/home/user/activation';
 
 describe('accountActivation.test.ts', { concurrency: false, sequential: true }, () => {
   const releases: Array<() => void> = [];
@@ -69,6 +70,26 @@ describe('accountActivation.test.ts', { concurrency: false, sequential: true }, 
       await assertActivationRejected(first.token);
       await consumeActivation(second.token);
     } finally {
+      if (fixture) await removeFixture(fixture);
+    }
+  });
+
+  it('preserves an enabled SSR site public path in activation links', async () => {
+    let fixture: IFixture | undefined;
+    let restoreSites: (() => void) | undefined;
+    try {
+      fixture = await createFixture();
+      restoreSites = configureAdminSsrSite();
+      const issued = await issueActivationLink(fixture, activationConsumerUrlAdmin);
+      assert.equal(issued.path, '/admin/home/user/activation');
+      assert.deepEqual(await getActivationState(getDigest(issued.token)), {
+        purpose: 'account-activation',
+        userId: fixture.userId,
+        consumerPath: '/home/user/activation',
+        email: fixture.email,
+      });
+    } finally {
+      restoreSites?.();
       if (fixture) await removeFixture(fixture);
     }
   });
@@ -173,6 +194,17 @@ interface IRegistration extends IFixture {
   passport: { user: { activated: boolean } };
   token: string;
   path: string;
+}
+
+function configureAdminSsrSite() {
+  const service = app.scope('a-ssr').service.ssr;
+  const getSitesEnabled = service.getSitesEnabled;
+  service.getSitesEnabled = (() => [
+    { beanOptions: { options: { publicPath: 'admin' } } },
+  ]) as typeof service.getSitesEnabled;
+  return () => {
+    service.getSitesEnabled = getSitesEnabled;
+  };
 }
 
 async function configureActivation() {
@@ -288,7 +320,7 @@ async function removeFixture(fixture: IFixture) {
   });
 }
 
-async function issueActivationLink(fixture: IFixture) {
+async function issueActivationLink(fixture: IFixture, consumerUrl = activationConsumerUrl) {
   let text: unknown;
   const mail = app.bean.mail;
   const send = mail.send;
@@ -297,9 +329,7 @@ async function issueActivationLink(fixture: IFixture) {
   };
   try {
     await app.bean.executor.mockCtx(async () => {
-      await app
-        .scope('home-user')
-        .service.account.issueActivationLink(fixture.userId, activationConsumerUrl);
+      await app.scope('home-user').service.account.issueActivationLink(fixture.userId, consumerUrl);
     });
   } finally {
     mail.send = send;

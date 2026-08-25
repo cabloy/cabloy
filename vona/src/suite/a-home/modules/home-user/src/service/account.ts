@@ -563,10 +563,19 @@ export class ServiceAccount extends BeanBase {
 
   private _getActivationLink(consumerUrl: string): URL {
     const url = this._getConsumerLink(consumerUrl, 'activation');
-    if (url.pathname !== activationConsumerPath) {
+    if (!this._isActivationConsumerPath(url.pathname)) {
       this.app.throw(503, 'account activation consumer URL is invalid');
     }
     return url;
+  }
+
+  private _isActivationConsumerPath(pathname: string) {
+    if (pathname === activationConsumerPath) return true;
+    const sites = this.app.scope('a-ssr').service.ssr.getSitesEnabled();
+    return sites.some(site => {
+      const publicPath = String(site.beanOptions.options?.publicPath ?? '');
+      return publicPath && pathname === `/${publicPath}${activationConsumerPath}`;
+    });
   }
 
   private _getPasswordSetLink(consumerUrl: string): URL {
