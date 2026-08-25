@@ -138,7 +138,7 @@ When the field is editable, the same `ClientOnly` boundary renders a toolbar abo
 - paragraph and heading levels 1–6;
 - bold, italic, strike-through, inline code, and highlight;
 - bullet, ordered, and task lists;
-- blockquotes, code blocks, code-block language selection with in-editor syntax highlighting, and horizontal rules;
+- blockquotes, code blocks, and horizontal rules;
 - applying, updating, and removing links on the current text selection through a URL prompt;
 - uploading one image through the configured image scene and inserting the finalized image at the preserved selection;
 - inserting a table through an 8 × 8 floating size picker. Moving over a cell previews the rectangle from the top-left cell to that cell (for example, 2 × 3); clicking inserts that many rows and columns. Inserted tables retain a header row.
@@ -147,7 +147,7 @@ The toolbar uses native buttons and a labelled block-style select, preserves the
 
 When the selection is inside an editable table, a separate contextual toolbar appears above that table. It adds and deletes rows or columns around the current cell, and can delete the table. The menu shares the same `ClientOnly`, selection-preservation, accessibility, readonly, and Markdown-serialization guarantees as the persistent toolbar. Column resizing remains out of scope.
 
-The code-block language select is enabled only while the cursor is inside a code block. It supports Bash, CSS, C++, C#, Go, HTML, Java, JavaScript, JSON, Markdown, PHP, Python, Rust, Shell, SQL, and TypeScript, plus Plain text. Changing a language updates the fenced-code information string through TipTap's document attribute and persists as Markdown; lowlight token spans are an editor-only presentation detail and are never submitted as HTML. Existing unknown fence languages remain unchanged until the author explicitly selects a supported language or Plain text.
+When the cursor is inside an editable code block, a floating code-block toolbar appears above the block's `<pre>` element. It contains the language selector and supports Bash, CSS, C++, C#, Go, HTML, Java, JavaScript, JSON, Markdown, PHP, Python, Rust, Shell, SQL, and TypeScript, plus Plain text. The selector remains usable while focused and disappears after leaving the code block or entering readonly mode. Changing a language updates the fenced-code information string through TipTap's document attribute and persists as Markdown; lowlight token spans are an editor-only presentation detail and are never submitted as HTML. Existing unknown fence languages remain unchanged until the author explicitly selects a supported language or Plain text.
 
 The toolbars intentionally do not include remote image import, a color picker, or a configurable plugin registry. Use the configured image scene for uploads; remote-image import needs its own explicit authorization and persistence contract. Link editing uses the existing Markdown link and backend sanitization contracts.
 

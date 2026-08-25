@@ -79,7 +79,7 @@ interface IMarkdownToolbarState {
   canDeleteTable: boolean;
 }
 
-interface IMarkdownTableToolbarPosition {
+interface IMarkdownContextualToolbarPosition {
   left: number;
   top: number;
 }
@@ -103,7 +103,8 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
   value = '';
   readonly = false;
   toolbarState: IMarkdownToolbarState = this._emptyToolbarState();
-  tableToolbarPosition?: IMarkdownTableToolbarPosition;
+  tableToolbarPosition?: IMarkdownContextualToolbarPosition;
+  codeBlockToolbarPosition?: IMarkdownContextualToolbarPosition;
   readonly tablePickerMaxSize = 8;
   tablePickerOpen = false;
   tablePickerPreview: IMarkdownTableDimensions = { rows: 1, cols: 1 };
@@ -116,8 +117,12 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
   private _handleBlur?: () => void;
   private _tableToolbarHost?: HTMLElement;
   private _tableToolbarFocused = false;
-  private _tableToolbarUpdateFrame?: number;
-  private _tableToolbarViewportHandler?: () => void;
+  private _codeBlockToolbarHost?: HTMLElement;
+  private _codeBlockToolbarFocused = false;
+  private _codeBlockToolbarHovered = false;
+  private _codeBlockToolbarInteracting = false;
+  private _contextualToolbarUpdateFrame?: number;
+  private _contextualToolbarViewportHandler?: () => void;
   private _tablePickerTrigger?: HTMLButtonElement;
   private _tablePickerRoot?: HTMLElement;
   private _tablePickerPointerHandler?: (event: PointerEvent) => void;
@@ -167,7 +172,7 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
     const editor = this.editor;
     if (!editor) {
       this.toolbarState = this._emptyToolbarState();
-      this._scheduleTableToolbarPosition();
+      this._scheduleContextualToolbarPosition();
       return;
     }
     const can = editor.can();
@@ -224,7 +229,7 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
       canDeleteTableColumn: tableActive ? can.deleteColumn() : false,
       canDeleteTable: tableActive ? can.deleteTable() : false,
     };
-    this._scheduleTableToolbarPosition();
+    this._scheduleContextualToolbarPosition();
   }
 
   private _runCommand(command: (editor: Editor) => boolean) {
@@ -243,7 +248,7 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
     );
   }
 
-  private _setTableToolbarPosition(position?: IMarkdownTableToolbarPosition) {
+  private _setTableToolbarPosition(position?: IMarkdownContextualToolbarPosition) {
     if (
       this.tableToolbarPosition?.left === position?.left &&
       this.tableToolbarPosition?.top === position?.top
@@ -253,12 +258,92 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
     this.tableToolbarPosition = position;
   }
 
-  private _scheduleTableToolbarPosition() {
-    if (!process.env.CLIENT || this._tableToolbarUpdateFrame !== undefined) return;
-    this._tableToolbarUpdateFrame = window.requestAnimationFrame(() => {
-      this._tableToolbarUpdateFrame = undefined;
+  private _scheduleContextualToolbarPosition() {
+    if (!process.env.CLIENT || this._contextualToolbarUpdateFrame !== undefined) return;
+    this._contextualToolbarUpdateFrame = window.requestAnimationFrame(() => {
+      this._contextualToolbarUpdateFrame = undefined;
       this._updateTableToolbarPosition();
+      this._updateCodeBlockToolbarPosition();
     });
+  }
+
+  private _shouldShowCodeBlockToolbar() {
+    const editor = this.editor;
+    const toolbarInteraction =
+      this._codeBlockToolbarFocused ||
+      this._codeBlockToolbarHovered ||
+      this._codeBlockToolbarInteracting;
+    return !!(
+      editor &&
+      !this.readonly &&
+      editor.isEditable &&
+      (editor.isActive('codeBlock') || (this.toolbarState.codeBlock && toolbarInteraction)) &&
+      (editor.view.hasFocus() || toolbarInteraction)
+    );
+  }
+
+  private _setCodeBlockToolbarPosition(position?: IMarkdownContextualToolbarPosition) {
+    if (
+      this.codeBlockToolbarPosition?.left === position?.left &&
+      this.codeBlockToolbarPosition?.top === position?.top
+    ) {
+      return;
+    }
+    this.codeBlockToolbarPosition = position;
+  }
+
+  private _updateCodeBlockToolbarPosition() {
+    const editor = this.editor;
+    const host = this._codeBlockToolbarHost;
+    if (!editor || !host || !this._shouldShowCodeBlockToolbar()) {
+      this._setCodeBlockToolbarPosition();
+      return;
+    }
+    const codeBlock = findParentNodeClosestToPos(
+      editor.state.selection.$from,
+      node => node.type.name === 'codeBlock',
+    );
+    if (!codeBlock) {
+      this._setCodeBlockToolbarPosition();
+      return;
+    }
+    const dom = editor.view.nodeDOM(codeBlock.pos);
+    if (!(dom instanceof HTMLElement)) {
+      this._setCodeBlockToolbarPosition();
+      return;
+    }
+    const codeBlockElement = dom.matches('pre') ? dom : dom.querySelector('pre');
+    if (!codeBlockElement) {
+      this._setCodeBlockToolbarPosition();
+      return;
+    }
+    const codeBlockRect = codeBlockElement.getBoundingClientRect();
+    const hostRect = host.getBoundingClientRect();
+    this._setCodeBlockToolbarPosition({
+      left: codeBlockRect.left - hostRect.left + codeBlockRect.width / 2,
+      top: codeBlockRect.top - hostRect.top,
+    });
+  }
+
+  public setCodeBlockToolbarHost(host: HTMLElement | null) {
+    if (this._codeBlockToolbarHost === host) return;
+    this._codeBlockToolbarHost = host ?? undefined;
+    this._scheduleContextualToolbarPosition();
+  }
+
+  public setCodeBlockToolbarFocused(focused: boolean) {
+    this._codeBlockToolbarFocused = focused;
+    this._scheduleContextualToolbarPosition();
+  }
+
+  public setCodeBlockToolbarHovered(hovered: boolean) {
+    this._codeBlockToolbarHovered = hovered;
+    this._scheduleContextualToolbarPosition();
+  }
+
+  public setCodeBlockToolbarInteracting(interacting: boolean) {
+    this._codeBlockToolbarInteracting = interacting;
+    this._scheduleContextualToolbarPosition();
   }
 
   private _updateTableToolbarPosition() {
@@ -293,12 +378,12 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
   public setTableToolbarHost(host: HTMLElement | null) {
     if (this._tableToolbarHost === host) return;
     this._tableToolbarHost = host ?? undefined;
-    this._scheduleTableToolbarPosition();
+    this._scheduleContextualToolbarPosition();
   }
 
   public setTableToolbarFocused(focused: boolean) {
     this._tableToolbarFocused = focused;
-    this._scheduleTableToolbarPosition();
+    this._scheduleContextualToolbarPosition();
   }
 
   private _isValidTablePickerDimensions(rows: number, cols: number) {
@@ -612,9 +697,13 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
 
   protected async __init__() {
     this.$controllerMounted(() => {
-      this._tableToolbarViewportHandler = () => {
-        if (this._shouldShowTableToolbar()) {
-          this._scheduleTableToolbarPosition();
+      this._contextualToolbarViewportHandler = () => {
+        if (
+          this._shouldShowTableToolbar() ||
+          this._shouldShowCodeBlockToolbar() ||
+          this._codeBlockToolbarHovered
+        ) {
+          this._scheduleContextualToolbarPosition();
         }
       };
       this._tablePickerPointerHandler = event => {
@@ -630,8 +719,8 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
       this._tablePickerKeyHandler = event => {
         this.handleTablePickerKeydown(event);
       };
-      window.addEventListener('resize', this._tableToolbarViewportHandler);
-      window.addEventListener('scroll', this._tableToolbarViewportHandler, true);
+      window.addEventListener('resize', this._contextualToolbarViewportHandler);
+      window.addEventListener('scroll', this._contextualToolbarViewportHandler, true);
       document.addEventListener('pointerdown', this._tablePickerPointerHandler);
       document.addEventListener('keydown', this._tablePickerKeyHandler);
       this.editor = new Editor({
@@ -665,11 +754,11 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
           this._refreshToolbarState();
         },
         onFocus: () => {
-          this._scheduleTableToolbarPosition();
+          this._scheduleContextualToolbarPosition();
         },
         onBlur: () => {
           this._handleBlur?.();
-          this._scheduleTableToolbarPosition();
+          this._scheduleContextualToolbarPosition();
         },
       });
       this._refreshToolbarState();
@@ -694,12 +783,12 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
   }
 
   protected __dispose__() {
-    if (this._tableToolbarUpdateFrame !== undefined) {
-      window.cancelAnimationFrame(this._tableToolbarUpdateFrame);
+    if (this._contextualToolbarUpdateFrame !== undefined) {
+      window.cancelAnimationFrame(this._contextualToolbarUpdateFrame);
     }
-    if (this._tableToolbarViewportHandler) {
-      window.removeEventListener('resize', this._tableToolbarViewportHandler);
-      window.removeEventListener('scroll', this._tableToolbarViewportHandler, true);
+    if (this._contextualToolbarViewportHandler) {
+      window.removeEventListener('resize', this._contextualToolbarViewportHandler);
+      window.removeEventListener('scroll', this._contextualToolbarViewportHandler, true);
     }
     if (this._tablePickerPointerHandler) {
       document.removeEventListener('pointerdown', this._tablePickerPointerHandler);
@@ -710,7 +799,9 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
     this._tablePickerTrigger = undefined;
     this._tablePickerRoot = undefined;
     this._tableToolbarHost = undefined;
+    this._codeBlockToolbarHost = undefined;
     this._setTableToolbarPosition();
+    this._setCodeBlockToolbarPosition();
     this.editor?.destroy();
   }
 

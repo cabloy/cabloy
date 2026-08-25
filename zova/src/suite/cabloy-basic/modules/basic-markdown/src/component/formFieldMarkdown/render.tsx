@@ -147,6 +147,40 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
     );
   }
 
+  private _renderCodeBlockLanguageSelect() {
+    const state = this.toolbarState;
+    return (
+      <select
+        class="select select-sm select-bordered w-auto min-w-28"
+        aria-label={this.scope.locale.CodeBlockLanguage()}
+        value={getCodeBlockLanguage(state.codeBlockLanguage) ?? ''}
+        onMousedown={event => {
+          event.stopPropagation();
+          this.setCodeBlockToolbarInteracting(true);
+        }}
+        onClick={event => {
+          event.stopPropagation();
+          this.setCodeBlockToolbarInteracting(true);
+        }}
+        onFocus={() => {
+          this.setCodeBlockToolbarInteracting(true);
+        }}
+        onChange={event => {
+          event.stopPropagation();
+          const value = (event.target as HTMLSelectElement).value;
+          this.setCodeBlockLanguage(value || undefined);
+        }}
+      >
+        <option value="">{this.scope.locale.PlainText()}</option>
+        {codeBlockLanguages.map(language => (
+          <option key={language} value={language}>
+            {this.scope.locale[language]()}
+          </option>
+        ))}
+      </select>
+    );
+  }
+
   private _renderToolbar(imageUploader?: IImageUploaderRenderState) {
     const state = this.toolbarState;
     return (
@@ -185,27 +219,6 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
           <option value="heading-4">{this.scope.locale.Heading4()}</option>
           <option value="heading-5">{this.scope.locale.Heading5()}</option>
           <option value="heading-6">{this.scope.locale.Heading6()}</option>
-        </select>
-        <select
-          class="select select-sm select-bordered w-auto min-w-28"
-          aria-label={this.scope.locale.CodeBlockLanguage()}
-          disabled={!state.codeBlock}
-          value={getCodeBlockLanguage(state.codeBlockLanguage) ?? ''}
-          onMousedown={event => {
-            event.stopPropagation();
-          }}
-          onChange={event => {
-            event.stopPropagation();
-            const value = (event.target as HTMLSelectElement).value;
-            this.setCodeBlockLanguage(value || undefined);
-          }}
-        >
-          <option value="">{this.scope.locale.PlainText()}</option>
-          {codeBlockLanguages.map(language => (
-            <option key={language} value={language}>
-              {this.scope.locale[language]()}
-            </option>
-          ))}
         </select>
         {this._toolbarButton(
           ':editor:format-bold',
@@ -293,6 +306,50 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
             },
           )}
         {this._renderTablePickerTrigger()}
+      </div>
+    );
+  }
+
+  private _renderCodeBlockToolbar() {
+    const position = this.codeBlockToolbarPosition;
+    return (
+      <div
+        class="pointer-events-none absolute inset-0 z-10"
+        ref={ref => {
+          if (this.ctx.disposed) return;
+          this.setCodeBlockToolbarHost?.(ref as HTMLDivElement | null);
+        }}
+      >
+        {position && (
+          <div
+            class="pointer-events-auto absolute flex items-center rounded-box border border-base-300 bg-base-100 p-1 shadow"
+            onPointerenter={() => {
+              this.setCodeBlockToolbarHovered(true);
+            }}
+            onPointerleave={() => {
+              this.setCodeBlockToolbarHovered(false);
+            }}
+            style={{
+              left: `${position.left}px`,
+              top: `${position.top}px`,
+              transform: 'translate(-50%, -100%)',
+            }}
+            role="toolbar"
+            aria-label={this.scope.locale.CodeBlockLanguage()}
+            onFocus={() => {
+              this.setCodeBlockToolbarFocused(true);
+            }}
+            onBlur={event => {
+              const nextTarget = event.relatedTarget;
+              const currentTarget = event.currentTarget as HTMLElement;
+              if (!(nextTarget instanceof Node) || !currentTarget.contains(nextTarget)) {
+                this.setCodeBlockToolbarFocused(false);
+              }
+            }}
+          >
+            {this._renderCodeBlockLanguageSelect()}
+          </div>
+        )}
       </div>
     );
   }
@@ -420,6 +477,7 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
                           ></ZImageUploader>
                         )}
                         {!this.readonly && this.editor && this._renderTableToolbar()}
+                        {!this.readonly && this.editor && this._renderCodeBlockToolbar()}
                         {this.imageUploadError && (
                           <p class="px-4 pt-3 text-sm text-error" role="alert" aria-live="polite">
                             {this.imageUploadError}
