@@ -59,14 +59,17 @@ const OVERWRITE_DIRS_CABLOY_BASIC: string[] = [
   'zova/src/suite/a-devui',
 ];
 
-const FRAMEWORK_E2E_DIRS_CABLOY_BASIC: string[] = [
-  'e2e/config',
-  'e2e/scripts',
-  'e2e/specs/cabloy-basic',
-  'e2e/specs/a-commerce',
+const FRAMEWORK_E2E_DIRS_CABLOY_BASIC: string[] = ['e2e/config', 'e2e/scripts'];
+
+const FRAMEWORK_E2E_FILES_CABLOY_BASIC: string[] = [
+  'e2e/specs/cabloy-basic.spec.ts',
+  'e2e/specs/account.spec.ts',
+  'e2e/specs/a-commerce.spec.ts',
 ];
 
-const FRAMEWORK_E2E_SCRIPT_NAMES_CABLOY_BASIC: string[] = [
+const FRAMEWORK_E2E_SCRIPT_NAMES_CABLOY_BASIC: string[] = ['test:e2e', 'test:e2e:fast'];
+
+const FRAMEWORK_E2E_LEGACY_SCRIPT_NAMES_CABLOY_BASIC: string[] = [
   'test:e2e:basic',
   'test:e2e:basic:web',
   'test:e2e:basic:admin',
@@ -75,14 +78,10 @@ const FRAMEWORK_E2E_SCRIPT_NAMES_CABLOY_BASIC: string[] = [
   'test:e2e:commerce:web',
   'test:e2e:commerce:admin',
   'test:e2e:commerce:clean',
+  'test:e2e:basic:flow',
 ];
 
 const FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC = '@playwright/test';
-
-const OBSOLETE_FRAMEWORK_E2E_SCRIPTS_CABLOY_BASIC: Record<string, string> = {
-  'test:e2e:basic:flow':
-    'playwright test --config e2e/config/playwright.basic.config.ts --grep ATP-BASIC-FLOW-01',
-};
 
 const MERGE_DIRS: string[] = [
   // Claude project assets
@@ -231,24 +230,6 @@ async function extractTarball(tarballPath: string, targetDir: string): Promise<v
   }
 }
 
-function needsBasicE2eReconciliation(): boolean {
-  if (!isCabloyBasic()) return false;
-
-  for (const dir of FRAMEWORK_E2E_DIRS_CABLOY_BASIC) {
-    if (!existsSync(resolve(ROOT_DIR, dir))) return true;
-  }
-
-  const packageJson = readPackageJson(resolve(ROOT_DIR, 'package.json'));
-  for (const name of FRAMEWORK_E2E_SCRIPT_NAMES_CABLOY_BASIC) {
-    const script = packageJson.scripts?.[name];
-    if (!script?.includes('e2e/')) return true;
-  }
-  for (const [name, value] of Object.entries(OBSOLETE_FRAMEWORK_E2E_SCRIPTS_CABLOY_BASIC)) {
-    if (packageJson.scripts?.[name] === value) return true;
-  }
-  return !packageJson.devDependencies?.[FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC];
-}
-
 function mergeFrameworkE2eAssets(dryRun?: boolean): void {
   if (!isCabloyBasic()) return;
 
@@ -263,6 +244,38 @@ function mergeFrameworkE2eAssets(dryRun?: boolean): void {
       continue;
     }
     copyDirectory(src, dest);
+  }
+
+  for (const file of FRAMEWORK_E2E_FILES_CABLOY_BASIC) {
+    const src = resolve(TEMP_DIR, file);
+    const dest = resolve(ROOT_DIR, file);
+    if (!existsSync(src)) {
+      throw new Error(`Expected framework E2E file in package: ${file}`);
+    }
+    if (dryRun) {
+      log(`  [dry-run] Overwrite framework E2E file: ${file}`);
+      continue;
+    }
+    mkdirSync(dirname(dest), { recursive: true });
+    cpSync(src, dest);
+  }
+
+  const legacyFrameworkFiles: string[] = [
+    'e2e/config/playwright.basic.config.ts',
+    'e2e/config/playwright.commerce.config.ts',
+    'e2e/config/playwright.shared.config.ts',
+    'e2e/specs/cabloy-basic/basic.spec.ts',
+    'e2e/specs/cabloy-basic/account.spec.ts',
+    'e2e/specs/a-commerce/commerce.spec.ts',
+  ];
+  for (const file of legacyFrameworkFiles) {
+    const dest = resolve(ROOT_DIR, file);
+    if (!existsSync(dest)) continue;
+    if (dryRun) {
+      log(`  [dry-run] Remove legacy framework E2E file: ${file}`);
+      continue;
+    }
+    rmSync(dest, { force: true });
   }
 }
 
@@ -324,18 +337,11 @@ function reconcileFrameworkE2ePackageJson(dryRun?: boolean): void {
     }
   }
 
-  for (const [name, value] of Object.entries(OBSOLETE_FRAMEWORK_E2E_SCRIPTS_CABLOY_BASIC)) {
-    const currentValue = projectPackage.scripts?.[name];
-    if (!currentValue) continue;
-    if (currentValue !== value) {
-      log(
-        `  Retain customized obsolete framework E2E script package.json scripts.${name}; remove it manually if no longer needed.`,
-      );
-      continue;
-    }
+  for (const name of FRAMEWORK_E2E_LEGACY_SCRIPT_NAMES_CABLOY_BASIC) {
+    if (!projectPackage.scripts?.[name]) continue;
     changed = true;
     if (dryRun) {
-      log(`  [dry-run] Remove obsolete framework E2E script package.json scripts.${name}`);
+      log(`  [dry-run] Remove legacy framework E2E script package.json scripts.${name}`);
     } else {
       delete projectPackage.scripts?.[name];
     }
@@ -513,41 +519,30 @@ async function main(): Promise<void> {
 
   const latestPackageInfo = await fetchLatestPackageInfo();
   const currentVersion = readVersionMarker();
-  const basicE2eIncomplete = needsBasicE2eReconciliation();
-
-  if (currentVersion) {
-    log(`Current project Cabloy version: ${currentVersion}`);
-  } else {
-    log(
-      `Warning: Missing ${VERSION_MARKER_FILE}, continuing with upgrade for backward compatibility.`,
+  if (!currentVersion) {
+    throw new Error(
+      `Missing ${VERSION_MARKER_FILE}; this project is not a supported Cabloy upgrade target.`,
     );
   }
+
+  log(`Current project Cabloy version: ${currentVersion}`);
   log(`Latest Cabloy version: ${latestPackageInfo.version}`);
 
-  if (currentVersion) {
-    const comparison = compareVersions(currentVersion, latestPackageInfo.version);
-    if (comparison === 0) {
-      if (basicE2eIncomplete) {
-        log(
-          `Cabloy is already up to date (current: ${currentVersion}), but the Cabloy Basic E2E baseline is incomplete. Repairing it in this upgrade; no additional upgrade command is required.\n`,
-        );
-      } else if (!dryRun) {
-        log(`Cabloy is already up to date (current: ${currentVersion}). Skipping upgrade.`);
-        return;
-      } else {
-        log(
-          `Cabloy is already up to date (current: ${currentVersion}). Continuing dry-run to show overwrite plan.\n`,
-        );
-      }
-    } else if (comparison > 0) {
-      throw new Error(
-        `Project Cabloy version ${currentVersion} is newer than npm latest ${latestPackageInfo.version}. Aborting upgrade.`,
-      );
-    } else {
-      log(`Upgrading Cabloy from ${currentVersion} to ${latestPackageInfo.version}...\n`);
+  const comparison = compareVersions(currentVersion, latestPackageInfo.version);
+  if (comparison === 0) {
+    if (!dryRun) {
+      log(`Cabloy is already up to date (current: ${currentVersion}). Skipping upgrade.`);
+      return;
     }
+    log(
+      `Cabloy is already up to date (current: ${currentVersion}). Continuing dry-run to show overwrite plan.\n`,
+    );
+  } else if (comparison > 0) {
+    throw new Error(
+      `Project Cabloy version ${currentVersion} is newer than npm latest ${latestPackageInfo.version}. Aborting upgrade.`,
+    );
   } else {
-    log(`Upgrading Cabloy to ${latestPackageInfo.version}...\n`);
+    log(`Upgrading Cabloy from ${currentVersion} to ${latestPackageInfo.version}...\n`);
   }
 
   try {

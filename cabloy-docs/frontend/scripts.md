@@ -61,28 +61,26 @@ npm run build:zova:admin
 # Both default Basic sites, then a managed local run
 npm run build:zova
 npm run deps:vona
-npm run test:e2e:basic:clean
+npm run test:e2e cabloy-basic account
 ```
 
-The managed clean command resets Vona-managed test data and the local Redis namespace, starts one development Vona worker, and runs the complete suite by default. Browser commands consume already-built artifacts; they do not rebuild them.
+The managed clean command resets Vona-managed test data and the local Redis namespace, starts one development Vona worker, and runs the selected specs. Browser commands consume already-built artifacts; they do not rebuild them.
 
-The Basic and Commerce suite families use the same command shape:
+The unified runner uses two commands:
 
 ```text
-test:e2e:<suite>          complete suite
-test:e2e:<suite>:web      all @web surface scenarios
-test:e2e:<suite>:admin    all @admin surface scenarios
-test:e2e:<suite>:clean    managed clean local suite run
+npm run test:e2e                 clean local run with database reset
+npm run test:e2e:fast            fast run without automatic reset
 ```
 
-Use Playwright tags after npm's argument delimiter for scenario selection instead of adding one root script per scenario:
+Place flat spec basenames directly after the npm script name. Use npm's `--` delimiter before Playwright options. With no names, every spec in `e2e/specs` runs. Native `--grep` and `--grep-invert` remain available, and repeatable `--tag` values require all listed tags:
 
 ```bash
-npm run test:e2e:basic:clean -- --grep @flow
-npm run test:e2e:basic -- --grep ATP-BASIC-FLOW-01
+npm run test:e2e cabloy-basic account -- --grep @flow
+npm run test:e2e:fast a-commerce -- --tag @web --tag @smoke
 ```
 
-For the complete tag vocabulary, managed-runner argument boundaries, and externally managed-target examples, see [Repo Scripts](/reference/repo-scripts#ssr-browser-checks). For a separately managed Basic target, set `BASIC_E2E_BASE_URL`; Commerce commands use `COMMERCE_E2E_BASE_URL`. The caller owns external-target data, cache, and artifact freshness.
+For the complete tag vocabulary, managed-runner argument boundaries, and externally managed-target examples, see [Repo Scripts](/reference/repo-scripts#ssr-browser-checks). A separately managed target uses `E2E_BASE_URL` with `test:e2e:fast`; the caller owns external-target data, cache, and artifact freshness.
 
 ## Cabloy Start root wrappers
 

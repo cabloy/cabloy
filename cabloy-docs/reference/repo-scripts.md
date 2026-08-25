@@ -33,14 +33,8 @@ Cabloy Basic exposes these shared root scripts:
 - `npm run start:one`
 - `npm run test`
 - `npm run db:reset`
-- `npm run test:e2e:basic`
-- `npm run test:e2e:basic:web`
-- `npm run test:e2e:basic:admin`
-- `npm run test:e2e:basic:clean`
-- `npm run test:e2e:commerce`
-- `npm run test:e2e:commerce:web`
-- `npm run test:e2e:commerce:admin`
-- `npm run test:e2e:commerce:clean`
+- `npm run test:e2e`
+- `npm run test:e2e:fast`
 - `npm run tsc`
 - `npm run docs:dev`
 - `npm run docs:build`
@@ -88,11 +82,12 @@ Basic upgrade owns these browser baseline paths:
 ```text
 e2e/config/
 e2e/scripts/
-e2e/specs/cabloy-basic/
-e2e/specs/a-commerce/
+e2e/specs/cabloy-basic.spec.ts
+e2e/specs/account.spec.ts
+e2e/specs/a-commerce.spec.ts
 ```
 
-It also reconciles the framework Basic and Commerce `test:e2e:*` scripts and `@playwright/test` development dependency. Keep project browser tests outside those reserved paths. The upgrader merges framework baseline directories without deleting project-owned paths and can repair an incomplete Basic E2E baseline even when the framework version marker is already current.
+It also reconciles the two framework E2E scripts and the `@playwright/test` development dependency. Keep additional project browser specs under other filenames in `e2e/specs`; the upgrader updates only the listed framework files. The current fresh baseline is required and is not repaired for unsupported legacy project layouts.
 
 ### Cabloy Start private repository
 
@@ -108,44 +103,38 @@ The public-package upgrade flow does not source or reconcile the Start baseline,
 
 ## SSR browser checks
 
-The suites use this command family:
+The unified runner has two modes:
 
-- `test:e2e:<suite>` runs every browser scenario in the suite.
-- `test:e2e:<suite>:web` and `test:e2e:<suite>:admin` select `@web` and `@admin` scenarios.
-- `test:e2e:<suite>:clean` resets managed local state, starts one development Vona worker, then runs the suite or a Playwright-filtered subset.
+- `npm run test:e2e`: clean local run; checks the managed port, resets the database, starts one development Vona worker, and runs Playwright.
+- `npm run test:e2e:fast`: skips the reset for quick reruns and may target either the local managed server or an externally managed `E2E_BASE_URL`.
 
-The managed `:clean` runner requires port `7102` to be available. It owns the suite config and local lifecycle: it resets the database, and Playwright starts and stops `npm run dev:one`. It accepts normal Playwright selection and reporting options, but rejects external base URLs, `--config`, and positional spec paths. Use `--grep` or `--grep-invert` to narrow the run.
+Place spec basenames directly after the npm script name; use npm's `--` delimiter only before Playwright options. Multiple spec names are allowed. With no names, every spec in `e2e/specs` is discovered:
 
-Pass Playwright options after npm's `--` delimiter. `@web` and `@admin` are stable surface tags. Purpose tags depend on the suite: current scenarios use `@smoke`, while the Basic suite also uses `@flow`. ATP IDs remain in titles for exact evidence and failure reruns.
+```bash
+npm run test:e2e cabloy-basic account
+npm run test:e2e a-commerce
+npm run test:e2e:fast account
+npm run test:e2e:fast a-commerce -- --grep ATP-SSR
+npm run test:e2e:fast a-commerce -- --grep-invert @admin
+```
+
+Tags remain independent from filenames. Repeat `--tag` to require all tags, while native `--grep` and `--grep-invert` remain available:
+
+```bash
+npm run test:e2e:fast a-commerce -- --tag @web --tag @smoke
+npm run test:e2e:fast account -- --grep @flow --tag @web
+```
+
+The existing tags include `@web`, `@admin`, `@smoke`, `@flow`, `@ssr`, `@theme`, and the business tags used by Commerce such as `@cart`, `@payment`, `@shipment`, and `@refund`. No suite tag is required. Clean runs are local-only and reject `E2E_BASE_URL`; fast runs against an external target do not reset, start, stop, or rebuild that target.
 
 ### Cabloy Basic and Commerce
 
-The Basic suite exercises Web at `/` and Admin at `/admin` through Vona's SSR dispatcher. Prepare fresh SSR and REST artifacts explicitly when frontend output has changed:
+The Basic baseline exercises Web at `/` and Admin at `/admin` through Vona's SSR dispatcher. Prepare artifacts when frontend output has changed:
 
 ```bash
 npm run build:zova
 npm run deps:vona
-npm run test:e2e:basic:clean
-```
-
-```bash
-# Exact acceptance scenario
-npm run test:e2e:basic -- --grep ATP-BASIC-FLOW-01
-
-# Category or surface selection
-npm run test:e2e:basic:clean -- --grep @flow
-npm run test:e2e:basic:clean -- --grep @admin
-
-# Compose tags with a Playwright regular expression
-npm run test:e2e:basic:clean -- --grep '(?=.*@admin)(?=.*@flow)'
-```
-
-For an externally managed Basic target, set `BASIC_E2E_BASE_URL` and use aggregate, surface, or forwarded-tag commands. These commands do not reset, start, stop, or rebuild the target:
-
-```bash
-BASIC_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:basic
-BASIC_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:basic:admin
-BASIC_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:basic -- --grep @flow
+npm run test:e2e cabloy-basic account
 ```
 
 Commerce browser acceptance exercises Customer Web at `/commerce` and Operator Admin routing at `/commerce-admin`. Prepare its paired artifacts explicitly:
@@ -153,15 +142,13 @@ Commerce browser acceptance exercises Customer Web at `/commerce` and Operator A
 ```bash
 npm run build:zova:commerce
 npm run deps:vona
-npm run test:e2e:commerce:clean
+npm run test:e2e a-commerce
 ```
 
-For an externally managed Commerce target, set `COMMERCE_E2E_BASE_URL` and use the matching aggregate, surface, or forwarded-tag command. The target owner is responsible for data, cache, and artifact freshness:
+For a separately managed target, use the fast command:
 
 ```bash
-COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce
-COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce:web
-COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce -- --grep @smoke
+E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:fast a-commerce -- --tag @smoke
 ```
 
 ### Cabloy Start

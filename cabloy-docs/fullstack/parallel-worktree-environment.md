@@ -77,7 +77,7 @@ Use commands from the active repository root.
 
 | Edition      | Marker             | Frontend command                                   | Managed clean E2E              |
 | ------------ | ------------------ | -------------------------------------------------- | ------------------------------ |
-| Cabloy Basic | `__CABLOY_BASIC__` | `npm run dev:zova:admin` or `npm run dev:zova:web` | `npm run test:e2e:basic:clean` |
+| Cabloy Basic | `__CABLOY_BASIC__` | `npm run dev:zova:admin` or `npm run dev:zova:web` | `npm run test:e2e`             |
 | Cabloy Start | `__CABLOY_START__` | `npm run dev:zova:admin` or `npm run dev:zova:web` | `npm run test:e2e:start:clean` |
 
 Run one frontend command, not both, in each worktree. Both managed clean E2E workflows read Vona's effective local `SERVER_LISTEN_PORT`, then reset, start, and target that local runtime.

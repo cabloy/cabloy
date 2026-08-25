@@ -176,7 +176,7 @@ This order separates public callback security, server-owned payment authority, b
 3. Inspect the server-rendered return-page HTML and the browser's initial hydration render. Both must be the neutral shell and contain no private payment/order data.
 4. Test missing/expired tokens independently. The browser should redirect to Login through normal route admission; it must not treat an absent Passport projection as proof that a valid token is absent.
 5. Repeat a terminal provider callback and combine return/webhook timing races. Verify one durable payment outcome and one Commerce effect.
-6. Run the direct-return browser coverage in `e2e/specs/a-commerce/commerce.spec.ts` when validating the runtime path.
+6. Run the direct-return browser coverage in `e2e/specs/a-commerce.spec.ts` when validating the runtime path.
 
 ## Related Records
 

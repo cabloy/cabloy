@@ -109,16 +109,17 @@ npm run upgrade:dry-run
 npm run upgrade
 ```
 
-In Cabloy Basic, upgrade synchronizes the framework-owned SSR browser E2E baseline, its suite/surface root `test:e2e:*` commands, and the `@playwright/test` development dependency. It does not add a root script for each individual E2E scenario. The framework reserves these paths:
+In Cabloy Basic, upgrade synchronizes the framework-owned SSR browser E2E baseline, the two root E2E scripts, and the `@playwright/test` development dependency. The framework owns these paths:
 
 ```text
 e2e/config/
 e2e/scripts/
-e2e/specs/cabloy-basic/
-e2e/specs/a-commerce/
+e2e/specs/cabloy-basic.spec.ts
+e2e/specs/account.spec.ts
+e2e/specs/a-commerce.spec.ts
 ```
 
-Keep project-owned browser tests outside those reserved paths, for example under `e2e/specs/my-project/`; upgrade overlays framework files without deleting project test paths. Projects whose previous upgrader predates this E2E synchronization may need to run `npm run upgrade` once more: the updated upgrader recognizes an incomplete Basic E2E baseline even when the version marker is already current.
+Keep additional project-owned browser specs under other filenames in `e2e/specs`. The current baseline is a fresh-project contract; unsupported legacy layouts are not repaired by the upgrader.
 
 ### Cabloy Start repository baseline
 

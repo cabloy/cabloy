@@ -17,7 +17,7 @@ const accountProfileApiPath = '/api/home/user/account/profile';
 const imageUploadApiPath = '/api/image/upload';
 const avatarFixturePath = path.resolve(
   import.meta.dirname,
-  '../../../zova/src/suite/a-home/modules/home-base/assets/img/avatar_user.png',
+  '../../zova/src/suite/a-home/modules/home-base/assets/img/avatar_user.png',
 );
 
 function waitForApiResponse(page: Page, method: string, path: string) {
