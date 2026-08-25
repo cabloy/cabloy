@@ -1,6 +1,6 @@
 {
   "name": "vona-suite-a-cabloy",
-  "version": "5.1.45",
+  "version": "5.1.46",
   "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
   "description": "",
   "author": "",
@@ -8,7 +8,7 @@
   "type": "module",
   "dependencies": {
     "vona-module-a-cabloy": "workspace:^",
-    "vona-module-a-markdown": "^5.0.1",
+    "vona-module-a-markdown": "^5.0.2",
     "vona-module-a-rbac": "^5.0.1",
     "vona-module-a-socket": "workspace:^",
     "vona-module-a-ssr": "workspace:^",

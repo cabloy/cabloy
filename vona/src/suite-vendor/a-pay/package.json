@@ -1,15 +1,15 @@
 {
   "name": "vona-suite-a-pay",
-  "version": "5.0.7",
+  "version": "5.0.8",
   "description": "",
   "author": "",
   "files": [],
   "type": "module",
   "dependencies": {
-    "vona-module-a-pay": "^5.0.7",
-    "vona-module-pay-mock": "^5.0.7",
-    "vona-module-pay-paypal": "^5.0.7",
-    "vona-module-pay-stripe": "^5.0.7"
+    "vona-module-a-pay": "^5.0.8",
+    "vona-module-pay-mock": "^5.0.8",
+    "vona-module-pay-paypal": "^5.0.8",
+    "vona-module-pay-stripe": "^5.0.8"
   },
   "title": "a-pay"
 }

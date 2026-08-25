@@ -1,13 +1,13 @@
 {
   "name": "zova-suite-a-pay",
-  "version": "5.0.5",
+  "version": "5.0.6",
   "description": "",
   "author": "",
   "files": [],
   "type": "module",
   "dependencies": {
-    "zova-module-a-pay": "^5.0.6",
-    "zova-module-pay-mock": "^5.0.4",
+    "zova-module-a-pay": "^5.0.7",
+    "zova-module-pay-mock": "^5.0.5",
     "zova-module-pay-paypal": "^5.0.2",
     "zova-module-pay-stripe": "^5.0.2"
   },
