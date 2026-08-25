@@ -60,7 +60,8 @@
   "title": "basic-markdown",
   "zovaModule": {
     "dependencies": {
-      "basic-app": "5.0.0"
+      "basic-app": "5.0.0",
+      "basic-image": "5.0.0"
     }
   }
 }

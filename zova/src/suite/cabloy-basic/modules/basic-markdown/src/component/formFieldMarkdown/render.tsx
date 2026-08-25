@@ -1,10 +1,12 @@
 import type { IIconRecord } from 'zova-module-a-icon';
+import type { IImageUploaderRenderState } from 'zova-module-basic-image';
 
 import { EditorContent } from '@tiptap/vue-3';
 import { BeanRenderBase, ClientOnly } from 'zova';
 import { Render } from 'zova-module-a-bean';
 import { ZFormField } from 'zova-module-a-form';
 import { ZIcon } from 'zova-module-a-icon';
+import { ZImageUploader } from 'zova-module-basic-image';
 
 @Render()
 export class RenderFormFieldMarkdown extends BeanRenderBase {
@@ -141,7 +143,7 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
     );
   }
 
-  private _renderToolbar() {
+  private _renderToolbar(imageUploader?: IImageUploaderRenderState) {
     const state = this.toolbarState;
     return (
       <div
@@ -254,6 +256,17 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
           () => this.setHorizontalRule(),
           { disabled: !state.canHorizontalRule },
         )}
+        {imageUploader &&
+          this._toolbarButton(
+            ':editor:image-outline',
+            this.scope.locale.InsertImage(),
+            () => {
+              this.beginImageUpload(imageUploader.chooseFiles);
+            },
+            {
+              disabled: imageUploader.isUploading || imageUploader.policy.pending,
+            },
+          )}
         {this._renderTablePickerTrigger()}
       </div>
     );
@@ -367,8 +380,25 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
                   v-slots={{
                     default: () => (
                       <>
-                        {!this.readonly && this._renderToolbar()}
+                        {!this.readonly && (
+                          <ZImageUploader
+                            imageScene={this.imageScene}
+                            multiple={false}
+                            onUploaded={result => {
+                              this.handleImageUploaded(result);
+                            }}
+                            onError={error => {
+                              this.handleImageUploadError(error);
+                            }}
+                            slotDefault={state => this._renderToolbar(state)}
+                          ></ZImageUploader>
+                        )}
                         {!this.readonly && this.editor && this._renderTableToolbar()}
+                        {this.imageUploadError && (
+                          <p class="px-4 pt-3 text-sm text-error" role="alert" aria-live="polite">
+                            {this.imageUploadError}
+                          </p>
+                        )}
                         <EditorContent editor={this.editor} class={this.cMarkdown} />
                       </>
                     ),

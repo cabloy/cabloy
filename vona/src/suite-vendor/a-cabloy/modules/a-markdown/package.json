@@ -58,6 +58,7 @@
   "title": "a-markdown",
   "vonaModule": {
     "dependencies": {
+      "a-image": "5.0.0",
       "a-vona": "5.0.0"
     }
   }

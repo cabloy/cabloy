@@ -16,6 +16,7 @@ Use this page together with:
 - [Component Guide](/frontend/component-guide)
 - [SSR ClientOnly](/frontend/ssr-client-only)
 - [Backend Markdown Guide](/backend/markdown-guide)
+- [Image Guide](/frontend/image-guide)
 
 > [!TIP]
 > **Choose the component by data contract**
@@ -63,11 +64,21 @@ export class EntityArticleContent {
 }
 ```
 
-The current resource options type does not add business-specific options. The renderer identifier is the important part of the contract:
+The field accepts an optional `imageScene` option. When it is omitted, the editor uploads through the public `a-markdown:markdown` scene supplied by the `a-markdown` module:
 
 ```typescript
 ZovaRender.field('basic-markdown:formFieldMarkdown');
 ```
+
+A business module can override that default when its images need resource-specific authorization, ownership metadata, delivery behavior, or upload limits:
+
+```typescript
+ZovaRender.field('basic-markdown:formFieldMarkdown', {
+  imageScene: 'article:bodyImage',
+});
+```
+
+The configured scene must be registered by the backend and must return a durable `http` or `https` URL. Define scene policy, authentication, provider, and upload constraints through the image contract described in the [Image Guide](/frontend/image-guide); do not construct storage URLs in the editor.
 
 The field value remains Markdown. It is not the editor's HTML output, and it should not be replaced with `innerHTML` or a browser DOM serialization.
 
@@ -129,13 +140,14 @@ When the field is editable, the same `ClientOnly` boundary renders a toolbar abo
 - bullet, ordered, and task lists;
 - blockquotes, code blocks, and horizontal rules;
 - applying, updating, and removing links on the current text selection through a URL prompt;
+- uploading one image through the configured image scene and inserting the finalized image at the preserved selection;
 - inserting a table through an 8 × 8 floating size picker. Moving over a cell previews the rectangle from the top-left cell to that cell (for example, 2 × 3); clicking inserts that many rows and columns. Inserted tables retain a header row.
 
-The toolbar uses native buttons and a labelled block-style select, preserves the current editor selection while buttons are clicked, exposes active and unavailable states accessibly, and runs commands on the existing TipTap editor. To add a link, select text and enter a URL; when the cursor is in an existing link, the same action edits its URL. Submitting an empty URL removes an existing link, while cancelling leaves the document unchanged. TipTap validates the URL before applying it, but backend Markdown rendering and sanitization remain the authoritative display security boundary. The table picker also supports keyboard navigation, Enter/Space to insert, and Escape to cancel. Those commands still serialize through `getMarkdown()`; they do not introduce an HTML value path. In readonly mode, TipTap remains visible but the toolbar and picker are omitted.
+The toolbar uses native buttons and a labelled block-style select, preserves the current editor selection while buttons are clicked, exposes active and unavailable states accessibly, and runs commands on the existing TipTap editor. Image upload delegates policy loading, validation, ordinary/direct transfer, and finalization to `basic-image`. Only a finalized URL using `http` or `https` is inserted, with the source filename as image alt text when available. The image node serializes through `getMarkdown()` just like every other editor command; it does not introduce an HTML value path. To add a link, select text and enter a URL; when the cursor is in an existing link, the same action edits its URL. Submitting an empty URL removes an existing link, while cancelling leaves the document unchanged. TipTap validates the URL before applying it, but backend Markdown rendering and sanitization remain the authoritative display security boundary. The table picker also supports keyboard navigation, Enter/Space to insert, and Escape to cancel. In readonly mode, TipTap remains visible but the toolbar and picker are omitted.
 
 When the selection is inside an editable table, a separate contextual toolbar appears above that table. It adds and deletes rows or columns around the current cell, and can delete the table. The menu shares the same `ClientOnly`, selection-preservation, accessibility, readonly, and Markdown-serialization guarantees as the persistent toolbar. Column resizing remains out of scope.
 
-The toolbars intentionally do not include image upload, image import, a color picker, or a configurable plugin registry. Image workflows still need separate upload, authorization, and persistence contracts; link editing uses the existing Markdown link and backend sanitization contracts.
+The toolbars intentionally do not include remote image import, a color picker, or a configurable plugin registry. Use the configured image scene for uploads; remote-image import needs its own explicit authorization and persistence contract. Link editing uses the existing Markdown link and backend sanitization contracts.
 
 ### Editor-to-form flow
 
@@ -257,8 +269,8 @@ The exact HTML output is governed by the backend renderer and sanitizer. Do not 
 4. **Expecting task checkboxes to be interactive**
    - The backend transforms rendered task inputs into disabled checkboxes for display.
 
-5. **Expecting image upload or unrelated plugin workflows from the toolbar**
-   - The toolbar supports Markdown link editing through a URL prompt, but it does not supply image upload, remote image import, a color picker, or a configurable plugin registry.
+5. **Expecting remote image import or unrelated plugin workflows from the toolbar**
+   - The toolbar supports configured image-scene uploads and Markdown link editing through a URL prompt, but it does not supply remote image import, a color picker, or a configurable plugin registry.
 
 6. **Treating browser validation or presentation CSS as security**
    - The backend renderer/sanitizer is the relevant content boundary. External image availability, privacy, CSP, and application authorization remain separate concerns.

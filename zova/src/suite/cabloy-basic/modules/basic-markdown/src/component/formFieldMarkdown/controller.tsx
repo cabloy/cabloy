@@ -4,7 +4,8 @@ import type {
   IFormFieldComponentOptions,
   IFormFieldRenderContextPropsBucket,
 } from 'zova-module-a-form';
-import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
+import type { IResourceFormFieldOptionsBase, IImageSceneRecord } from 'zova-module-a-openapi';
+import type { IImageUploaderResult } from 'zova-module-basic-image';
 
 import { findParentNodeClosestToPos } from '@tiptap/core';
 import { Highlight } from '@tiptap/extension-highlight';
@@ -17,13 +18,17 @@ import { Editor } from '@tiptap/vue-3';
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
+const markdownImageScene = 'a-markdown:markdown';
+
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {
     'basic-markdown:formFieldMarkdown'?: IResourceFormFieldMarkdownOptions;
   }
 }
 
-export interface IResourceFormFieldMarkdownOptions extends IResourceFormFieldOptionsBase {}
+export interface IResourceFormFieldMarkdownOptions extends IResourceFormFieldOptionsBase {
+  imageScene?: keyof IImageSceneRecord | string;
+}
 
 export interface ControllerFormFieldMarkdownProps extends IFormFieldComponentOptions {
   options?: IResourceFormFieldMarkdownOptions;
@@ -78,6 +83,11 @@ interface IMarkdownTableDimensions {
   cols: number;
 }
 
+interface IMarkdownSelection {
+  from: number;
+  to: number;
+}
+
 @Controller()
 export class ControllerFormFieldMarkdown extends BeanControllerBase {
   static $propsDefault = {};
@@ -92,6 +102,9 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
   tablePickerOpen = false;
   tablePickerPreview: IMarkdownTableDimensions = { rows: 1, cols: 1 };
   tablePickerActive: IMarkdownTableDimensions = { rows: 1, cols: 1 };
+  imageScene = markdownImageScene;
+  imageUploadError?: string;
+  private _imageUploadSelection?: IMarkdownSelection;
   private _syncing = false;
   private _setValue?: (value: string, disableNotifyChanged?: boolean) => void;
   private _handleBlur?: () => void;
@@ -520,6 +533,59 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
     this._runCommand(editor => editor.chain().focus().deleteTable().run());
   }
 
+  public beginImageUpload(chooseFiles: () => void) {
+    const editor = this.editor;
+    if (this.readonly || !editor || !editor.isEditable) return;
+    this._imageUploadSelection = {
+      from: editor.state.selection.from,
+      to: editor.state.selection.to,
+    };
+    this.imageUploadError = undefined;
+    chooseFiles();
+  }
+
+  public handleImageUploaded(result: IImageUploaderResult) {
+    const editor = this.editor;
+    const selection = this._imageUploadSelection;
+    const src = this._resolveImageUrl(result.url);
+    if (!editor || this.readonly || !editor.isEditable || !selection || !src) {
+      this.imageUploadError = this.scope.locale.ImageUploadInvalidUrl();
+      return;
+    }
+    const { from, to } = selection;
+    if (from < 0 || to < from || to > editor.state.doc.content.size) {
+      this.imageUploadError = this.scope.locale.ImageUploadInvalidUrl();
+      return;
+    }
+    const chain = editor.chain().focus().setTextSelection({ from, to });
+    if (!chain.setImage({ src, ...(result.filename ? { alt: result.filename } : {}) }).run()) {
+      this.imageUploadError = this.scope.locale.ImageUploadFailed();
+      return;
+    }
+    this._imageUploadSelection = undefined;
+    this.imageUploadError = undefined;
+  }
+
+  public handleImageUploadError(error: Error) {
+    this.imageUploadError = error.message || this.scope.locale.ImageUploadFailed();
+  }
+
+  private _resolveImageUrl(url: string | undefined) {
+    if (!url) return undefined;
+    const resolved =
+      url.startsWith('/api/') && this.sys.config.api.baseURL
+        ? `${this.sys.config.api.baseURL.replace(/\/$/, '')}${url}`
+        : url;
+    try {
+      const parsed = new URL(resolved);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+        ? parsed.toString()
+        : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
   protected async __init__() {
     this.$controllerMounted(() => {
       this._tableToolbarViewportHandler = () => {
@@ -629,8 +695,11 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
   ) {
     const value = propsBucket.value ?? '';
     const readonly = propsBucket.readonly ?? false;
+    const options = propsBucket.options ?? {};
+    const imageScene = options.imageScene ?? markdownImageScene;
     if (this.value !== value) this.value = value;
     if (this.readonly !== readonly) this.readonly = readonly;
+    if (this.imageScene !== imageScene) this.imageScene = imageScene;
     if (this._setValue && this._handleBlur) return;
     this._setValue = (value, disableNotifyChanged) => {
       if (this.readonly) return;
