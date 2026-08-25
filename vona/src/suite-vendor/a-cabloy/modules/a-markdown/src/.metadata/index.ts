@@ -1,4 +1,30 @@
 // eslint-disable
+/** imageScene: begin */
+export * from '../bean/imageScene.markdown.ts';
+
+import { type IDecoratorImageSceneOptions } from 'vona-module-a-image';
+declare module 'vona-module-a-image' {
+
+    export interface IImageSceneRecord {
+      'a-markdown:markdown': IDecoratorImageSceneOptions;
+    }
+
+
+}
+declare module 'vona-module-a-markdown' {
+
+        export interface ImageSceneMarkdown {
+          /** @internal */
+          get scope(): ScopeModuleAMarkdown;
+        }
+
+          export interface ImageSceneMarkdown {
+            get $beanFullName(): 'a-markdown.imageScene.markdown';
+            get $onionName(): 'a-markdown:markdown';
+            get $onionOptions(): IDecoratorImageSceneOptions;
+          }
+}
+/** imageScene: end */
 /** bean: begin */
 export * from '../bean/bean.markdown.ts';
 

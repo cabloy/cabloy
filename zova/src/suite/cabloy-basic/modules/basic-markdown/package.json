@@ -34,13 +34,15 @@
   },
   "dependencies": {
     "@tiptap/core": "^3.30.0",
+    "@tiptap/extension-code-block-lowlight": "3.30.0",
     "@tiptap/extension-highlight": "^3.30.0",
     "@tiptap/extension-image": "^3.30.0",
     "@tiptap/extension-list": "^3.30.0",
     "@tiptap/extension-table": "^3.30.0",
     "@tiptap/markdown": "^3.30.0",
     "@tiptap/starter-kit": "^3.30.0",
-    "@tiptap/vue-3": "^3.30.0"
+    "@tiptap/vue-3": "^3.30.0",
+    "lowlight": "^3.3.0"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",
@@ -57,5 +59,11 @@
       "exports.\\..import"
     ]
   },
-  "title": "basic-markdown"
+  "title": "basic-markdown",
+  "zovaModule": {
+    "dependencies": {
+      "basic-app": "5.0.0",
+      "basic-image": "5.0.0"
+    }
+  }
 }

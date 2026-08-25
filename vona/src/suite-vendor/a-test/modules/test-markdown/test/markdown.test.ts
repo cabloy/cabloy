@@ -3,6 +3,22 @@ import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
 describe('markdown.test.ts', () => {
+  it('registers the default Markdown image scene', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const slice = app.bean.onion.imageScene.getOnionSlice('a-markdown:markdown');
+      assert.ok(slice);
+      assert.deepEqual(slice.beanOptions.options, {
+        public: true,
+        upload: {
+          maxSize: 5 * 1024 * 1024,
+          mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+          extensions: ['.jpg', '.jpeg', '.png', '.webp'],
+          multiple: false,
+        },
+      });
+    });
+  });
+
   it('renders supported Markdown structures', async () => {
     await app.bean.executor.mockCtx(async () => {
       const html = app.bean.markdown.renderHtml(`
