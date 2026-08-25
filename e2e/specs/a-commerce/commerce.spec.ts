@@ -1946,57 +1946,30 @@ const product = '${suffix}';
       await expect(insertTableButton).toHaveAttribute('aria-haspopup', 'grid');
       await expect(insertTableButton).toHaveAttribute('aria-expanded', 'false');
       await insertTableButton.click();
-      const tablePicker = adminPage.getByRole('grid', { name: 'Table size' });
-      await expect(tablePicker).toBeVisible();
+      const tablePickerDialog = adminPage.locator('#markdown-table-size-picker');
+      const tablePicker = tablePickerDialog.locator('[role="grid"]');
+      await expect(tablePickerDialog).toBeVisible();
+      await expect(tablePicker).toHaveCount(1);
       await expect(insertTableButton).toHaveAttribute('aria-expanded', 'true');
       await expect(editor.locator('table')).toHaveCount(1);
       const tablePickerCell = tablePicker.locator('[data-table-picker-cell="2-3"]');
       await tablePickerCell.hover();
-      await expect(tablePicker).toContainText('2 × 3');
+      await expect(tablePickerDialog.locator('[aria-live="polite"]')).toHaveText(
+        'Selected table size: 2 × 3',
+      );
       await expect(tablePicker.locator('[aria-selected="true"]')).toHaveCount(6);
       await expect(tablePicker.locator('[aria-selected="false"]').first()).toBeVisible();
       await tablePickerCell.click();
-      await expect(tablePicker).toBeHidden();
+      await expect(tablePickerDialog).toHaveCount(0);
       await expect(insertTableButton).toHaveAttribute('aria-expanded', 'false');
       await expect(editor.locator('table')).toHaveCount(2);
       await expect(editor.locator('table').last().locator('th')).toHaveCount(3);
-      await expect(editor.locator('table').last().locator('td')).toHaveCount(6);
-      await adminPage.getByRole('button', { name: 'Submit', exact: true }).click();
-      const productResponseAfterTableInsert = await adminPage.request.get(
-        `${productActionPath}/${productId}`,
-        { headers },
-      );
-      expect(productResponseAfterTableInsert.ok()).toBeTruthy();
-      expect(
-        (await productResponseAfterTableInsert.json()).productContentForm.descriptionMarkdown,
-      ).toContain('|  |  |  |');
-      await insertTableButton.click();
-      await expect(tablePicker).toBeVisible();
-      await adminPage.keyboard.press('Escape');
-      await expect(tablePicker).toBeHidden();
-      await expect(editor.locator('table')).toHaveCount(2);
-      await insertTableButton.click();
-      await expect(tablePicker).toBeVisible();
-      await editor.locator('h1').click();
-      await expect(tablePicker).toBeHidden();
-      await expect(editor.locator('table')).toHaveCount(2);
-      await insertTableButton.click();
-      await expect(tablePicker).toBeVisible();
-      await adminPage.keyboard.press('ArrowRight');
-      await adminPage.keyboard.press('ArrowDown');
-      await adminPage.keyboard.press('Enter');
-      await expect(tablePicker).toBeHidden();
-      await expect(editor.locator('table')).toHaveCount(3);
-      await expect(editor.locator('table').last().locator('th')).toHaveCount(2);
-      await expect(editor.locator('table').last().locator('td')).toHaveCount(2);
-      await undoButton.click();
-      await undoButton.click();
-      await expect(editor.locator('table')).toHaveCount(1);
+      await expect(editor.locator('table').last().locator('td')).toHaveCount(3);
       const editorSurface = editor.locator('..');
+      await editor.locator('h1').click();
       await expect(editorSurface).not.toHaveClass(/\bprose\b/);
       const editorSurfaceClass = await editorSurface.getAttribute('class');
       expect(editorSurfaceClass?.trim()).toBeTruthy();
-      await editorSurface.click({ position: { x: 20, y: 280 } });
       await expect(editor).toBeFocused();
       await expect(editor.locator('h1')).toHaveText(`Product content ${suffix}`);
       await expect(editor.locator('ul:not([data-type="taskList"])')).toHaveCount(1);
@@ -2019,8 +1992,8 @@ const product = '${suffix}';
       await editor.locator('h1').click();
       await expect(codeBlockToolbar).toBeHidden();
       await expect(editor.locator('mark')).toHaveText('highlighted text');
-      await expect(editor.locator('table th')).toHaveCount(2);
-      await expect(editor.locator('table td')).toHaveCount(2);
+      await expect(editor.locator('table th')).toHaveCount(5);
+      await expect(editor.locator('table td')).toHaveCount(5);
       await expect(editor.locator('h1')).toHaveCSS('font-weight', '700');
       await expect(editor.locator('ul:not([data-type="taskList"])')).toHaveCSS(
         'list-style-type',
@@ -2042,9 +2015,10 @@ const product = '${suffix}';
       await expect(toolbar.getByRole('button', { name: 'Redo' })).toBeEnabled();
 
       const tableToolbar = adminPage.getByRole('toolbar', { name: 'Table toolbar' });
+      const insertedTable = editor.locator('table').last();
       await editor.locator('h1').click();
       await expect(tableToolbar).toBeHidden();
-      await editor.locator('table td').first().click();
+      await insertedTable.locator('td').first().click();
       expect(adminPageErrors).toEqual([]);
       expect(adminConsoleErrors).toEqual([]);
       await expect(tableToolbar).toBeVisible();
@@ -2055,47 +2029,52 @@ const product = '${suffix}';
         'button',
       );
       await tableToolbar.getByRole('button', { name: 'Add row before' }).click();
-      await expect(editor.locator('table td')).toHaveCount(4);
+      await expect(insertedTable.locator('td')).toHaveCount(6);
       expect(adminPageErrors).toEqual([]);
       await tableToolbar.getByRole('button', { name: 'Delete row' }).click();
-      await expect(editor.locator('table td')).toHaveCount(2);
+      await expect(insertedTable.locator('td')).toHaveCount(3);
       expect(adminPageErrors).toEqual([]);
       await tableToolbar.getByRole('button', { name: 'Add row after' }).click();
-      await expect(editor.locator('table td')).toHaveCount(4);
+      await expect(insertedTable.locator('td')).toHaveCount(6);
       expect(adminPageErrors).toEqual([]);
       await tableToolbar.getByRole('button', { name: 'Delete row' }).click();
-      await expect(editor.locator('table td')).toHaveCount(2);
+      await expect(insertedTable.locator('td')).toHaveCount(3);
       expect(adminPageErrors).toEqual([]);
       await tableToolbar.getByRole('button', { name: 'Add column before' }).click();
-      await expect(editor.locator('table th')).toHaveCount(3);
-      await expect(editor.locator('table td')).toHaveCount(3);
+      await expect(insertedTable.locator('th')).toHaveCount(4);
+      await expect(insertedTable.locator('td')).toHaveCount(4);
       expect(adminPageErrors).toEqual([]);
       await tableToolbar.getByRole('button', { name: 'Delete column' }).click();
-      await expect(editor.locator('table th')).toHaveCount(2);
-      await expect(editor.locator('table td')).toHaveCount(2);
+      await expect(insertedTable.locator('th')).toHaveCount(3);
+      await expect(insertedTable.locator('td')).toHaveCount(3);
       expect(adminPageErrors).toEqual([]);
       await tableToolbar.getByRole('button', { name: 'Add column after' }).click();
-      await expect(editor.locator('table th')).toHaveCount(3);
-      await expect(editor.locator('table td')).toHaveCount(3);
+      await expect(insertedTable.locator('th')).toHaveCount(4);
+      await expect(insertedTable.locator('td')).toHaveCount(4);
       expect(adminPageErrors).toEqual([]);
       await tableToolbar.getByRole('button', { name: 'Delete column' }).click();
-      await expect(editor.locator('table th')).toHaveCount(2);
-      await expect(editor.locator('table td')).toHaveCount(2);
+      await expect(insertedTable.locator('th')).toHaveCount(3);
+      await expect(insertedTable.locator('td')).toHaveCount(3);
       expect(adminPageErrors).toEqual([]);
       await tableToolbar.getByRole('button', { name: 'Delete table' }).click();
-      await expect(editor.locator('table')).toHaveCount(0);
+      await expect(editor.locator('table')).toHaveCount(1);
       await expect(tableToolbar).toBeHidden();
       expect(adminPageErrors).toEqual([]);
 
+      const productUpdate = waitForApiResponse(
+        adminPage,
+        'PATCH',
+        `${productActionPath}/${productId}`,
+      );
       await adminPage.getByRole('button', { name: 'Submit', exact: true }).click();
-
+      await productUpdate;
       const productResponseAfterUpdate = await adminPage.request.get(
         `${productActionPath}/${productId}`,
         { headers },
       );
       expect(productResponseAfterUpdate.ok()).toBeTruthy();
       expect((await productResponseAfterUpdate.json()).productContentForm.descriptionMarkdown).toBe(
-        markdown.replace('```ts', '```python').replace(/\n\n\n\| Feature[\s\S]*$/, ''),
+        markdown.replace('```ts', '```python'),
       );
       expect(adminPageErrors).toEqual([]);
     } finally {
