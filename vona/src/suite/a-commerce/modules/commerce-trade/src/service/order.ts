@@ -880,6 +880,11 @@ export class ServiceOrder extends BeanBase {
     };
   }
 
+  private _providerSupportsRefundQuery(providerName: string, clientName: string) {
+    const { provider } = this.bean.payProvider.resolveByName(providerName, clientName);
+    return typeof provider.queryRefund === 'function';
+  }
+
   private _refundRecoveryView(
     linked: Awaited<ReturnType<typeof this.refundRecoveryLinkage>>,
   ): DtoRefundRecoveryView {
@@ -893,7 +898,14 @@ export class ServiceOrder extends BeanBase {
       hasUnresolvedReconciliation,
     } = linked;
     const canQuery = Boolean(
-      refundOperation.providerRefundId && providerOperation.state !== 'succeeded',
+      refundOperation.providerRefundId &&
+      providerOperation.state !== 'succeeded' &&
+      this._providerSupportsRefundQuery(paymentSession.providerName, paymentSession.clientName),
+    );
+    const canAwaitWebhook = Boolean(
+      refundOperation.providerRefundId &&
+      providerOperation.state !== 'succeeded' &&
+      !this._providerSupportsRefundQuery(paymentSession.providerName, paymentSession.clientName),
     );
     const canRetry =
       !refundOperation.providerRefundId &&
@@ -909,21 +921,25 @@ export class ServiceOrder extends BeanBase {
       providerOperation.errorCode === 'refund_submission_outcome_unknown' &&
       Boolean(providerOperation.submittedAt) &&
       !hasUnresolvedReconciliation;
-    const recoveryDisposition = canQuery
-      ? 'query_only'
-      : canRetry
-        ? 'retry_same_key'
-        : canReconcile
-          ? 'reconcile_only'
-          : 'none';
+    const recoveryDisposition = canAwaitWebhook
+      ? 'await_webhook'
+      : canQuery
+        ? 'query_only'
+        : canRetry
+          ? 'retry_same_key'
+          : canReconcile
+            ? 'reconcile_only'
+            : 'none';
     const recoveryMessage =
-      recoveryDisposition === 'query_only'
-        ? 'A verified provider refund identifier is available. Reconcile without resubmitting.'
-        : recoveryDisposition === 'reconcile_only'
-          ? 'Provider refund outcome is unknown. Record reconciliation before considering a retry.'
-          : recoveryDisposition === 'retry_same_key'
-            ? 'Reconciliation was unresolved. A single acknowledged retry may reuse the original provider request.'
-            : 'No provider refund submission is available. Do not create or manually declare a replacement refund.';
+      recoveryDisposition === 'await_webhook'
+        ? 'A provider refund identifier is available. Wait for the verified provider webhook; do not resubmit or reconcile by querying.'
+        : recoveryDisposition === 'query_only'
+          ? 'A verified provider refund identifier is available. Reconcile without resubmitting.'
+          : recoveryDisposition === 'reconcile_only'
+            ? 'Provider refund outcome is unknown. Record reconciliation before considering a retry.'
+            : recoveryDisposition === 'retry_same_key'
+              ? 'Reconciliation was unresolved. A single acknowledged retry may reuse the original provider request.'
+              : 'No provider refund submission is available. Do not create or manually declare a replacement refund.';
     return {
       orderId: order.id,
       refundRequestId: refundRequest.id,

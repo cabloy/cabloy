@@ -17,6 +17,19 @@ export type ApiApiPayMockMockPaymentcompleteRequestBody =
 export type ApiApiPayMockMockPaymentcompleteResponseBody =
   paths[ApiApiPayMockMockPaymentcompletePath][ApiApiPayMockMockPaymentcompleteMethod]['responses']['200']['content']['application/json']['data'];
 
+/** PayMockMockPayment_completeRefund */
+export const ApiApiPayMockMockPaymentcompleteRefundPath =
+  '/api/pay/mock/payment-session/refund-operation/{id}/complete';
+export type ApiApiPayMockMockPaymentcompleteRefundPath =
+  '/api/pay/mock/payment-session/refund-operation/{id}/complete';
+export type ApiApiPayMockMockPaymentcompleteRefundMethod = 'post';
+export type ApiApiPayMockMockPaymentcompleteRefundRequestParams =
+  paths[ApiApiPayMockMockPaymentcompleteRefundPath][ApiApiPayMockMockPaymentcompleteRefundMethod]['parameters']['path'];
+export type ApiApiPayMockMockPaymentcompleteRefundRequestBody =
+  components['schemas']['pay-mock.dto.mockRefundComplete'];
+export type ApiApiPayMockMockPaymentcompleteRefundResponseBody =
+  paths[ApiApiPayMockMockPaymentcompleteRefundPath][ApiApiPayMockMockPaymentcompleteRefundMethod]['responses']['200']['content']['application/json']['data'];
+
 @Api()
 export class ApiPayMockMockPayment extends BeanApiBase {
   complete(
@@ -27,6 +40,19 @@ export class ApiPayMockMockPayment extends BeanApiBase {
   ) {
     return this.$fetch.post<any, ApiApiPayMockMockPaymentcompleteResponseBody>(
       this.$pathTranslate(ApiApiPayMockMockPaymentcompletePath, options.params),
+      body,
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
+  completeRefund(
+    body: ApiApiPayMockMockPaymentcompleteRefundRequestBody,
+    options: {
+      params: ApiApiPayMockMockPaymentcompleteRefundRequestParams;
+    } & IApiActionOptions,
+  ) {
+    return this.$fetch.post<any, ApiApiPayMockMockPaymentcompleteRefundResponseBody>(
+      this.$pathTranslate(ApiApiPayMockMockPaymentcompleteRefundPath, options.params),
       body,
       this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
     );

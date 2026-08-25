@@ -88,6 +88,7 @@ export class ModelOrder extends BeanModelBase {
       },
       meta: {
         disableSuspenseOnInit: true,
+        disableErrorEffect: true,
       },
     });
   }

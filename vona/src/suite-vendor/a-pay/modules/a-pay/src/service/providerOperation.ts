@@ -302,6 +302,29 @@ export class ServiceProviderOperation extends BeanBase {
       operation.kind === 'refund' && operation.refundOperationId
         ? await this.scope.model.refundOperation.getByIdForUpdate(operation.refundOperationId)
         : undefined;
+    if (operation.kind === 'refund' && refund?.providerRefundId) {
+      const session = await this.scope.model.paymentSession.getById(operation.paymentSessionId);
+      if (!session) this.app.throw(404, 'payment session not found');
+      const { provider } = this.bean.payProvider.resolveByName(
+        session.providerName,
+        session.clientName,
+      );
+      if (!provider.queryRefund) {
+        if (operation.nextAttemptAt) {
+          await this.scope.model.providerOperation.updateById(operation.id, {
+            nextAttemptAt: undefined,
+          });
+        }
+        return undefined;
+      }
+    }
+    if (
+      operation.kind === 'refund' &&
+      refund &&
+      ['succeeded', 'failed', 'cancelled'].includes(refund.state)
+    ) {
+      return undefined;
+    }
     if (
       operation.kind === 'refund' &&
       operation.submittedAt &&

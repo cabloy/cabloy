@@ -3133,7 +3133,12 @@ export interface components {
       /** Format: date-time */
       finalizedAt?: Date;
       /** @enum {string} */
-      recoveryDisposition: 'none' | 'reconcile_only' | 'query_only' | 'retry_same_key';
+      recoveryDisposition:
+        | 'none'
+        | 'await_webhook'
+        | 'reconcile_only'
+        | 'query_only'
+        | 'retry_same_key';
       recoveryMessage: string;
     };
     'commerce-trade.dto.refundRecoveryAction': {

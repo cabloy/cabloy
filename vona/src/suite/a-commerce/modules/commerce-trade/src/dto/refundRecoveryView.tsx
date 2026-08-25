@@ -62,8 +62,13 @@ export class DtoRefundRecoveryView {
   @Api.field(v.optional())
   finalizedAt?: Date;
 
-  @Api.field(z.enum(['none', 'reconcile_only', 'query_only', 'retry_same_key']))
-  recoveryDisposition: 'none' | 'reconcile_only' | 'query_only' | 'retry_same_key';
+  @Api.field(z.enum(['none', 'await_webhook', 'reconcile_only', 'query_only', 'retry_same_key']))
+  recoveryDisposition:
+    | 'none'
+    | 'await_webhook'
+    | 'reconcile_only'
+    | 'query_only'
+    | 'retry_same_key';
 
   @Api.field(v.required())
   recoveryMessage: string;

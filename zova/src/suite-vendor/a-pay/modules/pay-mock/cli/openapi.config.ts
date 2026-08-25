@@ -3,7 +3,7 @@ import type { ZovaOpenapiConfigModule } from 'zova-openapi';
 export default function (): ZovaOpenapiConfigModule {
   return {
     operations: {
-      match: ['PayMockMockPayment_complete'],
+      match: ['PayMockMockPayment_complete', 'PayMockMockPayment_completeRefund'],
     },
   };
 }

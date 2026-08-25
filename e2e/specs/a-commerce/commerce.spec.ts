@@ -1204,6 +1204,7 @@ test(
       const adminContext = await browser.newContext();
       const adminPage = await adminContext.newPage();
       const adminPageErrors = collectPageErrors(adminPage);
+      const adminConsoleErrors = collectConsoleErrors(adminPage);
       try {
         await adminPage.setViewportSize({ width: 1440, height: 900 });
         await login(adminPage, '/commerce-admin/', 'admin', '123456', 'commerceAdmin');
@@ -1216,28 +1217,87 @@ test(
         );
         const orderRow = await getAdminOrderRow(adminPage, checkout.orderId);
         await expect(orderRow).toBeVisible();
-        await orderRow.getByPlaceholder('Decision reason').fill('E2E approval');
-        await orderRow.getByRole('checkbox').check();
+        await expect(
+          orderRow.getByRole('button', { name: 'Review refund', exact: true }),
+        ).toBeVisible();
+        await expect(
+          orderRow.getByRole('button', { name: 'Approve refund', exact: true }),
+        ).toHaveCount(0);
+        await expect(
+          orderRow.getByRole('button', { name: 'Reject refund', exact: true }),
+        ).toHaveCount(0);
+        await orderRow.getByRole('button', { name: 'Review refund', exact: true }).click();
+        const refundDecisionTitle = adminPage.getByRole('heading', { name: 'Refund decision' });
+        await expect(refundDecisionTitle).toBeVisible();
+        await adminPage.getByPlaceholder('Decision reason').fill('E2E approval');
+        await adminPage.getByRole('checkbox', { name: 'Confirm' }).check();
         const approveResponse = waitForApiResponse(
           adminPage,
           'POST',
           `/api/commerce/trade/order/${checkout.orderId}/approveRefund`,
         );
-        await orderRow.getByRole('button', { name: 'Approve refund', exact: true }).click();
+        await adminPage.getByRole('button', { name: 'Approve refund', exact: true }).click();
         expect((await approveResponse).ok()).toBeTruthy();
+        await expect(refundDecisionTitle).toHaveCount(0);
         await expect(orderRow).toContainText('Refund approved');
+        await expect(
+          orderRow.getByRole('button', { name: 'Execute refund', exact: true }),
+        ).toHaveCount(1);
+        await expect(
+          orderRow.getByRole('button', { name: 'Inspect refund recovery', exact: true }),
+        ).toHaveCount(0);
+        await expect(orderRow.getByRole('checkbox')).toHaveCount(0);
+        await orderRow.getByRole('button', { name: 'Execute refund', exact: true }).click();
+        const refundExecutionTitle = adminPage.getByRole('heading', { name: 'Refund execution' });
+        await expect(refundExecutionTitle).toBeVisible();
+        const refundExecutionDialog = adminPage
+          .locator('div.card')
+          .filter({ has: refundExecutionTitle });
+        const executionButton = refundExecutionDialog.getByRole('button', {
+          name: 'Execute refund',
+          exact: true,
+        });
+        await expect(executionButton).toBeDisabled();
+        const unavailableRecoveryResponse = waitForApiResponse(
+          adminPage,
+          'GET',
+          `/api/commerce/trade/order/${checkout.orderId}/refundRecovery`,
+        );
+        await refundExecutionDialog
+          .getByRole('button', { name: 'Inspect refund recovery', exact: true })
+          .click();
+        expect((await unavailableRecoveryResponse).status()).toBe(404);
+        await expect(
+          refundExecutionDialog.getByText(
+            'Refund recovery is not available yet. Execute the refund first to create a provider refund submission.',
+          ),
+        ).toBeVisible();
+        await expect(refundExecutionDialog.getByText(/Provider operation:/)).toHaveCount(0);
+        await expect(refundExecutionDialog.getByPlaceholder('Recovery reason')).toHaveCount(0);
+        await expect(
+          refundExecutionDialog.getByRole('button', {
+            name: 'Reconcile provider refund',
+            exact: true,
+          }),
+        ).toHaveCount(0);
+        await expect(
+          refundExecutionDialog.getByRole('button', { name: 'Retry refund', exact: true }),
+        ).toHaveCount(0);
+        expect(
+          adminConsoleErrors.filter(error =>
+            /refund recovery is not available|AxiosError/i.test(error),
+          ),
+        ).toEqual([]);
+        await refundExecutionDialog.getByRole('checkbox', { name: 'Confirm' }).check();
         const executeResponse = waitForApiResponse(
           adminPage,
           'POST',
           `/api/commerce/trade/order/${checkout.orderId}/executeRefund`,
         );
-        await orderRow.getByRole('button', { name: 'Execute refund', exact: true }).click();
+        await executionButton.click();
         const executeResponseValue = await executeResponse;
         expect(executeResponseValue.ok()).toBeTruthy();
         const executeResult = (await executeResponseValue.json()).data;
-        const authorization = executeResponseValue.request().headers()['authorization'];
-        expect(authorization).toMatch(/^Bearer /);
-        const authHeaders = { Authorization: authorization };
         expectTableIdentity(executeResult.refundAttemptId);
         expectTableIdentity(executeResult.refundOperationId);
         expect([
@@ -1245,11 +1305,39 @@ test(
           executeResult.refundState,
           executeResult.refundAttemptState,
         ]).toEqual(['refund_approved', 'approved', 'created']);
-        const completeRefundResponse = await adminPage.request.post(
-          `/api/pay/mock/payment-session/refund-operation/${executeResult.refundOperationId}/complete`,
-          { headers: authHeaders, data: { outcome: 'succeeded' } },
+        await expect(refundExecutionTitle).toHaveCount(0);
+        await orderRow.getByRole('button', { name: 'Execute refund', exact: true }).click();
+        await expect(refundExecutionTitle).toBeVisible();
+        const recoveryResponse = waitForApiResponse(
+          adminPage,
+          'GET',
+          `/api/commerce/trade/order/${checkout.orderId}/refundRecovery`,
         );
-        expect(completeRefundResponse.ok()).toBeTruthy();
+        await adminPage
+          .getByRole('button', { name: 'Inspect refund recovery', exact: true })
+          .click();
+        expect((await recoveryResponse).ok()).toBeTruthy();
+        await expect(adminPage.getByText(/Provider operation:/)).toBeVisible();
+        await expect(
+          adminPage.getByText(
+            'A provider refund identifier is available. Wait for the verified provider webhook; do not resubmit or reconcile by querying.',
+          ),
+        ).toBeVisible();
+        await expect(
+          refundExecutionDialog.getByRole('button', {
+            name: 'Reconcile provider refund',
+            exact: true,
+          }),
+        ).toHaveCount(0);
+        const completeRefundResponse = waitForApiResponse(
+          adminPage,
+          'POST',
+          `/api/pay/mock/payment-session/refund-operation/${executeResult.refundOperationId}/complete`,
+        );
+        await refundExecutionDialog
+          .getByRole('button', { name: 'Complete mock refund', exact: true })
+          .click();
+        expect((await completeRefundResponse).ok()).toBeTruthy();
         await expect
           .poll(
             async () => {

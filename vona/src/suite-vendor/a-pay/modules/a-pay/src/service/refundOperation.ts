@@ -203,6 +203,13 @@ export class ServiceRefundOperation extends BeanBase {
         amountMinor: refund.amountMinor,
         currency: refund.currency,
       });
+      const providerOperation = await this.scope.model.providerOperation.getForUpdate({
+        refundOperationId: refund.id,
+        kind: 'refund',
+      });
+      if (providerOperation) {
+        await this._completeProviderOperation(providerOperation, options.providerRefundId);
+      }
     }
     return {
       refund: {
