@@ -3,6 +3,9 @@ import { defineConfig } from 'oxlint';
 
 export default defineConfig(
   oxcLintConfigVue({
+    rules: {
+      '@stylistic/jsx-curly-newline': 'off',
+    },
     ignorePatterns: [
       // root original
       '**/.claude',
