@@ -712,7 +712,7 @@ test(
       const orderHtml = await orderResponse.text();
       expect(orderHtml.toLowerCase()).not.toContain('data-zova-hydrated');
       expect(orderHtml).toContain(`Order #${checkout.orderId}`);
-      expect(orderHtml).toContain('paid · $45.99');
+      expect(orderHtml).toContain('Paid · $45.99');
       expect(orderHtml).toContain('USD');
       expect(orderHtml).toContain(fixture.recipientName);
       expect(orderHtml).toContain(fixture.addressLine1);
@@ -1199,7 +1199,7 @@ test(
       await page.getByPlaceholder('Reason for refund').fill('E2E refund request');
       await page.getByRole('button', { name: 'Request refund', exact: true }).click();
       expect((await requestResponse).ok()).toBeTruthy();
-      await expect(page.getByText('refund_requested · $45.99')).toBeVisible();
+      await expect(page.getByText('Refund requested · $45.99')).toBeVisible();
 
       const adminContext = await browser.newContext();
       const adminPage = await adminContext.newPage();
@@ -1230,7 +1230,7 @@ test(
         const refundDecisionTitle = adminPage.getByRole('heading', { name: 'Refund decision' });
         await expect(refundDecisionTitle).toBeVisible();
         await adminPage.getByPlaceholder('Decision reason').fill('E2E approval');
-        await adminPage.getByRole('checkbox', { name: 'Confirm' }).check();
+        await adminPage.locator('input[name="decisionConfirmed"]').check();
         const approveResponse = waitForApiResponse(
           adminPage,
           'POST',
@@ -1288,7 +1288,7 @@ test(
             /refund recovery is not available|AxiosError/i.test(error),
           ),
         ).toEqual([]);
-        await refundExecutionDialog.getByRole('checkbox', { name: 'Confirm' }).check();
+        await refundExecutionDialog.locator('input[name="executionConfirmed"]').check();
         const executeResponse = waitForApiResponse(
           adminPage,
           'POST',
