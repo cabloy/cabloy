@@ -452,7 +452,7 @@ const _configDefault: OxlintConfig = {
         propElementValues: 'always',
       },
     ],
-    '@stylistic/jsx-curly-newline': 'error',
+    '@stylistic/jsx-curly-newline': 'off',
     '@stylistic/jsx-curly-spacing': ['error', 'never'],
     '@stylistic/jsx-equals-spacing': 'error',
     '@stylistic/jsx-first-prop-new-line': 'error',
