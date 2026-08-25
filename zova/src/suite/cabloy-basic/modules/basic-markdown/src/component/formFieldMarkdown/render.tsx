@@ -45,7 +45,8 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
       <div
         id="markdown-table-size-picker"
         ref={ref => {
-          this.setTablePickerRoot(ref as HTMLDivElement | null);
+          if (this.ctx.disposed) return;
+          this.setTablePickerRoot?.(ref as HTMLDivElement | null);
         }}
         class="absolute right-0 top-full z-20 mt-1 rounded-box border border-base-300 bg-base-100 p-3 shadow-lg"
         role="dialog"
@@ -133,7 +134,8 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
             this.toggleTablePicker();
           }}
           ref={ref => {
-            this.setTablePickerTrigger(ref as HTMLButtonElement | null);
+            if (this.ctx.disposed) return;
+            this.setTablePickerTrigger?.(ref as HTMLButtonElement | null);
           }}
         >
           <ZIcon name=":editor:grid-on" width={18} height={18}></ZIcon>
@@ -279,7 +281,8 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
       <div
         class="pointer-events-none absolute inset-0 z-10"
         ref={ref => {
-          this.setTableToolbarHost(ref as HTMLDivElement | null);
+          if (this.ctx.disposed) return;
+          this.setTableToolbarHost?.(ref as HTMLDivElement | null);
         }}
       >
         {position && (
