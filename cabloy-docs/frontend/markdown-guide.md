@@ -114,7 +114,7 @@ This is a Markdown editor integrated with `ZFormField`; it is not a generic HTML
 The Controller creates the browser-dependent TipTap editor in `$controllerMounted`. Its extension set includes:
 
 - Markdown
-- StarterKit
+- StarterKit, with its plain code-block node replaced by `CodeBlockLowlight`
 - nested `TaskList` and `TaskItem`
 - Image
 - TableKit
@@ -138,7 +138,7 @@ When the field is editable, the same `ClientOnly` boundary renders a toolbar abo
 - paragraph and heading levels 1–6;
 - bold, italic, strike-through, inline code, and highlight;
 - bullet, ordered, and task lists;
-- blockquotes, code blocks, and horizontal rules;
+- blockquotes, code blocks, code-block language selection with in-editor syntax highlighting, and horizontal rules;
 - applying, updating, and removing links on the current text selection through a URL prompt;
 - uploading one image through the configured image scene and inserting the finalized image at the preserved selection;
 - inserting a table through an 8 × 8 floating size picker. Moving over a cell previews the rectangle from the top-left cell to that cell (for example, 2 × 3); clicking inserts that many rows and columns. Inserted tables retain a header row.
@@ -146,6 +146,8 @@ When the field is editable, the same `ClientOnly` boundary renders a toolbar abo
 The toolbar uses native buttons and a labelled block-style select, preserves the current editor selection while buttons are clicked, exposes active and unavailable states accessibly, and runs commands on the existing TipTap editor. Image upload delegates policy loading, validation, ordinary/direct transfer, and finalization to `basic-image`. Only a finalized URL using `http` or `https` is inserted, with the source filename as image alt text when available. The image node serializes through `getMarkdown()` just like every other editor command; it does not introduce an HTML value path. To add a link, select text and enter a URL; when the cursor is in an existing link, the same action edits its URL. Submitting an empty URL removes an existing link, while cancelling leaves the document unchanged. TipTap validates the URL before applying it, but backend Markdown rendering and sanitization remain the authoritative display security boundary. The table picker also supports keyboard navigation, Enter/Space to insert, and Escape to cancel. In readonly mode, TipTap remains visible but the toolbar and picker are omitted.
 
 When the selection is inside an editable table, a separate contextual toolbar appears above that table. It adds and deletes rows or columns around the current cell, and can delete the table. The menu shares the same `ClientOnly`, selection-preservation, accessibility, readonly, and Markdown-serialization guarantees as the persistent toolbar. Column resizing remains out of scope.
+
+The code-block language select is enabled only while the cursor is inside a code block. It supports Bash, CSS, C++, C#, Go, HTML, Java, JavaScript, JSON, Markdown, PHP, Python, Rust, Shell, SQL, and TypeScript, plus Plain text. Changing a language updates the fenced-code information string through TipTap's document attribute and persists as Markdown; lowlight token spans are an editor-only presentation detail and are never submitted as HTML. Existing unknown fence languages remain unchanged until the author explicitly selects a supported language or Plain text.
 
 The toolbars intentionally do not include remote image import, a color picker, or a configurable plugin registry. Use the configured image scene for uploads; remote-image import needs its own explicit authorization and persistence contract. Link editing uses the existing Markdown link and backend sanitization contracts.
 
@@ -253,7 +255,7 @@ const ready = true;
 ![Product image](https://example.com/product.png)
 ````
 
-The exact HTML output is governed by the backend renderer and sanitizer. Do not infer support for arbitrary raw HTML, iframe embeds, inline styles, `data:` URLs, or custom classes from the presence of a TipTap extension.
+The interactive editor decorates supported code blocks with lowlight token spans for syntax highlighting. The backend projection continues to render semantic `<code class="language-*">` output from Markdown; it does not persist editor token spans. Do not infer support for arbitrary raw HTML, iframe embeds, inline styles, `data:` URLs, or custom classes from the presence of a TipTap extension.
 
 ## Common mistakes
 

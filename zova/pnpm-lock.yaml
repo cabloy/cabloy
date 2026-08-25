@@ -1999,6 +1999,9 @@ importers:
       '@tiptap/core':
         specifier: ^3.30.0
         version: 3.30.0(@tiptap/pm@3.30.0)
+      '@tiptap/extension-code-block-lowlight':
+        specifier: 3.30.0
+        version: 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/extension-code-block@3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0)(highlight.js@11.11.2)(lowlight@3.3.0)
       '@tiptap/extension-highlight':
         specifier: ^3.30.0
         version: 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))
@@ -2020,6 +2023,9 @@ importers:
       '@tiptap/vue-3':
         specifier: ^3.30.0
         version: 3.30.0(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0)(vue@3.5.38(typescript@5.9.3))
+      lowlight:
+        specifier: ^3.3.0
+        version: 3.3.0
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -4368,6 +4374,15 @@ packages:
     peerDependencies:
       '@tiptap/extension-list': 3.30.0
 
+  '@tiptap/extension-code-block-lowlight@3.30.0':
+    resolution: {integrity: sha512-SDWMmqBe38o1ORmpx2rEzuxjbmUr50/XqMtwzaE/k6jHQ8tovIcTpAEbXEBj0hSDFdeZaFZnuOGVX85Y6SHQyQ==}
+    peerDependencies:
+      '@tiptap/core': 3.30.0
+      '@tiptap/extension-code-block': 3.30.0
+      '@tiptap/pm': 3.30.0
+      highlight.js: ^11
+      lowlight: ^2 || ^3
+
   '@tiptap/extension-code-block@3.30.0':
     resolution: {integrity: sha512-m0KcCiUijaHNqTQCw9ydKRAzOrWxL0MogQu2WnTrbSrtCBwSiRvbG3ocqv5L3OfkoqnezeZCSg9JRwN+QBLP4Q==}
     peerDependencies:
@@ -4567,6 +4582,9 @@ packages:
 
   '@types/har-format@1.2.16':
     resolution: {integrity: sha512-fluxdy7ryD3MV6h8pTfTYpy/xQzCFC7m89nOH9y94cNqJ1mDIDPut7MnRHI3F6qRmh/cT2fUjG1MLdCNb4hE9A==}
+
+  '@types/hast@3.0.5':
+    resolution: {integrity: sha512-rp/ezSWaD1m44dPKICGhiskI13nVr7qTloFwDa/IYkhhf5nzwP+zIQcIJh3WIFSBOy/H1PzB40jPjMDksN4F+g==}
 
   '@types/http-errors@2.0.5':
     resolution: {integrity: sha512-r8Tayk8HJnX0FztbZN7oVqGccWgw98T/0neJphO91KkmOzug1KkofZURD4UaD5uH8AqcFLfdPErnBod0u71/qg==}
@@ -6106,6 +6124,10 @@ packages:
   header-case@2.0.4:
     resolution: {integrity: sha512-H/vuk5TEEVZwrR0lp2zed9OCo1uAILMlx0JEMgC26rzyJJ3N1v6XkwHHXJQdR2doSjcGPM6OKPYoJgf0plJ11Q==}
 
+  highlight.js@11.11.2:
+    resolution: {integrity: sha512-oaXMACAU0kzOMXBjWpNcX+vlwSBCIAiZ9BHa7gA15NOTtT2L/l8OSZDuqS2XppOhZBPJ7hm4o8ep2kyuip2uEQ==}
+    engines: {node: '>=12.0.0'}
+
   hono@4.12.27:
     resolution: {integrity: sha512-1yrb/+w6HWQJrUCLkJ2IF5jNIPvvFkblV5RNOYl6bV+OA6p9GLcMpHFFGTosSvHvcAUibuUukRqhlYI4z32C7Q==}
     engines: {node: '>=16.9.0'}
@@ -6638,6 +6660,9 @@ packages:
 
   lower-case@2.0.2:
     resolution: {integrity: sha512-7fm3l3NAF9WfN6W3JOmf5drwpVqX78JtoGJ3A6W0a6ZnldM41w2fV5D490psKFTpMds8TJse/eHLFFsNHHjHgg==}
+
+  lowlight@3.3.0:
+    resolution: {integrity: sha512-0JNhgFoPvP6U6lE/UdVsSq99tn6DhjjpAj5MxG49ewd2mOBVtwWYIT8ClyABhq198aXXODMU6Ox8DrGy/CpTZQ==}
 
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
@@ -10473,6 +10498,14 @@ snapshots:
     dependencies:
       '@tiptap/extension-list': 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0)
 
+  '@tiptap/extension-code-block-lowlight@3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/extension-code-block@3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0)(highlight.js@11.11.2)(lowlight@3.3.0)':
+    dependencies:
+      '@tiptap/core': 3.30.0(@tiptap/pm@3.30.0)
+      '@tiptap/extension-code-block': 3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0)
+      '@tiptap/pm': 3.30.0
+      highlight.js: 11.11.2
+      lowlight: 3.3.0
+
   '@tiptap/extension-code-block@3.30.0(@tiptap/core@3.30.0(@tiptap/pm@3.30.0))(@tiptap/pm@3.30.0)':
     dependencies:
       '@tiptap/core': 3.30.0(@tiptap/pm@3.30.0)
@@ -10714,6 +10747,10 @@ snapshots:
       '@types/node': 22.20.0
 
   '@types/har-format@1.2.16': {}
+
+  '@types/hast@3.0.5':
+    dependencies:
+      '@types/unist': 3.0.3
 
   '@types/http-errors@2.0.5': {}
 
@@ -12529,6 +12566,8 @@ snapshots:
       capital-case: 1.0.4
       tslib: 2.8.1
 
+  highlight.js@11.11.2: {}
+
   hono@4.12.27: {}
 
   hookable@6.1.1: {}
@@ -12974,6 +13013,12 @@ snapshots:
   lower-case@2.0.2:
     dependencies:
       tslib: 2.8.1
+
+  lowlight@3.3.0:
+    dependencies:
+      '@types/hast': 3.0.5
+      devlop: 1.1.0
+      highlight.js: 11.11.2
 
   lru-cache@10.4.3: {}
 

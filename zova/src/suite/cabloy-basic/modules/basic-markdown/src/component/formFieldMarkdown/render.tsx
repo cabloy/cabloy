@@ -8,6 +8,8 @@ import { ZFormField } from 'zova-module-a-form';
 import { ZIcon } from 'zova-module-a-icon';
 import { ZImageUploader } from 'zova-module-basic-image';
 
+import { codeBlockLanguages, getCodeBlockLanguage } from '../../lib/codeBlockLanguages.js';
+
 @Render()
 export class RenderFormFieldMarkdown extends BeanRenderBase {
   private _toolbarButton(
@@ -183,6 +185,27 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
           <option value="heading-4">{this.scope.locale.Heading4()}</option>
           <option value="heading-5">{this.scope.locale.Heading5()}</option>
           <option value="heading-6">{this.scope.locale.Heading6()}</option>
+        </select>
+        <select
+          class="select select-sm select-bordered w-auto min-w-28"
+          aria-label={this.scope.locale.CodeBlockLanguage()}
+          disabled={!state.codeBlock}
+          value={getCodeBlockLanguage(state.codeBlockLanguage) ?? ''}
+          onMousedown={event => {
+            event.stopPropagation();
+          }}
+          onChange={event => {
+            event.stopPropagation();
+            const value = (event.target as HTMLSelectElement).value;
+            this.setCodeBlockLanguage(value || undefined);
+          }}
+        >
+          <option value="">{this.scope.locale.PlainText()}</option>
+          {codeBlockLanguages.map(language => (
+            <option key={language} value={language}>
+              {this.scope.locale[language]()}
+            </option>
+          ))}
         </select>
         {this._toolbarButton(
           ':editor:format-bold',

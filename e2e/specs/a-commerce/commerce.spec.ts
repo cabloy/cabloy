@@ -1843,6 +1843,8 @@ const product = '${suffix}';
       const toolbar = adminPage.getByRole('toolbar', { name: 'Markdown toolbar' });
       await expect(toolbar).toBeVisible();
       const undoButton = toolbar.getByRole('button', { name: 'Undo' });
+      const codeBlockLanguage = toolbar.getByRole('combobox', { name: 'Code block language' });
+      await expect(codeBlockLanguage).toBeDisabled();
       await expect(toolbar.getByRole('button', { name: 'Bold' })).toHaveAttribute('type', 'button');
       await expect(undoButton).toBeEnabled();
       const insertTableButton = toolbar.getByRole('button', { name: 'Insert table' });
@@ -1905,7 +1907,16 @@ const product = '${suffix}';
       await expect(editor.locator('h1')).toHaveText(`Product content ${suffix}`);
       await expect(editor.locator('ul:not([data-type="taskList"])')).toHaveCount(1);
       await expect(editor.locator('blockquote')).toHaveText('Product quote');
-      await expect(editor.locator('pre code')).toHaveText(`const product = '${suffix}';`);
+      const codeBlock = editor.locator('pre code');
+      await expect(codeBlock).toHaveClass(/\blanguage-ts\b/);
+      await expect(codeBlock).toHaveText(`const product = '${suffix}';`);
+      await expect(codeBlock.locator('span[class*="hljs-"]')).not.toHaveCount(0);
+      await codeBlock.click();
+      await expect(codeBlockLanguage).toBeEnabled();
+      await expect(codeBlockLanguage).toHaveValue('typescript');
+      await codeBlockLanguage.selectOption('python');
+      await expect(codeBlock).toHaveClass(/\blanguage-python\b/);
+      await expect(codeBlock.locator('span[class*="hljs-"]')).not.toHaveCount(0);
       await expect(editor.locator('mark')).toHaveText('highlighted text');
       await expect(editor.locator('table th')).toHaveCount(2);
       await expect(editor.locator('table td')).toHaveCount(2);
@@ -1983,7 +1994,7 @@ const product = '${suffix}';
       );
       expect(productResponseAfterUpdate.ok()).toBeTruthy();
       expect((await productResponseAfterUpdate.json()).productContentForm.descriptionMarkdown).toBe(
-        markdown.replace(/\n\n\n\| Feature[\s\S]*$/, ''),
+        markdown.replace('```ts', '```python').replace(/\n\n\n\| Feature[\s\S]*$/, ''),
       );
       expect(adminPageErrors).toEqual([]);
     } finally {

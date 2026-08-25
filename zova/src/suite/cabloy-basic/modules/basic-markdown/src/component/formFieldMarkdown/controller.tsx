@@ -8,6 +8,7 @@ import type { IResourceFormFieldOptionsBase, IImageSceneRecord } from 'zova-modu
 import type { IImageUploaderResult } from 'zova-module-basic-image';
 
 import { findParentNodeClosestToPos } from '@tiptap/core';
+import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Image } from '@tiptap/extension-image';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
@@ -15,10 +16,14 @@ import { TableKit } from '@tiptap/extension-table';
 import { Markdown } from '@tiptap/markdown';
 import StarterKit from '@tiptap/starter-kit';
 import { Editor } from '@tiptap/vue-3';
+import { common, createLowlight } from 'lowlight';
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
+import { getCodeBlockLanguage, isCodeBlockLanguage } from '../../lib/codeBlockLanguages.js';
+
 const markdownImageScene = 'a-markdown:markdown';
+const lowlight = createLowlight(common);
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {
@@ -47,6 +52,7 @@ interface IMarkdownToolbarState {
   taskList: boolean;
   blockquote: boolean;
   codeBlock: boolean;
+  codeBlockLanguage?: string;
   link: boolean;
   headingLevel: IMarkdownHeadingLevel | undefined;
   canUndo: boolean;
@@ -129,6 +135,7 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
       taskList: false,
       blockquote: false,
       codeBlock: false,
+      codeBlockLanguage: undefined,
       link: false,
       headingLevel: undefined,
       canUndo: false,
@@ -165,6 +172,8 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
     }
     const can = editor.can();
     const heading = editor.getAttributes('heading').level;
+    const codeBlockActive = editor.isActive('codeBlock');
+    const codeBlockLanguage = editor.getAttributes('codeBlock').language;
     const tableActive = editor.isActive('table');
     this.toolbarState = {
       bold: editor.isActive('bold'),
@@ -176,7 +185,10 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
       orderedList: editor.isActive('orderedList'),
       taskList: editor.isActive('taskList'),
       blockquote: editor.isActive('blockquote'),
-      codeBlock: editor.isActive('codeBlock'),
+      codeBlock: codeBlockActive,
+      codeBlockLanguage: codeBlockActive
+        ? (getCodeBlockLanguage(codeBlockLanguage) ?? codeBlockLanguage ?? undefined)
+        : undefined,
       link: editor.isActive('link'),
       headingLevel:
         heading === 1 ||
@@ -494,6 +506,18 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
     this._runCommand(editor => editor.chain().focus().toggleCodeBlock().run());
   }
 
+  public setCodeBlockLanguage(language?: string) {
+    if (language && !isCodeBlockLanguage(language)) return;
+    this._runCommand(editor => {
+      if (!editor.isActive('codeBlock')) return false;
+      return editor
+        .chain()
+        .focus()
+        .updateAttributes('codeBlock', { language: language || null })
+        .run();
+    });
+  }
+
   public setHorizontalRule() {
     this._runCommand(editor => editor.chain().focus().setHorizontalRule().run());
   }
@@ -613,7 +637,8 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
       this.editor = new Editor({
         extensions: [
           Markdown,
-          StarterKit,
+          StarterKit.configure({ codeBlock: false }),
+          CodeBlockLowlight.configure({ lowlight }),
           TaskList,
           TaskItem.configure({ nested: true }),
           Image,
