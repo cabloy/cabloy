@@ -217,7 +217,11 @@ export class ServiceAccount extends BeanBase {
       const link = this._getActivationLinkWithToken(consumerLink, rawToken);
       await this.bean.mail.send({
         to: currentUser.email,
-        subject: this.scope.locale.ActivationEmailSubject(),
+        subject: replaceTemplate(this.scope.locale.ActivationEmailSubject(), {
+          userName: currentUser.name,
+          link,
+          siteName: this.ctx.instance.title || this.app.meta.env.APP_TITLE,
+        }),
         text: replaceTemplate(this.scope.locale.ActivationEmailBody(), {
           userName: currentUser.name,
           link,
