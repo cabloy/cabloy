@@ -77,7 +77,7 @@ importers:
         version: 10.5.2(postcss@8.5.26)
       axios:
         specifier: ^1.18.1
-        version: 1.18.1(supports-color@10.2.2)
+        version: 1.18.1
       compression:
         specifier: ^1.8.1
         version: 1.8.1
@@ -136,7 +136,7 @@ importers:
         specifier: workspace:^
         version: link:packages-zova/zova
       zova-jsx:
-        specifier: ^1.1.86
+        specifier: ^1.1.87
         version: link:packages-utils/zova-jsx
       zova-module-a-api:
         specifier: workspace:^
@@ -363,7 +363,7 @@ importers:
     devDependencies:
       '@cabloy/cli':
         specifier: ^3.1.29
-        version: 3.1.29(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.29(vue@3.5.38(typescript@5.9.3))
       '@cabloy/lint':
         specifier: ^5.1.31
         version: 5.1.31(@typescript-eslint/eslint-plugin@8.62.1(@typescript-eslint/parser@8.62.1(eslint@10.6.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.6.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.62.1(eslint@10.6.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.62.1(typescript@5.9.3))(@typescript-eslint/utils@8.62.1(eslint@10.6.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.6.0(jiti@2.7.0))(oxfmt@0.62.0)(oxlint@1.77.0)(supports-color@10.2.2)(typescript@5.9.3)(vue-eslint-parser@10.4.1(eslint@10.6.0(jiti@2.7.0)))
@@ -438,7 +438,7 @@ importers:
     dependencies:
       '@cabloy/cli':
         specifier: ^3.1.29
-        version: 3.1.29(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.29(vue@3.5.38(typescript@5.9.3))
       '@cabloy/process-helper':
         specifier: ^3.1.8
         version: 3.1.8
@@ -472,7 +472,7 @@ importers:
         version: 7.29.7(@babel/core@7.29.7)
       '@cabloy/cli':
         specifier: ^3.1.29
-        version: 3.1.29(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.29(vue@3.5.38(typescript@5.9.3))
       '@cabloy/extend':
         specifier: ^3.2.8
         version: 3.2.8
@@ -726,7 +726,7 @@ importers:
         specifier: ^3.5.38
         version: 3.5.38(typescript@5.9.3)
       zova-core:
-        specifier: ^5.1.86
+        specifier: ^5.1.87
         version: link:../../packages-zova/zova-core
     devDependencies:
       clean-package:
@@ -867,10 +867,10 @@ importers:
   packages-zova/zova:
     dependencies:
       zova-core:
-        specifier: ^5.1.86
+        specifier: ^5.1.87
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.150
+        specifier: ^5.1.151
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -977,7 +977,7 @@ importers:
         specifier: ^5.0.1
         version: link:modules/a-rbac
       zova-module-rest-resource:
-        specifier: ^5.1.45
+        specifier: ^5.1.46
         version: link:modules/rest-resource
 
   src/suite-vendor/a-cabloy/modules/a-rbac:
@@ -1001,10 +1001,10 @@ importers:
   src/suite-vendor/a-pay:
     dependencies:
       zova-module-a-pay:
-        specifier: ^5.0.6
+        specifier: ^5.0.7
         version: link:modules/a-pay
       zova-module-pay-mock:
-        specifier: ^5.0.4
+        specifier: ^5.0.5
         version: link:modules/pay-mock
       zova-module-pay-paypal:
         specifier: ^5.0.2
@@ -1076,7 +1076,7 @@ importers:
         specifier: ^5.1.25
         version: link:modules/a-fetch
       zova-module-a-form:
-        specifier: ^5.1.47
+        specifier: ^5.1.48
         version: link:modules/a-form
       zova-module-a-icon:
         specifier: ^5.1.27
@@ -1124,7 +1124,7 @@ importers:
         specifier: ^5.1.37
         version: link:modules/a-zod
       zova-module-a-zova:
-        specifier: ^5.1.101
+        specifier: ^5.1.102
         version: link:modules/a-zova
 
   src/suite-vendor/a-zova/modules/a-api:
@@ -1198,7 +1198,7 @@ importers:
     dependencies:
       axios:
         specifier: ^1.18.1
-        version: 1.18.1(supports-color@10.2.2)
+        version: 1.18.1
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -1466,12 +1466,12 @@ importers:
         specifier: ^3.7.2
         version: 3.7.2
       zova-jsx:
-        specifier: ^1.1.86
+        specifier: ^1.1.87
         version: link:../../../../../packages-utils/zova-jsx
     devDependencies:
       '@cabloy/cli':
         specifier: ^3.1.29
-        version: 3.1.29(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.29(vue@3.5.38(typescript@5.9.3))
       '@types/luxon':
         specifier: ^3.7.1
         version: 3.7.2
@@ -8798,7 +8798,7 @@ snapshots:
 
   '@bufbuild/protobuf@2.12.1': {}
 
-  '@cabloy/cli@3.1.29(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))':
+  '@cabloy/cli@3.1.29(vue@3.5.38(typescript@5.9.3))':
     dependencies:
       '@babel/parser': 7.29.7
       '@cabloy/module-glob': 5.3.18
@@ -8807,7 +8807,7 @@ snapshots:
       '@cabloy/utils': 2.1.27
       '@cabloy/word-utils': link:packages-utils/word-utils
       '@npmcli/config': 10.11.0
-      '@zhennann/common-bin': 4.0.1(supports-color@10.2.2)
+      '@zhennann/common-bin': 4.0.1
       '@zhennann/ejs': 3.0.1
       boxen: 4.2.0
       chalk: 3.0.0
@@ -11041,7 +11041,7 @@ snapshots:
 
   '@vue/shared@3.5.13': {}
 
-  '@zhennann/common-bin@4.0.1(supports-color@10.2.2)':
+  '@zhennann/common-bin@4.0.1':
     dependencies:
       chalk: 4.1.2
       change-case: 4.1.2
@@ -11075,7 +11075,7 @@ snapshots:
 
   acorn@8.17.0: {}
 
-  agent-base@6.0.2(supports-color@10.2.2):
+  agent-base@6.0.2:
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
@@ -11187,11 +11187,11 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axios@1.18.1(supports-color@10.2.2):
+  axios@1.18.1:
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.6
-      https-proxy-agent: 5.0.1(supports-color@10.2.2)
+      https-proxy-agent: 5.0.1
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
@@ -12604,9 +12604,9 @@ snapshots:
       statuses: 2.0.2
       toidentifier: 1.0.1
 
-  https-proxy-agent@5.0.1(supports-color@10.2.2):
+  https-proxy-agent@5.0.1:
     dependencies:
-      agent-base: 6.0.2(supports-color@10.2.2)
+      agent-base: 6.0.2
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
