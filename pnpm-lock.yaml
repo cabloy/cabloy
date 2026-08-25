@@ -12,8 +12,8 @@ importers:
         specifier: ^1.2.8
         version: 1.2.8
       '@cabloy/lint':
-        specifier: ^5.1.31
-        version: 5.1.31(@typescript-eslint/eslint-plugin@8.60.0(@typescript-eslint/parser@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/rule-tester@8.60.0(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.60.0(typescript@5.9.3))(@typescript-eslint/utils@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(oxfmt@0.62.0)(oxlint@1.77.0)(typescript@5.9.3)(vue-eslint-parser@10.4.0(eslint@10.4.0))
+        specifier: ^5.1.32
+        version: 5.1.32(@typescript-eslint/eslint-plugin@8.60.0(@typescript-eslint/parser@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/rule-tester@8.60.0(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.60.0(typescript@5.9.3))(@typescript-eslint/utils@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(oxfmt@0.62.0)(oxlint@1.77.0)(typescript@5.9.3)(vue-eslint-parser@10.4.0(eslint@10.4.0))
       '@cabloy/process-helper':
         specifier: ^3.1.3
         version: 3.1.5
@@ -49,7 +49,7 @@ importers:
         version: 7.5.22
       textlint:
         specifier: ^15.7.0
-        version: 15.7.1
+        version: 15.7.1(supports-color@7.2.0)
       textlint-rule-en-no-mixed-period:
         specifier: ^3.0.2
         version: 3.0.2
@@ -88,8 +88,8 @@ packages:
   '@cabloy/extend@3.2.8':
     resolution: {integrity: sha512-BrXYUtlC1kFY33hNxL/hEaS7wW8TsOuu22k0VCEtzg2iw+USkb4BqONth5Uv2pJcIlDMeWx8A8aUIRF3WQ2ckQ==}
 
-  '@cabloy/lint@5.1.31':
-    resolution: {integrity: sha512-tlWIyTifvpZjQ/G0GICnGsPmHBLAm2qp58eFwNu8bMAA/+TkSrpzod2A/Vj1OK9m4j3aC6j7Hwa03bWD73N6mg==}
+  '@cabloy/lint@5.1.32':
+    resolution: {integrity: sha512-CgIheBgpXahfKixVLDweSoEki6jUjVAPE/8Rdj3OdtAAHSvxPA4keoPBB8oeUmZNrTVzZF+iC6FqB37n1fqpRg==}
     peerDependencies:
       oxfmt: '>=0.62.0'
       oxlint: '>=1.77.0'
@@ -149,12 +149,6 @@ packages:
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
 
-  '@eslint-community/eslint-utils@4.9.1':
-    resolution: {integrity: sha512-phrYmNiYppR7znFEdqgfWHXR6NCkZEK7hwWDHZUjit/2/U0r6XvkDl0SYnoM51Hq7FhCGdLDT6zxCCOY1hexsQ==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
-
   '@eslint-community/regexpp@4.12.2':
     resolution: {integrity: sha512-EriSTlt5OC9/7SXkRSCAhfSxxoSUgBm33OH+IkwbdpgoqsSsUg7y3uh+IICI/Qg4BBWr3U2i39RpmycbxMq4ew==}
     engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
@@ -193,10 +187,6 @@ packages:
 
   '@eslint/plugin-kit@0.6.1':
     resolution: {integrity: sha512-iH1B076HoAshH1mLpHMgwdGeTs0CYwL0SPMkGuSebZrwBp16v415e9NZXg2jtrqPVQjf6IANe2Vtlr5KswtcZQ==}
-    engines: {node: ^20.19.0 || ^22.13.0 || >=24}
-
-  '@eslint/plugin-kit@0.7.1':
-    resolution: {integrity: sha512-rZAP3aVgB9ds9KOeUSL+zZ21hPmo8dh6fnIFwRQj5EAZl9gzR7wxYbYXYysAM8CTqGmUGyp2S4kUdV17MnGuWQ==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
   '@eslint/plugin-kit@0.7.2':
@@ -1124,11 +1114,6 @@ packages:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
     peerDependencies:
       acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
-
-  acorn@8.16.0:
-    resolution: {integrity: sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==}
-    engines: {node: '>=0.4.0'}
-    hasBin: true
 
   acorn@8.18.0:
     resolution: {integrity: sha512-lGq+9yr1/GuAWaVYIHRjvvySG5/4VfKIvC8EWxStPdcDh/Ka7FG3twP6v4d5BkravUilhIAsG4Qj83t02LWUPQ==}
@@ -3091,10 +3076,6 @@ packages:
   pnpm-workspace-yaml@1.6.1:
     resolution: {integrity: sha512-yTeZntGWi8m9WNuhoVsP0DpFc4sC1U0+rr/qR6Zi9n2g3sxXY+JfccjXjjruNz96tM8I09yaJUA86doRnNLkbg==}
 
-  postcss-selector-parser@7.1.1:
-    resolution: {integrity: sha512-orRsuYpJVw8LdAwqqLykBj9ecS5/cRHlI5+nvTo8LcCKmzDmqVORXtOIYEEQuL9D4BxtA1lm5isAqzQZCoQ6Eg==}
-    engines: {node: '>=4'}
-
   postcss-selector-parser@7.1.5:
     resolution: {integrity: sha512-KvvtD7SrlBP7dlgkBghEE3r84CABm5SmV2aNcG4oCA+qDnJ/tvKonFVvwWAyyWUEwxuNawdfEAZKP9zM3oZ2Uw==}
     engines: {node: '>=4'}
@@ -3826,7 +3807,7 @@ snapshots:
 
   '@cabloy/extend@3.2.8': {}
 
-  '@cabloy/lint@5.1.31(@typescript-eslint/eslint-plugin@8.60.0(@typescript-eslint/parser@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/rule-tester@8.60.0(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.60.0(typescript@5.9.3))(@typescript-eslint/utils@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(oxfmt@0.62.0)(oxlint@1.77.0)(typescript@5.9.3)(vue-eslint-parser@10.4.0(eslint@10.4.0))':
+  '@cabloy/lint@5.1.32(@typescript-eslint/eslint-plugin@8.60.0(@typescript-eslint/parser@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/rule-tester@8.60.0(eslint@10.4.0)(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.60.0(typescript@5.9.3))(@typescript-eslint/utils@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(oxfmt@0.62.0)(oxlint@1.77.0)(typescript@5.9.3)(vue-eslint-parser@10.4.0(eslint@10.4.0))':
     dependencies:
       '@e18e/eslint-plugin': 0.2.0(eslint@10.4.0)(oxlint@1.77.0)
       '@eslint/json': 1.2.0
@@ -3915,11 +3896,6 @@ snapshots:
       eslint: 10.4.0
       eslint-visitor-keys: 3.4.3
 
-  '@eslint-community/eslint-utils@4.9.1(eslint@10.4.0)':
-    dependencies:
-      eslint: 10.4.0
-      eslint-visitor-keys: 3.4.3
-
   '@eslint-community/regexpp@4.12.2': {}
 
   '@eslint/config-array@0.23.5':
@@ -3971,11 +3947,6 @@ snapshots:
       levn: 0.4.1
 
   '@eslint/plugin-kit@0.6.1':
-    dependencies:
-      '@eslint/core': 1.2.1
-      levn: 0.4.1
-
-  '@eslint/plugin-kit@0.7.1':
     dependencies:
       '@eslint/core': 1.2.1
       levn: 0.4.1
@@ -4152,7 +4123,7 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@modelcontextprotocol/sdk@1.29.0(zod@3.25.76)':
+  '@modelcontextprotocol/sdk@1.29.0(supports-color@7.2.0)(zod@3.25.76)':
     dependencies:
       '@hono/node-server': 1.19.14(hono@4.12.23)
       ajv: 8.20.0
@@ -4162,8 +4133,8 @@ snapshots:
       cross-spawn: 7.0.6
       eventsource: 3.0.7
       eventsource-parser: 3.0.8
-      express: 5.2.1
-      express-rate-limit: 8.5.2(express@5.2.1)
+      express: 5.2.1(supports-color@7.2.0)
+      express-rate-limit: 8.5.2(express@5.2.1(supports-color@7.2.0))
       hono: 4.12.23
       jose: 6.2.3
       json-schema-typed: 8.0.2
@@ -4616,13 +4587,13 @@ snapshots:
 
   '@stylistic/eslint-plugin@5.10.0(eslint@10.4.0)':
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.1(eslint@10.4.0)
+      '@eslint-community/eslint-utils': 4.10.1(eslint@10.4.0)
       '@typescript-eslint/types': 8.60.0
       eslint: 10.4.0
       eslint-visitor-keys: 4.2.1
       espree: 10.4.0
       estraverse: 5.3.0
-      picomatch: 4.0.4
+      picomatch: 4.0.5
 
   '@textlint/ast-node-types@15.7.1': {}
 
@@ -4637,7 +4608,7 @@ snapshots:
     dependencies:
       '@textlint/ast-node-types': 15.7.1
 
-  '@textlint/config-loader@15.7.1':
+  '@textlint/config-loader@15.7.1(supports-color@7.2.0)':
     dependencies:
       '@textlint/kernel': 15.7.1
       '@textlint/module-interop': 15.7.1
@@ -4651,7 +4622,7 @@ snapshots:
 
   '@textlint/feature-flag@15.7.1': {}
 
-  '@textlint/fixer-formatter@15.7.1':
+  '@textlint/fixer-formatter@15.7.1(supports-color@7.2.0)':
     dependencies:
       '@textlint/module-interop': 15.7.1
       '@textlint/resolver': 15.7.1
@@ -4680,7 +4651,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@textlint/linter-formatter@15.7.1':
+  '@textlint/linter-formatter@15.7.1(supports-color@7.2.0)':
     dependencies:
       '@azu/format-text': 1.0.2
       '@azu/style-format': 1.0.1
@@ -4699,11 +4670,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@textlint/markdown-to-ast@15.7.1':
+  '@textlint/markdown-to-ast@15.7.1(supports-color@7.2.0)':
     dependencies:
       '@textlint/ast-node-types': 15.7.1
       debug: 4.4.3(supports-color@7.2.0)
-      mdast-util-gfm-autolink-literal: 0.1.3
+      mdast-util-gfm-autolink-literal: 0.1.3(supports-color@7.2.0)
       neotraverse: 0.6.18
       remark-footnotes: 3.0.0
       remark-frontmatter: 3.0.0
@@ -4736,9 +4707,9 @@ snapshots:
     dependencies:
       '@textlint/ast-node-types': 15.7.1
 
-  '@textlint/textlint-plugin-markdown@15.7.1':
+  '@textlint/textlint-plugin-markdown@15.7.1(supports-color@7.2.0)':
     dependencies:
-      '@textlint/markdown-to-ast': 15.7.1
+      '@textlint/markdown-to-ast': 15.7.1(supports-color@7.2.0)
       '@textlint/types': 15.7.1
     transitivePeerDependencies:
       - supports-color
@@ -4889,8 +4860,8 @@ snapshots:
       '@typescript-eslint/types': 8.60.0
       '@typescript-eslint/visitor-keys': 8.60.0
       debug: 4.4.3(supports-color@7.2.0)
-      minimatch: 10.2.5
-      semver: 7.8.1
+      minimatch: 10.2.6
+      semver: 7.8.5
       tinyglobby: 0.2.16
       ts-api-utils: 2.5.0(typescript@5.9.3)
       typescript: 5.9.3
@@ -4899,7 +4870,7 @@ snapshots:
 
   '@typescript-eslint/utils@8.60.0(eslint@10.4.0)(typescript@5.9.3)':
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.1(eslint@10.4.0)
+      '@eslint-community/eslint-utils': 4.10.1(eslint@10.4.0)
       '@typescript-eslint/scope-manager': 8.60.0
       '@typescript-eslint/types': 8.60.0
       '@typescript-eslint/typescript-estree': 8.60.0(typescript@5.9.3)
@@ -4928,15 +4899,9 @@ snapshots:
       mime-types: 3.0.2
       negotiator: 1.0.0
 
-  acorn-jsx@5.3.2(acorn@8.16.0):
-    dependencies:
-      acorn: 8.16.0
-
   acorn-jsx@5.3.2(acorn@8.18.0):
     dependencies:
       acorn: 8.18.0
-
-  acorn@8.16.0: {}
 
   acorn@8.18.0: {}
 
@@ -5031,7 +4996,7 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
-  body-parser@2.2.2:
+  body-parser@2.2.2(supports-color@7.2.0):
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
@@ -5444,7 +5409,7 @@ snapshots:
       empathic: 2.0.1
       eslint: 10.4.0
       module-replacements: 2.11.0
-      semver: 7.8.1
+      semver: 7.8.5
 
   eslint-plugin-eslint-comments@3.2.0(eslint@10.4.0):
     dependencies:
@@ -5454,7 +5419,7 @@ snapshots:
 
   eslint-plugin-jsonc@3.1.2(@eslint/json@1.2.0)(eslint@10.4.0):
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.1(eslint@10.4.0)
+      '@eslint-community/eslint-utils': 4.10.1(eslint@10.4.0)
       '@eslint/core': 1.2.1
       '@eslint/plugin-kit': 0.6.1
       '@ota-meshi/ast-token-store': 0.3.0
@@ -5480,7 +5445,7 @@ snapshots:
 
   eslint-plugin-regexp@3.1.0(eslint@10.4.0):
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.1(eslint@10.4.0)
+      '@eslint-community/eslint-utils': 4.10.1(eslint@10.4.0)
       '@eslint-community/regexpp': 4.12.2
       comment-parser: 1.4.7
       eslint: 10.4.0
@@ -5508,12 +5473,12 @@ snapshots:
 
   eslint-plugin-vue@10.9.1(@stylistic/eslint-plugin@5.10.0(eslint@10.4.0))(@typescript-eslint/parser@8.60.0(eslint@10.4.0)(typescript@5.9.3))(eslint@10.4.0)(vue-eslint-parser@10.4.0(eslint@10.4.0)):
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.1(eslint@10.4.0)
+      '@eslint-community/eslint-utils': 4.10.1(eslint@10.4.0)
       eslint: 10.4.0
       natural-compare: 1.4.0
       nth-check: 2.1.1
-      postcss-selector-parser: 7.1.1
-      semver: 7.8.1
+      postcss-selector-parser: 7.1.5
+      semver: 7.8.5
       vue-eslint-parser: 10.4.0(eslint@10.4.0)
       xml-name-validator: 4.0.0
     optionalDependencies:
@@ -5523,7 +5488,7 @@ snapshots:
   eslint-plugin-yml@3.3.2(eslint@10.4.0):
     dependencies:
       '@eslint/core': 1.2.1
-      '@eslint/plugin-kit': 0.7.1
+      '@eslint/plugin-kit': 0.7.2
       '@ota-meshi/ast-token-store': 0.3.0
       diff-sequences: 29.6.3
       escape-string-regexp: 5.0.0
@@ -5581,8 +5546,8 @@ snapshots:
 
   espree@10.4.0:
     dependencies:
-      acorn: 8.16.0
-      acorn-jsx: 5.3.2(acorn@8.16.0)
+      acorn: 8.18.0
+      acorn-jsx: 5.3.2(acorn@8.18.0)
       eslint-visitor-keys: 4.2.1
 
   espree@11.2.0:
@@ -5629,15 +5594,15 @@ snapshots:
 
   exponential-backoff@3.1.3: {}
 
-  express-rate-limit@8.5.2(express@5.2.1):
+  express-rate-limit@8.5.2(express@5.2.1(supports-color@7.2.0)):
     dependencies:
-      express: 5.2.1
+      express: 5.2.1(supports-color@7.2.0)
       ip-address: 10.2.0
 
-  express@5.2.1:
+  express@5.2.1(supports-color@7.2.0):
     dependencies:
       accepts: 2.0.0
-      body-parser: 2.2.2
+      body-parser: 2.2.2(supports-color@7.2.0)
       content-disposition: 1.1.0
       content-type: 1.0.5
       cookie: 0.7.2
@@ -5647,7 +5612,7 @@ snapshots:
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
-      finalhandler: 2.1.1
+      finalhandler: 2.1.1(supports-color@7.2.0)
       fresh: 2.0.0
       http-errors: 2.0.1
       merge-descriptors: 2.0.0
@@ -5658,8 +5623,8 @@ snapshots:
       proxy-addr: 2.0.7
       qs: 6.15.2
       range-parser: 1.2.1
-      router: 2.2.0
-      send: 1.2.1
+      router: 2.2.0(supports-color@7.2.0)
+      send: 1.2.1(supports-color@7.2.0)
       serve-static: 2.2.1
       statuses: 2.0.2
       type-is: 2.1.0
@@ -5703,10 +5668,6 @@ snapshots:
     dependencies:
       walk-up-path: 4.0.0
 
-  fdir@6.5.0(picomatch@4.0.4):
-    optionalDependencies:
-      picomatch: 4.0.4
-
   fdir@6.5.0(picomatch@4.0.5):
     optionalDependencies:
       picomatch: 4.0.5
@@ -5727,7 +5688,7 @@ snapshots:
     dependencies:
       to-regex-range: 5.0.1
 
-  finalhandler@2.1.1:
+  finalhandler@2.1.1(supports-color@7.2.0):
     dependencies:
       debug: 4.4.3(supports-color@7.2.0)
       encodeurl: 2.0.0
@@ -6148,9 +6109,9 @@ snapshots:
 
   jsonc-eslint-parser@3.1.0:
     dependencies:
-      acorn: 8.16.0
+      acorn: 8.18.0
       eslint-visitor-keys: 5.0.1
-      semver: 7.8.1
+      semver: 7.8.5
 
   jsonc-parser@3.3.1: {}
 
@@ -6396,7 +6357,7 @@ snapshots:
   mdast-util-footnote@0.1.7:
     dependencies:
       mdast-util-to-markdown: 0.6.5
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -6404,7 +6365,7 @@ snapshots:
     dependencies:
       '@types/mdast': 3.0.15
       mdast-util-to-string: 2.0.0
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@7.2.0)
       parse-entities: 2.0.0
       unist-util-stringify-position: 2.0.3
     transitivePeerDependencies:
@@ -6442,11 +6403,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-gfm-autolink-literal@0.1.3:
+  mdast-util-gfm-autolink-literal@0.1.3(supports-color@7.2.0):
     dependencies:
       ccount: 1.1.0
       mdast-util-find-and-replace: 1.1.1
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -6510,7 +6471,7 @@ snapshots:
 
   mdast-util-gfm@0.1.2:
     dependencies:
-      mdast-util-gfm-autolink-literal: 0.1.3
+      mdast-util-gfm-autolink-literal: 0.1.3(supports-color@7.2.0)
       mdast-util-gfm-strikethrough: 0.2.3
       mdast-util-gfm-table: 0.1.6
       mdast-util-gfm-task-list-item: 0.1.6
@@ -6591,7 +6552,7 @@ snapshots:
 
   micromark-extension-footnote@0.3.2:
     dependencies:
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -6608,7 +6569,7 @@ snapshots:
 
   micromark-extension-gfm-autolink-literal@0.5.7:
     dependencies:
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -6632,7 +6593,7 @@ snapshots:
 
   micromark-extension-gfm-strikethrough@0.6.5:
     dependencies:
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -6647,7 +6608,7 @@ snapshots:
 
   micromark-extension-gfm-table@0.4.3:
     dependencies:
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -6667,7 +6628,7 @@ snapshots:
 
   micromark-extension-gfm-task-list-item@0.3.3:
     dependencies:
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -6681,7 +6642,7 @@ snapshots:
 
   micromark-extension-gfm@0.3.3:
     dependencies:
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@7.2.0)
       micromark-extension-gfm-autolink-literal: 0.5.7
       micromark-extension-gfm-strikethrough: 0.6.5
       micromark-extension-gfm-table: 0.4.3
@@ -6793,7 +6754,7 @@ snapshots:
 
   micromark-util-types@2.0.2: {}
 
-  micromark@2.11.4:
+  micromark@2.11.4(supports-color@7.2.0):
     dependencies:
       debug: 4.4.3(supports-color@7.2.0)
       parse-entities: 2.0.0
@@ -7414,11 +7375,6 @@ snapshots:
     dependencies:
       yaml: 2.9.0
 
-  postcss-selector-parser@7.1.1:
-    dependencies:
-      cssesc: 3.0.0
-      util-deprecate: 1.0.2
-
   postcss-selector-parser@7.1.5:
     dependencies:
       cssesc: 3.0.0
@@ -7587,7 +7543,7 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  router@2.2.0:
+  router@2.2.0(supports-color@7.2.0):
     dependencies:
       debug: 4.4.3(supports-color@7.2.0)
       depd: 2.0.0
@@ -7627,7 +7583,7 @@ snapshots:
 
   semver@7.8.5: {}
 
-  send@1.2.1:
+  send@1.2.1(supports-color@7.2.0):
     dependencies:
       debug: 4.4.3(supports-color@7.2.0)
       encodeurl: 2.0.0
@@ -7648,7 +7604,7 @@ snapshots:
       encodeurl: 2.0.0
       escape-html: 1.0.3
       parseurl: 1.3.3
-      send: 1.2.1
+      send: 1.2.1(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -7889,19 +7845,19 @@ snapshots:
     dependencies:
       check-ends-with-period: 3.0.2
 
-  textlint@15.7.1:
+  textlint@15.7.1(supports-color@7.2.0):
     dependencies:
-      '@modelcontextprotocol/sdk': 1.29.0(zod@3.25.76)
+      '@modelcontextprotocol/sdk': 1.29.0(supports-color@7.2.0)(zod@3.25.76)
       '@textlint/ast-node-types': 15.7.1
       '@textlint/ast-traverse': 15.7.1
-      '@textlint/config-loader': 15.7.1
+      '@textlint/config-loader': 15.7.1(supports-color@7.2.0)
       '@textlint/feature-flag': 15.7.1
-      '@textlint/fixer-formatter': 15.7.1
+      '@textlint/fixer-formatter': 15.7.1(supports-color@7.2.0)
       '@textlint/kernel': 15.7.1
-      '@textlint/linter-formatter': 15.7.1
+      '@textlint/linter-formatter': 15.7.1(supports-color@7.2.0)
       '@textlint/module-interop': 15.7.1
       '@textlint/resolver': 15.7.1
-      '@textlint/textlint-plugin-markdown': 15.7.1
+      '@textlint/textlint-plugin-markdown': 15.7.1(supports-color@7.2.0)
       '@textlint/textlint-plugin-text': 15.7.1
       '@textlint/types': 15.7.1
       '@textlint/utils': 15.7.1
@@ -7928,8 +7884,8 @@ snapshots:
 
   tinyglobby@0.2.16:
     dependencies:
-      fdir: 6.5.0(picomatch@4.0.4)
-      picomatch: 4.0.4
+      fdir: 6.5.0(picomatch@4.0.5)
+      picomatch: 4.0.5
 
   tinypool@2.1.0: {}
 
