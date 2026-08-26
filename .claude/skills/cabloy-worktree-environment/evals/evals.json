@@ -10,7 +10,7 @@
     {
       "id": 2,
       "prompt": "I explicitly invoke /cabloy-worktree-environment in the second linked Cabloy Start worktree. Set up the standard local environment.",
-      "expected_output": "Detects __CABLOY_START__, selects npm run test:e2e:start:clean for later verification, and uses the shared canonical workflow. Without a process-selection question, it derives APP_NAME from the worktree basename and, for ordinal 2 batch 0, recommends SERVER_LISTEN_PORT 7104, DEV_SERVER_PORT 9002, DEV_SERVER_HMR_PORT 24681, and API_BASE_URL http://localhost:7104. It uses only the two broad local targets and waits for final confirmation before writing both.",
+      "expected_output": "Detects __CABLOY_START__, selects npm run test:e2e for later verification, and uses the shared canonical workflow. Without a process-selection question, it derives APP_NAME from the worktree basename and, for ordinal 2 batch 0, recommends SERVER_LISTEN_PORT 7104, DEV_SERVER_PORT 9002, DEV_SERVER_HMR_PORT 24681, and API_BASE_URL http://localhost:7104. It uses only the two broad local targets and waits for final confirmation before writing both.",
       "files": []
     },
     {

@@ -128,20 +128,20 @@ Cabloy Start is checked out from the licensed private repository rather than cre
 ```text
 repo-e2e/config/
 repo-e2e/scripts/
-repo-e2e/specs/cabloy-start/
+repo-e2e/specs/
 ```
 
-The public Cabloy upgrade flow does not synchronize or repair those Start E2E files, the `test:e2e:start*` scripts, or `@playwright/test`. Keep project-owned browser scenarios outside the baseline paths, for example under `repo-e2e/specs/my-project/`.
+The public Cabloy upgrade flow does not synchronize or repair those private Start E2E files, its root E2E scripts, or `@playwright/test`. Keep project-owned browser scenarios in the flat `repo-e2e/specs/` directory under distinct filenames, for example `repo-e2e/specs/my-project.spec.ts`.
 
 Prepare and run the managed Start baseline locally with:
 
 ```bash
 npm run build:zova
 npm run deps:vona
-npm run test:e2e:start:clean
+npm run test:e2e
 ```
 
-The managed command requires port `7102` to be available and owns the local reset and Vona worker lifecycle. For a separately managed target, set `START_E2E_BASE_URL` and use `test:e2e:start`, `test:e2e:start:web`, or `test:e2e:start:admin`; those commands do not reset, build, start, or stop the target. Install Chromium once when needed with `npx playwright install chromium`. See [Repo Scripts](/reference/repo-scripts#ssr-browser-checks) for the complete command variants.
+The managed command checks the effective local server port and owns the local reset and Vona worker lifecycle. For a separately managed target, set `E2E_BASE_URL` and use `npm run test:e2e:fast`; this mode does not reset, build, start, or stop the target. Select surfaces with `--tag @web` or `--tag @admin`, and exact scenarios with native `--grep` arguments. Install Chromium once when needed with `npx playwright install chromium`. See [Repo Scripts](/reference/repo-scripts#ssr-browser-checks) for the complete command variants.
 
 ## 7. Next steps for framework-aware development
 

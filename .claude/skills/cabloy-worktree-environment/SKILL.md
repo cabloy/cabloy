@@ -32,7 +32,7 @@ Interpretation:
 | Marker | Edition | Managed clean E2E command |
 | --- | --- | --- |
 | `__CABLOY_BASIC__` only | Cabloy Basic | `npm run test:e2e` |
-| `__CABLOY_START__` only | Cabloy Start | `npm run test:e2e:start:clean` |
+| `__CABLOY_START__` only | Cabloy Start | `npm run test:e2e` |
 
 Stop without edits when both markers are present, neither marker is present, the checkout is primary/unregistered, required environment directories are missing, or the selected edition's required scripts are unavailable.
 
@@ -181,11 +181,8 @@ npm run test
 Run the edition-appropriate managed clean E2E command:
 
 ```bash
-# Cabloy Basic
+# Cabloy Basic or Cabloy Start
 npm run test:e2e
-
-# Cabloy Start
-npm run test:e2e:start:clean
 ```
 
 Finish with a metadata-only status check. Do not use `git diff`, because it can print environment-file content:

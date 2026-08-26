@@ -63,10 +63,8 @@ Cabloy Start exposes the equivalent Start repository surface:
 - `npm run start:one`
 - `npm run test`
 - `npm run db:reset`
-- `npm run test:e2e:start`
-- `npm run test:e2e:start:web`
-- `npm run test:e2e:start:admin`
-- `npm run test:e2e:start:clean`
+- `npm run test:e2e`
+- `npm run test:e2e:fast`
 - `npm run tsc`
 
 Cabloy Start does not expose Basic Commerce or root documentation wrappers.
@@ -96,10 +94,10 @@ The Start E2E baseline is maintained in the private repository:
 ```text
 repo-e2e/config/
 repo-e2e/scripts/
-repo-e2e/specs/cabloy-start/
+repo-e2e/specs/
 ```
 
-The public-package upgrade flow does not source or reconcile the Start baseline, its `test:e2e:start*` scripts, or `@playwright/test`. Keep project browser tests outside the baseline paths, for example under `repo-e2e/specs/my-project/`.
+The public-package upgrade flow does not source or reconcile the private Start baseline, its root E2E scripts, or `@playwright/test`. Keep project browser tests in the flat `repo-e2e/specs/` directory under distinct filenames, for example `repo-e2e/specs/my-project.spec.ts`.
 
 ## SSR browser checks
 
@@ -158,24 +156,24 @@ The Start suite exercises Web at `/` and Admin at `/admin` through Vona's SSR di
 ```bash
 npm run build:zova
 npm run deps:vona
-npm run test:e2e:start:clean
+npm run test:e2e
 ```
 
 ```bash
 # Exact acceptance scenario
-npm run test:e2e:start -- --grep ATP-START-FLOW-01
+npm run test:e2e:fast cabloy-start -- --grep ATP-START-FLOW-01
 
 # Category or surface selection
-npm run test:e2e:start:clean -- --grep @smoke
-npm run test:e2e:start:clean -- --grep @admin
+npm run test:e2e:fast cabloy-start -- --tag @smoke
+npm run test:e2e:fast cabloy-admin -- --tag @admin --tag @cabloy-admin
 ```
 
-For an externally managed Start target, set `START_E2E_BASE_URL` and use matching aggregate, surface, or forwarded-tag commands. The target owner is responsible for data, cache, and artifact freshness:
+For an externally managed Start target, set `E2E_BASE_URL` and use `npm run test:e2e:fast`. The target owner is responsible for data, cache, artifact freshness, and process lifecycle:
 
 ```bash
-START_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:start
-START_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:start:admin
-START_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:start -- --grep @web
+E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:fast
+E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:fast cabloy-admin -- --tag @admin
+E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:fast cabloy-start -- --tag @web
 ```
 
 Browser commands consume existing SSR and REST artifacts; they never rebuild them. Install Chromium once when needed with `npx playwright install chromium`.

@@ -40,7 +40,7 @@
     {
       "id": 7,
       "prompt": "I created a linked Cabloy Start worktree and need isolated Vona, Zova Web, and managed clean E2E. Which workflow should I use?",
-      "expected_output": "Routes to the canonical shared guide and explicitly invoked /cabloy-worktree-environment skill. It recognizes that the invoked skill selects the Start command npm run test:e2e:start:clean while retaining read-only generic routing, a deterministic Git-metadata recommendation, no environment-content inspection, no automatic initialization, and the universal five-setting tuple written to both permitted broad local files only after confirmation.",
+      "expected_output": "Routes to the canonical shared guide and explicitly invoked /cabloy-worktree-environment skill. It recognizes that the invoked skill selects the Start command npm run test:e2e while retaining read-only generic routing, a deterministic Git-metadata recommendation, no environment-content inspection, no automatic initialization, and the universal five-setting tuple written to both permitted broad local files only after confirmation.",
       "files": []
     },
     {

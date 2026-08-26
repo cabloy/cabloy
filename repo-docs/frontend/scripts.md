@@ -98,31 +98,31 @@ Cabloy Start does not expose the Basic Commerce wrapper family.
 
 ## Start SSR browser acceptance
 
-The Start Web and Admin browser baseline also exercises Vona SSR dispatch at port `7102`. Prepare current SSR and REST artifacts, then use the managed local command:
+The Start Web and Admin browser baseline also exercises Vona SSR dispatch at the effective local server port. Prepare current SSR and REST artifacts, then use the managed local command:
 
 ```bash
 npm run build:zova
 npm run deps:vona
-npm run test:e2e:start:clean
+npm run test:e2e
 ```
 
-The Start command family is:
+Start uses the same unified E2E command pair as Basic:
 
 ```text
-test:e2e:start          complete suite
-test:e2e:start:web      all @web surface scenarios
-test:e2e:start:admin    all @admin surface scenarios
-test:e2e:start:clean    managed clean local suite run
+npm run test:e2e       managed clean local suite run
+npm run test:e2e:fast  fast rerun without an automatic reset
 ```
 
-Start scenarios currently use `@web`, `@admin`, and `@smoke`. Select a scenario or surface with Playwright arguments:
+Select flat spec basenames and filter scenarios or surfaces with runner tags and native Playwright arguments. Current Start scenarios use tags including `@web`, `@admin`, `@smoke`, `@layout`, `@cabloy-admin`, `@account`, `@ssr`, and `@flow`:
 
 ```bash
-npm run test:e2e:start:clean -- --grep @web
-npm run test:e2e:start -- --grep ATP-START-FLOW-01
+npm run test:e2e cabloy-start
+npm run test:e2e:fast cabloy-start -- --tag @web
+npm run test:e2e:fast cabloy-admin -- --tag @admin --tag @cabloy-admin
+npm run test:e2e:fast cabloy-start -- --grep ATP-START-FLOW-01
 ```
 
-For a separately managed Start target, set `START_E2E_BASE_URL`. The target owner is responsible for data, cache, and artifact freshness.
+For a separately managed Start target, set `E2E_BASE_URL` and use `test:e2e:fast`. The target owner is responsible for data, cache, artifact freshness, and process lifecycle.
 
 ## Zova script model
 
