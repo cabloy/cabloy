@@ -27,7 +27,7 @@ jobs:
       - name: install Chromium
         run: npx playwright install --with-deps chromium
       - name: run Basic E2E baseline
-        run: npm run test:e2e -- cabloy-basic account
+        run: npm run test:e2e -- cabloy-basic home-user-account
       - name: upload Playwright artifacts
         if: failure()
         uses: actions/upload-artifact@v7
