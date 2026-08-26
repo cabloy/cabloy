@@ -1,5 +1,19 @@
 # Changelog
 
+## 5.1.145
+
+### Features
+
+- Add Markdown support and code styling.
+- Add the `$serviceLocale` service locale capability.
+- Add home-user specifications.
+- Add update functionality.
+
+### Improvements
+
+- Update SSR menu product configuration.
+- Update package configuration and Playwright end-to-end workflow.
+
 ## 5.1.144
 
 ### Features
