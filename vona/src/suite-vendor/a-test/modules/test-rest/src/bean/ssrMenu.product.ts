@@ -9,6 +9,7 @@ import { $locale } from '../.metadata/locales.ts';
 export interface ISsrMenuOptionsProduct extends IDecoratorSsrMenuOptions<ISsrSiteOptionsAdmin> {}
 
 @SsrMenu<ISsrMenuOptionsProduct>({
+  meta: { mode: 'test' },
   items: {
     // public: {
     //   title: $locale('Product'),
