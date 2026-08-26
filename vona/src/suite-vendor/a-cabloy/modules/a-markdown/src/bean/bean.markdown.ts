@@ -83,6 +83,7 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
     'input',
     'label',
     'li',
+    'mark',
     'ol',
     'p',
     'pre',

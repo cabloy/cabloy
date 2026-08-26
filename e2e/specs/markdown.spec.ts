@@ -76,7 +76,7 @@ test(
     const categoryName = `E2E Product Content Web Category ${suffix}`;
     const productTitle = `E2E Product Content Web ${suffix}`;
     const skuCode = `E2E-PC-WEB-${suffix}`;
-    const markdown = `# Product details ${suffix}\n\nA **durable** product.\n\n\`\`\`ts\nconst product = '${suffix}';\n\`\`\`\n\n- [ ] Open task\n- [x] Completed task`;
+    const markdown = `# Product details ${suffix}\n\nA **durable** product.\n\n==highlighted product ${suffix}==\n\n\`\`\`ts\nconst product = '${suffix}';\n\`\`\`\n\n- [ ] Open task\n- [x] Completed task`;
     const unsafeHtml = '<a href="javascript:alert(\'unsafe\')">unsafe</a>';
     const adminContext = await browser.newContext();
     const adminPage = await adminContext.newPage();
@@ -149,6 +149,7 @@ test(
       expect(ssrHtml.toLowerCase()).not.toContain('data-zova-hydrated');
       expect(ssrHtml).toContain(`<h1>Product details ${suffix}</h1>`);
       expect(ssrHtml).toContain('<strong>durable</strong>');
+      expect(ssrHtml).toContain(`<mark>highlighted product ${suffix}</mark>`);
       expect(ssrHtml).toMatch(/<code class="language-ts"><span class="hljs-/);
       expect(ssrHtml).toMatch(
         new RegExp(`<code class="language-ts">[\\s\\S]*${suffix}[\\s\\S]*</code>`),
@@ -166,6 +167,9 @@ test(
         `Product details ${suffix}`,
       );
       await expect(webPage.locator('.product-description strong')).toHaveText('durable');
+      await expect(webPage.locator('.product-description mark')).toHaveText(
+        `highlighted product ${suffix}`,
+      );
       const description = webPage.locator('.product-description');
       await expect(description).not.toHaveClass(/\bprose\b/);
       const codeBlock = description.locator('pre > code.language-ts');

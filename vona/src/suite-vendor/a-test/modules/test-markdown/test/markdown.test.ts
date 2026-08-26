@@ -26,6 +26,8 @@ describe('markdown.test.ts', () => {
 
 A **durable** product with [documentation](https://example.com/docs).
 
+==highlighted text==
+
 | Feature | Value |
 | --- | --- |
 | Material | Steel |
@@ -39,6 +41,7 @@ const sku = 'SKU-1';
 
       assert.match(html, /<h1>Product details<\/h1>/);
       assert.match(html, /<strong>durable<\/strong>/);
+      assert.match(html, /<mark>highlighted text<\/mark>/);
       assert.match(
         html,
         /<a target="_blank" rel="noopener noreferrer" href="https:\/\/example\.com\/docs">documentation<\/a>/,

@@ -79,7 +79,7 @@ The allowlist retains the structures needed by the configured rich-text output:
 
 - document blocks: `p`, `br`, `hr`, `div`;
 - headings: `h1` through `h6`;
-- text marks: `em`, `strong`, `del`, `s`;
+- text marks: `em`, `strong`, `del`, `s`, `mark`;
 - links: `a`;
 - lists and quotes: `ol`, `ul`, `li`, `blockquote`;
 - code: `code`, `pre`;
@@ -106,7 +106,7 @@ Class values are restricted by tag:
 - code classes must match `language-*`;
 - span classes must match `hljs-*`.
 
-The renderer emits `hljs-*` token spans for supported fenced code blocks, and this narrow span policy preserves those generated syntax-highlighting tokens. Arbitrary classes and inline CSS do not become part of the output contract.
+Highlight Markdown such as `==text==` renders as a bare `<mark>text</mark>` element. The renderer emits `hljs-*` token spans for supported fenced code blocks, and the narrow class policy preserves those generated syntax-highlighting tokens. `mark` has no allowed attributes; arbitrary classes, event handlers, and inline CSS do not become part of the output contract.
 
 ### URL policy
 
