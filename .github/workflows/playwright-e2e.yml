@@ -65,7 +65,7 @@ jobs:
       - name: synchronize Vona dependencies
         run: npm run deps:vona
       - name: run Commerce E2E baseline
-        run: npm run test:e2e a-commerce
+        run: npm run test:e2e a-commerce markdown
       - name: upload Playwright artifacts
         if: failure()
         uses: actions/upload-artifact@v7
