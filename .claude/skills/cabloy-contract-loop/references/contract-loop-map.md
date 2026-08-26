@@ -103,7 +103,7 @@ After generation, choose the consumer shape by boundary:
 | Admin custom operation with the same authority, projection, and Resource page semantics | thin module facade → `rest-resource.model.resource` → schema-driven Resource UI |
 | Web self-service operation with different authority, server-derived owner scope, DTO projection, or page/SSR semantics | dedicated Web model → purpose-built self-service pages |
 
-The Web model is valid only for the separate self-service state domain. It must not become a parallel owner for Admin `select`/`view`, schemas, permissions, or generic Resource page state. See `../../../../cabloy-docs/fullstack/admin-resource-and-web-self-service.md` for the complete architecture.
+The Web model is valid only for the separate self-service state domain. It must not become a parallel owner for Admin `select`/`view`, schemas, permissions, or generic Resource page state. See `../../../../repo-docs/fullstack/admin-resource-and-web-self-service.md` for the complete architecture.
 
 ## Forward chain artifact map
 

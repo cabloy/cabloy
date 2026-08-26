@@ -147,7 +147,7 @@ Use that branch only when all of these are true:
 - the Web model owns only its self-service query keys and purpose-built page state, not Admin Resource schemas, permissions, or generic page state;
 - Web UX or private SSR behavior needs a dedicated admission and post-hydration boundary.
 
-This does not justify a parallel owner for a custom Admin endpoint. It establishes a separate Web state domain beside the Admin Resource boundary. Read `../../../../cabloy-docs/fullstack/admin-resource-and-web-self-service.md` for the complete cross-stack pattern.
+This does not justify a parallel owner for a custom Admin endpoint. It establishes a separate Web state domain beside the Admin Resource boundary. Read `../../../../repo-docs/fullstack/admin-resource-and-web-self-service.md` for the complete cross-stack pattern.
 
 ## Quick checklist
 

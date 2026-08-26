@@ -31,12 +31,12 @@ Interpretation:
 
 | Marker | Edition | Managed clean E2E command |
 | --- | --- | --- |
-| `__CABLOY_BASIC__` only | Cabloy Basic | `npm run test:e2e:basic:clean` |
+| `__CABLOY_BASIC__` only | Cabloy Basic | `npm run test:e2e` |
 | `__CABLOY_START__` only | Cabloy Start | `npm run test:e2e:start:clean` |
 
 Stop without edits when both markers are present, neither marker is present, the checkout is primary/unregistered, required environment directories are missing, or the selected edition's required scripts are unavailable.
 
-Read [Parallel Worktree Environment](../../../cabloy-docs/fullstack/parallel-worktree-environment.md) as the canonical shared recipe. Edition detection chooses command names and labels; it does not change the two-file environment model. Never change committed defaults, including `vona/env/.env` and `zova/env/.env`.
+Read [Parallel Worktree Environment](../../../repo-docs/fullstack/parallel-worktree-environment.md) as the canonical shared recipe. Edition detection chooses command names and labels; it does not change the two-file environment model. Never change committed defaults, including `vona/env/.env` and `zova/env/.env`.
 
 ## Step 2: Generate the standard environment recommendation
 
@@ -182,7 +182,7 @@ Run the edition-appropriate managed clean E2E command:
 
 ```bash
 # Cabloy Basic
-npm run test:e2e:basic:clean
+npm run test:e2e
 
 # Cabloy Start
 npm run test:e2e:start:clean

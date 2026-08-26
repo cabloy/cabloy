@@ -17,8 +17,11 @@ Always detect the active edition before making UI-sensitive assumptions, choosin
 - `package.json` is the primary shared workflow entrypoint.
 - `vona/` contains the backend framework, backend modules, and the Vona CLI.
 - `zova/` contains the frontend framework, frontend modules, and the Zova CLI.
-- `cabloy-docs/` contains the unified public documentation.
-- `.docs-internal/` contains internal engineering notes and ADRs.
+- `repo-docs/` contains the unified public documentation.
+- `repo-docs-internal/` contains internal engineering notes and ADRs.
+- `repo-specs/` contains product and business specifications, delivery plans, and suite-local ADRs.
+- `repo-e2e/` contains the end-to-end test project.
+- `repo-observability/` contains local observability infrastructure.
 - `.claude/` contains Claude commands, skills, and settings.
 
 ## Preferred workflow
@@ -35,8 +38,9 @@ Before inventing a custom implementation path:
 
 ## Documentation boundary
 
-- Put user-facing and agent-facing guidance in `cabloy-docs/`.
-- Put maintainer rationale, architecture notes, and ADRs in `.docs-internal/`.
+- Put user-facing and agent-facing guidance in `repo-docs/`.
+- Put maintainer rationale, architecture notes, and engineering ADRs in `repo-docs-internal/`.
+- Put product and business specifications, delivery plans, acceptance records, and suite-local ADRs in `repo-specs/`.
 - Do not mix internal rationale into public how-to pages unless a trimmed user-facing explanation is genuinely needed.
 
 ## AI development rules
@@ -56,19 +60,19 @@ Before inventing a custom implementation path:
 - Treat legacy docs as input material, not as unquestioned truth. When docs conflict with source code, prefer current source code.
 - For frontend work, assume Cabloy Basic and Cabloy Start share a frontend engineering layer but may diverge in UI layer, frontend flavors, suite/module availability, SSR site baselines, project assets, and generated outputs.
 - For Zova frontend analysis, do not default to generic Vue reinterpretation first. Read the code through Zova’s controller / bean / IoC architecture before mapping it to Vue concepts.
-- For Zova source-reading or Vue-vs-Zova explanation tasks, start from the frontend reading guides and source-reading map in `cabloy-docs/frontend/` before doing framework-neutral reinterpretation.
+- For Zova source-reading or Vue-vs-Zova explanation tasks, start from the frontend reading guides and source-reading map in `repo-docs/frontend/` before doing framework-neutral reinterpretation.
 - In Zova application modules under `zova/src/module/**`, `zova/src/module-vendor/**`, `zova/src/suite/**/modules/**`, and `zova/src/suite-vendor/**/modules/**`, use emitted runtime suffixes for relative imports and exports: `.js` for `.ts` targets and `.jsx` for `.tsx` targets, including type-only imports and module tests. Preserve the deliberate `.ts`/`.tsx` convention in `zova/packages-utils/**` and `zova/packages-zova/**`; do not generalize this rule to Vona, CLI/templates, dependencies, generated output, or build artifacts.
 - In Zova page routes, any route with dynamic `params` must define `route.name`; do not rely on unnamed path-keyed routes for typed `$params`. Static routes should omit `route.name` unless a documented named-route requirement exists; use `$router.getPagePath(...)` for canonical static URL generation rather than adding a name or alias for convenience. Ordinary business routes without `locale` params should omit app-config aliases unless a documented system, compatibility, or user-facing URL exception requires one. Choose `ssrProfile` from the page's rendering contract: Web remains `public` by default, while `session` is an explicit choice for cookie-backed state, protected admission, personalized first paint, or private SSR data; the absence of a locale parameter alone does not select a profile. `requiresAuth` is independent, so anonymous routes must explicitly use `requiresAuth: false`. Regenerate page metadata after route changes.
 - For frontend async state that affects rendering or interaction across consumers, prefer model-owned `$useStateData(...)` over controller-managed fetch/cache state.
 - Default to establishing such query state during render. Use `disableSuspenseOnInit: true` only for relatively stable query-backed state when you want to skip the init-time `query.suspense()` kick; it does not prevent query creation, fetches, or hydration-time rendering. If strict readiness is needed later, wait explicitly at the interaction boundary.
 - In SSR, keep server HTML and the client's hydration-time initial render equivalent. When server rendering intentionally omits private, cookie-unavailable, or browser-only state, keep the same neutral shell or placeholder through hydration and defer its query/load/render branch to an explicit post-hydration, admission, mounted, or interaction boundary.
 - Keep repo-wide AI rules in `CLAUDE.md` short and durable; put branching Zova analysis workflows in `.claude/skills/`.
-- Do not modify shared environment identity or ports merely to bypass a busy resource. For intentional parallel worktree setup, follow `cabloy-docs/fullstack/parallel-worktree-environment.md`; otherwise wait for the shared resource or ask the user. Create or change worktree-local environment overrides only through the explicitly invoked `cabloy-worktree-environment` skill and its confirmation phase, and only in `vona/env/.env.local` and `zova/env/.env.local`; never modify flavor-, mode-, app-mode-, or runtime-specific `.env.*.local` files. The skill derives the standard `APP_NAME`, `SERVER_LISTEN_PORT`, `DEV_SERVER_PORT`, `DEV_SERVER_HMR_PORT`, and API-derived `API_BASE_URL` tuple only from Git worktree metadata and fixed port baselines; never read or expose `.env*` content while recommending values. Admin and Web are alternative commands using this shared tuple and must not run concurrently in one worktree; use another linked worktree for concurrent use. Detect the active edition before choosing scripts, and never run `npm run init` as an automatic follow-up.
+- Do not modify shared environment identity or ports merely to bypass a busy resource. For intentional parallel worktree setup, follow `repo-docs/fullstack/parallel-worktree-environment.md`; otherwise wait for the shared resource or ask the user. Create or change worktree-local environment overrides only through the explicitly invoked `cabloy-worktree-environment` skill and its confirmation phase, and only in `vona/env/.env.local` and `zova/env/.env.local`; never modify flavor-, mode-, app-mode-, or runtime-specific `.env.*.local` files. The skill derives the standard `APP_NAME`, `SERVER_LISTEN_PORT`, `DEV_SERVER_PORT`, `DEV_SERVER_HMR_PORT`, and API-derived `API_BASE_URL` tuple only from Git worktree metadata and fixed port baselines; never read or expose `.env*` content while recommending values. Admin and Web are alternative commands using this shared tuple and must not run concurrently in one worktree; use another linked worktree for concurrent use. Detect the active edition before choosing scripts, and never run `npm run init` as an automatic follow-up.
 - For SSR theme-sensitive frontend work, detect the active edition marker and UI library before making assumptions. Cabloy Basic currently means DaisyUI + Tailwind CSS assumptions; Cabloy Start currently means Vuetify assumptions.
 - In Web SSR without cookie-backed theme resolution, do not treat server reads of `$theme.dark`, `$theme.darkMode`, or `$token` as final browser truth. Keep theme-sensitive SSR branching hydration-tolerant or defer final theme-sensitive decisions to the client.
 - Do not assume Cabloy Basic and Cabloy Start use the same adapter-level SSR theme handoff. Verify the active theme handler and client hydration path before changing SSR theme behavior.
 - Reuse existing repo terminology: Cabloy, Vona, Zova, suite, module, bean, SSR, SPA, Web, Admin.
-- For backend base-class placement, use the A / B1 / B2 rule from `cabloy-docs/ai/class-placement-rule.md`.
+- For backend base-class placement, use the A / B1 / B2 rule from `repo-docs/ai/class-placement-rule.md`.
 - Pure helper bases belong in `src/lib`; subclass-only bases should be evaluated case by case and often belong in `src/lib`.
 - Runtime-anchor bases that still require container-managed or selector/class-token behavior but should not be global beans should prefer `src/service` with `@Service()`.
 - Service-scene runtime-anchor bases that should not register in `IBeanRecordGeneral` should prefer the `src/service/*_.ts` form.
@@ -77,7 +81,7 @@ Before inventing a custom implementation path:
 - When adding a persisted field to an existing backend resource, ask the user whether `vonaModule.fileVersion` should be incremented before changing `meta.version.ts` or the module schema path. If yes, add a new migration version and bump `fileVersion`. If no, keep the current `fileVersion` and fold the schema change into the current version path. Do not assume the versioning strategy without confirmation.
 - In shared-database multitenancy, do not use `table.unique(...)` for business uniqueness. Keep ordinary indexes for lookup performance and enforce tenant-scoped uniqueness in the business layer.
 - In Vona, a tenant corresponds to an instance. Ordinary resource-model CRUD is automatically scoped to the active instance; treat records absent from that scope as absent, and do not use raw cross-instance probes merely to choose between `403` and not-found behavior. Model future multi-merchant boundaries explicitly inside an instance.
-- Model cross-Model query-cache dependencies as one directed, acyclic `modelsClear` / `modelsClearedBy` graph, and verify source mutations refresh warmed dependent queries; read `.docs-internal/architecture/vona-cross-model-query-cache-dependencies.md` before designing a nontrivial graph.
+- Model cross-Model query-cache dependencies as one directed, acyclic `modelsClear` / `modelsClearedBy` graph, and verify source mutations refresh warmed dependent queries; read `repo-docs-internal/architecture/vona-cross-model-query-cache-dependencies.md` before designing a nontrivial graph.
 - For `@Api.field(...)` and related schemaLike composition, framework guards now preserve previously attached OpenAPI metadata across schema rebuilds, but structure-shaping schemaLike is still order-sensitive. Treat `v.object(...)`, `v.array(...)`, `v.optional()`, `v.nullable()`, `v.default(...)`, and preprocess/transform wrappers as structure-shaping; keep the final structure-defining schemaLike last and verify emitted schema/OpenAPI output after such edits.
 - `@Core.transaction(...)` defaults to `REQUIRED`: it starts a transaction only when none exists and otherwise joins the current datasource transaction without upgrading its isolation. Prefer it over manual `inTransaction` wrappers for atomic service methods; use `REQUIRES_NEW` only when an independently committed boundary is explicitly required.
 - For replay-safe transient failures, use `@Core.retryable(...)` with an explicit `errorCodes` allowlist. It retries the downstream AOP suffix, so place it closest to the method when it must wrap and retry a `@Core.transaction(...)` boundary; use `ownerOnly: true` for dual-role leaves that must not retry inside a caller-owned transaction; do not retry external side effects or infer retryability from isolation level.

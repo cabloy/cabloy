@@ -7,7 +7,7 @@ description: This skill should be used when the main Cabloy task is parent-owned
 
 Use this skill when the user wants to add, extend, analyze, or preserve a Cabloy master-detail or nested-detail backend workflow.
 
-Read the public [Master-Detail Workflow](../../../cabloy-docs/backend/master-detail-workflow.md) for the canonical operational explanation and [Master-Detail Source Reading Map](../../../cabloy-docs/backend/master-detail-source-reading-map.md) for the current source evidence. This skill is the thinner orchestration layer: it should classify the detail shape, choose the generator-first path, preserve the naming and placement invariants, and finish with the right verification path.
+Read the public [Master-Detail Workflow](../../../repo-docs/backend/master-detail-workflow.md) for the canonical operational explanation and [Master-Detail Source Reading Map](../../../repo-docs/backend/master-detail-source-reading-map.md) for the current source evidence. This skill is the thinner orchestration layer: it should classify the detail shape, choose the generator-first path, preserve the naming and placement invariants, and finish with the right verification path.
 
 ## Goals
 
@@ -161,7 +161,7 @@ Master-detail ownership is separate from Vona's tenant/instance boundary:
 - treat a missing parent or detail from the normal scoped aggregate flow as absent; do not add unscoped existence probes merely to distinguish a foreign-instance row
 - if a future multi-merchant design is needed, model merchant ownership explicitly within the instance in addition to the aggregate relation
 
-For the canonical tenancy explanation, read [Multi-Instance and Instance Resolution](../../../cabloy-docs/backend/multi-instance-and-instance-resolution.md) and [Model Guide](../../../cabloy-docs/backend/model-guide.md).
+For the canonical tenancy explanation, read [Multi-Instance and Instance Resolution](../../../repo-docs/backend/multi-instance-and-instance-resolution.md) and [Model Guide](../../../repo-docs/backend/model-guide.md).
 
 ## Step 7: Keep fullstack boundaries explicit
 

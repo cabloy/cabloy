@@ -28,8 +28,8 @@ const OVERWRITE_DIRS: string[] = [
   // root
   'scripts',
   '.husky',
-  'cabloy-docs',
-  'observability',
+  'repo-docs',
+  'repo-observability',
   // vona
   'vona/packages-vona',
   'vona/packages-cli',
@@ -59,27 +59,15 @@ const OVERWRITE_DIRS_CABLOY_BASIC: string[] = [
   'zova/src/suite/a-devui',
 ];
 
-const FRAMEWORK_E2E_DIRS_CABLOY_BASIC: string[] = ['e2e/config', 'e2e/scripts'];
+const FRAMEWORK_E2E_DIRS_CABLOY_BASIC: string[] = ['repo-e2e/config', 'repo-e2e/scripts'];
 
 const FRAMEWORK_E2E_FILES_CABLOY_BASIC: string[] = [
-  'e2e/specs/cabloy-basic.spec.ts',
-  'e2e/specs/account.spec.ts',
-  'e2e/specs/a-commerce.spec.ts',
+  'repo-e2e/specs/cabloy-basic.spec.ts',
+  'repo-e2e/specs/home-user-account.spec.ts',
+  'repo-e2e/specs/a-commerce.spec.ts',
 ];
 
 const FRAMEWORK_E2E_SCRIPT_NAMES_CABLOY_BASIC: string[] = ['test:e2e', 'test:e2e:fast'];
-
-const FRAMEWORK_E2E_LEGACY_SCRIPT_NAMES_CABLOY_BASIC: string[] = [
-  'test:e2e:basic',
-  'test:e2e:basic:web',
-  'test:e2e:basic:admin',
-  'test:e2e:basic:clean',
-  'test:e2e:commerce',
-  'test:e2e:commerce:web',
-  'test:e2e:commerce:admin',
-  'test:e2e:commerce:clean',
-  'test:e2e:basic:flow',
-];
 
 const FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC = '@playwright/test';
 
@@ -261,12 +249,12 @@ function mergeFrameworkE2eAssets(dryRun?: boolean): void {
   }
 
   const legacyFrameworkFiles: string[] = [
-    'e2e/config/playwright.basic.config.ts',
-    'e2e/config/playwright.commerce.config.ts',
-    'e2e/config/playwright.shared.config.ts',
-    'e2e/specs/cabloy-basic/basic.spec.ts',
-    'e2e/specs/cabloy-basic/account.spec.ts',
-    'e2e/specs/a-commerce/commerce.spec.ts',
+    'repo-e2e/config/playwright.basic.config.ts',
+    'repo-e2e/config/playwright.commerce.config.ts',
+    'repo-e2e/config/playwright.shared.config.ts',
+    'repo-e2e/specs/cabloy-basic/basic.spec.ts',
+    'repo-e2e/specs/cabloy-basic/account.spec.ts',
+    'repo-e2e/specs/a-commerce/commerce.spec.ts',
   ];
   for (const file of legacyFrameworkFiles) {
     const dest = resolve(ROOT_DIR, file);
@@ -334,16 +322,6 @@ function reconcileFrameworkE2ePackageJson(dryRun?: boolean): void {
       );
     } else {
       delete projectPackage.dependencies[FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC];
-    }
-  }
-
-  for (const name of FRAMEWORK_E2E_LEGACY_SCRIPT_NAMES_CABLOY_BASIC) {
-    if (!projectPackage.scripts?.[name]) continue;
-    changed = true;
-    if (dryRun) {
-      log(`  [dry-run] Remove legacy framework E2E script package.json scripts.${name}`);
-    } else {
-      delete projectPackage.scripts?.[name];
     }
   }
 

@@ -74,17 +74,17 @@ That order reduces the risk of drifting into premature analogy before the source
 
 Do not begin by forcing the problem into generic Vue terminology.
 
-Start from the public frontend reading docs in `cabloy-docs/frontend/`.
+Start from the public frontend reading docs in `repo-docs/frontend/`.
 
 ### Primary reading surfaces
 
-- `cabloy-docs/frontend/reading-zova-for-vue-developers.md`
-- `cabloy-docs/frontend/zova-vs-vue3-comparison.md`
-- `cabloy-docs/frontend/zova-reactivity-under-the-hood.md`
-- `cabloy-docs/frontend/zova-source-reading-map.md`
-- `cabloy-docs/frontend/page-guide.md`
-- `cabloy-docs/frontend/component-guide.md`
-- `cabloy-docs/frontend/css-in-js-guide.md`
+- `repo-docs/frontend/reading-zova-for-vue-developers.md`
+- `repo-docs/frontend/zova-vs-vue3-comparison.md`
+- `repo-docs/frontend/zova-reactivity-under-the-hood.md`
+- `repo-docs/frontend/zova-source-reading-map.md`
+- `repo-docs/frontend/page-guide.md`
+- `repo-docs/frontend/component-guide.md`
+- `repo-docs/frontend/css-in-js-guide.md`
 
 For compact procedural summaries inside the skill bundle, also use:
 
@@ -93,25 +93,25 @@ For compact procedural summaries inside the skill bundle, also use:
 
 For locale-sensitive schema/form questions, also read:
 
-- `cabloy-docs/frontend/api-schema-guide.md`
-- `cabloy-docs/frontend/a-openapi-under-the-hood.md`
-- `cabloy-docs/frontend/form-guide.md`
-- `cabloy-docs/frontend/zova-form-under-the-hood.md`
+- `repo-docs/frontend/api-schema-guide.md`
+- `repo-docs/frontend/a-openapi-under-the-hood.md`
+- `repo-docs/frontend/form-guide.md`
+- `repo-docs/frontend/zova-form-under-the-hood.md`
 
 ### Core architecture surfaces
 
 Use these when the question needs broader architectural context:
 
-- `cabloy-docs/frontend/introduction.md`
-- `cabloy-docs/frontend/foundation.md`
-- `cabloy-docs/frontend/design-principles.md`
-- `cabloy-docs/frontend/ioc-and-beans.md`
-- `cabloy-docs/frontend/page-guide.md`
-- `cabloy-docs/frontend/component-guide.md`
-- `cabloy-docs/frontend/model-architecture.md`
-- `cabloy-docs/frontend/page-route-guide.md`
-- `cabloy-docs/frontend/behavior-guide.md`
-- `cabloy-docs/frontend/ssr-architecture-overview.md`
+- `repo-docs/frontend/introduction.md`
+- `repo-docs/frontend/foundation.md`
+- `repo-docs/frontend/design-principles.md`
+- `repo-docs/frontend/ioc-and-beans.md`
+- `repo-docs/frontend/page-guide.md`
+- `repo-docs/frontend/component-guide.md`
+- `repo-docs/frontend/model-architecture.md`
+- `repo-docs/frontend/page-route-guide.md`
+- `repo-docs/frontend/behavior-guide.md`
+- `repo-docs/frontend/ssr-architecture-overview.md`
 
 ## Step 4: Choose the shortest correct source-reading path
 
@@ -122,7 +122,7 @@ Use these bundled references to keep the workflow compact:
 - `references/analysis-modes.md`
 - `references/core-reading-paths.md`
 
-Use the public `cabloy-docs/frontend/zova-source-reading-map.md` as the fuller explanation layer, but use the bundled references first when they are enough for the current task.
+Use the public `repo-docs/frontend/zova-source-reading-map.md` as the fuller explanation layer, but use the bundled references first when they are enough for the current task.
 
 ### Locale-sensitive schema and form path
 

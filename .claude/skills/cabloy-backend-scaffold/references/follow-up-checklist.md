@@ -19,7 +19,7 @@ After generating or extending a backend thread, check which follow-up layers app
 - when a narrowed DTO or OpenAPI schema is expected to remove physical response fields, separately shape and verify the action response; declaration narrowing alone does not guarantee runtime field stripping
 - when stable Entity, Model, relation, or query truth exists, define the DTO projection first with `$Dto.*` and, where needed, `columns`, `include`, or `dtoClass`
 - for an inferred field, use `$makeMetadata(...)` for metadata-only refinement and `$makeSchema(...)` for schema or validation refinement; use a class-body `@Api.field(...)` member only for a genuinely new field
-- when inference cannot express the contract clearly, choose an explicit DTO deliberately; see [Default-first three-layer DTO authoring](../../../../cabloy-docs/backend/dto-infer-generation.md#default-first-three-layer-dto-authoring)
+- when inference cannot express the contract clearly, choose an explicit DTO deliberately; see [Default-first three-layer DTO authoring](../../../../repo-docs/backend/dto-infer-generation.md#default-first-three-layer-dto-authoring)
 - frontend contract impact
 - `@Api.field(...)` / `$makeSchema(...)` ordering: framework guards now preserve previously attached OpenAPI metadata across schema rebuilds, but structure-shaping schemaLike is still order-sensitive
 - when an explicit zod/custom schema or other structure-defining schemaLike is present, put that structure-defining schemaLike last because `makeSchemaLikes(...)` applies arguments right-to-left and later structure changes can otherwise alter or replace the intended schema
@@ -49,7 +49,7 @@ When the active edition and installed modules provide `@Passport.rbac(...)` and 
 - keep the dependency graph acyclic and free of duplicate edges; do not declare both forms for the same edge because propagation is transitive and current runtime collection does not deduplicate targets
 - when `modelsClearedByFn` is required, treat it as replacement behavior and explicitly own the target clear and any necessary downstream propagation
 - prefer normal Model/service mutation paths so source invalidation, commit-time re-clear, and configured double-delete remain active
-- add a warm-query → mutate-source → repeat-query regression test for each new dependency path; read [Vona Cross-Model Query-Cache Dependencies](../../../../.docs-internal/architecture/vona-cross-model-query-cache-dependencies.md) for the source-backed decision rules
+- add a warm-query → mutate-source → repeat-query regression test for each new dependency path; read [Vona Cross-Model Query-Cache Dependencies](../../../../repo-docs-internal/architecture/vona-cross-model-query-cache-dependencies.md) for the source-backed decision rules
 - transaction behavior
 
 ## Test resource lifecycle follow-up
@@ -73,7 +73,7 @@ When the active edition and installed modules provide `@Passport.rbac(...)` and 
 - add `vonaModule.dependencies` only for a genuine target-module availability, dependency-first ordering, or minimum-version requirement
 - startup, lifecycle, or `monkey.ts` integration can require dependency-first ordering, but are not the only valid dependency case
 - when adding an edge, verify package/suite composition, the target relative module name, the minimum compatible version, and that the graph remains acyclic
-- do not create speculative dependency edges or circular declarations merely to document a lookup; read [Vona Module Dependencies](../../../../cabloy-docs/backend/module-dependencies.md) for the canonical decision guide
+- do not create speculative dependency edges or circular declarations merely to document a lookup; read [Vona Module Dependencies](../../../../repo-docs/backend/module-dependencies.md) for the canonical decision guide
 
 ## Verification follow-up
 

@@ -15,7 +15,7 @@ Use this mode when the user is mainly asking:
 
 1. detect the active edition if UI-sensitive assumptions might matter
 2. start from the public frontend docs first
-3. pick the smallest matching thread from `cabloy-docs/frontend/zova-source-reading-map.md`
+3. pick the smallest matching thread from `repo-docs/frontend/zova-source-reading-map.md`
 4. cite the initial source files in the recommended reading order
 5. stop before tracing deeper runtime layers unless the user also wants runtime-flow analysis
 

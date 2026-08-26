@@ -55,7 +55,7 @@ Inspect these surfaces before proposing implementation:
 - the repository or workspace `package.json` that owns the scripts
 - `npm run zova`
 - Zova command families such as `create:*`, `init:*`, `refactor:*`, `tools:*`, `openapi:*`, and `bin:*`
-- `cabloy-docs/frontend/` for the relevant frontend thread
+- `repo-docs/frontend/` for the relevant frontend thread
 
 For deeper reference material, read:
 
@@ -241,31 +241,31 @@ Use the docs to decide what the generated frontend thread still needs.
 
 Especially relevant pages include:
 
-- `cabloy-docs/frontend/page-guide.md`
-- `cabloy-docs/frontend/page-query-guide.md`
-- `cabloy-docs/frontend/page-params-guide.md`
-- `cabloy-docs/frontend/page-route-guide.md`
-- `cabloy-docs/frontend/route-alias-guide.md`
-- `cabloy-docs/frontend/navigation-guards-guide.md`
-- `cabloy-docs/frontend/component-guide.md`
-- `cabloy-docs/frontend/form-layout-guide.md` for schema-driven field placement, Grid/flow selection, groups, tabs, or embedded filter actions
-- `cabloy-docs/frontend/component-props-guide.md`
-- `cabloy-docs/frontend/component-v-model-guide.md`
-- `cabloy-docs/frontend/generic-component-guide.md`
-- `cabloy-docs/frontend/api-guide.md`
-- `cabloy-docs/frontend/model-architecture.md`
-- `cabloy-docs/frontend/model-state-guide.md`
-- `cabloy-docs/frontend/openapi-sdk-guide.md`
-- `cabloy-docs/frontend/api-schema-guide.md`
-- `cabloy-docs/frontend/sdk-guide.md`
-- `cabloy-docs/frontend/ssr-overview.md`
-- `cabloy-docs/frontend/ssr-init-data.md`
-- `cabloy-docs/frontend/ssr-client-only.md`
-- `cabloy-docs/frontend/ssr-seo-meta.md`
-- `cabloy-docs/frontend/ssr-env.md`
-- `cabloy-docs/frontend/css-in-js-guide.md`
-- `cabloy-docs/frontend/theme-guide.md`
-- `cabloy-docs/frontend/icon-engine-guide.md`
+- `repo-docs/frontend/page-guide.md`
+- `repo-docs/frontend/page-query-guide.md`
+- `repo-docs/frontend/page-params-guide.md`
+- `repo-docs/frontend/page-route-guide.md`
+- `repo-docs/frontend/route-alias-guide.md`
+- `repo-docs/frontend/navigation-guards-guide.md`
+- `repo-docs/frontend/component-guide.md`
+- `repo-docs/frontend/form-layout-guide.md` for schema-driven field placement, Grid/flow selection, groups, tabs, or embedded filter actions
+- `repo-docs/frontend/component-props-guide.md`
+- `repo-docs/frontend/component-v-model-guide.md`
+- `repo-docs/frontend/generic-component-guide.md`
+- `repo-docs/frontend/api-guide.md`
+- `repo-docs/frontend/model-architecture.md`
+- `repo-docs/frontend/model-state-guide.md`
+- `repo-docs/frontend/openapi-sdk-guide.md`
+- `repo-docs/frontend/api-schema-guide.md`
+- `repo-docs/frontend/sdk-guide.md`
+- `repo-docs/frontend/ssr-overview.md`
+- `repo-docs/frontend/ssr-init-data.md`
+- `repo-docs/frontend/ssr-client-only.md`
+- `repo-docs/frontend/ssr-seo-meta.md`
+- `repo-docs/frontend/ssr-env.md`
+- `repo-docs/frontend/css-in-js-guide.md`
+- `repo-docs/frontend/theme-guide.md`
+- `repo-docs/frontend/icon-engine-guide.md`
 
 ## Step 7: Verification guidance
 

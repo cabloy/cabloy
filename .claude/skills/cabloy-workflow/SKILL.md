@@ -1,6 +1,6 @@
 ---
 name: cabloy-workflow
-description: This skill should be used when the main Cabloy problem is workflow routing before implementation: deciding between Vona backend scaffolding, Zova frontend scaffolding, contract-loop work, or docs/AI-enablement homes such as cabloy-docs, .docs-internal, CLAUDE.md, commands, or skills, including cases where Cabloy Basic vs Cabloy Start assumptions affect that routing. Trigger on requests to route, classify, choose a workflow, choose an edition-specific path, or decide where Cabloy guidance should live. Do not use it once the task is already clearly a backend scaffold, frontend scaffold, or contract-loop job.
+description: This skill should be used when the main Cabloy problem is workflow routing before implementation: deciding between Vona backend scaffolding, Zova frontend scaffolding, contract-loop work, or docs/AI-enablement homes such as repo-docs, repo-docs-internal, CLAUDE.md, commands, or skills, including cases where Cabloy Basic vs Cabloy Start assumptions affect that routing. Trigger on requests to route, classify, choose a workflow, choose an edition-specific path, or decide where Cabloy guidance should live. Do not use it once the task is already clearly a backend scaffold, frontend scaffold, or contract-loop job.
 ---
 
 # Cabloy Workflow
@@ -69,8 +69,8 @@ Use the frontend path when the task is about:
 
 Use the docs/AI path when the task is about:
 
-- `cabloy-docs/`
-- `.docs-internal/`
+- `repo-docs/`
+- `repo-docs-internal/`
 - `CLAUDE.md`
 - `.claude/commands/`
 - `.claude/skills/`
@@ -84,8 +84,8 @@ Before inventing a workflow, inspect these shared surfaces:
 - `npm run vona`
 - `npm run zova`
 - root `CLAUDE.md` if present
-- `cabloy-docs/` for public guidance
-- `.docs-internal/` for maintainer rationale
+- `repo-docs/` for public guidance
+- `repo-docs-internal/` for maintainer rationale
 
 If the request spans backend and frontend, classify it as fullstack by default unless the user clearly wants only one side.
 
@@ -100,7 +100,7 @@ The reason is simple: these files are where Cabloy already encodes its real work
 
 ### Parallel worktree environment setup
 
-When a request involves a second worktree, concurrent Vona/Zova development, isolated ordinary tests, or managed clean E2E, classify it as fullstack workflow setup. Read [Parallel Worktree Environment](../../../cabloy-docs/fullstack/parallel-worktree-environment.md), the canonical shared recipe maintained in Cabloy Basic for both editions.
+When a request involves a second worktree, concurrent Vona/Zova development, isolated ordinary tests, or managed clean E2E, classify it as fullstack workflow setup. Read [Parallel Worktree Environment](../../../repo-docs/fullstack/parallel-worktree-environment.md), the canonical shared recipe maintained in Cabloy Basic for both editions.
 
 This routing skill provides read-only guidance only. Do not infer an `APP_NAME` or ports, edit local overrides, or run `npm run init` from a generic worktree request. When the user wants confirmation-gated local environment setup, ask them to explicitly invoke `/cabloy-worktree-environment`.
 
@@ -152,7 +152,7 @@ When the user is asking for guidance or automation assets, route the work to the
 
 ### Public docs
 
-Use `cabloy-docs/` for:
+Use `repo-docs/` for:
 
 - user-facing explanations
 - reusable AI-facing workflow guidance
@@ -160,7 +160,7 @@ Use `cabloy-docs/` for:
 
 ### Internal engineering docs
 
-Use `.docs-internal/` for:
+Use `repo-docs-internal/` for:
 
 - ADRs
 - architecture notes
@@ -196,8 +196,8 @@ When the request is about whether a backend base class belongs in `src/lib`, `sr
 
 For these requests:
 
-- put the durable operational explanation in `cabloy-docs/`
-- put rationale and invariants in `.docs-internal/`
+- put the durable operational explanation in `repo-docs/`
+- put rationale and invariants in `repo-docs-internal/`
 - keep `CLAUDE.md` short and behavioral
 - do not treat `@Service()` as a business-layer naming decision only; for B2 it is a runtime-anchor placement choice
 

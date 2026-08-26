@@ -49,7 +49,7 @@ Inspect these surfaces before proposing implementation:
 - the repository or workspace `package.json` that owns the scripts
 - `npm run vona`
 - Vona command families such as `create:*`, `init:*`, `tools:*`, and `bin:*`
-- `cabloy-docs/backend/` for the relevant backend thread
+- `repo-docs/backend/` for the relevant backend thread
 
 For deeper reference material, read:
 
@@ -152,7 +152,7 @@ When the active edition and installed modules provide `@Passport.rbac(...)` and 
 - treat summary/description as presentation metadata, not authorization identity or enforcement
 - verify the explicit server-side catalog/editor projection; do not assume OpenAPI metadata is automatically displayed by a policy editor
 
-For the authoring example and metadata boundary, read [Controller Guide](../../../cabloy-docs/backend/controller-guide.md#rbac-presentation-metadata) and [Controller AOP Guide](../../../cabloy-docs/backend/controller-aop-guide.md#rbac-presentation-metadata).
+For the authoring example and metadata boundary, read [Controller Guide](../../../repo-docs/backend/controller-guide.md#rbac-presentation-metadata) and [Controller AOP Guide](../../../repo-docs/backend/controller-aop-guide.md#rbac-presentation-metadata).
 
 ### Persistence and schema lifecycle
 
@@ -172,7 +172,7 @@ For normal resource persistence, preserve Vona's default active-instance scope:
 - use `disableInstance`, plain builders, or raw SQL only for an explicit global/system or otherwise authorized contract
 - model a future multi-merchant requirement as a separate boundary within an instance, with its own ownership and authorization rules
 
-For the canonical explanation, read [Multi-Instance and Instance Resolution](../../../cabloy-docs/backend/multi-instance-and-instance-resolution.md) and [Model Guide](../../../cabloy-docs/backend/model-guide.md).
+For the canonical explanation, read [Multi-Instance and Instance Resolution](../../../repo-docs/backend/multi-instance-and-instance-resolution.md) and [Model Guide](../../../repo-docs/backend/model-guide.md).
 
 ### Cross-module resource lookup
 
@@ -190,7 +190,7 @@ Then distinguish runtime lookup from a true module dependency:
 - do not add a dependency declaration merely because code looks up another module's service, model, config, locale, or other resource
 - scope lookup cannot make an absent module available; validate application/suite composition separately when the target must exist
 
-For the canonical decision guide, read [Vona Module Dependencies](../../../cabloy-docs/backend/module-dependencies.md), with [Backend Foundation](../../../cabloy-docs/backend/foundation.md#scope-lookup-vs-module-dependencies) and [Package Map](../../../cabloy-docs/reference/package-map.md) as companions.
+For the canonical decision guide, read [Vona Module Dependencies](../../../repo-docs/backend/module-dependencies.md), with [Backend Foundation](../../../repo-docs/backend/foundation.md#scope-lookup-vs-module-dependencies) and [Package Map](../../../repo-docs/reference/package-map.md) as companions.
 
 ### Verification
 
@@ -219,18 +219,18 @@ Use the docs to decide what the generated backend thread still needs.
 
 Especially relevant pages include:
 
-- `cabloy-docs/backend/controller-guide.md`
-- `cabloy-docs/backend/service-guide.md`
-- `cabloy-docs/backend/model-guide.md`
-- `cabloy-docs/backend/entity-guide.md`
-- `cabloy-docs/backend/dto-guide.md`
-- `cabloy-docs/backend/crud-workflow.md`
-- `cabloy-docs/backend/migration-and-changes.md`
-- `cabloy-docs/backend/field-indexes.md`
-- `cabloy-docs/backend/unit-testing.md`
-- `cabloy-docs/backend/validation-guide.md`
-- `cabloy-docs/backend/openapi-guide.md`
-- `cabloy-docs/backend/dto-infer-generation.md`
+- `repo-docs/backend/controller-guide.md`
+- `repo-docs/backend/service-guide.md`
+- `repo-docs/backend/model-guide.md`
+- `repo-docs/backend/entity-guide.md`
+- `repo-docs/backend/dto-guide.md`
+- `repo-docs/backend/crud-workflow.md`
+- `repo-docs/backend/migration-and-changes.md`
+- `repo-docs/backend/field-indexes.md`
+- `repo-docs/backend/unit-testing.md`
+- `repo-docs/backend/validation-guide.md`
+- `repo-docs/backend/openapi-guide.md`
+- `repo-docs/backend/dto-infer-generation.md`
 
 ## Step 7: Verification guidance
 

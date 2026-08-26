@@ -46,4 +46,4 @@ Representative example:
 
 For the compact top-level overview shared across Vona and Zova, see:
 
-- `../../../cabloy-docs/reference/cli-reference.md`
+- `../../../repo-docs/reference/cli-reference.md`

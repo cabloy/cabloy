@@ -178,7 +178,8 @@ Contribution guidelines:
 
 - prefer CLI-backed workflows with `npm run vona` and `npm run zova`
 - put user-facing and agent-facing guidance in [docs.cabloy.com](https://docs.cabloy.com)
-- put maintainer rationale, architecture notes, and ADRs in [.docs-internal/](https://github.com/cabloy/cabloy/tree/main/.docs-internal)
+- put maintainer rationale, architecture notes, and engineering ADRs in [repo-docs-internal/](https://github.com/cabloy/cabloy/tree/main/repo-docs-internal)
+- put product and business specifications, delivery plans, and suite-local ADRs in [repo-specs/](https://github.com/cabloy/cabloy/tree/main/repo-specs)
 - verify framework changes with the narrowest meaningful checks first, then shared root scripts when broader confidence is needed
 
 To report bugs or propose changes, use [GitHub Issues](https://github.com/cabloy/cabloy/issues) or open a pull request in [github.com/cabloy/cabloy](https://github.com/cabloy/cabloy).

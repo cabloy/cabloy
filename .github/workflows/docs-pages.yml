@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - 'cabloy-docs/**'
+      - 'repo-docs/**'
       - 'README.md'
       - '.github/workflows/docs-pages.yml'
   workflow_dispatch:
@@ -32,19 +32,19 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-          cache-dependency-path: cabloy-docs/pnpm-lock.yaml
+          cache-dependency-path: repo-docs/pnpm-lock.yaml
       - name: install docs dependencies
-        run: pnpm --dir cabloy-docs install --frozen-lockfile
+        run: pnpm --dir repo-docs install --frozen-lockfile
       - name: build docs
         env:
           GA_MEASUREMENT_ID: ${{ vars.GA_MEASUREMENT_ID }}
-        run: pnpm --dir cabloy-docs docs:build
+        run: pnpm --dir repo-docs docs:build
       - name: setup pages
         uses: actions/configure-pages@v5
       - name: upload pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: cabloy-docs/.vitepress/dist
+          path: repo-docs/.vitepress/dist
 
   deploy:
     needs: build

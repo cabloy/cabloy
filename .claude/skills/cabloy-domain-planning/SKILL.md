@@ -48,7 +48,7 @@ Do not use this skill once naming is already confirmed and the request is clearl
 
 For real business work, prefer the suite-first path described in:
 
-- `cabloy-docs/fullstack/suites-and-modules.md`
+- `repo-docs/fullstack/suites-and-modules.md`
 
 Use this practical rule:
 
@@ -75,8 +75,8 @@ If the user already provides names, validate them instead of replacing them sile
 
 Reuse the durable naming rules from:
 
-- `cabloy-docs/fullstack/suites-and-modules.md`
-- `cabloy-docs/frontend/modules-and-suites.md`
+- `repo-docs/fullstack/suites-and-modules.md`
+- `repo-docs/frontend/modules-and-suites.md`
 
 ### Suite short name rule
 

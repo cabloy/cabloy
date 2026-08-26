@@ -7,7 +7,7 @@ description: Use this skill whenever the user wants to remove or delete an exist
 
 Use this skill when the user wants to remove an existing module from the Cabloy monorepo.
 
-Read the public [Module Removal Playbook](../../../cabloy-docs/ai/playbook-module-removal.md) for the canonical user/agent-facing workflow. This skill is the thinner orchestration layer: it should classify the removal path, choose the right cleanup branch, and point back to the playbook for the shared operational sequence.
+Read the public [Module Removal Playbook](../../../repo-docs/ai/playbook-module-removal.md) for the canonical user/agent-facing workflow. This skill is the thinner orchestration layer: it should classify the removal path, choose the right cleanup branch, and point back to the playbook for the shared operational sequence.
 
 ## Goals
 
@@ -128,7 +128,7 @@ Ask or confirm whether the task is:
 - code/runtime removal only
 - code/runtime removal plus docs/examples scrub
 
-If docs cleanup is in scope, update `cabloy-docs/` separately from the runtime cleanup and keep maintainer rationale in `.docs-internal/`.
+If docs cleanup is in scope, update `repo-docs/` separately from the runtime cleanup and keep maintainer rationale in `repo-docs-internal/`.
 
 ## Response pattern
 

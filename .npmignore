@@ -81,8 +81,9 @@ vona/docker-compose.yml
 
 # --- Additional npm-only exclusions ---
 
-# Documentation source (not needed in user projects)
-.docs-internal/
+# Internal repository documentation and planning sources (not needed in user projects)
+repo-docs-internal/
+repo-specs/
 vona/packages-docs/
 zova/packages-docs/
 

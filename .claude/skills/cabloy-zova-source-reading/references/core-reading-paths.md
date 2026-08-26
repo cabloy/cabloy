@@ -103,9 +103,9 @@ Use when the question is about:
 
 Read in this order:
 
-1. `cabloy-docs/frontend/api-schema-guide.md`
-2. `cabloy-docs/frontend/a-openapi-under-the-hood.md`
-3. `cabloy-docs/frontend/form-guide.md` and `cabloy-docs/frontend/zova-form-under-the-hood.md` when a form consumes the schema
+1. `repo-docs/frontend/api-schema-guide.md`
+2. `repo-docs/frontend/a-openapi-under-the-hood.md`
+3. `repo-docs/frontend/form-guide.md` and `repo-docs/frontend/zova-form-under-the-hood.md` when a form consumes the schema
 4. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/monkey.ts`
 5. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/model/sdk.ts`
 6. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/bean/sys.sdk.ts`

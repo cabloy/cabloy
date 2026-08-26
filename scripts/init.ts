@@ -18,7 +18,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = resolve(__dirname, '..');
 const VONA_DIR = resolve(ROOT_DIR, 'vona');
 const ZOVA_DIR = resolve(ROOT_DIR, 'zova');
-const CABLOY_DOCS_DIR = resolve(ROOT_DIR, 'cabloy-docs');
+const REPO_DOCS_DIR = resolve(ROOT_DIR, 'repo-docs');
 const PNPM_VERSION = '11.5.2';
 const VERSION_MARKER_FILE = '.cabloy-version';
 
@@ -284,14 +284,14 @@ function cleanupWorkspaceYaml(): void {
   }
 }
 
-// --- Step G: init:cabloy-docs ---
+// --- Step G: init:repo-docs ---
 
-function initCabloyDocs(): void {
-  const pkgPath = resolve(CABLOY_DOCS_DIR, 'package.json');
+function initRepoDocs(): void {
+  const pkgPath = resolve(REPO_DOCS_DIR, 'package.json');
   if (!existsSync(pkgPath)) return;
   // eslint-disable-next-line
-  console.log('[init] Initializing cabloy-docs...');
-  pnpmInstall(CABLOY_DOCS_DIR);
+  console.log('[init] Initializing repo-docs...');
+  pnpmInstall(REPO_DOCS_DIR);
 }
 
 // --- Main ---
@@ -305,7 +305,7 @@ cleanupWorkspaceYaml();
 initZova();
 buildSsrZovaAll();
 initVona();
-initCabloyDocs();
+initRepoDocs();
 writeVersionMarker();
 // eslint-disable-next-line
 console.log('[init] Done!');

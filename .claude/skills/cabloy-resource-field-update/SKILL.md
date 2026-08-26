@@ -214,7 +214,7 @@ If the user explicitly wants to **demonstrate** the custom renderer workflow, br
 Use these references:
 
 - `references/custom-renderer-demo-checklist.md`
-- `.docs-internal/architecture/backend-resource-field-workflow.md`
+- `repo-docs-internal/architecture/backend-resource-field-workflow.md`
 
 Recommended shape:
 

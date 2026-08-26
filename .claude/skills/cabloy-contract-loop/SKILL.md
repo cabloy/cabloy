@@ -7,7 +7,7 @@ description: Use this skill whenever a Cabloy task crosses the Vona-to-Zova cont
 
 Use this skill when a backend contract change needs to be reflected in frontend consumers, when frontend-owned metadata or resources need to be reflected back into backend consumers, or when either side appears stale and you need to diagnose where drift actually lives.
 
-Read the public [Contract Loop Playbook](../../../cabloy-docs/fullstack/contract-loop-playbook.md) for the canonical bidirectional model. This skill is the branching orchestration guide.
+Read the public [Contract Loop Playbook](../../../repo-docs/fullstack/contract-loop-playbook.md) for the canonical bidirectional model. This skill is the branching orchestration guide.
 
 ## Important recovery note for stale local file consumers
 
@@ -110,14 +110,14 @@ Inspect these surfaces before proposing workflow:
 - backend contract-defining code in Vona
 - `npm run zova`
 - frontend generation or consumption path in Zova
-- relevant docs in `cabloy-docs/fullstack/`, `cabloy-docs/backend/`, and `cabloy-docs/frontend/`
+- relevant docs in `repo-docs/fullstack/`, `repo-docs/backend/`, and `repo-docs/frontend/`
 
 For deeper reference material, read:
 
 - `references/contract-loop-map.md`
 - `references/verification-checklist.md`
 - `references/resource-custom-state-pattern.md`
-- `../../../cabloy-docs/fullstack/admin-resource-and-web-self-service.md`
+- `../../../repo-docs/fullstack/admin-resource-and-web-self-service.md`
 
 ## Step 3: Identify the contract source of truth deliberately
 
@@ -241,7 +241,7 @@ When the regenerated contract feeds a form or another metadata-driven UI, decide
 5. Keep reusable query, cache, mutation, invalidation, and resource state in `ModelResource` or a model. A page-specific action may call generated `$api` directly when it has no shared state or cache ownership; do not add an infrequently used operation to a shared model only for API indirection.
 6. If the page needs a custom renderer, layout, or behavior, determine whether that resource is frontend-owned and referenced by backend metadata. If so, follow the reverse-chain flavor build and `deps:vona` handoff rather than treating the change as frontend-only.
 
-Read the [API Schema Guide](../../../cabloy-docs/frontend/api-schema-guide.md), [Form Guide](../../../cabloy-docs/frontend/form-guide.md), [A-OpenAPI Under the Hood](../../../cabloy-docs/frontend/a-openapi-under-the-hood.md), and [Model Resource Owner Pattern](../../../cabloy-docs/frontend/model-resource-owner-pattern.md) for the ownership and runtime details. Use `references/contract-loop-map.md` and `references/verification-checklist.md` for the contract-loop proof steps.
+Read the [API Schema Guide](../../../repo-docs/frontend/api-schema-guide.md), [Form Guide](../../../repo-docs/frontend/form-guide.md), [A-OpenAPI Under the Hood](../../../repo-docs/frontend/a-openapi-under-the-hood.md), and [Model Resource Owner Pattern](../../../repo-docs/frontend/model-resource-owner-pattern.md) for the ownership and runtime details. Use `references/contract-loop-map.md` and `references/verification-checklist.md` for the contract-loop proof steps.
 
 ### Path C: Downstream frontend alignment
 
@@ -262,7 +262,7 @@ For one persisted domain with both Admin Resource and Web self-service consumers
 - **Admin/custom-resource branch:** the endpoint remains part of the Admin Resource authority, projection, and generic page state, so reuse `rest-resource.model.resource` through a thin semantic facade.
 - **Separate Web self-service branch:** the consumer has different authority, server-derived owner scope, DTO projection, operation names, UX, or SSR behavior, so expose explicit self-service operations and use a dedicated Web model and purpose-built pages.
 
-Share domain persistence and lifecycle logic, not necessarily HTTP projections or frontend state ownership. Read `../../../cabloy-docs/fullstack/admin-resource-and-web-self-service.md` for the complete architecture. Reuse the resource-owned custom state pattern in `references/resource-custom-state-pattern.md` for the Admin/custom-resource branch.
+Share domain persistence and lifecycle logic, not necessarily HTTP projections or frontend state ownership. Read `../../../repo-docs/fullstack/admin-resource-and-web-self-service.md` for the complete architecture. Reuse the resource-owned custom state pattern in `references/resource-custom-state-pattern.md` for the Admin/custom-resource branch.
 
 ## Step 6: Keep edition-aware differences explicit
 
