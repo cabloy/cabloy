@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.148
+
+### Improvements
+
+- Refactor end-to-end test startup.
+
 ## 5.1.147
 
 ### Improvements
