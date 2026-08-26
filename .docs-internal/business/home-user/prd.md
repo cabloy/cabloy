@@ -1,231 +1,234 @@
-# Home User 账户设置产品需求文档
+# Home User Account Settings Product Requirements Document
 
-## 目的
+## Purpose
 
-`home-user` 账户设置为所有已登录 Cabloy 用户提供统一的自助账户能力：维护可安全直接修改的个人资料，并依账户是否已存在 `auth-simple` 本地凭据，完成修改密码或设置首个本地密码。
+`home-user` account settings provide all logged-in Cabloy users with unified self-service account capabilities: maintaining personal profile data that can be safely changed directly, and, depending on whether an `auth-simple` local credential already exists, changing the password or setting the first local password.
 
-该能力必须同时服务 Web 和 Admin site，但不能将自助账户设置误建模为管理员编辑任意用户的 Resource CRUD。账户设置的目标用户始终由当前 Passport 会话决定，客户端不得指定目标 `userId`。
+This capability must serve both Web and Admin sites, but self-service account settings must not be incorrectly modeled as administrator editing arbitrary users through Resource CRUD. The target of account settings is always determined by the current Passport session; the client must not specify a target `userId`.
 
-本文定义产品成果、范围、业务规则、验收要求和实施顺序。后续 SRS 应定义 DTO、API、认证提供方、一次性 token、会话撤销、审计、SSR 和测试等技术契约。
+This document defines the product outcome, scope, business rules, acceptance requirements, and implementation sequence. The subsequent SRS should define the technical contracts for DTOs, APIs, authentication providers, one-time tokens, session revocation, auditing, SSR, and testing.
 
-## 产品目标
+## Product goals
 
-- 让每一位已登录用户在 Web 和 Admin 中都能进入同一套账户设置能力。
-- 让用户独立保存个人资料和账户安全设置，避免两个操作的加载、失败或草稿状态互相影响。
-- 为已有 `auth-simple` 本地凭据的用户提供安全的修改密码路径。
-- 为仅 OAuth 登录、尚无 `auth-simple` 凭据的用户提供受限“设置密码”路径：既有账户 email 保持权威；空字段只能在成功消费短时 token 时绑定显式输入的 candidate。
-- 为未登录用户提供独立的“忘记密码 / 重置密码”恢复闭环，并保持其语义、授权和 token purpose 与已登录账户操作隔离。
-- 在资料保存后及时同步当前 Passport 用户快照，使页面、Web/Admin 布局中的名称和头像保持一致。
+- Let every logged-in user access the same account settings capability in Web and Admin.
+- Let users save personal profile data and account security settings independently, so loading, failure, or draft state in one operation does not affect the other.
+- Provide users with existing `auth-simple` local credentials a secure path to change their password.
+- Provide OAuth-only users without an `auth-simple` credential a restricted “set password” path: the existing account email remains authoritative; an empty field may bind an explicitly entered candidate only when a short-lived token is successfully consumed.
+- Provide logged-out users with an independent “forgot password / reset password” recovery loop, keeping its semantics, authorization, and token purpose isolated from logged-in account operations.
+- Synchronize the current Passport user snapshot promptly after profile saving so that the name and avatar remain consistent across the page and the Web/Admin layouts.
 
-## 背景与现状
+## Background and current state
 
-当前 Cabloy Basic 的 Admin 头像菜单仅提供“退出登录”；`$passport.user` 已包含用户身份资料，但仓库尚无当前用户资料编辑页、自助账户 API、修改密码 API 或可用的密码恢复闭环。邮件密码恢复的底层能力和 callback 路由已存在，但 `home-user` 的 callback listener 仍为未实现状态，不能视为已交付的重置密码功能。
+Currently, the Cabloy Basic Admin avatar menu offers only “Log out”; `$passport.user` already contains user identity data, but the repository has no current-user profile-editing page, self-service account API, change-password API, or usable password-recovery loop. The underlying email password-recovery capability and callback route already exist, but the `home-user` callback listener is still unimplemented and must not be considered a delivered reset-password feature.
 
-因此，本需求不是给现有资料页面增加表单，而是建立一套新的、自助账户（self-service account）产品边界。
+Therefore, this requirement is not about adding a form to an existing profile page. It establishes a new self-service account product boundary.
 
-## 用户与场景
+## Users and scenarios
 
-### 已登录用户
+### Logged-in users
 
-所有已登录且通过各自站点准入的 Web 或 Admin 用户。用户可以查看并维护自身资料，并根据认证能力维护本地密码；站点可见性不替代服务端授权。
+All logged-in Web or Admin users admitted through their respective sites. Users can view and maintain their own profile and, according to their authentication capabilities, maintain a local password; Site visibility does not replace server-side authorization.
 
-### 已有本地密码的用户
+### Users with an existing local password
 
-账户已有 `auth-simple` 凭据。用户在账户安全区通过“当前密码、新密码、确认新密码”修改本地密码。
+The account already has an `auth-simple` credential. In the account security area, the user changes the local password with “current password, new password, confirm new password.”
 
-### OAuth-only 用户
+### OAuth-only users
 
-用户可通过 OAuth 登录，但尚无 `auth-simple` 凭据。用户在当前已认证账户的“设置密码”操作中显式输入 email，但该输入绝不选择 subject。若 `EntityUser.email` 已存在，输入必须经规范化后匹配，且只向既有字段投递；若该字段为空，服务端仅把输入作为短时 token-bound candidate 投递，随后在公开页面成功创建首个本地密码时才写入该字段。收件人不从 auth provider 记录推导。
+Users can log in through OAuth but do not yet have an `auth-simple` credential. In the “set password” operation for the currently authenticated account, the user explicitly enters an email, but this input never selects the subject. If `EntityUser.email` already exists, the input must match after normalization and may be delivered only to the existing field; if that field is empty, the server delivers the input only as a short-lived token-bound candidate, which is written to the field only after the first local password is successfully created on the public page. The recipient is not derived from the auth provider record.
 
-### 无账户 email 的 OAuth-only 用户
+### OAuth-only users without an account email
 
-若账户没有非空 `EntityUser.email`，用户仍可在已认证的“设置密码”操作中输入 candidate email。该值不会在签发时持久化；仅当持有该邮件链接的用户成功消费当前 token 并创建首个本地密码后，才原子写入 `EntityUser.email`。
+If the account has no non-empty `EntityUser.email`, the user may still enter a candidate email during the authenticated “set password” operation. This value is not persisted at issuance; it is atomically written to `EntityUser.email` only after the user holding the email link successfully consumes the current token and creates the first local password.
 
-## 范围
+## Scope
 
-### 本期范围
+### In scope for this release
 
-- 在前端 `home-user` 模块提供可供 Web 与 Admin 复用的账户设置页面、账户状态 Model 和多语言文案。
-- 在当前用户的 Web/Admin 登录入口提供“账户设置”导航；Admin 头像菜单保留“退出登录”，并将“账户设置”置于其前。
-- 在同一页面提供两个独立区块：**个人资料** 和 **账户安全**。
-- 支持用户查看并更新允许自助修改的个人资料：显示名称、头像、语言和时区。
-- 通过当前 Passport 会话确定自助操作的目标用户，提供当前账户读取和资料更新能力。
-- 对已有 `auth-simple` 凭据的用户支持安全修改密码。
-- 对 OAuth-only 用户支持显式输入 email 签发“设置密码”链接：既有账户 email 必须匹配；空字段使用短时 candidate，并在公开的一次性 token 页面成功设置首个本地密码时绑定。
-- 在 Login 提供注册入口，并复用 Passport 注册契约建立登录态。
-- 提供 CAPTCHA 保护的未登录密码 reset 申请、邮件链接和公开新密码设置页面。
-- 以 `password-set` 和 `password-reset` 区分设置首个密码与忘记密码恢复的 token purpose。
-- 在密码变更、密码设置、链接发送和密码恢复等安全动作中提供用户可理解的成功、失败和不可用状态。
+- Provide an account settings page, account-state Model, and localized copy in the frontend `home-user` module for reuse by Web and Admin.
+- Add an “Account settings” navigation item to the logged-in user's Web/Admin entry points; retain “Log out” in the Admin avatar menu and place “Account settings” before it.
+- Provide two independent sections on the same page: **Personal profile** and **Account security**.
+- Let users view and update the personal profile fields allowed for self-service: display name, avatar, language, and time zone.
+- Determine the self-service operation's target user through the current Passport session and provide current-account reading and profile-update capabilities.
+- Support secure password changes for users with an existing `auth-simple` credential.
+- Support OAuth-only users in explicitly entering an email to issue a “set password” link: an existing account email must match; an empty field uses a short-lived candidate and binds it when the first local password is successfully set on the public one-time-token page.
+- Provide a registration entry point in Login and establish the login state by reusing the Passport registration contract.
+- Provide a CAPTCHA-protected logged-out password reset request, email link, and public new-password setup page.
+- Distinguish the token purposes `password-set` and `password-reset` for first-password setup and forgot-password recovery.
+- Provide understandable success, failure, and unavailable states for security actions including password changes, password setup, link sending, and password recovery.
 
-### 不在本期范围
+### Out of scope for this release
 
-- 以浏览器输入的地址选择账户 subject、重置目标或绕过既有账户 email；password-set 的受限 candidate 仅在当前 Passport subject、空账户 email、短时 token state 和成功消费边界内有效。
-- 邮箱绑定、邮箱验证来源记录与旧数据兼容迁移；当前 reset 资格仅基于 active、activated、既有 `EntityUser.email` 和 canonical `auth-simple` 凭据。
-- 通用邮箱变更、邮箱验证 provenance、手机号绑定或手机号验证流程；仅提供 password-set 成功时受限的 candidate email 绑定。
-- MFA、登录设备管理、会话管理 UI、OAuth 账号管理、登录标识改名、账户注销和安全通知中心。
-- 管理员以本功能编辑其他用户资料或认证方式的能力。
-- 将账户设置实现为 Admin `rest-resource` 用户编辑页面。
-- 未经现有受控媒体/文件归属机制支持的任意外部头像 URL。
+- Selecting an account subject or reset target, or bypassing an existing account email, through a browser-supplied address; the restricted password-set candidate is valid only within the current Passport subject, empty account email, short-lived token state, and successful-consumption boundary.
+- Email binding, recording email verification provenance, and compatibility migration for old data; current reset eligibility is based only on active, activated, existing `EntityUser.email`, and canonical `auth-simple` credentials.
+- General email changes, email-verification provenance, phone-number binding, or phone-number verification; only restricted candidate-email binding on successful password-set is provided.
+- MFA, login-device management, a session-management UI, OAuth-account management, renaming login identifiers, account deletion, and a security-notification center.
+- Allowing administrators to edit another user's profile or authentication method through this feature.
+- Implementing account settings as an Admin `rest-resource` user-editing page.
+- Arbitrary external avatar URLs without the support of an existing controlled media/file ownership mechanism.
 
-## 信息架构与入口
+## Information architecture and entry points
 
-### 入口
+### Entry points
 
-Admin 已登录用户的头像菜单应呈现：
+The avatar menu for a logged-in Admin user should present:
 
 ```text
-[头像] 用户名 ▼
-├── 账户设置
-└── 退出登录
+[Avatar] Username ▼
+├── Account settings
+└── Log out
 ```
 
-Web 应在其适合的已登录用户菜单或个人中心入口中提供同一目的地。入口可以因站点布局而不同，但目标页面、账户领域和自助 API 必须共享。
+Web should provide the same destination through its appropriate logged-in-user menu or personal-center entry point. The entry point may vary by site layout, but the target page, account domain, and self-service APIs must be shared.
 
-### 页面
+### Page
 
-页面名称为 **账户设置**，归属前端 `home-user` 模块，而非 `home-layoutadmin` 或其他布局模块。首版采用单页两个独立 Card/区块，不要求 Tabs 或子路由：
+The page is named **Account settings** and belongs to the frontend `home-user` module, not `home-layoutadmin` or another layout module. The first release uses one page with two independent Card/sections; Tabs or child routes are not required:
 
 ```text
-账户设置
+Account settings
 
 ┌─────────────────────────────────────┐
-│ 个人资料                            │
-│ 头像 / 显示名称 / 语言 / 时区       │
-│                         [保存资料]  │
+│ Personal profile                    │
+│ Avatar / Display name / Language /  │
+│ Time zone                           │
+│                         [Save profile] │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
-│ 账户安全                            │
-│ 有 auth-simple：                    │
-│ 当前密码 / 新密码 / 确认新密码       │
-│                         [修改密码]  │
+│ Account security                    │
+│ With auth-simple:                   │
+│ Current password / New password /   │
+│ Confirm new password                │
+│                         [Change password] │
 │                                     │
-│ 无 auth-simple：                    │
-│ Email（显式输入；既有邮箱仅脱敏提示）│
-│             [发送设置密码链接]      │
+│ Without auth-simple:                │
+│ Email (explicit input; existing     │
+│ email shown only as a masked hint)  │
+│             [Send set-password link]│
 └─────────────────────────────────────┘
 ```
 
-个人资料与账户安全必须各自拥有提交、loading、成功、失败和表单草稿状态。任一区块的失败不得阻断、回滚或污染另一区块。
+Personal profile and account security must each own their submit, loading, success, failure, and form-draft states. Failure in either section must not block, roll back, or contaminate the other section.
 
-## 产品需求
+## Product requirements
 
-### 自助账户边界
+### Self-service account boundary
 
-- **PRD-ACC-01**：用户只能读取和修改当前 Passport 所代表的自身账户；请求与界面均不得提供用于指定其他目标用户的 `userId`。
-- **PRD-ACC-02**：自助账户能力必须可由 Web 与 Admin 的已登录用户使用；两端复用同一账户领域、页面能力和安全规则，但可拥有各自的导航入口与布局呈现。
-- **PRD-ACC-03**：自助账户 API、DTO、页面和状态所有权必须与管理员管理他人的通用 User Resource API/DTO/页面分离。
-- **PRD-ACC-04**：页面初始化应返回面向产品的账户能力，例如是否已有本地密码、是否可发送设置密码链接和脱敏后的账户邮箱；前端不得通过暴露或推断内部认证记录来决定界面。
+- **PRD-ACC-01**: Users may read and modify only the account represented by the current Passport; neither requests nor interfaces may provide a `userId` for specifying another target user.
+- **PRD-ACC-02**: The self-service account capability must be available to logged-in users of Web and Admin; both sides reuse the same account domain, page capability, and security rules, while each may have its own navigation entry point and layout presentation.
+- **PRD-ACC-03**: Self-service account APIs, DTOs, pages, and state ownership must be separate from the generic User Resource APIs/DTOs/pages used by administrators to manage other users.
+- **PRD-ACC-04**: Page initialization should return product-facing account capabilities, such as whether a local password already exists, whether a set-password link can be sent, and the masked account email; the frontend must not determine the interface by exposing or inferring internal authentication records.
 
-### 个人资料
+### Personal profile
 
-- **PRD-PRO-01**：用户可以查看当前账户的个人资料，并独立保存显示名称、头像、语言和时区。
-- **PRD-PRO-02**：个人资料中可编辑字段由服务端白名单确定；email、mobile、用户名及其他登录标识不得因本期资料保存而被自由修改。
-- **PRD-PRO-03**：头像必须使用项目受控的上传、媒体引用或文件归属流程，并校验文件类型、大小和资源所有权；不得以任意外部 URL 作为默认自助更新方式。
-- **PRD-PRO-04**：资料保存成功后，当前 Passport 用户快照必须被更新或重新获取，以便 Web/Admin 的顶部名称和头像无需手动刷新即可反映新值。
-- **PRD-PRO-05**：语言与时区保存成功后，运行时偏好应按既有 Passport 偏好机制同步，避免账户资料与实际界面偏好长期不一致。
+- **PRD-PRO-01**: Users can view the current account's personal profile and independently save the display name, avatar, language, and time zone.
+- **PRD-PRO-02**: The server determines editable profile fields through a whitelist; email, mobile, username, and other login identifiers must not be freely changed by this profile save.
+- **PRD-PRO-03**: Avatars must use the project's controlled upload, media-reference, or file-ownership flow, with validation of file type, size, and resource ownership; an arbitrary external URL must not be the default self-service update method.
+- **PRD-PRO-04**: After a successful profile save, the current Passport user snapshot must be updated or refetched so that the Web/Admin header name and avatar reflect the new values without a manual refresh.
+- **PRD-PRO-05**: After language and time-zone saving succeeds, runtime preferences should synchronize through the existing Passport preference mechanism, preventing the account profile and actual interface preferences from remaining inconsistent over time.
 
-### 已有本地密码时的修改密码
+### Changing the password with an existing local password
 
-- **PRD-PWD-01**：当账户已有 `auth-simple` 凭据时，账户安全区显示“修改密码”，并要求当前密码、新密码和确认新密码。
-- **PRD-PWD-02**：服务端必须基于当前会话确认用户身份和账户状态、验证当前密码，并执行统一密码策略后才可更新密码哈希。
-- **PRD-PWD-03**：修改密码必须以原子方式完成凭据更新和必要的认证状态处理，不能出现密码已变更但会话处理或安全记录处于不确定状态的成功结果。
-- **PRD-PWD-04**：密码变更后必须使旧认证状态失效。优先保留当前请求所在会话并撤销其他登录会话、refresh token 或 JWT 可续期能力；若现有认证基础暂不能支持该策略，首版可撤销所有会话并引导用户重新登录，但必须清楚告知用户。
-- **PRD-PWD-05**：成功后应向用户说明会话影响，例如“密码已修改，其他设备需要重新登录”。密码、密码哈希、确认密码和敏感认证材料不得出现在 Passport DTO、客户端持久化状态、日志或错误详情中。
+- **PRD-PWD-01**: When the account has an `auth-simple` credential, the account security section displays “Change password” and requires the current password, new password, and confirm-new-password fields.
+- **PRD-PWD-02**: The server must confirm the user's identity and account status from the current session, verify the current password, and apply the unified password policy before updating the password hash.
+- **PRD-PWD-03**: A password change must atomically complete the credential update and any required authentication-state handling; it must not report success while the password has changed but session handling or security records remain indeterminate.
+- **PRD-PWD-04**: After a password change, the old authentication state must be invalidated. Prefer retaining the session for the current request while revoking other login sessions, refresh tokens, or JWT renewal capability; if the existing authentication foundation cannot yet support this policy, the first release may revoke all sessions and guide the user to log in again, but must clearly inform the user.
+- **PRD-PWD-05**: After success, the user should be told about session effects, for example, “Password changed; other devices must log in again.” Passwords, password hashes, confirmation passwords, and sensitive authentication material must not appear in Passport DTOs, client-persisted state, logs, or error details.
 
-### 登录注册与未登录密码恢复
+### Login registration and logged-out password recovery
 
-- **PRD-REG-01**：登录页必须提供注册入口；注册表单复用 Passport 的 username、email、password、confirmation 和 CAPTCHA 契约。成功注册后遵循既有激活策略：若返回结果已获当前 Site 准入，则建立 Passport/JWT 状态并进入经验证的 return destination；默认邮件确认策略下，注册页必须保留 return destination、提示查收激活邮件且不得把未激活用户导航到受保护 Account 页面。
-- **PRD-RST-01**：登录页必须提供“忘记密码”入口。申请表单仅提交 email 和 CAPTCHA；只要 CAPTCHA 有效，未知地址、禁用或未激活账户、无本地凭据、recipient cooldown、邮件失败或部署不可用均返回相同的通用接受结果，界面不得据此区分账户资格。
-- **PRD-RST-02**：当前 reset 收件资格由服务端 scoped 用户的 active 状态、activated 状态、非空 `EntityUser.email` 和既有 canonical `auth-simple` 凭据共同确定。浏览器不得提交或声明 user、认证记录、验证状态或收件资格。地址级验证来源、时间和旧数据兼容策略是后续加固项。
-- **PRD-RST-03**：reset 使用与 `password-set` 独立的短时、单次、digest-only `password-reset` token，并严格绑定逻辑公开 `/home/user/password-reset` leaf。Zova 生成 token-free 的完整绝对 consumer URL；Account 仅接受 HTTP(S)、无 userinfo/query/fragment 且 origin 通过 `checkOriginExact(...)` 严格授权的 URL：精确同源（协议、host、有效端口均匹配）或精确匹配服务端 `a-security:cors` `whiteList`。`dev/test` 中 API request host 和 consumer origin 都是 loopback hostname 时允许不同端口。Vona 保留前端提供的 pathname，并仅添加 `token` URL query；不读取或验证 SSR Site、`publicPath` 或 `siteId`。请求或 proxy host 只能证明精确同源，不能授权 lookalike、suffix、异协议或异端口跨源目的地；`SERVER_SERVE_*`、`Referer`、浏览器输入 pathname 或 CORS wildcard/suffix 语义也不能授权邮件目的地。原始 token 只可短暂出现在邮件链接 query 和 controller 内存中；生产部署应显式配置 HTTPS consumer origin。消费后仅替换既有本地密码，不得创建首个凭据，并撤销 server-side Passport 会话后明确返回登录。
-- **PRD-RST-04**：公开 reset 页面在 SSR 和 hydration 初渲中不得包含 token、私有身份或预填密码。客户端仅在 hydration 后读取 `token` URL query、立即通过 router 恢复 token-free canonical URL，并仅在 controller 内存中短暂保留 token。
+- **PRD-REG-01**: The login page must provide a registration entry point; the registration form reuses Passport's username, email, password, confirmation, and CAPTCHA contract. After successful registration, follow the existing activation policy: if the returned result has current Site admission, establish Passport/JWT state and enter the validated return destination; under the default email-confirmation policy, the registration page must retain the return destination, tell the user to check the activation email, and must not navigate an inactive user to a protected Account page.
+- **PRD-RST-01**: The login page must provide a “Forgot password” entry point. The request form submits only email and CAPTCHA; whenever CAPTCHA is valid, an unknown address, disabled or inactive account, account without local credentials, recipient cooldown, email failure, or deployment unavailability must all return the same generic accepted result, and the interface must not distinguish account eligibility based on that result.
+- **PRD-RST-02**: Current reset-recipient eligibility is jointly determined server-side by the scoped user's active status, activated status, non-empty `EntityUser.email`, and existing canonical `auth-simple` credential. The browser must not submit or assert the user, authentication record, verification status, or recipient eligibility. Address-level verification provenance, timing, and old-data compatibility strategy are later hardening items.
+- **PRD-RST-03**: Reset uses a short-lived, single-use, digest-only `password-reset` token that is independent of `password-set` and strictly bound to the logical public `/home/user/password-reset` leaf. Zova generates a token-free complete absolute consumer URL; Account accepts only HTTP(S), without userinfo/query/fragment, whose origin is strictly authorized through `checkOriginExact(...)`: exact same-origin (protocol, host, and effective port all match) or an exact match for the server-side `a-security:cors` `whiteList`. In `dev/test`, different ports are allowed when both the API request host and consumer origin are loopback hostnames. Vona preserves the pathname supplied by the frontend and only adds the `token` URL query; it does not read or validate SSR Site, `publicPath`, or `siteId`. The request or proxy host can prove only exact same-origin and cannot authorize a lookalike, suffix, different-protocol, or different-port cross-origin destination; `SERVER_SERVE_*`, `Referer`, the pathname entered by the browser, and CORS wildcard/suffix semantics also cannot authorize the email destination. The raw token may appear only briefly in the email-link query and controller memory; production deployments should explicitly configure an HTTPS consumer origin. Consumption only replaces an existing local password; it must not create a first credential, and after revoking the server-side Passport session it must explicitly return the user to Login.
+- **PRD-RST-04**: The public reset page must contain no token, private identity, or prefilled password during SSR and the initial hydration render. After hydration, the client reads the `token` URL query, immediately restores the token-free canonical URL through the router, and retains the token briefly only in controller memory.
 
-### OAuth-only 用户设置首个本地密码
+### Setting the first local password for OAuth-only users
 
-- **PRD-SET-01**：当账户没有 `auth-simple` 凭据时，账户安全区显示“设置密码”，而不是“修改密码”，并且不得显示当前密码输入框。
-- **PRD-SET-02**：用户发起设置密码时必须显式输入 email，且 subject 始终仅由当前 Passport 派生。若当前 scoped `EntityUser.email` 非空，输入经 trim/lowercase 规范化后必须匹配，服务端仅向既有字段投递且不得改写它；不得从 auth provider 记录读取或推导收件人。
-- **PRD-SET-03**：若当前 `EntityUser.email` 为空，服务端可向规范化后的输入 candidate 投递，但只将其绑定至短时 password-set token state；签发、过期、失败、重放或 superseded token 均不得持久化该值。页面字段初始为空，既有地址最多仅脱敏提示，成功/失败反馈不得回显完整地址。
-- **PRD-SET-04**：用户通过链接进入公开页面，使用仍有效且未消费的一次性 token 设置新密码和确认密码；成功后为该用户创建首个 `auth-simple` 凭据。若 token 带有空字段签发的 candidate，创建凭据与将该 candidate 写入 `EntityUser.email` 必须在同一事务中完成。
-- **PRD-SET-05**：设置首个密码的 token 必须具有 `password-set` 用途，不得与未登录恢复密码的 `password-reset` token 混用。
-- **PRD-SET-06**：设置密码成功后的会话刷新或撤销策略必须明确、可审计，并不得降低 OAuth-only 账户原有的认证安全性。
+- **PRD-SET-01**: When the account has no `auth-simple` credential, the account security section displays “Set password,” not “Change password,” and must not display a current-password field.
+- **PRD-SET-02**: When initiating password setup, the user must explicitly enter an email, and the subject must always be derived only from the current Passport. If the current scoped `EntityUser.email` is non-empty, the input must match after trim/lowercase normalization; the server delivers only to the existing field and must not rewrite it. It must not read or derive the recipient from an auth provider record.
+- **PRD-SET-03**: If the current `EntityUser.email` is empty, the server may deliver to the normalized input candidate, but may bind it only to short-lived password-set token state; issuance, expiration, failure, replay, or superseded tokens must not persist the value. The page field starts empty, an existing address may at most be shown as a masked hint, and success/failure feedback must not echo the complete address.
+- **PRD-SET-04**: The user enters the public page through the link and uses a still-valid, unconsumed one-time token to set a new password and confirmation password; after success, the server creates the user's first `auth-simple` credential. If the token carries a candidate issued when the field was empty, credential creation and writing that candidate to `EntityUser.email` must complete in the same transaction.
+- **PRD-SET-05**: The first-password setup token must have the `password-set` purpose and must not be mixed with the logged-out password-recovery `password-reset` token.
+- **PRD-SET-06**: The session refresh or revocation policy after successful password setup must be explicit, auditable, and must not reduce the OAuth-only account's existing authentication security.
 
-### 文案与体验
+### Copy and experience
 
-- **PRD-UX-01**：已登录用户的密码操作统一称为“修改密码”或“设置密码”；“重置密码 / 忘记密码”仅用于未登录恢复场景。
-- **PRD-UX-02**：账户设置页面和入口必须提供现有支持语言的本地化文案，包括加载、保存成功、密码错误、密码策略失败、显式 email 输入、链接已发送及链接无效或过期等状态。
-- **PRD-UX-03**：账户设置是认证保护页面。SSR 与客户端 hydration 的初始 UI 必须一致，密码字段绝不预填，且私有账户信息不得因为 SSR、cookie 不可用或 hydration 差异而泄露或错误渲染。
+- **PRD-UX-01**: Password operations for logged-in users are consistently called “Change password” or “Set password”; “Reset password / Forgot password” is used only for logged-out recovery.
+- **PRD-UX-02**: The account settings page and entry points must provide localized copy in all currently supported languages, including loading, successful save, incorrect password, password-policy failure, explicit email input, link sent, and link invalid or expired states.
+- **PRD-UX-03**: Account settings is an authentication-protected page. The initial SSR and client hydration UI must match, password fields must never be prefilled, and private account information must not be exposed or rendered incorrectly because of SSR, unavailable cookies, or hydration differences.
 
-### 安全与审计
+### Security and auditing
 
-- **PRD-SEC-01**：资料更新、修改密码、发送设置密码链接和消费设置密码 token 的授权、字段校验、限流和敏感操作审计均由服务端执行；前端站点准入和隐藏按钮不构成授权。
-- **PRD-SEC-02**：一次性链接必须短时有效、仅可消费一次，并在过期、重复使用、无效或用途不匹配时给出安全且可理解的失败结果。
-- **PRD-SEC-03**：密码相关安全事件至少应记录能够支持审计和问题追踪的事件类型、用户身份、结果及必要上下文，且不得记录明文密码或 token。
+- **PRD-SEC-01**: The server performs authorization, field validation, rate limiting, and sensitive-operation auditing for profile updates, password changes, set-password link sending, and set-password token consumption; frontend Site admission and hidden buttons do not constitute authorization.
+- **PRD-SEC-02**: One-time links must be short-lived and consumable only once, with safe and understandable failure results when expired, reused, invalid, or used for the wrong purpose.
+- **PRD-SEC-03**: Password-related security events must at minimum record the event type, user identity, result, and necessary context needed for auditing and issue tracking, and must not record plaintext passwords or tokens.
 
-## 关键业务规则
+## Key business rules
 
-| 账户能力状态                         | 页面动作 | 必要授权依据                                            | 结果                                                                |
-| ------------------------------------ | -------- | ------------------------------------------------------- | ------------------------------------------------------------------- |
-| 存在 `auth-simple`                   | 修改密码 | 当前会话 + 当前密码                                     | 更新本地凭据并按策略撤销旧认证状态                                  |
-| 不存在 `auth-simple`，但有账户 email | 设置密码 | 当前会话 + 显式输入与既有 `EntityUser.email` 规范化匹配 | 向既有 email 发送 `password-set` 链接，公开页面创建首个本地凭据     |
-| 不存在 `auth-simple`，无账户 email   | 设置密码 | 当前会话 + 显式输入 candidate                           | 发送短时 token-bound candidate 链接；成功消费时创建凭据并写入 email |
-| 同时存在 OAuth 与 `auth-simple`      | 修改密码 | 当前会话 + 当前密码                                     | OAuth 绑定不改变本地密码修改路径                                    |
-| 未登录且忘记密码                     | 重置密码 | CAPTCHA + 当前认可的 email/激活状态依据                 | 通过独立的 `password-reset` 流程替换既有本地密码                    |
+| Account capability state                   | Page action     | Required authorization basis                                                        | Result                                                                                                             |
+| ------------------------------------------ | --------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `auth-simple` exists                       | Change password | Current session + current password                                                  | Update local credential and revoke old authentication state according to policy                                    |
+| No `auth-simple`, but account email exists | Set password    | Current session + normalized match of explicit input to existing `EntityUser.email` | Send a `password-set` link to the existing email; create the first local credential on the public page             |
+| No `auth-simple`, no account email         | Set password    | Current session + explicit input candidate                                          | Send a short-lived token-bound candidate link; create the credential and write the email on successful consumption |
+| OAuth and `auth-simple` both exist         | Change password | Current session + current password                                                  | OAuth binding does not change the local-password change path                                                       |
+| Logged out and forgot password             | Reset password  | CAPTCHA + currently accepted email/activation-status basis                          | Replace the existing local password through the independent `password-reset` flow                                  |
 
-## 分阶段实施顺序
+## Phased implementation sequence
 
-以下顺序是本需求的交付依赖，后续实施计划、SRS 和任务拆解不得倒置其安全前提。
+The following sequence is a delivery dependency for this requirement. Subsequent implementation plans, the SRS, and task breakdowns must not invert its security prerequisites.
 
-1. **建立 Account 自助契约**：在 `home-user` 定义当前账户、资料更新、密码能力读取等自助 API 与 DTO；明确当前 Passport 是唯一目标身份来源。
-2. **锁定资料边界**：确定资料可编辑字段以及头像的受控上传/媒体归属方案，完成资料更新后的 Passport 同步要求。
-3. **完成已有本地密码的修改路径**：在 `auth-simple` 及相关认证层实现当前密码校验、密码策略、原子更新、会话撤销和审计。
-4. **完成 OAuth-only 的设置链接路径**：由当前 Passport subject 显式输入 email；既有字段必须规范化匹配并保持权威，空字段仅使用短时 token-bound candidate，成功消费时才原子写入；不得从 auth provider 记录推导收件人。
-5. **完成公开设置密码页面与 token 消费**：实现设置首个本地密码、一次性 token 校验/消费及成功后的认证状态处理。
-6. **实现共享账户设置体验**：在 `home-user` 创建 Web/Admin 共用的账户设置页面、Account Model 和本地化文案；实现资料与账户安全两个独立区块。
-7. **接入站点入口**：分别为 Admin 头像菜单和 Web 已登录用户入口增加“账户设置”导航，不改变各自布局所有权。
-8. **完成未登录忘记密码**：在登录页提供注册入口、公开的 `password-reset` 申请、链接和新密码设置流程；必须保持与 `password-set` 的用途、初始授权和审计语义分离。
+1. **Establish the Account self-service contract**: Define self-service APIs and DTOs for the current account, profile updates, and password-capability reads in `home-user`; make the current Passport the sole target-identity source.
+2. **Lock down the profile boundary**: Determine editable profile fields and the controlled upload/media-ownership solution for avatars, and complete the Passport synchronization requirement after profile updates.
+3. **Complete the change path for existing local passwords**: Implement current-password validation, password policy, atomic update, session revocation, and auditing in `auth-simple` and the related authentication layers.
+4. **Complete the OAuth-only set-link path**: Require the current Passport subject to explicitly enter an email; an existing field must match after normalization and remain authoritative, while an empty field uses only a short-lived token-bound candidate that is atomically written on successful consumption; the recipient must not be derived from an auth provider record.
+5. **Complete the public set-password page and token consumption**: Implement first local-password creation, one-time token validation/consumption, and authentication-state handling after success.
+6. **Implement the shared account settings experience**: Create the Web/Admin shared account settings page, Account Model, and localized copy in `home-user`; implement the independent profile and account-security sections.
+7. **Connect site entry points**: Add “Account settings” navigation separately to the Admin avatar menu and the logged-in Web user entry point without changing layout ownership.
+8. **Complete logged-out forgot-password recovery**: Add registration to the login page, and implement the public `password-reset` request, link, and new-password setup flows; keep their purpose, initial authorization, and audit semantics separate from `password-set`.
 
-## 验收标准
+## Acceptance criteria
 
-本期在满足以下条件时可接受：
+This release is acceptable when all of the following conditions are met:
 
-- 已登录 Web 与 Admin 用户均可从适合各自站点的入口进入账户设置；Admin 头像菜单同时保留账户设置和退出登录。
-- 页面以两个相互隔离的区块呈现个人资料和账户安全，任一操作的加载或失败不影响另一个区块。
-- 用户只能读取和更新自身允许修改的资料；资料保存成功后，同一运行中的 Passport 名称、头像和偏好同步更新。
-- 已有 `auth-simple` 的用户必须提供正确当前密码才能修改密码；密码策略、确认密码、认证状态失效和安全审计均生效。
-- OAuth-only 用户不会看到错误的当前密码表单；既有账户 email 时输入必须规范化匹配且只向既有地址投递，空账户 email 时只能使用短时 token-bound candidate，并仅在成功消费时绑定。
-- `password-set` 链接只能在有效期内被消费一次，成功后创建首个本地密码；过期、无效、重复或用途不匹配的链接均安全失败。
-- Login 提供 Passport 注册入口；成功注册沿用正常登录状态和安全 return navigation。
-- CAPTCHA 成功后的 reset 申请始终提供相同通用反馈；有效 reset 只能替换既有 local password，公开页面不泄露 token，成功后必须重新登录。
-- 资料更新、修改密码、设置密码和 reset 流程都不暴露明文密码、密码哈希、一次性 token 或内部认证记录。
-- 支持语言中均具备完整的关键页面和错误状态文案，认证保护下的 SSR 与 hydration 不产生私有信息泄露或明显不一致。
+- Logged-in Web and Admin users can enter account settings from an appropriate entry point for each site; the Admin avatar menu retains both Account settings and Log out.
+- The page presents personal profile and account security as two isolated sections; loading or failure in either operation does not affect the other.
+- Users can read and update only their own permitted profile fields; after a successful profile save, the Passport name, avatar, and preferences in the same running instance are synchronized.
+- Users with an existing `auth-simple` credential must provide the correct current password to change the password; password policy, confirmation password, authentication-state invalidation, and security auditing all take effect.
+- OAuth-only users do not see an incorrect current-password form; when an account email exists, the input must match after normalization and delivery uses only the existing address; when the account email is empty, only a short-lived token-bound candidate may be used and it is bound only on successful consumption.
+- A `password-set` link can be consumed only once within its validity period and creates the first local password on success; expired, invalid, repeated, or wrong-purpose links fail safely.
+- Login provides the Passport registration entry point; successful registration preserves the normal logged-in state and safe return navigation.
+- A reset request after successful CAPTCHA always provides the same generic feedback; a valid reset can only replace an existing local password, the public page does not expose the token, and success requires logging in again.
+- Profile updates, password changes, password setup, and reset flows do not expose plaintext passwords, password hashes, one-time tokens, or internal authentication records.
+- All supported languages contain complete copy for key pages and error states, and authentication-protected SSR and hydration do not disclose private information or produce an obvious inconsistency.
 
-## 后续记录
+## Follow-up records
 
-- SRS 必须将每项 `PRD-ACC-*`、`PRD-PRO-*`、`PRD-PWD-*`、`PRD-SET-*`、`PRD-REG-*`、`PRD-RST-*`、`PRD-UX-*` 和 `PRD-SEC-*` 映射到具体 DTO、API、认证适配器、token 生命周期、事务与会话策略、SSR 约束和自动化测试。
-- 后续实施计划应从本 PRD 的“分阶段实施顺序”衍生依赖和完成检查，而不是将入口页面提前到安全契约之前。
-- 忘记密码维持独立的 product/security contract；即使复用邮件与一次性 token 基础设施，也不得与已登录设置密码或修改密码共享授权语义。
+- The SRS must map every `PRD-ACC-*`, `PRD-PRO-*`, `PRD-PWD-*`, `PRD-SET-*`, `PRD-REG-*`, `PRD-RST-*`, `PRD-UX-*`, and `PRD-SEC-*` item to concrete DTOs, APIs, authentication adapters, token lifecycle, transaction and session policies, SSR constraints, and automated tests.
+- Subsequent implementation plans should derive dependencies and completion checks from this PRD's “Phased implementation sequence,” rather than moving the entry page ahead of the security contract.
+- Forgot-password recovery remains an independent product/security contract; even when email and one-time-token infrastructure is reused, it must not share the authorization semantics of logged-in password setup or password change.
 
-## 追溯与配套记录
+## Traceability and supporting records
 
 ```text
 PRD requirement -> SRS contract -> PDP/WBS task -> ATP scenario -> observed evidence
 ```
 
-| PRD 需求族   | 主要 SRS 契约                          | 主要 WBS                                          | ATP                                                                    |
-| ------------ | -------------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------- |
-| `PRD-ACC-*`  | `SRS-ACC-*`, `SRS-API-*`               | `WBS-HUA-20-01`, `WBS-HUA-20-03`                  | `ATP-HUA-ACC-01`, `ATP-HUA-CTR-01`                                     |
-| `PRD-PRO-*`  | `SRS-PRO-*`                            | `WBS-HUA-20-02`, `WBS-HUA-60-01`                  | `ATP-HUA-PRO-01`, `ATP-HUA-PRO-02`, `ATP-HUA-PAS-01`                   |
-| `PRD-PWD-*`  | `SRS-PWD-*`, `SRS-SES-01`, `SRS-AUD-*` | `WBS-HUA-30-01`, `WBS-HUA-30-02`                  | `ATP-HUA-PWD-01`, `ATP-HUA-SES-01`, `ATP-HUA-AUD-01`                   |
-| `PRD-SET-*`  | `SRS-SET-*`, `SRS-TOK-*`, `SRS-SES-01` | `WBS-HUA-40-01`–`WBS-HUA-50-02`                   | `ATP-HUA-SET-01`, `ATP-HUA-SET-02`, `ATP-HUA-TOK-01`, `ATP-HUA-SSR-03` |
-| `PRD-UX-*`   | `SRS-UI-*`, `SRS-SSR-*`                | `WBS-HUA-60-01`–`WBS-HUA-60-03`                   | `ATP-HUA-UI-01`, `ATP-HUA-SSR-01`, `ATP-HUA-SSR-02`                    |
-| `PRD-SEC-*`  | `SRS-AUD-*`, `SRS-NFR-*`, `SRS-TOK-*`  | `WBS-HUA-30-02`, `WBS-HUA-40-02`, `WBS-HUA-70-01` | `ATP-HUA-AUD-01`, `ATP-HUA-RATE-01`, `ATP-HUA-TOK-01`                  |
-| `PRD-REG-01` | `SRS-REG-01`                           | `WBS-HUA-80-01`                                   | `ATP-HUA-REG-01`                                                       |
-| `PRD-RST-*`  | `SRS-RST-*`, `SRS-AUD-*`, `SRS-NFR-*`  | `WBS-HUA-80-02`–`WBS-HUA-80-04`                   | `ATP-HUA-RST-01`, `ATP-HUA-RST-02`, `ATP-HUA-RST-03`                   |
+| PRD requirement family | Primary SRS contract                   | Primary WBS                                       | ATP                                                                    |
+| ---------------------- | -------------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------- |
+| `PRD-ACC-*`            | `SRS-ACC-*`, `SRS-API-*`               | `WBS-HUA-20-01`, `WBS-HUA-20-03`                  | `ATP-HUA-ACC-01`, `ATP-HUA-CTR-01`                                     |
+| `PRD-PRO-*`            | `SRS-PRO-*`                            | `WBS-HUA-20-02`, `WBS-HUA-60-01`                  | `ATP-HUA-PRO-01`, `ATP-HUA-PRO-02`, `ATP-HUA-PAS-01`                   |
+| `PRD-PWD-*`            | `SRS-PWD-*`, `SRS-SES-01`, `SRS-AUD-*` | `WBS-HUA-30-01`, `WBS-HUA-30-02`                  | `ATP-HUA-PWD-01`, `ATP-HUA-SES-01`, `ATP-HUA-AUD-01`                   |
+| `PRD-SET-*`            | `SRS-SET-*`, `SRS-TOK-*`, `SRS-SES-01` | `WBS-HUA-40-01`–`WBS-HUA-50-02`                   | `ATP-HUA-SET-01`, `ATP-HUA-SET-02`, `ATP-HUA-TOK-01`, `ATP-HUA-SSR-03` |
+| `PRD-UX-*`             | `SRS-UI-*`, `SRS-SSR-*`                | `WBS-HUA-60-01`–`WBS-HUA-60-03`                   | `ATP-HUA-UI-01`, `ATP-HUA-SSR-01`, `ATP-HUA-SSR-02`                    |
+| `PRD-SEC-*`            | `SRS-AUD-*`, `SRS-NFR-*`, `SRS-TOK-*`  | `WBS-HUA-30-02`, `WBS-HUA-40-02`, `WBS-HUA-70-01` | `ATP-HUA-AUD-01`, `ATP-HUA-RATE-01`, `ATP-HUA-TOK-01`                  |
+| `PRD-REG-01`           | `SRS-REG-01`                           | `WBS-HUA-80-01`                                   | `ATP-HUA-REG-01`                                                       |
+| `PRD-RST-*`            | `SRS-RST-*`, `SRS-AUD-*`, `SRS-NFR-*`  | `WBS-HUA-80-02`–`WBS-HUA-80-04`                   | `ATP-HUA-RST-01`, `ATP-HUA-RST-02`, `ATP-HUA-RST-03`                   |
 
-- [Home User 账户设置内部规划索引](./README.md)
+- [Home User Account Settings Internal Planning Index](./README.md)
 - [Home User Account Settings SRS](./srs.md)
 - [Home User Account Settings PDP/WBS](./pdp-wbs.md)
 - [Home User Account Settings Test Plan](./test-plan.md)
 - [Home User Account Settings Delivery Progress](./progress.md)
-- [ADR 0001：建立 Home User 账户设置边界](./decisions/0001-account-settings-boundaries.md)
+- [ADR 0001: Establish Home User Account Settings Boundaries](./decisions/0001-account-settings-boundaries.md)
