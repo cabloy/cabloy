@@ -7,10 +7,13 @@ import { TableKit } from '@tiptap/extension-table';
 import Youtube from '@tiptap/extension-youtube';
 import { Markdown, MarkdownManager } from '@tiptap/markdown';
 import StarterKit from '@tiptap/starter-kit';
-import { renderToHTMLString } from '@tiptap/static-renderer';
+import { escapeHTML, escapeHTMLAttribute, renderToHTMLString } from '@tiptap/static-renderer';
+import { common, createLowlight } from 'lowlight';
 import sanitizeHtml from 'sanitize-html';
 import { BeanBase } from 'vona';
 import { Bean } from 'vona-module-a-bean';
+
+const lowlight = createLowlight(common);
 
 const extensions: AnyExtension[] = [
   Markdown,
@@ -31,6 +34,33 @@ const markdownManager = new MarkdownManager({
   markedOptions: { gfm: true },
   indentation: { style: 'space', size: 2 },
 });
+
+function renderHighlightedCode(code: string, language?: string | null): string {
+  const highlighted =
+    language && lowlight.registered(language)
+      ? lowlight.highlight(language, code)
+      : lowlight.highlightAuto(code);
+  return highlighted.children.map(renderHighlightedNode).join('');
+}
+
+interface HighlightedNode {
+  children?: HighlightedNode[];
+  properties?: { className?: string[] };
+  tagName?: string;
+  type: string;
+  value?: string;
+}
+
+function renderHighlightedNode(node: HighlightedNode): string {
+  if (node.type === 'text') return escapeHTML(node.value ?? '');
+  const children = node.children?.map(renderHighlightedNode).join('') ?? '';
+  if (node.tagName !== 'span') return children;
+  const classNames = node.properties?.className;
+  const classAttribute = classNames?.length
+    ? ` class="${classNames.map(escapeHTMLAttribute).join(' ')}"`
+    : '';
+  return `<span${classAttribute}>${children}</span>`;
+}
 
 const sanitizeOptions: sanitizeHtml.IOptions = {
   allowedTags: [
@@ -131,7 +161,21 @@ export class BeanMarkdown extends BeanBase {
   renderHtml(markdown?: string): string {
     if (!markdown?.trim()) return '';
     const json = markdownManager.parse(markdown);
-    const html = renderToHTMLString({ content: json, extensions });
+    const html = renderToHTMLString({
+      content: json,
+      extensions,
+      options: {
+        nodeMapping: {
+          codeBlock: ({ node }) => {
+            const language = node.attrs.language;
+            const classAttribute = language
+              ? ` class="language-${escapeHTMLAttribute(language)}"`
+              : '';
+            return `<pre><code${classAttribute}>${renderHighlightedCode(node.textContent, language)}</code></pre>`;
+          },
+        },
+      },
+    });
     return sanitizeHtml(html, sanitizeOptions);
   }
 }

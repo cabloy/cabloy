@@ -76,7 +76,7 @@ test(
     const categoryName = `E2E Product Content Web Category ${suffix}`;
     const productTitle = `E2E Product Content Web ${suffix}`;
     const skuCode = `E2E-PC-WEB-${suffix}`;
-    const markdown = `# Product details ${suffix}\n\nA **durable** product.\n\n- [ ] Open task\n- [x] Completed task`;
+    const markdown = `# Product details ${suffix}\n\nA **durable** product.\n\n\`\`\`ts\nconst product = '${suffix}';\n\`\`\`\n\n- [ ] Open task\n- [x] Completed task`;
     const unsafeHtml = '<a href="javascript:alert(\'unsafe\')">unsafe</a>';
     const adminContext = await browser.newContext();
     const adminPage = await adminContext.newPage();
@@ -149,6 +149,10 @@ test(
       expect(ssrHtml.toLowerCase()).not.toContain('data-zova-hydrated');
       expect(ssrHtml).toContain(`<h1>Product details ${suffix}</h1>`);
       expect(ssrHtml).toContain('<strong>durable</strong>');
+      expect(ssrHtml).toMatch(/<code class="language-ts"><span class="hljs-/);
+      expect(ssrHtml).toMatch(
+        new RegExp(`<code class="language-ts">[\\s\\S]*${suffix}[\\s\\S]*</code>`),
+      );
       expect(ssrHtml).toContain('<ul data-type="taskList">');
       expect(ssrHtml).toContain('<input type="checkbox" disabled="disabled" />');
       expect(ssrHtml).toContain('<input type="checkbox" checked="checked" disabled="disabled" />');
@@ -164,6 +168,9 @@ test(
       await expect(webPage.locator('.product-description strong')).toHaveText('durable');
       const description = webPage.locator('.product-description');
       await expect(description).not.toHaveClass(/\bprose\b/);
+      const codeBlock = description.locator('pre > code.language-ts');
+      await expect(codeBlock).toHaveText(`const product = '${suffix}';`);
+      await expect(codeBlock.locator('span[class*="hljs-"]')).not.toHaveCount(0);
       await expect(description.locator('ul[data-type="taskList"]')).toHaveCount(1);
       await expect(description.locator('input[type="checkbox"]')).toHaveCount(2);
       await expect(description.locator('input[type="checkbox"]').nth(0)).not.toBeChecked();

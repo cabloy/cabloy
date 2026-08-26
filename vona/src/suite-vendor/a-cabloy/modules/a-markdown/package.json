@@ -40,6 +40,7 @@
     "@tiptap/markdown": "^3.30.0",
     "@tiptap/starter-kit": "^3.30.0",
     "@tiptap/static-renderer": "^3.30.0",
+    "lowlight": "^3.3.0",
     "sanitize-html": "^2.17.6"
   },
   "devDependencies": {

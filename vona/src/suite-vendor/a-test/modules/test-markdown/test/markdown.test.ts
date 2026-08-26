@@ -45,6 +45,8 @@ const sku = 'SKU-1';
       );
       assert.match(html, /<table>/);
       assert.match(html, /<code class="language-ts">/);
+      assert.match(html, /<span class="hljs-[^"]+">/);
+      assert.match(html, /<code class="language-ts">[\s\S]*SKU-1[\s\S]*<\/code>/);
       assert.match(
         html,
         /<img src="https:\/\/example\.com\/product\.png" alt="Product image" title="Product" \/?>/,

@@ -50,6 +50,7 @@ The parser and static renderer are initialized once at module load. The configur
 
 - `Markdown`
 - `StarterKit`
+- server-side Lowlight rendering with the common language set for fenced code blocks
 - `TaskList`
 - nested `TaskItem`
 - `Image`
@@ -105,7 +106,7 @@ Class values are restricted by tag:
 - code classes must match `language-*`;
 - span classes must match `hljs-*`.
 
-Arbitrary classes and inline CSS do not become part of the output contract.
+The renderer emits `hljs-*` token spans for supported fenced code blocks, and this narrow span policy preserves those generated syntax-highlighting tokens. Arbitrary classes and inline CSS do not become part of the output contract.
 
 ### URL policy
 

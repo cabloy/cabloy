@@ -255,7 +255,7 @@ const ready = true;
 ![Product image](https://example.com/product.png)
 ````
 
-The interactive editor decorates supported code blocks with lowlight token spans for syntax highlighting. The backend projection continues to render semantic `<code class="language-*">` output from Markdown; it does not persist editor token spans. Do not infer support for arbitrary raw HTML, iframe embeds, inline styles, `data:` URLs, or custom classes from the presence of a TipTap extension.
+The interactive editor and the backend renderer both decorate supported fenced code blocks with Lowlight token spans for syntax highlighting. The backend projection preserves the semantic `<code class="language-*">` element and its sanitized `hljs-*` token spans. `ZMarkdownHtml` displays that trusted projection; it does not syntax-highlight arbitrary HTML itself. Do not infer support for arbitrary raw HTML, iframe embeds, inline styles, `data:` URLs, or custom classes from the presence of a TipTap extension.
 
 ## Common mistakes
 
