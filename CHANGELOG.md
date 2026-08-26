@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.146
+
+### Improvements
+
+- Refresh the Zova lockfile to prepare for compensation reruns.
+- Update the Vona Zova Core patch dependency to version 5.1.88.
+
 ## 5.1.145
 
 ### Features
