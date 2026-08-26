@@ -320,20 +320,20 @@
 
 依赖：`WBS-HUA-60-*`。
 
-#### WBS-HUA-70-01：完成 contract、security、SSR 与浏览器验收
+#### WBS-HUA-70-01：完成 contract、security、SSR 与 Playwright 浏览器验收 验收
 
 主要区域：
 
 - Home User/backend/auth module-local tests
-- Basic Web/Admin E2E
-- OpenAPI/生成消费与配对产物
+- Basic Web/Admin Playwright 浏览器验收
+- OpenAPI/生成 consumer 与配对产物
 
 任务：
 
 - 执行已定义的 service/action/transaction/token 竞争测试；
 - 验证 emitted OpenAPI 和 Home API generation；
 - 依次运行 `npm run build:zova:web`、`npm run build:zova:admin`、`npm run deps:vona`；
-- 完成 Web/ Admin SSR、hydration、导航、直接 API、locale 和浏览器 journey 验收；
+- 完成 Web/Admin SSR、hydration、导航、直接 API、locale 和 Playwright 浏览器验收 journey 验收；
 - 按测试计划记录每项 `ATP-HUA-*` 的命令、环境、结果和脱敏证据。
 
 验收检查：
@@ -413,7 +413,7 @@
 主要区域：
 
 - 前端 `home-user` public reset page/route
-- canonical route 与 browser acceptance
+- canonical route 与 Playwright 浏览器验收
 
 任务：
 

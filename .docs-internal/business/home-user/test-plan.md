@@ -44,18 +44,18 @@ email/mobile 绑定验证、地址级 email provenance 迁移、MFA、设备/会
 
 ### 全量关闭验证
 
-Phase 70 前完成各能力的 focused tests、OpenAPI/生成验证、Web/Admin SSR/hydration、浏览器 journey、type/lint/format 与所需 root checks。直接 API 安全验收必须独立于 UI/E2E 验收。
+Phase 70 前完成各能力的 focused tests、OpenAPI/生成验证、Web/Admin SSR/hydration、Playwright 浏览器验收 journey、type/lint/format 与所需 root checks。直接 API 安全验收必须独立于 Playwright 浏览器验收。
 
 ## 测试层和预期归属
 
-| 测试层                        | 目的                                                             | 预期归属                                                                              |
-| ----------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Account service/action tests  | 自助范围、资料白名单、凭据状态和错误结果                         | `vona/src/suite/a-home/modules/home-user/test/`                                       |
-| Credential/token tests        | 密码校验、hash 更新、会话策略、token issue/consume/竞争          | 最终选定的 `home-user`、`auth-simple` 和 token 基础设施模块测试目录                   |
-| Transaction/integration tests | 原子变更、失败回滚、独立 context 竞争和 durable outcome          | owning Vona 模块-local `test/**/*.ts`                                                 |
-| Contract tests                | OpenAPI operation/schema/guard 与生成 consumer 对齐              | Vona OpenAPI 输出、`home-api` generation、paired flavor builds                        |
-| SSR/document tests            | Web/Admin session admission、hydration 等价和公开 token 页面安全 | matching Home/site owner tests 与 Basic E2E HTTP/browser checks                       |
-| Browser acceptance            | Web/Admin 导航、共用页面、独立区块、用户旅程和 locale            | `e2e/specs/cabloy-basic.spec.ts and e2e/specs/account.spec.ts` 的后续 `@account` 场景 |
+| 测试层                        | 目的                                                             | 预期归属                                                               |
+| ----------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Account service/action tests  | 自助范围、资料白名单、凭据状态和错误结果                         | `vona/src/suite/a-home/modules/home-user/test/`                        |
+| Credential/token tests        | 密码校验、hash 更新、会话策略、token issue/consume/竞争          | 最终选定的 `home-user`、`auth-simple` 和 token 基础设施模块测试目录    |
+| Transaction/integration tests | 原子变更、失败回滚、独立 context 竞争和 durable outcome          | owning Vona 模块-local `test/**/*.ts`                                  |
+| Contract tests                | OpenAPI operation/schema/guard 与生成 consumer 对齐              | Vona OpenAPI 输出、`home-api` generation、paired flavor builds         |
+| SSR/document tests            | Web/Admin session admission、hydration 等价和公开 token 页面安全 | matching Home/site owner tests 与 Basic Playwright HTTP/browser checks |
+| Playwright browser acceptance | Web/Admin 导航、共用页面、独立区块、用户旅程和 locale            | `e2e/specs/home-user-account.spec.ts` 中的 `@account` 场景             |
 
 现有测试专用 activation endpoint 只能作为受控 fixture 准备辅助；它不是生产 Account Settings API、密码策略或邮件/token 流程的验收替代。
 
@@ -132,7 +132,7 @@ npm run tsc
 npm run lint
 npm run format
 npm run test
-npm run test:e2e account -- --grep @account
+npm run test:e2e home-user-account -- --grep @account
 ```
 
 任何 `meta.version.ts` 修改均要求 `npm run test`。测试标签至少应包括 `@account`，并分别带 `@web` 或 `@admin`；tagged E2E 只有在对应产品实现存在后才创建和执行。
