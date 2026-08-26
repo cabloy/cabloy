@@ -19,7 +19,7 @@ export class RenderLocale extends BeanRenderBase {
                   <li key={key} class={this.app.meta.locale.current === key ? 'disabled' : ''}>
                     <a
                       onClick={event => {
-                        this.$$serviceLocale.setLocale(key as any);
+                        this.app.meta.locale.current = key as any;
                         closeNearestDetails(event);
                       }}
                     >

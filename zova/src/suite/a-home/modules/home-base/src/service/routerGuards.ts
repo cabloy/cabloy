@@ -1,17 +1,11 @@
 import type { BeanRouter } from 'zova-module-a-router';
 
 import { catchError } from '@cabloy/utils';
-import { Use } from 'zova';
 import { Service } from 'zova-module-a-bean';
 import { BeanRouterGuardsBase } from 'zova-module-a-router';
 
-import { ServiceLocale } from './locale.js';
-
 @Service()
 export class ServiceRouterGuards extends BeanRouterGuardsBase {
-  @Use()
-  $$serviceLocale: ServiceLocale;
-
   protected onRouterGuards(router: BeanRouter) {
     router.beforeEach(async to => {
       if (to.meta.requiresAuth === false) return;

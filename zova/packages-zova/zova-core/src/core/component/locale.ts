@@ -70,6 +70,7 @@ export class AppLocale extends BeanSimple {
 
   /** @internal */
   public createLocaleText(moduleScope?: string): IModuleLocaleText {
+    // eslint-disable-next-line
     const self = this;
     const getText = function (text: string, ...args: any[]): string {
       return self.getText(false, moduleScope, undefined, text, ...args);
@@ -86,6 +87,7 @@ export class AppLocale extends BeanSimple {
 
   /** @internal */
   public createScopeLocaleText(moduleScope: string, text: string): IModuleLocale {
+    // eslint-disable-next-line
     const self = this;
     const getText = function (...args: any[]): string {
       return self.getText(false, moduleScope, undefined, text, ...args);

@@ -77,6 +77,7 @@ export class Monkey
   }
 
   async beanInit(bean: BeanContainer, beanInstance: BeanBase) {
+    // eslint-disable-next-line
     const self = this;
     // $ssr
     bean.defineProperty(beanInstance, '$ssr', {

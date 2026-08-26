@@ -1,6 +1,5 @@
 // eslint-disable
 /** service: begin */
-export * from '../service/locale.js';
 export * from '../service/routerGuards.js';
 export * from '../service/ssr.js';
 export * from '../service/ssrLayout.js';
@@ -9,8 +8,7 @@ import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
 
     export interface IServiceRecord {
-      'home-base:locale': never;
-'home-base:routerGuards': never;
+      'home-base:routerGuards': never;
 'home-base:ssr': never;
 'home-base:ssrLayout': never;
     }
@@ -18,17 +16,6 @@ declare module 'zova-module-a-bean' {
 
 }
 declare module 'zova-module-home-base' {
-
-        export interface ServiceLocale {
-          /** @internal */
-          get scope(): ScopeModuleHomeBase;
-        }
-
-        export interface ServiceLocale {
-          get $beanFullName(): 'home-base.service.locale';
-          get $onionName(): 'home-base:locale';
-
-        }
 
         export interface ServiceRouterGuards {
           /** @internal */
@@ -65,15 +52,13 @@ declare module 'zova-module-home-base' {
 }
 /** service: end */
 /** service: begin */
-import { ServiceLocale } from '../service/locale.js';
 import { ServiceRouterGuards } from '../service/routerGuards.js';
 import { ServiceSsr } from '../service/ssr.js';
 import { ServiceSsrLayout } from '../service/ssrLayout.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
-    'home-base.service.locale': ServiceLocale;
-'home-base.service.routerGuards': ServiceRouterGuards;
+    'home-base.service.routerGuards': ServiceRouterGuards;
 'home-base.service.ssr': ServiceSsr;
 'home-base.service.ssrLayout': ServiceSsrLayout;
   }

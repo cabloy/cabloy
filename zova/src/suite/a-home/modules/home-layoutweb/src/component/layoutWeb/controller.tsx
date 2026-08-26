@@ -2,7 +2,7 @@ import { BeanControllerBase, Use, usePrepareArg } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ModelTabs, ModelTabsOptions, RouteTabInitial } from 'zova-module-a-routertabs';
-import { IServiceSsrLayoutOptions, ServiceLocale, ServiceSsrLayout } from 'zova-module-home-base';
+import { IServiceSsrLayoutOptions, ServiceSsrLayout } from 'zova-module-home-base';
 
 import { ModelLayout } from '../../model/layout.js';
 import { ModelMenu } from '../../model/menu.js';
@@ -31,9 +31,6 @@ export class ControllerLayoutWeb extends BeanControllerBase {
       sidebarLeftOpenPCFallback: sidebar.leftOpenPCFallback,
     } satisfies IServiceSsrLayoutOptions);
   }
-
-  @Use()
-  $$serviceLocale: ServiceLocale;
 
   leftDrawerOpen: boolean;
   leftDrawerOpenMobile: boolean = false;
