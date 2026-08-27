@@ -219,15 +219,25 @@ Set `layout: 'flow'` when compact fields should appear from left to right withou
 
 ## How the resolver handles the declared tree
 
-Before rendering, `resolveFormLayout(...)` reconciles `formLayout` with the current scene's resolved schema properties. This makes the declaration a **placement overlay**, not an allow-list.
+Before rendering, `resolveFormLayout(...)` reconciles `formLayout` with the current scene's resolved schema properties. This makes the declaration a **placement overlay**, not an allow-list. The preceding OpenAPI normalization step is explained in [OpenAPI Runtime Under the Hood](/frontend/a-openapi-under-the-hood#scene-overlays-fieldsource-and-preserved-aliases).
 
 ### Eligible and omitted fields
 
 Only schema properties with `rest.visible !== false` are eligible. When an eligible visible field is absent from `formLayout`, the resolver appends it as a root-level field after the declared nodes, in schema-property order.
 
-A field that uses `fieldSource` is represented at runtime by its nested canonical source key. Form Layout accepts three declaration forms in precedence order: the exact canonical key, the original schema property key, and a unique relation-prefix shorthand. For example, a real relation declaration `studentContentForm` can resolve to the sole `studentContentForm.descriptionMarkdown` source, while an intentional virtual schema key such as `_descriptionMarkdown` can resolve to `content.descriptionMarkdown` even though it is not that source path's prefix. The resolved plan always renders and binds the canonical nested key.
+A field that uses `fieldSource` is represented at runtime by its nested canonical source key. The loader stores that source path in `key`, retains the first differing original schema name in `schemaKey`, and retains further coalesced names in `schemaKeys`. A property already named by its canonical key retains that identity in `key`. These preserved names are aliases for declaration matching, not separate fields or bindings.
 
-An original schema key or relation prefix must resolve to exactly one eligible canonical source. If multiple visible source keys match, declare the exact canonical source key instead. Duplicate declarations are also detected by canonical key, so an alias and `content.descriptionMarkdown` cannot render the same field twice.
+Form Layout accepts three declaration forms in precedence order:
+
+1. the exact eligible canonical key;
+2. any uniquely mapped preserved schema alias from `schemaKey` or `schemaKeys`;
+3. a unique relation-prefix shorthand.
+
+For example, a real relation declaration `studentContentForm` can resolve to the sole `studentContentForm.descriptionMarkdown` source, while an intentional virtual schema key such as `_descriptionMarkdown` can resolve to `content.descriptionMarkdown` even though it is not that source path's prefix. The resolved plan always renders and binds the canonical nested key.
+
+An alias or relation prefix must resolve to exactly one eligible canonical source. If multiple visible source keys match, it is unresolved and receives `unknownField`; declare the exact canonical source key instead. Exact canonical matches win over colliding aliases. Invisible properties contribute neither eligible fields nor usable aliases.
+
+Duplicate declarations are detected by canonical key, so an alias and `content.descriptionMarkdown` cannot render the same field twice. Resolved field names, duplicate identity, and tab paths all use the canonical key. If a declaration is removed because it is unknown, invisible, ambiguous, or duplicate, otherwise unplaced eligible canonical fields are still appended at the root.
 
 If a field must not render, make it invisible in schema metadata. Leaving it out of `formLayout.children` is not enough.
 
@@ -326,7 +336,7 @@ ZovaRender.block('basic-pageentry:blockForm', {
 });
 ```
 
-`studentContentForm` is one virtual nested-relation field in the structural tree. Its Markdown renderer owns the nested source-field UI, while the separate `StudentContent` group expresses that it is a distinct content area rather than part of the responsive profile Grid.
+`studentContentForm` is one virtual nested-relation field in the structural tree. It remains the DTO-facing declaration name, while the resolved plan rewrites it to `studentContentForm.descriptionMarkdown` before field-state lookup and rendering. Its Markdown renderer owns the nested source-field UI, while the separate `StudentContent` group expresses that it is a distinct content area rather than part of the responsive profile Grid.
 
 `trainingRecords` is one field in the structural tree. Its `basic-details:formFieldDetails` renderer owns the nested details UI; Form Layout does not recursively arrange the properties inside each detail record.
 
@@ -375,6 +385,7 @@ Here `formFieldLayout.inline: true` controls how each field wrapper is presented
 6. Keep entry actions in page-entry toolbar blocks. Keep filter action semantics in `basic-page:blockFilterActions`; place that block inside Form Layout when the actions must share structural Grid or flow placement with fields.
 7. For maintained Cabloy Basic list filters, prefer one inline flow section that explicitly lists every real filter-schema field in schema order and ends with one embedded `basic-page:blockFilterActions` block. Do not add virtual request fields, alter filter transforms, or combine it with a sibling action block.
 8. Review field names against the scene-specific schema. Unlisted visible fields are appended; unknown and duplicate declarations are silently pruned from the rendered plan.
+9. Prefer an exact canonical source path when an alias or relation prefix could match multiple visible fields. Do not list both an alias and its canonical key; canonical duplicate detection keeps only the first declaration.
 
 ## Source-reading and verification path
 
@@ -382,10 +393,14 @@ For source-level investigation, follow this order:
 
 1. `vona/src/suite/a-training/modules/training-student/src/dto/studentCreate.tsx` or `studentSelectResItem.tsx`
 2. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/types/resource/formLayout.ts`
-3. `zova/src/suite-vendor/a-zova/modules/a-form/src/lib/formLayout.ts`
-4. `zova/src/suite/cabloy-basic/modules/basic-form/src/component/blockFormLayout/controller.tsx`
-5. `vona/src/suite/a-training/modules/training-student/test/student.test.ts`
+3. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/lib/schema.ts`
+4. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/types/rest.ts`
+5. `zova/src/suite-vendor/a-zova/modules/a-form/src/lib/formLayout.ts`
+6. `zova/src/suite/cabloy-basic/modules/basic-form/src/component/blockFormLayout/controller.tsx`
+7. `zova/src/suite-vendor/a-zova/modules/a-openapi/test/lib/schema.test.ts`
+8. `zova/src/suite-vendor/a-zova/modules/a-form/test/lib/formLayout.test.ts`
+9. `vona/src/suite/a-training/modules/training-student/test/student.test.ts`
 
-The Student test verifies that entry and filter DTO metadata preserves the current block nesting, optional IDs, Grid columns/spans, flow layout selection, and field order through OpenAPI generation. It is a contract-metadata test, not a browser end-to-end assertion for tabs, layout behavior, or error badges.
+The OpenAPI loader test verifies canonical `fieldSource` keys, preserved aliases, scene overlays, coalescing, and declaration-order independence. The Form Layout test verifies canonical rewriting, alias and prefix resolution, ambiguity, duplicate detection, visibility, and tab paths. The Student test verifies that entry and filter DTO metadata preserves the current block nesting, optional IDs, Grid columns/spans, flow layout selection, and field order through OpenAPI generation. It is a contract-metadata test, not a browser end-to-end assertion for tabs, layout behavior, or error badges.
 
 For the broader form runtime, continue with [Zova Form Under the Hood](/frontend/zova-form-under-the-hood) and [Zova Form Source Reading Map](/frontend/zova-form-source-reading-map).

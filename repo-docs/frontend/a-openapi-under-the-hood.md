@@ -31,7 +31,7 @@ A practical mental model is:
 2. `$sdk` resolves a locale-scoped `ModelSdk`
 3. `ModelSdk` exposes bootstrap, permissions, sdk, schema, Zod, and default-value helpers
 4. `SysSdk` owns the lower cache/fetch layer for bootstrap/docs/schemas
-5. `schema.ts` extracts request/query/filter/body/row/paged schema surfaces and applies scene-aware property selection
+5. `schema.ts` extracts request/query/filter/body/row/paged schema surfaces, applies scene-aware property selection, and normalizes `fieldSource` fields into canonical runtime keys
 6. downstream resource/model/table consumers reuse those lower-level surfaces rather than rebuilding them independently
 
 That means `a-openapi` is not only about generated SDK usage. It is also the lower-level schema/runtime bridge beneath the higher-level frontend runtime.
@@ -204,11 +204,20 @@ This file owns the main lower-level helpers for:
 - scene-aware property loading
 - JSON-schema-to-Zod conversion
 
+### Scene overlays, `fieldSource`, and preserved aliases
+
 The most important scene-aware rule is in `loadSchemaProperties(...)`:
 
 - property metadata can be extended by `rest.*`
-- scene-specific overlays such as `table`, `form`, `form-view`, `form-create`, and `filter` are applied
+- for `form-view`, `form-create`, and `filter`, it merges base `rest`, the shared `rest.form` overlay, and then the exact scene overlay before reading `fieldSource`
+- other scenes apply their exact overlay
 - field ordering is resolved through `rest.order`
+
+When that effective metadata supplies `fieldSource`, its nested source path becomes the canonical runtime `key`. This is the field identity that downstream form and structural consumers bind and render. The first differing original schema property name that resolves to this key is retained as `schemaKey`; later coalesced names are retained in `schemaKeys`. If a schema property already has the canonical name, `key` itself remains that original identity.
+
+Several schema properties can therefore describe one canonical field without producing several runtime field records. Coalescing is by canonical key, so its result does not depend on declaration order. Ordinary properties that do not use `fieldSource` do not acquire alias metadata.
+
+The preserved names are metadata aliases, not additional bindings. They let a structural consumer accept a DTO-facing field name while still handing the canonical key to the form runtime. See [Zova Form Under the Hood](/frontend/zova-form-under-the-hood#fieldsource-canonicalization-and-preserved-schema-aliases) for the binding consequence and [Form Layout Guide](/frontend/form-layout-guide#how-the-resolver-handles-the-declared-tree) for author-facing declaration rules.
 
 That means `a-openapi` is not only a transport/schema lookup layer.
 
@@ -243,6 +252,8 @@ Use these next steps depending on your question:
 - if you want OpenAPI generation/config usage, read [OpenAPI SDK Guide](/frontend/openapi-sdk-guide)
 - if you want schema-driven UI positioning, read [API Schema Guide](/frontend/api-schema-guide)
 - if you want the resource-owner consumer side, read [ModelResource Internals Deep Dive](/frontend/model-resource-internals-deep-dive)
+- if you want canonical schema keys to become form bindings, read [Zova Form Under the Hood](/frontend/zova-form-under-the-hood)
+- if you want Form Layout field-declaration matching, read [Form Layout Guide](/frontend/form-layout-guide)
 - if you want the table/resource consumer side, read [Zova Table Under the Hood](/frontend/zova-table-under-the-hood) and the resource deep dives
 
 ## Final takeaway

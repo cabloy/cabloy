@@ -11,6 +11,7 @@ Use this page together with:
 - [Zova Reactivity Under the Hood](/frontend/zova-reactivity-under-the-hood)
 - [Behavior Guide](/frontend/behavior-guide)
 - [API Schema Guide](/frontend/api-schema-guide)
+- [OpenAPI Runtime Under the Hood](/frontend/a-openapi-under-the-hood)
 
 Use this page after [Form Guide](/frontend/form-guide) when you want to move from the public authoring surface to the internal cooperation among form controllers, field controllers, schema metadata, provider config, behaviors, and CRUD integration.
 
@@ -233,6 +234,14 @@ A practical reading takeaway is:
 - **schema is not only validation truth**
 - **schema also drives ordering, render metadata, and scene-specific field behavior**
 
+### `fieldSource` canonicalization and preserved schema aliases
+
+`loadSchemaProperties(...)` constructs the effective property `rest` metadata before inspecting `fieldSource`: base metadata, the applicable shared `form` overlay, and then the exact scene overlay. When that metadata supplies `fieldSource`, its nested source path becomes the property's canonical `key`.
+
+The form uses this canonical key for field-property lookup, CEL field scope, values, validation, and rendering. When an original schema property name differs, `schemaKey` preserves the first such name that reached the canonical key, while `schemaKeys` preserves later coalesced names. A property already named by its canonical key retains that identity in `key`. These preserved names are aliases for metadata consumers such as Form Layout, not independent form bindings.
+
+Consequently, several DTO-facing schema names can represent one nested field without creating duplicate form state. The OpenAPI loader owns this normalization and coalescing; see [OpenAPI Runtime Under the Hood](/frontend/a-openapi-under-the-hood#scene-overlays-fieldsource-and-preserved-aliases) for its lower-level contract.
+
 ### The form owner supplies the schema lifetime
 
 `ZForm` derives `properties` and `zodSchema` from the schema it receives. Its runtime does not own `$apiSchema` locale selection or refresh a facade retained by the page/controller. If the owner supplies a schema object created under an earlier locale, the form will faithfully render that object's titles and metadata.
@@ -444,6 +453,8 @@ That means automatic schema-driven rendering is not happening magically in the w
 ### Structural Form Layout boundary
 
 When `ZForm` receives a nonempty block list, the render bean delegates body rendering to those blocks instead of iterating schema fields directly. For Cabloy Basic structural forms, `basic-form:blockFormLayout` resolves `formLayout` against the form's current schema properties and calls `$$form.renderField(...)` for each surviving layout field.
+
+For a field declaration, the shared resolver first accepts an exact canonical key, then a uniquely mapped preserved schema alias, and then a unique relation-prefix shorthand. It rewrites an alias or shorthand to the canonical key before calling `$$form.renderField(...)`. Exact canonical keys win over colliding aliases; ambiguous aliases or prefixes are reported as `unknownField`. Duplicate tracking and tab-path bookkeeping use the canonical key, while visible canonical fields not placed by a surviving declaration are appended afterward. See [Form Layout Guide](/frontend/form-layout-guide#how-the-resolver-handles-the-declared-tree) for the full DTO authoring rules.
 
 Form Layout also supports a leaf `block` node. It wraps an existing resource block descriptor and the Basic renderer invokes it with the inherited `IJsxRenderContextForm`, including the same JSX runtime and CEL scope. The node has no schema property or field value; for example, a filter can place `basic-page:blockFilterActions` inside a flow section while that action block continues to read `$$filter` from the filter-owned form scope.
 

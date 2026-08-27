@@ -147,21 +147,29 @@ Use this path when you are asking questions like:
 
 - how does a schema become rendered fields?
 - where do field props come from?
+- where does `fieldSource` become the canonical form key, and where are original schema aliases preserved?
 - how are metadata expressions or render providers resolved?
 
 ### Read the docs first
 
 - [API Schema Guide](/frontend/api-schema-guide)
+- [OpenAPI Runtime Under the Hood](/frontend/a-openapi-under-the-hood)
 - [Form Guide](/frontend/form-guide)
 
 ### Then read source in this order
 
-1. `zova/src/suite-vendor/a-zova/modules/a-form/src/component/form/controller.tsx`
-2. `zova/src/suite-vendor/a-zova/modules/a-form/src/component/form/render.tsx`
-3. `zova/src/suite-vendor/a-zova/modules/a-form/src/types/formField.ts`
+1. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/lib/schema.ts`
+2. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/types/rest.ts`
+3. `zova/src/suite-vendor/a-zova/modules/a-openapi/test/lib/schema.test.ts`
+4. `zova/src/suite-vendor/a-zova/modules/a-form/src/component/form/controller.tsx`
+5. `zova/src/suite-vendor/a-zova/modules/a-form/src/component/form/render.tsx`
+6. `zova/src/suite-vendor/a-zova/modules/a-form/src/types/formField.ts`
 
 ### What each file clarifies
 
+- `schema.ts` shows scene-aware `fieldSource` canonicalization and coalescing by canonical key
+- `types/rest.ts` defines the preserved `schemaKey` and `schemaKeys` aliases
+- `schema.test.ts` is the compact behavior matrix for canonical keys, aliases, scene overlays, declaration-order independence, and ordinary fields
 - `form/controller.tsx` shows schema property loading, field CEL scope creation, and top-level field prop extraction
 - `form/render.tsx` shows how schema properties become children when the form body is not manually overridden
 - `types/formField.ts` shows the field render-context shapes that the runtime passes through to renderers and behaviors
@@ -224,12 +232,14 @@ Use this path when you are asking questions like:
 
 - where does `formLayout` come from in a resource DTO?
 - how are fields, embedded blocks, sections, groups, and tabs normalized before rendering?
+- how do canonical keys, preserved schema aliases, and unique relation-prefix shorthand resolve to one field?
 - why are omitted visible fields appended or duplicate fields removed?
 - where does Cabloy Basic render responsive grids and tab error badges?
 
 ### Read the docs first
 
 - [Form Layout Guide](/frontend/form-layout-guide)
+- [OpenAPI Runtime Under the Hood](/frontend/a-openapi-under-the-hood)
 - [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook)
 - [Resource Entry Page Deep Dive](/frontend/resource-entry-page-deep-dive)
 
@@ -238,18 +248,25 @@ Use this path when you are asking questions like:
 1. `vona/src/suite/a-training/modules/training-student/src/dto/studentCreate.tsx`
 2. `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectResItem.tsx`
 3. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/types/resource/formLayout.ts`
-4. `zova/src/suite-vendor/a-zova/modules/a-form/src/lib/formLayout.ts`
-5. `zova/src/suite/cabloy-basic/modules/basic-form/src/component/blockFormLayout/controller.tsx`
-6. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockFilterActions/controller.tsx`
-7. `vona/src/suite/a-training/modules/training-student/test/student.test.ts`
+4. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/lib/schema.ts`
+5. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/types/rest.ts`
+6. `zova/src/suite-vendor/a-zova/modules/a-form/src/lib/formLayout.ts`
+7. `zova/src/suite/cabloy-basic/modules/basic-form/src/component/blockFormLayout/controller.tsx`
+8. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockFilterActions/controller.tsx`
+9. `zova/src/suite-vendor/a-zova/modules/a-openapi/test/lib/schema.test.ts`
+10. `zova/src/suite-vendor/a-zova/modules/a-form/test/lib/formLayout.test.ts`
+11. `vona/src/suite/a-training/modules/training-student/test/student.test.ts`
 
 ### What each file clarifies
 
 - the Student DTOs show the entry and filter block composition that supplies layout metadata
 - the OpenAPI type contract defines the legal node grammar and responsive values
-- the resolver reconciles field metadata with visible schema fields, generated IDs, diagnostics, and preserved embedded blocks
-- the Basic block controller renders sections, groups, tabs, field spans, and embedded blocks while delegating fields to `$$form.renderField(...)`
+- `schema.ts` resolves scene overlays, canonicalizes `fieldSource`, and coalesces aliases that target one canonical key
+- `types/rest.ts` defines the preserved alias metadata
+- the resolver filters visible fields, resolves exact canonical keys before unique aliases and unique prefixes, and records duplicate identity and tab paths by canonical key
+- the Basic block controller renders sections, groups, tabs, field spans, and embedded blocks while delegating canonical field names to `$$form.renderField(...)`
 - `blockFilterActions` shows how a block rendered inside Form Layout reuses the inherited form CEL scope to invoke `$$filter`
+- the OpenAPI and Form Layout unit tests verify canonicalization, alias precedence, ambiguity, duplicates, visibility, root append, and tab paths
 - the Student test verifies emitted metadata nesting, columns, spans, embedded action blocks, and optional IDs; it is not a browser rendering test
 
 ## 8. Resource-driven CRUD page integration
