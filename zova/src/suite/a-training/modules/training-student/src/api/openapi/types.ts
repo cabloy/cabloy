@@ -4410,7 +4410,7 @@ export interface components {
           signed?: boolean;
         }
       | undefined;
-    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_28fce6ac9edcc5b3550b06ad8b5ab9772422d298':
+    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1d66fd9b41b42bee7a7709e4c1b00556fdb4dae3':
       | {
           /**
            * Format: date-time
@@ -8125,7 +8125,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_28fce6ac9edcc5b3550b06ad8b5ab9772422d298'];
+            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1d66fd9b41b42bee7a7709e4c1b00556fdb4dae3'];
           };
         };
       };

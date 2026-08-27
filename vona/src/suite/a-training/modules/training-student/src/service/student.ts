@@ -22,6 +22,10 @@ function getStudentContentFormInclude() {
   return { studentContentForm: true };
 }
 
+function getStudentContentInclude() {
+  return { studentContent: true };
+}
+
 @Service()
 export class ServiceStudent extends BeanBase {
   async create(student: DtoStudentCreate): Promise<EntityStudent> {
@@ -65,10 +69,11 @@ export class ServiceStudent extends BeanBase {
 
   async summary(id: TableIdentity): Promise<DtoStudentSummary | undefined> {
     const student = await this.scope.model.student.getById(id, {
-      include: getStudentContentFormInclude(),
+      include: getStudentContentInclude(),
     });
     if (!student) return undefined;
-    const description = student.studentContentForm?.descriptionMarkdown;
+    const description = student.studentContent?.descriptionMarkdown;
+    const descriptionHtml = student.studentContent?.descriptionHtml;
     const descriptionLength = description?.length ?? 0;
     const levelTitle = String(student.level);
     return {
@@ -78,6 +83,7 @@ export class ServiceStudent extends BeanBase {
       level: student.level,
       levelTitle,
       description,
+      descriptionHtml,
       descriptionLength,
       summaryText: `${student.name} is in level ${student.level}. Description length: ${descriptionLength}.`,
     };

@@ -112,6 +112,7 @@ describe('student.test.ts', () => {
           'mobile',
           'level',
           'description',
+          'descriptionHtml',
           'levelTitle',
           'descriptionLength',
           'summaryText',
@@ -299,6 +300,7 @@ describe('student.test.ts', () => {
       assert.equal(summary.mobile, maskedMobileUpdate);
       assert.equal(summary.level, dataUpdate.level);
       assert.equal(summary.description, descriptionUpdate);
+      assert.equal(summary.descriptionHtml, app.bean.markdown.renderHtml(descriptionUpdate));
       assert.equal(summary.descriptionLength, descriptionUpdate.length);
       assert.equal(typeof summary.levelTitle, 'string');
       assert.equal(typeof summary.summaryText, 'string');

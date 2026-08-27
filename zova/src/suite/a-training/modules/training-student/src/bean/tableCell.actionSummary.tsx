@@ -9,6 +9,7 @@ import type { ModelStudent } from 'zova-module-training-student';
 
 import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
+import { ZMarkdownHtml } from 'zova-module-basic-markdown';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableActionRowRecord {
@@ -40,13 +41,23 @@ export class TableCellActionSummary extends BeanBase implements ITableCellRender
           )) as ModelStudent;
           const querySummary = modelStudent.summary(id);
           const { data: summary } = await querySummary.refetch();
-          const message = [
-            `${this.scope.locale.Id()}: ${summary?.id ?? '-'}`,
-            `${this.scope.locale.Name()}: ${summary?.name ?? '-'}`,
-            `${this.scope.locale.Level()}: ${summary?.level ?? '-'}`,
-            `${this.scope.locale.Description()}: ${summary?.description ?? '-'}`,
-          ].join('\n');
-          await $host.$performCommand('basic-commands:alert', { text: message }, renderContext);
+          $host.$appModal.dialog(
+            {
+              title: this.scope.locale.Summary(),
+              slotDefault: () => (
+                <div class="student-summary-description">
+                  <ZMarkdownHtml html={summary?.descriptionHtml} />
+                </div>
+              ),
+            },
+            {
+              maxWidth: 720,
+              maxHeight: 'calc(100vh - 2rem)',
+              closeOnBackdrop: true,
+              closeOnEscape: true,
+              showCloseButton: true,
+            },
+          );
         }}
       >
         {this.scope.locale.Summary()}
