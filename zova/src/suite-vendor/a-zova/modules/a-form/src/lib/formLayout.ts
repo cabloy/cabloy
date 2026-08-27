@@ -193,17 +193,25 @@ function resolveField(
   diagnostics: IFormLayoutDiagnostic[],
   fieldTabPaths: IResolvedFormLayout['fieldTabPaths'],
 ): IResolvedFormLayoutField | undefined {
-  if (!propertyNames.has(node.name)) {
+  const name = resolveFieldName(node.name, propertyNames);
+  if (!name) {
     diagnostics.push({ type: 'unknownField', value: node.name });
     return;
   }
-  if (fieldNames.has(node.name)) {
+  if (fieldNames.has(name)) {
     diagnostics.push({ type: 'duplicateField', value: node.name });
     return;
   }
-  fieldNames.add(node.name);
-  fieldTabPaths[node.name] = tabPath;
-  return node;
+  fieldNames.add(name);
+  fieldTabPaths[name] = tabPath;
+  return name === node.name ? node : { ...node, name };
+}
+
+function resolveFieldName(name: string, propertyNames: Set<string>) {
+  if (propertyNames.has(name)) return name;
+  const fieldSourcePrefix = `${name}.`;
+  const fieldSources = [...propertyNames].filter(item => item.startsWith(fieldSourcePrefix));
+  return fieldSources.length === 1 ? fieldSources[0] : undefined;
 }
 
 function resolveId(node: { type: string; id?: string }, indexPath: number[]) {

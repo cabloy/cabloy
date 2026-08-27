@@ -348,3 +348,34 @@ test(
     expect(pageErrors).toEqual([]);
   },
 );
+
+test(
+  'ATP-BASIC-FORM-01: Training Student content remains in the Basic Information tab',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    const pageErrors = collectPageErrors(page);
+    await loginAsAdmin(page);
+
+    const response = await page.goto('/admin/rest/resource/training-student%3Astudent/create', {
+      waitUntil: 'load',
+    });
+    expect(response?.ok()).toBeTruthy();
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+
+    const basicInformationTab = page.getByRole('tab', { name: 'Basic Information', exact: true });
+    const studentContentGroup = page
+      .locator('fieldset')
+      .filter({ has: page.locator('legend').filter({ hasText: /^Student Content$/ }) });
+    await expect(studentContentGroup).toHaveCount(1);
+    await expect(
+      studentContentGroup.getByText('Description Markdown', { exact: true }),
+    ).toBeVisible();
+
+    const studentContentPanel = studentContentGroup.locator('xpath=ancestor::*[@role="tabpanel"]');
+    await expect(studentContentPanel).toHaveCount(1);
+    const basicInformationTabId = await basicInformationTab.getAttribute('id');
+    expect(basicInformationTabId).not.toBeNull();
+    await expect(studentContentPanel).toHaveAttribute('aria-labelledby', basicInformationTabId!);
+    expect(pageErrors).toEqual([]);
+  },
+);
