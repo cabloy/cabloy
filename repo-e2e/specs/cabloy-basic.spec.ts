@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import type { Locator, Page, Route } from '@playwright/test';
 
 import { expect, test } from '@playwright/test';
 
@@ -54,6 +54,39 @@ function waitForStudentSelect(page: Page) {
       !response.request().headers()['x-vona-openapi-schema']
     );
   });
+}
+
+function installStudentCreateResponseCapture(page: Page) {
+  let studentId: string | number | undefined;
+  const handler = async (route: Route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    if (
+      request.method() !== 'POST' ||
+      url.pathname !== '/api/training/student' ||
+      request.headers()['x-vona-openapi-schema']
+    ) {
+      await route.continue();
+      return;
+    }
+    const response = await route.fetch();
+    const payload = await response.json();
+    if (response.ok() && ['string', 'number'].includes(typeof payload.data)) {
+      studentId = payload.data;
+    }
+    await route.fulfill({ response });
+  };
+  return {
+    async install() {
+      await page.route('**/api/training/student', handler);
+    },
+    async uninstall() {
+      await page.unroute('**/api/training/student', handler);
+    },
+    get studentId() {
+      return studentId;
+    },
+  };
 }
 
 async function getFieldGeometry(locator: Locator): Promise<IFieldGeometry> {
@@ -377,5 +410,116 @@ test(
     expect(basicInformationTabId).not.toBeNull();
     await expect(studentContentPanel).toHaveAttribute('aria-labelledby', basicInformationTabId!);
     expect(pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-BASIC-SUMMARY-01: Training Student summary renders Markdown HTML in a dialog',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    const pageErrors = collectPageErrors(page);
+    await loginAsAdmin(page);
+
+    const studentName = `Summary E2E ${Date.now()}`;
+    const createResponseCapture = installStudentCreateResponseCapture(page);
+    let studentId: string | number | undefined;
+    await createResponseCapture.install();
+    try {
+      const createPageResponse = await page.goto(
+        '/admin/rest/resource/training-student%3Astudent/create',
+        { waitUntil: 'load' },
+      );
+      expect(createPageResponse?.ok()).toBeTruthy();
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await page
+        .getByRole('group', { name: 'Student Name *', exact: true })
+        .getByRole('textbox')
+        .fill(studentName);
+      await page
+        .getByRole('group', { name: 'Mobile *', exact: true })
+        .getByRole('textbox')
+        .fill('13812345678');
+      await page
+        .locator('.ProseMirror')
+        .last()
+        .fill(`## Summary heading\n\nSummary paragraph ${studentName}`);
+      await page.getByRole('tab', { name: 'Student Training Records', exact: true }).click();
+      await page.getByText('Foundation Track', { exact: true }).click();
+
+      const submitButton = page.getByRole('button', { name: 'Submit', exact: true });
+      await expect(submitButton).toBeEnabled();
+      await submitButton.click();
+      await expect(page).toHaveURL(/\/admin\/(?:\?|$)/);
+      studentId = createResponseCapture.studentId;
+      expect(['string', 'number']).toContain(typeof studentId);
+
+      const response = await page.goto('/admin/rest/resource/training-student%3Astudent', {
+        waitUntil: 'load',
+      });
+      expect(response?.ok()).toBeTruthy();
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+
+      const filterName = page.getByLabel('Student Name');
+      await expect(filterName).toBeVisible();
+      await filterName.fill(studentName);
+      const searchResponse = waitForStudentSelect(page);
+      await page.getByRole('button', { name: 'Search', exact: true }).click();
+      await searchResponse;
+
+      const row = page.locator('tr').filter({ hasText: studentName });
+      await expect(row).toHaveCount(1);
+      const summaryResponse = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return (
+          response.request().method() === 'GET' &&
+          response.ok() &&
+          url.pathname === `/api/training/student/summary/${studentId}` &&
+          !response.request().headers()['x-vona-openapi-schema']
+        );
+      });
+      await row.getByRole('button', { name: 'Summary', exact: true }).click();
+      await summaryResponse;
+
+      const description = page.locator('.student-summary-description');
+      await expect(description).toBeVisible();
+      await expect(description.locator('h2')).toHaveText('Summary heading');
+      await expect(description).toContainText(`Summary paragraph ${studentName}`);
+      expect(pageErrors).toEqual([]);
+    } finally {
+      try {
+        if (studentId !== undefined) {
+          const description = page.locator('.student-summary-description');
+          if (await description.count()) {
+            await description.locator('xpath=../..').getByRole('button').click();
+          }
+          const row = page.locator('tr').filter({ hasText: studentName });
+          if (!(await row.count())) {
+            const response = await page.goto('/admin/rest/resource/training-student%3Astudent', {
+              waitUntil: 'load',
+            });
+            expect(response?.ok()).toBeTruthy();
+            await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+            await page.getByLabel('Student Name').fill(studentName);
+            const searchResponse = waitForStudentSelect(page);
+            await page.getByRole('button', { name: 'Search', exact: true }).click();
+            await searchResponse;
+          }
+          const deleteResponse = page.waitForResponse(response => {
+            const url = new URL(response.url());
+            return (
+              response.request().method() === 'DELETE' &&
+              response.ok() &&
+              url.pathname === `/api/training/student/deleteForce/${studentId}` &&
+              !response.request().headers()['x-vona-openapi-schema']
+            );
+          });
+          await row.getByRole('button', { name: 'Force Delete', exact: true }).click();
+          await page.getByRole('button', { name: 'Yes', exact: true }).click();
+          await deleteResponse;
+        }
+      } finally {
+        await createResponseCapture.uninstall();
+      }
+    }
   },
 );

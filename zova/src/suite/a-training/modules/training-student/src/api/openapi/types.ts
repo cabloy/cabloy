@@ -4645,6 +4645,8 @@ export interface components {
           level: 1 | 2 | 3;
           /** @description Description */
           description?: string | undefined;
+          /** @description Description HTML */
+          descriptionHtml?: string | undefined;
           /** @description Level Title */
           levelTitle: string;
           /** @description Description Length */
