@@ -24,14 +24,14 @@ export interface IControllerOptions<%=argv.resourceNameCapitalize%> extends IDec
 })
 @Resource()
 export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
-  @Web.post({ summary: $locale('<%=argv.resourceNameCapitalize%>Create') })
+  @Web.post('', { summary: $locale('<%=argv.resourceNameCapitalize%>Create') })
   @Api.body(v.tableIdentity())
   @Passport.rbac()
   async create(@Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Create): Promise<TableIdentity> {
     return (await this.scope.service.<%=argv.resourceName%>.create(<%=argv.resourceName%>)).id;
   }
 
-  @Web.get({ summary: $locale('<%=argv.resourceNameCapitalize%>Select') })
+  @Web.get('', { summary: $locale('<%=argv.resourceNameCapitalize%>Select') })
   @Api.body(Dto<%=argv.resourceNameCapitalize%>SelectRes)
   @Passport.rbac()
   async select(@Arg.filter(Dto<%=argv.resourceNameCapitalize%>SelectReq) params: IQueryParams<Model<%=argv.resourceNameCapitalize%>>): Promise<Dto<%=argv.resourceNameCapitalize%>SelectRes> {
