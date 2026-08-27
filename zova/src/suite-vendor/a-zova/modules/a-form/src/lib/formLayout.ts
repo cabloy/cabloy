@@ -24,12 +24,21 @@ export function resolveFormLayout(
   layout: IFormLayout,
   properties: ISchemaObjectExtensionField[] | undefined,
 ): IResolvedFormLayout {
+  const visibleProperties = properties?.filter(item => item.rest?.visible !== false) ?? [];
   const propertyNames = new Set(
-    properties
-      ?.filter(item => item.rest?.visible !== false)
-      .map(item => item.key)
-      .filter(Boolean) as string[],
+    visibleProperties.map(item => item.key).filter(Boolean) as string[],
   );
+  const propertyAliases = new Map<string, Set<string>>();
+  for (const property of visibleProperties) {
+    if (!property.key) continue;
+    const schemaKeys = [property.schemaKey, ...(property.schemaKeys ?? [])];
+    for (const schemaKey of schemaKeys) {
+      if (!schemaKey || schemaKey === property.key) continue;
+      const aliases = propertyAliases.get(schemaKey) ?? new Set<string>();
+      aliases.add(property.key);
+      propertyAliases.set(schemaKey, aliases);
+    }
+  }
   const fieldNames = new Set<string>();
   const nodeIds = new Set<string>();
   const diagnostics: IFormLayoutDiagnostic[] = [];
@@ -41,6 +50,7 @@ export function resolveFormLayout(
         [index],
         [],
         propertyNames,
+        propertyAliases,
         fieldNames,
         nodeIds,
         diagnostics,
@@ -62,13 +72,22 @@ function resolveNode(
   indexPath: number[],
   tabPath: IResolvedFormLayout['fieldTabPaths'][string],
   propertyNames: Set<string>,
+  propertyAliases: Map<string, Set<string>>,
   fieldNames: Set<string>,
   nodeIds: Set<string>,
   diagnostics: IFormLayoutDiagnostic[],
   fieldTabPaths: IResolvedFormLayout['fieldTabPaths'],
 ): IResolvedFormLayoutNode | undefined {
   if (node.type === 'field') {
-    return resolveField(node, tabPath, propertyNames, fieldNames, diagnostics, fieldTabPaths);
+    return resolveField(
+      node,
+      tabPath,
+      propertyNames,
+      propertyAliases,
+      fieldNames,
+      diagnostics,
+      fieldTabPaths,
+    );
   }
   if (node.type === 'block') {
     return node;
@@ -78,6 +97,7 @@ function resolveNode(
       node,
       indexPath,
       propertyNames,
+      propertyAliases,
       fieldNames,
       nodeIds,
       diagnostics,
@@ -89,7 +109,15 @@ function resolveNode(
   if (node.type === 'section') {
     const children = node.children
       .map(item =>
-        resolveLeaf(item, tabPath, propertyNames, fieldNames, diagnostics, fieldTabPaths),
+        resolveLeaf(
+          item,
+          tabPath,
+          propertyNames,
+          propertyAliases,
+          fieldNames,
+          diagnostics,
+          fieldTabPaths,
+        ),
       )
       .filter(Boolean) as IResolvedFormLayoutLeaf[];
     return children.length ? { ...node, id, children } : undefined;
@@ -101,6 +129,7 @@ function resolveNode(
         [...indexPath, index],
         tabPath,
         propertyNames,
+        propertyAliases,
         fieldNames,
         nodeIds,
         diagnostics,
@@ -117,18 +146,28 @@ function resolveLeaf(
   node: IFormLayoutLeaf,
   tabPath: IResolvedFormLayout['fieldTabPaths'][string],
   propertyNames: Set<string>,
+  propertyAliases: Map<string, Set<string>>,
   fieldNames: Set<string>,
   diagnostics: IFormLayoutDiagnostic[],
   fieldTabPaths: IResolvedFormLayout['fieldTabPaths'],
 ): IResolvedFormLayoutLeaf | undefined {
   if (node.type === 'block') return node;
-  return resolveField(node, tabPath, propertyNames, fieldNames, diagnostics, fieldTabPaths);
+  return resolveField(
+    node,
+    tabPath,
+    propertyNames,
+    propertyAliases,
+    fieldNames,
+    diagnostics,
+    fieldTabPaths,
+  );
 }
 
 function resolveTabs(
   node: IFormLayoutTabs,
   indexPath: number[],
   propertyNames: Set<string>,
+  propertyAliases: Map<string, Set<string>>,
   fieldNames: Set<string>,
   nodeIds: Set<string>,
   diagnostics: IFormLayoutDiagnostic[],
@@ -143,6 +182,7 @@ function resolveTabs(
         [...indexPath, index],
         id,
         propertyNames,
+        propertyAliases,
         fieldNames,
         nodeIds,
         diagnostics,
@@ -158,6 +198,7 @@ function resolveTab(
   indexPath: number[],
   tabsId: string,
   propertyNames: Set<string>,
+  propertyAliases: Map<string, Set<string>>,
   fieldNames: Set<string>,
   nodeIds: Set<string>,
   diagnostics: IFormLayoutDiagnostic[],
@@ -173,6 +214,7 @@ function resolveTab(
         [...indexPath, index],
         tabPath,
         propertyNames,
+        propertyAliases,
         fieldNames,
         nodeIds,
         diagnostics,
@@ -189,11 +231,12 @@ function resolveField(
   node: IFormLayoutField,
   tabPath: IResolvedFormLayout['fieldTabPaths'][string],
   propertyNames: Set<string>,
+  propertyAliases: Map<string, Set<string>>,
   fieldNames: Set<string>,
   diagnostics: IFormLayoutDiagnostic[],
   fieldTabPaths: IResolvedFormLayout['fieldTabPaths'],
 ): IResolvedFormLayoutField | undefined {
-  const name = resolveFieldName(node.name, propertyNames);
+  const name = resolveFieldName(node.name, propertyNames, propertyAliases);
   if (!name) {
     diagnostics.push({ type: 'unknownField', value: node.name });
     return;
@@ -207,8 +250,14 @@ function resolveField(
   return name === node.name ? node : { ...node, name };
 }
 
-function resolveFieldName(name: string, propertyNames: Set<string>) {
+function resolveFieldName(
+  name: string,
+  propertyNames: Set<string>,
+  propertyAliases: Map<string, Set<string>>,
+) {
   if (propertyNames.has(name)) return name;
+  const aliases = propertyAliases.get(name);
+  if (aliases?.size === 1) return aliases.values().next().value;
   const fieldSourcePrefix = `${name}.`;
   const fieldSources = [...propertyNames].filter(item => item.startsWith(fieldSourcePrefix));
   return fieldSources.length === 1 ? fieldSources[0] : undefined;

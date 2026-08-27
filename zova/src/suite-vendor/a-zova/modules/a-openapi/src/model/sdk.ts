@@ -20,7 +20,7 @@ import {
   schemaToZodSchema,
 } from '../lib/schema.js';
 import { TypeOpenapiPermissions } from '../types/permissions.js';
-import { TypeSchemaScene } from '../types/rest.js';
+import { ISchemaObjectExtensionField, TypeSchemaScene } from '../types/rest.js';
 import { IOpenapiSchemas, TypeOpenapiSchemasSdk } from '../types/schema.js';
 import { TypeRequestMethod } from '../types/sdk.js';
 
@@ -236,7 +236,7 @@ export class ModelSdk extends BeanModelBase {
   public loadSchemaProperties(
     schema: SchemaObject | undefined,
     schemaScene?: TypeSchemaScene,
-  ): SchemaObject[] | undefined {
+  ): ISchemaObjectExtensionField[] | undefined {
     return loadSchemaProperties(schema, schemaName => this.getSchema(schemaName).data, schemaScene);
   }
 

@@ -225,7 +225,9 @@ Before rendering, `resolveFormLayout(...)` reconciles `formLayout` with the curr
 
 Only schema properties with `rest.visible !== false` are eligible. When an eligible visible field is absent from `formLayout`, the resolver appends it as a root-level field after the declared nodes, in schema-property order.
 
-A virtual relation field that uses `fieldSource` is represented at runtime by its nested source key. A declared relation name can therefore resolve to exactly one eligible source key with that name as its prefix; for example, `studentContentForm` resolves to `studentContentForm.descriptionMarkdown`. This preserves the DTO's business-level layout tree while rendering the actual nested form value. If more than one source key has that prefix, declare the exact source key instead.
+A field that uses `fieldSource` is represented at runtime by its nested canonical source key. Form Layout accepts three declaration forms in precedence order: the exact canonical key, the original schema property key, and a unique relation-prefix shorthand. For example, a real relation declaration `studentContentForm` can resolve to the sole `studentContentForm.descriptionMarkdown` source, while an intentional virtual schema key such as `_descriptionMarkdown` can resolve to `content.descriptionMarkdown` even though it is not that source path's prefix. The resolved plan always renders and binds the canonical nested key.
+
+An original schema key or relation prefix must resolve to exactly one eligible canonical source. If multiple visible source keys match, declare the exact canonical source key instead. Duplicate declarations are also detected by canonical key, so an alias and `content.descriptionMarkdown` cannot render the same field twice.
 
 If a field must not render, make it invisible in schema metadata. Leaving it out of `formLayout.children` is not enough.
 

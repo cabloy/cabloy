@@ -21,7 +21,7 @@ export function loadSchemaProperties(
   schema: SchemaObject | undefined,
   onGetSchema: (schemaName: string) => SchemaObject | undefined,
   schemaScene?: TypeSchemaScene,
-): SchemaObject[] | undefined {
+): ISchemaObjectExtensionField[] | undefined {
   if (!schema) return;
   const properties = schema.properties!;
   const result: ISchemaObjectExtensionField[] = [];
@@ -32,12 +32,26 @@ export function loadSchemaProperties(
       property = onGetSchema(property.$ref)!;
     }
     if (!property) continue;
-    const fieldSource = property.rest?.fieldSource;
+    const schemaKey = key;
+    const propertyRest = deepExtend(
+      {},
+      property.rest,
+      schemaScene && ['form-view', 'form-create', 'filter'].includes(schemaScene)
+        ? property.rest?.form
+        : undefined,
+      schemaScene ? property.rest?.[schemaScene] : undefined,
+    );
+    const fieldSource = propertyRest?.fieldSource;
     if (fieldSource) {
       const parts = fieldSource.split('.');
-      const propertyParent: any =
-        parts[0] === key ? property : result.find(item => item.key === parts[0]);
-      property = propertyParent?.properties[parts[1]];
+      let propertyParent =
+        parts[0] === schemaKey
+          ? property
+          : (properties[parts[0]] as ISchemaObjectExtensionField | undefined);
+      if (propertyParent?.$ref) {
+        propertyParent = onGetSchema(propertyParent.$ref)!;
+      }
+      property = propertyParent?.properties?.[parts[1]] as ISchemaObjectExtensionField;
       key = fieldSource;
     }
     if (!property) continue;
@@ -49,6 +63,14 @@ export function loadSchemaProperties(
         : undefined,
       schemaScene ? { rest: property.rest?.[schemaScene] ?? {} } : undefined,
     );
+    if (schemaKey !== key) {
+      property.schemaKey = schemaKey;
+    }
+    const propertyExisting = result.find(item => item.key === key);
+    if (propertyExisting) {
+      propertyExisting.schemaKeys = [...(propertyExisting.schemaKeys ?? []), schemaKey];
+      continue;
+    }
     result.push(property);
   }
   // sort

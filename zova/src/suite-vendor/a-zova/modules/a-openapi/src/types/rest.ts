@@ -47,6 +47,10 @@ export interface ISchemaObjectExtensionFieldFilter {
 
 export interface ISchemaObjectExtensionField extends SchemaObject {
   key?: string;
+  /** Original property name before fieldSource normalization. */
+  schemaKey?: string;
+  /** Additional schema aliases that resolve to this canonical key. */
+  schemaKeys?: string[];
   rest?: ISchemaObjectExtensionFieldRest;
   filter?: ISchemaObjectExtensionFieldFilter;
 }
