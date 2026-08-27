@@ -45,12 +45,17 @@ export interface IDtoOptionsStudentView extends IDecoratorDtoOptions<'studentCon
                                   { type: 'field', name: 'name' },
                                   { type: 'field', name: 'mobile' },
                                   { type: 'field', name: 'imageId' },
-                                  {
-                                    type: 'field',
-                                    name: 'studentContentForm',
-                                    span: { default: 1, md: 2 },
-                                  },
                                 ],
+                              },
+                            ],
+                          },
+                          {
+                            type: 'group',
+                            title: $locale('StudentContent'),
+                            children: [
+                              {
+                                type: 'section',
+                                children: [{ type: 'field', name: 'studentContentForm' }],
                               },
                             ],
                           },

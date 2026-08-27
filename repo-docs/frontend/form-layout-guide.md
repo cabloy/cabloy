@@ -260,7 +260,7 @@ Current behavior boundaries:
 
 ## Complete entry-form example
 
-The Student create DTO is the canonical complete example. It uses optional structural IDs, two tabs, a titled group, a responsive profile section, and a nested-details field:
+The Student create DTO is the canonical complete example. It uses optional structural IDs, two tabs, separate semantic groups for profile and companion content, a responsive profile section, and a nested-details field:
 
 ```tsx
 ZovaRender.block('basic-pageentry:blockForm', {
@@ -290,6 +290,16 @@ ZovaRender.block('basic-pageentry:blockForm', {
                       },
                     ],
                   },
+                  {
+                    type: 'group',
+                    title: $locale('StudentContent'),
+                    children: [
+                      {
+                        type: 'section',
+                        children: [{ type: 'field', name: 'studentContentForm' }],
+                      },
+                    ],
+                  },
                 ],
               },
               {
@@ -311,6 +321,8 @@ ZovaRender.block('basic-pageentry:blockForm', {
   ],
 });
 ```
+
+`studentContentForm` is one virtual nested-relation field in the structural tree. Its Markdown renderer owns the nested source-field UI, while the separate `StudentContent` group expresses that it is a distinct content area rather than part of the responsive profile Grid.
 
 `trainingRecords` is one field in the structural tree. Its `basic-details:formFieldDetails` renderer owns the nested details UI; Form Layout does not recursively arrange the properties inside each detail record.
 

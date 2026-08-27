@@ -25,16 +25,27 @@ describe('student.test.ts', () => {
         const formLayout =
           blocks?.[0]?.options?.blocks?.[0]?.options?.blocks?.[0]?.options?.formLayout;
         const tabs = formLayout?.children[0];
-        const profileSection = tabs?.children[0]?.children[0]?.children[0];
+        const groups = tabs?.children[0]?.children;
+        const profileSection = groups?.[0]?.children[0];
+        const studentContentSection = groups?.[1]?.children[0];
         const trainingRecordsSection = tabs?.children[1]?.children[1];
         assert.equal(tabs?.type, 'tabs');
         assert.equal(tabs?.id, undefined);
         assert.equal(tabs?.children[1]?.type, 'tab');
         assert.equal(tabs?.children[1]?.id, undefined);
+        assert.equal(groups?.length, 2);
+        assert.deepEqual(
+          groups?.map(item => item.type),
+          ['group', 'group'],
+        );
         assert.deepEqual(profileSection?.columns, { default: 1, md: 2 });
         assert.deepEqual(
           profileSection?.children.map(item => item.name),
-          ['name', 'mobile', 'imageId', 'studentContentForm'],
+          ['name', 'mobile', 'imageId'],
+        );
+        assert.deepEqual(
+          studentContentSection?.children.map(item => item.name),
+          ['studentContentForm'],
         );
         assert.equal(
           component.properties.studentContentForm.rest.fieldSource,
