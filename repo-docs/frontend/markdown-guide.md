@@ -17,6 +17,7 @@ Use this page together with:
 - [SSR ClientOnly](/frontend/ssr-client-only)
 - [Backend Markdown Guide](/backend/markdown-guide)
 - [Image Guide](/frontend/image-guide)
+- [One-to-One Companion Resource Architecture](/fullstack/one-to-one-companion-resource-guide) for the aggregate, projection, contract-loop, and edition-aware boundaries around Markdown companion content.
 
 > [!TIP]
 > **Choose the component by data contract**

@@ -126,6 +126,10 @@ const fullstackGroups = [
         link: '/fullstack/frontend-metadata-to-backend',
       },
       {
+        text: 'One-to-One Companion Resource',
+        link: '/fullstack/one-to-one-companion-resource-guide',
+      },
+      {
         text: 'Edition Collaboration Differences',
         link: '/fullstack/edition-collaboration-differences',
       },

@@ -7,6 +7,7 @@ Use this page together with:
 - [Frontend Markdown Guide](/frontend/markdown-guide)
 - [Validation Guide](/backend/validation-guide)
 - [Serialization Guide](/backend/serialization-guide)
+- [One-to-One Companion Resource Architecture](/fullstack/one-to-one-companion-resource-guide) when Markdown source and derived HTML belong to an aggregate-owned companion record.
 
 ## What `a-markdown` provides
 

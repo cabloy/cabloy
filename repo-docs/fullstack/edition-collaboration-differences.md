@@ -66,3 +66,4 @@ That is exactly the kind of mistake good fullstack docs should prevent.
 - If you want the shared bidirectional model first, continue with [Contract Loop Playbook](/fullstack/contract-loop-playbook).
 - If your current task is the forward contract bridge, continue with [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk).
 - If your current task is the reverse metadata/resource bridge, continue with [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend).
+- If a parent owns an optional one-to-one content or extension record, continue with [One-to-One Companion Resource Architecture](/fullstack/one-to-one-companion-resource-guide).

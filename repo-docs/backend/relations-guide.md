@@ -239,6 +239,7 @@ Read this guide together with:
 - [ORM Aggregate and Group Guide](/backend/orm-aggregate-group-guide)
 - [Multi-Database and Datasource Guide](/backend/multi-database-datasource)
 - [DTO Infer and Generation](/backend/dto-infer-generation)
+- [One-to-One Companion Resource Architecture](/fullstack/one-to-one-companion-resource-guide) for aggregate-owned optional companion records, bounded projections, lifecycle ownership, and one-row-per-parent invariants.
 
 ## Implementation checks for model-relationship changes
 
