@@ -88,4 +88,7 @@ export default {
   CompleteMockRefund: '完成模拟退款',
   MockRefundCompletionFailed: '无法完成模拟退款，请重试。',
   MockRefundCompleted: '模拟退款已完成，订单正在结算。',
+  AdjustStock: '调整库存',
+  SkuId: 'SKU',
+  Available: '可用库存',
 };

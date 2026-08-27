@@ -11,6 +11,7 @@ export default function (): ZovaOpenapiConfigModule {
         'CommerceTradeCart_clear',
         'CommerceTradeCheckout_paymentMethods',
         'CommerceTradeCheckout_create',
+        'CommerceTradeStockBalance_adjustStock',
         'CommerceTradeOrder_select',
         'CommerceTradeOrder_view',
         'CommerceTradeOrder_ship',

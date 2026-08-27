@@ -178,12 +178,21 @@ describe('skuPresentation.test.ts', () => {
         listComponent.properties.productId.rest?.table?.columnProps,
         productPickerOptions,
       );
+      assert.equal(listComponent.properties.available.rest?.table?.order, undefined);
+      assert.equal(listComponent.properties.available.rest?.table?.render, undefined);
+      assert.equal(listComponent.properties.available.type, 'integer');
+      assert.equal(listComponent.properties.available.minimum, 0);
+      assert.equal(listComponent.properties.available.title.toJSON(), 'Available');
+      const actions = listComponent.properties._operationsRow.rest.table.columnProps.actions;
       assert.deepEqual(
-        listComponent.properties._operationsRow.rest.table.columnProps.actions.map(
-          (action: any) => action.render,
-        ),
-        ['basic-table:actionUpdate', 'basic-table:actionDelete'],
+        actions.map((action: any) => action.render),
+        [
+          'commerce-trade:actionAdjustStock',
+          'basic-table:actionUpdate',
+          'basic-table:actionDelete',
+        ],
       );
+      assert.deepEqual(actions[0].options.permission, { actionInherit: 'update' });
 
       const filterBlock = listComponent.rest.blocks[0].options.blocks[0];
       const filterLayout = filterBlock.options.blocks[0].options.formLayout;
@@ -204,6 +213,7 @@ describe('skuPresentation.test.ts', () => {
       let categoryId: number | string | undefined;
       let productId: number | string | undefined;
       let skuId: number | string | undefined;
+      let skuIdWithBalance: number | string | undefined;
       await app.bean.passport.signinMock();
       try {
         categoryId = await app.bean.executor.performAction('post', '/commerce/catalog/category', {
@@ -222,6 +232,26 @@ describe('skuPresentation.test.ts', () => {
             productId,
             priceCents: 1234,
             lifecycle: 'draft',
+          },
+        });
+        const skuIdWithBalance = await app.bean.executor.performAction(
+          'post',
+          '/commerce/catalog/sku',
+          {
+            body: {
+              code: `presentation-sku-balance-${suffix}`,
+              productId,
+              priceCents: 2345,
+              lifecycle: 'draft',
+            },
+          },
+        );
+        await app.bean.executor.performAction('post', '/commerce/trade/stockBalance/adjustStock', {
+          body: {
+            skuId: skuIdWithBalance,
+            delta: 7,
+            reason: `presentation stock ${suffix}`,
+            correlationId: `presentation-${suffix}`,
           },
         });
 
@@ -247,12 +277,31 @@ describe('skuPresentation.test.ts', () => {
         });
         assert.equal(select.list.length, 1);
         assert.equal(String(select.list[0].id), String(skuId));
+        assert.equal(select.list[0].available, 0);
         assert.deepEqual(select.list[0].product, {
           id: productId,
           title: `presentation-sku-product-${suffix}`,
         });
         assert.equal(select.list[0].attributes, undefined);
+
+        const balanceSelect: any = await app.bean.executor.performAction(
+          'get',
+          '/commerce/catalog/sku',
+          { query: { code: `presentation-sku-balance-${suffix}` } },
+        );
+        assert.equal(balanceSelect.list.length, 1);
+        assert.equal(String(balanceSelect.list[0].id), String(skuIdWithBalance));
+        assert.equal(balanceSelect.list[0].available, 7);
       } finally {
+        const tradeScope = app.scope('commerce-trade');
+        if (skuIdWithBalance) {
+          await tradeScope.model.stockAudit.delete({ skuId: skuIdWithBalance });
+          await tradeScope.model.stockReservation.delete({ skuId: skuIdWithBalance });
+          await tradeScope.model.stockBalance.delete({ skuId: skuIdWithBalance });
+          await app.bean.executor.performAction('delete', '/commerce/catalog/sku/:id', {
+            params: { id: skuIdWithBalance },
+          });
+        }
         if (skuId) {
           await app.bean.executor.performAction('delete', '/commerce/catalog/sku/:id', {
             params: { id: skuId },

@@ -28,13 +28,31 @@ export class ServiceSku extends BeanBase {
   }
 
   async select(params?: IQueryParams<ModelSku>): Promise<DtoSkuSelectRes> {
-    return await this.scope.model.sku.selectAndCount({
+    const result = await this.scope.model.sku.selectAndCount({
       ...params,
       include: {
         ...params?.include,
         product: { columns: ['id', 'title'] },
       },
     });
+    if (result.list.length === 0) return result as unknown as DtoSkuSelectRes;
+
+    const balances = await this.$scope.commerceTrade.model.stockBalance.select({
+      columns: ['skuId', 'available'],
+      where: {
+        skuId: result.list.map(sku => sku.id),
+      },
+    });
+    const availableBySkuId = new Map(
+      balances.map(balance => [String(balance.skuId), balance.available]),
+    );
+    return {
+      ...result,
+      list: result.list.map(sku => ({
+        ...sku,
+        available: availableBySkuId.get(String(sku.id)) ?? 0,
+      })),
+    } as DtoSkuSelectRes;
   }
 
   async view(id: TableIdentity): Promise<DtoSkuView | undefined> {

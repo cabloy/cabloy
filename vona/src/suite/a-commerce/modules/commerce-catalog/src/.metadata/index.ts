@@ -357,114 +357,6 @@ declare module 'vona-module-a-orm' {
   }
 }
 /** model: end */
-/** service: begin */
-export * from '../service/category.ts';
-export * from '../service/product.ts';
-export * from '../service/sku.ts';
-
-import 'vona-module-a-bean';
-declare module 'vona-module-a-bean' {
-
-    export interface IServiceRecord {
-      'commerce-catalog:category': never;
-'commerce-catalog:product': never;
-'commerce-catalog:sku': never;
-    }
-
-
-}
-declare module 'vona-module-commerce-catalog' {
-
-        export interface ServiceCategory {
-          /** @internal */
-          get scope(): ScopeModuleCommerceCatalog;
-        }
-
-          export interface ServiceCategory {
-            get $beanFullName(): 'commerce-catalog.service.category';
-            get $onionName(): 'commerce-catalog:category';
-          }
-
-        export interface ServiceProduct {
-          /** @internal */
-          get scope(): ScopeModuleCommerceCatalog;
-        }
-
-          export interface ServiceProduct {
-            get $beanFullName(): 'commerce-catalog.service.product';
-            get $onionName(): 'commerce-catalog:product';
-          }
-
-        export interface ServiceSku {
-          /** @internal */
-          get scope(): ScopeModuleCommerceCatalog;
-        }
-
-          export interface ServiceSku {
-            get $beanFullName(): 'commerce-catalog.service.sku';
-            get $onionName(): 'commerce-catalog:sku';
-          }
-}
-/** service: end */
-/** service: begin */
-import type { ServiceCategory } from '../service/category.ts';
-import type { ServiceProduct } from '../service/product.ts';
-import type { ServiceSku } from '../service/sku.ts';
-export interface IModuleService {
-  'category': ServiceCategory;
-'product': ServiceProduct;
-'sku': ServiceSku;
-}
-/** service: end */
-/** service: begin */
-
-import 'vona';
-declare module 'vona' {
-  export interface IBeanRecordGeneral {
-    'commerce-catalog.service.category': ServiceCategory;
-'commerce-catalog.service.product': ServiceProduct;
-'commerce-catalog.service.sku': ServiceSku;
-  }
-}
-/** service: end */
-/** meta: begin */
-export * from '../bean/meta.index.ts';
-export * from '../bean/meta.version.ts';
-import type { IMetaOptionsIndex } from 'vona-module-a-index';
-import 'vona-module-a-meta';
-declare module 'vona-module-a-meta' {
-
-    export interface IMetaRecord {
-      'commerce-catalog:index': IMetaOptionsIndex;
-'commerce-catalog:version': never;
-    }
-
-
-}
-declare module 'vona-module-commerce-catalog' {
-
-        export interface MetaIndex {
-          /** @internal */
-          get scope(): ScopeModuleCommerceCatalog;
-        }
-
-          export interface MetaIndex {
-            get $beanFullName(): 'commerce-catalog.meta.index';
-            get $onionName(): 'commerce-catalog:index';
-            get $onionOptions(): IMetaOptionsIndex;
-          }
-
-        export interface MetaVersion {
-          /** @internal */
-          get scope(): ScopeModuleCommerceCatalog;
-        }
-
-          export interface MetaVersion {
-            get $beanFullName(): 'commerce-catalog.meta.version';
-            get $onionName(): 'commerce-catalog:version';
-          }
-}
-/** meta: end */
 /** dto: begin */
 export * from '../dto/categoryCreate.tsx';
 export * from '../dto/categorySelectReq.tsx';
@@ -803,6 +695,114 @@ import 'vona-module-a-openapi';
   }
 
 /** controller: end */
+/** service: begin */
+export * from '../service/category.ts';
+export * from '../service/product.ts';
+export * from '../service/sku.ts';
+
+import 'vona-module-a-bean';
+declare module 'vona-module-a-bean' {
+
+    export interface IServiceRecord {
+      'commerce-catalog:category': never;
+'commerce-catalog:product': never;
+'commerce-catalog:sku': never;
+    }
+
+
+}
+declare module 'vona-module-commerce-catalog' {
+
+        export interface ServiceCategory {
+          /** @internal */
+          get scope(): ScopeModuleCommerceCatalog;
+        }
+
+          export interface ServiceCategory {
+            get $beanFullName(): 'commerce-catalog.service.category';
+            get $onionName(): 'commerce-catalog:category';
+          }
+
+        export interface ServiceProduct {
+          /** @internal */
+          get scope(): ScopeModuleCommerceCatalog;
+        }
+
+          export interface ServiceProduct {
+            get $beanFullName(): 'commerce-catalog.service.product';
+            get $onionName(): 'commerce-catalog:product';
+          }
+
+        export interface ServiceSku {
+          /** @internal */
+          get scope(): ScopeModuleCommerceCatalog;
+        }
+
+          export interface ServiceSku {
+            get $beanFullName(): 'commerce-catalog.service.sku';
+            get $onionName(): 'commerce-catalog:sku';
+          }
+}
+/** service: end */
+/** service: begin */
+import type { ServiceCategory } from '../service/category.ts';
+import type { ServiceProduct } from '../service/product.ts';
+import type { ServiceSku } from '../service/sku.ts';
+export interface IModuleService {
+  'category': ServiceCategory;
+'product': ServiceProduct;
+'sku': ServiceSku;
+}
+/** service: end */
+/** service: begin */
+
+import 'vona';
+declare module 'vona' {
+  export interface IBeanRecordGeneral {
+    'commerce-catalog.service.category': ServiceCategory;
+'commerce-catalog.service.product': ServiceProduct;
+'commerce-catalog.service.sku': ServiceSku;
+  }
+}
+/** service: end */
+/** meta: begin */
+export * from '../bean/meta.index.ts';
+export * from '../bean/meta.version.ts';
+import type { IMetaOptionsIndex } from 'vona-module-a-index';
+import 'vona-module-a-meta';
+declare module 'vona-module-a-meta' {
+
+    export interface IMetaRecord {
+      'commerce-catalog:index': IMetaOptionsIndex;
+'commerce-catalog:version': never;
+    }
+
+
+}
+declare module 'vona-module-commerce-catalog' {
+
+        export interface MetaIndex {
+          /** @internal */
+          get scope(): ScopeModuleCommerceCatalog;
+        }
+
+          export interface MetaIndex {
+            get $beanFullName(): 'commerce-catalog.meta.index';
+            get $onionName(): 'commerce-catalog:index';
+            get $onionOptions(): IMetaOptionsIndex;
+          }
+
+        export interface MetaVersion {
+          /** @internal */
+          get scope(): ScopeModuleCommerceCatalog;
+        }
+
+          export interface MetaVersion {
+            get $beanFullName(): 'commerce-catalog.meta.version';
+            get $onionName(): 'commerce-catalog:version';
+          }
+}
+/** meta: end */
 /** ssrMenu: begin */
 export * from '../bean/ssrMenu.category.ts';
 export * from '../bean/ssrMenu.product.ts';

@@ -97,4 +97,7 @@ export default {
   CompleteMockRefund: 'Complete mock refund',
   MockRefundCompletionFailed: 'Unable to complete the mock refund. Try again.',
   MockRefundCompleted: 'The mock refund was completed. The order is being settled.',
+  AdjustStock: 'Adjust stock',
+  SkuId: 'SKU',
+  Available: 'Available',
 };

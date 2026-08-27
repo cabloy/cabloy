@@ -1737,6 +1737,7 @@ test(
     const categoryName = `E2E SKU Category ${suffix}`;
     const productTitle = `E2E SKU Product ${suffix}`;
     const skuCode = `E2E-SKU-${suffix}`;
+    const stockActionPath = '/api/commerce/trade/stockBalance/adjustStock';
     const adminContext = await browser.newContext();
     const adminPage = await adminContext.newPage();
     const adminPageErrors = collectPageErrors(adminPage);
@@ -1805,8 +1806,41 @@ test(
       const skuRow = adminPage.getByRole('row', { name: new RegExp(skuCode) });
       await expect(skuRow).toBeVisible();
       await expect(skuRow.getByText('12.34', { exact: true })).toBeVisible();
+      await expect(skuRow.getByText('0', { exact: true })).toBeVisible();
       await expect(skuRow.getByText('Draft', { exact: true })).toBeVisible();
       await expect(skuRow.getByRole('link', { name: skuCode, exact: true })).toBeVisible();
+      await expect(skuRow.getByRole('button', { name: 'Adjust stock', exact: true })).toBeVisible();
+      await skuRow.getByRole('button', { name: 'Adjust stock', exact: true }).click();
+      await expect(adminPage.getByRole('dialog')).toBeVisible();
+      await expect(adminPage.getByRole('dialog').getByText(skuCode, { exact: true })).toBeVisible();
+      await expect(adminPage.getByRole('dialog').getByText('0', { exact: true })).toBeVisible();
+      const deltaInput = adminPage.getByRole('group', { name: 'Delta' }).getByRole('spinbutton');
+      const reasonInput = adminPage.getByRole('group', { name: 'Reason' }).getByRole('textbox');
+      await deltaInput.fill('7');
+      await reasonInput.fill('Initial E2E stock');
+      const stockRequest = adminPage.waitForRequest(request => {
+        return request.method() === 'POST' && new URL(request.url()).pathname === stockActionPath;
+      });
+      const stockResponse = adminPage.waitForResponse(response => {
+        return (
+          response.request().method() === 'POST' &&
+          new URL(response.url()).pathname === stockActionPath
+        );
+      });
+      await adminPage
+        .getByRole('dialog')
+        .getByRole('button', { name: 'Adjust stock', exact: true })
+        .click();
+      const stockRequestValue = await stockRequest;
+      expect(stockRequestValue.postDataJSON()).toMatchObject({
+        skuId,
+        delta: 7,
+        reason: 'Initial E2E stock',
+        correlationId: expect.any(String),
+      });
+      expect((await stockResponse).ok()).toBeTruthy();
+      await expect(adminPage.getByRole('dialog')).toHaveCount(0);
+      await expect(skuRow.getByText('7', { exact: true })).toBeVisible();
       await expect(
         adminPage.locator('section').getByText('SKU code', { exact: true }),
       ).toBeVisible();
@@ -1822,6 +1856,7 @@ test(
       expect(adminPageErrors).toEqual([]);
     } finally {
       if (skuId && headers) {
+        await adminPage.request.delete(`${stockActionPath}/${skuId}`, { headers }).catch(() => {});
         const response = await adminPage.request.delete(`${skuActionPath}/${skuId}`, { headers });
         expect(response.ok()).toBeTruthy();
       }

@@ -675,154 +675,6 @@ declare module 'vona-module-a-orm' {
   }
 }
 /** model: end */
-/** bean: begin */
-export * from '../bean/bean.scheduleOrderExpiry.ts';
-
-import 'vona';
-declare module 'vona' {
-
-
-}
-declare module 'vona-module-commerce-trade' {
-
-        export interface BeanScheduleOrderExpiry {
-          /** @internal */
-          get scope(): ScopeModuleCommerceTrade;
-        }
-}
-/** bean: end */
-/** bean: begin */
-import type { BeanScheduleOrderExpiry } from '../bean/bean.scheduleOrderExpiry.ts';
-import 'vona';
-declare module 'vona' {
-  export interface IBeanRecordGlobal {
-    'scheduleOrderExpiry': BeanScheduleOrderExpiry;
-  }
-}
-/** bean: end */
-/** service: begin */
-export * from '../service/cart.ts';
-export * from '../service/order.ts';
-export * from '../service/stockAudit.ts';
-export * from '../service/stockBalance.ts';
-
-import 'vona-module-a-bean';
-declare module 'vona-module-a-bean' {
-
-    export interface IServiceRecord {
-      'commerce-trade:cart': never;
-'commerce-trade:order': never;
-'commerce-trade:stockAudit': never;
-'commerce-trade:stockBalance': never;
-    }
-
-
-}
-declare module 'vona-module-commerce-trade' {
-
-        export interface ServiceCart {
-          /** @internal */
-          get scope(): ScopeModuleCommerceTrade;
-        }
-
-          export interface ServiceCart {
-            get $beanFullName(): 'commerce-trade.service.cart';
-            get $onionName(): 'commerce-trade:cart';
-          }
-
-        export interface ServiceOrder {
-          /** @internal */
-          get scope(): ScopeModuleCommerceTrade;
-        }
-
-          export interface ServiceOrder {
-            get $beanFullName(): 'commerce-trade.service.order';
-            get $onionName(): 'commerce-trade:order';
-          }
-
-        export interface ServiceStockAudit {
-          /** @internal */
-          get scope(): ScopeModuleCommerceTrade;
-        }
-
-          export interface ServiceStockAudit {
-            get $beanFullName(): 'commerce-trade.service.stockAudit';
-            get $onionName(): 'commerce-trade:stockAudit';
-          }
-
-        export interface ServiceStockBalance {
-          /** @internal */
-          get scope(): ScopeModuleCommerceTrade;
-        }
-
-          export interface ServiceStockBalance {
-            get $beanFullName(): 'commerce-trade.service.stockBalance';
-            get $onionName(): 'commerce-trade:stockBalance';
-          }
-}
-/** service: end */
-/** service: begin */
-import type { ServiceCart } from '../service/cart.ts';
-import type { ServiceOrder } from '../service/order.ts';
-import type { ServiceStockAudit } from '../service/stockAudit.ts';
-import type { ServiceStockBalance } from '../service/stockBalance.ts';
-export interface IModuleService {
-  'cart': ServiceCart;
-'order': ServiceOrder;
-'stockAudit': ServiceStockAudit;
-'stockBalance': ServiceStockBalance;
-}
-/** service: end */
-/** service: begin */
-
-import 'vona';
-declare module 'vona' {
-  export interface IBeanRecordGeneral {
-    'commerce-trade.service.cart': ServiceCart;
-'commerce-trade.service.order': ServiceOrder;
-'commerce-trade.service.stockAudit': ServiceStockAudit;
-'commerce-trade.service.stockBalance': ServiceStockBalance;
-  }
-}
-/** service: end */
-/** meta: begin */
-export * from '../bean/meta.index.ts';
-export * from '../bean/meta.version.ts';
-import type { IMetaOptionsIndex } from 'vona-module-a-index';
-import 'vona-module-a-meta';
-declare module 'vona-module-a-meta' {
-
-    export interface IMetaRecord {
-      'commerce-trade:index': IMetaOptionsIndex;
-'commerce-trade:version': never;
-    }
-
-
-}
-declare module 'vona-module-commerce-trade' {
-
-        export interface MetaIndex {
-          /** @internal */
-          get scope(): ScopeModuleCommerceTrade;
-        }
-
-          export interface MetaIndex {
-            get $beanFullName(): 'commerce-trade.meta.index';
-            get $onionName(): 'commerce-trade:index';
-            get $onionOptions(): IMetaOptionsIndex;
-          }
-
-        export interface MetaVersion {
-          /** @internal */
-          get scope(): ScopeModuleCommerceTrade;
-        }
-
-          export interface MetaVersion {
-            get $beanFullName(): 'commerce-trade.meta.version';
-            get $onionName(): 'commerce-trade:version';
-          }
-}
-/** meta: end */
 /** dto: begin */
 export * from '../dto/cartAddItem.tsx';
 export * from '../dto/cartItem.tsx';
@@ -1368,6 +1220,154 @@ import 'vona-module-a-openapi';
   }
 
 /** controller: end */
+/** bean: begin */
+export * from '../bean/bean.scheduleOrderExpiry.ts';
+
+import 'vona';
+declare module 'vona' {
+
+
+}
+declare module 'vona-module-commerce-trade' {
+
+        export interface BeanScheduleOrderExpiry {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+}
+/** bean: end */
+/** bean: begin */
+import type { BeanScheduleOrderExpiry } from '../bean/bean.scheduleOrderExpiry.ts';
+import 'vona';
+declare module 'vona' {
+  export interface IBeanRecordGlobal {
+    'scheduleOrderExpiry': BeanScheduleOrderExpiry;
+  }
+}
+/** bean: end */
+/** service: begin */
+export * from '../service/cart.ts';
+export * from '../service/order.ts';
+export * from '../service/stockAudit.ts';
+export * from '../service/stockBalance.ts';
+
+import 'vona-module-a-bean';
+declare module 'vona-module-a-bean' {
+
+    export interface IServiceRecord {
+      'commerce-trade:cart': never;
+'commerce-trade:order': never;
+'commerce-trade:stockAudit': never;
+'commerce-trade:stockBalance': never;
+    }
+
+
+}
+declare module 'vona-module-commerce-trade' {
+
+        export interface ServiceCart {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ServiceCart {
+            get $beanFullName(): 'commerce-trade.service.cart';
+            get $onionName(): 'commerce-trade:cart';
+          }
+
+        export interface ServiceOrder {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ServiceOrder {
+            get $beanFullName(): 'commerce-trade.service.order';
+            get $onionName(): 'commerce-trade:order';
+          }
+
+        export interface ServiceStockAudit {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ServiceStockAudit {
+            get $beanFullName(): 'commerce-trade.service.stockAudit';
+            get $onionName(): 'commerce-trade:stockAudit';
+          }
+
+        export interface ServiceStockBalance {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ServiceStockBalance {
+            get $beanFullName(): 'commerce-trade.service.stockBalance';
+            get $onionName(): 'commerce-trade:stockBalance';
+          }
+}
+/** service: end */
+/** service: begin */
+import type { ServiceCart } from '../service/cart.ts';
+import type { ServiceOrder } from '../service/order.ts';
+import type { ServiceStockAudit } from '../service/stockAudit.ts';
+import type { ServiceStockBalance } from '../service/stockBalance.ts';
+export interface IModuleService {
+  'cart': ServiceCart;
+'order': ServiceOrder;
+'stockAudit': ServiceStockAudit;
+'stockBalance': ServiceStockBalance;
+}
+/** service: end */
+/** service: begin */
+
+import 'vona';
+declare module 'vona' {
+  export interface IBeanRecordGeneral {
+    'commerce-trade.service.cart': ServiceCart;
+'commerce-trade.service.order': ServiceOrder;
+'commerce-trade.service.stockAudit': ServiceStockAudit;
+'commerce-trade.service.stockBalance': ServiceStockBalance;
+  }
+}
+/** service: end */
+/** meta: begin */
+export * from '../bean/meta.index.ts';
+export * from '../bean/meta.version.ts';
+import type { IMetaOptionsIndex } from 'vona-module-a-index';
+import 'vona-module-a-meta';
+declare module 'vona-module-a-meta' {
+
+    export interface IMetaRecord {
+      'commerce-trade:index': IMetaOptionsIndex;
+'commerce-trade:version': never;
+    }
+
+
+}
+declare module 'vona-module-commerce-trade' {
+
+        export interface MetaIndex {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface MetaIndex {
+            get $beanFullName(): 'commerce-trade.meta.index';
+            get $onionName(): 'commerce-trade:index';
+            get $onionOptions(): IMetaOptionsIndex;
+          }
+
+        export interface MetaVersion {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface MetaVersion {
+            get $beanFullName(): 'commerce-trade.meta.version';
+            get $onionName(): 'commerce-trade:version';
+          }
+}
+/** meta: end */
 /** ssrMenu: begin */
 export * from '../bean/ssrMenu.order.ts';
 export * from '../bean/ssrMenu.stockAudit.ts';

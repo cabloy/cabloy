@@ -3,6 +3,7 @@ import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 import { Api, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
+import { z } from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
@@ -63,10 +64,21 @@ export class DtoSkuSelectResItem extends $Dto.get(() => ModelSku, {
   },
 }) {
   @Api.field(
+    v.title($locale('Available')),
+    v.required(),
+    z.number().int().nonnegative(),
+    ZovaRender.order(5),
+  )
+  available: number;
+
+  @Api.field(
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),
     ZovaRender.cell('basic-table:actionOperationsRow', {
       actions: [
+        ZovaRender.tableActionRow('commerce-trade:actionAdjustStock', {
+          permission: { actionInherit: 'update' },
+        }),
         ZovaRender.tableActionRow('basic-table:actionUpdate'),
         ZovaRender.tableActionRow('basic-table:actionDelete'),
       ],
