@@ -11,8 +11,11 @@ export interface IDtoOptionsStudentSummary extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsStudentSummary>()
 export class DtoStudentSummary extends $Dto.get(() => ModelStudent, {
-  columns: ['id', 'name', 'mobile', 'level', 'description'],
+  columns: ['id', 'name', 'mobile', 'level'],
 }) {
+  @Api.field(v.title($locale('Description')), v.optional())
+  description?: string;
+
   @Api.field(v.title($locale('LevelTitle')))
   levelTitle: string;
 

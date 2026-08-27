@@ -1,15 +1,18 @@
 // eslint-disable
-import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore,IModelRelationHasMany } from 'vona-module-a-orm';
+import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore,IModelRelationHasOne,IModelRelationBelongsTo,IModelRelationHasMany } from 'vona-module-a-orm';
 import type { TypeEntityOptionsFields,TypeControllerOptionsActions } from 'vona-module-a-openapi';
 import type { TableIdentity } from 'table-identity';
 /** entity: begin */
 export * from '../entity/student.tsx';
+export * from '../entity/studentContent.tsx';
 import type { IEntityOptionsStudent } from '../entity/student.tsx';
+import type { IEntityOptionsStudentContent } from '../entity/studentContent.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
 
     export interface IEntityRecord {
       'training-student:student': IEntityOptionsStudent;
+'training-student:studentContent': IEntityOptionsStudentContent;
     }
 
 
@@ -20,16 +23,21 @@ declare module 'vona-module-training-student' {
 /** entity: end */
 /** entity: begin */
 import type { EntityStudent } from '../entity/student.tsx';
+import type { EntityStudentContent } from '../entity/studentContent.tsx';
 export interface IModuleEntity {
   'student': EntityStudentMeta;
+'studentContent': EntityStudentContentMeta;
 }
 /** entity: end */
 /** entity: begin */
 export type EntityStudentTableName = 'trainingStudent';
+export type EntityStudentContentTableName = 'trainingStudentContent';
 export type EntityStudentMeta=TypeEntityMeta<EntityStudent,EntityStudentTableName>;
+export type EntityStudentContentMeta=TypeEntityMeta<EntityStudentContent,EntityStudentContentTableName>;
 declare module 'vona-module-a-orm' {
   export interface ITableRecord {
     'trainingStudent': EntityStudentMeta;
+'trainingStudentContent': EntityStudentContentMeta;
   }
 }
 declare module 'vona-module-training-student' {
@@ -37,16 +45,23 @@ declare module 'vona-module-training-student' {
     export interface IEntityOptionsStudent {
       fields?: TypeEntityOptionsFields<EntityStudent, IEntityOptionsStudent[TypeSymbolKeyFieldsMore]>;
     }
+
+    export interface IEntityOptionsStudentContent {
+      fields?: TypeEntityOptionsFields<EntityStudentContent, IEntityOptionsStudentContent[TypeSymbolKeyFieldsMore]>;
+    }
 }
 /** entity: end */
 /** model: begin */
 export * from '../model/student.ts';
+export * from '../model/studentContent.ts';
 import type { IModelOptionsStudent } from '../model/student.ts';
+import type { IModelOptionsStudentContent } from '../model/studentContent.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
 
     export interface IModelRecord {
       'training-student:student': IModelOptionsStudent;
+'training-student:studentContent': IModelOptionsStudentContent;
     }
 
 
@@ -63,12 +78,25 @@ declare module 'vona-module-training-student' {
             get $onionName(): 'training-student:student';
             get $onionOptions(): IModelOptionsStudent;
           }
+
+        export interface ModelStudentContent {
+          /** @internal */
+          get scope(): ScopeModuleTrainingStudent;
+        }
+
+          export interface ModelStudentContent {
+            get $beanFullName(): 'training-student.model.studentContent';
+            get $onionName(): 'training-student:studentContent';
+            get $onionOptions(): IModelOptionsStudentContent;
+          }
 }
 /** model: end */
 /** model: begin */
 import type { ModelStudent } from '../model/student.ts';
+import type { ModelStudentContent } from '../model/studentContent.ts';
 export interface IModuleModel {
   'student': ModelStudent;
+'studentContent': ModelStudentContent;
 }
 /** model: end */
 /** model: begin */
@@ -77,6 +105,7 @@ import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
     'training-student.model.student': ModelStudent;
+'training-student.model.studentContent': ModelStudentContent;
   }
 }
 /** model: end */
@@ -87,6 +116,13 @@ declare module 'vona-module-training-student' {
   export interface IModelOptionsStudent {
         relations: {
           trainingRecords: IModelRelationHasMany<'training-record:record', 'studentId', false, 'id'|'name'|'subjectCount'|'totalScore'|'averageScore'|'trainingTime'|'sceneImageIds'|'dossierFileIds'|'description', undefined, undefined, undefined>;
+studentContent: IModelRelationHasOne<'training-student:studentContent', 'studentId', false, 'id'|'studentId'|'descriptionMarkdown'|'descriptionHtml'>;
+studentContentForm: IModelRelationHasOne<'training-student:studentContent', 'studentId', false, 'id'|'studentId'|'descriptionMarkdown'>;
+        };
+      }
+export interface IModelOptionsStudentContent {
+        relations: {
+          student: IModelRelationBelongsTo<'training-student:studentContent', 'training-student:student', false, '*'>;
         };
       }
   export interface ModelStudent {
@@ -130,91 +166,51 @@ getByNameEqI<T extends IModelGetOptions<EntityStudent,ModelStudent>>(name?: stri
 selectByName<T extends IModelSelectParams<EntityStudent,ModelStudent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityStudent, ModelStudent, T>[]>;
 selectByNameEqI<T extends IModelSelectParams<EntityStudent,ModelStudent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityStudent, ModelStudent, T>[]>;
     }
+export interface ModelStudentContent {
+      [SymbolKeyEntity]: EntityStudentContent;
+      [SymbolKeyEntityMeta]: EntityStudentContentMeta;
+      [SymbolKeyModelOptions]: IModelOptionsStudentContent;
+      get<T extends IModelGetOptions<EntityStudentContent,ModelStudentContent>>(where: TypeModelWhere<EntityStudentContent>, options?: T): Promise<TypeModelRelationResult<EntityStudentContent, ModelStudentContent, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
+      getForUpdate<T extends IModelGetOptions<EntityStudentContent,ModelStudentContent>>(where: TypeModelWhere<EntityStudentContent>, options?: T): Promise<TypeModelRelationResult<EntityStudentContent, ModelStudentContent, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
+      getByIdForUpdate<T extends IModelGetOptions<EntityStudentContent,ModelStudentContent>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityStudentContent, ModelStudentContent, T> | undefined>;
+      mget<T extends IModelGetOptions<EntityStudentContent,ModelStudentContent>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityStudentContent, ModelStudentContent, T>[]>;
+      selectAndCount<T extends IModelSelectParams<EntityStudentContent,ModelStudentContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityStudentContent, ModelStudentContent, T>>;
+      select<T extends IModelSelectParams<EntityStudentContent,ModelStudentContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityStudentContent, ModelStudentContent, T>[]>;
+      insert<T extends IModelInsertOptions<EntityStudentContent,ModelStudentContent>>(data?: TypeModelMutateRelationData<EntityStudentContent,ModelStudentContent, T>, options?: T): Promise<TypeModelMutateRelationData<EntityStudentContent,ModelStudentContent, T, true>>;
+      insertBulk<T extends IModelInsertOptions<EntityStudentContent,ModelStudentContent>>(items: TypeModelMutateRelationData<EntityStudentContent,ModelStudentContent, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityStudentContent,ModelStudentContent, T, true>[]>;
+      update<T extends IModelUpdateOptions<EntityStudentContent,ModelStudentContent>>(data: TypeModelMutateRelationData<EntityStudentContent,ModelStudentContent, T>, options?: T): Promise<TypeModelMutateRelationData<EntityStudentContent,ModelStudentContent, T>>;
+      updateBulk<T extends IModelUpdateOptions<EntityStudentContent,ModelStudentContent>>(items: TypeModelMutateRelationData<EntityStudentContent,ModelStudentContent, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityStudentContent,ModelStudentContent, T>[]>;
+      delete<T extends IModelDeleteOptions<EntityStudentContent,ModelStudentContent>>(where?: TypeModelWhere<EntityStudentContent>, options?: T): Promise<void>;
+      deleteBulk<T extends IModelDeleteOptions<EntityStudentContent,ModelStudentContent>>(ids: TableIdentity[], options?: T): Promise<void>;
+      mutate<T extends IModelMutateOptions<EntityStudentContent,ModelStudentContent>>(data?: TypeModelMutateRelationData<EntityStudentContent,ModelStudentContent, T>, options?: T): Promise<TypeModelMutateRelationData<EntityStudentContent,ModelStudentContent, T>>;
+      mutateBulk<T extends IModelMutateOptions<EntityStudentContent,ModelStudentContent>>(items: TypeModelMutateRelationData<EntityStudentContent,ModelStudentContent, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityStudentContent,ModelStudentContent, T>[]>;
+      count<T extends IModelSelectCountParams<EntityStudentContent,ModelStudentContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<string | undefined>;
+      increment<T extends IModelIncrementParams<EntityStudentContent,ModelStudentContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      decrement<T extends IModelIncrementParams<EntityStudentContent,ModelStudentContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      aggregate<T extends IModelSelectAggrParams<EntityStudentContent,ModelStudentContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelAggrRelationResult<T>>;
+      group<T extends IModelSelectGroupParams<EntityStudentContent,ModelStudentContent,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelGroupRelationResult<EntityStudentContent, T>[]>;
+      getById<T extends IModelGetOptions<EntityStudentContent,ModelStudentContent>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityStudentContent, ModelStudentContent, T> | undefined>;
+updateById<T extends IModelUpdateOptions<EntityStudentContent,ModelStudentContent>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityStudentContent,ModelStudentContent, T>, options?: T): Promise<TypeModelMutateRelationData<EntityStudentContent,ModelStudentContent, T>>;
+deleteById<T extends IModelDeleteOptions<EntityStudentContent,ModelStudentContent>>(id: TableIdentity, options?: T): Promise<void>;
+    }
 }
 declare module 'vona-module-a-orm' {
   export interface IModelClassRecord {
     'training-student:student': ModelStudent;
+'training-student:studentContent': ModelStudentContent;
   }
 }
 /** model: end */
-/** service: begin */
-export * from '../service/student.ts';
-
-import 'vona-module-a-bean';
-declare module 'vona-module-a-bean' {
-
-    export interface IServiceRecord {
-      'training-student:student': never;
-    }
-
-
-}
-declare module 'vona-module-training-student' {
-
-        export interface ServiceStudent {
-          /** @internal */
-          get scope(): ScopeModuleTrainingStudent;
-        }
-
-          export interface ServiceStudent {
-            get $beanFullName(): 'training-student.service.student';
-            get $onionName(): 'training-student:student';
-          }
-}
-/** service: end */
-/** service: begin */
-import type { ServiceStudent } from '../service/student.ts';
-export interface IModuleService {
-  'student': ServiceStudent;
-}
-/** service: end */
-/** service: begin */
-
-import 'vona';
-declare module 'vona' {
-  export interface IBeanRecordGeneral {
-    'training-student.service.student': ServiceStudent;
-  }
-}
-/** service: end */
-/** meta: begin */
-export * from '../bean/meta.index.ts';
-export * from '../bean/meta.version.ts';
-import type { IMetaOptionsIndex } from 'vona-module-a-index';
-import 'vona-module-a-meta';
-declare module 'vona-module-a-meta' {
-
-    export interface IMetaRecord {
-      'training-student:index': IMetaOptionsIndex;
-'training-student:version': never;
-    }
-
-
-}
-declare module 'vona-module-training-student' {
-
-        export interface MetaIndex {
-          /** @internal */
-          get scope(): ScopeModuleTrainingStudent;
-        }
-
-          export interface MetaIndex {
-            get $beanFullName(): 'training-student.meta.index';
-            get $onionName(): 'training-student:index';
-            get $onionOptions(): IMetaOptionsIndex;
-          }
-
-        export interface MetaVersion {
-          /** @internal */
-          get scope(): ScopeModuleTrainingStudent;
-        }
-
-          export interface MetaVersion {
-            get $beanFullName(): 'training-student.meta.version';
-            get $onionName(): 'training-student:version';
-          }
-}
-/** meta: end */
 /** dto: begin */
 export * from '../dto/detailRecordBase.tsx';
 export * from '../dto/detailRecordMutate.tsx';
@@ -381,32 +377,6 @@ import 'vona-module-a-openapi';
   }
 
 /** controller: end */
-/** ssrMenu: begin */
-export * from '../bean/ssrMenu.student.ts';
-import type { ISsrMenuOptionsStudent } from '../bean/ssrMenu.student.ts';
-import 'vona-module-a-ssr';
-declare module 'vona-module-a-ssr' {
-
-    export interface ISsrMenuRecord {
-      'training-student:student': ISsrMenuOptionsStudent;
-    }
-
-
-}
-declare module 'vona-module-training-student' {
-
-        export interface SsrMenuStudent {
-          /** @internal */
-          get scope(): ScopeModuleTrainingStudent;
-        }
-
-          export interface SsrMenuStudent {
-            get $beanFullName(): 'training-student.ssrMenu.student';
-            get $onionName(): 'training-student:student';
-            get $onionOptions(): ISsrMenuOptionsStudent;
-          }
-}
-/** ssrMenu: end */
 /** imageScene: begin */
 export * from '../bean/imageScene.studentImage.ts';
 
@@ -433,6 +403,110 @@ declare module 'vona-module-training-student' {
           }
 }
 /** imageScene: end */
+/** service: begin */
+export * from '../service/student.ts';
+
+import 'vona-module-a-bean';
+declare module 'vona-module-a-bean' {
+
+    export interface IServiceRecord {
+      'training-student:student': never;
+    }
+
+
+}
+declare module 'vona-module-training-student' {
+
+        export interface ServiceStudent {
+          /** @internal */
+          get scope(): ScopeModuleTrainingStudent;
+        }
+
+          export interface ServiceStudent {
+            get $beanFullName(): 'training-student.service.student';
+            get $onionName(): 'training-student:student';
+          }
+}
+/** service: end */
+/** service: begin */
+import type { ServiceStudent } from '../service/student.ts';
+export interface IModuleService {
+  'student': ServiceStudent;
+}
+/** service: end */
+/** service: begin */
+
+import 'vona';
+declare module 'vona' {
+  export interface IBeanRecordGeneral {
+    'training-student.service.student': ServiceStudent;
+  }
+}
+/** service: end */
+/** meta: begin */
+export * from '../bean/meta.index.ts';
+export * from '../bean/meta.version.ts';
+import type { IMetaOptionsIndex } from 'vona-module-a-index';
+import 'vona-module-a-meta';
+declare module 'vona-module-a-meta' {
+
+    export interface IMetaRecord {
+      'training-student:index': IMetaOptionsIndex;
+'training-student:version': never;
+    }
+
+
+}
+declare module 'vona-module-training-student' {
+
+        export interface MetaIndex {
+          /** @internal */
+          get scope(): ScopeModuleTrainingStudent;
+        }
+
+          export interface MetaIndex {
+            get $beanFullName(): 'training-student.meta.index';
+            get $onionName(): 'training-student:index';
+            get $onionOptions(): IMetaOptionsIndex;
+          }
+
+        export interface MetaVersion {
+          /** @internal */
+          get scope(): ScopeModuleTrainingStudent;
+        }
+
+          export interface MetaVersion {
+            get $beanFullName(): 'training-student.meta.version';
+            get $onionName(): 'training-student:version';
+          }
+}
+/** meta: end */
+/** ssrMenu: begin */
+export * from '../bean/ssrMenu.student.ts';
+import type { ISsrMenuOptionsStudent } from '../bean/ssrMenu.student.ts';
+import 'vona-module-a-ssr';
+declare module 'vona-module-a-ssr' {
+
+    export interface ISsrMenuRecord {
+      'training-student:student': ISsrMenuOptionsStudent;
+    }
+
+
+}
+declare module 'vona-module-training-student' {
+
+        export interface SsrMenuStudent {
+          /** @internal */
+          get scope(): ScopeModuleTrainingStudent;
+        }
+
+          export interface SsrMenuStudent {
+            get $beanFullName(): 'training-student.ssrMenu.student';
+            get $onionName(): 'training-student:student';
+            get $onionOptions(): ISsrMenuOptionsStudent;
+          }
+}
+/** ssrMenu: end */
 /** locale: begin */
 import { locales } from './locales.ts';
 /** locale: end */

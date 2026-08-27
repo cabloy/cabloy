@@ -1,5 +1,8 @@
 export default {
   Description: '描述',
+  DescriptionMarkdown: '描述 Markdown',
+  DescriptionHtml: '描述 HTML',
+  StudentContent: '学生内容',
   Level: '培训阶段',
   BasicInformation: '基本信息',
   StudentProfile: '学生资料',

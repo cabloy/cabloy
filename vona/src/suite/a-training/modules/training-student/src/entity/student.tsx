@@ -44,9 +44,6 @@ export class EntityStudent extends EntityBase {
   )
   name: string;
 
-  @Api.field(v.title($locale('Description')), v.optional(), ZovaRender.order(2))
-  description?: string;
-
   @Api.field(
     v.title($locale('Mobile')),
     v.required(),

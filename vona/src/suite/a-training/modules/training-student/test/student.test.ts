@@ -34,7 +34,15 @@ describe('student.test.ts', () => {
         assert.deepEqual(profileSection?.columns, { default: 1, md: 2 });
         assert.deepEqual(
           profileSection?.children.map(item => item.name),
-          ['name', 'mobile', 'imageId'],
+          ['name', 'mobile', 'imageId', 'studentContentForm'],
+        );
+        assert.equal(
+          component.properties.studentContentForm.rest.fieldSource,
+          'studentContentForm.descriptionMarkdown',
+        );
+        assert.equal(
+          component.properties.studentContentForm.rest.form.render,
+          'basic-markdown:formFieldMarkdown',
         );
         assert.equal(tabs?.children[1]?.children[0]?.name, 'level');
         assert.deepEqual(
@@ -118,9 +126,13 @@ describe('student.test.ts', () => {
       const maskedMobileUpdate = '139****4321';
       const trainingTime = new Date('2026-03-10T08:00:00.000Z');
       const trainingTimeUpdate = new Date('2026-04-18T13:20:00.000Z');
+      const description =
+        `# Student profile\n\n${'This is a long Markdown description. '.repeat(10)}`.trim();
+      const descriptionUpdate =
+        `## Updated profile\n\n${'This is updated Markdown content. '.repeat(10)}`.trim();
       const data = {
         name: '__Tom__',
-        description: 'This is a test',
+        studentContentForm: { descriptionMarkdown: description },
         mobile,
         level: 1,
         trainingRecords: [
@@ -157,6 +169,7 @@ describe('student.test.ts', () => {
       assert.equal(!!studentItem, true);
       assert.equal(studentItem!.level, data.level);
       assert.equal(studentItem!.mobile, maskedMobile);
+      assert.equal((studentItem as any).description, undefined);
       // findMany: level filter
       const selectResByLevel: DtoStudentSelectRes = await app.bean.executor.performAction(
         'get',
@@ -182,6 +195,7 @@ describe('student.test.ts', () => {
       const record = student.trainingRecords?.[0];
       const recordSubject = record?.trainingRecordSubjects?.[0];
       assert.equal(student.trainingRecords?.length, 1);
+      assert.equal(student.studentContentForm?.descriptionMarkdown, description);
       assert.equal(record?.name, '__Record__');
       assert.equal(record?.subjectCount, 1);
       assert.equal(record?.totalScore, 88);
@@ -193,7 +207,7 @@ describe('student.test.ts', () => {
       // update
       const dataUpdate = {
         name: '__TomNew__',
-        description: 'This is a test',
+        studentContentForm: { descriptionMarkdown: descriptionUpdate },
         mobile: mobileUpdate,
         level: 2,
         trainingRecords: [
@@ -236,6 +250,7 @@ describe('student.test.ts', () => {
       assert.equal(student.name, dataUpdate.name);
       assert.equal(student.level, dataUpdate.level);
       assert.equal(student.mobile, maskedMobileUpdate);
+      assert.equal(student.studentContentForm?.descriptionMarkdown, descriptionUpdate);
       assert.equal(student.trainingRecords?.length, 1);
       assert.equal(updatedRecord?.name, '__RecordNew__');
       assert.equal(updatedRecord?.subjectCount, 2);
@@ -254,6 +269,15 @@ describe('student.test.ts', () => {
         disableDeleted: true,
       });
       assert.equal(studentRaw!.mobile, mobileUpdate);
+      assert.equal((studentRaw as any).description, undefined);
+      const studentContent = await app
+        .scope('training-student')
+        .model.studentContent.get({ studentId });
+      assert.equal(studentContent?.descriptionMarkdown, descriptionUpdate);
+      assert.equal(
+        studentContent?.descriptionHtml,
+        app.bean.markdown.renderHtml(descriptionUpdate),
+      );
       // summary
       const summary: DtoStudentSummary = await app.bean.executor.performAction(
         'get',
@@ -263,7 +287,8 @@ describe('student.test.ts', () => {
       assert.equal(summary.name, dataUpdate.name);
       assert.equal(summary.mobile, maskedMobileUpdate);
       assert.equal(summary.level, dataUpdate.level);
-      assert.equal(summary.descriptionLength, dataUpdate.description?.length);
+      assert.equal(summary.description, descriptionUpdate);
+      assert.equal(summary.descriptionLength, descriptionUpdate.length);
       assert.equal(typeof summary.levelTitle, 'string');
       assert.equal(typeof summary.summaryText, 'string');
       // delete
@@ -294,8 +319,80 @@ describe('student.test.ts', () => {
           disableDeleted: true,
         });
       assert.equal(studentForce, undefined);
+      assert.equal(
+        await app
+          .scope('training-student')
+          .model.studentContent.get({ studentId: studentIdForce }, { disableDeleted: true }),
+        undefined,
+      );
       // logout
       await app.bean.passport.signout();
+    });
+  });
+
+  it('action:student:contentPersistence', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      let studentId: string | undefined;
+      try {
+        studentId = await app.bean.executor.performAction('post', '/training/student', {
+          body: {
+            name: '__ContentStudent__',
+            mobile: '13812345678',
+            level: 1,
+          },
+        });
+        assert.equal(
+          await app.scope('training-student').model.studentContent.get({ studentId }),
+          undefined,
+        );
+
+        await app.bean.executor.performAction('patch', '/training/student/:id', {
+          params: { id: studentId },
+          body: {
+            name: '__ContentStudent__',
+            mobile: '13812345678',
+            level: 1,
+            studentContentForm: {
+              descriptionMarkdown: '  ## Created later  ',
+              descriptionHtml: '<p>Forged HTML</p>',
+            },
+          },
+        });
+        const studentContent = await app
+          .scope('training-student')
+          .model.studentContent.get({ studentId });
+        assert.equal(studentContent?.descriptionMarkdown, '## Created later');
+        assert.equal(
+          studentContent?.descriptionHtml,
+          app.bean.markdown.renderHtml('## Created later'),
+        );
+        assert.notEqual(studentContent?.descriptionHtml, '<p>Forged HTML</p>');
+
+        await app.bean.executor.performAction('patch', '/training/student/:id', {
+          params: { id: studentId },
+          body: {
+            name: '__ContentStudent__',
+            mobile: '13812345678',
+            level: 1,
+            studentContentForm: { descriptionMarkdown: ' \n\t ' },
+          },
+        });
+        assert.equal(
+          await app.scope('training-student').model.studentContent.get({ studentId }),
+          undefined,
+        );
+      } finally {
+        if (studentId) {
+          await app
+            .scope('training-student')
+            .model.studentContent.delete({ studentId }, { disableDeleted: true });
+          await app
+            .scope('training-student')
+            .model.student.deleteById(studentId, { disableDeleted: true });
+        }
+        await app.bean.passport.signout();
+      }
     });
   });
 
@@ -327,7 +424,7 @@ describe('student.test.ts', () => {
         await app.bean.executor.performAction('post', '/training/student', {
           body: {
             name: '__Tom__',
-            description: 'This is a test',
+            studentContentForm: { descriptionMarkdown: 'This is a test' },
             mobile: '13812345678',
             level: 4,
           },
@@ -344,7 +441,7 @@ describe('student.test.ts', () => {
         await app.bean.executor.performAction('post', '/training/student', {
           body: {
             name: '__Tom__',
-            description: 'This is a test',
+            studentContentForm: { descriptionMarkdown: 'This is a test' },
             level: 1,
           },
         });
@@ -360,7 +457,7 @@ describe('student.test.ts', () => {
         await app.bean.executor.performAction('post', '/training/student', {
           body: {
             name: '__Tom__',
-            description: 'This is a test',
+            studentContentForm: { descriptionMarkdown: 'This is a test' },
             mobile: '1381234567',
             level: 1,
           },

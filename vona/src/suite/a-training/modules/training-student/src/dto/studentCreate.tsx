@@ -10,7 +10,12 @@ import { ModelStudent } from '../model/student.ts';
 import { DtoDetailRecordMutate } from './detailRecordMutate.tsx';
 import { DtoDetailRecordResItem } from './detailRecordResItem.tsx';
 
-export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions {}
+const studentContentFormField = $makeMetadata(
+  ZovaRender.fieldSource('studentContentForm.descriptionMarkdown'),
+  ZovaRender.field('basic-markdown:formFieldMarkdown'),
+);
+
+export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions<'studentContentForm'> {}
 
 @Dto<IDtoOptionsStudentCreate>({
   blocks: [
@@ -39,6 +44,11 @@ export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions {}
                                   { type: 'field', name: 'name' },
                                   { type: 'field', name: 'mobile' },
                                   { type: 'field', name: 'imageId' },
+                                  {
+                                    type: 'field',
+                                    name: 'studentContentForm',
+                                    span: { default: 1, md: 2 },
+                                  },
                                 ],
                               },
                             ],
@@ -78,6 +88,7 @@ export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions {}
     }),
   ],
   fields: {
+    studentContentForm: studentContentFormField,
     trainingRecords: $makeMetadata(
       v.title($locale('TrainingRecords')),
       ZovaRender.order(6),
@@ -87,7 +98,10 @@ export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions {}
   },
 })
 export class DtoStudentCreate extends $Dto.create(() => ModelStudent, {
-  include: { trainingRecords: { dtoClass: DtoDetailRecordMutate } },
+  include: {
+    studentContentForm: true,
+    trainingRecords: { dtoClass: DtoDetailRecordMutate },
+  },
 }) {
   @Api.field(ZovaRender.visible(false), v.optional(), v.array(DtoDetailRecordResItem))
   _trainingRecords?: DtoDetailRecordResItem[];

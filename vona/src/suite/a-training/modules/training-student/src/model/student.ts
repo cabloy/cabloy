@@ -22,6 +22,12 @@ export interface IModelOptionsStudent extends IDecoratorModelOptions<EntityStude
         'description',
       ],
     }),
+    studentContent: $relation.hasOne('training-student:studentContent', 'studentId', {
+      columns: ['id', 'studentId', 'descriptionMarkdown', 'descriptionHtml'],
+    }),
+    studentContentForm: $relation.hasOne('training-student:studentContent', 'studentId', {
+      columns: ['id', 'studentId', 'descriptionMarkdown'],
+    }),
   },
 })
 export class ModelStudent extends BeanModelBase<EntityStudent> {}

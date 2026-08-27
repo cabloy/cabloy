@@ -11,7 +11,12 @@ import { ModelStudent } from '../model/student.ts';
 import { DtoDetailRecordResItem } from './detailRecordResItem.tsx';
 import { DtoDetailRecordView } from './detailRecordView.tsx';
 
-export interface IDtoOptionsStudentView extends IDecoratorDtoOptions {}
+const studentContentFormField = $makeMetadata(
+  ZovaRender.fieldSource('studentContentForm.descriptionMarkdown'),
+  ZovaRender.field('basic-markdown:formFieldMarkdown'),
+);
+
+export interface IDtoOptionsStudentView extends IDecoratorDtoOptions<'studentContentForm'> {}
 
 @Dto<IDtoOptionsStudentView>({
   blocks: [
@@ -40,6 +45,11 @@ export interface IDtoOptionsStudentView extends IDecoratorDtoOptions {}
                                   { type: 'field', name: 'name' },
                                   { type: 'field', name: 'mobile' },
                                   { type: 'field', name: 'imageId' },
+                                  {
+                                    type: 'field',
+                                    name: 'studentContentForm',
+                                    span: { default: 1, md: 2 },
+                                  },
                                 ],
                               },
                             ],
@@ -73,6 +83,7 @@ export interface IDtoOptionsStudentView extends IDecoratorDtoOptions {}
     }),
   ],
   fields: {
+    studentContentForm: studentContentFormField,
     trainingRecords: $makeMetadata(
       v.title($locale('TrainingRecords')),
       ZovaRender.order(6),
@@ -81,7 +92,10 @@ export interface IDtoOptionsStudentView extends IDecoratorDtoOptions {}
   },
 })
 export class DtoStudentView extends $Dto.get(() => ModelStudent, {
-  include: { trainingRecords: { dtoClass: DtoDetailRecordView } },
+  include: {
+    studentContentForm: true,
+    trainingRecords: { dtoClass: DtoDetailRecordView },
+  },
 }) {
   @Api.field(
     ZovaRender.visible(false),

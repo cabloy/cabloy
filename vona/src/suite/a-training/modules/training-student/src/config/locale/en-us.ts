@@ -1,5 +1,8 @@
 export default {
   Description: 'Description',
+  DescriptionMarkdown: 'Description Markdown',
+  DescriptionHtml: 'Description HTML',
+  StudentContent: 'Student Content',
   Level: 'Training Stage',
   BasicInformation: 'Basic Information',
   StudentProfile: 'Student Profile',

@@ -12,10 +12,28 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         table.comment(entityStudent.$comment.$table);
         table.basicFields();
         table.string(entityStudent.name, 50).comment(entityStudent.$comment.name);
-        table.string(entityStudent.description, 255).comment(entityStudent.$comment.description);
         table.string(entityStudent.mobile, 50).comment(entityStudent.$comment.mobile);
         table.tableIdentity(entityStudent.imageId).comment(entityStudent.$comment.imageId);
         table.integer(entityStudent.level).comment(entityStudent.$comment.level);
+      });
+
+      const entityStudentContent = this.scope.entity.studentContent;
+      await this.bean.model.createTable(entityStudentContent.$table, table => {
+        table.comment(entityStudentContent.$comment.$table);
+        table.basicFields();
+        table
+          .text(entityStudentContent.descriptionMarkdown)
+          .comment(entityStudentContent.$comment.descriptionMarkdown);
+        table
+          .text(entityStudentContent.descriptionHtml)
+          .comment(entityStudentContent.$comment.descriptionHtml);
+        table
+          .tableIdentity(entityStudentContent.studentId)
+          .comment(entityStudentContent.$comment.studentId);
+        table.index(
+          [entityStudentContent.studentId],
+          `idx_${entityStudentContent.$table}_studentId`,
+        );
       });
     }
   }

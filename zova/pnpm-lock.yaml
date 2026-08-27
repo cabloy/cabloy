@@ -1804,6 +1804,10 @@ importers:
         version: link:modules/training-student
 
   src/suite/a-training/modules/training-student:
+    dependencies:
+      zova-module-basic-markdown:
+        specifier: ^5.0.0
+        version: link:../../../cabloy-basic/modules/basic-markdown
     devDependencies:
       clean-package:
         specifier: ^2.2.0

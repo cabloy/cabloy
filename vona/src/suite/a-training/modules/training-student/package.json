@@ -46,6 +46,7 @@
   "title": "training-student",
   "vonaModule": {
     "dependencies": {
+      "a-markdown": "5.0.0",
       "a-vona": "5.0.0"
     },
     "fileVersion": 1
