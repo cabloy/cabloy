@@ -122,13 +122,13 @@ const modelStudent = (await ctx.bean._getBean(
 )) as ModelStudent;
 const querySummary = modelStudent.summary(id);
 
-await querySummary.refetch();
+await querySummary.refetch({ bypassPersister: true });
 $host.$appModal.dialog({
   slotDefault: () => <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />,
 });
 ```
 
-`refetch()` is the interaction-time freshness wait for this command. The dialog remains bound to `querySummary.data`, so the model-owned query remains the source of its ongoing render state rather than transferring ownership to an awaited-result snapshot.
+`refetch({ bypassPersister: true })` is useful when this interaction needs an API-fresh result without restoring or scheduling a persistence save through the persister for that fetch. The successful result still updates the model-owned in-memory query, and the dialog remains bound to `querySummary.data`, so the query remains the source of its ongoing render state rather than transferring ownership to an awaited-result snapshot. The option affects only this fetch; normal query cancellation and in-flight deduplication rules still apply. It is not a force-new-request option: when an existing fetch is reused by TanStack Query, that fetch's semantics remain in effect. The bypassed fetch itself does not intentionally replace an existing persisted value; an already queued ordinary persistence callback is a separate operation and is not automatically cancelled. Use static `meta.persister: false` only when persistence should be disabled for the query generally.
 
 ### Avoid
 

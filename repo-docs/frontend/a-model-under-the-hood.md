@@ -187,6 +187,44 @@ The important SSR-aware rule is:
 
 That means stale-time behavior is part of the model runtime contract, not only a local query option.
 
+### Per-fetch persistence bypass
+
+The returned query's `refetch()` is extended by the model runtime with an opt-in per-fetch persistence bypass:
+
+```ts
+await query.refetch({ bypassPersister: true });
+```
+
+The source-level execution path is:
+
+```text
+query.refetch({ bypassPersister: true })
+  -> BeanModelUseQuery refetch wrapper
+  -> remove bypassPersister from the public options
+  -> attach a per-fetch internal marker
+  -> TanStack Query fetch
+  -> BeanModelPersister wrapper
+  -> call queryFn(context) directly
+  -> TanStack Query updates in-memory query state
+  -> observers and query.data update
+```
+
+An ordinary refetch follows the existing persister path instead:
+
+```text
+query.refetch()
+  -> TanStack Query fetch
+  -> experimental query persister
+  -> possible persisted restore or restore-triggered refresh
+  -> normal persistence behavior
+```
+
+For a bypassed fetch, the marker makes the model persister skip persisted restore and the persister's save path for that fetch. The result still goes through TanStack Query's normal success/error handling, so the query's in-memory data, timestamps, observers, and reactive result continue to behave normally. The marker is scoped to the fetch and does not modify static query options or `meta.persister`; `meta.persister: false` remains the query-wide switch.
+
+This option is not a force-new-request primitive. The model wrapper preserves TanStack Query cancellation and in-flight deduplication semantics, including the meaning of `cancelRefetch`. A fetch that has already been deduplicated cannot be retroactively converted into a bypassed fetch. The bypass call also does not automatically cancel an ordinary persistence callback that was already queued before it.
+
+The current implementation transports the marker through the installed TanStack Query observer's internal fetch-options forwarding. `bypassPersister` is therefore a Zova model option, not a native public TanStack `RefetchOptions` field; the model wrapper keeps that internal detail out of the normal authoring surface.
+
 ## State helper families as one runtime family
 
 The state helper layer lives mainly in:

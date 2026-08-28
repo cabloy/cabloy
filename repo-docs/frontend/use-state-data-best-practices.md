@@ -286,6 +286,42 @@ An interaction or orchestration boundary may still await `query.refetch()` when 
 
 Do not copy an awaited `refetch()` result into a second long-lived controller/render state that drives an open dialog or persistent component. If the UI remains mounted and displays query-backed data, bind it to `query.data` or a model-derived reactive surface so later refetches and model updates remain visible.
 
+### Per-fetch persistence bypass
+
+When one interaction needs an API-fresh result but should not restore persisted data or schedule a persistence save for that fetch, use the model query's per-fetch option:
+
+```ts
+await query.refetch({ bypassPersister: true });
+```
+
+`bypassPersister: true`:
+
+- affects only the current fetch
+- does not change the query's static options or `meta.persister`
+- skips persisted-query restore for that fetch
+- does not schedule that fetch through the persister's save path
+- still lets TanStack Query update the in-memory query, timestamps, observers, and reactive `query.data`
+- does not create a second query or cache owner
+
+This option is not a force-new-request flag. Cancellation, `cancelRefetch`, and in-flight deduplication continue to follow TanStack Query semantics. If an existing fetch is reused, its already-established fetch semantics remain in effect. The bypassed fetch itself does not intentionally replace an existing persisted value; an already queued ordinary persistence callback is a separate operation and is not automatically cancelled.
+
+This is different from static `meta.persister: false`: the static option disables persistence for the query generally, while `bypassPersister: true` opts out only for one fetch.
+
+For example, an interaction can request a fresh summary and then open a dialog while the dialog remains bound to the query-owned state:
+
+```ts
+const querySummary = modelStudent.summary(id);
+await querySummary.refetch({ bypassPersister: true });
+
+$host.$appModal.dialog({
+  slotDefault: () => (
+    <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />
+  ),
+});
+```
+
+The awaited result may coordinate the current interaction, but ongoing rendering should continue to read `querySummary.data`.
+
 ## Practical rule 7: derive render-time state once per render when possible
 
 Even when the query object is reused, a controller can still become noisy if it repeatedly derives the same values in several helper calls.
