@@ -138,6 +138,6 @@ If the browser returns successfully but the Commerce order is not settled, inspe
 
 ## Related records
 
-- [A-Pay Payment Architecture](../../repo-docs-internal/architecture/a-pay-payment-architecture.md)
+- [A-Pay Payment Architecture](../../../repo-docs-internal/architecture/a-pay-payment-architecture.md)
 - [PayPal Sandbox Commerce Runbook](./paypal-sandbox-runbook.md)
-- [A-Commerce internal index](./README.md)
+- [A-Commerce internal index](../README.md)

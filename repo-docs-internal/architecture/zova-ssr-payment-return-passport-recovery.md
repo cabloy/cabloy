@@ -18,7 +18,7 @@ This note covers the path from a provider return through Vona callback handling,
 It does not redefine:
 
 - provider verification, durable `PaymentSession` transitions, outbox dispatch, or Commerce aggregate settlement, which remain owned by [A-Pay Payment Architecture](a-pay-payment-architecture.md);
-- PayPal credentials, tunnel setup, webhook registration, or Sandbox operations, which belong in the [PayPal Commerce Sandbox and Tunnel Runbook](../../repo-specs/a-commerce/paypal-commerce-runbook.md); or
+- PayPal credentials, tunnel setup, webhook registration, or Sandbox operations, which belong in the [PayPal Commerce Sandbox and Tunnel Runbook](../../repo-specs/a-commerce/runbooks/paypal-commerce-runbook.md); or
 - the generic Site and anonymous-SSR policy, which belongs in [User Workspace SSR Strategy](user-workspace-ssr-strategy.md).
 
 ## Triggering Scenario
@@ -184,4 +184,4 @@ This order separates public callback security, server-owned payment authority, b
 - [User Workspace SSR Strategy](user-workspace-ssr-strategy.md)
 - [Zova `$goto...()` Navigation Control-Flow Semantics](zova-goto-navigation-control-flow-semantics.md)
 - [SSR Vona/Zova Boundary and Call Chain](ssr-vona-zova-boundary-and-call-chain.md)
-- [PayPal Commerce Sandbox and Tunnel Runbook](../../repo-specs/a-commerce/paypal-commerce-runbook.md)
+- [PayPal Commerce Sandbox and Tunnel Runbook](../../repo-specs/a-commerce/runbooks/paypal-commerce-runbook.md)
