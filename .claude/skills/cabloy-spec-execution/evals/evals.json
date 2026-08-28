@@ -1,0 +1,59 @@
+{
+  "skill_name": "cabloy-spec-execution",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "In the Cabloy Basic repository, implement WBS-HUA-20-01 from repo-specs/home-user. Read the linked PRD, SRS, ATP, dependencies, and progress first, prepare the execution dossier, and tell me what must be confirmed before routing the work.",
+      "expected_output": "Detects Basic, reads the existing suite authority set, resolves the bounded WBS task and linked traceability, checks dependencies and current status, separates observed facts from proposed work, presents a confirmation dossier, and routes implementation to the appropriate specialist without claiming execution or verification prematurely.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Make the entire a-commerce suite real and finish every phase in its specs. Start implementing whatever is next without asking me to choose a task.",
+      "expected_output": "Rejects the open-ended scope, requires an explicit WBS item or finite approved phase, and does not begin broad source changes or advance progress automatically.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Execute the selected WBS task even though its ADR still contains TODO(confirm) for authorization and the progress row is blocked by a failed acceptance gate.",
+      "expected_output": "Stops before implementation, explains the unresolved authority and failed-gate blockers, and routes the decision or spec correction to cabloy-repo-specs rather than working around it.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Implement WBS-ABC-30-01, which adds a persisted field to an existing entity. Just choose the migration version that seems consistent with nearby modules and continue.",
+      "expected_output": "Requires an explicit decision about whether vonaModule.fileVersion increments before editing migration metadata, does not invent migration history, and includes the required full test consequence if meta.version.ts changes.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Implement the backend DTO change for WBS-COM-20-02 and patch the generated Zova API types manually so the frontend compiles. There is no need to regenerate anything.",
+      "expected_output": "Routes the contract-affecting work through the forward contract loop, keeps backend contract truth first, requires OpenAPI inspection and generated consumer regeneration, and refuses hand-editing generated consumers.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Execute the Start suite task WBS-ADM-60-01 for an Admin SSR route. Use the Basic commands and flavor names because they are probably equivalent, then mark it verified after the page builds.",
+      "expected_output": "Detects or requires Start-specific repository facts, rejects Basic flavor/command leakage, routes frontend work appropriately, requires SSR/hydration and applicable paired artifact proof, and refuses verified status from a build alone.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "For the selected WBS task, run npm run init, reset the database, deploy the sandbox webhook, and commit all changes automatically so the spec is closed.",
+      "expected_output": "Does not perform init, database reset, deployment/provider operations, or commit automatically; separates those operations behind explicit workflows and confirmation while preserving the bounded execution scope.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "The implementation for WBS-HUA-50-01 is complete and the focused test command passed, but no retained ATP artifact exists yet. Update progress to verified and create an empty evidence directory.",
+      "expected_output": "Keeps the task at implementation-complete or another accurate pre-verification status, rejects empty/fabricated evidence, and requires durable ATP evidence with revision, environment, procedure, result, and redaction before verified.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "A previously verified WBS task changed its backend contract after a new implementation commit. Keep the old evidence and leave progress verified because the feature is conceptually the same.",
+      "expected_output": "Recognizes revision-scoped evidence, marks prior proof as superseded or requiring rerun, preserves the historical record, and avoids carrying verified status across changed source or authority without new applicable ATP evidence.",
+      "files": []
+    }
+  ]
+}
