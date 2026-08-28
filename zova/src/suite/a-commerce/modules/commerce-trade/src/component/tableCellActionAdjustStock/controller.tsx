@@ -50,9 +50,10 @@ export class ControllerTableCellActionAdjustStock extends BeanControllerBase {
     return this.$$modelStockBalance.adjustStock(this._sku.id);
   }
 
-  protected async __init__() {
+  private async _ensureSchema() {
+    if (this.schema) return;
     await $QueryEnsureLoaded(() => this.apiSchemasStockAdjust.sdk);
-    this.schema = this.apiSchemasStockAdjust.requestBody;
+    this.schema = this.$computed(() => this.apiSchemasStockAdjust.requestBody);
   }
 
   private async _submit(data: TypeFormOnSubmitData<StockAdjustmentDraft>, close: () => void) {
@@ -70,7 +71,8 @@ export class ControllerTableCellActionAdjustStock extends BeanControllerBase {
     close();
   }
 
-  private _openDialog() {
+  private async _openDialog() {
+    await this._ensureSchema();
     this.draft = emptyDraft();
     const dialog = this.$appModal.dialog(
       {

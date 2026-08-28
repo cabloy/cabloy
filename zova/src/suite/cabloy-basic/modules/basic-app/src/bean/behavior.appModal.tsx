@@ -290,6 +290,8 @@ export class BehaviorAppModal extends BeanBehaviorBase<
           }}
         ></div>
         <div
+          role="dialog"
+          aria-modal="true"
           class="card bg-base-100 shadow-2xl relative w-full max-h-[calc(100vh-2rem)]"
           style={style}
         >

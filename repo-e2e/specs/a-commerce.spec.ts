@@ -1809,8 +1809,13 @@ test(
       await expect(skuRow.getByText('0', { exact: true })).toBeVisible();
       await expect(skuRow.getByText('Draft', { exact: true })).toBeVisible();
       await expect(skuRow.getByRole('link', { name: skuCode, exact: true })).toBeVisible();
-      await expect(skuRow.getByRole('button', { name: 'Adjust stock', exact: true })).toBeVisible();
-      await skuRow.getByRole('button', { name: 'Adjust stock', exact: true }).click();
+      const adjustStockButton = skuRow.getByRole('button', { name: 'Adjust stock', exact: true });
+      await expect(adjustStockButton).toBeVisible();
+      await expect(adminPage.locator('html')).toHaveAttribute(
+        'data-zova-hydrated',
+        'commerceAdmin',
+      );
+      await adjustStockButton.click();
       await expect(adminPage.getByRole('dialog')).toBeVisible();
       await expect(adminPage.getByRole('dialog').getByText(skuCode, { exact: true })).toBeVisible();
       await expect(adminPage.getByRole('dialog').getByText('0', { exact: true })).toBeVisible();

@@ -44,6 +44,7 @@ export class DtoStockAdjust {
   @Api.field(
     v.title($locale('Delta')),
     v.required(),
+    ZovaRender.field('basic-input:formFieldInput', { type: 'number' }),
     z
       .number()
       .int()

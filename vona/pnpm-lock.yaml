@@ -545,9 +545,6 @@ importers:
 
   .zova-rest/cabloy-basic-admin:
     dependencies:
-      '@tanstack/query-core':
-        specifier: ^5.101.1
-        version: 5.101.2
       '@tanstack/vue-query':
         specifier: ^5.101.1
         version: 5.101.2(vue@3.5.39(typescript@5.9.3))
@@ -779,9 +776,6 @@ importers:
 
   .zova-rest/cabloy-commerce-admin:
     dependencies:
-      '@tanstack/query-core':
-        specifier: ^5.101.1
-        version: 5.101.2
       '@tanstack/vue-query':
         specifier: ^5.101.1
         version: 5.101.2(vue@3.5.39(typescript@5.9.3))
