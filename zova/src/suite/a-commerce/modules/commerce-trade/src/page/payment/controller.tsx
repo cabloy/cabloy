@@ -160,7 +160,7 @@ export class ControllerPagePayment extends BeanControllerPageBase {
         if (delay > 0) await new Promise(resolve => setTimeout(resolve, delay));
         if (!this._isCurrentSettlementPoll(pollVersion)) return;
         try {
-          await this.queryPaymentSession?.refetch();
+          await this.queryPaymentSession?.refetch({ bypassPersister: true });
         } catch (error) {
           if (isNotFoundError(error)) {
             this.paymentSessionUnavailable = true;

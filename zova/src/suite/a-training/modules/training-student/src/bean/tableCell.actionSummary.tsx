@@ -40,7 +40,7 @@ export class TableCellActionSummary extends BeanBase implements ITableCellRender
             true,
           )) as ModelStudent;
           const querySummary = modelStudent.summary(id);
-          await querySummary.refetch();
+          await querySummary.refetch({ bypassPersister: true });
           $host.$appModal.dialog(
             {
               title: this.scope.locale.Summary(),
