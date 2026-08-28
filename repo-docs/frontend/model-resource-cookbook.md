@@ -121,11 +121,14 @@ const modelStudent = (await ctx.bean._getBean(
   true,
 )) as ModelStudent;
 const querySummary = modelStudent.summary(id);
-const { data: summary } = await querySummary.refetch();
-// Use `summary` only for immediate command/orchestration logic.
+
+await querySummary.refetch();
+$host.$appModal.dialog({
+  slotDefault: () => <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />,
+});
 ```
 
-The awaited result is local to the current command. If that command opens a dialog or component that remains mounted and displays the Summary, render its ongoing content from `querySummary.data` or a model-derived reactive surface instead of preserving `summary` as a second render-state snapshot.
+`refetch()` is the interaction-time freshness wait for this command. The dialog remains bound to `querySummary.data`, so the model-owned query remains the source of its ongoing render state rather than transferring ownership to an awaited-result snapshot.
 
 ### Avoid
 

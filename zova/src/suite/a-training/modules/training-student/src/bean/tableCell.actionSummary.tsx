@@ -40,13 +40,13 @@ export class TableCellActionSummary extends BeanBase implements ITableCellRender
             true,
           )) as ModelStudent;
           const querySummary = modelStudent.summary(id);
-          const { data: summary } = await querySummary.refetch();
+          await querySummary.refetch();
           $host.$appModal.dialog(
             {
               title: this.scope.locale.Summary(),
               slotDefault: () => (
                 <div class="student-summary-description">
-                  <ZMarkdownHtml html={summary?.descriptionHtml} />
+                  <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />
                 </div>
               ),
             },
