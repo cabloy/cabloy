@@ -318,7 +318,7 @@ const contentField = $makeMetadata(
 );
 ```
 
-The exact renderer is edition-specific; the nested source contract is not. Use the DTO relation option type, `include`, and `dtoClass` according to the inferred DTO pattern. Do not add derived HTML to a mutation DTO merely because it exists in the table.
+The exact renderer is edition-specific; the nested source contract is not. This is a valid `$makeMetadata(...)` overlay because `parentContentForm` is already supplied by the inferred relation projection through the DTO relation option type, `include`, and `dtoClass`; its schema exists before the renderer and `fieldSource(...)` metadata is added. `fieldSource(...)` maps the projected field to the nested source path but does not declare `sourceMarkdown`'s type. If a field-map key is instead a true virtual DTO key absent from the inferred projection, define it with `$makeSchema(...)` and an appropriate final concrete schema such as `z.string()`; see [Virtual fields in the DTO fields map](/backend/dto-infer-generation#virtual-fields-in-the-dto-fields-map). Do not add derived HTML to a mutation DTO merely because it exists in the table.
 
 A DTO or OpenAPI declaration is not a substitute for runtime response review. If a service returns an already-built object with extra properties, narrowing the declaration alone may not remove those properties from JSON. Verify the actual action response as well as emitted schema metadata.
 

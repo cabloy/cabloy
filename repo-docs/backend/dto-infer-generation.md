@@ -193,6 +193,25 @@ export class DtoStudentSelectReq extends $Dto.queryPage(EntityStudent, [
 
 Framework DTO composition preserves inherited OpenAPI metadata when a field schema is refined. That includes metadata such as titles, render information, and scene identity. It does **not** make structure-shaping schema-like arguments order-independent: keep the final structure-defining argument last and verify the effective schema rather than assuming a metadata merge can repair a reordered schema.
 
+#### Virtual fields in the DTO fields map
+
+The Layer 2 `$makeMetadata(...)` rule has a precondition: the field key must already be supplied by the inferred projection, whether through the `$Dto.*` base, `columns`, `include`, or `dtoClass`. It overlays metadata on that existing runtime schema.
+
+A **true virtual DTO field** is a key added only through `@Dto({ fields })` and absent from that inherited projection. Define such a key with `$makeSchema(...)` and a final concrete Zod schema, even when its purpose is only to map a renderer to a nested source:
+
+```typescript
+const descriptionMarkdownField = $makeSchema(
+  ZovaRender.fieldSource('content.descriptionMarkdown'),
+  ZovaRender.field('basic-markdown:formFieldMarkdown'),
+  v.optional(),
+  z.string(),
+);
+```
+
+`z.string()` establishes the virtual key's validation and emitted OpenAPI type. `fieldSource(...)` only maps the DTO-facing key to the canonical source path used by downstream schema-driven UI; it does not supply a type. `$makeMetadata(...)` alone has no inherited schema to overlay for a true virtual key, so its metadata is attached to an unconstrained fallback rather than a meaningful field schema.
+
+Use a class-body `@Api.field(...)` member instead when the new field should be a declared, statically typed DTO property rather than a contract-only `fields`-map key.
+
 `@Dto({ fields })` changes the runtime contract and metadata. It does not rewrite the TypeScript property type inferred from the `$Dto.*` base class. Do not add a duplicate `declare` field or a second field decorator solely to mirror a runtime schema restriction unless a separate static contract is genuinely required and is type-compatible with the inferred base.
 
 ### Layer 3: add contract-only fields
@@ -507,10 +526,11 @@ When evaluating a return shape or input contract that closely follows model stru
 2. is the contract get/list/query/create/update/aggregate/group oriented, and which `$Dto.*` helper matches it?
 3. should `columns`, `include`, `with`, or `dtoClass` define the projection boundary?
 4. should the inferred DTO stay inline or be wrapped in a named DTO class?
-5. for every local difference, is it metadata-only (`$makeMetadata(...)`) or schema-affecting (`$makeSchema(...)`)?
-6. is every `@Api.field(...)` member genuinely new instead of a redeclared inferred field?
-7. if `$makeSchema(...)` is used, is the structure-defining schema last and is emitted schema/OpenAPI verification planned?
-8. does the resulting DTO also affect OpenAPI and frontend generation paths?
-9. is CRUD generation already giving enough contract structure that another handwritten DTO would be redundant, or is an explicit DTO clearer?
+5. for every local difference, does the `fields` key already have an inferred/projected schema, or is it a true virtual key?
+6. use `$makeMetadata(...)` only for metadata-only refinement of an inferred/projected field; define every true virtual key with `$makeSchema(...)` and a final concrete `z.<type>()` schema
+7. is every `@Api.field(...)` member genuinely new instead of a redeclared inferred field?
+8. if `$makeSchema(...)` is used, is the structure-defining schema last and is emitted schema/OpenAPI verification planned?
+9. does the resulting DTO also affect OpenAPI and frontend generation paths?
+10. is CRUD generation already giving enough contract structure that another handwritten DTO would be redundant, or is an explicit DTO clearer?
 
 That helps reduce redundant type work and keeps contracts closer to the model truth.

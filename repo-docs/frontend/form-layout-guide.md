@@ -233,7 +233,7 @@ Form Layout accepts three declaration forms in precedence order:
 2. any uniquely mapped preserved schema alias from `schemaKey` or `schemaKeys`;
 3. a unique relation-prefix shorthand.
 
-For example, a real relation declaration `studentContentForm` can resolve to the sole `studentContentForm.descriptionMarkdown` source, while an intentional virtual schema key such as `_descriptionMarkdown` can resolve to `content.descriptionMarkdown` even though it is not that source path's prefix. The resolved plan always renders and binds the canonical nested key.
+For example, a real relation declaration `studentContentForm` can resolve to the sole `studentContentForm.descriptionMarkdown` source, while an intentional `fieldSource` schema alias such as `_descriptionMarkdown` can resolve to `content.descriptionMarkdown` even though it is not that source path's prefix. The resolved plan always renders and binds the canonical nested key. `fieldSource(...)` is a binding and canonical-key mapping mechanism; it neither infers nor declares the backend DTO field type. A projected field already has a schema, while a true virtual DTO key absent from the inferred projection must be defined with `$makeSchema(...)` and a concrete schema such as `z.string()`; see [Virtual fields in the DTO fields map](/backend/dto-infer-generation#virtual-fields-in-the-dto-fields-map).
 
 An alias or relation prefix must resolve to exactly one eligible canonical source. If multiple visible source keys match, it is unresolved and receives `unknownField`; declare the exact canonical source key instead. Exact canonical matches win over colliding aliases. Invisible properties contribute neither eligible fields nor usable aliases.
 
@@ -336,7 +336,7 @@ ZovaRender.block('basic-pageentry:blockForm', {
 });
 ```
 
-`studentContentForm` is one virtual nested-relation field in the structural tree. It remains the DTO-facing declaration name, while the resolved plan rewrites it to `studentContentForm.descriptionMarkdown` before field-state lookup and rendering. Its Markdown renderer owns the nested source-field UI, while the separate `StudentContent` group expresses that it is a distinct content area rather than part of the responsive profile Grid.
+`studentContentForm` is one projected, `fieldSource`-mapped nested-relation field in the structural tree. It remains the DTO-facing declaration name, while the resolved plan rewrites it to `studentContentForm.descriptionMarkdown` before field-state lookup and rendering. Its Markdown renderer owns the nested source-field UI, while the separate `StudentContent` group expresses that it is a distinct content area rather than part of the responsive profile Grid.
 
 `trainingRecords` is one field in the structural tree. Its `basic-details:formFieldDetails` renderer owns the nested details UI; Form Layout does not recursively arrange the properties inside each detail record.
 
@@ -383,7 +383,7 @@ Here `formFieldLayout.inline: true` controls how each field wrapper is presented
 4. Use `formLayout` when the requirement is field placement, Grid or flow structure, groups, or tabs.
 5. Use `layout`, `formFieldLayout`, `options`, or provider behaviors when the requirement is one field's wrapper or renderer.
 6. Keep entry actions in page-entry toolbar blocks. Keep filter action semantics in `basic-page:blockFilterActions`; place that block inside Form Layout when the actions must share structural Grid or flow placement with fields.
-7. For maintained Cabloy Basic list filters, prefer one inline flow section that explicitly lists every real filter-schema field in schema order and ends with one embedded `basic-page:blockFilterActions` block. Do not add virtual request fields, alter filter transforms, or combine it with a sibling action block.
+7. For maintained Cabloy Basic list filters, prefer one inline flow section that explicitly lists every real filter-schema field in schema order and ends with one embedded `basic-page:blockFilterActions` block. Do not add synthetic request-only filter fields, alter filter transforms, or combine it with a sibling action block.
 8. Review field names against the scene-specific schema. Unlisted visible fields are appended; unknown and duplicate declarations are silently pruned from the rendered plan.
 9. Prefer an exact canonical source path when an alias or relation prefix could match multiple visible fields. Do not list both an alias and its canonical key; canonical duplicate detection keeps only the first declaration.
 
