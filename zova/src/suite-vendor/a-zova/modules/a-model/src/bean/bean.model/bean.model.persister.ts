@@ -7,6 +7,7 @@ import { SymbolBeanFullName } from 'zova';
 import type { QueryMetaPersister } from '../../types/index.js';
 
 import { CookieWrapper } from '../../common/cookieWrapper.js';
+import { createQueryPersister } from '../../lib/queryPersister.js';
 import { resolveMaxAgeTime } from '../../types/index.js';
 import { BeanModelLast } from './bean.model.last.js';
 
@@ -145,13 +146,14 @@ export class BeanModelPersister extends BeanModelLast {
   protected _createPersister(options?: QueryMetaPersister | boolean): any {
     options = this._adjustPersisterOptions(options);
     if (!options) return undefined;
-    return experimental_createQueryPersister({
+    const persisterFn = experimental_createQueryPersister({
       storage: this._getPersisterStorage(options) as any,
       maxAge: options.maxAge as number,
       refetchOnRestore: options.refetchOnRestore,
       prefix: options.prefix,
       buster: options.buster,
     }).persisterFn;
+    return createQueryPersister(persisterFn);
   }
 
   protected _adjustPersisterOptions(options?: QueryMetaPersister | boolean) {

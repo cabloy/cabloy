@@ -17,6 +17,17 @@ void requiredBody.delete(id).mutateAsync({ reason: 'duplicate' });
 void optionalBody.delete(id).mutateAsync();
 void optionalBody.delete(id).mutateAsync({ reason: 'duplicate' });
 
+const queryItem = standard.queryItem({
+  id,
+  action: 'summary',
+  queryFn: async () => ({ id: 1 }),
+});
+void queryItem.refetch({
+  bypassPersister: true,
+  cancelRefetch: false,
+  throwOnError: true,
+});
+
 // @ts-expect-error required DELETE bodies cannot be omitted
 void requiredBody.delete(id).mutateAsync();
 

@@ -1,12 +1,4 @@
-import type {
-  DefaultError,
-  QueryClient,
-  QueryKey,
-  UseQueryDefinedReturnType,
-  UseQueryOptions,
-  UseQueryReturnType,
-} from '@tanstack/vue-query';
-import type { UnwrapNestedRefs } from 'vue';
+import type { DefaultError, QueryClient, QueryKey, UseQueryOptions } from '@tanstack/vue-query';
 
 import { checkErrorJwtExpired } from '@cabloy/utils';
 import { useQuery } from '@tanstack/vue-query';
@@ -16,7 +8,9 @@ import type {
   DefinedInitialQueryOptions,
   UndefinedInitialQueryOptions,
 } from '../../common/types.js';
+import type { ModelUseQueryDefinedReturnType, ModelUseQueryReturnType } from '../../types/query.js';
 
+import { createQueryRefetch } from '../../lib/queryRefetch.js';
 import { resolveStaleTime } from '../../types/index.js';
 import { BeanModelQuery } from './bean.model.query.js';
 
@@ -29,7 +23,7 @@ export class BeanModelUseQuery extends BeanModelQuery {
   >(
     options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     queryClient?: QueryClient,
-  ): UnwrapNestedRefs<UseQueryReturnType<TData, TError>>;
+  ): ModelUseQueryReturnType<TData, TError>;
   $useQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -38,7 +32,7 @@ export class BeanModelUseQuery extends BeanModelQuery {
   >(
     options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     queryClient?: QueryClient,
-  ): UnwrapNestedRefs<UseQueryDefinedReturnType<TData, TError>>;
+  ): ModelUseQueryDefinedReturnType<TData, TError>;
   $useQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -47,7 +41,7 @@ export class BeanModelUseQuery extends BeanModelQuery {
   >(
     options: UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
     queryClient?: QueryClient,
-  ): UnwrapNestedRefs<UseQueryReturnType<TData, TError>>;
+  ): ModelUseQueryReturnType<TData, TError>;
   $useQuery(options, queryClient) {
     const queryKey = this.self._forceQueryKeyPrefix(options.queryKey);
     const persister = this._createPersister(options.meta?.persister);
@@ -81,7 +75,11 @@ export class BeanModelUseQuery extends BeanModelQuery {
       };
     }
     return this.ctx.util.instanceScope(() => {
-      return useQuery(options, queryClient);
+      const query = useQuery(options, queryClient) as unknown as ModelUseQueryReturnType<any, any>;
+      query.refetch = createQueryRefetch(query.refetch, () =>
+        this.$queryFind({ queryKey }),
+      ) as typeof query.refetch;
+      return query;
     });
   }
 }

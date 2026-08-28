@@ -1,6 +1,5 @@
-import type { DefaultError, UseQueryReturnType } from '@tanstack/vue-query';
 import type { OpenAPIObject, SchemaObject } from 'openapi3-ts/oas31';
-import type { UnwrapNestedRefs } from 'vue';
+import type { ModelUseQueryReturnType } from 'zova-module-a-model';
 
 import type { IOpenapiSdkItem } from './sdk.js';
 
@@ -11,9 +10,7 @@ export interface IOpenapiSchema {
 
 export interface IOpenapiSchemaMeta {}
 
-export type TypeOpenapiSchemasSdk = UnwrapNestedRefs<
-  UseQueryReturnType<IOpenapiSdkItem, DefaultError>
->;
+export type TypeOpenapiSchemasSdk = ModelUseQueryReturnType<IOpenapiSdkItem, Error>;
 
 export interface IOpenapiSchemas {
   sdk: TypeOpenapiSchemasSdk;

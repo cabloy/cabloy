@@ -1,5 +1,5 @@
 import type { TableIdentity } from 'table-identity';
-import type { DataMutation, IDecoratorModelOptions } from 'zova-module-a-model';
+import type { DataMutation, IDecoratorModelOptions, QueryMetaPersister } from 'zova-module-a-model';
 import type {
   IFormMeta,
   IFormProvider,
@@ -27,6 +27,7 @@ interface IModelResourceQueryItemOptions<TData> {
   meta?: {
     disableSuspenseOnInit?: boolean;
     disableErrorEffect?: boolean;
+    persister?: QueryMetaPersister | boolean;
   };
 }
 

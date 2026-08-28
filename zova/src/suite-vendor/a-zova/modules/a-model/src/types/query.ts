@@ -3,8 +3,11 @@ import type {
   DehydratedState,
   Query,
   QueryKey,
+  QueryObserverResult,
+  RefetchOptions,
+  UseQueryDefinedReturnType as TanStackUseQueryDefinedReturnType,
+  UseQueryReturnType as TanStackUseQueryReturnType,
   useMutation,
-  useQuery,
   useQueryClient,
 } from '@tanstack/vue-query';
 import type { DebuggerOptions, UnwrapNestedRefs } from 'vue';
@@ -31,6 +34,26 @@ declare module '@tanstack/vue-query' {
 }
 
 export type { UseQueryOptions } from '@tanstack/vue-query';
+
+export type QueryRefetchOptions = RefetchOptions & {
+  bypassPersister?: boolean;
+};
+
+type QueryRefetch<TResult> = (options?: QueryRefetchOptions) => Promise<TResult>;
+
+export type ModelUseQueryReturnType<TData, TError> = Omit<
+  UnwrapNestedRefs<TanStackUseQueryReturnType<TData, TError>>,
+  'refetch'
+> & {
+  refetch: QueryRefetch<QueryObserverResult<TData, TError>>;
+};
+
+export type ModelUseQueryDefinedReturnType<TData, TError> = Omit<
+  UnwrapNestedRefs<TanStackUseQueryDefinedReturnType<TData, TError>>,
+  'refetch'
+> & {
+  refetch: QueryRefetch<QueryObserverResult<TData, TError>>;
+};
 
 export interface MyQueryMetaBase extends Record<string, unknown> {
   defaultData?: (() => any) | any;
@@ -108,8 +131,9 @@ export interface QueryMetaPersister {
   refetchOnRestore?: boolean | 'always';
 }
 
-export type DataQuery<TData, TError = Error | null> = UnwrapNestedRefs<
-  ReturnType<typeof useQuery<TData | undefined, TError>>
+export type DataQuery<TData, TError = Error | null> = ModelUseQueryReturnType<
+  TData | undefined,
+  TError
 >;
 
 export type DataMutation<TData = unknown, TVariables = void, TContext = unknown> = UnwrapNestedRefs<

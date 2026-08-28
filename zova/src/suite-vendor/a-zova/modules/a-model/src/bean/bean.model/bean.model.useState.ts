@@ -4,11 +4,8 @@ import type {
   QueryClient,
   QueryKey,
   QueryMeta,
-  UseQueryDefinedReturnType,
   UseQueryOptions,
-  UseQueryReturnType,
 } from '@tanstack/vue-query';
-import type { UnwrapNestedRefs } from 'vue';
 
 import { hashKey } from '@tanstack/vue-query';
 import { deepExtend } from 'zova';
@@ -17,7 +14,12 @@ import type {
   DefinedInitialQueryOptions,
   UndefinedInitialQueryOptions,
 } from '../../common/types.js';
-import type { QueryMetaPersister, UseQueryComputedOptions } from '../../types/query.js';
+import type {
+  ModelUseQueryDefinedReturnType,
+  ModelUseQueryReturnType,
+  QueryMetaPersister,
+  UseQueryComputedOptions,
+} from '../../types/query.js';
 
 import { BeanModelUseQuery } from './bean.model.useQuery.js';
 
@@ -311,7 +313,7 @@ export class BeanModelUseState extends BeanModelUseQuery {
   >(
     options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     queryClient?: QueryClient,
-  ): UnwrapNestedRefs<UseQueryReturnType<TData, TError>>;
+  ): ModelUseQueryReturnType<TData, TError>;
   $useStateData<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -320,7 +322,7 @@ export class BeanModelUseState extends BeanModelUseQuery {
   >(
     options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     queryClient?: QueryClient,
-  ): UnwrapNestedRefs<UseQueryDefinedReturnType<TData, TError>>;
+  ): ModelUseQueryDefinedReturnType<TData, TError>;
   $useStateData<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -329,7 +331,7 @@ export class BeanModelUseState extends BeanModelUseQuery {
   >(
     options: UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
     queryClient?: QueryClient,
-  ): UnwrapNestedRefs<UseQueryReturnType<TData, TError>>;
+  ): ModelUseQueryReturnType<TData, TError>;
   $useStateData(options, queryClient) {
     const queryKey = this.self._forceQueryKeyPrefix(options.queryKey);
     const queryHash = hashKey(queryKey);

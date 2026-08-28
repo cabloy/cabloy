@@ -1,17 +1,10 @@
-import type {
-  DefaultError,
-  QueryClient,
-  QueryKey,
-  UseQueryDefinedReturnType,
-  UseQueryOptions,
-  UseQueryReturnType,
-} from '@tanstack/vue-query';
-import type { UnwrapNestedRefs } from 'vue';
+import type { DefaultError, QueryClient, QueryKey, UseQueryOptions } from '@tanstack/vue-query';
 
 import type {
   DefinedInitialQueryOptions,
   UndefinedInitialQueryOptions,
 } from '../../common/types.js';
+import type { ModelUseQueryDefinedReturnType, ModelUseQueryReturnType } from '../../types/query.js';
 import type { StateType } from '../../types/query.js';
 
 import { BeanModelUseState } from './bean.model.useState.js';
@@ -56,7 +49,7 @@ export class BeanModelUseStateGeneral extends BeanModelUseState {
     stateType: 'data',
     options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     queryClient?: QueryClient,
-  ): UnwrapNestedRefs<UseQueryReturnType<TData, TError>>;
+  ): ModelUseQueryReturnType<TData, TError>;
   $useState<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -66,7 +59,7 @@ export class BeanModelUseStateGeneral extends BeanModelUseState {
     stateType: 'data',
     options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     queryClient?: QueryClient,
-  ): UnwrapNestedRefs<UseQueryDefinedReturnType<TData, TError>>;
+  ): ModelUseQueryDefinedReturnType<TData, TError>;
   $useState<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -76,7 +69,7 @@ export class BeanModelUseStateGeneral extends BeanModelUseState {
     stateType: 'data',
     options: UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
     queryClient?: QueryClient,
-  ): UnwrapNestedRefs<UseQueryReturnType<TData, TError>>;
+  ): ModelUseQueryReturnType<TData, TError>;
   $useState(stateType: StateType, options, queryClient) {
     switch (stateType) {
       case 'localAsync':
