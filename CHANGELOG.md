@@ -1,5 +1,27 @@
 # Changelog
 
+## 5.1.150
+
+### Features
+
+- Add `bypassPersister` support.
+- Update query functionality.
+- Add runbook updates.
+- Add schema alias support.
+- Add SKU stock availability support.
+- Update related functionality and resources.
+
+### Bug Fixes
+
+- Fix end-to-end tests.
+- Correct `bypassPersister` behavior.
+- Update schema tests.
+
+### Improvements
+
+- Refactor the student model and service.
+- Improve documentation for `bypassPersister`.
+
 ## 5.1.149
 
 ### Features
