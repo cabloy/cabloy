@@ -1,5 +1,5 @@
 ---
-name: cabloy-repo-specs
+name: cabloy-spec-generation
 description: Use this skill whenever the user asks to create, bootstrap, or maintain a repository-native spec set for a new Cabloy business suite or substantial capability, including requests for a PRD, SRS, PDP/WBS, test plan, progress register, suite ADR, or a complete `repo-specs/<suite>/` document set. It turns a confirmed domain boundary into linked product, technical, delivery, acceptance, and decision records. Trigger even when the user says “write the specs” or “plan the suite” without naming every document. Do not use it to replace `cabloy-domain-planning` for unresolved suite naming, scaffold skills for implementation, or `cabloy-contract-loop` for concrete synchronization work.
 ---
 

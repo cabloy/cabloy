@@ -56,7 +56,7 @@ Before implementation, verify:
 - tenant, identity, authorization, ownership, privacy, lifecycle, transaction, concurrency, idempotency, audit, and recovery constraints are defined for the task’s risk;
 - the requested change does not broaden scope or create a competing persistence, identity, or API authority.
 
-When authority records conflict, stop. Update the authoritative PRD, SRS, or ADR through `cabloy-repo-specs`, then propagate the change through WBS, ATP, evidence assumptions, and progress. Do not reconcile a conflict by silently editing a downstream status or implementation plan.
+When authority records conflict, stop. Update the authoritative PRD, SRS, or ADR through `cabloy-spec-generation`, then propagate the change through WBS, ATP, evidence assumptions, and progress. Do not reconcile a conflict by silently editing a downstream status or implementation plan.
 
 ## 4. Special gates
 
@@ -115,7 +115,7 @@ Require explicit confirmation. If the user changes scope, rebuild the dossier an
 | Zova page/component/route/model/metadata/SSR/test | `cabloy-frontend-scaffold` | route metadata, state ownership, hydration equivalence, emitted import suffixes, flavor/site proof |
 | OpenAPI, SDK/schema, generated consumer, reverse metadata, stale consumer | `cabloy-contract-loop` | source-first direction, paired SSR/REST reverse build, `deps:vona`, no hand edits |
 | master-detail, resource-field, module removal | corresponding specialist skill | specialized ownership and cleanup order |
-| requirement, architecture, scope, identity, or authority change | `cabloy-repo-specs` / `cabloy-domain-planning` | no implementation around unresolved authority |
+| requirement, architecture, scope, identity, or authority change | `cabloy-spec-generation` / `cabloy-domain-planning` | no implementation around unresolved authority |
 
 The coordinator may pass the dossier to the specialist; it should not duplicate the specialist’s detailed command tree.
 

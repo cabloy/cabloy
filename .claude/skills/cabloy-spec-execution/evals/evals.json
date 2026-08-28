@@ -16,7 +16,7 @@
     {
       "id": 3,
       "prompt": "Execute the selected WBS task even though its ADR still contains TODO(confirm) for authorization and the progress row is blocked by a failed acceptance gate.",
-      "expected_output": "Stops before implementation, explains the unresolved authority and failed-gate blockers, and routes the decision or spec correction to cabloy-repo-specs rather than working around it.",
+      "expected_output": "Stops before implementation, explains the unresolved authority and failed-gate blockers, and routes the decision or spec correction to cabloy-spec-generation rather than working around it.",
       "files": []
     },
     {

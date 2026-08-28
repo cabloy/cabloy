@@ -1,6 +1,6 @@
 ---
 name: cabloy-spec-execution
-description: Use this skill whenever the user asks to implement, execute, deliver, verify, or close a task from an existing Cabloy suite specification, including requests such as “implement WBS-…”, “execute the approved phase”, “deliver the next spec task”, or “make the repo-specs plan real”. It coordinates one bounded WBS increment through the existing backend, frontend, and contract-loop skills, then records evidence-backed derived status. Require an explicit WBS task ID or a finite, explicitly approved phase; do not use it to invent requirements, resolve suite identity, replace cabloy-repo-specs, duplicate scaffold procedures, or perform unapproved destructive, deployment, or provider operations.
+description: Use this skill whenever the user asks to implement, execute, deliver, verify, or close a task from an existing Cabloy suite specification, including requests such as “implement WBS-…”, “execute the approved phase”, “deliver the next spec task”, or “make the repo-specs plan real”. It coordinates one bounded WBS increment through the existing backend, frontend, and contract-loop skills, then records evidence-backed derived status. Require an explicit WBS task ID or a finite, explicitly approved phase; do not use it to invent requirements, resolve suite identity, replace cabloy-spec-generation, duplicate scaffold procedures, or perform unapproved destructive, deployment, or provider operations.
 ---
 
 # Cabloy Spec Execution
@@ -52,7 +52,7 @@ Classify the target:
 - **frontend increment**: Zova page, component, route, model, metadata, SSR, or frontend test;
 - **contract increment**: OpenAPI, DTO consumer, generated SDK/schema, reverse metadata handoff, or consumer-drift diagnosis;
 - **verification/closure increment**: an ATP, evidence, phase closure, or release gate explicitly defined by the test plan;
-- **authority change**: a requirement, contract, dependency, scope, or durable decision change. Stop and route this to `cabloy-repo-specs` or `cabloy-domain-planning` before execution.
+- **authority change**: a requirement, contract, dependency, scope, or durable decision change. Stop and route this to `cabloy-spec-generation` or `cabloy-domain-planning` before execution.
 
 If a task maps to a more specialized Cabloy skill such as `cabloy-master-detail`, `cabloy-resource-field-update`, or `cabloy-module-removal`, use that specialist rather than flattening its procedure into this skill.
 
