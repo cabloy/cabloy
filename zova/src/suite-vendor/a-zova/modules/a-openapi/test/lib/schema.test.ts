@@ -22,7 +22,7 @@ test('schema properties preserve the canonical fieldSource key and original sche
           properties: {
             descriptionMarkdown: field({
               type: 'string',
-              rest: { render: 'start-markdown:formFieldMarkdown' },
+              rest: { render: 'start-markdown:formFieldMarkdown' as any },
             }),
           },
         }),
