@@ -1,0 +1,35 @@
+{
+  "skill_name": "cabloy-repo-specs",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to create the complete repo-specs set for a new CRM suite in this Cabloy repository. The suite name and provider prefix are not decided yet. Please guide me through the right process and tell me what you need before writing files.",
+      "expected_output": "Detects the edition and repository context, routes unresolved suite naming to cabloy-domain-planning, asks for grouped missing inputs, and does not invent CRM requirements or create a fictional document set.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "The Cabloy Basic repository is confirmed. Create a planning baseline for suite a-training (providerId a, suiteName training). It will include student, course, and attendance capabilities for authenticated Web users and tenant Admin operators. Define the initial scope as course browsing, enrollment, attendance recording, and operator management; defer payments and certificates. Produce the repository-native PRD, SRS, PDP/WBS, test plan, progress register, README authority map, and initial suite-boundary ADR, but do not claim implementation or test evidence.",
+      "expected_output": "Uses repo-specs/a-training with the seven mandatory core records, suite-first Vona/Zova topology, stable PRD/SRS/WBS/ATP identifiers and traceability, explicit deferred scope, server-side tenant/authorization and contract-loop boundaries, and not-started progress without fabricated evidence.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Plan a new Cabloy Start business suite with an Admin application, several resource scenes that need different field groupings and renderers, and a real payment provider with sandbox/live webhooks and reconciliation. The suite identity and exact Start flavor/site names are confirmed in the active Start repo. Which spec files should be generated, and what must remain conditional or evidence-backed?",
+      "expected_output": "Keeps the shared core set, adds presentation-contracts and a provider runbook only because the supplied scope justifies them, uses Start-specific facts from the active repo rather than Basic assumptions, explains when a rollout record or additional ADR is warranted, and requires redacted observed evidence before verified status.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "The design is complete, so write all suite specs and mark every WBS phase verified. There is no test run yet. Please make the progress document look release-ready.",
+      "expected_output": "Refuses to claim verified status without retained ATP evidence, initializes progress as not-started or otherwise accurate, explains the revision/environment/procedure/result/redaction requirements, and does not create empty evidence records.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Our existing suite PRD says the first release is one tenant and no marketplace. I want to add an OpenSpec directory and update the WBS directly to support multiple merchants. How should the repository planning records change?",
+      "expected_output": "Treats the existing PRD and repository-native records as authoritative, rejects a parallel OpenSpec authority absent a new repository-level decision, requires the product/technical/ADR authority to change first, and then propagates updates to WBS, ATP, progress, and evidence assumptions.",
+      "files": []
+    }
+  ]
+}
