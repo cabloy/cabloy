@@ -116,8 +116,8 @@ declare module 'vona-module-training-student' {
   export interface IModelOptionsStudent {
         relations: {
           trainingRecords: IModelRelationHasMany<'training-record:record', 'studentId', false, 'id'|'name'|'subjectCount'|'totalScore'|'averageScore'|'trainingTime'|'sceneImageIds'|'dossierFileIds'|'description', undefined, undefined, undefined>;
-studentContent: IModelRelationHasOne<'training-student:studentContent', 'studentId', false, 'id'|'studentId'|'descriptionMarkdown'|'descriptionHtml'>;
-studentContentForm: IModelRelationHasOne<'training-student:studentContent', 'studentId', false, 'id'|'studentId'|'descriptionMarkdown'>;
+content: IModelRelationHasOne<'training-student:studentContent', 'studentId', false, 'id'|'descriptionMarkdown'>;
+contentHtml: IModelRelationHasOne<'training-student:studentContent', 'studentId', false, 'id'|'descriptionHtml'>;
         };
       }
 export interface IModelOptionsStudentContent {

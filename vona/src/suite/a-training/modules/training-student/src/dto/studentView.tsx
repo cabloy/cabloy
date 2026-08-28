@@ -1,9 +1,10 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
 import { DtoImageView } from 'vona-module-a-image';
-import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
+import { $makeMetadata, $makeSchema, Api, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
+import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
@@ -11,12 +12,14 @@ import { ModelStudent } from '../model/student.ts';
 import { DtoDetailRecordResItem } from './detailRecordResItem.tsx';
 import { DtoDetailRecordView } from './detailRecordView.tsx';
 
-const studentContentFormField = $makeMetadata(
-  ZovaRender.fieldSource('studentContentForm.descriptionMarkdown'),
+const studentContentField = $makeSchema(
+  ZovaRender.fieldSource('content.descriptionMarkdown'),
   ZovaRender.field('basic-markdown:formFieldMarkdown'),
+  v.optional(),
+  z.string(),
 );
 
-export interface IDtoOptionsStudentView extends IDecoratorDtoOptions<'studentContentForm'> {}
+export interface IDtoOptionsStudentView extends IDecoratorDtoOptions<'_descriptionMarkdown'> {}
 
 @Dto<IDtoOptionsStudentView>({
   blocks: [
@@ -55,7 +58,7 @@ export interface IDtoOptionsStudentView extends IDecoratorDtoOptions<'studentCon
                             children: [
                               {
                                 type: 'section',
-                                children: [{ type: 'field', name: 'studentContentForm' }],
+                                children: [{ type: 'field', name: '_descriptionMarkdown' }],
                               },
                             ],
                           },
@@ -88,7 +91,7 @@ export interface IDtoOptionsStudentView extends IDecoratorDtoOptions<'studentCon
     }),
   ],
   fields: {
-    studentContentForm: studentContentFormField,
+    _descriptionMarkdown: studentContentField,
     trainingRecords: $makeMetadata(
       v.title($locale('TrainingRecords')),
       ZovaRender.order(6),
@@ -98,7 +101,7 @@ export interface IDtoOptionsStudentView extends IDecoratorDtoOptions<'studentCon
 })
 export class DtoStudentView extends $Dto.get(() => ModelStudent, {
   include: {
-    studentContentForm: true,
+    content: { columns: ['descriptionMarkdown'] },
     trainingRecords: { dtoClass: DtoDetailRecordView },
   },
 }) {

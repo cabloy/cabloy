@@ -14,7 +14,7 @@ export class DtoStudentSummary extends $Dto.get(() => ModelStudent, {
   columns: ['id', 'name', 'mobile', 'level'],
 }) {
   @Api.field(v.title($locale('Description')), v.optional())
-  description?: string;
+  descriptionMarkdown?: string;
 
   @Api.field(v.title($locale('DescriptionHtml')), v.optional())
   descriptionHtml?: string;

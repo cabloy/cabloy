@@ -3374,7 +3374,7 @@ export interface components {
       available: number;
     };
     /** @description Adjust Stock */
-    'commerce-trade.dto.stockAdjust_0aab216abd3467dd07f61c69172266c2441af477': {
+    'commerce-trade.dto.stockAdjust_6a7c2f0bb21a25da3048650f263577ae4467750e': {
       /** @description SKU ID */
       skuId: number | string;
       /** @description Delta */
@@ -3815,6 +3815,8 @@ export interface components {
         /** @description Product title */
         title: string;
       };
+      /** @description Available */
+      available: number;
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -4287,7 +4289,7 @@ export interface components {
               | undefined;
           }[]
         | undefined;
-      studentContentForm?: {
+      content?: {
         /** @description Description Markdown */
         descriptionMarkdown?: string | undefined;
       };
@@ -4410,7 +4412,7 @@ export interface components {
           signed?: boolean;
         }
       | undefined;
-    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1d66fd9b41b42bee7a7709e4c1b00556fdb4dae3':
+    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_93b863fbe913f9389386c3f524075f08b39f48ac':
       | {
           /**
            * Format: date-time
@@ -4517,10 +4519,7 @@ export interface components {
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
               | undefined;
           }[];
-          studentContentForm?: {
-            /** @description ID */
-            id: number | string;
-            studentId: number | string;
+          content?: {
             /** @description Description Markdown */
             descriptionMarkdown?: string | undefined;
           };
@@ -4528,6 +4527,7 @@ export interface components {
           _trainingRecords?:
             | components['schemas']['training-student.dto.detailRecordResItem'][]
             | undefined;
+          _descriptionMarkdown?: string | undefined;
         }
       | undefined;
     'training-student.dto.studentUpdate': {
@@ -4618,7 +4618,7 @@ export interface components {
               | undefined;
           }[]
         | undefined;
-      studentContentForm?: {
+      content?: {
         /**
          * @description Deleted
          * @default false
@@ -4644,7 +4644,7 @@ export interface components {
           /** @description Training Stage */
           level: 1 | 2 | 3;
           /** @description Description */
-          description?: string | undefined;
+          descriptionMarkdown?: string | undefined;
           /** @description Description HTML */
           descriptionHtml?: string | undefined;
           /** @description Level Title */
@@ -7226,7 +7226,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['commerce-trade.dto.stockAdjust_0aab216abd3467dd07f61c69172266c2441af477'];
+        'application/json': components['schemas']['commerce-trade.dto.stockAdjust_6a7c2f0bb21a25da3048650f263577ae4467750e'];
       };
     };
     responses: {
@@ -8127,7 +8127,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1d66fd9b41b42bee7a7709e4c1b00556fdb4dae3'];
+            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_93b863fbe913f9389386c3f524075f08b39f48ac'];
           };
         };
       };

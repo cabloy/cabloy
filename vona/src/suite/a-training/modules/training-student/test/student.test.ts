@@ -43,18 +43,18 @@ describe('student.test.ts', () => {
           profileSection?.children.map(item => item.name),
           ['name', 'mobile', 'imageId'],
         );
+        const descriptionFieldName =
+          DtoClass === DtoStudentView ? '_descriptionMarkdown' : 'content';
         assert.deepEqual(
           studentContentSection?.children.map(item => item.name),
-          ['studentContentForm'],
+          [descriptionFieldName],
         );
-        assert.equal(
-          component.properties.studentContentForm.rest.fieldSource,
-          'studentContentForm.descriptionMarkdown',
-        );
-        assert.equal(
-          component.properties.studentContentForm.rest.form.render,
-          'basic-markdown:formFieldMarkdown',
-        );
+        const descriptionField = (component as any).properties[descriptionFieldName];
+        assert.equal(descriptionField.rest.fieldSource, 'content.descriptionMarkdown');
+        assert.equal(descriptionField.rest.form.render, 'basic-markdown:formFieldMarkdown');
+        if (DtoClass === DtoStudentView) {
+          assert.equal((component as any).required?.includes('_descriptionMarkdown'), false);
+        }
         assert.equal(tabs?.children[1]?.children[0]?.name, 'level');
         assert.deepEqual(
           trainingRecordsSection?.children.map(item => item.name),
@@ -111,7 +111,7 @@ describe('student.test.ts', () => {
           'name',
           'mobile',
           'level',
-          'description',
+          'descriptionMarkdown',
           'descriptionHtml',
           'levelTitle',
           'descriptionLength',
@@ -144,7 +144,7 @@ describe('student.test.ts', () => {
         `## Updated profile\n\n${'This is updated Markdown content. '.repeat(10)}`.trim();
       const data = {
         name: '__Tom__',
-        studentContentForm: { descriptionMarkdown: description },
+        content: { descriptionMarkdown: description },
         mobile,
         level: 1,
         trainingRecords: [
@@ -207,7 +207,7 @@ describe('student.test.ts', () => {
       const record = student.trainingRecords?.[0];
       const recordSubject = record?.trainingRecordSubjects?.[0];
       assert.equal(student.trainingRecords?.length, 1);
-      assert.equal(student.studentContentForm?.descriptionMarkdown, description);
+      assert.equal(student.content?.descriptionMarkdown, description);
       assert.equal(record?.name, '__Record__');
       assert.equal(record?.subjectCount, 1);
       assert.equal(record?.totalScore, 88);
@@ -219,7 +219,7 @@ describe('student.test.ts', () => {
       // update
       const dataUpdate = {
         name: '__TomNew__',
-        studentContentForm: { descriptionMarkdown: descriptionUpdate },
+        content: { descriptionMarkdown: descriptionUpdate },
         mobile: mobileUpdate,
         level: 2,
         trainingRecords: [
@@ -262,7 +262,7 @@ describe('student.test.ts', () => {
       assert.equal(student.name, dataUpdate.name);
       assert.equal(student.level, dataUpdate.level);
       assert.equal(student.mobile, maskedMobileUpdate);
-      assert.equal(student.studentContentForm?.descriptionMarkdown, descriptionUpdate);
+      assert.equal(student.content?.descriptionMarkdown, descriptionUpdate);
       assert.equal(student.trainingRecords?.length, 1);
       assert.equal(updatedRecord?.name, '__RecordNew__');
       assert.equal(updatedRecord?.subjectCount, 2);
@@ -299,7 +299,7 @@ describe('student.test.ts', () => {
       assert.equal(summary.name, dataUpdate.name);
       assert.equal(summary.mobile, maskedMobileUpdate);
       assert.equal(summary.level, dataUpdate.level);
-      assert.equal(summary.description, descriptionUpdate);
+      assert.equal(summary.descriptionMarkdown, descriptionUpdate);
       assert.equal(summary.descriptionHtml, app.bean.markdown.renderHtml(descriptionUpdate));
       assert.equal(summary.descriptionLength, descriptionUpdate.length);
       assert.equal(typeof summary.levelTitle, 'string');
@@ -309,6 +309,14 @@ describe('student.test.ts', () => {
         params: { id: student.id },
       });
       assert.equal(deleteRes, null);
+      const studentContentDeleted = await app
+        .scope('training-student')
+        .model.studentContent.get({ studentId }, { disableDeleted: true });
+      assert.equal(studentContentDeleted?.deleted, true);
+      assert.equal(
+        await app.scope('training-student').model.studentContent.get({ studentId }),
+        undefined,
+      );
       // findOne
       student = await app.bean.executor.performAction('get', '/training/student/:id', {
         params: { id: student.id },
@@ -355,45 +363,56 @@ describe('student.test.ts', () => {
             level: 1,
           },
         });
-        assert.equal(
-          await app.scope('training-student').model.studentContent.get({ studentId }),
-          undefined,
-        );
+        const studentContentModel = app.scope('training-student').model.studentContent;
+        const createdContent = await studentContentModel.get({ studentId });
+        assert.equal(createdContent?.descriptionMarkdown, '');
+        assert.equal(createdContent?.descriptionHtml, '');
 
         await app.bean.executor.performAction('patch', '/training/student/:id', {
           params: { id: studentId },
           body: {
-            name: '__ContentStudent__',
+            name: '__ContentStudentUpdated__',
             mobile: '13812345678',
             level: 1,
-            studentContentForm: {
-              descriptionMarkdown: '  ## Created later  ',
+          },
+        });
+        const preservedContent = await studentContentModel.get({ studentId });
+        assert.equal(preservedContent?.descriptionMarkdown, '');
+        assert.equal(preservedContent?.descriptionHtml, '');
+
+        const markdown = '  ## Created later  ';
+        await app.bean.executor.performAction('patch', '/training/student/:id', {
+          params: { id: studentId },
+          body: {
+            name: '__ContentStudentUpdated__',
+            mobile: '13812345678',
+            level: 1,
+            content: {
+              descriptionMarkdown: markdown,
               descriptionHtml: '<p>Forged HTML</p>',
             },
           },
         });
-        const studentContent = await app
-          .scope('training-student')
-          .model.studentContent.get({ studentId });
-        assert.equal(studentContent?.descriptionMarkdown, '## Created later');
-        assert.equal(
-          studentContent?.descriptionHtml,
-          app.bean.markdown.renderHtml('## Created later'),
-        );
+        const studentContent = await studentContentModel.get({ studentId });
+        assert.equal(studentContent?.descriptionMarkdown, markdown);
+        assert.equal(studentContent?.descriptionHtml, app.bean.markdown.renderHtml(markdown));
         assert.notEqual(studentContent?.descriptionHtml, '<p>Forged HTML</p>');
 
+        const whitespaceMarkdown = ' \n\t ';
         await app.bean.executor.performAction('patch', '/training/student/:id', {
           params: { id: studentId },
           body: {
-            name: '__ContentStudent__',
+            name: '__ContentStudentUpdated__',
             mobile: '13812345678',
             level: 1,
-            studentContentForm: { descriptionMarkdown: ' \n\t ' },
+            content: { descriptionMarkdown: whitespaceMarkdown },
           },
         });
+        const whitespaceContent = await studentContentModel.get({ studentId });
+        assert.equal(whitespaceContent?.descriptionMarkdown, whitespaceMarkdown);
         assert.equal(
-          await app.scope('training-student').model.studentContent.get({ studentId }),
-          undefined,
+          whitespaceContent?.descriptionHtml,
+          app.bean.markdown.renderHtml(whitespaceMarkdown),
         );
       } finally {
         if (studentId) {
@@ -437,7 +456,7 @@ describe('student.test.ts', () => {
         await app.bean.executor.performAction('post', '/training/student', {
           body: {
             name: '__Tom__',
-            studentContentForm: { descriptionMarkdown: 'This is a test' },
+            content: { descriptionMarkdown: 'This is a test' },
             mobile: '13812345678',
             level: 4,
           },
@@ -454,7 +473,7 @@ describe('student.test.ts', () => {
         await app.bean.executor.performAction('post', '/training/student', {
           body: {
             name: '__Tom__',
-            studentContentForm: { descriptionMarkdown: 'This is a test' },
+            content: { descriptionMarkdown: 'This is a test' },
             level: 1,
           },
         });
@@ -470,7 +489,7 @@ describe('student.test.ts', () => {
         await app.bean.executor.performAction('post', '/training/student', {
           body: {
             name: '__Tom__',
-            studentContentForm: { descriptionMarkdown: 'This is a test' },
+            content: { descriptionMarkdown: 'This is a test' },
             mobile: '1381234567',
             level: 1,
           },

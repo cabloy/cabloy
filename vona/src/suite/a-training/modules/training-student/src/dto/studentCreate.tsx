@@ -10,12 +10,12 @@ import { ModelStudent } from '../model/student.ts';
 import { DtoDetailRecordMutate } from './detailRecordMutate.tsx';
 import { DtoDetailRecordResItem } from './detailRecordResItem.tsx';
 
-const studentContentFormField = $makeMetadata(
-  ZovaRender.fieldSource('studentContentForm.descriptionMarkdown'),
+const studentContentField = $makeMetadata(
+  ZovaRender.fieldSource('content.descriptionMarkdown'),
   ZovaRender.field('basic-markdown:formFieldMarkdown'),
 );
 
-export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions<'studentContentForm'> {}
+export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions<'content'> {}
 
 @Dto<IDtoOptionsStudentCreate>({
   blocks: [
@@ -54,7 +54,7 @@ export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions<'studentC
                             children: [
                               {
                                 type: 'section',
-                                children: [{ type: 'field', name: 'studentContentForm' }],
+                                children: [{ type: 'field', name: 'content' }],
                               },
                             ],
                           },
@@ -93,7 +93,7 @@ export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions<'studentC
     }),
   ],
   fields: {
-    studentContentForm: studentContentFormField,
+    content: studentContentField,
     trainingRecords: $makeMetadata(
       v.title($locale('TrainingRecords')),
       ZovaRender.order(6),
@@ -103,8 +103,9 @@ export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions<'studentC
   },
 })
 export class DtoStudentCreate extends $Dto.create(() => ModelStudent, {
+  columns: ['name', 'mobile', 'imageId', 'level'],
   include: {
-    studentContentForm: true,
+    content: { columns: ['descriptionMarkdown'] },
     trainingRecords: { dtoClass: DtoDetailRecordMutate },
   },
 }) {
