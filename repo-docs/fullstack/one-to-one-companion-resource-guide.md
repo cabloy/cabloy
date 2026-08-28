@@ -295,7 +295,7 @@ The dependency should be directional:
 companion mutation → parent query cache invalidation
 ```
 
-Keep the cache graph acyclic and avoid duplicate or reverse edges. Cache invalidation is not a lock, a uniqueness constraint, or a transaction. Continue to use normal Model mutation APIs so the framework’s cache behavior remains active. Read [Cache Guide](/backend/cache-guide) for general cache rules.
+Keep the cache graph acyclic and avoid duplicate or reverse edges. Cache invalidation is not a lock, a uniqueness constraint, or a transaction. Continue to use normal Model mutation APIs so the framework’s cache behavior remains active. Read [Cross-model query-cache dependencies](/backend/cache-guide#cross-model-query-cache-dependencies) for the graph rules.
 
 ## DTO and contract design
 

@@ -149,7 +149,7 @@ Optional records remain subordinate to the PRD/SRS/WBS/test-plan authority appro
 
 While drafting, preserve these principles and tailor them to confirmed scope:
 
-- `repo-specs/` is the product/business planning home; `repo-docs/` is public and agent-facing framework guidance; `repo-docs-internal/` is cross-suite maintainer rationale; `.claude/skills/` is workflow behavior;
+- `repo-specs/` is the product/business planning home; `repo-docs/` is public and agent-facing framework guidance; an established `repo-docs-internal/` home may hold cross-suite maintainer rationale; `.claude/skills/` is workflow behavior; do not assume or create an internal-docs home in an edition that lacks one;
 - use suite-first ownership and distinguish new domain modules from reusable framework modules; do not duplicate an existing persistence or identity owner without a stated decision;
 - treat the active Vona instance as the tenant by default; do not introduce a store, organization, or merchant entity unless the confirmed domain contract requires it;
 - make identity, tenant scope, authorization, and ownership server-authoritative; menus, routes, browser filters, and UI visibility are not API authorization;

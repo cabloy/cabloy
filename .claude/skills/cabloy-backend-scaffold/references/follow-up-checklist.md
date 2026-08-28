@@ -50,7 +50,7 @@ When the active edition and installed modules provide `@Passport.rbac(...)` and 
 - keep the dependency graph acyclic and free of duplicate edges; do not declare both forms for the same edge because propagation is transitive and current runtime collection does not deduplicate targets
 - when `modelsClearedByFn` is required, treat it as replacement behavior and explicitly own the target clear and any necessary downstream propagation
 - prefer normal Model/service mutation paths so source invalidation, commit-time re-clear, and configured double-delete remain active
-- add a warm-query → mutate-source → repeat-query regression test for each new dependency path; read [Vona Cross-Model Query-Cache Dependencies](../../../../repo-docs-internal/architecture/vona-cross-model-query-cache-dependencies.md) for the source-backed decision rules
+- add a warm-query → mutate-source → repeat-query regression test for each new dependency path; follow [Cross-model query-cache dependencies](../../../../repo-docs/backend/cache-guide.md#cross-model-query-cache-dependencies) for the portable decision rules
 - transaction behavior
 
 ## Test resource lifecycle follow-up

@@ -52,17 +52,11 @@ Before regenerating frontend artifacts:
 
 ## Step 4: Regenerate the frontend-side contract artifacts
 
-Use the Zova OpenAPI and REST-generation path rather than manually updating request code first.
+Use the Zova OpenAPI and REST-generation path rather than manually updating request code first. Follow the canonical [Contract Loop Playbook](/fullstack/contract-loop-playbook#forward-chain-playbook) for the active edition’s complete generation and verification sequence.
 
-Representative commands may include:
+Do not treat `build:rest:*` as a standalone current command recipe. Resolve the active edition’s full build path from the canonical playbook and current root scripts so SSR bundle and REST output stay synchronized.
 
-```bash
-npm run zova :openapi:generate ...
-cd zova && npm run build:rest:cabloyBasicAdmin
-cd zova && npm run build:rest:cabloyBasicWeb
-```
-
-For Start, use the Start-specific flavor paths from that repo.
+For Start, resolve Start-specific flavor paths from that repository.
 
 ## Step 5: Inspect affected frontend layers
 

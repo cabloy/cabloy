@@ -8,10 +8,10 @@ Check the root repository signals first:
 
 - `package.json`
 - edition marker files such as `__CABLOY_BASIC__` or `__CABLOY_START__`
-- `repo-docs-internal/README.md`
+- an established internal-documentation home, when present
 - root `.claude/` assets
 
-These files tell the agent which repo it is in, which scripts are canonical, and where public versus internal documentation belongs.
+These surfaces tell the agent which repo it is in and which scripts are canonical. Inspect an internal-documentation home only when the active repository actually provides one.
 
 ## 2. Prefer framework entrypoints over scattered examples
 
@@ -27,10 +27,11 @@ For frontend workflows:
 
 This is more reliable than copying old file structures from examples without understanding the command surface that created them.
 
-## 3. Use docs and internal notes for different purposes
+## 3. Use public docs and optional internal notes for different purposes
 
 - use `repo-docs/` to explain how people and agents should work
-- use `repo-docs-internal/` to explain why maintainers designed the repo a certain way
+- when an established internal-documentation home exists, use it for maintainer rationale
+- when it does not exist, continue from public docs, rules, skills, source, and tests; do not create a new documentation home implicitly
 
 ## 4. Treat edition detection as mandatory for UI-sensitive work
 

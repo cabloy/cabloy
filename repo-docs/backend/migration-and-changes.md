@@ -48,6 +48,31 @@ The key rule is:
 
 In the scaffolded CRUD workflow, this is not an isolated maintenance step. The generator-driven thread treats `fileVersion` as part of the same backend evolution path that also touches entity/model/controller/test resources.
 
+## Decide whether to increment fileVersion
+
+For a new persisted field or another schema-shape change on an existing resource, decide whether `vonaModule.fileVersion` should change **before** editing `meta.version.ts`, a versioned schema path, or the module `package.json`.
+
+### Increment fileVersion
+
+Choose a new migration version when the change must be applied sequentially to an existing released module:
+
+1. increment `fileVersion`;
+2. add a new migration branch;
+3. preserve older branches as historical snapshots;
+4. introduce the schema change in the new branch.
+
+Do not introduce the same column in an older create path and again in a later migration branch. A fresh installation can execute version branches sequentially and fail on a duplicate column.
+
+### Keep the current fileVersion
+
+When the change belongs in the current version path rather than new migration history:
+
+1. keep the existing `fileVersion`;
+2. fold the schema change into the current version path;
+3. do not create a new migration branch.
+
+Ask before choosing this strategy; do not infer migration history from the field change alone. Any change to `meta.version.ts` requires `npm run test` so the test database is recreated and schema/data consistency is exercised.
+
 ## `meta.version`
 
 Vona uses a bean named `meta.version` to organize migration code for a module.
@@ -156,9 +181,9 @@ When the generated CRUD thread evolves, migration should evolve with it.
 
 A practical sequence is:
 
-1. increment `fileVersion`
+1. decide whether to increment `fileVersion`
 2. add or adjust entity/model structure
-3. update `meta.version` logic
+3. update the current or new `meta.version` path to match that decision
 4. rerun migration locally
 5. verify the contract through tests and controller actions
 

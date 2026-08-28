@@ -254,7 +254,7 @@ A practical distinction is:
 
 That means model behavior affects performance and consistency semantics, not only data retrieval.
 
-For the broader cache story, also see [Cache Guide](/backend/cache-guide).
+For the broader cache story, also see [Cache Guide](/backend/cache-guide). For dependencies between Models, see [Cross-model query-cache dependencies](/backend/cache-guide#cross-model-query-cache-dependencies).
 
 ## Relationship to the backend contract loop
 

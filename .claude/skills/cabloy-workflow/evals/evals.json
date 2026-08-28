@@ -15,8 +15,8 @@
     },
     {
       "id": 3,
-      "prompt": "Please help me decide whether this new AI guidance belongs in public docs, repo-docs-internal, CLAUDE.md, or a skill. The guidance is about when to use npm run zova instead of hand-written scaffolding.",
-      "expected_output": "Routes the request to the right knowledge homes, prefers public docs plus Claude rules/skills as appropriate, and reinforces the CLI-first principle.",
+      "prompt": "Please help me decide whether this new AI guidance belongs in public docs, an internal-docs home when present, CLAUDE.md, or a skill. The guidance is about when to use npm run zova instead of hand-written scaffolding.",
+      "expected_output": "Routes shared operational guidance to public docs and Claude rules/skills as appropriate, treats an internal-docs home as optional maintainer material rather than an assumed requirement, and reinforces the CLI-first principle.",
       "files": []
     },
     {
@@ -47,6 +47,12 @@
       "id": 8,
       "prompt": "I created a linked Cabloy Basic worktree and only need backend tests. What should I do for local environment isolation?",
       "expected_output": "Keeps generic routing read-only and directs the user to the canonical guide plus explicit /cabloy-worktree-environment invocation. It explains that the invoked skill still generates the universal APP_NAME, SERVER_LISTEN_PORT, DEV_SERVER_PORT, DEV_SERVER_HMR_PORT, and derived API_BASE_URL tuple in both broad local files after confirmation; it does not provide a backend-only one-file path.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "I am in Cabloy Start, which has no repo-docs-internal directory. I need shared agent guidance and some maintainer rationale. Where should each part go?",
+      "expected_output": "Detects Cabloy Start, does not assume or create repo-docs-internal, routes shared operational guidance to existing public docs and Claude rules or skills, and asks which established maintainer-rationale home to use rather than putting rationale into public docs automatically.",
       "files": []
     }
   ]

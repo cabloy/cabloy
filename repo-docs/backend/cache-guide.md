@@ -52,6 +52,42 @@ Representative areas include:
 - related-model cache clearing
 - custom cache-clearing logic
 
+## Cross-model query-cache dependencies
+
+When a mutation in one Model changes the members, totals, projections, includes, or visibility of a query cached by another Model, declare an explicit cross-model dependency. Decide this from **query-result semantics**, not merely from a relation or foreign key.
+
+### Choose one directed declaration
+
+Express each dependency as one source-to-target edge:
+
+- `modelsClear` declares targets from the source Model;
+- `modelsClearedBy` declares sources from the target Model.
+
+They normalize to the same direction. Choose the form that makes local ownership clearest, but never declare both forms for the same edge.
+
+### Keep the graph acyclic
+
+Keep the dependency graph directed, acyclic, and free of duplicate edges. A normal target clear can propagate transitively to its own dependent query caches, so reverse or duplicate declarations are not a way to increase reliability.
+
+The default behavior clears affected **query caches**. It does not make a cross-Model entity cache relationship, replace a lock, enforce uniqueness, or create a transaction boundary.
+
+### Use custom clearing deliberately
+
+`modelsClearedByFn` replaces the normal target-clear behavior for that dependency. When using it, explicitly own the target clear and any required downstream propagation. Do not add it as if it were an additional callback around the normal path.
+
+Prefer normal Model or service mutation paths so source invalidation, transaction-aware re-clearing, and configured cache behavior remain active.
+
+### Verify a warmed dependent query
+
+For every new dependency path, add a regression test that:
+
+1. warms the dependent Model query;
+2. mutates the source through the normal Model or service path;
+3. repeats the dependent query;
+4. proves that the result now reflects the mutation.
+
+This test demonstrates business invalidation rather than relying on test-runner scheduling or cache implementation assumptions.
+
 ## Consistency strategy
 
 Vona also clears or compensates cache automatically when model mutation occurs.

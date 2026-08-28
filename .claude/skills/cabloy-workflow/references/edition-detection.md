@@ -2,10 +2,12 @@
 
 ## Primary markers
 
-Use these root markers first:
+Interpret the root markers as exactly one of these states:
 
-- `__CABLOY_BASIC__`
-- `__CABLOY_START__`
+- only `__CABLOY_BASIC__` present → Cabloy Basic
+- only `__CABLOY_START__` present → Cabloy Start
+- both markers present → treat the checkout as invalid or ambiguous and stop before making edition-specific assumptions
+- neither marker present → inspect the owning `package.json` and nearby repository structure, then ask before making an edition-specific assumption
 
 ## Why the markers matter
 

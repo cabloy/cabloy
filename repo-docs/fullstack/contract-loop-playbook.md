@@ -113,6 +113,9 @@ Examples:
 - controller request or response changed
 - validation changed
 - OpenAPI metadata changed
+- an existing resource field changed
+
+For an existing resource-field change, first use [Existing Resource Field Update](/backend/resource-field-update) to make the persistence, DTO, locale, renderer, and migration decision explicit. Then continue with the applicable contract-loop branch.
 
 Then use the **forward chain**:
 
@@ -357,6 +360,7 @@ Use the tutorial series as examples of the two chains:
 
 - [Fullstack Introduction](/fullstack/introduction)
 - [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
+- [Existing Resource Field Update](/backend/resource-field-update)
 - [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend)
 - [Vona + Zova Integration](/fullstack/vona-zova-integration)
 - [OpenAPI SDK Guide](/frontend/openapi-sdk-guide)

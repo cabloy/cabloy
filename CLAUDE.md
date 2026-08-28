@@ -2,15 +2,14 @@
 
 ## Repository identity
 
-This repository is **Cabloy Basic**, the public framework/reference edition, identified by the root marker file:
+Detect the active edition from the repository-root marker before making edition-sensitive assumptions:
 
-- `__CABLOY_BASIC__`
+- exactly `__CABLOY_BASIC__` present → Cabloy Basic, the public framework/reference edition
+- exactly `__CABLOY_START__` present → Cabloy Start, the private commercial edition delivered as licensed source
+- both markers present → treat the checkout as invalid or ambiguous and stop before giving edition-specific guidance
+- neither marker present → inspect the owning `package.json` and nearby repository structure, then ask before making an edition-specific assumption
 
-A sibling repository named `cabloy-start` is the private commercial edition, delivered as a licensed separate source repository and identified by:
-
-- `__CABLOY_START__`
-
-Always detect the active edition before making UI-sensitive assumptions, choosing frontend examples, recommending module-specific workflows, or assuming the project creation path.
+Always perform this detection before making UI-sensitive assumptions, choosing frontend examples, recommending module-specific workflows, or assuming the project creation path.
 
 ## Monorepo layout
 
@@ -18,7 +17,7 @@ Always detect the active edition before making UI-sensitive assumptions, choosin
 - `vona/` contains the backend framework, backend modules, and the Vona CLI.
 - `zova/` contains the frontend framework, frontend modules, and the Zova CLI.
 - `repo-docs/` contains the unified public documentation.
-- `repo-docs-internal/` contains internal engineering notes and ADRs.
+- `repo-docs-internal/`, when present, contains edition-local maintainer notes and ADRs; treat it as optional supporting material, not as a shared-edition requirement.
 - `repo-specs/` contains product and business specifications, delivery plans, and suite-local ADRs.
 - `repo-e2e/` contains the end-to-end test project.
 - `repo-observability/` contains local observability infrastructure.
@@ -39,8 +38,9 @@ Before inventing a custom implementation path:
 ## Documentation boundary
 
 - Put user-facing and agent-facing guidance in `repo-docs/`.
-- Put maintainer rationale, architecture notes, and engineering ADRs in `repo-docs-internal/`.
-- Put product and business specifications, delivery plans, acceptance records, and suite-local ADRs in `repo-specs/`.
+- When an established `repo-docs-internal/` home exists, use it for maintainer rationale, architecture notes, and engineering ADRs. Do not assume or create that path in another edition.
+- If the active repository has no established internal-documentation home, do not block the workflow or move internal rationale into public docs automatically; use existing documentation homes or ask before establishing one.
+- Put product and business specifications, delivery plans, acceptance records, and suite-local ADRs in `repo-specs/` when that repository surface exists.
 - Do not mix internal rationale into public how-to pages unless a trimmed user-facing explanation is genuinely needed.
 
 ## AI development rules
@@ -82,7 +82,7 @@ Before inventing a custom implementation path:
 - When adding a persisted field to an existing backend resource, ask the user whether `vonaModule.fileVersion` should be incremented before changing `meta.version.ts` or the module schema path. If yes, add a new migration version and bump `fileVersion`. If no, keep the current `fileVersion` and fold the schema change into the current version path. Do not assume the versioning strategy without confirmation.
 - In shared-database multitenancy, do not use `table.unique(...)` for business uniqueness. Keep ordinary indexes for lookup performance and enforce tenant-scoped uniqueness in the business layer.
 - In Vona, a tenant corresponds to an instance. Ordinary resource-model CRUD is automatically scoped to the active instance; treat records absent from that scope as absent, and do not use raw cross-instance probes merely to choose between `403` and not-found behavior. Model future multi-merchant boundaries explicitly inside an instance.
-- Model cross-Model query-cache dependencies as one directed, acyclic `modelsClear` / `modelsClearedBy` graph, and verify source mutations refresh warmed dependent queries; read `repo-docs-internal/architecture/vona-cross-model-query-cache-dependencies.md` before designing a nontrivial graph.
+- Model cross-Model query-cache dependencies as one directed, acyclic `modelsClear` / `modelsClearedBy` graph, and verify source mutations refresh warmed dependent queries; follow [Cross-model query-cache dependencies](repo-docs/backend/cache-guide.md#cross-model-query-cache-dependencies) before designing a nontrivial graph.
 - For `@Api.field(...)` and related schemaLike composition, framework guards now preserve previously attached OpenAPI metadata across schema rebuilds, but structure-shaping schemaLike is still order-sensitive. Treat `v.object(...)`, `v.array(...)`, `v.optional()`, `v.nullable()`, `v.default(...)`, and preprocess/transform wrappers as structure-shaping; keep the final structure-defining schemaLike last and verify emitted schema/OpenAPI output after such edits.
 - `@Core.transaction(...)` defaults to `REQUIRED`: it starts a transaction only when none exists and otherwise joins the current datasource transaction without upgrading its isolation. Prefer it over manual `inTransaction` wrappers for atomic service methods; use `REQUIRES_NEW` only when an independently committed boundary is explicitly required.
 - For replay-safe transient failures, use `@Core.retryable(...)` with an explicit `errorCodes` allowlist. It retries the downstream AOP suffix, so place it closest to the method when it must wrap and retry a `@Core.transaction(...)` boundary; use `ownerOnly: true` for dual-role leaves that must not retry inside a caller-owned transaction; do not retry external side effects or infer retryability from isolation level.

@@ -6,7 +6,7 @@ This monorepo is organized around a small set of stable top-level areas.
 
 - `package.json` — shared scripts and release entrypoints
 - `lerna.json` — package topology
-- `repo-docs-internal/` — internal engineering docs
+- an established internal-documentation home, when present — edition-local maintainer notes and ADRs
 - `.claude/` — Claude commands, skills, and local settings
 - `repo-docs/` — unified public docs
 

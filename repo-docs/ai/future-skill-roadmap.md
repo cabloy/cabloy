@@ -85,7 +85,7 @@ Primary dependencies:
 
 - Vona entity / migration / DTO workflow knowledge
 - Zova metadata/build flows when renderer follow-up is involved
-- the backend resource field workflow note in `repo-docs-internal/`
+- [Existing Resource Field Update](/backend/resource-field-update)
 
 ### 5. Metadata refresh skill
 
@@ -148,7 +148,7 @@ The purpose is to create a small number of high-leverage skills that directly re
 
 - `repo-docs/`
 - `CLAUDE.md`
-- `repo-docs-internal/`
+- an established internal-documentation home, when present
 - `.claude/skills/`
 - the Vona and Zova CLIs
 

@@ -17,9 +17,10 @@ npm run zova
 
 Inspect the root `package.json` before documenting exact future commands. Read the active edition marker first:
 
-- `__CABLOY_BASIC__` means Cabloy Basic;
-- `__CABLOY_START__` means Cabloy Start;
-- neither means the edition is unresolved and must not receive edition-specific assumptions.
+- only `__CABLOY_BASIC__` present means Cabloy Basic;
+- only `__CABLOY_START__` present means Cabloy Start;
+- both markers mean the checkout is invalid or ambiguous and must not receive edition-specific assumptions;
+- neither marker means the edition is unresolved and must not receive edition-specific assumptions.
 
 For a Start repository, resolve flavor names, sites, public paths, generated-output locations, and command wrappers from that repository. Do not inherit Basic examples by analogy.
 
@@ -68,7 +69,7 @@ Hand actual implementation-time synchronization to `cabloy-contract-loop`.
 | --- | --- |
 | Product requirements, SRS contracts, WBS, ATPs, suite ADRs, delivery status | `repo-specs/<suite>/` |
 | Reusable user-facing or agent-facing framework guidance | `repo-docs/` |
-| Cross-suite maintainer architecture, rationale, and engineering ADRs | `repo-docs-internal/` |
+| Cross-suite maintainer architecture, rationale, and engineering ADRs | An established internal-documentation home, when present; do not create one implicitly |
 | Short durable AI operating rules | `CLAUDE.md` |
 | Reusable Claude procedure | `.claude/skills/` |
 

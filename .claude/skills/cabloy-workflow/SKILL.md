@@ -1,6 +1,6 @@
 ---
 name: cabloy-workflow
-description: This skill should be used when the main Cabloy problem is workflow routing before implementation: deciding between Vona backend scaffolding, Zova frontend scaffolding, contract-loop work, or docs/AI-enablement homes such as repo-docs, repo-docs-internal, CLAUDE.md, commands, or skills, including cases where Cabloy Basic vs Cabloy Start assumptions affect that routing. Trigger on requests to route, classify, choose a workflow, choose an edition-specific path, or decide where Cabloy guidance should live. Do not use it once the task is already clearly a backend scaffold, frontend scaffold, or contract-loop job.
+description: This skill should be used when the main Cabloy problem is workflow routing before implementation: deciding between Vona backend scaffolding, Zova frontend scaffolding, contract-loop work, or docs/AI-enablement homes such as repo-docs, an established internal-docs home when present, CLAUDE.md, commands, or skills, including cases where Cabloy Basic vs Cabloy Start assumptions affect that routing. Trigger on requests to route, classify, choose a workflow, choose an edition-specific path, or decide where Cabloy guidance should live. Do not use it once the task is already clearly a backend scaffold, frontend scaffold, or contract-loop job.
 ---
 
 # Cabloy Workflow
@@ -24,11 +24,20 @@ Check the repository root for these marker files:
 
 Interpretation:
 
-- `__CABLOY_BASIC__` present → this is Cabloy Basic
-- `__CABLOY_START__` present → this is Cabloy Start
-- neither present → inspect the repo scripts and ask the user before making a strong edition-specific assumption
+- only `__CABLOY_BASIC__` present → this is Cabloy Basic
+- only `__CABLOY_START__` present → this is Cabloy Start
+- both markers present → treat the repository as ambiguous or invalid and stop before making edition-specific assumptions
+- neither marker present → inspect the owning package scripts and nearby repository structure, then ask before making an edition-specific assumption
 
 This matters most for frontend work, UI-layer assumptions, flavor names, suite/module availability, SSR site baselines, project assets, and edition-specific AI guidance.
+
+Repository-path availability is independent of edition detection:
+
+- inspect a documentation path before recommending or reading it
+- use `repo-docs-internal/` only when an established active-repository home exists
+- treat edition-local internal notes as optional maintainer material, never as a prerequisite for shared workflow routing
+- when an optional path is absent, continue from public docs, bundled skill references, active source, and tests
+- do not create a missing documentation home unless the user explicitly asks to establish one
 
 ## Step 2: Identify the task layer
 
@@ -70,7 +79,7 @@ Use the frontend path when the task is about:
 Use the docs/AI path when the task is about:
 
 - `repo-docs/`
-- `repo-docs-internal/`
+- an established `repo-docs-internal/` home when present
 - `CLAUDE.md`
 - `.claude/commands/`
 - `.claude/skills/`
@@ -85,7 +94,7 @@ Before inventing a workflow, inspect these shared surfaces:
 - `npm run zova`
 - root `CLAUDE.md` if present
 - `repo-docs/` for public guidance
-- `repo-docs-internal/` for maintainer rationale
+- an established `repo-docs-internal/` home for optional maintainer rationale
 
 If the request spans backend and frontend, classify it as fullstack by default unless the user clearly wants only one side.
 
@@ -158,14 +167,16 @@ Use `repo-docs/` for:
 - reusable AI-facing workflow guidance
 - edition-aware public documentation
 
-### Internal engineering docs
+### Optional internal engineering docs
 
-Use `repo-docs-internal/` for:
+When an established `repo-docs-internal/` home exists, it may be used for:
 
 - ADRs
 - architecture notes
 - maintainer rationale
 - invariants and design boundaries
+
+Its absence must not block routing or implementation, and it must not be assumed to exist in Cabloy Start.
 
 ### Root rules and commands
 
@@ -197,7 +208,7 @@ When the request is about whether a backend base class belongs in `src/lib`, `sr
 For these requests:
 
 - put the durable operational explanation in `repo-docs/`
-- put rationale and invariants in `repo-docs-internal/`
+- when an established internal-docs home exists, put rationale and invariants there; otherwise preserve the public operational explanation and ask before establishing a new maintainer-rationale home
 - keep `CLAUDE.md` short and behavioral
 - do not treat `@Service()` as a business-layer naming decision only; for B2 it is a runtime-anchor placement choice
 
@@ -276,7 +287,7 @@ Verify:
 
 - referenced paths exist
 - command names still exist
-- public docs, internal docs, and rules tell a consistent story
+- public docs, optional internal rationale, and rules tell a consistent story
 - edition-specific notes point to the right repo assumptions
 
 ### For backend/frontend workflow changes

@@ -26,9 +26,10 @@ Check the repository root for these marker files:
 
 Interpretation:
 
-- `__CABLOY_BASIC__` present → this is Cabloy Basic
-- `__CABLOY_START__` present → this is Cabloy Start
-- neither present → inspect nearby scripts and ask before making edition-specific assumptions
+- only `__CABLOY_BASIC__` present → this is Cabloy Basic
+- only `__CABLOY_START__` present → this is Cabloy Start
+- both markers present → treat the repository as ambiguous or invalid and stop before making edition-specific assumptions
+- neither marker present → inspect the owning package scripts and nearby repository structure, then ask before making an edition-specific assumption
 
 Then classify the request into one of three branches:
 
@@ -128,7 +129,7 @@ Ask or confirm whether the task is:
 - code/runtime removal only
 - code/runtime removal plus docs/examples scrub
 
-If docs cleanup is in scope, update `repo-docs/` separately from the runtime cleanup and keep maintainer rationale in `repo-docs-internal/`.
+If docs cleanup is in scope, update `repo-docs/` separately from the runtime cleanup. When an established `repo-docs-internal/` home exists, keep maintainer rationale there; otherwise do not create or require that path as part of module removal.
 
 ## Response pattern
 

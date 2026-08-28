@@ -36,9 +36,10 @@ Check the repository root for these marker files:
 
 Interpretation:
 
-- `__CABLOY_BASIC__` present → this is Cabloy Basic
-- `__CABLOY_START__` present → this is Cabloy Start
-- neither present → inspect nearby scripts and ask before making edition-specific assumptions
+- only `__CABLOY_BASIC__` present → this is Cabloy Basic
+- only `__CABLOY_START__` present → this is Cabloy Start
+- both markers present → treat the repository as ambiguous or invalid and stop before making edition-specific assumptions
+- neither marker present → inspect the owning package scripts and nearby repository structure, then ask before making an edition-specific assumption
 
 Then confirm the request is about an **existing** resource field.
 
@@ -211,10 +212,12 @@ In Cabloy Basic, prefer `placeholder` over artificial empty-item injection when 
 
 If the user explicitly wants to **demonstrate** the custom renderer workflow, branch into a frontend follow-up path.
 
-Use these references:
+Use these portable references:
 
 - `references/custom-renderer-demo-checklist.md`
-- `repo-docs-internal/architecture/backend-resource-field-workflow.md`
+- [Existing Resource Field Update](../../../repo-docs/backend/resource-field-update.md)
+
+When an active repository provides `repo-docs-internal/architecture/backend-resource-field-workflow.md`, it may be consulted as optional maintainer rationale. Its absence must not block or alter this shared workflow.
 
 Recommended shape:
 

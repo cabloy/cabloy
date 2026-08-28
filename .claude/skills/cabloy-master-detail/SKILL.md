@@ -27,9 +27,10 @@ Check the repository root for these marker files:
 
 Interpretation:
 
-- `__CABLOY_BASIC__` present → this is Cabloy Basic
-- `__CABLOY_START__` present → this is Cabloy Start
-- neither present → inspect nearby scripts and ask before making edition-specific assumptions
+- only `__CABLOY_BASIC__` present → this is Cabloy Basic
+- only `__CABLOY_START__` present → this is Cabloy Start
+- both markers present → treat the repository as ambiguous or invalid and stop before making edition-specific assumptions
+- neither marker present → inspect the owning package scripts and nearby repository structure, then ask before making an edition-specific assumption
 
 Then classify the request into one of these entry shapes.
 

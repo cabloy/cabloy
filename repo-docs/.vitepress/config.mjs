@@ -292,6 +292,10 @@ export default defineConfig({
           text: 'Data & CRUD',
           items: [
             { text: 'CRUD Workflow', link: '/backend/crud-workflow' },
+            {
+              text: 'Existing Resource Field Update',
+              link: '/backend/resource-field-update',
+            },
             { text: 'Migration and Changes', link: '/backend/migration-and-changes' },
             { text: 'Field Indexes', link: '/backend/field-indexes' },
             { text: 'ORM Guide', link: '/backend/orm-guide' },

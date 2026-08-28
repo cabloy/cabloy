@@ -201,6 +201,4 @@ Read these pages together:
 - [Global Bean Lookup](/ai/global-bean-lookup)
 - [Docs, Skills, Rules, and CLI Mapping](/ai/docs-skills-rules-mapping)
 
-For maintainer-level rationale, also read:
-
-- `repo-docs-internal/architecture/virtual-decorator-runtime-semantics.md`
+For maintainer-level rationale, consult an established internal-documentation home when the active repository provides one. The public guidance above is the complete shared operational rule.

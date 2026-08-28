@@ -110,15 +110,13 @@ Recommended order:
 
 1. [Router Tabs Mechanism](/frontend/router-tabs-mechanism)
 2. [Router Tabs Admin and Web Comparison](/frontend/router-tabs-admin-web-comparison)
-3. `repo-docs-internal/architecture/router-tabs-design-boundaries.md`
+3. inspect the current implementation and public comparison guidance for refactor boundaries
 
 ## Scope boundary
 
 The public router-tabs docs explain the shared frontend mechanism and how to use it.
 
-For internal design boundaries, maintenance invariants, and refactor safety rules, see:
-
-- `repo-docs-internal/architecture/router-tabs-design-boundaries.md`
+For maintainer-only design boundaries, maintenance invariants, and refactor safety rules, consult an established internal-documentation home when the active repository provides one. The public mechanism, layout, route-meta, and Admin/Web comparison guides remain the shared implementation baseline.
 
 ## See also
 
