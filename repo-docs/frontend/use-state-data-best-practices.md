@@ -278,6 +278,14 @@ const passportCode = await this.$passport.ensureFreshTempAuthToken(options);
 
 Both paths reuse the same model-owned query. When `$QueryGetFresh(...)` finds stale data, it starts `query.suspense()` and returns `undefined` for the current render; reactive query state provides the replacement value on a later render. `$QueryEnsureFresh(...)` instead waits for that refresh and propagates query errors to the interaction flow.
 
+## Render-driving state versus one-shot refetch results
+
+A query established during render remains the owner of its ongoing state. Render paths should read the current reactive surface—typically `query.data`, `query.pending`, `query.error`, or a model-derived projection—and let query updates drive a later render.
+
+An interaction or orchestration boundary may still await `query.refetch()` when it needs one result to decide whether to continue a command, navigate, show a notification, or open a dialog. That result is local to the current sequence; it does not transfer query ownership to the controller or render path.
+
+Do not copy an awaited `refetch()` result into a second long-lived controller/render state that drives an open dialog or persistent component. If the UI remains mounted and displays query-backed data, bind it to `query.data` or a model-derived reactive surface so later refetches and model updates remain visible.
+
 ## Practical rule 7: derive render-time state once per render when possible
 
 Even when the query object is reused, a controller can still become noisy if it repeatedly derives the same values in several helper calls.

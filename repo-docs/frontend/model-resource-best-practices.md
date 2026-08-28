@@ -360,6 +360,8 @@ Use this checklist before merging resource-model changes:
 8. Does bootstrap/readiness stay inside the model boundary?
 9. Are `$fetch`, `$sdk`, and model state composed coherently?
 10. Would another screen reuse this model surface confidently?
+11. Does ongoing render output read `query.data` or a model-derived reactive surface rather than an awaited `refetch()` snapshot?
+12. Are awaited `refetch()` results limited to one-shot interaction/orchestration without creating a parallel ongoing render-state owner?
 
 ## When to use this page
 

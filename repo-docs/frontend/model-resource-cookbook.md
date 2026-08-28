@@ -122,7 +122,10 @@ const modelStudent = (await ctx.bean._getBean(
 )) as ModelStudent;
 const querySummary = modelStudent.summary(id);
 const { data: summary } = await querySummary.refetch();
+// Use `summary` only for immediate command/orchestration logic.
 ```
+
+The awaited result is local to the current command. If that command opens a dialog or component that remains mounted and displays the Summary, render its ongoing content from `querySummary.data` or a model-derived reactive surface instead of preserving `summary` as a second render-state snapshot.
 
 ### Avoid
 
