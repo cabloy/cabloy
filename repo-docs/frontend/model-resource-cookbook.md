@@ -122,13 +122,13 @@ const modelStudent = (await ctx.bean._getBean(
 )) as ModelStudent;
 const querySummary = modelStudent.summary(id);
 
-await querySummary.refetch({ bypassPersister: true });
+await querySummary.refetch();
 $host.$appModal.dialog({
   slotDefault: () => <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />,
 });
 ```
 
-`refetch({ bypassPersister: true })` is useful when this interaction needs an API-fresh result without restoring or scheduling a persistence save through the persister for that fetch. The successful result still updates the model-owned in-memory query, and the dialog remains bound to `querySummary.data`, so the query remains the source of its ongoing render state rather than transferring ownership to an awaited-result snapshot. The option affects only this fetch; normal query cancellation and in-flight deduplication rules still apply. It is not a force-new-request option: when an existing fetch is reused by TanStack Query, that fetch's semantics remain in effect. The bypassed fetch itself does not intentionally replace an existing persisted value; an already queued ordinary persistence callback is a separate operation and is not automatically cancelled. Use static `meta.persister: false` only when persistence should be disabled for the query generally.
+This summary interaction deliberately uses persisted-cache-first behavior. When the in-memory query is cold, an ordinary `refetch()` can restore usable persisted data and let the dialog open promptly. If the restored data is stale under the configured persister and query rules, it is revalidated afterward. Because the dialog remains bound to `querySummary.data`, it renders the restored data first and then reacts to the in-memory query update rather than keeping an awaited-result snapshot. This is a stale-while-revalidate experience, not an API-fresh orchestration decision. Whether a restore or follow-up revalidation occurs depends on data availability, persister configuration, and staleness.
 
 ### Avoid
 

@@ -307,11 +307,11 @@ This option is not a force-new-request flag. Cancellation, `cancelRefetch`, and 
 
 This is different from static `meta.persister: false`: the static option disables persistence for the query generally, while `bypassPersister: true` opts out only for one fetch.
 
-For example, an interaction can request a fresh summary and then open a dialog while the dialog remains bound to the query-owned state:
+For example, a summary dialog can deliberately use persisted-cache-first behavior while remaining bound to query-owned state:
 
 ```ts
 const querySummary = modelStudent.summary(id);
-await querySummary.refetch({ bypassPersister: true });
+await querySummary.refetch();
 
 $host.$appModal.dialog({
   slotDefault: () => (
@@ -320,7 +320,7 @@ $host.$appModal.dialog({
 });
 ```
 
-The awaited result may coordinate the current interaction, but ongoing rendering should continue to read `querySummary.data`.
+When the in-memory query is cold, ordinary `refetch()` can restore usable persisted data and allow the dialog to open promptly. If that restored data is stale under the configured persister and query rules, a later revalidation updates `querySummary.data`; the open dialog then renders the new value reactively. This is a stale-while-revalidate interaction, not a request for an API-fresh result. Restore and follow-up revalidation depend on data availability, persister configuration, and staleness. The awaited result may coordinate the current interaction, but ongoing rendering should continue to read `querySummary.data`.
 
 ## Practical rule 7: derive render-time state once per render when possible
 

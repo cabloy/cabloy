@@ -159,8 +159,10 @@ export class ControllerPagePayment extends BeanControllerPageBase {
       for (const [attempt, delay] of SettlementPollDelaysMilliseconds.entries()) {
         if (delay > 0) await new Promise(resolve => setTimeout(resolve, delay));
         if (!this._isCurrentSettlementPoll(pollVersion)) return;
+        let session: NonNullable<ReturnType<ModelPaymentSession['view']>>['data'];
         try {
-          await this.queryPaymentSession?.refetch({ bypassPersister: true });
+          const result = await this.queryPaymentSession?.refetch({ bypassPersister: true });
+          session = result?.data;
         } catch (error) {
           if (isNotFoundError(error)) {
             this.paymentSessionUnavailable = true;
@@ -170,7 +172,6 @@ export class ControllerPagePayment extends BeanControllerPageBase {
           throw error;
         }
         if (!this._isCurrentSettlementPoll(pollVersion)) return;
-        const session = this.queryPaymentSession?.data;
         const sessionState = session?.state;
         this.pendingSessionState = sessionState;
         this.pendingNextAction = session?.nextAction;
