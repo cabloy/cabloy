@@ -93,7 +93,7 @@ The purpose is to create a small number of high-leverage skills that directly re
 
 - `repo-docs/`
 - `CLAUDE.md`
-- an established internal-documentation home, when present
+- `repo-docs-internal/`
 - `.claude/skills/`
 - the Vona and Zova CLIs
 

@@ -129,7 +129,7 @@ Ask or confirm whether the task is:
 - code/runtime removal only
 - code/runtime removal plus docs/examples scrub
 
-If docs cleanup is in scope, update `repo-docs/` separately from the runtime cleanup. When an established `repo-docs-internal/` home exists, keep maintainer rationale there; otherwise do not create or require that path as part of module removal.
+If docs cleanup is in scope, update `repo-docs/` separately from the runtime cleanup. Keep maintainer rationale in `repo-docs-internal/`; do not require a particular internal record as part of module removal.
 
 ## Response pattern
 

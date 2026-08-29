@@ -217,7 +217,7 @@ Use these portable references:
 - `references/custom-renderer-demo-checklist.md`
 - [Existing Resource Field Update](../../../repo-docs/backend/resource-field-update.md)
 
-When an active repository provides `repo-docs-internal/architecture/backend-resource-field-workflow.md`, it may be consulted as optional maintainer rationale. Its absence must not block or alter this shared workflow.
+When relevant and available in the active edition, `repo-docs-internal/architecture/backend-resource-field-workflow.md` may be consulted as optional maintainer rationale. Its absence must not block or alter this shared workflow.
 
 Recommended shape:
 

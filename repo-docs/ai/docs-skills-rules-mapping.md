@@ -38,11 +38,11 @@ Public docs answer questions like:
 - how does Zova page or model architecture work?
 - what is different between Cabloy Basic and Cabloy Start?
 
-### 2. Optional internal engineering docs
+### 2. Internal engineering docs
 
 Location:
 
-- an established internal-documentation home, when the active repository provides one
+- `repo-docs-internal/`
 
 Use internal docs for:
 
@@ -51,7 +51,7 @@ Use internal docs for:
 - maintenance boundaries
 - “why this design exists” notes that do not belong in public user docs
 
-When available, internal docs answer questions like:
+Relevant internal records answer questions like:
 
 - why were docs and internal notes separated?
 - why is AI enablement structured this way?
@@ -105,7 +105,7 @@ Skills answer questions like:
 Use this quick rule:
 
 - if people and agents both need to read and understand it, put it in **public docs**
-- if it is maintainer rationale or long-lived design history, use an established internal-documentation home when one exists; otherwise ask before establishing one
+- if it is maintainer rationale or long-lived design history, use `repo-docs-internal/`; shared guidance remains complete without any particular internal record
 - if it is short repo-wide behavioral guidance, put it in **CLAUDE.md**
 - if it is a named repeatable operator action, put it in a **command**
 - if it is a reusable procedural workflow with branching, put it in a **skill**
@@ -128,7 +128,7 @@ Use this quick rule:
 ### Example: “How should a backend base class be placed?”
 
 - public operational explanation → [Class Placement Rule](/ai/class-placement-rule)
-- maintainer rationale and invariants → an established internal-documentation home, when available
+- maintainer rationale and invariants → `repo-docs-internal/`
 - default repo-wide behavior → `CLAUDE.md`
 - procedural decision workflow → `cabloy-workflow` skill
 
@@ -153,7 +153,7 @@ Use this quick rule:
 ### Example: “How should AI remove an existing module cleanly?”
 
 - public operational explanation → [Playbook: Module Removal](/ai/playbook-module-removal)
-- maintainer rationale and pitfalls → an established internal-documentation home, when available
+- maintainer rationale and pitfalls → `repo-docs-internal/`
 - avoid putting the full workflow in `CLAUDE.md` because the task needs branching, cleanup order, generated-runtime recovery, and verification
 - procedural decision workflow → `cabloy-module-removal` skill
 
@@ -170,7 +170,7 @@ Use this quick rule:
 - public workflow explanation → [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation)
 - procedural planning, confirmation, traceability, and chart-refresh behavior → `cabloy-spec-generation`
 - suite-specific PRD, SRS, WBS, ATP, ADR, progress, and observed evidence authority → `repo-specs/<suite>/`
-- maintainer rationale → an established internal-documentation home, when available
+- maintainer rationale → `repo-docs-internal/`
 - implementation is not implied by creating planning records
 
 ### Example: “How should AI deliver an approved suite task?”

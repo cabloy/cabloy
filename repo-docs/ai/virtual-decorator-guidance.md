@@ -201,4 +201,4 @@ Read these pages together:
 - [Global Bean Lookup](/ai/global-bean-lookup)
 - [Docs, Skills, Rules, and CLI Mapping](/ai/docs-skills-rules-mapping)
 
-For maintainer-level rationale, consult an established internal-documentation home when the active repository provides one. The public guidance above is the complete shared operational rule.
+For maintainer-level rationale, consult relevant records in `repo-docs-internal/`. The public guidance above is the complete shared operational rule.

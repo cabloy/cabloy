@@ -8,7 +8,7 @@ The Cabloy monorepo is a good fit for AI vibe coding because the source tree alr
 - Vona CLI source and command groups
 - Zova CLI source and command groups
 - archived docs that still capture valuable concepts
-- optional internal engineering docs for maintainers when the active repository provides them
+- `repo-docs-internal/` engineering docs for maintainers
 - Claude commands and skills
 
 ## The main design goal
@@ -20,7 +20,7 @@ The goal is to make AI **reuse the repo’s existing conventions directly**, esp
 - CLI commands
 - root scripts
 - repo markers
-- optional internal architecture notes when the active repository provides them
+- relevant `repo-docs-internal/` architecture notes
 - shared public documentation
 
 ## How to approach AI work
@@ -29,7 +29,7 @@ For contributor and automation workflows in this repository, prefer this order:
 
 1. inspect the active edition and repo markers before making UI-sensitive or workflow-sensitive assumptions
 2. inspect root scripts, Vona CLI, and Zova CLI before inventing manual scaffolding or custom workflow steps
-3. use public docs for durable user-facing and agent-facing guidance; consult an established internal-documentation home only when the active repository provides one for maintainer rationale
+3. use public docs for durable user-facing and agent-facing guidance; consult relevant `repo-docs-internal/` records for supporting maintainer rationale
 4. encode repeatable behavior in Claude rules, commands, or skills instead of relying on unstated habits
 
 ## The knowledge layers
@@ -40,9 +40,9 @@ Use `repo-docs/` for user-facing and agent-facing guidance that should remain du
 
 For normal project usage, prefer the user-facing entry docs such as [Fullstack Quickstart](/fullstack/quickstart). This AI section focuses on repository workflows and AI vibe coding.
 
-### Optional internal engineering docs
+### `repo-docs-internal/` engineering docs
 
-When an established internal-documentation home exists, use it for architecture notes, ADRs, and maintainer rationale that should not be mixed into public how-to documentation. Its absence must not block a shared workflow or cause internal rationale to be moved into public how-to documentation automatically.
+Use `repo-docs-internal/` for architecture notes, ADRs, and maintainer rationale that should not be mixed into public how-to documentation. Relevant records support a shared workflow without being prerequisites; an unavailable or irrelevant individual record must not cause its rationale to be moved into public how-to documentation automatically.
 
 ### Claude rules and commands
 

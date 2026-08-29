@@ -8,7 +8,7 @@ Use the root `CLAUDE.md` for concise, durable operational guidance such as:
 
 - how the monorepo is organized
 - where public docs live
-- whether an established internal-documentation home is available
+- where `repo-docs-internal/` holds supporting maintainer rationale
 - which command entrypoints are preferred
 - why edition detection is mandatory before UI-sensitive guidance or project-creation assumptions
 
@@ -26,4 +26,4 @@ Use Claude settings for permissions and execution environment, not as the primar
 
 ## Documentation boundary
 
-If a rule is important for people and agents to understand, it probably belongs in public docs too. When an established internal-documentation home exists, it may hold maintainer rationale rather than user-facing workflow. Do not infer or create such a home from edition identity alone.
+If a rule is important for people and agents to understand, it probably belongs in public docs too. `repo-docs-internal/` holds supporting maintainer rationale rather than user-facing workflow; individual records may vary by edition.

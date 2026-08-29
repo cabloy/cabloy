@@ -19,7 +19,7 @@ For contributor and automation workflows in this repository, prefer this order:
 1. inspect the root `package.json` and `npm run vona` entrypoint
 2. inspect Vona CLI command families such as `create:*`, `init:*`, `tools:*`, and `bin:*`
 3. inspect the current module or suite layout before creating new files manually
-4. use public docs for user-facing and agent-facing guidance; consult an established internal-documentation home only when the active repository provides one for maintainer rationale
+4. use public docs for user-facing and agent-facing guidance; consult relevant `repo-docs-internal/` records for supporting maintainer rationale
 
 ## Backend reading paths
 

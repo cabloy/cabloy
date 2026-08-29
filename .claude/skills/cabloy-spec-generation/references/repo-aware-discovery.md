@@ -82,7 +82,7 @@ Hand actual implementation-time synchronization to `cabloy-contract-loop`.
 | --- | --- |
 | Product requirements, SRS contracts, WBS, ATPs, suite ADRs, delivery status | `repo-specs/<suite>/` |
 | Reusable user-facing or agent-facing framework guidance | `repo-docs/` |
-| Cross-suite maintainer architecture, rationale, and engineering ADRs | An established internal-documentation home, when present; do not create one implicitly |
+| Cross-suite maintainer architecture, rationale, and engineering ADRs | `repo-docs-internal/`; individual records may vary by edition |
 | Short durable AI operating rules | `CLAUDE.md` |
 | Reusable Claude procedure | `.claude/skills/` |
 

@@ -116,7 +116,7 @@ Recommended order:
 
 The public router-tabs docs explain the shared frontend mechanism and how to use it.
 
-For maintainer-only design boundaries, maintenance invariants, and refactor safety rules, consult an established internal-documentation home when the active repository provides one. The public mechanism, layout, route-meta, and Admin/Web comparison guides remain the shared implementation baseline.
+For maintainer-only design boundaries, maintenance invariants, and refactor safety rules, consult relevant `repo-docs-internal/` records. The public mechanism, layout, route-meta, and Admin/Web comparison guides remain the shared implementation baseline.
 
 ## See also
 

@@ -15,8 +15,8 @@
     },
     {
       "id": 3,
-      "prompt": "Please help me decide whether this new AI guidance belongs in public docs, an internal-docs home when present, CLAUDE.md, or a skill. The guidance is about when to use npm run zova instead of hand-written scaffolding.",
-      "expected_output": "Routes shared operational guidance to public docs and Claude rules/skills as appropriate, treats an internal-docs home as optional maintainer material rather than an assumed requirement, and reinforces the CLI-first principle.",
+      "prompt": "Please help me decide whether this new AI guidance belongs in public docs, repo-docs-internal, CLAUDE.md, or a skill. The guidance is about when to use npm run zova instead of hand-written scaffolding.",
+      "expected_output": "Routes shared operational guidance to public docs and Claude rules/skills as appropriate, routes supporting maintainer rationale to repo-docs-internal, and reinforces the CLI-first principle without making an individual internal record a requirement.",
       "files": []
     },
     {
@@ -51,8 +51,8 @@
     },
     {
       "id": 9,
-      "prompt": "I am in a Cabloy checkout whose active repository currently has no repo-docs-internal directory. I need shared agent guidance and some maintainer rationale. Where should each part go?",
-      "expected_output": "Inspects the active repository path rather than making an edition-wide assumption, routes shared operational guidance to existing public docs and Claude rules or skills, and asks which established maintainer-rationale home to use rather than putting rationale into public docs automatically.",
+      "prompt": "I am in a Cabloy checkout where repo-docs-internal exists, but the named architecture record I expected is not available in this edition. I need shared agent guidance and some maintainer rationale. Where should each part go?",
+      "expected_output": "Recognizes repo-docs-internal as the internal documentation home, routes shared operational guidance to public docs and Claude rules or skills, and treats the missing named record as non-blocking rather than inventing a replacement or moving rationale into public docs automatically.",
       "files": []
     }
   ]
