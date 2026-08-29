@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1560" viewBox="0 0 1600 1560" role="img" aria-labelledby="chart-title chart-desc">
+  <title id="chart-title">A-Commerce WBS 交付路线甘特图</title>
+  <desc id="chart-desc">基于 A-Commerce 产品交付计划与工作分解结构的 WBS 级相对周次甘特图。显示从 WBS-10-01 到 WBS-80-04 的二十三项任务、显式依赖、全部已核验的当前状态，以及推定的相对工作时框。当前进度记录最后复核于二零二六年八月十五日，所有 WBS 项均为 verified，因此没有下一项待执行任务；任何新工作必须由单独批准的范围重新开启对应 WBS。</desc>
+  <metadata>
+    Source of sequencing and dependencies: repo-specs/a-commerce/pdp-wbs.md, Work Breakdown Structure.
+    Current status: repo-specs/a-commerce/progress.md, last reviewed 2026-08-15.
+    Acceptance evidence: repo-specs/a-commerce/test-plan.md, Acceptance Scenario Catalogue and Release Gates.
+    Relative timeboxes and intra-phase overlap are illustrative only. Specifications provide no effort estimates, durations, start dates, end dates, staffing plan, or calendar commitments.
+  </metadata>
+  <style>
+    :root {
+      --surface: #fcfcfb;
+      --page: #f9f9f7;
+      --ink: #0b0b0b;
+      --secondary: #52514e;
+      --muted: #898781;
+      --grid: #e1e0d9;
+      --axis: #c3c2b7;
+      --blue: #2a78d6;
+      --orange: #eb6834;
+      --aqua: #1baf7a;
+      --blue-wash: #eaf3fd;
+      --aqua-wash: #e7f7f0;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --surface: #1a1a19;
+        --page: #0d0d0d;
+        --ink: #ffffff;
+        --secondary: #c3c2b7;
+        --muted: #a09f99;
+        --grid: #2c2c2a;
+        --axis: #383835;
+        --blue: #3987e5;
+        --orange: #d95926;
+        --aqua: #199e70;
+        --blue-wash: #172435;
+        --aqua-wash: #122b23;
+      }
+    }
+    .canvas { fill: var(--page); }
+    .card { fill: var(--surface); stroke: var(--grid); stroke-width: 1; }
+    .title { fill: var(--ink); font: 700 27px system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: -0.5px; }
+    .subtitle { fill: var(--secondary); font: 14px system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .heading { fill: var(--ink); font: 700 13px system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .task { fill: var(--ink); font: 600 11.5px system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .wbs { fill: var(--ink); font: 700 11px system-ui, -apple-system, "Segoe UI", sans-serif; font-variant-numeric: tabular-nums; }
+    .dependency { fill: var(--secondary); font: 10px system-ui, -apple-system, "Segoe UI", sans-serif; font-variant-numeric: tabular-nums; }
+    .caption { fill: var(--secondary); font: 12px system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .small { fill: var(--muted); font: 10.5px system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .week { fill: var(--secondary); font: 600 10.5px system-ui, -apple-system, "Segoe UI", sans-serif; font-variant-numeric: tabular-nums; }
+    .status { fill: var(--secondary); font: 600 10px system-ui, -apple-system, "Segoe UI", sans-serif; }
+    /* WBS identifiers stay in the dedicated first column; bar labels are intentionally suppressed when a short planning timebox cannot contain them. */
+    .bar-code-light, .bar-code-dark { display: none; }
+    .grid { stroke: var(--grid); stroke-width: 1; shape-rendering: crispEdges; }
+    .axis { stroke: var(--axis); stroke-width: 1; shape-rendering: crispEdges; }
+    .bar { rx: 4; ry: 4; }
+    .row:focus { outline: 2px solid var(--ink); outline-offset: 2px; }
+  </style>
+
+  <rect class="canvas" width="1600" height="1560"/>
+  <rect class="card" x="32" y="28" width="1536" height="1504" rx="14"/>
+
+  <text class="title" x="72" y="84">A-Commerce WBS 交付路线</text>
+  <text class="subtitle" x="72" y="111">WBS 级任务、依赖门禁、相对实施时框与当前核验状态</text>
+
+  <g aria-label="图例" transform="translate(1030 66)">
+    <text class="small" x="0" y="0">工作类别</text>
+    <rect x="0" y="14" width="12" height="12" rx="3" fill="var(--blue)"/>
+    <text class="caption" x="19" y="25">基础与平台</text>
+    <rect x="114" y="14" width="12" height="12" rx="3" fill="var(--orange)"/>
+    <text class="caption" x="133" y="25">商业生命周期</text>
+    <rect x="263" y="14" width="12" height="12" rx="3" fill="var(--aqua)"/>
+    <text class="caption" x="282" y="25">质量、发布与语义呈现</text>
+  </g>
+
+  <rect x="72" y="142" width="1456" height="78" rx="8" fill="var(--aqua-wash)"/>
+  <text class="heading" x="96" y="171">当前执行结论</text>
+  <text class="caption" x="96" y="193">无下一项待执行 WBS：进度索引中全部 23 项 WBS 均为 <tspan font-weight="700">verified</tspan>（最后复核 2026-08-15）。</text>
+  <text class="caption" x="96" y="212">若新增工作获批准，应在下方寻找首个“依赖已满足且非 verified”的 WBS；阶段 80 重开时必须遵循其串行顺序。</text>
+  <g transform="translate(1300 164)" aria-label="已核验状态">
+    <circle cx="10" cy="10" r="10" fill="var(--surface)" stroke="var(--axis)"/>
+    <path d="M6 10 L9 13 L15 6" fill="none" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <text class="caption" x="26" y="14">23 / 23 已核验</text>
+  </g>
+
+  <!-- Table header and relative-week axis -->
+  <text class="small" x="72" y="261">WBS</text>
+  <text class="small" x="195" y="261">工作包 / 主要交付物</text>
+  <text class="small" x="470" y="261">显式依赖</text>
+  <text class="small" x="605" y="261">状态</text>
+  <text class="small" x="690" y="261">相对实施周（推定）</text>
+  <line class="axis" x1="690" y1="276" x2="1495" y2="276"/>
+
+  <g aria-label="相对周次刻度">
+    <line class="axis" x1="690" y1="276" x2="690" y2="1196"/>
+    <line class="grid" x1="725" y1="276" x2="725" y2="1196"/>
+    <line class="grid" x1="760" y1="276" x2="760" y2="1196"/>
+    <line class="grid" x1="795" y1="276" x2="795" y2="1196"/>
+    <line class="grid" x1="830" y1="276" x2="830" y2="1196"/>
+    <line class="grid" x1="865" y1="276" x2="865" y2="1196"/>
+    <line class="grid" x1="900" y1="276" x2="900" y2="1196"/>
+    <line class="grid" x1="935" y1="276" x2="935" y2="1196"/>
+    <line class="grid" x1="970" y1="276" x2="970" y2="1196"/>
+    <line class="grid" x1="1005" y1="276" x2="1005" y2="1196"/>
+    <line class="grid" x1="1040" y1="276" x2="1040" y2="1196"/>
+    <line class="grid" x1="1075" y1="276" x2="1075" y2="1196"/>
+    <line class="grid" x1="1110" y1="276" x2="1110" y2="1196"/>
+    <line class="grid" x1="1145" y1="276" x2="1145" y2="1196"/>
+    <line class="grid" x1="1180" y1="276" x2="1180" y2="1196"/>
+    <line class="grid" x1="1215" y1="276" x2="1215" y2="1196"/>
+    <line class="grid" x1="1250" y1="276" x2="1250" y2="1196"/>
+    <line class="grid" x1="1285" y1="276" x2="1285" y2="1196"/>
+    <line class="grid" x1="1320" y1="276" x2="1320" y2="1196"/>
+    <line class="grid" x1="1355" y1="276" x2="1355" y2="1196"/>
+    <line class="grid" x1="1390" y1="276" x2="1390" y2="1196"/>
+    <line class="grid" x1="1425" y1="276" x2="1425" y2="1196"/>
+    <line class="grid" x1="1460" y1="276" x2="1460" y2="1196"/>
+    <line class="axis" x1="1495" y1="276" x2="1495" y2="1196"/>
+    <text class="week" x="707.5" y="296" text-anchor="middle">1</text><text class="week" x="742.5" y="296" text-anchor="middle">2</text><text class="week" x="777.5" y="296" text-anchor="middle">3</text><text class="week" x="812.5" y="296" text-anchor="middle">4</text><text class="week" x="847.5" y="296" text-anchor="middle">5</text><text class="week" x="882.5" y="296" text-anchor="middle">6</text><text class="week" x="917.5" y="296" text-anchor="middle">7</text><text class="week" x="952.5" y="296" text-anchor="middle">8</text><text class="week" x="987.5" y="296" text-anchor="middle">9</text><text class="week" x="1022.5" y="296" text-anchor="middle">10</text><text class="week" x="1057.5" y="296" text-anchor="middle">11</text><text class="week" x="1092.5" y="296" text-anchor="middle">12</text><text class="week" x="1127.5" y="296" text-anchor="middle">13</text><text class="week" x="1162.5" y="296" text-anchor="middle">14</text><text class="week" x="1197.5" y="296" text-anchor="middle">15</text><text class="week" x="1232.5" y="296" text-anchor="middle">16</text><text class="week" x="1267.5" y="296" text-anchor="middle">17</text><text class="week" x="1302.5" y="296" text-anchor="middle">18</text><text class="week" x="1337.5" y="296" text-anchor="middle">19</text><text class="week" x="1372.5" y="296" text-anchor="middle">20</text><text class="week" x="1407.5" y="296" text-anchor="middle">21</text><text class="week" x="1442.5" y="296" text-anchor="middle">22</text><text class="week" x="1477.5" y="296" text-anchor="middle">23</text>
+  </g>
+
+  <!-- Row rules -->
+  <g class="grid">
+    <line x1="72" y1="316" x2="1495" y2="316"/><line x1="72" y1="355" x2="1495" y2="355"/><line x1="72" y1="394" x2="1495" y2="394"/><line x1="72" y1="433" x2="1495" y2="433"/><line x1="72" y1="472" x2="1495" y2="472"/><line x1="72" y1="511" x2="1495" y2="511"/><line x1="72" y1="550" x2="1495" y2="550"/><line x1="72" y1="589" x2="1495" y2="589"/><line x1="72" y1="628" x2="1495" y2="628"/><line x1="72" y1="667" x2="1495" y2="667"/><line x1="72" y1="706" x2="1495" y2="706"/><line x1="72" y1="745" x2="1495" y2="745"/><line x1="72" y1="784" x2="1495" y2="784"/><line x1="72" y1="823" x2="1495" y2="823"/><line x1="72" y1="862" x2="1495" y2="862"/><line x1="72" y1="901" x2="1495" y2="901"/><line x1="72" y1="940" x2="1495" y2="940"/><line x1="72" y1="979" x2="1495" y2="979"/><line x1="72" y1="1018" x2="1495" y2="1018"/><line x1="72" y1="1057" x2="1495" y2="1057"/><line x1="72" y1="1096" x2="1495" y2="1096"/><line x1="72" y1="1135" x2="1495" y2="1135"/><line x1="72" y1="1174" x2="1495" y2="1174"/><line x1="72" y1="1196" x2="1495" y2="1196"/>
+  </g>
+
+  <!-- WBS rows: all widths and overlap are illustrative planning timeboxes, not source estimates. -->
+  <g class="row" aria-label="WBS-10-01: freeze product and technical baseline; no dependencies; verified" tabindex="0"><title>WBS-10-01 · 冻结产品与技术基线 · 无依赖 · 已核验</title><text class="wbs" x="72" y="340">WBS-10-01</text><text class="task" x="195" y="340">冻结产品与技术基线</text><text class="dependency" x="470" y="340">无</text><circle cx="612" cy="336" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 336 L611 338 L616 332" fill="none" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><text class="status" x="625" y="340">已核验</text><rect class="bar" x="693" y="326" width="29" height="20" fill="var(--blue)"/></g>
+  <g class="row" aria-label="WBS-20-01: create A-Commerce suite and capability modules; depends on WBS-10-01; verified" tabindex="0"><title>WBS-20-01 · 创建 suite 与能力模块 · 依赖 WBS-10-01 · 已核验</title><text class="wbs" x="72" y="379">WBS-20-01</text><text class="task" x="195" y="379">创建 suite 与能力模块</text><text class="dependency" x="470" y="379">WBS-10-01</text><circle cx="612" cy="375" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 375 L611 377 L616 371" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="379">已核验</text><rect class="bar" x="728" y="365" width="29" height="20" fill="var(--blue)"/></g>
+  <g class="row" aria-label="WBS-20-02: add independent Commerce SSR sites and flavors; depends on WBS-10-01; verified" tabindex="0"><title>WBS-20-02 · 添加独立 Commerce SSR 站点与 flavor · 依赖 WBS-10-01 · 已核验</title><text class="wbs" x="72" y="418">WBS-20-02</text><text class="task" x="195" y="418">添加独立 Commerce SSR 站点与 flavor</text><text class="dependency" x="470" y="418">WBS-10-01</text><circle cx="612" cy="414" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 414 L611 416 L616 410" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="418">已核验</text><rect class="bar" x="728" y="404" width="64" height="20" fill="var(--blue)"/></g>
+  <g class="row" aria-label="WBS-20-03: establish Commerce contract loop checks; depends on WBS-10-01; verified" tabindex="0"><title>WBS-20-03 · 建立 Commerce contract-loop 检查 · 依赖 WBS-10-01 · 已核验</title><text class="wbs" x="72" y="457">WBS-20-03</text><text class="task" x="195" y="457">建立 Commerce contract-loop 检查</text><text class="dependency" x="470" y="457">WBS-10-01</text><circle cx="612" cy="453" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 453 L611 455 L616 449" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="457">已核验</text><rect class="bar" x="763" y="443" width="29" height="20" fill="var(--blue)"/></g>
+  <g class="row" aria-label="WBS-30-01: implement catalogue and SKU lifecycle; depends on WBS-20 star; verified" tabindex="0"><title>WBS-30-01 · 实现目录与 SKU 生命周期 · 依赖 WBS-20-* · 已核验</title><text class="wbs" x="72" y="496">WBS-30-01</text><text class="task" x="195" y="496">实现目录与 SKU 生命周期</text><text class="dependency" x="470" y="496">WBS-20-*</text><circle cx="612" cy="492" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 492 L611 494 L616 488" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="496">已核验</text><rect class="bar" x="798" y="482" width="64" height="20" fill="var(--blue)"/></g>
+  <g class="row" aria-label="WBS-30-02: implement one warehouse stock and audit foundation; depends on WBS-20 star; verified" tabindex="0"><title>WBS-30-02 · 实现单仓库存与审计基础 · 依赖 WBS-20-* · 已核验</title><text class="wbs" x="72" y="535">WBS-30-02</text><text class="task" x="195" y="535">实现单仓库存与审计基础</text><text class="dependency" x="470" y="535">WBS-20-*</text><circle cx="612" cy="531" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 531 L611 533 L616 527" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="535">已核验</text><rect class="bar" x="798" y="521" width="64" height="20" fill="var(--blue)"/></g>
+  <g class="row" aria-label="WBS-40-01: implement authenticated customer cart and address management; depends on WBS-30 star; verified" tabindex="0"><title>WBS-40-01 · 实现已认证客户购物车与地址管理 · 依赖 WBS-30-* · 已核验</title><text class="wbs" x="72" y="574">WBS-40-01</text><text class="task" x="195" y="574">客户购物车与地址管理</text><text class="dependency" x="470" y="574">WBS-30-*</text><circle cx="612" cy="570" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 570 L611 572 L616 566" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="574">已核验</text><rect class="bar" x="868" y="560" width="64" height="20" fill="var(--orange)"/></g>
+  <g class="row" aria-label="WBS-40-02: implement fixed amount coupon lifecycle; depends on WBS-30 star; verified" tabindex="0"><title>WBS-40-02 · 实现固定金额优惠券生命周期 · 依赖 WBS-30-* · 已核验</title><text class="wbs" x="72" y="613">WBS-40-02</text><text class="task" x="195" y="613">固定金额优惠券生命周期</text><text class="dependency" x="470" y="613">WBS-30-*</text><circle cx="612" cy="609" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 609 L611 611 L616 605" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="613">已核验</text><rect class="bar" x="868" y="599" width="64" height="20" fill="var(--orange)"/></g>
+  <g class="row" aria-label="WBS-40-03: implement atomic order creation and reservation expiry; depends on WBS-30 star; verified" tabindex="0"><title>WBS-40-03 · 实现原子订单创建与预留过期 · 依赖 WBS-30-* · 已核验</title><text class="wbs" x="72" y="652">WBS-40-03</text><text class="task" x="195" y="652">原子订单创建与预留过期</text><text class="dependency" x="470" y="652">WBS-30-*</text><circle cx="612" cy="648" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 648 L611 650 L616 644" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="652">已核验</text><rect class="bar" x="938" y="638" width="64" height="20" fill="var(--orange)"/></g>
+  <g class="row" aria-label="WBS-40-04: split Address into read only Admin and Web self service contracts; depends on WBS-20-03 and WBS-40-01; verified" tabindex="0"><title>WBS-40-04 · 拆分 Address Admin/Web 合约 · 依赖 WBS-20-03 与 WBS-40-01 · 已核验</title><text class="wbs" x="72" y="691">WBS-40-04</text><text class="task" x="195" y="691">拆分 Address Admin / Web 合约</text><text class="dependency" x="470" y="691">20-03 + 40-01</text><circle cx="612" cy="687" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 687 L611 689 L616 683" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="691">已核验</text><rect class="bar" x="938" y="677" width="64" height="20" fill="var(--orange)"/></g>
+  <g class="row" aria-label="WBS-50-01: implement Commerce owned mock payment attempts; depends on WBS-40 star; verified" tabindex="0"><title>WBS-50-01 · 实现 Commerce-owned mock 支付尝试 · 依赖 WBS-40-* · 已核验</title><text class="wbs" x="72" y="730">WBS-50-01</text><text class="task" x="195" y="730">Commerce-owned mock 支付尝试</text><text class="dependency" x="470" y="730">WBS-40-*</text><circle cx="612" cy="726" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 726 L611 728 L616 722" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="730">已核验</text><rect class="bar" x="1008" y="716" width="64" height="20" fill="var(--orange)"/></g>
+  <g class="row" aria-label="WBS-50-02: deliver checkout and personal centre order surfaces; depends on WBS-40 star; verified" tabindex="0"><title>WBS-50-02 · 交付结账与个人中心订单界面 · 依赖 WBS-40-* · 已核验</title><text class="wbs" x="72" y="769">WBS-50-02</text><text class="task" x="195" y="769">交付结账与个人中心订单界面</text><text class="dependency" x="470" y="769">WBS-40-*</text><circle cx="612" cy="765" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 765 L611 767 L616 761" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="769">已核验</text><rect class="bar" x="1008" y="755" width="64" height="20" fill="var(--orange)"/></g>
+  <g class="row" aria-label="WBS-60-01: deliver operator order workbench and manual shipment; depends on WBS-50 star; verified" tabindex="0"><title>WBS-60-01 · 交付运营订单工作台与人工发货 · 依赖 WBS-50-* · 已核验</title><text class="wbs" x="72" y="808">WBS-60-01</text><text class="task" x="195" y="808">运营订单工作台与人工发货</text><text class="dependency" x="470" y="808">WBS-50-*</text><circle cx="612" cy="804" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 804 L611 806 L616 800" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="808">已核验</text><rect class="bar" x="1078" y="794" width="64" height="20" fill="var(--orange)"/></g>
+  <g class="row" aria-label="WBS-60-02: deliver request approval and mock execution of refunds; depends on WBS-50 star; verified" tabindex="0"><title>WBS-60-02 · 交付退款申请、审批与 mock 执行 · 依赖 WBS-50-* · 已核验</title><text class="wbs" x="72" y="847">WBS-60-02</text><text class="task" x="195" y="847">退款申请、审批与 mock 执行</text><text class="dependency" x="470" y="847">WBS-50-*</text><circle cx="612" cy="843" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 843 L611 845 L616 839" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="847">已核验</text><rect class="bar" x="1113" y="833" width="64" height="20" fill="var(--orange)"/></g>
+  <g class="row" aria-label="WBS-70-01: complete migrations and contract synchronization; depends on WBS-20 through WBS-60; verified" tabindex="0"><title>WBS-70-01 · 完成迁移与契约同步 · 依赖 WBS-20-* 至 WBS-60-* · 已核验</title><text class="wbs" x="72" y="886">WBS-70-01</text><text class="task" x="195" y="886">完成迁移与契约同步</text><text class="dependency" x="470" y="886">WBS-20–60-*</text><circle cx="612" cy="882" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 882 L611 884 L616 878" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="886">已核验</text><rect class="bar" x="1183" y="872" width="29" height="20" fill="var(--aqua)"/></g>
+  <g class="row" aria-label="WBS-70-02: run focused and end to end verification; depends on WBS-20 through WBS-60; verified" tabindex="0"><title>WBS-70-02 · 运行聚焦与端到端验证 · 依赖 WBS-20-* 至 WBS-60-* · 已核验</title><text class="wbs" x="72" y="925">WBS-70-02</text><text class="task" x="195" y="925">运行聚焦与端到端验证</text><text class="dependency" x="470" y="925">WBS-20–60-*</text><circle cx="612" cy="921" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 921 L611 923 L616 917" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="925">已核验</text><rect class="bar" x="1183" y="911" width="64" height="20" fill="var(--aqua)"/></g>
+  <g class="row" aria-label="WBS-70-03: establish Coupon Template semantic form layout reference; depends on WBS-40-02 and WBS-70-01; verified" tabindex="0"><title>WBS-70-03 · 建立 Coupon Template 语义表单布局参考 · 依赖 WBS-40-02 与 WBS-70-01 · 已核验</title><text class="wbs" x="72" y="964">WBS-70-03</text><text class="task" x="195" y="964">Coupon Template 语义表单参考</text><text class="dependency" x="470" y="964">40-02 + 70-01</text><circle cx="612" cy="960" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 960 L611 962 L616 956" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="964">已核验</text><rect class="bar" x="1218" y="950" width="29" height="20" fill="var(--aqua)"/></g>
+  <g class="row" aria-label="WBS-70-04: codify reusable semantic presentation contract; depends on WBS-10-01 and WBS-70-03; verified" tabindex="0"><title>WBS-70-04 · 固化可复用语义呈现契约 · 依赖 WBS-10-01 与 WBS-70-03 · 已核验</title><text class="wbs" x="72" y="1003">WBS-70-04</text><text class="task" x="195" y="1003">固化可复用语义呈现契约</text><text class="dependency" x="470" y="1003">10-01 + 70-03</text><circle cx="612" cy="999" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 999 L611 1001 L616 995" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="1003">已核验</text><rect class="bar" x="1218" y="989" width="29" height="20" fill="var(--aqua)"/></g>
+  <g class="row" aria-label="WBS-80-00: establish resumable rollout controls; depends on WBS-70-04; verified" tabindex="0"><title>WBS-80-00 · 建立可恢复 rollout 控制 · 依赖 WBS-70-04 · 已核验</title><text class="wbs" x="72" y="1042">WBS-80-00</text><text class="task" x="195" y="1042">建立可恢复 rollout 控制</text><text class="dependency" x="470" y="1042">WBS-70-04</text><circle cx="612" cy="1038" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 1038 L611 1040 L616 1034" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="1042">已核验</text><rect class="bar" x="1253" y="1028" width="29" height="20" fill="var(--aqua)"/></g>
+  <g class="row" aria-label="WBS-80-01: deliver Catalogue Admin semantic presentation wave, Category then Product then SKU serially; depends on WBS-80-00 and WBS-70-03/04 retained evidence; verified" tabindex="0"><title>WBS-80-01 · 交付 Catalogue Admin 语义呈现 wave · 目录、产品、SKU 串行 · 依赖 WBS-80-00 及 70-03/04 保留证据 · 已核验</title><text class="wbs" x="72" y="1081">WBS-80-01</text><text class="task" x="195" y="1081">Catalogue Admin wave（目录→产品→SKU）</text><text class="dependency" x="470" y="1081">80-00 + 70-03/04</text><circle cx="612" cy="1077" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 1077 L611 1079 L616 1073" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="1081">已核验</text><rect class="bar" x="1288" y="1067" width="99" height="20" fill="var(--aqua)"/></g>
+  <g class="row" aria-label="WBS-80-02: deliver Order Admin semantic workbench; depends on WBS-80-01; verified" tabindex="0"><title>WBS-80-02 · 交付 Order Admin 语义工作台 · 依赖 WBS-80-01 · 已核验</title><text class="wbs" x="72" y="1120">WBS-80-02</text><text class="task" x="195" y="1120">Order Admin 语义工作台</text><text class="dependency" x="470" y="1120">WBS-80-01</text><circle cx="612" cy="1116" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 1116 L611 1118 L616 1112" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="1120">已核验</text><rect class="bar" x="1393" y="1106" width="29" height="20" fill="var(--aqua)"/></g>
+  <g class="row" aria-label="WBS-80-03: deliver Stock Balance and Stock Audit Admin presentation; depends on WBS-80-02; verified" tabindex="0"><title>WBS-80-03 · 交付库存余额与审计 Admin 呈现 · 依赖 WBS-80-02 · 已核验</title><text class="wbs" x="72" y="1159">WBS-80-03</text><text class="task" x="195" y="1159">Stock Balance / Audit Admin 呈现</text><text class="dependency" x="470" y="1159">WBS-80-02</text><circle cx="612" cy="1155" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 1155 L611 1157 L616 1151" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="1159">已核验</text><rect class="bar" x="1428" y="1145" width="29" height="20" fill="var(--aqua)"/></g>
+  <g class="row" aria-label="WBS-80-04: deliver read only Address Admin presentation; depends on WBS-80-03; verified" tabindex="0"><title>WBS-80-04 · 交付只读 Address Admin 呈现 · 依赖 WBS-80-03 · 已核验</title><text class="wbs" x="72" y="1193">WBS-80-04</text><text class="task" x="195" y="1193">只读 Address Admin 呈现</text><text class="dependency" x="470" y="1193">WBS-80-03</text><circle cx="612" cy="1189" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M609 1189 L611 1191 L616 1185" fill="none" stroke="var(--ink)" stroke-width="1.4"/><text class="status" x="625" y="1193">已核验</text><rect class="bar" x="1463" y="1179" width="29" height="20" fill="var(--aqua)"/></g>
+
+  <g aria-label="执行规则与验收里程碑">
+    <rect x="72" y="1230" width="684" height="218" rx="9" fill="var(--surface)" stroke="var(--grid)"/>
+    <text class="heading" x="96" y="1264">如何用图确定“下一步”</text>
+    <text class="caption" x="96" y="1294">1. 跳过状态为 verified 的工作包。</text>
+    <text class="caption" x="96" y="1320">2. 在剩余任务中，选择所有“显式依赖”均已 verified 的最前一项。</text>
+    <text class="caption" x="96" y="1346">3. 不把时间条的宽度、同行重叠或周次解读为工期、并行授权或日历承诺。</text>
+    <text class="caption" x="96" y="1384">当前结果：没有待执行项。新范围获批后，更新权威 WBS 与 progress 索引，再用此规则选取下一项。</text>
+    <text class="small" x="96" y="1422">阶段 80 的额外规则：80-00 → 80-01（目录 → 产品 → SKU）→ 80-02 → 80-03 → 80-04，严格串行。</text>
+
+    <rect x="780" y="1230" width="715" height="218" rx="9" fill="var(--surface)" stroke="var(--grid)"/>
+    <text class="heading" x="804" y="1264">阶段验收里程碑</text>
+    <text class="caption" x="804" y="1294">P20 · ATP-SSR-01 / ATP-SSR-02 / ATP-CTR-01</text>
+    <text class="caption" x="804" y="1320">P30–40 · ATP-TEN-01 / ATP-INV-01 / ATP-TXN-01 / ATP-CPN-01 / ATP-EXP-01 / ATP-SNAP-01</text>
+    <text class="caption" x="804" y="1346">P50–60 · ATP-PAY-01 / ATP-SHP-01 / ATP-RFD-01 / ATP-RACE-01</text>
+    <text class="caption" x="804" y="1372">P70 · ATP-FIA-01 / ATP-SPC-01；P80 · ATP-SPC-02 至 ATP-SPC-05</text>
+    <text class="small" x="804" y="1422">WBS 顺序与依赖来自 PDP/WBS；状态来自派生进度索引，并不替代权威需求与验收记录。</text>
+  </g>
+
+  <line class="grid" x1="72" y1="1480" x2="1495" y2="1480"/>
+  <text class="small" x="72" y="1504">依据：pdp-wbs.md（顺序、依赖、完成检查） · progress.md（状态，最后复核 2026-08-15） · test-plan.md（ATP 与发布证据）</text>
+  <text class="small" x="1495" y="1504" text-anchor="end">相对时框及重叠为推定，不构成日历、工期或并行承诺</text>
+</svg>
