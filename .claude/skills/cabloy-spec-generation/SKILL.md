@@ -1,6 +1,6 @@
 ---
 name: cabloy-spec-generation
-description: Use this skill whenever the user asks to create, bootstrap, or maintain a repository-native spec set for a new Cabloy business suite or substantial capability, including requests for a PRD, SRS, PDP/WBS, test plan, progress register, suite ADR, or a complete `repo-specs/<suite>/` document set. It turns a confirmed domain boundary into linked product, technical, delivery, acceptance, and decision records. Trigger even when the user says “write the specs” or “plan the suite” without naming every document. Do not use it to replace `cabloy-domain-planning` for unresolved suite naming, scaffold skills for implementation, or `cabloy-contract-loop` for concrete synchronization work.
+description: This skill should be used for requests to create or maintain a Cabloy `repo-specs/<suite>/` set, including a PRD, SRS, PDP/WBS, test plan, progress register, suite ADR, or “write the specs”/“plan the suite.” It links product, technical, delivery, acceptance, and decision records after the domain boundary is confirmed. Route unresolved naming to `cabloy-domain-planning`, implementation to scaffold skills, and concrete synchronization to `cabloy-contract-loop`.
 ---
 
 # Cabloy Repository Specs
@@ -103,7 +103,7 @@ Before creating or replacing records, summarize and request explicit confirmatio
 - unresolved decisions and explicit `TODO(confirm)` gates;
 - the initial status policy: delivery is `not-started` unless implementation evidence already exists.
 
-Do not treat silence as approval. Once confirmed, generate the records in authority order. If the user asks only for a draft, mark it `Proposed` and retain unresolved decisions rather than implying acceptance.
+Do not treat silence as approval. Once confirmed, generate the records in authority order. Confirmation to generate records does not accept a durable ADR decision: retain its ADR as `Proposed` unless the user explicitly accepts that decision. If the user asks only for a draft, or has not explicitly accepted a durable boundary, retain unresolved decisions and do not imply acceptance.
 
 ## Step 6: Generate the mandatory document set
 
@@ -131,7 +131,7 @@ Use the templates and authority rules in `references/repo-specs-document-set.md`
 - `progress.md` owns derived status, WBS execution rows, blockers, open decisions, evidence pointers, and next proof only;
 - `decisions/0001-*.md` owns the durable initial boundary decision, alternatives, consequences, and decision gates.
 
-Create records in a way that makes every sibling link resolvable from the final directory. Use stable prefixes consistently, such as `PRD-<DOMAIN>-*`, `SRS-<DOMAIN>-*`, `WBS-<DOMAIN>-<PHASE>-*`, and `ATP-<DOMAIN>-*`. Choose a concise domain prefix and use it consistently across all matrices.
+Create records in a way that makes every sibling link resolvable from the final directory. Use stable prefixes consistently, such as `PRD-<DOMAIN>-*`, `SRS-<DOMAIN>-*`, `WBS-<DOMAIN>-<PHASE>-*`, and `ATP-<DOMAIN>-*`. Choose a concise domain prefix and use it consistently across all matrices. Define every exact SRS ID used in generated planning records as one formal contract in `srs.md`, and every exact ATP ID as one scenario with a procedure in `test-plan.md`, before any downstream record references it. Wildcards and ranges are compact summaries of already-defined IDs; they never substitute for a formal definition.
 
 ## Step 7: Add optional records only when justified
 
@@ -171,8 +171,12 @@ Before reporting completion, verify:
 6. no downstream file silently changes an upstream product, technical, or ADR decision;
 7. every `verified` claim has observed revision, environment, exact command/procedure, result, and redacted evidence location;
 8. initial rows remain `not-started`, `deferred`, or explicitly `blocked` unless existing observed evidence was intentionally carried forward;
-9. local Markdown links and referenced paths resolve;
-10. prospective commands are real commands discovered in the active repository, or clearly marked as commands to confirm later.
+9. every exact `PRD-*`, `SRS-*`, `WBS-*`, and `ATP-*` reference in the planning authority set resolves to exactly one formal definition in its owning document; ranges and wildcards are aggregation notation only and cannot satisfy this check;
+10. README language distinguishes observed facts, confirmed inputs, proposed targets, and `TODO(confirm)` decisions, and does not upgrade a `Proposed` ADR into a confirmed or accepted durable boundary;
+11. local Markdown links and referenced paths resolve;
+12. prospective commands are real commands discovered in the active repository, or clearly marked as commands to confirm later.
+
+If the exact-ID or status-consistency audit fails, correct the authoritative planning records and rerun it before reporting generation complete. This is a static planning check, not ATP execution: do not create evidence or claim `verified` for it.
 
 Do not run `npm run init`, reset a database, scaffold code, or execute deployment/provider operations as an automatic consequence of writing planning records. Do not report those activities as evidence.
 

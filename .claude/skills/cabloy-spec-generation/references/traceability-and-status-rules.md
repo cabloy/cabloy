@@ -16,6 +16,18 @@ EVD-<DOMAIN>-<CAPABILITY>-01   # only after evidence is observed
 
 A shorter `PRD-<DOMAIN>-01` / `SRS-<DOMAIN>-01` form is acceptable for a small capability. IDs must be stable: do not renumber existing records merely to make a table look tidy. If an existing suite already has a convention, preserve it.
 
+## Identifier registry and reference validation
+
+Before reporting a generated baseline or an authority update complete, build a temporary registry. Collect formal definitions from their owning documents (`prd.md`, `srs.md`, `pdp-wbs.md`, and `test-plan.md`) and scan every generated non-evidence Markdown record for references, including core records, `decisions/*.md`, presentation/rollout records, phase indexes, and `runbooks/*.md`.
+
+- A **formal definition** is one atomic requirement, contract, WBS task, or ATP scenario declaration in its owning document. A prose mention, matrix cell, evidence-record format example, range, wildcard, template placeholder such as `<DOMAIN>`, or generic ellipsis is not a definition.
+- A **concrete reference** names one complete instantiated ID, such as `SRS-<DOMAIN>-CAT-01` or `ATP-<DOMAIN>-CON-01`. It must resolve to exactly one formal definition in its owning document. Do not create duplicate definitions or dangling concrete references.
+- A wildcard or range, such as `SRS-<DOMAIN>-CAT-*` or `ATP-<DOMAIN>-01`–`03`, is aggregation notation only. It may summarize already-defined records, but cannot define them or satisfy an exact reference/traceability requirement.
+- Preserve an existing suite's ID convention when extending it. For a new baseline, use the chosen convention consistently across definitions and references.
+- Report missing owners, duplicate definitions, and orphaned material definitions separately; correct the authoritative records before completion.
+- Validate the canonical PRD -> SRS -> WBS -> ATP chain by exact defined IDs, while allowing a many-to-many relationship where the matrices make it explicit.
+- This static audit covers generated planning records only. Exclude `evidence/`: evidence is created after observed execution and cannot establish or repair planning authority.
+
 ## Canonical chain
 
 Maintain this chain across the core records:
@@ -61,6 +73,17 @@ Downstream records summarize or operationalize authority; they do not silently o
 
 For a newly created plan, initialize delivery rows as `not-started`, `deferred`, or `blocked` as appropriate. Creating Markdown files never makes implementation `implementation-complete` or `verified`.
 
+### README and ADR decision-status consistency
+
+Keep the status domain explicit:
+
+- **Observed current-source facts** are repository facts that have been inspected and cited.
+- **Confirmed inputs** are values explicitly supplied or confirmed by the user.
+- **Proposed targets** and durable boundaries remain proposed while their governing ADR is `Proposed`.
+- **Accepted durable decisions** require explicit confirmation and an `Accepted` governing ADR.
+
+A README may summarize observed facts and confirmed inputs, but it must not label a proposed target baseline, topology, scope boundary, or durable decision as `Confirmed` or `Accepted` while its governing ADR remains `Proposed`. Use neutral wording such as “Product and Technical Baseline,” and label individual entries by their actual state. The ADR remains authoritative; a README summary never upgrades its status.
+
 ## Evidence requirements
 
 A retained evidence entry should include:
@@ -100,6 +123,9 @@ Do not:
 - create empty evidence records just to make the traceability chain appear complete;
 - mark progress `implementation-complete` because the planning set was generated;
 - place a new requirement only in `progress.md`;
+- reference an exact SRS or ATP ID that has no formal definition in `srs.md` or `test-plan.md`;
+- use a wildcard, range, prose mention, or evidence-format example as if it defined an atomic PRD, SRS, WBS, or ATP record;
+- describe a proposed target or durable boundary as confirmed/accepted in README while its governing ADR remains `Proposed`;
 - let an optional presentation matrix, runbook, or rollout record redefine PRD/SRS authority;
 - introduce OpenSpec or another parallel authority by duplicating these records without a repository-level decision defining ownership, migration, history, traceability, and duplicate-prevention rules.
 

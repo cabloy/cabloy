@@ -42,13 +42,13 @@ Use the following sections:
 1. `# <Suite> Internal Planning`
 2. introductory statement that this is maintainer-facing planning material;
 3. `## Reading Order` with ordered links to every core document and justified extension;
-4. `## Confirmed Product and Technical Baseline` with a compact table for suite identity, scope, tenancy, audiences, sites/flavors, and major constraints;
+4. `## Product and Technical Baseline` with a compact table for suite identity, scope, tenancy, audiences, sites/flavors, and major constraints;
 5. `## Current or Intended Topology` with Vona/Zova paths and capability ownership;
 6. `## Document Authority` with the authority map and conflict rule;
 7. `## Traceability Chain and Status Rules`;
 8. `## Related Framework Records`.
 
-The README is an index and baseline summary. Keep detailed business requirements in the PRD and detailed contracts in the SRS.
+The README is an index and baseline summary. Keep detailed business requirements in the PRD and detailed contracts in the SRS. Label each baseline entry as a confirmed input, observed current-source fact, proposed target, or `TODO(confirm)` decision. The README must not call a proposed target or durable boundary confirmed/accepted while its governing ADR remains `Proposed`; only explicitly accepted decisions may use that wording.
 
 ## PRD template contract
 
@@ -101,7 +101,7 @@ Use identifiers such as `SRS-<DOMAIN>-*`. Define the technical facts needed to i
 - generated API consumers and forward/reverse contract-loop obligations;
 - frontend model/resource ownership, audience-specific contracts, route names/params, SSR privacy, and hydration behavior when applicable.
 
-Mark observed repository facts separately from proposed target contracts. Never pretend an unverified path, operation, flavor, or module exists.
+Mark observed repository facts separately from proposed target contracts. Every exact SRS ID named in PRD/WBS/test-plan traceability must have one explicit SRS contract definition here; a matrix mention, wildcard, or range is not a definition. Never pretend an unverified path, operation, flavor, or module exists.
 
 ## PDP/WBS template contract
 
@@ -144,7 +144,7 @@ Use:
 10. `## Release Closure Gate`;
 11. `## Related Records`.
 
-Use `ATP-<DOMAIN>-<CAPABILITY>-01` identifiers. Each scenario links to PRD/SRS/WBS records and defines scope, setup, procedure, expected result, and minimum retained proof. Include appropriate negative, authorization, tenant-isolation, state-transition, rollback, concurrency, idempotency, contract-generation, SSR/hydration, migration, and browser tests for the confirmed risk profile.
+Use `ATP-<DOMAIN>-<CAPABILITY>-01` identifiers. Each scenario links to PRD/SRS/WBS records and defines scope, setup, procedure, expected result, and minimum retained proof. Every exact ATP ID named in WBS or traceability records must have one scenario declaration here; a matrix mention, wildcard, range, or evidence-format example is not a scenario. Include appropriate negative, authorization, tenant-isolation, state-transition, rollback, concurrency, idempotency, contract-generation, SSR/hydration, migration, and browser tests for the confirmed risk profile.
 
 Every evidence record should retain, at minimum:
 
@@ -252,4 +252,4 @@ Every core document links to the README and relevant peers. Maintain a compact m
 | --- | --- | --- | --- | --- | --- |
 | `<capability>` | `PRD-...` | `SRS-...` | `WBS-...` | `ATP-...` | `progress.md` / evidence link |
 
-Every material product requirement needs at least one technical contract, delivery item, and executable acceptance scenario. Evidence is added only after execution.
+Every material product requirement needs at least one technical contract, delivery item, and executable acceptance scenario. Before reporting generation complete, statically audit exact-ID referential integrity and README/ADR decision-status consistency across the planning authority set. Exclude `evidence/` from this static audit: evidence is added only after execution.

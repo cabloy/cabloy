@@ -30,6 +30,24 @@
       "prompt": "Our existing suite PRD says the first release is one tenant and no marketplace. I want to add an OpenSpec directory and update the WBS directly to support multiple merchants. How should the repository planning records change?",
       "expected_output": "Treats the existing PRD and repository-native records as authoritative, rejects a parallel OpenSpec authority absent a new repository-level decision, requires the product/technical/ADR authority to change first, and then propagates updates to WBS, ATP, progress, and evidence assumptions.",
       "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Create a complete planning baseline for a new inventory suite. In the WBS, refer to SRS-INV-STOCK-01 and ATP-INV-CON-01 even if the SRS and test plan only mention those IDs in a matrix or generic prose. Do not add implementation or evidence.",
+      "expected_output": "Defines every exact SRS ID used downstream as an explicit SRS contract and every exact ATP ID as a test-plan scenario with traceability, setup, procedure, expected result, and minimum proof. It treats wildcard/range/matrix mentions as aggregation notation rather than definitions, runs a static planning-authority ID audit before completion, and does not create evidence for that audit.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Draft a new suite baseline with an unresolved tenancy boundary. Keep ADR 0001 Proposed, but title the README section Confirmed Product and Technical Baseline so it reads more decisively.",
+      "expected_output": "Keeps ADR 0001 Proposed absent explicit acceptance and uses neutral README baseline wording that distinguishes observed facts, confirmed inputs, proposed targets, and TODO(confirm) decisions. It refuses to let README language upgrade the proposed durable boundary, keeps delivery status accurate, and does not fabricate evidence.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "Generate a proposed suite baseline with an optional payment-provider runbook. The user confirms the planning inputs and output path but has not accepted the provider boundary ADR. The runbook traceability table names ATP-PAY-WEBHOOK-01, but the test plan does not define that scenario.",
+      "expected_output": "Treats confirmation to generate records as distinct from accepting the ADR, retains the provider boundary as Proposed, and uses neutral README wording. It scans the optional runbook as a generated non-evidence record, rejects the dangling ATP-PAY-WEBHOOK-01 reference until a formal test-plan scenario exists, and does not create execution evidence.",
+      "files": []
     }
   ]
 }
