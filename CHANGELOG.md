@@ -1,5 +1,19 @@
 # Changelog
 
+## 5.1.153
+
+### Features
+
+- Add an option to disable Suspense during initialization.
+- Add support for bypassing the persister.
+
+### Improvements
+
+- Update table cell action summary handling.
+- Improve query summary Suspense documentation.
+- Update state data best-practices documentation.
+- Enhance internal repository documentation and specification-generation guidance.
+
 ## 5.1.152
 
 ### Improvements
