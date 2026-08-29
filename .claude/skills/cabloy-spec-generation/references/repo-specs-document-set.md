@@ -56,7 +56,7 @@ Use the following sections:
 
 The `## Reading Order` section must also link `implementation-gantt.svg` and `implementation-burndown.svg` as derived delivery views. Their language defaults to the language used by this README, and the generator applies that choice consistently to labels, accessibility text, and metadata.
 
-The README is an index and baseline summary. Keep detailed business requirements in the PRD and detailed contracts in the SRS. Label each baseline entry as a confirmed input, observed current-source fact, proposed target, or `TODO(confirm)` decision. The README must not call a proposed target or durable boundary confirmed/accepted while its governing ADR remains `Proposed`; only explicitly accepted decisions may use that wording.
+The README is an index and baseline summary. Keep detailed business requirements in the PRD and detailed contracts in the SRS. For each Web, Admin, or other site audience, summarize the selected shared/independent/no-site strategy and its certainty as a confirmed input, observed current-source fact, proposed target, or `TODO(confirm)` decision. README may summarize cited identifiers but does not establish their authority. The README must not call a proposed target or durable boundary confirmed/accepted while its governing ADR remains `Proposed`; only explicitly accepted decisions may use that wording.
 
 ## PRD template contract
 
@@ -73,7 +73,7 @@ Use:
 9. `## Requirement Traceability`;
 10. `## Related Records`.
 
-Requirements state observable business outcomes and use stable identifiers. Preferred forms are `PRD-<DOMAIN>-01` or `PRD-<DOMAIN>-<CAPABILITY>-01`. Avoid putting DTO syntax, table names, route mechanics, lock strategy, or test commands in the PRD. Those belong downstream.
+Requirements state observable business outcomes and use stable identifiers. Preferred forms are `PRD-<DOMAIN>-01` or `PRD-<DOMAIN>-<CAPABILITY>-01`. When site strategy affects the product, describe the intended audience/channel scope and journey, not site IDs, route mechanics, flavors, configuration, lock strategy, DTO syntax, table names, or test commands. Those belong downstream.
 
 A typical requirement should identify actor, allowed outcome, key boundary, and observable acceptance without dictating implementation:
 
@@ -109,7 +109,9 @@ Use identifiers such as `SRS-<DOMAIN>-*`. Define the technical facts needed to i
 - generated API consumers and forward/reverse contract-loop obligations;
 - frontend model/resource ownership, audience-specific contracts, route names/params, SSR privacy, and hydration behavior when applicable.
 
-Mark observed repository facts separately from proposed target contracts. Every exact SRS ID named in PRD/WBS/test-plan traceability must have one explicit SRS contract definition here; a matrix mention, wildcard, or range is not a definition. Never pretend an unverified path, operation, flavor, or module exists.
+For each user-facing audience, the SRS owns the shared-versus-independent site topology, its relation to the domain/persistence boundary, and the audience-specific API/DTO, server-scope, state/page/route, and SSR contracts. List shared targets and exact independent-site identifiers only when observed and cited. Keep unobserved site IDs, public paths, bundles, flavors, environment/configuration files, `SsrSite` registrations, output locations, and command pairs as `TODO(confirm from active source)`. An independent site does not establish a separate tenant, identity, authorization, persistence, or business-rule authority.
+
+Mark observed repository facts separately from confirmed inputs and proposed target contracts. Every exact SRS ID named in PRD/WBS/test-plan traceability must have one explicit SRS contract definition here; a matrix mention, wildcard, or range is not a definition. Never pretend an unverified path, operation, flavor, or module exists.
 
 ## PDP/WBS template contract
 
@@ -136,7 +138,7 @@ Every WBS entry should state:
 - linked PRD, SRS, and ATP identifiers;
 - whether it is planned, implemented, or awaiting evidence.
 
-Begin with a documentation/decision implementation gate before feature work. Prefer vertical, verifiable increments. Include migration and release hardening as explicit work. Keep `implementation-complete` distinct from `verified`.
+Begin with a documentation/decision implementation gate before feature work. For differing Web/Admin strategies, split shared-site integration and independent-site delivery into separate frontend tasks when their source facts, dependencies, or proof differ. An unresolved strategy or exact runtime identifier may block only the affected implementation task; preserve runnable discovery work and unaffected backend or audience work as accurately actionable. Prefer vertical, verifiable increments. Include migration and release hardening as explicit work. Keep `implementation-complete` distinct from `verified`.
 
 ## Test-plan template contract
 
@@ -167,7 +169,7 @@ Every evidence record should retain, at minimum:
 - redacted log, response, screenshot, CI job, or artifact location;
 - waiver owner, reason, and expiry when a temporary exception exists.
 
-A command listed in a new test plan is a prospective procedure, not a result.
+A command listed in a new test plan is a prospective procedure, not a result. For independent sites, define SSR/REST/build/browser proof only with source-confirmed site/flavor/command facts; for shared sites, define composition/integration and shared-site proof against the observed owner. Unresolved identifiers remain planned confirmation gates, never successful verification claims.
 
 ## Progress template contract
 
@@ -194,7 +196,7 @@ Initialize a new suite with statuses such as `not-started`, `deferred`, or expli
 | `waived` | A temporary exception with owner, reason, and expiry; expiry makes it a release blocker. |
 | `deferred` | Explicitly postponed scope, not completed scope. |
 
-Progress must remain a derived register. It may point to evidence but must not become a second requirements document.
+Progress must remain a derived register. It may point to evidence but must not become a second requirements document. Include a decision-register entry for each material site strategy and show strategy/identifier deferral as a blocker only on affected frontend/site WBS branches; source reading, planning, or a selected strategy alone is not implementation evidence.
 
 ## ADR 0001 template contract
 
@@ -236,7 +238,7 @@ Proposed
 <Links to README, PRD, SRS, WBS, test plan, and framework records.>
 ```
 
-Use `Accepted` only for explicitly confirmed durable decisions; otherwise use `Proposed`. Later ADRs should narrowly state what prior decision they supersede. Do not use an ADR as a duplicate SRS or status log.
+Use `Accepted` only for explicitly confirmed durable decisions; otherwise use `Proposed`. Record material shared/independent site strategy, alternatives, and consequences in the ADR, including the condition for a future independent Web or Admin boundary and the requirement for a superseding ADR if that boundary changes. Later ADRs should narrowly state what prior decision they supersede. Do not use an ADR as a duplicate SRS or status log.
 
 ## Optional extensions
 

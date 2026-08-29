@@ -24,6 +24,19 @@ Inspect the root `package.json` before documenting exact future commands. Read t
 
 For a Start repository, resolve flavor names, sites, public paths, generated-output locations, and command wrappers from that repository. Do not inherit Basic examples by analogy.
 
+## Site-strategy discovery
+
+Use two passes when the proposed suite has a Web, Admin, or another user-facing site audience.
+
+1. **Before strategy selection**, inspect the active edition only far enough to identify observed shared Web/Admin hosts, their composition owners and extension points, and any independent-site conventions. Read current `SsrSite` registrations, Zova site/flavor configuration, root scripts, and representative shared-site or site-owner modules as needed. Do not turn an example suite’s layout into the new suite’s target.
+2. **After the high-level strategy is selected**, inspect only the affected source/configuration surfaces to establish exact facts: `SsrSite` registrations, shared-shell contribution patterns, site IDs, public paths, bundle/flavor names, environment/configuration files, asset-copy targets, paired development/SSR-build/REST-build commands, and dependency-sync procedures.
+
+Cite every observed site/runtime fact by source path in the planning record. Describe a selected strategy as a confirmed input, proposed target, or accepted ADR boundary—not as a source-confirmed fact. Keep each unobserved identifier as `TODO(confirm from active source)`; never derive it from a suite/module name or symmetry between Web and Admin.
+
+When selecting Web/Admin strategy, evaluate each audience separately. A normal choice may combine shared or independent composition for each audience, but a custom combination, an audience with no site, or deferral remains valid. If strategy or required identifiers are deferred, make only affected frontend/site implementation work `blocked`; a source-discovery task can remain `not-started`, and backend, known shared-site, or unrelated-audience work remains accurately statused.
+
+Basic identifiers and commands are not portable Start facts, and neither Basic nor Start example-suite details are portable to another suite without active-source inspection.
+
 ## Suite-first source topology
 
 For a confirmed suite short name `<suite>`, the intended source layout is normally:

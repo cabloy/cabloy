@@ -60,6 +60,24 @@
       "prompt": "A later WBS dependency, ATP reference, or progress status changes after the charts were generated. Update the affected authority/status record and finish without regenerating the SVGs.",
       "expected_output": "Regenerates both derived charts with npm run spec:charts -- <suite>, runs npm run spec:charts:check -- <suite>, and treats stale or dangling chart references as a static failure rather than changing authority to make the chart pass.",
       "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "Plan a new long-lived suite with a reader-facing Web experience and staff Admin operations. The active repository has not yet told us whether either audience should use a shared site or an independent suite-owned site. Do not guess flavor names or commands.",
+      "expected_output": "Performs edition-aware source discovery before choosing topology, evaluates Web and Admin independently, makes a contextual recommendation, and presents the four normal shared/independent Web/Admin combinations in one single-select decision with the ordinary Other path available for a custom strategy or deferral. It requires a cited observed shared target, keeps unobserved site/flavor/env/SsrSite/command identifiers as TODO(confirm from active source), and does not fabricate Basic or Start facts.",
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "For the confirmed Cabloy Basic suite strategy, choose an independent reader Web site and integration into an observed shared Admin site. The independent reader site is intended, but active source has not yet confirmed its site ID, public path, bundle, flavor, environment/configuration, SsrSite registration, or paired commands. Generate the planning records only.",
+      "expected_output": "Propagates the mixed strategy through the authority chain: PRD describes audience/channel scope, SRS owns topology and audience-specific contracts, ADR records the durable boundary subject to its status, WBS separates independent-Web delivery from shared-Admin integration, test-plan defines only source-confirmed proof, and progress remains derived. It preserves every missing independent identifier as TODO(confirm from active source), cites the shared Admin target, avoids creating source/config/scripts, and does not imply separate persistence, tenancy, identity, or authorization ownership.",
+      "files": []
+    },
+    {
+      "id": 13,
+      "prompt": "Create a suite baseline where the product needs backend catalogue work plus future Web and Admin experiences, but the user defers the Web/Admin site strategy and all site identifiers. Keep backend planning available.",
+      "expected_output": "Retains the site strategy as a governing ADR/SRS TODO(confirm), marks only dependent frontend/site implementation WBS work blocked, and keeps backend plus any runnable source-discovery work accurately not-started or unchanged. It does not globally block delivery, invent site/flavor/env/configuration/build facts, create implementation evidence, or mark planning/source discovery as verified.",
+      "files": []
     }
   ]
 }
