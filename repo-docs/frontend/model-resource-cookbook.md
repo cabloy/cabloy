@@ -127,22 +127,24 @@ $host.$appModal.dialog({
   slotDefault: () => {
     const hasData = querySummary.data !== undefined;
     const isLoading = !hasData && (querySummary.isPending || querySummary.isFetching);
+    const error = querySummary.error;
 
     return (
       <>
-        {hasData && querySummary.error && (
+        {hasData && error && (
           <div class="alert alert-warning" role="alert">
             <span>{this.scope.locale.SummaryRefreshFailed()}</span>
+          </div>
+        )}
+        {error && (
+          <div class="alert alert-error" role="alert">
+            <span>{error.message}</span>
           </div>
         )}
         {hasData ? (
           <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />
         ) : isLoading ? (
           <div role="status">Loading...</div>
-        ) : querySummary.error ? (
-          <div class="alert alert-error" role="alert">
-            <span>{querySummary.error.message}</span>
-          </div>
         ) : undefined}
       </>
     );
@@ -152,7 +154,7 @@ $host.$appModal.dialog({
 
 This dialog has no command decision that needs readiness, so it opens immediately after creating its model-owned query. Default first creation kicks `query.suspense()` without awaiting it. A cold query can restore usable persisted data and a stale restored value can revalidate afterward according to the configured persister and query rules. The open dialog remains bound to the query state throughout.
 
-Use `data !== undefined` as the availability boundary. Retained data plus `error` renders exactly one non-blocking localized refresh-failure warning while preserving the content. No data plus `error` renders the blocking error instead. This is persisted-cache-first stale-while-revalidate UI, not an API-fresh orchestration decision. Whether restore and follow-up revalidation occur depends on data availability, persister configuration, and staleness.
+Use `data !== undefined` as the availability boundary. Retained data plus `error` renders two distinct messages while preserving the content: a non-blocking localized refresh-failure warning explains that the content may be outdated, and `error.message` explains the concrete failed fetch. No data plus `error` renders only the concrete fetch error. This is persisted-cache-first stale-while-revalidate UI, not an API-fresh orchestration decision. Whether restore and follow-up revalidation occur depends on data availability, persister configuration, and staleness.
 
 ### Avoid
 

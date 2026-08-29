@@ -316,24 +316,26 @@ $host.$appModal.dialog({
   slotDefault: () => {
     const hasData = querySummary.data !== undefined;
     const isLoading = !hasData && (querySummary.isPending || querySummary.isFetching);
+    const error = querySummary.error;
 
-    return hasData ? (
+    return (
       <>
-        {querySummary.error && <SummaryRefreshWarning />}
-        <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />
+        {hasData && error && <SummaryRefreshWarning />}
+        {error && <SummaryFetchError error={error} />}
+        {hasData ? (
+          <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />
+        ) : isLoading ? (
+          <SummaryLoading />
+        ) : undefined}
       </>
-    ) : isLoading ? (
-      <SummaryLoading />
-    ) : querySummary.error ? (
-      <SummaryLoadError error={querySummary.error} />
-    ) : undefined;
+    );
   },
 });
 ```
 
 This dialog has no command decision that needs readiness, so it opens immediately after creating its model-owned query rather than awaiting `refetch()`. By default, first query creation kicks `query.suspense()` without awaiting it. A cold query can restore usable persisted data, and a stale restored value can later revalidate according to the configured persister and query rules; the open dialog reads every transition through `querySummary.data` and its query status.
 
-Treat `data !== undefined` as the availability boundary: retained data plus `error` renders one non-blocking refresh-failure warning and keeps the content visible, while no data plus `error` renders one blocking load error. This is persisted-cache-first stale-while-revalidate UI, not an API-fresh orchestration request. Restore and follow-up revalidation depend on data availability, persister configuration, and staleness.
+Treat `data !== undefined` as the availability boundary. Retained data plus `error` has two separate user-facing meanings: render a non-blocking refresh-failure warning to explain that the retained content may be outdated, render the concrete `error.message` through `SummaryFetchError`, and keep the content visible. With no data plus `error`, render only the concrete fetch error. This is persisted-cache-first stale-while-revalidate UI, not an API-fresh orchestration request. Restore and follow-up revalidation depend on data availability, persister configuration, and staleness.
 
 ## Practical rule 7: derive render-time state once per render when possible
 
