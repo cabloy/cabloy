@@ -305,6 +305,21 @@ await query.refetch({ bypassPersister: true });
 
 This option is not a force-new-request flag. Cancellation, `cancelRefetch`, and in-flight deduplication continue to follow TanStack Query semantics. If an existing fetch is reused, its already-established fetch semantics remain in effect. The bypassed fetch itself does not intentionally replace an existing persisted value; an already queued ordinary persistence callback is a separate operation and is not automatically cancelled.
 
+When the current interaction or polling iteration must make an immediate decision from its API-oriented fetch, consume the awaited result rather than rereading `query.data`:
+
+```ts
+const result = await queryPaymentSession.refetch({
+  bypassPersister: true,
+});
+const session = result.data;
+
+if (session?.state === 'succeeded') {
+  // Decide this iteration from this fetch result.
+}
+```
+
+`query.data` remains the reactive, long-lived surface for rendering and subsequent updates. `result.data` is the result for this one awaited sequence. Keeping those roles separate prevents a controller from treating ongoing render state as the local result variable for a command. The result represents this fetch's response; it does not guarantee that no later server-side state transition occurs, and normal TanStack Query reuse semantics still apply.
+
 This is different from static `meta.persister: false`: the static option disables persistence for the query generally, while `bypassPersister: true` opts out only for one fetch.
 
 By contrast, a summary dialog can deliberately use persisted-cache-first behavior while remaining bound to query-owned state:
