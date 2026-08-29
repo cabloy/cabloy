@@ -54,6 +54,11 @@ export class TableCellActionSummary extends BeanBase implements ITableCellRender
                         <span>{this.scope.locale.SummaryRefreshFailed()}</span>
                       </div>
                     )}
+                    {error && (
+                      <div class="alert alert-error mb-3" role="alert">
+                        <span>{error.message}</span>
+                      </div>
+                    )}
                     {hasData ? (
                       <div class="student-summary-description">
                         <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />
@@ -61,10 +66,6 @@ export class TableCellActionSummary extends BeanBase implements ITableCellRender
                     ) : isLoading ? (
                       <div class="flex justify-center p-4" role="status">
                         <span class="loading loading-spinner text-primary" />
-                      </div>
-                    ) : error ? (
-                      <div class="alert alert-error" role="alert">
-                        <span>{error.message}</span>
                       </div>
                     ) : undefined}
                   </>
