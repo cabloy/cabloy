@@ -143,13 +143,43 @@ test('rejects missing progress rows and dangling ATP references', () => {
   }), /references undefined ATP-MISSING-01/);
 });
 
+test('renders partial burndown progress at its remaining-count position', async t => {
+  const directory = await fixture({
+    'progress.md': files['progress.md'].replace('`not-started`', '`verified`'),
+  });
+  t.after(() => removeFixture(directory));
+  const result = await generateCharts(directory);
+  const burndown = result.artifacts.get('implementation-burndown.svg');
+  assert.match(burndown, />1 remaining · 1 verified</);
+  assert.match(burndown, />2 remaining</);
+  assert.doesNotMatch(burndown, />0 \/ 2</);
+  assert.match(burndown, /<line x1="190" y1="410" x2="550\.0" y2="530\.0" stroke="var\(--blue\)" stroke-width="2"\/>/);
+  assert.match(burndown, /<line x1="550\.0" y1="530\.0" x2="910" y2="650" stroke="var\(--blue\)" stroke-width="2" stroke-dasharray="6 5"/);
+  assert.match(burndown, /<circle cx="550\.0" cy="530\.0" r="8"/);
+  assert.doesNotMatch(burndown, /r="14" fill="var\(--aqua\)"/);
+});
+
+test('renders a completion marker only when no WBS items remain', async t => {
+  const directory = await fixture({
+    'progress.md': files['progress.md']
+      .replace('`not-started`', '`verified`')
+      .replace('`in-progress`', '`verified`'),
+  });
+  t.after(() => removeFixture(directory));
+  const burndown = (await generateCharts(directory)).artifacts.get('implementation-burndown.svg');
+  assert.match(burndown, />0 remaining · 2 verified</);
+  assert.match(burndown, /<line x1="190" y1="410" x2="910\.0" y2="650\.0"/);
+  assert.match(burndown, /<circle cx="910\.0" cy="650\.0" r="14"/);
+  assert.match(burndown, /M904\.0 650\.0 L908\.0 654\.0 L916\.0 645\.0/);
+});
+
 test('writes deterministic XML-escaped artifacts and detects stale output', async t => {
   const directory = await fixture();
   t.after(() => removeFixture(directory));
   const first = await generateCharts(directory);
   assert.match(first.artifacts.get('implementation-gantt.svg'), /tenant/);
   assert.match(first.artifacts.get('implementation-gantt.svg'), /role="img"/);
-  assert.match(first.artifacts.get('implementation-gantt.svg'), /role="img"/);
+  assert.match(first.artifacts.get('implementation-burndown.svg'), /role="img"/);
   assert.equal((await generateCharts(directory, { check: true })).stale.length, 0);
   await writeFile(resolve(directory, 'implementation-gantt.svg'), 'stale');
   await assert.rejects(() => generateCharts(directory, { check: true }), /implementation-gantt\.svg/);

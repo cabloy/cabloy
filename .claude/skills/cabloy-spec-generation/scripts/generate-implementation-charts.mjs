@@ -27,6 +27,7 @@ const COPY = {
     source: 'Sources', reviewed: 'Last reviewed', scopeReference: 'Scope-count reference',
     notTime: 'Verified WBS items in approved scope — not time', remainingAxis: 'WBS items remaining',
     logicalBaseline: 'Logical approved-scope baseline', currentSnapshot: 'Current snapshot',
+    remainingShort: 'remaining', emptyScope: 'No active WBS items remain in scope.',
     noHistory: 'No observed intermediate status points are available.',
     formula: 'remaining = active scope − verified',
     phaseScope: 'Scope by phase', active: 'Active WBS items', deferred: 'Deferred',
@@ -49,6 +50,7 @@ const COPY = {
     source: '来源', reviewed: '最后审查日期', scopeReference: '范围计数参考',
     notTime: '已核验的批准范围 WBS 项——不是时间', remainingAxis: '剩余 WBS 项',
     logicalBaseline: '逻辑上的批准范围基线', currentSnapshot: '当前快照',
+    remainingShort: '剩余', emptyScope: '当前范围内没有活跃 WBS 项。',
     noHistory: '没有可用的中间历史状态点。',
     formula: '剩余 = 活跃范围 − 已核验',
     phaseScope: '按阶段统计范围', active: '活跃 WBS 项', deferred: '已延期',
@@ -247,6 +249,12 @@ export function renderBurndown(model, suiteName) {
   const { copy: t, phases, activeTasks, deferredTasks, verified, reviewed, language } = model;
   const total = activeTasks.length; const remaining = total - verified;
   const height = 1050; const x0 = 190; const x1 = 910; const y0 = 410; const y1 = 650;
+  const completion = total ? verified / total : 0;
+  const currentX = x0 + completion * (x1 - x0);
+  const currentY = y0 + completion * (y1 - y0);
+  const currentMarker = remaining === 0 && total > 0
+    ? `<circle cx="${currentX.toFixed(1)}" cy="${currentY.toFixed(1)}" r="14" fill="var(--aqua)" stroke="var(--surface)" stroke-width="3"/><path d="M${(currentX - 6).toFixed(1)} ${currentY.toFixed(1)} L${(currentX - 2).toFixed(1)} ${(currentY + 4).toFixed(1)} L${(currentX + 6).toFixed(1)} ${(currentY - 5).toFixed(1)}" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round"/>`
+    : `<circle cx="${currentX.toFixed(1)}" cy="${currentY.toFixed(1)}" r="8" fill="var(--orange)" stroke="var(--surface)" stroke-width="2"/>`;
   const phaseRows = phases.map((phase, index) => {
     const phaseTasks = phase.tasks.filter(task => !task.deferred && task.status !== 'deferred');
     const phaseVerified = phaseTasks.filter(task => task.status === 'verified').length;
@@ -259,7 +267,7 @@ export function renderBurndown(model, suiteName) {
   <rect x="72" y="142" width="1428" height="116" rx="8" fill="var(--aqua-wash)"/><text class="heading" x="96" y="170">${escapeXml(t.current)}</text><text x="96" y="231" class="title" style="font-size:52px">${remaining}</text><text class="heading" x="155" y="215">${escapeXml(t.remaining)}</text><text class="caption" x="155" y="237">${escapeXml(`${verified} / ${total} ${t.verified}`)}</text><text class="caption" x="700" y="205">${escapeXml(t.approved)}</text><text class="heading" x="700" y="230">${total}</text><text class="caption" x="1030" y="205">${escapeXml(t.deferred)}</text><text class="heading" x="1030" y="230">${deferredTasks.length}</text>
   <text class="heading" x="72" y="300">${escapeXml(t.scopeReference)}</text><text class="caption" x="72" y="321">${escapeXml(t.noHistory)}</text><rect class="card" x="72" y="340" width="940" height="390" rx="9"/><text class="small" x="116" y="372">${escapeXml(t.remainingAxis)}</text><text class="small" x="550" y="704" text-anchor="middle">${escapeXml(t.notTime)}</text>
   <g class="grid"><line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y0}"/><line x1="${x0}" y1="${y0 + 80}" x2="${x1}" y2="${y0 + 80}"/><line x1="${x0}" y1="${y0 + 160}" x2="${x1}" y2="${y0 + 160}"/><line x1="${x0}" y1="${y1}" x2="${x1}" y2="${y1}"/><line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y1}"/><line x1="${x1}" y1="${y0}" x2="${x1}" y2="${y1}"/></g><line class="axis" x1="${x0}" y1="${y1}" x2="${x1}" y2="${y1}"/><line class="axis" x1="${x0}" y1="${y0}" x2="${x0}" y2="${y1}"/>
-  <path d="M${x0} ${y0} L${x1} ${y1}" fill="none" stroke="var(--blue)" stroke-width="2"/><circle cx="${x0}" cy="${y0}" r="7" fill="var(--blue)" stroke="var(--surface)" stroke-width="2"/><text class="heading" x="${x0 + 22}" y="${y0 + 18}">${escapeXml(t.logicalBaseline)}</text><text class="caption" x="${x0 + 22}" y="${y0 + 37}">0 / ${total}</text><circle cx="${x1}" cy="${y1}" r="14" fill="var(--aqua)" stroke="var(--surface)" stroke-width="3"/><path d="M${x1 - 6} ${y1} L${x1 - 2} ${y1 + 4} L${x1 + 6} ${y1 - 5}" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round"/><text class="heading" x="${x1 - 22}" y="${y1 - 49}" text-anchor="end">${escapeXml(t.currentSnapshot)}</text><text class="caption" x="${x1 - 22}" y="${y1 - 30}" text-anchor="end">${escapeXml(`${verified} ${t.verified} · ${remaining} ${t.remaining}`)}</text>
+  <line x1="${x0}" y1="${y0}" x2="${currentX.toFixed(1)}" y2="${currentY.toFixed(1)}" stroke="var(--blue)" stroke-width="2"/><line x1="${currentX.toFixed(1)}" y1="${currentY.toFixed(1)}" x2="${x1}" y2="${y1}" stroke="var(--blue)" stroke-width="2" stroke-dasharray="6 5"/><circle cx="${x0}" cy="${y0}" r="7" fill="var(--blue)" stroke="var(--surface)" stroke-width="2"/><text class="heading" x="${x0 + 22}" y="${y0 + 18}">${escapeXml(t.logicalBaseline)}</text><text class="caption" x="${x0 + 22}" y="${y0 + 37}">${total} ${escapeXml(t.remainingShort)}</text>${currentMarker}<text class="heading" x="${Math.max(x0 + 150, currentX - 22)}" y="${Math.max(y0 + 60, currentY - 49)}" text-anchor="end">${escapeXml(t.currentSnapshot)}</text><text class="caption" x="${Math.max(x0 + 150, currentX - 22)}" y="${Math.max(y0 + 79, currentY - 30)}" text-anchor="end">${escapeXml(`${remaining} ${t.remainingShort} · ${verified} ${t.verified}`)}</text>
   <rect x="1040" y="340" width="460" height="390" rx="9" fill="var(--blue-wash)"/><text class="heading" x="1070" y="378">${escapeXml(t.howRead)}</text><text class="caption" x="1070" y="412">${escapeXml(t.formula)}</text><text class="caption" x="1070" y="448">${escapeXml(t.noHistory)}</text><text class="caption" x="1070" y="474">${escapeXml(t.caveat)}</text><text class="caption" x="1070" y="510">${escapeXml(t.chartCaveat)}</text>
   <rect class="card" x="72" y="758" width="1428" height="${height - 846}" rx="9"/><text class="heading" x="96" y="786">${escapeXml(t.phaseScope)}</text><text class="small" x="96" y="800">${escapeXml(`${t.active}: ${total}; ${t.verified}: ${verified}; ${t.remaining}: ${remaining}`)}</text><text class="small" x="730" y="786" text-anchor="end">${escapeXml(t.verified)}</text><text class="small" x="850" y="786" text-anchor="end">${escapeXml(t.remaining)}</text><text class="small" x="930" y="786">${escapeXml(t.completion)}</text>${phaseRows}
   <line class="grid" x1="72" y1="${height - 74}" x2="1500" y2="${height - 74}"/><text class="small" x="72" y="${height - 48}">${escapeXml(`${t.source}: pdp-wbs.md · progress.md (${t.reviewed}: ${reviewed})`)}</text><text class="small" x="1500" y="${height - 48}" text-anchor="end">${escapeXml(t.caveat)}</text>`;
