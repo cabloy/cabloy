@@ -42,8 +42,12 @@ Current examples include:
 
 - `cabloy-workflow` for choosing the correct Cabloy work path before implementation
 - `cabloy-domain-planning` for proposing and confirming providerId, suite, and initial module names before scaffolding a new business domain
+- `cabloy-spec-generation` for creating or maintaining suite-local planning authority, traceability, and derived planning views before implementation
+- `cabloy-spec-execution` for coordinating one confirmed WBS increment through specialist implementation, evidence, and derived progress updates
 - `cabloy-contract-loop` for backend/frontend contract regeneration and drift diagnosis
 - `cabloy-resource-field-update` for updating an existing backend resource field thread
 - `cabloy-module-removal` for removing a backend, frontend, or fullstack module cleanly, including generated-runtime cleanup, stale-residue recovery, and verification
+
+The specification workflows show the same boundary: [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution) explain the durable public workflow, while the skills retain the branching, confirmation gates, specialist routing, and evidence protocol.
 
 The module-removal workflow is a good example of why skills belong in `.claude/skills/` instead of `CLAUDE.md`: the task needs branching, cleanup order, recovery guidance for generated runtime directories such as `vona/.vona` and `zova/.zova`, and a verification checklist that would be too large for a short repo-wide rule.

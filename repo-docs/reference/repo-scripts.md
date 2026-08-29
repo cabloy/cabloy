@@ -42,6 +42,31 @@ Cabloy Basic exposes these shared root scripts:
 
 `npm run init` prepares all Cabloy Basic SSR and REST artifacts with `npm run build:zova:all`, which sequentially builds the Basic and Commerce flavor batches before Vona initialization. Use `build:zova` or `build:zova:commerce` for focused artifact refreshes; use `build:zova:all` only when every shipped Basic flavor must be prepared.
 
+## Specification planning and derived charts
+
+The current Cabloy Basic root scripts also expose:
+
+```bash
+npm run test:spec-charts
+npm run spec:charts -- <suite>
+npm run spec:charts:check -- <suite>
+```
+
+`spec:charts` refreshes the generated Gantt and burndown SVG views for a chart-compatible `repo-specs/<suite>/` record. `spec:charts:check` validates the supported input contract and detects stale generated views; `test:spec-charts` runs the chart-tool test suite.
+
+### Chart input contract
+
+The generator consumes `README.md`, `pdp-wbs.md`, `test-plan.md`, and `progress.md`. The supported Markdown format includes:
+
+- formal `### Phase <number>:` and `#### WBS-...:` headings in the WBS, with supported dependency labels
+- formally defined `ATP-*` scenarios in the test plan for every ATP reference used by a WBS task
+- one progress row for each WBS item, with the WBS ID in the first cell and its supported status in the second cell
+- a README whose current title and language should be reflected by regenerated chart output
+
+A legacy suite with a different WBS or progress-table layout is not chart-compatible until a deliberate record-format normalization aligns its authoritative Markdown with this input contract. Format normalization must preserve the existing planning authority; it does not require an unrelated product or delivery change.
+
+These commands do not create planning authority, implement a WBS task, execute an ATP, produce acceptance evidence, or replace traceability/status review. Confirm the active root `package.json` and script input expectations before assuming equivalent behavior in Cabloy Start or another repository.
+
 ## Cabloy Start entrypoints
 
 Cabloy Start exposes the equivalent Start repository surface:

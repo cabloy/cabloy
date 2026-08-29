@@ -66,6 +66,16 @@ Start here when the task is about choosing the right repo surface, docs location
 - [Skills](/ai/skills)
 - [Rules and Config](/ai/rules-and-config)
 
+### Specification planning and delivery path
+
+Use this path to establish suite authority before implementation, then deliver one approved, bounded WBS increment with evidence-backed status:
+
+- [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation)
+- [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution)
+- [Skills](/ai/skills)
+- [Repo Scripts](/reference/repo-scripts)
+- [Verification](/ai/verification)
+
 ### Framework implementation path
 
 Use this path when the task is about implementing or reviewing Cabloy code with repo-aware rules:

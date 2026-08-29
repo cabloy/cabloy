@@ -122,6 +122,25 @@ Typical skill role:
 
 - notice when route/component/icon changes require metadata regeneration
 
+## Repository planning and derived-chart scripts
+
+Not every skill maps to a Vona or Zova generator. Repository-native suite specifications are authored under `repo-specs/`; no CLI generates the complete planning authority set.
+
+In the current Cabloy Basic repository, these root scripts refresh and check derived planning views:
+
+```bash
+npm run spec:charts -- <suite>
+npm run spec:charts:check -- <suite>
+```
+
+They generate or validate the Gantt and burndown SVGs from authoritative planning records. They do not replace PRD/SRS/WBS/ATP updates, implement a WBS task, execute an ATP, or create evidence. Confirm scripts in the active repository before using them for another edition.
+
+Typical skill roles:
+
+- `cabloy-spec-generation` creates or updates planning authority only after confirmation, then refreshes derived charts after relevant record changes
+- `cabloy-spec-execution` coordinates one approved increment, records evidence before derived progress, then refreshes and checks charts
+- source implementation remains routed to Vona, Zova, contract-loop, or other specialist workflows
+
 ## Example mappings
 
 ### Example: “Create a student CRUD backend thread”

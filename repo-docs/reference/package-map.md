@@ -9,6 +9,9 @@ This monorepo is organized around a small set of stable top-level areas.
 - an established internal-documentation home, when present — edition-local maintainer notes and ADRs
 - `.claude/` — Claude commands, skills, and local settings
 - `repo-docs/` — unified public docs
+- `repo-specs/` — suite-local product, technical, delivery, ATP, progress, observed-evidence, and ADR authority
+
+`repo-specs/` is distinct from `repo-docs/`, which explains reusable public guidance, `.claude/`, which contains executable workflow behavior, and an established internal-documentation home, which preserves maintainer rationale. For the public planning workflow, see [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation).
 
 ## Backend side
 

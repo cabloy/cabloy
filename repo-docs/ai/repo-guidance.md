@@ -9,6 +9,7 @@ Check the root repository signals first:
 - `package.json`
 - edition marker files such as `__CABLOY_BASIC__` or `__CABLOY_START__`
 - an established internal-documentation home, when present
+- `repo-specs/` when the task concerns a suite plan, WBS increment, acceptance record, or evidence
 - root `.claude/` assets
 
 These surfaces tell the agent which repo it is in and which scripts are canonical. Inspect an internal-documentation home only when the active repository actually provides one.
@@ -27,11 +28,14 @@ For frontend workflows:
 
 This is more reliable than copying old file structures from examples without understanding the command surface that created them.
 
-## 3. Use public docs and optional internal notes for different purposes
+## 3. Use public docs, suite records, and optional internal notes for different purposes
 
 - use `repo-docs/` to explain how people and agents should work
+- use `repo-specs/<suite>/` for suite-local product, technical, delivery, ATP, progress, ADR, and observed-evidence authority
 - when an established internal-documentation home exists, use it for maintainer rationale
 - when it does not exist, continue from public docs, rules, skills, source, and tests; do not create a new documentation home implicitly
+
+For planning work, read the suite README, PRD, SRS, WBS, test plan, and progress records in the order appropriate to the task. `cabloy-spec-generation` maintains planning authority; `cabloy-spec-execution` acts only on a confirmed, bounded WBS increment. Both require active-source and edition discovery before topology or command claims.
 
 ## 4. Treat edition detection as mandatory for UI-sensitive work
 

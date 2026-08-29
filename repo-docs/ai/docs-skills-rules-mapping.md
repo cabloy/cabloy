@@ -165,6 +165,21 @@ Use this quick rule:
 - avoid putting the full branching workflow in `CLAUDE.md` because the task needs proposal, validation, confirmation, and CLI handoff
 - procedural decision workflow → `cabloy-domain-planning` skill
 
+### Example: “How should AI create or maintain a repository-native suite specification?”
+
+- public workflow explanation → [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation)
+- procedural planning, confirmation, traceability, and chart-refresh behavior → `cabloy-spec-generation`
+- suite-specific PRD, SRS, WBS, ATP, ADR, progress, and observed evidence authority → `repo-specs/<suite>/`
+- maintainer rationale → an established internal-documentation home, when available
+- implementation is not implied by creating planning records
+
+### Example: “How should AI deliver an approved suite task?”
+
+- public workflow explanation → [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution)
+- bounded-WBS coordination, readiness gates, evidence, and derived-status behavior → `cabloy-spec-execution`
+- source implementation → the relevant backend, frontend, contract-loop, or shape-specific skill
+- product, contract, dependency, scope, or durable-decision changes → return to specification or domain planning
+
 ### Example: “What `@Api.field(...)` ordering rule should AI preserve when mixing helpers and zod?”
 
 - full explanation → [Entity Guide](/backend/entity-guide) and [DTO Guide](/backend/dto-guide)

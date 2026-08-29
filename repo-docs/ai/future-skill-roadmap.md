@@ -14,94 +14,39 @@ Current root skills include:
 
 - `cabloy-workflow`
 - `cabloy-domain-planning`
+- `cabloy-spec-generation`
+- `cabloy-spec-execution`
+- `cabloy-backend-scaffold`
+- `cabloy-frontend-scaffold`
 - `cabloy-contract-loop`
 - `cabloy-resource-field-update`
 - `cabloy-module-removal`
+- `cabloy-master-detail`
+- `cabloy-worktree-environment`
+- `cabloy-zova-source-reading`
 
 Their current roles are:
 
 - `cabloy-workflow` → broad workflow selection, edition detection, CLI-first routing, and verification framing
 - `cabloy-domain-planning` → suite-first naming proposals, providerId confirmation, module-boundary suggestions, and scaffold handoff for new business domains
+- `cabloy-spec-generation` → repository-native suite planning authority, traceability, confirmation, and derived planning views
+- `cabloy-spec-execution` → one approved WBS increment through readiness gates, specialist routing, evidence, and derived status
+- `cabloy-backend-scaffold` → Vona implementation routing and CLI-backed backend scaffolding
+- `cabloy-frontend-scaffold` → Zova implementation routing and CLI-backed frontend scaffolding
 - `cabloy-contract-loop` → backend/frontend contract regeneration, reverse-chain handling, and drift diagnosis
 - `cabloy-resource-field-update` → existing backend resource-field changes with `fileVersion` and renderer-aware follow-up
 - `cabloy-module-removal` → backend/frontend/fullstack module deletion order, generated-runtime cleanup, and verification
+- `cabloy-master-detail` → coordinated master-detail resource workflow
+- `cabloy-worktree-environment` → confirmed worktree-local environment tuple setup for intentional parallel work
+- `cabloy-zova-source-reading` → Zova-first source reading and Vue comparison workflow
 
 This is now a stronger foundation skill set, but it still leaves several useful workflow families for future specialization.
 
 ## Recommended next skill families
 
-### 1. Backend scaffold skill
+The backend scaffold, frontend scaffold, contract-loop, resource-field-update, and metadata-refresh workflow families already have implemented specialist coverage. Future work should refine those skills only when a new repository-wide branch or stable verification need emerges.
 
-Purpose:
-
-- scaffold Vona controller/service/model/entity/dto/CRUD threads
-- choose between bean creation and CRUD generation
-- verify migration/test implications
-
-Primary dependencies:
-
-- Vona `create:*`
-- Vona `tools:*`
-- backend docs in `repo-docs/backend/`
-
-### 2. Frontend scaffold skill
-
-Purpose:
-
-- scaffold Zova pages/components/API/models
-- branch correctly between Basic and Start
-- use create/refactor commands before manual edits
-
-Primary dependencies:
-
-- Zova `create:*`
-- Zova `refactor:*`
-- frontend docs in `repo-docs/frontend/`
-
-### 3. Fullstack contract loop skill
-
-Purpose:
-
-- detect backend contract changes
-- regenerate OpenAPI/SDK-related output
-- verify backend/frontend contract alignment
-
-Primary dependencies:
-
-- Vona OpenAPI and validation docs
-- Zova OpenAPI SDK and server-data docs
-- fullstack collaboration docs
-
-### 4. Resource field update skill
-
-Purpose:
-
-- handle updates to fields on existing backend resources
-- force the right `fileVersion` decision for new persisted fields
-- branch correctly between shared renderer reuse and custom renderer demo follow-up
-- verify entity, locale, migration, test, metadata, build, and dependency-sync implications
-
-Primary dependencies:
-
-- Vona entity / migration / DTO workflow knowledge
-- Zova metadata/build flows when renderer follow-up is involved
-- [Existing Resource Field Update](/backend/resource-field-update)
-
-### 5. Metadata refresh skill
-
-Purpose:
-
-- detect when route/component/icon or related changes require metadata regeneration
-- run the right metadata flow
-- verify generated artifacts belong to the active edition
-
-Primary dependencies:
-
-- Zova `tools:*`
-- CLI-to-skill mapping
-- edition detection docs
-
-### 6. Distributed backend workflow skill
+### 1. Distributed backend workflow skill
 
 Purpose:
 

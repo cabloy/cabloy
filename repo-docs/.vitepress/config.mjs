@@ -23,6 +23,11 @@ const aiItems = [
   { text: 'Playbook: Backend Module', link: '/ai/playbook-backend-module' },
   { text: 'Playbook: Frontend Page', link: '/ai/playbook-frontend-page' },
   { text: 'Playbook: Contract Regeneration', link: '/ai/playbook-contract-regeneration' },
+  { text: 'Playbook: Plan a Suite Specification', link: '/ai/playbook-spec-generation' },
+  {
+    text: 'Playbook: Execute an Approved Specification Increment',
+    link: '/ai/playbook-spec-execution',
+  },
   { text: 'Playbook: Module Removal', link: '/ai/playbook-module-removal' },
   { text: 'Playbook: Metadata Refresh', link: '/ai/playbook-metadata-refresh' },
   { text: 'Playbook: Technical Blog Authoring', link: '/ai/playbook-technical-blog-authoring' },
