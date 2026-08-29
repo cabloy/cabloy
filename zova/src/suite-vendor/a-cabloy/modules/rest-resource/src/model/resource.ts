@@ -17,6 +17,7 @@ import { $QueryEnsureLoaded, BeanModelBase, Model } from 'zova-module-a-model';
 import { ScopeModuleAOpenapi, SymbolOpenapiSchemaName } from 'zova-module-a-openapi';
 
 import { prepareDeleteRequestConfig } from '../lib/deleteRequest.js';
+import { runMutationSuccess } from '../lib/mutationSuccess.js';
 
 export interface IModelOptionsResource extends IDecoratorModelOptions {}
 
@@ -154,8 +155,10 @@ export class ModelResource<
           this.sys.util.apiActionConfigPrepare(),
         );
       },
-      onSuccess: () => {
-        this.$invalidateQueries({ queryKey: ['select'] });
+      onSuccess: async () => {
+        await runMutationSuccess({
+          invalidateSelect: () => this.$invalidateQueries({ queryKey: ['select'] }),
+        });
       },
     });
   }
@@ -169,11 +172,13 @@ export class ModelResource<
       mutationKey: [...this.keyItem(id, action), 'mutation'],
       mutationFn,
       onSuccess: async (data, variables, context) => {
-        if (invalidateSelect) {
-          this.$invalidateQueries({ queryKey: ['select'] });
-        }
-        this.$invalidateQueries({ queryKey: this.keyItemRoot(id) });
-        await onSuccess?.(data, variables, context);
+        await runMutationSuccess({
+          invalidateSelect: invalidateSelect
+            ? () => this.$invalidateQueries({ queryKey: ['select'] })
+            : undefined,
+          invalidateItem: () => this.$invalidateQueries({ queryKey: this.keyItemRoot(id) }),
+          onSuccess: () => onSuccess?.(data, variables, context),
+        });
       },
     });
   }

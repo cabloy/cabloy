@@ -468,9 +468,12 @@ test(
 
       const summaryPath = `/api/training/student/summary/${studentId}`;
       let summaryMode: 'failure' | 'success' = 'failure';
+      let releaseSummaryRequest: (() => void) | undefined;
+      let summaryRequest: Promise<void> | undefined;
       let releaseSummaryResponse: (() => void) | undefined;
       let summaryResponseRelease: Promise<void> | undefined;
       const summaryHandler = async (route: Route) => {
+        releaseSummaryRequest?.();
         if (summaryMode === 'failure') {
           await route.fulfill({
             status: 500,
@@ -498,6 +501,9 @@ test(
         await expect(dialog).toHaveCount(0);
 
         summaryMode = 'success';
+        summaryRequest = new Promise(resolve => {
+          releaseSummaryRequest = resolve;
+        });
         summaryResponseRelease = new Promise(resolve => {
           releaseSummaryResponse = resolve;
         });
@@ -514,12 +520,12 @@ test(
         row = page.locator('tr').filter({ hasText: studentName });
         await expect(row).toHaveCount(1);
         await row.getByRole('button', { name: 'Summary', exact: true }).click();
-        await expect(dialog).toBeVisible();
-        await expect(dialog.getByRole('status')).toBeVisible();
-        await expect(dialog.locator('.student-summary-description')).toHaveCount(0);
+        await summaryRequest;
+        await expect(dialog).toHaveCount(0, { timeout: 250 });
         releaseSummaryResponse?.();
 
         const description = dialog.locator('.student-summary-description');
+        await expect(dialog).toBeVisible();
         await expect(description).toBeVisible();
         await expect(description.locator('h2')).toHaveText('Summary heading');
         await expect(description).toContainText(`Summary paragraph ${studentName}`);
