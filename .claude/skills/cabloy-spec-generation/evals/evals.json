@@ -48,6 +48,18 @@
       "prompt": "Generate a proposed suite baseline with an optional payment-provider runbook. The user confirms the planning inputs and output path but has not accepted the provider boundary ADR. The runbook traceability table names ATP-PAY-WEBHOOK-01, but the test plan does not define that scenario.",
       "expected_output": "Treats confirmation to generate records as distinct from accepting the ADR, retains the provider boundary as Proposed, and uses neutral README wording. It scans the optional runbook as a generated non-evidence record, rejects the dangling ATP-PAY-WEBHOOK-01 reference until a formal test-plan scenario exists, and does not create execution evidence.",
       "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Create a new long-lived suite baseline and keep its README in Chinese. Generate the complete records without implementation evidence.",
+      "expected_output": "Creates both implementation-gantt.svg and implementation-burndown.svg, initializes statuses accurately, uses the README language consistently in chart labels/accessibility/metadata, and does not fabricate dates, estimates, history, or verified evidence.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "A later WBS dependency, ATP reference, or progress status changes after the charts were generated. Update the affected authority/status record and finish without regenerating the SVGs.",
+      "expected_output": "Regenerates both derived charts with npm run spec:charts -- <suite>, runs npm run spec:charts:check -- <suite>, and treats stale or dangling chart references as a static failure rather than changing authority to make the chart pass.",
+      "files": []
     }
   ]
 }

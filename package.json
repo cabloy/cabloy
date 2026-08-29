@@ -23,7 +23,6 @@
   "scripts": {
     "init": "node scripts/init.ts",
     "init:test-data": "node scripts/initTestData.ts",
-    "test:scripts": "node --test scripts/initAppName.test.ts",
     "upgrade": "node scripts/upgrade.ts",
     "upgrade:dry-run": "node scripts/upgrade.ts --dry-run",
     "vona": "node ./vona/packages-cli/cli/src/bin/vona.ts --projectPath=vona",
@@ -57,6 +56,9 @@
     "format:fix": "oxfmt --write",
     "lint": "oxlint --disable-nested-config",
     "lint:fix": "oxlint --disable-nested-config --fix",
+    "test:spec-charts": "node --test .claude/skills/cabloy-spec-generation/scripts/generate-implementation-charts.test.mjs",
+    "spec:charts": "node ./.claude/skills/cabloy-spec-generation/scripts/generate-implementation-charts.mjs",
+    "spec:charts:check": "node ./.claude/skills/cabloy-spec-generation/scripts/generate-implementation-charts.mjs --check",
     "docs:dev": "pnpm --dir repo-docs docs:dev",
     "docs:build": "pnpm --dir repo-docs docs:build",
     "docs:preview": "pnpm --dir repo-docs docs:preview",

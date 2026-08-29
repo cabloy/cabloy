@@ -101,7 +101,8 @@ Before creating or replacing records, summarize and request explicit confirmatio
 - tenant, authorization, persistence, site/flavor, and privacy boundaries that are actually confirmed;
 - mandatory documents and any optional extensions, with a reason for each;
 - unresolved decisions and explicit `TODO(confirm)` gates;
-- the initial status policy: delivery is `not-started` unless implementation evidence already exists.
+- the initial status policy: delivery is `not-started` unless implementation evidence already exists;
+- the derived implementation charts: `implementation-gantt.svg` and `implementation-burndown.svg`, whose labels default to the language detected from `README.md`.
 
 Do not treat silence as approval. Once confirmed, generate the records in authority order. Confirmation to generate records does not accept a durable ADR decision: retain its ADR as `Proposed` unless the user explicitly accepts that decision. If the user asks only for a draft, or has not explicitly accepted a durable boundary, retain unresolved decisions and do not imply acceptance.
 
@@ -117,6 +118,8 @@ repo-specs/<suite-short-name>/
 ├── pdp-wbs.md
 ├── test-plan.md
 ├── progress.md
+├── implementation-gantt.svg
+├── implementation-burndown.svg
 └── decisions/
     └── 0001-<suite-boundary-slug>.md
 ```
@@ -129,6 +132,8 @@ Use the templates and authority rules in `references/repo-specs-document-set.md`
 - `pdp-wbs.md` owns dependency-ordered phases, WBS tasks, completion checks, contract-loop checkpoints, and delivery traceability;
 - `test-plan.md` owns risk priorities, test levels, `ATP-*` scenarios, fixtures, evidence format/redaction, procedures, and release gates;
 - `progress.md` owns derived status, WBS execution rows, blockers, open decisions, evidence pointers, and next proof only;
+- `implementation-gantt.svg` and `implementation-burndown.svg` are deterministic derived views, not authority. They consume `pdp-wbs.md`, `test-plan.md`, and `progress.md`; they must not introduce scope, dependencies, dates, estimates, evidence, or status. Generate them with `npm run spec:charts -- <suite>` and validate them with `npm run spec:charts:check -- <suite>`;
+- chart language defaults to the language detected from `README.md` and applies consistently to visible labels, accessibility text, and metadata;
 - `decisions/0001-*.md` owns the durable initial boundary decision, alternatives, consequences, and decision gates.
 
 Create records in a way that makes every sibling link resolvable from the final directory. Use stable prefixes consistently, such as `PRD-<DOMAIN>-*`, `SRS-<DOMAIN>-*`, `WBS-<DOMAIN>-<PHASE>-*`, and `ATP-<DOMAIN>-*`. Choose a concise domain prefix and use it consistently across all matrices. Define every exact SRS ID used in generated planning records as one formal contract in `srs.md`, and every exact ATP ID as one scenario with a procedure in `test-plan.md`, before any downstream record references it. Wildcards and ranges are compact summaries of already-defined IDs; they never substitute for a formal definition.
@@ -173,10 +178,14 @@ Before reporting completion, verify:
 8. initial rows remain `not-started`, `deferred`, or explicitly `blocked` unless existing observed evidence was intentionally carried forward;
 9. every exact `PRD-*`, `SRS-*`, `WBS-*`, and `ATP-*` reference in the planning authority set resolves to exactly one formal definition in its owning document; ranges and wildcards are aggregation notation only and cannot satisfy this check;
 10. README language distinguishes observed facts, confirmed inputs, proposed targets, and `TODO(confirm)` decisions, and does not upgrade a `Proposed` ADR into a confirmed or accepted durable boundary;
-11. local Markdown links and referenced paths resolve;
-12. prospective commands are real commands discovered in the active repository, or clearly marked as commands to confirm later.
+11. `npm run spec:charts:check -- <suite>` passes, proving every WBS task has one progress row, statuses and dependencies reconcile, ATP references resolve, and both generated SVGs are current;
+12. chart language and accessibility/metadata text follow the README language policy;
+13. local Markdown links and referenced paths resolve;
+14. prospective commands are real commands discovered in the active repository, or clearly marked as commands to confirm later.
 
-If the exact-ID or status-consistency audit fails, correct the authoritative planning records and rerun it before reporting generation complete. This is a static planning check, not ATP execution: do not create evidence or claim `verified` for it.
+If the exact-ID, status-consistency, or chart check fails, correct the authoritative planning records or regenerate the derived artifacts and rerun it before reporting generation complete. This is a static planning check, not ATP execution: do not create evidence or claim `verified` for it.
+
+After creating or changing `pdp-wbs.md`, `test-plan.md`, or `progress.md`, regenerate both derived views with `npm run spec:charts -- <suite>` and then run `npm run spec:charts:check -- <suite>`. A chart change never authorizes a planning or status change. If a later edit occurs outside this workflow, the check command is the source of truth for detecting stale views.
 
 Do not run `npm run init`, reset a database, scaffold code, or execute deployment/provider operations as an automatic consequence of writing planning records. Do not report those activities as evidence.
 
@@ -189,6 +198,7 @@ Report:
 - optional files intentionally omitted and why;
 - unresolved decisions and the next confirmation needed;
 - initial status and evidence limitations;
-- recommended next workflow (`cabloy-domain-planning`, backend/frontend scaffold, or `cabloy-contract-loop`).
+- recommended next workflow (`cabloy-domain-planning`, backend/frontend scaffold, or `cabloy-contract-loop`);
+- generated or refreshed `implementation-gantt.svg` and `implementation-burndown.svg`, selected README language, and the result of `npm run spec:charts:check -- <suite>`.
 
 Keep the result practical. A good spec set gives the next implementer a shared authority map, not a fictional completion report.

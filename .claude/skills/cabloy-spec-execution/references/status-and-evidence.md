@@ -11,7 +11,10 @@ For ordinary execution that does not change authority:
 1. retain actual evidence;
 2. update a dedicated phase/ATP evidence record when the suite convention supports it;
 3. update a rollout or operational handoff record when it is part of the established suite flow;
-4. update `progress.md` last with derived status, evidence pointers, blockers, and next proof.
+4. update `progress.md` with derived status, evidence pointers, blockers, and next proof;
+5. regenerate `implementation-gantt.svg` and `implementation-burndown.svg` last, then run `npm run spec:charts:check -- <suite>`.
+
+The charts are derived views only. Refresh them after status, review-date, evidence-pointer, or evidence-supersession changes that affect their display; do not edit them to conceal an authority conflict. Their labels, accessibility text, and metadata follow the suite `README.md` language.
 
 Some Basic suites retain observed evidence inline in `test-plan.md`. Preserve the existing convention rather than introducing duplicate evidence stores. If the procedure, expected result, evidence requirement, release gate, or delivery scope changes, update the owning authority first and then reassess existing evidence before updating progress.
 

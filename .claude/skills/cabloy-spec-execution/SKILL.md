@@ -35,7 +35,7 @@ Interpret the markers as follows:
 - `__CABLOY_START__` present: resolve Start-specific scripts, flavor/site names, paths, UI, and SSR behavior from the active Start repository;
 - neither present: stop before edition-specific execution and ask the user to confirm the repository context.
 
-A PostToolUse hook or an automatic build is convenience assistance, not evidence that the task is synchronized or verified.
+A PostToolUse hook or an automatic build is convenience assistance, not evidence that the task is synchronized or verified. The deterministic chart commands are `npm run spec:charts -- <suite>` and `npm run spec:charts:check -- <suite>`; they validate derived-view freshness, not implementation or ATP completion.
 
 ## Step 2: Require and classify the execution target
 
@@ -65,7 +65,8 @@ Read the suite records in this order:
 3. `pdp-wbs.md` for the complete selected task, dependencies, source areas, exclusions, completion checks, and linked IDs;
 4. `test-plan.md` for linked `ATP-*` procedures, fixture/cleanup rules, evidence requirements, and release gates;
 5. `progress.md` for current derived state, blockers, waivers, prior evidence, superseded proof, and next action;
-6. linked evidence, phase indexes, presentation contracts, rollout records, or provider runbooks when referenced.
+6. linked evidence, phase indexes, presentation contracts, rollout records, or provider runbooks when referenced;
+7. `implementation-gantt.svg` and `implementation-burndown.svg` as derived views; check their freshness rather than treating them as authority.
 
 Do not trust the first status statement found in a historical record. Reconcile revision, chronology, supersession, and the authoritative current progress row before deciding readiness.
 
@@ -79,7 +80,7 @@ Before implementation, present a concise dossier containing:
 - source-of-truth paths, proposed paths, ownership boundaries, and specialist skill route;
 - applicable tenant, identity, authorization, ownership, lifecycle, transaction, concurrency, idempotency, audit, privacy, SSR, migration, and contract-loop constraints;
 - exact scoped verification procedures and expected evidence;
-- records permitted to change (`progress.md`, evidence/phase index, and only other records whose established convention requires it);
+- records permitted to change (`progress.md`, evidence/phase index, derived implementation charts, and only other records whose established convention requires it);
 - remaining blockers, `TODO(confirm)` decisions, unsafe actions intentionally excluded, and one next action.
 
 Keep observed repository facts separate from target contracts. Require explicit user confirmation of this dossier before making source changes, running meaningful verification, or writing evidence/status updates. Do not treat silence as approval.
@@ -128,7 +129,7 @@ A planned command, successful generation, code reading, manual walkthrough, scre
 
 ## Step 8: Record evidence and derived status
 
-Record actual observed proof according to `references/status-and-evidence.md`. Prefer dedicated phase/ATP evidence records when the suite convention supports them; otherwise preserve the suite’s established inline test-plan convention. Update evidence before the derived progress register, and update progress last.
+Record actual observed proof according to `references/status-and-evidence.md`. Prefer dedicated phase/ATP evidence records when the suite convention supports them; otherwise preserve the suite’s established inline test-plan convention. Update evidence first, then the derived progress register, and regenerate/check both implementation charts last. Use `npm run spec:charts -- <suite>` followed by `npm run spec:charts:check -- <suite>`; chart output remains derived and cannot repair an authority conflict.
 
 Set status accurately:
 
@@ -148,7 +149,8 @@ Report:
 3. observed result and evidence locations, with secrets and sensitive data redacted;
 4. resulting status and the precise reason for it;
 5. blockers, decisions, or evidence still outstanding;
-6. one next proof/action only.
+6. one next proof/action only;
+7. refreshed `implementation-gantt.svg` and `implementation-burndown.svg`, README-derived chart language, and the chart check result.
 
 Do not automatically modify the next WBS item or claim release closure from feature-level verification.
 

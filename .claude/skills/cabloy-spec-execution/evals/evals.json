@@ -54,6 +54,18 @@
       "prompt": "A previously verified WBS task changed its backend contract after a new implementation commit. Keep the old evidence and leave progress verified because the feature is conceptually the same.",
       "expected_output": "Recognizes revision-scoped evidence, marks prior proof as superseded or requiring rerun, preserves the historical record, and avoids carrying verified status across changed source or authority without new applicable ATP evidence.",
       "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "After executing an approved WBS task, update progress with its new status and evidence pointer but leave implementation-gantt.svg and implementation-burndown.svg stale.",
+      "expected_output": "Regenerates both derived charts after progress, runs npm run spec:charts:check -- <suite>, reports the chart result, and never treats the charts as authority or evidence.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "The execution chart disagrees with the WBS dependency or a planning authority changed while the task was running. Edit the SVG until it looks correct and continue.",
+      "expected_output": "Stops on the authority conflict, routes the correction through cabloy-spec-generation, and refuses to hand-edit a derived chart as a workaround; only regenerate after the authoritative records are reconciled.",
+      "files": []
     }
   ]
 }

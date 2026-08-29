@@ -27,6 +27,7 @@ Before reporting a generated baseline or an authority update complete, build a t
 - Report missing owners, duplicate definitions, and orphaned material definitions separately; correct the authoritative records before completion.
 - Validate the canonical PRD -> SRS -> WBS -> ATP chain by exact defined IDs, while allowing a many-to-many relationship where the matrices make it explicit.
 - This static audit covers generated planning records only. Exclude `evidence/`: evidence is created after observed execution and cannot establish or repair planning authority.
+- Generated implementation charts must contain only formal WBS/ATP identifiers and current progress statuses; run `npm run spec:charts:check -- <suite>` after generation to verify freshness and reconciliation.
 
 ## Canonical chain
 
@@ -55,9 +56,11 @@ When a requirement or durable boundary changes:
 3. update WBS dependencies and completion checks;
 4. update ATP procedures and expected proof;
 5. update progress and evidence pointers;
-6. reassess prior evidence and statuses whose assumptions changed.
+6. reassess prior evidence and statuses whose assumptions changed;
+7. regenerate `implementation-gantt.svg` and `implementation-burndown.svg` with `npm run spec:charts -- <suite>`;
+8. run `npm run spec:charts:check -- <suite>` and reconcile generated WBS/ATP/status references.
 
-Downstream records summarize or operationalize authority; they do not silently override it.
+Downstream records summarize or operationalize authority; they do not silently override it. The SVGs are derived views only: they cannot authorize scope, dependencies, dates, evidence, or status. Their language follows the suite `README.md`.
 
 ## Status semantics
 

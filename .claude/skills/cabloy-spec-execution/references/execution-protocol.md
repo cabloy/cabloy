@@ -41,7 +41,7 @@ Read in this order:
 3. complete WBS task and dependency rows;
 4. linked ATP definitions and test-plan release gates;
 5. progress, blockers, waivers, and next proof;
-6. linked evidence, phase indexes, runbooks, presentation contracts, and rollout records.
+6. linked evidence, phase indexes, runbooks, presentation contracts, rollout records, and the two derived implementation charts; verify their freshness with `npm run spec:charts:check -- <suite>`.
 
 Before implementation, verify:
 
@@ -52,6 +52,7 @@ Before implementation, verify:
 - the selected task is not already `verified`, `deferred`, or `blocked`;
 - source ownership and the target API/state/page boundary are unambiguous;
 - current evidence is still valid for the current source revision and authority set;
+- both implementation charts are present and current, or their regeneration is included in the approved record-update scope;
 - dirty-worktree changes can be attributed without overwriting unrelated work;
 - tenant, identity, authorization, ownership, privacy, lifecycle, transaction, concurrency, idempotency, audit, and recovery constraints are defined for the task’s risk;
 - the requested change does not broaden scope or create a competing persistence, identity, or API authority.
@@ -99,7 +100,8 @@ Specialist route: <backend/frontend/contract-loop/specialist>
 Safety/contract constraints: <tenant, auth, lifecycle, transaction, SSR, migration, privacy>
 Verification: <exact approved ATP procedures and commands>
 Evidence: <required revision/environment/procedure/result/redacted artifact>
-Allowed record updates: <evidence/phase index/progress, or explicitly named authority change>
+Derived charts: regenerate `implementation-gantt.svg` and `implementation-burndown.svg` after `progress.md`, then run `npm run spec:charts:check -- <suite>`; their language follows `README.md` and they remain non-authoritative.
+Allowed record updates: <evidence/phase index/progress/derived charts, or explicitly named authority change>
 Blocked or unresolved: <TODOs, waivers, conflicts>
 Excluded operations: <init/reset/deploy/provider/etc.>
 Next action: <one action after confirmation>

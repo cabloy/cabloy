@@ -9,13 +9,15 @@ This directory records the agreed product, system, and delivery baseline for the
 3. [Product Delivery Plan and Work Breakdown Structure](./pdp-wbs.md) sequences the work and defines completion checks.
 4. [Test Strategy and Acceptance Plan](./test-plan.md) defines executable acceptance scenarios, Phase 20 build/browser procedure, evidence, and release proof.
 5. [Delivery Progress](./progress.md) is the derived execution-status index for WBS state, evidence pointers, blockers, and next proof; it does not redefine authoritative requirements or acceptance.
-6. [ADR 0001](./decisions/0001-mvp-boundaries.md) records the accepted MVP architecture and scope decisions behind this plan.
-7. [ADR 0002](./decisions/0002-multi-merchant-within-one-vona-instance.md) records proposed guardrails for a future multi-merchant boundary within one Vona instance.
-8. [ADR 0003](./decisions/0003-semantic-presentation-contracts.md) records the semantic-presentation authority and boundary convention.
-9. [Presentation contracts](./presentation-contracts.md) is the living resource/scene matrix that applies the PRD and SRS to renderer selection.
-10. [Semantic-presentation rollout](./semantic-presentation-rollout.md) is the resumable execution runbook for the staged follow-on work; it does not replace the authoritative WBS, test plan, or matrix.
-11. [PayPal Commerce runbook](./runbooks/paypal-commerce-runbook.md) is the internal Sandbox/Live, webhook, tunnel, and reconciliation reference for the `pay-paypal` Commerce path.
-12. [Stripe Sandbox Commerce runbook](./runbooks/stripe-sandbox-runbook.md) is the internal Hosted Checkout, webhook, tunnel/domain, and reconciliation reference for the `pay-stripe` Sandbox path.
+6. [Implementation roadmap](./implementation-gantt.svg) is a generated, non-authoritative WBS/dependency/status view.
+7. [Implementation scope-count burndown](./implementation-burndown.svg) is a generated scope-count reference; without dated history it is not a calendar trend or forecast.
+8. [ADR 0001](./decisions/0001-mvp-boundaries.md) records the accepted MVP architecture and scope decisions behind this plan.
+9. [ADR 0002](./decisions/0002-multi-merchant-within-one-vona-instance.md) records proposed guardrails for a future multi-merchant boundary within one Vona instance.
+10. [ADR 0003](./decisions/0003-semantic-presentation-contracts.md) records the semantic-presentation authority and boundary convention.
+11. [Presentation contracts](./presentation-contracts.md) is the living resource/scene matrix that applies the PRD and SRS to renderer selection.
+12. [Semantic-presentation rollout](./semantic-presentation-rollout.md) is the resumable execution runbook for the staged follow-on work; it does not replace the authoritative WBS, test plan, or matrix.
+13. [PayPal Commerce runbook](./runbooks/paypal-commerce-runbook.md) is the internal Sandbox/Live, webhook, tunnel, and reconciliation reference for the `pay-paypal` Commerce path.
+14. [Stripe Sandbox Commerce runbook](./runbooks/stripe-sandbox-runbook.md) is the internal Hosted Checkout, webhook, tunnel/domain, and reconciliation reference for the `pay-stripe` Sandbox path.
 
 ## Confirmed MVP Baseline
 

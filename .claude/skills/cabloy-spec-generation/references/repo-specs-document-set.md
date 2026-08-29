@@ -14,6 +14,8 @@ repo-specs/<suite-short-name>/
 ├── pdp-wbs.md
 ├── test-plan.md
 ├── progress.md
+├── implementation-gantt.svg
+├── implementation-burndown.svg
 └── decisions/
     └── 0001-<suite-boundary-slug>.md
 ```
@@ -30,10 +32,14 @@ The directory is repository-native, suite-local, and maintainer-facing. It is no
 | `pdp-wbs.md` | Delivery sequencing, dependencies, implementation tasks, completion checks, and delivery traceability. |
 | `test-plan.md` | Quality priorities, executable acceptance scenarios, fixtures, evidence format, verification procedures, and release proof. |
 | `progress.md` | Derived execution status, blockers, decisions needed, next proof, and evidence pointers. It never redefines requirements or contracts. |
+| `implementation-gantt.svg` | Deterministic derived WBS view of phases, task order, dependencies, status, and optional ATP labels. It is not schedule or planning authority. |
+| `implementation-burndown.svg` | Deterministic derived scope/status view. Without dated history, it is a scope-count reference, not a time-series, velocity trend, or forecast. |
 | `decisions/*.md` | Durable suite-local scope, architecture, security, ownership, migration, or integration decisions. |
 | `runbooks/*.md` | Operational procedures subordinate to the relevant SRS, ADR, WBS, and test plan. |
 
-When records disagree, update the authoritative record first, then update downstream summaries, mappings, and derived status.
+When records disagree, update the authoritative record first, then update downstream summaries, mappings, and derived status. After any change to `pdp-wbs.md`, `test-plan.md`, or `progress.md`, run `npm run spec:charts -- <suite>` followed by `npm run spec:charts:check -- <suite>`.
+
+The implementation charts are generated records, not authorities. The Gantt reads formal WBS phases/tasks/dependencies and progress status, with ATP labels only when they resolve in `test-plan.md`; absent authoritative dates or estimates must be shown as relative/illustrative order. The burndown reads active/deferred scope and verified status; without immutable dated snapshots it must be a scope-count reference rather than a calendar trend or forecast. Neither chart may add scope, dependencies, evidence, or completion claims. Both SVGs use the README-derived language consistently, including visible labels, accessibility text, and metadata.
 
 ## README template contract
 
@@ -47,6 +53,8 @@ Use the following sections:
 6. `## Document Authority` with the authority map and conflict rule;
 7. `## Traceability Chain and Status Rules`;
 8. `## Related Framework Records`.
+
+The `## Reading Order` section must also link `implementation-gantt.svg` and `implementation-burndown.svg` as derived delivery views. Their language defaults to the language used by this README, and the generator applies that choice consistently to labels, accessibility text, and metadata.
 
 The README is an index and baseline summary. Keep detailed business requirements in the PRD and detailed contracts in the SRS. Label each baseline entry as a confirmed input, observed current-source fact, proposed target, or `TODO(confirm)` decision. The README must not call a proposed target or durable boundary confirmed/accepted while its governing ADR remains `Proposed`; only explicitly accepted decisions may use that wording.
 
@@ -116,6 +124,8 @@ Use:
 7. `## Traceability Matrix`;
 8. `## Completion and Evidence Rules`;
 9. `## Related Records`.
+
+For new long-lived suite baselines, both `implementation-gantt.svg` and `implementation-burndown.svg` are mandatory generated records. They must be regenerated after source changes with `npm run spec:charts -- <suite>` and checked with `npm run spec:charts:check -- <suite>`.
 
 Every WBS entry should state:
 
