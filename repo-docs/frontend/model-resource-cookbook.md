@@ -87,7 +87,8 @@ export class ModelStudent extends BeanModelBase {
         return res ?? null;
       },
       meta: {
-        disableSuspenseOnInit: true,
+        // The Summary dialog renders query errors itself.
+        disableErrorEffect: true,
       },
     });
   }
@@ -122,13 +123,36 @@ const modelStudent = (await ctx.bean._getBean(
 )) as ModelStudent;
 const querySummary = modelStudent.summary(id);
 
-await querySummary.refetch();
 $host.$appModal.dialog({
-  slotDefault: () => <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />,
+  slotDefault: () => {
+    const hasData = querySummary.data !== undefined;
+    const isLoading = !hasData && (querySummary.isPending || querySummary.isFetching);
+
+    return (
+      <>
+        {hasData && querySummary.error && (
+          <div class="alert alert-warning" role="alert">
+            <span>{this.scope.locale.SummaryRefreshFailed()}</span>
+          </div>
+        )}
+        {hasData ? (
+          <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />
+        ) : isLoading ? (
+          <div role="status">Loading...</div>
+        ) : querySummary.error ? (
+          <div class="alert alert-error" role="alert">
+            <span>{querySummary.error.message}</span>
+          </div>
+        ) : undefined}
+      </>
+    );
+  },
 });
 ```
 
-This summary interaction deliberately uses persisted-cache-first behavior. When the in-memory query is cold, an ordinary `refetch()` can restore usable persisted data and let the dialog open promptly. If the restored data is stale under the configured persister and query rules, it is revalidated afterward. Because the dialog remains bound to `querySummary.data`, it renders the restored data first and then reacts to the in-memory query update rather than keeping an awaited-result snapshot. This is a stale-while-revalidate experience, not an API-fresh orchestration decision. Whether a restore or follow-up revalidation occurs depends on data availability, persister configuration, and staleness.
+This dialog has no command decision that needs readiness, so it opens immediately after creating its model-owned query. Default first creation kicks `query.suspense()` without awaiting it. A cold query can restore usable persisted data and a stale restored value can revalidate afterward according to the configured persister and query rules. The open dialog remains bound to the query state throughout.
+
+Use `data !== undefined` as the availability boundary. Retained data plus `error` renders exactly one non-blocking localized refresh-failure warning while preserving the content. No data plus `error` renders the blocking error instead. This is persisted-cache-first stale-while-revalidate UI, not an API-fresh orchestration decision. Whether restore and follow-up revalidation occur depends on data availability, persister configuration, and staleness.
 
 ### Avoid
 
@@ -161,7 +185,8 @@ summary(id: TableIdentity) {
       return res ?? null;
     },
     meta: {
-      disableSuspenseOnInit: true,
+      // The Summary dialog renders query errors itself.
+      disableErrorEffect: true,
     },
   });
 }

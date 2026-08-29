@@ -40,15 +40,36 @@ export class TableCellActionSummary extends BeanBase implements ITableCellRender
             true,
           )) as ModelStudent;
           const querySummary = modelStudent.summary(id);
-          await querySummary.refetch();
           $host.$appModal.dialog(
             {
               title: this.scope.locale.Summary(),
-              slotDefault: () => (
-                <div class="student-summary-description">
-                  <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />
-                </div>
-              ),
+              slotDefault: () => {
+                const hasData = querySummary.data !== undefined;
+                const isLoading = !hasData && (querySummary.isPending || querySummary.isFetching);
+                const error = querySummary.error;
+                return (
+                  <>
+                    {hasData && error && (
+                      <div class="alert alert-warning mb-3" role="alert">
+                        <span>{this.scope.locale.SummaryRefreshFailed()}</span>
+                      </div>
+                    )}
+                    {hasData ? (
+                      <div class="student-summary-description">
+                        <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />
+                      </div>
+                    ) : isLoading ? (
+                      <div class="flex justify-center p-4" role="status">
+                        <span class="loading loading-spinner text-primary" />
+                      </div>
+                    ) : error ? (
+                      <div class="alert alert-error" role="alert">
+                        <span>{error.message}</span>
+                      </div>
+                    ) : undefined}
+                  </>
+                );
+              },
             },
             {
               maxWidth: 720,

@@ -307,20 +307,33 @@ This option is not a force-new-request flag. Cancellation, `cancelRefetch`, and 
 
 This is different from static `meta.persister: false`: the static option disables persistence for the query generally, while `bypassPersister: true` opts out only for one fetch.
 
-For example, a summary dialog can deliberately use persisted-cache-first behavior while remaining bound to query-owned state:
+By contrast, a summary dialog can deliberately use persisted-cache-first behavior while remaining bound to query-owned state:
 
 ```ts
 const querySummary = modelStudent.summary(id);
-await querySummary.refetch();
 
 $host.$appModal.dialog({
-  slotDefault: () => (
-    <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />
-  ),
+  slotDefault: () => {
+    const hasData = querySummary.data !== undefined;
+    const isLoading = !hasData && (querySummary.isPending || querySummary.isFetching);
+
+    return hasData ? (
+      <>
+        {querySummary.error && <SummaryRefreshWarning />}
+        <ZMarkdownHtml html={querySummary.data?.descriptionHtml ?? ''} />
+      </>
+    ) : isLoading ? (
+      <SummaryLoading />
+    ) : querySummary.error ? (
+      <SummaryLoadError error={querySummary.error} />
+    ) : undefined;
+  },
 });
 ```
 
-When the in-memory query is cold, ordinary `refetch()` can restore usable persisted data and allow the dialog to open promptly. If that restored data is stale under the configured persister and query rules, a later revalidation updates `querySummary.data`; the open dialog then renders the new value reactively. This is a stale-while-revalidate interaction, not a request for an API-fresh result. Restore and follow-up revalidation depend on data availability, persister configuration, and staleness. The awaited result may coordinate the current interaction, but ongoing rendering should continue to read `querySummary.data`.
+This dialog has no command decision that needs readiness, so it opens immediately after creating its model-owned query rather than awaiting `refetch()`. By default, first query creation kicks `query.suspense()` without awaiting it. A cold query can restore usable persisted data, and a stale restored value can later revalidate according to the configured persister and query rules; the open dialog reads every transition through `querySummary.data` and its query status.
+
+Treat `data !== undefined` as the availability boundary: retained data plus `error` renders one non-blocking refresh-failure warning and keeps the content visible, while no data plus `error` renders one blocking load error. This is persisted-cache-first stale-while-revalidate UI, not an API-fresh orchestration request. Restore and follow-up revalidation depend on data availability, persister configuration, and staleness.
 
 ## Practical rule 7: derive render-time state once per render when possible
 

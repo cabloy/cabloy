@@ -25,7 +25,7 @@ export class ModelStudent extends BeanModelBase {
         return res ?? null;
       },
       meta: {
-        disableSuspenseOnInit: true,
+        disableErrorEffect: true,
       },
     });
   }

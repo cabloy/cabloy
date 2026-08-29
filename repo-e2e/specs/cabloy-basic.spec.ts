@@ -414,7 +414,7 @@ test(
 );
 
 test(
-  'ATP-BASIC-SUMMARY-01: Training Student summary renders Markdown HTML in a dialog',
+  'ATP-BASIC-SUMMARY-01: Training Student summary dialog renders query states and Markdown HTML',
   { tag: ['@admin', '@flow'] },
   async ({ page }) => {
     const pageErrors = collectPageErrors(page);
@@ -466,25 +466,68 @@ test(
       await page.getByRole('button', { name: 'Search', exact: true }).click();
       await searchResponse;
 
-      const row = page.locator('tr').filter({ hasText: studentName });
-      await expect(row).toHaveCount(1);
-      const summaryResponse = page.waitForResponse(response => {
-        const url = new URL(response.url());
-        return (
-          response.request().method() === 'GET' &&
-          response.ok() &&
-          url.pathname === `/api/training/student/summary/${studentId}` &&
-          !response.request().headers()['x-vona-openapi-schema']
-        );
-      });
-      await row.getByRole('button', { name: 'Summary', exact: true }).click();
-      await summaryResponse;
+      const summaryPath = `/api/training/student/summary/${studentId}`;
+      let summaryMode: 'failure' | 'success' = 'failure';
+      let releaseSummaryResponse: (() => void) | undefined;
+      let summaryResponseRelease: Promise<void> | undefined;
+      const summaryHandler = async (route: Route) => {
+        if (summaryMode === 'failure') {
+          await route.fulfill({
+            status: 500,
+            contentType: 'application/json',
+            body: JSON.stringify({ code: 500, message: 'Summary temporarily unavailable' }),
+          });
+          return;
+        }
+        const response = await route.fetch();
+        await summaryResponseRelease;
+        await route.fulfill({ response });
+      };
+      const summaryRouteUrl = (url: URL) => url.pathname === summaryPath;
+      await page.route(summaryRouteUrl, summaryHandler);
+      try {
+        let row = page.locator('tr').filter({ hasText: studentName });
+        await expect(row).toHaveCount(1);
+        await row.getByRole('button', { name: 'Summary', exact: true }).click();
 
-      const description = page.locator('.student-summary-description');
-      await expect(description).toBeVisible();
-      await expect(description.locator('h2')).toHaveText('Summary heading');
-      await expect(description).toContainText(`Summary paragraph ${studentName}`);
-      expect(pageErrors).toEqual([]);
+        const dialog = page.getByRole('dialog');
+        await expect(dialog).toBeVisible();
+        await expect(dialog.locator('.alert.alert-error')).toHaveCount(1);
+        await expect(dialog.locator('.student-summary-description')).toHaveCount(0);
+        await page.keyboard.press('Escape');
+        await expect(dialog).toHaveCount(0);
+
+        summaryMode = 'success';
+        summaryResponseRelease = new Promise(resolve => {
+          releaseSummaryResponse = resolve;
+        });
+        const listResponse = await page.goto('/admin/rest/resource/training-student%3Astudent', {
+          waitUntil: 'load',
+        });
+        expect(listResponse?.ok()).toBeTruthy();
+        await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+        await page.getByLabel('Student Name').fill(studentName);
+        const nextSearchResponse = waitForStudentSelect(page);
+        await page.getByRole('button', { name: 'Search', exact: true }).click();
+        await nextSearchResponse;
+
+        row = page.locator('tr').filter({ hasText: studentName });
+        await expect(row).toHaveCount(1);
+        await row.getByRole('button', { name: 'Summary', exact: true }).click();
+        await expect(dialog).toBeVisible();
+        await expect(dialog.getByRole('status')).toBeVisible();
+        await expect(dialog.locator('.student-summary-description')).toHaveCount(0);
+        releaseSummaryResponse?.();
+
+        const description = dialog.locator('.student-summary-description');
+        await expect(description).toBeVisible();
+        await expect(description.locator('h2')).toHaveText('Summary heading');
+        await expect(description).toContainText(`Summary paragraph ${studentName}`);
+        expect(pageErrors).toEqual([]);
+      } finally {
+        releaseSummaryResponse?.();
+        await page.unroute(summaryRouteUrl, summaryHandler);
+      }
     } finally {
       try {
         if (studentId !== undefined) {
