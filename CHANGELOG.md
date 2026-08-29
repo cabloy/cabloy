@@ -1,5 +1,24 @@
 # Changelog
 
+## 5.1.151
+
+### Features
+
+- Add chart specifications and chart support.
+- Add SSR site specifications.
+- Add Cabloy specification execution.
+- Add skill creation support.
+- Add implementation burndown and gantt charts.
+
+### Bug Fixes
+
+- Fix skill specifications.
+
+### Improvements
+
+- Refactor skills and skill specification generation.
+- Update dependencies.
+
 ## 5.1.150
 
 ### Features
