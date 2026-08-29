@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.152
+
+### Improvements
+
+- Update project guidance in `CLAUDE.md`.
+
 ## 5.1.151
 
 ### Features
