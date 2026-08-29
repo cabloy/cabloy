@@ -122,6 +122,7 @@ const modelStudent = (await ctx.bean._getBean(
   true,
 )) as ModelStudent;
 const querySummary = modelStudent.summary(id);
+await querySummary.suspense();
 
 $host.$appModal.dialog({
   slotDefault: () => {
@@ -152,7 +153,7 @@ $host.$appModal.dialog({
 });
 ```
 
-This dialog has no command decision that needs readiness, so it opens immediately after creating its model-owned query. Default first creation kicks `query.suspense()` without awaiting it. A cold query can restore usable persisted data and a stale restored value can revalidate afterward according to the configured persister and query rules. The open dialog remains bound to the query state throughout.
+Opening this Summary dialog is an interaction readiness boundary, so the handler awaits the existing model-owned query with `await querySummary.suspense()` before creating the dialog. That wait follows normal query cache, staleness, error, persistence, and deduplication semantics; it is not an unconditional API-fresh request. After opening, the dialog remains bound to reactive query state rather than an awaited one-shot result, so later query updates remain visible.
 
 Use `data !== undefined` as the availability boundary. Retained data plus `error` renders two distinct messages while preserving the content: a non-blocking localized refresh-failure warning explains that the content may be outdated, and `error.message` explains the concrete failed fetch. No data plus `error` renders only the concrete fetch error. This is persisted-cache-first stale-while-revalidate UI, not an API-fresh orchestration decision. Whether restore and follow-up revalidation occur depends on data availability, persister configuration, and staleness.
 
@@ -269,6 +270,8 @@ deleteForce(id: TableIdentity) {
 - item/list invalidation remains centralized
 - the business-facing model exposes semantic actions without competing for cache ownership
 
+`mutationItem(...)` awaits its standard consistency work before mutation completion: it invalidates matching active `select` queries unless `invalidateSelect: false`, then invalidates matching active queries under the row's item root, and only then invokes and awaits the optional custom `onSuccess`. This keeps `mutateAsync()` aligned with active resource refreshes. `invalidateSelect: false` skips only the default select invalidation; item-root invalidation remains automatic.
+
 ## Recipe 5: customize invalidation for a special mutation
 
 ### Use this when
@@ -288,7 +291,6 @@ publish(id: TableIdentity) {
     },
     onSuccess: async () => {
       await this.$$modelResource.$invalidateQueries({ queryKey: ['select'] });
-      await this.$$modelResource.$invalidateQueries({ queryKey: ['item', id] });
       await this.$$modelResource.$invalidateQueries({ queryKey: ['select', 'dashboard'] });
     },
   });
@@ -298,7 +300,7 @@ publish(id: TableIdentity) {
 ### Why this works well
 
 - the existing resource-owner remains the source of truth for consistency rules
-- special cache dependencies stay explicit
+- the automatic item-root invalidation completes before this callback adds the special list dependencies
 - pages do not need to remember hidden follow-up refetch rules
 
 ### Avoid
@@ -438,6 +440,8 @@ batchArchive(ids: TableIdentity[]) {
 - batch behavior stays modeled explicitly
 - list invalidation policy remains visible
 - cache ownership still stays with the existing resource-owner even when row-level helpers are not the right fit
+
+This uses raw `$useMutationData(...)` because a batch action affects multiple rows rather than the one `id` accepted by `mutationItem(...)`. It does not inherit `mutationItem(...)`'s automatic item-root invalidation or sequencing, so define and await the necessary list and per-item invalidations explicitly.
 
 ## Recipe 10: keep generic blocks working while adding resource semantics
 

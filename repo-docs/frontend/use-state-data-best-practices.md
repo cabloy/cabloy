@@ -284,6 +284,8 @@ A query established during render remains the owner of its ongoing state. Render
 
 An interaction or orchestration boundary may still await `query.refetch()` when it needs one result to decide whether to continue a command, navigate, show a notification, or open a dialog. That result is local to the current sequence; it does not transfer query ownership to the controller or render path.
 
+When a query-backed dialog needs readiness before it opens, await the existing query's `suspense()` instead. This follows normal query cache, staleness, error, and deduplication semantics; it does not necessarily force an API-fresh request. After the dialog opens, continue to render from the query wrapper rather than the awaited result.
+
 Do not copy an awaited `refetch()` result into a second long-lived controller/render state that drives an open dialog or persistent component. If the UI remains mounted and displays query-backed data, bind it to `query.data` or a model-derived reactive surface so later refetches and model updates remain visible.
 
 ### Per-fetch persistence bypass
@@ -326,6 +328,7 @@ By contrast, a summary dialog can deliberately use persisted-cache-first behavio
 
 ```ts
 const querySummary = modelStudent.summary(id);
+await querySummary.suspense();
 
 $host.$appModal.dialog({
   slotDefault: () => {
@@ -348,7 +351,7 @@ $host.$appModal.dialog({
 });
 ```
 
-This dialog has no command decision that needs readiness, so it opens immediately after creating its model-owned query rather than awaiting `refetch()`. By default, first query creation kicks `query.suspense()` without awaiting it. A cold query can restore usable persisted data, and a stale restored value can later revalidate according to the configured persister and query rules; the open dialog reads every transition through `querySummary.data` and its query status.
+This Summary interaction deliberately awaits `querySummary.suspense()` before opening the dialog. It therefore has a query-readiness boundary, but does not force an API-fresh request: the wait still follows normal query cache, staleness, error, persistence, and deduplication semantics. The open dialog reads every later transition through `querySummary.data` and its query status rather than taking ownership of an awaited one-shot result.
 
 Treat `data !== undefined` as the availability boundary. Retained data plus `error` has two separate user-facing meanings: render a non-blocking refresh-failure warning to explain that the retained content may be outdated, render the concrete `error.message` through `SummaryFetchError`, and keep the content visible. With no data plus `error`, render only the concrete fetch error. This is persisted-cache-first stale-while-revalidate UI, not an API-fresh orchestration request. Restore and follow-up revalidation depend on data availability, persister configuration, and staleness.
 
