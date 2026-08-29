@@ -66,6 +66,34 @@ function escapeXml(value) {
   return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 
+function wrapChartText(value, maxCharacters) {
+  const words = String(value).trim().replace(/\s+/g, ' ').split(' ');
+  const lines = [];
+  let line = '';
+  for (const word of words) {
+    const characters = [...word];
+    if (characters.length > maxCharacters) {
+      if (line) {
+        lines.push(line);
+        line = '';
+      }
+      for (let index = 0; index < characters.length; index += maxCharacters) {
+        lines.push(characters.slice(index, index + maxCharacters).join(''));
+      }
+      continue;
+    }
+    const candidate = line ? `${line} ${word}` : word;
+    if ([...candidate].length > maxCharacters) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = candidate;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
 function languageFromReadme(readme) {
   const cjk = (readme.match(/[㐀-鿿]/g) ?? []).length;
   const latin = (readme.match(/[A-Za-z]/g) ?? []).length;
@@ -187,7 +215,7 @@ function style() {
   return `<style>
     :root { --surface:#fcfcfb;--page:#f9f9f7;--ink:#0b0b0b;--secondary:#52514e;--muted:#898781;--grid:#e1e0d9;--axis:#c3c2b7;--blue:#2a78d6;--orange:#eb6834;--aqua:#1baf7a;--violet:#4a3aa7;--red:#e34948;--yellow:#eda100;--blue-wash:#eaf3fd;--aqua-wash:#e7f7f0; }
     @media (prefers-color-scheme:dark) { :root { --surface:#1a1a19;--page:#0d0d0d;--ink:#fff;--secondary:#c3c2b7;--muted:#a09f99;--grid:#2c2c2a;--axis:#383835;--blue:#3987e5;--orange:#d95926;--aqua:#199e70;--violet:#9085e9;--red:#e66767;--yellow:#c98500;--blue-wash:#172435;--aqua-wash:#122b23; } }
-    .canvas{fill:var(--page)}.card{fill:var(--surface);stroke:var(--grid);stroke-width:1}.title{fill:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:27px;font-weight:700}.subtitle{fill:var(--secondary);font-family:Arial,Helvetica,sans-serif;font-size:14px}.heading{fill:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700}.task{fill:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:10px}.small{fill:var(--muted);font-family:Arial,Helvetica,sans-serif;font-size:9px}.caption{fill:var(--secondary);font-family:Arial,Helvetica,sans-serif;font-size:11px}.num{fill:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}.grid{stroke:var(--grid);stroke-width:1;shape-rendering:crispEdges}.axis{stroke:var(--axis);stroke-width:1;shape-rendering:crispEdges}.row:focus{outline:2px solid var(--ink);outline-offset:2px}
+    .canvas{fill:var(--page)}.card{fill:var(--surface);stroke:var(--grid);stroke-width:1}.title{fill:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:27px;font-weight:700}.subtitle{fill:var(--secondary);font-family:Arial,Helvetica,sans-serif;font-size:14px}.heading{fill:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700}.phase{fill:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:700}.task{fill:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:10px}.small{fill:var(--muted);font-family:Arial,Helvetica,sans-serif;font-size:9px}.caption{fill:var(--secondary);font-family:Arial,Helvetica,sans-serif;font-size:11px}.num{fill:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}.grid{stroke:var(--grid);stroke-width:1;shape-rendering:crispEdges}.axis{stroke:var(--axis);stroke-width:1;shape-rendering:crispEdges}.row:focus{outline:2px solid var(--ink);outline-offset:2px}
   </style>`;
 }
 
@@ -214,15 +242,26 @@ function svgDocument(title, desc, body, height, metadata) {
 }
 
 export function renderGantt(model, suiteName) {
-  const { copy: t, tasks, phases, reviewed, language } = model;
-  const height = Math.max(850, 390 + tasks.length * 34 + 170);
-  const plotX = 890; const plotW = 610; const rowY = 270; const rowH = 34;
-  const rows = tasks.map((task, index) => {
-    const y = rowY + index * rowH;
+  const { copy: t, tasks, reviewed, language } = model;
+  const phaseX = 72; const wbsX = 265; const workX = 405; const dependencyX = 735; const statusX = 900;
+  const plotX = 980; const plotW = 520; const rowY = 270; const rowH = 34; const phaseLineH = 12;
+  let nextY = rowY;
+  const layout = tasks.map((task, index) => {
+    const phaseStart = index === 0 || tasks[index - 1].phase.number !== task.phase.number;
+    const descriptionLines = phaseStart ? wrapChartText(task.phase.title, 30) : [];
+    const phaseLabelY = phaseStart ? nextY : undefined;
+    const y = phaseStart ? nextY + 23 + descriptionLines.length * phaseLineH : nextY;
+    nextY = y + rowH;
+    return { task, index, y, phaseLabelY, descriptionLines };
+  });
+  const contentBottom = layout.at(-1)?.y + 14 ?? rowY;
+  const footerY = Math.max(772, contentBottom + 80);
+  const height = Math.max(850, footerY + 78);
+  const rows = layout.map(({ task, index, y, phaseLabelY, descriptionLines }) => {
     const barX = plotX + (index / Math.max(tasks.length, 1)) * (plotW - 90);
     const barW = task.status === 'verified' ? 58 : 42;
-    const phaseLabel = index === 0 || tasks[index - 1].phase.number !== task.phase.number ? `${t.phase} ${task.phase.number}` : '';
-    return `<g class="row" tabindex="0" aria-label="${escapeXml(`${task.id}: ${task.title}; ${statusLabel(task.status, language)}`)}"><title>${escapeXml(`${task.id}: ${task.title}; dependencies: ${task.dependency}; ${statusLabel(task.status, language)}`)}</title><line class="grid" x1="72" y1="${y + 14}" x2="1500" y2="${y + 14}"/><text class="small" x="72" y="${y}">${escapeXml(phaseLabel)}</text><text class="num" x="185" y="${y}">${escapeXml(task.id)}</text><text class="task" x="325" y="${y}">${escapeXml(task.title)}</text><text class="small" x="625" y="${y}">${escapeXml(task.dependency)}</text>${statusIcon(795, y - 4, task.status)}<text class="small" x="807" y="${y}">${escapeXml(statusLabel(task.status, language))}</text><rect x="${barX.toFixed(1)}" y="${y - 15}" width="${barW}" height="18" rx="4" fill="${STATUS_COLORS[task.status]}"/></g>`;
+    const phaseHeader = phaseLabelY === undefined ? '' : `<text class="phase" x="${phaseX}" y="${phaseLabelY}">${escapeXml(`${t.phase} ${task.phase.number}`)}</text>${descriptionLines.map((line, lineIndex) => `<text class="small" x="${phaseX}" y="${phaseLabelY + 13 + lineIndex * phaseLineH}">${escapeXml(line)}</text>`).join('')}`;
+    return `<g class="row" tabindex="0" aria-label="${escapeXml(`${task.id}: ${task.title}; ${statusLabel(task.status, language)}`)}"><title>${escapeXml(`${task.id}: ${task.title}; dependencies: ${task.dependency}; ${statusLabel(task.status, language)}`)}</title><line class="grid" x1="72" y1="${y + 14}" x2="1500" y2="${y + 14}"/>${phaseHeader}<text class="num" x="${wbsX}" y="${y}">${escapeXml(task.id)}</text><text class="task" x="${workX}" y="${y}">${escapeXml(task.title)}</text><text class="small" x="${dependencyX}" y="${y}">${escapeXml(task.dependency)}</text>${statusIcon(statusX + 5, y - 4, task.status)}<text class="small" x="${statusX + 17}" y="${y}">${escapeXml(statusLabel(task.status, language))}</text><rect x="${barX.toFixed(1)}" y="${y - 15}" width="${barW}" height="18" rx="4" fill="${STATUS_COLORS[task.status]}"/></g>`;
   }).join('\n');
   const completed = new Set(tasks.filter(task => task.status === 'verified').map(task => task.id));
   const dependencyIds = task => [...task.dependency.matchAll(/\bWBS-(?:[A-Za-z0-9]+-)*[A-Za-z0-9]+(?:-\*)?/g)].flatMap(match => {
@@ -239,9 +278,9 @@ export function renderGantt(model, suiteName) {
   const body = `<rect class="canvas" width="1600" height="${height}"/><rect class="card" x="32" y="28" width="1536" height="${height - 56}" rx="14"/>
   <text class="title" x="72" y="84">${escapeXml(`${suiteName} ${t.ganttTitle}`)}</text><text class="subtitle" x="72" y="110">${escapeXml(t.ganttSubtitle)}</text><text class="small" x="1500" y="84" text-anchor="end">${escapeXml(`${t.reviewed}: ${reviewed}`)}</text>
   <rect x="72" y="142" width="1428" height="78" rx="8" fill="var(--aqua-wash)"/><text class="heading" x="96" y="171">${escapeXml(t.current)}</text><text class="caption" x="96" y="195">${escapeXml(nextLabel)}</text><text class="heading" x="1320" y="171" text-anchor="end">${escapeXml(t.next)}</text><text class="heading" x="1320" y="195" text-anchor="end">${model.verified} / ${model.activeTasks.length} ${escapeXml(t.verified)}</text>
-  <text class="small" x="72" y="246">${escapeXml(t.phase)}</text><text class="small" x="185" y="246">${escapeXml(t.wbs)}</text><text class="small" x="325" y="246">${escapeXml(t.work)}</text><text class="small" x="625" y="246">${escapeXml(t.dependency)}</text><text class="small" x="790" y="246">${escapeXml(t.status)}</text><text class="small" x="890" y="246">${escapeXml(t.weeks)}</text><line class="axis" x1="890" y1="254" x2="1500" y2="254"/>
+  <text class="small" x="${phaseX}" y="246">${escapeXml(t.phase)}</text><text class="small" x="${wbsX}" y="246">${escapeXml(t.wbs)}</text><text class="small" x="${workX}" y="246">${escapeXml(t.work)}</text><text class="small" x="${dependencyX}" y="246">${escapeXml(t.dependency)}</text><text class="small" x="${statusX}" y="246">${escapeXml(t.status)}</text><text class="small" x="${plotX}" y="246">${escapeXml(t.weeks)}</text><line class="axis" x1="${plotX}" y1="254" x2="1500" y2="254"/>
   ${rows}
-  <line class="grid" x1="72" y1="${height - 78}" x2="1500" y2="${height - 78}"/><text class="small" x="72" y="${height - 50}">${escapeXml(`${t.source}: pdp-wbs.md · test-plan.md · progress.md (${t.reviewed}: ${reviewed})`)}</text><text class="small" x="1500" y="${height - 50}" text-anchor="end">${escapeXml(t.chartCaveat)}</text>`;
+  <line class="grid" x1="72" y1="${footerY}" x2="1500" y2="${footerY}"/><text class="small" x="72" y="${footerY + 28}">${escapeXml(`${t.source}: pdp-wbs.md · test-plan.md · progress.md (${t.reviewed}: ${reviewed})`)}</text><text class="small" x="1500" y="${footerY + 28}" text-anchor="end">${escapeXml(t.chartCaveat)}</text>`;
   return svgDocument(`${suiteName} ${t.ganttTitle}`, `${t.ganttTitle}. ${tasks.length} formal WBS tasks. Current derived status reviewed ${reviewed}. ${t.chartCaveat}`, body, height, t.metadata);
 }
 

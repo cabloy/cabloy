@@ -117,6 +117,20 @@ test('selects the earliest dependency-ready WBS item', async t => {
   assert.match(gantt, /Next executable WBS item/);
 });
 
+test('renders a phase description directly beneath its phase label', async t => {
+  const directory = await fixture({
+    'pdp-wbs.md': files['pdp-wbs.md'].replace(
+      'Phase 10: Baseline',
+      'Phase 10: A deliberately extended <phase> & description that wraps safely',
+    ),
+  });
+  t.after(() => removeFixture(directory));
+  const gantt = (await generateCharts(directory)).artifacts.get('implementation-gantt.svg');
+  assert.match(gantt, /<text class="phase" x="72" y="270">Phase 10<\/text><text class="small" x="72" y="283">A deliberately extended<\/text><text class="small" x="72" y="295">&lt;phase&gt; &amp; description that<\/text><text class="small" x="72" y="307">wraps safely<\/text><text class="num" x="265" y="329">WBS-10-01<\/text>/);
+  assert.match(gantt, /<text class="phase" x="72" y="363">Phase 20<\/text><text class="small" x="72" y="376">Delivery<\/text><text class="num" x="265" y="398">WBS-20-01<\/text>/);
+  assert.doesNotMatch(gantt, /y="432">Delivery<\/text>/);
+});
+
 test('selects Chinese chart copy from a Chinese README', () => {
   const model = createChartModel({
     readme: '# 示例内部规划\n\n这是中文规划记录。\n',
