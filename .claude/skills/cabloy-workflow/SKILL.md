@@ -176,7 +176,7 @@ When an established `repo-docs-internal/` home exists, it may be used for:
 - maintainer rationale
 - invariants and design boundaries
 
-Its absence must not block routing or implementation, and it must not be assumed to exist in Cabloy Start.
+Its absence must not block routing or implementation, and it must not be assumed to exist in every checkout.
 
 ### Root rules and commands
 

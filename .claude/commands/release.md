@@ -6,7 +6,14 @@ version: 1.0.0
 
 # Cabloy Release
 
-Run the release workflow for the cabloy package. The release script at `scripts/release.ts` performs 4 steps:
+This command applies only when the active checkout is unambiguously Cabloy Basic and its root `package.json` exposes the public `cabloy` release scripts. First inspect the repository-root edition markers and the active root script surface:
+
+- only `__CABLOY_BASIC__` present and the required `release*` scripts available → continue with this workflow;
+- only `__CABLOY_START__` present → stop: do not use this public release workflow or `scripts/release.ts`; use an explicitly configured Cabloy Start release workflow instead;
+- both markers or neither marker present → stop before choosing an edition-specific release path;
+- required Basic release scripts absent → stop and ask for the active release workflow rather than inferring one.
+
+The release script at `scripts/release.ts` performs 4 steps for the public `cabloy` package:
 
 1. **Version bump** — Detects changes since last `cabloy@*` tag, bumps `package.json` version, commits + tags + pushes
 2. **AI Changelog** — Calls Anthropic API to summarize commits into categorized changelog, writes to `CHANGELOG.md`
@@ -14,6 +21,8 @@ Run the release workflow for the cabloy package. The release script at `scripts/
 4. **GitHub release** — Creates a GitHub release with changelog notes
 
 ## Commands
+
+Only after the Basic preflight above succeeds, use the matching script that exists in the active root `package.json`:
 
 | Command | Description |
 |---------|-------------|
@@ -25,6 +34,8 @@ Run the release workflow for the cabloy package. The release script at `scripts/
 | `pnpm release:changelog` | Only generate changelog (no version bump) |
 | `pnpm release:publish` | Only publish to npm |
 | `pnpm release:github` | Only create GitHub release |
+
+Do not infer equivalent commands in Cabloy Start when this table is absent from its package scripts.
 
 ## CLI Options
 

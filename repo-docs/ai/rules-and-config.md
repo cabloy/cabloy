@@ -26,4 +26,4 @@ Use Claude settings for permissions and execution environment, not as the primar
 
 ## Documentation boundary
 
-If a rule is important for people and agents to understand, it probably belongs in public docs too. When an established internal-documentation home exists, it may hold maintainer rationale rather than user-facing workflow. Do not assume or create such a home in another edition.
+If a rule is important for people and agents to understand, it probably belongs in public docs too. When an established internal-documentation home exists, it may hold maintainer rationale rather than user-facing workflow. Do not infer or create such a home from edition identity alone.

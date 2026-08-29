@@ -265,7 +265,7 @@ The Commerce payment route requires authentication and uses the session SSR prof
 
 The invariant is more important than a particular visual shell: server HTML and the hydration-time initial render must agree about private payment/order data. Do not render customer-owned payment state on the server when the request cannot authorize it, and do not let the provider return itself settle Commerce.
 
-For the deeper SSR return and Passport recovery rationale, maintainers can consult the internal architecture note. The public rule remains: settle on verified server facts; recover private browser state only after hydration and authorization.
+When the active repository provides the corresponding internal architecture note, maintainers can consult it for deeper SSR return and Passport recovery rationale. The public rule remains: settle on verified server facts; recover private browser state only after hydration and authorization.
 
 ## Reliability and security invariants
 

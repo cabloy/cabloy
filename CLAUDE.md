@@ -38,7 +38,7 @@ Before inventing a custom implementation path:
 ## Documentation boundary
 
 - Put user-facing and agent-facing guidance in `repo-docs/`.
-- When an established `repo-docs-internal/` home exists, use it for maintainer rationale, architecture notes, and engineering ADRs. Do not assume or create that path in another edition.
+- When an established `repo-docs-internal/` home exists, use it for maintainer rationale, architecture notes, and engineering ADRs. Do not infer or create that path from edition identity alone.
 - If the active repository has no established internal-documentation home, do not block the workflow or move internal rationale into public docs automatically; use existing documentation homes or ask before establishing one.
 - Put product and business specifications, delivery plans, acceptance records, and suite-local ADRs in `repo-specs/` when that repository surface exists.
 - Do not mix internal rationale into public how-to pages unless a trimmed user-facing explanation is genuinely needed.

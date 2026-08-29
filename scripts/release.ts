@@ -88,8 +88,53 @@ function readJson(filePath: string): Record<string, any> {
   return JSON.parse(readFileSync(filePath, 'utf-8'));
 }
 
+type CabloyEdition = 'basic' | 'start';
+
+function resolveEdition(): CabloyEdition {
+  const hasBasic = existsSync(resolve(ROOT_DIR, '__CABLOY_BASIC__'));
+  const hasStart = existsSync(resolve(ROOT_DIR, '__CABLOY_START__'));
+  if (hasBasic === hasStart) {
+    throw new Error(
+      hasBasic
+        ? 'Ambiguous Cabloy edition: both __CABLOY_BASIC__ and __CABLOY_START__ markers are present'
+        : 'Not a Cabloy project: no __CABLOY_BASIC__ or __CABLOY_START__ marker found',
+    );
+  }
+  return hasBasic ? 'basic' : 'start';
+}
+
 function readPackageJson(): Record<string, any> {
   return readJson(PACKAGE_JSON_PATH);
+}
+
+function assertPublicBasicReleaseSurface(): void {
+  const edition = resolveEdition();
+  if (edition !== 'basic') {
+    throw new Error(
+      'The public Cabloy release workflow is available only in Cabloy Basic. Use an explicitly configured Cabloy Start release workflow instead.',
+    );
+  }
+
+  const pkg = readPackageJson();
+  const requiredScripts: Record<string, string> = {
+    'release-patch': 'node scripts/release.ts patch',
+    'release-minor': 'node scripts/release.ts minor',
+    'release-major': 'node scripts/release.ts major',
+    'release': 'node scripts/release.ts',
+    'release:dry-run': 'node scripts/release.ts --dry-run',
+    'release:changelog': 'node scripts/release.ts --changelog-only',
+    'release:publish': 'node scripts/release.ts --publish-only',
+    'release:github': 'node scripts/release.ts --release-only',
+  };
+  if (
+    pkg.name !== 'cabloy' ||
+    !isValidVersion(pkg.version) ||
+    Object.entries(requiredScripts).some(([name, command]) => pkg.scripts?.[name] !== command)
+  ) {
+    throw new Error(
+      'The active package.json does not expose the Cabloy Basic public release surface required by scripts/release.ts.',
+    );
+  }
 }
 
 function writePackageJson(pkg: Record<string, any>): void {
@@ -274,7 +319,7 @@ function refreshZovaDependencyGraph(): void {
   execInherited('pnpm install', false, { cwd: ZOVA_DIR });
   execInherited('npm run zova :tools:deps', false, { cwd: ZOVA_DIR });
   execInherited('npm run build:zova:admin');
-  if (existsSync(resolve(ROOT_DIR, '__CABLOY_BASIC__'))) {
+  if (resolveEdition() === 'basic') {
     execInherited('npm run build:zova:web');
   }
 }
@@ -881,6 +926,8 @@ interface ReleaseOptions {
 async function release(options: ReleaseOptions): Promise<void> {
   // eslint-disable-next-line
   console.log('🔧 Cabloy Release\n');
+
+  assertPublicBasicReleaseSurface();
 
   // Pre-flight checks
   try {

@@ -51,8 +51,8 @@
     },
     {
       "id": 9,
-      "prompt": "I am in Cabloy Start, which has no repo-docs-internal directory. I need shared agent guidance and some maintainer rationale. Where should each part go?",
-      "expected_output": "Detects Cabloy Start, does not assume or create repo-docs-internal, routes shared operational guidance to existing public docs and Claude rules or skills, and asks which established maintainer-rationale home to use rather than putting rationale into public docs automatically.",
+      "prompt": "I am in a Cabloy checkout whose active repository currently has no repo-docs-internal directory. I need shared agent guidance and some maintainer rationale. Where should each part go?",
+      "expected_output": "Inspects the active repository path rather than making an edition-wide assumption, routes shared operational guidance to existing public docs and Claude rules or skills, and asks which established maintainer-rationale home to use rather than putting rationale into public docs automatically.",
       "files": []
     }
   ]

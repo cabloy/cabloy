@@ -42,6 +42,11 @@ type ReverseSyncOutcome =
 
 type SyncState = Record<string, SyncStateEntry>;
 
+type EditionResolution =
+  | { kind: 'resolved'; edition: EditionConfig }
+  | { kind: 'ambiguous' }
+  | { kind: 'missing' };
+
 const SCRIPT_FILE = fileURLToPath(import.meta.url);
 const ROOT = path.resolve(path.dirname(SCRIPT_FILE), '../..');
 const ROOT_KEY = toPosixPath(ROOT);
@@ -102,7 +107,9 @@ const EDITION_CONFIGS: Record<'basic' | 'start', EditionConfig> = {
   },
 };
 
-const ACTIVE_EDITION = resolveEdition();
+const ACTIVE_EDITION_RESOLUTION = resolveEdition();
+const ACTIVE_EDITION =
+  ACTIVE_EDITION_RESOLUTION.kind === 'resolved' ? ACTIVE_EDITION_RESOLUTION.edition : null;
 const FALLBACK_REVERSE_VONA_CONTENT_MARKERS = [
   ...SHARED_REVERSE_VONA_CONTENT_MARKERS,
   ...EDITION_CONFIGS.basic.reverseVonaContentMarkers,
@@ -123,14 +130,12 @@ function normalizePath(value?: string): string | null {
   }
 }
 
-function resolveEdition(): EditionConfig | null {
-  if (existsSync(path.resolve(ROOT, '__CABLOY_BASIC__'))) {
-    return EDITION_CONFIGS.basic;
-  }
-  if (existsSync(path.resolve(ROOT, '__CABLOY_START__'))) {
-    return EDITION_CONFIGS.start;
-  }
-  return null;
+function resolveEdition(): EditionResolution {
+  const hasBasic = existsSync(path.resolve(ROOT, '__CABLOY_BASIC__'));
+  const hasStart = existsSync(path.resolve(ROOT, '__CABLOY_START__'));
+  if (hasBasic && hasStart) return { kind: 'ambiguous' };
+  if (!hasBasic && !hasStart) return { kind: 'missing' };
+  return { kind: 'resolved', edition: hasBasic ? EDITION_CONFIGS.basic : EDITION_CONFIGS.start };
 }
 
 function getReverseVonaContentMarkers(edition: EditionConfig | null): readonly string[] {
@@ -290,7 +295,11 @@ function autoSyncReverse(filePath: string, edition: EditionConfig): ReverseSyncO
 
 function buildReverseGuidance(edition: EditionConfig | null): string {
   if (!edition) {
-    return 'If backend tooling or backend metadata will consume this handoff, refresh generated metadata when applicable, resolve the active Cabloy edition marker before choosing the relevant Zova build and generated-output path, and then run `npm run deps:vona`.';
+    const resolutionMessage =
+      ACTIVE_EDITION_RESOLUTION.kind === 'ambiguous'
+        ? 'Both Cabloy edition markers are present, so stop before choosing an edition-specific build or generated-output path.'
+        : 'No Cabloy edition marker is present, so inspect the active package scripts and repository shape before choosing an edition-specific build or generated-output path.';
+    return `If backend tooling or backend metadata will consume this handoff, refresh generated metadata when applicable. ${resolutionMessage} Then run \`npm run deps:vona\` once the active edition is resolved.`;
   }
 
   const autoSyncCommands = edition.reverseAutoSyncCommands
@@ -319,18 +328,21 @@ function resolveReverseSyncOutcome(
     };
   }
 
+  if (!edition) {
+    const reason =
+      ACTIVE_EDITION_RESOLUTION.kind === 'ambiguous'
+        ? 'both Cabloy edition markers are present'
+        : 'no Cabloy edition marker is present';
+    return {
+      kind: 'not-applicable',
+      message: `Auto-sync did not run because ${reason}.`,
+    };
+  }
+
   if (shouldSkipAutoSync(filePath)) {
     return {
       kind: 'skipped',
       message: 'Auto-sync skipped because the same reverse-source edit was already synced recently in this repo.',
-    };
-  }
-
-  if (!edition) {
-    return {
-      kind: 'not-applicable',
-      message:
-        'Auto-sync did not run because the active Cabloy edition marker could not be resolved for this repo.',
     };
   }
 
@@ -343,6 +355,12 @@ function buildMessages(
   reverseSyncOutcome: ReverseSyncOutcome,
 ): string {
   const messages = ["Contract-loop gate: this change may affect Cabloy's bidirectional contract loop."];
+
+  if (ACTIVE_EDITION_RESOLUTION.kind === 'ambiguous') {
+    messages.push(
+      'Both Cabloy edition markers are present, so stop before choosing an edition-specific build, generated-output path, or auto-sync action.',
+    );
+  }
 
   if (result.forwardReason) {
     messages.push(

@@ -152,8 +152,21 @@ function copyDirectory(src: string, dest: string): void {
   cpSync(src, dest, { recursive: true, filter: shouldCopyPath });
 }
 
+function resolveEdition(): 'basic' | 'start' {
+  const hasBasic = existsSync(resolve(ROOT_DIR, '__CABLOY_BASIC__'));
+  const hasStart = existsSync(resolve(ROOT_DIR, '__CABLOY_START__'));
+  if (hasBasic === hasStart) {
+    throw new Error(
+      hasBasic
+        ? 'Ambiguous Cabloy edition: both __CABLOY_BASIC__ and __CABLOY_START__ markers are present'
+        : 'Not a Cabloy project: no __CABLOY_BASIC__ or __CABLOY_START__ marker found',
+    );
+  }
+  return hasBasic ? 'basic' : 'start';
+}
+
 function isCabloyBasic(): boolean {
-  return existsSync(resolve(ROOT_DIR, '__CABLOY_BASIC__'));
+  return resolveEdition() === 'basic';
 }
 
 function readPackageJson(filePath: string): PackageJson {
@@ -337,12 +350,10 @@ function reconcileFrameworkE2ePackageJson(dryRun?: boolean): void {
 // --- Step 1: Pre-flight ---
 
 function preflight(): void {
-  const markers = ['__CABLOY_BASIC__', '__CABLOY_START__'];
-  const found = markers.find(m => existsSync(resolve(ROOT_DIR, m)));
-  if (!found) {
-    console.error(
-      'Error: Not a cabloy project (no __CABLOY_BASIC__ or __CABLOY_START__ marker found)',
-    );
+  try {
+    resolveEdition();
+  } catch (error) {
+    console.error(`Error: ${(error as Error).message}`);
     process.exit(1);
   }
 }
