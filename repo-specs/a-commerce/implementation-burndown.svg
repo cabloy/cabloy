@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1300" viewBox="0 0 1600 1300" role="img" aria-labelledby="chart-title chart-desc">
+  <title id="chart-title">A-Commerce WBS Scope-Count Burndown</title>
+  <desc id="chart-desc">A scope-count burndown reference for the A-Commerce approved Work Breakdown Structure. The derived status snapshot was last reviewed on 2026-08-15. It records 23 approved WBS items, 23 verified items, and zero remaining items. The horizontal axis is verified WBS-item count, not time. There is no historical status series, estimate, duration, staffing plan, delivery calendar, velocity measurement, or forecast in the source specifications.</desc>
+  <metadata>
+    WBS scope, dependencies, and completion checks: repo-specs/a-commerce/pdp-wbs.md.
+    Derived current status: repo-specs/a-commerce/progress.md, last reviewed 2026-08-15.
+    This is a scope-count reference, not a dated delivery trend. The source specifications
+    provide no historical status series, actual dates, durations, estimates, staffing plan,
+    calendar commitments, velocity measurement, or forecast.
+  </metadata>
+  <style>
+    :root {
+      --surface: #fcfcfb;
+      --page: #f9f9f7;
+      --ink: #0b0b0b;
+      --secondary: #52514e;
+      --muted: #898781;
+      --grid: #e1e0d9;
+      --axis: #c3c2b7;
+      --blue: #2a78d6;
+      --aqua: #1baf7a;
+      --blue-wash: #eaf3fd;
+      --aqua-wash: #e7f7f0;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --surface: #1a1a19;
+        --page: #0d0d0d;
+        --ink: #ffffff;
+        --secondary: #c3c2b7;
+        --muted: #a09f99;
+        --grid: #2c2c2a;
+        --axis: #383835;
+        --blue: #3987e5;
+        --aqua: #199e70;
+        --blue-wash: #172435;
+        --aqua-wash: #122b23;
+      }
+    }
+    .canvas { fill: var(--page); }
+    .card { fill: var(--surface); stroke: var(--grid); stroke-width: 1; }
+    .title { fill: var(--ink); font-family: Arial, Helvetica, sans-serif; font-size: 27px; font-weight: 700; letter-spacing: -0.5px; }
+    .subtitle { fill: var(--secondary); font-family: Arial, Helvetica, sans-serif; font-size: 14px; }
+    .heading { fill: var(--ink); font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: 700; }
+    .hero { fill: var(--ink); font-family: Arial, Helvetica, sans-serif; font-size: 54px; font-weight: 700; letter-spacing: -2px; }
+    .metric { fill: var(--ink); font-family: Arial, Helvetica, sans-serif; font-size: 20px; font-weight: 700; }
+    .caption { fill: var(--secondary); font-family: Arial, Helvetica, sans-serif; font-size: 11px; }
+    .small { fill: var(--muted); font-family: Arial, Helvetica, sans-serif; font-size: 9px; }
+    .axis-label { fill: var(--secondary); font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: 600; }
+    .tick { fill: var(--secondary); font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-variant-numeric: tabular-nums; }
+    .table-head { fill: var(--muted); font-family: Arial, Helvetica, sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.4px; }
+    .table-text { fill: var(--ink); font-family: Arial, Helvetica, sans-serif; font-size: 11px; }
+    .table-number { fill: var(--ink); font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .grid { stroke: var(--grid); stroke-width: 1; shape-rendering: crispEdges; }
+    .axis { stroke: var(--axis); stroke-width: 1; shape-rendering: crispEdges; }
+    .reference { fill: none; stroke: var(--blue); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .meter-track { fill: var(--blue-wash); }
+    .meter-fill { fill: var(--aqua); }
+    .row:focus { outline: 2px solid var(--ink); outline-offset: 2px; }
+  </style>
+
+  <rect class="canvas" width="1600" height="1300"/>
+  <rect class="card" x="32" y="28" width="1536" height="1244" rx="14"/>
+
+  <text class="title" x="72" y="84">A-Commerce WBS Scope-Count Burndown</text>
+  <text class="subtitle" x="72" y="111">Verified WBS-item scope snapshot — remaining-count reference, not a calendar or historical trend</text>
+  <g aria-label="Source date" transform="translate(1210 83)">
+    <text class="small" x="0" y="0">STATUS SNAPSHOT</text>
+    <text class="caption" x="0" y="19">Last reviewed 2026-08-15</text>
+  </g>
+
+  <g aria-label="Current reviewed state">
+    <title>Current reviewed state: zero WBS items remaining; 23 of 23 WBS items verified; status snapshot last reviewed on 2026-08-15.</title>
+    <rect x="72" y="142" width="1456" height="128" rx="9" fill="var(--aqua-wash)"/>
+    <text class="heading" x="96" y="171">Current reviewed state</text>
+    <text class="hero" x="96" y="233">0</text>
+    <text class="metric" x="151" y="221">WBS items remaining</text>
+    <text class="caption" x="151" y="243">All approved WBS items are verified; no next item is ready to execute.</text>
+    <line class="axis" x1="790" y1="167" x2="790" y2="246"/>
+    <circle cx="833" cy="205" r="17" fill="var(--surface)" stroke="var(--axis)"/>
+    <path d="M825 205 L831 211 L842 198" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text class="metric" x="862" y="202">23 / 23 verified</text>
+    <text class="caption" x="862" y="224">Derived status snapshot reviewed 2026-08-15</text>
+    <text class="caption" x="1155" y="202">Approved WBS scope</text>
+    <text class="metric" x="1155" y="230">23 items</text>
+  </g>
+
+  <g aria-label="Scope-count reference plot">
+    <title>Scope-count reference. The logical relationship is remaining WBS items equals 23 minus verified WBS items. It has an undated 23-item-scope baseline at zero verified items and a current snapshot at 23 verified items and zero remaining items. No observed intermediate status points are available.</title>
+    <text class="heading" x="72" y="312">Scope-count reference</text>
+    <text class="caption" x="72" y="332">The descending line expresses a fixed 23-item accounting relationship. It is not observed history, velocity, or a forecast.</text>
+
+    <rect class="card" x="72" y="352" width="940" height="430" rx="9"/>
+    <text class="axis-label" x="118" y="385">WBS items remaining</text>
+    <text class="axis-label" x="542" y="758" text-anchor="middle">Verified WBS items in approved scope — not time</text>
+
+    <g class="grid">
+      <line x1="170" y1="416" x2="930" y2="416"/>
+      <line x1="170" y1="484" x2="930" y2="484"/>
+      <line x1="170" y1="552" x2="930" y2="552"/>
+      <line x1="170" y1="620" x2="930" y2="620"/>
+      <line x1="170" y1="688" x2="930" y2="688"/>
+      <line x1="170" y1="416" x2="170" y2="688"/>
+      <line x1="335" y1="416" x2="335" y2="688"/>
+      <line x1="500" y1="416" x2="500" y2="688"/>
+      <line x1="665" y1="416" x2="665" y2="688"/>
+      <line x1="830" y1="416" x2="830" y2="688"/>
+      <line x1="930" y1="416" x2="930" y2="688"/>
+    </g>
+    <line class="axis" x1="170" y1="688" x2="930" y2="688"/>
+    <line class="axis" x1="170" y1="416" x2="170" y2="688"/>
+
+    <text class="tick" x="157" y="691" text-anchor="end">0</text>
+    <text class="tick" x="157" y="623" text-anchor="end">5</text>
+    <text class="tick" x="157" y="555" text-anchor="end">10</text>
+    <text class="tick" x="157" y="487" text-anchor="end">15</text>
+    <text class="tick" x="157" y="419" text-anchor="end">20</text>
+    <text class="tick" x="157" y="399" text-anchor="end">23</text>
+    <text class="tick" x="170" y="713" text-anchor="middle">0</text>
+    <text class="tick" x="335" y="713" text-anchor="middle">5</text>
+    <text class="tick" x="500" y="713" text-anchor="middle">10</text>
+    <text class="tick" x="665" y="713" text-anchor="middle">15</text>
+    <text class="tick" x="830" y="713" text-anchor="middle">20</text>
+    <text class="tick" x="930" y="713" text-anchor="middle">23</text>
+
+    <path class="reference" d="M170 375 L930 688"/>
+    <circle cx="170" cy="375" r="8" fill="var(--blue)" stroke="var(--surface)" stroke-width="2"/>
+    <line x1="177" y1="380" x2="281" y2="397" stroke="var(--blue)" stroke-width="1"/>
+    <text class="heading" x="288" y="391">Logical approved-scope baseline</text>
+    <text class="caption" x="288" y="410">0 verified · 23 remaining · undated</text>
+
+    <circle cx="930" cy="688" r="16" fill="var(--surface)" stroke="var(--surface)" stroke-width="4"/>
+    <circle cx="930" cy="688" r="13" fill="var(--aqua)"/>
+    <path d="M924 688 L928 692 L937 682" fill="none" stroke="var(--surface)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="920" y1="680" x2="824" y2="621" stroke="var(--aqua)" stroke-width="1"/>
+    <text class="heading" x="811" y="604" text-anchor="end">Current snapshot</text>
+    <text class="caption" x="811" y="623" text-anchor="end">23 verified · 0 remaining</text>
+    <text class="caption" x="811" y="642" text-anchor="end">reviewed 2026-08-15</text>
+
+    <rect x="198" y="730" width="14" height="5" rx="2.5" fill="var(--blue)"/>
+    <text class="caption" x="220" y="736">Scope-count reference</text>
+    <circle cx="401" cy="732" r="6" fill="var(--aqua)"/>
+    <path d="M398 732 L400 734 L404 729" fill="none" stroke="var(--surface)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <text class="caption" x="413" y="736">Current verified snapshot</text>
+
+    <rect x="1036" y="352" width="492" height="430" rx="9" fill="var(--blue-wash)"/>
+    <text class="heading" x="1064" y="389">What this line does—and does not—show</text>
+    <text class="caption" x="1064" y="421">The line maps the fixed relationship:</text>
+    <text class="metric" x="1064" y="458">remaining = 23 − verified</text>
+    <line class="axis" x1="1064" y1="484" x2="1496" y2="484"/>
+    <text class="caption" x="1064" y="516">No observed intermediate status points are available.</text>
+    <text class="caption" x="1064" y="540">No actual dates, durations, estimates, staffing plan,</text>
+    <text class="caption" x="1064" y="560">velocity measurement, delivery calendar, or forecast</text>
+    <text class="caption" x="1064" y="580">is present in the source specifications.</text>
+    <text class="heading" x="1064" y="627">Reading the current state</text>
+    <text class="caption" x="1064" y="651">All 23 approved WBS items are verified. Any approved</text>
+    <text class="caption" x="1064" y="671">new scope or reopened item must update the authoritative</text>
+    <text class="caption" x="1064" y="691">WBS and derived progress index before a new snapshot.</text>
+  </g>
+
+  <g aria-label="Verified scope by phase">
+    <title>Verified scope by phase. Phase 10 has 1 of 1 verified. Phase 20 has 3 of 3. Phase 30 has 2 of 2. Phase 40 has 4 of 4. Phase 50 has 2 of 2. Phase 60 has 2 of 2. Phase 70 has 4 of 4. Phase 80 has 5 of 5. The total is 23 of 23 WBS items verified and zero remaining.</title>
+    <rect class="card" x="72" y="810" width="1456" height="380" rx="9"/>
+    <text class="heading" x="96" y="844">Verified scope by phase</text>
+    <text class="caption" x="96" y="864">Every current phase is complete under the derived status index.</text>
+    <text class="table-head" x="96" y="899">PHASE</text>
+    <text class="table-head" x="674" y="899" text-anchor="end">WBS ITEMS</text>
+    <text class="table-head" x="799" y="899" text-anchor="end">VERIFIED</text>
+    <text class="table-head" x="920" y="899" text-anchor="end">REMAINING</text>
+    <text class="table-head" x="1075" y="899">COMPLETION</text>
+    <text class="table-head" x="1438" y="899" text-anchor="end">STATUS</text>
+    <line class="grid" x1="96" y1="910" x2="1504" y2="910"/>
+
+    <g class="row" aria-label="Phase 10: 1 WBS item, 1 verified, 0 remaining, verified" tabindex="0"><title>Phase 10 — Documentation baseline: 1 of 1 verified, 0 remaining.</title><text class="table-text" x="96" y="935">P10 · Documentation baseline</text><text class="table-number" x="674" y="935" text-anchor="end">1</text><text class="table-number" x="799" y="935" text-anchor="end">1 / 1</text><text class="table-number" x="920" y="935" text-anchor="end">0</text><rect class="meter-track" x="1075" y="924" width="216" height="12" rx="6"/><rect class="meter-fill" x="1075" y="924" width="216" height="12" rx="6"/><circle cx="1360" cy="930" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M1357 930 L1359 932 L1364 927" fill="none" stroke="var(--ink)" stroke-width="1.1" stroke-linecap="round"/><text class="table-text" x="1373" y="935">Verified</text></g>
+    <g class="row" aria-label="Phase 20: 3 WBS items, 3 verified, 0 remaining, verified" tabindex="0"><title>Phase 20 — Suite, site, flavor, and contract plumbing: 3 of 3 verified, 0 remaining.</title><text class="table-text" x="96" y="963">P20 · Suite, site, flavor, and contract plumbing</text><text class="table-number" x="674" y="963" text-anchor="end">3</text><text class="table-number" x="799" y="963" text-anchor="end">3 / 3</text><text class="table-number" x="920" y="963" text-anchor="end">0</text><rect class="meter-track" x="1075" y="952" width="216" height="12" rx="6"/><rect class="meter-fill" x="1075" y="952" width="216" height="12" rx="6"/><circle cx="1360" cy="958" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M1357 958 L1359 960 L1364 955" fill="none" stroke="var(--ink)" stroke-width="1.1" stroke-linecap="round"/><text class="table-text" x="1373" y="963">Verified</text></g>
+    <g class="row" aria-label="Phase 30: 2 WBS items, 2 verified, 0 remaining, verified" tabindex="0"><title>Phase 30 — Catalogue and stock foundation: 2 of 2 verified, 0 remaining.</title><text class="table-text" x="96" y="991">P30 · Catalogue and stock foundation</text><text class="table-number" x="674" y="991" text-anchor="end">2</text><text class="table-number" x="799" y="991" text-anchor="end">2 / 2</text><text class="table-number" x="920" y="991" text-anchor="end">0</text><rect class="meter-track" x="1075" y="980" width="216" height="12" rx="6"/><rect class="meter-fill" x="1075" y="980" width="216" height="12" rx="6"/><circle cx="1360" cy="986" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M1357 986 L1359 988 L1364 983" fill="none" stroke="var(--ink)" stroke-width="1.1" stroke-linecap="round"/><text class="table-text" x="1373" y="991">Verified</text></g>
+    <g class="row" aria-label="Phase 40: 4 WBS items, 4 verified, 0 remaining, verified" tabindex="0"><title>Phase 40 — Checkout, coupon, order, and reservation lifecycle: 4 of 4 verified, 0 remaining.</title><text class="table-text" x="96" y="1019">P40 · Checkout, coupon, order, and reservation lifecycle</text><text class="table-number" x="674" y="1019" text-anchor="end">4</text><text class="table-number" x="799" y="1019" text-anchor="end">4 / 4</text><text class="table-number" x="920" y="1019" text-anchor="end">0</text><rect class="meter-track" x="1075" y="1008" width="216" height="12" rx="6"/><rect class="meter-fill" x="1075" y="1008" width="216" height="12" rx="6"/><circle cx="1360" cy="1014" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M1357 1014 L1359 1016 L1364 1011" fill="none" stroke="var(--ink)" stroke-width="1.1" stroke-linecap="round"/><text class="table-text" x="1373" y="1019">Verified</text></g>
+
+    <g class="row" aria-label="Phase 50: 2 WBS items, 2 verified, 0 remaining, verified" tabindex="0"><title>Phase 50 — Mock payment and customer order experience: 2 of 2 verified, 0 remaining.</title><text class="table-text" x="96" y="1047">P50 · Mock payment and customer order experience</text><text class="table-number" x="674" y="1047" text-anchor="end">2</text><text class="table-number" x="799" y="1047" text-anchor="end">2 / 2</text><text class="table-number" x="920" y="1047" text-anchor="end">0</text><rect class="meter-track" x="1075" y="1036" width="216" height="12" rx="6"/><rect class="meter-fill" x="1075" y="1036" width="216" height="12" rx="6"/><circle cx="1360" cy="1042" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M1357 1042 L1359 1044 L1364 1039" fill="none" stroke="var(--ink)" stroke-width="1.1" stroke-linecap="round"/><text class="table-text" x="1373" y="1047">Verified</text></g>
+    <g class="row" aria-label="Phase 60: 2 WBS items, 2 verified, 0 remaining, verified" tabindex="0"><title>Phase 60 — Operator shipment and pre-shipment refunds: 2 of 2 verified, 0 remaining.</title><text class="table-text" x="96" y="1075">P60 · Operator shipment and pre-shipment refunds</text><text class="table-number" x="674" y="1075" text-anchor="end">2</text><text class="table-number" x="799" y="1075" text-anchor="end">2 / 2</text><text class="table-number" x="920" y="1075" text-anchor="end">0</text><rect class="meter-track" x="1075" y="1064" width="216" height="12" rx="6"/><rect class="meter-fill" x="1075" y="1064" width="216" height="12" rx="6"/><circle cx="1360" cy="1070" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M1357 1070 L1359 1072 L1364 1067" fill="none" stroke="var(--ink)" stroke-width="1.1" stroke-linecap="round"/><text class="table-text" x="1373" y="1075">Verified</text></g>
+    <g class="row" aria-label="Phase 70: 4 WBS items, 4 verified, 0 remaining, verified" tabindex="0"><title>Phase 70 — Migrations, integration hardening, and release acceptance: 4 of 4 verified, 0 remaining.</title><text class="table-text" x="96" y="1103">P70 · Migrations, integration hardening, and release acceptance</text><text class="table-number" x="674" y="1103" text-anchor="end">4</text><text class="table-number" x="799" y="1103" text-anchor="end">4 / 4</text><text class="table-number" x="920" y="1103" text-anchor="end">0</text><rect class="meter-track" x="1075" y="1092" width="216" height="12" rx="6"/><rect class="meter-fill" x="1075" y="1092" width="216" height="12" rx="6"/><circle cx="1360" cy="1098" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M1357 1098 L1359 1100 L1364 1095" fill="none" stroke="var(--ink)" stroke-width="1.1" stroke-linecap="round"/><text class="table-text" x="1373" y="1103">Verified</text></g>
+    <g class="row" aria-label="Phase 80: 5 WBS items, 5 verified, 0 remaining, verified" tabindex="0"><title>Phase 80 — Staged semantic-presentation rollout: 5 of 5 verified, 0 remaining.</title><text class="table-text" x="96" y="1131">P80 · Staged semantic-presentation rollout</text><text class="table-number" x="674" y="1131" text-anchor="end">5</text><text class="table-number" x="799" y="1131" text-anchor="end">5 / 5</text><text class="table-number" x="920" y="1131" text-anchor="end">0</text><rect class="meter-track" x="1075" y="1120" width="216" height="12" rx="6"/><rect class="meter-fill" x="1075" y="1120" width="216" height="12" rx="6"/><circle cx="1360" cy="1126" r="7" fill="var(--surface)" stroke="var(--axis)"/><path d="M1357 1126 L1359 1128 L1364 1123" fill="none" stroke="var(--ink)" stroke-width="1.1" stroke-linecap="round"/><text class="table-text" x="1373" y="1131">Verified</text></g>
+    <line class="grid" x1="96" y1="1144" x2="1504" y2="1144"/>
+    <text class="table-number" x="96" y="1167">Total approved WBS scope</text><text class="table-number" x="674" y="1167" text-anchor="end">23</text><text class="table-number" x="799" y="1167" text-anchor="end">23 / 23</text><text class="table-number" x="920" y="1167" text-anchor="end">0</text><text class="table-number" x="1075" y="1167">100% complete</text><text class="table-number" x="1438" y="1167" text-anchor="end">Verified</text>
+  </g>
+
+  <line class="grid" x1="72" y1="1220" x2="1528" y2="1220"/>
+  <text class="small" x="72" y="1246">Sources: pdp-wbs.md (scope, dependencies, completion) · progress.md (derived status, reviewed 2026-08-15)</text>
+  <text class="small" x="1528" y="1246" text-anchor="end">Scope-count reference only — not a schedule, velocity trend, or forecast</text>
+</svg>
