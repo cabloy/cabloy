@@ -66,24 +66,46 @@ function escapeXml(value) {
   return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 
-function wrapChartText(value, maxCharacters) {
+function chartTextWidth(value, fontSize) {
+  return [...String(value)].reduce((width, character) => {
+    const characterWidth = /[⺀-鿿가-힯豈-﫿\ud800-\udfff]/.test(character)
+      ? 1
+      : /[MW@#%&]/.test(character)
+        ? 0.9
+        : /[A-Z0-9]/.test(character)
+          ? 0.62
+          : /[ilI.,:;!'` ]/.test(character)
+            ? 0.28
+            : 0.5;
+    return width + characterWidth * fontSize;
+  }, 0);
+}
+
+function wrapChartText(value, maxWidth, measure = value => [...String(value)].length) {
   const words = String(value).trim().replace(/\s+/g, ' ').split(' ');
   const lines = [];
   let line = '';
   for (const word of words) {
     const characters = [...word];
-    if (characters.length > maxCharacters) {
+    if (measure(word) > maxWidth) {
       if (line) {
         lines.push(line);
         line = '';
       }
-      for (let index = 0; index < characters.length; index += maxCharacters) {
-        lines.push(characters.slice(index, index + maxCharacters).join(''));
+      let chunk = ''; let chunkWidth = 0;
+      for (const character of characters) {
+        const characterWidth = measure(character);
+        if (chunk && chunkWidth + characterWidth > maxWidth) {
+          lines.push(chunk);
+          chunk = ''; chunkWidth = 0;
+        }
+        chunk += character; chunkWidth += characterWidth;
       }
+      if (chunk) lines.push(chunk);
       continue;
     }
     const candidate = line ? `${line} ${word}` : word;
-    if ([...candidate].length > maxCharacters) {
+    if (measure(candidate) > maxWidth) {
       lines.push(line);
       line = word;
     } else {
@@ -229,6 +251,11 @@ function statusIcon(x, y, status) {
   return `<circle cx="${x}" cy="${y}" r="5" fill="${STATUS_COLORS[status]}"/>`;
 }
 
+function renderChartTextLines(className, x, y, lines, lineHeight) {
+  if (lines.length === 1) return `<text class="${className}" x="${x}" y="${y}">${escapeXml(lines[0])}</text>`;
+  return `<text class="${className}" x="${x}" y="${y}">${lines.map((line, lineIndex) => `<tspan x="${x}" dy="${lineIndex ? lineHeight : 0}">${escapeXml(line)}</tspan>`).join('')}</text>`;
+}
+
 function svgDocument(title, desc, body, height, metadata) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="${height}" viewBox="0 0 1600 ${height}" role="img" aria-labelledby="chart-title chart-desc">
@@ -243,25 +270,33 @@ function svgDocument(title, desc, body, height, metadata) {
 
 export function renderGantt(model, suiteName) {
   const { copy: t, tasks, reviewed, language } = model;
-  const phaseX = 72; const wbsX = 265; const workX = 405; const dependencyX = 735; const statusX = 900;
+  const phaseX = 72; const wbsX = 265; const workX = 405; const dependencyX = 680; const statusX = 900;
   const plotX = 980; const plotW = 520; const rowY = 270; const rowH = 34; const phaseLineH = 12;
+  const workMaxWidth = dependencyX - workX - 10;
+  const dependencyMaxWidth = statusX - dependencyX - 12;
   let nextY = rowY;
   const layout = tasks.map((task, index) => {
     const phaseStart = index === 0 || tasks[index - 1].phase.number !== task.phase.number;
     const descriptionLines = phaseStart ? wrapChartText(task.phase.title, 30) : [];
+    const workLines = wrapChartText(task.title, workMaxWidth, value => chartTextWidth(value, 10));
+    const dependencyLines = wrapChartText(task.dependency, dependencyMaxWidth, value => chartTextWidth(value, 9));
+    const contentLines = Math.max(workLines.length, dependencyLines.length);
+    const taskRowH = Math.max(rowH, contentLines * phaseLineH + 22);
     const phaseLabelY = phaseStart ? nextY : undefined;
     const y = phaseStart ? nextY + 23 + descriptionLines.length * phaseLineH : nextY;
-    nextY = y + rowH;
-    return { task, index, y, phaseLabelY, descriptionLines };
+    const separatorY = y + Math.max(14, contentLines * phaseLineH + 2);
+    nextY = y + taskRowH;
+    return { task, index, y, separatorY, phaseLabelY, descriptionLines, workLines, dependencyLines };
   });
-  const contentBottom = layout.at(-1)?.y + 14 ?? rowY;
+  const contentBottom = layout.at(-1)?.separatorY ?? rowY;
   const footerY = Math.max(772, contentBottom + 80);
   const height = Math.max(850, footerY + 78);
-  const rows = layout.map(({ task, index, y, phaseLabelY, descriptionLines }) => {
+  const rows = layout.map(({ task, index, y, separatorY, phaseLabelY, descriptionLines, workLines, dependencyLines }) => {
     const barX = plotX + (index / Math.max(tasks.length, 1)) * (plotW - 90);
     const barW = task.status === 'verified' ? 58 : 42;
     const phaseHeader = phaseLabelY === undefined ? '' : `<text class="phase" x="${phaseX}" y="${phaseLabelY}">${escapeXml(`${t.phase} ${task.phase.number}`)}</text>${descriptionLines.map((line, lineIndex) => `<text class="small" x="${phaseX}" y="${phaseLabelY + 13 + lineIndex * phaseLineH}">${escapeXml(line)}</text>`).join('')}`;
-    return `<g class="row" tabindex="0" aria-label="${escapeXml(`${task.id}: ${task.title}; ${statusLabel(task.status, language)}`)}"><title>${escapeXml(`${task.id}: ${task.title}; dependencies: ${task.dependency}; ${statusLabel(task.status, language)}`)}</title><line class="grid" x1="72" y1="${y + 14}" x2="1500" y2="${y + 14}"/>${phaseHeader}<text class="num" x="${wbsX}" y="${y}">${escapeXml(task.id)}</text><text class="task" x="${workX}" y="${y}">${escapeXml(task.title)}</text><text class="small" x="${dependencyX}" y="${y}">${escapeXml(task.dependency)}</text>${statusIcon(statusX + 5, y - 4, task.status)}<text class="small" x="${statusX + 17}" y="${y}">${escapeXml(statusLabel(task.status, language))}</text><rect x="${barX.toFixed(1)}" y="${y - 15}" width="${barW}" height="18" rx="4" fill="${STATUS_COLORS[task.status]}"/></g>`;
+    const dependencyText = renderChartTextLines('small', dependencyX, y, dependencyLines, phaseLineH);
+    return `<g class="row" tabindex="0" aria-label="${escapeXml(`${task.id}: ${task.title}; ${statusLabel(task.status, language)}`)}"><title>${escapeXml(`${task.id}: ${task.title}; dependencies: ${task.dependency}; ${statusLabel(task.status, language)}`)}</title><line class="grid" x1="72" y1="${separatorY}" x2="1500" y2="${separatorY}"/>${phaseHeader}<text class="num" x="${wbsX}" y="${y}">${escapeXml(task.id)}</text>${renderChartTextLines('task', workX, y, workLines, phaseLineH)}${dependencyText}${statusIcon(statusX + 5, y - 4, task.status)}<text class="small" x="${statusX + 17}" y="${y}">${escapeXml(statusLabel(task.status, language))}</text><rect x="${barX.toFixed(1)}" y="${y - 15}" width="${barW}" height="18" rx="4" fill="${STATUS_COLORS[task.status]}"/></g>`;
   }).join('\n');
   const completed = new Set(tasks.filter(task => task.status === 'verified').map(task => task.id));
   const dependencyIds = task => [...task.dependency.matchAll(/\bWBS-(?:[A-Za-z0-9]+-)*[A-Za-z0-9]+(?:-\*)?/g)].flatMap(match => {

@@ -131,6 +131,19 @@ test('renders a phase description directly beneath its phase label', async t => 
   assert.doesNotMatch(gantt, /y="432">Delivery<\/text>/);
 });
 
+test('widens and wraps the Dependencies column without covering status', async t => {
+  const directory = await fixture({
+    'pdp-wbs.md': files['pdp-wbs.md'].replace(
+      'Dependencies: `WBS-10-01`.',
+      'Dependencies: `WBS-10-01`, `WBS-10-01`, `WBS-10-01`, `WBS-10-01`.',
+    ),
+  });
+  t.after(() => removeFixture(directory));
+  const gantt = (await generateCharts(directory)).artifacts.get('implementation-gantt.svg');
+  assert.match(gantt, /<text class="small" x="680" y="246">Dependencies<\/text>/);
+  assert.match(gantt, /<text class="small" x="680" y="\d+"><tspan x="680" dy="0">[^<]+<\/tspan><tspan x="680" dy="12">[^<]+<\/tspan><\/text><circle cx="905" cy="\d+"/);
+});
+
 test('selects Chinese chart copy from a Chinese README', () => {
   const model = createChartModel({
     readme: '# 示例内部规划\n\n这是中文规划记录。\n',
