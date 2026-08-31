@@ -28,7 +28,7 @@ export class ModelMenu extends BeanModelBase {
     // event
     if (process.env.CLIENT && this.sys.config.ssr.hmr) {
       this._eventSsrHmrReload = this.sys.meta.event.on('a-ssrhmr:reload', async (_data, next) => {
-        await this._refetchRetrieveMenus();
+        await this.refreshMenus();
         return next();
       });
     }
@@ -78,8 +78,9 @@ export class ModelMenu extends BeanModelBase {
     });
   }
 
-  private _refetchRetrieveMenus(): Promise<void> {
-    return this.$refetchQueries({ queryKey: this._getQueryKeyRetrieveMenus() });
+  async refreshMenus(): Promise<void> {
+    const queryMenus = this.retrieveMenus();
+    await queryMenus.refetch({ bypassPersister: true });
   }
 
   private _getQueryKeyRetrieveMenus(): [string, string | undefined, string | undefined] {

@@ -70,8 +70,9 @@ In the current repo implementation, the out-of-the-box menu controller is public
 })
 ```
 
-- Omit `roles`, or use `roles: []`, to make an item visible to anonymous and authenticated callers.
-- A nonempty `roles` array is visible when the current Passport has at least one matching role name.
+- Omit `roles` to make an item visible to anonymous and authenticated callers.
+- Use `roles: []` when an item has no static role visibility and is intended to be disclosed only through dynamic Role-menu configuration.
+- A nonempty `roles` array is visible when the current Passport has at least one matching role name; it can also be disclosed through dynamic Role-menu configuration.
 - `roles` is server-only declaration metadata. It is filtered out before the API response and is not part of `IMenuItem`, OpenAPI, or generated frontend clients.
 - This controls navigation disclosure only. It never grants access to a page, controller action, API, or resource; those boundaries retain their own route and Passport/permission guards. For the fullstack pattern that pairs an Admin `presetResource` entry with independently authorized Admin APIs and separately scoped Web self-service APIs, see [Admin Resource and Web Self-Service](/fullstack/admin-resource-and-web-self-service).
 
