@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.1.154
+
+### Features
+
+- Add home user functionality.
+- Add commerce role site support.
+- Add role site support.
+
+### Bug Fixes
+
+- Fix the menu guide.
+- Correct Gantt chart render width.
+
 ## 5.1.153
 
 ### Features
