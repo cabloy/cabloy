@@ -1,71 +1,6 @@
 // eslint-disable
 import type { TypeSymbolKeyFieldsMore } from 'vona-module-a-orm';
 import type { TypeEntityOptionsFields,TypeControllerOptionsActions } from 'vona-module-a-openapi';
-/** service: begin */
-export * from '../service/operator.ts';
-
-import 'vona-module-a-bean';
-declare module 'vona-module-a-bean' {
-
-    export interface IServiceRecord {
-      'commerce-siteadmin:operator': never;
-    }
-
-
-}
-declare module 'vona-module-commerce-siteadmin' {
-
-        export interface ServiceOperator {
-          /** @internal */
-          get scope(): ScopeModuleCommerceSiteadmin;
-        }
-
-          export interface ServiceOperator {
-            get $beanFullName(): 'commerce-siteadmin.service.operator';
-            get $onionName(): 'commerce-siteadmin:operator';
-          }
-}
-/** service: end */
-/** service: begin */
-import type { ServiceOperator } from '../service/operator.ts';
-export interface IModuleService {
-  'operator': ServiceOperator;
-}
-/** service: end */
-/** service: begin */
-
-import 'vona';
-declare module 'vona' {
-  export interface IBeanRecordGeneral {
-    'commerce-siteadmin.service.operator': ServiceOperator;
-  }
-}
-/** service: end */
-/** meta: begin */
-export * from '../bean/meta.version.ts';
-
-import 'vona-module-a-meta';
-declare module 'vona-module-a-meta' {
-
-    export interface IMetaRecord {
-      'commerce-siteadmin:version': never;
-    }
-
-
-}
-declare module 'vona-module-commerce-siteadmin' {
-
-        export interface MetaVersion {
-          /** @internal */
-          get scope(): ScopeModuleCommerceSiteadmin;
-        }
-
-          export interface MetaVersion {
-            get $beanFullName(): 'commerce-siteadmin.meta.version';
-            get $onionName(): 'commerce-siteadmin:version';
-          }
-}
-/** meta: end */
 /** dto: begin */
 export * from '../dto/operatorContext.ts';
 import type { IDtoOptionsOperatorContext } from '../dto/operatorContext.ts';
@@ -140,6 +75,46 @@ import 'vona-module-a-openapi';
   }
 
 /** controller: end */
+/** service: begin */
+export * from '../service/operator.ts';
+
+import 'vona-module-a-bean';
+declare module 'vona-module-a-bean' {
+
+    export interface IServiceRecord {
+      'commerce-siteadmin:operator': never;
+    }
+
+
+}
+declare module 'vona-module-commerce-siteadmin' {
+
+        export interface ServiceOperator {
+          /** @internal */
+          get scope(): ScopeModuleCommerceSiteadmin;
+        }
+
+          export interface ServiceOperator {
+            get $beanFullName(): 'commerce-siteadmin.service.operator';
+            get $onionName(): 'commerce-siteadmin:operator';
+          }
+}
+/** service: end */
+/** service: begin */
+import type { ServiceOperator } from '../service/operator.ts';
+export interface IModuleService {
+  'operator': ServiceOperator;
+}
+/** service: end */
+/** service: begin */
+
+import 'vona';
+declare module 'vona' {
+  export interface IBeanRecordGeneral {
+    'commerce-siteadmin.service.operator': ServiceOperator;
+  }
+}
+/** service: end */
 /** ssrSite: begin */
 export * from '../bean/ssrSite.commerceAdmin.ts';
 import type { ISsrSiteOptionsCommerceAdmin } from '../bean/ssrSite.commerceAdmin.ts';
