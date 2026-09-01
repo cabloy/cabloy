@@ -54,7 +54,8 @@
       "monkey": true
     },
     "dependencies": {
-      "a-zova": "5.0.0"
+      "a-zova": "5.0.0",
+      "home-base": "5.0.0"
     }
   }
 }

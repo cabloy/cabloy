@@ -9,13 +9,17 @@ describe('role.test.ts', () => {
       const roleRegisteredUser = await scope.model.role.getByName('registeredUser');
       assert.equal(roleRegisteredUser?.title, 'Registered User');
       assert.deepEqual(roleRegisteredUser?.titleLocales, { 'zh-cn': '注册用户' });
-      assert.ok(roleRegisteredUser?.siteIds.includes('web'));
+      assert.deepEqual(
+        roleRegisteredUser?.siteIds,
+        scope.config.builtinRoles.registeredUser.siteIds,
+      );
+      assert.equal(roleRegisteredUser?.builtin, true);
 
       const roleSystemAdmin = await scope.model.role.getByName('systemAdmin');
       assert.equal(roleSystemAdmin?.title, 'System Administrator');
       assert.deepEqual(roleSystemAdmin?.titleLocales, { 'zh-cn': '系统管理员' });
-      assert.ok(roleSystemAdmin?.siteIds.includes('web'));
-      assert.ok(roleSystemAdmin?.siteIds.includes('admin'));
+      assert.deepEqual(roleSystemAdmin?.siteIds, scope.config.builtinRoles.systemAdmin.siteIds);
+      assert.equal(roleSystemAdmin?.builtin, true);
 
       await app.bean.passport.signinMock();
       const passport = await app.bean.executor.performAction('get', '/home/user/passport/current');
@@ -24,13 +28,17 @@ describe('role.test.ts', () => {
       );
       assert.equal(passportRegisteredUser?.title, 'Registered User');
       assert.deepEqual(passportRegisteredUser?.titleLocales, { 'zh-cn': '注册用户' });
-      assert.ok(passportRegisteredUser?.siteIds.includes('web'));
+      assert.deepEqual(
+        passportRegisteredUser?.siteIds,
+        scope.config.builtinRoles.registeredUser.siteIds,
+      );
+      assert.equal(passportRegisteredUser?.builtin, true);
 
       const passportSystemAdmin = passport.roles.find((role: any) => role.name === 'systemAdmin');
       assert.equal(passportSystemAdmin?.title, 'System Administrator');
       assert.deepEqual(passportSystemAdmin?.titleLocales, { 'zh-cn': '系统管理员' });
-      assert.ok(passportSystemAdmin?.siteIds.includes('web'));
-      assert.ok(passportSystemAdmin?.siteIds.includes('admin'));
+      assert.deepEqual(passportSystemAdmin?.siteIds, scope.config.builtinRoles.systemAdmin.siteIds);
+      assert.equal(passportSystemAdmin?.builtin, true);
     });
   });
 });

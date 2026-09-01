@@ -4,6 +4,8 @@ import { catchError } from '@cabloy/utils';
 import { Service } from 'zova-module-a-bean';
 import { BeanRouterGuardsBase } from 'zova-module-a-router';
 
+import { isRoleSiteAdmitted } from '../lib/roleSiteAdmission.js';
+
 @Service()
 export class ServiceRouterGuards extends BeanRouterGuardsBase {
   protected onRouterGuards(router: BeanRouter) {
@@ -31,9 +33,7 @@ export class ServiceRouterGuards extends BeanRouterGuardsBase {
         }
         return pagePath;
       }
-      const siteId = this.sys.env.SITE_ID;
-      const siteAdmitted =
-        !!siteId && !!this.$passport.roles?.some(role => role.siteIds.includes(siteId));
+      const siteAdmitted = isRoleSiteAdmitted(this.sys.env.SITE_ID, this.$passport.roles);
       if (!siteAdmitted) {
         const pagePath = this.app.$getPagePathAccessDenied();
         if (process.env.SERVER) {

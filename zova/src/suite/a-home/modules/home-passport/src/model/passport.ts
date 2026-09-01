@@ -17,6 +17,7 @@ import {
   TypeOpenapiPermissions,
 } from 'zova-module-a-openapi';
 import { ApiApiHomeUserPassportloginOauthPath, OpenApiBaseURL } from 'zova-module-home-api';
+import { isRoleSiteAdmitted } from 'zova-module-home-base';
 
 import { matchPermissionAction } from '../lib/permissionActionMatcher.js';
 
@@ -143,8 +144,7 @@ export class ModelPassport extends BeanModelBase {
   }
 
   isPassportSiteAdmitted(passport?: ApiApiHomeUserPassportloginResponseBody['passport']) {
-    const siteId = this.sys.env.SITE_ID;
-    return !!siteId && !!passport?.roles.some(role => role.siteIds.includes(siteId));
+    return isRoleSiteAdmitted(this.sys.env.SITE_ID, passport?.roles);
   }
 
   logout() {

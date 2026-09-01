@@ -23,4 +23,7 @@ export class EntityRole extends EntityBase implements IRole {
 
   @Api.field(v.array(z.string()))
   siteIds: string[];
+
+  @Api.field(v.default(false))
+  builtin: boolean;
 }

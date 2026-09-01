@@ -21,6 +21,10 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
         table.string(entityRole.title, 255).comment(entityRole.$comment.title);
         table.json(entityRole.titleLocales).comment(entityRole.$comment.titleLocales);
         table.json(entityRole.siteIds).comment(entityRole.$comment.siteIds);
+        table
+          .boolean(entityRole.builtin)
+          .defaultTo(entityRole.$default.builtin)
+          .comment(entityRole.$comment.builtin);
       });
       // homeUser
       const entityUser = this.scope.entity.user;
@@ -62,6 +66,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
           title: role.title,
           titleLocales: role.titleLocales ?? {},
           siteIds: role.siteIds,
+          builtin: role.builtin,
         });
       }
       // user: admin

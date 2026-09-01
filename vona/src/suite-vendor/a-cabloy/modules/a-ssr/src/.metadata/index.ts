@@ -162,6 +162,7 @@ declare module 'vona' {
 }
 /** service: end */
 /** event: begin */
+export * from '../bean/event.resolveMenuVisibility.ts';
 export * from '../bean/event.retrieveMenus.ts';
 export * from '../bean/event.retrieveMenusSite.ts';
 
@@ -171,6 +172,16 @@ declare module 'vona' {
 
 }
 declare module 'vona-module-a-ssr' {
+
+        export interface EventResolveMenuVisibility {
+          /** @internal */
+          get scope(): ScopeModuleASsr;
+        }
+
+          export interface EventResolveMenuVisibility {
+            get $beanFullName(): 'a-ssr.event.resolveMenuVisibility';
+            get $onionName(): 'a-ssr:resolveMenuVisibility';
+          }
 
         export interface EventRetrieveMenus {
           /** @internal */
@@ -194,20 +205,24 @@ declare module 'vona-module-a-ssr' {
 }
 /** event: end */
 /** event: begin */
+import type { EventResolveMenuVisibility } from '../bean/event.resolveMenuVisibility.ts';
 import type { EventRetrieveMenus } from '../bean/event.retrieveMenus.ts';
 import type { EventRetrieveMenusSite } from '../bean/event.retrieveMenusSite.ts';
 export interface IModuleEvent {
-  'retrieveMenus': EventRetrieveMenus;
+  'resolveMenuVisibility': EventResolveMenuVisibility;
+'retrieveMenus': EventRetrieveMenus;
 'retrieveMenusSite': EventRetrieveMenusSite;
 }
 /** event: end */
 /** event: begin */
+import type { TypeEventResolveMenuVisibilityData, TypeEventResolveMenuVisibilityResult } from '../bean/event.resolveMenuVisibility.ts';
 import type { TypeEventRetrieveMenusData, TypeEventRetrieveMenusResult } from '../bean/event.retrieveMenus.ts';
 import type { TypeEventRetrieveMenusSiteData, TypeEventRetrieveMenusSiteResult } from '../bean/event.retrieveMenusSite.ts';
 import type { EventOn } from 'vona-module-a-event';
 declare module 'vona-module-a-event' {
   export interface IEventRecord {
-    'a-ssr:retrieveMenus': EventOn<TypeEventRetrieveMenusData, TypeEventRetrieveMenusResult>;
+    'a-ssr:resolveMenuVisibility': EventOn<TypeEventResolveMenuVisibilityData, TypeEventResolveMenuVisibilityResult>;
+'a-ssr:retrieveMenus': EventOn<TypeEventRetrieveMenusData, TypeEventRetrieveMenusResult>;
 'a-ssr:retrieveMenusSite': EventOn<TypeEventRetrieveMenusSiteData, TypeEventRetrieveMenusSiteResult>;
   }
 }

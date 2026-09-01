@@ -15,6 +15,7 @@ import path from 'node:path';
 import { BeanBase, cast, deepExtend, SymbolModuleName } from 'vona';
 import { checkErrorJwtExpiredAndThrow } from 'vona-module-a-jwt';
 
+import type { TypeEventResolveMenuVisibilityResult } from '../bean/event.resolveMenuVisibility.ts';
 import type { TypeEventRetrieveMenusResult } from '../bean/event.retrieveMenus.ts';
 import type { TypeEventRetrieveMenusSiteResult } from '../bean/event.retrieveMenusSite.ts';
 import type {
@@ -34,6 +35,13 @@ import type {
 import { ServiceDevProxy } from '../service/devProxy.ts';
 import { ServiceSsrHandler } from '../service/ssrHandler.ts';
 import { SymbolCacheMenus } from './const.ts';
+import { checkSsrBinding } from './ssrMenuEligibility.ts';
+import {
+  projectPublicSsrMenuGroups,
+  projectPublicSsrMenus,
+  resolveSsrMenuVisibilityDefault,
+  resolveVisibleSsrMenuGroups,
+} from './ssrMenuVisibility.ts';
 
 export class BeanSsrSiteBase<
   SsrSiteOptions extends IDecoratorSsrSiteOptions = IDecoratorSsrSiteOptions,
@@ -154,13 +162,22 @@ export class BeanSsrSiteBase<
   async retrieveMenus(): Promise<TypeEventRetrieveMenusResult | undefined> {
     const menusPrepared = await this._getMenusCache(this.ctx.locale);
     if (!menusPrepared) return;
-    const menus = menusPrepared.menus
-      ?.filter(menu => !menu.roles?.length || this.bean.passport.checkRoleName(menu.roles))
-      .map(menu => {
-        const { roles: _roles, ...menuPublic } = menu;
-        return menuPublic;
-      });
-    return { menus, groups: menusPrepared.groups };
+    const menusPreparedVisible = await this.$scope.ssr.event.resolveMenuVisibility.emit(
+      {
+        ssrSiteName: this.$onionName,
+        menus: menusPrepared.menus ?? [],
+        currentRoleIds: (this.bean.passport.currentRoles ?? []).map(role => role.id),
+      },
+      async data => this._resolveMenuVisibilityDefault(data.menus),
+    );
+    const groupsPreparedVisible = resolveVisibleSsrMenuGroups(
+      menusPreparedVisible,
+      menusPrepared.groups ?? [],
+    );
+    return {
+      menus: projectPublicSsrMenus(menusPreparedVisible),
+      groups: projectPublicSsrMenuGroups(groupsPreparedVisible),
+    };
   }
 
   public get siteOptions() {
@@ -282,6 +299,12 @@ export class BeanSsrSiteBase<
     };
   }
 
+  private _resolveMenuVisibilityDefault(
+    menus: ISsrMenuItemPrepared[],
+  ): TypeEventResolveMenuVisibilityResult {
+    return resolveSsrMenuVisibilityDefault(menus, roles => this.bean.passport.checkRoleName(roles));
+  }
+
   private async _getMenusCache(
     locale: keyof ILocaleRecord,
   ): Promise<TypeEventRetrieveMenusSiteResult | undefined> {
@@ -335,8 +358,8 @@ export class BeanSsrSiteBase<
     for (const ssrMenu of ssrMenus) {
       const siteMenuOptions = ssrMenu.beanOptions
         .options as IDecoratorSsrMenuOptions<IDecoratorSsrSiteOptions>;
-      if (!_checkValidSiteOrLocale(siteOnionName, siteMenuOptions.site)) continue;
-      if (!_checkValidSiteOrLocale(locale, siteMenuOptions.locale)) continue;
+      if (!checkSsrBinding(siteOnionName, siteMenuOptions.site)) continue;
+      if (!checkSsrBinding(locale, siteMenuOptions.locale)) continue;
       const menusFrom =
         siteMenuOptions.items || (siteMenuOptions.item && { '': siteMenuOptions.item });
       if (!menusFrom) continue;
@@ -355,11 +378,4 @@ export class BeanSsrSiteBase<
     }
     return menus;
   }
-}
-
-function _checkValidSiteOrLocale(expect: any, target: any) {
-  if (!target) return true;
-  if (Array.isArray(target) && target.includes(expect)) return true;
-  if (expect === target) return true;
-  return false;
 }

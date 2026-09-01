@@ -15,6 +15,7 @@ export interface IRole {
   title: string;
   titleLocales?: LocalizedTextMap;
   siteIds: string[];
+  builtin?: boolean;
 }
 
 export interface IRoleAdapter {

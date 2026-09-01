@@ -1,76 +1,6 @@
 // eslint-disable
 import type { TypeSymbolKeyFieldsMore } from 'vona-module-a-orm';
 import type { TypeEntityOptionsFields,TypeControllerOptionsActions } from 'vona-module-a-openapi';
-/** service: begin */
-export * from '../service/menu.ts';
-export * from '../service/permission.ts';
-export * from '../service/siteCatalog.ts';
-
-import 'vona-module-a-bean';
-declare module 'vona-module-a-bean' {
-
-    export interface IServiceRecord {
-      'home-base:menu': never;
-'home-base:permission': never;
-'home-base:siteCatalog': never;
-    }
-
-
-}
-declare module 'vona-module-home-base' {
-
-        export interface ServiceMenu {
-          /** @internal */
-          get scope(): ScopeModuleHomeBase;
-        }
-
-          export interface ServiceMenu {
-            get $beanFullName(): 'home-base.service.menu';
-            get $onionName(): 'home-base:menu';
-          }
-
-        export interface ServicePermission {
-          /** @internal */
-          get scope(): ScopeModuleHomeBase;
-        }
-
-          export interface ServicePermission {
-            get $beanFullName(): 'home-base.service.permission';
-            get $onionName(): 'home-base:permission';
-          }
-
-        export interface ServiceSiteCatalog {
-          /** @internal */
-          get scope(): ScopeModuleHomeBase;
-        }
-
-          export interface ServiceSiteCatalog {
-            get $beanFullName(): 'home-base.service.siteCatalog';
-            get $onionName(): 'home-base:siteCatalog';
-          }
-}
-/** service: end */
-/** service: begin */
-import type { ServiceMenu } from '../service/menu.ts';
-import type { ServicePermission } from '../service/permission.ts';
-import type { ServiceSiteCatalog } from '../service/siteCatalog.ts';
-export interface IModuleService {
-  'menu': ServiceMenu;
-'permission': ServicePermission;
-'siteCatalog': ServiceSiteCatalog;
-}
-/** service: end */
-/** service: begin */
-
-import 'vona';
-declare module 'vona' {
-  export interface IBeanRecordGeneral {
-    'home-base.service.menu': ServiceMenu;
-'home-base.service.permission': ServicePermission;
-'home-base.service.siteCatalog': ServiceSiteCatalog;
-  }
-}
-/** service: end */
 /** dto: begin */
 export * from '../dto/siteCatalogSelectRes.ts';
 export * from '../dto/siteCatalogSelectResItem.ts';
@@ -195,11 +125,84 @@ import 'vona-module-a-openapi';
   }
 
 /** controller: end */
+/** service: begin */
+export * from '../service/menu.ts';
+export * from '../service/permission.ts';
+export * from '../service/siteCatalog.ts';
+
+import 'vona-module-a-bean';
+declare module 'vona-module-a-bean' {
+
+    export interface IServiceRecord {
+      'home-base:menu': never;
+'home-base:permission': never;
+'home-base:siteCatalog': never;
+    }
+
+
+}
+declare module 'vona-module-home-base' {
+
+        export interface ServiceMenu {
+          /** @internal */
+          get scope(): ScopeModuleHomeBase;
+        }
+
+          export interface ServiceMenu {
+            get $beanFullName(): 'home-base.service.menu';
+            get $onionName(): 'home-base:menu';
+          }
+
+        export interface ServicePermission {
+          /** @internal */
+          get scope(): ScopeModuleHomeBase;
+        }
+
+          export interface ServicePermission {
+            get $beanFullName(): 'home-base.service.permission';
+            get $onionName(): 'home-base:permission';
+          }
+
+        export interface ServiceSiteCatalog {
+          /** @internal */
+          get scope(): ScopeModuleHomeBase;
+        }
+
+          export interface ServiceSiteCatalog {
+            get $beanFullName(): 'home-base.service.siteCatalog';
+            get $onionName(): 'home-base:siteCatalog';
+          }
+}
+/** service: end */
+/** service: begin */
+import type { ServiceMenu } from '../service/menu.ts';
+import type { ServicePermission } from '../service/permission.ts';
+import type { ServiceSiteCatalog } from '../service/siteCatalog.ts';
+export interface IModuleService {
+  'menu': ServiceMenu;
+'permission': ServicePermission;
+'siteCatalog': ServiceSiteCatalog;
+}
+/** service: end */
+/** service: begin */
+
+import 'vona';
+declare module 'vona' {
+  export interface IBeanRecordGeneral {
+    'home-base.service.menu': ServiceMenu;
+'home-base.service.permission': ServicePermission;
+'home-base.service.siteCatalog': ServiceSiteCatalog;
+  }
+}
+/** service: end */
+/** locale: begin */
+import { locales } from './locales.ts';
+/** locale: end */
 /** main: begin */
 export * from '../main.ts';
 /** main: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil } from 'vona';
+import { BeanScopeBase, type BeanScopeUtil, type TypeModuleLocales, type TypeLocaleBase } from 'vona';
 import { Scope } from 'vona-module-a-bean';
 
 @Scope()
@@ -207,6 +210,7 @@ export class ScopeModuleHomeBase extends BeanScopeBase {}
 
 export interface ScopeModuleHomeBase {
   util: BeanScopeUtil;
+locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 service: IModuleService;
 }
 
@@ -222,7 +226,9 @@ declare module 'vona' {
 
 
 
-
+  export interface IBeanScopeLocale {
+    'home-base': (typeof locales)[TypeLocaleBase];
+  }
 
 
 }

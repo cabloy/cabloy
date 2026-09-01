@@ -3,9 +3,11 @@ import type { IOnionSlice } from 'vona-module-a-onion';
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
+import type { ISsrMenuCatalog, ISsrMenuEligibility } from '../types/ssrMenu.ts';
 import type { IDecoratorSsrSiteOptions, ISsrSiteRecord } from '../types/ssrSite.ts';
 
 import { SymbolCacheSites } from '../lib/const.ts';
+import { resolveSsrMenuCatalog, resolveSsrMenuEligibility } from '../lib/ssrMenuEligibility.ts';
 
 @Service()
 export class ServiceSsr extends BeanBase {
@@ -64,6 +66,34 @@ export class ServiceSsr extends BeanBase {
       });
     }
     return this.app.meta[SymbolCacheSites][cacheKey];
+  }
+
+  public getMenuCatalog(): ISsrMenuCatalog {
+    const sites = this.getSitesEnabled().map(site => {
+      const options = site.beanOptions.options as IDecoratorSsrSiteOptions;
+      return {
+        ssrSiteName: site.name,
+        title: this.app.meta.text.locale(this.ctx.locale, options.title),
+      };
+    });
+    return resolveSsrMenuCatalog(
+      sites,
+      this.bean.onion.ssrMenu.getOnionsEnabled(),
+      this.bean.onion.ssrMenuGroup.getOnionsEnabled(),
+    );
+  }
+
+  public resolveMenuEligibility(
+    ssrSiteName: string,
+    ssrMenuName: string,
+  ): ISsrMenuEligibility | undefined {
+    const site = this.getSitesEnabled().find(item => item.name === ssrSiteName);
+    if (!site) return;
+    return resolveSsrMenuEligibility(
+      ssrSiteName,
+      ssrMenuName,
+      this.bean.onion.ssrMenu.getOnionsEnabled(),
+    );
   }
 
   public prepareMenuLink(
