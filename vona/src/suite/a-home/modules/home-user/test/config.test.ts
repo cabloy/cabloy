@@ -9,17 +9,30 @@ function createConfig(env: Record<string, string | undefined>) {
 }
 
 describe('config.test.ts', () => {
-  it('uses wildcard defaults without mutating static role definitions', () => {
+  it('uses environment overrides and defaults without mutating static role definitions', () => {
     const configured = createConfig({
+      HOME_USER_PASSWORD_DEFAULT_ADMIN: 'strong-admin-password',
+      HOME_USER_DISABLE_BOOTSTRAP_SYSTEM_ADMIN: 'true',
+      HOME_USER_DISABLE_USER_ADMIN: 'true',
       HOME_USER_BUILTIN_ROLE_REGISTERED_USER_SITE_IDS: 'web',
       HOME_USER_BUILTIN_ROLE_SYSTEM_ADMIN_SITE_IDS: 'web,admin',
     });
+    assert.equal(configured.passwordDefault.admin, 'strong-admin-password');
+    assert.equal(configured.disableBootstrapSystemAdmin, true);
+    assert.equal(configured.disableUserAdmin, true);
     assert.deepEqual(configured.builtinRoles.registeredUser.siteIds, ['web']);
     assert.deepEqual(configured.builtinRoles.systemAdmin.siteIds, ['web', 'admin']);
     assert.deepEqual(builtinRoles.registeredUser.siteIds, ['*']);
     assert.deepEqual(builtinRoles.systemAdmin.siteIds, ['*']);
 
-    const defaults = createConfig({});
+    const defaults = createConfig({
+      HOME_USER_PASSWORD_DEFAULT_ADMIN: '',
+      HOME_USER_DISABLE_BOOTSTRAP_SYSTEM_ADMIN: 'false',
+      HOME_USER_DISABLE_USER_ADMIN: 'invalid',
+    });
+    assert.equal(defaults.passwordDefault.admin, '123456');
+    assert.equal(defaults.disableBootstrapSystemAdmin, false);
+    assert.equal(defaults.disableUserAdmin, false);
     assert.deepEqual(defaults.builtinRoles.registeredUser.siteIds, ['*']);
     assert.deepEqual(defaults.builtinRoles.systemAdmin.siteIds, ['*']);
   });

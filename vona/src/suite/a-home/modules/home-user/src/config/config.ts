@@ -17,25 +17,26 @@ export interface IHomeUserConfig {
 }
 
 export function config(app: VonaApplication): IHomeUserConfig {
+  const { env } = app.meta;
   return {
     passwordDefault: {
-      admin: '123456',
+      admin: env.HOME_USER_PASSWORD_DEFAULT_ADMIN || '123456',
     },
-    disableBootstrapSystemAdmin: false,
-    disableUserAdmin: false,
+    disableBootstrapSystemAdmin: env.HOME_USER_DISABLE_BOOTSTRAP_SYSTEM_ADMIN === 'true',
+    disableUserAdmin: env.HOME_USER_DISABLE_USER_ADMIN === 'true',
     builtinRoles: {
       ...builtinRoles,
       registeredUser: {
         ...builtinRoles.registeredUser,
         siteIds: parseBuiltinRoleSiteIds(
-          app.meta.env.HOME_USER_BUILTIN_ROLE_REGISTERED_USER_SITE_IDS,
+          env.HOME_USER_BUILTIN_ROLE_REGISTERED_USER_SITE_IDS,
           'HOME_USER_BUILTIN_ROLE_REGISTERED_USER_SITE_IDS',
         ),
       },
       systemAdmin: {
         ...builtinRoles.systemAdmin,
         siteIds: parseBuiltinRoleSiteIds(
-          app.meta.env.HOME_USER_BUILTIN_ROLE_SYSTEM_ADMIN_SITE_IDS,
+          env.HOME_USER_BUILTIN_ROLE_SYSTEM_ADMIN_SITE_IDS,
           'HOME_USER_BUILTIN_ROLE_SYSTEM_ADMIN_SITE_IDS',
         ),
       },
