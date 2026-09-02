@@ -3,7 +3,7 @@
 [![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cabloy/cabloy/blob/main/LICENSE)
 [![npm version](https://img.shields.io/npm/v/cabloy.svg?style=flat-square&label=cabloy)](https://www.npmjs.com/package/cabloy)
 [![npm downloads](https://img.shields.io/npm/dm/cabloy?color=orange&label=downloads)](https://www.npmjs.com/package/cabloy)
-[![Docs](https://img.shields.io/badge/docs-cabloy-4f46e5.svg?style=flat-square)](https://docs.cabloy.com)
+[![Docs](https://img.shields.io/badge/docs-cabloy-4f46e5.svg?style=flat-square)](https://cabloy.com)
 [![Demo](https://img.shields.io/badge/demo-cabloy.com-059669.svg?style=flat-square)](https://cabloy.com)
 
 Cabloy is a Node.js fullstack framework for AI vibe coding.
@@ -12,7 +12,7 @@ Cabloy is a Node.js fullstack framework for AI vibe coding.
 
 Instead of stitching separate backend and frontend stacks together, Cabloy keeps their contracts, tooling, and guidance connected in one repository. Vona, Zova, and suite-based modules provide the aligned architecture behind that workflow.
 
-[Documentation](https://docs.cabloy.com) · [npm](https://www.npmjs.com/package/cabloy) · [Web Demo](https://cabloy.com) · [Admin Demo](https://cabloy.com/admin) · [GitHub](https://github.com/cabloy/cabloy)
+[Documentation](https://cabloy.com) · [npm](https://www.npmjs.com/package/cabloy) · [Web Demo](https://cabloy.com) · [Admin Demo](https://cabloy.com/admin) · [GitHub](https://github.com/cabloy/cabloy)
 
 ## Fullstack Principles
 
@@ -87,7 +87,7 @@ For **Cabloy Start**, purchase access to the licensed private repository, clone 
 Then continue with the framework docs:
 
 - [Fullstack Quickstart](https://cabloy.com/fullstack/quickstart)
-- [Documentation](https://docs.cabloy.com)
+- [Documentation](https://cabloy.com)
 - [Fullstack Introduction](https://cabloy.com/fullstack/introduction)
 - [Backend Introduction](https://cabloy.com/backend/introduction)
 - [Frontend Introduction](https://cabloy.com/frontend/introduction)
@@ -177,7 +177,7 @@ For more details, see:
 Contribution guidelines:
 
 - prefer CLI-backed workflows with `npm run vona` and `npm run zova`
-- put user-facing and agent-facing guidance in [docs.cabloy.com](https://docs.cabloy.com)
+- put user-facing and agent-facing guidance in [cabloy.com](https://cabloy.com)
 - put maintainer rationale, architecture notes, and engineering ADRs in [repo-docs-internal/](https://github.com/cabloy/cabloy/tree/main/repo-docs-internal)
 - put product and business specifications, delivery plans, and suite-local ADRs in [repo-specs/](https://github.com/cabloy/cabloy/tree/main/repo-specs)
 - verify framework changes with the narrowest meaningful checks first, then shared root scripts when broader confidence is needed
