@@ -82,7 +82,7 @@ pnpm_config_minimum_release_age=0 npm create cabloy
 
 If you already created the project directory and only need to rerun initialization, use the same environment variable with `npm run init`.
 
-For **Cabloy Start**, purchase access to the licensed private repository, clone `git@github.com:cabloy/cabloy-start.git`, and run `npm run init`. For the complete Start onboarding flow, read the [Cabloy Start](https://cabloy.com/editions/cabloy-start) page.
+For **Cabloy Start**, clone the public MIT-licensed repository at `https://github.com/cabloy/cabloy-start`, then run `npm run init`. For the complete Start onboarding flow, read the [Cabloy Start](https://cabloy.com/editions/cabloy-start) page.
 
 Then continue with the framework docs:
 
