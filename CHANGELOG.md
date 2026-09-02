@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.155
+
+### Features
+
+- Add support for REST resource keys.
+
 ## 5.1.154
 
 ### Features
