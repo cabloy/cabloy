@@ -163,15 +163,15 @@ npm run dev:zova:admin
 npm run dev:zova:web
 ```
 
-Then follow the [Cabloy Fullstack Quick Start Tutorials](https://docs.cabloy.com/fullstack/tutorials-overview). Start with a small module and experience how CRUD, frontend/backend contract sharing, and a fullstack workflow connect in practice.
+Then follow the [Cabloy Fullstack Quick Start Tutorials](https://cabloy.com/fullstack/tutorials-overview). Start with a small module and experience how CRUD, frontend/backend contract sharing, and a fullstack workflow connect in practice.
 
-If you are looking not for another component library or another Next.js starter, but for a framework built for enterprise fullstack collaboration, start with the [Cabloy Fullstack Quickstart](https://docs.cabloy.com/fullstack/quickstart) and give CabloyJS a try.
+If you are looking not for another component library or another Next.js starter, but for a framework built for enterprise fullstack collaboration, start with the [Cabloy Fullstack Quickstart](https://cabloy.com/fullstack/quickstart) and give CabloyJS a try.
 
 ## Further reading
 
-- [Cabloy Fullstack Introduction](https://docs.cabloy.com/fullstack/introduction)
-- [Cabloy Fullstack Quickstart](https://docs.cabloy.com/fullstack/quickstart)
-- [Cabloy Suites and Modules](https://docs.cabloy.com/fullstack/suites-and-modules)
-- [Cabloy Vona + Zova Integration](https://docs.cabloy.com/fullstack/vona-zova-integration)
-- [Cabloy Contract Loop Playbook](https://docs.cabloy.com/fullstack/contract-loop-playbook)
-- [Cabloy Fullstack Quick Start Tutorials](https://docs.cabloy.com/fullstack/tutorials-overview)
+- [Cabloy Fullstack Introduction](https://cabloy.com/fullstack/introduction)
+- [Cabloy Fullstack Quickstart](https://cabloy.com/fullstack/quickstart)
+- [Cabloy Suites and Modules](https://cabloy.com/fullstack/suites-and-modules)
+- [Cabloy Vona + Zova Integration](https://cabloy.com/fullstack/vona-zova-integration)
+- [Cabloy Contract Loop Playbook](https://cabloy.com/fullstack/contract-loop-playbook)
+- [Cabloy Fullstack Quick Start Tutorials](https://cabloy.com/fullstack/tutorials-overview)

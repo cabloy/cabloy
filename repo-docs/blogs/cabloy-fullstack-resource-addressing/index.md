@@ -36,7 +36,7 @@ This is not one universal string that travels through every layer, nor is it zer
 
 IoC asks a focused question: **who creates, owns, disposes of, and supplies a runtime capability?**
 
-In Zova, a Bean may be held in the `sys`, `app`, or `ctx` container scope. Code can use `@Use` for injection or use containers and Scope for dependency lookup. This single model keeps state sharing, lifecycle behavior, and cross-module collaboration from drifting into unrelated mechanisms. [IoC and Beans](https://docs.cabloy.com/frontend/ioc-and-beans) explains that model in detail.
+In Zova, a Bean may be held in the `sys`, `app`, or `ctx` container scope. Code can use `@Use` for injection or use containers and Scope for dependency lookup. This single model keeps state sharing, lifecycle behavior, and cross-module collaboration from drifting into unrelated mechanisms. [IoC and Beans](https://cabloy.com/frontend/ioc-and-beans) explains that model in detail.
 
 Addressing asks a broader question: **when one layer needs something, which identity expresses the target, who resolves it, and what kind of resource results?**
 
@@ -66,7 +66,7 @@ Cabloy defines a **suite** as a business-domain composition boundary and a **mod
 
 In the Student sample, the domain is `a-training` and the module is `training-student`. Vona and Zova both have corresponding suite/module structures, so backend Controllers, Services, Models, Entities, and DTOs can evolve along the same business boundary as frontend pages, APIs, Models, and metadata. What is shared first is a **business coordinate**, not a block of memory shared by Node.js and the browser.
 
-That is why a module name matters more than a directory position. Directories can be reorganized and implementation files can move, while a stable module namespace can continue to carry the logical identity of Services, Models, APIs, locales, errors, Resources, and frontend render resources. See [Suites and Modules](https://docs.cabloy.com/fullstack/suites-and-modules) for the boundary between suites and modules.
+That is why a module name matters more than a directory position. Directories can be reorganized and implementation files can move, while a stable module namespace can continue to carry the logical identity of Services, Models, APIs, locales, errors, Resources, and frontend render resources. See [Suites and Modules](https://cabloy.com/fullstack/suites-and-modules) for the boundary between suites and modules.
 
 ## Coordinate two: Bean full names and the Scope facade
 
@@ -101,7 +101,7 @@ const students = await this.scope.model.student.select();
 const sku = await this.$scope.commerceCatalog.model.sku.getById(id);
 ```
 
-Scope does not create another identity system. It raises a container-level full name into an everyday way to navigate a module’s resource catalog. Backend Scope can organize services, models, entities, configuration, locales, and errors; frontend Scope commonly exposes facades for configuration, constants, locales, errors, APIs, and API Schemas. Both [Vona Backend Foundation](https://docs.cabloy.com/backend/foundation) and [Zova Module Scope](https://docs.cabloy.com/frontend/module-scope) describe that division of responsibility.
+Scope does not create another identity system. It raises a container-level full name into an everyday way to navigate a module’s resource catalog. Backend Scope can organize services, models, entities, configuration, locales, and errors; frontend Scope commonly exposes facades for configuration, constants, locales, errors, APIs, and API Schemas. Both [Vona Backend Foundation](https://cabloy.com/backend/foundation) and [Zova Module Scope](https://cabloy.com/frontend/module-scope) describe that division of responsibility.
 
 There is an important limit: Scope lookup can resolve only resources from modules that have already been composed into the active application. A correct string does not install, load, or order an absent module. Module dependencies, suite/application composition, and runtime lookup are related but different concerns. The first establishes availability, ordering, and versioning; only then can the latter retrieve a resource from the composed modules.
 
@@ -187,7 +187,7 @@ If this field needs specialized controls instead of the default Renderer, it can
 
 That does not mean each field automatically grows a complete UI, nor that every presentation decision belongs in the backend. It means the field’s business meaning, data contract, and permitted exposure do not have to be copied into backend DTOs, frontend request types, form rules, table columns, and response post-processing—and then manually kept aligned.
 
-In this **forward contract chain**, backend Controllers, DTOs, Entities, and validation rules are the source of truth. Vona generates OpenAPI; Zova then generates or consumes SDK/Schema contract material. When a backend contract changes, the recommended path is to propagate that truth forward rather than hand-edit multiple frontend copies. [Backend OpenAPI to Frontend SDK](https://docs.cabloy.com/fullstack/openapi-to-sdk) and [One Contract Surface, Four Uses](https://docs.cabloy.com/fullstack/tutorial-6-one-contract-four-uses) describe the boundary of that chain.
+In this **forward contract chain**, backend Controllers, DTOs, Entities, and validation rules are the source of truth. Vona generates OpenAPI; Zova then generates or consumes SDK/Schema contract material. When a backend contract changes, the recommended path is to propagate that truth forward rather than hand-edit multiple frontend copies. [Backend OpenAPI to Frontend SDK](https://cabloy.com/fullstack/openapi-to-sdk) and [One Contract Surface, Four Uses](https://cabloy.com/fullstack/tutorial-6-one-contract-four-uses) describe the boundary of that chain.
 
 ## Coordinate five: routes choose a UI scene; Resource identities choose business context
 
@@ -280,7 +280,7 @@ This has two practical benefits:
 
 For example, a `training-student` frontend Model can initialize the generic owner with `training-student:student`, then add semantic entry points for business actions such as `summary(id)` or `deleteForce(id)` while reusing that owner’s item query, mutation, and invalidation boundary.
 
-One more distinction matters: a call-site value such as `['select', ...]` or `['item', id, action]` is only a logical query key. The effective cache identity also incorporates Model Bean identity and selector. A short query key is therefore not an address that is globally unique across the application. [Model Resource Internals Deep Dive](https://docs.cabloy.com/frontend/model-resource-internals-deep-dive) and [Model State Guide](https://docs.cabloy.com/frontend/model-state-guide) explain this owner/state identity layer.
+One more distinction matters: a call-site value such as `['select', ...]` or `['item', id, action]` is only a logical query key. The effective cache identity also incorporates Model Bean identity and selector. A short query key is therefore not an address that is globally unique across the application. [Model Resource Internals Deep Dive](https://cabloy.com/frontend/model-resource-internals-deep-dive) and [Model State Guide](https://cabloy.com/frontend/model-state-guide) explain this owner/state identity layer.
 
 ## Coordinate seven: Schema metadata selects concrete UI capabilities
 
@@ -336,7 +336,7 @@ In other words, `schemaRow` is the current select-response row Schema, and `rest
 
 Cabloy resource addressing therefore does not stop at an API. Table cells, form fields, image scenes, and Behaviors can also be selected through module-qualified, scene-aware frontend resource identities. Field metadata can, for example, refer to `training-student:formFieldLevel`, which a registered frontend capability resolves and renders.
 
-This does not mean backend code executes frontend components. More precisely, backend contracts or metadata can declare which frontend rendering resource should be selected at a point; the frontend still owns the renderer implementation and runtime. Frontend-owned facts such as routes, components, icons, table cells, and form fields also have a reverse contract handoff: refresh the frontend metadata/build output first, then let Vona consume the synchronized local dependency result. [Frontend Metadata Back to Backend](https://docs.cabloy.com/fullstack/frontend-metadata-to-backend) describes that reverse chain.
+This does not mean backend code executes frontend components. More precisely, backend contracts or metadata can declare which frontend rendering resource should be selected at a point; the frontend still owns the renderer implementation and runtime. Frontend-owned facts such as routes, components, icons, table cells, and form fields also have a reverse contract handoff: refresh the frontend metadata/build output first, then let Vona consume the synchronized local dependency result. [Frontend Metadata Back to Backend](https://cabloy.com/fullstack/frontend-metadata-to-backend) describes that reverse chain.
 
 The two directions are distinct:
 
@@ -407,13 +407,13 @@ IoC is one runtime foundation of that chain, but not the whole chain. The engine
 
 ### Concepts and workflows
 
-- [Cabloy: Suites and Modules](https://docs.cabloy.com/fullstack/suites-and-modules)
-- [Cabloy: Vona Backend Foundation](https://docs.cabloy.com/backend/foundation)
-- [Cabloy: Zova IoC and Beans](https://docs.cabloy.com/frontend/ioc-and-beans)
-- [Cabloy: Zova Module Scope](https://docs.cabloy.com/frontend/module-scope)
-- [Cabloy: Backend OpenAPI to Frontend SDK](https://docs.cabloy.com/fullstack/openapi-to-sdk)
-- [Cabloy: Frontend Metadata Back to Backend](https://docs.cabloy.com/fullstack/frontend-metadata-to-backend)
-- [Cabloy: Model Resource Internals Deep Dive](https://docs.cabloy.com/frontend/model-resource-internals-deep-dive)
+- [Cabloy: Suites and Modules](https://cabloy.com/fullstack/suites-and-modules)
+- [Cabloy: Vona Backend Foundation](https://cabloy.com/backend/foundation)
+- [Cabloy: Zova IoC and Beans](https://cabloy.com/frontend/ioc-and-beans)
+- [Cabloy: Zova Module Scope](https://cabloy.com/frontend/module-scope)
+- [Cabloy: Backend OpenAPI to Frontend SDK](https://cabloy.com/fullstack/openapi-to-sdk)
+- [Cabloy: Frontend Metadata Back to Backend](https://cabloy.com/fullstack/frontend-metadata-to-backend)
+- [Cabloy: Model Resource Internals Deep Dive](https://cabloy.com/frontend/model-resource-internals-deep-dive)
 
 ### Source samples verified for this article
 

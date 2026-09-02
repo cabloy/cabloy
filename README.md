@@ -27,7 +27,7 @@ Cabloy’s fullstack model is built around two core principles:
    - **Backend -> Frontend**: Vona emits Swagger/OpenAPI contracts that Zova can use to generate SDKs and related schema-aware helpers
    - **Frontend -> Backend**: Zova generates structural metadata and typing surfaces such as routes, components, and icons that can improve backend-side tooling and type hints
 
-For the complete explanation, see [Fullstack Introduction](https://docs.cabloy.com/fullstack/introduction), [Vona + Zova Integration](https://docs.cabloy.com/fullstack/vona-zova-integration), [Backend OpenAPI to Frontend SDK](https://docs.cabloy.com/fullstack/openapi-to-sdk), and [Frontend Metadata Back to Backend](https://docs.cabloy.com/fullstack/frontend-metadata-to-backend).
+For the complete explanation, see [Fullstack Introduction](https://cabloy.com/fullstack/introduction), [Vona + Zova Integration](https://cabloy.com/fullstack/vona-zova-integration), [Backend OpenAPI to Frontend SDK](https://cabloy.com/fullstack/openapi-to-sdk), and [Frontend Metadata Back to Backend](https://cabloy.com/fullstack/frontend-metadata-to-backend).
 
 ## Get Started
 
@@ -82,17 +82,17 @@ pnpm_config_minimum_release_age=0 npm create cabloy
 
 If you already created the project directory and only need to rerun initialization, use the same environment variable with `npm run init`.
 
-For **Cabloy Start**, purchase access to the licensed private repository, clone `git@github.com:cabloy/cabloy-start.git`, and run `npm run init`. For the complete Start onboarding flow, read the [Cabloy Start](https://docs.cabloy.com/editions/cabloy-start) page.
+For **Cabloy Start**, purchase access to the licensed private repository, clone `git@github.com:cabloy/cabloy-start.git`, and run `npm run init`. For the complete Start onboarding flow, read the [Cabloy Start](https://cabloy.com/editions/cabloy-start) page.
 
 Then continue with the framework docs:
 
-- [Fullstack Quickstart](https://docs.cabloy.com/fullstack/quickstart)
+- [Fullstack Quickstart](https://cabloy.com/fullstack/quickstart)
 - [Documentation](https://docs.cabloy.com)
-- [Fullstack Introduction](https://docs.cabloy.com/fullstack/introduction)
-- [Backend Introduction](https://docs.cabloy.com/backend/introduction)
-- [Frontend Introduction](https://docs.cabloy.com/frontend/introduction)
-- [Editions Overview](https://docs.cabloy.com/editions/overview)
-- [Choosing Between Cabloy Basic and Cabloy Start](https://docs.cabloy.com/editions/choosing-between-basic-and-start)
+- [Fullstack Introduction](https://cabloy.com/fullstack/introduction)
+- [Backend Introduction](https://cabloy.com/backend/introduction)
+- [Frontend Introduction](https://cabloy.com/frontend/introduction)
+- [Editions Overview](https://cabloy.com/editions/overview)
+- [Choosing Between Cabloy Basic and Cabloy Start](https://cabloy.com/editions/choosing-between-basic-and-start)
 
 To upgrade an existing Cabloy project:
 
@@ -168,11 +168,11 @@ npm run build
 
 For more details, see:
 
-- [Editions Overview](https://docs.cabloy.com/editions/overview)
-- [Choosing Between Cabloy Basic and Cabloy Start](https://docs.cabloy.com/editions/choosing-between-basic-and-start)
-- [Repo Scripts](https://docs.cabloy.com/reference/repo-scripts)
-- [Package Map](https://docs.cabloy.com/reference/package-map)
-- [AI Development Introduction](https://docs.cabloy.com/ai/introduction)
+- [Editions Overview](https://cabloy.com/editions/overview)
+- [Choosing Between Cabloy Basic and Cabloy Start](https://cabloy.com/editions/choosing-between-basic-and-start)
+- [Repo Scripts](https://cabloy.com/reference/repo-scripts)
+- [Package Map](https://cabloy.com/reference/package-map)
+- [AI Development Introduction](https://cabloy.com/ai/introduction)
 
 Contribution guidelines:
 

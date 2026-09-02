@@ -475,9 +475,9 @@ If you already know Vue 3, try writing one small Zova feature: one Controller, o
 
 ## Further reading
 
-- [Zova Frontend Foundation](https://docs.cabloy.com/frontend/foundation)
-- [Reading Zova for Vue Developers](https://docs.cabloy.com/frontend/reading-zova-for-vue-developers)
-- [Zova vs Vue 3 Comparison](https://docs.cabloy.com/frontend/zova-vs-vue3-comparison)
-- [IoC and Beans](https://docs.cabloy.com/frontend/ioc-and-beans)
-- [State Architecture for Vue Developers](https://docs.cabloy.com/frontend/state-architecture-for-vue-developers)
-- [Model Architecture](https://docs.cabloy.com/frontend/model-architecture)
+- [Zova Frontend Foundation](https://cabloy.com/frontend/foundation)
+- [Reading Zova for Vue Developers](https://cabloy.com/frontend/reading-zova-for-vue-developers)
+- [Zova vs Vue 3 Comparison](https://cabloy.com/frontend/zova-vs-vue3-comparison)
+- [IoC and Beans](https://cabloy.com/frontend/ioc-and-beans)
+- [State Architecture for Vue Developers](https://cabloy.com/frontend/state-architecture-for-vue-developers)
+- [Model Architecture](https://cabloy.com/frontend/model-architecture)
