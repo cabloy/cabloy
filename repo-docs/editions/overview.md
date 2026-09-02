@@ -7,7 +7,7 @@ Cabloy currently supports two related but distinct editions:
 - **Cabloy Basic**
 - **Cabloy Start**
 
-They share one Cabloy fullstack architecture, but they are distributed, composed, and optimized differently.
+They share one Cabloy fullstack architecture, but they are composed and optimized differently.
 
 If you need a recommendation path, start with [Choosing Between Cabloy Basic and Cabloy Start](/editions/choosing-between-basic-and-start).
 
@@ -26,7 +26,7 @@ Use this page as the main editions hub, then choose the path that matches your t
 
 ### Selection path
 
-Start here when the task is about choosing the right edition baseline or understanding distribution differences:
+Start here when the task is about choosing the right edition baseline or understanding their differences:
 
 - [Choosing Basic vs Start](/editions/choosing-between-basic-and-start)
 - [Cabloy Basic](/editions/cabloy-basic)
@@ -64,14 +64,13 @@ Cabloy Basic is the open-source community edition and is optimized for public re
 
 ## What "Start" means
 
-Cabloy Start is the private commercial edition.
+Cabloy Start is the public MIT-licensed edition maintained in its own repository.
 
-- the private repository is marked with `__CABLOY_START__`
-- users first purchase a license and obtain repository access, then clone the private repository source directly
-- after cloning, the project is initialized through the Start edition workflow
-- Start uses its own edition-specific flavors, SSR site baselines, and project assets for that edition
+- the public repository is marked with `__CABLOY_START__`
+- users clone the public repository source directly, then follow the Start initialization workflow
+- Start uses its own edition-specific flavors, SSR site baselines, and project assets
 
-Cabloy Start is optimized as a commercial baseline for more complex business systems while staying on the same Cabloy fullstack direction.
+Cabloy Start is optimized as a business-system baseline for more complex systems while staying on the same Cabloy fullstack direction.
 
 ## Architecture layering
 
@@ -105,7 +104,7 @@ The editions intentionally diverge in several surfaces:
 - frontend flavor names
 - suite and module composition
 - admin/web SSR site baselines
-- licensed private-repo structure and edition-specific project assets
+- separate-repository structure and edition-specific project assets
 - rules, skills, and docs used for AI vibe coding
 
 For example:
@@ -134,5 +133,5 @@ Write shared explanations once. Split or annotate only when a workflow changes b
 - UI library assumptions
 - frontend flavor names
 - different modules or assets
-- distribution and authorization model
+- repository and initialization model
 - edition-specific scripts, generated outputs, or AI workflow guidance

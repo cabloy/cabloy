@@ -225,7 +225,7 @@ Important Cabloy Basic reverse-sync rule:
 - if the change was consumer-side, low-confidence, cross-edition, or happened outside the Claude hook path, run the reverse sync flow deliberately yourself
 - prefer visible proof under `zova/src/**/.metadata/**` when it is available; if the effective handoff only appears in `.zova-rest`, treat the safeguard as conservative reminder/auto-sync assistance rather than strict proof
 
-For Cabloy Start, verify the exact Start-specific flavor names, paths, SSR site baselines, and project assets in the licensed Start repo.
+For Cabloy Start, verify the exact Start-specific flavor names, paths, SSR site baselines, and project assets in the active Start repository.
 
 ### Schema-driven UI decision branch
 

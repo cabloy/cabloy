@@ -16,7 +16,7 @@ The two editions share many concepts but differ in important operational details
 - frontend UI library assumptions
 - flavor-specific frontend scripts
 - module availability
-- value-add project content in the private Start repository
+- Start-specific value-add project content
 
 If an agent skips edition detection, it may generate the wrong instructions, recommend the wrong module, or use the wrong UI stack.
 

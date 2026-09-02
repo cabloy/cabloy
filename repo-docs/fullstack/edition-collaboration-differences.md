@@ -26,7 +26,7 @@ The most important differences show up in:
 - frontend flavor names
 - frontend module composition
 - admin/web SSR site baselines
-- edition-specific private value-add content and project assets in Cabloy Start
+- Start-specific value-add content and project assets
 - potentially different generated output paths or integration details
 
 ## Cabloy Basic
@@ -38,7 +38,7 @@ In the current public monorepo, Basic examples commonly align with:
 
 ## Cabloy Start
 
-In the sibling private repo, Start examples commonly align with:
+In the sibling public Start repository, examples commonly align with:
 
 - Vuetify-oriented frontend assumptions
 - Start-specific Zova flavors such as `cabloyStartAdmin` and `cabloyStartWeb`

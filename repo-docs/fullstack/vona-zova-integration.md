@@ -51,7 +51,7 @@ cd zova && npm run build:rest:cabloyBasicWeb
 
 ## Cabloy Start
 
-Cabloy Start is the private commercial edition. It lives in a licensed sibling repository rather than a subdirectory here, but the same integration idea applies.
+Cabloy Start is the public MIT-licensed edition. It lives in a separate sibling repository rather than a subdirectory here, but the same integration idea applies.
 
 Its root script surface uses Start-specific flavors such as:
 

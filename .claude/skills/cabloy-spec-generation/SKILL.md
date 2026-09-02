@@ -35,7 +35,7 @@ From the repository root, inspect:
 Interpret the markers as follows:
 
 - `__CABLOY_BASIC__` present: use Cabloy Basic source and public-doc assumptions;
-- `__CABLOY_START__` present: use Cabloy Start source and resolve its own licensed-site, UI, flavor, and command details;
+- `__CABLOY_START__` present: use Cabloy Start source and resolve its own site, UI, flavor, and command details;
 - neither present: do not make strong edition-specific assumptions; inspect the nearby project shape and ask the user to confirm the edition.
 
 Never copy Basic flavor names, SSR assumptions, UI-library assumptions, or exact command lines into a Start record without verifying them in the active Start repository. The document architecture is shared; edition-specific runtime facts are not.

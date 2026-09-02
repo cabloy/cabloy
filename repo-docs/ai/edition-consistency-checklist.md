@@ -16,8 +16,8 @@ Before checking details, confirm that the content still tells the same baseline 
 
 - **Cabloy Basic** is the public framework/reference edition
 - `npm create cabloy` creates the default Cabloy Basic project route
-- **Cabloy Start** is the private commercial edition
-- Cabloy Start is used by cloning the licensed private repository source directly
+- **Cabloy Start** is the public MIT-licensed edition maintained in its own repository
+- Cabloy Start is used by cloning its public repository directly and following its initialization workflow
 - both editions share the same Cabloy fullstack core
 - both editions share a frontend engineering layer built around Zova, Vue, Vite, Quasar tooling, and related libraries
 - the editions diverge in UI layer, frontend flavors, suites/modules, SSR site baselines, project assets, and some generated outputs
@@ -38,13 +38,13 @@ Confirm that the content:
 Confirm that the content states or implies the right project-entry model:
 
 - **Cabloy Basic** → `npm create cabloy`
-- **Cabloy Start** → licensed private repository clone
+- **Cabloy Start** → public repository clone and edition-specific initialization workflow
 
 Watch for drift such as:
 
 - implying that Cabloy Start is created through `npm create cabloy`
 - implying that both editions use the same bootstrap path
-- omitting the Start licensing/private-repo model when it matters to the workflow
+- omitting the Start public-repository and edition-specific initialization model when it matters to the workflow
 
 ## Checklist 3: shared core vs edition divergence is separated cleanly
 
@@ -88,7 +88,7 @@ Avoid wording that makes Quasar sound like the edition UI component library when
 For scripts, flavors, paths, and examples, confirm that:
 
 - Basic examples use Basic markers and Basic flavor names
-- Start examples tell the reader to verify the Start repo directly
+- Start examples tell the reader to verify the active Start repository directly
 - Start workflows do not silently reuse Basic script or flavor assumptions
 - SSR site baseline assumptions match the edition being discussed
 - project-asset references match the repo being discussed
@@ -119,7 +119,7 @@ When content ends with verification steps, confirm that it reminds the reader or
 - generated outputs
 - project assets
 
-For Start-sensitive workflows, confirm that verification points back to the licensed Start repository rather than pretending the current Basic repo is the direct source of truth.
+For Start-sensitive workflows, confirm that verification points back to the active Start repository rather than pretending the current Basic repo is the direct source of truth.
 
 ## Checklist 8: wording about system size stays appropriately scoped
 
@@ -137,7 +137,7 @@ Before you finish an edition-aware change, ask:
 1. Did I clearly separate shared core from edition-specific divergence?
 2. Did I preserve the correct Basic vs Start creation path?
 3. Did I avoid turning UI difference into the whole story?
-4. Did I point Start-specific operational truth back to the licensed Start repo where needed?
+4. Did I point Start-specific operational truth back to the active Start repository where needed?
 5. Do docs, rules, and skills each play their proper role?
 
 ## Read together with

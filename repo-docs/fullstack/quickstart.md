@@ -73,9 +73,9 @@ npm run dev:zova:web   # http://localhost:9000/
 
 ### Cabloy Start
 
-Cabloy Start is the private commercial edition. Instead of `npm create cabloy`, purchase access to the licensed private repository, clone that source directly, and run `npm run init`. Then use the frontend commands provided by that edition. Do not assume the Cabloy Basic flavor names apply to Cabloy Start.
+Cabloy Start is the public MIT-licensed edition maintained in its own repository. Instead of `npm create cabloy`, clone its public repository directly and run `npm run init`. Then use the frontend commands provided by that edition. Do not assume the Cabloy Basic flavor names apply to Cabloy Start.
 
-For the full Start onboarding details, including the access and initialization flow, read [Cabloy Start](/editions/cabloy-start).
+For the full Start onboarding and initialization flow, read [Cabloy Start](/editions/cabloy-start).
 
 If you are not sure which edition you are using or which one to choose, read:
 
@@ -123,7 +123,7 @@ Keep additional project-owned browser specs under other filenames in `repo-e2e/s
 
 ### Cabloy Start repository baseline
 
-Cabloy Start is checked out from the licensed private repository rather than created through `npm create cabloy`. Its E2E baseline is maintained in that repository:
+Cabloy Start is cloned from its separate public repository rather than created through `npm create cabloy`. Its E2E baseline is maintained in that repository:
 
 ```text
 repo-e2e/config/
@@ -131,7 +131,7 @@ repo-e2e/scripts/
 repo-e2e/specs/
 ```
 
-The public Cabloy upgrade flow does not synchronize or repair those private Start E2E files, its root E2E scripts, or `@playwright/test`. Keep project-owned browser scenarios in the flat `repo-e2e/specs/` directory under distinct filenames, for example `repo-e2e/specs/my-project.spec.ts`.
+The public Cabloy upgrade flow does not synchronize or repair those Start-owned E2E files, its root E2E scripts, or `@playwright/test`. Keep project-owned browser scenarios in the flat `repo-e2e/specs/` directory under distinct filenames, for example `repo-e2e/specs/my-project.spec.ts`.
 
 Prepare and run the managed Start baseline locally with:
 

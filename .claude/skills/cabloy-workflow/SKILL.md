@@ -267,12 +267,12 @@ Bias toward:
 
 Bias toward:
 
-- the private commercial edition
+- the public MIT-licensed edition maintained in its own repository
 - the Start repo marker
-- the licensed private repository source
+- the active Start repository source
 - Vuetify-sensitive examples
 - Start-specific frontend flavor names
-- Start-specific suites/modules, SSR site baselines, project assets, and licensed private-repo structure
+- Start-specific suites/modules, SSR site baselines, project assets, and separate-repository structure
 
 Do not silently reuse Basic examples when Start-specific assumptions matter.
 

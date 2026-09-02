@@ -6,7 +6,7 @@ This guide helps you choose the right Cabloy edition before you start a new proj
 
 Choose **Cabloy Basic** when you want the public framework/reference edition, the default `npm create cabloy` project route, and a faster path for open, community-oriented, or small-to-medium system development.
 
-Choose **Cabloy Start** when you want the private commercial edition, purchase-based access to the licensed private repository source, and a stronger baseline for more complex business systems built around Start-oriented SSR sites, project assets, and a Vuetify-aligned UI layer.
+Choose **Cabloy Start** when you want the public MIT-licensed edition in its own repository and a stronger baseline for more complex business systems built around Start-oriented SSR sites, project assets, and a Vuetify-aligned UI layer.
 
 ## What stays the same in both editions
 
@@ -35,9 +35,8 @@ Cabloy Basic is usually the better fit when you want:
 
 Cabloy Start is usually the better fit when you want:
 
-- the private commercial edition
-- purchase-based access to the licensed private repository source
-- direct cloning of the Start repository after authorization
+- the public MIT-licensed edition maintained in its own repository
+- direct cloning of the public Start repository
 - Start-specific flavors, SSR site baselines, and project assets
 - a UI layer aligned with Vuetify
 - a stronger starting point for more complex business systems
@@ -48,7 +47,7 @@ Cabloy Start is usually the better fit when you want:
 ### Project creation path
 
 - **Cabloy Basic**: create the project with `npm create cabloy`
-- **Cabloy Start**: purchase access, clone the licensed private repository source directly, then run `npm run init`
+- **Cabloy Start**: clone the public repository directly, then run `npm run init`
 
 ### UI strategy
 
@@ -58,7 +57,7 @@ Cabloy Start is usually the better fit when you want:
 ### Repo and asset model
 
 - **Cabloy Basic**: public repository and public reference materials
-- **Cabloy Start**: private repository with edition-specific SSR sites and project assets
+- **Cabloy Start**: separate public repository with edition-specific SSR sites and project assets
 
 ### AI workflow assumptions
 
@@ -72,7 +71,7 @@ This is why edition detection matters so much for AI vibe coding.
 Use this rule when you need a fast decision:
 
 1. If you want the public, default, `npm create cabloy` path, choose **Cabloy Basic**.
-2. If you want the licensed private repo with Start-oriented assets, a Vuetify-based business-system baseline, and a clone-plus-`npm run init` onboarding path, choose **Cabloy Start**.
+2. If you want the public MIT-licensed Start repository with Start-oriented assets, a Vuetify-based business-system baseline, and a clone-plus-`npm run init` onboarding path, choose **Cabloy Start**.
 3. If AI workflow accuracy matters for UI generation, SSR site assumptions, or flavor-specific commands, confirm the edition before writing prompts, rules, skills, or docs.
 
 ## Read together with

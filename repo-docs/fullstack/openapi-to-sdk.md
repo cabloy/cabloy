@@ -204,7 +204,7 @@ If the endpoint still belongs to an existing business resource, prefer keeping `
 
 ## Cabloy Start workflow
 
-In the sibling private Start repo, the same collaboration idea applies, but the frontend flavor names differ.
+In the sibling public Start repository, the same collaboration idea applies, but the frontend flavor names differ.
 
 Representative Start-specific flavors include:
 

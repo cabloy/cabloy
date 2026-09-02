@@ -124,7 +124,7 @@ For a public route, the default response header depends on whether the URL ident
 | missing or false `meta.locale` | `Cache-Control: no-cache, no-store, must-revalidate`                     | Not stored                        |
 | `session` profile              | `Cache-Control: private, no-store`                                       | Not stored                        |
 
-For Cabloy Start, verify the effective Web and Admin values in the licensed Start repository before creating the Cloudflare rule. The rule design remains the same: preserve and follow the origin `Cache-Control` response instead of replacing it.
+For Cabloy Start, verify the effective Web and Admin values in the active Start repository before creating the Cloudflare rule. The rule design remains the same: preserve and follow the origin `Cache-Control` response instead of replacing it.
 
 A route can override the flavor default through SSR route metadata. An explicit public `meta.ssrProfileOptions.responseCache` policy remains authoritative; the Cloudflare rule follows the resulting response contract and does not replace it.
 

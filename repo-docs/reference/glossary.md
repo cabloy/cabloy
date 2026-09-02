@@ -18,7 +18,7 @@ The public framework/reference edition for the shared Cabloy architecture.
 
 ## Cabloy Start
 
-The private commercial edition, provided as a licensed sibling repository with different UI, module, and project-baseline choices.
+The public MIT-licensed edition, provided in a separate sibling repository with different UI, module, and project-baseline choices.
 
 ## Edition detection
 

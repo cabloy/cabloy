@@ -5,7 +5,7 @@
 Detect the active edition from the repository-root marker before making edition-sensitive assumptions:
 
 - exactly `__CABLOY_BASIC__` present → Cabloy Basic, the public framework/reference edition
-- exactly `__CABLOY_START__` present → Cabloy Start, the private commercial edition delivered as licensed source
+- exactly `__CABLOY_START__` present → Cabloy Start, the public MIT-licensed edition maintained in its own repository
 - both markers present → treat the checkout as invalid or ambiguous and stop before giving edition-specific guidance
 - neither marker present → inspect the owning `package.json` and nearby repository structure, then ask before making an edition-specific assumption
 

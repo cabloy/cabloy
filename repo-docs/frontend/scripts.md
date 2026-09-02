@@ -84,7 +84,7 @@ For the complete tag vocabulary, managed-runner argument boundaries, and externa
 
 ## Cabloy Start root wrappers
 
-Cabloy Start is the licensed private edition. Its default root wrappers use the `cabloyStartAdmin` and `cabloyStartWeb` flavors:
+Cabloy Start is the public MIT-licensed edition. Its default root wrappers use the `cabloyStartAdmin` and `cabloyStartWeb` flavors:
 
 ```bash
 npm run dev:zova:admin
@@ -160,7 +160,7 @@ cd zova && npm run build:rest:cabloyBasicAdmin
 
 ## Cabloy Start
 
-The licensed private repository supports Start-specific flavors:
+The separate public Cabloy Start repository supports Start-specific flavors:
 
 - `cabloyStartAdmin`
 - `cabloyStartWeb`

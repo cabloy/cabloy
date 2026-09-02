@@ -1,6 +1,6 @@
 # Cabloy Start
 
-Cabloy Start is the private commercial edition. It is a sibling private repository that shares the Cabloy fullstack direction while intentionally differing from Cabloy Basic.
+Cabloy Start is the public MIT-licensed edition. It is a sibling repository that shares the Cabloy fullstack direction while intentionally differing from Cabloy Basic.
 
 ## Repository marker
 
@@ -14,27 +14,25 @@ Use that marker before choosing examples, UI assumptions, or automation behavior
 
 Use Cabloy Start as the edition-aware target when work depends on:
 
-- direct use of the licensed private repository source
+- direct use of the public Cabloy Start repository source
 - Vuetify-specific frontend workflows
 - Cabloy Start flavor names in frontend scripts
-- edition-specific module composition in the licensed Start repository
-- licensed private-repo structure and edition-specific project composition
+- edition-specific module composition in the active Start repository
+- separate-repository structure and edition-specific project composition
 - edition-specific SSR site baselines and project assets
 
-## Get access and initialize
+## Clone and initialize
 
-Cabloy Start is the private commercial edition. It does not use the default `npm create cabloy` project route.
+Cabloy Start is public and MIT-licensed. It does not use the default `npm create cabloy` project route.
 
 To use Cabloy Start:
 
-1. purchase a license and obtain repository access
-2. clone the private repository source directly
-3. run the edition initialization flow in the cloned project
+1. clone the public repository directly
+2. run the edition initialization flow in the cloned project
 
-Access surfaces:
+Repository:
 
-- Purchase page: `https://cabloy.com/module/cabloy-start`
-- Repository: `https://github.com/cabloy/cabloy-start`
+- `https://github.com/cabloy/cabloy-start`
 
 Clone the repository:
 
