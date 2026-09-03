@@ -2,23 +2,25 @@
 
 ## Cabloy
 
-The fullstack framework and monorepo direction that combines backend and frontend workflows.
+The coordinated Node.js fullstack system that combines backend and frontend workflows.
 
 ## Vona
 
-The backend framework in the Cabloy ecosystem.
+Cabloy's backend framework and runtime layer.
 
 ## Zova
 
-The frontend framework in the Cabloy ecosystem.
+Cabloy's frontend framework and application layer.
 
 ## Cabloy Basic
 
-The public framework/reference edition for the shared Cabloy architecture.
+The public reference and community edition baseline for the shared Cabloy architecture, created with `npm create cabloy`.
 
 ## Cabloy Start
 
-The public MIT-licensed edition, provided in a separate sibling repository with different UI, module, and project-baseline choices.
+The public MIT-licensed business-system edition baseline for the shared Cabloy architecture, maintained in a sibling repository and initialized with `npm run init` after cloning.
+
+Vona and Zova describe architectural layers; Cabloy Basic and Cabloy Start describe complete edition baselines built with those layers.
 
 ## Edition detection
 
@@ -35,4 +37,5 @@ Use the glossary together with:
 - [Fullstack Introduction](/fullstack/introduction)
 - [Backend (Vona)](/backend/introduction)
 - [Frontend (Zova)](/frontend/introduction)
+- [Editions Overview](/editions/overview)
 - [Package Map](/reference/package-map)

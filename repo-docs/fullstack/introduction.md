@@ -61,9 +61,13 @@ Use this path when the task depends on edition boundaries, UI assumptions, or cr
 
 ## Shared architecture
 
-- **Vona** provides the backend framework capabilities.
-- **Zova** provides the frontend framework capabilities.
-- The root repository coordinates the two through shared scripts, shared terminology, and a shared release story.
+Cabloy coordinates its backend and frontend layers as one fullstack system:
+
+- **Vona** provides the backend framework and runtime capabilities.
+- **Zova** provides the frontend framework and application capabilities.
+- Root scripts, shared terminology, and CLI-first workflows keep the layers aligned within each edition repository.
+
+Cabloy Basic and Cabloy Start are related, complete edition baselines built on this shared architecture, not alternatives to the Vona and Zova layers. They intentionally compose UI, flavors, modules, SSR sites, and project assets differently. See [Editions Overview](/editions/overview) for the complete relationship and edition differences.
 
 This combination keeps backend and frontend development close enough for code sharing, workflow reuse, and AI vibe coding workflows.
 

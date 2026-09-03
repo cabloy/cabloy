@@ -35,7 +35,7 @@ features:
 
 Cabloy is a Node.js fullstack framework for AI vibe coding. It brings backend and frontend work into one system, with bidirectional type sync, CLI-first workflows, and source-grounded docs and skills for people and AI agents.
 
-Start with the [Contract Loop Playbook](/fullstack/contract-loop-playbook) to understand bidirectional type sync, then use the [Fullstack CLI](/fullstack/cli) and [AI Development](/ai/introduction) guides to follow the current repository. Vona, Zova, and suite-based modules provide the aligned architecture behind that workflow, while Cabloy Basic and Cabloy Start share the same fullstack core but diverge by edition.
+Start with the [Contract Loop Playbook](/fullstack/contract-loop-playbook) to understand bidirectional type sync, then use the [Fullstack CLI](/fullstack/cli) and [AI Development](/ai/introduction) guides to follow the current repository. Cabloy coordinates Vona and Zova as its backend and frontend layers, while Cabloy Basic and Cabloy Start are related, complete edition baselines built on that shared architecture. See [Editions Overview](/editions/overview) for the relationship and deliberate edition differences.
 
 ## What you can do here
 
