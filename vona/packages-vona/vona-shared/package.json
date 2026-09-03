@@ -8,15 +8,15 @@
     "vona",
     "vue3"
   ],
-  "homepage": "https://github.com/cabloy/vona#readme",
+  "homepage": "https://github.com/vonajs/vona#readme",
   "bugs": {
-    "url": "https://github.com/cabloy/vona/issues"
+    "url": "https://github.com/vonajs/vona/issues"
   },
   "license": "MIT",
   "author": "zhennann",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cabloy/vona.git"
+    "url": "git+https://github.com/vonajs/vona.git"
   },
   "files": [
     "dist"
