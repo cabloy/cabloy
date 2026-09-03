@@ -24,9 +24,9 @@ export class ServiceQueue extends BeanBase {
   _queues: IQueueQueues = {};
   _queueCallbacks: IQueueCallbacks = {};
 
-  push<DATA>(info: IQueueJobContext<DATA>) {
+  push<DATA>(info: IQueueJobContext<DATA>): Promise<void> {
     if (!info.options?.dbInfo) throw new Error('should specify the options.dbInfo');
-    this._queuePush(info, false);
+    return this._queuePush(info, false);
   }
 
   // { locale, instanceName, module, queueName,queueNameSub,data }

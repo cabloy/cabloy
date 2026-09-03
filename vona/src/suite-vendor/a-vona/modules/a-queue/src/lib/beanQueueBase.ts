@@ -11,7 +11,7 @@ export class BeanQueueBase<DATA = unknown, RESULT = unknown> extends BeanBase {
     );
   }
 
-  push(data: DATA, options?: IQueuePushOptions) {
+  push(data: DATA, options?: IQueuePushOptions): Promise<void> {
     return this.$scope.queue.service.queue.push(
       this.$scope.queue.service.queue.prepareJobInfo(this.$onionName as any, data, options),
     );
