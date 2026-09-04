@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.158
+
+### Improvements
+
+- Add licensing documentation.
+- Add contribution guidelines.
+
 ## 5.1.157
 
 ### Features
