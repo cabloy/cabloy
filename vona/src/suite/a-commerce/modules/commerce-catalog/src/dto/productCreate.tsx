@@ -11,6 +11,7 @@ import { ModelProduct } from '../model/product.ts';
 export interface IDtoOptionsProductCreate extends IDecoratorDtoOptions<'productContentForm'> {}
 
 @Dto<IDtoOptionsProductCreate>({
+  openapi: { title: $locale('CreateProduct') },
   fields: {
     productContentForm: $makeMetadata(
       ZovaRender.fieldSource('productContentForm.descriptionMarkdown'),

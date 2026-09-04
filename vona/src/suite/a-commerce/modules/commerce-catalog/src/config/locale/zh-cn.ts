@@ -1,6 +1,7 @@
 export default {
   Available: '可用库存',
   Category: '分类',
+  CreateProduct: '新建商品',
   Description: '描述',
   DescriptionHtml: '商品描述（HTML）',
   DescriptionMarkdown: '商品描述（Markdown）',
@@ -15,6 +16,8 @@ export default {
   Unpublished: '未发布',
   Sku: 'SKU',
   SkuAttributeName: 'SKU 属性名',
+  UpdateProduct: '编辑商品',
+  ViewProduct: '商品详情',
   SkuAttributeValue: 'SKU 属性值',
   SkuAttributes: 'SKU 属性',
   SkuCode: 'SKU 编码',

@@ -1,6 +1,7 @@
 export default {
   Available: 'Available',
   Category: 'Category',
+  CreateProduct: 'Create product',
   Description: 'Description',
   DescriptionHtml: 'Product description (HTML)',
   DescriptionMarkdown: 'Product description (Markdown)',
@@ -15,6 +16,8 @@ export default {
   Unpublished: 'Unpublished',
   Sku: 'SKU',
   SkuAttributeName: 'SKU attribute name',
+  UpdateProduct: 'Update product',
+  ViewProduct: 'Product details',
   SkuAttributeValue: 'SKU attribute value',
   SkuAttributes: 'SKU attributes',
   SkuCode: 'SKU code',

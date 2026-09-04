@@ -115,7 +115,7 @@ Keep these boundaries in mind:
 
 - `pageTitleKey` controls the routed-shell level-2 task title, not the resource or OpenAPI schema title and not the browser document title.
 - The current implementation reads one exact top-level form-data key. It is not a dotted-path resolver or a formatter.
-- On a create page, the title remains empty until its source field has a value. A fixed initial label such as “Create Product” requires a dedicated page-entry behavior that writes page meta explicitly.
+- When the source field is `null` or `undefined`, the current page-entry runtime falls back to the resolved form DTO schema's OpenAPI `title`. Give the create DTO an operation-specific title such as `openapi: { title: $locale('CreateProduct') }` when it needs an initial task label; a populated source field takes precedence. The fallback is not used for an empty string.
 
 ### `pageDirty`
 
