@@ -1,4 +1,4 @@
-import { catchError } from '@cabloy/utils';
+import { catchError, isNil } from '@cabloy/utils';
 import { DateTime } from 'luxon';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
@@ -128,6 +128,56 @@ describe('database.test.ts', { concurrency: false }, () => {
       // drop table
       await app.bean.model.dropTable(tableName);
     });
+  });
+
+  it('action:model:databaseDefaultResult', async () => {
+    const bigNumberValue = '9007199254740993';
+    const decimalValue = '12345678901234567890.1234567890';
+    const tableName = `__tempDatabaseDefault_${crypto.randomUUID().replaceAll('-', '')}`;
+    let clientName: any;
+    let created = false;
+    try {
+      await app.bean.executor.mockCtx(async () => {
+        clientName = app.ctx.db.clientName;
+        await app.bean.model.createTable(tableName, table => {
+          table.basicFields({ timestamps: false, deleted: false, iid: false });
+          table.boolean('defaultFalse').defaultTo(false);
+          table.boolean('defaultTrue').defaultTo(true);
+          table.tinyint('numberValue', 4).defaultTo(2);
+          table.bigInteger('bigNumberValue').defaultTo(bigNumberValue);
+          table.decimal('decimalValue', 30, 10).defaultTo(decimalValue);
+          table.string('textValue', 255).defaultTo('ready');
+          table.timestamp('generatedAt').defaultTo(app.ctx.db.connection.fn.now());
+        });
+        created = true;
+        const defaults = await app.ctx.db.columns.defaultData(tableName);
+        const item = await app.bean.model.insert(tableName as any, {});
+        const selected = await app.bean.model.get(tableName as any, { id: item.id });
+        assert.strictEqual(defaults.defaultFalse, false);
+        assert.strictEqual(defaults.defaultTrue, true);
+        assert.equal(isNil(defaults.numberValue), false);
+        assert.strictEqual(defaults.bigNumberValue, bigNumberValue);
+        assert.strictEqual(defaults.decimalValue, decimalValue);
+        assert.strictEqual(defaults.textValue, 'ready');
+        assert.strictEqual(defaults.generatedAt, undefined);
+        assert.strictEqual(item.defaultFalse, false);
+        assert.strictEqual(item.defaultTrue, true);
+        assert.strictEqual(item.numberValue, defaults.numberValue);
+        assert.strictEqual(item.bigNumberValue, bigNumberValue);
+        assert.strictEqual(item.decimalValue, decimalValue);
+        assert.strictEqual(item.textValue, 'ready');
+        assert.strictEqual(item.generatedAt, undefined);
+        assert.strictEqual(selected?.defaultFalse, false);
+        assert.strictEqual(selected?.defaultTrue, true);
+        assert.equal(isNil(selected?.generatedAt), false);
+      });
+    } finally {
+      await app.bean.executor.mockCtx(async () => {
+        clientName ??= app.ctx.db.clientName;
+        if (created) await app.bean.model.dropTable(tableName);
+        app.bean.database.getDb(clientName).columns.columnsClear(tableName);
+      });
+    }
   });
 
   it('action:model:mysqlBooleanResult', async () => {
