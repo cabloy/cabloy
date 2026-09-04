@@ -19,6 +19,7 @@ export interface IDtoOptionsProductCreate extends IDecoratorDtoOptions<'productC
   },
   blocks: [
     ZovaRender.block('basic-pageentry:blockPageEntry', {
+      pageTitleKey: 'title',
       blocks: [
         ZovaRender.block('basic-pageentry:blockForm', {
           blocks: [
