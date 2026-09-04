@@ -167,7 +167,7 @@ export class ControllerBlockPageEntry<TData extends {} = {}> extends BeanControl
 
   setPageMeta(data: any | undefined, pageDirty?: boolean) {
     if (!this.$pageRoute) return;
-    const pageTitle = data?.[this.$props.pageTitleKey] ?? this.formSchema?.title;
+    const pageTitle = data?.[this.$props.pageTitleKey] || this.formSchema?.title;
     this.$router.setPageMeta(this.$pageRoute, { pageTitle, pageDirty, formMeta: this.formMeta });
   }
 
