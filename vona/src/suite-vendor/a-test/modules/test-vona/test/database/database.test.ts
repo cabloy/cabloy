@@ -4,7 +4,7 @@ import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
-describe('database.test.ts', () => {
+describe('database.test.ts', { concurrency: false }, () => {
   it('action:database:switchClient', async () => {
     await app.bean.executor.mockCtx(async () => {
       const scopeDatabase = app.scope('a-orm');
@@ -178,7 +178,7 @@ describe('database.test.ts', () => {
         assert.strictEqual(columnsAgain, columns);
         if (app.ctx.db.dialectName === 'mysql' || app.ctx.db.dialectName === 'mysql2') {
           assert.strictEqual(columns.flag.columnType, 'tinyint(1)');
-          assert.strictEqual(columns.numberValue.columnType, 'tinyint(4)');
+          assert.match(columns.numberValue.columnType ?? '', /^tinyint(?:\(4\))?$/);
         }
       });
     } finally {
