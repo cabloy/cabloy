@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.157
+
+### Features
+
+- Add `coerceColumn` support.
+
 ## 5.1.156
 
 ### Features
