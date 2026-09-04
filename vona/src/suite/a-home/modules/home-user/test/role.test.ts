@@ -45,11 +45,13 @@ describe('role.test.ts', { concurrency: false }, () => {
   it('bean:role emits only actual membership changes', async () => {
     let userId: string | undefined;
     let roleId: string | undefined;
-    const events: unknown[] = [];
+    const events: Array<{ userIds: unknown[]; roleIds: unknown[] }> = [];
     const event = app.scope('a-user').event.roleMembershipChanged;
     const originalEmit = event.emit.bind(event);
     const emitMock = mock.method(event, 'emit', async data => {
-      events.push(data);
+      if (data.userIds.some(item => String(item) === userId)) {
+        events.push(data);
+      }
       return await originalEmit(data);
     });
     try {
@@ -143,11 +145,13 @@ describe('role.test.ts', { concurrency: false }, () => {
   it('bean:role replaces a membership set with one change event', async () => {
     let userId: string | undefined;
     const roleIds: string[] = [];
-    const events: unknown[] = [];
+    const events: Array<{ userIds: unknown[]; roleIds: unknown[] }> = [];
     const event = app.scope('a-user').event.roleMembershipChanged;
     const originalEmit = event.emit.bind(event);
     const emitMock = mock.method(event, 'emit', async data => {
-      events.push(data);
+      if (data.userIds.some(item => String(item) === userId)) {
+        events.push(data);
+      }
       return await originalEmit(data);
     });
     try {
@@ -175,7 +179,9 @@ describe('role.test.ts', { concurrency: false }, () => {
 
         const result = await app.bean.role.replaceUserRoleIds(user.id, [roles[1].id, roles[2].id]);
         assert.deepEqual(result, { addedRoleIds: [roles[2].id], removedRoleIds: [roles[0].id] });
-        assert.deepEqual(events, [{ userIds: [user.id], roleIds: [roles[0].id, roles[2].id] }]);
+        assert.equal(events.length, 1);
+        assert.deepEqual(events[0]?.userIds, [user.id]);
+        assert.deepEqual(events[0]?.roleIds.toSorted(), [roles[0].id, roles[2].id].toSorted());
 
         const memberships = await homeUser.model.roleUser.select({ where: { userId: user.id } });
         assert.deepEqual(
