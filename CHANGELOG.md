@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.1.156
+
+### Features
+
+- Add a `bean.role` adapter.
+- Update queue push capabilities.
+- Move documentation from `docs.cabloy.com` to `cabloy.com`.
+
+### Improvements
+
+- Refresh basic getting-started documentation and README content.
+- Update repository scripts documentation and package configuration.
+
 ## 5.1.155
 
 ### Features
