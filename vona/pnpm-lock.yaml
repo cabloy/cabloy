@@ -615,8 +615,8 @@ importers:
         specifier: ^5.0.5
         version: 5.0.5
       zova-module-rest-resource:
-        specifier: ^5.1.47
-        version: 5.1.47
+        specifier: ^5.1.48
+        version: 5.1.49
 
   .zova-rest/cabloy-basic-web:
     dependencies:
@@ -1610,7 +1610,7 @@ importers:
         specifier: ^5.0.3
         version: link:modules/a-markdown
       vona-module-a-rbac:
-        specifier: ^5.0.1
+        specifier: ^5.0.2
         version: link:modules/a-rbac
       vona-module-a-socket:
         specifier: workspace:^
@@ -9052,6 +9052,9 @@ packages:
   zova-module-rest-resource@5.1.47:
     resolution: {integrity: sha512-/LBZxfD/ULG+sQVuGnC+aqRe32O4qJesaKZF5IHNCuhuRwLzqvUIpijoyA890R7Ah5kHGxcnqaScW8DYkmf+RA==}
 
+  zova-module-rest-resource@5.1.49:
+    resolution: {integrity: sha512-tLf3BLov4GnV1QPivvLro6T2sNdriDZ8vZMsghuUN7dl+PRCG2pI0q9hBCrqe2faRSIcVUXowwnEbEynmaM7Zg==}
+
   zova-suite-a-zova@5.1.152:
     resolution: {integrity: sha512-P/dcMb2fcMpnmDMlrgvpddWUbupnvohD1Jp60VYWoqI0JcWMlYTJvWQWrwszDqiMvMiOTH5mmQBTws0KzbsXpA==}
 
@@ -15540,6 +15543,8 @@ snapshots:
   zova-module-rest-resource@5.1.46: {}
 
   zova-module-rest-resource@5.1.47: {}
+
+  zova-module-rest-resource@5.1.49: {}
 
   zova-suite-a-zova@5.1.152(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3)):
     dependencies:

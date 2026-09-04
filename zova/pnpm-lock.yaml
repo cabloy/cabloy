@@ -977,7 +977,7 @@ importers:
         specifier: ^5.0.1
         version: link:modules/a-rbac
       zova-module-rest-resource:
-        specifier: ^5.1.48
+        specifier: ^5.1.49
         version: link:modules/rest-resource
 
   src/suite-vendor/a-cabloy/modules/a-rbac:
