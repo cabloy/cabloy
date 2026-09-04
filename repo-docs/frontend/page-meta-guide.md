@@ -90,6 +90,33 @@ export interface IPageMeta {
 
 In the current Basic source, this is typically what the Admin layout uses for the level-2 item label instead of the broader menu-backed workspace title.
 
+### Resource entry `pageTitleKey`
+
+For schema-driven Resource entry pages, `basic-pageentry:blockPageEntry` derives `pageTitle` from the current form data. Its default `pageTitleKey` is `name`.
+
+When the resource's human-readable identifier uses another top-level field, configure that field explicitly on the page-entry block in the DTO:
+
+```typescript
+@Dto({
+  blocks: [
+    ZovaRender.block('basic-pageentry:blockPageEntry', {
+      pageTitleKey: 'title',
+      blocks: [
+        // form and toolbar blocks
+      ],
+    }),
+  ],
+})
+```
+
+Use the same key in the create, update, and view DTOs when those scenes should show a consistent task title. Common choices include `title` and `code`; do not add a synthetic `name` field merely to satisfy the default.
+
+Keep these boundaries in mind:
+
+- `pageTitleKey` controls the routed-shell level-2 task title, not the resource or OpenAPI schema title and not the browser document title.
+- The current implementation reads one exact top-level form-data key. It is not a dotted-path resolver or a formatter.
+- On a create page, the title remains empty until its source field has a value. A fixed initial label such as “Create Product” requires a dedicated page-entry behavior that writes page meta explicitly.
+
 ### `pageDirty`
 
 `pageDirty` tells the routed shell whether the current work item should appear dirty.
