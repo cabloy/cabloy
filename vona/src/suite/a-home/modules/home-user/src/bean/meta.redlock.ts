@@ -8,7 +8,8 @@ export type TypeRedlockLockResource =
   | `homeUser.account.passwordSetCandidate.${string}`
   | `homeUser.account.passwordResetConsume.${string}`
   | `homeUser.account.activationMutation.${string}`
-  | `homeUser.account.activationConsume.${string}`;
+  | `homeUser.account.activationConsume.${string}`
+  | `homeUser.roleMembership.${string}`;
 export type TypeRedlockLockIsolateResource = never;
 
 @Meta()

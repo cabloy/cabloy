@@ -174,6 +174,7 @@ export interface IModuleCacheRedis {
 export * from '../bean/event.activate.ts';
 export * from '../bean/event.createAnonymous.ts';
 export * from '../bean/event.register.ts';
+export * from '../bean/event.roleMembershipChanged.ts';
 export * from '../bean/event.signin.ts';
 export * from '../bean/event.signout.ts';
 
@@ -214,6 +215,16 @@ declare module 'vona-module-a-user' {
             get $onionName(): 'a-user:register';
           }
 
+        export interface EventRoleMembershipChanged {
+          /** @internal */
+          get scope(): ScopeModuleAUser;
+        }
+
+          export interface EventRoleMembershipChanged {
+            get $beanFullName(): 'a-user.event.roleMembershipChanged';
+            get $onionName(): 'a-user:roleMembershipChanged';
+          }
+
         export interface EventSignin {
           /** @internal */
           get scope(): ScopeModuleAUser;
@@ -239,12 +250,14 @@ declare module 'vona-module-a-user' {
 import type { EventActivate } from '../bean/event.activate.ts';
 import type { EventCreateAnonymous } from '../bean/event.createAnonymous.ts';
 import type { EventRegister } from '../bean/event.register.ts';
+import type { EventRoleMembershipChanged } from '../bean/event.roleMembershipChanged.ts';
 import type { EventSignin } from '../bean/event.signin.ts';
 import type { EventSignout } from '../bean/event.signout.ts';
 export interface IModuleEvent {
   'activate': EventActivate;
 'createAnonymous': EventCreateAnonymous;
 'register': EventRegister;
+'roleMembershipChanged': EventRoleMembershipChanged;
 'signin': EventSignin;
 'signout': EventSignout;
 }
@@ -253,6 +266,7 @@ export interface IModuleEvent {
 import type { TypeEventActivateData, TypeEventActivateResult } from '../bean/event.activate.ts';
 import type { TypeEventCreateAnonymousData, TypeEventCreateAnonymousResult } from '../bean/event.createAnonymous.ts';
 import type { TypeEventRegisterData, TypeEventRegisterResult } from '../bean/event.register.ts';
+import type { TypeEventRoleMembershipChangedData, TypeEventRoleMembershipChangedResult } from '../bean/event.roleMembershipChanged.ts';
 import type { TypeEventSigninData, TypeEventSigninResult } from '../bean/event.signin.ts';
 import type { TypeEventSignoutData, TypeEventSignoutResult } from '../bean/event.signout.ts';
 import type { EventOn } from 'vona-module-a-event';
@@ -261,6 +275,7 @@ declare module 'vona-module-a-event' {
     'a-user:activate': EventOn<TypeEventActivateData, TypeEventActivateResult>;
 'a-user:createAnonymous': EventOn<TypeEventCreateAnonymousData, TypeEventCreateAnonymousResult>;
 'a-user:register': EventOn<TypeEventRegisterData, TypeEventRegisterResult>;
+'a-user:roleMembershipChanged': EventOn<TypeEventRoleMembershipChangedData, TypeEventRoleMembershipChangedResult>;
 'a-user:signin': EventOn<TypeEventSigninData, TypeEventSigninResult>;
 'a-user:signout': EventOn<TypeEventSignoutData, TypeEventSignoutResult>;
   }

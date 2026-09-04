@@ -109,6 +109,32 @@ declare module 'vona-module-a-event' {
   }
 }
 /** event: end */
+/** eventListener: begin */
+export * from '../bean/eventListener.roleMembershipChanged.ts';
+
+import { type IDecoratorEventListenerOptions } from 'vona-module-a-event';
+declare module 'vona-module-a-event' {
+
+    export interface IEventListenerRecord {
+      'a-rbac:roleMembershipChanged': IDecoratorEventListenerOptions;
+    }
+
+
+}
+declare module 'vona-module-a-rbac' {
+
+        export interface EventListenerRoleMembershipChanged {
+          /** @internal */
+          get scope(): ScopeModuleARbac;
+        }
+
+          export interface EventListenerRoleMembershipChanged {
+            get $beanFullName(): 'a-rbac.eventListener.roleMembershipChanged';
+            get $onionName(): 'a-rbac:roleMembershipChanged';
+            get $onionOptions(): IDecoratorEventListenerOptions;
+          }
+}
+/** eventListener: end */
 /** config: begin */
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';
