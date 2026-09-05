@@ -210,11 +210,16 @@ export default defineConfig({
       { text: 'AI Development', link: '/ai/introduction', activeMatch: '^/ai/' },
       { text: 'Reference', link: '/reference/introduction', activeMatch: '^/reference/' },
       {
-        text: 'GitHub',
-        items: [
-          { text: 'Cabloy Basic', link: 'https://github.com/cabloy/cabloy' },
-          { text: 'Cabloy Start', link: 'https://github.com/cabloy/cabloy-start' },
-        ],
+        component: 'GitHubRepositoriesNav',
+        props: {
+          repositories: [
+            { text: 'github.com/cabloy/cabloy', link: 'https://github.com/cabloy/cabloy' },
+            {
+              text: 'github.com/cabloy/cabloy-start',
+              link: 'https://github.com/cabloy/cabloy-start',
+            },
+          ],
+        },
       },
     ],
     sidebar: {

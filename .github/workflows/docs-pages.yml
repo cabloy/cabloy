@@ -5,6 +5,9 @@ on:
       - main
     paths:
       - 'repo-docs/**'
+      - 'repo-e2e/docs/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
       - 'README.md'
       - '.github/workflows/docs-pages.yml'
   workflow_dispatch:
@@ -33,12 +36,25 @@ jobs:
           node-version: 24
           cache: pnpm
           cache-dependency-path: repo-docs/pnpm-lock.yaml
+      - name: install root dependencies
+        run: pnpm install --frozen-lockfile
       - name: install docs dependencies
         run: pnpm --dir repo-docs install --frozen-lockfile
-      - name: build docs
+      - name: install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: build docs and verify layout
         env:
           GA_MEASUREMENT_ID: ${{ vars.GA_MEASUREMENT_ID }}
-        run: pnpm --dir repo-docs docs:build
+        run: npm run test:docs:e2e
+      - name: upload docs E2E artifacts
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: docs-e2e-artifacts
+          path: |
+            repo-e2e/docs/playwright-report/
+            repo-e2e/docs/test-results/
+          if-no-files-found: ignore
       - name: setup pages
         uses: actions/configure-pages@v5
       - name: upload pages artifact

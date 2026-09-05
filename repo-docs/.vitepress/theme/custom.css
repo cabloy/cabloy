@@ -64,8 +64,8 @@
 }
 
 @media (min-width: 960px) {
-  .VPDoc.cabloy-blogs-index:not(.has-sidebar) .container,
-  .VPDoc.cabloy-blogs-index:not(.has-sidebar) .content {
+  .cabloy-blogs-index .VPDoc:not(.has-sidebar) .container,
+  .cabloy-blogs-index .VPDoc:not(.has-sidebar) .content {
     max-width: 1440px;
   }
 }

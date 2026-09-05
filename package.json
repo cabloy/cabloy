@@ -47,6 +47,7 @@
     "test": "cd vona && npm run test",
     "test:e2e": "node repo-e2e/scripts/runE2e.ts --clean",
     "test:e2e:fast": "node repo-e2e/scripts/runE2e.ts --fast",
+    "test:docs:e2e": "npm run docs:build && playwright test --config repo-e2e/docs/playwright.config.ts",
     "db:reset": "cd vona && npm run db:reset",
     "tsc": "npm run tsc:zova && pnpm --dir vona run tsc",
     "tsc:zova": "pnpm --dir zova run tsc",
