@@ -191,6 +191,19 @@ export default defineConfig({
   base: '/',
   ignoreDeadLinks: [/^https?:\/\/localhost/],
   head: gaHead,
+  transformPageData(pageData) {
+    if (!/^blogs\/[^/]+\/index\.md$/.test(pageData.relativePath)) return;
+
+    const pageClass = [pageData.frontmatter.pageClass, 'cabloy-blogs-article']
+      .filter(Boolean)
+      .join(' ');
+    return {
+      frontmatter: {
+        ...pageData.frontmatter,
+        pageClass,
+      },
+    };
+  },
   markdown: {
     lineNumbers: true,
   },

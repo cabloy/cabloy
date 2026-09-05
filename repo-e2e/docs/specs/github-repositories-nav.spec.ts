@@ -2,11 +2,11 @@ import { expect, test } from '@playwright/test';
 
 const repositories = [
   {
-    text: 'Cabloy Basic',
+    text: 'github.com/cabloy/cabloy',
     link: 'https://github.com/cabloy/cabloy',
   },
   {
-    text: 'Cabloy Start',
+    text: 'github.com/cabloy/cabloy-start',
     link: 'https://github.com/cabloy/cabloy-start',
   },
 ];
@@ -27,15 +27,19 @@ test('DOCS-NAV-01: GitHub icon menu exposes both repository links on desktop', a
   const menu = page.getByRole('menu', { name: 'GitHub repositories' });
   await expect(menu).toBeVisible();
   for (const repository of repositories) {
-    const link = menu.getByRole('menuitem', { name: repository.text });
+    const link = menu.getByRole('menuitem', { name: repository.text, exact: true });
     await expect(link).toHaveAttribute('href', repository.link);
     await expect(link).toHaveAttribute('target', '_blank');
     await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   }
 
-  await expect(menu.getByRole('menuitem', { name: 'Cabloy Basic' })).toBeFocused();
+  await expect(
+    menu.getByRole('menuitem', { name: repositories[0].text, exact: true }),
+  ).toBeFocused();
   await page.keyboard.press('ArrowDown');
-  await expect(menu.getByRole('menuitem', { name: 'Cabloy Start' })).toBeFocused();
+  await expect(
+    menu.getByRole('menuitem', { name: repositories[1].text, exact: true }),
+  ).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(menu).toHaveCount(0);
   await expect(trigger).toBeFocused();
@@ -57,7 +61,7 @@ test('DOCS-NAV-02: GitHub repositories remain readable in mobile navigation', as
   await expect(screenMenu).toBeVisible();
   await expect(screenMenu.getByText('GitHub repositories')).toBeVisible();
   for (const repository of repositories) {
-    const link = screenMenu.getByRole('link', { name: repository.text });
+    const link = screenMenu.getByRole('link', { name: repository.text, exact: true });
     await expect(link).toHaveAttribute('href', repository.link);
     await expect(link).toHaveAttribute('target', '_blank');
     await expect(link).toHaveAttribute('rel', 'noopener noreferrer');

@@ -16,6 +16,21 @@ interface IBlogsGeometry {
   grid: IRectangle & { display: string };
 }
 
+interface IArticleGeometry {
+  aside: IRectangle;
+  container: IRectangle;
+  content: IRectangle;
+  contentContainer: IRectangle;
+  body: IRectangle;
+}
+
+const blogArticlePaths = [
+  '/blogs/ai-react-nextjs-enterprise-architecture-cabloy/',
+  '/blogs/cabloy-fullstack-resource-addressing/',
+  '/blogs/nextjs-integrated-fullstack-cabloy-contract-loop/',
+  '/blogs/vue-object-oriented-zova-beginner-mental-model/',
+];
+
 function collectPageErrors(page: Page) {
   const errors: Error[] = [];
   page.on('pageerror', error => {
@@ -60,6 +75,33 @@ function getBlogsGeometry(page: Page) {
   }) as Promise<IBlogsGeometry>;
 }
 
+function getArticleGeometry(page: Page) {
+  return page.locator('.VPDoc').evaluate(doc => {
+    const getRequiredChild = (parent: Element, selector: string) => {
+      const element = parent.querySelector(`:scope > ${selector}`);
+      if (!element) throw new Error(`Could not find ${selector}`);
+      return element;
+    };
+    const toRectangle = (element: Element) => {
+      const { bottom, height, left, right, top, width } = element.getBoundingClientRect();
+      return { bottom, height, left, right, top, width };
+    };
+    const container = getRequiredChild(doc, '.container');
+    const aside = getRequiredChild(container, '.aside');
+    const content = getRequiredChild(container, '.content');
+    const contentContainer = getRequiredChild(content, '.content-container');
+    const body = getRequiredChild(contentContainer, '.main').querySelector('.vp-doc');
+    if (!body) throw new Error('Could not find .vp-doc');
+    return {
+      aside: toRectangle(aside),
+      container: toRectangle(container),
+      content: toRectangle(content),
+      contentContainer: toRectangle(contentContainer),
+      body: toRectangle(body),
+    };
+  }) as Promise<IArticleGeometry>;
+}
+
 test(
   'DOCS-BLOGS-01: Blogs index uses a wide desktop card grid',
   { tag: '@layout' },
@@ -101,6 +143,37 @@ test(
     expect(firstCard.right).toBeLessThanOrEqual(1441);
 
     await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+    expect(pageErrors).toEqual([]);
+    expect(consoleErrors).toEqual([]);
+  },
+);
+
+test(
+  'DOCS-BLOGS-02: Blog articles use a wide desktop body with an outline aside',
+  { tag: '@layout' },
+  async ({ page }) => {
+    const pageErrors = collectPageErrors(page);
+    const consoleErrors = collectConsoleErrors(page);
+
+    for (const path of blogArticlePaths) {
+      const documentResponse = await page.goto(path, { waitUntil: 'load' });
+      expect(documentResponse?.ok()).toBeTruthy();
+
+      await expect(page.locator('.Layout.cabloy-blogs-article')).toBeVisible();
+      await expect(page.locator('.VPDoc.has-sidebar')).toHaveCount(0);
+      await expect(page.locator('.VPDoc.has-aside')).toHaveCount(1);
+      await expect(page.locator('.aside')).toBeVisible();
+
+      const geometry = await getArticleGeometry(page);
+      expect(geometry.container.width).toBeCloseTo(1216, 0);
+      expect(geometry.content.width).toBeCloseTo(960, 0);
+      expect(geometry.contentContainer.width).toBeCloseTo(896, 0);
+      expect(geometry.body.width).toBeCloseTo(896, 0);
+      expect(geometry.aside.left).toBeGreaterThanOrEqual(geometry.content.right - 1);
+      expect(geometry.aside.right).toBeLessThanOrEqual(geometry.container.right + 1);
+      await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+    }
+
     expect(pageErrors).toEqual([]);
     expect(consoleErrors).toEqual([]);
   },
