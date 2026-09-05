@@ -63,6 +63,13 @@
   color: #fdba74;
 }
 
+@media (min-width: 960px) {
+  .VPDoc.cabloy-blogs-index:not(.has-sidebar) .container,
+  .VPDoc.cabloy-blogs-index:not(.has-sidebar) .content {
+    max-width: 1440px;
+  }
+}
+
 .cabloy-blog-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));

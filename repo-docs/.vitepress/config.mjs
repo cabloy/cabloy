@@ -197,10 +197,15 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
+      {
+        text: 'Docs',
+        items: [
+          { text: 'Fullstack', link: '/fullstack/introduction', activeMatch: '^/fullstack/' },
+          { text: 'Backend (Vona)', link: '/backend/introduction', activeMatch: '^/backend/' },
+          { text: 'Frontend (Zova)', link: '/frontend/introduction', activeMatch: '^/frontend/' },
+        ],
+      },
       { text: 'Blogs', link: '/blogs/', activeMatch: '^/blogs/' },
-      { text: 'Fullstack', link: '/fullstack/introduction', activeMatch: '^/fullstack/' },
-      { text: 'Backend (Vona)', link: '/backend/introduction', activeMatch: '^/backend/' },
-      { text: 'Frontend (Zova)', link: '/frontend/introduction', activeMatch: '^/frontend/' },
       { text: 'Editions', link: '/editions/overview', activeMatch: '^/editions/' },
       { text: 'AI Development', link: '/ai/introduction', activeMatch: '^/ai/' },
       { text: 'Reference', link: '/reference/introduction', activeMatch: '^/reference/' },
