@@ -209,6 +209,13 @@ export default defineConfig({
       { text: 'Editions', link: '/editions/overview', activeMatch: '^/editions/' },
       { text: 'AI Development', link: '/ai/introduction', activeMatch: '^/ai/' },
       { text: 'Reference', link: '/reference/introduction', activeMatch: '^/reference/' },
+      {
+        text: 'GitHub',
+        items: [
+          { text: 'Cabloy Basic', link: 'https://github.com/cabloy/cabloy' },
+          { text: 'Cabloy Start', link: 'https://github.com/cabloy/cabloy-start' },
+        ],
+      },
     ],
     sidebar: {
       '/fullstack/': fullstackGroups,
@@ -639,7 +646,6 @@ export default defineConfig({
       ],
       '/reference/': referenceGroups,
     },
-    socialLinks: [{ icon: 'github', link: 'https://github.com/cabloy/cabloy' }],
     search: {
       provider: 'local',
     },
