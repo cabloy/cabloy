@@ -22,6 +22,7 @@ const studentContentField = $makeSchema(
 export interface IDtoOptionsStudentView extends IDecoratorDtoOptions<'_descriptionMarkdown'> {}
 
 @Dto<IDtoOptionsStudentView>({
+  openapi: { title: $locale('ViewStudent') },
   blocks: [
     ZovaRender.block('basic-pageentry:blockPageEntry', {
       blocks: [

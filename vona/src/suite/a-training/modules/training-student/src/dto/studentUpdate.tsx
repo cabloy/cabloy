@@ -18,6 +18,7 @@ const studentContentField = $makeMetadata(
 export interface IDtoOptionsStudentUpdate extends IDecoratorDtoOptions<'content'> {}
 
 @Dto<IDtoOptionsStudentUpdate>({
+  openapi: { title: $locale('EditStudent') },
   blocks: [
     ZovaRender.block('basic-pageentry:blockPageEntry', {
       blocks: [
