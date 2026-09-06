@@ -17,6 +17,7 @@ import {
   schemaRenderTableActionRowJsx,
 } from './component.ts';
 import {
+  schemaRenderColumn,
   schemaRenderDisableNotifyChanged,
   schemaRenderFieldSource,
   schemaRenderLayout,
@@ -35,6 +36,7 @@ export const ZovaRender = {
   disableNotifyChanged: schemaRenderDisableNotifyChanged,
   onEffect: schemaRenderOnEffect,
   fieldSource: schemaRenderFieldSource,
+  column: schemaRenderColumn,
   // component
   field: schemaRenderField,
   fieldJsx: schemaRenderFieldJsx,

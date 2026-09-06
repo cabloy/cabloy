@@ -183,6 +183,10 @@ export class ModelSdk extends BeanModelBase {
         const operationObject = sdk.data?.operationObject;
         return getSchemaOfRequestQueryFilter(operationObject, { where: true });
       },
+      get order() {
+        const operationObject = sdk.data?.operationObject;
+        return getSchemaOfRequestQueryFilter(operationObject, { order: true });
+      },
       get requestBody() {
         const operationObject = sdk.data?.operationObject;
         const schemaBody = getSchemaOfRequestBody(operationObject);

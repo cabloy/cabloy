@@ -13,7 +13,7 @@ import {
 import { DtoDetailRecordResItem } from '../src/dto/detailRecordResItem.tsx';
 import { DtoStudentSummary } from '../src/dto/studentSummary.tsx';
 
-describe('student.test.ts', () => {
+describe('student.test.ts', { concurrency: false }, () => {
   it('action:student:formLayoutMetadata', async () => {
     await app.bean.executor.mockCtx(async () => {
       for (const DtoClass of [DtoStudentCreate, DtoStudentUpdate, DtoStudentView]) {
@@ -92,6 +92,104 @@ describe('student.test.ts', () => {
       );
       assert.equal(filterLayoutChildren?.[2]?.span, undefined);
       assert.equal(filterLayoutChildren?.[3]?.block?.render, 'basic-page:blockFilterActions');
+    });
+  });
+
+  it('action:student:tableColumnMetadata', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const apiJson = await app.bean.openapi.generateJsonOfClass(DtoStudentSelectResItem);
+      const component = Object.values(apiJson.components!.schemas as any).find(item => {
+        return (item as any).properties?._operationsRow;
+      }) as any;
+      assert.deepEqual(
+        {
+          align: component.properties.name.rest.table.align,
+          width: component.properties.name.rest.table.width,
+          fixed: component.properties.name.rest.table.fixed,
+          enableSorting: component.properties.name.rest.table.enableSorting,
+        },
+        { align: 'left', width: 240, fixed: 'left', enableSorting: true },
+      );
+      assert.deepEqual(
+        {
+          align: component.properties.level.rest.table.align,
+          width: component.properties.level.rest.table.width,
+          enableSorting: component.properties.level.rest.table.enableSorting,
+        },
+        { align: 'center', width: 140, enableSorting: true },
+      );
+      assert.deepEqual(
+        {
+          align: component.properties.createdAt.rest.table.align,
+          width: component.properties.createdAt.rest.table.width,
+          enableSorting: component.properties.createdAt.rest.table.enableSorting,
+        },
+        { align: 'center', width: 180, enableSorting: true },
+      );
+      assert.deepEqual(
+        {
+          align: component.properties._operationsRow.rest.table.align,
+          width: component.properties._operationsRow.rest.table.width,
+          fixed: component.properties._operationsRow.rest.table.fixed,
+        },
+        { align: 'center', width: 360, fixed: 'right' },
+      );
+    });
+  });
+
+  it('action:student:serverSorting', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      const studentIds: string[] = [];
+      const names = ['__StudentSortA__', '__StudentSortZ__'];
+      try {
+        for (const [index, name] of names.entries()) {
+          const studentId = await app.bean.executor.performAction('post', '/training/student', {
+            body: {
+              name,
+              mobile: `13812345${678 + index}`,
+              level: 1,
+            },
+          });
+          studentIds.push(studentId);
+        }
+        const ascending: DtoStudentSelectRes = await app.bean.executor.performAction(
+          'get',
+          '/training/student',
+          { query: { orders: [['name', 'asc']] } },
+        );
+        const descending: DtoStudentSelectRes = await app.bean.executor.performAction(
+          'get',
+          '/training/student',
+          { query: { orders: [['name', 'desc']] } },
+        );
+        const ascendingIndexes = names.map(name =>
+          ascending.list.findIndex(item => item.name === name),
+        );
+        const descendingIndexes = names.map(name =>
+          descending.list.findIndex(item => item.name === name),
+        );
+        assert.equal(
+          ascendingIndexes.every(index => index >= 0),
+          true,
+        );
+        assert.equal(
+          descendingIndexes.every(index => index >= 0),
+          true,
+        );
+        assert.equal(ascendingIndexes[0] < ascendingIndexes[1], true);
+        assert.equal(descendingIndexes[0] > descendingIndexes[1], true);
+      } finally {
+        for (const studentId of studentIds.reverse()) {
+          await app
+            .scope('training-student')
+            .model.studentContent.delete({ studentId }, { disableDeleted: true });
+          await app
+            .scope('training-student')
+            .model.student.deleteById(studentId, { disableDeleted: true });
+        }
+        await app.bean.passport.signout();
+      }
     });
   });
 

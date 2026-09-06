@@ -16,6 +16,7 @@ export interface IOpenapiSchemas {
   sdk: TypeOpenapiSchemasSdk;
   query?: SchemaObject;
   filter?: SchemaObject;
+  order?: SchemaObject;
   requestBody?: SchemaObject;
   responseBody?: SchemaObject;
   paged?: SchemaObject;

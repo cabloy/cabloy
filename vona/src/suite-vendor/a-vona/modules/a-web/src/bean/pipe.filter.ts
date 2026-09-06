@@ -25,6 +25,7 @@ import type {
 export type TypePipeFilterData = ITableQuery;
 
 export type TypePipeFilterResult = TypeQueryParamsPatch;
+type TypeQueryJoin = NonNullable<TypeQueryParamsPatch['joins']>[number];
 
 export interface IPipeOptionsFilter
   extends IDecoratorPipeOptions, IDecoratorPipeOptionsArgument, ValidatorOptions {}
@@ -68,10 +69,13 @@ export class PipeFilter
   private async _transform(value: TypePipeFilterData, options: IPipeOptionsFilter) {
     // 1. system: columns/where/orders/pageNo/pageSize
     const params = this._transformSystem(value);
+    const rootOpenapi = ZodMetadata.getOpenapiMetadata(options.schema!) as
+      | ISchemaObjectExtensionField
+      | undefined;
     // 2. fields
-    await this._transformFields(params, value, options);
+    await this._transformFields(params, value, options, rootOpenapi);
     // 3. system: orders
-    this._transformOrders(params, options);
+    this._transformOrders(params, options, rootOpenapi);
     // ok
     return params;
   }
@@ -104,32 +108,75 @@ export class PipeFilter
     return params;
   }
 
-  private _transformOrders(params: TypeQueryParamsPatch, options: IPipeOptionsFilter) {
+  private _transformOrders(
+    params: TypeQueryParamsPatch,
+    options: IPipeOptionsFilter,
+    rootOpenapi: ISchemaObjectExtensionField | undefined,
+  ) {
     if (!params.orders) return;
-    // openapi
-    const openapi: ISchemaObjectExtensionField | undefined = ZodMetadata.getOpenapiMetadata(
-      options.schema!,
-    ) as ISchemaObjectExtensionField | undefined;
-    const table = openapi?.filter?.table;
-    // loop
     for (const order of params.orders) {
-      const field = order[0] as string;
-      if (field.includes('.')) continue;
-      let tableCurrent = table;
-      let fieldCurrent = field;
-      const fieldSchema = ZodMetadata.getFieldSchema(options.schema, field);
-      if (fieldSchema) {
-        const openapi: ISchemaObjectExtensionField | undefined = ZodMetadata.getOpenapiMetadata(
-          fieldSchema,
-        ) as ISchemaObjectExtensionField | undefined;
-        if (openapi?.filter?.table) {
-          tableCurrent = openapi?.filter?.table;
-        }
-        if (openapi?.filter?.originalName) {
-          fieldCurrent = openapi?.filter?.originalName;
-        }
+      if (!Array.isArray(order) || order.length !== 2) {
+        throw new Error('invalid order');
       }
-      cast(order)[0] = tableCurrent ? `${tableCurrent}.${fieldCurrent}` : fieldCurrent;
+      const [key, direction] = order;
+      if (typeof key !== 'string' || (direction !== 'asc' && direction !== 'desc')) {
+        throw new Error('invalid order');
+      }
+      const info = this._resolveField(key, options, rootOpenapi);
+      if (!info || info.openapi?.filter?.capabilities?.order === false) {
+        throw new Error(`invalid order field: ${key}`);
+      }
+      cast(order)[0] = info.orderFullName;
+      this._addJoin(params, info.joinInfo);
+    }
+  }
+
+  private _resolveField(
+    key: string,
+    options: IPipeOptionsFilter,
+    rootOpenapi: ISchemaObjectExtensionField | undefined,
+  ) {
+    const fieldSchema = ZodMetadata.getFieldSchema(options.schema!, key);
+    if (!fieldSchema) {
+      if (!rootOpenapi?.filter?.table) {
+        return { orderFullName: key };
+      }
+      const keyParts = key.split('.');
+      const [table, field] = keyParts;
+      if (!table || !field || keyParts.length !== 2) return;
+      const resolved = this._resolveField(field, options, rootOpenapi);
+      if (!resolved || resolved.orderFullName !== key) return;
+      return resolved;
+    }
+    const fieldSchemaInner = ZodMetadata.unwrapChained(fieldSchema);
+    const openapi: ISchemaObjectExtensionField | undefined = ZodMetadata.getOpenapiMetadata(
+      fieldSchema,
+    ) as ISchemaObjectExtensionField | undefined;
+    const originalName = openapi?.filter?.originalName ?? key;
+    const table = openapi?.filter?.table ?? rootOpenapi?.filter?.table;
+    const joinInfo = openapi?.filter?.joinOn
+      ? ([
+          openapi.filter.joinType ?? 'innerJoin',
+          openapi.filter.table,
+          openapi.filter.joinOn,
+        ] as TypeQueryJoin)
+      : undefined;
+    return {
+      fieldSchema,
+      fieldSchemaInner,
+      openapi,
+      originalName,
+      fullName: joinInfo ? `${openapi?.filter?.table}.${originalName}` : originalName,
+      orderFullName: table ? `${table}.${originalName}` : originalName,
+      joinInfo,
+    };
+  }
+
+  private _addJoin(params: TypeQueryParamsPatch, joinInfo: TypeQueryJoin | undefined) {
+    if (!joinInfo) return;
+    if (!params.joins) params.joins = [];
+    if (params.joins.findIndex(item => item[1] === joinInfo[1]) === -1) {
+      params.joins.push(joinInfo);
     }
   }
 
@@ -139,36 +186,21 @@ export class PipeFilter
     params: TypeQueryParamsPatch,
     value: any,
     options: IPipeOptionsFilter,
+    rootOpenapi: ISchemaObjectExtensionField | undefined,
   ) {
     if (__FieldsSystem.includes(key)) return;
-    const fieldSchema = ZodMetadata.getFieldSchema(options.schema, key);
-    if (!fieldSchema) return;
-    const fieldSchemaInner = ZodMetadata.unwrapChained(fieldSchema);
-    // openapi
-    const openapi: ISchemaObjectExtensionField | undefined = ZodMetadata.getOpenapiMetadata(
-      fieldSchema,
-    ) as ISchemaObjectExtensionField | undefined;
-    const [transformName] = openapi?.filter?.transform ?? ['a-web:base', undefined];
+    const info = this._resolveField(key, options, rootOpenapi);
+    if (!info) return;
+    const { fieldSchema, fieldSchemaInner, openapi, originalName, fullName, joinInfo } = info;
+    const [transformName, transformOptions] = openapi?.filter?.transform ?? [
+      'a-web:base',
+      undefined,
+    ];
     const fieldNullable = fieldValue === null && isNullableSchema(fieldSchema);
     if (isNilOrEmptyString(fieldValue) && !fieldNullable) return;
-    // name
-    const originalName = openapi?.filter?.originalName ?? key;
-    let fullName: string;
-    // joins
-    let joinInfo;
-    if (openapi?.filter?.joinOn) {
-      const joinType = openapi.filter.joinType ?? 'innerJoin';
-      const joinTable = openapi.filter.table;
-      const joinOn = openapi.filter.joinOn;
-      joinInfo = [joinType, joinTable, joinOn];
-      fullName = `${joinTable}.${originalName}`;
-    } else {
-      fullName = originalName;
-    }
     // check where
     if (Object.prototype.hasOwnProperty.call(params.where, fullName)) return;
     // filter transform
-    const [, transformOptions] = openapi?.filter?.transform ?? ['a-web:base', undefined];
     const transformOptions2 = this.bean.onion.filterTransform.getOnionOptionsDynamic(
       transformName as keyof IFilterTransformRecord,
       transformOptions,
@@ -182,7 +214,7 @@ export class PipeFilter
     if (!beanInstance.where) {
       throw new Error(`filterTransform.where not found: ${beanFullName}`);
     }
-    const info = {
+    const transformInfo = {
       params,
       query: value,
       options,
@@ -194,17 +226,12 @@ export class PipeFilter
       schema: fieldSchema,
       openapi,
     };
-    const resTransform = await beanInstance.where(info, transformOptions2);
+    const resTransform = await beanInstance.where(transformInfo, transformOptions2);
     if (resTransform !== undefined) {
       // where
       params.where[fullName] = resTransform;
       // join
-      if (joinInfo) {
-        if (!params.joins) params.joins = [];
-        if (params.joins.findIndex(item => item[1] === joinInfo.joinTable) === -1) {
-          params.joins.push(joinInfo);
-        }
-      }
+      this._addJoin(params, joinInfo);
     }
   }
 
@@ -212,10 +239,11 @@ export class PipeFilter
     params: TypeQueryParamsPatch,
     value: any,
     options: IPipeOptionsFilter,
+    rootOpenapi: ISchemaObjectExtensionField | undefined,
   ) {
     // loop
     for (const key in value) {
-      await this._transformField(key, value[key], params, value, options);
+      await this._transformField(key, value[key], params, value, options, rootOpenapi);
     }
   }
 }

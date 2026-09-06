@@ -24,8 +24,7 @@ describe('dtoQuery.test.ts', () => {
                 _gt_: 12,
               },
             },
-            // orders: [['userName', 'asc']],
-            // orders: [['testVonaPost.createdAt', 'asc']],
+            orders: [['userName', 'asc']],
             pageNo: 2,
             pageSize: 30,
             title: 'ai',
@@ -44,7 +43,10 @@ describe('dtoQuery.test.ts', () => {
           _lt_: new Date('2025-12-02T15:00:00.000Z'),
         },
       });
-      assert.deepEqual(resEcho.orders, [['testVonaPost.createdAt', 'desc']]);
+      assert.deepEqual(resEcho.orders, [['testVonaUser.name', 'asc']]);
+      assert.deepEqual(resEcho.joins, [
+        ['innerJoin', 'testVonaUser', ['userId', 'testVonaUser.id']],
+      ]);
       assert.equal(resEcho.offset, 30);
       assert.equal(resEcho.limit, 30);
       // findManyEcho: null in where

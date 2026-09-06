@@ -57,6 +57,7 @@ export class ModelResource<
   public schemaCreate?: ISchemaObjectExtensionField;
   public schemaUpdate?: ISchemaObjectExtensionField;
   public schemaFilter?: ISchemaObjectExtensionField;
+  public schemaOrder?: ISchemaObjectExtensionField;
   public schemaRow?: ISchemaObjectExtensionField;
   public schemaPages?: ISchemaObjectExtensionField;
 
@@ -86,6 +87,9 @@ export class ModelResource<
     });
     this.schemaFilter = this.$computed(() => {
       return this.apiSchemasSelect.filter;
+    });
+    this.schemaOrder = this.$computed(() => {
+      return this.apiSchemasSelect.order;
     });
     this.schemaRow = this.$computed(() => {
       return this.apiSchemasSelect.row;

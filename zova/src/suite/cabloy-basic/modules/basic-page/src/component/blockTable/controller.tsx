@@ -44,6 +44,9 @@ export class ControllerBlockTable<TData extends {} = {}> extends BeanControllerB
           }}
           data={$$page.data as unknown as TData[]}
           schema={$$page.schemaRow}
+          schemaOrder={$$page.schemaOrder}
+          sorting={$$page.sorting}
+          onSortingChange={updater => $$page.onSortingChange(updater)}
           tableScope={$$page.jsxCelScope}
         ></ZTable>
       </div>

@@ -44,12 +44,12 @@ async function loginAsAdmin(page: Page) {
   return dashboardResponse;
 }
 
-function waitForStudentSelect(page: Page) {
+function waitForStudentSelect(page: Page, requireSuccess = true) {
   return page.waitForResponse(response => {
     const url = new URL(response.url());
     return (
       response.request().method() === 'GET' &&
-      response.ok() &&
+      (!requireSuccess || response.ok()) &&
       url.pathname === '/api/training/student' &&
       !response.request().headers()['x-vona-openapi-schema']
     );
@@ -379,6 +379,140 @@ test(
     await expect(createdAtStart).toHaveValue('');
     await expect(createdAtEnd).toHaveValue('');
     expect(pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-BASIC-TABLE-01: Training Student table submits server sorting and pins configured columns',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const pageErrors = collectPageErrors(page);
+    await loginAsAdmin(page);
+
+    const studentName = `Table E2E ${Date.now()}`;
+    const accessToken = (await page.context().cookies()).find(
+      cookie => cookie.name === 'token',
+    )?.value;
+    expect(accessToken).toBeTruthy();
+    const headers = { Authorization: `Bearer ${accessToken}` };
+    let studentId: string | number | undefined;
+    try {
+      const createResponse = await page.request.post('/api/training/student', {
+        data: { name: studentName, mobile: '13812345678', level: 1 },
+        headers,
+      });
+      expect(createResponse.ok()).toBeTruthy();
+      studentId = (await createResponse.json()).data;
+      expect(['string', 'number']).toContain(typeof studentId);
+
+      const initialSelect = waitForStudentSelect(page);
+      await page.getByRole('link', { name: 'Student', exact: true }).click();
+      await expect(page).toHaveURL(studentResourceUrl);
+      await initialSelect;
+      await page.setViewportSize({ width: 800, height: 900 });
+
+      const nameSort = page.getByRole('button', { name: 'Sort by name', exact: true });
+      const nameHeader = nameSort.locator('xpath=ancestor::th');
+      const operationsHeader = page.getByRole('columnheader', { name: 'Operations', exact: true });
+      await expect(nameSort).toBeVisible();
+      await expect(nameHeader).toHaveAttribute('aria-sort', 'none');
+      await expect(nameHeader).toHaveCSS('position', 'sticky');
+      await expect(nameHeader).toHaveCSS('left', '0px');
+      await expect(nameHeader).toHaveCSS('min-width', '240px');
+      await expect(nameHeader).toHaveCSS('text-align', 'left');
+      await expect(operationsHeader).toHaveCSS('position', 'sticky');
+      await expect(operationsHeader).toHaveCSS('right', '0px');
+      await expect(operationsHeader).toHaveCSS('min-width', '360px');
+      await expect(operationsHeader).toHaveCSS('text-align', 'center');
+
+      const ascendingResponse = waitForStudentSelect(page, false);
+      await nameSort.click();
+      await expect(nameHeader).toHaveAttribute('aria-sort', 'ascending');
+      const ascending = await ascendingResponse;
+      expect(ascending.status()).toBe(200);
+      const ascendingUrl = new URL(ascending.url());
+      expect(JSON.parse(ascendingUrl.searchParams.get('orders')!)).toEqual([['name', 'asc']]);
+
+      const descendingResponse = waitForStudentSelect(page, false);
+      await nameSort.click();
+      await expect(nameHeader).toHaveAttribute('aria-sort', 'descending');
+      const descending = await descendingResponse;
+      expect(descending.status()).toBe(200);
+      const descendingUrl = new URL(descending.url());
+      expect(JSON.parse(descendingUrl.searchParams.get('orders')!)).toEqual([['name', 'desc']]);
+
+      const tableWrapper = page
+        .locator('div.overflow-x-auto')
+        .filter({ has: page.locator('table') })
+        .first();
+      await expect(tableWrapper).toBeVisible();
+      const overflow = await tableWrapper.evaluate(element => {
+        return element.scrollWidth > element.clientWidth;
+      });
+      expect(overflow).toBeTruthy();
+      await tableWrapper.evaluate(element => {
+        element.scrollLeft = element.scrollWidth;
+      });
+      await expect(operationsHeader).toHaveCSS('right', '0px');
+
+      const operationsRow = page
+        .locator('tbody tr')
+        .filter({
+          has: page.getByRole('button', { name: 'Summary', exact: true }),
+        })
+        .first();
+      const operationActions = operationsRow.getByRole('button');
+      await expect(operationActions).toHaveCount(4);
+      for (const action of await operationActions.all()) {
+        await expect(action).toBeVisible();
+      }
+      const operationsGeometry = await operationActions.evaluateAll(actions => {
+        const cell = actions[0]?.closest('td');
+        const join = actions[0]?.parentElement;
+        const wrapper = cell?.closest('table')?.parentElement;
+        if (!cell || !join || !wrapper)
+          throw new Error('Could not resolve the Operations action cell');
+        const cellRect = cell.getBoundingClientRect();
+        const joinRect = join.getBoundingClientRect();
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const tolerance = 2;
+        return {
+          fitsCell: join.scrollWidth <= cell.clientWidth,
+          actionsFitCell: actions.every(action => {
+            const rect = action.getBoundingClientRect();
+            return (
+              rect.left >= cellRect.left - tolerance && rect.right <= cellRect.right + tolerance
+            );
+          }),
+          joinFitsCell:
+            joinRect.left >= cellRect.left - tolerance &&
+            joinRect.right <= cellRect.right + tolerance,
+          actionsFitWrapper: actions.every(action => {
+            const rect = action.getBoundingClientRect();
+            return (
+              rect.left >= wrapperRect.left - tolerance &&
+              rect.right <= wrapperRect.right + tolerance
+            );
+          }),
+        };
+      });
+      expect(operationsGeometry).toEqual({
+        fitsCell: true,
+        actionsFitCell: true,
+        joinFitsCell: true,
+        actionsFitWrapper: true,
+      });
+      expect(pageErrors).toEqual([]);
+    } finally {
+      if (studentId !== undefined) {
+        const deleteResponse = await page.request.delete(
+          `/api/training/student/deleteForce/${studentId}`,
+          { headers },
+        );
+        expect(deleteResponse.ok()).toBeTruthy();
+      }
+    }
   },
 );
 

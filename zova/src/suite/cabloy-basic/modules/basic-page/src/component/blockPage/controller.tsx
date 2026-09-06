@@ -1,3 +1,4 @@
+import type { SortingState } from '@tanstack/vue-table';
 import type { IComponentOptions } from 'zova';
 import type {
   IJsxRenderContextPage,
@@ -10,6 +11,7 @@ import type {
 } from 'zova-module-a-openapi';
 
 import { celEnvBase } from '@cabloy/utils';
+import { functionalUpdate } from '@tanstack/vue-table';
 import { VNode } from 'vue';
 import { BeanControllerBase, deepEqual } from 'zova';
 import { ZovaJsx } from 'zova-jsx';
@@ -49,8 +51,9 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
 
   queryFixedData: ITableQuery;
   queryFilterData: ITableQuery;
+  querySortingData: ITableQuery;
+  sorting: SortingState;
   queryPaged: ITablePaged;
-  query: ITableQuery;
 
   $$modelResource: ModelResource<TData>;
 
@@ -65,6 +68,8 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
     // query
     this.queryFixedData = this.$props.queryFixed ?? {};
     this.queryFilterData = {};
+    this.querySortingData = {};
+    this.sorting = [];
     this.$watch(
       () => this.$props.queryFixed,
       queryFixed => {
@@ -72,16 +77,6 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
       },
     );
     this.queryPaged = { pageNo: 1, pageSize: this.$props.pageSize };
-    this.query = this.$computed(() => {
-      const { where: whereFixed, ...queryFixed } = this.queryFixedData;
-      const { where: whereFilter, ...queryFilter } = this.queryFilterData;
-      return {
-        ...queryFixed,
-        ...queryFilter,
-        where: { ...whereFilter, ...whereFixed },
-        ...this.queryPaged,
-      };
-    });
     // load schema/data
     await $QueriesEnsureLoaded(
       () => this.$$modelResource.apiSchemasSelect.sdk,
@@ -101,6 +96,18 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
     return this.$props.resource;
   }
 
+  get query() {
+    const { where: whereFixed, ...queryFixed } = this.queryFixedData;
+    const { where: whereFilter, ...queryFilter } = this.queryFilterData;
+    return {
+      ...queryFixed,
+      ...queryFilter,
+      ...this.querySortingData,
+      where: { ...whereFilter, ...whereFixed },
+      ...this.queryPaged,
+    };
+  }
+
   get queryData() {
     return this.$$modelResource.select(this.query);
   }
@@ -115,6 +122,10 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
 
   get schemaFilter() {
     return this.$$modelResource.schemaFilter;
+  }
+
+  get schemaOrder() {
+    return this.$$modelResource.schemaOrder;
   }
 
   get schemaRow() {
@@ -144,6 +155,15 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
 
   onFilter(data: ITableQuery) {
     this.queryFilterData = data;
+    this.queryPaged.pageNo = 1;
+  }
+
+  onSortingChange(updater: SortingState | ((old: SortingState) => SortingState)) {
+    this.sorting = functionalUpdate(updater, this.sorting).slice(0, 1);
+    const sorting = this.sorting[0];
+    this.querySortingData = sorting
+      ? { orders: [[sorting.id, sorting.desc ? 'desc' : 'asc']] }
+      : {};
     this.queryPaged.pageNo = 1;
   }
 

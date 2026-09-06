@@ -1,14 +1,17 @@
 import type { DtoRecordCreate, DtoRecordUpdate } from 'vona-module-training-record';
 import type { DtoStudentCreate } from 'vona-module-training-student';
 
+import { ZodMetadata } from '@cabloy/zod-openapi';
 import fse from 'fs-extra';
 import assert from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
+import { getTargetDecoratorRules } from 'vona-module-a-openapiutils';
 
 import { DtoDetailRecordSubjectResItem } from '../src/dto/detailRecordSubjectResItem.tsx';
+import { DtoRecordSelectReq } from '../src/dto/recordSelectReq.tsx';
 import { DtoRecordSelectResItem } from '../src/dto/recordSelectResItem.tsx';
 import { DtoRecordView } from '../src/dto/recordView.tsx';
 
@@ -26,6 +29,38 @@ describe('record.test.ts', () => {
       ) as any;
       assert.ok(subjectComponent?.properties?._lineNumber);
       assert.equal(subjectComponent.required?.includes('_lineNumber'), false);
+
+      const selectReqRules = getTargetDecoratorRules(DtoRecordSelectReq.prototype);
+      const studentIdMetadata = ZodMetadata.getOpenapiMetadata(selectReqRules.studentId!);
+      assert.equal(selectReqRules.studentId?.type, 'optional');
+      assert.deepEqual(studentIdMetadata?.filter, {
+        table: 'trainingStudent',
+        joinType: 'innerJoin',
+        joinOn: ['studentId', 'trainingStudent.id'],
+        originalName: 'name',
+        op: '_includesI_',
+      });
+
+      const controller = app.bean.onion.controller
+        .getOnionsEnabledCached()
+        .find(item => item.beanOptions.beanFullName === 'training-record.controller.record')
+        ?.beanOptions.beanClass;
+      if (!controller) throw new Error('training-record.controller.record not found');
+      const controllerApiJson = await app.bean.openapi.generateJsonOfControllerAction(
+        controller,
+        'select',
+        'V31',
+      );
+      const parameters = controllerApiJson.paths?.['/api/training/record']?.get?.parameters ?? [];
+      const studentIdParameter = parameters.find(parameter => parameter.name === 'studentId');
+      assert.ok(studentIdParameter);
+      assert.equal(studentIdParameter.in, 'query');
+      assert.equal(studentIdParameter.required, false);
+      assert.deepEqual(studentIdParameter.schema?.type, ['string', 'null']);
+      assert.equal(
+        parameters.some(parameter => parameter.name === 'studentName'),
+        false,
+      );
 
       for (const [DtoClass, hasTrainingRecordSubjects] of [
         [DtoRecordSelectResItem, false],
@@ -49,6 +84,7 @@ describe('record.test.ts', () => {
           'id',
           'name',
         ]);
+        assert.equal(component.properties.studentId.rest.table.enableSorting, true);
       }
     });
   });
@@ -123,6 +159,21 @@ describe('record.test.ts', () => {
         assert.equal(String(recordItem!.studentId), String(studentId));
         assert.equal(String(recordItem!.student?.id), String(studentId));
         assert.equal(recordItem!.student?.name, studentData.name);
+
+        const filteredSelectRes: any = await app.bean.executor.performAction(
+          'get',
+          '/training/record',
+          { query: { studentId: 'tude' } },
+        );
+        assert.equal(
+          filteredSelectRes.list.some((item: any) => String(item.id) === String(recordId)),
+          true,
+        );
+        assert.equal(
+          filteredSelectRes.list.every((item: any) => item.student?.name.includes('tude')),
+          true,
+        );
+
         assert.equal(recordItem!.dossierFiles?.length, 1);
         assert.equal(recordItem!.dossierFiles?.[0]?.filename, 'attendance.txt');
 

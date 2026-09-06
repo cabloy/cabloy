@@ -63,6 +63,7 @@ export class DtoStudentSelectResItem extends $Dto.get(() => ModelStudent) {
   @Api.field(
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),
+    ZovaRender.column({ align: 'center', width: 360, fixed: 'right' }),
     ZovaRender.cell('basic-table:actionOperationsRow', {
       actions: [
         ZovaRender.tableActionRow('training-student:actionSummary', {

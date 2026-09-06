@@ -15,13 +15,24 @@ export type TypeFormFieldOnEffect = (value: any) => void;
 
 export interface ISchemaRenderComponentPresetRecord extends IResourceFormFieldRecord {}
 
-export interface ISchemaObjectExtensionFieldRest {
+export type TypeTableColumnAlign = 'left' | 'center' | 'right';
+export type TypeTableColumnFixed = 'left' | 'right';
+
+export interface ITableColumnOptions {
+  order?: number;
+  align?: TypeTableColumnAlign;
+  width?: number;
+  fixed?: TypeTableColumnFixed;
+  enableSorting?: boolean;
+  sortDescFirst?: boolean;
+}
+
+export interface ISchemaObjectExtensionFieldRest extends ITableColumnOptions {
   'blocks'?: IResourceRenderBlockOptionsBlock[];
   'schemaScene'?: TypeSchemaScene;
   //
   'fieldSource'?: string;
   'visible'?: boolean;
-  'order'?: number;
   'disableNotifyChanged'?: boolean;
   'readonly'?: boolean;
   'onEffect'?: TypeFormFieldOnEffect;

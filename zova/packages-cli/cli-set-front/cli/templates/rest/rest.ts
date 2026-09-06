@@ -1,8 +1,12 @@
 import type z from 'zod';
 
-import type { TypeFormSchemaScene, TypeFormFieldOnEffect } from 'zova-module-a-openapi';
-import type { IResourceFormFieldLayoutOptions } from 'zova-module-a-openapi';
-import type { TypeSchemaScene } from 'zova-module-a-openapi';
+import type {
+  IResourceFormFieldLayoutOptions,
+  ITableColumnOptions,
+  TypeFormFieldOnEffect,
+  TypeFormSchemaScene,
+  TypeSchemaScene,
+} from 'zova-module-a-openapi';
 import type { TypeSchemaOrderLevel } from 'zova-module-a-openapi';
 
 import { _generalSchemaRest, _order } from './inner.ts';
@@ -76,5 +80,11 @@ export function schemaRenderOrder<T extends z.ZodType>(
   return function (schema: T): T {
     const options = { order: orderReal };
     return _generalSchemaRest(schema, options, scene);
+  };
+}
+
+export function schemaRenderColumn<T extends z.ZodType>(options: ITableColumnOptions) {
+  return function (schema: T): T {
+    return schema.openapi({ rest: { table: options } });
   };
 }

@@ -11,7 +11,7 @@ export interface IEntityOptions<%=argv.resourceNameCapitalize%> extends IDecorat
 @Entity<IEntityOptions<%=argv.resourceNameCapitalize%>>('<%=argv.moduleResourceName%>', {
   openapi: { title: $locale('<%=argv.resourceNameCapitalize%>') },
   fields: {
-    id: $makeMetadata(ZovaRender.order(1, 'core')),
+    id: $makeMetadata(ZovaRender.order(1, 'core'), ZovaRender.column({ width: 50, fixed: 'left' })),
     iid: $makeMetadata(ZovaRender.visible(false)),
     deleted: $makeMetadata(ZovaRender.visible(false)),
     createdAt: $makeMetadata(

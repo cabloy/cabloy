@@ -10,8 +10,11 @@ import { celEnvBase, isNilOrEmptyString } from '@cabloy/utils';
 import {
   CellContext,
   createColumnHelper,
+  functionalUpdate,
   getCoreRowModel,
+  OnChangeFn,
   Row,
+  SortingState,
   TableOptionsWithReactiveData,
 } from '@tanstack/vue-table';
 import { SchemaObject } from 'openapi3-ts/oas31';
@@ -48,6 +51,9 @@ import { ITableCellRenderColumnOptions } from '../../types/tableColumn.js';
 export interface ControllerTableProps<TData extends {} = {}> {
   data?: TData[];
   schema?: SchemaObject;
+  schemaOrder?: SchemaObject;
+  sorting?: SortingState;
+  onSortingChange?: OnChangeFn<SortingState>;
   tableScope?: ITableScope;
   getColumns?: TypeTableGetColumns<TData>;
   slotDefault?: (table: ControllerTable<TData>) => VNode;
@@ -95,9 +101,14 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
     return this.$props.data;
   }
 
+  public get sorting() {
+    return this.$props.sorting ?? [];
+  }
+
   public async refreshMeta() {
     this.tableMeta = await this._createTableMeta();
     this.columns = await this._createColumns();
+    this.table?.setColumnPinning(this._getColumnPinning());
   }
 
   private _createTable() {
@@ -108,6 +119,22 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
       getCoreRowModel: getCoreRowModel(),
       renderFallbackValue: this.scope.config.renderFallbackValue,
       manualPagination: true,
+      manualSorting: true,
+      enableMultiSort: false,
+      enableSortingRemoval: false,
+      state: {
+        get sorting() {
+          return self.sorting;
+        },
+      },
+      onSortingChange: updater => {
+        const sorting = functionalUpdate(updater, self.sorting).slice(0, 1);
+        self.$props.onSortingChange?.(sorting);
+      },
+      get initialState() {
+        const columnPinning = self._getColumnPinning();
+        return { columnPinning };
+      },
       get data() {
         return self.data || [];
       },
@@ -116,6 +143,7 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
       },
     };
     this.table = this.$useTable(tableOptions);
+    this.table.setColumnPinning(this._getColumnPinning());
   }
 
   private async _createColumns() {
@@ -162,10 +190,32 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
             return property?.title || key;
           },
           cell: props => tableMeta.renders[key](props),
+          size: property.rest?.width,
+          enableSorting: property.rest?.enableSorting === true && this._isOrderable(property),
+          sortDescFirst: property.rest?.sortDescFirst === true,
+          meta: { rest: property.rest },
         }),
       );
     }
     return columns;
+  }
+
+  private _getColumnPinning() {
+    const left: string[] = [];
+    const right: string[] = [];
+    for (const property of this.tableMeta?.properties ?? []) {
+      const fixed = property.rest?.fixed;
+      if (fixed === 'left') left.push(property.key!);
+      if (fixed === 'right') right.push(property.key!);
+    }
+    return { left, right };
+  }
+
+  private _isOrderable(property: ISchemaObjectExtensionField) {
+    const properties = this.$props.schemaOrder?.properties;
+    if (!properties) return false;
+    const keys = [property.key, property.schemaKey, ...(property.schemaKeys ?? [])];
+    return keys.some(key => key && Object.prototype.hasOwnProperty.call(properties, key));
   }
 
   private _createProperties() {
