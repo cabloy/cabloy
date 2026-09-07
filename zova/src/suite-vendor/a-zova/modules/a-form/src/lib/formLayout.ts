@@ -58,12 +58,6 @@ export function resolveFormLayout(
       ),
     )
     .filter(Boolean) as IResolvedFormLayoutNode[];
-  for (const property of properties ?? []) {
-    const name = property.key;
-    if (!name || !propertyNames.has(name) || fieldNames.has(name)) continue;
-    fieldNames.add(name);
-    children.push({ type: 'field', name });
-  }
   return { children, fieldTabPaths, diagnostics };
 }
 

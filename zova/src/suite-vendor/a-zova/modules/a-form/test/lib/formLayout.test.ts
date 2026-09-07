@@ -76,6 +76,19 @@ test('Form Layout accepts every preserved alias for the same canonical source', 
   assert.deepEqual(resolved.diagnostics, []);
 });
 
+test('Form Layout renders only explicitly declared visible fields', () => {
+  const resolved = resolveFormLayout(
+    createTabsLayout('name'),
+    createProperties({ key: 'name', type: 'string' }, { key: 'level', type: 'string' }),
+  );
+
+  assert.deepEqual(getTabFieldNames(resolved), ['name']);
+  assert.deepEqual(resolved.fieldTabPaths, {
+    name: [{ tabsId: 'tabs-0', tabId: 'tab-0-0' }],
+  });
+  assert.deepEqual(resolved.diagnostics, []);
+});
+
 test('Form Layout prefers an exact canonical field over a colliding alias', () => {
   const resolved = resolveFormLayout(
     { children: [{ type: 'field', name: 'content' }] },
@@ -89,10 +102,7 @@ test('Form Layout prefers an exact canonical field over a colliding alias', () =
     ),
   );
 
-  assert.deepEqual(resolved.children, [
-    { type: 'field', name: 'content' },
-    { type: 'field', name: 'content.descriptionMarkdown' },
-  ]);
+  assert.deepEqual(resolved.children, [{ type: 'field', name: 'content' }]);
   assert.deepEqual(resolved.diagnostics, []);
 });
 
@@ -131,17 +141,14 @@ test('Form Layout keeps ambiguous aliases and relation prefixes unknown', () => 
     ),
   );
 
-  assert.deepEqual(resolved.children, [
-    { type: 'field', name: 'content.descriptionMarkdown' },
-    { type: 'field', name: 'content.descriptionHtml' },
-  ]);
+  assert.deepEqual(resolved.children, []);
   assert.deepEqual(resolved.diagnostics, [
     { type: 'unknownField', value: '_content' },
     { type: 'unknownField', value: 'content' },
   ]);
 });
 
-test('Form Layout does not resolve or append invisible aliases', () => {
+test('Form Layout does not resolve invisible aliases', () => {
   const resolved = resolveFormLayout(
     { children: [{ type: 'field', name: '_descriptionMarkdown' }] },
     createProperties({

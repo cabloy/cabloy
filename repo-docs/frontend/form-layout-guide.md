@@ -219,11 +219,11 @@ Set `layout: 'flow'` when compact fields should appear from left to right withou
 
 ## How the resolver handles the declared tree
 
-Before rendering, `resolveFormLayout(...)` reconciles `formLayout` with the current scene's resolved schema properties. This makes the declaration a **placement overlay**, not an allow-list. The preceding OpenAPI normalization step is explained in [OpenAPI Runtime Under the Hood](/frontend/a-openapi-under-the-hood#scene-overlays-fieldsource-and-preserved-aliases).
+Before rendering, `resolveFormLayout(...)` reconciles `formLayout` with the current scene's resolved schema properties. A configured Form Layout is an **explicit allow-list**: it renders only successfully resolved declared fields and explicit block nodes. The preceding OpenAPI normalization step is explained in [OpenAPI Runtime Under the Hood](/frontend/a-openapi-under-the-hood#scene-overlays-fieldsource-and-preserved-aliases).
 
-### Eligible and omitted fields
+### Eligible and declared fields
 
-Only schema properties with `rest.visible !== false` are eligible. When an eligible visible field is absent from `formLayout`, the resolver appends it as a root-level field after the declared nodes, in schema-property order.
+Only schema properties with `rest.visible !== false` are eligible for a field declaration. Eligibility alone does not render a field: a visible field absent from `formLayout.children` does not render and produces no diagnostic.
 
 A field that uses `fieldSource` is represented at runtime by its nested canonical source key. The loader stores that source path in `key`, retains the first differing original schema name in `schemaKey`, and retains further coalesced names in `schemaKeys`. A property already named by its canonical key retains that identity in `key`. These preserved names are aliases for declaration matching, not separate fields or bindings.
 
@@ -237,9 +237,9 @@ For example, a real relation declaration `studentContentForm` can resolve to the
 
 An alias or relation prefix must resolve to exactly one eligible canonical source. If multiple visible source keys match, it is unresolved and receives `unknownField`; declare the exact canonical source key instead. Exact canonical matches win over colliding aliases. Invisible properties contribute neither eligible fields nor usable aliases.
 
-Duplicate declarations are detected by canonical key, so an alias and `content.descriptionMarkdown` cannot render the same field twice. Resolved field names, duplicate identity, and tab paths all use the canonical key. If a declaration is removed because it is unknown, invisible, ambiguous, or duplicate, otherwise unplaced eligible canonical fields are still appended at the root.
+Duplicate declarations are detected by canonical key, so an alias and `content.descriptionMarkdown` cannot render the same field twice. Resolved field names, duplicate identity, and tab paths all use the canonical key. If a declaration is removed because it is unknown, invisible, ambiguous, or duplicate, it does not render and no other eligible fields are added as a fallback.
 
-If a field must not render, make it invisible in schema metadata. Leaving it out of `formLayout.children` is not enough.
+Use `rest.visible: false` when a field must be ineligible in the schema scene. In a configured Form Layout, leave a visible field out of `formLayout.children` when it should not render there.
 
 ### Invalid declarations and diagnostics
 
@@ -384,7 +384,7 @@ Here `formFieldLayout.inline: true` controls how each field wrapper is presented
 5. Use `layout`, `formFieldLayout`, `options`, or provider behaviors when the requirement is one field's wrapper or renderer.
 6. Keep entry actions in page-entry toolbar blocks. Keep filter action semantics in `basic-page:blockFilterActions`; place that block inside Form Layout when the actions must share structural Grid or flow placement with fields.
 7. For maintained Cabloy Basic list filters, prefer one inline flow section that explicitly lists every real filter-schema field in schema order and ends with one embedded `basic-page:blockFilterActions` block. Do not add synthetic request-only filter fields, alter filter transforms, or combine it with a sibling action block.
-8. Review field names against the scene-specific schema. Unlisted visible fields are appended; unknown and duplicate declarations are silently pruned from the rendered plan.
+8. Review field names against the scene-specific schema. Explicitly list every field that should render; omitted visible fields do not render, while unknown and duplicate declarations are silently pruned from the rendered plan.
 9. Prefer an exact canonical source path when an alias or relation prefix could match multiple visible fields. Do not list both an alias and its canonical key; canonical duplicate detection keeps only the first declaration.
 
 ## Source-reading and verification path

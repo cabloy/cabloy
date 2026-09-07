@@ -233,7 +233,7 @@ Use this path when you are asking questions like:
 - where does `formLayout` come from in a resource DTO?
 - how are fields, embedded blocks, sections, groups, and tabs normalized before rendering?
 - how do canonical keys, preserved schema aliases, and unique relation-prefix shorthand resolve to one field?
-- why are omitted visible fields appended or duplicate fields removed?
+- why do omitted fields not render, or duplicate fields get removed?
 - where does Cabloy Basic render responsive grids and tab error badges?
 
 ### Read the docs first
@@ -266,7 +266,7 @@ Use this path when you are asking questions like:
 - the resolver filters visible fields, resolves exact canonical keys before unique aliases and unique prefixes, and records duplicate identity and tab paths by canonical key
 - the Basic block controller renders sections, groups, tabs, field spans, and embedded blocks while delegating canonical field names to `$$form.renderField(...)`
 - `blockFilterActions` shows how a block rendered inside Form Layout reuses the inherited form CEL scope to invoke `$$filter`
-- the OpenAPI and Form Layout unit tests verify canonicalization, alias precedence, ambiguity, duplicates, visibility, root append, and tab paths
+- the OpenAPI and Form Layout unit tests verify canonicalization, explicit field inclusion, alias precedence, ambiguity, duplicates, visibility, and tab paths
 - the Student test verifies emitted metadata nesting, columns, spans, embedded action blocks, and optional IDs; it is not a browser rendering test
 
 ## 8. Resource-driven CRUD page integration
