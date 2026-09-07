@@ -1,5 +1,24 @@
 # Changelog
 
+## 5.1.159
+
+### Features
+
+- Add form layout support.
+- Add render column support.
+- Add OpenAPI title support for DTOs.
+- Add form schema title support.
+- Add configurable page title keys.
+- Add blog styling enhancements.
+
+### Improvements
+
+- Update documentation for joined backend filtering and sorting.
+- Document raw `this` reactivity boundaries.
+- Document SSR site and flavor setup.
+- Improve documentation links, layouts, page metadata guidance, and blog styling.
+- Update site configuration and controller behavior.
+
 ## 5.1.158
 
 ### Improvements
