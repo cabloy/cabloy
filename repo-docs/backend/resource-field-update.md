@@ -13,6 +13,7 @@ Use it when you need to:
 - add a stored field to an existing resource;
 - refine validation, titles, OpenAPI metadata, or `ZovaRender.field(...)` / `ZovaRender.cell(...)` metadata for an existing field;
 - add enum-like field constraints;
+- filter or sort an existing foreign-key field by a display column from its related table without replacing the stored foreign-key contract;
 - decide whether a persisted field change increments `vonaModule.fileVersion`;
 - add a custom form-field or table-cell renderer because shared renderer options are insufficient.
 
@@ -93,6 +94,43 @@ For projected fields, use `$makeMetadata(...)` for metadata-only refinement and 
 
 Read [DTO Infer and Generation](/backend/dto-infer-generation) when inference cannot express the intended contract. If serialization metadata controls the returned value, also confirm that the target controller action opts into `@Core.serializer()`.
 
+## Filter and sort a relation by its display field
+
+A resource list can search and order a relation by a human-readable column from its related table without changing the persisted relation contract. Keep the entity field as the foreign-key identity and place the join mapping on that entity field. For example, `studentId` remains a `TableIdentity` even though the list filter accepts part of the student's name:
+
+```ts
+@Api.field(
+  v.filter({
+    table: 'trainingStudent',
+    joinType: 'innerJoin',
+    joinOn: ['studentId', 'trainingStudent.id'],
+    originalName: 'name',
+    op: '_includesI_',
+  }),
+  ZovaRender.column({ enableSorting: true }),
+  v.tableIdentity(),
+)
+studentId: TableIdentity;
+```
+
+`table` and `joinOn` identify the relation, while `originalName` resolves both the `studentId` filter and order key to `trainingStudent.name`. `_includesI_` makes the filter a case-insensitive partial-name match. `ZovaRender.column({ enableSorting: true })` exposes the sortable table column; the query pipeline uses the same field metadata to add the join and rewrite `orders: [['studentId', 'asc']]` to the related display column.
+
+Use `innerJoin` deliberately when the relation is required and unmatched rows should not participate in this filter/order path. For an optional relation whose unmatched rows must remain visible, choose the join behavior explicitly instead of copying the required-relation example.
+
+Keep `studentId` as the public filter and order key. In the select request DTO, override only its query-input schema and renderer so a text fragment reaches the join-backed filter; the entity and create/update contracts remain foreign-key identities:
+
+```ts
+fields: {
+  studentId: $makeSchema(
+    ZovaRender.field('basic-input:formFieldInput'),
+    v.optional(),
+    z.string(),
+  ),
+},
+```
+
+Do not add a parallel `studentName` query field unless the API intentionally needs distinct ID and display-name filtering semantics. For the underlying query behavior, see [ORM Select Guide](/backend/orm-select-guide). For the list-page query path, see [Filter to Query to Select Data Flow](/frontend/filter-query-select-data-flow-guide).
+
 ## Choose the renderer branch
 
 Prefer the smallest rendering change that expresses the requirement:
@@ -141,6 +179,14 @@ Minimum backend coverage generally includes:
 - get-by-id or view response;
 - delete behavior when it is relevant.
 
+For join-backed relation filtering and sorting, also verify:
+
+- the projected request field is optional text while the entity remains a foreign-key identity;
+- direct DTO metadata retains the intended `table`, `joinType`, `joinOn`, `originalName`, and operator;
+- the select action exposes the intended query parameter without an unintended parallel display-name parameter;
+- filtering returns records whose related display value matches the text fragment;
+- ascending and descending orders return the expected related-display ordering, including the selected join behavior for unmatched rows.
+
 For constrained enum-like values, add a negative test that proves an invalid value is rejected. Test-local persisted resources must be deleted in `finally` using precise owned identities and reverse dependency order.
 
 ## Verification checklist
@@ -151,6 +197,7 @@ Choose checks that match the layers changed:
 - run the narrow resource test and relevant typecheck;
 - run `npm run test` for any `meta.version.ts` change so the test database is recreated and migration consistency is exercised;
 - run the relevant frontend metadata/build/dependency synchronization when custom renderer resources are involved;
-- verify action-level serializer behavior with an API test when `v.serializer*` metadata changes returned fields.
+- verify action-level serializer behavior with an API test when `v.serializer*` metadata changes returned fields;
+- for join-backed filters and sorting, inspect transformed `where`, `orders`, and `joins`, then exercise the resource endpoint so metadata-only success cannot hide incorrect query behavior.
 
 Finish by confirming the backend contract, frontend resources, generated handoff, and user-visible locale labels all describe the same field behavior.

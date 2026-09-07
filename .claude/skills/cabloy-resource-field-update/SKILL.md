@@ -180,6 +180,24 @@ Important serialization reminder:
 - for performance reasons, Vona response serialization is opt-in per API action
 - verify that the target controller action explicitly uses `@Core.serializer()` before concluding that serializer metadata is broken
 
+### Join-backed foreign-key filtering and sorting
+
+Use this metadata/query-contract branch when a persisted relation field remains an identity, but a resource list must filter or order it by a human-readable column on the related table. This is a metadata-only refinement when the foreign-key column already exists; do not increment `fileVersion` solely for this behavior.
+
+Keep the entity field name and identity schema unchanged. Put the relation mapping on the entity field so inferred projections retain it:
+
+- `v.filter({ table, joinType, joinOn, originalName, op })` maps the public relation field to the related display column;
+- `ZovaRender.column({ enableSorting: true })` exposes the table sort control when the list should support ordering;
+- preserve existing relation picker/cell metadata and `v.tableIdentity()` (or the applicable identity schema).
+
+For a required relation, `innerJoin` is usually appropriate. When the relation is optional or unmatched base rows must remain visible, choose the join semantics explicitly instead of copying an inner-join example.
+
+Keep the public query and order key equal to the foreign-key field name. In the select request DTO, retain that inferred field and use `$makeSchema(...)` only to change its query-input schema and renderer, usually to `v.optional()`, `z.string()`, and Cabloy Basic's `basic-input:formFieldInput`. Do not replace the entity storage schema with a string or add a parallel display-name parameter unless the API intentionally exposes separate ID and display-name filters.
+
+Verify direct DTO metadata, the emitted optional text query parameter, absence of an unintended alternate parameter, visible sortable-column metadata, and endpoint filtering plus ascending/descending ordering. Confirm that filtering and ordering resolve to the intended related display column and inject the expected join.
+
+See [Existing Resource Field Update](../../../repo-docs/backend/resource-field-update.md#filter-and-sort-a-relation-by-its-display-field) for the public pattern and links to the ORM and frontend query-flow guides.
+
 ## Step 6: Apply the renderer branch deliberately
 
 ### Default rule: prefer shared renderer reuse
