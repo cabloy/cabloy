@@ -97,6 +97,7 @@ const fullstackGroups = [
       },
       { text: 'Framework Performance', link: '/fullstack/framework-performance' },
       { text: 'Vona + Zova Integration', link: '/fullstack/vona-zova-integration' },
+      { text: 'SSR Site and Flavor Setup', link: '/fullstack/ssr-site-and-flavor-setup' },
       { text: 'A-Pay Payment Suite', link: '/fullstack/a-pay-payment-suite' },
       {
         text: 'Payment Provider Sandbox Configuration',

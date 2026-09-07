@@ -30,6 +30,18 @@
       "prompt": "One persisted Order domain needs read-only Admin select/view operations through presetResource and customer Web list/detail reads. Should Admin and Web share one API and ModelResource, or should I use mine/viewMine-style Web operations and a separate Web model? Include the Cabloy contract-loop steps.",
       "expected_output": "Keeps one domain and persistence boundary while separating Admin select/view and explicit owner-scoped Web operations with audience-specific DTOs. Keeps ModelResource as the Admin Resource owner and accepts a dedicated Web model/pages only for the distinct self-service state. Requires backend-first OpenAPI inspection, constrained regeneration for all owned operations, and verification of Admin authorization, Web owner scope before pagination, SSR admission where relevant, and both consumer paths. Rejects forcing Web through presetResource and rejects a parallel Admin cache owner for an ordinary custom Admin action.",
       "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "In Cabloy Start, add an independently mounted SSR site with a new Zova flavor. What must be discovered and built before Vona can serve it?",
+      "expected_output": "Detects the Start repository and discovers the site-specific flavor env/config, lower-level SSR and REST scripts, root paired wrapper, Vona @SsrSite baseline, artifact path, and generated zova-rest package. Requires a new aligned site identity tuple and paired SSR-plus-REST build followed by deps:vona. Rejects reusing or relabeling default Admin/Web wrappers, REST-only rebuilding, and Commerce-specific names or paths as a generic template.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "A Vona consumer remains stale after an independent SSR flavor change. The new flavor artifacts appear correct. What is the safe Cabloy diagnosis order?",
+      "expected_output": "Requires proving that the selected site-specific wrapper generated both SSR and REST artifacts, confirming the matching Vona bundle/type identity, and running deps:vona before calling it local dependency drift. Does not suggest REST-only rebuilding or default Admin/Web commands for the independent site. Only after the normal handoff is proved does it recommend repairing Vona local installation state.",
+      "files": []
     }
   ]
 }

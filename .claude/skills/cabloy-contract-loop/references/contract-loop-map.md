@@ -145,6 +145,34 @@ The Web model is valid only for the separate self-service state domain. It must 
    - backend tooling and type hints
    - SSR or integration paths that depend on refreshed frontend output
 
+## Independent SSR site/flavor handoff map
+
+Use this map when Vona must serve a newly independent Zova SSR site, rather than when a route is added to an existing site.
+
+1. authored site boundary
+   - flavor env and optional flavor config
+   - site-specific route, layout, admission, locale, and asset choices
+   - exact site ID and mounted public path
+2. paired frontend artifacts
+   - SSR bundle and client assets copied to the owning Vona site module
+   - flavor-specific generated REST/type package copied to Vona’s local workspace
+   - one source-confirmed root wrapper that produces both outputs
+3. Vona consumer registration
+   - independently packaged site module
+   - `@SsrSite(...)` identity, public path, bundle path, localized title, and diagnostics command
+   - typed site/public-path augmentation plus generated page/icon imports from the matching REST package
+4. dependency handoff
+   - run the selected site wrapper first
+   - run `npm run deps:vona` only after both artifacts exist
+   - do not treat `build:rest:*` alone as a Vona SSR handoff
+5. consumer proof
+   - Vona dispatch reaches the intended public path
+   - raw HTML is server-rendered and assets resolve
+   - browser hydration and route aliases preserve the mounted boundary
+   - admission, redirect, and cache behavior match the site contract
+
+Default Admin/Web wrappers are specimens only. Discover the independently named site’s own scripts and generated paths from the active edition before recommending commands.
+
 ## Drift diagnosis matrix
 
 ### Source wrong

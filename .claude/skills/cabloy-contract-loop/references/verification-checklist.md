@@ -37,8 +37,9 @@ When one persisted domain has both Admin Resource and Web self-service consumers
 
 - frontend-owned source is correct
 - metadata generation completed when applicable
-- the relevant flavor build completed successfully
-- `deps:vona` completed
+- every affected flavor’s source-confirmed paired SSR/REST build completed successfully
+- `deps:vona` completed after the paired builds
+- `build:rest:*` was not treated as the only Vona SSR handoff
 - backend consumers can resolve the refreshed frontend-generated handoff
 - prefer visible proof under `zova/src/**/.metadata/**` when it is available
 - this repo does not rely on a contract-loop pre-commit gate; the active safeguard is the Claude hook layer
@@ -47,6 +48,22 @@ When one persisted domain has both Admin Resource and Web self-service consumers
 - if the real handoff only appears in `.zova-rest`, treat the safeguard as conservative reminder/auto-sync assistance rather than strict proof
 - `npm run tsc:zova`
 - relevant flavor-specific or route-specific checks
+
+### Independent SSR site/flavor verification
+
+When Vona consumes a new independent SSR site, also verify:
+
+- the active edition and exact flavor are confirmed from source
+- `SITE_ID`, Vona `siteId`, Zova `APP_PUBLIC_PATH`, and Vona `publicPath` align; enabled site IDs and public paths remain unique
+- Vona `bundlePath` exactly matches the copied SSR release directory
+- the generated `zova-rest-*` package matches the Vona type import
+- the source-confirmed root wrapper generated both the SSR bundle and REST/type output
+- `npm run deps:vona` ran after that paired build, and Vona resolves the refreshed local package
+- the site diagnostics command names that same wrapper rather than a default Admin/Web command
+- raw Vona-served HTML proves server rendering at the intended mounted path
+- client assets load, hydration completes without mismatch, and aliases do not duplicate the mount path
+- public/private admission, redirect, and cache expectations match the selected SSR profile
+- targeted browser or E2E evidence covers the site through Vona, not only a standalone frontend server
 
 ## Consumer drift verification
 

@@ -64,6 +64,8 @@ Because Start can differ in UI layer, module composition, SSR site baselines, an
 2. the Start repo’s `package.json`
 3. the exact Zova flavor names and generated output paths used there
 
+For a new independently mounted SSR surface, use [Independent SSR Site and Flavor Setup](/fullstack/ssr-site-and-flavor-setup). It defines the linked Zova flavor, paired SSR/REST artifacts, Vona `@SsrSite` registration, and browser proof without assuming that either edition’s default Admin or Web wrapper applies.
+
 ## Recommended integration workflow
 
 ### 1. Detect the edition

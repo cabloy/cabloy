@@ -146,6 +146,8 @@ Then use the **reverse chain**:
 
 See [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend) for the end-to-end reverse-chain bridge from frontend-owned truth to backend-visible shared handoff.
 
+When the frontend change creates a new independently mounted SSR site rather than refreshing an existing consumer, use [Independent SSR Site and Flavor Setup](/fullstack/ssr-site-and-flavor-setup). The new Vona consumer needs a matched flavor, paired SSR/REST build wrapper, site registration, and dispatch/hydration proof.
+
 ### 3. Do generated artifacts look stale?
 
 Examples:

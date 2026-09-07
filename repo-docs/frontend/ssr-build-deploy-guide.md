@@ -130,7 +130,7 @@ If you need deeper script control or need to verify the exact Zova flavor path, 
 
 ### Build frontend SSR output only
 
-Use this when you need the frontend SSR artifacts refreshed but do not yet need the full backend build flow.
+Use this when you need the frontend SSR artifacts refreshed but do not yet need the full backend build flow. If the task creates a new independently mounted site rather than refreshing an existing one, first follow [Independent SSR Site and Flavor Setup](/fullstack/ssr-site-and-flavor-setup): the new site needs its own source-confirmed wrapper that pairs its SSR and REST outputs, not a renamed default Admin or Web wrapper.
 
 Representative current Basic command:
 

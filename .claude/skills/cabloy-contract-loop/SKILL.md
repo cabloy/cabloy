@@ -18,11 +18,11 @@ This includes the reverse fullstack direction where newly added frontend resourc
 In that situation:
 
 1. run the normal sync or regeneration flow first
-2. run the relevant Zova build from the repo root before `npm run deps:vona`
-   - use `npm run build:zova:admin` for Admin-facing render/action/metadata changes
-   - also run `npm run build:zova:web` when the Web flavor is affected
+2. identify every affected flavor from the active repository’s root wrappers and lower-level Zova scripts, then run each matching paired SSR/REST build before `npm run deps:vona`
+   - `npm run build:zova:admin` and `npm run build:zova:web` are representative default wrappers only
+   - an independently named site must use its own source-confirmed paired root wrapper; do not relabel or assume a default wrapper refreshed it
 3. do not treat `build:rest:*` alone as sufficient, because the SSR bundle and rest output must move together
-4. run `npm run deps:vona`
+4. run `npm run deps:vona` after the required flavor builds
 5. if the generated `.zova-rest` artifacts already contain the expected changes but Vona still sees stale types, delete `vona/node_modules` and reinstall dependencies
 
 Do not keep debugging source-level contract or renderer changes until the local file-package installation state is known to be healthy.
@@ -100,6 +100,22 @@ In this mode, first diagnose whether the visible stale behavior comes from skipp
 ### Mode D: local dependency drift recovery
 
 Use this mode when generated artifacts already contain the expected keys, types, or resources, but installed local file dependencies still behave stale after the normal sync flow.
+
+### Mode E: independent SSR flavor and site
+
+Use this mode when the request adds a deployable Zova SSR surface that Vona must dispatch separately. This is more than a page or route inside an existing site.
+
+Before proposing implementation, inspect the active repository rather than inferring names from Admin or Web:
+
+1. edition marker and root `package.json` wrappers;
+2. `zova/package.json` or its durable source for matching `dev:ssr:*`, `build:ssr:*`, and `build:rest:*` scripts;
+3. flavor env/config and its `SITE_ID`, mount path, SSR profile, and artifact-copy targets;
+4. a Vona `@SsrSite(...)` baseline and the owning site-module asset path;
+5. the expected SSR release directory and flavor-specific `zova-rest-*` package.
+
+The independent identity tuple—flavor, site ID, public path, bundle path, REST package, Vona site module, and root paired-build wrapper—must be selected together. The root wrapper must build both SSR and REST output before `npm run deps:vona`; `build:rest:*` alone is not enough. Default Basic or Start Admin/Web wrappers are validated specimens, not a command template for a differently named site.
+
+Read [Independent SSR Site and Flavor Setup](../../../repo-docs/fullstack/ssr-site-and-flavor-setup.md) for the canonical setup and evidence procedure.
 
 If the task is only backend scaffolding or only frontend scaffolding, the more specialized scaffold skills may be the better primary choice.
 
@@ -225,7 +241,7 @@ Important Cabloy Basic reverse-sync rule:
 - if the change was consumer-side, low-confidence, cross-edition, or happened outside the Claude hook path, run the reverse sync flow deliberately yourself
 - prefer visible proof under `zova/src/**/.metadata/**` when it is available; if the effective handoff only appears in `.zova-rest`, treat the safeguard as conservative reminder/auto-sync assistance rather than strict proof
 
-For Cabloy Start, verify the exact Start-specific flavor names, paths, SSR site baselines, and project assets in the active Start repository.
+For Cabloy Start, verify the exact Start-specific flavor names, paths, SSR site baselines, project assets, and source-confirmed root wrappers in the active Start repository. If the work affects an independent SSR site, follow Mode E: build that site’s paired wrapper rather than assuming an Admin/Web command covers it.
 
 ### Schema-driven UI decision branch
 
@@ -273,10 +289,11 @@ Especially verify:
 
 - active repo marker
 - affected frontend flavor
-- whether the change affects Admin, Web, or both
+- whether the change affects a default Admin/Web site, an independent site, or more than one site
+- source-confirmed root wrapper for every affected flavor
 - whether the generated output path is edition-specific
 
-Do not silently reuse Basic-specific examples in Start workflows.
+Do not silently reuse Basic-specific examples in Start workflows or treat default Admin/Web commands as an independent-site template.
 
 ## Step 7: End-to-end verification
 

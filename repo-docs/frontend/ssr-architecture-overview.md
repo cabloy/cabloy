@@ -187,6 +187,10 @@ What can differ by edition is usually:
 
 So the architecture model is shared, while some concrete frontend examples remain edition-sensitive.
 
+## Adding an independent SSR site
+
+The architecture maps one Vona SSR site to one built Zova flavor bundle. When a new deployable mount needs its own flavor and Vona dispatch registration, follow [Independent SSR Site and Flavor Setup](/fullstack/ssr-site-and-flavor-setup). It covers the matching site ID, public path, bundle path, generated REST types, paired build wrapper, and hydration proof.
+
 ## Recommended reading order
 
 Use this order when you need the shortest path from mental model to implementation detail:
