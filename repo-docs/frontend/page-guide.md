@@ -66,6 +66,18 @@ class ControllerPageCounter {
 }
 ```
 
+### Keep callbacks on the reactive bean path
+
+Use ordinary controller methods as the default for actions that change controller state. Do not expose a state-mutating class-field arrow callback such as `onIncrement = () => this.count++`: it captures construction-time `this` before Zova exposes the controller's reactive/proxied bean.
+
+At a TSX or component-prop boundary, forward to the method instead:
+
+```typescript
+onClick={() => this.increment()}
+```
+
+When an external API requires a stable callback reference, create the closure in `__init__()` after the controller has been prepared. See [Zova Reactivity Under the Hood](/frontend/zova-reactivity-under-the-hood#construction-time-this-and-the-exposed-reactive-bean) for the lifecycle reason and safe pattern.
+
 ## Add render logic
 
 Representative TSX render pattern:

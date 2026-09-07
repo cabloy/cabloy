@@ -151,6 +151,62 @@ This is one of the most important source-level facts for understanding Zova.
 
 Zova does not require the business author to write `reactive({ ... })` around controller state, because the framework already treats the controller bean as the reactive object.
 
+#### Construction-time `this` and the exposed reactive bean
+
+There is one lifecycle boundary that matters when a callback closes over `this`:
+
+1. the container first constructs the raw class instance with `new BeanClass(...)`;
+2. it then exposes the framework-managed reactive/proxied bean; and
+3. it invokes `__init__()` only after that preparation completes.
+
+That distinction is normally invisible when a controller uses ordinary methods and render-time `this.member` access. It matters for a class-field arrow callback that mutates controller state, because the arrow is created during construction and lexically captures the construction-time raw `this`:
+
+```typescript
+class ControllerPageCounter {
+  count = 0;
+
+  // Avoid for a state-mutating controller callback.
+  onIncrement = () => {
+    this.count++;
+  };
+}
+```
+
+The field can change on the raw instance, but the mutation bypasses the reactive/proxied bean through which render dependencies were collected. Vue therefore receives no invalidation notification. A later update to another dependency can rerender the component and reveal the changed underlying value, which can make this look intermittent.
+
+Prefer an ordinary controller method for a normal TSX action:
+
+```typescript
+class ControllerPageCounter {
+  count = 0;
+
+  increment() {
+    this.count++;
+  }
+
+  protected render() {
+    return <button onClick={() => this.increment()}>Increment</button>;
+  }
+}
+```
+
+If an external API requires a stable stored callback, create that closure in `__init__()` instead. At that point, its lexical `this` is the framework-exposed reactive/proxied bean:
+
+```typescript
+class ControllerPageCounter {
+  count = 0;
+  onIncrement: () => void;
+
+  protected async __init__() {
+    this.onIncrement = () => {
+      this.count++;
+    };
+  }
+}
+```
+
+This is not a rule that arrow functions are generally non-reactive. The narrow hazard is a **class-field arrow callback that captures construction-time `this` and mutates bean state**.
+
 ### 4. `$computed()` is an instance-scoped wrapper around Vue `computed(...)`
 
 In:
@@ -238,21 +294,21 @@ A practical reading takeaway is:
 
 ### 7. Field mutation becomes normal reactive invalidation and rerender
 
-Once the controller bean is reactive and render has read its fields, changes such as:
+Once render has read fields through the framework-exposed reactive/proxied controller, a mutation through that same identity, such as:
 
 ```typescript
 this.count++;
 ```
 
-behave the way a Vue reader would expect at the reactive-engine level:
+behaves the way a Vue reader would expect at the reactive-engine level:
 
 - the field change invalidates dependencies
 - computed values depending on that field are recomputed
 - the next render sees the updated values
 
-So the runtime behavior is still recognizably Vue-like.
+The construction-time class-field arrow case described above is the exception: its raw `this` can change the underlying field without triggering the dependency that render collected through the exposed bean.
 
-The architectural surface is what changed.
+So the runtime behavior is still recognizably Vue-like. The architectural surface, including the bean lifecycle and identity boundary, is what changed.
 
 ## A compact call-flow sketch
 
@@ -260,13 +316,13 @@ The architectural surface is what changed.
 useControllerPage(...)
   -> _useController(...)
   -> ctx.bean._newBeanInner(..., markReactive = true)
-  -> BeanContainer creates controller bean
-  -> BeanContainer applies reactive(...)
-  -> controller __init__ wires $computed / $watch helpers
+  -> BeanContainer constructs the raw controller bean
+  -> BeanContainer exposes the reactive/proxied controller bean
+  -> controller __init__ wires $computed / $watch helpers and any stored callbacks
   -> component render is patched toward controller/render bean
   -> render-time controller data update refreshes page route data
-  -> render reads controller fields
-  -> field mutation invalidates dependencies
+  -> render reads fields through the exposed bean
+  -> mutation through that same identity invalidates dependencies
   -> rerender produces updated UI
 ```
 

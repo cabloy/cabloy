@@ -139,6 +139,20 @@ When a translated schema title, renderer, or validation surface remains stale af
 
 The key distinction is between a genuinely stale generated contract and a valid schema facade captured from an earlier locale. `$computed` is only locale-safe when its dependency path reacquires the current schema source; wrapping an old facade or transformed snapshot does not make it current.
 
+### Raw-`this` reactivity boundary
+
+When an author reports that a controller field changed but a TSX render, `$computed`, or `$watch` did not react, inspect this lifecycle boundary before recommending framework-neutral rewrites:
+
+1. inspect `zova-core/src/bean/beanContainer.ts` `BeanContainer._prepareBeanInstanceCommon(...)` to verify that `new BeanClass(...)` occurs before the framework exposes the reactive/proxied bean;
+2. inspect `BeanContainer._initBeanInstance(...)` to verify that `__init__()` is invoked only after preparation;
+3. check whether a class-field arrow callback or construction-time `bind(this)` captured raw `this` and later writes bean state;
+4. distinguish this from a callback created in `__init__()`, whose lexical `this` is the exposed bean; and
+5. verify whether the dependent render read through that same exposed identity.
+
+State the consequence precisely: a proxy-based TSX render read can track normally, while a mutation through a raw construction-time callback changes the underlying field without notifying that dependency. An unrelated reactive update can later expose the changed value during another render.
+
+Do **not** summarize this as “arrow functions are non-reactive,” and do not default to `ref.value`, `toRaw`, or generic Vue rewrites. Explain the Zova bean lifecycle first; recommend ordinary controller methods for normal actions, or closures created in `__init__()` only when a stable callback reference is required.
+
 ## Step 5: Explain Zova-native meaning first
 
 When answering, explain the Zova role first, then add Vue analogies only if they help.

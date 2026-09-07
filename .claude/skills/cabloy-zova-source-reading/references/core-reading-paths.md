@@ -20,6 +20,16 @@ Use when the question is about:
 - `$computed`
 - `$params` / `$query`
 - page render flow
+- a class-field arrow callback, callback identity, or stale TSX after an apparent controller-state mutation
+
+For a raw-`this` reactivity symptom, verify this expected sequence:
+
+1. `BeanContainer` constructs the class instance before it exposes the reactive/proxied bean;
+2. a class-field arrow callback captures that construction-time raw `this`;
+3. `__init__()` runs after preparation, so a closure created there captures the exposed bean instead; and
+4. a render dependency invalidates only when its mutation travels through the same exposed reactive identity used for the read.
+
+Therefore, do not classify the issue as “arrow functions are non-reactive.” Distinguish a raw-captured write that changes the underlying field without a trigger from an ordinary controller method or `__init__()` callback that writes through the exposed bean.
 
 ## Component controller and wrapper path
 
