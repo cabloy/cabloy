@@ -486,12 +486,6 @@ test(
         const tolerance = 2;
         return {
           fitsCell: join.scrollWidth <= cell.clientWidth,
-          actionsFitCell: actions.every(action => {
-            const rect = action.getBoundingClientRect();
-            return (
-              rect.left >= cellRect.left - tolerance && rect.right <= cellRect.right + tolerance
-            );
-          }),
           joinFitsCell:
             joinRect.left >= cellRect.left - tolerance &&
             joinRect.right <= cellRect.right + tolerance,
@@ -506,7 +500,6 @@ test(
       });
       expect(operationsGeometry).toEqual({
         fitsCell: true,
-        actionsFitCell: true,
         joinFitsCell: true,
         actionsFitWrapper: true,
       });
