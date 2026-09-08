@@ -414,25 +414,24 @@ test(
 
       const nameSort = page.getByRole('button', { name: 'Sort by name', exact: true });
       const nameHeader = nameSort.locator('xpath=ancestor::th');
+      const precedingPinnedHeader = nameHeader.locator('xpath=preceding-sibling::th[1]');
       const operationsHeader = page.getByRole('columnheader', { name: 'Operations', exact: true });
       await expect(nameSort).toBeVisible();
       await expect(nameHeader).toHaveAttribute('aria-sort', 'none');
+      await expect(precedingPinnedHeader).toHaveCSS('position', 'sticky');
+      await expect(precedingPinnedHeader).toHaveCSS('left', '0px');
       await expect(nameHeader).toHaveCSS('position', 'sticky');
-      await expect(nameHeader).toHaveCSS('left', '0px');
+      const [precedingPinnedWidth, namePinnedOffset] = await Promise.all([
+        precedingPinnedHeader.evaluate(element => element.getBoundingClientRect().width),
+        nameHeader.evaluate(element => Number.parseFloat(getComputedStyle(element).left)),
+      ]);
+      expect(Math.abs(namePinnedOffset - precedingPinnedWidth)).toBeLessThanOrEqual(1);
       await expect(nameHeader).toHaveCSS('min-width', '240px');
       await expect(nameHeader).toHaveCSS('text-align', 'left');
       await expect(operationsHeader).toHaveCSS('position', 'sticky');
       await expect(operationsHeader).toHaveCSS('right', '0px');
       await expect(operationsHeader).toHaveCSS('min-width', '360px');
       await expect(operationsHeader).toHaveCSS('text-align', 'center');
-
-      const ascendingResponse = waitForStudentSelect(page, false);
-      await nameSort.click();
-      await expect(nameHeader).toHaveAttribute('aria-sort', 'ascending');
-      const ascending = await ascendingResponse;
-      expect(ascending.status()).toBe(200);
-      const ascendingUrl = new URL(ascending.url());
-      expect(JSON.parse(ascendingUrl.searchParams.get('orders')!)).toEqual([['name', 'asc']]);
 
       const descendingResponse = waitForStudentSelect(page, false);
       await nameSort.click();
@@ -441,6 +440,14 @@ test(
       expect(descending.status()).toBe(200);
       const descendingUrl = new URL(descending.url());
       expect(JSON.parse(descendingUrl.searchParams.get('orders')!)).toEqual([['name', 'desc']]);
+
+      const ascendingResponse = waitForStudentSelect(page, false);
+      await nameSort.click();
+      await expect(nameHeader).toHaveAttribute('aria-sort', 'ascending');
+      const ascending = await ascendingResponse;
+      expect(ascending.status()).toBe(200);
+      const ascendingUrl = new URL(ascending.url());
+      expect(JSON.parse(ascendingUrl.searchParams.get('orders')!)).toEqual([['name', 'asc']]);
 
       const tableWrapper = page
         .locator('div.overflow-x-auto')
