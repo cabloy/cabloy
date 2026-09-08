@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.160
+
+### Features
+
+- Update feature capabilities
+
+### Improvements
+
+- Add documentation explaining shared RBAC architecture
+- Add system management guides
+- Document ZovaRender.column
+
 ## 5.1.159
 
 ### Features
