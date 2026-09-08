@@ -65,6 +65,8 @@ It becomes the place that owns:
 
 This page explains that pattern explicitly.
 
+`ModelResource` owns the reactive permission surface for its Resource. For the shared backend guard evaluation, permission DTO, matcher semantics, SSR transfer, and browser-freshness boundary behind that surface, read [Shared RBAC Architecture](/backend/shared-rbac-architecture).
+
 ## What “resource owner” means in Zova
 
 In this context, a resource-owner model is a model bean that becomes the reusable frontend boundary for one backend resource.

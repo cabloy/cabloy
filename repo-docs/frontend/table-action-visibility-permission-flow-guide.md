@@ -16,6 +16,7 @@ Several existing docs already explain nearby pieces:
 
 - [Table Guide](/frontend/table-guide) and [Zova Table Under the Hood](/frontend/zova-table-under-the-hood) explain table runtime and rendering
 - [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern) explains `ModelResource` as the owner of permissions and schema
+- [Shared RBAC Architecture](/backend/shared-rbac-architecture) explains the shared backend projection, frontend matcher, and authority boundary
 - [Permission, formScene, and Action Visibility Guide](/frontend/permission-formscene-action-visibility-guide) explains the entry-page scene-aware action path
 
 What those pages do not isolate directly is the list-page row/bulk action visibility path.
@@ -247,6 +248,7 @@ Use these next steps depending on your question:
 - if you want the list-page runtime path that hosts these actions, read [Resource List Page Deep Dive](/frontend/resource-list-page-deep-dive)
 - if you want the entry-page scene-aware action path, read [Permission, formScene, and Action Visibility Guide](/frontend/permission-formscene-action-visibility-guide)
 - if you want the broader resource-owner permission surface, read [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern)
+- if you want the shared projection producer, matcher, SSR, and freshness semantics, read [Shared RBAC Architecture](/backend/shared-rbac-architecture)
 - if you want table runtime internals, read [Zova Table Under the Hood](/frontend/zova-table-under-the-hood)
 
 ## Final takeaway

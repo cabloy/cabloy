@@ -17,6 +17,7 @@ Several existing docs already explain nearby pieces:
 - [Form Scene to Page Meta Guide](/frontend/form-scene-to-page-meta-guide) explains how `formScene` becomes `formMeta`, then `pageMeta`
 - [Page Meta Guide](/frontend/page-meta-guide) explains shell/task presentation
 - [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern) and related resource-model docs explain permissions as part of resource ownership
+- [Shared RBAC Architecture](/backend/shared-rbac-architecture) explains the shared backend permission projection, frontend matcher, and authority boundary
 
 What those pages do not isolate directly is the specific runtime rule for entry-page action visibility.
 
@@ -134,7 +135,7 @@ Only after the scene passes does the controller call:
 This is the critical source-confirmed distinction:
 
 - **scene filtering** decides whether this action should even be considered in the current page-entry scene
-- **permission checking** decides whether the user is allowed to perform it
+- **frontend permission checking** decides whether the current UI should offer it; backend guards remain the authoritative execution decision
 
 ## 4. What `permissionHint.formScene` really means
 
@@ -311,6 +312,7 @@ Use these next steps depending on your question:
 - if you want the list-page row/bulk contrast, read [Table Action Visibility and Permission Flow Guide](/frontend/table-action-visibility-permission-flow-guide)
 - if you want shell/task presentation semantics, read [Page Meta Guide](/frontend/page-meta-guide)
 - if you want the underlying resource permission/model context, read [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern)
+- if you want the shared backend projection, matcher, SSR, and freshness semantics, read [Shared RBAC Architecture](/backend/shared-rbac-architecture)
 
 ## Final takeaway
 
@@ -318,8 +320,8 @@ The most accurate rule for current Cabloy Basic entry-page action visibility is:
 
 - `permissionHint.formScene` is a scene-aware visibility prefilter
 - `$$pageEntry.formMeta.formScene` is the current scene source
-- `$passport.checkPermission(...)` is still the actual authorization check
-- the action renders only if both layers pass
+- `$passport.checkPermission(...)` is the frontend permission-projection/visibility check; backend guards authorize execution
+- the action renders only if both UI layers pass
 - bulk actions do not currently carry `formScene` in their permission hints
 
 That is the source-confirmed `permission / formScene / action visibility` path in the current Basic frontend architecture.

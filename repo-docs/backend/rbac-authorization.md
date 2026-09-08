@@ -2,6 +2,8 @@
 
 RBAC Authorization decides whether a backend action is allowed and, for scoped actions, which persisted data the caller may reach. It is server-enforced action and data authorization.
 
+Read [Shared RBAC Architecture](/backend/shared-rbac-architecture) first for the shared Basic/Start `a-rbac` runtime, Resource permission projection, frontend matcher, SSR, and freshness model. This page focuses on the Cabloy Start operational policy specimen: roles, grants, Departments, and administration workflow.
+
 > [!WARNING]
 > RBAC is not authentication, SSR menu disclosure, or a frontend-button rule. A hidden action may improve UX, but every direct Vona request must pass the backend guard and, when applicable, the server-side data-scope check.
 
@@ -66,14 +68,14 @@ Departments are inputs to the policy, not alternative authorization stores. Read
 
 ## Runtime authority and frontend projections
 
-Cabloy can project Resource permissions for frontend action visibility. That projection is obtained from the same guards and helps the interface avoid offering actions that will fail. It is not a second grant database and it is never the final authority.
+Resource permissions are derived from the same guards to support frontend action visibility. They are UX projections, not a second grant database and never the final authority:
 
 ```text
 frontend permission projection → UX decision
 backend RBAC guard/scope       → authoritative decision
 ```
 
-This distinction prevents stale browser state, crafted requests, and hidden-button assumptions from becoming security vulnerabilities.
+For the shared guard simulation, projection contract, matcher semantics, SSR behavior, and active-tab freshness limitation, read [Shared RBAC Architecture](/backend/shared-rbac-architecture). This distinction prevents stale browser state, crafted requests, and hidden-button assumptions from becoming security vulnerabilities.
 
 ## Policy freshness
 
@@ -107,6 +109,7 @@ Representative Start sources:
 
 ## Read next
 
+- [Shared RBAC Architecture](/backend/shared-rbac-architecture)
 - [Role Management](/backend/role-management)
 - [Department Management](/backend/department-management)
 - [Menu Authorization](/backend/menu-authorization)
