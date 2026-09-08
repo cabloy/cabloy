@@ -449,7 +449,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.5
       zova-cli-set-front:
-        specifier: ^1.2.102
+        specifier: ^1.2.104
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -558,7 +558,7 @@ importers:
         specifier: ^1.1.17
         version: link:../../packages-utils/zova-openapi
       zova-vite:
-        specifier: ^1.1.44
+        specifier: ^1.1.45
         version: link:../../packages-utils/zova-vite
     devDependencies:
       clean-package:
@@ -761,8 +761,8 @@ importers:
         specifier: ^7.28.6
         version: 7.29.7(@babel/core@7.29.7)
       '@cabloy/dotenv':
-        specifier: ^1.2.8
-        version: 1.2.8
+        specifier: ^1.2.9
+        version: 1.2.9
       '@cabloy/extend':
         specifier: ^3.2.8
         version: 3.2.8
@@ -870,7 +870,7 @@ importers:
         specifier: ^5.1.88
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.154
+        specifier: ^5.1.155
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -977,7 +977,7 @@ importers:
         specifier: ^5.0.1
         version: link:modules/a-rbac
       zova-module-rest-resource:
-        specifier: ^5.1.49
+        specifier: ^5.1.50
         version: link:modules/rest-resource
 
   src/suite-vendor/a-cabloy/modules/a-rbac:
@@ -1076,7 +1076,7 @@ importers:
         specifier: ^5.1.25
         version: link:modules/a-fetch
       zova-module-a-form:
-        specifier: ^5.1.50
+        specifier: ^5.1.51
         version: link:modules/a-form
       zova-module-a-icon:
         specifier: ^5.1.27
@@ -1094,7 +1094,7 @@ importers:
         specifier: ^5.1.36
         version: link:modules/a-model
       zova-module-a-openapi:
-        specifier: ^5.1.51
+        specifier: ^5.1.52
         version: link:modules/a-openapi
       zova-module-a-router:
         specifier: ^5.1.34
@@ -1118,7 +1118,7 @@ importers:
         specifier: ^5.1.35
         version: link:modules/a-style
       zova-module-a-table:
-        specifier: ^5.1.38
+        specifier: ^5.1.39
         version: link:modules/a-table
       zova-module-a-zod:
         specifier: ^5.1.37
@@ -2311,8 +2311,8 @@ packages:
   '@cabloy/deps@1.1.8':
     resolution: {integrity: sha512-CWaVGSwPI5qLSuRF+WmB+1CwbRe9+PR+nkUmKc9/Dj7sB75qPXLTYACn23T/jIylbDbWCL82LoOa455Vgseyeg==}
 
-  '@cabloy/dotenv@1.2.8':
-    resolution: {integrity: sha512-1Xn0IsfMVWSZW0Gi7MBGbW6JL8kD7GN/B199RbDlIIy3PbSTdbKF2Gh/NIR2FNCChD1kQaG0FW/mR1tKgMNxbg==}
+  '@cabloy/dotenv@1.2.9':
+    resolution: {integrity: sha512-iR7KWj1YI2SiTjlcSMnZ/wYw/PMcgAJRvOHdWDrwehY8YOuG6uKPTez1hTCR4kfrhiBnZwM/acZvmqjflx18GA==}
 
   '@cabloy/extend@3.2.8':
     resolution: {integrity: sha512-BrXYUtlC1kFY33hNxL/hEaS7wW8TsOuu22k0VCEtzg2iw+USkb4BqONth5Uv2pJcIlDMeWx8A8aUIRF3WQ2ckQ==}
@@ -5138,8 +5138,8 @@ packages:
   capital-case@1.0.4:
     resolution: {integrity: sha512-ds37W8CytHgwnhGGTi88pcPyR15qoNkOpYwmMMfnWqqWgESapLqvDx6huFjQ5vqWSn2Z06173XNA7LtMOeUh1A==}
 
-  cascade-extend@2.2.8:
-    resolution: {integrity: sha512-cs8DkxDoYv0YSFnbZyn/xaaodKgp+iV9xv8IeAWpYRyM5vxIXGKS8Ej0jLwneFFYTaF7juIjOlktOjEidDZURA==}
+  cascade-extend@2.2.9:
+    resolution: {integrity: sha512-YevoTZSywFhLNnHWh9GSzHgrwAJmsDzR0sQeOZ8BG5NlwF8MyH0457ocLVyGgB/m9rTHmRXJkzzvPuDcjpTtfQ==}
 
   ccount@1.1.0:
     resolution: {integrity: sha512-vlNK021QdI7PNeiUh/lKkC/mNHHfV0m/Ad5JoI0TYtlBnJAslM/JIkm/tGC88bkLIwO6OQ5uV6ztS6kVAtCDlg==}
@@ -8834,9 +8834,9 @@ snapshots:
 
   '@cabloy/deps@1.1.8': {}
 
-  '@cabloy/dotenv@1.2.8':
+  '@cabloy/dotenv@1.2.9':
     dependencies:
-      cascade-extend: 2.2.8
+      cascade-extend: 2.2.9
       dotenv: 16.6.1
       dotenv-expand: 11.0.7
       globby: 16.2.0
@@ -11389,7 +11389,7 @@ snapshots:
       tslib: 2.8.1
       upper-case-first: 2.0.2
 
-  cascade-extend@2.2.8:
+  cascade-extend@2.2.9:
     dependencies:
       '@cabloy/extend': 3.2.8
 
