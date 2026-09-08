@@ -26,6 +26,21 @@ npm create cabloy
 
 The generated project already includes `CLAUDE.md` and the `.claude/` workspace assets. This path creates a Cabloy Basic project baseline. Open this project in Claude Code and start coding immediately with project-specific guidance.
 
+`npm create cabloy` automatically runs `npm run init` after creating the project. If you later need to reinstall the project's frontend and backend dependencies, you can run `npm run init` directly.
+
+### Cabloy Start
+
+Cabloy Start is the public MIT-licensed edition maintained in its own repository. Instead of `npm create cabloy`, clone its public repository directly and run `npm run init`. Then use the frontend commands provided by that edition. Do not assume the Cabloy Basic flavor names apply to Cabloy Start.
+
+For the full Start onboarding and initialization flow, read [Cabloy Start](/editions/cabloy-start).
+
+If you are not sure which edition you are using or which one to choose, read:
+
+- [Choosing Between Cabloy Basic and Cabloy Start](/editions/choosing-between-basic-and-start)
+- [Edition Detection](/editions/detection)
+- [Cabloy Basic](/editions/cabloy-basic)
+- [Cabloy Start](/editions/cabloy-start)
+
 ### pnpm 11 supply-chain protection note
 
 `pnpm` 11 enables the `minimumReleaseAge` supply-chain protection by default. Newly published packages may be blocked for a short time window before `pnpm` allows installation.
@@ -51,8 +66,6 @@ set pnpm_config_minimum_release_age=0 && npm create cabloy
 pnpm_config_minimum_release_age=0 npm create cabloy
 ```
 
-If you already created the project directory and only need to rerun initialization, use the same environment variable with `npm run init`.
-
 ## 3. Start Vona integrated SSR
 
 ```bash
@@ -68,11 +81,9 @@ npm run dev
 | Commerce-Web   | http://localhost:7102/commerce/       |
 | Commerce-Admin | http://localhost:7102/commerce-admin/ |
 
-## 4. Start Zova standalone SSR for your edition
+## 4. Start Zova standalone SSR
 
 The Zova commands below start the Zova development server on `9000` in the Cabloy Basic default environment. This is the Zova standalone SSR entry for page, route, and hydration iteration. Direct access to `9000` does not replace Vona integrated SSR acceptance through `7102`.
-
-### Cabloy Basic
 
 ```bash
 npm run dev:zova:web   # http://localhost:9000/
@@ -88,19 +99,6 @@ npm run dev:zova:commerce:admin   # http://localhost:9000/commerce-admin/
 | Commerce-Web   | http://localhost:9000/commerce/       |
 | Commerce-Admin | http://localhost:9000/commerce-admin/ |
 
-### Cabloy Start
-
-Cabloy Start is the public MIT-licensed edition maintained in its own repository. Instead of `npm create cabloy`, clone its public repository directly and run `npm run init`. Then use the frontend commands provided by that edition. Do not assume the Cabloy Basic flavor names apply to Cabloy Start.
-
-For the full Start onboarding and initialization flow, read [Cabloy Start](/editions/cabloy-start).
-
-If you are not sure which edition you are using or which one to choose, read:
-
-- [Choosing Between Cabloy Basic and Cabloy Start](/editions/choosing-between-basic-and-start)
-- [Edition Detection](/editions/detection)
-- [Cabloy Basic](/editions/cabloy-basic)
-- [Cabloy Start](/editions/cabloy-start)
-
 ## 5. Run with Docker Compose
 
 Both Cabloy Basic and Cabloy Start support the same Docker Compose command flow. Run these commands from the repository for the edition you are using:
@@ -112,81 +110,21 @@ sudo COMPOSE_BAKE=true docker-compose build
 sudo docker-compose up
 ```
 
-- Web: http://localhost/
-- Admin: http://localhost/admin/
-
-These commands build the edition-specific frontend flavors from the repository you are using.
+| SSR Site       | Url                              |
+| -------------- | -------------------------------- |
+| Web            | http://localhost/                |
+| Admin          | http://localhost/admin/          |
+| Commerce-Web   | http://localhost/commerce/       |
+| Commerce-Admin | http://localhost/commerce-admin/ |
 
 ## 6. Upgrade an existing project
 
-Inspect the planned framework changes before applying them:
-
 ```bash
-npm run upgrade:dry-run
 npm run upgrade
 ```
 
-In Cabloy Basic, upgrade synchronizes the framework-owned SSR browser E2E baseline, the two root E2E scripts, and the `@playwright/test` development dependency. The framework owns these paths:
-
-```text
-repo-e2e/config/
-repo-e2e/scripts/
-repo-e2e/specs/cabloy-basic.spec.ts
-repo-e2e/specs/home-user-account.spec.ts
-repo-e2e/specs/a-commerce.spec.ts
-```
-
-Keep additional project-owned browser specs under other filenames in `repo-e2e/specs`. The current baseline is a fresh-project contract; unsupported legacy layouts are not repaired by the upgrader.
-
-### Cabloy Start repository baseline
-
-Cabloy Start is cloned from its separate public repository rather than created through `npm create cabloy`. Its E2E baseline is maintained in that repository:
-
-```text
-repo-e2e/config/
-repo-e2e/scripts/
-repo-e2e/specs/
-```
-
-The public Cabloy upgrade flow does not synchronize or repair those Start-owned E2E files, its root E2E scripts, or `@playwright/test`. Keep project-owned browser scenarios in the flat `repo-e2e/specs/` directory under distinct filenames, for example `repo-e2e/specs/my-project.spec.ts`.
-
-Prepare and run the managed Start baseline locally with:
-
-```bash
-npm run build:zova
-npm run deps:vona
-npm run test:e2e
-```
-
-The managed command checks the effective local server port and owns the local reset and Vona worker lifecycle. For a separately managed target, set `E2E_BASE_URL` and use `npm run test:e2e:fast`; this mode does not reset, build, start, or stop the target. Select surfaces with `--tag @web` or `--tag @admin`, and exact scenarios with native `--grep` arguments. Install Chromium once when needed with `npx playwright install chromium`. See [Repo Scripts](/reference/repo-scripts#ssr-browser-checks) for the complete command variants.
-
-## 7. Next steps for framework-aware development
-
-If you are contributing to framework-aware workflows or using Cabloy CLI generation directly, prefer CLI-backed generation over manual scaffolding.
-
-Read [Fullstack CLI](/fullstack/cli) for the shared cross-stack workflow model, then start with:
-
-```bash
-npm run vona :create
-npm run zova :create
-```
-
-Then narrow into the specific command family you need.
-
-## 8. Next step: follow the quick start tutorials
+## 7. Next step: follow the quick start tutorials
 
 If you want a beginner-friendly path that connects modules, CRUD, bidirectional contract sharing, and schema-driven workflows into one story, continue with:
 
 - [Fullstack Quick Start Tutorials](/fullstack/tutorials-overview)
-
-## 9. Shared verification commands for deeper workflow checks
-
-If you are validating framework-aware changes or a broader workflow, use the shared project scripts before declaring a workflow correct:
-
-```bash
-npm run tsc
-npm run test
-npm run build
-```
-
-Choose more targeted checks when only one area is affected, but treat these scripts as the shared reference surface.
