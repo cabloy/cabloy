@@ -59,17 +59,30 @@ If you already created the project directory and only need to rerun initializati
 npm run dev
 ```
 
-- Web: http://localhost:7102/
-- Admin: http://localhost:7102/admin/
+| Flavor         | Url                                   |
+| -------------- | ------------------------------------- |
+| Web            | http://localhost:7102/                |
+| Admin          | http://localhost:7102/admin/          |
+| Commerce-Web   | http://localhost:7102/commerce/       |
+| Commerce-Admin | http://localhost:7102/commerce-admin/ |
 
 ## 4. Start the frontend for your edition
 
 ### Cabloy Basic
 
 ```bash
-npm run dev:zova:admin # http://localhost:9000/admin/
 npm run dev:zova:web   # http://localhost:9000/
+npm run dev:zova:admin # http://localhost:9000/admin/
+npm run dev:zova:commerce:web   # http://localhost:9000/commerce/
+npm run dev:zova:commerce:admin   # http://localhost:9000/commerce-admin/
 ```
+
+| Flavor         | Url                                   |
+| -------------- | ------------------------------------- |
+| Web            | http://localhost:9000/                |
+| Admin          | http://localhost:9000/admin/          |
+| Commerce-Web   | http://localhost:9000/commerce/       |
+| Commerce-Admin | http://localhost:9000/commerce-admin/ |
 
 ### Cabloy Start
 
