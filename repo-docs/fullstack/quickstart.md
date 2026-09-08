@@ -61,7 +61,7 @@ npm run dev
 
 `npm run dev` starts the Vona server. In the Cabloy Basic default environment, its listener at `7102` is the Vona integrated SSR entry: Vona serves the backend API and dispatches the selected SSR site.
 
-| Flavor         | Url                                   |
+| SSR Site       | Url                                   |
 | -------------- | ------------------------------------- |
 | Web            | http://localhost:7102/                |
 | Admin          | http://localhost:7102/admin/          |
@@ -81,7 +81,7 @@ npm run dev:zova:commerce:web   # http://localhost:9000/commerce/
 npm run dev:zova:commerce:admin   # http://localhost:9000/commerce-admin/
 ```
 
-| Flavor         | Url                                   |
+| SSR Site       | Url                                   |
 | -------------- | ------------------------------------- |
 | Web            | http://localhost:9000/                |
 | Admin          | http://localhost:9000/admin/          |
