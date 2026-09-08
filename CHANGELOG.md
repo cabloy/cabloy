@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.161
+
+### Bug Fixes
+
+- Fix end-to-end test execution.
+
+### Improvements
+
+- Update Cabloy Basic specifications.
+
 ## 5.1.160
 
 ### Features
