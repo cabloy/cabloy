@@ -68,13 +68,15 @@ pnpm_config_minimum_release_age=0 npm create cabloy
 
 ## 3. Start Vona integrated SSR
 
+Run the root CLI command to start the Vona server:
+
 ```bash
 npm run dev
 ```
 
-`npm run dev` starts the Vona server. In the Cabloy Basic default environment, its listener at `7102` is the Vona integrated SSR entry: Vona serves the backend API and dispatches the selected SSR site.
+In the Cabloy Basic default environment, Vona listens on `7102` and serves the following SSR sites:
 
-| SSR Site       | Url                                   |
+| SSR Site       | URL                                   |
 | -------------- | ------------------------------------- |
 | Web            | http://localhost:7102/                |
 | Admin          | http://localhost:7102/admin/          |
@@ -83,23 +85,36 @@ npm run dev
 
 ## 4. Start Zova standalone SSR
 
-The Zova commands below start the Zova development server on `9000` in the Cabloy Basic default environment. This is the Zova standalone SSR entry for page, route, and hydration iteration. Direct access to `9000` does not replace Vona integrated SSR acceptance through `7102`.
+Run one of the root CLI commands below to start the Zova development server. Zova standalone SSR is typically used for frontend development, hot reload, and isolated debugging:
 
 ```bash
-npm run dev:zova:web   # http://localhost:9000/
-npm run dev:zova:admin # http://localhost:9000/admin/
-npm run dev:zova:commerce:web   # http://localhost:9000/commerce/
-npm run dev:zova:commerce:admin   # http://localhost:9000/commerce-admin/
+npm run dev:zova:web             # http://localhost:9000/
+npm run dev:zova:admin           # http://localhost:9000/admin/
+npm run dev:zova:commerce:web    # http://localhost:9000/commerce/
+npm run dev:zova:commerce:admin  # http://localhost:9000/commerce-admin/
 ```
 
-| SSR Site       | Url                                   |
+In the Cabloy Basic default environment, the Zova development server listens on `9000`:
+
+| SSR Site       | URL                                   |
 | -------------- | ------------------------------------- |
 | Web            | http://localhost:9000/                |
 | Admin          | http://localhost:9000/admin/          |
 | Commerce-Web   | http://localhost:9000/commerce/       |
 | Commerce-Admin | http://localhost:9000/commerce-admin/ |
 
-## 5. Run with Docker Compose
+## 5. Vona integrated SSR and Zova standalone SSR
+
+The two commands start different SSR entry points. Choose the one that matches the task:
+
+| SSR entry               | Default port | Best for                                                                                 | What it validates                                                                                   |
+| ----------------------- | ------------ | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| **Vona integrated SSR** | `7102`       | Fullstack development, site access, and browser acceptance                               | Vona API handling, SSR site matching, built artifact handoff, and the integrated HTTP response path |
+| **Zova standalone SSR** | `9000`       | Frontend development, hot reload, isolated debugging, and page/route/hydration iteration | Zova SSR rendering and frontend behavior without proving the Vona integration boundary              |
+
+The Zova standalone SSR server can also be used as Vona's development proxy target. However, directly opening `9000` does not replace validation through Vona integrated SSR at `7102`. For acceptance or deployment-oriented checks, build the required SSR/REST artifacts, synchronize them with Vona, and access the site through Vona.
+
+## 6. Run with Docker Compose
 
 Both Cabloy Basic and Cabloy Start support the same Docker Compose command flow. Run these commands from the repository for the edition you are using:
 
@@ -117,13 +132,13 @@ sudo docker-compose up
 | Commerce-Web   | http://localhost/commerce/       |
 | Commerce-Admin | http://localhost/commerce-admin/ |
 
-## 6. Upgrade an existing project
+## 7. Upgrade an existing project
 
 ```bash
 npm run upgrade
 ```
 
-## 7. Next step: follow the quick start tutorials
+## 8. Next step: follow the quick start tutorials
 
 If you want a beginner-friendly path that connects modules, CRUD, bidirectional contract sharing, and schema-driven workflows into one story, continue with:
 
