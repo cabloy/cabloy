@@ -34,7 +34,12 @@ Without a durable call-chain note, future contributors can fix bugs in the wrong
 
 ## Layer model
 
-The SSR stack should be read as four cooperating layers.
+The SSR stack should be read as four cooperating layers. There are two user-facing SSR entry modes:
+
+- **Vona integrated SSR**: the browser reaches Vona's server (the Cabloy Basic default is `7102`), which selects the SSR site and owns the HTTP response lifecycle.
+- **Zova standalone SSR**: the browser reaches the Zova development server (the Cabloy Basic default is `9000`) for frontend iteration. This does not prove Vona site matching, built artifact handoff, or integrated acceptance.
+
+“Independent SSR Site/flavor” remains a separate term for an independently deployable application boundary, not for the Zova development-server entry.
 
 ### Layer 1: Vona SSR orchestration
 
@@ -189,7 +194,7 @@ If a request never reaches SSR logic, the problem usually belongs in Vona site r
 
 Decision order:
 
-1. if `apiType === 'dev'`, proxy to the frontend dev host
+1. if `apiType === 'dev'`, proxy to the Zova standalone SSR development host
 2. otherwise ensure the SSR handler is ready
 3. ask the handler whether a built static asset exists
 4. if not, perform SSR render

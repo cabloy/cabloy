@@ -124,7 +124,7 @@ For the theme-side contract and edition-aware checklist, see [Theme Guide](/fron
 
 ## Scripts and runtime variants
 
-Frontend scripts map directly onto the same runtime dimensions.
+Frontend scripts map directly onto the same runtime dimensions. In the Cabloy Basic default environment, `dev:ssr:*` commands use the Zova standalone SSR development listener (`DEV_SERVER_PORT=9000`), while Vona integrated SSR uses Vona's `SERVER_LISTEN_PORT=7102`. These are separate listeners; `API_BASE_URL` still points from Zova to the Vona server.
 
 Representative commands include variants such as:
 

@@ -115,7 +115,7 @@ This is the main place to inspect when an SSR route is not being picked up at al
 
 Decision order:
 
-1. if `apiType === 'dev'`, proxy to the configured dev host
+1. if `apiType === 'dev'`, proxy to the configured Zova standalone SSR development host
 2. otherwise load/prepare the SSR handler
 3. ask the handler whether a static asset exists in the site bundle
 4. if no asset matches, render HTML through the handler
@@ -168,7 +168,7 @@ Relevant sources:
 The default config establishes:
 
 - `apiType: 'performAction'`
-- dev host `http://localhost:9000`
+- Zova standalone SSR development host `http://localhost:9000` (the default `DEV_SERVER_PORT`)
 - preset links such as `presetLogin`, `presetErrorExpired`, and `presetResource`
 
 The generated environment surface includes values such as:

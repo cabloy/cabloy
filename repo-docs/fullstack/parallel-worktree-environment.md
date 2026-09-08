@@ -30,6 +30,8 @@ The recommendation uses only Git worktree metadata and the fixed defaults below.
 | `DEV_SERVER_PORT`     |   `9000` | `9000 + linked-worktree ordinal`  |
 | `DEV_SERVER_HMR_PORT` |  `24679` | `24679 + linked-worktree ordinal` |
 
+These listeners have different responsibilities: `SERVER_LISTEN_PORT` is the Vona server and Vona integrated SSR entry, `DEV_SERVER_PORT` is the Zova standalone SSR development server, and `DEV_SERVER_HMR_PORT` is its HMR listener. `API_BASE_URL` must point to the Vona port, not the Zova development port.
+
 `APP_NAME` is the current linked worktree directory name. `API_BASE_URL` is regenerated as `http://localhost:<SERVER_LISTEN_PORT>`.
 
 Every valid explicit setup proposes the same complete tuple and both local files:

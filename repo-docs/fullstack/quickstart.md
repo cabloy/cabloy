@@ -53,11 +53,13 @@ pnpm_config_minimum_release_age=0 npm create cabloy
 
 If you already created the project directory and only need to rerun initialization, use the same environment variable with `npm run init`.
 
-## 3. Start the backend
+## 3. Start Vona integrated SSR
 
 ```bash
 npm run dev
 ```
+
+`npm run dev` starts the Vona server. In the Cabloy Basic default environment, its listener at `7102` is the Vona integrated SSR entry: Vona serves the backend API and dispatches the selected SSR site.
 
 | Flavor         | Url                                   |
 | -------------- | ------------------------------------- |
@@ -66,7 +68,9 @@ npm run dev
 | Commerce-Web   | http://localhost:7102/commerce/       |
 | Commerce-Admin | http://localhost:7102/commerce-admin/ |
 
-## 4. Start the frontend for your edition
+## 4. Start Zova standalone SSR for your edition
+
+The Zova commands below start the Zova development server on `9000` in the Cabloy Basic default environment. This is the Zova standalone SSR entry for page, route, and hydration iteration. Direct access to `9000` does not replace Vona integrated SSR acceptance through `7102`.
 
 ### Cabloy Basic
 

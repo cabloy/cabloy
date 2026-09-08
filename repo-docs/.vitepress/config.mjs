@@ -658,7 +658,7 @@ export default defineConfig({
             { text: 'SSR Init Data', link: '/frontend/ssr-init-data' },
             { text: 'SSR ClientOnly', link: '/frontend/ssr-client-only' },
             { text: 'SSR SEO Meta', link: '/frontend/ssr-seo-meta' },
-            { text: 'SSR Env', link: '/frontend/ssr-env' },
+            { text: 'SSR Environment Variables', link: '/frontend/ssr-env' },
           ],
         },
       ],

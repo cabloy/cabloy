@@ -200,7 +200,7 @@ Use this order when you need the shortest path from mental model to implementati
 3. [SSR Init Data](/frontend/ssr-init-data)
 4. [SSR ClientOnly](/frontend/ssr-client-only)
 5. [SSR SEO Meta](/frontend/ssr-seo-meta)
-6. [SSR Env](/frontend/ssr-env)
+6. [SSR Environment Variables](/frontend/ssr-env)
 7. [Fullstack Vona + Zova Integration](/fullstack/vona-zova-integration)
 
 ## Implementation checks for architecture-sensitive SSR changes

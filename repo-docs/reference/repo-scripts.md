@@ -136,8 +136,10 @@ The public-package upgrade flow does not source or reconcile the Start-owned bas
 
 The unified runner has two modes:
 
-- `npm run test:e2e`: clean local run; checks the managed port, resets the database, starts one development Vona worker, and runs Playwright.
-- `npm run test:e2e:fast`: skips the reset for quick reruns and may target either the local managed server or an externally managed `E2E_BASE_URL`.
+- `npm run test:e2e`: clean local run; checks the managed Vona port, resets the database, starts one development Vona worker, and runs Playwright.
+- `npm run test:e2e:fast`: skips the reset for quick reruns and may target either the local managed Vona server or an externally managed `E2E_BASE_URL`.
+
+These browser checks target Vona integrated SSR. In the Cabloy Basic default environment, the Vona listener is `7102`; the Zova standalone SSR development server uses `9000` and is not an acceptance target.
 
 Place spec basenames directly after the npm script name; use npm's `--` delimiter only before Playwright options. Multiple spec names are allowed. With no names, every spec in `repo-e2e/specs` is discovered:
 
@@ -160,7 +162,7 @@ The existing tags include `@web`, `@admin`, `@smoke`, `@flow`, `@ssr`, `@theme`,
 
 ### Cabloy Basic and Commerce
 
-The Basic baseline exercises Web at `/` and Admin at `/admin` through Vona's SSR dispatcher. Prepare artifacts when frontend output has changed:
+The Basic baseline exercises Web at `/` and Admin at `/admin` through Vona integrated SSR dispatch. Prepare artifacts when frontend output has changed:
 
 ```bash
 npm run build:zova
@@ -184,7 +186,7 @@ E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:fast a-commerce -- --tag @sm
 
 ### Cabloy Start
 
-The Start suite exercises Web at `/` and Admin at `/admin` through Vona's SSR dispatcher. Prepare current Start artifacts before a managed local run:
+The Start suite exercises Web at `/` and Admin at `/admin` through Vona integrated SSR dispatch. Prepare current Start artifacts before a managed local run:
 
 ```bash
 npm run build:zova

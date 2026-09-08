@@ -121,7 +121,7 @@ Use this path when the task is about data loading, API contracts, generated SDKs
 - [SSR Init Data](/frontend/ssr-init-data)
 - [SSR ClientOnly](/frontend/ssr-client-only)
 - [SSR SEO Meta](/frontend/ssr-seo-meta)
-- [SSR Env](/frontend/ssr-env)
+- [SSR Environment Variables](/frontend/ssr-env)
 
 ### Tooling support
 

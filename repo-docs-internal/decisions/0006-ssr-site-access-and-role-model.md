@@ -218,7 +218,7 @@ Future Sites such as `merchant`, `partner`, or `operations` can be added as new 
 
 ### Existing API permission boundaries remain intact
 
-Zova protected-route admission and Vona resource/API permission have different scopes. Keeping them separate avoids weakening API protection or creating a second interpretation of route permissions inside the SSR dispatcher.
+Zova protected-route admission and Vona resource/API permission have different scopes. Keeping them separate avoids weakening API protection or creating a second interpretation of route permissions inside the Vona integrated SSR dispatch path.
 
 ## Alternatives Considered
 

@@ -174,7 +174,7 @@ If the generated artifacts are correct and `npm run deps:vona` completed but Von
 
 ## Verify through the Vona boundary
 
-A standalone Zova development server can help with page iteration, but it does not prove copied artifacts, Vona site matching, generated type handoff, or production-like hydration.
+A Zova standalone SSR development server (the default `9000` entry) can help with page iteration, but it does not prove copied artifacts, Vona site matching, generated type handoff, or production-like hydration. An independent SSR Site/flavor remains a separately deployable application boundary; it is not another name for Zova standalone SSR.
 
 Run the narrowest meaningful checks first:
 

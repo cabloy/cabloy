@@ -77,7 +77,7 @@ npm run build
 
 Practical interpretation:
 
-- `dev:zova:*` is for normal frontend SSR development entry
+- `dev:zova:*` starts the Zova standalone SSR development entry (the default `9000` listener)
 - `build:zova` builds frontend SSR output in batch mode
 - `build:zova:admin` and `build:zova:web` are explicit root-wrapper paths for flavor-specific SSR output plus related REST generation
 - `build` is the fullstack alignment path when frontend and backend output should move together
@@ -117,12 +117,14 @@ or:
 npm run dev:zova:web
 ```
 
-Use this when the task is:
+Use this Zova standalone SSR entry when the task is:
 
 - page development
 - route debugging
 - SSR UI iteration
 - hydration behavior review
+
+When the task requires the Vona HTTP boundary, built artifact handoff, or acceptance evidence, verify through Vona integrated SSR on the effective Vona server port (the Cabloy Basic default is `7102`), rather than directly through the Zova development server.
 
 If you need deeper script control or need to verify the exact Zova flavor path, inspect the flavor-specific scripts described in [Frontend Scripts](/frontend/scripts).
 
