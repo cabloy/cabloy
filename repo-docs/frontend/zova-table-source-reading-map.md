@@ -120,7 +120,8 @@ Use this path when you are asking questions like:
 Use this path when you are asking questions like:
 
 - how does a row schema become visible columns?
-- where do `visible`, `order`, `render`, and `columnProps` come from?
+- where do `order`, `align`, `width`, `fixed`, `enableSorting`, and `sortDescFirst` come from?
+- where do `visible`, `render`, and `columnProps` come from?
 - how does the table scene differ from form or filter scenes?
 
 ### Read the docs first
@@ -130,17 +131,51 @@ Use this path when you are asking questions like:
 
 ### Then read source in this order
 
-1. `zova/src/suite-vendor/a-zova/modules/a-table/src/component/table/controller.tsx`
-2. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/lib/schema.ts`
-3. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/types/rest.ts`
+1. `zova/packages-cli/cli-set-front/cli/templates/rest/rest.ts`
+2. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/types/rest.ts`
+3. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/lib/schema.ts`
+4. `zova/src/suite-vendor/a-zova/modules/a-table/src/component/table/controller.tsx`
+5. `zova/src/suite-vendor/a-zova/modules/a-table/src/component/table/render.tsx`
 
 ### What each file clarifies
 
-- `controller.tsx` shows `_createProperties()`, `_createTableMeta()`, and `_createColumnsMiddle()`
-- `schema.ts` shows `loadSchemaProperties(...)`, `$ref` resolution, and scene-specific `rest` overlays
-- `rest.ts` shows the schema extension contract, including `rest.table` and table-related render types
+- `cli/templates/rest/rest.ts` shows that `ZovaRender.column(...)` writes `ITableColumnOptions` under `rest.table`
+- `types/rest.ts` defines `order`, `align`, `width`, `fixed`, `enableSorting`, and `sortDescFirst`
+- `schema.ts` shows `loadSchemaProperties(...)`, `$ref` resolution, and the merge of shared `rest` metadata with table-scene overlays
+- `controller.tsx` shows `_createProperties()`, `_createTableMeta()`, `_createColumnsMiddle()`, order-schema sorting eligibility, and pinning
+- `render.tsx` shows how effective metadata becomes alignment, dimensions, fixed-column styles, and sortable header DOM
 
-## 4. `tableCell` bean-scene contract and decorator surface
+## 4. Column metadata, sortable headers, and resource orders
+
+Use this path when you are asking questions like:
+
+- why did `ZovaRender.column({ enableSorting: true })` not make a header sortable?
+- how do fixed columns become sticky left/right columns?
+- how does one header click become a resource request `orders` value?
+
+### Read the docs first
+
+- [Table Guide](/frontend/table-guide)
+- [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook)
+- [Existing Resource Field Update](/backend/resource-field-update#filter-and-sort-a-relation-by-its-display-field)
+
+### Then read source in this order
+
+1. `zova/src/suite-vendor/a-zova/modules/a-table/src/component/table/controller.tsx`
+2. `zova/src/suite-vendor/a-zova/modules/a-table/src/component/table/render.tsx`
+3. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockTable/controller.tsx`
+4. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockPage/controller.tsx`
+
+### What each file clarifies
+
+- `controller.tsx` shows that `enableSorting` also requires the property key or aliases to exist in `schemaOrder`, and shows left/right pinning construction
+- `render.tsx` shows the header toggle, `aria-sort`, indicators, and sticky styles
+- `blockTable/controller.tsx` shows the handoff of `schemaOrder`, controlled sorting, and `onSortingChange`
+- `blockPage/controller.tsx` shows conversion of the single current sort into backend `orders` and query reload
+
+The result is a controlled, manual server-sorting path: the standard resource page does not client-side sort rows that have already been fetched. The `basic-page` files are Cabloy Basic specimens; the metadata API and base Zova Table behavior are shared with Cabloy Start, whose page module paths must be resolved in that edition.
+
+## 5. `tableCell` bean-scene contract and decorator surface
 
 Use this path when you are asking questions like:
 
@@ -168,7 +203,7 @@ Use this path when you are asking questions like:
 - `package.json` shows `zovaModule.onions.tableCell` and boilerplate metadata
 - the boilerplate files show the intended scaffold shape for normal cells and row-action cells
 
-## 5. Cell render pipeline and CEL/JSX scope
+## 6. Cell render pipeline and CEL/JSX scope
 
 Use this path when you are asking questions like:
 
@@ -193,7 +228,7 @@ Use this path when you are asking questions like:
 - `tableColumn.ts` shows column scope, cell scope, and table column render types
 - `tableCell.ts` shows the render-context contract received by a `tableCell` bean
 
-## 6. Representative built-in cell renderers
+## 7. Representative built-in cell renderers
 
 Use this path when you are asking questions like:
 
@@ -220,7 +255,7 @@ Use this path when you are asking questions like:
 - `tableCell.select.tsx` shows value-to-item mapping
 - `actionOperationsRow.tsx` shows advanced visibility checks, nested action rendering, and permission-aware orchestration
 
-## 7. Custom columns through `getColumns(...)`
+## 8. Custom columns through `getColumns(...)`
 
 Use this path when you are asking questions like:
 
@@ -243,15 +278,15 @@ Use this path when you are asking questions like:
 
 - `types/table.ts` shows `TypeTableGetColumns` and `TypeTableCreateColumnRender`
 - `controller.tsx` shows how custom columns are given `next(...)`, `createColumnRender(...)`, and the table controller itself
-- `basic-table/render.tsx` shows a module-level consumer wrapping `ZTable` rather than replacing its runtime
+- `basic-table/render.tsx` is a Cabloy Basic forwarding wrapper around `ZTable`; it preserves the custom-column hook rather than serving as an executable custom-column specimen
 
-## 8. Resource-page integration
+## 9. Resource-page integration
 
 Use this path when you are asking questions like:
 
 - how does a resource list page feed schema and data into `ZTable`?
-- where do `data`, `schemaRow`, and `tableScope` come from?
-- where should permission-sensitive table refresh be debugged?
+- where do `data`, `schemaRow`, `schemaOrder`, and `tableScope` come from?
+- where should permission-sensitive table refresh or resource sorting be debugged?
 
 ### Read the docs first
 
@@ -266,11 +301,11 @@ Use this path when you are asking questions like:
 
 ### What each file clarifies
 
-- `blockPage/controller.tsx` shows resource ownership, query state, page CEL scope, permissions, and table refresh integration
-- `blockTable/controller.tsx` shows the direct bridge from page block to `ZTable`
+- `blockPage/controller.tsx` shows resource ownership, query state, page CEL scope, permissions, table refresh integration, and `orders` mapping
+- `blockTable/controller.tsx` shows the direct bridge from page block to `ZTable`, including order schema and controlled sorting props
 - the Vona DTO specimen shows the block-based page composition consumed from backend-owned metadata
 
-## 9. Representative specimens to read before editing the framework
+## 10. Representative specimens to read before editing the framework
 
 Use this section when you want one small example before reading framework internals.
 
@@ -288,7 +323,7 @@ Use this section when you want one small example before reading framework intern
 
 Together they give you the public integration, the advanced cell path, and the minimal cell path before you descend into the whole table runtime.
 
-## 10. A compact reading strategy
+## 11. A compact reading strategy
 
 When in doubt, use this order:
 
@@ -301,7 +336,7 @@ When in doubt, use this order:
 
 That order usually gets you to the answer faster than starting from the deepest runtime files first.
 
-## 11. Final takeaway
+## 12. Final takeaway
 
 The fastest way to read Zova Table accurately is not to memorize every file in `a-table`.
 

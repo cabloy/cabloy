@@ -47,7 +47,7 @@ If you only remember one idea, remember this one:
 That leads to three common authoring surfaces:
 
 - `ZTable` — the root table component
-- schema `rest.table` metadata — the default source of visibility, order, and render decisions
+- schema metadata — `ZovaRender.column(...)` supplies table-column layout/capability metadata, while shared/table-scene overlays supply effective visibility, order, and render metadata
 - `tableCell` beans — the main extension surface for reusable cell rendering
 
 ## One running example through this guide: Student list page
@@ -123,17 +123,12 @@ A practical reading takeaway is:
 
 In the default path, `ZTable` reads table-scene metadata from the row schema.
 
-The key table-facing metadata surface is the schema field `rest.table`, especially values such as:
-
-- `order`
-- `visible`
-- `render`
-- `columnProps`
+The table sees the **effective table metadata**, not only one literal source object. It combines shared field `rest` metadata with the table-scene `rest.table` overlay, then orders the resulting properties by effective `rest.order`.
 
 A simplified mental model is:
 
 ```text
-schema row -> load table properties -> sort by order -> filter by visible -> build columns -> render cells
+schema row -> merge table metadata -> sort by order -> filter by visible -> build columns -> render cells
 ```
 
 That means the default list-page question becomes less:
@@ -146,6 +141,58 @@ and more:
 
 This is why table work often belongs in the broader contract loop when the real source of truth is backend field metadata.
 
+## Step 4: Configure physical columns with `ZovaRender.column(...)`
+
+`ZovaRender.column(...)` is a shared Cabloy/Zova schema-metadata API available in both Cabloy Basic and Cabloy Start. It returns a schema transformer that writes column options under `rest.table`; it does **not** register a frontend column or render a cell by itself.
+
+```ts
+@Api.field(
+  v.title($locale('Name')),
+  ZovaRender.column({
+    align: 'left',
+    width: 240,
+    fixed: 'left',
+    enableSorting: true,
+    sortDescFirst: true,
+  }),
+  v.string(),
+)
+name: string;
+```
+
+The current options are:
+
+| Option          | Meaning in the table runtime                                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `order`         | Orders this property among the effective table properties. For shared field order, `ZovaRender.order(...)` is usually clearer. |
+| `align`         | Applies `left`, `center`, or `right` text alignment to the header and cells.                                                   |
+| `width`         | Supplies the TanStack column size and current renderers apply it as pixel width and minimum width.                             |
+| `fixed`         | Pins the column to the `left` or `right`; the table runtime calculates pinning and renderers apply sticky offsets.             |
+| `enableSorting` | Requests a sortable header, subject to the order-schema capability described below.                                            |
+| `sortDescFirst` | Makes the first header toggle descend; it does not change backend order syntax.                                                |
+
+`ZovaRender.column(...)` configures the physical column. `ZovaRender.cell(...)` independently selects the cell renderer and its options. For example, a virtual Operations field can be right-pinned and centered while its content comes from a reusable `tableCell` resource:
+
+```ts
+@Api.field(
+  v.title($locale('Operations')),
+  ZovaRender.order(1, 'max'),
+  ZovaRender.column({ align: 'center', width: 360, fixed: 'right' }),
+  ZovaRender.cell('basic-table:actionOperationsRow', { actions }),
+)
+_operationsRow?: unknown;
+```
+
+The `basic-table:*` renderer key in this example is Cabloy Basic-specific. The `ZovaRender.column(...)` contract itself is shared; use the active edition's renderer keys when selecting a cell resource.
+
+### Enable server-backed sorting
+
+`enableSorting: true` is necessary but not sufficient. The same field, canonical key, or schema alias must also exist in `schemaOrder`; otherwise the table deliberately creates a non-sortable column.
+
+A direct `ZTable` consumer owns and passes `schemaOrder`, controlled `sorting`, and `onSortingChange`. In the standard Cabloy Basic resource-page path, `basic-page:blockTable` passes those values from `basic-page:blockPage`; the page translates one manual table sort into backend `orders` and reloads the resource query. The loaded page is not client-side sorted by TanStack.
+
+For relation-order rewriting, see [Existing Resource Field Update](/backend/resource-field-update#filter-and-sort-a-relation-by-its-display-field). For the resource-page bridge, see [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook).
+
 A practical expression example is a schema-driven cell display that formats the current row value through CEL:
 
 ```text
@@ -156,7 +203,7 @@ In the shared table CEL scope, `getValue(name)` reads the current row value and 
 
 For the schema side of that contract, also see [API Schema Guide](/frontend/api-schema-guide).
 
-## Step 4: Use built-in or custom `tableCell` render resources
+## Step 5: Use built-in or custom `tableCell` render resources
 
 A column render is usually chosen through schema metadata such as:
 
@@ -184,7 +231,7 @@ A practical rule is:
 - use built-in `tableCell` resources first
 - add a custom `tableCell` bean only when the business UI really needs module-owned rendering behavior
 
-## Step 5: Create a custom `tableCell` bean
+## Step 6: Create a custom `tableCell` bean
 
 When a built-in renderer is not enough, use the existing CLI-backed scene workflow.
 
@@ -230,7 +277,7 @@ That scaffold is useful because it starts from the correct Zova scene contract:
 
 For the broader scene system behind this decorator, see [Bean Scene Authoring](/frontend/bean-scene-authoring).
 
-## Step 6: Add page-local custom columns with `getColumns(...)`
+## Step 7: Add page-local custom columns with `getColumns(...)`
 
 When most columns should stay schema-driven but one column should be page-local, use `getColumns(...)`.
 
@@ -275,7 +322,7 @@ A practical caveat is:
 
 So a mixed table does **not** mean bypassing Zova. It means extending the existing runtime through its own hooks.
 
-## Step 7: Use resource-driven page blocks for CRUD list pages
+## Step 8: Use resource-driven page blocks for CRUD list pages
 
 For standard resource pages, the more common public surface is not direct `ZTable` usage. It is the block-based page runtime:
 
@@ -299,7 +346,7 @@ This gives you a cohesive CRUD path where:
 
 For the resource ownership side of that page shape, see [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern).
 
-## Step 8: Know when to use `BeanControllerPageTableBase`
+## Step 9: Know when to use `BeanControllerPageTableBase`
 
 If your table belongs directly to a page controller rather than a reusable component controller, the page-oriented base class already exists:
 
@@ -322,15 +369,19 @@ TanStack Table is still important, but the business-facing runtime is controller
 
 For many resource pages, the faster path is to let `rest.table` metadata describe the default columns first.
 
-### Mistake 3: Bypassing `tableCell` beans for reusable cell behavior
+### Mistake 3: Treating `ZovaRender.column(...)` as a cell renderer
+
+`ZovaRender.column(...)` supplies column layout and sorting metadata. Use `ZovaRender.cell(...)` to name the cell render target, and use a `tableCell` bean when that reusable renderer needs module-owned behavior.
+
+### Mistake 4: Bypassing `tableCell` beans for reusable cell behavior
 
 If a renderer should be shared across pages or modules, prefer a `tableCell` resource over repeated page-local callbacks.
 
-### Mistake 4: Treating `controllerRef` like a generic Vue DOM ref
+### Mistake 5: Treating `controllerRef` like a generic Vue DOM ref
 
 `controllerRef` gives you the table controller instance, not a plain DOM element.
 
-### Mistake 5: Rebuilding CRUD list wiring manually when `basic-page` already owns it
+### Mistake 6: Rebuilding CRUD list wiring manually when `basic-page` already owns it
 
 For standard resource pages, prefer the existing block/page runtime before hand-building a custom table flow.
 
@@ -340,12 +391,12 @@ If you want the shortest accurate path to a real business table, use this order:
 
 1. make sure the backend row schema is already the right contract truth
 2. start with a resource page or direct `ZTable`
-3. let schema metadata drive the default columns
-4. reuse built-in `tableCell` renderers first
+3. let schema metadata drive the default columns; add `ZovaRender.column(...)` only where layout, pinning, or sorting metadata is needed
+4. use `ZovaRender.cell(...)` and built-in `tableCell` renderers for cell content first
 5. add page-local `getColumns(...)` only where needed
 6. create custom `tableCell` beans only where the UI becomes business-specific
 7. continue with [TableCell Authoring Cookbook](/frontend/table-cell-cookbook) when you want concrete patterns for custom cell beans and row actions
-8. continue with [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook) when you want the standard resource-page integration path for filter, bulk actions, table, and pager
+8. continue with [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook) when you want the standard resource-page integration path for filter, bulk actions, table, pager, and server sorting
 9. continue with [Zova Table Under the Hood](/frontend/zova-table-under-the-hood) when you want the runtime explanation behind the public authoring surface
 10. continue with [Zova Table Source Reading Map](/frontend/zova-table-source-reading-map) when you need framework-level source details and targeted file-order guidance
 
@@ -359,9 +410,11 @@ When documenting or changing a table workflow, verify in this order:
    npm run zova :create:bean --help
    ```
 
-2. confirm the `tableCell` scene metadata still exists in the current `a-table` module
-3. confirm the runtime claims against the current `a-table`, `basic-table`, and `basic-page` source
-4. if you changed docs, build the docs site:
+2. confirm the `ZovaRender.column(...)` option contract and table-scene metadata merge still match current source
+3. confirm the `tableCell` scene metadata still exists in the current `a-table` module
+4. for sortable resource columns, verify header state, fixed-column layout/overflow where relevant, and the backend `orders` request
+5. confirm the runtime claims against the current `a-table`, `basic-table`, and `basic-page` source
+6. if you changed docs, build the docs site:
 
    ```bash
    npm run docs:build

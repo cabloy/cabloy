@@ -269,6 +269,8 @@ Its bridge role is very clear:
 - render `ZTable`
 - pass page data into `data`
 - pass row schema into `schema`
+- pass the resource order schema into `schemaOrder`
+- pass controlled `sorting` and `onSortingChange`
 - pass page CEL scope into `tableScope`
 - capture the table controller through `controllerRef`
 
@@ -329,9 +331,12 @@ _operationsRow?: unknown;
 
 This is the practical reverse-sharing model:
 
-- the backend row contract chooses the table cell resource identity
+- `ZovaRender.column(...)` configures physical-column behavior such as alignment, width, pinning, and sorting eligibility
+- `ZovaRender.cell(...)` chooses the table-cell resource identity and its options
 - the frontend table runtime resolves that resource
 - the page block and table block do not need page-local hard-coded row-action wiring
+
+For example, an Operations field can add `ZovaRender.column({ align: 'center', width: 360, fixed: 'right' })` beside the existing `ZovaRender.cell(...)`. `ZovaRender.column(...)` is a shared Basic/Start capability; the `basic-table:*` cell key remains a Cabloy Basic choice.
 
 For the built-in metadata-sharing teaching path, see [Tutorial 3: Frontend Metadata Sharing](/fullstack/tutorial-3-frontend-metadata-sharing).
 
@@ -346,10 +351,24 @@ For standard CRUD list pages, most customization should happen in one of these p
 Use this when:
 
 - a field should change order
+- a column should change alignment, width, or left/right pinning
+- a server-authorized field should expose a sortable header
 - a column should be visible or hidden
 - a field should use a different built-in or custom `tableCell`
 
-This is usually the first and best extension point.
+This is usually the first and best extension point. Use `ZovaRender.column(...)` for the column metadata and `ZovaRender.cell(...)` for the cell renderer; do not treat either helper as a replacement for the other.
+
+### Enable standard resource-page sorting
+
+For a normal Cabloy Basic resource list, backend field metadata can request a sortable column with:
+
+```ts
+ZovaRender.column({ enableSorting: true });
+```
+
+The field must also be present in the resource `schemaOrder`; that order schema remains the authority for whether the header is actually sortable. `blockTable` forwards the order schema plus controlled sorting state into `ZTable`, and `blockPage` turns one header selection into backend `orders` before reloading the resource query. This is server sorting, not local reordering of the current page.
+
+For the full shared `ZovaRender.column(...)` contract, see [Table Guide](/frontend/table-guide#configure-physical-columns-with-zovarendercolumn). For relation-backed order rewriting, see [Existing Resource Field Update](/backend/resource-field-update#filter-and-sort-a-relation-by-its-display-field).
 
 ### Extension point B: backend block composition metadata
 
@@ -505,8 +524,8 @@ If you want the shortest path to a real CRUD list page, use this order:
 1. generate or confirm the backend CRUD contract thread
 2. confirm the resource-owner model already exposes the required schemas and permissions
 3. keep the standard `blockPage -> blockFilter -> blockToolbarBulk -> blockTable -> blockPager` chain
-4. refine backend row metadata for visible columns and row actions
-5. reuse built-in `tableCell` resources first
+4. refine backend row metadata for visible columns, layout/pinning/sort capability through `ZovaRender.column(...)`, and row actions
+5. reuse `ZovaRender.cell(...)` with built-in `tableCell` resources first
 6. add custom `tableCell` resources only where the UI becomes business-specific
 7. change block controllers only when the existing runtime is structurally insufficient
 8. continue with [Table Guide](/frontend/table-guide) for the public `ZTable` surface
@@ -533,6 +552,8 @@ When authoring or documenting a resource CRUD list page, verify in this order:
    - filter works
    - bulk actions render correctly
    - table columns and row actions match metadata
+   - fixed columns, widths, and overflow behave as intended when configured
+   - sortable headers expose the expected state and reload with the intended backend `orders`
    - pager updates the list correctly
 7. if you changed docs, build the docs site:
 

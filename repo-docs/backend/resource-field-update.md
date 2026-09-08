@@ -113,7 +113,7 @@ A resource list can search and order a relation by a human-readable column from 
 studentId: TableIdentity;
 ```
 
-`table` and `joinOn` identify the relation, while `originalName` resolves both the `studentId` filter and order key to `trainingStudent.name`. `_includesI_` makes the filter a case-insensitive partial-name match. `ZovaRender.column({ enableSorting: true })` exposes the sortable table column; the query pipeline uses the same field metadata to add the join and rewrite `orders: [['studentId', 'asc']]` to the related display column.
+`table` and `joinOn` identify the relation, while `originalName` resolves both the `studentId` filter and order key to `trainingStudent.name`. `_includesI_` makes the filter a case-insensitive partial-name match. `ZovaRender.column({ enableSorting: true })` is the shared Cabloy Basic/Start frontend eligibility declaration for a sortable table header; it does not by itself authorize or resolve the backend order key. The order schema and query metadata remain authoritative, and the query pipeline uses the same field metadata to add the join and rewrite `orders: [['studentId', 'asc']]` to the related display column. For the complete table-column contract and resource-page sort path, see [Table Guide](/frontend/table-guide#configure-physical-columns-with-zovarendercolumn).
 
 Use `innerJoin` deliberately when the relation is required and unmatched rows should not participate in this filter/order path. For an optional relation whose unmatched rows must remain visible, choose the join behavior explicitly instead of copying the required-relation example.
 
@@ -154,7 +154,7 @@ A custom backend-rendered field normally needs both sides of the frontend pair:
 
 A plain frontend component is not sufficient for backend table-cell metadata. Reuse the closest shared renderer’s option/data flow and keep the customization focused.
 
-For public implementation patterns, see [Form Guide](/frontend/form-guide), [TableCell Cookbook](/frontend/table-cell-cookbook#pattern-7-backend-contract-to-frontend-cell-handoff), and the Basic-only [Custom Form/Table Renderers tutorial](/fullstack/tutorial-4-custom-level-renderers).
+For public implementation patterns, see [Form Guide](/frontend/form-guide), [TableCell Authoring Cookbook](/frontend/table-cell-cookbook#pattern-7-backend-contract-to-frontend-cell-handoff), and the Basic-only [Custom Form/Table Renderers tutorial](/fullstack/tutorial-4-custom-level-renderers).
 
 ## Follow the contract loop
 

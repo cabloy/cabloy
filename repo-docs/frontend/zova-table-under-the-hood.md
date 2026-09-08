@@ -58,13 +58,14 @@ This page is that bridge.
 
 For a typical Zova table, the shortest accurate model is:
 
-1. the `ZTable` wrapper creates a table controller bean through the normal Zova controller path
-2. the table controller loads table-scene schema properties from the row schema
-3. the controller builds table metadata with visible properties and per-column render functions
-4. the controller creates TanStack table options through Zova’s `$useTable(...)` wrapper
-5. each cell render resolves either to text fallback, a general JSX render target, or a `tableCell` bean
-6. the cell runtime evaluates JSX/CEL props with table-aware column and cell scope
-7. resource pages feed schema, data, permissions, and page scope into the same table runtime through `basic-page:blockTable`
+1. backend schema helpers such as `ZovaRender.column(...)` attach table-column metadata to the field contract
+2. the `ZTable` wrapper creates a table controller bean through the normal Zova controller path
+3. the table controller loads effective table-scene schema properties from the row schema
+4. the controller builds table metadata with visible properties and per-column render functions
+5. the controller creates TanStack table options through Zova’s `$useTable(...)` wrapper
+6. each cell render resolves either to text fallback, a general JSX render target, or a `tableCell` bean
+7. the cell runtime evaluates JSX/CEL props with table-aware column and cell scope
+8. resource pages feed schema, data, permissions, and page scope into the same table runtime through `basic-page:blockTable`
 
 That is why Zova Table is not only a thin wrapper around TanStack Table. The business-facing runtime surface is still Zova-native.
 
@@ -98,25 +99,27 @@ These three files already show the core architecture:
 
 When you want to trace the full mechanism, read these files in order:
 
-1. `zova/src/suite-vendor/a-zova/modules/a-table/src/.metadata/component/table.ts`
-2. `zova/src/suite-vendor/a-zova/modules/a-table/src/component/table/controller.tsx`
-3. `zova/src/suite-vendor/a-zova/modules/a-table/src/lib/beanControllerTableBase.ts`
-4. `zova/src/suite-vendor/a-zova/modules/a-table/src/component/table/render.tsx`
-5. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/lib/schema.ts`
-6. `zova/src/suite-vendor/a-zova/modules/a-table/src/types/tableCell.ts`
-7. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockTable/controller.tsx`
-8. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockPage/controller.tsx`
+1. `zova/packages-cli/cli-set-front/cli/templates/rest/rest.ts`
+2. `zova/src/suite-vendor/a-zova/modules/a-table/src/.metadata/component/table.ts`
+3. `zova/src/suite-vendor/a-zova/modules/a-table/src/component/table/controller.tsx`
+4. `zova/src/suite-vendor/a-zova/modules/a-table/src/lib/beanControllerTableBase.ts`
+5. `zova/src/suite-vendor/a-zova/modules/a-table/src/component/table/render.tsx`
+6. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/lib/schema.ts`
+7. `zova/src/suite-vendor/a-zova/modules/a-table/src/types/tableCell.ts`
+8. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockTable/controller.tsx`
+9. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockPage/controller.tsx`
 
 A compact role map is:
 
+- `cli/templates/rest/rest.ts` shows that `ZovaRender.column(...)` stores its options under `rest.table`
 - `table.ts` shows how the public wrapper enters `useController(...)`
-- `component/table/controller.tsx` owns schema properties, metadata refresh, TanStack bridge, and cell rendering
+- `component/table/controller.tsx` owns schema properties, metadata refresh, TanStack bridge, pinning, sorting eligibility, and cell rendering
 - `beanControllerTableBase.ts` shows the Zova wrapper around `useVueTable(...)`
-- `component/table/render.tsx` shows the default table DOM render path through `FlexRender`
-- `schema.ts` shows how table-scene schema properties are loaded and ordered
+- `component/table/render.tsx` shows the default table DOM render path, layout metadata, sortable headers, and `FlexRender`
+- `schema.ts` shows how top-level and table-scene metadata are merged and ordered
 - `types/tableCell.ts` shows the `tableCell` scene contract
-- `blockTable/controller.tsx` shows how page blocks feed `data`, `schema`, and `tableScope` into `ZTable`
-- `blockPage/controller.tsx` shows where resource data, permissions, and page scope come from
+- `blockTable/controller.tsx` shows how Basic page blocks feed data, schemas, scope, and sorting state into `ZTable`
+- `blockPage/controller.tsx` shows where resource data, permissions, page scope, and backend `orders` mapping come from
 
 ## Step-by-step runtime path
 
@@ -205,16 +208,19 @@ zova/src/suite-vendor/a-zova/modules/a-openapi/src/lib/schema.ts
 
 The important runtime path is:
 
-1. the table receives `schema`
-2. `_createProperties()` computes `this.$sdk.loadSchemaProperties(this.schema, 'table')`
-3. `loadSchemaProperties(...)` resolves `$ref`, applies `rest.table` overlays, and sorts by `rest.order`
-4. `_createTableMeta()` iterates those properties and decides visibility and render behavior
-5. `_createColumnsMiddle()` converts the surviving properties into TanStack column definitions
+1. `ZovaRender.column(options)` stores the field's column options under `rest.table`
+2. the table receives `schema`
+3. `_createProperties()` computes `this.$sdk.loadSchemaProperties(this.schema, 'table')`
+4. `loadSchemaProperties(...)` resolves `$ref`, merges shared `rest` metadata with the `rest.table` overlay, and sorts by effective `rest.order`
+5. `_createTableMeta()` iterates those properties and decides visibility and render behavior
+6. `_createColumnsMiddle()` converts the surviving properties into TanStack column definitions
+
+`ZovaRender.column(...)` is a shared Zova API available in both Cabloy Basic and Cabloy Start. It supplies metadata only; it neither registers a frontend column nor selects a cell renderer. `ZovaRender.cell(...)` supplies the render target, and `tableCell` beans implement reusable cell behavior.
 
 A practical reading takeaway is:
 
 - **schema is not only validation truth**
-- **schema also drives table order, visibility, and cell render metadata**
+- **schema also drives table order, physical-column behavior, visibility, and cell render metadata**
 
 ## 5. How table metadata is built
 
@@ -256,6 +262,21 @@ A practical reading takeaway is:
 
 - **TanStack owns the row-model mechanics**
 - **the controller still owns which data and columns TanStack sees**
+
+### Column metadata becomes TanStack and DOM behavior
+
+When `_createColumnsMiddle()` creates each surviving property column, it maps effective table metadata as follows:
+
+| Metadata             | Controller and render behavior                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------------------------- |
+| `rest.order`         | Orders properties during schema-property loading.                                                    |
+| `rest.width`         | Becomes the TanStack `size`; render beans apply pixel `width` and `min-width`.                       |
+| `rest.align`         | Remains in column metadata; render beans apply header/cell text alignment.                           |
+| `rest.fixed`         | Builds left/right TanStack pinning arrays; render beans use sticky positions and calculated offsets. |
+| `rest.enableSorting` | Enables sorting only when the field's key or aliases are also present in `schemaOrder`.              |
+| `rest.sortDescFirst` | Becomes TanStack's first-toggle direction.                                                           |
+
+The sorting gate is intentional: metadata can request sorting, but the order schema remains the contract that authorizes the field. The standard resource-page table is controlled and `manualSorting`; it does not locally reorder the fetched data.
 
 ## 7. Column and cell render context are explicitly separated
 
@@ -392,12 +413,12 @@ That contract defines:
 The decorator itself is:
 
 ```typescript
-createBeanDecorator('tableCell', 'sys', true, options);
+createBeanDecorator('tableCell', 'app', true, options);
 ```
 
-That means `tableCell` is not only a naming convention. It is a frontend bean scene with:
+That means `tableCell` is not only a naming convention. It is an app-scoped frontend bean scene with:
 
-- system-scoped resolution behavior
+- app-scoped reusable bean resolution
 - scene-level typing
 - CLI boilerplate support
 - metadata-driven resource identity
@@ -437,9 +458,12 @@ The default render bean lives in:
 zova/src/suite-vendor/a-zova/modules/a-table/src/component/table/render.tsx
 ```
 
-It does two important jobs:
+It does more than delegate vnode creation:
 
 - render the outer table markup with `<table class="table">`
+- apply effective column alignment, pixel width/minimum width, and fixed-column sticky positioning
+- calculate and apply left/right pinned-column offsets
+- render accessible sortable header buttons, `aria-sort`, and sort-state indicators when the controller exposes a sortable column
 - delegate header and cell vnode creation to TanStack `FlexRender`
 
 If `slotDefault` is supplied, the render bean yields to that slot instead of the built-in table DOM.
@@ -470,7 +494,8 @@ zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockTable/controll
 - loads `ModelResource`
 - creates page-level JSX/CEL environment
 - computes resource query state
-- exposes `data`, `schemaRow`, and `permissions`
+- exposes `data`, `schemaRow`, `schemaOrder`, and `permissions`
+- owns controlled table sorting and converts its single current sorting entry into backend `orders`
 - refreshes table metadata when permissions change
 
 ### Table block path
@@ -480,6 +505,8 @@ zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockTable/controll
 - renders `ZTable`
 - passes `data={$$page.data}`
 - passes `schema={$$page.schemaRow}`
+- passes `schemaOrder={$$page.schemaOrder}`
+- passes controlled `sorting` and `onSortingChange`
 - passes `tableScope={$$page.jsxCelScope}`
 - captures `controllerRef` and stores `tableRef` back onto the page controller
 
@@ -487,18 +514,22 @@ This is one of the most important integration facts about the module.
 
 The resource page does not manually rebuild the table runtime. It feeds page-owned resource state into the same reusable table controller.
 
+This section uses Cabloy Basic `basic-page` paths as the concrete resource-page specimen. The core `ZovaRender.column(...)` metadata contract and the base Zova Table controller behavior are shared by Cabloy Basic and Cabloy Start; resolve Start-specific page modules and renderer keys from the active Start repository.
+
 ## 14. Compact call-flow sketch
 
 When in doubt, use this short call flow:
 
-1. `ZTable` wrapper enters the normal Zova controller path
-2. `ControllerTable.__init__()` creates CEL/JSX support and schema-driven properties
-3. `refreshMeta()` computes visible table properties and per-column render functions
-4. `_createTable()` creates the TanStack bridge through `$useTable(...)`
-5. `RenderTable` renders headers and rows through `FlexRender`
-6. each cell render resolves to text fallback, a general render target, or a `tableCell` bean
-7. `tableCell` beans receive controller-prepared options, scope, and `next()`
-8. resource pages prepare `data`, `schemaRow`, `permissions`, and `tableScope` before entering the same runtime
+1. `ZovaRender.column(...)` contributes `rest.table` metadata to the backend/OpenAPI field contract
+2. `ZTable` wrapper enters the normal Zova controller path
+3. `ControllerTable.__init__()` creates CEL/JSX support and schema-driven properties
+4. `refreshMeta()` computes visible table properties, column pinning, and per-column render functions
+5. `_createTable()` creates the TanStack bridge through `$useTable(...)`
+6. `RenderTable` applies column metadata and renders headers and rows through `FlexRender`
+7. each cell render resolves to text fallback, a general render target, or a `tableCell` bean
+8. `tableCell` beans receive controller-prepared options, scope, and `next()`
+9. resource pages prepare `data`, `schemaRow`, `schemaOrder`, sorting state, permissions, and `tableScope` before entering the same runtime
+10. a resource-page sort becomes backend `orders`; TanStack does not locally sort the fetched page
 
 That is the shortest end-to-end explanation of how the module cooperates.
 
