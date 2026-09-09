@@ -6,11 +6,11 @@
 [![Docs](https://img.shields.io/badge/docs-cabloy-4f46e5.svg?style=flat-square)](https://cabloy.com)
 [![Demo](https://img.shields.io/badge/demo-cabloy.com-059669.svg?style=flat-square)](https://cabloy.com)
 
-Cabloy is a Node.js fullstack framework for AI vibe coding.
+Cabloy is a Node.js fullstack framework for AI vibe coding, with AI Spec-Driven Development for traceable, evidence-backed delivery.
 
-**One fullstack system for AI vibe coding—bidirectional type sync, CLI-first workflows, docs, and skills.**
+**One fullstack system for AI vibe coding—bidirectional type sync, CLI-first workflows, docs, skills, and traceable delivery from product intent to verifiable evidence.**
 
-Instead of stitching separate backend and frontend stacks together, Cabloy keeps their contracts, tooling, and guidance connected in one repository. Vona is its backend framework and runtime layer, and Zova is its frontend framework and application layer. Cabloy Basic and Cabloy Start are related, complete edition baselines built on that shared architecture; see [Editions Overview](https://cabloy.com/editions/overview) for their deliberate differences.
+Instead of stitching separate backend and frontend stacks together, Cabloy keeps their contracts, tooling, and guidance connected in one repository. [AI Spec-Driven Development](https://cabloy.com/ai/ai-spec-driven-development) provides the disciplined path from confirmed Specs to evidence-backed delivery; its precise engineering method is Traceable Spec Delivery. Vona is its backend framework and runtime layer, and Zova is its frontend framework and application layer. Cabloy Basic and Cabloy Start are related, complete edition baselines built on that shared architecture; see [Editions Overview](https://cabloy.com/editions/overview) for their deliberate differences.
 
 [Documentation](https://cabloy.com) · [npm](https://www.npmjs.com/package/cabloy) · [Web Demo](https://cabloy.com) · [Admin Demo](https://cabloy.com/admin) · [GitHub](https://github.com/cabloy/cabloy)
 
@@ -106,6 +106,7 @@ npm run upgrade
 - **Bidirectional type sync** — use the contract loop to keep backend contracts and frontend metadata aligned in both directions
 - **CLI-first workflows** — use explicit commands for scaffolding, generation, refactors, and verification
 - **Docs and skills** — give people and AI agents reusable, source-grounded guidance for the current repository
+- **AI Spec-Driven Development** — use Traceable Spec Delivery to connect product intent, contracts, bounded work, acceptance procedures, and verifiable evidence
 - **Vona + Zova** — use aligned backend and frontend layers for code sharing and cross-stack consistency
 - **Modular delivery** — organize capabilities as suites and modules, then deliver SSR, SPA, Web, and Admin applications with shared conventions
 

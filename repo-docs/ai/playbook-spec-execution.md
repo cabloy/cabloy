@@ -4,6 +4,8 @@ Use this playbook to deliver one approved Cabloy specification increment from a 
 
 The `cabloy-spec-execution` skill is a control plane. It coordinates an approved increment and its specialist workflow; it is not a second product authority, architecture authority, or code generator.
 
+This playbook is the execution half of [AI Spec-Driven Development](/ai/ai-spec-driven-development). It operationalizes Traceable Spec Delivery for one bounded increment; it does not redefine upstream authority or make Contract Loop synchronization sufficient evidence of verification.
+
 ## When to use this playbook
 
 Use `cabloy-spec-execution` when you need to:

@@ -47,6 +47,7 @@ Read this guide together with:
 - [DTO Infer and Generation](/backend/dto-infer-generation)
 - [Validation Guide](/backend/validation-guide)
 - [OpenAPI Guide](/backend/openapi-guide)
+- [Semantic Presentation Contract](/fullstack/semantic-presentation-contract) for the boundary between an operation DTO and its presentation translation
 
 ## `@Api.field`
 

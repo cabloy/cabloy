@@ -4,6 +4,8 @@ Use this playbook to create or maintain the repository-native planning record fo
 
 A specification establishes product intent, technical contracts, delivery structure, acceptance procedures, and decision history. It does **not** prove that implementation, generated artifacts, tests, or acceptance evidence already exist.
 
+This playbook is the planning half of [AI Spec-Driven Development](/ai/ai-spec-driven-development). That overview defines Cabloy's Traceable Spec Delivery model; this page remains the operational authority for creating and maintaining suite planning records.
+
 ## When to use this playbook
 
 Use `cabloy-spec-generation` when you need to:

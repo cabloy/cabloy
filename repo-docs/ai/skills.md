@@ -48,6 +48,6 @@ Current examples include:
 - `cabloy-resource-field-update` for updating an existing backend resource field thread
 - `cabloy-module-removal` for removing a backend, frontend, or fullstack module cleanly, including generated-runtime cleanup, stale-residue recovery, and verification
 
-The specification workflows show the same boundary: [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution) explain the durable public workflow, while the skills retain the branching, confirmation gates, specialist routing, and evidence protocol.
+The specification workflows show the same boundary: [AI Spec-Driven Development](/ai/ai-spec-driven-development) explains the public Traceable Spec Delivery method, while [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution) explain its operational paths. The skills retain branching, confirmation gates, specialist routing, and evidence protocol; suite-local records remain the authority for a specific increment.
 
 The module-removal workflow is a good example of why skills belong in `.claude/skills/` instead of `CLAUDE.md`: the task needs branching, cleanup order, recovery guidance for generated runtime directories such as `vona/.vona` and `zova/.zova`, and a verification checklist that would be too large for a short repo-wide rule.

@@ -2,7 +2,7 @@
 
 This page is for docs, skills, and workflow authors who need to decide where Cabloy AI guidance should live.
 
-This page explains how the Cabloy AI knowledge system is divided across public docs, skills, rules, and CLI capabilities.
+This page explains how the Cabloy AI knowledge system is divided across public docs, suite-local authority records, skills, rules, and CLI capabilities.
 
 ## Why this mapping matters
 
@@ -16,7 +16,7 @@ Without a clear mapping, AI systems and contributors repeat the same mistakes:
 
 The goal is to give each layer a distinct job.
 
-## The four main layers
+## The five main layers
 
 ### 1. Public docs
 
@@ -38,7 +38,21 @@ Public docs answer questions like:
 - how does Zova page or model architecture work?
 - what is different between Cabloy Basic and Cabloy Start?
 
-### 2. Internal engineering docs
+### 2. Suite-local authority records
+
+Location:
+
+- `repo-specs/<suite>/`
+
+Use suite records for the authority that governs one business suite:
+
+- product requirements and system requirements
+- WBS delivery boundaries and ATP procedures
+- accepted decisions, observed evidence, and derived progress
+
+[AI Spec-Driven Development](/ai/ai-spec-driven-development) explains how these domain-scoped records form Traceable Spec Delivery. Public docs explain the method; they do not replace suite authority.
+
+### 3. Internal engineering docs
 
 Location:
 
@@ -57,7 +71,7 @@ Relevant internal records answer questions like:
 - why is AI enablement structured this way?
 - what invariants should future contributors preserve?
 
-### 3. Rules and commands
+### 4. Rules and commands
 
 Locations:
 
@@ -81,7 +95,7 @@ These layers answer questions like:
 - when should CLI be preferred over manual scaffolding?
 - what recurring workflow deserves a named command?
 
-### 4. Skills
+### 5. Skills
 
 Location:
 
@@ -105,6 +119,7 @@ Skills answer questions like:
 Use this quick rule:
 
 - if people and agents both need to read and understand it, put it in **public docs**
+- if it is product, contract, delivery, ATP, decision, or observed-evidence authority for one suite, use `repo-specs/<suite>/`
 - if it is maintainer rationale or long-lived design history, use `repo-docs-internal/`; shared guidance remains complete without any particular internal record
 - if it is short repo-wide behavioral guidance, put it in **CLAUDE.md**
 - if it is a named repeatable operator action, put it in a **command**
@@ -167,6 +182,7 @@ Use this quick rule:
 
 ### Example: “How should AI create or maintain a repository-native suite specification?”
 
+- public method overview → [AI Spec-Driven Development](/ai/ai-spec-driven-development)
 - public workflow explanation → [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation)
 - procedural planning, confirmation, traceability, and chart-refresh behavior → `cabloy-spec-generation`
 - suite-specific PRD, SRS, WBS, ATP, ADR, progress, and observed evidence authority → `repo-specs/<suite>/`
@@ -175,6 +191,7 @@ Use this quick rule:
 
 ### Example: “How should AI deliver an approved suite task?”
 
+- public method overview → [AI Spec-Driven Development](/ai/ai-spec-driven-development)
 - public workflow explanation → [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution)
 - bounded-WBS coordination, readiness gates, evidence, and derived-status behavior → `cabloy-spec-execution`
 - source implementation → the relevant backend, frontend, contract-loop, or shape-specific skill

@@ -1,8 +1,8 @@
 # Fullstack Introduction
 
-Cabloy is a Node.js fullstack framework for AI vibe coding.
+Cabloy is a Node.js fullstack framework for AI vibe coding, with AI Spec-Driven Development for traceable, evidence-backed delivery.
 
-**One fullstack system for AI vibe coding—bidirectional type sync, CLI-first workflows, docs, and skills.**
+**One fullstack system for AI vibe coding—bidirectional type sync, CLI-first workflows, docs, skills, and traceable delivery from product intent to verifiable evidence.**
 
 Instead of stitching separate backend and frontend stacks together, Cabloy keeps their contracts, tooling, and guidance connected in one repository. Vona, Zova, and suite-based modules are the aligned architecture behind that workflow.
 
@@ -12,6 +12,7 @@ Instead of stitching separate backend and frontend stacks together, Cabloy keeps
 - **Bidirectional type sync** — use the contract loop to keep backend contracts and frontend metadata aligned in both directions
 - **CLI-first workflows** — use explicit commands for scaffolding, generation, refactors, and verification
 - **Docs and skills** — give people and AI agents reusable, source-grounded guidance for the current repository
+- **AI Spec-Driven Development** — use Traceable Spec Delivery to connect product intent, contracts, bounded work, acceptance procedures, and verifiable evidence
 - **Vona + Zova** — use aligned backend and frontend layers for code sharing and cross-stack consistency
 - **Modular delivery** — organize capabilities as suites and modules, then deliver SSR, SPA, Web, and Admin applications with shared conventions
 
@@ -45,6 +46,7 @@ Use this path when the task is about how backend and frontend stay aligned insid
 - [Framework Performance](/fullstack/framework-performance)
 - [Vona + Zova Integration](/fullstack/vona-zova-integration)
 - [Contract Loop Playbook](/fullstack/contract-loop-playbook)
+- [Semantic Presentation Contract](/fullstack/semantic-presentation-contract)
 - [Admin Resource and Web Self-Service](/fullstack/admin-resource-and-web-self-service)
 - [Backend Metadata to Frontend Table Actions](/fullstack/backend-metadata-to-frontend-table-actions)
 - [Fullstack Image Workflow](/fullstack/image-workflow)
@@ -70,6 +72,14 @@ Cabloy coordinates its backend and frontend layers as one fullstack system:
 Cabloy Basic and Cabloy Start are related, complete edition baselines built on this shared architecture, not alternatives to the Vona and Zova layers. They intentionally compose UI, flavors, modules, SSR sites, and project assets differently. See [Editions Overview](/editions/overview) for the complete relationship and edition differences.
 
 This combination keeps backend and frontend development close enough for code sharing, workflow reuse, and AI vibe coding workflows.
+
+## Traceable delivery and contract synchronization
+
+[AI Spec-Driven Development](/ai/ai-spec-driven-development) governs how confirmed product intent becomes contracts, bounded WBS work, acceptance procedures, and evidence-backed status. Its precise engineering method is Traceable Spec Delivery.
+
+The [Contract Loop](/fullstack/contract-loop-playbook) is complementary rather than interchangeable: it synchronizes Vona↔Zova contract sources, generated handoffs, and consumers when an approved increment crosses the fullstack contract boundary. A completed synchronization does not establish product authority or close ATP evidence.
+
+When an approved scene needs schema-driven presentation, use the [Semantic Presentation Contract](/fullstack/semantic-presentation-contract) to translate audience, task, scene, and DTO boundaries into renderer decisions without changing security or ownership authority.
 
 ## Cabloy fullstack framework principles
 

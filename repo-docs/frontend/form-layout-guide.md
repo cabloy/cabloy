@@ -9,6 +9,8 @@ This guide covers the **structural** layout contract authored in DTO metadata an
 
 ## Choose the layout from the business form
 
+Before selecting Form Layout nodes or renderers, define the scene's audience, task, meaningful information areas, and operation-specific contract boundary. See [Semantic Presentation Contract](/fullstack/semantic-presentation-contract).
+
 Start with the user's task, information hierarchy, and audience—not with the available layout node types or the number of fields. The generated CRUD layout is a valid baseline to review and refine, not a requirement to preserve unchanged.
 
 Choose the smallest structure that communicates the business form:
@@ -30,7 +32,7 @@ When the business grouping is unknown, keep the simpler layout or clarify the gr
 
 ## The layout layers are different
 
-Several APIs contain the word “layout,” but they own different concerns:
+Several APIs contain the word “layout,” but they own different concerns. Presentation metadata translates an already authorized scene contract; it does not define API membership, persistence, validation, authorization, page/state ownership, or SSR privacy:
 
 | Surface                                        | Owns                                                                                                           | Does not own                                              |
 | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
@@ -377,7 +379,7 @@ Here `formFieldLayout.inline: true` controls how each field wrapper is presented
 
 ## Authoring checklist
 
-1. Identify the audience, task, and meaningful field groupings for the operation-specific DTO before choosing a structural tree.
+1. Use the [Semantic Presentation Contract](/fullstack/semantic-presentation-contract) to identify the audience, task, scene, meaningful information areas, and operation-specific DTO boundary before choosing a structural tree.
 2. Start with DTO or resource metadata; do not hand-patch generated `.zova-rest` artifacts.
 3. Use no structural layout when schema order is sufficient. Otherwise use the smallest layout that communicates the business structure; reserve tabs for genuinely separate business domains or workflows.
 4. Use `formLayout` when the requirement is field placement, Grid or flow structure, groups, or tabs.

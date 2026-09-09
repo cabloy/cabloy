@@ -35,7 +35,7 @@ This is more reliable than copying old file structures from examples without und
 - use `repo-docs-internal/` for supporting maintainer rationale
 - continue from public docs, rules, skills, source, and tests when a specific internal record is unavailable or irrelevant; do not create a replacement document implicitly
 
-For planning work, read the suite README, PRD, SRS, WBS, test plan, and progress records in the order appropriate to the task. `cabloy-spec-generation` maintains planning authority; `cabloy-spec-execution` acts only on a confirmed, bounded WBS increment. Both require active-source and edition discovery before topology or command claims.
+For planning work, read the suite README, PRD, SRS, WBS, test plan, and progress records in the order appropriate to the task. [AI Spec-Driven Development](/ai/ai-spec-driven-development) explains the public Traceable Spec Delivery method; the suite records retain product, technical, delivery, acceptance, and evidence authority. `cabloy-spec-generation` maintains planning authority; `cabloy-spec-execution` acts only on a confirmed, bounded WBS increment. Both require active-source and edition discovery before topology or command claims.
 
 ## 4. Treat edition detection as mandatory for UI-sensitive work
 

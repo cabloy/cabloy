@@ -13,6 +13,7 @@ const editionsItems = [
 
 const aiItems = [
   { text: 'Introduction', link: '/ai/introduction' },
+  { text: 'AI Spec-Driven Development', link: '/ai/ai-spec-driven-development' },
   { text: 'Repo Guidance', link: '/ai/repo-guidance' },
   { text: 'Skills', link: '/ai/skills' },
   { text: 'Class Placement Rule', link: '/ai/class-placement-rule' },
@@ -104,6 +105,7 @@ const fullstackGroups = [
         link: '/fullstack/payment-sandbox-configuration',
       },
       { text: 'Contract Loop Playbook', link: '/fullstack/contract-loop-playbook' },
+      { text: 'Semantic Presentation Contract', link: '/fullstack/semantic-presentation-contract' },
       {
         text: 'Admin Resource and Web Self-Service',
         link: '/fullstack/admin-resource-and-web-self-service',

@@ -4,7 +4,7 @@ layout: home
 hero:
   name: 'Cabloy'
   text: 'Node.js fullstack framework for AI vibe coding'
-  tagline: One fullstack system for AI vibe coding—bidirectional type sync, CLI-first workflows, docs, and skills.
+  tagline: One fullstack system for AI vibe coding—bidirectional type sync, CLI-first workflows, and Traceable Spec Delivery from product intent to verifiable evidence.
   actions:
     - theme: brand
       text: Get Started
@@ -13,8 +13,8 @@ hero:
       text: Editions
       link: /editions/overview
     - theme: alt
-      text: AI Development
-      link: /ai/introduction
+      text: AI Spec-Driven Development
+      link: /ai/ai-spec-driven-development
 
 features:
   - title: One fullstack system
@@ -25,6 +25,8 @@ features:
     details: Use explicit commands for scaffolding, generation, refactors, and verification.
   - title: Docs and skills
     details: Give people and AI agents reusable, source-grounded guidance for the current repository.
+  - title: AI Spec-Driven Development
+    details: Connect confirmed product intent to contracts, bounded delivery, acceptance procedures, and verifiable evidence.
   - title: Vona + Zova
     details: Use aligned backend and frontend layers for code sharing and cross-stack consistency.
   - title: Modular delivery
@@ -33,9 +35,9 @@ features:
 
 # Cabloy Documentation
 
-Cabloy is a Node.js fullstack framework for AI vibe coding. It brings backend and frontend work into one system, with bidirectional type sync, CLI-first workflows, and source-grounded docs and skills for people and AI agents.
+Cabloy is a Node.js fullstack framework for AI vibe coding, with AI Spec-Driven Development for traceable, evidence-backed delivery. It brings backend and frontend work into one system, with bidirectional type sync, CLI-first workflows, and source-grounded docs and skills for people and AI agents.
 
-Start with the [Contract Loop Playbook](/fullstack/contract-loop-playbook) to understand bidirectional type sync, then use the [Fullstack CLI](/fullstack/cli) and [AI Development](/ai/introduction) guides to follow the current repository. Cabloy coordinates Vona and Zova as its backend and frontend layers, while Cabloy Basic and Cabloy Start are related, complete edition baselines built on that shared architecture. See [Editions Overview](/editions/overview) for the relationship and deliberate edition differences.
+[AI Spec-Driven Development](/ai/ai-spec-driven-development) adds Cabloy's disciplined delivery path: **Traceable Spec Delivery** connects confirmed product intent to contracts, bounded work, acceptance procedures, and verifiable evidence. Start with the [Contract Loop Playbook](/fullstack/contract-loop-playbook) to understand bidirectional type sync, then use the [Fullstack CLI](/fullstack/cli) and [AI Development](/ai/introduction) guides to follow the current repository. Cabloy coordinates Vona and Zova as its backend and frontend layers, while Cabloy Basic and Cabloy Start are related, complete edition baselines built on that shared architecture. See [Editions Overview](/editions/overview) for the relationship and deliberate edition differences.
 
 ## What you can do here
 
@@ -44,7 +46,8 @@ Start with the [Contract Loop Playbook](/fullstack/contract-loop-playbook) to un
 - **Explore backend and frontend workflows** without losing the cross-stack picture
 - **Understand Cabloy’s performance philosophy and runtime stability story** with [Framework Performance](/fullstack/framework-performance)
 - **See how Cabloy Basic and Cabloy Start differ by edition** when UI assumptions, flavors, modules, SSR sites, or AI workflow guidance matter
-- **Follow source-grounded AI vibe coding guidance** for prompting, workflow selection, and verification
+- **Follow AI Spec-Driven Development** from confirmed product intent to evidence-backed verification
+- **Use source-grounded AI vibe coding guidance** for prompting, workflow selection, and verification
 
 ## First reading path
 
@@ -62,8 +65,9 @@ Start with the [Contract Loop Playbook](/fullstack/contract-loop-playbook) to un
 2. [Fullstack CLI](/fullstack/cli)
 3. [VS Code Extensions](/fullstack/vscode-extensions)
 4. [AI Development Introduction](/ai/introduction)
-5. [Reference Introduction](/reference/introduction)
-6. [Editions Overview](/editions/overview)
+5. [AI Spec-Driven Development](/ai/ai-spec-driven-development)
+6. [Reference Introduction](/reference/introduction)
+7. [Editions Overview](/editions/overview)
 
 ### For performance-oriented reading
 

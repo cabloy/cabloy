@@ -2,6 +2,8 @@
 
 This page is the canonical playbook for Cabloy’s bidirectional fullstack contract loop.
 
+[AI Spec-Driven Development](/ai/ai-spec-driven-development) defines what an approved increment should build and how it is proven. Contract Loop is its complementary synchronization mechanism: it aligns Vona↔Zova contract sources, generated handoffs, and consumers, but does not create suite authority or establish ATP evidence.
+
 Use it when you need to decide:
 
 - where source truth lives for a change
@@ -361,6 +363,8 @@ Use the tutorial series as examples of the two chains:
 ## Related docs
 
 - [Fullstack Introduction](/fullstack/introduction)
+- [AI Spec-Driven Development](/ai/ai-spec-driven-development)
+- [Semantic Presentation Contract](/fullstack/semantic-presentation-contract)
 - [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
 - [Existing Resource Field Update](/backend/resource-field-update)
 - [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend)

@@ -74,7 +74,7 @@ The same emitted metadata has coordinated but distinct consumers:
 
 For the form-derived scenes `form-view`, `form-create`, and `filter`, a field's base `rest` metadata is followed by the shared `rest.form` overlay and then the exact scene overlay. This lets one contract describe common form behavior while still declaring a create- or filter-specific exception.
 
-The end-to-end rule is therefore not “the frontend hides a field.” Vona uses the DTO contract to sanitize read-only request input, while Zova uses compatible metadata to render the relevant scene. See [DTO Guide](/backend/dto-guide) for declaring a DTO scene, [Validation Guide](/backend/validation-guide) for server-side readonly handling, [OpenAPI Runtime Under the Hood](/frontend/a-openapi-under-the-hood) for Zova schema loading, and [Form Scene to Page Meta Guide](/frontend/form-scene-to-page-meta-guide) for frontend form-scene flow.
+The end-to-end rule is therefore not “the frontend hides a field.” Vona uses the DTO contract to sanitize read-only request input, while Zova uses compatible metadata to render the relevant scene. See [DTO Guide](/backend/dto-guide) for declaring a DTO scene, [Semantic Presentation Contract](/fullstack/semantic-presentation-contract) for the authority boundary behind presentation translation, [Validation Guide](/backend/validation-guide) for server-side readonly handling, [OpenAPI Runtime Under the Hood](/frontend/a-openapi-under-the-hood) for Zova schema loading, and [Form Scene to Page Meta Guide](/frontend/form-scene-to-page-meta-guide) for frontend form-scene flow.
 
 ## Controllers, DTOs, entities, and examples all contribute
 

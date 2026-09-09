@@ -2,6 +2,8 @@
 
 This page is the entrypoint for contributors who are designing, reviewing, or maintaining AI vibe coding workflows in the Cabloy repository.
 
+For work that must move from confirmed product intent to evidence-backed verification, use [AI Spec-Driven Development](/ai/ai-spec-driven-development). It is a disciplined specification-delivery path within AI Development, not a synonym for every AI vibe coding workflow.
+
 The Cabloy monorepo is a good fit for AI vibe coding because the source tree already contains most of the framework knowledge an agent needs:
 
 - root scripts for shared workflows
@@ -68,8 +70,9 @@ Start here when the task is about choosing the right repo surface, docs location
 
 ### Specification planning and delivery path
 
-Use this path to establish suite authority before implementation, then deliver one approved, bounded WBS increment with evidence-backed status:
+Use this path to understand [AI Spec-Driven Development](/ai/ai-spec-driven-development), establish suite authority before implementation, then deliver one approved, bounded WBS increment with evidence-backed status:
 
+- [AI Spec-Driven Development](/ai/ai-spec-driven-development)
 - [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation)
 - [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution)
 - [Skills](/ai/skills)

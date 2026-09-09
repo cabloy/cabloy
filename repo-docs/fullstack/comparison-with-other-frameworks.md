@@ -1,6 +1,6 @@
 # Comparison with Other Frameworks
 
-This page shows how **Cabloy** differs from several common framework choices, focusing on its one fullstack system for AI vibe coding: bidirectional type sync, CLI-first workflows, and source-grounded docs and skills. It also distinguishes strengths of the fullstack system from those of the backend layer provided by **Vona**.
+This page shows how **Cabloy** differs from several common framework choices, focusing on its one fullstack system for AI vibe coding: bidirectional type sync, CLI-first workflows, source-grounded docs and skills, and AI Spec-Driven Development. It also distinguishes strengths of the fullstack system from those of the backend layer provided by **Vona**.
 
 ## What is being compared
 
@@ -15,6 +15,7 @@ For the broader Cabloy model, start with these pages:
 - [Vona + Zova Integration](/fullstack/vona-zova-integration)
 - [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
 - [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend)
+- [AI Spec-Driven Development](/ai/ai-spec-driven-development)
 
 ## Comparison lens
 
@@ -25,6 +26,7 @@ The sections below use the same comparison lens each time:
 - **Frontend and admin model** — how the UI side is expected to evolve
 - **Cross-stack workflow** — how bidirectional type sync, contracts, and generation workflows stay aligned
 - **Guidance and automation** — how CLI-first workflows, docs, and skills make repository conventions reusable
+- **Traceable delivery** — how a repository can connect requirements, contracts, bounded work, acceptance procedures, and evidence
 - **Best fit** — the kind of team or project the framework fits most naturally
 
 ## Cabloy vs Next.js
@@ -35,7 +37,7 @@ The sections below use the same comparison lens each time:
 | Backend model            | Dedicated backend framework with its own runtime, contracts, infrastructure, and CLI workflows | Backend capabilities are typically centered around the web app runtime |
 | Frontend and admin model | Shared conventions across SSR, SPA, Web, and Admin applications                                | Strong fit for React-based web application delivery                    |
 | Cross-stack workflow     | Bidirectional type sync through OpenAPI, SDK generation, and metadata feedback loops           | Usually chosen per project or ecosystem tooling                        |
-| Guidance and automation  | CLI-first workflows plus source-grounded docs and skills                                       | Usually chosen per project or ecosystem tooling                        |
+| Guidance and automation  | CLI-first workflows, source-grounded docs and skills, and Traceable Spec Delivery              | Usually chosen per project or ecosystem tooling                        |
 | Best fit                 | Teams that want a coordinated fullstack system with a stronger dedicated backend layer         | Teams that want a React-centered fullstack web application path        |
 
 Cabloy and Next.js both target fullstack application development, but they organize the stack differently.
@@ -48,6 +50,7 @@ Representative Cabloy strengths in this comparison include:
 - bidirectional type sync through backend OpenAPI output, frontend SDK generation, and frontend metadata feedback loops
 - CLI-first workflows for scaffolding, generation, refactors, and verification
 - source-grounded docs and skills that make repository conventions reusable for people and AI agents
+- AI Spec-Driven Development: a repository-native Traceable Spec Delivery model that connects requirements, contracts, bounded work, acceptance procedures, and observed evidence
 - shared delivery conventions for SSR, SPA, Web, and Admin applications
 
 If your main goal is a React-centered fullstack web app, Next.js may feel more direct. If your main goal is a **coordinated fullstack framework system** with a stronger backend layer and explicit cross-stack workflows, Cabloy is the better fit.
@@ -117,6 +120,7 @@ These comparisons are most useful when your decision depends on questions like:
 - do you want one coordinated framework system instead of stitching backend and frontend frameworks together?
 - do you need bidirectional type sync through an explicit contract loop?
 - do you want CLI-first workflows, source-grounded docs, and skills that make repository conventions reusable?
+- do you want a disciplined, evidence-aware specification-delivery model in the repository?
 - do you need a stronger dedicated backend layer inside a fullstack architecture?
 - do you need shared conventions across SSR, SPA, Web, and Admin delivery modes?
 - do you want Django-Admin-like rapid admin development inside the Node.js ecosystem, but with a more modern frontend and interaction model?
