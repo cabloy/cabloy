@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.163
+
+### Improvements
+
+- Update the Basic homepage end-to-end assertion.
+
 ## 5.1.162
 
 ### Features
