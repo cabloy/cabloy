@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.1.162
+
+### Features
+
+- Add a home prompt capability.
+- Document Vona integrated SSR and Zova standalone SSR support.
+
+### Improvements
+
+- Update AI spec-driven development, playbook specification generation, and Cabloy Editions documentation.
+- Refresh the README, quickstart guide, skills documentation, and configuration.
+- Update dependencies and the pnpm lockfile.
+
 ## 5.1.161
 
 ### Bug Fixes
