@@ -32,6 +32,9 @@
     "prepack": "clean-package",
     "postpack": "clean-package restore"
   },
+  "dependencies": {
+    "zova-module-home-base": "^5.0.0"
+  },
   "devDependencies": {
     "clean-package": "^2.2.0",
     "rimraf": "^6.1.3"

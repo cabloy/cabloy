@@ -67,6 +67,7 @@ declare module 'zova' {
 /** controller: begin */
 export * from '../component/itemLink/controller.jsx';
 export * from '../component/page/controller.jsx';
+export * from '../component/siteEntryTables/controller.jsx';
 export * from '../page/authCallback/controller.jsx';
 export * from '../page/errorAccessDenied/controller.jsx';
 export * from '../page/errorExpired/controller.jsx';
@@ -85,6 +86,11 @@ declare module 'zova-module-home-base' {
         }
 
         export interface ControllerPage {
+          /** @internal */
+          get scope(): ScopeModuleHomeBase;
+        }
+
+        export interface ControllerSiteEntryTables {
           /** @internal */
           get scope(): ScopeModuleHomeBase;
         }
@@ -113,6 +119,7 @@ declare module 'zova-module-home-base' {
 /** controller: begin */
 import { ControllerItemLink } from '../component/itemLink/controller.jsx';
 import { ControllerPage } from '../component/page/controller.jsx';
+import { ControllerSiteEntryTables } from '../component/siteEntryTables/controller.jsx';
 import { ControllerPageAuthCallback } from '../page/authCallback/controller.jsx';
 import { ControllerPageErrorAccessDenied } from '../page/errorAccessDenied/controller.jsx';
 import { ControllerPageErrorExpired } from '../page/errorExpired/controller.jsx';
@@ -122,6 +129,7 @@ declare module 'zova' {
   export interface IBeanRecordLocal {
     'home-base.controller.itemLink': ControllerItemLink;
 'home-base.controller.page': ControllerPage;
+'home-base.controller.siteEntryTables': ControllerSiteEntryTables;
 'home-base.controller.pageAuthCallback': ControllerPageAuthCallback;
 'home-base.controller.pageErrorAccessDenied': ControllerPageErrorAccessDenied;
 'home-base.controller.pageErrorExpired': ControllerPageErrorExpired;
@@ -176,19 +184,24 @@ export * from './component/itemLink.js';
 import { ZItemLink } from './component/itemLink.js';
 export * from './component/page.js';
 import { ZPage } from './component/page.js';
+export * from './component/siteEntryTables.js';
+import { ZSiteEntryTables } from './component/siteEntryTables.js';
 export const components = {
   'itemLink': ZItemLink,
 'page': ZPage,
+'siteEntryTables': ZSiteEntryTables,
 };
 import 'zova';
 declare module 'zova' {
 export interface IComponentRecord {
   'home-base:itemLink': ControllerItemLink;
 'home-base:page': ControllerPage;
+'home-base:siteEntryTables': ControllerSiteEntryTables;
 }
 export interface IZovaComponentRecord {
   'home-base:itemLink': typeof ZItemLink;
 'home-base:page': typeof ZPage;
+'home-base:siteEntryTables': typeof ZSiteEntryTables;
 }
 }
 /** components: end */
