@@ -32,14 +32,9 @@ The generated project already includes `CLAUDE.md` and the `.claude/` workspace 
 
 Cabloy Start is the public MIT-licensed edition maintained in its own repository. Instead of `npm create cabloy`, clone its public repository directly and run `npm run init`. Then use the frontend commands provided by that edition. Do not assume the Cabloy Basic flavor names apply to Cabloy Start.
 
-For the full Start onboarding and initialization flow, read [Cabloy Start](/editions/cabloy-start).
+For the Start onboarding distinction, read [Cabloy Editions: Cabloy Start](/editions/overview#cabloy-start).
 
-If you are not sure which edition you are using or which one to choose, read:
-
-- [Choosing Between Cabloy Basic and Cabloy Start](/editions/choosing-between-basic-and-start)
-- [Edition Detection](/editions/detection)
-- [Cabloy Basic](/editions/cabloy-basic)
-- [Cabloy Start](/editions/cabloy-start)
+If you are not sure which edition you are using or which one to choose, read [Cabloy Editions](/editions/overview).
 
 ### pnpm 11 supply-chain protection note
 

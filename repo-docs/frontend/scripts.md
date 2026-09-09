@@ -16,7 +16,7 @@ A practical rule is:
 2. then choose the correct script, flavor, and appMode path
 3. only then document or automate edition-specific frontend examples
 
-For the edition-detection workflow, also see [Edition Detection](/editions/detection).
+For the edition-detection workflow, see [Cabloy Editions: For AI Development](/editions/overview#for-ai-development).
 
 ## Cabloy Basic root wrappers
 

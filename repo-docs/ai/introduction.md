@@ -95,7 +95,7 @@ Use this path when the task is about implementing or reviewing Cabloy code with 
 
 Use this path when the task is about consistency checks, verification, or future workflow planning:
 
-- [Edition Detection](/ai/edition-detection)
+- [Cabloy Editions: For AI Development](/editions/overview#for-ai-development)
 - [Edition Consistency Checklist](/ai/edition-consistency-checklist)
 - [Verification](/ai/verification)
 - [Future Skill Roadmap](/ai/future-skill-roadmap)

@@ -21,7 +21,7 @@ npm run init
 
 `npm run init` is more than a package install: it installs multiple workspaces, prepares generated local configuration, initializes and synchronizes Vona and Zova, and generates required frontend and backend artifacts. Run it intentionally rather than as a retry for an unrelated narrow change.
 
-Current CI workflows run on Ubuntu with Node.js 24 after pushes to `main`; do not assume that every pull request is automatically validated. For maintained onboarding guidance, see [Cabloy Basic](https://cabloy.com/editions/cabloy-basic).
+Current CI workflows run on Ubuntu with Node.js 24 after pushes to `main`; do not assume that every pull request is automatically validated. For maintained edition and onboarding guidance, see [Cabloy Editions](https://cabloy.com/editions/overview#cabloy-basic).
 
 ## Develop and validate
 

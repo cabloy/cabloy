@@ -129,7 +129,7 @@ Use this quick rule:
 
 ### Example: “Always detect Basic vs Start before giving UI-sensitive advice”
 
-- public explanation → [AI Edition Detection](/ai/edition-detection)
+- public explanation → [Cabloy Editions: For AI Development](/editions/overview#for-ai-development)
 - consistency review surface → [Edition Consistency Checklist](/ai/edition-consistency-checklist)
 - repo-wide behavior rule → `CLAUDE.md`
 - procedural enforcement → `cabloy-workflow` skill

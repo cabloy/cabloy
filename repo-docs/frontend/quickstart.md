@@ -33,11 +33,7 @@ That matters because edition choice affects:
 - project assets and examples
 - which examples in the docs match the current repo directly
 
-Read together with:
-
-- [Edition Detection](/editions/detection)
-- [Cabloy Basic](/editions/cabloy-basic)
-- [Cabloy Start](/editions/cabloy-start)
+Read together with [Cabloy Editions](/editions/overview#working-in-an-existing-checkout).
 
 ## Step 2: start from root scripts
 
@@ -203,9 +199,7 @@ Read next:
 
 ### I need edition-sensitive guidance
 
-- [Edition Detection](/editions/detection)
-- [Cabloy Basic](/editions/cabloy-basic)
-- [Cabloy Start](/editions/cabloy-start)
+- [Cabloy Editions](/editions/overview#working-in-an-existing-checkout)
 - [Frontend Scripts](/frontend/scripts)
 
 ### I want the broader frontend architecture story

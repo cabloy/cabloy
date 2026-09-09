@@ -1,150 +1,81 @@
-# Editions Overview
+# Cabloy Editions
 
-This page is the editions hub for deciding which Cabloy baseline you are working with and which assumptions should follow from that choice.
+Cabloy is available through two complete project baselines: Cabloy Basic and Cabloy Start. Both use the same Cabloy fullstack direction—Vona for the backend framework and runtime layer, Zova for the frontend framework and application layer—but intentionally provide different default application baselines.
 
-Cabloy currently supports two related but distinct editions:
+## At a glance
 
-- **Cabloy Basic**
-- **Cabloy Start**
+| Edition      | Repository                                                               | License                                                         | Default path                                  | UI layer               |
+| ------------ | ------------------------------------------------------------------------ | --------------------------------------------------------------- | --------------------------------------------- | ---------------------- |
+| Cabloy Basic | [github.com/cabloy/cabloy](https://github.com/cabloy/cabloy)             | [MIT](https://github.com/cabloy/cabloy/blob/main/LICENSE)       | `npm create cabloy`                           | DaisyUI + Tailwind CSS |
+| Cabloy Start | [github.com/cabloy/cabloy-start](https://github.com/cabloy/cabloy-start) | [MIT](https://github.com/cabloy/cabloy-start/blob/main/LICENSE) | Clone the repository, then run `npm run init` | Vuetify                |
 
-They share one Cabloy fullstack architecture, but they are composed and optimized differently.
+Both editions share Vona + Zova, suite-based modular delivery, CLI-first workflows, bidirectional type synchronization, and coordinated SSR application delivery. Their UI layer, frontend flavors, suites and modules, SSR site baselines, project assets, generated outputs, root scripts, and onboarding paths can differ.
 
-## How the names fit together
+## Comparison
 
-| Name         | Functional role                                                                   |
-| ------------ | --------------------------------------------------------------------------------- |
-| Cabloy       | The coordinated Node.js fullstack system.                                         |
-| Vona         | Cabloy's backend framework and runtime layer.                                     |
-| Zova         | Cabloy's frontend framework and application layer.                                |
-| Cabloy Basic | The public reference and community edition baseline.                              |
-| Cabloy Start | The public MIT-licensed business-system edition baseline in a sibling repository. |
+**Legend:** ✅ Included in the default edition baseline · — Not included in the default edition baseline
 
-Vona and Zova answer the architectural-layer question. Cabloy Basic and Cabloy Start answer the complete-edition-baseline question: both use the shared Cabloy architecture, but their UI, frontend flavors, modules, SSR baselines, project assets, generated outputs, root scripts, and onboarding paths can differ.
+### Included core capabilities
 
-If you need a recommendation path, start with [Choosing Between Cabloy Basic and Cabloy Start](/editions/choosing-between-basic-and-start).
+| Capability           | Description                                                                       | Cabloy Basic | Cabloy Start |
+| -------------------- | --------------------------------------------------------------------------------- | ------------ | ------------ |
+| Master–detail forms  | Supports nested master–detail forms, including multiple levels of detail records. | ✅           | ✅           |
+| Image uploads        | Supports local storage and Cloudflare storage backends.                           | ✅           | ✅           |
+| File uploads         | Supports local storage and Cloudflare storage backends.                           | ✅           | ✅           |
+| Payment integrations | Demonstrates simulated payments, PayPal, and Stripe integrations.                 | ✅           | ✅           |
+| Markdown editor      | Includes image uploads and syntax highlighting.                                   | ✅           | ✅           |
 
-## How to approach editions work
+### Included demonstration suites
 
-For contributor and automation workflows in this repository, prefer this order:
+| Suite                       | What it demonstrates                                                                                                                       | Cabloy Basic | Cabloy Start |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------ | ------------ |
+| Student Training Management | Master–detail forms, nested detail records, image uploads, and file uploads. Cabloy Start additionally demonstrates data-scope-based RBAC. | ✅           | ✅           |
+| E-commerce                  | A complete Admin site, Web site, personal center, payment flows, Markdown editing, and related capabilities.                               | ✅           | —            |
+| System Management           | User management, role management, department management, RBAC authorization, and menu authorization.                                       | —            | ✅           |
 
-1. identify the active edition before making UI-sensitive, flavor-sensitive, module-sensitive, or asset-sensitive assumptions
-2. explain the shared Cabloy architecture once before branching into edition-specific notes
-3. split documentation or workflow guidance only where the editions intentionally diverge
-4. use explicit edition markers and flavor names instead of treating the editions as interchangeable
+> “Not included” means that the suite is not part of the default edition baseline. It does not limit what can be built with Cabloy.
 
-## Editions reading paths
+## Choosing an edition
 
-Use this page as the main editions hub, then choose the path that matches your task.
+Choose **Cabloy Basic** when you want the public framework and reference edition, the default `npm create cabloy` path, and the examples and workflows provided by this repository.
 
-### Selection path
+Choose **Cabloy Start** when you want the public MIT-licensed sibling repository and its business-system-oriented baseline with Start-specific assets, SSR sites, and a Vuetify UI layer.
 
-Start here when the task is about choosing the right edition baseline or understanding their differences:
+This is a choice of default baseline, not a general capability limit. Both editions follow the same Cabloy fullstack architecture.
 
-- [Choosing Basic vs Start](/editions/choosing-between-basic-and-start)
-- [Cabloy Basic](/editions/cabloy-basic)
-- [Cabloy Start](/editions/cabloy-start)
+## Cabloy Basic
 
-### Detection and workflow path
+Cabloy Basic is the public framework and reference edition. Projects created with `npm create cabloy` follow the Basic route, and the public examples and root scripts in this repository use it as their default baseline.
 
-Use this path when the task is about repo-aware automation, flavor assumptions, or edition-safe workflow choices:
+Use the [Fullstack Quickstart](/fullstack/quickstart) to create a new Basic project. When working in this repository, verify its current scripts before choosing a flavor or implementation workflow.
 
-- [Edition Detection](/editions/detection)
-- [Fullstack Introduction](/fullstack/introduction)
-- [AI Development Introduction](/ai/introduction)
+## Cabloy Start
 
-## Shared fullstack core
+Cabloy Start is a public MIT-licensed edition maintained in its own repository. Clone [github.com/cabloy/cabloy-start](https://github.com/cabloy/cabloy-start), then run `npm run init` in that checkout.
 
-Both editions are built around the same core direction:
+Start has its own frontend flavors, suite and module composition, SSR site baselines, project assets, scripts, and generated outputs. Inspect the active Start repository before naming or relying on any of those edition-specific surfaces.
 
-- **Vona** as the backend framework and runtime layer
-- **Zova** as the frontend framework and application layer
-- suite-based modules across the stack
-- root-level `npm run vona` and `npm run zova` entrypoints
-- CLI-backed workflows for generation, refactoring, metadata, and verification
+## Working in an existing checkout
 
-This means the editions are related fullstack baselines, not unrelated products or alternatives to Vona and Zova.
+Detect the active edition before making UI-sensitive, flavor-sensitive, module-sensitive, SSR-sensitive, or asset-sensitive assumptions:
 
-## What "Basic" means
+| Repository-root markers | Result                                                                                                                    |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Only `__CABLOY_BASIC__` | Cabloy Basic                                                                                                              |
+| Only `__CABLOY_START__` | Cabloy Start                                                                                                              |
+| Both markers            | Invalid or ambiguous checkout; stop before making edition-specific assumptions.                                           |
+| Neither marker          | Inspect the owning `package.json` and nearby repository structure, then ask before making an edition-specific assumption. |
 
-Cabloy Basic is the public reference and community edition of Cabloy.
+## For AI Development
 
-- this public repository is marked with `__CABLOY_BASIC__`
-- projects created with `npm create cabloy` follow the Cabloy Basic route
-- the public docs and examples in this repo use Cabloy Basic as the default baseline
+AI-assisted work benefits from edition awareness whenever it depends on the UI library, frontend flavors, module availability, SSR sites, project assets, generated-output locations, or root scripts.
 
-Cabloy Basic is the open-source community edition and is optimized for public reference, learning, and fast development workflows.
+Before recommending an implementation path:
 
-## What "Start" means
+1. detect the active edition from the repository marker
+2. verify the relevant current scripts or CLI entry points
+3. branch guidance only where the editions genuinely diverge
 
-Cabloy Start is the public MIT-licensed edition maintained in its own repository.
+Keep shared Cabloy and contract-loop guidance shared. Do not project Basic-specific examples, flavors, UI assumptions, or `npm create cabloy` onboarding onto a Start checkout, or the reverse.
 
-- the public repository is marked with `__CABLOY_START__`
-- users clone the public repository source directly, then run `npm run init`
-- Start uses its own edition-specific flavors, SSR site baselines, and project assets
-
-Cabloy Start is optimized as a business-system baseline for more complex systems while staying on the same Cabloy fullstack direction.
-
-## Architecture layering
-
-Most of the frontend engineering layer is shared, while the edition-specific UI layer differs.
-
-### Shared frontend engineering layer
-
-Across editions, Zova uses the same frontend framework direction and engineering tooling, including:
-
-- Vue
-- Vite
-- Quasar tooling such as `quasar dev` and `quasar build`
-- TanStack libraries where applicable
-
-Here, Quasar is used for engineering tooling rather than as the edition UI component library.
-
-### Edition-specific UI layer
-
-The UI component strategy diverges by edition:
-
-- **Cabloy Basic**: DaisyUI + Tailwind CSS
-- **Cabloy Start**: Vuetify
-
-This difference affects not only UI code, but also module composition, frontend flavor assumptions, SSR site baselines, examples, and AI workflow guidance.
-
-## Edition-specific assets
-
-The editions intentionally diverge in several surfaces:
-
-- UI layer assumptions
-- frontend flavor names
-- suite and module composition
-- admin/web SSR site baselines
-- separate-repository structure and edition-specific project assets
-- generated outputs and root scripts
-- rules, skills, and docs used for AI vibe coding
-
-For example:
-
-- **Cabloy Basic** provides the `cabloy-basic` suites and the `cabloyBasicAdmin` / `cabloyBasicWeb` Zova flavors
-- **Cabloy Start** uses public flavors such as `cabloyStartAdmin` and `cabloyStartWeb`
-
-## Why the repo markers matter
-
-The edition markers are not just labels for humans.
-
-`__CABLOY_BASIC__` and `__CABLOY_START__` help tools, docs, and AI workflows choose the correct assumptions for:
-
-- UI component usage
-- flavor selection
-- module availability
-- SSR site expectations
-- rules, skills, and verification guidance
-
-This is why the two editions should be identified explicitly instead of being treated as interchangeable.
-
-## Documentation rule
-
-Write shared explanations once. Split or annotate only when a workflow changes because of:
-
-- UI library assumptions
-- frontend flavor names
-- different modules or assets
-- repository and initialization model
-- edition-specific scripts, generated outputs, or AI workflow guidance
+For the shared architecture and delivery model, see [Fullstack Introduction](/fullstack/introduction) and [AI Development Introduction](/ai/introduction). For front-end command selection, see [Frontend Scripts](/frontend/scripts).

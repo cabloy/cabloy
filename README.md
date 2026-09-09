@@ -46,7 +46,7 @@ Cabloy is available through two complete project baselines, each maintained in i
 
 Both editions share Cabloy’s Vona + Zova architecture, CLI-first workflows, bidirectional type synchronization, and AI Spec-Driven Development model. They differ primarily in their default UI layer, included demonstration suites, and out-of-the-box application baseline.
 
-For a fuller comparison and guidance on choosing an edition, see [Editions Overview](https://cabloy.com/editions/overview) and [Choosing Between Cabloy Basic and Cabloy Start](https://cabloy.com/editions/choosing-between-basic-and-start).
+For fuller guidance on choosing an edition and working in an existing checkout, see [Cabloy Editions](https://cabloy.com/editions/overview).
 
 **Legend:** ✅ Included in the default edition baseline · — Not included in the default edition baseline
 
@@ -145,8 +145,7 @@ npm run build
 
 For more details, see:
 
-- [Editions Overview](https://cabloy.com/editions/overview)
-- [Choosing Between Cabloy Basic and Cabloy Start](https://cabloy.com/editions/choosing-between-basic-and-start)
+- [Cabloy Editions](https://cabloy.com/editions/overview)
 - [Repo Scripts](https://cabloy.com/reference/repo-scripts)
 - [Package Map](https://cabloy.com/reference/package-map)
 - [AI Development Introduction](https://cabloy.com/ai/introduction)

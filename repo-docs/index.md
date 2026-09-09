@@ -57,9 +57,8 @@ Cabloy is a Node.js fullstack framework for AI vibe coding, with AI Spec-Driven 
 
 1. [Fullstack Quickstart](/fullstack/quickstart)
 2. [Fullstack Quick Start Tutorials](/fullstack/tutorials-overview)
-3. [Editions Overview](/editions/overview)
-4. [Choosing Between Cabloy Basic and Cabloy Start](/editions/choosing-between-basic-and-start)
-5. [Fullstack Introduction](/fullstack/introduction)
+3. [Cabloy Editions](/editions/overview#choosing-an-edition)
+4. [Fullstack Introduction](/fullstack/introduction)
 
 ### For contributors and AI vibe coding workflows
 

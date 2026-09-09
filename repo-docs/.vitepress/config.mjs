@@ -1,15 +1,6 @@
 import { defineConfig } from 'vitepress';
 
-const editionsItems = [
-  { text: 'Overview', link: '/editions/overview' },
-  {
-    text: 'Choosing Basic vs Start',
-    link: '/editions/choosing-between-basic-and-start',
-  },
-  { text: 'Cabloy Basic', link: '/editions/cabloy-basic' },
-  { text: 'Cabloy Start', link: '/editions/cabloy-start' },
-  { text: 'Edition Detection', link: '/editions/detection' },
-];
+const editionsItems = [{ text: 'Overview', link: '/editions/overview' }];
 
 const aiItems = [
   { text: 'Introduction', link: '/ai/introduction' },
@@ -61,7 +52,6 @@ const aiItems = [
     text: 'Edition & Verification',
     collapsed: true,
     items: [
-      { text: 'Edition Detection', link: '/ai/edition-detection' },
       { text: 'Edition Consistency Checklist', link: '/ai/edition-consistency-checklist' },
       { text: 'Verification', link: '/ai/verification' },
     ],

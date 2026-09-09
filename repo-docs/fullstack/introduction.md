@@ -58,8 +58,7 @@ Use this path when the task is about how backend and frontend stay aligned insid
 Use this path when the task depends on edition boundaries, UI assumptions, or cross-repo delivery differences:
 
 - [Edition Collaboration Differences](/fullstack/edition-collaboration-differences)
-- [Editions Overview](/editions/overview)
-- [Choosing Basic vs Start](/editions/choosing-between-basic-and-start)
+- [Cabloy Editions](/editions/overview#choosing-an-edition)
 
 ## Shared architecture
 

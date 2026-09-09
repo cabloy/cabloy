@@ -28,7 +28,7 @@ Read the repository marker first:
 - `__CABLOY_START__` → inspect the active Start repository before naming a flavor, wrapper, generated package, or site module.
 - both markers → stop: the checkout is ambiguous.
 
-The framework model is shared, but the exact flavor names, site baselines, UI layer, assets, scripts, and generated output paths can differ by edition. See [Edition Detection](/editions/detection) and [Edition Collaboration Differences](/fullstack/edition-collaboration-differences).
+The framework model is shared, but the exact flavor names, site baselines, UI layer, assets, scripts, and generated output paths can differ by edition. See [Cabloy Editions: Working in an Existing Checkout](/editions/overview#working-in-an-existing-checkout) and [Edition Collaboration Differences](/fullstack/edition-collaboration-differences).
 
 ### Confirm that a new site is needed
 

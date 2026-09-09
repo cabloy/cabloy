@@ -142,9 +142,8 @@ Before you finish an edition-aware change, ask:
 
 ## Read together with
 
-- [Choosing Between Cabloy Basic and Cabloy Start](/editions/choosing-between-basic-and-start)
-- [Editions Overview](/editions/overview)
-- [Edition Detection for AI Workflows](/ai/edition-detection)
+- [Cabloy Editions: Choosing an Edition](/editions/overview#choosing-an-edition)
+- [Cabloy Editions: For AI Development](/editions/overview#for-ai-development)
 - [Docs, Skills, Rules, and CLI Mapping](/ai/docs-skills-rules-mapping)
 - [Rules and Config](/ai/rules-and-config)
 - [Verification](/ai/verification)
