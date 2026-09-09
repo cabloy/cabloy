@@ -24,7 +24,7 @@ const aiItems = [
   { text: 'Playbook: Backend Module', link: '/ai/playbook-backend-module' },
   { text: 'Playbook: Frontend Page', link: '/ai/playbook-frontend-page' },
   { text: 'Playbook: Contract Regeneration', link: '/ai/playbook-contract-regeneration' },
-  { text: 'Playbook: Plan a Suite Specification', link: '/ai/playbook-spec-generation' },
+  { text: 'Generate a Cabloy Suite Specification', link: '/ai/playbook-spec-generation' },
   {
     text: 'Playbook: Execute an Approved Specification Increment',
     link: '/ai/playbook-spec-execution',

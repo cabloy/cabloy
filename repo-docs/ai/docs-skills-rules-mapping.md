@@ -183,7 +183,7 @@ Use this quick rule:
 ### Example: “How should AI create or maintain a repository-native suite specification?”
 
 - public method overview → [AI Spec-Driven Development](/ai/ai-spec-driven-development)
-- public workflow explanation → [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation)
+- public workflow explanation → [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation)
 - procedural planning, confirmation, traceability, and chart-refresh behavior → `cabloy-spec-generation`
 - suite-specific PRD, SRS, WBS, ATP, ADR, progress, and observed evidence authority → `repo-specs/<suite>/`
 - maintainer rationale → `repo-docs-internal/`

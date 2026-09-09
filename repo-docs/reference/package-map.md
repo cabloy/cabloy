@@ -11,7 +11,7 @@ This monorepo is organized around a small set of stable top-level areas.
 - `repo-docs/` — unified public docs
 - `repo-specs/` — suite-local product, technical, delivery, ATP, progress, observed-evidence, and ADR authority
 
-`repo-specs/` is distinct from `repo-docs/`, which explains reusable public guidance, `.claude/`, which contains executable workflow behavior, and `repo-docs-internal/`, which preserves supporting maintainer rationale. For the public planning workflow, see [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation).
+`repo-specs/` is distinct from `repo-docs/`, which explains reusable public guidance, `.claude/`, which contains executable workflow behavior, and `repo-docs-internal/`, which preserves supporting maintainer rationale. For the public planning workflow, see [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation).
 
 ## Backend side
 

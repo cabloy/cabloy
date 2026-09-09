@@ -154,6 +154,18 @@ Cabloy implements this approach through **Traceable Spec Delivery**:
 PRD → SRS → WBS → ATP → Evidence
 ```
 
-For suite-level work, use `cabloy-spec-generation` to create or maintain the planning and traceability records before implementation. Once a bounded WBS increment is confirmed, use `cabloy-spec-execution` to coordinate its specialist implementation, verification, evidence, and progress handoff. These Skills guide the workflow but do not replace the suite records that own product, technical, delivery, acceptance, and evidence authority.
+For suite-level work, describe the business capability you want to plan in Claude Code:
 
-Start with [AI Spec-Driven Development](/ai/ai-spec-driven-development), then continue with [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution).
+```text
+/cabloy-spec-generation <business description>
+```
+
+Once a bounded WBS increment is approved, execute it with:
+
+```text
+/cabloy-spec-execution <WBS-ID>
+```
+
+These Skills guide planning, specialist implementation, verification, evidence, and progress handoff; they do not replace the suite records that own product, technical, delivery, acceptance, and evidence authority.
+
+Start with [AI Spec-Driven Development](/ai/ai-spec-driven-development), then continue with [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution).

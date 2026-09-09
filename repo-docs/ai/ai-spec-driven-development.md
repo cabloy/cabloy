@@ -27,7 +27,7 @@ To support this workflow, Cabloy provides two complementary AI Skills:
 - `cabloy-spec-generation` creates or maintains suite-local planning authority and traceability before implementation.
 - `cabloy-spec-execution` coordinates one confirmed, bounded WBS increment through the appropriate specialist workflow, scoped verification, retained evidence, and derived progress updates.
 
-Use the skills in Claude Code when the task matches their boundary. They provide procedural routing, readiness and confirmation gates, and evidence discipline; they do not replace the suite records that own product, technical, delivery, acceptance, or evidence authority. For the detailed public workflow, read [Plan a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution).
+Use the skills in Claude Code when the task matches their boundary. Start planning with `/cabloy-spec-generation <business description>`; after one bounded increment is approved, use `/cabloy-spec-execution <WBS-ID>`. They provide procedural routing, readiness and confirmation gates, and evidence discipline; they do not replace the suite records that own product, technical, delivery, acceptance, or evidence authority. For the detailed public workflow, read [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution).
 
 ## Repository-native, domain-scoped authority
 
@@ -45,7 +45,7 @@ Traceable Spec Delivery does not create a second planning hierarchy or reduce th
 
 Update upstream authority before downstream records. For example, a changed product or technical boundary belongs in the PRD, SRS, or an accepted decision first; its WBS, ATP, progress, evidence, and derived-chart implications follow from that change. Evidence can reveal a mismatch, but it cannot rewrite a requirement or contract.
 
-For the detailed authority table, identifiers, and chart boundary, see [Plan a Cabloy Suite Specification](/ai/playbook-spec-generation).
+For the detailed authority table, identifiers, and chart boundary, see [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation).
 
 ## Evidence-gated delivery
 
@@ -90,7 +90,7 @@ For schema-driven UI, establish the audience, task, scene, meaningful business i
 ## Continue reading
 
 - [AI Development Introduction](/ai/introduction)
-- [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation)
+- [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation)
 - [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution)
 - [Contract Loop Playbook](/fullstack/contract-loop-playbook)
 - [Semantic Presentation Contract](/fullstack/semantic-presentation-contract)

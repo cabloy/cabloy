@@ -2,6 +2,16 @@
 
 Skills are the procedural layer of Cabloy’s AI development model.
 
+## Using a Skill in Claude Code
+
+Invoke a Cabloy Skill by typing its slash name followed by the task input. For example, describe the business capability you want to plan:
+
+```text
+/cabloy-spec-generation <business description>
+```
+
+The AI guides you through the task-specific confirmation and next steps. See [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation) for the complete planning experience.
+
 ## What a skill should do here
 
 A Cabloy skill should reduce repeated reasoning cost by encoding workflows such as:
@@ -48,6 +58,6 @@ Current examples include:
 - `cabloy-resource-field-update` for updating an existing backend resource field thread
 - `cabloy-module-removal` for removing a backend, frontend, or fullstack module cleanly, including generated-runtime cleanup, stale-residue recovery, and verification
 
-The specification workflows show the same boundary: [AI Spec-Driven Development](/ai/ai-spec-driven-development) explains the public Traceable Spec Delivery method, while [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution) explain its operational paths. The skills retain branching, confirmation gates, specialist routing, and evidence protocol; suite-local records remain the authority for a specific increment.
+The specification workflows show the same boundary: [AI Spec-Driven Development](/ai/ai-spec-driven-development) explains the public Traceable Spec Delivery method, while [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution) explain its operational paths. The skills retain branching, confirmation gates, specialist routing, and evidence protocol; suite-local records remain the authority for a specific increment.
 
 The module-removal workflow is a good example of why skills belong in `.claude/skills/` instead of `CLAUDE.md`: the task needs branching, cleanup order, recovery guidance for generated runtime directories such as `vona/.vona` and `zova/.zova`, and a verification checklist that would be too large for a short repo-wide rule.

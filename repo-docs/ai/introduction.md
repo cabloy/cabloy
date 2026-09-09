@@ -73,7 +73,7 @@ Start here when the task is about choosing the right repo surface, docs location
 Use this path to understand [AI Spec-Driven Development](/ai/ai-spec-driven-development), establish suite authority before implementation, then deliver one approved, bounded WBS increment with evidence-backed status:
 
 - [AI Spec-Driven Development](/ai/ai-spec-driven-development)
-- [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation)
+- [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation)
 - [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution)
 - [Skills](/ai/skills)
 - [Repo Scripts](/reference/repo-scripts)
