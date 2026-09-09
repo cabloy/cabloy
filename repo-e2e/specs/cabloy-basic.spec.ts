@@ -171,7 +171,9 @@ test(
     expect(documentResponse?.ok()).toBeTruthy();
     await expect(page).toHaveURL(/\/$/);
     await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
-    await expect(page.getByText('Web: en-us')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Vona integrated SSR', exact: true }),
+    ).toBeVisible();
     await expect(page.getByText('Dashboard')).toHaveCount(0);
     await expect(page.locator('body')).toBeVisible();
     await expect(page).not.toHaveTitle(/error/i);
