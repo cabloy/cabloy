@@ -143,3 +143,17 @@ npm run upgrade
 If you want a beginner-friendly path that connects modules, CRUD, bidirectional contract sharing, and schema-driven workflows into one story, continue with:
 
 - [Fullstack Quick Start Tutorials](/fullstack/tutorials-overview)
+
+## 9. AI Spec-Driven Development
+
+After the project is running, use **AI Spec-Driven Development** when AI-assisted work must move from confirmed product intent to traceable, evidence-backed delivery.
+
+Cabloy implements this approach through **Traceable Spec Delivery**:
+
+```text
+PRD → SRS → WBS → ATP → Evidence
+```
+
+For suite-level work, use `cabloy-spec-generation` to create or maintain the planning and traceability records before implementation. Once a bounded WBS increment is confirmed, use `cabloy-spec-execution` to coordinate its specialist implementation, verification, evidence, and progress handoff. These Skills guide the workflow but do not replace the suite records that own product, technical, delivery, acceptance, and evidence authority.
+
+Start with [AI Spec-Driven Development](/ai/ai-spec-driven-development), then continue with [Playbook: Plan a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution).

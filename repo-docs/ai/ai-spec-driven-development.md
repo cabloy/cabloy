@@ -20,7 +20,14 @@ This is a traceability chain rather than a literal list of every implementation 
 - **ATP** defines formal acceptance procedures, expected proof, and release gates.
 - **Evidence** is observed, retained, redacted proof for the applicable authority and revision.
 
-Implementation and, when applicable, fullstack contract synchronization happen between the approved WBS increment and the resulting ATP evidence. The detailed operational paths are [Plan a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution).
+Implementation and, when applicable, fullstack contract synchronization happen between the approved WBS increment and the resulting ATP evidence.
+
+To support this workflow, Cabloy provides two complementary AI Skills:
+
+- `cabloy-spec-generation` creates or maintains suite-local planning authority and traceability before implementation.
+- `cabloy-spec-execution` coordinates one confirmed, bounded WBS increment through the appropriate specialist workflow, scoped verification, retained evidence, and derived progress updates.
+
+Use the skills in Claude Code when the task matches their boundary. They provide procedural routing, readiness and confirmation gates, and evidence discipline; they do not replace the suite records that own product, technical, delivery, acceptance, or evidence authority. For the detailed public workflow, read [Plan a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution).
 
 ## Repository-native, domain-scoped authority
 

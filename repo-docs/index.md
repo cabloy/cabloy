@@ -31,6 +31,8 @@ features:
     details: Use aligned backend and frontend layers for code sharing and cross-stack consistency.
   - title: Modular delivery
     details: Organize capabilities as suites and modules, then deliver SSR, SPA, Web, and Admin applications with shared conventions.
+  - title: Semantic presentation
+    details: Translate confirmed audience, task, scene, and DTO contracts into schema-driven UI without changing security or ownership authority.
 ---
 
 # Cabloy Documentation
