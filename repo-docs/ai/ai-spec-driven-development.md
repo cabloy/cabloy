@@ -22,6 +22,8 @@ This is a traceability chain rather than a literal list of every implementation 
 
 Implementation and, when applicable, fullstack contract synchronization happen between the approved WBS increment and the resulting ATP evidence.
 
+## AI Skills
+
 To support this workflow, Cabloy provides two complementary AI Skills:
 
 - `cabloy-spec-generation` creates or maintains suite-local planning authority and traceability before implementation.

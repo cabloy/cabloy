@@ -6,7 +6,7 @@ The `cabloy-spec-execution` skill is a control plane. It coordinates an approved
 
 This playbook is the execution half of [AI Spec-Driven Development](/ai/ai-spec-driven-development). It operationalizes Traceable Spec Delivery for one bounded increment; it does not redefine upstream authority or make Contract Loop synchronization sufficient evidence of verification.
 
-## When to use this playbook
+## Start a bounded execution increment
 
 In Claude Code, use either of these entry points:
 
