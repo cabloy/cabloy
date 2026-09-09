@@ -74,7 +74,7 @@ Use this path to understand [AI Spec-Driven Development](/ai/ai-spec-driven-deve
 
 - [AI Spec-Driven Development](/ai/ai-spec-driven-development)
 - [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation)
-- [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution)
+- [Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution)
 - [Skills](/ai/skills)
 - [Repo Scripts](/reference/repo-scripts)
 - [Verification](/ai/verification)

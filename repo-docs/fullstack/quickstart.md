@@ -168,4 +168,4 @@ Once a bounded WBS increment is approved, execute it with:
 
 These Skills guide planning, specialist implementation, verification, evidence, and progress handoff; they do not replace the suite records that own product, technical, delivery, acceptance, and evidence authority.
 
-Start with [AI Spec-Driven Development](/ai/ai-spec-driven-development), then continue with [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution).
+Start with [AI Spec-Driven Development](/ai/ai-spec-driven-development), then continue with [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution).

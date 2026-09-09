@@ -91,7 +91,7 @@ For schema-driven UI, establish the audience, task, scene, meaningful business i
 
 - [AI Development Introduction](/ai/introduction)
 - [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation)
-- [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution)
+- [Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution)
 - [Contract Loop Playbook](/fullstack/contract-loop-playbook)
 - [Semantic Presentation Contract](/fullstack/semantic-presentation-contract)
 - [Docs, Skills, Rules, and CLI Mapping](/ai/docs-skills-rules-mapping)

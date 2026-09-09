@@ -1,4 +1,4 @@
-# Playbook: Execute an Approved Cabloy Specification Increment
+# Execute an Approved Cabloy Specification Increment
 
 Use this playbook to deliver one approved Cabloy specification increment from a bounded WBS item through implementation, scoped verification, retained evidence, and an accurate progress handoff.
 

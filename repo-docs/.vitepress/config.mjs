@@ -13,7 +13,18 @@ const editionsItems = [
 
 const aiItems = [
   { text: 'Introduction', link: '/ai/introduction' },
-  { text: 'AI Spec-Driven Development', link: '/ai/ai-spec-driven-development' },
+  {
+    text: 'AI Spec-Driven Development',
+    collapsed: false,
+    items: [
+      { text: 'Overview', link: '/ai/ai-spec-driven-development' },
+      { text: 'Generate a Cabloy Suite Specification', link: '/ai/playbook-spec-generation' },
+      {
+        text: 'Execute an Approved Cabloy Specification Increment',
+        link: '/ai/playbook-spec-execution',
+      },
+    ],
+  },
   { text: 'Repo Guidance', link: '/ai/repo-guidance' },
   { text: 'Skills', link: '/ai/skills' },
   { text: 'Class Placement Rule', link: '/ai/class-placement-rule' },
@@ -24,11 +35,6 @@ const aiItems = [
   { text: 'Playbook: Backend Module', link: '/ai/playbook-backend-module' },
   { text: 'Playbook: Frontend Page', link: '/ai/playbook-frontend-page' },
   { text: 'Playbook: Contract Regeneration', link: '/ai/playbook-contract-regeneration' },
-  { text: 'Generate a Cabloy Suite Specification', link: '/ai/playbook-spec-generation' },
-  {
-    text: 'Playbook: Execute an Approved Specification Increment',
-    link: '/ai/playbook-spec-execution',
-  },
   { text: 'Playbook: Module Removal', link: '/ai/playbook-module-removal' },
   { text: 'Playbook: Metadata Refresh', link: '/ai/playbook-metadata-refresh' },
   { text: 'Playbook: Technical Blog Authoring', link: '/ai/playbook-technical-blog-authoring' },

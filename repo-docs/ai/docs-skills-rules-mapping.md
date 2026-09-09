@@ -192,7 +192,7 @@ Use this quick rule:
 ### Example: “How should AI deliver an approved suite task?”
 
 - public method overview → [AI Spec-Driven Development](/ai/ai-spec-driven-development)
-- public workflow explanation → [Playbook: Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution)
+- public workflow explanation → [Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution)
 - bounded-WBS coordination, readiness gates, evidence, and derived-status behavior → `cabloy-spec-execution`
 - source implementation → the relevant backend, frontend, contract-loop, or shape-specific skill
 - product, contract, dependency, scope, or durable-decision changes → return to specification or domain planning
