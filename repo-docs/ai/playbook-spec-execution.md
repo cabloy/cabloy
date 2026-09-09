@@ -8,15 +8,21 @@ This playbook is the execution half of [AI Spec-Driven Development](/ai/ai-spec-
 
 ## When to use this playbook
 
-In Claude Code, execute an already approved bounded increment with:
+In Claude Code, use either of these entry points:
 
 ```text
 /cabloy-spec-execution <WBS-ID>
+/cabloy-spec-execution Execute the next task for <Suite Name>
 ```
+
+An explicit `WBS-ID` is the most direct and precise request: it identifies the bounded increment that you want to execute.
+
+If you do not know the next `WBS-ID`, use the suite-level request instead. AI reads the suite's WBS, dependencies, current progress, blockers, and acceptance requirements, then proposes the next ready bounded increment or a finite candidate set. Review and explicitly approve the proposed WBS target and execution dossier before any implementation begins. The suite-level request authorizes exploration and recommendation; it does **not** authorize AI to choose or execute adjacent work automatically.
 
 Use `cabloy-spec-execution` when you need to:
 
 - implement one named `WBS-*` item
+- explore an existing suite and recommend its next ready bounded increment
 - execute an explicitly named, finite, approved phase with a defined closure boundary
 - verify or close a named ATP or release-gate task
 - turn one existing suite-plan increment into implementation and observed proof

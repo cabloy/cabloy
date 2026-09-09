@@ -81,6 +81,18 @@ AI adds presentation contracts, staged rollout records, runbooks, extra ADRs, or
 
 For an existing suite, the workflow updates the owning upstream authority before dependent records. It preserves existing identifiers, accepted decisions, history, and evidence conventions rather than silently overwriting them or creating a parallel planning set.
 
+## Change or add requirements
+
+Use the same Skill whenever an existing suite needs a changed requirement or a new capability. Describe the requested change in Claude Code:
+
+```text
+/cabloy-spec-generation <changed or new business requirement>
+```
+
+AI reads the existing specification set, identifies the product, contract, decision, WBS, acceptance, and progress records affected by the change, then asks you to confirm the revised scope and any new boundaries. It updates the upstream PRD, SRS, or proposed/accepted ADR before it updates dependent WBS, ATP, progress, and derived-chart records.
+
+If the change affects an approved or in-progress increment, return to planning first. Confirm the revised authority and delivery boundary before resuming execution; do not use an execution handoff or source workaround to redefine the requirement or contract.
+
 ## How traceability and evidence work
 
 Cabloy connects the specification set through **Traceable Spec Delivery**:
