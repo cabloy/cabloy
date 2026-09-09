@@ -31,74 +31,7 @@ For the complete explanation, see [Fullstack Introduction](https://cabloy.com/fu
 
 ## Get Started
 
-### Prerequisites
-
-Before creating a new Cabloy project, make sure your environment has:
-
-| Name       | Version    |
-| ---------- | ---------- |
-| pnpm       | `>=11.5.2` |
-| Node.js    | `>=24.4.0` |
-| Redis      | `>=7.2.6`  |
-| SQLite3    | `Built-in` |
-| MySQL      | `>=8`      |
-| PostgreSQL | `>=16`     |
-
-- `Redis`: powers queue, schedule, startup, broadcast, caching, two-layer cache, and redlock
-- `SQLite3`: if you use `better-sqlite3`, set up `node-gyp` before installing dependencies
-
-Create a new Cabloy project:
-
-```bash
-npm create cabloy
-```
-
-The generated project already includes `CLAUDE.md` and the `.claude/` workspace assets. This path creates a Cabloy Basic project baseline. Open this project in Claude Code and start coding immediately with project-specific guidance.
-
-#### pnpm 11 supply-chain protection note
-
-`pnpm` 11 enables the `minimumReleaseAge` supply-chain protection by default. Newly published packages may be blocked for a short time window before `pnpm` allows installation.
-
-This matters for `npm create cabloy` because the command downloads Cabloy from npm and then automatically runs `npm run init`. If your environment blocks newly published packages during that flow, temporarily set `pnpm_config_minimum_release_age=0` for the current shell session and rerun the command.
-
-**Windows PowerShell**
-
-```powershell
-$env:pnpm_config_minimum_release_age = "0"
-npm create cabloy
-```
-
-**Windows Command Prompt**
-
-```cmd
-set pnpm_config_minimum_release_age=0 && npm create cabloy
-```
-
-**macOS / Linux**
-
-```bash
-pnpm_config_minimum_release_age=0 npm create cabloy
-```
-
-If you already created the project directory and only need to rerun initialization, use the same environment variable with `npm run init`.
-
-For **Cabloy Start**, clone the public MIT-licensed repository at `https://github.com/cabloy/cabloy-start`, then run `npm run init`. For the complete Start onboarding flow, read the [Cabloy Start](https://cabloy.com/editions/cabloy-start) page.
-
-Then continue with the framework docs:
-
-- [Fullstack Quickstart](https://cabloy.com/fullstack/quickstart)
-- [Documentation](https://cabloy.com)
-- [Fullstack Introduction](https://cabloy.com/fullstack/introduction)
-- [Backend Introduction](https://cabloy.com/backend/introduction)
-- [Frontend Introduction](https://cabloy.com/frontend/introduction)
-- [Editions Overview](https://cabloy.com/editions/overview)
-- [Choosing Between Cabloy Basic and Cabloy Start](https://cabloy.com/editions/choosing-between-basic-and-start)
-
-To upgrade an existing Cabloy project:
-
-```bash
-npm run upgrade
-```
+See the [Fullstack Quickstart](https://cabloy.com/fullstack/quickstart).
 
 ## Highlights
 
