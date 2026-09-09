@@ -33,6 +33,10 @@ For the complete explanation, see [Fullstack Introduction](https://cabloy.com/fu
 
 See the [Fullstack Quickstart](https://cabloy.com/fullstack/quickstart).
 
+## AI Spec-Driven Development
+
+See the [AI Spec-Driven Development](https://cabloy.com/ai/ai-spec-driven-development).
+
 ## Highlights
 
 - **One fullstack system** — build backend and frontend together instead of assembling separate stacks
