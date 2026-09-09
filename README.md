@@ -41,8 +41,8 @@ See the [AI Spec-Driven Development](https://cabloy.com/ai/ai-spec-driven-develo
 
 Cabloy is available through two complete project baselines, each maintained in its own repository:
 
-- **Cabloy Basic** — the public framework and reference edition, with a DaisyUI + Tailwind CSS UI layer and an e-commerce-oriented demonstration suite.
-- **Cabloy Start** — a public MIT-licensed starter edition, with a Vuetify UI layer and built-in system-management and authorization demonstrations.
+- **[Cabloy Basic](https://github.com/cabloy/cabloy)** — the public framework and reference edition, licensed under [MIT](https://github.com/cabloy/cabloy/blob/main/LICENSE), with a DaisyUI + Tailwind CSS UI layer and an e-commerce-oriented demonstration suite.
+- **[Cabloy Start](https://github.com/cabloy/cabloy-start)** — a public starter edition, licensed under [MIT](https://github.com/cabloy/cabloy-start/blob/main/LICENSE), with a Vuetify UI layer and built-in system-management and authorization demonstrations.
 
 Both editions share Cabloy’s Vona + Zova architecture, CLI-first workflows, bidirectional type synchronization, and AI Spec-Driven Development model. They differ primarily in their default UI layer, included demonstration suites, and out-of-the-box application baseline.
 
