@@ -196,16 +196,49 @@ This distinction is central to writing Zova code that behaves correctly across b
 
 ## Built-in env variables
 
-Zova exposes built-in variables covering areas such as:
+Zova provides the following built-in environment variables. Configure them in `zova/env/.env` or in an applicable meta-specific env file.
 
-- app identity
-- router mode
-- dev-server settings
-- project-disabled suites/modules
-- build output settings
-- API/proxy configuration
-- SSR-specific values
-- mock configuration
+### App identity and presentation
+
+`SITE_ID`, `APP_NAME`, `APP_TITLE`, `APP_DESCRIPTION`, `APP_VERSION`, `APP_META_VIEWPORT`, `APP_PUBLIC_PATH`, `APP_LOCALE_DEFAULT`, `APP_LOCALE_HEADER_KEY`, `APP_TZ_HEADER_KEY`
+
+### Router settings
+
+`ROUTER_MODE`, `ROUTER_PAGE_HOME`, `ROUTER_PAGE_LOGIN`, `ROUTER_KEY_RETURNTO`
+
+### Development-server settings
+
+`DEV_SERVER_HOSTNAME`, `DEV_SERVER_PORT`, `DEV_SERVER_HMR_PORT`
+
+### Project-disabled suites and modules
+
+`PROJECT_DISABLED_SUITES`, `PROJECT_DISABLED_MODULES`
+
+`PROJECT_DISABLED_SUITES` disables entire suites, including every module in each disabled suite. `PROJECT_DISABLED_MODULES` disables individual modules without disabling their containing suite. Both accept comma-separated relative names.
+
+For example, a production deployment that does not need the e-commerce demonstration suite can set:
+
+```dotenv
+PROJECT_DISABLED_SUITES=a-commerce
+```
+
+### Build output settings
+
+`LOGGER_CLIENT_DEFAULT`, `BUILD_OUTDIR`, `BUILD_MINIFY`, `BUILD_SOURCEMAP`, `BUILD_TARGET_BROWSER`, `BUILD_TARGET_NODE`, `BUILD_ANALYZE`, `BUILD_COPY_DIST`, `BUILD_COPY_RELEASE`, `BUILD_REST_COPY_DIST`
+
+### API and proxy configuration
+
+`API_BASE_URL`, `API_PREFIX`, `API_JWT`, `OPENAPI_BASE_URL_DEFAULT`, `OPENAPI_BASE_URL_<MODULE>`, `PROXY_API_ENABLED`, `PROXY_API_BASE_URL`, `PROXY_API_PREFIX`
+
+Use `OPENAPI_BASE_URL_<MODULE>` to override the OpenAPI base URL for a specific module. Replace `<MODULE>` with the module's uppercase underscore-separated name, such as `OPENAPI_BASE_URL_HOME_API`.
+
+### SSR-specific values
+
+`SSR_API_BASE_URL`, `SSR_PROD_PORT`, `SSR_PROD_PROTOCOL`, `SSR_PROD_HOST`, `SSR_WITH_VONA`, `SSR_PROFILE`, `SSR_PROFILE_PUBLIC_RESPONSE_CACHE_EXPIRES`, `SSR_PROFILE_SESSION_RESPONSE_CACHE_EXPIRES`, `SSR_COOKIE_THEMEDARK_DEFAULT`
+
+### Mock-server configuration
+
+`MOCK_ENABLED`, `MOCK_LOGGER`, `MOCK_BASE_NAME`, `MOCK_BUILD`, `MOCK_BUILD_PORT`, `MOCK_BUILD_OUTPUT`, `MOCK_BUILD_CORS`
 
 That means many common project-level knobs already exist and should be reused before inventing project-specific patterns.
 
