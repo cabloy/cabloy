@@ -3,6 +3,7 @@ import type { IQueryParams } from 'vona-module-a-orm';
 
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
+import { Core } from 'vona-module-a-core';
 
 import type { DtoStudentCreate } from '../dto/studentCreate.tsx';
 import type { DtoStudentSelectRes } from '../dto/studentSelectRes.tsx';
@@ -84,6 +85,11 @@ export class ServiceStudent extends BeanBase {
     return await this.scope.model.student.deleteById(id, {
       include: getStudentRelationsInclude(),
     });
+  }
+
+  @Core.transaction()
+  async deleteBulk(ids: TableIdentity[]): Promise<void> {
+    await this.scope.model.student.deleteBulk(ids, { include: getStudentRelationsInclude() });
   }
 
   async deleteForce(id: TableIdentity) {

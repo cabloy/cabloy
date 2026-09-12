@@ -4,6 +4,8 @@ import { FlexRender } from '@tanstack/vue-table';
 import { BeanRenderBase } from 'zova';
 import { Render } from 'zova-module-a-bean';
 
+import { TableColumnIdSelection } from '../../types/table.js';
+
 @Render()
 export class RenderTable extends BeanRenderBase {
   private _getColumnStyle(column: any): CSSProperties {
@@ -33,7 +35,18 @@ export class RenderTable extends BeanRenderBase {
               const sorted = column.getIsSorted();
               const fixed = column.getIsPinned();
               const headerDefinition = column.columnDef.header;
-              const headerContent = (
+              const selection = column.id === TableColumnIdSelection;
+              const headerContent = selection ? (
+                <input
+                  type="checkbox"
+                  checked={table.getIsAllPageRowsSelected()}
+                  indeterminate={table.getIsSomePageRowsSelected()}
+                  aria-checked={table.getIsSomePageRowsSelected() ? 'mixed' : undefined}
+                  aria-label="Select all rows on this page"
+                  disabled={table.getRowModel().rows.every(row => !row.getCanSelect())}
+                  onChange={table.getToggleAllPageRowsSelectedHandler()}
+                />
+              ) : (
                 <FlexRender render={headerDefinition} props={header.getContext()}></FlexRender>
               );
               let sortAria: AriaAttributes['aria-sort'] = 'none';
@@ -73,19 +86,30 @@ export class RenderTable extends BeanRenderBase {
         <tbody>
           {table.getRowModel().rows.map(row => {
             return (
-              <tr key={row.id}>
+              <tr key={row.id} aria-selected={row.getIsSelected()}>
                 {row.getVisibleCells().map(cell => {
                   const column = cell.column;
+                  const selection = column.id === TableColumnIdSelection;
                   return (
                     <td
                       key={cell.id}
                       class={column.getIsPinned() ? 'bg-base-100' : undefined}
                       style={this._getColumnStyle(column)}
                     >
-                      <FlexRender
-                        render={column.columnDef.cell}
-                        props={cell.getContext()}
-                      ></FlexRender>
+                      {selection ? (
+                        <input
+                          type="checkbox"
+                          checked={row.getIsSelected()}
+                          disabled={!row.getCanSelect()}
+                          aria-label={`Select row ${row.id}`}
+                          onChange={row.getToggleSelectedHandler()}
+                        />
+                      ) : (
+                        <FlexRender
+                          render={column.columnDef.cell}
+                          props={cell.getContext()}
+                        ></FlexRender>
+                      )}
                     </td>
                   );
                 })}

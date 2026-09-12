@@ -27,8 +27,6 @@ export class ControllerBlockTable<TData extends {} = {}> extends BeanControllerB
   @Use({ injectionScope: 'host' })
   $$renderContext: IJsxRenderContextPage;
 
-  protected async __init__() {}
-
   get permissions() {
     return this.$$renderContext.$celScope.permissions;
   }
@@ -47,6 +45,9 @@ export class ControllerBlockTable<TData extends {} = {}> extends BeanControllerB
           schemaOrder={$$page.schemaOrder}
           sorting={$$page.sorting}
           onSortingChange={updater => $$page.onSortingChange(updater)}
+          enableRowSelection={$$page.selectionEnabled}
+          rowSelection={$$page.rowSelection}
+          onRowSelectionChange={updater => $$page.onRowSelectionChange(updater)}
           tableScope={$$page.jsxCelScope}
         ></ZTable>
       </div>

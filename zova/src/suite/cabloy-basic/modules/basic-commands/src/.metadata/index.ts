@@ -5,6 +5,7 @@ export * from '../bean/command.confirm.jsx';
 export * from '../bean/command.copy.jsx';
 export * from '../bean/command.create.jsx';
 export * from '../bean/command.delete.jsx';
+export * from '../bean/command.deleteBulk.jsx';
 export * from '../bean/command.edit.jsx';
 export * from '../bean/command.prompt.jsx';
 export * from '../bean/command.setValue.jsx';
@@ -14,6 +15,7 @@ import { ICommandOptionsConfirm } from '../bean/command.confirm.jsx';
 import { ICommandOptionsCopy } from '../bean/command.copy.jsx';
 import { ICommandOptionsCreate } from '../bean/command.create.jsx';
 import { ICommandOptionsDelete } from '../bean/command.delete.jsx';
+import { ICommandOptionsDeleteBulk } from '../bean/command.deleteBulk.jsx';
 import { ICommandOptionsEdit } from '../bean/command.edit.jsx';
 import { ICommandOptionsPrompt } from '../bean/command.prompt.jsx';
 import { ICommandOptionsSetValue } from '../bean/command.setValue.jsx';
@@ -27,6 +29,7 @@ declare module 'zova-module-a-command' {
 'basic-commands:copy': ICommandOptionsCopy;
 'basic-commands:create': ICommandOptionsCreate;
 'basic-commands:delete': ICommandOptionsDelete;
+'basic-commands:deleteBulk': ICommandOptionsDeleteBulk;
 'basic-commands:edit': ICommandOptionsEdit;
 'basic-commands:prompt': ICommandOptionsPrompt;
 'basic-commands:setValue': ICommandOptionsSetValue;
@@ -92,6 +95,17 @@ declare module 'zova-module-basic-commands' {
           get $onionOptions(): ICommandOptionsDelete;
         }
 
+        export interface CommandDeleteBulk {
+          /** @internal */
+          get scope(): ScopeModuleBasicCommands;
+        }
+
+        export interface CommandDeleteBulk {
+          get $beanFullName(): 'basic-commands.command.deleteBulk';
+          get $onionName(): 'basic-commands:deleteBulk';
+          get $onionOptions(): ICommandOptionsDeleteBulk;
+        }
+
         export interface CommandEdit {
           /** @internal */
           get scope(): ScopeModuleBasicCommands;
@@ -143,6 +157,7 @@ import { CommandConfirm } from '../bean/command.confirm.jsx';
 import { CommandCopy } from '../bean/command.copy.jsx';
 import { CommandCreate } from '../bean/command.create.jsx';
 import { CommandDelete } from '../bean/command.delete.jsx';
+import { CommandDeleteBulk } from '../bean/command.deleteBulk.jsx';
 import { CommandEdit } from '../bean/command.edit.jsx';
 import { CommandPrompt } from '../bean/command.prompt.jsx';
 import { CommandSetValue } from '../bean/command.setValue.jsx';
@@ -155,6 +170,7 @@ declare module 'zova' {
 'basic-commands.command.copy': CommandCopy;
 'basic-commands.command.create': CommandCreate;
 'basic-commands.command.delete': CommandDelete;
+'basic-commands.command.deleteBulk': CommandDeleteBulk;
 'basic-commands.command.edit': CommandEdit;
 'basic-commands.command.prompt': CommandPrompt;
 'basic-commands.command.setValue': CommandSetValue;

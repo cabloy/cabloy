@@ -10,6 +10,7 @@ import {
   ApiApiTrainingStudentdeletePath,
   ApiApiTrainingStudentupdatePath,
   ApiApiTrainingStudentsummaryPath,
+  ApiApiTrainingStudentdeleteBulkPath,
   ApiApiTrainingStudentdeleteForcePath,
 } from '../api/trainingStudent.js';
 
@@ -37,6 +38,10 @@ export class ApiSchemaTrainingStudent extends BeanBase {
 
   summary(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiTrainingStudentsummaryPath, 'get', options);
+  }
+
+  deleteBulk(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiTrainingStudentdeleteBulkPath, 'post', options);
   }
 
   deleteForce(options?: IApiSchemaOptions) {

@@ -11,7 +11,9 @@ import { z } from 'zod';
 
 import type { ModelStudent } from '../model/student.ts';
 
+import { $locale } from '../.metadata/locales.ts';
 import { DtoStudentCreate } from '../dto/studentCreate.tsx';
+import { DtoStudentDeleteBulk } from '../dto/studentDeleteBulk.tsx';
 import { DtoStudentSelectReq } from '../dto/studentSelectReq.tsx';
 import { DtoStudentSelectRes } from '../dto/studentSelectRes.tsx';
 import { DtoStudentSummary } from '../dto/studentSummary.tsx';
@@ -68,6 +70,13 @@ export class ControllerStudent extends BeanBase {
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoStudentSummary | undefined> {
     return await this.scope.service.student.summary(id);
+  }
+
+  @Web.post('bulk/delete', { summary: $locale('BulkDelete') })
+  @Api.body(z.null())
+  @Passport.systemAdmin()
+  async deleteBulk(@Arg.body() command: DtoStudentDeleteBulk): Promise<void> {
+    await this.scope.service.student.deleteBulk(command.ids);
   }
 
   @Web.delete(':id')

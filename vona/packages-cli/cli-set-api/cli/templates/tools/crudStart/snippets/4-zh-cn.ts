@@ -7,6 +7,7 @@ const __resources = {
   Name: '名称',
   Description: '描述',
   Operations: '操作',
+  BulkDelete: '批量删除',
 };
 
 export default metadataCustomSnippet({

@@ -165,6 +165,7 @@ Its controller is responsible for:
 - creating query state
 - loading schema and paged data
 - exposing `data`, `schemaRow`, `schemaFilter`, `permissions`, and `paged`
+- owning selected IDs, loaded-row snapshots, and the page-level `selectionPolicy`
 - refreshing table metadata when permissions change
 
 This is one of the most important architecture facts about CRUD pages.
@@ -258,6 +259,26 @@ A practical rule is:
 - if the page only needs standard create or other bulk actions, keep the existing block and adjust the metadata
 - if an action is reusable, prefer a reusable action render resource rather than page-local ad hoc code
 
+### Declare selected-row actions explicitly
+
+`tableActionBulk` describes toolbar placement, not necessarily a batch mutation. Keep Create selection-independent. An action that consumes selected rows must declare `requiresSelection: true`:
+
+```ts
+ZovaRender.block('basic-page:blockToolbarBulk', {
+  actions: [
+    ZovaRender.tableActionBulk('basic-table:actionCreate'),
+    ZovaRender.tableActionBulk('basic-table:actionDeleteBulk', {
+      requiresSelection: true,
+      selectedMaxIds: 100,
+    }),
+  ],
+});
+```
+
+With `blockPage`'s default automatic `selectionPolicy`, this exposes an on-demand **Select** control. It reveals the checkbox column; **Done** clears selection before hiding it. Coarse permission controls action discoverability. A selected action is disabled until the selection is nonempty, all selected IDs have loaded snapshots, and every snapshot passes the browser permission matcher. `selectedMaxIds` is optional action policy: when declared, the toolbar disables only that action after the configured count is exceeded; when omitted for a selection-requiring action, the frontend fallback applies.
+
+The DTO declares static policy only. Custom bulk-action components receive the current selection and eligibility as `dynamicSelection`, `dynamicDisabled`, and `dynamicDisabledReason`. Those snapshots are only UX evidence: the command must reload, authorize, and mutate every submitted ID atomically on the backend.
+
 ## Step 6: Let `blockTable` bridge page state into `ZTable`
 
 The standard table block is:
@@ -271,10 +292,13 @@ Its bridge role is very clear:
 - pass row schema into `schema`
 - pass the resource order schema into `schemaOrder`
 - pass controlled `sorting` and `onSortingChange`
+- pass controlled `rowSelection` and `onRowSelectionChange`
 - pass page CEL scope into `tableScope`
 - capture the table controller through `controllerRef`
 
-That means `blockTable` does not own list fetching or pagination logic.
+`blockPage.selectionPolicy` controls row-selection behavior: `undefined` uses automatic behavior, `'always'` shows selection immediately, `'onDemand'` exposes Select/Done without a selected action, and `false` disables selection. `blockTable` only consumes the resulting page state. The header checkbox operates only on the loaded page under server pagination.
+
+That means `blockTable` does not own list fetching, pagination, or selection policy.
 
 It owns the handoff from page resource state to the reusable table runtime.
 

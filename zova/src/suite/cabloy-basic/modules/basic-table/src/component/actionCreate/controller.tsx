@@ -1,7 +1,7 @@
 import type { IComponentOptions } from 'zova';
 import type {
   IJsxRenderContextPage,
-  IResourceTableActionBulkOptionsBase,
+  IResourceTableActionBulkPropsBase,
 } from 'zova-module-a-openapi';
 
 import { BeanControllerBase, Use } from 'zova';
@@ -13,7 +13,7 @@ declare module 'zova-module-a-openapi' {
   }
 }
 
-export interface ControllerActionCreateProps extends IResourceTableActionBulkOptionsBase {}
+export interface ControllerActionCreateProps extends IResourceTableActionBulkPropsBase {}
 
 @Controller()
 export class ControllerActionCreate extends BeanControllerBase {
@@ -26,11 +26,14 @@ export class ControllerActionCreate extends BeanControllerBase {
   protected async __init__() {}
 
   protected render() {
+    const disabled = this.$props.disabled === true || this.$props.dynamicDisabled === true;
     return (
       <button
         class={this.$props.class}
         type="button"
+        disabled={disabled}
         onClick={async () => {
+          if (disabled) return;
           await this.$performCommand('basic-commands:create', this.$props, this.$$renderContext);
         }}
       >

@@ -25,6 +25,7 @@ interface IArticleGeometry {
 }
 
 const blogArticlePaths = [
+  '/blogs/ai-spec-driven-development/',
   '/blogs/ai-react-nextjs-enterprise-architecture-cabloy/',
   '/blogs/cabloy-fullstack-resource-addressing/',
   '/blogs/nextjs-integrated-fullstack-cabloy-contract-loop/',
@@ -118,29 +119,46 @@ test(
     await expect(page.locator('.VPDoc.has-aside')).toHaveCount(0);
 
     const cards = page.locator('.cabloy-blog-card');
-    await expect(cards).toHaveCount(4);
-    for (let index = 0; index < 4; index++) {
+    await expect(cards).toHaveCount(5);
+    for (let index = 0; index < 5; index++) {
       await expect(cards.nth(index)).toBeVisible();
       await expect(cards.nth(index).locator('.cabloy-blog-card__cover img')).toBeVisible();
     }
+    await expect(
+      cards.nth(0).getByRole('link', {
+        name: 'CabloyJS AI Spec-Driven Development Automatically Generates Gantt and Burndown Charts',
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(cards.nth(0).locator('.cabloy-blog-card__date')).toHaveText('September 11, 2026');
+    await expect(cards.nth(0).locator('.cabloy-blog-card__cover')).toHaveAttribute(
+      'href',
+      '/blogs/ai-spec-driven-development/',
+    );
 
     const geometry = await getBlogsGeometry(page);
     expect(geometry.grid.display).toBe('grid');
-    expect(geometry.cards).toHaveLength(4);
+    expect(geometry.cards).toHaveLength(5);
 
-    const [firstCard, ...remainingCards] = geometry.cards;
+    const [firstCard, secondCard, thirdCard, fourthCard, fifthCard] = geometry.cards;
+    const firstRow = [firstCard, secondCard, thirdCard, fourthCard];
     expect(firstCard.width).toBeGreaterThanOrEqual(279);
-    for (const card of remainingCards) {
+    for (const card of firstRow) {
       expect(Math.abs(card.top - firstCard.top)).toBeLessThanOrEqual(1);
       expect(Math.abs(card.width - firstCard.width)).toBeLessThanOrEqual(1);
-      expect(card.left).toBeGreaterThan(firstCard.left);
       expect(card.left).toBeGreaterThanOrEqual(geometry.grid.left - 1);
       expect(card.right).toBeLessThanOrEqual(geometry.grid.right + 1);
       expect(card.right).toBeLessThanOrEqual(1441);
     }
-    expect(firstCard.left).toBeGreaterThanOrEqual(geometry.grid.left - 1);
-    expect(firstCard.right).toBeLessThanOrEqual(geometry.grid.right + 1);
-    expect(firstCard.right).toBeLessThanOrEqual(1441);
+    expect(secondCard.left).toBeGreaterThan(firstCard.left);
+    expect(thirdCard.left).toBeGreaterThan(secondCard.left);
+    expect(fourthCard.left).toBeGreaterThan(thirdCard.left);
+    expect(fifthCard.top).toBeGreaterThan(firstCard.bottom);
+    expect(fifthCard.left).toBeCloseTo(firstCard.left, 0);
+    expect(fifthCard.width).toBeCloseTo(firstCard.width, 0);
+    expect(fifthCard.left).toBeGreaterThanOrEqual(geometry.grid.left - 1);
+    expect(fifthCard.right).toBeLessThanOrEqual(geometry.grid.right + 1);
+    expect(fifthCard.right).toBeLessThanOrEqual(1441);
 
     await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
     expect(pageErrors).toEqual([]);
@@ -163,6 +181,24 @@ test(
       await expect(page.locator('.VPDoc.has-sidebar')).toHaveCount(0);
       await expect(page.locator('.VPDoc.has-aside')).toHaveCount(1);
       await expect(page.locator('.aside')).toBeVisible();
+      if (path === '/blogs/ai-spec-driven-development/') {
+        await expect(
+          page.getByRole('heading', {
+            name: 'CabloyJS AI Spec-Driven Development Automatically Generates Gantt and Burndown Charts',
+            level: 1,
+          }),
+        ).toBeVisible();
+        await expect(
+          page.getByAltText(
+            'A-Commerce implementation roadmap: WBS phases, dependencies, and derived status',
+          ),
+        ).toBeVisible();
+        await expect(
+          page.getByAltText(
+            'A-Commerce WBS scope-count burndown: approved scope and remaining-item counts',
+          ),
+        ).toBeVisible();
+      }
 
       const geometry = await getArticleGeometry(page);
       expect(geometry.container.width).toBeCloseTo(1216, 0);

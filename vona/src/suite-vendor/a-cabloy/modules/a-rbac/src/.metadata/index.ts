@@ -27,6 +27,7 @@ declare module 'vona-module-a-rbac' {
 /** guard: end */
 /** bean: begin */
 export * from '../bean/bean.rbacCatalog.ts';
+export * from '../bean/bean.rbacResourceBulk.ts';
 export * from '../bean/bean.rbacScope.ts';
 
 import 'vona';
@@ -41,6 +42,11 @@ declare module 'vona-module-a-rbac' {
           get scope(): ScopeModuleARbac;
         }
 
+        export interface BeanRbacResourceBulk {
+          /** @internal */
+          get scope(): ScopeModuleARbac;
+        }
+
         export interface BeanRbacScope {
           /** @internal */
           get scope(): ScopeModuleARbac;
@@ -49,11 +55,13 @@ declare module 'vona-module-a-rbac' {
 /** bean: end */
 /** bean: begin */
 import type { BeanRbacCatalog } from '../bean/bean.rbacCatalog.ts';
+import type { BeanRbacResourceBulk } from '../bean/bean.rbacResourceBulk.ts';
 import type { BeanRbacScope } from '../bean/bean.rbacScope.ts';
 import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'rbacCatalog': BeanRbacCatalog;
+    'rbacResourceBulk': BeanRbacResourceBulk;
     'rbacScope': BeanRbacScope;
   }
 }
@@ -139,8 +147,15 @@ declare module 'vona-module-a-rbac' {
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';
 /** config: end */
+/** locale: begin */
+import { locales } from './locales.ts';
+/** locale: end */
+/** error: begin */
+export * from '../config/errors.ts';
+import type { errors } from '../config/errors.ts';
+/** error: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig } from 'vona';
+import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig, type TypeModuleErrors, type TypeModuleLocales, type TypeLocaleBase } from 'vona';
 import { Scope } from 'vona-module-a-bean';
 
 @Scope()
@@ -149,6 +164,8 @@ export class ScopeModuleARbac extends BeanScopeBase {}
 export interface ScopeModuleARbac {
   util: BeanScopeUtil;
 config: TypeModuleConfig<typeof config>;
+error: TypeModuleErrors<typeof errors>;
+locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 event: IModuleEvent;
 }
 
@@ -166,8 +183,12 @@ declare module 'vona' {
     'a-rbac': ReturnType<typeof config>;
   }
 
+  export interface IBeanScopeLocale {
+    'a-rbac': (typeof locales)[TypeLocaleBase];
+  }
 
-
-
+  export interface IBeanScopeErrors {
+    'a-rbac': typeof errors;
+  }
 }
 /** scope: end */

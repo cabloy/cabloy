@@ -9,6 +9,7 @@ const __resources = {
   Name: 'Name',
   Description: 'Description',
   Operations: 'Operations',
+  BulkDelete: 'Bulk Delete',
 };
 
 declare module '@cabloy/cli' {

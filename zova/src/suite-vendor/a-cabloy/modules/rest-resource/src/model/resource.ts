@@ -18,6 +18,7 @@ import { ScopeModuleAOpenapi, SymbolOpenapiSchemaName } from 'zova-module-a-open
 
 import { prepareDeleteRequestConfig } from '../lib/deleteRequest.js';
 import { runMutationSuccess } from '../lib/mutationSuccess.js';
+import { validateSelectedIds } from '../lib/selectedIds.js';
 
 export interface IModelOptionsResource extends IDecoratorModelOptions {}
 
@@ -35,6 +36,14 @@ interface IModelResourceQueryItemOptions<TData> {
 interface IModelResourceMutationItemOptions<TData = void, TVariables = void> {
   id: TableIdentity;
   action: string;
+  mutationFn: (params: TVariables) => Promise<TData>;
+  onSuccess?: (data: TData, variables: TVariables, context: unknown) => void | Promise<void>;
+  invalidateSelect?: boolean;
+}
+
+interface IModelResourceMutationSelectedOptions<TData = void, TVariables = void> {
+  action: string;
+  getIds: (variables: TVariables) => readonly TableIdentity[];
   mutationFn: (params: TVariables) => Promise<TData>;
   onSuccess?: (data: TData, variables: TVariables, context: unknown) => void | Promise<void>;
   invalidateSelect?: boolean;
@@ -187,6 +196,47 @@ export class ModelResource<
     });
   }
 
+  mutationSelected<TData = void, TVariables = void>(
+    options: IModelResourceMutationSelectedOptions<TData, TVariables>,
+  ) {
+    const { action, getIds, mutationFn, onSuccess, invalidateSelect = true } = options;
+    return this.$useMutationData<TData, TVariables>({
+      mutationKey: ['selected', action, 'mutation'],
+      mutationFn: async variables => {
+        this._getMutationSelectedIds(getIds, variables);
+        return await mutationFn(variables);
+      },
+      onSuccess: async (data, variables, context) => {
+        const ids = this._getMutationSelectedIds(getIds, variables);
+        await runMutationSuccess({
+          invalidateSelect: invalidateSelect
+            ? () => this.$invalidateQueries({ queryKey: ['select'] })
+            : undefined,
+          invalidateItem: async () => {
+            await Promise.all(
+              ids.map(id => this.$invalidateQueries({ queryKey: this.keyItemRoot(id) })),
+            );
+          },
+          onSuccess: () => onSuccess?.(data, variables, context),
+        });
+      },
+    });
+  }
+
+  deleteBulk() {
+    return this.mutationSelected<void, { ids: readonly TableIdentity[] }>({
+      action: 'delete',
+      getIds: body => body.ids,
+      mutationFn: async body => {
+        return this.$fetch.post<any, void, { ids: readonly TableIdentity[] }>(
+          this.sys.util.apiActionPathTranslate(`${this.resourceApi}/bulk/delete`),
+          body,
+          this.sys.util.apiActionConfigPrepare(),
+        );
+      },
+    });
+  }
+
   update(id: TableIdentity) {
     return this.mutationItem<void, EntityUpdate>({
       id,
@@ -274,6 +324,13 @@ export class ModelResource<
       schemaName = schemaName[SymbolOpenapiSchemaName] as string;
     }
     return this.$sdk.getSchemaDefaultValue(schemaName) as EntityCreate | undefined;
+  }
+
+  private _getMutationSelectedIds<TVariables>(
+    getIds: (variables: TVariables) => readonly TableIdentity[],
+    variables: TVariables,
+  ) {
+    return validateSelectedIds(getIds(variables));
   }
 
   protected keySelect(actionPath?: string, query?: ITableQuery) {

@@ -14,6 +14,7 @@ import {
   getCoreRowModel,
   OnChangeFn,
   Row,
+  RowSelectionState,
   SortingState,
   TableOptionsWithReactiveData,
 } from '@tanstack/vue-table';
@@ -46,6 +47,7 @@ import type {
 } from '../../types/tableColumn.js';
 
 import { BeanControllerTableBase } from '../../lib/beanControllerTableBase.js';
+import { TableColumnIdSelection } from '../../types/table.js';
 import { ITableCellRenderColumnOptions } from '../../types/tableColumn.js';
 
 export interface ControllerTableProps<TData extends {} = {}> {
@@ -54,6 +56,9 @@ export interface ControllerTableProps<TData extends {} = {}> {
   schemaOrder?: SchemaObject;
   sorting?: SortingState;
   onSortingChange?: OnChangeFn<SortingState>;
+  enableRowSelection?: boolean | ((row: Row<TData>) => boolean);
+  rowSelection?: RowSelectionState;
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>;
   tableScope?: ITableScope;
   getColumns?: TypeTableGetColumns<TData>;
   slotDefault?: (table: ControllerTable<TData>) => VNode;
@@ -89,6 +94,13 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
         await this.refreshMeta();
       },
     );
+    this.$watch(
+      () => this.$props.enableRowSelection,
+      async (newValue, oldValue) => {
+        if (newValue === oldValue) return;
+        await this.refreshMeta();
+      },
+    );
     // table
     this._createTable();
   }
@@ -105,6 +117,10 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
     return this.$props.sorting ?? [];
   }
 
+  public get rowSelection() {
+    return this.$props.rowSelection ?? {};
+  }
+
   public async refreshMeta() {
     this.tableMeta = await this._createTableMeta();
     this.columns = await this._createColumns();
@@ -115,21 +131,29 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
     // eslint-disable-next-line
     const self = this;
     const tableOptions: TableOptionsWithReactiveData<TData> = {
-      getRowId: this.$props.getRowId ?? ((originalRow: TData) => cast(originalRow).id),
+      getRowId: (originalRow, index, parent) => this._getRowId(originalRow, index, parent),
       getCoreRowModel: getCoreRowModel(),
       renderFallbackValue: this.scope.config.renderFallbackValue,
       manualPagination: true,
       manualSorting: true,
       enableMultiSort: false,
       enableSortingRemoval: false,
+      enableRowSelection: row => self._canSelectRow(row),
       state: {
         get sorting() {
           return self.sorting;
+        },
+        get rowSelection() {
+          return self.rowSelection;
         },
       },
       onSortingChange: updater => {
         const sorting = functionalUpdate(updater, self.sorting).slice(0, 1);
         self.$props.onSortingChange?.(sorting);
+      },
+      onRowSelectionChange: updater => {
+        const rowSelection = functionalUpdate(updater, self.rowSelection);
+        self.$props.onRowSelectionChange?.(rowSelection);
       },
       get initialState() {
         const columnPinning = self._getColumnPinning();
@@ -148,31 +172,50 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
 
   private async _createColumns() {
     if (!this.properties) return [];
-    if (!this.$props.getColumns) return await this._createColumnsMiddle(this.tableMeta.properties);
-    return await this.$props.getColumns(
-      async properties => {
-        return await this._createColumnsMiddle(properties ?? this.tableMeta.properties);
-      },
-      async (
-        key: string,
-        render: TypeTableCellRenderComponent,
-      ): Promise<TypeTableCellRender<TData, any> | undefined> => {
-        // columnScope
-        const columnScope = this.getColumnScope(key);
-        // renderContext
-        const jsxRenderContext = this.getColumnJsxRenderContext(columnScope);
-        // columnProps
-        const { visible, columnProps } = this.getColumnComponentPropsTop(
-          key,
-          columnScope,
-          jsxRenderContext,
+    const columns = !this.$props.getColumns
+      ? await this._createColumnsMiddle(this.tableMeta.properties)
+      : await this.$props.getColumns(
+          async properties => {
+            return await this._createColumnsMiddle(properties ?? this.tableMeta.properties);
+          },
+          async (
+            key: string,
+            render: TypeTableCellRenderComponent,
+          ): Promise<TypeTableCellRender<TData, any> | undefined> => {
+            // columnScope
+            const columnScope = this.getColumnScope(key);
+            // renderContext
+            const jsxRenderContext = this.getColumnJsxRenderContext(columnScope);
+            // columnProps
+            const { visible, columnProps } = this.getColumnComponentPropsTop(
+              key,
+              columnScope,
+              jsxRenderContext,
+            );
+            // visible
+            if (visible === false) return;
+            return await this._createColumnRender(
+              render,
+              columnProps,
+              columnScope,
+              jsxRenderContext,
+            );
+          },
+          this,
         );
-        // visible
-        if (visible === false) return;
-        return await this._createColumnRender(render, columnProps, columnScope, jsxRenderContext);
-      },
-      this,
-    );
+    if (!this.$props.enableRowSelection) return columns;
+    const columnHelper = createColumnHelper<TData>();
+    return [
+      columnHelper.display({
+        id: TableColumnIdSelection,
+        header: '',
+        cell: '',
+        size: 48,
+        enableSorting: false,
+        meta: { rest: { fixed: 'left', width: 48, align: 'center' } },
+      }),
+      ...columns,
+    ];
   }
 
   private async _createColumnsMiddle(
@@ -200,8 +243,25 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
     return columns;
   }
 
+  private _getRowId(originalRow: TData, index: number, parent?: Row<TData>) {
+    const id = this.$props.getRowId?.(originalRow, index, parent) ?? cast(originalRow).id;
+    if (isNilOrEmptyString(id)) {
+      return `__unselectable_${parent ? `${parent.id}.` : ''}${index}`;
+    }
+    return String(id);
+  }
+
+  private _canSelectRow(row: Row<TData>) {
+    const enableRowSelection = this.$props.enableRowSelection;
+    if (!enableRowSelection) return false;
+    const originalId =
+      this.$props.getRowId?.(row.original, row.index, row.getParentRow()) ?? cast(row.original).id;
+    if (isNilOrEmptyString(originalId)) return false;
+    return typeof enableRowSelection === 'function' ? enableRowSelection(row) : true;
+  }
+
   private _getColumnPinning() {
-    const left: string[] = [];
+    const left: string[] = this.$props.enableRowSelection ? [TableColumnIdSelection] : [];
     const right: string[] = [];
     for (const property of this.tableMeta?.properties ?? []) {
       const fixed = property.rest?.fixed;

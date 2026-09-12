@@ -169,6 +169,24 @@ This is the clearest source-confirmed bulk-action rule:
 - bulk action visibility is permission-driven
 - it is resolved in the bulk-toolbar block
 
+### Selected-action enablement is stricter than discovery
+
+A bulk action with `requiresSelection: true` remains visible when its coarse permission check succeeds, but it is disabled unless all of these conditions hold:
+
+1. at least one ID is selected;
+2. every selected ID still has a loaded row snapshot; and
+3. `$passport.checkPermission(...)` permits **every** selected snapshot with the action's permission hint.
+
+The final condition is intentionally an all-record check. A constrained RBAC projection may allow an action for some rows while denying it for others; a mixed selection must not appear enabled.
+
+The bulk action contract separates authored metadata from toolbar runtime props:
+
+- DTO authors configure static `requiresSelection`, `selectedMaxIds`, and optional unconditional `disabled` in action `options`.
+- `blockToolbarBulk` supplies current-page runtime values as `dynamicSelection`, `dynamicDisabled`, and `dynamicDisabledReason`.
+- A component disables itself when either static `disabled` or toolbar-owned `dynamicDisabled` is true. Custom action components consume the `dynamic*` values as UI state; command implementations should not depend on them as mutation policy.
+
+This is still only a browser projection. Direct selected-row API requests must reload the targets and enforce authorization on the server.
+
 ## Row action hints vs bulk action hints
 
 The permission hint contracts live in:
@@ -240,6 +258,8 @@ If a list-page action is missing unexpectedly, ask:
 5. for row actions, is the operations-row cell bean actually resolving a visible renderer set?
 6. for bulk actions, is the bulk toolbar reading the expected action config?
 7. are you accidentally expecting entry-page `formScene` behavior in a list-page action surface?
+8. for a selected action, is selection nonempty, complete, and permitted for every selected snapshot?
+9. does the backend endpoint independently reload and authorize all submitted IDs?
 
 ## Where to read next
 

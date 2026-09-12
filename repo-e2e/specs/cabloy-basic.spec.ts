@@ -1,4 +1,4 @@
-import type { Locator, Page, Route } from '@playwright/test';
+import type { Locator, Page, Request, Route } from '@playwright/test';
 
 import { expect, test } from '@playwright/test';
 
@@ -513,6 +513,251 @@ test(
           { headers },
         );
         expect(deleteResponse.ok()).toBeTruthy();
+      }
+    }
+  },
+);
+
+test(
+  'ATP-BASIC-TABLE-02: Training Student selection mode preserves page state and bulk deletes selected rows',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }, testInfo) => {
+    testInfo.setTimeout(120_000);
+    page.setDefaultTimeout(10_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const pageErrors = collectPageErrors(page);
+    await loginAsAdmin(page);
+
+    const fixturePrefix = `Selection E2E ${Date.now()}`;
+    const fixtureNames = Array.from(
+      { length: 21 },
+      (_, index) => `${fixturePrefix} ${String(index + 1).padStart(2, '0')}`,
+    );
+    const visibleFixtureNames = fixtureNames.toReversed();
+    const fixtureRecords: Array<{ id: string | number; name: string }> = [];
+    const accessToken = (await page.context().cookies()).find(
+      cookie => cookie.name === 'token',
+    )?.value;
+    expect(accessToken).toBeTruthy();
+    const headers = { Authorization: `Bearer ${accessToken}` };
+
+    const allPageCheckbox = page.getByRole('checkbox', {
+      name: 'Select all rows on this page',
+      exact: true,
+    });
+    const selectionStatus = page.getByRole('status').filter({ hasText: /^Selected \d+ items$/ });
+    const select = page.getByRole('button', { name: 'Select', exact: true });
+    const done = page.getByRole('button', { name: 'Done', exact: true });
+    const create = page.getByRole('button', { name: 'Create', exact: true });
+    const deleteBulk = page.getByRole('button', { name: 'Bulk Delete', exact: true });
+    const rowFor = (name: string) => page.locator('tbody tr').filter({ hasText: name });
+    const rowCheckboxFor = (name: string) =>
+      rowFor(name).getByRole('checkbox', { name: /^Select row / });
+    const selectPage = async () => {
+      const response = waitForStudentSelect(page);
+      await page.getByRole('button', { name: 'Search', exact: true }).click();
+      return await response;
+    };
+
+    try {
+      for (const name of fixtureNames) {
+        const createResponse = await page.request.post('/api/training/student', {
+          data: { name, mobile: '13812345678', level: 1 },
+          headers,
+        });
+        expect(createResponse.ok()).toBeTruthy();
+        const id = (await createResponse.json()).data;
+        expect(['string', 'number']).toContain(typeof id);
+        fixtureRecords.unshift({ id, name });
+      }
+
+      const initialSelect = waitForStudentSelect(page);
+      await page.getByRole('link', { name: 'Student', exact: true }).click();
+      await expect(page).toHaveURL(studentResourceUrl);
+      await initialSelect;
+
+      await page.getByLabel('Student Name').fill(fixturePrefix);
+      const filteredResponse = await selectPage();
+      const filteredUrl = new URL(filteredResponse.url());
+      expect(filteredUrl.searchParams.get('name')).toBe(fixturePrefix);
+      await expect(rowFor(visibleFixtureNames[0])).toHaveCount(1);
+      await expect(rowFor(visibleFixtureNames[20])).toHaveCount(0);
+
+      await expect(create).toBeVisible();
+      await expect(create).toBeEnabled();
+      await expect(select).toBeVisible();
+      await expect(allPageCheckbox).toHaveCount(0);
+      await expect(deleteBulk).toBeDisabled();
+
+      await select.click();
+      await expect(done).toBeVisible();
+      await expect(selectionStatus).toHaveText('Selected 0 items');
+      await expect(allPageCheckbox).toBeVisible();
+      await expect(rowCheckboxFor(visibleFixtureNames[0])).toBeVisible();
+
+      await rowCheckboxFor(visibleFixtureNames[0]).check();
+      await expect(rowFor(visibleFixtureNames[0])).toHaveAttribute('aria-selected', 'true');
+      await expect(selectionStatus).toHaveText('Selected 1 items');
+      await expect(allPageCheckbox).toHaveAttribute('aria-checked', 'mixed');
+      await expect(allPageCheckbox).toHaveJSProperty('indeterminate', true);
+
+      await done.click();
+      await expect(select).toBeVisible();
+      await expect(allPageCheckbox).toHaveCount(0);
+      await expect(create).toBeEnabled();
+
+      await select.click();
+      await rowCheckboxFor(visibleFixtureNames[0]).check();
+      await allPageCheckbox.check();
+      await expect(selectionStatus).toHaveText('Selected 20 items');
+      await expect(allPageCheckbox).toBeChecked();
+      await expect(allPageCheckbox).toHaveJSProperty('indeterminate', false);
+
+      const pageTwoResponse = waitForStudentSelect(page);
+      await page.getByRole('button', { name: '»', exact: true }).click();
+      const pageTwoUrl = new URL((await pageTwoResponse).url());
+      expect(pageTwoUrl.searchParams.get('pageNo')).toBe('2');
+      await expect(selectionStatus).toHaveText('Selected 20 items');
+      await expect(rowFor(visibleFixtureNames[20])).toHaveCount(1);
+      await expect(rowCheckboxFor(visibleFixtureNames[20])).not.toBeChecked();
+
+      await rowCheckboxFor(visibleFixtureNames[20]).check();
+      await expect(rowFor(visibleFixtureNames[20])).toHaveAttribute('aria-selected', 'true');
+      await expect(selectionStatus).toHaveText('Selected 21 items');
+
+      await page.getByRole('button', { name: '«', exact: true }).click();
+      await expect(rowFor(visibleFixtureNames[0])).toHaveCount(1);
+      await expect(allPageCheckbox).toBeChecked();
+      await allPageCheckbox.uncheck();
+      await expect(selectionStatus).toHaveText('Selected 1 items');
+
+      await rowCheckboxFor(visibleFixtureNames[9]).check();
+      await expect(selectionStatus).toHaveText('Selected 2 items');
+      await page.getByLabel('Student Name').fill(`${fixturePrefix} 1`);
+      await selectPage();
+      await expect(selectionStatus).toHaveText('Selected 0 items');
+      await expect(rowFor(visibleFixtureNames[9])).toHaveAttribute('aria-selected', 'false');
+
+      await rowCheckboxFor(visibleFixtureNames[9]).check();
+      await expect(selectionStatus).toHaveText('Selected 1 items');
+      await page.getByRole('button', { name: 'Reset', exact: true }).click();
+      await expect(page.getByLabel('Student Name')).toHaveValue('');
+      await expect(selectionStatus).toHaveText('Selected 0 items');
+      await page.getByLabel('Student Name').fill(fixturePrefix);
+      await page.getByRole('button', { name: 'Search', exact: true }).click();
+      await expect(rowFor(visibleFixtureNames[0])).toHaveCount(1);
+
+      await rowCheckboxFor(visibleFixtureNames[0]).check();
+      await expect(selectionStatus).toHaveText('Selected 1 items');
+      const nameSort = page.getByRole('button', { name: 'Sort by name', exact: true });
+      const sortResponse = waitForStudentSelect(page);
+      await nameSort.click();
+      await sortResponse;
+      await expect(selectionStatus).toHaveText('Selected 0 items');
+
+      await nameSort.click();
+      const selectedRows = page.locator('tbody tr').filter({ hasText: fixturePrefix });
+      await expect(selectedRows).toHaveCount(20);
+      const selectedNames = await selectedRows.evaluateAll(rows =>
+        rows.slice(0, 2).map(row => row.querySelector('td:nth-child(3) a')?.textContent?.trim()),
+      );
+      const selectedIds = await selectedRows.evaluateAll(rows =>
+        rows
+          .slice(0, 2)
+          .map(row => Number(row.querySelector('td:nth-child(2)')?.textContent?.trim())),
+      );
+      expect(selectedNames.every((name): name is string => Boolean(name))).toBeTruthy();
+      expect(selectedIds.every(Number.isInteger)).toBeTruthy();
+      await rowCheckboxFor(selectedNames[0]).check();
+      await rowCheckboxFor(selectedNames[1]).check();
+      await expect(selectionStatus).toHaveText('Selected 2 items');
+      await expect(deleteBulk).toBeEnabled();
+
+      let cancelledRequestCount = 0;
+      const cancelledRequestListener = (request: Request) => {
+        if (
+          request.method() === 'POST' &&
+          new URL(request.url()).pathname === '/api/training/student/bulk/delete'
+        ) {
+          cancelledRequestCount++;
+        }
+      };
+      page.on('request', cancelledRequestListener);
+      try {
+        await deleteBulk.click();
+        await expect(page.getByRole('dialog')).toContainText('2 selected items');
+        await page.getByRole('button', { name: 'No', exact: true }).click();
+        await expect(selectionStatus).toHaveText('Selected 2 items');
+        expect(cancelledRequestCount).toBe(0);
+      } finally {
+        page.off('request', cancelledRequestListener);
+      }
+
+      let failureRequestCount = 0;
+      const bulkDeleteRoute = (url: URL) => url.pathname === '/api/training/student/bulk/delete';
+      const bulkDeleteFailureHandler = async (route: Route) => {
+        failureRequestCount++;
+        await route.fulfill({
+          status: 500,
+          contentType: 'application/json',
+          body: JSON.stringify({ code: 500, message: 'Bulk deletion temporarily unavailable' }),
+        });
+      };
+      await page.route(bulkDeleteRoute, bulkDeleteFailureHandler);
+      try {
+        await deleteBulk.click();
+        await page.getByRole('button', { name: 'Yes', exact: true }).click();
+        await expect.poll(() => failureRequestCount).toBe(1);
+        await expect(selectionStatus).toHaveText('Selected 2 items');
+        await expect(rowFor(selectedNames[0])).toHaveAttribute('aria-selected', 'true');
+        await expect(rowFor(selectedNames[1])).toHaveAttribute('aria-selected', 'true');
+      } finally {
+        await page.unroute(bulkDeleteRoute, bulkDeleteFailureHandler);
+      }
+
+      const bulkDeleteRequest = page.waitForRequest(request => {
+        const url = new URL(request.url());
+        return request.method() === 'POST' && url.pathname === '/api/training/student/bulk/delete';
+      });
+      const bulkDeleteResponse = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return (
+          response.request().method() === 'POST' &&
+          response.ok() &&
+          url.pathname === '/api/training/student/bulk/delete'
+        );
+      });
+      const refetchResponse = waitForStudentSelect(page);
+      await deleteBulk.click();
+      await page.getByRole('button', { name: 'Yes', exact: true }).click();
+      const [request, response, refetch] = await Promise.all([
+        bulkDeleteRequest,
+        bulkDeleteResponse,
+        refetchResponse,
+      ]);
+      expect(response.ok()).toBeTruthy();
+      expect(request.postDataJSON()).toEqual({ ids: selectedIds });
+      expect(refetch.ok()).toBeTruthy();
+
+      await expect(rowFor(selectedNames[0])).toHaveCount(0);
+      await expect(rowFor(selectedNames[1])).toHaveCount(0);
+      await expect(selectionStatus).toHaveText('Selected 0 items');
+      await expect(page.locator('tbody tr[aria-selected="true"]')).toHaveCount(0);
+      await expect(deleteBulk).toBeDisabled();
+      expect(pageErrors).toEqual([]);
+    } finally {
+      for (const { id, name } of fixtureRecords) {
+        const deleteResponse = await page.request.delete(
+          `/api/training/student/deleteForce/${id}`,
+          {
+            headers,
+            timeout: 10_000,
+          },
+        );
+        expect(
+          deleteResponse.ok() || deleteResponse.status() === 404,
+          `Failed to clean up Training Student ${name} (${id}): ${deleteResponse.status()}`,
+        ).toBeTruthy();
       }
     }
   },

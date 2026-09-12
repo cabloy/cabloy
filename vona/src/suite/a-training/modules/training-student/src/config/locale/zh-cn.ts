@@ -22,6 +22,7 @@ export default {
   LevelTitle: '阶段名称',
   DescriptionLength: '描述长度',
   ForceDelete: '强制删除',
+  BulkDelete: '批量删除',
   TrainingRecords: '学生培训记录',
   AddTrainingRecord: '添加学生培训记录',
   EditTrainingRecord: '编辑学生培训记录',

@@ -1,0 +1,14 @@
+import type { TableIdentity } from 'table-identity';
+import type { IDecoratorDtoOptions } from 'vona-module-a-web';
+
+import { Api, v } from 'vona-module-a-openapiutils';
+import { Dto } from 'vona-module-a-web';
+import { z } from 'zod';
+
+export interface IDtoOptions<%=argv.resourceNameCapitalize%>DeleteBulk extends IDecoratorDtoOptions {}
+
+@Dto<IDtoOptions<%=argv.resourceNameCapitalize%>DeleteBulk>()
+export class Dto<%=argv.resourceNameCapitalize%>DeleteBulk {
+  @Api.field(v.required(), z.array(v.tableIdentity()()).min(1).max(100))
+  ids: TableIdentity[];
+}

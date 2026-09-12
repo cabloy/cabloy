@@ -10,6 +10,21 @@ Selected articles on Cabloy, Vona, Zova, and the architectural questions that sh
 
 <div class="cabloy-blog-grid">
   <article class="cabloy-blog-card">
+    <a class="cabloy-blog-card__cover" href="/blogs/ai-spec-driven-development/" aria-label="Read CabloyJS AI Spec-Driven Development Automatically Generates Gantt and Burndown Charts">
+      <img src="/blogs/ai-spec-driven-development/cover-en-v1.png" alt="CabloyJS AI Spec-Driven Development Automatically Generates Gantt and Burndown Charts" />
+    </a>
+    <div class="cabloy-blog-card__content">
+      <p class="cabloy-blog-card__date">September 11, 2026</p>
+      <h2><a href="/blogs/ai-spec-driven-development/">CabloyJS AI Spec-Driven Development Automatically Generates Gantt and Burndown Charts</a></h2>
+      <p>Learn how two CabloyJS Skills establish specification authority, execute bounded WBS increments, and derive Gantt and Burndown status views from the same traceability chain.</p>
+      <div class="cabloy-blog-card__tags" aria-label="Article topics">
+        <span>AI Spec-Driven Development</span><span>AI Coding</span><span>Specification Workflow</span><span>Fullstack</span>
+      </div>
+      <a class="cabloy-blog-card__read" href="/blogs/ai-spec-driven-development/">Read article <span aria-hidden="true">→</span></a>
+    </div>
+  </article>
+
+  <article class="cabloy-blog-card">
     <a class="cabloy-blog-card__cover" href="/blogs/nextjs-integrated-fullstack-cabloy-contract-loop/" aria-label="Read Next.js Integrated Full Stack and Cabloy’s Bidirectional Contract Loop">
       <img src="/blogs/nextjs-integrated-fullstack-cabloy-contract-loop/cover-en-v1.png" alt="Next.js Integrated Full Stack and Cabloy’s Bidirectional Contract Loop" />
     </a>

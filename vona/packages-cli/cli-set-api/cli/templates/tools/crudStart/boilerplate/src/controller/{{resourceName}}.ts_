@@ -12,6 +12,7 @@ import type { Model<%=argv.resourceNameCapitalize%> } from '../model/<%=argv.res
 
 import { $locale } from '../.metadata/locales.ts';
 import { Dto<%=argv.resourceNameCapitalize%>Create } from '../dto/<%=argv.resourceName%>Create.tsx';
+import { Dto<%=argv.resourceNameCapitalize%>DeleteBulk } from '../dto/<%=argv.resourceName%>DeleteBulk.tsx';
 import { Dto<%=argv.resourceNameCapitalize%>SelectReq } from '../dto/<%=argv.resourceName%>SelectReq.tsx';
 import { Dto<%=argv.resourceNameCapitalize%>SelectRes } from '../dto/<%=argv.resourceName%>SelectRes.tsx';
 import { Dto<%=argv.resourceNameCapitalize%>Update } from '../dto/<%=argv.resourceName%>Update.tsx';
@@ -50,6 +51,13 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   @Passport.rbac()
   async update(@Arg.param('id', v.tableIdentity()) id: TableIdentity, @Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Update): Promise<void> {
     await this.scope.service.<%=argv.resourceName%>.update(id, <%=argv.resourceName%>);
+  }
+
+  @Web.post('bulk/delete', { summary: $locale('BulkDelete') })
+  @Api.body(z.null())
+  @Passport.rbac()
+  async deleteBulk(@Arg.body() command: Dto<%=argv.resourceNameCapitalize%>DeleteBulk): Promise<void> {
+    await this.scope.service.<%=argv.resourceName%>.deleteBulk(command.ids);
   }
 
   @Web.delete(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>Delete') })

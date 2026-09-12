@@ -22,6 +22,7 @@ export default {
   LevelTitle: 'Level Title',
   DescriptionLength: 'Description Length',
   ForceDelete: 'Force Delete',
+  BulkDelete: 'Bulk Delete',
   TrainingRecords: 'Student Training Records',
   AddTrainingRecord: 'Add Student Training Record',
   EditTrainingRecord: 'Edit Student Training Record',

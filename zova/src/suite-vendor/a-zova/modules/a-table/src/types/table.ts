@@ -11,6 +11,8 @@ export type TypeTable<TData extends {} = {}> = ReturnType<typeof useVueTable<TDa
 
 export type TypeColumn<TData extends {} = {}> = ColumnDef<TData, any>;
 
+export const TableColumnIdSelection = '$$selection';
+
 export interface ITableMeta<TData extends {} = {}> {
   properties: ISchemaObjectExtensionField[];
   renders: Record<string, TypeTableCellRender<TData>>;

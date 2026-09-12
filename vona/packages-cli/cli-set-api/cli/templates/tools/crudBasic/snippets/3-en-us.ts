@@ -9,6 +9,7 @@ const __resources = {
   Name: 'Name',
   Description: 'Description',
   Operations: 'Operations',
+  BulkDelete: 'Bulk Delete',
 };
 
 declare module '@cabloy/cli' {
@@ -30,6 +31,16 @@ export default metadataCustomSnippet({
     return fs.readFileSync(targetFile).toString('utf8');
   },
   async transform({ ast, argv }) {
-    return locale_transform({ ast, argv, resources: __resources });
+    const resource = argv.resourceNameCapitalize;
+    const resources = {
+      ...__resources,
+      [`${resource}Controller`]: `${resource} Management`,
+      [`${resource}Create`]: `Create ${resource}`,
+      [`${resource}Select`]: `Query ${resource} List`,
+      [`${resource}View`]: `View ${resource}`,
+      [`${resource}Update`]: `Update ${resource}`,
+      [`${resource}Delete`]: `Delete ${resource}`,
+    };
+    return locale_transform({ ast, argv, resources });
   },
 });

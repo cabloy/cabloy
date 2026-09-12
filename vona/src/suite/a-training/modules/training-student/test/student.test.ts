@@ -64,13 +64,47 @@ describe('student.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('action:student:bulkDeleteOpenapi', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const controller = app.bean.onion.controller
+        .getOnionsEnabledCached()
+        .find(item => item.beanOptions.beanFullName === 'training-student.controller.student')
+        ?.beanOptions.beanClass;
+      if (!controller) throw new Error('training-student.controller.student not found');
+      const apiJson = await app.bean.openapi.generateJsonOfControllerAction(
+        controller,
+        'deleteBulk',
+        'V31',
+      );
+      const operation = apiJson.paths?.['/api/training/student/bulk/delete']?.post;
+      assert.equal(operation?.operationId, 'TrainingStudent_deleteBulk');
+      assert.equal(operation?.summary?.toJSON(), 'Bulk Delete');
+      const requestSchema = operation?.requestBody?.content?.['application/json']?.schema as any;
+      const requestSchemaRef = requestSchema?.$ref;
+      assert.ok(requestSchemaRef);
+      const requestSchemaName = requestSchemaRef.replace('#/components/schemas/', '');
+      const component = apiJson.components?.schemas?.[requestSchemaName] as any;
+      assert.equal(component?.properties?.ids?.minItems, 1);
+      assert.equal(component?.properties?.ids?.maxItems, 100);
+    });
+  });
+
   it('action:student:filterFormLayoutMetadata', async () => {
     await app.bean.executor.mockCtx(async () => {
       const apiJson = await app.bean.openapi.generateJsonOfClass(DtoStudentSelectResItem);
       const component = Object.values(apiJson.components!.schemas as any).find(item => {
         return (item as any).properties?._operationsRow;
       });
-      const filterBlock = (component as any)?.rest?.blocks?.[0]?.options?.blocks?.[0];
+      const pageBlocks = (component as any)?.rest?.blocks?.[0]?.options?.blocks;
+      const toolbarBlock = pageBlocks?.[1];
+      assert.equal(toolbarBlock?.render, 'basic-page:blockToolbarBulk');
+      const deleteBulkAction = toolbarBlock?.options?.actions?.find(
+        (action: any) => action.render === 'basic-table:actionDeleteBulk',
+      );
+      assert.equal(deleteBulkAction?.options?.requiresSelection, true);
+      assert.equal(deleteBulkAction?.options?.selectedMaxIds, 100);
+
+      const filterBlock = pageBlocks?.[0];
       assert.equal(filterBlock?.render, 'basic-page:blockFilter');
       assert.equal(filterBlock?.options?.formFieldLayout?.inline, true);
       assert.deepEqual(
@@ -449,6 +483,75 @@ describe('student.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('action:student:deleteBulk', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      const studentIds: string[] = [];
+      try {
+        for (const name of ['__DeleteBulkA__', '__DeleteBulkB__']) {
+          const studentId = await app.bean.executor.performAction('post', '/training/student', {
+            body: { name, mobile: `138${studentIds.length}1234567`, level: 1 },
+          });
+          studentIds.push(studentId);
+        }
+        const deleted = await app.bean.executor.performAction(
+          'post',
+          '/training/student/bulk/delete',
+          { body: { ids: studentIds } },
+        );
+        assert.equal(deleted, null);
+        for (const studentId of studentIds) {
+          assert.equal(
+            await app.scope('training-student').model.student.getById(studentId),
+            undefined,
+          );
+        }
+      } finally {
+        for (const studentId of studentIds.reverse()) {
+          await app
+            .scope('training-student')
+            .model.studentContent.delete({ studentId }, { disableDeleted: true });
+          await app
+            .scope('training-student')
+            .model.student.deleteById(studentId, { disableDeleted: true });
+        }
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
+  it('action:student:deleteBulk accepts duplicate and missing IDs', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      let studentId: string | undefined;
+      try {
+        studentId = await app.bean.executor.performAction('post', '/training/student', {
+          body: { name: '__DeleteBulkIdempotent__', mobile: '13891234567', level: 1 },
+        });
+        const deleted = await app.bean.executor.performAction(
+          'post',
+          '/training/student/bulk/delete',
+          { body: { ids: [studentId, studentId, '__missing-student__'] } },
+        );
+        assert.equal(deleted, null);
+        assert.equal(
+          await app.scope('training-student').model.student.getById(studentId),
+          undefined,
+        );
+      } finally {
+        if (studentId) {
+          await app
+            .scope('training-student')
+            .model.studentContent.delete({ studentId }, { disableDeleted: true });
+          await app
+            .scope('training-student')
+            .model.student.deleteById(studentId, { disableDeleted: true });
+        }
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
   it('action:student:contentPersistence', async () => {
     await app.bean.executor.mockCtx(async () => {
       await app.bean.passport.signinMock();
@@ -531,7 +634,16 @@ describe('student.test.ts', { concurrency: false }, () => {
       await app.bean.passport.signinMock();
       try {
         app.bean.passport.current!.roles = [];
-        const actions = ['create', 'select', 'view', 'update', 'summary', 'delete', 'deleteForce'];
+        const actions = [
+          'create',
+          'select',
+          'view',
+          'update',
+          'summary',
+          'delete',
+          'deleteBulk',
+          'deleteForce',
+        ];
         const permissions = await Promise.all(
           actions.map(action =>
             app.bean.permission.retrievePermissionAction('training-student:student', action),

@@ -1,7 +1,7 @@
 import type { IComponentOptions } from 'zova';
 import type {
   IJsxRenderContextPage,
-  IResourceTableActionBulkOptionsBase,
+  IResourceTableActionBulkPropsBase,
 } from 'zova-module-a-openapi';
 
 import { BeanControllerBase, Use } from 'zova';
@@ -13,7 +13,7 @@ declare module 'zova-module-a-openapi' {
   }
 }
 
-export interface Controller<%=argv.nameMeta.fullCapitalize%>Props extends IResourceTableActionBulkOptionsBase {}
+export interface Controller<%=argv.nameMeta.fullCapitalize%>Props extends IResourceTableActionBulkPropsBase {}
 
 @Controller()
 export class Controller<%=argv.nameMeta.fullCapitalize%> extends BeanControllerBase {

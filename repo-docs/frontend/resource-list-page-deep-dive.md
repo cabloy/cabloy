@@ -151,6 +151,15 @@ This controller becomes the deeper owner for:
 - `schemaFilter`, `schemaRow`, and `permissions`
 - the shared page JSX/render context (`$$page`)
 - permission-driven table-meta refresh through `tableRef.refreshMeta()`
+- transient selected IDs and snapshots of selected loaded rows
+
+### Page-owned row selection
+
+Selection is page-local interaction state, not `ModelResource` cache state. `blockPage` keeps canonical selected IDs and loaded-row snapshots, while `ZTable` receives only a controlled TanStack selection map for the current page.
+
+Consequently, normal paging and same-query refetches preserve selected IDs and refresh a snapshot when its row reappears. The header checkbox selects or clears only **currently loaded** rows; it never selects all rows matching a server-side filter. Selection clears when the result universe materially changes: fixed query, submitted/reset filter, sort, page size, resource identity, or a successful selected-row mutation. Page-size changes also return to page 1, and **Done** clears selection before hiding the selection column.
+
+Snapshots exist for browser UX only. A selected-row command sends IDs; the backend reloads and authorizes every persisted target through the normal instance-scoped model boundary.
 
 This is the second key architectural boundary:
 
@@ -184,8 +193,12 @@ This controller consumes `$$page` and passes the canonical page-owned values int
 - `data`
 - `schemaRow`
 - `tableScope`
+- controlled sorting
+- controlled row selection
 
-It also captures the table controller ref back onto `$$page.tableRef`.
+It captures the table controller ref back onto `$$page.tableRef`; it does not configure selection policy.
+
+`blockPage.selectionPolicy` is the page-owned configuration: `undefined` is automatic, `'always'` shows checkboxes immediately, `'onDemand'` exposes **Select / Done** even without a selected action, and `false` prevents selection. With the automatic policy, a sibling bulk-toolbar action that declares `requiresSelection: true` makes **Select / Done** available. The toolbar's action requirement remains independent from page policy.
 
 This is the clearest proof that `blockTable` is a bridge into table runtime, not the main owner of list state.
 

@@ -119,6 +119,48 @@ A practical reading takeaway is:
 - **the visible wrapper component is thin**
 - **the controller bean is the real runtime owner**
 
+## Row selection and selected actions
+
+Row selection is opt-in. Direct `ZTable` use remains unchanged unless it receives the controlled TanStack selection surface:
+
+```tsx
+<ZTable
+  data={this.students}
+  schema={this.schemaRow}
+  enableRowSelection={true}
+  rowSelection={this.rowSelection}
+  onRowSelectionChange={updater => {
+    this.rowSelection = functionalUpdate(updater, this.rowSelection);
+  }}
+/>
+```
+
+The framework-owned selection column is not a schema field: it is left-pinned, non-sortable, and uses the stable `getRowId(...)` identity. The header checkbox selects only rows currently loaded in the table; under server pagination it never means every row matching the filter.
+
+For standard resource list pages, `basic-page:blockPage` owns selected IDs, loaded row snapshots, and the `selectionPolicy` configuration. Its default `undefined` policy is automatic: a `tableActionBulk` action that opts in with `requiresSelection: true` makes the localized **Select** control available:
+
+```ts
+ZovaRender.block('basic-page:blockPage', {
+  blocks: [
+    ZovaRender.block('basic-page:blockToolbarBulk', {
+      actions: [
+        ZovaRender.tableActionBulk('basic-table:actionCreate'),
+        ZovaRender.tableActionBulk('basic-table:actionDeleteBulk', {
+          requiresSelection: true,
+        }),
+      ],
+    }),
+    ZovaRender.block('basic-page:blockTable'),
+  ],
+});
+```
+
+Use `selectionPolicy: 'onDemand'` to expose **Select / Done** without a selected action, `'always'` to show row selection continuously, or `false` to disable row selection for the page. In automatic and on-demand modes, **Select** keeps the checkbox column hidden until the user enters selection mode; **Done** clears the selection and hides the column. Required actions remain discoverable but disabled until every selected row has a current snapshot and passes the projected row-permission check.
+
+Schema metadata remains declarative: author `requiresSelection`, `selectedMaxIds`, and an unconditional `disabled` in action options. A custom bulk-action component receives current toolbar state through `dynamicSelection`, `dynamicDisabled`, and `dynamicDisabledReason`; it should disable when either `disabled` or `dynamicDisabled` is true. Frontend snapshots provide UX only—server actions must reload and authorize all submitted IDs.
+
+Selection persists while paging the same result universe and during ordinary refetches. It clears on a material fixed-query change, filter submit/reset, sorting, page-size change, resource change, or a successful selection-consuming mutation. Page-size changes also return to page 1.
+
 ## Step 3: Let schema metadata drive the default columns
 
 In the default path, `ZTable` reads table-scene metadata from the row schema.

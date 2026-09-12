@@ -1,4 +1,5 @@
-import type { SortingState } from '@tanstack/vue-table';
+import type { RowSelectionState, SortingState } from '@tanstack/vue-table';
+import type { TableIdentity } from 'table-identity';
 import type { IComponentOptions } from 'zova';
 import type {
   IJsxRenderContextPage,
@@ -20,6 +21,8 @@ import { $QueriesEnsureLoaded } from 'zova-module-a-model';
 import { BeanControllerTableBase } from 'zova-module-a-table';
 import { ModelResource } from 'zova-module-rest-resource';
 
+import { reconcileSelection, selectionKey, selectionRowId } from '../../lib/selection.js';
+
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {
     'basic-page:blockPage'?: ControllerBlockPageProps;
@@ -31,6 +34,7 @@ export interface ControllerBlockPageProps extends IResourceBlockOptionsBase {
   resource?: string;
   pageSize?: number;
   queryFixed?: ITableQuery;
+  selectionPolicy?: 'always' | 'onDemand' | false;
 }
 
 @Controller()
@@ -55,6 +59,12 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
   sorting: SortingState;
   queryPaged: ITablePaged;
 
+  rowSelection: RowSelectionState;
+  selectedIds: TableIdentity[];
+  selectedRows: Map<string, TData>;
+  selectionVisible = false;
+  selectionRequiredCount = 0;
+
   $$modelResource: ModelResource<TData>;
 
   protected async __init__() {
@@ -70,10 +80,21 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
     this.queryFilterData = {};
     this.querySortingData = {};
     this.sorting = [];
+    this.rowSelection = {};
+    this.selectedIds = [];
+    this.selectedRows = new Map();
     this.$watch(
       () => this.$props.queryFixed,
       queryFixed => {
         this.setQueryFixed(queryFixed);
+      },
+    );
+    this.$watch(
+      () => this.$props.resource,
+      (resource, oldResource) => {
+        if (resource === oldResource) return;
+        this.clearSelection();
+        this.selectionVisible = false;
       },
     );
     this.queryPaged = { pageNo: 1, pageSize: this.$props.pageSize };
@@ -88,6 +109,12 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
       async (newValue, oldValue) => {
         if (deepEqual(newValue, oldValue)) return;
         await this._requestTableMetaRefresh();
+      },
+    );
+    this.$watch(
+      () => this.data,
+      data => {
+        this._refreshSelectedRows((data ?? []) as unknown as Record<string, unknown>[]);
       },
     );
   }
@@ -136,6 +163,98 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
     return this.$$modelResource.permissions;
   }
 
+  get selection() {
+    return {
+      ids: this.selectedIds,
+      rows: this.selectedIds.flatMap(id => {
+        const row = this.selectedRows.get(selectionKey(id));
+        return row ? [row] : [];
+      }),
+      count: this.selectedIds.length,
+    };
+  }
+
+  get selectionAvailable() {
+    const policy = this.$props.selectionPolicy;
+    return (
+      policy === 'always' ||
+      policy === 'onDemand' ||
+      (policy === undefined && this.selectionRequiredCount > 0)
+    );
+  }
+
+  get selectionToggleAvailable() {
+    return this.selectionAvailable && this.$props.selectionPolicy !== 'always';
+  }
+
+  get selectionEnabled() {
+    const policy = this.$props.selectionPolicy;
+    return policy === 'always' || (this.selectionVisible && policy !== false);
+  }
+
+  onRowSelectionChange(
+    updater: RowSelectionState | ((old: RowSelectionState) => RowSelectionState),
+  ) {
+    const data = (this.data ?? []) as unknown as Record<string, unknown>[];
+    const next = functionalUpdate(updater, this.rowSelection);
+    this.rowSelection = reconcileSelection(this.rowSelection, data, next);
+    this._reconcileSelectedRows(data);
+  }
+
+  clearSelection() {
+    this.rowSelection = {};
+    this.selectedIds = [];
+    this.selectedRows = new Map();
+  }
+
+  private _refreshSelectedRows(data: readonly Record<string, unknown>[]) {
+    if (this.selectedIds.length === 0) return;
+    this._reconcileSelectedRows(data);
+  }
+
+  private _reconcileSelectedRows(data: readonly Record<string, unknown>[]) {
+    const selectedIds = [...this.selectedIds];
+    const selectedRows = new Map(this.selectedRows);
+    for (const row of data) {
+      const id = selectionRowId(row);
+      const key = selectionKey(id);
+      if (this.rowSelection[key]) {
+        if (!selectedIds.some(selectedId => selectionKey(selectedId) === key)) {
+          selectedIds.push(id);
+        }
+        selectedRows.set(key, row as TData);
+      } else {
+        const index = selectedIds.findIndex(selectedId => selectionKey(selectedId) === key);
+        if (index !== -1) selectedIds.splice(index, 1);
+        selectedRows.delete(key);
+      }
+    }
+    this.selectedIds = selectedIds;
+    this.selectedRows = selectedRows;
+  }
+
+  toggleSelection() {
+    if (this.selectionVisible) {
+      this.clearSelection();
+    }
+    this.selectionVisible = !this.selectionVisible;
+  }
+
+  setSelectionRequired(required: boolean) {
+    this.selectionRequiredCount += required ? 1 : -1;
+    if (this.selectionRequiredCount < 0) this.selectionRequiredCount = 0;
+  }
+
+  clearSelectionAfterMutation(ids: readonly TableIdentity[]) {
+    const keys = new Set(ids.map(selectionKey));
+    if (keys.size === 0) return;
+    this.rowSelection = Object.fromEntries(
+      Object.entries(this.rowSelection).filter(([key]) => !keys.has(key)),
+    );
+    this.selectedIds = this.selectedIds.filter(id => !keys.has(selectionKey(id)));
+    this.selectedRows = new Map([...this.selectedRows].filter(([key]) => !keys.has(key)));
+  }
+
   gotoPage(pageNo: number) {
     if (this.queryPaged.pageNo !== pageNo) {
       this.queryPaged.pageNo = pageNo;
@@ -144,26 +263,34 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
 
   setPageSize(pageSize: number) {
     if (this.queryPaged.pageSize !== pageSize) {
+      this.clearSelection();
       this.queryPaged.pageSize = pageSize;
+      this.queryPaged.pageNo = 1;
     }
   }
 
   setQueryFixed(queryFixed?: ITableQuery) {
-    this.queryFixedData = queryFixed ?? {};
+    const next = queryFixed ?? {};
+    if (deepEqual(this.queryFixedData, next)) return;
+    this.clearSelection();
+    this.queryFixedData = next;
     this.queryPaged.pageNo = 1;
   }
 
   onFilter(data: ITableQuery) {
+    if (deepEqual(this.queryFilterData, data)) return;
+    this.clearSelection();
     this.queryFilterData = data;
     this.queryPaged.pageNo = 1;
   }
 
   onSortingChange(updater: SortingState | ((old: SortingState) => SortingState)) {
-    this.sorting = functionalUpdate(updater, this.sorting).slice(0, 1);
-    const sorting = this.sorting[0];
-    this.querySortingData = sorting
-      ? { orders: [[sorting.id, sorting.desc ? 'desc' : 'asc']] }
-      : {};
+    const sorting = functionalUpdate(updater, this.sorting).slice(0, 1);
+    if (deepEqual(this.sorting, sorting)) return;
+    this.clearSelection();
+    this.sorting = sorting;
+    const first = this.sorting[0];
+    this.querySortingData = first ? { orders: [[first.id, first.desc ? 'desc' : 'asc']] } : {};
     this.queryPaged.pageNo = 1;
   }
 
@@ -231,9 +358,18 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
         set(_value) {},
       };
     }) as any;
+    const selection = this.$customRef(() => {
+      return {
+        get() {
+          return self.selection;
+        },
+        set(_value) {},
+      };
+    }) as any;
     return {
       resource: this.resource,
       permissions,
+      selection,
     };
   }
 

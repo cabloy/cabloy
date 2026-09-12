@@ -3,6 +3,7 @@ import type { IQueryParams } from 'vona-module-a-orm';
 
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
+import { Core } from 'vona-module-a-core';
 
 import type { Dto<%=argv.resourceNameCapitalize%>Create } from '../dto/<%=argv.resourceName%>Create.tsx';
 import type { Dto<%=argv.resourceNameCapitalize%>SelectRes } from '../dto/<%=argv.resourceName%>SelectRes.tsx';
@@ -31,5 +32,10 @@ export class Service<%=argv.resourceNameCapitalize%> extends BeanBase {
 
   async delete(id: TableIdentity) {
     return await this.scope.model.<%=argv.resourceName%>.deleteById(id);
+  }
+
+  @Core.transaction()
+  async deleteBulk(ids: TableIdentity[]): Promise<void> {
+    await this.scope.model.<%=argv.resourceName%>.deleteBulk(ids);
   }
 }

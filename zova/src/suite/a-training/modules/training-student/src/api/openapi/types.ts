@@ -1344,6 +1344,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/training/student/bulk/delete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Bulk Delete */
+    post: operations['TrainingStudent_deleteBulk'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/training/student/deleteForce/{id}': {
     parameters: {
       query?: never;
@@ -2674,6 +2691,8 @@ export interface components {
           }
         | undefined;
       siteIds: string[];
+      /** @default false */
+      builtin?: boolean;
     };
     'home-user.dto.passportJwt': {
       passport: components['schemas']['home-user.dto.passport'];
@@ -3550,6 +3569,7 @@ export interface components {
       /** @description Description */
       description?: string | undefined;
     };
+    /** @description Create product */
     'commerce-catalog.dto.productCreate': {
       /** @description Product title */
       title: string;
@@ -3674,7 +3694,8 @@ export interface components {
           descriptionHtml?: string | undefined;
         }
       | undefined;
-    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7':
+    /** @description Product details */
+    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_a2f92cabb46b0630848b50414c0d4c60efb47a57':
       | {
           /**
            * Format: date-time
@@ -3729,6 +3750,7 @@ export interface components {
           };
         }
       | undefined;
+    /** @description Update product */
     'commerce-catalog.dto.productUpdate': {
       /** @description Product title */
       title: string;
@@ -3948,6 +3970,7 @@ export interface components {
       siteId: string;
       title: string;
     };
+    /** @description Add Student Training Record */
     'training-record.dto.recordCreate': {
       /** @description Training Record Name */
       name: string;
@@ -4089,7 +4112,8 @@ export interface components {
       /** @default true */
       signed?: boolean;
     };
-    'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+    /** @description View Student Training Record */
+    'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347':
       | {
           /**
            * Format: date-time
@@ -4164,6 +4188,7 @@ export interface components {
             | undefined;
         }
       | undefined;
+    /** @description Edit Student Training Record */
     'training-record.dto.recordUpdate': {
       /** @description Training Record Name */
       name: string;
@@ -4208,6 +4233,7 @@ export interface components {
         | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
         | undefined;
     };
+    /** @description Add Student */
     'training-student.dto.studentCreate': {
       /** @description Student Name */
       name: string;
@@ -4412,7 +4438,8 @@ export interface components {
           signed?: boolean;
         }
       | undefined;
-    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_93b863fbe913f9389386c3f524075f08b39f48ac':
+    /** @description View Student */
+    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60':
       | {
           /**
            * Format: date-time
@@ -4530,6 +4557,7 @@ export interface components {
           _descriptionMarkdown?: string | undefined;
         }
       | undefined;
+    /** @description Edit Student */
     'training-student.dto.studentUpdate': {
       /** @description Student Name */
       name: string;
@@ -4655,6 +4683,9 @@ export interface components {
           summaryText: string;
         }
       | undefined;
+    'training-student.dto.studentDeleteBulk': {
+      ids: (number | string)[];
+    };
     'basic-metrics.dto.metricsSnapshot': {
       enabled: boolean;
       runtime: components['schemas']['basic-metrics.dto.metricsRuntime'];
@@ -7589,7 +7620,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7'];
+            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_a2f92cabb46b0630848b50414c0d4c60efb47a57'];
           };
         };
       };
@@ -7910,7 +7941,7 @@ export interface operations {
         pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
-        studentId?: number | undefined;
+        studentId?: string | undefined;
       };
       header?: never;
       path?: never;
@@ -7980,7 +8011,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+            data?: components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347'];
           };
         };
       };
@@ -8127,7 +8158,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_93b863fbe913f9389386c3f524075f08b39f48ac'];
+            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60'];
           };
         };
       };
@@ -8210,6 +8241,34 @@ export interface operations {
             code: string;
             message: string;
             data?: components['schemas']['training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_deleteBulk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['training-student.dto.studentDeleteBulk'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
           };
         };
       };

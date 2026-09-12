@@ -40,6 +40,11 @@ export interface ICommandRowOptionsBase<Result = any> extends ICommandOptionsBas
   id?: TableIdentity;
 }
 
+export interface ICommandSelectedOptionsBase<Result = any> extends ICommandOptionsBase<Result> {
+  resource?: string;
+  ids?: readonly TableIdentity[];
+}
+
 export interface ICommandDetailsRowOptionsBase<Result = any> extends ICommandOptionsBase<Result> {}
 
 declare module 'zova-module-a-bean' {

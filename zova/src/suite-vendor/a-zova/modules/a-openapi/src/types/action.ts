@@ -3,6 +3,8 @@ import type { ZovaJsx } from 'zova-jsx';
 
 import { TableIdentity } from 'table-identity';
 
+import type { IResourceTableSelectionPayload } from './resource/tableActionBulk.js';
+
 import { TypeOpenapiPermissions } from './permissions.js';
 
 export interface IJsxRenderContextBase {
@@ -41,6 +43,7 @@ export interface IJsxRenderSceneRecord {
 export interface IPageScope {
   resource?: string;
   permissions?: TypeOpenapiPermissions;
+  selection?: IResourceTableSelectionPayload;
 }
 
 export interface IJsxRenderContextPage extends IJsxRenderContextBase {

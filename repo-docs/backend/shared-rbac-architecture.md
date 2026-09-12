@@ -129,6 +129,10 @@ After guard admission, a controller must consume the current typed scope. The co
 | Bulk mutation      | `checkEntries(entries)`  | Ensure every intended target is inside scope                          |
 | Create             | `ownerValues()`          | Derive trusted owner/scope fields instead of accepting widening input |
 
+For an atomic multi-ID Resource command, have the command DTO validate its request-list maximum and use `a-rbac` to validate that the list is nonempty and has no duplicate normalized identities. Then load every requested record through the ordinary instance-scoped model boundary. Require complete one-for-one resolution before calling `checkEntries(entries)` and before any mutation. This treats missing, soft-deleted, and other-instance records uniformly as absent; do not use an unscoped query merely to distinguish them. Run the full preflight and mutation inside the domain transaction.
+
+`a-rbac` exposes `this.bean.rbacResourceBulk.entries(...)` for the reusable integrity and authorization sequence. Pass the facade a fresh, ordinary instance-scoped loader (rather than a cache-backed lookup) from the domain transaction. It preserves the requested order, invokes `checkEntries(...)` only after complete normal-scoped loading, and emits localized `a-rbac` scoped errors for invalid ID lists and absent entries.
+
 A representative list shape is:
 
 ```typescript

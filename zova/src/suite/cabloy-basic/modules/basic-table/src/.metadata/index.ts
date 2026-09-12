@@ -1,6 +1,7 @@
 // eslint-disable
 /** controller: begin */
 export * from '../component/actionCreate/controller.jsx';
+export * from '../component/actionDeleteBulk/controller.jsx';
 export * from '../component/table/controller.jsx';
 
 import 'zova';
@@ -15,6 +16,11 @@ declare module 'zova-module-basic-table' {
           get scope(): ScopeModuleBasicTable;
         }
 
+        export interface ControllerActionDeleteBulk {
+          /** @internal */
+          get scope(): ScopeModuleBasicTable;
+        }
+
         export interface ControllerTable {
           /** @internal */
           get scope(): ScopeModuleBasicTable;
@@ -23,11 +29,13 @@ declare module 'zova-module-basic-table' {
 /** controller: end */
 /** controller: begin */
 import { ControllerActionCreate } from '../component/actionCreate/controller.jsx';
+import { ControllerActionDeleteBulk } from '../component/actionDeleteBulk/controller.jsx';
 import { ControllerTable } from '../component/table/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
     'basic-table.controller.actionCreate': ControllerActionCreate;
+'basic-table.controller.actionDeleteBulk': ControllerActionDeleteBulk;
 'basic-table.controller.table': ControllerTable;
   }
 }
@@ -36,20 +44,25 @@ declare module 'zova' {
 /** components: begin */
 export * from './component/actionCreate.js';
 import { ZActionCreate } from './component/actionCreate.js';
+export * from './component/actionDeleteBulk.js';
+import { ZActionDeleteBulk } from './component/actionDeleteBulk.js';
 export * from './component/table.js';
 import { ZTable } from './component/table.js';
 export const components = {
   'actionCreate': ZActionCreate,
+'actionDeleteBulk': ZActionDeleteBulk,
 'table': ZTable,
 };
 import 'zova';
 declare module 'zova' {
 export interface IComponentRecord {
   'basic-table:actionCreate': ControllerActionCreate;
+'basic-table:actionDeleteBulk': ControllerActionDeleteBulk;
 'basic-table:table': ControllerTable;
 }
 export interface IZovaComponentRecord {
   'basic-table:actionCreate': typeof ZActionCreate;
+'basic-table:actionDeleteBulk': typeof ZActionDeleteBulk;
 'basic-table:table': typeof ZTable;
 }
 }
