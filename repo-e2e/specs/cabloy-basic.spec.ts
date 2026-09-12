@@ -545,7 +545,9 @@ test(
       name: 'Select all rows on this page',
       exact: true,
     });
-    const selectionStatus = page.getByRole('status').filter({ hasText: /^Selected \d+ items$/ });
+    const selectionStatus = page
+      .getByRole('status')
+      .filter({ hasText: /^Selected (?:\d+ items|one item)$/ });
     const select = page.getByRole('button', { name: 'Select', exact: true });
     const done = page.getByRole('button', { name: 'Done', exact: true });
     const create = page.getByRole('button', { name: 'Create', exact: true });
@@ -597,7 +599,7 @@ test(
 
       await rowCheckboxFor(visibleFixtureNames[0]).check();
       await expect(rowFor(visibleFixtureNames[0])).toHaveAttribute('aria-selected', 'true');
-      await expect(selectionStatus).toHaveText('Selected 1 items');
+      await expect(selectionStatus).toHaveText('Selected one item');
       await expect(allPageCheckbox).toHaveAttribute('aria-checked', 'mixed');
       await expect(allPageCheckbox).toHaveJSProperty('indeterminate', true);
 
@@ -629,7 +631,7 @@ test(
       await expect(rowFor(visibleFixtureNames[0])).toHaveCount(1);
       await expect(allPageCheckbox).toBeChecked();
       await allPageCheckbox.uncheck();
-      await expect(selectionStatus).toHaveText('Selected 1 items');
+      await expect(selectionStatus).toHaveText('Selected one item');
 
       await rowCheckboxFor(visibleFixtureNames[9]).check();
       await expect(selectionStatus).toHaveText('Selected 2 items');
@@ -639,7 +641,7 @@ test(
       await expect(rowFor(visibleFixtureNames[9])).toHaveAttribute('aria-selected', 'false');
 
       await rowCheckboxFor(visibleFixtureNames[9]).check();
-      await expect(selectionStatus).toHaveText('Selected 1 items');
+      await expect(selectionStatus).toHaveText('Selected one item');
       await page.getByRole('button', { name: 'Reset', exact: true }).click();
       await expect(page.getByLabel('Student Name')).toHaveValue('');
       await expect(selectionStatus).toHaveText('Selected 0 items');
@@ -648,7 +650,7 @@ test(
       await expect(rowFor(visibleFixtureNames[0])).toHaveCount(1);
 
       await rowCheckboxFor(visibleFixtureNames[0]).check();
-      await expect(selectionStatus).toHaveText('Selected 1 items');
+      await expect(selectionStatus).toHaveText('Selected one item');
       const nameSort = page.getByRole('button', { name: 'Sort by name', exact: true });
       const sortResponse = waitForStudentSelect(page);
       await nameSort.click();
