@@ -1,5 +1,6 @@
 import type { TableIdentity } from 'table-identity';
 import type { IQueryParams } from 'vona-module-a-orm';
+import type { IRbacScopeAccess } from 'vona-module-a-rbac';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
@@ -53,17 +54,29 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
     await this.scope.service.<%=argv.resourceName%>.update(id, <%=argv.resourceName%>);
   }
 
-  @Web.post('bulk/delete', { summary: $locale('BulkDelete') })
-  @Api.body(z.null())
-  @Passport.rbac()
-  async deleteBulk(@Arg.body() command: Dto<%=argv.resourceNameCapitalize%>DeleteBulk): Promise<void> {
-    await this.scope.service.<%=argv.resourceName%>.deleteBulk(command.ids);
-  }
-
   @Web.delete(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>Delete') })
   @Api.body(z.null())
   @Passport.rbac()
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
     await this.scope.service.<%=argv.resourceName%>.delete(id);
+  }
+
+  @Web.post('bulk/delete', { summary: $locale('BulkDelete') })
+  @Api.body(z.null())
+  @Passport.rbac({ actionInherit: 'delete' })
+  async deleteBulk(
+    @Arg.body() command: Dto<%=argv.resourceNameCapitalize%>DeleteBulk,
+    @Arg.rbacScopeCurrent() rbacScopeCurrent: IRbacScopeAccess,
+  ): Promise<void> {
+    const entries = await this.bean.rbacResourceBulk.entries(
+      command.ids,
+      async ids => {
+        return await this.scope.model.<%=argv.resourceName%>.select({
+          where: rbacScopeCurrent.where({ id: ids }),
+        });
+      },
+      rbacScopeCurrent,
+    );
+    await this.scope.service.<%=argv.resourceName%>.deleteBulk(entries.map(entry => entry.id));
   }
 }

@@ -133,6 +133,28 @@ For an atomic multi-ID Resource command, have the command DTO validate its reque
 
 `a-rbac` exposes `this.bean.rbacResourceBulk.entries(...)` for the reusable integrity and authorization sequence. Pass the facade a fresh, ordinary instance-scoped loader (rather than a cache-backed lookup) from the domain transaction. It preserves the requested order, invokes `checkEntries(...)` only after complete normal-scoped loading, and emits localized `a-rbac` scoped errors for invalid ID lists and absent entries.
 
+A canonical Resource bulk-delete controller shape is:
+
+```typescript
+@Web.post('bulk/delete')
+@Api.body(z.null())
+@Core.transaction()
+@Passport.rbac({ dataScope: true, actionInherit: 'delete' })
+async deleteBulk(
+  @Arg.body() command: DtoRecordDeleteBulk,
+  @Arg.rbacScopeCurrent() rbacScopeCurrent: IRbacScopeAccess,
+) {
+  const entries = await this.bean.rbacResourceBulk.entries(
+    command.ids,
+    ids => this.scope.model.record.select({ where: rbacScopeCurrent.where({ id: ids }) }),
+    rbacScopeCurrent,
+  );
+  await this.scope.service.record.deleteBulk(entries.map(entry => entry.id));
+}
+```
+
+The DTO must require `ids` and declare an operation-appropriate maximum. This controller shape makes `POST <resource>/bulk/delete` compatible with the generic Resource mutation surface while keeping the data-scope preflight and delete in one transaction. A frontend table may hide or disable a selected action as a usability aid, but it must never replace this server-side validation.
+
 A representative list shape is:
 
 ```typescript

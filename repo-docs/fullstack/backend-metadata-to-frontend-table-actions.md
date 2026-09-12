@@ -1,8 +1,10 @@
 # Backend Metadata to Frontend Table Actions
 
-This page explains one of the most practical fullstack contract chains in Cabloy Basic:
+This page explains one of the most practical fullstack contract chains in Cabloy:
 
 > backend field and row metadata can drive visible frontend table actions, while frontend action resources and generated contract consumers stay aligned with that backend truth.
+
+The contract model is shared by Cabloy Basic and Cabloy Start. The rendering adapter is edition-specific: the examples below use Basic resource names where they illustrate the general mechanism; Start list pages use `start-page`, `start-table`, `start-commands`, and Vuetify.
 
 This page sits between the pure direction guides:
 
@@ -299,6 +301,39 @@ This is the same contract idea at a different UI level:
 
 - backend or shared page metadata chooses the action resource identity
 - frontend runtime resolves that identity to a visible action implementation
+
+### Cabloy Start selected-resource actions
+
+A selected-resource action adds a page-owned selection payload to this same contract. A Training Student list can declare the Start render resources directly in its backend DTO metadata:
+
+```tsx
+ZovaRender.block('start-page:blockToolbarBulk', {
+  actions: [
+    ZovaRender.tableActionBulk('start-table:actionCreate'),
+    ZovaRender.tableActionBulk('start-table:actionDeleteBulk', {
+      requiresSelection: true,
+      selectedMaxIds: 100,
+    }),
+  ],
+});
+```
+
+The metadata remains declarative. `start-page:blockPage` owns the normalized selected IDs and currently loaded selected-row snapshots; `start-page:blockTable` bridges that state to Vuetify `VDataTableServer` with page-local checkbox selection. Therefore a page change retains earlier selections, while a new resource, fixed query, submitted/reset filter, sort, page-size change, or successful selected mutation clears the relevant selection.
+
+`start-page:blockToolbarBulk` adds the Start **Select**/**Done** mode and selected-count status. It supplies runtime `dynamicSelection` and `dynamicDisabled` props to action resources without overwriting authored `disabled` metadata. Selection-required actions are unavailable when the selection is empty, incomplete, exceeds its declared/default limit, or fails the projected frontend permission check for any selected row.
+
+`start-table:actionDeleteBulk` confirms the operation and delegates to `start-commands:deleteBulk`. The command uses the existing `rest-resource.model.resource` owner and calls its generated-resource mutation with `{ ids }`; it clears only successfully deleted IDs after the mutation resolves. A cancel or failed request preserves selection. Browser-side eligibility is only a UX projection: the backend controller remains authoritative.
+
+For a Resource bulk delete, expose the canonical endpoint as `POST <resource>/bulk/delete` with a request DTO whose `ids` array is required and bounded. In a `@Core.transaction()` controller action, pass the requested IDs and an ordinary active-instance model loader to `this.bean.rbacResourceBulk.entries(...)`, then mutate only the returned entries. This rejects malformed or normalized-duplicate identities, requires complete scoped resolution, checks every entry through the current data scope, and prevents partial deletion. Missing, soft-deleted, or other-instance rows are uniformly absent; do not issue cross-instance probes merely to distinguish them.
+
+After adding or changing a Start action resource, regenerate its Zova metadata and run the paired Admin reverse chain from the repository root:
+
+```bash
+npm run build:zova:admin
+npm run deps:vona
+```
+
+Regenerate generated OpenAPI consumers only after the backend contract output contains the canonical operation; do not hand-edit generated consumers. Build the Web flavor too only when the affected action is consumed by Web.
 
 ## Step 7A: Detail actions follow the same contract idea inside details blocks
 

@@ -53,17 +53,17 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
     await this.scope.service.<%=argv.resourceName%>.update(id, <%=argv.resourceName%>);
   }
 
-  @Web.post('bulk/delete', { summary: $locale('BulkDelete') })
-  @Api.body(z.null())
-  @Passport.systemAdmin()
-  async deleteBulk(@Arg.body() command: Dto<%=argv.resourceNameCapitalize%>DeleteBulk): Promise<void> {
-    await this.scope.service.<%=argv.resourceName%>.deleteBulk(command.ids);
-  }
-
   @Web.delete(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>Delete') })
   @Api.body(z.null())
   @Passport.systemAdmin()
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
     await this.scope.service.<%=argv.resourceName%>.delete(id);
   }
+
+  @Web.post('bulk/delete', { summary: $locale('BulkDelete') })
+  @Api.body(z.null())
+  @Passport.systemAdmin()
+  async deleteBulk(@Arg.body() command: Dto<%=argv.resourceNameCapitalize%>DeleteBulk): Promise<void> {
+    await this.scope.service.<%=argv.resourceName%>.deleteBulk(command.ids);
+  }  
 }
