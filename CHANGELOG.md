@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.165
+
+### Features
+
+- Align bulk actions and component attributes.
+- Update functionality.
+
 ## 5.1.164
 
 ### Features
