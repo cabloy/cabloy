@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.164
+
+### Features
+
+- Enhance resource selection and CRUD CLI tools.
+
+### Improvements
+
+- Include demonstration suites in the documentation.
+
 ## 5.1.163
 
 ### Improvements
