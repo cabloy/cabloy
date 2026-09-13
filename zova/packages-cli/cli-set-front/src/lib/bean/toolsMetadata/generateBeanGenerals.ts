@@ -16,7 +16,7 @@ export async function generateBeanGenerals(
     const beanFullName = `${moduleName}.${sceneName}.${beanName}`;
     if (isIgnore) continue;
     if (!sceneMeta.scopeResource) {
-      contentImports.push(`import { ${className} } from '${fileNameJSRelative}';`);
+      contentImports.push(`import type { ${className} } from '${fileNameJSRelative}';`);
     }
     contentRecords.push(`'${beanFullName}': ${className};`);
   }

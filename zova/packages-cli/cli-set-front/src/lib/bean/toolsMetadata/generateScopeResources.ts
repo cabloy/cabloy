@@ -17,7 +17,7 @@ export async function generateScopeResources(
   for (const globFile of globFiles) {
     const { fileNameJSRelative, className, beanName, isIgnore } = globFile;
     if (isIgnore) continue;
-    contentImports.push(`import { ${className} } from '${fileNameJSRelative}';`);
+    contentImports.push(`import type { ${className} } from '${fileNameJSRelative}';`);
     contentRecords.push(`'${beanName}': ${className};`);
   }
   if (contentImports.length === 0) return '';
