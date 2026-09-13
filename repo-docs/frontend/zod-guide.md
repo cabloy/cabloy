@@ -42,19 +42,21 @@ const user = z.object({
 
 This is the foundation used by typed page params and page query support.
 
-## Type coercion
+## Zova route/query number parsing
 
-One of the most important Zova enhancements is automatic coercion.
+Cabloy Basic pins `zod` in `zova/pnpm-workspace.yaml` to `npm:@cabloy/zod@4.3.8`. Zova's route/query parsing path uses the Cabloy Zod query adapter to prepare URL values before ordinary Zod validation.
 
-This matters because route params and query values often arrive as strings, while the page controller wants the final typed values.
-
-That is why schemas such as:
+For a non-nil numeric route or query value, the adapter applies `Number(value)` before `z.number()` validates it. Therefore, use `z.number()` for numeric fields in Zova page params and query schemas:
 
 ```typescript
-z.number();
+export const ControllerPageCounterSchemaQuery = z.object({
+  age: z.number().optional(),
+});
 ```
 
-can still support route-driven values more naturally than raw parsing code.
+When parsing succeeds, `this.$query.age` is a number. There is normally no need to add `z.coerce.number()` or a manual `Number(...)` conversion at this boundary.
+
+The adapter preserves its nil semantics: an empty string, `'undefined'`, or `'null'` is handled as an absent or null value rather than as an ordinary number. Invalid numeric text becomes `NaN` and still fails normal number validation. This behavior belongs to Zova's route/query parsing path; do not infer it for an arbitrary standalone `Zod.parse` call. Use `z.coerce.number()` when handling a different input boundary that does not use the Zova adapter.
 
 ## Boolean coercion
 

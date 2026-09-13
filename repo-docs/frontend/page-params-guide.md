@@ -26,7 +26,7 @@ export const ControllerPageCounterSchemaParams = z.object({
 
 This is more than a type annotation.
 
-Because route params arrive as strings at the URL level, the schema is also where Zova’s `z` wrapper can coerce the route value into the typed value that the page controller wants to consume.
+Route params arrive as strings at the URL level. On Zova's route/query parsing path, the Cabloy Zod query adapter converts a numeric value before the `z.number()` validation runs, so a successful `$params.id` value is a number. Use `z.number()` for numeric page params; `z.coerce.number()` is normally redundant here. For the exact scope and nil/error semantics, see [Zova route/query number parsing](./zod-guide#zova-routequery-number-parsing).
 
 ## Route record requirements
 

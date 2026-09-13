@@ -31,6 +31,12 @@ export const ControllerPageCounterSchemaQuery = z.object({
 
 This matters because query parsing becomes typed and framework-aware instead of stringly-typed ad hoc access.
 
+## Numeric query values
+
+Query values are commonly strings at the URL boundary. On Zova's route/query parsing path, the Cabloy Zod query adapter converts a non-nil numeric value with `Number(...)` before ordinary `z.number()` validation. Use `z.number()` for numeric query fields such as `age`; when parsing succeeds, `this.$query.age` is a number.
+
+Invalid numeric text still fails number validation rather than silently producing a usable value. `z.coerce.number()` is normally redundant for Zova page query schemas, but may be appropriate at a different input boundary that does not use the Zova adapter. See [Zova route/query number parsing](/frontend/zod-guide#zova-routequery-number-parsing) for the adapter's nil semantics and scope.
+
 ## Use query values
 
 Representative pattern:

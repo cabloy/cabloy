@@ -165,6 +165,7 @@ Check whether the feature needs:
 
 - page route review
 - params/query schema alignment
+- for numeric Zova page params and query fields, use `z.number()` and rely on the Cabloy/Zova route/query parse adapter; do not generalize this behavior to standalone Zod parsing or add manual coercion without a separate input-boundary requirement
 - effective layout, authentication, and SSR-profile default resolution
 - static-name and ordinary-alias exception review
 - alias or guard review
