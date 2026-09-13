@@ -153,7 +153,7 @@ export class ModelResource<
           this.sys.util.apiActionPathTranslate(`${this.resourceApi}/:id`, { id }),
           this.sys.util.apiActionConfigPrepare(),
         );
-        return res ?? null;
+        return (res as Entity | null) ?? null;
       },
     });
   }
