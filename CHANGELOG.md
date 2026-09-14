@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.1.167
+
+### Features
+
+- Add routed dialog support.
+- Add update capabilities.
+- Add bean general generation support.
+
+### Improvements
+
+- Update resource handling.
+- Update Zod documentation.
+
 ## 5.1.166
 
 ### Improvements
