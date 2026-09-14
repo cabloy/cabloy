@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.168
+
+### Features
+
+- Add a resource picker.
+- Add update functionality.
+
 ## 5.1.167
 
 ### Features
