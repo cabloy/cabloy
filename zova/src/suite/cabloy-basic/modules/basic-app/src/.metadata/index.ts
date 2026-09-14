@@ -26,7 +26,7 @@ declare module 'zova-module-basic-app' {
 }
 /** service: end */
 /** service: begin */
-import { ServiceAppModal } from '../service/appModal.js';
+import type { ServiceAppModal } from '../service/appModal.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -34,6 +34,48 @@ declare module 'zova' {
   }
 }
 /** service: end */
+/** controller: begin */
+export * from '../component/routedDialog/controller.jsx';
+
+import 'zova';
+declare module 'zova' {
+
+
+}
+declare module 'zova-module-basic-app' {
+
+        export interface ControllerRoutedDialog {
+          /** @internal */
+          get scope(): ScopeModuleBasicApp;
+        }
+}
+/** controller: end */
+/** controller: begin */
+import type { ControllerRoutedDialog } from '../component/routedDialog/controller.jsx';
+import 'zova';
+declare module 'zova' {
+  export interface IBeanRecordLocal {
+    'basic-app.controller.routedDialog': ControllerRoutedDialog;
+  }
+}
+/** controller: end */
+
+/** components: begin */
+export * from './component/routedDialog.js';
+import { ZRoutedDialog } from './component/routedDialog.js';
+export const components = {
+  'routedDialog': ZRoutedDialog,
+};
+import 'zova';
+declare module 'zova' {
+export interface IComponentRecord {
+  'basic-app:routedDialog': ControllerRoutedDialog;
+}
+export interface IZovaComponentRecord {
+  'basic-app:routedDialog': typeof ZRoutedDialog;
+}
+}
+/** components: end */
 /** behavior: begin */
 export * from '../bean/behavior.appModal.jsx';
 import { IBehaviorOptionsAppModal } from '../bean/behavior.appModal.jsx';
@@ -61,7 +103,7 @@ declare module 'zova-module-basic-app' {
 }
 /** behavior: end */
 /** behavior: begin */
-import { BehaviorAppModal } from '../bean/behavior.appModal.jsx';
+import type { BehaviorAppModal } from '../bean/behavior.appModal.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {

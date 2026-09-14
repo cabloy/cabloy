@@ -14,7 +14,10 @@ export class ControllerRouterViewEmpty extends BeanRouterViewBase {
     const slots = {
       default: component => {
         const vnode = h(component.Component);
-        cast(vnode).zovaHostProviders = { [pageRouteKey]: component.route };
+        cast(vnode).zovaHostProviders = {
+          [pageRouteKey]: component.route,
+          'a-router.bean.router': this.$router,
+        };
         return vnode;
       },
     };

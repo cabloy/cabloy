@@ -47,8 +47,12 @@ export class BeanRouterViewBase extends BeanControllerBase implements IRouterVie
           default: () => {
             const vnode = h(component.Component as any, {
               key: routeMeta.componentKey,
+              route: component.route,
             });
-            cast(vnode).zovaHostProviders = { [pageRouteKey]: component.route };
+            cast(vnode).zovaHostProviders = {
+              [pageRouteKey]: component.route,
+              'a-router.bean.router': this.$router,
+            };
             return [
               h(
                 KeepAlive,

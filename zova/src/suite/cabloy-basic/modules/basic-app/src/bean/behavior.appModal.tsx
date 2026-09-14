@@ -15,7 +15,14 @@ import {
   IModalItem,
   IModalMessageOptions,
   IModalPromptOptionsInner,
+  IModalResponsiveMaxWidth,
+  IModalResponsiveTopGutter,
+  IModalRoutedDialogItem,
+  IModalRoutedDialogPresentationOptions,
+  ModalRoutedDialogMaxWidth,
+  ModalRoutedDialogTopGutter,
   ModalType,
+  ModalWidth,
 } from '../types/appModal.js';
 
 export interface IBehaviorPropsInputAppModal {}
@@ -24,16 +31,91 @@ export interface IBehaviorPropsOutputAppModal extends IBehaviorPropsInputAppModa
 
 export interface IBehaviorOptionsAppModal extends IDecoratorBehaviorOptions {}
 
+interface IPreparedDialogOptions extends Omit<IModalDialogOptions, 'maxWidth'> {
+  maxWidth?: ModalRoutedDialogMaxWidth;
+  topGutter?: ModalRoutedDialogTopGutter;
+  showBackButton?: boolean;
+}
+
 interface IRenderDialogBaseOptions {
   modalItem: IModalItem;
-  dialogOptions: IModalDialogOptions;
+  dialogOptions: IPreparedDialogOptions;
   iconName?: keyof IIconRecord;
   title: string;
   body?: VNode;
   actions?: VNode;
+  showBackButton?: boolean;
   showCloseButton?: boolean;
+  onBack?: () => void;
   onClose: () => void;
 }
+
+interface IModalCardPresentation {
+  className?: string;
+  style?: Record<string, string>;
+}
+
+interface IModalOuterPresentation {
+  className?: string;
+  style?: Record<string, string>;
+}
+
+const responsiveMaxWidthClass = {
+  maxWidth: 'var(--zova-routed-dialog-max-width-default)',
+  $nest: {
+    '@media (min-width: 48rem)': {
+      maxWidth:
+        'var(--zova-routed-dialog-max-width-md, var(--zova-routed-dialog-max-width-default))',
+    },
+    '@media (min-width: 64rem)': {
+      maxWidth:
+        'var(--zova-routed-dialog-max-width-lg, var(--zova-routed-dialog-max-width-md, var(--zova-routed-dialog-max-width-default)))',
+    },
+  },
+};
+
+const responsiveTopGutterClass = {
+  paddingTop: 'var(--zova-routed-dialog-top-gutter-default)',
+  $nest: {
+    '@media (min-width: 48rem)': {
+      paddingTop:
+        'var(--zova-routed-dialog-top-gutter-md, var(--zova-routed-dialog-top-gutter-default))',
+    },
+    '@media (min-width: 64rem)': {
+      paddingTop:
+        'var(--zova-routed-dialog-top-gutter-lg, var(--zova-routed-dialog-top-gutter-md, var(--zova-routed-dialog-top-gutter-default)))',
+    },
+  },
+};
+
+const routedDialogMaxHeightClass = {
+  maxHeight:
+    'min(var(--zova-routed-dialog-max-height, 100%), calc(100vh - var(--zova-routed-dialog-top-gutter-default) - 1rem))',
+  $nest: {
+    '@media (min-width: 48rem)': {
+      maxHeight:
+        'min(var(--zova-routed-dialog-max-height, 100%), calc(100vh - var(--zova-routed-dialog-top-gutter-md, var(--zova-routed-dialog-top-gutter-default)) - 1rem))',
+    },
+    '@media (min-width: 64rem)': {
+      maxHeight:
+        'min(var(--zova-routed-dialog-max-height, 100%), calc(100vh - var(--zova-routed-dialog-top-gutter-lg, var(--zova-routed-dialog-top-gutter-md, var(--zova-routed-dialog-top-gutter-default))) - 1rem))',
+    },
+    '@supports (height: 100dvh)': {
+      maxHeight:
+        'min(var(--zova-routed-dialog-max-height, 100%), calc(100dvh - var(--zova-routed-dialog-top-gutter-default) - 1rem))',
+      $nest: {
+        '@media (min-width: 48rem)': {
+          maxHeight:
+            'min(var(--zova-routed-dialog-max-height, 100%), calc(100dvh - var(--zova-routed-dialog-top-gutter-md, var(--zova-routed-dialog-top-gutter-default)) - 1rem))',
+        },
+        '@media (min-width: 64rem)': {
+          maxHeight:
+            'min(var(--zova-routed-dialog-max-height, 100%), calc(100dvh - var(--zova-routed-dialog-top-gutter-lg, var(--zova-routed-dialog-top-gutter-md, var(--zova-routed-dialog-top-gutter-default))) - 1rem))',
+        },
+      },
+    },
+  },
+};
 
 @Behavior<IBehaviorOptionsAppModal>()
 export class BehaviorAppModal extends BeanBehaviorBase<
@@ -108,6 +190,7 @@ export class BehaviorAppModal extends BeanBehaviorBase<
     if (modalItem.type === 'alert') return this._renderAppModalAlert(modalItem);
     if (modalItem.type === 'confirm') return this._renderAppModalConfirm(modalItem);
     if (modalItem.type === 'prompt') return this._renderAppModalPrompt(modalItem);
+    if (modalItem.type === 'routedDialog') return this._renderAppModalRoutedDialog(modalItem);
     return this._renderAppModalDialog(modalItem);
   }
 
@@ -249,6 +332,41 @@ export class BehaviorAppModal extends BeanBehaviorBase<
     });
   }
 
+  private _renderAppModalRoutedDialog(modalItem: IModalRoutedDialogItem) {
+    const options = modalItem.options;
+    const dialogOptions = this._prepareDialogOptions(
+      modalItem.type,
+      modalItem.dialogOptions,
+      options,
+    );
+    const title = options.title ?? this.sys.env.APP_TITLE ?? '';
+    const state = modalItem.state;
+    let body: VNode;
+    if (state.status === 'error') {
+      body = <div class="text-error whitespace-pre-wrap">{String(state.error)}</div>;
+    } else if (state.status === 'ready' && state.router) {
+      const RoutedDialog = this.$zovaComponent('basic-app:routedDialog');
+      body = <RoutedDialog item={modalItem}></RoutedDialog>;
+    } else {
+      body = <div class="loading loading-spinner"></div>;
+    }
+    return this._renderDialogBase({
+      modalItem,
+      dialogOptions,
+      iconName: options.icon,
+      title,
+      body,
+      showBackButton: dialogOptions.showBackButton && state.status === 'ready' && state.canGoBack,
+      showCloseButton: dialogOptions.showCloseButton,
+      onBack: () => {
+        state.router?.back();
+      },
+      onClose: () => {
+        this.$appModal.close(modalItem.id, 'button');
+      },
+    });
+  }
+
   private _renderAppModalDialog(modalItem: IModalItem) {
     const options = modalItem.options as IModalDialogRenderOptions | undefined;
     const dialogOptions = this._prepareDialogOptions(modalItem.type, modalItem.dialogOptions);
@@ -275,12 +393,27 @@ export class BehaviorAppModal extends BeanBehaviorBase<
     title,
     body,
     actions,
+    showBackButton,
     showCloseButton,
+    onBack,
     onClose,
   }: IRenderDialogBaseOptions) {
-    const style = this._dialogStyle(dialogOptions);
+    const routedDialog = modalItem.type === 'routedDialog';
+    const presentation = this._dialogPresentation(dialogOptions, routedDialog);
+    const outerPresentation = routedDialog
+      ? this._routedDialogOuterPresentation(dialogOptions)
+      : undefined;
     return (
-      <div key={modalItem.id} class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        key={modalItem.id}
+        class={this.$cssMerge(
+          routedDialog
+            ? 'fixed inset-0 z-50 flex items-start justify-center overflow-y-auto px-4 pb-4'
+            : 'fixed inset-0 z-50 flex items-center justify-center p-4',
+          outerPresentation?.className,
+        )}
+        style={outerPresentation?.style}
+      >
         <div
           class="absolute inset-0 bg-base-content/30"
           onClick={() => {
@@ -292,11 +425,29 @@ export class BehaviorAppModal extends BeanBehaviorBase<
         <div
           role="dialog"
           aria-modal="true"
-          class="card bg-base-100 shadow-2xl relative w-full max-h-[calc(100vh-2rem)]"
-          style={style}
+          class={this.$cssMerge(
+            routedDialog
+              ? 'card bg-base-100 shadow-2xl relative w-full'
+              : 'card bg-base-100 shadow-2xl relative w-full max-h-[calc(100vh-2rem)]',
+            presentation.className,
+          )}
+          style={presentation.style}
         >
           <div class="card-body flex max-h-full min-h-0 flex-col gap-4">
-            <div class="flex items-start gap-3 shrink-0">
+            <div class="flex items-center gap-3 shrink-0">
+              {!!showBackButton && (
+                <button
+                  type="button"
+                  class="btn btn-ghost btn-sm btn-circle shrink-0 transition-colors hover:bg-base-300"
+                  aria-label={this.scope.locale.Back()}
+                  title={this.scope.locale.Back()}
+                  onClick={() => {
+                    onBack?.();
+                  }}
+                >
+                  <ZIcon name="::arrow-back" width={18} height={18}></ZIcon>
+                </button>
+              )}
               {!!iconName && (
                 <ZIcon class="text-primary mt-1 shrink-0" name={iconName} width={24}></ZIcon>
               )}
@@ -334,19 +485,44 @@ export class BehaviorAppModal extends BeanBehaviorBase<
 
   private _prepareDialogOptions(
     type: ModalType,
-    dialogOptions?: IModalDialogOptions | IModalMessageOptions,
-  ) {
+    dialogOptions?:
+      | IModalDialogOptions
+      | IModalMessageOptions
+      | IModalRoutedDialogPresentationOptions,
+    routedDialogOptions?: IModalRoutedDialogPresentationOptions,
+  ): IPreparedDialogOptions {
     const defaults = this.scope.config.model[type].default as
       | IModalDialogOptions
-      | IModalMessageOptions;
-    const options = {
-      maxWidth: dialogOptions?.maxWidth ?? defaults.maxWidth,
+      | IModalMessageOptions
+      | IModalRoutedDialogPresentationOptions;
+    const maxWidth =
+      type === 'routedDialog'
+        ? this._resolveRoutedDialogMaxWidth(
+            defaults.maxWidth as ModalRoutedDialogMaxWidth | undefined,
+            routedDialogOptions?.maxWidth,
+            (dialogOptions as IModalRoutedDialogPresentationOptions | undefined)?.maxWidth,
+          )
+        : ((dialogOptions as IModalDialogOptions | IModalMessageOptions | undefined)?.maxWidth ??
+          (defaults.maxWidth as ModalWidth | undefined));
+    const routedPresentation = dialogOptions as IModalRoutedDialogPresentationOptions | undefined;
+    const routedDefaults = defaults as IModalRoutedDialogPresentationOptions;
+    const topGutter =
+      type === 'routedDialog'
+        ? this._resolveRoutedDialogTopGutter(
+            routedDefaults.topGutter,
+            routedDialogOptions?.topGutter,
+            routedPresentation?.topGutter,
+          )
+        : undefined;
+    const options: IPreparedDialogOptions = {
+      maxWidth,
       maxHeight: dialogOptions?.maxHeight ?? defaults.maxHeight,
+      topGutter,
       closeOnBackdrop: dialogOptions?.closeOnBackdrop ?? defaults.closeOnBackdrop,
       closeOnEscape: dialogOptions?.closeOnEscape ?? defaults.closeOnEscape,
       showCloseButton: false,
     };
-    if (type !== 'dialog') return options;
+    if (type !== 'dialog' && type !== 'routedDialog') return options;
     const defaultsDialog = defaults as IModalDialogOptions;
     return {
       ...options,
@@ -354,20 +530,132 @@ export class BehaviorAppModal extends BeanBehaviorBase<
         (dialogOptions as IModalDialogOptions | undefined)?.showCloseButton ??
         defaultsDialog.showCloseButton ??
         false,
+      showBackButton:
+        type === 'routedDialog'
+          ? (routedPresentation?.showBackButton ??
+            routedDialogOptions?.showBackButton ??
+            routedDefaults.showBackButton ??
+            false)
+          : undefined,
     };
   }
 
-  private _dialogStyle(dialogOptions: IModalDialogOptions) {
+  private _resolveRoutedDialogMaxWidth(
+    ...values: (ModalRoutedDialogMaxWidth | undefined)[]
+  ): ModalRoutedDialogMaxWidth | undefined {
+    return this._resolveRoutedDialogLength(values) as ModalRoutedDialogMaxWidth | undefined;
+  }
+
+  private _resolveRoutedDialogTopGutter(
+    ...values: (ModalRoutedDialogTopGutter | undefined)[]
+  ): ModalRoutedDialogTopGutter | undefined {
+    return this._resolveRoutedDialogLength(values) as ModalRoutedDialogTopGutter | undefined;
+  }
+
+  private _resolveRoutedDialogLength(
+    values: (ModalRoutedDialogMaxWidth | ModalRoutedDialogTopGutter | undefined)[],
+  ): ModalRoutedDialogMaxWidth | ModalRoutedDialogTopGutter | undefined {
+    let resolved: ModalRoutedDialogMaxWidth | ModalRoutedDialogTopGutter | undefined;
+    for (const value of values) {
+      if (value === undefined) continue;
+      if (!this._isResponsiveLength(value)) {
+        resolved = value;
+        continue;
+      }
+      resolved = {
+        ...(this._isResponsiveLength(resolved) ? resolved : { default: resolved }),
+        ...value,
+      };
+    }
+    return resolved;
+  }
+
+  private _isResponsiveMaxWidth(
+    value: ModalRoutedDialogMaxWidth | undefined,
+  ): value is IModalResponsiveMaxWidth {
+    return this._isResponsiveLength(value);
+  }
+
+  private _isResponsiveTopGutter(
+    value: ModalRoutedDialogTopGutter | undefined,
+  ): value is IModalResponsiveTopGutter {
+    return this._isResponsiveLength(value);
+  }
+
+  private _isResponsiveLength(
+    value: ModalRoutedDialogMaxWidth | ModalRoutedDialogTopGutter | undefined,
+  ): value is IModalResponsiveMaxWidth | IModalResponsiveTopGutter {
+    return !!value && typeof value === 'object';
+  }
+
+  private _routedDialogOuterPresentation(
+    dialogOptions: IPreparedDialogOptions,
+  ): IModalOuterPresentation {
+    const style = {} as Record<string, string>;
+    const topGutter = dialogOptions.topGutter;
+    if (this._isResponsiveTopGutter(topGutter)) {
+      this._setResponsiveTopGutter(style, 'default', topGutter.default);
+      this._setResponsiveTopGutter(style, 'md', topGutter.md);
+      this._setResponsiveTopGutter(style, 'lg', topGutter.lg);
+    } else if (topGutter !== undefined) {
+      this._setResponsiveTopGutter(style, 'default', topGutter);
+    }
+    return {
+      className: this.$style(responsiveTopGutterClass),
+      style: Object.keys(style).length > 0 ? style : undefined,
+    };
+  }
+
+  private _dialogPresentation(
+    dialogOptions: IPreparedDialogOptions,
+    routedDialog: boolean,
+  ): IModalCardPresentation {
     const style = {} as Record<string, string>;
     const maxWidth = dialogOptions.maxWidth;
     const maxHeight = dialogOptions.maxHeight;
-    if (maxWidth) {
-      style.maxWidth = typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth;
+    const classNames: string[] = [];
+    if (this._isResponsiveMaxWidth(maxWidth)) {
+      classNames.push(this.$style(responsiveMaxWidthClass));
+      this._setResponsiveMaxWidth(style, 'default', maxWidth.default);
+      this._setResponsiveMaxWidth(style, 'md', maxWidth.md);
+      this._setResponsiveMaxWidth(style, 'lg', maxWidth.lg);
+    } else if (maxWidth !== undefined) {
+      style.maxWidth = this._normalizeWidth(maxWidth);
     }
-    if (maxHeight) {
-      style.maxHeight = typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight;
+    if (routedDialog) {
+      classNames.push(this.$style(routedDialogMaxHeightClass));
+      if (maxHeight !== undefined) {
+        style['--zova-routed-dialog-max-height'] = this._normalizeWidth(maxHeight);
+      }
+    } else if (maxHeight !== undefined) {
+      style.maxHeight = this._normalizeWidth(maxHeight);
     }
-    return Object.keys(style).length > 0 ? style : undefined;
+    return {
+      className: classNames.length > 0 ? this.$cssMerge(...classNames) : undefined,
+      style: Object.keys(style).length > 0 ? style : undefined,
+    };
+  }
+
+  private _setResponsiveMaxWidth(
+    style: Record<string, string>,
+    breakpoint: keyof IModalResponsiveMaxWidth,
+    value: ModalWidth | undefined,
+  ) {
+    if (value === undefined) return;
+    style[`--zova-routed-dialog-max-width-${breakpoint}`] = this._normalizeWidth(value);
+  }
+
+  private _setResponsiveTopGutter(
+    style: Record<string, string>,
+    breakpoint: keyof IModalResponsiveTopGutter,
+    value: ModalWidth | undefined,
+  ) {
+    if (value === undefined) return;
+    style[`--zova-routed-dialog-top-gutter-${breakpoint}`] = this._normalizeWidth(value);
+  }
+
+  private _normalizeWidth(value: ModalWidth) {
+    return typeof value === 'number' ? `${value}px` : value;
   }
 
   private _getButtonClass(type: AlertType, primary?: boolean) {

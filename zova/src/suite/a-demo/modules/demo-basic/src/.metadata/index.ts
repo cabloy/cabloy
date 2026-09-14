@@ -26,7 +26,7 @@ declare module 'zova-module-demo-basic' {
 }
 /** model: end */
 /** model: begin */
-import { ModelTest } from '../model/test.js';
+import type { ModelTest } from '../model/test.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -44,6 +44,9 @@ export * from '../page/locale/controller.jsx';
 export * from '../page/routeParams/controller.jsx';
 export * from '../page/routeQuery/controller.jsx';
 export * from '../page/routeQueryB/controller.jsx';
+export * from '../page/routedDialog/controller.jsx';
+export * from '../page/routedDialogDetail/controller.jsx';
+export * from '../page/routedDialogEntry/controller.jsx';
 export * from '../page/state/controller.jsx';
 export * from '../page/style/controller.jsx';
 export * from '../page/toolMinimal/controller.jsx';
@@ -102,6 +105,21 @@ declare module 'zova-module-demo-basic' {
           get scope(): ScopeModuleDemoBasic;
         }
 
+        export interface ControllerPageRoutedDialog {
+          /** @internal */
+          get scope(): ScopeModuleDemoBasic;
+        }
+
+        export interface ControllerPageRoutedDialogDetail {
+          /** @internal */
+          get scope(): ScopeModuleDemoBasic;
+        }
+
+        export interface ControllerPageRoutedDialogEntry {
+          /** @internal */
+          get scope(): ScopeModuleDemoBasic;
+        }
+
         export interface ControllerPageState {
           /** @internal */
           get scope(): ScopeModuleDemoBasic;
@@ -129,20 +147,23 @@ declare module 'zova-module-demo-basic' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerActionView } from '../component/actionView/controller.jsx';
-import { ControllerCard } from '../component/card/controller.jsx';
-import { ControllerFormFieldTest } from '../component/formFieldTest/controller.jsx';
-import { ControllerTableCellTest } from '../component/tableCellTest/controller.jsx';
-import { ControllerPageComponent } from '../page/component/controller.jsx';
-import { ControllerPageLocale } from '../page/locale/controller.jsx';
-import { ControllerPageRouteParams } from '../page/routeParams/controller.jsx';
-import { ControllerPageRouteQuery } from '../page/routeQuery/controller.jsx';
-import { ControllerPageRouteQueryB } from '../page/routeQueryB/controller.jsx';
-import { ControllerPageState } from '../page/state/controller.jsx';
-import { ControllerPageStyle } from '../page/style/controller.jsx';
-import { ControllerPageToolMinimal } from '../page/toolMinimal/controller.jsx';
-import { ControllerPageToolOne } from '../page/toolOne/controller.jsx';
-import { ControllerPageToolTwo } from '../page/toolTwo/controller.jsx';
+import type { ControllerActionView } from '../component/actionView/controller.jsx';
+import type { ControllerCard } from '../component/card/controller.jsx';
+import type { ControllerFormFieldTest } from '../component/formFieldTest/controller.jsx';
+import type { ControllerTableCellTest } from '../component/tableCellTest/controller.jsx';
+import type { ControllerPageComponent } from '../page/component/controller.jsx';
+import type { ControllerPageLocale } from '../page/locale/controller.jsx';
+import type { ControllerPageRouteParams } from '../page/routeParams/controller.jsx';
+import type { ControllerPageRouteQuery } from '../page/routeQuery/controller.jsx';
+import type { ControllerPageRouteQueryB } from '../page/routeQueryB/controller.jsx';
+import type { ControllerPageRoutedDialog } from '../page/routedDialog/controller.jsx';
+import type { ControllerPageRoutedDialogDetail } from '../page/routedDialogDetail/controller.jsx';
+import type { ControllerPageRoutedDialogEntry } from '../page/routedDialogEntry/controller.jsx';
+import type { ControllerPageState } from '../page/state/controller.jsx';
+import type { ControllerPageStyle } from '../page/style/controller.jsx';
+import type { ControllerPageToolMinimal } from '../page/toolMinimal/controller.jsx';
+import type { ControllerPageToolOne } from '../page/toolOne/controller.jsx';
+import type { ControllerPageToolTwo } from '../page/toolTwo/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -155,6 +176,9 @@ declare module 'zova' {
 'demo-basic.controller.pageRouteParams': ControllerPageRouteParams;
 'demo-basic.controller.pageRouteQuery': ControllerPageRouteQuery;
 'demo-basic.controller.pageRouteQueryB': ControllerPageRouteQueryB;
+'demo-basic.controller.pageRoutedDialog': ControllerPageRoutedDialog;
+'demo-basic.controller.pageRoutedDialogDetail': ControllerPageRoutedDialogDetail;
+'demo-basic.controller.pageRoutedDialogEntry': ControllerPageRoutedDialogEntry;
 'demo-basic.controller.pageState': ControllerPageState;
 'demo-basic.controller.pageStyle': ControllerPageStyle;
 'demo-basic.controller.pageToolMinimal': ControllerPageToolMinimal;
@@ -172,6 +196,11 @@ export * from './page/routeQuery.js';
 import { NSControllerPageRouteQuery } from './page/routeQuery.js';
 export * from './page/routeQueryB.js';
 import { NSControllerPageRouteQueryB } from './page/routeQueryB.js';
+export * from './page/routedDialog.js';
+export * from './page/routedDialogDetail.js';
+import { NSControllerPageRoutedDialogDetail } from './page/routedDialogDetail.js';
+export * from './page/routedDialogEntry.js';
+import { NSControllerPageRoutedDialogEntry } from './page/routedDialogEntry.js';
 export * from './page/state.js';
 export * from './page/style.js';
 export * from './page/toolMinimal.js';
@@ -189,6 +218,9 @@ export interface IPagePathRecord {
 '/demo/basic/routeParams/:id?': TypePagePathSchema<NSControllerPageRouteParams.ParamsInput,NSControllerPageRouteParams.QueryInput>;
 '/demo/basic/routeQuery': TypePagePathSchema<NSControllerPageRouteQuery.ParamsInput,NSControllerPageRouteQuery.QueryInput>;
 '/demo/basic/routeQueryB': TypePagePathSchema<NSControllerPageRouteQueryB.ParamsInput,NSControllerPageRouteQueryB.QueryInput>;
+'/demo/basic/routedDialog': TypePagePathSchema<undefined,undefined>;
+'/demo/basic/routedDialogDetail/:id': TypePagePathSchema<NSControllerPageRoutedDialogDetail.ParamsInput,NSControllerPageRoutedDialogDetail.QueryInput>;
+'/demo/basic/routedDialogEntry': TypePagePathSchema<NSControllerPageRoutedDialogEntry.ParamsInput,NSControllerPageRoutedDialogEntry.QueryInput>;
 '/demo/basic/state': TypePagePathSchema<undefined,undefined>;
 '/demo/basic/style': TypePagePathSchema<undefined,undefined>;
 '/demo/basic/toolMinimal': TypePagePathSchema<undefined,undefined>;
@@ -197,6 +229,7 @@ export interface IPagePathRecord {
 }
 export interface IPageNameRecord {
   'demo-basic:routeParams': TypePagePathSchema<NSControllerPageRouteParams.ParamsInput,NSControllerPageRouteParams.QueryInput>;
+'demo-basic:routedDialogDetail': TypePagePathSchema<NSControllerPageRoutedDialogDetail.ParamsInput,NSControllerPageRoutedDialogDetail.QueryInput>;
 'demo-basic:toolMinimal': TypePagePathSchema<undefined,undefined>;
 'demo-basic:toolOne': TypePagePathSchema<NSControllerPageToolOne.ParamsInput,NSControllerPageToolOne.QueryInput>;
 'demo-basic:toolTwo': TypePagePathSchema<NSControllerPageToolTwo.ParamsInput,NSControllerPageToolTwo.QueryInput>;
@@ -209,11 +242,18 @@ export const pagePathSchemas = {
 '/demo/basic/routeQueryB': {
           query: NSControllerPageRouteQueryB.querySchema,
         },
+'/demo/basic/routedDialogEntry': {
+          query: NSControllerPageRoutedDialogEntry.querySchema,
+        },
 };
 export const pageNameSchemas = {
 'demo-basic:routeParams': {
           params: NSControllerPageRouteParams.paramsSchema,
           query: NSControllerPageRouteParams.querySchema,
+        },
+'demo-basic:routedDialogDetail': {
+          params: NSControllerPageRoutedDialogDetail.paramsSchema,
+          query: NSControllerPageRoutedDialogDetail.querySchema,
         },
 'demo-basic:toolOne': {
           params: NSControllerPageToolOne.paramsSchema,
@@ -236,6 +276,14 @@ $query: NSControllerPageRouteQuery.QueryOutput;
 export interface ControllerPageRouteQueryB {
         $params: NSControllerPageRouteQueryB.ParamsOutput;
 $query: NSControllerPageRouteQueryB.QueryOutput;
+      }
+export interface ControllerPageRoutedDialogDetail {
+        $params: NSControllerPageRoutedDialogDetail.ParamsOutput;
+$query: NSControllerPageRoutedDialogDetail.QueryOutput;
+      }
+export interface ControllerPageRoutedDialogEntry {
+        $params: NSControllerPageRoutedDialogEntry.ParamsOutput;
+$query: NSControllerPageRoutedDialogEntry.QueryOutput;
       }
 export interface ControllerPageToolOne {
         $params: NSControllerPageToolOne.ParamsOutput;
@@ -296,7 +344,7 @@ declare module 'zova-module-demo-basic' {
 }
 /** render: end */
 /** render: begin */
-import { RenderPageToolOne } from '../page/toolOne/render.jsx';
+import type { RenderPageToolOne } from '../page/toolOne/render.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -331,7 +379,7 @@ declare module 'zova-module-demo-basic' {
 }
 /** behavior: end */
 /** behavior: begin */
-import { BehaviorFormFieldLayout } from '../bean/behavior.formFieldLayout.jsx';
+import type { BehaviorFormFieldLayout } from '../bean/behavior.formFieldLayout.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -385,7 +433,7 @@ declare module 'zova-module-demo-basic' {
 }
 /** tableCell: end */
 /** tableCell: begin */
-import { TableCellTest } from '../bean/tableCell.test.jsx';
+import type { TableCellTest } from '../bean/tableCell.test.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {

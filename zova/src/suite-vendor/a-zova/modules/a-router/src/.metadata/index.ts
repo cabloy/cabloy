@@ -26,7 +26,7 @@ declare module 'zova-module-a-router' {
 }
 /** model: end */
 /** model: begin */
-import { ModelPageData } from '../model/pageData.js';
+import type { ModelPageData } from '../model/pageData.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -57,7 +57,7 @@ declare module 'zova-module-a-router' {
 }
 /** sys: end */
 /** sys: begin */
-import { SysRouter } from '../bean/sys.router.js';
+import type { SysRouter } from '../bean/sys.router.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -89,8 +89,8 @@ declare module 'zova-module-a-router' {
 }
 /** bean: end */
 /** bean: begin */
-import { BeanRouter } from '../bean/bean.router.js';
-import { BeanRouterGuardsBase } from '../bean/bean.routerGuardsBase.js';
+import type { BeanRouter } from '../bean/bean.router.js';
+import type { BeanRouterGuardsBase } from '../bean/bean.routerGuardsBase.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -126,7 +126,7 @@ declare module 'zova-module-a-router' {
 }
 /** service: end */
 /** service: begin */
-import { ServiceRouterGuards } from '../service/routerGuards.js';
+import type { ServiceRouterGuards } from '../service/routerGuards.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -151,7 +151,7 @@ declare module 'zova-module-a-router' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerRouterViewEmpty } from '../component/routerViewEmpty/controller.jsx';
+import type { ControllerRouterViewEmpty } from '../component/routerViewEmpty/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {

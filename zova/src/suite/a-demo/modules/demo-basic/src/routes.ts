@@ -2,6 +2,9 @@ import type { IModuleRoute } from 'zova-module-a-router';
 
 import { ZPageComponent } from './.metadata/page/component.js';
 import { ZPageLocale } from './.metadata/page/locale.js';
+import { ZPageRoutedDialog } from './.metadata/page/routedDialog.js';
+import { ZPageRoutedDialogDetail } from './.metadata/page/routedDialogDetail.js';
+import { ZPageRoutedDialogEntry } from './.metadata/page/routedDialogEntry.js';
 import { ZPageRouteParams } from './.metadata/page/routeParams.js';
 import { ZPageRouteQuery } from './.metadata/page/routeQuery.js';
 import { ZPageRouteQueryB } from './.metadata/page/routeQueryB.js';
@@ -69,5 +72,21 @@ export const routes: IModuleRoute[] = [
       requiresAuth: false,
       ssrProfile: 'public',
     },
+  },
+  {
+    path: 'routedDialog',
+    component: ZPageRoutedDialog,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: 'routedDialogEntry',
+    component: ZPageRoutedDialogEntry,
+    meta: { requiresAuth: false },
+  },
+  {
+    name: 'routedDialogDetail',
+    path: 'routedDialogDetail/:id',
+    component: ZPageRoutedDialogDetail,
+    meta: { requiresAuth: false },
   },
 ];

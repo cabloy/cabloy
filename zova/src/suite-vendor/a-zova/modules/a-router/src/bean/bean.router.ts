@@ -3,6 +3,7 @@ import type {
   NavigationHookAfter,
   RouteLocationNormalizedLoadedGeneric,
   Router,
+  RouterOptions,
 } from '@cabloy/vue-router';
 
 import { BeanBase, TypeEventOff, Use } from 'zova';
@@ -14,6 +15,13 @@ import { IPageMeta } from '../types/pageMeta.js';
 import { TypeErrorListener } from '../types/router.js';
 import { SysRouter } from './sys.router.js';
 
+export interface BeanRouterInitOptions {
+  mainRouter?: boolean;
+  routerOptions?: RouterOptions;
+  prepareNavigation?: (to: unknown) => Promise<void> | void;
+  embeddedView?: 'page';
+}
+
 export interface BeanRouter extends Omit<
   SysRouter,
   '$beanFullName' | '$onionName' | '$onionOptions'
@@ -24,6 +32,7 @@ export class BeanRouter extends BeanBase {
   private _vueRouterApp: Router;
   private _eventRouterGuards: TypeEventOff[] = [];
   private _routerViews: BeanRouterViewBase[] = [];
+  private _disposed = false;
 
   @Use()
   $$sysRouter: SysRouter;
@@ -35,10 +44,42 @@ export class BeanRouter extends BeanBase {
     return this._vueRouterApp;
   }
 
+  get isEmbedded() {
+    return this._isEmbedded;
+  }
+
+  private _isEmbedded = false;
+  private _embeddedView?: 'page';
+  private _prepareNavigation?: (to: unknown) => Promise<void> | void;
+
+  /**
+   * Returns the initial RouterView depth for an embedded page-only host.
+   *
+   * SysRouter records the synthetic layout parents it creates. The page-only
+   * host skips only those exact records; routes registered with
+   * `meta.layout: false` still start at depth zero.
+   */
+  public getEmbeddedRouterViewDepth(route: RouteLocationNormalizedLoadedGeneric): number {
+    if (this._embeddedView !== 'page') return 0;
+    return this.$$sysRouter.isSyntheticLayoutRouteRecord(route.matched[0]) ? 1 : 0;
+  }
+
+  public dispose() {
+    this.__dispose__();
+  }
+
   protected __dispose__() {
+    if (this._disposed) return;
+    this._disposed = true;
     for (const fn of this._eventRouterGuards) {
       fn();
     }
+    this._eventRouterGuards = [];
+    this._routerViews = [];
+    const router = this._vueRouterApp as Router & {
+      __prepareNavigation?: (to: unknown) => Promise<void> | void;
+    };
+    if (router) router.__prepareNavigation = undefined;
   }
 
   protected __get__(prop: string) {
@@ -48,10 +89,21 @@ export class BeanRouter extends BeanBase {
     return this.$$sysRouter?.[prop];
   }
 
-  protected async __init__(mainRouter?: boolean) {
+  protected async __init__(mainRouterOrOptions?: boolean | BeanRouterInitOptions) {
+    const options: BeanRouterInitOptions =
+      typeof mainRouterOrOptions === 'boolean'
+        ? { mainRouter: mainRouterOrOptions }
+        : (mainRouterOrOptions ?? {});
+    this._isEmbedded = options.mainRouter === false;
+    this._embeddedView = options.embeddedView;
+    this._prepareNavigation = options.prepareNavigation;
     // create router
-    this._vueRouterApp = this.$$sysRouter.createRouter();
-    if (!mainRouter) {
+    this._vueRouterApp = this.$$sysRouter.createRouter(options.routerOptions);
+    const router = this._vueRouterApp as Router & {
+      __prepareNavigation?: (to: unknown) => Promise<void> | void;
+    };
+    router.__prepareNavigation = this._prepareNavigation;
+    if (!options.mainRouter) {
       // emit event
       await this.app.meta.event.emit('a-router:routerGuards', this);
     }
@@ -59,6 +111,11 @@ export class BeanRouter extends BeanBase {
 
   addRouterView(routerView: BeanRouterViewBase) {
     this._routerViews.push(routerView);
+    if (!this._isEmbedded) return;
+    const route = this._vueRouterApp.currentRoute.value;
+    if (route?.matched.length > 0) {
+      routerView.forwardRoute(route);
+    }
   }
 
   removeRouterView(routerView: BeanRouterViewBase) {

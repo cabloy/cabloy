@@ -33,6 +33,7 @@ export interface SysRouter extends Router {}
 @Sys()
 export class SysRouter extends BeanBase {
   private _vueRouterSys: Router;
+  private _syntheticLayoutRouteNames = new Set<string>();
 
   get router(): Router {
     return this._vueRouterSys;
@@ -90,6 +91,14 @@ export class SysRouter extends BeanBase {
   public createAsyncComponent(component: string | IModuleRouteComponent) {
     if (typeof component !== 'string') return component;
     return this.sys.meta.component.createAsyncComponent(component);
+  }
+
+  public isSyntheticLayoutRouteRecord(record: RouteLocationMatched | undefined) {
+    const canonicalRecord = record?.aliasOf ?? record;
+    return (
+      typeof canonicalRecord?.name === 'string' &&
+      this._syntheticLayoutRouteNames.has(canonicalRecord.name)
+    );
   }
 
   public getPagePath<K extends keyof IPagePathRecord>(
@@ -392,5 +401,8 @@ export class SysRouter extends BeanBase {
     }
     // add
     this.router.addRoute(routeData);
+    if (routeNameParent) {
+      this._syntheticLayoutRouteNames.add(routeNameParent);
+    }
   }
 }
