@@ -5,7 +5,7 @@ import { BeanControllerBase, cast } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZRouterViewStack } from 'zova-module-a-routerstack';
 
-import type { IModalRoutedDialogItem } from '../../types/appModal.js';
+import { IModalRoutedDialogItem, routedDialogContextKey } from '../../types/appModal.js';
 
 export interface ControllerRoutedDialogProps {
   item: IModalRoutedDialogItem;
@@ -41,7 +41,11 @@ export class ControllerRoutedDialog extends BeanControllerBase {
     if (!this.$$modelStack) return <div class="loading loading-spinner"></div>;
     const router = item.state.router;
     if (!router) return <div class="text-error">Router unavailable</div>;
-    const vnode = h(ZRouterViewStack);
+    const vnode = h(ZRouterViewStack, {
+      pageHostProviders: {
+        [routedDialogContextKey]: item.state.context,
+      },
+    });
     cast(vnode).zovaHostProviders = {
       'a-router.bean.router': router,
       '$$modelStack': this.$$modelStack,

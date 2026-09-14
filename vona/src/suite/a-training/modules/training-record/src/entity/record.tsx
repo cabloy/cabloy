@@ -53,6 +53,8 @@ export class EntityRecord extends EntityBase {
     ZovaRender.column({ enableSorting: true }),
     ZovaRender.field('basic-resource:formFieldResourcePicker', {
       resource: $resourceName('training-student:student'),
+      pickerMode: 'routedDialog',
+      selectionMode: 'single',
     }),
     ZovaRender.cell('basic-resource:resourcePicker', {
       resource: $resourceName('training-student:student'),

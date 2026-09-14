@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+  limitPickerRowSelection,
   reconcileSelection,
+  resolvePickerSelectionMax,
   resolveSelectionMaxIds,
   resolveTableActionBulkDynamicProps,
   selectionKey,
@@ -14,6 +16,17 @@ test('selection maximum uses action metadata before the frontend fallback', () =
   assert.equal(resolveSelectionMaxIds(100), 100);
   assert.equal(resolveSelectionMaxIds(101), 101);
   assert.equal(resolveSelectionMaxIds(0), 0);
+});
+
+test('picker selection maximum distinguishes single and multiple modes', () => {
+  assert.equal(resolvePickerSelectionMax(undefined, undefined), 100);
+  assert.equal(resolvePickerSelectionMax('multiple', undefined), 100);
+  assert.equal(resolvePickerSelectionMax('multiple', 3), 3);
+  assert.equal(resolvePickerSelectionMax('multiple', 0), 0);
+  assert.equal(resolvePickerSelectionMax('single', 99), 1);
+  assert.equal(resolvePickerSelectionMax('multiple', -1), 100);
+  assert.equal(resolvePickerSelectionMax('multiple', 1.5), 100);
+  assert.equal(resolvePickerSelectionMax('multiple', Number.NaN), 100);
 });
 
 test('bulk action runtime props do not overwrite static action metadata', () => {
@@ -96,4 +109,15 @@ test('current-page reconciliation removes only deselected loaded identities', ()
   const selection = reconcileSelection({ 1: true, 2: true, previous: true }, rows, {});
 
   assert.deepEqual(selection, { previous: true });
+});
+
+test('picker selection caps page-wide updates while retaining earlier identities', () => {
+  const rows = [{ id: '2' }, { id: '3' }, { id: '4' }];
+  assert.deepEqual(
+    limitPickerRowSelection({ 1: true, 2: true, 3: true, 4: true }, rows, 'multiple', 3),
+    { 1: true, 2: true, 3: true },
+  );
+  assert.deepEqual(limitPickerRowSelection({ previous: true, 2: true }, rows, 'single', 1), {
+    2: true,
+  });
 });

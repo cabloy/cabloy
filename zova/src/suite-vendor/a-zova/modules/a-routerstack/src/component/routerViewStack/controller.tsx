@@ -9,7 +9,9 @@ import {
 
 import type { ModelStack } from '../../model/stack.js';
 
-export interface ControllerRouterViewStackProps extends IRouterViewPropsBase {}
+export interface ControllerRouterViewStackProps extends IRouterViewPropsBase {
+  pageHostProviders?: Record<string, unknown>;
+}
 
 @Controller()
 export class ControllerRouterViewStack extends BeanRouterViewBase {
@@ -34,5 +36,9 @@ export class ControllerRouterViewStack extends BeanRouterViewBase {
 
   protected getKeepAliveInclude(): string[] | undefined {
     return this.$$modelStack.keepAliveInclude;
+  }
+
+  protected getPageHostProviders(): Record<string, unknown> | undefined {
+    return this.$props.pageHostProviders;
   }
 }

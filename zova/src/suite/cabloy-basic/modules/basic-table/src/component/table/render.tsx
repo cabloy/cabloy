@@ -16,6 +16,7 @@ export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
         sorting={this.$props.sorting}
         onSortingChange={this.$props.onSortingChange}
         enableRowSelection={this.$props.enableRowSelection}
+        selectionMode={this.$props.selectionMode}
         rowSelection={this.$props.rowSelection}
         onRowSelectionChange={this.$props.onRowSelectionChange}
         tableScope={this.$props.tableScope}
@@ -48,6 +49,7 @@ export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
 
   public _renderTable($$table: ControllerTable<TData>) {
     const table = $$table.table;
+    const selectionMode = this.$props.selectionMode ?? 'multiple';
     const selectionEnabled = $$table.columns.some(column => column.id === TableColumnIdSelection);
     return (
       <table class="table">
@@ -61,16 +63,18 @@ export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
               const headerDefinition = column.columnDef.header;
               const selection = selectionEnabled && column.id === TableColumnIdSelection;
               const headerContent = selection ? (
-                <input
-                  type="checkbox"
-                  class="checkbox checkbox-sm"
-                  checked={table.getIsAllPageRowsSelected()}
-                  indeterminate={table.getIsSomePageRowsSelected()}
-                  aria-checked={table.getIsSomePageRowsSelected() ? 'mixed' : undefined}
-                  aria-label={this.scope.locale.SelectAllPageRows()}
-                  disabled={table.getRowModel().rows.every(row => !row.getCanSelect())}
-                  onChange={table.getToggleAllPageRowsSelectedHandler()}
-                />
+                selectionMode === 'single' ? null : (
+                  <input
+                    type="checkbox"
+                    class="checkbox checkbox-sm"
+                    checked={table.getIsAllPageRowsSelected()}
+                    indeterminate={table.getIsSomePageRowsSelected()}
+                    aria-checked={table.getIsSomePageRowsSelected() ? 'mixed' : undefined}
+                    aria-label={this.scope.locale.SelectAllPageRows()}
+                    disabled={table.getRowModel().rows.every(row => !row.getCanSelect())}
+                    onChange={table.getToggleAllPageRowsSelectedHandler()}
+                  />
+                )
               ) : (
                 <FlexRender render={headerDefinition} props={header.getContext()}></FlexRender>
               );
@@ -123,8 +127,10 @@ export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
                     >
                       {selection ? (
                         <input
-                          type="checkbox"
-                          class="checkbox checkbox-sm"
+                          type={selectionMode === 'single' ? 'radio' : 'checkbox'}
+                          class={
+                            selectionMode === 'single' ? 'radio radio-sm' : 'checkbox checkbox-sm'
+                          }
                           checked={row.getIsSelected()}
                           disabled={!row.getCanSelect()}
                           aria-label={this.scope.locale.SelectRow(row.id)}
