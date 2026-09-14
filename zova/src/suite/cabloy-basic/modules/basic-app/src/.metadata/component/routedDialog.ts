@@ -6,7 +6,8 @@ import {
   routerViewLocationKey,
   viewDepthKey,
 } from '@cabloy/vue-router';
-import { computed, defineComponent, provide, shallowReactive } from 'vue';
+import { computed, provide, shallowReactive } from 'vue';
+import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
 import type { ControllerRoutedDialogProps } from '../../component/routedDialog/controller.jsx';

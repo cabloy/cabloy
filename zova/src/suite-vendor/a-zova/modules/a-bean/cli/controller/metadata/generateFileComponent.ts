@@ -13,6 +13,7 @@ export async function generateFileComponent(
   const { moduleName } = options;
   const { className } = globFile;
   const {
+    type,
     name,
     nameCapitalize,
     controllerExtJs,
@@ -61,6 +62,12 @@ export async function generateFileComponent(
   if (_contentImportTypeController.length > 0) {
     contentImports.push(
       `import type { ${_contentImportTypeController.join(', ')} } from '../../component/${name}/controller${controllerExtJs}';`,
+    );
+  }
+  if (type === 'component' && name === 'routedDialog') {
+    contentImports.push(
+      "import { routeLocationKey, routerKey, routerViewLocationKey, viewDepthKey } from '@cabloy/vue-router';",
+      "import { computed, provide, shallowReactive } from 'vue';",
     );
   }
   contentImports.push("import { defineComponent } from 'vue'");
@@ -137,7 +144,39 @@ export async function generateFileComponent(
     }`;
   }
   // component
-  const contentComponent = `export const Z${nameCapitalize} = defineComponent(
+  const contentComponent =
+    type === 'component' && name === 'routedDialog'
+      ? `export const Z${nameCapitalize} = defineComponent(
+    ${genericDeclare}(props: ${typeControllerPublicPropsName}${genericArguments}) => {
+      const router = props.item.state.router;
+      if (router) {
+        const currentRoute = router.currentRoute;
+        const reactiveRoute = {} as Record<string, unknown>;
+        for (const key in currentRoute.value) {
+          Object.defineProperty(reactiveRoute, key, {
+            get: () => currentRoute.value[key],
+            enumerable: true,
+          });
+        }
+        provide(routerKey, router.router);
+        provide(routeLocationKey, shallowReactive(reactiveRoute) as any);
+        provide(routerViewLocationKey, currentRoute);
+        provide(
+          viewDepthKey,
+          computed(() => router.getEmbeddedRouterViewDepth(currentRoute.value)),
+        );
+      }
+      useController(${className}, ${hasRenderFirst ? classNameRenderFirst : undefined}, ${hasStyleFirst ? classNameStyleFirst : undefined});
+      return () => {};
+    },
+    {
+      ...prepareComponentOptions(${componentOptions}),
+      props: {
+        item: { type: Object, required: true },
+      },
+    },
+  );`
+      : `export const Z${nameCapitalize} = defineComponent(
     ${genericDeclare}(_props: ${typeControllerPublicPropsName}${genericArguments}) => {
       useController(${className}, ${hasRenderFirst ? classNameRenderFirst : undefined}, ${hasStyleFirst ? classNameStyleFirst : undefined});
       return () => {};
