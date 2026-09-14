@@ -8,9 +8,28 @@ import type {
 import { isNil } from '@cabloy/utils';
 
 export const ResourceSelectedMaxIds = 100;
+export const ResourcePickerSelectionMax = 100;
+
+export type TypeResourcePickerSelectionMode = 'single' | 'multiple';
 
 export function resolveSelectionMaxIds(selectedMaxIds: number | undefined): number {
   return selectedMaxIds ?? ResourceSelectedMaxIds;
+}
+
+export function resolvePickerSelectionMax(
+  selectionMode: TypeResourcePickerSelectionMode | undefined,
+  selectionMax: number | undefined,
+): number {
+  if (selectionMode === 'single') return 1;
+  if (
+    selectionMax === undefined ||
+    !Number.isFinite(selectionMax) ||
+    !Number.isInteger(selectionMax) ||
+    selectionMax < 0
+  ) {
+    return ResourcePickerSelectionMax;
+  }
+  return selectionMax;
 }
 
 export type TypeTableActionBulkDynamicDisabledReason = 'maxExceeded' | 'selectionUnavailable';
@@ -81,4 +100,20 @@ export function reconcileSelection(
     }
   }
   return result;
+}
+
+export function limitPickerRowSelection(
+  selection: RowSelectionState,
+  rows: readonly Record<string, unknown>[],
+  selectionMode: TypeResourcePickerSelectionMode,
+  selectionMax: number,
+): RowSelectionState {
+  const selectedKeys = Object.keys(selection).filter(key => selection[key]);
+  if (selectedKeys.length <= selectionMax) return selection;
+  const currentPageKeys = selectionRowIds(rows);
+  const retainedKeys =
+    selectionMode === 'single'
+      ? selectedKeys.filter(key => currentPageKeys.has(key)).slice(-1)
+      : selectedKeys.slice(0, selectionMax);
+  return Object.fromEntries(retainedKeys.map(key => [key, true]));
 }

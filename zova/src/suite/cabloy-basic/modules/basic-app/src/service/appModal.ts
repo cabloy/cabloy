@@ -14,7 +14,9 @@ import {
   IModalPromptOptions,
   IModalRoutedDialogOptions,
   IModalRoutedDialogPresentationOptions,
+  IModalRoutedDialogItem,
   IModalRoutedDialogState,
+  IRoutedDialogContext,
   IRoutedDialogHandle,
 } from '../types/appModal.js';
 
@@ -25,6 +27,11 @@ export class ServiceAppModal extends BeanBase {
   private routedDialogReadySettlers = new Map<
     number,
     { resolve: () => void; reject: (error: unknown) => void }
+  >();
+
+  private routedDialogResultSettlers = new Map<
+    number,
+    { resolve: (value: unknown | undefined) => void; reject: (error: unknown) => void }
   >();
 
   private routedDialogHistories = new Map<number, RoutedDialogHistory>();
@@ -101,10 +108,14 @@ export class ServiceAppModal extends BeanBase {
     return new AppModalItem(this, modalItem);
   }
 
-  public routedDialog(
-    options: IModalRoutedDialogOptions,
+  public routedDialog<
+    TResult = unknown,
+    TProps extends Record<string, unknown> = Record<string, unknown>,
+    TSession = unknown,
+  >(
+    options: IModalRoutedDialogOptions<TProps, TSession>,
     dialogOptions?: IModalRoutedDialogPresentationOptions,
-  ): IRoutedDialogHandle {
+  ): IRoutedDialogHandle<TResult> {
     const id = this.newModalItemId();
     let resolveReady!: () => void;
     let rejectReady!: (error: unknown) => void;
@@ -112,25 +123,47 @@ export class ServiceAppModal extends BeanBase {
       resolveReady = resolve;
       rejectReady = reject;
     });
-    // A close-before-ready rejection remains observable through the handle,
-    // without becoming an unhandled rejection when callers do not await it.
+    let resolveResult!: (value: TResult | undefined) => void;
+    let rejectResult!: (error: unknown) => void;
+    const result = new Promise<TResult | undefined>((resolve, reject) => {
+      resolveResult = resolve;
+      rejectResult = reject;
+    });
+    // Both promises remain observable through the handle without becoming
+    // unhandled rejections when callers only need one lifecycle channel.
     void ready.catch(() => {});
-    const modalItem: IModalItem = {
+    void result.catch(() => {});
+    let modalItem!: IModalRoutedDialogItem<TResult, TProps, TSession>;
+    const context: IRoutedDialogContext<TResult, TProps, TSession> = {
+      id,
+      props: options.props,
+      session: options.session as TSession,
+      resolve: value => this._resolveRoutedDialog(modalItem, value),
+      cancel: () => this.close(id),
+    };
+    modalItem = {
       id,
       type: 'routedDialog',
       options,
       dialogOptions,
-      state: shallowReactive<IModalRoutedDialogState>({
+      state: shallowReactive<IModalRoutedDialogState<TResult, TProps, TSession>>({
         status: 'loading',
         canGoBack: false,
         ready,
+        result,
+        context,
       }),
     };
     this.modalItems.push(modalItem);
     this.routedDialogReadySettlers.set(id, { resolve: resolveReady, reject: rejectReady });
-    const handle = new AppModalItem(this, modalItem) as IRoutedDialogHandle;
+    this.routedDialogResultSettlers.set(id, {
+      resolve: value => resolveResult(value as TResult | undefined),
+      reject: rejectResult,
+    });
+    const handle = new AppModalItem(this, modalItem) as IRoutedDialogHandle<TResult>;
     Object.defineProperties(handle, {
       ready: { enumerable: true, get: () => ready },
+      result: { enumerable: true, get: () => result },
       push: {
         enumerable: true,
         value: (to: any) => this._navigateRoutedDialog(modalItem, to, false),
@@ -197,6 +230,7 @@ export class ServiceAppModal extends BeanBase {
       modalItem.state.status = 'error';
       modalItem.state.error = error;
       this._settleRoutedDialogReady(modalItem.id, 'reject', error);
+      this._settleRoutedDialogResult(modalItem.id, 'reject', error);
     }
   }
 
@@ -233,6 +267,23 @@ export class ServiceAppModal extends BeanBase {
     else settler.reject(error);
   }
 
+  private _settleRoutedDialogResult(id: number, action: 'resolve' | 'reject', value?: unknown) {
+    const settler = this.routedDialogResultSettlers.get(id);
+    if (!settler) return;
+    this.routedDialogResultSettlers.delete(id);
+    if (action === 'resolve') settler.resolve(value);
+    else settler.reject(value);
+  }
+
+  private _resolveRoutedDialog(
+    modalItem: Extract<IModalItem, { type: 'routedDialog' }>,
+    value: unknown,
+  ) {
+    if (!this._isRoutedDialogOpen(modalItem)) return;
+    this._settleRoutedDialogResult(modalItem.id, 'resolve', value);
+    this.close(modalItem.id);
+  }
+
   public close(id: number, _reason: string = 'api') {
     const [index, modalItem] = this.findModalItem(id);
     if (index === -1 || !modalItem) return;
@@ -245,6 +296,7 @@ export class ServiceAppModal extends BeanBase {
       this.routedDialogHistories.delete(modalItem.id);
       modalItem.state.router = undefined;
       this._settleRoutedDialogReady(modalItem.id, 'reject', new Error('routedDialog is closed'));
+      this._settleRoutedDialogResult(modalItem.id, 'resolve');
       modalItem.options.onClose?.();
       return;
     }

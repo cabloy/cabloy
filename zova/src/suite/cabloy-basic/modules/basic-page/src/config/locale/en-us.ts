@@ -7,6 +7,7 @@ export default {
   Done: 'Done',
   SelectedItems: 'Selected %d items',
   SelectedItems_1: 'Selected one item',
+  SelectedItemsWithMax: 'Selected %d / %d items',
   BulkActions: 'Bulk actions',
   SelectionActionUnavailable: 'Select one or more permitted rows to enable this action',
   SelectionActionMaxExceeded: 'Select at most %d items to enable this action',

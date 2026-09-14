@@ -6,6 +6,7 @@ import type {
   IPageScope,
   IResourceBlockOptionsBase,
   IResourceRenderBlockOptionsBlock,
+  IResourceTableSelectionPayload,
   ITablePaged,
   ITableQuery,
   ITableResPaged,
@@ -21,7 +22,14 @@ import { $QueriesEnsureLoaded } from 'zova-module-a-model';
 import { BeanControllerTableBase } from 'zova-module-a-table';
 import { ModelResource } from 'zova-module-rest-resource';
 
-import { reconcileSelection, selectionKey, selectionRowId } from '../../lib/selection.js';
+import {
+  limitPickerRowSelection,
+  reconcileSelection,
+  resolvePickerSelectionMax,
+  selectionKey,
+  selectionRowId,
+  TypeResourcePickerSelectionMode,
+} from '../../lib/selection.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {
@@ -32,9 +40,15 @@ declare module 'zova-module-a-openapi' {
 export interface ControllerBlockPageProps extends IResourceBlockOptionsBase {
   blocks?: IResourceRenderBlockOptionsBlock[];
   resource?: string;
+  actionPath?: string;
   pageSize?: number;
   queryFixed?: ITableQuery;
   selectionPolicy?: 'always' | 'onDemand' | false;
+  selectionMode?: TypeResourcePickerSelectionMode;
+  selectionMax?: number;
+  selectedIds?: readonly TableIdentity[];
+  selectedRows?: readonly Record<string, unknown>[];
+  onSelectionChange?: (selection: IResourceTableSelectionPayload) => void;
 }
 
 @Controller()
@@ -65,6 +79,10 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
   selectionVisible = false;
   selectionRequiredCount = 0;
 
+  private _selectionChangeListeners = new Set<
+    (selection: IResourceTableSelectionPayload<TData>) => void
+  >();
+
   $$modelResource: ModelResource<TData>;
 
   protected async __init__() {
@@ -80,9 +98,9 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
     this.queryFilterData = {};
     this.querySortingData = {};
     this.sorting = [];
-    this.rowSelection = {};
-    this.selectedIds = [];
-    this.selectedRows = new Map();
+    this.selectedIds = this._normalizeSelectedIds(this.$props.selectedIds ?? []);
+    this.rowSelection = Object.fromEntries(this.selectedIds.map(id => [selectionKey(id), true]));
+    this.selectedRows = this._normalizeSelectedRows(this.$props.selectedRows ?? []);
     this.$watch(
       () => this.$props.queryFixed,
       queryFixed => {
@@ -103,6 +121,8 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
       () => this.$$modelResource.apiSchemasSelect.sdk,
       () => this.queryData,
     );
+    this._refreshSelectedRows((this.data ?? []) as unknown as Record<string, unknown>[]);
+    this._notifySelectionChange();
     // watch
     this.$watch(
       () => this.permissions,
@@ -115,12 +135,39 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
       () => this.data,
       data => {
         this._refreshSelectedRows((data ?? []) as unknown as Record<string, unknown>[]);
+        this._notifySelectionChange();
       },
     );
   }
 
   get resource() {
     return this.$props.resource;
+  }
+
+  private _normalizeSelectedIds(ids: readonly TableIdentity[]) {
+    const selectedIds: TableIdentity[] = [];
+    const keys = new Set<string>();
+    for (const id of ids) {
+      const key = selectionKey(id);
+      if (keys.has(key)) continue;
+      keys.add(key);
+      selectedIds.push(id);
+    }
+    return this.selectionMode === 'single'
+      ? selectedIds.slice(-1)
+      : selectedIds.slice(0, this.selectionMax);
+  }
+
+  private _normalizeSelectedRows(rows: readonly Record<string, unknown>[]) {
+    const selectedKeys = new Set(this.selectedIds.map(selectionKey));
+    const selectedRows = new Map<string, TData>();
+    for (const row of rows) {
+      const id = selectionRowId(row);
+      const key = selectionKey(id);
+      if (!selectedKeys.has(key) || selectedRows.has(key)) continue;
+      selectedRows.set(key, row as TData);
+    }
+    return selectedRows;
   }
 
   get query() {
@@ -136,7 +183,7 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
   }
 
   get queryData() {
-    return this.$$modelResource.select(this.query);
+    return this.$$modelResource.selectGeneral(this.$props.actionPath, this.query);
   }
 
   get data() {
@@ -174,6 +221,18 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
     };
   }
 
+  get selectionMode(): TypeResourcePickerSelectionMode {
+    return this.$props.selectionMode ?? 'multiple';
+  }
+
+  get selectionMax() {
+    return resolvePickerSelectionMax(this.$props.selectionMode, this.$props.selectionMax);
+  }
+
+  get selectionPersistent() {
+    return this.$props.selectionMode !== undefined || this.$props.selectionMax !== undefined;
+  }
+
   get selectionAvailable() {
     const policy = this.$props.selectionPolicy;
     return (
@@ -192,19 +251,45 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
     return policy === 'always' || (this.selectionVisible && policy !== false);
   }
 
+  onSelectionChange(listener: (selection: IResourceTableSelectionPayload<TData>) => void) {
+    this._selectionChangeListeners.add(listener);
+    return () => this._selectionChangeListeners.delete(listener);
+  }
+
   onRowSelectionChange(
     updater: RowSelectionState | ((old: RowSelectionState) => RowSelectionState),
   ) {
     const data = (this.data ?? []) as unknown as Record<string, unknown>[];
     const next = functionalUpdate(updater, this.rowSelection);
-    this.rowSelection = reconcileSelection(this.rowSelection, data, next);
+    const reconciled = reconcileSelection(this.rowSelection, data, next);
+    this.rowSelection = this._limitRowSelection(reconciled, data);
     this._reconcileSelectedRows(data);
+    this._notifySelectionChange();
+  }
+
+  private _limitRowSelection(
+    rowSelection: RowSelectionState,
+    data: readonly Record<string, unknown>[],
+  ) {
+    if (this.$props.selectionMode === undefined && this.$props.selectionMax === undefined) {
+      return rowSelection;
+    }
+    return limitPickerRowSelection(rowSelection, data, this.selectionMode, this.selectionMax);
   }
 
   clearSelection() {
     this.rowSelection = {};
     this.selectedIds = [];
     this.selectedRows = new Map();
+    this._notifySelectionChange();
+  }
+
+  private _notifySelectionChange() {
+    const selection = this.selection;
+    this.$props.onSelectionChange?.(selection);
+    for (const listener of this._selectionChangeListeners) {
+      listener(selection);
+    }
   }
 
   private _refreshSelectedRows(data: readonly Record<string, unknown>[]) {
@@ -263,7 +348,7 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
 
   setPageSize(pageSize: number) {
     if (this.queryPaged.pageSize !== pageSize) {
-      this.clearSelection();
+      if (!this.selectionPersistent) this.clearSelection();
       this.queryPaged.pageSize = pageSize;
       this.queryPaged.pageNo = 1;
     }
@@ -272,14 +357,14 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
   setQueryFixed(queryFixed?: ITableQuery) {
     const next = queryFixed ?? {};
     if (deepEqual(this.queryFixedData, next)) return;
-    this.clearSelection();
+    if (!this.selectionPersistent) this.clearSelection();
     this.queryFixedData = next;
     this.queryPaged.pageNo = 1;
   }
 
   onFilter(data: ITableQuery) {
     if (deepEqual(this.queryFilterData, data)) return;
-    this.clearSelection();
+    if (!this.selectionPersistent) this.clearSelection();
     this.queryFilterData = data;
     this.queryPaged.pageNo = 1;
   }
@@ -287,7 +372,7 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
   onSortingChange(updater: SortingState | ((old: SortingState) => SortingState)) {
     const sorting = functionalUpdate(updater, this.sorting).slice(0, 1);
     if (deepEqual(this.sorting, sorting)) return;
-    this.clearSelection();
+    if (!this.selectionPersistent) this.clearSelection();
     this.sorting = sorting;
     const first = this.sorting[0];
     this.querySortingData = first ? { orders: [[first.id, first.desc ? 'desc' : 'asc']] } : {};

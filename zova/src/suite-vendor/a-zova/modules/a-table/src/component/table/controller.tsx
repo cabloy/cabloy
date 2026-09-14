@@ -57,6 +57,7 @@ export interface ControllerTableProps<TData extends {} = {}> {
   sorting?: SortingState;
   onSortingChange?: OnChangeFn<SortingState>;
   enableRowSelection?: boolean | ((row: Row<TData>) => boolean);
+  selectionMode?: 'single' | 'multiple';
   rowSelection?: RowSelectionState;
   onRowSelectionChange?: OnChangeFn<RowSelectionState>;
   tableScope?: ITableScope;
@@ -139,6 +140,7 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
       enableMultiSort: false,
       enableSortingRemoval: false,
       enableRowSelection: row => self._canSelectRow(row),
+      enableMultiRowSelection: this.$props.selectionMode !== 'single',
       state: {
         get sorting() {
           return self.sorting;

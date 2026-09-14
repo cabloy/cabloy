@@ -766,6 +766,81 @@ test(
 );
 
 test(
+  'ATP-BASIC-RESOURCE-PICKER-01: Training Record selects and cancels a routed Student picker',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    const pageErrors = collectPageErrors(page);
+    await loginAsAdmin(page);
+
+    const studentName = `Resource Picker E2E ${Date.now()}`;
+    const accessToken = (await page.context().cookies()).find(
+      cookie => cookie.name === 'token',
+    )?.value;
+    expect(accessToken).toBeTruthy();
+    const headers = { Authorization: `Bearer ${accessToken}` };
+    let studentId: string | number | undefined;
+    try {
+      const createResponse = await page.request.post('/api/training/student', {
+        data: { name: studentName, mobile: '13812345678', level: 1 },
+        headers,
+      });
+      expect(createResponse.ok()).toBeTruthy();
+      studentId = (await createResponse.json()).data;
+      expect(['string', 'number']).toContain(typeof studentId);
+
+      const response = await page.goto('/admin/rest/resource/training-record%3Arecord/create', {
+        waitUntil: 'load',
+      });
+      expect(response?.ok()).toBeTruthy();
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      const browserUrl = page.url();
+      const studentField = page.getByRole('group', { name: 'Student *', exact: true });
+      const pickerTrigger = studentField.locator('button');
+      await expect(pickerTrigger).toBeVisible();
+
+      const initialSelect = waitForStudentSelect(page);
+      await pickerTrigger.click();
+      const dialog = page.getByRole('dialog');
+      await expect(dialog).toHaveCount(1);
+      await initialSelect;
+      expect(page.url()).toBe(browserUrl);
+
+      const row = dialog.locator('tbody tr').filter({ hasText: studentName });
+      await expect(row).toHaveCount(1);
+      await expect(dialog.getByRole('button', { name: 'Create', exact: true })).toBeVisible();
+      await expect(dialog.getByRole('button', { name: 'Search', exact: true })).toBeVisible();
+      await expect(row.getByRole('radio', { name: /^Select row / })).toHaveCount(1);
+
+      await row.getByRole('radio', { name: /^Select row / }).check();
+      await expect(row).toHaveAttribute('aria-selected', 'true');
+      await expect(dialog.locator('span.text-sm[role="status"]')).toHaveText('Selected one item');
+      await expect(dialog.getByRole('button', { name: 'Select', exact: true })).toBeEnabled();
+      await dialog.getByRole('button', { name: 'Select', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await expect(pickerTrigger).toHaveText(studentName);
+      expect(page.url()).toBe(browserUrl);
+
+      await pickerTrigger.click();
+      await expect(dialog).toHaveCount(1);
+      await expect(row).toHaveCount(1);
+      await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await expect(pickerTrigger).toHaveText(studentName);
+      expect(page.url()).toBe(browserUrl);
+      expect(pageErrors).toEqual([]);
+    } finally {
+      if (studentId !== undefined) {
+        const deleteResponse = await page.request.delete(
+          `/api/training/student/deleteForce/${studentId}`,
+          { headers },
+        );
+        expect(deleteResponse.ok()).toBeTruthy();
+      }
+    }
+  },
+);
+
+test(
   'ATP-BASIC-FORM-01: Training Student content remains in the Basic Information tab',
   { tag: ['@admin', '@flow'] },
   async ({ page }) => {

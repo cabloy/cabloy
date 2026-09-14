@@ -39,6 +39,10 @@ export class BeanRouterViewBase extends BeanControllerBase implements IRouterVie
     throw new Error('Not Implemented');
   }
 
+  protected getPageHostProviders(): Record<string, unknown> | undefined {
+    return undefined;
+  }
+
   protected render() {
     const slots = {
       default: (component: IRouterViewSlotParams) => {
@@ -50,6 +54,7 @@ export class BeanRouterViewBase extends BeanControllerBase implements IRouterVie
               route: component.route,
             });
             cast(vnode).zovaHostProviders = {
+              ...this.getPageHostProviders(),
               [pageRouteKey]: component.route,
               'a-router.bean.router': this.$router,
             };

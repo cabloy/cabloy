@@ -25,6 +25,7 @@ export class RenderTable extends BeanRenderBase {
 
   private _renderTableDefault() {
     const table = this.table;
+    const selectionMode = this.$props.selectionMode ?? 'multiple';
     return (
       <table class="table">
         <thead>
@@ -37,15 +38,17 @@ export class RenderTable extends BeanRenderBase {
               const headerDefinition = column.columnDef.header;
               const selection = column.id === TableColumnIdSelection;
               const headerContent = selection ? (
-                <input
-                  type="checkbox"
-                  checked={table.getIsAllPageRowsSelected()}
-                  indeterminate={table.getIsSomePageRowsSelected()}
-                  aria-checked={table.getIsSomePageRowsSelected() ? 'mixed' : undefined}
-                  aria-label="Select all rows on this page"
-                  disabled={table.getRowModel().rows.every(row => !row.getCanSelect())}
-                  onChange={table.getToggleAllPageRowsSelectedHandler()}
-                />
+                selectionMode === 'single' ? null : (
+                  <input
+                    type="checkbox"
+                    checked={table.getIsAllPageRowsSelected()}
+                    indeterminate={table.getIsSomePageRowsSelected()}
+                    aria-checked={table.getIsSomePageRowsSelected() ? 'mixed' : undefined}
+                    aria-label="Select all rows on this page"
+                    disabled={table.getRowModel().rows.every(row => !row.getCanSelect())}
+                    onChange={table.getToggleAllPageRowsSelectedHandler()}
+                  />
+                )
               ) : (
                 <FlexRender render={headerDefinition} props={header.getContext()}></FlexRender>
               );
@@ -98,7 +101,7 @@ export class RenderTable extends BeanRenderBase {
                     >
                       {selection ? (
                         <input
-                          type="checkbox"
+                          type={selectionMode === 'single' ? 'radio' : 'checkbox'}
                           checked={row.getIsSelected()}
                           disabled={!row.getCanSelect()}
                           aria-label={`Select row ${row.id}`}

@@ -71,15 +71,40 @@ export interface IModalDialogRenderOptions {
   onClose?: () => void;
 }
 
-export interface IModalRoutedDialogOptions extends IModalRoutedDialogPresentationOptions {
+export const routedDialogContextKey = '$routedDialogContext';
+
+export interface IRoutedDialogContext<
+  TResult = unknown,
+  TProps extends Record<string, unknown> = Record<string, unknown>,
+  TSession = unknown,
+> {
+  readonly id: number;
+  readonly props?: TProps;
+  readonly session: TSession;
+  resolve(value: TResult): void;
+  cancel(): void;
+}
+
+export interface IModalRoutedDialogOptions<
+  TProps extends Record<string, unknown> = Record<string, unknown>,
+  TSession = unknown,
+> extends IModalRoutedDialogPresentationOptions {
   route: RouteLocationRaw;
   icon?: keyof IIconRecord;
   title?: string;
-  props?: Record<string, unknown>;
+  props?: TProps;
+  session?: TSession;
+  createPageHostProviders?: (
+    context: IRoutedDialogContext<any, any, any>,
+  ) => Record<string, unknown>;
   onClose?: () => void;
 }
 
-export interface IModalRoutedDialogState {
+export interface IModalRoutedDialogState<
+  TResult = unknown,
+  TProps extends Record<string, unknown> = Record<string, unknown>,
+  TSession = unknown,
+> {
   status: 'loading' | 'ready' | 'error' | 'closed';
   closed?: boolean;
   error?: unknown;
@@ -87,24 +112,34 @@ export interface IModalRoutedDialogState {
   currentRoute?: RouteLocationNormalizedLoadedGeneric;
   canGoBack: boolean;
   ready: Promise<void>;
+  result: Promise<TResult | undefined>;
+  context: IRoutedDialogContext<TResult, TProps, TSession>;
 }
 
-export type IModalRoutedDialogInput = Omit<IModalRoutedDialogOptions, 'route'>;
+export type IModalRoutedDialogInput<
+  TProps extends Record<string, unknown> = Record<string, unknown>,
+  TSession = unknown,
+> = Omit<IModalRoutedDialogOptions<TProps, TSession>, 'route'>;
 
 export interface IModalRoutedDialogNavigate {
   navigate(to: RouteLocationRaw, replace?: boolean): Promise<NavigationFailure | void | undefined>;
 }
 
-export interface IModalRoutedDialogItem {
+export interface IModalRoutedDialogItem<
+  TResult = unknown,
+  TProps extends Record<string, unknown> = Record<string, unknown>,
+  TSession = unknown,
+> {
   id: number;
   type: 'routedDialog';
-  options: IModalRoutedDialogOptions;
+  options: IModalRoutedDialogOptions<TProps, TSession>;
   dialogOptions?: IModalRoutedDialogPresentationOptions;
-  state: IModalRoutedDialogState;
+  state: IModalRoutedDialogState<TResult, TProps, TSession>;
 }
 
-export interface IRoutedDialogHandle extends AppModalItem {
+export interface IRoutedDialogHandle<TResult = unknown> extends AppModalItem {
   readonly ready: Promise<void>;
+  readonly result: Promise<TResult | undefined>;
   push(to: RouteLocationRaw): Promise<NavigationFailure | void | undefined>;
   replace(to: RouteLocationRaw): Promise<NavigationFailure | void | undefined>;
 }

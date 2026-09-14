@@ -46,6 +46,7 @@ export class ControllerBlockTable<TData extends {} = {}> extends BeanControllerB
           sorting={$$page.sorting}
           onSortingChange={updater => $$page.onSortingChange(updater)}
           enableRowSelection={$$page.selectionEnabled}
+          selectionMode={$$page.selectionMode}
           rowSelection={$$page.rowSelection}
           onRowSelectionChange={updater => $$page.onRowSelectionChange(updater)}
           tableScope={$$page.jsxCelScope}
