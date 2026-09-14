@@ -505,7 +505,7 @@ importers:
         version: 7.0.3
       gogocode:
         specifier: ^1.0.55
-        version: 1.0.55(vue@3.5.39(typescript@5.9.3))
+        version: 1.0.55(vue@3.5.42(typescript@5.9.3))
       oxfmt:
         specifier: ^0.62.0
         version: 0.62.0
@@ -546,29 +546,29 @@ importers:
   .zova-rest/cabloy-basic-admin:
     dependencies:
       '@cabloy/vue-router':
-        specifier: ^4.4.16
-        version: 4.4.16(vue@3.5.39(typescript@5.9.3))
+        specifier: ^4.4.18
+        version: 4.4.18(vue@3.5.42(typescript@5.9.3))
       '@tanstack/vue-query':
-        specifier: ^5.101.1
-        version: 5.101.2(vue@3.5.39(typescript@5.9.3))
+        specifier: ^5.102.8
+        version: 5.102.8(vue@3.5.42(typescript@5.9.3))
       '@tanstack/vue-table':
         specifier: ^8.21.3
-        version: 8.21.3(vue@3.5.39(typescript@5.9.3))
+        version: 8.21.3(vue@3.5.42(typescript@5.9.3))
       openapi3-ts:
-        specifier: ^4.6.0
-        version: 4.6.0
+        specifier: ^4.6.1
+        version: 4.6.1
       table-identity:
         specifier: ^1.1.7
         version: link:../../packages-utils/table-identity
       vue:
-        specifier: ^3.5.38
-        version: 3.5.39(typescript@5.9.3)
+        specifier: ^3.5.42
+        version: 3.5.42(typescript@5.9.3)
       zod:
         specifier: npm:@cabloy/zod@4.3.8
         version: '@cabloy/zod@4.3.8'
       zova:
-        specifier: ^5.1.158
-        version: 5.1.158(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
+        specifier: ^5.1.159
+        version: 5.1.159(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3))
       zova-jsx:
         specifier: ^1.1.89
         version: 1.1.89(typescript@5.9.3)
@@ -586,7 +586,7 @@ importers:
         version: 5.1.35
       zova-module-a-form:
         specifier: ^5.1.51
-        version: 5.1.51(vue@3.5.39(typescript@5.9.3))
+        version: 5.1.51(vue@3.5.42(typescript@5.9.3))
       zova-module-a-icon:
         specifier: ^5.1.27
         version: 5.1.27
@@ -595,7 +595,7 @@ importers:
         version: 5.1.31
       zova-module-a-model:
         specifier: ^5.1.36
-        version: 5.1.36(vue@3.5.39(typescript@5.9.3))
+        version: 5.1.36(vue@3.5.42(typescript@5.9.3))
       zova-module-a-openapi:
         specifier: ^5.1.53
         version: 5.1.53
@@ -603,8 +603,8 @@ importers:
         specifier: ^5.0.7
         version: 5.0.7
       zova-module-a-router:
-        specifier: ^5.1.34
-        version: 5.1.34
+        specifier: ^5.1.35
+        version: 5.1.35
       zova-module-a-routertabs:
         specifier: ^5.1.34
         version: 5.1.34
@@ -616,40 +616,40 @@ importers:
         version: 5.1.35
       zova-module-a-table:
         specifier: ^5.1.40
-        version: 5.1.40(vue@3.5.39(typescript@5.9.3))
+        version: 5.1.40(vue@3.5.42(typescript@5.9.3))
       zova-module-pay-mock:
         specifier: ^5.0.5
         version: 5.0.5
       zova-module-rest-resource:
-        specifier: ^5.1.51
-        version: 5.1.51
+        specifier: ^5.1.52
+        version: 5.1.52
 
   .zova-rest/cabloy-basic-web:
     dependencies:
       '@cabloy/vue-router':
-        specifier: ^4.4.16
-        version: 4.4.16(vue@3.5.39(typescript@5.9.3))
+        specifier: ^4.4.18
+        version: 4.4.18(vue@3.5.42(typescript@5.9.3))
       '@tanstack/vue-query':
-        specifier: ^5.101.1
-        version: 5.101.2(vue@3.5.39(typescript@5.9.3))
+        specifier: ^5.102.8
+        version: 5.102.8(vue@3.5.42(typescript@5.9.3))
       '@tanstack/vue-table':
         specifier: ^8.21.3
-        version: 8.21.3(vue@3.5.39(typescript@5.9.3))
+        version: 8.21.3(vue@3.5.42(typescript@5.9.3))
       openapi3-ts:
-        specifier: ^4.6.0
-        version: 4.6.0
+        specifier: ^4.6.1
+        version: 4.6.1
       table-identity:
         specifier: ^1.1.7
         version: link:../../packages-utils/table-identity
       vue:
-        specifier: ^3.5.38
-        version: 3.5.39(typescript@5.9.3)
+        specifier: ^3.5.42
+        version: 3.5.42(typescript@5.9.3)
       zod:
         specifier: npm:@cabloy/zod@4.3.8
         version: '@cabloy/zod@4.3.8'
       zova:
         specifier: ^5.1.158
-        version: 5.1.158(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
+        version: 5.1.158(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3))
       zova-jsx:
         specifier: ^1.1.89
         version: 1.1.89(typescript@5.9.3)
@@ -667,7 +667,7 @@ importers:
         version: 5.1.35
       zova-module-a-form:
         specifier: ^5.1.51
-        version: 5.1.51(vue@3.5.39(typescript@5.9.3))
+        version: 5.1.51(vue@3.5.42(typescript@5.9.3))
       zova-module-a-icon:
         specifier: ^5.1.27
         version: 5.1.27
@@ -676,7 +676,7 @@ importers:
         version: 5.1.31
       zova-module-a-model:
         specifier: ^5.1.36
-        version: 5.1.36(vue@3.5.39(typescript@5.9.3))
+        version: 5.1.36(vue@3.5.42(typescript@5.9.3))
       zova-module-a-openapi:
         specifier: ^5.1.53
         version: 5.1.53
@@ -697,7 +697,7 @@ importers:
         version: 5.1.35
       zova-module-a-table:
         specifier: ^5.1.40
-        version: 5.1.40(vue@3.5.39(typescript@5.9.3))
+        version: 5.1.40(vue@3.5.42(typescript@5.9.3))
       zova-module-pay-mock:
         specifier: ^5.0.5
         version: 5.0.5
@@ -913,7 +913,7 @@ importers:
         version: 16.2.0
       gogocode:
         specifier: ^1.0.55
-        version: 1.0.55(vue@3.5.39(typescript@5.9.3))
+        version: 1.0.55(vue@3.5.42(typescript@5.9.3))
       is-type-of:
         specifier: ^2.2.0
         version: 2.2.0
@@ -1050,7 +1050,7 @@ importers:
         version: 16.2.0
       gogocode:
         specifier: ^1.0.55
-        version: 1.0.55(vue@3.5.39(typescript@5.9.3))
+        version: 1.0.55(vue@3.5.42(typescript@5.9.3))
       lodash:
         specifier: ^4.18.1
         version: 4.18.1
@@ -2464,7 +2464,7 @@ importers:
         version: 7.0.3
       gogocode:
         specifier: ^1.0.55
-        version: 1.0.55(vue@3.5.39(typescript@5.9.3))
+        version: 1.0.55(vue@3.5.42(typescript@5.9.3))
       rimraf:
         specifier: ^6.1.3
         version: 6.1.3
@@ -3658,6 +3658,11 @@ packages:
     peerDependencies:
       vue: ^3.2.0
 
+  '@cabloy/vue-router@4.4.18':
+    resolution: {integrity: sha512-HlkWAbEvcuRPmsQuQK51OQew4DiIBdPZAJKZuVXEaxrdh7MPmWONIm8xH7/eA5ueceJBlAwp+gOUIFJWfinuhg==}
+    peerDependencies:
+      vue: ^3.2.0
+
   '@cabloy/vue-runtime-core@3.5.17':
     resolution: {integrity: sha512-w39bfYpGkIRQSQmwX2sHHw/p1JvwbThfZUN6VqY1juyoNNGCzvIHzBJzgp8vRgzDYnb9FhDQR+Yw27SQN7Ts7A==}
 
@@ -4837,6 +4842,9 @@ packages:
   '@tanstack/query-core@5.101.2':
     resolution: {integrity: sha512-hH5MLoJhF7KaIGd7q3xTXGXvslI+GYlM1Z/35aSHHWaCJWB7XvTSHYuV3eM7tw+aE0mT/xMro4M4Q9rCGHT0lw==}
 
+  '@tanstack/query-core@5.102.8':
+    resolution: {integrity: sha512-ZNjkJ33CqvPNec/6lZBnHqLc3EVGPZ9ySLhYahU9TcuRFdmwXewuj0c4hwSWcGHqEUwcSrKeZ+oGcvPBqXcQcg==}
+
   '@tanstack/query-persist-client-core@5.101.2':
     resolution: {integrity: sha512-rgMsbvBVpSPDUsprC9FYxojdG0Q1LH6yq1i3DXz2aps4VEqv2l4Msj3YDqIifU3xkl/DrYe9YWntZAJLrM6xTg==}
 
@@ -4854,6 +4862,15 @@ packages:
 
   '@tanstack/vue-query@5.101.2':
     resolution: {integrity: sha512-nFXKNK4dI/PnKNejyIkQmmobBsJWWXTPcpjPvkgFLkpFPz9DcmqIiKIAF2Pa7MZCipH62/+bt2sxEIA0wNEeOg==}
+    peerDependencies:
+      '@vue/composition-api': ^1.1.2
+      vue: ^2.6.0 || ^3.3.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
+  '@tanstack/vue-query@5.102.8':
+    resolution: {integrity: sha512-W3Q6Od3FbdttACuavgbICKMFgYCPobvuMiO8tIpqMP073QnREVSaO4ZPqrFqosIbFKikiQTmZhEEbYR9bPsWLA==}
     peerDependencies:
       '@vue/composition-api': ^1.1.2
       vue: ^2.6.0 || ^3.3.0
@@ -7665,6 +7682,9 @@ packages:
   openapi3-ts@4.6.0:
     resolution: {integrity: sha512-a4sfn6L2sIShhtzJqmjGrARvxAW/3F2BJDdyRVvNF9VhAsZSh5hSyI3a9TNvmzBxXmq66nY5LNT5bQcBxYAZZg==}
 
+  openapi3-ts@4.6.1:
+    resolution: {integrity: sha512-XW9MOldkhoICNeXVzzmXzmOW5G73ppOEGmh7fLCqHjgfdEYCGGN+00MlVCeUZgovjjfC56j9tvtDt1zGabNjjA==}
+
   opentype.js@2.0.0:
     resolution: {integrity: sha512-kCyjv6xdDY1W/jLWZ/L3QhhTlKUqDZMQ5+Jdlw12b3dXkKNpYBqqlMMj0YDQPShWFTMwgZI1hG14kN3XUDSg/A==}
     hasBin: true
@@ -8823,6 +8843,14 @@ packages:
       typescript:
         optional: true
 
+  vue@3.5.42:
+    resolution: {integrity: sha512-4RyHQTbQvOPs3MfvUO1Sg0YRrKNnA0mAVtvpd12Tg1fKDN7OHBUl1IqSn8zGJjK9nI3NkNp8cgTpVrSZC5TTcA==}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   w3c-keyname@2.2.8:
     resolution: {integrity: sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==}
 
@@ -9031,6 +9059,9 @@ packages:
   zova-module-a-router@5.1.34:
     resolution: {integrity: sha512-6XAia5GVmdJqUcwGW9r2vJ2JomnU0QMHK7y7QQoniUZ0JqDj7SWFbSYXd6WDlvLU7Kd5yt4WfyzE7GQVb/HcnA==}
 
+  zova-module-a-router@5.1.35:
+    resolution: {integrity: sha512-uFHIXS1mEtYGqn8rsUxPXw20J1eZ60Me9irerpsr2v6tPLCC0E8QspeIXTzOO7jpnO660iuZYLGcIMp8GPh5Gw==}
+
   zova-module-a-routerstack@5.1.27:
     resolution: {integrity: sha512-mSL3IPbk8IDXnfkXwljh8gmi+i7u2yuSmxLdDzGTJL9AFLKmdBYPnMh+pstLzKUPxaADPsfLKikJ35w0H8DSrQ==}
 
@@ -9073,17 +9104,26 @@ packages:
   zova-module-rest-resource@5.1.51:
     resolution: {integrity: sha512-rZy8oaQvtcXmqepkE+OWsXt0MUbBuL+NdY099FuG1eYrtl/nB5WMyvmtFVF5d5NRaz6q+otysFuyo8Q93aHfwA==}
 
+  zova-module-rest-resource@5.1.52:
+    resolution: {integrity: sha512-qQAPo/qsuz3ZkUV4x6NspnAvgJKfaoQb4TH/dWHHwcSWRcrra+0JdFYeSoXIDAtbYlFFBMi2jOq+S5qfVGYQQA==}
+
   zova-suite-a-zova@5.1.155:
     resolution: {integrity: sha512-w4+mlwOJ3DF+Bl9N1hkZBbgNW0UouP3/Xaw8PtiNEpmmr/ScWj+/+l85RTr/q9F+Qw/hjDCWTLwy4GBukTiBag==}
 
   zova-suite-a-zova@5.1.157:
     resolution: {integrity: sha512-oMJHt3stq27tHnOMC8t3w0+QFoipL+wnc1tkhOi6q1MP3hz4g7S8aOSEvNA/3SAiI+Bq+wpeoSVqt/2ze4zVGw==}
 
+  zova-suite-a-zova@5.1.158:
+    resolution: {integrity: sha512-QBYPzzZl6PAASrTESQ+iNdCGJIhVKshgUWKElEDrs8K1EV+Ws+blobR+IAz55fRI5mttes4eA/qkDY/Ky7I+dA==}
+
   zova@5.1.156:
     resolution: {integrity: sha512-LawJuQhiR+M+BdFkLYEz1wLz0zQa2IuZFAR0Vtq/dcNMX1Jus9g2iem/guNbavgeNP8aXRa+P4vCnaFynnWC/w==}
 
   zova@5.1.158:
     resolution: {integrity: sha512-lrsU/TlQvghdd3XRUuqeTIOsum7yv2Jm3NBeUqmcjixcDXxeAWRmH7i9g8MG+1Q8GJru6J6UYpD8mvxeTNKgcA==}
+
+  zova@5.1.159:
+    resolution: {integrity: sha512-0g4hrd9dNWzztQEfjgmHPTj4EUx7xulrkPZOo0uMMKmUCrQFP15TdjelKgr/H4S6+WpaLCtrg0D2+bPW1IhB6g==}
 
   zwitch@1.0.5:
     resolution: {integrity: sha512-V50KMwwzqJV0NpZIZFwfOD5/lyny3WlSzRiXgA0G7VUnRlqttta1L6UQIHzd6EuBY/cHGfwTIck7w1yH6Q5zUw==}
@@ -9632,6 +9672,16 @@ snapshots:
     dependencies:
       '@vue/devtools-api': 6.6.4
       vue: 3.5.39(typescript@5.9.3)
+
+  '@cabloy/vue-router@4.4.16(vue@3.5.42(typescript@5.9.3))':
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.42(typescript@5.9.3)
+
+  '@cabloy/vue-router@4.4.18(vue@3.5.42(typescript@5.9.3))':
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.42(typescript@5.9.3)
 
   '@cabloy/vue-runtime-core@3.5.17':
     dependencies:
@@ -10568,6 +10618,8 @@ snapshots:
 
   '@tanstack/query-core@5.101.2': {}
 
+  '@tanstack/query-core@5.102.8': {}
+
   '@tanstack/query-persist-client-core@5.101.2':
     dependencies:
       '@tanstack/query-core': 5.101.2
@@ -10584,6 +10636,14 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
 
+  '@tanstack/vue-form@1.33.2(vue@3.5.42(typescript@5.9.3))':
+    dependencies:
+      '@tanstack/form-core': 1.33.2
+      '@tanstack/vue-store': 0.11.0(vue@3.5.42(typescript@5.9.3))
+      vue: 3.5.42(typescript@5.9.3)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+
   '@tanstack/vue-query@5.101.2(vue@3.5.39(typescript@5.9.3))':
     dependencies:
       '@tanstack/match-sorter-utils': 8.19.4
@@ -10592,16 +10652,43 @@ snapshots:
       vue: 3.5.39(typescript@5.9.3)
       vue-demi: 0.14.10(vue@3.5.39(typescript@5.9.3))
 
+  '@tanstack/vue-query@5.101.2(vue@3.5.42(typescript@5.9.3))':
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.19.4
+      '@tanstack/query-core': 5.101.2
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.42(typescript@5.9.3)
+      vue-demi: 0.14.10(vue@3.5.42(typescript@5.9.3))
+
+  '@tanstack/vue-query@5.102.8(vue@3.5.42(typescript@5.9.3))':
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.19.4
+      '@tanstack/query-core': 5.102.8
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.42(typescript@5.9.3)
+      vue-demi: 0.14.10(vue@3.5.42(typescript@5.9.3))
+
   '@tanstack/vue-store@0.11.0(vue@3.5.39(typescript@5.9.3))':
     dependencies:
       '@tanstack/store': 0.11.0
       vue: 3.5.39(typescript@5.9.3)
       vue-demi: 0.14.10(vue@3.5.39(typescript@5.9.3))
 
+  '@tanstack/vue-store@0.11.0(vue@3.5.42(typescript@5.9.3))':
+    dependencies:
+      '@tanstack/store': 0.11.0
+      vue: 3.5.42(typescript@5.9.3)
+      vue-demi: 0.14.10(vue@3.5.42(typescript@5.9.3))
+
   '@tanstack/vue-table@8.21.3(vue@3.5.39(typescript@5.9.3))':
     dependencies:
       '@tanstack/table-core': 8.21.3
       vue: 3.5.39(typescript@5.9.3)
+
+  '@tanstack/vue-table@8.21.3(vue@3.5.42(typescript@5.9.3))':
+    dependencies:
+      '@tanstack/table-core': 8.21.3
+      vue: 3.5.42(typescript@5.9.3)
 
   '@textlint/ast-node-types@15.7.1': {}
 
@@ -11255,6 +11342,12 @@ snapshots:
       '@vue/compiler-ssr': 3.5.36
       '@vue/shared': 3.5.36
       vue: 3.5.39(typescript@5.9.3)
+
+  '@vue/server-renderer@3.5.36(vue@3.5.42(typescript@5.9.3))':
+    dependencies:
+      '@vue/compiler-ssr': 3.5.36
+      '@vue/shared': 3.5.36
+      vue: 3.5.42(typescript@5.9.3)
 
   '@vue/shared@3.5.36': {}
 
@@ -12539,14 +12632,14 @@ snapshots:
       slash: 5.1.0
       unicorn-magic: 0.4.0
 
-  gogocode@1.0.55(vue@3.5.39(typescript@5.9.3)):
+  gogocode@1.0.55(vue@3.5.42(typescript@5.9.3)):
     dependencies:
       '@babel/parser': 7.29.7
       glob: 7.2.3
       hyntax-yx: 1.0.9
       indent-string: 4.0.0
       recast-yx: 0.18.12
-      vue3-browser-compiler-yx: 1.0.4(vue@3.5.39(typescript@5.9.3))
+      vue3-browser-compiler-yx: 1.0.4(vue@3.5.42(typescript@5.9.3))
     transitivePeerDependencies:
       - vue
 
@@ -13841,6 +13934,10 @@ snapshots:
       fn.name: 1.1.0
 
   openapi3-ts@4.6.0:
+    dependencies:
+      yaml: 2.9.0
+
+  openapi3-ts@4.6.1:
     dependencies:
       yaml: 2.9.0
 
@@ -15169,6 +15266,10 @@ snapshots:
     dependencies:
       vue: 3.5.39(typescript@5.9.3)
 
+  vue-demi@0.14.10(vue@3.5.42(typescript@5.9.3)):
+    dependencies:
+      vue: 3.5.42(typescript@5.9.3)
+
   vue-eslint-parser@10.4.1(eslint@10.6.0):
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
@@ -15185,7 +15286,7 @@ snapshots:
     dependencies:
       vue: 3.5.39(typescript@5.9.3)
 
-  vue3-browser-compiler-yx@1.0.4(vue@3.5.39(typescript@5.9.3)):
+  vue3-browser-compiler-yx@1.0.4(vue@3.5.42(typescript@5.9.3)):
     dependencies:
       '@babel/parser': 7.29.7
       '@babel/types': 7.29.7
@@ -15202,7 +15303,7 @@ snapshots:
       postcss-modules: 4.0.0(postcss@8.1.10)
       postcss-selector-parser: 6.0.4
       source-map: 0.6.1
-      vue: 3.5.39(typescript@5.9.3)
+      vue: 3.5.42(typescript@5.9.3)
 
   vue@3.5.39(typescript@5.9.3):
     dependencies:
@@ -15210,6 +15311,16 @@ snapshots:
       '@vue/compiler-sfc': 3.5.36
       '@vue/runtime-dom': 3.5.36
       '@vue/server-renderer': 3.5.36(vue@3.5.39(typescript@5.9.3))
+      '@vue/shared': 3.5.36
+    optionalDependencies:
+      typescript: 5.9.3
+
+  vue@3.5.42(typescript@5.9.3):
+    dependencies:
+      '@vue/compiler-dom': 3.5.36
+      '@vue/compiler-sfc': 3.5.36
+      '@vue/runtime-dom': 3.5.36
+      '@vue/server-renderer': 3.5.36(vue@3.5.42(typescript@5.9.3))
       '@vue/shared': 3.5.36
     optionalDependencies:
       typescript: 5.9.3
@@ -15475,6 +15586,14 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
+  zova-module-a-form@5.1.51(vue@3.5.42(typescript@5.9.3)):
+    dependencies:
+      '@tanstack/vue-form': 1.33.2(vue@3.5.42(typescript@5.9.3))
+      '@tanstack/vue-store': 0.11.0(vue@3.5.42(typescript@5.9.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
   zova-module-a-icon@5.1.27: {}
 
   zova-module-a-interceptor@5.1.31: {}
@@ -15497,6 +15616,18 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
+  zova-module-a-model@5.1.36(vue@3.5.42(typescript@5.9.3)):
+    dependencies:
+      '@tanstack/query-core': 5.101.2
+      '@tanstack/query-persist-client-core': 5.101.2
+      '@tanstack/vue-query': 5.101.2(vue@3.5.42(typescript@5.9.3))
+      localforage: 1.10.0
+      mutate-on-copy: 1.1.13
+      table-identity: link:packages-utils/table-identity
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
   zova-module-a-openapi@5.1.52:
     dependencies:
       '@cabloy/json-schema-to-zod': 2.6.5
@@ -15512,6 +15643,8 @@ snapshots:
   zova-module-a-pay@5.0.7: {}
 
   zova-module-a-router@5.1.34: {}
+
+  zova-module-a-router@5.1.35: {}
 
   zova-module-a-routerstack@5.1.27: {}
 
@@ -15550,6 +15683,13 @@ snapshots:
     transitivePeerDependencies:
       - vue
 
+  zova-module-a-table@5.1.40(vue@3.5.42(typescript@5.9.3)):
+    dependencies:
+      '@tanstack/table-core': 8.21.3
+      '@tanstack/vue-table': 8.21.3(vue@3.5.42(typescript@5.9.3))
+    transitivePeerDependencies:
+      - vue
+
   zova-module-a-zod@5.1.37:
     dependencies:
       '@cabloy/zod-errors-custom': link:packages-utils/zod-errors-custom
@@ -15573,14 +15713,14 @@ snapshots:
       - typescript
       - vue
 
-  zova-module-a-zova@5.1.104(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3)):
+  zova-module-a-zova@5.1.104(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3)):
     dependencies:
       '@cabloy/compose': link:packages-utils/compose
       '@cabloy/deps': link:packages-utils/deps
       '@cabloy/json5': link:packages-utils/json5
       '@cabloy/module-info': 2.0.3
       '@cabloy/utils': link:packages-utils/utils
-      '@cabloy/vue-router': 4.4.16(vue@3.5.39(typescript@5.9.3))
+      '@cabloy/vue-router': 4.4.16(vue@3.5.42(typescript@5.9.3))
       '@cabloy/word-utils': 2.1.14
       defu: 6.1.7
       luxon: 3.7.2
@@ -15594,6 +15734,8 @@ snapshots:
   zova-module-rest-resource@5.1.50: {}
 
   zova-module-rest-resource@5.1.51: {}
+
+  zova-module-rest-resource@5.1.52: {}
 
   zova-suite-a-zova@5.1.155(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3)):
     dependencies:
@@ -15629,7 +15771,7 @@ snapshots:
       - typescript
       - vue
 
-  zova-suite-a-zova@5.1.157(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3)):
+  zova-suite-a-zova@5.1.157(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3)):
     dependencies:
       zova-module-a-api: 5.1.22
       zova-module-a-app: 5.1.26
@@ -15639,12 +15781,12 @@ snapshots:
       zova-module-a-boundary: 5.1.22
       zova-module-a-command: 5.1.35
       zova-module-a-fetch: 5.1.25
-      zova-module-a-form: 5.1.51(vue@3.5.39(typescript@5.9.3))
+      zova-module-a-form: 5.1.51(vue@3.5.42(typescript@5.9.3))
       zova-module-a-icon: 5.1.27
       zova-module-a-interceptor: 5.1.31
       zova-module-a-logger: 5.1.28
       zova-module-a-meta: 5.1.22
-      zova-module-a-model: 5.1.36(vue@3.5.39(typescript@5.9.3))
+      zova-module-a-model: 5.1.36(vue@3.5.42(typescript@5.9.3))
       zova-module-a-openapi: 5.1.53
       zova-module-a-router: 5.1.34
       zova-module-a-routerstack: 5.1.27
@@ -15653,9 +15795,43 @@ snapshots:
       zova-module-a-ssrhmr: 5.1.23
       zova-module-a-ssrserver: 5.1.26
       zova-module-a-style: 5.1.35
-      zova-module-a-table: 5.1.40(vue@3.5.39(typescript@5.9.3))
+      zova-module-a-table: 5.1.40(vue@3.5.42(typescript@5.9.3))
       zova-module-a-zod: 5.1.37
-      zova-module-a-zova: 5.1.104(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
+      zova-module-a-zova: 5.1.104(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - debug
+      - supports-color
+      - typescript
+      - vue
+
+  zova-suite-a-zova@5.1.158(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3)):
+    dependencies:
+      zova-module-a-api: 5.1.22
+      zova-module-a-app: 5.1.26
+      zova-module-a-bean: 5.1.33
+      zova-module-a-behavior: 5.1.26
+      zova-module-a-behaviors: 5.1.22
+      zova-module-a-boundary: 5.1.22
+      zova-module-a-command: 5.1.35
+      zova-module-a-fetch: 5.1.25
+      zova-module-a-form: 5.1.51(vue@3.5.42(typescript@5.9.3))
+      zova-module-a-icon: 5.1.27
+      zova-module-a-interceptor: 5.1.31
+      zova-module-a-logger: 5.1.28
+      zova-module-a-meta: 5.1.22
+      zova-module-a-model: 5.1.36(vue@3.5.42(typescript@5.9.3))
+      zova-module-a-openapi: 5.1.53
+      zova-module-a-router: 5.1.35
+      zova-module-a-routerstack: 5.1.27
+      zova-module-a-routertabs: 5.1.34
+      zova-module-a-ssr: 5.1.38
+      zova-module-a-ssrhmr: 5.1.23
+      zova-module-a-ssrserver: 5.1.26
+      zova-module-a-style: 5.1.35
+      zova-module-a-table: 5.1.40(vue@3.5.42(typescript@5.9.3))
+      zova-module-a-zod: 5.1.37
+      zova-module-a-zova: 5.1.104(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - debug
@@ -15674,10 +15850,21 @@ snapshots:
       - typescript
       - vue
 
-  zova@5.1.158(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3)):
+  zova@5.1.158(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3)):
     dependencies:
       zova-core: 5.1.89(patch_hash=144450bd7a567a6067e5857c0cf4c780981b7e90bc48745c09e1696a9b6f1b97)(typescript@5.9.3)
-      zova-suite-a-zova: 5.1.157(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
+      zova-suite-a-zova: 5.1.157(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - debug
+      - supports-color
+      - typescript
+      - vue
+
+  zova@5.1.159(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3)):
+    dependencies:
+      zova-core: 5.1.89(patch_hash=144450bd7a567a6067e5857c0cf4c780981b7e90bc48745c09e1696a9b6f1b97)(typescript@5.9.3)
+      zova-suite-a-zova: 5.1.158(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - debug
