@@ -7,6 +7,7 @@
   "files": [],
   "type": "module",
   "dependencies": {
+    "zova-module-a-layoutprofile": "^5.0.0",
     "zova-module-a-rbac": "^5.0.1",
     "zova-module-rest-resource": "^5.1.54"
   },
