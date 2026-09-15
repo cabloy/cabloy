@@ -8,6 +8,7 @@
   "type": "module",
   "dependencies": {
     "vona-module-a-cabloy": "workspace:^",
+    "vona-module-a-layoutprofile": "^5.0.0",
     "vona-module-a-markdown": "^5.0.3",
     "vona-module-a-rbac": "^5.0.6",
     "vona-module-a-socket": "workspace:^",

@@ -28,6 +28,9 @@
     },
     {
       "path": "modules/a-rbac/tsconfig.build.json"
+    },
+    {
+      "path": "modules/a-layoutprofile/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]
