@@ -274,6 +274,51 @@ test(
 );
 
 test(
+  'ATP-BASIC-SSR-05: Admin sidebar readiness waits for a complete drawer',
+  { tag: ['@admin', '@smoke'] },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await loginAsAdmin(page);
+    const pageErrors = collectPageErrors(page);
+
+    await page.route(studentResourceUrl, async route => {
+      const response = await route.fetch();
+      const html = await response.text();
+      const body = html.replace(
+        '<div class="drawer-side"',
+        '<script>const __targets=window.ssr_body_ready_condition?.();if(__targets){window.ssr_body_ready_callback?.(__targets);}</script><div class="drawer-side"',
+      );
+      expect(body).not.toBe(html);
+      await route.fulfill({ response, body });
+    });
+    try {
+      const response = await page.goto('/admin/rest/resource/training-student%3Astudent', {
+        waitUntil: 'load',
+      });
+      expect(response?.ok()).toBeTruthy();
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await expect(page.locator('body')).toBeVisible();
+      await expect(page.locator('.drawer').first()).toHaveClass(/\bdrawer-open\b/);
+      await expect(page.locator('#__leftDrawerOpenJS')).toHaveCount(0);
+      await expect(page.locator('#ssr-body-ready-observer')).toHaveCount(0);
+      expect(
+        await page.evaluate(() => {
+          const ssrWindow = window as unknown as Record<string, unknown>;
+          return {
+            callback: ssrWindow.ssr_body_ready_callback,
+            condition: ssrWindow.ssr_body_ready_condition,
+            observer: ssrWindow.ssr_bodyReadyObserver,
+          };
+        }),
+      ).toEqual({ callback: undefined, condition: undefined, observer: undefined });
+      expect(pageErrors).toEqual([]);
+    } finally {
+      await page.unroute(studentResourceUrl);
+    }
+  },
+);
+
+test(
   'ATP-BASIC-FLOW-01: Training Student flow filter wraps and submits queries',
   { tag: ['@admin', '@flow'] },
   async ({ page }) => {

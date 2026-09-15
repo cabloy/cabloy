@@ -37,17 +37,26 @@ export class ServiceSsrLayout extends BeanBase {
             `<script id="__leftDrawerOpenJS">
   ${this.options?.sidebarLeftOpenPCCapability ? this._getJsHandlerSidebar() : ''}
   ${this._getJsHandlerPageContainer()}
-  window.ssr_body_ready_handler=()=>{
-    ${this.options?.sidebarLeftOpenPCCapability ? 'window.ssr_body_ready_handler_sidebar();' : ''}
-    window.ssr_body_ready_handler_pageContainer();
+  window.ssr_body_ready_handler=__targets=>{
+    ${this.options?.sidebarLeftOpenPCCapability ? 'window.ssr_body_ready_handler_sidebar(__targets);' : ''}
+    window.ssr_body_ready_handler_pageContainer(__targets);
   };
   window.ssr_body_ready_condition=()=>{
+    const __domDrawerContainer=document.querySelector('#q-app>.drawer');
     const __domPageContainer=document.querySelector('#q-app>.drawer>.drawer-content');
-    return __domPageContainer;
+    ${this.options?.sidebarLeftOpenPCCapability ? "const __domDrawer=document.querySelector('#q-app>.drawer>.drawer-side');" : ''}
+    return __domDrawerContainer&&__domPageContainer${this.options?.sidebarLeftOpenPCCapability ? '&&__domDrawer' : ''}?{
+      drawerContainer:__domDrawerContainer,
+      pageContainer:__domPageContainer,
+      ${this.options?.sidebarLeftOpenPCCapability ? 'drawer:__domDrawer,' : ''}
+    }:undefined;
   };
-  window.ssr_body_ready_callback=()=>{
-    window.ssr_body_ready_handler();
-    document.querySelector('#__leftDrawerOpenJS').remove();
+  window.ssr_body_ready_callback=__targets=>{
+    try{
+      window.ssr_body_ready_handler(__targets);
+    }finally{
+      document.querySelector('#__leftDrawerOpenJS')?.remove();
+    }
   };
 </script>`.replaceAll('\n', '') + getBodyReadyObserverScript();
         }
@@ -61,7 +70,7 @@ export class ServiceSsrLayout extends BeanBase {
   }
 
   private _getJsHandlerSidebar() {
-    return `window.ssr_body_ready_handler_sidebar=()=>{
+    return `window.ssr_body_ready_handler_sidebar=__targets=>{
       const __belowBreakpoint=document.documentElement.clientWidth <= ${this.options?.sidebarBreakpoint};
       let __leftDrawerOpen;
       if(__belowBreakpoint){
@@ -70,10 +79,11 @@ export class ServiceSsrLayout extends BeanBase {
         const __leftDrawerOpenPC=window.ssr_load_local('sidebarLeftOpenPC');
         __leftDrawerOpen=__leftDrawerOpenPC!==undefined?__leftDrawerOpenPC:${this.options?.sidebarLeftOpenPCFallback ?? false};
       }
-      const __domDrawerContainer=document.querySelector('#q-app>.drawer');
-      const __domDrawer=document.querySelector('#q-app>.drawer>.drawer-side');
+      const __domDrawerContainer=__targets?.drawerContainer;
+      const __domDrawer=__targets?.drawer;
       const sidebarWidth = '${this.scope.config.layout.sidebar.width}px';
       const navbarHeight = '${this.scope.config.layout.navbar.height}px';
+      if(!__domDrawerContainer||!__domDrawer)return;
       if(__leftDrawerOpen){
         __domDrawer.style.transform='translateX(0px)';
         __domDrawer.style.width=sidebarWidth;
