@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.1.170
+
+### Features
+
+- Add CLI column configuration.
+- Add SSR layout support.
+- Add column layout support.
+- Add a resource picker.
+
 ## 5.1.169
 
 ### Features
