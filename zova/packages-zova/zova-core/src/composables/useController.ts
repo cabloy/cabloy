@@ -112,7 +112,7 @@ async function _useController(
     });
   }
 
-  async function __load() {
+  async function __loadBeans() {
     // controller
     if (ctx.disposed) return;
     await ctx.bean._newBeanInner(
@@ -123,6 +123,7 @@ async function _useController(
       true,
       false,
     );
+    // style
     if (styleBeanFullName) {
       if (ctx.disposed) return;
       await ctx.bean._newBeanInner(
@@ -134,6 +135,7 @@ async function _useController(
         false,
       );
     }
+    // render
     if (renderBeanFullName) {
       if (ctx.disposed) return;
       await ctx.bean._newBeanInner(
@@ -145,6 +147,10 @@ async function _useController(
         false,
       );
     }
+  }
+
+  async function __load() {
+    await __loadBeans();
     // must touch inited on server/client, force router.use effect
     if (ctx.disposed) return;
     ctx.meta.state.inited.touch();
