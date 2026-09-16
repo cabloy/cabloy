@@ -33,12 +33,23 @@ export function resolvePickerSelectionMax(
 }
 
 export type TypeTableActionBulkDynamicDisabledReason = 'maxExceeded' | 'selectionUnavailable';
+export type TypeTableActionBulkPlacement = 'start' | 'end';
 
 export interface IResourceTableActionBulkDynamicProps {
   dynamicSelection: IResourceTableSelectionPayload;
   dynamicDisabled: boolean;
   dynamicDisabledReason?: TypeTableActionBulkDynamicDisabledReason;
   selectedMaxIds?: number;
+}
+
+export function groupTableActionBulkActions<T>(
+  items: readonly { item: T; placement?: unknown }[],
+): Record<TypeTableActionBulkPlacement, T[]> {
+  const groups: Record<TypeTableActionBulkPlacement, T[]> = { start: [], end: [] };
+  for (const { item, placement } of items) {
+    groups[placement === 'end' ? 'end' : 'start'].push(item);
+  }
+  return groups;
 }
 
 export function resolveTableActionBulkDynamicProps(

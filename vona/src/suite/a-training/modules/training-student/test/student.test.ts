@@ -103,6 +103,11 @@ describe('student.test.ts', { concurrency: false }, () => {
       );
       assert.equal(deleteBulkAction?.options?.requiresSelection, true);
       assert.equal(deleteBulkAction?.options?.selectedMaxIds, 100);
+      const columnConfigAction = toolbarBlock?.options?.actions?.find(
+        (action: any) => action.render === 'basic-table:actionColumnConfig',
+      );
+      assert.deepEqual(columnConfigAction?.options?.permission, { public: true });
+      assert.equal(columnConfigAction?.options?.placement, 'end');
 
       const filterBlock = pageBlocks?.[0];
       assert.equal(filterBlock?.render, 'basic-page:blockFilter');

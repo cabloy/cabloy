@@ -9,7 +9,10 @@ import { VNode } from 'vue';
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
-import { resolveTableActionBulkDynamicProps } from '../../lib/selection.js';
+import {
+  groupTableActionBulkActions,
+  resolveTableActionBulkDynamicProps,
+} from '../../lib/selection.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {
@@ -65,35 +68,48 @@ export class ControllerBlockToolbarBulk extends BeanControllerBase {
     const { $$page } = this.$$renderContext;
     const domActions = this._renderActions();
     const selectionAvailable = $$page.selectionAvailable;
-    if ((!domActions || domActions.length === 0) && !selectionAvailable) return;
+    if (domActions.start.length === 0 && domActions.end.length === 0 && !selectionAvailable) return;
     return (
       <div class={this.$props.class}>
-        <div class="join" role="toolbar" aria-label={this.scope.locale.BulkActions()}>
-          {$$page.selectionToggleAvailable && (
-            <button type="button" class="btn join-item" onClick={() => $$page.toggleSelection()}>
-              {$$page.selectionVisible ? this.scope.locale.Done() : this.scope.locale.Select()}
-            </button>
+        <div
+          class="flex flex-wrap items-center gap-3"
+          role="toolbar"
+          aria-label={this.scope.locale.BulkActions()}
+        >
+          {(selectionAvailable || domActions.start.length > 0) && (
+            <div class="join">
+              {$$page.selectionToggleAvailable && (
+                <button
+                  type="button"
+                  class="btn join-item"
+                  onClick={() => $$page.toggleSelection()}
+                >
+                  {$$page.selectionVisible ? this.scope.locale.Done() : this.scope.locale.Select()}
+                </button>
+              )}
+              {$$page.selectionEnabled && (
+                <span
+                  class="join-item border-base-300 bg-base-200 px-3 py-2"
+                  role="status"
+                  aria-live="polite"
+                >
+                  {this.scope.locale.SelectedItems($$page.selection.count)}
+                </span>
+              )}
+              {domActions.start}
+            </div>
           )}
-          {$$page.selectionEnabled && (
-            <span
-              class="join-item border-base-300 bg-base-200 px-3 py-2"
-              role="status"
-              aria-live="polite"
-            >
-              {this.scope.locale.SelectedItems($$page.selection.count)}
-            </span>
-          )}
-          {domActions}
+          {domActions.end.length > 0 && <div class="ml-auto join">{domActions.end}</div>}
         </div>
       </div>
     );
   }
 
-  private _renderActions() {
+  private _renderActions(): Record<'start' | 'end', VNode[]> {
     const { $jsx, $celScope } = this.$$renderContext;
     const actions = this.$props.actions;
-    if (!actions || actions.length === 0) return;
-    const domActions: VNode[] = [];
+    if (!actions || actions.length === 0) return { start: [], end: [] };
+    const items: { item: VNode; placement?: unknown }[] = [];
     actions.forEach((action, index) => {
       const actionName = action.name;
       const permissionHint = action.options?.permission;
@@ -127,12 +143,11 @@ export class ControllerBlockToolbarBulk extends BeanControllerBase {
       });
       const domAction = $jsx.render(action.render!, options, $celScope, this.$$renderContext);
       if (!domAction) return;
-      if (Array.isArray(domAction)) {
-        domActions.push(...domAction);
-      } else {
-        domActions.push(domAction);
+      const renderedActions = Array.isArray(domAction) ? domAction : [domAction];
+      for (const item of renderedActions) {
+        items.push({ item, placement: action.options?.placement });
       }
     });
-    return domActions;
+    return groupTableActionBulkActions(items);
   }
 }

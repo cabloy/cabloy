@@ -1,6 +1,7 @@
 import type { RowSelectionState, SortingState } from '@tanstack/vue-table';
 import type { TableIdentity } from 'table-identity';
 import type { IComponentOptions } from 'zova';
+import type { ModelLayoutProfile } from 'zova-module-a-layoutprofile';
 import type {
   IJsxRenderContextPage,
   IPageScope,
@@ -19,7 +20,7 @@ import { BeanControllerBase, deepEqual } from 'zova';
 import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
 import { $QueriesEnsureLoaded } from 'zova-module-a-model';
-import { BeanControllerTableBase } from 'zova-module-a-table';
+import { BeanControllerTableBase, ITableLayout } from 'zova-module-a-table';
 import { ModelResource } from 'zova-module-rest-resource';
 
 import {
@@ -62,6 +63,7 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
   tableRef: BeanControllerTableBase<TData> | undefined;
   private _tableMetaRefreshPending = false;
   private _tableMetaRefreshTask: Promise<void> | undefined;
+  $$modelLayoutProfile: ModelLayoutProfile | undefined;
 
   jsxZova: ZovaJsx;
   jsxCelScope: IPageScope;
@@ -91,6 +93,14 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
       true,
       this.resource,
     );
+    const layoutKey = this.layoutKey;
+    if (layoutKey) {
+      this.$$modelLayoutProfile = await this.bean._getBeanSelector(
+        'a-layoutprofile.model.layoutProfile',
+        true,
+        layoutKey,
+      );
+    }
     // jsx
     this._prepareJsx();
     // query
@@ -120,6 +130,7 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
     await $QueriesEnsureLoaded(
       () => this.$$modelResource.apiSchemasSelect.sdk,
       () => this.queryData,
+      () => this.queryLayoutProfile,
     );
     this._refreshSelectedRows((this.data ?? []) as unknown as Record<string, unknown>[]);
     this._notifySelectionChange();
@@ -142,6 +153,38 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
 
   get resource() {
     return this.$props.resource;
+  }
+
+  get queryLayoutProfile() {
+    return this.$$modelLayoutProfile?.load();
+  }
+
+  get tableLayout(): ITableLayout | undefined {
+    return this.queryLayoutProfile?.data as ITableLayout | undefined;
+  }
+
+  get layoutKey() {
+    return this.$pageRoute?.path;
+  }
+
+  get columnConfigSeed() {
+    const layout = this.tableRef?.layout;
+    const properties = this.tableRef?.layoutProperties;
+    if (!layout || !properties || !this.$$modelLayoutProfile || !this.$passport.isAuthenticated)
+      return;
+    return { layout, properties };
+  }
+
+  async saveColumnConfig(layout: ITableLayout): Promise<void> {
+    if (!this.$$modelLayoutProfile) return;
+    await this.$$modelLayoutProfile.save().mutateAsync(layout as any);
+    await this._requestTableMetaRefresh();
+  }
+
+  async resetColumnConfig(): Promise<void> {
+    if (!this.$$modelLayoutProfile) return;
+    await this.$$modelLayoutProfile.reset().mutateAsync();
+    await this._requestTableMetaRefresh();
   }
 
   private _normalizeSelectedIds(ids: readonly TableIdentity[]) {

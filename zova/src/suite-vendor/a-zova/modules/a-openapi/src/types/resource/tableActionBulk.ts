@@ -20,9 +20,12 @@ export interface IResourceTableSelectionPayload<TData extends {} = Record<string
 }
 
 /** Declarative bulk-action metadata authored by a resource schema. */
+export type TypeResourceTableActionBulkPlacement = 'start' | 'end';
+
 export interface IResourceTableActionBulkOptionsBase {
   class?: any;
   style?: types.NestedCSSProperties;
+  placement?: TypeResourceTableActionBulkPlacement;
   resource?: string;
   permission?: IPermissionHintTableActionBulk;
   requiresSelection?: boolean;

@@ -50,6 +50,7 @@ export class ControllerBlockTable<TData extends {} = {}> extends BeanControllerB
           rowSelection={$$page.rowSelection}
           onRowSelectionChange={updater => $$page.onRowSelectionChange(updater)}
           tableScope={$$page.jsxCelScope}
+          layout={$$page.tableLayout}
         ></ZTable>
       </div>
     );

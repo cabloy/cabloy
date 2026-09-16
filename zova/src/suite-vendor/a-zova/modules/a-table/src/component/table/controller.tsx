@@ -45,13 +45,16 @@ import type {
   ITableScope,
   TypeTableCellRender,
 } from '../../types/tableColumn.js';
+import type { ITableLayout } from '../../types/tableLayout.js';
 
 import { BeanControllerTableBase } from '../../lib/beanControllerTableBase.js';
 import { TableColumnIdSelection } from '../../types/table.js';
 import { ITableCellRenderColumnOptions } from '../../types/tableColumn.js';
+import { reconcileTableLayout } from '../../types/tableLayout.js';
 
 export interface ControllerTableProps<TData extends {} = {}> {
   data?: TData[];
+  layout?: ITableLayout;
   schema?: SchemaObject;
   schemaOrder?: SchemaObject;
   sorting?: SortingState;
@@ -102,6 +105,13 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
         await this.refreshMeta();
       },
     );
+    this.$watch(
+      () => this.$props.layout,
+      async (newValue, oldValue) => {
+        if (deepEqual(newValue, oldValue)) return;
+        await this.refreshMeta();
+      },
+    );
     // table
     this._createTable();
   }
@@ -120,6 +130,14 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
 
   public get rowSelection() {
     return this.$props.rowSelection ?? {};
+  }
+
+  public get layout(): ITableLayout {
+    return reconcileTableLayout(this.layoutProperties, this.$props.layout);
+  }
+
+  public get layoutProperties(): readonly ISchemaObjectExtensionField[] {
+    return this.tableMeta?.properties ?? [];
   }
 
   public async refreshMeta() {
@@ -147,6 +165,15 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
         },
         get rowSelection() {
           return self.rowSelection;
+        },
+        get columnVisibility() {
+          return self._getColumnVisibility();
+        },
+        get columnOrder() {
+          return self._getColumnOrder();
+        },
+        get columnSizing() {
+          return self._getColumnSizing();
         },
       },
       onSortingChange: updater => {
@@ -235,10 +262,15 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
             return property?.title || key;
           },
           cell: props => tableMeta.renders[key](props),
-          size: property.rest?.width,
+          size: this._getLayoutWidth(key),
           enableSorting: property.rest?.enableSorting === true && this._isOrderable(property),
           sortDescFirst: property.rest?.sortDescFirst === true,
-          meta: { rest: property.rest },
+          meta: {
+            rest: {
+              ...property.rest,
+              width: this._getLayoutWidth(key),
+            },
+          },
         }),
       );
     }
@@ -260,6 +292,36 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
       this.$props.getRowId?.(row.original, row.index, row.getParentRow()) ?? cast(row.original).id;
     if (isNilOrEmptyString(originalId)) return false;
     return typeof enableRowSelection === 'function' ? enableRowSelection(row) : true;
+  }
+
+  private _getLayoutColumn(key: string) {
+    return this.layout.columns.find(column => column.key === key);
+  }
+
+  private _getLayoutWidth(key: string) {
+    const width = this._getLayoutColumn(key)?.width;
+    return typeof width === 'number' ? width : undefined;
+  }
+
+  private _getColumnVisibility() {
+    return Object.fromEntries(
+      this.layout.columns
+        .filter(column => column.key !== TableColumnIdSelection)
+        .map(column => [column.key, column.visible]),
+    );
+  }
+
+  private _getColumnOrder() {
+    const keys = this.layout.columns.map(column => column.key);
+    return this.$props.enableRowSelection ? [TableColumnIdSelection, ...keys] : keys;
+  }
+
+  private _getColumnSizing() {
+    return Object.fromEntries(
+      this.layout.columns
+        .filter(column => typeof column.width === 'number')
+        .map(column => [column.key, column.width as number]),
+    );
   }
 
   private _getColumnPinning() {

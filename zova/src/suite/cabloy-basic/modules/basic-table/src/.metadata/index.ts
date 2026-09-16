@@ -1,5 +1,6 @@
 // eslint-disable
 /** controller: begin */
+export * from '../component/actionColumnConfig/controller.jsx';
 export * from '../component/actionCreate/controller.jsx';
 export * from '../component/actionDeleteBulk/controller.jsx';
 export * from '../component/table/controller.jsx';
@@ -10,6 +11,11 @@ declare module 'zova' {
 
 }
 declare module 'zova-module-basic-table' {
+
+        export interface ControllerActionColumnConfig {
+          /** @internal */
+          get scope(): ScopeModuleBasicTable;
+        }
 
         export interface ControllerActionCreate {
           /** @internal */
@@ -28,13 +34,15 @@ declare module 'zova-module-basic-table' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerActionCreate } from '../component/actionCreate/controller.jsx';
-import { ControllerActionDeleteBulk } from '../component/actionDeleteBulk/controller.jsx';
-import { ControllerTable } from '../component/table/controller.jsx';
+import type { ControllerActionColumnConfig } from '../component/actionColumnConfig/controller.jsx';
+import type { ControllerActionCreate } from '../component/actionCreate/controller.jsx';
+import type { ControllerActionDeleteBulk } from '../component/actionDeleteBulk/controller.jsx';
+import type { ControllerTable } from '../component/table/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
-    'basic-table.controller.actionCreate': ControllerActionCreate;
+    'basic-table.controller.actionColumnConfig': ControllerActionColumnConfig;
+'basic-table.controller.actionCreate': ControllerActionCreate;
 'basic-table.controller.actionDeleteBulk': ControllerActionDeleteBulk;
 'basic-table.controller.table': ControllerTable;
   }
@@ -42,6 +50,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
+export * from './component/actionColumnConfig.js';
+import { ZActionColumnConfig } from './component/actionColumnConfig.js';
 export * from './component/actionCreate.js';
 import { ZActionCreate } from './component/actionCreate.js';
 export * from './component/actionDeleteBulk.js';
@@ -49,19 +59,22 @@ import { ZActionDeleteBulk } from './component/actionDeleteBulk.js';
 export * from './component/table.js';
 import { ZTable } from './component/table.js';
 export const components = {
-  'actionCreate': ZActionCreate,
+  'actionColumnConfig': ZActionColumnConfig,
+'actionCreate': ZActionCreate,
 'actionDeleteBulk': ZActionDeleteBulk,
 'table': ZTable,
 };
 import 'zova';
 declare module 'zova' {
 export interface IComponentRecord {
-  'basic-table:actionCreate': ControllerActionCreate;
+  'basic-table:actionColumnConfig': ControllerActionColumnConfig;
+'basic-table:actionCreate': ControllerActionCreate;
 'basic-table:actionDeleteBulk': ControllerActionDeleteBulk;
 'basic-table:table': ControllerTable;
 }
 export interface IZovaComponentRecord {
-  'basic-table:actionCreate': typeof ZActionCreate;
+  'basic-table:actionColumnConfig': typeof ZActionColumnConfig;
+'basic-table:actionCreate': typeof ZActionCreate;
 'basic-table:actionDeleteBulk': typeof ZActionDeleteBulk;
 'basic-table:table': typeof ZTable;
 }
@@ -84,7 +97,7 @@ declare module 'zova-module-basic-table' {
 }
 /** render: end */
 /** render: begin */
-import { RenderTable } from '../component/table/render.jsx';
+import type { RenderTable } from '../component/table/render.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -161,10 +174,10 @@ declare module 'zova-module-basic-table' {
 }
 /** tableCell: end */
 /** tableCell: begin */
-import { TableCellActionDelete } from '../bean/tableCell.actionDelete.jsx';
-import { TableCellActionOperationsRow } from '../bean/tableCell.actionOperationsRow.jsx';
-import { TableCellActionUpdate } from '../bean/tableCell.actionUpdate.jsx';
-import { TableCellActionView } from '../bean/tableCell.actionView.jsx';
+import type { TableCellActionDelete } from '../bean/tableCell.actionDelete.jsx';
+import type { TableCellActionOperationsRow } from '../bean/tableCell.actionOperationsRow.jsx';
+import type { TableCellActionUpdate } from '../bean/tableCell.actionUpdate.jsx';
+import type { TableCellActionView } from '../bean/tableCell.actionView.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {

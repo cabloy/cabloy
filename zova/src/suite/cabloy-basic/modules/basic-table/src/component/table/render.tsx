@@ -22,6 +22,7 @@ export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
         tableScope={this.$props.tableScope}
         getColumns={this.$props.getColumns}
         getRowId={this.$props.getRowId}
+        layout={this.$props.layout}
         controllerRef={ref => {
           this.$props?.tableRef?.(ref);
         }}
@@ -35,10 +36,9 @@ export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
   private _getColumnStyle(column: any): CSSProperties {
     const rest = (column.columnDef.meta as any)?.rest;
     const fixed = column.getIsPinned();
-    const width = rest?.width ? `${rest.width}px` : undefined;
+    const width = column.getSize();
     return {
-      width,
-      minWidth: width,
+      ...(typeof rest?.width === 'number' ? { width: `${width}px`, minWidth: `${width}px` } : {}),
       textAlign: rest?.align,
       position: fixed ? ('sticky' as const) : undefined,
       left: fixed === 'left' ? `${column.getStart('left')}px` : undefined,
