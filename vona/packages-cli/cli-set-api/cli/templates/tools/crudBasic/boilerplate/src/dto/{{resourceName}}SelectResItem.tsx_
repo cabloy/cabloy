@@ -44,6 +44,10 @@ export interface IDtoOptions<%=argv.resourceNameCapitalize%>SelectResItem extend
               requiresSelection: true,
               selectedMaxIds: 100,
             }),
+            ZovaRender.tableActionBulk('basic-table:actionColumnConfig', {
+              permission: { public: true },
+              placement: 'end',
+            }),
           ],
         }),
         ZovaRender.block('basic-page:blockTable'),
