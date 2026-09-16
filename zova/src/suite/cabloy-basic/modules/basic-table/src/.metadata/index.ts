@@ -3,6 +3,7 @@
 export * from '../component/actionColumnConfig/controller.jsx';
 export * from '../component/actionCreate/controller.jsx';
 export * from '../component/actionDeleteBulk/controller.jsx';
+export * from '../component/actionRefresh/controller.jsx';
 export * from '../component/table/controller.jsx';
 
 import 'zova';
@@ -27,6 +28,11 @@ declare module 'zova-module-basic-table' {
           get scope(): ScopeModuleBasicTable;
         }
 
+        export interface ControllerActionRefresh {
+          /** @internal */
+          get scope(): ScopeModuleBasicTable;
+        }
+
         export interface ControllerTable {
           /** @internal */
           get scope(): ScopeModuleBasicTable;
@@ -37,6 +43,7 @@ declare module 'zova-module-basic-table' {
 import type { ControllerActionColumnConfig } from '../component/actionColumnConfig/controller.jsx';
 import type { ControllerActionCreate } from '../component/actionCreate/controller.jsx';
 import type { ControllerActionDeleteBulk } from '../component/actionDeleteBulk/controller.jsx';
+import type { ControllerActionRefresh } from '../component/actionRefresh/controller.jsx';
 import type { ControllerTable } from '../component/table/controller.jsx';
 import 'zova';
 declare module 'zova' {
@@ -44,6 +51,7 @@ declare module 'zova' {
     'basic-table.controller.actionColumnConfig': ControllerActionColumnConfig;
 'basic-table.controller.actionCreate': ControllerActionCreate;
 'basic-table.controller.actionDeleteBulk': ControllerActionDeleteBulk;
+'basic-table.controller.actionRefresh': ControllerActionRefresh;
 'basic-table.controller.table': ControllerTable;
   }
 }
@@ -56,12 +64,15 @@ export * from './component/actionCreate.js';
 import { ZActionCreate } from './component/actionCreate.js';
 export * from './component/actionDeleteBulk.js';
 import { ZActionDeleteBulk } from './component/actionDeleteBulk.js';
+export * from './component/actionRefresh.js';
+import { ZActionRefresh } from './component/actionRefresh.js';
 export * from './component/table.js';
 import { ZTable } from './component/table.js';
 export const components = {
   'actionColumnConfig': ZActionColumnConfig,
 'actionCreate': ZActionCreate,
 'actionDeleteBulk': ZActionDeleteBulk,
+'actionRefresh': ZActionRefresh,
 'table': ZTable,
 };
 import 'zova';
@@ -70,12 +81,14 @@ export interface IComponentRecord {
   'basic-table:actionColumnConfig': ControllerActionColumnConfig;
 'basic-table:actionCreate': ControllerActionCreate;
 'basic-table:actionDeleteBulk': ControllerActionDeleteBulk;
+'basic-table:actionRefresh': ControllerActionRefresh;
 'basic-table:table': ControllerTable;
 }
 export interface IZovaComponentRecord {
   'basic-table:actionColumnConfig': typeof ZActionColumnConfig;
 'basic-table:actionCreate': typeof ZActionCreate;
 'basic-table:actionDeleteBulk': typeof ZActionDeleteBulk;
+'basic-table:actionRefresh': typeof ZActionRefresh;
 'basic-table:table': typeof ZTable;
 }
 }

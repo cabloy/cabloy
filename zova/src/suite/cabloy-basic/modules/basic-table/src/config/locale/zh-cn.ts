@@ -5,6 +5,7 @@ export default {
   SelectRow: '选择行 %s',
   DeleteBulk: '批量删除',
   DeleteBulkConfirm: '您确认要批量删除已选择的 %d 项吗？',
+  Refresh: '刷新',
   ColumnConfiguration: '列配置',
   Columns: '字段',
   Visible: '显示',

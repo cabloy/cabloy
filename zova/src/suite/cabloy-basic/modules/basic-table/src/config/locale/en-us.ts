@@ -5,6 +5,7 @@ export default {
   SelectRow: 'Select row %s',
   DeleteBulk: 'Bulk Delete',
   DeleteBulkConfirm: 'Are you sure you want to bulk delete %d selected items?',
+  Refresh: 'Refresh',
   ColumnConfiguration: 'Column configuration',
   Columns: 'Columns',
   Visible: 'Visible',

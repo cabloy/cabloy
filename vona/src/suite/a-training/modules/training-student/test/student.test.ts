@@ -103,6 +103,11 @@ describe('student.test.ts', { concurrency: false }, () => {
       );
       assert.equal(deleteBulkAction?.options?.requiresSelection, true);
       assert.equal(deleteBulkAction?.options?.selectedMaxIds, 100);
+      const refreshAction = toolbarBlock?.options?.actions?.find(
+        (action: any) => action.render === 'basic-table:actionRefresh',
+      );
+      assert.equal(refreshAction?.options?.requiresSelection, undefined);
+      assert.equal(refreshAction?.options?.selectedMaxIds, undefined);
       const columnConfigAction = toolbarBlock?.options?.actions?.find(
         (action: any) => action.render === 'basic-table:actionColumnConfig',
       );
