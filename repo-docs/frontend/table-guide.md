@@ -245,6 +245,32 @@ In the shared table CEL scope, `getValue(name)` reads the current row value and 
 
 For the schema side of that contract, also see [API Schema Guide](/frontend/api-schema-guide).
 
+## Persisted per-user column layouts
+
+`ZovaRender.column(...)` defines the schema defaults for column visibility, order, width, and fixed regions. On a standard resource list page, an authenticated user can personalize those defaults through the **Column Configuration** toolbar action. The saved layout is scoped to that user and the current page route path, then restored on later visits.
+
+| Edition      | Toolbar block                 | Column-configuration action      |
+| ------------ | ----------------------------- | -------------------------------- |
+| Cabloy Basic | `basic-page:blockToolbarBulk` | `basic-table:actionColumnConfig` |
+| Cabloy Start | `start-page:blockToolbarBulk` | `start-table:actionColumnConfig` |
+
+For example, in Cabloy Basic:
+
+```ts
+ZovaRender.tableActionBulk('basic-table:actionColumnConfig', {
+  permission: { public: true },
+  placement: 'end',
+});
+```
+
+In Cabloy Start, use `start-table:actionColumnConfig` in the corresponding `start-page:blockToolbarBulk`. `permission: { public: true }` controls action discoverability in the toolbar; loading and saving a personal layout still require an authenticated user.
+
+The dialog lets the user show or hide eligible columns, choose a numeric or automatic width, and reorder columns within their schema-defined left, center, or right fixed region. **Save** persists the layout. **Reset** removes the saved profile and restores the current schema defaults.
+
+Schema metadata remains authoritative. When the schema changes, stale or malformed saved entries are discarded, newly eligible schema columns are appended with their defaults, fixed regions are preserved, and the synthetic row-selection column is never persisted.
+
+Automatic loading, saving, and resetting belong to the standard resource-page `blockPage` flow. A direct `ZTable` consumer can pass a `layout`, but it owns any persistence workflow itself. Current CRUD generators add the edition-appropriate column-configuration action.
+
 ## Step 5: Use built-in or custom `tableCell` render resources
 
 A column render is usually chosen through schema metadata such as:
