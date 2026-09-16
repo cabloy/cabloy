@@ -49,7 +49,7 @@ export interface IDtoOptionsStudentSelectResItem extends IDecoratorDtoOptions {}
             ZovaRender.tableActionBulk('basic-table:actionColumnConfig', {
               permission: { public: true },
               placement: 'end',
-            }),
+            } as any),
           ],
         }),
         ZovaRender.block('basic-page:blockTable'),
