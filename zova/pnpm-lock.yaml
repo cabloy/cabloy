@@ -873,7 +873,7 @@ importers:
         specifier: ^5.1.89
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.160
+        specifier: ^5.1.161
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -977,7 +977,7 @@ importers:
   src/suite-vendor/a-cabloy:
     dependencies:
       zova-module-a-layoutprofile:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: link:modules/a-layoutprofile
       zova-module-a-rbac:
         specifier: ^5.0.1
@@ -1109,7 +1109,7 @@ importers:
         specifier: ^5.1.36
         version: link:modules/a-model
       zova-module-a-openapi:
-        specifier: ^5.1.53
+        specifier: ^5.1.54
         version: link:modules/a-openapi
       zova-module-a-router:
         specifier: ^5.1.37
@@ -1121,7 +1121,7 @@ importers:
         specifier: ^5.1.34
         version: link:modules/a-routertabs
       zova-module-a-ssr:
-        specifier: ^5.1.38
+        specifier: ^5.1.39
         version: link:modules/a-ssr
       zova-module-a-ssrhmr:
         specifier: ^5.1.23
@@ -1133,7 +1133,7 @@ importers:
         specifier: ^5.1.35
         version: link:modules/a-style
       zova-module-a-table:
-        specifier: ^5.1.42
+        specifier: ^5.1.43
         version: link:modules/a-table
       zova-module-a-zod:
         specifier: ^5.1.37
