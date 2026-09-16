@@ -45,6 +45,13 @@ declare module '@cabloy/cli' {
   }
 }
 
+interface IBinBuildRestPackageJson {
+  name: string;
+  version: string;
+  dependencies?: Record<string, string>;
+  [key: string]: unknown;
+}
+
 interface IBinBuildRestContext {
   projectPath: string;
   flavor: ZovaMetaFlavor;
@@ -54,6 +61,7 @@ interface IBinBuildRestContext {
   outDir: string;
   bundleModules?: string[];
   sideEffectImportModuleNames?: string[];
+  packageJson?: IBinBuildRestPackageJson;
 }
 
 export class CliBinBuildRest extends BeanCliBase {
@@ -129,6 +137,7 @@ export class CliBinBuildRest extends BeanCliBase {
     const templateDir = this.template.resolveTemplatePath(__ThisSetName__, 'rest');
     // render
     await this.template.renderDir(srcDir, templateDir);
+    context.packageJson = await loadJSONFile(path.join(srcDir, 'package.json'));
   }
 
   async _buildTs({ srcDir, outDir }: IBinBuildRestContext) {
@@ -204,7 +213,7 @@ export class CliBinBuildRest extends BeanCliBase {
   }
 
   async _build(buildContext: IBinBuildRestContext) {
-    const { projectPath, flavor, bundleNameCopy, srcDir, outDir } = buildContext;
+    const { projectPath, flavor, bundleNameCopy, outDir, packageJson } = buildContext;
     // build
     await this._buildTs(buildContext);
     await this._buildDts(buildContext);
@@ -212,8 +221,10 @@ export class CliBinBuildRest extends BeanCliBase {
     const deps = await _extractDeps(path.join(outDir, 'index.d.mts'));
     const depsVersion = await _extractDepsVersion(projectPath, deps);
     // package.json
-    const pkgContent = await loadJSONFile(path.join(srcDir, 'package.json'));
-    pkgContent.dependencies = depsVersion;
+    const pkgContent = {
+      ...packageJson!,
+      dependencies: depsVersion,
+    };
     await saveJSONFile(path.join(outDir, 'package.json'), pkgContent);
     // await fse.copyFile(path.join(srcDir, 'package.json'), path.join(outDir, 'package.json'));
     // release
