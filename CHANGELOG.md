@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.172
+
+### Features
+
+- Add action refresh capabilities.
+- Add update functionality.
+
+### Improvements
+
+- Update the table guide documentation.
+- Improve REST build handling in the CLI.
+
 ## 5.1.171
 
 ### Features
