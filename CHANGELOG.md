@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.173
+
+### Features
+
+- Consolidate boundary handling and retry behavior.
+
 ## 5.1.172
 
 ### Features
