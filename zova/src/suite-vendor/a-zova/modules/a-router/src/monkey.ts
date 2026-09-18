@@ -190,8 +190,6 @@ export class Monkey
     // check if changed
     const changed = !controller.$route || controller.$route.fullPath !== route.fullPath;
     if (!changed) return;
-    controller.$route = route;
-    controller.$routeMatched = routeMatched;
     // update $params/$query
     const routeName = getRealRouteName(routeMatched.name);
     const schemaKey = routeName || String(routeMatched.path);
@@ -205,7 +203,23 @@ export class Monkey
       // do nothing
       return;
     }
-    const module = this.app.meta.module.get(moduleInfo.relativeName)!;
+    const module = this.app.meta.module.get(moduleInfo.relativeName, false);
+    if (!module) {
+      void this.app.meta.module
+        .use(moduleInfo.relativeName)
+        .then(() => {
+          if (cast(controller).ctx.disposed) return;
+          const currentRoute = getPageRoute(cast<ZovaContext>(cast(controller).ctx));
+          if (!currentRoute || currentRoute.fullPath !== route.fullPath) return;
+          this._initControllerRoute(currentRoute, controller);
+        })
+        .catch(err => {
+          console.error('failed to load route module', moduleInfo.relativeName, err);
+        });
+      return;
+    }
+    controller.$route = route;
+    controller.$routeMatched = routeMatched;
     if (routeName) {
       schemas = module.resource.pageNameSchemas?.[schemaKey];
     } else {
