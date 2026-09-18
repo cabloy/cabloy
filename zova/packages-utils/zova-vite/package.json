@@ -1,6 +1,6 @@
 {
   "name": "zova-vite",
-  "version": "1.1.45",
+  "version": "1.1.46",
   "gitHead": "09d901d17140a80ee0764211b441cda72fd94663",
   "description": "zova vite",
   "keywords": [
@@ -58,7 +58,7 @@
     "babel-plugin-transform-typescript-metadata": "^0.4.0",
     "babel-plugin-zova-bean-module": "^1.2.15",
     "babel-plugin-zova-bean-use": "^1.1.15",
-    "babel-plugin-zova-behavior": "^1.1.15",
+    "babel-plugin-zova-behavior": "^1.1.16",
     "babel-plugin-zova-component": "^1.1.15",
     "chalk": "^3.0.0",
     "esbuild": "^0.25.12",
