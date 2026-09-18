@@ -155,10 +155,9 @@ test(
     const ready = overrideHost.getByText('Override Controller boundary probe ready', {
       exact: true,
     });
-    const initialOverrideLoading = loading.waitFor({ state: 'visible' });
+    const initialOverrideLoading = expect(loading).toHaveText('Override loading mode: inline');
     await page.getByRole('button', { name: 'Mount override failing probe', exact: true }).click();
     await initialOverrideLoading;
-    await expect(loading).toHaveText('Override loading mode: inline');
     await expect(error).toHaveText(
       'Override legacy error: Override Controller boundary probe initialization failed',
     );

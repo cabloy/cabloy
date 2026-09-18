@@ -74,12 +74,12 @@ export class ControllerPageControllerBoundary extends BeanControllerPageBase {
   }
 
   mountOverrideFailingProbe() {
-    this.overrideProbe = { mode: 'failure', delayMs: 800 };
+    this.overrideProbe = { mode: 'failure', delayMs: 2_000 };
     this.overrideProbeKey++;
   }
 
   recoverOverrideWithDelayedSuccess() {
-    this.overrideProbe = { mode: 'success', delayMs: 800 };
+    this.overrideProbe = { mode: 'success', delayMs: 2_000 };
     this.overrideProbeKey++;
   }
 
