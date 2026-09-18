@@ -4,6 +4,7 @@ import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
+import { isDeepStrictEqual } from 'node:util';
 import { app } from 'vona-mock';
 
 import type { ILayoutProfile } from '../src/types/layoutprofile.ts';
@@ -200,9 +201,7 @@ describe('layoutprofile.test.ts', { concurrency: false }, () => {
         });
       });
       assert.equal(persisted.length, 1);
-      assert.ok(
-        profiles.some(profile => JSON.stringify(profile) === JSON.stringify(persisted[0].profile)),
-      );
+      assert.ok(profiles.some(profile => isDeepStrictEqual(profile, persisted[0].profile)));
 
       const loaded = await app.bean.executor.mockCtx(async () => {
         return await performAs(fixture.token, 'get', `${actionPath}/load`, {
