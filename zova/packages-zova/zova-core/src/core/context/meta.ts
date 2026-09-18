@@ -23,6 +23,7 @@ export class CtxMeta extends BeanSimple {
 
   /** @internal */
   public dispose() {
+    this.state.dispose();
     this.component.dispose();
     this.hooks.dispose();
   }

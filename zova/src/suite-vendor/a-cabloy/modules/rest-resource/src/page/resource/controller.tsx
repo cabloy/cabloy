@@ -1,6 +1,6 @@
 import { VNode } from 'vue';
 import { z } from 'zod';
-import { BeanControllerPageBase, deepExtend, Use, usePrepareArg } from 'zova';
+import { BeanControllerPageBase, deepExtend, IComponentOptions, Use, usePrepareArg } from 'zova';
 import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
@@ -14,6 +14,10 @@ export const ControllerPageResourceSchemaParams = z.object({
 
 @Controller()
 export class ControllerPageResource extends BeanControllerPageBase {
+  static $componentOptions: IComponentOptions = {
+    boundary: { retry: true },
+  };
+
   jsxZova: ZovaJsx;
 
   @Use({ beanFullName: 'rest-resource.model.resource' })

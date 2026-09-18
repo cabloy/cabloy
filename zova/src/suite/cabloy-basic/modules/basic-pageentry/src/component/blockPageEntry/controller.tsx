@@ -42,7 +42,11 @@ export interface ControllerBlockPageEntryProps extends IResourceBlockOptionsBase
 @Controller()
 export class ControllerBlockPageEntry<TData extends {} = {}> extends BeanControllerBase {
   static $propsDefault = { pageTitleKey: 'name' };
-  static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
+  static $componentOptions: IComponentOptions = {
+    inheritAttrs: false,
+    deepExtendDefault: true,
+    boundary: { retry: true },
+  };
 
   entryIdCreated?: TableIdentity;
 

@@ -85,8 +85,26 @@ export interface DefineModelOptions<T = any, G = T, S = T> {
   set?: (v: S) => any;
 }
 
+export type TypeComponentBoundaryRenderMode = 'block' | 'inline';
+export type TypeComponentBoundaryRetry = () => Promise<void>;
+
+export interface IComponentBoundaryLoadingOptions {
+  delay?: number;
+}
+
+export interface IComponentBoundaryOptions {
+  loading?: IComponentBoundaryLoadingOptions;
+  renderMode?: TypeComponentBoundaryRenderMode;
+  /**
+   * Declares that this Controller can safely construct a fresh load graph after a fallback error.
+   * It is disabled by default because Controller initialization may include non-idempotent work.
+   */
+  retry?: boolean;
+}
+
 export type IComponentOptions = Parameters<typeof defineOptions>[0] & {
   deepExtendDefault?: boolean;
+  boundary?: IComponentBoundaryOptions;
 };
 
 export type IEmit = () => void;

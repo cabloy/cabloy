@@ -9,6 +9,7 @@ import {
 
 import type { IBeanRecord, IControllerData } from '../bean/type.ts';
 import type { Constructable } from '../decorator/index.ts';
+import type { IControllerLoadEvent } from '../types/interface/monkey.ts';
 
 import {
   BeanControllerIdentifier,
@@ -16,6 +17,7 @@ import {
   BeanStyleIdentifier,
   SymbolControllerRefDisable,
 } from '../bean/type.ts';
+import { normalizeError } from '../core/component/error.ts';
 import { ZovaContext } from '../core/context/index.ts';
 import { sys } from '../core/sys/sys.ts';
 
@@ -81,6 +83,7 @@ async function _useController(
 ) {
   // ctx
   const ctx = new ZovaContext(getCurrentInstance()!);
+  setLoadBoundaryOptions(controllerBeanFullName);
   // ctx: monkey
   if (ctx.app) {
     ctx.app.meta.module._monkeyModuleSync(true, 'appContextInitialize', undefined, ctx);
@@ -97,7 +100,160 @@ async function _useController(
       ctx,
     );
   }
+
+  let retryPromise: Promise<void> | undefined;
+  let loadBeans = new Set<object>();
+
+  function setLoadBoundaryOptions(controllerBeanFullName: Constructable | string) {
+    const boundary = (controllerBeanFullName as any).$componentOptions?.boundary;
+    ctx.meta.state.setLoadRenderMode(boundary?.renderMode);
+    ctx.meta.state.setLoadRetryEnabled(boundary?.retry);
+  }
+
+  function isAttemptActive(attemptId: number) {
+    return ctx.meta.state.isLoadAttemptActive(attemptId);
+  }
+
+  function getLoadLoadingDelay() {
+    const delay =
+      (controllerBeanFullName as any).$componentOptions?.boundary?.loading?.delay ??
+      sys.config.boundary.loading?.delay;
+    const delayNumber = Number(delay);
+    return Number.isFinite(delayNumber) && delayNumber > 0 ? delayNumber : 0;
+  }
+
+  async function __loadBeans(attemptId: number) {
+    // controller
+    if (!isAttemptActive(attemptId)) return false;
+    await ctx.bean._newBeanInner(
+      true,
+      BeanControllerIdentifier,
+      controllerData,
+      controllerBeanFullName,
+      true,
+      false,
+      controller => {
+        loadBeans.add(controller as object);
+        ctx.meta.state.setLoadBeanAttempt(controller as object, attemptId);
+        if (!isAttemptActive(attemptId)) return;
+        ctx.meta.state.setLoadController(controller);
+        setLoadBoundaryOptions((controller as any).constructor);
+      },
+    );
+    if (!isAttemptActive(attemptId)) return false;
+    // style
+    if (styleBeanFullName) {
+      await ctx.bean._newBeanInner(
+        true,
+        BeanStyleIdentifier,
+        undefined,
+        styleBeanFullName,
+        true,
+        false,
+        style => {
+          loadBeans.add(style as object);
+          ctx.meta.state.setLoadBeanAttempt(style as object, attemptId);
+        },
+      );
+    }
+    if (!isAttemptActive(attemptId)) return false;
+    // render
+    if (renderBeanFullName) {
+      await ctx.bean._newBeanInner(
+        true,
+        BeanRenderIdentifier,
+        undefined,
+        renderBeanFullName,
+        true,
+        false,
+        render => {
+          loadBeans.add(render as object);
+          ctx.meta.state.setLoadBeanAttempt(render as object, attemptId);
+        },
+      );
+    }
+    return isAttemptActive(attemptId);
+  }
+
+  async function __load(attemptId: number) {
+    if (!(await __loadBeans(attemptId))) return;
+    if (!isAttemptActive(attemptId)) return;
+    ctx.meta.state.setLoadReady();
+    if (process.env.CLIENT) {
+      ctx.util.instanceScope(() => {
+        queuePostFlushCb(() => {
+          if (!isAttemptActive(attemptId)) return;
+          setControllerRef(ctx, true);
+          ctx.meta.hooks.invokeHook('mounted');
+        });
+      });
+    }
+  }
+
+  async function runLoadAttempt(
+    attemptId: number,
+    beforeLoad?: () => void | Promise<void>,
+  ): Promise<void> {
+    try {
+      await beforeLoad?.();
+      if (!isAttemptActive(attemptId)) return;
+      await __load(attemptId);
+    } catch (err) {
+      if (!isAttemptActive(attemptId)) return;
+      const result = ctx.app?.meta.error.handleLoadError(err, ctx, ctx.instance as any) ?? {
+        err: normalizeError(err),
+        disposition: 'fallback' as const,
+      };
+      if (!isAttemptActive(attemptId)) return;
+      if (result.disposition === 'handled') {
+        ctx.meta.state.setLoadHandled();
+        return;
+      }
+      ctx.app?.meta.module._monkeyModuleSync(true, 'controllerLoad', undefined, {
+        phase: 'fallback',
+        ctx,
+        controllerBeanFullName,
+        controllerBeanName:
+          typeof controllerBeanFullName === 'string'
+            ? controllerBeanFullName
+            : controllerBeanFullName.name,
+        error: result.err,
+        controllerRecorded: !!ctx.meta.state.loadController,
+      });
+      if (!isAttemptActive(attemptId)) return;
+      ctx.meta.state.setLoadError(result.err);
+    }
+  }
+
+  function retry() {
+    if (!ctx.meta.state.isLoadRetryAvailable) return Promise.resolve();
+    if (retryPromise) return retryPromise;
+    const promise = (async () => {
+      const attemptId = ctx.meta.state.beginLoadAttempt(getLoadLoadingDelay());
+      const previousLoadBeans = loadBeans;
+      loadBeans = new Set();
+      ctx.meta.hooks.clearMounted();
+      setControllerRef(ctx, false);
+      await runLoadAttempt(attemptId, () => {
+        ctx.bean.retryReset(previousLoadBeans);
+      });
+    })();
+    retryPromise = promise;
+    void promise.finally(() => {
+      if (retryPromise === promise) {
+        retryPromise = undefined;
+      }
+    });
+    return promise;
+  }
+
+  ctx.meta.state.setLoadRetry(retry);
   if (process.env.CLIENT) {
+    ctx.meta.hooks.onHydrated(() => {
+      if (!ctx.disposed) {
+        ctx.meta.state.setLoadRetryReady();
+      }
+    });
     // dispose
     onBeforeUnmount(() => {
       if (ctx.disposed) return;
@@ -112,67 +268,35 @@ async function _useController(
     });
   }
 
-  async function __loadBeans() {
-    // controller
-    if (ctx.disposed) return;
-    await ctx.bean._newBeanInner(
-      true,
-      BeanControllerIdentifier,
-      controllerData,
-      controllerBeanFullName,
-      true,
-      false,
-    );
-    // style
-    if (styleBeanFullName) {
-      if (ctx.disposed) return;
-      await ctx.bean._newBeanInner(
-        true,
-        BeanStyleIdentifier,
-        undefined,
-        styleBeanFullName,
-        true,
-        false,
-      );
-    }
-    // render
-    if (renderBeanFullName) {
-      if (ctx.disposed) return;
-      await ctx.bean._newBeanInner(
-        true,
-        BeanRenderIdentifier,
-        undefined,
-        renderBeanFullName,
-        true,
-        false,
-      );
-    }
-  }
-
-  async function __load() {
-    await __loadBeans();
-    // must touch inited on server/client, force router.use effect
-    if (ctx.disposed) return;
-    ctx.meta.state.inited.touch();
-    if (process.env.CLIENT) {
-      ctx.util.instanceScope(() => {
-        queuePostFlushCb(() => {
-          setControllerRef(ctx, true);
-          ctx.meta.hooks.invokeHook('mounted');
-        });
-      });
-    }
-  }
-
   // load
   ctx.meta.hooks.onCreated(async () => {
     if (ctx.disposed) return;
-    try {
-      return await __load();
-    } catch (err) {
-      if (ctx.disposed) return;
-      throw err;
+    const loadEvent: IControllerLoadEvent = {
+      phase: 'prepare',
+      ctx,
+      controllerBeanFullName,
+      controllerBeanName:
+        typeof controllerBeanFullName === 'string'
+          ? controllerBeanFullName
+          : controllerBeanFullName.name,
+    };
+    ctx.app?.meta.module._monkeyModuleSync(true, 'controllerLoad', undefined, loadEvent);
+    if (loadEvent.replayError) {
+      const attemptId = ctx.meta.state.beginLoadAttempt();
+      if (loadEvent.replayControllerRecorded) {
+        try {
+          await __loadBeans(attemptId);
+        } catch {
+          // The server's fallback decision is authoritative during initial hydration.
+        }
+      }
+      if (!ctx.disposed) {
+        ctx.meta.state.setLoadError(loadEvent.replayError);
+      }
+      return;
     }
+    const attemptId = ctx.meta.state.beginLoadAttempt(getLoadLoadingDelay());
+    await runLoadAttempt(attemptId);
   });
   if (process.env.SERVER) {
     onServerPrefetch(() => {

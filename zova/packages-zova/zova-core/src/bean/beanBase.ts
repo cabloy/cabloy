@@ -192,7 +192,7 @@ export class BeanBase extends BeanBaseSimple {
 
   protected $controllerMounted(fn: any) {
     return this.ctx.util.instanceScope(() => {
-      return this.ctx.meta.hooks.onMounted(fn);
+      return this.ctx.meta.hooks.onMounted(fn, this);
     });
   }
 

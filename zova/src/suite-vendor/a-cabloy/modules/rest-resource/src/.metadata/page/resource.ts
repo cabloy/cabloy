@@ -9,4 +9,9 @@ export namespace NSControllerPageResource {
   export type ParamsOutput = z.output<typeof ControllerPageResourceSchemaParams>;
 }
 
-export const ZPageResource = createZovaComponentPage(ControllerPageResource, undefined, undefined);
+export const ZPageResource = createZovaComponentPage(
+  ControllerPageResource,
+  undefined,
+  undefined,
+  ControllerPageResource.$componentOptions,
+);

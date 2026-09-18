@@ -1,8 +1,6 @@
 import type { DefaultError, QueryClient, QueryKey, UseQueryOptions } from '@tanstack/vue-query';
 
-import { checkErrorJwtExpired } from '@cabloy/utils';
 import { useQuery } from '@tanstack/vue-query';
-import { cast } from 'zova';
 
 import type {
   DefinedInitialQueryOptions,
@@ -45,21 +43,7 @@ export class BeanModelUseQuery extends BeanModelQuery {
   $useQuery(options, queryClient) {
     const queryKey = this.self._forceQueryKeyPrefix(options.queryKey);
     const persister = this._createPersister(options.meta?.persister);
-    const optionsDefault: any = {};
-    if (!cast(options).meta?.disableErrorEffect) {
-      optionsDefault.throwOnError = (error: Error, query) => {
-        let errorInfo = cast(options).meta?.errorInfo;
-        if (typeof errorInfo === 'function') {
-          errorInfo = errorInfo(error, query);
-        }
-        if (!error.message.includes('useQuery:') && !checkErrorJwtExpired(error)) {
-          error.message = `useQuery: [${queryKey.join(', ')}]: ${error.message}`;
-        }
-        this.$errorHandler(error, errorInfo ?? 'useQuery');
-        return false;
-      };
-    }
-    options = Object.assign(optionsDefault, options, { queryKey, persister });
+    options = Object.assign({}, options, { queryKey, persister });
     // staleTime
     const sync = typeof options.meta?.persister === 'object' && options.meta?.persister?.sync;
     if (sync !== true) {

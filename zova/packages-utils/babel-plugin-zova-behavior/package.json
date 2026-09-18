@@ -30,6 +30,7 @@
   },
   "scripts": {
     "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "test": "node --experimental-strip-types --test test/**/*.test.ts",
     "tsc:publish": "npm run clean && tsc",
     "prepublishOnly": "npm run tsc:publish",
     "prepack": "clean-package",

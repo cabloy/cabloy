@@ -1,5 +1,6 @@
 import type { ComponentPublicInstance } from 'vue';
 
+import type { ZovaContext } from '../../../core/context/context.ts';
 import type { IErrorObject } from './errorObject.ts';
 
 export const SymbolErrorInstanceInfo = Symbol('SymbolErrorInstanceInfo');
@@ -9,10 +10,18 @@ export interface IErrorInstanceInfo {
   info?: string;
 }
 
+export interface IErrorHandlerLoad {
+  readonly kind: 'controller-load';
+  readonly ctx: ZovaContext;
+  readonly originalError: unknown;
+  disposition: 'fallback' | 'handled';
+}
+
 export interface IErrorHandlerEventData {
   err: Error;
   instance?: ComponentPublicInstance | null;
   info?: string;
+  load?: IErrorHandlerLoad;
 }
 
 export type IErrorHandlerEventResult = Error | undefined;

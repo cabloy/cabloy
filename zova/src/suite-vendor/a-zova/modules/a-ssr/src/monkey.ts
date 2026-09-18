@@ -2,6 +2,7 @@ import type { IModule } from '@cabloy/module-info';
 import type {
   BeanBase,
   BeanContainer,
+  IControllerLoadEvent,
   IMonkeyAppContextInitialize,
   IMonkeyAppInitialize,
   IMonkeyBeanInit,
@@ -23,9 +24,20 @@ export class Monkey
 {
   appContextInitialize(ctx: ZovaContext): void {
     ctx.meta.$ssr = ctx.app.ctx.meta.$ssr;
+    if (process.env.CLIENT) {
+      ctx.meta.$ssr.handleDirectOrOnHydrated(() => {
+        if (!ctx.disposed) {
+          ctx.meta.hooks.invokeHook('hydrated');
+        }
+      });
+    }
     if (process.env.SERVER) {
       ctx.meta.$ssr._registerServerContext(ctx);
     }
+  }
+
+  controllerLoad(event: IControllerLoadEvent) {
+    event.ctx.meta.$ssr.controllerLoad(event);
   }
 
   async appInitialize() {
@@ -104,8 +116,16 @@ export class Monkey
 
   private _ssrErrorHandler() {
     if (!process.env.SERVER) return;
-    const _eventErrorHandler = this.app.meta.event.on('app:errorHandler', (_data, next) => {
+    const _eventErrorHandler = this.app.meta.event.on('app:errorHandler', (data, next) => {
       const err = next();
+      if (data.load?.kind === 'controller-load') {
+        if (_isLoadErrorHandledServer(data.err)) {
+          data.load.disposition = 'handled';
+          if (!err || !(err instanceof Error)) return err;
+          return this._errorHandlerDefaultServer(err);
+        }
+        return err;
+      }
       if (!err || !(err instanceof Error)) return err;
       return this._errorHandlerDefaultServer(err);
     });
@@ -132,4 +152,8 @@ export class Monkey
     }
     return undefined;
   }
+}
+
+function _isLoadErrorHandledServer(err: Error) {
+  return isNavigationFailure(err) || [301, 302, 401].includes(Number((err as any).code));
 }

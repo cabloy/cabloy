@@ -22,6 +22,7 @@ export async function generateFilePage(
     importStyleFirst,
     hasStyleFirst,
     classNameStyleFirst,
+    hasComponentOptions,
   } = controllerInfo;
   const { nameSchemaParams, hasSchemaParams, nameSchemaQuery, hasSchemaQuery } = controllerInfo;
   const contentImports: string[] = [];
@@ -68,7 +69,8 @@ export async function generateFilePage(
     }`);
   }
   // page
-  const contentPage = `export const ZPage${nameCapitalize} = createZovaComponentPage(${className}, ${hasRenderFirst ? classNameRenderFirst : undefined}, ${hasStyleFirst ? classNameStyleFirst : undefined});`;
+  const componentOptions = hasComponentOptions ? `${className}.$componentOptions` : undefined;
+  const contentPage = `export const ZPage${nameCapitalize} = createZovaComponentPage(${className}, ${hasRenderFirst ? classNameRenderFirst : undefined}, ${hasStyleFirst ? classNameStyleFirst : undefined}${componentOptions ? `, ${componentOptions}` : ''});`;
   // content
   const content = `${contentImports.join('\n')}
   ${combineContentRenderAndStyle(controllerInfo, moduleName, className, '', '')}

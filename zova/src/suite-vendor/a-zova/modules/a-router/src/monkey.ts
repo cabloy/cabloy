@@ -238,6 +238,9 @@ export class Monkey
   private _ssrErrorHandler() {
     if (!process.env.CLIENT) return;
     this.app.meta.event.on('app:errorHandler', (data, next) => {
+      if (_isLoadErrorHandledClient(data)) {
+        data.load!.disposition = 'handled';
+      }
       const err = next();
       if (!err || !(err instanceof Error)) return err;
       return this._errorHandlerDefaultClient(err, data);
@@ -264,4 +267,9 @@ export class Monkey
     // not handled
     return err;
   }
+}
+
+function _isLoadErrorHandledClient(data: IErrorHandlerEventData) {
+  if (data.load?.kind !== 'controller-load') return false;
+  return [301, 302, 401, 600].includes(Number((data.err as ErrorSSR).code));
 }

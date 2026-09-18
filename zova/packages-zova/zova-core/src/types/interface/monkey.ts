@@ -5,6 +5,7 @@ import type { BeanContainer } from '../../bean/beanContainer.ts';
 import type { IControllerData } from '../../bean/type.ts';
 import type { ZovaApplication } from '../../core/app/application.ts';
 import type { ZovaContext } from '../../core/context/context.ts';
+import type { Constructable } from '../../decorator/type/constructable.ts';
 
 export type TypeMonkeyName =
   | keyof IMonkeyModuleSys
@@ -59,10 +60,24 @@ export interface IMonkeyApp
     IMonkeyBeanDispose,
     IMonkeyBeanDisposed {}
 
+export type ControllerLoadPhase = 'prepare' | 'fallback' | 'replay';
+
+export interface IControllerLoadEvent {
+  phase: ControllerLoadPhase;
+  ctx: ZovaContext;
+  controllerBeanFullName: Constructable | string;
+  controllerBeanName?: string;
+  error?: Error;
+  controllerRecorded?: boolean;
+  replayError?: Error;
+  replayControllerRecorded?: boolean;
+}
+
 export interface IMonkeyController {
   controllerDataPrepare(controllerData: IControllerData, ctx: ZovaContext): void;
   controllerDataInit(controllerData: IControllerData, controller: BeanBase): void;
   controllerDataUpdate(controller: BeanBase): void;
+  controllerLoad?(event: IControllerLoadEvent): void;
 }
 
 export interface IMonkeySysApplicationInitialize {

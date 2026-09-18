@@ -7,6 +7,7 @@ import type {
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZIcon } from 'zova-module-a-icon';
+import { ZButton } from 'zova-module-basic-button';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableActionBulkRecord {
@@ -27,19 +28,17 @@ export class ControllerActionRefresh extends BeanControllerBase {
   protected render() {
     const disabled = this.$props.disabled === true || this.$props.dynamicDisabled === true;
     return (
-      <button
+      <ZButton
         class={[this.$props.class, 'btn-square']}
-        type="button"
         disabled={disabled}
         aria-label={this.scope.locale.Refresh()}
         title={this.scope.locale.Refresh()}
-        onClick={async () => {
-          if (disabled) return;
-          await this.$$renderContext.$$page.queryData.refetch();
+        onPerform={async () => {
+          await this.$$renderContext.$$page.queryData.refetch({ throwOnError: true });
         }}
       >
         <ZIcon name="::arrow-repeat" width={20}></ZIcon>
-      </button>
+      </ZButton>
     );
   }
 }

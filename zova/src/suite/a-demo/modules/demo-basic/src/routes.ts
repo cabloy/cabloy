@@ -1,6 +1,7 @@
 import type { IModuleRoute } from 'zova-module-a-router';
 
 import { ZPageComponent } from './.metadata/page/component.js';
+import { ZPageControllerBoundary } from './.metadata/page/controllerBoundary.js';
 import { ZPageLocale } from './.metadata/page/locale.js';
 import { ZPageRoutedDialog } from './.metadata/page/routedDialog.js';
 import { ZPageRoutedDialogDetail } from './.metadata/page/routedDialogDetail.js';
@@ -88,5 +89,10 @@ export const routes: IModuleRoute[] = [
     path: 'routedDialogDetail/:id',
     component: ZPageRoutedDialogDetail,
     meta: { requiresAuth: false },
+  },
+  {
+    path: 'controllerBoundary',
+    component: ZPageControllerBoundary,
+    meta: { requiresAuth: false, ssrProfile: 'public' },
   },
 ];

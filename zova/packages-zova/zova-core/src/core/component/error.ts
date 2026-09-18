@@ -1,7 +1,12 @@
 import type { ComponentPublicInstance } from 'vue';
 
 import type { IErrorObject } from '../../bean/resource/error/errorObject.ts';
-import type { IErrorInstanceInfo, IModuleError } from '../../bean/resource/error/type.ts';
+import type {
+  IErrorHandlerLoad,
+  IErrorInstanceInfo,
+  IModuleError,
+} from '../../bean/resource/error/type.ts';
+import type { ZovaContext } from '../context/context.ts';
 
 import { ErrorClass } from '../../bean/resource/error/errorClass.ts';
 import { SymbolErrorInstanceInfo } from '../../bean/resource/error/type.ts';
@@ -42,6 +47,22 @@ export class AppError extends ErrorClass {
     };
   }
 
+  public handleLoadError(
+    originalError: unknown,
+    ctx: ZovaContext,
+    instance?: ComponentPublicInstance | null,
+  ) {
+    const err = normalizeError(originalError);
+    const load: IErrorHandlerLoad = {
+      kind: 'controller-load',
+      ctx,
+      originalError,
+      disposition: 'fallback',
+    };
+    this._handleError(err, instance, 'useController:load', load);
+    return { err, disposition: load.disposition };
+  }
+
   private _handleUnhandledError(error: Error, infoDefault: string) {
     if (error instanceof Error) {
       const errorInfo: IErrorInstanceInfo | undefined = error[SymbolErrorInstanceInfo];
@@ -61,6 +82,7 @@ export class AppError extends ErrorClass {
     err: Error,
     instance: ComponentPublicInstance | null | undefined,
     info: string | undefined,
+    load?: IErrorHandlerLoad,
   ) {
     if (!this.app) {
       // means destroyed
@@ -69,7 +91,7 @@ export class AppError extends ErrorClass {
     }
     const err2 = this.app.meta.event.emitSync(
       'app:errorHandler',
-      { err: err as Error, instance, info },
+      { err: err as Error, instance, info, load },
       data => {
         return data.err;
       },
@@ -77,10 +99,45 @@ export class AppError extends ErrorClass {
     // only log error in client
     if (process.env.CLIENT) {
       if (!err2 || !(err2 instanceof Error)) return err2;
-      if (!info || !['useMutationData'].includes(info)) {
-        console.error(err2);
-      }
+      console.error(err2);
     }
     return err2;
   }
+}
+
+export function normalizeError(error: unknown) {
+  if (error instanceof Error) return error;
+  const normalized = new Error(getErrorMessage(error));
+  if (error && (typeof error === 'object' || typeof error === 'function')) {
+    for (const key of ['code', 'status', 'pagePath', 'url']) {
+      const descriptor = Object.getOwnPropertyDescriptor(error, key);
+      if (!descriptor || !('value' in descriptor)) continue;
+      const value = descriptor.value;
+      if (
+        (key === 'code' || key === 'status') &&
+        (typeof value === 'number' || typeof value === 'string')
+      ) {
+        (normalized as any)[key] = value;
+      }
+      if ((key === 'pagePath' || key === 'url') && typeof value === 'string') {
+        (normalized as any)[key] = value;
+      }
+    }
+  }
+  return normalized;
+}
+
+function getErrorMessage(error: unknown) {
+  if (
+    error === null ||
+    error === undefined ||
+    typeof error === 'string' ||
+    typeof error === 'number' ||
+    typeof error === 'boolean' ||
+    typeof error === 'bigint' ||
+    typeof error === 'symbol'
+  ) {
+    return String(error);
+  }
+  return 'Unknown error';
 }

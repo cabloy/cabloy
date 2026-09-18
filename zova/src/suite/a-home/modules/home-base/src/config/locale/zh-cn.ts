@@ -1,6 +1,7 @@
 export default {
   Home: '主页',
   GoHome: '返回首页',
+  Retry: '重试',
   LanguageEnglish: '英语',
   LanguageChinese: '简体中文',
   VonaIntegratedSsr: 'Vona 集成式 SSR',

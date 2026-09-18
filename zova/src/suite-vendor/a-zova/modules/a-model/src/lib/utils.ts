@@ -68,7 +68,8 @@ async function _QueryEnsureLoadedInner<T = any>(fn?: TypeQueryEnsureLoadedFn<T>)
   if (!fn) return;
   const query = fn();
   if (query && query.data === undefined) {
-    await query.suspense();
+    const result = await query.suspense();
+    if (result.error) throw result.error;
   }
   return query;
 }

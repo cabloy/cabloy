@@ -36,9 +36,6 @@ export class ModelLayoutProfile extends BeanModelBase {
           query: { layoutKey: this.layoutKey },
         });
       },
-      meta: {
-        disableErrorEffect: true,
-      },
     });
   }
 

@@ -373,7 +373,7 @@ const _configDefault: OxlintConfig = {
         switches: 'never',
       },
     ],
-    '@stylistic/quote-props': ['error', 'consistent-as-needed'],
+    '@stylistic/quote-props': 'off',
     '@stylistic/quotes': [
       'error',
       'single',

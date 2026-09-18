@@ -51,7 +51,8 @@
   "title": "basic-details",
   "zovaModule": {
     "dependencies": {
-      "basic-app": "5.0.0"
+      "basic-app": "5.0.0",
+      "basic-button": "5.0.0"
     }
   }
 }

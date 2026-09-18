@@ -58,7 +58,11 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
     pageSize: 20,
   };
 
-  static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
+  static $componentOptions: IComponentOptions = {
+    inheritAttrs: false,
+    deepExtendDefault: true,
+    boundary: { retry: true },
+  };
 
   tableRef: BeanControllerTableBase<TData> | undefined;
   private _tableMetaRefreshPending = false;

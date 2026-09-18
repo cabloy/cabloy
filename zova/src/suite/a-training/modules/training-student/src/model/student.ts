@@ -24,9 +24,6 @@ export class ModelStudent extends BeanModelBase {
         const res = await this.scope.api.trainingStudent.summary({ params: { id } });
         return res ?? null;
       },
-      meta: {
-        disableErrorEffect: true,
-      },
     });
   }
 

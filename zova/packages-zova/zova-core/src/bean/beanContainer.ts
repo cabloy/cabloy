@@ -74,50 +74,90 @@ export class BeanContainer {
   /** @internal */
   public dispose() {
     const beanInstances = this[SymbolBeanContainerInstances];
-    for (const prop in beanInstances) {
-      if (prop.startsWith('$$')) continue;
-      const beanInstance = cast(beanInstances[prop]);
-      if (beanInstance && !(beanInstance instanceof BeanAopBase) && beanInstance.__dispose__) {
-        if (this.containerType === 'sys') {
-          this.sys.meta.module._monkeyModuleSync(
-            false,
-            'beanDispose',
-            undefined,
-            this,
-            beanInstance,
-          );
-          beanInstance.__dispose__();
-          this.sys.meta.module._monkeyModuleSync(
-            false,
-            'beanDisposed',
-            undefined,
-            this,
-            beanInstance,
-          );
-        } else {
-          this.app.meta.module._monkeyModuleSync(
-            false,
-            'beanDispose',
-            undefined,
-            this,
-            beanInstance,
-          );
+    let error: Error | undefined;
+    try {
+      for (const prop in beanInstances) {
+        if (prop.startsWith('$$')) continue;
+        const beanInstance = cast(beanInstances[prop]);
+        if (!beanInstance || beanInstance instanceof BeanAopBase || !beanInstance.__dispose__)
+          continue;
+        try {
+          if (this.containerType === 'sys') {
+            this.sys.meta.module._monkeyModuleSync(
+              false,
+              'beanDispose',
+              undefined,
+              this,
+              beanInstance,
+            );
+            beanInstance.__dispose__();
+            this.sys.meta.module._monkeyModuleSync(
+              false,
+              'beanDisposed',
+              undefined,
+              this,
+              beanInstance,
+            );
+          } else {
+            this.app.meta.module._monkeyModuleSync(
+              false,
+              'beanDispose',
+              undefined,
+              this,
+              beanInstance,
+            );
+            this.runWithInstanceScopeOrAppContext(() => {
+              return beanInstance.__dispose__();
+            });
+            this.app.meta.module._monkeyModuleSync(
+              false,
+              'beanDisposed',
+              undefined,
+              this,
+              beanInstance,
+            );
+          }
+        } catch (err) {
+          error ??= err as Error;
+        }
+      }
+    } finally {
+      this[SymbolBeanContainerInstances] = shallowReactive({});
+      this[SymbolBeanContainerParent] = undefined;
+      this[SymbolGetBeanSelectorInnerPromises] = {};
+    }
+    // eslint-disable no-throw-literal
+    if (error) throw error;
+  }
+
+  /** @internal */
+  public retryReset(ownedBeans: Set<object>) {
+    const beanInstances = this[SymbolBeanContainerInstances];
+    let error: Error | undefined;
+    try {
+      for (const prop in beanInstances) {
+        const beanInstance = cast(beanInstances[prop]);
+        if (!ownedBeans.has(beanInstance)) continue;
+        if (!beanInstance || beanInstance instanceof BeanAopBase || !beanInstance.__dispose__)
+          continue;
+        try {
           this.runWithInstanceScopeOrAppContext(() => {
             return beanInstance.__dispose__();
           });
-          this.app.meta.module._monkeyModuleSync(
-            false,
-            'beanDisposed',
-            undefined,
-            this,
-            beanInstance,
-          );
+        } catch (err) {
+          error ??= err as Error;
         }
       }
+    } finally {
+      for (const prop in beanInstances) {
+        if (ownedBeans.has(cast(beanInstances[prop]))) {
+          delete beanInstances[prop];
+        }
+      }
+      this[SymbolGetBeanSelectorInnerPromises] = {};
     }
-    this[SymbolBeanContainerInstances] = shallowReactive({});
-    this[SymbolBeanContainerParent] = undefined;
-    this[SymbolGetBeanSelectorInnerPromises] = {};
+    // eslint-disable no-throw-literal
+    if (error) throw error;
   }
 
   get containerType(): ContainerType {
@@ -355,6 +395,7 @@ export class BeanContainer {
       fullName,
       markReactive,
       withSelector,
+      undefined,
       ...args,
     );
   }
@@ -382,7 +423,16 @@ export class BeanContainer {
     markReactive?: boolean,
     ...args
   ): Promise<T> {
-    return await this._newBeanInner(false, null, null, beanFullName, markReactive, false, ...args);
+    return await this._newBeanInner(
+      false,
+      null,
+      null,
+      beanFullName,
+      markReactive,
+      false,
+      undefined,
+      ...args,
+    );
   }
 
   async _newBeanSelector<T>(
@@ -415,6 +465,7 @@ export class BeanContainer {
     beanFullName: Constructable<T> | string | undefined,
     markReactive?: boolean,
     withSelector?: boolean,
+    onBeanRecorded?: (beanInstance: T) => void,
     ...args
   ): Promise<T> {
     // bean options
@@ -432,6 +483,7 @@ export class BeanContainer {
           false,
           markReactive,
           withSelector,
+          onBeanRecorded,
         );
       }
       // throw new Error(`bean not found: ${beanFullName}`);
@@ -449,6 +501,7 @@ export class BeanContainer {
       // default is true: same as inject prop
       markReactive ?? beanOptions.markReactive ?? true,
       withSelector,
+      onBeanRecorded,
     );
   }
 
@@ -504,6 +557,7 @@ export class BeanContainer {
     aop: boolean | undefined,
     markReactive: boolean | undefined,
     withSelector?: boolean,
+    onBeanRecorded?: (beanInstance: T) => void,
   ): Promise<T> {
     // prepare
     const beanInstance = await this._prepareBeanInstance(
@@ -530,6 +584,7 @@ export class BeanContainer {
       if (recordProp) {
         this.__recordProp(recordProp, fullName, beanInstance, true);
       }
+      onBeanRecorded?.(beanInstance);
     }
     // init
     await this._initBeanInstance(beanFullName, beanInstance, args);
@@ -781,6 +836,7 @@ export class BeanContainer {
         targetBeanFullName,
         markReactive,
         selectorInfo.withSelector,
+        undefined,
         ...selectorInfo.args,
       );
     }

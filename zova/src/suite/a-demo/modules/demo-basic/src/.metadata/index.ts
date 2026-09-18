@@ -37,9 +37,13 @@ declare module 'zova' {
 /** controller: begin */
 export * from '../component/actionView/controller.jsx';
 export * from '../component/card/controller.jsx';
+export * from '../component/controllerBoundaryProbe/controller.jsx';
+export * from '../component/controllerBoundaryProbeInline/controller.jsx';
+export * from '../component/controllerBoundaryProbeOverride/controller.jsx';
 export * from '../component/formFieldTest/controller.jsx';
 export * from '../component/tableCellTest/controller.jsx';
 export * from '../page/component/controller.jsx';
+export * from '../page/controllerBoundary/controller.jsx';
 export * from '../page/locale/controller.jsx';
 export * from '../page/routeParams/controller.jsx';
 export * from '../page/routeQuery/controller.jsx';
@@ -70,6 +74,21 @@ declare module 'zova-module-demo-basic' {
           get scope(): ScopeModuleDemoBasic;
         }
 
+        export interface ControllerControllerBoundaryProbe {
+          /** @internal */
+          get scope(): ScopeModuleDemoBasic;
+        }
+
+        export interface ControllerControllerBoundaryProbeInline {
+          /** @internal */
+          get scope(): ScopeModuleDemoBasic;
+        }
+
+        export interface ControllerControllerBoundaryProbeOverride {
+          /** @internal */
+          get scope(): ScopeModuleDemoBasic;
+        }
+
         export interface ControllerFormFieldTest {
           /** @internal */
           get scope(): ScopeModuleDemoBasic;
@@ -81,6 +100,11 @@ declare module 'zova-module-demo-basic' {
         }
 
         export interface ControllerPageComponent {
+          /** @internal */
+          get scope(): ScopeModuleDemoBasic;
+        }
+
+        export interface ControllerPageControllerBoundary {
           /** @internal */
           get scope(): ScopeModuleDemoBasic;
         }
@@ -149,9 +173,13 @@ declare module 'zova-module-demo-basic' {
 /** controller: begin */
 import type { ControllerActionView } from '../component/actionView/controller.jsx';
 import type { ControllerCard } from '../component/card/controller.jsx';
+import type { ControllerControllerBoundaryProbe } from '../component/controllerBoundaryProbe/controller.jsx';
+import type { ControllerControllerBoundaryProbeInline } from '../component/controllerBoundaryProbeInline/controller.jsx';
+import type { ControllerControllerBoundaryProbeOverride } from '../component/controllerBoundaryProbeOverride/controller.jsx';
 import type { ControllerFormFieldTest } from '../component/formFieldTest/controller.jsx';
 import type { ControllerTableCellTest } from '../component/tableCellTest/controller.jsx';
 import type { ControllerPageComponent } from '../page/component/controller.jsx';
+import type { ControllerPageControllerBoundary } from '../page/controllerBoundary/controller.jsx';
 import type { ControllerPageLocale } from '../page/locale/controller.jsx';
 import type { ControllerPageRouteParams } from '../page/routeParams/controller.jsx';
 import type { ControllerPageRouteQuery } from '../page/routeQuery/controller.jsx';
@@ -169,9 +197,13 @@ declare module 'zova' {
   export interface IBeanRecordLocal {
     'demo-basic.controller.actionView': ControllerActionView;
 'demo-basic.controller.card': ControllerCard;
+'demo-basic.controller.controllerBoundaryProbe': ControllerControllerBoundaryProbe;
+'demo-basic.controller.controllerBoundaryProbeInline': ControllerControllerBoundaryProbeInline;
+'demo-basic.controller.controllerBoundaryProbeOverride': ControllerControllerBoundaryProbeOverride;
 'demo-basic.controller.formFieldTest': ControllerFormFieldTest;
 'demo-basic.controller.tableCellTest': ControllerTableCellTest;
 'demo-basic.controller.pageComponent': ControllerPageComponent;
+'demo-basic.controller.pageControllerBoundary': ControllerPageControllerBoundary;
 'demo-basic.controller.pageLocale': ControllerPageLocale;
 'demo-basic.controller.pageRouteParams': ControllerPageRouteParams;
 'demo-basic.controller.pageRouteQuery': ControllerPageRouteQuery;
@@ -189,6 +221,8 @@ declare module 'zova' {
 /** controller: end */
 /** pages: begin */
 export * from './page/component.js';
+export * from './page/controllerBoundary.js';
+import { NSControllerPageControllerBoundary } from './page/controllerBoundary.js';
 export * from './page/locale.js';
 export * from './page/routeParams.js';
 import { NSControllerPageRouteParams } from './page/routeParams.js';
@@ -214,6 +248,7 @@ import 'zova';
 declare module 'zova-module-a-router' {
 export interface IPagePathRecord {
   '/demo/basic/component': TypePagePathSchema<undefined,undefined>;
+'/demo/basic/controllerBoundary': TypePagePathSchema<NSControllerPageControllerBoundary.ParamsInput,NSControllerPageControllerBoundary.QueryInput>;
 '/demo/basic/locale': TypePagePathSchema<undefined,undefined>;
 '/demo/basic/routeParams/:id?': TypePagePathSchema<NSControllerPageRouteParams.ParamsInput,NSControllerPageRouteParams.QueryInput>;
 '/demo/basic/routeQuery': TypePagePathSchema<NSControllerPageRouteQuery.ParamsInput,NSControllerPageRouteQuery.QueryInput>;
@@ -236,6 +271,9 @@ export interface IPageNameRecord {
 }
 }
 export const pagePathSchemas = {
+'/demo/basic/controllerBoundary': {
+          query: NSControllerPageControllerBoundary.querySchema,
+        },
 '/demo/basic/routeQuery': {
           query: NSControllerPageRouteQuery.querySchema,
         },
@@ -265,7 +303,11 @@ export const pageNameSchemas = {
         },
 };
 declare module 'zova-module-demo-basic' {
-  export interface ControllerPageRouteParams {
+  export interface ControllerPageControllerBoundary {
+        $params: NSControllerPageControllerBoundary.ParamsOutput;
+$query: NSControllerPageControllerBoundary.QueryOutput;
+      }
+export interface ControllerPageRouteParams {
         $params: NSControllerPageRouteParams.ParamsOutput;
 $query: NSControllerPageRouteParams.QueryOutput;
       }
@@ -301,6 +343,12 @@ export * from './component/actionView.js';
 import { ZActionView } from './component/actionView.js';
 export * from './component/card.js';
 import { ZCard } from './component/card.js';
+export * from './component/controllerBoundaryProbe.js';
+import { ZControllerBoundaryProbe } from './component/controllerBoundaryProbe.js';
+export * from './component/controllerBoundaryProbeInline.js';
+import { ZControllerBoundaryProbeInline } from './component/controllerBoundaryProbeInline.js';
+export * from './component/controllerBoundaryProbeOverride.js';
+import { ZControllerBoundaryProbeOverride } from './component/controllerBoundaryProbeOverride.js';
 export * from './component/formFieldTest.js';
 import { ZFormFieldTest } from './component/formFieldTest.js';
 export * from './component/tableCellTest.js';
@@ -308,6 +356,9 @@ import { ZTableCellTest } from './component/tableCellTest.js';
 export const components = {
   'actionView': ZActionView,
 'card': ZCard,
+'controllerBoundaryProbe': ZControllerBoundaryProbe,
+'controllerBoundaryProbeInline': ZControllerBoundaryProbeInline,
+'controllerBoundaryProbeOverride': ZControllerBoundaryProbeOverride,
 'formFieldTest': ZFormFieldTest,
 'tableCellTest': ZTableCellTest,
 };
@@ -316,12 +367,18 @@ declare module 'zova' {
 export interface IComponentRecord {
   'demo-basic:actionView': ControllerActionView;
 'demo-basic:card': ControllerCard;
+'demo-basic:controllerBoundaryProbe': ControllerControllerBoundaryProbe;
+'demo-basic:controllerBoundaryProbeInline': ControllerControllerBoundaryProbeInline;
+'demo-basic:controllerBoundaryProbeOverride': ControllerControllerBoundaryProbeOverride;
 'demo-basic:formFieldTest': ControllerFormFieldTest;
 'demo-basic:tableCellTest': ControllerTableCellTest;
 }
 export interface IZovaComponentRecord {
   'demo-basic:actionView': typeof ZActionView;
 'demo-basic:card': typeof ZCard;
+'demo-basic:controllerBoundaryProbe': typeof ZControllerBoundaryProbe;
+'demo-basic:controllerBoundaryProbeInline': typeof ZControllerBoundaryProbeInline;
+'demo-basic:controllerBoundaryProbeOverride': typeof ZControllerBoundaryProbeOverride;
 'demo-basic:formFieldTest': typeof ZFormFieldTest;
 'demo-basic:tableCellTest': typeof ZTableCellTest;
 }

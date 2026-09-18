@@ -59,17 +59,12 @@ export interface MyQueryMetaBase extends Record<string, unknown> {
   defaultData?: (() => any) | any;
   ssr?: QueryMetaSSR;
   persister?: QueryMetaPersister | boolean;
-  disableErrorEffect?: boolean;
   disableSuspenseOnInit?: boolean;
 }
 
-export interface MyQueryMeta extends MyQueryMetaBase {
-  errorInfo?: ((error, query) => string) | string;
-}
+export interface MyQueryMeta extends MyQueryMetaBase {}
 
-export interface MyMutationMeta extends MyQueryMetaBase {
-  errorInfo?: ((error, variables, context) => string) | string;
-}
+export interface MyMutationMeta extends Record<string, unknown> {}
 
 export interface QueryMetaSSR {
   /** default is true */

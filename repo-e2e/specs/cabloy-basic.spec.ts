@@ -564,6 +564,164 @@ test(
 );
 
 test(
+  'ATP-BASIC-TABLE-03: Training Student row delete handles cancellation, local failures, and retry',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    page.setDefaultTimeout(10_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const pageErrors = collectPageErrors(page);
+    await loginAsAdmin(page);
+
+    const studentName = `Row Delete E2E ${Date.now()}`;
+    const accessToken = (await page.context().cookies()).find(
+      cookie => cookie.name === 'token',
+    )?.value;
+    expect(accessToken).toBeTruthy();
+    const headers = { Authorization: `Bearer ${accessToken}` };
+    let studentId: string | number | undefined;
+    try {
+      const createResponse = await page.request.post('/api/training/student', {
+        data: { name: studentName, mobile: '13812345678', level: 1 },
+        headers,
+      });
+      expect(createResponse.ok()).toBeTruthy();
+      studentId = (await createResponse.json()).data;
+      expect(['string', 'number']).toContain(typeof studentId);
+
+      const initialSelect = waitForStudentSelect(page);
+      await page.getByRole('link', { name: 'Student', exact: true }).click();
+      await expect(page).toHaveURL(studentResourceUrl);
+      await initialSelect;
+
+      await page.getByLabel('Student Name').fill(studentName);
+      const filteredResponse = waitForStudentSelect(page);
+      await page.getByRole('button', { name: 'Search', exact: true }).click();
+      await filteredResponse;
+
+      const row = page.locator('tbody tr').filter({
+        has: page.getByRole('link', { name: studentName, exact: true }),
+      });
+      const deleteButton = row.locator('button.btn-outline.btn-error').first();
+      const confirmDialog = page.getByRole('dialog').filter({
+        hasText: 'Are you sure you want to delete this item?',
+      });
+      await expect(row).toHaveCount(1);
+      await expect(deleteButton).toBeVisible();
+
+      let cancelledRequestCount = 0;
+      const cancelledRequestListener = (request: Request) => {
+        const url = new URL(request.url());
+        if (
+          request.method() === 'DELETE' &&
+          url.pathname === `/api/training/student/${studentId}` &&
+          !request.headers()['x-vona-openapi-schema']
+        ) {
+          cancelledRequestCount++;
+        }
+      };
+      page.on('request', cancelledRequestListener);
+      try {
+        await deleteButton.click();
+        await expect(confirmDialog).toBeVisible();
+        await confirmDialog.getByRole('button', { name: 'No', exact: true }).click();
+        await expect(confirmDialog).toHaveCount(0);
+        await expect(row).toHaveCount(1);
+        expect(cancelledRequestCount).toBe(0);
+      } finally {
+        page.off('request', cancelledRequestListener);
+      }
+
+      let failureRequestCount = 0;
+      let releaseFailedDelete: (() => void) | undefined;
+      const failedDeleteHeld = new Promise<void>(resolve => {
+        releaseFailedDelete = resolve;
+      });
+      const deleteRoute = (url: URL) => url.pathname === `/api/training/student/${studentId}`;
+      const failedDeleteHandler = async (route: Route) => {
+        failureRequestCount++;
+        await failedDeleteHeld;
+        await route.fulfill({
+          status: 500,
+          contentType: 'application/json',
+          body: JSON.stringify({ code: 500, message: 'Row deletion temporarily unavailable' }),
+        });
+      };
+      await page.route(deleteRoute, failedDeleteHandler);
+      try {
+        await deleteButton.click();
+        await confirmDialog.getByRole('button', { name: 'Yes', exact: true }).click();
+        await expect.poll(() => failureRequestCount).toBe(1);
+        await expect(deleteButton).toBeDisabled();
+        await expect(deleteButton).toHaveAttribute('aria-busy', 'true');
+        await expect(deleteButton.locator('.loading.loading-spinner')).toHaveCount(1);
+        await deleteButton.click({ force: true });
+        await expect.poll(() => failureRequestCount).toBe(1);
+
+        releaseFailedDelete?.();
+        const errorDialog = page.getByRole('dialog').filter({
+          hasText: 'Row deletion temporarily unavailable',
+        });
+        await expect(errorDialog).toBeVisible();
+        await expect(errorDialog.getByRole('button', { name: 'Close', exact: true })).toBeVisible();
+        await expect(row).toHaveCount(1);
+        await errorDialog.getByRole('button', { name: 'Close', exact: true }).click();
+        await expect(errorDialog).toHaveCount(0);
+        await expect(deleteButton).toBeEnabled();
+        await expect(deleteButton).not.toHaveAttribute('aria-busy', 'true');
+        await expect(deleteButton.locator('.loading.loading-spinner')).toHaveCount(0);
+      } finally {
+        releaseFailedDelete?.();
+        await page.unroute(deleteRoute, failedDeleteHandler);
+      }
+
+      const deleteRequest = page.waitForRequest(request => {
+        const url = new URL(request.url());
+        return (
+          request.method() === 'DELETE' &&
+          url.pathname === `/api/training/student/${studentId}` &&
+          !request.headers()['x-vona-openapi-schema']
+        );
+      });
+      const deleteResponse = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return (
+          response.request().method() === 'DELETE' &&
+          url.pathname === `/api/training/student/${studentId}` &&
+          !response.request().headers()['x-vona-openapi-schema']
+        );
+      });
+      const refetchResponse = waitForStudentSelect(page, false);
+      await deleteButton.click();
+      await confirmDialog.getByRole('button', { name: 'Yes', exact: true }).click();
+      const [, response, refetch] = await Promise.all([
+        deleteRequest,
+        deleteResponse,
+        refetchResponse,
+      ]);
+      expect(response.ok()).toBeTruthy();
+      expect(refetch.ok()).toBeTruthy();
+      await expect(row).toHaveCount(0);
+      expect(pageErrors).toEqual([]);
+    } finally {
+      if (studentId !== undefined) {
+        const deleteResponse = await page.request.delete(
+          `/api/training/student/deleteForce/${studentId}`,
+          {
+            headers,
+            timeout: 10_000,
+          },
+        );
+        expect(
+          deleteResponse.ok() || deleteResponse.status() === 404,
+          `Failed to clean up Training Student ${studentName} (${studentId}): ${deleteResponse.status()}`,
+        ).toBeTruthy();
+      }
+    }
+  },
+);
+
+test(
   'ATP-BASIC-TABLE-02: Training Student selection mode preserves page state and bulk deletes selected rows',
   { tag: ['@admin', '@flow'] },
   async ({ page }, testInfo) => {

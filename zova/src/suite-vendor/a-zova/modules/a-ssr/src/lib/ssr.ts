@@ -1,5 +1,5 @@
 import type { ComponentInternalInstance, Ref, VNode } from 'vue';
-import type { Functionable, ILocaleRecord, ZovaContext } from 'zova';
+import type { Functionable, IControllerLoadEvent, ILocaleRecord, ZovaContext } from 'zova';
 
 import { RouteLocationNormalizedGeneric, RouteLocationResolvedGeneric } from '@cabloy/vue-router';
 import { includeBooleanAttr, isBooleanAttr, isString, stringifyStyle } from '@vue/shared';
@@ -14,6 +14,7 @@ import type {
   OnHydratePropHasMismatch,
   OnHydratePropHasMismatchResult,
   SSRContext,
+  SSRControllerLoadErrorSnapshot,
   TypeSsrProfile,
   TypeSsrSitePerformAction,
 } from '../types/ssr.js';
@@ -40,6 +41,7 @@ export class CtxSSR extends BeanSimple {
 
   private [SymbolHydratingCounter]: number = 0;
   private [SymbolServerContexts]: Set<ZovaContext> = new Set();
+  private _controllerLoadSequence: Record<string, number> = {};
 
   public metaStore: CtxSSRMetaStore;
 
@@ -130,6 +132,53 @@ export class CtxSSR extends BeanSimple {
     } else {
       return this[SymbolSSRState].stateDefer;
     }
+  }
+
+  /** @internal */
+  public controllerLoad(event: IControllerLoadEvent) {
+    if (event.phase === 'prepare') {
+      if (process.env.SERVER) {
+        event.ctx.meta.state.controllerLoadKey = this._allocateControllerLoadKey(event);
+        return;
+      }
+      if (!process.env.CLIENT || !this.isRuntimeSsrPreHydration) return;
+      const key = this._allocateControllerLoadKey(event);
+      const snapshot = this.stateDefer.controllerLoad?.[key];
+      if (
+        !snapshot ||
+        snapshot.version !== 1 ||
+        snapshot.controllerBeanName !== event.controllerBeanName
+      ) {
+        return;
+      }
+      delete this.stateDefer.controllerLoad![key];
+      event.replayError = _createControllerLoadError(snapshot);
+      event.replayControllerRecorded = snapshot.controllerRecorded;
+      return;
+    }
+    if (event.phase !== 'fallback' || !process.env.SERVER || !event.error) return;
+    const key = event.ctx.meta.state.controllerLoadKey;
+    if (!key) return;
+    const controllerLoad = (this.stateDefer.controllerLoad ??= {});
+    controllerLoad[key] = _createControllerLoadErrorSnapshot(event);
+  }
+
+  private _allocateControllerLoadKey(event: IControllerLoadEvent) {
+    const instance = event.ctx.instance;
+    const parts: string[] = [];
+    let current: ComponentInternalInstance | null = instance;
+    while (current) {
+      const componentType = current.type as any;
+      const name =
+        componentType.__file ?? componentType.name ?? componentType.__name ?? 'anonymous';
+      const key = current.vnode.key ?? '';
+      parts.unshift(`${name}:${String(key)}`);
+      current = current.parent;
+    }
+    const structuralKey = parts.join('/');
+    const occurrence = this._controllerLoadSequence[structuralKey] ?? 0;
+    this._controllerLoadSequence[structuralKey] = occurrence + 1;
+    return `${structuralKey}#${occurrence}:${event.controllerBeanName ?? ''}`;
   }
 
   get profile(): TypeSsrProfile {
@@ -366,4 +415,39 @@ export class CtxSSR extends BeanSimple {
   public _disposeServerContexts() {
     this._serverContextsDispose();
   }
+}
+
+function _createControllerLoadErrorSnapshot(
+  event: IControllerLoadEvent,
+): SSRControllerLoadErrorSnapshot {
+  const error = event.error! as any;
+  const snapshot: SSRControllerLoadErrorSnapshot = {
+    version: 1,
+    controllerBeanName: event.controllerBeanName,
+    name: error.name || 'Error',
+    message: error.message || String(error),
+    controllerRecorded: event.controllerRecorded === true,
+  };
+  for (const key of ['code', 'status']) {
+    if (typeof error[key] === 'number' || typeof error[key] === 'string') {
+      snapshot[key] = error[key];
+    }
+  }
+  for (const key of ['pagePath', 'url']) {
+    if (typeof error[key] === 'string') {
+      snapshot[key] = error[key];
+    }
+  }
+  return snapshot;
+}
+
+function _createControllerLoadError(snapshot: SSRControllerLoadErrorSnapshot) {
+  const error = new Error(snapshot.message);
+  error.name = snapshot.name;
+  for (const key of ['code', 'status', 'pagePath', 'url']) {
+    if (snapshot[key] !== undefined) {
+      (error as any)[key] = snapshot[key];
+    }
+  }
+  return error;
 }

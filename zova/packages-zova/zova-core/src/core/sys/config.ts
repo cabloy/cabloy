@@ -1,5 +1,6 @@
 import type { ZovaConfigMeta } from '@cabloy/module-info';
 import type ms from 'ms';
+import type { VNodeChild } from 'vue';
 
 import type {
   ILayoutRecord,
@@ -8,9 +9,14 @@ import type {
 } from '../../bean/resource/component/type.ts';
 import type { ILocaleRecord } from '../../bean/resource/locale/type.ts';
 import type { ZovaConfigRoutes } from '../../bean/resource/page/type.ts';
-import type { IBeanScopeConfig } from '../../bean/type.ts';
+import type {
+  IBeanScopeConfig,
+  TypeComponentBoundaryRenderMode,
+  TypeComponentBoundaryRetry,
+} from '../../bean/type.ts';
 import type { ZovaConfigEnv } from '../../types/utils/env.ts';
 import type { PowerPartial } from '../../types/utils/powerPartial.ts';
+import type { ZovaContext } from '../context/context.ts';
 import type { ConfigLogger } from '../logger/types.ts';
 
 export function configDefault(env: ZovaConfigEnv): PowerPartial<ZovaConfig> {
@@ -20,8 +26,31 @@ export function configDefault(env: ZovaConfigEnv): PowerPartial<ZovaConfig> {
       mode: env.META_MODE,
       appMode: env.META_APP_MODE,
     },
+    boundary: {},
   };
   return config;
+}
+
+export interface ZovaConfigApp {
+  name: string;
+  title: string;
+  description: string;
+  version: string;
+}
+
+export interface ZovaConfigBoundaryLoading {
+  delay?: number;
+}
+
+export interface ZovaConfigBoundary {
+  loading?: ZovaConfigBoundaryLoading;
+  renderLoading?: (ctx: ZovaContext, renderMode: TypeComponentBoundaryRenderMode) => VNodeChild;
+  renderError?: (
+    ctx: ZovaContext,
+    error: unknown,
+    renderMode: TypeComponentBoundaryRenderMode,
+    retry?: TypeComponentBoundaryRetry,
+  ) => VNodeChild;
 }
 
 export interface ZovaConfigSsrResponseCachePolicy {
@@ -35,12 +64,8 @@ export interface ZovaConfigSsrProfile {
 
 export interface ZovaConfig {
   meta: ZovaConfigMeta;
-  app: {
-    name: string;
-    title: string;
-    description: string;
-    version: string;
-  };
+  app: ZovaConfigApp;
+  boundary: ZovaConfigBoundary;
   api: {
     baseURL: string;
     prefix: string;

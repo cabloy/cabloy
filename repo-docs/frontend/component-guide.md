@@ -78,6 +78,39 @@ Component wrappers can also participate in asynchronous loading behavior automat
 
 This matters because the wrapper is not just a naming convenience. It is part of how Zova turns modular code into practical runtime behavior.
 
+## Controller load boundaries
+
+A component Controller, optional Style bean, and optional Render bean load in that order. While that asynchronous work is pending, Zova can render a loading boundary; an unhandled initialization failure renders an error boundary.
+
+```ts
+@Controller()
+class ControllerReport extends BeanControllerBase {
+  static $componentOptions: IComponentOptions = {
+    boundary: {
+      loading: { delay: 500 },
+      renderMode: 'inline',
+      retry: true,
+    },
+  };
+}
+```
+
+`retry` is disabled by default. Enable it only when creating a fresh Controller → Style → Render graph and running the Controller initialization again is safe. In particular, do not opt in for initialization that can repeat a non-idempotent external effect without its own idempotency or recovery contract.
+
+Error rendering keeps Controller ownership first. A Controller override may receive the retry action as its trailing argument; otherwise the application boundary renderer receives it:
+
+```ts
+protected renderError(error, renderMode, retry?) {
+  return null;
+}
+
+config.boundary.renderError(ctx, error, renderMode, retry?);
+```
+
+The callback is optional because retry may be disabled or unavailable. Existing error renderers that accept only `error` or `error, renderMode` remain valid. When a Controller provides its own error renderer, Zova does not wrap that output with an application retry control; the Controller decides whether to present the action.
+
+For SSR, a server-selected error fallback remains the client’s first hydration result. Retry becomes interactive only after the component has mounted, so the server HTML and hydration-time client output stay equivalent. A retry then creates a fresh client-side load graph; it does not rerun the failed Controller instance in place.
+
 ## Reference the component instance
 
 Instead of relying on template refs in the usual Vue style, Zova prefers direct access to the component controller instance.

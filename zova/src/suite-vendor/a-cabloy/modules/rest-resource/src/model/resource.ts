@@ -28,7 +28,6 @@ interface IModelResourceQueryItemOptions<TData> {
   queryFn: () => Promise<TData>;
   meta?: {
     disableSuspenseOnInit?: boolean;
-    disableErrorEffect?: boolean;
     persister?: QueryMetaPersister | boolean;
   };
 }

@@ -128,10 +128,6 @@ export class ModelStudent extends BeanModelBase {
         const res = await this.scope.api.trainingStudent.summary({ params: { id } });
         return res ?? null;
       },
-      meta: {
-        // The Summary dialog renders query errors itself.
-        disableErrorEffect: true,
-      },
     });
   }
 

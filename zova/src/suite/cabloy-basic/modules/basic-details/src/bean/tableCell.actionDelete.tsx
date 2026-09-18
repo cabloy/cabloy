@@ -8,6 +8,7 @@ import type {
 import { BeanBase } from 'zova';
 import { ZIcon } from 'zova-module-a-icon';
 import { TableCell } from 'zova-module-a-table';
+import { ZButton } from 'zova-module-basic-button';
 
 import { ICommandOptionsDelete } from './command.delete.jsx';
 
@@ -30,10 +31,9 @@ export class TableCellActionDelete extends BeanBase implements ITableCellRender 
   ) {
     const { $host } = renderContext;
     return (
-      <button
+      <ZButton
         class={options.class}
-        type="button"
-        onClick={async () => {
+        onPerform={async () => {
           const confirmed = await $host.$performCommand('basic-commands:confirm', {
             text: this.scope.locale.DeleteConfirm(),
           });
@@ -46,7 +46,7 @@ export class TableCellActionDelete extends BeanBase implements ITableCellRender 
         }}
       >
         <ZIcon name="::delete" width={24}></ZIcon>
-      </button>
+      </ZButton>
     );
   }
 }

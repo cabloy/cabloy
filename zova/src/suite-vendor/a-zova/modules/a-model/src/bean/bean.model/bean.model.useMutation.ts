@@ -41,17 +41,7 @@ export class BeanModelUseMutation extends BeanModelUseStateGeneral {
     mutationKey = this.self._forceQueryKeyPrefix(mutationKey);
     const mutationHash = hashKey(mutationKey);
     if (!this[SymbolUseMutations][mutationHash]) {
-      const optionsDefault: any = {};
-      if (!cast(mutationOptions).meta?.disableErrorEffect) {
-        optionsDefault.onError = (error, variables, context) => {
-          let errorInfo = cast(mutationOptions).meta?.errorInfo;
-          if (typeof errorInfo === 'function') {
-            errorInfo = errorInfo(error, variables, context);
-          }
-          this.$errorHandler(error, errorInfo ?? 'useMutationData');
-        };
-      }
-      mutationOptions = Object.assign(optionsDefault, mutationOptions, { mutationKey });
+      mutationOptions = Object.assign({}, mutationOptions, { mutationKey });
       this[SymbolUseMutations][mutationHash] = this.$useMutation(mutationOptions, queryClient);
     }
     return this[SymbolUseMutations][mutationHash] as UnwrapNestedRefs<

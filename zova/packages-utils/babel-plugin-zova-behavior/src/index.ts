@@ -92,13 +92,16 @@ function createVisitor(context: ContextInfo) {
             ),
           );
           // -> ()=>{}
-          const children = (nodePath.container as any)?.children;
-          if (children && children.length > 0 && !_checkIfHasJsxExpression(children)) {
-            const expressionArray = t.arrayExpression();
-            expressionArray.elements = (nodePath.container as any)?.children;
-            const expressionSlot = t.arrowFunctionExpression([], expressionArray);
+          const children = (nodePath.container as t.JSXElement).children;
+          if (children.length > 0 && _shouldWrapChildrenInSlot(tag, children)) {
+            const expressionSlot = t.arrowFunctionExpression(
+              [],
+              t.arrayExpression([
+                t.jsxFragment(t.jsxOpeningFragment(), t.jsxClosingFragment(), children),
+              ]),
+            );
             const expressionSlotContainer = t.jsxExpressionContainer(expressionSlot);
-            (nodePath.container as any).children = [expressionSlotContainer];
+            (nodePath.container as t.JSXElement).children = [expressionSlotContainer];
           }
         }
       }
@@ -106,8 +109,18 @@ function createVisitor(context: ContextInfo) {
   };
 }
 
-function _checkIfHasJsxExpression(children: t.JSXElement[]) {
-  return children.some(node => t.isJSXExpressionContainer(node));
+function _shouldWrapChildrenInSlot(tag: t.Expression, children: t.JSXElement['children']) {
+  if (_hasExplicitDefaultSlotFunction(children)) return false;
+  return t.isStringLiteral(tag) || !children.some(child => t.isJSXExpressionContainer(child));
+}
+
+function _hasExplicitDefaultSlotFunction(children: t.JSXElement['children']) {
+  if (children.length !== 1) return false;
+  const [child] = children;
+  return (
+    t.isJSXExpressionContainer(child) &&
+    (t.isArrowFunctionExpression(child.expression) || t.isFunctionExpression(child.expression))
+  );
 }
 
 // bs-providerId-moduleName-beanName

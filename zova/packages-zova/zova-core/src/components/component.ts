@@ -9,11 +9,12 @@ export function createZovaComponentPage<M, R, S>(
   controller: Constructable<M>,
   render?: Constructable<R>,
   style?: Constructable<S>,
+  componentOptions?: IComponentOptions,
 ) {
   return defineComponent(() => {
     useControllerPage(controller, render, style);
     return () => {};
-  });
+  }, prepareComponentOptions(componentOptions));
 }
 
 export function prepareComponentOptions(componentOptions?: IComponentOptions) {

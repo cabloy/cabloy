@@ -21,8 +21,12 @@ export class CtxComponent extends BeanSimple {
     const self = this;
     instance[renderMethod] = function (this, ...args) {
       if (instance.isUnmounted) return;
-      if (!self.ctx.meta.state.inited.state) {
-        return self._bean_render_original.call(this, ...args);
+      const loadStatus = self.ctx.meta.state.loadStatus;
+      if (loadStatus === 'loading') {
+        return self.ctx.meta.state.loadLoadingVisible ? self._renderLoading() : null;
+      }
+      if (loadStatus === 'error') {
+        return self._renderError(self.ctx.meta.state.loadError);
       }
       const render = self._getRender();
       if (!render) {
@@ -77,6 +81,30 @@ export class CtxComponent extends BeanSimple {
     this._ssrRenderReset = false;
   }
 
+  private _renderLoading() {
+    const renderMode = this.ctx.meta.state.loadRenderMode;
+    const controller = this.ctx.meta.state.loadController as any;
+    if (controller?.renderLoading) {
+      return controller.renderLoading(renderMode);
+    }
+    const renderLoading = this.sys.config.boundary.renderLoading;
+    return renderLoading?.(this.ctx, renderMode) ?? null;
+  }
+
+  private _renderError(error: unknown) {
+    const renderMode = this.ctx.meta.state.loadRenderMode;
+    const retry = this.ctx.meta.state.loadRetry;
+    const controller = this.ctx.meta.state.loadController as any;
+    if (controller?.renderError) {
+      return controller.renderError(error, renderMode, retry);
+    }
+    const renderError = this.sys.config.boundary.renderError;
+    if (renderError) {
+      return renderError(this.ctx, error, renderMode, retry);
+    }
+    return _renderErrorDefault(error);
+  }
+
   private _getRender(): any {
     const render = this.bean._getBeanSyncOnly<BeanControllerBase>(BeanControllerIdentifier);
     if (!render) return;
@@ -84,4 +112,11 @@ export class CtxComponent extends BeanSimple {
     if ((render as any).render) return render;
     return this.bean._getBeanSyncOnly(BeanRenderIdentifier);
   }
+}
+
+function _renderErrorDefault(error: unknown) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return String(error);
 }

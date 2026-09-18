@@ -1,6 +1,7 @@
 export default {
   Home: 'Home',
   GoHome: 'Go Home',
+  Retry: 'Retry',
   LanguageEnglish: 'English',
   LanguageChinese: 'Chinese',
   VonaIntegratedSsr: 'Vona integrated SSR',

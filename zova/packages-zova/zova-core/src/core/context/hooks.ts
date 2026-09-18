@@ -1,6 +1,6 @@
 import { BeanSimple } from '../../bean/beanSimple.ts';
 
-export type ZovaHookType = 'created' | 'mounted';
+export type ZovaHookType = 'created' | 'mounted' | 'hydrated';
 
 export const SymbolHooksFns = Symbol('SymbolHooksFns');
 export const SymbolHooksState = Symbol('SymbolHooksState');
@@ -18,8 +18,19 @@ export class CtxHooks extends BeanSimple {
     this._onHook('created', fn);
   }
 
-  onMounted(fn: any) {
+  onMounted(fn: any, owner?: object) {
+    if (owner && !this.ctx.meta.state.isLoadBeanActive(owner)) return;
     this._onHook('mounted', fn);
+  }
+
+  /** @internal */
+  public onHydrated(fn: any) {
+    this._onHook('hydrated', fn);
+  }
+
+  clearMounted() {
+    if (this[SymbolHooksState].mounted) return;
+    this[SymbolHooksFns].mounted = undefined;
   }
 
   private _onHook(type: ZovaHookType, fn: any) {

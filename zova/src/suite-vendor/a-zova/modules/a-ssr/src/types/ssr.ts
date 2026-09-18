@@ -66,7 +66,21 @@ export interface SSRContextState {
   ssrProfile?: TypeSsrProfile;
   ssrProfileOptions?: Readonly<ISsrProfileOptions>;
 }
-export interface SSRContextStateDefer {}
+export interface SSRControllerLoadErrorSnapshot {
+  version: 1;
+  controllerBeanName?: string;
+  name: string;
+  message: string;
+  code?: number | string;
+  status?: number | string;
+  pagePath?: string;
+  url?: string;
+  controllerRecorded: boolean;
+}
+
+export interface SSRContextStateDefer {
+  controllerLoad?: Record<string, SSRControllerLoadErrorSnapshot>;
+}
 
 // from: quasar/dist/types/meta.d.ts
 // Cannot use `Record<string, string>` as TS would error out about `template` signature

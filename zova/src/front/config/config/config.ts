@@ -9,6 +9,8 @@ import type { IThemeRecord } from 'zova-module-a-style';
 import { colorizer, combine, errors, splatter, timestamp } from '@cabloy/logger';
 import { formatLoggerConsole, formatLoggerFilter } from 'zova';
 
+import { renderError, renderLoading } from './render.jsx';
+
 export default function (sys: ZovaSys) {
   const config: ZovaConfigOptional = {};
   const env = sys.env;
@@ -31,6 +33,15 @@ export default function (sys: ZovaSys) {
     title: env.APP_TITLE,
     description: env.APP_DESCRIPTION,
     version: env.APP_VERSION,
+  };
+
+  // boundary
+  config.boundary = {
+    loading: {
+      delay: 500,
+    },
+    renderLoading,
+    renderError,
   };
 
   // api
