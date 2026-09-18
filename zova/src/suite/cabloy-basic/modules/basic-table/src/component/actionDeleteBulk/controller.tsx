@@ -6,6 +6,7 @@ import type {
 
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
+import { ZButton } from 'zova-module-basic-button';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableActionBulkRecord {
@@ -27,13 +28,12 @@ export class ControllerActionDeleteBulk extends BeanControllerBase {
     const { dynamicDisabledReason, dynamicSelection } = this.$props;
     const disabled = this.$props.disabled === true || this.$props.dynamicDisabled === true;
     return (
-      <button
+      <ZButton
         class={this.$props.class}
-        type="button"
         disabled={disabled}
         title={dynamicDisabledReason}
         aria-description={dynamicDisabledReason}
-        onClick={async () => {
+        onPerform={async () => {
           if (disabled) return;
           const confirmed = await this.$performCommand(
             'basic-commands:confirm',
@@ -51,7 +51,7 @@ export class ControllerActionDeleteBulk extends BeanControllerBase {
         }}
       >
         {this.scope.locale.DeleteBulk() as string}
-      </button>
+      </ZButton>
     );
   }
 }

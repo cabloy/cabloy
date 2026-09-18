@@ -4,6 +4,7 @@ import type { ModelPayMockPayment } from 'zova-module-pay-mock';
 
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
+import { ZButton } from 'zova-module-basic-button';
 
 import type {
   ApiSchemaCommerceTradeDtoOrderSelectResItem,
@@ -118,22 +119,20 @@ export class ControllerTableCellActionRefund extends BeanControllerBase {
               <button class="btn btn-ghost" type="button" onClick={dialog.close}>
                 {this.scope.locale.Cancel()}
               </button>
-              <button
+              <ZButton
                 class="btn btn-error"
-                type="button"
                 disabled={disabled}
-                onClick={() => this._submitDecision(false, dialog.close)}
+                onPerform={() => this._submitDecision(false, dialog.close)}
               >
                 {this.scope.locale.RejectRefund()}
-              </button>
-              <button
+              </ZButton>
+              <ZButton
                 class="btn btn-warning"
-                type="button"
                 disabled={disabled}
-                onClick={() => this._submitDecision(true, dialog.close)}
+                onPerform={() => this._submitDecision(true, dialog.close)}
               >
                 {this.scope.locale.ApproveRefund()}
-              </button>
+              </ZButton>
             </>
           );
         },
@@ -397,14 +396,13 @@ export class ControllerTableCellActionRefund extends BeanControllerBase {
                           )}
                         {(recoveryData.recoveryDisposition === 'query_only' ||
                           recoveryData.recoveryDisposition === 'reconcile_only') && (
-                          <button
+                          <ZButton
                             class="btn btn-outline btn-sm mt-2"
-                            type="button"
                             disabled={this._recoveryActionPending}
-                            onClick={() => this._reconcile()}
+                            onPerform={() => this._reconcile()}
                           >
                             {this.scope.locale.ReconcileProviderRefund()}
-                          </button>
+                          </ZButton>
                         )}
                         {recoveryData.recoveryDisposition === 'retry_same_key' && (
                           <>
@@ -419,14 +417,13 @@ export class ControllerTableCellActionRefund extends BeanControllerBase {
                                 {this.scope.locale.AcknowledgeRefundRetryRisk()}
                               </span>
                             </label>
-                            <button
+                            <ZButton
                               class="btn btn-warning btn-sm"
-                              type="button"
                               disabled={this._recoveryActionPending}
-                              onClick={() => this._retry()}
+                              onPerform={() => this._retry()}
                             >
                               {this.scope.locale.RetryRefund()}
-                            </button>
+                            </ZButton>
                           </>
                         )}
                       </>
@@ -444,14 +441,13 @@ export class ControllerTableCellActionRefund extends BeanControllerBase {
               <button class="btn btn-ghost" type="button" onClick={dialog.close}>
                 {this.scope.locale.Cancel()}
               </button>
-              <button
+              <ZButton
                 class="btn btn-warning"
-                type="button"
                 disabled={disabled}
-                onClick={() => this._execute(dialog.close)}
+                onPerform={() => this._execute(dialog.close)}
               >
                 {this.scope.locale.ExecuteRefund()}
-              </button>
+              </ZButton>
             </>
           );
         },

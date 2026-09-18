@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
+import { ZButton } from 'zova-module-basic-button';
 import { ZPage } from 'zova-module-home-base';
 
 import { ModelCart } from '../../model/cart.js';
@@ -62,9 +63,9 @@ export class ControllerPageCart extends BeanControllerPageBase {
                   <RouterLink class="btn btn-primary btn-sm" to={this._getCheckoutPagePath()}>
                     {this.scope.locale.Checkout()}
                   </RouterLink>
-                  <button class="btn btn-outline btn-sm" onClick={() => this.clear()}>
+                  <ZButton class="btn btn-outline btn-sm" onPerform={() => this.clear()}>
                     {this.scope.locale.ClearCart()}
-                  </button>
+                  </ZButton>
                 </>
               )}
             </div>
@@ -93,12 +94,12 @@ export class ControllerPageCart extends BeanControllerPageBase {
                           onChange={(event: Event) => this.updateQuantity(String(item.id), event)}
                         />
                       </label>
-                      <button
+                      <ZButton
                         class="btn btn-error btn-outline btn-sm"
-                        onClick={() => this.deleteItem(String(item.id))}
+                        onPerform={() => this.deleteItem(String(item.id))}
                       >
                         {this.scope.locale.RemoveCartItem()}
-                      </button>
+                      </ZButton>
                     </div>
                   </div>
                 </article>

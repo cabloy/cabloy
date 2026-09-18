@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
+import { ZButton } from 'zova-module-basic-button';
 import { ZMarkdownHtml } from 'zova-module-basic-markdown';
 import { ZPage } from 'zova-module-home-base';
 
@@ -88,12 +89,12 @@ export class ControllerPageProduct extends BeanControllerPageBase {
                       <span class="badge badge-success">
                         {this.scope.locale.AvailableCount(sku.available)}
                       </span>
-                      <button
+                      <ZButton
                         class="btn btn-primary btn-sm"
-                        onClick={() => this.addItem(String(sku.id))}
+                        onPerform={() => this.addItem(String(sku.id))}
                       >
                         {this.scope.locale.AddToCart()}
-                      </button>
+                      </ZButton>
                     </div>
                   ))}
                 </div>

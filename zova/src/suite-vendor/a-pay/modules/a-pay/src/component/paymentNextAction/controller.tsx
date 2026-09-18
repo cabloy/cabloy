@@ -1,5 +1,6 @@
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
+import { ZButton } from 'zova-module-basic-button';
 
 import type { TypePaymentNextAction } from '../../types/payment.js';
 
@@ -49,13 +50,13 @@ export class ControllerPaymentNextAction extends BeanControllerBase {
       return (
         <div class="mt-6 space-y-3">
           <p class="text-base-content/70">{continueToPaymentHelpText}</p>
-          <button
+          <ZButton
             class="btn btn-primary"
             disabled={disabled}
-            onClick={() => this.continueRedirect()}
+            onPerform={() => this.continueRedirect()}
           >
             {continueToPaymentText}
-          </button>
+          </ZButton>
         </div>
       );
     }
@@ -68,9 +69,9 @@ export class ControllerPaymentNextAction extends BeanControllerBase {
               : paymentPreparingText}
           </p>
           {onRefresh && (
-            <button class="btn btn-outline" disabled={disabled} onClick={() => onRefresh()}>
+            <ZButton class="btn btn-outline" disabled={disabled} onPerform={() => onRefresh()}>
               {refreshPaymentStatusText}
-            </button>
+            </ZButton>
           )}
         </div>
       );

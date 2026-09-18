@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
+import { ZButton } from 'zova-module-basic-button';
 import { ZPage } from 'zova-module-home-base';
 
 import { ModelOrderMine } from '../../model/orderMine.js';
@@ -101,14 +102,13 @@ export class ControllerPageOrder extends BeanControllerPageBase {
                       placeholder={this.scope.locale.RefundReason()}
                       v-model={this.refundReason}
                     />
-                    <button
+                    <ZButton
                       class="btn btn-outline btn-warning self-start"
-                      type="button"
                       disabled={!this.refundReason.trim() || this.mutationRequestRefund.isPending}
-                      onClick={() => this._requestRefund()}
+                      onPerform={() => this._requestRefund()}
                     >
                       {this.scope.locale.RequestRefund()}
-                    </button>
+                    </ZButton>
                   </div>
                 </article>
               )}

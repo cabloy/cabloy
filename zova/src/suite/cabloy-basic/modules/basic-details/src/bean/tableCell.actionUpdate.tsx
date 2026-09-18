@@ -10,6 +10,7 @@ import { BeanBase, deepExtend } from 'zova';
 import { TypeFormOnSubmitData } from 'zova-module-a-form';
 import { IIconRecord, ZIcon } from 'zova-module-a-icon';
 import { TableCell } from 'zova-module-a-table';
+import { ZButton } from 'zova-module-basic-button';
 
 import { ServiceDetail } from '../service/detail.jsx';
 import { IDialogFormOptions } from '../types/dialogForm.js';
@@ -35,10 +36,9 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
   ) {
     const { ctx, $celScope, cellContext } = renderContext;
     return (
-      <button
+      <ZButton
         class={options.class}
-        type="button"
-        onClick={async () => {
+        onPerform={async () => {
           const $$details = $celScope.$$details;
           if (!$$details) throw new Error('should provide $$details in cell scope');
           const detailItem = cellContext.row.original as Record<string, any>;
@@ -68,7 +68,7 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
         }}
       >
         <ZIcon name="::draft" width={24}></ZIcon>
-      </button>
+      </ZButton>
     );
   }
 }

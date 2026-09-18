@@ -7,6 +7,7 @@ import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZForm } from 'zova-module-a-form';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
+import { ZButton } from 'zova-module-basic-button';
 
 import type { ApiApiCommerceTradeStockBalanceadjustStockRequestBody } from '../../api/commerceTradeStockBalance.js';
 import type { ITableCellOptionsActionAdjustStock } from '../../bean/tableCell.actionAdjustStock.js';
@@ -130,9 +131,9 @@ export class ControllerTableCellActionAdjustStock extends BeanControllerBase {
   protected render() {
     const props = this.$props as ControllerTableCellActionAdjustStockProps;
     return (
-      <button class={props.class} type="button" onClick={() => this._openDialog()}>
+      <ZButton class={props.class} onPerform={() => this._openDialog()}>
         {this.scope.locale.AdjustStock()}
-      </button>
+      </ZButton>
     );
   }
 }

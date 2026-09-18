@@ -6,6 +6,7 @@ import type {
 
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
+import { ZButton } from 'zova-module-basic-button';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableActionBulkRecord {
@@ -28,17 +29,16 @@ export class ControllerActionCreate extends BeanControllerBase {
   protected render() {
     const disabled = this.$props.disabled === true || this.$props.dynamicDisabled === true;
     return (
-      <button
+      <ZButton
         class={this.$props.class}
-        type="button"
         disabled={disabled}
-        onClick={async () => {
+        onPerform={async () => {
           if (disabled) return;
           await this.$performCommand('basic-commands:create', this.$props, this.$$renderContext);
         }}
       >
         {this.scope.locale.Create()}
-      </button>
+      </ZButton>
     );
   }
 }

@@ -7,6 +7,7 @@ import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZForm } from 'zova-module-a-form';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
+import { ZButton } from 'zova-module-basic-button';
 import { ZPage } from 'zova-module-home-base';
 
 import type {
@@ -127,12 +128,12 @@ export class ControllerPageAddress extends BeanControllerPageBase {
                         <button class="btn btn-outline btn-sm" onClick={() => this.edit(item)}>
                           {this.scope.locale.EditAddress()}
                         </button>
-                        <button
+                        <ZButton
                           class="btn btn-error btn-outline btn-sm"
-                          onClick={() => this.delete(item)}
+                          onPerform={() => this.delete(item)}
                         >
                           {this.scope.locale.DeleteAddress()}
-                        </button>
+                        </ZButton>
                       </div>
                     </div>
                     <p>{item.addressLine1}</p>

@@ -3,6 +3,7 @@ import type { IJsxRenderContextTableCell } from 'zova-module-a-table';
 
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
+import { ZButton } from 'zova-module-basic-button';
 
 import type { ITableCellOptionsActionShip } from '../../bean/tableCell.actionShip.js';
 import type { ModelOrder } from '../../model/order.js';
@@ -57,9 +58,9 @@ export class ControllerTableCellActionShip extends BeanControllerBase {
           />
           <span class="label-text text-xs">{this.scope.locale.Confirm()}</span>
         </label>
-        <button class={props.class} type="button" onClick={() => this._ship()}>
+        <ZButton class={props.class} onPerform={() => this._ship()}>
           {this.scope.locale.ShipOrder()}
-        </button>
+        </ZButton>
       </div>
     );
   }

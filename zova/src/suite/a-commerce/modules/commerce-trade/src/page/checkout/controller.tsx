@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { $QueriesEnsureLoaded } from 'zova-module-a-model';
+import { ZButton } from 'zova-module-basic-button';
 import { ModelAddressMine } from 'zova-module-commerce-member';
 import { ModelCoupon } from 'zova-module-commerce-promotion';
 import { ZPage } from 'zova-module-home-base';
@@ -57,7 +58,7 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
         correlationId: `${Date.now()}-${Math.random().toString(36).slice(2, 12)}`,
         providerCandidateKey: this.providerCandidateKey,
       });
-      this.$router.push(
+      await this.$router.push(
         this.$router.getPagePath('/commerce/trade/payment/:paymentSessionId/:orderId', {
           params: {
             paymentSessionId: String(result.paymentSessionId),
@@ -139,13 +140,13 @@ export class ControllerPageCheckout extends BeanControllerPageBase {
                 </label>
               ))}
             </fieldset>
-            <button
+            <ZButton
               class="btn btn-primary"
               disabled={!this.addressId || !this.providerCandidateKey || this.submitting}
-              onClick={() => this.checkout()}
+              onPerform={() => this.checkout()}
             >
               {this.scope.locale.CreateOrder()}
-            </button>
+            </ZButton>
           </div>
         </section>
       </ZPage>

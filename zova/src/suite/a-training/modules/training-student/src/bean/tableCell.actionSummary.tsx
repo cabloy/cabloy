@@ -9,6 +9,7 @@ import type { ModelStudent } from 'zova-module-training-student';
 
 import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
+import { ZButton } from 'zova-module-basic-button';
 import { ZMarkdownHtml } from 'zova-module-basic-markdown';
 
 declare module 'zova-module-a-openapi' {
@@ -30,10 +31,9 @@ export class TableCellActionSummary extends BeanBase implements ITableCellRender
   ) {
     const { $host, cellContext, ctx } = renderContext;
     return (
-      <button
+      <ZButton
         class={options.class}
-        type="button"
-        onClick={async () => {
+        onPerform={async () => {
           const id = cellContext.row.id as TableIdentity;
           const modelStudent = (await ctx.bean._getBean(
             'training-student.model.student',
@@ -84,7 +84,7 @@ export class TableCellActionSummary extends BeanBase implements ITableCellRender
         }}
       >
         {this.scope.locale.Summary()}
-      </button>
+      </ZButton>
     );
   }
 }

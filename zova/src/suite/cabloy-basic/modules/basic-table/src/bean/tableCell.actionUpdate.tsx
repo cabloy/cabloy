@@ -8,6 +8,7 @@ import type {
 import { BeanBase } from 'zova';
 import { ZIcon } from 'zova-module-a-icon';
 import { TableCell } from 'zova-module-a-table';
+import { ZButton } from 'zova-module-basic-button';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableActionRowRecord {
@@ -28,15 +29,14 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
   ) {
     const { $host } = renderContext;
     return (
-      <button
+      <ZButton
         class={options.class}
-        type="button"
-        onClick={async () => {
+        onPerform={async () => {
           await $host.$performCommand('basic-commands:edit', options, renderContext);
         }}
       >
         <ZIcon name="::draft" width={24}></ZIcon>
-      </button>
+      </ZButton>
     );
   }
 }

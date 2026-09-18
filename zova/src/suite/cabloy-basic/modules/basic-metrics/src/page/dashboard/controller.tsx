@@ -1,6 +1,7 @@
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
+import { ZButton } from 'zova-module-basic-button';
 
 import { ModelMetrics } from '../../model/metrics.js';
 
@@ -24,9 +25,14 @@ export class ControllerPageDashboard extends BeanControllerPageBase {
       <main class="p-6">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <h1 class="text-2xl font-semibold">Metrics</h1>
-          <button class="btn btn-sm" onClick={() => this.querySnapshot.refetch()}>
+          <ZButton
+            class="btn btn-sm"
+            onPerform={async () => {
+              await this.querySnapshot.refetch({ throwOnError: true });
+            }}
+          >
             Refresh
-          </button>
+          </ZButton>
         </div>
         {!snapshot.enabled ? (
           <div class="alert mt-6">Metrics collection is disabled.</div>
