@@ -541,7 +541,7 @@ describe('student.test.ts', { concurrency: false }, () => {
         const deleted = await app.bean.executor.performAction(
           'post',
           '/training/student/bulk/delete',
-          { body: { ids: [studentId, studentId, '__missing-student__'] } },
+          { body: { ids: [studentId, studentId, '-1'] } },
         );
         assert.equal(deleted, null);
         assert.equal(
