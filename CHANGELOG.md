@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.174
+
+### Improvements
+
+- Refresh dependency lockfiles and core patches to prepare for compensation reruns.
+
 ## 5.1.173
 
 ### Features
