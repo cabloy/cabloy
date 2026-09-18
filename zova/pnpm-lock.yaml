@@ -153,9 +153,6 @@ importers:
       zova-module-a-behaviors:
         specifier: workspace:^
         version: link:src/suite-vendor/a-zova/modules/a-behaviors
-      zova-module-a-boundary:
-        specifier: workspace:^
-        version: link:src/suite-vendor/a-zova/modules/a-boundary
       zova-module-a-command:
         specifier: workspace:^
         version: link:src/suite-vendor/a-zova/modules/a-command
@@ -1084,9 +1081,6 @@ importers:
       zova-module-a-behaviors:
         specifier: ^5.1.22
         version: link:modules/a-behaviors
-      zova-module-a-boundary:
-        specifier: ^5.1.22
-        version: link:modules/a-boundary
       zova-module-a-command:
         specifier: ^5.1.35
         version: link:modules/a-command
@@ -1186,15 +1180,6 @@ importers:
         version: 6.1.3
 
   src/suite-vendor/a-zova/modules/a-behaviors:
-    devDependencies:
-      clean-package:
-        specifier: ^2.2.0
-        version: 2.2.0
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.3
-
-  src/suite-vendor/a-zova/modules/a-boundary:
     devDependencies:
       clean-package:
         specifier: ^2.2.0
