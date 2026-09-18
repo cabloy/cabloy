@@ -8,6 +8,7 @@ import type {
 import { TableIdentity } from 'table-identity';
 import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
+import { ZButton } from 'zova-module-basic-button';
 
 import type { ModelStudent } from '../model/student.js';
 
@@ -30,10 +31,9 @@ export class TableCellActionDeleteForce extends BeanBase implements ITableCellRe
   ) {
     const { $host, cellContext, ctx } = renderContext;
     return (
-      <button
+      <ZButton
         class={options.class}
-        type="button"
-        onClick={async () => {
+        onPerform={async () => {
           const confirmed = await $host.$performCommand('basic-commands:confirm', {
             text: this.scope.locale.ForceDeleteConfirm(),
           });
@@ -47,7 +47,7 @@ export class TableCellActionDeleteForce extends BeanBase implements ITableCellRe
         }}
       >
         {this.scope.locale.ForceDelete()}
-      </button>
+      </ZButton>
     );
   }
 }
