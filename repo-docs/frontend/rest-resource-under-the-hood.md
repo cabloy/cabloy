@@ -9,6 +9,7 @@ Use this page together with:
 - [Using `ModelResource` in Your Module](/frontend/model-resource-usage-guide)
 - [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook)
 - [Form Guide](/frontend/form-guide)
+- [Resource Picker Guide](/frontend/resource-picker-guide)
 - [Zova Source Reading Map](/frontend/zova-source-reading-map)
 
 Use this page after [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern) when you want to move from the model-focused explanation to the internal cooperation among route records, generated page wrappers, page-shell controllers, schema-driven block rendering, selector-backed resource ownership, and downstream CRUD block runtimes.
@@ -62,12 +63,12 @@ This page is that bridge.
 
 For a typical `rest-resource` page, the shortest accurate model is:
 
-1. `routes.ts` declares one generic resource list route and two generic resource entry routes
+1. `routes.ts` declares one generic resource list route, two generic resource entry routes, and one host-dependent Resource Picker route
 2. generated `ZPage*` wrappers bind those route records to page-controller classes through `createZovaComponentPage(...)`
-3. the page controller resolves a selector-backed `ModelResource` instance from the current `resource`
+3. the ordinary page controllers resolve a selector-backed `ModelResource` instance from the current `resource`; the picker controller also requires a matching host-scoped picker contract
 4. `ModelResource.__init__(resource)` bootstraps the resource metadata and resolves the final `resourceApi`
 5. the model exposes resource-level computed surfaces such as permissions, form provider, and select/view/create/update schemas
-6. the list shell reads `schemaRow.rest.blocks`, while the entry shell reads `formSchema.rest.blocks`
+6. the list and picker shells read `schemaRow.rest.blocks`, while the entry shell reads `formSchema.rest.blocks`
 7. those blocks usually enter downstream generic runtimes such as `basic-page:blockPage` or `basic-pageentry:blockPageEntry`
 8. those downstream runtimes resolve the same selector-backed `ModelResource` again and own the deeper list/form behavior
 9. commands such as delete can also reuse the same model boundary instead of inventing page-local mutation logic
@@ -93,10 +94,11 @@ Use this diagram when the question is:
 ```text
 Route record
   └─ routes.ts
-       └─ ZPageResource / ZPageEntry / ZPageEntryCreate
+       └─ ZPageResource / ZPageEntry / ZPageEntryCreate / ZPageResourcePicker
             └─ createZovaComponentPage(...)
                  └─ page-controller shell
                       ├─ resolves current resource / id / formScene
+                      ├─ picker route additionally resolves its host-scoped picker contract
                       ├─ resolves selector-backed ModelResource
                       ├─ ensures top-level API schema surface is loaded
                       └─ reads schemaRow.rest.blocks or formSchema.rest.blocks
@@ -127,7 +129,8 @@ Route record
 
 Read this top-down:
 
-- the route and page shell choose the scene
+- the ordinary route and page shell choose the CRUD scene
+- the picker route additionally requires its routed-dialog host to choose its selection workflow
 - schema metadata chooses the block composition
 - generic Basic blocks own the richer CRUD page behavior
 - `ModelResource` remains the stable owner of resource semantics underneath all of them
@@ -140,6 +143,7 @@ The smallest module-level source set is:
 zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/routes.ts
 zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/resource/controller.tsx
 zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/entry/controller.tsx
+zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/resourcePicker/controller.tsx
 zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/model/resource.ts
 ```
 
@@ -166,14 +170,16 @@ When you want to trace the full mechanism, read these files in order:
 2. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/.metadata/page/resource.ts`
 3. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/.metadata/page/entry.ts`
 4. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/.metadata/page/entryCreate.ts`
-5. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/resource/controller.tsx`
-6. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/entry/controller.tsx`
-7. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/entryCreate/controller.tsx`
-8. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/model/resource.ts`
-9. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockPage/controller.tsx`
-10. `zova/src/suite/cabloy-basic/modules/basic-pageentry/src/component/blockPageEntry/controller.tsx`
-11. `zova/src/suite/cabloy-basic/modules/basic-commands/src/bean/command.delete.tsx`
-12. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/.metadata/index.ts`
+5. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/.metadata/page/resourcePicker.ts`
+6. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/resource/controller.tsx`
+7. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/entry/controller.tsx`
+8. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/entryCreate/controller.tsx`
+9. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/resourcePicker/controller.tsx`
+10. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/model/resource.ts`
+11. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockPage/controller.tsx`
+12. `zova/src/suite/cabloy-basic/modules/basic-pageentry/src/component/blockPageEntry/controller.tsx`
+13. `zova/src/suite/cabloy-basic/modules/basic-commands/src/bean/command.delete.tsx`
+14. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/.metadata/index.ts`
 
 A compact role map is:
 
@@ -182,6 +188,7 @@ A compact role map is:
 - `page/resource/controller.tsx` shows the list-page shell
 - `page/entry/controller.tsx` shows the entry-page shell
 - `page/entryCreate/controller.tsx` shows virtual create-route reuse
+- `page/resourcePicker/controller.tsx` shows the host-dependent picker shell
 - `model/resource.ts` shows the owner core
 - `blockPage/controller.tsx` shows the deeper list runtime
 - `blockPageEntry/controller.tsx` shows the deeper form runtime
@@ -198,29 +205,28 @@ Start with:
 zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/routes.ts
 ```
 
-This file declares three routes:
+This file declares four routes:
 
 - `:resource`
 - `:resource/create`
 - `:resource/:id/:formScene?`
+- `:resource/picker`
 
-That already reveals the module’s public role.
+The first three are ordinary resource workspace routes. The fourth is the host-dependent Resource Picker route; it is normally embedded in a routed dialog instead of entered as a direct browser destination. See [Resource Picker Guide](/frontend/resource-picker-guide) for the public field contract.
 
-It is not a resource-specific module such as Student or Product.
-
-It is a generic module whose runtime identity comes from the route params.
+The module is not a resource-specific module such as Student or Product. Its runtime identity comes from the route params.
 
 ### Why the shared `tabKey` matters
 
-All three routes use the same `tabKey(route)` shape:
+The list, create, and entry routes use the same `tabKey(route)` shape:
 
 ```typescript
 `/rest/resource/${encodeURIComponent(route.params.resource)}`;
 ```
 
-This means the workspace identity is resource-level rather than row-level.
+This means their workspace identity is resource-level rather than row-level. The picker route deliberately does not share the workspace tab identity because its controller requires the host-scoped picker contract supplied by the routed-dialog caller.
 
-So the list page, create page, and entry page for one resource remain grouped under one resource-oriented tab boundary.
+The list page, create page, and entry page for one resource remain grouped under one resource-oriented tab boundary.
 
 ## 2. Generated page wrappers enter the normal Zova page-controller path
 
@@ -229,6 +235,7 @@ Read next:
 - `src/.metadata/page/resource.ts`
 - `src/.metadata/page/entry.ts`
 - `src/.metadata/page/entryCreate.ts`
+- `src/.metadata/page/resourcePicker.ts`
 
 These files are intentionally thin.
 
@@ -237,6 +244,7 @@ They show that each route component is generated as a `ZPage*` wrapper through:
 - `createZovaComponentPage(ControllerPageResource, ...)`
 - `createZovaComponentPage(ControllerPageEntry, ...)`
 - `createZovaComponentPage(ControllerPageEntryCreate, ...)`
+- `createZovaComponentPage(ControllerPageResourcePicker, ...)`
 
 They also surface the Zod-based params schemas for each page.
 
@@ -333,7 +341,19 @@ This is an important Zova design clue:
 - page identity can differ
 - controller logic can still stay shared
 
-## 6. `ModelResource` is the owner core behind both shells
+## 6. Resource Picker shell requires its routed-dialog host
+
+Read:
+
+```text
+zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/resourcePicker/controller.tsx
+```
+
+`ControllerPageResourcePicker` resolves the target resource and its select schema, then renders the target resource's existing list blocks through a host adapter. It is intentionally unlike the ordinary CRUD page shells: it requires a host-scoped picker contract, verifies that the host resource matches the route resource, and delegates selection adaptation plus confirmation/cancellation to that host.
+
+The route is therefore part of a hosted routed-dialog workflow rather than a standalone page-navigation surface. For the supported metadata, value, and display contract, see [Resource Picker Guide](/frontend/resource-picker-guide).
+
+## 7. `ModelResource` is the owner core behind both shells
 
 Read:
 
@@ -345,7 +365,7 @@ This file is the stable owner boundary behind the route shells.
 
 At the module-runtime level, the most important steps are:
 
-### 6.1 Selector-backed initialization
+### 7.1 Selector-backed initialization
 
 `ModelResource` is decorated with:
 
@@ -361,7 +381,7 @@ protected async __init__(resource: string)
 
 That means one generic model class can serve many resources safely, because the runtime identity comes from the selector resource name.
 
-### 6.2 Bootstrap resolves the final `resourceApi`
+### 7.2 Bootstrap resolves the final `resourceApi`
 
 Inside initialization, `_bootstrap()` calls:
 
@@ -381,7 +401,7 @@ The model does not assume a hardcoded final API path.
 
 It bootstraps the resource metadata first, then derives the stable runtime API boundary from that metadata.
 
-### 6.3 The model exposes resource-level metadata surfaces
+### 7.3 The model exposes resource-level metadata surfaces
 
 Still inside initialization, the model creates computed surfaces for:
 
@@ -398,7 +418,7 @@ That is why the page shells can stay thin.
 
 They do not need to invent schema or permission lookup rules locally, because the owner already exposes them.
 
-### 6.4 The model owns query, mutation, and form semantics
+### 7.4 The model owns query, mutation, and form semantics
 
 The same owner also provides:
 
@@ -419,7 +439,7 @@ A practical reading takeaway is:
 
 > routes and page shells give the module its outer shape, but `ModelResource` gives it its resource truth.
 
-## 7. `basic-page:blockPage` is the deeper list runtime
+## 8. `basic-page:blockPage` is the deeper list runtime
 
 Read:
 
@@ -450,7 +470,7 @@ rest-resource page shell
 
 So if you are debugging list-page behavior such as paging, filtering, or table refresh, stopping at `ControllerPageResource` is usually too early.
 
-## 8. `basic-pageentry:blockPageEntry` is the deeper form runtime
+## 9. `basic-pageentry:blockPageEntry` is the deeper form runtime
 
 Read:
 
@@ -483,7 +503,7 @@ rest-resource entry shell
 
 So if you are debugging entry-page behavior such as submit, title updates, or row-data loading, stopping at `ControllerPageEntry` is usually too early.
 
-## 9. Commands can reuse the same owner boundary
+## 10. Commands can reuse the same owner boundary
 
 Read:
 
@@ -510,7 +530,7 @@ This is one reason the owner boundary is so valuable.
 
 The mutation policy remains centralized even when the caller is not a page.
 
-## 10. Generated metadata is a registry layer, not the main runtime layer
+## 11. Generated metadata is a registry layer, not the main runtime layer
 
 Read last:
 

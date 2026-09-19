@@ -53,9 +53,9 @@ It is also a **route-to-page-shell-to-block-to-model bridge** for resource-drive
 
 If you only remember one mental model, remember this one:
 
-1. `routes.ts` chooses one of three resource-oriented pages
+1. `routes.ts` declares three ordinary resource workspace routes and one host-dependent picker route
 2. generated `ZPage*` wrappers bind those route entries to page controllers
-3. the page controllers resolve the current `resource`, `id`, and `formScene`
+3. the ordinary page controllers resolve the current `resource`, `id`, and `formScene`, while the picker controller also requires its host-scoped picker contract
 4. the page controllers load top-level schema metadata and render `rest.blocks`
 5. those rendered blocks usually enter generic Basic runtimes such as `basic-page:blockPage` or `basic-pageentry:blockPageEntry`
 6. those downstream runtimes resolve the same selector-backed `ModelResource` instance again
@@ -65,13 +65,15 @@ A compact relationship map is:
 
 ```text
 routes.ts
-  └─ ZPageResource / ZPageEntry / ZPageEntryCreate
+  └─ ZPageResource / ZPageEntry / ZPageEntryCreate / ZPageResourcePicker
        └─ page controller shell
             └─ schema rest.blocks
                  └─ generic Basic blocks
                       └─ selector-backed ModelResource
                            └─ OpenAPI bootstrap / fetch / mutation / invalidation
 ```
+
+The picker route is intentionally different from an ordinary workspace page: it consumes an injected host contract and is normally entered through a routed dialog. For its public authoring contract, see [Resource Picker Guide](/frontend/resource-picker-guide).
 
 That is why `rest-resource` should not be read as “one page that does CRUD directly”.
 
@@ -89,14 +91,16 @@ When you want the shortest correct reading order, use this sequence:
 2. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/.metadata/page/resource.ts`
 3. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/.metadata/page/entry.ts`
 4. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/.metadata/page/entryCreate.ts`
-5. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/resource/controller.tsx`
-6. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/entry/controller.tsx`
-7. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/entryCreate/controller.tsx`
-8. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/model/resource.ts`
-9. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockPage/controller.tsx`
-10. `zova/src/suite/cabloy-basic/modules/basic-pageentry/src/component/blockPageEntry/controller.tsx`
-11. `zova/src/suite/cabloy-basic/modules/basic-commands/src/bean/command.delete.tsx`
-12. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/.metadata/index.ts`
+5. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/.metadata/page/resourcePicker.ts`
+6. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/resource/controller.tsx`
+7. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/entry/controller.tsx`
+8. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/entryCreate/controller.tsx`
+9. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/resourcePicker/controller.tsx`
+10. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/model/resource.ts`
+11. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockPage/controller.tsx`
+12. `zova/src/suite/cabloy-basic/modules/basic-pageentry/src/component/blockPageEntry/controller.tsx`
+13. `zova/src/suite/cabloy-basic/modules/basic-commands/src/bean/command.delete.tsx`
+14. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/.metadata/index.ts`
 
 A compact role map is:
 
@@ -105,6 +109,7 @@ A compact role map is:
 - `page/resource/controller.tsx` shows the list-page shell
 - `page/entry/controller.tsx` shows the entry-page shell
 - `page/entryCreate/controller.tsx` shows virtual create-page reuse
+- `page/resourcePicker/controller.tsx` shows the host-dependent picker shell
 - `model/resource.ts` shows the resource-owner core
 - `basic-page:blockPage` shows the deeper list runtime
 - `basic-pageentry:blockPageEntry` shows the deeper form runtime
@@ -117,31 +122,30 @@ Start with:
 
 - `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/routes.ts`
 
-This file declares three routes:
+This file declares four routes:
 
 - `:resource`
 - `:resource/create`
 - `:resource/:id/:formScene?`
+- `:resource/picker`
 
-That already tells you the module’s public role.
+The first three are ordinary resource workspace routes. The fourth is the host-dependent Resource Picker route; it is normally rendered by a routed-dialog workflow, not entered as a direct browser destination. See [Resource Picker Guide](/frontend/resource-picker-guide) for the public authoring contract.
 
-It is not tied to one concrete resource such as Student or Product.
-
-Instead, it is a generic route module whose runtime identity comes from `route.params.resource`.
+The module is not tied to one concrete resource such as Student or Product. Its runtime identity comes from `route.params.resource`.
 
 ### Why `tabKey` matters
 
-All three routes use the same `tabKey(route)` shape:
+The list, create, and entry routes use the same `tabKey(route)` shape:
 
 ```typescript
 `/rest/resource/${encodeURIComponent(route.params.resource)}`;
 ```
 
-This means the tab identity is resource-level rather than row-level.
+This means their workspace identity is resource-level rather than row-level. The picker route deliberately does not use that shared workspace identity: its controller requires the host-scoped picker contract that its routed-dialog caller provides.
 
 If your next question becomes specifically how the entry route becomes a working page through `basic-pageentry`, continue with [Resource Entry Page Deep Dive](/frontend/resource-entry-page-deep-dive).
 
-So these views are grouped under one resource-oriented tab boundary:
+The ordinary workspace views are grouped under one resource-oriented tab boundary:
 
 - resource list
 - create entry
@@ -172,6 +176,7 @@ Instead, each route enters the normal Zova page-controller path through:
 - `createZovaComponentPage(ControllerPageResource, ...)`
 - `createZovaComponentPage(ControllerPageEntry, ...)`
 - `createZovaComponentPage(ControllerPageEntryCreate, ...)`
+- `createZovaComponentPage(ControllerPageResourcePicker, ...)`
 
 These files also expose the typed Zod-based params schema for each page.
 
@@ -184,8 +189,8 @@ After the page wrappers, read:
 This generated file is mostly not “business logic”, but it is still the best summary of the module’s registered surfaces:
 
 - `rest-resource.model.resource` → model bean full name
-- `rest-resource.controller.pageResource` / `pageEntry` / `pageEntryCreate` → controller registrations
-- page-path and page-name typing for `/rest/resource/...`
+- `rest-resource.controller.pageResource` / `pageEntry` / `pageEntryCreate` / `pageResourcePicker` → controller registrations
+- page-path and page-name typing for `/rest/resource/...`, including the hosted picker route
 - module scope typing for `rest-resource`
 
 Use this file as the **registry map**, not as the first place to learn the runtime behavior.
@@ -265,6 +270,16 @@ That tells you the module does not want two separate create/runtime implementati
 Instead, the create route reuses the entry shell and lets route params plus form-scene logic select the create behavior.
 
 This is a good example of Zova keeping page identity separate from duplicated controller logic.
+
+### 3.4 Resource Picker shell is host-dependent
+
+Read:
+
+- `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/resourcePicker/controller.tsx`
+
+This controller resolves the selector-backed target resource and its select schema, then renders the schema's list blocks through a picker page host. Unlike the ordinary list and entry shells, it requires an injected host contract whose resource must match the route parameter. The host adapts the resource's existing list blocks for selection and supplies the confirm/cancel workflow.
+
+That makes the picker route an internal routed-dialog workflow page, not a direct browser-entry CRUD page. For the supported field metadata and result contract, continue with [Resource Picker Guide](/frontend/resource-picker-guide).
 
 ## 4. `ModelResource` is the owner core, not only a helper
 
@@ -384,6 +399,7 @@ These are the main runtime logic files:
 - `src/page/resource/controller.tsx`
 - `src/page/entry/controller.tsx`
 - `src/page/entryCreate/controller.tsx`
+- `src/page/resourcePicker/controller.tsx`
 - `src/model/resource.ts`
 
 These are where the real behavior decisions live.

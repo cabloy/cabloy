@@ -531,6 +531,7 @@ export default defineConfig({
           items: [
             { text: 'Component Guide', link: '/frontend/component-guide' },
             { text: 'Form Guide', link: '/frontend/form-guide' },
+            { text: 'Resource Picker Guide', link: '/frontend/resource-picker-guide' },
             { text: 'Form Layout Guide', link: '/frontend/form-layout-guide' },
             { text: 'Image Guide', link: '/frontend/image-guide' },
             { text: 'File Guide', link: '/frontend/file-guide' },

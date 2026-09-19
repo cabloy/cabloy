@@ -33,6 +33,9 @@ describe('error.test.ts', () => {
           status: 409,
           message: '结构化冲突',
         });
+        const error = app.util.createError(body);
+        assert.equal(error.code, 'test-vona:1002');
+        assert.equal(error.status, 409);
         assert.throws(
           () => scopeTest.error.StructuredConflict.throw(),
           (err: Error) =>

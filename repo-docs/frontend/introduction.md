@@ -81,6 +81,7 @@ Use this path when the task is about UI composition, component contracts, form o
 
 - [Component Guide](/frontend/component-guide)
 - [Form Guide](/frontend/form-guide)
+- [Resource Picker Guide](/frontend/resource-picker-guide)
 - [Semantic Presentation Contract](/fullstack/semantic-presentation-contract)
 - [Form Layout Guide](/frontend/form-layout-guide)
 - [Image Guide](/frontend/image-guide)

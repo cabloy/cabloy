@@ -183,6 +183,7 @@ export class AppUtil extends BeanSimple {
   createError(data, returnObject?: boolean) {
     const error = returnObject ? ({} as any) : new Error();
     error.code = data.code !== undefined ? data.code : 500;
+    if (data.status !== undefined) error.status = data.status;
     if (data.message && typeof data.message === 'object') {
       error.message = JSON.stringify(data.message, null, 2);
     } else {

@@ -64,10 +64,15 @@ export class ServiceExecutor extends BeanBase {
             throw app.util.createError(ctx.body);
           }
           if (ctx.body && typeof ctx.body === 'object') {
-            throw app.util.createError(ctx.body);
+            throw app.util.createError({
+              ...ctx.body,
+              status: ctx.status,
+              code: (ctx.body as { code?: unknown }).code ?? ctx.status,
+            });
           }
           throw app.util.createError({
             code: ctx.status,
+            status: ctx.status,
             message: ctx.message,
           });
         },

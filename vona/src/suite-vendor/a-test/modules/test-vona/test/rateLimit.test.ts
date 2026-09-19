@@ -53,6 +53,7 @@ describe('rateLimit.test.ts', { concurrency: false }, () => {
           });
         });
         assert.equal(error?.code, 429);
+        assert.equal(error?.status, 429);
       });
     } finally {
       restore();
@@ -81,6 +82,7 @@ describe('rateLimit.test.ts', { concurrency: false }, () => {
           });
         });
         assert.equal(error?.code, 429);
+        assert.equal(error?.status, 429);
       });
     } finally {
       restore();
@@ -99,6 +101,7 @@ describe('rateLimit.test.ts', { concurrency: false }, () => {
           });
         });
         assert.equal(error?.code, 503);
+        assert.equal(error?.status, 503);
       });
     } finally {
       restore();
