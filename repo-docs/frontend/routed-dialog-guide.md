@@ -2,7 +2,7 @@
 
 A routed dialog hosts ordinary Cabloy pages in an isolated dialog-local router without changing the main browser route or URL.
 
-Use `this.$appModal.routedDialog(...)` when one interaction needs page routing inside a modal: for example, a multi-step picker, a detail-to-detail flow, or a focused page-level form. It is a current **Cabloy Basic** capability provided by `basic-app`.
+Use `this.$appModal.routedDialog(...)` when one interaction needs page routing inside a modal: for example, a multi-step picker, a detail-to-detail flow, or a focused page-level form. It is supported by both **Cabloy Basic** and **Cabloy Start**, through their edition-local app modules.
 
 ## Choose the right primitive
 
