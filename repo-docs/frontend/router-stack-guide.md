@@ -184,9 +184,10 @@ In the current public Basic source:
 
 - Router Stack exists as a real framework primitive
 - the currently visible public Basic shell is centered on Router Tabs
-- Router Stack should therefore be read as an available routed-host strategy, not as the main visible Basic shell pattern
+- `basic-app:routedDialog` is an embedded, per-dialog `ZRouterViewStack` consumer rather than an application layout consumer
+- Router Stack should therefore be read as an available routed-host strategy, not as the main visible Basic shell pattern or a Router Tabs replacement
 
-This keeps the docs source-confirmed without overstating current public usage.
+For the routed-dialog workflow, local memory history, and client-only boundary, see [Routed Dialog Guide](/frontend/routed-dialog-guide). This keeps the docs source-confirmed without overstating current public usage.
 
 ## Where Router Stack stops and other docs begin
 
@@ -212,6 +213,7 @@ Use this page together with:
 - [Router Tabs Mechanism](/frontend/router-tabs-mechanism)
 - [Router Tabs vs Stack](/frontend/router-tabs-vs-stack)
 - [A-Router Guide](/frontend/a-router-guide)
+- [Routed Dialog Guide](/frontend/routed-dialog-guide)
 - [Zova Source Reading Map](/frontend/zova-source-reading-map)
 
 ## Final takeaway

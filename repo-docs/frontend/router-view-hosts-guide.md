@@ -11,6 +11,7 @@ Read this page together with:
 - [Router Tabs Introduction](/frontend/router-tabs-introduction)
 - [Router Tabs vs Stack](/frontend/router-tabs-vs-stack)
 - [Router Stack Guide](/frontend/router-stack-guide)
+- [Routed Dialog Guide](/frontend/routed-dialog-guide)
 - [Router Tabs Mechanism](/frontend/router-tabs-mechanism)
 - [Page Meta Guide](/frontend/page-meta-guide)
 - [Router Tabs Layout Integration](/frontend/router-tabs-layout-integration)
@@ -353,9 +354,9 @@ If your next question is specifically about how a page author should update task
 
 In the current public Cabloy Basic source, there is no app-level layout consumer of `ZRouterViewStack` outside the vendor module itself.
 
-That means the stack host is present as a reusable framework primitive, but the current public Basic layouts visibly consume `routerViewTabs` rather than `routerViewStack`.
+That does not mean the Stack host has no application use. `basic-app:routedDialog` is an embedded, per-dialog consumer: each routed dialog creates its own local router and stack scene, then hosts ordinary pages in `ZRouterViewStack`. It is not an application layout and does not add Router Tabs/workbench semantics. See [Routed Dialog Guide](/frontend/routed-dialog-guide) for the user-facing workflow.
 
-This is a source-confirmed statement based on the current repo search surface, not a guarantee about all future editions or downstream apps.
+The current public Basic layouts visibly consume `routerViewTabs`, while routed dialogs use Stack as an isolated page host. This is a source-confirmed statement based on the current repo search surface, not a guarantee about all future editions or downstream apps.
 
 ## Empty vs tabs vs stack
 

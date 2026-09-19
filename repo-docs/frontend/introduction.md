@@ -65,6 +65,7 @@ Use this path when the task is page-oriented, route-oriented, or the first time 
 - [Navigation Guards Guide](/frontend/navigation-guards-guide)
 - [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
 - [Router View Hosts Guide](/frontend/router-view-hosts-guide)
+- [Routed Dialog Guide](/frontend/routed-dialog-guide)
 - [Router Tabs Introduction](/frontend/router-tabs-introduction)
 - [Router Tabs Overview](/frontend/router-tabs-overview)
 - [Router Tabs Mechanism](/frontend/router-tabs-mechanism)

@@ -72,6 +72,12 @@ Choose `meta.ssrProfile` from the page's rendering contract. Use `session` when 
 
 This is one reason route records matter so much: they are not just URL declarations. They are an application-behavior surface.
 
+## Route records inside routed dialogs
+
+An ordinary page route can also be the target of a [Routed Dialog](/frontend/routed-dialog-guide). The route still follows the rules on this page: dynamic params require `name`, static routes normally remain unnamed, and generated `$params` / `$query` schemas continue to apply.
+
+The difference is hosting rather than route declaration. A routed dialog runs the target through its own local memory-history router, so navigation inside the dialog does not change the main browser URL or route. Do not infer that every routed-dialog target is a suitable direct browser entry: a feature-specific target may require a page-host contract supplied only by its routed-dialog workflow.
+
 ## Route -> shell -> routed page
 
 A useful frontend mental model is:

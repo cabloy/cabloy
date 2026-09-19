@@ -503,6 +503,7 @@ export default defineConfig({
             { text: 'A-Router Guide', link: '/frontend/a-router-guide' },
             { text: 'Zova Router Under the Hood', link: '/frontend/zova-router-under-the-hood' },
             { text: 'Router View Hosts Guide', link: '/frontend/router-view-hosts-guide' },
+            { text: 'Routed Dialog Guide', link: '/frontend/routed-dialog-guide' },
             { text: 'Router Tabs Introduction', link: '/frontend/router-tabs-introduction' },
             { text: 'Router Tabs Overview', link: '/frontend/router-tabs-overview' },
             { text: 'Router Tabs Mechanism', link: '/frontend/router-tabs-mechanism' },
