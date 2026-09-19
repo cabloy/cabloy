@@ -363,6 +363,20 @@ Pass the complete interaction promise through `onPerform`. For a button-only act
 </ZButton>
 ```
 
+Returning the complete promise is not enough when an API reports its failure as a result value. When a `ZButton` owns the generic error path for a query refetch, await a refetch that rejects on failure:
+
+```tsx
+<ZButton
+  onPerform={async () => {
+    await query.refetch({ throwOnError: true });
+  }}
+>
+  {this.scope.locale.Refresh()}
+</ZButton>
+```
+
+The rejection reaches `BehaviorPerform`, which calls `onError` or its default action-error alert and then clears loading in `finally`. `bypassPersister` controls persistence behavior only; it does not make `refetch()` reject. Catch the failure locally only when that layer intentionally owns recovery or error presentation. For the query-state ownership decision and avoiding duplicate local and generic feedback, see [`$useStateData` Best Practices](/frontend/use-state-data-best-practices#choose-the-refetch-error-boundary).
+
 Do not detach asynchronous work from the callback. In the following shape, the callback returns `void`, so the behavior clears its button-local loading state before `save()` finishes and cannot handle its rejection:
 
 ```tsx

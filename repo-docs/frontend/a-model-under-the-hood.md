@@ -225,6 +225,17 @@ This option is not a force-new-request primitive. The model wrapper preserves Ta
 
 The current implementation transports the marker through the installed TanStack Query observer's internal fetch-options forwarding. `bypassPersister` is therefore a Zova model option, not a native public TanStack `RefetchOptions` field; the model wrapper keeps that internal detail out of the normal authoring surface.
 
+`QueryRefetchOptions` extends TanStack `RefetchOptions` with only `bypassPersister`. The wrapper removes that Zova-specific option and forwards the remaining native options, including `throwOnError`. When one interaction needs both policies, combine them explicitly:
+
+```ts
+await query.refetch({
+  bypassPersister: true,
+  throwOnError: true,
+});
+```
+
+The options remain independent: `bypassPersister` selects the persistence path for this fetch, while `throwOnError` controls whether a fetch failure rejects the awaited interaction. Neither changes query ownership, cancellation, or in-flight deduplication semantics. For choosing between an action-level failure boundary and local query-error UI, see [`$useStateData` Best Practices](/frontend/use-state-data-best-practices#choose-the-refetch-error-boundary).
+
 ## State helper families as one runtime family
 
 The state helper layer lives mainly in:

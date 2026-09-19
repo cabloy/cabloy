@@ -288,6 +288,32 @@ When a query-backed dialog needs readiness before it opens, await the existing q
 
 Do not copy an awaited `refetch()` result into a second long-lived controller/render state that drives an open dialog or persistent component. If the UI remains mounted and displays query-backed data, bind it to `query.data` or a model-derived reactive surface so later refetches and model updates remain visible.
 
+### Choose the refetch error boundary
+
+A failed `await query.refetch()` normally resolves with a query result. When this one interaction must make a local decision, inspect `result.error`; mounted UI continues to render the query-owned `query.error` and `query.data` surfaces:
+
+```ts
+const result = await query.refetch();
+if (result.error) {
+  this.recoveryError = result.error;
+  return;
+}
+```
+
+Use `throwOnError: true` only when the interaction intentionally delegates an uncaught failure to an outer `try`/`catch` or action boundary. In Cabloy Basic, return or await that promise from `ZButton onPerform` so `BehaviorPerform` can invoke `onError` or show its default error alert:
+
+```tsx
+<ZButton
+  onPerform={async () => {
+    await query.refetch({ throwOnError: true });
+  }}
+>
+  {this.scope.locale.Refresh()}
+</ZButton>
+```
+
+Choose exactly one presentation owner for a failed refetch: the generic `ZButton` fallback, a local `onError`/`catch`, or query/local error UI. Do not add `throwOnError: true` merely because a refetch appears in `onPerform` when the current layer already classifies `result.error` or renders a domain-specific `query.error` state; otherwise one failure can produce duplicate generic and local feedback. `throwOnError` changes promise propagation, not query ownership. For the button lifecycle, see the [Behavior Guide](/frontend/behavior-guide#perform-a-standalone-asynchronous-button-action).
+
 ### Per-fetch persistence bypass
 
 When one interaction needs an API-fresh result but should not restore persisted data or schedule a persistence save for that fetch, use the model query's per-fetch option:

@@ -183,6 +183,7 @@ Check whether the feature needs:
 - SSR hydration-equivalence review: classify state as SSR-required or intentionally deferred; keep server HTML and the hydration-time client render equivalent; defer private, cookie-unavailable, or browser-only query/load/render branches to an explicit post-hydration, admission, mounted, or interaction boundary
 - distinguish `$useStateData(...)` query ownership from readiness waits: `disableSuspenseOnInit` only skips its init-time suspense kick and does not prevent query creation or fetches; choose `$QueryEnsureLoaded(...)` or freshness helpers only at the later boundary that needs them
 - verify that render-driving UI reads model/query-owned reactive state (`query.data` or a model-derived surface); keep awaited `refetch()` results local to one-shot interaction/orchestration and never as a parallel ongoing controller/render state copy
+- refetch error-boundary ownership: when an interaction boundary such as `ZButton onPerform` should own generic query-refetch failure, return or await `query.refetch({ throwOnError: true })`; when local/domain-specific UI owns recovery, retain `result.error`, `query.error`, or a local catch instead; `bypassPersister` controls per-fetch persistence only and can be combined with either deliberate error route
 - reverse fullstack handoff when newly added frontend resources will later be consumed by backend metadata or backend tooling
 
 If the frontend change introduces resources such as a custom form-field renderer, table-cell renderer, or other generated metadata that backend `ZovaRender.field(...)` / `ZovaRender.cell(...)` will consume, do not treat the task as frontend-only cleanup.
@@ -203,7 +204,7 @@ Check whether the feature needs:
 - generic component conversion
 - style/theme/icon updates
 - wrapper usage review
-- async interaction ownership: for a button-only action, return or await the complete action through `ZButton onPerform` and do not mirror the same lifecycle with button-local `loading` / `disabled` state; retain explicit state only for independently initiated or broader shared work
+- async interaction ownership: for a button-only action, return or await the complete action through `ZButton onPerform`, choose one error presentation owner rather than combining its generic alert with local query/error UI, and do not mirror the same lifecycle with button-local `loading` / `disabled` state; retain explicit state only for independently initiated or broader shared work
 - async-loading or controllerRef implications
 
 ### Verification
@@ -217,6 +218,7 @@ Check whether the feature needs:
 - SSR or route-path verification
 - hydration-time initial-render equivalence when SSR, private state, browser-only state, or async model state changes
 - edition-specific flavor, SSR site baseline, and project-asset verification
+- interaction failure-path verification when `ZButton onPerform` owns a query action: a failed refetch reaches exactly the intended `onError`, generic alert, or local error UI, and button loading resets
 
 ### SSR theme review reminder
 
