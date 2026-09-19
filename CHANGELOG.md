@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.177
+
+### Improvements
+
+- Update the menu guide documentation.
+- Refresh the pnpm lockfile.
+
 ## 5.1.176
 
 ### Improvements
