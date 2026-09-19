@@ -55,9 +55,11 @@ This makes menu retrieval part of the broader backend contract surface.
 
 In the current repo implementation, the out-of-the-box menu controller is public and delegates directly to `this.scope.service.menu.retrieveMenus(publicPath)`.
 
-## Static menu visibility
+## SSR Site targeting
 
-`@SsrMenu(...)` items can declare static role visibility without changing the public menu DTO:
+`@SsrMenu(...)` and `@SsrMenuGroup(...)` use `site` to select the SSR Site onion(s) that receive the declaration. It is a navigation-composition filter, not a site-admission, role-visibility, or backend-authorization decision.
+
+Use `site` for navigation owned by one SSR Site or deliberately exclusive to a known subset of sites:
 
 ```typescript
 @SsrMenu({
@@ -66,9 +68,40 @@ In the current repo implementation, the out-of-the-box menu controller is public
     link: 'presetResource',
     roles: ['systemAdmin'],
   },
-  site: 'basic-siteadmin:admin',
+  // This Basic Admin-owned entry intentionally targets one SSR Site.
+  site: ['basic-siteadmin:admin'],
 })
 ```
+
+For a shared module declaration intended for every compatible SSR Admin site, omit `site`:
+
+```typescript
+@SsrMenu({
+  item: {
+    title: $locale('SharedOperations'),
+    link: 'presetResource',
+    roles: ['systemAdmin'],
+  },
+  // No `site`: the shared declaration is available to compatible SSR Admin sites.
+})
+```
+
+Do not bind a shared Admin menu or menu group to the current/default Admin site merely to keep a new independent site's navigation narrow. Isolate an independent site through its enabled module composition and site-owned menus/groups. When a shared capability needs genuinely different navigation contracts per site, use an explicit, approved site-specific composition or owner instead of narrowing the shared declaration by default.
+
+`site` is distinct from a role's `siteIds`, menu `roles` or role-menu associations, and Passport/RBAC authorization:
+
+```text
+site              -> which SSR Site receives a menu/group declaration
+siteIds           -> which frontend Site a subject may enter
+roles / role-menu -> which admitted subject may discover a menu leaf
+Passport / RBAC   -> which backend actions or data the subject may use
+```
+
+See [Menu Authorization](/backend/menu-authorization) for the site-admission, navigation-disclosure, and backend-authority boundaries.
+
+## Static menu visibility
+
+`@SsrMenu(...)` items can declare static role visibility without changing the public menu DTO:
 
 - Omit `roles` to make an item visible to anonymous and authenticated callers.
 - Use `roles: []` when an item has no static role visibility and is intended to be disclosed only through dynamic Role-menu configuration.
@@ -107,5 +140,6 @@ When editing SSR menu behavior, ask:
 2. is there a default fallback menu that should remain available?
 3. does the menu contract belong in backend API design, frontend route design, or both?
 4. does the active edition affect the menu structure or public path assumptions?
+5. is this declaration site-owned or deliberately site-exclusive (specify `site`), or shared across compatible SSR Admin sites (omit `site`)?
 
 That helps AI keep menu behavior aligned with Cabloy’s shared SSR architecture.
