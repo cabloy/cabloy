@@ -1019,7 +1019,7 @@ importers:
   src/suite-vendor/a-pay:
     dependencies:
       zova-module-a-pay:
-        specifier: ^5.0.8
+        specifier: ^5.0.9
         version: link:modules/a-pay
       zova-module-pay-mock:
         specifier: ^5.0.5
