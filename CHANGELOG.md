@@ -1,5 +1,23 @@
 # Changelog
 
+## 5.1.175
+
+### Features
+
+- Add `$routedDialog` support for route-driven dialogs.
+- Remove the `a-boundary` component.
+- Update core functionality and related integrations.
+
+### Bug Fixes
+
+- Fix end-to-end test failures.
+
+### Improvements
+
+- Refactor `ZButton`.
+- Update table cell force-delete actions and related test coverage.
+- Document controller load boundaries, column layouts, resource pickers, routed dialogs, error handling, and `ZButton` usage.
+
 ## 5.1.174
 
 ### Improvements
