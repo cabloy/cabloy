@@ -916,6 +916,17 @@ test(
         await expect(selectionStatus).toHaveText('Selected 2 items');
         await expect(rowFor(selectedNames[0])).toHaveAttribute('aria-selected', 'true');
         await expect(rowFor(selectedNames[1])).toHaveAttribute('aria-selected', 'true');
+
+        const errorDialog = page.getByRole('dialog').filter({
+          hasText: 'Bulk deletion temporarily unavailable',
+        });
+        await expect(errorDialog).toBeVisible();
+        await expect(errorDialog.getByRole('button', { name: 'Close', exact: true })).toBeVisible();
+        await errorDialog.getByRole('button', { name: 'Close', exact: true }).click();
+        await expect(errorDialog).toHaveCount(0);
+        await expect(deleteBulk).toBeEnabled();
+        await expect(deleteBulk).not.toHaveAttribute('aria-busy', 'true');
+        await expect(deleteBulk.locator('.loading.loading-spinner')).toHaveCount(0);
       } finally {
         await page.unroute(bulkDeleteRoute, bulkDeleteFailureHandler);
       }
