@@ -80,6 +80,7 @@ Use this path when the task is page-oriented, route-oriented, or the first time 
 Use this path when the task is about UI composition, component contracts, form or table architecture, form or table internals, form or table source reading, or theme work:
 
 - [Component Guide](/frontend/component-guide)
+- [Controller Load Boundary Guide](/frontend/controller-boundary-guide)
 - [Form Guide](/frontend/form-guide)
 - [Resource Picker Guide](/frontend/resource-picker-guide)
 - [Semantic Presentation Contract](/fullstack/semantic-presentation-contract)

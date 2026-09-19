@@ -530,6 +530,10 @@ export default defineConfig({
           text: 'Components & UI',
           items: [
             { text: 'Component Guide', link: '/frontend/component-guide' },
+            {
+              text: 'Controller Load Boundary Guide',
+              link: '/frontend/controller-boundary-guide',
+            },
             { text: 'Form Guide', link: '/frontend/form-guide' },
             { text: 'Resource Picker Guide', link: '/frontend/resource-picker-guide' },
             { text: 'Form Layout Guide', link: '/frontend/form-layout-guide' },
