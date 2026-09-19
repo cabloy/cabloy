@@ -65,5 +65,5 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   @Passport.systemAdmin()
   async deleteBulk(@Arg.body() command: Dto<%=argv.resourceNameCapitalize%>DeleteBulk): Promise<void> {
     await this.scope.service.<%=argv.resourceName%>.deleteBulk(command.ids);
-  }  
+  }
 }
