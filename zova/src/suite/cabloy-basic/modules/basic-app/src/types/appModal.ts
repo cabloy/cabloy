@@ -188,5 +188,6 @@ export type IModalItem =
 declare module 'zova' {
   export interface BeanBase {
     $appModal: ServiceAppModal;
+    $routedDialog: IRoutedDialogContext | undefined;
   }
 }

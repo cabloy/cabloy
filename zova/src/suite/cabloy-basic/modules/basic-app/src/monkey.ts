@@ -4,6 +4,9 @@ import type { BeanBase, BeanContainer, IMonkeyBeanInit, IMonkeyModule } from 'zo
 import { BeanSimple } from 'zova';
 
 import type { ServiceAppModal } from './service/appModal.js';
+import type { IRoutedDialogContext } from './types/appModal.js';
+
+import { routedDialogContextKey } from './types/appModal.js';
 
 export class Monkey extends BeanSimple implements IMonkeyModule, IMonkeyBeanInit {
   private _moduleSelf: IModule;
@@ -29,6 +32,14 @@ export class Monkey extends BeanSimple implements IMonkeyModule, IMonkeyBeanInit
       get() {
         return self._serviceAppModal;
       },
+    });
+    Object.defineProperty(beanInstance, '$routedDialog', {
+      enumerable: false,
+      configurable: true,
+      get: () =>
+        bean._getBeanFromHost<IRoutedDialogContext>({
+          name: routedDialogContextKey,
+        }),
     });
   }
 

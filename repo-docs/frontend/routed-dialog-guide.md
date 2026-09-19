@@ -239,24 +239,19 @@ public openCustomerPicker() {
 }
 ```
 
-The routed-dialog host injects an `IRoutedDialogContext` under `routedDialogContextKey`. A simple hosted page can consume that context through host-scoped `@Use(...)` and call its completion operations:
+The routed-dialog host injects an `IRoutedDialogContext` under `routedDialogContextKey`. Every Zova Bean exposes the current host context through the optional `$routedDialog` shortcut:
 
 ```typescript
-@Use({ name: routedDialogContextKey, injectionScope: 'host' })
-$$routedDialog: IRoutedDialogContext<
-  ICustomerSelection,
-  ICustomerPickerProps,
-  ICustomerPickerSession
-> | undefined;
-
 public confirm(customer: ICustomerSelection) {
-  this.$$routedDialog?.resolve(customer);
+  this.$routedDialog?.resolve(customer);
 }
 
 public cancel() {
-  this.$$routedDialog?.cancel();
+  this.$routedDialog?.cancel();
 }
 ```
+
+`$routedDialog` performs a live host lookup on every access. It is `undefined` outside a routed-dialog host, and it follows the current host when a Bean is reused across host lifecycles. Do not retain a previously read context as a cross-host or cross-lifecycle snapshot; read `this.$routedDialog` at the point where the operation is needed.
 
 `resolve(value)` settles `handle.result` with `value` and closes the dialog. `cancel()` closes it and leaves `handle.result` as `undefined`.
 
