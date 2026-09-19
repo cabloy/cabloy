@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
-import { ZPaymentNextAction } from 'zova-module-a-pay';
+import { ZPaymentNextAction } from 'zova-module-basic-pay';
 import { ZPage } from 'zova-module-home-base';
 
 import { ModelOrderMine } from '../../model/orderMine.js';

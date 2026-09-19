@@ -26,7 +26,7 @@ declare module 'zova-module-a-pay' {
 }
 /** model: end */
 /** model: begin */
-import { ModelPaymentSession } from '../model/paymentSession.js';
+import type { ModelPaymentSession } from '../model/paymentSession.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -57,7 +57,7 @@ declare module 'zova-module-a-pay' {
 }
 /** api: end */
 /** api: begin */
-import { ApiPayPaymentSession } from '../api/payPaymentSession.js';
+import type { ApiPayPaymentSession } from '../api/payPaymentSession.js';
 export interface IModuleApi {
   'payPaymentSession': ApiPayPaymentSession;
 }
@@ -97,7 +97,7 @@ declare module 'zova-module-a-pay' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import { ApiSchemaPayPaymentSession } from '../apiSchema/payPaymentSession.js';
+import type { ApiSchemaPayPaymentSession } from '../apiSchema/payPaymentSession.js';
 export interface IModuleApiSchema {
   'payPaymentSession': ApiSchemaPayPaymentSession;
 }
@@ -138,7 +138,7 @@ declare module 'zova-module-a-pay' {
 }
 /** service: end */
 /** service: begin */
-import { ServicePaymentCoordinator } from '../service/paymentCoordinator.js';
+import type { ServicePaymentCoordinator } from '../service/paymentCoordinator.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -146,48 +146,6 @@ declare module 'zova' {
   }
 }
 /** service: end */
-/** controller: begin */
-export * from '../component/paymentNextAction/controller.jsx';
-
-import 'zova';
-declare module 'zova' {
-
-
-}
-declare module 'zova-module-a-pay' {
-
-        export interface ControllerPaymentNextAction {
-          /** @internal */
-          get scope(): ScopeModuleAPay;
-        }
-}
-/** controller: end */
-/** controller: begin */
-import { ControllerPaymentNextAction } from '../component/paymentNextAction/controller.jsx';
-import 'zova';
-declare module 'zova' {
-  export interface IBeanRecordLocal {
-    'a-pay.controller.paymentNextAction': ControllerPaymentNextAction;
-  }
-}
-/** controller: end */
-
-/** components: begin */
-export * from './component/paymentNextAction.js';
-import { ZPaymentNextAction } from './component/paymentNextAction.js';
-export const components = {
-  'paymentNextAction': ZPaymentNextAction,
-};
-import 'zova';
-declare module 'zova' {
-export interface IComponentRecord {
-  'a-pay:paymentNextAction': ControllerPaymentNextAction;
-}
-export interface IZovaComponentRecord {
-  'a-pay:paymentNextAction': typeof ZPaymentNextAction;
-}
-}
-/** components: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil } from 'zova';
 import { Scope } from 'zova-module-a-bean';

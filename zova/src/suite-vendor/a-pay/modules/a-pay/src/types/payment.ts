@@ -19,6 +19,19 @@ export interface IPaymentSessionView {
   nextAction?: TypePaymentNextAction;
 }
 
+export interface IPaymentNextActionProps {
+  action?: TypePaymentNextAction;
+  disabled?: boolean;
+  continueToPaymentText?: string;
+  continueToPaymentHelpText?: string;
+  embeddedCheckoutUnavailableText?: string;
+  paymentCompletedText?: string;
+  paymentPreparingText?: string;
+  paymentPreparingRetryText?: (retryAfterSeconds: number) => string;
+  refreshPaymentStatusText?: string;
+  onRefresh?: () => void | Promise<void>;
+}
+
 export interface IPayUiProvider {
   supports(action: TypePaymentNextAction): boolean;
   execute(action: TypePaymentNextAction): Promise<void>;

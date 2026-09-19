@@ -1,23 +1,11 @@
+import type { IPaymentNextActionProps } from 'zova-module-a-pay';
+
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
+import { ServicePaymentCoordinator } from 'zova-module-a-pay';
 import { ZButton } from 'zova-module-basic-button';
 
-import type { TypePaymentNextAction } from '../../types/payment.js';
-
-import { ServicePaymentCoordinator } from '../../service/paymentCoordinator.js';
-
-export interface ControllerPaymentNextActionProps {
-  action?: TypePaymentNextAction;
-  disabled?: boolean;
-  continueToPaymentText?: string;
-  continueToPaymentHelpText?: string;
-  embeddedCheckoutUnavailableText?: string;
-  paymentCompletedText?: string;
-  paymentPreparingText?: string;
-  paymentPreparingRetryText?: (retryAfterSeconds: number) => string;
-  refreshPaymentStatusText?: string;
-  onRefresh?: () => void | Promise<void>;
-}
+export interface ControllerPaymentNextActionProps extends IPaymentNextActionProps {}
 
 @Controller()
 export class ControllerPaymentNextAction extends BeanControllerBase {
@@ -27,8 +15,8 @@ export class ControllerPaymentNextAction extends BeanControllerBase {
   $$paymentCoordinator: ServicePaymentCoordinator;
 
   async continueRedirect() {
-    const action = this.$props.action;
-    if (action?.kind !== 'redirect' || this.$props.disabled) return;
+    const { action, disabled } = this.$props as IPaymentNextActionProps;
+    if (action?.kind !== 'redirect' || disabled) return;
     await this.$$paymentCoordinator.execute(action);
   }
 
@@ -44,7 +32,7 @@ export class ControllerPaymentNextAction extends BeanControllerBase {
       paymentPreparingRetryText,
       refreshPaymentStatusText,
       onRefresh,
-    } = this.$props as ControllerPaymentNextActionProps;
+    } = this.$props as IPaymentNextActionProps;
     if (!action) return null;
     if (action.kind === 'redirect') {
       return (

@@ -24,6 +24,7 @@
     "zova-module-basic-metrics": "workspace:",
     "zova-module-basic-page": "^5.0.7",
     "zova-module-basic-pageentry": "^5.0.7",
+    "zova-module-basic-pay": "^5.0.0",
     "zova-module-basic-resource": "^5.0.0",
     "zova-module-basic-select": "^5.0.4",
     "zova-module-basic-table": "^5.0.6",

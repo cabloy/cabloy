@@ -1,5 +1,5 @@
 {
-  "name": "zova-module-commerce-trade",
+  "name": "zova-module-basic-pay",
   "version": "5.0.0",
   "description": "",
   "keywords": [
@@ -11,8 +11,7 @@
     "dist",
     "src",
     "icons",
-    "assets",
-    "cli"
+    "assets"
   ],
   "type": "module",
   "exports": {
@@ -34,9 +33,7 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "zova-module-a-pay": "workspace:^",
-    "zova-module-basic-pay": "workspace:^",
-    "zova-module-pay-mock": "workspace:^"
+    "zova-module-a-pay": "workspace:^"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",
@@ -53,11 +50,11 @@
       "exports.\\..import"
     ]
   },
-  "title": "commerce-trade",
+  "title": "basic-pay",
   "zovaModule": {
     "dependencies": {
-      "basic-app": "5.0.0",
-      "basic-pay": "5.0.0"
+      "a-pay": "5.0.0",
+      "basic-button": "5.0.0"
     }
   }
 }

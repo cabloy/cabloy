@@ -14,7 +14,7 @@ type ControllerInnerProps = TypeControllerInnerProps<
   ControllerPaymentNextActionProps,
   keyof typeof ControllerPaymentNextAction.$propsDefault
 >;
-declare module 'zova-module-a-pay' {
+declare module 'zova-module-basic-pay' {
   export interface ControllerPaymentNextAction {
     $props: ControllerInnerProps;
   }
@@ -26,6 +26,6 @@ export const ZPaymentNextAction = defineComponent((_props: ZPaymentNextActionPro
 }, prepareComponentOptions());
 declare module 'zova-module-a-bean' {
   export interface IVonaComponentRecord {
-    'a-pay:paymentNextAction': ControllerPaymentNextActionProps;
+    'basic-pay:paymentNextAction': ControllerPaymentNextActionProps;
   }
 }

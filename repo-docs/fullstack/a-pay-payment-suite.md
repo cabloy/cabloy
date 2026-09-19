@@ -1,6 +1,6 @@
 # A-Pay Payment Suite
 
-This guide explains the current payment architecture in Cabloy Basic across Vona, Zova, and the Commerce domain.
+This guide explains the current payment architecture shared by Cabloy Basic and Cabloy Start across Vona, Zova, and the Commerce domain.
 
 It is a source-oriented architecture guide for:
 
@@ -50,12 +50,26 @@ zova/src/suite-vendor/a-pay/
 
 The general suite/module organization is described in [Suites and Modules](/fullstack/suites-and-modules). The payment suite follows the vendor-suite layout rather than being a complete user-facing page package.
 
-| Module       | Vona responsibility                                                                                       | Zova responsibility                                                                         |
-| ------------ | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `a-pay`      | Payment sessions, provider operations, callbacks, webhooks, normalized contracts, audit/outbox boundaries | Payment-session API/model, generated contracts, next-action component, redirect coordinator |
-| `pay-mock`   | Deterministic development/test provider and simulator webhook path                                        | Mock completion mutation used by the Commerce test surface                                  |
-| `pay-paypal` | PayPal API, capture, query, refund, and webhook translation                                               | Provider identity and metadata surface; no PayPal SDK execution in the browser              |
-| `pay-stripe` | Stripe Checkout, query, refund, and webhook translation                                                   | Provider identity and metadata surface; no Stripe SDK execution in the browser              |
+The shared suite contains payment-domain state and browser-safe coordination only. Presentation is owned by the active edition:
+
+```text
+zova/src/suite/cabloy-basic/modules/basic-pay/
+└── paymentNextAction  # DaisyUI and Tailwind CSS presenter
+
+zova/src/suite/cabloy-start/modules/start-pay/
+└── paymentNextAction  # Vuetify presenter
+```
+
+Each edition module exposes its own `ZPaymentNextAction` wrapper, while consuming the neutral `IPaymentNextActionProps` contract and `ServicePaymentCoordinator` from `a-pay`.
+
+| Module       | Vona responsibility                                                                                       | Zova responsibility                                                                                |
+| ------------ | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `a-pay`      | Payment sessions, provider operations, callbacks, webhooks, normalized contracts, audit/outbox boundaries | Payment-session API/model, generated contracts, normalized next-action input, redirect coordinator |
+| `basic-pay`  | —                                                                                                         | Cabloy Basic next-action presentation using DaisyUI and Tailwind CSS                               |
+| `start-pay`  | —                                                                                                         | Cabloy Start next-action presentation using Vuetify                                                |
+| `pay-mock`   | Deterministic development/test provider and simulator webhook path                                        | Mock completion mutation used by the Commerce test surface                                         |
+| `pay-paypal` | PayPal API, capture, query, refund, and webhook translation                                               | Provider identity and metadata surface; no PayPal SDK execution in the browser                     |
+| `pay-stripe` | Stripe Checkout, query, refund, and webhook translation                                                   | Provider identity and metadata surface; no Stripe SDK execution in the browser                     |
 
 The actual Web payment page is owned by the Commerce consumer, not by `zova-module-a-pay`:
 
@@ -143,7 +157,7 @@ The following flow is source-confirmed by the current Commerce and A-Pay impleme
 6. Commerce navigates to an authenticated Commerce payment route with the payment-session and order identifiers. Callback continuation remains server-selected and allowlisted; do not derive it from provider or browser input.
 7. The customer starts the session. Zova calls `POST /api/pay/payment-session/{id}/start`; A-Pay claims a provider operation with a stable idempotency key before making the external provider call.
 8. The provider adapter returns a normalized snapshot and optional `nextAction`. Redirect-capable providers normally return `requires_action` with a redirect action.
-9. Zova renders the generic next-action component. On the client, the redirect coordinator uses `window.location.assign(...)`; it does not call a provider SDK or decide whether the order is paid.
+9. Zova renders the edition-owned next-action presenter: `ZPaymentNextAction` from `basic-pay` in Cabloy Basic or from `start-pay` in Cabloy Start. On the client, the shared redirect coordinator uses `window.location.assign(...)`; it does not call a provider SDK or decide whether the order is paid.
 10. The provider returns through the server callback route, or sends a webhook to the public webhook route. A return callback can request confirmation or reconciliation, but cannot assert success.
 11. A-Pay verifies provider webhook input using the selected server-side client and the raw request body, then correlates provider, client, environment, amount, currency, and identifiers with the persisted session.
 12. Verified facts are deduplicated and applied to payment state. The state transition, audit entry, and `payment.outcome.v1` outbox record are written durably.
@@ -212,9 +226,9 @@ Read the frontend in Zova’s own roles first:
 | Zova role                        | Current A-Pay responsibility                                                                                      |
 | -------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `ModelPaymentSession`            | Model-owned query and mutation state for `view`, `start`, and `reconcile`, including invalidation after mutations |
-| `ControllerPaymentNextAction`    | Component-controller behavior for redirect, pending, completed, and embedded action rendering                     |
+| `IPaymentNextActionProps`        | Shared neutral input contract for edition-owned next-action presenters                                            |
 | `ServicePaymentCoordinator`      | Client-only execution of a normalized redirect action                                                             |
-| `ZPaymentNextAction`             | Metadata-backed public component wrapper for the action controller                                                |
+| `basic-pay` / `start-pay`        | Edition-owned `ControllerPaymentNextAction` and `ZPaymentNextAction` presentation wrappers                        |
 | Commerce payment page controller | Route state, start/reconcile decisions, settlement polling, and order navigation                                  |
 
 This is not page-local Vue fetching rewritten with classes. The model bean owns remote query/mutation state; the controller owns interaction and lifecycle decisions; the service bean owns reusable browser-side behavior; the render/component wrapper exposes the controller to consumers.
@@ -223,10 +237,10 @@ The core frontend reading path is:
 
 1. `zova/src/suite-vendor/a-pay/modules/a-pay/src/types/payment.ts`
 2. `zova/src/suite-vendor/a-pay/modules/a-pay/src/model/paymentSession.ts`
-3. `zova/src/suite-vendor/a-pay/modules/a-pay/src/api/paymentSession.ts`
-4. `zova/src/suite-vendor/a-pay/modules/a-pay/src/apiSchema/paymentSession.ts`
+3. `zova/src/suite-vendor/a-pay/modules/a-pay/src/api/payPaymentSession.ts`
+4. `zova/src/suite-vendor/a-pay/modules/a-pay/src/apiSchema/payPaymentSession.ts`
 5. `zova/src/suite-vendor/a-pay/modules/a-pay/src/service/paymentCoordinator.ts`
-6. `zova/src/suite-vendor/a-pay/modules/a-pay/src/component/paymentNextAction/controller.tsx`
+6. `zova/src/suite/cabloy-basic/modules/basic-pay/src/component/paymentNextAction/controller.tsx` or `zova/src/suite/cabloy-start/modules/start-pay/src/component/paymentNextAction/controller.tsx`
 7. `zova/src/suite/a-commerce/modules/commerce-trade/src/page/payment/controller.tsx`
 
 When a consumer uses `controllerRef` on `ZPaymentNextAction`, it receives the Zova component controller instance. It is not a generic DOM or Vue component reference.
@@ -235,7 +249,7 @@ When a consumer uses `controllerRef` on `ZPaymentNextAction`, it receives the Zo
 
 - Keep payment-session query/mutation state in `ModelPaymentSession`.
 - Consume generated API types and schemas; do not hand-patch generated files.
-- Pass the normalized `nextAction` to the generic action component instead of adding provider-specific branches to Commerce pages.
+- Pass the normalized `nextAction` and shared `IPaymentNextActionProps` to the active edition's action component instead of adding provider-specific branches to Commerce pages.
 - Execute redirects only in the browser.
 - Keep mock simulator controls limited to mock sessions and development/test surfaces.
 - Treat payment-session terminal state and Commerce order settlement as separate observations.
@@ -303,10 +317,10 @@ For frontend contracts and consumption:
 
 1. `zova/src/suite-vendor/a-pay/modules/a-pay/src/types/payment.ts`
 2. `zova/src/suite-vendor/a-pay/modules/a-pay/src/model/paymentSession.ts`
-3. `zova/src/suite-vendor/a-pay/modules/a-pay/src/api/paymentSession.ts`
-4. `zova/src/suite-vendor/a-pay/modules/a-pay/src/apiSchema/paymentSession.ts`
+3. `zova/src/suite-vendor/a-pay/modules/a-pay/src/api/payPaymentSession.ts`
+4. `zova/src/suite-vendor/a-pay/modules/a-pay/src/apiSchema/payPaymentSession.ts`
 5. `zova/src/suite-vendor/a-pay/modules/a-pay/src/service/paymentCoordinator.ts`
-6. `zova/src/suite-vendor/a-pay/modules/a-pay/src/component/paymentNextAction/controller.tsx`
+6. `zova/src/suite/cabloy-basic/modules/basic-pay/src/component/paymentNextAction/controller.tsx` or `zova/src/suite/cabloy-start/modules/start-pay/src/component/paymentNextAction/controller.tsx`
 7. `zova/src/suite/a-commerce/modules/commerce-trade/src/routes.ts`
 8. `zova/src/suite/a-commerce/modules/commerce-trade/src/page/checkout/controller.tsx`
 9. `zova/src/suite/a-commerce/modules/commerce-trade/src/page/payment/controller.tsx`
