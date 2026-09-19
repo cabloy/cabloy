@@ -203,6 +203,7 @@ Check whether the feature needs:
 - generic component conversion
 - style/theme/icon updates
 - wrapper usage review
+- async interaction ownership: for a button-only action, return or await the complete action through `ZButton onPerform` and do not mirror the same lifecycle with button-local `loading` / `disabled` state; retain explicit state only for independently initiated or broader shared work
 - async-loading or controllerRef implications
 
 ### Verification
@@ -251,6 +252,7 @@ Especially relevant pages include:
 - `repo-docs/frontend/route-alias-guide.md`
 - `repo-docs/frontend/navigation-guards-guide.md`
 - `repo-docs/frontend/component-guide.md`
+- `repo-docs/frontend/behavior-guide.md` for `ZButton` / Behavior action loading and error-boundary ownership
 - `repo-docs/frontend/form-layout-guide.md` for schema-driven field placement, Grid/flow selection, groups, tabs, or embedded filter actions
 - `repo-docs/frontend/component-props-guide.md`
 - `repo-docs/frontend/component-v-model-guide.md`

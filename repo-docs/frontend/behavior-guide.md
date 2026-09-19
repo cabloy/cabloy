@@ -337,6 +337,65 @@ Representative usage:
 
 This is a clean example of attaching a behavior to a native element through a generated `bs-*` attribute.
 
+### Perform a standalone asynchronous button action
+
+Cabloy Basic's `ZButton` attaches the `basic-button:perform` behavior to its native button. `BehaviorPerform` owns the button-local lifecycle for an action passed through `onPerform`:
+
+- loading presentation and `aria-busy`
+- temporary disabled state and duplicate-click suppression
+- the ordinary action-error alert, unless `onError` handles the error
+- cleanup in `finally` after the action completes or fails
+
+Pass the complete interaction promise through `onPerform`. For a button-only action, do not mirror the same invocation with controller-local busy state or `loading` / `disabled` props:
+
+```tsx
+// Correct: BehaviorPerform awaits the complete save action.
+<ZButton onPerform={() => this.save()}>{this.scope.locale.Save()}</ZButton>
+
+// Correct: the loading boundary includes every step of this interaction.
+<ZButton
+  onPerform={async () => {
+    await this.save();
+    await this.$router.push(nextPath);
+  }}
+>
+  {this.scope.locale.Save()}
+</ZButton>
+```
+
+Do not detach asynchronous work from the callback. In the following shape, the callback returns `void`, so the behavior clears its button-local loading state before `save()` finishes and cannot handle its rejection:
+
+```tsx
+// Incorrect: the save promise is outside BehaviorPerform's boundary.
+<ZButton
+  onPerform={() => {
+    void this.save();
+  }}
+>
+  {this.scope.locale.Save()}
+</ZButton>
+```
+
+`loading` and `disabled` remain valid when they represent pending work owned outside this button's `onPerform`, such as an operation started by another control or a native-form/Enter-key submission path. In that case, the button must reflect a broader shared lifecycle:
+
+```tsx
+<ZButton
+  type="submit"
+  loading={this.formRef.formState.isSubmitting}
+  disabled={this.formRef.formState.isSubmitting}
+  onClick={event => {
+    event.preventDefault();
+  }}
+  onPerform={() => this.submitFromButton()}
+>
+  {this.scope.locale.Save()}
+</ZButton>
+```
+
+A genuine `ZForm` submission still owns form-wide validation, submission state, and form error handling even when one visible trigger is a `ZButton`. Use form state when another submit path can bypass the button; otherwise let `BehaviorPerform` be the sole owner of the button-local lifecycle.
+
+The source contract is implemented by `basic-button`'s `ControllerButton` and `BehaviorPerform`. For form ownership and submission paths, see the [Form Guide](/frontend/form-guide).
+
 ### Form-field behavior composition
 
 The form-field controller composes behaviors from two sources:
