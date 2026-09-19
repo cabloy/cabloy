@@ -557,6 +557,7 @@ export default defineConfig({
               link: '/frontend/permission-formscene-action-visibility-guide',
             },
             { text: 'Table Guide', link: '/frontend/table-guide' },
+            { text: 'Column Configuration Guide', link: '/frontend/column-configuration-guide' },
             { text: 'TableCell Authoring Cookbook', link: '/frontend/table-cell-cookbook' },
             {
               text: 'Table + Resource CRUD Cookbook',

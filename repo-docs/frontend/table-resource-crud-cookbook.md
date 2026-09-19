@@ -12,6 +12,7 @@ Use this page when your next question is practical rather than framework-neutral
 Use this page together with:
 
 - [Table Guide](/frontend/table-guide)
+- [Column Configuration Guide](/frontend/column-configuration-guide)
 - [TableCell Authoring Cookbook](/frontend/table-cell-cookbook)
 - [Zova Table Under the Hood](/frontend/zova-table-under-the-hood)
 - [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern)

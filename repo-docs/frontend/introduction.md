@@ -88,6 +88,7 @@ Use this path when the task is about UI composition, component contracts, form o
 - [Zova Form Under the Hood](/frontend/zova-form-under-the-hood)
 - [Zova Form Source Reading Map](/frontend/zova-form-source-reading-map)
 - [Table Guide](/frontend/table-guide)
+- [Column Configuration Guide](/frontend/column-configuration-guide)
 - [TableCell Authoring Cookbook](/frontend/table-cell-cookbook)
 - [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook)
 - [Zova Table Under the Hood](/frontend/zova-table-under-the-hood)

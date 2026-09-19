@@ -16,6 +16,7 @@ Use this page together with:
 - [API Schema Guide](/frontend/api-schema-guide)
 - [Bean Scene Authoring](/frontend/bean-scene-authoring)
 - [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern)
+- [Column Configuration Guide](/frontend/column-configuration-guide)
 - [TableCell Authoring Cookbook](/frontend/table-cell-cookbook)
 - [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook)
 - [Zova Table Under the Hood](/frontend/zova-table-under-the-hood)
@@ -247,7 +248,7 @@ For the schema side of that contract, also see [API Schema Guide](/frontend/api-
 
 ## Persisted per-user column layouts
 
-`ZovaRender.column(...)` defines the schema defaults for column visibility, order, width, and fixed regions. On a standard resource list page, an authenticated user can personalize those defaults through the **Column Configuration** toolbar action. The saved layout is scoped to that user and the current page route path, then restored on later visits.
+`ZovaRender.visible(...)` and schema/table-scene metadata decide which columns are eligible and establish their schema defaults; `ZovaRender.column(...)` supplies physical column defaults such as width and fixed regions. On a standard resource list page, an authenticated user can personalize eligible columns through the **Column Configuration** toolbar action. The saved layout is scoped to that user and the current page route path, then restored on later visits. For the complete setup, persistence, reconciliation, and Basic/Start guidance, see [Column Configuration Guide](/frontend/column-configuration-guide).
 
 | Edition      | Toolbar block                 | Column-configuration action      |
 | ------------ | ----------------------------- | -------------------------------- |
