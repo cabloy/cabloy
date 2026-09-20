@@ -14,6 +14,11 @@ export interface IRouteViewRouteItem extends IRouteViewRouteItemBase {
   pageMeta?: IPageMeta;
 }
 
+export interface IRouteViewTabCurrent {
+  tabKey: string;
+  items?: IRouteViewRouteItem[];
+}
+
 export interface IRouteViewRouteMeta extends IRouteViewRouteItemBase {
   tabKey: string;
 }

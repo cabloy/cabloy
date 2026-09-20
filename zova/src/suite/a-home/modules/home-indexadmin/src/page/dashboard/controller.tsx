@@ -4,6 +4,37 @@ import { ZPage, ZSiteEntryTables } from 'zova-module-home-base';
 
 @Controller()
 export class ControllerPageDashboard extends BeanControllerPageBase {
+  private _timer?: number;
+  currentTime = '';
+
+  protected __init__() {
+    if (!this.$pageRoute) return;
+    this.$ssr.handleDirectOrOnHydrated(() => {
+      this.currentTime = new Date().toLocaleTimeString();
+      this._timer = window.setInterval(() => {
+        this.currentTime = new Date().toLocaleTimeString();
+      }, 1000);
+    });
+    this.$router.setPageMeta(this.$pageRoute, {
+      onCustomRenderIsolate: () => (
+        <div class="flex w-full items-center justify-center">
+          <div class="badge badge-lg gap-2 border border-primary/30 bg-primary/10 px-4 py-3 text-primary shadow-sm">
+            <span class="h-2 w-2 animate-pulse rounded-full bg-primary" aria-hidden="true"></span>
+            <span class="font-mono text-base font-semibold tracking-wide tabular-nums">
+              {this.currentTime || '--:--:--'}
+            </span>
+          </div>
+        </div>
+      ),
+    });
+  }
+
+  protected __dispose__() {
+    if (this._timer !== undefined) {
+      window.clearInterval(this._timer);
+    }
+  }
+
   protected render() {
     return (
       <ZPage>

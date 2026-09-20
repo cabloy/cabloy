@@ -63,6 +63,20 @@ export class RenderTabs extends BeanRenderBase {
     const tabCurrent = $$modelTabs.tabCurrent;
     if (!tabCurrent || !tabCurrent.items) return;
     const tabKey = tabCurrent.tabKey;
+    const tabItemAnchor = tabCurrent.items.find(item => item.componentKey === tabKey);
+    const onCustomRenderIsolate = tabItemAnchor?.pageMeta?.onCustomRenderIsolate;
+    if (onCustomRenderIsolate) {
+      const domContent = onCustomRenderIsolate(tabCurrent);
+      if (!this.$$modelTabs.cache) return domContent;
+      return <ClientOnly>{domContent}</ClientOnly>;
+    }
+    const pageTitleAnchor = tabItemAnchor?.pageMeta?.pageTitle;
+    if (pageTitleAnchor) {
+      const domWrapper = <div class="flex items-center justify-center">{pageTitleAnchor}</div>;
+      if (!this.$$modelTabs.cache) return domWrapper;
+      return <ClientOnly>{domWrapper}</ClientOnly>;
+    }
+
     const domTabs: VNode[] = [];
     for (const tabItem of tabCurrent.items) {
       // ignore first
@@ -70,7 +84,9 @@ export class RenderTabs extends BeanRenderBase {
       const { componentKey, pageMeta } = tabItem;
       const className =
         componentKey === $$modelTabs.componentKeyCurrent ? 'tab-active text-primary' : '';
-      const pageTitle = pageMeta?.pageTitle || '';
+      const pageContent = pageMeta?.onCustomRender
+        ? pageMeta.onCustomRender(tabItem)
+        : pageMeta?.pageTitle || '';
       const tabItemIcon = this.getTabItemIcon(tabItem);
       const domTab = (
         <a
@@ -86,7 +102,7 @@ export class RenderTabs extends BeanRenderBase {
             class="overflow-hidden text-ellipsis whitespace-nowrap"
             style={{ display: 'inline-block', maxWidth: this.scope.config.tabItem.maxWidth }}
           >
-            {pageTitle}
+            {pageContent}
           </div>
           <ZIcon
             class="tab-close hidden hover:bg-slate-400 rounded-sm"
