@@ -419,11 +419,27 @@ These are routed-shell presentation hooks, not browser document-title or SEO met
 
 ### Scenario 5: I only want to change browser document title
 
-Do not assume page meta is the right tool.
+Use [`$useMeta(...)` in the SSR SEO Meta guide](/frontend/ssr-seo-meta#usemeta), not `$router.setPageMeta(...)`.
 
-`pageTitle` is a routed-shell task-title surface first.
+`pageTitle` is a routed-shell task-title surface first. `$useMeta(...)` owns SSR-aware document-head metadata, including the browser title:
 
-If the requirement is only browser document-title behavior, verify the current document-title consumer path before reusing page meta for that purpose.
+```typescript
+this.$useMeta({
+  title: 'Product catalogue',
+});
+```
+
+When the title depends on reactive page state, pass a function so the client metadata surface updates with that state:
+
+```typescript
+this.$useMeta(() => ({
+  title: this.product?.name ?? 'Product',
+}));
+```
+
+Use page meta as well only when the routed shell needs its task label to change independently. For example, a record editor may set `pageTitle` for its Admin tab and `$useMeta(...)` for the browser title; neither API automatically updates the other.
+
+For title templates, descriptions, other head tags, and the static-versus-reactive behavior of `$useMeta(...)`, continue with [SSR SEO Meta](/frontend/ssr-seo-meta).
 
 ## A compact helper pattern
 
