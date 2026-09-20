@@ -337,17 +337,39 @@ test(
     const pageErrors = collectPageErrors(page);
     const consoleErrors = collectConsoleErrors(page);
     try {
-      await loginAsAdmin(page);
+      await page.goto('/admin/login', { waitUntil: 'load' });
       await page.evaluate(() => {
+        indexedDB.deleteDatabase('localforage');
         localStorage.clear();
         sessionStorage.clear();
       });
+      await page.goto('/admin/login?returnTo=/rest/resource/training-student%253Astudent', {
+        waitUntil: 'load',
+      });
+      await page.getByPlaceholder('Your Username').fill('admin');
+      await page.getByPlaceholder('Your Password').fill('123456');
+      await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
 
       const initialSelect = waitForStudentSelect(page);
-      await page.getByRole('link', { name: 'Student', exact: true }).click();
-      await expect(page).toHaveURL(studentResourceUrl);
-      await initialSelect;
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
+      try {
+        await expect(page).toHaveURL(studentResourceUrl);
+        await initialSelect;
+      } finally {
+        await initialSelect.catch(() => {});
+      }
       await expect(page.getByLabel('Student Name')).toBeVisible();
+
+      await page.getByRole('link', { name: 'Home', exact: true }).click();
+      await expect(page).toHaveURL(/\/admin\/(?:\?|$)/);
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await expect(
+        page.getByRole('heading', { name: 'Vona integrated SSR', exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('heading', { name: 'Zova standalone SSR', exact: true }),
+      ).toBeVisible();
+      await expect(page.locator('body')).toBeVisible();
 
       expect(pageErrors).toEqual([]);
       expect(

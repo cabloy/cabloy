@@ -6,9 +6,10 @@ import type {
   RouterOptions,
 } from '@cabloy/vue-router';
 
-import { BeanBase, TypeEventOff, Use } from 'zova';
+import { BeanBase, Use } from 'zova';
 import { Bean } from 'zova-module-a-bean';
 
+import { RouterGuardDisposers } from '../lib/routerGuardDisposers.js';
 import { BeanRouterViewBase } from '../lib/routerViewBase.js';
 import { ModelPageData } from '../model/pageData.js';
 import { IPageMeta } from '../types/pageMeta.js';
@@ -30,7 +31,7 @@ export interface BeanRouter extends Omit<
 @Bean()
 export class BeanRouter extends BeanBase {
   private _vueRouterApp: Router;
-  private _eventRouterGuards: TypeEventOff[] = [];
+  private _routerGuardDisposers = new RouterGuardDisposers();
   private _routerViews: BeanRouterViewBase[] = [];
   private _disposed = false;
 
@@ -65,21 +66,19 @@ export class BeanRouter extends BeanBase {
   }
 
   public dispose() {
-    this.__dispose__();
-  }
-
-  protected __dispose__() {
     if (this._disposed) return;
     this._disposed = true;
-    for (const fn of this._eventRouterGuards) {
-      fn();
-    }
-    this._eventRouterGuards = [];
+    this._routerGuardDisposers.dispose();
     this._routerViews = [];
     const router = this._vueRouterApp as Router & {
       __prepareNavigation?: (to: unknown) => Promise<void> | void;
     };
     if (router) router.__prepareNavigation = undefined;
+  }
+
+  protected __dispose__() {
+    // Router instances can be borrowed through page host providers. Their
+    // creator explicitly calls dispose() when the router itself is finished.
   }
 
   protected __get__(prop: string) {
@@ -140,27 +139,19 @@ export class BeanRouter extends BeanBase {
   }
 
   beforeEach(guard: NavigationGuardWithThis<undefined>): () => void {
-    const fn = this._vueRouterApp.beforeEach(guard);
-    this._eventRouterGuards.push(fn);
-    return fn;
+    return this._routerGuardDisposers.add(this._vueRouterApp.beforeEach(guard));
   }
 
   beforeResolve(guard: NavigationGuardWithThis<undefined>): () => void {
-    const fn = this._vueRouterApp.beforeResolve(guard);
-    this._eventRouterGuards.push(fn);
-    return fn;
+    return this._routerGuardDisposers.add(this._vueRouterApp.beforeResolve(guard));
   }
 
   afterEach(guard: NavigationHookAfter): () => void {
-    const fn = this._vueRouterApp.afterEach(guard);
-    this._eventRouterGuards.push(fn);
-    return fn;
+    return this._routerGuardDisposers.add(this._vueRouterApp.afterEach(guard));
   }
 
   onError(handler: TypeErrorListener): () => void {
-    const fn = this._vueRouterApp.onError(handler);
-    this._eventRouterGuards.push(fn);
-    return fn;
+    return this._routerGuardDisposers.add(this._vueRouterApp.onError(handler));
   }
 
   setPageMeta(route: RouteLocationNormalizedLoadedGeneric, pageMeta: IPageMeta) {

@@ -12,9 +12,18 @@ export class ServiceRouterGuards extends BeanRouterGuardsBase {
     const self = this;
     router.beforeEach(async to => {
       // match path
-      let match = to.matched.find(item => item.aliasOf);
-      if (match) {
-        match = match.aliasOf;
+      const aliasMatch = to.matched.find(item => item.aliasOf);
+      let match = aliasMatch;
+      if (aliasMatch) {
+        match = aliasMatch.aliasOf;
+        // A path-config alias can initially resolve to a componentless placeholder
+        // before its module registers the real layout route. Reload the same path
+        // after loading so the router resolves the newly registered component.
+        if (!match?.components || Object.keys(match.components).length === 0) {
+          const resLoadModule = await this._forceLoadModule(router, match?.name, match?.path);
+          if (resLoadModule && resLoadModule !== true) return resLoadModule;
+          return to.fullPath;
+        }
       } else {
         match = to.matched[to.matched.length - 1];
         // prepareCheck

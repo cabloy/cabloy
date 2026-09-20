@@ -99,6 +99,7 @@ export class Monkey
     if (this.serviceRouterGuards) {
       this.serviceRouterGuards.dispose();
     }
+    this._beanRouter?.dispose();
   }
 
   async appReady() {

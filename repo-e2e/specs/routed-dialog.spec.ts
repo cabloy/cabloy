@@ -198,6 +198,21 @@ test(
     await page.keyboard.press('Escape');
     await expect(dialogA).toHaveCount(0);
     expect(page.url()).toBe(browserUrl);
+
+    await page.getByRole('button', { name: 'Open A', exact: true }).click();
+    await expect(dialogA).toHaveCount(1);
+    await expect(
+      dialogA.getByRole('heading', { name: 'Routed Dialog Entry', exact: true }),
+    ).toBeVisible();
+    await dialogA.getByRole('button', { name: 'Local push to detail', exact: true }).click();
+    await expect(
+      dialogA.getByRole('heading', { name: 'Routed Dialog Detail', exact: true }),
+    ).toBeVisible();
+    expect(page.url()).toBe(browserUrl);
+
+    await page.keyboard.press('Escape');
+    await expect(dialogA).toHaveCount(0);
+    expect(page.url()).toBe(browserUrl);
     expect(pageErrors).toEqual([]);
     expect(consoleErrors).toEqual([]);
     expect(await getHydrationWarningProbe(page)).toEqual([]);

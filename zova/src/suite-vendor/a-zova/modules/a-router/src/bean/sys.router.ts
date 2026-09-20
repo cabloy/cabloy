@@ -388,6 +388,7 @@ export class SysRouter extends BeanBase {
       routeData = {
         name: routeNameParent,
         path,
+        ...(route.alias ? { alias: route.alias } : {}),
         component: this.createAsyncComponent(layout as any),
         children: [{ ...route, name, path: '', component, meta }],
       };
