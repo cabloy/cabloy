@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.179
+
+### Improvements
+
+- Refresh the Zova lockfile and core patch dependencies.
+
 ## 5.1.178
 
 ### Features
