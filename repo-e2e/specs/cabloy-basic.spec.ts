@@ -28,6 +28,16 @@ function collectPageErrors(page: Page) {
   return errors;
 }
 
+function collectConsoleErrors(page: Page) {
+  const errors: string[] = [];
+  page.on('console', message => {
+    if (message.type() === 'error') {
+      errors.push(message.text());
+    }
+  });
+  return errors;
+}
+
 async function loginAsAdmin(page: Page) {
   await page.goto('/admin/', { waitUntil: 'load' });
   if (page.url().includes('/admin/login')) {
@@ -319,7 +329,42 @@ test(
 );
 
 test(
-  'ATP-BASIC-FLOW-01: Training Student flow filter wraps and submits queries',
+  'ATP-BASIC-FLOW-01: cold Admin navigation initializes dynamic resource selectors',
+  { tag: ['@admin', '@flow'] },
+  async ({ browser }) => {
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    const pageErrors = collectPageErrors(page);
+    const consoleErrors = collectConsoleErrors(page);
+    try {
+      await loginAsAdmin(page);
+      await page.evaluate(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+      });
+
+      const initialSelect = waitForStudentSelect(page);
+      await page.getByRole('link', { name: 'Student', exact: true }).click();
+      await expect(page).toHaveURL(studentResourceUrl);
+      await initialSelect;
+      await expect(page.getByLabel('Student Name')).toBeVisible();
+
+      expect(pageErrors).toEqual([]);
+      expect(
+        consoleErrors.some(
+          error =>
+            error.includes("Cannot read properties of undefined (reading 'resource')") ||
+            error.includes('resource not specified'),
+        ),
+      ).toBeFalsy();
+    } finally {
+      await context.close();
+    }
+  },
+);
+
+test(
+  'ATP-BASIC-FLOW-02: Training Student flow filter wraps and submits queries',
   { tag: ['@admin', '@flow'] },
   async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });

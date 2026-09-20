@@ -489,6 +489,10 @@ export class BeanContainer {
       // throw new Error(`bean not found: ${beanFullName}`);
       return null!;
     }
+    // controller module: ensure route resources are ready before controller data initialization
+    if (controllerData) {
+      await this._useModule(beanOptions.module);
+    }
     // beanFullName
     return await this._createBeanInstance<T>(
       record,
