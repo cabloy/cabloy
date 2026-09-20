@@ -111,6 +111,7 @@ async function _useController(
   }
 
   function isAttemptActive(attemptId: number) {
+    if (ctx.disposed || !ctx.meta) return false;
     return ctx.meta.state.isLoadAttemptActive(attemptId);
   }
 
@@ -133,9 +134,9 @@ async function _useController(
       true,
       false,
       controller => {
+        if (!isAttemptActive(attemptId)) return;
         loadBeans.add(controller as object);
         ctx.meta.state.setLoadBeanAttempt(controller as object, attemptId);
-        if (!isAttemptActive(attemptId)) return;
         ctx.meta.state.setLoadController(controller);
         setLoadBoundaryOptions((controller as any).constructor);
       },
@@ -151,6 +152,7 @@ async function _useController(
         true,
         false,
         style => {
+          if (!isAttemptActive(attemptId)) return;
           loadBeans.add(style as object);
           ctx.meta.state.setLoadBeanAttempt(style as object, attemptId);
         },
@@ -167,6 +169,7 @@ async function _useController(
         true,
         false,
         render => {
+          if (!isAttemptActive(attemptId)) return;
           loadBeans.add(render as object);
           ctx.meta.state.setLoadBeanAttempt(render as object, attemptId);
         },

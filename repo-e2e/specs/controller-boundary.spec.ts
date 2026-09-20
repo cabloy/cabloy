@@ -102,6 +102,48 @@ test(
 );
 
 test(
+  'ATP-BASIC-CONTROLLER-BOUNDARY-06: disposed and stale loads do not surface errors',
+  { tag: ['@web', '@flow'] },
+  async ({ page }) => {
+    const pageErrors = collectPageErrors(page);
+    const consoleErrors = collectConsoleErrors(page);
+    const response = await page.goto('/demo/basic/controllerBoundary', { waitUntil: 'load' });
+    expect(response?.ok()).toBeTruthy();
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+    await page.waitForTimeout(1_000);
+
+    const loading = page.getByRole('status');
+    const error = page.locator('.alert.alert-error');
+    const ready = page.getByText('Controller boundary probe ready', { exact: true });
+
+    const disposedLoading = loading.waitFor({ state: 'visible' });
+    await page.getByRole('button', { name: 'Mount failing probe', exact: true }).click();
+    await disposedLoading;
+    await page.getByRole('button', { name: 'Clear probe', exact: true }).click();
+    await page.waitForTimeout(1_000);
+    await expect(loading).toHaveCount(0);
+    await expect(error).toHaveCount(0);
+    await expect(ready).toHaveCount(0);
+
+    const staleLoading = loading.waitFor({ state: 'visible' });
+    await page.getByRole('button', { name: 'Mount failing probe', exact: true }).click();
+    await staleLoading;
+    await page.getByRole('button', { name: 'Mount fast success probe', exact: true }).click();
+    await expect(ready).toBeVisible();
+    await page.waitForTimeout(1_000);
+    await expect(error).toHaveCount(0);
+    await expect(ready).toBeVisible();
+
+    expect(pageErrors).toEqual([]);
+    expect(
+      consoleErrors.filter(error =>
+        /Cannot read properties of null \(reading ['"]state['"]\)/.test(error),
+      ),
+    ).toEqual([]);
+  },
+);
+
+test(
   'ATP-BASIC-CONTROLLER-BOUNDARY-02: inline boundaries preserve phrasing-content markup',
   { tag: ['@web', '@flow'] },
   async ({ page }) => {
