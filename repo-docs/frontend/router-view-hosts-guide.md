@@ -129,6 +129,43 @@ A compact interpretation is:
 
 This is the point where route state becomes host state.
 
+### Page activation state
+
+A routed page and its descendant Zova components can read the optional `$pageHost` shortcut:
+
+```ts
+this.$pageHost?.active;
+```
+
+`$pageHost.active` is a stable, reactive page-host context value. It describes whether this concrete page component instance is currently activated by its Vue host. It is initialized as `true` for SSR and the initial client render, becomes `false` when a cached page is deactivated, and becomes `true` again when that same page instance is reactivated. It becomes `false` before final unmount as a cleanup safeguard.
+
+Use it to pause work that does not need to continue while a cached page is inactive, for example timers, polling, subscriptions, media, or observers:
+
+```ts
+this.$watch(
+  () => this.$pageHost?.active,
+  active => {
+    if (active) this.startPolling();
+    else this.stopPolling();
+  },
+  { immediate: true },
+);
+```
+
+Keep the browser-only work behind the existing SSR and hydration boundary. An initial `active === true` value does not mean that `window`, `document`, or other browser APIs exist during server rendering.
+
+`$pageHost.active` is not:
+
+- the current route or navigation intent
+- membership in `keepAliveInclude`
+- the selected Tabs or Stack model item
+- browser visibility or window focus
+- data-loading readiness
+
+Therefore `active` and `keepAlive` answer different questions: `keepAlive` controls retention eligibility, while `$pageHost.active` reports the lifecycle state of the retained page instance. `__dispose__()` remains the final cleanup hook and is not called merely because a cached page is deactivated.
+
+This context is available through the page bean-host hierarchy, so Page Controllers, Render/Style companions, and descendant components can observe the same page-host object. Nested routed pages receive their own nearest page host.
+
 ## Host 1: `routerViewEmpty`
 
 The minimal host controller lives in:

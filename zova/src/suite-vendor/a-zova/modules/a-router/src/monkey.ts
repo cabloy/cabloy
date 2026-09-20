@@ -18,14 +18,15 @@ import type {
 import type { ErrorSSR } from 'zova-module-a-ssr';
 
 import * as ModuleInfo from '@cabloy/module-info';
-import { shallowReactive } from 'vue';
+import { onActivated, onBeforeUnmount, onDeactivated, shallowReactive } from 'vue';
 import { BeanControllerPageBase, BeanSimple, cast, useComputed } from 'zova';
 
 import type { BeanRouter } from './bean/bean.router.js';
 import type { SysRouter } from './bean/sys.router.js';
+import type { IPageHost } from './types/pageHost.js';
 import type { TypePageSchema } from './types/router.js';
 
-import { routerViewKey } from './lib/const.js';
+import { pageHostKey, routerViewKey } from './lib/const.js';
 import { getCurrentRoute, getPageRoute, getRealRouteName, getRouteMatched } from './lib/utils.js';
 import { ServiceRouterGuards } from './service/routerGuards.js';
 import { SymbolRouterHistory } from './types/utils.js';
@@ -42,6 +43,7 @@ export class Monkey
 {
   private _beanRouter: BeanRouter;
   private _sysRouter: SysRouter;
+  private _pageHosts = new WeakMap<ZovaContext, IPageHost>();
   serviceRouterGuards: ServiceRouterGuards;
 
   private async _getSysRouter() {
@@ -149,6 +151,13 @@ export class Monkey
         });
       },
     });
+    bean.defineProperty(beanInstance, '$pageHost', {
+      enumerable: false,
+      configurable: true,
+      get() {
+        return bean._getBeanFromHost({ name: pageHostKey }) ?? undefined;
+      },
+    });
     bean.defineProperty(beanInstance, '$currentRoute', {
       enumerable: false,
       configurable: true,
@@ -161,7 +170,35 @@ export class Monkey
   }
 
   controllerDataPrepare(controllerData: IControllerData, ctx: ZovaContext) {
+    if (controllerData.context.page) {
+      this._initPageHost(ctx);
+    }
     controllerData.context.route = getPageRoute(ctx);
+  }
+
+  private _initPageHost(ctx: ZovaContext) {
+    const existing = this._pageHosts.get(ctx);
+    if (existing) {
+      ctx.bean._setBean(pageHostKey, existing);
+      return;
+    }
+
+    const pageHost = shallowReactive({ active: true });
+    this._pageHosts.set(ctx, pageHost);
+    ctx.bean._setBean(pageHostKey, pageHost);
+    if (!process.env.CLIENT) return;
+
+    ctx.util.instanceScope(() => {
+      onActivated(() => {
+        pageHost.active = true;
+      });
+      onDeactivated(() => {
+        pageHost.active = false;
+      });
+      onBeforeUnmount(() => {
+        pageHost.active = false;
+      });
+    });
   }
 
   controllerDataInit(controllerData: IControllerData, controller: BeanBase) {

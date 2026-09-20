@@ -39,7 +39,7 @@ export function useControllerPage(
   styleBeanFullName?: Constructable | string,
 ) {
   // controllerData
-  const controllerData = { context: {} };
+  const controllerData = { context: { page: true } };
   // use controller
   _useController(controllerData, controllerBeanFullName, renderBeanFullName, styleBeanFullName);
 }

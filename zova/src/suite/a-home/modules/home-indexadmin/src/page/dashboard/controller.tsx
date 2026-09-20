@@ -10,10 +10,17 @@ export class ControllerPageDashboard extends BeanControllerPageBase {
   protected __init__() {
     if (!this.$pageRoute) return;
     this.$ssr.handleDirectOrOnHydrated(() => {
-      this.currentTime = new Date().toLocaleTimeString();
-      this._timer = window.setInterval(() => {
-        this.currentTime = new Date().toLocaleTimeString();
-      }, 1000);
+      this.$watch(
+        () => this.$pageHost?.active,
+        active => {
+          if (active) {
+            this._startTimer();
+          } else {
+            this._stopTimer();
+          }
+        },
+        { immediate: true },
+      );
     });
     this.$router.setPageMeta(this.$pageRoute, {
       onCustomRenderIsolate: () => (
@@ -29,10 +36,22 @@ export class ControllerPageDashboard extends BeanControllerPageBase {
     });
   }
 
+  private _startTimer() {
+    if (this._timer !== undefined) return;
+    this.currentTime = new Date().toLocaleTimeString();
+    this._timer = window.setInterval(() => {
+      this.currentTime = new Date().toLocaleTimeString();
+    }, 1000);
+  }
+
+  private _stopTimer() {
+    if (this._timer === undefined) return;
+    window.clearInterval(this._timer);
+    this._timer = undefined;
+  }
+
   protected __dispose__() {
-    if (this._timer !== undefined) {
-      window.clearInterval(this._timer);
-    }
+    this._stopTimer();
   }
 
   protected render() {

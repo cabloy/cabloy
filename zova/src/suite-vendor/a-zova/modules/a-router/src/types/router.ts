@@ -17,6 +17,7 @@ import type {
 
 import type { BeanRouter } from '../bean/bean.router.js';
 import type { BeanRouterViewBase } from '../lib/routerViewBase.js';
+import type { IPageHost } from './pageHost.js';
 import type { IGetPagePathOptions, IGotoPageOptions } from './utils.js';
 import 'vue-router';
 
@@ -72,6 +73,7 @@ declare module 'zova' {
     $router: BeanRouter;
     $routerView: BeanRouterViewBase;
     $pageRoute: RouteLocationNormalizedLoadedGeneric | undefined;
+    $pageHost: IPageHost | undefined;
     $currentRoute: RouteLocationNormalizedLoadedGeneric | undefined;
   }
 

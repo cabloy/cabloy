@@ -62,6 +62,7 @@ export type TypeAllErrorCodes = TypeScopesErrorCodes | keyof TypeErrorsInternal;
 
 export interface IControllerDataContext {
   slots?: object;
+  page?: boolean;
 }
 
 export interface IControllerData {
