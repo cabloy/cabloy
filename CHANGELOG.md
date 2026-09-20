@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.178
+
+### Features
+
+- Add `setPageMeta` support for configuring page metadata.
+
+### Bug Fixes
+
+- Fix router behavior.
+- Correct `isAttemptActive` handling.
+- Ensure route resources are ready before initializing controller data.
+
 ## 5.1.177
 
 ### Improvements
