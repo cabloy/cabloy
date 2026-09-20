@@ -38,8 +38,8 @@ The shortest accurate model is:
 2. page code calls `$router.setPageMeta(this.$pageRoute, pageMeta)` when task-level presentation should change
 3. the shared router bean forwards that update to registered router-view hosts
 4. `routerViewTabs` delegates the update to `ModelTabs`
-5. `ModelTabs` stores the metadata on the current level-2 tab item
-6. the active layout reads that metadata to render task-level title and icon state
+5. `ModelTabs` stores the metadata on the level-2 work item matched by the route's `fullPath`
+6. the relevant layout reads that metadata to render task-level title and icon state
 
 That is why page metadata is not the same thing as route metadata.
 
@@ -57,13 +57,14 @@ The highest-value current Basic source path is:
 5. `zova/src/suite-vendor/a-zova/modules/a-routertabs/src/component/routerViewTabs/controller.tsx` overrides `setPageMeta(...)` and delegates to `ModelTabs`
 6. `zova/src/suite-vendor/a-zova/modules/a-routertabs/src/model/tabs.ts` stores and merges `pageMeta` on the routed work item
 7. `zova/src/suite/cabloy-basic/modules/basic-pageentry/src/component/blockPageEntry/controller.tsx` shows the clearest current authoring path
-8. `zova/src/suite/a-home/modules/home-layoutadmin/src/component/layoutAdmin/render.tabs.tsx` shows the clearest current visible shell consumer
+8. `zova/src/suite/a-home/modules/home-indexadmin/src/page/dashboard/controller.tsx` shows a current custom-render page-meta call site
+9. `zova/src/suite/a-home/modules/home-layoutadmin/src/component/layoutAdmin/render.tabs.tsx` shows the clearest current visible shell consumer
 
 A compact interpretation is:
 
 - page code emits page meta through `$router.setPageMeta(...)`
-- the router forwards it to the active routed host
-- the tabs host stores it on the routed work item
+- the router forwards it to all registered routed hosts
+- each host may handle the update or ignore it; the tabs host stores it on the work item matched by the route
 - the shell renders title, dirty, and form-scene signals from that stored metadata
 
 ## The public page-meta surface
@@ -81,8 +82,38 @@ export interface IPageMeta {
   pageTitle?: string;
   pageDirty?: boolean;
   formMeta?: IFormMeta;
+  onCustomRender?: (tabItem: IRouteViewRouteItem) => VNodeChild;
+  onCustomRenderIsolate?: (tabCurrent: IRouteViewTabCurrent) => VNodeChild;
 }
 ```
+
+The two render callbacks are optional shell-rendering hooks. They are useful when a page needs to replace the usual text-only task label with a small reactive presentation, such as a status badge or clock. They are not a replacement for the page's main `render()` output.
+
+### `onCustomRender`
+
+`onCustomRender` customizes the content of a non-anchor level-2 tab item. The callback receives the corresponding `IRouteViewRouteItem` and returns a Vue `VNodeChild`:
+
+```typescript
+this.$router.setPageMeta(this.$pageRoute, {
+  onCustomRender: tabItem => <span>{tabItem.pageMeta?.pageTitle || 'Working'}</span>,
+});
+```
+
+In the current Admin tabs renderer, this callback takes precedence over `pageTitle` for that tab item. The returned content is rendered inside the level-2 tab label. Use the callback argument for stable tab-item metadata; use the page/controller's reactive state when the label itself needs to update.
+
+### `onCustomRenderIsolate`
+
+`onCustomRenderIsolate` customizes the active anchor item's isolated level-2 presentation. The callback receives the current `IRouteViewTabCurrent` and returns a Vue `VNodeChild`:
+
+```typescript
+this.$router.setPageMeta(this.$pageRoute, {
+  onCustomRenderIsolate: () => <span class="badge">Online</span>,
+});
+```
+
+In the current Admin tabs renderer, this callback has precedence over the anchor's `pageTitle` and the ordinary level-2 tab list. It is therefore appropriate for a page-specific shell area that should be shown in place of the default current-item title. The current Basic dashboard uses this hook for its live time badge.
+
+These callbacks are currently consumed by the Admin layout's tabs renderer. Do not assume that every routed host or every edition renders them; verify the concrete host and layout before relying on custom shell output.
 
 ### `pageTitle`
 
@@ -224,7 +255,7 @@ setPageMeta(route, pageMeta) {
 
 This means the router bean is not itself the state owner.
 
-It is the forwarding boundary between page code and routed hosts.
+It is the forwarding boundary between page code and routed hosts. The base router-view host provides a no-op `setPageMeta(...)`, so a host that does not override it can ignore the update without changing the page or route record.
 
 ### 3. `routerViewTabs` delegates to `ModelTabs`
 
@@ -241,7 +272,7 @@ public setPageMeta(route, pageMeta) {
 }
 ```
 
-Inside `ModelTabs`, the update is resolved by `route.fullPath`, then applied to the current tab item.
+Inside `ModelTabs`, the update is resolved by searching the tab items for the matching `route.fullPath`, then applied to that routed work item. The incoming object is shallow-merged with the existing `pageMeta`, so a later call can update one field without clearing the other fields already stored on that work item.
 
 This is the crucial source-level fact:
 
@@ -249,16 +280,29 @@ This is the crucial source-level fact:
 
 ### 4. The active layout consumes the stored page meta
 
-Representative Basic consumers:
+The clearest Basic page-meta consumer is the Admin layout:
 
 - `zova/src/suite/a-home/modules/home-layoutadmin/src/component/layoutAdmin/render.tabs.tsx`
+
+The Web layout has a related tabs presentation, but its current renderer does not read `pageMeta`:
+
 - `zova/src/suite/a-home/modules/home-layoutweb/src/component/layoutWeb/render.tabs.tsx`
 
-In the current Basic source, the layout can use page meta for:
+In the current Admin layout, the renderer can use page meta for:
 
 - task-level title rendering
 - dirty indicators
 - create/edit icon signals derived from `formMeta.formScene`
+- custom content for level-2 tab items through `onCustomRender`
+- isolated content for the active anchor item through `onCustomRenderIsolate`
+
+The current Admin tabs renderer applies custom content in this order:
+
+1. if the active anchor item has `onCustomRenderIsolate`, render that isolated result
+2. otherwise, if the anchor item has `pageTitle`, render that title
+3. otherwise, render the other level-2 items; each item uses `onCustomRender(tabItem)` when present, otherwise its `pageTitle`
+
+When tabs caching is enabled, this renderer wraps the custom shell output in `ClientOnly`. The current Web layout's tabs renderer does not read these page-meta callbacks, so do not assume that the same custom output appears in every layout or routed host.
 
 ## The most important authoring pattern
 
@@ -355,7 +399,25 @@ this.$router.setPageMeta(this.$pageRoute, {
 
 In the current Basic source, this lets the layout derive task-level icon treatment from `formMeta.formScene`.
 
-### Scenario 4: I only want to change browser document title
+### Scenario 4: I need a custom task-level shell presentation
+
+Use one of the custom render hooks when the normal title text is not enough:
+
+```typescript
+this.$router.setPageMeta(this.$pageRoute, {
+  onCustomRenderIsolate: () => (
+    <span class="badge badge-primary">{this.statusText}</span>
+  ),
+});
+```
+
+Use `onCustomRender` for a non-anchor level-2 item and `onCustomRenderIsolate` when the active anchor item's presentation should replace the ordinary level-2 item row. The callback may close over reactive controller state, as in the current dashboard clock example:
+
+- `zova/src/suite/a-home/modules/home-indexadmin/src/page/dashboard/controller.tsx`
+
+These are routed-shell presentation hooks, not browser document-title or SEO metadata APIs.
+
+### Scenario 5: I only want to change browser document title
 
 Do not assume page meta is the right tool.
 
