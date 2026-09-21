@@ -24,7 +24,7 @@ importers:
     dependencies:
       '@babel/core':
         specifier: ^7.29.0
-        version: 7.29.7
+        version: 7.29.7(supports-color@5.5.0)
       '@babel/traverse':
         specifier: ^7.29.0
         version: 7.29.7
@@ -69,7 +69,7 @@ importers:
         version: 8.0.1
       bullmq:
         specifier: ^5.74.1
-        version: 5.79.1
+        version: 5.79.1(supports-color@5.5.0)
       chalk:
         specifier: ^5.6.2
         version: 5.6.2
@@ -81,7 +81,7 @@ importers:
         version: 11.3.5
       ioredis:
         specifier: ^5.10.1
-        version: 5.11.1
+        version: 5.11.1(supports-color@5.5.0)
       knex:
         specifier: ^3.3.0
         version: 3.3.0(better-sqlite3@12.11.1)
@@ -160,6 +160,9 @@ importers:
       vona-module-a-datasource:
         specifier: workspace:^
         version: link:src/suite-vendor/a-cabloy/modules/a-datasource
+      vona-module-a-demonstration:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-demonstration
       vona-module-a-election:
         specifier: workspace:^
         version: link:src/suite-vendor/a-vona/modules/a-election
@@ -2131,6 +2134,10 @@ importers:
         version: 6.1.3
 
   src/suite-vendor/a-test/modules/test-vona:
+    dependencies:
+      vona-module-a-demonstration:
+        specifier: workspace:^
+        version: link:../../../a-vona/modules/a-demonstration
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -2168,6 +2175,9 @@ importers:
       vona-module-a-core:
         specifier: workspace:^
         version: link:modules/a-core
+      vona-module-a-demonstration:
+        specifier: ^5.0.0
+        version: link:modules/a-demonstration
       vona-module-a-election:
         specifier: workspace:^
         version: link:modules/a-election
@@ -2516,6 +2526,22 @@ importers:
       why-is-node-running:
         specifier: ^3.2.2
         version: 3.2.2
+
+  src/suite-vendor/a-vona/modules/a-demonstration:
+    dependencies:
+      vona-module-a-aspect:
+        specifier: workspace:^
+        version: link:../a-aspect
+      vona-module-a-user:
+        specifier: workspace:^
+        version: link:../a-user
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
 
   src/suite-vendor/a-vona/modules/a-election:
     devDependencies:
@@ -2870,7 +2896,7 @@ importers:
     dependencies:
       bullmq:
         specifier: ^5.74.1
-        version: 5.79.1
+        version: 5.79.1(supports-color@5.5.0)
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -2892,7 +2918,7 @@ importers:
     dependencies:
       ioredis:
         specifier: ^5.10.1
-        version: 5.11.1
+        version: 5.11.1(supports-color@5.5.0)
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -9401,6 +9427,26 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/core@7.29.7(supports-color@5.5.0)':
+    dependencies:
+      '@babel/code-frame': 7.29.7
+      '@babel/generator': 7.29.7
+      '@babel/helper-compilation-targets': 7.29.7
+      '@babel/helper-module-transforms': 7.29.7(@babel/core@7.29.7(supports-color@5.5.0))
+      '@babel/helpers': 7.29.7
+      '@babel/parser': 7.29.7
+      '@babel/template': 7.29.7
+      '@babel/traverse': 7.29.7
+      '@babel/types': 7.29.7
+      '@jridgewell/remapping': 2.3.5
+      convert-source-map: 2.0.0
+      debug: 4.4.3(supports-color@5.5.0)
+      gensync: 1.0.0-beta.2
+      json5: 2.2.3
+      semver: 6.3.1
+    transitivePeerDependencies:
+      - supports-color
+
   '@babel/generator@7.29.7':
     dependencies:
       '@babel/parser': 7.29.7
@@ -9447,6 +9493,15 @@ snapshots:
     dependencies:
       '@babel/traverse': 7.29.7
       '@babel/types': 7.29.7
+    transitivePeerDependencies:
+      - supports-color
+
+  '@babel/helper-module-transforms@7.29.7(@babel/core@7.29.7(supports-color@5.5.0))':
+    dependencies:
+      '@babel/core': 7.29.7(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.29.7
+      '@babel/helper-validator-identifier': 7.29.7
+      '@babel/traverse': 7.29.7
     transitivePeerDependencies:
       - supports-color
 
@@ -10416,7 +10471,7 @@ snapshots:
 
   '@sesamecare-oss/redlock@1.4.0(ioredis@5.11.1)':
     dependencies:
-      ioredis: 5.11.1
+      ioredis: 5.11.1(supports-color@5.5.0)
 
   '@sindresorhus/merge-streams@2.3.0': {}
 
@@ -11504,10 +11559,10 @@ snapshots:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
-  bullmq@5.79.1:
+  bullmq@5.79.1(supports-color@5.5.0):
     dependencies:
       cron-parser: 4.9.0
-      ioredis: 5.10.1
+      ioredis: 5.10.1(supports-color@5.5.0)
       msgpackr: 2.0.2
       node-abort-controller: 3.1.1
       semver: 7.8.1
@@ -12709,7 +12764,7 @@ snapshots:
 
   interpret@2.2.0: {}
 
-  ioredis@5.10.1:
+  ioredis@5.10.1(supports-color@5.5.0):
     dependencies:
       '@ioredis/commands': 1.5.1
       cluster-key-slot: 1.1.2
@@ -12723,7 +12778,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ioredis@5.11.1:
+  ioredis@5.11.1(supports-color@5.5.0):
     dependencies:
       '@ioredis/commands': 1.10.0
       cluster-key-slot: 1.1.1
