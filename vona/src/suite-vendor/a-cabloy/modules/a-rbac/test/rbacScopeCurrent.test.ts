@@ -90,6 +90,21 @@ describe('rbacScopeCurrent.test.ts', { concurrency: false }, () => {
     access.checkEntries([{ departmentId: 'one' }, { departmentId: 'two' }]);
   });
 
+  it('falls back to the system-admin passport check without a configured adapter', async () => {
+    let systemAdmin = false;
+    const scope = Object.create(BeanRbacScope.prototype) as BeanRbacScope;
+    Object.defineProperties(scope, {
+      bean: {
+        value: { passport: { isSystemAdmin: async () => systemAdmin } },
+      },
+      _scopeAdapter: { value: null, writable: true },
+    });
+
+    assert.equal(await scope.isUnrestricted(), false);
+    systemAdmin = true;
+    assert.equal(await scope.isUnrestricted(), true);
+  });
+
   it('does not expose the decision to a child context sharing caller state', () => {
     const action = createAction();
     const ctx = { route: action.route, state: {} } as VonaContext;
@@ -144,6 +159,19 @@ describe('rbacScopeCurrent.test.ts', { concurrency: false }, () => {
     const otherAction = createAction('view');
     setRbacDecision(ctx, createDecision(otherAction, [{ dataScope: 'all' }]));
     await assertForbidden(() => scope.current());
+  });
+
+  it('does not require adapter owner values for an unscoped create action', async () => {
+    const action = { ...createAction('create'), options: {} };
+    const { scope, ctx } = createScope(action, null as never);
+    setRbacDecision(ctx, createDecision(action, [{ dataScope: 'all' }]));
+
+    const access = await scope.current();
+    assert.equal(access.unrestricted, true);
+    assert.throws(
+      () => access.ownerValues(),
+      error => (error as { code?: number }).code === 500,
+    );
   });
 
   it('derives create owner values from the configured adapter', async () => {

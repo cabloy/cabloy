@@ -11,10 +11,12 @@ import { getRbacDecision, hasRbacAllScope, rbacActionKey } from '../lib/rbac.ts'
 
 @Bean()
 export class BeanRbacScope extends BeanBase {
-  private _scopeAdapter: IRbacScopeAdapter | undefined;
+  private _scopeAdapter: IRbacScopeAdapter | null | undefined;
 
   async isUnrestricted(): Promise<boolean> {
-    return await this.scopeAdapter.isUnrestricted();
+    const scopeAdapter = this.scopeAdapter;
+    if (scopeAdapter) return await scopeAdapter.isUnrestricted();
+    return await this.bean.passport.isSystemAdmin();
   }
 
   async current(actionKey?: string): Promise<IRbacScopeAccess> {
@@ -26,19 +28,21 @@ export class BeanRbacScope extends BeanBase {
 
     const unrestricted = hasRbacAllScope(decision);
     const ownerValues =
-      action.action === 'create'
+      action.action === 'create' && action.options.dataScope
         ? await this.prepareOwnerValues(action, decision, unrestricted)
         : undefined;
     return this.createAccess(action, decision, unrestricted, ownerValues);
   }
 
-  private get scopeAdapter(): IRbacScopeAdapter {
-    if (!this._scopeAdapter) {
+  private get scopeAdapter(): IRbacScopeAdapter | null {
+    if (this._scopeAdapter === undefined) {
       const beanFullName = beanFullNameFromOnionName(
         this.scope.config.adapter.rbacScope,
         'service',
       );
-      this._scopeAdapter = this.bean._getBean(beanFullName) as unknown as IRbacScopeAdapter;
+      this._scopeAdapter =
+        (this.bean._getBean(beanFullName) as unknown as IRbacScopeAdapter | null | undefined) ??
+        null;
     }
     return this._scopeAdapter;
   }
@@ -48,7 +52,9 @@ export class BeanRbacScope extends BeanBase {
     decision: IRbacPolicyDecision,
     unrestricted: boolean,
   ): Promise<Record<string, TableIdentity | null | undefined>> {
-    const values = await this.scopeAdapter.ownerValues(action, decision);
+    const scopeAdapter = this.scopeAdapter;
+    if (!scopeAdapter) this.app.throw(403);
+    const values = await scopeAdapter.ownerValues(action, decision);
     const departmentField = action.options.dataScopeField ?? 'departmentId';
     const ownerField = action.options.dataScopeMineField ?? 'userIdOwner';
     const ownerValues = {
