@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.181
+
+### Improvements
+
+- Refresh the Zova lockfile and update the `zova-core` patch.
+
 ## 5.1.180
 
 ### Features
