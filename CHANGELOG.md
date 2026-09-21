@@ -1,5 +1,24 @@
 # Changelog
 
+## 5.1.180
+
+### Features
+
+- Add support for `$pageHost?.active`.
+- Prepare CRUD resources for RBAC integration.
+- Add demonstration capabilities.
+- Update framework functionality.
+
+### Bug Fixes
+
+- Fix the RBAC adapter.
+
+### Improvements
+
+- Refactor the demo demonstration.
+- Update framework performance documentation.
+- Improve page metadata documentation.
+
 ## 5.1.179
 
 ### Improvements
