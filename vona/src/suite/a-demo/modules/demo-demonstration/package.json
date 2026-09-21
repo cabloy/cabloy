@@ -1,5 +1,5 @@
 {
-  "name": "vona-module-a-demonstration",
+  "name": "vona-module-demo-demonstration",
   "version": "5.0.0",
   "description": "",
   "keywords": [
@@ -46,8 +46,10 @@
       "exports.\\..import"
     ]
   },
-  "title": "a-demonstration",
+  "title": "demo-demonstration",
   "vonaModule": {
-    "dependencies": {}
+    "dependencies": {
+      "a-vona": "5.0.0"
+    }
   }
 }

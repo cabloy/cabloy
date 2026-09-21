@@ -6,21 +6,21 @@ import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
 
     export interface IGuardRecordGlobal {
-      'a-demonstration:demonstration': IGuardOptionsDemonstration;
+      'demo-demonstration:demonstration': IGuardOptionsDemonstration;
     }
 
 
 }
-declare module 'vona-module-a-demonstration' {
+declare module 'vona-module-demo-demonstration' {
 
         export interface GuardDemonstration {
           /** @internal */
-          get scope(): ScopeModuleADemonstration;
+          get scope(): ScopeModuleDemoDemonstration;
         }
 
           export interface GuardDemonstration {
-            get $beanFullName(): 'a-demonstration.guard.demonstration';
-            get $onionName(): 'a-demonstration:demonstration';
+            get $beanFullName(): 'demo-demonstration.guard.demonstration';
+            get $onionName(): 'demo-demonstration:demonstration';
             get $onionOptions(): IGuardOptionsDemonstration;
           }
 }
@@ -37,9 +37,9 @@ import { BeanScopeBase, type BeanScopeUtil, type TypeModuleErrors, type TypeModu
 import { Scope } from 'vona-module-a-bean';
 
 @Scope()
-export class ScopeModuleADemonstration extends BeanScopeBase {}
+export class ScopeModuleDemoDemonstration extends BeanScopeBase {}
 
-export interface ScopeModuleADemonstration {
+export interface ScopeModuleDemoDemonstration {
   util: BeanScopeUtil;
 error: TypeModuleErrors<typeof errors>;
 locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
@@ -48,21 +48,21 @@ locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 import 'vona';
 declare module 'vona' {
   export interface IBeanScopeRecord {
-    'a-demonstration': ScopeModuleADemonstration;
+    'demo-demonstration': ScopeModuleDemoDemonstration;
   }
 
   export interface IBeanScopeContainer {
-    demonstration: ScopeModuleADemonstration;
+    demoDemonstration: ScopeModuleDemoDemonstration;
   }
 
 
 
   export interface IBeanScopeLocale {
-    'a-demonstration': (typeof locales)[TypeLocaleBase];
+    'demo-demonstration': (typeof locales)[TypeLocaleBase];
   }
 
   export interface IBeanScopeErrors {
-    'a-demonstration': typeof errors;
+    'demo-demonstration': typeof errors;
   }
 }
 /** scope: end */

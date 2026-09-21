@@ -2,9 +2,9 @@ import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
-import { GuardDemonstration, parseUsernameWhitelist } from 'vona-module-a-demonstration';
+import { GuardDemonstration, parseUsernameWhitelist } from 'vona-module-demo-demonstration';
 
-const guardBeanName = 'a-demonstration.guard.demonstration';
+const guardBeanName = 'demo-demonstration.guard.demonstration';
 const businessRoute = {
   controllerBeanFullName: 'test.controller.business',
   action: 'write',
@@ -24,7 +24,7 @@ function setRequest(method: string, route = businessRoute) {
 }
 
 function isGuardEnabledForRoute(routePathRaw: string, enable = true): boolean {
-  const options = app.bean.onion.guard.getOnionOptions('a-demonstration:demonstration');
+  const options = app.bean.onion.guard.getOnionOptions('demo-demonstration:demonstration');
   assert.ok(options);
   return app.bean.onion.checkOnionOptionsEnabled({ ...options, enable }, routePathRaw);
 }
@@ -36,7 +36,7 @@ describe('guardDemonstration.test.ts', () => {
     assert.deepEqual(parseUsernameWhitelist(''), []);
 
     await app.bean.executor.mockCtx(async () => {
-      const scopeDemonstration = app.scope('a-demonstration');
+      const scopeDemonstration = app.scope('demo-demonstration');
       assert.equal(
         scopeDemonstration.locale.WriteForbidden.locale('zh-cn'),
         '在演示模式下禁止此操作',
@@ -75,7 +75,7 @@ describe('guardDemonstration.test.ts', () => {
             async () => true,
           ),
         );
-        assert.equal(err?.code, 'a-demonstration:1001');
+        assert.equal(err?.code, 'demo-demonstration:1001');
         assert.equal(err?.status, 403);
       } finally {
         await app.bean.passport.signout();

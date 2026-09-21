@@ -16,7 +16,6 @@
     "vona-module-a-cache": "workspace:^",
     "vona-module-a-caching": "workspace:^",
     "vona-module-a-core": "workspace:^",
-    "vona-module-a-demonstration": "^5.0.0",
     "vona-module-a-election": "workspace:^",
     "vona-module-a-error": "workspace:^",
     "vona-module-a-event": "workspace:^",

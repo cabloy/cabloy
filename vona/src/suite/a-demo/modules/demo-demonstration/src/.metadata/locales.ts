@@ -14,5 +14,5 @@ export function $locale<K extends keyof (typeof locales)[TypeLocaleBase]>(
   key: K,
   ...args: any[]
 ): any {
-  return $makeLocaleMagic(`a-demonstration::${key}`, ...args);
+  return $makeLocaleMagic(`demo-demonstration::${key}`, ...args);
 }

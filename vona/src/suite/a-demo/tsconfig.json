@@ -4,6 +4,9 @@
   "references": [
     {
       "path": "modules/demo-basic/tsconfig.build.json"
+    },
+    {
+      "path": "modules/demo-demonstration/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]
