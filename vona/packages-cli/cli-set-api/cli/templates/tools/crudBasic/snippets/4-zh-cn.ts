@@ -7,7 +7,6 @@ const __resources = {
   Name: '名称',
   Description: '描述',
   Operations: '操作',
-  BulkDelete: '批量删除',
 };
 
 export default metadataCustomSnippet({
@@ -23,6 +22,7 @@ export default metadataCustomSnippet({
       [`${resource}View`]: `查看${resource}`,
       [`${resource}Update`]: `更新${resource}`,
       [`${resource}Delete`]: `删除${resource}`,
+      [`${resource}DeleteBulk`]: `批量删除${resource}`,
     };
     return locale_transform({ ast, argv, resources });
   },

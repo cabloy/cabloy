@@ -27,42 +27,42 @@ export interface IControllerOptions<%=argv.resourceNameCapitalize%> extends IDec
 export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   @Web.post('', { summary: $locale('<%=argv.resourceNameCapitalize%>Create') })
   @Api.body(v.tableIdentity())
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async create(@Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Create): Promise<TableIdentity> {
     return (await this.scope.service.<%=argv.resourceName%>.create(<%=argv.resourceName%>)).id;
   }
 
   @Web.get('', { summary: $locale('<%=argv.resourceNameCapitalize%>Select') })
   @Api.body(Dto<%=argv.resourceNameCapitalize%>SelectRes)
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async select(@Arg.filter(Dto<%=argv.resourceNameCapitalize%>SelectReq) params: IQueryParams<Model<%=argv.resourceNameCapitalize%>>): Promise<Dto<%=argv.resourceNameCapitalize%>SelectRes> {
     return await this.scope.service.<%=argv.resourceName%>.select(params);
   }
 
   @Web.get(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>View') })
   @Api.body(v.optional(), v.object(Dto<%=argv.resourceNameCapitalize%>View))
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async view(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<Dto<%=argv.resourceNameCapitalize%>View | undefined> {
     return await this.scope.service.<%=argv.resourceName%>.view(id);
   }
 
   @Web.patch(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>Update') })
   @Api.body(z.null())
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async update(@Arg.param('id', v.tableIdentity()) id: TableIdentity, @Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Update): Promise<void> {
     await this.scope.service.<%=argv.resourceName%>.update(id, <%=argv.resourceName%>);
   }
 
   @Web.delete(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>Delete') })
   @Api.body(z.null())
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
     await this.scope.service.<%=argv.resourceName%>.delete(id);
   }
 
-  @Web.post('bulk/delete', { summary: $locale('BulkDelete') })
+  @Web.post('bulk/delete', { summary: $locale('<%=argv.resourceNameCapitalize%>DeleteBulk') })
   @Api.body(z.null())
-  @Passport.systemAdmin()
+  @Passport.rbac({ actionInherit: 'delete' })
   async deleteBulk(@Arg.body() command: Dto<%=argv.resourceNameCapitalize%>DeleteBulk): Promise<void> {
     await this.scope.service.<%=argv.resourceName%>.deleteBulk(command.ids);
   }

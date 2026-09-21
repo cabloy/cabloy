@@ -9,7 +9,6 @@ const __resources = {
   Name: 'Name',
   Description: 'Description',
   Operations: 'Operations',
-  BulkDelete: 'Bulk Delete',
 };
 
 declare module '@cabloy/cli' {
@@ -40,6 +39,7 @@ export default metadataCustomSnippet({
       [`${resource}View`]: `View ${resource}`,
       [`${resource}Update`]: `Update ${resource}`,
       [`${resource}Delete`]: `Delete ${resource}`,
+      [`${resource}DeleteBulk`]: `Bulk Delete ${resource}`,
     };
     return locale_transform({ ast, argv, resources });
   },

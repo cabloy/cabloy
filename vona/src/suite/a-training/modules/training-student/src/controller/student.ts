@@ -22,39 +22,41 @@ import { DtoStudentView } from '../dto/studentView.tsx';
 
 export interface IControllerOptionsStudent extends IDecoratorControllerOptions {}
 
-@Controller<IControllerOptionsStudent>('student')
+@Controller<IControllerOptionsStudent>('student', {
+  summary: $locale('StudentController'),
+})
 @Resource()
 export class ControllerStudent extends BeanBase {
-  @Web.post()
+  @Web.post('', { summary: $locale('StudentCreate') })
   @Api.body(v.tableIdentity())
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async create(@Arg.body() student: DtoStudentCreate): Promise<TableIdentity> {
     return (await this.scope.service.student.create(student)).id;
   }
 
-  @Web.get()
+  @Web.get('', { summary: $locale('StudentSelect') })
   @Api.body(DtoStudentSelectRes)
   @Core.serializer()
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async select(
     @Arg.filter(DtoStudentSelectReq) params: IQueryParams<ModelStudent>,
   ): Promise<DtoStudentSelectRes> {
     return await this.scope.service.student.select(params);
   }
 
-  @Web.get(':id')
+  @Web.get(':id', { summary: $locale('StudentView') })
   @Api.body(v.optional(), v.object(DtoStudentView))
   @Core.serializer()
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async view(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoStudentView | undefined> {
     return await this.scope.service.student.view(id);
   }
 
-  @Web.patch(':id')
+  @Web.patch(':id', { summary: $locale('StudentUpdate') })
   @Api.body(z.null())
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async update(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
     @Arg.body() student: DtoStudentUpdate,
@@ -62,33 +64,33 @@ export class ControllerStudent extends BeanBase {
     await this.scope.service.student.update(id, student);
   }
 
-  @Web.get('summary/:id')
+  @Web.get('summary/:id', { summary: $locale('StudentSummary') })
   @Api.body(v.optional(), v.object(DtoStudentSummary))
   @Core.serializer()
-  @Passport.systemAdmin()
+  @Passport.rbac({ actionInherit: 'view' })
   async summary(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoStudentSummary | undefined> {
     return await this.scope.service.student.summary(id);
   }
 
-  @Web.post('bulk/delete', { summary: $locale('BulkDelete') })
+  @Web.post('bulk/delete', { summary: $locale('StudentDeleteBulk') })
   @Api.body(z.null())
-  @Passport.systemAdmin()
+  @Passport.rbac({ actionInherit: 'delete' })
   async deleteBulk(@Arg.body() command: DtoStudentDeleteBulk): Promise<void> {
     await this.scope.service.student.deleteBulk(command.ids);
   }
 
-  @Web.delete(':id')
+  @Web.delete(':id', { summary: $locale('StudentDelete') })
   @Api.body(z.null())
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
     await this.scope.service.student.delete(id);
   }
 
-  @Web.delete('deleteForce/:id')
+  @Web.delete('deleteForce/:id', { summary: $locale('StudentDeleteForce') })
   @Api.body(z.null())
-  @Passport.systemAdmin()
+  @Passport.rbac({ actionInherit: 'delete' })
   async deleteForce(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
     await this.scope.service.student.deleteForce(id);
   }

@@ -1,12 +1,74 @@
 import type { Dto<%=argv.resourceNameCapitalize%>Create, Dto<%=argv.resourceNameCapitalize%>SelectRes, Dto<%=argv.resourceNameCapitalize%>Update, Entity<%=argv.resourceNameCapitalize%> } from 'vona-module-<%=argv.moduleInfo.relativeName%>';
+
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
+import { appMetadata } from 'vona';
 import { app } from 'vona-mock';
+import { SymbolOpenApiOptions } from 'vona-module-a-openapiutils';
 
-describe('<%=argv.resourceName%>.test.ts', () => {
+describe('<%=argv.resourceName%>.test.ts', { concurrency: false }, () => {
+  it('action:<%=argv.resourceName%>:openapiMetadata', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const controllerBeanFullName = '<%=argv.moduleInfo.relativeName%>.controller.<%=argv.resourceName%>';
+      const controller = app.bean.onion.controller
+        .getOnionsEnabledCached()
+        .find(item => item.beanOptions.beanFullName === controllerBeanFullName)
+        ?.beanOptions.beanClass;
+      if (!controller) throw new Error(`${controllerBeanFullName} not found`);
+
+      const controllerMetadata = appMetadata.getMetadata<any>(
+        SymbolOpenApiOptions,
+        controller,
+      );
+      assert.equal(
+        controllerMetadata?.summary?.toString(),
+        '<%=argv.moduleInfo.relativeName%>::<%=argv.resourceNameCapitalize%>Controller',
+      );
+
+      const expectedSummaries = {
+        create: ['post', '<%=argv.moduleActionPathRaw%>', 'Create <%=argv.resourceNameCapitalize%>'],
+        select: ['get', '<%=argv.moduleActionPathRaw%>', 'Query <%=argv.resourceNameCapitalize%> List'],
+        view: ['get', '<%=argv.moduleActionPathRaw%>/{id}', 'View <%=argv.resourceNameCapitalize%>'],
+        update: ['patch', '<%=argv.moduleActionPathRaw%>/{id}', 'Update <%=argv.resourceNameCapitalize%>'],
+        delete: ['delete', '<%=argv.moduleActionPathRaw%>/{id}', 'Delete <%=argv.resourceNameCapitalize%>'],
+        deleteBulk: ['post', '<%=argv.moduleActionPathRaw%>/bulk/delete', 'Bulk Delete <%=argv.resourceNameCapitalize%>'],
+      } as const;
+      for (const [action, [method, path, summary]] of Object.entries(expectedSummaries)) {
+        const apiJson = await app.bean.openapi.generateJsonOfControllerAction(
+          controller,
+          action,
+          'V31',
+        );
+        const operation = (apiJson.paths as any)?.[path]?.[method];
+        assert.ok(operation, `${action} operation is missing`);
+        assert.equal(operation.summary?.toJSON(), summary);
+      }
+    });
+  });
+
+  it('action:<%=argv.resourceName%>:rbacCatalog', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const controllerBeanFullName = '<%=argv.moduleInfo.relativeName%>.controller.<%=argv.resourceName%>';
+      const catalog = app.bean.rbacCatalog.getCatalog();
+      const expectedInherits = {
+        create: undefined,
+        select: undefined,
+        view: undefined,
+        update: undefined,
+        delete: undefined,
+        deleteBulk: `${controllerBeanFullName}#delete`,
+      } as const;
+      for (const [action, actionInheritKey] of Object.entries(expectedInherits)) {
+        const descriptor = catalog.get(`${controllerBeanFullName}#${action}`);
+        assert.ok(descriptor, `${action} RBAC action is missing`);
+        assert.equal(descriptor.actionInheritKey, actionInheritKey);
+        assert.equal(descriptor.options.dataScope, undefined);
+      }
+    });
+  });
+
   it('action:<%=argv.resourceName%>', async () => {
     await app.bean.executor.mockCtx(async () => {
-      // data
       const data: Dto<%=argv.resourceNameCapitalize%>Create = {
         name: '__Tom__',
         description: 'This is a test',
@@ -15,48 +77,40 @@ describe('<%=argv.resourceName%>.test.ts', () => {
         name: '__TomNew__',
         description: 'This is a test',
       };
-      // role-less authenticated users cannot access generated admin actions
+      let <%=argv.resourceName%>Id: Entity<%=argv.resourceNameCapitalize%>['id'] | undefined;
+      // sign in as an unrestricted test identity
       await app.bean.passport.signinMock();
       try {
-        app.bean.passport.current!.roles = [];
-        const actions = ['create', 'select', 'view', 'update', 'delete'];
-        const permissions = await Promise.all(
-          actions.map(action =>
-            app.bean.permission.retrievePermissionAction(
-              '<%=argv.moduleInfo.relativeName%>:<%=argv.resourceName%>',
-              action,
-            ),
-          ),
-        );
-        assert.deepEqual(permissions, actions.map(() => false));
+        // create
+        <%=argv.resourceName%>Id = await app.bean.executor.performAction('post', '<%=argv.moduleActionPathRaw%>', { body: data });
+        assert.equal(!!<%=argv.resourceName%>Id, true);
+        // findMany
+        const selectRes: Dto<%=argv.resourceNameCapitalize%>SelectRes = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>');
+        assert.equal(selectRes.list.findIndex(item => item.name === data.name) > -1, true);
+        // update
+        const updateRes = await app.bean.executor.performAction('patch', '<%=argv.moduleActionPathRaw%>/:id', {
+          params: { id: <%=argv.resourceName%>Id },
+          body: dataUpdate,
+        });
+        assert.equal(updateRes, null);
+        // findOne
+        let <%=argv.resourceName%>: Entity<%=argv.resourceNameCapitalize%> = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/:id', { params: { id: <%=argv.resourceName%>Id } });
+        assert.equal(<%=argv.resourceName%>.name, dataUpdate.name);
+        // delete
+        const deleteRes = await app.bean.executor.performAction('delete', '<%=argv.moduleActionPathRaw%>/:id', { params: { id: <%=argv.resourceName%>.id } });
+        assert.equal(deleteRes, null);
+        // findOne
+        <%=argv.resourceName%> = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/:id', { params: { id: <%=argv.resourceName%>.id } });
+        assert.equal(<%=argv.resourceName%>, undefined);
       } finally {
+        if (<%=argv.resourceName%>Id) {
+          await app.scope('<%=argv.moduleInfo.relativeName%>').model.<%=argv.resourceName%>.deleteById(
+            <%=argv.resourceName%>Id,
+            { disableDeleted: true },
+          );
+        }
         await app.bean.passport.signout();
       }
-      // login as system admin
-      await app.bean.passport.signinMock();
-      // create
-      const <%=argv.resourceName%>Id = await app.bean.executor.performAction('post', '<%=argv.moduleActionPathRaw%>', { body: data });
-      assert.equal(!!<%=argv.resourceName%>Id, true);
-      // findMany
-      const selectRes: Dto<%=argv.resourceNameCapitalize%>SelectRes = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>');
-      assert.equal(selectRes.list.findIndex(item => item.name === data.name) > -1, true);
-      // update
-      const updateRes = await app.bean.executor.performAction('patch', '<%=argv.moduleActionPathRaw%>/:id', {
-        params: { id: <%=argv.resourceName%>Id },
-        body: dataUpdate,
-      });
-      assert.equal(updateRes, null);
-      // findOne
-      let <%=argv.resourceName%>: Entity<%=argv.resourceNameCapitalize%> = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/:id', { params: { id: <%=argv.resourceName%>Id } });
-      assert.equal(<%=argv.resourceName%>.name, dataUpdate.name);
-      // delete
-      const deleteRes = await app.bean.executor.performAction('delete', '<%=argv.moduleActionPathRaw%>/:id', { params: { id: <%=argv.resourceName%>.id } });
-      assert.equal(deleteRes, null);
-      // findOne
-      <%=argv.resourceName%> = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/:id', { params: { id: <%=argv.resourceName%>.id } });
-      assert.equal(<%=argv.resourceName%>, undefined);
-      // logout
-      await app.bean.passport.signout();
     });
   });
 });

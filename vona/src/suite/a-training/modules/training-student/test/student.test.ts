@@ -2,7 +2,9 @@ import type { DtoStudentSelectRes, EntityStudent } from 'vona-module-training-st
 
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
+import { appMetadata } from 'vona';
 import { app } from 'vona-mock';
+import { SymbolOpenApiOptions } from 'vona-module-a-openapiutils';
 import {
   DtoStudentCreate,
   DtoStudentSelectResItem,
@@ -64,13 +66,39 @@ describe('student.test.ts', { concurrency: false }, () => {
     });
   });
 
-  it('action:student:bulkDeleteOpenapi', async () => {
+  it('action:student:openapiMetadata', async () => {
     await app.bean.executor.mockCtx(async () => {
       const controller = app.bean.onion.controller
         .getOnionsEnabledCached()
         .find(item => item.beanOptions.beanFullName === 'training-student.controller.student')
         ?.beanOptions.beanClass;
       if (!controller) throw new Error('training-student.controller.student not found');
+      const controllerMetadata = appMetadata.getMetadata<any>(SymbolOpenApiOptions, controller);
+      assert.equal(controllerMetadata?.summary?.toString(), 'training-student::StudentController');
+      const expectedSummaries = {
+        create: ['post', '/api/training/student', 'Create Student'],
+        select: ['get', '/api/training/student', 'List Students'],
+        view: ['get', '/api/training/student/{id}', 'View Student'],
+        update: ['patch', '/api/training/student/{id}', 'Update Student'],
+        summary: ['get', '/api/training/student/summary/{id}', 'View Student Summary'],
+        delete: ['delete', '/api/training/student/{id}', 'Delete Student'],
+        deleteForce: [
+          'delete',
+          '/api/training/student/deleteForce/{id}',
+          'Permanently Delete Student',
+        ],
+        deleteBulk: ['post', '/api/training/student/bulk/delete', 'Bulk Delete Students'],
+      } as const;
+      for (const [action, [method, path, summary]] of Object.entries(expectedSummaries)) {
+        const apiJson = await app.bean.openapi.generateJsonOfControllerAction(
+          controller,
+          action,
+          'V31',
+        );
+        const operation = (apiJson.paths as any)?.[path]?.[method];
+        assert.ok(operation, `${action} operation is missing`);
+        assert.equal(operation.summary?.toJSON(), summary);
+      }
       const apiJson = await app.bean.openapi.generateJsonOfControllerAction(
         controller,
         'deleteBulk',
@@ -78,7 +106,6 @@ describe('student.test.ts', { concurrency: false }, () => {
       );
       const operation = apiJson.paths?.['/api/training/student/bulk/delete']?.post;
       assert.equal(operation?.operationId, 'TrainingStudent_deleteBulk');
-      assert.equal(operation?.summary?.toJSON(), 'Bulk Delete');
       const requestSchema = operation?.requestBody?.content?.['application/json']?.schema as any;
       const requestSchemaRef = requestSchema?.$ref;
       assert.ok(requestSchemaRef);
@@ -639,32 +666,25 @@ describe('student.test.ts', { concurrency: false }, () => {
     });
   });
 
-  it('action:student:systemAdmin', async () => {
+  it('action:student:rbacCatalog', async () => {
     await app.bean.executor.mockCtx(async () => {
-      await app.bean.passport.signinMock();
-      try {
-        app.bean.passport.current!.roles = [];
-        const actions = [
-          'create',
-          'select',
-          'view',
-          'update',
-          'summary',
-          'delete',
-          'deleteBulk',
-          'deleteForce',
-        ];
-        const permissions = await Promise.all(
-          actions.map(action =>
-            app.bean.permission.retrievePermissionAction('training-student:student', action),
-          ),
-        );
-        assert.deepEqual(
-          permissions,
-          actions.map(() => false),
-        );
-      } finally {
-        await app.bean.passport.signout();
+      const catalog = app.bean.rbacCatalog.getCatalog();
+      const controllerBeanFullName = 'training-student.controller.student';
+      const expectedInherits = {
+        create: undefined,
+        select: undefined,
+        view: undefined,
+        update: undefined,
+        summary: `${controllerBeanFullName}#view`,
+        delete: undefined,
+        deleteBulk: `${controllerBeanFullName}#delete`,
+        deleteForce: `${controllerBeanFullName}#delete`,
+      } as const;
+      for (const [action, actionInheritKey] of Object.entries(expectedInherits)) {
+        const descriptor = catalog.get(`${controllerBeanFullName}#${action}`);
+        assert.ok(descriptor, `${action} RBAC action is missing`);
+        assert.equal(descriptor.actionInheritKey, actionInheritKey);
+        assert.equal(descriptor.options.dataScope, undefined);
       }
     });
   });
