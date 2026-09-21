@@ -81,7 +81,7 @@ The `@Core.gate(...)` shorthand still maps to `@Aspect.middlewareGlobal('a-core:
 
 ## Guard
 
-Guards are used for access control and execution preconditions.
+Guards are used for access control and execution preconditions. For a concrete global Guard that controls write admission in a shared demo deployment, see [Demonstration Mode Guide](/backend/demonstration-mode-guide).
 
 Typical jobs include:
 
