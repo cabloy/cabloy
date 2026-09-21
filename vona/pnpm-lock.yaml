@@ -160,6 +160,9 @@ importers:
       vona-module-a-datasource:
         specifier: workspace:^
         version: link:src/suite-vendor/a-cabloy/modules/a-datasource
+      vona-module-a-demonstration:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-demonstration
       vona-module-a-election:
         specifier: workspace:^
         version: link:src/suite-vendor/a-vona/modules/a-election
@@ -738,11 +741,11 @@ importers:
         specifier: npm:@cabloy/zod@4.3.8
         version: '@cabloy/zod@4.3.8'
       zova:
-        specifier: ^5.1.164
+        specifier: ^5.1.165
         version: 5.1.165(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3))
       zova-jsx:
-        specifier: ^1.1.90
-        version: 1.1.90(typescript@5.9.3)
+        specifier: ^1.1.91
+        version: 1.1.91(typescript@5.9.3)
       zova-module-a-api:
         specifier: ^5.1.22
         version: 5.1.22
@@ -774,10 +777,10 @@ importers:
         specifier: ^5.1.54
         version: 5.1.54
       zova-module-a-pay:
-        specifier: ^5.0.8
+        specifier: ^5.0.9
         version: 5.0.9
       zova-module-a-router:
-        specifier: ^5.1.39
+        specifier: ^5.1.40
         version: 5.1.40
       zova-module-a-routertabs:
         specifier: ^5.1.34
@@ -822,11 +825,11 @@ importers:
         specifier: npm:@cabloy/zod@4.3.8
         version: '@cabloy/zod@4.3.8'
       zova:
-        specifier: ^5.1.164
+        specifier: ^5.1.165
         version: 5.1.165(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3))
       zova-jsx:
-        specifier: ^1.1.90
-        version: 1.1.90(typescript@5.9.3)
+        specifier: ^1.1.91
+        version: 1.1.91(typescript@5.9.3)
       zova-module-a-api:
         specifier: ^5.1.22
         version: 5.1.22
@@ -858,10 +861,10 @@ importers:
         specifier: ^5.1.54
         version: 5.1.54
       zova-module-a-pay:
-        specifier: ^5.0.8
+        specifier: ^5.0.9
         version: 5.0.9
       zova-module-a-router:
-        specifier: ^5.1.39
+        specifier: ^5.1.40
         version: 5.1.40
       zova-module-a-routertabs:
         specifier: ^5.1.34
@@ -2131,6 +2134,10 @@ importers:
         version: 6.1.3
 
   src/suite-vendor/a-test/modules/test-vona:
+    dependencies:
+      vona-module-a-demonstration:
+        specifier: workspace:^
+        version: link:../../../a-vona/modules/a-demonstration
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -2168,6 +2175,9 @@ importers:
       vona-module-a-core:
         specifier: workspace:^
         version: link:modules/a-core
+      vona-module-a-demonstration:
+        specifier: ^5.0.0
+        version: link:modules/a-demonstration
       vona-module-a-election:
         specifier: workspace:^
         version: link:modules/a-election
@@ -2516,6 +2526,22 @@ importers:
       why-is-node-running:
         specifier: ^3.2.2
         version: 3.2.2
+
+  src/suite-vendor/a-vona/modules/a-demonstration:
+    dependencies:
+      vona-module-a-aspect:
+        specifier: workspace:^
+        version: link:../a-aspect
+      vona-module-a-user:
+        specifier: workspace:^
+        version: link:../a-user
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
 
   src/suite-vendor/a-vona/modules/a-election:
     devDependencies:
@@ -9001,14 +9027,8 @@ packages:
     peerDependencies:
       zod: ^3.25.28 || ^4
 
-  zova-core@5.1.90:
-    resolution: {integrity: sha512-WqQhLAAac0VlDXOxhjdW/7/l+cMUrATd+Q42XV0Fi1l3f2Sbpn/EBtx0PCl31xWwr5l9QSK8eyuUhy/eQEUdDA==}
-
   zova-core@5.1.91:
     resolution: {integrity: sha512-5e4EgInhcU7LUMhl6x7oOQnsF2X3lk1HMRvbo882FZrwTB3lvIz/ejOOdpRxoId29hqxvX5HFiKcb9aZi/cHog==}
-
-  zova-jsx@1.1.90:
-    resolution: {integrity: sha512-67UwnmQPpFoSoCfK5PB2NwyC5NWGoCaCd/fueJswCQ4IQIif/qnE/JdWf1ndLi0kEVHC9BZOx/BoN0pbkfGVYA==}
 
   zova-jsx@1.1.91:
     resolution: {integrity: sha512-VIScqEFG6jwzNqjW7MvBvZdLJAqpkzchop6Q/g2ttGBKXMGjyTZnaISrB3gWv/feReGnUb0BFPzDgmrOdFnQgA==}
@@ -15382,37 +15402,6 @@ snapshots:
     dependencies:
       zod: '@cabloy/zod@4.3.8'
 
-  zova-core@5.1.90(typescript@5.9.3):
-    dependencies:
-      '@cabloy/compose': link:packages-utils/compose
-      '@cabloy/extend': link:packages-utils/extend
-      '@cabloy/json5': link:packages-utils/json5
-      '@cabloy/localeutil': link:packages-utils/localeutil
-      '@cabloy/logger': 1.1.25
-      '@cabloy/module-info': 2.0.3
-      '@cabloy/utils': link:packages-utils/utils
-      '@cabloy/vue-compiler-sfc': 3.5.14
-      '@cabloy/vue-reactivity': 3.5.16
-      '@cabloy/vue-router': 4.4.18(vue@3.5.42(typescript@5.9.3))
-      '@cabloy/vue-runtime-core': 3.5.57
-      '@cabloy/vue-runtime-dom': 3.5.13
-      '@cabloy/vue-server-renderer': 3.5.18(vue@3.5.42(typescript@5.9.3))
-      '@cabloy/word-utils': 2.1.14
-      '@cabloy/zod-errors-custom': link:packages-utils/zod-errors-custom
-      '@cabloy/zod-openapi': link:packages-utils/zod-openapi
-      '@cabloy/zod-query': link:packages-utils/zod-query
-      '@types/js-cookie': 3.0.6
-      '@types/ms': 2.1.0
-      '@vue/shared': 3.5.36
-      deep-equal: 2.2.3
-      ms: 2.1.3
-      reflect-metadata: 0.2.2
-      vue: 3.5.42(typescript@5.9.3)
-      vue-plugin-render-freeze: 2.0.4(vue@3.5.42(typescript@5.9.3))
-      zod: '@cabloy/zod@4.3.8'
-    transitivePeerDependencies:
-      - typescript
-
   zova-core@5.1.91(patch_hash=144450bd7a567a6067e5857c0cf4c780981b7e90bc48745c09e1696a9b6f1b97)(typescript@5.9.3):
     dependencies:
       '@cabloy/compose': link:packages-utils/compose
@@ -15441,17 +15430,6 @@ snapshots:
       vue: 3.5.42(typescript@5.9.3)
       vue-plugin-render-freeze: 2.0.4(vue@3.5.42(typescript@5.9.3))
       zod: '@cabloy/zod@4.3.8'
-    transitivePeerDependencies:
-      - typescript
-
-  zova-jsx@1.1.90(typescript@5.9.3):
-    dependencies:
-      '@cabloy/compose': link:packages-utils/compose
-      '@cabloy/utils': link:packages-utils/utils
-      '@cabloy/word-utils': 2.1.14
-      typestyle: 2.4.0
-      vue: 3.5.42(typescript@5.9.3)
-      zova-core: 5.1.90(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
