@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.182
+
+### Improvements
+
+- Update the `{{resourceName}}.test.ts_` test template.
+
 ## 5.1.181
 
 ### Improvements
