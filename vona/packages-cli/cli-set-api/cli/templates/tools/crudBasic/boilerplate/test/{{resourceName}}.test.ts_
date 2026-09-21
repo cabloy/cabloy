@@ -25,13 +25,14 @@ describe('<%=argv.resourceName%>.test.ts', { concurrency: false }, () => {
         '<%=argv.moduleInfo.relativeName%>::<%=argv.resourceNameCapitalize%>Controller',
       );
 
+      const moduleApiPath = app.util.combineApiPath('<%=argv.moduleActionPathRaw%>', '', true, true);
       const expectedSummaries = {
-        create: ['post', '<%=argv.moduleActionPathRaw%>', 'Create <%=argv.resourceNameCapitalize%>'],
-        select: ['get', '<%=argv.moduleActionPathRaw%>', 'Query <%=argv.resourceNameCapitalize%> List'],
-        view: ['get', '<%=argv.moduleActionPathRaw%>/{id}', 'View <%=argv.resourceNameCapitalize%>'],
-        update: ['patch', '<%=argv.moduleActionPathRaw%>/{id}', 'Update <%=argv.resourceNameCapitalize%>'],
-        delete: ['delete', '<%=argv.moduleActionPathRaw%>/{id}', 'Delete <%=argv.resourceNameCapitalize%>'],
-        deleteBulk: ['post', '<%=argv.moduleActionPathRaw%>/bulk/delete', 'Bulk Delete <%=argv.resourceNameCapitalize%>'],
+        create: ['post', moduleApiPath, 'Create <%=argv.resourceNameCapitalize%>'],
+        select: ['get', moduleApiPath, 'Query <%=argv.resourceNameCapitalize%> List'],
+        view: ['get', `${moduleApiPath}/{id}`, 'View <%=argv.resourceNameCapitalize%>'],
+        update: ['patch', `${moduleApiPath}/{id}`, 'Update <%=argv.resourceNameCapitalize%>'],
+        delete: ['delete', `${moduleApiPath}/{id}`, 'Delete <%=argv.resourceNameCapitalize%>'],
+        deleteBulk: ['post', `${moduleApiPath}/bulk/delete`, 'Bulk Delete <%=argv.resourceNameCapitalize%>'],
       } as const;
       for (const [action, [method, path, summary]] of Object.entries(expectedSummaries)) {
         const apiJson = await app.bean.openapi.generateJsonOfControllerAction(
