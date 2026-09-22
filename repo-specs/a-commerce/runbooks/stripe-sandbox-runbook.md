@@ -44,6 +44,7 @@ Stripe Hosted Checkout return URLs and webhook URLs are generated from the trust
 Set `SERVER_SERVE_HOST` to the complete public hostname and set `SERVER_SUBDOMAINOFFSET` to the number of dot-separated domain parts in that hostname. For example:
 
 ```dotenv
+SERVER_SERVE_PROTOCOL = https
 SERVER_SERVE_HOST = xxx.asse.devtunnels.ms
 SERVER_SUBDOMAINOFFSET = 4
 ```
