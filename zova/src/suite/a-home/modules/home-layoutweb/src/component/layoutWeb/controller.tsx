@@ -26,6 +26,7 @@ export class ControllerLayoutWeb extends BeanControllerBase {
     const sidebar = this.scope.config.layout.sidebar;
     return usePrepareArg({
       bodyReadyObserver: sidebar.bodyReadyObserver,
+      sidebarWidth: sidebar.width,
       sidebarBreakpoint: sidebar.breakpoint,
       sidebarLeftOpenPCCapability: sidebar.leftOpenPCCapability,
       sidebarLeftOpenPCFallback: sidebar.leftOpenPCFallback,
