@@ -39,8 +39,8 @@ const app = useApp();
   clients: {
     github: {
       Strategy: StrategyGithub,
-      clientID: app.meta.env.AUTH_GITHUB_CLIENTID,
-      clientSecret: app.meta.env.AUTH_GITHUB_CLIENTSECRET,
+      clientID: app.meta.env.AUTH_GITHUB_CLIENTID || 'Shoule specify clientID',
+      clientSecret: app.meta.env.AUTH_GITHUB_CLIENTSECRET || 'Shoule specify clientSecret',
     },
   },
 })
