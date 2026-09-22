@@ -1595,7 +1595,7 @@ importers:
         specifier: workspace:^
         version: link:modules/a-auth
       vona-module-auth-oauth:
-        specifier: ^5.0.10
+        specifier: ^5.0.12
         version: link:modules/auth-oauth
       vona-module-auth-simple:
         specifier: workspace:^
