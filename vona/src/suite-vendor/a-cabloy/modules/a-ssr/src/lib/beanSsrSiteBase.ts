@@ -185,7 +185,9 @@ export class BeanSsrSiteBase<
       const onionOptions = this.$onionOptions as IDecoratorSsrSiteOptions;
       const SSR_WITH_VONA = 'true';
       const META_MODE: ZovaMetaMode =
-        process.env.META_MODE === 'dev' ? 'development' : 'production';
+        this.app.meta.env.META_MODE === 'dev' || this.app.meta.env.DEMONSTRATION_ENABLED === 'true'
+          ? 'development'
+          : 'production';
       const baseUrl = `${this.app.util.protocol}://${this.app.util.host}`;
       this._siteOptions = deepExtend(
         {
