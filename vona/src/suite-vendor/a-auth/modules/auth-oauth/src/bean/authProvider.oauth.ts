@@ -7,6 +7,7 @@ import type {
 } from 'vona-module-a-auth';
 
 import StrategyGithub from 'passport-github';
+import { useApp } from 'vona';
 import { AuthProvider, BeanAuthProviderOauth2Base } from 'vona-module-a-auth';
 
 export interface IAuthProviderOauthClientOptionsGithub extends IAuthProviderOauthClientOptions {
@@ -27,6 +28,8 @@ export interface IAuthProviderOptionsOauth extends IDecoratorAuthProviderOptions
   IAuthProviderOauthClientOptions
 > {}
 
+const app = useApp();
+
 @AuthProvider<IAuthProviderOptionsOauth>({
   base: {
     confirmed: true,
@@ -36,6 +39,8 @@ export interface IAuthProviderOptionsOauth extends IDecoratorAuthProviderOptions
   clients: {
     github: {
       Strategy: StrategyGithub,
+      clientID: app.meta.env.AUTH_GITHUB_CLIENTID,
+      clientSecret: app.meta.env.AUTH_GITHUB_CLIENTSECRET,
     },
   },
 })
