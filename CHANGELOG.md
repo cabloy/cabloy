@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.186
+
+### Improvements
+
+- Update the OAuth authentication provider.
+
 ## 5.1.185
 
 ### Features
