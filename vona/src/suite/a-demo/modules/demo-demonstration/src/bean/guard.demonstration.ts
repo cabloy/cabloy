@@ -40,6 +40,10 @@ export interface IGuardOptionsDemonstration extends IDecoratorGuardOptionsGlobal
     '/home/user/passport/createPassportJwtFromOauthCode',
     '/home/user/passport/createTempAuthToken',
     '/auth/passport/callback',
+    '/auth/mock/authorize',
+    '/captcha/create',
+    '/image/upload-policy',
+    '/file/upload-policy',
   ],
   dependencies: 'a-user:passport',
 })
