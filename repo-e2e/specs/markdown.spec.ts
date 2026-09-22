@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from '@playwright/test';
 
@@ -33,6 +33,49 @@ function waitForApiResponse(page: Page, method: string, path: string | RegExp) {
 
 function expectTableIdentity(value: unknown) {
   expect(['string', 'number']).toContain(typeof value);
+}
+
+async function expectTaskCheckboxLayout(root: Locator) {
+  const layout = await root.locator('ul[data-type="taskList"] li').evaluateAll(taskItems =>
+    taskItems.map(taskItem => {
+      const checkbox = taskItem.querySelector<HTMLInputElement>('label > input[type="checkbox"]');
+      const label = taskItem.querySelector<HTMLElement>('label');
+      const text = taskItem.querySelector<HTMLElement>('div > p');
+      if (!checkbox || !label || !text) return null;
+
+      const checkboxRect = checkbox.getBoundingClientRect();
+      const textRect = text.getBoundingClientRect();
+      const checkboxStyle = getComputedStyle(checkbox);
+      const labelStyle = getComputedStyle(label);
+      const itemStyle = getComputedStyle(taskItem);
+      return {
+        checkboxHeight: checkboxRect.height,
+        checkboxWidth: checkboxRect.width,
+        checkboxCenter: checkboxRect.top + checkboxRect.height / 2,
+        checkboxMarginBlockEnd: checkboxStyle.marginBlockEnd,
+        checkboxMarginBlockStart: checkboxStyle.marginBlockStart,
+        checkboxMarginInlineEnd: checkboxStyle.marginInlineEnd,
+        checkboxMarginInlineStart: checkboxStyle.marginInlineStart,
+        itemDisplay: itemStyle.display,
+        labelDisplay: labelStyle.display,
+        textCenter: textRect.top + Number.parseFloat(getComputedStyle(text).lineHeight) / 2,
+      };
+    }),
+  );
+
+  expect(layout).toHaveLength(2);
+  for (const task of layout) {
+    expect(task).not.toBeNull();
+    expect(task?.itemDisplay).toBe('flex');
+    expect(task?.labelDisplay).toBe('flex');
+    expect(task?.checkboxWidth).toBeGreaterThan(0);
+    expect(task?.checkboxHeight).toBe(task?.checkboxWidth);
+    expect(task?.checkboxMarginBlockStart).toBe('0px');
+    expect(task?.checkboxMarginBlockEnd).toBe('0px');
+    expect(task?.checkboxMarginInlineStart).toBe('0px');
+    expect(task?.checkboxMarginInlineEnd).toBe('0px');
+    expect(Math.abs((task?.checkboxCenter ?? 0) - (task?.textCenter ?? 0))).toBeLessThanOrEqual(2);
+  }
 }
 
 async function login(
@@ -181,6 +224,7 @@ test(
       await expect(description.locator('input[type="checkbox"]').nth(0)).toBeDisabled();
       await expect(description.locator('input[type="checkbox"]').nth(1)).toBeChecked();
       await expect(description.locator('input[type="checkbox"]').nth(1)).toBeDisabled();
+      await expectTaskCheckboxLayout(description);
       expect(webPageErrors).toEqual([]);
       expect(webConsoleErrors).toEqual([]);
     } finally {
@@ -353,6 +397,7 @@ const product = '${suffix}';
       await expect(editor.locator('input[type="checkbox"]')).toHaveCount(2);
       await expect(editor.locator('input[type="checkbox"]').nth(0)).not.toBeChecked();
       await expect(editor.locator('input[type="checkbox"]').nth(1)).toBeChecked();
+      await expectTaskCheckboxLayout(editor);
       await expect(editor.locator('blockquote')).toHaveCSS('border-left-width', '4px');
       await expect(editor.locator('pre')).toHaveCSS('overflow-x', 'auto');
       await expect(editor.locator('table th').first()).toHaveCSS('font-weight', '600');
