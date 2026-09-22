@@ -42,6 +42,7 @@ export interface IGuardOptionsDemonstration extends IDecoratorGuardOptionsGlobal
     '/auth/passport/callback',
     '/auth/mock/authorize',
     '/captcha/create',
+    '/captcha/refresh',
     '/image/upload-policy',
     '/file/upload-policy',
   ],
