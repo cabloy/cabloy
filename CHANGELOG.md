@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.185
+
+### Features
+
+- Add GitHub authentication support.
+
 ## 5.1.184
 
 ### Improvements
