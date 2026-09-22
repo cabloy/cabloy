@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.187
+
+### Improvements
+
+- Enhance redirection handling for trusted external destinations.
+
 ## 5.1.186
 
 ### Improvements
