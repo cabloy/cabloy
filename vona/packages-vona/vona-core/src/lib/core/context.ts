@@ -1,5 +1,5 @@
 import type { IInstanceRecord } from '../../types/config/instance.ts';
-import type { ContextBase } from '../../types/context/contextBase.ts';
+import type { ContextBase, IContextRedirectOptions } from '../../types/context/contextBase.ts';
 import type { VonaContext } from '../../types/context/index.ts';
 import type { MetadataKey } from './metadata.ts';
 
@@ -121,15 +121,16 @@ export const contextBase: ContextBase = {
     return false;
   },
 
-  redirect(url: string, status?: 301 | 302): void {
+  redirect(url: string, statusOrOptions?: (301 | 302) | IContextRedirectOptions): void {
     const self = cast<VonaContext>(this);
+    const options =
+      typeof statusOrOptions === 'number' ? { status: statusOrOptions } : (statusOrOptions ?? {});
     // checkOrigin
-    if (!url.startsWith('/')) {
+    if (!url.startsWith('/') && !options.trustedExternal) {
       const origin = cast(self.app.bean).security.checkOrigin(url, self.host);
       if (!origin) self.app.throw(403);
     }
     // throw
-    status = status ?? 302;
-    self.app.throw(status, url);
+    self.app.throw(options.status ?? 302, url);
   },
 };

@@ -86,7 +86,7 @@ export class BeanAuth extends BeanBase {
       strategy.redirect = (location: string) => {
         // real
         if (!clientOptions.mockUsername) {
-          return this.ctx.redirect(location);
+          return this.ctx.redirect(location, { trustedExternal: true });
         }
         // mock
         this.ctx.request.query.code = clientOptions.mockProfileId

@@ -1,3 +1,4 @@
+import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
@@ -69,6 +70,30 @@ describe('error.test.ts', () => {
         message: 'Structured conflict',
       });
       assert.equal(scopeTest.error.StructuredConflict.parseFail().status, 409);
+    });
+  });
+
+  it('context:redirect:trustedExternal', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const [_, untrustedError] = await catchError(() => {
+        app.ctx.redirect('https://untrusted.example.test/authorize');
+      });
+      assert.equal(untrustedError?.code, 403);
+      assert.equal(untrustedError?.status, 403);
+
+      const [__, trustedError] = await catchError(() => {
+        app.ctx.redirect('https://provider.example.test/authorize', { trustedExternal: true });
+      });
+      assert.equal(trustedError?.code, 302);
+      assert.equal(trustedError?.status, 302);
+      assert.equal(trustedError?.message, 'https://provider.example.test/authorize');
+
+      const [___, legacyError] = await catchError(() => {
+        app.ctx.redirect('/legacy', 301);
+      });
+      assert.equal(legacyError?.code, 301);
+      assert.equal(legacyError?.status, 301);
+      assert.equal(legacyError?.message, '/legacy');
     });
   });
 });

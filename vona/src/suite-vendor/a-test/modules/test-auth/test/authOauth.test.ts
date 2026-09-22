@@ -6,6 +6,24 @@ import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
 describe('authOauth.test.ts', () => {
+  it('action:authOauth:githubRedirect', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const [_, error] = await catchError(() => {
+        return app.bean.auth.authenticate('auth-oauth:oauth', {
+          clientName: 'github',
+        });
+      });
+      assert.equal(error?.code, 302);
+      assert.equal(error?.status, 302);
+      const location = new URL(error?.message);
+      assert.equal(location.origin, 'https://github.com');
+      assert.equal(location.pathname, '/login/oauth/authorize');
+      assert.equal(location.searchParams.get('client_id'), 'Shoule specify clientID');
+      assert.ok(location.searchParams.get('redirect_uri'));
+      assert.ok(location.searchParams.get('state'));
+    });
+  });
+
   it('action:authOauth', async () => {
     await app.bean.executor.mockCtx(
       async () => {

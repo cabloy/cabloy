@@ -5,6 +5,7 @@ import type { ContextBase } from './contextBase.ts';
 import type { ContextOthers } from './contextOthers.ts';
 import type { ContextState } from './contextState.ts';
 
+export type { IContextRedirectOptions } from './contextBase.ts';
 export * from './contextState.ts';
 
 // @ts-ignore ignore the throw type check of 'throw'/'meta'

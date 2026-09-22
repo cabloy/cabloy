@@ -3,6 +3,11 @@ import type { VonaConfig } from '../config/config.ts';
 import type { IInstanceRecord } from '../config/instance.ts';
 import type { VonaContext } from './index.ts';
 
+export interface IContextRedirectOptions {
+  status?: 301 | 302;
+  trustedExternal?: boolean;
+}
+
 export interface ContextBase {
   get bean(): BeanContainer;
   get locale(): keyof ILocaleRecord;
@@ -26,4 +31,5 @@ export interface ContextBase {
   set onionsDynamic(value: any | undefined);
   get acceptJSON(): boolean;
   redirect(url: string, status?: 301 | 302): void;
+  redirect(url: string, options?: IContextRedirectOptions): void;
 }
