@@ -58,11 +58,13 @@ function _collectCss(
     }
   });
 
-  styles.forEach((content, id) => {
-    result = result.concat(
-      `<style vite-css-module-id="${hashCode(id)}">${(content || '').replaceAll('\n', '')}</style>`,
-    );
-  });
+  Array.from(styles.entries())
+    .reverse()
+    .forEach(([id, content]) => {
+      result = result.concat(
+        `<style vite-css-module-id="${hashCode(id)}">${(content || '').replaceAll('\n', '')}</style>`,
+      );
+    });
 
   return result;
 }
