@@ -7,6 +7,8 @@ import { DateTime } from 'luxon';
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
+import { createDatabaseTestName, getDatabaseTestPrefix } from '../lib/databaseTestName.ts';
+
 const __separator = '-';
 const __timeFormat = `yyyyMMdd${__separator}HHmmss`;
 
@@ -20,8 +22,8 @@ export class ServiceDatabase extends BeanBase {
     instanceName?: keyof IInstanceRecord,
     configInstanceBase?: ConfigInstanceBase,
   ) {
-    const prefix = configInstanceBase?.isolate ? `isolate${__separator}${instanceName}` : 'share';
-    return `vona${__separator}test${__separator}${this.app.name}${__separator}${prefix}${__separator}`;
+    const scope = configInstanceBase?.isolate ? `isolate${__separator}${instanceName}` : 'share';
+    return getDatabaseTestPrefix(this.app.name, scope);
   }
 
   public async databaseInitStartup() {
@@ -60,7 +62,10 @@ export class ServiceDatabase extends BeanBase {
     configInstanceBase?: ConfigInstanceBase,
   ) {
     const databasePrefix = this.getDatabasePrefix(instanceName, configInstanceBase);
-    const databaseName = `${databasePrefix}${DateTime.now().toFormat(__timeFormat)}`;
+    const databaseName = createDatabaseTestName(
+      databasePrefix,
+      DateTime.now().toFormat(__timeFormat),
+    );
     return await client.connection.schema.createDatabase(databaseName);
   }
 
