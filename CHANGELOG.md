@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.188
+
+### Bug Fixes
+
+- Enforce database name length limits.
+- Correct markdown task list item rendering.
+
+### Improvements
+
+- Refactor the layout implementation.
+- Update SSR CSS collection handling.
+
 ## 5.1.187
 
 ### Improvements
