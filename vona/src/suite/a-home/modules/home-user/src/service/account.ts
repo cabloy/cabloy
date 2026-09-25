@@ -601,7 +601,7 @@ export class ServiceAccount extends BeanBase {
       url.password ||
       url.search ||
       url.hash ||
-      this.bean.security.checkOriginExact(url.origin, this.ctx.host) !== url.origin
+      this.bean.security.checkOriginExact(url.origin, this.app.util.host) !== url.origin
     ) {
       this.app.throw(503, `account ${purpose} consumer URL is invalid`);
     }

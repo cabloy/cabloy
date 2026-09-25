@@ -248,21 +248,34 @@ describe('accountPasswordReset.test.ts', { concurrency: false }, () => {
     }
   });
 
-  it('allows an exact same-origin consumer without a whitelist entry', async () => {
+  it('uses the canonical host for an exact same-origin consumer without a whitelist entry', async () => {
     let fixture: IAccountPasswordResetFixture | undefined;
     let restoreConfig: (() => void) | undefined;
+    const serve = app.config.server.serve;
+    const servePrevious = { ...serve };
     try {
       fixture = await createFixture({ simpleAuth: true });
       restoreConfig = await configurePasswordReset([]);
+      (serve as any).host = 'canonical.example.test';
 
       const sameOriginConsumerUrl = await app.bean.executor.mockCtx(async () => {
-        return `${app.ctx.protocol}://${app.ctx.host}/home/user/password-reset`;
+        return `${app.ctx.protocol}://${app.util.host}/home/user/password-reset`;
       });
       const issued = await issuePasswordResetLink(fixture, sameOriginConsumerUrl);
       assert.equal(issued.origin, new URL(sameOriginConsumerUrl).origin);
       assert.equal(issued.path, '/home/user/password-reset');
       assert.equal(issued.search, `?token=${issued.token}`);
+
+      await clearPasswordResetState(fixture.userId);
+      await clearPasswordResetRecipientCooldown(fixture.email);
+      const requestOriginConsumerUrl = await app.bean.executor.mockCtx(async () => {
+        return `${app.ctx.protocol}://${app.ctx.host}/home/user/password-reset`;
+      });
+      await requestPasswordReset(fixture.email, requestOriginConsumerUrl);
+      await assertNoPasswordResetState(fixture.userId);
+      await assertNoPasswordResetRecipientCooldown(fixture.email);
     } finally {
+      Object.assign(serve, servePrevious);
       restoreConfig?.();
       if (fixture) await removeFixture(fixture);
     }
