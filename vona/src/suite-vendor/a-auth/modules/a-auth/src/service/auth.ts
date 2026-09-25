@@ -20,6 +20,7 @@ import type {
 } from '../types/authProvider.ts';
 
 import { StrategyMock } from '../lib/strategyMock.ts';
+import { getOauthRedirectDiagnostic } from '../lib/utils.ts';
 
 @Service()
 export class ServiceAuth extends BeanBase {
@@ -247,10 +248,27 @@ export class ServiceAuth extends BeanBase {
           if (clientOptions.mockUsername) {
             return resolve(jwt);
           }
+          // redirect
+          if (!strategyState.redirect) {
+            this._logOauthRedirectRejected(entityAuthProvider, strategyState, 'redirect_missing');
+            return reject(new Error('redirect not specified'));
+          }
+          if (!strategyState.redirect.startsWith('/')) {
+            const redirectAllowed = !!this.bean.security.checkOrigin(
+              strategyState.redirect,
+              this.ctx.host,
+            );
+            if (!redirectAllowed) {
+              this._logOauthRedirectRejected(
+                entityAuthProvider,
+                strategyState,
+                'origin_disallowed',
+              );
+              return this.app.throw(403);
+            }
+          }
           // code
           const code = await this.bean.passport.createOauthCodeFromOauthAuthToken(jwt.accessToken);
-          // redirect
-          if (!strategyState.redirect) return reject(new Error('redirect not specified'));
           const redirectUrl = combineQueries(strategyState.redirect, {
             [this.scope.config.oauthCodeField]: code,
           });
@@ -263,6 +281,46 @@ export class ServiceAuth extends BeanBase {
         reject(err);
       };
       strategy.authenticate(this.ctx.request, strategyOptions);
+    });
+  }
+
+  private _logOauthRedirectRejected(
+    entityAuthProvider: EntityAuthProvider,
+    strategyState: IAuthenticateStrategyState,
+    reason: 'origin_disallowed' | 'redirect_missing',
+  ) {
+    const redirectDiagnostic = strategyState.redirect
+      ? getOauthRedirectDiagnostic(strategyState.redirect)
+      : { redirectKind: 'missing' as const };
+    const onionCors = this.bean.onion.middlewareSystem.getOnionSlice('a-security:cors');
+    const whiteList = onionCors?.beanOptions.options?.whiteList;
+    const whiteListEntries =
+      typeof whiteList === 'string' ? whiteList.split(',').filter(Boolean) : whiteList;
+    this.$logger.warn('OAuth callback final redirect rejected', {
+      event: 'auth.oauth_final_redirect_rejected',
+      stage: 'redirect_validation',
+      outcome: 'rejected',
+      reason,
+      authProviderId: entityAuthProvider.id,
+      providerName: entityAuthProvider.providerName,
+      clientName: entityAuthProvider.clientName,
+      intention: strategyState.intention ?? 'login',
+      instanceName: strategyState.instanceName,
+      mockMode: !!strategyState.clientOptions?.mockUsername,
+      requestHost: this.ctx.host,
+      requestProtocol: this.ctx.protocol,
+      serveHost: this.ctx.config.server.serve.host || null,
+      serveProtocol: this.ctx.config.server.serve.protocol || null,
+      proxyEnabled: this.app.proxy,
+      hostMatches:
+        redirectDiagnostic.redirectHost === undefined
+          ? undefined
+          : redirectDiagnostic.redirectHost === this.ctx.host,
+      whiteListConfigured: Array.isArray(whiteList) ? whiteList.length > 0 : !!whiteList,
+      whiteListKind: Array.isArray(whiteList) ? 'array' : typeof whiteList,
+      whiteListEntryCount: Array.isArray(whiteListEntries) ? whiteListEntries.length : 0,
+      whiteListWildcard: whiteList === '*',
+      ...redirectDiagnostic,
     });
   }
 
