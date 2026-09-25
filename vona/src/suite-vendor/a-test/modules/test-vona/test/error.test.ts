@@ -85,7 +85,7 @@ describe('error.test.ts', { concurrency: false }, () => {
 
   it('context:redirect:trustedExternal', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const serve = app.config.server.serve;
+      const serve = app.ctx.config.server.serve;
       const servePrevious = { ...serve };
       try {
         (serve as any).host = 'canonical.example.test';

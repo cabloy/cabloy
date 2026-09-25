@@ -251,12 +251,16 @@ describe('accountPasswordReset.test.ts', { concurrency: false }, () => {
   it('uses the canonical host for an exact same-origin consumer without a whitelist entry', async () => {
     let fixture: IAccountPasswordResetFixture | undefined;
     let restoreConfig: (() => void) | undefined;
-    const serve = app.config.server.serve;
-    const servePrevious = { ...serve };
+    let serve: typeof app.config.server.serve | undefined;
+    let servePrevious: { protocol?: string; host?: string } | undefined;
     try {
       fixture = await createFixture({ simpleAuth: true });
       restoreConfig = await configurePasswordReset([]);
-      (serve as any).host = 'canonical.example.test';
+      await app.bean.executor.mockCtx(async () => {
+        serve = app.ctx.config.server.serve;
+        servePrevious = { ...serve };
+        (serve as any).host = 'canonical.example.test';
+      });
 
       const sameOriginConsumerUrl = await app.bean.executor.mockCtx(async () => {
         return `${app.ctx.protocol}://${app.util.host}/home/user/password-reset`;
@@ -275,7 +279,7 @@ describe('accountPasswordReset.test.ts', { concurrency: false }, () => {
       await assertNoPasswordResetState(fixture.userId);
       await assertNoPasswordResetRecipientCooldown(fixture.email);
     } finally {
-      Object.assign(serve, servePrevious);
+      if (serve && servePrevious) Object.assign(serve, servePrevious);
       restoreConfig?.();
       if (fixture) await removeFixture(fixture);
     }
@@ -719,9 +723,11 @@ async function assertNoPasswordResetRecipientCooldown(email: string) {
 }
 
 async function clearPasswordResetState(userId: string): Promise<void> {
-  const digest = await app.scope('home-user').cacheRedis.passwordResetCurrent.get(userId as any);
-  if (digest) await app.scope('home-user').cacheRedis.passwordReset.del(digest);
-  await app.scope('home-user').cacheRedis.passwordResetCurrent.del(userId as any);
+  await app.bean.executor.mockCtx(async () => {
+    const digest = await app.scope('home-user').cacheRedis.passwordResetCurrent.get(userId as any);
+    if (digest) await app.scope('home-user').cacheRedis.passwordReset.del(digest);
+    await app.scope('home-user').cacheRedis.passwordResetCurrent.del(userId as any);
+  });
 }
 
 async function assertNoPasswordResetState(userId: string, digest?: string): Promise<void> {
