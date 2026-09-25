@@ -72,22 +72,29 @@ export class VonaApplication extends KoaApplication {
     if (req) {
       request = req;
     } else {
-      const host = `localhost:${this.meta.env.SERVER_LISTEN_PORT}`;
+      const port = this.config?.server.listen.port ?? this.meta.env.SERVER_LISTEN_PORT;
+      const hostFallback = port ? `localhost:${port}` : 'localhost';
+      const protocol = (this.config ? this.util.protocol : undefined) || 'http';
+      const host = (this.config ? this.util.host : undefined) || hostFallback;
+      const hostname = new URL(`${protocol}://${host}`).hostname;
       request = {
         headers: {
           'host': host,
-          'x-forwarded-for': host,
+          'x-forwarded-for': '127.0.0.1',
+          'x-forwarded-host': host,
+          'x-forwarded-proto': protocol,
         },
         query: {},
         querystring: '',
         host,
-        hostname: 'localhost',
-        protocol: 'http',
-        secure: 'false',
+        hostname,
+        protocol,
+        secure: protocol === 'https',
         method: 'POST',
         url: '',
         path: '',
         socket: {
+          encrypted: protocol === 'https',
           remoteAddress: '127.0.0.1',
           remotePort: 7001,
         },
