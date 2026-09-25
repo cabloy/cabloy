@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.189
+
+### Features
+
+- Add anonymous context creation support.
+- Add home user functionality.
+- Add application host utility access through the context.
+- Add authentication enhancements.
+- Update core feature behavior.
+
 ## 5.1.188
 
 ### Bug Fixes
