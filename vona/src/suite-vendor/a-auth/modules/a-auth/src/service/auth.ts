@@ -256,7 +256,7 @@ export class ServiceAuth extends BeanBase {
           if (!strategyState.redirect.startsWith('/')) {
             const redirectAllowed = !!this.bean.security.checkOrigin(
               strategyState.redirect,
-              this.ctx.host,
+              this.app.util.host,
             );
             if (!redirectAllowed) {
               this._logOauthRedirectRejected(

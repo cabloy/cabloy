@@ -127,7 +127,7 @@ export const contextBase: ContextBase = {
       typeof statusOrOptions === 'number' ? { status: statusOrOptions } : (statusOrOptions ?? {});
     // checkOrigin
     if (!url.startsWith('/') && !options.trustedExternal) {
-      const origin = cast(self.app.bean).security.checkOrigin(url, self.host);
+      const origin = cast(self.app.bean).security.checkOrigin(url, self.app.util.host);
       if (!origin) self.app.throw(403);
     }
     // throw

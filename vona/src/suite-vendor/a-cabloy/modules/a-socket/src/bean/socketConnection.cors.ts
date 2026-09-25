@@ -14,7 +14,7 @@ export interface ISocketConnectionOptionsCors extends IDecoratorSocketConnection
 export class SocketConnectionCors extends BeanBase implements ISocketConnectionExecute {
   async enter(ws: WebSocket, _options: ISocketConnectionOptionsCors, next: Next): Promise<void> {
     // cors
-    const origin = this.bean.security.checkOrigin(this.ctx.get('origin'), this.ctx.host);
+    const origin = this.bean.security.checkOrigin(this.ctx.get('origin'), this.app.util.host);
     if (!origin) {
       ws.terminate();
       return;

@@ -52,5 +52,5 @@ export class MiddlewareSystemCors extends BeanBase implements IMiddlewareSystemE
 }
 
 function _corsOrigin(ctx: VonaContext) {
-  return ctx.app.bean.security.checkOrigin(ctx.get('origin'), ctx.host);
+  return ctx.app.bean.security.checkOrigin(ctx.get('origin'), ctx.app.util.host);
 }

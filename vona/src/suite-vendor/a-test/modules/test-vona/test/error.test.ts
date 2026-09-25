@@ -1,9 +1,19 @@
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
-import { describe, it } from 'node:test';
-import { app } from 'vona-mock';
+import { after, before, describe, it } from 'node:test';
+import { acquireTestLock, app } from 'vona-mock';
 
-describe('error.test.ts', () => {
+describe('error.test.ts', { concurrency: false }, () => {
+  const releases: Array<() => void> = [];
+
+  before(async () => {
+    releases.push(await acquireTestLock('a-security'));
+  });
+
+  after(() => {
+    for (const release of releases.reverse()) release();
+  });
+
   it('action:error:legacy', async () => {
     await app.bean.executor.mockCtx(
       async () => {
@@ -75,25 +85,40 @@ describe('error.test.ts', () => {
 
   it('context:redirect:trustedExternal', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const [_, untrustedError] = await catchError(() => {
-        app.ctx.redirect('https://untrusted.example.test/authorize');
-      });
-      assert.equal(untrustedError?.code, 403);
-      assert.equal(untrustedError?.status, 403);
+      const serve = app.config.server.serve;
+      const servePrevious = { ...serve };
+      try {
+        (serve as any).host = 'canonical.example.test';
 
-      const [__, trustedError] = await catchError(() => {
-        app.ctx.redirect('https://provider.example.test/authorize', { trustedExternal: true });
-      });
-      assert.equal(trustedError?.code, 302);
-      assert.equal(trustedError?.status, 302);
-      assert.equal(trustedError?.message, 'https://provider.example.test/authorize');
+        const [_, canonicalError] = await catchError(() => {
+          app.ctx.redirect(`https://${app.util.host}/authorize`);
+        });
+        assert.equal(canonicalError?.code, 302);
+        assert.equal(canonicalError?.status, 302);
+        assert.equal(canonicalError?.message, 'https://canonical.example.test/authorize');
 
-      const [___, legacyError] = await catchError(() => {
-        app.ctx.redirect('/legacy', 301);
-      });
-      assert.equal(legacyError?.code, 301);
-      assert.equal(legacyError?.status, 301);
-      assert.equal(legacyError?.message, '/legacy');
+        const [__, untrustedError] = await catchError(() => {
+          app.ctx.redirect(`https://${app.ctx.host}/authorize`);
+        });
+        assert.equal(untrustedError?.code, 403);
+        assert.equal(untrustedError?.status, 403);
+
+        const [___, trustedError] = await catchError(() => {
+          app.ctx.redirect('https://provider.example.test/authorize', { trustedExternal: true });
+        });
+        assert.equal(trustedError?.code, 302);
+        assert.equal(trustedError?.status, 302);
+        assert.equal(trustedError?.message, 'https://provider.example.test/authorize');
+
+        const [____, legacyError] = await catchError(() => {
+          app.ctx.redirect('/legacy', 301);
+        });
+        assert.equal(legacyError?.code, 301);
+        assert.equal(legacyError?.status, 301);
+        assert.equal(legacyError?.message, '/legacy');
+      } finally {
+        Object.assign(serve, servePrevious);
+      }
     });
   });
 });
