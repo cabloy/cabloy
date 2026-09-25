@@ -307,15 +307,15 @@ export class ServiceAuth extends BeanBase {
       intention: strategyState.intention ?? 'login',
       instanceName: strategyState.instanceName,
       mockMode: !!strategyState.clientOptions?.mockUsername,
-      requestHost: this.ctx.host,
-      requestProtocol: this.ctx.protocol,
+      requestHost: this.app.util.host,
+      requestProtocol: this.app.util.protocol,
       serveHost: this.ctx.config.server.serve.host || null,
       serveProtocol: this.ctx.config.server.serve.protocol || null,
       proxyEnabled: this.app.proxy,
       hostMatches:
         redirectDiagnostic.redirectHost === undefined
           ? undefined
-          : redirectDiagnostic.redirectHost === this.ctx.host,
+          : redirectDiagnostic.redirectHost === this.app.util.host,
       whiteListConfigured: Array.isArray(whiteList) ? whiteList.length > 0 : !!whiteList,
       whiteListKind: Array.isArray(whiteList) ? 'array' : typeof whiteList,
       whiteListEntryCount: Array.isArray(whiteListEntries) ? whiteListEntries.length : 0,
