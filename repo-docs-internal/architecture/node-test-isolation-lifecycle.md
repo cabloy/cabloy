@@ -80,12 +80,12 @@ This creates the explicit lifecycle barriers that event listeners alone cannot p
 
 1. **Aggregate result:** `waitForTestSummary()` reports the final `summary.success` value or runner-stream error.
 2. **Reporter drain:** the `spec` or `lcov` pipeline is awaited before the aggregate failure is propagated, so failure locations, summary diagnostics, and coverage output reach their destination. A reporter error is raised only after a successful test summary; an unsuccessful summary remains the primary failure.
-3. **Early host cleanup:** the `---done---` `test:pass` event starts the one shared close operation before `node:test` emits its summary. This preserves the existing runner behavior in which Vona-owned handles must begin closing before the test stream can finish.
+3. **Early host cleanup:** the `---done---` `test:pass` event starts the one shared close operation before `node:test` emits its summary. `test:pass` is definition-ordered, so the top-level `---done---` suite appended after all actual test files becomes the final pass event even when test execution is concurrent. The listener is restricted to that top-level suite so a nested test with the same name cannot trigger shutdown.
 4. **Guaranteed host cleanup:** `testRun()` awaits that same once-only close Promise in `finally`; if `---done---` did not pass because tests failed, were cancelled, or runner startup failed, `finally` starts the close instead.
 5. **Failure priority:** a test failure remains primary; a close failure is logged alongside it. If tests passed, a close failure fails the runner.
 6. **Process result:** `CliBinTest._run()` awaits the child process without broad error suppression, so a failed runner produces a nonzero CLI/CI result.
 
-The `---done---` listener is therefore an **early shutdown trigger**, not the awaited shutdown boundary. The once-only close helper ensures that it and `finally` cannot close the application twice.
+The `---done---` listener is an **early shutdown trigger**, not the awaited shutdown boundary. The once-only close helper ensures that it and `finally` cannot close the application twice.
 
 ## Refactor invariants
 

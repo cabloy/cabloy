@@ -99,8 +99,8 @@ async function testRun(projectPath: string, coverage: boolean, patterns: string[
       .on('test:coverage', data => {
         outputCoverageReport(data.summary.totals);
       })
-      .on('test:pass', t => {
-        if (t.name === '---done---') {
+      .on('test:pass', data => {
+        if (data.nesting === 0 && data.name === '---done---') {
           void closeApplicationOnce();
         }
       });
