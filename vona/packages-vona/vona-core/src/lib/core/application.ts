@@ -73,7 +73,7 @@ export class VonaApplication extends KoaApplication {
       request = req;
     } else {
       const protocol = 'http';
-      const port = this.config?.server.listen.port ?? this.meta.env.SERVER_LISTEN_PORT;
+      const port = this.meta.env.SERVER_LISTEN_PORT;
       const host = port ? `localhost:${port}` : 'localhost';
       const hostname = new URL(`${protocol}://${host}`).hostname;
       request = {
