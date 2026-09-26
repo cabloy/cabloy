@@ -10,6 +10,9 @@ hero:
       text: Get Started
       link: /fullstack/quickstart
     - theme: alt
+      text: Demo
+      link: /demo
+    - theme: alt
       text: Editions
       link: /editions/overview
     - theme: alt
