@@ -72,10 +72,9 @@ export class VonaApplication extends KoaApplication {
     if (req) {
       request = req;
     } else {
+      const protocol = 'http';
       const port = this.config?.server.listen.port ?? this.meta.env.SERVER_LISTEN_PORT;
-      const hostFallback = port ? `localhost:${port}` : 'localhost';
-      const protocol = (this.config ? this.util.protocol : undefined) || 'http';
-      const host = (this.config ? this.util.host : undefined) || hostFallback;
+      const host = port ? `localhost:${port}` : 'localhost';
       const hostname = new URL(`${protocol}://${host}`).hostname;
       request = {
         headers: {
@@ -89,12 +88,12 @@ export class VonaApplication extends KoaApplication {
         host,
         hostname,
         protocol,
-        secure: protocol === 'https',
+        secure: false,
         method: 'POST',
         url: '',
         path: '',
         socket: {
-          encrypted: protocol === 'https',
+          encrypted: false,
           remoteAddress: '127.0.0.1',
           remotePort: 7001,
         },
