@@ -79,7 +79,7 @@ describe('oauthRequestContext.test.ts', { concurrency: false }, () => {
         remotePort: 443,
       },
     };
-    await app.bean.executor.newCtx(
+    await app.bean.executor.mockCtx(
       async () => {
         assert.equal(app.ctx.host, 'edge.example.test');
         assert.equal(app.ctx.protocol, 'https');
