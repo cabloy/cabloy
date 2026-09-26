@@ -243,7 +243,7 @@ describe('productContent.test.ts', { concurrency: false }, () => {
         return product.id;
       });
 
-      await Promise.all(
+      const results = await Promise.allSettled(
         markdowns.map(descriptionMarkdown =>
           runInMockCtx(async () => {
             await app.scope('commerce-catalog').service.product.update(productId, {
@@ -252,10 +252,17 @@ describe('productContent.test.ts', { concurrency: false }, () => {
           }),
         ),
       );
+      assert.deepEqual(
+        results.map(result => result.status),
+        ['fulfilled', 'fulfilled'],
+      );
 
       await runInMockCtx(async () => {
-        const stored = await app.scope('commerce-catalog').model.productContent.get({ productId });
-        assert.ok(stored);
+        const storeds = await app.scope('commerce-catalog').model.productContent.select({
+          where: { productId },
+        });
+        assert.equal(storeds.length, 1);
+        const stored = storeds[0]!;
         assert.ok(markdowns.includes(stored.descriptionMarkdown!));
         assert.equal(
           stored.descriptionHtml,

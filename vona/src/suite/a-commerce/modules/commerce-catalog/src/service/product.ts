@@ -17,11 +17,11 @@ import type { EntityProduct } from '../entity/product.tsx';
 import type { ModelProduct } from '../model/product.ts';
 
 const serializationRetryOptions = {
-  retries: 3,
-  factor: 1,
+  retries: 6,
+  factor: 2,
   minTimeout: 10,
-  maxTimeout: 10,
-  randomize: false,
+  maxTimeout: 160,
+  randomize: true,
   errorCodes: [
     '40001',
     'ER_LOCK_DEADLOCK',

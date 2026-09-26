@@ -98,6 +98,7 @@ export class DatabaseDialectBetterSqlite3 extends ServiceDatabaseDialectBase {
 }
 
 async function sqlite3_afterCreate(conn) {
+  conn.pragma('busy_timeout = 5000');
   const pragma: { journal_mode: string }[] = conn.pragma('journal_mode');
   if (pragma[0]?.journal_mode?.toLocaleLowerCase() !== 'wal') {
     conn.pragma('journal_mode = wal');
