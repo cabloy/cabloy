@@ -1,5 +1,20 @@
 # Changelog
 
+## 5.1.190
+
+### Features
+
+- Update application and authentication capabilities.
+
+### Bug Fixes
+
+- Correct test coverage and authentication request handling.
+
+### Improvements
+
+- Simplify `bean.core` by removing obsolete methods.
+- Update application, Passport, OAuth request context, and project documentation.
+
 ## 5.1.189
 
 ### Features
