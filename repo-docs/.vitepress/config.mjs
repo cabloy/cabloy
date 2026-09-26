@@ -245,6 +245,7 @@ export default defineConfig({
           { text: 'Frontend (Zova)', link: '/frontend/introduction', activeMatch: '^/frontend/' },
         ],
       },
+      { text: 'Demo', link: '/demo' },
       { text: 'Blogs', link: '/blogs/', activeMatch: '^/blogs/' },
       { text: 'Editions', link: '/editions/overview', activeMatch: '^/editions/' },
       { text: 'AI Development', link: '/ai/introduction', activeMatch: '^/ai/' },
