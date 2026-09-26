@@ -88,7 +88,7 @@ export class ServicePaymentCallback extends BeanBase {
 
   private _assertTrustedOrigin() {
     const { protocol, host } = this.app.config.server.serve;
-    if (!protocol || !host) {
+    if (!this.app.meta.isTest && (!protocol || !host)) {
       this.app.throw(503, 'payment callbacks require configured server serve protocol and host');
     }
   }

@@ -453,36 +453,28 @@ describe('accountPasswordSet.test.ts', { concurrency: false, sequential: true },
     }
   });
 
-  it('uses the canonical host for an exact same-origin consumer without a whitelist entry', async () => {
+  it('uses the fallback origin for an exact same-origin consumer without a whitelist entry', async () => {
     let fixture: IAccountPasswordSetFixture | undefined;
     let restoreConfig: (() => void) | undefined;
-    let serve: typeof app.config.server.serve | undefined;
-    let servePrevious: { protocol?: string; host?: string } | undefined;
     try {
       fixture = await createFixture();
       restoreConfig = await configurePasswordSet([]);
-      await app.bean.executor.mockCtx(async () => {
-        serve = app.ctx.config.server.serve;
-        servePrevious = { ...serve };
-        (serve as any).host = 'canonical.example.test';
-      });
 
-      const sameOriginConsumerUrl = await app.bean.executor.mockCtx(async () => {
-        return `${app.ctx.protocol}://${app.util.host}/home/user/password-set`;
-      });
+      const port = app.meta.env.SERVER_LISTEN_PORT;
+      const fallbackOrigin = `http://${port ? `localhost:${port}` : 'localhost'}`;
+      const sameOriginConsumerUrl = `${fallbackOrigin}/home/user/password-set`;
       const issued = await issuePasswordSetLink(fixture, sameOriginConsumerUrl);
-      assert.equal(issued.origin, new URL(sameOriginConsumerUrl).origin);
+      assert.equal(issued.origin, fallbackOrigin);
       assert.equal(issued.path, '/home/user/password-set');
       assert.equal(issued.search, `?token=${issued.token}`);
 
       await clearPasswordSetState(fixture.userId);
-      const requestOriginConsumerUrl = await app.bean.executor.mockCtx(async () => {
-        return `${app.ctx.protocol}://${app.ctx.host}/home/user/password-set`;
-      });
-      await issuePasswordSetLinkRejected(fixture, requestOriginConsumerUrl);
+      await issuePasswordSetLinkRejected(
+        fixture,
+        'https://request.example.test/home/user/password-set',
+      );
       await assertNoPasswordSetState(fixture.userId);
     } finally {
-      if (serve && servePrevious) Object.assign(serve, servePrevious);
       restoreConfig?.();
       if (fixture) await removeFixture(fixture);
     }

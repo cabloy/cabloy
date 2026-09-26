@@ -287,24 +287,28 @@ async function createCheckout(suffix: string, providerCandidateKey = 'paypal'): 
 async function callbackToken(sessionId: number, purpose: 'return' | 'cancel') {
   const session = await app.scope('a-pay').model.paymentSession.getById(sessionId);
   assert.ok(session);
-  return (await app.scope('a-pay').service.paymentCallback.createUrls(session))[
+  const callbackUrl = (await app.scope('a-pay').service.paymentCallback.createUrls(session))[
     purpose === 'return' ? 'returnUrl' : 'cancelUrl'
   ];
+  const port = app.meta.env.SERVER_LISTEN_PORT;
+  const fallbackOrigin = `http://${port ? `localhost:${port}` : 'localhost'}`;
+  const url = new URL(callbackUrl);
+  assert.equal(url.origin, fallbackOrigin);
+  assert.equal(url.pathname, `/api/pay/payment-callback/${purpose}`);
+  assert.ok(url.searchParams.get('state'));
+  return callbackUrl;
 }
 
 describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, () => {
   const releases: Array<() => void> = [];
-  let originalServe: { protocol?: string; host?: string };
 
   before(async () => {
-    for (const scene of ['a-commerce', 'a-pay']) releases.push(await acquireTestLock(scene));
-    originalServe = { ...app.config.server.serve };
-    (app.config.server.serve as any).protocol = 'http';
-    (app.config.server.serve as any).host = 'localhost';
+    for (const scene of ['a-commerce', 'a-pay']) {
+      releases.push(await acquireTestLock(scene));
+    }
   });
 
   after(() => {
-    Object.assign(app.config.server.serve, originalServe);
     for (const release of releases.reverse()) release();
   });
 

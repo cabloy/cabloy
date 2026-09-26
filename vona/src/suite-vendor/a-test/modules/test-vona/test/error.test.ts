@@ -85,40 +85,32 @@ describe('error.test.ts', { concurrency: false }, () => {
 
   it('context:redirect:trustedExternal', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const serve = app.ctx.config.server.serve;
-      const servePrevious = { ...serve };
-      try {
-        (serve as any).host = 'canonical.example.test';
+      const [_, fallbackError] = await catchError(() => {
+        app.ctx.redirect(`${app.util.protocol}://${app.util.host}/authorize`);
+      });
+      assert.equal(fallbackError?.code, 302);
+      assert.equal(fallbackError?.status, 302);
+      assert.equal(fallbackError?.message, `${app.util.protocol}://${app.util.host}/authorize`);
 
-        const [_, canonicalError] = await catchError(() => {
-          app.ctx.redirect(`https://${app.util.host}/authorize`);
-        });
-        assert.equal(canonicalError?.code, 302);
-        assert.equal(canonicalError?.status, 302);
-        assert.equal(canonicalError?.message, 'https://canonical.example.test/authorize');
+      const [__, untrustedError] = await catchError(() => {
+        app.ctx.redirect('https://request.example.test/authorize');
+      });
+      assert.equal(untrustedError?.code, 403);
+      assert.equal(untrustedError?.status, 403);
 
-        const [__, untrustedError] = await catchError(() => {
-          app.ctx.redirect(`https://${app.ctx.host}/authorize`);
-        });
-        assert.equal(untrustedError?.code, 403);
-        assert.equal(untrustedError?.status, 403);
+      const [___, trustedError] = await catchError(() => {
+        app.ctx.redirect('https://provider.example.test/authorize', { trustedExternal: true });
+      });
+      assert.equal(trustedError?.code, 302);
+      assert.equal(trustedError?.status, 302);
+      assert.equal(trustedError?.message, 'https://provider.example.test/authorize');
 
-        const [___, trustedError] = await catchError(() => {
-          app.ctx.redirect('https://provider.example.test/authorize', { trustedExternal: true });
-        });
-        assert.equal(trustedError?.code, 302);
-        assert.equal(trustedError?.status, 302);
-        assert.equal(trustedError?.message, 'https://provider.example.test/authorize');
-
-        const [____, legacyError] = await catchError(() => {
-          app.ctx.redirect('/legacy', 301);
-        });
-        assert.equal(legacyError?.code, 301);
-        assert.equal(legacyError?.status, 301);
-        assert.equal(legacyError?.message, '/legacy');
-      } finally {
-        Object.assign(serve, servePrevious);
-      }
+      const [____, legacyError] = await catchError(() => {
+        app.ctx.redirect('/legacy', 301);
+      });
+      assert.equal(legacyError?.code, 301);
+      assert.equal(legacyError?.status, 301);
+      assert.equal(legacyError?.message, '/legacy');
     });
   });
 });

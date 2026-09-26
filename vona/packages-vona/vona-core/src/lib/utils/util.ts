@@ -61,12 +61,17 @@ export class AppUtil extends BeanSimple {
 
   get protocol() {
     const config = this.ctx ? this.ctx.config : this.app.config;
-    return config.server.serve.protocol || this.ctx?.protocol;
+    return config.server.serve.protocol || this.ctx?.protocol || 'http';
   }
 
   get host() {
     const config = this.ctx ? this.ctx.config : this.app.config;
-    return config.server.serve.host || this.ctx?.host;
+    let host = config.server.serve.host || this.ctx?.host;
+    if (!host) {
+      const port = this.app.meta.env.SERVER_LISTEN_PORT;
+      host = port ? `localhost:${port}` : 'localhost';
+    }
+    return host;
   }
 
   getAbsoluteUrl(path?: string) {

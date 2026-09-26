@@ -1,8 +1,18 @@
 import assert from 'node:assert';
-import { describe, it } from 'node:test';
-import { app } from 'vona-mock';
+import { after, before, describe, it } from 'node:test';
+import { acquireTestLock, app } from 'vona-mock';
 
 describe('origin.test.ts', { concurrency: false }, () => {
+  let release: () => void;
+
+  before(async () => {
+    release = await acquireTestLock('a-security');
+  });
+
+  after(() => {
+    release();
+  });
+
   it('keeps normal CORS separate from exact credential-link authorization', async () => {
     await withWhiteList('*', async () => {
       assert.equal(

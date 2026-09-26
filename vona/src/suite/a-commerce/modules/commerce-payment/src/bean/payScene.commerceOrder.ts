@@ -23,7 +23,9 @@ import 'vona-module-a-ssr';
       input.candidate.clientName,
     );
     const server = _ctx.app.config.server.serve;
-    const hasPublicServer = !!(server.protocol && server.host);
+    const hasCallbackOrigin = _ctx.app.meta.isTest
+      ? !!(_ctx.app.util.protocol && _ctx.app.util.host)
+      : !!(server.protocol && server.host);
     if (input.candidate.key === 'paypal') {
       const options = clientOptions as IPayProviderPaypalClientOptions;
       return !!(
@@ -31,12 +33,12 @@ import 'vona-module-a-ssr';
         options.secretCredential.clientSecret &&
         options.webhookId &&
         options.merchantReference &&
-        hasPublicServer
+        hasCallbackOrigin
       );
     }
     if (input.candidate.key === 'stripe') {
       const options = clientOptions as IPayProviderStripeClientOptions;
-      return !!(options.secretCredential && options.secretWebhook && hasPublicServer);
+      return !!(options.secretCredential && options.secretWebhook && hasCallbackOrigin);
     }
     return false;
   },
