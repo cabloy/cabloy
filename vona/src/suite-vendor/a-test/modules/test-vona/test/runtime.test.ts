@@ -11,7 +11,10 @@ describe('runtime.test.ts', () => {
       const runtimeFile = path.join(app.projectPath, '.app/runtime/-.json');
       if (!fse.existsSync(runtimeFile)) throw new Error('dev server not running');
       const runtime = await loadJSONFile(runtimeFile);
+      const runtimeCore = runtime['a-core'];
       const runtimeUser = runtime['a-user'];
+      assert.equal(runtimeCore?.protocol, app.util.protocol);
+      assert.equal(runtimeCore?.host, app.util.host);
       // isAuthenticated: isolate + header
       const isAuthenticated = await app.bean.executor.newCtxIsolate(async () => {
         return await app.bean.executor.performAction('get', '/test/vona/passport/isAuthenticated', {

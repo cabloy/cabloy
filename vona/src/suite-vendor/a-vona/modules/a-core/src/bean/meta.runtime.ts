@@ -12,8 +12,8 @@ export interface TypeMetaRuntimeResult {
 export class MetaRuntime extends BeanBase implements IMetaRuntimeExecute {
   async execute(): Promise<TypeMetaRuntimeResult> {
     return {
-      protocol: this.bean.core.protocol,
-      host: this.bean.core.host,
+      protocol: this.app.util.protocol,
+      host: this.app.util.host,
     };
   }
 }
