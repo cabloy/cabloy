@@ -15,7 +15,7 @@ export class ControllerPassport extends BeanBase {
   @Aspect.guardGlobal('a-user:passport', { public: true })
   @Api.exclude()
   async callback() {
-    const code = this.ctx.query.code as string;
+    // const code = this.ctx.query.code as string;
     const stateQuery = this.ctx.query.state as string;
     if (!stateQuery) this.app.throw(403);
     const strategyState: IAuthenticateStrategyState = (await this.bean.jwt
@@ -23,7 +23,7 @@ export class ControllerPassport extends BeanBase {
       .verify(stateQuery)) as unknown as IAuthenticateStrategyState;
     return await this.bean.executor.newCtx(
       async () => {
-        this.ctx.request.query = { code, state: stateQuery };
+        // this.ctx.request.query = { code, state: stateQuery };
         return await this.scope.service.auth.authCallback(strategyState);
       },
       {
@@ -31,6 +31,8 @@ export class ControllerPassport extends BeanBase {
         tz: strategyState.tz,
         instanceName: strategyState.instanceName,
         instance: true,
+        req: this.ctx.req,
+        res: this.ctx.res,
       },
     );
   }
