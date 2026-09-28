@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/contract-loop-gate.ts",
+            "statusMessage": "Checking contract-loop gate"
+          }
+        ]
+      }
+    ]
+  }
+}

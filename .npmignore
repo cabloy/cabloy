@@ -96,3 +96,18 @@ zova/packages-cli/cli-set-front/cli/templates/create/project
 
 # create-cabloy itself (shouldn't be in the project it creates)
 packages-cabloy/
+
+# One-release governance migration bridge. A pre-governance upgrader blindly overwrites
+# these paths before it runs the incoming initializer, so this package intentionally leaves
+# them out. The incoming initializer restores/adopts the manifest-managed adapters safely.
+CLAUDE.md
+AGENTS.md
+.claude/commands/
+.claude/hooks/
+.claude/skills/
+.claude/settings.json
+.agents/
+.cursor/
+
+**/.claude/scheduled_tasks.lock
+.cabloy-agent-governance-state.json

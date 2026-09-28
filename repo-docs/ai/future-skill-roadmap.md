@@ -92,9 +92,9 @@ The purpose of the roadmap is not to create many skills.
 The purpose is to create a small number of high-leverage skills that directly reuse the knowledge system now being built in:
 
 - `repo-docs/`
-- `CLAUDE.md`
+- `repo-agent-governance/policies/`
 - `repo-docs-internal/`
-- `.claude/skills/`
+- `repo-agent-governance/skills/`
 - the Vona and Zova CLIs
 
 That is how Cabloy gets long-term value from the documentation work.

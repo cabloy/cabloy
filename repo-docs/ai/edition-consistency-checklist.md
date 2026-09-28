@@ -5,9 +5,9 @@ This checklist helps maintainers keep docs, rules, commands, and skills aligned 
 Use it whenever you add or revise:
 
 - edition-aware docs
-- `CLAUDE.md` guidance
-- `.claude/commands/`
-- `.claude/skills/`
+- `repo-agent-governance/` rules, commands, and skill bundles
+- generated Claude, Codex, or Cursor adapter outputs
+- platform-specific Claude commands, hooks, or settings when they are affected
 - AI workflow playbooks
 
 ## The baseline story that should stay consistent
@@ -98,14 +98,15 @@ For scripts, flavors, paths, and examples, confirm that:
 Confirm that the same guidance is distributed correctly:
 
 - **docs** explain the workflow in durable prose
-- **`CLAUDE.md`** captures short repo-wide behavioral rules
+- **`repo-agent-governance/`** owns short portable repo-wide behavioral rules, commands, and root skills
+- **generated adapters** expose that shared guidance to Claude Code, Codex, and Cursor without becoming a second authored source
 - **skills** encode procedural branching and follow-up logic
 - **commands** are used only for named operator workflows, not as the only home for conceptual guidance
 
 Avoid these drifts:
 
 - a skill contains the only explanation of an edition rule
-- `CLAUDE.md` grows into a long architectural essay
+- the concise canonical repository policy grows into a long architectural essay
 - docs duplicate every procedural branch that belongs in a skill
 
 ## Checklist 7: verification guidance matches the edition model
@@ -138,7 +139,8 @@ Before you finish an edition-aware change, ask:
 2. Did I preserve the correct Basic vs Start creation path?
 3. Did I avoid turning UI difference into the whole story?
 4. Did I point Start-specific operational truth back to the active Start repository where needed?
-5. Do docs, rules, and skills each play their proper role?
+5. Do docs, canonical governance, generated adapters, and skills each play their proper role?
+6. Did I regenerate and check every affected adapter without claiming platform-specific automation is portable?
 
 ## Read together with
 

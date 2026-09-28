@@ -297,6 +297,7 @@ function initRepoDocs(): void {
 // --- Main ---
 
 checkPnpm();
+exec('node scripts/bootstrapAgentGovernance.mjs');
 pnpmInstall();
 setAppName();
 generateEnvProdLocal();

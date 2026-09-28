@@ -71,48 +71,49 @@ Relevant internal records answer questions like:
 - why is AI enablement structured this way?
 - what invariants should future contributors preserve?
 
-### 4. Rules and commands
+### 4. Agent governance, rules, and commands
 
-Locations:
+Canonical location:
 
-- `CLAUDE.md`
-- `.claude/commands/`
+- `repo-agent-governance/`
 
-Use rules for:
+Generated adapter locations include:
 
-- concise repo-wide operational guidance
-- default behavior Claude should follow in this repo
-- short durable constraints such as edition detection and CLI-first preference
+- policy adapters: `CLAUDE.md`, `AGENTS.md`, and `.cursor/rules/`
+- Claude-specific command adapter: `.claude/commands/`
 
-Use commands for:
+Codex and Cursor adapter paths are configured output locations; verify active-client discovery externally before claiming that behavior is supported.
 
-- named recurring operator workflows
-- shorter, explicit actions such as release or future migration helpers
+Use the canonical repository policy for concise repo-wide operational guidance and durable constraints such as edition detection and CLI-first preference. Use canonical commands for named recurring operator workflows such as release.
 
 These layers answer questions like:
 
-- what should Claude check first in this repo?
+- what should an agent check first in this repo?
 - when should CLI be preferred over manual scaffolding?
 - what recurring workflow deserves a named command?
 
 ### 5. Skills
 
-Location:
+Canonical location:
 
-- `.claude/skills/`
+- `repo-agent-governance/skills/`
+
+Generated adapter locations include `.claude/skills/`, `.agents/skills/`, and `.cursor/skills/`. The Codex and Cursor locations are configured output paths, not verified client-discovery claims; validate the active client version externally before relying on discovery.
 
 Use skills for:
 
 - procedural decision trees
 - reusable workflows with branching logic
-- tasks that benefit from bundled references, evals, or future deterministic helpers
+- tasks that benefit from bundled references, evals, or deterministic helpers
 - repo-specific orchestration over CLI and source inspection
 
 Skills answer questions like:
 
-- how should Claude choose the right Cabloy workflow?
+- how should an agent choose the right Cabloy workflow?
 - when should it branch between Basic and Start?
 - what is the right verification path after generation or refactor work?
+
+Do not treat provider hooks, permissions, local settings, or command discovery as portable skill capabilities. These remain platform-specific adapters.
 
 ## Decision rule for authors: where should a new piece of knowledge go?
 
@@ -121,7 +122,7 @@ Use this quick rule:
 - if people and agents both need to read and understand it, put it in **public docs**
 - if it is product, contract, delivery, ATP, decision, or observed-evidence authority for one suite, use `repo-specs/<suite>/`
 - if it is maintainer rationale or long-lived design history, use `repo-docs-internal/`; shared guidance remains complete without any particular internal record
-- if it is short repo-wide behavioral guidance, put it in **CLAUDE.md**
+- if it is short portable repo-wide behavioral guidance, put it in **`repo-agent-governance/policies/`** and render its adapters
 - if it is a named repeatable operator action, put it in a **command**
 - if it is a reusable procedural workflow with branching, put it in a **skill**
 
@@ -131,26 +132,26 @@ Use this quick rule:
 
 - public explanation → [Cabloy Editions: For AI Development](/editions/overview#for-ai-development)
 - consistency review surface → [Edition Consistency Checklist](/ai/edition-consistency-checklist)
-- repo-wide behavior rule → `CLAUDE.md`
+- repo-wide behavior rule → `repo-agent-governance/policies/`, rendered to generated policy adapters
 - procedural enforcement → `cabloy-workflow` skill
 
 ### Example: “Use Zova CLI refactors before hand-editing page params/query/component props”
 
 - conceptual explanation → public docs in frontend and AI sections
-- default agent behavior → `CLAUDE.md`
+- default agent behavior → `repo-agent-governance/policies/`, rendered to generated policy adapters
 - step-by-step orchestration → `cabloy-workflow` skill or future specialized skills
 
 ### Example: “How should a backend base class be placed?”
 
 - public operational explanation → [Class Placement Rule](/ai/class-placement-rule)
 - maintainer rationale and invariants → `repo-docs-internal/`
-- default repo-wide behavior → `CLAUDE.md`
+- default repo-wide behavior → `repo-agent-governance/policies/`, rendered to generated policy adapters
 - procedural decision workflow → `cabloy-workflow` skill
 
 ### Example: “How should AI look up a backend global bean?”
 
 - public lookup explanation → [Global Bean Lookup](/ai/global-bean-lookup)
-- default repo-wide behavior → `CLAUDE.md`
+- default repo-wide behavior → `repo-agent-governance/policies/`, rendered to generated policy adapters
 - procedural lookup sequence → `cabloy-workflow` skill
 
 ### Example: “How backend OpenAPI becomes frontend SDK”
@@ -161,7 +162,7 @@ Use this quick rule:
 ### Example: “How should one persisted resource serve Admin and Web users?”
 
 - full architecture explanation → [Admin Resource and Web Self-Service](/fullstack/admin-resource-and-web-self-service)
-- concise repo-wide default → `CLAUDE.md`
+- concise repo-wide default → `repo-agent-governance/policies/repository.md`, rendered to policy adapters
 - contract regeneration, consumer-boundary choice, and verification routing → `cabloy-contract-loop`
 - extend the existing contract-loop skill references and evals; do not create an Order-specific skill
 
@@ -169,7 +170,7 @@ Use this quick rule:
 
 - public operational explanation → [Playbook: Module Removal](/ai/playbook-module-removal)
 - maintainer rationale and pitfalls → `repo-docs-internal/`
-- avoid putting the full workflow in `CLAUDE.md` because the task needs branching, cleanup order, generated-runtime recovery, and verification
+- avoid putting the full workflow in the concise canonical policy because the task needs branching, cleanup order, generated-runtime recovery, and verification
 - procedural decision workflow → `cabloy-module-removal` skill
 
 ### Example: “How should AI plan a new business domain name and structure?”
@@ -177,7 +178,7 @@ Use this quick rule:
 - public naming and suite-first explanation → [Suites and Modules](/fullstack/suites-and-modules)
 - frontend-side naming companion → [Modules and Suites](/frontend/modules-and-suites)
 - keep the durable naming rules in docs instead of duplicating them in repo rules
-- avoid putting the full branching workflow in `CLAUDE.md` because the task needs proposal, validation, confirmation, and CLI handoff
+- avoid putting the full branching workflow in the concise canonical policy because the task needs proposal, validation, confirmation, and CLI handoff
 - procedural decision workflow → `cabloy-domain-planning` skill
 
 ### Example: “How should AI create or maintain a repository-native suite specification?”
@@ -202,13 +203,13 @@ Use this quick rule:
 - full explanation → [Entity Guide](/backend/entity-guide) and [DTO Guide](/backend/dto-guide)
 - AI workflow reminder → [Playbook: Add a Backend Module](/ai/playbook-backend-module)
 - procedural checklist reminder → backend scaffold skill references
-- avoid putting the full explanation only in `CLAUDE.md` because this is a framework-specific authoring rule, not a short global behavior rule
+- avoid putting the full explanation only in the concise canonical policy because this is a framework-specific authoring rule, not a short global behavior rule
 
 ## Anti-patterns to avoid
 
 Avoid these mistakes:
 
-- putting large conceptual explanations in `CLAUDE.md`
+- putting large conceptual explanations in the concise canonical policy
 - using a skill as the only place where an important architectural rule is explained
 - duplicating the same workflow prose across docs and skills without giving each a distinct role
 - creating a command for something that actually needs a branching decision tree

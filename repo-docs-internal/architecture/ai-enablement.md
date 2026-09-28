@@ -78,35 +78,38 @@ Purpose:
 
 This layer is intentionally separate from public documentation.
 
-### 3. Claude rules, commands, hooks, and shared settings
+### 3. Agent-neutral governance and generated adapters
 
-Location:
+Canonical location:
 
-- `CLAUDE.md`
-- `.claude/commands/`
-- `.claude/hooks/`
-- `.claude/settings.json`
+- `repo-agent-governance/`
+
+Generated platform adapters:
+
+- Claude Code: `CLAUDE.md`, `.claude/commands/`, `.claude/skills/`, `.claude/hooks/`, `.claude/settings.json`
+- Codex: `AGENTS.md`, `.agents/skills/`
+- Cursor: `.cursor/rules/`, `.cursor/skills/`
 
 Purpose:
 
-- define concise operational repo guidance
-- encode named workflows such as release or future docs migration commands
-- enforce shared automation behavior that should travel with each published repo
-- keep execution behavior aligned with the repo’s real entrypoints
+- define one authored source for concise operational repository guidance and root procedural skill bundles
+- encode named workflows and deterministic tools without provider-directory coupling
+- make adapter drift visible through committed output and a no-write checker
+- keep agent guidance aligned with real Vona/Zova entrypoints
 
 Policy:
 
-- `CLAUDE.md` should stay short, durable, and edition-aware
-- shared command behavior should be distributed to both repos
-- shared hook behavior should be distributed to both repos when the hook can branch safely by marker
-- `.claude/settings.json` may be shared when the settings are intended to ship with the repo
-- `.claude/settings.local.json` is local-only and is excluded from the shared policy
+- canonical policy and skill bodies are shared only when their engineering semantics are genuinely portable
+- generated adapters are never hand-edited or treated as another authority
+- hooks, permissions, local settings, MCP registration, command discovery, and automatic command execution remain provider-specific integrations
+- the Claude contract-loop hook may keep its Claude-only automatic convenience behavior; other adapters must describe only the portable advisory workflow
+- local settings, worktree state, and credentials are excluded from generated ownership
 
-### 4. Skills
+### 4. Root skills
 
-Location:
+Canonical location:
 
-- `.claude/skills/`
+- `repo-agent-governance/skills/`
 
 Purpose:
 
@@ -117,9 +120,10 @@ Purpose:
 
 Policy:
 
-- prefer one shared skill per workflow
+- prefer one shared root skill per portable workflow
 - make edition detection the first durable branch in the workflow
 - parameterize UI-library assumptions, build flavors, output paths, and examples instead of forking entire skills by edition
+- retain provider-local diagnostic skills outside the root governance surface until their capability profile is explicitly reviewed
 
 ## Edition-aware shared-assets principle
 
@@ -166,56 +170,51 @@ Do **not** rely on marker-based branching as a way to hide truly private or sens
 
 The following assets should be treated as part of the shared, repo-managed AI surface unless a specific file proves otherwise:
 
-- `CLAUDE.md`
-- `.claude/commands/`
-- `.claude/skills/`
-- `.claude/hooks/contract-loop-gate.ts`
-- `.claude/settings.json`
+- `repo-agent-governance/` canonical policies, root skills, adapters, and deterministic tools
+- committed generated adapters for Claude Code, Codex, and Cursor
+- Claude-specific `PostToolUse` contract-loop bridge and its settings registration
 - edition-neutral and edition-aware pages under `repo-docs/`
 - relevant internal architecture notes under `repo-docs-internal/`
 
-The following assets are **not** part of the shared set:
+The following assets are **not** part of the generated or shared ownership set:
 
-- `.claude/settings.local.json`
-- worktree-local state
-- machine-local preferences
+- `.claude/settings.local.json`, `CLAUDE.local.md`, and equivalent local provider configuration
+- worktree-local and scheduled-task state
+- machine-local preferences, credentials, and MCP registration
+- arbitrary unregistered sibling files in adapter directories
 - any file whose content is genuinely edition-private rather than edition-parameterized
 
 ## Hook policy
 
-`contract-loop-gate.ts` should be maintained as a shared hook that supports both Basic and Start.
+The portable contract-loop classifier and advisory CLI are maintained in `repo-agent-governance/tools/contract-loop/` and support both Basic and Start through root marker detection.
 
-That means the hook should:
+The Claude adapter hook may additionally:
 
-- detect the active root marker before making edition-sensitive assumptions
-- keep shared contract-loop guidance common where possible
-- branch only where Basic and Start genuinely need different build flavors, paths, or generated outputs
+- parse the Claude `PostToolUse` payload
+- maintain Claude-only duplicate-sync state
+- auto-run the high-confidence Basic/Admin reverse-chain convenience path
 
-If one repo is missing this shared hook, the absence should be treated as a distribution gap rather than as evidence that the hook must stay Basic-only.
+Its platform-specific behavior must not be promised by Codex or Cursor adapters. All adapters should preserve the same shared classifier guidance and branch only where Basic and Start genuinely need different build flavors, paths, or generated outputs.
 
 ## Settings policy
 
-`.claude/settings.json` may be shared and published with the repo when the contained behavior is intended for all consumers of that repository.
+`.claude/settings.json` is a generated Claude adapter file when its behavior is intended for the repository's Claude Code users. It is not a cross-agent settings contract.
 
-`.claude/settings.local.json` remains explicitly outside the shared policy because it is for local, non-portable, or developer-specific adjustments.
+`.claude/settings.local.json` remains explicitly outside the generated policy because it is for local, non-portable, or developer-specific adjustments.
 
 ## Upgrade and distribution implication
 
-Any repo-to-repo upgrade or distribution path that claims to keep shared Claude assets aligned should include the shared hook and shared settings surface, not only commands and skills.
+Any repo-to-repo upgrade or npm distribution path that claims to keep shared agent guidance aligned must distribute `repo-agent-governance/` first, then reconcile only the exact manifest-managed adapter paths and named package scripts.
 
-In practice, that means shared-asset distribution should cover at least:
+The upgrader must:
 
-- `CLAUDE.md`
-- `.claude/commands/`
-- `.claude/skills/`
-- `.claude/hooks/` when the hook is shared-by-marker
-- `.claude/settings.json`
+- replace the canonical governance directory as framework-owned source
+- preserve unregistered adapter siblings and local configuration
+- update or delete an adapter only when installer state proves that it is unchanged since the prior managed version
+- preserve modified or legacy outputs as reported conflicts
+- keep platform-specific hook/settings behavior inside the applicable provider adapter
 
-and should continue to ignore:
-
-- `.claude/settings.local.json`
-
-This closes the class of drift where one repo receives shared skills and commands but misses the shared hook or shared settings behavior.
+This closes drift without recreating the previous blind root `.claude/**` merge and overwrite behavior.
 
 ## CLI-first principle
 
@@ -247,7 +246,7 @@ Use the following decision rule:
 
 - if the content teaches users or agents how to work, it belongs in `repo-docs/`
 - if the content explains maintainer rationale or design history, it belongs in `repo-docs-internal/`
-- if the content changes execution behavior for Claude, it belongs in `CLAUDE.md`, `.claude/commands/`, `.claude/hooks/`, `.claude/settings.json`, or `.claude/skills/`
+- if the content changes portable agent guidance, it belongs in `repo-agent-governance/`; Claude-specific execution behavior belongs in its canonical adapter source and is rendered to the applicable `.claude/` path
 
 ## Operational consequences
 

@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "policy": {
+    "source": "policies/repository.md",
+    "targets": [
+      {
+        "adapter": "claude",
+        "target": "CLAUDE.md"
+      },
+      {
+        "adapter": "codex",
+        "target": "AGENTS.md"
+      },
+      {
+        "adapter": "cursor",
+        "target": ".cursor/rules/cabloy-governance.mdc"
+      }
+    ]
+  },
+  "skills": {
+    "sourceDirectory": "skills",
+    "targets": [
+      {
+        "adapter": "claude",
+        "targetDirectory": ".claude/skills"
+      },
+      {
+        "adapter": "codex",
+        "targetDirectory": ".agents/skills"
+      },
+      {
+        "adapter": "cursor",
+        "targetDirectory": ".cursor/skills"
+      }
+    ]
+  },
+  "commands": [
+    {
+      "adapter": "claude",
+      "source": "commands/release.md",
+      "target": ".claude/commands/release.md"
+    }
+  ],
+  "claude": {
+    "settings": {
+      "source": "adapters/claude/settings.json",
+      "target": ".claude/settings.json"
+    },
+    "hooks": [
+      {
+        "source": "adapters/claude/contract-loop-gate.ts",
+        "target": ".claude/hooks/contract-loop-gate.ts"
+      }
+    ]
+  }
+}

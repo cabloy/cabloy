@@ -189,10 +189,10 @@ Avoid these mistakes in skills:
 
 ## Current root skill example
 
-The root-level skill:
+The canonical root-level skill:
 
-- `.claude/skills/cabloy-workflow/SKILL.md`
+- `repo-agent-governance/skills/cabloy-workflow/SKILL.md`
 
-already follows this philosophy: detect edition, classify layer, prefer CLI, then verify.
+is rendered to the Claude adapter path and already follows this philosophy: detect edition, classify layer, prefer CLI, then verify.
 
 Future skills should follow the same mapping pattern.

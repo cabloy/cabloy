@@ -57,9 +57,9 @@
     "format:fix": "oxfmt --write",
     "lint": "oxlint --disable-nested-config",
     "lint:fix": "oxlint --disable-nested-config --fix",
-    "test:spec-charts": "node --test .claude/skills/cabloy-spec-generation/scripts/generate-implementation-charts.test.mjs",
-    "spec:charts": "node ./.claude/skills/cabloy-spec-generation/scripts/generate-implementation-charts.mjs",
-    "spec:charts:check": "node ./.claude/skills/cabloy-spec-generation/scripts/generate-implementation-charts.mjs --check",
+    "test:spec-charts": "node --test repo-agent-governance/tools/spec-charts/generate-implementation-charts.test.mjs",
+    "spec:charts": "node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs",
+    "spec:charts:check": "node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs --check",
     "docs:dev": "pnpm --dir repo-docs docs:dev",
     "docs:build": "pnpm --dir repo-docs docs:build",
     "docs:preview": "pnpm --dir repo-docs docs:preview",
@@ -72,7 +72,13 @@
     "release:changelog": "node scripts/release.ts --changelog-only",
     "release:publish": "node scripts/release.ts --publish-only",
     "release:github": "node scripts/release.ts --release-only",
-    "prepare": "husky"
+    "prepare": "husky",
+    "agent:governance:render": "node repo-agent-governance/scripts/governance.mjs render",
+    "agent:governance:check": "node repo-agent-governance/scripts/governance.mjs check",
+    "agent:governance:adopt": "node repo-agent-governance/scripts/governance.mjs adopt",
+    "test:agent-governance": "node --test repo-agent-governance/tests/*.test.mjs",
+    "contract:gate": "node repo-agent-governance/tools/contract-loop/check.mjs",
+    "agent:governance:pack-check": "node repo-agent-governance/scripts/pack-check.mjs"
   },
   "devDependencies": {
     "@cabloy/dotenv": "^1.2.8",

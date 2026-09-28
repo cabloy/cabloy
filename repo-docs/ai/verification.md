@@ -17,7 +17,8 @@ For skills and repo guidance:
 
 - confirm the workflow still points to real command entrypoints
 - confirm edition branches match the active repo markers and scripts
-- confirm public docs, skills, and root `CLAUDE.md` tell the same story
+- confirm public docs, canonical `repo-agent-governance/` assets, and generated platform adapters tell the same story
+- run the deterministic governance checker after changing shared rules, skills, tools, or adapter metadata
 - review edition-aware changes against [Edition Consistency Checklist](/ai/edition-consistency-checklist)
 
 ## Code-generation verification

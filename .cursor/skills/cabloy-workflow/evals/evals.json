@@ -1,0 +1,59 @@
+{
+  "skill_name": "cabloy-workflow",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I am in the cabloy-basic repo and want to add a new backend bean plus the related frontend page for an admin workflow. Please tell me the right Cabloy workflow and what command families I should inspect first.",
+      "expected_output": "Detects Cabloy Basic, classifies the work as cross-stack, recommends root package.json plus Vona/Zova CLI families instead of manual scaffolding, and mentions verification.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We are working in cabloy-start and I need to create a new page with Vuetify-specific assumptions. Which repo checks should Claude do before recommending code changes?",
+      "expected_output": "Detects Cabloy Start, highlights the edition marker, treats the task as frontend-sensitive, and avoids reusing Cabloy Basic assumptions blindly.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Please help me decide whether this new AI guidance belongs in public docs, repo-docs-internal, CLAUDE.md, or a skill. The guidance is about when to use npm run zova instead of hand-written scaffolding.",
+      "expected_output": "Routes shared operational guidance to public docs and Claude rules/skills as appropriate, routes supporting maintainer rationale to repo-docs-internal, and reinforces the CLI-first principle without making an individual internal record a requirement.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "I found a Cabloy-like repo without __CABLOY_BASIC__ or __CABLOY_START__. Before I scaffold a frontend page, what should Claude verify so it does not assume the wrong edition?",
+      "expected_output": "Does not force an edition, inspects the owning package scripts and nearby repo structure, and asks before making a strong edition-specific assumption.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "I want to update the public guidance for Cabloy contributors about using CLI generators first, but I also think Claude should follow the same rule automatically. Where should each part of that knowledge live?",
+      "expected_output": "Splits the guidance across public docs and Claude rules/skills appropriately, keeping maintainer rationale out of public docs unless needed.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "I created a second Cabloy Basic worktree and need to run Vona, Zova Admin, and test:e2e in parallel with the first worktree. Which environment files and exact variables should I configure without changing shared defaults?",
+      "expected_output": "Classifies this as fullstack parallel-worktree environment setup and routes to the canonical shared Parallel Worktree Environment guide. Explains that generic routing is read-only: it must not inspect env content, infer or write local values, or run npm run init. Directs the user to explicitly invoke /cabloy-worktree-environment for confirmation-gated setup. The invoked skill uses Git worktree metadata, the worktree basename, and fixed baseline ports to recommend APP_NAME, SERVER_LISTEN_PORT, DEV_SERVER_PORT, DEV_SERVER_HMR_PORT, and a derived API_BASE_URL, then writes only vona/env/.env.local and zova/env/.env.local after confirmation. It does not use a flavor-specific local file or reserve ports; Admin and Web are alternative non-concurrent commands using the shared tuple.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "I created a linked Cabloy Start worktree and need isolated Vona, Zova Web, and managed clean E2E. Which workflow should I use?",
+      "expected_output": "Routes to the canonical shared guide and explicitly invoked /cabloy-worktree-environment skill. It recognizes that the invoked skill selects the Start command npm run test:e2e while retaining read-only generic routing, a deterministic Git-metadata recommendation, no environment-content inspection, no automatic initialization, and the universal five-setting tuple written to both permitted broad local files only after confirmation.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "I created a linked Cabloy Basic worktree and only need backend tests. What should I do for local environment isolation?",
+      "expected_output": "Keeps generic routing read-only and directs the user to the canonical guide plus explicit /cabloy-worktree-environment invocation. It explains that the invoked skill still generates the universal APP_NAME, SERVER_LISTEN_PORT, DEV_SERVER_PORT, DEV_SERVER_HMR_PORT, and derived API_BASE_URL tuple in both broad local files after confirmation; it does not provide a backend-only one-file path.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "I am in a Cabloy checkout where repo-docs-internal exists, but the named architecture record I expected is not available in this edition. I need shared agent guidance and some maintainer rationale. Where should each part go?",
+      "expected_output": "Recognizes repo-docs-internal as the internal documentation home, routes shared operational guidance to public docs and Claude rules or skills, and treats the missing named record as non-blocking rather than inventing a replacement or moving rationale into public docs automatically.",
+      "files": []
+    }
+  ]
+}

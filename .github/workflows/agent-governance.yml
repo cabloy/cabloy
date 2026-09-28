@@ -1,0 +1,39 @@
+name: agent-governance
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      PNPM_CONFIG_MINIMUM_RELEASE_AGE: 0
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v5
+        with:
+          version: 11.5.2
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: install root dependencies
+        run: pnpm install --frozen-lockfile
+      - name: install docs dependencies
+        run: pnpm --dir repo-docs install --frozen-lockfile
+      - name: verify agent-governance assets
+        run: |
+          npm run test:agent-governance
+          npm run agent:governance:check
+          npm run agent:governance:pack-check
+          npm run test:spec-charts
+          npm run spec:charts:check -- a-commerce
+      - name: build documentation
+        run: npm run docs:build

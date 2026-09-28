@@ -2,15 +2,15 @@
 
 Skills are the procedural layer of Cabloy’s AI development model.
 
-## Using a Skill in Claude Code
+## Using a Skill
 
-Invoke a Cabloy Skill by typing its slash name followed by the task input. For example, describe the business capability you want to plan:
+Root Cabloy skill bundles are authored in `repo-agent-governance/skills/` and rendered to configured Claude Code, Codex, and Cursor adapter locations. Codex and Cursor skill discovery must be confirmed by a version-pinned external smoke check before being presented as supported client behavior. Use the invocation UI and syntax of the active agent; for example, in Claude Code:
 
 ```text
 /cabloy-spec-generation <business description>
 ```
 
-The AI guides you through the task-specific confirmation and next steps. See [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation) for the complete planning experience.
+The AI guides you through the task-specific confirmation and next steps. See [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation) for the complete planning experience. See [Agent Governance](/ai/agent-governance) for adapter and capability details.
 
 ## What a skill should do here
 
@@ -29,8 +29,8 @@ If a generator or refactor command exists, the skill should orchestrate it inste
 
 ## Skill placement
 
-- Use root `.claude/skills/` for cross-stack, monorepo-wide workflows.
-- Use subtree-local `.claude/skills/` only when a workflow is truly specific to one framework area.
+- Author cross-stack, monorepo-wide workflow bundles in `repo-agent-governance/skills/`; generated root adapter copies are not a second authoring surface.
+- Use subtree-local agent skill directories only when a workflow is truly specific to one framework area and has not been approved for portable root governance.
 
 ## Skill structure recommendation
 
@@ -48,7 +48,7 @@ For edition-aware skills, use [Cabloy Editions: For AI Development](/editions/ov
 
 ## Current root workflow skills
 
-The repository currently provides these cross-stack and monorepo-wide workflows in root `.claude/skills/`:
+The repository currently authors these cross-stack and monorepo-wide workflows in `repo-agent-governance/skills/` and renders them to root platform adapters; Codex and Cursor discovery remains subject to external client validation:
 
 - `cabloy-workflow` for choosing the correct Cabloy work path before implementation
 - `cabloy-domain-planning` for proposing and confirming providerId, suite, and initial module names before scaffolding a new business domain
@@ -65,7 +65,7 @@ The repository currently provides these cross-stack and monorepo-wide workflows 
 
 The specification workflows show the same boundary: [AI Spec-Driven Development](/ai/ai-spec-driven-development) explains the public Traceable Spec Delivery method, while [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation) and [Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution) explain its operational paths. The skills retain branching, confirmation gates, specialist routing, and evidence protocol; suite-local records remain the authority for a specific increment.
 
-The module-removal workflow is a good example of why skills belong in `.claude/skills/` instead of `CLAUDE.md`: the task needs branching, cleanup order, recovery guidance for generated runtime directories such as `vona/.vona` and `zova/.zova`, and a verification checklist that would be too large for a short repo-wide rule.
+The module-removal workflow is a good example of why skills belong in `repo-agent-governance/skills/` instead of the concise repository policy: the task needs branching, cleanup order, recovery guidance for generated runtime directories such as `vona/.vona` and `zova/.zova`, and a verification checklist that would be too large for a short repo-wide rule. The canonical bundle is rendered to each supported platform skill adapter.
 
 ## Advanced subtree-local diagnostics
 

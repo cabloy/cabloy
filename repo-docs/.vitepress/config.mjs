@@ -21,6 +21,7 @@ const aiItems = [
     collapsed: true,
     items: [
       { text: 'Repo Guidance', link: '/ai/repo-guidance' },
+      { text: 'Agent Governance', link: '/ai/agent-governance' },
       { text: 'Skills', link: '/ai/skills' },
       { text: 'Docs / Skills Mapping', link: '/ai/docs-skills-rules-mapping' },
       { text: 'CLI to Skill Map', link: '/ai/cli-to-skill-map' },

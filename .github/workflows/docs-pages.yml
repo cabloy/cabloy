@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - 'repo-docs/**'
+      - 'repo-agent-governance/**'
       - 'repo-e2e/docs/**'
       - 'package.json'
       - 'pnpm-lock.yaml'

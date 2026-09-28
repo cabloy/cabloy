@@ -78,3 +78,6 @@ vona/docker-compose.yml
 !/zova/packages-utils/quasar-app-extension-zova/dist
 
 **/assets/site
+
+**/.claude/scheduled_tasks.lock
+.cabloy-agent-governance-state.json

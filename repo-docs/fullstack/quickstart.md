@@ -24,7 +24,7 @@ Before creating a new Cabloy project, make sure your environment has:
 npm create cabloy
 ```
 
-The generated project already includes `CLAUDE.md` and the `.claude/` workspace assets. This path creates a Cabloy Basic project baseline. Open this project in Claude Code and start coding immediately with project-specific guidance.
+The generated project includes `repo-agent-governance/` plus committed adapters for Claude Code, Codex, and Cursor. This path creates a Cabloy Basic project baseline. Open it in a supported coding agent and start with the project-specific guidance; regenerate adapters from the canonical governance source rather than editing generated files directly.
 
 `npm create cabloy` automatically runs `npm run init` after creating the project. If you later need to reinstall the project's frontend and backend dependencies, you can run `npm run init` directly.
 

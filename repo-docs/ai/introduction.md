@@ -11,7 +11,7 @@ The Cabloy monorepo is a good fit for AI vibe coding because the source tree alr
 - Zova CLI source and command groups
 - archived docs that still capture valuable concepts
 - `repo-docs-internal/` engineering docs for maintainers
-- Claude commands and skills
+- agent-neutral repository governance, generated adapters, and deterministic tools
 
 ## The main design goal
 
@@ -32,7 +32,7 @@ For contributor and automation workflows in this repository, prefer this order:
 1. inspect the active edition and repo markers before making UI-sensitive or workflow-sensitive assumptions
 2. inspect root scripts, Vona CLI, and Zova CLI before inventing manual scaffolding or custom workflow steps
 3. use public docs for durable user-facing and agent-facing guidance; consult relevant `repo-docs-internal/` records for supporting maintainer rationale
-4. encode repeatable behavior in Claude rules, commands, or skills instead of relying on unstated habits
+4. encode repeatable behavior in the canonical agent-governance rules, commands, or skills instead of relying on unstated habits
 
 ## The knowledge layers
 
@@ -46,13 +46,13 @@ For normal project usage, prefer the user-facing entry docs such as [Fullstack Q
 
 Use `repo-docs-internal/` for architecture notes, ADRs, and maintainer rationale that should not be mixed into public how-to documentation. Relevant records support a shared workflow without being prerequisites; an unavailable or irrelevant individual record must not cause its rationale to be moved into public how-to documentation automatically.
 
-### Claude rules and commands
+### Agent governance and adapters
 
-Use root `CLAUDE.md` and `.claude/commands/` for concise operational behavior and repeatable workflows.
+Use `repo-agent-governance/` as the authored source for portable repository rules, root workflow skills, bundled references, and deterministic tools. It generates committed adapter outputs for Claude Code, Codex, and Cursor. See [Agent Governance](/ai/agent-governance) for the ownership and capability boundary.
 
-### Skills
+### Platform runtime integration
 
-Use `.claude/skills/` for procedural workflows that benefit from reusable instructions, bundled references, or future deterministic scripts.
+`CLAUDE.md`, `.claude/commands/`, `.claude/skills/`, `AGENTS.md`, `.agents/skills/`, and `.cursor/` are adapter/runtime surfaces. Hooks, permissions, local settings, credentials, and provider-specific command discovery stay platform-specific rather than becoming shared framework facts.
 
 ## AI reading paths
 
@@ -63,6 +63,7 @@ Use this page as the main AI-development hub, then choose the path that matches 
 Start here when the task is about choosing the right repo surface, docs location, or automation boundary:
 
 - [Repo Guidance](/ai/repo-guidance)
+- [Agent Governance](/ai/agent-governance)
 - [Docs / Skills Mapping](/ai/docs-skills-rules-mapping)
 - [CLI to Skill Map](/ai/cli-to-skill-map)
 - [Skills](/ai/skills)

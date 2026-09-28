@@ -1,29 +1,37 @@
 # Rules and Config
 
-Cabloy’s AI behavior should be organized into a few clear layers instead of one oversized instruction file.
+Cabloy’s AI behavior is organized into authored governance, generated platform adapters, and platform-local runtime configuration. This prevents the same repository knowledge from drifting across agent-specific directories.
 
-## Root `CLAUDE.md`
+## `repo-agent-governance/`
 
-Use the root `CLAUDE.md` for concise, durable operational guidance such as:
+Use `repo-agent-governance/` as the only authored source for portable repository rules, root procedural skill bundles, bundled references, deterministic tools, and adapter definitions.
 
-- how the monorepo is organized
-- where public docs live
-- where `repo-docs-internal/` holds supporting maintainer rationale
-- which command entrypoints are preferred
-- why edition detection is mandatory before UI-sensitive guidance or project-creation assumptions
+It contains the concise repository policy that adapters render to `CLAUDE.md`, `AGENTS.md`, and Cursor MDC rules. It also owns the source bundles rendered to Claude, Codex, and Cursor skill locations.
 
-## `.claude/commands/`
+Run these maintenance checks after changing governance assets:
 
-Use commands for reusable operator workflows that are naturally invoked as a named action, such as release or future docs migration helpers.
+```bash
+npm run agent:governance:render
+npm run agent:governance:check
+npm run test:agent-governance
+```
 
-## `.claude/skills/`
+## Generated platform adapters
 
-Use skills for workflows that need more procedural context, bundled references, or iterative selection logic.
+The following are committed generated outputs, not parallel authored knowledge sources:
 
-## `settings.json` and `settings.local.json`
+- Claude Code: `CLAUDE.md`, `.claude/commands/`, `.claude/skills/`, `.claude/settings.json`, `.claude/hooks/`
+- Codex: `AGENTS.md`, `.agents/skills/`
+- Cursor: `.cursor/rules/cabloy-governance.mdc`, `.cursor/skills/`
 
-Use Claude settings for permissions and execution environment, not as the primary place to explain framework concepts.
+The Codex and Cursor skill paths are configured generated adapter locations; verify client discovery with a version-pinned external smoke check before presenting it as supported behavior. The adapter model shares rules and procedures, not platform runtime behavior. Claude Code's contract-loop hook is a Claude-specific convenience integration; Codex and Cursor receive advisory guidance but do not claim the same automatic after-edit action.
+
+## Local configuration and permissions
+
+Keep local settings, credentials, worktree state, scheduled-task state, and user-owned agent configuration out of the generated ownership surface. In particular, do not overwrite or adopt `settings.local.json`, `CLAUDE.local.md`, or unregistered files merely because they are near an adapter directory.
+
+Use agent settings for permissions and execution environment, not as the primary place to explain framework concepts.
 
 ## Documentation boundary
 
-If a rule is important for people and agents to understand, it probably belongs in public docs too. `repo-docs-internal/` holds supporting maintainer rationale rather than user-facing workflow; individual records may vary by edition.
+If a rule is important for people and agents to understand, it belongs in public docs as well. `repo-docs-internal/` holds supporting maintainer rationale rather than user-facing workflow; individual records may vary by edition. See [Agent Governance](/ai/agent-governance) for the complete ownership, adoption, and package-distribution model.

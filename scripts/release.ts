@@ -107,6 +107,19 @@ function readPackageJson(): Record<string, any> {
   return readJson(PACKAGE_JSON_PATH);
 }
 
+function runGovernancePreflight(dryRun?: boolean): void {
+  const commands = [
+    'npm run test:agent-governance',
+    'npm run agent:governance:check',
+    'npm run agent:governance:pack-check',
+  ];
+  // eslint-disable-next-line
+  console.log('\n🔎 Validating agent-governance assets...');
+  for (const command of commands) {
+    execInherited(command, dryRun);
+  }
+}
+
 function assertPublicBasicReleaseSurface(): void {
   const edition = resolveEdition();
   if (edition !== 'basic') {
@@ -948,6 +961,8 @@ async function release(options: ReleaseOptions): Promise<void> {
     console.error('Error: Working tree is not clean. Commit or stash your changes first.');
     process.exit(1);
   }
+
+  runGovernancePreflight(options.dryRun);
 
   // Determine the version to use
   let version: string;

@@ -30,6 +30,7 @@ const OVERWRITE_DIRS: string[] = [
   '.husky',
   'repo-docs',
   'repo-observability',
+  'repo-agent-governance',
   // vona
   'vona/packages-vona',
   'vona/packages-cli',
@@ -72,10 +73,6 @@ const FRAMEWORK_E2E_SCRIPT_NAMES_CABLOY_BASIC: string[] = ['test:e2e', 'test:e2e
 const FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC = '@playwright/test';
 
 const MERGE_DIRS: string[] = [
-  // Claude project assets
-  '.claude/commands',
-  '.claude/hooks',
-  '.claude/skills',
   // Vona Claude project assets
   'vona/.claude/commands',
   'vona/.claude/skills',
@@ -91,8 +88,6 @@ const BLACKLIST_DIRS: string[] = [
 
 const WHITELIST_FILES: string[] = [
   // root
-  'CLAUDE.md',
-  '.claude/settings.json',
   'tsconfig.json',
   'tsconfig.base.json',
   'tsconfig.base.esm.json',
@@ -277,6 +272,64 @@ function mergeFrameworkE2eAssets(dryRun?: boolean): void {
       continue;
     }
     rmSync(dest, { force: true });
+  }
+}
+
+function reconcileGovernancePackageJson(dryRun?: boolean): void {
+  const projectPackagePath = resolve(ROOT_DIR, 'package.json');
+  const sourcePackagePath = resolve(TEMP_DIR, 'package.json');
+  const projectPackage = readPackageJson(projectPackagePath);
+  const sourcePackage = readPackageJson(sourcePackagePath);
+  const baselineScripts = ['test:spec-charts', 'spec:charts', 'spec:charts:check'];
+  const governanceScripts = [
+    'agent:governance:render',
+    'agent:governance:check',
+    'agent:governance:adopt',
+    'agent:governance:pack-check',
+    'test:agent-governance',
+    'contract:gate',
+  ];
+  const managedScripts = [...baselineScripts, ...governanceScripts];
+  let changed = false;
+  for (const name of managedScripts) {
+    const sourceValue = sourcePackage.scripts?.[name];
+    if (!sourceValue) {
+      if (
+        governanceScripts.includes(name) &&
+        !existsSync(resolve(TEMP_DIR, 'repo-agent-governance'))
+      ) {
+        continue;
+      }
+      throw new Error(`Expected agent-governance script in package.json: ${name}`);
+    }
+    if (projectPackage.scripts?.[name] === sourceValue) continue;
+    changed = true;
+    if (dryRun) {
+      log(`  [dry-run] Set package.json scripts.${name}`);
+    } else {
+      projectPackage.scripts ??= {};
+      projectPackage.scripts[name] = sourceValue;
+    }
+  }
+  if (changed && !dryRun) {
+    writeFileSync(projectPackagePath, `${JSON.stringify(projectPackage, null, 2)}\n`);
+  }
+}
+
+function reconcileGovernanceAssets(dryRun?: boolean): void {
+  const command = 'node repo-agent-governance/scripts/governance.mjs adopt --apply';
+  if (dryRun) {
+    log(`  [dry-run] Run non-destructive governance adoption: ${command}`);
+    return;
+  }
+  try {
+    execSync(command, { cwd: ROOT_DIR, stdio: 'inherit' });
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+    if (status !== 2) throw error;
+    log(
+      '  Agent-governance adoption preserved locally modified or legacy adapter outputs. Review the reported conflicts before explicitly forcing an individual managed target.',
+    );
   }
 }
 
@@ -545,7 +598,13 @@ async function main(): Promise<void> {
     selectiveOverwrite(dryRun);
     log('');
 
-    // 4. Reconcile Cabloy Basic framework E2E manifest entries
+    // 4. Reconcile agent-governance manifest entries and managed adapters
+    log('Reconciling agent-governance package entries and managed adapters...');
+    reconcileGovernancePackageJson(dryRun);
+    reconcileGovernanceAssets(dryRun);
+    log('');
+
+    // 5. Reconcile Cabloy Basic framework E2E manifest entries
     if (isCabloyBasic()) {
       log('Reconciling framework-owned E2E package entries...');
       reconcileFrameworkE2ePackageJson(dryRun);

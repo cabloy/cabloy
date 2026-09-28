@@ -235,7 +235,7 @@ That means:
 
 For resource-bound custom endpoints, prefer `rest-resource.model.resource` as the state owner. A module-local model may still exist, but it should remain a semantic facade instead of becoming a second cache owner. When Admin Resource consumption and Web self-service consumption have genuinely different API, scope, projection, or SSR semantics, see [Admin Resource and Web Self-Service](/fullstack/admin-resource-and-web-self-service) for the boundary between Admin owner reuse and a dedicated Web model.
 
-See the downstream pattern in `.claude/skills/cabloy-contract-loop/references/resource-custom-state-pattern.md`.
+See the canonical downstream pattern in `repo-agent-governance/skills/cabloy-contract-loop/references/resource-custom-state-pattern.md`.
 
 ### Stage 5: Consumer verification
 
