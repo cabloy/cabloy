@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.191
+
+### Features
+
+- Update functionality with the latest enhancements.
+
+### Improvements
+
+- Refresh the demo and documentation in the README and index pages.
+
 ## 5.1.190
 
 ### Features
