@@ -1,4 +1,5 @@
 import type {
+  IResourceDetailsActionRowOptionsBase,
   IResourceTableActionRowOptionsBase,
   ISchemaObjectExtensionField,
   ISchemaObjectExtensionFieldRest,
@@ -466,7 +467,7 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
 
   public cellRender(
     render: TypeTableCellRenderComponent,
-    columnProps: IResourceTableActionRowOptionsBase,
+    columnProps: IResourceTableActionRowOptionsBase | IResourceDetailsActionRowOptionsBase,
     renderContext: IJsxRenderContextTableCell,
   ) {
     // render

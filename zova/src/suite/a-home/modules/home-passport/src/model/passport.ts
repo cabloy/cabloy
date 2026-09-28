@@ -10,12 +10,7 @@ import type {
 import { combineQueries, isNil } from '@cabloy/utils';
 import { SchemaObject } from 'openapi3-ts/oas31';
 import { $QueryEnsureFresh, $QueryGetFresh, BeanModelBase, Model } from 'zova-module-a-model';
-import {
-  IPermissionHintGeneral,
-  IResourceFormActionRowNameRecord,
-  IResourceTableActionNameRecord,
-  TypeOpenapiPermissions,
-} from 'zova-module-a-openapi';
+import { IPermissionHintGeneral, TypeOpenapiPermissions } from 'zova-module-a-openapi';
 import { ApiApiHomeUserPassportloginOauthPath, OpenApiBaseURL } from 'zova-module-home-api';
 import { isRoleSiteAdmitted } from 'zova-module-home-base';
 
@@ -272,7 +267,7 @@ export class ModelPassport extends BeanModelBase {
 
   public checkPermission(
     permissions: TypeOpenapiPermissions | undefined,
-    actionName?: keyof (IResourceTableActionNameRecord & IResourceFormActionRowNameRecord),
+    actionName?: string,
     permissionHint?: IPermissionHintGeneral,
     currentData?: Record<string, unknown> | readonly Record<string, unknown>[],
   ): boolean {

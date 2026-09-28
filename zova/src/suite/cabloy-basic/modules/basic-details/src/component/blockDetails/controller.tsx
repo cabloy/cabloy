@@ -13,6 +13,8 @@ import {
 } from 'zova-module-a-openapi';
 import { BeanControllerTableBase } from 'zova-module-a-table';
 
+import type { TypeDetailsCheckPermission } from '../../types/details.js';
+
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {
     'basic-details:blockDetails'?: ControllerBlockDetailsProps;
@@ -26,6 +28,7 @@ export interface ControllerBlockDetailsProps<
   formMeta?: IFormMeta;
   schemaRow?: ISchemaObjectExtensionField;
   schemaForm?: ISchemaObjectExtensionField;
+  checkPermission?: TypeDetailsCheckPermission;
   getDetailItems?: () => TData[] | undefined;
   setDetailItems?: (detailItems: TData[]) => void;
 }
@@ -68,6 +71,14 @@ export class ControllerBlockDetails<TData extends {} = {}> extends BeanControlle
 
   get schemaForm() {
     return this.$props.schemaForm!;
+  }
+
+  checkPermission(...args: Parameters<TypeDetailsCheckPermission>) {
+    const checkPermission = this.$props.checkPermission;
+    if (!checkPermission) {
+      throw new Error('should provide enclosing Resource permission checker for details');
+    }
+    return checkPermission(...args);
   }
 
   public async setTableRef(tableRef: BeanControllerTableBase<TData> | undefined) {

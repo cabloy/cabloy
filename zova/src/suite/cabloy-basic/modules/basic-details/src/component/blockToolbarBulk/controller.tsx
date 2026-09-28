@@ -9,7 +9,7 @@ import { VNode } from 'vue';
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
-import { checkPermission } from '../../lib/utils.js';
+import { filterDetailsBulkActions } from '../../lib/detailsPermissions.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {
@@ -46,9 +46,12 @@ export class ControllerBlockToolbarBulk extends BeanControllerBase {
     const actions = this.$props.actions;
     if (!actions || actions.length === 0) return;
     const domActions: VNode[] = [];
-    actions.forEach((action, index) => {
-      const permissionHint = action.options?.permission;
-      if (!checkPermission($$details.formScene, permissionHint)) return;
+    const allowedActions = filterDetailsBulkActions(
+      $$details.formScene,
+      $$details.checkPermission.bind($$details),
+      actions,
+    );
+    allowedActions.forEach((action, index) => {
       const options = Object.assign({ key: index }, action.options);
       const domAction = $jsx.render(action.render!, options, $celScope, this.$$renderContext);
       if (!domAction) return;

@@ -52,12 +52,6 @@ export interface IPermissionHintTableActionBulk {
   public?: boolean;
 }
 
-export interface IPermissionHintDetailsActionRow {
-  formScene?: TypeFormScene | TypeFormScene[];
-}
+export interface IPermissionHintDetailsActionRow extends IPermissionHintGeneral {}
 
-export interface IPermissionHintDetailsActionBulk {
-  // actionInherit?: keyof IResourceDetailsActionBulkNameRecord;
-  // public?: boolean;
-  formScene?: TypeFormScene | TypeFormScene[];
-}
+export interface IPermissionHintDetailsActionBulk extends IPermissionHintGeneral {}

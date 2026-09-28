@@ -8,6 +8,7 @@ import type {
   IResourceFormFieldOptionsBase,
   ISchemaObjectExtensionField,
   TypeFormScene,
+  TypeOpenapiPermissions,
 } from 'zova-module-a-openapi';
 
 import { VNode } from 'vue';
@@ -15,6 +16,10 @@ import { BeanControllerBase, deepExtend } from 'zova';
 import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
 import { formMetaFromFormScene, ZFormField } from 'zova-module-a-form';
+
+import type { TypeDetailsCheckPermission } from '../../types/details.js';
+
+import { createDetailsPermissionChecker } from '../../lib/detailsPermissions.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {
@@ -76,6 +81,14 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
     // blocks
     const blocks = schemaRow?.rest?.blocks;
     if (!blocks || blocks.length === 0) return;
+    const checkPermission: TypeDetailsCheckPermission = createDetailsPermissionChecker(
+      () =>
+        (formFieldRenderContext.celScope as { permissions?: TypeOpenapiPermissions }).permissions,
+      () => $$formField.$$form.formState.values as Record<string, unknown>,
+      (permissions, actionName, permissionHint, currentData) => {
+        return this.$passport.checkPermission(permissions, actionName, permissionHint, currentData);
+      },
+    );
     const domBlocks: VNode[] = [];
     blocks.forEach((block, index) => {
       const options = deepExtend(
@@ -92,6 +105,7 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
           },
         },
         block.options,
+        { checkPermission },
       );
       const domBlock = this.jsxZova.render(block.render!, options);
       if (!domBlock) return;

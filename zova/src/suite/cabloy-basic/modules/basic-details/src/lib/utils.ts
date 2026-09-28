@@ -1,8 +1,8 @@
-import { IPermissionHintDetailsActionBulk, TypeFormScene } from 'zova-module-a-openapi';
+import type { IPermissionHintGeneral, TypeFormScene } from 'zova-module-a-openapi';
 
-export function checkPermission(
+export function checkFormScene(
   formScene: TypeFormScene,
-  permissionHint?: IPermissionHintDetailsActionBulk,
+  permissionHint?: IPermissionHintGeneral,
 ): boolean {
   const formSceneHint = permissionHint?.formScene;
   if (!formSceneHint) return true;
