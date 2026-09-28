@@ -8,6 +8,7 @@ import {
   createChartModel,
   generateCharts,
   parseAtpIds,
+  parseProgress,
   parseWbs,
 } from './generate-implementation-charts.mjs';
 
@@ -90,6 +91,51 @@ test('parses task dependencies independently from phase dependencies', () => {
 test('requires formal ATP definitions rather than prose mentions', () => {
   assert.deepEqual([...parseAtpIds(files['test-plan.md'])], ['ATP-DEMO-01']);
   assert.deepEqual([...parseAtpIds('A prose mention of ATP-DEMO-99.')], []);
+});
+
+test('parses progress rows by formal WBS and Status header columns', () => {
+  const progress = parseProgress(
+    [
+      '# Progress',
+      '',
+      '> 最后审查日期： 2026-09-01',
+      '',
+      '| WBS ID | Work item | Status |',
+      '| --- | --- | --- |',
+      '| `WBS-DEMO-01` | Implementation title | `verified` |',
+      '',
+    ].join('\r\n'),
+  );
+  assert.equal(progress.reviewed, '2026-09-01');
+  assert.deepEqual([...progress.rows], [['WBS-DEMO-01', 'verified']]);
+});
+
+test('does not parse prose wildcard ATP references as concrete IDs', () => {
+  const model = parseWbs(
+    [
+      '# Delivery Plan',
+      '',
+      '### Phase 10: Baseline',
+      '',
+      '#### WBS-DEMO-01: Freeze the baseline',
+      '',
+      '- Track every `ATP-DEMO-*` after planning.',
+      '',
+    ].join('\n'),
+  );
+  assert.deepEqual(model.tasks[0].atps, []);
+});
+
+test('rejects malformed WBS headings with a trailing hyphen', () => {
+  assert.throws(
+    () =>
+      parseWbs(
+        ['# Delivery Plan', '', '### Phase 10: Baseline', '', '#### WBS-DEMO-01-: Freeze', ''].join(
+          '\n',
+        ),
+      ),
+    /No formal `#### WBS-…:` tasks/,
+  );
 });
 
 test('creates a mixed-status model with deferred scope separated', () => {

@@ -113,9 +113,155 @@ function escapeXml(value) {
     .replace(/'/g, '&apos;');
 }
 
+function isAsciiLetter(character) {
+  if (!character || character.length !== 1) return false;
+  const codePoint = character.codePointAt(0);
+  return (codePoint >= 0x41 && codePoint <= 0x5a) || (codePoint >= 0x61 && codePoint <= 0x7a);
+}
+
+function isAsciiDigit(character) {
+  if (!character || character.length !== 1) return false;
+  const codePoint = character.codePointAt(0);
+  return codePoint >= 0x30 && codePoint <= 0x39;
+}
+
+function isAsciiIdentifierCharacter(character) {
+  return isAsciiLetter(character) || isAsciiDigit(character);
+}
+
+function isAsciiWordCharacter(character) {
+  return isAsciiIdentifierCharacter(character) || character === '_';
+}
+
+function isHorizontalWhitespace(character) {
+  return character === ' ' || character === '\t';
+}
+
+function skipHorizontalWhitespace(value, index) {
+  let cursor = index;
+  while (isHorizontalWhitespace(value[cursor])) {
+    cursor++;
+  }
+  return cursor;
+}
+
+function consumeHorizontalWhitespace(value, index) {
+  const cursor = skipHorizontalWhitespace(value, index);
+  return cursor === index ? null : cursor;
+}
+
+function isWideChartCharacter(character) {
+  const codePoint = character.codePointAt(0);
+  return (
+    codePoint > 0xffff ||
+    (codePoint >= 0x2e80 && codePoint <= 0x9fff) ||
+    (codePoint >= 0xac00 && codePoint <= 0xd7af) ||
+    (codePoint >= 0xf900 && codePoint <= 0xfaff)
+  );
+}
+
+function isCjkUnifiedIdeograph(character) {
+  const codePoint = character.codePointAt(0);
+  return codePoint >= 0x3400 && codePoint <= 0x9fff;
+}
+
+function isTokenStart(value, index) {
+  return index === 0 || !isAsciiWordCharacter(value[index - 1]);
+}
+
+function readIdentifier(value, index, prefix, { wildcard = false } = {}) {
+  if (!value.startsWith(prefix, index) || !isTokenStart(value, index)) return null;
+  let cursor = index + prefix.length;
+  let segmentStart = cursor;
+  while (isAsciiIdentifierCharacter(value[cursor])) {
+    cursor++;
+  }
+  if (cursor === segmentStart) return null;
+  while (value[cursor] === '-') {
+    if (wildcard && value[cursor + 1] === '*') {
+      return { end: cursor + 2, value: value.slice(index, cursor + 2) };
+    }
+    const hyphen = cursor;
+    segmentStart = ++cursor;
+    while (isAsciiIdentifierCharacter(value[cursor])) {
+      cursor++;
+    }
+    if (cursor === segmentStart) {
+      return { end: hyphen, value: value.slice(index, hyphen) };
+    }
+  }
+  return { end: cursor, value: value.slice(index, cursor) };
+}
+
+function findIdentifierMatches(value, prefix, options) {
+  const identifiers = [];
+  let index = 0;
+  while (index < value.length) {
+    const found = value.indexOf(prefix, index);
+    if (found === -1) break;
+    const identifier = readIdentifier(value, found, prefix, options);
+    if (identifier) {
+      identifiers.push(identifier);
+      index = identifier.end;
+    } else {
+      index = found + prefix.length;
+    }
+  }
+  return identifiers;
+}
+
+function findIdentifiers(value, prefix, options) {
+  return findIdentifierMatches(value, prefix, options).map(identifier => identifier.value);
+}
+
+function parseHeadingPrefix(line, hashes) {
+  if (!line.startsWith('#'.repeat(hashes))) return null;
+  if (line[hashes] === '#') return null;
+  return consumeHorizontalWhitespace(line, hashes);
+}
+
+function parseLabeledValue(line, label) {
+  if (line.slice(0, label.length).toLowerCase() !== label.toLowerCase()) return null;
+  if (line[label.length] !== ':') return null;
+  const value = line.slice(label.length + 1).trim();
+  return value || null;
+}
+
+function readDate(value, index) {
+  const date = value.slice(index, index + 10);
+  if (
+    date.length !== 10 ||
+    date[4] !== '-' ||
+    date[7] !== '-' ||
+    ![...date.slice(0, 4)].every(isAsciiDigit) ||
+    ![...date.slice(5, 7)].every(isAsciiDigit) ||
+    ![...date.slice(8)].every(isAsciiDigit)
+  ) {
+    return null;
+  }
+  return date;
+}
+
+function reviewDateFromLine(line) {
+  const normalized = line.toLowerCase();
+  const labels = [
+    { index: normalized.indexOf('last reviewed'), length: 'last reviewed'.length },
+    { index: line.indexOf('最后审查日期'), length: '最后审查日期'.length },
+  ];
+  for (const label of labels) {
+    if (label.index === -1) continue;
+    let cursor = skipHorizontalWhitespace(line, label.index + label.length);
+    if (line[cursor] === ':' || line[cursor] === '：') cursor++;
+    cursor = skipHorizontalWhitespace(line, cursor);
+    const date = readDate(line, cursor);
+    if (date) return date;
+  }
+  return null;
+}
+
 function chartTextWidth(value, fontSize) {
   return [...String(value)].reduce((width, character) => {
-    const characterWidth = /[⺀-鿿가-힯豈-﫿\ud800-\udfff]/.test(character)
+    const characterWidth = isWideChartCharacter(character)
       ? 1
       : /[MW@#%&]/.test(character)
         ? 0.9
@@ -167,8 +313,12 @@ function wrapChartText(value, maxWidth, measure = value => [...String(value)].le
 }
 
 function languageFromReadme(readme) {
-  const cjk = (readme.match(/[㐀-鿿]/g) ?? []).length;
-  const latin = (readme.match(/[A-Za-z]/g) ?? []).length;
+  let cjk = 0;
+  let latin = 0;
+  for (const character of readme) {
+    if (isCjkUnifiedIdeograph(character)) cjk++;
+    if (isAsciiLetter(character)) latin++;
+  }
   return cjk > latin / 3 ? 'zh' : 'en';
 }
 
@@ -180,80 +330,172 @@ function normalizeStatus(value) {
   return normalized;
 }
 
+function isTableDividerCell(value) {
+  const cell = value.trim();
+  return Boolean(cell) && [...cell].every(character => character === '-' || character === ':');
+}
+
 function parseTableRow(line) {
-  if (!line.trim().startsWith('|') || /^\|\s*[-: ]+\|/.test(line)) return null;
-  return line
+  const trimmed = line.trim();
+  if (!trimmed.startsWith('|')) return null;
+  const cells = trimmed
     .split('|')
     .slice(1, -1)
     .map(cell => cell.trim());
+  return isTableDividerCell(cells[0] ?? '') ? null : cells;
+}
+
+function readProgressId(value) {
+  return findIdentifiers(value.replace(/`/g, ''), 'WBS-')[0] ?? null;
+}
+
+function progressColumnIndexes(cells) {
+  let id;
+  let status;
+  for (const [index, cell] of cells.entries()) {
+    const label = cell.replace(/`/g, '').trim().toLowerCase();
+    if (label === 'wbs id') id = index;
+    if (label === 'status') status = index;
+  }
+  return id === undefined || status === undefined ? null : { id, status };
 }
 
 export function parseProgress(markdown) {
   const rows = new Map();
-  let reviewed = markdown.match(
-    /(?:Last reviewed|最后审查日期)\s*[:：]?\s*(\d{4}-\d{2}-\d{2})/i,
-  )?.[1];
-  for (const line of markdown.split('\n')) {
+  let reviewed;
+  let columns = null;
+  for (const line of markdown.split(/\r?\n/)) {
+    reviewed ??= reviewDateFromLine(line);
     const cells = parseTableRow(line);
-    if (!cells || cells.length < 2) continue;
-    const id = cells[0].replace(/`/g, '').match(/\bWBS-[A-Za-z0-9-]+\b/)?.[0];
+    if (!cells) {
+      if (line.trim() && !line.trim().startsWith('|')) columns = null;
+      continue;
+    }
+    const headerColumns = progressColumnIndexes(cells);
+    if (headerColumns) {
+      columns = headerColumns;
+      continue;
+    }
+    if (!columns) continue;
+    const id = readProgressId(cells[columns.id] ?? '');
     if (!id) continue;
-    rows.set(id, normalizeStatus(cells[1]));
+    rows.set(id, normalizeStatus(cells[columns.status] ?? ''));
   }
-  if (!reviewed) reviewed = 'not recorded';
-  return { rows, reviewed };
+  return { rows, reviewed: reviewed ?? 'not recorded' };
+}
+
+function parsePhaseHeading(line) {
+  const contentStart = parseHeadingPrefix(line, 3);
+  if (contentStart === null || !line.startsWith('Phase', contentStart)) return null;
+  let cursor = consumeHorizontalWhitespace(line, contentStart + 'Phase'.length);
+  if (cursor === null) return null;
+  const numberStart = cursor;
+  while (isAsciiDigit(line[cursor])) {
+    cursor++;
+  }
+  if (cursor === numberStart) return null;
+  cursor = skipHorizontalWhitespace(line, cursor);
+  if (line[cursor] !== ':') return null;
+  const title = line.slice(cursor + 1).trim();
+  if (!title) return null;
+  return { number: line.slice(numberStart, cursor).trim(), title };
+}
+
+function parseTaskHeading(line) {
+  const contentStart = parseHeadingPrefix(line, 4);
+  if (contentStart === null) return null;
+  const identifier = readIdentifier(line, contentStart, 'WBS-');
+  if (!identifier || hasMalformedIdentifierTail(line, identifier.end)) return null;
+  const cursor = skipHorizontalWhitespace(line, identifier.end);
+  if (line[cursor] !== ':') return null;
+  const title = line.slice(cursor + 1).trim();
+  if (!title) return null;
+  return { id: identifier.value, title };
+}
+
+function dependencyFromLines(lines) {
+  for (const line of lines) {
+    const dependency = parseLabeledValue(line.trim(), 'Dependencies');
+    if (dependency) return dependency;
+  }
+  return null;
+}
+
+function isDeferred(lines) {
+  for (const line of lines) {
+    const normalized = line.trim().replaceAll('`', '').toLowerCase();
+    if (normalized === 'deferred scope' || parseLabeledValue(normalized, 'status') === 'deferred') {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isIdentifierContinuation(character) {
+  return character === '-' || isAsciiIdentifierCharacter(character);
+}
+
+function hasMalformedIdentifierTail(value, end) {
+  return value[end] === '-' && (value[end + 1] === ':' || isHorizontalWhitespace(value[end + 1]));
+}
+
+function atpReferences(lines) {
+  const ids = new Set();
+  for (const line of lines) {
+    for (const identifier of findIdentifierMatches(line, 'ATP-')) {
+      if (!isIdentifierContinuation(line[identifier.end])) ids.add(identifier.value);
+    }
+  }
+  return [...ids];
 }
 
 export function parseWbs(markdown) {
-  const phaseMatches = [...markdown.matchAll(/^###\s+Phase\s+(\d+)\s*:\s*(.+)$/gim)];
-  if (!phaseMatches.length)
+  const lines = markdown.split(/\r?\n/);
+  const phaseStarts = [];
+  for (const [index, line] of lines.entries()) {
+    const phase = parsePhaseHeading(line);
+    if (phase) phaseStarts.push({ ...phase, index });
+  }
+  if (!phaseStarts.length) {
     throw new Error('No formal `### Phase <number>:` headings were found in pdp-wbs.md.');
-  const phases = [];
-  for (let phaseIndex = 0; phaseIndex < phaseMatches.length; phaseIndex++) {
-    const match = phaseMatches[phaseIndex];
-    const bodyStart = match.index + match[0].length;
-    const bodyEnd = phaseMatches[phaseIndex + 1]?.index ?? markdown.length;
-    const body = markdown.slice(bodyStart, bodyEnd);
-    const phaseDependency = body.match(/^Dependencies:\s*(.+)$/im)?.[1]?.trim() ?? 'none';
-    const taskMatches = [...body.matchAll(/^####\s+(WBS-[A-Za-z0-9-]+)\s*:\s*(.+)$/gim)];
-    const tasks = taskMatches.map((taskMatch, taskIndex) => {
-      const taskBodyStart = taskMatch.index + taskMatch[0].length;
-      const taskBodyEnd = taskMatches[taskIndex + 1]?.index ?? body.length;
-      const taskBody = body.slice(taskBodyStart, taskBodyEnd);
-      const dependency = taskBody.match(/^Dependencies:\s*(.+)$/im)?.[1]?.trim() ?? phaseDependency;
-      const deferred = /\b(?:status\s*:\s*`?deferred`?|deferred scope)\b/i.test(taskBody);
+  }
+  const phases = phaseStarts.map((phase, phaseIndex) => {
+    const bodyLines = lines.slice(phase.index + 1, phaseStarts[phaseIndex + 1]?.index);
+    const phaseDependency = dependencyFromLines(bodyLines) ?? 'none';
+    const taskStarts = [];
+    for (const [index, line] of bodyLines.entries()) {
+      const task = parseTaskHeading(line);
+      if (task) taskStarts.push({ ...task, index });
+    }
+    const tasks = taskStarts.map((task, taskIndex) => {
+      const taskBody = bodyLines.slice(task.index + 1, taskStarts[taskIndex + 1]?.index);
       return {
-        id: taskMatch[1],
-        title: taskMatch[2].trim(),
-        dependency,
-        deferred,
-        atps: [
-          ...new Set(
-            [...taskBody.matchAll(/\bATP-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*\b/g)].map(
-              value => value[0],
-            ),
-          ),
-        ],
+        id: task.id,
+        title: task.title,
+        dependency: dependencyFromLines(taskBody) ?? phaseDependency,
+        deferred: isDeferred(taskBody),
+        atps: atpReferences(taskBody),
       };
     });
-    phases.push({ number: match[1], title: match[2].trim(), dependency: phaseDependency, tasks });
-  }
+    return { number: phase.number, title: phase.title, dependency: phaseDependency, tasks };
+  });
   const tasks = phases.flatMap(phase =>
     phase.tasks.map(task => {
       task.phase = { number: phase.number, title: phase.title };
       return task;
     }),
   );
-  if (!tasks.length) throw new Error('No formal `#### WBS-…:` tasks were found in pdp-wbs.md.');
+  if (!tasks.length) {
+    throw new Error('No formal `#### WBS-…:` tasks were found in pdp-wbs.md.');
+  }
   const ids = new Set(tasks.map(task => task.id));
   for (const task of tasks) {
-    for (const dependency of task.dependency.match(
-      /\bWBS-(?:[A-Za-z0-9]+-)*[A-Za-z0-9]+(?:-\*)?/g,
-    ) ?? []) {
+    for (const dependency of findIdentifiers(task.dependency, 'WBS-', { wildcard: true })) {
       if (dependency.endsWith('-*')) {
         const prefix = dependency.slice(0, -1);
-        if (![...ids].some(id => id.startsWith(prefix)))
+        if (![...ids].some(id => id.startsWith(prefix))) {
           throw new Error(`${task.id} depends on unknown WBS task group ${dependency}.`);
+        }
       } else if (!ids.has(dependency)) {
         throw new Error(`${task.id} depends on unknown WBS task ${dependency}.`);
       }
@@ -262,17 +504,37 @@ export function parseWbs(markdown) {
   return { phases, tasks };
 }
 
+function readStrictAtpId(value) {
+  const trimmed = value.trim();
+  const unwrapped =
+    trimmed.startsWith('`') && trimmed.endsWith('`') ? trimmed.slice(1, -1) : trimmed;
+  const identifier = readIdentifier(unwrapped, 0, 'ATP-');
+  return identifier?.end === unwrapped.length ? identifier.value : null;
+}
+
 export function parseAtpIds(markdown) {
   const ids = new Set();
-  for (const line of markdown.split('\n')) {
+  for (const line of markdown.split(/\r?\n/)) {
     const cells = parseTableRow(line);
     if (cells?.[0]) {
-      const id = cells[0].match(/^`?(ATP-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)`?$/)?.[1];
+      const id = readStrictAtpId(cells[0]);
       if (id) ids.add(id);
       continue;
     }
-    const heading = line.match(/^#{2,}\s+`?(ATP-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)`?(?=\s|$)/);
-    if (heading) ids.add(heading[1]);
+    for (let hashes = 2; hashes <= line.length; hashes++) {
+      const contentStart = parseHeadingPrefix(line, hashes);
+      if (contentStart === null) continue;
+      const content = line.slice(contentStart).trimStart();
+      const id = readIdentifier(content, content.startsWith('`') ? 1 : 0, 'ATP-');
+      if (!id) break;
+      const after = content.slice(id.end);
+      if (content.startsWith('`')) {
+        if (after.startsWith('`')) ids.add(id.value);
+      } else if (!after || isHorizontalWhitespace(after[0])) {
+        ids.add(id.value);
+      }
+      break;
+    }
   }
   return ids;
 }
@@ -283,10 +545,11 @@ export function createChartModel({ readme, wbs, progress, testPlan }) {
   const { phases, tasks } = parseWbs(wbs);
   const { rows: statusRows, reviewed } = parseProgress(progress);
   const unknownProgress = [...statusRows.keys()].filter(id => !tasks.some(task => task.id === id));
-  if (unknownProgress.length)
+  if (unknownProgress.length) {
     throw new Error(
       `progress.md contains WBS rows not defined in pdp-wbs.md: ${unknownProgress.join(', ')}.`,
     );
+  }
   for (const task of tasks) {
     if (!statusRows.has(task.id))
       throw new Error(`${task.id} has no corresponding progress.md status row.`);
@@ -445,16 +708,13 @@ export function renderGantt(model, suiteName) {
     .join('\n');
   const completed = new Set(tasks.filter(task => task.status === 'verified').map(task => task.id));
   const dependencyIds = task =>
-    [...task.dependency.matchAll(/\bWBS-(?:[A-Za-z0-9]+-)*[A-Za-z0-9]+(?:-\*)?/g)].flatMap(
-      match => {
-        const value = match[0];
-        if (!value.endsWith('-*')) return [value];
-        const prefix = value.slice(0, -1);
-        return tasks
-          .filter(candidate => candidate.id.startsWith(prefix))
-          .map(candidate => candidate.id);
-      },
-    );
+    findIdentifiers(task.dependency, 'WBS-', { wildcard: true }).flatMap(value => {
+      if (!value.endsWith('-*')) return [value];
+      const prefix = value.slice(0, -1);
+      return tasks
+        .filter(candidate => candidate.id.startsWith(prefix))
+        .map(candidate => candidate.id);
+    });
   const nextTask = tasks.find(
     task =>
       task.status !== 'verified' &&
@@ -526,6 +786,20 @@ export function renderBurndown(model, suiteName) {
   );
 }
 
+function suiteNameFromReadme(readme, fallback) {
+  for (const line of readme.split(/\r?\n/)) {
+    if (!line.startsWith('# ') || line.startsWith('## ')) continue;
+    let title = line.slice(2).trim();
+    for (const suffix of ['Internal Planning', '内部规划']) {
+      if (title.endsWith(suffix)) {
+        title = title.slice(0, -suffix.length).trimEnd();
+      }
+    }
+    return title || fallback;
+  }
+  return fallback;
+}
+
 export async function generateCharts(directory, { check = false } = {}) {
   const root = resolve(directory);
   const [readme, wbs, progress, testPlan] = await Promise.all(
@@ -534,9 +808,7 @@ export async function generateCharts(directory, { check = false } = {}) {
     ),
   );
   const model = createChartModel({ readme, wbs, progress, testPlan });
-  const suiteName =
-    readme.match(/^#\s+(.+?)(?:\s+(?:Internal Planning|内部规划))?\s*$/m)?.[1]?.trim() ??
-    basename(root);
+  const suiteName = suiteNameFromReadme(readme, basename(root));
   const artifacts = new Map([
     ['implementation-gantt.svg', renderGantt(model, suiteName)],
     ['implementation-burndown.svg', renderBurndown(model, suiteName)],
@@ -553,10 +825,11 @@ export async function generateCharts(directory, { check = false } = {}) {
     if (current !== content) stale.push(name);
     if (!check && current !== content) await writeFile(path, content);
   }
-  if (check && stale.length)
+  if (check && stale.length) {
     throw new Error(
       `Derived implementation charts are stale: ${stale.join(', ')}. Run \`npm run spec:charts -- ${basename(root)}\`.`,
     );
+  }
   return { model, artifacts, stale };
 }
 
@@ -564,15 +837,16 @@ async function main() {
   const args = process.argv.slice(2);
   const check = args.includes('--check');
   const target = args.find(arg => !arg.startsWith('--'));
-  if (!target)
+  if (!target) {
     throw new Error(
       'Usage: generate-implementation-charts.mjs [--check] <repo-specs/<suite>|<suite>.',
     );
+  }
   const directory = target.includes('/') ? target : `repo-specs/${target}`;
   const result = await generateCharts(directory, { check });
   const mode = check ? 'checked' : 'generated';
-  console.log(
-    `${mode} implementation-gantt.svg and implementation-burndown.svg for ${directory} (${result.model.language}; ${result.model.verified}/${result.model.activeTasks.length} verified).`,
+  process.stdout.write(
+    `${mode} implementation-gantt.svg and implementation-burndown.svg for ${directory} (${result.model.language}; ${result.model.verified}/${result.model.activeTasks.length} verified).\n`,
   );
 }
 
