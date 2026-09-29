@@ -36,7 +36,7 @@ function reconcileGovernancePackageJson(sourceRoot) {
   }
   if (changed) {
     writeFileSync(projectPackagePath, `${JSON.stringify(projectPackage, null, 2)}\n`);
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-console
     console.log('[init] Reconciled agent-governance package scripts');
   }
 }
@@ -55,7 +55,7 @@ function adoptAgentGovernance() {
     });
   } catch (error) {
     if (error.status !== 2) throw error;
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-console
     console.log(
       '[init] Agent-governance adoption preserved locally modified or legacy adapter outputs. Review the reported conflicts before explicitly forcing an individual managed target.',
     );

@@ -521,19 +521,18 @@ async function main() {
   const { command, options } = parseArgs(process.argv.slice(2));
   if (command === 'render') {
     const result = render();
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-console
     console.log(`Rendered ${result.assets.length} managed governance assets.`);
     return;
   }
   if (command === 'check') {
     const result = check();
     if (result.problems.length) {
-      // eslint-disable-next-line
       console.error(`${result.problems.join('\n')}\nRun: npm run agent:governance:render`);
       process.exitCode = 1;
       return;
     }
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-console
     console.log(`Governance outputs are current (${result.assets.length} assets).`);
     return;
   }
@@ -547,11 +546,11 @@ async function main() {
   }
   const result = await adopt({ apply: options.includes('--apply'), force });
   for (const [label, paths] of Object.entries(result)) {
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-console
     if (paths.length) console.log(`${label}: ${paths.join(', ')}`);
   }
   if (!Object.values(result).some(paths => paths.length)) {
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-console
     console.log('No governance adoption changes are needed.');
   }
   if (result.conflicts.length) process.exitCode = 2;
@@ -564,7 +563,7 @@ if (
     realpathSync(resolve(process.argv[1] ?? '')) === realpathSync(ACTIVE_SCRIPT_FILE))
 ) {
   main().catch(error => {
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-console
     console.error(`Agent governance failed: ${error.message}`);
     process.exitCode = 1;
   });

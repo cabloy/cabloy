@@ -17,15 +17,6 @@ const required = [
   'repo-agent-governance/scripts/governance.mjs',
   'repo-agent-governance/tools/contract-loop/core.mjs',
 ];
-// A pre-governance upgrader overwrites these paths before it invokes the incoming
-// initializer. Keep them out of this transition package so the initializer can
-// adopt canonical outputs without destroying a locally customized legacy adapter.
-const transitionExcludedAdapters = [
-  'AGENTS.md',
-  'CLAUDE.md',
-  '.claude/settings.json',
-  '.cursor/rules/cabloy-governance.mdc',
-];
 const forbidden = [
   '.cabloy-agent-governance-state.json',
   '.claude/scheduled_tasks.lock',
@@ -34,6 +25,9 @@ const forbidden = [
 for (const path of required) {
   if (!files.has(path)) throw new Error(`npm package is missing governance asset: ${path}`);
 }
+// A pre-governance upgrader overwrites manifest-managed outputs before it invokes the
+// incoming initializer. Keep every managed adapter out of this transition package so the
+// initializer can adopt canonical outputs without destroying a customized legacy adapter.
 for (const path of managedAdapters) {
   if (files.has(path)) {
     throw new Error(`npm package must exclude transition adapter output: ${path}`);
@@ -43,7 +37,7 @@ for (const path of forbidden) {
   if (files.has(path))
     throw new Error(`npm package must not contain local governance state: ${path}`);
 }
-// eslint-disable-next-line
+// eslint-disable-next-line no-console
 console.log(
   `Governance package surface is valid (${required.length} canonical assets; ${managedAdapters.length} transition adapters excluded).`,
 );

@@ -52,13 +52,13 @@ function main() {
     message: hasSignal(result) ? buildMessages(result, resolution) : null,
   };
   if (format === 'json') {
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-console
     console.log(JSON.stringify(output, null, 2));
   } else if (output.message) {
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-console
     console.log(output.message);
   } else {
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-console
     console.log(`Contract-loop check: no signal for ${file}.`);
   }
 }
