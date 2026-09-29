@@ -52,7 +52,7 @@ Use `repo-agent-governance/` as the authored source for portable repository rule
 
 ### Platform runtime integration
 
-`CLAUDE.md`, `.claude/commands/`, `.claude/skills/`, `AGENTS.md`, `.agents/skills/`, and `.cursor/` are adapter/runtime surfaces. Hooks, permissions, local settings, credentials, and provider-specific command discovery stay platform-specific rather than becoming shared framework facts.
+`CLAUDE.md`, `.claude/commands/`, `.claude/skills/`, `AGENTS.md`, `.agents/skills/`, `.codex/`, and `.cursor/` are adapter/runtime surfaces. Hooks, permissions, local settings, credentials, and provider-specific command discovery stay platform-specific rather than becoming shared framework facts.
 
 ## AI reading paths
 

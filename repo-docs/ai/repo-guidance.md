@@ -11,7 +11,7 @@ Check the root repository signals first:
 - `repo-docs-internal/`
 - `repo-specs/` when the task concerns a suite plan, WBS increment, acceptance record, or evidence
 - `repo-agent-governance/` canonical rules, skill bundles, and deterministic tools
-- generated platform adapter assets such as `CLAUDE.md`, `AGENTS.md`, `.claude/`, `.agents/`, and `.cursor/`
+- generated platform adapter assets such as `CLAUDE.md`, `AGENTS.md`, `.claude/`, `.agents/`, `.codex/`, and `.cursor/`
 
 These surfaces tell the agent which repo it is in, which scripts are canonical, and where shared agent instructions are authored. Treat platform directories as generated adapters; regenerate them from `repo-agent-governance/` rather than hand-editing them. Inspect relevant `repo-docs-internal/` records as supporting context rather than as a gate to workflow guidance.
 

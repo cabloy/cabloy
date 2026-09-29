@@ -100,35 +100,51 @@ export function isCodeFile(filePath) {
   );
 }
 
-function detectForward(filePath, content) {
-  if (!filePath.includes('/vona/src/')) return null;
-  if (
-    pathContainsAny(filePath, FORWARD_PATH_MARKERS) ||
-    containsAny(content, FORWARD_CONTENT_MARKERS)
-  ) {
+function detectForwardPath(filePath) {
+  if (filePath.includes('/vona/src/') && pathContainsAny(filePath, FORWARD_PATH_MARKERS)) {
     return 'Backend contract source may have changed.';
   }
   return null;
 }
 
-function detectReverse(filePath, content, reverseVonaContentMarkers) {
-  if (filePath.includes('/vona/src/') && containsAny(content, reverseVonaContentMarkers)) {
-    return 'Vona code is consuming frontend metadata or render resources.';
+function detectForwardContent(filePath, content) {
+  if (filePath.includes('/vona/src/') && containsAny(content, FORWARD_CONTENT_MARKERS)) {
+    return 'Backend contract source may have changed.';
   }
-  if (
-    filePath.includes('/zova/src/') &&
-    (pathContainsAny(filePath, REVERSE_ZOVA_PATH_MARKERS) ||
-      containsAny(content, REVERSE_ZOVA_CONTENT_MARKERS))
-  ) {
+  return null;
+}
+
+function detectReversePath(filePath) {
+  if (filePath.includes('/zova/src/') && pathContainsAny(filePath, REVERSE_ZOVA_PATH_MARKERS)) {
     return 'Frontend-owned resources or metadata may affect backend consumers.';
   }
   return null;
 }
 
-export function analyze(filePath, content, edition) {
+function detectReverseContent(filePath, content, reverseVonaContentMarkers) {
+  if (filePath.includes('/vona/src/') && containsAny(content, reverseVonaContentMarkers)) {
+    return 'Vona code is consuming frontend metadata or render resources.';
+  }
+  if (filePath.includes('/zova/src/') && containsAny(content, REVERSE_ZOVA_CONTENT_MARKERS)) {
+    return 'Frontend-owned resources or metadata may affect backend consumers.';
+  }
+  return null;
+}
+
+export function analyzePath(filePath) {
   return {
-    forwardReason: detectForward(filePath, content),
-    reverseReason: detectReverse(filePath, content, getReverseVonaContentMarkers(edition)),
+    forwardReason: detectForwardPath(filePath),
+    reverseReason: detectReversePath(filePath),
+  };
+}
+
+export function analyze(filePath, content, edition) {
+  const pathResult = analyzePath(filePath);
+  return {
+    forwardReason: pathResult.forwardReason ?? detectForwardContent(filePath, content),
+    reverseReason:
+      pathResult.reverseReason ??
+      detectReverseContent(filePath, content, getReverseVonaContentMarkers(edition)),
   };
 }
 

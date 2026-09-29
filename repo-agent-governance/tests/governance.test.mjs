@@ -20,7 +20,10 @@ import {
   isCodeFile,
   resolveEdition,
 } from '../tools/contract-loop/core.mjs';
-import { extractCodexEditedFilePaths } from '../tools/contract-loop/hook-runtime.mjs';
+import {
+  extractCodexEditedFiles,
+  extractCodexEditedFilePaths,
+} from '../tools/contract-loop/hook-runtime.mjs';
 
 function createFixture() {
   const root = mkdtempSync(resolve(tmpdir(), 'cabloy-agent-governance-'));
@@ -48,9 +51,27 @@ function runGovernance(root, ...args) {
   return runNode(root, resolve(root, 'repo-agent-governance/scripts/governance.mjs'), ...args);
 }
 
-function runHook(root, executable, payload) {
+function runHook(root, executable, payload, { cwd = root, env = {} } = {}) {
   const result = spawnSync(process.execPath, [executable], {
-    cwd: root,
+    cwd,
+    encoding: 'utf8',
+    input: JSON.stringify(payload),
+    env: {
+      ...process.env,
+      CABLOY_GOVERNANCE_ROOT: root,
+      ...env,
+    },
+  });
+  return {
+    status: result.status,
+    output: `${result.stdout}${result.stderr}`,
+  };
+}
+
+function runShellHook(root, command, payload, cwd = root) {
+  const result = spawnSync(command, {
+    shell: true,
+    cwd,
     encoding: 'utf8',
     input: JSON.stringify(payload),
     env: {
@@ -346,7 +367,7 @@ test('contract-loop recognizes supported vendor and suite source paths', () => {
   assert.equal(isCodeFile('/repo/repo-docs/ai/agent-governance.md'), false);
 });
 
-test('Codex contract-loop adapter evaluates apply_patch file paths', () => {
+test('Codex contract-loop adapter evaluates operation-aware apply_patch paths', () => {
   withFixture(root => {
     const sourcePath = resolve(root, 'vona/src/module/demo/src/controller/demo.ts');
     mkdirSync(dirname(sourcePath), { recursive: true });
@@ -367,6 +388,10 @@ test('Codex contract-loop adapter evaluates apply_patch file paths', () => {
       'vona/src/module/demo/src/controller/demo.ts',
       'repo-docs/ai/agent-governance.md',
     ]);
+    assert.deepEqual(extractCodexEditedFiles({ tool_input: { command } }), [
+      { operation: 'update', filePath: 'vona/src/module/demo/src/controller/demo.ts' },
+      { operation: 'update', filePath: 'repo-docs/ai/agent-governance.md' },
+    ]);
 
     const result = runHook(root, resolve(root, '.codex/hooks/contract-loop-gate.mjs'), {
       hook_event_name: 'PostToolUse',
@@ -380,7 +405,117 @@ test('Codex contract-loop adapter evaluates apply_patch file paths', () => {
   });
 });
 
-test('Cursor contract-loop adapter handles Agent and Tab edit events', () => {
+test('Codex launch command finds a non-Git project from nested cwd', () => {
+  withFixture(root => {
+    const sourcePath = resolve(root, 'vona/src/module/demo/src/controller/demo.ts');
+    mkdirSync(dirname(sourcePath), { recursive: true });
+    writeFileSync(sourcePath, '@Api.field()\n');
+    assert.equal(runGovernance(root, 'render').status, 0);
+
+    const hook = JSON.parse(readFileSync(resolve(root, '.codex/hooks.json'), 'utf8')).hooks
+      .PostToolUse[0].hooks[0];
+    assert.doesNotMatch(hook.command, /git rev-parse|\$\(/);
+    assert.equal(hook.commandWindows, hook.command);
+
+    const command = [
+      '*** Begin Patch',
+      '*** Update File: src/controller/demo.ts',
+      '@@',
+      '-@Api.field()',
+      '+@Api.field()',
+      '*** End Patch',
+    ].join('\n');
+    const nestedCwd = resolve(root, 'vona/src/module/demo');
+    const result = runShellHook(
+      root,
+      hook.command,
+      {
+        hook_event_name: 'PostToolUse',
+        tool_name: 'apply_patch',
+        cwd: nestedCwd,
+        tool_input: { command },
+      },
+      nestedCwd,
+    );
+    assert.equal(result.status, 0, result.output);
+    assert.match(JSON.parse(result.output).hookSpecificOutput.additionalContext, /Forward chain:/);
+  });
+});
+
+test('Codex delete paths are classified without reading removed sources', () => {
+  withFixture(root => {
+    assert.equal(runGovernance(root, 'render').status, 0);
+    const command = [
+      '*** Begin Patch',
+      '*** Delete File: vona/src/module/demo/src/controller/demo.ts',
+      '*** Delete File: zova/src/module/demo/src/bean/demo.ts',
+      '*** Delete File: repo-docs/ai/agent-governance.md',
+      '*** End Patch',
+    ].join('\n');
+    const result = runHook(root, resolve(root, '.codex/hooks/contract-loop-gate.mjs'), {
+      hook_event_name: 'PostToolUse',
+      tool_name: 'apply_patch',
+      tool_input: { command },
+    });
+    assert.equal(result.status, 0, result.output);
+    const output = JSON.parse(result.output).hookSpecificOutput.additionalContext;
+    assert.match(output, /Forward chain:/);
+    assert.match(output, /Reverse chain:/);
+    assert.match(output, /Auto-sync failed during `npm run build:zova:admin`/);
+    assert.doesNotMatch(output, /agent-governance\.md/);
+  });
+});
+
+test('Codex missing update does not become a delete and does not conceal a delete', () => {
+  withFixture(root => {
+    assert.equal(runGovernance(root, 'render').status, 0);
+    const command = [
+      '*** Begin Patch',
+      '*** Update File: vona/src/module/demo/src/controller/missing.ts',
+      '@@',
+      '*** Delete File: vona/src/module/demo/src/dto/deleted.ts',
+      '*** End Patch',
+    ].join('\n');
+    const result = runHook(root, resolve(root, '.codex/hooks/contract-loop-gate.mjs'), {
+      hook_event_name: 'PostToolUse',
+      tool_name: 'apply_patch',
+      tool_input: { command },
+    });
+    assert.equal(result.status, 0, result.output);
+    const output = JSON.parse(result.output).hookSpecificOutput.additionalContext;
+    assert.match(output, /could not inspect edited source/);
+    assert.match(output, /Forward chain:/);
+    assert.doesNotMatch(output, /Reverse chain:/);
+  });
+});
+
+test('Codex move paths inspect the destination', () => {
+  withFixture(root => {
+    const destinationPath = resolve(root, 'vona/src/module/demo/src/controller/moved.ts');
+    mkdirSync(dirname(destinationPath), { recursive: true });
+    writeFileSync(destinationPath, '@Api.field()\n');
+    assert.equal(runGovernance(root, 'render').status, 0);
+    const command = [
+      '*** Begin Patch',
+      '*** Update File: vona/src/module/demo/src/service/old.ts',
+      '*** Move to: vona/src/module/demo/src/controller/moved.ts',
+      '@@',
+      '*** End Patch',
+    ].join('\n');
+    assert.deepEqual(extractCodexEditedFiles({ tool_input: { command } }), [
+      { operation: 'update', filePath: 'vona/src/module/demo/src/controller/moved.ts' },
+    ]);
+    const result = runHook(root, resolve(root, '.codex/hooks/contract-loop-gate.mjs'), {
+      hook_event_name: 'PostToolUse',
+      tool_name: 'apply_patch',
+      tool_input: { command },
+    });
+    assert.equal(result.status, 0, result.output);
+    assert.match(JSON.parse(result.output).hookSpecificOutput.additionalContext, /Forward chain:/);
+  });
+});
+
+test('Cursor contract-loop adapter handles Agent and Tab edit events once each', () => {
   withFixture(root => {
     const sourcePath = resolve(root, 'vona/src/module/demo/src/controller/demo.ts');
     mkdirSync(dirname(sourcePath), { recursive: true });
@@ -389,18 +524,16 @@ test('Cursor contract-loop adapter handles Agent and Tab edit events', () => {
 
     const hooks = JSON.parse(readFileSync(resolve(root, '.cursor/hooks.json'), 'utf8'));
     assert.equal(hooks.hooks.postToolUse[0].matcher, 'Write');
-    assert.equal(hooks.hooks.afterFileEdit[0].matcher, 'Write');
+    assert.equal(hooks.hooks.afterFileEdit, undefined);
     assert.equal(hooks.hooks.afterTabFileEdit[0].matcher, 'TabWrite');
 
     const script = resolve(root, '.cursor/hooks/contract-loop-gate.mjs');
-    for (const hookEventName of ['afterFileEdit', 'afterTabFileEdit']) {
-      const result = runHook(root, script, {
-        hook_event_name: hookEventName,
-        file_path: sourcePath,
-      });
-      assert.equal(result.status, 0, result.output);
-      assert.equal(result.output, '');
-    }
+    const tabResult = runHook(root, script, {
+      hook_event_name: 'afterTabFileEdit',
+      file_path: sourcePath,
+    });
+    assert.equal(tabResult.status, 0, tabResult.output);
+    assert.equal(tabResult.output, '');
 
     const result = runHook(root, script, {
       hook_event_name: 'postToolUse',
@@ -408,5 +541,29 @@ test('Cursor contract-loop adapter handles Agent and Tab edit events', () => {
     });
     assert.equal(result.status, 0, result.output);
     assert.match(JSON.parse(result.output).additional_context, /Forward chain:/);
+  });
+});
+
+test('Claude contract-loop adapter stays inert when imported by Cursor', () => {
+  withFixture(root => {
+    const sourcePath = resolve(root, 'vona/src/module/demo/src/controller/demo.ts');
+    mkdirSync(dirname(sourcePath), { recursive: true });
+    writeFileSync(sourcePath, '@Api.field()\n');
+    assert.equal(runGovernance(root, 'render').status, 0);
+    const script = resolve(root, '.claude/hooks/contract-loop-gate.ts');
+    const payload = { hook_event_name: 'PostToolUse', tool_input: { file_path: sourcePath } };
+
+    const claudeResult = runHook(root, script, payload);
+    assert.equal(claudeResult.status, 0, claudeResult.output);
+    assert.match(
+      JSON.parse(claudeResult.output).hookSpecificOutput.additionalContext,
+      /Forward chain:/,
+    );
+
+    const cursorResult = runHook(root, script, payload, {
+      env: { CURSOR_PROJECT_DIR: root },
+    });
+    assert.equal(cursorResult.status, 0, cursorResult.output);
+    assert.equal(cursorResult.output, '');
   });
 });

@@ -28,7 +28,7 @@ Always perform this detection before making UI-sensitive assumptions, choosing f
 - `repo-e2e/` contains the end-to-end test project.
 - `repo-observability/` contains local observability infrastructure.
 - `repo-agent-governance/` is the authored source for portable agent rules, root skills, adapters, and deterministic governance tools.
-- `.claude/`, `.agents/`, and `.cursor/` contain generated platform adapters plus platform-specific runtime integration.
+- `.claude/`, `.agents/`, `.codex/`, and `.cursor/` contain generated platform adapters plus platform-specific runtime integration.
 
 ## Preferred workflow
 

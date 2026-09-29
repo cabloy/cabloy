@@ -23,7 +23,7 @@ The committed repository adapter outputs are:
 
 The same root rule and skill sources are copied to every listed adapter. Platform-specific discovery metadata is intentionally thin and lives in the adapter layer. The generated Codex and Cursor skill paths are configured adapter locations; their client discovery behavior requires a version-pinned external smoke check before it is claimed as supported.
 
-Codex requires the user to trust project-local hooks before it runs `.codex/hooks.json`; that local trust state is not generated or committed by this repository.
+Codex requires the user to trust project-local hooks before it runs `.codex/hooks.json`; that local trust state is not generated or committed by this repository. The repository launcher resolves a hook from nested working directories without Git once Codex invokes it, but Codex discovery remains client-version behavior. For non-Git projects opened from nested directories, configure local Codex `project_root_markers` to include `__CABLOY_BASIC__` and `__CABLOY_START__` alongside `.git`; do not generate that user setting from this repository.
 
 ### Package migration bridge
 

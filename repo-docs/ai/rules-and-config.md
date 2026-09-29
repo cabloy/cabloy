@@ -26,7 +26,7 @@ The following are committed generated outputs, not parallel authored knowledge s
 
 The Codex and Cursor skill paths are configured generated adapter locations; verify client discovery with a version-pinned external smoke check before presenting it as supported behavior. The adapter model shares rules and procedures, not hook payload formats. Claude Code, Codex, and Cursor each register a platform-specific contract-loop convenience hook over the same portable runtime.
 
-Codex runs project-local `.codex/hooks.json` only after the user trusts that hook definition. Hook trust is local state and remains outside generated governance ownership.
+Codex runs project-local `.codex/hooks.json` only after the user trusts that hook definition. Hook trust is local state and remains outside generated governance ownership. The generated launcher is Git-free once Codex invokes it, but non-Git project discovery from a nested directory remains client-controlled; configure local Codex `project_root_markers` with Cabloy edition markers when that scenario must be supported.
 
 ## Local configuration and permissions
 

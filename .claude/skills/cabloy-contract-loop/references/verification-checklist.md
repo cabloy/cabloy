@@ -42,9 +42,11 @@ When one persisted domain has both Admin Resource and Web self-service consumers
 - `build:rest:*` was not treated as the only Vona SSR handoff
 - backend consumers can resolve the refreshed frontend-generated handoff
 - prefer visible proof under `zova/src/**/.metadata/**` when it is available
-- this repo does not rely on a contract-loop pre-commit gate; the active safeguard is the Claude hook layer
-- if the change was a high-confidence Zova reverse-source edit through the Claude hook path, confirm whether the hook already auto-ran `npm run build:zova:admin` and `npm run deps:vona`
-- if the change was consumer-side, low-confidence, outside the Claude hook path, or in another edition branch, run the reverse sync flow manually instead of assuming it already happened
+- this repo does not rely on a contract-loop pre-commit gate; Claude Code, Codex, and Cursor each use a provider-specific adapter over the same classifier
+- if the change was a high-confidence Zova reverse-source edit through a supported hook path, confirm whether the hook already auto-ran `npm run build:zova:admin` and `npm run deps:vona`
+- Codex evaluates an `apply_patch` batch as operation-aware entries: an explicit Delete is classified from reliable path evidence only; an unreadable Add or Update target is an inspection failure rather than a synthetic delete
+- Cursor Agent writes use native `postToolUse` context and Cursor Tab writes use native `afterTabFileEdit` side effects; the imported Claude bridge is intentionally inactive in Cursor to avoid duplicate work
+- if the change was consumer-side, low-confidence, outside a supported hook path, affected an untrusted/discovery-disabled hook, or was in another edition branch, run the reverse sync flow manually instead of assuming it already happened
 - if the real handoff only appears in `.zova-rest`, treat the safeguard as conservative reminder/auto-sync assistance rather than strict proof
 - `npm run tsc:zova`
 - relevant flavor-specific or route-specific checks

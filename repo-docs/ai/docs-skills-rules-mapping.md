@@ -101,7 +101,7 @@ Canonical location:
 
 - `repo-agent-governance/skills/`
 
-Generated adapter locations include `.claude/skills/`, `.agents/skills/`, and `.cursor/skills/`. The Codex and Cursor locations are configured output paths, not verified client-discovery claims; validate the active client version externally before relying on discovery.
+Generated adapter locations include `.claude/skills/`, `.agents/skills/`, `.codex/`, and `.cursor/skills/`. The Codex and Cursor locations are configured output paths, not verified client-discovery claims; validate the active client version externally before relying on discovery.
 
 Use skills for:
 

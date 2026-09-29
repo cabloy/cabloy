@@ -1,10 +1,11 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
 import {
   analyze,
+  analyzePath,
   buildMessages,
   isCodeFile,
   isHighConfidenceReverseSource,
@@ -22,6 +23,34 @@ function readText(filePath) {
   } catch {
     return null;
   }
+}
+
+function isDirectory(filePath) {
+  try {
+    return statSync(filePath).isDirectory();
+  } catch {
+    return false;
+  }
+}
+
+function canonicalPath(filePath) {
+  let current = filePath;
+  const missingSegments = [];
+  for (;;) {
+    try {
+      return path.resolve(realpathSync(current), ...missingSegments);
+    } catch {
+      const parent = path.dirname(current);
+      if (parent === current) return filePath;
+      missingSegments.unshift(path.basename(current));
+      current = parent;
+    }
+  }
+}
+
+function isInside(root, candidate) {
+  const relative = path.relative(canonicalPath(root), canonicalPath(candidate));
+  return relative === '' || (!relative.startsWith(`..${path.sep}`) && relative !== '..');
 }
 
 function loadState() {
@@ -142,16 +171,42 @@ export function extractClaudeEditedFilePath(payload) {
   return typeof filePath === 'string' && filePath ? filePath : null;
 }
 
-export function extractCodexEditedFilePaths(payload) {
+export function extractCodexEditedFiles(payload) {
   const command = payload?.tool_input?.command;
   if (typeof command !== 'string') return [];
-  const paths = new Set();
-  const pattern = /^\*\*\* (?:Add|Update|Delete) File:\s*(.+?)\s*$/gm;
-  for (const match of command.matchAll(pattern)) {
-    const filePath = match[1].trim();
-    if (filePath) paths.add(filePath);
+  const entries = [];
+  let pendingUpdate = null;
+  const headerPattern =
+    /^\*\*\* (Add|Update|Delete) File:\s*(.+?)\s*$|^\*\*\* Move to:\s*(.+?)\s*$/gm;
+
+  const flushUpdate = () => {
+    if (pendingUpdate) entries.push(pendingUpdate);
+    pendingUpdate = null;
+  };
+
+  for (const match of command.matchAll(headerPattern)) {
+    const [, verb, sourcePath, destinationPath] = match;
+    if (destinationPath !== undefined) {
+      if (pendingUpdate) pendingUpdate.filePath = destinationPath.trim();
+      continue;
+    }
+    flushUpdate();
+    const filePath = sourcePath.trim();
+    if (!filePath) continue;
+    const operation = verb.toLowerCase();
+    if (operation === 'update') {
+      pendingUpdate = { operation, filePath };
+    } else {
+      entries.push({ operation, filePath });
+    }
   }
-  return [...paths];
+  flushUpdate();
+  return entries;
+}
+
+// Retain the path-only export for callers that only need the historical view.
+export function extractCodexEditedFilePaths(payload) {
+  return extractCodexEditedFiles(payload).map(entry => entry.filePath);
 }
 
 export function extractCursorEditedFilePath(payload) {
@@ -200,24 +255,47 @@ export function formatCursorHookOutput(message, eventName) {
   return { additional_context: message };
 }
 
-function inspectEditedFile(root, rawPath) {
-  const filePath = normalizePath(root, rawPath);
-  if (!filePath || !isCodeFile(filePath)) return null;
-  const content = readText(filePath);
-  if (content === null) return null;
+function resolvePathBase(root, candidate) {
+  if (typeof candidate !== 'string' || !candidate) return root;
+  const pathBase = normalizePath(root, candidate);
+  if (!pathBase || !isInside(root, pathBase) || !isDirectory(pathBase)) return root;
+  return pathBase;
+}
+
+function createInspectionFailure(root, filePath, operation) {
+  const relativePath = toPosixPath(path.relative(root, filePath));
+  return {
+    kind: 'failure',
+    filePath,
+    message: `Contract-loop gate: could not inspect edited source \`${relativePath}\` after this ${operation} patch; no contract-loop guidance or auto-sync ran.`,
+  };
+}
+
+function inspectEditedFile(root, rawPath, { operation = 'update', pathBase = root } = {}) {
+  const filePath = normalizePath(pathBase, rawPath);
+  if (!filePath || !isInside(root, filePath) || !isCodeFile(filePath)) return null;
+
   const resolution = resolveEdition(root);
+  if (operation === 'delete') {
+    const result = analyzePath(filePath);
+    if (!result.forwardReason && !result.reverseReason) return null;
+    return { kind: 'signal', filePath, resolution, result };
+  }
+
+  const content = readText(filePath);
+  if (content === null) return createInspectionFailure(root, filePath, operation);
   const result = analyze(
     filePath,
     content,
     resolution.kind === 'resolved' ? resolution.edition : null,
   );
   if (!result.forwardReason && !result.reverseReason) return null;
-  return { filePath, resolution, result };
+  return { kind: 'signal', filePath, resolution, result };
 }
 
 export function evaluateEditedFile(root, rawPath) {
   const inspected = inspectEditedFile(root, rawPath);
-  if (!inspected) return null;
+  if (!inspected || inspected.kind !== 'signal') return null;
   const { filePath, resolution, result } = inspected;
   const reverseSyncOutcome = resolveReverseSyncOutcome(root, filePath, result.reverseReason);
   return {
@@ -226,25 +304,37 @@ export function evaluateEditedFile(root, rawPath) {
   };
 }
 
-export function evaluateEditedFiles(root, rawPaths) {
-  const seenPaths = new Set();
+export function evaluateCodexEditedFiles(root, entries, payloadCwd) {
+  const pathBase = resolvePathBase(root, payloadCwd);
+  const seenEntries = new Set();
   const inspected = [];
-  for (const rawPath of rawPaths) {
-    const item = inspectEditedFile(root, rawPath);
-    if (item && !seenPaths.has(item.filePath)) {
-      seenPaths.add(item.filePath);
-      inspected.push(item);
-    }
+  for (const entry of entries) {
+    if (!entry || typeof entry.filePath !== 'string') continue;
+    const operation = ['add', 'update', 'delete'].includes(entry.operation)
+      ? entry.operation
+      : 'update';
+    const normalizedPath = normalizePath(pathBase, entry.filePath);
+    if (!normalizedPath || !isInside(root, normalizedPath)) continue;
+    const key = `${operation}:${normalizedPath}`;
+    if (seenEntries.has(key)) continue;
+    seenEntries.add(key);
+    const item = inspectEditedFile(root, entry.filePath, { operation, pathBase });
+    if (item) inspected.push(item);
   }
 
   const autoSyncItem = inspected.find(
-    item => item.result.reverseReason && isHighConfidenceReverseSource(item.filePath),
+    item =>
+      item.kind === 'signal' &&
+      item.result.reverseReason &&
+      isHighConfidenceReverseSource(item.filePath),
   );
   const autoSyncOutcome = autoSyncItem
     ? resolveReverseSyncOutcome(root, autoSyncItem.filePath, autoSyncItem.result.reverseReason)
     : null;
 
   return inspected.map(item => {
+    if (item.kind === 'failure') return { filePath: item.filePath, message: item.message };
+
     let reverseSyncOutcome;
     if (item === autoSyncItem) {
       reverseSyncOutcome = autoSyncOutcome;
@@ -266,4 +356,12 @@ export function evaluateEditedFiles(root, rawPaths) {
       message: buildMessages(item.result, item.resolution, reverseSyncOutcome),
     };
   });
+}
+
+// Keep the prior general API for direct callers. Codex now uses the operation-aware evaluator.
+export function evaluateEditedFiles(root, rawPaths) {
+  return evaluateCodexEditedFiles(
+    root,
+    rawPaths.map(filePath => ({ operation: 'update', filePath })),
+  );
 }

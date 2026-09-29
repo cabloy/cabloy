@@ -7,7 +7,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$(git rev-parse --show-toplevel)/.codex/hooks/contract-loop-gate.mjs\"",
+            "command": "node -e \"const fs=require('node:fs'),path=require('node:path'),{pathToFileURL}=require('node:url');let d=process.cwd();for(;;){const h=path.join(d,'.codex','hooks','contract-loop-gate.mjs');if(fs.existsSync(h)){import(pathToFileURL(h).href);break}const p=path.dirname(d);if(p===d)break;d=p}\"",
+            "commandWindows": "node -e \"const fs=require('node:fs'),path=require('node:path'),{pathToFileURL}=require('node:url');let d=process.cwd();for(;;){const h=path.join(d,'.codex','hooks','contract-loop-gate.mjs');if(fs.existsSync(h)){import(pathToFileURL(h).href);break}const p=path.dirname(d);if(p===d)break;d=p}\"",
             "timeout": 600,
             "statusMessage": "Checking contract-loop gate"
           }

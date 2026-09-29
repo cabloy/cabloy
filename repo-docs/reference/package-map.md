@@ -8,7 +8,7 @@ This monorepo is organized around a small set of stable top-level areas.
 - `lerna.json` — package topology
 - `repo-docs-internal/` — edition-local maintainer notes and ADRs
 - `repo-agent-governance/` — authored portable agent rules, root skill bundles, adapter definitions, and deterministic tools
-- `CLAUDE.md`, `AGENTS.md`, `.claude/`, `.agents/`, `.cursor/` — generated platform adapters plus platform-specific runtime integration
+- `CLAUDE.md`, `AGENTS.md`, `.claude/`, `.agents/`, `.codex/`, `.cursor/` — generated platform adapters plus platform-specific runtime integration
 - `repo-docs/` — unified public docs
 - `repo-specs/` — suite-local product, technical, delivery, ATP, progress, observed-evidence, and ADR authority
 

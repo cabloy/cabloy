@@ -3,8 +3,8 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
-  evaluateEditedFiles,
-  extractCodexEditedFilePaths,
+  evaluateCodexEditedFiles,
+  extractCodexEditedFiles,
   formatCodexHookOutput,
   readHookPayload,
 } from '../../repo-agent-governance/tools/contract-loop/hook-runtime.mjs';
@@ -14,7 +14,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 function runCodexHook() {
   const payload = readHookPayload();
   if (!payload) return 0;
-  const evaluated = evaluateEditedFiles(ROOT, extractCodexEditedFilePaths(payload));
+  const evaluated = evaluateCodexEditedFiles(ROOT, extractCodexEditedFiles(payload), payload.cwd);
   if (!evaluated.length) return 0;
   const message = evaluated.map(item => item.message).join('\n\n');
   // eslint-disable-next-line

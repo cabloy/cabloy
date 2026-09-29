@@ -174,7 +174,7 @@ The following assets should be treated as part of the shared, repo-managed AI su
 - committed generated adapters for Claude Code, Codex, and Cursor
 - Claude-specific `PostToolUse` contract-loop bridge and its settings registration
 - Codex-specific `PostToolUse` contract-loop bridge and its `hooks.json` registration
-- Cursor-specific `postToolUse` / `afterFileEdit` contract-loop bridge and its `hooks.json` registration
+- Cursor-specific native `postToolUse` / `afterTabFileEdit` contract-loop bridge and its `hooks.json` registration; imported Claude-compatible hook execution is intentionally suppressed in Cursor to avoid duplicate Agent work
 - edition-neutral and edition-aware pages under `repo-docs/`
 - relevant internal architecture notes under `repo-docs-internal/`
 
@@ -196,7 +196,7 @@ Each platform adapter hook may additionally:
 - share duplicate-sync state for the high-confidence reverse-chain convenience path
 - auto-run the high-confidence Basic/Admin reverse-chain convenience path
 
-Claude Code, Codex, and Cursor must keep separate payload adapters because their hook stdin and stdout contracts differ. All adapters should preserve the same shared classifier guidance and branch only where Basic and Start genuinely need different build flavors, paths, or generated outputs.
+Claude Code, Codex, and Cursor must keep separate payload adapters because their hook stdin and stdout contracts differ. Codex preserves explicit patch operations so deletes receive path-only classification rather than being inferred from a failed file read. Cursor owns one native Agent `postToolUse` route plus a Tab-only `afterTabFileEdit` route, while the Claude bridge is inert under Cursor imports. All adapters should preserve the same shared classifier guidance and branch only where Basic and Start genuinely need different build flavors, paths, or generated outputs.
 
 ## Settings policy
 
