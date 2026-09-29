@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.192
+
+### Features
+
+- Update core functionality.
+- Add agents for Claude Code, Codex, and Cursor.
+
 ## 5.1.191
 
 ### Features
