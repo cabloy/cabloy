@@ -87,8 +87,8 @@ Canonical location:
 Generated platform adapters:
 
 - Claude Code: `CLAUDE.md`, `.claude/commands/`, `.claude/skills/`, `.claude/hooks/`, `.claude/settings.json`
-- Codex: `AGENTS.md`, `.agents/skills/`
-- Cursor: `.cursor/rules/`, `.cursor/skills/`
+- Codex: `AGENTS.md`, `.agents/skills/`, `.codex/hooks.json`, `.codex/hooks/`
+- Cursor: `.cursor/rules/`, `.cursor/skills/`, `.cursor/hooks.json`, `.cursor/hooks/`
 
 Purpose:
 
@@ -102,7 +102,7 @@ Policy:
 - canonical policy and skill bodies are shared only when their engineering semantics are genuinely portable
 - generated adapters are never hand-edited or treated as another authority
 - hooks, permissions, local settings, MCP registration, command discovery, and automatic command execution remain provider-specific integrations
-- the Claude contract-loop hook may keep its Claude-only automatic convenience behavior; other adapters must describe only the portable advisory workflow
+- Claude Code, Codex, and Cursor may each keep a platform-specific contract-loop convenience hook over the shared classifier and reverse auto-sync runtime
 - local settings, worktree state, and credentials are excluded from generated ownership
 
 ### 4. Root skills
@@ -173,6 +173,8 @@ The following assets should be treated as part of the shared, repo-managed AI su
 - `repo-agent-governance/` canonical policies, root skills, adapters, and deterministic tools
 - committed generated adapters for Claude Code, Codex, and Cursor
 - Claude-specific `PostToolUse` contract-loop bridge and its settings registration
+- Codex-specific `PostToolUse` contract-loop bridge and its `hooks.json` registration
+- Cursor-specific `postToolUse` / `afterFileEdit` contract-loop bridge and its `hooks.json` registration
 - edition-neutral and edition-aware pages under `repo-docs/`
 - relevant internal architecture notes under `repo-docs-internal/`
 
@@ -188,13 +190,13 @@ The following assets are **not** part of the generated or shared ownership set:
 
 The portable contract-loop classifier and advisory CLI are maintained in `repo-agent-governance/tools/contract-loop/` and support both Basic and Start through root marker detection.
 
-The Claude adapter hook may additionally:
+Each platform adapter hook may additionally:
 
-- parse the Claude `PostToolUse` payload
-- maintain Claude-only duplicate-sync state
+- parse that platform’s edit payload
+- share duplicate-sync state for the high-confidence reverse-chain convenience path
 - auto-run the high-confidence Basic/Admin reverse-chain convenience path
 
-Its platform-specific behavior must not be promised by Codex or Cursor adapters. All adapters should preserve the same shared classifier guidance and branch only where Basic and Start genuinely need different build flavors, paths, or generated outputs.
+Claude Code, Codex, and Cursor must keep separate payload adapters because their hook stdin and stdout contracts differ. All adapters should preserve the same shared classifier guidance and branch only where Basic and Start genuinely need different build flavors, paths, or generated outputs.
 
 ## Settings policy
 

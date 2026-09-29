@@ -3,22 +3,23 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
-  evaluateEditedFile,
-  extractClaudeEditedFilePath,
-  formatClaudeHookOutput,
+  evaluateEditedFiles,
+  extractCodexEditedFilePaths,
+  formatCodexHookOutput,
   readHookPayload,
 } from '../../repo-agent-governance/tools/contract-loop/hook-runtime.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
-function runClaudeHook(): number {
+function runCodexHook() {
   const payload = readHookPayload();
   if (!payload) return 0;
-  const evaluated = evaluateEditedFile(ROOT, extractClaudeEditedFilePath(payload));
-  if (!evaluated) return 0;
+  const evaluated = evaluateEditedFiles(ROOT, extractCodexEditedFilePaths(payload));
+  if (!evaluated.length) return 0;
+  const message = evaluated.map(item => item.message).join('\n\n');
   // eslint-disable-next-line
-  console.log(JSON.stringify(formatClaudeHookOutput(evaluated.message)));
+  console.log(JSON.stringify(formatCodexHookOutput(message)));
   return 0;
 }
 
-process.exit(runClaudeHook());
+process.exit(runCodexHook());

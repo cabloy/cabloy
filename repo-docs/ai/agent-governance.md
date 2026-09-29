@@ -15,13 +15,15 @@ npm run agent:governance:check
 
 The committed repository adapter outputs are:
 
-| Agent surface | Generated repository assets                                                                    |
-| ------------- | ---------------------------------------------------------------------------------------------- |
-| Claude Code   | `CLAUDE.md`, `.claude/skills/`, `.claude/commands/`, `.claude/settings.json`, `.claude/hooks/` |
-| Codex         | `AGENTS.md`, `.agents/skills/`                                                                 |
-| Cursor        | `.cursor/rules/cabloy-governance.mdc`, `.cursor/skills/`                                       |
+| Agent surface | Generated repository assets                                                                      |
+| ------------- | ------------------------------------------------------------------------------------------------ |
+| Claude Code   | `CLAUDE.md`, `.claude/skills/`, `.claude/commands/`, `.claude/settings.json`, `.claude/hooks/`   |
+| Codex         | `AGENTS.md`, `.agents/skills/`, `.codex/hooks.json`, `.codex/hooks/`                             |
+| Cursor        | `.cursor/rules/cabloy-governance.mdc`, `.cursor/skills/`, `.cursor/hooks.json`, `.cursor/hooks/` |
 
 The same root rule and skill sources are copied to every listed adapter. Platform-specific discovery metadata is intentionally thin and lives in the adapter layer. The generated Codex and Cursor skill paths are configured adapter locations; their client discovery behavior requires a version-pinned external smoke check before it is claimed as supported.
+
+Codex requires the user to trust project-local hooks before it runs `.codex/hooks.json`; that local trust state is not generated or committed by this repository.
 
 ### Package migration bridge
 
@@ -31,7 +33,7 @@ The transition package deliberately excludes generated root adapters because the
 
 Rules, procedural skills, references, eval fixtures, contract-loop analysis, and ordinary deterministic repository tools are portable.
 
-Hooks, tool permissions, local settings, credentials, MCP registration, slash-command discovery, confirmation UI, and automatic command execution are not portable contracts. Claude Code retains the repository `PostToolUse` contract-loop convenience hook. Codex and Cursor receive the same advisory contract-loop guidance but must not be described as running the Claude hook or its automatic commands.
+Hooks, tool permissions, local settings, credentials, MCP registration, slash-command discovery, confirmation UI, and automatic command execution are not portable contracts. Claude Code, Codex, and Cursor each have a platform-specific contract-loop convenience hook over the same portable classifier and reverse auto-sync runtime. Their hook payloads and stdout contracts differ, so each adapter must remain provider-specific even when it shares the same runtime.
 
 No adapter output owns `settings.local.json`, `CLAUDE.local.md`, worktree state, scheduled-task state, credentials, or arbitrary user-owned agent files.
 

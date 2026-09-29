@@ -16,6 +16,11 @@ const required = [
   'repo-agent-governance/managed-assets.json',
   'repo-agent-governance/scripts/governance.mjs',
   'repo-agent-governance/tools/contract-loop/core.mjs',
+  'repo-agent-governance/tools/contract-loop/hook-runtime.mjs',
+  'repo-agent-governance/adapters/cursor/hooks.json',
+  'repo-agent-governance/adapters/cursor/contract-loop-gate.mjs',
+  'repo-agent-governance/adapters/codex/hooks.json',
+  'repo-agent-governance/adapters/codex/contract-loop-gate.mjs',
 ];
 const forbidden = [
   '.cabloy-agent-governance-state.json',

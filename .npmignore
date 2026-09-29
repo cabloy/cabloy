@@ -108,6 +108,7 @@ AGENTS.md
 .claude/settings.json
 .agents/
 .cursor/
+.codex/
 
 **/.claude/scheduled_tasks.lock
 .cabloy-agent-governance-state.json

@@ -31,7 +31,14 @@ const GENERATED_HEADER =
   '<!-- Generated from repo-agent-governance/. Do not edit this adapter output directly. -->\n\n';
 const CURSOR_HEADER =
   '---\ndescription: Cabloy repository governance generated from repo-agent-governance.\nglobs: []\nalwaysApply: true\n---\n\n';
-const ALLOWED_TARGET_ROOTS = ['CLAUDE.md', 'AGENTS.md', '.claude/', '.agents/', '.cursor/'];
+const ALLOWED_TARGET_ROOTS = [
+  'CLAUDE.md',
+  'AGENTS.md',
+  '.claude/',
+  '.agents/',
+  '.cursor/',
+  '.codex/',
+];
 const FORBIDDEN_TARGET_SEGMENTS = [
   'settings.local.json',
   'worktrees',
@@ -163,7 +170,7 @@ function validateManifest() {
   );
   assertKeys(
     manifest,
-    ['schemaVersion', 'policy', 'skills', 'commands', 'claude'],
+    ['schemaVersion', 'policy', 'skills', 'commands', 'claude', 'cursor', 'codex'],
     'Governance manifest',
   );
   if (manifest.schemaVersion !== 1) throw new Error('Governance manifest must use schemaVersion 1');
@@ -203,6 +210,24 @@ function validateManifest() {
     ? claude.hooks
     : (() => {
         throw new Error('Claude hooks must be an array');
+      })();
+  const cursor = requireObject(manifest.cursor, 'Cursor manifest section');
+  assertKeys(cursor, ['hooksJson', 'hooks'], 'Cursor manifest section');
+  const cursorHooksJson = requireObject(cursor.hooksJson, 'Cursor hooks.json manifest section');
+  assertKeys(cursorHooksJson, ['source', 'target'], 'Cursor hooks.json manifest section');
+  const cursorHooks = Array.isArray(cursor.hooks)
+    ? cursor.hooks
+    : (() => {
+        throw new Error('Cursor hooks must be an array');
+      })();
+  const codex = requireObject(manifest.codex, 'Codex manifest section');
+  assertKeys(codex, ['hooksJson', 'hooks'], 'Codex manifest section');
+  const codexHooksJson = requireObject(codex.hooksJson, 'Codex hooks.json manifest section');
+  assertKeys(codexHooksJson, ['source', 'target'], 'Codex hooks.json manifest section');
+  const codexHooks = Array.isArray(codex.hooks)
+    ? codex.hooks
+    : (() => {
+        throw new Error('Codex hooks must be an array');
       })();
 
   const targets = new Set();
@@ -246,6 +271,24 @@ function validateManifest() {
     assertKeys(hook, ['source', 'target'], `Claude hook ${index}`);
     return { source: readCanonical(hook.source).source, target: claimTarget(hook.target) };
   });
+  const normalizedCursorHooksJson = {
+    source: readCanonical(cursorHooksJson.source).source,
+    target: claimTarget(cursorHooksJson.target),
+  };
+  const normalizedCursorHooks = cursorHooks.map((item, index) => {
+    const hook = requireObject(item, `Cursor hook ${index}`);
+    assertKeys(hook, ['source', 'target'], `Cursor hook ${index}`);
+    return { source: readCanonical(hook.source).source, target: claimTarget(hook.target) };
+  });
+  const normalizedCodexHooksJson = {
+    source: readCanonical(codexHooksJson.source).source,
+    target: claimTarget(codexHooksJson.target),
+  };
+  const normalizedCodexHooks = codexHooks.map((item, index) => {
+    const hook = requireObject(item, `Codex hook ${index}`);
+    assertKeys(hook, ['source', 'target'], `Codex hook ${index}`);
+    return { source: readCanonical(hook.source).source, target: claimTarget(hook.target) };
+  });
 
   return {
     manifest,
@@ -257,6 +300,8 @@ function validateManifest() {
     skills: { directory: skillsDirectory, path: skillsPath, targets: normalizedSkillTargets },
     commands,
     claude: { settings: normalizedSettings, hooks: normalizedHooks },
+    cursor: { hooksJson: normalizedCursorHooksJson, hooks: normalizedCursorHooks },
+    codex: { hooksJson: normalizedCodexHooksJson, hooks: normalizedCodexHooks },
   };
 }
 
@@ -331,6 +376,26 @@ function buildAssets() {
   for (const hook of config.claude.hooks) {
     add(hook.target, readCanonical(hook.source).content, hook.source, 'claude', 'runtime');
   }
+  add(
+    config.cursor.hooksJson.target,
+    readCanonical(config.cursor.hooksJson.source).content,
+    config.cursor.hooksJson.source,
+    'cursor',
+    'runtime',
+  );
+  for (const hook of config.cursor.hooks) {
+    add(hook.target, readCanonical(hook.source).content, hook.source, 'cursor', 'runtime');
+  }
+  add(
+    config.codex.hooksJson.target,
+    readCanonical(config.codex.hooksJson.source).content,
+    config.codex.hooksJson.source,
+    'codex',
+    'runtime',
+  );
+  for (const hook of config.codex.hooks) {
+    add(hook.target, readCanonical(hook.source).content, hook.source, 'codex', 'runtime');
+  }
 
   const targets = new Set();
   for (const asset of assets) {
@@ -358,6 +423,31 @@ function lockText(assets) {
   return `${JSON.stringify(lockFromAssets(assets), null, 2)}\n`;
 }
 
+function previousManagedAssets() {
+  if (!existsSync(LOCK_PATH)) return [];
+  try {
+    const lock = readJson(LOCK_PATH, 'managed governance lock');
+    if (lock?.schemaVersion !== 1 || !Array.isArray(lock.assets)) return [];
+    const targets = new Set();
+    return lock.assets.map(asset => {
+      if (
+        !asset ||
+        typeof asset !== 'object' ||
+        typeof asset.target !== 'string' ||
+        !/^[a-f0-9]{64}$/.test(asset.sha256)
+      ) {
+        throw new Error('invalid managed asset');
+      }
+      const target = assertAllowedTarget(asset.target);
+      if (targets.has(target)) throw new Error('duplicate managed asset');
+      targets.add(target);
+      return { target, sha256: asset.sha256 };
+    });
+  } catch {
+    return [];
+  }
+}
+
 function targetPath(target) {
   const path = resolve(ROOT_DIR, target);
   assertInside(ROOT_DIR, path, 'Managed target');
@@ -377,10 +467,19 @@ function writeAtomic(path, content) {
 
 export function render() {
   const assets = buildAssets();
+  const previousAssets = previousManagedAssets();
   for (const asset of assets) {
     const path = targetPath(asset.target);
     const existing = existsSync(path) ? readFileSync(path, 'utf8') : null;
     if (existing !== asset.content) writeAtomic(path, asset.content);
+  }
+  const activeTargets = new Set(assets.map(asset => asset.target));
+  for (const asset of previousAssets) {
+    if (activeTargets.has(asset.target)) continue;
+    const path = targetPath(asset.target);
+    if (existsSync(path) && sha256(readFileSync(path, 'utf8')) === asset.sha256) {
+      rmSync(path, { force: true });
+    }
   }
   const lock = lockText(assets);
   const existingLock = existsSync(LOCK_PATH) ? readFileSync(LOCK_PATH, 'utf8') : null;

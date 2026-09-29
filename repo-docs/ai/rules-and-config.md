@@ -21,10 +21,12 @@ npm run test:agent-governance
 The following are committed generated outputs, not parallel authored knowledge sources:
 
 - Claude Code: `CLAUDE.md`, `.claude/commands/`, `.claude/skills/`, `.claude/settings.json`, `.claude/hooks/`
-- Codex: `AGENTS.md`, `.agents/skills/`
-- Cursor: `.cursor/rules/cabloy-governance.mdc`, `.cursor/skills/`
+- Codex: `AGENTS.md`, `.agents/skills/`, `.codex/hooks.json`, `.codex/hooks/`
+- Cursor: `.cursor/rules/cabloy-governance.mdc`, `.cursor/skills/`, `.cursor/hooks.json`, `.cursor/hooks/`
 
-The Codex and Cursor skill paths are configured generated adapter locations; verify client discovery with a version-pinned external smoke check before presenting it as supported behavior. The adapter model shares rules and procedures, not platform runtime behavior. Claude Code's contract-loop hook is a Claude-specific convenience integration; Codex and Cursor receive advisory guidance but do not claim the same automatic after-edit action.
+The Codex and Cursor skill paths are configured generated adapter locations; verify client discovery with a version-pinned external smoke check before presenting it as supported behavior. The adapter model shares rules and procedures, not hook payload formats. Claude Code, Codex, and Cursor each register a platform-specific contract-loop convenience hook over the same portable runtime.
+
+Codex runs project-local `.codex/hooks.json` only after the user trusts that hook definition. Hook trust is local state and remains outside generated governance ownership.
 
 ## Local configuration and permissions
 

@@ -7,7 +7,7 @@ Use it whenever you add or revise:
 - edition-aware docs
 - `repo-agent-governance/` rules, commands, and skill bundles
 - generated Claude, Codex, or Cursor adapter outputs
-- platform-specific Claude commands, hooks, or settings when they are affected
+- platform-specific Claude, Codex, or Cursor commands, hooks, or settings when they are affected
 - AI workflow playbooks
 
 ## The baseline story that should stay consistent

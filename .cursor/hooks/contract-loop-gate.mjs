@@ -4,21 +4,25 @@ import { fileURLToPath } from 'node:url';
 
 import {
   evaluateEditedFile,
-  extractClaudeEditedFilePath,
-  formatClaudeHookOutput,
+  extractCursorEditedFilePath,
+  formatCursorHookOutput,
+  inferCursorHookEvent,
   readHookPayload,
 } from '../../repo-agent-governance/tools/contract-loop/hook-runtime.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
-function runClaudeHook(): number {
+function runCursorHook() {
   const payload = readHookPayload();
   if (!payload) return 0;
-  const evaluated = evaluateEditedFile(ROOT, extractClaudeEditedFilePath(payload));
+  const evaluated = evaluateEditedFile(ROOT, extractCursorEditedFilePath(payload));
   if (!evaluated) return 0;
-  // eslint-disable-next-line
-  console.log(JSON.stringify(formatClaudeHookOutput(evaluated.message)));
+  const output = formatCursorHookOutput(evaluated.message, inferCursorHookEvent(payload));
+  if (output) {
+    // eslint-disable-next-line
+    console.log(JSON.stringify(output));
+  }
   return 0;
 }
 
-process.exit(runClaudeHook());
+process.exit(runCursorHook());

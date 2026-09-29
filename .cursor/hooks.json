@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "hooks": {
+    "postToolUse": [
+      {
+        "command": "node .cursor/hooks/contract-loop-gate.mjs",
+        "matcher": "Write",
+        "timeout": 600
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": "node .cursor/hooks/contract-loop-gate.mjs",
+        "matcher": "Write",
+        "timeout": 600
+      }
+    ],
+    "afterTabFileEdit": [
+      {
+        "command": "node .cursor/hooks/contract-loop-gate.mjs",
+        "matcher": "TabWrite",
+        "timeout": 600
+      }
+    ]
+  }
+}

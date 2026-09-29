@@ -30,7 +30,12 @@ Do not keep debugging source-level contract or renderer changes until the local 
 ## Current safeguard behavior in this repo
 
 - there is no contract-loop pre-commit gate in the current repo workflow
-- the active safeguard lives in the Claude `PostToolUse` hook configured in `.claude/settings.json`
+- the active safeguards are platform-specific adapters over the same portable classifier and reverse auto-sync runtime in `repo-agent-governance/tools/contract-loop/`
+- Claude Code uses the `PostToolUse` hook in `.claude/settings.json`
+- Codex uses the `PostToolUse` hook in `.codex/hooks.json`; it matches `apply_patch` / `Edit` / `Write`, extracts edited paths from the standard `tool_input.command` patch, and returns model-visible context through the Codex hook contract
+- Cursor uses `postToolUse` and `afterFileEdit` for Agent `Write` operations plus `afterTabFileEdit` for Tab `TabWrite` operations in `.cursor/hooks.json`; Cursor payloads are not Claude hook payloads, so the Cursor adapter must not reuse `.claude/hooks/contract-loop-gate.ts`
+- `postToolUse` injects `additional_context` into the agent turn; `afterFileEdit` and `afterTabFileEdit` are side-effect only and still run the shared reverse auto-sync when the edited file matches
+- Codex handles every matching path in one `apply_patch` call and runs at most one high-confidence reverse auto-sync for that patch
 - for high-confidence reverse-chain source edits on the Zova side, the hook auto-runs `npm run build:zova:admin` and then `npm run deps:vona`
 - forward-chain detections remain reminder-only, so backend contract changes still require deliberate regeneration and verification
 - consumer-side reverse signals remain reminder-only, so do not assume every reverse-chain case auto-syncs itself

@@ -20,6 +20,7 @@ import {
   isCodeFile,
   resolveEdition,
 } from '../tools/contract-loop/core.mjs';
+import { extractCodexEditedFilePaths } from '../tools/contract-loop/hook-runtime.mjs';
 
 function createFixture() {
   const root = mkdtempSync(resolve(tmpdir(), 'cabloy-agent-governance-'));
@@ -47,6 +48,22 @@ function runGovernance(root, ...args) {
   return runNode(root, resolve(root, 'repo-agent-governance/scripts/governance.mjs'), ...args);
 }
 
+function runHook(root, executable, payload) {
+  const result = spawnSync(process.execPath, [executable], {
+    cwd: root,
+    encoding: 'utf8',
+    input: JSON.stringify(payload),
+    env: {
+      ...process.env,
+      CABLOY_GOVERNANCE_ROOT: root,
+    },
+  });
+  return {
+    status: result.status,
+    output: `${result.stdout}${result.stderr}`,
+  };
+}
+
 function readState(root) {
   return JSON.parse(readFileSync(resolve(root, '.cabloy-agent-governance-state.json'), 'utf8'));
 }
@@ -60,6 +77,13 @@ function removePolicyTarget(root, target) {
   const manifestPath = resolve(root, 'repo-agent-governance/manifest.json');
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
   manifest.policy.targets = manifest.policy.targets.filter(item => item.target !== target);
+  writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+}
+
+function setCursorHookTarget(root, target) {
+  const manifestPath = resolve(root, 'repo-agent-governance/manifest.json');
+  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+  manifest.cursor.hooks[0].target = target;
   writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
 }
 
@@ -215,6 +239,34 @@ test('governance adoption deletes only unchanged retired outputs', () => {
   });
 });
 
+test('governance rendering removes unchanged retired outputs', () => {
+  withFixture(root => {
+    const legacyTarget = '.cursor/hooks/contract-loop-gate.ts';
+    setCursorHookTarget(root, legacyTarget);
+    assert.equal(runGovernance(root, 'render').status, 0);
+    assert.ok(existsSync(resolve(root, legacyTarget)));
+
+    setCursorHookTarget(root, '.cursor/hooks/contract-loop-gate.mjs');
+    assert.equal(runGovernance(root, 'render').status, 0);
+    assert.equal(existsSync(resolve(root, legacyTarget)), false);
+    assert.ok(existsSync(resolve(root, '.cursor/hooks/contract-loop-gate.mjs')));
+  });
+});
+
+test('governance rendering preserves modified retired outputs', () => {
+  withFixture(root => {
+    const legacyTarget = '.cursor/hooks/contract-loop-gate.ts';
+    setCursorHookTarget(root, legacyTarget);
+    assert.equal(runGovernance(root, 'render').status, 0);
+    const legacyPath = resolve(root, legacyTarget);
+    writeFileSync(legacyPath, 'project-owned legacy hook\n');
+
+    setCursorHookTarget(root, '.cursor/hooks/contract-loop-gate.mjs');
+    assert.equal(runGovernance(root, 'render').status, 0);
+    assert.equal(readFileSync(legacyPath, 'utf8'), 'project-owned legacy hook\n');
+  });
+});
+
 test('governance adoption preserves modified retired outputs', () => {
   withFixture(root => {
     assert.equal(runGovernance(root, 'adopt', '--apply').status, 0);
@@ -292,4 +344,69 @@ test('contract-loop recognizes supported vendor and suite source paths', () => {
   );
   assert.equal(isCodeFile('/repo/vona/src/module/demo/src/service/demo.ts'), true);
   assert.equal(isCodeFile('/repo/repo-docs/ai/agent-governance.md'), false);
+});
+
+test('Codex contract-loop adapter evaluates apply_patch file paths', () => {
+  withFixture(root => {
+    const sourcePath = resolve(root, 'vona/src/module/demo/src/controller/demo.ts');
+    mkdirSync(dirname(sourcePath), { recursive: true });
+    writeFileSync(sourcePath, '@Api.field()\n');
+    assert.equal(runGovernance(root, 'render').status, 0);
+
+    const command = [
+      '*** Begin Patch',
+      '*** Update File: vona/src/module/demo/src/controller/demo.ts',
+      '@@',
+      '-@Api.field()',
+      '+@Api.field()',
+      '*** Update File: repo-docs/ai/agent-governance.md',
+      '@@',
+      '*** End Patch',
+    ].join('\n');
+    assert.deepEqual(extractCodexEditedFilePaths({ tool_input: { command } }), [
+      'vona/src/module/demo/src/controller/demo.ts',
+      'repo-docs/ai/agent-governance.md',
+    ]);
+
+    const result = runHook(root, resolve(root, '.codex/hooks/contract-loop-gate.mjs'), {
+      hook_event_name: 'PostToolUse',
+      tool_name: 'apply_patch',
+      tool_input: { command },
+    });
+    assert.equal(result.status, 0, result.output);
+    const output = JSON.parse(result.output);
+    assert.equal(output.hookSpecificOutput.hookEventName, 'PostToolUse');
+    assert.match(output.hookSpecificOutput.additionalContext, /Forward chain:/);
+  });
+});
+
+test('Cursor contract-loop adapter handles Agent and Tab edit events', () => {
+  withFixture(root => {
+    const sourcePath = resolve(root, 'vona/src/module/demo/src/controller/demo.ts');
+    mkdirSync(dirname(sourcePath), { recursive: true });
+    writeFileSync(sourcePath, '@Api.field()\n');
+    assert.equal(runGovernance(root, 'render').status, 0);
+
+    const hooks = JSON.parse(readFileSync(resolve(root, '.cursor/hooks.json'), 'utf8'));
+    assert.equal(hooks.hooks.postToolUse[0].matcher, 'Write');
+    assert.equal(hooks.hooks.afterFileEdit[0].matcher, 'Write');
+    assert.equal(hooks.hooks.afterTabFileEdit[0].matcher, 'TabWrite');
+
+    const script = resolve(root, '.cursor/hooks/contract-loop-gate.mjs');
+    for (const hookEventName of ['afterFileEdit', 'afterTabFileEdit']) {
+      const result = runHook(root, script, {
+        hook_event_name: hookEventName,
+        file_path: sourcePath,
+      });
+      assert.equal(result.status, 0, result.output);
+      assert.equal(result.output, '');
+    }
+
+    const result = runHook(root, script, {
+      hook_event_name: 'postToolUse',
+      tool_input: { file_path: sourcePath },
+    });
+    assert.equal(result.status, 0, result.output);
+    assert.match(JSON.parse(result.output).additional_context, /Forward chain:/);
+  });
 });

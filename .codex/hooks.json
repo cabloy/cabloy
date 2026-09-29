@@ -1,0 +1,18 @@
+{
+  "description": "Cabloy repository lifecycle hooks generated from repo-agent-governance.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "apply_patch|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$(git rev-parse --show-toplevel)/.codex/hooks/contract-loop-gate.mjs\"",
+            "timeout": 600,
+            "statusMessage": "Checking contract-loop gate"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -81,6 +81,9 @@ Generated adapter locations include:
 
 - policy adapters: `CLAUDE.md`, `AGENTS.md`, and `.cursor/rules/`
 - Claude-specific command adapter: `.claude/commands/`
+- Claude-specific hook adapter: `.claude/settings.json`, `.claude/hooks/`
+- Codex-specific hook adapter: `.codex/hooks.json`, `.codex/hooks/`
+- Cursor-specific hook adapter: `.cursor/hooks.json`, `.cursor/hooks/`
 
 Codex and Cursor adapter paths are configured output locations; verify active-client discovery externally before claiming that behavior is supported.
 
