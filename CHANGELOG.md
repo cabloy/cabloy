@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.193
+
+### Features
+
+- Add support for Cursor and Codex agents.
+- Update agent capabilities and integrations.
+
 ## 5.1.192
 
 ### Features
