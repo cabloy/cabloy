@@ -9,6 +9,8 @@ import type {
 import type { IDecoratorSsrMenuGroupOptions, ISsrMenuGroupRecord } from '../types/ssrMenuGroup.ts';
 import type { IDecoratorSsrSiteOptions } from '../types/ssrSite.ts';
 
+import { validateSsrMenuSite } from './ssrMenuSite.ts';
+
 export function checkSsrBinding<T>(expect: T, target: T | T[] | null | ''): boolean {
   if (target === undefined || target === null || target === '') return true;
   if (Array.isArray(target)) return target.some(item => item === expect);
@@ -20,6 +22,12 @@ export function resolveSsrMenuCatalog(
   ssrMenus: IOnionSlice<ISsrMenuRecord, keyof ISsrMenuRecord, unknown>[],
   ssrMenuGroups: IOnionSlice<ISsrMenuGroupRecord, keyof ISsrMenuGroupRecord, unknown>[] = [],
 ): ISsrMenuCatalog {
+  for (const ssrMenu of [...ssrMenus, ...ssrMenuGroups]) {
+    const options = ssrMenu.beanOptions.options as
+      | IDecoratorSsrMenuOptions<IDecoratorSsrSiteOptions>
+      | undefined;
+    validateSsrMenuSite(options?.site, ssrMenu.beanOptions.beanFullName || ssrMenu.name);
+  }
   const menus: ISsrMenuCatalog['menus'] = [];
   const groups: ISsrMenuCatalog['groups'] = [];
   for (const { ssrSiteName } of sites) {
@@ -87,6 +95,12 @@ export function resolveSsrMenuEligibility(
   ssrMenuName: string,
   ssrMenus: IOnionSlice<ISsrMenuRecord, keyof ISsrMenuRecord, unknown>[],
 ): ISsrMenuEligibility | undefined {
+  for (const ssrMenu of ssrMenus) {
+    const options = ssrMenu.beanOptions.options as
+      | IDecoratorSsrMenuOptions<IDecoratorSsrSiteOptions>
+      | undefined;
+    validateSsrMenuSite(options?.site, ssrMenu.beanOptions.beanFullName || ssrMenu.name);
+  }
   for (const ssrMenu of ssrMenus) {
     const options = ssrMenu.beanOptions.options as
       | IDecoratorSsrMenuOptions<IDecoratorSsrSiteOptions>

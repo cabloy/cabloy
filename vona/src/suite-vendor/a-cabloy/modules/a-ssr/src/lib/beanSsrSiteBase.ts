@@ -36,6 +36,7 @@ import { ServiceDevProxy } from '../service/devProxy.ts';
 import { ServiceSsrHandler } from '../service/ssrHandler.ts';
 import { SymbolCacheMenus } from './const.ts';
 import { checkSsrBinding } from './ssrMenuEligibility.ts';
+import { validateSsrMenuSite } from './ssrMenuSite.ts';
 import {
   projectPublicSsrMenuGroups,
   projectPublicSsrMenus,
@@ -360,6 +361,7 @@ export class BeanSsrSiteBase<
     for (const ssrMenu of ssrMenus) {
       const siteMenuOptions = ssrMenu.beanOptions
         .options as IDecoratorSsrMenuOptions<IDecoratorSsrSiteOptions>;
+      validateSsrMenuSite(siteMenuOptions?.site, ssrMenu.beanOptions.beanFullName || ssrMenu.name);
       if (!checkSsrBinding(siteOnionName, siteMenuOptions.site)) continue;
       if (!checkSsrBinding(locale, siteMenuOptions.locale)) continue;
       const menusFrom =

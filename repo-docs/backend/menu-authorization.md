@@ -18,6 +18,7 @@ An SSR menu item can declare `roles` metadata:
     link: 'presetResource',
     roles: ['systemAdmin'],
   },
+  site: 'basic-siteadmin:admin',
 })
 ```
 

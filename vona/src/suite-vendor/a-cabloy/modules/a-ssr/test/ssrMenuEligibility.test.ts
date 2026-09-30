@@ -10,9 +10,10 @@ import {
 function createMenus() {
   return [
     {
-      name: 'test:omitted',
+      name: 'test:shared',
       beanOptions: {
         options: {
+          site: ['test:admin', 'test:web'],
           item: { roles: [] },
           locale: ['en-us'],
         },
@@ -31,14 +32,16 @@ function createMenus() {
       },
     },
     {
-      name: 'test:malformed',
-      beanOptions: {},
+      name: 'test:unbound',
+      beanOptions: {
+        options: { site: [], item: { roles: [] } },
+      },
     },
   ] as any;
 }
 
 describe('ssrMenuEligibility.test.ts', () => {
-  it('matches unset, scalar, or array bindings', () => {
+  it('preserves optional locale matching and scalar or array bindings', () => {
     assert.equal(checkSsrBinding('test:admin', undefined), true);
     assert.equal(checkSsrBinding('test:admin', null), true);
     assert.equal(checkSsrBinding('test:admin', ''), true);
@@ -64,8 +67,8 @@ describe('ssrMenuEligibility.test.ts', () => {
     assert.deepEqual(catalog.menus, [
       {
         ssrSiteName: 'test:admin',
-        ssrMenuName: 'test:omitted',
-        onionName: 'test:omitted',
+        ssrMenuName: 'test:shared',
+        onionName: 'test:shared',
         roles: [],
       },
       {
@@ -82,8 +85,8 @@ describe('ssrMenuEligibility.test.ts', () => {
       },
       {
         ssrSiteName: 'test:web',
-        ssrMenuName: 'test:omitted',
-        onionName: 'test:omitted',
+        ssrMenuName: 'test:shared',
+        onionName: 'test:shared',
         roles: [],
       },
       {
@@ -103,16 +106,73 @@ describe('ssrMenuEligibility.test.ts', () => {
 
   it('resolves final leaves independently of locale', () => {
     const menus = createMenus();
-    assert.deepEqual(resolveSsrMenuEligibility('test:admin', 'test:omitted', menus), {
+    assert.deepEqual(resolveSsrMenuEligibility('test:admin', 'test:shared', menus), {
       ssrSiteName: 'test:admin',
-      ssrMenuName: 'test:omitted',
+      ssrMenuName: 'test:shared',
       rolesDefined: true,
     });
-    assert.deepEqual(resolveSsrMenuEligibility('test:web', 'test:omitted', menus), {
+    assert.deepEqual(resolveSsrMenuEligibility('test:web', 'test:shared', menus), {
       ssrSiteName: 'test:web',
-      ssrMenuName: 'test:omitted',
+      ssrMenuName: 'test:shared',
       rolesDefined: true,
     });
+  });
+
+  it('rejects invalid menu and group sites before catalog partitioning or eligibility lookup', () => {
+    const sites = [{ ssrSiteName: 'test:admin', title: 'Admin' }];
+    for (const site of [undefined, null, '', '  ', [''], ['test:admin', null]]) {
+      const invalid = [{ name: 'test:invalid', beanOptions: { options: { site } } }] as any;
+      assert.throws(() => resolveSsrMenuCatalog(sites, invalid), /site for test:invalid/);
+      assert.throws(() => resolveSsrMenuCatalog([], [], invalid), /site for test:invalid/);
+      assert.throws(
+        () =>
+          resolveSsrMenuEligibility('test:admin', 'test:shared', [...createMenus(), ...invalid]),
+        /site for test:invalid/,
+      );
+    }
+    const missing = [{ name: 'test:missingOptions', beanOptions: {} }] as any;
+    assert.throws(() => resolveSsrMenuCatalog(sites, missing), /site for test:missingOptions/);
+    assert.throws(
+      () => resolveSsrMenuEligibility('test:admin', 'test:missing', missing),
+      /site for test:missingOptions/,
+    );
+  });
+
+  it('partitions scalar and shared groups and accepts empty menu or group site arrays', () => {
+    const groups = [
+      { name: 'test:adminGroup', beanOptions: { options: { site: 'test:admin', item: {} } } },
+      {
+        name: 'test:sharedGroup',
+        beanOptions: { options: { site: ['test:admin', 'test:web'], item: {} } },
+      },
+      { name: 'test:unboundGroup', beanOptions: { options: { site: [], item: {} } } },
+    ] as any;
+    const catalog = resolveSsrMenuCatalog(
+      [
+        { ssrSiteName: 'test:admin', title: 'Admin' },
+        { ssrSiteName: 'test:web', title: 'Web' },
+        { ssrSiteName: 'test:future', title: 'Future' },
+      ],
+      createMenus(),
+      groups,
+    );
+    assert.deepEqual(
+      catalog.groups.map(group => [group.ssrSiteName, group.ssrMenuGroupName]),
+      [
+        ['test:admin', 'test:adminGroup'],
+        ['test:admin', 'test:sharedGroup'],
+        ['test:web', 'test:sharedGroup'],
+      ],
+    );
+    assert.equal(
+      catalog.menus.some(menu => menu.ssrMenuName === 'test:unbound'),
+      false,
+    );
+    assert.equal(
+      catalog.menus.some(menu => menu.ssrSiteName === 'test:future'),
+      false,
+    );
+    assert.equal(resolveSsrMenuEligibility('test:web', 'test:unbound', createMenus()), undefined);
   });
 
   it('distinguishes dynamic/static leaves from public leaves and exact keyed names', () => {
@@ -130,6 +190,6 @@ describe('ssrMenuEligibility.test.ts', () => {
     assert.equal(resolveSsrMenuEligibility('test:admin', 'test:keyed', menus), undefined);
     assert.equal(resolveSsrMenuEligibility('test:other', 'test:keyed#static', menus), undefined);
     assert.equal(resolveSsrMenuEligibility('test:admin', 'test:missing', menus), undefined);
-    assert.equal(resolveSsrMenuEligibility('test:admin', 'test:malformed', menus), undefined);
+    assert.equal(resolveSsrMenuEligibility('test:admin', 'test:unbound', menus), undefined);
   });
 });

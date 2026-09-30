@@ -57,9 +57,16 @@ In the current repo implementation, the out-of-the-box menu controller is public
 
 ## SSR Site targeting
 
-`@SsrMenu(...)` and `@SsrMenuGroup(...)` use `site` to select the SSR Site onion(s) that receive the declaration. It is a navigation-composition filter, not a site-admission, role-visibility, or backend-authorization decision.
+`@SsrMenu(...)` and `@SsrMenuGroup(...)` require an explicit `site` to select the SSR Site onion(s) that receive the declaration. It is a navigation-composition filter, not a site-admission, role-visibility, or backend-authorization decision.
 
-Use `site` for navigation owned by one SSR Site or deliberately exclusive to a known subset of sites:
+- Use a site string or an array of site strings to target known SSR Sites.
+- Omission, `undefined`, `null`, and empty or whitespace-only strings are invalid, including blank entries in an array.
+- `site: []` is valid and explicitly means no sites receive the declaration.
+- Sharing requires an explicit array of intended sites; there is no wildcard or implicit all-sites scope.
+- Menu and group declarations are independently scoped. A menu does not inherit its group's `site`; declare the intended sites on both.
+- `locale` remains optional: omitting it leaves the declaration unrestricted by locale.
+
+Use a single site string for navigation owned by one SSR Site:
 
 ```typescript
 @SsrMenu({
@@ -69,11 +76,11 @@ Use `site` for navigation owned by one SSR Site or deliberately exclusive to a k
     roles: ['systemAdmin'],
   },
   // This Basic Admin-owned entry intentionally targets one SSR Site.
-  site: ['basic-siteadmin:admin'],
+  site: 'basic-siteadmin:admin',
 })
 ```
 
-For a shared module declaration intended for every compatible SSR Admin site, omit `site`:
+For a shared module declaration, list every intended compatible SSR Admin site explicitly:
 
 ```typescript
 @SsrMenu({
@@ -82,11 +89,15 @@ For a shared module declaration intended for every compatible SSR Admin site, om
     link: 'presetResource',
     roles: ['systemAdmin'],
   },
-  // No `site`: the shared declaration is available to compatible SSR Admin sites.
+  // Share only with these explicitly selected SSR Sites.
+  site: ['basic-siteadmin:admin', 'commerce-siteadmin:commerceAdmin'],
 })
 ```
 
-Do not bind a shared Admin menu or menu group to the current/default Admin site merely to keep a new independent site's navigation narrow. Isolate an independent site through its enabled module composition and site-owned menus/groups. When a shared capability needs genuinely different navigation contracts per site, use an explicit, approved site-specific composition or owner instead of narrowing the shared declaration by default.
+Choose the site list from the intended navigation contract, not merely the current/default Admin site. Isolate an independent site through its enabled module composition and site-owned menus/groups. When a shared capability needs genuinely different navigation contracts per site, use an explicit, approved site-specific composition or owner.
+
+> [!WARNING]
+> This is a breaking change for declarations that previously omitted `site` to reach all sites. Migrate each menu and group to an explicit site string or array, or use `site: []` when it should reach no sites. Add future shared sites to the array deliberately; omission is no longer a sharing mechanism.
 
 `site` is distinct from a role's `siteIds`, menu `roles` or role-menu associations, and Passport/RBAC authorization:
 
@@ -140,6 +151,6 @@ When editing SSR menu behavior, ask:
 2. is there a default fallback menu that should remain available?
 3. does the menu contract belong in backend API design, frontend route design, or both?
 4. does the active edition affect the menu structure or public path assumptions?
-5. is this declaration site-owned or deliberately site-exclusive (specify `site`), or shared across compatible SSR Admin sites (omit `site`)?
+5. does every menu and group declare its own explicit `site` string or array, with all intended shared sites listed and `[]` used only when no sites should receive it?
 
 That helps AI keep menu behavior aligned with Cabloy’s shared SSR architecture.

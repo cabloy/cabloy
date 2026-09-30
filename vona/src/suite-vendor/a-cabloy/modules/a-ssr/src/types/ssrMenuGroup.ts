@@ -17,7 +17,7 @@ export interface IDecoratorSsrMenuGroupOptions<
   SsrSiteOptions extends IDecoratorSsrSiteOptions,
 > extends IOnionOptionsEnable {
   item?: ISsrMenuGroup<SsrSiteOptions['icons']>;
-  site?: keyof ISsrSiteRecord | (keyof ISsrSiteRecord)[];
+  site: keyof ISsrSiteRecord | (keyof ISsrSiteRecord)[];
   locale?: keyof ILocaleRecord | (keyof ILocaleRecord)[];
 }
 

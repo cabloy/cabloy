@@ -219,6 +219,7 @@ The Student SSR menu supplies that context:
       },
     },
   },
+  site: ['basic-siteadmin:admin'],
 })
 export class SsrMenuStudent extends BeanBase {}
 ```

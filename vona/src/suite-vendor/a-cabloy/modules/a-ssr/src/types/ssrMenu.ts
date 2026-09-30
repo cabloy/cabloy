@@ -96,7 +96,7 @@ export interface IDecoratorSsrMenuOptions<
 > extends IOnionOptionsEnable {
   item?: ISsrMenuItem<SsrSiteOptions['pages'], SsrSiteOptions['icons']>;
   items?: Record<string, ISsrMenuItem<SsrSiteOptions['pages'], SsrSiteOptions['icons']>>;
-  site?: keyof ISsrSiteRecord | (keyof ISsrSiteRecord)[];
+  site: keyof ISsrSiteRecord | (keyof ISsrSiteRecord)[];
   locale?: keyof ILocaleRecord | (keyof ILocaleRecord)[];
 }
 
