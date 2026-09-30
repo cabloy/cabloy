@@ -1,5 +1,19 @@
 # Changelog
 
+## 5.1.194
+
+### Bug Fixes
+
+- Resolve lint errors in governance contract-loop hooks.
+
+### Improvements
+
+- Update controller-boundary tests.
+
+### Breaking Changes
+
+- Require explicit menu site bindings for SSR.
+
 ## 5.1.193
 
 ### Features
