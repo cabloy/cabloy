@@ -21,7 +21,7 @@ export default defineConfig({
     : {
         command: 'node repo-e2e/scripts/startE2eVona.ts',
         cwd: E2E_ROOT_DIR,
-        url: `${baseURL}/`,
+        url: `${baseURL}/health/ready`,
         timeout: 180_000,
         reuseExistingServer: false,
         stdout: 'pipe',

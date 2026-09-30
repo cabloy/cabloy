@@ -2,13 +2,17 @@ import type { ChildProcess } from 'node:child_process';
 
 import { spawn } from 'node:child_process';
 
-import { E2E_ROOT_DIR } from './e2e.ts';
+import { E2E_LOCAL_BASE_URL, E2E_ROOT_DIR } from './e2e.ts';
 
 const child: ChildProcess = spawn('npm', ['run', 'dev:one'], {
   cwd: E2E_ROOT_DIR,
   detached: process.platform !== 'win32',
   stdio: 'inherit',
-  env: process.env,
+  env: {
+    ...process.env,
+    SERVER_SERVE_PROTOCOL: 'http',
+    SERVER_SERVE_HOST: E2E_LOCAL_BASE_URL.replace(/^https?:\/\//, ''),
+  },
 });
 
 const gracefulShutdownTimeout = 7000;
