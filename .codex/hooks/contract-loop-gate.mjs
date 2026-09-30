@@ -17,7 +17,7 @@ function runCodexHook() {
   const evaluated = evaluateCodexEditedFiles(ROOT, extractCodexEditedFiles(payload), payload.cwd);
   if (!evaluated.length) return 0;
   const message = evaluated.map(item => item.message).join('\n\n');
-  // eslint-disable-next-line
+  // eslint-disable-next-line no-console
   console.log(JSON.stringify(formatCodexHookOutput(message)));
   return 0;
 }

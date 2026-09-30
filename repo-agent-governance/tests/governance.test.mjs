@@ -367,6 +367,38 @@ test('contract-loop recognizes supported vendor and suite source paths', () => {
   assert.equal(isCodeFile('/repo/repo-docs/ai/agent-governance.md'), false);
 });
 
+test('Codex patch headers preserve operations, moves, and paths with whitespace', () => {
+  const command = [
+    '*** Begin Patch',
+    '*** Add File:\t vona/src/module/demo/src/dto/new item.ts  ',
+    '*** Update File: vona/src/module/demo/src/service/old.ts',
+    '*** Move to:\t vona/src/module/demo/src/controller/moved item.ts \t',
+    '@@',
+    '+*** Delete File: not-a-header.ts',
+    '*** Delete File: vona/src/module/demo/src/dto/deleted.ts',
+    '*** End Patch',
+  ].join('\r\n');
+  assert.deepEqual(extractCodexEditedFiles({ tool_input: { command } }), [
+    { operation: 'add', filePath: 'vona/src/module/demo/src/dto/new item.ts' },
+    { operation: 'update', filePath: 'vona/src/module/demo/src/controller/moved item.ts' },
+    { operation: 'delete', filePath: 'vona/src/module/demo/src/dto/deleted.ts' },
+  ]);
+});
+
+test('Codex blank file headers do not consume subsequent patch lines', () => {
+  const command = [
+    '*** Add File:',
+    `*** Delete File:${' '.repeat(100_000)}`,
+    '*** Update File:\t ',
+    '*** Add File: vona/src/module/demo/src/dto/valid.ts',
+  ].join('\n');
+  assert.deepEqual(extractCodexEditedFiles({ tool_input: { command } }), [
+    { operation: 'add', filePath: 'vona/src/module/demo/src/dto/valid.ts' },
+  ]);
+  assert.deepEqual(extractCodexEditedFiles({}), []);
+  assert.deepEqual(extractCodexEditedFiles({ tool_input: { command: null } }), []);
+});
+
 test('Codex contract-loop adapter evaluates operation-aware apply_patch paths', () => {
   withFixture(root => {
     const sourcePath = resolve(root, 'vona/src/module/demo/src/controller/demo.ts');

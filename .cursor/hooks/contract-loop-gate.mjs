@@ -19,7 +19,7 @@ function runCursorHook() {
   if (!evaluated) return 0;
   const output = formatCursorHookOutput(evaluated.message, inferCursorHookEvent(payload));
   if (output) {
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-console
     console.log(JSON.stringify(output));
   }
   return 0;

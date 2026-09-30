@@ -176,15 +176,16 @@ export function extractCodexEditedFiles(payload) {
   if (typeof command !== 'string') return [];
   const entries = [];
   let pendingUpdate = null;
-  const headerPattern =
-    /^\*\*\* (Add|Update|Delete) File:\s*(.+?)\s*$|^\*\*\* Move to:\s*(.+?)\s*$/gm;
+  const headerPattern = /^\*\*\* (Add|Update|Delete) File:(.+)$|^\*\*\* Move to:(.+)$/;
 
   const flushUpdate = () => {
     if (pendingUpdate) entries.push(pendingUpdate);
     pendingUpdate = null;
   };
 
-  for (const match of command.matchAll(headerPattern)) {
+  for (const line of command.split(/\r?\n/)) {
+    const match = headerPattern.exec(line);
+    if (!match) continue;
     const [, verb, sourcePath, destinationPath] = match;
     if (destinationPath !== undefined) {
       if (pendingUpdate) pendingUpdate.filePath = destinationPath.trim();

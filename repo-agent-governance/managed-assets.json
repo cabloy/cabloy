@@ -592,7 +592,7 @@
     {
       "adapter": "codex",
       "category": "runtime",
-      "sha256": "3f3fcc1824f18bcdc2040d65932a47cb74b477ad21670dae957de61540af0154",
+      "sha256": "7d7bc4472cd7fdfa2a34193117a771445b3b2ac6fddb553c64050f7ae9cf01cc",
       "source": "adapters/codex/contract-loop-gate.mjs",
       "target": ".codex/hooks/contract-loop-gate.mjs"
     },
@@ -606,7 +606,7 @@
     {
       "adapter": "cursor",
       "category": "runtime",
-      "sha256": "da224fb581fde615273af8db4e2bfca513233a83e69a0803442dfec86bbd6ba6",
+      "sha256": "14ec4e6aaf57cd8cdc21b42b8ff865810d79a82f0927a4445b756e41c0e2438a",
       "source": "adapters/cursor/contract-loop-gate.mjs",
       "target": ".cursor/hooks/contract-loop-gate.mjs"
     },
