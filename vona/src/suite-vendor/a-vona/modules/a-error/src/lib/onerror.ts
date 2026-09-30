@@ -50,6 +50,15 @@ export function onerror(app: VonaApplication, options?: OnerrorOptions) {
       return;
     }
 
+    // A disconnected request can become unreadable before the body parser observes its abort.
+    if (
+      this.req?.aborted &&
+      !this.writable &&
+      ['request.aborted', 'stream.not.readable'].includes(err.type)
+    ) {
+      return;
+    }
+
     // ignore all padding request stream
     if (this.req) {
       sendToWormhole(this.req);
