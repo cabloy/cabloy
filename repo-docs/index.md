@@ -4,7 +4,7 @@ layout: home
 hero:
   name: 'Cabloy'
   text: 'Node.js fullstack framework for AI vibe coding'
-  tagline: One fullstack system for AI vibe coding—bidirectional type sync, CLI-first workflows, and Traceable Spec Delivery from product intent to verifiable evidence.
+  tagline: Vona and Zova stay connected through bidirectional type sync; AI Spec-Driven Development guides work from confirmed specs to verifiable delivery.
   actions:
     - theme: brand
       text: Get Started
@@ -20,65 +20,43 @@ hero:
       link: /ai/ai-spec-driven-development
 
 features:
-  - title: One fullstack system
-    details: Build backend and frontend together instead of assembling separate stacks.
   - title: Bidirectional type sync
-    details: Keep backend contracts and frontend metadata aligned through a two-way contract loop.
+    details: Generate Zova SDKs from Vona OpenAPI contracts and feed Zova metadata back to backend tooling.
   - title: CLI-first workflows
-    details: Use explicit commands for scaffolding, generation, refactors, and verification.
-  - title: Docs and skills
-    details: Give people and AI agents reusable, source-grounded guidance for the current repository.
+    details: Scaffold, regenerate, refactor, and verify through Vona and Zova commands.
   - title: AI Spec-Driven Development
-    details: Connect confirmed product intent to contracts, bounded delivery, acceptance procedures, and verifiable evidence.
-  - title: Vona + Zova
-    details: Use aligned backend and frontend layers for code sharing and cross-stack consistency.
-  - title: Modular delivery
-    details: Organize capabilities as suites and modules, then deliver SSR, SPA, Web, and Admin applications with shared conventions.
-  - title: Semantic presentation
-    details: Translate confirmed audience, task, scene, and DTO contracts into schema-driven UI without changing security or ownership authority.
+    details: Turn confirmed product intent into bounded work, acceptance procedures, and verifiable evidence.
+  - title: Suites and modules
+    details: Organize capabilities for SSR, SPA, Web, and Admin applications with shared conventions.
 ---
 
-# Cabloy Documentation
+## Choose a reading path
 
-Cabloy is a Node.js fullstack framework for AI vibe coding, with AI Spec-Driven Development for traceable, evidence-backed delivery. It brings backend and frontend work into one system, with bidirectional type sync, CLI-first workflows, and source-grounded docs and skills for people and AI agents.
+### Start a project
 
-[AI Spec-Driven Development](/ai/ai-spec-driven-development) adds Cabloy's disciplined delivery path: **Traceable Spec Delivery** connects confirmed product intent to contracts, bounded work, acceptance procedures, and verifiable evidence. Start with the [Contract Loop Playbook](/fullstack/contract-loop-playbook) to understand bidirectional type sync, then use the [Fullstack CLI](/fullstack/cli) and [AI Development](/ai/introduction) guides to follow the current repository. Cabloy coordinates Vona and Zova as its backend and frontend layers, while Cabloy Basic and Cabloy Start are related, complete edition baselines built on that shared architecture. See [Editions Overview](/editions/overview) for the relationship and deliberate edition differences.
+1. [Choose an edition](/editions/overview#choosing-an-edition)
+2. [Fullstack Quickstart](/fullstack/quickstart)
+3. [Fullstack Quick Start Tutorials](/fullstack/tutorials-overview)
 
-## What you can do here
+### Develop across Vona and Zova
 
-- **Get started quickly** with the fullstack quickstart and core Cabloy concepts
-- **Learn the shared fullstack architecture** across Cabloy, Vona, and Zova
-- **Explore backend and frontend workflows** without losing the cross-stack picture
-- **Understand Cabloy’s performance philosophy and runtime stability story** with [Framework Performance](/fullstack/framework-performance)
-- **See how Cabloy Basic and Cabloy Start differ by edition** when UI assumptions, flavors, modules, SSR sites, or AI workflow guidance matter
-- **Follow AI Spec-Driven Development** from confirmed product intent to evidence-backed verification
-- **Use source-grounded AI vibe coding guidance** for prompting, workflow selection, and verification
-
-## First reading path
-
-### For getting started
-
-1. [Fullstack Quickstart](/fullstack/quickstart)
-2. [Fullstack Quick Start Tutorials](/fullstack/tutorials-overview)
-3. [Cabloy Editions](/editions/overview#choosing-an-edition)
-4. [Fullstack Introduction](/fullstack/introduction)
-
-### For contributors and AI vibe coding workflows
+Use the contract loop when generated contracts or metadata cross the Vona-Zova boundary.
 
 1. [Fullstack Introduction](/fullstack/introduction)
 2. [Fullstack CLI](/fullstack/cli)
-3. [VS Code Extensions](/fullstack/vscode-extensions)
-4. [AI Development Introduction](/ai/introduction)
-5. [AI Spec-Driven Development](/ai/ai-spec-driven-development)
-6. [Reference Introduction](/reference/introduction)
-7. [Editions Overview](/editions/overview)
+3. [Contract Loop Playbook](/fullstack/contract-loop-playbook)
 
-### For performance-oriented reading
+### Deliver from confirmed specs
 
-1. [Fullstack Introduction](/fullstack/introduction)
-2. [Framework Performance](/fullstack/framework-performance)
-3. [Cache Guide](/backend/cache-guide)
-4. [Vona + Zova Integration](/fullstack/vona-zova-integration)
+Use AI Spec-Driven Development to connect product intent, bounded work, and acceptance evidence.
+
+1. [AI Spec-Driven Development](/ai/ai-spec-driven-development)
+2. [AI Development Introduction](/ai/introduction)
+
+### Explore performance
+
+1. [Framework Performance](/fullstack/framework-performance)
+2. [Cache Guide](/backend/cache-guide)
 
 ## Documentation scope labels
 
