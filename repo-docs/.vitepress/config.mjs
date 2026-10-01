@@ -69,6 +69,7 @@ const fullstackGroups = [
     text: 'Fullstack / Getting Started',
     items: [
       { text: 'Introduction', link: '/fullstack/introduction' },
+      { text: 'Development History', link: '/fullstack/development-history' },
       { text: 'Quickstart', link: '/fullstack/quickstart' },
       { text: 'Suites and Modules', link: '/fullstack/suites-and-modules' },
     ],

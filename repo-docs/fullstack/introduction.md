@@ -41,6 +41,7 @@ For exact versions, inspect `vona/package.json` and `zova/package.json` in the a
 
 ## Continue reading
 
+- **Explore the framework's origins:** [CabloyJS Development History](/fullstack/development-history).
 - **Start a project:** [choose an edition](/editions/overview#choosing-an-edition), then follow the [Fullstack Quickstart](/fullstack/quickstart).
 - **Build a feature:** use the [Fullstack Tutorials](/fullstack/tutorials-overview) and [Fullstack CLI](/fullstack/cli).
 - **Work with AI agents:** start with the [AI Development Introduction](/ai/introduction) for repository guidance and skills.
