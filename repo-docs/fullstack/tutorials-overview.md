@@ -84,9 +84,9 @@ See [Contract Loop Playbook](/fullstack/contract-loop-playbook) and [Frontend Me
 
 This phase teaches the **forward chain** of the contract loop: backend contract truth changes first, generated frontend consumers are refreshed second, and frontend follow-up stays thin and resource-owner-aware.
 
-### Phase 4: One field story across multiple contract surfaces
+### Phase 4: One field-oriented contract model across four uses
 
-- [Tutorial 6: One Contract Surface, Four Uses](/fullstack/tutorial-6-one-contract-four-uses)
+- [Tutorial 6: One Contract Model, Four Uses](/fullstack/tutorial-6-one-contract-four-uses)
 
 ## The standard tutorial structure
 

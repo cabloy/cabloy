@@ -187,7 +187,7 @@ If this field needs specialized controls instead of the default Renderer, it can
 
 That does not mean each field automatically grows a complete UI, nor that every presentation decision belongs in the backend. It means the field’s business meaning, data contract, and permitted exposure do not have to be copied into backend DTOs, frontend request types, form rules, table columns, and response post-processing—and then manually kept aligned.
 
-In this **forward contract chain**, backend Controllers, DTOs, Entities, and validation rules are the source of truth. Vona generates OpenAPI; Zova then generates or consumes SDK/Schema contract material. When a backend contract changes, the recommended path is to propagate that truth forward rather than hand-edit multiple frontend copies. [Backend OpenAPI to Frontend SDK](https://cabloy.com/fullstack/openapi-to-sdk) and [One Contract Surface, Four Uses](https://cabloy.com/fullstack/tutorial-6-one-contract-four-uses) describe the boundary of that chain.
+In this **forward contract chain**, backend Controllers, DTOs, Entities, and validation rules are the source of truth. Vona generates OpenAPI; Zova then generates or consumes SDK/Schema contract material. When a backend contract changes, the recommended path is to propagate that truth forward rather than hand-edit multiple frontend copies. [Backend OpenAPI to Frontend SDK](https://cabloy.com/fullstack/openapi-to-sdk) and [One Contract Model, Four Uses](https://cabloy.com/fullstack/tutorial-6-one-contract-four-uses) describe the boundary of that chain.
 
 ## Coordinate five: routes choose a UI scene; Resource identities choose business context
 

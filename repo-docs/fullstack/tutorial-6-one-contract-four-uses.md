@@ -1,8 +1,8 @@
-# Tutorial 6: One Contract Surface, Four Uses
+# Tutorial 6: One Contract Model, Four Uses
 
 <Badge type="info" text="Basic" />
 
-In this tutorial, one prompt lets AI close the series by showing Cabloy’s core fullstack idea: one field-oriented contract surface can drive several behaviors across backend and frontend.
+In this tutorial, one prompt lets AI close the series by showing how Cabloy's field-oriented contract model supports several behaviors across backend and frontend.
 
 This capstone sits on top of both the forward chain and the reverse chain rather than replacing either one.
 
@@ -14,7 +14,7 @@ This time the main teaching field is `mobile`, while `level` stays as the suppor
 
 ## Goal
 
-By the end of this tutorial, you will understand how one business field thread can participate in:
+By the end of this tutorial, you will understand how the field-oriented contract model supports:
 
 1. validation
 2. OpenAPI generation
@@ -44,13 +44,16 @@ Cabloy tries to reduce that duplication through a field-oriented contract and me
 
 ## CLI commands to inspect/use
 
-This tutorial is mainly a source-inspection and verification capstone.
+This tutorial is mainly a source-inspection and verification capstone. After updating the backend field and DTO contracts, start Vona in a separate terminal and keep it running so OpenAPI generation reads the current Swagger output:
 
-Useful commands include:
+```bash
+npm run dev
+```
+
+Then regenerate the frontend contract using the module configuration established in Tutorial 5:
 
 ```bash
 npm run zova :openapi:generate demo-student
-npm run dev
 ```
 
 Usage notes:
@@ -94,9 +97,7 @@ The supporting render example remains:
 
 ## What those files mean in the business thread
 
-This tutorial works best when you read `mobile` as one continuous contract thread.
-
-That is why `mobile` is the main capstone field, while `level` remains the supporting rendering field.
+Read `mobile` as the validation, OpenAPI, and serialization example, and `level` as the table and form rendering example. Together they show four uses of the same field-oriented contract model.
 
 ### Use 1: Validation
 
@@ -140,12 +141,7 @@ That keeps the masking rule close to the field contract ecosystem instead of sca
 
 ## Verification
 
-1. make sure the local dev workflow is running:
-
-```bash
-npm run dev
-```
-
+1. confirm that Vona, started before OpenAPI generation, is still running
 2. open `http://localhost:7102/admin/`
 3. enter the relevant **Student** page
 4. verify that `level` still shows the expected render-driven behavior

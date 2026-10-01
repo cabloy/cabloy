@@ -98,7 +98,7 @@ const fullstackGroups = [
         link: '/fullstack/tutorial-5-backend-contract-sharing',
       },
       {
-        text: 'Tutorial 6: One Contract Surface, Four Uses',
+        text: 'Tutorial 6: One Contract Model, Four Uses',
         link: '/fullstack/tutorial-6-one-contract-four-uses',
       },
     ],

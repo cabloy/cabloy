@@ -358,7 +358,7 @@ Use the tutorial series as examples of the two chains:
 - [Tutorial 3: Frontend Metadata Sharing](/fullstack/tutorial-3-frontend-metadata-sharing) — reverse chain, built-in metadata branch
 - [Tutorial 4: Custom Form/Table Renderers for Level](/fullstack/tutorial-4-custom-level-renderers) — reverse chain, custom resource handoff branch
 - [Tutorial 5: Backend Contract Sharing](/fullstack/tutorial-5-backend-contract-sharing) — forward chain, backend-emitted contract branch
-- [Tutorial 6: One Contract Surface, Four Uses](/fullstack/tutorial-6-one-contract-four-uses) — one field story spanning multiple contract surfaces
+- [Tutorial 6: One Contract Model, Four Uses](/fullstack/tutorial-6-one-contract-four-uses) — two field examples spanning validation, OpenAPI, rendering, and serialization
 
 ## Related docs
 

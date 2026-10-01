@@ -47,6 +47,17 @@ Inspect the relevant command surfaces first:
 
 ```bash
 npm run zova :openapi
+```
+
+After updating the backend controller and DTOs, start Vona in a separate terminal and keep it running so the generator can read the current Swagger output:
+
+```bash
+npm run dev
+```
+
+Then configure the module's OpenAPI ownership if needed and regenerate its frontend consumers:
+
+```bash
 npm run zova :openapi:config demo-student
 npm run zova :openapi:generate demo-student
 ```
@@ -118,12 +129,7 @@ That is the practical forward chain: backend controller and DTO truth flows into
 
 ## Verification
 
-1. make sure the local dev workflow is running:
-
-```bash
-npm run dev
-```
-
+1. confirm that Vona, started before OpenAPI generation, is still running
 2. open `http://localhost:7102/admin/`
 3. enter the **Student** list page
 4. trigger the **Summary** row action and verify that it uses the regenerated frontend API and returns the expected Student summary data
@@ -148,4 +154,4 @@ npm run dev
 
 ## Next step
 
-Continue to [Tutorial 6: One Contract Surface, Four Uses](/fullstack/tutorial-6-one-contract-four-uses).
+Continue to [Tutorial 6: One Contract Model, Four Uses](/fullstack/tutorial-6-one-contract-four-uses).
