@@ -24,7 +24,13 @@ Learn more about [Vona + Zova Integration](https://cabloy.com/fullstack/vona-zov
 
 ## Get Started
 
-See the [Fullstack Quickstart](https://cabloy.com/fullstack/quickstart).
+Create a new Cabloy Basic project:
+
+```bash
+npm create cabloy
+```
+
+For Cabloy Start, clone the [Cabloy Start repository](https://github.com/cabloy/cabloy-start) and run `npm run init` from its root. See the [Fullstack Quickstart](https://cabloy.com/fullstack/quickstart) for prerequisites and development commands.
 
 ## AI Spec-Driven Development
 
@@ -70,16 +76,6 @@ For fuller guidance on choosing an edition and working in an existing checkout, 
 Included demonstration suites give AI vibe coding agents high-quality, project-native code examples. They improve development efficiency while reducing token use. For production deployments, set `PROJECT_DISABLED_SUITES` to a comma-separated list of unneeded suite names to disable them; see the [Environment and Config Guide](https://cabloy.com/frontend/environment-config-guide#built-in-env-variables).
 
 > “Not included” means that the suite is not part of the default edition baseline. It does not limit what can be built with Cabloy.
-
-## Highlights
-
-- **One fullstack system** — build backend and frontend together instead of assembling separate stacks
-- **Bidirectional type sync** — use the contract loop to keep backend contracts and frontend metadata aligned in both directions
-- **CLI-first workflows** — use explicit commands for scaffolding, generation, refactors, and verification
-- **Docs and skills** — give people and AI agents reusable, source-grounded guidance for the current repository
-- **AI Spec-Driven Development** — use Traceable Spec Delivery to connect product intent, contracts, bounded work, acceptance procedures, and verifiable evidence
-- **Vona + Zova** — use aligned backend and frontend layers for code sharing and cross-stack consistency
-- **Modular delivery** — organize capabilities as suites and modules, then deliver SSR, SPA, Web, and Admin applications with shared conventions
 
 ## Technology Stack
 
