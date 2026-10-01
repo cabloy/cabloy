@@ -14,18 +14,13 @@ Cabloy Basic and Cabloy Start are complete editions built on this shared archite
 
 ## Fullstack Principles
 
-Cabloy’s fullstack model is built around two core principles:
+Cabloy connects Vona and Zova in two ways:
 
-1. **Frontend build output participates directly in backend SSR**
-   - Zova owns the frontend application source
-   - the generated frontend bundle and SSR-related artifacts are consumed by the Vona-side SSR flow
-   - backend rendering and frontend hydration stay on one coordinated delivery path
+1. **Integrated SSR.** Zova builds the frontend and SSR artifacts. In Vona integrated SSR, Vona consumes those artifacts to render the page, and Zova hydrates it in the browser.
 
-2. **Type information flows in both directions**
-   - **Backend -> Frontend**: Vona emits Swagger/OpenAPI contracts that Zova can use to generate SDKs and related schema-aware helpers
-   - **Frontend -> Backend**: Zova generates structural metadata and typing surfaces such as routes, components, and icons that can improve backend-side tooling and type hints
+2. **Bidirectional contract flow.** Vona's OpenAPI contracts generate Zova SDKs and schema-aware helpers. Zova's generated metadata and types for routes, components, and icons feed back into Vona's tooling and type hints.
 
-For the complete explanation, see [Fullstack Introduction](https://cabloy.com/fullstack/introduction), [Vona + Zova Integration](https://cabloy.com/fullstack/vona-zova-integration), [Backend OpenAPI to Frontend SDK](https://cabloy.com/fullstack/openapi-to-sdk), and [Frontend Metadata Back to Backend](https://cabloy.com/fullstack/frontend-metadata-to-backend).
+Learn more about [Vona + Zova Integration](https://cabloy.com/fullstack/vona-zova-integration) and the [Contract Loop](https://cabloy.com/fullstack/contract-loop-playbook).
 
 ## Get Started
 
