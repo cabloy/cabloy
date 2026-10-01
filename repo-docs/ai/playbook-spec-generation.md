@@ -31,7 +31,7 @@ Use a different path when the task is already an approved bounded WBS increment,
 ## What happens after you invoke it
 
 1. **AI checks the current repository.** It detects the active Cabloy edition, reads the relevant repository guidance and existing suite records, and distinguishes observed source facts from your confirmed decisions, proposals, and unresolved items.
-2. **AI identifies the planning scope.** It distinguishes a new suite, an update to an existing specification set, and a deliberately smaller planning request. Cabloy Basic and Cabloy Start share the planning model, but their runtime details can differ, so the active source remains authoritative for edition-specific facts.
+2. **AI identifies the planning scope.** It chooses a complete new baseline, incremental maintenance of an existing set, or explicitly approved lightweight planning. An existing directory is normally the update destination, not a conflict or reset request. Basic and Start share the model, but runtime details come from the active edition. Both edition markers mean stop; if neither marker is present, inspect the owning package/structure and ask before edition-sensitive planning.
 3. **AI asks focused questions.** You provide only the decisions that are needed to make the plan coherent. AI can recommend a boundary, but it identifies a recommendation as a proposal rather than treating it as confirmed input.
 4. **AI presents a confirmation summary.** The summary states what will be created or changed, what remains unresolved, and which decisions or WBS branches remain gated.
 5. **You approve or revise the summary.** No specification file is generated, replaced, or treated as approved merely because a question was asked or left unanswered. A confirmation to generate records also does not accept a durable ADR; a decision remains proposed until it is explicitly accepted.
@@ -48,7 +48,19 @@ The initial business description can be short. During the conversation, AI may a
 - delivery, release, and verification expectations
 - unresolved durable decisions, the WBS branches they block, justified optional records, and the initial delivery status
 
-This is a design confirmation, not a request to invent implementation details prematurely. When a fact must come from the active repository, AI verifies it rather than carrying assumptions across editions.
+AI asks only for missing decisions. If the existing strategy still governs, it does not repeat a Web/Admin four-way choice; a single unresolved audience gets a focused question. Unresolved naming takes a naming-only detour through `cabloy-domain-planning`, then returns here without scaffolding.
+
+## Existing facts and new designs
+
+Targets have three distinct states:
+
+- **Observed existing**: source/configuration was inspected and cited. Shared-site integration requires an observed owner.
+- **Proposed new**: a deliberately new design, not a claim that source already exists.
+- **Explicitly approved new**: the concrete tuple passed framework-constraint and collision checks, you explicitly approved the design, and its governing ADR is `Accepted`.
+
+For a new independent SSR site, validate site ID, public path, flavor, configuration ownership, site module/registration, copied bundle, generated REST package, and paired SSR/REST commands together. The target need not exist before approval: a bounded execution task may create an explicitly approved new tuple after its own dossier approval. Unknown or unchecked values remain `TODO(confirm)`; they block only dependent work. A new wrapper is a **planned addition**, not a current command to run. See [Independent SSR Site and Flavor Setup](/fullstack/ssr-site-and-flavor-setup).
+
+Keep approval domains separate: approval to generate records does not accept a durable ADR or authorize source execution. Site-strategy selection approves only that input; design/ADR acceptance and bounded execution approval remain explicit.
 
 ## What gets generated or updated
 
@@ -77,7 +89,7 @@ repo-specs/<suite>/
 | `test-plan.md`             | Acceptance procedures, expected proof, and release gates                                         |
 | `progress.md` and charts   | Derived delivery status and planning views, not upstream authority                               |
 
-AI adds presentation contracts, staged rollout records, runbooks, extra ADRs, or an `evidence/` directory only when the confirmed scope justifies them. It does not create empty evidence records to make testing or delivery appear to have started.
+Charts are generated only after complete supported README/WBS/ATP/progress inputs exist. A deliberately lightweight set agrees on selected records and omissions instead of forcing a complete baseline or charts. AI adds presentation contracts, rollout records, runbooks, extra ADRs, or evidence only when justified; it never creates empty evidence to imply execution.
 
 For an existing suite, the workflow updates the owning upstream authority before dependent records. It preserves existing identifiers, accepted decisions, history, and evidence conventions rather than silently overwriting them or creating a parallel planning set.
 
@@ -104,6 +116,31 @@ PRD → SRS → WBS → ATP → Evidence
 A product or technical change belongs in its PRD, SRS, or accepted ADR before its WBS, acceptance, progress, evidence, and chart implications are updated. A progress entry or chart cannot introduce a requirement, resolve a contract conflict, or accept an ADR.
 
 Planning records and derived charts do not establish `implementation-complete` or `verified`. `verified` requires the applicable acceptance procedure and retained, redacted observed evidence. A generated plan, planned command, scaffold, screenshot, or unrelated check is not automatically sufficient proof.
+
+## Check planning without claiming implementation
+
+Use three independent gates:
+
+1. **Planning authority audit** checks formal definitions, exact references, declared PRD → SRS → WBS → ATP associations, and local links:
+
+   ```bash
+   npm run spec:check -- <suite>
+   # Only for explicitly limited planning scope:
+   npm run spec:check -- <suite> --lightweight
+   ```
+
+   Lightweight mode reports omitted owners/chain coverage; it does not permit dangling references. If progress is present, its WBS owner is still needed.
+2. **Chart model/freshness** checks supported WBS/dependency/ATP/progress consistency and generated-view freshness, only with complete supported inputs:
+
+   ```bash
+   npm run spec:charts -- <suite>
+   npm run spec:charts:check -- <suite>
+   ```
+
+   Regenerate after WBS, test-plan, progress, or README title/language changes. With incomplete lightweight/legacy inputs, report the precise chart gap; do not invent business definitions or status to make a generator pass.
+3. **Human approval/evidence review** retains ADR acceptance, controlling TODOs, bounded execution approval, and observed ATP proof as separate requirements. Neither static check approves a design or establishes `verified`.
+
+New specs use atomic `- **PRD-...**: <body>` / `- **SRS-...**: <body>` declarations, phase/task WBS headings with explicit Dependencies, Traceability, Tasks, and Acceptance checks, and `### ATP-...: <title>` scenarios under `## Acceptance Scenario Catalogue` with Setup, Procedure, Expected result, Minimum proof, and Traceability. Resolve progress columns by `WBS ID` and `Status` headers rather than fixed positions. Compatible legacy catalogue tables remain supported; matrices and evidence are not definitions. Report legacy gaps without silently rewriting business meaning. See [Repo Scripts](/reference/repo-scripts) for the active deterministic command contracts.
 
 ## What happens next
 

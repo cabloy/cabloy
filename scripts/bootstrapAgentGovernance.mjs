@@ -9,6 +9,7 @@ const GOVERNANCE_SCRIPT_NAMES = [
   'test:spec-charts',
   'spec:charts',
   'spec:charts:check',
+  'spec:check',
   'agent:governance:render',
   'agent:governance:check',
   'agent:governance:adopt',

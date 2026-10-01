@@ -27,7 +27,9 @@ Before reporting a generated baseline or an authority update complete, build a t
 - Report missing owners, duplicate definitions, and orphaned material definitions separately; correct the authoritative records before completion.
 - Validate the canonical PRD -> SRS -> WBS -> ATP chain by exact defined IDs, while allowing a many-to-many relationship where the matrices make it explicit.
 - This static audit covers generated planning records only. Exclude `evidence/`: evidence is created after observed execution and cannot establish or repair planning authority.
-- Generated implementation charts must contain only formal WBS/ATP identifiers and current progress statuses; run `npm run spec:charts:check -- <suite>` after generation to verify freshness and reconciliation.
+- Run `npm run spec:check -- <suite>` for the planning authority audit; add `--lightweight` only for explicitly agreed limited scope. Derive chain associations from explicit declaration-body Traceability, not matrix co-occurrence.
+- `canonical-spec-input.md` specifies new declarations and compatible legacy catalogue roles. Matrix/evidence mentions cannot establish definitions.
+- With complete supported chart inputs, run `npm run spec:charts:check -- <suite>` after generation to verify model consistency and freshness. This is a separate gate, not the PRD/SRS audit or evidence review.
 
 ## Canonical chain
 
@@ -57,10 +59,11 @@ When a requirement or durable boundary changes:
 4. update ATP procedures and expected proof;
 5. update progress and evidence pointers;
 6. reassess prior evidence and statuses whose assumptions changed;
-7. regenerate `implementation-gantt.svg` and `implementation-burndown.svg` with `npm run spec:charts -- <suite>`;
-8. run `npm run spec:charts:check -- <suite>` and reconcile generated WBS/ATP/status references.
+7. run the applicable full/lightweight planning audit and review legacy gaps without inventing business definitions;
+8. with complete supported chart inputs, regenerate both charts and run `npm run spec:charts:check -- <suite>`; otherwise report the precise chart-input gap;
+9. review human approval, controlling TODOs, and retained proof separately.
 
-Downstream records summarize or operationalize authority; they do not silently override it. The SVGs are derived views only: they cannot authorize scope, dependencies, dates, evidence, or status. Their language follows the suite `README.md`.
+Downstream records do not silently override authority. Charts cannot authorize scope, dependencies, dates, evidence, or status. Their language follows `README.md`; title/language edits also require regeneration when chart inputs are complete.
 
 ## Status semantics
 
@@ -80,10 +83,11 @@ For a newly created plan, initialize delivery rows as `not-started`, `deferred`,
 
 Keep the status domain explicit:
 
-- **Observed current-source facts** are repository facts that have been inspected and cited.
-- **Confirmed inputs** are values explicitly supplied or confirmed by the user.
-- **Proposed targets** and durable boundaries remain proposed while their governing ADR is `Proposed`.
-- **Accepted durable decisions** require explicit confirmation and an `Accepted` governing ADR.
+- **Observed existing** targets are inspected and cited repository facts.
+- **Confirmed inputs** are explicitly supplied/confirmed values; they are not automatically accepted durable designs.
+- **Proposed new** targets remain proposals while design checks, explicit approval, or ADR acceptance are missing.
+- **Explicitly approved new** targets require framework/collision validation, explicit concrete design approval, and an `Accepted` governing ADR. Their source may be created later under a separately approved bounded execution dossier; absence of that future source is not a design blocker.
+- Generation approval, ADR acceptance, and execution approval are separate domains. Keep any partially approved target state and controlling TODOs explicit.
 
 A README may summarize observed facts and confirmed inputs, but it must not label a proposed target baseline, topology, scope boundary, or durable decision as `Confirmed` or `Accepted` while its governing ADR remains `Proposed`. Use neutral wording such as “Product and Technical Baseline,” and label individual entries by their actual state. The ADR remains authoritative; a README summary never upgrades its status.
 

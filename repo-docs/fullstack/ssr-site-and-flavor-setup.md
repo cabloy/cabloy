@@ -42,7 +42,9 @@ A new site is an ownership decision, not a convenient alias for an existing Admi
 
 ## Define the identity tuple
 
-Choose these values before editing source. Keep their spelling and ownership consistent:
+Choose these values before editing source. Classify the tuple as **observed existing**, **proposed new**, or **explicitly approved new**. A new tuple need not already exist: validate framework constraints and collisions against active source, obtain explicit approval of the concrete design and an `Accepted` governing ADR, then create it through a separately approved bounded execution task. Strategy selection or approval to generate planning records alone is insufficient. Keep unchecked values and controlling `TODO(confirm)` gates explicit.
+
+Label a new root wrapper as a **planned addition**, not a currently runnable command. Its execution task must create the durable manifest entry and inspect the resulting SSR/REST pair before running it. Keep tuple spelling and ownership consistent:
 
 | Identity               | Role                                                                                                            |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------- |

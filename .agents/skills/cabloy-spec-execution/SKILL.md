@@ -31,9 +31,10 @@ From the active repository root, inspect:
 
 Interpret the markers as follows:
 
-- `__CABLOY_BASIC__` present: use Basic source, scripts, flavors, UI, and SSR facts only when observed;
-- `__CABLOY_START__` present: resolve Start-specific scripts, flavor/site names, paths, UI, and SSR behavior from the active Start repository;
-- neither present: stop before edition-specific execution and ask the user to confirm the repository context.
+- exactly `__CABLOY_BASIC__`: use observed Basic source, scripts, flavors, UI, and SSR facts;
+- exactly `__CABLOY_START__`: resolve those facts from the active Start repository;
+- both markers: stop; the checkout is invalid or ambiguous;
+- neither: inspect the owning package/structure and ask before edition-specific execution.
 
 A PostToolUse hook or an automatic build is convenience assistance, not evidence that the task is synchronized or verified. The deterministic chart commands are `npm run spec:charts -- <suite>` and `npm run spec:charts:check -- <suite>`; they validate derived-view freshness, not implementation or ATP completion.
 
@@ -66,7 +67,9 @@ Read the suite records in this order:
 4. `test-plan.md` for linked `ATP-*` procedures, fixture/cleanup rules, evidence requirements, and release gates;
 5. `progress.md` for current derived state, blockers, waivers, prior evidence, superseded proof, and next action;
 6. linked evidence, phase indexes, presentation contracts, rollout records, or provider runbooks when referenced;
-7. `implementation-gantt.svg` and `implementation-burndown.svg` as derived views; check their freshness rather than treating them as authority.
+7. applicable implementation charts as derived views: check freshness only with complete supported README/WBS/ATP/progress inputs; otherwise report the legacy/lightweight input gap without inventing business definitions.
+
+Keep planning authority audit (`npm run spec:check -- <suite>`, with `--lightweight` only for agreed limited scope), chart model/freshness, and human approval/evidence as three independent gates. Static passes do not clear controlling TODOs, accept ADRs, or prove ATP execution.
 
 Do not trust the first status statement found in a historical record. Reconcile revision, chronology, supersession, and the authoritative current progress row before deciding readiness.
 
@@ -83,7 +86,9 @@ Before implementation, present a concise dossier containing:
 - records permitted to change (`progress.md`, evidence/phase index, derived implementation charts, and only other records whose established convention requires it);
 - remaining blockers, `TODO(confirm)` decisions, unsafe actions intentionally excluded, and one next action.
 
-Keep observed repository facts separate from target contracts. Require explicit user confirmation of this dossier before making source changes, running meaningful verification, or writing evidence/status updates. Do not treat silence as approval.
+Classify targets as observed existing, proposed new, or explicitly approved new. An explicitly approved new site/flavor tuple may be created before target source exists when framework constraints and collisions were checked, the concrete design was explicitly approved, and its governing ADR is `Accepted`. Cite the design, planned paths/manifests, and creation prerequisites. A new wrapper remains a planned addition until created and observed; do not run it prematurely. Shared integration still needs an observed owner. Proposed/unchecked values and controlling TODOs remain gated.
+
+Require explicit dossier approval before source changes, meaningful verification, or evidence/status updates. Generation approval, design/ADR acceptance, and this execution approval are separate; silence is not approval.
 
 ## Step 5: Apply readiness gates
 
@@ -115,7 +120,7 @@ Keep the specialist’s CLI-first and follow-up rules. Never hand-edit generated
 
 ## Step 7: Verify narrowly, then expand as required
 
-Start with the narrowest meaningful check for the selected task, then follow the linked ATP and release-gate requirements. Use only commands observed in the active repository and approved by the dossier.
+Start with the narrowest meaningful check, then follow linked ATP/release gates. Run only commands observed in the active repository and approved by the dossier. An approved task may first add a planned wrapper to its durable manifest; inspect the resulting command and paired outputs before running it. Do not substitute an existing Basic wrapper for a new/Start tuple.
 
 For contract-sensitive work:
 
@@ -129,7 +134,7 @@ A planned command, successful generation, code reading, manual walkthrough, scre
 
 ## Step 8: Record evidence and derived status
 
-Record actual observed proof according to `references/status-and-evidence.md`. Prefer dedicated phase/ATP evidence records when the suite convention supports them; otherwise preserve the suite’s established inline test-plan convention. Update evidence first, then the derived progress register, and regenerate/check both implementation charts last. Use `npm run spec:charts -- <suite>` followed by `npm run spec:charts:check -- <suite>`; chart output remains derived and cannot repair an authority conflict.
+Record proof under `references/status-and-evidence.md`, preserving the established evidence convention. Update evidence, then progress, then applicable charts. With complete supported inputs, run `npm run spec:charts -- <suite>` and `npm run spec:charts:check -- <suite>`; README title/language changes also require regeneration. Otherwise report chart-input omissions and route needed authority repair to generation; do not invent definitions or force a full baseline. Charts cannot repair an authority conflict.
 
 Set status accurately:
 
@@ -150,7 +155,7 @@ Report:
 4. resulting status and the precise reason for it;
 5. blockers, decisions, or evidence still outstanding;
 6. one next proof/action only;
-7. refreshed `implementation-gantt.svg` and `implementation-burndown.svg`, README-derived chart language, and the chart check result.
+7. separate authority-audit, chart-model/freshness, and human approval/evidence results; applicable refreshed charts and README language, or the precise incomplete-input omission.
 
 Do not automatically modify the next WBS item or claim release closure from feature-level verification.
 

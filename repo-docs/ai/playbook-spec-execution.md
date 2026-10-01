@@ -33,7 +33,7 @@ Use [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation) instea
 
 ## Establish the execution boundary first
 
-Start by inspecting the active repository, edition marker, current revision, and working-tree state. Then build an execution dossier for the selected increment.
+Inspect the active root, current revision, working tree, and edition markers. Exactly one marker selects Basic or Start; both mean stop as invalid/ambiguous. If neither marker is present, inspect the owning package/structure and ask before edition-sensitive execution. Then build the selected increment's dossier.
 
 The dossier identifies:
 
@@ -46,7 +46,11 @@ The dossier identifies:
 - approved verification procedures, expected redacted evidence, and allowed record updates
 - blockers, unresolved `TODO(confirm)` items, excluded unsafe operations, and one next action
 
-Require explicit approval of the dossier before source changes, meaningful verification, evidence/status updates, or specialist execution. Do not reserve a task by marking it `in-progress` before approved work actually starts.
+Require explicit dossier approval before source changes, meaningful verification, evidence/status updates, or specialist execution. Generation approval, concrete design/ADR acceptance, and execution approval are separate. Do not reserve a task by marking it `in-progress` before approved work starts.
+
+Classify targets as **observed existing**, **proposed new**, or **explicitly approved new**, as in [spec generation](/ai/playbook-spec-generation#existing-facts-and-new-designs). An approved new site/flavor tuple may be created before its future source exists if framework constraints and collisions were checked, you explicitly approved the concrete design, and its governing ADR is `Accepted`. Cite accepted design authority and planned paths/manifests in the dossier. Shared integration still requires an observed owner. Controlling TODOs, unaccepted ADRs, and blocked gates remain blockers; absence of future source alone is not one.
+
+A new wrapper is a planned addition: create it within approved scope, inspect its durable manifest and paired SSR/REST outputs, then run it. Do not treat the proposed command as already runnable.
 
 ## Read authority before implementation
 
@@ -58,7 +62,9 @@ Read the suite records in this order:
 4. linked ATP procedures and release gates in `test-plan.md`
 5. `progress.md` for derived status, blockers, waivers, evidence pointers, and next proof
 6. linked evidence, runbooks, presentation records, or rollout records when they apply
-7. `implementation-gantt.svg` and `implementation-burndown.svg` as derived views to check for freshness, not authority
+7. applicable implementation charts, checking freshness only with complete supported inputs; report incomplete lightweight/legacy inputs rather than forcing new business declarations
+
+Keep planning authority audit (`npm run spec:check -- <suite>`, with `--lightweight` only for agreed limited scope), chart model/freshness, and human approval/evidence as three separate gates. Compatible catalogue tables can define legacy ATPs in their owning role; matrices and evidence cannot. A static pass does not clear a controlling TODO, accept an ADR, or prove ATP execution.
 
 When records conflict, return to [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation) before implementation. Do not resolve an authority contradiction through an execution note, a chart edit, or a source workaround.
 
@@ -111,7 +117,7 @@ A successful build, generation command, hook, manual walkthrough, screenshot, or
 
 ## Refresh derived charts last
 
-After evidence and progress are accurate, refresh the two derived views when the suite's authoritative Markdown follows the [chart input contract](/reference/repo-scripts#chart-input-contract). Refresh again when the suite README title or language changes:
+After evidence and progress are accurate, refresh both derived views only when complete supported README/WBS/ATP/progress inputs follow the [chart input contract](/reference/repo-scripts#chart-input-contract). Refresh again when README title/language changes. If legacy/lightweight inputs are incomplete, report the precise omission and route necessary authority repair through planning; never invent business definitions to force chart generation. Find progress rows by `WBS ID` and `Status` headers, not fixed column positions.
 
 ```bash
 npm run spec:charts -- <suite>

@@ -1,0 +1,114 @@
+{
+  "purpose": "Synthetic conversation facts only. Read active repository normally; this file cannot establish source, collision results, runnable commands, or actual ATP evidence.",
+  "cases": [
+    {
+      "id": 1,
+      "facts": [
+        "Naming undecided; no write approval."
+      ]
+    },
+    {
+      "id": 2,
+      "facts": [
+        "Requested identity a-training; payments/certificates deferred.",
+        "No design/ADR/execution approval supplied."
+      ]
+    },
+    {
+      "id": 3,
+      "facts": [
+        "Start runtime names must still be read from active Start source.",
+        "Provider credentials and real operations are excluded."
+      ]
+    },
+    {
+      "id": 4,
+      "facts": [
+        "No ATP run or retained artifact exists."
+      ]
+    },
+    {
+      "id": 5,
+      "facts": [
+        "Requested merchant scope changes current first-release boundary."
+      ]
+    },
+    {
+      "id": 6,
+      "facts": [
+        "Matrix-only IDs intentionally exercise missing-definition failure."
+      ]
+    },
+    {
+      "id": 7,
+      "facts": [
+        "Tenancy remains unresolved; ADR is Proposed."
+      ]
+    },
+    {
+      "id": 8,
+      "facts": [
+        "Generation approval only; provider ADR acceptance withheld.",
+        "ATP-PAY-WEBHOOK-01 has not been declared."
+      ]
+    },
+    {
+      "id": 9,
+      "facts": [
+        "README language requested: Chinese.",
+        "No implementation evidence."
+      ]
+    },
+    {
+      "id": 10,
+      "facts": [
+        "Changed WBS/ATP/progress inputs require freshness review."
+      ]
+    },
+    {
+      "id": 11,
+      "facts": [
+        "Both audience strategies unresolved."
+      ]
+    },
+    {
+      "id": 12,
+      "facts": [
+        "Mixed strategy selected; independent tuple not specified or approved."
+      ]
+    },
+    {
+      "id": 13,
+      "facts": [
+        "Site strategy deferred; backend planning still wanted."
+      ]
+    },
+    {
+      "id": 14,
+      "facts": [
+        "One audience: Web. Candidate values in prompt are proposed.",
+        "Constraint/collision results must come from active inspection.",
+        "Approvals arrive as separate follow-up turns."
+      ]
+    },
+    {
+      "id": 15,
+      "facts": [
+        "Incremental delta only; no destructive replacement approval."
+      ]
+    },
+    {
+      "id": 16,
+      "facts": [
+        "Explicit lightweight tutorial scope: README and PRD only.",
+        "No downstream exact references or progress record requested."
+      ]
+    },
+    {
+      "id": 17,
+      "facts": [
+        "Caller is spec generation; detour is naming-only."
+      ]
+    }
+  ]
+}

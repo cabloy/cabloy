@@ -11,6 +11,13 @@ This directory records the product, technical, delivery, and acceptance baseline
 5. [Delivery Progress](./progress.md) records derived implementation status, evidence, blockers, and the next proof; it does not redefine requirements or contracts.
 6. [ADR 0001: Establish Account Settings Boundaries](./decisions/0001-account-settings-boundaries.md) records the persistent domain and security boundaries for this capability.
 
+## Derived Implementation Views
+
+- [Implementation Gantt](./implementation-gantt.svg)
+- [Implementation Burndown](./implementation-burndown.svg)
+
+These deterministic views derive from the WBS, ATP catalogue, and progress register. They do not establish new scope, acceptance evidence, or execution authorization.
+
 ## Confirmed Product Baseline
 
 | Concern                    | Confirmed baseline                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |

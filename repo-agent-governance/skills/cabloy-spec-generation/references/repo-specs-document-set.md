@@ -37,7 +37,9 @@ The directory is repository-native, suite-local, and maintainer-facing. It is no
 | `decisions/*.md`              | Durable suite-local scope, architecture, security, ownership, migration, or integration decisions.                                                         |
 | `runbooks/*.md`               | Operational procedures subordinate to the relevant SRS, ADR, WBS, and test plan.                                                                           |
 
-When records disagree, update the authoritative record first, then update downstream summaries, mappings, and derived status. After any change to `pdp-wbs.md`, `test-plan.md`, or `progress.md`, run `npm run spec:charts -- <suite>` followed by `npm run spec:charts:check -- <suite>`.
+When records disagree, update authority first, then downstream mappings and derived status. Use `canonical-spec-input.md` for new declaration syntax and the three separate quality gates. Full baseline and complete incremental sets use `npm run spec:check -- <suite>`; explicitly lightweight sets use `--lightweight` and state omitted owners/chain coverage. An existing directory is an incremental destination, not an automatic conflict or reset request.
+
+Generate/check charts only with complete supported README/WBS/ATP/progress inputs. Regenerate after `pdp-wbs.md`, `test-plan.md`, `progress.md`, or README title/language changes. An incomplete lightweight/legacy set reports missing chart inputs rather than inventing business definitions to make the generator run.
 
 The implementation charts are generated records, not authorities. The Gantt reads formal WBS phases/tasks/dependencies and progress status, with ATP labels only when they resolve in `test-plan.md`; absent authoritative dates or estimates must be shown as relative/illustrative order. The burndown reads active/deferred scope and verified status; without immutable dated snapshots it must be a scope-count reference rather than a calendar trend or forecast. Neither chart may add scope, dependencies, evidence, or completion claims. Both SVGs use the README-derived language consistently, including visible labels, accessibility text, and metadata.
 
@@ -109,7 +111,7 @@ Use identifiers such as `SRS-<DOMAIN>-*`. Define the technical facts needed to i
 - generated API consumers and forward/reverse contract-loop obligations;
 - frontend model/resource ownership, audience-specific contracts, route names/params, SSR privacy, and hydration behavior when applicable.
 
-For each user-facing audience, the SRS owns the shared-versus-independent site topology, its relation to the domain/persistence boundary, and the audience-specific API/DTO, server-scope, state/page/route, and SSR contracts. List shared targets and exact independent-site identifiers only when observed and cited. Keep unobserved site IDs, public paths, bundles, flavors, environment/configuration files, `SsrSite` registrations, output locations, and command pairs as `TODO(confirm from active source)`. An independent site does not establish a separate tenant, identity, authorization, persistence, or business-rule authority.
+For each audience, SRS owns topology and audience-specific API/DTO, scope, state/page/route, and SSR contracts. Apply the observed-existing/proposed-new/explicitly-approved-new semantics in `repo-aware-discovery.md`. Shared targets require a cited existing owner. A deliberately new independent tuple may be designed before source exists: validate framework constraints and collisions, obtain explicit design approval and an `Accepted` governing ADR, then permit creation only through bounded execution approval. Unknown/unchecked values stay `TODO(confirm)`; a planned new wrapper is not a current command. Independent composition does not create separate tenant, identity, authorization, persistence, or business-rule authority.
 
 Mark observed repository facts separately from confirmed inputs and proposed target contracts. Every exact SRS ID named in PRD/WBS/test-plan traceability must have one explicit SRS contract definition here; a matrix mention, wildcard, or range is not a definition. Never pretend an unverified path, operation, flavor, or module exists.
 
@@ -127,7 +129,7 @@ Use:
 8. `## Completion and Evidence Rules`;
 9. `## Related Records`.
 
-For new long-lived suite baselines, both `implementation-gantt.svg` and `implementation-burndown.svg` are mandatory generated records. They must be regenerated after source changes with `npm run spec:charts -- <suite>` and checked with `npm run spec:charts:check -- <suite>`.
+Complete new long-lived baselines include both derived charts once their supported inputs are complete. Follow the conditional chart branch and freshness commands in `canonical-spec-input.md`; neither charts nor audit results are implementation proof.
 
 Every WBS entry should state:
 
@@ -169,7 +171,7 @@ Every evidence record should retain, at minimum:
 - redacted log, response, screenshot, CI job, or artifact location;
 - waiver owner, reason, and expiry when a temporary exception exists.
 
-A command listed in a new test plan is a prospective procedure, not a result. For independent sites, define SSR/REST/build/browser proof only with source-confirmed site/flavor/command facts; for shared sites, define composition/integration and shared-site proof against the observed owner. Unresolved identifiers remain planned confirmation gates, never successful verification claims.
+A listed command is prospective, not a result. Independent-site proof may target an explicitly approved new tuple and planned wrapper, with wrapper creation/manifest observation as a prerequisite to running it. Proposed/unchecked designs retain their gates. Shared-site proof uses the observed owner. Neither prospective procedures nor source reading establish successful verification.
 
 ## Progress template contract
 

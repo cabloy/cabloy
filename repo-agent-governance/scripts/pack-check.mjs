@@ -17,6 +17,18 @@ const required = [
   'repo-agent-governance/scripts/governance.mjs',
   'repo-agent-governance/tools/contract-loop/core.mjs',
   'repo-agent-governance/tools/contract-loop/hook-runtime.mjs',
+  'repo-agent-governance/tools/spec-audit/audit.mjs',
+  'repo-agent-governance/tools/spec-charts/spec-parser.mjs',
+  'repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs',
+  'repo-agent-governance/skills/cabloy-spec-generation/SKILL.md',
+  'repo-agent-governance/skills/cabloy-spec-generation/references/canonical-spec-input.md',
+  'repo-agent-governance/skills/cabloy-spec-generation/evals/evals.json',
+  'repo-agent-governance/skills/cabloy-spec-generation/evals/protocol.md',
+  'repo-agent-governance/skills/cabloy-spec-generation/evals/files/scenarios.json',
+  'repo-agent-governance/skills/cabloy-spec-execution/SKILL.md',
+  'repo-agent-governance/skills/cabloy-spec-generation/references/repo-aware-discovery.md',
+  'repo-agent-governance/skills/cabloy-spec-generation/references/repo-specs-document-set.md',
+  'repo-agent-governance/skills/cabloy-spec-generation/references/traceability-and-status-rules.md',
   'repo-agent-governance/adapters/cursor/hooks.json',
   'repo-agent-governance/adapters/cursor/contract-loop-gate.mjs',
   'repo-agent-governance/adapters/codex/hooks.json',
@@ -41,6 +53,11 @@ for (const path of managedAdapters) {
 for (const path of forbidden) {
   if (files.has(path))
     throw new Error(`npm package must not contain local governance state: ${path}`);
+}
+for (const path of files) {
+  if (path.startsWith('repo-specs/') || path.startsWith('repo-docs-internal/')) {
+    throw new Error(`npm package must not contain project planning or internal records: ${path}`);
+  }
 }
 // eslint-disable-next-line no-console
 console.log(

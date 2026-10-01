@@ -1,10 +1,10 @@
 # Repository-Aware Discovery
 
-Use this reference before putting repository-specific paths or commands into a suite planning record.
+Inspect active source before recording edition-specific facts. New design does not need to exist already, but it must not be described as observed source.
 
 ## Read-only discovery
 
-Run from the active repository root when needed:
+From the active root, inspect:
 
 ```bash
 git rev-parse --show-toplevel
@@ -15,87 +15,85 @@ npm run vona
 npm run zova
 ```
 
-Inspect the root `package.json` before documenting exact future commands. Read the active edition marker first:
+Read root `package.json` and relevant CLI entrypoints before documenting commands.
 
-- only `__CABLOY_BASIC__` present means Cabloy Basic;
-- only `__CABLOY_START__` present means Cabloy Start;
-- both markers mean the checkout is invalid or ambiguous and must not receive edition-specific assumptions;
-- neither marker means the edition is unresolved and must not receive edition-specific assumptions.
+- Exactly Basic marker: Basic source and runtime facts.
+- Exactly Start marker: inspect Start's own scripts, UI, sites, flavors, and generated paths.
+- Both markers: stop as invalid/ambiguous.
+- Neither: inspect owning package/structure and ask before edition-sensitive assumptions.
 
-For a Start repository, resolve flavor names, sites, public paths, generated-output locations, and command wrappers from that repository. Do not inherit Basic examples by analogy.
+Never transfer Basic identifiers or example-suite boundaries into Start or a new suite by analogy. Do not read or expose `.env*` content to recommend worktree identities or ports.
+
+## Target classification
+
+Use these labels consistently in README, SRS, ADR, WBS, test plan, and execution dossiers:
+
+| Class | Meaning | Required treatment |
+| --- | --- | --- |
+| **Observed existing** | Inspected source/configuration/manifest currently defines the target. | Cite the actual owner and path; verify applicable behavior and conflicts. |
+| **Proposed new** | An intentionally new design, not yet explicitly approved. | State candidate values, framework constraints, checks still needed, and governing `Proposed` ADR. Do not claim source exists or command runs. |
+| **Explicitly approved new** | User explicitly approved the concrete design after framework and collision checks, and the governing durable ADR is `Accepted`. | A bounded WBS execution may create it after its own dossier approval. Cite design authority, planned source/manifests, and checks; pre-existing target source is not required. |
+
+User inputs or high-level strategy selection alone do not upgrade a proposed tuple. Separate generation approval, design/ADR approval, and execution approval. If design is approved but ADR acceptance is still pending, record both facts and keep creation gated.
+
+Unknown values remain `TODO(confirm)` with a specific missing design, source inspection, or collision check. Do not label a deliberately new target `TODO(confirm from active source)` merely because its future source does not exist.
 
 ## Site-strategy discovery
 
-Use two passes when the proposed suite has a Web, Admin, or another user-facing site audience.
+Use two passes for user-facing audiences:
 
-1. **Before strategy selection**, inspect the active edition only far enough to identify observed shared Web/Admin hosts, their composition owners and extension points, and any independent-site conventions. Read current `SsrSite` registrations, Zova site/flavor configuration, root scripts, and representative shared-site or site-owner modules as needed. Do not turn an example suite’s layout into the new suite’s target.
-2. **After the high-level strategy is selected**, inspect only the affected source/configuration surfaces to establish exact facts: `SsrSite` registrations, shared-shell contribution patterns, site IDs, public paths, bundle/flavor names, environment/configuration files, asset-copy targets, paired development/SSR-build/REST-build commands, and dependency-sync procedures.
+1. Before strategy selection, inspect observed shared hosts/composition owners/extension points, independent-site conventions, and the active edition's framework constraints.
+2. After selection, inspect only affected surfaces and validate a coherent target tuple. Preserve established strategy and ask only about missing/materially changed audiences. The four normal Web/Admin combinations are useful only when both audiences are unresolved; a single audience does not need a redundant four-way choice.
 
-Cite every observed site/runtime fact by source path in the planning record. Describe a selected strategy as a confirmed input, proposed target, or accepted ADR boundary—not as a source-confirmed fact. Keep each unobserved identifier as `TODO(confirm from active source)`; never derive it from a suite/module name or symmetry between Web and Admin.
+Shared integration requires an observed owning site and cited extension point. For an independent new site, design and check together:
 
-When selecting Web/Admin strategy, evaluate each audience separately. A normal choice may combine shared or independent composition for each audience, but a custom combination, an audience with no site, or deferral remains valid. If strategy or required identifiers are deferred, make only affected frontend/site implementation work `blocked`; a source-discovery task can remain `not-started`, and backend, known shared-site, or unrelated-audience work remains accurately statused.
+- site ID and public mount path, including collisions among enabled sites and exclusive ownership of the empty/root path;
+- flavor, frontend composition/configuration ownership, SSR rendering/admission contract, and tracked flavor configuration destinations;
+- site module, `SsrSite` registration design, copied bundle/release identity, generated REST package, and package/import alignment;
+- development, SSR-build, REST-build, preview, paired root wrapper, and `deps:vona` handoff;
+- durable manifests and whether the site belongs to the edition's default artifact set.
 
-Basic identifiers and commands are not portable Start facts, and neither Basic nor Start example-suite details are portable to another suite without active-source inspection.
+Read framework code and [the independent SSR setup guide](../../../../repo-docs/fullstack/ssr-site-and-flavor-setup.md) for constraints; representative sites are specimens, not the new suite's design authority. Cite the source surfaces used for validation, not a fabricated target source path. Keep local environment identity/ports outside site planning.
 
-## Suite-first source topology
+A new wrapper must be labeled **planned addition**, with its durable manifest path and paired SSR/REST steps. Do not list it among current runnable commands. During execution, create it under the approved boundary, inspect the resulting manifest, then run it. Existing wrappers must be observed before reuse.
 
-For a confirmed suite short name `<suite>`, the intended source layout is normally:
+A deferred strategy/tuple gate blocks only affected frontend/site implementation. Backend, unrelated audiences, and runnable discovery tasks retain accurate status. Independent composition never creates a separate tenant, identity, persistence, authorization, or domain-rule authority.
+
+## Suite-first topology
+
+The intended ownership layout is normally:
 
 ```text
 vona/src/suite/<suite>/modules/<module>/
 zova/src/suite/<suite>/modules/<module>/
 ```
 
-This is a planning target, not proof that the directories already exist. State whether a path is observed or proposed.
+Classify these as observed existing, proposed new, or explicitly approved new; planned directories need not exist before generation. Reuse established owners rather than duplicating hierarchy.
 
-## CLI-first planning
+## CLI-first planning and checks
 
-No known Cabloy CLI currently generates the complete repository Markdown planning set. Once the baseline is confirmed, create the planning records manually under `repo-specs/`. Use Vona/Zova CLI discovery to plan eventual code scaffolding, metadata, OpenAPI generation, dependency synchronization, or verification; do not invent a command family.
+No known Cabloy CLI generates the complete Markdown planning set. Approved records may be authored manually under `repo-specs/`. Implementation scaffolding/metadata/OpenAPI/dependency work uses discovered Vona/Zova command families through bounded execution and specialists.
 
-Potential Cabloy Basic root commands observed in the active repository include:
+Verify root scripts before citing them. The shared planning branches are:
 
 ```bash
-npm run vona
-npm run zova
-npm run tsc
-npm run test
-npm run build
-npm run test:e2e
-npm run build:zova:admin
-npm run build:zova:web
-npm run deps:vona
+npm run spec:check -- <suite>
+npm run spec:check -- <suite> --lightweight
+# Only with complete chart inputs:
+npm run spec:charts -- <suite>
+npm run spec:charts:check -- <suite>
 ```
 
-These are prospective commands only until actually executed for the relevant change. A test plan must label them as planned procedures. A command in a document is not evidence of a passing run.
+For prospective implementation, inspect applicable root `tsc`, `test`, build, E2E, flavor-paired build, and dependency-sync commands. A documented command is a prospective procedure, not a passing run.
 
-For a fullstack contract change, record the appropriate checkpoint:
+- Forward: backend contract truth -> OpenAPI inspection -> generated Zova consumers -> thin follow-up.
+- Reverse: affected flavor SSR and REST outputs together -> `npm run deps:vona`.
+- Correct generated output but stale installed consumers: local dependency drift, not permission to patch generated files.
 
-- forward chain: backend contract truth, OpenAPI inspection, generated Zova consumers, then thin model/page follow-up;
-- reverse chain: matching Zova flavor SSR plus REST build, then `npm run deps:vona`;
-- if generated artifacts are correct but installed consumers remain stale, diagnose local dependency drift before editing generated files.
+Actual synchronization belongs to `cabloy-contract-loop` under execution.
 
-Hand actual implementation-time synchronization to `cabloy-contract-loop`.
+## Safe boundary
 
-## Documentation boundaries
+Business planning belongs in `repo-specs/`; reusable guidance in `repo-docs/`; supporting cross-suite rationale in `repo-docs-internal/`; procedural behavior in authored governance skills. Do not introduce a parallel authority.
 
-| Content                                                                     | Home                                                          |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| Product requirements, SRS contracts, WBS, ATPs, suite ADRs, delivery status | `repo-specs/<suite>/`                                         |
-| Reusable user-facing or agent-facing framework guidance                     | `repo-docs/`                                                  |
-| Cross-suite maintainer architecture, rationale, and engineering ADRs        | `repo-docs-internal/`; individual records may vary by edition |
-| Short durable AI operating rules                                            | `repo-agent-governance/policies/`                             |
-| Reusable procedural workflow                                                | `repo-agent-governance/skills/`                               |
-
-Do not place suite product specifications in public docs, or copy repository-wide process rationale into every suite. Link to authoritative framework records instead.
-
-## Safe execution boundary
-
-While authoring planning records, do not automatically:
-
-- run `npm run init`;
-- reset or recreate a database;
-- scaffold source code;
-- run deployment or external-provider operations;
-- claim test, browser, CI, build, migration, or generated-artifact results.
-
-If the user explicitly asks for a verification command to be run and the result is intended as retained evidence, execute only after confirming the scope and then record the actual revision, environment, exact procedure, result, and redacted artifact location. Otherwise keep the command as a future WBS/test-plan procedure.
+Planning must not automatically run init, database reset/recreation, source scaffolding, acceptance tests, deployment, or provider operations. Static planning checks are not ATP evidence. Any meaningful retained verification needs a separately approved bounded scope and actual revision/environment/procedure/result/redacted artifact.

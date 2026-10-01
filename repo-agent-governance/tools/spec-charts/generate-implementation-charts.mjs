@@ -2,15 +2,9 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { basename, resolve } from 'node:path';
 
-const STATUS_ORDER = [
-  'not-started',
-  'in-progress',
-  'implementation-complete',
-  'verified',
-  'blocked',
-  'waived',
-  'deferred',
-];
+import { markdownLines, parseAtpIds, parseProgress, parseWbs } from './spec-parser.mjs';
+export { parseAtpIds, parseProgress, parseWbs } from './spec-parser.mjs';
+
 const STATUS_COLORS = {
   'not-started': 'var(--blue)',
   'in-progress': 'var(--orange)',
@@ -38,15 +32,33 @@ const COPY = {
     current: 'Current reviewed state',
     remaining: 'WBS items remaining',
     verified: 'verified',
-    approved: 'Approved WBS scope',
-    noNext: 'No WBS item is ready to execute after the current scope.',
-    noReady: 'No next WBS item is ready to execute.',
+    approved: 'Recorded WBS scope',
+    noNext: 'No dependency-ready WBS candidate is recorded.',
+    noReady: 'No dependency-ready WBS candidate is recorded.',
+    notRecorded: 'not recorded',
+    none: 'none',
+    candidateCaveat:
+      'Dependency readiness is not execution approval; descriptive gates still require review.',
+    ganttDescription: (count, reviewed) =>
+      `${count} formal WBS tasks. Current derived status reviewed ${reviewed}.`,
+    burndownDescription: (total, verified, remaining) =>
+      `${total} active WBS items; ${verified} verified; ${remaining} remaining.`,
+    phaseSummary: (number, verified, total) => `Phase ${number}: ${verified} / ${total} verified`,
+    statuses: {
+      'not-started': 'Not started',
+      'in-progress': 'In progress',
+      'implementation-complete': 'Implementation complete',
+      'verified': 'Verified',
+      'blocked': 'Blocked',
+      'waived': 'Waived',
+      'deferred': 'Deferred',
+    },
     source: 'Sources',
     reviewed: 'Last reviewed',
     scopeReference: 'Scope-count reference',
-    notTime: 'Verified WBS items in approved scope — not time',
+    notTime: 'Verified WBS items in recorded scope — not time',
     remainingAxis: 'WBS items remaining',
-    logicalBaseline: 'Logical approved-scope baseline',
+    logicalBaseline: 'Logical recorded-scope baseline',
     currentSnapshot: 'Current snapshot',
     remainingShort: 'remaining',
     emptyScope: 'No active WBS items remain in scope.',
@@ -62,7 +74,7 @@ const COPY = {
       'Relative positions and overlap are illustrative; they are not calendar dates, duration, staffing, or concurrency commitments.',
     metadata:
       'Derived from pdp-wbs.md, test-plan.md, and progress.md. This SVG is not planning authority.',
-    next: 'Next executable WBS item',
+    next: 'Dependency-ready WBS candidate',
   },
   zh: {
     ganttTitle: '实施路线图',
@@ -78,15 +90,32 @@ const COPY = {
     current: '当前审查状态',
     remaining: '剩余 WBS 项',
     verified: '已核验',
-    approved: '已批准 WBS 范围',
-    noNext: '选择其依赖均已满足的最早未核验 WBS 项。',
-    noReady: '当前没有可执行的下一项 WBS 工作。',
+    approved: '已记录 WBS 范围',
+    noNext: '当前没有已记录的依赖就绪 WBS 候选项。',
+    noReady: '当前没有已记录的依赖就绪 WBS 候选项。',
+    notRecorded: '未记录',
+    none: '无',
+    candidateCaveat: '依赖就绪不代表实施批准；描述性门槛仍需审查。',
+    ganttDescription: (count, reviewed) =>
+      `${count} 项正式 WBS 工作。当前派生状态的审查日期：${reviewed}。`,
+    burndownDescription: (total, verified, remaining) =>
+      `${total} 项活跃 WBS 工作；${verified} 项已核验；${remaining} 项剩余。`,
+    phaseSummary: (number, verified, total) => `阶段 ${number}：${verified} / ${total} 项已核验`,
+    statuses: {
+      'not-started': '未开始',
+      'in-progress': '进行中',
+      'implementation-complete': '实施完成',
+      'verified': '已核验',
+      'blocked': '受阻',
+      'waived': '已豁免',
+      'deferred': '已延期',
+    },
     source: '来源',
     reviewed: '最后审查日期',
     scopeReference: '范围计数参考',
-    notTime: '已核验的批准范围 WBS 项——不是时间',
+    notTime: '已核验的记录范围 WBS 项——不是时间',
     remainingAxis: '剩余 WBS 项',
-    logicalBaseline: '逻辑上的批准范围基线',
+    logicalBaseline: '逻辑上的记录范围基线',
     currentSnapshot: '当前快照',
     remainingShort: '剩余',
     emptyScope: '当前范围内没有活跃 WBS 项。',
@@ -99,7 +128,7 @@ const COPY = {
     howRead: '图表说明',
     caveat: '仅为派生可视化——不是计划、速度趋势或预测',
     chartCaveat: '相对位置和重叠仅为示意；不代表日历日期、工期、人员或并发承诺。',
-    next: '下一项 WBS 工作',
+    next: '依赖就绪 WBS 候选项',
     metadata: '派生自 pdp-wbs.md、test-plan.md 和 progress.md。本 SVG 不是计划权威。',
   },
 };
@@ -119,37 +148,6 @@ function isAsciiLetter(character) {
   return (codePoint >= 0x41 && codePoint <= 0x5a) || (codePoint >= 0x61 && codePoint <= 0x7a);
 }
 
-function isAsciiDigit(character) {
-  if (!character || character.length !== 1) return false;
-  const codePoint = character.codePointAt(0);
-  return codePoint >= 0x30 && codePoint <= 0x39;
-}
-
-function isAsciiIdentifierCharacter(character) {
-  return isAsciiLetter(character) || isAsciiDigit(character);
-}
-
-function isAsciiWordCharacter(character) {
-  return isAsciiIdentifierCharacter(character) || character === '_';
-}
-
-function isHorizontalWhitespace(character) {
-  return character === ' ' || character === '\t';
-}
-
-function skipHorizontalWhitespace(value, index) {
-  let cursor = index;
-  while (isHorizontalWhitespace(value[cursor])) {
-    cursor++;
-  }
-  return cursor;
-}
-
-function consumeHorizontalWhitespace(value, index) {
-  const cursor = skipHorizontalWhitespace(value, index);
-  return cursor === index ? null : cursor;
-}
-
 function isWideChartCharacter(character) {
   const codePoint = character.codePointAt(0);
   return (
@@ -163,100 +161,6 @@ function isWideChartCharacter(character) {
 function isCjkUnifiedIdeograph(character) {
   const codePoint = character.codePointAt(0);
   return codePoint >= 0x3400 && codePoint <= 0x9fff;
-}
-
-function isTokenStart(value, index) {
-  return index === 0 || !isAsciiWordCharacter(value[index - 1]);
-}
-
-function readIdentifier(value, index, prefix, { wildcard = false } = {}) {
-  if (!value.startsWith(prefix, index) || !isTokenStart(value, index)) return null;
-  let cursor = index + prefix.length;
-  let segmentStart = cursor;
-  while (isAsciiIdentifierCharacter(value[cursor])) {
-    cursor++;
-  }
-  if (cursor === segmentStart) return null;
-  while (value[cursor] === '-') {
-    if (wildcard && value[cursor + 1] === '*') {
-      return { end: cursor + 2, value: value.slice(index, cursor + 2) };
-    }
-    const hyphen = cursor;
-    segmentStart = ++cursor;
-    while (isAsciiIdentifierCharacter(value[cursor])) {
-      cursor++;
-    }
-    if (cursor === segmentStart) {
-      return { end: hyphen, value: value.slice(index, hyphen) };
-    }
-  }
-  return { end: cursor, value: value.slice(index, cursor) };
-}
-
-function findIdentifierMatches(value, prefix, options) {
-  const identifiers = [];
-  let index = 0;
-  while (index < value.length) {
-    const found = value.indexOf(prefix, index);
-    if (found === -1) break;
-    const identifier = readIdentifier(value, found, prefix, options);
-    if (identifier) {
-      identifiers.push(identifier);
-      index = identifier.end;
-    } else {
-      index = found + prefix.length;
-    }
-  }
-  return identifiers;
-}
-
-function findIdentifiers(value, prefix, options) {
-  return findIdentifierMatches(value, prefix, options).map(identifier => identifier.value);
-}
-
-function parseHeadingPrefix(line, hashes) {
-  if (!line.startsWith('#'.repeat(hashes))) return null;
-  if (line[hashes] === '#') return null;
-  return consumeHorizontalWhitespace(line, hashes);
-}
-
-function parseLabeledValue(line, label) {
-  if (line.slice(0, label.length).toLowerCase() !== label.toLowerCase()) return null;
-  if (line[label.length] !== ':') return null;
-  const value = line.slice(label.length + 1).trim();
-  return value || null;
-}
-
-function readDate(value, index) {
-  const date = value.slice(index, index + 10);
-  if (
-    date.length !== 10 ||
-    date[4] !== '-' ||
-    date[7] !== '-' ||
-    ![...date.slice(0, 4)].every(isAsciiDigit) ||
-    ![...date.slice(5, 7)].every(isAsciiDigit) ||
-    ![...date.slice(8)].every(isAsciiDigit)
-  ) {
-    return null;
-  }
-  return date;
-}
-
-function reviewDateFromLine(line) {
-  const normalized = line.toLowerCase();
-  const labels = [
-    { index: normalized.indexOf('last reviewed'), length: 'last reviewed'.length },
-    { index: line.indexOf('最后审查日期'), length: '最后审查日期'.length },
-  ];
-  for (const label of labels) {
-    if (label.index === -1) continue;
-    let cursor = skipHorizontalWhitespace(line, label.index + label.length);
-    if (line[cursor] === ':' || line[cursor] === '：') cursor++;
-    cursor = skipHorizontalWhitespace(line, cursor);
-    const date = readDate(line, cursor);
-    if (date) return date;
-  }
-  return null;
 }
 
 function chartTextWidth(value, fontSize) {
@@ -322,227 +226,10 @@ function languageFromReadme(readme) {
   return cjk > latin / 3 ? 'zh' : 'en';
 }
 
-function normalizeStatus(value) {
-  const normalized = value.trim().replace(/`/g, '').toLowerCase();
-  if (!STATUS_ORDER.includes(normalized)) {
-    throw new Error(`Unsupported progress status: ${value.trim()}`);
-  }
-  return normalized;
-}
-
-function isTableDividerCell(value) {
-  const cell = value.trim();
-  return Boolean(cell) && [...cell].every(character => character === '-' || character === ':');
-}
-
-function parseTableRow(line) {
-  const trimmed = line.trim();
-  if (!trimmed.startsWith('|')) return null;
-  const cells = trimmed
-    .split('|')
-    .slice(1, -1)
-    .map(cell => cell.trim());
-  return isTableDividerCell(cells[0] ?? '') ? null : cells;
-}
-
-function readProgressId(value) {
-  return findIdentifiers(value.replace(/`/g, ''), 'WBS-')[0] ?? null;
-}
-
-function progressColumnIndexes(cells) {
-  let id;
-  let status;
-  for (const [index, cell] of cells.entries()) {
-    const label = cell.replace(/`/g, '').trim().toLowerCase();
-    if (label === 'wbs id') id = index;
-    if (label === 'status') status = index;
-  }
-  return id === undefined || status === undefined ? null : { id, status };
-}
-
-export function parseProgress(markdown) {
-  const rows = new Map();
-  let reviewed;
-  let columns = null;
-  for (const line of markdown.split(/\r?\n/)) {
-    reviewed ??= reviewDateFromLine(line);
-    const cells = parseTableRow(line);
-    if (!cells) {
-      if (line.trim() && !line.trim().startsWith('|')) columns = null;
-      continue;
-    }
-    const headerColumns = progressColumnIndexes(cells);
-    if (headerColumns) {
-      columns = headerColumns;
-      continue;
-    }
-    if (!columns) continue;
-    const id = readProgressId(cells[columns.id] ?? '');
-    if (!id) continue;
-    rows.set(id, normalizeStatus(cells[columns.status] ?? ''));
-  }
-  return { rows, reviewed: reviewed ?? 'not recorded' };
-}
-
-function parsePhaseHeading(line) {
-  const contentStart = parseHeadingPrefix(line, 3);
-  if (contentStart === null || !line.startsWith('Phase', contentStart)) return null;
-  let cursor = consumeHorizontalWhitespace(line, contentStart + 'Phase'.length);
-  if (cursor === null) return null;
-  const numberStart = cursor;
-  while (isAsciiDigit(line[cursor])) {
-    cursor++;
-  }
-  if (cursor === numberStart) return null;
-  cursor = skipHorizontalWhitespace(line, cursor);
-  if (line[cursor] !== ':') return null;
-  const title = line.slice(cursor + 1).trim();
-  if (!title) return null;
-  return { number: line.slice(numberStart, cursor).trim(), title };
-}
-
-function parseTaskHeading(line) {
-  const contentStart = parseHeadingPrefix(line, 4);
-  if (contentStart === null) return null;
-  const identifier = readIdentifier(line, contentStart, 'WBS-');
-  if (!identifier || hasMalformedIdentifierTail(line, identifier.end)) return null;
-  const cursor = skipHorizontalWhitespace(line, identifier.end);
-  if (line[cursor] !== ':') return null;
-  const title = line.slice(cursor + 1).trim();
-  if (!title) return null;
-  return { id: identifier.value, title };
-}
-
-function dependencyFromLines(lines) {
-  for (const line of lines) {
-    const dependency = parseLabeledValue(line.trim(), 'Dependencies');
-    if (dependency) return dependency;
-  }
-  return null;
-}
-
-function isDeferred(lines) {
-  for (const line of lines) {
-    const normalized = line.trim().replaceAll('`', '').toLowerCase();
-    if (normalized === 'deferred scope' || parseLabeledValue(normalized, 'status') === 'deferred') {
-      return true;
-    }
-  }
-  return false;
-}
-
-function isIdentifierContinuation(character) {
-  return character === '-' || isAsciiIdentifierCharacter(character);
-}
-
-function hasMalformedIdentifierTail(value, end) {
-  return value[end] === '-' && (value[end + 1] === ':' || isHorizontalWhitespace(value[end + 1]));
-}
-
-function atpReferences(lines) {
-  const ids = new Set();
-  for (const line of lines) {
-    for (const identifier of findIdentifierMatches(line, 'ATP-')) {
-      if (!isIdentifierContinuation(line[identifier.end])) ids.add(identifier.value);
-    }
-  }
-  return [...ids];
-}
-
-export function parseWbs(markdown) {
-  const lines = markdown.split(/\r?\n/);
-  const phaseStarts = [];
-  for (const [index, line] of lines.entries()) {
-    const phase = parsePhaseHeading(line);
-    if (phase) phaseStarts.push({ ...phase, index });
-  }
-  if (!phaseStarts.length) {
-    throw new Error('No formal `### Phase <number>:` headings were found in pdp-wbs.md.');
-  }
-  const phases = phaseStarts.map((phase, phaseIndex) => {
-    const bodyLines = lines.slice(phase.index + 1, phaseStarts[phaseIndex + 1]?.index);
-    const phaseDependency = dependencyFromLines(bodyLines) ?? 'none';
-    const taskStarts = [];
-    for (const [index, line] of bodyLines.entries()) {
-      const task = parseTaskHeading(line);
-      if (task) taskStarts.push({ ...task, index });
-    }
-    const tasks = taskStarts.map((task, taskIndex) => {
-      const taskBody = bodyLines.slice(task.index + 1, taskStarts[taskIndex + 1]?.index);
-      return {
-        id: task.id,
-        title: task.title,
-        dependency: dependencyFromLines(taskBody) ?? phaseDependency,
-        deferred: isDeferred(taskBody),
-        atps: atpReferences(taskBody),
-      };
-    });
-    return { number: phase.number, title: phase.title, dependency: phaseDependency, tasks };
-  });
-  const tasks = phases.flatMap(phase =>
-    phase.tasks.map(task => {
-      task.phase = { number: phase.number, title: phase.title };
-      return task;
-    }),
-  );
-  if (!tasks.length) {
-    throw new Error('No formal `#### WBS-…:` tasks were found in pdp-wbs.md.');
-  }
-  const ids = new Set(tasks.map(task => task.id));
-  for (const task of tasks) {
-    for (const dependency of findIdentifiers(task.dependency, 'WBS-', { wildcard: true })) {
-      if (dependency.endsWith('-*')) {
-        const prefix = dependency.slice(0, -1);
-        if (![...ids].some(id => id.startsWith(prefix))) {
-          throw new Error(`${task.id} depends on unknown WBS task group ${dependency}.`);
-        }
-      } else if (!ids.has(dependency)) {
-        throw new Error(`${task.id} depends on unknown WBS task ${dependency}.`);
-      }
-    }
-  }
-  return { phases, tasks };
-}
-
-function readStrictAtpId(value) {
-  const trimmed = value.trim();
-  const unwrapped =
-    trimmed.startsWith('`') && trimmed.endsWith('`') ? trimmed.slice(1, -1) : trimmed;
-  const identifier = readIdentifier(unwrapped, 0, 'ATP-');
-  return identifier?.end === unwrapped.length ? identifier.value : null;
-}
-
-export function parseAtpIds(markdown) {
-  const ids = new Set();
-  for (const line of markdown.split(/\r?\n/)) {
-    const cells = parseTableRow(line);
-    if (cells?.[0]) {
-      const id = readStrictAtpId(cells[0]);
-      if (id) ids.add(id);
-      continue;
-    }
-    for (let hashes = 2; hashes <= line.length; hashes++) {
-      const contentStart = parseHeadingPrefix(line, hashes);
-      if (contentStart === null) continue;
-      const content = line.slice(contentStart).trimStart();
-      const id = readIdentifier(content, content.startsWith('`') ? 1 : 0, 'ATP-');
-      if (!id) break;
-      const after = content.slice(id.end);
-      if (content.startsWith('`')) {
-        if (after.startsWith('`')) ids.add(id.value);
-      } else if (!after || isHorizontalWhitespace(after[0])) {
-        ids.add(id.value);
-      }
-      break;
-    }
-  }
-  return ids;
-}
-
 export function createChartModel({ readme, wbs, progress, testPlan }) {
   const language = languageFromReadme(readme);
   const atpIds = parseAtpIds(testPlan);
-  const { phases, tasks } = parseWbs(wbs);
+  const { phases, tasks, expandedEdges } = parseWbs(wbs);
   const { rows: statusRows, reviewed } = parseProgress(progress);
   const unknownProgress = [...statusRows.keys()].filter(id => !tasks.some(task => task.id === id));
   if (unknownProgress.length) {
@@ -553,7 +240,14 @@ export function createChartModel({ readme, wbs, progress, testPlan }) {
   for (const task of tasks) {
     if (!statusRows.has(task.id))
       throw new Error(`${task.id} has no corresponding progress.md status row.`);
-    task.status = statusRows.get(task.id);
+    const progressStatus = statusRows.get(task.id);
+    if (task.status !== undefined && task.status !== progressStatus) {
+      throw new Error(
+        `${task.id} has explicit pdp-wbs.md Status ${task.status} but progress status ${progressStatus}.`,
+      );
+    }
+    task.recordedStatus = task.status;
+    task.status = progressStatus;
     if (task.deferred && task.status !== 'deferred') {
       throw new Error(
         `${task.id} is marked deferred in pdp-wbs.md but has progress status ${task.status}.`,
@@ -574,8 +268,9 @@ export function createChartModel({ readme, wbs, progress, testPlan }) {
     tasks,
     activeTasks,
     deferredTasks,
+    expandedEdges,
     verified,
-    reviewed,
+    reviewed: reviewed === 'not recorded' ? COPY[language].notRecorded : reviewed,
   };
 }
 
@@ -588,27 +283,11 @@ function style() {
 }
 
 function statusLabel(status, language) {
-  const labels = {
-    en: {
-      'not-started': 'Not started',
-      'in-progress': 'In progress',
-      'implementation-complete': 'Implementation complete',
-      'verified': 'Verified',
-      'blocked': 'Blocked',
-      'waived': 'Waived',
-      'deferred': 'Deferred',
-    },
-    zh: {
-      'not-started': '未开始',
-      'in-progress': '进行中',
-      'implementation-complete': '实施完成',
-      'verified': '已核验',
-      'blocked': '受阻',
-      'waived': '已豁免',
-      'deferred': '已延期',
-    },
-  };
-  return labels[language][status];
+  return COPY[language].statuses[status];
+}
+
+function dependencyLabel(task, copy) {
+  return /^`?none`?\.?$/i.test(task.dependency.trim()) ? copy.none : task.dependency;
 }
 
 function statusIcon(x, y, status) {
@@ -654,10 +333,15 @@ export function renderGantt(model, suiteName) {
     const phaseStart = index === 0 || tasks[index - 1].phase.number !== task.phase.number;
     const descriptionLines = phaseStart ? wrapChartText(task.phase.title, 30) : [];
     const workLines = wrapChartText(task.title, workMaxWidth, value => chartTextWidth(value, 10));
-    const dependencyLines = wrapChartText(task.dependency, dependencyMaxWidth, value =>
+    const dependencyLines = wrapChartText(dependencyLabel(task, t), dependencyMaxWidth, value =>
       chartTextWidth(value, 9),
     );
-    const contentLines = Math.max(workLines.length, dependencyLines.length);
+    const statusLines = wrapChartText(
+      statusLabel(task.status, language),
+      plotX - statusX - 27,
+      value => chartTextWidth(value, 9),
+    );
+    const contentLines = Math.max(workLines.length, dependencyLines.length, statusLines.length);
     const taskRowH = Math.max(rowH, contentLines * phaseLineH + 22);
     const phaseLabelY = phaseStart ? nextY : undefined;
     const y = phaseStart ? nextY + 23 + descriptionLines.length * phaseLineH : nextY;
@@ -672,6 +356,7 @@ export function renderGantt(model, suiteName) {
       descriptionLines,
       workLines,
       dependencyLines,
+      statusLines,
     };
   });
   const contentBottom = layout.at(-1)?.separatorY ?? rowY;
@@ -688,6 +373,7 @@ export function renderGantt(model, suiteName) {
         descriptionLines,
         workLines,
         dependencyLines,
+        statusLines,
       }) => {
         const barX = plotX + (index / Math.max(tasks.length, 1)) * (plotW - 90);
         const barW = task.status === 'verified' ? 58 : 42;
@@ -702,26 +388,18 @@ export function renderGantt(model, suiteName) {
           dependencyLines,
           phaseLineH,
         );
-        return `<g class="row" tabindex="0" aria-label="${escapeXml(`${task.id}: ${task.title}; ${statusLabel(task.status, language)}`)}"><title>${escapeXml(`${task.id}: ${task.title}; dependencies: ${task.dependency}; ${statusLabel(task.status, language)}`)}</title><line class="grid" x1="72" y1="${separatorY}" x2="1500" y2="${separatorY}"/>${phaseHeader}<text class="num" x="${wbsX}" y="${y}">${escapeXml(task.id)}</text>${renderChartTextLines('task', workX, y, workLines, phaseLineH)}${dependencyText}${statusIcon(statusX + 5, y - 4, task.status)}<text class="small" x="${statusX + 17}" y="${y}">${escapeXml(statusLabel(task.status, language))}</text><rect x="${barX.toFixed(1)}" y="${y - 15}" width="${barW}" height="18" rx="4" fill="${STATUS_COLORS[task.status]}"/></g>`;
+        return `<g class="row" tabindex="0" aria-label="${escapeXml(`${task.id}: ${task.title}; ${t.dependency}: ${dependencyLabel(task, t)}; ${statusLabel(task.status, language)}`)}"><title>${escapeXml(`${task.id}: ${task.title}; ${t.dependency}: ${dependencyLabel(task, t)}; ${statusLabel(task.status, language)}`)}</title><line class="grid" x1="72" y1="${separatorY}" x2="1500" y2="${separatorY}"/>${phaseHeader}<text class="num" x="${wbsX}" y="${y}">${escapeXml(task.id)}</text>${renderChartTextLines('task', workX, y, workLines, phaseLineH)}${dependencyText}${statusIcon(statusX + 5, y - 4, task.status)}${renderChartTextLines('small', statusX + 17, y, statusLines, phaseLineH)}<rect x="${barX.toFixed(1)}" y="${y - 15}" width="${barW}" height="18" rx="4" fill="${STATUS_COLORS[task.status]}"/></g>`;
       },
     )
     .join('\n');
   const completed = new Set(tasks.filter(task => task.status === 'verified').map(task => task.id));
-  const dependencyIds = task =>
-    findIdentifiers(task.dependency, 'WBS-', { wildcard: true }).flatMap(value => {
-      if (!value.endsWith('-*')) return [value];
-      const prefix = value.slice(0, -1);
-      return tasks
-        .filter(candidate => candidate.id.startsWith(prefix))
-        .map(candidate => candidate.id);
-    });
   const nextTask = tasks.find(
     task =>
       task.status !== 'verified' &&
       task.status !== 'deferred' &&
       task.status !== 'waived' &&
       task.status !== 'blocked' &&
-      dependencyIds(task).every(id => completed.has(id)),
+      model.expandedEdges.get(task.id).every(id => completed.has(id)),
   );
   const nextLabel = nextTask
     ? `${nextTask.id}: ${nextTask.title}`
@@ -733,10 +411,10 @@ export function renderGantt(model, suiteName) {
   <rect x="72" y="142" width="1428" height="78" rx="8" fill="var(--aqua-wash)"/><text class="heading" x="96" y="171">${escapeXml(t.current)}</text><text class="caption" x="96" y="195">${escapeXml(nextLabel)}</text><text class="heading" x="1320" y="171" text-anchor="end">${escapeXml(t.next)}</text><text class="heading" x="1320" y="195" text-anchor="end">${model.verified} / ${model.activeTasks.length} ${escapeXml(t.verified)}</text>
   <text class="small" x="${phaseX}" y="246">${escapeXml(t.phase)}</text><text class="small" x="${wbsX}" y="246">${escapeXml(t.wbs)}</text><text class="small" x="${workX}" y="246">${escapeXml(t.work)}</text><text class="small" x="${dependencyX}" y="246">${escapeXml(t.dependency)}</text><text class="small" x="${statusX}" y="246">${escapeXml(t.status)}</text><text class="small" x="${plotX}" y="246">${escapeXml(t.weeks)}</text><line class="axis" x1="${plotX}" y1="254" x2="1500" y2="254"/>
   ${rows}
-  <line class="grid" x1="72" y1="${footerY}" x2="1500" y2="${footerY}"/><text class="small" x="72" y="${footerY + 28}">${escapeXml(`${t.source}: pdp-wbs.md · test-plan.md · progress.md (${t.reviewed}: ${reviewed})`)}</text><text class="small" x="1500" y="${footerY + 28}" text-anchor="end">${escapeXml(t.chartCaveat)}</text>`;
+  <line class="grid" x1="72" y1="${footerY}" x2="1500" y2="${footerY}"/><text class="small" x="72" y="${footerY + 28}">${escapeXml(`${t.source}: pdp-wbs.md · test-plan.md · progress.md (${t.reviewed}: ${reviewed})`)}</text><text class="small" x="1500" y="${footerY + 28}" text-anchor="end">${escapeXml(t.chartCaveat)}</text><text class="small" x="72" y="${footerY + 48}">${escapeXml(t.candidateCaveat)}</text>`;
   return svgDocument(
     `${suiteName} ${t.ganttTitle}`,
-    `${t.ganttTitle}. ${tasks.length} formal WBS tasks. Current derived status reviewed ${reviewed}. ${t.chartCaveat}`,
+    `${t.ganttTitle}. ${t.ganttDescription(tasks.length, reviewed)} ${t.chartCaveat} ${t.candidateCaveat}`,
     body,
     height,
     t.metadata,
@@ -747,7 +425,9 @@ export function renderBurndown(model, suiteName) {
   const { copy: t, phases, activeTasks, deferredTasks, verified, reviewed, language } = model;
   const total = activeTasks.length;
   const remaining = total - verified;
-  const height = 1050;
+  const phaseBottom = 836 + Math.max(0, phases.length - 1) * 28;
+  const footerY = Math.max(976, phaseBottom + 50);
+  const height = footerY + 74;
   const x0 = 190;
   const x1 = 910;
   const y0 = 410;
@@ -763,23 +443,32 @@ export function renderBurndown(model, suiteName) {
     .map((phase, index) => {
       const phaseTasks = phase.tasks.filter(task => !task.deferred && task.status !== 'deferred');
       const phaseVerified = phaseTasks.filter(task => task.status === 'verified').length;
-      const y = 805 + index * 28;
+      const y = 832 + index * 28;
       const width = phaseTasks.length ? (phaseVerified / phaseTasks.length) * 210 : 0;
-      return `<g class="row" tabindex="0" aria-label="${escapeXml(`${t.phase} ${phase.number}: ${phaseVerified} of ${phaseTasks.length} ${t.verified}`)}"><title>${escapeXml(`${t.phase} ${phase.number} ${phase.title}: ${phaseVerified} of ${phaseTasks.length} ${t.verified}`)}</title><text class="task" x="96" y="${y}">${escapeXml(`${t.phase} ${phase.number} · ${phase.title}`)}</text><text class="num" x="730" y="${y}" text-anchor="end">${phaseVerified} / ${phaseTasks.length}</text><text class="num" x="850" y="${y}" text-anchor="end">${phaseTasks.length - phaseVerified}</text><rect x="930" y="${y - 11}" width="210" height="12" rx="6" fill="var(--blue-wash)"/><rect x="930" y="${y - 11}" width="${width}" height="12" rx="6" fill="var(--aqua)"/>${statusIcon(1215, y - 5, phaseVerified === phaseTasks.length ? 'verified' : 'in-progress')}<text class="small" x="1228" y="${y}">${escapeXml(phaseVerified === phaseTasks.length ? statusLabel('verified', language) : `${phaseVerified}/${phaseTasks.length}`)}</text></g>`;
+      return `<g class="row" tabindex="0" aria-label="${escapeXml(t.phaseSummary(phase.number, phaseVerified, phaseTasks.length))}"><title>${escapeXml(`${t.phaseSummary(phase.number, phaseVerified, phaseTasks.length)} · ${phase.title}`)}</title><text class="task" x="96" y="${y}">${escapeXml(`${t.phase} ${phase.number} · ${phase.title}`)}</text><text class="num" x="730" y="${y}" text-anchor="end">${phaseVerified} / ${phaseTasks.length}</text><text class="num" x="850" y="${y}" text-anchor="end">${phaseTasks.length - phaseVerified}</text><rect x="930" y="${y - 11}" width="210" height="12" rx="6" fill="var(--blue-wash)"/><rect x="930" y="${y - 11}" width="${width}" height="12" rx="6" fill="var(--aqua)"/>${statusIcon(1215, y - 5, phaseVerified === phaseTasks.length ? 'verified' : 'in-progress')}<text class="small" x="1228" y="${y}">${escapeXml(phaseVerified === phaseTasks.length ? statusLabel('verified', language) : `${phaseVerified}/${phaseTasks.length}`)}</text></g>`;
     })
     .join('\n');
+  let explanationY = 412;
+  const explanation = [t.formula, t.noHistory, t.caveat, t.chartCaveat]
+    .map(value => {
+      const lines = wrapChartText(value, 370, text => chartTextWidth(text, 11));
+      const text = renderChartTextLines('caption', 1070, explanationY, lines, 18);
+      explanationY += lines.length * 18 + 18;
+      return text;
+    })
+    .join('');
   const body = `<rect class="canvas" width="1600" height="${height}"/><rect class="card" x="32" y="28" width="1536" height="${height - 56}" rx="14"/>
   <text class="title" x="72" y="84">${escapeXml(`${suiteName} ${t.burndownTitle}`)}</text><text class="subtitle" x="72" y="110">${escapeXml(t.burndownSubtitle)}</text><text class="small" x="1500" y="84" text-anchor="end">${escapeXml(`${t.reviewed}: ${reviewed}`)}</text>
   <rect x="72" y="142" width="1428" height="116" rx="8" fill="var(--aqua-wash)"/><text class="heading" x="96" y="170">${escapeXml(t.current)}</text><text x="96" y="231" class="title" style="font-size:52px">${remaining}</text><text class="heading" x="155" y="215">${escapeXml(t.remaining)}</text><text class="caption" x="155" y="237">${escapeXml(`${verified} / ${total} ${t.verified}`)}</text><text class="caption" x="700" y="205">${escapeXml(t.approved)}</text><text class="heading" x="700" y="230">${total}</text><text class="caption" x="1030" y="205">${escapeXml(t.deferred)}</text><text class="heading" x="1030" y="230">${deferredTasks.length}</text>
   <text class="heading" x="72" y="300">${escapeXml(t.scopeReference)}</text><text class="caption" x="72" y="321">${escapeXml(t.noHistory)}</text><rect class="card" x="72" y="340" width="940" height="390" rx="9"/><text class="small" x="116" y="372">${escapeXml(t.remainingAxis)}</text><text class="small" x="550" y="704" text-anchor="middle">${escapeXml(t.notTime)}</text>
   <g class="grid"><line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y0}"/><line x1="${x0}" y1="${y0 + 80}" x2="${x1}" y2="${y0 + 80}"/><line x1="${x0}" y1="${y0 + 160}" x2="${x1}" y2="${y0 + 160}"/><line x1="${x0}" y1="${y1}" x2="${x1}" y2="${y1}"/><line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y1}"/><line x1="${x1}" y1="${y0}" x2="${x1}" y2="${y1}"/></g><line class="axis" x1="${x0}" y1="${y1}" x2="${x1}" y2="${y1}"/><line class="axis" x1="${x0}" y1="${y0}" x2="${x0}" y2="${y1}"/>
   <line x1="${x0}" y1="${y0}" x2="${currentX.toFixed(1)}" y2="${currentY.toFixed(1)}" stroke="var(--blue)" stroke-width="2"/><line x1="${currentX.toFixed(1)}" y1="${currentY.toFixed(1)}" x2="${x1}" y2="${y1}" stroke="var(--blue)" stroke-width="2" stroke-dasharray="6 5"/><circle cx="${x0}" cy="${y0}" r="7" fill="var(--blue)" stroke="var(--surface)" stroke-width="2"/><text class="heading" x="${x0 + 22}" y="${y0 + 18}">${escapeXml(t.logicalBaseline)}</text><text class="caption" x="${x0 + 22}" y="${y0 + 37}">${total} ${escapeXml(t.remainingShort)}</text>${currentMarker}<text class="heading" x="${Math.max(x0 + 150, currentX - 22)}" y="${Math.max(y0 + 60, currentY - 49)}" text-anchor="end">${escapeXml(t.currentSnapshot)}</text><text class="caption" x="${Math.max(x0 + 150, currentX - 22)}" y="${Math.max(y0 + 79, currentY - 30)}" text-anchor="end">${escapeXml(`${remaining} ${t.remainingShort} · ${verified} ${t.verified}`)}</text>
-  <rect x="1040" y="340" width="460" height="390" rx="9" fill="var(--blue-wash)"/><text class="heading" x="1070" y="378">${escapeXml(t.howRead)}</text><text class="caption" x="1070" y="412">${escapeXml(t.formula)}</text><text class="caption" x="1070" y="448">${escapeXml(t.noHistory)}</text><text class="caption" x="1070" y="474">${escapeXml(t.caveat)}</text><text class="caption" x="1070" y="510">${escapeXml(t.chartCaveat)}</text>
-  <rect class="card" x="72" y="758" width="1428" height="${height - 846}" rx="9"/><text class="heading" x="96" y="786">${escapeXml(t.phaseScope)}</text><text class="small" x="96" y="800">${escapeXml(`${t.active}: ${total}; ${t.verified}: ${verified}; ${t.remaining}: ${remaining}`)}</text><text class="small" x="730" y="786" text-anchor="end">${escapeXml(t.verified)}</text><text class="small" x="850" y="786" text-anchor="end">${escapeXml(t.remaining)}</text><text class="small" x="930" y="786">${escapeXml(t.completion)}</text>${phaseRows}
+  <rect x="1040" y="340" width="460" height="390" rx="9" fill="var(--blue-wash)"/><text class="heading" x="1070" y="378">${escapeXml(t.howRead)}</text>${explanation}
+  <rect class="card" x="72" y="758" width="1428" height="${phaseBottom + 24 - 758}" rx="9"/><text class="heading" x="96" y="786">${escapeXml(t.phaseScope)}</text><text class="small" x="96" y="800">${escapeXml(`${t.active}: ${total}; ${t.verified}: ${verified}; ${t.remaining}: ${remaining}`)}</text><text class="small" x="730" y="786" text-anchor="end">${escapeXml(t.verified)}</text><text class="small" x="850" y="786" text-anchor="end">${escapeXml(t.remaining)}</text><text class="small" x="930" y="786">${escapeXml(t.completion)}</text>${phaseRows}
   <line class="grid" x1="72" y1="${height - 74}" x2="1500" y2="${height - 74}"/><text class="small" x="72" y="${height - 48}">${escapeXml(`${t.source}: pdp-wbs.md · progress.md (${t.reviewed}: ${reviewed})`)}</text><text class="small" x="1500" y="${height - 48}" text-anchor="end">${escapeXml(t.caveat)}</text>`;
   return svgDocument(
     `${suiteName} ${t.burndownTitle}`,
-    `${t.burndownTitle}. ${total} active WBS items; ${verified} verified; ${remaining} remaining. ${t.noHistory}`,
+    `${t.burndownTitle}. ${t.burndownDescription(total, verified, remaining)} ${t.noHistory}`,
     body,
     height,
     t.metadata,
@@ -787,7 +476,7 @@ export function renderBurndown(model, suiteName) {
 }
 
 function suiteNameFromReadme(readme, fallback) {
-  for (const line of readme.split(/\r?\n/)) {
+  for (const { text: line } of markdownLines(readme)) {
     if (!line.startsWith('# ') || line.startsWith('## ')) continue;
     let title = line.slice(2).trim();
     for (const suffix of ['Internal Planning', '内部规划']) {

@@ -51,9 +51,9 @@ For edition-aware skills, use [Cabloy Editions: For AI Development](/editions/ov
 The repository currently authors these cross-stack and monorepo-wide workflows in `repo-agent-governance/skills/` and renders them to root platform adapters; Codex and Cursor discovery remains subject to external client validation:
 
 - `cabloy-workflow` for choosing the correct Cabloy work path before implementation
-- `cabloy-domain-planning` for proposing and confirming providerId, suite, and initial module names before scaffolding a new business domain
-- `cabloy-spec-generation` for creating or maintaining suite-local planning authority, traceability, and derived planning views before implementation; see [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation)
-- `cabloy-spec-execution` for coordinating one confirmed WBS increment through specialist implementation, evidence, and derived progress updates; see [Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution)
+- `cabloy-domain-planning` for confirming providerId, suite, and capability names; a naming-only detour from specification generation returns there without scaffolding
+- `cabloy-spec-generation` for complete new baselines, incremental maintenance, or explicitly lightweight planning; it separates generation approval, design/ADR acceptance, and bounded execution approval, audits authority, and refreshes charts only with complete supported inputs; see [Generate a Cabloy Suite Specification](/ai/playbook-spec-generation)
+- `cabloy-spec-execution` for one explicitly approved WBS increment, including creation of an approved new target whose future source does not exist yet; it preserves controlling gates, specialist implementation, retained evidence, and conditional derived-view updates; see [Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution)
 - `cabloy-contract-loop` for backend/frontend contract regeneration and drift diagnosis; see [Contract Loop Playbook](/fullstack/contract-loop-playbook)
 - `cabloy-resource-field-update` for updating an existing backend resource field thread; see [Existing Resource Field Update](/backend/resource-field-update)
 - `cabloy-module-removal` for removing a backend, frontend, or fullstack module cleanly, including generated-runtime cleanup, stale-residue recovery, and verification; see [Module Removal](/ai/playbook-module-removal)

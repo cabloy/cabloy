@@ -35,5 +35,6 @@ jobs:
           npm run agent:governance:pack-check
           npm run test:spec-charts
           npm run spec:charts:check -- a-commerce
+          npm run spec:charts:check -- home-user
       - name: build documentation
         run: npm run docs:build

@@ -143,9 +143,11 @@ Use examples such as:
 
 When helpful, explain why the recommendation is better than obvious alternatives.
 
-## Step 7: Require confirmation before scaffolding
+## Step 7: Confirm naming and preserve the caller's workflow
 
-Before suggesting any scaffold execution, explicitly confirm:
+If invoked by `cabloy-spec-generation` because naming was unresolved, this is a **naming-only** detour. Return the validated identity, capability names, proposed ownership, edition, and remaining naming questions to generation. Do not run scaffold commands or treat naming confirmation as generation, ADR, or execution approval. Generation resumes its selected complete/incremental/lightweight mode and confirmation gate.
+
+For a direct scaffolding request, before suggesting execution, explicitly confirm:
 
 - `providerId`
 - suite short name
@@ -160,7 +162,7 @@ Always leave a custom path available, for example:
 
 ## Step 8: Hand off to CLI-first scaffolding only after confirmation
 
-Once naming is confirmed, route to the real generators rather than hand-authoring structure.
+For a naming-only detour, return to `cabloy-spec-generation` without source generation. Only a direct, explicitly confirmed scaffolding request routes to the real generators rather than hand-authoring structure. A completed spec baseline instead hands one bounded WBS candidate to `cabloy-spec-execution` for its own dossier approval.
 
 Typical commands are:
 

@@ -12,9 +12,11 @@ For ordinary execution that does not change authority:
 2. update a dedicated phase/ATP evidence record when the suite convention supports it;
 3. update a rollout or operational handoff record when it is part of the established suite flow;
 4. update `progress.md` with derived status, evidence pointers, blockers, and next proof;
-5. regenerate `implementation-gantt.svg` and `implementation-burndown.svg` last, then run `npm run spec:charts:check -- <suite>`.
+5. with complete supported README/WBS/ATP/progress inputs, regenerate both charts last, then run `npm run spec:charts:check -- <suite>`; otherwise report the exact lightweight/legacy omission rather than forcing definitions.
 
-The charts are derived views only. Refresh them after status, review-date, evidence-pointer, or evidence-supersession changes that affect their display; do not edit them to conceal an authority conflict. Their labels, accessibility text, and metadata follow the suite `README.md` language.
+Refresh applicable charts after display-affecting status/evidence/review changes and README title/language edits. Labels, accessibility, and metadata follow README language. Charts cannot conceal authority conflicts.
+
+Keep `spec:check` definition/reference/chain/link validation, chart model/freshness, and human approval/evidence as independent gates. A static pass is not ATP proof or ADR/execution acceptance. A legacy definition gap requires an approved authority repair, not an invented business contract or a matrix/evidence mention promoted into a definition.
 
 Some Basic suites retain observed evidence inline in `test-plan.md`. Preserve the existing convention rather than introducing duplicate evidence stores. If the procedure, expected result, evidence requirement, release gate, or delivery scope changes, update the owning authority first and then reassess existing evidence before updating progress.
 
@@ -88,7 +90,7 @@ Do not trust a later progress summary over a contradictory, more recent ATP/arti
 
 ## Progress update contract
 
-Update only the selected task/phase’s derived fields unless an authority change was explicitly approved:
+Locate `WBS ID` and `Status` by header names in the execution register, not fixed cell positions; preserve other/reordered columns and require unique selected rows. Update only the selected task/phase’s derived fields unless an authority change was explicitly approved:
 
 - current status;
 - last reviewed revision/date;

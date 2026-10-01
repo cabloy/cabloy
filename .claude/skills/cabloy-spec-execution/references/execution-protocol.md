@@ -15,7 +15,19 @@ find . -maxdepth 1 \( -name '__CABLOY_BASIC__' -o -name '__CABLOY_START__' \) -p
 
 Then inspect the root `package.json`, `repo-agent-governance/` (or the active generated adapter), the suite spec directory, and actual affected source paths. Classify the worktree as clean, dirty with unrelated changes, dirty with overlapping changes, or otherwise unknown. Do not clean or reset it to make execution easier.
 
-For Basic, resolve current scripts, sites, flavors, UI, and generated paths from the active repository. For Start, inspect the active Start repository and use its own commands and flavor/site names. The shared execution model does not make edition-specific runtime facts interchangeable.
+Exactly one edition marker is required before edition-specific work. Both markers mean stop as invalid/ambiguous; neither means inspect the owning package/structure and ask. For Basic or Start, resolve scripts, sites, UI, flavors, and generated paths from that active repository. Shared workflow does not make runtime facts interchangeable.
+
+## Target semantics
+
+Apply the same classes used by generation:
+
+- **Observed existing**: cite inspected source/configuration/manifest and the owner.
+- **Proposed new**: design approval, framework/collision checks, or ADR acceptance is missing; creation stays gated.
+- **Explicitly approved new**: concrete design passed framework/collision checks, user explicitly approved it, and governing ADR is `Accepted`. A separately approved bounded WBS task can create its future source. Do not require a deliberately new target to exist already.
+
+For a new independent site, verify the site ID/public-path collisions, exclusive root-path owner, flavor/composition, SSR admission/profile, site module/registration, bundle/release identity, generated REST package/import, durable manifests, and paired commands together. Cite checked framework surfaces and accepted design authority. A shared target still requires an observed owner.
+
+A new wrapper is a planned addition until implementation creates it in the durable manifest. Observe its resulting definition and SSR/REST pairing before running it. Neither tuple design nor generation approval is execution approval. Keep controlling TODOs, unaccepted ADRs, and blocked gates; absence of future source alone is not one of those gates.
 
 ## 2. Target selection
 
@@ -41,7 +53,9 @@ Read in this order:
 3. complete WBS task and dependency rows;
 4. linked ATP definitions and test-plan release gates;
 5. progress, blockers, waivers, and next proof;
-6. linked evidence, phase indexes, runbooks, presentation contracts, rollout records, and the two derived implementation charts; verify their freshness with `npm run spec:charts:check -- <suite>`.
+6. linked evidence, indexes, runbooks, presentation/rollout records, and applicable derived charts. With complete supported chart inputs, check freshness using `npm run spec:charts:check -- <suite>`; otherwise report the precise legacy/lightweight gap.
+
+Run the applicable authority audit (`npm run spec:check -- <suite>`; `--lightweight` only for agreed limited scope). Keep definition/reference/chain/link audit, chart model/freshness, and human approval/evidence review separate. Compatible legacy catalogue tables remain definitions only in their owning catalogue role; matrices/evidence do not define records. Do not invent business declarations to repair a tool gap.
 
 Before implementation, verify:
 
@@ -52,7 +66,7 @@ Before implementation, verify:
 - the selected task is not already `verified`, `deferred`, or `blocked`;
 - source ownership and the target API/state/page boundary are unambiguous;
 - current evidence is still valid for the current source revision and authority set;
-- both implementation charts are present and current, or their regeneration is included in the approved record-update scope;
+- with complete supported inputs, both charts are current or regeneration is in approved scope; with incomplete inputs, the omission is explicit and does not conceal a controlling task-authority gap;
 - dirty-worktree changes can be attributed without overwriting unrelated work;
 - tenant, identity, authorization, ownership, privacy, lifecycle, transaction, concurrency, idempotency, audit, and recovery constraints are defined for the task’s risk;
 - the requested change does not broaden scope or create a competing persistence, identity, or API authority.
@@ -100,7 +114,9 @@ Specialist route: <backend/frontend/contract-loop/specialist>
 Safety/contract constraints: <tenant, auth, lifecycle, transaction, SSR, migration, privacy>
 Verification: <exact approved ATP procedures and commands>
 Evidence: <required revision/environment/procedure/result/redacted artifact>
-Derived charts: regenerate `implementation-gantt.svg` and `implementation-burndown.svg` after `progress.md`, then run `npm run spec:charts:check -- <suite>`; their language follows `README.md` and they remain non-authoritative.
+Target classes: <observed existing / proposed new / explicitly approved new; design checks, ADR and planned additions>
+Quality gates: <authority audit; chart input eligibility/model/freshness; human approval/evidence>
+Derived charts: with complete inputs, regenerate both after progress or README title/language changes, then run spec:charts:check; otherwise name the input gap. They remain non-authoritative.
 Allowed record updates: <evidence/phase index/progress/derived charts, or explicitly named authority change>
 Blocked or unresolved: <TODOs, waivers, conflicts>
 Excluded operations: <init/reset/deploy/provider/etc.>
@@ -127,7 +143,7 @@ Start with the narrowest meaningful check, then execute linked ATP procedures an
 
 Stop and report rather than guessing when:
 
-- a command or path is not observed in the active repository;
+- a command to run is not yet observed, or a creation path lacks the explicit approved-new design/ADR/execution boundary; future source absence alone is not a blocker for an approved creation task;
 - a test fails or a required artifact is missing;
 - the working tree becomes attribution-ambiguous;
 - a specialist discovers a requirement or contract change;

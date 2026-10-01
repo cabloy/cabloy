@@ -177,7 +177,10 @@ test('initializer preserves a legacy-customized adapter during a staged upgrade'
     );
     writeFileSync(fixtureBootstrap, content);
     writeFileSync(resolve(root, 'CLAUDE.md'), 'legacy project customization\n');
-    writeFileSync(resolve(root, 'package.json'), readFileSync(resolve(ROOT_DIR, 'package.json')));
+    const projectPackage = JSON.parse(readFileSync(resolve(ROOT_DIR, 'package.json'), 'utf8'));
+    delete projectPackage.scripts['spec:check'];
+    projectPackage.scripts['project:custom'] = 'node project-owned.mjs';
+    writeFileSync(resolve(root, 'package.json'), JSON.stringify(projectPackage));
 
     const upgradeRoot = resolve(root, 'node_modules/.cabloy-upgrade');
     cpSync(GOVERNANCE_DIR, resolve(upgradeRoot, 'repo-agent-governance'), { recursive: true });
@@ -199,6 +202,12 @@ test('initializer preserves a legacy-customized adapter during a staged upgrade'
       /Staged governance source/,
     );
     assert.match(readFileSync(resolve(root, 'AGENTS.md'), 'utf8'), /Staged governance source/);
+    const updatedPackage = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
+    assert.equal(
+      updatedPackage.scripts['spec:check'],
+      'node ./repo-agent-governance/tools/spec-audit/audit.mjs',
+    );
+    assert.equal(updatedPackage.scripts['project:custom'], 'node project-owned.mjs');
   });
 });
 

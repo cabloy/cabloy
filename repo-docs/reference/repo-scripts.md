@@ -55,10 +55,14 @@ Cabloy Basic exposes these shared root scripts:
 The current Cabloy Basic root scripts also expose:
 
 ```bash
+npm run spec:check -- <suite>
+npm run spec:check -- <suite> --lightweight --format json
 npm run test:spec-charts
 npm run spec:charts -- <suite>
 npm run spec:charts:check -- <suite>
 ```
+
+`spec:check` is a read-only planning-authority structure audit: complete mode checks core records, formal definitions, exact references and traceability, WBS/progress consistency, and supported local Markdown links. `--lightweight` checks the present authority and references without requiring a full baseline or charts; `--format json` emits deterministic diagnostics. Audit regressions run under `test:agent-governance`. A structural pass does not authenticate approval, business completeness, implementation, or acceptance evidence; existing legacy gaps should be reported rather than filled with invented requirements.
 
 `spec:charts` refreshes the generated Gantt and burndown SVG views for a chart-compatible `repo-specs/<suite>/` record. `spec:charts:check` validates the supported input contract and detects stale generated views; `test:spec-charts` runs the chart-tool test suite. The deterministic implementation lives in `repo-agent-governance/tools/spec-charts/`, not inside a provider-specific skill discovery directory.
 
@@ -68,7 +72,8 @@ The generator consumes `README.md`, `pdp-wbs.md`, `test-plan.md`, and `progress.
 
 - formal `### Phase <number>:` and `#### WBS-...:` headings in the WBS, with supported dependency labels
 - formally defined `ATP-*` scenarios in the test plan for every ATP reference used by a WBS task
-- one progress row for each WBS item, with the WBS ID in the first cell and its supported status in the second cell
+- exactly one progress row for each WBS item, with columns identified by the `WBS ID` and `Status` headers, regardless of their order; explicit WBS status must agree
+- unique formal definitions and an acyclic dependency graph; both `Dependency:` and `Dependencies:` are supported, phase defaults apply only before the first task, and explicit task dependencies override them
 - a README whose current title and language should be reflected by regenerated chart output
 
 A legacy suite with a different WBS or progress-table layout is not chart-compatible until a deliberate record-format normalization aligns its authoritative Markdown with this input contract. Format normalization must preserve the existing planning authority; it does not require an unrelated product or delivery change.
