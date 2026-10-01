@@ -6,11 +6,9 @@
 [![Docs](https://img.shields.io/badge/docs-cabloy-4f46e5.svg?style=flat-square)](https://cabloy.com)
 [![Demo](https://img.shields.io/badge/demo-cabloy.com-059669.svg?style=flat-square)](https://cabloy.com/demo)
 
-Cabloy is a Node.js fullstack framework for AI vibe coding, with AI Spec-Driven Development for traceable, evidence-backed delivery.
+Cabloy is a Node.js fullstack framework for AI vibe coding. It connects Vona (backend) and Zova (frontend) through bidirectional type sync, while [AI Spec-Driven Development](https://cabloy.com/ai/ai-spec-driven-development) guides work from confirmed specs to verifiable delivery.
 
-**One fullstack system for AI vibe coding—bidirectional type sync, CLI-first workflows, docs, skills, and traceable delivery from product intent to verifiable evidence.**
-
-Instead of stitching separate backend and frontend stacks together, Cabloy keeps their contracts, tooling, and guidance connected in one repository. [AI Spec-Driven Development](https://cabloy.com/ai/ai-spec-driven-development) provides the disciplined path from confirmed Specs to evidence-backed delivery; its precise engineering method is Traceable Spec Delivery. Vona is its backend framework and runtime layer, and Zova is its frontend framework and application layer. Cabloy Basic and Cabloy Start are related, complete edition baselines built on that shared architecture; see [Editions Overview](https://cabloy.com/editions/overview) for their deliberate differences.
+Cabloy Basic and Cabloy Start are complete editions built on this shared architecture; see [Editions Overview](https://cabloy.com/editions/overview) for their differences.
 
 [Documentation](https://cabloy.com) · [npm](https://www.npmjs.com/package/cabloy) · [Demo](https://cabloy.com/demo) · [GitHub](https://github.com/cabloy/cabloy)
 
