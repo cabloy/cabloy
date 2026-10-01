@@ -29,10 +29,6 @@ function isAsciiWordCharacter(character) {
   return isAsciiIdentifierCharacter(character) || character === '_';
 }
 
-function isHorizontalWhitespace(character) {
-  return character === ' ' || character === '\t';
-}
-
 function isTokenStart(value, index) {
   return index === 0 || !isAsciiWordCharacter(value[index - 1]);
 }
@@ -106,7 +102,7 @@ export function markdownLines(markdown) {
           text += raw.slice(cursor);
           break;
         }
-        text += `${raw.slice(cursor, start)  } `;
+        text += `${raw.slice(cursor, start)} `;
         cursor = start + 4;
         comment = true;
       }
@@ -157,11 +153,23 @@ function strictIdentifier(value, prefix) {
 }
 
 function leadingDefinition(value, prefix) {
-  const match = value.match(/^(?:\*\*(`?[^*]+)\*\*|`([^`]+)`|([^\s:：]+))(.*)$/);
-  if (!match) return null;
-  const id = strictIdentifier(match[1] ?? match[2] ?? match[3], prefix);
-  if (!id || (match[4] && !/^[\s:：]/.test(match[4]))) return null;
-  return { id, tail: match[4] };
+  let token;
+  let end;
+  const delimiter = value.startsWith('**') ? '**' : value.startsWith('`') ? '`' : null;
+  if (delimiter) {
+    const close = value.indexOf(delimiter, delimiter.length);
+    if (close === -1) return null;
+    token = value.slice(delimiter.length, close);
+    end = close + delimiter.length;
+  } else {
+    token = value.match(/^[^\s:：]+/)?.[0];
+    if (!token) return null;
+    end = token.length;
+  }
+  const id = strictIdentifier(token, prefix);
+  const tail = value.slice(end);
+  if (!id || (tail && !/^[\s:：]/.test(tail))) return null;
+  return { id, tail };
 }
 
 function scenarioSection(title) {
@@ -216,7 +224,7 @@ export function parseDefinitions(markdown, prefix, { file } = {}) {
       }
       continue;
     }
-    const bullet = text.match(/^\s*[-+*]\s+\*\*(.*?)\*\*(.*)$/);
+    const bullet = text.match(/^\s*[-+*]\s+\*\*([^*]*)\*\*(.*)$/);
     if (bullet && (!atp || scenarioLevel !== null)) {
       const id = strictIdentifier(bullet[1], prefix);
       const ids = findIdentifiers(bullet[1], prefix);
@@ -273,7 +281,7 @@ export function parseDefinitions(markdown, prefix, { file } = {}) {
           (record.heading && (!ownHeading || record.heading.level <= ownHeading.level))
         ) {
           break;
-}
+        }
         end++;
       }
     }
@@ -298,7 +306,9 @@ function normalizeStatus(value) {
 }
 
 function reviewDateFromLine(line) {
-  return line.match(/(?:last reviewed|最后审查日期)\s*(?:[:：]\s*)?(\d{4}-\d{2}-\d{2})/i)?.[1] ?? null;
+  return (
+    line.match(/(?:last reviewed|最后审查日期)\s*(?:[:：]\s*)?(\d{4}-\d{2}-\d{2})/i)?.[1] ?? null
+  );
 }
 
 export function parseProgress(markdown, { file } = {}) {
@@ -341,7 +351,7 @@ export function parseProgress(markdown, { file } = {}) {
       throw new Error(
         `Duplicate ${id} progress row at ${atLocation(record, file)} (first at line ${locations.get(id).line}).`,
       );
-}
+    }
     rows.set(id, normalizeStatus(cells[columns.status] ?? ''));
     locations.set(id, location(record, file));
   }
@@ -349,7 +359,7 @@ export function parseProgress(markdown, { file } = {}) {
 }
 
 function labeledValue(record, labels) {
-  const match = record.text.trim().match(/^([A-Z]+)\s*:\s*(.*)$/i);
+  const match = record.text.trim().match(/^([A-Z]+)\s*:(.*)$/i);
   return match && labels.includes(match[1].toLowerCase()) ? match[2].trim() : null;
 }
 
@@ -388,7 +398,7 @@ function expandDependencies(task, tasks) {
       throw new Error(
         `${task.id} depends on unknown WBS task${value.endsWith('-*') ? ' group' : ''} ${value}.`,
       );
-}
+    }
     return ids;
   };
   const ids = new Set();
@@ -406,7 +416,7 @@ function expandDependencies(task, tasks) {
         throw new Error(
           `${task.id} has an unparseable reversed WBS dependency range: ${match.value} through ${next.value}.`,
         );
-}
+      }
       tasks.slice(start, end + 1).forEach(candidate => ids.add(candidate.id));
       rangeSpans.push({ start: match.end, end: next.start });
       index++;
@@ -431,7 +441,7 @@ function expandDependencies(task, tasks) {
     .replace(/\b(?:and|or)\b/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-  if (/^through$/i.test(gate) || (gate && !/[A-Z㐀-鿿]/i.test(gate))) {
+  if (/^through$/i.test(gate) || (gate && !/[A-Z\p{Script=Han}]/iu.test(gate))) {
     throw new Error(`${task.id} has an unparseable WBS dependency range: ${dependency}`);
   }
   return { ids: [...ids], gate };
@@ -446,12 +456,11 @@ export function parseWbs(markdown, { file } = {}) {
   const seen = new Map();
   for (const record of records) {
     const heading = record.heading;
-    const phaseMatch =
-      heading?.level === 3 ? heading.text.match(/^Phase\s+(\d+)\s*:\s*(.+)$/) : null;
+    const phaseMatch = heading?.level === 3 ? heading.text.match(/^Phase\s+(\d+)\s*:(.*\S)/) : null;
     if (phaseMatch) {
       phase = {
         number: phaseMatch[1],
-        title: phaseMatch[2],
+        title: phaseMatch[2].trim(),
         line: record.line,
         tasks: [],
         preamble: [],
@@ -474,7 +483,7 @@ export function parseWbs(markdown, { file } = {}) {
         throw new Error(
           `Duplicate ${taskMatch.id} definition at ${atLocation(record, file)} (first at line ${seen.get(taskMatch.id)}).`,
         );
-}
+      }
       seen.set(taskMatch.id, record.line);
       task = {
         id: taskMatch.id,
@@ -514,7 +523,7 @@ export function parseWbs(markdown, { file } = {}) {
         throw new Error(
           `Multiple ${task.id} Status fields at ${atLocation(statusRecords[1], file)}.`,
         );
-}
+      }
       task.status = statusRecords.length
         ? normalizeStatus(labeledValue(statusRecords[0], ['status']))
         : undefined;

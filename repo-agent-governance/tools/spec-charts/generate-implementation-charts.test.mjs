@@ -362,6 +362,25 @@ test('definition bodies stop before the next definition or a sibling section', (
   assert.doesNotMatch(mixed.get('PRD-MIXED-01').body, /WBS-NOT-OWNED/);
 });
 
+test('leading definitions preserve plain, code, and bold delimiters with long titles', () => {
+  for (const label of [
+    'PRD-FORMAT-01',
+    '`PRD-FORMAT-01`',
+    '**PRD-FORMAT-01**',
+    '**`PRD-FORMAT-01`**',
+  ]) {
+    const definitions = parseDefinitions(`### ${label}: ${'A'.repeat(10000)}`, 'PRD-');
+    assert.deepEqual([...definitions.keys()], ['PRD-FORMAT-01']);
+  }
+  assert.equal(parseDefinitions('### **PRD-FORMAT-01: unclosed bold', 'PRD-').size, 0);
+  assert.equal(parseDefinitions('### `PRD-FORMAT-01: unclosed code', 'PRD-').size, 0);
+  const wbs = parseWbs(
+    '### Phase 10:   Trimmed phase   \n#### WBS-FORMAT-01: task\nDependencies:   none.',
+  );
+  assert.equal(wbs.phases[0].title, 'Trimmed phase');
+  assert.equal(wbs.tasks[0].dependency, 'none.');
+});
+
 test('same-line multiple bold definitions or explicit heading definitions are rejected', () => {
   assert.throws(
     () => parseDefinitions('- **PRD-A-01**: first; **PRD-A-02**: second', 'PRD-'),
@@ -658,9 +677,11 @@ test('burndown grows for eight phases and keeps phase rows clear of the footer',
     (_, index) =>
       `### Phase ${index + 1}: 阶段说明\nDependency: none.\n#### WBS-P-${index + 1}: 工作项`,
   ).join('\n');
-  const progress =
-    `| WBS ID | Status |\n| --- | --- |\n${ 
-    Array.from({ length: 8 }, (_, index) => `| WBS-P-${index + 1} | not-started |`).join('\n')}`;
+  const progressRows = Array.from(
+    { length: 8 },
+    (_, index) => `| WBS-P-${index + 1} | not-started |`,
+  ).join('\n');
+  const progress = `| WBS ID | Status |\n| --- | --- |\n${progressRows}`;
   const model = createChartModel({
     readme: '# 中文规划\n完整中文记录。',
     wbs,
@@ -669,7 +690,8 @@ test('burndown grows for eight phases and keeps phase rows clear of the footer',
   });
   const svg = renderBurndown(model, '示例');
   const phaseY = Array.from(svg.matchAll(/<text class="task" x="96" y="(\d+)">阶段/g), match =>
-    Number(match[1]));
+    Number(match[1]),
+  );
   assert.equal(phaseY.length, 8);
   const footerY = Number(svg.match(/<line class="grid" x1="72" y1="(\d+)" x2="1500"/)[1]);
   const height = Number(svg.match(/width="1600" height="(\d+)"/)[1]);
@@ -696,7 +718,10 @@ test('long status labels and burndown explanations wrap within their existing co
     burndown,
     /<text class="caption" x="1070" y="\d+"><tspan x="1070" dy="0">Relative positions/,
   );
-  const explanationLines = Array.from(burndown.matchAll(/<tspan x="1070" dy="(?:0|18)">([^<]*)<\/tspan>/g), match => match[1]);
+  const explanationLines = Array.from(
+    burndown.matchAll(/<tspan x="1070" dy="(?:0|18)">([^<]*)<\/tspan>/g),
+    match => match[1],
+  );
   assert.ok(explanationLines.length >= 2);
   assert.doesNotMatch(
     burndown,
