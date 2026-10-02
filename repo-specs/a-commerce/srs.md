@@ -22,7 +22,7 @@ It runs two independent Zova SSR applications and Vona SSR sites:
 | Zova flavor          | `cabloyCommerce`                                                                               | `cabloyCommerceAdmin`                                                   |
 | Paired root build    | `npm run build:zova:commerce:web`                                                              | `npm run build:zova:commerce:admin`                                     |
 | Primary audience     | Authenticated customers, with public catalogue browsing                                        | Authorized tenant operators                                             |
-| SSR privacy baseline | Anonymous shell for private data unless a later decision requires cookie-aware personalization | Cookie-aware SSR may be enabled only when the site contract requires it |
+| SSR privacy baseline | Anonymous protected Address requests redirect without exposing private data; authenticated session SSR may render owner-scoped Address data with private, no-store caching and equivalent hydration | Operator SSR and API access require independently enforced authorization |
 
 `web` and `admin` are already registered SSR site IDs in Cabloy Basic. Commerce must declare new IDs and public paths rather than reuse either identity.
 
@@ -46,44 +46,44 @@ Inventory reservation is initially a `commerce-trade` aggregate behavior. The pe
 
 ### Tenant isolation
 
-- **SRS-TEN-01**: The active tenant is resolved on the server from Cabloy's authoritative request/session context. The browser must not select or assert the tenant for authorization.
-- **SRS-TEN-02**: Catalogue, SKU, stock, reservation, cart, address, order, order line, coupon, coupon reservation/redemption, payment, shipment, refund, and audit queries and mutations are scoped to that active tenant.
-- **SRS-TEN-03**: Tenant scope is enforced for relation traversal, asynchronous processing, scheduled expiration, event handling, and mutation recovery—not only list endpoints.
-- **SRS-TEN-04**: A resource identifier alone never grants cross-tenant access. Services must verify both tenant membership and resource ownership before reading or mutating it.
+- **SRS-TEN-01**: The active tenant is resolved on the server from Cabloy's authoritative request/session context. The browser must not select or assert the tenant for authorization. Traceability: `PRD-ORD-04`, `WBS-40-01`, `WBS-40-03`.
+- **SRS-TEN-02**: Catalogue, SKU, stock, reservation, cart, address, order, order line, coupon, coupon reservation/redemption, payment, shipment, refund, and audit queries and mutations are scoped to that active tenant. Traceability: `PRD-CAT-01`, `PRD-CAT-03`, `PRD-ORD-04`, `WBS-30-01`, `WBS-30-02`, `WBS-40-01`, `WBS-40-02`, `WBS-40-03`, `WBS-40-04`, `WBS-60-01`.
+- **SRS-TEN-03**: Tenant scope is enforced for relation traversal, asynchronous processing, scheduled expiration, event handling, and mutation recovery—not only list endpoints. Traceability: `PRD-ORD-04`, `WBS-30-01`, `WBS-40-03`, `WBS-40-04`.
+- **SRS-TEN-04**: A resource identifier alone never grants cross-tenant access. Services must verify both tenant membership and resource ownership before reading or mutating it. Traceability: `PRD-ORD-04`, `WBS-30-01`, `WBS-40-01`, `WBS-40-04`, `WBS-50-02`.
 
 ### Customer and operator authorization
 
-- **SRS-AUT-01**: Checkout, carts, addresses, orders, payment attempts, and refund requests require authentication. Guest checkout is not available.
-- **SRS-AUT-02**: Customer operations verify that the target resource belongs to the current authenticated customer in the active tenant.
-- **SRS-AUT-03**: Operator operations require explicit server-side authorization for catalogue, stock, Address, order, shipment, coupon, payment, and refund actions as applicable. The current read-only Admin Address actions use `@Passport.systemAdmin()`; Commerce site admission and menu visibility do not grant that API authority.
-- **SRS-AUT-04**: Zova `SITE_ID` and route admission determine site access only. Vona API and service authorization independently enforce tenant and resource permissions.
-- **SRS-AUT-05**: A refund request and an approval are separate actions. The MVP allows the same authorized operator to perform both, but no customer can approve or execute a refund.
+- **SRS-AUT-01**: Checkout, carts, addresses, orders, payment attempts, and refund requests require authentication. Guest checkout is not available. Traceability: `PRD-ORD-01`, `PRD-ORD-04`, `WBS-40-01`, `WBS-40-03`, `WBS-50-02`, `WBS-60-02`.
+- **SRS-AUT-02**: Customer operations verify that the target resource belongs to the current authenticated customer in the active tenant. Traceability: `PRD-ORD-04`, `PRD-ADR-01`, `PRD-SHP-02`, `WBS-40-01`, `WBS-40-04`, `WBS-50-02`.
+- **SRS-AUT-03**: Operator operations require explicit server-side authorization for catalogue, stock, Address, order, shipment, coupon, payment, and refund actions as applicable. The current read-only Admin Address actions use `@Passport.systemAdmin()`; Commerce site admission and menu visibility do not grant that API authority. Traceability: `PRD-CAT-03`, `PRD-ADR-02`, `PRD-SHP-01`, `WBS-30-01`, `WBS-40-04`, `WBS-60-01`, `WBS-60-02`.
+- **SRS-AUT-04**: Zova `SITE_ID` and route admission determine site access only. Vona API and service authorization independently enforce tenant and resource permissions. Traceability: `PRD-ADR-02`, `WBS-20-02`, `WBS-40-04`.
+- **SRS-AUT-05**: A refund request and an approval are separate actions. The MVP allows the same authorized operator to perform both, but no customer can approve or execute a refund. Traceability: `PRD-RFD-02`, `WBS-60-02`.
 
 ## Data and Money Contracts
 
 ### Shared record requirements
 
-- **SRS-DAT-01**: Commerce records persist tenant ownership or derive it through a mandatory tenant-owned parent relationship that is enforced in services.
-- **SRS-DAT-02**: Mutations that affect order, stock, coupon, payment, shipment, or refund state append an audit record containing the actor, action, prior and next state where applicable, correlation ID, reason when supplied, and timestamp.
+- **SRS-DAT-01**: Commerce records persist tenant ownership or derive it through a mandatory tenant-owned parent relationship that is enforced in services. Traceability: `PRD-ORD-04`, `WBS-30-01`, `WBS-30-02`, `WBS-40-01`, `WBS-40-04`.
+- **SRS-DAT-02**: Mutations that affect order, stock, coupon, payment, shipment, or refund state append an audit record containing the actor, action, prior and next state where applicable, correlation ID, reason when supplied, and timestamp. Traceability: `PRD-RFD-02`, `WBS-30-02`, `WBS-40-03`, `WBS-50-01`, `WBS-60-02`.
 - **SRS-DAT-03**: Business uniqueness is enforced through tenant-aware service logic and transactional checks. Do not use `table.unique(...)` for tenant-scoped business uniqueness.
 - **SRS-DAT-04**: Ordinary indexes support tenant-scoped lookup, active-state lookup, and idempotency lookup.
 
 ### Live Address Admin/Web contracts
 
-- **SRS-ADR-01**: `commerce-member` owns one live Address entity, model, active-instance persistence boundary, and lifecycle. It does not duplicate Address persistence for Admin and Web consumers. `commerce-trade` owns immutable Address snapshots persisted with orders.
-- **SRS-ADR-02**: The Admin Resource surface is read-only: conventional `select` and `view` actions are independently protected by `@Passport.systemAdmin()`, operate within the active instance, and never inherit the current-customer owner predicate. Admin `create`, `update`, and `delete` actions are absent from the MVP contract, metadata, and UI.
-- **SRS-ADR-03**: The customer self-service surface uses explicit `mine`, `viewMine`, `createMine`, `updateMine`, and `deleteMine` actions with customer-specific request and response DTOs. It does not use one unqualified action with role-dependent response shapes.
-- **SRS-ADR-04**: Every Web service path derives the authoritative customer owner only from the current Passport. Web request and response DTOs exclude authoritative `userId`, tenant/instance identity, and Admin-only metadata. Owner and customer-visible predicates are applied in the database query before count, ordering, offset, or limit; every Web detail/update/delete lookup includes that owner, so foreign-customer and cross-instance rows are absent.
-- **SRS-ADR-05**: Admin DTOs may carry the operational Resource metadata required by the generic page. Web DTOs contain only customer-needed Address fields and never alias the Admin projection. Both operation families are emitted as separate generated contracts from Vona contract truth.
-- **SRS-ADR-06**: Admin Address state remains selector-scoped under `rest-resource.model.resource`, with only an optional thin semantic facade. Customer Address state belongs to a dedicated model such as `ModelAddressMine`, with distinct `$useStateData(...)` keys, mutations, and invalidation for the Web contract; this is a separate audience state domain, not a competing Admin cache owner.
-- **SRS-ADR-07**: An Admin `presetResource` menu may disclose the approved read-only Resource surface, and the customer route remains protected, but neither menu nor route admission authorizes Address APIs. Anonymous Web SSR and hydration-time initial rendering remain an equivalent neutral shell until the browser authentication/admission boundary creates private Address queries.
+- **SRS-ADR-01**: `commerce-member` owns one live Address entity, model, active-instance persistence boundary, and lifecycle. It does not duplicate Address persistence for Admin and Web consumers. `commerce-trade` owns immutable Address snapshots persisted with orders. Traceability: `PRD-ADR-03`, `WBS-40-04`, `WBS-40-03`.
+- **SRS-ADR-02**: The Admin Resource surface is read-only: conventional `select` and `view` actions are independently protected by `@Passport.systemAdmin()`, operate within the active instance, and never inherit the current-customer owner predicate. Admin `create`, `update`, and `delete` actions are absent from the MVP contract, metadata, and UI. Traceability: `PRD-ADR-02`, `WBS-40-04`, `WBS-80-04`.
+- **SRS-ADR-03**: The customer self-service surface uses explicit `mine`, `viewMine`, `createMine`, `updateMine`, and `deleteMine` actions with customer-specific request and response DTOs. It does not use one unqualified action with role-dependent response shapes. Traceability: `PRD-ADR-01`, `WBS-40-04`.
+- **SRS-ADR-04**: Every Web service path derives the authoritative customer owner only from the current Passport. Web request and response DTOs exclude authoritative `userId`, tenant/instance identity, and Admin-only metadata. Owner and customer-visible predicates are applied in the database query before count, ordering, offset, or limit; every Web detail/update/delete lookup includes that owner, so foreign-customer and cross-instance rows are absent. Traceability: `PRD-ADR-01`, `WBS-40-04`.
+- **SRS-ADR-05**: Admin DTOs may carry the operational Resource metadata required by the generic page. Web DTOs contain only customer-needed Address fields and never alias the Admin projection. Both operation families are emitted as separate generated contracts from Vona contract truth. Traceability: `PRD-ADR-03`, `WBS-40-04`.
+- **SRS-ADR-06**: Admin Address state remains selector-scoped under `rest-resource.model.resource`, with only an optional thin semantic facade. Customer Address state belongs to a dedicated model such as `ModelAddressMine`, with distinct `$useStateData(...)` keys, mutations, and invalidation for the Web contract; this is a separate audience state domain, not a competing Admin cache owner. Traceability: `PRD-ADR-03`, `WBS-40-04`.
+- **SRS-ADR-07**: An Admin `presetResource` menu may disclose the approved read-only Resource surface, and the customer route remains protected, but neither menu nor route admission authorizes Address APIs. An anonymous protected Address document request redirects to login without private Address data. An authenticated session may server-render its owner-scoped Address query with `private, no-store` caching; the client's hydration-time initial render must match the authorized server view. An anonymous or unavailable-session render must not create a private Address query or disclose its data. Traceability: `PRD-ADR-03`, `WBS-40-04`.
 
 ### Monetary values and snapshots
 
-- **SRS-MNY-01**: Every persisted money amount is a signed or unsigned integer count of USD cents. Floating-point values are not persisted or used to determine totals.
-- **SRS-MNY-02**: An order snapshots line title, SKU attributes, unit price, quantity, eligible subtotal, coupon identity and discount, address, payable total, and payment currency at creation.
-- **SRS-MNY-03**: Coupon discount is `min(fixedDiscountCents, eligibleSubtotalCents)` and the payable amount must not be negative.
-- **SRS-MNY-04**: Later product, SKU, address, coupon-template, or price changes do not alter an existing order snapshot, payment amount, or refund amount.
+- **SRS-MNY-01**: Every persisted money amount is a signed or unsigned integer count of USD cents. Floating-point values are not persisted or used to determine totals. Traceability: `PRD-CAT-02`, `WBS-30-01`, `WBS-40-03`.
+- **SRS-MNY-02**: An order snapshots line title, SKU attributes, unit price, quantity, eligible subtotal, coupon identity and discount, address, payable total, and payment currency at creation. Traceability: `PRD-ORD-03`, `WBS-40-02`, `WBS-40-03`, `WBS-80-02`.
+- **SRS-MNY-03**: Coupon discount is `min(fixedDiscountCents, eligibleSubtotalCents)` and the payable amount must not be negative. Traceability: `PRD-CPN-01`, `PRD-ORD-02`, `WBS-40-02`, `WBS-40-03`.
+- **SRS-MNY-04**: Later product, SKU, address, coupon-template, or price changes do not alter an existing order snapshot, payment amount, or refund amount. Traceability: `PRD-ORD-03`, `WBS-30-01`, `WBS-40-03`, `WBS-80-02`.
 
 ## State Machines
 
@@ -98,8 +98,8 @@ State names in this section are canonical. A later implementation may use intege
 | `inactive` | Not newly sellable; existing orders remain historical facts | `active`, `archived`   |
 | `archived` | Permanently unavailable for new sales                       | none                   |
 
-- **SRS-CAT-01**: Checkout accepts only an `active` SKU with sufficient available stock.
-- **SRS-CAT-02**: Catalogue display is advisory; checkout reruns publication, tenant, price, and availability validation.
+- **SRS-CAT-01**: Checkout accepts only an `active` SKU with sufficient available stock. Traceability: `PRD-INV-01`, `WBS-40-03`.
+- **SRS-CAT-02**: Catalogue display is advisory; checkout reruns publication, tenant, price, and availability validation. Traceability: `PRD-CAT-02`, `PRD-ORD-02`, `WBS-40-03`, `WBS-80-01`.
 
 ### Stock reservation
 
@@ -110,9 +110,9 @@ State names in this section are canonical. A later implementation may use intege
 | `released` | The unpaid order was cancelled, failed, or expired  | none                   |
 | `restored` | A successful whole-order refund restored sold stock | none                   |
 
-- **SRS-INV-01**: Available stock is calculated from the tenant's one-warehouse on-hand stock minus active reservations; the persistent representation may store equivalent counters if they preserve this invariant.
-- **SRS-INV-02**: The system must prevent a reservation from reducing available stock below zero.
-- **SRS-INV-03**: Each order line has a traceable reservation record. Release, consumption, and restoration are idempotent.
+- **SRS-INV-01**: Available stock is calculated from the tenant's one-warehouse on-hand stock minus active reservations; the persistent representation may store equivalent counters if they preserve this invariant. Traceability: `PRD-CAT-02`, `PRD-INV-01`, `WBS-30-02`, `WBS-80-03`.
+- **SRS-INV-02**: The system must prevent a reservation from reducing available stock below zero. Traceability: `PRD-INV-01`, `PRD-INV-02`, `WBS-30-02`, `WBS-40-03`.
+- **SRS-INV-03**: Each order line has a traceable reservation record. Release, consumption, and restoration are idempotent. Traceability: `PRD-INV-03`, `PRD-INV-04`, `WBS-30-02`, `WBS-40-03`, `WBS-50-01`, `WBS-60-02`.
 
 ### Order
 
@@ -128,9 +128,9 @@ State names in this section are canonical. A later implementation may use intege
 | `cancelled`        | Customer/operator cancellation before payment completion        | none                                         |
 | `expired`          | 30-minute unpaid timeout released reservations                  | none                                         |
 
-- **SRS-ORD-01**: `paid`, `refund_requested`, `refund_approved`, or `refund_rejected` must not transition to `shipped` unless the current state is `paid` at the transaction boundary.
-- **SRS-ORD-02**: `shipped`, `refunded`, `cancelled`, and `expired` are final in the MVP.
-- **SRS-ORD-03**: The refund route accepts only `paid` orders. It is unavailable after shipment and for every final or payment-incomplete state.
+- **SRS-ORD-01**: `paid`, `refund_requested`, `refund_approved`, or `refund_rejected` must not transition to `shipped` unless the current state is `paid` at the transaction boundary. Traceability: `PRD-PAY-03`, `WBS-60-01`, `WBS-60-02`, `WBS-80-02`.
+- **SRS-ORD-02**: `shipped`, `refunded`, `cancelled`, and `expired` are final in the MVP. Traceability: `PRD-SHP-03`, `WBS-40-03`, `WBS-50-01`, `WBS-60-01`, `WBS-60-02`.
+- **SRS-ORD-03**: The refund route accepts only `paid` orders. It is unavailable after shipment and for every final or payment-incomplete state. Traceability: `PRD-SHP-03`, `PRD-RFD-01`, `WBS-60-02`.
 
 ### Coupon use
 
@@ -141,9 +141,9 @@ State names in this section are canonical. A later implementation may use intege
 | `redeemed`  | Payment succeeded and coupon use is final        | none                    |
 | `expired`   | No longer usable                                 | none                    |
 
-- **SRS-CPN-01**: One order holds at most one coupon reservation.
-- **SRS-CPN-02**: Coupon validation checks active status, customer ownership, validity, total usage limit, per-customer limit, and minimum spend while creating the order.
-- **SRS-CPN-03**: Cancellation, failed payment, and expiry change `reserved` to `available` exactly once; a successful refund leaves `redeemed` unchanged.
+- **SRS-CPN-01**: One order holds at most one coupon reservation. Traceability: `PRD-CPN-01`, `WBS-40-02`, `WBS-40-03`.
+- **SRS-CPN-02**: Coupon validation checks active status, customer ownership, validity, total usage limit, per-customer limit, and minimum spend while creating the order. Traceability: `PRD-CPN-02`, `WBS-40-02`, `WBS-40-03`.
+- **SRS-CPN-03**: Cancellation, failed payment, and expiry change `reserved` to `available` exactly once; a successful refund leaves `redeemed` unchanged. Traceability: `PRD-CPN-03`, `PRD-RFD-03`, `WBS-40-02`, `WBS-40-03`, `WBS-50-01`, `WBS-60-02`.
 
 ### Payment and refund attempts
 
@@ -157,41 +157,41 @@ State names in this section are canonical. A later implementation may use intege
 | Refund attempt  | `succeeded` | Verified provider refund completed exactly once              |
 | Refund attempt  | `failed`    | Verified provider refund failed and the order is recoverable |
 
-- **SRS-RFD-01**: A refund request records the requesting customer, order, reason, requested time, decision actor, decision reason, and execution attempt. It is created only from the order's current `paid` state.
-- **SRS-RFD-02**: Approval must recheck tenant ownership and that no shipment exists. A refund attempt may run only from `refund_approved`; a rejection returns the order to `paid` without changing stock or coupon redemption.
-- **SRS-RFD-03**: A successful whole-order refund restores each consumed reservation exactly once, transitions the order to `refunded`, and leaves the coupon in `redeemed` state. A failed provider attempt is retained in the refund audit trail and returns the order to `paid`, where the customer may create a new refund request.
+- **SRS-RFD-01**: A refund request records the requesting customer, order, reason, requested time, decision actor, decision reason, and execution attempt. It is created only from the order's current `paid` state. Traceability: `PRD-RFD-01`, `PRD-RFD-02`, `WBS-60-02`.
+- **SRS-RFD-02**: Approval must recheck tenant ownership and that no shipment exists. A refund attempt may run only from `refund_approved`; a rejection returns the order to `paid` without changing stock or coupon redemption. Traceability: `PRD-RFD-02`, `PRD-SHP-03`, `WBS-60-02`.
+- **SRS-RFD-03**: A successful whole-order refund restores each consumed reservation exactly once, transitions the order to `refunded`, and leaves the coupon in `redeemed` state. A failed provider attempt is retained in the refund audit trail and returns the order to `paid`, where the customer may create a new refund request. Traceability: `PRD-RFD-03`, `WBS-60-02`.
 
-- **SRS-PAY-01**: A payment or refund event has a durable idempotency key scoped to its attempt and tenant.
-- **SRS-PAY-02**: Replaying a successful event returns the existing final result and must not reapply any stock, coupon, order, or audit mutation.
-- **SRS-PAY-03**: Payment success consumes reservations and changes the order from `awaiting_payment` to `paid` atomically. Full refund success restores stock and changes the order from `refund_approved` to `refunded` atomically.
+- **SRS-PAY-01**: A payment or refund event has a durable idempotency key scoped to its attempt and tenant. Traceability: `PRD-PAY-02`, `WBS-50-01`, `WBS-60-02`.
+- **SRS-PAY-02**: Replaying a successful event returns the existing final result and must not reapply any stock, coupon, order, or audit mutation. Traceability: `PRD-PAY-02`, `PRD-RFD-03`, `WBS-50-01`, `WBS-60-02`.
+- **SRS-PAY-03**: Payment success consumes reservations and changes the order from `awaiting_payment` to `paid` atomically. Full refund success restores stock and changes the order from `refund_approved` to `refunded` atomically. Traceability: `PRD-PAY-01`, `PRD-PAY-03`, `PRD-INV-04`, `WBS-50-01`, `WBS-60-02`.
 - **SRS-PAY-04**: Browser redirects and callbacks are advisory only. The Provider result must be verified through a signed webhook, Provider query, or reconciliation before it changes Commerce state.
 - **SRS-PAY-05**: Provider side effects are driven by durable operations and an outbox. No external payment call runs inside a retryable Commerce database transaction.
 
 ### Shipment
 
-- **SRS-SHP-01**: A shipment is a whole-order record with a non-empty carrier and tracking number, the operator, and the timestamp.
-- **SRS-SHP-02**: Creating the shipment is permitted only for the same tenant's current `paid` order and moves that order to `shipped` in the same transaction.
-- **SRS-SHP-03**: The MVP has no split shipment, tracking-provider integration, delivery confirmation, or post-shipment correction workflow.
+- **SRS-SHP-01**: A shipment is a whole-order record with a non-empty carrier and tracking number, the operator, and the timestamp. Traceability: `PRD-SHP-01`, `PRD-SHP-02`, `WBS-60-01`.
+- **SRS-SHP-02**: Creating the shipment is permitted only for the same tenant's current `paid` order and moves that order to `shipped` in the same transaction. Traceability: `PRD-SHP-01`, `PRD-PAY-03`, `WBS-60-01`.
+- **SRS-SHP-03**: The MVP has no split shipment, tracking-provider integration, delivery confirmation, or post-shipment correction workflow. Traceability: `PRD-SHP-01`, `WBS-60-01`.
 
 ## Transactional and Concurrency Requirements
 
-- **SRS-TXN-01**: Order creation is one `@Core.transaction()`-protected operation. It resolves tenant and customer, loads authoritative SKU and coupon data, validates every condition, creates order snapshots, reserves stock, reserves a coupon if present, creates the payment attempt, and writes audit records.
-- **SRS-TXN-02**: The stock update uses a concurrency-safe row lock or conditional update. It succeeds only when sufficient current availability exists. A losing concurrent checkout rolls back completely and reports insufficient stock.
-- **SRS-TXN-03**: Any failure during order creation leaves no partial order, reservation, coupon reservation, payment attempt, or cache mutation.
-- **SRS-TXN-04**: Payment success, cancellation/failure, unpaid expiry, shipment, and refund success each have explicit transactional transitions and are safe to retry.
-- **SRS-TXN-05**: Scheduled expiry locates only still-`awaiting_payment` orders whose reservation deadline has passed; it rechecks current state in the transaction before releasing stock or coupons.
-- **SRS-TXN-06**: Cache writes related to transactional mutations use the framework's transaction-aware path, and tests assert database rollback and cache consistency when relevant.
+- **SRS-TXN-01**: Order creation is one `@Core.transaction()`-protected operation. It resolves tenant and customer, loads authoritative SKU and coupon data, validates every condition, creates order snapshots, reserves stock, reserves a coupon if present, creates the payment attempt, and writes audit records. Traceability: `PRD-INV-02`, `PRD-ORD-02`, `WBS-40-03`.
+- **SRS-TXN-02**: The stock update uses a concurrency-safe row lock or conditional update. It succeeds only when sufficient current availability exists. A losing concurrent checkout rolls back completely and reports insufficient stock. Traceability: `PRD-INV-02`, `WBS-30-02`, `WBS-40-03`.
+- **SRS-TXN-03**: Any failure during order creation leaves no partial order, reservation, coupon reservation, payment attempt, or cache mutation. Traceability: `PRD-INV-02`, `WBS-40-03`.
+- **SRS-TXN-04**: Payment success, cancellation/failure, unpaid expiry, shipment, and refund success each have explicit transactional transitions and are safe to retry. Traceability: `PRD-PAY-01`, `PRD-INV-03`, `PRD-RFD-03`, `WBS-40-03`, `WBS-50-01`, `WBS-60-01`, `WBS-60-02`.
+- **SRS-TXN-05**: Scheduled expiry locates only still-`awaiting_payment` orders whose reservation deadline has passed; it rechecks current state in the transaction before releasing stock or coupons. Traceability: `PRD-INV-03`, `WBS-40-03`.
+- **SRS-TXN-06**: Cache writes related to transactional mutations use the framework's transaction-aware path, and tests assert database rollback and cache consistency when relevant. Traceability: `PRD-INV-02`, `WBS-40-03`.
 
 ## API and Frontend State Contracts
 
-- **SRS-API-01**: Vona is the contract truth. For a Commerce DTO, controller, validation, or OpenAPI change, update and verify Vona first; start local Vona when Swagger generation requires it; configure the owning Zova module with `npm run zova :openapi:config <module>` when it exposes operations; require non-empty `operations.match` or `operations.ignore`; then run `npm run zova :openapi:generate <module>`. Regenerate Zova consumers rather than manually patching generated output, and consume the result through a thin Zova Model facade.
-- **SRS-API-02**: A reverse change to frontend metadata/routes requires the matching Commerce flavor SSR + REST build before `npm run deps:vona`: `npm run build:zova:commerce:web` for Customer, `npm run build:zova:commerce:admin` for Operator, or `npm run build:zova:commerce` when both surfaces or generated contract output changed. A REST-only build is insufficient because the SSR bundle and generated contract must move together. Generated `vona/.zova-rest/` directories are build artifacts and must not be edited manually.
-- **SRS-API-03**: APIs expose semantic resource and action boundaries. A customer action never accepts an arbitrary customer, tenant, total, discount, or state transition from the browser.
-- **SRS-UI-01**: Reusable async product, cart, order, coupon, and operator query state belongs to a Zova Model. Controllers orchestrate scenes rather than becoming shared fetch/cache owners.
-- **SRS-UI-02**: A custom endpoint in the same Admin Resource boundary reuses the existing `rest-resource.model.resource` state and invalidation tree rather than creating a competing module-local cache owner. A genuinely separate customer self-service contract may own its dedicated Web state boundary as specified by `SRS-ADR-06`.
-- **SRS-UI-03**: Customer SSR renders no private cart, address, order, coupon, or payment information in an anonymous response. Final client theme and authenticated state remain hydration-tolerant.
-- **SRS-UI-04**: Coupon Template Admin DTO render metadata expresses the semantic information areas in the Coupon Template Admin scene matrix without changing validation, authorization, server-authoritative values, or the separate customer coupon-selection flow. Layouts may differ by scene when their DTO fields differ.
-- **SRS-UI-05**: Semantic presentation starts from the PRD/SRS audience, task, scene, information-area, and operation-DTO contract. Vona DTO render metadata may translate only eligible scene fields into order, groups, sections, tabs, Grid/flow placement, visibility, and shared or Commerce-specific renderer identity. It must not add API authority, change persistence or validation, turn browser input into server authority, replace authorization or SSR privacy, merge distinct audience DTO contracts, or replace separate Model and page ownership. Scene layouts may differ when their operation DTO fields or tasks differ.
+- **SRS-API-01**: Vona is the contract truth. For a Commerce DTO, controller, validation, or OpenAPI change, update and verify Vona first; start local Vona when Swagger generation requires it; configure the owning Zova module with `npm run zova :openapi:config <module>` when it exposes operations; require non-empty `operations.match` or `operations.ignore`; then run `npm run zova :openapi:generate <module>`. Regenerate Zova consumers rather than manually patching generated output, and consume the result through a thin Zova Model facade. Traceability: `WBS-20-03`, `WBS-40-04`, `WBS-70-01`.
+- **SRS-API-02**: A reverse change to frontend metadata/routes requires the matching Commerce flavor SSR + REST build before `npm run deps:vona`: `npm run build:zova:commerce:web` for Customer, `npm run build:zova:commerce:admin` for Operator, or `npm run build:zova:commerce` when both surfaces or generated contract output changed. A REST-only build is insufficient because the SSR bundle and generated contract must move together. Generated `vona/.zova-rest/` directories are build artifacts and must not be edited manually. Traceability: `WBS-20-02`, `WBS-20-03`, `WBS-40-04`, `WBS-70-01`.
+- **SRS-API-03**: APIs expose semantic resource and action boundaries. A customer action never accepts an arbitrary customer, tenant, total, discount, or state transition from the browser. Traceability: `PRD-ORD-02`, `WBS-40-01`, `WBS-40-03`, `WBS-40-04`.
+- **SRS-UI-01**: Reusable async product, cart, order, coupon, and operator query state belongs to a Zova Model. Controllers orchestrate scenes rather than becoming shared fetch/cache owners. Traceability: `WBS-30-01`, `WBS-40-01`, `WBS-50-02`.
+- **SRS-UI-02**: A custom endpoint in the same Admin Resource boundary reuses the existing `rest-resource.model.resource` state and invalidation tree rather than creating a competing module-local cache owner. A genuinely separate customer self-service contract may own its dedicated Web state boundary as specified by `SRS-ADR-06`. Traceability: `PRD-ADR-03`, `WBS-40-01`, `WBS-40-04`.
+- **SRS-UI-03**: Customer SSR renders no private cart, address, order, coupon, or payment information in an anonymous response. Protected Commerce routes use authenticated session admission: anonymous document requests redirect without private data, while authorized owner-scoped data may be server-rendered with private, no-store caching and an equivalent hydration-time initial view. Browser-only state and final client theme remain hydration-tolerant. Traceability: `PRD-ORD-04`, `WBS-20-02`, `WBS-40-04`, `WBS-50-02`.
+- **SRS-UI-04**: Coupon Template Admin DTO render metadata expresses the semantic information areas in the Coupon Template Admin scene matrix without changing validation, authorization, server-authoritative values, or the separate customer coupon-selection flow. Layouts may differ by scene when their DTO fields differ. Traceability: `PRD-CPN-04`, `WBS-70-03`.
+- **SRS-UI-05**: Semantic presentation starts from the PRD/SRS audience, task, scene, information-area, and operation-DTO contract. Vona DTO render metadata may translate only eligible scene fields into order, groups, sections, tabs, Grid/flow placement, visibility, and shared or Commerce-specific renderer identity. It must not add API authority, change persistence or validation, turn browser input into server authority, replace authorization or SSR privacy, merge distinct audience DTO contracts, or replace separate Model and page ownership. Scene layouts may differ when their operation DTO fields or tasks differ. Traceability: `PRD-UI-01`, `WBS-70-04`, `WBS-80-00`, `WBS-80-01`, `WBS-80-02`, `WBS-80-03`, `WBS-80-04`.
 
 ### Semantic presentation authority matrix
 
@@ -213,10 +213,10 @@ State names in this section are canonical. A later implementation may use intege
 
 ## Non-Functional Requirements
 
-- **SRS-NFR-01**: Order, payment, inventory, coupon, shipment, and refund state changes are attributable and diagnosable through audit records and correlation IDs.
-- **SRS-NFR-02**: Customer addresses and tracking data are tenant-scoped personal data. Live Address data is returned only through the owner-scoped Web projection or the independently authorized, read-only Admin projection; it is never exposed through a browser-supplied owner/tenant claim or an Admin mutation action.
-- **SRS-NFR-03**: Tests cover tenant isolation, stock contention, duplicate payment/refund event delivery, expiry, coupon limits, shipment/refund conflict, and historical snapshot stability.
-- **SRS-NFR-04**: Any schema change in a future implementation follows the repository migration rules. Before adding a persisted field to an existing resource, the implementer asks whether `vonaModule.fileVersion` should increase; every `meta.version.ts` change requires `npm run test`.
+- **SRS-NFR-01**: Order, payment, inventory, coupon, shipment, and refund state changes are attributable and diagnosable through audit records and correlation IDs. Traceability: `PRD-RFD-02`, `WBS-30-02`, `WBS-40-03`, `WBS-50-01`, `WBS-60-02`.
+- **SRS-NFR-02**: Customer addresses and tracking data are tenant-scoped personal data. Live Address data is returned only through the owner-scoped Web projection or the independently authorized, read-only Admin projection; it is never exposed through a browser-supplied owner/tenant claim or an Admin mutation action. Traceability: `PRD-ORD-04`, `WBS-40-01`, `WBS-40-04`, `WBS-50-02`, `WBS-60-01`.
+- **SRS-NFR-03**: Tests cover tenant isolation, stock contention, duplicate payment/refund event delivery, expiry, coupon limits, shipment/refund conflict, and historical snapshot stability. Traceability: `WBS-70-02`.
+- **SRS-NFR-04**: Any schema change in a future implementation follows the repository migration rules. Before adding a persisted field to an existing resource, the implementer asks whether `vonaModule.fileVersion` should increase; every `meta.version.ts` change requires `npm run test`. Traceability: `WBS-70-01`.
 
 ## Acceptance Mapping
 

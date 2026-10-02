@@ -68,6 +68,8 @@ Acceptance checks:
 
 #### WBS-20-02: Add two independent Commerce SSR sites and flavors
 
+Traceability: `SRS-AUT-04`, `SRS-UI-03`, `SRS-API-02`, `ATP-SSR-01`, `ATP-SSR-02`.
+
 Primary areas:
 
 - Commerce site-owner modules under `vona/src/suite/a-commerce/modules/`
@@ -89,6 +91,8 @@ Acceptance checks:
 - operator site access, routes, menus, and APIs reject users without required tenant roles.
 
 #### WBS-20-03: Establish Commerce contract-loop checks
+
+Traceability: `SRS-API-01`, `SRS-API-02`, `ATP-CTR-01`.
 
 Primary files/areas:
 
@@ -116,6 +120,8 @@ Dependencies: `WBS-20-*`.
 
 #### WBS-30-01: Implement catalogue and SKU lifecycle
 
+Traceability: `SRS-TEN-02`, `SRS-AUT-03`, `SRS-MNY-01`, `ATP-TEN-01`, `ATP-SNAP-01`.
+
 Primary areas:
 
 - `commerce-catalog` entities, DTOs, services, controllers, and Zova Models/pages
@@ -133,6 +139,8 @@ Acceptance checks:
 - publication changes affect new sales only and never rewrite historical orders.
 
 #### WBS-30-02: Implement one-warehouse stock and audit foundation
+
+Traceability: `SRS-INV-01`, `SRS-INV-02`, `SRS-DAT-02`, `ATP-INV-01`, `ATP-TXN-01` (stock primitive and rollback branches only).
 
 Primary areas:
 
@@ -157,6 +165,10 @@ Dependencies: `WBS-30-*`.
 
 #### WBS-40-01: Implement authenticated customer cart and address management
 
+Traceability: `SRS-AUT-01`, `SRS-AUT-02`, `SRS-UI-01`, `ATP-TEN-01`, `ATP-AUT-01`.
+
+These are customer cart/Address branches only; the later Address contract split belongs to `WBS-40-04`.
+
 Primary areas:
 
 - `commerce-member`
@@ -179,6 +191,8 @@ This verified historical item covers the customer contract that existed when it 
 
 #### WBS-40-02: Implement fixed-amount coupon lifecycle
 
+Traceability: `SRS-CPN-01`, `SRS-CPN-02`, `SRS-CPN-03`, `ATP-CPN-01`, `ATP-SNAP-01` (coupon snapshot only).
+
 Primary areas:
 
 - `commerce-promotion` entities, service, API, operator pages, and customer selection surface
@@ -197,6 +211,8 @@ Acceptance checks:
 - unpaid-order expiry releases a reserved coupon exactly once while preserving the immutable order discount snapshot.
 
 #### WBS-40-03: Implement atomic order creation and 30-minute reservation expiry
+
+Traceability: `SRS-TXN-01`, `SRS-TXN-02`, `SRS-TXN-03`, `SRS-TXN-05`, `ATP-INV-01`, `ATP-TXN-01`, `ATP-CPN-01`, `ATP-EXP-01`, `ATP-SNAP-01`.
 
 Primary areas:
 
@@ -218,6 +234,8 @@ Acceptance checks:
 
 #### WBS-40-04: Split Address into read-only Admin Resource and Web self-service contracts
 
+Traceability: `SRS-ADR-01`, `SRS-ADR-02`, `SRS-ADR-03`, `SRS-ADR-04`, `SRS-ADR-05`, `SRS-ADR-06`, `SRS-ADR-07`, `ATP-ADDR-01`, `ATP-TEN-01`, `ATP-AUT-01`, `ATP-SSR-01`, `ATP-SSR-02`, `ATP-CTR-01`.
+
 Dependencies: `WBS-20-03`, `WBS-40-01`.
 
 Primary areas:
@@ -232,7 +250,7 @@ Tasks:
 - preserve one live Address persistence/lifecycle domain while separating Admin Resource and Web self-service operations and DTO projections;
 - expose only Admin `select` and `view`, independently guarded by `@Passport.systemAdmin()`, and add the approved read-only `presetResource` Admin entry without enabling mutation actions;
 - replace the current generic Resource-shaped customer contract with explicit owner-derived Web operations and move customer query/mutation state to a dedicated Web model;
-- preserve active-instance isolation, owner-scoped Web absence semantics, anonymous SSR neutrality, and hydration-safe customer query admission;
+- preserve active-instance isolation, owner-scoped Web absence semantics, anonymous SSR privacy and protected-route admission, and hydration-safe customer query ownership (including authorized session SSR where supported);
 - change Vona contract truth first, regenerate both audience contract consumers, then build the Web and Admin Commerce flavor pairs before `npm run deps:vona`.
 
 Acceptance checks:
@@ -248,6 +266,8 @@ Acceptance checks:
 Dependencies: `WBS-40-*`.
 
 #### WBS-50-01: Implement Commerce-owned mock payment attempts
+
+Traceability: `SRS-PAY-01`, `SRS-PAY-02`, `SRS-PAY-03`, `SRS-TXN-04`, `ATP-PAY-01`, `ATP-EXP-01`, `ATP-CPN-01` (payment-outcome branches only).
 
 Primary areas:
 
@@ -268,6 +288,8 @@ Acceptance checks:
 
 #### WBS-50-02: Deliver customer checkout and personal-centre order surfaces
 
+Traceability: `SRS-AUT-01`, `SRS-AUT-02`, `SRS-UI-01`, `SRS-UI-03`, `ATP-SSR-01`, `ATP-SNAP-01` (customer read and snapshot branches only).
+
 Primary areas:
 
 - `commerce-siteweb`
@@ -278,7 +300,7 @@ Tasks:
 
 - deliver checkout confirmation, mock payment result, order history, order detail, coupon selection, and address selection;
 - expose customer-visible order status and shipment information without exposing other customers' data;
-- keep personalized screens hydration-tolerant on the customer SSR site.
+- keep personalized screens hydration-tolerant on the customer SSR site, including authenticated owner-scoped session SSR and anonymous protected-document redirects where the route contract selects them.
 
 Acceptance checks:
 
@@ -291,6 +313,8 @@ Acceptance checks:
 Dependencies: `WBS-50-*`.
 
 #### WBS-60-01: Deliver operator order workbench and manual shipment
+
+Traceability: `SRS-ORD-01`, `SRS-SHP-01`, `SRS-SHP-02`, `SRS-SHP-03`, `ATP-SHP-01`, `ATP-RACE-01` (shipment-side prerequisite only), `ATP-SSR-02` (operator access branch).
 
 Primary areas:
 
@@ -311,6 +335,8 @@ Acceptance checks:
 - no split-shipment UI or API path exists.
 
 #### WBS-60-02: Deliver request, approval, and mock execution of refunds
+
+Traceability: `SRS-RFD-01`, `SRS-RFD-02`, `SRS-RFD-03`, `SRS-ORD-03`, `ATP-RFD-01`, `ATP-RACE-01`, `ATP-CPN-01` (refund/redemption branch), `ATP-SNAP-01` (refund-view branch).
 
 Primary areas:
 
@@ -337,6 +363,8 @@ Dependencies: `WBS-20-*` through `WBS-60-*`.
 
 #### WBS-70-01: Complete migrations and contract synchronization
 
+Traceability: `SRS-NFR-04`, `SRS-API-01`, `SRS-API-02`, `ATP-CTR-01` (contract synchronization only; migration checks remain separately owned in this task).
+
 Tasks:
 
 - apply the repository's file-version decision rule before each persisted-field change;
@@ -350,6 +378,8 @@ Acceptance checks:
 - no stale `.zova-rest` package masks a contract mismatch.
 
 #### WBS-70-02: Run focused and end-to-end verification
+
+Traceability: `SRS-NFR-03`, `ATP-TEN-01`, `ATP-AUT-01`, `ATP-ADDR-01`, `ATP-INV-01`, `ATP-TXN-01`, `ATP-CPN-01`, `ATP-FIA-01`, `ATP-SPC-01`, `ATP-SPC-02`, `ATP-SPC-03`, `ATP-SPC-04`, `ATP-SPC-05`, `ATP-PAY-01`, `ATP-EXP-01`, `ATP-SHP-01`, `ATP-RFD-01`, `ATP-RACE-01`, `ATP-SNAP-01`, `ATP-SSR-01`, `ATP-SSR-02`, `ATP-CTR-01` (release verification; implementation ownership remains with the preceding tasks).
 
 Tasks:
 
@@ -365,6 +395,8 @@ Acceptance checks:
 - the complete customer and operator flow passes through the repository-managed Commerce SSR sites (`/commerce` and `/commerce-admin`) using `npm run test:e2e a-commerce` after current artifact preparation; externally managed-target E2E is not a WBS-70-02 prerequisite or blocker.
 
 #### WBS-70-03: Establish the Coupon Template semantic form-layout reference
+
+Traceability: `SRS-UI-04`, `ATP-FIA-01`.
 
 Dependencies: `WBS-40-02`, `WBS-70-01`.
 
@@ -389,6 +421,8 @@ Acceptance checks:
 - `ATP-FIA-01` records focused test and Commerce Admin contract-loop evidence.
 
 #### WBS-70-04: Codify the reusable semantic-presentation contract
+
+Traceability: `SRS-UI-05`, `ATP-SPC-01` (`ATP-FIA-01` remains the separately owned Coupon Template layout reference).
 
 Dependencies: `WBS-10-01`, `WBS-70-03`.
 
@@ -444,6 +478,8 @@ Acceptance checks:
 
 #### WBS-80-01: Deliver the Catalogue Admin semantic-presentation wave
 
+Traceability: `SRS-UI-05`, `SRS-CAT-02`, `SRS-MNY-01`, `ATP-SPC-02`.
+
 Dependencies: `WBS-80-00` and retained CI evidence for `WBS-70-03` / `WBS-70-04`.
 
 Primary areas:
@@ -470,6 +506,8 @@ Acceptance checks:
 
 #### WBS-80-02: Deliver the Order Admin semantic workbench
 
+Traceability: `SRS-UI-05`, `SRS-MNY-02`, `SRS-MNY-04`, `ATP-SPC-03`.
+
 Dependencies: `WBS-80-01`.
 
 Primary areas:
@@ -492,6 +530,8 @@ Acceptance checks:
 
 #### WBS-80-03: Deliver Stock Balance and Stock Audit Admin presentation
 
+Traceability: `SRS-UI-05`, `SRS-INV-01`, `SRS-DAT-02`, `ATP-SPC-04`.
+
 Dependencies: `WBS-80-02`.
 
 Primary areas:
@@ -512,6 +552,8 @@ Acceptance checks:
 - `ATP-SPC-04` records Admin contract/runtime and applicable stock regression evidence.
 
 #### WBS-80-04: Deliver read-only Address Admin presentation
+
+Traceability: `SRS-UI-05`, `SRS-ADR-02`, `SRS-ADR-05`, `ATP-SPC-05`, `ATP-ADDR-01` (ownership regression).
 
 Dependencies: `WBS-80-03`.
 

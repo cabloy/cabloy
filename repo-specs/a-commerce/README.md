@@ -17,7 +17,8 @@ This directory records the agreed product, system, and delivery baseline for the
 11. [Presentation contracts](./presentation-contracts.md) is the living resource/scene matrix that applies the PRD and SRS to renderer selection.
 12. [Semantic-presentation rollout](./semantic-presentation-rollout.md) is the resumable execution runbook for the staged follow-on work; it does not replace the authoritative WBS, test plan, or matrix.
 13. [PayPal Commerce runbook](./runbooks/paypal-commerce-runbook.md) is the internal Sandbox/Live, webhook, tunnel, and reconciliation reference for the `pay-paypal` Commerce path.
-14. [Stripe Sandbox Commerce runbook](./runbooks/stripe-sandbox-runbook.md) is the internal Hosted Checkout, webhook, tunnel/domain, and reconciliation reference for the `pay-stripe` Sandbox path.
+14. [PayPal Sandbox runbook](./runbooks/paypal-sandbox-runbook.md) records the separate Sandbox operational procedure.
+15. [Stripe Sandbox Commerce runbook](./runbooks/stripe-sandbox-runbook.md) is the internal Hosted Checkout, webhook, tunnel/domain, and reconciliation reference for the `pay-stripe` Sandbox path.
 
 ## Confirmed MVP Baseline
 
@@ -48,6 +49,8 @@ vona/src/suite/a-commerce/modules/
 zova/src/suite/a-commerce/modules/
 ```
 
+The independently registered `commerce` Web and `commerceAdmin` Admin SSR sites and their paired `npm run build:zova:commerce:web` / `npm run build:zova:commerce:admin` wrappers are present in this Basic checkout. These are separate application compositions, not separate tenant or domain authorities.
+
 The capability boundaries are:
 
 - `commerce-catalog`: categories, products, SKU publication, and catalogue read models;
@@ -57,6 +60,8 @@ The capability boundaries are:
 - `commerce-member`: addresses, member extensions, and personal-centre aggregation;
 - `commerce-siteweb`: the customer-facing SSR site and Web composition;
 - `commerce-siteadmin`: the operator SSR site and Admin composition.
+
+The Vona-only `commerce-seed` module provides managed sample catalogue and inventory fixtures through its seed hook; it has no matching Zova module and does not own Commerce business APIs or customer state.
 
 The reusable `a-home` modules `home-indexweb` and `home-indexadmin` provide general Web and Admin landing or entry pages. They remain distinct from the Commerce-owned `commerce-siteweb` and `commerce-siteadmin` modules, which own Commerce application/site composition.
 
@@ -75,6 +80,18 @@ Inventory reservation starts as a `commerce-trade` aggregate behavior. The SRS k
 - [ADR 0009](../../repo-docs-internal/decisions/0009-homepage-module-naming-boundary.md) owns the cross-suite naming and ownership boundary between reusable A-Home entry modules and Commerce site modules.
 
 If the documents disagree, update the authoritative document first and then update every downstream reference.
+
+## Traceability Chain and Status Rules
+
+Formal, stable definitions live in `prd.md`, `srs.md`, `pdp-wbs.md`, and the existing acceptance-scenario catalogue in `test-plan.md`. Exact declaration-level links follow PRD → SRS → WBS → ATP; wildcard and range matrices are summaries, not proof of an individual link. `progress.md` and the generated charts derive status from the delivery records and cannot change a requirement or verify implementation. A historical `verified` entry applies to its recorded revision and evidence, not automatically to a later source change. The [progress index](./progress.md#later-source-and-evidence-boundary) and [acceptance plan](./test-plan.md#later-source-follow-ups-current-shape-versus-retained-acceptance) separate later source-observed presentation/SSR behavior from its earlier CI baseline. The complete `spec:check` audit, chart-model freshness check, and review of actual acceptance evidence are independent gates; none accepts an ADR or proves the others.
+
+The remaining full-audit gaps are not covered by a guessed link or an invented acceptance scenario:
+
+- `SRS-DAT-03`/`SRS-DAT-04` (tenant-aware business uniqueness and lookup indexes) have no exact product-source/implementation-task/acceptance chain. `SRS-PAY-04`/`SRS-PAY-05` (verified real-Provider outcomes and durable external operations) have no exact MVP WBS/ATP owner; this maintenance does not expand the mock-payment baseline to manufacture one.
+- `SRS-API-01`/`SRS-API-02`, `SRS-UI-01`, and `SRS-NFR-03`/`SRS-NFR-04` have delivery-task links but no sufficiently specific atomic PRD source for their engineering and verification policies.
+- `WBS-10-01` and `WBS-20-01` are baseline and scaffolding controls without an exact upstream SRS and downstream formal ATP; `WBS-80-00` has an upstream semantic contract but no independently defined control/handoff ATP. Their historical completion and evidence are not equivalent to a new formal scenario.
+
+Some linked business paths also have narrower coverage than their product wording: customer catalogue browsing, operator catalogue maintenance, coupon total issuance limits, customer shipment reading, failed-refund recovery, and migration/index checks need a separate semantic review if their coverage must be asserted as complete. These are explicit planning/evidence gaps, not approvals to alter the product, payment, or historical acceptance decisions.
 
 ## Related Framework Records
 

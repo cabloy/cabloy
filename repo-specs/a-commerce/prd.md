@@ -97,58 +97,58 @@ A tenant operator who assigns commerce roles. Framework-wide administrative auth
 
 ### Catalogue
 
-- **PRD-CAT-01**: Customers can browse categories, active products, and active SKUs available to the current tenant.
-- **PRD-CAT-02**: Customers see the price and current sellable availability for a selected SKU, but the display is not the final checkout authority.
-- **PRD-CAT-03**: Catalogue operators can create, edit, publish, unpublish, inspect, list, filter, and delete Categories, Products, and SKUs within their tenant through their approved Admin Resource contracts.
+- **PRD-CAT-01**: Customers can browse categories, active products, and active SKUs available to the current tenant. Traceability: `SRS-TEN-02`.
+- **PRD-CAT-02**: Customers see the price and current sellable availability for a selected SKU, but the display is not the final checkout authority. Traceability: `SRS-CAT-02`, `SRS-INV-01`, `SRS-MNY-01`.
+- **PRD-CAT-03**: Catalogue operators can create, edit, publish, unpublish, inspect, list, filter, and delete Categories, Products, and SKUs within their tenant through their approved Admin Resource contracts. Traceability: `SRS-AUT-03`, `SRS-TEN-02`, `SRS-UI-05`.
 
 ### Inventory
 
-- **PRD-INV-01**: A customer cannot create an order for more units than are currently sellable.
-- **PRD-INV-02**: Order creation reserves stock atomically; concurrent requests must not oversell an SKU.
-- **PRD-INV-03**: Cancellation, failed payment, and 30-minute unpaid expiry release a reservation exactly once.
-- **PRD-INV-04**: A successful eligible refund restores the refunded order's stock exactly once.
+- **PRD-INV-01**: A customer cannot create an order for more units than are currently sellable. Traceability: `SRS-CAT-01`, `SRS-INV-01`, `SRS-INV-02`.
+- **PRD-INV-02**: Order creation reserves stock atomically; concurrent requests must not oversell an SKU. Traceability: `SRS-INV-02`, `SRS-TXN-01`, `SRS-TXN-02`, `SRS-TXN-03`.
+- **PRD-INV-03**: Cancellation, failed payment, and 30-minute unpaid expiry release a reservation exactly once. Traceability: `SRS-INV-03`, `SRS-TXN-04`, `SRS-TXN-05`.
+- **PRD-INV-04**: A successful eligible refund restores the refunded order's stock exactly once. Traceability: `SRS-INV-03`, `SRS-RFD-03`, `SRS-PAY-03`.
 
 ### Address management
 
-- **PRD-ADR-01**: Customers can create, list, view, update, and delete only their own live delivery addresses within the active tenant.
-- **PRD-ADR-02**: An action-level `systemAdmin` operator can list and view live customer addresses only within the active tenant through a read-only operational surface. The MVP exposes no Admin Address create, update, or delete action.
-- **PRD-ADR-03**: Customer and Admin Address consumers use audience-appropriate contracts and pages while sharing one live Address domain; an order continues to snapshot its selected delivery address as a historical fact.
+- **PRD-ADR-01**: Customers can create, list, view, update, and delete only their own live delivery addresses within the active tenant. Traceability: `SRS-ADR-03`, `SRS-ADR-04`, `SRS-AUT-02`.
+- **PRD-ADR-02**: An action-level `systemAdmin` operator can list and view live customer addresses only within the active tenant through a read-only operational surface. The MVP exposes no Admin Address create, update, or delete action. Traceability: `SRS-ADR-02`, `SRS-AUT-03`, `SRS-AUT-04`.
+- **PRD-ADR-03**: Customer and Admin Address consumers use audience-appropriate contracts and pages while sharing one live Address domain; an order continues to snapshot its selected delivery address as a historical fact. Traceability: `SRS-ADR-01`, `SRS-ADR-05`, `SRS-ADR-06`, `SRS-ADR-07`, `SRS-MNY-02`.
 
 ### Checkout and orders
 
-- **PRD-ORD-01**: Checkout requires authentication and a customer-owned delivery address.
-- **PRD-ORD-02**: The server, not the browser, determines order items, amounts, coupon result, and current sellability.
-- **PRD-ORD-03**: An order preserves historical snapshots of the purchased SKU, pricing, coupon result, and delivery address.
-- **PRD-ORD-04**: Customers can access only their own carts, addresses, orders, payments, and refund requests.
+- **PRD-ORD-01**: Checkout requires authentication and a customer-owned delivery address. Traceability: `SRS-AUT-01`, `SRS-AUT-02`, `SRS-TXN-01`.
+- **PRD-ORD-02**: The server, not the browser, determines order items, amounts, coupon result, and current sellability. Traceability: `SRS-CAT-02`, `SRS-TXN-01`, `SRS-API-03`, `SRS-MNY-03`.
+- **PRD-ORD-03**: An order preserves historical snapshots of the purchased SKU, pricing, coupon result, and delivery address. Traceability: `SRS-MNY-02`, `SRS-MNY-04`.
+- **PRD-ORD-04**: Customers can access only their own carts, addresses, orders, payments, and refund requests. Traceability: `SRS-AUT-01`, `SRS-AUT-02`, `SRS-TEN-01`, `SRS-TEN-02`, `SRS-TEN-03`, `SRS-TEN-04`, `SRS-UI-03`, `SRS-NFR-02`.
 
 ### Coupons
 
-- **PRD-CPN-01**: A customer can apply no more than one eligible fixed-amount coupon to an order.
-- **PRD-CPN-02**: Coupon evaluation enforces minimum spend, validity period, total issuance/usage limits, and per-customer limits.
-- **PRD-CPN-03**: Coupon reservation and release follow the order lifecycle; a paid-and-refunded order does not reissue its coupon.
-- **PRD-CPN-04**: Coupon Template maintenance distinguishes basic identity and activation, monetary eligibility, the validity window, and issuance/usage limits, while its operator list keeps finding templates compact. These are business information areas, not a prescribed UI component tree.
+- **PRD-CPN-01**: A customer can apply no more than one eligible fixed-amount coupon to an order. Traceability: `SRS-CPN-01`, `SRS-MNY-03`.
+- **PRD-CPN-02**: Coupon evaluation enforces minimum spend, validity period, total issuance/usage limits, and per-customer limits. Traceability: `SRS-CPN-02`.
+- **PRD-CPN-03**: Coupon reservation and release follow the order lifecycle; a paid-and-refunded order does not reissue its coupon. Traceability: `SRS-CPN-03`, `SRS-RFD-03`.
+- **PRD-CPN-04**: Coupon Template maintenance distinguishes basic identity and activation, monetary eligibility, the validity window, and issuance/usage limits, while its operator list keeps finding templates compact. These are business information areas, not a prescribed UI component tree. Traceability: `SRS-UI-04`.
 
 ### Semantic presentation
 
-- **PRD-UI-01**: Each customer and operator scene identifies its audience, task, and meaningful business information areas before choosing visual structure. Lists support finding and comparison; create and update scenes support only permitted input; detail scenes show the complete audience-appropriate business facts. State, money, availability, time, and immutable snapshots are understandable business meanings rather than raw storage values. Groups, sections, tabs, grids, flows, and renderer keys translate this requirement but do not define it; a distinct audience, API contract, authorization boundary, state owner, or page is never reduced to visual grouping.
+- **PRD-UI-01**: Each customer and operator scene identifies its audience, task, and meaningful business information areas before choosing visual structure. Lists support finding and comparison; create and update scenes support only permitted input; detail scenes show the complete audience-appropriate business facts. State, money, availability, time, and immutable snapshots are understandable business meanings rather than raw storage values. Groups, sections, tabs, grids, flows, and renderer keys translate this requirement but do not define it; a distinct audience, API contract, authorization boundary, state owner, or page is never reduced to visual grouping. Traceability: `SRS-UI-05`.
 
 ### Payment
 
-- **PRD-PAY-01**: The MVP provides a mock payment experience that can finish successfully, fail, or be cancelled.
-- **PRD-PAY-02**: Payment completion is idempotent: repeated confirmation cannot charge, consume stock, or advance an order twice.
-- **PRD-PAY-03**: A paid order becomes available for shipment only after the server accepts payment completion.
+- **PRD-PAY-01**: The MVP provides a mock payment experience that can finish successfully, fail, or be cancelled. Traceability: `SRS-TXN-04`, `SRS-PAY-03`.
+- **PRD-PAY-02**: Payment completion is idempotent: repeated confirmation cannot charge, consume stock, or advance an order twice. Traceability: `SRS-PAY-01`, `SRS-PAY-02`, `SRS-PAY-03`.
+- **PRD-PAY-03**: A paid order becomes available for shipment only after the server accepts payment completion. Traceability: `SRS-PAY-03`, `SRS-ORD-01`, `SRS-SHP-02`.
 
 ### Shipment
 
-- **PRD-SHP-01**: An authorized operator can record one carrier and tracking number for a paid, unshipped order.
-- **PRD-SHP-02**: Customers can view shipment information for their own shipped order.
-- **PRD-SHP-03**: Shipment makes the MVP refund route unavailable.
+- **PRD-SHP-01**: An authorized operator can record one carrier and tracking number for a paid, unshipped order. Traceability: `SRS-AUT-03`, `SRS-SHP-01`, `SRS-SHP-02`.
+- **PRD-SHP-02**: Customers can view shipment information for their own shipped order. Traceability: `SRS-AUT-02`, `SRS-SHP-01`.
+- **PRD-SHP-03**: Shipment makes the MVP refund route unavailable. Traceability: `SRS-ORD-02`, `SRS-ORD-03`, `SRS-RFD-02`.
 
 ### Refunds
 
-- **PRD-RFD-01**: A customer can request a refund only for a paid, unshipped, whole order.
-- **PRD-RFD-02**: An authorized operator approves or rejects each refund request and records an auditable reason.
-- **PRD-RFD-03**: An approved refund runs once through mock payment, restores stock on success, and does not restore the coupon.
+- **PRD-RFD-01**: A customer can request a refund only for a paid, unshipped, whole order. Traceability: `SRS-ORD-03`, `SRS-RFD-01`.
+- **PRD-RFD-02**: An authorized operator approves or rejects each refund request and records an auditable reason. Traceability: `SRS-AUT-05`, `SRS-DAT-02`, `SRS-RFD-01`, `SRS-RFD-02`, `SRS-NFR-01`.
+- **PRD-RFD-03**: An approved refund runs once through mock payment, restores stock on success, and does not restore the coupon. Traceability: `SRS-INV-03`, `SRS-CPN-03`, `SRS-RFD-03`, `SRS-PAY-02`, `SRS-TXN-04`.
 
 ## Business Rules
 
