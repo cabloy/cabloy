@@ -19,8 +19,27 @@ const allowedLifecycleTransitions: Record<EntitySku['lifecycle'], EntitySku['lif
   archived: [],
 };
 
+const serializationRetryOptions = {
+  retries: 6,
+  factor: 2,
+  minTimeout: 10,
+  maxTimeout: 160,
+  randomize: true,
+  errorCodes: [
+    '40001',
+    '40P01',
+    'ER_LOCK_DEADLOCK',
+    'ER_LOCK_WAIT_TIMEOUT',
+    'SQLITE_BUSY',
+    'SQLITE_BUSY_SNAPSHOT',
+  ],
+  ownerOnly: true,
+};
+
 @Service()
 export class ServiceSku extends BeanBase {
+  @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async create(sku: DtoSkuCreate): Promise<EntitySku> {
     await this._ensureProductExists(sku.productId);
     await this._ensureCodeAvailable(sku.code);
@@ -64,6 +83,7 @@ export class ServiceSku extends BeanBase {
   }
 
   @Core.transaction({ isolationLevel: 'SERIALIZABLE' })
+  @Core.retryable(serializationRetryOptions)
   async update(id: TableIdentity, sku: DtoSkuUpdate) {
     if (sku.lifecycle !== undefined) {
       const currentSku = await this.scope.model.sku.getByIdForUpdate(id);
@@ -96,9 +116,10 @@ export class ServiceSku extends BeanBase {
   }
 
   private async _ensureCodeAvailable(code: string, excludedId?: TableIdentity) {
-    const sku = await this.scope.model.sku.get({ code });
-    if (sku && String(sku.id) !== String(excludedId)) {
-      this.app.throw(409, `SKU code already exists: ${code}`);
-    }
+    const sku = await this.scope.model.sku.get(
+      { code, ...(excludedId === undefined ? {} : { id: { _notEq_: excludedId } }) },
+      { disableCacheEntity: true, disableCacheQuery: true },
+    );
+    if (sku) this.app.throw(409, `SKU code already exists: ${code}`);
   }
 }

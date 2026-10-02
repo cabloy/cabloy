@@ -134,9 +134,12 @@ export class ServiceTransaction extends BeanBase {
     if (fiber) {
       try {
         await fiber.doCommit();
-      } finally {
+      } catch (err) {
         this.transactionState.remove(this._db);
+        await fiber.compensatesDone();
+        throw err;
       }
+      this.transactionState.remove(this._db);
       await fiber.commitsDone();
     }
     return res;

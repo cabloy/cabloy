@@ -29,8 +29,12 @@ export class ServiceTransactionFiber extends BeanBase {
   }
 
   async doCommit() {
-    await this._connection.commit();
-    this._connection = undefined as any;
+    const connection = this._connection;
+    try {
+      await Promise.all([connection.executionPromise, connection.commit()]);
+    } finally {
+      this._connection = undefined as any;
+    }
   }
 
   async doRollback() {

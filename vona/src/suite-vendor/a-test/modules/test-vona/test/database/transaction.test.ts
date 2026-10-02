@@ -1,6 +1,8 @@
+import knex from 'knex';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
+import { ServiceTransactionFiber } from 'vona-module-a-orm';
 
 describe('transaction.test.ts', { concurrency: false }, () => {
   const tableNameFail = '__tempTransactionFail';
@@ -98,6 +100,34 @@ describe('transaction.test.ts', { concurrency: false }, () => {
         assert.equal(items.length, 2);
       } finally {
         await app.bean.model.dropTable(tableNameCommit);
+      }
+    });
+  });
+
+  it('propagates an actual deferred-constraint failure at COMMIT', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const db = knex({
+        client: 'better-sqlite3',
+        connection: { filename: ':memory:' },
+        useNullAsDefault: true,
+      });
+      try {
+        await db.raw('PRAGMA foreign_keys = ON');
+        await db.raw('CREATE TABLE commitParent (id integer PRIMARY KEY)');
+        await db.raw(
+          'CREATE TABLE commitChild (parentId integer REFERENCES commitParent(id) DEFERRABLE INITIALLY DEFERRED)',
+        );
+        const transaction = await db.transaction();
+        const fiber = app.bean._newBean(ServiceTransactionFiber, transaction);
+        let successCallbackCalled = false;
+        fiber.commit(() => {
+          successCallbackCalled = true;
+        });
+        await transaction.raw('INSERT INTO commitChild (parentId) VALUES (1)');
+        await assert.rejects(fiber.doCommit(), { code: 'SQLITE_CONSTRAINT_FOREIGNKEY' });
+        assert.equal(successCallbackCalled, false);
+      } finally {
+        await db.destroy();
       }
     });
   });

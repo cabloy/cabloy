@@ -6,26 +6,27 @@ import { $tableColumns } from 'vona-module-a-ormutils';
 
 @Meta<IMetaOptionsIndex>({
   indexes: {
-    ...$tableColumns('commercePaymentAttempt', 'orderId'),
-    ...$tableColumns('commercePaymentAttempt', 'userId'),
-    ...$tableColumns('commercePaymentAttempt', 'state'),
-    ...$tableColumns('commercePaymentAttempt', 'correlationId'),
-    ...$tableColumns('commercePaymentAudit', 'paymentAttemptId'),
-    ...$tableColumns('commercePaymentAudit', 'providerEventId'),
-    ...$tableColumns('commercePaymentAudit', 'orderId'),
-    ...$tableColumns('commercePaymentAudit', 'idempotencyKey'),
-    ...$tableColumns('commercePaymentRefundRequest', 'orderId'),
-    ...$tableColumns('commercePaymentRefundRequest', 'userId'),
-    ...$tableColumns('commercePaymentRefundRequest', 'state'),
-    ...$tableColumns('commercePaymentRefundRequest', 'correlationId'),
-    ...$tableColumns('commercePaymentRefundAttempt', 'refundRequestId'),
-    ...$tableColumns('commercePaymentRefundAttempt', 'orderId'),
-    ...$tableColumns('commercePaymentRefundAttempt', 'state'),
-    ...$tableColumns('commercePaymentRefundAudit', 'refundRequestId'),
-    ...$tableColumns('commercePaymentRefundAudit', 'refundAttemptId'),
-    ...$tableColumns('commercePaymentRefundAudit', 'orderId'),
-    ...$tableColumns('commercePaymentRefundAudit', 'idempotencyKey'),
-    ...$tableColumns('commercePaymentRefundAudit', 'correlationId'),
+    ...$tableColumns('commercePaymentAttempt', ['orderId', 'userId', 'state', 'correlationId']),
+    ...$tableColumns('commercePaymentAudit', [
+      'paymentAttemptId',
+      'providerEventId',
+      'orderId',
+      'idempotencyKey',
+    ]),
+    ...$tableColumns('commercePaymentRefundRequest', [
+      'orderId',
+      'userId',
+      'state',
+      'correlationId',
+    ]),
+    ...$tableColumns('commercePaymentRefundAttempt', ['refundRequestId', 'orderId', 'state']),
+    ...$tableColumns('commercePaymentRefundAudit', [
+      'refundRequestId',
+      'refundAttemptId',
+      'orderId',
+      'idempotencyKey',
+      'correlationId',
+    ]),
   },
 })
 export class MetaIndex extends BeanBase {}
