@@ -166,6 +166,7 @@ const fullstackGroups = [
   {
     text: 'Resource & SSR Patterns',
     items: [
+      { text: 'Vona Integrated SSR vs Zova Standalone SSR', link: '/fullstack/ssr-entry-modes' },
       { text: 'SSR Site and Flavor Setup', link: '/fullstack/ssr-site-and-flavor-setup' },
       {
         text: 'Admin Resource and Web Self-Service',

@@ -107,7 +107,7 @@ The two commands start different SSR entry points. Choose the one that matches t
 | **Vona integrated SSR** | `7102`       | Fullstack development, site access, and browser acceptance                               | Vona API handling, SSR site matching, built artifact handoff, and the integrated HTTP response path |
 | **Zova standalone SSR** | `9000`       | Frontend development, hot reload, isolated debugging, and page/route/hydration iteration | Zova SSR rendering and frontend behavior without proving the Vona integration boundary              |
 
-The Zova standalone SSR server can also be used as Vona's development proxy target. However, directly opening `9000` does not replace validation through Vona integrated SSR at `7102`. For acceptance or deployment-oriented checks, build the required SSR/REST artifacts, synchronize them with Vona, and access the site through Vona.
+Directly opening `9000` does not replace validation through Vona at `7102`. For acceptance or deployment-oriented checks, build the required SSR/REST artifacts, synchronize them with Vona, and access the site through Vona. For the request flows and guidance on choosing an entry, see [Vona Integrated SSR and Zova Standalone SSR](/fullstack/ssr-entry-modes).
 
 ## 6. Run with Docker Compose
 
