@@ -116,7 +116,7 @@ const fullstackGroups = [
     ],
   },
   {
-    text: 'Architecture & Integration',
+    text: 'Architecture & Editions',
     items: [
       {
         text: 'Comparison with Other Frameworks',
@@ -124,18 +124,27 @@ const fullstackGroups = [
       },
       { text: 'Framework Performance', link: '/fullstack/framework-performance' },
       { text: 'Vona + Zova Integration', link: '/fullstack/vona-zova-integration' },
-      { text: 'SSR Site and Flavor Setup', link: '/fullstack/ssr-site-and-flavor-setup' },
-      { text: 'A-Pay Payment Suite', link: '/fullstack/a-pay-payment-suite' },
       {
-        text: 'Payment Provider Sandbox Configuration',
-        link: '/fullstack/payment-sandbox-configuration',
+        text: 'Edition Collaboration Differences',
+        link: '/fullstack/edition-collaboration-differences',
       },
+    ],
+  },
+  {
+    text: 'Contracts & Integration',
+    items: [
       { text: 'Contract Loop Playbook', link: '/fullstack/contract-loop-playbook' },
       { text: 'Semantic Presentation Contract', link: '/fullstack/semantic-presentation-contract' },
+      { text: 'Backend OpenAPI to Frontend SDK', link: '/fullstack/openapi-to-sdk' },
       {
-        text: 'Admin Resource and Web Self-Service',
-        link: '/fullstack/admin-resource-and-web-self-service',
+        text: 'Frontend Metadata Back to Backend',
+        link: '/fullstack/frontend-metadata-to-backend',
       },
+    ],
+  },
+  {
+    text: 'Metadata-Driven UI',
+    items: [
       {
         text: 'Backend Metadata to Frontend Table Actions',
         link: '/fullstack/backend-metadata-to-frontend-table-actions',
@@ -152,20 +161,31 @@ const fullstackGroups = [
         text: 'Backend Metadata to Frontend Table Actions Source Reading Map',
         link: '/fullstack/backend-metadata-to-frontend-table-actions-source-reading-map',
       },
-      { text: 'Fullstack Image Workflow', link: '/fullstack/image-workflow' },
-      { text: 'Fullstack File Workflow', link: '/fullstack/file-workflow' },
-      { text: 'Backend OpenAPI to Frontend SDK', link: '/fullstack/openapi-to-sdk' },
+    ],
+  },
+  {
+    text: 'Resource & SSR Patterns',
+    items: [
+      { text: 'SSR Site and Flavor Setup', link: '/fullstack/ssr-site-and-flavor-setup' },
       {
-        text: 'Frontend Metadata Back to Backend',
-        link: '/fullstack/frontend-metadata-to-backend',
+        text: 'Admin Resource and Web Self-Service',
+        link: '/fullstack/admin-resource-and-web-self-service',
       },
       {
         text: 'One-to-One Companion Resource',
         link: '/fullstack/one-to-one-companion-resource-guide',
       },
+    ],
+  },
+  {
+    text: 'Media & Payments',
+    items: [
+      { text: 'Fullstack Image Workflow', link: '/fullstack/image-workflow' },
+      { text: 'Fullstack File Workflow', link: '/fullstack/file-workflow' },
+      { text: 'A-Pay Payment Suite', link: '/fullstack/a-pay-payment-suite' },
       {
-        text: 'Edition Collaboration Differences',
-        link: '/fullstack/edition-collaboration-differences',
+        text: 'Payment Provider Sandbox Configuration',
+        link: '/fullstack/payment-sandbox-configuration',
       },
     ],
   },
