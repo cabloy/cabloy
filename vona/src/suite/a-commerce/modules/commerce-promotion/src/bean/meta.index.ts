@@ -6,19 +6,22 @@ import { $tableColumns } from 'vona-module-a-ormutils';
 
 @Meta<IMetaOptionsIndex>({
   indexes: {
-    ...$tableColumns('commercePromotionCouponTemplate', 'state'),
-    ...$tableColumns('commercePromotionCouponTemplate', 'validUntil'),
-    ...$tableColumns('commercePromotionCouponGrant', 'templateId'),
-    ...$tableColumns('commercePromotionCouponGrant', 'userId'),
-    ...$tableColumns('commercePromotionCouponGrant', 'state'),
-    ...$tableColumns('commercePromotionCouponGrant', 'validUntilSnapshot'),
-    ...$tableColumns('commercePromotionCouponGrant', 'reservationOrderId'),
-    ...$tableColumns('commercePromotionCouponGrant', 'reservationCorrelationId'),
-    ...$tableColumns('commercePromotionCouponGrant', 'redeemedOrderId'),
-    ...$tableColumns('commercePromotionCouponAudit', 'couponGrantId'),
-    ...$tableColumns('commercePromotionCouponAudit', 'templateId'),
-    ...$tableColumns('commercePromotionCouponAudit', 'orderId'),
-    ...$tableColumns('commercePromotionCouponAudit', 'correlationId'),
+    ...$tableColumns('commercePromotionCouponTemplate', ['state', 'validUntil']),
+    ...$tableColumns('commercePromotionCouponGrant', [
+      'templateId',
+      'userId',
+      'state',
+      'validUntilSnapshot',
+      'reservationOrderId',
+      'reservationCorrelationId',
+      'redeemedOrderId',
+    ]),
+    ...$tableColumns('commercePromotionCouponAudit', [
+      'couponGrantId',
+      'templateId',
+      'orderId',
+      'correlationId',
+    ]),
   },
 })
 export class MetaIndex extends BeanBase {}

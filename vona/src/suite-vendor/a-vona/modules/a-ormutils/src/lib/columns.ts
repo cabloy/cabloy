@@ -58,7 +58,9 @@ export function $tableColumns<K extends keyof ITableRecord>(
   key?:
     | TypeEntityMetaFieldKeys<ITableRecord[K]>
     | TypeEntityMetaCompositeFieldKeys<ITableRecord[K]>
-    | TypeEntityMetaFieldKeys<ITableRecord[K]>[]
+    | Array<
+        TypeEntityMetaFieldKeys<ITableRecord[K]> | TypeEntityMetaCompositeFieldKeys<ITableRecord[K]>
+      >
     | undefined,
 ) {
   return { [tableName]: key };

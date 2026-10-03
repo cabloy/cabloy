@@ -1,4 +1,5 @@
 import { metadataCustomSnippet } from '@cabloy/cli';
+import { mergeMetaIndex } from 'vona-cli-set-api/mergeMetaIndex';
 import { catchError } from '@cabloy/utils';
 import fs from 'node:fs';
 
@@ -9,7 +10,7 @@ declare module '@cabloy/cli' {
 }
 
 const __snippet_import1 = "import { $tableColumns } from 'vona-module-a-ormutils';";
-const __snippet_update = "...$tableColumns('<%=argv.moduleResourceName%>', 'name'),";
+const __snippet_table = '<%=argv.moduleResourceName%>';
 
 export default metadataCustomSnippet({
   file: 'src/bean/meta.index.ts',
@@ -35,14 +36,7 @@ export default metadataCustomSnippet({
         `import { Meta } from 'vona-module-a-meta';\n${code}`,
       );
     }
-    // update
-    const code = await cli.template.renderContent({ content: __snippet_update });
-    if (ast.includes('indexes: {}')) {
-      ast = ast.replace('indexes: {', `indexes: {\n    ${code}\n  `);
-    } else {
-      ast = ast.replace('indexes: {', `indexes: {\n    ${code}`);
-    }
-    // ok
-    return ast;
+    const table = await cli.template.renderContent({ content: __snippet_table });
+    return mergeMetaIndex(ast, table, 'name');
   },
 });

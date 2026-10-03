@@ -4,6 +4,7 @@ import { BeanCliBase } from '@cabloy/cli';
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { mergeMetaIndex } from '../mergeMetaIndex.ts';
 import { __ThisSetName__ } from '../this.ts';
 
 type DetailMode = 'aggregate' | 'standalone';
@@ -179,23 +180,19 @@ export class CliToolsMasterDetail extends BeanCliBase {
 
   private async _patchDetailMetaIndex() {
     const { argv } = this.context;
-    await this._patchFileByMarker({
-      fileName: this._detailPaths().metaIndex,
-      existsNeedle: `'${argv.fk}'`,
-      marker: '  indexes: {\n',
-      line: this._detailMetaIndexLine(),
-      shapeName: 'detail meta.index',
-    });
+    const fileName = this._detailPaths().metaIndex;
+    const content = this._readFile(fileName);
+    const table = this.helper.combineModuleNameAndResource(
+      argv.detailModuleInfo.relativeName,
+      argv.detailResourceName,
+    );
+    const updated = mergeMetaIndex(content, table, argv.fk);
+    if (updated !== content) await this._saveFile(fileName, updated);
   }
 
   private _detailMetaVersionLine() {
     const { argv } = this.context;
     return `        table.tableIdentity(entity${argv.detailResourceNameCapitalize}.${argv.fk}).comment(entity${argv.detailResourceNameCapitalize}.$comment.${argv.fk});\n`;
-  }
-
-  private _detailMetaIndexLine() {
-    const { argv } = this.context;
-    return `    ...$tableColumns('${this.helper.combineModuleNameAndResource(argv.detailModuleInfo.relativeName, argv.detailResourceName)}', '${argv.fk}'),\n`;
   }
 
   private async _patchFileByMarker({

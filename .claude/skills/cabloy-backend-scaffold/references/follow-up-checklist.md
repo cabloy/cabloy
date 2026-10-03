@@ -43,6 +43,7 @@ When the active edition and installed modules provide `@Passport.rbac(...)` and 
 - migration/version changes
 - `meta.version`
 - field indexes; in shared-database multitenancy, preserve ordinary lookup indexes and enforce business uniqueness in tenant-aware business logic rather than with `table.unique(...)`
+- when editing or generating `meta.index`, consolidate each table's specifications into one declaration instead of adding another same-table `$tableColumns` spread; check for leading-column name collisions, effective metadata, and physical index definitions using the [Field Indexes guide](../../../../repo-docs/backend/field-indexes.md)
 - relations
 - datasource choice
 - cache behavior

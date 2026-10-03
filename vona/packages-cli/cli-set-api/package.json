@@ -26,6 +26,10 @@
       "import": "./src/index.ts",
       "default": "./dist/index.js"
     },
+    "./mergeMetaIndex": {
+      "types": "./dist/lib/mergeMetaIndex.d.ts",
+      "default": "./dist/index.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {

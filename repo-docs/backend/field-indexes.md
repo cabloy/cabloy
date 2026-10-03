@@ -60,6 +60,29 @@ class MetaIndex {}
 
 This is especially valuable for maintainability because it reduces stringly-typed drift.
 
+### Multiple indexes on one table
+
+Declare each table only once in an `indexes` object, whether using direct properties or `$tableColumns`. The helper returns one property keyed by the table name; spreading multiple calls for the same table overwrites earlier values rather than combining them. Put all specifications for that table in one array:
+
+```typescript
+@Meta({
+  indexes: {
+    ...$tableColumns('payPaymentSession', [
+      'businessReference',
+      'providerCorrelationReference',
+      'state+expiresAt',
+    ]),
+  },
+})
+class MetaIndex {}
+```
+
+Each array entry defines a separate index. In this example, the first two entries are independent single-column indexes; `state+expiresAt` defines one composite index, with `state` as its leading column. An array such as `['state', 'expiresAt']` would instead define two single-column indexes. The typed helper accepts arrays containing both single-column fields and two-column `+` specifications.
+
+### Generated names and verification
+
+The current index reconciler names an index `idx_<table>_<first-column>` and checks existing indexes by that leading column. Two intended indexes with the same leading column, such as `state+expiresAt` and `state+nextAttemptAt`, can therefore collide or leave one uncreated. Do not change column order merely to avoid a naming collision: order is part of the query access pattern. Inspect the resulting definitions, not just whether initialization succeeded.
+
 ## App-config override support
 
 Field indexes can also be configured through app config.
@@ -84,6 +107,8 @@ Also ask:
 2. should the index belong in `meta.index`?
 3. does a business key need tenant-scoped uniqueness, to be enforced in tenant-aware business logic rather than with `table.unique(...)`?
 4. is the typed style a better fit than raw string declarations?
+5. does each table have one effective declaration containing every intended index specification, without conflicting leading columns?
+6. do the resulting database indexes have the intended columns in the intended order? Check both registered metadata and physical index definitions; a passing type check or successful initialization alone does not establish this.
 
 That leads to backend changes that are more production-aware and more aligned with Vona’s module metadata model.
 
