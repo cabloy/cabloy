@@ -24,6 +24,8 @@ Dependency: none.
 
 #### WBS-HUA-10-01: Freeze planning authority and pre-implementation decision gate
 
+Traceability: PRD-ACC-03; SRS-API-02; WBS-HUA-10-01; ATP-HUA-CTR-01.
+
 Primary documents:
 
 - `repo-specs/home-user/prd.md`
@@ -50,6 +52,10 @@ Dependency: `WBS-HUA-10-01`.
 
 #### WBS-HUA-20-01: Establish the current-account capability/read contract
 
+Traceability: PRD-ACC-01; SRS-ACC-01, SRS-ACC-02; WBS-HUA-20-01; ATP-HUA-ACC-01.
+Traceability: PRD-ACC-04; SRS-ACC-03; WBS-HUA-20-01; ATP-HUA-ACC-01.
+Traceability: PRD-ACC-03; SRS-API-01, SRS-API-02; WBS-HUA-20-01; ATP-HUA-CTR-01.
+
 Primary areas:
 
 - `vona/src/suite/a-home/modules/home-user/`
@@ -71,6 +77,12 @@ Acceptance checks:
 
 #### WBS-HUA-20-02: Lock down the profile-update boundary and Passport synchronization
 
+Traceability: PRD-PRO-01, PRD-PRO-02; SRS-PRO-01; WBS-HUA-20-02; ATP-HUA-PRO-01.
+Traceability: PRD-PRO-03; SRS-PRO-02; WBS-HUA-20-02; ATP-HUA-PRO-02.
+Traceability: PRD-PRO-04; SRS-PRO-03; WBS-HUA-20-02; ATP-HUA-PAS-01.
+Traceability: PRD-PRO-05; SRS-PRO-04; WBS-HUA-20-02; ATP-HUA-PAS-01.
+Traceability: PRD-SEC-01; SRS-PRO-01, SRS-AUD-01; WBS-HUA-20-02; ATP-HUA-AUD-01, ATP-HUA-RATE-01.
+
 Primary areas:
 
 - Vona `home-user` Account DTO/controller/service
@@ -80,17 +92,21 @@ Primary areas:
 Tasks:
 
 - Define a dedicated update DTO, server-side allowlist, validation, and error semantics for display name, controlled avatar, locale, and tz;
-- Determine type, size, and ownership validation for avatar media references;
+- Determine type, size, and ownership validation for avatar media references; reject arbitrary external URLs;
 - Exclude email, mobile, login identifiers, roles, account status, and internal authentication fields;
+- Define server-side rate-limit dimensions/window and redacted success/rejection auditing for profile updates;
 - Define the Passport refresh/replacement and locale/tz synchronization path after profile success.
 
 Acceptance checks:
 
 - Disallowed fields and invalid/external/unowned avatars do not produce a partial update;
 - After save, identity profile and preferences in the same running `$passport` are consistent;
-- `SRS-PRO-*` and `ATP-HUA-PRO-01`, `ATP-HUA-PRO-02`, `ATP-HUA-PAS-01` are traceable.
+- Profile success/rejection audits are redacted and the enforced limit is proven with actual rejected attempts; neither a passing external-URL test nor a menu check substitutes for avatar ownership proof;
+- `SRS-PRO-*`, `SRS-AUD-01`, and `ATP-HUA-PRO-01`, `ATP-HUA-PRO-02`, `ATP-HUA-PAS-01`, `ATP-HUA-AUD-01`, `ATP-HUA-RATE-01` are traceable.
 
 #### WBS-HUA-20-03: Establish Account contract-loop checks
+
+Traceability: PRD-ACC-03; SRS-API-01, SRS-API-02, SRS-API-03; WBS-HUA-20-03; ATP-HUA-CTR-01.
 
 Primary areas:
 
@@ -116,6 +132,9 @@ Dependency: `WBS-HUA-20-*`.
 
 #### WBS-HUA-30-01: Implement the authenticated password-change contract
 
+Traceability: PRD-PWD-01; SRS-PWD-01; WBS-HUA-30-01; ATP-HUA-PWD-01.
+Traceability: PRD-PWD-02; SRS-ACC-01, SRS-PWD-02, SRS-AUD-02; WBS-HUA-30-01; ATP-HUA-PWD-01.
+
 Primary areas:
 
 - `vona/src/suite/a-home/modules/home-user/`
@@ -137,6 +156,10 @@ Acceptance checks:
 
 #### WBS-HUA-30-02: Implement an atomic result for session invalidation and audit
 
+Traceability: PRD-PWD-03; SRS-PWD-03, SRS-NFR-01; WBS-HUA-30-02; ATP-HUA-PWD-01, ATP-HUA-SES-01.
+Traceability: PRD-PWD-04, PRD-PWD-05; SRS-SES-01, SRS-PWD-04; WBS-HUA-30-02; ATP-HUA-SES-01.
+Traceability: PRD-SEC-01, PRD-SEC-03; SRS-AUD-01; WBS-HUA-30-02; ATP-HUA-AUD-01, ATP-HUA-RATE-01.
+
 Primary areas:
 
 - Authentication token adapter/Passport services
@@ -146,14 +169,14 @@ Primary areas:
 Tasks:
 
 - Implement and prove the selected “retain current, revoke others” semantics of `SRS-SES-01`, or its approved all-token fallback;
-- Combine hash change, session handling, and security audit into a defined atomic persisted result;
-- Define security events, redacted fields, rate limiting, and concurrency behavior;
-- Prefer `@Core.transaction(...)` for database operations that require a single commit boundary; do not perform unbounded retries of external side effects.
+- Define the DB hash-commit boundary separately from token-store revocation and security audit; specify durable intent/compensation or recovery and safe failure reporting so a post-commit `kickOut` or audit failure cannot leave an unexplained partial security result;
+- Define credential security events, redacted fields, rate limiting, and concurrency behavior;
+- Prefer `@Core.transaction(...)` for database operations that require a single commit boundary; do not claim that it atomically commits Redis or logs, and do not perform unbounded retries of external side effects.
 
 Acceptance checks:
 
 - Authentication-continuation behavior exactly matches user messaging and the SRS;
-- Concurrent password changes and injected failures leave no partial credential/token/audit state;
+- Concurrent password changes and injected DB, token-revocation, and audit failures produce the specified persisted credential/old-token outcome and a recoverable, auditable result; no unexplained partial security state or false success is accepted;
 - Logs, responses, Passport, and test evidence disclose no password/hash/token;
 - `SRS-SES-01`, `SRS-AUD-*`, `SRS-NFR-*`, and `ATP-HUA-SES-01`, `ATP-HUA-AUD-01`, `ATP-HUA-RATE-01` are traceable.
 
@@ -162,6 +185,10 @@ Acceptance checks:
 Dependency: `WBS-HUA-20-*`, `WBS-HUA-30-02`.
 
 #### WBS-HUA-40-01: Implement Passport eligibility and frontend consumer-URL set-link issue
+
+Traceability: PRD-SET-01, PRD-SET-02; SRS-ACC-01, SRS-SET-01; WBS-HUA-40-01; ATP-HUA-SET-01.
+Traceability: PRD-SET-03, PRD-ACC-04; SRS-ACC-03, SRS-SET-02; WBS-HUA-40-01; ATP-HUA-SET-02.
+Traceability: PRD-SEC-01; SRS-SET-03, SRS-AUD-01; WBS-HUA-40-01; ATP-HUA-RATE-01, ATP-HUA-AUD-01.
 
 Primary areas:
 
@@ -182,6 +209,9 @@ Acceptance checks:
 - `SRS-SET-01`–`SRS-SET-03` and `ATP-HUA-SET-01`, `ATP-HUA-SET-02`, `ATP-HUA-RATE-01` are traceable.
 
 #### WBS-HUA-40-02: Establish a purpose-bound password-set token lifecycle
+
+Traceability: PRD-SET-05, PRD-SEC-02; SRS-TOK-01, SRS-TOK-02, SRS-NFR-01; WBS-HUA-40-02; ATP-HUA-TOK-01.
+Traceability: PRD-SEC-01, PRD-SEC-03; SRS-SET-03, SRS-AUD-01; WBS-HUA-40-02; ATP-HUA-AUD-01.
 
 Primary areas:
 
@@ -207,6 +237,10 @@ Dependency: `WBS-HUA-40-*`.
 
 #### WBS-HUA-50-01: Implement the public password-set page and consumption action
 
+Traceability: PRD-SET-04, PRD-SEC-02; SRS-TOK-01, SRS-TOK-03; WBS-HUA-50-01; ATP-HUA-TOK-01, ATP-HUA-SSR-03.
+Traceability: PRD-UX-03; SRS-SSR-03; WBS-HUA-50-01; ATP-HUA-SSR-03.
+Traceability: PRD-SEC-01, PRD-SEC-03; SRS-PWD-04, SRS-AUD-02; WBS-HUA-50-01; ATP-HUA-AUD-01, ATP-HUA-RATE-01.
+
 Primary areas:
 
 - Frontend `home-user` public page/route
@@ -228,6 +262,9 @@ Acceptance checks:
 
 #### WBS-HUA-50-02: Create the first auth-simple credential and handle the session result
 
+Traceability: PRD-SET-03, PRD-SET-04; SRS-SET-02, SRS-TOK-02, SRS-NFR-01; WBS-HUA-50-02; ATP-HUA-SET-02, ATP-HUA-TOK-01.
+Traceability: PRD-SET-06; SRS-SES-01, SRS-AUD-01; WBS-HUA-50-02; ATP-HUA-SES-01, ATP-HUA-AUD-01.
+
 Primary areas:
 
 - `auth-simple` and Account credential service
@@ -245,13 +282,17 @@ Acceptance checks:
 
 - A valid token succeeds only once, and the user can subsequently authenticate with the new local password;
 - Every race/failure path has no duplicate credential or undefined token/session state;
-- `SRS-SET-04`–`SRS-SET-06`, `SRS-SES-01`, and `ATP-HUA-TOK-01`, `ATP-HUA-SES-01`, `ATP-HUA-AUD-01` are traceable.
+- `SRS-SET-02`, `SRS-TOK-01`, `SRS-TOK-02`, `SRS-SES-01`, and `ATP-HUA-SET-02`, `ATP-HUA-TOK-01`, `ATP-HUA-SES-01`, `ATP-HUA-AUD-01` are traceable.
 
 ### Phase 60: Shared Account Experience and Site Entry Points
 
 Dependency: `WBS-HUA-20-*`, `WBS-HUA-30-*`, `WBS-HUA-50-*`.
 
 #### WBS-HUA-60-01: Create the shared Account page, Model, and locale
+
+Traceability: PRD-ACC-02, PRD-PRO-01; SRS-ACC-04, SRS-UI-01; WBS-HUA-60-01; ATP-HUA-UI-01.
+Traceability: PRD-PRO-04; SRS-PRO-03; WBS-HUA-60-01; ATP-HUA-PAS-01.
+Traceability: PRD-UX-01, PRD-UX-02; SRS-PWD-01, SRS-SET-02, SRS-AUD-02; WBS-HUA-60-01; ATP-HUA-UI-01.
 
 Primary areas:
 
@@ -276,6 +317,9 @@ Acceptance checks:
 
 #### WBS-HUA-60-02: Implement the Web Account session-SSR route
 
+Traceability: PRD-ACC-02, PRD-UX-03; SRS-SSR-01, SRS-UI-02; WBS-HUA-60-02; ATP-HUA-SSR-01.
+Traceability: PRD-ACC-01; SRS-ACC-02; WBS-HUA-60-02; ATP-HUA-ACC-01.
+
 Primary areas:
 
 - Web Account route/page
@@ -297,6 +341,9 @@ Acceptance checks:
 
 #### WBS-HUA-60-03: Integrate Account Settings entry points in Admin and Web
 
+Traceability: PRD-ACC-02; SRS-ACC-04, SRS-UI-02; WBS-HUA-60-03; ATP-HUA-UI-01.
+Traceability: PRD-UX-03; SRS-SSR-02; WBS-HUA-60-03; ATP-HUA-SSR-02.
+
 Primary areas:
 
 - `home-layoutadmin`
@@ -316,38 +363,13 @@ Acceptance checks:
 - Admin and Web session SSR, and the neutral SSR of public token/reset pages, each comply with requirements;
 - `SRS-UI-02`, `SRS-SSR-02`, and `ATP-HUA-SSR-02`, `ATP-HUA-UI-01` are traceable.
 
-### Phase 70: Integration, Evidence, and Release Closure
-
-Dependency: `WBS-HUA-60-*`.
-
-#### WBS-HUA-70-01: Complete contract, security, SSR, and Playwright browser acceptance
-
-Primary areas:
-
-- Home User/backend/auth module-local tests
-- Basic Web/Admin Playwright browser acceptance
-- OpenAPI/generated consumers and paired artifacts
-
-Tasks:
-
-- Run defined service/action/transaction/token-race tests;
-- Verify emitted OpenAPI and Home API generation;
-- Run `npm run build:zova:web`, `npm run build:zova:admin`, and `npm run deps:vona` in sequence;
-- Complete Web/Admin SSR, hydration, navigation, direct API, locale, and Playwright browser-acceptance journeys;
-- Record the command, environment, result, and redacted evidence for every `ATP-HUA-*` according to the test plan.
-
-Acceptance checks:
-
-- Every PRD/SRS requirement in scope for this delivery has `ATP-HUA-*` evidence;
-- No temporary waiver is expired;
-- All generation, SSR, token, session, and direct-authorization paths comply with the specification;
-- WBS status may be marked `verified` only when evidence is complete.
-
 ### Phase 80: Login Registration and Unauthenticated Password-Reset Closure
 
 Dependency: `WBS-HUA-20-03`, `WBS-HUA-30-02`, `WBS-HUA-40-02`, `WBS-HUA-50-*`.
 
 #### WBS-HUA-80-01: Integrate the Passport registration entry point
+
+Traceability: PRD-REG-01; SRS-REG-01; WBS-HUA-80-01; ATP-HUA-REG-01.
 
 Primary areas:
 
@@ -369,6 +391,9 @@ Acceptance checks:
 
 #### WBS-HUA-80-02: Implement anonymous reset request and neutral feedback
 
+Traceability: PRD-RST-01, PRD-RST-02; SRS-RST-01, SRS-RST-02; WBS-HUA-80-02; ATP-HUA-RST-01.
+Traceability: PRD-SEC-01, PRD-SEC-03; SRS-AUD-01, SRS-AUD-02; WBS-HUA-80-02; ATP-HUA-RATE-01, ATP-HUA-AUD-01.
+
 Primary areas:
 
 - Vona `home-user` Account DTO/controller/service
@@ -385,10 +410,14 @@ Tasks:
 Acceptance checks:
 
 - The browser must not submit a user, auth record, provider, verified state, or recipient eligibility;
-- Ineligible accounts, unknown addresses, cooldown, and mail/configuration failures do not issue usable reset state or alter the external response;
+- Ineligible accounts, including a scoped user who is active but not activated, unknown addresses, cooldown, and mail/configuration failures do not issue usable reset state or alter the external response;
 - `SRS-RST-01`–`SRS-RST-02`, `PRD-RST-01`–`PRD-RST-02`, and `ATP-HUA-RST-01` are traceable.
 
 #### WBS-HUA-80-03: Implement purpose-isolated reset tokens and replacement
+
+Traceability: PRD-RST-02, PRD-RST-03; SRS-RST-01, SRS-RST-02, SRS-RST-03; WBS-HUA-80-03; ATP-HUA-RST-02.
+Traceability: PRD-SEC-02; SRS-TOK-01, SRS-NFR-01; WBS-HUA-80-03; ATP-HUA-RST-02.
+Traceability: PRD-SEC-03; SRS-AUD-01; WBS-HUA-80-03; ATP-HUA-AUD-01.
 
 Primary areas:
 
@@ -399,16 +428,19 @@ Tasks:
 
 - Use separate `password-reset` digest-only state, a 15-minute TTL, current pointer, and recipient cooldown; Zova submits a complete absolute token-free consumer URL, and Vona accepts only HTTP(S), without userinfo/query/fragment, where `checkOriginExact(...)` permits exact same-origin (scheme, host, effective port) using `app.util.host`—configured `SERVER_SERVE_HOST` when present, otherwise the request-host fallback—or an exact match to existing `a-security:cors` `whiteList`; Vona preserves the frontend-supplied pathname, does not read or validate SSR Site, `publicPath`, or `siteId`, and adds only the `token` URL query. Request/proxy hosts cannot substitute for a configured canonical host or authorize lookalike, suffix, cross-scheme, or cross-port cross-origin destinations; production explicitly configures an HTTPS consumer origin; `dev/test` permits different ports only when both API and consumer are loopback hostnames;
 - Place the raw UUID only in the mail `token` URL query added by Vona, binding it strictly to the logical `/home/user/password-reset` leaf; the canonical `app.util.host` may participate in exact same-origin (scheme, host, effective port) determination, but request/proxy headers cannot substitute for a configured canonical host or authorize lookalike, suffix, cross-scheme, or cross-port cross-origin targets; neither `Referer`, a client-supplied mount path, nor CORS wildcard/suffix semantics may authorize a consumer URL; do not persist the raw token; protections for query arrival at request, log, or referrer layers are handled by subsequent Referrer-Policy and log-redaction work;
-- After the digest lock, acquire the shared per-user password-mutation lock, revalidate state/current pointer/eligibility while holding the lock, and call only `replacePassword()` in the transaction;
-- After transaction commit, while the lock remains held, revoke server-side sessions and clean up reset state; reset must not create the first local credential for an OAuth-only user.
+- After the digest lock, acquire the shared per-user password-mutation lock, revalidate state/current pointer and active, activated, account-email, canonical-local-credential eligibility while holding the lock, and call only `replacePassword()` in the transaction;
+- After transaction commit, while the lock remains held, revoke server-side sessions, record the redacted consumption outcome, and clean up reset state; reset must not create the first local credential for an OAuth-only user.
 
 Acceptance checks:
 
-- Supersession, expiry, replay, malformed payload, eligibility change, same-token concurrency, and interleaved reissue/consume safely fail;
+- Supersession, expiry, replay, malformed payload, deactivation or loss of activation after issuance, other eligibility changes, same-token concurrency, and interleaved reissue/consume safely fail;
 - Only the new password is usable after successful token replacement, and old sessions are revoked;
 - `SRS-RST-02`–`SRS-RST-03`, `PRD-RST-03`, and `ATP-HUA-RST-02` are traceable.
 
 #### WBS-HUA-80-04: Implement the public reset page and Login-loop acceptance
+
+Traceability: PRD-RST-03, PRD-RST-04; SRS-RST-04, SRS-SSR-03; WBS-HUA-80-04; ATP-HUA-RST-03.
+Traceability: PRD-UX-02; SRS-AUD-02; WBS-HUA-80-04; ATP-HUA-RST-03.
 
 Primary areas:
 
@@ -427,6 +459,37 @@ Acceptance checks:
 - The SSR and hydration initial trees contain no token, private identity, or prefilled password;
 - The reset page only transiently captures the token from the route query and then router-scrubs it; it must not write it to storage, Model state, or retainable artifacts;
 - `SRS-RST-04`, `PRD-RST-03`–`PRD-RST-04`, and `ATP-HUA-RST-03` are traceable.
+
+### Phase 70: Integration, Evidence, and Release Closure
+
+Dependency: `WBS-HUA-60-*`, `WBS-HUA-80-*`.
+
+#### WBS-HUA-70-01: Complete contract, security, SSR, and Playwright browser acceptance
+
+Traceability: PRD-ACC-03; SRS-API-03; WBS-HUA-70-01; ATP-HUA-CTR-01.
+Traceability: PRD-SEC-03; SRS-NFR-02; WBS-HUA-70-01; ATP-HUA-AUD-01.
+
+Primary areas:
+
+- Home User/backend/auth module-local tests
+- Basic Web/Admin Playwright browser acceptance
+- OpenAPI/generated consumers and paired artifacts
+
+Tasks:
+
+- Run defined service/action/transaction/token-race tests, including the outstanding profile, reset eligibility, and password-change failure paths;
+- Verify emitted OpenAPI and Home API generation;
+- Run `npm run build:zova:web`, `npm run build:zova:admin`, and `npm run deps:vona` in sequence;
+- Complete Web/Admin SSR, hydration, navigation, direct API, locale, and Playwright browser-acceptance journeys;
+- Record revision, command, environment, result, and a durable redacted artifact location for every applicable `ATP-HUA-*` according to the test plan; prior partial test runs do not establish current-revision closure.
+
+Acceptance checks:
+
+- Every PRD/SRS requirement in scope for this delivery has applicable passing `ATP-HUA-*` evidence, including registration and reset from Phase 80;
+- No temporary waiver is expired;
+- Profile media ownership and audit/rate, password-change failure recovery, and reset activation are implemented and proven, not merely planned;
+- All generation, SSR, token, session, and direct-authorization paths comply with the specification;
+- WBS status may be marked `verified` only when evidence is complete.
 
 ## Dependency and Contract-Loop Rules
 
@@ -456,20 +519,20 @@ The corresponding SSR bundle and REST output must be built first; running `build
 
 | WBS Scope                      | PRD                                                 | SRS                                    | ATP                                                                                      |
 | ------------------------------ | --------------------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `WBS-HUA-10-01`                | All in-scope `PRD-*`                                | All in-scope `SRS-*`                   | All planned `ATP-HUA-*`                                                                  |
+| `WBS-HUA-10-01`                | Planning gate for all in-scope `PRD-*`               | Planning gate for all in-scope `SRS-*`  | Catalogue review; narrow matcher anchor: `ATP-HUA-CTR-01`                                |
 | `WBS-HUA-20-*`                 | `PRD-ACC-*`, `PRD-PRO-*`                            | `SRS-ACC-*`, `SRS-PRO-*`, `SRS-API-*`  | `ATP-HUA-ACC-01`, `ATP-HUA-PRO-01`, `ATP-HUA-PRO-02`, `ATP-HUA-PAS-01`, `ATP-HUA-CTR-01` |
 | `WBS-HUA-30-*`                 | `PRD-PWD-*`, `PRD-SEC-*`                            | `SRS-PWD-*`, `SRS-SES-01`, `SRS-AUD-*` | `ATP-HUA-PWD-01`, `ATP-HUA-SES-01`, `ATP-HUA-AUD-01`, `ATP-HUA-RATE-01`                  |
 | `WBS-HUA-40-*`, `WBS-HUA-50-*` | `PRD-SET-*`, `PRD-SEC-02`–`PRD-SEC-03`              | `SRS-SET-*`, `SRS-TOK-*`, `SRS-SES-01` | `ATP-HUA-SET-01`, `ATP-HUA-SET-02`, `ATP-HUA-TOK-01`, `ATP-HUA-SSR-03`                   |
 | `WBS-HUA-60-*`                 | `PRD-ACC-02`, `PRD-PRO-04`–`PRD-PRO-05`, `PRD-UX-*` | `SRS-UI-*`, `SRS-SSR-*`                | `ATP-HUA-UI-01`, `ATP-HUA-SSR-01`, `ATP-HUA-SSR-02`, `ATP-HUA-PAS-01`                    |
-| `WBS-HUA-70-01`                | All in-scope `PRD-*`                                | All in-scope `SRS-*`                   | All applicable `ATP-HUA-*`                                                               |
 | `WBS-HUA-80-01`                | `PRD-REG-01`                                        | `SRS-REG-01`                           | `ATP-HUA-REG-01`                                                                         |
 | `WBS-HUA-80-02`                | `PRD-RST-01`–`PRD-RST-02`                           | `SRS-RST-01`–`SRS-RST-02`              | `ATP-HUA-RST-01`                                                                         |
 | `WBS-HUA-80-03`                | `PRD-RST-03`                                        | `SRS-RST-02`–`SRS-RST-03`              | `ATP-HUA-RST-02`                                                                         |
 | `WBS-HUA-80-04`                | `PRD-RST-03`–`PRD-RST-04`                           | `SRS-RST-04`                           | `ATP-HUA-RST-03`                                                                         |
+| `WBS-HUA-70-01`                | Release gate for all in-scope `PRD-*`               | Release gate for all in-scope `SRS-*`  | All applicable `ATP-HUA-*`; narrow anchor: `ATP-HUA-CTR-01`, `ATP-HUA-AUD-01`            |
 
 ## Completion and Evidence Rules
 
-- `implementation-complete` means the code task is complete; it does not mean acceptance has passed.
+- `implementation-complete` means the task's implementation or planning deliverable and its declared prerequisites are complete; it does not mean acceptance has passed. Historical source presence alone does not close a task whose required security checks or predecessors remain open.
 - `verified` requires the ATP, command, environment, result, and redacted evidence defined by the test plan.
 - Every waiver must state its owner, reason, and expiration time; when expired, it automatically becomes a blocker.
 - Change the authoritative PRD or SRS record first for a requirement change, then update the WBS, test plan, ADR, and progress register.

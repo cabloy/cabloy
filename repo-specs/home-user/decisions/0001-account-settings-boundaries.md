@@ -6,7 +6,7 @@ Accepted.
 
 ## Context
 
-Cabloy Basic's `home-user` and Passport provide the foundation for current identity, registration, login, and OAuth authentication. This ADR establishes separate boundaries for editing the current user's profile, changing the local password, setting the first local password for OAuth-only users, and recovering a password while logged out. The Admin avatar menu currently offers only logout, and the Web layout has no corresponding account entry point.
+Cabloy Basic's `home-user` and Passport provide the foundation for current identity, registration, login, and OAuth authentication. This ADR establishes separate boundaries for editing the current user's profile, changing the local password, setting the first local password for OAuth-only users, and recovering a password while logged out. When this ADR was drafted, the Admin avatar menu offered only logout and the Web layout had no corresponding Account entry point; both entries now exist in source, subject to acceptance evidence.
 
 Account settings involve personal profile data, authentication credentials, the account email, one-time tokens, session invalidation, auditing, the authentication-protected session SSR Account route, and neutral SSR for the public token page. If implemented as a generic User Resource, temporary code in a layout, or a superficial extension of the existing incomplete password-reset callback, the domain boundary and security prerequisites would drift.
 
@@ -53,7 +53,7 @@ Default simple self-registration follows the existing email-confirmation policy:
 
 Authorization, field validation, rate limiting, auditing, and sensitive-data redaction for password changes, first-password setup, and token sending and consumption are performed on the server. The frontend must not persist or record plaintext passwords, password hashes, raw one-time tokens, or internal authentication records.
 
-The existing `a-user` all-token invalidation capability and `auth-simple` hashing/validation capability may be evaluated for reuse, but the precise session-invalidation policy, transaction boundaries, and authentication-adapter ownership must be implemented only after the SRS decision gate is closed.
+The existing `a-user` all-token invalidation and `auth-simple` hashing/validation capabilities are used by the Account implementation. `SRS-SES-01` permits all-token invalidation and explicit re-login for the first release rather than assuming selective retention of the current session. A DB transaction alone does not cover token-store revocation or audit: the post-commit password-change failure/recovery boundary in `SRS-PWD-03` remains unresolved and must not be recorded as an accepted atomic implementation merely because this ADR is Accepted.
 
 ## Rejected or deferred options
 
@@ -62,15 +62,15 @@ The existing `a-user` all-token invalidation capability and `auth-simple` hashin
 - Disguising `password-set` as or merging it into `password-reset`.
 - Determining account capability or authorization solely from frontend OAuth state, page routes, Site ID, or menu visibility.
 - Moving the Web user workspace to Admin solely to reuse cookie-aware SSR.
-- Treating the currently `Not Implemented` password-reset callback as a usable end-to-end recovery flow.
+- Treating the legacy password-reset callback as the Account recovery flow or as proof of its end-to-end acceptance.
 - Accepting arbitrary external avatar URLs before controlled media ownership and verification mechanisms are defined.
 - Implicitly adding a migration for account/token/audit persistence changes before the `fileVersion` strategy is explicit.
 
-## Decision gates before implementation
+## Implementation decision gates and remaining closure
 
-The subsequent SRS and WBS must clarify the following before corresponding code work begins:
+These gates governed the original implementation. Existing source shows a dedicated Account controller/matcher, all-token revocation with re-login, and separate token purposes; those observations do not close the remaining controlled-avatar, profile rate/audit, or post-commit password-change recovery gates. Before the corresponding outstanding code work or acceptance can close, the SRS and WBS must clarify or verify:
 
-1. Whether the Account API remains in the `HomeUserPassport` operation family or uses a separate controller/tag, and the corresponding update to the Home API OpenAPI matcher;
+1. The selected dedicated Account controller/tag and corresponding Home API OpenAPI matcher, including generation evidence for the current revision;
 2. the final editable profile-field whitelist, avatar ownership proof, and Passport synchronization response;
 3. the unified password policy, current-password validation, and handling of accounts without local credentials;
 4. the `password-set` explicit email input, normalized matching against an existing `EntityUser.email`, the token-bound/persist-on-success boundary for an empty-field candidate, and eligibility invalidation after that field changes;
