@@ -115,6 +115,16 @@ These shorthands still map back to the generic aspect model.
 
 The global Passport guard is the baseline for controller actions: without a local Passport decorator, an action requires an authenticated and activated user. It is not public.
 
+`@Passport.activated(...)` changes the activation requirement for an authenticated user:
+
+| Value | Requirement | Typical use |
+| --- | --- | --- |
+| `true` | The user must be activated; this is the default. | Ordinary protected actions. |
+| `false` | The user must **not** be activated. This does not mean “skip the check.” | An account-activation action. |
+| `'noCheck'` | Do not check activation state; both activated and unactivated users can proceed. | Logout, including for an unactivated account. |
+
+All three values still require authentication by default. An unauthenticated request is rejected; use `@Passport.public()` only if anonymous access is intended. A disabled account is still rejected regardless of the activation setting. The guard returns `403` when an authenticated user fails the account-status or activation check.
+
 Use a local Passport or domain guard when an action needs a policy beyond that baseline:
 
 - use `@Passport.public()` only when anonymous access is intentional
