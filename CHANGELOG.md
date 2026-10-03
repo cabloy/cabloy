@@ -1,5 +1,21 @@
 # Changelog
 
+## 5.1.195
+
+### Features
+
+- Update application features.
+
+### Bug Fixes
+
+- Fix metadata index merging and preserve indexes on the same table in metadata and generators.
+
+### Improvements
+
+- Enhance transaction handling and specification skills.
+- Refine the commerce specification and clarify the tutorial’s OpenAPI workflow and contract model.
+- Update the controller AOP guide, SSR comparison, development history, introduction, README, and site icon.
+
 ## 5.1.194
 
 ### Bug Fixes
