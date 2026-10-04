@@ -421,14 +421,22 @@ test('ATP catalogue role headers define scenarios but coverage and evidence tabl
     '| ATP ID | Scenario |',
     '| --- | --- |',
     '| ATP-REF-04 | rollout reference only |',
+    '',
+    '| ATP ID | Procedure |',
+    '| --- | --- |',
+    '| ATP-REF-05 | evidence procedure only |',
     '## Acceptance Scenario Catalogue',
     '| Primary traceability | Scenario and minimum proof | ATP ID |',
     '| --- | --- | --- |',
     '| WBS-REAL-01 | legacy definition | `ATP-CATALOGUE-01` |',
+    '',
+    '| ATP ID | Acceptance Procedure |',
+    '| --- | --- |',
+    '| ATP-CATALOGUE-02 | acceptance steps |',
   ].join('\n');
   assert.deepEqual(
     [...parseAtpIds(markdown)],
-    ['ATP-BULLET-01', 'ATP-HEADING-01', 'ATP-CATALOGUE-01'],
+    ['ATP-BULLET-01', 'ATP-HEADING-01', 'ATP-CATALOGUE-01', 'ATP-CATALOGUE-02'],
   );
 });
 

@@ -185,7 +185,8 @@ function catalogueColumns(cells) {
     label => /^(?:atp\s+)?id$/.test(label) || /^(?:atp\s*)?编号$/.test(label),
   );
   const scenario = labels.findIndex(
-    label => /^(?:acceptance\s+)?scenario\b/.test(label) || /^(?:验收)?场景/.test(label),
+    label =>
+      /^(?:acceptance\s+)?(?:scenario|procedure)\b/.test(label) || /^(?:验收)?场景/.test(label),
   );
   return id !== -1 && scenario !== -1 && id !== scenario ? { id, scenario } : null;
 }
