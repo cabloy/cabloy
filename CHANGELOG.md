@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.197
+
+### Bug Fixes
+
+- Recognize procedure headers in ATP catalogues.
+
 ## 5.1.196
 
 ### Improvements
