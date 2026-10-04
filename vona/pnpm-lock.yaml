@@ -1652,7 +1652,7 @@ importers:
         specifier: ^5.0.3
         version: link:modules/a-markdown
       vona-module-a-rbac:
-        specifier: ^5.0.7
+        specifier: ^5.0.8
         version: link:modules/a-rbac
       vona-module-a-socket:
         specifier: workspace:^
@@ -1956,16 +1956,16 @@ importers:
   src/suite-vendor/a-pay:
     dependencies:
       vona-module-a-pay:
-        specifier: ^5.0.9
+        specifier: ^5.0.10
         version: link:modules/a-pay
       vona-module-pay-mock:
-        specifier: ^5.0.9
+        specifier: ^5.0.10
         version: link:modules/pay-mock
       vona-module-pay-paypal:
-        specifier: ^5.0.9
+        specifier: ^5.0.10
         version: link:modules/pay-paypal
       vona-module-pay-stripe:
-        specifier: ^5.0.9
+        specifier: ^5.0.10
         version: link:modules/pay-stripe
 
   src/suite-vendor/a-pay/modules/a-pay:
@@ -2031,7 +2031,7 @@ importers:
         specifier: ^5.0.3
         version: link:modules/test-markdown
       vona-module-test-pay:
-        specifier: ^5.0.8
+        specifier: ^5.0.9
         version: link:modules/test-pay
 
   src/suite-vendor/a-test/modules/test-auth:

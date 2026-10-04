@@ -13,6 +13,7 @@ const passportCurrentApiPath = '/api/home/user/passport/current';
 const passportLoginApiPath = '/api/home/user/passport/login';
 const passportRegisterApiPath = '/api/home/user/passport/register';
 const passportActivateCurrentApiPath = '/api/home/user/passportTest/activateCurrent';
+const passportRemoveCurrentFixtureApiPath = '/api/home/user/passportTest/removeCurrentFixture';
 const accountProfileApiPath = '/api/home/user/account/profile';
 const imageUploadApiPath = '/api/image/upload';
 const avatarFixturePath = path.resolve(
@@ -31,18 +32,59 @@ function waitForApiResponse(page: Page, method: string, path: string) {
   });
 }
 
-async function registerAccountUser(request: APIRequestContext, testInfo: TestInfo) {
-  const suffix = `${testInfo.workerIndex}-${testInfo.parallelIndex ?? testInfo.retry}-${Date.now()}`;
-  const username = `e2e-account-${suffix}`;
-  const password = 'account-e2e-password';
-  const captchaResponse = await request.post('/api/captcha/create', {
+interface RegisteredAccount {
+  id: number | string;
+  username: string;
+  password: string;
+  accessToken: string;
+  roles: Array<{ id: number | string; name: string }>;
+}
+
+interface PassportJwt {
+  passport: { user: { id: RegisteredAccount['id'] }; roles: RegisteredAccount['roles'] };
+  jwt: { accessToken: string };
+}
+
+async function createCaptcha(request: APIRequestContext): Promise<{ id: string; token: string }> {
+  const response = await request.post('/api/captcha/create', {
     data: { scene: 'captcha-simple:simple' },
   });
-  expect(captchaResponse.ok()).toBeTruthy();
-  const captcha = (await captchaResponse.json()).data;
+  expect(response.ok()).toBeTruthy();
+  const captcha = (await response.json()).data;
   expect(captcha?.id).toEqual(expect.any(String));
   expect(captcha?.token).toEqual(expect.any(String));
+  return { id: captcha.id, token: captcha.token };
+}
 
+async function loginAsAccount(
+  request: APIRequestContext,
+  username: string,
+  password: string,
+): Promise<RegisteredAccount> {
+  const captcha = await createCaptcha(request);
+  const response = await request.post(passportLoginApiPath, {
+    data: { username, password, captcha },
+  });
+  expect(response.ok()).toBeTruthy();
+  const login = (await response.json()).data as PassportJwt;
+  return {
+    id: login.passport.user.id,
+    username,
+    password,
+    accessToken: login.jwt.accessToken,
+    roles: login.passport.roles,
+  };
+}
+
+async function registerAccountUser(
+  request: APIRequestContext,
+  testInfo: TestInfo,
+  onRegistered: (account: RegisteredAccount) => void,
+): Promise<RegisteredAccount> {
+  const suffix = `${testInfo.workerIndex}-${testInfo.parallelIndex ?? testInfo.retry}-${crypto.randomUUID()}`;
+  const username = `e2e-fixture-home-account-${suffix}`;
+  const password = 'account-e2e-password';
+  const captcha = await createCaptcha(request);
   const baseURL = testInfo.project.use.baseURL;
   if (!baseURL) throw new Error('account E2E base URL is unavailable');
   const consumerUrl = new URL('/home/user/activation', baseURL).toString();
@@ -53,17 +95,39 @@ async function registerAccountUser(request: APIRequestContext, testInfo: TestInf
       password,
       passwordConfirm: password,
       consumerUrl,
-      captcha: { id: captcha.id, token: captcha.token },
+      captcha,
     },
   });
   expect(registerResponse.ok()).toBeTruthy();
-  const registration = (await registerResponse.json()).data;
-  expect(registration?.jwt?.accessToken).toEqual(expect.any(String));
+  const registration = (await registerResponse.json()).data as PassportJwt;
+  const account: RegisteredAccount = {
+    id: registration.passport.user.id,
+    username,
+    password,
+    accessToken: registration.jwt.accessToken,
+    roles: registration.passport.roles,
+  };
+  onRegistered(account);
+  expect(account.id).toEqual(expect.anything());
+  expect(account.accessToken).toEqual(expect.any(String));
   const activateResponse = await request.post(passportActivateCurrentApiPath, {
-    headers: { Authorization: `Bearer ${registration.jwt.accessToken}` },
+    headers: { Authorization: `Bearer ${account.accessToken}` },
   });
   expect(activateResponse.ok()).toBeTruthy();
-  return { password, username };
+  const activatedAccount = await loginAsAccount(request, username, password);
+  expect(String(activatedAccount.id)).toBe(String(account.id));
+  return activatedAccount;
+}
+
+async function removeAccountFixture(request: APIRequestContext, account: RegisteredAccount) {
+  const currentAccount = await loginAsAccount(request, account.username, account.password);
+  if (String(currentAccount.id) !== String(account.id)) {
+    throw new Error(`Fixture login resolved a different account: ${account.username}`);
+  }
+  const response = await request.delete(passportRemoveCurrentFixtureApiPath, {
+    headers: { Authorization: `Bearer ${currentAccount.accessToken}` },
+  });
+  expect(response.ok()).toBeTruthy();
 }
 
 function collectPageErrors(page: Page) {
@@ -115,43 +179,58 @@ test(
 test(
   'ATP-HUA-REG-01: Login registration uses the Passport contract and defers site admission until activation',
   { tag: ['@account', '@web', '@flow'] },
-  async ({ page }, testInfo) => {
-    const suffix = `${testInfo.workerIndex}-${testInfo.parallelIndex ?? testInfo.retry}-${Date.now()}`;
-    const username = `e2e-register-${suffix}`;
+  async ({ page, request }, testInfo) => {
+    const suffix = `${testInfo.workerIndex}-${testInfo.parallelIndex ?? testInfo.retry}-${crypto.randomUUID()}`;
+    const username = `e2e-fixture-home-account-register-${suffix}`;
     const password = 'account-e2e-password';
+    let account: RegisteredAccount | undefined;
+    try {
+      await page.goto(accountPath, { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(page).toHaveURL(/\/login(?:\?|$)/);
+      expect(new URL(page.url()).searchParams.get('returnTo')).toBe(accountPath);
+      await page.getByRole('button', { name: 'Create account', exact: true }).click();
+      await expect(page).toHaveURL(
+        new RegExp(`/home/login/register\\?returnTo=${encodeURIComponent(accountPath)}`),
+      );
+      await expect(page.getByRole('heading', { name: 'Create account' })).toBeVisible();
 
-    await page.goto(accountPath, { waitUntil: 'load' });
-    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
-    await expect(page).toHaveURL(/\/login(?:\?|$)/);
-    expect(new URL(page.url()).searchParams.get('returnTo')).toBe(accountPath);
-    await page.getByRole('button', { name: 'Create account', exact: true }).click();
-    await expect(page).toHaveURL(
-      new RegExp(`/home/login/register\\?returnTo=${encodeURIComponent(accountPath)}`),
-    );
-    await expect(page.getByRole('heading', { name: 'Create account' })).toBeVisible();
-
-    await page.getByRole('group', { name: 'User Name *' }).getByRole('textbox').fill(username);
-    await page
-      .getByRole('group', { name: 'Email *' })
-      .getByRole('textbox')
-      .fill(`${username}@example.test`);
-    await page.locator('input[name="password"]').fill(password);
-    await page.locator('input[name="passwordConfirm"]').fill(password);
-    await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
-    const registerResponse = waitForApiResponse(page, 'POST', passportRegisterApiPath);
-    await page.getByRole('button', { name: 'Create account', exact: true }).click();
-    expect((await registerResponse).ok()).toBeTruthy();
-    await expect(page).toHaveURL(
-      new RegExp(`/home/login/register\\?returnTo=${encodeURIComponent(accountPath)}`),
-    );
-    await expect(
-      page.getByText('Check your email to activate your account before signing in.', {
-        exact: true,
-      }),
-    ).toBeVisible();
-    await page.getByRole('button', { name: 'Back to login', exact: true }).click();
-    await expect(page).toHaveURL(/\/login(?:\?|$)/);
-    expect(new URL(page.url()).searchParams.get('returnTo')).toBe(accountPath);
+      await page.getByRole('group', { name: 'User Name *' }).getByRole('textbox').fill(username);
+      await page
+        .getByRole('group', { name: 'Email *' })
+        .getByRole('textbox')
+        .fill(`${username}@example.test`);
+      await page.locator('input[name="password"]').fill(password);
+      await page.locator('input[name="passwordConfirm"]').fill(password);
+      await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
+      const registerResponse = waitForApiResponse(page, 'POST', passportRegisterApiPath);
+      await page.getByRole('button', { name: 'Create account', exact: true }).click();
+      const registrationResponse = await registerResponse;
+      expect(registrationResponse.ok()).toBeTruthy();
+      const registration = (await registrationResponse.json()).data as PassportJwt;
+      account = {
+        id: registration.passport.user.id,
+        username,
+        password,
+        accessToken: registration.jwt.accessToken,
+        roles: registration.passport.roles,
+      };
+      expect(account.id).toEqual(expect.anything());
+      expect(account.accessToken).toEqual(expect.any(String));
+      await expect(page).toHaveURL(
+        new RegExp(`/home/login/register\\?returnTo=${encodeURIComponent(accountPath)}`),
+      );
+      await expect(
+        page.getByText('Check your email to activate your account before signing in.', {
+          exact: true,
+        }),
+      ).toBeVisible();
+      await page.getByRole('button', { name: 'Back to login', exact: true }).click();
+      await expect(page).toHaveURL(/\/login(?:\?|$)/);
+      expect(new URL(page.url()).searchParams.get('returnTo')).toBe(accountPath);
+    } finally {
+      if (account) await removeAccountFixture(request, account);
+    }
   },
 );
 
@@ -306,89 +385,98 @@ test(
   'ATP-ACCOUNT-WEB-01: signed-in Web menu refreshes after profile save and keeps drafts isolated',
   { tag: ['@account', '@web', '@flow'] },
   async ({ page, request }, testInfo) => {
-    const account = await registerAccountUser(request, testInfo);
-    const pageErrors = collectPageErrors(page);
-    const consoleErrors = collectConsoleErrors(page);
+    let account: RegisteredAccount | undefined;
+    try {
+      account = await registerAccountUser(request, testInfo, registered => {
+        account = registered;
+      });
+      expect(account.roles.map(role => role.name)).toContain('registeredUser');
+      const pageErrors = collectPageErrors(page);
+      const consoleErrors = collectConsoleErrors(page);
 
-    await page.goto('/login?returnTo=%2Fhome%2Fuser%2Faccount', { waitUntil: 'load' });
-    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
-    await page.getByPlaceholder('Your Username').fill(account.username);
-    await page.getByPlaceholder('Your Password').fill(account.password);
-    await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
-    const loginResponse = waitForApiResponse(page, 'POST', passportLoginApiPath);
-    const accountResponse = waitForApiResponse(page, 'GET', accountApiPath);
-    await page.getByRole('button', { name: 'Login', exact: true }).click();
-    expect((await loginResponse).ok()).toBeTruthy();
-    const accountResponseBody = await accountResponse;
-    expect(accountResponseBody.ok()).toBeTruthy();
-    expect((await accountResponseBody.json()).data.avatar).toBeNull();
-    await expect(page).toHaveURL(accountPath);
-    await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
+      await page.goto('/login?returnTo=%2Fhome%2Fuser%2Faccount', { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await page.getByPlaceholder('Your Username').fill(account.username);
+      await page.getByPlaceholder('Your Password').fill(account.password);
+      await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
+      const loginResponse = waitForApiResponse(page, 'POST', passportLoginApiPath);
+      const accountResponse = waitForApiResponse(page, 'GET', accountApiPath);
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
+      expect((await loginResponse).ok()).toBeTruthy();
+      const accountResponseBody = await accountResponse;
+      expect(accountResponseBody.ok()).toBeTruthy();
+      expect((await accountResponseBody.json()).data.avatar).toBeNull();
+      await expect(page).toHaveURL(accountPath);
+      await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
 
-    const avatarPreview = page.getByAltText('Choose avatar', { exact: true });
-    await expect(avatarPreview).toBeVisible();
-    await expect
-      .poll(() =>
-        avatarPreview.evaluate(image => ({
-          complete: (image as HTMLImageElement).complete,
-          naturalWidth: (image as HTMLImageElement).naturalWidth,
-        })),
-      )
-      .toEqual({ complete: true, naturalWidth: expect.any(Number) });
-    await expect
-      .poll(() => avatarPreview.evaluate(image => (image as HTMLImageElement).naturalWidth))
-      .toBeGreaterThan(0);
+      const avatarPreview = page.getByAltText('Choose avatar', { exact: true });
+      await expect(avatarPreview).toBeVisible();
+      await expect
+        .poll(() =>
+          avatarPreview.evaluate(image => ({
+            complete: (image as HTMLImageElement).complete,
+            naturalWidth: (image as HTMLImageElement).naturalWidth,
+          })),
+        )
+        .toEqual({ complete: true, naturalWidth: expect.any(Number) });
+      await expect
+        .poll(() => avatarPreview.evaluate(image => (image as HTMLImageElement).naturalWidth))
+        .toBeGreaterThan(0);
 
-    const profileName = `E2E Account ${testInfo.workerIndex}-${Date.now()}`;
-    await page
-      .getByRole('group', { name: 'Display name', exact: true })
-      .getByRole('textbox')
-      .fill(profileName);
-    const timezone = page
-      .getByRole('group', { name: 'Time zone', exact: true })
-      .getByRole('textbox');
-    const browserTimezone = await page.evaluate(
-      () => Intl.DateTimeFormat().resolvedOptions().timeZone,
-    );
-    await expect(timezone).toHaveAttribute('placeholder', browserTimezone);
-    await expect(timezone).toHaveValue('');
-    await timezone.fill('UTC');
+      const profileName = `e2e-fixture-home-account-profile-${testInfo.workerIndex}-${crypto.randomUUID()}`;
+      await page
+        .getByRole('group', { name: 'Display name', exact: true })
+        .getByRole('textbox')
+        .fill(profileName);
+      const timezone = page
+        .getByRole('group', { name: 'Time zone', exact: true })
+        .getByRole('textbox');
+      const browserTimezone = await page.evaluate(
+        () => Intl.DateTimeFormat().resolvedOptions().timeZone,
+      );
+      await expect(timezone).toHaveAttribute('placeholder', browserTimezone);
+      await expect(timezone).toHaveValue('');
+      await timezone.fill('UTC');
 
-    // The password form is independently schema-rendered; profile submission must not mutate it.
-    const passwordDraftSnapshot = await page
-      .locator('input[type="password"]')
-      .evaluateAll(inputs => inputs.map(input => (input as HTMLInputElement).value));
+      // The password form is independently schema-rendered; profile submission must not mutate it.
+      const passwordDraftSnapshot = await page
+        .locator('input[type="password"]')
+        .evaluateAll(inputs => inputs.map(input => (input as HTMLInputElement).value));
 
-    const profileResponse = waitForApiResponse(page, 'PATCH', accountProfileApiPath);
-    const refreshedPassportResponse = waitForApiResponse(page, 'GET', passportCurrentApiPath);
-    await page.getByRole('button', { name: 'Save profile', exact: true }).click();
-    expect((await profileResponse).ok()).toBeTruthy();
-    expect((await refreshedPassportResponse).ok()).toBeTruthy();
-    await expect(page.getByText('Profile saved.', { exact: true })).toBeVisible();
-    await expect
-      .poll(() =>
-        page
-          .locator('input[type="password"]')
-          .evaluateAll(inputs => inputs.map(input => (input as HTMLInputElement).value)),
-      )
-      .toEqual(passwordDraftSnapshot);
+      const profileResponse = waitForApiResponse(page, 'PATCH', accountProfileApiPath);
+      const refreshedPassportResponse = waitForApiResponse(page, 'GET', passportCurrentApiPath);
+      await page.getByRole('button', { name: 'Save profile', exact: true }).click();
+      expect((await profileResponse).ok()).toBeTruthy();
+      account.username = profileName;
+      expect((await refreshedPassportResponse).ok()).toBeTruthy();
+      await expect(page.getByText('Profile saved.', { exact: true })).toBeVisible();
+      await expect
+        .poll(() =>
+          page
+            .locator('input[type="password"]')
+            .evaluateAll(inputs => inputs.map(input => (input as HTMLInputElement).value)),
+        )
+        .toEqual(passwordDraftSnapshot);
 
-    await page.goto('/', { waitUntil: 'load' });
-    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
-    const userMenu = page
-      .locator('details')
-      .filter({ has: page.getByText('Logout', { exact: true }) });
-    await expect(userMenu).toHaveCount(1);
-    await expect(userMenu.locator('summary')).toContainText(profileName);
-    await userMenu.locator('summary').click();
-    const links = userMenu.locator('ul > li > a');
-    await expect(links).toHaveText(['Account Settings', 'Logout']);
-    await userMenu.getByText('Account Settings', { exact: true }).click();
-    await expect(page).toHaveURL(accountPath);
-    await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
-    await expect(userMenu).not.toHaveAttribute('open', '');
-    expect(pageErrors).toEqual([]);
-    expect(consoleErrors).toEqual([]);
+      await page.goto('/', { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      const userMenu = page
+        .locator('details')
+        .filter({ has: page.getByText('Logout', { exact: true }) });
+      await expect(userMenu).toHaveCount(1);
+      await expect(userMenu.locator('summary')).toContainText(profileName);
+      await userMenu.locator('summary').click();
+      const links = userMenu.locator('ul > li > a');
+      await expect(links).toHaveText(['Account Settings', 'Logout']);
+      await userMenu.getByText('Account Settings', { exact: true }).click();
+      await expect(page).toHaveURL(accountPath);
+      await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
+      await expect(userMenu).not.toHaveAttribute('open', '');
+      expect(pageErrors).toEqual([]);
+      expect(consoleErrors).toEqual([]);
+    } finally {
+      if (account) await removeAccountFixture(request, account);
+    }
   },
 );
 
@@ -396,54 +484,62 @@ test(
   'ATP-ACCOUNT-AVATAR-01: avatar crop defers file upload until crop approval',
   { tag: ['@account', '@web', '@flow'] },
   async ({ page, request }, testInfo) => {
-    const account = await registerAccountUser(request, testInfo);
-    const pageErrors = collectPageErrors(page);
-    const consoleErrors = collectConsoleErrors(page);
+    let account: RegisteredAccount | undefined;
+    try {
+      account = await registerAccountUser(request, testInfo, registered => {
+        account = registered;
+      });
+      expect(account.roles.map(role => role.name)).toContain('registeredUser');
+      const pageErrors = collectPageErrors(page);
+      const consoleErrors = collectConsoleErrors(page);
 
-    await page.goto('/login?returnTo=%2Fhome%2Fuser%2Faccount', { waitUntil: 'load' });
-    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
-    await page.getByPlaceholder('Your Username').fill(account.username);
-    await page.getByPlaceholder('Your Password').fill(account.password);
-    await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
-    const loginResponse = waitForApiResponse(page, 'POST', passportLoginApiPath);
-    const accountResponse = waitForApiResponse(page, 'GET', accountApiPath);
-    await page.getByRole('button', { name: 'Login', exact: true }).click();
-    expect((await loginResponse).ok()).toBeTruthy();
-    expect((await accountResponse).ok()).toBeTruthy();
-    await expect(page).toHaveURL(accountPath);
+      await page.goto('/login?returnTo=%2Fhome%2Fuser%2Faccount', { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await page.getByPlaceholder('Your Username').fill(account.username);
+      await page.getByPlaceholder('Your Password').fill(account.password);
+      await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
+      const loginResponse = waitForApiResponse(page, 'POST', passportLoginApiPath);
+      const accountResponse = waitForApiResponse(page, 'GET', accountApiPath);
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
+      expect((await loginResponse).ok()).toBeTruthy();
+      expect((await accountResponse).ok()).toBeTruthy();
+      await expect(page).toHaveURL(accountPath);
 
-    const fileInput = page.locator('input[type="file"]').first();
-    let uploadCount = 0;
-    const uploadListener = (response: import('@playwright/test').Response) => {
-      if (new URL(response.url()).pathname === imageUploadApiPath) uploadCount++;
-    };
-    page.on('response', uploadListener);
-    await fileInput.setInputFiles(avatarFixturePath);
-    await expect(page.getByRole('button', { name: 'Apply crop', exact: true })).toBeVisible();
-    expect(uploadCount).toBe(0);
-    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
-    await expect(page.getByRole('button', { name: 'Apply crop', exact: true })).toHaveCount(0);
-    expect(uploadCount).toBe(0);
+      const fileInput = page.locator('input[type="file"]').first();
+      let uploadCount = 0;
+      const uploadListener = (response: import('@playwright/test').Response) => {
+        if (new URL(response.url()).pathname === imageUploadApiPath) uploadCount++;
+      };
+      page.on('response', uploadListener);
+      await fileInput.setInputFiles(avatarFixturePath);
+      await expect(page.getByRole('button', { name: 'Apply crop', exact: true })).toBeVisible();
+      expect(uploadCount).toBe(0);
+      await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await expect(page.getByRole('button', { name: 'Apply crop', exact: true })).toHaveCount(0);
+      expect(uploadCount).toBe(0);
 
-    await fileInput.setInputFiles(avatarFixturePath);
-    await expect(page.getByRole('button', { name: 'Apply crop', exact: true })).toBeVisible();
-    await page.waitForTimeout(1_000);
-    await page.getByRole('button', { name: 'Apply crop', exact: true }).click();
-    await expect.poll(() => uploadCount, { timeout: 10_000 }).toBeGreaterThan(0);
-    await expect(page.getByText('Avatar is ready to save.', { exact: true })).toBeVisible();
-    page.off('response', uploadListener);
+      await fileInput.setInputFiles(avatarFixturePath);
+      await expect(page.getByRole('button', { name: 'Apply crop', exact: true })).toBeVisible();
+      await page.waitForTimeout(1_000);
+      await page.getByRole('button', { name: 'Apply crop', exact: true }).click();
+      await expect.poll(() => uploadCount, { timeout: 10_000 }).toBeGreaterThan(0);
+      await expect(page.getByText('Avatar is ready to save.', { exact: true })).toBeVisible();
+      page.off('response', uploadListener);
 
-    const profileResponse = page.waitForResponse(response => {
-      const url = new URL(response.url());
-      return response.request().method() === 'PATCH' && url.pathname === accountProfileApiPath;
-    });
-    await page.getByRole('button', { name: 'Save profile', exact: true }).click();
-    const profile = await profileResponse;
-    expect(profile.ok()).toBeTruthy();
-    const profileBody = (await profile.json()).data;
-    expect(profileBody.avatar).toEqual(expect.any(String));
-    expect(pageErrors).toEqual([]);
-    expect(consoleErrors).toEqual([]);
+      const profileResponse = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'PATCH' && url.pathname === accountProfileApiPath;
+      });
+      await page.getByRole('button', { name: 'Save profile', exact: true }).click();
+      const profile = await profileResponse;
+      expect(profile.ok()).toBeTruthy();
+      const profileBody = (await profile.json()).data;
+      expect(profileBody.avatar).toEqual(expect.any(String));
+      expect(pageErrors).toEqual([]);
+      expect(consoleErrors).toEqual([]);
+    } finally {
+      if (account) await removeAccountFixture(request, account);
+    }
   },
 );
 
@@ -451,34 +547,42 @@ test(
   'ATP-ACCOUNT-SSR-02: signed-in Account session SSR hydrates without mismatch',
   { tag: ['@account', '@web', '@ssr'] },
   async ({ page, request }, testInfo) => {
-    const account = await registerAccountUser(request, testInfo);
-    const pageErrors = collectPageErrors(page);
-    const consoleErrors = collectConsoleErrors(page);
+    let account: RegisteredAccount | undefined;
+    try {
+      account = await registerAccountUser(request, testInfo, registered => {
+        account = registered;
+      });
+      expect(account.roles.map(role => role.name)).toContain('registeredUser');
+      const pageErrors = collectPageErrors(page);
+      const consoleErrors = collectConsoleErrors(page);
 
-    await page.goto('/login?returnTo=%2Fhome%2Fuser%2Faccount', { waitUntil: 'load' });
-    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
-    await page.getByPlaceholder('Your Username').fill(account.username);
-    await page.getByPlaceholder('Your Password').fill(account.password);
-    await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
-    const loginResponse = waitForApiResponse(page, 'POST', passportLoginApiPath);
-    const initialAccountResponse = waitForApiResponse(page, 'GET', accountApiPath);
-    await page.getByRole('button', { name: 'Login', exact: true }).click();
-    expect((await loginResponse).ok()).toBeTruthy();
-    expect((await initialAccountResponse).ok()).toBeTruthy();
-    await expect(page).toHaveURL(accountPath);
-    await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
+      await page.goto('/login?returnTo=%2Fhome%2Fuser%2Faccount', { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await page.getByPlaceholder('Your Username').fill(account.username);
+      await page.getByPlaceholder('Your Password').fill(account.password);
+      await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
+      const loginResponse = waitForApiResponse(page, 'POST', passportLoginApiPath);
+      const initialAccountResponse = waitForApiResponse(page, 'GET', accountApiPath);
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
+      expect((await loginResponse).ok()).toBeTruthy();
+      expect((await initialAccountResponse).ok()).toBeTruthy();
+      await expect(page).toHaveURL(accountPath);
+      await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
 
-    pageErrors.length = 0;
-    consoleErrors.length = 0;
-    const documentResponse = await page.reload({ waitUntil: 'load' });
-    expect(documentResponse?.ok()).toBeTruthy();
-    expect(documentResponse?.url()).toContain(accountPath);
-    const html = await documentResponse!.text();
-    expect(html).toContain('Account Settings');
-    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
-    await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
-    expect(pageErrors).toEqual([]);
-    expect(consoleErrors).toEqual([]);
+      pageErrors.length = 0;
+      consoleErrors.length = 0;
+      const documentResponse = await page.reload({ waitUntil: 'load' });
+      expect(documentResponse?.ok()).toBeTruthy();
+      expect(documentResponse?.url()).toContain(accountPath);
+      const html = await documentResponse!.text();
+      expect(html).toContain('Account Settings');
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
+      expect(pageErrors).toEqual([]);
+      expect(consoleErrors).toEqual([]);
+    } finally {
+      if (account) await removeAccountFixture(request, account);
+    }
   },
 );
 
