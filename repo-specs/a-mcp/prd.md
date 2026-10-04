@@ -1,0 +1,157 @@
+# A-MCP Product Requirements Document
+
+## Purpose
+
+The proposed `a-mcp` suite gives authorized external AI applications a controlled way to discover and invoke Cabloy business capabilities through a standards-based remote MCP server. It is an access boundary over existing Cabloy APIs, not a second business-domain implementation and not a bypass around Passport, instance isolation, RBAC, resource ownership, or controller guards.
+
+This PRD defines the product outcome and observable boundaries. The SRS owns OAuth, transport, DTO/schema projection, tool policy, dispatch, context isolation, audit, and operational details.
+
+## Product Goals
+
+- Let an external AI application discover only the tools that the deployment has intentionally made available to the caller.
+- Let an authorized caller invoke an eligible business operation without the AI application needing a bespoke Cabloy client for every controller.
+- Reuse existing DTO/OpenAPI contract truth while preserving server-side authorization and business invariants.
+- Bind each request to the correct Cabloy instance and prevent a token, host, query, or header from expanding tenant scope.
+- Make tool capability, risk, and failure behavior understandable to AI clients and operators.
+- Provide auditable, rate-limited, privacy-preserving operation suitable for production governance.
+
+## Personas
+
+### External AI application
+
+A client such as an enterprise assistant or agent that obtains an OAuth access token, connects to a configured MCP endpoint, lists available tools, and requests tool calls. It is not trusted to select arbitrary routes, headers, tenants, or execution options.
+
+### Business user
+
+The human represented by the OAuth subject and local Passport mapping. Their existing Cabloy roles, permissions, instance scope, and business-resource ownership remain authoritative.
+
+### Platform operator
+
+The maintainer who configures MCP exposure, OAuth resource metadata, allowed tool policy, rate limits, audit retention, and deployment host/instance bindings. Operator configuration is not a substitute for per-request authorization.
+
+### Cabloy domain owner
+
+The owner of an existing controller/API operation whose DTO, OpenAPI metadata, guard, business rule, and data scope remain authoritative when the operation is exposed as an MCP candidate.
+
+## Scope
+
+### In scope for the first planned increment
+
+- A Vona vendor suite `a-mcp` and module `a-mcp` as a proposed new ownership boundary.
+- A remote MCP Streamable HTTP endpoint; local stdio integration is excluded.
+- OAuth protected-resource discovery and per-request bearer-token validation, including issuer, audience/resource, expiry, scope, and subject checks.
+- Trusted endpoint-host to active-instance binding and rejection of conflicting instance selectors.
+- Candidate tool discovery from generated OpenAPI/DTO metadata.
+- Independent MCP exclusion metadata and MCP-specific descriptive/risk metadata.
+- A fixed, server-owned operation registry that maps each exposed tool to one known controller method/path and known input/output adaptation.
+- `tools/list` filtering and `tools/call` authorization for the current OAuth subject, instance, scope, RBAC, data scope, deployment policy, and operation risk.
+- JSON-compatible input and output adaptation through the existing executor route path with `innerAccess: false`.
+- Per-request context isolation, controlled headers, request limits, rate limits, audit, telemetry, and redacted protocol errors.
+- Contract, security, concurrency, tenant-isolation, and protocol acceptance scenarios.
+
+### Deferred
+
+- A general-purpose OAuth authorization-server UI or identity provider managed by Cabloy itself.
+- Automatic exposure of every OpenAPI operation without eligibility, policy, or risk review.
+- Multipart upload, raw-body operations, binary downloads, redirects, streaming responses, SSE business payloads, and non-JSON tool results.
+- Destructive-operation confirmation UX beyond a protocol-level policy/metadata contract.
+- A Zova Admin/Web management page, independent SSR site, or end-user MCP configuration screen.
+- Long-running asynchronous jobs, subscriptions, notifications, and tool-result pagination unless a later MCP-specific design adds them.
+- MCP resources and prompts; the first increment is tools-focused.
+- Cross-instance administration or an input-controlled `iid`/tenant switch.
+
+### Out of scope
+
+- Replacing existing controllers, DTOs, OpenAPI generation, Passport, RBAC, or business services.
+- Treating the MCP bearer token as proof of unrestricted system-admin authority.
+- Allowing the client to provide an arbitrary HTTP method, URL, route, host, authorization header, cookies, `innerAccess`, middleware onions, or executor state.
+- Creating a separate tenant, user store, business-resource database, or alternate authorization model.
+- Claiming that a GET operation is safe solely because its HTTP method is GET.
+
+## Primary User Journeys
+
+### Discover available tools
+
+1. The AI application requests the configured MCP endpoint with a valid OAuth token.
+2. The server binds the request to the trusted endpoint instance and validates the token.
+3. The server returns only tools visible under deployment policy, OAuth scope, local RBAC, data-scope policy, operation eligibility, and current subject state.
+4. The tool definition contains a stable server-owned name, human-readable description, JSON input schema, output contract, and relevant risk/confirmation annotations.
+
+### Invoke a read-oriented tool
+
+1. The AI application submits a server-owned tool name and JSON arguments.
+2. The server resolves the name through its immutable request-time registry; arguments cannot select a route or execution mode.
+3. The server creates an isolated request context, performs per-request authorization, and dispatches the known controller operation with `innerAccess: false`.
+4. The response is converted to an MCP tool result without leaking credentials, internal IDs, stack traces, or unrelated fields.
+
+### Invoke a state-changing tool
+
+1. The client sees the operation's explicit risk metadata and obtains any required user/deployment consent outside or through the agreed MCP interaction.
+2. The server repeats authorization and policy checks at call time; visibility in `tools/list` is not authorization for arbitrary arguments.
+3. The server executes the controller/business transaction and emits a redacted audit event with correlation data.
+4. Failures are nondiagnostic to the external client while remaining actionable in protected operator telemetry.
+
+### Reject an unsafe or invalid call
+
+The server rejects missing/invalid OAuth, wrong resource/audience, instance mismatch, unknown tool name, malformed JSON, unsupported content shape, insufficient scope/RBAC/data scope, excessive rate, unsafe operation policy, or downstream authorization failure without falling back to a generic internal dispatch path.
+
+## Product Requirements
+
+### External access and discovery
+
+- **PRD-MCP-ACCESS-01**: An authorized external AI application can connect to the configured remote MCP endpoint and receive a protocol-compliant response without requiring a custom client endpoint for each Cabloy controller. Traceability: `SRS-MCP-TRANSPORT-01`, `WBS-MCP-20-01`, `ATP-MCP-TRANSPORT-01`.
+- **PRD-MCP-ACCESS-02**: A caller can list only the tools that the current deployment, OAuth subject, instance, scope, RBAC, data scope, and tool policy allow them to see. Traceability: `SRS-MCP-AUTH-02`, `SRS-MCP-CATALOG-04`, `WBS-MCP-30-01`, `ATP-MCP-AUTH-02`.
+- **PRD-MCP-ACCESS-03**: A caller can invoke an exposed tool using the published JSON input contract and receive a bounded MCP tool result derived from the existing business operation. Traceability: `SRS-MCP-DISPATCH-01`, `SRS-MCP-DISPATCH-02`, `WBS-MCP-40-01`, `ATP-MCP-CALL-01`.
+
+### Identity, instance, and authorization
+
+- **PRD-MCP-IDENTITY-01**: Every MCP request is authenticated with a standards-based OAuth access token whose issuer, resource/audience, expiry, subject, and required scopes are validated before tool discovery or invocation. Traceability: `SRS-MCP-AUTH-01`, `WBS-MCP-20-02`, `ATP-MCP-AUTH-01`.
+- **PRD-MCP-IDENTITY-02**: Every request is bound to the intended Cabloy instance by trusted endpoint host configuration, and a token or client-supplied selector cannot cross or override that instance boundary. Traceability: `SRS-MCP-INSTANCE-01`, `SRS-MCP-INSTANCE-02`, `WBS-MCP-20-03`, `ATP-MCP-INSTANCE-01`.
+- **PRD-MCP-IDENTITY-03**: Existing Passport, RBAC, business-resource ownership, and data-scope rules remain effective for MCP calls; MCP exposure never grants authority that the local subject does not already possess. Traceability: `SRS-MCP-AUTH-02`, `SRS-MCP-AUTH-03`, `WBS-MCP-30-02`, `ATP-MCP-AUTH-02`.
+
+### Contract and tool governance
+
+- **PRD-MCP-CONTRACT-01**: MCP candidate schemas are derived from the current Vona DTO/OpenAPI contract rather than duplicated manually in an unrelated tool definition. Traceability: `SRS-MCP-CATALOG-01`, `WBS-MCP-30-01`, `ATP-MCP-CONTRACT-01`.
+- **PRD-MCP-CONTRACT-02**: A controller operation can be explicitly excluded from MCP independently of whether it remains visible in Swagger/OpenAPI, and MCP-specific metadata can describe stable naming, risk, confirmation, and adaptation rules. Traceability: `SRS-MCP-CATALOG-02`, WBS-MCP-30-01`, `ATP-MCP-CONTRACT-02`.
+- **PRD-MCP-CONTRACT-03**: The default candidate policy does not automatically expose operations whose input/output or side-effect semantics cannot be represented safely as first-increment JSON tools. Traceability: `SRS-MCP-CATALOG-03`, `WBS-MCP-30-02`, `ATP-MCP-CONTRACT-03`.
+
+### Safe execution and operations
+
+- **PRD-MCP-SAFETY-01**: A tool call dispatches only to a server-owned controller operation through the existing guarded route path and cannot alter `innerAccess`, middleware, authentication, host, cookies, or tenant context through arguments. Traceability: `SRS-MCP-DISPATCH-01`, `SRS-MCP-DISPATCH-03`, `WBS-MCP-40-01`, `ATP-MCP-CALL-02`.
+- **PRD-MCP-SAFETY-02**: The server isolates caller identity and request state for every MCP request, including concurrent requests and nested executor contexts. Traceability: `SRS-MCP-DISPATCH-04`, `WBS-MCP-40-02`, `ATP-MCP-CALL-03`.
+- **PRD-MCP-SAFETY-03**: MCP calls enforce request-size, rate, timeout, and risk policy limits and produce redacted audit/telemetry records without exposing secrets or sensitive business data to the client. Traceability: `SRS-MCP-OPS-01`, `SRS-MCP-OPS-02`, `WBS-MCP-50-01`, `ATP-MCP-OPS-01`.
+- **PRD-MCP-SAFETY-04**: A deployment can disable or defer the MCP surface without changing the underlying business APIs or making them less secure for ordinary HTTP callers. Traceability: `SRS-MCP-OPS-03`, `WBS-MCP-50-02`, `ATP-MCP-OPS-02`.
+
+## Business Rules
+
+- OpenAPI export is a candidate source, not a final authorization or safety decision.
+- `@Api.exclude()` is a hard upstream exclusion; a separate `@Mcp.exclude()` is proposed for MCP-only exclusion.
+- Tool names are stable server-owned identifiers and cannot be derived from a potentially colliding `operationId` without collision detection and a deterministic naming policy.
+- Visibility in `tools/list` does not authorize every possible argument in `tools/call`; authorization is repeated at call time.
+- HTTP method is not a side-effect classification. GET operations that mutate state remain high-risk or excluded until explicitly classified.
+- The active Vona instance is the tenant boundary. An input field such as `iid` is never an authorization source.
+- The first increment accepts ordinary JSON-compatible request/response shapes only. Multipart, raw body, binary, redirect, streaming, and unsupported status/result forms are excluded or require explicit adapters.
+- Existing controller guards and AOP remain authoritative, but MCP must perform its own OAuth, instance, request-shape, policy, and audit boundary before executor dispatch.
+- No source, provider, database migration, or deployment is created by this planning baseline.
+
+## Launch Criteria
+
+The first increment may launch only when the governing ADR is accepted, the concrete module/dependency design is approved, the OAuth resource-server and trusted-host strategy is operationally configured, every exposed tool has a reviewed registry/policy entry, direct API authorization and instance-isolation ATPs pass, context-concurrency and redaction proof is retained, generated contract checks pass, and release owners approve the remaining operational gates. Planning files alone never satisfy launch criteria.
+
+## Requirement Traceability
+
+| Product area           | PRD                                           | SRS                                                | WBS                                   | ATP                                           | Status source |
+| ---------------------- | --------------------------------------------- | -------------------------------------------------- | ------------------------------------- | --------------------------------------------- | ------------- |
+| Transport and protocol | `PRD-MCP-ACCESS-01`                           | `SRS-MCP-TRANSPORT-01`                             | `WBS-MCP-20-01`                       | `ATP-MCP-TRANSPORT-01`                        | `progress.md` |
+| OAuth and instance     | `PRD-MCP-IDENTITY-01`–`03`                    | `SRS-MCP-AUTH-01`–`03`, `SRS-MCP-INSTANCE-01`–`02` | `WBS-MCP-20-02`–`03`, `WBS-MCP-30-02` | `ATP-MCP-AUTH-01`–`02`, `ATP-MCP-INSTANCE-01` | `progress.md` |
+| Catalog and schema     | `PRD-MCP-CONTRACT-01`–`03`                    | `SRS-MCP-CATALOG-01`–`03`                          | `WBS-MCP-30-01`–`02`                  | `ATP-MCP-CONTRACT-01`–`03`                    | `progress.md` |
+| Dispatch and isolation | `PRD-MCP-ACCESS-03`, `PRD-MCP-SAFETY-01`–`02` | `SRS-MCP-DISPATCH-01`–`04`                         | `WBS-MCP-40-01`–`02`                  | `ATP-MCP-CALL-01`–`03`                        | `progress.md` |
+| Operations and release | `PRD-MCP-SAFETY-03`–`04`                      | `SRS-MCP-OPS-01`–`03`                              | `WBS-MCP-50-01`–`02`                  | `ATP-MCP-OPS-01`–`02`                         | `progress.md` |
+
+## Related Records
+
+- [A-MCP planning index](./README.md)
+- [A-MCP SRS](./srs.md)
+- [A-MCP PDP/WBS](./pdp-wbs.md)
+- [A-MCP test plan](./test-plan.md)
+- [A-MCP ADR 0001](./decisions/0001-mcp-suite-boundaries.md)
