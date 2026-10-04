@@ -519,7 +519,7 @@ The corresponding SSR bundle and REST output must be built first; running `build
 
 | WBS Scope                      | PRD                                                 | SRS                                    | ATP                                                                                      |
 | ------------------------------ | --------------------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `WBS-HUA-10-01`                | Planning gate for all in-scope `PRD-*`               | Planning gate for all in-scope `SRS-*`  | Catalogue review; narrow matcher anchor: `ATP-HUA-CTR-01`                                |
+| `WBS-HUA-10-01`                | Planning gate for all in-scope `PRD-*`              | Planning gate for all in-scope `SRS-*` | Catalogue review; narrow matcher anchor: `ATP-HUA-CTR-01`                                |
 | `WBS-HUA-20-*`                 | `PRD-ACC-*`, `PRD-PRO-*`                            | `SRS-ACC-*`, `SRS-PRO-*`, `SRS-API-*`  | `ATP-HUA-ACC-01`, `ATP-HUA-PRO-01`, `ATP-HUA-PRO-02`, `ATP-HUA-PAS-01`, `ATP-HUA-CTR-01` |
 | `WBS-HUA-30-*`                 | `PRD-PWD-*`, `PRD-SEC-*`                            | `SRS-PWD-*`, `SRS-SES-01`, `SRS-AUD-*` | `ATP-HUA-PWD-01`, `ATP-HUA-SES-01`, `ATP-HUA-AUD-01`, `ATP-HUA-RATE-01`                  |
 | `WBS-HUA-40-*`, `WBS-HUA-50-*` | `PRD-SET-*`, `PRD-SEC-02`–`PRD-SEC-03`              | `SRS-SET-*`, `SRS-TOK-*`, `SRS-SES-01` | `ATP-HUA-SET-01`, `ATP-HUA-SET-02`, `ATP-HUA-TOK-01`, `ATP-HUA-SSR-03`                   |

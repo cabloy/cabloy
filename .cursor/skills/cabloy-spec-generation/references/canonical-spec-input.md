@@ -6,11 +6,11 @@ Use this syntax for new spec records. Preserve compatible legacy records when ma
 
 Only declarations in the owning document define IDs:
 
-| Owner | New canonical declaration |
-| --- | --- |
-| `prd.md` | Atomic `- **PRD-...**: <requirement body>` under product requirements. |
-| `srs.md` | Atomic `- **SRS-...**: <contract body>` under the applicable contract section. |
-| `pdp-wbs.md` | `#### WBS-...: <title>` inside a phase; declaration body contains Traceability, Tasks, and Acceptance checks. |
+| Owner          | New canonical declaration                                                                                         |
+| -------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `prd.md`       | Atomic `- **PRD-...**: <requirement body>` under product requirements.                                            |
+| `srs.md`       | Atomic `- **SRS-...**: <contract body>` under the applicable contract section.                                    |
+| `pdp-wbs.md`   | `#### WBS-...: <title>` inside a phase; declaration body contains Traceability, Tasks, and Acceptance checks.     |
 | `test-plan.md` | `### ATP-...: <title>` under `## Acceptance Scenario Catalogue`; declaration body contains the five fields below. |
 
 References in matrices, related-record lists, progress, evidence, templates, wildcards, or ranges are not definitions. A legacy acceptance catalogue table may declare scenarios when the table is actually the scenario catalogue in `test-plan.md`; a generic traceability matrix or evidence table cannot. Compatible legacy requirement/contract declarations remain valid in their owning role. Do not create duplicate declarations to migrate syntax.
@@ -102,8 +102,8 @@ Setup, Procedure, Expected result, Minimum proof, and Traceability must each be 
 ```markdown
 ## WBS Execution Register
 
-| WBS ID | Status | Evidence | Next action |
-| --- | --- | --- | --- |
+| WBS ID           | Status        | Evidence                       | Next action                            |
+| ---------------- | ------------- | ------------------------------ | -------------------------------------- |
 | `WBS-DEMO-10-01` | `not-started` | None; execution has not begun. | Confirm the bounded execution dossier. |
 ```
 

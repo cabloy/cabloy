@@ -117,10 +117,10 @@ The global Passport guard is the baseline for controller actions: without a loca
 
 `@Passport.activated(...)` changes the activation requirement for an authenticated user:
 
-| Value | Requirement | Typical use |
-| --- | --- | --- |
-| `true` | The user must be activated; this is the default. | Ordinary protected actions. |
-| `false` | The user must **not** be activated. This does not mean “skip the check.” | An account-activation action. |
+| Value       | Requirement                                                                      | Typical use                                   |
+| ----------- | -------------------------------------------------------------------------------- | --------------------------------------------- |
+| `true`      | The user must be activated; this is the default.                                 | Ordinary protected actions.                   |
+| `false`     | The user must **not** be activated. This does not mean “skip the check.”         | An account-activation action.                 |
 | `'noCheck'` | Do not check activation state; both activated and unactivated users can proceed. | Logout, including for an unactivated account. |
 
 All three values still require authentication by default. An unauthenticated request is rejected; use `@Passport.public()` only if anonymous access is intended. A disabled account is still rejected regardless of the activation setting. The guard returns `403` when an authenticated user fails the account-status or activation check.

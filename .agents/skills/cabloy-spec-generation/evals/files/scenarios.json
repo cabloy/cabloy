@@ -3,9 +3,7 @@
   "cases": [
     {
       "id": 1,
-      "facts": [
-        "Naming undecided; no write approval."
-      ]
+      "facts": ["Naming undecided; no write approval."]
     },
     {
       "id": 2,
@@ -23,9 +21,7 @@
     },
     {
       "id": 4,
-      "facts": [
-        "No ATP run or retained artifact exists."
-      ]
+      "facts": ["No ATP run or retained artifact exists."]
     },
     {
       "id": 5,
@@ -41,9 +37,7 @@
     },
     {
       "id": 7,
-      "facts": [
-        "Tenancy remains unresolved; ADR is Proposed."
-      ]
+      "facts": ["Tenancy remains unresolved; ADR is Proposed."]
     },
     {
       "id": 8,
@@ -61,15 +55,11 @@
     },
     {
       "id": 10,
-      "facts": [
-        "Changed WBS/ATP/progress inputs require freshness review."
-      ]
+      "facts": ["Changed WBS/ATP/progress inputs require freshness review."]
     },
     {
       "id": 11,
-      "facts": [
-        "Both audience strategies unresolved."
-      ]
+      "facts": ["Both audience strategies unresolved."]
     },
     {
       "id": 12,
@@ -79,9 +69,7 @@
     },
     {
       "id": 13,
-      "facts": [
-        "Site strategy deferred; backend planning still wanted."
-      ]
+      "facts": ["Site strategy deferred; backend planning still wanted."]
     },
     {
       "id": 14,
@@ -93,9 +81,7 @@
     },
     {
       "id": 15,
-      "facts": [
-        "Incremental delta only; no destructive replacement approval."
-      ]
+      "facts": ["Incremental delta only; no destructive replacement approval."]
     },
     {
       "id": 16,
@@ -106,9 +92,7 @@
     },
     {
       "id": 17,
-      "facts": [
-        "Caller is spec generation; detour is naming-only."
-      ]
+      "facts": ["Caller is spec generation; detour is naming-only."]
     }
   ]
 }

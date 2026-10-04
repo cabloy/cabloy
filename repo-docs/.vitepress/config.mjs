@@ -216,22 +216,22 @@ const referenceGroups = [
 const GA_MEASUREMENT_ID = 'G-2NYR9RGRL4'; // process.env.GA_MEASUREMENT_ID;
 const gaHead = GA_MEASUREMENT_ID
   ? [
-    [
-      'script',
-      {
-        async: '',
-        src: `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`,
-      },
-    ],
-    [
-      'script',
-      {},
-      `window.dataLayer = window.dataLayer || [];
+      [
+        'script',
+        {
+          async: '',
+          src: `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`,
+        },
+      ],
+      [
+        'script',
+        {},
+        `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', '${GA_MEASUREMENT_ID}');`,
-    ],
-  ]
+      ],
+    ]
   : [];
 
 export default defineConfig({
@@ -240,10 +240,7 @@ export default defineConfig({
   lang: 'en-US',
   base: '/',
   ignoreDeadLinks: [/^https?:\/\/localhost/],
-  head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
-    ...gaHead,
-  ],
+  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }], ...gaHead],
   transformPageData(pageData) {
     if (!/^blogs\/[^/]+\/index\.md$/.test(pageData.relativePath)) return;
 
