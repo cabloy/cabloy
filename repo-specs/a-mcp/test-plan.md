@@ -2,7 +2,7 @@
 
 ## Purpose and Authority
 
-This plan defines verification strategy, executable acceptance scenarios, fixtures, evidence requirements, and release proof for the proposed `a-mcp` remote access boundary. It completes the traceability chain:
+This plan defines verification strategy, executable acceptance scenarios, fixtures, evidence requirements, and release proof for the accepted overall `cabloy-mcp` remote access design, whose source and runtime proof remain pending. It completes the traceability chain:
 
 ```text
 PRD requirement -> SRS contract -> PDP/WBS task -> ATP scenario -> observed evidence
@@ -42,16 +42,16 @@ Release requires protocol, OAuth, instance, direct authorization, catalog, dispa
 
 ## Test Levels and Ownership Locations
 
-| Test level                               | Purpose                                                                                           | Expected ownership                                                                  |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Catalog/metadata unit tests              | OpenAPI projection, MCP metadata, exclusions, stable names, shape/risk classification             | Proposed `vona/src/suite-vendor/a-mcp/modules/a-mcp/test/` and metadata owner tests |
-| OAuth/resource integration tests         | Token validation, resource metadata, scope, local subject mapping, key/error cases                | Proposed `a-mcp` tests plus approved OAuth integration owner                        |
-| Instance/authorization integration tests | Host mapping, selector conflicts, RBAC/data scope, tenant isolation                               | Proposed `a-mcp` tests and existing instance/guard owners                           |
-| Dispatch/context tests                   | Fixed executor route, `innerAccess: false`, headers/options, Passport isolation, concurrent calls | Proposed `a-mcp` tests and owning controller tests                                  |
-| Transaction/side-effect tests            | Domain transaction, timeout, retry/idempotency, irreversible operation policy                     | Owning domain module tests plus MCP adapter tests                                   |
-| Protocol tests                           | Streamable HTTP, metadata, initialize, tools/list, tools/call, errors, limits                     | Proposed `a-mcp` protocol tests                                                     |
-| Operational tests                        | Rate limits, audit/telemetry, redaction, disablement, failure-closed behavior                     | Proposed `a-mcp` operational tests and deployment checks                            |
-| Root closure checks                      | Type, format, lint, tests, planning audit, chart freshness                                        | Root scripts and bounded release dossier                                            |
+| Test level                               | Purpose                                                                                           | Expected ownership                                                                     |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Catalog/metadata unit tests              | OpenAPI projection, MCP metadata, exclusions, stable names, shape/risk classification             | Proposed `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/` and metadata owner tests |
+| OAuth/resource integration tests         | Token validation, resource metadata, scope, local subject mapping, key/error cases                | Proposed `cabloy-mcp` tests plus approved OAuth integration owner                      |
+| Instance/authorization integration tests | Host mapping, selector conflicts, RBAC/data scope, tenant isolation                               | Proposed `cabloy-mcp` tests and existing instance/guard owners                         |
+| Dispatch/context tests                   | Fixed executor route, `innerAccess: false`, headers/options, Passport isolation, concurrent calls | Proposed `cabloy-mcp` tests and owning controller tests                                |
+| Transaction/side-effect tests            | Domain transaction, timeout, retry/idempotency, irreversible operation policy                     | Owning domain module tests plus MCP adapter tests                                      |
+| Protocol tests                           | Streamable HTTP, metadata, initialize, tools/list, tools/call, errors, limits                     | Proposed `cabloy-mcp` protocol tests                                                   |
+| Operational tests                        | Rate limits, audit/telemetry, redaction, disablement, failure-closed behavior                     | Proposed `cabloy-mcp` operational tests and deployment checks                          |
+| Root closure checks                      | Type, format, lint, tests, planning audit, chart freshness                                        | Root scripts and bounded release dossier                                               |
 
 No Zova browser/E2E suite is required for the first increment. If a future operator/user UI is added, it needs separate ATPs and site-specific SSR/hydration proof.
 
@@ -383,7 +383,7 @@ The first increment has no Zova SSR/browser procedure. After implementation, use
 
 ```bash
 # Vona module-local or selected backend tests, after the proposed module exists
-npm run vona -- :bin:test -- <selected-a-mcp-tests> --flavor=normal
+npm run vona -- :bin:test -- <selected-cabloy-mcp-tests> --flavor=normal
 
 # Type and root checks as applicable
 npm run tsc

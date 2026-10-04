@@ -2,11 +2,11 @@
 
 ## Delivery Objective
 
-Deliver a security-first remote MCP capability for Cabloy Basic that lets an authorized external AI application discover and invoke a reviewed subset of existing business controller operations. The delivery must preserve Vona identity, instance, RBAC, data-scope, DTO/OpenAPI, controller guard, transaction, audit, and resource ownership boundaries. This plan covers the proposed `a-mcp` suite/module; it does not authorize source scaffolding, provider deployment, or production exposure.
+Deliver a security-first remote MCP capability for Cabloy Basic that lets an authorized external AI application discover and invoke a reviewed subset of existing business controller operations. The delivery must preserve Vona identity, instance, RBAC, data-scope, DTO/OpenAPI, controller guard, transaction, audit, and resource ownership boundaries. This plan covers the revised accepted overall `cabloy-mcp` normal-suite/module design, still planned new source; the stable planning directory and WBS IDs remain `a-mcp`/`MCP`. It does not authorize source scaffolding, provider deployment, or production exposure.
 
 ## Delivery Principles
 
-- Treat `a-mcp` and `a-mcp` module as proposed new until design/ADR and bounded execution approvals are complete; do not claim source exists.
+- Treat the accepted `cabloy-mcp` normal suite and `cabloy-mcp` module design as planned new source until the specific manifest/activation gates and a separate bounded execution dossier are approved; do not claim source exists.
 - Establish the OAuth resource-server and trusted host/instance boundary before exposing tools.
 - Use Vona/OpenAPI/DTO contract truth first; generate a candidate catalog, then apply independent MCP metadata, risk, representation, and deployment policy.
 - Keep a server-owned immutable operation registry. Never map an untrusted tool name or argument to an arbitrary route.
@@ -33,14 +33,14 @@ Source areas: `repo-specs/a-mcp/`; observed Vona suite/module topology; `repo-do
 
 Tasks:
 
-- Confirm that `a-mcp` is the intended provider/suite identity and that the module capability name is `a-mcp` without colliding with existing suite/module identifiers.
-- Record the proposed ownership boundary, no-Zova first-increment decision, external OAuth issuer/resource-server ownership, and JSON-only scope in ADR 0001.
-- Separate generation approval, design/ADR approval, and execution approval; record each missing approval and `TODO(confirm)` design input.
-- Decide whether a registry, consent, or durable audit persistence is necessary; if schema work is proposed, ask about `vonaModule.fileVersion` before implementation.
+- Confirm the revised `providerId=cabloy`, normal suite `cabloy-mcp`, and initial module `cabloy-mcp` identity and inspect source/manifests for collisions; source creation remains a later task.
+- Record ADR 0001's accepted overall ownership boundary, no-Zova first increment, external OAuth resource-server requirement, JSON-only scope, and no new MCP-owned registry/consent/audit persistence.
+- Separate generation approval, overall design/ADR acceptance, concrete implementation design gates, and execution approval; keep remaining `TODO(confirm)` inputs explicit.
+- If a later increment proposes a persisted registry, consent, or audit model, reopen the persistence decision and ask about `vonaModule.fileVersion` before schema work.
 
 Acceptance checks:
 
-- ADR 0001 remains `Proposed` unless the concrete durable decision is explicitly accepted.
+- ADR 0001 records explicit acceptance of the overall boundary and names only; concrete integration choices remain gated.
 - No planning record claims that the source suite/module, endpoint, OAuth provider, or runnable command already exists.
 - Every material design gate has an owner and a bounded downstream WBS dependency.
 
@@ -50,7 +50,7 @@ Traceability: `PRD-MCP-IDENTITY-01`, `PRD-MCP-IDENTITY-02`, `PRD-MCP-IDENTITY-03
 
 Dependencies: `WBS-MCP-10-01`.
 
-Source areas: proposed `a-mcp` security boundary; existing Passport/instance/guard/executor behavior; deployment trust and OAuth documentation.
+Source areas: proposed `cabloy-mcp` security boundary; existing Passport/instance/guard/executor behavior; deployment trust and OAuth documentation.
 
 Tasks:
 
@@ -74,7 +74,7 @@ Traceability: `PRD-MCP-ACCESS-01`, `SRS-MCP-TRANSPORT-01`, `SRS-MCP-TRANSPORT-02
 
 Dependencies: `WBS-MCP-10-01`.
 
-Source areas: proposed `vona/src/suite-vendor/a-mcp/modules/a-mcp/`; existing Vona router/middleware registration; selected MCP transport implementation.
+Source areas: proposed `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/`; existing Vona router/middleware registration; selected MCP transport implementation.
 
 Tasks:
 
@@ -94,7 +94,7 @@ Traceability: `PRD-MCP-IDENTITY-01`, `PRD-MCP-IDENTITY-03`, `SRS-MCP-AUTH-01`, `
 
 Dependencies: `WBS-MCP-20-01`.
 
-Source areas: approved OAuth issuer/resource-server integration; existing Vona Passport/user/auth ownership; proposed `a-mcp` authentication service.
+Source areas: approved OAuth issuer/resource-server integration; existing Vona Passport/user/auth ownership; proposed `cabloy-mcp` authentication service.
 
 Tasks:
 

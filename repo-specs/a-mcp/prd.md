@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The proposed `a-mcp` suite gives authorized external AI applications a controlled way to discover and invoke Cabloy business capabilities through a standards-based remote MCP server. It is an access boundary over existing Cabloy APIs, not a second business-domain implementation and not a bypass around Passport, instance isolation, RBAC, resource ownership, or controller guards.
+The planned `cabloy-mcp` suite gives authorized external AI applications a controlled way to discover and invoke Cabloy business capabilities through a standards-based remote MCP server. It is an access boundary over existing Cabloy APIs, not a second business-domain implementation and not a bypass around Passport, instance isolation, RBAC, resource ownership, or controller guards.
 
 This PRD defines the product outcome and observable boundaries. The SRS owns OAuth, transport, DTO/schema projection, tool policy, dispatch, context isolation, audit, and operational details.
 
@@ -37,7 +37,7 @@ The owner of an existing controller/API operation whose DTO, OpenAPI metadata, g
 
 ### In scope for the first planned increment
 
-- A Vona vendor suite `a-mcp` and module `a-mcp` as a proposed new ownership boundary.
+- A Vona normal suite `cabloy-mcp` and module `cabloy-mcp` as an accepted ownership design for planned new source; exact integration details remain gated by ADR 0001.
 - A remote MCP Streamable HTTP endpoint; local stdio integration is excluded.
 - OAuth protected-resource discovery and per-request bearer-token validation, including issuer, audience/resource, expiry, scope, and subject checks.
 - Trusted endpoint-host to active-instance binding and rejection of conflicting instance selectors.

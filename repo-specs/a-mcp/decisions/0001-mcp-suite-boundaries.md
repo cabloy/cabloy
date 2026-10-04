@@ -2,13 +2,15 @@
 
 ## Status
 
-Proposed
+Accepted
+
+The 2026-10-04 WBS-MCP-10-01 decision accepts only the overall suite and first-increment boundary. A subsequent explicit naming/layout revision supersedes the initial `providerId=a` vendor-suite identity: the accepted target is now `providerId=cabloy`, normal suite `cabloy-mcp`, initial module `cabloy-mcp`, and no new MCP-owned persistence in the first increment. The implementation decision gates remain open; this acceptance is not approval of source creation, ATP execution, provider configuration, or release.
 
 ## Background
 
-External AI applications need a controlled way to reach selected Cabloy business capabilities. Existing Vona controllers, DTOs, OpenAPI metadata, Passport, instance isolation, RBAC, resource ownership, guards, AOP, transactions, and audit behavior already define the business system. The proposed `a-mcp` capability must expose that system without creating a parallel domain API, bypassing authorization, or treating an OAuth connection as a tenant or user authority.
+External AI applications need a controlled way to reach selected Cabloy business capabilities. Existing Vona controllers, DTOs, OpenAPI metadata, Passport, instance isolation, RBAC, resource ownership, guards, AOP, transactions, and audit behavior already define the business system. The proposed `cabloy-mcp` capability must expose that system without creating a parallel domain API, bypassing authorization, or treating an OAuth connection as a tenant or user authority.
 
-Discovery of this Cabloy Basic checkout found existing vendor suites under `vona/src/suite-vendor/`, but no `a-mcp` suite/module source. The user-requested target is therefore a proposed new suite/module, not an observed current topology. This ADR records the design boundary for review; it does not authorize scaffolding, provider configuration, deployment, or acceptance execution.
+Discovery of this Cabloy Basic checkout found existing normal suites under `vona/src/suite/`, but no `cabloy-mcp` suite/module source or package-name collision at revision `8ead4de3204028652ab1612603c4a49484c17872`. The accepted identity targets proposed new source, not an observed current topology. This ADR records the accepted overall boundary and remaining design gates; it does not authorize scaffolding, provider configuration, deployment, or acceptance execution.
 
 ## Problem
 
@@ -16,17 +18,17 @@ A naive MCP bridge could expose every Swagger operation as a tool, trust generic
 
 ## Decision
 
-The following is proposed and remains subject to explicit design approval and ADR acceptance.
+The overall ownership and first-increment boundary below is accepted. Exact integration designs remain subject to the specific gates listed under Implementation Decision Gates; acceptance does not make planned source or commands observed.
 
 ### Suite and module ownership
 
-Create a Vona vendor suite with the proposed identity `a-mcp` and a capability module with the proposed identity `a-mcp`:
+The accepted revised identity is `providerId=cabloy`, Vona normal suite `cabloy-mcp` (`vona-suite-cabloy-mcp`), and first capability module `cabloy-mcp` (`vona-module-cabloy-mcp`). The original `providerId=a`, vendor suite/module `a-mcp`, and `src/suite-vendor` placement are superseded as source targets; the stable `repo-specs/a-mcp/` planning slug and `*-MCP-*` IDs are unchanged. The intended source path remains a planned addition, not observed source:
 
 ```text
-vona/src/suite-vendor/a-mcp/modules/a-mcp/
+vona/src/suite/cabloy-mcp/modules/cabloy-mcp/
 ```
 
-The exact manifest, provider/module registration, dependency versions, source file topology, and configuration names are `TODO(confirm)`. The module owns MCP transport adaptation, protected-resource metadata, OAuth resource validation integration, instance binding policy, candidate catalog projection, MCP metadata, fixed operation registry, dispatch isolation, protocol errors, limits, and MCP audit/telemetry integration.
+The inspected Vona suite/module sources and manifests had no `cabloy-mcp` naming collision at revision `8ead4de3204028652ab1612603c4a49484c17872`; the existing normal-suite workspace and module-discovery layout can contain this shape. The suite-creation CLI defaults to `src/suite`, which matches the revised target, but has not been run. The exact manifest contents, application activation, module registration and dependencies, dependency versions, source file topology, and configuration names remain `TODO(confirm)`. The module owns MCP transport adaptation, protected-resource metadata, OAuth resource validation integration, instance binding policy, candidate catalog projection, MCP metadata, fixed operation registry, dispatch isolation, protocol errors, limits, and MCP audit/telemetry integration.
 
 It does not own Cabloy users, Passport, tenants/instances, roles, business resources, domain persistence, controller business rules, or a second CRUD API. Existing modules remain authoritative for those concerns.
 
@@ -58,7 +60,7 @@ Before dispatch, the MCP layer performs OAuth validation, instance binding, requ
 
 ### First-increment scope
 
-The first increment is JSON tool discovery/call with bounded result/error adaptation, rate limits, redacted audit/telemetry, and endpoint/tool disablement. It has no Zova module, Web/Admin page, independent SSR site, MCP resources/prompts, or new business persistence by default. A future user or operator UI, independent site, durable consent store, or persisted registry requires a separate decision or superseding ADR.
+The first increment is JSON tool discovery/call with bounded result/error adaptation, rate limits, redacted audit/telemetry, and endpoint/tool disablement. It has no Zova module, Web/Admin page, independent SSR site, MCP resources/prompts, or new MCP-owned registry, consent, or audit persistence. Identity, authorization, business persistence, and any available platform audit/telemetry owner remain the existing authorities; the exact audit sink and retention are still `TODO(confirm)`. A future user or operator UI, independent site, durable consent store, persisted registry, or new durable audit model requires a separate decision or superseding ADR. The `vonaModule.fileVersion` choice is not triggered by this no-schema increment; ask before any later persisted schema change.
 
 ## Alternatives Deferred
 
@@ -79,23 +81,22 @@ The first increment is JSON tool discovery/call with bounded result/error adapta
 - The first increment is narrower than the total OpenAPI surface and requires explicit future adapters for binary, multipart, streaming, and high-impact operations.
 - Operational observability, redaction, rate limiting, and disablement are release requirements, not optional polish.
 - If persistence is later added, the module/fileVersion/migration decision must be made before schema changes; schema work triggers the repository's full test requirement.
-- No source or provider is created by this ADR while it remains Proposed. A separately approved execution dossier is required even after ADR acceptance.
+- This ADR acceptance creates no source or provider. Each implementation task still requires its predecessor and design gates, then a separately approved bounded execution dossier.
 
 ## Implementation Decision Gates
 
-Before implementation begins, resolve and record:
+Before implementation begins, resolve and record (the accepted overall boundary and naming do not settle the remaining design inputs):
 
-1. explicit acceptance of this ADR's suite/module ownership and first-increment boundary;
-2. exact `a-mcp` module manifest, provider registration, dependency, and configuration topology after collision checks;
-3. selected MCP transport implementation, supported protocol version, endpoint route, session/stateless mode, and protected-resource metadata locations;
-4. OAuth authorization-server/resource-server owner, issuer, JWKS/introspection, resource/audience identifier, client registration, scope vocabulary, subject mapping, key rotation, and outage behavior;
-5. trusted host/proxy model, canonical host-to-instance mapping, forwarded-host handling, selector conflict policy, and token-instance consistency rules;
-6. MCP decorator/metadata API, metadata merge order, stable naming/collision policy, catalog freshness, and registry persistence/in-memory lifecycle;
-7. JSON eligibility, unsupported content/status handling, side-effect/risk/confirmation classification, and destructive-operation policy;
-8. request-context/Passport construction and executor option isolation, including timeout, cancellation, idempotency, and non-retry rules;
-9. limit dimensions, audit/telemetry sink and retention, redaction policy, and operational ownership;
-10. whether persistence is needed; if yes, whether `vonaModule.fileVersion` is incremented and which migration path is approved;
-11. a bounded `cabloy-spec-execution` dossier with explicit source/scaffolding/provider/runtime authorization.
+1. `TODO(confirm)` the exact `cabloy-mcp` module manifest, application activation, registration, dependencies, and configuration topology; the revised name/layout collision check has passed, but the planned source does not exist;
+2. selected MCP transport implementation, supported protocol version, endpoint route, session/stateless mode, and protected-resource metadata locations;
+3. OAuth authorization-server/resource-server owner, issuer, JWKS/introspection, resource/audience identifier, client registration, scope vocabulary, subject mapping, key rotation, and outage behavior;
+4. trusted host/proxy model, canonical host-to-instance mapping, forwarded-host handling, selector conflict policy, and token-instance consistency rules;
+5. MCP decorator/metadata API, metadata merge order, stable naming/collision policy, catalog freshness, and generated/in-memory registry lifecycle (no MCP-owned registry persistence in the first increment);
+6. JSON eligibility, unsupported content/status handling, side-effect/risk/confirmation classification, and destructive-operation policy;
+7. request-context/Passport construction and executor option isolation, including timeout, cancellation, idempotency, and non-retry rules;
+8. limit dimensions, audit/telemetry sink and retention, redaction policy, and operational ownership;
+9. if a later task proposes schema work, reopen the first-increment no-persistence boundary and ask whether `vonaModule.fileVersion` is incremented before editing the migration path;
+10. a separate bounded `cabloy-spec-execution` dossier with explicit source/scaffolding/provider/runtime authorization for the selected implementation task.
 
 ## Related Records
 
