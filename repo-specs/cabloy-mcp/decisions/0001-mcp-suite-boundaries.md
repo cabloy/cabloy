@@ -22,7 +22,7 @@ The overall ownership and first-increment boundary below is accepted. Exact inte
 
 ### Suite and module ownership
 
-The accepted revised identity is `providerId=cabloy`, Vona normal suite `cabloy-mcp` (`vona-suite-cabloy-mcp`), and first capability module `cabloy-mcp` (`vona-module-cabloy-mcp`). The original `providerId=a`, vendor suite/module `a-mcp`, and `src/suite-vendor` placement are superseded as source targets; the stable `repo-specs/a-mcp/` planning slug and `*-MCP-*` IDs are unchanged. The intended source path remains a planned addition, not observed source:
+The accepted revised identity is `providerId=cabloy`, Vona normal suite `cabloy-mcp` (`vona-suite-cabloy-mcp`), and first capability module `cabloy-mcp` (`vona-module-cabloy-mcp`). The original `providerId=a`, vendor suite/module `a-mcp`, and `src/suite-vendor` placement are superseded as source targets; the planning directory has since moved to `repo-specs/cabloy-mcp/` while the `*-MCP-*` IDs remain unchanged. The intended source path remains a planned addition, not observed source:
 
 ```text
 vona/src/suite/cabloy-mcp/modules/cabloy-mcp/

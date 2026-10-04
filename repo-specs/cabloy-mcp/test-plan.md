@@ -392,9 +392,9 @@ npm run format
 npm run test
 
 # Planning authority and derived chart checks
-npm run spec:check -- a-mcp
-npm run spec:charts -- a-mcp
-npm run spec:charts:check -- a-mcp
+npm run spec:check -- cabloy-mcp
+npm run spec:charts -- cabloy-mcp
+npm run spec:charts:check -- cabloy-mcp
 ```
 
 The exact generated module test command, protocol harness, OAuth test provider, and deployment integration command remain execution-dossier decisions. Do not run database reset, provider operation, deployment, or acceptance tests automatically as a consequence of generating this plan.
@@ -405,8 +405,8 @@ If a future Zova interface is added, its affected Web/Admin SSR and REST artifac
 
 Planning commands are separate from runtime proof:
 
-- `npm run spec:check -- a-mcp` validates planning definition/reference/link structure.
-- `npm run spec:charts -- a-mcp` and `npm run spec:charts:check -- a-mcp` validate complete supported chart inputs and freshness.
+- `npm run spec:check -- cabloy-mcp` validates planning definition/reference/link structure.
+- `npm run spec:charts -- cabloy-mcp` and `npm run spec:charts:check -- cabloy-mcp` validate complete supported chart inputs and freshness.
 - The implementation commands above are prospective only until an approved execution dossier runs them and retains evidence.
 
 ## Release Closure Gate

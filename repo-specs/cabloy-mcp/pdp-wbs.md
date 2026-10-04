@@ -2,7 +2,7 @@
 
 ## Delivery Objective
 
-Deliver a security-first remote MCP capability for Cabloy Basic that lets an authorized external AI application discover and invoke a reviewed subset of existing business controller operations. The delivery must preserve Vona identity, instance, RBAC, data-scope, DTO/OpenAPI, controller guard, transaction, audit, and resource ownership boundaries. This plan covers the revised accepted overall `cabloy-mcp` normal-suite/module design, still planned new source; the stable planning directory and WBS IDs remain `a-mcp`/`MCP`. It does not authorize source scaffolding, provider deployment, or production exposure.
+Deliver a security-first remote MCP capability for Cabloy Basic that lets an authorized external AI application discover and invoke a reviewed subset of existing business controller operations. The delivery must preserve Vona identity, instance, RBAC, data-scope, DTO/OpenAPI, controller guard, transaction, audit, and resource ownership boundaries. This plan covers the revised accepted overall `cabloy-mcp` normal-suite/module design, still planned new source; the planning directory is `repo-specs/cabloy-mcp/`, while existing `WBS-MCP-*` IDs remain unchanged. It does not authorize source scaffolding, provider deployment, or production exposure.
 
 ## Delivery Principles
 
@@ -29,7 +29,7 @@ Traceability: `PRD-MCP-ACCESS-01`, `PRD-MCP-ACCESS-02`, `PRD-MCP-CONTRACT-01`, `
 
 Dependencies: none.
 
-Source areas: `repo-specs/a-mcp/`; observed Vona suite/module topology; `repo-docs/fullstack/suites-and-modules.md`; MCP transport and authorization specifications. The proposed source path is not yet created.
+Source areas: `repo-specs/cabloy-mcp/`; observed Vona suite/module topology; `repo-docs/fullstack/suites-and-modules.md`; MCP transport and authorization specifications. The proposed source path is not yet created.
 
 Tasks:
 

@@ -8,7 +8,7 @@ This SRS translates the [A-MCP PRD](./prd.md) into implementable and verifiable 
 PRD requirement -> SRS contract -> PDP/WBS task -> ATP scenario -> observed evidence
 ```
 
-Unless explicitly marked as an observed current-source fact, this document defines a target contract, not implemented source. ADR 0001 accepts the revised `cabloy-mcp` normal-suite naming and overall first-increment boundary, including no new MCP-owned persistence. The planning directory remains `repo-specs/a-mcp/` to preserve existing IDs and links. The planned suite/module does not currently exist in the inspected checkout. Exact application activation, framework registration, dependency versions, OAuth provider selection, configuration keys, and source file names remain `TODO(confirm)` until their specific design approval and bounded execution.
+Unless explicitly marked as an observed current-source fact, this document defines a target contract, not implemented source. ADR 0001 accepts the revised `cabloy-mcp` normal-suite naming and overall first-increment boundary, including no new MCP-owned persistence. The planning directory is `repo-specs/cabloy-mcp/`; existing `*-MCP-*` IDs and relative links remain unchanged. The planned suite/module does not currently exist in the inspected checkout. Exact application activation, framework registration, dependency versions, OAuth provider selection, configuration keys, and source file names remain `TODO(confirm)` until their specific design approval and bounded execution.
 
 ## Current-Source Facts and Target Contracts
 

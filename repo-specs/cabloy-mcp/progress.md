@@ -4,7 +4,7 @@
 
 This is the derived execution register for the [A-MCP PDP/WBS](./pdp-wbs.md). It records planning status, blockers, decisions, next proof, and evidence pointers; it does not redefine the [PRD](./prd.md), [SRS](./srs.md), [test plan](./test-plan.md), or [ADR 0001](./decisions/0001-mcp-suite-boundaries.md).
 
-At baseline creation, no MCP source/module, OAuth deployment, runtime endpoint, implementation, or ATP execution was observed. On 2026-10-04, the WBS-MCP-10-01 overall boundary, initial naming, and no-new-MCP-persistence decision were accepted; the subsequent explicit revision supersedes the initial `a-mcp` vendor-suite target with `cabloy-mcp` under `vona/src/suite/`. The `repo-specs/a-mcp/` slug and IDs remain stable. Source and ATP state remains planning-only. Last reviewed: 2026-10-04. No evidence directory or fabricated `EVD-*` record is created.
+At baseline creation, no MCP source/module, OAuth deployment, runtime endpoint, implementation, or ATP execution was observed. On 2026-10-04, the WBS-MCP-10-01 overall boundary, initial naming, and no-new-MCP-persistence decision were accepted; the subsequent explicit revision supersedes the initial `a-mcp` vendor-suite target with `cabloy-mcp` under `vona/src/suite/`. The planning directory is now `repo-specs/cabloy-mcp/`; existing `*-MCP-*` IDs remain stable. Source and ATP state remains planning-only. Last reviewed: 2026-10-04. No evidence directory or fabricated `EVD-*` record is created.
 
 ## Status Definitions
 

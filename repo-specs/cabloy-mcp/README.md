@@ -1,6 +1,6 @@
 # A-MCP Internal Planning
 
-This directory retains the `a-mcp` planning slug and `MCP` IDs for the proposed `cabloy-mcp` normal Vona suite. It is maintainer-facing planning material, not end-user documentation, source implementation, or execution authorization. ADR 0001 accepts only the revised overall first-increment boundary; concrete integration designs remain gated.
+This `repo-specs/cabloy-mcp/` directory retains the existing `MCP` requirement, WBS, and ATP IDs for the proposed `cabloy-mcp` normal Vona suite. It is maintainer-facing planning material, not end-user documentation, source implementation, or execution authorization. ADR 0001 accepts only the revised overall first-increment boundary; concrete integration designs remain gated.
 
 ## Reading Order
 
