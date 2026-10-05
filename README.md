@@ -36,6 +36,12 @@ For Cabloy Start, clone the [Cabloy Start repository](https://github.com/cabloy/
 
 See the [AI Spec-Driven Development](https://cabloy.com/ai/ai-spec-driven-development).
 
+## Demonstrations
+
+### 1. Can an Admin Site Use SSR? CabloyJS in Three Practical Demos (Duration: 1:16)
+
+[![CabloyJS Admin SSR video](./repo-docs/assets/img/cabloy-admin-ssr-cover-en.png)](https://youtu.be/786IQhRdr1I)
+
 ## Editions
 
 Cabloy is available through two complete project baselines, each maintained in its own repository:
