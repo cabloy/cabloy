@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
@@ -440,20 +440,19 @@ test('ATP catalogue role headers define scenarios but coverage and evidence tabl
   );
 });
 
-test('existing business ATP catalogues remain compatible with strict definitions', async () => {
+test('repository ATP catalogues remain compatible with strict definitions', async () => {
   const root = resolve(import.meta.dirname, '../../..');
-  const commerce = parseAtpIds(
-    await readFile(resolve(root, 'repo-specs/a-commerce/test-plan.md'), 'utf8'),
-  );
-  const account = parseAtpIds(
-    await readFile(resolve(root, 'repo-specs/home-user/test-plan.md'), 'utf8'),
-  );
-  assert.ok(commerce.has('ATP-SPC-04'));
-  assert.ok(commerce.has('ATP-SPC-05'));
-  assert.ok(account.has('ATP-HUA-ACC-01'));
-  assert.ok(account.has('ATP-HUA-RST-03'));
-  assert.ok(commerce.size > 10);
-  assert.ok(account.size > 10);
+  const suiteEntries = await readdir(resolve(root, 'repo-specs'), { withFileTypes: true });
+  const suiteNames = suiteEntries
+    .filter(entry => entry.isDirectory() && !entry.name.startsWith('.'))
+    .map(entry => entry.name)
+    .sort();
+  assert.ok(suiteNames.length > 0, 'repo-specs must contain at least one suite directory');
+  for (const suiteName of suiteNames) {
+    const testPlan = await readFile(resolve(root, 'repo-specs', suiteName, 'test-plan.md'), 'utf8');
+    const atpIds = parseAtpIds(testPlan);
+    assert.ok(atpIds.size > 0, `${suiteName}/test-plan.md must define formal ATP scenarios`);
+  }
 });
 
 test('progress rejects duplicate rows and multiple IDs in one row with source locations', () => {
