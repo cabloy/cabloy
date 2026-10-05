@@ -392,8 +392,8 @@ function expandDependencies(task, tasks) {
   const expand = value => {
     const ids = value.endsWith('-*')
       ? tasks
-        .filter(candidate => candidate.id.startsWith(value.slice(0, -1)))
-        .map(candidate => candidate.id)
+          .filter(candidate => candidate.id.startsWith(value.slice(0, -1)))
+          .map(candidate => candidate.id)
       : tasks.filter(candidate => candidate.id === value).map(candidate => candidate.id);
     if (!ids.length) {
       throw new Error(
