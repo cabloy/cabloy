@@ -208,6 +208,50 @@ test('local Markdown destinations, fragments and reference links are checked', a
   );
 });
 
+test('link destinations are not authority references but labels and prose remain audited', async t => {
+  const records = {
+    ...BASELINE,
+    'rollout.md':
+      '# Rollout\n\n[WBS-MISSING-01](./evidence/WBS-DEMO-10-01-current-source.md) and `ATP-MISSING-01`.\n\n![SRS-MISSING-01](<./evidence/WBS-DEMO-10-01-image.md>)\n\n[WBS-DEMO-10-01][proof]\n\n[proof]: ./evidence/WBS-DEMO-10-01-referenced.md\n',
+    'evidence/WBS-DEMO-10-01-current-source.md': '# Current source\n',
+    'evidence/WBS-DEMO-10-01-image.md': '# Image\n',
+    'evidence/WBS-DEMO-10-01-referenced.md': '# Referenced\n',
+  };
+  const result = await auditPlanning(await fixture(t, records));
+  assert.deepEqual(
+    result.diagnostics.map(diagnostic => [
+      diagnostic.code,
+      diagnostic.file,
+      diagnostic.line,
+      diagnostic.id,
+    ]),
+    [
+      ['undefined-reference', 'rollout.md', 3, 'ATP-MISSING-01'],
+      ['undefined-reference', 'rollout.md', 3, 'WBS-MISSING-01'],
+      ['undefined-reference', 'rollout.md', 5, 'SRS-MISSING-01'],
+    ],
+  );
+});
+
+test('destination masking preserves local link and reference diagnostics', async t => {
+  const records = {
+    ...BASELINE,
+    'rollout.md':
+      '# Rollout\n\n[Missing](./evidence/WBS-DEMO-10-01-missing.md)\n[Bad fragment](./evidence/WBS-DEMO-10-01-existing.md#absent)\n[Good fragment](./evidence/WBS-DEMO-10-01-existing.md#present)\n[Bad encoding](./evidence/WBS-DEMO-10-01-%ZZ.md)\n[Undefined][missing]\n\n[unused]: <./evidence/WBS-DEMO-10-01-unused.md>\n',
+    'evidence/WBS-DEMO-10-01-existing.md': '# Present\n',
+  };
+  const result = await auditPlanning(await fixture(t, records));
+  assert.deepEqual(
+    result.diagnostics.map(diagnostic => [diagnostic.code, diagnostic.line]),
+    [
+      ['link-target', 3],
+      ['link-fragment', 4],
+      ['link-format', 6],
+      ['link-reference', 7],
+    ],
+  );
+});
+
 test('exact range endpoints do not masquerade as exact traceability', async t => {
   const records = {
     ...BASELINE,
