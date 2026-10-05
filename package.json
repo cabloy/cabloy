@@ -54,7 +54,7 @@
     "deps:vona": "pnpm --dir vona run vona :tools:deps",
     "deps:zova": "pnpm --dir zova run zova :tools:deps",
     "format": "oxfmt --check",
-    "format:fix": "oxfmt --write",
+    "format:fix": "oxfmt --write && npm run agent:governance:render",
     "lint": "oxlint --disable-nested-config",
     "lint:fix": "oxlint --disable-nested-config --fix",
     "test:spec-charts": "node --test repo-agent-governance/tools/spec-charts/generate-implementation-charts.test.mjs",

@@ -1,1 +1,2 @@
 pnpm exec lint-staged
+npm run agent:governance:check
