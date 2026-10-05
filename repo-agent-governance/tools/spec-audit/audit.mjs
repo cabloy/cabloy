@@ -142,17 +142,31 @@ function headingIds(markdown) {
   return slugs;
 }
 
+const LINK_DEFINITION = /^(\s*\[([^\]]+)\]:\s*)(<[^>]+>|\S+)/;
+const INLINE_LINK = /(!?\[[^\]]*\]\(\s*)(<[^>]+>|[^\s)]+)((?:\s+["'][^\n]*["'])?\s*\))/g;
+
+function referenceText(text) {
+  return text
+    .replace(
+      LINK_DEFINITION,
+      (_, start, _label, destination) => `${start}${' '.repeat(destination.length)}`,
+    )
+    .replace(
+      INLINE_LINK,
+      (_, start, destination, end) => `${start}${' '.repeat(destination.length)}${end}`,
+    );
+}
+
 function markdownLinks(markdown) {
   const lines = markdownLines(markdown);
   const references = new Map();
   const links = [];
   for (const { text, line } of lines) {
-    const declaration = text.match(/^\s*\[([^\]]+)\]:\s*(<[^>]+>|\S+)/);
+    const declaration = text.match(LINK_DEFINITION);
     if (declaration)
-      references.set(declaration[1].trim().toLowerCase(), declaration[2].replace(/^<|>$/g, ''));
-    const inline = /!?\[[^\]]*\]\(\s*(<[^>]+>|[^\s)]+)(?:\s+["'][^\n]*["'])?\s*\)/g;
-    for (const match of text.matchAll(inline))
-      links.push({ destination: match[1].replace(/^<|>$/g, ''), line });
+      references.set(declaration[2].trim().toLowerCase(), declaration[3].replace(/^<|>$/g, ''));
+    for (const match of text.matchAll(INLINE_LINK))
+      links.push({ destination: match[2].replace(/^<|>$/g, ''), line });
     const referenced = /!?\[([^\]]+)\]\[([^\]]*)\]/g;
     for (const match of text.matchAll(referenced))
       links.push({ reference: (match[2] || match[1]).trim().toLowerCase(), line });
@@ -260,7 +274,7 @@ export async function auditPlanning(
   for (const [file, markdown] of records) {
     for (const { text, line } of markdownLines(markdown)) {
       for (const prefix of OWNERS.keys()) {
-        for (const id of findIdentifiers(text, prefix)) {
+        for (const id of findIdentifiers(referenceText(text), prefix)) {
           if (!definitions.has(id)) {
             report(
               'undefined-reference',
