@@ -23,7 +23,7 @@ These observations are source facts with limits, not implementation authorizatio
 
 Use an approved external or separately operated OAuth 2.0 authorization server as the issuer and client-consent owner. The planned `cabloy-mcp` module is an OAuth **protected resource/resource server** only. It does not implement an authorization UI, login provider, authorization-code exchange, dynamic client registration, consent persistence, token minting, or a second user store in the first increment.
 
-The authorization server must publish standards-compatible authorization-server metadata and an approved registration/consent path outside this module. The MCP protected-resource metadata advertises that issuer without exposing client secrets, private keys, internal topology, or local Passport details. The exact issuer and operational owner remain deployment configuration, not a hard-coded public default.
+The authorization server must provide OAuth Authorization Server Metadata (RFC 8414) or OpenID Connect Discovery, including a client-verifiable PKCE capability, and an approved registration/consent path outside this module. The MCP protected-resource metadata advertises the approved issuer identifier in `authorization_servers`, not a URL for the issuer's metadata document; clients discover that document from the issuer. The exact issuer and operational owner remain deployment configuration, not a hard-coded public default. Metadata must not expose client secrets, private keys, internal topology, or local Passport details.
 
 The existing Cabloy `auth-oauth` module may remain responsible for ordinary Cabloy login providers. It is not reused as the MCP authorization server unless a later review proves that its contracts cover protected-resource metadata, resource indicators, access-token issuance, scopes, client registration, and key lifecycle. It must not silently mint or accept MCP tokens merely because it can exchange an OAuth login code for a Cabloy JWT.
 
@@ -34,22 +34,22 @@ For the first increment, propose **signed JWT access tokens validated locally wi
 For each protected MCP request, the resource-server boundary must:
 
 1. require exactly one `Authorization` header using the `Bearer` scheme; reject query, cookie, `x-vona-passport-code`, and other token locations;
-2. obtain signing keys only from the configured issuer's approved JWKS metadata, with issuer/host allowlisting and bounded refresh/cache behavior;
+2. obtain signing keys only from the configured authorization server's approved JWKS location, with issuer/host allowlisting and bounded refresh/cache behavior; RFC 9728's protected-resource `jwks_uri`, if present, describes resource-server keys and must not be used to validate issuer access tokens;
 3. validate signature and an explicit allowed algorithm, `iss`, `exp`, `nbf` when present, and any required token-type/profile constraints; reject algorithm confusion, missing time claims, malformed tokens, and key/issuer mismatch;
-4. require the `aud` or RFC-compliant resource indicator to identify the canonical MCP protected resource, using an exact canonical comparison rather than accepting a generic application audience or a caller-selected URL;
+4. independently verify that the validated token was issued specifically for the configured MCP protected resource, using the issuer's verified `aud` claim or another explicitly approved, cryptographically or introspection-backed recipient-binding mechanism. The OAuth `resource` parameter sent by the client to the authorization server is a request for a resource-bound token, not itself proof of this token's audience. The proposed JWT/JWKS profile requires the token's approved audience claim to match the configured resource identifier after the chosen URI canonicalization policy; never accept a generic application audience or a caller-selected URL;
 5. require a nonempty stable `sub`, validate the approved scope claim format, and apply the required scope for the requested MCP operation. Scope is an upper bound, never a replacement for local RBAC or data scope;
 6. reject tokens with a wrong issuer/resource, expired or not-yet-valid lifetime, missing subject, unknown key, insufficient scope, or invalid claims before `server/discover`-protected tool policy, `tools/list`, or `tools/call` reaches a business controller;
 7. fail closed on JWKS outage, malformed key material, issuer metadata mismatch, clock uncertainty beyond the configured bound, or ambiguous validation. Key rotation may use a bounded cached previous key only while its validity and issuer policy remain satisfied; it must not turn an issuer outage into indefinite acceptance.
 
-The exact JWT library, JWKS client, algorithm allowlist, clock skew, cache TTL, token lifetime, and error/status mapping are `TODO(confirm)` until DEC-MCP-03 is accepted and an execution dossier verifies the selected implementation.
+The JWT/JWKS, mandatory `sub`, and strict canonical-resource comparison above are proposed deployment choices, not universal MCP token-format requirements. Define URI canonicalization before comparison: MCP recommends accepting equivalent uppercase URI scheme/host, while never accepting a different resource path, authority, or audience. The exact JWT library, JWKS client, algorithm allowlist, clock skew, cache TTL, token lifetime, and error/status mapping are `TODO(confirm)` until DEC-MCP-03 is accepted and an execution dossier verifies the selected implementation.
 
 ### Protected-resource metadata and discovery
 
-Publish RFC 9728 protected-resource metadata for the canonical MCP resource URL and identify the approved authorization-server metadata URL(s). Because the proposed MCP endpoint is `/mcp`, use the RFC path-aware protected-resource metadata location for that resource (proposed `/.well-known/oauth-protected-resource/mcp`) and verify whether the deployment must additionally serve the origin-wide well-known form. Do not publish conflicting documents or derive issuer/resource values from an untrusted request Host.
+Publish RFC 9728 protected-resource metadata containing the canonical MCP `resource` identifier and `authorization_servers` with at least one approved authorization-server **issuer identifier** (not a metadata-document URL). For a canonical resource of `https://example.com/mcp`, the path-specific well-known location is `https://example.com/.well-known/oauth-protected-resource/mcp`. Serving this path-specific document satisfies the proposed discovery route; the origin-wide well-known location is a client fallback, not an additional mandatory server route. If an origin-wide document is also offered, its `resource` must match the resource it represents and cannot conflict with the path-specific document. Do not derive issuer or resource values from an untrusted request Host.
 
 The metadata response is a direct standards JSON response, not Vona's `{ code: 0, data }` application envelope. It contains only approved public resource/discovery information, supported scopes/authorization details as applicable, and no secrets, access tokens, private keys, subject mappings, internal instance names, or tool catalog. Cache headers and host/instance variation are owned jointly by this decision and DEC-MCP-04; a cached metadata document must never advertise one instance's resource for another host.
 
-A protected MCP request without a valid token may return an RFC-compatible `401` and `WWW-Authenticate` challenge that points to the protected-resource metadata. The challenge and metadata must not echo raw credentials or user-controlled issuer/resource URLs. The exact error fields, scope challenge, and status mapping must be checked against the accepted MCP authorization revision and selected SDK.
+Missing/invalid/expired tokens receive HTTP `401`; insufficient scope or permission receives HTTP `403` at the HTTP authorization boundary, without publishing sensitive denial details. This proposal uses the well-known metadata URL for discovery; a `WWW-Authenticate` challenge with `resource_metadata` may also be used where appropriate, but the selected MCP revision requires a working well-known route **or** that challenge mechanism, not both. If a challenge is emitted, it must point to trusted protected-resource metadata rather than a caller-controlled URL. Scope hints are advisory, not a required disclosure; the exact fields and any protocol-level versus HTTP-level error handling must be verified against the selected SDK and revision.
 
 ### Subject mapping to local Passport
 
@@ -61,7 +61,7 @@ A token's `scope`, `roles`, `groups`, `tenant`, or profile claims cannot directl
 
 ### Client registration, scopes, and revocation
 
-The external authorization server owns client registration, redirect URIs, PKCE, consent, grant, and token revocation. The first increment does not provide dynamic client registration or a Cabloy consent UI. The operator must provision the MCP client and permitted resource/scope grant through the approved authorization-server process.
+The external authorization server owns client registration, redirect URIs, PKCE, consent, grant, and token revocation. The first increment does not provide dynamic client registration or a Cabloy consent UI. This proposal limits supported clients to those pre-registered through the authorization server's approved process with the permitted resource/scope grant; it is a deployment/client-compatibility constraint, not a general MCP requirement. Before acceptance, verify the selected authorization server's Client ID Metadata Documents support or explicitly record the client-compatibility impact of not supporting that recommended registration method. Dynamic Client Registration is optional for the selected MCP revision and remains out of first-increment scope.
 
 Use narrow, deployment-defined scopes that name MCP capabilities or policy classes rather than broad `admin` or raw Cabloy role names. The exact vocabulary and per-tool requirements remain `TODO(confirm)` under DEC-MCP-06. Every request checks the token's scope and current deployment policy; a previously issued token does not survive endpoint disablement or tool-policy removal.
 
@@ -69,8 +69,8 @@ Locally validated JWTs cannot provide immediate revocation by themselves. The de
 
 ### Failure and privacy policy
 
-- Missing or malformed bearer credentials: bounded `401` with a safe challenge where appropriate.
-- Validly signed but wrong issuer/resource, expired/not-yet-valid, unknown subject, insufficient scope, disabled mapping, or instance mismatch: bounded authorization failure; do not disclose unrelated subject/resource existence.
+- Missing, malformed, wrong-issuer/resource, expired/not-yet-valid, or otherwise invalid bearer credentials: bounded HTTP `401`, with a trusted metadata challenge if this deployment elects to emit one.
+- Insufficient scope or local permission: bounded HTTP `403` at the HTTP authorization boundary. Unknown subject, disabled/ambiguous mapping, and instance mismatch fail closed without disclosing unrelated subject/resource existence; finalize their nondiagnostic HTTP mapping before acceptance.
 - Issuer metadata/JWKS/key-rotation outage or ambiguous subject mapping: fail closed and emit only a protected, redacted operator event.
 - No raw Authorization value, JWT, claims, JWKS response, client secret, refresh token, cookie, or complete subject profile may enter logs, traces, metrics, audit, or retained evidence.
 - OAuth validation never expands authority beyond the intersection of endpoint enablement, DEC-MCP-04 instance binding, deployment tool policy, local Passport/RBAC, data scope, resource ownership, and DEC-MCP-06 risk policy.
@@ -96,9 +96,9 @@ Locally validated JWTs cannot provide immediate revocation by themselves. The de
 
 Before accepting `DEC-MCP-03`, verify:
 
-1. the external issuer/resource-server owner, canonical resource identifier, authorization-server metadata URL, client-registration process, scope vocabulary, and operational escalation owner;
-2. JWT/JWKS versus introspection choice, algorithm/claim requirements, key rotation, clock skew, cache/outage behavior, and exact MCP `401`/`403`/challenge mapping;
-3. path-aware protected-resource metadata route(s), host/instance variation and cache policy, direct unwrapped JSON output, and no secret/topology disclosure;
+1. the external issuer/resource-server owner, canonical resource identifier, authorization-server issuer identifier and discovery method (RFC 8414 or OIDC), PKCE metadata, client-registration/consent process and compatibility limits, scope vocabulary, and operational escalation owner;
+2. JWT/JWKS versus introspection choice, approved token-recipient binding (JWT audience in this proposal), URI canonicalization, algorithm/claim requirements, key rotation, clock skew, cache/outage behavior, and exact MCP `401`/`403`/challenge mapping;
+3. path-specific protected-resource metadata route (plus any optional origin-wide alias), required `resource`/`authorization_servers` fields, host/instance variation and cache policy, direct unwrapped JSON output, and no secret/topology disclosure;
 4. deterministic `(issuer, sub, instance)` local mapping, disabled/ambiguous/outage behavior, and fresh Passport handoff to DEC-MCP-07;
 5. synthetic tests for wrong issuer/resource, expired/not-yet-valid, signature/key rotation, missing scope, query-token rejection, unmapped/disabled subjects, and no-controller dispatch;
 6. approved dependencies and configuration ownership in a bounded execution dossier. Do not add packages, provider configuration, secrets, or routes as part of this planning draft.

@@ -102,13 +102,13 @@ Traceability: `PRD-MCP-IDENTITY-02`, `WBS-MCP-20-03`, `ATP-MCP-INSTANCE-01`.
 
 Each configured MCP endpoint has an approved host-to-instance binding. The server derives the expected instance from trusted endpoint configuration and request host processing, not from an untrusted tool argument. Deployment must define trusted proxy/forwarded-host behavior before relying on host-derived identity. A host not present in the approved mapping is rejected.
 
-The generic Vona resolver's query/header/subdomain precedence cannot silently override the MCP binding. The final policy must either reject conflicting `x-vona-instance-name`/query selectors or ignore them while recording a redacted conflict; it must never use a conflicting selector to broaden scope.
+The generic Vona resolver's query/header/subdomain precedence cannot silently override the MCP binding. [ADR 0004](./decisions/0004-mcp-host-instance-binding.md) proposes rejecting query/header selectors on MCP paths even when they agree with the configured host and establishing an early, path-scoped binding before instance initialization. This remains a DEC-MCP-04 proposal, not an approved selector or proxy policy. The final policy must never use a conflicting selector to broaden scope; it must verify the effective external host against an approved deployment-owned allowlist, not infer authority from `ctx.hostname` or a subdomain alone.
 
 ### SRS-MCP-INSTANCE-02: Token-instance consistency
 
 Traceability: `PRD-MCP-IDENTITY-02`, `WBS-MCP-20-03`, `ATP-MCP-INSTANCE-01`.
 
-If the approved OAuth token carries an instance, tenant, organization, or resource claim, the claim must equal the endpoint-bound instance under a documented canonical comparison. If the token has no such claim, the approved authorization-server/resource registration must establish that the subject/client is permitted for the endpoint instance without treating absence as unrestricted access. Host, token, query, and header disagreement fails closed before tool visibility or business lookup.
+If the approved OAuth token carries an issuer-defined, verified instance or tenant claim, its documented mapping must agree with the endpoint-bound instance; a resource/audience claim instead binds the token to the configured MCP resource and cannot be treated as an instance-name selector. If the token has no instance claim, the approved per-instance authorization-server/resource registration and unambiguous active local subject mapping must authorize the endpoint instance without treating absence as unrestricted access. Host, token, query, and header disagreement fails closed before tool visibility or business lookup. ADR 0004 proposes one canonical resource per instance endpoint and leaves actual issuer/grant semantics `TODO(confirm)`.
 
 ### SRS-MCP-PRIVACY-01: Sensitive-data minimization
 
@@ -178,7 +178,7 @@ ADR 0002 proposes the 2026-07-28 modern-only POST profile with a native Vona `//
 
 Traceability: `PRD-MCP-ACCESS-01`, `PRD-MCP-IDENTITY-01`, `WBS-MCP-20-01`, `WBS-MCP-20-02`, `ATP-MCP-TRANSPORT-01`, `ATP-MCP-AUTH-01`.
 
-The deployment publishes protected-resource metadata at the standards-required location(s), advertises the resource identifier used for token audience/resource validation, and points clients to the approved authorization-server metadata. Metadata must not expose client secrets, private issuer material, or internal topology. Discovery behavior and response caching must be reviewed for host/instance correctness.
+The deployment publishes protected-resource metadata at the standards-required location(s), advertises the canonical `resource` identifier used for token audience/resource validation, and lists at least one approved authorization-server issuer identifier in `authorization_servers`; clients discover the authorization-server metadata from the issuer rather than from a metadata-document URL in that field. Metadata must not expose client secrets, private issuer material, or internal topology. Discovery behavior and response caching must be reviewed for host/instance correctness. ADR 0003's path-specific route and issuer/JWKS choices remain proposed pending DEC-MCP-03 acceptance.
 
 ### SRS-MCP-TRANSPORT-03: Protocol error boundary
 
@@ -321,3 +321,4 @@ Catalog generation, tool listing, and calls have explicit bounded work, response
 - [A-MCP ADR 0001](./decisions/0001-mcp-suite-boundaries.md)
 - [A-MCP ADR 0002 (proposed)](./decisions/0002-mcp-transport.md)
 - [A-MCP ADR 0003 (proposed)](./decisions/0003-mcp-oauth-resource-server.md)
+- [A-MCP ADR 0004 (proposed)](./decisions/0004-mcp-host-instance-binding.md)

@@ -116,19 +116,19 @@ Traceability: `PRD-MCP-IDENTITY-02`, `SRS-MCP-INSTANCE-01`, `SRS-MCP-INSTANCE-02
 
 Dependencies: `WBS-MCP-20-02`.
 
-Source areas: existing Vona instance resolver; trusted host/proxy configuration; proposed MCP endpoint configuration.
+Source areas: existing Vona instance resolver and pre-router middleware; trusted host/proxy configuration; proposed MCP endpoint configuration. [ADR 0004](./decisions/0004-mcp-host-instance-binding.md) drafts the early host-binding mechanism and deployment requirements; it does not accept DEC-MCP-04.
 
 Tasks:
 
-- Define an approved host-to-instance mapping and canonical comparison for token instance/resource claims.
-- Decide whether conflicting query/header instance selectors are rejected or ignored with audit; neither may override the trusted endpoint binding.
-- Validate forwarded-host trust, unknown hosts, host collisions, and deployment-specific canonical resource identifiers.
+- Define a deployment-owned canonical HTTPS endpoint-host/port → unique OAuth resource → instance mapping, and a comparison for verified token recipient/optional instance claims.
+- Decide and implement an early MCP-path-only selection before generic query/header/subdomain fallback or instance initialization; ADR 0004 proposes rejecting any MCP query/header instance selector, even one that matches.
+- Validate trusted proxy peers and sanitization of forwarded host/protocol, direct-backend policy, malformed/duplicate authorities, unknown hosts, resource collisions, and cache separation for protected-resource metadata.
 
 Acceptance checks:
 
-- Requests to an unknown or conflicting host fail before tool visibility or business lookup.
-- Same-subject tokens cannot cross instances through host, query, header, path, or tool arguments.
-- Trusted proxy behavior is explicit; request host is not accepted as a canonical identity without the approved deployment model.
+- Requests to an unknown, untrusted, or conflicting host fail before unintended instance initialization, tool visibility, metadata disclosure, or business lookup; ordinary non-MCP instance resolution stays unchanged.
+- Same-subject tokens cannot cross instances through host, query, header, path, cached context, or tool arguments.
+- Real HTTP tests prove trusted proxy behavior and request ordering; `performAction()` alone is not transport/instance-middleware proof.
 
 ### Phase 30: Candidate catalog and authorization policy
 
@@ -300,3 +300,4 @@ Acceptance checks:
 - [A-MCP test plan](./test-plan.md)
 - [A-MCP progress](./progress.md)
 - [A-MCP ADR 0001](./decisions/0001-mcp-suite-boundaries.md)
+- [A-MCP ADR 0004 (proposed)](./decisions/0004-mcp-host-instance-binding.md)

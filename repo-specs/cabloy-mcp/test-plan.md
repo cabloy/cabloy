@@ -117,7 +117,7 @@ Traceability: `PRD-MCP-ACCESS-01`, `SRS-MCP-TRANSPORT-01`, `SRS-MCP-TRANSPORT-02
 Setup:
 
 - Prepare synthetic signed/introspected tokens for valid issuer/resource/subject/scope, wrong issuer, wrong audience/resource, expired/not-yet-valid, malformed signature, revoked/introspection-negative, missing subject, and missing scope.
-- Configure approved resource metadata and a local subject mapping for one instance.
+- Configure protected-resource metadata with the canonical `resource` and at least one `authorization_servers` issuer identifier (not an authorization-server metadata URL), plus a local subject mapping for one instance.
 
 Procedure:
 
@@ -126,8 +126,8 @@ Procedure:
 
 Expected result:
 
-- Only the valid resource-bound token proceeds to the next policy stage.
-- Invalid, stale, wrong-resource, missing-scope, unavailable, ambiguous, or disabled states fail closed without anonymous fallback, controller dispatch, or cross-instance probing.
+- Only the valid token independently verified as bound to the canonical resource proceeds to the next policy stage; a client-supplied `resource` parameter alone is not audience proof.
+- Missing, invalid, expired, or wrong-resource tokens yield bounded HTTP `401`; insufficient scope yields bounded HTTP `403` at the HTTP authorization boundary. Unavailable, ambiguous, or disabled states fail closed with a separately approved nondiagnostic mapping; none permits anonymous fallback, controller dispatch, or cross-instance probing.
 - Client errors are bounded; protected telemetry records a redacted reason class.
 
 Minimum proof:
@@ -164,23 +164,23 @@ Traceability: `PRD-MCP-ACCESS-02`, `PRD-MCP-IDENTITY-03`, `SRS-MCP-AUTH-02`, `SR
 
 Setup:
 
-- Configure synthetic endpoint hosts for instances A and B, an unknown host, trusted and untrusted forwarded-host cases, and conflicting query/header selectors.
-- Prepare same-subject tokens authorized only for A, only for B, and with mismatched/absent instance claims.
+- Configure synthetic canonical HTTPS endpoints and distinct resources for instances A and B, plus an unknown host, malformed/duplicate authority, unexpected port, direct-backend and trusted/untrusted forwarded-host/proto cases, and query/header selectors that agree or conflict with the endpoint.
+- Prepare same-subject tokens authorized only for A, only for B, and with mismatched/absent verified instance claims; configure metadata routing/cache cases for both endpoint hosts.
 
 Procedure:
 
-- Perform metadata, tools/list, and tools/call against each host/selector/token combination.
-- Attempt to use an `iid`-like argument, host header, forwarded host, query selector, or instance header to switch from A to B.
+- Exercise real HTTP metadata, tools/list, and tools/call against each host/selector/token combination, including the instance-initialization order and cached-name behavior; compare ordinary non-MCP API routing before and after.
+- Attempt to use an `iid`-like argument, host header, forwarded host/protocol, empty/default or duplicate query selector, or instance header to switch from A to B. Simulate a reverse-proxy cache hit for the wrong host's metadata.
 
 Expected result:
 
-- Only the approved host/token/instance combination proceeds.
-- Unknown hosts, untrusted proxy values, token-instance mismatches, and conflicting selectors fail or follow the explicitly approved reject/ignore policy without scope expansion.
-- Business queries never use a caller-supplied instance field as authorization.
+- Only the approved host/resource/token/instance combination proceeds; each metadata response names only the configured resource and issuer for that host.
+- Unknown hosts, untrusted proxy values, token-instance mismatches, and selectors fail under the accepted reject/ignore policy without default-instance fallback, wrong-instance metadata, unintended instance initialization, or controller dispatch. ADR 0004 proposes rejecting all MCP query/header instance selectors; accepting this behavior still requires DEC-MCP-04 approval.
+- Business queries never use a caller-supplied instance field as authorization, and ordinary non-MCP routing remains unchanged.
 
 Minimum proof:
 
-- Retain canonicalized host/instance labels, proxy trust configuration fingerprint, expected/observed outcomes, domain lookup/dispatch trace, and redacted artifacts.
+- Retain synthetic host/resource/instance labels, proxy-ingress trust configuration fingerprint (without sensitive network settings), exact redacted HTTP requests and responses, expected/observed outcomes, metadata cache behavior, instance initialization/dispatch counters, and redacted artifacts. Do not mutate global `app.proxy` or request-origin settings in unit tests; use explicit `req` fixtures and environment-specific real HTTP tests.
 
 Traceability: `PRD-MCP-IDENTITY-02`, `SRS-MCP-INSTANCE-01`, `SRS-MCP-INSTANCE-02`, `SRS-MCP-NFR-01`, `WBS-MCP-20-03`.
 
@@ -431,3 +431,4 @@ Release is blocked until:
 - [A-MCP PDP/WBS](./pdp-wbs.md)
 - [A-MCP progress](./progress.md)
 - [A-MCP ADR 0001](./decisions/0001-mcp-suite-boundaries.md)
+- [A-MCP ADR 0004 (proposed)](./decisions/0004-mcp-host-instance-binding.md)
