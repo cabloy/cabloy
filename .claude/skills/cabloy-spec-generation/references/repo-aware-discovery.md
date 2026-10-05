@@ -28,10 +28,10 @@ Never transfer Basic identifiers or example-suite boundaries into Start or a new
 
 Use these labels consistently in README, SRS, ADR, WBS, test plan, and execution dossiers:
 
-| Class | Meaning | Required treatment |
-| --- | --- | --- |
-| **Observed existing** | Inspected source/configuration/manifest currently defines the target. | Cite the actual owner and path; verify applicable behavior and conflicts. |
-| **Proposed new** | An intentionally new design, not yet explicitly approved. | State candidate values, framework constraints, checks still needed, and governing `Proposed` ADR. Do not claim source exists or command runs. |
+| Class                       | Meaning                                                                                                                         | Required treatment                                                                                                                                                             |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Observed existing**       | Inspected source/configuration/manifest currently defines the target.                                                           | Cite the actual owner and path; verify applicable behavior and conflicts.                                                                                                      |
+| **Proposed new**            | An intentionally new design, not yet explicitly approved.                                                                       | State candidate values, framework constraints, checks still needed, and governing `Proposed` ADR. Do not claim source exists or command runs.                                  |
 | **Explicitly approved new** | User explicitly approved the concrete design after framework and collision checks, and the governing durable ADR is `Accepted`. | A bounded WBS execution may create it after its own dossier approval. Cite design authority, planned source/manifests, and checks; pre-existing target source is not required. |
 
 User inputs or high-level strategy selection alone do not upgrade a proposed tuple. Separate generation approval, design/ADR approval, and execution approval. If design is approved but ADR acceptance is still pending, record both facts and keep creation gated.
