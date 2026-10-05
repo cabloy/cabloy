@@ -89,7 +89,7 @@ export default {
   '*.{js,jsx,ts,tsx,vue,mjs,cjs}': filenames => {
     const filtered = filterIgnored(filenames);
     if (filtered.length === 0) return [];
-    return ['npm run lint:fix', createOxfmtCommand(filtered)];
+    return [`npm run lint:fix -- ${joinShellArgs(filtered)}`, createOxfmtCommand(filtered)];
   },
   '*.{json,yaml,yml,md,css,scss,html}': filenames => {
     const filtered = filterIgnored(filenames);

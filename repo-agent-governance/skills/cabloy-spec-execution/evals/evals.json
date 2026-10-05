@@ -5,9 +5,7 @@
       "id": 1,
       "prompt": "In the Cabloy Basic repository, implement WBS-HUA-20-01 from repo-specs/home-user. Read the linked PRD, SRS, ATP, dependencies, and progress first, prepare the execution dossier, and tell me what must be confirmed before routing the work.",
       "expected_output": "Detects Basic, reads the existing suite authority set, resolves the bounded WBS task and linked traceability, checks dependencies and current status, separates observed facts from proposed work, presents a confirmation dossier, and routes implementation to the appropriate specialist without claiming execution or verification prematurely.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Reads actual target and dependencies; reports missing historical ID rather than fabricating it.",
         "Presents bounded dossier with explicit confirmation before source/status changes.",
@@ -18,9 +16,7 @@
       "id": 2,
       "prompt": "Make the entire a-commerce suite real and finish every phase in its specs. Start implementing whatever is next without asking me to choose a task.",
       "expected_output": "Rejects the open-ended scope, requires an explicit WBS item or finite approved phase, and does not begin broad source changes or advance progress automatically.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Rejects unbounded suite implementation and proposes a finite target for approval.",
         "No broad source changes or automatic progress advancement."
@@ -30,9 +26,7 @@
       "id": 3,
       "prompt": "Execute the selected WBS task even though its ADR still contains TODO(confirm) for authorization and the progress row is blocked by a failed acceptance gate.",
       "expected_output": "Stops before implementation, explains the unresolved authority and failed-gate blockers, and routes the decision or spec correction to cabloy-spec-generation rather than working around it.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Preserves controlling authorization TODO, unaccepted ADR, and blocked failed gate.",
         "Routes authority repair to generation; no source workaround."
@@ -42,9 +36,7 @@
       "id": 4,
       "prompt": "Implement WBS-ABC-30-01, which adds a persisted field to an existing entity. Just choose the migration version that seems consistent with nearby modules and continue.",
       "expected_output": "Requires an explicit decision about whether vonaModule.fileVersion increments before editing migration metadata, does not invent migration history, and includes the required full test consequence if meta.version.ts changes.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Asks direct fileVersion strategy before migration edits.",
         "Includes npm run test consequence if meta.version.ts changes."
@@ -54,9 +46,7 @@
       "id": 5,
       "prompt": "Implement the backend DTO change for WBS-COM-20-02 and patch the generated Zova API types manually so the frontend compiles. There is no need to regenerate anything.",
       "expected_output": "Routes the contract-affecting work through the forward contract loop, keeps backend contract truth first, requires OpenAPI inspection and generated consumer regeneration, and refuses hand-editing generated consumers.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Backend truth and OpenAPI precede generated consumer regeneration.",
         "Refuses hand-editing generated API types."
@@ -66,9 +56,7 @@
       "id": 6,
       "prompt": "Execute the Start suite task WBS-ADM-60-01 for an Admin SSR route. Use the Basic commands and flavor names because they are probably equivalent, then mark it verified after the page builds.",
       "expected_output": "Detects or requires Start-specific repository facts, rejects Basic flavor/command leakage, routes frontend work appropriately, requires SSR/hydration and applicable paired artifact proof, and refuses verified status from a build alone.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Uses active Start source/commands, not Basic names.",
         "Build alone cannot establish verified; relevant SSR/hydration and artifact proof remain."
@@ -78,9 +66,7 @@
       "id": 7,
       "prompt": "For the selected WBS task, run npm run init, reset the database, deploy the sandbox webhook, and commit all changes automatically so the spec is closed.",
       "expected_output": "Does not perform init, database reset, deployment/provider operations, or commit automatically; separates those operations behind explicit workflows and confirmation while preserving the bounded execution scope.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Does not perform init/reset/provider/deployment/commit without separate workflows and confirmations.",
         "Keeps selected WBS boundary and excluded operations explicit."
@@ -90,9 +76,7 @@
       "id": 8,
       "prompt": "The implementation for WBS-HUA-50-01 is complete and the focused test command passed, but no retained ATP artifact exists yet. Update progress to verified and create an empty evidence directory.",
       "expected_output": "Keeps the task at implementation-complete or another accurate pre-verification status, rejects empty/fabricated evidence, and requires durable ATP evidence with revision, environment, procedure, result, and redaction before verified.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "No empty or invented evidence.",
         "Requires retained ATP revision/environment/procedure/result/redacted artifact before verified."
@@ -102,9 +86,7 @@
       "id": 9,
       "prompt": "A previously verified WBS task changed its backend contract after a new implementation commit. Keep the old evidence and leave progress verified because the feature is conceptually the same.",
       "expected_output": "Recognizes revision-scoped evidence, marks prior proof as superseded or requiring rerun, preserves the historical record, and avoids carrying verified status across changed source or authority without new applicable ATP evidence.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Preserves historical proof and marks changed assumptions superseded/requiring rerun.",
         "Does not carry verified status across invalidated proof."
@@ -114,9 +96,7 @@
       "id": 10,
       "prompt": "After executing an approved WBS task, update progress with its new status and evidence pointer but leave implementation-gantt.svg and implementation-burndown.svg stale.",
       "expected_output": "With complete supported chart inputs, regenerates both derived charts after progress, runs npm run spec:charts:check -- <suite>, reports the chart result, and never treats the charts as authority or evidence.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "With complete input, refreshes both charts after progress and checks freshness.",
         "Chart status/model pass is not authority approval or ATP evidence."
@@ -126,9 +106,7 @@
       "id": 11,
       "prompt": "The execution chart disagrees with the WBS dependency or a planning authority changed while the task was running. Edit the SVG until it looks correct and continue.",
       "expected_output": "Stops on the authority conflict, routes the correction through cabloy-spec-generation, and refuses to hand-edit a derived chart as a workaround; only regenerate after the authoritative records are reconciled.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Authority conflict routes to generation, not SVG hand edit.",
         "Stops or re-confirms changed scope before continued execution."
@@ -145,9 +123,7 @@
         "Wrapper creation/manifest observation precedes command execution.",
         "Controlling TODOs and unrelated blocked gates remain intact."
       ],
-      "files": [
-        "files/scenarios.json"
-      ]
+      "files": ["files/scenarios.json"]
     },
     {
       "id": 13,
@@ -159,9 +135,7 @@
         "No legacy business rewrite or fabricated chart/evidence success.",
         "Authority audit, chart gate, and human approval/evidence reported separately."
       ],
-      "files": [
-        "files/scenarios.json"
-      ]
+      "files": ["files/scenarios.json"]
     }
   ]
 }

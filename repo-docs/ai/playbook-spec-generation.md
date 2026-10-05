@@ -130,6 +130,7 @@ Use three independent gates:
    ```
 
    Lightweight mode reports omitted owners/chain coverage; it does not permit dangling references. If progress is present, its WBS owner is still needed.
+
 2. **Chart model/freshness** checks supported WBS/dependency/ATP/progress consistency and generated-view freshness, only with complete supported inputs:
 
    ```bash
@@ -138,6 +139,7 @@ Use three independent gates:
    ```
 
    Regenerate after WBS, test-plan, progress, or README title/language changes. With incomplete lightweight/legacy inputs, report the precise chart gap; do not invent business definitions or status to make a generator pass.
+
 3. **Human approval/evidence review** retains ADR acceptance, controlling TODOs, bounded execution approval, and observed ATP proof as separate requirements. Neither static check approves a design or establishes `verified`.
 
 New specs use atomic `- **PRD-...**: <body>` / `- **SRS-...**: <body>` declarations, phase/task WBS headings with explicit Dependencies, Traceability, Tasks, and Acceptance checks, and `### ATP-...: <title>` scenarios under `## Acceptance Scenario Catalogue` with Setup, Procedure, Expected result, Minimum proof, and Traceability. Resolve progress columns by `WBS ID` and `Status` headers rather than fixed positions. Compatible legacy catalogue tables remain supported; matrices and evidence are not definitions. Report legacy gaps without silently rewriting business meaning. See [Repo Scripts](/reference/repo-scripts) for the active deterministic command contracts.

@@ -45,9 +45,7 @@
     },
     {
       "id": 8,
-      "facts": [
-        "No retained ATP artifact exists."
-      ]
+      "facts": ["No retained ATP artifact exists."]
     },
     {
       "id": 9,

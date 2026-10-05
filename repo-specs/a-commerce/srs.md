@@ -15,13 +15,13 @@ zova/src/suite/a-commerce/modules/<module>/
 
 It runs two independent Zova SSR applications and Vona SSR sites:
 
-| Concern              | Customer application                                                                           | Operator application                                                    |
-| -------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| SSR site ID          | `commerce`                                                                                     | `commerceAdmin`                                                         |
-| Public path          | `commerce` (`/commerce`)                                                                       | `commerce-admin` (`/commerce-admin`)                                    |
-| Zova flavor          | `cabloyCommerce`                                                                               | `cabloyCommerceAdmin`                                                   |
-| Paired root build    | `npm run build:zova:commerce:web`                                                              | `npm run build:zova:commerce:admin`                                     |
-| Primary audience     | Authenticated customers, with public catalogue browsing                                        | Authorized tenant operators                                             |
+| Concern              | Customer application                                                                                                                                                                                | Operator application                                                     |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| SSR site ID          | `commerce`                                                                                                                                                                                          | `commerceAdmin`                                                          |
+| Public path          | `commerce` (`/commerce`)                                                                                                                                                                            | `commerce-admin` (`/commerce-admin`)                                     |
+| Zova flavor          | `cabloyCommerce`                                                                                                                                                                                    | `cabloyCommerceAdmin`                                                    |
+| Paired root build    | `npm run build:zova:commerce:web`                                                                                                                                                                   | `npm run build:zova:commerce:admin`                                      |
+| Primary audience     | Authenticated customers, with public catalogue browsing                                                                                                                                             | Authorized tenant operators                                              |
 | SSR privacy baseline | Anonymous protected Address requests redirect without exposing private data; authenticated session SSR may render owner-scoped Address data with private, no-store caching and equivalent hydration | Operator SSR and API access require independently enforced authorization |
 
 `web` and `admin` are already registered SSR site IDs in Cabloy Basic. Commerce must declare new IDs and public paths rather than reuse either identity.

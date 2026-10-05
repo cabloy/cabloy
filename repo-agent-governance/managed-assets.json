@@ -158,14 +158,14 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "1d5a93d8285e85778e281c1a82d141f44d6f74112a295fc1d8ad977e2af2b3c3",
+      "sha256": "c17feccdf3e3528ba9a8006b03135a581a98bc264412885544acd5e8d089c4bc",
       "source": "skills/cabloy-spec-execution/evals/evals.json",
       "target": ".agents/skills/cabloy-spec-execution/evals/evals.json"
     },
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "187c45fea775846326bcdea17b20a465850e563cd98a9c189725ca5aac5fdee5",
+      "sha256": "66af519e402d0d26078abf8d60ae9b03c40866a0af7e8f80ca8db8733faaf3c1",
       "source": "skills/cabloy-spec-execution/evals/files/scenarios.json",
       "target": ".agents/skills/cabloy-spec-execution/evals/files/scenarios.json"
     },
@@ -200,14 +200,14 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "4ef681f7bb98e605514e770bfa129d171f915e8562025d6195de0f8dfecaa80a",
+      "sha256": "84124b0a17f64e4f66222ee787ad95d5b1854b1a132a029674b64dd8634ad57b",
       "source": "skills/cabloy-spec-generation/evals/evals.json",
       "target": ".agents/skills/cabloy-spec-generation/evals/evals.json"
     },
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "c5a1923be3cf387d3d31535af816e8ecadd52762ebb847a1be0d7cd1fe7c3d61",
+      "sha256": "34d6b8dfd8ce3744f85dec1c4457524ac1627073a5ec9f481ec491115a7f94b4",
       "source": "skills/cabloy-spec-generation/evals/files/scenarios.json",
       "target": ".agents/skills/cabloy-spec-generation/evals/files/scenarios.json"
     },
@@ -221,14 +221,14 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "85b5a174c20111d31e50071a826f555c1e9b810e52078305af2850f3593f3603",
+      "sha256": "2b59a2f5322befbef51690e77c19d55de2cf690572d5159ca946290b0ec7319e",
       "source": "skills/cabloy-spec-generation/references/canonical-spec-input.md",
       "target": ".agents/skills/cabloy-spec-generation/references/canonical-spec-input.md"
     },
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "0c482b23c42c893dae4a027a786117ff2ad4b5686e3fc29de0a117d7e4958a49",
+      "sha256": "664816ac5f579767f430749e1cba8515971d658c525f8332da95097cf273c0eb",
       "source": "skills/cabloy-spec-generation/references/repo-aware-discovery.md",
       "target": ".agents/skills/cabloy-spec-generation/references/repo-aware-discovery.md"
     },
@@ -249,7 +249,7 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "7b66c1f77130d14e44bea6f6f09e0de53fe4ae251ad888e78195dab48246301d",
+      "sha256": "1fae802d5b5f2fac97c4b223870d933e9fd551fdc37b5ac3a0acaa4f40efd45b",
       "source": "skills/cabloy-spec-generation/SKILL.md",
       "target": ".agents/skills/cabloy-spec-generation/SKILL.md"
     },
@@ -494,14 +494,14 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "1d5a93d8285e85778e281c1a82d141f44d6f74112a295fc1d8ad977e2af2b3c3",
+      "sha256": "c17feccdf3e3528ba9a8006b03135a581a98bc264412885544acd5e8d089c4bc",
       "source": "skills/cabloy-spec-execution/evals/evals.json",
       "target": ".claude/skills/cabloy-spec-execution/evals/evals.json"
     },
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "187c45fea775846326bcdea17b20a465850e563cd98a9c189725ca5aac5fdee5",
+      "sha256": "66af519e402d0d26078abf8d60ae9b03c40866a0af7e8f80ca8db8733faaf3c1",
       "source": "skills/cabloy-spec-execution/evals/files/scenarios.json",
       "target": ".claude/skills/cabloy-spec-execution/evals/files/scenarios.json"
     },
@@ -536,14 +536,14 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "4ef681f7bb98e605514e770bfa129d171f915e8562025d6195de0f8dfecaa80a",
+      "sha256": "84124b0a17f64e4f66222ee787ad95d5b1854b1a132a029674b64dd8634ad57b",
       "source": "skills/cabloy-spec-generation/evals/evals.json",
       "target": ".claude/skills/cabloy-spec-generation/evals/evals.json"
     },
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "c5a1923be3cf387d3d31535af816e8ecadd52762ebb847a1be0d7cd1fe7c3d61",
+      "sha256": "34d6b8dfd8ce3744f85dec1c4457524ac1627073a5ec9f481ec491115a7f94b4",
       "source": "skills/cabloy-spec-generation/evals/files/scenarios.json",
       "target": ".claude/skills/cabloy-spec-generation/evals/files/scenarios.json"
     },
@@ -557,14 +557,14 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "85b5a174c20111d31e50071a826f555c1e9b810e52078305af2850f3593f3603",
+      "sha256": "2b59a2f5322befbef51690e77c19d55de2cf690572d5159ca946290b0ec7319e",
       "source": "skills/cabloy-spec-generation/references/canonical-spec-input.md",
       "target": ".claude/skills/cabloy-spec-generation/references/canonical-spec-input.md"
     },
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "0c482b23c42c893dae4a027a786117ff2ad4b5686e3fc29de0a117d7e4958a49",
+      "sha256": "664816ac5f579767f430749e1cba8515971d658c525f8332da95097cf273c0eb",
       "source": "skills/cabloy-spec-generation/references/repo-aware-discovery.md",
       "target": ".claude/skills/cabloy-spec-generation/references/repo-aware-discovery.md"
     },
@@ -585,7 +585,7 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "7b66c1f77130d14e44bea6f6f09e0de53fe4ae251ad888e78195dab48246301d",
+      "sha256": "1fae802d5b5f2fac97c4b223870d933e9fd551fdc37b5ac3a0acaa4f40efd45b",
       "source": "skills/cabloy-spec-generation/SKILL.md",
       "target": ".claude/skills/cabloy-spec-generation/SKILL.md"
     },
@@ -844,14 +844,14 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "1d5a93d8285e85778e281c1a82d141f44d6f74112a295fc1d8ad977e2af2b3c3",
+      "sha256": "c17feccdf3e3528ba9a8006b03135a581a98bc264412885544acd5e8d089c4bc",
       "source": "skills/cabloy-spec-execution/evals/evals.json",
       "target": ".cursor/skills/cabloy-spec-execution/evals/evals.json"
     },
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "187c45fea775846326bcdea17b20a465850e563cd98a9c189725ca5aac5fdee5",
+      "sha256": "66af519e402d0d26078abf8d60ae9b03c40866a0af7e8f80ca8db8733faaf3c1",
       "source": "skills/cabloy-spec-execution/evals/files/scenarios.json",
       "target": ".cursor/skills/cabloy-spec-execution/evals/files/scenarios.json"
     },
@@ -886,14 +886,14 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "4ef681f7bb98e605514e770bfa129d171f915e8562025d6195de0f8dfecaa80a",
+      "sha256": "84124b0a17f64e4f66222ee787ad95d5b1854b1a132a029674b64dd8634ad57b",
       "source": "skills/cabloy-spec-generation/evals/evals.json",
       "target": ".cursor/skills/cabloy-spec-generation/evals/evals.json"
     },
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "c5a1923be3cf387d3d31535af816e8ecadd52762ebb847a1be0d7cd1fe7c3d61",
+      "sha256": "34d6b8dfd8ce3744f85dec1c4457524ac1627073a5ec9f481ec491115a7f94b4",
       "source": "skills/cabloy-spec-generation/evals/files/scenarios.json",
       "target": ".cursor/skills/cabloy-spec-generation/evals/files/scenarios.json"
     },
@@ -907,14 +907,14 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "85b5a174c20111d31e50071a826f555c1e9b810e52078305af2850f3593f3603",
+      "sha256": "2b59a2f5322befbef51690e77c19d55de2cf690572d5159ca946290b0ec7319e",
       "source": "skills/cabloy-spec-generation/references/canonical-spec-input.md",
       "target": ".cursor/skills/cabloy-spec-generation/references/canonical-spec-input.md"
     },
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "0c482b23c42c893dae4a027a786117ff2ad4b5686e3fc29de0a117d7e4958a49",
+      "sha256": "664816ac5f579767f430749e1cba8515971d658c525f8332da95097cf273c0eb",
       "source": "skills/cabloy-spec-generation/references/repo-aware-discovery.md",
       "target": ".cursor/skills/cabloy-spec-generation/references/repo-aware-discovery.md"
     },
@@ -935,7 +935,7 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "7b66c1f77130d14e44bea6f6f09e0de53fe4ae251ad888e78195dab48246301d",
+      "sha256": "1fae802d5b5f2fac97c4b223870d933e9fd551fdc37b5ac3a0acaa4f40efd45b",
       "source": "skills/cabloy-spec-generation/SKILL.md",
       "target": ".cursor/skills/cabloy-spec-generation/SKILL.md"
     },

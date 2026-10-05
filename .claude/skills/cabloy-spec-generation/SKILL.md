@@ -27,11 +27,11 @@ Cite inspected paths. Keep repository facts separate from user inputs, target de
 
 ## 2. Choose one planning mode
 
-| Mode | Scope and protection | Quality branch |
-| --- | --- | --- |
-| Complete new baseline | New long-lived suite: six core Markdown records plus initial ADR; both charts after complete chart inputs exist. | Full `spec:check`, then chart generation/freshness, then human decision/status review. |
-| Incremental maintenance | Read the existing README/authority map; update affected upstream authority and downstream links only. Preserve IDs, accepted decisions, evidence, and unrelated statuses. | Full audit when the authority set is complete; report legacy gaps separately. Charts only with complete supported inputs. |
-| Lightweight planning | Explicitly approved small demo, utility, or limited planning scope. Agree on selected records, omitted owners, limits, and no implied full-suite closure. | `spec:check --lightweight` for available owners/references/links; manually review the limited chain. No forced full set or charts with incomplete inputs. |
+| Mode                    | Scope and protection                                                                                                                                                      | Quality branch                                                                                                                                            |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Complete new baseline   | New long-lived suite: six core Markdown records plus initial ADR; both charts after complete chart inputs exist.                                                          | Full `spec:check`, then chart generation/freshness, then human decision/status review.                                                                    |
+| Incremental maintenance | Read the existing README/authority map; update affected upstream authority and downstream links only. Preserve IDs, accepted decisions, evidence, and unrelated statuses. | Full audit when the authority set is complete; report legacy gaps separately. Charts only with complete supported inputs.                                 |
+| Lightweight planning    | Explicitly approved small demo, utility, or limited planning scope. Agree on selected records, omitted owners, limits, and no implied full-suite closure.                 | `spec:check --lightweight` for available owners/references/links; manually review the limited chain. No forced full set or charts with incomplete inputs. |
 
 An existing directory is the normal incremental destination, not an automatic conflict. Ask about a conflict only for a genuine identity collision, parallel authority, or requested destructive replacement. Do not reset the directory or regenerate the whole baseline by default.
 

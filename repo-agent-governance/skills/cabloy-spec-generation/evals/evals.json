@@ -5,9 +5,7 @@
       "id": 1,
       "prompt": "I want to create the complete repo-specs set for a new CRM suite in this Cabloy repository. The suite name and provider prefix are not decided yet. Please guide me through the right process and tell me what you need before writing files.",
       "expected_output": "Detects the edition and repository context, routes unresolved suite naming to cabloy-domain-planning, asks for grouped missing inputs, and does not invent CRM requirements or create a fictional document set.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Reads active edition and repository before assumptions.",
         "Routes unresolved names through naming-only domain planning and returns to generation.",
@@ -18,9 +16,7 @@
       "id": 2,
       "prompt": "The Cabloy Basic repository is confirmed. Create a planning baseline for suite a-training (providerId a, suiteName training). It will include student, course, and attendance capabilities for authenticated Web users and tenant Admin operators. Define the initial scope as course browsing, enrollment, attendance recording, and operator management; defer payments and certificates. Produce the repository-native PRD, SRS, PDP/WBS, test plan, progress register, README authority map, and initial suite-boundary ADR, but do not claim implementation or test evidence.",
       "expected_output": "Uses repo-specs/a-training with the seven mandatory core records, suite-first Vona/Zova topology, stable PRD/SRS/WBS/ATP identifiers and traceability, explicit deferred scope, server-side tenant/authorization and contract-loop boundaries, and not-started progress without fabricated evidence.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Confirms complete-baseline scope and generation separately from ADR acceptance.",
         "Uses stable formally defined PRD/SRS/WBS/ATP IDs and exact declared associations.",
@@ -31,9 +27,7 @@
       "id": 3,
       "prompt": "Plan a new Cabloy Start business suite with an Admin application, several resource scenes that need different field groupings and renderers, and a real payment provider with sandbox/live webhooks and reconciliation. The suite identity and exact Start flavor/site names are confirmed in the active Start repo. Which spec files should be generated, and what must remain conditional or evidence-backed?",
       "expected_output": "Keeps the shared core set, adds presentation-contracts and a provider runbook only because the supplied scope justifies them, uses Start-specific facts from the active repo rather than Basic assumptions, explains when a rollout record or additional ADR is warranted, and requires redacted observed evidence before verified status.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Reads active Start facts rather than borrowing Basic runtime identifiers.",
         "Adds presentation/runbook records only for explicit scope.",
@@ -44,9 +38,7 @@
       "id": 4,
       "prompt": "The design is complete, so write all suite specs and mark every WBS phase verified. There is no test run yet. Please make the progress document look release-ready.",
       "expected_output": "Refuses to claim verified status without retained ATP evidence, initializes progress as not-started or otherwise accurate, explains the revision/environment/procedure/result/redaction requirements, and does not create empty evidence records.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Rejects verified status without actual retained ATP proof.",
         "Does not fabricate artifacts or empty evidence records.",
@@ -57,9 +49,7 @@
       "id": 5,
       "prompt": "Our existing suite PRD says the first release is one tenant and no marketplace. I want to add an OpenSpec directory and update the WBS directly to support multiple merchants. How should the repository planning records change?",
       "expected_output": "Treats the existing PRD and repository-native records as authoritative, rejects a parallel OpenSpec authority absent a new repository-level decision, requires the product/technical/ADR authority to change first, and then propagates updates to WBS, ATP, progress, and evidence assumptions.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Reads existing authority and preserves stable identity/history.",
         "Requires upstream PRD/SRS/ADR approval before downstream merchant-scope changes.",
@@ -70,9 +60,7 @@
       "id": 6,
       "prompt": "Create a complete planning baseline for a new inventory suite. In the WBS, refer to SRS-INV-STOCK-01 and ATP-INV-CON-01 even if the SRS and test plan only mention those IDs in a matrix or generic prose. Do not add implementation or evidence.",
       "expected_output": "Defines every exact SRS ID used downstream as an explicit SRS contract and every exact ATP ID as a test-plan scenario with traceability, setup, procedure, expected result, and minimum proof. It treats wildcard/range/matrix mentions as aggregation notation rather than definitions, runs a static planning-authority ID audit before completion, and does not create evidence for that audit.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Defines exact SRS and ATP records in their owners rather than counting matrix/prose mentions.",
         "ATP declaration has substantive Setup, Procedure, Expected result, Minimum proof, and Traceability.",
@@ -83,9 +71,7 @@
       "id": 7,
       "prompt": "Draft a new suite baseline with an unresolved tenancy boundary. Keep ADR 0001 Proposed, but title the README section Confirmed Product and Technical Baseline so it reads more decisively.",
       "expected_output": "Keeps ADR 0001 Proposed absent explicit acceptance and uses neutral README baseline wording that distinguishes observed facts, confirmed inputs, proposed targets, and TODO(confirm) decisions. It refuses to let README language upgrade the proposed durable boundary, keeps delivery status accurate, and does not fabricate evidence.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Retains Proposed ADR and controlling tenancy TODO.",
         "Uses neutral README wording without upgrading proposed durable decisions.",
@@ -96,9 +82,7 @@
       "id": 8,
       "prompt": "Generate a proposed suite baseline with an optional payment-provider runbook. The user confirms the planning inputs and output path but has not accepted the provider boundary ADR. The runbook traceability table names ATP-PAY-WEBHOOK-01, but the test plan does not define that scenario.",
       "expected_output": "Treats confirmation to generate records as distinct from accepting the ADR, retains the provider boundary as Proposed, and uses neutral README wording. It scans the optional runbook as a generated non-evidence record, rejects the dangling ATP-PAY-WEBHOOK-01 reference until a formal test-plan scenario exists, and does not create execution evidence.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Audits optional non-evidence runbook references.",
         "Reports missing ATP definition rather than using a matrix/evidence row as definition.",
@@ -109,9 +93,7 @@
       "id": 9,
       "prompt": "Create a new long-lived suite baseline and keep its README in Chinese. Generate the complete records without implementation evidence.",
       "expected_output": "With complete supported chart inputs, creates both implementation-gantt.svg and implementation-burndown.svg, initializes statuses accurately, uses the README language consistently in chart labels/accessibility/metadata, and does not fabricate dates, estimates, history, or verified evidence.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "With complete supported input, generates both derived views using README language.",
         "Canonical declarations and progress header names match the new input contract.",
@@ -122,9 +104,7 @@
       "id": 10,
       "prompt": "A later WBS dependency, ATP reference, or progress status changes after the charts were generated. Update the affected authority/status record and finish without regenerating the SVGs.",
       "expected_output": "With complete supported chart inputs, regenerates both derived charts with npm run spec:charts -- <suite>, runs npm run spec:charts:check -- <suite>, and treats stale or dangling chart references as a static failure rather than changing authority to make the chart pass.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Changes authority/status first, then regenerates/checks both eligible charts.",
         "Reports chart model/freshness separately from authority audit and ATP proof.",
@@ -135,9 +115,7 @@
       "id": 11,
       "prompt": "Plan a new long-lived suite with a reader-facing Web experience and staff Admin operations. The active repository has not yet told us whether either audience should use a shared site or an independent suite-owned site. Do not guess flavor names or commands.",
       "expected_output": "Performs edition-aware source discovery before choosing topology, evaluates Web and Admin independently, makes a contextual recommendation, and presents the four normal shared/independent Web/Admin combinations in one single-select decision with the ordinary Other path available for a custom strategy or deferral. It requires a cited observed shared target, keeps unknown or unchecked tuple values as explicit TODO(confirm) design/discovery gates, and does not fabricate Basic or Start facts.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "When both audiences are unresolved, offers contextual four-way single-select plus Other.",
         "Shared targets are inspected/cited; new designs are labeled proposed rather than observed.",
@@ -148,9 +126,7 @@
       "id": 12,
       "prompt": "For the confirmed Cabloy Basic suite strategy, choose an independent reader Web site and integration into an observed shared Admin site. The independent reader site is intended, but active source has not yet confirmed its site ID, public path, bundle, flavor, environment/configuration, SsrSite registration, or paired commands. Generate the planning records only.",
       "expected_output": "Propagates the mixed strategy through the authority chain: PRD describes audience/channel scope, SRS owns topology and audience-specific contracts, ADR records the durable boundary subject to its status, WBS separates independent-Web delivery from shared-Admin integration, test-plan gates proof on observed commands or approved-new command creation, and progress remains derived. It retains unspecified or unchecked tuple values as explicit TODO(confirm) design/discovery gates, cites the shared Admin target, avoids creating source/config/scripts, and does not imply separate persistence, tenancy, identity, or authorization ownership.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Keeps mixed strategy and separates independent-Web creation from shared-Admin integration.",
         "Unspecified tuple values remain explicit design/discovery gates, not fabricated facts.",
@@ -161,9 +137,7 @@
       "id": 13,
       "prompt": "Create a suite baseline where the product needs backend catalogue work plus future Web and Admin experiences, but the user defers the Web/Admin site strategy and all site identifiers. Keep backend planning available.",
       "expected_output": "Retains the site strategy as a governing ADR/SRS TODO(confirm), marks only dependent frontend/site implementation WBS work blocked, and keeps backend plus any runnable source-discovery work accurately not-started or unchanged. It does not globally block delivery, invent site/flavor/env/configuration/build facts, create implementation evidence, or mark planning/source discovery as verified.",
-      "files": [
-        "files/scenarios.json"
-      ],
+      "files": ["files/scenarios.json"],
       "expectations": [
         "Blocks only dependent site/frontend implementation branches.",
         "Preserves actionable backend/discovery status without inventing site facts.",
@@ -181,9 +155,7 @@
         "After separate design approval and Accepted ADR, future source absence alone is not a blocker; execution remains bounded.",
         "New wrapper is never presented as currently runnable."
       ],
-      "files": [
-        "files/scenarios.json"
-      ]
+      "files": ["files/scenarios.json"]
     },
     {
       "id": 15,
@@ -195,9 +167,7 @@
         "Established strategy skips redundant four-way choice.",
         "Legacy audit/chart gaps are distinct and not repaired by invented business meaning."
       ],
-      "files": [
-        "files/scenarios.json"
-      ]
+      "files": ["files/scenarios.json"]
     },
     {
       "id": 16,
@@ -209,9 +179,7 @@
         "No forced full baseline, empty progress/evidence, or charts with incomplete input.",
         "Static lightweight pass is not full-chain or behavioral/ATP success."
       ],
-      "files": [
-        "files/scenarios.json"
-      ]
+      "files": ["files/scenarios.json"]
     },
     {
       "id": 17,
@@ -223,9 +191,7 @@
         "Generation resumes mode/input collection and its own confirmation gate.",
         "Final implementation handoff is one bounded spec-execution candidate, not broad direct scaffold."
       ],
-      "files": [
-        "files/scenarios.json"
-      ]
+      "files": ["files/scenarios.json"]
     }
   ]
 }
