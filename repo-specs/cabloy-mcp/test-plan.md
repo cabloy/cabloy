@@ -49,7 +49,7 @@ Release requires protocol, OAuth, instance, direct authorization, catalog, dispa
 | Instance/authorization integration tests | Host mapping, selector conflicts, RBAC/data scope, tenant isolation                               | Proposed `cabloy-mcp` tests and existing instance/guard owners                         |
 | Dispatch/context tests                   | Fixed executor route, `innerAccess: false`, headers/options, Passport isolation, concurrent calls | Proposed `cabloy-mcp` tests and owning controller tests                                |
 | Transaction/side-effect tests            | Domain transaction, timeout, retry/idempotency, irreversible operation policy                     | Owning domain module tests plus MCP adapter tests                                      |
-| Protocol tests                           | Streamable HTTP, metadata, initialize, tools/list, tools/call, errors, limits                     | Proposed `cabloy-mcp` protocol tests                                                   |
+| Protocol tests                           | Selected-version Streamable HTTP, metadata/discovery, tools/list, tools/call, errors, limits      | Proposed `cabloy-mcp` protocol tests                                                   |
 | Operational tests                        | Rate limits, audit/telemetry, redaction, disablement, failure-closed behavior                     | Proposed `cabloy-mcp` operational tests and deployment checks                          |
 | Root closure checks                      | Type, format, lint, tests, planning audit, chart freshness                                        | Root scripts and bounded release dossier                                               |
 
@@ -92,23 +92,23 @@ A planned command or code reading is not a result. No `evidence/` directory or `
 Setup:
 
 - Use a synthetic configured MCP endpoint and approved resource metadata/authorization-server discovery values.
-- Prepare valid protocol messages, unsupported content types/versions, missing authorization, oversized body, unknown host, and session/stateless variants according to the selected design.
+- Prepare valid messages for the selected protocol revision, including its required request metadata and discovery method; test unsupported content types/versions, missing authorization, oversized body, and unknown host. Do not add legacy session cases unless the accepted revision explicitly supports them.
 
 Procedure:
 
 - Request protected-resource metadata and verify only approved resource/discovery information is returned.
-- Perform initialize, tools/list, and a minimal tools/call with a valid synthetic token.
-- Repeat with malformed protocol, unsupported method/content negotiation, oversized input, unknown host, and a session identifier without valid authorization.
+- Perform the selected revision's mandatory discovery RPC, tools/list, and a minimal tools/call with a valid synthetic token; perform `initialize` only if the accepted revision requires it.
+- Repeat with malformed protocol, unsupported method/content negotiation, oversized input, unknown host, and any protocol/session identifier without valid authorization only if the accepted revision defines it.
 
 Expected result:
 
 - Supported exchanges are protocol-compliant; unsupported or malformed requests fail without controller dispatch.
-- Resource metadata identifies the configured resource and authorization discovery without secrets.
-- Session state, if selected, is not accepted as authorization; every request still authenticates.
+- The selected protocol's discovery response and separate protected-resource metadata identify only approved resource/authorization information without secrets.
+- Protocol state or session identifiers, if supported by the accepted revision, are not accepted as authorization; every protected request still authenticates.
 
 Minimum proof:
 
-- Retain revision, environment, exact HTTP/protocol exchanges with tokens redacted, dispatch counter, status/error classes, and redacted artifact location.
+- Retain accepted protocol revision and SDK configuration fingerprint, environment, exact HTTP/protocol exchanges with tokens redacted, dispatch counter, status/error classes, and redacted artifact location.
 
 Traceability: `PRD-MCP-ACCESS-01`, `SRS-MCP-TRANSPORT-01`, `SRS-MCP-TRANSPORT-02`, `SRS-MCP-TRANSPORT-03`, `SRS-MCP-NFR-03`, `WBS-MCP-20-01`.
 
@@ -358,22 +358,24 @@ Traceability: `PRD-MCP-SAFETY-03`, `SRS-MCP-PRIVACY-01`, `SRS-MCP-OPS-01`, `SRS-
 
 Setup:
 
-- Prepare enabled/disabled endpoint and per-tool policy states, missing OAuth configuration, missing host mapping, invalid registry/adapter, and ordinary HTTP calls to the same underlying controller.
+- After a separately approved scaffold exists, inspect the generated `5.0.0` suite/module manifests, suite `workspace:^` module dependency, module `a-vona: 5.0.0` lifecycle dependency, absence of MCP-owned `fileVersion`/schema, and discovered/generated application registration; do not substitute planning text for observed output.
+- Prepare default module configuration (`enabled: false`), literal application `CABLOY_MCP_ENABLED=true` opt-in, non-`true` inputs, enabled/disabled endpoint and per-tool policy states, missing OAuth configuration, missing host mapping, invalid registry/adapter, and ordinary HTTP calls to the same underlying controller.
 
 Procedure:
 
-- Disable the endpoint and individual tool, remove each required MCP configuration item, and attempt list/call operations.
-- Call the ordinary HTTP API with its normal authentication before and after MCP disablement.
+- Confirm the generated module is discoverable without handwritten registration, then compare default-off behavior, non-`true` inputs, and explicit application opt-in; remove each required MCP security configuration item and attempt list/call operations.
+- Disable the endpoint and individual tool, then call the ordinary HTTP API with its normal authentication before and after MCP disablement.
 
 Expected result:
 
+- The actual generated manifests and registration match DEC-MCP-01; mere module discovery never enables MCP. Default-off, non-`true` inputs, and incomplete opt-in all fail closed without business-controller dispatch.
 - Disabled or incomplete MCP configuration returns stable unavailable/failure-closed results and never invokes a business controller.
 - Ordinary HTTP authorization and behavior are unchanged by MCP disablement.
 - Operator telemetry identifies the configuration class without exposing secret values.
 
 Minimum proof:
 
-- Retain configuration state labels, dispatch counters, ordinary HTTP comparison, result classes, and redacted operator artifact.
+- Retain source revision, generated manifest/registration excerpts, default/override configuration state labels (not secret values), dispatch counters, ordinary HTTP comparison, result classes, and redacted operator artifact.
 
 Traceability: `PRD-MCP-SAFETY-04`, `SRS-MCP-OPS-03`, `SRS-MCP-OPS-04`, `SRS-MCP-UI-01`, `SRS-MCP-UI-02`, `WBS-MCP-50-02`.
 

@@ -6,7 +6,7 @@ Deliver a security-first remote MCP capability for Cabloy Basic that lets an aut
 
 ## Delivery Principles
 
-- Treat the accepted `cabloy-mcp` normal suite and `cabloy-mcp` module design as planned new source until the specific manifest/activation gates and a separate bounded execution dossier are approved; do not claim source exists.
+- Treat the accepted `cabloy-mcp` normal suite and module, including DEC-MCP-01's initial manifest/discovery/default-off configuration design, as planned new source until a separate bounded execution dossier is approved; do not claim source exists or that later integration gates are decided.
 - Establish the OAuth resource-server and trusted host/instance boundary before exposing tools.
 - Use Vona/OpenAPI/DTO contract truth first; generate a candidate catalog, then apply independent MCP metadata, risk, representation, and deployment policy.
 - Keep a server-owned immutable operation registry. Never map an untrusted tool name or argument to an arbitrary route.
@@ -35,14 +35,16 @@ Tasks:
 
 - Confirm the revised `providerId=cabloy`, normal suite `cabloy-mcp`, and initial module `cabloy-mcp` identity and inspect source/manifests for collisions; source creation remains a later task.
 - Record ADR 0001's accepted overall ownership boundary, no-Zova first increment, external OAuth resource-server requirement, JSON-only scope, and no new MCP-owned registry/consent/audit persistence.
-- Separate generation approval, overall design/ADR acceptance, concrete implementation design gates, and execution approval; keep remaining `TODO(confirm)` inputs explicit.
+- Record DEC-MCP-01's accepted initial `5.0.0` suite/module manifests, suite `workspace:^` composition, module's initial `a-vona: 5.0.0` lifecycle dependency, CLI-driven discovery/generated registration, and module-owned `enabled: false` defaults with explicit application opt-in. Leave SDK/OAuth libraries and runtime security settings to their later decisions.
+- Record `zhennann` as the accountable owner for DEC-MCP-02 through DEC-MCP-08; keep the design inputs `TODO(confirm)` until each decision is separately resolved.
+- Separate generation approval, overall design/ADR acceptance, concrete implementation design gates, and execution approval.
 - If a later increment proposes a persisted registry, consent, or audit model, reopen the persistence decision and ask about `vonaModule.fileVersion` before schema work.
 
 Acceptance checks:
 
-- ADR 0001 records explicit acceptance of the overall boundary and names only; concrete integration choices remain gated.
+- ADR 0001 records explicit acceptance of the overall boundary, names, and DEC-MCP-01 initial structural/configuration design only; DEC-MCP-02 through DEC-MCP-08 remain gated.
 - No planning record claims that the source suite/module, endpoint, OAuth provider, or runnable command already exists.
-- Every material design gate has an owner and a bounded downstream WBS dependency.
+- Every material design gate has a recorded accountable owner and a bounded downstream WBS dependency; do not infer the owner from package authorship.
 
 #### WBS-MCP-10-02: Complete MCP threat model and policy matrix
 
@@ -50,7 +52,7 @@ Traceability: `PRD-MCP-IDENTITY-01`, `PRD-MCP-IDENTITY-02`, `PRD-MCP-IDENTITY-03
 
 Dependencies: `WBS-MCP-10-01`.
 
-Source areas: proposed `cabloy-mcp` security boundary; existing Passport/instance/guard/executor behavior; deployment trust and OAuth documentation.
+Source areas: proposed `cabloy-mcp` security boundary; existing Passport/instance/guard/executor behavior; deployment trust and OAuth documentation. The [draft threat model and policy matrix](./threat-model.md) records candidate controls and open decision gates; it is not accepted closure.
 
 Tasks:
 
@@ -74,13 +76,13 @@ Traceability: `PRD-MCP-ACCESS-01`, `SRS-MCP-TRANSPORT-01`, `SRS-MCP-TRANSPORT-02
 
 Dependencies: `WBS-MCP-10-01`.
 
-Source areas: proposed `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/`; existing Vona router/middleware registration; selected MCP transport implementation.
+Source areas: proposed `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/`; existing Vona router/middleware registration; selected MCP transport implementation. ADR 0002 is the current proposed transport draft; it does not close DEC-MCP-02 or authorize source.
 
 Tasks:
 
 - Select and record the supported Streamable HTTP protocol version, SDK or adapter, route registration, stateless/session mode, content negotiation, request size, timeout, and Origin/Host handling.
 - Implement protected-resource metadata and authorization-server discovery integration without exposing secrets or internal topology.
-- Define protocol initialization, tools/list, tools/call, error, cancellation, and unsupported-feature behavior for the first increment.
+- Define the selected revision's discovery handshake (not necessarily `initialize`), tools/list, tools/call, error, cancellation, and unsupported-feature behavior for the first increment; do not import GET, DELETE, or session behavior from an older revision.
 
 Acceptance checks:
 
@@ -94,7 +96,7 @@ Traceability: `PRD-MCP-IDENTITY-01`, `PRD-MCP-IDENTITY-03`, `SRS-MCP-AUTH-01`, `
 
 Dependencies: `WBS-MCP-20-01`.
 
-Source areas: approved OAuth issuer/resource-server integration; existing Vona Passport/user/auth ownership; proposed `cabloy-mcp` authentication service.
+Source areas: approved OAuth issuer/resource-server integration; existing Vona Passport/user/auth ownership; proposed `cabloy-mcp` authentication service. ADR 0003 is the current proposed OAuth design; it does not select an issuer or authorize provider configuration.
 
 Tasks:
 
