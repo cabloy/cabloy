@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.202
+
+### Features
+
+- Add a traceability gate for planning baseline reviews.
+
 ## 5.1.201
 
 ### Features
