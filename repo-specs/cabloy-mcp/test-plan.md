@@ -169,7 +169,7 @@ Setup:
 
 Procedure:
 
-- Exercise real HTTP metadata, tools/list, and tools/call against each host/selector/token combination, including the instance-initialization order and cached-name behavior; compare ordinary non-MCP API routing before and after.
+- Exercise real HTTP metadata, tools/list, and tools/call against each host/selector/token combination, including the instance-initialization order, missing/disabled-instance rejection and cached-name behavior; compare ordinary non-MCP API routing before and after. The inner executor's instance lookup/readiness is not a substitute for the HTTP `initInstance()` admission check.
 - Attempt to use an `iid`-like argument, host header, forwarded host/protocol, empty/default or duplicate query selector, or instance header to switch from A to B. Simulate a reverse-proxy cache hit for the wrong host's metadata.
 
 Expected result:
@@ -294,17 +294,17 @@ Setup:
 Procedure:
 
 - Call as an authorized subject and an unauthorized subject.
-- Repeat with every forged execution-control input and inspect executor invocation options and guard behavior.
+- Repeat with every forged execution-control input, including a query token key, and inspect the **inner action** invocation options and guard behavior. Verify the exact registered route, guard/AOP chain and action-context RBAC decision; separately check that MCP admission enforces enabled-instance and body-size/security controls not rerun by router-only dispatch.
 
 Expected result:
 
-- The adapter invokes the known method/path with `innerAccess: false`; normal guard/AOP authorization remains effective.
-- Caller-controlled execution options are stripped/rejected and never reach executor dispatch.
-- Unauthorized calls fail without a trusted inner-access bypass.
+- The adapter invokes the known method/path with `innerAccess: false` on the action, not just an outer context; normal route guard/AOP authorization remains effective with a fresh local mapped Passport.
+- Caller-controlled execution options are rejected before dispatch and never reach the executor; token-in-query, inherited HTTP Passport, and `extraData.state` cannot substitute another principal.
+- Unauthorized calls fail without a trusted inner-access bypass; router-only tests are not counted as real HTTP admission proof.
 
 Minimum proof:
 
-- Retain redacted executor-option capture, guard invocation/result, route identity, caller input class, and audit artifact.
+- Retain redacted executor-option capture, guard invocation/result, route identity, matched instance and Passport labels, query-token denial, caller input class, admission control coverage, and audit artifact.
 
 Traceability: `PRD-MCP-SAFETY-01`, `PRD-MCP-IDENTITY-03`, `SRS-MCP-DISPATCH-01`, `SRS-MCP-DISPATCH-03`, `WBS-MCP-40-01`.
 
@@ -313,23 +313,23 @@ Traceability: `PRD-MCP-SAFETY-01`, `PRD-MCP-IDENTITY-03`, `SRS-MCP-DISPATCH-01`,
 Setup:
 
 - Prepare subjects A/B and instances A/B with distinct visible resources, fixed tools, separate `mockCtx(...)` contexts, and a transaction/side-effect fixture.
-- Include interleavings where one request is authenticated or reaches a guard while the other begins dispatch.
+- Include interleavings where one request is authenticated or reaches a guard while the other begins dispatch. Create shared setup separately, then launch each contender inside its own **top-level** `mockCtx(...)` boundary; do not nest competitors inside one parent transaction.
 
 Procedure:
 
-- Launch explicitly competing calls with different subjects/instances and controlled barriers.
-- Inject downstream validation, timeout, transaction, post-commit, result-filter, and non-idempotent side-effect failures where the owning domain supports them; attempt a repeated call after an uncertain result.
-- Inspect Passport/state/header identity and combined durable outcome after all calls finish; separately compare execution outcome, result delivery, and redacted audit class.
+- Launch explicitly competing calls with different subjects/instances and controlled barriers, and verify the effective instance, Passport, action-context RBAC decision and datasource/transaction ownership for each.
+- Inject downstream validation, a response lost after commit, a post-commit success-callback rejection, a context-completion failure, result-filter failure and non-idempotent side-effect failure where the owning domain supports them; separately test deadline/disconnect with a real HTTP transport fixture. Attempt a duplicate client submission after an uncertain result only for a reviewed domain-safe test operation.
+- Inspect Passport/state/header identity and combined durable outcome after all calls settle; separately compare execution outcome, result delivery, redacted audit class and any permitted domain reconciliation. Delete precise test-owned persisted resources in `finally` in reverse dependency order.
 
 Expected result:
 
-- No call observes another request's Passport, state, headers, arguments, instance, or audit identity.
-- At most the contract-defined durable side effect occurs; retries/timeouts or a post-execution output-filter failure do not automatically duplicate non-idempotent work.
-- Failure results match the documented transaction/recovery boundary, never claim false success or automatic rollback after commit, and do not reveal rejected output.
+- No call observes another request's Passport, state, headers, arguments, instance, transaction store, authorization result or audit identity.
+- At most the contract-defined durable side effect occurs; deadlines/disconnects or post-execution callback/filter failures do not automatically duplicate non-idempotent work. Operations lacking a reviewed idempotency/recovery policy remain disabled.
+- Failure results match the documented transaction/recovery boundary, never claim false success or automatic rollback after commit, and do not reveal rejected output. The real HTTP fixture demonstrates bounded completion/accounting independently of executor-only tests.
 
 Minimum proof:
 
-- Retain explicit interleaving, separate-context identifiers, durable final state, failure injection, result classes, and redacted telemetry.
+- Retain explicit interleaving, separate-context/datasource identifiers, durable final state, failure injection and duplicate-submit outcome, guarded route and real HTTP classifications, and redacted telemetry; test runner concurrency alone is not contention proof.
 
 Traceability: `PRD-MCP-SAFETY-02`, `PRD-MCP-SAFETY-03`, `SRS-MCP-DISPATCH-04`, `SRS-MCP-DISPATCH-05`, `SRS-MCP-PRIVACY-01`, `WBS-MCP-40-02`.
 
@@ -337,24 +337,24 @@ Traceability: `PRD-MCP-SAFETY-02`, `PRD-MCP-SAFETY-03`, `SRS-MCP-DISPATCH-04`, `
 
 Setup:
 
-- Configure synthetic request/body/result/concurrency/time/rate limits and redacted audit/telemetry sinks.
-- Prepare successful, validation, auth, instance, policy, downstream, timeout, and internal-failure calls containing synthetic sensitive-looking values.
+- Configure synthetic, separately reviewed preauth header/body/parser and request budgets, JSON argument/structure and list/result limits, keyed rate and in-flight limits, and execution/cleanup deadlines; configure an approved protected audit sink and separate telemetry/exporters. Keep live secret/configuration values out of evidence.
+- Prepare successful, validation, auth, instance, policy, downstream, timeout, post-commit filtering/audit failure, disconnect, and internal-failure calls containing synthetic sensitive-looking values; use independent subjects, clients, instances and tool classes, plus the approved worker topology.
 
 Procedure:
 
-- Exceed each approved limit by subject/client/instance/tool dimension.
-- Inspect protocol responses, application logs, traces, metrics, audit records, and retained test artifacts.
-- Search for bearer tokens, cookies, passwords, hashes, raw OAuth claims, complete private payloads, and usable links.
+- Exceed each approved ingress/JSON/catalog/result/time/concurrency/rate limit, including preauth requests, per-subject/client/instance/tool dimensions, multiple workers where applicable, and a quota-backend failure/stall or restart. Prove whether denial occurs before dispatch and whether result rejection follows an already committed effect.
+- Inject sink delivery/ack failure before state-changing admission; check read/list outage behavior against the approved policy. Trigger disconnect/deadline while an owned operation remains active, and check slot/accounting and eventual domain outcome without auto-replay.
+- Inspect real HTTP protocol/error responses, dedicated HTTP file logs, platform/SDK/proxy and nested route/AOP error-and-argument/token/ORM SQL debug logs, trace exceptions, metrics, protected audit records, external exporters and retained test artifacts, including debug and nonproduction error modes. Search each approved sink for bearer tokens, cookies, passwords, hashes, raw OAuth claims, raw arguments/results, complete private payloads, usable links and high-cardinality identity labels; verify MCP correlation independently of optional telemetry and caller-supplied request IDs.
 
 Expected result:
 
-- Limits reject safely without cross-subject leakage or unintended controller side effects.
-- Operators can distinguish error classes through redacted protected telemetry; clients receive bounded nondiagnostic errors.
-- No prohibited secret or sensitive value is retained.
+- Limits and required sink/backend failures reject safely at the approved stage without cross-subject leakage, unintended controller side effects for pre-dispatch denials, or untracked active work; result rejection or timeout does not imply rollback or permit MCP replay.
+- Protected audit delivery and operator telemetry preserve the approved, pseudonymous event/outcome classes; clients receive bounded nondiagnostic errors. Actual settled and unknown states remain distinguishable.
+- No prohibited secret or sensitive value is retained; ordinary non-MCP routes remain unchanged by MCP limit/disablement policy.
 
 Minimum proof:
 
-- Retain configuration fingerprint, redacted event samples, limit counters, search procedure/result, and artifact location.
+- Retain the approved numeric/key/window matrix, source/configuration/worker/sink fingerprints, ingress and dispatch counters, explicit in-flight/settlement interleaving, sink-failure procedure, safe event samples, per-sink redaction searches, and redacted artifact locations. This is a future ATP, not evidence from this planning draft.
 
 Traceability: `PRD-MCP-SAFETY-03`, `SRS-MCP-PRIVACY-01`, `SRS-MCP-OPS-01`, `SRS-MCP-OPS-02`, `SRS-MCP-TRANSPORT-03`, `WBS-MCP-50-01`.
 
@@ -438,3 +438,5 @@ Release is blocked until:
 - [A-MCP ADR 0004 (proposed)](./decisions/0004-mcp-host-instance-binding.md)
 - [A-MCP ADR 0005 (proposed)](./decisions/0005-mcp-tool-catalog-registry.md)
 - [A-MCP ADR 0006 (proposed)](./decisions/0006-mcp-tool-eligibility-risk-results.md)
+- [A-MCP ADR 0007 (proposed)](./decisions/0007-mcp-context-passport-executor.md)
+- [A-MCP ADR 0008 (proposed)](./decisions/0008-mcp-limits-audit-telemetry-redaction.md)

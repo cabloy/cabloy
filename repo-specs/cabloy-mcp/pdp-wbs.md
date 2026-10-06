@@ -189,12 +189,13 @@ Traceability: `PRD-MCP-ACCESS-03`, `PRD-MCP-SAFETY-01`, `SRS-MCP-AUTH-03`, `SRS-
 
 Dependencies: `WBS-MCP-30-02`.
 
-Source areas: proposed MCP tool-call adapter; `bean.executor.performAction(...)`; existing controller guards/AOP; approved registry.
+Source areas: proposed MCP tool-call adapter; `bean.executor.performAction(...)`; existing controller guards/AOP; approved registry. [ADR 0007](./decisions/0007-mcp-context-passport-executor.md) is a Proposed DEC-MCP-07 input, not approval of the context factory, executor options, or runtime execution.
 
 Tasks:
 
 - Resolve only server-owned tool names and map validated arguments to declared method/path/params/query/body fields.
-- Invoke the executor with `innerAccess: false`, server-controlled headers/options, bounded timeout, and no caller-controlled onions/state/authToken.
+- Invoke the **inner action** with `innerAccess: false` and a fresh server-built options object; validate trusted minimal headers and reject caller-controlled authorization, query tokens, instance, onions, state and `authToken`. Apply a reviewed bounded execution policy without assuming current executor options provide abort/deadline/cancellation.
+- Prove route guard/AOP and domain policy coverage separately from OAuth, enabled-instance admission, HTTP body limits, origin and other system-middleware controls bypassed by router-only executor invocation; check downstream AOP argument/result and JWT diagnostic redaction.
 - Adapt only explicitly reviewed Cabloy 200-status executor/unwrapped results to a minimized, runtime-validated MCP JSON value; check optional output-schema/structured-content and compatibility-text consistency, and classify unsupported statuses/shapes and post-execution failures safely.
 - Reject unknown tools, unknown/dangerous fields, route-like arguments, and caller-supplied authorization/host/cookie/tenant controls.
 
@@ -210,19 +211,19 @@ Traceability: `PRD-MCP-SAFETY-02`, `PRD-MCP-SAFETY-03`, `SRS-MCP-DISPATCH-04`, `
 
 Dependencies: `WBS-MCP-40-01`.
 
-Source areas: proposed request-context factory; existing executor context delegation; Passport state; owning domain transaction/lock services.
+Source areas: proposed request-context factory; existing executor context delegation; Passport state; owning domain transaction/lock services. [ADR 0007](./decisions/0007-mcp-context-passport-executor.md) remains Proposed; no context implementation or runtime proof exists.
 
 Tasks:
 
-- Establish a fresh request context and Passport for every call, with no state/header reference sharing across subjects or instances.
-- Define timeout, cancellation, idempotency, transaction, retry, and external-side-effect behavior; do not retry non-idempotent operations automatically.
-- Prove concurrent calls using separate `mockCtx(...)` boundaries and explicit durable outcomes.
+- Establish a fresh, explicitly endpoint-bound, enabled-instance context and local mapped Passport for every call, with no cross-call state/header references or ambient datasource/transaction-store/callback inheritance; verify any intentional same-call executor delegation and recomputed action-context RBAC.
+- Define bounded execution, cancellation, duplicate submission, idempotency, transaction, retry, post-commit callback and external-side-effect behavior; never infer rollback from timeout, disconnect or failed result filtering, and never automatically retry MCP calls.
+- Prove concurrent calls using independent top-level `mockCtx(...)` boundaries after setup, explicit barriers and combined durable outcomes; use real HTTP separately for system-middleware ingress and disconnect behavior.
 
 Acceptance checks:
 
-- Concurrent calls by different subjects cannot observe or mutate each other's Passport, headers, arguments, or audit identity.
-- A failure after a domain commit has a documented result/recovery boundary and no false success caused by the adapter.
-- No sensitive request/result content appears in ordinary logs or retained artifacts.
+- Concurrent calls by different subjects and instances cannot observe or mutate each other's Passport, headers, arguments, authorization result, transaction state, or audit identity.
+- Failure after a domain commit has a documented result/recovery boundary, no false rollback/success claim and no unreviewed replay of a non-idempotent effect.
+- No sensitive request/result content appears in downstream AOP/JWT logging or retained artifacts.
 
 ### Phase 50: Operations, release hardening, and handoff
 
@@ -234,19 +235,20 @@ Traceability: `PRD-MCP-SAFETY-03`, `SRS-MCP-PRIVACY-01`, `SRS-MCP-OPS-01`, `SRS-
 
 Dependencies: `WBS-MCP-40-02`.
 
-Source areas: proposed MCP operational middleware; existing rate-limit/audit/telemetry owners; deployment configuration.
+Source areas: proposed MCP operational middleware; existing rate-limit/audit/telemetry owners; deployment configuration. [ADR 0008](./decisions/0008-mcp-limits-audit-telemetry-redaction.md) is a Proposed DEC-MCP-08 input, not approved numeric policy, a selected audit sink, or source authorization.
 
 Tasks:
 
-- Enforce request/body/depth/result/concurrency/time/rate limits keyed by approved subject/client/instance/tool dimensions.
-- Emit redacted discovery and call audit events with correlation, subject/client pseudonyms, instance, tool/version, outcome, policy class, latency, and safe error class.
-- Define protected telemetry retention and verify that tokens, cookies, passwords, hashes, raw sensitive arguments, and usable links are not retained.
+- Select and enforce reviewed numeric ingress/body/parser, JSON argument/depth/collection, catalog/list, filtered-result, concurrency, time/cleanup and rate budgets, including preauth limits and independently derived instance/subject/client/tool keys. Verify key/window/worker/restart and quota-backend outage semantics; ordinary body-parser/rate-limiter defaults do not establish MCP limits.
+- Account for already-started work after timeout/disconnect until actual settlement or approved durable recovery, without freeing capacity early, claiming rollback, or retrying uncertain effects; coordinate with DEC-MCP-02/07.
+- Select a protected audit sink and operational owner with explicit delivery/failure, retention/deletion and pseudonym policy; emit reviewed redacted discovery, call, denial, dispatch, outcome/uncertainty and policy-change events with bounded fields. Keep diagnostic telemetry separate from required audit.
+- Review transport, HTTP/error, nested route/AOP, token diagnostics, proxy/exporter, logs, traces, metrics and retained evidence for tokens, cookies, passwords, hashes, raw sensitive arguments/results, and usable links; disable a tool whose downstream disclosure cannot be controlled.
 
 Acceptance checks:
 
-- Deliberate limit exceedance is rejected without cross-subject/instance leakage or unintended side effects.
-- Success, validation, authorization, downstream, timeout, and internal failures are distinguishable to operators but nondiagnostic to clients.
-- Redaction proof covers protocol responses, logs, traces, metrics, and test evidence.
+- Deliberate limit exceedance and backend/sink failure reject before dispatch where required without cross-subject/instance leakage, unintended side effects or untracked still-active work; real HTTP and worker topology prove the selected mechanisms.
+- Operators distinguish rejection, guarded authorization, settled and uncertain execution without inferring cancellation from a timeout; clients receive bounded nondiagnostic errors.
+- Redaction proof covers protocol responses, logs, traces, metrics, protected audit and test evidence; approved retention and owner are recorded before release.
 
 #### WBS-MCP-50-02: Establish disablement, configuration, and release closure
 
@@ -307,3 +309,5 @@ Acceptance checks:
 - [A-MCP ADR 0004 (proposed)](./decisions/0004-mcp-host-instance-binding.md)
 - [A-MCP ADR 0005 (proposed)](./decisions/0005-mcp-tool-catalog-registry.md)
 - [A-MCP ADR 0006 (proposed)](./decisions/0006-mcp-tool-eligibility-risk-results.md)
+- [A-MCP ADR 0007 (proposed)](./decisions/0007-mcp-context-passport-executor.md)
+- [A-MCP ADR 0008 (proposed)](./decisions/0008-mcp-limits-audit-telemetry-redaction.md)
