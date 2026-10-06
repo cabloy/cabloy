@@ -152,6 +152,88 @@ test('creates a mixed-status model with deferred scope separated', () => {
   assert.equal(model.activeTasks.length, 2);
   assert.equal(model.deferredTasks.length, 1);
   assert.equal(model.verified, 0);
+  assert.doesNotMatch(renderGantt(model, 'Demo'), /--teal:/);
+});
+
+test('planning completion requires an explicit task mode and preserves verified-only metrics', () => {
+  const wbs = files['pdp-wbs.md'].replace(
+    '#### WBS-10-01: Freeze the baseline',
+    '#### WBS-10-01: Freeze the baseline\n\nCompletion mode: planning-only.',
+  );
+  const progress = files['progress.md'].replace('`not-started`', '`planning-complete`');
+  assert.throws(
+    () =>
+      createChartModel({
+        readme: files['README.md'],
+        wbs: files['pdp-wbs.md'],
+        progress,
+        testPlan: files['test-plan.md'],
+      }),
+    /planning-complete status without Completion mode/,
+  );
+  const model = createChartModel({
+    readme: files['README.md'],
+    wbs,
+    progress,
+    testPlan: files['test-plan.md'],
+  });
+  assert.equal(model.tasks[0].completionMode, 'planning-only');
+  assert.equal(model.verified, 0);
+  const gantt = renderGantt(model, 'Demo');
+  assert.match(gantt, /Planning complete/);
+  assert.match(gantt, /--teal:#087f83/);
+  assert.doesNotMatch(renderBurndown(model, 'Demo'), /--teal:/);
+  assert.match(gantt, /class="caption" x="96" y="195">WBS-20-01: Deliver/);
+  assert.doesNotMatch(gantt, /class="caption" x="96" y="195">WBS-10-01/);
+  assert.match(renderBurndown(model, 'Demo'), />2 remaining · 0 verified</);
+  const blocked = createChartModel({
+    readme: files['README.md'],
+    wbs,
+    progress: progress.replace('`in-progress`', '`blocked`'),
+    testPlan: files['test-plan.md'],
+  });
+  assert.match(renderGantt(blocked, 'Demo'), /No dependency-ready WBS candidate is recorded/);
+  assert.equal(blocked.verified, 0);
+  const chinese = createChartModel({
+    readme: '# 中文规划\n\n完整中文记录。',
+    wbs,
+    progress,
+    testPlan: files['test-plan.md'],
+  });
+  assert.match(renderGantt(chinese, '示例'), /规划完成/);
+  assert.match(renderBurndown(chinese, '示例'), /2 剩余 · 0 已核验/);
+});
+
+test('completion mode must be unique, supported and task-local', () => {
+  const wbs = files['pdp-wbs.md'];
+  for (const value of ['unknown.', '', 'planning-only.\nCompletion mode: planning-only.']) {
+    assert.throws(
+      () => parseWbs(wbs.replace('Tasks:', `Completion mode: ${value}\n\nTasks:`)),
+      /Completion mode/,
+    );
+  }
+  assert.throws(
+    () =>
+      parseWbs(
+        wbs.replace('Dependencies: none.', 'Dependencies: none.\nCompletion mode: planning-only.'),
+      ),
+    /Completion mode must belong to a formal WBS task/,
+  );
+  assert.throws(
+    () => parseWbs(`Completion mode: planning-only.\n${wbs}`),
+    /Completion mode must belong to a formal WBS task/,
+  );
+  const progress = files['progress.md'].replace('`not-started`', '`planning-complete`');
+  assert.throws(
+    () =>
+      createChartModel({
+        readme: files['README.md'],
+        wbs: wbs.replace('Tasks:', 'Status: in-progress.\nCompletion mode: planning-only.\nTasks:'),
+        progress,
+        testPlan: files['test-plan.md'],
+      }),
+    /explicit.*Status in-progress.*planning-complete/,
+  );
 });
 
 test('selects the earliest dependency-ready WBS item', async t => {

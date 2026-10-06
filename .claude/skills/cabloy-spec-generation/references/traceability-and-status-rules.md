@@ -67,17 +67,18 @@ Downstream records do not silently override authority. Charts cannot authorize s
 
 ## Status semantics
 
-| Status                    | Meaning                                                                                                                                              |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `not-started`             | Defined, but implementation or acceptance evidence has not started.                                                                                  |
-| `in-progress`             | Work or verification has started, but closure checks are incomplete.                                                                                 |
-| `implementation-complete` | Source work is reported complete, but required ATP or release evidence is incomplete.                                                                |
-| `verified`                | Applicable WBS checks and ATPs passed, and durable evidence contains revision, environment, exact procedure, result, and redacted artifact location. |
-| `blocked`                 | A failed gate, dependency, or unresolved decision prevents closure.                                                                                  |
-| `waived`                  | A temporary exception explicitly approved with owner, reason, and expiry.                                                                            |
-| `deferred`                | Explicitly postponed scope; it is not complete or verified.                                                                                          |
+| Status                    | Meaning                                                                                                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `not-started`             | Defined, but implementation or acceptance evidence has not started.                                                                                                 |
+| `in-progress`             | Work or verification has started, but closure checks are incomplete.                                                                                                |
+| `planning-complete`       | Opted-in documentary/design-only WBS checks have a named-reviewer, revision-scoped closure disposition and retained planning proof; source and ATP remain unproven. |
+| `implementation-complete` | Source work is reported complete, but required ATP or release evidence is incomplete.                                                                               |
+| `verified`                | Applicable WBS checks and ATPs passed, and durable evidence contains revision, environment, exact procedure, result, and redacted artifact location.                |
+| `blocked`                 | A failed gate, dependency, or unresolved decision prevents closure.                                                                                                 |
+| `waived`                  | A temporary exception explicitly approved with owner, reason, and expiry.                                                                                           |
+| `deferred`                | Explicitly postponed scope; it is not complete or verified.                                                                                                         |
 
-For a newly created plan, initialize delivery rows as `not-started`, `deferred`, or `blocked` as appropriate. Creating Markdown files never makes implementation `implementation-complete` or `verified`.
+For a newly created plan, initialize delivery rows as `not-started`, `deferred`, or `blocked` as appropriate. Creating Markdown files never makes a task `planning-complete`, implementation `implementation-complete`, or ATP `verified`. Only a formally declared `Completion mode: planning-only.` task with documentary acceptance checks, revision-scoped evidence and an explicit named-reviewer closure disposition may reach `planning-complete`; `authority-only` traceability does not establish this eligibility. A planning-complete predecessor satisfies its WBS dependency edge, but blocked/deferred/waived successors stay gated and require their own decisions and approvals. `implementation-complete`, `waived` and `deferred` do not satisfy predecessor completion. Only `verified` contributes to verified totals and the verified-based burndown remainder.
 
 ### README and ADR decision-status consistency
 

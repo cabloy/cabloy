@@ -56,15 +56,16 @@ Do not create an empty `evidence/` directory, placeholder `EVD-*` record, or fab
 
 Use the suite’s canonical status meanings:
 
-| Status                    | Meaning                                                                                                                                                           |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `not-started`             | Defined, but implementation or acceptance evidence has not started.                                                                                               |
-| `in-progress`             | Work or verification has started, but closure checks remain.                                                                                                      |
-| `implementation-complete` | Source work is reported complete, but required ATP or release evidence is incomplete.                                                                             |
-| `verified`                | Applicable WBS checks and ATPs passed, with durable traceable evidence containing revision, environment, exact procedure, result, and redacted artifact location. |
-| `blocked`                 | A dependency, unresolved decision, failed gate, attribution problem, or missing required proof prevents closure.                                                  |
-| `waived`                  | A temporary exception has an owner, reason, affected scope, and expiry; expiry becomes a release blocker.                                                         |
-| `deferred`                | Explicitly postponed scope; it is not complete or verified.                                                                                                       |
+| Status                    | Meaning                                                                                                                                                                 |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `not-started`             | Defined, but implementation or acceptance evidence has not started.                                                                                                     |
+| `in-progress`             | Work or verification has started, but closure checks remain.                                                                                                            |
+| `planning-complete`       | An opted-in documentary/design-only WBS task has a named-reviewer, revision-scoped planning-closure disposition and retained planning proof; not source or ATP closure. |
+| `implementation-complete` | Source work is reported complete, but required ATP or release evidence is incomplete.                                                                                   |
+| `verified`                | Applicable WBS checks and ATPs passed, with durable traceable evidence containing revision, environment, exact procedure, result, and redacted artifact location.       |
+| `blocked`                 | A dependency, unresolved decision, failed gate, attribution problem, or missing required proof prevents closure.                                                        |
+| `waived`                  | A temporary exception has an owner, reason, affected scope, and expiry; expiry becomes a release blocker.                                                               |
+| `deferred`                | Explicitly postponed scope; it is not complete or verified.                                                                                                             |
 
 The normal path is:
 
@@ -72,7 +73,7 @@ The normal path is:
 not-started -> in-progress -> implementation-complete -> verified
 ```
 
-`blocked`, `waived`, and `deferred` are explicit states, not shortcuts to completion. Mark a task `in-progress` only after approved implementation or verification actually begins. A generated file, successful scaffold, passing typecheck, code review, manual walkthrough, screenshot, or unrelated broad test pass cannot by itself produce `verified`.
+A genuinely documentary/design-only task can instead follow `not-started -> in-progress -> planning-complete`, but only when its formal WBS declaration contains `Completion mode: planning-only.`, its own checks have revision-scoped documentary evidence, and a named reviewer explicitly records the planning-closure disposition. `authority-only` traceability is not this opt-in. `planning-complete` satisfies a predecessor dependency edge but never grants successor execution approval, accepts another ADR, completes source, or passes a linked prospective runtime ATP. The Gantt shows its status separately; verified totals and the burndown's active-minus-verified remainder still count only `verified`. `implementation-complete`, `waived` and `deferred` are not completed prerequisites. `blocked`, `waived`, and `deferred` are explicit states, not shortcuts to completion. Mark an implementation task `in-progress` only after approved implementation or verification actually begins. A generated file, successful scaffold, passing typecheck, code review, manual walkthrough, screenshot, or unrelated broad test pass cannot by itself produce `verified`.
 
 A task may be `implementation-complete` when source work is complete but an ATP, browser check, paired build, release gate, redaction decision, or durable artifact remains. A phase can be verified without implying that a separately defined integration or release phase is verified.
 

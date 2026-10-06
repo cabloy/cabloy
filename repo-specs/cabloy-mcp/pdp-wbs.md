@@ -25,6 +25,8 @@ Dependencies: none.
 
 #### WBS-MCP-10-01: Freeze suite boundary and delivery decision gates
 
+Completion mode: planning-only.
+
 Traceability: `PRD-MCP-ACCESS-01`, `PRD-MCP-ACCESS-02`, `PRD-MCP-CONTRACT-01`, `PRD-MCP-SAFETY-04`, `SRS-MCP-API-01`, `SRS-MCP-UI-01`, `SRS-MCP-OPS-04`, `ATP-MCP-CONTRACT-01`, `ATP-MCP-OPS-02`.
 
 Dependencies: none.
@@ -74,7 +76,7 @@ Dependencies: `WBS-MCP-10-01`, `WBS-MCP-10-02`.
 
 Traceability: `PRD-MCP-ACCESS-01`, `SRS-MCP-TRANSPORT-01`, `SRS-MCP-TRANSPORT-02`, `SRS-MCP-NFR-03`, `ATP-MCP-TRANSPORT-01`.
 
-Dependencies: `WBS-MCP-10-01`.
+Dependencies: `WBS-MCP-10-01`, `WBS-MCP-10-02`.
 
 Source areas: proposed `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/`; existing Vona router/middleware registration; selected MCP transport implementation. ADR 0002 is the current proposed transport draft; it does not close DEC-MCP-02 or authorize source.
 
@@ -292,7 +294,8 @@ Acceptance checks:
 
 ## Completion and Evidence Rules
 
-- A planning task is not implementation-complete because its Markdown exists.
+- A planning task is not implementation-complete because its Markdown exists. Only a task explicitly declaring `Completion mode: planning-only.` may become `planning-complete` once its own documentary checks have revision-scoped evidence and a named reviewer records a planning-closure disposition. WBS-MCP-10-01 is eligible, but remains `in-progress` until that distinct approval is recorded; the 2026-10-06 closure review did not grant it. Its linked runtime ATPs remain future proof and its successors remain subject to their own gates.
+- A `planning-complete` predecessor satisfies its dependency edge, but does not authorize a blocked successor, accept another ADR, waive applicable ATPs or change the verified count.
 - A WBS task may become `implementation-complete` only after its source/configuration completion checks are satisfied; it becomes `verified` only after every applicable ATP has retained proof.
 - Evidence must identify exact source revision, environment/database/instance where relevant, command or procedure, fixture/interleaving, observed result, and redacted durable artifact path.
 - No empty evidence directory or fabricated `EVD-*` record is created by planning.

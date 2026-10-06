@@ -109,11 +109,12 @@ Use the narrowest approved check first, then follow the linked ATP procedures an
 
 Use status precisely:
 
-- `in-progress` — approved implementation or verification has actually begun
+- `in-progress` — approved work or verification has actually begun
+- `planning-complete` — only an opted-in documentary/design WBS task with a named-reviewer, revision-scoped closure disposition and linked planning proof; no source or ATP closure
 - `implementation-complete` — source work is complete, but required ATP or release proof remains
 - `verified` — all applicable WBS checks and ATPs have durable, linked, redacted observed evidence
 
-A successful build, generation command, hook, manual walkthrough, screenshot, or unrelated test run is not by itself `verified` unless the authoritative test plan defines it as sufficient retained proof. Evidence is revision- and authority-scoped; mark old proof superseded or requiring rerun when relevant source or authority changes.
+`planning-complete` satisfies a predecessor dependency edge but does not unblock a task still recorded `blocked` or grant an execution dossier. Charts count only `verified` toward verified/remaining metrics. A successful build, generation command, hook, manual walkthrough, screenshot, or unrelated test run is not by itself `verified` unless the authoritative test plan defines it as sufficient retained proof. Evidence is revision- and authority-scoped; mark old proof superseded or requiring rerun when relevant source or authority changes.
 
 ## Refresh derived charts last
 

@@ -69,7 +69,7 @@ Acceptance checks:
 - The selected ATP passes and retains its required proof.
 ```
 
-Each phase has explicit Dependencies, using `none` when no predecessor exists. Task-level Dependencies override the phase Dependencies for that task; they are not accumulated automatically. Do not rely on an empty dependency label to mean none. Keep phases dependency-ordered and task scope bounded. WBS bodies own linked IDs, tasks, and checks; progress does not add them.
+Each phase has explicit Dependencies, using `none` when no predecessor exists. Task-level Dependencies override the phase Dependencies for that task; they are not accumulated automatically. Do not rely on an empty dependency label to mean none. Keep phases dependency-ordered and task scope bounded. WBS bodies own linked IDs, tasks, and checks; progress does not add them. For a genuinely documentary/design-only task, the formal task declaration may add exactly one `Completion mode: planning-only.` field. This opt-in is not a phase default or a traceability exception: its own checks still need a named reviewer, a revision-scoped planning-closure disposition and linked documentary proof before progress can say `planning-complete`. Keep linked prospective runtime ATPs intact and unpassed.
 
 ### test-plan.md
 
@@ -109,7 +109,7 @@ Setup, Procedure, Expected result, Minimum proof, and Traceability must each be 
 | `WBS-DEMO-10-01` | `not-started` | None; execution has not begun. | Confirm the bounded execution dossier. |
 ```
 
-Resolve columns by header names (`WBS ID` and `Status`), never fixed cell positions. Additional/reordered columns are allowed. Require one row for every formal WBS task when constructing the complete chart model. Preserve the established status vocabulary and explain blockers/waivers precisely.
+Resolve columns by header names (`WBS ID` and `Status`), never fixed cell positions. Additional/reordered columns are allowed. Require one row for every formal WBS task when constructing the complete chart model. Preserve the established status vocabulary and explain blockers/waivers precisely. `planning-complete` is valid only for a task declaring `Completion mode: planning-only.` in its WBS body; it satisfies a predecessor dependency edge but does not grant successor execution approval, count as verified, or reduce the verified-based burndown remainder.
 
 ## Three gates, not one success signal
 

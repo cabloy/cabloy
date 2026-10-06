@@ -2,6 +2,7 @@
 export const STATUS_ORDER = [
   'not-started',
   'in-progress',
+  'planning-complete',
   'implementation-complete',
   'verified',
   'blocked',
@@ -306,6 +307,16 @@ function normalizeStatus(value) {
   return normalized;
 }
 
+export function isPlanningCompleteEligible(task) {
+  return task.completionMode === 'planning-only';
+}
+
+export function isPrerequisiteSatisfied(task, status) {
+  return (
+    status === 'verified' || (status === 'planning-complete' && isPlanningCompleteEligible(task))
+  );
+}
+
 function reviewDateFromLine(line) {
   return (
     line.match(/(?:last reviewed|最后审查日期)\s*(?:[:：]\s*)?(\d{4}-\d{2}-\d{2})/i)?.[1] ?? null
@@ -360,7 +371,7 @@ export function parseProgress(markdown, { file } = {}) {
 }
 
 function labeledValue(record, labels) {
-  const match = record.text.trim().match(/^([A-Z]+)\s*:(.*)$/i);
+  const match = record.text.trim().match(/^([A-Z]+(?:\s+[A-Z]+)*)\s*:(.*)$/i);
   return match && labels.includes(match[1].toLowerCase()) ? match[2].trim() : null;
 }
 
@@ -502,6 +513,11 @@ export function parseWbs(markdown, { file } = {}) {
       task = null;
       inPhase = false;
     }
+    if (!task && labeledValue(record, ['completion mode']) !== null) {
+      throw new Error(
+        `Completion mode must belong to a formal WBS task at ${atLocation(record, file)}.`,
+      );
+    }
     if (!inPhase) continue;
     if (task) task.body.push(record);
     else if (!phase.tasks.length) phase.preamble.push(record);
@@ -519,6 +535,29 @@ export function parseWbs(markdown, { file } = {}) {
         ? { line: dependency.line, ...(file ? { file } : {}) }
         : undefined;
       task.phase = { number: phase.number, title: phase.title };
+      const modeRecords = task.body.filter(
+        record => labeledValue(record, ['completion mode']) !== null,
+      );
+      if (modeRecords.length > 1) {
+        throw new Error(
+          `Multiple ${task.id} Completion mode fields at ${atLocation(modeRecords[1], file)}.`,
+        );
+      }
+      const mode = modeRecords.length
+        ? labeledValue(modeRecords[0], ['completion mode'])
+            .replace(/`/g, '')
+            .replace(/\.$/, '')
+            .toLowerCase()
+        : undefined;
+      if (mode && mode !== 'planning-only') {
+        throw new Error(
+          `Unsupported ${task.id} Completion mode at ${atLocation(modeRecords[0], file)}.`,
+        );
+      }
+      if (modeRecords.length && !mode) {
+        throw new Error(`Empty ${task.id} Completion mode at ${atLocation(modeRecords[0], file)}.`);
+      }
+      task.completionMode = mode;
       const statusRecords = task.body.filter(record => labeledValue(record, ['status']) !== null);
       if (statusRecords.length > 1) {
         throw new Error(

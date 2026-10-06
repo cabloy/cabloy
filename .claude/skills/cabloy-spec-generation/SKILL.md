@@ -128,7 +128,7 @@ npm run spec:check -- <suite> --lightweight
 
 For incremental legacy gaps, report the missing definition/owner/link and affected chain without silently changing business meaning. If correction needs a new decision, request it and report the update as incomplete at that gate. Lightweight results must state skipped owners/chain coverage; never advertise a full-suite pass.
 
-Planning creation alone initializes delivery as `not-started`, `deferred`, or specifically `blocked`. Preserve carried-forward observed evidence with its revision/authority limits. Do not run init, database reset, scaffolding, deployment/provider operations, or acceptance tests as an automatic consequence of planning.
+Planning creation alone initializes delivery as `not-started`, `deferred`, or specifically `blocked`. `planning-complete` is only available to a formally opted-in documentary/design task after its own checks receive revision-scoped proof and a named-reviewer closure disposition; it is not ATP verification or permission to execute a successor. Preserve carried-forward observed evidence with its revision/authority limits. Do not run init, database reset, scaffolding, deployment/provider operations, or acceptance tests as an automatic consequence of planning.
 
 ## 10. Finish with a bounded execution handoff
 

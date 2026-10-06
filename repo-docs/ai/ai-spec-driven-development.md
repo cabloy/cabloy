@@ -53,6 +53,7 @@ For the detailed authority table, identifiers, and chart boundary, see [Generate
 
 **Evidence-gated delivery** means delivery status stays precise about what is known and what has been proven.
 
+- `planning-complete` means an explicitly `planning-only` WBS task's documentary checks have a named-reviewer, revision-scoped closure disposition and retained planning proof. It satisfies that task's prerequisite edge, not implementation, ATP, successor approval, or release.
 - `implementation-complete` means the source work is complete, while required ATP or release proof remains.
 - `verified` means all applicable WBS checks and ATPs have durable, linked, redacted observed evidence.
 

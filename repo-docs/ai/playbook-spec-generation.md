@@ -115,7 +115,7 @@ PRD → SRS → WBS → ATP → Evidence
 
 A product or technical change belongs in its PRD, SRS, or accepted ADR before its WBS, acceptance, progress, evidence, and chart implications are updated. A progress entry or chart cannot introduce a requirement, resolve a contract conflict, or accept an ADR.
 
-Planning records and derived charts do not establish `implementation-complete` or `verified`. `verified` requires the applicable acceptance procedure and retained, redacted observed evidence. A generated plan, planned command, scaffold, screenshot, or unrelated check is not automatically sufficient proof.
+A WBS task may declare `Completion mode: planning-only.` only for documentary/design-only checks. It can reach `planning-complete` after an explicit named-reviewer, revision-scoped closure disposition and linked planning proof; this satisfies its dependency edge without executing source, passing future ATPs, unblocking a recorded `blocked` successor, or counting as `verified` in charts. Planning records and derived charts do not establish `implementation-complete` or `verified`. `verified` requires the applicable acceptance procedure and retained, redacted observed evidence. A generated plan, planned command, scaffold, screenshot, or unrelated check is not automatically sufficient proof.
 
 ## Check planning without claiming implementation
 
