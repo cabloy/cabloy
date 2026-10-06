@@ -99,6 +99,176 @@ test('ordinary co-occurrence and wildcard matrices cannot manufacture traceabili
   );
 });
 
+test('technical-only SRS exempts its PRD parent, not its WBS successor', async t => {
+  const records = {
+    ...BASELINE,
+    'srs.md':
+      '# Contracts\n\n- **SRS-DEMO-01**: Test hygiene. Traceability exception: technical-only — Repository fixture policy owns cleanup.\n\nTraceability: `WBS-DEMO-10-01`\n\n- **SRS-DEMO-02**: Product contract. Traceability: `PRD-DEMO-01`, `WBS-DEMO-10-01`.\n',
+    'prd.md': BASELINE['prd.md'].replace('`SRS-DEMO-01`', '`SRS-DEMO-02`'),
+  };
+  const result = await auditPlanning(await fixture(t, records));
+  assert.deepEqual(result.diagnostics, []);
+  const withoutException = {
+    ...records,
+    'srs.md': records['srs.md'].replace(
+      ' Traceability exception: technical-only — Repository fixture policy owns cleanup.',
+      '',
+    ),
+  };
+  const missingParent = await auditPlanning(await fixture(t, withoutException));
+  assert.ok(
+    missingParent.diagnostics.some(
+      diagnostic => diagnostic.id === 'SRS-DEMO-01' && diagnostic.code === 'traceability-incoming',
+    ),
+  );
+  const missingSuccessor = await auditPlanning(
+    await fixture(t, {
+      ...records,
+      'srs.md': records['srs.md'].replace('Traceability: `WBS-DEMO-10-01`\n', ''),
+      'pdp-wbs.md': records['pdp-wbs.md'].replace('`SRS-DEMO-01`, ', ''),
+    }),
+  );
+  assert.ok(
+    missingSuccessor.diagnostics.some(
+      diagnostic => diagnostic.id === 'SRS-DEMO-01' && diagnostic.code === 'traceability-outgoing',
+    ),
+  );
+});
+
+test('authority-only WBS exempts its ATP successor, not its SRS parent', async t => {
+  const records = {
+    ...BASELINE,
+    'pdp-wbs.md': `${BASELINE['pdp-wbs.md']}\n#### WBS-DEMO-10-02: Review baseline\n\nTraceability exception: authority-only — Retain the baseline review disposition.\n\nTraceability: \`SRS-DEMO-01\`.\n`,
+    'progress.md': `${BASELINE['progress.md']}| WBS-DEMO-10-02 | Review | not-started |\n`,
+  };
+  const result = await auditPlanning(await fixture(t, records));
+  assert.deepEqual(result.diagnostics, []);
+  const withoutException = {
+    ...records,
+    'pdp-wbs.md': records['pdp-wbs.md'].replace(
+      'Traceability exception: authority-only — Retain the baseline review disposition.\n\n',
+      '',
+    ),
+  };
+  const missingSuccessor = await auditPlanning(await fixture(t, withoutException));
+  assert.ok(
+    missingSuccessor.diagnostics.some(
+      diagnostic =>
+        diagnostic.id === 'WBS-DEMO-10-02' && diagnostic.code === 'traceability-outgoing',
+    ),
+  );
+  const missingParent = await auditPlanning(
+    await fixture(t, {
+      ...records,
+      'pdp-wbs.md': records['pdp-wbs.md'].replace('Traceability: `SRS-DEMO-01`.\n', ''),
+    }),
+  );
+  assert.ok(
+    missingParent.diagnostics.some(
+      diagnostic =>
+        diagnostic.id === 'WBS-DEMO-10-02' && diagnostic.code === 'traceability-incoming',
+    ),
+  );
+});
+
+test('malformed, repeated and wrong-kind exceptions fail closed', async t => {
+  const invalid = [
+    'Traceability exception: technical-only —',
+    'Traceability exception: technical-only — !',
+    'Traceability exception: unknown — Rationale.',
+    'Traceability exception: authority-only — Rationale.',
+    'Traceability exception: technical-only — Rationale. Traceability exception: technical-only — Again.',
+  ];
+  for (const field of invalid) {
+    const records = {
+      ...BASELINE,
+      'srs.md': BASELINE['srs.md'].replace(
+        '### SRS-DEMO-01: Contract\n',
+        `- **SRS-DEMO-01**: Contract. ${field}\n`,
+      ),
+    };
+    const result = await auditPlanning(await fixture(t, records));
+    assert.ok(
+      result.diagnostics.some(diagnostic => diagnostic.code === 'traceability-exception'),
+      field,
+    );
+  }
+  const wrongWbs = {
+    ...BASELINE,
+    'pdp-wbs.md': BASELINE['pdp-wbs.md'].replace(
+      'Completion checks:',
+      'Traceability exception: technical-only — Not an SRS.\n\nCompletion checks:',
+    ),
+  };
+  assert.ok(
+    codes(await auditPlanning(await fixture(t, wrongWbs))).includes('traceability-exception'),
+  );
+});
+
+test('an exception outside its own declaration cannot exempt a missing link', async t => {
+  const records = {
+    ...BASELINE,
+    'srs.md':
+      '# Contracts\n\nTraceability exception: technical-only — Preamble.\n\n- **SRS-DEMO-02**: Unmapped contract.\n- **SRS-DEMO-01**: Contract. Traceability exception: technical-only — Different record.\n\nTraceability: `PRD-DEMO-01`, `WBS-DEMO-10-01`\n',
+    'pdp-wbs.md': `${BASELINE['pdp-wbs.md'].replace(
+      'Dependencies: none.',
+      'Dependencies: none.\n\nTraceability exception: authority-only — Phase preamble.',
+    )}\n#### WBS-DEMO-10-02: Unmapped task\n`,
+    'progress.md': `${BASELINE['progress.md']}| WBS-DEMO-10-02 | Unmapped | not-started |\n`,
+  };
+  const result = await auditPlanning(await fixture(t, records));
+  for (const [id, code] of [
+    ['SRS-DEMO-02', 'traceability-incoming'],
+    ['WBS-DEMO-10-02', 'traceability-outgoing'],
+  ]) {
+    assert.ok(
+      result.diagnostics.some(diagnostic => diagnostic.id === id && diagnostic.code === code),
+    );
+  }
+  assert.ok(result.diagnostics.some(diagnostic => diagnostic.code === 'traceability-exception'));
+});
+
+test('classified gates retain reference and completed-prerequisite checks', async t => {
+  const records = {
+    ...BASELINE,
+    'pdp-wbs.md': `${BASELINE['pdp-wbs.md']}\n#### WBS-DEMO-10-02: Review gate\n\nDependencies: WBS-DEMO-10-01.\n\nTraceability exception: authority-only — Retain the review disposition.\n\nTraceability: \`SRS-DEMO-01\`.\n\nReview \`SRS-MISSING-01\`.\n`,
+    'progress.md': `${BASELINE['progress.md']}| WBS-DEMO-10-02 | Review | verified |\n`,
+  };
+  const result = await auditPlanning(await fixture(t, records));
+  assert.ok(
+    result.diagnostics.some(
+      diagnostic => diagnostic.code === 'undefined-reference' && diagnostic.id === 'SRS-MISSING-01',
+    ),
+  );
+  assert.ok(
+    result.diagnostics.some(
+      diagnostic => diagnostic.code === 'dependency-state' && diagnostic.id === 'WBS-DEMO-10-02',
+    ),
+  );
+  assert.ok(
+    !result.diagnostics.some(
+      diagnostic =>
+        diagnostic.code === 'traceability-outgoing' && diagnostic.id === 'WBS-DEMO-10-02',
+    ),
+  );
+});
+
+test('fences and comments cannot annotate a definition', async t => {
+  const records = {
+    ...BASELINE,
+    'pdp-wbs.md': `${BASELINE['pdp-wbs.md']}\n#### WBS-DEMO-10-02: Review gate\n\nTraceability: \`SRS-DEMO-01\`.\n\n\`\`\`md\nTraceability exception: authority-only — Example only.\n\`\`\`\n\n<!-- Traceability exception: authority-only — Not authority. -->\n`,
+    'progress.md': `${BASELINE['progress.md']}| WBS-DEMO-10-02 | Review | not-started |\n`,
+  };
+  const result = await auditPlanning(await fixture(t, records));
+  assert.ok(
+    result.diagnostics.some(
+      diagnostic =>
+        diagnostic.code === 'traceability-outgoing' && diagnostic.id === 'WBS-DEMO-10-02',
+    ),
+  );
+  assert.ok(!codes(result).includes('traceability-exception'));
+});
+
 test('lightweight records do not require absent baseline files or charts', async t => {
   const directory = await fixture(t, {
     'README.md': '# Lightweight\n',

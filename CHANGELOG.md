@@ -1,5 +1,20 @@
 # Changelog
 
+## 5.1.201
+
+### Features
+
+- Support scoped spec traceability exceptions.
+
+### Bug Fixes
+
+- Fix the CabloyJS Admin SSR video.
+
+### Improvements
+
+- Add the CabloyJS Admin SSR video to the demonstrations.
+- Refine the spec parser.
+
 ## 5.1.200
 
 ### Features

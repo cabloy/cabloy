@@ -17,6 +17,8 @@ References in matrices, related-record lists, progress, evidence, templates, wil
 
 Use exact instantiated IDs in declaration-body Traceability. A wildcard or abbreviated range is an aggregate summary, not an exact association or substitute for missing definitions. Keep associations explicit even if a downstream summary matrix repeats them. The audit must derive associations from the declaration body, not nearby unrelated sections.
 
+For a genuinely cross-cutting engineering contract without a product requirement, an atomic SRS bullet may carry `Traceability exception: technical-only — <record-specific rationale>` on its definition line. This exempts only the incoming PRD association; its outgoing WBS mapping remains required. For a documentary planning or release gate with no independent executable scenario, a WBS task may carry `Traceability exception: authority-only — <record-specific rationale>` in its declaration body. This exempts only the outgoing ATP association; its incoming SRS mapping remains required. Use exactly one well-formed field on the correct definition and explain the alternative authority or retained documentary checks. The auditor rejects malformed, empty, duplicated, or wrong-kind exceptions. Neither classification waives the underlying contract, delivery checks, applicable ATPs, revision-scoped evidence, or release approval; never use one merely to silence a missing real link.
+
 ## Minimal connected example
 
 These are neutral **syntax examples**, not business requirements to copy into a real suite. All four IDs are exact and unique. Production bodies must describe the approved domain.
