@@ -221,7 +221,7 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "38da95914b45ac9b52e2fb02806c1a50e47b119565a49acaa6e4bcdc58dac9ec",
+      "sha256": "f4051409e04e5557a3d45415b8111e6a70b7bfa013b52ee75553ace29d28531c",
       "source": "skills/cabloy-spec-generation/references/canonical-spec-input.md",
       "target": ".agents/skills/cabloy-spec-generation/references/canonical-spec-input.md"
     },
@@ -235,14 +235,14 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "02615a53188fc116e5ea72e117b65cfab44407da57090caff8d69fd17575cdc5",
+      "sha256": "17aaee04e0db0bce9b09d72eb55181d062b0024974ed72014681be1c8490a6a1",
       "source": "skills/cabloy-spec-generation/references/repo-specs-document-set.md",
       "target": ".agents/skills/cabloy-spec-generation/references/repo-specs-document-set.md"
     },
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "fe77a383c64f5b36054d6089e5b4b4bce53d2a5dc22e5055d81d0c40d5591221",
+      "sha256": "4174bef895433d6bdfd6238c6a90391e825e1dce90194cfd47bd6aa2d7a02494",
       "source": "skills/cabloy-spec-generation/references/traceability-and-status-rules.md",
       "target": ".agents/skills/cabloy-spec-generation/references/traceability-and-status-rules.md"
     },
@@ -557,7 +557,7 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "38da95914b45ac9b52e2fb02806c1a50e47b119565a49acaa6e4bcdc58dac9ec",
+      "sha256": "f4051409e04e5557a3d45415b8111e6a70b7bfa013b52ee75553ace29d28531c",
       "source": "skills/cabloy-spec-generation/references/canonical-spec-input.md",
       "target": ".claude/skills/cabloy-spec-generation/references/canonical-spec-input.md"
     },
@@ -571,14 +571,14 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "02615a53188fc116e5ea72e117b65cfab44407da57090caff8d69fd17575cdc5",
+      "sha256": "17aaee04e0db0bce9b09d72eb55181d062b0024974ed72014681be1c8490a6a1",
       "source": "skills/cabloy-spec-generation/references/repo-specs-document-set.md",
       "target": ".claude/skills/cabloy-spec-generation/references/repo-specs-document-set.md"
     },
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "fe77a383c64f5b36054d6089e5b4b4bce53d2a5dc22e5055d81d0c40d5591221",
+      "sha256": "4174bef895433d6bdfd6238c6a90391e825e1dce90194cfd47bd6aa2d7a02494",
       "source": "skills/cabloy-spec-generation/references/traceability-and-status-rules.md",
       "target": ".claude/skills/cabloy-spec-generation/references/traceability-and-status-rules.md"
     },
@@ -907,7 +907,7 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "38da95914b45ac9b52e2fb02806c1a50e47b119565a49acaa6e4bcdc58dac9ec",
+      "sha256": "f4051409e04e5557a3d45415b8111e6a70b7bfa013b52ee75553ace29d28531c",
       "source": "skills/cabloy-spec-generation/references/canonical-spec-input.md",
       "target": ".cursor/skills/cabloy-spec-generation/references/canonical-spec-input.md"
     },
@@ -921,14 +921,14 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "02615a53188fc116e5ea72e117b65cfab44407da57090caff8d69fd17575cdc5",
+      "sha256": "17aaee04e0db0bce9b09d72eb55181d062b0024974ed72014681be1c8490a6a1",
       "source": "skills/cabloy-spec-generation/references/repo-specs-document-set.md",
       "target": ".cursor/skills/cabloy-spec-generation/references/repo-specs-document-set.md"
     },
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "fe77a383c64f5b36054d6089e5b4b4bce53d2a5dc22e5055d81d0c40d5591221",
+      "sha256": "4174bef895433d6bdfd6238c6a90391e825e1dce90194cfd47bd6aa2d7a02494",
       "source": "skills/cabloy-spec-generation/references/traceability-and-status-rules.md",
       "target": ".cursor/skills/cabloy-spec-generation/references/traceability-and-status-rules.md"
     },
