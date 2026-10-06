@@ -57,6 +57,234 @@ test('complete baseline checks exact traceability without treating a Proposed AD
   assert.match(result.limitations, /approval.*evidence authenticity/);
 });
 
+const PLANNING_GATE = {
+  ...BASELINE,
+  'srs.md': BASELINE['srs.md'].replace(', `WBS-DEMO-10-01`', ''),
+  'test-plan.md': BASELINE['test-plan.md'].replace('Traceability: `WBS-DEMO-10-01`', ''),
+  'pdp-wbs.md':
+    '# Delivery\n\n### Phase 10: Baseline\n\nDependencies: none.\n\n#### WBS-DEMO-10-01: Review planning baseline\n\nTraceability mode: planning-baseline-review\n\nReview authority: [ADR](./decisions/0001-boundary.md).\n\nTasks:\n\n- Reconcile the whole requirements, contracts, work and acceptance catalogue.\n\nAcceptance checks:\n\n- Confirm the boundary ADR was accepted by its decision owner.\n',
+  'decisions/0001-boundary.md':
+    '# Boundary\n\n## Status\n\nAccepted.\n\n## Decision\n\nAccept the planning boundary.\n',
+};
+
+test('explicit planning-baseline gate omits only its WBS adjacency checks', async t => {
+  const result = await auditPlanning(await fixture(t, PLANNING_GATE));
+  assert.deepEqual(
+    result.diagnostics.map(diagnostic => [diagnostic.id, diagnostic.code]),
+    [
+      ['SRS-DEMO-01', 'traceability-outgoing'],
+      ['ATP-DEMO-01', 'traceability-incoming'],
+    ],
+  );
+  assert.equal(result.ok, false);
+});
+
+test('a planning gate coexists with a fully connected product chain', async t => {
+  const records = {
+    ...BASELINE,
+    'pdp-wbs.md': `${PLANNING_GATE['pdp-wbs.md']}\n#### WBS-DEMO-10-02: Implement contract\n\nTraceability: \`SRS-DEMO-01\`, \`ATP-DEMO-01\`.\n`,
+    'srs.md': BASELINE['srs.md'].replace('WBS-DEMO-10-01', 'WBS-DEMO-10-02'),
+    'test-plan.md': BASELINE['test-plan.md'].replace('WBS-DEMO-10-01', 'WBS-DEMO-10-02'),
+    'progress.md': `${BASELINE['progress.md']}| WBS-DEMO-10-02 | Implement contract | not-started |\n`,
+    'decisions/0001-boundary.md': PLANNING_GATE['decisions/0001-boundary.md'],
+  };
+  const result = await auditPlanning(await fixture(t, records));
+  assert.deepEqual(result.diagnostics, []);
+  assert.equal(result.ok, true);
+});
+
+test('planning review accepts existing and legacy accepted ADR status formats', async t => {
+  for (const status of [
+    '## Status\n\nAccepted.\n',
+    '## Status\n\nAccepted\n',
+    '- **Status:** Accepted\n',
+  ]) {
+    await t.test(status.trim().replace(/\n/g, ' '), async subtest => {
+      const records = {
+        ...PLANNING_GATE,
+        'decisions/0001-boundary.md': `# Boundary\n\n${status}`,
+      };
+      const result = await auditPlanning(await fixture(subtest, records));
+      assert.ok(!codes(result).includes('traceability-mode'), JSON.stringify(result.diagnostics));
+    });
+  }
+});
+
+test('baseline review prose may refer to the work catalogue without doing delivery work', async t => {
+  const records = {
+    ...PLANNING_GATE,
+    'pdp-wbs.md': PLANNING_GATE['pdp-wbs.md'].replace(
+      '- Reconcile the whole requirements, contracts, work and acceptance catalogue.',
+      '- Review the implementation plan, build risks and migration strategy as planning inputs.',
+    ),
+  };
+  const result = await auditPlanning(await fixture(t, records));
+  assert.ok(!codes(result).includes('traceability-mode'), JSON.stringify(result.diagnostics));
+});
+
+test('baseline classification must be declared inside a bounded Phase 10 WBS task', async t => {
+  const cases = [
+    [
+      'unknown',
+      { 'pdp-wbs.md': PLANNING_GATE['pdp-wbs.md'].replace('planning-baseline-review', 'skip') },
+    ],
+    [
+      'duplicate',
+      {
+        'pdp-wbs.md': PLANNING_GATE['pdp-wbs.md'].replace(
+          'Tasks:',
+          'Traceability mode: planning-baseline-review\n\nTasks:',
+        ),
+      },
+    ],
+    ['wrong phase', { 'pdp-wbs.md': PLANNING_GATE['pdp-wbs.md'].replace('Phase 10', 'Phase 20') }],
+    ['no tasks', { 'pdp-wbs.md': PLANNING_GATE['pdp-wbs.md'].replace('Tasks:', 'Work:') }],
+    [
+      'no checks',
+      { 'pdp-wbs.md': PLANNING_GATE['pdp-wbs.md'].replace('Acceptance checks:', 'Proof:') },
+    ],
+    [
+      'mixed scope',
+      {
+        'pdp-wbs.md': `${PLANNING_GATE['pdp-wbs.md']}\n- Implement SRS-DEMO-01 through ATP-DEMO-01.\n`,
+      },
+    ],
+    [
+      'no authority',
+      { 'pdp-wbs.md': PLANNING_GATE['pdp-wbs.md'].replace('Review authority:', 'Reviewer:') },
+    ],
+    [
+      'unaccepted authority',
+      {
+        'decisions/0001-boundary.md': PLANNING_GATE['decisions/0001-boundary.md'].replace(
+          'Accepted.',
+          'Proposed.',
+        ),
+      },
+    ],
+    [
+      'implementation in title',
+      {
+        'pdp-wbs.md': PLANNING_GATE['pdp-wbs.md'].replace(
+          'Review planning baseline',
+          'Review baseline and implement SRS-DEMO-01',
+        ),
+      },
+    ],
+    [
+      'release task',
+      {
+        'pdp-wbs.md': PLANNING_GATE['pdp-wbs.md'].replace(
+          '- Reconcile the whole requirements, contracts, work and acceptance catalogue.',
+          '- Review the baseline and release the feature.',
+        ),
+      },
+    ],
+    [
+      'implementation task',
+      {
+        'pdp-wbs.md': PLANNING_GATE['pdp-wbs.md'].replace(
+          '- Reconcile the whole requirements, contracts, work and acceptance catalogue.',
+          '- Review the baseline and implement the feature.',
+        ),
+      },
+    ],
+    [
+      'implementation acceptance check',
+      {
+        'pdp-wbs.md': PLANNING_GATE['pdp-wbs.md'].replace(
+          '- Confirm the boundary ADR was accepted by its decision owner.',
+          '- Confirm the boundary ADR was accepted and deploy the feature.',
+        ),
+      },
+    ],
+    ...['Build the checkout backend.', 'Create a service.', 'Run a migration.'].map(instruction => [
+      instruction,
+      {
+        'pdp-wbs.md': PLANNING_GATE['pdp-wbs.md'].replace(
+          '- Reconcile the whole requirements, contracts, work and acceptance catalogue.',
+          `- ${instruction}`,
+        ),
+      },
+    ]),
+    [
+      'unmapped contract in title',
+      {
+        'pdp-wbs.md': PLANNING_GATE['pdp-wbs.md'].replace(
+          'Review planning baseline',
+          'Review planning baseline for SRS-DEMO-01',
+        ),
+      },
+    ],
+    [
+      'contradictory ADR statuses',
+      {
+        'decisions/0001-boundary.md': '## Status\n\nAccepted.\n\n- **Status:** Proposed\n',
+      },
+    ],
+    [
+      'ADR status inside unrelated section',
+      {
+        'decisions/0001-boundary.md': '# Boundary\n\n## Background\n\n- **Status:** Accepted\n',
+      },
+    ],
+    ['mapped from SRS', { 'srs.md': BASELINE['srs.md'] }],
+    ['mapped to ATP', { 'test-plan.md': BASELINE['test-plan.md'] }],
+    [
+      'misplaced',
+      {
+        'README.md': `${PLANNING_GATE['README.md']}\nTraceability mode: planning-baseline-review\n`,
+      },
+    ],
+    [
+      'competing exception',
+      {
+        'pdp-wbs.md': PLANNING_GATE['pdp-wbs.md'].replace(
+          'Tasks:',
+          'Traceability exception: authority-only — Review the whole baseline.\n\nTasks:',
+        ),
+      },
+    ],
+  ];
+  for (const [name, changed] of cases) {
+    await t.test(name, async subtest => {
+      const result = await auditPlanning(await fixture(subtest, { ...PLANNING_GATE, ...changed }));
+      assert.ok(codes(result).includes('traceability-mode'), JSON.stringify(result.diagnostics));
+      if (name !== 'misplaced' && name !== 'mapped from SRS') {
+        assert.ok(
+          result.diagnostics.some(
+            diagnostic =>
+              diagnostic.id === 'WBS-DEMO-10-01' && diagnostic.code === 'traceability-incoming',
+          ),
+        );
+      }
+      if (name !== 'misplaced' && name !== 'mapped to ATP' && name !== 'competing exception') {
+        assert.ok(
+          result.diagnostics.some(
+            diagnostic =>
+              diagnostic.id === 'WBS-DEMO-10-01' && diagnostic.code === 'traceability-outgoing',
+          ),
+        );
+      }
+    });
+  }
+});
+
+test('ordinary unmapped WBS retains its adjacency diagnostics beside a planning gate', async t => {
+  const records = {
+    ...PLANNING_GATE,
+    'pdp-wbs.md': `${PLANNING_GATE['pdp-wbs.md']}\n#### WBS-DEMO-10-02: Implement item\n\nTasks:\n\n- Implement the item.\n`,
+    'progress.md': `${PLANNING_GATE['progress.md']}| WBS-DEMO-10-02 | Implement item | not-started |\n`,
+  };
+  const result = await auditPlanning(await fixture(t, records));
+  assert.deepEqual(
+    result.diagnostics
+      .filter(diagnostic => diagnostic.id === 'WBS-DEMO-10-02')
+      .map(diagnostic => diagnostic.code),
+    ['traceability-incoming', 'traceability-outgoing'],
+  );
+});
+
 test('canonical atomic bullets carry their own inline traceability', async t => {
   const records = {
     ...BASELINE,

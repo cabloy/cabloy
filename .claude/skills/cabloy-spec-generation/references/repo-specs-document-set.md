@@ -137,10 +137,10 @@ Every WBS entry should state:
 - primary source areas or ownership boundaries;
 - bounded tasks;
 - acceptance/completion checks;
-- linked PRD, SRS, and ATP identifiers where a real adjacent-authority association exists; a genuine documentary planning/release gate without an independent ATP uses the explicit `authority-only` classification and retains its SRS association and review evidence as specified in `canonical-spec-input.md`;
+- linked PRD, SRS, and ATP identifiers where a real adjacent-authority association exists; a genuine documentary planning/release gate without an independent ATP uses the explicit `authority-only` classification and retains its SRS association and review evidence as specified in `canonical-spec-input.md`. A whole-baseline planning review with neither a specific SRS nor a formal ATP instead uses `planning-baseline-review` and an accepted local ADR review authority as specified in `traceability-and-status-rules.md`;
 - whether it is planned, implemented, or awaiting evidence.
 
-Begin with a documentation/decision implementation gate before feature work. For differing Web/Admin strategies, split shared-site integration and independent-site delivery into separate frontend tasks when their source facts, dependencies, or proof differ. An unresolved strategy or exact runtime identifier may block only the affected implementation task; preserve runnable discovery work and unaffected backend or audience work as accurately actionable. Prefer vertical, verifiable increments. Include migration and release hardening as explicit work. Keep `implementation-complete` distinct from `verified`.
+Begin with a documentation/decision implementation gate before feature work. A planning-baseline review gate does not execute an ATP or acquire `verified` status from its audit classification. For differing Web/Admin strategies, split shared-site integration and independent-site delivery into separate frontend tasks when their source facts, dependencies, or proof differ. An unresolved strategy or exact runtime identifier may block only the affected implementation task; preserve runnable discovery work and unaffected backend or audience work as accurately actionable. Prefer vertical, verifiable increments. Include migration and release hardening as explicit work. Keep `implementation-complete` distinct from `verified`.
 
 ## Test-plan template contract
 

@@ -160,6 +160,116 @@ function collectMappings(records, definitions) {
   return edges;
 }
 
+function acceptedDecision(markdown) {
+  if (!markdown) return false;
+  const lines = markdownLines(markdown);
+  const statuses = [];
+  let section = null;
+  for (const [index, { text, heading }] of lines.entries()) {
+    if (heading?.level === 2) section = heading.text;
+    const field = text.match(/^\s*-\s*\*\*Status:\*\*/i);
+    if (field && (section === null || /^Status$/i.test(section)))
+      statuses.push(text.slice(field[0].length).trim());
+    if (!heading || !/^Status$/i.test(heading.text)) continue;
+    const value = lines.slice(index + 1).find(record => {
+      if (record.heading && record.heading.level <= heading.level) return true;
+      return record.text.trim();
+    });
+    if (value && !(value.heading && value.heading.level <= heading.level))
+      statuses.push(value.text.trim());
+  }
+  return statuses.length > 0 && statuses.every(status => /^Accepted\.?$/i.test(status));
+}
+
+function planningBaselineGates(records, wbs, edges, exceptions, report) {
+  const gates = new Set();
+  const field = /^\s*(?:-\s*)?(?:\*\*)?Traceability mode(?:\*\*)?\s*:/i;
+  const declarations = new Map();
+  for (const [file, markdown] of records) {
+    for (const { text, line } of markdownLines(markdown)) {
+      if (!field.test(text)) continue;
+      const task =
+        file === 'pdp-wbs.md'
+          ? wbs?.tasks.find(candidate => candidate.line < line && candidate.endLine >= line)
+          : null;
+      if (!task) {
+        report(
+          'traceability-mode',
+          file,
+          line,
+          'Traceability mode must be declared inside a WBS task.',
+        );
+        continue;
+      }
+      if (!declarations.has(task.id)) declarations.set(task.id, []);
+      declarations.get(task.id).push({ text, line });
+    }
+  }
+  for (const task of wbs?.tasks ?? []) {
+    const declared = declarations.get(task.id);
+    if (!declared) continue;
+    const [{ text, line }] = declared;
+    const mode = text.replace(field, '').trim().replace(/`/g, '');
+    const body = markdownLines(task.body).map(record => record.text);
+    const deliveryAction =
+      /(?:^|[,;]\s*|\b(?:and|then|to)\s+)(?:implement|deploy|migrate|release|regenerate|develop|ship|code|build\b(?!\s+risks?\b)|create|run\s+(?:an?\s+)?(?:migrations?|tests?|ATP-|scenarios?)|execute\s+(?:an?\s+)?(?:ATP-|tests?|scenarios?))\b/i;
+    const mixedScope =
+      deliveryAction.test(task.title) ||
+      body.some(value => {
+        const bullet = value.match(/^\s*[-*]\s+(.*)/);
+        return bullet && deliveryAction.test(bullet[1].replace(/^\*\*[^*]+\*\*\s*/, ''));
+      });
+    const hasItems = label =>
+      body.some((value, index) => {
+        if (value.trim().toLowerCase() !== `${label}:`) return false;
+        const next = body.slice(index + 1).find(line => line.trim());
+        return Boolean(next?.trim().match(/^[-*] \S/));
+      });
+    const authorities = body.flatMap(value => {
+      const match = value.match(/^\s*(?:-\s*)?(?:\*\*)?Review authority(?:\*\*)?\s*:/i);
+      return match ? [value.replace(match[0], '').trim()] : [];
+    });
+    const authority = authorities[0]?.match(
+      /^\[([^\]]+)\]\((\.\/decisions\/[^/()]+\.md)\)(?:\s*\([^\n]*\))?\s*\.?$/,
+    );
+    const adr = authority?.[2].slice(2);
+    const decision = adr && records.get(adr);
+    const mappedIncoming = [...edges].some(
+      ([id, targets]) => id.startsWith('SRS-') && targets.has(task.id),
+    );
+    const valid =
+      declared.length === 1 &&
+      mode === 'planning-baseline-review' &&
+      task.phase.number === '10' &&
+      /\b(?:review|freeze)\b/i.test(task.title) &&
+      /\bbaseline\b/i.test(task.title) &&
+      hasItems('tasks') &&
+      hasItems('acceptance checks') &&
+      !mixedScope &&
+      !findIdentifiers(task.title, 'SRS-').length &&
+      !findIdentifiers(task.title, 'ATP-').length &&
+      !findIdentifiers(task.body, 'SRS-').length &&
+      !findIdentifiers(task.body, 'ATP-').length &&
+      !mappedIncoming &&
+      !edges.get(task.id)?.size &&
+      !exceptions.has(task.id) &&
+      authorities.length === 1 &&
+      acceptedDecision(decision);
+    if (!valid) {
+      report(
+        'traceability-mode',
+        'pdp-wbs.md',
+        line,
+        'Planning-baseline review requires one valid mode, Phase 10 baseline review, substantive review-only Tasks and Acceptance checks, no individual SRS/ATP mapping or other traceability exception, and one accepted local ADR review authority.',
+        task.id,
+      );
+      continue;
+    }
+    gates.add(task.id);
+  }
+  return gates;
+}
+
 function headingIds(markdown) {
   const slugs = new Set();
   const counts = new Map();
@@ -398,9 +508,10 @@ export async function auditPlanning(
   }
   if (!lightweight) {
     const edges = collectMappings(records, definitions);
+    const gates = planningBaselineGates(records, wbs, edges, exceptions, report);
     const incoming = new Set([...edges.values()].flatMap(values => [...values]));
     for (const [id, definition] of definitions) {
-      if (definition.status === 'deferred' || definition.deferred) continue;
+      if (definition.status === 'deferred' || definition.deferred || gates.has(id)) continue;
       if (!id.startsWith('PRD-') && !incoming.has(id) && exceptions.get(id) !== 'technical-only') {
         report(
           'traceability-incoming',
