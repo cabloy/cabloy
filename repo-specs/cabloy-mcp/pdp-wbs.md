@@ -140,20 +140,22 @@ Traceability: `PRD-MCP-CONTRACT-01`, `PRD-MCP-CONTRACT-02`, `SRS-MCP-CATALOG-01`
 
 Dependencies: `WBS-MCP-20-01`.
 
-Source areas: existing OpenAPI generator/DTO metadata; proposed MCP decorator/metadata library; proposed catalog builder and registry.
+Source areas: existing OpenAPI generator/DTO metadata and enabled controller/router registrations; proposed MCP annotation or authored-manifest contract; proposed catalog builder and registry. [ADR 0005](./decisions/0005-mcp-tool-catalog-registry.md) is a Proposed input, not DEC-MCP-05 approval or source authorization.
 
 Tasks:
 
-- Collect OpenAPI JSON internally and correlate operations to controller metadata and fixed route identities.
-- Add independent MCP exclusion and metadata mechanisms, including stable name, description, risk, confirmation, idempotency, and adapter declarations.
-- Define deterministic naming, collision detection, schema revision/freshness, hard `@Api.exclude()` behavior, and registry output.
-- Keep candidate, eligible, enabled, visible, and call-authorized states distinct.
+- Collect versioned OpenAPI JSON internally and prove a unique enabled controller/action/request-mapping match for each candidate; validate DTO reference and response-envelope projection without treating OpenAPI presence as an allowlist.
+- Choose independent MCP exclusion and annotation or manifest ownership without cyclic dependencies; require reviewed explicit public tool names, safe descriptions, metadata/risk signals, and adapter declarations before inclusion.
+- Define deterministic diagnostic identity and stable public naming, collision/rename handling, schema revision/freshness, hard `@Api.exclude()` behavior, startup validation, and atomic in-memory registry snapshot without new MCP persistence.
+- Separate structural registry refresh from deployment policy, per-subject `tools/list`, and call-time authorization; settle locale, cache, cursor, HMR/restart, and multi-worker drift behavior against the selected protocol.
+- Keep candidate, eligible, enabled, visible, and call-authorized states distinct; DEC-MCP-06 still owns the final shape/risk/confirmation approval.
 
 Acceptance checks:
 
-- DTO/OpenAPI schema changes flow into the candidate contract without hand-editing generated consumers.
-- MCP exclusion can hide an operation while OpenAPI remains available; an upstream API exclusion cannot be reintroduced.
-- Duplicate names, stale entries, unsupported references, and missing operation ownership fail closed and are visible to operators.
+- DTO/OpenAPI schema changes flow into the candidate contract without hand-editing generated consumers; enabled router identity, emitted operation, schema and registry snapshot agree at the serving revision.
+- MCP exclusion can hide an operation while OpenAPI remains available; an upstream API exclusion cannot be reintroduced, and unannotated/unreviewed operations are not enabled.
+- Duplicate public names, stale entries/caches, unsupported references, missing operation ownership, worker mismatch, and metadata-policy conflicts fail closed and are visible to operators.
+- A per-subject list/cursor neither leaks another subject's tools nor authorizes a later call after policy/role/registry changes; ordinary non-MCP OpenAPI/API behavior is unchanged.
 
 #### WBS-MCP-30-02: Classify tool shapes, risk, and authorization policy
 
@@ -161,19 +163,21 @@ Traceability: `PRD-MCP-ACCESS-02`, `PRD-MCP-CONTRACT-03`, `PRD-MCP-IDENTITY-03`,
 
 Dependencies: `WBS-MCP-30-01`.
 
-Source areas: candidate catalog; existing controller guards/RBAC/data-scope conventions; deployment policy configuration.
+Source areas: candidate catalog; existing controller guards/RBAC/data-scope conventions; Vona executor result/serializer behavior; deployment policy configuration. [ADR 0006](./decisions/0006-mcp-tool-eligibility-risk-results.md) is a Proposed DEC-MCP-06 input, not approval of a risk exception or any first tool.
 
 Tasks:
 
-- Classify read-only, mutating, destructive, irreversible, idempotent, sensitive, and confirmation-required behavior independently of HTTP method.
-- Exclude or require explicit adapters for multipart, raw body, binary, redirect, streaming, unsupported statuses/envelopes, arbitrary URL inputs, callbacks, and unclassified side effects.
-- Define the intersection of OAuth scopes, deployment policy, local Passport/RBAC, data scope, resource ownership, and risk/confirmation rules for list and call.
+- Obtain a per-action domain-owner/operator review of shape, guarded route/data scope, input/output field projection, side effects, reversibility, idempotency, sensitivity, and external interactions independently of HTTP method; require explicit allowlist/policy/scope ownership before eligibility.
+- Exclude or require separately reviewed adapters for multipart, raw body, binary, redirect, streaming, unsupported statuses/envelopes, arbitrary URL inputs, callbacks, and unclassified side effects. Review current executor 200-status/unwrapped-result behavior and the gap between OpenAPI response schema and serializer/runtime output.
+- Define the intersection of OAuth scopes, deployment policy, local Passport/RBAC, data scope, resource ownership, and risk/confirmation rules for list and call. Disable destructive/irreversible/open-world operations by default and any confirmation-required mutation without a separately approved server-verifiable, replay-safe grant; do not use a caller-provided boolean or tool annotation as approval.
+- Specify the reviewed JSON result allowlist and runtime validation, `structuredContent`/optional `outputSchema`/compatibility text, supported empty/null/scalar forms, and bounded nondiagnostic post-execution failures without presuming a committed effect was rolled back. Set numerical limits, context/retry mechanics, and audit ownership through DEC-MCP-07/08, not this classification alone.
 
 Acceptance checks:
 
-- A GET with business side effects is not classified read-only by method alone.
-- `tools/list` hides disallowed tools and `tools/call` repeats all relevant authorization checks.
-- The first catalog contains only representations and operations with a documented safe MCP adapter.
+- A GET with business side effects is not classified read-only by method alone; unreviewed, deceptive-hint, externally irreversible, and unsupported operations cannot enter the enabled set by OpenAPI presence or deployment opt-in alone.
+- `tools/list` hides disallowed tools and `tools/call` repeats relevant current authorization and argument-specific row checks; a listed operation is not a row-level grant.
+- The first approved catalog contains only representations and operations with a documented safe MCP adapter, approved domain/field/side-effect review, and deployment policy; no tool is asserted to be approved by this ADR.
+- Execution and result tests prove field minimization and schema conformity for each enabled shape, reject unapproved response fields/unsupported status without raw fallback, and distinguish downstream effect from result delivery after post-execution failure.
 
 ### Phase 40: Guarded dispatch and isolation
 
@@ -191,7 +195,7 @@ Tasks:
 
 - Resolve only server-owned tool names and map validated arguments to declared method/path/params/query/body fields.
 - Invoke the executor with `innerAccess: false`, server-controlled headers/options, bounded timeout, and no caller-controlled onions/state/authToken.
-- Adapt supported Cabloy success envelopes and JSON results to MCP tool results; classify unsupported statuses/shapes and downstream failures safely.
+- Adapt only explicitly reviewed Cabloy 200-status executor/unwrapped results to a minimized, runtime-validated MCP JSON value; check optional output-schema/structured-content and compatibility-text consistency, and classify unsupported statuses/shapes and post-execution failures safely.
 - Reject unknown tools, unknown/dangerous fields, route-like arguments, and caller-supplied authorization/host/cookie/tenant controls.
 
 Acceptance checks:
@@ -301,3 +305,5 @@ Acceptance checks:
 - [A-MCP progress](./progress.md)
 - [A-MCP ADR 0001](./decisions/0001-mcp-suite-boundaries.md)
 - [A-MCP ADR 0004 (proposed)](./decisions/0004-mcp-host-instance-binding.md)
+- [A-MCP ADR 0005 (proposed)](./decisions/0005-mcp-tool-catalog-registry.md)
+- [A-MCP ADR 0006 (proposed)](./decisions/0006-mcp-tool-eligibility-risk-results.md)

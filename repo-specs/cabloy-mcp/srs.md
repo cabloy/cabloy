@@ -94,7 +94,7 @@ A broader OAuth scope cannot elevate local authority. A local administrator role
 
 Traceability: `PRD-MCP-ACCESS-02`, `PRD-MCP-IDENTITY-03`, `WBS-MCP-30-02`, `WBS-MCP-40-01`, `ATP-MCP-AUTH-02`, `ATP-MCP-CALL-01`.
 
-The result of `tools/list` is advisory visibility, not a capability token. `tools/call` repeats token, instance, subject, tool-policy, scope, RBAC, data-scope, and operation-risk checks immediately before dispatch. Argument values are validated against the published schema and any server-side resource policy; an argument cannot choose a different user, tenant, host, route, method, or authorization context.
+The result of `tools/list` is advisory visibility, not a capability token. `tools/call` repeats token, instance, subject, tool-policy, scope, RBAC, data-scope, and operation-risk checks immediately before dispatch. Argument values are validated against the published schema and any server-side resource policy; an argument cannot choose a different user, tenant, host, route, method, or authorization context. If visibility depends on an argument-specific row, listing may indicate only that a subject can attempt the operation; actual row ownership remains the guarded domain operation's decision. A confirmation-required operation remains unavailable without the separately approved server-verifiable grant described by the proposed ADR 0006, not a caller-provided flag.
 
 ### SRS-MCP-INSTANCE-01: Trusted endpoint-host binding
 
@@ -122,7 +122,7 @@ Tool schemas and results expose only fields required by the existing approved co
 
 Traceability: `PRD-MCP-CONTRACT-01`, `WBS-MCP-30-01`, `ATP-MCP-CONTRACT-01`.
 
-The catalog builder may call the existing internal OpenAPI generation service and inspect the associated controller/DTO metadata. It must preserve the generated input schema as the contract source or record a deterministic, reviewable transformation. It must distinguish at least:
+The catalog builder may call the existing internal OpenAPI generation service and inspect the associated controller/DTO metadata. It must preserve the generated input schema as the contract source or record a deterministic, reviewable transformation. [ADR 0005](./decisions/0005-mcp-tool-catalog-registry.md) proposes a one-to-one match between an enabled registered controller/action and request mapping, the emitted operation, and independent MCP metadata; a single-action OpenAPI document alone does not prove router enablement. Proposed schema projection must explicitly normalize or reject unresolved `$ref`, framework extensions, unconstrained fields, response-envelope differences, and incompatible runtime serialization. This proposal does not accept DEC-MCP-05 or make OpenAPI an exposure allowlist. The catalog must distinguish at least:
 
 - registered HTTP route;
 - OpenAPI operation;
@@ -146,23 +146,25 @@ The design must provide an independent MCP metadata mechanism, modeled in style 
 - input/output adaptation identifiers where schema translation is required;
 - required OAuth scope and deployment-policy metadata where appropriate.
 
-`@Api.exclude()` remains a hard upstream exclusion: an operation excluded from OpenAPI cannot be reintroduced by MCP discovery. Exact decorator names, metadata symbols, merge order, and module ownership are `TODO(confirm)` until design approval. Metadata must not weaken controller authorization.
+`@Api.exclude()` remains a hard upstream exclusion: an operation excluded from OpenAPI cannot be reintroduced by MCP discovery. ADR 0005 proposes separate MCP controller/action exclusion, explicitly reviewed action inclusion, and an independent authored deployment allowlist; unannotated or unapproved operations remain disabled. If a gateway-owned decorator would create business-module dependency cycles, prefer an authored manifest or neutral metadata owner. Exact decorator names, metadata symbols, merge order, dependency direction, and first operation owners are `TODO(confirm)` until design approval. Metadata must not weaken controller authorization; presentation strings and annotations are never policy proof.
 
 ### SRS-MCP-CATALOG-03: Eligibility and risk classification
 
 Traceability: `PRD-MCP-CONTRACT-03`, `PRD-MCP-SAFETY-03`, `WBS-MCP-30-02`, `ATP-MCP-CONTRACT-03`.
 
-The default candidate policy is conservative. An operation is not automatically exposed merely because it appears in Swagger/OpenAPI. The eligibility classifier must account for method-independent side effects, authorization annotations, input content type, response content type, status behavior, streaming/redirect behavior, path/query/header bindings, idempotency, and data sensitivity.
+The default candidate policy is conservative. An operation is not automatically exposed merely because it appears in Swagger/OpenAPI. [ADR 0006](./decisions/0006-mcp-tool-eligibility-risk-results.md) proposes a review by the owning domain and MCP operator of the enabled action, DTO/OpenAPI-to-runtime input/output shape, guard and row/data scope, side effects, field minimization, and a narrow deployment policy. This remains an unaccepted DEC-MCP-06 input, not approval of a tool. Reviewed read-oriented operations and individually approved bounded reversible mutations may become eligible; destructive, externally irreversible, callback/open-world, and unclassified operations remain disabled by default. A GET with business side effects is a mutation, and MCP read-only/destructive/idempotency hints are not safety or authorization proof. The first enabled allowlist and per-tool scope/risk classification remain `TODO(confirm)`.
 
-The first increment excludes or requires explicit reviewed adapters for multipart/form-data, raw bodies, binary/file downloads, redirect responses, streaming/SSE, non-JSON success payloads, unsupported status envelopes, ambiguous operation IDs, arbitrary URL/host inputs, callbacks/webhooks, and operations whose destructive or externally irreversible effects are not explicitly classified. GET is not a read-only guarantee.
+Eligibility requires a JSON object-root input schema with deterministic declared path/query/body bindings, plus a reviewed output projection/schema checked against the actual JSON result after executor adaptation. Reject unknown/control fields before dispatch and unreviewed result fields before external release. Supported JSON objects, arrays, scalars, and null require per-tool semantics; if `outputSchema` is published, emitted `structuredContent` must conform. Any compatibility JSON text block must derive from the same filtered value. The first increment excludes multipart/form-data, raw bodies, binary/file downloads, redirect responses, streaming/SSE, non-JSON success payloads, unsupported statuses/envelopes, arbitrary URL/host inputs, callbacks/webhooks, and unclassified/destructive effects unless a separate reviewed decision admits an adapter or risk exception. Response limits and operational redaction remain DEC-MCP-08 gates.
+
+A client `confirm` argument, risk hint, or previous list entry is not a trusted approval. Any per-call-confirmation-required mutation remains disabled until the subject/client/instance/tool/arguments are bound to an independently approved, replay-safe, server-verifiable confirmation channel; client-side prompts and optional MCP elicitation do not automatically provide one. Explicitly reviewed reversible mutations without that requirement still need current OAuth scope, deployment policy, local authorization and domain ownership, plus audit. The confirmation mechanism and actual tool list remain `TODO(confirm)`; this proposal creates no MCP-owned consent database or UI.
 
 ### SRS-MCP-CATALOG-04: Stable server-owned tool registry
 
 Traceability: `PRD-MCP-CONTRACT-02`, `PRD-MCP-ACCESS-02`, `WBS-MCP-30-01`, `ATP-MCP-CONTRACT-02`.
 
-Every exposed tool has a deterministic unique name, one fixed HTTP method/path/controller operation, one schema version, one adapter policy, and one risk/policy record. Tool names cannot be supplied by the caller to resolve arbitrary routes. Collisions, stale generated entries, missing owners, or registry/schema drift fail the catalog build or remove the affected tool rather than selecting a nondeterministic winner.
+Every exposed tool has a reviewed explicit public name independent of its internal bean/action key, one fixed HTTP method/path/controller operation, one schema version, one adapter policy, and one risk/policy record. Tool names supplied by the caller resolve only a validated server-owned entry, never arbitrary routes. A deterministic diagnostic key may identify unapproved candidates, but refactoring that key cannot silently rename an enabled public tool. Collisions, stale generated entries, missing owners, or registry/schema drift fail closed rather than selecting a nondeterministic winner.
 
-The registry may be generated from source metadata, but runtime calls use the server-owned result and verify its revision/freshness policy. The accepted first increment does not persist an MCP-owned registry; its exact generated/in-memory lifecycle is `TODO(confirm)`. A persisted registry requires a separate decision and the fileVersion gate.
+ADR 0005 proposes an atomic in-memory structural snapshot validated after controller registration and before MCP admission, with explicit cache invalidation/rebuild or restart and per-worker revision checks. Subject-specific `tools/list` remains a current authorization projection rather than part of the immutable registry; a list or pagination cursor never grants `tools/call` authority. For the proposed 2026-07-28 protocol, completed list responses require `resultType`, `ttlMs`, and `cacheScope`, with private scope for a subject-specific list; final wire behavior awaits DEC-MCP-02 acceptance. The accepted first increment does not persist an MCP-owned registry. Exact metadata integration, snapshot lifecycle, policy freshness, and first allowlist remain `TODO(confirm)` under DEC-MCP-05; a persisted registry requires a separate decision and the fileVersion gate.
 
 ## MCP Transport and Protocol Contracts
 
@@ -194,7 +196,7 @@ Traceability: `PRD-MCP-ACCESS-03`, `PRD-MCP-SAFETY-01`, `WBS-MCP-40-01`, `ATP-MC
 
 For each registry entry, the adapter maps MCP arguments to the known controller path/method/body/query/params shape and invokes the existing executor path with `innerAccess: false`. It must preserve the selected controller guard/AOP chain and must not use trusted inner access. The server owns all executor options, including method, URL, headers, body, instance, auth context, and middleware behavior.
 
-The adapter must account for executor behavior that unwraps successful Cabloy response envelopes and treats only supported response statuses/shapes as success. It must define a safe result transformation and reject unsupported response forms rather than silently misrepresenting them.
+The inspected executor directly runs router middleware, treats **only status 200** as success, unwraps a `code: 0` Cabloy response to `data`, and does not perform an HTTP JSON serialization round-trip. OpenAPI's default response schema is a wrapped 200 shape; it does not itself prove the runtime/serialized shape or redact extra fields. A supported tool must review the actual unwrapped 200 result and account for guards attached to router middleware versus any system-only middleware; 201/202/204, framework/custom responses, or security controls outside that path need a separate approved adapter or stay disabled. Never unwrap a domain value a second time just because it has a `code` field. A rejected post-execution shape cannot be assumed to undo a committed business effect.
 
 ### SRS-MCP-DISPATCH-02: Input and output binding
 
@@ -202,7 +204,7 @@ Traceability: `PRD-MCP-ACCESS-03`, `PRD-MCP-CONTRACT-01`, `WBS-MCP-40-01`, `ATP-
 
 The binding layer validates JSON arguments against the registry schema, applies only declared path/query/body mappings, rejects unknown or dangerous fields according to the DTO contract, and enforces request size/depth/string limits. It must never interpret an argument as a URL, method, host, cookie, authorization header, tenant selector, executor onion, or arbitrary state patch.
 
-Outputs are converted to the MCP result content supported by the first increment. JSON object/array/scalar representations must preserve the approved business result semantics without exposing internal envelope details unless that envelope is part of the declared tool contract.
+Outputs are converted from the executor's actual unwrapped value into a separately reviewed MCP field allowlist and runtime-validated JSON result; DTO/OpenAPI schema and the opt-in Vona serializer alone do not strip every undeclared field. JSON object/array/scalar/null representations must preserve the approved business result semantics without exposing internal envelope details unless that envelope is part of the declared tool contract. If a reviewed `outputSchema` is published, `structuredContent` conforms; any JSON text compatibility block is generated only from the same minimized value. An unexpected or unsafe result fails without raw-value fallback.
 
 ### SRS-MCP-DISPATCH-03: Server-controlled execution options
 
@@ -266,7 +268,7 @@ Existing Vona DTO/controller/OpenAPI metadata remains the source of business req
 
 Traceability: `PRD-MCP-CONTRACT-01`, `PRD-MCP-CONTRACT-02`, WBS-MCP-30-01`, ATP-MCP-CONTRACT-01`, `ATP-MCP-CONTRACT-02`.
 
-The implementation must define when the catalog is rebuilt, how schema/metadata revisions are identified, and what happens when runtime registry entries differ from current controller metadata. Stale or orphaned entries are not dispatched. Catalog output must be deterministic across equivalent source/configuration inputs, and duplicate stable names are a build/configuration failure.
+The implementation must define when the catalog is rebuilt, how schema/metadata revisions are identified, and what happens when runtime registry entries differ from current controller metadata. Stale or orphaned entries are not dispatched. Catalog output must be deterministic across equivalent source/configuration inputs, and duplicate stable names are a build/configuration failure. ADR 0005 proposes validating generated metadata, the current OpenAPI cache and effective enabled router against one approved source/configuration fingerprint at startup, then atomically publishing only a matching snapshot. HMR, DTO/schema edits, locale-specific descriptions, application controller overrides, worker drift, and policy/role revocation require separate structural and subject-visibility freshness checks; no stale cache can extend a caller's authority.
 
 ## Frontend State, Route, Site, and SSR Contracts
 
@@ -322,3 +324,5 @@ Catalog generation, tool listing, and calls have explicit bounded work, response
 - [A-MCP ADR 0002 (proposed)](./decisions/0002-mcp-transport.md)
 - [A-MCP ADR 0003 (proposed)](./decisions/0003-mcp-oauth-resource-server.md)
 - [A-MCP ADR 0004 (proposed)](./decisions/0004-mcp-host-instance-binding.md)
+- [A-MCP ADR 0005 (proposed)](./decisions/0005-mcp-tool-catalog-registry.md)
+- [A-MCP ADR 0006 (proposed)](./decisions/0006-mcp-tool-eligibility-risk-results.md)

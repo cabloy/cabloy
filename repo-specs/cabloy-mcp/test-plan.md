@@ -188,24 +188,24 @@ Traceability: `PRD-MCP-IDENTITY-02`, `SRS-MCP-INSTANCE-01`, `SRS-MCP-INSTANCE-02
 
 Setup:
 
-- Prepare an observed or execution-created controller DTO/OpenAPI operation with representative path/query/body/response schema.
-- Generate OpenAPI and the proposed MCP candidate/registry output from the same source revision.
+- Prepare an observed or execution-created enabled controller DTO/OpenAPI operation with representative path/query/body/response schema, one excluded/disabled router action, a referenced schema, and a distinct runtime-serialization or response-envelope case.
+- Generate OpenAPI and the proposed MCP candidate/registry output from the same source revision and approved configuration fingerprint, with a second worker snapshot if multi-process serving is selected.
 
 Procedure:
 
-- Compare declared MCP input/output schema and mapping with emitted OpenAPI/DTO metadata.
-- Change a source DTO/operation metadata field in a controlled revision, regenerate, and inspect catalog freshness/drift behavior.
-- Attempt to invoke an orphaned or stale registry entry.
+- Compare the declared MCP input/output schema, normalized references, actual enabled router identity, fixed controller/action/method/path mapping, and runtime response shape with emitted OpenAPI/DTO metadata.
+- Change a source DTO/operation metadata field in a controlled revision, regenerate, and inspect OpenAPI-cache, HMR/restart, registry snapshot and second-worker freshness/drift behavior.
+- Attempt to invoke an orphaned, excluded, disabled, stale, ambiguous, or wrong-worker registry entry; separately change role/policy after listing and try to call the formerly visible name.
 
 Expected result:
 
-- The candidate reflects approved DTO/OpenAPI truth through a deterministic transformation; no hand-edited generated consumer is required.
-- Drift, missing ownership, unsupported references, or stale entries fail the catalog check or prevent dispatch.
-- Runtime does not silently retain an obsolete schema/route.
+- The candidate reflects approved DTO/OpenAPI truth through a deterministic transformation; no hand-edited generated consumer is required. An emitted single-action schema alone cannot admit a disabled or API-excluded router action.
+- Drift, missing ownership, unsupported references/extensions, schema/serialization disagreement, worker mismatch, or stale entries fail the catalog check or prevent dispatch.
+- Runtime does not silently retain an obsolete schema/route; revoking policy/role after list prevents subsequent call even when the structural snapshot remains valid.
 
 Minimum proof:
 
-- Retain source revision, generated schema diff, catalog revision/fingerprint, command/procedure, drift result, and redacted artifact path.
+- Retain source revision, effective route identity and generated schema diff, catalog/worker revision fingerprints, cache/rebuild procedure, negative dispatch counts, policy-revocation result, and redacted artifact path.
 
 Traceability: `PRD-MCP-CONTRACT-01`, `SRS-MCP-CATALOG-01`, `SRS-MCP-API-01`, `SRS-MCP-API-02`, `WBS-MCP-30-01`.
 
@@ -213,23 +213,24 @@ Traceability: `PRD-MCP-CONTRACT-01`, `SRS-MCP-CATALOG-01`, `SRS-MCP-API-01`, `SR
 
 Setup:
 
-- Prepare operations that are API-excluded, MCP-excluded only, explicitly named, unnamed, duplicate-named, and annotated with risk/confirmation/output-adapter metadata.
+- Prepare operations that are API-excluded (controller and action), MCP-excluded only, explicitly named, unnamed/unreviewed, duplicate-named, and annotated with risk/confirmation/output-adapter metadata. Include a refactor/rename case, an alternate locale, a controller/action metadata conflict, and a deployment-disabled entry.
 
 Procedure:
 
-- Build the catalog and inspect each candidate/registry state.
-- Change MCP metadata while leaving OpenAPI exposure intact, and introduce a stable-name collision.
+- Build the catalog and inspect registered route, emitted operation, candidate, eligible, deployment-enabled, subject-visible, and call-authorized states separately.
+- Change MCP metadata while leaving OpenAPI exposure intact; introduce a stable-name collision, a bean/action rename with an unchanged public tool name, an invalid schema reference, a metadata inheritance conflict, a locale change, and a disabled deployment policy.
+- List tools under two subjects and instances, then change policy/role and retry a paginated cursor and `tools/call`; inspect the selected MCP revision's completed list fields, private caching rules, and bounded error classes.
 
 Expected result:
 
-- API-excluded operations never reappear in MCP.
-- MCP-only exclusion hides an otherwise OpenAPI-visible operation.
-- Metadata is preserved in the tool definition and policy registry.
-- Duplicate names fail deterministically; no nondeterministic winner is callable.
+- API-excluded operations never reappear in MCP; MCP-only exclusion hides an otherwise OpenAPI-visible operation, while ordinary OpenAPI/API behavior remains unchanged.
+- An unannotated or unreviewed operation is not enabled; presentation text and risk hints are preserved only as reviewed metadata, not interpreted as authorization.
+- A stable reviewed public name survives a checked internal refactor, and locale changes affect presentation only. Duplicate names, invalid metadata conflicts, and unsupported schemas fail deterministically; no nondeterministic winner is callable.
+- A private, subject-filtered list (or its cursor/cache entry) never exposes another subject or instance's tools and cannot authorize a call after revocation; required list response fields match the approved protocol revision.
 
 Minimum proof:
 
-- Retain metadata fixture/source revision, catalog state table, collision diagnostic, and redacted generated output.
+- Retain metadata/manifest fixture and source revision, catalog state and stable-name tables, collision/conflict diagnostics, locale/policy changes, redacted list/cache/call outcomes, and generated output.
 
 Traceability: `PRD-MCP-CONTRACT-02`, `SRS-MCP-CATALOG-02`, `SRS-MCP-CATALOG-04`, `SRS-MCP-API-02`, `WBS-MCP-30-01`.
 
@@ -237,22 +238,24 @@ Traceability: `PRD-MCP-CONTRACT-02`, `SRS-MCP-CATALOG-02`, `SRS-MCP-CATALOG-04`,
 
 Setup:
 
-- Prepare JSON read/mutation operations, a side-effecting GET, multipart/raw-body, binary, redirect, streaming, unsupported status/envelope, arbitrary-URL, and unclassified destructive operation.
+- Prepare JSON read/mutation operations (including reversible and confirmation-required mutations), a side-effecting GET, multipart/raw-body, binary, redirect, streaming, unsupported 201/202/204 status or envelope, arbitrary-URL/callback, and unclassified destructive operation.
+- For each candidate, define a synthetic domain-owner review of route, request/response fields, guards/row scope, business and external effects, idempotency, reversibility, and proposed OAuth scope/deployment policy. Leave at least one candidate without review and one with misleading read-only metadata.
 
 Procedure:
 
-- Run candidate eligibility/classification and inspect `tools/list` under default policy and explicitly approved policy.
-- Attempt calls for excluded/unsupported operations and compare a safe JSON operation.
+- Run candidate eligibility/classification and inspect `tools/list` under default policy and explicitly approved policy, with subject/instance/scope/role variants; change role/policy and try the same tool with owned and unowned row identifiers.
+- Attempt calls for unsupported/unclassified/confirmation-required operations using a forged `confirm: true` argument or tool annotation; compare an individually reviewed JSON mutation that requires no per-call confirmation. Do not execute a destructive call just to classify or preview it.
+- Check the runtime result of a supported 200-status action and the proposed output allowlist against OpenAPI/DTO; verify that source changes or unreviewed external effects invalidate prior risk approval.
 
 Expected result:
 
-- JSON-compatible, explicitly classified operations can become candidates; unsafe/unclassified shapes remain excluded or require a reviewed adapter.
-- GET side effects are not marked read-only by method.
-- Excluded operations cannot be reached through a guessed tool name or route-like arguments.
+- JSON-compatible, explicitly classified operations may become candidates, but only domain/operator-reviewed and deployment-approved read or bounded reversible operations may enter an enabled set; this plan itself does not approve one. Unsafe/unclassified/destructive/open-world shapes and misleading hints cannot enable or appear as safe reads; GET side effects are mutations.
+- Confirmation-required operations remain disabled without an approved, server-verifiable, subject/client/instance/tool/arguments-bound and replay-safe grant; caller booleans, hints, a prior list, or optional elicitation alone do not grant one. Explicitly reviewed low-risk mutations without a per-call-confirmation requirement still face normal scope, RBAC, row scope, and audit checks.
+- Excluded operations cannot be reached through a guessed tool name or route-like arguments, and neither list visibility nor broad scopes disclose an unrelated row. Unsupported executor statuses or unsafe result fields never fall back to raw data.
 
 Minimum proof:
 
-- Retain classification matrix, policy configuration fingerprint, list/call outcomes, and redacted diagnostics.
+- Retain the per-operation review/classification and field-policy matrix, synthetic allowlist and configuration fingerprints, scope/role/row visibility and call outcomes, negative dispatch counters, and redacted diagnostics.
 
 Traceability: `PRD-MCP-CONTRACT-03`, `PRD-MCP-SAFETY-01`, `SRS-MCP-CATALOG-03`, `WBS-MCP-30-02`.
 
@@ -260,23 +263,24 @@ Traceability: `PRD-MCP-CONTRACT-03`, `PRD-MCP-SAFETY-01`, `SRS-MCP-CATALOG-03`, 
 
 Setup:
 
-- Use one approved fixed registry entry backed by a synthetic controller operation with declared path/query/body mapping and JSON result.
-- Prepare valid and schema-invalid arguments, including unknown and boundary values.
+- Use one approved fixed registry entry backed by a synthetic 200-status controller operation with declared path/query/body mapping and JSON result; include an OpenAPI 200 envelope, an unwrapped executor result, a declared-field projection with an extra sensitive field, and optional `outputSchema`.
+- Prepare valid and schema-invalid arguments, including unknown, nested override, route/host/tenant-like, and boundary values. Include approved object/array/scalar/null outputs and an unsupported status, non-finite number, oversized result, and output-schema mismatch.
 
 Procedure:
 
-- Call the tool with valid arguments, then malformed/unknown/oversized/extra arguments.
-- Verify the controller receives only the declared mapped fields and inspect the MCP result.
+- Call the tool with valid arguments, then malformed/unknown/oversized/extra arguments; verify that Vona raw-body parser limits are not incorrectly credited for a pre-populated executor body.
+- Verify the controller receives only the declared mapped fields and inspect the actual unwrapped 200 value. Compare the OpenAPI/DTO response with the runtime result and the MCP-specific field allowlist after any Vona serializer.
+- Inspect `structuredContent` and any compatibility JSON text block, then inject an extra secret field or result-shape mismatch after a synthetic mutation and check both external result and protected outcome classification.
 
 Expected result:
 
-- Valid input reaches the fixed operation and returns the declared MCP result semantics.
-- Invalid input is rejected before business dispatch; unknown/dangerous fields cannot alter route or state.
-- Envelope unwrapping/response transformation follows the approved adapter contract.
+- Valid input reaches the fixed operation and returns only the reviewed, bounded JSON value; any published output schema matches `structuredContent` for objects, arrays, scalars, or null as individually approved. Text content, if supplied, derives from the same filtered value.
+- Invalid input is rejected before business dispatch; unknown/dangerous fields cannot alter route or state. DTO metadata and Vona serialization do not substitute for the MCP result allowlist.
+- An unsupported status, undeclared sensitive field, unsafe value, or schema mismatch does not leak through a raw-result or text fallback. A post-execution filtering failure does not claim the domain mutation was rolled back or auto-retry it.
 
 Minimum proof:
 
-- Retain synthetic request/result, mapping assertions, dispatch counter, response classification, and redacted logs.
+- Retain synthetic request/result and field-projection matrix, mapping and route validation assertions, status/dispatch and side-effect counters, structured/text/schema comparisons, protected outcome classification, and redacted logs.
 
 Traceability: `PRD-MCP-ACCESS-03`, `SRS-MCP-DISPATCH-01`, `SRS-MCP-DISPATCH-02`, `SRS-MCP-TRANSPORT-03`, `WBS-MCP-40-01`.
 
@@ -314,14 +318,14 @@ Setup:
 Procedure:
 
 - Launch explicitly competing calls with different subjects/instances and controlled barriers.
-- Inject downstream validation, timeout, transaction, post-commit, and non-idempotent side-effect failures where the owning domain supports them.
-- Inspect Passport/state/header identity and combined durable outcome after all calls finish.
+- Inject downstream validation, timeout, transaction, post-commit, result-filter, and non-idempotent side-effect failures where the owning domain supports them; attempt a repeated call after an uncertain result.
+- Inspect Passport/state/header identity and combined durable outcome after all calls finish; separately compare execution outcome, result delivery, and redacted audit class.
 
 Expected result:
 
 - No call observes another request's Passport, state, headers, arguments, instance, or audit identity.
-- At most the contract-defined durable side effect occurs; retries/timeouts do not duplicate non-idempotent work.
-- Failure results match the documented transaction/recovery boundary and never claim false success.
+- At most the contract-defined durable side effect occurs; retries/timeouts or a post-execution output-filter failure do not automatically duplicate non-idempotent work.
+- Failure results match the documented transaction/recovery boundary, never claim false success or automatic rollback after commit, and do not reveal rejected output.
 
 Minimum proof:
 
@@ -432,3 +436,5 @@ Release is blocked until:
 - [A-MCP progress](./progress.md)
 - [A-MCP ADR 0001](./decisions/0001-mcp-suite-boundaries.md)
 - [A-MCP ADR 0004 (proposed)](./decisions/0004-mcp-host-instance-binding.md)
+- [A-MCP ADR 0005 (proposed)](./decisions/0005-mcp-tool-catalog-registry.md)
+- [A-MCP ADR 0006 (proposed)](./decisions/0006-mcp-tool-eligibility-risk-results.md)
