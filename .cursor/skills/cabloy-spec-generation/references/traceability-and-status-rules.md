@@ -47,7 +47,7 @@ Minimum cardinality for a material in-scope requirement:
 - at least one ATP scenario;
 - zero evidence records before execution, and at least one retained evidence record before `verified`.
 
-A single ATP may prove several related requirements, but the matrices must make the relationship explicit. A WBS item may cover several contracts, but it still needs bounded completion checks.
+A single ATP may prove several related requirements, but the matrices must make the relationship explicit. A WBS item may cover several contracts, but it still needs bounded completion checks. The full-chain minimum applies to material in-scope product requirements; a separately sourced engineering obligation or a documentary coordination gate need not invent a product parent or an executable ATP. Use the narrowly scoped declaration-local `Traceability exception` classifications in `canonical-spec-input.md` only for those genuine cases. The unaffected direction still needs an exact-ID link, and review/closure still needs applicable retained proof. An exception is not a deferred status, evidence waiver, acceptance result, or release approval.
 
 ## Authority-first updates
 

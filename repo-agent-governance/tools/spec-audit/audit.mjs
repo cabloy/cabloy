@@ -71,6 +71,46 @@ function addMapping(groups, edges, definitions) {
   }
 }
 
+function traceabilityException(definition, report, annotatedLines) {
+  const fields = markdownLines(definition.body ?? '').flatMap(({ text, line }) =>
+    Array.from(text.matchAll(/\bTraceability\s+exception\b/gi), match => ({
+      text,
+      line,
+      start: match.index,
+    })),
+  );
+  if (!fields.length) return null;
+  for (const field of fields) {
+    const line = definition.line + field.line - (definition.kind === 'WBS' ? 0 : 1);
+    annotatedLines.add(`${definition.file}:${line}`);
+  }
+  const field = fields[0];
+  const value =
+    definition.kind === 'bullet' && field.line === 1
+      ? field.text.slice(field.start).trim()
+      : field.text.trim();
+  const match = value.match(/^Traceability exception:\s*(technical-only|authority-only)\s+—\s+/i);
+  const exception = match?.[1].toLowerCase();
+  const rationale = match && value.slice(match[0].length);
+  const validOwner =
+    (exception === 'technical-only' &&
+      definition.id.startsWith('SRS-') &&
+      definition.kind === 'bullet' &&
+      field.line === 1) ||
+    (exception === 'authority-only' && definition.id.startsWith('WBS-'));
+  if (fields.length !== 1 || !validOwner || !/[\p{L}\p{N}]/u.test(rationale ?? '')) {
+    report(
+      'traceability-exception',
+      definition.file,
+      definition.line + field.line - (definition.kind === 'WBS' ? 0 : 1),
+      'Invalid Traceability exception: use one declaration-local technical-only SRS or authority-only WBS field with a rationale.',
+      definition.id,
+    );
+    return null;
+  }
+  return exception;
+}
+
 function collectMappings(records, definitions) {
   const edges = new Map(Array.from(definitions.keys(), id => [id, new Set()]));
   for (const definition of definitions.values()) {
@@ -271,8 +311,22 @@ export async function auditPlanning(
       report('declaration', file, 1, error.message);
     }
   }
+  const exceptions = new Map();
+  const annotatedLines = new Set();
+  for (const definition of definitions.values()) {
+    const exception = traceabilityException(definition, report, annotatedLines);
+    if (exception) exceptions.set(definition.id, exception);
+  }
   for (const [file, markdown] of records) {
     for (const { text, line } of markdownLines(markdown)) {
+      if (/\bTraceability\s+exception\b/i.test(text) && !annotatedLines.has(`${file}:${line}`)) {
+        report(
+          'traceability-exception',
+          file,
+          line,
+          'Traceability exception must be in its own formal declaration.',
+        );
+      }
       for (const prefix of OWNERS.keys()) {
         for (const id of findIdentifiers(referenceText(text), prefix)) {
           if (!definitions.has(id)) {
@@ -347,7 +401,7 @@ export async function auditPlanning(
     const incoming = new Set([...edges.values()].flatMap(values => [...values]));
     for (const [id, definition] of definitions) {
       if (definition.status === 'deferred' || definition.deferred) continue;
-      if (!id.startsWith('PRD-') && !incoming.has(id)) {
+      if (!id.startsWith('PRD-') && !incoming.has(id) && exceptions.get(id) !== 'technical-only') {
         report(
           'traceability-incoming',
           definition.file,
@@ -356,7 +410,11 @@ export async function auditPlanning(
           id,
         );
       }
-      if (!id.startsWith('ATP-') && !edges.get(id).size) {
+      if (
+        !id.startsWith('ATP-') &&
+        !edges.get(id).size &&
+        exceptions.get(id) !== 'authority-only'
+      ) {
         report(
           'traceability-outgoing',
           definition.file,
