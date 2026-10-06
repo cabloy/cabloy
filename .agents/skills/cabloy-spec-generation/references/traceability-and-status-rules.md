@@ -53,7 +53,7 @@ A single ATP may prove several related requirements, but the matrices must make 
 
 A WBS task that solely reviews and approves the whole PRD/SRS/WBS/ATP baseline before feature work may declare `Traceability mode: planning-baseline-review` in its own Phase 10 task body. It must name a local accepted boundary ADR under `decisions/` as `Review authority: [ADR](./decisions/<file>.md)`, and retain substantive Tasks and Acceptance checks for the baseline review. It must not claim to implement a specific SRS contract or execute a formal ATP, including in its title, Tasks, or Acceptance checks. The ADR may use the existing `## Status` followed by `Accepted` or `Accepted.` convention; the auditor does not require new owner or acceptance fields in the ADR, and acceptance of the ADR alone does not prove the review occurred. This explicit process gate alone is exempt from the WBS-specific SRS incoming and ATP outgoing exact-ID checks in the complete audit; all product-chain definitions, ordinary WBS tasks, references, dependencies, and progress remain checked. It cannot classify implementation, migration, contract-loop, release, or mixed-scope work. Do not infer this type from a title, task number, review status, or a summary table, and do not combine it with `Traceability exception: authority-only`.
 
-This differs from `authority-only`, which still requires an exact SRS incoming link and exempts only the ATP outgoing link. An audit exception is not approval or proof: the ADR decision owner must separately accept the baseline, and the progress record must retain that review's attributable approval before `verified` is appropriate. It does not create an ATP execution record, change any business traceability, or relax the evidence rule for other WBS work.
+This differs from `authority-only`, which still requires an exact SRS incoming link and exempts only the ATP outgoing link. Both traceability classifications are independent of `Completion mode: planning-only.`; neither makes a task eligible for `planning-complete`. An audit exception is not approval or proof: the ADR decision owner must separately accept the baseline, and the progress record must retain that review's attributable approval before `verified` is appropriate. It does not create an ATP execution record, change any business traceability, or relax the evidence rule for other WBS work.
 
 ## Authority-first updates
 
@@ -73,17 +73,18 @@ Downstream records do not silently override authority. Charts cannot authorize s
 
 ## Status semantics
 
-| Status                    | Meaning                                                                                                                                              |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `not-started`             | Defined, but implementation or acceptance evidence has not started.                                                                                  |
-| `in-progress`             | Work or verification has started, but closure checks are incomplete.                                                                                 |
-| `implementation-complete` | Source work is reported complete, but required ATP or release evidence is incomplete.                                                                |
-| `verified`                | Applicable WBS checks and ATPs passed, and durable evidence contains revision, environment, exact procedure, result, and redacted artifact location. |
-| `blocked`                 | A failed gate, dependency, or unresolved decision prevents closure.                                                                                  |
-| `waived`                  | A temporary exception explicitly approved with owner, reason, and expiry.                                                                            |
-| `deferred`                | Explicitly postponed scope; it is not complete or verified.                                                                                          |
+| Status                    | Meaning                                                                                                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `not-started`             | Defined, but implementation or acceptance evidence has not started.                                                                                                 |
+| `in-progress`             | Work or verification has started, but closure checks are incomplete.                                                                                                |
+| `planning-complete`       | Opted-in documentary/design-only WBS checks have a named-reviewer, revision-scoped closure disposition and retained planning proof; source and ATP remain unproven. |
+| `implementation-complete` | Source work is reported complete, but required ATP or release evidence is incomplete.                                                                               |
+| `verified`                | Applicable WBS checks and ATPs passed, and durable evidence contains revision, environment, exact procedure, result, and redacted artifact location.                |
+| `blocked`                 | A failed gate, dependency, or unresolved decision prevents closure.                                                                                                 |
+| `waived`                  | A temporary exception explicitly approved with owner, reason, and expiry.                                                                                           |
+| `deferred`                | Explicitly postponed scope; it is not complete or verified.                                                                                                         |
 
-For a newly created plan, initialize delivery rows as `not-started`, `deferred`, or `blocked` as appropriate. Creating Markdown files never makes implementation `implementation-complete` or `verified`.
+For a newly created plan, initialize delivery rows as `not-started`, `deferred`, or `blocked` as appropriate. Creating Markdown files never makes a task `planning-complete`, implementation `implementation-complete`, or ATP `verified`. Only a formally declared `Completion mode: planning-only.` task with documentary acceptance checks, revision-scoped evidence and an explicit named-reviewer closure disposition may reach `planning-complete`; `authority-only` traceability does not establish this eligibility. A planning-complete predecessor satisfies its WBS dependency edge, but blocked/deferred/waived successors stay gated and require their own decisions and approvals. `implementation-complete`, `waived` and `deferred` do not satisfy predecessor completion. Only `verified` contributes to verified totals and the verified-based burndown remainder.
 
 ### README and ADR decision-status consistency
 

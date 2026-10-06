@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url';
 
 import {
   findIdentifiers,
+  isPlanningCompleteEligible,
+  isPrerequisiteSatisfied,
   markdownLines,
   parseDefinitions,
   parseProgress,
@@ -472,10 +474,23 @@ export async function auditPlanning(
               task.id,
             );
           }
-          if (['implementation-complete', 'verified'].includes(rows.get(task.id))) {
+          if (rows.get(task.id) === 'planning-complete' && !isPlanningCompleteEligible(task)) {
+            report(
+              'completion-mode',
+              'progress.md',
+              locations?.get(task.id)?.line ?? 1,
+              'Planning-complete requires a declaration-local Completion mode: planning-only field.',
+              task.id,
+            );
+          }
+          if (
+            ['planning-complete', 'implementation-complete', 'verified'].includes(rows.get(task.id))
+          ) {
             for (const dependency of task.dependencyIds) {
+              const predecessor = wbs.tasks.find(item => item.id === dependency);
               if (
-                ['not-started', 'in-progress', 'blocked', 'deferred'].includes(rows.get(dependency))
+                rows.has(dependency) &&
+                !isPrerequisiteSatisfied(predecessor, rows.get(dependency))
               ) {
                 report(
                   'dependency-state',

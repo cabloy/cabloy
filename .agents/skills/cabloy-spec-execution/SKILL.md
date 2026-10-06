@@ -97,8 +97,8 @@ Stop and route back to the relevant planning authority if any of the following a
 - the suite identity, ownership, or target boundary is unresolved;
 - PRD/SRS/ADR/WBS/test-plan records contradict one another;
 - a controlling `TODO(confirm)` or unaccepted ADR remains;
-- a predecessor is not complete according to the WBS, or its required evidence is absent;
-- the selected task is already `verified`, explicitly `deferred`, or currently `blocked`;
+- a predecessor is neither `verified` nor formally opted-in `planning-complete` with a named-reviewer, revision-scoped documentary closure disposition, or its required evidence is absent; a planning-complete edge does not authorize execution;
+- the selected task is already `verified` or `planning-complete`, explicitly `deferred`, or currently `blocked`;
 - a persisted field/schema change lacks an explicit decision about incrementing `vonaModule.fileVersion`;
 - the working tree contains overlapping unclassified changes that make attribution or rollback unclear;
 - authorization, tenant isolation, privacy, lifecycle, transaction, concurrency, idempotency, or ownership behavior is unspecified for a material risk;
@@ -139,6 +139,7 @@ Record proof under `references/status-and-evidence.md`, preserving the establish
 Set status accurately:
 
 - `in-progress` while work or verification remains open;
+- `planning-complete` only for an opted-in documentary/design task after explicit named-reviewer, revision-scoped planning-closure disposition and linked planning evidence; never infer source/ATP closure or next-task approval;
 - `implementation-complete` when source work is complete but ATP/release proof remains;
 - `verified` only after all applicable WBS checks and ATPs have durable linked redacted evidence;
 - `blocked`, `waived`, or `deferred` only with the required details.

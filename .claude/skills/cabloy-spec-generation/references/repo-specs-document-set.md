@@ -140,6 +140,8 @@ Every WBS entry should state:
 - linked PRD, SRS, and ATP identifiers where a real adjacent-authority association exists; a genuine documentary planning/release gate without an independent ATP uses the explicit `authority-only` classification and retains its SRS association and review evidence as specified in `canonical-spec-input.md`. A whole-baseline planning review with neither a specific SRS nor a formal ATP instead uses `planning-baseline-review` and an accepted local ADR review authority as specified in `traceability-and-status-rules.md`;
 - whether it is planned, implemented, or awaiting evidence.
 
+For a documentary/design-only task, declare `Completion mode: planning-only.` in that task's formal WBS body. The declaration makes `planning-complete` eligible only after the task's own checks receive a named-reviewer, revision-scoped closure disposition and retained documentary proof; it does not close linked future runtime ATPs or approve subsequent implementation. This is independent of `planning-baseline-review` and the `authority-only` traceability exception. Other tasks keep ordinary implementation and ATP closure rules.
+
 Begin with a documentation/decision implementation gate before feature work. A planning-baseline review gate does not execute an ATP or acquire `verified` status from its audit classification. For differing Web/Admin strategies, split shared-site integration and independent-site delivery into separate frontend tasks when their source facts, dependencies, or proof differ. An unresolved strategy or exact runtime identifier may block only the affected implementation task; preserve runnable discovery work and unaffected backend or audience work as accurately actionable. Prefer vertical, verifiable increments. Include migration and release hardening as explicit work. Keep `implementation-complete` distinct from `verified`.
 
 ## Test-plan template contract
@@ -188,17 +190,18 @@ Use:
 
 Initialize a new suite with statuses such as `not-started`, `deferred`, or explicitly `blocked`; do not mark planning work as verified. Use this vocabulary:
 
-| Status                    | Meaning                                                                                                                       |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `not-started`             | Defined, but implementation or acceptance evidence has not started.                                                           |
-| `in-progress`             | Work started, but closure checks are incomplete.                                                                              |
-| `implementation-complete` | Source work is reported complete, but required ATP evidence or release gates are incomplete.                                  |
-| `verified`                | Required ATP evidence is observed and retained with revision, environment, procedure, result, and redacted artifact location. |
-| `blocked`                 | A dependency, unresolved decision, or failed gate prevents closure.                                                           |
-| `waived`                  | A temporary exception with owner, reason, and expiry; expiry makes it a release blocker.                                      |
-| `deferred`                | Explicitly postponed scope, not completed scope.                                                                              |
+| Status                    | Meaning                                                                                                                                                              |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `not-started`             | Defined, but implementation or acceptance evidence has not started.                                                                                                  |
+| `in-progress`             | Work started, but closure checks are incomplete.                                                                                                                     |
+| `planning-complete`       | An explicitly opted-in planning task's own documentary checks have a named-reviewer, revision-scoped closure disposition and linked proof; not runtime verification. |
+| `implementation-complete` | Source work is reported complete, but required ATP evidence or release gates are incomplete.                                                                         |
+| `verified`                | Required ATP evidence is observed and retained with revision, environment, procedure, result, and redacted artifact location.                                        |
+| `blocked`                 | A dependency, unresolved decision, or failed gate prevents closure.                                                                                                  |
+| `waived`                  | A temporary exception with owner, reason, and expiry; expiry makes it a release blocker.                                                                             |
+| `deferred`                | Explicitly postponed scope, not completed scope.                                                                                                                     |
 
-Progress must remain a derived register. It may point to evidence but must not become a second requirements document. Include a decision-register entry for each material site strategy and show strategy/identifier deferral as a blocker only on affected frontend/site WBS branches; source reading, planning, or a selected strategy alone is not implementation evidence.
+A `planning-complete` predecessor satisfies its dependency edge, not the next task's design/approval gates; keep a blocked successor blocked. Verified/remaining burndown counts still count only `verified` as complete. Progress must remain a derived register. It may point to evidence but must not become a second requirements document. Include a decision-register entry for each material site strategy and show strategy/identifier deferral as a blocker only on affected frontend/site WBS branches; source reading, planning, or a selected strategy alone is not implementation evidence.
 
 ## ADR 0001 template contract
 

@@ -93,6 +93,39 @@ test('a planning gate coexists with a fully connected product chain', async t =>
   assert.equal(result.ok, true);
 });
 
+test('planning closure and baseline traceability classification remain independent', async t => {
+  const records = {
+    ...BASELINE,
+    'pdp-wbs.md': `${PLANNING_GATE['pdp-wbs.md']}\n#### WBS-DEMO-10-02: Implement contract\n\nTraceability: \`SRS-DEMO-01\`, \`ATP-DEMO-01\`.\n`,
+    'srs.md': BASELINE['srs.md'].replace('WBS-DEMO-10-01', 'WBS-DEMO-10-02'),
+    'test-plan.md': BASELINE['test-plan.md'].replace('WBS-DEMO-10-01', 'WBS-DEMO-10-02'),
+    'progress.md': `${BASELINE['progress.md'].replace('not-started |', 'planning-complete |')}| WBS-DEMO-10-02 | Implement contract | not-started |\n`,
+    'decisions/0001-boundary.md': PLANNING_GATE['decisions/0001-boundary.md'],
+  };
+  const missingMode = await auditPlanning(await fixture(t, records));
+  assert.deepEqual(codes(missingMode), ['completion-mode']);
+  const withMode = {
+    ...records,
+    'pdp-wbs.md': records['pdp-wbs.md'].replace(
+      'Traceability mode: planning-baseline-review',
+      'Traceability mode: planning-baseline-review\n\nCompletion mode: planning-only.',
+    ),
+  };
+  const eligible = await auditPlanning(await fixture(t, withMode));
+  assert.equal(eligible.ok, true, JSON.stringify(eligible.diagnostics));
+  const invalidGate = await auditPlanning(
+    await fixture(t, {
+      ...withMode,
+      'pdp-wbs.md': withMode['pdp-wbs.md'].replace(
+        'Traceability mode: planning-baseline-review',
+        'Traceability mode: unknown',
+      ),
+    }),
+  );
+  assert.ok(codes(invalidGate).includes('traceability-mode'));
+  assert.ok(!codes(invalidGate).includes('completion-mode'));
+});
+
 test('planning review accepts existing and legacy accepted ADR status formats', async t => {
   for (const status of [
     '## Status\n\nAccepted.\n',
@@ -587,6 +620,68 @@ test('completed tasks cannot hide unfinished recorded prerequisites', async t =>
       diagnostic => diagnostic.id === 'WBS-DEMO-10-02' && diagnostic.code === 'dependency-state',
     ),
   );
+});
+
+test('planning-complete requires a task-local mode in full and lightweight audits', async t => {
+  const progress = BASELINE['progress.md'].replace('not-started |', 'planning-complete |');
+  for (const lightweight of [false, true]) {
+    const rejected = await auditPlanning(
+      await fixture(t, { ...BASELINE, 'progress.md': progress }),
+      { lightweight },
+    );
+    assert.ok(codes(rejected).includes('completion-mode'));
+    const approved = await auditPlanning(
+      await fixture(t, {
+        ...BASELINE,
+        'pdp-wbs.md': BASELINE['pdp-wbs.md'].replace(
+          'Completion checks:',
+          'Completion mode: planning-only.\n\nCompletion checks:',
+        ),
+        'progress.md': progress,
+      }),
+      { lightweight },
+    );
+    assert.equal(approved.ok, true, JSON.stringify(approved.diagnostics));
+  }
+});
+
+test('planning-complete prerequisites allow recorded closure but never unblock successors', async t => {
+  const wbs = `${BASELINE['pdp-wbs.md'].replace('Completion checks:', 'Completion mode: planning-only.\n\nCompletion checks:')}\n#### WBS-DEMO-10-02: Dependent review\n\nDependencies: WBS-DEMO-10-01.\n\nTraceability exception: authority-only — Retain the review decision.\n\nTraceability: \`SRS-DEMO-01\`.\n`;
+  const progress = `${BASELINE['progress.md'].replace('not-started |', 'planning-complete |')}| WBS-DEMO-10-02 | Dependent | planning-complete |\n`;
+  const records = { ...BASELINE, 'pdp-wbs.md': wbs, 'progress.md': progress };
+  const completed = await auditPlanning(await fixture(t, records));
+  assert.ok(codes(completed).includes('completion-mode'));
+  assert.ok(!codes(completed).includes('dependency-state'));
+  const blocked = await auditPlanning(
+    await fixture(t, {
+      ...records,
+      'progress.md': progress.replace('Dependent | planning-complete', 'Dependent | blocked'),
+    }),
+  );
+  assert.ok(!codes(blocked).includes('dependency-state'));
+  assert.ok(!codes(blocked).includes('completion-mode'));
+  const unfinished = await auditPlanning(
+    await fixture(t, {
+      ...records,
+      'progress.md': progress.replace('planning-complete |', 'implementation-complete |'),
+    }),
+  );
+  assert.ok(codes(unfinished).includes('dependency-state'));
+  const waived = await auditPlanning(
+    await fixture(t, {
+      ...records,
+      'progress.md': progress.replace('planning-complete |', 'waived |'),
+    }),
+  );
+  assert.ok(codes(waived).includes('dependency-state'));
+  const noMode = await auditPlanning(
+    await fixture(t, {
+      ...records,
+      'pdp-wbs.md': wbs.replace('Completion mode: planning-only.\n\n', ''),
+    }),
+  );
+  assert.ok(codes(noMode).includes('completion-mode'));
+  assert.ok(codes(noMode).includes('dependency-state'));
 });
 
 test('local Markdown destinations, fragments and reference links are checked', async t => {

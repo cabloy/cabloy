@@ -61,7 +61,7 @@ Before implementation, verify:
 
 - the WBS target exists and is bounded;
 - every material linked requirement has a technical contract and ATP;
-- predecessor status satisfies the WBS dependency rule and required evidence exists;
+- each predecessor is `verified`, or is `planning-complete` with its own formal `Completion mode: planning-only.` declaration, named-reviewer revision-scoped disposition and documentary proof; neither `implementation-complete` nor a traceability exception satisfies this edge;
 - no controlling `TODO(confirm)`, unaccepted ADR, waiver, or failed gate remains unresolved;
 - the selected task is not already `verified`, `deferred`, or `blocked`;
 - source ownership and the target API/state/page boundary are unambiguous;

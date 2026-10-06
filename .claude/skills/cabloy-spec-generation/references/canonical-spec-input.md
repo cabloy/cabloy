@@ -19,7 +19,7 @@ Use exact instantiated IDs in declaration-body Traceability. A wildcard or abbre
 
 For a genuinely cross-cutting engineering contract without a product requirement, an atomic SRS bullet may carry `Traceability exception: technical-only — <record-specific rationale>` on its definition line. This exempts only the incoming PRD association; its outgoing WBS mapping remains required. For a documentary planning or release gate with no independent executable scenario, a WBS task may carry `Traceability exception: authority-only — <record-specific rationale>` in its declaration body. This exempts only the outgoing ATP association; its incoming SRS mapping remains required. Use exactly one well-formed field on the correct definition and explain the alternative authority or retained documentary checks. The auditor rejects malformed, empty, duplicated, or wrong-kind exceptions. Neither classification waives the underlying contract, delivery checks, applicable ATPs, revision-scoped evidence, or release approval; never use one merely to silence a missing real link.
 
-For a Phase 10 task that reviews the entire planning baseline rather than implementing one SRS or executing one ATP, use the separate `Traceability mode: planning-baseline-review` classification and accepted local ADR review authority described in `traceability-and-status-rules.md`. It exempts only that WBS task's incoming SRS and outgoing ATP checks. Do not combine it with a `Traceability exception` or apply it to product-delivery, contract-loop, migration, or release work. Classification alone does not establish approval, proof, or `verified` status.
+For a Phase 10 task that reviews the entire planning baseline rather than implementing one SRS or executing one ATP, use the separate `Traceability mode: planning-baseline-review` classification and accepted local ADR review authority described in `traceability-and-status-rules.md`. It exempts only that WBS task's incoming SRS and outgoing ATP checks. Do not combine it with a `Traceability exception` or apply it to product-delivery, contract-loop, migration, or release work. Classification alone does not establish approval, proof, `planning-complete` eligibility, or `verified` status; a separate task-local `Completion mode: planning-only.` declaration is required for planning closure.
 
 ## Minimal connected example
 
@@ -71,7 +71,7 @@ Acceptance checks:
 - The selected ATP passes and retains its required proof.
 ```
 
-Each phase has explicit Dependencies, using `none` when no predecessor exists. Task-level Dependencies override the phase Dependencies for that task; they are not accumulated automatically. Do not rely on an empty dependency label to mean none. Keep phases dependency-ordered and task scope bounded. WBS bodies own linked IDs, tasks, and checks; progress does not add them.
+Each phase has explicit Dependencies, using `none` when no predecessor exists. Task-level Dependencies override the phase Dependencies for that task; they are not accumulated automatically. Do not rely on an empty dependency label to mean none. Keep phases dependency-ordered and task scope bounded. WBS bodies own linked IDs, tasks, and checks; progress does not add them. For a genuinely documentary/design-only task, the formal task declaration may add exactly one `Completion mode: planning-only.` field. This opt-in is not a phase default or a traceability exception: its own checks still need a named reviewer, a revision-scoped planning-closure disposition and linked documentary proof before progress can say `planning-complete`. Keep linked prospective runtime ATPs intact and unpassed.
 
 ### test-plan.md
 
@@ -111,7 +111,7 @@ Setup, Procedure, Expected result, Minimum proof, and Traceability must each be 
 | `WBS-DEMO-10-01` | `not-started` | None; execution has not begun. | Confirm the bounded execution dossier. |
 ```
 
-Resolve columns by header names (`WBS ID` and `Status`), never fixed cell positions. Additional/reordered columns are allowed. Require one row for every formal WBS task when constructing the complete chart model. Preserve the established status vocabulary and explain blockers/waivers precisely.
+Resolve columns by header names (`WBS ID` and `Status`), never fixed cell positions. Additional/reordered columns are allowed. Require one row for every formal WBS task when constructing the complete chart model. Preserve the established status vocabulary and explain blockers/waivers precisely. `planning-complete` is valid only for a task declaring `Completion mode: planning-only.` in its WBS body; it satisfies a predecessor dependency edge but does not grant successor execution approval, count as verified, or reduce the verified-based burndown remainder.
 
 ## Three gates, not one success signal
 

@@ -2,12 +2,20 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { basename, resolve } from 'node:path';
 
-import { markdownLines, parseAtpIds, parseProgress, parseWbs } from './spec-parser.mjs';
+import {
+  isPlanningCompleteEligible,
+  isPrerequisiteSatisfied,
+  markdownLines,
+  parseAtpIds,
+  parseProgress,
+  parseWbs,
+} from './spec-parser.mjs';
 export { parseAtpIds, parseProgress, parseWbs } from './spec-parser.mjs';
 
 const STATUS_COLORS = {
   'not-started': 'var(--blue)',
   'in-progress': 'var(--orange)',
+  'planning-complete': 'var(--teal)',
   'implementation-complete': 'var(--violet)',
   'verified': 'var(--aqua)',
   'blocked': 'var(--red)',
@@ -47,6 +55,7 @@ const COPY = {
     statuses: {
       'not-started': 'Not started',
       'in-progress': 'In progress',
+      'planning-complete': 'Planning complete',
       'implementation-complete': 'Implementation complete',
       'verified': 'Verified',
       'blocked': 'Blocked',
@@ -104,6 +113,7 @@ const COPY = {
     statuses: {
       'not-started': '未开始',
       'in-progress': '进行中',
+      'planning-complete': '规划完成',
       'implementation-complete': '实施完成',
       'verified': '已核验',
       'blocked': '受阻',
@@ -248,6 +258,11 @@ export function createChartModel({ readme, wbs, progress, testPlan }) {
     }
     task.recordedStatus = task.status;
     task.status = progressStatus;
+    if (task.status === 'planning-complete' && !isPlanningCompleteEligible(task)) {
+      throw new Error(
+        `${task.id} has planning-complete status without Completion mode: planning-only.`,
+      );
+    }
     if (task.deferred && task.status !== 'deferred') {
       throw new Error(
         `${task.id} is marked deferred in pdp-wbs.md but has progress status ${task.status}.`,
@@ -274,10 +289,10 @@ export function createChartModel({ readme, wbs, progress, testPlan }) {
   };
 }
 
-function style() {
+function style(planningComplete) {
   return `<style>
-    :root { --surface:#fcfcfb;--page:#f9f9f7;--ink:#0b0b0b;--secondary:#52514e;--muted:#898781;--grid:#e1e0d9;--axis:#c3c2b7;--blue:#2a78d6;--orange:#eb6834;--aqua:#1baf7a;--violet:#4a3aa7;--red:#e34948;--yellow:#eda100;--blue-wash:#eaf3fd;--aqua-wash:#e7f7f0; }
-    @media (prefers-color-scheme:dark) { :root { --surface:#1a1a19;--page:#0d0d0d;--ink:#fff;--secondary:#c3c2b7;--muted:#a09f99;--grid:#2c2c2a;--axis:#383835;--blue:#3987e5;--orange:#d95926;--aqua:#199e70;--violet:#9085e9;--red:#e66767;--yellow:#c98500;--blue-wash:#172435;--aqua-wash:#122b23; } }
+    :root { --surface:#fcfcfb;--page:#f9f9f7;--ink:#0b0b0b;--secondary:#52514e;--muted:#898781;--grid:#e1e0d9;--axis:#c3c2b7;--blue:#2a78d6;--orange:#eb6834;${planningComplete ? '--teal:#087f83;' : ''}--aqua:#1baf7a;--violet:#4a3aa7;--red:#e34948;--yellow:#eda100;--blue-wash:#eaf3fd;--aqua-wash:#e7f7f0; }
+    @media (prefers-color-scheme:dark) { :root { --surface:#1a1a19;--page:#0d0d0d;--ink:#fff;--secondary:#c3c2b7;--muted:#a09f99;--grid:#2c2c2a;--axis:#383835;--blue:#3987e5;--orange:#d95926;${planningComplete ? '--teal:#29aeb0;' : ''}--aqua:#199e70;--violet:#9085e9;--red:#e66767;--yellow:#c98500;--blue-wash:#172435;--aqua-wash:#122b23; } }
     .canvas{fill:var(--page)}.card{fill:var(--surface);stroke:var(--grid);stroke-width:1}.title{fill:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:27px;font-weight:700}.subtitle{fill:var(--secondary);font-family:Arial,Helvetica,sans-serif;font-size:14px}.heading{fill:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700}.phase{fill:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:700}.task{fill:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:10px}.small{fill:var(--muted);font-family:Arial,Helvetica,sans-serif;font-size:9px}.caption{fill:var(--secondary);font-family:Arial,Helvetica,sans-serif;font-size:11px}.num{fill:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}.grid{stroke:var(--grid);stroke-width:1;shape-rendering:crispEdges}.axis{stroke:var(--axis);stroke-width:1;shape-rendering:crispEdges}.row:focus{outline:2px solid var(--ink);outline-offset:2px}
   </style>`;
 }
@@ -302,13 +317,13 @@ function renderChartTextLines(className, x, y, lines, lineHeight) {
   return `<text class="${className}" x="${x}" y="${y}">${lines.map((line, lineIndex) => `<tspan x="${x}" dy="${lineIndex ? lineHeight : 0}">${escapeXml(line)}</tspan>`).join('')}</text>`;
 }
 
-function svgDocument(title, desc, body, height, metadata) {
+function svgDocument(title, desc, body, height, metadata, planningComplete = false) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="${height}" viewBox="0 0 1600 ${height}" role="img" aria-labelledby="chart-title chart-desc">
   <title id="chart-title">${escapeXml(title)}</title>
   <desc id="chart-desc">${escapeXml(desc)}</desc>
   <metadata>${escapeXml(metadata)}</metadata>
-  ${style()}
+  ${style(planningComplete)}
   ${body}
 </svg>
 `;
@@ -392,9 +407,12 @@ export function renderGantt(model, suiteName) {
       },
     )
     .join('\n');
-  const completed = new Set(tasks.filter(task => task.status === 'verified').map(task => task.id));
+  const completed = new Set(
+    tasks.filter(task => isPrerequisiteSatisfied(task, task.status)).map(task => task.id),
+  );
   const nextTask = tasks.find(
     task =>
+      task.status !== 'planning-complete' &&
       task.status !== 'verified' &&
       task.status !== 'deferred' &&
       task.status !== 'waived' &&
@@ -418,6 +436,7 @@ export function renderGantt(model, suiteName) {
     body,
     height,
     t.metadata,
+    tasks.some(task => task.status === 'planning-complete'),
   );
 }
 
