@@ -30,7 +30,7 @@ features:
     details: Organize capabilities for SSR, SPA, Web, and Admin applications with shared conventions.
 ---
 
-## Demonstrations
+## Demonstrations(Videos)
 
 ### 1. Can an Admin Site Use SSR? CabloyJS in Three Practical Demos (Duration: 1:16)
 
