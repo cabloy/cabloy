@@ -50,6 +50,8 @@ Acceptance checks:
 
 #### WBS-MCP-10-02: Complete MCP threat model and policy matrix
 
+Completion mode: planning-only.
+
 Traceability: `PRD-MCP-IDENTITY-01`, `PRD-MCP-IDENTITY-02`, `PRD-MCP-IDENTITY-03`, `PRD-MCP-CONTRACT-03`, `PRD-MCP-SAFETY-01`, `PRD-MCP-SAFETY-02`, `PRD-MCP-SAFETY-03`, `SRS-MCP-NFR-01`, `SRS-MCP-NFR-02`, `ATP-MCP-AUTH-01`, `ATP-MCP-AUTH-02`, `ATP-MCP-INSTANCE-01`, `ATP-MCP-CONTRACT-03`, `ATP-MCP-CALL-02`, `ATP-MCP-CALL-03`, `ATP-MCP-OPS-01`.
 
 Dependencies: `WBS-MCP-10-01`.
