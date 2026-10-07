@@ -74,6 +74,7 @@ Those concerns should live elsewhere.
 
 - [a-status Module Architecture](./architecture/a-status-module-architecture.md)
 - [Backend Resource Field Update Workflow](./architecture/backend-resource-field-workflow.md)
+- [Package Publish Manifest Cleanup Evaluation](./architecture/package-publish-manifest-cleanup-evaluation.md)
 - [DTO Render Field-Name Typing Boundary](./architecture/dto-render-field-name-typing.md)
 - [DTO/Model Contract Projection Evolution](./architecture/dto-model-contract-projection-evolution.md)
 - [DTO Schema Scenes and Readonly Sanitization](./architecture/dto-schema-scenes-and-readonly-sanitization.md)
