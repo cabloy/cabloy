@@ -4,7 +4,7 @@
 
 Accepted
 
-The 2026-10-04 WBS-MCP-10-01 decision accepts the overall suite and first-increment boundary. A subsequent explicit naming/layout revision supersedes the initial `providerId=a` vendor-suite identity: the accepted target is now `providerId=cabloy`, normal suite `cabloy-mcp`, initial module `cabloy-mcp`, and no new MCP-owned persistence in the first increment. On 2026-10-05, DEC-MCP-01's structural scaffold, application discovery, generated registration, dependency ownership, and default-off configuration design were explicitly accepted. Transport, OAuth, host trust, catalog policy, dispatch isolation, and operational decisions remain open under DEC-MCP-02 through DEC-MCP-08; this acceptance is not approval of source creation, ATP execution, provider configuration, or release.
+The 2026-10-04 WBS-MCP-10-01 decision accepts the overall suite and first-increment boundary. A subsequent explicit naming/layout revision supersedes the initial `providerId=a` vendor-suite identity: the accepted target is now `providerId=cabloy`, normal suite `cabloy-mcp`, initial module `cabloy-mcp`, and no new MCP-owned persistence in the first increment. On 2026-10-05, DEC-MCP-01's structural scaffold, application discovery, generated registration, dependency ownership, and default-off configuration design were explicitly accepted. Transport, OAuth, host trust, catalog policy, dispatch isolation, and operational decisions were left open under DEC-MCP-02 through DEC-MCP-08 by this ADR; DEC-MCP-02's transport design was separately accepted in ADR 0002 on 2026-10-07. This acceptance is not approval of source creation, ATP execution, provider configuration, or release.
 
 ## Background
 

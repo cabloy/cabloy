@@ -4,7 +4,7 @@
 
 Proposed — design draft for `DEC-MCP-05`; not an accepted annotation API, enabled tool list, source implementation, `ATP-MCP-CONTRACT-01/02` result, or authorization to expose controllers. The accountable decision owner is `zhennann`. The exact metadata API, first reviewed operation set, registry integration point, and generation command remain `TODO(confirm)`.
 
-This proposal refines the accepted candidate-source and fixed-dispatch boundary in [ADR 0001](./0001-mcp-suite-boundaries.md). It depends on the proposed transport in [ADR 0002](./0002-mcp-transport.md), but does not accept it. DEC-MCP-06 owns eligibility, risk, confirmation, and result policy; DEC-MCP-07 owns executor/context adaptation. A catalog entry or MCP annotation grants neither business authorization nor permission to dispatch.
+This proposal refines the accepted candidate-source and fixed-dispatch boundary in [ADR 0001](./0001-mcp-suite-boundaries.md). It depends on the transport design separately accepted in [ADR 0002](./0002-mcp-transport.md), but does not accept DEC-MCP-05 or prove transport runtime behavior. DEC-MCP-06 owns eligibility, risk, confirmation, and result policy; DEC-MCP-07 owns executor/context adaptation. A catalog entry or MCP annotation grants neither business authorization nor permission to dispatch.
 
 ## Observed Cabloy Basic source
 

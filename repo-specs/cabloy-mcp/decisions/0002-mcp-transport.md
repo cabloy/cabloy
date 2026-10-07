@@ -1,10 +1,10 @@
-# ADR 0002: Proposed MCP Streamable HTTP Transport Boundary
+# ADR 0002: MCP Streamable HTTP Transport Boundary
 
 ## Status
 
-Proposed — design draft only. This record does not accept `DEC-MCP-02`, authorize source creation, select an OAuth provider, configure a route in a running application, or provide runtime/ATP evidence. The accountable decision owner is `zhennann`.
+Accepted (design only) — on 2026-10-07, the accountable decision owner `zhennann` explicitly accepted `DEC-MCP-02` for the MCP **2026-07-28** modern-only Streamable HTTP profile, the specified SDK versions and explicit legacy rejection, and the Vona `/mcp` integration design below. This decision does not authorize source creation, select an OAuth provider or live Host/proxy policy, configure a route in a running application, or provide runtime/ATP evidence. DEC-MCP-03/04/07/08 and a separate bounded execution dossier remain gates.
 
-The proposal targets the MCP **2026-07-28** Streamable HTTP profile. It must not be silently applied to an older MCP profile or inferred from a package name alone. Acceptance requires explicit review of the normative protocol revision, the selected SDK API/compatibility behavior, and the Vona route integration.
+Do not silently apply this design to an older MCP profile or infer its wire behavior from a package name alone. Published SDK and Vona source observations informed the decision; target-module compilation, real HTTP interoperability, security behavior, and bounded request lifetime remain implementation/ATP checks.
 
 ## Context
 
@@ -12,16 +12,16 @@ The first increment needs one remote MCP HTTP boundary served by Vona. It must n
 
 The current MCP profile differs materially from older Streamable HTTP revisions. The 2026-07-28 profile is a POST request/response protocol: it has no `initialize` handshake, protocol session, standalone GET stream, DELETE termination, or `Last-Event-ID` resumption. Treating an older client/server exchange as the current contract would create an interoperability and security ambiguity.
 
-## Proposed decision
+## Decision
 
 ### Protocol profile and library
 
 Use the MCP 2026-07-28 Streamable HTTP profile in **modern-only** mode:
 
-- propose the official v2 server package `@modelcontextprotocol/server` at `2.3.0`;
-- propose the official Node adapter `@modelcontextprotocol/node` at `2.1.1`;
+- select the official v2 server package `@modelcontextprotocol/server` at `2.3.0`;
+- select the official Node adapter `@modelcontextprotocol/node` at `2.1.1`;
 - use the v2 web-standard handler (`createMcpHandler`) and its Node adapter (`toNodeHandler`), subject to compile-time/API and real HTTP verification during a separately approved execution dossier;
-- configure `createMcpHandler(factory, { legacy: 'reject' })` explicitly: the published `2.3.0` handler defaults to `legacy: 'stateless'` and would otherwise admit 2025-era requests. The published `2.1.1` Node adapter accepts native `(req, res, parsedBody?)` and returns `Promise<void>`; it does not make a Vona controller action or its lifecycle safe by itself. The published packages declare Node `>=20` and the adapter peers on server `^2.3.0`; the root project declares Node `>=24.4.0`. These are package-source observations, **not** installation, compilation, lockfile selection, or runtime interoperability proof. Versions and dependency ownership remain proposed until approved execution checks them in the target module.
+- configure `createMcpHandler(factory, { legacy: 'reject' })` explicitly: the published `2.3.0` handler defaults to `legacy: 'stateless'` and would otherwise admit 2025-era requests. The published `2.1.1` Node adapter accepts native `(req, res, parsedBody?)` and returns `Promise<void>`; it does not make a Vona controller action or its lifecycle safe by itself. The published packages declare Node `>=20` and the adapter peers on server `^2.3.0`; the root project declares Node `>=24.4.0`. These are package-source observations, **not** installation, compilation, lockfile selection, or runtime interoperability proof. These versions and their module-local ordinary dependency ownership are accepted for the transport design; their installation and compatibility in the target module remain execution gates.
 
 Do not select the older monolithic `@modelcontextprotocol/sdk` 1.x package for this modern-only boundary. If compatibility with an older MCP revision is later required, it needs a separate protocol/version decision, explicit route behavior, and separate ATP coverage; it must not be enabled as an accidental SDK default.
 
@@ -52,7 +52,7 @@ For the first increment, each client JSON-RPC message uses a new `POST` with a s
 - validate `Origin` on incoming transport traffic and return HTTP `403` when a present Origin is invalid (**MUST**). Validate approved Host/proxy inputs at ingress; the published bare handler does not itself supply deployment-specific trust or host-to-instance binding, which remains DEC-MCP-04;
 - choose bounded request bytes, JSON depth/collection limits, concurrent calls, execution deadlines, and cancellation behavior under DEC-MCP-07/08. The protocol profile supplies no numeric body bound. A disconnected SSE response cannot on its own prove domain cancellation or rollback of a committed effect.
 
-The cited normative mappings and published-package API/defaults were inspected as planning inputs; compatibility across actual SDK, Vona, ingress/proxy and real HTTP still requires a separately approved compilation and ATP. No runtime wire behavior is claimed.
+The cited normative mappings and published-package API/defaults were inspected as design inputs; compatibility across the installed SDK, Vona, ingress/proxy and real HTTP still requires separately approved compilation and ATP. No runtime wire behavior is claimed.
 
 ### Legacy compatibility boundary
 
@@ -68,18 +68,19 @@ Legacy 2025-era behavior (`initialize`, optional protocol sessions, GET SSE, DEL
 
 ## Consequences and verification gates
 
-This proposal keeps transport ownership inside the planned normal Vona module and preserves the no-new-persistence boundary. It requires a native-response controller integration, exact body/response interceptor configuration, explicit Host/Origin policy, and real HTTP tests rather than only `bean.executor.performAction(...)` tests. It also means older MCP clients are intentionally unsupported until a separately approved compatibility design exists.
+This decision keeps transport ownership inside the planned normal Vona module and preserves the no-new-persistence boundary. It requires a native-response controller integration, exact body/response interceptor configuration, explicit Host/Origin policy, and real HTTP tests rather than only `bean.executor.performAction(...)` tests. It also means older MCP clients are intentionally unsupported until a separately approved compatibility design exists.
 
-Before accepting `DEC-MCP-02`, verify:
+Design acceptance and implementation verification are separate gates. The 2026-10-07 owner disposition accepts the 2026-07-28 revision, pinned package versions and published API/Node/peer requirements, explicit modern-only configuration, root `/mcp` POST and GET/DELETE policy, normative wire/error mappings, and Vona integration design. The review considered the known pre-route method override, parser/envelope bypass, native error writing (including an invalid Origin remaining `403` rather than being rewritten to `401`), request-scope settlement, and ownership handoffs to DEC-MCP-03/04/07/08. Static planning/source checks informed this design decision; unverified SDK behavior and runtime controls remain execution checks. Acceptance does not authorize source work, select a live issuer/host/proxy/limit, or prove a runtime control.
 
-1. proposed package versions, Node/peer requirements, generated module dependency ownership, compilation and modern-only `legacy: 'reject'` behavior in the target module;
-2. exact 2026-07-28 `_meta`, mirrored headers and Base64 sentinel, JSON/SSE negotiation, `server/discover`, supported/unknown-method error codes, and unsupported-version behavior via real HTTP;
-3. Vona `//mcp` route resolution, POST/GET/DELETE mapping, pre-route POST method-override rejection, route-level `enable: false` body/response overrides, application body bounds, native writer/error ownership and parser bypass;
-4. request-context lifetime across JSON/SSE and pre-/post-header errors, request scope through awaited work and cleanup, disconnect signaling versus actual domain settlement, and concurrent stateless calls;
-5. Origin `403`, Host/proxy ingress policy and instance-binding handoff without moving OAuth, resource metadata, or host-to-instance authority out of DEC-MCP-03/04;
-6. ATP updates and a bounded execution dossier before adding any package, route, or source. DEC-MCP-02 acceptance itself remains a separate explicit owner decision; real HTTP/ATP results cannot be inferred from this record.
+Obtain separate approval of a bounded `WBS-MCP-20-01` execution dossier **before** adding any package, route, or source. That dossier must retain the following compilation and real-HTTP checks as implementation/ATP gates, not prerequisites for this already accepted design:
 
-No item above is runtime evidence. Planning audit and chart checks cannot accept this ADR or prove protocol/security behavior.
+1. Install the accepted versions under the approved module dependency owner; check generated manifests, lockfile selection, compilation, fresh per-request server creation in the handler factory, and actual `legacy: 'reject'` behavior. Never reuse a server across overlapping requests or capture request-scoped state in a process-global handler.
+2. Exercise the selected profile's required `_meta`, mirrored headers and Base64 sentinel, JSON/SSE negotiation, `server/discover`, supported/unknown-method errors and unsupported-version behavior over real HTTP. Distinguish a malformed RPC request from a valid call whose tool-input validation or execution fails; inspect the pinned handler's legacy-notification and missing/unsupported-version classification rather than assuming an error for every legacy message.
+3. Prove Vona `//mcp` route resolution, POST/GET/DELETE mapping, pre-route POST method-override rejection, route-level `enable: false` body/response overrides, application body bounds, parser bypass, and one bounded native writer for JSON/SSE and pre-/post-header errors.
+4. Observe request-context lifetime across JSON/SSE and errors, awaited request-scoped work and cleanup, disconnect signaling versus actual domain settlement, and concurrent stateless calls; do not infer cancellation, transaction rollback, or capacity release from socket close alone.
+5. Prove invalid Origin receives `403` even when the default Vona error filter would rewrite an unauthenticated `403` to `401`; test the approved Host/proxy ingress and instance-binding handoff only against separately accepted DEC-MCP-03/04 policy, without moving their authority into this decision.
+
+`ATP-MCP-TRANSPORT-01` and the WBS-MCP-20-01 acceptance checks retain the real-HTTP proof obligation; failing a check blocks implementation closure and may require reopening this design. No check listed here has been executed in the target module. Planning audit and chart checks did not accept this ADR and cannot prove protocol/security behavior; acceptance is the separate owner disposition recorded above.
 
 ## References
 

@@ -44,7 +44,7 @@ Tasks:
 
 Acceptance checks:
 
-- ADR 0001 records explicit acceptance of the overall boundary, names, and DEC-MCP-01 initial structural/configuration design only; DEC-MCP-02 through DEC-MCP-08 remain gated.
+- ADR 0001 records explicit acceptance of the overall boundary, names, and DEC-MCP-01 initial structural/configuration design only. ADR 0002 separately accepts DEC-MCP-02's transport design; DEC-MCP-03 through DEC-MCP-08 and bounded source execution remain gated.
 - No planning record claims that the source suite/module, endpoint, OAuth provider, or runnable command already exists.
 - Every material design gate has a recorded accountable owner and a bounded downstream WBS dependency; do not infer the owner from package authorship.
 
@@ -80,7 +80,7 @@ Traceability: `PRD-MCP-ACCESS-01`, `SRS-MCP-TRANSPORT-01`, `SRS-MCP-TRANSPORT-02
 
 Dependencies: `WBS-MCP-10-01`, `WBS-MCP-10-02`.
 
-Source areas: proposed `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/`; existing Vona router/middleware registration; selected MCP transport implementation. ADR 0002 is the current proposed transport draft; it does not close DEC-MCP-02 or authorize source.
+Source areas: proposed `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/`; existing Vona router/middleware registration; selected MCP transport implementation. ADR 0002 accepts DEC-MCP-02's transport design only; it does not authorize source or claim the target module exists. Target-module compilation and real HTTP remain checks under a separately approved bounded execution dossier.
 
 Tasks:
 
