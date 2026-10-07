@@ -20,8 +20,8 @@ Use the MCP 2026-07-28 Streamable HTTP profile in **modern-only** mode:
 
 - propose the official v2 server package `@modelcontextprotocol/server` at `2.3.0`;
 - propose the official Node adapter `@modelcontextprotocol/node` at `2.1.1`;
-- use the v2 web-standard handler (`createMcpHandler`) and its Node adapter (`toNodeHandler`), subject to compile-time/API verification during a separately approved execution dossier;
-- reject legacy MCP traffic rather than accepting both profiles implicitly. The exact package versions remain a proposal until lockfile, Node engine, peer dependencies, and the package's modern-only configuration are checked in the target module.
+- use the v2 web-standard handler (`createMcpHandler`) and its Node adapter (`toNodeHandler`), subject to compile-time/API and real HTTP verification during a separately approved execution dossier;
+- configure `createMcpHandler(factory, { legacy: 'reject' })` explicitly: the published `2.3.0` handler defaults to `legacy: 'stateless'` and would otherwise admit 2025-era requests. The published `2.1.1` Node adapter accepts native `(req, res, parsedBody?)` and returns `Promise<void>`; it does not make a Vona controller action or its lifecycle safe by itself. The published packages declare Node `>=20` and the adapter peers on server `^2.3.0`; the root project declares Node `>=24.4.0`. These are package-source observations, **not** installation, compilation, lockfile selection, or runtime interoperability proof. Versions and dependency ownership remain proposed until approved execution checks them in the target module.
 
 Do not select the older monolithic `@modelcontextprotocol/sdk` 1.x package for this modern-only boundary. If compatibility with an older MCP revision is later required, it needs a separate protocol/version decision, explicit route behavior, and separate ATP coverage; it must not be enabled as an accidental SDK default.
 
@@ -31,31 +31,32 @@ Mount the endpoint at the origin-root Vona path `//mcp`, which resolves to `/mcp
 
 The controller hands native `ctx.req` and `ctx.res` to the Node adapter. It must deliberately transfer ownership of parsing, protocol response writing, stream completion, and protocol error formatting to the selected MCP transport. The implementation must:
 
-- disable the route's Vona request-body interceptor, or use the SDK's documented pre-parsed-body path without double-reading the consumed stream; do not accept Vona's default 20 MB parser limit accidentally;
-- disable the normal Vona response-envelope interceptor for the transport action and set `ctx.respond = false` when native response ownership is transferred; otherwise JSON-RPC responses can be wrapped as `{ code: 0, data: ... }`;
+- disable the transport actions' global Vona parser/envelope with route-local `@UseInterceptorGlobal('a-body:bodyReq', { enable: false })` and `@UseInterceptorGlobal('a-body:bodyRes', { enable: false })` (the option is `enable`, **not** `enabled`); alternatively, a separately verified pre-parsed-body path must preserve the same bounds without double-reading the stream. The normal parser's 20 MB default is no longer an MCP ingress bound when bypassed. The published Node adapter and server handler each default to a 4 MiB body bound for bodies they read; select and verify application-level request limits under DEC-MCP-08 rather than relying on those defaults or passing an unbounded pre-parsed body;
+- set `ctx.respond = false` for native response ownership, not as an error or lifetime bypass: Vona error handling and middleware unwinding still run. Define and verify one bounded writer for native JSON, SSE, pre-/post-header errors, and aborts so that a Vona error cannot corrupt an MCP response or leak an unredacted framework payload;
 - avoid Express response/request APIs and avoid appending an Express-style middleware after Vona's terminal router;
-- keep request-local transport state and request-scoped Vona context alive until tool work, response completion, cancellation, or disconnect cleanup has finished. No process-global handler may capture a request-scoped context or Passport.
+- reject transport-path method override before routing: Vona's system-level `koa-override` accepts POST overrides (including `X-HTTP-Method-Override`) before the controller route is chosen. A POST with an override must not reach a GET/DELETE handler, bypass the POST protocol checks, or dispatch a business action; disabling action-level interceptors alone does not address this ingress behavior;
+- await the adapter and any request-scope-dependent tool work/cleanup through actual settlement. Vona disposes request-scoped beans when its request callback settles, not when a socket eventually closes; a response close is a cancellation signal under the protocol but cannot by itself prove domain work stopped, a transaction rolled back, or capacity was released. No process-global handler may capture a request-scoped context or Passport. DEC-MCP-07/08 own bounded active-work, deadline, and post-disconnect outcome mechanics.
 
 A separate protected-resource metadata HTTP route is **not** selected here. Its resource identifier, authorization-server discovery, OAuth bearer validation, and host-to-instance authorization belong to `DEC-MCP-03` and `DEC-MCP-04`. The MCP `server/discover` method is a protocol RPC on `/mcp`, not a substitute for OAuth protected-resource metadata.
 
 ### Modern HTTP wire contract
 
-For the first increment, the endpoint accepts one JSON-RPC request per `POST`:
+For the first increment, each client JSON-RPC message uses a new `POST` with a single JSON-RPC request or notification, never a response or batch. The current core protocol defines no client-to-server HTTP notifications; accepting an extension notification would need separate review:
 
-- require `Content-Type: application/json` and `Accept: application/json, text/event-stream` (or an equivalent explicitly approved negotiation policy);
-- require the selected profile's request `_meta` protocol version and client capabilities; `clientInfo` is recommended but not a required authentication input;
-- validate the profile's mirrored protocol headers against the request body, including `MCP-Protocol-Version`, `Mcp-Method`, and `Mcp-Name` where required by the method. A mismatch is a bounded HTTP `400` / protocol header-mismatch error; an unsupported version is a bounded HTTP `400` with the supported-version error class/list;
-- implement the required `server/discover` RPC, `tools/list`, and `tools/call` on the same endpoint. `tools/call` business or tool execution failures are represented as tool results with `isError: true` where the profile requires a result; malformed requests, unknown RPC methods, and invalid protocol envelopes remain JSON-RPC errors;
-- allow a JSON response or request-scoped SSE response according to the client's `Accept` header and the selected SDK. There is no long-lived standalone GET notification stream in this proposal. If future subscription notifications use POST (for example `subscriptions/listen`), they require a separate scope and cancellation/limit review;
-- return `405` for GET and DELETE, with no session creation or termination semantics; do not accept `Mcp-Session-Id` or `Last-Event-ID` as authority or resumption state;
-- validate a present `Origin` and reject an invalid Origin with `403`. Add explicit Vona ingress Host allowlisting and trusted-proxy handling because the SDK handler does not itself establish the deployment's Host/instance trust boundary;
-- choose bounded request bytes, JSON depth/collection limits, concurrent calls, execution deadlines, and cancellation behavior in the operational decisions. The protocol profile does not supply a numerical body-size limit. An SSE disconnect closes the transport response; whether work is actually canceled depends on the verified Vona/SDK/domain operation lifecycle. A disconnect alone neither proves business cancellation nor rolls back a committed effect; DEC-MCP-07/08 own active-work accounting and recovery.
+- require JSON request `Content-Type: application/json` and an `Accept` header listing both `application/json` and `text/event-stream`; a supported request receives either a JSON object or a request-scoped SSE response. An accepted notification, if separately supported, returns `202` with no body;
+- require `_meta` fields `io.modelcontextprotocol/protocolVersion` and `io.modelcontextprotocol/clientCapabilities` on every request; `io.modelcontextprotocol/clientInfo` is SHOULD but not a required authentication input. Missing required metadata maps to HTTP `400` and JSON-RPC `-32602`; a declared but missing capability required for the operation maps to HTTP `400` and `-32021` with `data.requiredCapabilities`;
+- require and compare `MCP-Protocol-Version` with `_meta` and `Mcp-Method` with `method`; require `Mcp-Name` for `tools/call` and compare with `params.name`. Standard header names are case-insensitive, values are case-sensitive. Decode the `=?base64?{Base64EncodedValue}?=` sentinel for header-unsafe or sentinel-shaped names before comparison; reject malformed, missing, or mismatched required headers with HTTP `400` / JSON-RPC `-32020`. Reject an unsupported protocol version with HTTP `400` / `-32022` and a supported-version list. If any later tool publishes `x-mcp-header`, its `Mcp-Param-*` matching and safe value encoding need a separate catalog/transport review; first-increment tools must not advertise an unvalidated annotation;
+- implement the required `server/discover` RPC, `tools/list`, and `tools/call` on the same endpoint. An unimplemented **RPC method** maps to HTTP `404` and JSON-RPC `-32601`; an unknown tool or malformed call is a JSON-RPC protocol error (for example `-32602`), **not** an `isError` tool result. Execution failures after a valid tool call use a tool result with `isError: true` where the profile requires one. Bound and redact all error bodies;
+- allow JSON or request-scoped SSE responses. There is no standalone GET notification stream. A future `subscriptions/listen` or long-lived notification path requires a separate scope, cancellation, and limits review; a request-scoped SSE close is a protocol cancellation signal, not proof of completed business cancellation;
+- return `405` for GET and DELETE as the chosen modern-only behavior (the specification says **SHOULD**, not MUST). Ignore `Mcp-Session-Id` and `Last-Event-ID` as legacy compatibility inputs without minting/echoing sessions or resuming streams; never treat them as authority;
+- validate `Origin` on incoming transport traffic and return HTTP `403` when a present Origin is invalid (**MUST**). Validate approved Host/proxy inputs at ingress; the published bare handler does not itself supply deployment-specific trust or host-to-instance binding, which remains DEC-MCP-04;
+- choose bounded request bytes, JSON depth/collection limits, concurrent calls, execution deadlines, and cancellation behavior under DEC-MCP-07/08. The protocol profile supplies no numeric body bound. A disconnected SSE response cannot on its own prove domain cancellation or rollback of a committed effect.
 
-The exact status/error mappings above must be checked against the selected SDK and normative profile before implementation. They are proposed contract targets, not observed runtime behavior.
+The cited normative mappings and published-package API/defaults were inspected as planning inputs; compatibility across actual SDK, Vona, ingress/proxy and real HTTP still requires a separately approved compilation and ATP. No runtime wire behavior is claimed.
 
 ### Legacy compatibility boundary
 
-Legacy 2025-era behavior (`initialize`, optional protocol sessions, GET SSE, DELETE, and `Last-Event-ID`) is excluded from the first increment. A client that sends such traffic receives the modern endpoint's bounded unsupported-method/version response and no controller dispatch. Supporting both profiles in one route would require explicit negotiation, test fixtures, and a new decision; it is not a safe compatibility default.
+Legacy 2025-era behavior (`initialize`, optional protocol sessions, GET SSE, DELETE, and `Last-Event-ID`) is excluded from the first increment. A well-formed, modern-profile `initialize` request is an unimplemented RPC method (`404` / `-32601`); malformed/missing headers or an unsupported version instead receive their applicable `400` protocol error before RPC dispatch. Legacy GET/DELETE receive the chosen `405`; session/resumption headers are ignored rather than used for authority. Supporting both profiles in one route would require explicit negotiation, test fixtures, and a new decision; it is not a safe SDK compatibility default.
 
 ## Alternatives rejected or deferred
 
@@ -71,12 +72,12 @@ This proposal keeps transport ownership inside the planned normal Vona module an
 
 Before accepting `DEC-MCP-02`, verify:
 
-1. package versions, Node/peer requirements, modern-only SDK configuration, and generated module dependency ownership;
-2. exact 2026-07-28 request `_meta`, header mirroring, response negotiation, `server/discover`, error codes, and unsupported-method/version behavior;
-3. Vona `//mcp` route resolution, POST/GET/DELETE mapping, route-level request/response interceptor overrides, native response ownership, and parser limits;
-4. request-context lifetime across JSON and SSE responses, disconnect cancellation, and concurrent stateless calls;
-5. Host/Origin handling without moving OAuth, resource metadata, or host-to-instance authority out of DEC-MCP-03/04;
-6. ATP updates and a bounded execution dossier before adding the package, route, or source.
+1. proposed package versions, Node/peer requirements, generated module dependency ownership, compilation and modern-only `legacy: 'reject'` behavior in the target module;
+2. exact 2026-07-28 `_meta`, mirrored headers and Base64 sentinel, JSON/SSE negotiation, `server/discover`, supported/unknown-method error codes, and unsupported-version behavior via real HTTP;
+3. Vona `//mcp` route resolution, POST/GET/DELETE mapping, pre-route POST method-override rejection, route-level `enable: false` body/response overrides, application body bounds, native writer/error ownership and parser bypass;
+4. request-context lifetime across JSON/SSE and pre-/post-header errors, request scope through awaited work and cleanup, disconnect signaling versus actual domain settlement, and concurrent stateless calls;
+5. Origin `403`, Host/proxy ingress policy and instance-binding handoff without moving OAuth, resource metadata, or host-to-instance authority out of DEC-MCP-03/04;
+6. ATP updates and a bounded execution dossier before adding any package, route, or source. DEC-MCP-02 acceptance itself remains a separate explicit owner decision; real HTTP/ATP results cannot be inferred from this record.
 
 No item above is runtime evidence. Planning audit and chart checks cannot accept this ADR or prove protocol/security behavior.
 
@@ -87,5 +88,7 @@ No item above is runtime evidence. Planning audit and chart checks cannot accept
 - [MCP versioning](https://modelcontextprotocol.io/specification/2026-07-28/basic/versioning)
 - [MCP server discovery](https://modelcontextprotocol.io/specification/2026-07-28/server/discover)
 - [MCP server tools](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)
-- [TypeScript SDK HTTP serving guide](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/docs/serving/http.md)
+- [Published server 2.3.0 package metadata](https://registry.npmjs.org/@modelcontextprotocol%2Fserver/2.3.0) and [published Node adapter 2.1.1 metadata](https://registry.npmjs.org/@modelcontextprotocol%2Fnode/2.1.1) (package archives inspected for exports/defaults; not installed or compiled)
+- [TypeScript SDK HTTP serving guide](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/docs/serving/http.md) (not fetched during this review; package archives supplied SDK findings)
 - [Vona Swagger root-path precedent](../../../vona/src/suite-vendor/a-vona/modules/a-swagger/src/controller/swagger.ts)
+- [Vona pre-route method override](../../../vona/src/suite-vendor/a-vona/modules/a-core/src/bean/middlewareSystem.overrideMethod.ts), [body parser](../../../vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyReq.ts), [response interceptor](../../../vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts), [router](../../../vona/src/suite-vendor/a-vona/modules/a-web/src/bean/bean.router.ts), and [error renderer](../../../vona/src/suite-vendor/a-vona/modules/a-error/src/lib/onerror.ts)

@@ -13,7 +13,7 @@ This `repo-specs/cabloy-mcp/` directory retains the existing `MCP` requirement, 
 7. [Implementation scope-count burndown](./implementation-burndown.svg) is a generated scope-count reference, not a calendar forecast.
 8. [ADR 0001](./decisions/0001-mcp-suite-boundaries.md) records the accepted overall suite, security, ownership, and first-increment boundaries while retaining specific implementation design gates.
 9. [ADR 0002 (proposed)](./decisions/0002-mcp-transport.md) drafts the current-profile Streamable HTTP boundary without accepting DEC-MCP-02 or authorizing source.
-10. [Threat model and policy matrix (draft)](./threat-model.md) maps first-increment threats to fail-closed controls and open design gates; it does not accept DEC-MCP-02–08 or close WBS-MCP-10-02.
+10. [Threat model and policy matrix (draft)](./threat-model.md) maps first-increment threats to fail-closed controls and open design gates; WBS-MCP-10-02 has a separate documentary `planning-complete` closure, but this record does not accept DEC-MCP-02–08 or prove runtime controls.
 11. [ADR 0003 (proposed)](./decisions/0003-mcp-oauth-resource-server.md) drafts the OAuth protected-resource boundary without selecting a provider or authorizing configuration.
 12. [ADR 0004 (proposed)](./decisions/0004-mcp-host-instance-binding.md) drafts early host-to-instance selection and deployment proxy trust without approving a host map or changing source.
 13. [ADR 0005 (proposed)](./decisions/0005-mcp-tool-catalog-registry.md) drafts MCP-only exclusion, reviewed public names, and an in-memory fixed registry without enabling tools or accepting DEC-MCP-05.

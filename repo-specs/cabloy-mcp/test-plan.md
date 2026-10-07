@@ -91,24 +91,26 @@ A planned command or code reading is not a result. No `evidence/` directory or `
 
 Setup:
 
-- Use a synthetic configured MCP endpoint and approved resource metadata/authorization-server discovery values.
-- Prepare valid messages for the selected protocol revision, including its required request metadata and discovery method; test unsupported content types/versions, missing authorization, oversized body, and unknown host. Do not add legacy session cases unless the accepted revision explicitly supports them.
+- Use a synthetic configured MCP endpoint and, for the metadata handoff, approved resource metadata/authorization-server discovery values; DEC-MCP-03/04 acceptance and their separate ATPs remain necessary for actual metadata/host authorization closure.
+- Prepare valid 2026-07-28-profile `server/discover`, tools/list, and tools/call requests with required `_meta` and mirrored headers plus JSON and request-scoped SSE negotiation. Record the proposed SDK versions and explicit `legacy: 'reject'` setting if DEC-MCP-02 is accepted; do not use `initialize` as a valid-profile handshake.
+- Prepare malformed/omitted `_meta` and headers, mismatches, unsupported versions, unknown RPC method and tool, header-safe/unsafe/sentinel-shaped `Mcp-Name`, unsupported content types, oversized bodies, POST `X-HTTP-Method-Override`, invalid Origin, GET/DELETE, and legacy session/resumption headers. Test missing authorization and unknown host only against approved DEC-MCP-03/04 policies, not as transport-only proof.
 
 Procedure:
 
-- Request protected-resource metadata and verify only approved resource/discovery information is returned.
-- Perform the selected revision's mandatory discovery RPC, tools/list, and a minimal tools/call with a valid synthetic token; perform `initialize` only if the accepted revision requires it.
-- Repeat with malformed protocol, unsupported method/content negotiation, oversized input, unknown host, and any protocol/session identifier without valid authorization only if the accepted revision defines it.
+- Request protected-resource metadata and verify approved resource/discovery values only after their DEC-MCP-03/04 owners select them; do not treat this test alone as acceptance of their policy or instance binding.
+- Over real HTTP, perform `server/discover`, tools/list, and a minimal tools/call with a valid synthetic token under the separately approved OAuth/host fixture; exercise JSON and request-scoped SSE, including a disconnect and work that settles later. Test request-scope disposal and native error/response writer behavior before and after headers, with no duplicate or framework-wrapped response.
+- Repeat with missing or mismatched `MCP-Protocol-Version`, `Mcp-Method`, and `Mcp-Name`, decoded Base64/sentinel-shaped names, missing required `_meta`, missing required client capability, unsupported version, unknown RPC method versus unknown tool versus tool-execution failure, invalid Origin, and oversized/unsupported representations. Submit POST with `X-HTTP-Method-Override: GET` and `DELETE` and confirm no method remapping or business dispatch; test GET/DELETE and ignored `Mcp-Session-Id`/`Last-Event-ID` without enabling legacy behavior. Test missing authorization/unknown host against separately approved DEC-MCP-03/04 decisions.
 
 Expected result:
 
-- Supported exchanges are protocol-compliant; unsupported or malformed requests fail without controller dispatch.
-- The selected protocol's discovery response and separate protected-resource metadata identify only approved resource/authorization information without secrets.
-- Protocol state or session identifiers, if supported by the accepted revision, are not accepted as authorization; every protected request still authenticates.
+- Supported exchanges are protocol-compliant; malformed/missing mirrored headers yield HTTP `400` / JSON-RPC `-32020`, unsupported version `400` / `-32022`, missing required `_meta` `400` / `-32602`, missing required client capability `400` / `-32021`, and an unknown RPC method `404` / `-32601`. An unknown tool or malformed tool call is a protocol error, while a valid call's execution failure follows the tool-result `isError` contract. No invalid/method-overridden request dispatches a business controller.
+- Modern-only mode rejects `initialize` as an unimplemented method when otherwise well formed, answers GET/DELETE with the chosen `405`, and ignores session/resumption headers without accepting them as authority. An invalid present Origin yields `403`; bounded body handling remains effective when Vona's ordinary parser is bypassed.
+- Native JSON/SSE/error responses are not enveloped or rewritten by Vona; disconnect signaling, actual work settlement, context disposal, and post-effect outcomes are observed separately rather than inferring rollback from a closed socket.
+- The selected protocol's discovery response and, after separate DEC-MCP-03/04 approval, protected-resource metadata identify only approved resource/authorization information without secrets. Every protected request still authenticates; this scenario does not itself approve OAuth or host-to-instance policy.
 
 Minimum proof:
 
-- Retain accepted protocol revision and SDK configuration fingerprint, environment, exact HTTP/protocol exchanges with tokens redacted, dispatch counter, status/error classes, and redacted artifact location.
+- Retain accepted protocol revision and SDK/legacy-mode configuration fingerprint, source revision, environment, exact real-HTTP JSON/SSE, header, method-override, Origin, error and disconnect procedures with synthetic/redacted tokens, dispatch counter, status and JSON-RPC codes, context/work-settlement observations, and durable redacted artifact location. Document which metadata/host/auth decisions and ATPs are still separately open.
 
 Traceability: `PRD-MCP-ACCESS-01`, `SRS-MCP-TRANSPORT-01`, `SRS-MCP-TRANSPORT-02`, `SRS-MCP-TRANSPORT-03`, `SRS-MCP-NFR-03`, `WBS-MCP-20-01`.
 

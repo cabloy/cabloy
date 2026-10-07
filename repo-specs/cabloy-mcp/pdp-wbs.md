@@ -84,15 +84,15 @@ Source areas: proposed `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/`; existing
 
 Tasks:
 
-- Select and record the supported Streamable HTTP protocol version, SDK or adapter, route registration, stateless/session mode, content negotiation, request size, timeout, and Origin/Host handling.
-- Implement protected-resource metadata and authorization-server discovery integration without exposing secrets or internal topology.
-- Define the selected revision's discovery handshake (not necessarily `initialize`), tools/list, tools/call, error, cancellation, and unsupported-feature behavior for the first increment; do not import GET, DELETE, or session behavior from an older revision.
+- Select and record the supported Streamable HTTP protocol version, SDK or adapter, route registration, modern-only configuration, content negotiation, request size, timeout, and Origin handling; do not equate an SDK default or `ctx.respond = false` with isolation, response ownership, or request-scope lifetime.
+- Define the transport-facing handoff to protected-resource metadata, authorization-server discovery, and canonical host/instance binding without selecting the metadata route/issuer or host-to-instance trust policy here; implementation and acceptance of those contracts remain with DEC-MCP-03/04 and WBS-MCP-20-02/03. Do not expose secrets or internal topology.
+- Define the selected revision's `server/discover` (not legacy `initialize`), tools/list, tools/call, mirrored-header and error mappings, POST method-override defense, native JSON/SSE/error ownership, disconnect and context-settlement behavior, and unsupported-feature handling. Do not import GET, DELETE, or session behavior from an older revision.
 
 Acceptance checks:
 
-- A valid protocol exchange reaches the MCP boundary without requiring a Zova site.
-- Missing, malformed, unsupported, or oversized protocol requests fail safely and do not dispatch a controller.
-- Metadata advertises the correct resource identity and approved authorization-server discovery; no session identifier is treated as authorization.
+- A valid protocol exchange reaches the MCP boundary without requiring a Zova site; supported JSON/SSE and all error responses have exactly one transport-owned writer and a bounded request-scope lifetime.
+- Missing, malformed, unsupported, method-overridden, or oversized protocol requests fail safely without business-controller dispatch; modern-only and exact HTTP/JSON-RPC mappings are proven with real HTTP, not just source inspection.
+- The boundary preserves the approved resource/authorization-server/instance handoff without using any protocol or session identifier as authorization. Protected-resource metadata correctness and host-to-instance authorization remain gated by WBS-MCP-20-02/03 and DEC-MCP-03/04; this task alone cannot close those separate contracts.
 
 #### WBS-MCP-20-02: Integrate OAuth resource-server validation and local subject mapping
 
