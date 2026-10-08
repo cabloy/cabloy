@@ -16,3 +16,7 @@ Explore the Cabloy demonstration sites:
 ### 1. Can an Admin Site Use SSR? CabloyJS in Three Practical Demos (Duration: 1:16)
 
 [![CabloyJS Admin SSR video](./assets/img/cabloy-admin-ssr-cover-en.png)](https://youtu.be/786IQhRdr1I)
+
+### 2. A First: Second-Level Tabs for Admin Multitasking
+
+[![CabloyJS Admin Tabs video](./assets/img/cabloy-admin-tabs-cover-en.png)](https://youtu.be/L6DxD-JfztQ)

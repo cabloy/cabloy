@@ -36,6 +36,10 @@ features:
 
 [![CabloyJS Admin SSR video](./assets/img/cabloy-admin-ssr-cover-en.png)](https://youtu.be/786IQhRdr1I)
 
+### 2. A First: Second-Level Tabs for Admin Multitasking
+
+[![CabloyJS Admin Tabs video](./assets/img/cabloy-admin-tabs-cover-en.png)](https://youtu.be/L6DxD-JfztQ)
+
 ## Choose a reading path
 
 ### Start a project

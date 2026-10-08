@@ -42,6 +42,10 @@ See the [AI Spec-Driven Development](https://cabloy.com/ai/ai-spec-driven-develo
 
 [![CabloyJS Admin SSR video](./repo-docs/assets/img/cabloy-admin-ssr-cover-en.png)](https://youtu.be/786IQhRdr1I)
 
+### 2. A First: Second-Level Tabs for Admin Multitasking
+
+[![CabloyJS Admin Tabs video](./repo-docs/assets/img/cabloy-admin-tabs-cover-en.png)](https://youtu.be/L6DxD-JfztQ)
+
 ## Editions
 
 Cabloy is available through two complete project baselines, each maintained in its own repository:
