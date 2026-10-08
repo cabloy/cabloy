@@ -14,7 +14,7 @@ The [PRD](./prd.md) owns product outcomes; the [SRS](./srs.md) owns technical co
 
 Verification prioritizes:
 
-1. OAuth issuer/resource/audience/expiry/scope validation and local-subject mapping;
+1. MCP-profile access-token resource/expiry/scope validation, current token lookup, and local-subject mapping;
 2. trusted endpoint-host to instance binding, forwarded-host behavior, and selector conflict rejection;
 3. candidate-vs-enabled-vs-visible-vs-call-authorized tool separation;
 4. OpenAPI/DTO schema fidelity, MCP exclusions, stable-name collision handling, and unsafe-shape rejection;
@@ -64,7 +64,7 @@ Each applicable combination uses synthetic data and separate contexts for:
 - instance A and instance B;
 - subject A with allowed scope/RBAC/data ownership;
 - subject B with different allowed scope and no ownership of A's resource;
-- disabled/unmapped subject, ambiguous subject mapping, wrong-resource token, expired token, wrong issuer, insufficient scope, and valid token;
+- disabled/unmapped subject, ambiguous subject mapping, wrong-resource token, expired/inactive/revoked opaque token, token-lookup outage, wrong issuer, insufficient scope, and valid token;
 - approved endpoint host, unknown host, trusted proxy host, conflicting query/header selector, and token-instance mismatch;
 - one safe JSON read candidate, one JSON mutation candidate, one destructive or side-effecting GET candidate, one MCP-excluded candidate, one API-excluded candidate, one multipart/binary/streaming/redirect/unsupported-shape candidate, and a duplicate-name candidate;
 - valid, malformed, unknown, extra-field, oversized, route-like, header-like, tenant-like, and state-like tool arguments;
@@ -119,19 +119,20 @@ Traceability: `PRD-MCP-ACCESS-01`, `SRS-MCP-TRANSPORT-01`, `SRS-MCP-TRANSPORT-02
 
 Setup:
 
-- Prepare synthetic signed/introspected tokens for valid issuer/resource/subject/scope, wrong issuer, wrong audience/resource, expired/not-yet-valid, malformed signature, revoked/introspection-negative, missing subject, and missing scope.
+- Prepare synthetic MCP-profile opaque access-token lookup results for valid issuer/resource/subject/scope/instance, wrong issuer, wrong resource, expired/inactive/revoked state, missing subject, missing scope, ambiguous mapping, and lookup/introspection outage. If a JWT/JWKS alternative is separately selected, add its signed-token and key-rotation fixtures as an explicit branch rather than as the default profile.
 - Configure protected-resource metadata with the canonical `resource` and at least one `authorization_servers` issuer identifier (not an authorization-server metadata URL), plus a local subject mapping for one instance.
+- Prepare a client/grant fixture that requests and receives a refresh token, and one that has no refresh token. Treat issuance as optional even after a request; keep refresh-token values confined to authorization-server token-endpoint procedures except for a redacted negative resource-server fixture.
 
 Procedure:
 
 - Call metadata, tools/list, and tools/call with each token state.
-- Simulate key/introspection unavailability, including a required JWKS refresh failure while a previously fetched key remains cached, and ambiguous or disabled local subject mapping.
+- Simulate token lookup/introspection unavailability, stale or ambiguous token state, refresh-token rotation, prior-refresh-token reuse, and ambiguous or disabled local subject mapping. Exercise refresh only at the authorization-server token endpoint; send a refresh token to the MCP resource endpoint as a negative test and confirm rejection. If JWT/JWKS is later selected, separately simulate a required JWKS refresh failure while a previously fetched key remains cached.
 
 Expected result:
 
-- Only the valid token independently verified as bound to the canonical resource proceeds to the next policy stage; a client-supplied `resource` parameter alone is not audience proof.
-- A successfully fetched, currently valid key cache may be used before refresh is required; when a required JWKS refresh fails, the token is denied even if a prior key remains cached. The test observes no anonymous fallback or controller dispatch.
-- Missing, invalid, expired, or wrong-resource tokens yield bounded HTTP `401`; insufficient scope yields bounded HTTP `403` at the HTTP authorization boundary. Unavailable, ambiguous, or disabled states fail closed with a separately approved nondiagnostic mapping; none permits anonymous fallback, controller dispatch, or cross-instance probing.
+- Only the active MCP-profile access token whose current lookup/introspection state confirms the canonical resource, subject, scope, instance, expiry, and revocation status proceeds to the next policy stage; a client-supplied `resource` parameter alone is not proof of binding.
+- Lookup/introspection outage, stale authorization state, and ambiguous grant state deny without using a stale cache or permitting controller dispatch. If refresh is supported and a refresh token is issued, the authorization-server token endpoint enforces the approved rotation/reuse policy; a refresh token is rejected at the MCP resource endpoint. A client without a refresh token may use its valid access token until expiry and then needs reauthorization, not a resource-server refresh.
+- Missing, invalid, expired, inactive, revoked, or wrong-resource tokens yield bounded HTTP `401`; insufficient scope yields bounded HTTP `403` at the HTTP authorization boundary. Unavailable, ambiguous, or disabled states fail closed with a separately approved nondiagnostic mapping; none permits anonymous fallback, controller dispatch, or cross-instance probing. If a JWT/JWKS alternative is later approved, its required-refresh-failure behavior is verified in a separate branch.
 - Client errors are bounded; protected telemetry records a redacted reason class.
 
 Minimum proof:

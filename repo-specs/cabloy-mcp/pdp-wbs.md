@@ -60,7 +60,7 @@ Source areas: proposed `cabloy-mcp` security boundary; existing Passport/instanc
 
 Tasks:
 
-- Model wrong-resource tokens, issuer/JWKS/introspection failure, replay, confused deputy, host/forwarded-host injection, selector conflicts, cross-instance access, Passport leakage, tool/schema injection, output exfiltration, rate abuse, and destructive operations.
+- Model wrong-resource tokens, authorization-server/token-lookup failure, refresh-token replay/rotation failure, confused deputy, host/forwarded-host injection, selector conflicts, cross-instance access, Passport leakage, tool/schema injection, output exfiltration, rate abuse, and destructive operations.
 - Define the policy matrix for tool visibility, call authorization, risk/confirmation, data minimization, audit, error classes, disablement, and operational limits.
 - Identify exact OAuth issuer, resource identifier, subject-to-local mapping, trusted proxy model, and configuration owner as design gates.
 
@@ -100,19 +100,19 @@ Traceability: `PRD-MCP-IDENTITY-01`, `PRD-MCP-IDENTITY-03`, `SRS-MCP-AUTH-01`, `
 
 Dependencies: `WBS-MCP-20-01`.
 
-Source areas: approved OAuth issuer/resource-server integration; existing Vona Passport/user/auth ownership; proposed `cabloy-mcp` authentication service. ADR 0003 is the current proposed OAuth design; it does not select an issuer or authorize provider configuration.
+Source areas: approved authorization-server/token-service integration and MCP resource-server boundary; existing Vona Passport/user/auth ownership; proposed `cabloy-mcp` authentication service. ADR 0003 evaluates a Cabloy-integrated `a-auth` authorization-server candidate with an MCP-specific opaque access-token profile and optional refresh support; it does not select an issuer, assign new auth storage, or authorize configuration. Authorization-server endpoints/grants/token persistence need their own bounded owner and scope before this resource-server task can rely on them.
 
 Tasks:
 
-- Validate issuer, signature/introspection, resource/audience, expiry, subject, and scope on every request.
+- Validate the MCP access-token profile, issuer/resource binding, current lookup/introspection state, expiry, subject, instance relation, and scope on every request.
 - Map the OAuth subject to an active local Passport-compatible identity in the endpoint instance without reusing an existing unrelated request Passport.
-- Define behavior for key rotation, issuer outage, ambiguous mapping, disabled identity, missing scope, and token/resource mismatch; the approved deny-on-required-JWKS-refresh-failure policy rejects a token when refresh is required and fails, even if a prior key remains cached.
+- Define behavior for token lookup/introspection outage, refresh-token rotation or failure, ambiguous mapping, disabled identity, missing scope, and token/resource mismatch; the preferred opaque-token profile rejects a token whenever current authorization state cannot be confirmed. The earlier deny-on-required-JWKS-refresh-failure policy is retained only if a later JWT/JWKS alternative is selected.
 
 Acceptance checks:
 
 - Invalid and wrong-resource tokens cannot list or call tools.
 - A valid token maps to exactly one permitted local subject or fails closed.
-- A required JWKS refresh failure denies even with a previously cached key; normal current-cache use and finite freshness/refresh/rotation bounds are verified without extending trust after failure.
+- An opaque token is accepted only when the MCP-specific token profile, resource, subject, scope, instance binding, expiry, and revocation state are confirmed; token lookup/introspection failure denies without using stale authorization state. If a JWT/JWKS alternative is later approved, its refresh-failure rule is verified separately.
 - OAuth scope never expands local RBAC, data scope, or deployment tool policy.
 
 #### WBS-MCP-20-03: Bind endpoint hosts to Vona instances
