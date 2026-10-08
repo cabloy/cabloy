@@ -125,11 +125,12 @@ Setup:
 Procedure:
 
 - Call metadata, tools/list, and tools/call with each token state.
-- Simulate key/introspection unavailability and ambiguous or disabled local subject mapping.
+- Simulate key/introspection unavailability, including a required JWKS refresh failure while a previously fetched key remains cached, and ambiguous or disabled local subject mapping.
 
 Expected result:
 
 - Only the valid token independently verified as bound to the canonical resource proceeds to the next policy stage; a client-supplied `resource` parameter alone is not audience proof.
+- A successfully fetched, currently valid key cache may be used before refresh is required; when a required JWKS refresh fails, the token is denied even if a prior key remains cached. The test observes no anonymous fallback or controller dispatch.
 - Missing, invalid, expired, or wrong-resource tokens yield bounded HTTP `401`; insufficient scope yields bounded HTTP `403` at the HTTP authorization boundary. Unavailable, ambiguous, or disabled states fail closed with a separately approved nondiagnostic mapping; none permits anonymous fallback, controller dispatch, or cross-instance probing.
 - Client errors are bounded; protected telemetry records a redacted reason class.
 

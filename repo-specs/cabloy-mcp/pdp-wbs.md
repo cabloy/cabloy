@@ -106,12 +106,13 @@ Tasks:
 
 - Validate issuer, signature/introspection, resource/audience, expiry, subject, and scope on every request.
 - Map the OAuth subject to an active local Passport-compatible identity in the endpoint instance without reusing an existing unrelated request Passport.
-- Define behavior for key rotation, issuer outage, ambiguous mapping, disabled identity, missing scope, and token/resource mismatch.
+- Define behavior for key rotation, issuer outage, ambiguous mapping, disabled identity, missing scope, and token/resource mismatch; the approved deny-on-required-JWKS-refresh-failure policy rejects a token when refresh is required and fails, even if a prior key remains cached.
 
 Acceptance checks:
 
 - Invalid and wrong-resource tokens cannot list or call tools.
 - A valid token maps to exactly one permitted local subject or fails closed.
+- A required JWKS refresh failure denies even with a previously cached key; normal current-cache use and finite freshness/refresh/rotation bounds are verified without extending trust after failure.
 - OAuth scope never expands local RBAC, data scope, or deployment tool policy.
 
 #### WBS-MCP-20-03: Bind endpoint hosts to Vona instances
