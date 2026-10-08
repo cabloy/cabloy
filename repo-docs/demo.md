@@ -17,6 +17,6 @@ Explore the Cabloy demonstration sites:
 
 [![CabloyJS Admin SSR video](./assets/img/cabloy-admin-ssr-cover-en.png)](https://youtu.be/786IQhRdr1I)
 
-### 2. A First: Second-Level Tabs for Admin Multitasking
+### 2. A First: Second-Level Tabs for Admin Multitasking (Duration: 1:50)
 
 [![CabloyJS Admin Tabs video](./assets/img/cabloy-admin-tabs-cover-en.png)](https://youtu.be/L6DxD-JfztQ)
