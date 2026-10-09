@@ -77,12 +77,12 @@ For privacy, the skill writes only to absent or empty permitted broad local file
 
 Use commands from the active repository root.
 
-| Edition      | Marker             | Frontend command                                   | Managed clean E2E  |
+| Edition      | Marker             | Frontend command                                   | Managed E2E        |
 | ------------ | ------------------ | -------------------------------------------------- | ------------------ |
 | Cabloy Basic | `__CABLOY_BASIC__` | `npm run dev:zova:admin` or `npm run dev:zova:web` | `npm run test:e2e` |
 | Cabloy Start | `__CABLOY_START__` | `npm run dev:zova:admin` or `npm run dev:zova:web` | `npm run test:e2e` |
 
-Run one frontend command, not both, in each worktree. Both managed clean E2E workflows read Vona's effective local `SERVER_LISTEN_PORT`, then reset, start, and target that local runtime.
+Run one frontend command, not both, in each worktree. Both managed E2E workflows read Vona's effective local `SERVER_LISTEN_PORT` and start a local runtime. Basic's clean command runs a separate reset before startup; Start initializes test state during managed test-mode startup. Confirm ownership of the affected database, Redis namespace, and runtime paths before either command.
 
 ## What this isolates
 
