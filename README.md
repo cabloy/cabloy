@@ -46,6 +46,10 @@ See the [AI Spec-Driven Development](https://cabloy.com/ai/ai-spec-driven-develo
 
 [![CabloyJS Admin Tabs video](./repo-docs/assets/img/cabloy-admin-tabs-cover-en.png)](https://youtu.be/L6DxD-JfztQ)
 
+### 3. AI Coding in Action: One Prompt for CRUD, SSR & Multitasking (Duration: 3:50)
+
+[![CabloyJS AI CRUD video](./repo-docs/assets/img/cabloy-ai-crud-cover-en.png)](https://youtu.be/PV9_By08hDM)
+
 ## Editions
 
 Cabloy is available through two complete project baselines, each maintained in its own repository:
