@@ -38,15 +38,7 @@ See the [AI Spec-Driven Development](https://cabloy.com/ai/ai-spec-driven-develo
 
 ## Demonstrations(Videos)
 
-### 1. Can an Admin Site Use SSR? CabloyJS in Three Practical Demos (Duration: 1:16)
-
-[![CabloyJS Admin SSR video](./repo-docs/assets/img/cabloy-admin-ssr-cover-en.png)](https://youtu.be/786IQhRdr1I)
-
-### 2. A First: Second-Level Tabs for Admin Multitasking (Duration: 1:50)
-
-[![CabloyJS Admin Tabs video](./repo-docs/assets/img/cabloy-admin-tabs-cover-en.png)](https://youtu.be/L6DxD-JfztQ)
-
-### 3. AI Coding in Action: One Prompt for CRUD, SSR & Multitasking (Duration: 3:50)
+### 1. AI Coding in Action: One Prompt for CRUD, SSR & Multitasking (Duration: 3:50)
 
 [![CabloyJS AI CRUD video](./repo-docs/assets/img/cabloy-ai-crud-cover-en.png)](https://youtu.be/PV9_By08hDM)
 
