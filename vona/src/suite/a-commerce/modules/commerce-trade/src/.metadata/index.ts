@@ -1063,11 +1063,13 @@ declare module 'vona-module-commerce-trade' {
 /** controller: begin */
 export * from '../controller/cart.ts';
 export * from '../controller/checkout.ts';
+export * from '../controller/e2eFixture.ts';
 export * from '../controller/order.ts';
 export * from '../controller/stockAudit.ts';
 export * from '../controller/stockBalance.ts';
 import type { IControllerOptionsCart } from '../controller/cart.ts';
 import type { IControllerOptionsCheckout } from '../controller/checkout.ts';
+import type { IControllerOptionsE2eFixture } from '../controller/e2eFixture.ts';
 import type { IControllerOptionsOrder } from '../controller/order.ts';
 import type { IControllerOptionsStockAudit } from '../controller/stockAudit.ts';
 import type { IControllerOptionsStockBalance } from '../controller/stockBalance.ts';
@@ -1077,6 +1079,7 @@ declare module 'vona-module-a-web' {
     export interface IControllerRecord {
       'commerce-trade:cart': IControllerOptionsCart;
 'commerce-trade:checkout': IControllerOptionsCheckout;
+'commerce-trade:e2eFixture': IControllerOptionsE2eFixture;
 'commerce-trade:order': IControllerOptionsOrder;
 'commerce-trade:stockAudit': IControllerOptionsStockAudit;
 'commerce-trade:stockBalance': IControllerOptionsStockBalance;
@@ -1106,6 +1109,17 @@ declare module 'vona-module-commerce-trade' {
             get $beanFullName(): 'commerce-trade.controller.checkout';
             get $onionName(): 'commerce-trade:checkout';
             get $onionOptions(): IControllerOptionsCheckout;
+          }
+
+        export interface ControllerE2eFixture {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ControllerE2eFixture {
+            get $beanFullName(): 'commerce-trade.controller.e2eFixture';
+            get $onionName(): 'commerce-trade:e2eFixture';
+            get $onionOptions(): IControllerOptionsE2eFixture;
           }
 
         export interface ControllerOrder {
@@ -1148,6 +1162,8 @@ import type { ControllerCart } from '../controller/cart.ts';
 // @ts-ignore ignore
 import type { ControllerCheckout } from '../controller/checkout.ts';
 // @ts-ignore ignore
+import type { ControllerE2eFixture } from '../controller/e2eFixture.ts';
+// @ts-ignore ignore
 import type { ControllerOrder } from '../controller/order.ts';
 // @ts-ignore ignore
 import type { ControllerStockAudit } from '../controller/stockAudit.ts';
@@ -1161,6 +1177,10 @@ declare module 'vona-module-commerce-trade' {
 
     export interface IControllerOptionsCheckout {
       actions?: TypeControllerOptionsActions<ControllerCheckout>;
+    }
+
+    export interface IControllerOptionsE2eFixture {
+      actions?: TypeControllerOptionsActions<ControllerE2eFixture>;
     }
 
     export interface IControllerOptionsOrder {
@@ -1192,6 +1212,9 @@ declare module 'vona-module-a-web' {
 export interface IApiPathPostRecord{
         '/commerce/trade/cart/items': undefined;
 '/commerce/trade/checkout': undefined;
+'/commerce/trade/e2eFixture/catalogue': undefined;
+'/commerce/trade/e2eFixture/order/:orderId/payment/:attemptId/dispatch': undefined;
+'/commerce/trade/e2eFixture/order/:orderId/refund/:attemptId/dispatch': undefined;
 '/commerce/trade/order/:id/requestRefund': undefined;
 '/commerce/trade/order/:id/approveRefund': undefined;
 '/commerce/trade/order/:id/rejectRefund': undefined;
@@ -1207,6 +1230,9 @@ export interface IApiPathPatchRecord{
 export interface IApiPathDeleteRecord{
         '/commerce/trade/cart/items/:id': undefined;
 '/commerce/trade/cart/items': undefined;
+'/commerce/trade/e2eFixture/order/:orderId': undefined;
+'/commerce/trade/e2eFixture/customer': undefined;
+'/commerce/trade/e2eFixture/catalogue/:categoryId': undefined;
     }
 
 }
@@ -1247,6 +1273,7 @@ declare module 'vona' {
 /** bean: end */
 /** service: begin */
 export * from '../service/cart.ts';
+export * from '../service/e2eFixture.ts';
 export * from '../service/order.ts';
 export * from '../service/stockAudit.ts';
 export * from '../service/stockBalance.ts';
@@ -1256,6 +1283,7 @@ declare module 'vona-module-a-bean' {
 
     export interface IServiceRecord {
       'commerce-trade:cart': never;
+'commerce-trade:e2eFixture': never;
 'commerce-trade:order': never;
 'commerce-trade:stockAudit': never;
 'commerce-trade:stockBalance': never;
@@ -1273,6 +1301,16 @@ declare module 'vona-module-commerce-trade' {
           export interface ServiceCart {
             get $beanFullName(): 'commerce-trade.service.cart';
             get $onionName(): 'commerce-trade:cart';
+          }
+
+        export interface ServiceE2eFixture {
+          /** @internal */
+          get scope(): ScopeModuleCommerceTrade;
+        }
+
+          export interface ServiceE2eFixture {
+            get $beanFullName(): 'commerce-trade.service.e2eFixture';
+            get $onionName(): 'commerce-trade:e2eFixture';
           }
 
         export interface ServiceOrder {
@@ -1308,11 +1346,13 @@ declare module 'vona-module-commerce-trade' {
 /** service: end */
 /** service: begin */
 import type { ServiceCart } from '../service/cart.ts';
+import type { ServiceE2eFixture } from '../service/e2eFixture.ts';
 import type { ServiceOrder } from '../service/order.ts';
 import type { ServiceStockAudit } from '../service/stockAudit.ts';
 import type { ServiceStockBalance } from '../service/stockBalance.ts';
 export interface IModuleService {
   'cart': ServiceCart;
+'e2eFixture': ServiceE2eFixture;
 'order': ServiceOrder;
 'stockAudit': ServiceStockAudit;
 'stockBalance': ServiceStockBalance;
@@ -1324,6 +1364,7 @@ import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
     'commerce-trade.service.cart': ServiceCart;
+'commerce-trade.service.e2eFixture': ServiceE2eFixture;
 'commerce-trade.service.order': ServiceOrder;
 'commerce-trade.service.stockAudit': ServiceStockAudit;
 'commerce-trade.service.stockBalance': ServiceStockBalance;

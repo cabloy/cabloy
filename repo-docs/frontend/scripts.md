@@ -68,23 +68,16 @@ npm run deps:vona
 npm run test:e2e cabloy-basic home-user-account
 ```
 
-The managed clean command resets Vona-managed test data and the local Redis namespace, starts one development Vona worker, and runs the selected specs. Browser commands consume already-built artifacts; they do not rebuild them.
-
-Cabloy Basic's runner uses two commands:
-
-```text
-npm run test:e2e                 clean local run with database reset
-npm run test:e2e:fast            fast run without automatic reset
-```
+The sole managed `npm run test:e2e` command starts a fresh local Vona worker with `--workers=1 --flavor=normal --mode=test`, then runs the selected specs against Vona integrated SSR. Test-mode startup initializes test resources without a separate `db:reset`; browser commands consume already-built artifacts and do not rebuild them. Confirm exclusive ownership of the effective test database, `_local` Redis namespace, public/runtime paths, `APP_NAME`, API origin, and listener before startup; a free port alone is insufficient.
 
 Place flat spec basenames directly after the npm script name. Use npm's `--` delimiter before Playwright options. With no names, every spec in `repo-e2e/specs` runs. Native `--grep` and `--grep-invert` remain available, and repeatable `--tag` values require all listed tags:
 
 ```bash
 npm run test:e2e cabloy-basic home-user-account -- --grep @flow
-npm run test:e2e:fast a-commerce -- --tag @web --tag @smoke
+npm run test:e2e a-commerce -- --tag @web --tag @smoke
 ```
 
-For the complete Basic tag vocabulary, managed-runner argument boundaries, and externally managed-target examples, see [Repo Scripts](/reference/repo-scripts#ssr-browser-checks). In Cabloy Basic, a separately managed target uses `E2E_BASE_URL` with `test:e2e:fast`; the caller owns external-target data, cache, and artifact freshness.
+For the complete Basic tag vocabulary and managed-runner argument boundaries, see [Repo Scripts](/reference/repo-scripts#ssr-browser-checks). `E2E_BASE_URL` must be unset: externally managed targets are unsupported.
 
 ## Cabloy Start root wrappers
 

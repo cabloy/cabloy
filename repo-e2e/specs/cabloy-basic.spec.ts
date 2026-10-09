@@ -166,9 +166,7 @@ test(
 
     const routeOverrideResponse = await request.get('/demo/basic/routeQueryB');
     expect(routeOverrideResponse.ok()).toBeTruthy();
-    expect(routeOverrideResponse.headers()['cache-control']).toBe(
-      'no-cache, no-store, must-revalidate',
-    );
+    expect(routeOverrideResponse.headers()['cache-control']).toBe('public, max-age=300');
 
     const unlocalizedResponse = await request.get('/demo/basic/state');
     expect(unlocalizedResponse.ok()).toBeTruthy();
@@ -192,7 +190,7 @@ test(
 );
 
 test(
-  'ATP-BASIC-SSR-03: concurrent public routes are non-cacheable in development',
+  'ATP-BASIC-SSR-03: concurrent public routes preserve their cache policies in managed test mode',
   { tag: ['@web', '@smoke'] },
   async ({ request }) => {
     const responses = await Promise.all(
@@ -205,9 +203,15 @@ test(
 
     for (const [index, response] of responses.entries()) {
       expect(response.ok(), `response ${index}`).toBeTruthy();
-      expect(response.headers()['cache-control'], `response ${index}`).toBe(
-        'no-cache, no-store, must-revalidate',
-      );
+      if (index % 3 === 1) {
+        expect(response.headers()['cache-control'], `response ${index}`).toBe(
+          'public, max-age=300',
+        );
+      } else {
+        expect(response.headers()['cache-control'], `response ${index}`).toBe(
+          'no-cache, no-store, must-revalidate',
+        );
+      }
     }
   },
 );

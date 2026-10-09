@@ -8,6 +8,154 @@ const addressResourceUrl =
 const addressMinePath = '/api/commerce/member/address/mine';
 const addressActionPath = '/api/commerce/member/address';
 const passportTestActivateCurrentPath = '/api/home/user/passportTest/activateCurrent';
+const commerceFixturePath = '/api/commerce/trade/e2eFixture';
+
+interface IOwnedCommerceFixture {
+  customerToken?: string;
+  customerName?: string;
+  adminToken?: string;
+  categoryId?: number | string;
+  orderIds: Array<number | string>;
+}
+
+const ownedFixtures = new Map<string, IOwnedCommerceFixture>();
+
+function ownedFixture(testInfo: TestInfo): IOwnedCommerceFixture {
+  let fixture = ownedFixtures.get(testInfo.testId);
+  if (!fixture) {
+    fixture = { orderIds: [] };
+    ownedFixtures.set(testInfo.testId, fixture);
+  }
+  return fixture;
+}
+
+async function fixtureRequest(
+  request: APIRequestContext,
+  method: 'post' | 'delete',
+  path: string,
+  token: string,
+  data?: object,
+) {
+  const response = await request[method](path, {
+    headers: { Authorization: `Bearer ${token}` },
+    ...(data ? { data } : {}),
+  });
+  if (!response.ok())
+    throw new Error(`Commerce fixture ${method} ${path} failed (${response.status()})`);
+  return (await response.json()).data;
+}
+
+async function createOwnedCatalogue(browser: Browser, testInfo: TestInfo) {
+  const fixture = ownedFixture(testInfo);
+  const context = await browser.newContext();
+  try {
+    const page = await context.newPage();
+    await login(page, '/commerce-admin/', 'admin', '123456', 'commerceAdmin');
+    const token = (await context.cookies()).find(cookie => cookie.name === 'token')?.value;
+    if (!token) throw new Error('Commerce Admin fixture token unavailable');
+    fixture.adminToken = token;
+    // Server-side creation is transactional; record the returned category before
+    // validating the response so assertion failures still trigger its cleanup.
+    const catalogue = await fixtureRequest(
+      context.request,
+      'post',
+      `${commerceFixturePath}/catalogue`,
+      token,
+    );
+    fixture.categoryId = catalogue.categoryId;
+    expectTableIdentity(catalogue.categoryId);
+    expectTableIdentity(catalogue.skuId);
+    expect(catalogue.initialStock).toBe(10);
+    return catalogue as {
+      categoryId: number | string;
+      skuId: number | string;
+      title: string;
+      code: string;
+      initialStock: number;
+    };
+  } finally {
+    await context.close();
+  }
+}
+
+async function dispatchOwnedOutcome(
+  request: APIRequestContext,
+  testInfo: TestInfo,
+  checkout: { orderId: number | string; paymentAttemptId: number | string },
+  refundAttemptId?: number | string,
+) {
+  const token = ownedFixture(testInfo).customerToken;
+  if (!token) throw new Error('Commerce customer fixture token unavailable');
+  return await fixtureRequest(
+    request,
+    'post',
+    `${commerceFixturePath}/order/${checkout.orderId}/${refundAttemptId ? 'refund' : 'payment'}/${refundAttemptId ?? checkout.paymentAttemptId}/dispatch`,
+    token,
+  );
+}
+
+// Playwright invokes afterEach even for partial setup and failed assertions. Never delete
+// shared seed stock: remove only the IDs created by these tests, in reverse dependency order.
+test.afterEach(async ({ request }, testInfo) => {
+  const fixture = ownedFixtures.get(testInfo.testId);
+  if (!fixture) return;
+  ownedFixtures.delete(testInfo.testId);
+  const errors: Error[] = [];
+  const clean = async (label: string, action: () => Promise<unknown>) => {
+    try {
+      await action();
+    } catch (error) {
+      errors.push(new Error(`${label}: ${String(error)}`));
+    }
+  };
+  if (fixture.customerToken) {
+    for (const orderId of fixture.orderIds.toReversed()) {
+      await clean(`order ${orderId}`, () =>
+        fixtureRequest(
+          request,
+          'delete',
+          `${commerceFixturePath}/order/${orderId}`,
+          fixture.customerToken!,
+        ),
+      );
+    }
+    if (!errors.length) {
+      await clean('customer Commerce resources', () =>
+        fixtureRequest(
+          request,
+          'delete',
+          `${commerceFixturePath}/customer`,
+          fixture.customerToken!,
+        ),
+      );
+    }
+    // Keep the identity when Commerce cleanup fails, so its surviving records
+    // retain their owner and can be identified and removed without a global sweep.
+    if (!errors.length) {
+      await clean('customer account', () =>
+        fixtureRequest(
+          request,
+          'delete',
+          '/api/home/user/passportTest/removeCurrentFixture',
+          fixture.customerToken!,
+        ),
+      );
+    }
+  }
+  // Preserve the catalogue if order/cart cleanup failed: deleting its SKU would
+  // otherwise obscure the precise ownership of a surviving customer's records.
+  if (!errors.length && fixture.categoryId && fixture.adminToken) {
+    await clean(`catalogue ${fixture.categoryId}`, () =>
+      fixtureRequest(
+        request,
+        'delete',
+        `${commerceFixturePath}/catalogue/${fixture.categoryId}`,
+        fixture.adminToken!,
+      ),
+    );
+  }
+  if (errors.length) throw new AggregateError(errors, 'Commerce E2E fixture cleanup failed');
+});
 
 interface IAddressFixture {
   addressLine1: string;
@@ -105,7 +253,7 @@ async function registerCustomer(
   testInfo: TestInfo,
 ): Promise<{ password: string; username: string }> {
   const id = `${testInfo.workerIndex}-${testInfo.parallelIndex ?? testInfo.retry}-${Date.now()}`;
-  const username = `e2e-address-${id}`;
+  const username = `e2e-fixture-address-${id}`;
   const password = 'address-e2e-password';
   const captchaResponse = await request.post('/api/captcha/create', {
     data: { scene: 'captcha-simple:simple' },
@@ -131,6 +279,9 @@ async function registerCustomer(
   expect(registerResponse.ok()).toBeTruthy();
   const registration = (await registerResponse.json()).data;
   expect(registration?.jwt?.accessToken).toEqual(expect.any(String));
+  const fixture = ownedFixture(testInfo);
+  fixture.customerToken = registration.jwt.accessToken;
+  fixture.customerName = username;
   const activateResponse = await request.post(passportTestActivateCurrentPath, {
     headers: { Authorization: `Bearer ${registration.jwt.accessToken}` },
   });
@@ -220,7 +371,7 @@ test(
   async ({ page, request }) => {
     const response = await request.get('/commerce');
     expect(response.ok()).toBeTruthy();
-    expect(response.headers()['cache-control']).toBe('no-cache, no-store, must-revalidate');
+    expect(response.headers()['cache-control']).toBe('public, max-age=600');
     const html = await response.text();
     const normalizedHtml = html.toLowerCase();
     expect(normalizedHtml).not.toContain('data-zova-hydrated');
@@ -382,7 +533,7 @@ test(
     for (const [index, response] of responses.entries()) {
       expect(response.status(), `public response ${index}`).toBe(200);
       expect(response.headers()['cache-control'], `public response ${index}`).toBe(
-        'no-cache, no-store, must-revalidate',
+        'public, max-age=600',
       );
       expect(html[index].toLowerCase()).not.toContain('data-zova-hydrated');
       expect(html[index]).toContain('data-ssr-theme-dark-false="light"');
@@ -629,16 +780,17 @@ test(
       testInfo,
     );
     try {
+      const catalogue = await createOwnedCatalogue(browser, testInfo);
       await page.goto('/commerce', { waitUntil: 'load' });
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
       await expect(page.getByRole('heading', { name: 'Commerce catalogue' })).toBeVisible();
 
-      const productLink = page.getByRole('link', { name: 'Pour-Over Coffee Set', exact: true });
+      const productLink = page.getByRole('link', { name: catalogue.title, exact: true });
       await expect(productLink).toBeVisible();
       await productLink.click();
       await expect(page).toHaveURL(/\/commerce\/product\/\d+(?:\/|$)/);
-      await expect(page.getByRole('heading', { name: 'Pour-Over Coffee Set' })).toBeVisible();
-      await expect(page.getByText('COF-SET-01')).toBeVisible();
+      await expect(page.getByRole('heading', { name: catalogue.title })).toBeVisible();
+      await expect(page.getByText(catalogue.code)).toBeVisible();
       await expect(page.getByText('$45.99')).toBeVisible();
 
       const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
@@ -649,7 +801,7 @@ test(
       await expect(page).toHaveURL(/\/commerce\/commerce\/trade\/cart(?:\/|$)/);
       await expect(page.getByRole('heading', { name: 'Cart' })).toBeVisible();
       const cartItem = page.locator('article').filter({ has: page.getByRole('spinbutton') });
-      await expect(cartItem).toContainText('COF-SET-01');
+      await expect(cartItem).toContainText(catalogue.code);
       await expect(cartItem).toContainText('$45.99');
       await expect(cartItem.getByRole('spinbutton')).toHaveValue('1');
 
@@ -669,6 +821,7 @@ test(
       const checkoutResponseValue = await checkoutResponse;
       expect(checkoutResponseValue.ok()).toBeTruthy();
       const checkout = (await checkoutResponseValue.json()).data;
+      ownedFixture(testInfo).orderIds.push(checkout.orderId);
       expectTableIdentity(checkout.orderId);
       expectTableIdentity(checkout.paymentAttemptId);
       expectTableIdentity(checkout.paymentSessionId);
@@ -699,6 +852,11 @@ test(
       );
       await page.getByRole('button', { name: 'Payment succeeded', exact: true }).click();
       expect((await completeResponse).ok()).toBeTruthy();
+      expect(await dispatchOwnedOutcome(request, testInfo, checkout)).toMatchObject({
+        orderState: 'paid',
+        attemptState: 'succeeded',
+        stock: 9,
+      });
       await expect(page).toHaveURL(
         new RegExp(`/commerce/commerce/trade/order/${checkout.orderId}(?:/|$)`),
         {
@@ -717,8 +875,8 @@ test(
       expect(orderHtml).toContain(fixture.recipientName);
       expect(orderHtml).toContain(fixture.addressLine1);
       expect(orderHtml).toContain('Discount: $0.00');
-      expect(orderHtml).toContain('Pour-Over Coffee Set');
-      expect(orderHtml).toContain('COF-SET-01');
+      expect(orderHtml).toContain(catalogue.title);
+      expect(orderHtml).toContain(catalogue.code);
       expect(orderHtml).toContain('1 × $45.99 = $45.99');
 
       const orderDocumentResponse = await page.reload({ waitUntil: 'load' });
@@ -729,8 +887,8 @@ test(
       await expect(page.getByText(fixture.recipientName)).toBeVisible();
       await expect(page.getByText(fixture.addressLine1)).toBeVisible();
       await expect(page.getByText('Discount: $0.00')).toBeVisible();
-      await expect(page.getByRole('heading', { name: 'Pour-Over Coffee Set' })).toBeVisible();
-      await expect(page.getByText('COF-SET-01')).toBeVisible();
+      await expect(page.getByRole('heading', { name: catalogue.title })).toBeVisible();
+      await expect(page.getByText(catalogue.code)).toBeVisible();
       await expect(page.getByText('1 × $45.99 = $45.99')).toBeVisible();
 
       const shipmentCarrier = 'Cabloy Express';
@@ -766,8 +924,8 @@ test(
         await expect(adminPage.getByText('Purchased lines').first()).toBeVisible();
         await expect(adminPage.getByText('addressSnapshot').first()).toBeVisible();
         await expect(adminPage.getByText('couponSnapshot').first()).toBeVisible();
-        await expect(adminPage.getByText('Pour-Over Coffee Set')).toBeVisible();
-        await expect(adminPage.getByText('COF-SET-01')).toBeVisible();
+        await expect(adminPage.getByText(catalogue.title)).toBeVisible();
+        await expect(adminPage.getByText(catalogue.code)).toBeVisible();
         await expect(adminPage.getByRole('button', { name: 'Submit', exact: true })).toHaveCount(0);
         await adminPage.getByRole('button', { name: 'Back', exact: true }).click();
         await expect(orderRow).toBeVisible();
@@ -844,14 +1002,15 @@ test(
       testInfo,
     );
     try {
+      const catalogue = await createOwnedCatalogue(browser, testInfo);
       await page.goto('/commerce', { waitUntil: 'load' });
-      const productLink = page.getByRole('link', { name: 'Pour-Over Coffee Set', exact: true });
+      const productLink = page.getByRole('link', { name: catalogue.title, exact: true });
       await expect(productLink).toBeVisible();
       await productLink.click();
       await expect(page).toHaveURL(/\/commerce\/product\/\d+(?:\/|$)/);
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
-      await expect(page.getByRole('heading', { name: 'Pour-Over Coffee Set' })).toBeVisible();
-      await expect(page.getByText('COF-SET-01')).toBeVisible();
+      await expect(page.getByRole('heading', { name: catalogue.title })).toBeVisible();
+      await expect(page.getByText(catalogue.code)).toBeVisible();
       const addToCartButton = page.getByRole('button', { name: 'Add to cart', exact: true });
       await expect(addToCartButton).toBeEnabled();
       const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
@@ -868,6 +1027,7 @@ test(
       const checkoutResponseValue = await checkoutResponse;
       expect(checkoutResponseValue.ok()).toBeTruthy();
       const checkout = (await checkoutResponseValue.json()).data;
+      ownedFixture(testInfo).orderIds.push(checkout.orderId);
       expectTableIdentity(checkout.orderId);
       expectTableIdentity(checkout.paymentSessionId);
       const startResponse = waitForApiResponse(
@@ -885,6 +1045,11 @@ test(
       );
       await page.getByRole('button', { name: 'Payment succeeded', exact: true }).click();
       expect((await completeResponse).ok()).toBeTruthy();
+      expect(await dispatchOwnedOutcome(request, testInfo, checkout)).toMatchObject({
+        orderState: 'paid',
+        attemptState: 'succeeded',
+        stock: 9,
+      });
       await expect(page).toHaveURL(
         new RegExp(`/commerce/commerce/trade/order/${checkout.orderId}(?:/|$)`),
         {
@@ -951,14 +1116,15 @@ test(
       testInfo,
     );
     try {
+      const catalogue = await createOwnedCatalogue(browser, testInfo);
       await page.goto('/commerce', { waitUntil: 'load' });
-      const productLink = page.getByRole('link', { name: 'Pour-Over Coffee Set', exact: true });
+      const productLink = page.getByRole('link', { name: catalogue.title, exact: true });
       await expect(productLink).toBeVisible();
       await productLink.click();
       await expect(page).toHaveURL(/\/commerce\/product\/\d+(?:\/|$)/);
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
-      await expect(page.getByRole('heading', { name: 'Pour-Over Coffee Set' })).toBeVisible();
-      await expect(page.getByText('COF-SET-01')).toBeVisible();
+      await expect(page.getByRole('heading', { name: catalogue.title })).toBeVisible();
+      await expect(page.getByText(catalogue.code)).toBeVisible();
       const addToCartButton = page.getByRole('button', { name: 'Add to cart', exact: true });
       await expect(addToCartButton).toBeEnabled();
       const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
@@ -975,6 +1141,7 @@ test(
       const checkoutResponseValue = await checkoutResponse;
       expect(checkoutResponseValue.ok()).toBeTruthy();
       const checkout = (await checkoutResponseValue.json()).data;
+      ownedFixture(testInfo).orderIds.push(checkout.orderId);
       expectTableIdentity(checkout.orderId);
       expectTableIdentity(checkout.paymentSessionId);
       expect(checkout.state).toBe('awaiting_payment');
@@ -1077,13 +1244,14 @@ test(
       testInfo,
     );
     try {
+      const catalogue = await createOwnedCatalogue(browser, testInfo);
       await page.goto('/commerce', { waitUntil: 'load' });
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
-      const productLink = page.getByRole('link', { name: 'Pour-Over Coffee Set', exact: true });
+      const productLink = page.getByRole('link', { name: catalogue.title, exact: true });
       await expect(productLink).toBeVisible();
       await productLink.click();
       await expect(page).toHaveURL(/\/commerce\/product\/\d+(?:\/|$)/);
-      await expect(page.getByRole('heading', { name: 'Pour-Over Coffee Set' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: catalogue.title })).toBeVisible();
       const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
       await page.getByRole('button', { name: 'Add to cart', exact: true }).click();
       expect((await addResponse).ok()).toBeTruthy();
@@ -1100,6 +1268,7 @@ test(
       const checkoutResponseValue = await checkoutResponse;
       expect(checkoutResponseValue.ok()).toBeTruthy();
       const checkout = (await checkoutResponseValue.json()).data;
+      ownedFixture(testInfo).orderIds.push(checkout.orderId);
       expectTableIdentity(checkout.orderId);
       expectTableIdentity(checkout.paymentSessionId);
       const startResponse = waitForApiResponse(
@@ -1118,6 +1287,11 @@ test(
       );
       await page.getByRole('button', { name: 'Cancel payment', exact: true }).click();
       expect((await cancelResponse).ok()).toBeTruthy();
+      expect(await dispatchOwnedOutcome(request, testInfo, checkout)).toMatchObject({
+        orderState: 'cancelled',
+        attemptState: 'cancelled',
+        stock: 10,
+      });
       await expect(page).toHaveURL(
         new RegExp(`/commerce/commerce/trade/order/${checkout.orderId}(?:/|$)`),
         {
@@ -1144,15 +1318,16 @@ test(
       testInfo,
     );
     try {
+      const catalogue = await createOwnedCatalogue(browser, testInfo);
       await page.goto('/commerce', { waitUntil: 'load' });
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
       await expect(page.getByRole('heading', { name: 'Commerce catalogue' })).toBeVisible();
-      const productLink = page.getByRole('link', { name: 'Pour-Over Coffee Set', exact: true });
+      const productLink = page.getByRole('link', { name: catalogue.title, exact: true });
       await expect(productLink).toBeVisible();
       await productLink.click();
       await expect(page).toHaveURL(/\/commerce\/product\/\d+(?:\/|$)/);
-      await expect(page.getByRole('heading', { name: 'Pour-Over Coffee Set' })).toBeVisible();
-      await expect(page.getByText('COF-SET-01')).toBeVisible();
+      await expect(page.getByRole('heading', { name: catalogue.title })).toBeVisible();
+      await expect(page.getByText(catalogue.code)).toBeVisible();
       await expect(page.getByText('$45.99')).toBeVisible();
       const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
       await page.getByRole('button', { name: 'Add to cart', exact: true }).click();
@@ -1169,6 +1344,7 @@ test(
       const checkoutResponseValue = await checkoutResponse;
       expect(checkoutResponseValue.ok()).toBeTruthy();
       const checkout = (await checkoutResponseValue.json()).data;
+      ownedFixture(testInfo).orderIds.push(checkout.orderId);
       expectTableIdentity(checkout.orderId);
       expectTableIdentity(checkout.paymentAttemptId);
       expectTableIdentity(checkout.paymentSessionId);
@@ -1189,6 +1365,11 @@ test(
       );
       await page.getByRole('button', { name: 'Payment succeeded', exact: true }).click();
       expect((await completeResponse).ok()).toBeTruthy();
+      expect(await dispatchOwnedOutcome(request, testInfo, checkout)).toMatchObject({
+        orderState: 'paid',
+        attemptState: 'succeeded',
+        stock: 9,
+      });
       await expect(page.getByText('paid · $45.99')).toBeVisible({ timeout: 40_000 });
 
       const requestResponse = waitForApiResponse(
@@ -1329,15 +1510,23 @@ test(
             exact: true,
           }),
         ).toHaveCount(0);
-        const completeRefundResponse = waitForApiResponse(
-          adminPage,
-          'POST',
+        // The Admin mock button is intentionally hidden in the production-built SSR UI.
+        // Use the existing dev/test Admin API to submit its signed mock webhook, then
+        // dispatch the linked event under the customer's separate identity.
+        const adminToken = ownedFixture(testInfo).adminToken;
+        if (!adminToken) throw new Error('Commerce Admin fixture token unavailable');
+        const completeRefund = await adminContext.request.post(
           `/api/pay/mock/payment-session/refund-operation/${executeResult.refundOperationId}/complete`,
+          { headers: { Authorization: `Bearer ${adminToken}` }, data: { outcome: 'succeeded' } },
         );
-        await refundExecutionDialog
-          .getByRole('button', { name: 'Complete mock refund', exact: true })
-          .click();
-        expect((await completeRefundResponse).ok()).toBeTruthy();
+        expect(completeRefund.ok()).toBeTruthy();
+        expect(
+          await dispatchOwnedOutcome(request, testInfo, checkout, executeResult.refundAttemptId),
+        ).toMatchObject({
+          orderState: 'refunded',
+          refundState: 'refunded',
+          stock: 10,
+        });
         await expect
           .poll(
             async () => {

@@ -29,10 +29,10 @@ Before proposing configuration values or writing files:
 
 Interpretation:
 
-| Marker                  | Edition      | Managed clean E2E command |
-| ----------------------- | ------------ | ------------------------- |
-| `__CABLOY_BASIC__` only | Cabloy Basic | `npm run test:e2e`        |
-| `__CABLOY_START__` only | Cabloy Start | `npm run test:e2e`        |
+| Marker                  | Edition      | Managed E2E command |
+| ----------------------- | ------------ | ------------------- |
+| `__CABLOY_BASIC__` only | Cabloy Basic | `npm run test:e2e`  |
+| `__CABLOY_START__` only | Cabloy Start | `npm run test:e2e`  |
 
 Stop without edits when both markers are present, neither marker is present, the checkout is primary/unregistered, required environment directories are missing, or the selected edition's required scripts are unavailable.
 
@@ -178,7 +178,7 @@ npm run dev:zova:web
 npm run test
 ```
 
-Run the edition-appropriate managed clean E2E command:
+Run the edition-appropriate managed E2E command:
 
 ```bash
 # Cabloy Basic or Cabloy Start
