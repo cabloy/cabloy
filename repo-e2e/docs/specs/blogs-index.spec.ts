@@ -25,6 +25,7 @@ interface IArticleGeometry {
 }
 
 const blogArticlePaths = [
+  '/blogs/ai-coding-one-prompt-crud-ssr-multitasking/',
   '/blogs/ai-spec-driven-development/',
   '/blogs/ai-react-nextjs-enterprise-architecture-cabloy/',
   '/blogs/cabloy-fullstack-resource-addressing/',
@@ -119,26 +120,26 @@ test(
     await expect(page.locator('.VPDoc.has-aside')).toHaveCount(0);
 
     const cards = page.locator('.cabloy-blog-card');
-    await expect(cards).toHaveCount(5);
-    for (let index = 0; index < 5; index++) {
+    await expect(cards).toHaveCount(blogArticlePaths.length);
+    for (let index = 0; index < blogArticlePaths.length; index++) {
       await expect(cards.nth(index)).toBeVisible();
       await expect(cards.nth(index).locator('.cabloy-blog-card__cover img')).toBeVisible();
     }
     await expect(
       cards.nth(0).getByRole('link', {
-        name: 'CabloyJS AI Spec-Driven Development Automatically Generates Gantt and Burndown Charts',
+        name: 'AI Coding in Action: One Prompt for CRUD, SSR & Multitasking',
         exact: true,
       }),
     ).toBeVisible();
-    await expect(cards.nth(0).locator('.cabloy-blog-card__date')).toHaveText('September 11, 2026');
+    await expect(cards.nth(0).locator('.cabloy-blog-card__date')).toHaveText('October 9, 2026');
     await expect(cards.nth(0).locator('.cabloy-blog-card__cover')).toHaveAttribute(
       'href',
-      '/blogs/ai-spec-driven-development/',
+      '/blogs/ai-coding-one-prompt-crud-ssr-multitasking/',
     );
 
     const geometry = await getBlogsGeometry(page);
     expect(geometry.grid.display).toBe('grid');
-    expect(geometry.cards).toHaveLength(5);
+    expect(geometry.cards).toHaveLength(blogArticlePaths.length);
 
     const [firstCard, secondCard, thirdCard, fourthCard, fifthCard] = geometry.cards;
     const firstRow = [firstCard, secondCard, thirdCard, fourthCard];
@@ -181,6 +182,22 @@ test(
       await expect(page.locator('.VPDoc.has-sidebar')).toHaveCount(0);
       await expect(page.locator('.VPDoc.has-aside')).toHaveCount(1);
       await expect(page.locator('.aside')).toBeVisible();
+      if (path === '/blogs/ai-coding-one-prompt-crud-ssr-multitasking/') {
+        await expect(
+          page.getByRole('heading', {
+            name: 'AI Coding in Action: One Prompt for CRUD, SSR & Multitasking',
+            level: 1,
+          }),
+        ).toBeVisible();
+        const images = page.locator('.vp-doc img');
+        await expect(images).toHaveCount(3);
+        for (const image of await images.all()) {
+          await expect(image).toBeVisible();
+          await expect
+            .poll(() => image.evaluate(element => (element as HTMLImageElement).naturalWidth))
+            .toBeGreaterThan(0);
+        }
+      }
       if (path === '/blogs/ai-spec-driven-development/') {
         await expect(
           page.getByRole('heading', {

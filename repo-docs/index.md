@@ -36,6 +36,8 @@ features:
 
 [![CabloyJS AI CRUD video](./assets/img/cabloy-ai-crud-cover-en.png)](https://youtu.be/PV9_By08hDM)
 
+[Read the hands-on walkthrough: AI Coding in Action — One Prompt for CRUD, SSR & Multitasking](/blogs/ai-coding-one-prompt-crud-ssr-multitasking/)
+
 ## Choose a reading path
 
 ### Start a project

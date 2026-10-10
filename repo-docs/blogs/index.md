@@ -10,6 +10,21 @@ Selected articles on Cabloy, Vona, Zova, and the architectural questions that sh
 
 <div class="cabloy-blog-grid">
   <article class="cabloy-blog-card">
+    <a class="cabloy-blog-card__cover" href="/blogs/ai-coding-one-prompt-crud-ssr-multitasking/" aria-label="Read AI Coding in Action: One Prompt for CRUD, SSR &amp; Multitasking">
+      <img src="/blogs/ai-coding-one-prompt-crud-ssr-multitasking/cover-en-v1.png" alt="AI Coding in Action: One Prompt for CRUD, SSR &amp; Multitasking" />
+    </a>
+    <div class="cabloy-blog-card__content">
+      <p class="cabloy-blog-card__date">October 9, 2026</p>
+      <h2><a href="/blogs/ai-coding-one-prompt-crud-ssr-multitasking/">AI Coding in Action: One Prompt for CRUD, SSR &amp; Multitasking</a></h2>
+      <p>Follow one prompt from AI-assisted Book CRUD development to a working CabloyJS Admin interface, SSR refresh, and task switching that preserves form input.</p>
+      <div class="cabloy-blog-card__tags" aria-label="Article topics">
+        <span>AI Coding</span><span>CabloyJS</span><span>SSR</span><span>Multitasking</span>
+      </div>
+      <a class="cabloy-blog-card__read" href="/blogs/ai-coding-one-prompt-crud-ssr-multitasking/">Read article <span aria-hidden="true">→</span></a>
+    </div>
+  </article>
+
+  <article class="cabloy-blog-card">
     <a class="cabloy-blog-card__cover" href="/blogs/ai-spec-driven-development/" aria-label="Read CabloyJS AI Spec-Driven Development Automatically Generates Gantt and Burndown Charts">
       <img src="/blogs/ai-spec-driven-development/cover-en-v1.png" alt="CabloyJS AI Spec-Driven Development Automatically Generates Gantt and Burndown Charts" />
     </a>
