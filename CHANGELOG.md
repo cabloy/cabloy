@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.203
+
+### Features
+- Update application features.
+
+### Improvements
+- Refactor end-to-end tests.
+- Clarify managed E2E resource authorization documentation.
+- Add a video demonstrating second-level tabs for admin multitasking.
+- Update the demo documentation.
+
 ## 5.1.202
 
 ### Features
