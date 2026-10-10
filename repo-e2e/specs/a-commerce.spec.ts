@@ -37,11 +37,12 @@ async function fixtureRequest(
   data?: object,
 ) {
   const response = await request[method](path, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
     ...(data ? { data } : {}),
   });
   if (!response.ok())
     throw new Error(`Commerce fixture ${method} ${path} failed (${response.status()})`);
+  if (method === 'delete') return;
   return (await response.json()).data;
 }
 
@@ -790,7 +791,12 @@ test(
       await productLink.click();
       await expect(page).toHaveURL(/\/commerce\/product\/\d+(?:\/|$)/);
       await expect(page.getByRole('heading', { name: catalogue.title })).toBeVisible();
-      await expect(page.getByText(catalogue.code)).toBeVisible();
+      await expect(
+        page
+          .getByRole('button', { name: 'Add to cart', exact: true })
+          .locator('..')
+          .getByText(catalogue.code),
+      ).toBeVisible();
       await expect(page.getByText('$45.99')).toBeVisible();
 
       const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
@@ -888,7 +894,7 @@ test(
       await expect(page.getByText(fixture.addressLine1)).toBeVisible();
       await expect(page.getByText('Discount: $0.00')).toBeVisible();
       await expect(page.getByRole('heading', { name: catalogue.title })).toBeVisible();
-      await expect(page.getByText(catalogue.code)).toBeVisible();
+      await expect(page.getByRole('paragraph').filter({ hasText: catalogue.code })).toBeVisible();
       await expect(page.getByText('1 × $45.99 = $45.99')).toBeVisible();
 
       const shipmentCarrier = 'Cabloy Express';
@@ -924,8 +930,9 @@ test(
         await expect(adminPage.getByText('Purchased lines').first()).toBeVisible();
         await expect(adminPage.getByText('addressSnapshot').first()).toBeVisible();
         await expect(adminPage.getByText('couponSnapshot').first()).toBeVisible();
-        await expect(adminPage.getByText(catalogue.title)).toBeVisible();
-        await expect(adminPage.getByText(catalogue.code)).toBeVisible();
+        await expect(
+          adminPage.getByRole('cell', { name: catalogue.title, exact: true }),
+        ).toHaveCount(2);
         await expect(adminPage.getByRole('button', { name: 'Submit', exact: true })).toHaveCount(0);
         await adminPage.getByRole('button', { name: 'Back', exact: true }).click();
         await expect(orderRow).toBeVisible();
@@ -1010,8 +1017,8 @@ test(
       await expect(page).toHaveURL(/\/commerce\/product\/\d+(?:\/|$)/);
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
       await expect(page.getByRole('heading', { name: catalogue.title })).toBeVisible();
-      await expect(page.getByText(catalogue.code)).toBeVisible();
       const addToCartButton = page.getByRole('button', { name: 'Add to cart', exact: true });
+      await expect(addToCartButton.locator('..')).toContainText(catalogue.code);
       await expect(addToCartButton).toBeEnabled();
       const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
       await addToCartButton.click();
@@ -1124,8 +1131,8 @@ test(
       await expect(page).toHaveURL(/\/commerce\/product\/\d+(?:\/|$)/);
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'commerce');
       await expect(page.getByRole('heading', { name: catalogue.title })).toBeVisible();
-      await expect(page.getByText(catalogue.code)).toBeVisible();
       const addToCartButton = page.getByRole('button', { name: 'Add to cart', exact: true });
+      await expect(addToCartButton.locator('..')).toContainText(catalogue.code);
       await expect(addToCartButton).toBeEnabled();
       const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
       await addToCartButton.click();
@@ -1327,7 +1334,12 @@ test(
       await productLink.click();
       await expect(page).toHaveURL(/\/commerce\/product\/\d+(?:\/|$)/);
       await expect(page.getByRole('heading', { name: catalogue.title })).toBeVisible();
-      await expect(page.getByText(catalogue.code)).toBeVisible();
+      await expect(
+        page
+          .getByRole('button', { name: 'Add to cart', exact: true })
+          .locator('..')
+          .getByText(catalogue.code),
+      ).toBeVisible();
       await expect(page.getByText('$45.99')).toBeVisible();
       const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
       await page.getByRole('button', { name: 'Add to cart', exact: true }).click();

@@ -134,6 +134,28 @@ describe('owned Commerce E2E webhook fixture selection', { concurrency: false },
     );
   });
 
+  it('accepts a missing capture for cancelled and failed payments without accepting a conflicting capture', () => {
+    for (const state of ['cancelled', 'failed'] as const) {
+      const outcome = { ...payment, state, providerCaptureId: undefined };
+      const outcomeEvent = event({ payload: outcome });
+      const outcomeInbox = inbox({
+        eventType: `payment.${state}`,
+        paymentState: state,
+        providerCaptureId: null,
+      });
+      assert.equal(selectPayment([outcomeEvent], [outcomeInbox]).payload.state, state);
+      assert.throws(
+        () =>
+          selectPayment([outcomeEvent], [inbox({ ...outcomeInbox, providerCaptureId: 'other' })]),
+        /processed matching/,
+      );
+      assert.throws(
+        () => selectPayment([event({ payload: { ...payment, state } })], [outcomeInbox]),
+        /processed matching/,
+      );
+    }
+  });
+
   it('requires the refund attempt, mock operation, inbox and outbox to agree', () => {
     const refund = {
       eventId: 'mock-refund-owned',

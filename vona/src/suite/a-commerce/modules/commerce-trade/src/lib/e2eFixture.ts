@@ -193,7 +193,8 @@ export function selectFixtureEvent(
     inbox.amountMinor !== expected.amountMinor ||
     inbox.currency !== expected.currency ||
     (expected.kind === 'payment' &&
-      inbox.providerCaptureId !== (payload as IPaymentOutcomeEvent).providerCaptureId) ||
+      (inbox.providerCaptureId ?? undefined) !==
+        ((payload as IPaymentOutcomeEvent).providerCaptureId ?? undefined)) ||
     (expected.kind === 'refund' &&
       inbox.providerRefundId !== (payload as IRefundOutcomeEvent).providerRefundId)
   ) {

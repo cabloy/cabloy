@@ -40,11 +40,23 @@ function collectConsoleErrors(page: Page) {
 
 async function loginAsAdmin(page: Page) {
   await page.goto('/admin/', { waitUntil: 'load' });
+  await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
   if (page.url().includes('/admin/login')) {
-    await page.getByPlaceholder('Your Username').fill('admin');
-    await page.getByPlaceholder('Your Password').fill('123456');
+    const usernameInput = page.getByPlaceholder('Your Username');
+    const passwordInput = page.getByPlaceholder('Your Password');
+    await usernameInput.fill('admin');
+    await passwordInput.fill('123456');
+    await expect(usernameInput).toHaveValue('admin');
+    await expect(passwordInput).toHaveValue('123456');
     await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
+    const loginResponse = page.waitForResponse(response => {
+      const url = new URL(response.url());
+      return (
+        response.request().method() === 'POST' && url.pathname === '/api/home/user/passport/login'
+      );
+    });
     await page.getByRole('button', { name: 'Login', exact: true }).click();
+    expect((await loginResponse).ok()).toBeTruthy();
     await expect(page).not.toHaveURL(/\/admin\/login(?:\?|$)/);
   }
 
@@ -158,7 +170,7 @@ test(
   async ({ page, request }) => {
     const response = await request.get('/');
     expect(response.ok()).toBeTruthy();
-    expect(response.headers()['cache-control']).toBe('no-cache, no-store, must-revalidate');
+    expect(response.headers()['cache-control']).toBe('public, max-age=600');
     const html = await response.text();
     expect(html.toLowerCase()).not.toContain('data-zova-hydrated');
     expect(html).not.toContain('ssr-body-ready-observer');
@@ -203,15 +215,13 @@ test(
 
     for (const [index, response] of responses.entries()) {
       expect(response.ok(), `response ${index}`).toBeTruthy();
-      if (index % 3 === 1) {
-        expect(response.headers()['cache-control'], `response ${index}`).toBe(
-          'public, max-age=300',
-        );
-      } else {
-        expect(response.headers()['cache-control'], `response ${index}`).toBe(
-          'no-cache, no-store, must-revalidate',
-        );
-      }
+      const cacheControl =
+        index % 3 === 0
+          ? 'public, max-age=600'
+          : index % 3 === 1
+            ? 'public, max-age=300'
+            : 'no-cache, no-store, must-revalidate';
+      expect(response.headers()['cache-control'], `response ${index}`).toBe(cacheControl);
     }
   },
 );
@@ -342,6 +352,7 @@ test(
     const consoleErrors = collectConsoleErrors(page);
     try {
       await page.goto('/admin/login', { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
       await page.evaluate(() => {
         indexedDB.deleteDatabase('localforage');
         localStorage.clear();
@@ -350,13 +361,25 @@ test(
       await page.goto('/admin/login?returnTo=/rest/resource/training-student%253Astudent', {
         waitUntil: 'load',
       });
-      await page.getByPlaceholder('Your Username').fill('admin');
-      await page.getByPlaceholder('Your Password').fill('123456');
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      const usernameInput = page.getByPlaceholder('Your Username');
+      const passwordInput = page.getByPlaceholder('Your Password');
+      await usernameInput.fill('admin');
+      await passwordInput.fill('123456');
+      await expect(usernameInput).toHaveValue('admin');
+      await expect(passwordInput).toHaveValue('123456');
       await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
 
       const initialSelect = waitForStudentSelect(page);
+      const loginResponse = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return (
+          response.request().method() === 'POST' && url.pathname === '/api/home/user/passport/login'
+        );
+      });
       await page.getByRole('button', { name: 'Login', exact: true }).click();
       try {
+        expect((await loginResponse).ok()).toBeTruthy();
         await expect(page).toHaveURL(studentResourceUrl);
         await initialSelect;
       } finally {

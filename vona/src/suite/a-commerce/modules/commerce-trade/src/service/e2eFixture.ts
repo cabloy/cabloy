@@ -172,8 +172,12 @@ export class ServiceE2eFixture extends BeanBase {
       clientName: session.clientName,
       environment: session.environment,
     });
-    if (payload.state !== session.state || payload.providerCaptureId !== session.providerCaptureId)
+    if (
+      payload.state !== session.state ||
+      (payload.providerCaptureId ?? undefined) !== (session.providerCaptureId ?? undefined)
+    ) {
       this.app.throw(409, 'payment webhook outcome conflicts with session');
+    }
     const needsDispatch = this._needsDispatch(event);
     if (needsDispatch) {
       if (attempt.state !== 'created' || order.state !== 'awaiting_payment')
@@ -194,7 +198,8 @@ export class ServiceE2eFixture extends BeanBase {
     if (
       currentEvent?.state !== 'dispatched' ||
       currentAttempt?.state !== payload.state ||
-      currentAttempt.providerCaptureId !== payload.providerCaptureId ||
+      (currentAttempt.providerCaptureId ?? undefined) !==
+        (payload.providerCaptureId ?? undefined) ||
       !currentOrder ||
       (currentOrder.state !== finalOrderState &&
         (needsDispatch ||
