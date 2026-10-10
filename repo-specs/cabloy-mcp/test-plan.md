@@ -42,18 +42,19 @@ Release requires protocol, OAuth, instance, direct authorization, catalog, dispa
 
 ## Test Levels and Ownership Locations
 
-| Test level                               | Purpose                                                                                           | Expected ownership                                                                     |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Catalog/metadata unit tests              | OpenAPI projection, MCP metadata, exclusions, stable names, shape/risk classification             | Proposed `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/` and metadata owner tests |
-| OAuth/resource integration tests         | Token validation, resource metadata, scope, local subject mapping, key/error cases                | Proposed `cabloy-mcp` tests plus approved OAuth integration owner                      |
-| Instance/authorization integration tests | Host mapping, selector conflicts, RBAC/data scope, tenant isolation                               | Proposed `cabloy-mcp` tests and existing instance/guard owners                         |
-| Dispatch/context tests                   | Fixed executor route, `innerAccess: false`, headers/options, Passport isolation, concurrent calls | Proposed `cabloy-mcp` tests and owning controller tests                                |
-| Transaction/side-effect tests            | Domain transaction, timeout, retry/idempotency, irreversible operation policy                     | Owning domain module tests plus MCP adapter tests                                      |
-| Protocol tests                           | Selected-version Streamable HTTP, metadata/discovery, tools/list, tools/call, errors, limits      | Proposed `cabloy-mcp` protocol tests                                                   |
-| Operational tests                        | Rate limits, audit/telemetry, redaction, disablement, failure-closed behavior                     | Proposed `cabloy-mcp` operational tests and deployment checks                          |
-| Root closure checks                      | Type, format, lint, tests, planning audit, chart freshness                                        | Root scripts and bounded release dossier                                               |
+| Test level                               | Purpose                                                                                                                    | Expected ownership                                                                     |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Catalog/metadata unit tests              | OpenAPI projection, MCP metadata, exclusions, stable names, shape/risk classification                                      | Proposed `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/` and metadata owner tests |
+| OAuth/resource integration tests         | Token validation, resource metadata, scope, local subject mapping, key/error cases                                         | Proposed `cabloy-mcp` tests plus approved OAuth integration owner                      |
+| Authorization-server integration tests   | Metadata, code/PKCE/client registration, resource-bound issuance, grant storage, revocation and optional refresh lifecycle | Proposed `a-auth` extension or approved AS owner under separate WBS-MCP-20-04 scope    |
+| Instance/authorization integration tests | Host mapping, selector conflicts, RBAC/data scope, tenant isolation                                                        | Proposed `cabloy-mcp` tests and existing instance/guard owners                         |
+| Dispatch/context tests                   | Fixed executor route, `innerAccess: false`, headers/options, Passport isolation, concurrent calls                          | Proposed `cabloy-mcp` tests and owning controller tests                                |
+| Transaction/side-effect tests            | Domain transaction, timeout, retry/idempotency, irreversible operation policy                                              | Owning domain module tests plus MCP adapter tests                                      |
+| Protocol tests                           | Selected-version Streamable HTTP, metadata/discovery, tools/list, tools/call, errors, limits                               | Proposed `cabloy-mcp` protocol tests                                                   |
+| Operational tests                        | Rate limits, audit/telemetry, redaction, disablement, failure-closed behavior                                              | Proposed `cabloy-mcp` operational tests and deployment checks                          |
+| Root closure checks                      | Type, format, lint, tests, planning audit, chart freshness                                                                 | Root scripts and bounded release dossier                                               |
 
-No Zova browser/E2E suite is required for the first increment. If a future operator/user UI is added, it needs separate ATPs and site-specific SSR/hydration proof.
+No Zova browser/E2E suite is required for the MCP resource increment. If an integrated AS is selected, its separately approved authorization-code user interaction and grant consent need AS-owned verification even without a new Zova site; if an operator/user UI is added, it needs separate ATPs and site-specific SSR/hydration proof.
 
 ## Fixtures, Cleanup, Privacy, and Data Minimization
 
@@ -121,17 +122,17 @@ Setup:
 
 - Prepare synthetic MCP-profile opaque access-token lookup results for valid issuer/resource/subject/scope/instance, wrong issuer, wrong resource, expired/inactive/revoked state, missing subject, missing scope, ambiguous mapping, and lookup/introspection outage. If a JWT/JWKS alternative is separately selected, add its signed-token and key-rotation fixtures as an explicit branch rather than as the default profile.
 - Configure protected-resource metadata with the canonical `resource` and at least one `authorization_servers` issuer identifier (not an authorization-server metadata URL), plus a local subject mapping for one instance.
-- Prepare a client/grant fixture that requests and receives a refresh token, and one that has no refresh token. Treat issuance as optional even after a request; keep refresh-token values confined to authorization-server token-endpoint procedures except for a redacted negative resource-server fixture.
+- Prepare a synthetic credential that is recognizable as a refresh token only for the negative resource-server case. AS issuance and optional refresh behavior belong to `ATP-MCP-AUTH-03`, not this resource-server fixture.
 
 Procedure:
 
 - Call metadata, tools/list, and tools/call with each token state.
-- Simulate token lookup/introspection unavailability, stale or ambiguous token state, refresh-token rotation, prior-refresh-token reuse, and ambiguous or disabled local subject mapping. Exercise refresh only at the authorization-server token endpoint; send a refresh token to the MCP resource endpoint as a negative test and confirm rejection. If JWT/JWKS is later selected, separately simulate a required JWKS refresh failure while a previously fetched key remains cached.
+- Simulate token lookup/introspection unavailability, stale or ambiguous token state, and ambiguous or disabled local subject mapping. Send a synthetic refresh credential to the MCP resource endpoint as a negative test and confirm rejection; do not exercise AS issuance or refresh here. If JWT/JWKS is later selected, separately simulate a required JWKS refresh failure while a previously fetched key remains cached.
 
 Expected result:
 
 - Only the active MCP-profile access token whose current lookup/introspection state confirms the canonical resource, subject, scope, instance, expiry, and revocation status proceeds to the next policy stage; a client-supplied `resource` parameter alone is not proof of binding.
-- Lookup/introspection outage, stale authorization state, and ambiguous grant state deny without using a stale cache or permitting controller dispatch. If refresh is supported and a refresh token is issued, the authorization-server token endpoint enforces the approved rotation/reuse policy; a refresh token is rejected at the MCP resource endpoint. A client without a refresh token may use its valid access token until expiry and then needs reauthorization, not a resource-server refresh.
+- Lookup/introspection outage, stale authorization state, and ambiguous grant state deny without using a stale cache or permitting controller dispatch. A refresh credential is rejected at the MCP resource endpoint. A client without a refresh token may use its valid access token until expiry and then needs reauthorization, not a resource-server refresh. AS-owned refresh issuance or rotation/reuse, if approved, is proved separately by `ATP-MCP-AUTH-03`.
 - Missing, invalid, expired, inactive, revoked, or wrong-resource tokens yield bounded HTTP `401`; insufficient scope yields bounded HTTP `403` at the HTTP authorization boundary. Unavailable, ambiguous, or disabled states fail closed with a separately approved nondiagnostic mapping; none permits anonymous fallback, controller dispatch, or cross-instance probing. If a JWT/JWKS alternative is later approved, its required-refresh-failure behavior is verified in a separate branch.
 - Client errors are bounded; protected telemetry records a redacted reason class.
 
@@ -164,6 +165,33 @@ Minimum proof:
 - Retain policy fixture labels, subject/tool visibility matrix, call outcomes, resource-scope assertions, and redacted audit records.
 
 Traceability: `PRD-MCP-ACCESS-02`, `PRD-MCP-IDENTITY-03`, `SRS-MCP-AUTH-02`, `SRS-MCP-AUTH-03`, `WBS-MCP-30-02`, `WBS-MCP-40-01`.
+
+### ATP-MCP-AUTH-03: Authorization-server issuance, grant, and token lifecycle (proposed)
+
+This is an AS-owned acceptance scenario, not authorization to implement or operate an AS. Run it only after `DEC-MCP-03`, any required `DEC-MCP-09` scope/schema disposition, and a bounded `WBS-MCP-20-04` execution dossier receive separate approvals. If a separately operated AS is selected, its accountable owner must provide equivalent observable contract proof; an isolated resource-server lookup fixture is not sufficient.
+
+Setup:
+
+- Configure synthetic issuer/client/resource/instance/subject labels under the approved AS owner, without retaining credentials or real endpoint/provider settings. Include public and confidential client profiles only where approved; record the supported Client ID Metadata Documents, pre-registration or optional Dynamic Client Registration path and explicit client-compatibility limits.
+- Prepare approved authorization-server metadata/discovery, redirect URI and client-authentication policy, authorization-code + PKCE S256 fixtures, a reviewed resource-owner authentication and authorization/grant interaction, two distinct canonical resources/instances and scopes, and current token/grant-state lookup for the resource server. Do not assume existing Cabloy login JWTs, Redis session markers, provider records or local Passport refresh satisfy these fixtures.
+- Choose the approved no-refresh or refresh-issuance branch explicitly. If refresh is issued, prepare synthetic grant-bound public/confidential client cases, concurrent redemption, predecessor reuse, lost response, idle/absolute expiry, revocation, and multi-worker store outage. Do not require refresh issuance in the no-refresh branch.
+
+Procedure:
+
+- Inspect issuer discovery and advertised endpoints, grant types, registration and PKCE capabilities. Exercise supported-client registration or pre-registration, redirect/client authentication and user-authorization decisions; reject unregistered/incompatible clients, missing/invalid PKCE, unauthorized user grants, redirect mismatch, and authorization-code reuse. If authorization-response `iss` is emitted, verify its advertised support and exact issuer comparison.
+- Request the canonical `resource` during authorization and token exchange, then attempt substitution of another resource, client, subject, instance or broader scope when redeeming the code. Verify that issued MCP-only opaque access tokens have current active grant/token records retrievable by the protected resource, and that revoked/expired/ambiguous/outage states cannot be accepted as current. Exercise separate workers where selected by the deployment model; do not treat a valid Redis session marker or ordinary signed JWT as an MCP token record.
+- Under a no-refresh profile, confirm the AS does not advertise/issue unsupported refresh capability and the client reauthorizes after access expiry. Under an approved refresh profile, request refresh only at the AS token endpoint, verify grant-bound resource/scope/client/subject/instance preservation, selected sender constraint or atomic rotation, predecessor invalidation, family-lineage/reuse response where rotated, and defined concurrent, lost-response, revocation, expiry and outage behavior. Cross-check that no refresh credential reaches `/mcp`; `ATP-MCP-AUTH-01` separately proves resource-endpoint rejection.
+
+Expected result:
+
+- Metadata and actual behavior agree for the approved supported-client and no-refresh/refresh profile. Only the authorized user/client/code/PKCE and consented canonical resource/scope combination produces a current MCP-profile access-token record. Code replay, substitution, invalid client, revoked grant, ambiguous state or unavailable token service never yields a resource-server-valid token or escalates local authority.
+- If refresh issuance is deferred, no unsupported grant or `offline_access` resource scope is implied; expiry requires reauthorization. If refresh is approved, only the selected replay-safe profile issues an access token within the original grant boundary, and detected predecessor reuse revokes active refresh capability when rotation is selected. Failures do not expose credentials, token-state internals or subject profiles. This scenario does not independently prove host binding, Passport mapping or guarded tool authorization.
+
+Minimum proof:
+
+- Retain the AS owner/approval and source revision, synthetic environment/resource/instance/client labels, configuration and metadata fingerprints, exact authorization/token/lookup procedures and interleavings, redacted grant/token-state and worker-revocation outcomes, applicable user-interaction/consent results, negative issuance counts, observed no-refresh or refresh branch, and a durable redacted artifact location. Never retain raw codes, access/refresh tokens, cookies, signed callback state, client secrets, full claims or private subject data. A later Zova UI, if selected, needs separately scoped browser/SSR proof.
+
+Traceability: `PRD-MCP-IDENTITY-01`, `SRS-MCP-AUTH-04`, `SRS-MCP-NFR-01`, `WBS-MCP-20-04`.
 
 ### ATP-MCP-INSTANCE-01: Host binding and cross-instance isolation
 
@@ -390,7 +418,7 @@ Traceability: `PRD-MCP-SAFETY-04`, `SRS-MCP-OPS-03`, `SRS-MCP-OPS-04`, `SRS-MCP-
 
 ## Contract, SSR, Browser, and Integration Procedures
 
-The first increment has no Zova SSR/browser procedure. After implementation, use the narrowest applicable command and record actual results in a bounded execution dossier. Prospective command families verified during planning include:
+The MCP resource-server increment has no Zova SSR/browser procedure. A separately approved integrated AS still requires AS-owned authorization/grant-interaction verification under `ATP-MCP-AUTH-03`, even if it adds no Zova site. After implementation, use the narrowest applicable command and record actual results in a bounded execution dossier. Prospective resource-server command families verified during planning include:
 
 ```bash
 # Vona module-local or selected backend tests, after the proposed module exists

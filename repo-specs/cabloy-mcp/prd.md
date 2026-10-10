@@ -51,7 +51,7 @@ The owner of an existing controller/API operation whose DTO, OpenAPI metadata, g
 
 ### Deferred
 
-- A general-purpose OAuth authorization-server UI or identity provider managed by Cabloy itself.
+- A general-purpose OAuth authorization-server UI or identity provider managed by Cabloy itself. A separate, proposed MCP-specific authorization-server delivery scope may be needed for the preferred integrated opaque-token option; its AS-owned interaction, token/grant storage and optional refresh policy require their own approval and do not automatically add a Zova site or change this deferred general-purpose UI.
 - Automatic exposure of every OpenAPI operation without eligibility, policy, or risk review.
 - Multipart upload, raw-body operations, binary downloads, redirects, streaming responses, SSE business payloads, and non-JSON tool results.
 - Destructive-operation confirmation UX beyond a protocol-level policy/metadata contract.
@@ -105,7 +105,7 @@ The server rejects missing/invalid OAuth, wrong resource/audience, instance mism
 
 ### Identity, instance, and authorization
 
-- **PRD-MCP-IDENTITY-01**: Every MCP request is authenticated with a standards-based OAuth access token whose issuer, resource/audience, expiry, subject, and required scopes are validated before tool discovery or invocation. Traceability: `SRS-MCP-AUTH-01`, `WBS-MCP-20-02`, `ATP-MCP-AUTH-01`.
+- **PRD-MCP-IDENTITY-01**: Every MCP request is authenticated with a standards-based OAuth access token whose issuer, resource/audience, expiry, subject, and required scopes are validated before tool discovery or invocation. For the proposed integrated AS option, obtaining that token also requires a separately owned authorization-server delivery contract; the existing login provider does not provide it automatically. Traceability: `SRS-MCP-AUTH-01`, `SRS-MCP-AUTH-04`, `WBS-MCP-20-02`, `WBS-MCP-20-04`, `ATP-MCP-AUTH-01`, `ATP-MCP-AUTH-03`.
 - **PRD-MCP-IDENTITY-02**: Every request is bound to the intended Cabloy instance by trusted endpoint host configuration, and a token or client-supplied selector cannot cross or override that instance boundary. Traceability: `SRS-MCP-INSTANCE-01`, `SRS-MCP-INSTANCE-02`, `WBS-MCP-20-03`, `ATP-MCP-INSTANCE-01`.
 - **PRD-MCP-IDENTITY-03**: Existing Passport, RBAC, business-resource ownership, and data-scope rules remain effective for MCP calls; MCP exposure never grants authority that the local subject does not already possess. Traceability: `SRS-MCP-AUTH-02`, `SRS-MCP-AUTH-03`, `WBS-MCP-30-02`, `ATP-MCP-AUTH-02`.
 
@@ -143,7 +143,7 @@ The first increment may launch only when the governing ADR is accepted, the conc
 | Product area           | PRD                                           | SRS                                                | WBS                                   | ATP                                           | Status source |
 | ---------------------- | --------------------------------------------- | -------------------------------------------------- | ------------------------------------- | --------------------------------------------- | ------------- |
 | Transport and protocol | `PRD-MCP-ACCESS-01`                           | `SRS-MCP-TRANSPORT-01`                             | `WBS-MCP-20-01`                       | `ATP-MCP-TRANSPORT-01`                        | `progress.md` |
-| OAuth and instance     | `PRD-MCP-IDENTITY-01`–`03`                    | `SRS-MCP-AUTH-01`–`03`, `SRS-MCP-INSTANCE-01`–`02` | `WBS-MCP-20-02`–`03`, `WBS-MCP-30-02` | `ATP-MCP-AUTH-01`–`02`, `ATP-MCP-INSTANCE-01` | `progress.md` |
+| OAuth and instance     | `PRD-MCP-IDENTITY-01`–`03`                    | `SRS-MCP-AUTH-01`–`04`, `SRS-MCP-INSTANCE-01`–`02` | `WBS-MCP-20-02`–`04`, `WBS-MCP-30-02` | `ATP-MCP-AUTH-01`–`03`, `ATP-MCP-INSTANCE-01` | `progress.md` |
 | Catalog and schema     | `PRD-MCP-CONTRACT-01`–`03`                    | `SRS-MCP-CATALOG-01`–`03`                          | `WBS-MCP-30-01`–`02`                  | `ATP-MCP-CONTRACT-01`–`03`                    | `progress.md` |
 | Dispatch and isolation | `PRD-MCP-ACCESS-03`, `PRD-MCP-SAFETY-01`–`02` | `SRS-MCP-DISPATCH-01`–`04`                         | `WBS-MCP-40-01`–`02`                  | `ATP-MCP-CALL-01`–`03`                        | `progress.md` |
 | Operations and release | `PRD-MCP-SAFETY-03`–`04`                      | `SRS-MCP-OPS-01`–`03`                              | `WBS-MCP-50-01`–`02`                  | `ATP-MCP-OPS-01`–`02`                         | `progress.md` |

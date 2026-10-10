@@ -44,7 +44,7 @@ Tasks:
 
 Acceptance checks:
 
-- ADR 0001 records explicit acceptance of the overall boundary, names, and DEC-MCP-01 initial structural/configuration design only. ADR 0002 separately accepts DEC-MCP-02's transport design; DEC-MCP-03 through DEC-MCP-08 and bounded source execution remain gated.
+- ADR 0001 records explicit acceptance of the overall boundary, names, and DEC-MCP-01 initial structural/configuration design only. ADR 0002 separately accepts DEC-MCP-02's transport design; ADR 0003 accepts DEC-MCP-03's bounded OAuth design only. DEC-MCP-04 through DEC-MCP-08 and bounded source execution remain gated.
 - No planning record claims that the source suite/module, endpoint, OAuth provider, or runnable command already exists.
 - Every material design gate has a recorded accountable owner and a bounded downstream WBS dependency; do not infer the owner from package authorship.
 
@@ -98,15 +98,15 @@ Acceptance checks:
 
 Traceability: `PRD-MCP-IDENTITY-01`, `PRD-MCP-IDENTITY-03`, `SRS-MCP-AUTH-01`, `SRS-MCP-AUTH-02`, `SRS-MCP-NFR-01`, `ATP-MCP-AUTH-01`, `ATP-MCP-AUTH-02`.
 
-Dependencies: `WBS-MCP-20-01`.
+Dependencies: `WBS-MCP-20-01`, `WBS-MCP-20-04`.
 
-Source areas: approved authorization-server/token-service integration and MCP resource-server boundary; existing Vona Passport/user/auth ownership; proposed `cabloy-mcp` authentication service. ADR 0003 evaluates a Cabloy-integrated `a-auth` authorization-server candidate with an MCP-specific opaque access-token profile and optional refresh support; it does not select an issuer, assign new auth storage, or authorize configuration. Authorization-server endpoints/grants/token persistence need their own bounded owner and scope before this resource-server task can rely on them.
+Source areas: approved authorization-server/token-service integration and MCP resource-server boundary; existing Vona Passport/user/auth ownership; proposed `cabloy-mcp` authentication service. ADR 0003 evaluates a Cabloy-integrated `a-auth` authorization-server candidate with an MCP-specific opaque access-token profile and optional refresh support; it does not select an issuer, assign new auth storage, or authorize configuration. The separate proposed `WBS-MCP-20-04` owns authorization-server endpoints/grants/token persistence and contract proof; this resource-server task may use synthetic lookup fixtures in isolation but cannot claim real issuance, refresh or end-to-end readiness before its predecessor's approved delivery and proof. An already available conforming AS alternative still requires equivalent approved contract/proof and an explicit dependency disposition.
 
 Tasks:
 
 - Validate the MCP access-token profile, issuer/resource binding, current lookup/introspection state, expiry, subject, instance relation, and scope on every request.
 - Map the OAuth subject to an active local Passport-compatible identity in the endpoint instance without reusing an existing unrelated request Passport.
-- Define behavior for token lookup/introspection outage, refresh-token rotation or failure, ambiguous mapping, disabled identity, missing scope, and token/resource mismatch; the preferred opaque-token profile rejects a token whenever current authorization state cannot be confirmed. The earlier deny-on-required-JWKS-refresh-failure policy is retained only if a later JWT/JWKS alternative is selected.
+- Define behavior for token lookup/introspection outage, an AS without refresh issuance or an AS-owned refresh failure, ambiguous mapping, disabled identity, missing scope, and token/resource mismatch; the preferred opaque-token profile rejects a token whenever current authorization state cannot be confirmed. Do not implement rotation, grant storage or consent in this resource module. The earlier deny-on-required-JWKS-refresh-failure policy is retained only if a later JWT/JWKS alternative is selected.
 
 Acceptance checks:
 
@@ -134,6 +134,27 @@ Acceptance checks:
 - Requests to an unknown, untrusted, or conflicting host fail before unintended instance initialization, tool visibility, metadata disclosure, or business lookup; ordinary non-MCP instance resolution stays unchanged.
 - Same-subject tokens cannot cross instances through host, query, header, path, cached context, or tool arguments.
 - Real HTTP tests prove trusted proxy behavior and request ordering; `performAction()` alone is not transport/instance-middleware proof.
+
+#### WBS-MCP-20-04: Deliver an approved MCP authorization-server/token-service contract
+
+Traceability: `PRD-MCP-IDENTITY-01`, `SRS-MCP-AUTH-04`, `SRS-MCP-NFR-01`, `ATP-MCP-AUTH-03`.
+
+Dependencies: `WBS-MCP-10-01`, `WBS-MCP-10-02`. ADR 0003 accepts DEC-MCP-03's bounded OAuth design only; concrete AS delivery, DEC-MCP-04, and any DEC-MCP-09 persistence disposition remain independent authority gates, not satisfied by these planning predecessors.
+
+Source areas: observed `a-auth` login/provider and `a-user` Passport/session primitives; ADR 0003 accepts the bounded design direction for an integrated `a-auth` logical owner, pre-registered public/confidential clients, authorization code + PKCE S256, MCP-specific opaque access tokens, and no refresh issuance in the first profile. Concrete AS implementation, operational owner, storage, interaction, endpoint, and provider remain `TODO(confirm)`. An external conforming AS remains an alternative after a separate approved selection. No `cabloy-mcp` resource-module token/grant persistence, source target, site or provider is approved by this task declaration.
+
+Tasks:
+
+- Choose and record a separately accountable authorization-server implementation and operational owner, supported client types and registration path (including the Client ID Metadata Documents recommendation versus pre-registration limits), issuer/discovery and truthful endpoint/grant/PKCE/redirect/response-issuer metadata, resource-owner authentication and authorization interaction, and a resource-bound authorization-code + PKCE exchange. Verify exact issuer comparison independently of canonical resource matching.
+- Define MCP-only opaque access-token issuance, grant/client/subject/scope/canonical-resource/instance binding, token-state lookup or introspection contract for the resource server, revocation, secret-safe representation, availability and multi-worker consistency. The existing Cabloy JWT pair, temporary token, OAuth provider and Redis session marker do not satisfy this token service by default.
+- Decide explicitly whether refresh tokens are issued. If yes, select and prove a public/confidential-client profile with consented resource/scope constraints, atomic rotation or approved sender constraint, predecessor invalidation/family-reuse handling when rotated, lifetime/idle expiry, concurrent refresh and lost-response failure policy. Keep refresh only at the AS token endpoint; if no refresh, document reauthorization after access expiry.
+- Before proposing a new auth-owned store or AS interaction, reconcile DEC-MCP-09's no-schema first-increment scope and ADR 0001's separately gated UI/durable consent boundary. Specify owner, retention, migration and `vonaModule.fileVersion` choice before editing a schema; any `meta.version.ts` change requires `npm run test`. No schema or UI is approved by this planning WBS.
+
+Acceptance checks:
+
+- An independently approved AS owner and bounded execution dossier identify real discovery, code/PKCE, client compatibility, resource-bound grant/token issuance and current token-service contract, with no assumption that `auth-oauth` provider login is already an AS. The selected no-refresh or refresh profile is explicit; metadata does not advertise unsupported capabilities.
+- `ATP-MCP-AUTH-03` has separately retained AS-owned synthetic/redacted proof for metadata, authorization/code exchange, token binding, revocation, outage, and (if issued) refresh rotation/reuse and multi-worker consistency. Resource-server-only fixtures or `ATP-MCP-AUTH-01` are insufficient for this work package.
+- Any new persistence, AS interaction or changed first-increment scope has its own named approval and migration/version disposition before source; no source, endpoint, provider or test execution is authorized by this proposal.
 
 ### Phase 30: Candidate catalog and authorization policy
 
@@ -290,14 +311,14 @@ Acceptance checks:
 | Product area             | PRD                                             | SRS                                                           | WBS                              | ATP                                                                   |
 | ------------------------ | ----------------------------------------------- | ------------------------------------------------------------- | -------------------------------- | --------------------------------------------------------------------- |
 | Planning/security gates  | `PRD-MCP-*`                                     | `SRS-MCP-NFR-01`                                              | `WBS-MCP-10-01`, `WBS-MCP-10-02` | `ATP-MCP-AUTH-01`, `ATP-MCP-CONTRACT-03`                              |
-| Transport/OAuth/instance | `PRD-MCP-ACCESS-01`, `PRD-MCP-IDENTITY-01`–`03` | `SRS-MCP-TRANSPORT-*`, `SRS-MCP-AUTH-*`, `SRS-MCP-INSTANCE-*` | `WBS-MCP-20-01`–`03`             | `ATP-MCP-TRANSPORT-01`, `ATP-MCP-AUTH-01`–`02`, `ATP-MCP-INSTANCE-01` |
+| Transport/OAuth/instance | `PRD-MCP-ACCESS-01`, `PRD-MCP-IDENTITY-01`–`03` | `SRS-MCP-TRANSPORT-*`, `SRS-MCP-AUTH-*`, `SRS-MCP-INSTANCE-*` | `WBS-MCP-20-01`–`04`             | `ATP-MCP-TRANSPORT-01`, `ATP-MCP-AUTH-01`–`03`, `ATP-MCP-INSTANCE-01` |
 | Catalog/policy           | `PRD-MCP-CONTRACT-01`–`03`                      | `SRS-MCP-CATALOG-*`, `SRS-MCP-API-*`                          | `WBS-MCP-30-01`–`02`             | `ATP-MCP-CONTRACT-01`–`03`                                            |
 | Dispatch/isolation       | `PRD-MCP-ACCESS-03`, `PRD-MCP-SAFETY-01`–`02`   | `SRS-MCP-DISPATCH-*`, `SRS-MCP-PRIVACY-01`                    | `WBS-MCP-40-01`–`02`             | `ATP-MCP-CALL-01`–`03`                                                |
 | Operations/release       | `PRD-MCP-SAFETY-03`–`04`                        | `SRS-MCP-OPS-*`, `SRS-MCP-UI-*`, `SRS-MCP-NFR-02`–`03`        | `WBS-MCP-50-01`–`02`             | `ATP-MCP-OPS-01`–`02`                                                 |
 
 ## Completion and Evidence Rules
 
-- A planning task is not implementation-complete because its Markdown exists. Only a task explicitly declaring `Completion mode: planning-only.` may become `planning-complete` once its own documentary checks have revision-scoped evidence and a named reviewer records a planning-closure disposition. WBS-MCP-10-01 is eligible, but remains `in-progress` until that distinct approval is recorded; the 2026-10-06 closure review did not grant it. Its linked runtime ATPs remain future proof and its successors remain subject to their own gates.
+- A planning task is not implementation-complete because its Markdown exists. Only a task explicitly declaring `Completion mode: planning-only.` may become `planning-complete` once its own documentary checks have revision-scoped evidence and a named reviewer records a planning-closure disposition. WBS-MCP-10-01 and WBS-MCP-10-02 have separate named-reviewer documentary `planning-complete` closures recorded in the current progress register. The earlier 2026-10-06 review did not grant WBS-MCP-10-01 closure. Their linked runtime ATPs remain future proof and successors, including proposed WBS-MCP-20-04, remain subject to their own gates.
 - A `planning-complete` predecessor satisfies its dependency edge, but does not authorize a blocked successor, accept another ADR, waive applicable ATPs or change the verified count.
 - A WBS task may become `implementation-complete` only after its source/configuration completion checks are satisfied; it becomes `verified` only after every applicable ATP has retained proof.
 - Evidence must identify exact source revision, environment/database/instance where relevant, command or procedure, fixture/interleaving, observed result, and redacted durable artifact path.
@@ -312,6 +333,8 @@ Acceptance checks:
 - [A-MCP test plan](./test-plan.md)
 - [A-MCP progress](./progress.md)
 - [A-MCP ADR 0001](./decisions/0001-mcp-suite-boundaries.md)
+- [A-MCP AS design review dossier](./wbs-mcp-20-04-as-design-review.md)
+- [A-MCP AS execution dossier (planning draft)](./wbs-mcp-20-04-execution-dossier.md)
 - [A-MCP ADR 0004 (proposed)](./decisions/0004-mcp-host-instance-binding.md)
 - [A-MCP ADR 0005 (proposed)](./decisions/0005-mcp-tool-catalog-registry.md)
 - [A-MCP ADR 0006 (proposed)](./decisions/0006-mcp-tool-eligibility-risk-results.md)

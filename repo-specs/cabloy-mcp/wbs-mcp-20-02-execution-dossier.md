@@ -12,7 +12,7 @@ Prepared from the observed worktree at revision `d8ea65675e2496165064a603f752c2d
 - **Target WBS:** `WBS-MCP-20-02 — Integrate OAuth resource-server validation and local subject mapping`
 - **Target class:** backend increment, contingent on an approved bounded execution dossier and resolved authority gates.
 - **Finite boundary:**
-  - integrate the approved OAuth protected-resource validation boundary for each protected MCP request against a separately approved and available authorization-server/token service;
+  - integrate the approved OAuth protected-resource validation boundary for each protected MCP request against a separately approved and available authorization-server/token service delivered under `WBS-MCP-20-04` (or an explicitly approved equivalent AS disposition);
   - map a validated subject to exactly one active local Passport-compatible identity in the already bound Vona instance;
   - enforce fail-closed behavior before protected discovery, `tools/list`, or `tools/call` reaches a business controller;
   - cover the resource-server portions of `ATP-MCP-AUTH-01` and the linked `ATP-MCP-AUTH-02` procedures after implementation. Refresh grant issuance/rotation needs separate authorization-server ownership and proof.
@@ -44,6 +44,7 @@ Prepared from the observed worktree at revision `d8ea65675e2496165064a603f752c2d
 ### Dependency readiness
 
 - `WBS-MCP-20-01` is **blocked**. Its planning predecessors are documentary `planning-complete`, and DEC-MCP-02's transport design is accepted, but no transport source, bounded implementation approval, or real-HTTP proof exists. This dossier does not override that block.
+- Proposed predecessor `WBS-MCP-20-04` is **blocked**: no AS owner, approved AS execution dossier, AS source/contract proof, no-schema disposition, or `ATP-MCP-AUTH-03` result exists. Its numeric suffix does not mean it follows resource-server implementation.
 - `DEC-MCP-03` remains **Proposed**. The preferred Cabloy-integrated `a-auth` authorization-server candidate, MCP opaque-token/grant profile, token lookup/introspection availability, resource identifier, refresh-token issuance/rotation/reuse, mapping owner, scope/grant semantics, and outage taxonomy remain unresolved.
 - `DEC-MCP-04` remains **Proposed**. The trusted endpoint/resource/instance map, ingress trust, early selection, and cache isolation remain unresolved. This target may consume only an agreed interface; it may not invent host or instance authority.
 - No predecessor is `verified`; no predecessor's planning-only status constitutes implementation authorization. Consequently this dossier is not execution-ready.
@@ -98,7 +99,7 @@ The exact issuer, resource URL, metadata values, client grant, scope vocabulary,
 - **Transactions and persistence:** this target proposes no MCP-owned schema or persisted field. If implementation later changes a persisted schema or `meta.version.ts`, stop and obtain the required `vonaModule.fileVersion` decision before editing; the current dossier does not authorize such a change.
 - **Concurrency and recovery:** concurrent subject/instance checks must use separate Vona `mockCtx(...)` boundaries where scoped state is involved. A key refresh outage, mapping ambiguity, or validation uncertainty fails closed. No automatic retry of external side effects is in scope.
 - **Privacy/audit:** tests and evidence use synthetic labels and redacted fingerprints only. No raw token, signed JWT, full claims, client secret, refresh token, cookie, JWKS body, private key, or complete subject profile may be retained. Detailed audit ownership remains DEC-MCP-08.
-- **SSR/site/flavor:** the first increment has no Zova page, browser flow, or SSR site. No frontend contract loop applies.
+- **SSR/site/flavor:** this MCP resource-server target has no Zova page, browser flow, or SSR site. A separately approved AS authorization-code interaction/grant flow under `WBS-MCP-20-04` still needs AS-owned verification; it does not automatically require a new Zova site. No frontend contract loop applies to this RS task.
 - **Contract direction:** this is a Vona backend increment. There is no generated Zova consumer; no generated consumer may be hand-edited.
 
 ## Verification and evidence plan (prospective)
@@ -107,9 +108,9 @@ These procedures become runnable only after the dependency and authority gates c
 
 ### `ATP-MCP-AUTH-01`
 
-Use synthetic MCP-profile lookup/introspection fixtures for valid issuer/resource/subject/scope/instance, wrong issuer, wrong resource, expired/inactive/revoked state, missing subject/scope, lookup outage, stale state, disabled/unmapped subject, and ambiguous mapping. Include a client/grant that requests a refresh token and one that does not; keep refresh-token values out of resource-server requests and retained evidence.
+Use synthetic MCP-profile lookup/introspection fixtures for valid issuer/resource/subject/scope/instance, wrong issuer, wrong resource, expired/inactive/revoked state, missing subject/scope, lookup outage, stale state, disabled/unmapped subject, and ambiguous mapping. Prepare a synthetic refresh credential as a negative resource-endpoint fixture only; do not retain its value.
 
-Exercise metadata, `tools/list`, and `tools/call` through the approved transport and host fixture. Verify authorization-server refresh issuance/rotation and prior-token reuse only through separately approved AS-owned tests at its token endpoint; include a client without a refresh token. Send a refresh token to the resource endpoint as a negative test. Verify that only the valid current resource-bound access token reaches the next policy stage; lookup failure, stale state, and refresh-token misuse deny without anonymous fallback, controller dispatch, cross-instance probe, or raw credential disclosure. Record bounded status/result classes and redacted reason categories. If a JWT/JWKS alternative is later selected, add its key-refresh-failure branch separately.
+Exercise metadata, `tools/list`, and `tools/call` through the approved transport and host fixture. Send the synthetic refresh credential to the resource endpoint and confirm rejection. Verify that only the valid current resource-bound access token reaches the next policy stage; lookup failure, stale state, and refresh-token misuse deny without anonymous fallback, controller dispatch, cross-instance probe, or raw credential disclosure. Record bounded status/result classes and redacted reason categories. Authorization-server issuance and optional refresh rotation/reuse belong to `ATP-MCP-AUTH-03` under `WBS-MCP-20-04`; resource-server fixtures cannot close that AS scenario. If a JWT/JWKS alternative is later selected, add its key-refresh-failure branch separately.
 
 Minimum evidence: source revision, environment/instance labels, configuration fingerprint without secrets, fixture labels not token values, exact procedure, expected/observed result, dispatch counts, and durable redacted artifact location.
 
@@ -174,7 +175,7 @@ Before execution approval, this dossier may be corrected for scope, observed rev
 
 The following are explicit blockers or exclusions, not TODOs to fill by assumption:
 
-- `WBS-MCP-20-01` remains blocked and has no source or transport ATP proof.
+- `WBS-MCP-20-01` and proposed AS predecessor `WBS-MCP-20-04` remain blocked and have no source or applicable ATP proof.
 - `DEC-MCP-03` remains Proposed; its preferred opaque-token/refresh-token planning direction is not an accepted authorization-server or runtime configuration. The earlier deny-on-required-JWKS-refresh-failure sub-policy applies only to a separately selected JWT/JWKS alternative.
 - `DEC-MCP-04` remains Proposed; no host/proxy/instance configuration is approved.
 - Issuer/operator, resource URL, metadata owner, client registration/grants, scopes, library, algorithms, cache/refresh/rotation bounds, mapping owner, and final failure taxonomy remain `TODO(confirm)`.
@@ -192,7 +193,7 @@ Authority and ownership: PRD/SRS/WBS/ATP links above; DEC-MCP-03/04 remain propo
 Completed gates/evidence: repository/edition discovery and dossier-reference review; no runtime or ATP evidence
 Commands/procedures actually run: repository identity/status/marker inspection only; no implementation or runtime command
 Commands/procedures still required: resolve predecessor and ADR gates, explicitly approve this dossier, then observe source/dependency layout before selecting narrow tests and ATP procedures
-Blocker or decision needed: WBS-MCP-20-01 implementation readiness plus DEC-MCP-03/04 authority closure and configuration ownership
+Blocker or decision needed: WBS-MCP-20-01 and WBS-MCP-20-04 delivery/proof plus DEC-MCP-03/04 authority closure, DEC-MCP-09 no-schema disposition if needed, and configuration ownership
 Next single action: obtain explicit review/approval of this bounded dossier after the unresolved OAuth and predecessor gates are addressed; do not execute source or ATP work automatically
 ```
 
