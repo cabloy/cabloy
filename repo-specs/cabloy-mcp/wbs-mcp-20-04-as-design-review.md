@@ -2,7 +2,7 @@
 
 ## Dossier status
 
-**Planning-only design disposition — not an execution dossier.** This record is the planning basis for the bounded `DEC-MCP-03` design accepted in ADR 0003 on 2026-10-09. It does not amend `DEC-MCP-09`, authorize source or schema changes, configure an issuer/provider, operate an authorization endpoint, run OAuth/HTTP tests, or advance any WBS/ATP status. Concrete implementation and persistence gates remain open.
+**Planning-only design disposition — not an execution dossier.** This record is the 2026-10-09 planning basis for the bounded `DEC-MCP-03` design accepted in ADR 0003. It did not amend `DEC-MCP-09` at that review; [ADR 0009](./decisions/0009-mcp-as-state-boundary.md) subsequently permitted planning AS-owned shared authorization state on 2026-10-10, without selecting a store or schema. Neither decision authorizes source or schema changes, configures an issuer/provider, operates an authorization endpoint, runs OAuth/HTTP tests, or advances a WBS/ATP status. Concrete implementation and persistence gates remain open.
 
 Prepared against the Cabloy Basic worktree at revision `1e7c10ce84` on 2026-10-09. The worktree contains the uncommitted planning increment that introduced the AS work package and its resource-server dependency. No AS source, endpoint, provider configuration, usable credential, or ATP evidence was observed.
 
@@ -12,12 +12,12 @@ Prepared against the Cabloy Basic worktree at revision `1e7c10ce84` on 2026-10-0
 - **Target:** proposed `WBS-MCP-20-04 — Deliver an approved MCP authorization-server/token-service contract`
 - **Primary authority:** [ADR 0003](./decisions/0003-mcp-oauth-resource-server.md), `DEC-MCP-03`, accepted for bounded design only
 - **Overall boundary:** [ADR 0001](./decisions/0001-mcp-suite-boundaries.md), accepted for the overall first-increment boundary and no-schema/no-site MCP resource boundary only
-- **Persistence gate:** `DEC-MCP-09`, accepted for the no-schema first increment; it does not authorize auth-owned grant, consent, or token persistence
+- **Persistence gate:** `DEC-MCP-09` was no-schema at this review; later [ADR 0009](./decisions/0009-mcp-as-state-boundary.md) permits AS-owned shared-state planning only, not a concrete grant/token store, consent record, or schema
 - **Technical contracts:** `SRS-MCP-AUTH-04`, `SRS-MCP-AUTH-01`, `SRS-MCP-INSTANCE-01`
 - **Acceptance scenario:** proposed `ATP-MCP-AUTH-03`; no result exists
 - **Related boundary:** proposed [ADR 0004](./decisions/0004-mcp-host-instance-binding.md) must use the same endpoint → resource → instance interface, but its prior acceptance is not assumed
 
-This dossier is a design review input. It is not a human decision record and does not convert any recommendation below into an accepted value.
+This dossier is a historical design-review input, not the human decision record. ADR 0003 records the bounded first-profile design acceptance; ADR 0009 records the later route/ownership and conceptual AS-state disposition. Recommendations below do not select concrete storage, issuer, source, or execution.
 
 ## Observed source feasibility
 
@@ -41,10 +41,10 @@ The following records the bounded design disposition accepted under `DEC-MCP-03`
 
 ### 1. Logical and operational ownership
 
-- Keep the preferred **logical AS owner** as an extension of Vona `a-auth`, sharing the existing local identity owner but using a separate MCP authorization-server capability and contracts.
+- The subsequently selected **logical AS owner** is an extension of Vona `a-auth`, sharing the existing local identity owner but using a separate MCP authorization-server capability and contracts.
 - Keep `cabloy-mcp` as a distinct **resource-server** boundary. It receives only access tokens at `/mcp`; it does not host authorization, consent, refresh, client registration, or token/grant persistence as a shortcut.
-- Require a separately named **operational owner** for issuer metadata, redirect/client registration, authorization interaction, token-state availability, revocation, key/secret custody, incident response, and retention. `zhennann` is the planning decision owner, not by that fact an AS operator.
-- Retain a separately operated conforming AS as an alternative. It can replace the integrated candidate only after equivalent ownership, resource registration, current token lookup, interaction, and redacted proof are observed.
+- The later ADR 0009 decision names `zhennann` as **implementation and operational owner** for issuer metadata, redirect/client registration, authorization interaction, token-state availability, revocation, key/secret custody, incident response, and retention. Naming responsibility does not approve configuration, credentials or a retention policy.
+- A separately operated conforming AS remains a later alternative requiring a new route decision, equivalent ownership, resource registration, current token lookup, interaction, and redacted proof.
 
 ### 2. Supported client and grant profile
 
@@ -108,23 +108,23 @@ The required state is separated by purpose rather than hidden under `a-auth`:
 | Refresh-token family                        | Not required in proposed no-refresh profile | None                                                                                                                                               | Reopen only if refresh is later selected                                                       |
 | MCP-owned registry/consent/audit schema     | Not required and excluded                   | None                                                                                                                                               | Any exception requires a new decision; placement under `a-auth` does not bypass it             |
 
-`DEC-MCP-09` remains controlling: this dossier preserves the accepted no-schema first-increment wording and does not authorize a new `a-auth` table, Redis contract, durable consent record, or migration. An external shared store is still persistence/authorization state even when it is not a relational schema. Before implementing the integrated AS, one of the following must receive a separately recorded authority disposition:
+At the 2026-10-09 review, `DEC-MCP-09` still expressed a no-schema first-increment boundary. This dossier did not authorize a new `a-auth` table, Redis contract, durable consent record, or migration. An external shared store is still authorization state even without a relational schema. The review presented two possible dispositions:
 
 1. **Preserve no-schema:** defer the integrated AS and use no real MCP token issuance until an already conforming, separately operated AS is selected and its contract is approved; or
 2. **Revise the first-increment boundary:** permit explicitly AS-owned shared authorization/token state, name its owner and retention, choose database versus external store, decide the owning `vonaModule.fileVersion` strategy before any schema edit, and run the required root test path if `meta.version.ts` changes.
 
-Neither option is selected by this dossier. In particular, “put the tables in `a-auth`” is not a no-schema solution.
+This dossier selected neither option. On 2026-10-10, [ADR 0009](./decisions/0009-mcp-as-state-boundary.md) selected the integrated route and revised the scope **only to permit planning** AS-owned shared state; the specific store, retention, schema/migration and fileVersion strategy still require separate decisions. In particular, “put the tables in `a-auth`” is not a no-schema solution or an approved implementation.
 
 ## Acceptance and proof required later
 
 Before approving AS execution, the execution dossier and decision record must resolve:
 
-1. accountable implementation and operations owner, issuer deployment and endpoint ownership;
+1. the subsequently named implementation and operations owner (`zhennann`), with issuer deployment and endpoint configuration still separate gates;
 2. supported public/confidential client matrix, pre-registration/metadata-document/DCR compatibility, exact redirect and client-authentication rules;
 3. resource-owner login and explicit grant interaction, consent retention choice, cancellation/denial, state/PKCE/code replay behavior;
 4. canonical resource and instance binding at authorization, token exchange, current lookup, revocation, and local subject mapping;
 5. access-token store/lookup owner, representation, retention, multi-worker consistency, outage and fail-closed behavior;
-6. the no-schema versus auth-owned persistence disposition and, if schema is allowed, the owning module `fileVersion` choice;
+6. the subsequent ADR 0009 design-only AS-state disposition and the still-open specific storage, retention, migration and (before any schema edit) owning-module `fileVersion` choice;
 7. the proposed no-refresh profile, or a separately accepted replay-safe refresh profile;
 8. `ATP-MCP-AUTH-03` redacted proof for truthful metadata, supported-client behavior, user/grant interaction, code/PKCE, substitution/replay denial, current token lookup, revocation, outage, and the selected refresh branch.
 
@@ -133,9 +133,9 @@ No raw authorization code, access/refresh token, cookie, signed state, client se
 ## Current blockers and permitted next action
 
 - `DEC-MCP-03` is accepted for bounded design only; concrete implementation, configuration, persistence, and proof remain open.
-- `DEC-MCP-09` remains accepted for no-schema first increment; no persistence exception is granted.
+- Later ADR 0009 permits planning AS-owned shared authorization state; no particular store, schema, remembered consent or execution is approved.
 - `WBS-MCP-20-04` remains blocked and has no source or ATP evidence.
 - `WBS-MCP-20-02` remains blocked on this AS contract and the transport/host gates; synthetic RS fixtures cannot close the AS dependency.
 - No issuer, provider, endpoint, client, schema, grant, token, consent record, dependency, or credential may be configured from this dossier.
 
-**Next single action:** review the separate [AS execution dossier (planning draft)](./wbs-mcp-20-04-execution-dossier.md) after resolving concrete implementation/storage authority and any required DEC-MCP-09 disposition. Do not execute source or OAuth/HTTP ATP work automatically.
+**Next single action:** resolve the exact AS-owned shared-state representation, consistency, retention and interaction contract under ADR 0009, then re-review the separate [AS execution dossier (planning draft)](./wbs-mcp-20-04-execution-dossier.md). Do not execute source or OAuth/HTTP ATP work automatically.

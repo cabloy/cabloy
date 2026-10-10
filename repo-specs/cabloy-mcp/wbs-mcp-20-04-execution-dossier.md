@@ -4,15 +4,15 @@
 
 **Planning-only execution dossier draft — not approved for execution and not execution-ready.** This record scopes the bounded work required for `WBS-MCP-20-04`, but the task remains `blocked`. It does not authorize source changes, dependency installation, schema or external-store creation, provider or issuer configuration, authorization-endpoint operation, credential changes, OAuth/HTTP execution, ATP execution, or status advancement.
 
-Prepared against the Cabloy Basic worktree at revision `1e7c10ce84` on 2026-10-09. The worktree contains an uncommitted planning increment. No AS source, endpoint, provider configuration, usable credential, grant/token store, or `ATP-MCP-AUTH-03` evidence is claimed.
+Originally prepared against the Cabloy Basic worktree at revision `1e7c10ce84` on 2026-10-09; reconciled against the clean worktree at `2dda23660f` on 2026-10-10. The current planning disposition selects an integrated `a-auth` AS logical owner with `zhennann` responsible for implementation and operations, and permits planning for AS-owned shared authorization state under ADR 0009. No specific store, AS source, endpoint, provider configuration, usable credential, grant/token record, or `ATP-MCP-AUTH-03` evidence is claimed.
 
-This dossier follows the accepted-for-design-only disposition in [ADR 0003](./decisions/0003-mcp-oauth-resource-server.md) and the planning review in [the AS design dossier](./wbs-mcp-20-04-as-design-review.md). It is a readiness and approval boundary, not an implementation plan that silently resolves the remaining authority decisions.
+This dossier follows the accepted-for-design-only disposition in [ADR 0003](./decisions/0003-mcp-oauth-resource-server.md) and the planning review in [the AS design dossier](./wbs-mcp-20-04-as-design-review.md). The [AS state and interaction review](./wbs-mcp-20-04-state-interaction-review.md) recommends one transactional state authority and sketches a browser grant interaction for a **future** decision; it is neither a chosen store nor an approved interaction. This dossier remains a readiness and approval boundary, not an implementation plan that silently resolves the remaining authority decisions.
 
 ## Execution target
 
 - **Suite:** `cabloy-mcp`
 - **Target WBS:** `WBS-MCP-20-04 — Deliver an approved MCP authorization-server/token-service contract`
-- **Target class:** backend authorization-server/token-service increment, or an explicitly selected separately operated AS contract; currently blocked before execution.
+- **Target class:** planned backend AS/token-service increment under the selected integrated `a-auth` route; currently blocked before execution. A separately operated AS requires a new route decision.
 - **Finite boundary after all gates close:** deliver and prove one approved MCP authorization-server/token-service contract that supports:
   - truthful authorization-server metadata/discovery;
   - pre-registered public and confidential clients;
@@ -26,15 +26,15 @@ This dossier follows the accepted-for-design-only disposition in [ADR 0003](./de
   - redacted AS-owned proof for `ATP-MCP-AUTH-03`.
 - **Not included:** MCP resource-server Bearer middleware (`WBS-MCP-20-02`), Streamable HTTP transport (`WBS-MCP-20-01`), trusted host/proxy-to-instance binding (`WBS-MCP-20-03`), tool catalog/risk policy, Passport/context dispatch, operational limits/audit, production deployment, live provider operation, or release closure.
 
-The target has one bounded outcome, but its implementation route is not yet selected. The integrated `a-auth` extension is the preferred logical candidate. A separately operated conforming AS is an alternative only after equivalent owner, configuration, contract, and proof approval. No route is authorized by this dossier.
+The target has one bounded outcome. The integrated `a-auth` logical route has been selected for design, with `zhennann` responsible for its implementation and operations. A separately operated conforming AS would require a new route decision and equivalent contract/proof. The selected route is not approved for source, configuration, or runtime work by this dossier.
 
 ## Edition, repository, revision, and worktree
 
 - **Edition:** Cabloy Basic, observed from the sole marker `__CABLOY_BASIC__`.
 - **Repository root:** `/Volumes/my-data/cabloy-multirepo/cabloy-basic/.claude/worktrees/spec-basic-cabloy-mcp`
 - **Planning authority directory:** `/Volumes/my-data/cabloy-multirepo/cabloy-basic/.claude/worktrees/spec-basic-cabloy-mcp/repo-specs/cabloy-mcp/`
-- **Revision observed:** `1e7c10ce84`.
-- **Worktree classification:** dirty with attributable planning changes; no source or configuration change for this task was observed. The dossier must not overwrite or clean existing changes.
+- **Revision observed:** `1e7c10ce84` at initial draft; `2dda23660f` at authority reconciliation.
+- **Worktree classification:** clean at the 2026-10-10 review; this planning update makes it dirty with attributable documentation changes. No source or configuration change for this task was observed. The dossier must not overwrite or clean existing changes.
 - **Observed root workflow:** `package.json` exposes `npm run vona`, `npm run tsc`, `npm run lint`, `npm run format`, `npm run test`, `npm run spec:check`, and chart commands. Prospective commands below are not evidence until executed under a separately approved dossier.
 
 ## Authority and traceability
@@ -47,25 +47,25 @@ The target has one bounded outcome, but its implementation route is not yet sele
 - **ATP:** `ATP-MCP-AUTH-03`.
 - **Overall boundary:** [ADR 0001](./decisions/0001-mcp-suite-boundaries.md), accepted for the overall first-increment boundary; no MCP-owned registry/consent/audit persistence and no-site resource-server boundary remain controlling.
 - **Transport dependency:** [ADR 0002](./decisions/0002-mcp-transport.md), accepted for design only; no transport source or runtime proof is required by this AS target.
-- **OAuth design authority:** [ADR 0003](./decisions/0003-mcp-oauth-resource-server.md), accepted for bounded design only; it does not select a concrete AS owner, storage, endpoint, provider, or source.
+- **OAuth design authority:** [ADR 0003](./decisions/0003-mcp-oauth-resource-server.md), accepted for bounded design only; the integrated `a-auth` logical AS route is selected, but no concrete store, endpoint, provider, or source is approved.
 - **Instance interface:** [ADR 0004](./decisions/0004-mcp-host-instance-binding.md), proposed; this dossier must preserve the shared endpoint → resource → instance interface without accepting host/proxy policy.
-- **Persistence authority:** `DEC-MCP-09`, accepted for the no-schema first increment; it does not authorize AS-owned grant, consent, or token persistence.
-- **Design review:** [WBS-MCP-20-04 AS design review dossier](./wbs-mcp-20-04-as-design-review.md), accepted as the bounded design basis only.
+- **Persistence authority:** [ADR 0009](./decisions/0009-mcp-as-state-boundary.md) amends `DEC-MCP-09` for bounded design of AS-owned shared authorization state; it does not select or authorize a store, schema, migration, remembered consent or execution.
+- **Design review:** [WBS-MCP-20-04 AS design review dossier](./wbs-mcp-20-04-as-design-review.md), accepted as the bounded design basis only; the later [AS state and interaction review](./wbs-mcp-20-04-state-interaction-review.md) is a proposal, not a store or interaction decision.
 
 ### Dependency readiness
 
-| Dependency or gate | Current state                            | Effect on this dossier                                                                                                   |
-| ------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `WBS-MCP-10-01`    | `planning-complete` documentary closure  | Satisfies its planning dependency only; no AS source or runtime proof.                                                   |
-| `WBS-MCP-10-02`    | `planning-complete` documentary closure  | Satisfies its planning dependency only; no AS source or runtime proof.                                                   |
-| `DEC-MCP-03`       | `accepted (design only)`                 | Establishes the bounded design direction; does not authorize concrete execution.                                         |
-| `DEC-MCP-09`       | `accepted for no-schema first increment` | Blocks new auth-owned schema, external shared state, durable consent, or migration until separately revised.             |
-| `WBS-MCP-20-01`    | `blocked`                                | Not a direct AS implementation prerequisite, but no end-to-end MCP proof can be claimed while transport is absent.       |
-| `WBS-MCP-20-02`    | `blocked`                                | Remains dependent on this AS contract plus transport and instance gates.                                                 |
-| `DEC-MCP-04`       | `proposed`                               | The AS must preserve its shared resource/instance interface; this dossier cannot choose host, proxy, or instance values. |
-| `ATP-MCP-AUTH-03`  | prospective, no evidence                 | Must be run only after owner, storage, source/configuration, and execution approval close.                               |
+| Dependency or gate | Current state                               | Effect on this dossier                                                                                                          |
+| ------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `WBS-MCP-10-01`    | `planning-complete` documentary closure     | Satisfies its planning dependency only; no AS source or runtime proof.                                                          |
+| `WBS-MCP-10-02`    | `planning-complete` documentary closure     | Satisfies its planning dependency only; no AS source or runtime proof.                                                          |
+| `DEC-MCP-03`       | `accepted (design only)`                    | Establishes the bounded design direction; does not authorize concrete execution.                                                |
+| `DEC-MCP-09`       | `accepted for bounded AS-state design only` | Permits planning AS-owned shared state under ADR 0009; the exact store/schema, retention, migration and execution remain gated. |
+| `WBS-MCP-20-01`    | `blocked`                                   | Not a direct AS implementation prerequisite, but no end-to-end MCP proof can be claimed while transport is absent.              |
+| `WBS-MCP-20-02`    | `blocked`                                   | Remains dependent on this AS contract plus transport and instance gates.                                                        |
+| `DEC-MCP-04`       | `proposed`                                  | The AS must preserve its shared resource/instance interface; this dossier cannot choose host, proxy, or instance values.        |
+| `ATP-MCP-AUTH-03`  | prospective, no evidence                    | Must be run only after owner, storage, source/configuration, and execution approval close.                                      |
 
-The target remains blocked because the implementation/operations owner, storage authority, and no-schema disposition are unresolved. Planning-complete predecessors do not authorize execution.
+The target remains blocked: the integrated route, implementation/operations responsibility, and bounded AS-state planning disposition are recorded, but the exact store/retention/consistency, authorization interaction, configuration, migration/file-version choice if applicable, execution approval, and AS-owned proof remain open. Planning-complete predecessors do not authorize execution.
 
 ## Observed source and feasibility boundary
 
@@ -79,20 +79,20 @@ The following existing paths are read-only inputs and do not establish an MCP AS
 - `vona/src/suite-vendor/a-vona/modules/a-user/src/service/redisToken.ts` — instance-scoped session marker, not a token-digest-to-grant, consent, or revocation store.
 - `vona/src/suite-vendor/a-auth/modules/a-auth/src/bean/meta.version.ts` and `package.json` — existing auth persistence and module metadata, not approval for MCP state or a file-version change.
 
-The proposed integrated route may extend an existing auth owner, but exact source files, package ownership, dependency additions, service boundaries, and state representation remain unselected. An external AS route would not create source in this worktree, but it would still require an approved operator, public contract, resource registration, current lookup/introspection proof, and safe redacted evidence.
+The selected integrated `a-auth` logical route may extend an existing auth owner, but exact source files, package/dependency ownership, service boundaries, and state representation remain unselected. A separately operated AS is not selected; any future switch needs a new route decision, approved operator, contract, resource registration, current lookup proof, and redacted evidence.
 
 ## Ownership and target classification
 
-### Preferred logical route: integrated `a-auth` capability
+### Selected logical route: integrated `a-auth` capability
 
 - **Logical owner:** an extension of Vona `a-auth`, sharing local identity ownership but exposing a separate MCP authorization-server capability.
-- **Operational owner:** a separately named accountable operator must own issuer metadata, public endpoints, client/redirect registration, authorization interaction, state availability, revocation, key/secret custody, incident response, and retention. The planning decision owner is not automatically the operational owner.
+- **Implementation and operational owner:** `zhennann` accepts responsibility for issuer metadata, public endpoints, client/redirect registration, authorization interaction, state availability, revocation, key/secret custody, incident response and retention policy. Exact configuration, custody and retention values remain unapproved.
 - **Resource server:** `cabloy-mcp` remains separate and receives access-token Bearer credentials only. It does not issue tokens, receive refresh tokens, own consent, or create a second grant/token store.
 - **Target classification:** proposed new capability in an observed logical owner; exact source/manifest/state paths are not explicitly approved new targets.
 
-### Alternative route: separately operated conforming AS
+### Deferred alternative: separately operated conforming AS
 
-- **Owner:** must be named and accountable before selection.
+- **Route authority:** not selected; a change from the integrated route requires a new decision and separately accountable operator.
 - **Target classification:** external existing or proposed service, to be classified after its metadata, registration, resource binding, lookup, revocation, and proof are inspected.
 - **Acceptance condition:** it must provide the same supported client/grant/resource/token contract and redacted `ATP-MCP-AUTH-03` proof. Existing provider login, local JWTs, or Redis markers cannot be substituted as evidence.
 
@@ -106,19 +106,15 @@ Execution cannot start until each gate below has a recorded disposition in the o
 
 ### Gate A — accountable ownership and route selection
 
-1. Name the AS implementation owner and operational owner.
-2. Select either the integrated `a-auth` route or an already conforming separately operated AS.
-3. Record endpoint, issuer, discovery, client-registration, and token-state ownership without writing live values or credentials into planning records.
-4. Define incident response, retention, key/secret custody, worker topology, and outage escalation.
+1. **Recorded:** `zhennann` owns AS implementation and operations; the integrated `a-auth` logical route is selected. A route change requires a new decision.
+2. **Still open:** record the exact endpoint, issuer, discovery, client-registration, and token-state service ownership without writing live values or credentials into planning records.
+3. **Still open:** define incident response, retention, key/secret custody, worker topology, and outage escalation. Naming a responsible person does not settle these operational policies.
 
 ### Gate B — persistence and state authority
 
-Resolve `DEC-MCP-09` before any implementation that needs shared authorization state:
+[ADR 0009](./decisions/0009-mcp-as-state-boundary.md) records a **bounded design-only** revision of `DEC-MCP-09`: planning may specify AS-owned shared client registration, authorization request/code/PKCE transaction, grant/resource/scope binding and opaque-token active/revocation state. The initial `cabloy-mcp` scaffold remains schema-free; no MCP resource-module store or remembered consent is approved. This disposition is **not** approval to create an `a-auth` table, a Redis namespace, an external state service or a grant/consent record.
 
-1. **Preserve no-schema:** defer integrated issuance and select no real MCP token issuance until a separately operated conforming AS is selected and approved; or
-2. **Revise the first-increment boundary:** explicitly authorize AS-owned shared client, authorization transaction/code/PKCE, grant, opaque-token active/revocation, and any required consent state; name the owner, storage, retention, consistency, outage behavior, and migration boundary.
-
-If a relational schema or `meta.version.ts` changes, decide the owning module's `vonaModule.fileVersion` strategy before editing and run the required root `npm run test` after the change. An external Redis or other shared store is still persistence/authorization state and is not a no-schema loophole. No option is selected by this dossier.
+Before implementation, select and approve the exact AS module/service and shared-state representation, TTL and deletion, digest/custody, atomic redemption/revocation and multi-worker consistency, outage recovery, and migration boundary. The [state and interaction review](./wbs-mcp-20-04-state-interaction-review.md) recommends a single transactional authority rather than relying on generic cache reads/deletes, but **does not select** SQL, Redis, schema, or a service. If a persisted field/schema or `meta.version.ts` changes, ask and record whether the owning `vonaModule.fileVersion` increments **before editing**, and run the required root `npm run test` after an approved `meta.version.ts` change. An external Redis or other shared store is still authorization state and requires its own namespace, lifetime and operational approval even without SQL schema.
 
 ### Gate C — authorization interaction and protocol profile
 
@@ -135,7 +131,7 @@ Approve the exact first-profile behavior:
 - no Client Credentials, implicit, or password fallback; and
 - no refresh-token issuance in the accepted first profile.
 
-Any remembered consent, alternative grant, metadata-document compatibility, refresh profile, or UI/site addition requires a separate authority change.
+Before approving this interaction, distinguish client OAuth `state`, AS transaction/browser correlation, upstream provider-login state (if reused), grant-form CSRF and the PKCE challenge/verifier. An existing login session may establish identity but cannot substitute for the required new grant decision. Specify invalid-redirect, denial/cancellation, concurrent redemption, account-switch and lost-response behavior without treating client `state` as a token-endpoint credential; the [state and interaction review](./wbs-mcp-20-04-state-interaction-review.md) is a proposal only. Any remembered consent, alternative grant, metadata-document compatibility, refresh profile, or UI/site addition requires a separate authority change.
 
 ### Gate D — token and lookup contract
 
@@ -152,7 +148,7 @@ The resource server accepts only one `Authorization: Bearer` access-token creden
 
 ### Gate E — shared resource/instance interface
 
-Use the same deployment-owned interface proposed by DEC-MCP-03/04:
+Use the deployment-owned interface accepted for bounded design by DEC-MCP-03 and still proposed for trusted-ingress design by DEC-MCP-04:
 
 ```text
 canonical external HTTPS /mcp endpoint
@@ -160,7 +156,7 @@ canonical external HTTPS /mcp endpoint
     -> one enabled Vona instance
 ```
 
-The AS binds the canonical resource and approved instance relation at authorization and token exchange. The resource server later compares current token state with the trusted endpoint/resource/instance binding and maps `(issuer, sub, bound instance)` to exactly one active local identity. Raw Host, forwarded headers, query selectors, token claims, and tool arguments cannot select an instance. Concrete hosts, issuers, resources, proxy operators, and instance values remain outside this dossier.
+The AS binds the canonical resource and approved instance relation at authorization and token exchange. The AS may resolve an authorization request's `resource` only through an approved resource-to-instance registry; the supplied value is a request for a registered recipient, not a trusted instance selector. The resource server later compares current token state with the trusted endpoint/resource/instance binding and maps `(issuer, sub, bound instance)` to exactly one active local identity. Raw Host, forwarded headers, query selectors, token claims, and tool arguments cannot select an instance. Concrete hosts, issuers, resources, proxy operators, and instance values remain outside this dossier.
 
 ### Gate F — local identity and privacy boundary
 
@@ -168,7 +164,7 @@ The AS supplies a stable subject, but local account activation, mapping, Passpor
 
 ## Bounded implementation boundary after approval
 
-Only one route may be executed after the gates close. The exact files and commands must be observed from the selected owner before changes.
+Only the selected integrated `a-auth` route may be proposed for execution after the gates close; changing routes requires a new decision. Exact files and commands must be observed from the owning module before changes.
 
 ### Integrated `a-auth` route
 
@@ -179,12 +175,9 @@ Only one route may be executed after the gates close. The exact files and comman
 5. Keep `/mcp` resource validation outside the AS change; provide the contract and redacted lookup fixtures required by the resource-server successor.
 6. Add focused unit/integration tests for the AS-owned behavior and run only approved commands. If schema changes, apply the approved file-version strategy and required root test.
 
-### Separately operated AS route
+### Separately operated AS route (not selected)
 
-1. Inspect the selected AS's actual metadata, registration/client policy, Authorization Code + PKCE behavior, resource binding, token format/lookup, revocation, no-refresh behavior, worker consistency, and outage semantics.
-2. Register the canonical resource and approved clients only through an approved operational process; do not retain credentials or live token values in the repository.
-3. Retain redacted contract proof and update the dependency disposition so `WBS-MCP-20-02` can consume the AS contract.
-4. Do not add AS source, provider configuration, or external credentials to this worktree unless separately authorized.
+A future route change needs a new decision and revised dossier. It would still require inspected metadata, client/PKCE/resource/lookup/revocation and no-refresh behavior, approved resource registration and operation, and equivalent redacted AS-owned proof. This paragraph authorizes no external provider operation or configuration.
 
 ## Verification and evidence plan (prospective)
 
@@ -249,7 +242,7 @@ npm run spec:charts:check -- cabloy-mcp
 git diff --check
 ```
 
-These checks cannot accept the AS, revise `DEC-MCP-09`, produce ATP evidence, or unblock the task.
+These checks cannot accept an AS store/schema or execution, revise the bounded ADR 0009 disposition, produce ATP evidence, or unblock the task.
 
 ## Allowed records and exclusions
 
@@ -264,7 +257,7 @@ These checks cannot accept the AS, revise `DEC-MCP-09`, produce ATP evidence, or
 ### Explicitly excluded now
 
 - changing ADR 0003 from design-only acceptance;
-- changing `DEC-MCP-09` without a separately recorded persistence decision;
+- treating ADR 0009's bounded state-planning disposition as a specific store, schema, remembered-consent, or execution approval;
 - creating relational schema, Redis token contracts, durable consent, or external shared state;
 - editing `meta.version.ts` or choosing `vonaModule.fileVersion` without explicit approval;
 - implementing `cabloy-mcp` resource-server validation, transport, host binding, catalog, dispatch, or operations;
@@ -277,7 +270,7 @@ These checks cannot accept the AS, revise `DEC-MCP-09`, produce ATP evidence, or
 
 - **Authority audit:** planning structure is checked separately; static audit is not AS approval or runtime evidence.
 - **Chart model/freshness:** charts are derived only; they do not prove source, token state, or ATP behavior.
-- **Human approval:** this dossier requires separate approval after the owner and persistence gates are resolved. Approval of this draft would not itself authorize provider/deployment operations or revise `DEC-MCP-09`.
+- **Human approval:** route, responsible owner and bounded `DEC-MCP-09` state-planning direction are recorded, but this dossier still requires separate approval after concrete storage, interaction and operational gates close. Approval of this draft would not itself authorize provider/deployment operations or a specific store/schema.
 - **Current WBS status:** `WBS-MCP-20-04` remains `blocked`.
 - **Current evidence:** none for `ATP-MCP-AUTH-03`; no AS source or runtime proof exists.
 
@@ -286,14 +279,14 @@ These checks cannot accept the AS, revise `DEC-MCP-09`, produce ATP evidence, or
 ```text
 WBS / phase: WBS-MCP-20-04 / Phase 20
 Status: blocked; planning-only execution dossier draft, not implementation-complete or verified
-Revision and worktree: 1e7c10ce84; dirty with attributable planning changes
-Scope and exclusions: one approved AS/token-service contract only; no resource-server, transport, host binding, deployment, provider operation, schema, or runtime execution
-Authority and ownership: PRD/SRS/WBS/ATP above; ADR 0003 accepted for bounded design only; integrated a-auth is the preferred logical owner; external AS remains an alternative
-Completed gates/evidence: edition/repository discovery, authority/dependency review, source feasibility review, and dossier drafting; no AS execution or ATP evidence
-Commands/procedures actually run: repository discovery and read-only planning inspection only for this dossier
-Commands/procedures still required: resolve owner/operations route and DEC-MCP-09 persistence disposition, obtain execution approval, then observe selected source/dependency layout and run the approved narrow checks
-Blocker or decision needed: accountable AS owner; no-schema versus explicitly authorized AS-owned shared state; storage/retention/worker consistency; resource-owner interaction owner; concrete issuer/resource/client registration; separate execution approval
-Next single action: obtain a separately recorded owner and persistence disposition, then re-review this dossier before any source, configuration, provider, or OAuth/HTTP operation
+Revision and worktree: initial draft 1e7c10ce84; clean review 2dda23660f; now dirty with attributable planning edits
+Scope and exclusions: one integrated a-auth AS/token-service contract only; no resource-server, transport, host binding, deployment, provider operation, schema, or runtime execution
+Authority and ownership: PRD/SRS/WBS/ATP above; ADR 0003 accepted for bounded design only; ADR 0009 permits AS-state planning; zhennann owns AS implementation and operations
+Completed gates/evidence: edition/repository discovery, authority/dependency review, source feasibility review, route/owner/state-planning disposition, and dossier drafting; no AS execution or ATP evidence
+Commands/procedures actually run: repository discovery and read-only planning inspection for the original dossier; later documentary edits/checks are reported separately, not as ATP proof
+Commands/procedures still required: approve exact shared store/retention/consistency, interaction and operational policy; decide owning module fileVersion before any schema edit; obtain separate execution approval; then observe source/dependency layout and run approved narrow checks
+Blocker or decision needed: concrete AS state representation and service, retention/worker consistency/outage, resource-owner interaction, issuer/resource/client registration, applicable migration strategy, separate execution approval
+Next single action: review the proposed AS state and interaction contract in wbs-mcp-20-04-state-interaction-review.md and record a separate decision before re-reviewing this dossier; do not infer source, configuration, provider, or OAuth/HTTP authorization
 ```
 
 This dossier is a bounded planning handoff only. It does not authorize execution automatically, and it does not change the status of any ADR, WBS, ATP, provider, endpoint, schema, or runtime environment.
