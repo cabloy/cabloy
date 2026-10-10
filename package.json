@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "5.1.202",
+  "version": "5.1.203",
   "gitHead": "2c5c19284bab738e492856189acb6fad74b8a7b7",
   "description": "A Node.js fullstack framework",
   "keywords": [
@@ -45,8 +45,7 @@
     "start": "cd vona && npm run start",
     "start:one": "cd vona && npm run start:one",
     "test": "cd vona && npm run test",
-    "test:e2e": "node repo-e2e/scripts/runE2e.ts --clean",
-    "test:e2e:fast": "node repo-e2e/scripts/runE2e.ts --fast",
+    "test:e2e": "node repo-e2e/scripts/runE2e.ts",
     "test:docs:e2e": "npm run docs:build && playwright test --config repo-e2e/docs/playwright.config.ts",
     "db:reset": "cd vona && npm run db:reset",
     "tsc": "npm run tsc:zova && pnpm --dir vona run tsc",

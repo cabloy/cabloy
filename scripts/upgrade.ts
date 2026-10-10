@@ -68,7 +68,8 @@ const FRAMEWORK_E2E_FILES_CABLOY_BASIC: string[] = [
   'repo-e2e/specs/a-commerce.spec.ts',
 ];
 
-const FRAMEWORK_E2E_SCRIPT_NAMES_CABLOY_BASIC: string[] = ['test:e2e', 'test:e2e:fast'];
+const FRAMEWORK_E2E_SCRIPT_CABLOY_BASIC = 'test:e2e';
+const LEGACY_FRAMEWORK_E2E_FAST_SCRIPT_CABLOY_BASIC = 'node repo-e2e/scripts/runE2e.ts --fast';
 
 const FRAMEWORK_E2E_DEV_DEPENDENCY_CABLOY_BASIC = '@playwright/test';
 
@@ -147,9 +148,9 @@ function copyDirectory(src: string, dest: string): void {
   cpSync(src, dest, { recursive: true, filter: shouldCopyPath });
 }
 
-function resolveEdition(): 'basic' | 'start' {
-  const hasBasic = existsSync(resolve(ROOT_DIR, '__CABLOY_BASIC__'));
-  const hasStart = existsSync(resolve(ROOT_DIR, '__CABLOY_START__'));
+function resolveEdition(rootDir = ROOT_DIR): 'basic' | 'start' {
+  const hasBasic = existsSync(resolve(rootDir, '__CABLOY_BASIC__'));
+  const hasStart = existsSync(resolve(rootDir, '__CABLOY_START__'));
   if (hasBasic === hasStart) {
     throw new Error(
       hasBasic
@@ -226,12 +227,16 @@ async function extractTarball(tarballPath: string, targetDir: string): Promise<v
   }
 }
 
-function mergeFrameworkE2eAssets(dryRun?: boolean): void {
-  if (!isCabloyBasic()) return;
+export function mergeFrameworkE2eAssets(
+  dryRun?: boolean,
+  rootDir = ROOT_DIR,
+  tempDir = TEMP_DIR,
+): void {
+  if (resolveEdition(rootDir) !== 'basic') return;
 
   for (const dir of FRAMEWORK_E2E_DIRS_CABLOY_BASIC) {
-    const src = resolve(TEMP_DIR, dir);
-    const dest = resolve(ROOT_DIR, dir);
+    const src = resolve(tempDir, dir);
+    const dest = resolve(rootDir, dir);
     if (!existsSync(src)) {
       throw new Error(`Expected framework E2E directory in package: ${dir}`);
     }
@@ -243,8 +248,8 @@ function mergeFrameworkE2eAssets(dryRun?: boolean): void {
   }
 
   for (const file of FRAMEWORK_E2E_FILES_CABLOY_BASIC) {
-    const src = resolve(TEMP_DIR, file);
-    const dest = resolve(ROOT_DIR, file);
+    const src = resolve(tempDir, file);
+    const dest = resolve(rootDir, file);
     if (!existsSync(src)) {
       throw new Error(`Expected framework E2E file in package: ${file}`);
     }
@@ -265,7 +270,7 @@ function mergeFrameworkE2eAssets(dryRun?: boolean): void {
     'repo-e2e/specs/a-commerce/commerce.spec.ts',
   ];
   for (const file of legacyFrameworkFiles) {
-    const dest = resolve(ROOT_DIR, file);
+    const dest = resolve(rootDir, file);
     if (!existsSync(dest)) continue;
     if (dryRun) {
       log(`  [dry-run] Remove legacy framework E2E file: ${file}`);
@@ -334,11 +339,15 @@ function reconcileGovernanceAssets(dryRun?: boolean): void {
   }
 }
 
-function reconcileFrameworkE2ePackageJson(dryRun?: boolean): void {
-  if (!isCabloyBasic()) return;
+export function reconcileFrameworkE2ePackageJson(
+  dryRun?: boolean,
+  rootDir = ROOT_DIR,
+  tempDir = TEMP_DIR,
+): void {
+  if (resolveEdition(rootDir) !== 'basic') return;
 
-  const projectPackagePath = resolve(ROOT_DIR, 'package.json');
-  const sourcePackagePath = resolve(TEMP_DIR, 'package.json');
+  const projectPackagePath = resolve(rootDir, 'package.json');
+  const sourcePackagePath = resolve(tempDir, 'package.json');
   const projectPackage = readPackageJson(projectPackagePath);
   const sourcePackage = readPackageJson(sourcePackagePath);
   const sourcePlaywrightVersion =
@@ -349,19 +358,30 @@ function reconcileFrameworkE2ePackageJson(dryRun?: boolean): void {
     );
   }
 
+  const sourceScript = sourcePackage.scripts?.[FRAMEWORK_E2E_SCRIPT_CABLOY_BASIC];
+  if (!sourceScript) {
+    throw new Error(
+      `Expected framework E2E script in package.json: ${FRAMEWORK_E2E_SCRIPT_CABLOY_BASIC}`,
+    );
+  }
+
   let changed = false;
-  for (const name of FRAMEWORK_E2E_SCRIPT_NAMES_CABLOY_BASIC) {
-    const sourceValue = sourcePackage.scripts?.[name];
-    if (!sourceValue) {
-      throw new Error(`Expected framework E2E script in package.json: ${name}`);
-    }
-    if (projectPackage.scripts?.[name] === sourceValue) continue;
+  if (projectPackage.scripts?.[FRAMEWORK_E2E_SCRIPT_CABLOY_BASIC] !== sourceScript) {
     changed = true;
     if (dryRun) {
-      log(`  [dry-run] Set package.json scripts.${name}`);
+      log(`  [dry-run] Set package.json scripts.${FRAMEWORK_E2E_SCRIPT_CABLOY_BASIC}`);
     } else {
       projectPackage.scripts ??= {};
-      projectPackage.scripts[name] = sourceValue;
+      projectPackage.scripts[FRAMEWORK_E2E_SCRIPT_CABLOY_BASIC] = sourceScript;
+    }
+  }
+
+  if (projectPackage.scripts?.['test:e2e:fast'] === LEGACY_FRAMEWORK_E2E_FAST_SCRIPT_CABLOY_BASIC) {
+    changed = true;
+    if (dryRun) {
+      log('  [dry-run] Remove package.json scripts.test:e2e:fast (retired framework value)');
+    } else {
+      delete projectPackage.scripts['test:e2e:fast'];
     }
   }
 
@@ -635,7 +655,9 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch(err => {
-  console.error(`\nUpgrade failed: ${err.message}`);
-  process.exit(1);
-});
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch(err => {
+    console.error(`\nUpgrade failed: ${err.message}`);
+    process.exit(1);
+  });
+}

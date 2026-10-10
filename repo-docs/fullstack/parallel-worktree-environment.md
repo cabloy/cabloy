@@ -77,12 +77,12 @@ For privacy, the skill writes only to absent or empty permitted broad local file
 
 Use commands from the active repository root.
 
-| Edition      | Marker             | Frontend command                                   | Managed clean E2E  |
+| Edition      | Marker             | Frontend command                                   | Managed E2E        |
 | ------------ | ------------------ | -------------------------------------------------- | ------------------ |
 | Cabloy Basic | `__CABLOY_BASIC__` | `npm run dev:zova:admin` or `npm run dev:zova:web` | `npm run test:e2e` |
 | Cabloy Start | `__CABLOY_START__` | `npm run dev:zova:admin` or `npm run dev:zova:web` | `npm run test:e2e` |
 
-Run one frontend command, not both, in each worktree. Both managed clean E2E workflows read Vona's effective local `SERVER_LISTEN_PORT`, then reset, start, and target that local runtime.
+Run one frontend command, not both, in each worktree. Both managed E2E workflows read Vona's effective local `SERVER_LISTEN_PORT` and start one fresh Vona test-mode worker; startup initializes test resources without a separate reset. Before either command, confirm exclusive ownership of the effective test database, `_local` Redis namespace, public/runtime paths, `APP_NAME`, API origin, and listener. A free port alone does not establish ownership. Do not change shared identity or ports to bypass a collision, and leave `E2E_BASE_URL` unset: externally managed targets are unsupported.
 
 ## What this isolates
 

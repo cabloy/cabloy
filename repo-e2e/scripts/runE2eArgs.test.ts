@@ -20,15 +20,11 @@ function withSpecs(callback: (specsDir: string) => void): void {
   }
 }
 
-test('parses mode, multiple specs, and repeatable tags', () => {
+test('parses multiple specs and repeatable tags', () => {
   withSpecs(specsDir => {
     assert.deepEqual(
-      parseE2eArgs(
-        ['--clean', 'cabloy-basic', 'account', '--tag', '@web', '--tag=@smoke'],
-        specsDir,
-      ),
+      parseE2eArgs(['cabloy-basic', 'account', '--tag', '@web', '--tag=@smoke'], specsDir),
       {
-        mode: 'clean',
         specNames: ['cabloy-basic', 'account'],
         playwrightArgs: [],
         tags: ['@web', '@smoke'],
@@ -39,8 +35,7 @@ test('parses mode, multiple specs, and repeatable tags', () => {
 
 test('allows no spec names and forwards Playwright filters', () => {
   withSpecs(specsDir => {
-    assert.deepEqual(parseE2eArgs(['--fast', '--grep', '@flow'], specsDir), {
-      mode: 'fast',
+    assert.deepEqual(parseE2eArgs(['--grep', '@flow'], specsDir), {
       specNames: [],
       playwrightArgs: ['--grep', '@flow'],
       tags: [],
@@ -50,19 +45,28 @@ test('allows no spec names and forwards Playwright filters', () => {
 
 test('rejects invalid or unknown specs and managed config overrides', () => {
   withSpecs(specsDir => {
-    assert.throws(() => parseE2eArgs(['--fast', '../account'], specsDir), /Invalid E2E spec name/);
-    assert.throws(() => parseE2eArgs(['--fast', 'missing'], specsDir), /Unknown E2E spec/);
-    assert.throws(
-      () => parseE2eArgs(['--fast', '--config', 'other.ts'], specsDir),
-      /manages --config/,
-    );
+    assert.throws(() => parseE2eArgs(['../account'], specsDir), /Invalid E2E spec name/);
+    assert.throws(() => parseE2eArgs(['missing'], specsDir), /Unknown E2E spec/);
+    for (const args of [
+      ['--config', 'other.ts'],
+      ['--config=other.ts'],
+      ['-c', 'other.ts'],
+      ['-c=other.ts'],
+      ['-cother.ts'],
+    ]) {
+      assert.throws(() => parseE2eArgs(args, specsDir), /manages --config/);
+    }
+    for (const args of [['--workers', '2'], ['--workers=2'], ['-j', '2'], ['-j=2'], ['-j2']]) {
+      assert.throws(() => parseE2eArgs(args, specsDir), /manages --workers/);
+    }
   });
 });
 
-test('requires exactly one run mode', () => {
+test('rejects removed clean and fast options', () => {
   withSpecs(specsDir => {
-    assert.throws(() => parseE2eArgs(['account'], specsDir), /Missing E2E mode/);
-    assert.throws(() => parseE2eArgs(['--clean', '--fast'], specsDir), /exactly one/);
+    for (const option of ['--clean', '--fast', '--clean=true', '--fast=false']) {
+      assert.throws(() => parseE2eArgs(['account', option], specsDir), /Unsupported E2E option/);
+    }
   });
 });
 

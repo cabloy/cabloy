@@ -591,11 +591,18 @@ test(
   { tag: ['@account', '@admin'] },
   async ({ page }) => {
     await page.goto('/admin/', { waitUntil: 'load' });
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
     if (page.url().includes('/admin/login')) {
-      await page.getByPlaceholder('Your Username').fill('admin');
-      await page.getByPlaceholder('Your Password').fill('123456');
+      const usernameInput = page.getByPlaceholder('Your Username');
+      const passwordInput = page.getByPlaceholder('Your Password');
+      await usernameInput.fill('admin');
+      await passwordInput.fill('123456');
+      await expect(usernameInput).toHaveValue('admin');
+      await expect(passwordInput).toHaveValue('123456');
       await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
+      const loginResponse = waitForApiResponse(page, 'POST', passportLoginApiPath);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
+      expect((await loginResponse).ok()).toBeTruthy();
       await expect(page).not.toHaveURL(/\/admin\/login(?:\?|$)/);
     }
 

@@ -386,13 +386,13 @@ Tasks:
 - execute the focused, transaction, API, SSR, browser, and release evidence defined in `test-plan.md`;
 - exercise concurrent checkout, duplicate payment/refund, unpaid expiry, coupon recovery, shipment/refund conflict, and snapshot stability;
 - build both Commerce SSR/REST flavor pairs and inspect their generated site artifacts;
-- run `npm run test:e2e a-commerce` after the relevant Commerce artifacts and Vona dependencies are current; treat `E2E_BASE_URL` fast runs as deployment-specific supplemental validation owned by the target operator.
+- run the sole managed local test-mode command, `npm run test:e2e a-commerce`, after the relevant Commerce artifacts and Vona dependencies are current; confirm exclusive ownership of the effective test database, Redis namespace, public/runtime paths, application identity, API origin, and listener before startup. Externally managed `E2E_BASE_URL` targets are unsupported.
 
 Acceptance checks:
 
 - every PRD and SRS traceability entry has observed evidence;
 - affected flavor builds, contract synchronization, type checks, linting, formatting, and test suite checks pass;
-- the complete customer and operator flow passes through the repository-managed Commerce SSR sites (`/commerce` and `/commerce-admin`) using `npm run test:e2e a-commerce` after current artifact preparation; externally managed-target E2E is not a WBS-70-02 prerequisite or blocker.
+- the complete customer and operator flow passes through the repository-managed Commerce SSR sites (`/commerce` and `/commerce-admin`) using the single local test-mode `npm run test:e2e a-commerce` command after current artifact preparation; external-target E2E is not supported or a WBS-70-02 prerequisite.
 
 #### WBS-70-03: Establish the Coupon Template semantic form-layout reference
 

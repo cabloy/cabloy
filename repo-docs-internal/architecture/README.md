@@ -16,6 +16,7 @@ Representative examples:
 
 - `a-status-module-architecture.md` records the Vona-side `a-status` module boundary, shared-table storage model, module-scoped ownership invariant, `get` / `set` call path, Redlock-protected first-write flow, cache-fresh recheck rule, and refactor safety rules
 - `backend-resource-field-workflow.md` records the preferred AI-assisted workflow for adding or refining fields on existing Vona backend resources, including fileVersion decisions, migration safety, shared renderer reuse, locale updates, and verification
+- `package-publish-manifest-cleanup-evaluation.md` records why pnpm `publishConfig.exports` cannot directly replace `clean-package` under the current Lerna publishing path and defines the artifact tests and release gates for a possible migration
 - `dto-render-field-name-typing.md` records why DTO-local field-name identity helpers are avoided and the framework-level typing boundary required for complete render-layout constraints
 - `dto-model-contract-projection-evolution.md` records why stable narrowed model-derived DTO contracts use positive `columns` projection, when bare `$Dto.get(...)` or `$Class.omit(...)` remains appropriate, and why runtime response construction still needs independent verification
 - `vona-dto-get-relation-resolution.md` records the eager top-level Model / lazy named relation-target boundary in `$Dto.get(...)`, the autoload-cache preservation rule, and the regression that prevents module registration order from leaking into DTO construction

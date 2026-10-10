@@ -68,23 +68,16 @@ npm run deps:vona
 npm run test:e2e cabloy-basic home-user-account
 ```
 
-The managed clean command resets Vona-managed test data and the local Redis namespace, starts one development Vona worker, and runs the selected specs. Browser commands consume already-built artifacts; they do not rebuild them.
-
-The unified runner uses two commands:
-
-```text
-npm run test:e2e                 clean local run with database reset
-npm run test:e2e:fast            fast run without automatic reset
-```
+The sole managed `npm run test:e2e` command starts a fresh local Vona worker with `--workers=1 --flavor=normal --mode=test`, then runs the selected specs against Vona integrated SSR. Test-mode startup initializes test resources without a separate `db:reset`; browser commands consume already-built artifacts and do not rebuild them. Confirm exclusive ownership of the effective test database, `_local` Redis namespace, public/runtime paths, `APP_NAME`, API origin, and listener before startup; a free port alone is insufficient.
 
 Place flat spec basenames directly after the npm script name. Use npm's `--` delimiter before Playwright options. With no names, every spec in `repo-e2e/specs` runs. Native `--grep` and `--grep-invert` remain available, and repeatable `--tag` values require all listed tags:
 
 ```bash
 npm run test:e2e cabloy-basic home-user-account -- --grep @flow
-npm run test:e2e:fast a-commerce -- --tag @web --tag @smoke
+npm run test:e2e a-commerce -- --tag @web --tag @smoke
 ```
 
-For the complete tag vocabulary, managed-runner argument boundaries, and externally managed-target examples, see [Repo Scripts](/reference/repo-scripts#ssr-browser-checks). A separately managed target uses `E2E_BASE_URL` with `test:e2e:fast`; the caller owns external-target data, cache, and artifact freshness.
+For the complete Basic tag vocabulary and managed-runner argument boundaries, see [Repo Scripts](/reference/repo-scripts#ssr-browser-checks). `E2E_BASE_URL` must be unset: externally managed targets are unsupported.
 
 ## Cabloy Start root wrappers
 
@@ -102,7 +95,7 @@ Cabloy Start does not expose the Basic Commerce wrapper family.
 
 ## Start SSR browser acceptance
 
-The Start Web and Admin browser baseline also exercises Vona SSR dispatch at the effective local server port. Prepare current SSR and REST artifacts, then use the managed local command:
+The Start Web and Admin browser baseline exercises Vona integrated SSR dispatch at the effective local test-mode server port. Prepare current SSR and REST artifacts, then use the managed local command:
 
 ```bash
 npm run build:zova
@@ -110,23 +103,22 @@ npm run deps:vona
 npm run test:e2e
 ```
 
-Start uses the same unified E2E command pair as Basic:
+Start uses one E2E command and one fresh managed local test-mode lifecycle:
 
 ```text
-npm run test:e2e       managed clean local suite run
-npm run test:e2e:fast  fast rerun without an automatic reset
+npm run test:e2e       fresh managed local test-mode suite run
 ```
 
 Select flat spec basenames and filter scenarios or surfaces with runner tags and native Playwright arguments. Current Start scenarios use tags including `@web`, `@admin`, `@smoke`, `@layout`, `@cabloy-admin`, `@account`, `@ssr`, and `@flow`:
 
 ```bash
 npm run test:e2e cabloy-start
-npm run test:e2e:fast cabloy-start -- --tag @web
-npm run test:e2e:fast cabloy-admin -- --tag @admin --tag @cabloy-admin
-npm run test:e2e:fast cabloy-start -- --grep ATP-START-FLOW-01
+npm run test:e2e cabloy-start -- --tag @web
+npm run test:e2e cabloy-admin -- --tag @admin --tag @cabloy-admin
+npm run test:e2e cabloy-start -- --grep ATP-START-FLOW-01
 ```
 
-For a separately managed Start target, set `E2E_BASE_URL` and use `test:e2e:fast`. The target owner is responsible for data, cache, artifact freshness, and process lifecycle.
+Start does not support externally managed E2E targets: `E2E_BASE_URL` must be unset. The command requires the configured local port to be available and starts one Vona worker with `--flavor=normal --mode=test`; Playwright does not reuse an existing process. Test-mode startup initializes test state. Confirm exclusive ownership of the test database, Redis namespace, and public/runtime paths before running it. The command does not replace the paired build/dependency-sync prerequisite; do not change shared environment identity or ports to avoid a busy resource.
 
 ## Zova script model
 

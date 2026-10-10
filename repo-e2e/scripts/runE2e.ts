@@ -34,16 +34,7 @@ async function assertPortAvailable(): Promise<void> {
 }
 
 const parsed = parseE2eArgs(process.argv.slice(2), E2E_SPECS_DIR);
-if (parsed.mode === 'clean' && process.env.E2E_BASE_URL) {
-  throw new Error(
-    'The clean E2E run manages the local target and cannot be used with E2E_BASE_URL. Use test:e2e:fast for an external target.',
-  );
-}
-
-if (parsed.mode === 'clean') {
-  await assertPortAvailable();
-  run('npm', ['run', 'db:reset']);
-}
+await assertPortAvailable();
 
 const playwrightCommand = resolve(
   E2E_ROOT_DIR,
@@ -55,8 +46,5 @@ const specPaths = parsed.specNames.map(name => resolve(E2E_SPECS_DIR, `${name}.s
 const playwrightArgs = combineGreps(parsed.playwrightArgs, parsed.tags);
 run(playwrightCommand, ['test', '--config', E2E_CONFIG_FILE, ...specPaths, ...playwrightArgs]);
 
-// Keep this value referenced in the runner's startup output and make the local target explicit.
-if (!process.env.E2E_BASE_URL) {
-  // eslint-disable-next-line no-console
-  console.log(`E2E target: ${E2E_LOCAL_BASE_URL}`);
-}
+// eslint-disable-next-line no-console
+console.log(`E2E target: ${E2E_LOCAL_BASE_URL}`);

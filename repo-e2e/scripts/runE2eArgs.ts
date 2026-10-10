@@ -1,10 +1,7 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-export type E2eRunMode = 'clean' | 'fast';
-
 export type ParsedE2eArgs = {
-  mode: E2eRunMode;
   specNames: string[];
   playwrightArgs: string[];
   tags: string[];
@@ -28,7 +25,6 @@ const VALUE_OPTIONS = new Set([
   '--shard',
   '--timeout',
   '--trace',
-  '--workers',
 ]);
 
 function optionName(arg: string): string {
@@ -46,35 +42,23 @@ export function buildTagGrep(tags: string[]): string | undefined {
 }
 
 export function parseE2eArgs(args: string[], specsDir: string): ParsedE2eArgs {
-  let mode: E2eRunMode | undefined;
-  const remainingArgs: string[] = [];
-
-  for (const arg of args) {
-    if (arg === '--clean' || arg === '--fast') {
-      if (mode && mode !== arg.slice(2)) {
-        throw new Error('Choose exactly one E2E mode: --clean or --fast.');
-      }
-      if (mode === arg.slice(2)) {
-        throw new Error(`E2E mode ${arg} was provided more than once.`);
-      }
-      mode = arg.slice(2) as E2eRunMode;
-    } else {
-      remainingArgs.push(arg);
-    }
-  }
-
-  if (!mode) {
-    throw new Error('Missing E2E mode. Use --clean or --fast.');
-  }
-
   const specNames: string[] = [];
   const playwrightArgs: string[] = [];
   const tags: string[] = [];
   let optionStarted = false;
   let pendingValueFor: string | undefined;
 
-  for (let index = 0; index < remainingArgs.length; index++) {
-    const arg = remainingArgs[index];
+  for (let index = 0; index < args.length; index++) {
+    const arg = args[index];
+
+    if (
+      arg === '--clean' ||
+      arg.startsWith('--clean=') ||
+      arg === '--fast' ||
+      arg.startsWith('--fast=')
+    ) {
+      throw new Error(`Unsupported E2E option: ${arg}. Use the single managed test:e2e command.`);
+    }
 
     if (pendingValueFor) {
       if (!arg || arg.startsWith('--')) {
@@ -100,8 +84,11 @@ export function parseE2eArgs(args: string[], specsDir: string): ParsedE2eArgs {
       continue;
     }
 
-    if (arg === '--config' || arg.startsWith('--config=')) {
+    if (arg === '--config' || arg.startsWith('--config=') || arg.startsWith('-c')) {
       throw new Error('The E2E runner manages --config; do not provide it.');
+    }
+    if (arg === '--workers' || arg.startsWith('--workers=') || arg.startsWith('-j')) {
+      throw new Error('The E2E runner manages --workers; do not provide it.');
     }
 
     if (!optionStarted && !arg.startsWith('-')) {
@@ -133,7 +120,7 @@ export function parseE2eArgs(args: string[], specsDir: string): ParsedE2eArgs {
     throw new Error(`Missing value for ${pendingValueFor}.`);
   }
 
-  return { mode, specNames, playwrightArgs, tags };
+  return { specNames, playwrightArgs, tags };
 }
 
 export function combineGreps(args: string[], tags: string[]): string[] {

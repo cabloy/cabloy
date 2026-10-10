@@ -32,9 +32,11 @@ features:
 
 ## Demonstrations(Videos)
 
-### 1. Can an Admin Site Use SSR? CabloyJS in Three Practical Demos (Duration: 1:16)
+### 1. AI Coding in Action: One Prompt for CRUD, SSR & Multitasking (Duration: 3:50)
 
-[![CabloyJS Admin SSR video](./assets/img/cabloy-admin-ssr-cover-en.png)](https://youtu.be/786IQhRdr1I)
+[![CabloyJS AI CRUD video](./assets/img/cabloy-ai-crud-cover-en.png)](https://youtu.be/PV9_By08hDM)
+
+[Read the hands-on walkthrough: AI Coding in Action — One Prompt for CRUD, SSR & Multitasking](/blogs/ai-coding-one-prompt-crud-ssr-multitasking/)
 
 ## Choose a reading path
 

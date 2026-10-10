@@ -27,23 +27,24 @@ Current CI workflows run on Ubuntu with Node.js 24 after pushes to `main`; do no
 
 Start with the narrowest meaningful check, then broaden validation when a change crosses a shared boundary.
 
-| Purpose                                  | Command                    |
-| ---------------------------------------- | -------------------------- |
-| Start Vona development                   | `npm run dev`              |
-| Start one Vona development process       | `npm run dev:one`          |
-| Start Basic Admin SSR development        | `npm run dev:zova:admin`   |
-| Start Basic Web SSR development          | `npm run dev:zova:web`     |
-| Check formatting                         | `npm run format`           |
-| Lint                                     | `npm run lint`             |
-| Type-check Vona and Zova                 | `npm run tsc`              |
-| Run backend tests                        | `npm run test`             |
-| Run the full E2E suite                   | `npm run test:e2e`         |
-| Rerun E2E tests without reset            | `npm run test:e2e:fast`    |
-| Build required Basic artifacts           | `npm run build`            |
-| Build Basic Admin SSR and REST artifacts | `npm run build:zova:admin` |
-| Build Basic Web SSR and REST artifacts   | `npm run build:zova:web`   |
-| Synchronize Zova dependencies into Vona  | `npm run deps:vona`        |
-| Build the public documentation site      | `npm run docs:build`       |
+| Purpose                                   | Command                    |
+| ----------------------------------------- | -------------------------- |
+| Start Vona development                    | `npm run dev`              |
+| Start one Vona development process        | `npm run dev:one`          |
+| Start Basic Admin SSR development         | `npm run dev:zova:admin`   |
+| Start Basic Web SSR development           | `npm run dev:zova:web`     |
+| Check formatting                          | `npm run format`           |
+| Lint                                      | `npm run lint`             |
+| Type-check Vona and Zova                  | `npm run tsc`              |
+| Run backend tests                         | `npm run test`             |
+| Run the managed local test-mode E2E suite | `npm run test:e2e`         |
+| Build required Basic artifacts            | `npm run build`            |
+| Build Basic Admin SSR and REST artifacts  | `npm run build:zova:admin` |
+| Build Basic Web SSR and REST artifacts    | `npm run build:zova:web`   |
+| Synchronize Zova dependencies into Vona   | `npm run deps:vona`        |
+| Build the public documentation site       | `npm run docs:build`       |
+
+`npm run test:e2e` starts a fresh runner-managed local Vona worker in test mode and runs Playwright against Vona integrated SSR. Select flat spec basenames directly after the script, for example `npm run test:e2e a-commerce`; place Playwright filters after npm's `--` delimiter, for example `npm run test:e2e a-commerce -- --tag @smoke`. Browser commands consume existing SSR/REST artifacts and do not rebuild them. Confirm exclusive ownership of the effective test database, local Redis namespace, public/runtime paths, application identity, API origin, and listener before starting a test-mode runtime; an available port alone is not sufficient. Externally managed `E2E_BASE_URL` targets are unsupported.
 
 The tracked pre-commit hook runs `lint-staged`. It may format staged Markdown and configuration files, and may lint-fix and format staged source files. Review the resulting staged changes and run the relevant explicit checks before submitting.
 

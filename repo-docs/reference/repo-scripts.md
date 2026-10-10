@@ -40,9 +40,7 @@ Cabloy Basic exposes these shared root scripts:
 - `npm run start`
 - `npm run start:one`
 - `npm run test`
-- `npm run db:reset`
 - `npm run test:e2e`
-- `npm run test:e2e:fast`
 - `npm run tsc`
 - `npm run docs:dev`
 - `npm run docs:build`
@@ -117,7 +115,6 @@ Cabloy Start exposes the equivalent Start repository surface:
 - `npm run test`
 - `npm run db:reset`
 - `npm run test:e2e`
-- `npm run test:e2e:fast`
 - `npm run tsc`
 
 Cabloy Start does not expose Basic Commerce or root documentation wrappers.
@@ -138,7 +135,7 @@ repo-e2e/specs/home-user-account.spec.ts
 repo-e2e/specs/a-commerce.spec.ts
 ```
 
-It also reconciles the two framework E2E scripts and the `@playwright/test` development dependency. Keep additional project browser specs under other filenames in `repo-e2e/specs`; the upgrader updates only the listed framework files. The current fresh baseline is required and is not repaired for unsupported legacy project layouts.
+It reconciles the single framework-owned `test:e2e` script and the `@playwright/test` development dependency. The retired `test:e2e:fast` script is removed only if its value matches the known old framework command; a customized project alias is preserved. Keep additional project browser specs under other filenames in `repo-e2e/specs`; the upgrader updates only the listed framework files. The current fresh baseline is required and is not repaired for unsupported legacy project layouts.
 
 ### Cabloy Start repository
 
@@ -154,31 +151,28 @@ The public-package upgrade flow does not source or reconcile the Start-owned bas
 
 ## SSR browser checks
 
-The unified runner has two modes:
+Cabloy Basic and Cabloy Start each use a single managed local `npm run test:e2e` command. In Basic, the runner checks the effective `normal/test/local` Vona listener port and starts one fresh `--workers=1 --flavor=normal --mode=test` worker. Test-mode startup initializes test resources; the runner does not invoke a separate `db:reset` or a development-mode server. Playwright does not reuse an existing process. Confirm exclusive ownership of the effective test database, `_local` Redis namespace, public/runtime paths, `APP_NAME`, API origin, and listener before starting it; port availability alone is insufficient.
 
-- `npm run test:e2e`: clean local run; checks the managed Vona port, resets the database, starts one development Vona worker, and runs Playwright.
-- `npm run test:e2e:fast`: skips the reset for quick reruns and may target either the local managed Vona server or an externally managed `E2E_BASE_URL`.
-
-These browser checks target Vona integrated SSR. In the Cabloy Basic default environment, the Vona listener is `7102`; the Zova standalone SSR development server uses `9000` and is not an acceptance target.
+Both editions' browser checks target Vona integrated SSR. In the Cabloy Basic default environment, the Vona listener is `7102`; the Zova standalone SSR development server uses `9000` and is not an acceptance target.
 
 Place spec basenames directly after the npm script name; use npm's `--` delimiter only before Playwright options. Multiple spec names are allowed. With no names, every spec in `repo-e2e/specs` is discovered:
 
 ```bash
 npm run test:e2e cabloy-basic home-user-account
 npm run test:e2e a-commerce
-npm run test:e2e:fast home-user-account
-npm run test:e2e:fast a-commerce -- --grep ATP-SSR
-npm run test:e2e:fast a-commerce -- --grep-invert @admin
+npm run test:e2e home-user-account
+npm run test:e2e a-commerce -- --grep ATP-SSR
+npm run test:e2e a-commerce -- --grep-invert @admin
 ```
 
 Tags remain independent from filenames. Repeat `--tag` to require all tags, while native `--grep` and `--grep-invert` remain available:
 
 ```bash
-npm run test:e2e:fast a-commerce -- --tag @web --tag @smoke
-npm run test:e2e:fast home-user-account -- --grep @flow --tag @web
+npm run test:e2e a-commerce -- --tag @web --tag @smoke
+npm run test:e2e home-user-account -- --grep @flow --tag @web
 ```
 
-The existing tags include `@web`, `@admin`, `@smoke`, `@flow`, `@ssr`, `@theme`, and the business tags used by Commerce such as `@cart`, `@payment`, `@shipment`, and `@refund`. No suite tag is required. Clean runs are local-only and reject `E2E_BASE_URL`; fast runs against an external target do not reset, start, stop, or rebuild that target.
+The existing Basic tags include `@web`, `@admin`, `@smoke`, `@flow`, `@ssr`, `@theme`, and the business tags used by Commerce such as `@cart`, `@payment`, `@shipment`, and `@refund`. No suite tag is required. In Cabloy Basic, `E2E_BASE_URL` must be unset: external targets and a fast/no-reset mode are unsupported.
 
 ### Cabloy Basic and Commerce
 
@@ -198,15 +192,9 @@ npm run deps:vona
 npm run test:e2e a-commerce
 ```
 
-For a separately managed target, use the fast command:
-
-```bash
-E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:fast a-commerce -- --tag @smoke
-```
-
 ### Cabloy Start
 
-The Start suite exercises Web at `/` and Admin at `/admin` through Vona integrated SSR dispatch. Prepare current Start artifacts before a managed local run:
+The Start suite exercises Web at `/` and Admin at `/admin` through Vona integrated SSR dispatch. Prepare current Start artifacts before a managed local run. The runner uses the effective local `normal`-flavor, test-mode Vona listener, rather than assuming a fixed port:
 
 ```bash
 npm run build:zova
@@ -216,20 +204,16 @@ npm run test:e2e
 
 ```bash
 # Exact acceptance scenario
-npm run test:e2e:fast cabloy-start -- --grep ATP-START-FLOW-01
+npm run test:e2e cabloy-start -- --grep ATP-START-FLOW-01
 
 # Category or surface selection
-npm run test:e2e:fast cabloy-start -- --tag @smoke
-npm run test:e2e:fast cabloy-admin -- --tag @admin --tag @cabloy-admin
+npm run test:e2e cabloy-start -- --tag @smoke
+npm run test:e2e cabloy-admin -- --tag @admin --tag @cabloy-admin
 ```
 
-For an externally managed Start target, set `E2E_BASE_URL` and use `npm run test:e2e:fast`. The target owner is responsible for data, cache, artifact freshness, and process lifecycle:
+In Cabloy Start, the sole `npm run test:e2e` command checks the configured local port and starts a fresh runner-managed Vona target with `--workers=1 --flavor=normal --mode=test`. Playwright never reuses an existing server. Test-mode startup initializes test resources; the runner does not invoke a separate `db:reset`. Confirm ownership of the test database, Redis namespace, and public/runtime paths before running it; do not change shared environment identity or ports to bypass a busy resource.
 
-```bash
-E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:fast
-E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:fast cabloy-admin -- --tag @admin
-E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:fast cabloy-start -- --tag @web
-```
+`E2E_BASE_URL` is unsupported in Cabloy Start and must be unset, even for a local URL. Externally managed targets are not supported.
 
 Browser commands consume existing SSR and REST artifacts; they never rebuild them. Install Chromium once when needed with `npx playwright install chromium`.
 
