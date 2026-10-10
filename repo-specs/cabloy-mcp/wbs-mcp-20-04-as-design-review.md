@@ -2,7 +2,7 @@
 
 ## Dossier status
 
-**Planning-only design disposition — not an execution dossier.** This record is the 2026-10-09 planning basis for the bounded `DEC-MCP-03` design accepted in ADR 0003. It did not amend `DEC-MCP-09` at that review; [ADR 0009](./decisions/0009-mcp-as-state-boundary.md) subsequently permitted planning AS-owned shared authorization state on 2026-10-10, without selecting a store or schema. Neither decision authorizes source or schema changes, configures an issuer/provider, operates an authorization endpoint, runs OAuth/HTTP tests, or advances a WBS/ATP status. Concrete implementation and persistence gates remain open.
+**Planning-only design disposition — not an execution dossier.** This record is the 2026-10-09 planning basis for the bounded `DEC-MCP-03` design accepted in ADR 0003. It did not amend `DEC-MCP-09` at that review; [ADR 0009](./decisions/0009-mcp-as-state-boundary.md) subsequently permitted planning AS-owned shared authorization state and separately selected a transactional-database authority and AS-owned browser-flow direction on 2026-10-10, without selecting a physical store, browser implementation or schema. Neither decision authorizes source or schema changes, configures an issuer/provider, operates an authorization endpoint, runs OAuth/HTTP tests, or advances a WBS/ATP status. Concrete implementation and persistence gates remain open.
 
 Prepared against the Cabloy Basic worktree at revision `1e7c10ce84` on 2026-10-09. The worktree contains the uncommitted planning increment that introduced the AS work package and its resource-server dependency. No AS source, endpoint, provider configuration, usable credential, or ATP evidence was observed.
 
@@ -12,12 +12,12 @@ Prepared against the Cabloy Basic worktree at revision `1e7c10ce84` on 2026-10-0
 - **Target:** proposed `WBS-MCP-20-04 — Deliver an approved MCP authorization-server/token-service contract`
 - **Primary authority:** [ADR 0003](./decisions/0003-mcp-oauth-resource-server.md), `DEC-MCP-03`, accepted for bounded design only
 - **Overall boundary:** [ADR 0001](./decisions/0001-mcp-suite-boundaries.md), accepted for the overall first-increment boundary and no-schema/no-site MCP resource boundary only
-- **Persistence gate:** `DEC-MCP-09` was no-schema at this review; later [ADR 0009](./decisions/0009-mcp-as-state-boundary.md) permits AS-owned shared-state planning only, not a concrete grant/token store, consent record, or schema
+- **Persistence gate:** `DEC-MCP-09` was no-schema at this review; later [ADR 0009](./decisions/0009-mcp-as-state-boundary.md) selects an AS-owned transactional database authority and browser-flow design direction only, not a physical grant/token store, browser implementation, consent record, or schema
 - **Technical contracts:** `SRS-MCP-AUTH-04`, `SRS-MCP-AUTH-01`, `SRS-MCP-INSTANCE-01`
 - **Acceptance scenario:** proposed `ATP-MCP-AUTH-03`; no result exists
 - **Related boundary:** proposed [ADR 0004](./decisions/0004-mcp-host-instance-binding.md) must use the same endpoint → resource → instance interface, but its prior acceptance is not assumed
 
-This dossier is a historical design-review input, not the human decision record. ADR 0003 records the bounded first-profile design acceptance; ADR 0009 records the later route/ownership and conceptual AS-state disposition. Recommendations below do not select concrete storage, issuer, source, or execution.
+This dossier is a historical design-review input, not the human decision record. ADR 0003 records the bounded first-profile design acceptance; ADR 0009 records the later route/ownership and transactional-database/AS-browser design directions. Recommendations below do not select concrete storage, issuer, source, or execution.
 
 ## Observed source feasibility
 
@@ -113,7 +113,7 @@ At the 2026-10-09 review, `DEC-MCP-09` still expressed a no-schema first-increme
 1. **Preserve no-schema:** defer the integrated AS and use no real MCP token issuance until an already conforming, separately operated AS is selected and its contract is approved; or
 2. **Revise the first-increment boundary:** permit explicitly AS-owned shared authorization/token state, name its owner and retention, choose database versus external store, decide the owning `vonaModule.fileVersion` strategy before any schema edit, and run the required root test path if `meta.version.ts` changes.
 
-This dossier selected neither option. On 2026-10-10, [ADR 0009](./decisions/0009-mcp-as-state-boundary.md) selected the integrated route and revised the scope **only to permit planning** AS-owned shared state; the specific store, retention, schema/migration and fileVersion strategy still require separate decisions. In particular, “put the tables in `a-auth`” is not a no-schema solution or an approved implementation.
+This dossier selected neither option. On 2026-10-10, [ADR 0009](./decisions/0009-mcp-as-state-boundary.md) selected the integrated route and AS-owned shared-state planning scope, then separately selected a single transactional-database authority and AS-owned browser-flow direction **for design only**; physical database/module/schema, exact interaction, retention, migration and fileVersion still require separate decisions. In particular, “put the tables in `a-auth`” is not a no-schema solution or an approved implementation.
 
 ## Acceptance and proof required later
 
@@ -124,7 +124,7 @@ Before approving AS execution, the execution dossier and decision record must re
 3. resource-owner login and explicit grant interaction, consent retention choice, cancellation/denial, state/PKCE/code replay behavior;
 4. canonical resource and instance binding at authorization, token exchange, current lookup, revocation, and local subject mapping;
 5. access-token store/lookup owner, representation, retention, multi-worker consistency, outage and fail-closed behavior;
-6. the subsequent ADR 0009 design-only AS-state disposition and the still-open specific storage, retention, migration and (before any schema edit) owning-module `fileVersion` choice;
+6. the subsequent ADR 0009 design-only AS-owned transactional-database/browser-flow directions and the still-open physical storage, interaction mechanics, retention, migration and (before any schema edit) owning-module `fileVersion` choice;
 7. the proposed no-refresh profile, or a separately accepted replay-safe refresh profile;
 8. `ATP-MCP-AUTH-03` redacted proof for truthful metadata, supported-client behavior, user/grant interaction, code/PKCE, substitution/replay denial, current token lookup, revocation, outage, and the selected refresh branch.
 
@@ -133,9 +133,9 @@ No raw authorization code, access/refresh token, cookie, signed state, client se
 ## Current blockers and permitted next action
 
 - `DEC-MCP-03` is accepted for bounded design only; concrete implementation, configuration, persistence, and proof remain open.
-- Later ADR 0009 permits planning AS-owned shared authorization state; no particular store, schema, remembered consent or execution is approved.
+- Later ADR 0009 selects an AS-owned transactional-database authority and browser grant-flow direction for bounded design; no physical store, concrete UI/session/CSRF, schema, remembered consent or execution is approved.
 - `WBS-MCP-20-04` remains blocked and has no source or ATP evidence.
 - `WBS-MCP-20-02` remains blocked on this AS contract and the transport/host gates; synthetic RS fixtures cannot close the AS dependency.
 - No issuer, provider, endpoint, client, schema, grant, token, consent record, dependency, or credential may be configured from this dossier.
 
-**Next single action:** resolve the exact AS-owned shared-state representation, consistency, retention and interaction contract under ADR 0009, then re-review the separate [AS execution dossier (planning draft)](./wbs-mcp-20-04-execution-dossier.md). Do not execute source or OAuth/HTTP ATP work automatically.
+**Next single action:** resolve the physical transactional-database/module/schema, consistency, retention and concrete AS-browser/session/CSRF contract under ADR 0009, then re-review the separate [AS execution dossier (planning draft)](./wbs-mcp-20-04-execution-dossier.md). Do not execute source or OAuth/HTTP ATP work automatically.

@@ -4,9 +4,9 @@
 
 **Planning-only execution dossier draft — not approved for execution and not execution-ready.** This record scopes the bounded work required for `WBS-MCP-20-04`, but the task remains `blocked`. It does not authorize source changes, dependency installation, schema or external-store creation, provider or issuer configuration, authorization-endpoint operation, credential changes, OAuth/HTTP execution, ATP execution, or status advancement.
 
-Originally prepared against the Cabloy Basic worktree at revision `1e7c10ce84` on 2026-10-09; reconciled against the clean worktree at `2dda23660f` on 2026-10-10. The current planning disposition selects an integrated `a-auth` AS logical owner with `zhennann` responsible for implementation and operations, and permits planning for AS-owned shared authorization state under ADR 0009. No specific store, AS source, endpoint, provider configuration, usable credential, grant/token record, or `ATP-MCP-AUTH-03` evidence is claimed.
+Originally prepared against the Cabloy Basic worktree at revision `1e7c10ce84` on 2026-10-09; reconciled against clean `2dda23660f`, then reviewed against clean `9cca451dff` on 2026-10-10. The bounded planning disposition selects an integrated `a-auth` AS logical owner with `zhennann` responsible for implementation and operations, one AS-owned database-neutral transactional authority **state direction**, and an AS-owned per-request approve/deny flow with **backend-rendered HTML presentation direction** under ADR 0009. No deployed dialect, schema, AS source, HTML routes/renderer, browser identity/session/CSRF mechanism, endpoint, provider configuration, usable credential, grant/token record, or `ATP-MCP-AUTH-03` evidence is claimed.
 
-This dossier follows the accepted-for-design-only disposition in [ADR 0003](./decisions/0003-mcp-oauth-resource-server.md) and the planning review in [the AS design dossier](./wbs-mcp-20-04-as-design-review.md). The [AS state and interaction review](./wbs-mcp-20-04-state-interaction-review.md) recommends one transactional state authority and sketches a browser grant interaction for a **future** decision; it is neither a chosen store nor an approved interaction. This dossier remains a readiness and approval boundary, not an implementation plan that silently resolves the remaining authority decisions.
+This dossier follows the accepted-for-design-only disposition in [ADR 0003](./decisions/0003-mcp-oauth-resource-server.md) and the planning review in [the AS design dossier](./wbs-mcp-20-04-as-design-review.md). The [AS state and interaction review](./wbs-mcp-20-04-state-interaction-review.md) is the basis for the separately selected transactional-database authority and AS-owned browser-flow **directions**; it does not approve the physical store or concrete browser interaction. This dossier remains a readiness and approval boundary, not an implementation plan that silently resolves the remaining authority decisions.
 
 ## Execution target
 
@@ -33,8 +33,8 @@ The target has one bounded outcome. The integrated `a-auth` logical route has be
 - **Edition:** Cabloy Basic, observed from the sole marker `__CABLOY_BASIC__`.
 - **Repository root:** `/Volumes/my-data/cabloy-multirepo/cabloy-basic/.claude/worktrees/spec-basic-cabloy-mcp`
 - **Planning authority directory:** `/Volumes/my-data/cabloy-multirepo/cabloy-basic/.claude/worktrees/spec-basic-cabloy-mcp/repo-specs/cabloy-mcp/`
-- **Revision observed:** `1e7c10ce84` at initial draft; `2dda23660f` at authority reconciliation.
-- **Worktree classification:** clean at the 2026-10-10 review; this planning update makes it dirty with attributable documentation changes. No source or configuration change for this task was observed. The dossier must not overwrite or clean existing changes.
+- **Revision observed:** `1e7c10ce84` at initial draft; clean `2dda23660f` at authority reconciliation and clean `9cca451dff` at the later design review.
+- **Worktree classification:** clean at the `9cca451dff` design review; attributable planning-document changes were present before this bounded design update and remain in the worktree. No source or configuration change for this task was observed. The dossier must not overwrite or clean existing changes.
 - **Observed root workflow:** `package.json` exposes `npm run vona`, `npm run tsc`, `npm run lint`, `npm run format`, `npm run test`, `npm run spec:check`, and chart commands. Prospective commands below are not evidence until executed under a separately approved dossier.
 
 ## Authority and traceability
@@ -49,23 +49,23 @@ The target has one bounded outcome. The integrated `a-auth` logical route has be
 - **Transport dependency:** [ADR 0002](./decisions/0002-mcp-transport.md), accepted for design only; no transport source or runtime proof is required by this AS target.
 - **OAuth design authority:** [ADR 0003](./decisions/0003-mcp-oauth-resource-server.md), accepted for bounded design only; the integrated `a-auth` logical AS route is selected, but no concrete store, endpoint, provider, or source is approved.
 - **Instance interface:** [ADR 0004](./decisions/0004-mcp-host-instance-binding.md), proposed; this dossier must preserve the shared endpoint → resource → instance interface without accepting host/proxy policy.
-- **Persistence authority:** [ADR 0009](./decisions/0009-mcp-as-state-boundary.md) amends `DEC-MCP-09` for bounded design of AS-owned shared authorization state; it does not select or authorize a store, schema, migration, remembered consent or execution.
-- **Design review:** [WBS-MCP-20-04 AS design review dossier](./wbs-mcp-20-04-as-design-review.md), accepted as the bounded design basis only; the later [AS state and interaction review](./wbs-mcp-20-04-state-interaction-review.md) is a proposal, not a store or interaction decision.
+- **State/interaction design authority:** [ADR 0009](./decisions/0009-mcp-as-state-boundary.md) selects a database-neutral AS-owned transactional authority and AS backend HTML per-request grant-flow direction for bounded design; it does not approve the deployed dialect, physical store, session/CSRF/HTML implementation, schema, migration, remembered consent or execution.
+- **Design review:** [WBS-MCP-20-04 AS design review dossier](./wbs-mcp-20-04-as-design-review.md), accepted as the bounded design basis only; the later [AS state and interaction review](./wbs-mcp-20-04-state-interaction-review.md) records the basis and remaining unselected physical/interaction choices.
 
 ### Dependency readiness
 
-| Dependency or gate | Current state                               | Effect on this dossier                                                                                                          |
-| ------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `WBS-MCP-10-01`    | `planning-complete` documentary closure     | Satisfies its planning dependency only; no AS source or runtime proof.                                                          |
-| `WBS-MCP-10-02`    | `planning-complete` documentary closure     | Satisfies its planning dependency only; no AS source or runtime proof.                                                          |
-| `DEC-MCP-03`       | `accepted (design only)`                    | Establishes the bounded design direction; does not authorize concrete execution.                                                |
-| `DEC-MCP-09`       | `accepted for bounded AS-state design only` | Permits planning AS-owned shared state under ADR 0009; the exact store/schema, retention, migration and execution remain gated. |
-| `WBS-MCP-20-01`    | `blocked`                                   | Not a direct AS implementation prerequisite, but no end-to-end MCP proof can be claimed while transport is absent.              |
-| `WBS-MCP-20-02`    | `blocked`                                   | Remains dependent on this AS contract plus transport and instance gates.                                                        |
-| `DEC-MCP-04`       | `proposed`                                  | The AS must preserve its shared resource/instance interface; this dossier cannot choose host, proxy, or instance values.        |
-| `ATP-MCP-AUTH-03`  | prospective, no evidence                    | Must be run only after owner, storage, source/configuration, and execution approval close.                                      |
+| Dependency or gate | Current state                              | Effect on this dossier                                                                                                                                                                     |
+| ------------------ | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `WBS-MCP-10-01`    | `planning-complete` documentary closure    | Satisfies its planning dependency only; no AS source or runtime proof.                                                                                                                     |
+| `WBS-MCP-10-02`    | `planning-complete` documentary closure    | Satisfies its planning dependency only; no AS source or runtime proof.                                                                                                                     |
+| `DEC-MCP-03`       | `accepted (design only)`                   | Establishes the bounded design direction; does not authorize concrete execution.                                                                                                           |
+| `DEC-MCP-09`       | `accepted (bounded design direction only)` | Selects one AS-owned transactional database authority and an AS-owned browser approve/deny flow; physical store, UI/session/CSRF, schema, retention, migration and execution remain gated. |
+| `WBS-MCP-20-01`    | `blocked`                                  | Not a direct AS implementation prerequisite, but no end-to-end MCP proof can be claimed while transport is absent.                                                                         |
+| `WBS-MCP-20-02`    | `blocked`                                  | Remains dependent on this AS contract plus transport and instance gates.                                                                                                                   |
+| `DEC-MCP-04`       | `proposed`                                 | The AS must preserve its shared resource/instance interface; this dossier cannot choose host, proxy, or instance values.                                                                   |
+| `ATP-MCP-AUTH-03`  | prospective, no evidence                   | Must be run only after owner, storage, source/configuration, and execution approval close.                                                                                                 |
 
-The target remains blocked: the integrated route, implementation/operations responsibility, and bounded AS-state planning disposition are recorded, but the exact store/retention/consistency, authorization interaction, configuration, migration/file-version choice if applicable, execution approval, and AS-owned proof remain open. Planning-complete predecessors do not authorize execution.
+The target remains blocked: the integrated route, implementation/operations responsibility, transactional-database authority and AS-owned browser direction are recorded, but the physical store/retention/consistency, browser/session/CSRF implementation, configuration, migration/file-version choice if applicable, execution approval, and AS-owned proof remain open. Planning-complete predecessors do not authorize execution.
 
 ## Observed source and feasibility boundary
 
@@ -112,9 +112,9 @@ Execution cannot start until each gate below has a recorded disposition in the o
 
 ### Gate B — persistence and state authority
 
-[ADR 0009](./decisions/0009-mcp-as-state-boundary.md) records a **bounded design-only** revision of `DEC-MCP-09`: planning may specify AS-owned shared client registration, authorization request/code/PKCE transaction, grant/resource/scope binding and opaque-token active/revocation state. The initial `cabloy-mcp` scaffold remains schema-free; no MCP resource-module store or remembered consent is approved. This disposition is **not** approval to create an `a-auth` table, a Redis namespace, an external state service or a grant/consent record.
+[ADR 0009](./decisions/0009-mcp-as-state-boundary.md) now records a **bounded design-only** selection: one AS-owned transactional database authority for authorization request/code/grant linkage and MCP opaque-token active/revocation state, with code consumption and token activation in one atomic commit. The initial `cabloy-mcp` scaffold remains schema-free; no MCP resource-module store or remembered consent is approved. This disposition is **not** approval to create an `a-auth` table, a Redis namespace, an external state service or a grant/consent record. Redis-only and SQL/Redis split authority are not selected.
 
-Before implementation, select and approve the exact AS module/service and shared-state representation, TTL and deletion, digest/custody, atomic redemption/revocation and multi-worker consistency, outage recovery, and migration boundary. The [state and interaction review](./wbs-mcp-20-04-state-interaction-review.md) recommends a single transactional authority rather than relying on generic cache reads/deletes, but **does not select** SQL, Redis, schema, or a service. If a persisted field/schema or `meta.version.ts` changes, ask and record whether the owning `vonaModule.fileVersion` increments **before editing**, and run the required root `npm run test` after an approved `meta.version.ts` change. An external Redis or other shared store is still authorization state and requires its own namespace, lifetime and operational approval even without SQL schema.
+The bounded design direction is database-neutral, not a PostgreSQL-primary recommendation: specify portable state/transition invariants now, but select and approve the actual deployed dialect/topology and verify its actual affected-row/serialization semantics, creation-time uniqueness, current lookup, contention and fresh-install/existing-install/partial-recovery migration implementation before execution; ordinary cached model `update()` and `getForUpdate()` alone are not compare-and-set or uniqueness proof. Also approve the exact AS module/service, client registry representation, schema, TTL and deletion, digest/custody, approval and redemption/revocation state machine, multi-worker consistency, outage recovery, and migration boundary. The [state and interaction review](./wbs-mcp-20-04-state-interaction-review.md) supplies the design basis and unresolved details, **not** a schema or service selection. If a persisted field/schema or `meta.version.ts` changes, ask and record whether the owning `vonaModule.fileVersion` increments **before editing**, and run the required root `npm run test` after an approved `meta.version.ts` change. Switching to an external Redis or another shared-store direction requires a new authority decision and its own namespace, lifetime and operational approval.
 
 ### Gate C — authorization interaction and protocol profile
 
@@ -125,13 +125,13 @@ Approve the exact first-profile behavior:
 - exact redirect URI validation;
 - approved confidential-client authentication;
 - explicit resource-owner login and grant/deny interaction;
-- one-time code redemption with state, client, redirect, resource, scope, subject, and instance binding;
+- one-time code redemption with AS transaction, client, authorization-time redirect, resource, scope, subject, and instance binding; OAuth client `state` remains authorization-response correlation, not a token-request credential;
 - truthful RFC 8414 or selected discovery metadata;
 - no Dynamic Client Registration and no required Client ID Metadata Documents in the first profile, with compatibility limits documented;
 - no Client Credentials, implicit, or password fallback; and
 - no refresh-token issuance in the accepted first profile.
 
-Before approving this interaction, distinguish client OAuth `state`, AS transaction/browser correlation, upstream provider-login state (if reused), grant-form CSRF and the PKCE challenge/verifier. An existing login session may establish identity but cannot substitute for the required new grant decision. Specify invalid-redirect, denial/cancellation, concurrent redemption, account-switch and lost-response behavior without treating client `state` as a token-endpoint credential; the [state and interaction review](./wbs-mcp-20-04-state-interaction-review.md) is a proposal only. Any remembered consent, alternative grant, metadata-document compatibility, refresh profile, or UI/site addition requires a separate authority change.
+The AS-owned browser flow with per-request approve/deny and AS backend-rendered HTML presentation is selected for bounded design; no Zova authorization site is selected. A plain backend GET does not inherit a verified identity from Zova's client-written cookie, and the existing global CSRF middleware does not assert approval-form tokens. Before approving its **concrete implementation**, distinguish client OAuth `state`, AS transaction/browser correlation, upstream provider-login state (if reused), grant-form CSRF and the PKCE challenge/verifier. An existing login session may establish identity but cannot substitute for the required new grant decision. Specify invalid-redirect, denial/cancellation, concurrent approval and redemption, account-switch and lost-response behavior without treating client `state` as a token-endpoint credential; the authorization-time redirect remains code-bound. OAuth 2.1 draft-13 §10.2 removes the token-request `redirect_uri`, while any separately supported OAuth 2.0 compatibility branch must require its identical value when the authorization request supplied it (RFC 6749 §4.1.3). Select and verify the branch before execution rather than describing it as an optional comparison. Design AS request-to-instance admission in the pre-`newCtx` resolver separately from ADR 0004's proposed early `/mcp` hook; route guards run too late to undo initial instance selection. Define a server-verifiable browser identity/session or login bridge, CSRF checked after bounded form parsing, exact registered client redirect matching (not the existing provider continuation/origin check), escaped HTML and response protections on success, errors and redirects. The [state and interaction review](./wbs-mcp-20-04-state-interaction-review.md) is a selected design basis with unapproved concrete mechanics. Any remembered consent, alternative grant, metadata-document compatibility, refresh profile, or UI/site addition requires a separate authority change.
 
 ### Gate D — token and lookup contract
 
@@ -257,7 +257,7 @@ These checks cannot accept an AS store/schema or execution, revise the bounded A
 ### Explicitly excluded now
 
 - changing ADR 0003 from design-only acceptance;
-- treating ADR 0009's bounded state-planning disposition as a specific store, schema, remembered-consent, or execution approval;
+- treating ADR 0009's selected transactional-database/browser **directions** as a physical database, schema, browser route/UI/CSRF, remembered-consent, or execution approval;
 - creating relational schema, Redis token contracts, durable consent, or external shared state;
 - editing `meta.version.ts` or choosing `vonaModule.fileVersion` without explicit approval;
 - implementing `cabloy-mcp` resource-server validation, transport, host binding, catalog, dispatch, or operations;
@@ -270,7 +270,7 @@ These checks cannot accept an AS store/schema or execution, revise the bounded A
 
 - **Authority audit:** planning structure is checked separately; static audit is not AS approval or runtime evidence.
 - **Chart model/freshness:** charts are derived only; they do not prove source, token state, or ATP behavior.
-- **Human approval:** route, responsible owner and bounded `DEC-MCP-09` state-planning direction are recorded, but this dossier still requires separate approval after concrete storage, interaction and operational gates close. Approval of this draft would not itself authorize provider/deployment operations or a specific store/schema.
+- **Human approval:** route, responsible owner, transactional-database authority and AS-owned browser-flow directions are recorded under bounded `DEC-MCP-09` design only. This dossier still requires separate approval after concrete physical storage, browser/session/CSRF and operational gates close. Approval of these directions does not authorize provider/deployment operations, physical schema or source.
 - **Current WBS status:** `WBS-MCP-20-04` remains `blocked`.
 - **Current evidence:** none for `ATP-MCP-AUTH-03`; no AS source or runtime proof exists.
 
@@ -279,14 +279,14 @@ These checks cannot accept an AS store/schema or execution, revise the bounded A
 ```text
 WBS / phase: WBS-MCP-20-04 / Phase 20
 Status: blocked; planning-only execution dossier draft, not implementation-complete or verified
-Revision and worktree: initial draft 1e7c10ce84; clean review 2dda23660f; now dirty with attributable planning edits
+Revision and worktree: initial draft 1e7c10ce84; clean reviews 2dda23660f and 9cca451dff; now dirty with attributable planning edits
 Scope and exclusions: one integrated a-auth AS/token-service contract only; no resource-server, transport, host binding, deployment, provider operation, schema, or runtime execution
-Authority and ownership: PRD/SRS/WBS/ATP above; ADR 0003 accepted for bounded design only; ADR 0009 permits AS-state planning; zhennann owns AS implementation and operations
-Completed gates/evidence: edition/repository discovery, authority/dependency review, source feasibility review, route/owner/state-planning disposition, and dossier drafting; no AS execution or ATP evidence
+Authority and ownership: PRD/SRS/WBS/ATP above; ADR 0003 accepted for bounded design only; ADR 0009 selects transactional-database and AS-owned browser-flow directions; zhennann owns AS implementation and operations
+Completed gates/evidence: edition/repository discovery, authority/dependency review, source feasibility review, route/owner and logical state/browser-flow design decisions, and dossier drafting; no AS execution or ATP evidence
 Commands/procedures actually run: repository discovery and read-only planning inspection for the original dossier; later documentary edits/checks are reported separately, not as ATP proof
-Commands/procedures still required: approve exact shared store/retention/consistency, interaction and operational policy; decide owning module fileVersion before any schema edit; obtain separate execution approval; then observe source/dependency layout and run approved narrow checks
-Blocker or decision needed: concrete AS state representation and service, retention/worker consistency/outage, resource-owner interaction, issuer/resource/client registration, applicable migration strategy, separate execution approval
-Next single action: review the proposed AS state and interaction contract in wbs-mcp-20-04-state-interaction-review.md and record a separate decision before re-reviewing this dossier; do not infer source, configuration, provider, or OAuth/HTTP authorization
+Commands/procedures still required: approve deployed dialect/module/schema/retention/consistency and prove that dialect's transition/migration behavior; approve concrete AS backend HTML identity/session/CSRF/admission and operational policy; decide owning module fileVersion before any schema edit; obtain separate execution approval; then observe source/dependency layout and run approved narrow checks
+Blocker or decision needed: concrete AS physical state representation/service, retention/worker consistency/outage, browser interaction implementation and instance admission, issuer/resource/client registration, applicable migration strategy, separate execution approval
+Next single action: develop a bounded physical-database and AS-browser interaction design for separate disposition before re-reviewing this dossier; do not infer source, configuration, provider, or OAuth/HTTP authorization
 ```
 
 This dossier is a bounded planning handoff only. It does not authorize execution automatically, and it does not change the status of any ADR, WBS, ATP, provider, endpoint, schema, or runtime environment.
