@@ -1,11 +1,21 @@
 # Changelog
 
+## 5.1.204
+
+### Improvements
+
+- Document model relations and transaction rules.
+- Add a blog post on using AI coding for CRUD, SSR, and multitasking.
+- Update the pnpm lockfile.
+
 ## 5.1.203
 
 ### Features
+
 - Update application features.
 
 ### Improvements
+
 - Refactor end-to-end tests.
 - Clarify managed E2E resource authorization documentation.
 - Add a video demonstrating second-level tabs for admin multitasking.
