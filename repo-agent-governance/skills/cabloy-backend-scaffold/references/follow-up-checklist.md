@@ -44,7 +44,7 @@ When the active edition and installed modules provide `@Passport.rbac(...)` and 
 - `meta.version`
 - field indexes; in shared-database multitenancy, preserve ordinary lookup indexes and enforce business uniqueness in tenant-aware business logic rather than with `table.unique(...)`
 - when editing or generating `meta.index`, consolidate each table's specifications into one declaration instead of adding another same-table `$tableColumns` spread; check for leading-column name collisions, effective metadata, and physical index definitions using the [Field Indexes guide](../../../../repo-docs/backend/field-indexes.md)
-- relations
+- relations: define stable, reusable business relationships on the Model (`hasOne`, `belongsTo`, `hasMany`, `belongsToMany`); for CRUD reads, load only the relations the endpoint needs via `include`, and align the `$Dto.*` relation projection with the ORM query. Use dynamic `with` for situational relations; when related rows determine which parents appear, filter the parent query rather than relying on `include`. See [Relations Guide](../../../../repo-docs/backend/relations-guide.md) and [ORM Select Guide](../../../../repo-docs/backend/orm-select-guide.md).
 - datasource choice
 - cache behavior
 - cross-Model query-cache dependencies: when a source mutation can change another Model's cached query members, totals, projections, includes, or visibility, declare exactly one directed `modelsClear` / `modelsClearedBy` edge
@@ -52,7 +52,7 @@ When the active edition and installed modules provide `@Passport.rbac(...)` and 
 - when `modelsClearedByFn` is required, treat it as replacement behavior and explicitly own the target clear and any necessary downstream propagation
 - prefer normal Model/service mutation paths so source invalidation, commit-time re-clear, and configured double-delete remain active
 - add a warm-query → mutate-source → repeat-query regression test for each new dependency path; follow [Cross-model query-cache dependencies](../../../../repo-docs/backend/cache-guide.md#cross-model-query-cache-dependencies) for the portable decision rules
-- transaction behavior
+- transaction and concurrency requirements: leave independent CRUD writes without an explicit transaction or pessimistic lock by default; identify any multi-write atomicity or contention-sensitive invariant before choosing a transaction and the minimum necessary concurrency control. See [Transaction Guide](../../../../repo-docs/backend/transaction-guide.md).
 
 ## Test resource lifecycle follow-up
 

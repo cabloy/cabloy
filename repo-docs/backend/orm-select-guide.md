@@ -83,6 +83,12 @@ A useful distinction is:
 
 That means joins are not floating SQL trivia. They are part of a model-aware query system that can move between table-level control and relation-level convenience.
 
+For stable, reusable business relationships, declare the appropriate `hasOne`, `belongsTo`, `hasMany`, or `belongsToMany` relation on the Model and prefer `include` when a CRUD read needs its related data. Use `with` for a situational relation instead of adding every one-off lookup to Model metadata. See [Relations Guide](/backend/relations-guide#static-relations-vs-dynamic-relations). An `include` loads and attaches related records after the parent query; it is **not** automatically a SQL `JOIN` between the parent and related tables. In list reads, the ordinary relation loader batches related lookups, but this still adds queries and may load large collections. Select only the relations and fields needed by that endpoint.
+
+A relation's `where` filters the related rows that are attached; it does not remove parent rows or change a parent's `selectAndCount` total. If the presence of a matching child determines which parents belong in a list, put that condition in the parent query, for example with `_exists_` or a deliberately chosen `joins` predicate. Paginate the parent results explicitly and load bounded relation projections. A `hasMany` relation `limit` on a multi-parent list applies to the shared child query, not separately to each parent; for per-parent top-N requirements, design a query for that contract rather than assuming `include` provides it. Direct joins to collections can multiply parent rows and distort pagination or counts, so verify those semantics before using them.
+
+Match the read's selected relations to its `$Dto.*` projection when inferring an API contract; inference describes the shape, but does not trigger ORM loading or strip extra response fields by itself. See [DTO Infer and Generation](/backend/dto-infer-generation#default-first-three-layer-dto-authoring).
+
 ## Type-guided joins
 
 A key insight is that joinable tables often come from relationships already declared on the model.

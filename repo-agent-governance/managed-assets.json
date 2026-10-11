@@ -18,7 +18,7 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "88e6ca8c60d8caeb68ab932f2a7e22810a31911400b4428fd0756d076dbc78e8",
+      "sha256": "73e068093dfc88d57dc484582e0c20b1dd5d48bdbe12e860ac6343a64883cf5e",
       "source": "skills/cabloy-backend-scaffold/references/follow-up-checklist.md",
       "target": ".agents/skills/cabloy-backend-scaffold/references/follow-up-checklist.md"
     },
@@ -354,7 +354,7 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "88e6ca8c60d8caeb68ab932f2a7e22810a31911400b4428fd0756d076dbc78e8",
+      "sha256": "73e068093dfc88d57dc484582e0c20b1dd5d48bdbe12e860ac6343a64883cf5e",
       "source": "skills/cabloy-backend-scaffold/references/follow-up-checklist.md",
       "target": ".claude/skills/cabloy-backend-scaffold/references/follow-up-checklist.md"
     },
@@ -683,7 +683,7 @@
     {
       "adapter": "cursor",
       "category": "policy",
-      "sha256": "db2467e225f30b74efb312c45572324f75a6a81077e19b7723ffd640a45793f9",
+      "sha256": "e57b3389c32379a1bdebc4ca716f1e7b21cd8bf960d5aa2c1d7b61d79c1ac556",
       "source": "policies/repository.md",
       "target": ".cursor/rules/cabloy-governance.mdc"
     },
@@ -704,7 +704,7 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "88e6ca8c60d8caeb68ab932f2a7e22810a31911400b4428fd0756d076dbc78e8",
+      "sha256": "73e068093dfc88d57dc484582e0c20b1dd5d48bdbe12e860ac6343a64883cf5e",
       "source": "skills/cabloy-backend-scaffold/references/follow-up-checklist.md",
       "target": ".cursor/skills/cabloy-backend-scaffold/references/follow-up-checklist.md"
     },
@@ -1005,14 +1005,14 @@
     {
       "adapter": "codex",
       "category": "policy",
-      "sha256": "307edb0409d7d723c213c534713d2477ba000f19571e054d5498aeb9578b22bb",
+      "sha256": "0c22d8b0c25b20e5325ea0aa8e8272bb68e6f5752f1b14238b98814c8935fd5a",
       "source": "policies/repository.md",
       "target": "AGENTS.md"
     },
     {
       "adapter": "claude",
       "category": "policy",
-      "sha256": "307edb0409d7d723c213c534713d2477ba000f19571e054d5498aeb9578b22bb",
+      "sha256": "0c22d8b0c25b20e5325ea0aa8e8272bb68e6f5752f1b14238b98814c8935fd5a",
       "source": "policies/repository.md",
       "target": "CLAUDE.md"
     }
