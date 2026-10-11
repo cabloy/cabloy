@@ -29,6 +29,18 @@ async transaction() {
 
 This matters because it makes transaction behavior explicit at the business-method level.
 
+## Choose atomicity and concurrency guarantees separately
+
+Keep ordinary, independent CRUD writes simple: do not add an explicit transaction or pessimistic update lock just because a method is named `create`, `update`, or `delete`. A Model mutation participates in an existing transaction on its datasource, but ordinary CRUD does not automatically start a transaction around the entire service method. A single Model call can also perform more than one write, so do not assume that a compound call is an all-or-nothing business operation without checking its behavior.
+
+Ask what the business operation must guarantee:
+
+- **Multiple writes must succeed or fail together:** put a transaction around the business unit of work. Parent/companion writes and all-or-nothing bulk commands are examples. A transaction gives atomicity, not automatic protection against every concurrent write race.
+- **A shared invariant depends on previously read state:** define the competing operations and required outcome, then select a concurrency strategy. Depending on the operation, that may be an atomic conditional update, optimistic version check, suitable isolation with retry, or a pessimistic row lock inside a transaction. For a read-modify-write balance or a check-then-insert path, a transaction alone may still allow a lost update or duplicate first insert.
+- **No cross-write or contention guarantee is required:** leave the CRUD operation without an additional explicit transaction or pessimistic lock. This is a decision about application-level guarantees, not a claim that the database never locks rows while executing writes.
+
+For an optional one-to-one companion, updating parent fields and companion content together can justify a transaction. If concurrent first writes must leave exactly one companion, locking an existing companion row cannot protect its first insertion: a parent-row serialization point or another deliberate strategy is needed. Once all competing writers use the same parent-row serialization point, an additional companion-row lock on that path may be redundant; verify that no writer bypasses the serialization point before removing it. Test the required combined durable outcome under competing operations. See [One-to-One Companion Resource Guide](/fullstack/one-to-one-companion-resource-guide#consistency-modes-and-concurrency) and [Unit Testing](/backend/unit-testing).
+
 ## Manual transactions
 
 Vona also supports manual transaction control using either:

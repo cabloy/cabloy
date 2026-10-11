@@ -52,7 +52,7 @@ When the active edition and installed modules provide `@Passport.rbac(...)` and 
 - when `modelsClearedByFn` is required, treat it as replacement behavior and explicitly own the target clear and any necessary downstream propagation
 - prefer normal Model/service mutation paths so source invalidation, commit-time re-clear, and configured double-delete remain active
 - add a warm-query → mutate-source → repeat-query regression test for each new dependency path; follow [Cross-model query-cache dependencies](../../../../repo-docs/backend/cache-guide.md#cross-model-query-cache-dependencies) for the portable decision rules
-- transaction behavior
+- transaction and concurrency requirements: leave independent CRUD writes without an explicit transaction or pessimistic lock by default; identify any multi-write atomicity or contention-sensitive invariant before choosing a transaction and the minimum necessary concurrency control. See [Transaction Guide](../../../../repo-docs/backend/transaction-guide.md).
 
 ## Test resource lifecycle follow-up
 
