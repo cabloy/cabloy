@@ -51,7 +51,7 @@ The owner of an existing controller/API operation whose DTO, OpenAPI metadata, g
 
 ### Deferred
 
-- A general-purpose OAuth authorization-server UI or identity provider managed by Cabloy itself. The selected integrated `a-auth` logical AS for the MCP-specific opaque-token profile has a separate, blocked delivery scope: its AS-owned interaction and shared grant/token state still require concrete approval, without automatically adding a Zova site or changing this deferred general-purpose UI. The first profile issues no refresh tokens; any later refresh profile needs a separate authority change.
+- A general-purpose OAuth authorization-server UI or identity provider managed by Cabloy itself. The selected integrated `a-auth` logical AS for the MCP-specific opaque-token profile has a separate, blocked delivery scope: a narrow Zova-presented, AS-controlled per-request authorization interaction is selected for design, while its concrete site/flavor, admission and shared grant/token implementation still require approval. This does not create a general-purpose UI or automatically add an independent Zova site. The first profile issues no refresh tokens; any later refresh profile needs a separate authority change.
 - Automatic exposure of every OpenAPI operation without eligibility, policy, or risk review.
 - Multipart upload, raw-body operations, binary downloads, redirects, streaming responses, SSE business payloads, and non-JSON tool results.
 - Destructive-operation confirmation UX beyond a protocol-level policy/metadata contract.
