@@ -313,13 +313,21 @@ export function getUnitTestCommands(args: string[]) {
   ];
 }
 
-export async function runIsolatedTest(kind: 'unit' | 'e2e', args: string[]) {
-  if (
-    !existsSync(resolve(ROOT_DIR, '__CABLOY_BASIC__')) ||
-    existsSync(resolve(ROOT_DIR, '__CABLOY_START__'))
-  ) {
-    throw new Error('This isolated test runner requires an unambiguous Cabloy Basic checkout');
+export function resolveCabloyEdition(rootDir = ROOT_DIR): 'basic' | 'start' {
+  const hasBasic = existsSync(resolve(rootDir, '__CABLOY_BASIC__'));
+  const hasStart = existsSync(resolve(rootDir, '__CABLOY_START__'));
+  if (hasBasic === hasStart) {
+    throw new Error(
+      hasBasic
+        ? 'Ambiguous Cabloy edition: both __CABLOY_BASIC__ and __CABLOY_START__ markers are present'
+        : 'Not a Cabloy project: no __CABLOY_BASIC__ or __CABLOY_START__ marker found',
+    );
   }
+  return hasBasic ? 'basic' : 'start';
+}
+
+export async function runIsolatedTest(kind: 'unit' | 'e2e', args: string[]) {
+  resolveCabloyEdition();
   if (process.env.E2E_BASE_URL !== undefined) {
     throw new Error(
       'E2E_BASE_URL is unsupported; the E2E runner manages a local test-mode target.',

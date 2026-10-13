@@ -32,6 +32,7 @@ import {
   createTestRunId,
   getUnitTestCommands,
   reserveTestRun,
+  resolveCabloyEdition,
   ROOT_DIR,
   runIsolatedProcess,
   runIsolatedTest,
@@ -77,6 +78,26 @@ test('public test scripts delegate to the isolated runner without recursion', ()
     'src/test/example.test.ts',
     '--ci=true',
   ]);
+});
+
+test('accepts either Cabloy edition and rejects ambiguous or missing markers', () => {
+  const root = mkdtempSync(join(tmpdir(), 'cabloy-run-edition-'));
+  const basicMarker = join(root, '__CABLOY_BASIC__');
+  const startMarker = join(root, '__CABLOY_START__');
+  try {
+    assert.throws(() => resolveCabloyEdition(root), /Not a Cabloy project/);
+
+    writeFileSync(basicMarker, '');
+    assert.equal(resolveCabloyEdition(root), 'basic');
+
+    writeFileSync(startMarker, '');
+    assert.throws(() => resolveCabloyEdition(root), /Ambiguous Cabloy edition/);
+
+    rmSync(basicMarker);
+    assert.equal(resolveCabloyEdition(root), 'start');
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
 
 test('creates a UTC timestamp and eight random hex digits for one run identity', () => {
