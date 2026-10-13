@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.206
+
+### Features
+
+- Update functionality (details unspecified).
+
+### Improvements
+
+- Update the pnpm dependency lockfile.
+
 ## 5.1.205
 
 ### Features
