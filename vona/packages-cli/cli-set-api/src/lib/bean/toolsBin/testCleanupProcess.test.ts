@@ -2,13 +2,9 @@ import { mkdir, mkdtemp, realpath, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
+import { createTestClaim, getTestClaimRedisPrefix, writeTestClaim } from 'vona-core';
 
 import { prepareCleanupProcess } from '../../../../../../../scripts/testClaimCleanup.ts';
-import {
-  createTestClaim,
-  getTestClaimRedisPrefix,
-} from '../../../../../../packages-vona/vona-core/src/lib/core/testClaim.ts';
-import { writeTestClaim } from '../../../../../../packages-vona/vona-core/src/lib/core/testClaim.ts';
 
 // A fake source config exercises child registration/current resolution/IPC but
 // never opens a database, Redis connection, listener, migration or seed.

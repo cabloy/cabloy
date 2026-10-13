@@ -1,24 +1,22 @@
-import type { VonaConfig, VonaConfigEnv } from 'vona-core';
+import type { TestClaimManifest, VonaConfig, VonaConfigEnv } from 'vona-core';
 
 import { getEnvFiles } from '@cabloy/dotenv';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
-import { VonaApplication, deepExtend, getTestAppName } from 'vona-core';
-
-import type { TestClaimManifest } from '../../../../../../packages-vona/vona-core/src/lib/core/testClaim.ts';
-
 import {
+  VonaApplication,
+  deepExtend,
+  getTestAppName,
   getTestClaimRedisPrefix,
   mergeTestClaimDatabaseOptions,
   mergeTestClaimRedisOptions,
   normalizeTestClaimDatabaseEndpoint,
   normalizeTestClaimRedisEndpoint,
-} from '../../../../../../packages-vona/vona-core/src/lib/core/testClaim.ts';
-import {
   getDatabaseTestPrefix,
   assertDisposableDatabaseName,
-} from '../../../../../../packages-vona/vona-core/src/lib/core/testIsolation.ts';
+} from 'vona-core';
+
 import { createConfigUtils } from './configUtils.ts';
 
 export interface TestCleanupResolvedConfig {

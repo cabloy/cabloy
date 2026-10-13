@@ -347,10 +347,16 @@ export async function loadTestClaim(claimPath: string) {
   try {
     const stat = await handle.stat();
     if (!stat.isFile() || stat.size > 4 * 1024 * 1024) throw new Error('Invalid test claim file');
-    return validateTestClaim(JSON.parse(await handle.readFile('utf8')), claimPath);
+    return validateTestClaim(parseTestClaimJson(await handle.readFile('utf8')), claimPath);
   } finally {
     await handle.close();
   }
+}
+function parseTestClaimJson(source: string) {
+  // Claim identities stay literal even when @cabloy/json5 revives ISO strings.
+  return JSON.parse(source, function (this: Record<string, unknown>, key: string) {
+    return this[key];
+  });
 }
 async function syncDirectory(directory: string) {
   const handle = await open(directory, constants.O_RDONLY);
@@ -606,7 +612,7 @@ export async function startTestClaimBroker(claimPath: string) {
         body += chunk.toString('utf8');
         if (Buffer.byteLength(body) > 1024 * 1024) throw new Error('Test claim event too large');
       }
-      await update(JSON.parse(body));
+      await update(parseTestClaimJson(body));
       res.writeHead(204).end();
     } catch {
       res.writeHead(409).end('Test claim registration rejected');

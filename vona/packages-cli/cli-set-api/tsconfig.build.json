@@ -6,5 +6,6 @@
     "declaration": true,
     "emitDeclarationOnly": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["src/lib/bean/toolsBin/*.test.ts"]
 }

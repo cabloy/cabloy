@@ -1,3 +1,4 @@
+import '@cabloy/json5';
 import assert from 'node:assert/strict';
 import {
   chmodSync,
@@ -88,6 +89,7 @@ test('exclusive central claim has canonical immutable UTC creation time and priv
     const { claimPath, manifest } = await createTestClaim(f.projectPath, runId, 'unit', owner);
     assert.equal(claimPath, path.join(f.projectPath, '.vona-test-claim', `${runId}.json`));
     assert.equal(manifest.createdAt, '2026-10-13T01:02:03.000Z');
+    assert.ok(JSON.parse('{"createdAt":"2026-10-13T01:02:03.000Z"}').createdAt instanceof Date);
     assert.equal(lstatSync(claimPath).mode & 0o777, 0o600);
     assert.equal(lstatSync(path.dirname(claimPath)).mode & 0o777, 0o700);
     await assert.rejects(createTestClaim(f.projectPath, runId, 'unit', owner), { code: 'EEXIST' });

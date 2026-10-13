@@ -7,9 +7,7 @@ import { pathToFileURL } from 'node:url';
 register(import.meta.resolve('ts-node-maintained/esm'), pathToFileURL(`${process.cwd()}/`));
 const require = createRequire(pathToFileURL(path.join(process.cwd(), 'package.json')));
 let queue = Promise.resolve();
-let claim:
-  | import('../../../../../../packages-vona/vona-core/src/lib/core/testClaim.ts').TestClaimManifest
-  | undefined;
+let claim: import('vona-core').TestClaimManifest | undefined;
 let config: import('./resolveTestCleanupConfig.ts').TestCleanupResolvedConfig | undefined;
 
 process.on('message', (message: any) => {
@@ -21,8 +19,7 @@ process.on('message', (message: any) => {
         if (message.command === 'prepare') {
           if (claim || typeof message.claimPath !== 'string')
             throw new Error('Invalid cleanup initialization');
-          const inventory =
-            await import('../../../../../../packages-vona/vona-core/src/lib/core/testClaim.ts');
+          const inventory = await import('vona-core');
           claim = await inventory.loadTestClaim(message.claimPath);
           if (claim.projectPath !== process.cwd() || claim.runId !== process.env.VONA_TEST_RUN_ID)
             throw new Error('Cleanup process identity mismatch');
@@ -71,7 +68,7 @@ process.on('message', (message: any) => {
           });
           const { dropExactCleanupDatabase } = await import('./testCleanupAdapters.ts');
           const { assertDisposableDatabaseName, getDatabaseTestPrefix, getTestAppName } =
-            await import('../../../../../../packages-vona/vona-core/src/lib/core/testIsolation.ts');
+            await import('vona-core');
           await dropExactCleanupDatabase(
             connection,
             database.endpoint.dialect,
@@ -115,8 +112,7 @@ process.on('message', (message: any) => {
           try {
             await connection.connect();
             const { clearExactRedisPrefix } = await import('./testCleanupAdapters.ts');
-            const { getTestClaimRedisPrefix } =
-              await import('../../../../../../packages-vona/vona-core/src/lib/core/testClaim.ts');
+            const { getTestClaimRedisPrefix } = await import('vona-core');
             await clearExactRedisPrefix(connection, resource.prefix, prefix => {
               if (prefix !== getTestClaimRedisPrefix(claim!.runId, resource.clientName)?.prefix)
                 throw new Error('Foreign cleanup prefix');

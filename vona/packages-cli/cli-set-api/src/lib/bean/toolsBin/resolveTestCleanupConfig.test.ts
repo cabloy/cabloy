@@ -1,18 +1,17 @@
+import type { TestClaimManifest } from 'vona-core';
+
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-
-import type { TestClaimManifest } from '../../../../../../packages-vona/vona-core/src/lib/core/testClaim.ts';
-import type { TestCleanupConfigDependencies } from './resolveTestCleanupConfig.ts';
-
 import {
   getTestClaimCreatedAt,
   getTestClaimPaths,
   getTestClaimRedisPrefix,
-} from '../../../../../../packages-vona/vona-core/src/lib/core/testClaim.ts';
-import {
   getDatabaseTestPrefix,
   getTestAppName,
-} from '../../../../../../packages-vona/vona-core/src/lib/core/testIsolation.ts';
+} from 'vona-core';
+
+import type { TestCleanupConfigDependencies } from './resolveTestCleanupConfig.ts';
+
 import { resolveTestCleanupConfig } from './resolveTestCleanupConfig.ts';
 
 const runId = '20261011010203-deadbeef';
