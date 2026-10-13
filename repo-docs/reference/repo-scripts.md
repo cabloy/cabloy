@@ -41,12 +41,33 @@ Cabloy Basic exposes these shared root scripts:
 - `npm run start:one`
 - `npm run test`
 - `npm run test:e2e`
+- `npm run db:reset`
 - `npm run tsc`
 - `npm run docs:dev`
 - `npm run docs:build`
 - `npm run docs:preview`
 
 `npm run init` prepares all Cabloy Basic SSR and REST artifacts with `npm run build:zova:all`, which sequentially builds the Basic and Commerce flavor batches before Vona initialization. Use `build:zova` or `build:zova:commerce` for focused artifact refreshes; use `build:zova:all` only when every shipped Basic flavor must be prepared.
+
+## Test isolation and development data in Cabloy Basic
+
+Root `npm run test` delegates to Vona's `npm run test`; both it and direct `cd vona && npm run test` use the same isolated runner. Vona's `npm run cov` also uses that runner and enables coverage. Root `npm run test:e2e` retains its own isolated E2E entrypoint. Each command launches a new test-mode run, even in the same checkout as a running development server. The runner chooses a UTC `YYYYMMDDHHmmss` timestamp plus eight lowercase cryptographically random hexadecimal characters for one run ID (for example, `20261014010203-a1b2c3d4`). This ID names both owned Vona directories (`.app-test-<id>` and `.vona-test-<id>`) and the disposable database and Redis namespaces; the runner also allocates a loopback listener. The runner exclusively creates an ignored JSON claim at `vona/.vona-test-claim/<id>.json` before allocating resources. A rare claim or directory collision fails without adopting or deleting the existing paths; rerun the command. Independent checkouts sharing database or Redis services do not share these claims, so their random suffixes reduce, but cannot eliminate, cross-checkout collisions.
+
+Claims contain a versioned, nonsecret resource inventory: owned local roots, exact database allocation intents, Redis namespaces and endpoint identities, process ownership, and cleanup progress. Allocators must receive an acknowledgment that their intent is recorded before creating a database or using framework-managed Redis resources. Credentials, full environment/configuration snapshots, and readiness secrets are not stored in claims.
+
+Successful unit, coverage, and managed application E2E runs release inventoried database and Redis resources and remove their owned local roots after process shutdown is verified. Managed E2E uses a registered browser fixture to verify detached browser-group shutdown; its run-owned reports, traces, and temporary profiles are deleted on success too. The claim is deleted last. Failed or interrupted runs retain their claim and resources for inspection. Cleanup failure also makes the command fail and retains the journal for retry.
+
+Before each new invocation, the runner checks retained claims against their immutable UTC creation timestamp. Claims older than one day are eligible for cleanup; set `VONA_TEST_CLAIM_TTL_SECONDS` to a positive integer to change the default `86400` seconds. Eligibility is not permission to delete a live or unowned resource: the runner retains malformed claims, mismatched owner markers, symlinked paths, changed service endpoints, live or uncertain process identities, incomplete launch registrations, and claims with an existing cleanup lock. Inspect these warnings manually; a lock is never taken over merely because it is old. Cleanup resolves current trusted configuration without starting the application, running seeds, or opening a listener. It drops only recorded database names and scans only exact recorded Redis prefixes, never flushing Redis. Partial progress is journaled so a later eligible cleanup can retry safely. Legacy `.vona-test-claim-<id>` directories and inventory-less run roots are not automatically migrated or deleted.
+
+All three commands initialize test databases and run module `seed()` hooks; none resets the ordinary dev-mode database or deletes its business data. A narrow test selection still initializes the test environment. Raw `:bin:test` invocations bypass the public scripts and do not get the runner's isolation guarantee.
+
+Coverage reports (`vona/coverage/lcov.info` and, without `--ci`, `vona/coverage/report`) are shared checkout-level artifacts, not run-owned data. Avoid overlapping coverage runs or relying on these reports as independent per-run output.
+
+Builds, generated artifacts, dependency installation/generation, and other shared preparation writes remain accepted prerequisites when needed. Test isolation does not make those writes private or authorize an unrelated reset of development data. The run-specific identity namespaces framework-managed resources; separately configured external databases, Redis targets or unprefixed custom keys, and third-party providers still require deliberate ownership and isolation. Inspect the active edition's scripts rather than assuming Cabloy Start already uses the same root runner.
+
+For Vona integrated SSR, the allocated E2E origin is supplied to Zova at runtime as server `SSR_API_BASE_URL` and browser `API_BASE_URL`. Do not edit Zova `.env` files or rebuild solely to match the test port. The current root `npm run test:e2e` consumes prebuilt frontend artifacts; refresh affected SSR/REST output and synchronize dependencies when their inputs change. See [Runtime API origins in Vona integrated SSR](/fullstack/ssr-entry-modes#runtime-api-origins-in-vona-integrated-ssr) for configuration overrides and scope.
+
+For a deliberate **dev-mode** database recreation, `npm run db:reset` is a separate, destructive command: it drops matching disposable development databases, reruns migrations and instance initialization, then runs module `seed()` hooks. It requires `database.testDatabase: true` in the dev configuration and a connection outside the disposable database. Ordinary `npm run dev` does not seed or reset; never run `db:reset` against development data you need to retain. Upgrades no longer initialize development test data automatically. See [Migration and Changes](/backend/migration-and-changes#local-development-workflow).
 
 ## Specification planning and derived charts
 
@@ -151,7 +172,7 @@ The public-package upgrade flow does not source or reconcile the Start-owned bas
 
 ## SSR browser checks
 
-Cabloy Basic and Cabloy Start each use a single managed local `npm run test:e2e` command. In Basic, the runner checks the effective `normal/test/local` Vona listener port and starts one fresh `--workers=1 --flavor=normal --mode=test` worker. Test-mode startup initializes test resources; the runner does not invoke a separate `db:reset` or a development-mode server. Playwright does not reuse an existing process. Confirm exclusive ownership of the effective test database, `_local` Redis namespace, public/runtime paths, `APP_NAME`, API origin, and listener before starting it; port availability alone is insufficient.
+Cabloy Basic and Cabloy Start each use a managed local `npm run test:e2e` command. In Basic, the root wrapper allocates a run-specific test identity, disposable database and Redis namespaces, Vona generated/runtime/public paths, and an available loopback port, then starts a fresh `--workers=1 --flavor=normal --mode=test` worker. Test-mode startup initializes test resources and invokes module seeds without a separate dev-mode `db:reset`; Playwright does not reuse an existing process. This protects ordinary same-checkout development data and permits a Basic root E2E run alongside a dev server, subject to the shared-preparation and external-resource boundaries above. Inspect the Start repository's current scripts for its own resource-ownership rules.
 
 Both editions' browser checks target Vona integrated SSR. In the Cabloy Basic default environment, the Vona listener is `7102`; the Zova standalone SSR development server uses `9000` and is not an acceptance target.
 

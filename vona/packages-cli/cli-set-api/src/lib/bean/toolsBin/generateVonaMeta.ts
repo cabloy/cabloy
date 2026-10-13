@@ -1,5 +1,7 @@
 import type { VonaConfigMeta } from '@cabloy/module-info';
 
+import { assertTestRunOwner, resolveVonaLocalPaths } from 'vona-core';
+
 import type { VonaBinConfigOptions } from './types.ts';
 
 import { createConfigUtils } from './configUtils.ts';
@@ -9,6 +11,14 @@ export async function generateVonaMeta(
   configMeta: VonaConfigMeta,
   configOptions: VonaBinConfigOptions,
 ) {
+  const paths = resolveVonaLocalPaths(configOptions.appDir, configMeta.mode);
+  if (paths.runId) {
+    if (configOptions.runtimeDir !== paths.generatedDir) {
+      throw new Error('Isolated test generated directory does not match its run ID');
+    }
+    assertTestRunOwner(paths.dataRoot, paths.runId);
+    assertTestRunOwner(paths.generatedRoot, paths.runId);
+  }
   // config utils
   const configUtils = createConfigUtils(configMeta, configOptions);
   // env

@@ -26,8 +26,9 @@ export class DatabaseDialectPg extends ServiceDatabaseDialectBase {
     schemaBuilder: Knex.SchemaBuilder,
     databasePrefix: string,
   ): Promise<IFetchDatabasesResultItem[]> {
+    const escapedPrefix = databasePrefix.replaceAll("'", "''");
     const res: any = await schemaBuilder.raw(
-      `select datname from pg_database where datname like '${databasePrefix}%'`,
+      `select datname from pg_database where left(datname, ${databasePrefix.length}) = '${escapedPrefix}'`,
     );
     let dbs = res.rows;
     dbs = dbs.map(db => {

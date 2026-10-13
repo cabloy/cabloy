@@ -5,6 +5,7 @@ import type { BootstrapOptions } from '../../types/interface/bootstrap.ts';
 import type { VonaConfigEnv } from '../../types/utils/env.ts';
 
 import { VonaApplication } from '../core/application.ts';
+import { assertTestAppIdentity } from '../core/testIsolation.ts';
 import { jsxEnhance } from '../utils/jsx-enhance.ts';
 import { prepareEnv } from '../utils/util.ts';
 import { zodEnhance } from '../utils/zod-enhance.ts';
@@ -54,6 +55,7 @@ function __createApp({ modulesMeta, locales, config, env, AppMonkey }: Bootstrap
   jsxEnhance();
   // env
   const env2 = prepareEnv(env);
+  assertTestAppIdentity(env2.META_MODE, env2.VONA_TEST_RUN_ID, env2.APP_NAME ?? '');
   // appInfo
   const appInfo = prepareAppInfo(env2);
   // options

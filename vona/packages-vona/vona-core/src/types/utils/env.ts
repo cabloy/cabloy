@@ -4,6 +4,7 @@ export interface VonaConfigEnv {
   META_FLAVOR: VonaMetaFlavor;
   META_MODE: VonaMetaMode;
   APP_NAME: string | undefined;
+  VONA_TEST_RUN_ID: string | undefined;
   APP_TITLE: string | undefined;
   APP_VERSION: string | undefined;
   SERVER_KEYS: string | undefined;

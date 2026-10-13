@@ -15,6 +15,25 @@ Zova standalone SSR:    browser → Zova development server → frontend SSR →
 
 In the Cabloy Basic default environment, `SERVER_LISTEN_PORT=7102` is the Vona entry and `DEV_SERVER_PORT=9000` is the Zova development entry. These are separate listeners, not two ports for the same server. Zova's `API_BASE_URL` points to Vona, not to its own development port. Local environment overrides can change the ports; use the effective values in your checkout.
 
+## Runtime API origins in Vona integrated SSR
+
+Vona integrated SSR supplies API origins at runtime; this mechanism is not specific to an edition or frontend flavor. By default, Vona derives the origin from its effective protocol and host and passes:
+
+- `envServer.SSR_API_BASE_URL` to the built Zova server bundle during initialization.
+- `envClient.API_BASE_URL` through the SSR state to the browser during client initialization.
+
+These runtime values override Zova's build-time environment defaults used by the normal API client. They do not rewrite hard-coded URLs or arbitrary build-time substitutions in application code.
+
+For an isolated `npm run test:e2e` that enters through Vona integrated SSR, the runner's dynamic Vona origin is therefore sufficient: **do not edit Zova `.env` files or rebuild the flavor solely to match the test port**. A new listener address alone does not make the bundle stale.
+
+Artifact preparation is a separate concern. When frontend code, routes, metadata, or other build inputs change, refresh the required SSR/REST artifacts and synchronize Vona dependencies as required. Resolve commands and flavors from the active repository's scripts; do not assume every edition's E2E command builds the frontend automatically. See [SSR Build and Deploy Guide](/frontend/ssr-build-deploy-guide) and [Repo Scripts](/reference/repo-scripts).
+
+The injected origins are defaults, with these boundaries:
+
+- Vona merges the default origins first, then the `a-ssr` module's `site.default` configuration, then the individual SSR Site options. An explicit `envServer.SSR_API_BASE_URL` or `envClient.API_BASE_URL` in those site settings overrides the corresponding default; a value only in Zova's build-time `.env` does not count as a site override.
+- Generated OpenAPI clients prefer their module-specific `OPENAPI_BASE_URL_*`, then `OPENAPI_BASE_URL_DEFAULT`, before the server or browser API-origin fallback. Custom API configuration and hard-coded URLs also require separate inspection when requests reach the wrong origin.
+- Zova standalone SSR and SPA do not automatically receive this Vona integrated SSR handoff. Keep their environment setup separate from this rule, including deliberate [parallel worktree development configuration](/fullstack/parallel-worktree-environment).
+
 ## Start and use them in Cabloy Basic
 
 Start the Vona server from the repository root and visit a Vona-served site:

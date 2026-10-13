@@ -1,7 +1,8 @@
 import type { APIRequestContext, Page, TestInfo } from '@playwright/test';
 
-import { expect, test } from '@playwright/test';
 import path from 'node:path';
+
+import { expect, test } from '../scripts/managedTest.ts';
 
 const accountPath = '/home/user/account';
 const passwordSetPath = '/home/user/password-set';

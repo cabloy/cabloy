@@ -1,6 +1,6 @@
 import type { Locator, Page, Request, Route } from '@playwright/test';
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../scripts/managedTest.ts';
 
 const studentResourceUrl =
   /\/admin\/rest\/resource\/training-student(?:%3A|:|%253A)student(?:[/?#]|$)/;

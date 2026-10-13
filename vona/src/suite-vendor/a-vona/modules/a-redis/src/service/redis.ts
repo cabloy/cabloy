@@ -1,6 +1,6 @@
 import type { Redis } from 'ioredis';
 
-import { BeanBase } from 'vona';
+import { BeanBase, resolveTestRunId } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
 import type { IRedisClientRecord } from '../types/redis.ts';
@@ -14,7 +14,8 @@ export class ServiceRedis extends BeanBase {
     // clear keys
     await this._clearRedisKeys(
       app.bean.redis.get('queue'),
-      `${getRedisClientKeyPrefix('bull', app)}*`,
+      getRedisClientKeyPrefix('bull', app),
+      true,
     );
     // broadcast channel has subscribed
     // await _clearRedisKeys(app.redis.get('broadcast'), `${getRedisClientKeyPrefix('broadcast', app)}*`);
@@ -24,22 +25,38 @@ export class ServiceRedis extends BeanBase {
       if (clientName.startsWith('redlock')) {
         await this._clearRedisKeys(
           app.bean.redis.get(clientName),
-          `${getRedisClientKeyPrefix('redlock', app)}*`,
+          getRedisClientKeyPrefix('redlock', app),
+          true,
         );
       } else {
         const client = app.config.redis.clients[clientName];
         const keyPrefix = prepareRedisClientKeyPrefix(client.keyPrefix, clientName, this.app);
-        await this._clearRedisKeys(app.bean.redis.get(clientName), `${keyPrefix}*`);
+        await this._clearRedisKeys(app.bean.redis.get(clientName), keyPrefix!);
       }
     }
   }
 
-  private async _clearRedisKeys(redis: Redis, pattern: string) {
+  private async _clearRedisKeys(redis: Redis, expectedPrefix: string, unprefixedClient = false) {
     if (!redis) return;
+    const isolated = resolveTestRunId(
+      this.app.meta.env.META_MODE,
+      this.app.meta.env.VONA_TEST_RUN_ID,
+    );
     const keyPrefix = redis.options.keyPrefix;
-    const keys = await redis.keys(pattern);
+    if (isolated) {
+      if (!expectedPrefix.includes(this.app.name) || !expectedPrefix.endsWith(':')) {
+        throw new Error('Isolated test Redis cleanup prefix does not belong to this run');
+      }
+      if (unprefixedClient ? Boolean(keyPrefix) : keyPrefix !== expectedPrefix) {
+        throw new Error('Isolated test Redis cleanup uses an unexpected client prefix');
+      }
+    }
+    const keys = await redis.keys(`${expectedPrefix}*`);
     const keysDel: string[] = [];
     for (const fullKey of keys) {
+      if (isolated && !fullKey.startsWith(expectedPrefix)) {
+        throw new Error('Isolated test Redis lookup returned a key outside the owned prefix');
+      }
       const key = keyPrefix ? fullKey.substring(keyPrefix.length) : fullKey;
       keysDel.push(key);
     }

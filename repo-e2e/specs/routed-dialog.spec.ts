@@ -1,6 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../scripts/managedTest.ts';
 
 declare global {
   interface Window {

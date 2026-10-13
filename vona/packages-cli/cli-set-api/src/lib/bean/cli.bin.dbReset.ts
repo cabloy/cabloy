@@ -5,6 +5,7 @@ import { BeanCliBase } from '@cabloy/cli';
 import fse from 'fs-extra';
 import path from 'node:path';
 import { rimraf } from 'rimraf';
+import { resolveVonaLocalPaths } from 'vona-core';
 
 import type { VonaBinConfigOptions } from './toolsBin/types.ts';
 
@@ -23,23 +24,27 @@ export class CliBinDbReset extends BeanCliBase {
     // super
     await super.execute();
     const projectPath = argv.projectPath;
-    // test
+    // recreate the development database
     await this._dbReset(projectPath);
   }
 
   async _dbReset(projectPath: string) {
     const { argv } = this.context;
-    const mode: VonaMetaMode = 'test';
+    const mode: VonaMetaMode = 'dev';
     const flavor: VonaMetaFlavor = argv.flavor || 'normal';
     const configMeta: VonaConfigMeta = { flavor, mode };
+    const paths = resolveVonaLocalPaths(projectPath, mode);
     const configOptions: VonaBinConfigOptions = {
       appDir: projectPath,
-      runtimeDir: '.vona',
+      runtimeDir: paths.generatedDir,
       workers: 1,
     };
-    const { modulesMeta } = await generateVonaMeta(configMeta, configOptions);
-    await this._run(projectPath, modulesMeta);
-    await rimraf(path.join(projectPath, '.vona'));
+    try {
+      const { modulesMeta } = await generateVonaMeta(configMeta, configOptions);
+      await this._run(projectPath, modulesMeta);
+    } finally {
+      await rimraf(paths.generatedRoot);
+    }
   }
 
   async _run(projectPath: string, _modulesMeta: Awaited<ReturnType<typeof glob>>) {
@@ -50,7 +55,11 @@ export class CliBinDbReset extends BeanCliBase {
     }
     // run
     let args: string[] = [];
-    args = args.concat([getImportEsm(), testFile, projectPath]);
+    args = args.concat([
+      getImportEsm(resolveVonaLocalPaths(projectPath, 'dev').generatedDir),
+      testFile,
+      projectPath,
+    ]);
     // args = args.concat(['--experimental-transform-types', getImportEsm(), testFile, projectPath]);
     await this.helper.spawnExe({
       cmd: 'node',

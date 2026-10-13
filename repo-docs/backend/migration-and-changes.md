@@ -94,11 +94,11 @@ export class MetaVersion extends BeanBase {}
 
 Three migration scenarios are defined:
 
-| Scenario | Purpose                                          |
-| -------- | ------------------------------------------------ |
-| `update` | schema evolution such as tables and fields       |
-| `init`   | instance- or tenant-specific initialization data |
-| `seed`   | shared baseline data for the test environment    |
+| Scenario | Purpose                                             |
+| -------- | --------------------------------------------------- |
+| `update` | schema evolution such as tables and fields          |
+| `init`   | instance- or tenant-specific initialization data    |
+| `seed`   | baseline data for test runs and explicit dev resets |
 
 This split is one of the most important Vona migration ideas because it separates:
 
@@ -110,7 +110,7 @@ A practical generated-thread interpretation is:
 
 - `update` follows schema and entity/model evolution
 - `init` follows instance-aware initialization needs introduced by the backend feature
-- `seed` provides shared baseline data while the application starts in test mode
+- `seed` provides shared baseline data during test-mode startup or an explicit development database reset
 
 ## Update: schema migration
 
@@ -153,7 +153,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionInit {
 
 The important point is that initialization can run per instance or tenant, which keeps tenant data isolated.
 
-## Seed: test-environment baseline data
+## Seed: test and reset baseline data
 
 Representative pattern:
 
@@ -171,9 +171,9 @@ export class MetaVersion extends BeanBase implements IMetaVersionSeed {
 
 This is valuable because shared baseline data becomes part of the structured version lifecycle instead of being scattered across unrelated setup code.
 
-Vona invokes `seed()` while the application starts in test mode. Use it for durable baseline fixtures shared by multiple tests, E2E tests, or the managed local-development test-data workflow. The seed path starts from a newly recreated managed database; it is not a repeatable, same-database data-import mechanism.
+Vona invokes `seed()` while the application starts in test mode (`npm run test` or managed E2E), and during an explicit `npm run db:reset` in dev mode. Ordinary development startup and framework upgrades do not seed or reset development data automatically. Use `seed()` for durable baseline fixtures shared by tests or for freshly prepared local development data. Both paths seed after instance initialization on a newly recreated disposable database; `seed()` is not a repeatable, same-database data-import mechanism.
 
-Treat shared `seed()` records as read-only in ordinary tests. A scenario that needs different state must create independent, test-owned data and clean it up in `finally`; it must not mutate or delete the shared baseline. `seed()` remains distinct from `init()`: use `init()` for instance-aware initialization data and reserve `seed()` for shared test-environment baseline data.
+Treat shared `seed()` records as read-only in ordinary tests. A scenario that needs different state must create independent, test-owned data and clean it up in `finally`; it must not mutate or delete the shared baseline. `seed()` remains distinct from `init()`: use `init()` for instance-aware initialization data and reserve `seed()` for baseline data in test runs or explicit development resets.
 
 ## Version changes across the generated backend thread
 
@@ -199,13 +199,14 @@ Representative commands:
 
 ```bash
 npm run test
-cd vona && npm run db:reset
+npm run db:reset
 ```
 
 A practical decision rule is:
 
-- use `db:reset` when you mainly need to replay migration/database setup locally
-- use `test` when you need to verify that migration, controller behavior, and the broader generated contract thread still work together
+- use `db:reset` to recreate the disposable **dev-mode** databases, rerun migrations and instance initialization, and then invoke module `seed()` hooks; it deletes existing matching development databases, so do not run it against data you need to keep
+- `db:reset` requires `database.testDatabase: true` in dev config and a connection outside the disposable database; it refuses to reset a configured non-disposable database
+- use `test` when you need **test-mode** verification of migration, controller behavior, and the broader generated contract thread; E2E also remains test-mode
 
 ## Implementation checks for migration-sensitive changes
 

@@ -6,6 +6,7 @@ import { catchError } from '@cabloy/utils';
 import fse from 'fs-extra';
 import path from 'node:path';
 import { rimraf } from 'rimraf';
+import { resolveVonaLocalPaths } from 'vona-core';
 
 import type { VonaBinConfigOptions } from './toolsBin/types.ts';
 
@@ -34,17 +35,21 @@ export class CliBinTest extends BeanCliBase {
     const mode: VonaMetaMode = 'test';
     const flavor: VonaMetaFlavor = argv.flavor || 'normal';
     const configMeta: VonaConfigMeta = { flavor, mode };
+    const paths = resolveVonaLocalPaths(projectPath, mode);
     const configOptions: VonaBinConfigOptions = {
       appDir: projectPath,
-      runtimeDir: '.vona',
+      runtimeDir: paths.generatedDir,
       workers: 1,
     };
-    const { modulesMeta } = await generateVonaMeta(configMeta, configOptions);
-    await this._run(projectPath, modulesMeta);
-    if (argv.coverage && !argv.ci) {
-      await this._outputCoverageReportViewer(projectPath);
+    try {
+      const { modulesMeta } = await generateVonaMeta(configMeta, configOptions);
+      await this._run(projectPath, modulesMeta);
+      if (argv.coverage && !argv.ci) {
+        await this._outputCoverageReportViewer(projectPath);
+      }
+    } finally {
+      if (!paths.runId) await rimraf(paths.generatedRoot);
     }
-    await rimraf(path.join(projectPath, '.vona'));
   }
 
   async _run(projectPath: string, modulesMeta: Awaited<ReturnType<typeof glob>>) {
@@ -70,7 +75,7 @@ export class CliBinTest extends BeanCliBase {
       args.push('--import=why-is-node-running/include');
     }
     args = args.concat([
-      getImportEsm(),
+      getImportEsm(resolveVonaLocalPaths(projectPath, 'test').generatedDir),
       testFile,
       projectPath,
       (!!argv.coverage).toString(),

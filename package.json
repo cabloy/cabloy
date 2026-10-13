@@ -22,7 +22,6 @@
   "type": "module",
   "scripts": {
     "init": "node scripts/init.ts",
-    "init:test-data": "node scripts/initTestData.ts",
     "upgrade": "node scripts/upgrade.ts",
     "upgrade:dry-run": "node scripts/upgrade.ts --dry-run",
     "vona": "node ./vona/packages-cli/cli/src/bin/vona.ts --projectPath=vona",
@@ -47,7 +46,7 @@
     "start": "cd vona && npm run start",
     "start:one": "cd vona && npm run start:one",
     "test": "cd vona && npm run test",
-    "test:e2e": "node repo-e2e/scripts/runE2e.ts",
+    "test:e2e": "node scripts/runIsolatedTest.ts e2e",
     "test:docs:e2e": "npm run docs:build && playwright test --config repo-e2e/docs/playwright.config.ts",
     "db:reset": "cd vona && npm run db:reset",
     "tsc": "npm run tsc:zova && pnpm --dir vona run tsc",

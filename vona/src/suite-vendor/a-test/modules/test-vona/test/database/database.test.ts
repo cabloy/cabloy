@@ -12,8 +12,9 @@ describe('database.test.ts', { concurrency: false }, () => {
       // current
       assert.equal(app.ctx.db.clientName, defaultClientName);
       // switch
-      const clientNames = Object.keys(app.config.database.clients);
-      const clientName2 = clientNames.find(item => item !== defaultClientName);
+      const clientName2 = 'isolateTest';
+      assert.notEqual(clientName2, defaultClientName);
+      assert.ok(app.config.database.clients[clientName2]);
       await app.bean.database.switchDb(
         async () => {
           assert.equal(app.ctx.db.clientName, clientName2);

@@ -3,6 +3,7 @@ import path from 'node:path';
 
 import type { VonaApplication } from '../core/application.ts';
 
+import { resolveVonaLocalPaths } from '../core/testIsolation.ts';
 import { pathToHref } from '../utils/util.ts';
 
 export function useApp(): VonaApplication {
@@ -38,7 +39,10 @@ export async function createGeneralApp(
     const testInstance = await import(pathToHref(testFile));
     return await testInstance.appBootstrap;
   } else {
-    const testFile = path.join(projectPath, '.vona/app.ts');
+    const testFile = path.join(
+      resolveVonaLocalPaths(projectPath, process.env.META_MODE).generatedRoot,
+      'app.ts',
+    );
     const testInstance = await import(pathToHref(testFile));
     return await testInstance.createSingleApp();
   }

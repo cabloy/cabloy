@@ -24,6 +24,8 @@ export default defineConfig(
       '**/quasar.config.ts.temporary.*',
       // common directory patterns (from vona & zova, converted to **/)
       '**/.vona',
+      '**/.vona-test-*',
+      '**/.app-test-*',
       '**/.assets',
       '**/.app',
       '**/.zova-rest',

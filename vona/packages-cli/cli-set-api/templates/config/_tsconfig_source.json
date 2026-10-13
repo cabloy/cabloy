@@ -5,6 +5,7 @@
   },
   "include": [
     ".vona/**/*.ts",
+    ".vona-test-*/**/*.ts",
     "src/backend/package.json",
     "src/backend/config",
     "src/backend/play",

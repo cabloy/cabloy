@@ -3,7 +3,13 @@ import type { IOnionSlice } from 'vona-module-a-onion';
 
 import { isNil } from '@cabloy/utils';
 import fse from 'fs-extra';
-import { BeanBase, cast, getRuntimePathPhysicalRoot } from 'vona';
+import {
+  assertIsolatedTestConfig,
+  BeanBase,
+  cast,
+  getRuntimePathPhysicalRoot,
+  withIsolatedTestDatabaseDiscovery,
+} from 'vona';
 import { Service } from 'vona-module-a-bean';
 
 import type {
@@ -16,6 +22,10 @@ import type {
 @Service()
 export class ServiceStartup extends BeanBase {
   async appStart() {
+    // db:reset is a one-shot data preparation command, not a development server.
+    if (this.app.meta.isDev && process.env.VONA_DB_RESET === 'true') {
+      this.app.config.server.listen.disable = true;
+    }
     // clear keys
     await this._clearResources();
 
@@ -23,7 +33,23 @@ export class ServiceStartup extends BeanBase {
     for (const startup of this._startups) {
       const startupOptions = startup.beanOptions.options;
       if (!startupOptions?.instance && startupOptions?.after !== true) {
-        await this.runStartup(startup.name, null);
+        // A previous dev startup may have left databaseInit's debounce key in Redis.
+        // Only the explicit reset must bypass that key to guarantee recreation.
+        const force =
+          this.app.meta.isDev &&
+          process.env.VONA_DB_RESET === 'true' &&
+          startup.name === 'a-version:databaseInit';
+        const run = () => this.runStartup(startup.name, null, force ? { force: true } : undefined);
+        if (this.app.meta.env.VONA_TEST_RUN_ID && startup.name === 'a-version:databaseInit') {
+          const defaultClient = this.app.config.database.defaultClient;
+          if (typeof defaultClient !== 'string') {
+            throw new TypeError('Isolated test requires a static default database client');
+          }
+          const client = this.app.config.database.clients[defaultClient];
+          await withIsolatedTestDatabaseDiscovery(this.app, defaultClient, client, run);
+        } else {
+          await run();
+        }
       }
     }
   }
@@ -52,24 +78,25 @@ export class ServiceStartup extends BeanBase {
       }
     }
 
-    // version seed
-    if (this.app.meta.isTest) {
-      const instanceName = '';
-      await this.bean.executor.newCtx(
-        async () => {
-          await this.$scope.version.service.version.__instanceSeed(instanceName);
-        },
-        {
-          dbInfo: { level: 1 },
-          instanceName,
-        },
-      );
+    // Seed test runs and explicit development resets only, after instance initialization.
+    if (this.app.meta.isTest || (this.app.meta.isDev && process.env.VONA_DB_RESET === 'true')) {
+      await this.seedDefaultInstance();
     }
+  }
+
+  private async seedDefaultInstance() {
+    const instanceName = '';
+    await this.bean.executor.newCtx(
+      async () => {
+        await this.$scope.version.service.version.__instanceSeed(instanceName);
+      },
+      { dbInfo: { level: 1 }, instanceName },
+    );
   }
 
   private async _appReadyInstanceStartup(instanceName: keyof IInstanceRecord, wait: boolean) {
     const res = this.$scope.instance.service.instance.instanceStartupIsolate(instanceName, {
-      force: false,
+      force: this.app.meta.isDev && process.env.VONA_DB_RESET === 'true',
     });
     if (wait) {
       await res;
@@ -172,6 +199,7 @@ export class ServiceStartup extends BeanBase {
 
   private async _clearResources() {
     if (!this.app.meta.isTest) return;
+    assertIsolatedTestConfig(this.app);
     // redis
     await this.$scope.redis.service.redis.clearAllData();
     // .app/public

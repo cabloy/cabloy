@@ -65,7 +65,7 @@ function __parseBeanInfo(state) {
 }
 
 function __getModuleName(sourceFileName: string | null | undefined) {
-  if (!__checkIfValid(sourceFileName)) return;
+  if (!isValidBeanModuleFile(sourceFileName)) return;
   const moduleInfo = parseInfoFromPath(sourceFileName);
   if (!moduleInfo) return;
   return moduleInfo.relativeName;
@@ -93,8 +93,9 @@ function __createDecoratorNode(beanInfo) {
 //   }
 // }
 
-function __checkIfValid(fileName?: string | null) {
+export function isValidBeanModuleFile(fileName?: string | null) {
   if (!fileName) return false;
+  if (/[\\/].vona-test-\d{14}-[a-f0-9]{8}[\\/]/.test(fileName)) return false;
   return !['src/boot/app/', '.zova/app/', 'src/backend/', '.vona/'].some(item => {
     return fileName.includes(item);
   });

@@ -57,7 +57,8 @@ cd vona && npm run start:one
 In the current repo, those scripts map naturally to:
 
 - `dev` commands -> development mode
-- `test` / `cov` / `db:reset` -> test mode
+- `test` / `cov` -> test mode through the same per-run isolated runner as root `npm run test` (root `npm run test:e2e` also uses an isolated test mode); raw `:bin:test` bypasses the wrapper
+- `db:reset` -> development mode (explicitly recreates disposable development databases and runs module seeds)
 - `build` / `start` -> production mode
 
 ## Flavors

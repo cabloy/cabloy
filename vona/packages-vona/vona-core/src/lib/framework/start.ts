@@ -2,6 +2,8 @@ import type { VonaConfig, VonaConfigOptional } from '../../types/index.ts';
 import type { VonaApplication } from '../core/application.ts';
 
 import { EnumAppEvent } from '../../types/index.ts';
+import { assertIsolatedTestConfig } from '../core/isolationGuard.ts';
+import { registerTestClaimResourceInventory } from '../core/testClaim.ts';
 import { ModuleLoader } from '../module/loader.ts';
 import { deepExtend } from '../utils/util.ts';
 
@@ -65,6 +67,8 @@ export class Start {
     // config
     const appConfig = await __prepareConfig(app);
     this.app.config = appConfig as VonaConfig;
+    assertIsolatedTestConfig(app);
+    await registerTestClaimResourceInventory(app);
     this.app.keys = appConfig.server!.keys!;
     this.app.proxy = appConfig.proxy!.enable!;
     this.app.subdomainOffset = appConfig.server!.subdomainOffset!;

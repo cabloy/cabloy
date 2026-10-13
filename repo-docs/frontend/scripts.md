@@ -51,7 +51,7 @@ The `dev:zova:*` commands start the Zova development server, which uses `9000` i
 
 ## Vona integrated SSR browser acceptance
 
-The default Basic Web and Admin sites have browser smoke commands that exercise Vona integrated SSR through Vona SSR dispatch at port `7102`, not through the Zova standalone SSR development-server port.
+The default Basic Web and Admin sites have browser smoke commands that exercise Vona integrated SSR through Vona SSR dispatch at the managed run's dynamically allocated test listener, not through the ordinary Vona development listener (`7102` by default) or the Zova standalone SSR development-server port. Vona supplies the API origin at runtime, so no Zova `.env` change or rebuild is needed solely for the test port; see [Runtime API origins in Vona integrated SSR](/fullstack/ssr-entry-modes#runtime-api-origins-in-vona-integrated-ssr).
 
 Prepare current SSR and REST artifacts explicitly when frontend output has changed:
 

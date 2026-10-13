@@ -43,6 +43,8 @@ export default defineConfig(
       '**/.rollup.cache/**',
       '**/.metadata/index.ts',
       '.vona',
+      '.vona-test-*',
+      '.app-test-*',
       '.claude',
       '.assets',
       'coverage',

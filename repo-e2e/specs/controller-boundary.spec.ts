@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../scripts/managedTest.ts';
 
 const probeErrorMessage = 'Controller boundary probe initialization failed';
 
