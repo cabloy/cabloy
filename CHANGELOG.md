@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.205
+
+### Features
+
+- Update functionality.
+
+### Bug Fixes
+
+- Respect CLI publish boundaries.
+- Preserve test claim identities.
+
 ## 5.1.204
 
 ### Improvements
