@@ -1,5 +1,19 @@
 # Changelog
 
+## 5.1.207
+
+### Features
+
+- Add update functionality.
+
+### Bug Fixes
+
+- Fix database reset behavior.
+
+### Improvements
+
+- Enhance and refactor database reset functionality.
+
 ## 5.1.206
 
 ### Features
