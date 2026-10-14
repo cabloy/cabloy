@@ -81,9 +81,9 @@ function fixture(existing: string[] = [], isolate?: string[]) {
 }
 
 describe('dev database preparation', { concurrency: false }, () => {
-  it('clears all resources before first creation and records only actual creations', async () => {
+  it('clears all resources before reset creation and records only actual creations', async () => {
     const { service, calls } = fixture();
-    await service.prepareDevDatabases();
+    await service.prepareDevDatabases(true);
     assert.deepEqual(calls.slice(0, 3), ['clear', 'alive', 'create:main']);
     assert.deepEqual(service.createdInstanceNames, ['']);
     await service.prepareDevDatabases();
@@ -102,13 +102,29 @@ describe('dev database preparation', { concurrency: false }, () => {
     assert.deepEqual(service.createdInstanceNames, []);
   });
 
-  it('does not reseed the existing shared database when only an isolate is missing', async () => {
+  it('rejects a missing isolate before reloading or changing the existing shared database', async () => {
     const { service, calls } = fixture([databaseName], []);
-    await service.prepareDevDatabases();
-    assert.equal(calls.filter(call => call === 'clear').length, 1);
-    assert.ok(calls.includes('create:isolated'));
-    assert.ok(!calls.includes('create:main'));
-    assert.deepEqual(service.createdInstanceNames, ['isolateTest']);
+    await assert.rejects(service.prepareDevDatabases(false), /isolateTest.*npm run db:reset/);
+    assert.deepEqual(calls, []);
+    assert.deepEqual(service.createdInstanceNames, []);
+  });
+
+  it('rejects a missing shared database without any preparation side effects', async () => {
+    const { service, calls } = fixture();
+    await assert.rejects(service.prepareDevDatabases(false), /default.*npm run db:reset/);
+    assert.deepEqual(calls, []);
+    assert.deepEqual(service.createdInstanceNames, []);
+  });
+
+  it('rejects missing targets through legacy startup entrypoints before migration', async () => {
+    for (const versionStart of [false, true]) {
+      const { service, calls } = fixture();
+      await assert.rejects(
+        service.prepareDatabase('main' as never, versionStart),
+        /npm run db:reset/,
+      );
+      assert.deepEqual(calls, []);
+    }
   });
 
   it('preflights every target before any deletion', async () => {
@@ -122,7 +138,7 @@ describe('dev database preparation', { concurrency: false }, () => {
     (service as any).$scope.redis.service.redis.clearAllData = async () => {
       throw new Error('cleanup failed');
     };
-    await assert.rejects(service.prepareDevDatabases(), /cleanup failed/);
+    await assert.rejects(service.prepareDevDatabases(true), /cleanup failed/);
     assert.deepEqual(calls, []);
     assert.deepEqual(service.createdInstanceNames, []);
   });
@@ -159,9 +175,27 @@ describe('dev database preparation', { concurrency: false }, () => {
   it('checks actual existence even if the configured name belongs to the managed namespace', async () => {
     const { service, clients, calls } = fixture();
     clients.main.getDatabaseName = () => databaseName;
-    await service.prepareDevDatabases(false);
-    assert.ok(calls.includes('clear'));
-    assert.ok(calls.includes('create:main'));
+    await assert.rejects(service.prepareDevDatabases(false), /npm run db:reset/);
+    assert.deepEqual(calls, []);
+  });
+
+  it('propagates discovery failures without treating them as missing databases', async () => {
+    const { service, clients, calls } = fixture([databaseName]);
+    clients.main.connection.schema.fetchDatabases = async () => {
+      throw new Error('discovery failed');
+    };
+    await assert.rejects(service.prepareDevDatabases(false), /discovery failed/);
+    assert.deepEqual(calls, []);
+  });
+
+  it('propagates reset creation failure without migrating or requesting seeds', async () => {
+    const { service, clients, calls } = fixture([databaseName]);
+    clients.main.connection.schema.createDatabase = async () => {
+      throw new Error('creation failed');
+    };
+    await assert.rejects(service.prepareDevDatabases(true), /creation failed/);
+    assert.deepEqual(calls, ['clear', 'alive', `drop:${databaseName}`]);
+    assert.deepEqual(service.createdInstanceNames, []);
   });
 
   it('preserves both existing targets on reuse', async () => {

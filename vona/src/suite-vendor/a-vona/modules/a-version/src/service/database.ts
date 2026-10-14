@@ -131,13 +131,18 @@ export class ServiceDatabase extends BeanBase {
             databasePrefix,
             sqliteRoot,
             databases: dbs.map(db => db.name),
-            create: reset || dbs.length === 0,
+            create: reset,
           };
         }, target.clientName),
       );
     }
 
-    if (plans.some(plan => plan.create)) {
+    if (!reset) {
+      const missing = plans.find(plan => plan.databases.length === 0);
+      if (missing) this.__missingDevDatabase(missing.instanceName);
+    }
+
+    if (reset) {
       await this.$scope.redis.service.redis.clearAllData();
       await this.bean.worker.setAlive();
     }
@@ -260,14 +265,20 @@ export class ServiceDatabase extends BeanBase {
     instanceName?: keyof IInstanceRecord,
     configInstanceBase?: ConfigInstanceBase,
   ) {
-    await this.__prepareDatabaseInner(versionStart, instanceName, configInstanceBase);
+    await this.__prepareDatabaseInner(instanceName, configInstanceBase);
     if (versionStart) {
       await this.scope.service.version.__start();
     }
   }
 
+  private __missingDevDatabase(instanceName?: keyof IInstanceRecord): never {
+    throw new Error(
+      `Development database is missing for instance "${instanceName || 'default'}". ` +
+        'Run "npm run db:reset" before starting the development server.',
+    );
+  }
+
   private async __prepareDatabaseInner(
-    versionStart: boolean,
     instanceName?: keyof IInstanceRecord,
     configInstanceBase?: ConfigInstanceBase,
   ) {
@@ -275,7 +286,10 @@ export class ServiceDatabase extends BeanBase {
       // donothing
       return;
     }
-    if (this.app.meta.isDev && devDatabasePreparations.get(this.app)?.prepared) return;
+    if (this.app.meta.isDev) {
+      await this.prepareDevDatabases();
+      return;
+    }
     const databasePrefix = this.getDatabasePrefix(instanceName, configInstanceBase);
     if (this.app.meta.env.VONA_TEST_RUN_ID) {
       const paths = resolveVonaLocalPaths(
@@ -288,16 +302,7 @@ export class ServiceDatabase extends BeanBase {
     // client
     const client = this.bean.database.current.client;
     // get current database name
-    let databaseName = client.getDatabaseName();
-    // dev/debug db
-    if (this.app.meta.isDev) {
-      const reset = versionStart && process.env.VONA_DB_RESET === 'true';
-      // Never drop a configured, non-disposable development database.
-      if (reset && !this.configDatabase.testDatabase) {
-        throw new Error('db:reset requires database.testDatabase=true in the dev configuration');
-      }
-      if (!this.configDatabase.testDatabase) return;
-    }
+    const databaseName = client.getDatabaseName();
     const sqliteRoot =
       client.db.dialectName === 'better-sqlite3'
         ? resolveVonaLocalPaths(
@@ -318,34 +323,6 @@ export class ServiceDatabase extends BeanBase {
       throw new Error(
         `Isolated test database is outside its disposable namespace: ${databaseName}`,
       );
-    }
-    // dev/debug db
-    if (this.app.meta.isDev) {
-      const reset = versionStart && process.env.VONA_DB_RESET === 'true';
-      // The database used to enumerate/drop databases must not itself be dropped.
-      if (isTestDatabase) {
-        if (reset)
-          throw new Error('db:reset requires a connection outside the disposable database');
-        return;
-      }
-      const dbs = await this.__fetchDatabases(client, instanceName, configInstanceBase);
-      for (const db of dbs) {
-        assertDisposableDatabaseName(db.name, databasePrefix, sqliteRoot);
-      }
-      if (reset) {
-        for (const db of dbs) {
-          await client.connection.schema.dropDatabase(db.name);
-        }
-      }
-      databaseName =
-        reset || dbs.length === 0
-          ? await this.__createDatabase(client, instanceName, configInstanceBase)
-          : dbs[0].name;
-      assertDisposableDatabaseName(databaseName, databasePrefix, sqliteRoot);
-      // set config and reload client
-      await client.changeConfigConnectionAndReloadWorker(databaseName);
-      this.$logger.silly(chalk.cyan(`dialect: ${client.db.dialectName}`));
-      this.$logger.silly(chalk.cyan(`database: ${databaseName}, pid: ${process.pid}`));
     }
     // test db
     if (this.app.meta.isTest) {

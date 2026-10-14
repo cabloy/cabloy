@@ -1,10 +1,14 @@
+import type { Worker } from 'node:cluster';
+
 import chalk from 'chalk';
 import cluster from 'node:cluster';
 
 import { useApp } from './useApp.ts';
 
 let __closing = false;
+let __failed = false;
 let __timeout;
+const __reloading = new WeakSet<Worker>();
 
 async function _closeInner() {
   __timeout = setTimeout(() => {
@@ -23,32 +27,39 @@ export function handleProcessMaster(workers: number) {
     });
   });
 
-  for (let i = 0; i < workers; i++) {
-    cluster.fork();
-  }
-
   cluster.on('message', (worker, message) => {
     if (message === 'reload-worker') {
       if (!__closing) {
         cluster.fork();
       }
+      __reloading.add(worker);
       worker.process.kill('SIGTERM');
     }
   });
 
   cluster.on('exit', (_worker, _code, _signal) => {
-    // console.log(`----------------- worker ${_worker.process.pid} died`, _code, _signal);
+    const expectedSignal =
+      (__closing && ['SIGINT', 'SIGUSR2', 'SIGTERM'].includes(_signal)) ||
+      (__reloading.has(_worker) && _signal === 'SIGTERM');
+    __reloading.delete(_worker);
+    if ((_code !== 0 || _signal) && !expectedSignal) {
+      __failed = true;
+    }
     if (cluster.workers && Object.keys(cluster.workers).length === 0) {
       clearTimeout(__timeout);
       // log
       const app = useApp();
       if (app.meta.env.LOGGER_DUMMY !== 'true') {
-        const message = `Master shutdown gracefully: ${process.pid}`;
+        const message = `Master shutdown ${__failed ? 'with worker failure' : 'gracefully'}: ${process.pid}`;
         // eslint-disable-next-line
         console.log(chalk.cyan(message));
       }
       // exit
-      process.exit(0);
+      process.exit(__failed ? 1 : 0);
     }
   });
+
+  for (let i = 0; i < workers; i++) {
+    cluster.fork();
+  }
 }

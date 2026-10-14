@@ -97,7 +97,8 @@ export class CliBinDev extends BeanCliBase {
 
   async _run(projectPath: string, _modulesMeta: Awaited<ReturnType<typeof glob>>) {
     let closed = false;
-    return new Promise((resolve, _reject) => {
+    let crashError: Error | undefined;
+    return new Promise((resolve, reject) => {
       (nodemon as any)({
         script: '.vona/bootstrap.ts',
         cwd: projectPath,
@@ -127,9 +128,23 @@ export class CliBinDev extends BeanCliBase {
         ],
       });
       nodemon
+        .on('crash', () => {
+          if (closed) return;
+          closed = true;
+          // nodemon emits crash without an error payload; the child already logged the cause.
+          crashError = new Error('Development server crashed; see the startup error above');
+          // Let nodemon finish processing the child exit before stopping its watchers.
+          setImmediate(() => nodemon.emit('quit'));
+        })
         .on('quit', () => {
           closed = true;
-          resolve(undefined);
+          if (crashError) {
+            // The programmatic quit event does not close watchers; reset before propagating
+            // the failure to the CLI's error handler, which exits the process immediately.
+            nodemon.reset(() => reject(crashError));
+          } else {
+            resolve(undefined);
+          }
         })
         .on('restart', files => {
           if (closed) {
