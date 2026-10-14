@@ -100,7 +100,7 @@ async function main() {
   }
 
   p.outro(
-    `${pc.green(' Done! ')}Next steps:\n${pc.dim(`  cd ${result.projectName}\n`)}${pc.dim('  claude\n')}${pc.dim('  npm run db:reset\n')}${pc.dim('  npm run dev\n')}\nOpen this project in Claude Code and start coding immediately with project-specific guidance.`,
+    `${pc.green(' Done! ')}Next steps:\n${pc.dim(`  cd ${result.projectName}\n`)}${pc.dim('  npm run db:reset\n')}${pc.dim('  npm run dev\n')}\nOpen this project in Claude Code and start coding immediately with project-specific guidance.`,
   );
 }
 
