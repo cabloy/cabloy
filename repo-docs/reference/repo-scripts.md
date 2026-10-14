@@ -67,7 +67,7 @@ Builds, generated artifacts, dependency installation/generation, and other share
 
 For Vona integrated SSR, the allocated E2E origin is supplied to Zova at runtime as server `SSR_API_BASE_URL` and browser `API_BASE_URL`. Do not edit Zova `.env` files or rebuild solely to match the test port. The current root `npm run test:e2e` consumes prebuilt frontend artifacts; refresh affected SSR/REST output and synchronize dependencies when their inputs change. See [Runtime API origins in Vona integrated SSR](/fullstack/ssr-entry-modes#runtime-api-origins-in-vona-integrated-ssr) for configuration overrides and scope.
 
-For a deliberate **dev-mode** database recreation, `npm run db:reset` is a separate, destructive command: it drops matching disposable development databases, reruns migrations and instance initialization, then runs module `seed()` hooks. It requires `database.testDatabase: true` in the dev configuration and a connection outside the disposable database. Ordinary `npm run dev` does not seed or reset; never run `db:reset` against development data you need to retain. Upgrades no longer initialize development test data automatically. See [Migration and Changes](/backend/migration-and-changes#local-development-workflow).
+For a deliberate **dev-mode** database recreation, `npm run db:reset` is a separate, destructive command: it clears application-owned Redis keys, drops matching disposable development databases, reruns migrations and instance initialization, then runs module `seed()` hooks. It requires `database.testDatabase: true` in the dev configuration and a connection outside the disposable database. Ordinary `npm run dev` does not reset existing databases; it clears Redis and seeds only when creating a missing managed disposable database. Never run `db:reset` against development data you need to retain. Upgrades do not reset existing development data or repeat its seeds. See [Development database preparation](#development-database-preparation) and [Migration and Changes](/backend/migration-and-changes#local-development-workflow).
 
 ## Specification planning and derived charts
 
@@ -139,6 +139,21 @@ Cabloy Start exposes the equivalent Start repository surface:
 - `npm run tsc`
 
 Cabloy Start does not expose Basic Commerce or root documentation wrappers.
+
+## Development database preparation
+
+**Cabloy Basic, Commerce, and Cabloy Start** share this creation-only development lifecycle. Use the active repository's commands and configuration; sharing the lifecycle does not make the editions' flavors or frontend outputs interchangeable.
+
+With `database.testDatabase: true`, `npm run dev` (or `npm run dev:one`) distinguishes creation from reuse of framework-managed disposable development databases:
+
+- **Missing database:** the framework directly invokes Redis `clearAllData()` before creating the database, then runs migrations, instance initialization, and module `seed()` hooks for the newly created database before listeners and queue workers start.
+- **Existing database:** the framework reuses it without repeating creation-time Redis cleanup or module seeding. This is not a reset or a repeatable fixture-import path.
+
+`npm run db:reset` explicitly recreates matching disposable **dev-mode** databases and uses the same direct `clearAllData()` preparation before migrations, instance initialization, and seeding. It requires `database.testDatabase: true` and a connection outside the disposable database. **Stop the development server and any other processes using the same database and Redis namespace before running it**; disabling the reset command's own listener does not make a reset safe alongside a live server. Do not reset data you need to retain.
+
+Here, `clearAllData()` deletes only keys in the validated application-owned Redis prefixes, covering Bull queue, redlock, worker, and cache keys. It does not use `FLUSHDB` or `FLUSHALL`, clear unrelated namespaces, or treat broadcast subscriptions as cleanup keys. Prefix scoping still makes this operation destructive to the application's own Redis state; it is not permission to clean a shared live namespace manually.
+
+See [Managed development database preparation](/backend/migration-and-changes#managed-development-database-preparation) for the seed lifecycle and safety boundary.
 
 ## Upgrade
 

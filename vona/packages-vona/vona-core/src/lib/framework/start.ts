@@ -2,6 +2,7 @@ import type { VonaConfig, VonaConfigOptional } from '../../types/index.ts';
 import type { VonaApplication } from '../core/application.ts';
 
 import { EnumAppEvent } from '../../types/index.ts';
+import { acquireDevDatabasePreparation } from '../core/devDatabasePreparation.ts';
 import { assertIsolatedTestConfig } from '../core/isolationGuard.ts';
 import { registerTestClaimResourceInventory } from '../core/testClaim.ts';
 import { ModuleLoader } from '../module/loader.ts';
@@ -18,10 +19,15 @@ export class Start {
     const app = this.app;
     try {
       await this._start_appConfig();
-      await this._start_appLoad();
-      await this._start_appStart();
-      await this._start_appReady();
-      await this._start_appStarted();
+      const release = await acquireDevDatabasePreparation(app);
+      try {
+        await this._start_appLoad();
+        await this._start_appStart();
+        await this._start_appReady();
+        await this._start_appStarted();
+      } finally {
+        await release?.();
+      }
     } catch (err) {
       // record
       app.meta.appStartError = err as Error;
