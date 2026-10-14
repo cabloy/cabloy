@@ -116,6 +116,20 @@ describe('dev database preparation', { concurrency: false }, () => {
     assert.deepEqual(service.createdInstanceNames, []);
   });
 
+  it('prints a prominent reset command and destructive-data warning before rejecting', async t => {
+    const { service, calls } = fixture();
+    const output: string[] = [];
+    t.mock.method(console, 'error', (message: string) => output.push(message));
+    await assert.rejects(service.prepareDevDatabases(false), /default.*npm run db:reset/);
+    assert.equal(output.length, 1);
+    assert.match(output[0], /DEVELOPMENT DATABASE MISSING/);
+    assert.match(output[0], /Instance: default/);
+    assert.match(output[0], /npm run db:reset/);
+    assert.match(output[0], /deletes managed development data/);
+    assert.match(output[0], /Stop processes using the same database and Redis namespace first/);
+    assert.deepEqual(calls, []);
+  });
+
   it('rejects missing targets through legacy startup entrypoints before migration', async () => {
     for (const versionStart of [false, true]) {
       const { service, calls } = fixture();

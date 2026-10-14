@@ -272,6 +272,22 @@ export class ServiceDatabase extends BeanBase {
   }
 
   private __missingDevDatabase(instanceName?: keyof IInstanceRecord): never {
+    // eslint-disable-next-line
+    console.error(
+      [
+        '',
+        chalk.bgRed.white.bold(' DEVELOPMENT DATABASE MISSING '),
+        chalk.yellow(`Instance: ${instanceName || 'default'}`),
+        '',
+        chalk.bold.yellow('Run this command before starting the development server:'),
+        '',
+        chalk.bold.cyan('  npm run db:reset'),
+        '',
+        chalk.yellow('Warning: db:reset deletes managed development data.'),
+        chalk.yellow('Stop processes using the same database and Redis namespace first.'),
+        '',
+      ].join('\n'),
+    );
     throw new Error(
       `Development database is missing for instance "${instanceName || 'default'}". ` +
         'Run "npm run db:reset" before starting the development server.',
