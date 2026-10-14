@@ -171,7 +171,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionSeed {
 
 This is valuable because shared baseline data becomes part of the structured version lifecycle instead of being scattered across unrelated setup code.
 
-Vona invokes `seed()` while the application starts in test mode (`npm run test` or managed E2E), and during an explicit `npm run db:reset` in dev mode. **Cabloy Basic, Commerce, and Cabloy Start** also seed when dev startup creates a missing framework-managed disposable database, but not when it reuses an existing one. Framework upgrades do not reset existing development data or repeat its seeds. Use `seed()` for durable baseline fixtures shared by tests or for freshly prepared local development data. Seeding follows instance initialization on a newly created or recreated disposable database; `seed()` is not a repeatable, same-database data-import mechanism. See [Managed development database preparation](#managed-development-database-preparation) for the creation-only lifecycle.
+Vona invokes `seed()` while the application starts in test mode (`npm run test` or managed E2E), and during an explicit `npm run db:reset` in dev mode. **Cabloy Basic and Cabloy Start** also seed when dev startup creates a missing framework-managed disposable database, but not when it reuses an existing one. Framework upgrades do not reset existing development data or repeat its seeds. Use `seed()` for durable baseline fixtures shared by tests or for freshly prepared local development data. Seeding follows instance initialization on a newly created or recreated disposable database; `seed()` is not a repeatable, same-database data-import mechanism. See [Managed development database preparation](#managed-development-database-preparation) for the creation-only lifecycle.
 
 Treat shared `seed()` records as read-only in ordinary tests. A scenario that needs different state must create independent, test-owned data and clean it up in `finally`; it must not mutate or delete the shared baseline. `seed()` remains distinct from `init()`: use `init()` for instance-aware initialization data and reserve `seed()` for baseline data in test runs, explicit development resets, or creation-only development preparation.
 
@@ -210,7 +210,7 @@ A practical decision rule is:
 
 ### Managed development database preparation
 
-**Cabloy Basic, Commerce, and Cabloy Start** share this creation-only lifecycle for framework-managed disposable development databases.
+**Cabloy Basic and Cabloy Start** share this creation-only lifecycle for framework-managed disposable development databases.
 
 When `database.testDatabase: true` enables framework-managed disposable dev databases, `npm run dev` and `npm run dev:one` distinguish two paths:
 

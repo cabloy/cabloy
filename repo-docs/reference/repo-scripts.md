@@ -142,7 +142,7 @@ Cabloy Start does not expose Basic Commerce or root documentation wrappers.
 
 ## Development database preparation
 
-**Cabloy Basic, Commerce, and Cabloy Start** share this creation-only development lifecycle. Use the active repository's commands and configuration; sharing the lifecycle does not make the editions' flavors or frontend outputs interchangeable.
+**Cabloy Basic and Cabloy Start** share this creation-only development lifecycle. Use the active repository's commands and configuration; sharing the lifecycle does not make the editions' flavors or frontend outputs interchangeable.
 
 With `database.testDatabase: true`, `npm run dev` (or `npm run dev:one`) distinguishes creation from reuse of framework-managed disposable development databases:
 
