@@ -4,7 +4,29 @@ import path from 'node:path';
 import { loadJSONFile } from './utils.ts';
 
 export async function playAttach(projectPath: string, args: string[]) {
-  const runtimeFile = path.join(projectPath, '.app/runtime/-.json');
+  const runId = process.env.VONA_TEST_RUN_ID;
+  if (runId) {
+    const match = /^(\d{14})-[a-f0-9]{8}$/.exec(runId);
+    const timestamp = match?.[1];
+    const date = timestamp
+      ? new Date(
+          `${timestamp.slice(0, 4)}-${timestamp.slice(4, 6)}-${timestamp.slice(6, 8)}T${timestamp.slice(8, 10)}:${timestamp.slice(10, 12)}:${timestamp.slice(12, 14)}Z`,
+        )
+      : undefined;
+    if (
+      process.env.META_MODE !== 'test' ||
+      !timestamp ||
+      !date ||
+      Number.isNaN(date.getTime()) ||
+      date.toISOString().slice(0, 19).replace(/[-:T]/g, '') !== timestamp
+    ) {
+      throw new Error(
+        'VONA_TEST_RUN_ID requires test mode and a UTC timestamp plus eight hex digits',
+      );
+    }
+  }
+  const dataDir = runId ? `.app-test-${runId}` : '.app';
+  const runtimeFile = path.join(projectPath, dataDir, 'runtime/-.json');
   if (!fse.existsSync(runtimeFile)) throw new Error('dev server not running');
   // body
   const body = { args, projectPath };

@@ -97,24 +97,10 @@ async function main() {
     p.log.error(pc.red('npm run init failed. You can try running it manually.'));
   } else {
     s2.stop('Project initialized successfully!');
-
-    const s3 = p.spinner();
-    s3.start('Initializing test data...');
-    const testDataExitCode = await spawnAsync('npm', ['run', 'init:test-data'], {
-      cwd: targetDir,
-    });
-    if (testDataExitCode !== 0) {
-      s3.stop('Test data initialization skipped', 1);
-      p.log.warn(
-        pc.yellow('npm run init:test-data failed. You can try running it manually later.'),
-      );
-    } else {
-      s3.stop('Test data initialized successfully!');
-    }
   }
 
   p.outro(
-    `${pc.green(' Done! ')}Next steps:\n${pc.dim(`  cd ${result.projectName}\n`)}${pc.dim('  claude\n')}${pc.dim('  npm run dev\n')}\nOpen this project in Claude Code and start coding immediately with project-specific guidance.`,
+    `${pc.green(' Done! ')}Next steps:\n${pc.dim(`  cd ${result.projectName}\n`)}${pc.dim('  npm run db:reset\n')}${pc.dim('  npm run dev\n')}\nOpen this project in Claude Code and start coding immediately with project-specific guidance.`,
   );
 }
 

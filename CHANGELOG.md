@@ -1,5 +1,47 @@
 # Changelog
 
+## 5.1.208
+
+### Improvements
+
+- Update the README and quickstart documentation.
+- Update the changelog for version 5.1.207.
+
+## 5.1.207
+
+### Features
+
+- Add update functionality.
+
+### Bug Fixes
+
+- Fix database reset behavior.
+
+### Improvements
+
+- Enhance and refactor database reset functionality.
+
+## 5.1.206
+
+### Features
+
+- Update functionality (details unspecified).
+
+### Improvements
+
+- Update the pnpm dependency lockfile.
+
+## 5.1.205
+
+### Features
+
+- Update functionality.
+
+### Bug Fixes
+
+- Respect CLI publish boundaries.
+- Preserve test claim identities.
+
 ## 5.1.204
 
 ### Improvements

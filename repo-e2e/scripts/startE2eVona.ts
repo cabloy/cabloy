@@ -5,6 +5,10 @@ import { resolve } from 'node:path';
 
 import { E2E_LOCAL_BASE_URL, E2E_ROOT_DIR } from './e2e.ts';
 
+// Root isolated E2E owns the server directly. This wrapper remains for direct, legacy E2E.
+if (process.env.VONA_TEST_RUN_ID) {
+  throw new Error('Root isolated E2E starts its server through the root runner');
+}
 const child: ChildProcess = spawn(
   process.execPath,
   [
@@ -32,10 +36,38 @@ let stopping = false;
 let forced = false;
 let shutdownTimer: NodeJS.Timeout | undefined;
 
-function finish(code: number) {
+async function waitForGroupExit(timeoutMs: number): Promise<boolean> {
+  if (!child.pid || process.platform === 'win32') return true;
+  const deadline = Date.now() + timeoutMs;
+  while (true) {
+    try {
+      process.kill(-child.pid, 0);
+    } catch (error: any) {
+      if (error.code === 'ESRCH') return true;
+      throw error;
+    }
+    if (Date.now() >= deadline) return false;
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+}
+
+let finishing = false;
+async function finish(code: number) {
+  if (finishing) return;
+  finishing = true;
   if (shutdownTimer) {
     clearTimeout(shutdownTimer);
     shutdownTimer = undefined;
+  }
+  if (child.pid && process.platform !== 'win32' && !(await waitForGroupExit(1000))) {
+    signalChild('SIGINT');
+    if (!(await waitForGroupExit(3500))) {
+      signalChild('SIGKILL');
+      if (!(await waitForGroupExit(1000))) {
+        console.error(`E2E Vona process group is still active: ${child.pid}`);
+        process.exit(1);
+      }
+    }
   }
   process.exit(code);
 }
@@ -64,7 +96,7 @@ function forceStop() {
     `E2E Vona process group did not stop within ${gracefulShutdownTimeout}ms; forcing termination: ${child.pid}`,
   );
   signalChild('SIGKILL');
-  finish(1);
+  void finish(1);
 }
 
 function stop() {
@@ -85,10 +117,10 @@ process.on('SIGTERM', stop);
 child.on('error', error => {
   // eslint-disable-next-line
   console.error(error);
-  finish(1);
+  void finish(1);
 });
 
-child.on('exit', (code, signal) => {
+child.on('close', (code, signal) => {
   // Playwright waits for this wrapper to exit, not only for Vona's workers to stop.
-  finish(code ?? (signal ? 1 : 0));
+  void finish(code ?? (signal ? 1 : 0));
 });

@@ -134,6 +134,7 @@ Use the root [package.json](https://github.com/cabloy/cabloy/blob/main/package.j
 
 ```bash
 npm run init
+npm run db:reset
 npm run dev
 npm run tsc
 npm run test

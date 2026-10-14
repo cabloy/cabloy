@@ -57,11 +57,11 @@ It examines the project and generator commands, then uses Vona's CRUD generator 
 
 The resulting book form has three fields:
 
-| Field | Purpose | Requirement |
-| --- | --- | --- |
-| Title | Book title | Required |
-| Author | Book author | Required |
-| Description | Book description | Optional |
+| Field       | Purpose          | Requirement |
+| ----------- | ---------------- | ----------- |
+| Title       | Book title       | Required    |
+| Author      | Book author      | Required    |
+| Description | Book description | Optional    |
 
 One useful part of the development experience is immediately apparent: **once the business resource is defined, the list, detail view, and forms can reuse CabloyJS's existing schema-driven CRUD pages. There is no need to build a new management interface from scratch.**
 
@@ -163,10 +163,10 @@ Don't submit this time. Leave the form as a draft.
 
 The task tabs now contain three open tasks:
 
-| Task | Content |
-| --- | --- |
-| Edit | Book One's edit form |
-| Detail | Book One's detail view |
+| Task   | Content                     |
+| ------ | --------------------------- |
+| Edit   | Book One's edit form        |
+| Detail | Book One's detail view      |
 | Create | Book Two's unsubmitted form |
 
 ### Switch Back and Continue Where You Left Off

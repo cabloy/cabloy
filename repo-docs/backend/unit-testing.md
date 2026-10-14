@@ -47,11 +47,13 @@ npm run test
 A typical Vona test flow includes:
 
 1. create one shared global `app` object for the test run
-2. clean Redis data
-3. recreate the database
-4. execute migration code
+2. clean the run's Redis namespace and run-specific public/runtime paths
+3. recreate the run's disposable test database
+4. execute migration and instance initialization code, then module `seed()` hooks
 5. run the test files
 6. close the shared application after the test run
+
+In Cabloy Basic, root `npm run test` delegates to `vona/`'s `npm run test`; both allocate an isolated test identity, database and Redis namespace, Vona generated/runtime/public paths, and loopback listener. They can run in the same checkout as an ordinary development server without resetting or mutating that server's business data. Even a targeted run performs the test-mode setup. The Vona `npm run cov` script uses the same isolation; raw `:bin:test` commands do not. Shared build/dependency preparation may still write to shared artifacts, and custom external resources need separate isolation. See [Repo Scripts](/reference/repo-scripts#test-isolation-and-development-data-in-cabloy-basic).
 
 The runner owns this application lifecycle. Test files import the shared app from `vona-mock` and must not create or close it themselves:
 
@@ -61,15 +63,15 @@ import { app } from 'vona-mock';
 
 This is one of the most important distinctions from ordinary app flow: test execution rebuilds and verifies the framework lifecycle, not only the target function.
 
-## Reset database without running tests
+## Reset development database without running tests
 
-Representative command:
+From the repository root:
 
 ```bash
-cd vona && npm run db:reset
+npm run db:reset
 ```
 
-This is useful when you want to reapply migration logic without running the entire test suite.
+This is an explicit, destructive **dev-mode** command, not test isolation: it recreates matching disposable development databases, reapplies migration and instance initialization, and runs module `seed()` hooks. It requires `database.testDatabase: true` in dev configuration and a connection outside the disposable database. Ordinary dev startup does not seed; do not reset if you need to keep its existing business data. See [Migration and Changes](/backend/migration-and-changes#local-development-workflow).
 
 ## Coverage
 
@@ -78,6 +80,8 @@ Representative command:
 ```bash
 cd vona && npm run cov
 ```
+
+This script runs under the same isolated test environment as Vona's `npm run test`. It writes `vona/coverage/lcov.info` and, unless `--ci` is supplied, `vona/coverage/report`. These reports are shared checkout-level artifacts rather than per-run test data; do not run coverage jobs simultaneously in one checkout. Use `npm run cov -- --ci` to skip the viewer in CI.
 
 ## Runner concurrency
 
@@ -129,7 +133,7 @@ Locale-sensitive variants and additional request-context helpers are also availa
 Classify persisted test data before creating it:
 
 - use a **test-local fixture** for a single test or scenario;
-- use an owning module's `meta.version.ts` `seed()` hook only for stable baseline data shared across tests or intentionally used by the local-development test-data workflow.
+- use an owning module's `meta.version.ts` `seed()` hook only for stable baseline data shared across isolated test runs or intentionally prepared by an explicit dev-mode database reset.
 
 A test owns every persisted resource it creates. Keep the returned entity or exact ID and delete owned records from `finally`, including when an assertion or action fails. Delete dependents before their owners and use the same active tenant/instance context that created them. Do not discover cleanup targets through broad table queries, time-based prefixes, or business conditions when the test already knows the exact identity.
 

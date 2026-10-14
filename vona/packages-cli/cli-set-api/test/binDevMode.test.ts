@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
+import { CliBinDbReset } from '../src/lib/bean/cli.bin.dbReset.ts';
 import { CliBinDev, resolveDevMode, resolveTestWorkers } from '../src/lib/bean/cli.bin.dev.ts';
 import command from '../src/lib/command/bin.dev.ts';
 
@@ -29,6 +30,23 @@ describe('bin.dev mode', () => {
     for (const workers of [0, 2, '1', null, [1]]) {
       assert.throws(() => resolveTestWorkers('test', workers), /requires --workers=1/);
     }
+  });
+
+  it('launches db:reset with dev-mode generated runtime', async () => {
+    const cli = Object.create(CliBinDbReset.prototype) as CliBinDbReset;
+    const calls: Array<{ cmd: string; args: string[]; options: { cwd: string } }> = [];
+    Object.defineProperty(cli, 'helper', {
+      value: {
+        spawnExe: async options => {
+          calls.push(options);
+        },
+      },
+    });
+    await cli._run('/tmp/vona-reset-project', {} as never);
+    assert.equal(calls.length, 1);
+    assert.deepEqual(calls[0].args.slice(0, 1), ['--import=./.vona/register.js']);
+    assert.match(calls[0].args[1], /dbReset\.ts$/);
+    assert.equal(calls[0].args[2], '/tmp/vona-reset-project');
   });
 
   it('supervises test-mode bootstrap exit without starting a server', async () => {

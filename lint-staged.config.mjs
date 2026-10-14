@@ -22,6 +22,8 @@ const OXFMT_IGNORE_PATTERNS = [
   '**/quasar.config.ts.temporary.*',
   // common directory patterns
   '**/.vona',
+  '**/.vona-test-*',
+  '**/.app-test-*',
   '**/.assets',
   '**/.app',
   '**/.zova-rest',

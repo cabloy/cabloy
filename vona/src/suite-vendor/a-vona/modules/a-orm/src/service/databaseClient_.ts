@@ -2,7 +2,7 @@ import type { Knex } from 'knex';
 
 import { catchError } from '@cabloy/utils';
 import knex from 'knex';
-import { deepExtend } from 'vona';
+import { assertIsolatedTestDatabaseClient, assertTestClaimDatabaseClient, deepExtend } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { BeanMutateBase } from 'vona-module-a-beanmutate';
 
@@ -71,6 +71,8 @@ export class ServiceDatabaseClient extends BeanMutateBase {
     this.clientName = dbInfo.clientName;
     // config: inited by bean.database.getClient
     this.clientConfig = clientConfig!;
+    assertIsolatedTestDatabaseClient(this.app, this.clientName, this.clientConfig);
+    assertTestClaimDatabaseClient(this.app, this.clientName, this.clientConfig);
     // knex
     this._knex = knex(deepExtend({}, this.clientConfig));
   }
@@ -89,6 +91,7 @@ export class ServiceDatabaseClient extends BeanMutateBase {
       this.clientName,
       clientConfig,
     );
+    assertIsolatedTestDatabaseClient(this.app, this.clientName, clientConfigReal);
     this.$mutate([this.clientNameSelector, clientConfigReal]);
     await this.__close();
     this.__load(this.clientNameSelector, clientConfigReal);
@@ -118,6 +121,8 @@ export class ServiceDatabaseClient extends BeanMutateBase {
     //   * should not use this.clientConfig.connection, because password is hidden
     const config = this.scope.service.database.getClientConfig(this.clientName, undefined, true);
     config.connection = Object.assign({}, config.connection, connDatabaseName);
+    const effectiveConfig = this.scope.service.database.getClientConfig(this.clientName, config);
+    assertIsolatedTestDatabaseClient(this.app, this.clientName, effectiveConfig);
     // only used by startup, so no consider that workers broadcast
     this.configDatabase.clients[this.clientName] = config;
     // reload

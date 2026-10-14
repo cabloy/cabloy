@@ -8,8 +8,8 @@ import { handleProcessWork } from './processWorker.ts';
 
 export async function startCluster(workers: number, bootstrapOptions: BootstrapOptions) {
   if (cluster.isPrimary) {
+    await createAppMaster(bootstrapOptions);
     handleProcessMaster(workers);
-    createAppMaster(bootstrapOptions);
   } else {
     await startWorker(bootstrapOptions);
   }

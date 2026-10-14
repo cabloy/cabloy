@@ -37,6 +37,8 @@ blob-report/
 # vona core related directories
 vona/.vona
 vona/.app
+vona/.vona-test-*
+vona/.app-test-*
 vona/.zova-rest
 
 **/.temp-dynamic-*

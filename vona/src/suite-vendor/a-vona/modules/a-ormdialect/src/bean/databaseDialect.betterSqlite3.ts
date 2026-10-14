@@ -11,7 +11,9 @@ import type {
 
 import { ensureDir, remove } from 'fs-extra';
 import { globby } from 'globby';
+import { lstat } from 'node:fs/promises';
 import path from 'node:path';
+import { assertTestRunOwner, resolveVonaLocalPaths, resolveTestRunId } from 'vona';
 import { ServiceDatabaseDialectBase, DatabaseDialect } from 'vona-module-a-orm';
 
 export interface IDatabaseDialectOptionsBetterSqlite3 extends IDecoratorDatabaseDialectOptions {}
@@ -54,6 +56,30 @@ export class DatabaseDialectBetterSqlite3 extends ServiceDatabaseDialectBase {
   }
 
   async dropDatabase(_schemaBuilder: Knex.SchemaBuilder, databaseName: string): Promise<void> {
+    const isolated = resolveTestRunId(
+      this.app.meta.env.META_MODE,
+      this.app.meta.env.VONA_TEST_RUN_ID,
+    );
+    if (isolated) {
+      const paths = resolveVonaLocalPaths(this.app.projectPath, 'test', isolated);
+      assertTestRunOwner(paths.dataRoot, isolated);
+      const basename = path.basename(databaseName);
+      if (
+        path.resolve(databaseName) !== path.join(paths.sqliteRoot, basename) ||
+        !/^vona-test-[\w-]+-\d{8}-\d{6}\.db$/.test(basename)
+      ) {
+        throw new Error(
+          `Isolated test cannot remove SQLite database outside its owned root: ${databaseName}`,
+        );
+      }
+      await assertNotSymlink(paths.sqliteRoot);
+      for (const file of [
+        databaseName,
+        ...['shm', 'wal', 'journal'].map(part => `${databaseName}-${part}`),
+      ]) {
+        await assertNotSymlink(file);
+      }
+    }
     await remove(databaseName);
     for (const part of ['shm', 'wal', 'journal']) {
       await remove(`${databaseName}-${part}`);
@@ -93,7 +119,21 @@ export class DatabaseDialectBetterSqlite3 extends ServiceDatabaseDialectBase {
   }
 
   private _getDbDir() {
-    return path.join(this.app.projectPath, '.app/sqlite3');
+    return resolveVonaLocalPaths(
+      this.app.projectPath,
+      this.app.meta.env.META_MODE,
+      this.app.meta.env.VONA_TEST_RUN_ID,
+    ).sqliteRoot;
+  }
+}
+
+async function assertNotSymlink(file: string) {
+  try {
+    if ((await lstat(file)).isSymbolicLink()) {
+      throw new Error(`Isolated test SQLite path is a symlink: ${file}`);
+    }
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
   }
 }
 

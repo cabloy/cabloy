@@ -3,9 +3,9 @@ import type { VonaConfigMeta, VonaMetaFlavor, VonaMetaMode } from '@cabloy/modul
 
 import { BeanCliBase } from '@cabloy/cli';
 import { spawn } from 'node:child_process';
-import path from 'node:path';
 import nodemon from 'nodemon';
 import { rimraf } from 'rimraf';
+import { resolveVonaLocalPaths } from 'vona-core';
 
 import type { VonaBinConfigOptions } from './toolsBin/types.ts';
 
@@ -48,9 +48,10 @@ export class CliBinDev extends BeanCliBase {
     const workers = resolveTestWorkers(mode, argv.workers);
     const flavor: VonaMetaFlavor = argv.flavor || 'normal';
     const configMeta: VonaConfigMeta = { flavor, mode };
+    const paths = resolveVonaLocalPaths(projectPath, mode);
     const configOptions: VonaBinConfigOptions = {
       appDir: projectPath,
-      runtimeDir: '.vona',
+      runtimeDir: paths.generatedDir,
       workers,
     };
     try {
@@ -61,15 +62,20 @@ export class CliBinDev extends BeanCliBase {
         await this._run(projectPath, modulesMeta);
       }
     } finally {
-      await rimraf(path.join(projectPath, '.vona'));
+      if (!paths.runId) await rimraf(paths.generatedRoot);
     }
   }
 
   async _runTest(projectPath: string) {
-    const child = spawn(process.execPath, [getImportEsm(), '.vona/bootstrap.ts'], {
-      cwd: projectPath,
-      stdio: 'inherit',
-    });
+    const generatedDir = resolveVonaLocalPaths(projectPath, 'test').generatedDir;
+    const child = spawn(
+      process.execPath,
+      [getImportEsm(generatedDir), `${generatedDir}/bootstrap.ts`],
+      {
+        cwd: projectPath,
+        stdio: 'inherit',
+      },
+    );
     const forwardSignal = (signal: NodeJS.Signals) => child.kill(signal);
     const onInterrupt = () => forwardSignal('SIGINT');
     const onTerminate = () => forwardSignal('SIGTERM');
@@ -91,7 +97,8 @@ export class CliBinDev extends BeanCliBase {
 
   async _run(projectPath: string, _modulesMeta: Awaited<ReturnType<typeof glob>>) {
     let closed = false;
-    return new Promise((resolve, _reject) => {
+    let crashError: Error | undefined;
+    return new Promise((resolve, reject) => {
       (nodemon as any)({
         script: '.vona/bootstrap.ts',
         cwd: projectPath,
@@ -121,9 +128,23 @@ export class CliBinDev extends BeanCliBase {
         ],
       });
       nodemon
+        .on('crash', () => {
+          if (closed) return;
+          closed = true;
+          // nodemon emits crash without an error payload; the child already logged the cause.
+          crashError = new Error('Development server crashed; see the startup error above');
+          // Let nodemon finish processing the child exit before stopping its watchers.
+          setImmediate(() => nodemon.emit('quit'));
+        })
         .on('quit', () => {
           closed = true;
-          resolve(undefined);
+          if (crashError) {
+            // The programmatic quit event does not close watchers; reset before propagating
+            // the failure to the CLI's error handler, which exits the process immediately.
+            nodemon.reset(() => reject(crashError));
+          } else {
+            resolve(undefined);
+          }
         })
         .on('restart', files => {
           if (closed) {

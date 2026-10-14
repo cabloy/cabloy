@@ -63,11 +63,21 @@ pnpm_config_minimum_release_age=0 npm create cabloy
 
 ## 3. Start Vona integrated SSR
 
-Run the root CLI command to start the Vona server:
+Before the first start, run the root command below to prepare the development databases and seed data:
+
+```bash
+npm run db:reset
+```
+
+`npm run db:reset` is destructive: it clears application-owned Redis prefixes and drops and recreates the managed development databases, then runs migrations, initialization, and seeds. Use it only when you intend to reset those resources. Do not run it while a development server is using the same databases and Redis namespace.
+
+Then start the Vona server:
 
 ```bash
 npm run dev
 ```
+
+For subsequent starts, run `npm run dev` directly. It reuses existing databases and does not create or seed missing databases; if a required database is missing, run `npm run db:reset` explicitly before starting again.
 
 In the Cabloy Basic default environment, Vona listens on `7102` and serves the following SSR sites:
 

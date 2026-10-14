@@ -11,7 +11,7 @@ export function getSqlite3DatabaseNameDefault(app: VonaApplication) {
   const mode = app.meta.env.META_MODE;
   if (mode !== 'prod') return '';
   const dbPath = path.join(getHomeVonaAppDir(app), 'sqlite3');
-  fse.ensureDirSync(dbPath);
+  if (!app.options.configResolutionOnly) fse.ensureDirSync(dbPath);
   return path.join(dbPath, `${app.name}.db`);
 }
 

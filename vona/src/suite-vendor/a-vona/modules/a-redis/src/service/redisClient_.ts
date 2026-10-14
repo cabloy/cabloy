@@ -1,7 +1,7 @@
 import type { RedisOptions } from 'ioredis';
 
 import { Redis } from 'ioredis';
-import { BeanBase, cast, deepExtend } from 'vona';
+import { assertTestClaimRedisClient, BeanBase, cast, deepExtend, resolveTestRunId } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
 import type { ConfigRedisCluster, IRedisClientRecord } from '../types/redis.ts';
@@ -29,6 +29,22 @@ export class ServiceRedisClient extends BeanBase {
     const configRedis = this.app.config.redis;
     const configClient = configRedis.clients[clientName];
     if (!configClient) throw new Error(`redis client not found: ${clientName}`);
+    const isolated = resolveTestRunId(
+      this.app.meta.env.META_MODE,
+      this.app.meta.env.VONA_TEST_RUN_ID,
+    );
+    if (
+      isolated &&
+      (cast<RedisOptions>(configClient).sentinels || cast<ConfigRedisCluster>(configClient).nodes)
+    ) {
+      throw new Error(`Isolated test cannot use a Redis sentinel or cluster client: ${clientName}`);
+    }
+    if (isolated) {
+      prepareRedisClientKeyPrefix(configClient.keyPrefix, clientName, this.app);
+      if (configRedis.base.keyPrefix !== undefined) {
+        throw new Error('Isolated test cannot inherit a Redis base keyPrefix');
+      }
+    }
     if (cast<RedisOptions>(configClient).sentinels) {
       // sentinels
       return new Redis(configClient as RedisOptions);
@@ -40,6 +56,7 @@ export class ServiceRedisClient extends BeanBase {
     } else {
       const keyPrefix = prepareRedisClientKeyPrefix(configClient.keyPrefix, clientName, this.app);
       const configNode = deepExtend({}, configRedis.base, configClient, { keyPrefix });
+      assertTestClaimRedisClient(this.app, clientName, configNode);
       return new Redis(configNode);
     }
   }

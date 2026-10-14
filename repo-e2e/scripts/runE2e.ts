@@ -9,6 +9,7 @@ import {
   E2E_ROOT_DIR,
   E2E_SPECS_DIR,
 } from './e2e.ts';
+import { assertManagedTestImports } from './managedTestImports.ts';
 import { combineGreps, parseE2eArgs } from './runE2eArgs.ts';
 
 function run(command: string, args: string[]): void {
@@ -34,7 +35,17 @@ async function assertPortAvailable(): Promise<void> {
 }
 
 const parsed = parseE2eArgs(process.argv.slice(2), E2E_SPECS_DIR);
-await assertPortAvailable();
+if (
+  process.env.VONA_TEST_RUN_ID &&
+  process.env.APP_NAME !== `cabtest${process.env.VONA_TEST_RUN_ID}`
+) {
+  throw new Error('Managed E2E test identity does not match its run ID');
+}
+if (process.env.VONA_TEST_RUN_ID) {
+  await assertManagedTestImports();
+} else {
+  await assertPortAvailable();
+}
 
 const playwrightCommand = resolve(
   E2E_ROOT_DIR,

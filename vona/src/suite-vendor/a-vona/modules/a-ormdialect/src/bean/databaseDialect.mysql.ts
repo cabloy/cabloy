@@ -34,7 +34,10 @@ export class DatabaseDialectMysql extends ServiceDatabaseDialectBase {
     schemaBuilder: Knex.SchemaBuilder,
     databasePrefix: string,
   ): Promise<IFetchDatabasesResultItem[]> {
-    const res = await schemaBuilder.raw(`show databases like '${databasePrefix}%'`);
+    const escapedPrefix = databasePrefix.replaceAll("'", "''");
+    const res = await schemaBuilder.raw(
+      `select schema_name from information_schema.schemata where left(schema_name, ${databasePrefix.length}) = '${escapedPrefix}'`,
+    );
     let dbs = res[0];
     dbs = dbs.map(db => {
       const name = db[Object.keys(db)[0]];

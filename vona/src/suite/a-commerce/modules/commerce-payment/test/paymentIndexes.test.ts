@@ -1,12 +1,20 @@
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 
+import { DateTime } from 'luxon';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import { mkdtemp, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { lstat, open, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { describe, it } from 'node:test';
-import { appResource } from 'vona';
+import {
+  appResource,
+  assertDisposableDatabaseName,
+  assertIsolatedTestPath,
+  assertTestRunOwner,
+  getDatabaseTestPrefix,
+  registerTestClaimDatabaseCreation,
+  resolveVonaLocalPaths,
+} from 'vona';
 import { app } from 'vona-mock';
 import { ServiceDatabaseAsyncLocalStorage, ServiceDatabaseClient } from 'vona-module-a-orm';
 
@@ -23,6 +31,56 @@ const expectedIndexes = {
     'correlationId',
   ],
 };
+
+const attemptedCopyNames = new Set<string>();
+
+async function allocateOwnedSqliteCopy(source: ServiceDatabaseClient) {
+  const runId = app.meta.env.VONA_TEST_RUN_ID;
+  assert.ok(runId, 'the isolated SQLite copy requires a test run ID');
+  const paths = resolveVonaLocalPaths(app.projectPath, 'test', runId);
+  assertTestRunOwner(paths.dataRoot, runId);
+  const prefix = getDatabaseTestPrefix(app.name, 'share');
+
+  for (let offset = 0; offset < 3600; offset++) {
+    const timestamp = DateTime.now().plus({ seconds: offset }).toFormat('yyyyMMdd-HHmmss');
+    const databaseName = `${prefix}${timestamp}`;
+    assertDisposableDatabaseName(databaseName, prefix);
+    const filename = path.join(paths.sqliteRoot, `${databaseName}.db`);
+    if (attemptedCopyNames.has(filename)) continue;
+    const reservation = `${filename}.lock`;
+    assertIsolatedTestPath(filename, path.join(paths.sqliteRoot, path.basename(filename)));
+    assertIsolatedTestPath(reservation, path.join(paths.sqliteRoot, path.basename(reservation)));
+    try {
+      const reservationHandle = await open(reservation, 'wx');
+      await reservationHandle.close();
+      try {
+        const exists = await lstat(filename).then(
+          () => true,
+          error => {
+            if ((error as NodeJS.ErrnoException).code === 'ENOENT') return false;
+            throw error;
+          },
+        );
+        if (exists) {
+          await rm(reservation);
+          continue;
+        }
+        attemptedCopyNames.add(filename);
+        await registerTestClaimDatabaseCreation(app, source.clientConfig, databaseName, 'intent');
+        const databaseHandle = await open(filename, 'wx');
+        await databaseHandle.close();
+        await rm(filename);
+        return { filename, paths, reservation };
+      } catch (error) {
+        await rm(reservation, { force: true });
+        if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
+      }
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
+    }
+  }
+  throw new Error('Unable to allocate an owned SQLite copy name');
+}
 
 describe('paymentIndexes.test.ts', { concurrency: false }, () => {
   it('registers all payment indexes without overwriting table keys', () => {
@@ -85,12 +143,17 @@ describe('paymentIndexes.test.ts', { concurrency: false }, () => {
         t.skip('SQLite-only independent database copy');
         return;
       }
-      const directory = await mkdtemp(path.join(tmpdir(), 'commerce-index-recovery-'));
-      const filename = path.join(directory, 'existing.db');
       const source = app.bean.database.current;
+      const { filename, paths, reservation } = await allocateOwnedSqliteCopy(source.client);
       let client: ServiceDatabaseClient | undefined;
       try {
         await source.connection.raw('VACUUM main INTO ?', [filename]);
+        await registerTestClaimDatabaseCreation(
+          app,
+          source.client.clientConfig,
+          path.basename(filename, '.db'),
+          'created',
+        );
         const selector = `index-recovery-${randomUUID()}`;
         client = app.bean._newBean(ServiceDatabaseClient, selector, {
           client: 'better-sqlite3',
@@ -154,11 +217,11 @@ describe('paymentIndexes.test.ts', { concurrency: false }, () => {
           }
         });
       } finally {
-        try {
-          if (client) await client.connection.destroy();
-        } finally {
-          await rm(directory, { recursive: true, force: true });
-        }
+        if (client) await client.connection.destroy();
+        assertTestRunOwner(paths.dataRoot, paths.runId!);
+        assertIsolatedTestPath(filename, filename);
+        await source.connection.schema.dropDatabase(filename);
+        await rm(reservation, { force: true });
       }
     });
   });

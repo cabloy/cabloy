@@ -42,6 +42,8 @@ export interface VonaApplicationOptions {
   locales: TypeBootstrapOptionsLocales;
   config: TypeBootstrapOptionsConfig;
   env: VonaConfigEnv;
+  /** Internal cleanup-only source configuration resolution; never starts an application. */
+  configResolutionOnly?: boolean;
   AppMonkey?: AppMonkeyConstructable;
 }
 

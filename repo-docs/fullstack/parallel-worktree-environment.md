@@ -1,10 +1,10 @@
 # Parallel Worktree Environment
 
-Use worktree-local environment overrides when two Cabloy Basic or Cabloy Start worktrees need to run ordinary local development or managed E2E checks at the same time.
+Use worktree-local environment overrides when two Cabloy Basic or Cabloy Start worktrees need to run ordinary local development at the same time. In Cabloy Basic, root `npm run test` and `npm run test:e2e` already isolate their test-mode runtime and data on every run, including alongside ordinary dev in the **same** checkout; they do not require this worktree setup for that purpose.
 
-This Cabloy Basic page is the canonical shared recipe for both editions. Detect the active edition before selecting commands, but keep the same two-file environment model.
+This Cabloy Basic page is the canonical shared recipe for both editions. Detect the active edition before selecting commands, but keep the same two-file environment model for worktree-local development.
 
-This workflow creates a standard isolated local runtime without changing committed environment defaults. It does not automatically isolate every external dependency.
+This workflow creates a standard isolated local development runtime without changing committed environment defaults. It does not automatically isolate every external dependency.
 
 ## Before creating local overrides
 
@@ -82,13 +82,13 @@ Use commands from the active repository root.
 | Cabloy Basic | `__CABLOY_BASIC__` | `npm run dev:zova:admin` or `npm run dev:zova:web` | `npm run test:e2e` |
 | Cabloy Start | `__CABLOY_START__` | `npm run dev:zova:admin` or `npm run dev:zova:web` | `npm run test:e2e` |
 
-Run one frontend command, not both, in each worktree. Both managed E2E workflows read Vona's effective local `SERVER_LISTEN_PORT` and start one fresh Vona test-mode worker; startup initializes test resources without a separate reset. Before either command, confirm exclusive ownership of the effective test database, `_local` Redis namespace, public/runtime paths, `APP_NAME`, API origin, and listener. A free port alone does not establish ownership. Do not change shared identity or ports to bypass a collision, and leave `E2E_BASE_URL` unset: externally managed targets are unsupported.
+Run one frontend command, not both, in each worktree. In Cabloy Basic, root `npm run test` and `npm run test:e2e` allocate a fresh run-specific identity, test database and Redis namespace, generated/runtime/public paths, and loopback listener independently of the worktree's development environment. Managed E2E starts a fresh Vona test-mode worker, and startup initializes test resources and module seeds without a separate dev-mode reset. This also isolates tests from a dev process in the same checkout. Cabloy Start's managed E2E uses the effective local test-mode Vona listener and its own ownership rules; inspect its root scripts before relying on Basic's isolation. Leave `E2E_BASE_URL` unset: externally managed targets are unsupported. Do not change shared identity or ports merely to bypass a busy development resource.
 
 ## What this isolates
 
-A unique `APP_NAME` separates the application identity used by ordinary framework-managed local resources, including managed test database names and Redis-related key prefixes. Worktree-local generated files, runtime files, build output, and coverage output are already separated by their worktree paths.
+A unique worktree `APP_NAME` separates the identity of ordinary development resources across worktrees, including framework-managed development database names and Redis-related key prefixes. Worktree-local generated files, runtime files, build output, and coverage output are already separated by their worktree paths. Cabloy Basic root tests use a separate run-specific identity even when invoked inside a worktree; they do not clean its ordinary development business data.
 
-The generated Vona, Zova development HTTP, and Zova HMR ports let worktrees run their ordinary local processes concurrently. The matching Zova API URL prevents the frontend in one worktree from calling the Vona process in another.
+The generated Vona, Zova development HTTP, and Zova HMR ports let worktrees run their ordinary local processes concurrently. The matching Zova API URL prevents the frontend in one worktree from calling the Vona process in another. Builds, dependency generation, and other shared preparation writes remain accepted prerequisites rather than part of test data cleanup.
 
 This is sufficient for the normal local workflows:
 

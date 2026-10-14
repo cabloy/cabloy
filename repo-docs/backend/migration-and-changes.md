@@ -94,11 +94,11 @@ export class MetaVersion extends BeanBase {}
 
 Three migration scenarios are defined:
 
-| Scenario | Purpose                                          |
-| -------- | ------------------------------------------------ |
-| `update` | schema evolution such as tables and fields       |
-| `init`   | instance- or tenant-specific initialization data |
-| `seed`   | shared baseline data for the test environment    |
+| Scenario | Purpose                                                      |
+| -------- | ------------------------------------------------------------ |
+| `update` | schema evolution such as tables and fields                   |
+| `init`   | instance- or tenant-specific initialization data             |
+| `seed`   | baseline data for test runs and newly prepared dev databases |
 
 This split is one of the most important Vona migration ideas because it separates:
 
@@ -110,7 +110,7 @@ A practical generated-thread interpretation is:
 
 - `update` follows schema and entity/model evolution
 - `init` follows instance-aware initialization needs introduced by the backend feature
-- `seed` provides shared baseline data while the application starts in test mode
+- `seed` provides shared baseline data during test-mode startup or an explicit development database reset; ordinary dev startup never seeds (see the shared lifecycle below)
 
 ## Update: schema migration
 
@@ -153,7 +153,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionInit {
 
 The important point is that initialization can run per instance or tenant, which keeps tenant data isolated.
 
-## Seed: test-environment baseline data
+## Seed: test and development baseline data
 
 Representative pattern:
 
@@ -171,9 +171,9 @@ export class MetaVersion extends BeanBase implements IMetaVersionSeed {
 
 This is valuable because shared baseline data becomes part of the structured version lifecycle instead of being scattered across unrelated setup code.
 
-Vona invokes `seed()` while the application starts in test mode. Use it for durable baseline fixtures shared by multiple tests, E2E tests, or the managed local-development test-data workflow. The seed path starts from a newly recreated managed database; it is not a repeatable, same-database data-import mechanism.
+Vona invokes `seed()` while the application starts in test mode (`npm run test` or managed E2E), and during an explicit `npm run db:reset` in dev mode. In **Cabloy Basic and Cabloy Start**, ordinary `npm run dev` and `npm run dev:one` only reuse existing managed disposable databases and never seed; a missing required database makes startup fail with an instruction to run `npm run db:reset`. Framework upgrades do not reset existing development data or repeat its seeds. Use `seed()` for durable baseline fixtures shared by tests or for freshly prepared local development data. Seeding follows instance initialization on a newly created or recreated disposable database; `seed()` is not a repeatable, same-database data-import mechanism. See [Managed development database preparation](#managed-development-database-preparation) for the explicit reset lifecycle.
 
-Treat shared `seed()` records as read-only in ordinary tests. A scenario that needs different state must create independent, test-owned data and clean it up in `finally`; it must not mutate or delete the shared baseline. `seed()` remains distinct from `init()`: use `init()` for instance-aware initialization data and reserve `seed()` for shared test-environment baseline data.
+Treat shared `seed()` records as read-only in ordinary tests. A scenario that needs different state must create independent, test-owned data and clean it up in `finally`; it must not mutate or delete the shared baseline. `seed()` remains distinct from `init()`: use `init()` for instance-aware initialization data and reserve `seed()` for baseline data in test runs or explicit development resets.
 
 ## Version changes across the generated backend thread
 
@@ -199,13 +199,33 @@ Representative commands:
 
 ```bash
 npm run test
-cd vona && npm run db:reset
+npm run db:reset
 ```
 
 A practical decision rule is:
 
-- use `db:reset` when you mainly need to replay migration/database setup locally
-- use `test` when you need to verify that migration, controller behavior, and the broader generated contract thread still work together
+- use `db:reset` to recreate the disposable **dev-mode** databases, rerun migrations and instance initialization, and then invoke module `seed()` hooks; it deletes existing matching development databases, so do not run it against data you need to keep
+- `db:reset` requires `database.testDatabase: true` in dev config and a connection outside the disposable database; it refuses to reset a configured non-disposable database
+- use `test` when you need **test-mode** verification of migration, controller behavior, and the broader generated contract thread; E2E also remains test-mode
+
+### Managed development database preparation
+
+**Cabloy Basic and Cabloy Start** share this explicit preparation lifecycle for framework-managed disposable development databases.
+
+When `database.testDatabase: true` enables framework-managed disposable dev databases, `npm run dev` and `npm run dev:one` only reuse existing databases:
+
+1. **Check every required target:** both shared and statically configured isolate database targets must exist. If any required target is missing, startup fails promptly with an instruction to run `npm run db:reset`; it does not create the target, perform creation-time Redis cleanup, or seed as a fallback.
+2. **Reuse existing databases:** keep their data without database creation, creation-time Redis cleanup, or module seeding. Ordinary startup is not a fixture refresh, an implicit reset, or recovery for a partial reset. Non-disposable databases are outside this managed reset path.
+
+An explicit `npm run db:reset` owns preparation in a single process. It requires `database.testDatabase: true` and a connection outside the disposable database. It clears validated application-owned Redis state with `clearAllData()`, drops and recreates the managed disposable dev databases, runs migrations and instance initialization, then invokes the owning modules' `seed()` hooks.
+
+**Stop the development server and any other processes using the same database and Redis namespace first.** There is no file-based preparation lock; concurrent dev/dev and dev/reset against the same database and Redis namespace are unsupported. The reset command disables its own listener, but that does not protect a concurrently running server or queue worker. Never reset development data you need to keep.
+
+If reset fails, the failure remains visible. There is no preparation journal or automatic recovery: investigate and resolve the cause, then explicitly rerun `npm run db:reset`. Database existence alone does not prove migrations, initialization, or seeding completed after an interruption. A subsequent dev startup must not be used to repair or complete the failed preparation.
+
+The Redis cleanup is prefix-scoped, not a Redis-wide flush: `clearAllData()` validates application-owned prefixes and deletes matching Bull queue, redlock, worker, and cache keys. It does not use `FLUSHDB` or `FLUSHALL`, delete unrelated namespaces, or clear broadcast subscriptions. Only explicit reset performs this destructive preparation cleanup; ordinary dev startup does not. Prefix scoping is not permission to clear a live shared namespace manually.
+
+See [Development database preparation](/reference/repo-scripts#development-database-preparation) for the root-command summary.
 
 ## Implementation checks for migration-sensitive changes
 

@@ -3,7 +3,13 @@ import type { IOnionSlice } from 'vona-module-a-onion';
 
 import { isNil } from '@cabloy/utils';
 import fse from 'fs-extra';
-import { BeanBase, cast, getRuntimePathPhysicalRoot } from 'vona';
+import {
+  assertIsolatedTestConfig,
+  BeanBase,
+  cast,
+  getRuntimePathPhysicalRoot,
+  withIsolatedTestDatabaseDiscovery,
+} from 'vona';
 import { Service } from 'vona-module-a-bean';
 
 import type {
@@ -16,19 +22,63 @@ import type {
 @Service()
 export class ServiceStartup extends BeanBase {
   async appStart() {
+    // db:reset is a one-shot data preparation command, not a development server.
+    if (this.app.meta.isDev && process.env.VONA_DB_RESET === 'true') {
+      this.app.config.server.listen.disable = true;
+    }
     // clear keys
     await this._clearResources();
+    if (this.app.meta.isDev) {
+      await this.bean.executor.newCtx(
+        () => this.$scope.version.service.database.prepareDevDatabases(),
+        { dbInfo: { level: 1 }, instanceName: null },
+      );
+    }
 
     // run startups: not after
     for (const startup of this._startups) {
       const startupOptions = startup.beanOptions.options;
       if (!startupOptions?.instance && startupOptions?.after !== true) {
-        await this.runStartup(startup.name, null);
+        const force =
+          this.app.meta.isDev &&
+          startup.name === 'a-version:databaseInit' &&
+          (process.env.VONA_DB_RESET === 'true' ||
+            this.$scope.version.service.database.createdInstanceNames.length > 0);
+        const run = () => this.runStartup(startup.name, null, force ? { force: true } : undefined);
+        if (this.app.meta.env.VONA_TEST_RUN_ID && startup.name === 'a-version:databaseInit') {
+          const defaultClient = this.app.config.database.defaultClient;
+          if (typeof defaultClient !== 'string') {
+            throw new TypeError('Isolated test requires a static default database client');
+          }
+          const client = this.app.config.database.clients[defaultClient];
+          await withIsolatedTestDatabaseDiscovery(this.app, defaultClient, client, run);
+        } else {
+          await run();
+        }
       }
     }
   }
 
   async appReady() {
+    const createdInstances = this.$scope.version.service.database.createdInstanceNames;
+    const preparingDev = this.app.meta.isDev && createdInstances.length > 0;
+    if (preparingDev) {
+      // Initialize and seed fresh instances before listeners or queue workers start.
+      const instanceNames = [
+        '',
+        ...createdInstances.filter(name => name !== ''),
+      ] as (keyof IInstanceRecord)[];
+      for (const instanceName of instanceNames) {
+        await this._appReadyInstanceStartup(instanceName, true, true);
+      }
+      for (const instanceName of instanceNames) {
+        await this.bean.executor.newCtx(() => this.runStartupInstanceAfter(instanceName), {
+          dbInfo: { level: 1 },
+          instanceName,
+        });
+      }
+    }
+
     // run startups: after
     for (const startup of this._startups) {
       const startupOptions = startup.beanOptions.options;
@@ -39,7 +89,7 @@ export class ServiceStartup extends BeanBase {
 
     // version init : force: should be false
     if (this.app.meta.isTest || this.app.meta.isDev) {
-      await this._appReadyInstanceStartup('', true);
+      if (!preparingDev) await this._appReadyInstanceStartup('', true);
     } else {
       // only start static instances (defined in config)
       for (const key in this.app.config.instance.instances) {
@@ -52,24 +102,33 @@ export class ServiceStartup extends BeanBase {
       }
     }
 
-    // version seed
+    // Test seeding retains its existing lifecycle; dev seeding belongs to fresh instances.
     if (this.app.meta.isTest) {
-      const instanceName = '';
-      await this.bean.executor.newCtx(
-        async () => {
-          await this.$scope.version.service.version.__instanceSeed(instanceName);
-        },
-        {
-          dbInfo: { level: 1 },
-          instanceName,
-        },
-      );
+      await this.seedDefaultInstance();
     }
   }
 
-  private async _appReadyInstanceStartup(instanceName: keyof IInstanceRecord, wait: boolean) {
+  private async seedDefaultInstance() {
+    const instanceName = '';
+    await this.bean.executor.newCtx(
+      async () => {
+        await this.$scope.version.service.version.__instanceSeed(instanceName);
+      },
+      { dbInfo: { level: 1 }, instanceName },
+    );
+  }
+
+  private async _appReadyInstanceStartup(
+    instanceName: keyof IInstanceRecord,
+    wait: boolean,
+    deferAfter?: boolean,
+  ) {
     const res = this.$scope.instance.service.instance.instanceStartupIsolate(instanceName, {
-      force: false,
+      force:
+        this.app.meta.isDev &&
+        (process.env.VONA_DB_RESET === 'true' ||
+          this.$scope.version.service.database.createdInstanceNames.includes(instanceName)),
+      deferAfter,
     });
     if (wait) {
       await res;
@@ -155,6 +214,21 @@ export class ServiceStartup extends BeanBase {
         await this.runStartup(startup.name, instanceName, options);
       }
     }
+    if (
+      this.app.meta.isDev &&
+      this.$scope.version.service.database.createdInstanceNames.includes(instanceName)
+    ) {
+      await this.$scope.version.service.version.__instanceSeed(instanceName);
+      this.$scope.version.service.database.consumeCreatedInstance(instanceName);
+    }
+    if (options?.deferAfter) return;
+    await this.runStartupInstanceAfter(instanceName, options);
+  }
+
+  async runStartupInstanceAfter(
+    instanceName: keyof IInstanceRecord,
+    options?: IInstanceStartupOptions,
+  ) {
     // set flag
     this.app.meta.appReadyInstances[instanceName] = true;
     // run startups: after
@@ -172,6 +246,7 @@ export class ServiceStartup extends BeanBase {
 
   private async _clearResources() {
     if (!this.app.meta.isTest) return;
+    assertIsolatedTestConfig(this.app);
     // redis
     await this.$scope.redis.service.redis.clearAllData();
     // .app/public

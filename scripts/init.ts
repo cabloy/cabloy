@@ -310,3 +310,18 @@ initRepoDocs();
 writeVersionMarker();
 // eslint-disable-next-line
 console.log('[init] Done!');
+// eslint-disable-next-line
+console.log(
+  [
+    '',
+    '=== Before your first development startup ===',
+    'Prepare the development database before running npm run dev:',
+    '',
+    '  npm run db:reset',
+    '',
+    'Warning: db:reset deletes managed development data and application-owned Redis state.',
+    'Stop processes using the same database and Redis namespace before running it.',
+    'If your development database is already prepared, skip reset to keep existing data.',
+    '',
+  ].join('\n'),
+);

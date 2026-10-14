@@ -3,6 +3,7 @@ import type { VonaConfigMeta, VonaMetaFlavor, VonaMetaMode } from '@cabloy/modul
 import { BeanCliBase } from '@cabloy/cli';
 import fse from 'fs-extra';
 import path from 'node:path';
+import { resolveVonaLocalPaths } from 'vona-core';
 
 import type { VonaBinConfigOptions } from './toolsBin/types.ts';
 
@@ -49,7 +50,10 @@ export class CliBinPlay extends BeanCliBase {
   }
 
   async _runAttach(projectPath: string) {
-    const runtimeFile = path.join(projectPath, '.app/runtime/-.json');
+    const runtimeFile = path.join(
+      resolveVonaLocalPaths(projectPath, process.env.META_MODE ?? 'dev').runtimeRoot,
+      '-.json',
+    );
     if (!fse.existsSync(runtimeFile)) throw new Error('dev server not running');
     // args
     let args: string[] = [];

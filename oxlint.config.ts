@@ -49,6 +49,8 @@ export default defineConfig(
       '**/postcss.config.cjs',
       // common directory patterns (from vona & zova, converted to **/)
       '**/.vona',
+      '**/.vona-test-*',
+      '**/.app-test-*',
       '**/.assets',
       '**/.zova',
       '**/docker-compose',

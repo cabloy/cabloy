@@ -6,6 +6,8 @@ import type { PowerPartial } from '../../types/utils/powerPartial.ts';
 import type { VonaApplication } from './application.ts';
 
 import { deepExtend } from '../utils/util.ts';
+import { assertIsolatedTestPath } from './isolationGuard.ts';
+import { assertTestRunOwner, resolveVonaLocalPaths } from './testIsolation.ts';
 
 export type TypeConfigLoader<T> = (app: VonaApplication) => Promise<PowerPartial<T>>;
 
@@ -32,11 +34,18 @@ export function getLoggerPathPhysicalRoot(app: VonaApplication) {
   const mode = app.meta.env.META_MODE;
   let loggerDir: string;
   if (mode === 'test' || mode === 'dev') {
-    loggerDir = path.join(app.projectPath, '.app/logs');
+    loggerDir = resolveVonaLocalPaths(
+      app.projectPath,
+      mode,
+      app.meta.env.VONA_TEST_RUN_ID,
+    ).logsRoot;
   } else {
     loggerDir = path.join(getHomeVonaAppDir(app), 'logs');
   }
-  fse.ensureDirSync(loggerDir);
+  if (!app.options.configResolutionOnly) {
+    assertOwnedLocalPath(app, loggerDir, 'logsRoot');
+    fse.ensureDirSync(loggerDir);
+  }
   return loggerDir;
 }
 
@@ -44,11 +53,18 @@ export function getPublicPathPhysicalRoot(app: VonaApplication) {
   const mode = app.meta.env.META_MODE;
   let publicDir: string;
   if (mode === 'test' || mode === 'dev') {
-    publicDir = path.join(app.projectPath, '.app/public');
+    publicDir = resolveVonaLocalPaths(
+      app.projectPath,
+      mode,
+      app.meta.env.VONA_TEST_RUN_ID,
+    ).publicRoot;
   } else {
     publicDir = path.join(getHomeVonaAppDir(app), 'public');
   }
-  fse.ensureDirSync(publicDir);
+  if (!app.options.configResolutionOnly) {
+    assertOwnedLocalPath(app, publicDir, 'publicRoot');
+    fse.ensureDirSync(publicDir);
+  }
   return publicDir;
 }
 
@@ -56,12 +72,34 @@ export function getRuntimePathPhysicalRoot(app: VonaApplication) {
   const mode = app.meta.env.META_MODE;
   let runtimeDir: string;
   if (mode === 'test' || mode === 'dev') {
-    runtimeDir = path.join(app.options.projectPath, '.app/runtime');
+    runtimeDir = resolveVonaLocalPaths(
+      app.options.projectPath,
+      mode,
+      app.meta.env.VONA_TEST_RUN_ID,
+    ).runtimeRoot;
   } else {
     runtimeDir = path.join(getHomeVonaAppDir(app), 'runtime');
   }
-  fse.ensureDirSync(runtimeDir);
+  if (!app.options.configResolutionOnly) {
+    assertOwnedLocalPath(app, runtimeDir, 'runtimeRoot');
+    fse.ensureDirSync(runtimeDir);
+  }
   return runtimeDir;
+}
+
+function assertOwnedLocalPath(
+  app: VonaApplication,
+  actual: string,
+  leaf: 'logsRoot' | 'publicRoot' | 'runtimeRoot',
+) {
+  const paths = resolveVonaLocalPaths(
+    app.projectPath,
+    app.meta.env.META_MODE,
+    app.meta.env.VONA_TEST_RUN_ID,
+  );
+  if (!paths.runId) return;
+  assertTestRunOwner(paths.dataRoot, paths.runId);
+  assertIsolatedTestPath(actual, paths[leaf]);
 }
 
 export function getHomeVonaAppDir(app: VonaApplication) {

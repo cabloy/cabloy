@@ -113,6 +113,8 @@ This routing skill provides read-only guidance only. Do not infer an `APP_NAME` 
 
 The invoked skill detects Basic or Start to select the active root scripts and managed E2E command. It uses Git worktree metadata, fixed Vona/Zova port baselines, and the worktree basename to recommend the complete standard tuple for confirmation: `APP_NAME`, `SERVER_LISTEN_PORT`, `DEV_SERVER_PORT`, `DEV_SERVER_HMR_PORT`, and an `API_BASE_URL` derived from the Vona port. After confirmation, it writes both `vona/env/.env.local` and `zova/env/.env.local`; never use flavor-, mode-, app-mode-, or runtime-specific `.env.*.local` files. It does not inspect environment-file content or allocate/reserve a live port. The shared environment is Vona + Zova development: Admin and Web are alternative commands using the same configuration, and they must not run concurrently in one worktree. Concurrent use requires separately configured linked worktrees.
 
+For isolated E2E through Vona integrated SSR, use the [runtime API-origin guidance](../../../repo-docs/fullstack/ssr-entry-modes.md#runtime-api-origins-in-vona-integrated-ssr): a dynamic test port alone requires neither a Zova `.env` edit nor a frontend rebuild. This is separate from explicitly requested worktree development configuration; check the active scripts for artifact preparation and explicit API URL overrides.
+
 ## Step 4: Prefer CLI-first workflows
 
 Whenever the task maps to an existing generator, initializer, refactor, or metadata command, prefer the CLI.

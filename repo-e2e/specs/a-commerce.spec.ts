@@ -1,6 +1,6 @@
 import type { APIRequestContext, Browser, Locator, Page, TestInfo } from '@playwright/test';
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../scripts/managedTest.ts';
 
 const privateMarkers = ['cart', 'address', 'order', 'coupon', 'payment'];
 const addressResourceUrl =
