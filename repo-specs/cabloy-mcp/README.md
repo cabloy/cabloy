@@ -4,6 +4,8 @@ This `repo-specs/cabloy-mcp/` directory retains the existing `MCP` requirement, 
 
 The 2026-10-15 bounded inputs additionally select **same-host multiple Vona workers sharing persistent SQLite** through that primary datasource and, **if persistence resides in existing `a-auth`, keeping `vonaModule.fileVersion: 1` and folding the schema into its version-1 creation path**. This adds no version-2 migration and does not automatically upgrade databases already recorded at v1. Installation applicability, actual deployment attestation, exact schema/browser contracts and separate execution approval remain open; cross-host SQLite and replica support are not selected. Cross-worker contention, revocation visibility and connection/failure behavior require later runtime proof.
 
+The [installation/deployment review candidate](./wbs-mcp-20-04-as-contract-dossier.md#92-installation-applicability-candidate-not-approved) now recommends fresh physical-database/v1 creation only, with existing-v1, inconsistent, partial and unknown installations excluded or blocked pending separate treatment. Its operations-owned, secret-free confirmation template remains entirely unfilled. These recommendations are not accepted installation scope, deployment attestation or execution approval.
+
 ## Reading Order
 
 1. [Product Requirements Document](./prd.md) defines the external-AI access outcome, actors, scope, and product acceptance.

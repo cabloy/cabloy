@@ -22,6 +22,16 @@ The 2026-10-10 decision selects an integrated `a-auth` logical AS for the first 
 
 The decision is not an exception for a new `cabloy-mcp` schema, an AS inside the resource module, a general consent ledger, new OAuth provider configuration, or a production authorization endpoint. A separately operated AS remains a later alternative only through a new route decision and equivalent contract proof.
 
+## Accepted installation scope and deployment-confirmation requirements (bounded design only)
+
+On 2026-10-15, following preparation of the [concrete AS contract dossier, sections 9.2–9.4](../wbs-mcp-20-04-as-contract-dossier.md#92-installation-applicability-accepted-bounded-design-only), `zhennann` agreed to the explicitly offered design-approval step. This accepts **fresh physical-database/version-1 creation only** as the first supported installation scope under the conditional existing-`a-auth` keep-v1 strategy, together with the documented exclusions and secret-free deployment-confirmation requirements. It does not classify any actual installation as eligible.
+
+Already-recorded v1 databases are excluded from automatic upgrade or adoption, including claims that AS objects already exist. Missing/inconsistent history, partial creation and unknown states remain blocked pending separate treatment; there is no inferred retroactive version replay, ledger repair or reset. Shared instances use the physical database's schema-update history, not separate per-instance schema installations. Before AS activation, the approved physical contract and installation classification must be confirmed; unknown, incomplete or incompatible authority fails closed without alternate token authority or automatic DDL. Concrete check ownership, timing, mechanics, failure mappings and recovery procedures remain unselected.
+
+The operations-owned confirmation requirements cover per-instance/worker effective routing and shared persistent storage, per-physical-target installation classification, and the allowlisted attribution, connection/failure-policy and evidence fields in section 9.3. **Every actual deployment field remains unconfirmed.** This approval does not fill the template, authorize deployment inspection, select effective settings, or replace runtime contention/commit/revocation proof.
+
+Only this finite installation/exclusion and confirmation-requirements package is accepted. The existing conditional keep-v1 choice is unchanged; exact owner/schema, credential and transition mechanics, connection policy, remaining physical/browser/protocol contracts, execution approval and runtime proof retain their separate gates. No provisioning, persisted edit, reset, recovery, source, configuration, root test, ATP, deployment or release operation is authorized.
+
 ## Consequences and readiness
 
 - The AS implementation path has a responsible logical owner, accountable operator, accepted bounded physical state and Zova presentation directions, and a selected first target of SQLite via `better-sqlite3` on Vona's existing primary datasource; no actual deployment configuration, physical schema, site/admission contract, interaction implementation or runtime proof is established. The existing auth tables and Redis session marker are not accepted as an opaque-token/grant store.
