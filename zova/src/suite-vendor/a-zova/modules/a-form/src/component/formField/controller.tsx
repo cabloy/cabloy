@@ -12,6 +12,7 @@ import type { ControllerForm } from '../form/controller.jsx';
 import { schemaRefreshFingerprint } from '../../lib/schemaRefresh.js';
 import { TypeFormField } from '../../types/form.js';
 import {
+  constFieldBindingSlot,
   constFieldProps,
   IFormFieldComponentOptions,
   IFormFieldOptions,
@@ -105,6 +106,7 @@ export class ControllerFormField<TParentData extends {} = {}> extends BeanContro
       props.behaviors,
       !!props.onEffect,
       !!props.slotDefault,
+      props[constFieldBindingSlot] === true,
     ]);
   }
 
@@ -118,12 +120,9 @@ export class ControllerFormField<TParentData extends {} = {}> extends BeanContro
       return;
     }
     const props = this.$props;
-    // Basic Input owns its binding slot; direct custom slots remain opaque.
+    // Only explicitly renderer-owned binding slots qualify; custom slots remain opaque.
     const inputBindingSlot =
-      props[constFieldProps] === true &&
-      (props.render
-        ? this.$$form.getRenderProvider(props.render)
-        : this.formProvider.components?.Input) === 'basic-input:formFieldInput';
+      props[constFieldProps] === true && props[constFieldBindingSlot] === true;
     const eligible =
       !props.sys &&
       !props.behaviors &&

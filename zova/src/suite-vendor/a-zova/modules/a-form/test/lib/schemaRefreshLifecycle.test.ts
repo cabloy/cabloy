@@ -22,7 +22,12 @@ function deferred<T = void>() {
 
 // Like basic-pageentry's draftModel harness, execute the current source rather than a
 // copied refresh algorithm. TSX requires transpileModule instead of native stripping.
-function evaluateClass(path: string, name: string, bindings: Record<string, unknown>) {
+function evaluateClass(
+  path: string,
+  name: string,
+  bindings: Record<string, unknown>,
+  jsx = ts.JsxEmit.Preserve,
+) {
   const source = readFileSync(new URL(path, import.meta.url), 'utf8')
     .replace(/^import[\s\S]*?;\n/gm, '')
     .replace(/^\s*@(Controller|UseScope|Use)\([^\n]*\)\s*\n/gm, '');
@@ -32,7 +37,8 @@ function evaluateClass(path: string, name: string, bindings: Record<string, unkn
     compilerOptions: {
       target: ts.ScriptTarget.ES2022,
       module: ts.ModuleKind.ESNext,
-      jsx: ts.JsxEmit.Preserve,
+      jsx,
+      jsxFactory: 'createElement',
     },
   });
   assert.deepEqual(
@@ -85,7 +91,14 @@ class ControllerBase {
   }
 }
 
-const constFieldProps = Symbol('constFieldProps');
+const fieldTypes = ts.transpileModule(
+  readFileSync(new URL('../../src/types/formField.ts', import.meta.url), 'utf8'),
+  { compilerOptions: { module: ts.ModuleKind.CommonJS } },
+).outputText;
+const { constFieldProps, constFieldBindingSlot } = new Function(
+  'exports',
+  `${fieldTypes}\nreturn exports;`,
+)({});
 const commonBindings = {
   markRaw: (value: unknown) => value,
   useSelector: (store: any, selector: (state: any) => any) => ({
@@ -95,7 +108,31 @@ const commonBindings = {
   isNil: (value: unknown) => value === undefined || value === null,
   schemaRefreshFingerprint,
   constFieldProps,
+  constFieldBindingSlot,
 };
+
+const ZFormField = {};
+const ControllerFormFieldInput = evaluateClass(
+  '../../../../../../suite/cabloy-basic/modules/basic-input/src/component/formFieldInput/controller.tsx',
+  'ControllerFormFieldInput',
+  {
+    BeanControllerBase: ControllerBase,
+    constFieldBindingSlot,
+    ZFormField,
+    classes: (...values: unknown[]) => values.filter(Boolean).join(' '),
+    createElement: (type: unknown, props: any) => ({ type, props }),
+  },
+  ts.JsxEmit.React,
+);
+
+function inputBindingProps(props: any = {}) {
+  const input = new ControllerFormFieldInput();
+  input.$props = props;
+  const rendered = input.render();
+  assert.equal(rendered.type, ZFormField);
+  assert.equal(rendered.props[constFieldBindingSlot], true);
+  return rendered.props;
+}
 
 const ControllerForm = evaluateClass('../../src/component/form/controller.tsx', 'ControllerForm', {
   ...commonBindings,
@@ -732,6 +769,7 @@ test(
       const before: unknown[] = [];
       const after: unknown[] = [];
       const owner = await initializedField(runtime, {
+        [constFieldBindingSlot]: true,
         slotDefault: () => 'initial slot',
         onFieldStateReady: (field: any) => before.push(field.form.getFieldValue(field.name)),
       });
@@ -755,31 +793,30 @@ test(
 );
 
 test(
-  'canonical Basic input binding slots preserve live names across locale refresh',
+  'explicit renderer-owned binding slots preserve live names independently of component selectors',
   { concurrency: false },
   async () => {
-    for (const render of [
-      undefined,
-      'Input',
-      'basic-input:formFieldInput',
-      { $$typeof: 'zova-jsx:component', type: 'basic-input:formFieldInput' },
-    ]) {
-      await withRuntime({}, async runtime => {
-        runtime.form.$$scopeOpenapi.config.formProvider = {
-          components: { Input: 'basic-input:formFieldInput' },
-        };
-        const owner = await initializedField(runtime, {
-          render,
-          slotDefault: () => 'binding slot',
+    for (const selector of ['basic-input:formFieldInput', 'start-input:formFieldInput']) {
+      for (const render of [
+        undefined,
+        'Input',
+        selector,
+        { $$typeof: 'zova-jsx:component', type: selector },
+      ]) {
+        await withRuntime({}, async runtime => {
+          runtime.form.$$scopeOpenapi.config.formProvider = {
+            components: { Input: selector },
+          };
+          const owner = await initializedField(runtime, inputBindingProps({ render }));
+          dirty(runtime, 'typed name');
+          runtime.select('zh-cn');
+          owner.refresh();
+          assert.deepEqual(lifecycle(runtime.events), ['update', 'reset', 'validate', 'ready']);
+          assert.equal(lastEvent(runtime.events).value, 'typed name');
+          assertResetMeta(lastEvent(runtime.events).meta);
+          assert.deepEqual(runtime.changed, []);
         });
-        dirty(runtime, 'typed name');
-        runtime.select('zh-cn');
-        owner.refresh();
-        assert.deepEqual(lifecycle(runtime.events), ['update', 'reset', 'validate', 'ready']);
-        assert.equal(lastEvent(runtime.events).value, 'typed name');
-        assertResetMeta(lastEvent(runtime.events).meta);
-        assert.deepEqual(runtime.changed, []);
-      });
+      }
     }
   },
 );
@@ -789,9 +826,13 @@ test(
   { concurrency: false },
   async () => {
     for (const props of [
-      { [constFieldProps]: false, render: 'basic-input:formFieldInput' },
+      inputBindingProps({ [constFieldProps]: false, render: 'basic-input:formFieldInput' }),
+      { render: 'basic-input:formFieldInput' },
       { render: 'custom:formFieldInput' },
       { render: 'Input' },
+      {},
+      { [constFieldBindingSlot]: false },
+      { [constFieldBindingSlot]: 'true' },
     ]) {
       await withRuntime({}, async runtime => {
         runtime.form.$$scopeOpenapi.config.formProvider = {
@@ -807,6 +848,69 @@ test(
         assert.deepEqual(lifecycle(runtime.events), ['update', 'reset', 'ready']);
         assert.equal(lastEvent(runtime.events).value, 'baseline');
         assert.deepEqual(runtime.changed, []);
+      });
+    }
+  },
+);
+
+test('the input wrapper owns its marker and value/blur binding slot', () => {
+  const externalSlot = () => 'external slot';
+  const props = inputBindingProps({
+    name: 'name',
+    [constFieldBindingSlot]: false,
+    slotDefault: externalSlot,
+  });
+  assert.equal(props.name, 'name');
+  assert.notEqual(props.slotDefault, externalSlot);
+  const writes: unknown[] = [];
+  let blurred = false;
+  const input = props.slotDefault(
+    { propsBucket: { value: 'current', disableNotifyChanged: true }, props: {} },
+    {
+      setValue: (...args: unknown[]) => writes.push(args),
+      handleBlur: () => {
+        blurred = true;
+      },
+    },
+  );
+  assert.equal(input.type, 'input');
+  assert.equal(input.props.value, 'current');
+  input.props.onInput({ target: { value: 'edited' } });
+  input.props.onBlur();
+  assert.deepEqual(writes, [['edited', true]]);
+  assert.equal(blurred, true);
+});
+
+test(
+  'a missing Input provider does not authorize an unmarked slot',
+  { concurrency: false },
+  async () => {
+    await withRuntime({}, async runtime => {
+      const owner = await initializedField(runtime, { slotDefault: () => 'custom slot' });
+      dirty(runtime, 'typed name');
+      runtime.select('zh-cn');
+      owner.refresh();
+      assert.deepEqual(lifecycle(runtime.events), ['update', 'reset', 'ready']);
+      assert.equal(lastEvent(runtime.events).value, 'baseline');
+    });
+  },
+);
+
+test(
+  'binding-slot ownership changes invalidate the prior refresh configuration',
+  { concurrency: false },
+  async () => {
+    for (const initiallyOwned of [false, true]) {
+      await withRuntime({}, async runtime => {
+        const owner = await initializedField(runtime, {
+          [constFieldBindingSlot]: initiallyOwned,
+          slotDefault: () => 'slot',
+        });
+        dirty(runtime, 'typed name');
+        owner.field.$props[constFieldBindingSlot] = !initiallyOwned;
+        owner.refresh();
+        assert.deepEqual(lifecycle(runtime.events), ['update', 'reset', 'ready']);
+        assert.equal(lastEvent(runtime.events).value, 'baseline');
       });
     }
   },
