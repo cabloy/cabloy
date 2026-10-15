@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.212
+
+### Features
+
+- Add OpenAPI SDK skills.
+
 ## 5.1.211
 
 ### Features
