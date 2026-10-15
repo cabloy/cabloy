@@ -6,6 +6,10 @@
 
 Prepared from the observed worktree at revision `d8ea65675e2496165064a603f752c2d999846a0f` on 2026-10-08. Revision-specific preparation and clean-worktree observations below are historical, not the current checkout state; later design-only decisions are noted without recasting them as execution approval. No runtime or ATP evidence is claimed.
 
+### Later owner, lifecycle and activation disposition (2026-10-15; bounded design only)
+
+After separate candidate preparation, [ADR 0009](./decisions/0009-mcp-as-state-boundary.md), SRS-MCP-AUTH-04 and [concrete dossier sections 9.5–9.8](./wbs-mcp-20-04-as-contract-dossier.md#95-owner-and-runtime-boundary-bounded-design-accepted) record acceptance of four bounded rows: existing-`a-auth` physical persistence and dedicated service-scene authorization/readiness responsibilities; one logical aggregate/lifecycle; layered read-only activation responsibilities/timing; and only verifiable continuity of the same approved fresh-v1 installation across restart. This supersedes historical open-owner/logical-lifecycle/check-responsibility wording below only at that bounded level, satisfies the existing conditional keep-v1 owner premise, and does not admit arbitrary existing-v1 installations. Exact source targets/dependencies, schema/DDL, SQL/cache/transaction/credential/connection mechanisms, provenance producer/integrity/binding/retention/restart verification, check hooks/reuse/coherence and remaining browser/protocol/ingress contracts remain gated. All deployment observations remain unconfirmed; no actual installation qualifies. WBS-MCP-20-04 and WBS-MCP-20-02 remain blocked, ATP-MCP-AUTH-03 prospective, with no source, deployment inspection, execution or runtime approval.
+
 ## Execution target
 
 - **Suite:** `cabloy-mcp`
@@ -194,7 +198,7 @@ Authority and ownership: PRD/SRS/WBS/ATP links above; DEC-MCP-03 and ADR 0009 ac
 Completed gates/evidence: repository/edition discovery and dossier-reference review; no runtime or ATP evidence
 Commands/procedures actually run: repository identity/status/marker inspection only; no implementation or runtime command
 Commands/procedures still required: resolve predecessor and ADR gates, explicitly approve this dossier, then observe source/dependency layout before selecting narrow tests and ATP procedures
-Blocker or decision needed: WBS-MCP-20-01 and WBS-MCP-20-04 delivery/proof, DEC-MCP-04 host authority, exact AS shared-state/interaction approval and installation applicability/migration approval under the conditional existing-a-auth keep-v1 strategy (another owner needs its own version disposition) before a schema edit, and live configuration ownership
+Blocker or decision needed: WBS-MCP-20-01 and WBS-MCP-20-04 delivery/proof, DEC-MCP-04 host authority, exact AS shared-state/interaction approval and actual eligibility confirmation/migration approval under the accepted fresh-only conditional existing-a-auth keep-v1 scope (another owner needs its own version disposition) before a schema edit, and live configuration ownership
 Next single action: obtain explicit review/approval of this bounded dossier after the unresolved OAuth and predecessor gates are addressed; do not execute source or ATP work automatically
 ```
 
