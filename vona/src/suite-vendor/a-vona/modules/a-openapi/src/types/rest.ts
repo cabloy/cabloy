@@ -14,6 +14,7 @@ export interface ISchemaObjectExtensionFieldRestProps {
   order?: number;
   disableNotifyChanged?: boolean;
   readonly?: boolean;
+  draft?: boolean;
   required?: boolean;
 }
 

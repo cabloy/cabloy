@@ -46,13 +46,25 @@
     {
       "id": 8,
       "prompt": "I created a linked Cabloy Basic worktree and only need backend tests. What should I do for local environment isolation?",
-      "expected_output": "Keeps generic routing read-only and directs the user to the canonical guide plus explicit /cabloy-worktree-environment invocation. It explains that the invoked skill still generates the universal APP_NAME, SERVER_LISTEN_PORT, DEV_SERVER_PORT, DEV_SERVER_HMR_PORT, and derived API_BASE_URL tuple in both broad local files after confirmation; it does not provide a backend-only one-file path.",
+      "expected_output": "Recognizes that Basic root npm run test already allocates isolated runtime and framework-managed data, including in a linked worktree. Does not require /cabloy-worktree-environment, local environment changes, another worktree, or dev shutdown for tests alone. Points to Repo Scripts, checks actual test-resource overlap and custom external resources, and coordinates any shared build/dependency preparation writes.",
       "files": []
     },
     {
       "id": 9,
       "prompt": "I am in a Cabloy checkout where repo-docs-internal exists, but the named architecture record I expected is not available in this edition. I need shared agent guidance and some maintainer rationale. Where should each part go?",
       "expected_output": "Recognizes repo-docs-internal as the internal documentation home, routes shared operational guidance to public docs and Claude rules or skills, and treats the missing named record as non-blocking rather than inventing a replacement or moving rationale into public docs automatically.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "Vona dev is running in this Cabloy Basic checkout. Can I run root npm run test:e2e here, or must I stop dev or create another worktree?",
+      "expected_output": "Explains that root managed E2E allocates run-owned database and Redis namespaces, runtime/public paths, and a listener, so ordinary same-checkout dev presence alone is not a blocker. Does not stop dev, change ports/env, request a new worktree, or invoke environment setup. Coordinates actual shared build/dependency writes and checks real test-resource or custom external-resource overlap without treating process names as proof. Does not extend isolation to raw test commands or infer reset/cleanup authorization.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "In Cabloy Start, Vona dev and Zova Web dev are already active. I only need root npm run test and npm run test:e2e. Is their presence an isolation conflict?",
+      "expected_output": "Applies the same root managed-test isolation guarantee as Cabloy Basic while selecting Start's actual scripts and artifact prerequisites. Ordinary dev presence alone is not a conflict and does not require another worktree, dev shutdown, or environment changes. Distinguishes actual test-owned resource collisions, shared preparation writes, and custom external resources; preserves ownership and authorization checks.",
       "files": []
     }
   ]

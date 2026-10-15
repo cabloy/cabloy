@@ -19,6 +19,7 @@ import {
 import {
   schemaRenderColumn,
   schemaRenderDisableNotifyChanged,
+  schemaRenderDraft,
   schemaRenderFieldSource,
   schemaRenderLayout,
   schemaRenderOnEffect,
@@ -32,6 +33,7 @@ export const ZovaRender = {
   layout: schemaRenderLayout,
   visible: schemaRenderVisible,
   readonly: schemaRenderReadonly,
+  draft: schemaRenderDraft,
   order: schemaRenderOrder,
   disableNotifyChanged: schemaRenderDisableNotifyChanged,
   onEffect: schemaRenderOnEffect,

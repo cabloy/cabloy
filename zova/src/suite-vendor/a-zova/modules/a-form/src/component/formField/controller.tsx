@@ -3,12 +3,13 @@ import { useField } from '@tanstack/vue-form';
 import { useSelector } from '@tanstack/vue-store';
 import { markRaw } from 'vue';
 import z from 'zod';
-import { BeanControllerBase, deepEqual, IComponentOptions, Use } from 'zova';
+import { BeanControllerBase, IComponentOptions, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { BeanBehaviorsHolder, IBehaviorItem } from 'zova-module-a-behavior';
 
 import type { ControllerForm } from '../form/controller.jsx';
 
+import { schemaRefreshFingerprint } from '../../lib/schemaRefresh.js';
 import { TypeFormField } from '../../types/form.js';
 import {
   constFieldProps,
@@ -29,6 +30,11 @@ export class ControllerFormField<TParentData extends {} = {}> extends BeanContro
   static $componentOptions: IComponentOptions = { inheritAttrs: false };
 
   private _formField: TypeFormField;
+  private _initialized = false;
+  private _mounted = false;
+  private _disposed = false;
+  private _readyNotified = false;
+  private _remount = false;
   public propsBucket: IFormFieldRenderContextPropsBucket<TParentData>;
 
   @Use({ injectionScope: 'host' })
@@ -44,6 +50,7 @@ export class ControllerFormField<TParentData extends {} = {}> extends BeanContro
     // provide
     this.bean._setBean('$$formField', this);
     // field
+    this._remount = this.$$form.hasSchemaRefresh(this.name);
     this._formField = this._createField();
     // propsBucket
     this.propsBucket = this.$computed(() => {
@@ -51,18 +58,14 @@ export class ControllerFormField<TParentData extends {} = {}> extends BeanContro
     });
     // defaultValue
     // this._handleDefaultValue();
-    // watch
+    this.$controllerMounted(() => {
+      this._mounted = true;
+      this._refreshField();
+    });
     this.$watch(
-      () => this.property,
-      (newValue, oldValue) => {
-        if (deepEqual(newValue, oldValue)) return;
-        // defaultValue
-        // this._handleDefaultValue();
-        const options = this._getFormFieldOptions();
-        this._formField.api.update(options as any);
-        this.form.resetField(this.name);
-        this.$props.onFieldStateReady?.(this);
-      },
+      () => [this.$$form.schemaRefresh, this._getRefreshConfiguration()],
+      () => this._refreshField(),
+      { flush: 'post' },
     );
     // behaviors
     await this.$$beanBehaviorsHolder.initialize({
@@ -81,7 +84,77 @@ export class ControllerFormField<TParentData extends {} = {}> extends BeanContro
         },
       );
     }
-    this.$props.onFieldStateReady?.(this);
+    this._initialized = true;
+    this._refreshField();
+  }
+
+  protected __dispose__() {
+    this._disposed = true;
+  }
+
+  private _getRefreshConfiguration() {
+    const props = this.$props;
+    return schemaRefreshFingerprint([
+      props.name,
+      props.render,
+      props.options,
+      props.readonly,
+      props.required,
+      props.sys,
+      props.validators,
+      props.behaviors,
+      !!props.onEffect,
+      !!props.slotDefault,
+    ]);
+  }
+
+  private _refreshField() {
+    if (
+      !this._initialized ||
+      this._disposed ||
+      (process.env.CLIENT && this._remount && !this._mounted) ||
+      !this.$$form.schemaRefresh.contract.ready
+    ) {
+      return;
+    }
+    const props = this.$props;
+    // Basic Input owns its binding slot; direct custom slots remain opaque.
+    const inputBindingSlot =
+      props[constFieldProps] === true &&
+      (props.render
+        ? this.$$form.getRenderProvider(props.render)
+        : this.formProvider.components?.Input) === 'basic-input:formFieldInput';
+    const eligible =
+      !props.sys &&
+      !props.behaviors &&
+      !props.onEffect &&
+      (!props.slotDefault || inputBindingSlot) &&
+      Object.values(props.validators ?? {}).every(value => typeof value === 'boolean');
+    const refresh = this.$$form.consumeSchemaRefresh(
+      this.name,
+      this._getRefreshConfiguration(),
+      eligible,
+    );
+    if (refresh.changed) {
+      const value = this.form.getFieldValue(this.name);
+      this.field.api.update(this._getFormFieldOptions() as any);
+      this.form.resetField(this.name);
+      if (refresh.preserve) {
+        this.form.setFieldValue(this.name, value, {
+          dontUpdateMeta: true,
+          dontRunListeners: true,
+          dontValidate: true,
+        });
+        this.field.api.validateSync('change', {});
+      }
+    } else if (this._remount && !this._readyNotified) {
+      this.field.api.update(this._getFormFieldOptions() as any);
+    }
+    if (refresh.changed || !this._readyNotified) {
+      this._readyNotified = true;
+      this.$props.onFieldStateReady?.(this);
+    }
+    if (refresh.changed) this.$$form.schemaFieldRefreshed();
   }
 
   public get form() {
@@ -141,6 +214,8 @@ export class ControllerFormField<TParentData extends {} = {}> extends BeanContro
 
   private _createField() {
     const options = this._getFormFieldOptions();
+    // A remount must not seed over a live null/undefined before refresh eligibility is known.
+    if (this._remount) delete options.defaultValue;
     const field = markRaw(useField(options as any)) as any;
     const fieldState = useSelector(field.api.store, state => state) as any;
     return { api: field.api, state: fieldState };

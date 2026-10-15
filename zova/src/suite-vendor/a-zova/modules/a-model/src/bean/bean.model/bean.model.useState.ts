@@ -346,17 +346,33 @@ export class BeanModelUseState extends BeanModelUseQuery {
   }
 
   private _handleAsyncDataGet(options, queryClient, persister) {
+    if (this.ctx?.disposed) return undefined;
+    // Track the context even when the disabled Query already contains data.
+    // A scope switch must invalidate the custom-ref consumer synchronously.
+    void this.$modelPersistence.epoch;
     const query = this.$useStateData(options, queryClient);
     if (query.data !== undefined) return query.data;
     return this._handleAsyncDataGet_inner(options, queryClient, persister);
   }
 
   private async _handleAsyncDataGet_inner(options, queryClient, persister) {
+    const ctx = this.ctx;
+    if (ctx?.disposed) return undefined;
+    const persistence = this.$modelPersistence;
     const queryKey = options.queryKey;
+    const token = persistence.capture();
     const query = this.$useStateData(options, queryClient);
     if (persister) {
+      const generation = this.$persisterGeneration(queryKey);
       const data = await this.$persisterLoad(queryKey);
-      if (data !== undefined) {
+      if (
+        ctx?.disposed ||
+        !persistence.current(token) ||
+        generation !== this.$persisterGeneration(queryKey)
+      ) {
+        return undefined;
+      }
+      if (data !== undefined && query.data === undefined) {
         this.$setQueryData(queryKey, data, false);
       }
     }

@@ -86,10 +86,13 @@ export class ServiceRouterGuards extends BeanRouterGuardsBase {
     info: NavigationInformation | undefined,
   ) {
     if (!info) return;
-    const needBack =
-      (info.type === NavigationType.pop && info.direction === NavigationDirection.back) ||
-      (info.type === NavigationType.push && info.replace);
+    const isBack = info.type === NavigationType.pop && info.direction === NavigationDirection.back;
+    const needBack = isBack || (info.type === NavigationType.push && info.replace);
     if (!needBack) return;
+    if (isBack) {
+      // afterEach is synchronous; listeners register and invalidate outgoing work immediately.
+      void router.notifyRouteDiscard('back', [{ fullPath: from.fullPath }]);
+    }
     router.afterEachBackRoute(from);
   }
 

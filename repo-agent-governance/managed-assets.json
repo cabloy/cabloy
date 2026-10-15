@@ -256,7 +256,7 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "0d1901134f7222902cfc702275ed7bd83a4e3a1d72c3543a77c8ab5d7cabaa55",
+      "sha256": "900d9c74bd44f746990046c3ea142d653da740b156a648c573992134b5cc1b9f",
       "source": "skills/cabloy-workflow/evals/evals.json",
       "target": ".agents/skills/cabloy-workflow/evals/evals.json"
     },
@@ -277,7 +277,7 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "eccad69c3969f97e80a3766fc2149b9f3e0bf2acd0c8586ed7bed0418f6878a9",
+      "sha256": "b9414b99bc7ad83d4db2dccfd14e9dfa5281bdd78dd2df524080129dd032b750",
       "source": "skills/cabloy-workflow/SKILL.md",
       "target": ".agents/skills/cabloy-workflow/SKILL.md"
     },
@@ -592,7 +592,7 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "0d1901134f7222902cfc702275ed7bd83a4e3a1d72c3543a77c8ab5d7cabaa55",
+      "sha256": "900d9c74bd44f746990046c3ea142d653da740b156a648c573992134b5cc1b9f",
       "source": "skills/cabloy-workflow/evals/evals.json",
       "target": ".claude/skills/cabloy-workflow/evals/evals.json"
     },
@@ -613,7 +613,7 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "eccad69c3969f97e80a3766fc2149b9f3e0bf2acd0c8586ed7bed0418f6878a9",
+      "sha256": "b9414b99bc7ad83d4db2dccfd14e9dfa5281bdd78dd2df524080129dd032b750",
       "source": "skills/cabloy-workflow/SKILL.md",
       "target": ".claude/skills/cabloy-workflow/SKILL.md"
     },
@@ -683,7 +683,7 @@
     {
       "adapter": "cursor",
       "category": "policy",
-      "sha256": "e2784a08d355455da0da0cfb7c83ff1df4db69566012a1b4a33a5d591764f730",
+      "sha256": "2948516f964a13242178b4f5969756d469f60cc1766616a53e899c5551cf443d",
       "source": "policies/repository.md",
       "target": ".cursor/rules/cabloy-governance.mdc"
     },
@@ -942,7 +942,7 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "0d1901134f7222902cfc702275ed7bd83a4e3a1d72c3543a77c8ab5d7cabaa55",
+      "sha256": "900d9c74bd44f746990046c3ea142d653da740b156a648c573992134b5cc1b9f",
       "source": "skills/cabloy-workflow/evals/evals.json",
       "target": ".cursor/skills/cabloy-workflow/evals/evals.json"
     },
@@ -963,7 +963,7 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "eccad69c3969f97e80a3766fc2149b9f3e0bf2acd0c8586ed7bed0418f6878a9",
+      "sha256": "b9414b99bc7ad83d4db2dccfd14e9dfa5281bdd78dd2df524080129dd032b750",
       "source": "skills/cabloy-workflow/SKILL.md",
       "target": ".cursor/skills/cabloy-workflow/SKILL.md"
     },
@@ -1005,14 +1005,14 @@
     {
       "adapter": "codex",
       "category": "policy",
-      "sha256": "d5f4d8fb331147baa92aa68d8579ac604d2a34bf872efc594393ff1e52e8cd79",
+      "sha256": "f4f6c2584bd58846e315ecf2c0772a47735ef0d1f24a72213d2d6ea13673db71",
       "source": "policies/repository.md",
       "target": "AGENTS.md"
     },
     {
       "adapter": "claude",
       "category": "policy",
-      "sha256": "d5f4d8fb331147baa92aa68d8579ac604d2a34bf872efc594393ff1e52e8cd79",
+      "sha256": "f4f6c2584bd58846e315ecf2c0772a47735ef0d1f24a72213d2d6ea13673db71",
       "source": "policies/repository.md",
       "target": "CLAUDE.md"
     }

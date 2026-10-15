@@ -2,6 +2,7 @@ import type {
   IFormMeta,
   IFormProvider,
   ISchemaObjectExtensionField,
+  IResourceRenderBlockOptionsBlock,
   TypeFormScene,
 } from 'zova-module-a-openapi';
 
@@ -29,6 +30,7 @@ export class ControllerPageEntry extends BeanControllerPageBase {
   formProvider: IFormProvider;
   formSchema?: ISchemaObjectExtensionField;
   jsxZova: ZovaJsx;
+  private _blocks?: IResourceRenderBlockOptionsBlock[];
 
   @Use({ beanFullName: 'rest-resource.model.resource' })
   get $$modelResource(): ModelResource {
@@ -71,7 +73,10 @@ export class ControllerPageEntry extends BeanControllerPageBase {
   }
 
   protected render() {
-    const blocks = this.formSchema?.rest?.blocks;
+    const schema = this.formSchema;
+    // Keep the mounted editor while the current locale's schema is loading.
+    if (schema) this._blocks = schema.rest?.blocks;
+    const blocks = this._blocks;
     if (!blocks || blocks.length === 0) return;
     const domBlocks: VNode[] = [];
     blocks.forEach((block, index) => {

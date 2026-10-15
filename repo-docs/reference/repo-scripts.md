@@ -49,7 +49,11 @@ Cabloy Basic exposes these shared root scripts:
 
 `npm run init` prepares all Cabloy Basic SSR and REST artifacts with `npm run build:zova:all`, which sequentially builds the Basic and Commerce flavor batches before Vona initialization. Use `build:zova` or `build:zova:commerce` for focused artifact refreshes; use `build:zova:all` only when every shipped Basic flavor must be prepared.
 
-## Test isolation and development data in Cabloy Basic
+## Test isolation and development data {#test-isolation-and-development-data}
+
+<span id="test-isolation-and-development-data-in-cabloy-basic"></span>
+
+Cabloy Basic and Cabloy Start both support root `npm run test` and `npm run test:e2e` alongside ordinary development services in the **same checkout**. Their managed runners allocate isolated test resources; an ordinary dev process alone is not a reason to stop services, create another worktree, or change environment identity or ports. Detect the active edition to select its scripts and artifact prerequisites, not to decide whether this guarantee applies.
 
 Root `npm run test` delegates to Vona's `npm run test`; both it and direct `cd vona && npm run test` use the same isolated runner. Vona's `npm run cov` also uses that runner and enables coverage. Root `npm run test:e2e` retains its own isolated E2E entrypoint. Each command launches a new test-mode run, even in the same checkout as a running development server. The runner chooses a UTC `YYYYMMDDHHmmss` timestamp plus eight lowercase cryptographically random hexadecimal characters for one run ID (for example, `20261014010203-a1b2c3d4`). This ID names both owned Vona directories (`.app-test-<id>` and `.vona-test-<id>`) and the disposable database and Redis namespaces; the runner also allocates a loopback listener. The runner exclusively creates an ignored JSON claim at `vona/.vona-test-claim/<id>.json` before allocating resources. A rare claim or directory collision fails without adopting or deleting the existing paths; rerun the command. Independent checkouts sharing database or Redis services do not share these claims, so their random suffixes reduce, but cannot eliminate, cross-checkout collisions.
 
@@ -63,7 +67,17 @@ All three commands initialize test databases and run module `seed()` hooks; none
 
 Coverage reports (`vona/coverage/lcov.info` and, without `--ci`, `vona/coverage/report`) are shared checkout-level artifacts, not run-owned data. Avoid overlapping coverage runs or relying on these reports as independent per-run output.
 
-Builds, generated artifacts, dependency installation/generation, and other shared preparation writes remain accepted prerequisites when needed. Test isolation does not make those writes private or authorize an unrelated reset of development data. The run-specific identity namespaces framework-managed resources; separately configured external databases, Redis targets or unprefixed custom keys, and third-party providers still require deliberate ownership and isolation. Inspect the active edition's scripts rather than assuming Cabloy Start already uses the same root runner.
+Builds, generated artifacts, dependency installation/generation, and other shared preparation writes remain accepted prerequisites when needed. Test isolation does not make those writes private or authorize an unrelated reset of development data. The run-specific identity namespaces framework-managed resources; separately configured external databases, Redis targets or unprefixed custom keys, and third-party providers still require deliberate ownership and isolation.
+
+Judge preflight conflicts by actual resource overlap, not process names:
+
+| Situation                                                                                                                                   | Required action                                                                                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ordinary Vona or Zova dev services are running in the same checkout                                                                         | Not a blocker by itself; do not require shutdown or environment/worktree setup solely for root managed tests.                                                                   |
+| Another operation writes the same build output, generated artifacts, installed dependencies, or coverage reports                            | Coordinate the overlapping shared writes and artifact readiness; these outputs are not run-private.                                                                             |
+| A runner-owned listener, test identity, claim, database/Redis namespace, or path actually collides, or a custom external resource is shared | Diagnose ownership and wait or ask when needed; do not adopt another run's resources, reset dev data, kill its process, or change shared identity/ports to bypass the conflict. |
+
+A process-list match or a free port alone is not proof of either a conflict or safe ownership. Use the managed root entrypoints and retain normal execution-authorization checks; isolation is not a blanket reset or cleanup authorization.
 
 For Vona integrated SSR, the allocated E2E origin is supplied to Zova at runtime as server `SSR_API_BASE_URL` and browser `API_BASE_URL`. Do not edit Zova `.env` files or rebuild solely to match the test port. The current root `npm run test:e2e` consumes prebuilt frontend artifacts; refresh affected SSR/REST output and synchronize dependencies when their inputs change. See [Runtime API origins in Vona integrated SSR](/fullstack/ssr-entry-modes#runtime-api-origins-in-vona-integrated-ssr) for configuration overrides and scope.
 
@@ -191,7 +205,7 @@ The public-package upgrade flow does not source or reconcile the Start-owned bas
 
 ## SSR browser checks
 
-Cabloy Basic and Cabloy Start each use a managed local `npm run test:e2e` command. In Basic, the root wrapper allocates a run-specific test identity, disposable database and Redis namespaces, Vona generated/runtime/public paths, and an available loopback port, then starts a fresh `--workers=1 --flavor=normal --mode=test` worker. Test-mode startup initializes test resources and invokes module seeds without a separate dev-mode `db:reset`; Playwright does not reuse an existing process. This protects ordinary same-checkout development data and permits a Basic root E2E run alongside a dev server, subject to the shared-preparation and external-resource boundaries above. Inspect the Start repository's current scripts for its own resource-ownership rules.
+Cabloy Basic and Cabloy Start each use a managed local `npm run test:e2e` command. In both editions, the root wrapper allocates a run-specific test identity, disposable database and Redis namespaces, Vona generated/runtime/public paths, and an available loopback port, then starts a fresh `--workers=1 --flavor=normal --mode=test` worker. Test-mode startup initializes test resources and invokes module seeds without a separate dev-mode `db:reset`; Playwright does not reuse an existing process. This protects ordinary same-checkout development data and permits root E2E alongside a dev server in either edition, subject to the [shared-preparation and external-resource boundaries](#test-isolation-and-development-data).
 
 Both editions' browser checks target Vona integrated SSR. In the Cabloy Basic default environment, the Vona listener is `7102`; the Zova standalone SSR development server uses `9000` and is not an acceptance target.
 
@@ -234,7 +248,7 @@ npm run test:e2e a-commerce
 
 ### Cabloy Start
 
-The Start suite exercises Web at `/` and Admin at `/admin` through Vona integrated SSR dispatch. Prepare current Start artifacts before a managed local run. The runner uses the effective local `normal`-flavor, test-mode Vona listener, rather than assuming a fixed port:
+The Start suite exercises Web at `/` and Admin at `/admin` through Vona integrated SSR dispatch. Prepare current Start artifacts before a managed local run. The runner allocates a loopback listener for its `normal`-flavor, test-mode Vona worker independently of the configured dev port:
 
 ```bash
 npm run build:zova
@@ -251,7 +265,7 @@ npm run test:e2e cabloy-start -- --tag @smoke
 npm run test:e2e cabloy-admin -- --tag @admin --tag @cabloy-admin
 ```
 
-In Cabloy Start, the sole `npm run test:e2e` command checks the configured local port and starts a fresh runner-managed Vona target with `--workers=1 --flavor=normal --mode=test`. Playwright never reuses an existing server. Test-mode startup initializes test resources; the runner does not invoke a separate `db:reset`. Confirm ownership of the test database, Redis namespace, and public/runtime paths before running it; do not change shared environment identity or ports to bypass a busy resource.
+In Cabloy Start, the sole `npm run test:e2e` command uses the allocated run listener and starts a fresh runner-managed Vona target with `--workers=1 --flavor=normal --mode=test`. Playwright never reuses an existing server. Test-mode startup initializes test resources; the runner does not invoke a separate `db:reset`. Ordinary same-checkout dev presence is not a blocker, and its configured port need not be free. Apply the same run-owned resource and shared-preparation checks as Basic; do not change shared environment identity or ports to bypass an actual conflict.
 
 `E2E_BASE_URL` is unsupported in Cabloy Start and must be unset, even for a local URL. Externally managed targets are not supported.
 

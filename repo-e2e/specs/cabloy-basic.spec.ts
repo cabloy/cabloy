@@ -5,6 +5,26 @@ import { expect, test } from '../scripts/managedTest.ts';
 const studentResourceUrl =
   /\/admin\/rest\/resource\/training-student(?:%3A|:|%253A)student(?:[/?#]|$)/;
 
+interface IModelPersistenceIdentity {
+  appName: string;
+  siteId: string;
+  scope: readonly [string | null, string | null, string | null];
+}
+
+interface IStudentDraftSnapshot {
+  storageKey: string;
+  namespace: unknown[];
+  identity: unknown[];
+  queryKey: unknown[];
+  schemaSignature: string;
+  baselineSignature?: string;
+  mode: string;
+  id?: string;
+  values: Record<string, unknown>;
+  relations: Record<string, { id?: string | number; deleted?: boolean }[]>;
+  undefinedPaths: string[];
+}
+
 interface IFieldGeometry {
   container: {
     display: string;
@@ -109,6 +129,312 @@ function installStudentCreateResponseCapture(page: Page) {
       return studentId;
     },
   };
+}
+
+const studentDraftCreatePath = '/admin/rest/resource/training-student%3Astudent/create';
+
+function studentDraftNameInput(page: Page) {
+  return page.getByRole('group', { name: 'Student Name *', exact: true }).getByRole('textbox');
+}
+
+function studentDraftBanner(page: Page) {
+  return page.getByTestId('resource-draft');
+}
+
+function collectDraftEffects(page: Page, includeNestedRecords = false) {
+  const mutationMethods = includeNestedRecords
+    ? ['POST', 'PUT', 'PATCH', 'DELETE']
+    : ['POST', 'PATCH'];
+  const resourcePaths = includeNestedRecords
+    ? /^\/api\/training\/(?:student|record)(?:\/|$)/
+    : /^\/api\/training\/student(?:\/|$)/;
+  const mutations: string[] = [];
+  const hydrationWarnings: string[] = [];
+  const consoleErrors: string[] = [];
+  const pageErrors = collectPageErrors(page);
+  const requestHandler = (request: Request) => {
+    if (
+      mutationMethods.includes(request.method()) &&
+      resourcePaths.test(new URL(request.url()).pathname) &&
+      !request.headers()['x-vona-openapi-schema']
+    ) {
+      mutations.push(`${request.method()} ${new URL(request.url()).pathname}`);
+    }
+  };
+  page.on('request', requestHandler);
+  page.on('console', message => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+    if (/hydration.*mismatch|mismatch.*hydration/i.test(message.text())) {
+      hydrationWarnings.push(message.text());
+    }
+  });
+  return { mutations, hydrationWarnings, consoleErrors, pageErrors };
+}
+
+async function readModelPersistenceIdentity(page: Page): Promise<IModelPersistenceIdentity> {
+  return page.evaluate(async (): Promise<IModelPersistenceIdentity> => {
+    // ZovaApplication attaches itself to Vue's app, whose mount root exposes __vue_app__.
+    const root = Array.from(document.querySelectorAll('*')).find(
+      element => (element as any).__vue_app__?.zova,
+    ) as any;
+    const app = root?.__vue_app__?.zova;
+    if (!app) throw new Error('Mounted Zova application not found');
+    const passport = await app.bean._getBean('home-passport.model.passport', true);
+    const scope: IModelPersistenceIdentity['scope'] = passport.$modelPersistence.capture().scope;
+    return {
+      appName: app.sys.env.APP_NAME ?? '',
+      siteId: app.sys.env.SITE_ID,
+      scope,
+    };
+  });
+}
+
+async function readStudentDrafts(page: Page, expectedIdentity?: IModelPersistenceIdentity) {
+  const current = expectedIdentity ?? (await readModelPersistenceIdentity(page));
+  const entries = await page.evaluate(async () => {
+    if (!(await indexedDB.databases()).some(database => database.name === 'localforage')) {
+      return [];
+    }
+    return await new Promise<{ key: IDBValidKey; value: unknown }[]>((resolve, reject) => {
+      const opening = indexedDB.open('localforage');
+      opening.onerror = () => reject(opening.error);
+      opening.onsuccess = () => {
+        const database = opening.result;
+        if (!database.objectStoreNames.contains('keyvaluepairs')) {
+          database.close();
+          resolve([]);
+          return;
+        }
+        const transaction = database.transaction('keyvaluepairs', 'readonly');
+        const entries: { key: IDBValidKey; value: unknown }[] = [];
+        const cursor = transaction.objectStore('keyvaluepairs').openCursor();
+        cursor.onsuccess = () => {
+          const entry = cursor.result;
+          if (!entry) return;
+          entries.push({ key: entry.key, value: entry.value });
+          entry.continue();
+        };
+        transaction.oncomplete = () => {
+          database.close();
+          resolve(entries);
+        };
+        transaction.onerror = () => {
+          database.close();
+          reject(transaction.error);
+        };
+      };
+    });
+  });
+  // Decode outside the app: its global JSON.parse revives ISO strings into Dates.
+  const drafts: IStudentDraftSnapshot[] = [];
+  for (const entry of entries) {
+    try {
+      if (typeof entry.key !== 'string') continue;
+      const namespace = JSON.parse(entry.key);
+      if (
+        !Array.isArray(namespace) ||
+        namespace.length !== 5 ||
+        namespace[0] !== 'zova-model-db' ||
+        namespace[1] !== 1 ||
+        namespace[2] !== current.appName ||
+        JSON.stringify(namespace[3]) !== JSON.stringify(current.scope) ||
+        typeof namespace[4] !== 'string'
+      ) {
+        continue;
+      }
+      const query = typeof entry.value === 'string' ? JSON.parse(entry.value) : entry.value;
+      if (query?.queryKey?.[0] !== 'basic-pageentry.model.draft') continue;
+      const identity = JSON.parse(query.queryKey[1]);
+      const snapshot = query.state?.data;
+      if (identity[0] === 'training-student:student' && snapshot?.projection?.values) {
+        drafts.push({
+          storageKey: entry.key,
+          namespace,
+          identity,
+          queryKey: query.queryKey,
+          schemaSignature: snapshot.schemaSignature,
+          baselineSignature: snapshot.baselineSignature,
+          mode: identity[1],
+          id: identity[2] ?? undefined,
+          values: snapshot.projection.values,
+          relations: snapshot.projection.relations,
+          undefinedPaths: snapshot.projection.undefinedPaths,
+        });
+      }
+    } catch {
+      // Other persisted models are not draft envelopes.
+    }
+  }
+  return drafts;
+}
+
+async function waitForStudentDraft(page: Page, name: string, id?: string | number) {
+  await expect
+    .poll(async () => {
+      return (await readStudentDrafts(page)).some(
+        draft =>
+          draft.mode === (id === undefined ? 'create' : 'edit') &&
+          draft.id === (id === undefined ? undefined : String(id)) &&
+          draft.values.name === name,
+      );
+    })
+    .toBe(true);
+}
+
+async function expectNoStudentDraft(page: Page, id?: string | number) {
+  await expect
+    .poll(async () => {
+      return (await readStudentDrafts(page)).filter(
+        draft =>
+          draft.mode === (id === undefined ? 'create' : 'edit') &&
+          draft.id === (id === undefined ? undefined : String(id)),
+      ).length;
+    })
+    .toBe(0);
+}
+
+async function reloadStudentDraft(page: Page) {
+  await page.reload({ waitUntil: 'load' });
+  await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+  await expect(studentDraftBanner(page)).toContainText('Unsaved draft available');
+  await expect(
+    studentDraftBanner(page).getByRole('button', { name: 'Recover draft', exact: true }),
+  ).toBeVisible();
+}
+
+async function recoverStudentDraft(page: Page) {
+  await studentDraftBanner(page)
+    .getByRole('button', { name: 'Recover draft', exact: true })
+    .click();
+  // Edit recovery rechecks the server baseline before replacing live values.
+  await expect(studentDraftBanner(page)).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Discard draft', exact: true })).toHaveCount(0);
+}
+
+function studentDraftTrainingRecords(page: Page) {
+  return page.getByRole('group', { name: /^Student Training Records(?: \*)?$/ });
+}
+
+function studentDraftTrainingRow(page: Page, name: string) {
+  return studentDraftTrainingRecords(page)
+    .locator('tbody tr')
+    .filter({ has: page.getByRole('link', { name, exact: true }) });
+}
+
+function trainingTimeInput(dialog: Locator) {
+  return dialog
+    .getByRole('group', { name: 'Training Time', exact: true })
+    .locator('input[type="date"]');
+}
+
+async function browserLocalDateIso(page: Page, value: string) {
+  // Basic Date interprets a native date input as midnight in the browser's timezone.
+  return page.evaluate(date => new Date(`${date}T00:00:00`).toISOString(), value);
+}
+
+async function readStudentTrainingDraft(page: Page, id?: string | number) {
+  const draft = (await readStudentDrafts(page)).find(
+    draft =>
+      draft.mode === (id === undefined ? 'create' : 'edit') &&
+      draft.id === (id === undefined ? undefined : String(id)),
+  );
+  return {
+    rows: draft?.values.trainingRecords as Record<string, unknown>[] | undefined,
+    identities: draft?.relations[JSON.stringify(['trainingRecords'])],
+    trainingTimeCleared: draft?.undefinedPaths.includes(
+      JSON.stringify(['trainingRecords', 0, 'trainingTime']),
+    ),
+  };
+}
+
+async function openStudentDraftCreate(page: Page) {
+  await page.getByRole('link', { name: 'Student', exact: true }).click();
+  await expect(page).toHaveURL(studentResourceUrl);
+  await page.getByRole('button', { name: 'Create', exact: true }).click();
+  await expect(page).toHaveURL(/training-student(?:%3A|:)student\/create/);
+  await expect(studentDraftNameInput(page)).toBeVisible();
+}
+
+async function openStudentDraftEdit(page: Page, name: string, id: string | number) {
+  await page.getByRole('link', { name: 'Student', exact: true }).click();
+  await expect(page).toHaveURL(studentResourceUrl);
+  await page.getByLabel('Student Name').fill(name);
+  const select = waitForStudentSelect(page);
+  await page.getByRole('button', { name: 'Search', exact: true }).click();
+  await select;
+  const row = page
+    .locator('tbody tr')
+    .filter({ has: page.getByRole('link', { name, exact: true }) });
+  await expect(row).toHaveCount(1);
+  await row.locator('button.btn-outline.btn-primary').click();
+  await expect(page).toHaveURL(
+    new RegExp(`/training-student(?:%3A|:)student/${id}/edit(?:[?#]|$)`),
+  );
+  await expect(studentDraftNameInput(page)).toHaveValue(name);
+}
+
+async function withDraftStudents(
+  page: Page,
+  count: number,
+  run: (
+    students: { id: string | number; name: string }[],
+    headers: Record<string, string>,
+  ) => Promise<void>,
+) {
+  const token = (await page.context().cookies()).find(cookie => cookie.name === 'token')?.value;
+  expect(token).toBeTruthy();
+  const headers = { Authorization: `Bearer ${token}` };
+  const students: { id: string | number; name: string }[] = [];
+  try {
+    for (let index = 0; index < count; index++) {
+      const name = `Draft E2E ${Date.now()} ${index}`;
+      const response = await page.request.post('/api/training/student', {
+        headers,
+        data: { name, mobile: '13812345678', level: 1 },
+      });
+      expect(response.ok()).toBeTruthy();
+      const id = (await response.json()).data;
+      expect(['string', 'number']).toContain(typeof id);
+      students.push({ id, name });
+    }
+    await run(students, headers);
+  } finally {
+    if (students.length) {
+      let cleanupToken = (await page.context().cookies()).find(
+        cookie => cookie.name === 'token',
+      )?.value;
+      if (!cleanupToken || page.url().includes('/admin/login')) {
+        await loginAsAdmin(page);
+        cleanupToken = (await page.context().cookies()).find(
+          cookie => cookie.name === 'token',
+        )?.value;
+      }
+      expect(cleanupToken).toBeTruthy();
+      let cleanupHeaders = { Authorization: `Bearer ${cleanupToken}` };
+      const failures: string[] = [];
+      for (const student of students.toReversed()) {
+        let response = await page.request.delete(
+          `/api/training/student/deleteForce/${student.id}`,
+          { headers: cleanupHeaders },
+        );
+        if (response.status() === 401) {
+          await loginAsAdmin(page);
+          cleanupToken = (await page.context().cookies()).find(
+            cookie => cookie.name === 'token',
+          )?.value;
+          expect(cleanupToken).toBeTruthy();
+          cleanupHeaders = { Authorization: `Bearer ${cleanupToken}` };
+          response = await page.request.delete(`/api/training/student/deleteForce/${student.id}`, {
+            headers: cleanupHeaders,
+          });
+        }
+        if (!response.ok() && response.status() !== 404) {
+          failures.push(`Draft fixture cleanup ${student.id}: ${response.status()}`);
+        }
+      }
+      expect(failures).toEqual([]);
+    }
+  }
 }
 
 async function getFieldGeometry(locator: Locator): Promise<IFieldGeometry> {
@@ -1145,6 +1471,1257 @@ test(
         expect(deleteResponse.ok()).toBeTruthy();
       }
     }
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-01: default-on create recovery restores ordinary and nested fields without submitting',
+  { tag: ['@admin', '@flow', '@ssr'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    const effects = collectDraftEffects(page);
+    await loginAsAdmin(page);
+    const name = `Create Draft E2E ${Date.now()}`;
+    await page.goto(studentDraftCreatePath, { waitUntil: 'load' });
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+    await page.getByRole('tab', { name: 'Basic Information', exact: true }).click();
+    await studentDraftNameInput(page).fill(name);
+    await page
+      .getByRole('group', { name: 'Mobile *', exact: true })
+      .getByRole('textbox')
+      .fill('13812345678');
+    await page.locator('.ProseMirror').last().fill(`Nested draft ${name}`);
+    await waitForStudentDraft(page, name);
+    await expect
+      .poll(async () => {
+        const snapshot = (await readStudentDrafts(page)).find(draft => draft.mode === 'create');
+        return (snapshot?.values.content as { descriptionMarkdown?: string } | undefined)
+          ?.descriptionMarkdown;
+      })
+      .toContain(name);
+    await page.getByRole('tab', { name: 'Student Training Records', exact: true }).click();
+    const progress = page
+      .getByRole('group', { name: 'Training Stage *', exact: true })
+      .getByRole('button', { name: 'Progress Track', exact: true });
+    await progress.click();
+    await expect(progress).toHaveClass(/\bbtn-info\b/);
+    await expect
+      .poll(async () => {
+        const snapshot = (await readStudentDrafts(page)).find(draft => draft.mode === 'create');
+        return snapshot?.values.level;
+      })
+      .toBe(2);
+
+    const html = await (await page.request.get(studentDraftCreatePath)).text();
+    expect(html).not.toContain('Unsaved draft available');
+    expect(html).not.toContain(name);
+    await expect(studentDraftBanner(page)).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Discard draft', exact: true })).toHaveCount(0);
+    await reloadStudentDraft(page);
+    await page.getByRole('tab', { name: 'Basic Information', exact: true }).click();
+    await expect(studentDraftNameInput(page)).not.toHaveValue(name);
+    await recoverStudentDraft(page);
+    await page.getByRole('tab', { name: 'Student Training Records', exact: true }).click();
+    await expect(progress).toHaveClass(/\bbtn-info\b/);
+    await page.getByRole('tab', { name: 'Basic Information', exact: true }).click();
+    await expect(studentDraftNameInput(page)).toHaveValue(name);
+    await expect(
+      page.getByRole('group', { name: 'Mobile *', exact: true }).getByRole('textbox'),
+    ).toHaveValue('13812345678');
+    await expect(page.locator('.ProseMirror').last()).toContainText(name);
+    await waitForStudentDraft(page, name);
+    expect(effects.mutations).toEqual([]);
+
+    await reloadStudentDraft(page);
+    await page.getByRole('tab', { name: 'Basic Information', exact: true }).click();
+    await expect(studentDraftNameInput(page)).not.toHaveValue(name);
+    await studentDraftBanner(page)
+      .getByRole('button', { name: 'Discard draft', exact: true })
+      .click();
+    await expectNoStudentDraft(page);
+    await expect(studentDraftNameInput(page)).not.toHaveValue(name);
+    await page.reload({ waitUntil: 'load' });
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+    await expect(studentDraftBanner(page)).toHaveCount(0);
+    expect(effects.mutations).toEqual([]);
+    expect(effects.hydrationWarnings).toEqual([]);
+    expect(effects.pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-02: default-on edit recovery and candidate discard never PATCH the record',
+  { tag: ['@admin', '@flow', '@ssr'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    const effects = collectDraftEffects(page);
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student], headers) => {
+      const editedName = `${student.name} unsaved`;
+      await page.goto(`/admin/rest/resource/training-student%3Astudent/${student.id}/edit`, {
+        waitUntil: 'load',
+      });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      await studentDraftNameInput(page).fill(editedName);
+      await waitForStudentDraft(page, editedName, student.id);
+      await reloadStudentDraft(page);
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      await recoverStudentDraft(page);
+      await expect(studentDraftNameInput(page)).toHaveValue(editedName);
+      const response = await page.request.get(`/api/training/student/${student.id}`, { headers });
+      expect(response.ok()).toBeTruthy();
+      expect((await response.json()).name).toBe(student.name);
+      expect(effects.mutations).toEqual([]);
+
+      await reloadStudentDraft(page);
+      await studentDraftBanner(page)
+        .getByRole('button', { name: 'Discard draft', exact: true })
+        .click();
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      await expectNoStudentDraft(page, student.id);
+      await page.reload({ waitUntil: 'load' });
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+      expect(effects.mutations).toEqual([]);
+      expect(effects.hydrationWarnings).toEqual([]);
+      expect(effects.pageErrors).toEqual([]);
+    });
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-03: successful create and edit submission remove their exact draft identities',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    await loginAsAdmin(page);
+    const capture = installStudentCreateResponseCapture(page);
+    await capture.install();
+    const token = (await page.context().cookies()).find(cookie => cookie.name === 'token')?.value;
+    expect(token).toBeTruthy();
+    const headers = { Authorization: `Bearer ${token}` };
+    const name = `Submitted Draft E2E ${Date.now()}`;
+    let studentId: string | number | undefined;
+    try {
+      await openStudentDraftCreate(page);
+      await studentDraftNameInput(page).fill(name);
+      await page
+        .getByRole('group', { name: 'Mobile *', exact: true })
+        .getByRole('textbox')
+        .fill('13812345678');
+      await page.getByRole('tab', { name: 'Student Training Records', exact: true }).click();
+      await page.getByText('Foundation Track', { exact: true }).click();
+      await waitForStudentDraft(page, name);
+      const create = page.waitForResponse(
+        response =>
+          response.request().method() === 'POST' &&
+          new URL(response.url()).pathname === '/api/training/student' &&
+          !response.request().headers()['x-vona-openapi-schema'],
+      );
+      await page.getByRole('button', { name: 'Submit', exact: true }).click();
+      expect((await create).ok()).toBeTruthy();
+      studentId = capture.studentId;
+      expect(['string', 'number']).toContain(typeof studentId);
+      await expect(page).toHaveURL(studentResourceUrl);
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await expectNoStudentDraft(page);
+      await openStudentDraftCreate(page);
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+      await expect(studentDraftNameInput(page)).not.toHaveValue(name);
+
+      await page.goto(`/admin/rest/resource/training-student%3Astudent/${studentId}/edit`, {
+        waitUntil: 'load',
+      });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      const updatedName = `${name} updated`;
+      await studentDraftNameInput(page).fill(updatedName);
+      await waitForStudentDraft(page, updatedName, studentId);
+      const update = page.waitForResponse(
+        response =>
+          response.request().method() === 'PATCH' &&
+          new URL(response.url()).pathname === `/api/training/student/${studentId}` &&
+          !response.request().headers()['x-vona-openapi-schema'],
+      );
+      await page.getByRole('button', { name: 'Submit', exact: true }).click();
+      expect((await update).ok()).toBeTruthy();
+      await expect(page).toHaveURL(/training-student(?:%3A|:)student\/create/);
+      await page.waitForLoadState('load');
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await expectNoStudentDraft(page, studentId);
+      await page.goto(`/admin/rest/resource/training-student%3Astudent/${studentId}/edit`, {
+        waitUntil: 'load',
+      });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await expect(studentDraftNameInput(page)).toHaveValue(updatedName);
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+    } finally {
+      studentId ??= capture.studentId;
+      try {
+        if (studentId !== undefined) {
+          const response = await page.request.delete(
+            `/api/training/student/deleteForce/${studentId}`,
+            { headers },
+          );
+          expect(response.ok() || response.status() === 404).toBeTruthy();
+        }
+      } finally {
+        await capture.uninstall();
+      }
+    }
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-04: ordinary Back and explicit task close delete drafts instead of recovering them',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    const effects = collectDraftEffects(page);
+    await loginAsAdmin(page);
+    await openStudentDraftCreate(page);
+    const backName = `Back Draft E2E ${Date.now()}`;
+    await studentDraftNameInput(page).fill(backName);
+    await waitForStudentDraft(page, backName);
+    await page.getByRole('button', { name: 'Back', exact: true }).click();
+    await expect(page).toHaveURL(studentResourceUrl);
+    await expectNoStudentDraft(page);
+    await openStudentDraftCreate(page);
+    await expect(studentDraftBanner(page)).toHaveCount(0);
+    await expect(studentDraftNameInput(page)).not.toHaveValue(backName);
+
+    const closeName = `Closed Draft E2E ${Date.now()}`;
+    await studentDraftNameInput(page).fill(closeName);
+    await waitForStudentDraft(page, closeName);
+    const task = page.getByRole('tab', { name: closeName, exact: true });
+    await expect(task).toBeVisible();
+    await task.hover();
+    await task.locator('.tab-close').click();
+    await expect(task).toHaveCount(0);
+    await expectNoStudentDraft(page);
+    await openStudentDraftCreate(page);
+    await expect(studentDraftBanner(page)).toHaveCount(0);
+    await expect(studentDraftNameInput(page)).not.toHaveValue(closeName);
+    expect(effects.mutations).toEqual([]);
+    expect(effects.pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-05: switching tasks retains drafts and workspace close removes inactive edit drafts',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    const effects = collectDraftEffects(page);
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 2, async ([first, second]) => {
+      await openStudentDraftEdit(page, first.name, first.id);
+      const firstDraft = `${first.name} unsaved`;
+      await studentDraftNameInput(page).fill(firstDraft);
+      await waitForStudentDraft(page, firstDraft, first.id);
+      await openStudentDraftEdit(page, second.name, second.id);
+      const secondDraft = `${second.name} unsaved`;
+      await studentDraftNameInput(page).fill(secondDraft);
+      await waitForStudentDraft(page, secondDraft, second.id);
+
+      await page.getByRole('tab', { name: firstDraft, exact: true }).click();
+      await expect(studentDraftNameInput(page)).toHaveValue(firstDraft);
+      await waitForStudentDraft(page, firstDraft, first.id);
+      await waitForStudentDraft(page, secondDraft, second.id);
+      await page.getByRole('link', { name: 'Student', exact: true }).click();
+      await expect(page).toHaveURL(studentResourceUrl);
+      const workspace = page
+        .locator('.tabs-lifted')
+        .getByRole('tab', { name: 'Student', exact: true });
+      await workspace.hover();
+      await workspace.locator('.tab-close').click();
+      await expect(workspace).toHaveCount(0);
+      await expectNoStudentDraft(page, first.id);
+      await expectNoStudentDraft(page, second.id);
+      await page.goto(`/admin/rest/resource/training-student%3Astudent/${first.id}/edit`, {
+        waitUntil: 'load',
+      });
+      await expect(studentDraftNameInput(page)).toHaveValue(first.name);
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+      await page.goto(`/admin/rest/resource/training-student%3Astudent/${second.id}/edit`, {
+        waitUntil: 'load',
+      });
+      await expect(studentDraftNameInput(page)).toHaveValue(second.name);
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+      expect(effects.mutations).toEqual([]);
+      expect(effects.pageErrors).toEqual([]);
+    });
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-06: edit recovery rejects a changed server baseline without overwriting it',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    const effects = collectDraftEffects(page);
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student], headers) => {
+      await page.goto(`/admin/rest/resource/training-student%3Astudent/${student.id}/edit`, {
+        waitUntil: 'load',
+      });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      const unsavedName = `${student.name} unsaved`;
+      await studentDraftNameInput(page).fill(unsavedName);
+      await waitForStudentDraft(page, unsavedName, student.id);
+      const serverName = `${student.name} changed on server`;
+      const change = await page.request.patch(`/api/training/student/${student.id}`, {
+        headers,
+        data: { name: serverName, mobile: '13812345678', level: 1 },
+      });
+      expect(change.ok()).toBeTruthy();
+      await reloadStudentDraft(page);
+      await expect(studentDraftNameInput(page)).toHaveValue(serverName);
+      await studentDraftBanner(page)
+        .getByRole('button', { name: 'Recover draft', exact: true })
+        .click();
+      await expect(studentDraftBanner(page)).toContainText(
+        'This draft cannot be recovered because the form or record has changed.',
+      );
+      await expect(studentDraftNameInput(page)).toHaveValue(serverName);
+      await waitForStudentDraft(page, unsavedName, student.id);
+      await studentDraftBanner(page)
+        .getByRole('button', { name: 'Discard draft', exact: true })
+        .click();
+      await expectNoStudentDraft(page, student.id);
+      const unchanged = await page.request.get(`/api/training/student/${student.id}`, { headers });
+      expect(unchanged.ok()).toBeTruthy();
+      expect((await unchanged.json()).name).toBe(serverName);
+      expect(effects.mutations).toEqual([]);
+      expect(effects.pageErrors).toEqual([]);
+    });
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-07: failed create validation retains recoverable incomplete input',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    const effects = collectDraftEffects(page);
+    await loginAsAdmin(page);
+    await openStudentDraftCreate(page);
+    const name = `Invalid Draft E2E ${Date.now()}`;
+    await studentDraftNameInput(page).fill(name);
+    const mobile = page.getByRole('group', { name: 'Mobile *', exact: true });
+    await mobile.getByRole('textbox').fill('123');
+    await waitForStudentDraft(page, name);
+    await page.getByRole('button', { name: 'Submit', exact: true }).click();
+    await expect(mobile.locator('.text-error')).toBeVisible();
+    await expect(page).toHaveURL(/training-student(?:%3A|:)student\/create/);
+    await waitForStudentDraft(page, name);
+    await expect(studentDraftBanner(page)).toHaveCount(0);
+    expect(effects.mutations).toEqual([]);
+
+    await reloadStudentDraft(page);
+    await recoverStudentDraft(page);
+    await expect(studentDraftNameInput(page)).toHaveValue(name);
+    await expect(mobile.getByRole('textbox')).toHaveValue('123');
+    await waitForStudentDraft(page, name);
+    await reloadStudentDraft(page);
+    await expect(studentDraftNameInput(page)).not.toHaveValue(name);
+    await studentDraftBanner(page)
+      .getByRole('button', { name: 'Discard draft', exact: true })
+      .click();
+    await expectNoStudentDraft(page);
+    expect(effects.mutations).toEqual([]);
+    expect(effects.pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-08: locale changes preserve recovered dirty input and current-schema persistence',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    const effects = collectDraftEffects(page);
+    await loginAsAdmin(page);
+    await openStudentDraftCreate(page);
+    const name = `Locale Draft E2E ${Date.now()}`;
+    await studentDraftNameInput(page).fill(name);
+    await waitForStudentDraft(page, name);
+    await reloadStudentDraft(page);
+    await recoverStudentDraft(page);
+    await expect(studentDraftNameInput(page)).toHaveValue(name);
+
+    const localeMenu = page
+      .locator('details')
+      .filter({ has: page.getByText('Chinese', { exact: true }) });
+    await expect(localeMenu).toHaveCount(1);
+    await localeMenu.locator('summary').click();
+    await localeMenu.getByText('Chinese', { exact: true }).click();
+    const chineseName = page
+      .getByRole('group', { name: '学生姓名 *', exact: true })
+      .getByRole('textbox');
+    await expect(chineseName).toBeVisible();
+    await expect(studentDraftBanner(page)).toHaveCount(0);
+    await expect(page.getByRole('button', { name: '丢弃草稿', exact: true })).toHaveCount(0);
+    await waitForStudentDraft(page, name);
+    await expect(chineseName).toHaveValue(name);
+    const nextName = `${name} 中文`;
+    await chineseName.fill(nextName);
+    await waitForStudentDraft(page, nextName);
+
+    const chineseLocaleMenu = page
+      .locator('details')
+      .filter({ has: page.getByText('英语', { exact: true }) });
+    await chineseLocaleMenu.locator('summary').click();
+    await chineseLocaleMenu.getByText('英语', { exact: true }).click();
+    await expect(studentDraftNameInput(page)).toHaveValue(nextName);
+    await reloadStudentDraft(page);
+    await recoverStudentDraft(page);
+    await expect(studentDraftNameInput(page)).toHaveValue(nextName);
+    await waitForStudentDraft(page, nextName);
+    await reloadStudentDraft(page);
+    await expect(studentDraftNameInput(page)).not.toHaveValue(nextName);
+    await studentDraftBanner(page)
+      .getByRole('button', { name: 'Discard draft', exact: true })
+      .click();
+    await expectNoStudentDraft(page);
+    expect(effects.mutations).toEqual([]);
+    expect(effects.hydrationWarnings).toEqual([]);
+    expect(effects.pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-11: edit locale refresh preserves recovered names but resets translated level options to the server baseline',
+  { tag: ['@admin', '@flow', '@ssr'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student], headers) => {
+      const effects = collectDraftEffects(page);
+      const editedName = `${student.name} locale unsaved`;
+      const selectBasic = async (locale = 'en') => {
+        await page
+          .getByRole('tab', {
+            name: locale === 'en' ? 'Basic Information' : '基本信息',
+            exact: true,
+          })
+          .click();
+      };
+      const selectTraining = async (locale = 'en') => {
+        await page
+          .getByRole('tab', {
+            name: locale === 'en' ? 'Student Training Records' : '学生培训记录',
+            exact: true,
+          })
+          .click();
+      };
+      const expectDraftValues = async (level: number) => {
+        await expect
+          .poll(async () => {
+            const draft = (await readStudentDrafts(page)).find(
+              draft => draft.mode === 'edit' && draft.id === String(student.id),
+            );
+            return { name: draft?.values.name, level: draft?.values.level };
+          })
+          .toEqual({ name: editedName, level });
+      };
+      await page.goto(`/admin/rest/resource/training-student%3Astudent/${student.id}/edit`, {
+        waitUntil: 'load',
+      });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      const englishLevel = page.getByRole('group', { name: 'Training Stage *', exact: true });
+      const foundation = englishLevel.getByRole('button', {
+        name: 'Foundation Track',
+        exact: true,
+      });
+      const progress = englishLevel.getByRole('button', { name: 'Progress Track', exact: true });
+      await studentDraftNameInput(page).fill(editedName);
+      await selectTraining();
+      await expect(foundation).toHaveClass(/\bbtn-warning\b/);
+      await progress.click();
+      await expect(progress).toHaveClass(/\bbtn-info\b/);
+      await expectDraftValues(2);
+
+      await reloadStudentDraft(page);
+      await selectBasic();
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      await selectTraining();
+      await expect(foundation).toHaveClass(/\bbtn-warning\b/);
+      await expect(progress).toHaveClass(/\bbtn-outline\b/);
+      await expectDraftValues(2);
+      await recoverStudentDraft(page);
+      await expect(progress).toHaveClass(/\bbtn-info\b/);
+      await selectBasic();
+      await expect(studentDraftNameInput(page)).toHaveValue(editedName);
+
+      const localeMenu = page
+        .locator('details')
+        .filter({ has: page.getByText('Chinese', { exact: true }) });
+      await expect(localeMenu).toHaveCount(1);
+      await localeMenu.locator('summary').click();
+      await localeMenu.getByText('Chinese', { exact: true }).click();
+      const chineseName = page
+        .getByRole('group', { name: '学生姓名 *', exact: true })
+        .getByRole('textbox');
+      const chineseLevel = page.getByRole('group', { name: '培训阶段 *', exact: true });
+      const chineseFoundation = chineseLevel.getByRole('button', { name: '基础班', exact: true });
+      const chineseProgress = chineseLevel.getByRole('button', { name: '提升班', exact: true });
+      await selectBasic('zh');
+      await expect(chineseName).toHaveValue(editedName);
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+      await expect(page.getByRole('button', { name: '丢弃草稿', exact: true })).toHaveCount(0);
+      // This custom renderer has localized options and an opaque slot, so it takes normal reset.
+      await selectTraining('zh');
+      await expect(chineseFoundation).toHaveClass(/\bbtn-warning\b/);
+      await expect(chineseProgress).toHaveClass(/\bbtn-outline\b/);
+      await expectDraftValues(1);
+      expect(effects.mutations).toEqual([]);
+
+      // Make level dirty again to prove the reverse locale change also resets to server truth.
+      await chineseProgress.click();
+      await expect(chineseProgress).toHaveClass(/\bbtn-info\b/);
+      await expectDraftValues(2);
+      const chineseLocaleMenu = page
+        .locator('details')
+        .filter({ has: page.getByText('英语', { exact: true }) });
+      await expect(chineseLocaleMenu).toHaveCount(1);
+      await chineseLocaleMenu.locator('summary').click();
+      await chineseLocaleMenu.getByText('英语', { exact: true }).click();
+      await selectBasic();
+      await expect(studentDraftNameInput(page)).toHaveValue(editedName);
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+      await expect(page.getByRole('button', { name: 'Discard draft', exact: true })).toHaveCount(0);
+      await selectTraining();
+      await expect(foundation).toHaveClass(/\bbtn-warning\b/);
+      await expect(progress).toHaveClass(/\bbtn-outline\b/);
+      await expectDraftValues(1);
+      expect(effects.mutations).toEqual([]);
+      const unchanged = await page.request.get(`/api/training/student/${student.id}`, { headers });
+      expect(unchanged.ok()).toBeTruthy();
+      const persisted = await unchanged.json();
+      expect(persisted.name).toBe(student.name);
+      expect(persisted.level).toBe(1);
+
+      await reloadStudentDraft(page);
+      await selectBasic();
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      await expectDraftValues(1);
+      await recoverStudentDraft(page);
+      await expect(studentDraftNameInput(page)).toHaveValue(editedName);
+      await selectTraining();
+      await expect(foundation).toHaveClass(/\bbtn-warning\b/);
+      await expect(progress).toHaveClass(/\bbtn-outline\b/);
+      await expectDraftValues(1);
+      await reloadStudentDraft(page);
+      await selectBasic();
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      await studentDraftBanner(page)
+        .getByRole('button', { name: 'Discard draft', exact: true })
+        .click();
+      await expectNoStudentDraft(page, student.id);
+      await selectBasic();
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      expect(effects.mutations).toEqual([]);
+      expect(effects.hydrationWarnings).toEqual([]);
+      expect(effects.pageErrors).toEqual([]);
+    });
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-12: nested Training Time create drafts persist ISO and reopen the recovered date without submitting',
+  { tag: ['@admin', '@flow', '@ssr'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    await loginAsAdmin(page);
+    const effects = collectDraftEffects(page, true);
+    const capture = installStudentCreateResponseCapture(page);
+    await capture.install();
+    const token = (await page.context().cookies()).find(cookie => cookie.name === 'token')?.value;
+    expect(token).toBeTruthy();
+    const headers = { Authorization: `Bearer ${token}` };
+    const name = `Training Time Draft E2E ${Date.now()}`;
+    const recordName = `${name} record`;
+    const date = '2026-03-10';
+    const iso = await browserLocalDateIso(page, date);
+    const expectNoBusinessRecords = async () => {
+      for (const [resource, ownedName] of [
+        ['student', name],
+        ['record', recordName],
+      ]) {
+        const response = await page.request.get(`/api/training/${resource}`, {
+          headers,
+          params: { name: ownedName },
+        });
+        expect(response.ok()).toBeTruthy();
+        expect((await response.json()).list).toEqual([]);
+      }
+    };
+    try {
+      await expectNoBusinessRecords();
+      await page.goto(studentDraftCreatePath, { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await studentDraftNameInput(page).fill(name);
+      await waitForStudentDraft(page, name);
+      await page.getByRole('tab', { name: 'Student Training Records', exact: true }).click();
+      const details = studentDraftTrainingRecords(page);
+      await details.getByRole('button', { name: 'Add Detail', exact: true }).click();
+      const dialog = page.getByRole('dialog');
+      await expect(dialog).toHaveCount(1);
+      await dialog
+        .getByRole('group', { name: 'Training Record Name *', exact: true })
+        .getByRole('textbox')
+        .fill(recordName);
+      await trainingTimeInput(dialog).fill(date);
+      await expect(trainingTimeInput(dialog)).toHaveValue(date);
+      // The child form is not part of the parent draft until its own OK boundary.
+      expect((await readStudentTrainingDraft(page)).rows ?? []).toEqual([]);
+      await dialog.getByRole('button', { name: 'OK', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await expect(studentDraftTrainingRow(page, recordName)).toHaveCount(1);
+      const expectDateDraft = async () => {
+        await expect
+          .poll(async () => {
+            const draft = await readStudentTrainingDraft(page);
+            return {
+              rows: draft.rows?.map(row => ({ name: row.name, trainingTime: row.trainingTime })),
+              identities: draft.identities,
+            };
+          })
+          // The create DTO omits row IDs, so this array has no relation identity metadata.
+          .toEqual({ rows: [{ name: recordName, trainingTime: iso }], identities: undefined });
+      };
+      await expectDateDraft();
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+      await expect(page.getByRole('button', { name: 'Discard draft', exact: true })).toHaveCount(0);
+      expect(effects.mutations).toEqual([]);
+      const serverHtml = await page.request.get(studentDraftCreatePath);
+      expect(serverHtml.ok()).toBeTruthy();
+      const html = await serverHtml.text();
+      expect(html).not.toContain(recordName);
+      expect(html).not.toContain(iso);
+
+      await reloadStudentDraft(page);
+      await page.getByRole('tab', { name: 'Student Training Records', exact: true }).click();
+      await expect(studentDraftTrainingRow(page, recordName)).toHaveCount(0);
+      await expectDateDraft();
+      await recoverStudentDraft(page);
+      const row = studentDraftTrainingRow(page, recordName);
+      await expect(row).toHaveCount(1);
+      await row.locator('button.btn-outline.btn-primary').click();
+      await expect(dialog).toHaveCount(1);
+      // Recovery intentionally supplies ISO strings; Basic Date accepts them without Date revival.
+      await expect(trainingTimeInput(dialog)).toHaveValue(date);
+      await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await expectDateDraft();
+      await expectNoBusinessRecords();
+
+      await reloadStudentDraft(page);
+      await page.getByRole('tab', { name: 'Student Training Records', exact: true }).click();
+      await expect(row).toHaveCount(0);
+      await studentDraftBanner(page)
+        .getByRole('button', { name: 'Discard draft', exact: true })
+        .click();
+      await expectNoStudentDraft(page);
+      await expect(row).toHaveCount(0);
+      expect(effects.mutations).toEqual([]);
+      expect(effects.hydrationWarnings).toEqual([]);
+      expect(effects.pageErrors).toEqual([]);
+    } finally {
+      try {
+        // Normally no business row exists; capture only this form's accidental create, if any.
+        if (capture.studentId !== undefined) {
+          const response = await page.request.delete(
+            `/api/training/student/deleteForce/${capture.studentId}`,
+            { headers },
+          );
+          expect(response.ok() || response.status() === 404).toBeTruthy();
+        }
+      } finally {
+        await capture.uninstall();
+      }
+    }
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-13: nested Training Time edit drafts recover changed and cleared dates then discard to the server baseline',
+  { tag: ['@admin', '@flow', '@ssr'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student], headers) => {
+      const recordName = `${student.name} dated record`;
+      const baselineDate = '2026-03-10';
+      const changedDate = '2026-04-18';
+      const baselineIso = await browserLocalDateIso(page, baselineDate);
+      const changedIso = await browserLocalDateIso(page, changedDate);
+      // API-only fixture setup; the tested UI never submits a business resource.
+      const setup = await page.request.patch(`/api/training/student/${student.id}`, {
+        headers,
+        data: {
+          name: student.name,
+          mobile: '13812345678',
+          level: 1,
+          trainingRecords: [{ name: recordName, trainingTime: baselineIso }],
+        },
+      });
+      expect(setup.ok()).toBeTruthy();
+      const initial = await page.request.get(`/api/training/student/${student.id}`, { headers });
+      expect(initial.ok()).toBeTruthy();
+      const baseline = await initial.json();
+      expect(baseline.trainingRecords).toHaveLength(1);
+      const record = baseline.trainingRecords[0];
+      expect(['string', 'number']).toContain(typeof record.id);
+      expect(record.name).toBe(recordName);
+      expect(new Date(record.trainingTime).toISOString()).toBe(baselineIso);
+      const effects = collectDraftEffects(page, true);
+      const expectServerBaseline = async () => {
+        const response = await page.request.get(`/api/training/student/${student.id}`, { headers });
+        expect(response.ok()).toBeTruthy();
+        expect(await response.json()).toEqual(baseline);
+        expect(effects.mutations).toEqual([]);
+      };
+      const expectDateDraft = async (trainingTime: string | undefined) => {
+        await expect
+          .poll(async () => {
+            const draft = await readStudentTrainingDraft(page, student.id);
+            return {
+              rows: draft.rows?.map(row => ({ name: row.name, trainingTime: row.trainingTime })),
+              identities: draft.identities,
+              cleared: draft.trainingTimeCleared,
+            };
+          })
+          .toEqual({
+            rows: [{ name: recordName, trainingTime }],
+            identities: [{ id: record.id }],
+            cleared: trainingTime === undefined,
+          });
+      };
+      const openRecord = async () => {
+        await page.getByRole('tab', { name: 'Student Training Records', exact: true }).click();
+        const row = studentDraftTrainingRow(page, recordName);
+        await expect(row).toHaveCount(1);
+        await row.locator('button.btn-outline.btn-primary').click();
+        await expect(page.getByRole('dialog')).toHaveCount(1);
+      };
+      const dialog = page.getByRole('dialog');
+      await page.goto(`/admin/rest/resource/training-student%3Astudent/${student.id}/edit`, {
+        waitUntil: 'load',
+      });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      await openRecord();
+      await expect(trainingTimeInput(dialog)).toHaveValue(baselineDate);
+      await trainingTimeInput(dialog).fill(changedDate);
+      await expectNoStudentDraft(page, student.id);
+      await dialog.getByRole('button', { name: 'OK', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await expectDateDraft(changedIso);
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+      await expect(page.getByRole('button', { name: 'Discard draft', exact: true })).toHaveCount(0);
+
+      await reloadStudentDraft(page);
+      await openRecord();
+      await expect(trainingTimeInput(dialog)).toHaveValue(baselineDate);
+      await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await recoverStudentDraft(page);
+      await openRecord();
+      await expect(trainingTimeInput(dialog)).toHaveValue(changedDate);
+      await expectServerBaseline();
+      await trainingTimeInput(dialog).fill('');
+      await expect(trainingTimeInput(dialog)).toHaveValue('');
+      // Clearing the optional date is committed to the parent only on dialog OK.
+      await expectDateDraft(changedIso);
+      await dialog.getByRole('button', { name: 'OK', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await expectDateDraft(undefined);
+
+      await reloadStudentDraft(page);
+      await openRecord();
+      await expect(trainingTimeInput(dialog)).toHaveValue(baselineDate);
+      await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await recoverStudentDraft(page);
+      await openRecord();
+      await expect(trainingTimeInput(dialog)).toHaveValue('');
+      await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await expectDateDraft(undefined);
+      await expectServerBaseline();
+
+      await reloadStudentDraft(page);
+      await openRecord();
+      await expect(trainingTimeInput(dialog)).toHaveValue(baselineDate);
+      await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await studentDraftBanner(page)
+        .getByRole('button', { name: 'Discard draft', exact: true })
+        .click();
+      await expectNoStudentDraft(page, student.id);
+      await openRecord();
+      await expect(trainingTimeInput(dialog)).toHaveValue(baselineDate);
+      await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await expectNoStudentDraft(page, student.id);
+      await expectServerBaseline();
+      expect(effects.hydrationWarnings).toEqual([]);
+      expect(effects.pageErrors).toEqual([]);
+      // withDraftStudents finally deletes this exact student and its nested record via include.
+    });
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-14: new create input replaces an unrecovered candidate without merging old values',
+  { tag: ['@admin', '@flow', '@ssr'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    await loginAsAdmin(page);
+    const effects = collectDraftEffects(page, true);
+    const oldName = `Create Takeover E2E ${Date.now()} old`;
+    const nextName = `${oldName} replacement`;
+    const mobile = page.getByRole('group', { name: 'Mobile *', exact: true }).getByRole('textbox');
+    await page.goto(studentDraftCreatePath, { waitUntil: 'load' });
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+    await studentDraftNameInput(page).fill(oldName);
+    await mobile.fill('13912345678');
+    await expect
+      .poll(async () => {
+        const draft = (await readStudentDrafts(page)).find(draft => draft.mode === 'create');
+        return { name: draft?.values.name, mobile: draft?.values.mobile };
+      })
+      .toEqual({ name: oldName, mobile: '13912345678' });
+    await expect(studentDraftBanner(page)).toHaveCount(0);
+
+    await reloadStudentDraft(page);
+    await expect(studentDraftNameInput(page)).not.toHaveValue(oldName);
+    await expect(mobile).toHaveValue('');
+    // A parent onChanged takes over the complete current form, not the stored candidate.
+    await studentDraftNameInput(page).fill(nextName);
+    await expect(studentDraftBanner(page)).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Discard draft', exact: true })).toHaveCount(0);
+    await expect(mobile).toHaveValue('');
+    await expect
+      .poll(async () => {
+        return (await readStudentDrafts(page))
+          .filter(draft => draft.mode === 'create')
+          .map(draft => ({ name: draft.values.name, mobile: draft.values.mobile ?? '' }));
+      })
+      .toEqual([{ name: nextName, mobile: '' }]);
+
+    await reloadStudentDraft(page);
+    await expect(studentDraftNameInput(page)).not.toHaveValue(nextName);
+    await expect(mobile).toHaveValue('');
+    await recoverStudentDraft(page);
+    await expect(studentDraftNameInput(page)).toHaveValue(nextName);
+    await expect(mobile).toHaveValue('');
+    await waitForStudentDraft(page, nextName);
+    const token = (await page.context().cookies()).find(cookie => cookie.name === 'token')?.value;
+    expect(token).toBeTruthy();
+    for (const name of [oldName, nextName]) {
+      const response = await page.request.get('/api/training/student', {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { name },
+      });
+      expect(response.ok()).toBeTruthy();
+      expect((await response.json()).list).toEqual([]);
+    }
+
+    await reloadStudentDraft(page);
+    await studentDraftBanner(page)
+      .getByRole('button', { name: 'Discard draft', exact: true })
+      .click();
+    await expectNoStudentDraft(page);
+    await expect(studentDraftNameInput(page)).not.toHaveValue(nextName);
+    await expect(mobile).toHaveValue('');
+    await expect(studentDraftBanner(page)).toHaveCount(0);
+    expect(effects.mutations).toEqual([]);
+    expect(effects.hydrationWarnings).toEqual([]);
+    expect(effects.pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-15: new edit input replaces an unrecovered candidate with the live server baseline',
+  { tag: ['@admin', '@flow', '@ssr'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student], headers) => {
+      const initial = await page.request.get(`/api/training/student/${student.id}`, { headers });
+      expect(initial.ok()).toBeTruthy();
+      const baseline = await initial.json();
+      const effects = collectDraftEffects(page, true);
+      const oldName = `${student.name} old candidate`;
+      const nextName = `${student.name} replacement`;
+      const mobile = page
+        .getByRole('group', { name: 'Mobile *', exact: true })
+        .getByRole('textbox');
+      const expectDraftValues = async (name: string, mobile: string) => {
+        await expect
+          .poll(async () => {
+            return (await readStudentDrafts(page))
+              .filter(draft => draft.mode === 'edit' && draft.id === String(student.id))
+              .map(draft => ({ name: draft.values.name, mobile: draft.values.mobile }));
+          })
+          .toEqual([{ name, mobile }]);
+      };
+      await page.goto(`/admin/rest/resource/training-student%3Astudent/${student.id}/edit`, {
+        waitUntil: 'load',
+      });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      await studentDraftNameInput(page).fill(oldName);
+      await mobile.fill('13912345678');
+      await expectDraftValues(oldName, '13912345678');
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+
+      await reloadStudentDraft(page);
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      // The read contract masks mobile; takeover retains that live baseline, not the old draft.
+      await expect(mobile).toHaveValue(baseline.mobile);
+      await studentDraftNameInput(page).fill(nextName);
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+      await expect(page.getByRole('button', { name: 'Discard draft', exact: true })).toHaveCount(0);
+      await expect(mobile).toHaveValue(baseline.mobile);
+      await expectDraftValues(nextName, baseline.mobile);
+
+      await reloadStudentDraft(page);
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      await expect(mobile).toHaveValue(baseline.mobile);
+      await recoverStudentDraft(page);
+      await expect(studentDraftNameInput(page)).toHaveValue(nextName);
+      await expect(mobile).toHaveValue(baseline.mobile);
+      await expectDraftValues(nextName, baseline.mobile);
+      const unchanged = await page.request.get(`/api/training/student/${student.id}`, { headers });
+      expect(unchanged.ok()).toBeTruthy();
+      expect(await unchanged.json()).toEqual(baseline);
+
+      await reloadStudentDraft(page);
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      await studentDraftBanner(page)
+        .getByRole('button', { name: 'Discard draft', exact: true })
+        .click();
+      await expectNoStudentDraft(page, student.id);
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      await expect(mobile).toHaveValue(baseline.mobile);
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+      expect(effects.mutations).toEqual([]);
+      expect(effects.hydrationWarnings).toEqual([]);
+      expect(effects.pageErrors).toEqual([]);
+    });
+  },
+);
+
+for (const mode of ['edit', 'create'] as const) {
+  test(
+    `ATP-BASIC-DRAFT-${mode === 'edit' ? '16' : '17'}: inactive ${mode} task offers recovery after list reload`,
+    { tag: ['@admin', '@flow', '@ssr'] },
+    async ({ page }, testInfo) => {
+      test.setTimeout(120_000);
+      await loginAsAdmin(page);
+      await withDraftStudents(page, mode === 'edit' ? 1 : 0, async ([student], headers) => {
+        const effects = collectDraftEffects(page, true);
+        const id = student?.id;
+        const baseline = student
+          ? await (await page.request.get(`/api/training/student/${id}`, { headers })).json()
+          : undefined;
+        if (student) await openStudentDraftEdit(page, student.name, student.id);
+        else await openStudentDraftCreate(page);
+        const entryUrl = page.url();
+        const baselineName = await studentDraftNameInput(page).inputValue();
+        const name = `Inactive ${mode} Draft ${Date.now()}`;
+        await studentDraftNameInput(page).fill(name);
+        await waitForStudentDraft(page, name, id);
+        const stored = (await readStudentDrafts(page)).filter(draft => draft.mode === mode);
+        const checkpoint = async (label: string) => {
+          const drafts = (await readStudentDrafts(page)).filter(draft => draft.mode === mode);
+          await testInfo.attach(label, {
+            body: JSON.stringify(drafts, null, 2),
+            contentType: 'application/json',
+          });
+          expect(drafts, label).toEqual(stored);
+        };
+        await checkpoint('before-switch');
+        const workspace = page.locator('.tabs-lifted').getByRole('tab', {
+          name: 'Student',
+          exact: true,
+        });
+        await workspace.click();
+        await expect(page).not.toHaveURL(entryUrl);
+        await expect(page.getByRole('button', { name: 'Search', exact: true })).toBeVisible();
+        await checkpoint('after-switch');
+        await page.reload({ waitUntil: 'load' });
+        await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+        // Restored task titles and dirty markers need not retain their live presentation.
+        const task = page.locator('.tabs-border').getByRole('tab');
+        await expect(task).toHaveCount(1);
+        await checkpoint('after-list-reload');
+        await task.click();
+        await expect(page).toHaveURL(entryUrl);
+        await expect(studentDraftNameInput(page)).toHaveValue(baselineName);
+        await checkpoint('after-entry-activation');
+        await expect(studentDraftBanner(page)).toContainText('Unsaved draft available');
+        await expect(
+          studentDraftBanner(page).getByRole('button', {
+            name: 'Discard draft',
+            exact: true,
+          }),
+        ).toBeVisible();
+        await recoverStudentDraft(page);
+        await expect(studentDraftNameInput(page)).toHaveValue(name);
+        await workspace.click();
+        await task.click();
+        await expect(studentDraftNameInput(page)).toHaveValue(name);
+        await expect(studentDraftBanner(page)).toHaveCount(0);
+        if (student) {
+          const unchanged = await page.request.get(`/api/training/student/${id}`, { headers });
+          expect(await unchanged.json()).toEqual(baseline);
+        }
+        expect(effects.mutations).toEqual([]);
+        expect(effects.hydrationWarnings).toEqual([]);
+        expect(effects.pageErrors).toEqual([]);
+      });
+    },
+  );
+}
+
+test(
+  'ATP-BASIC-DRAFT-09: logout removes persisted create and inactive edit drafts before relogin',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    const effects = collectDraftEffects(page);
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student]) => {
+      await openStudentDraftEdit(page, student.name, student.id);
+      const editName = `${student.name} logout`;
+      await studentDraftNameInput(page).fill(editName);
+      await waitForStudentDraft(page, editName, student.id);
+      await openStudentDraftCreate(page);
+      const createName = `Logout Draft E2E ${Date.now()}`;
+      await studentDraftNameInput(page).fill(createName);
+      await waitForStudentDraft(page, createName);
+      const authenticatedIdentity = await readModelPersistenceIdentity(page);
+      expect(authenticatedIdentity.scope[2]).not.toBeNull();
+      const userMenu = page
+        .locator('details')
+        .filter({ has: page.getByText('Logout', { exact: true }) });
+      await expect(userMenu).toHaveCount(1);
+      await userMenu.locator('summary').click();
+      const outgoingProtectedRequests: string[] = [];
+      const outgoingUnauthorizedResponses: string[] = [];
+      let loggingOut = true;
+      page.on('request', request => {
+        const path = new URL(request.url()).pathname;
+        if (
+          loggingOut &&
+          request.method() === 'GET' &&
+          /^\/api\/(?:training\/student(?:\/|$)|home\/base\/permission\/)/.test(path)
+        ) {
+          outgoingProtectedRequests.push(`${request.method()} ${path}`);
+        }
+      });
+      page.on('response', response => {
+        const path = new URL(response.url()).pathname;
+        if (loggingOut && path.startsWith('/api/') && response.status() === 401) {
+          outgoingUnauthorizedResponses.push(`${response.status()} ${path}`);
+        }
+      });
+      await userMenu.getByText('Logout', { exact: true }).click();
+      await expect(page).toHaveURL(/\/admin\/login(?:\?|$)/);
+      await expectNoStudentDraft(page);
+      await expectNoStudentDraft(page, student.id);
+      await expect
+        .poll(async () => (await readStudentDrafts(page, authenticatedIdentity)).length)
+        .toBe(0);
+      const anonymousIdentity = await readModelPersistenceIdentity(page);
+      expect(anonymousIdentity.scope).toEqual([null, authenticatedIdentity.siteId, null]);
+      loggingOut = false;
+      expect(outgoingProtectedRequests).toEqual([]);
+      expect(outgoingUnauthorizedResponses).toEqual([]);
+      expect(effects.consoleErrors).toEqual([]);
+      await loginAsAdmin(page);
+      expect(await readModelPersistenceIdentity(page)).toEqual(authenticatedIdentity);
+      await page.goto(studentDraftCreatePath, { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+      await expect(studentDraftNameInput(page)).not.toHaveValue(createName);
+      await page.goto(`/admin/rest/resource/training-student%3Astudent/${student.id}/edit`, {
+        waitUntil: 'load',
+      });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+      expect(effects.mutations).toEqual([]);
+      expect(effects.hydrationWarnings).toEqual([]);
+      expect(effects.consoleErrors).toEqual([]);
+      expect(effects.pageErrors).toEqual([]);
+    });
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-18: actual Passport namespaces survive another tab and global model clear prevents draft resurrection',
+  { tag: ['@admin', '@flow', '@ssr'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    const effects = collectDraftEffects(page);
+    await loginAsAdmin(page);
+    const identity = await readModelPersistenceIdentity(page);
+    const token = (await page.context().cookies()).find(cookie => cookie.name === 'token')?.value;
+    expect(token).toBeTruthy();
+    const current = await page.request.get('/api/home/user/passport/current', {
+      headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+    });
+    expect(current.ok()).toBeTruthy();
+    const passport = (await current.json()).data;
+    expect(Object.hasOwn(passport, 'instanceId')).toBe(true);
+    expect(identity.scope).toEqual([
+      passport.instanceId == null ? null : String(passport.instanceId),
+      identity.siteId,
+      String(passport.user.id),
+    ]);
+
+    await page.goto(studentDraftCreatePath, { waitUntil: 'load' });
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+    const name = `Namespace Draft E2E ${Date.now()}`;
+    await studentDraftNameInput(page).fill(name);
+    await waitForStudentDraft(page, name);
+    const draft = (await readStudentDrafts(page)).find(draft => draft.values.name === name)!;
+    expect(draft.namespace).toEqual([
+      'zova-model-db',
+      1,
+      identity.appName,
+      identity.scope,
+      expect.any(String),
+    ]);
+    expect(draft.identity).toEqual([
+      'training-student:student',
+      'create',
+      null,
+      expect.stringContaining('/training-student'),
+    ]);
+    expect(draft.queryKey).toEqual([
+      'basic-pageentry.model.draft',
+      JSON.stringify(draft.identity),
+      'snapshot',
+    ]);
+
+    const otherTab = await page.context().newPage();
+    const otherEffects = collectDraftEffects(otherTab);
+    try {
+      await otherTab.goto(studentDraftCreatePath, { waitUntil: 'load' });
+      await expect(otherTab.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      expect(await readModelPersistenceIdentity(otherTab)).toEqual(identity);
+      await expect(studentDraftBanner(otherTab)).toContainText('Unsaved draft available');
+      await expect(studentDraftNameInput(otherTab)).not.toHaveValue(name);
+      await recoverStudentDraft(otherTab);
+      await expect(studentDraftNameInput(otherTab)).toHaveValue(name);
+      await waitForStudentDraft(otherTab, name);
+      expect(
+        (await readStudentDrafts(otherTab)).find(draft => draft.values.name === name)?.storageKey,
+      ).toBe(draft.storageKey);
+    } finally {
+      // Cross-tab notification is not the contract; stop the second writer before clearing.
+      await otherTab.close();
+    }
+    expect(otherEffects.mutations).toEqual([]);
+    expect(otherEffects.hydrationWarnings).toEqual([]);
+    expect(otherEffects.pageErrors).toEqual([]);
+
+    const draftKeyExistsAfterClear = await page.evaluate(async storageKey => {
+      const root = Array.from(document.querySelectorAll('*')).find(
+        element => (element as any).__vue_app__?.zova,
+      ) as any;
+      const app = root?.__vue_app__?.zova;
+      if (!app) throw new Error('Mounted Zova application not found');
+      const passport = await app.bean._getBean('home-passport.model.passport', true);
+      await passport.$clear();
+      return new Promise<boolean>((resolve, reject) => {
+        const opening = indexedDB.open('localforage');
+        opening.onerror = () => reject(opening.error);
+        opening.onsuccess = () => {
+          const database = opening.result;
+          const transaction = database.transaction('keyvaluepairs', 'readonly');
+          const request = transaction.objectStore('keyvaluepairs').getKey(storageKey);
+          transaction.oncomplete = () => {
+            database.close();
+            resolve(request.result !== undefined);
+          };
+          transaction.onerror = () => {
+            database.close();
+            reject(transaction.error);
+          };
+        };
+      });
+    }, draft.storageKey);
+    expect(draftKeyExistsAfterClear).toBe(false);
+    await expect.poll(async () => (await readStudentDrafts(page, identity)).length).toBe(0);
+    // Global clear resets query memory too; use real login if authentication was cleared.
+    await loginAsAdmin(page);
+    await page.goto(studentDraftCreatePath, { waitUntil: 'load' });
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+    await expect(studentDraftBanner(page)).toHaveCount(0);
+    await expect(studentDraftNameInput(page)).not.toHaveValue(name);
+    await expectNoStudentDraft(page);
+    expect(effects.mutations).toEqual([]);
+    expect(effects.hydrationWarnings).toEqual([]);
+    expect(effects.pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-BASIC-DRAFT-10: deleted edit records retain reachable discard without recovering or submitting',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    const effects = collectDraftEffects(page);
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student], headers) => {
+      await page.goto(`/admin/rest/resource/training-student%3Astudent/${student.id}/edit`, {
+        waitUntil: 'load',
+      });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      const unsavedName = `${student.name} deleted record draft`;
+      await studentDraftNameInput(page).fill(unsavedName);
+      await waitForStudentDraft(page, unsavedName, student.id);
+      const deletion = await page.request.delete(`/api/training/student/${student.id}`, {
+        headers,
+      });
+      expect(deletion.ok()).toBeTruthy();
+
+      await page.reload({ waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await expect(page.getByText('The entry does not exist', { exact: true })).toBeVisible();
+      await expect(studentDraftNameInput(page)).toHaveCount(0);
+      await expect(studentDraftBanner(page)).toContainText('Unsaved draft available');
+      await expect(
+        studentDraftBanner(page).getByRole('button', { name: 'Recover draft', exact: true }),
+      ).toHaveCount(0);
+      const discard = studentDraftBanner(page).getByRole('button', {
+        name: 'Discard draft',
+        exact: true,
+      });
+      await expect(discard).toBeVisible();
+      await waitForStudentDraft(page, unsavedName, student.id);
+      await discard.click();
+      await expectNoStudentDraft(page, student.id);
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+
+      await page.reload({ waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await expect(page.getByText('The entry does not exist', { exact: true })).toBeVisible();
+      await expect(studentDraftNameInput(page)).toHaveCount(0);
+      await expect(studentDraftBanner(page)).toHaveCount(0);
+      await expectNoStudentDraft(page, student.id);
+      expect(effects.mutations).toEqual([]);
+      expect(effects.hydrationWarnings).toEqual([]);
+      expect(effects.pageErrors).toEqual([]);
+    });
   },
 );
 

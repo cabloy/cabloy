@@ -49,5 +49,13 @@
       "exports.\\..import"
     ]
   },
-  "title": "basic-pageentry"
+  "title": "basic-pageentry",
+  "zovaModule": {
+    "capabilities": {
+      "monkey": true
+    },
+    "dependencies": {
+      "a-zova": "5.0.0"
+    }
+  }
 }

@@ -153,6 +153,7 @@ export class ControllerPassport extends BeanBase {
     const user = passport?.user as (EntityUser & IUser) | undefined;
     if (!passport || !passport.auth || !user) return;
     return {
+      instanceId: this.ctx.instance?.id ?? null,
       user: {
         id: user.id,
         name: user.name,

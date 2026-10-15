@@ -25,6 +25,8 @@ export class ModelPassport extends BeanModelBase {
   accessToken?: string;
   expireTime?: number;
   schemaLogin?: SchemaObject;
+  private _passportRevision = 0;
+  private _identityUpdating = false;
 
   protected async __init__() {}
 
@@ -43,6 +45,28 @@ export class ModelPassport extends BeanModelBase {
     if (process.env.CLIENT) {
       this._setLocaleTz();
     }
+    this._syncPersistenceIdentity(true);
+    this.$watch(
+      () => [this.passport?.instanceId, this.passport?.user?.id, this.sys.env.SITE_ID],
+      () => {
+        if (this._identityUpdating) return;
+        ++this._passportRevision;
+        this._syncPersistenceIdentity();
+      },
+      { flush: 'sync' },
+    );
+  }
+
+  private _syncPersistenceIdentity(initial = false, options: { refetchActive?: boolean } = {}) {
+    const passport = this.passport;
+    this.$modelPersistence.update(
+      {
+        instanceId: passport?.user ? passport.instanceId : null,
+        siteId: this.sys.env.SITE_ID,
+        userId: passport?.user?.id,
+      },
+      { initial, ...options },
+    );
   }
 
   get apiSchemasLogin() {
@@ -199,17 +223,20 @@ export class ModelPassport extends BeanModelBase {
 
   async refreshCurrent() {
     if (this.$ssr.cookieDisabledOnServer || !this.accessToken) return;
-    this.passport = await this.$api.homeUserPassport.current();
+    const revision = this._passportRevision;
+    const passport = await this.$api.homeUserPassport.current();
+    if (revision !== this._passportRevision) return this.passport;
+    this._setPassport(passport);
     this._setLocaleTz();
     return this.passport;
   }
 
   async requireRelogin(returnTo?: string | boolean, cause?: string) {
-    this._setPassportJwt();
+    this._setPassportJwt(undefined, { refetchActive: false });
     // page: login
     await this.app.$gotoLogin(returnTo, cause);
     // clear: should after goto login page, avoid home-layoutadmin use some cache data
-    this.$clear(); // not await
+    await this.$clear();
   }
 
   private _isTempAuthTokenExpired(
@@ -239,17 +266,24 @@ export class ModelPassport extends BeanModelBase {
     }
   }
 
-  private _setPassportJwt(data?: ApiApiHomeUserPassportloginResponseBody) {
-    this._setPassport(data?.passport);
-    this._setJwt(data?.jwt);
+  private _setPassportJwt(
+    data?: ApiApiHomeUserPassportloginResponseBody,
+    options: { refetchActive?: boolean } = {},
+  ) {
+    this._identityUpdating = true;
+    try {
+      this._setPassport(data?.passport);
+      this._setJwt(data?.jwt);
+    } finally {
+      this._identityUpdating = false;
+      this._syncPersistenceIdentity(false, options);
+    }
   }
 
   private _setPassport(passport?: ApiApiHomeUserPassportloginResponseBody['passport']) {
-    if (passport) {
-      this.passport = passport;
-    } else {
-      this.passport = undefined;
-    }
+    ++this._passportRevision;
+    this.passport = passport;
+    if (!this._identityUpdating) this._syncPersistenceIdentity();
   }
 
   private _setJwt(jwt?: ApiApiHomeUserPassportloginResponseBody['jwt']) {

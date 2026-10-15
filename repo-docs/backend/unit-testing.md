@@ -53,7 +53,7 @@ A typical Vona test flow includes:
 5. run the test files
 6. close the shared application after the test run
 
-In Cabloy Basic, root `npm run test` delegates to `vona/`'s `npm run test`; both allocate an isolated test identity, database and Redis namespace, Vona generated/runtime/public paths, and loopback listener. They can run in the same checkout as an ordinary development server without resetting or mutating that server's business data. Even a targeted run performs the test-mode setup. The Vona `npm run cov` script uses the same isolation; raw `:bin:test` commands do not. Shared build/dependency preparation may still write to shared artifacts, and custom external resources need separate isolation. See [Repo Scripts](/reference/repo-scripts#test-isolation-and-development-data-in-cabloy-basic).
+In Cabloy Basic and Cabloy Start, root `npm run test` delegates to `vona/`'s `npm run test`; both allocate an isolated test identity, database and Redis namespace, Vona generated/runtime/public paths, and loopback listener. They can run in the same checkout as an ordinary development server without resetting or mutating that server's business data. Even a targeted run performs the test-mode setup. The Vona `npm run cov` script uses the same isolation; raw `:bin:test` commands do not. Shared build/dependency preparation may still write to shared artifacts, and custom external resources need separate isolation. See [Repo Scripts](/reference/repo-scripts#test-isolation-and-development-data).
 
 The runner owns this application lifecycle. Test files import the shared app from `vona-mock` and must not create or close it themselves:
 

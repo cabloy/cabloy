@@ -9,10 +9,12 @@ import type {
 import { BeanBase, Use } from 'zova';
 import { Bean } from 'zova-module-a-bean';
 
+import { dispatchRouteDiscard } from '../lib/routeDiscard.js';
 import { RouterGuardDisposers } from '../lib/routerGuardDisposers.js';
 import { BeanRouterViewBase } from '../lib/routerViewBase.js';
 import { ModelPageData } from '../model/pageData.js';
 import { IPageMeta } from '../types/pageMeta.js';
+import { IRouteDiscardItem, TypeRouteDiscardReason } from '../types/routeDiscard.js';
 import { TypeErrorListener } from '../types/router.js';
 import { SysRouter } from './sys.router.js';
 
@@ -122,6 +124,18 @@ export class BeanRouter extends BeanBase {
     if (index > -1) {
       this._routerViews.splice(index, 1);
     }
+  }
+
+  notifyRouteDiscard(
+    reason: TypeRouteDiscardReason,
+    items: readonly IRouteDiscardItem[],
+    ownerSelector?: string,
+  ): Promise<void> {
+    return dispatchRouteDiscard(
+      { router: this, reason, items, ownerSelector },
+      event => this.app.meta.event.emitSync('a-router:routeDiscard', event),
+      () => console.error('Route discard cleanup failed'),
+    );
   }
 
   afterEachBackRoute(route: RouteLocationNormalizedLoadedGeneric) {

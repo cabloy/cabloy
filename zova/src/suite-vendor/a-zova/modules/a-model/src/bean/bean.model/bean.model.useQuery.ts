@@ -43,7 +43,9 @@ export class BeanModelUseQuery extends BeanModelQuery {
   $useQuery(options, queryClient) {
     const queryKey = this.self._forceQueryKeyPrefix(options.queryKey);
     const persister = this._createPersister(options.meta?.persister);
-    options = Object.assign({}, options, { queryKey, persister });
+    options = this.$modelPersistence.guardOptions(
+      Object.assign({}, options, { queryKey, persister }),
+    );
     // staleTime
     const sync = typeof options.meta?.persister === 'object' && options.meta?.persister?.sync;
     if (sync !== true) {

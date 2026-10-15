@@ -47,6 +47,11 @@ export class Monkey
   }
 
   async beanInit(bean: BeanContainer, beanInstance: BeanBase) {
+    bean.defineProperty(beanInstance, '$modelPersistence', {
+      enumerable: false,
+      configurable: true,
+      get: () => this._storage,
+    });
     bean.defineProperty(beanInstance, '$queryClient', {
       enumerable: false,
       configurable: true,

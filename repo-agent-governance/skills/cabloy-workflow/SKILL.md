@@ -105,9 +105,11 @@ For deeper reference material, read:
 
 The reason is simple: these files are where Cabloy already encodes its real workflows.
 
-### Parallel worktree environment setup
+### Isolated tests versus parallel worktree environment setup
 
-When a request involves a second worktree, concurrent Vona/Zova development, isolated ordinary tests, or managed E2E, classify it as fullstack workflow setup. Read [Parallel Worktree Environment](../../../repo-docs/fullstack/parallel-worktree-environment.md), the canonical shared recipe maintained in Cabloy Basic for both editions.
+In Cabloy Basic and Cabloy Start, root `npm run test` and `npm run test:e2e` isolate their runtime and framework-managed data from ordinary dev in the same checkout. A running Vona or Zova dev process alone is not a blocker and does not require dev shutdown, another worktree, or `/cabloy-worktree-environment`. For tests-only requests, use the active edition's root scripts and the [test-isolation guidance](../../../repo-docs/reference/repo-scripts.md#test-isolation-and-development-data); do not route them into environment setup. Check actual overlap with runner-owned test resources, coordinate shared build/dependency writes, and assess custom external resources separately. Process names alone do not establish a conflict.
+
+When a request actually involves a second ordinary development runtime or worktree-local environment configuration, classify it as fullstack workflow setup. Read [Parallel Worktree Environment](../../../repo-docs/fullstack/parallel-worktree-environment.md), the canonical shared recipe maintained in Cabloy Basic for both editions.
 
 This routing skill provides read-only guidance only. Do not infer an `APP_NAME` or ports, edit local overrides, or run `npm run init` from a generic worktree request. When the user wants confirmation-gated local environment setup, ask them to explicitly invoke `/cabloy-worktree-environment`.
 
