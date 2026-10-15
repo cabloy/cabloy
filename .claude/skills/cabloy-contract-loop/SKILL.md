@@ -206,7 +206,7 @@ That may include:
 - confirming DTO and validation alignment
 - checking Swagger/OpenAPI output
 - confirming that the changed endpoint or schema now reflects the intended contract
-- if local OpenAPI generation depends on a running Swagger source, starting the backend service first — in Cabloy Basic, `npm run dev` is the normal path and exposes `http://localhost:7102/swagger/json?version=V31`
+- for AI-driven local OpenAPI generation, using the managed isolated service by default as described in Path A below; do not make a separately running development service a prerequisite
 
 If the backend contract output is wrong, frontend regeneration will only spread the mistake.
 
@@ -218,17 +218,23 @@ Once the backend contract is correct, decide how the frontend should consume it.
 
 Use this when the frontend consumes generated API contracts.
 
-Typical Zova commands include:
+For AI development, **default to managed isolated generation**, even when a development Swagger service is currently reachable. An independently managed development service may stop at any time; owning the service lifecycle keeps the generation task continuous and its contract source consistent.
 
-- `npm run zova :openapi:config ...`
-- `npm run zova :openapi:generate ...`
+1. Detect the edition and verify the isolated entrypoint in the active root `package.json`. Cabloy Basic provides:
 
-Preflight reminder:
+   ```bash
+   npm run contract:generate:isolated -- <module-name>
+   ```
 
-- if `:openapi:generate` reads from a local Swagger endpoint, do not assume the generator itself is broken when fetch fails
-- first start the backend service, typically with `npm run dev`, and confirm `http://localhost:7102/swagger/json?version=V31` is reachable
+   For Cabloy Start or another version, verify the actual command and configuration support rather than assuming the Basic entrypoint exists.
 
-When the target is a module-local SDK, constrain `openapi.config.ts` with `operations.match` unless the module intentionally owns a broad API surface. This prevents unrelated APIs from being generated into the module.
+2. Initialize module configuration with `npm run zova :openapi:config <module-name>` when needed. Keep module ownership constrained with `operations.match` unless the module intentionally owns a broad API surface; the isolated command reuses the existing generator and ownership checks.
+3. Confirm the effective source uses the isolated service. The command supplies a child-scoped `OPENAPI_SOURCE_URL` to the project default source resolver; explicit module sources or project `modules` overrides retain their precedence. Inspect the project resolver and align conflicting sources deliberately before claiming isolated generation. Do not edit `.env` files or SDK runtime API targets to inject the temporary port.
+4. Coordinate shared output writes. The service and claim-backed test resources are isolated, but generated SDK/schema/metadata files remain shared workspace output: serialize generation and do not assume automatic rollback. Successful runs clean their owned resources after shutdown; failures retain evidence and must remain visible, not trigger a silent fallback to development Swagger.
+
+Use `npm run zova :openapi:generate <module-name>` only as a deliberate exception, such as an explicit user request or a contract source that must come from a specific external or development environment. Record the reason and verify the configured source and its availability; current reachability alone is not a reason to override the AI default. If isolated support is absent, report that limitation and establish an explicit alternative rather than silently relying on a development service.
+
+See [OpenAPI SDK Guide](../../../repo-docs/frontend/openapi-sdk-guide.md) for source precedence and configuration compatibility, and [Contract Loop Playbook](../../../repo-docs/fullstack/contract-loop-playbook.md#forward-chain-playbook) for the full forward-chain workflow.
 
 ### Path B: REST/type generation by flavor
 
