@@ -238,18 +238,16 @@ function opaqueBehavior(value: unknown): boolean {
   );
 }
 
+const pageEntryBlockOptions = ['blocks', 'resource', 'id', 'formScene', 'pageTitleKey', 'draft'];
 const blockOptions: Record<string, string[]> = {
-  'basic-pageentry:blockPageEntry': [
-    'blocks',
-    'resource',
-    'id',
-    'formScene',
-    'pageTitleKey',
-    'draft',
-  ],
+  'basic-pageentry:blockPageEntry': pageEntryBlockOptions,
+  'start-pageentry:blockPageEntry': pageEntryBlockOptions,
   'basic-pageentry:blockForm': ['blocks'],
+  'start-pageentry:blockForm': ['blocks'],
   'basic-form:blockFormLayout': ['formLayout'],
+  'start-form:blockFormLayout': ['formLayout'],
   'basic-pageentry:blockToolbarRow': ['actions'],
+  'start-pageentry:blockToolbarRow': ['actions'],
 };
 
 function safeLayoutNode(value: unknown): boolean {
@@ -317,7 +315,7 @@ function safeBlocks(value: unknown): boolean {
   );
 }
 
-// Only Basic's declared layout grammar owns these title strings. Rest data/options,
+// Only Basic's and Start's declared layout grammar owns these title strings. Rest data/options,
 // action metadata, descriptions, field names, and unknown structures stay strict.
 function normalizeLayoutNode(value: unknown): unknown {
   if (!isRecord(value)) return value;
@@ -334,7 +332,12 @@ function normalizeBlocks(value: unknown): unknown {
     if (!isRecord(block) || !isRecord(block.options)) return block;
     const options = { ...block.options };
     if (Object.hasOwn(options, 'blocks')) options.blocks = normalizeBlocks(options.blocks);
-    if (block.render === 'basic-form:blockFormLayout' && safeLayout(options.formLayout)) {
+    if (
+      ['basic-form:blockFormLayout', 'start-form:blockFormLayout'].includes(
+        block.render as string,
+      ) &&
+      safeLayout(options.formLayout)
+    ) {
       const layout = options.formLayout as Record<string, unknown>;
       options.formLayout = { children: (layout.children as unknown[]).map(normalizeLayoutNode) };
     }
@@ -425,7 +428,13 @@ export function createSchemaRefreshContract(
       const form = isRecord(rest.form) ? rest.form : undefined;
       const render = rest.render ?? form?.render;
       const renderType = isRecord(render) ? render.type : render;
-      if (renderType !== 'basic-details:formFieldDetails') continue;
+      if (
+        !['basic-details:formFieldDetails', 'start-details:formFieldDetails'].includes(
+          String(renderType),
+        )
+      ) {
+        continue;
+      }
       for (const name of [
         property.key,
         property.schemaKey,
@@ -434,7 +443,7 @@ export function createSchemaRefreshContract(
         if (typeof name === 'string') detailNames.add(name);
       }
     }
-    // Basic Details resolves its row schema through the exact hidden `_name` auxiliary.
+    // Basic and Start Details resolve row schemas through the exact hidden `_name` auxiliary.
     // It belongs to that nested form, not to an unrelated parent field's behavior scope.
     const auxiliaryDetails = new Set<string>();
     for (const property of effective) {

@@ -425,6 +425,118 @@ test(
 );
 
 test(
+  'Start edit layout locale refresh preserves recovered input while localized custom options reset',
+  { concurrency: false },
+  async () => {
+    const nestedEffect = () => {};
+    const studentSchema = (locale: string) => {
+      const title = locale === 'en-us' ? 'Training Records' : '培训记录';
+      const result: any = schema(
+        locale,
+        {},
+        {
+          rest: {
+            blocks: [
+              {
+                render: 'start-pageentry:blockPageEntry',
+                options: {
+                  blocks: [
+                    {
+                      render: 'start-pageentry:blockForm',
+                      options: {
+                        blocks: [
+                          {
+                            render: 'start-form:blockFormLayout',
+                            options: {
+                              formLayout: {
+                                children: [
+                                  {
+                                    type: 'tabs',
+                                    children: [
+                                      {
+                                        type: 'tab',
+                                        title,
+                                        children: [{ type: 'field', name: 'name' }],
+                                      },
+                                    ],
+                                  },
+                                ],
+                              },
+                            },
+                          },
+                        ],
+                      },
+                    },
+                    {
+                      render: 'start-pageentry:blockToolbarRow',
+                      options: {
+                        actions: [
+                          {
+                            render: 'start-form:actionSubmit',
+                            options: { permission: { actionInherit: 'update' } },
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      );
+      result.properties.level = {
+        type: 'number',
+        rest: {
+          form: {
+            render: 'training-student:formFieldLevel',
+            options: { items: [{ value: 1, title }] },
+          },
+        },
+      };
+      result.properties.trainingRecords = {
+        type: 'array',
+        rest: { form: { render: 'start-details:formFieldDetails' } },
+        items: {
+          type: 'object',
+          properties: {
+            subject: { type: 'string', rest: { onEffect: nestedEffect } },
+          },
+        },
+      };
+      return result;
+    };
+    await withRuntime(
+      { data: { name: 'baseline', level: 1 }, schema: studentSchema('en-us') },
+      async runtime => {
+        const name = await initializedField(runtime, inputBindingProps());
+        const level = await initializedField(runtime, {
+          name: 'level',
+          slotDefault: () => 'custom level options',
+        });
+        runtime.form.reset(
+          { name: 'recovered unsaved name', level: 2 },
+          { keepDefaultValues: true },
+        );
+        // Establish the post-recovery epoch before switching locales, like mounted fields do.
+        name.refresh();
+        level.refresh();
+        for (const locale of ['zh-cn', 'en-us']) {
+          runtime.form.form.setFieldValue('level', 2, { dontValidate: true });
+          runtime.events.length = 0;
+          runtime.select(locale, studentSchema(locale));
+          name.refresh();
+          level.refresh();
+          assert.equal(runtime.form.form.getFieldValue('name'), 'recovered unsaved name');
+          assert.equal(runtime.form.form.getFieldValue('level'), 1);
+          assert.deepEqual(runtime.changed, []);
+        }
+      },
+    );
+  },
+);
+
+test(
   'locale replay preserves exact raw empty and falsy values',
   { concurrency: false },
   async () => {
