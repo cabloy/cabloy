@@ -95,22 +95,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/auth/mock/authorize': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['AuthMock_authorize'];
-    put?: never;
-    post: operations['AuthMock_authorizePost'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/captcha/create': {
     parameters: {
       query?: never;
@@ -1303,8 +1287,10 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** List Students */
     get: operations['TrainingStudent_select'];
     put?: never;
+    /** Create Student */
     post: operations['TrainingStudent_create'];
     delete?: never;
     options?: never;
@@ -1319,12 +1305,15 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** View Student */
     get: operations['TrainingStudent_view'];
     put?: never;
     post?: never;
+    /** Delete Student */
     delete: operations['TrainingStudent_delete'];
     options?: never;
     head?: never;
+    /** Update Student */
     patch: operations['TrainingStudent_update'];
     trace?: never;
   };
@@ -1335,6 +1324,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** View Student Summary */
     get: operations['TrainingStudent_summary'];
     put?: never;
     post?: never;
@@ -1353,7 +1343,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Bulk Delete */
+    /** Bulk Delete Students */
     post: operations['TrainingStudent_deleteBulk'];
     delete?: never;
     options?: never;
@@ -1371,6 +1361,7 @@ export interface paths {
     get?: never;
     put?: never;
     post?: never;
+    /** Permanently Delete Student */
     delete: operations['TrainingStudent_deleteForce'];
     options?: never;
     head?: never;
@@ -1388,6 +1379,54 @@ export interface paths {
     put?: never;
     post?: never;
     delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/layoutprofile/load': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['Layoutprofile_load'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/layoutprofile/save': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Layoutprofile_save'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/layoutprofile/reset': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['Layoutprofile_reset'];
     options?: never;
     head?: never;
     patch?: never;
@@ -2625,6 +2664,7 @@ export interface components {
     };
     'home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
+          instanceId: number | string | undefined;
           user: components['schemas']['home-user.dto.passportUser'];
           auth: components['schemas']['a-auth.dto.auth'];
           roles: components['schemas']['home-user.entity.role'][];
@@ -2699,6 +2739,7 @@ export interface components {
       jwt: components['schemas']['a-jwt.dto.jwtToken'];
     };
     'home-user.dto.passport': {
+      instanceId: number | string | undefined;
       user: components['schemas']['home-user.dto.passportUser'];
       auth: components['schemas']['a-auth.dto.auth'];
       roles: components['schemas']['home-user.entity.role'][];
@@ -4713,6 +4754,41 @@ export interface components {
         | undefined;
       schedulers?: number | undefined;
     };
+    'a-layoutprofile.dto.layoutProfile_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          /** @enum {number} */
+          version: 1;
+          schemaFingerprint?: string | undefined;
+          columns: {
+            key: string;
+            visible: true | false;
+            width: 'auto' | number;
+          }[];
+        }
+      | undefined;
+    'a-layoutprofile.dto.layoutProfile': {
+      /** @enum {number} */
+      version: 1;
+      schemaFingerprint?: string | undefined;
+      columns: {
+        key: string;
+        visible: true | false;
+        width: 'auto' | number;
+      }[];
+    };
+    'a-layoutprofile.dto.layoutProfileSave': {
+      layoutKey: string;
+      profile: {
+        /** @enum {number} */
+        version: 1;
+        schemaFingerprint?: string | undefined;
+        columns: {
+          key: string;
+          visible: true | false;
+          width: 'auto' | number;
+        }[];
+      };
+    };
     'a-file.dto.fileUploadPolicyResponse': {
       fileScene: string;
       maxSize?: number | undefined;
@@ -5433,61 +5509,6 @@ export interface operations {
       cookie?: never;
     };
     requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-  };
-  AuthMock_authorize: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-  };
-  AuthMock_authorizePost: {
-    parameters: {
-      query: {
-        redirect_uri: string;
-        state: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': {
-          username: string;
-        };
-      };
-    };
     responses: {
       200: {
         headers: {
@@ -8319,6 +8340,86 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['basic-metrics.dto.metricsSnapshot'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Layoutprofile_load: {
+    parameters: {
+      query: {
+        layoutKey: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['a-layoutprofile.dto.layoutProfile_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Layoutprofile_save: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-layoutprofile.dto.layoutProfileSave'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-layoutprofile.dto.layoutProfile'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Layoutprofile_reset: {
+    parameters: {
+      query: {
+        layoutKey: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
           };
         };
       };

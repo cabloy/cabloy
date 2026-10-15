@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
@@ -123,6 +124,118 @@ test('isolated dry-run reports changes without writing files or contacting npm',
       readFileSync(resolve(project, 'repo-e2e/specs/project-owned.spec.ts'), 'utf-8'),
       'project browser test',
     );
+  } finally {
+    dispose();
+  }
+});
+
+const isolatedContractCommand = 'node scripts/generateOpenapiIsolated.ts';
+
+function reconcileContract(project: string, source: string, dryRun = false): string {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '--input-type=module',
+      '--eval',
+      `import { reconcileContractPackageJson } from ${JSON.stringify(new URL('./upgrade.ts', import.meta.url).href)};
+       reconcileContractPackageJson(${dryRun}, ${JSON.stringify(project)}, ${JSON.stringify(source)});`,
+    ],
+    { encoding: 'utf8' },
+  );
+  const output = `${result.stdout}${result.stderr}`;
+  assert.equal(result.status, 0, output);
+  return output;
+}
+
+function addIncomingContractCommand(source: string): void {
+  const pkg = readPackage(source);
+  pkg.scripts['contract:generate:isolated'] = isolatedContractCommand;
+  writeFile(source, 'package.json', `${JSON.stringify(pkg)}\n`);
+}
+
+test('adopts the missing isolated contract command without changing other package entries', () => {
+  const { project, source, dispose } = fixture();
+  try {
+    addIncomingContractCommand(source);
+    const before = readPackage(project);
+    assert.match(reconcileContract(project, source), /Added missing.*contract:generate:isolated/);
+    assert.deepEqual(readPackage(project), {
+      ...before,
+      scripts: { ...before.scripts, 'contract:generate:isolated': isolatedContractCommand },
+    });
+    const first = readFileSync(resolve(project, 'package.json'), 'utf-8');
+    assert.equal(reconcileContract(project, source), '');
+    assert.equal(readFileSync(resolve(project, 'package.json'), 'utf-8'), first);
+  } finally {
+    dispose();
+  }
+});
+
+test('isolated contract reconciliation creates a missing scripts object', () => {
+  const { project, source, dispose } = fixture();
+  try {
+    addIncomingContractCommand(source);
+    writeFile(project, 'package.json', '{"name":"project-owned"}\n');
+    reconcileContract(project, source);
+    assert.deepEqual(readPackage(project), {
+      name: 'project-owned',
+      scripts: { 'contract:generate:isolated': isolatedContractCommand },
+    });
+  } finally {
+    dispose();
+  }
+});
+
+test('isolated contract reconciliation visibly preserves customized values, including empty commands', () => {
+  const { project, source, dispose } = fixture();
+  try {
+    addIncomingContractCommand(source);
+    for (const command of ['node project-contract.ts', '']) {
+      const pkg = readPackage(project);
+      pkg.scripts['contract:generate:isolated'] = command;
+      const before = `${JSON.stringify(pkg)}\n`;
+      writeFile(project, 'package.json', before);
+      for (const dryRun of [false, true]) {
+        const output = reconcileContract(project, source, dryRun);
+        assert.match(output, /Preserved customized.*contract:generate:isolated/);
+        assert.ok(output.includes(isolatedContractCommand), output);
+        assert.equal(readFileSync(resolve(project, 'package.json'), 'utf-8'), before);
+      }
+    }
+  } finally {
+    dispose();
+  }
+});
+
+test('isolated contract dry-run reports adoption without writing and matching commands are a byte-preserving no-op', () => {
+  const { project, source, dispose } = fixture();
+  try {
+    addIncomingContractCommand(source);
+    const before = readFileSync(resolve(project, 'package.json'), 'utf-8');
+    assert.match(
+      reconcileContract(project, source, true),
+      /\[dry-run\] Add missing.*contract:generate:isolated/,
+    );
+    assert.equal(readFileSync(resolve(project, 'package.json'), 'utf-8'), before);
+
+    const pkg = readPackage(project);
+    pkg.scripts['contract:generate:isolated'] = isolatedContractCommand;
+    const matching = `${JSON.stringify(pkg)}\n`;
+    writeFile(project, 'package.json', matching);
+    assert.equal(reconcileContract(project, source), '');
+    assert.equal(reconcileContract(project, source, true), '');
+    assert.equal(readFileSync(resolve(project, 'package.json'), 'utf-8'), matching);
+  } finally {
+    dispose();
+  }
+});
+
+test('isolated contract reconciliation tolerates an older incoming package without the command', () => {
+  const { project, source, dispose } = fixture();
+  try {
+    const before = readFileSync(resolve(project, 'package.json'), 'utf-8');
+    assert.equal(reconcileContract(project, source), '');
+    assert.equal(readFileSync(resolve(project, 'package.json'), 'utf-8'), before);
   } finally {
     dispose();
   }

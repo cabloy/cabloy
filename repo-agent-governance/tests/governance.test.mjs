@@ -211,6 +211,71 @@ test('initializer preserves a legacy-customized adapter during a staged upgrade'
   });
 });
 
+for (const scenario of [
+  { name: 'adopts a missing command', incoming: true },
+  {
+    name: 'leaves a matching command byte-identical',
+    incoming: true,
+    command: 'node scripts/generateOpenapiIsolated.ts',
+  },
+  {
+    name: 'reports and preserves a customized command',
+    incoming: true,
+    command: 'node project-contract.mjs',
+  },
+  { name: 'reports and preserves an empty customized command', incoming: true, command: '' },
+  { name: 'tolerates an older staged package without the command', incoming: false },
+]) {
+  test(`staged initializer isolated contract bridge ${scenario.name}`, () => {
+    withFixture(root => {
+      const name = 'contract:generate:isolated';
+      const incomingCommand = 'node scripts/generateOpenapiIsolated.ts';
+      const fixtureBootstrap = resolve(root, 'scripts/bootstrapAgentGovernance.mjs');
+      mkdirSync(dirname(fixtureBootstrap));
+      cpSync(resolve(ROOT_DIR, 'scripts/bootstrapAgentGovernance.mjs'), fixtureBootstrap);
+
+      const upgradeRoot = resolve(root, 'node_modules/.cabloy-upgrade');
+      cpSync(GOVERNANCE_DIR, resolve(upgradeRoot, 'repo-agent-governance'), { recursive: true });
+      const sourcePackage = JSON.parse(readFileSync(resolve(ROOT_DIR, 'package.json'), 'utf8'));
+      delete sourcePackage.scripts[name];
+      const projectPackage = structuredClone(sourcePackage);
+      projectPackage.scripts['project:custom'] = 'node project-owned.mjs';
+      if (Object.hasOwn(scenario, 'command')) projectPackage.scripts[name] = scenario.command;
+      if (scenario.incoming) sourcePackage.scripts[name] = incomingCommand;
+      writeFileSync(resolve(upgradeRoot, 'package.json'), JSON.stringify(sourcePackage));
+      const projectPackagePath = resolve(root, 'package.json');
+      const before = `${JSON.stringify(projectPackage)}\n`;
+      writeFileSync(projectPackagePath, before);
+
+      const result = runNode(root, fixtureBootstrap);
+      assert.equal(result.status, 0, result.output);
+      const customized = Object.hasOwn(scenario, 'command') && scenario.command !== incomingCommand;
+      const adopted = scenario.incoming && !Object.hasOwn(scenario, 'command');
+      const updated = JSON.parse(readFileSync(projectPackagePath, 'utf8'));
+      if (adopted) {
+        assert.match(result.output, /Added missing.*contract:generate:isolated/);
+        assert.deepEqual(updated, {
+          ...projectPackage,
+          scripts: { ...projectPackage.scripts, [name]: incomingCommand },
+        });
+      } else {
+        assert.equal(readFileSync(projectPackagePath, 'utf8'), before);
+      }
+      if (customized) {
+        assert.match(result.output, /Preserved customized.*contract:generate:isolated/);
+        assert.ok(result.output.includes(incomingCommand), result.output);
+      } else {
+        assert.doesNotMatch(result.output, /Preserved customized.*contract:generate:isolated/);
+      }
+      const first = readFileSync(projectPackagePath, 'utf8');
+      const second = runNode(root, fixtureBootstrap);
+      assert.equal(second.status, 0, second.output);
+      assert.equal(readFileSync(projectPackagePath, 'utf8'), first);
+      assert.doesNotMatch(second.output, /Added missing.*contract:generate:isolated/);
+    });
+  });
+}
+
 test('governance adoption adopts byte-identical legacy outputs', () => {
   withFixture(root => {
     assert.equal(runGovernance(root, 'render').status, 0);

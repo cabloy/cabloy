@@ -54,6 +54,8 @@ Before regenerating frontend artifacts:
 
 Use the Zova OpenAPI and REST-generation path rather than manually updating request code first. Follow the canonical [Contract Loop Playbook](/fullstack/contract-loop-playbook#forward-chain-playbook) for the active edition’s complete generation and verification sequence.
 
+In Cabloy Basic, if no development Swagger service should be started or reused, use `npm run contract:generate:isolated -- <module-name>`. It verifies a fresh test-mode Vona service's signed readiness response and invokes the existing Zova generator against its Swagger source; generated SDK output remains shared workspace output and concurrent generation must be serialized.
+
 Do not treat `build:rest:*` as a standalone current command recipe. Resolve the active edition’s full build path from the canonical playbook and current root scripts so SSR bundle and REST output stay synchronized.
 
 For Start, resolve Start-specific flavor paths from that repository.

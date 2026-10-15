@@ -44,7 +44,7 @@ export function createTestRunId(date = new Date()) {
 export async function reserveTestRun(
   vonaDir: string,
   runId: string,
-  kind: 'unit' | 'cov' | 'e2e' = 'unit',
+  kind: 'unit' | 'cov' | 'e2e' | 'contract' = 'unit',
 ) {
   const identity = await inspectTestProcess(process.pid);
   const { claimPath } = await createTestClaim(vonaDir, runId, kind, {
@@ -75,18 +75,18 @@ function toError(value: unknown) {
   return value instanceof Error ? value : new Error(String(value));
 }
 
-interface GuardianResult {
+export interface GuardianResult {
   type: 'drained';
   result?: { code: number | null; signal: NodeJS.Signals | null };
   failed: boolean;
 }
 
-interface OwnedProcess {
+export interface OwnedProcess {
   wait: () => Promise<GuardianResult>;
   stop: () => Promise<GuardianResult>;
 }
 
-async function startOwnedProcess(
+export async function startOwnedProcess(
   command: string,
   args: string[],
   cwd: string,
@@ -234,6 +234,89 @@ async function startOwnedProcess(
   return { wait, stop };
 }
 
+export function getIsolatedVonaCommand(port: number, env: NodeJS.ProcessEnv, readyKey: string) {
+  return {
+    command: process.execPath,
+    args: [
+      './packages-cli/cli/src/bin/vona.ts',
+      ':bin:dev',
+      '--workers=1',
+      '--flavor=normal',
+      '--mode=test',
+    ],
+    cwd: resolve(ROOT_DIR, 'vona'),
+    env: {
+      ...env,
+      VONA_TEST_READY_KEY: readyKey,
+      VONA_TEST_SERVER_ORIGIN: 'true',
+      SERVER_SERVE_PROTOCOL: 'http',
+      SERVER_SERVE_HOST: `127.0.0.1:${port}`,
+    },
+  };
+}
+
+export async function withIsolatedVona<T>(
+  port: number,
+  env: NodeJS.ProcessEnv,
+  callback: () => Promise<T>,
+  dependencies = { start: startOwnedProcess, ready: waitForReady },
+): Promise<T> {
+  const readyKey = randomBytes(32).toString('hex');
+  const command = getIsolatedVonaCommand(port, env, readyKey);
+  const server = await dependencies.start(command.command, command.args, command.cwd, command.env);
+  let stopping = false;
+  let exitedEarly = false;
+  void server.wait().then(
+    () => {
+      if (!stopping) exitedEarly = true;
+    },
+    () => {
+      if (!stopping) exitedEarly = true;
+    },
+  );
+  let interrupted = false;
+  const onInterrupt = () => {
+    interrupted = true;
+    void server.stop().catch(console.error);
+  };
+  process.on('SIGINT', onInterrupt);
+  process.on('SIGTERM', onInterrupt);
+  let operationError: Error | undefined;
+  let shutdownError: Error | undefined;
+  let result: T | undefined;
+  try {
+    await dependencies.ready(port, server, readyKey);
+    if (interrupted) throw new Error('Isolated Vona run interrupted');
+    result = await callback();
+  } catch (error) {
+    operationError = toError(error);
+  } finally {
+    stopping = true;
+    try {
+      const stopped = await server.stop();
+      if (stopped.failed || interrupted || exitedEarly || stopped.result?.code !== 0) {
+        shutdownError = new Error(
+          'Isolated Vona server did not stop cleanly, exited early, or run was interrupted',
+        );
+      }
+    } catch (error) {
+      shutdownError = toError(error);
+    } finally {
+      process.off('SIGINT', onInterrupt);
+      process.off('SIGTERM', onInterrupt);
+    }
+  }
+  if (operationError && shutdownError) {
+    throw new AggregateError(
+      [operationError, shutdownError],
+      'Isolated Vona operation and shutdown failed',
+    );
+  }
+  if (shutdownError) throw toError(shutdownError);
+  if (operationError) throw toError(operationError);
+  return result as T;
+}
+
 export async function runIsolatedProcess(
   command: string,
   args: string[],
@@ -265,11 +348,16 @@ export function verifyReadyProof(challenge: string, key: string, proof: string |
   return timingSafeEqual(expected, Buffer.from(proof, 'hex'));
 }
 
-export async function waitForReady(port: number, server: OwnedProcess, key: string) {
-  const deadline = Date.now() + 180_000;
+export async function waitForReady(
+  port: number,
+  server: OwnedProcess,
+  key: string,
+  timeoutMs = 180_000,
+) {
+  const deadline = Date.now() + timeoutMs;
   const url = `http://127.0.0.1:${port}/health/ready`;
   const exited = server.wait().then(() => {
-    throw new Error('Isolated E2E server exited before readiness');
+    throw new Error('Isolated Vona server exited before readiness');
   });
   while (Date.now() < deadline) {
     const challenge = randomBytes(16).toString('hex');
@@ -288,12 +376,12 @@ export async function waitForReady(port: number, server: OwnedProcess, key: stri
       continue;
     }
     if (!verifyReadyProof(challenge, key, response.headers.get('x-vona-test-proof'))) {
-      throw new Error('Isolated E2E listener does not belong to this test run');
+      throw new Error('Isolated Vona listener does not belong to this test run');
     }
     if (response.ok && ((await response.json()) as { status?: string }).status === 'ok') return;
     await Promise.race([new Promise(resolvePromise => setTimeout(resolvePromise, 200)), exited]);
   }
-  throw new Error('Isolated E2E server did not become ready with a valid ownership proof');
+  throw new Error('Isolated Vona server did not become ready with a valid ownership proof');
 }
 
 export function getUnitTestCommands(args: string[]) {
@@ -326,14 +414,24 @@ export function resolveCabloyEdition(rootDir = ROOT_DIR): 'basic' | 'start' {
   return hasBasic ? 'basic' : 'start';
 }
 
-export async function runIsolatedTest(kind: 'unit' | 'e2e', args: string[]) {
-  resolveCabloyEdition();
-  if (process.env.E2E_BASE_URL !== undefined) {
-    throw new Error(
-      'E2E_BASE_URL is unsupported; the E2E runner manages a local test-mode target.',
-    );
-  }
-  const vonaDir = resolve(ROOT_DIR, 'vona');
+export interface IsolatedRunContext {
+  runId: string;
+  vonaDir: string;
+  dataRoot: string;
+  generatedRoot: string;
+  port: number;
+  claimPath: string;
+  broker: Awaited<ReturnType<typeof startTestClaimBroker>>;
+  env: NodeJS.ProcessEnv;
+}
+
+export async function withIsolatedRun<T>(
+  kind: 'unit' | 'cov' | 'e2e' | 'contract',
+  callback: (context: IsolatedRunContext) => Promise<T>,
+  rootDir = ROOT_DIR,
+): Promise<T> {
+  resolveCabloyEdition(rootDir);
+  const vonaDir = resolve(rootDir, 'vona');
   await reapExpiredTestClaims(vonaDir, {
     ttlSeconds: parseTestClaimTtlSeconds(),
     now: Date.now(),
@@ -344,13 +442,10 @@ export async function runIsolatedTest(kind: 'unit' | 'e2e', args: string[]) {
   const dataRoot = resolve(vonaDir, `.app-test-${runId}`);
   const generatedRoot = resolve(vonaDir, `.vona-test-${runId}`);
   const port = await allocateTestPort();
-  const claimPath = await reserveTestRun(
-    vonaDir,
-    runId,
-    kind === 'unit' && args.includes('--coverage') ? 'cov' : kind,
-  );
+  const claimPath = await reserveTestRun(vonaDir, runId, kind);
   let broker: Awaited<ReturnType<typeof startTestClaimBroker>> | undefined;
   let completed = false;
+  let result: T | undefined;
   try {
     broker = await startTestClaimBroker(claimPath);
     createOwned(dataRoot, runId);
@@ -374,64 +469,16 @@ export async function runIsolatedTest(kind: 'unit' | 'e2e', args: string[]) {
       TMPDIR: resolve(dataRoot, 'tmp'),
     };
     await broker.update({ type: 'status', status: 'running' });
-    if (kind === 'unit') {
-      for (const { command, args: commandArgs, cwd } of getUnitTestCommands(args)) {
-        await runIsolatedProcess(command, commandArgs, cwd, env);
-      }
-    } else {
-      let e2eError: unknown;
-      const readyKey = randomBytes(32).toString('hex');
-      const server = await startOwnedProcess(
-        process.execPath,
-        [
-          './packages-cli/cli/src/bin/vona.ts',
-          ':bin:dev',
-          '--workers=1',
-          '--flavor=normal',
-          '--mode=test',
-        ],
-        resolve(ROOT_DIR, 'vona'),
-        {
-          ...env,
-          VONA_TEST_READY_KEY: readyKey,
-          VONA_TEST_SERVER_ORIGIN: 'true',
-          SERVER_SERVE_PROTOCOL: 'http',
-          SERVER_SERVE_HOST: `127.0.0.1:${port}`,
-        },
-      );
-      let interrupted = false;
-      let serverError: unknown;
-      const onInterrupt = () => {
-        interrupted = true;
-        void server.stop().catch(console.error);
-      };
-      process.on('SIGINT', onInterrupt);
-      process.on('SIGTERM', onInterrupt);
-      try {
-        await waitForReady(port, server, readyKey);
-        await runIsolatedProcess(
-          process.execPath,
-          ['repo-e2e/scripts/runE2e.ts', ...args],
-          ROOT_DIR,
-          env,
-        );
-      } catch (error) {
-        e2eError = error;
-      } finally {
-        process.off('SIGINT', onInterrupt);
-        process.off('SIGTERM', onInterrupt);
-        try {
-          const result = await server.stop();
-          if (result.failed || interrupted) {
-            serverError = new Error('Isolated E2E server did not stop cleanly');
-          }
-        } catch (error) {
-          serverError = error;
-        }
-      }
-      if (serverError) throw toError(serverError);
-      if (e2eError) throw toError(e2eError);
-    }
+    result = await callback({
+      runId,
+      vonaDir,
+      dataRoot,
+      generatedRoot,
+      port,
+      claimPath,
+      broker,
+      env,
+    });
     completed = true;
   } catch (error) {
     await broker?.update({ type: 'status', status: 'failed' }).catch(() => {
@@ -444,15 +491,43 @@ export async function runIsolatedTest(kind: 'unit' | 'e2e', args: string[]) {
     }
     await broker?.close();
   }
-  const result = await cleanTestClaim(claimPath, {
+  const cleanup = await cleanTestClaim(claimPath, {
     projectPath: vonaDir,
     isInactive: claim => isTestClaimInactive(claim, true),
     warn: message => console.error(message),
   });
-  if (result.status !== 'cleaned') {
+  if (cleanup.status !== 'cleaned') {
     console.error(`Isolated test claim retained for inspection: ${claimPath}`);
     throw new Error('Isolated test succeeded but resource cleanup did not complete');
   }
+  return result as T;
+}
+
+export async function runIsolatedTest(kind: 'unit' | 'e2e', args: string[]) {
+  if (process.env.E2E_BASE_URL !== undefined) {
+    throw new Error(
+      'E2E_BASE_URL is unsupported; the E2E runner manages a local test-mode target.',
+    );
+  }
+  await withIsolatedRun(
+    kind === 'unit' && args.includes('--coverage') ? 'cov' : kind,
+    async ({ env, port }) => {
+      if (kind === 'unit') {
+        for (const { command, args: commandArgs, cwd } of getUnitTestCommands(args)) {
+          await runIsolatedProcess(command, commandArgs, cwd, env);
+        }
+        return;
+      }
+      await withIsolatedVona(port, env, () =>
+        runIsolatedProcess(
+          process.execPath,
+          ['repo-e2e/scripts/runE2e.ts', ...args],
+          ROOT_DIR,
+          env,
+        ),
+      );
+    },
+  );
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {

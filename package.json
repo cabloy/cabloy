@@ -47,6 +47,7 @@
     "start:one": "cd vona && npm run start:one",
     "test": "cd vona && npm run test",
     "test:e2e": "node scripts/runIsolatedTest.ts e2e",
+    "contract:generate:isolated": "node scripts/generateOpenapiIsolated.ts",
     "test:docs:e2e": "npm run docs:build && playwright test --config repo-e2e/docs/playwright.config.ts",
     "db:reset": "cd vona && npm run db:reset",
     "tsc": "npm run tsc:zova && pnpm --dir vona run tsc",

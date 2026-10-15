@@ -135,18 +135,24 @@ Representative frontend-side contract-generation commands include:
 ```bash
 npm run zova :openapi:config training-student
 npm run zova :openapi:generate training-student
-cd zova && npm run build:rest:cabloyBasicAdmin
-cd zova && npm run build:rest:cabloyBasicWeb
 ```
+
+When no development service should be started or reused, use the isolated contract path instead:
+
+```bash
+npm run contract:generate:isolated -- training-student
+```
+
+This starts a disposable test-mode Vona service, verifies its signed readiness response and OpenAPI document, runs the same Zova generator, and cleans its claim-backed test resources after success. The generated SDK output is still shared workspace output; serialize concurrent generation and inspect or repair it explicitly rather than expecting rollback.
 
 A practical forward-chain sequence is:
 
 1. author or change the backend contract
 2. emit or inspect backend OpenAPI output
-3. if the frontend generator reads from a local Swagger endpoint, start the backend service first so the endpoint is reachable — in this repo, `npm run dev` is the normal path and exposes Swagger at `http://localhost:7102/swagger/json?version=V31`
+3. choose the source lifecycle: reuse a reachable development Swagger service for the direct command (`npm run dev` normally exposes `http://localhost:7102/swagger/json?version=V31`), or let the isolated command own a fresh test-mode service
 4. configure frontend module ownership if needed
-5. generate module-level OpenAPI SDK output
-6. run the rest build for the active flavor when needed
+5. generate module-level OpenAPI SDK output with the selected command
+6. when frontend output must be handed back to Vona, run the paired flavor build (`npm run build:zova:admin`, plus `npm run build:zova:web` when affected), then `npm run deps:vona`; REST-only builds are not sufficient for this handoff
 7. consume the generated contract from frontend code instead of re-declaring it manually
 8. keep frontend follow-up thin by wrapping generated consumers with semantic facades instead of re-declaring the contract
 9. when the custom API still belongs to an existing resource, reuse the existing resource-owner instead of creating a competing cache owner
@@ -162,7 +168,7 @@ If both `operations.match` and `operations.ignore` are empty, frontend SDK gener
 A practical regeneration rule is:
 
 - if the backend contract changed, prefer regenerating the SDK/rest layer before hand-editing frontend request code
-- if `npm run zova :openapi:generate ...` fails because the local Swagger source is unavailable, first start the backend service and confirm `http://localhost:7102/swagger/json?version=V31` is reachable before treating generation as broken
+- if `npm run zova :openapi:generate ...` fails because the local Swagger source is unavailable, start the backend service and confirm the configured source is reachable, or use `npm run contract:generate:isolated -- <module-name>` instead
 - if the generated consumer path is already correct, but frontend behavior still looks stale, stop patching generated files and diagnose consumer drift or local dependency drift instead
 
 ## `training-student` as a compact forward-chain specimen

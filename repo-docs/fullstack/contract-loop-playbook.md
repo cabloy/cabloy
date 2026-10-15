@@ -221,6 +221,14 @@ npm run zova :openapi:config <module-name>
 npm run zova :openapi:generate <module-name>
 ```
 
+The direct command is the fast path when a development Swagger service is already available. In Cabloy Basic, when the workflow should own a fresh test-mode service instead, use:
+
+```bash
+npm run contract:generate:isolated -- <module-name>
+```
+
+This isolated path reuses the existing Zova generator and module ownership checks, but starts Vona in an isolated test run without Playwright. Its claim-backed test resources are cleaned after success and retained on failure; generated SDK files remain shared workspace output, so serialize concurrent generation and do not assume rollback.
+
 When the target is a module-local SDK, keep ownership constrained with `operations.match` so the module only generates the API surface it actually owns.
 
 ### Stage 4: Thin frontend follow-up

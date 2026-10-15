@@ -41,6 +41,7 @@ Cabloy Basic exposes these shared root scripts:
 - `npm run start:one`
 - `npm run test`
 - `npm run test:e2e`
+- `npm run contract:generate:isolated`
 - `npm run db:reset`
 - `npm run tsc`
 - `npm run docs:dev`
@@ -78,6 +79,8 @@ Judge preflight conflicts by actual resource overlap, not process names:
 | A runner-owned listener, test identity, claim, database/Redis namespace, or path actually collides, or a custom external resource is shared | Diagnose ownership and wait or ask when needed; do not adopt another run's resources, reset dev data, kill its process, or change shared identity/ports to bypass the conflict. |
 
 A process-list match or a free port alone is not proof of either a conflict or safe ownership. Use the managed root entrypoints and retain normal execution-authorization checks; isolation is not a blanket reset or cleanup authorization.
+
+`npm run contract:generate:isolated -- <module-name>` starts a fresh test-mode Vona service on a run-owned loopback port, verifies its signed readiness response, fetches the Swagger document, and invokes the existing Zova OpenAPI generator without Playwright. The run owns its disposable test resources and claim-backed local roots; successful runs clean them after the service drains, while failures retain the claim and evidence for inspection. The generated SDK files under `zova/src/**` remain shared checkout output, so serialize concurrent generation for the same workspace/module and do not treat this command as an automatic rollback boundary.
 
 For Vona integrated SSR, the allocated E2E origin is supplied to Zova at runtime as server `SSR_API_BASE_URL` and browser `API_BASE_URL`. Do not edit Zova `.env` files or rebuild solely to match the test port. The current root `npm run test:e2e` consumes prebuilt frontend artifacts; refresh affected SSR/REST output and synchronize dependencies when their inputs change. See [Runtime API origins in Vona integrated SSR](/fullstack/ssr-entry-modes#runtime-api-origins-in-vona-integrated-ssr) for configuration overrides and scope.
 

@@ -322,6 +322,34 @@ function reconcileGovernancePackageJson(dryRun?: boolean): void {
   }
 }
 
+export function reconcileContractPackageJson(
+  dryRun?: boolean,
+  rootDir = ROOT_DIR,
+  tempDir = TEMP_DIR,
+): void {
+  const name = 'contract:generate:isolated';
+  const sourcePackage = readPackageJson(resolve(tempDir, 'package.json'));
+  const command = sourcePackage.scripts?.[name];
+  if (!command) return;
+
+  const projectPackagePath = resolve(rootDir, 'package.json');
+  const projectPackage = readPackageJson(projectPackagePath);
+  if (Object.hasOwn(projectPackage.scripts ?? {}, name)) {
+    if (projectPackage.scripts?.[name] !== command) {
+      log(`  Preserved customized package.json scripts.${name}; incoming command: ${command}`);
+    }
+    return;
+  }
+  if (dryRun) {
+    log(`  [dry-run] Add missing package.json scripts.${name} = ${command}`);
+    return;
+  }
+  projectPackage.scripts ??= {};
+  projectPackage.scripts[name] = command;
+  writeFileSync(projectPackagePath, `${JSON.stringify(projectPackage, null, 2)}\n`);
+  log(`  Added missing package.json scripts.${name}`);
+}
+
 function reconcileGovernanceAssets(dryRun?: boolean): void {
   const command = 'node repo-agent-governance/scripts/governance.mjs adopt --apply';
   if (dryRun) {
@@ -613,6 +641,10 @@ async function main(): Promise<void> {
     log('Reconciling agent-governance package entries and managed adapters...');
     reconcileGovernancePackageJson(dryRun);
     reconcileGovernanceAssets(dryRun);
+    log('');
+
+    log('Reconciling missing contract-generation package entries...');
+    reconcileContractPackageJson(dryRun);
     log('');
 
     // 5. Reconcile Cabloy Basic framework E2E manifest entries
