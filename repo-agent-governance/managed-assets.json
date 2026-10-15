@@ -60,7 +60,7 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "4aeb0477e3cb316b14bca7c4a3d1e277329be4a8f8e14ef31a3ceb858b6b0698",
+      "sha256": "27888ed8bb2c177a7bbe836a494d6185580f2e12e9de809809e3b38820084f94",
       "source": "skills/cabloy-contract-loop/SKILL.md",
       "target": ".agents/skills/cabloy-contract-loop/SKILL.md"
     },
@@ -396,7 +396,7 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "4aeb0477e3cb316b14bca7c4a3d1e277329be4a8f8e14ef31a3ceb858b6b0698",
+      "sha256": "27888ed8bb2c177a7bbe836a494d6185580f2e12e9de809809e3b38820084f94",
       "source": "skills/cabloy-contract-loop/SKILL.md",
       "target": ".claude/skills/cabloy-contract-loop/SKILL.md"
     },
@@ -746,7 +746,7 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "4aeb0477e3cb316b14bca7c4a3d1e277329be4a8f8e14ef31a3ceb858b6b0698",
+      "sha256": "27888ed8bb2c177a7bbe836a494d6185580f2e12e9de809809e3b38820084f94",
       "source": "skills/cabloy-contract-loop/SKILL.md",
       "target": ".cursor/skills/cabloy-contract-loop/SKILL.md"
     },

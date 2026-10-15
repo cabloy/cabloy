@@ -220,13 +220,13 @@ Use this when the frontend consumes generated API contracts.
 
 For AI development, **default to managed isolated generation**, even when a development Swagger service is currently reachable. An independently managed development service may stop at any time; owning the service lifecycle keeps the generation task continuous and its contract source consistent.
 
-1. Detect the edition and verify the isolated entrypoint in the active root `package.json`. Cabloy Basic provides:
+1. Both Cabloy Basic and Cabloy Start support managed isolated generation through the same root command:
 
    ```bash
    npm run contract:generate:isolated -- <module-name>
    ```
 
-   For Cabloy Start or another version, verify the actual command and configuration support rather than assuming the Basic entrypoint exists.
+   Detect the active edition for edition-specific paths and follow-up builds, not to choose a different SDK generation default. For older project versions, verify the root entrypoint and source resolver are up to date.
 
 2. Initialize module configuration with `npm run zova :openapi:config <module-name>` when needed. Keep module ownership constrained with `operations.match` unless the module intentionally owns a broad API surface; the isolated command reuses the existing generator and ownership checks.
 3. Confirm the effective source uses the isolated service. The command supplies a child-scoped `OPENAPI_SOURCE_URL` to the project default source resolver; explicit module sources or project `modules` overrides retain their precedence. Inspect the project resolver and align conflicting sources deliberately before claiming isolated generation. Do not edit `.env` files or SDK runtime API targets to inject the temporary port.
