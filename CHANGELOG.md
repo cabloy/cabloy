@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.211
+
+### Features
+
+- Add an OpenAPI SDK.
+- Add draft functionality.
+
 ## 5.1.210
 
 ### Features
