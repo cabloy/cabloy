@@ -19,7 +19,7 @@ export interface IDtoOptions<%=cli.helper.firstCharToUpperCase(argv.detailDtoRes
           actions: [
             ZovaRender.detailsActionBulk('<%=argv.detailsModuleName%>:actionCreate', {
               dialogOptions: { title: $locale('Add<%=argv.detailDialogTitleCapitalize%>') },
-              permission: { formScene: ['create', 'edit'] },
+              permission: { mode: 'formScene', formScene: ['create', 'edit'] },
             }),
           ],
         }),
@@ -48,10 +48,10 @@ export class Dto<%=cli.helper.firstCharToUpperCase(argv.detailDtoResItemName)%> 
       actions: [
         ZovaRender.detailsActionRow('<%=argv.detailsModuleName%>:actionUpdate', {
           dialogOptions: { title: $locale('Edit<%=argv.detailDialogTitleCapitalize%>') },
-          permission: { formScene: ['create', 'edit'] },
+          permission: { mode: 'formScene', formScene: ['create', 'edit'] },
         }),
         ZovaRender.detailsActionRow('<%=argv.detailsModuleName%>:actionDelete', {
-          permission: { formScene: ['create', 'edit'] },
+          permission: { mode: 'formScene', formScene: ['create', 'edit'] },
         }),
       ],
     }),

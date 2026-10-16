@@ -63,6 +63,9 @@ export class ServiceVersion extends BeanBase {
 
   async __instanceSeed(instanceName: keyof IInstanceRecord) {
     await this.__check({ scene: 'seed', instanceName });
+    this.$logger.silly(
+      chalk.cyan(`The instance is seeded successfully: ${instanceName || 'default'}`),
+    );
   }
 
   // scene: update/init/seed

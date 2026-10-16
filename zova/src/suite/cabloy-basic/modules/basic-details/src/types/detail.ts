@@ -3,6 +3,7 @@ import 'zova-module-a-form';
 import 'zova-module-a-openapi';
 
 import type { ServiceDetail } from '../service/detail.jsx';
+import type { TypeDetailsCheckPermission } from './details.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IJsxRenderContextDetail<TData extends {} = {}> {
@@ -11,6 +12,7 @@ declare module 'zova-module-a-openapi' {
 
   export interface IDetailScope {
     $$detail?: ServiceDetail;
+    checkPermission?: TypeDetailsCheckPermission;
   }
 }
 

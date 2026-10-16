@@ -91,6 +91,7 @@ export class ServiceDetail<TData extends {} = {}> extends BeanBase {
     return {
       formMeta: this.formMeta,
       $$detail,
+      checkPermission: this.options.checkPermission,
     };
   }
 

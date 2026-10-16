@@ -19,7 +19,7 @@ export interface IDtoOptionsDetailRecordSubjectResItem extends IDecoratorDtoOpti
           actions: [
             ZovaRender.detailsActionBulk('basic-details:actionCreate', {
               dialogOptions: { title: $locale('AddTrainingRecordSubject') },
-              permission: { formScene: ['create', 'edit'] },
+              permission: { mode: 'formScene', formScene: ['create', 'edit'] },
             }),
           ],
         }),
@@ -53,10 +53,10 @@ export class DtoDetailRecordSubjectResItem extends $Dto.get(() => ModelSubject, 
       actions: [
         ZovaRender.detailsActionRow('basic-details:actionUpdate', {
           dialogOptions: { title: $locale('EditTrainingRecordSubject') },
-          permission: { formScene: ['create', 'edit'] },
+          permission: { mode: 'formScene', formScene: ['create', 'edit'] },
         }),
         ZovaRender.detailsActionRow('basic-details:actionDelete', {
-          permission: { formScene: ['create', 'edit'] },
+          permission: { mode: 'formScene', formScene: ['create', 'edit'] },
         }),
       ],
     }),

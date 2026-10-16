@@ -1,12 +1,12 @@
 import 'zova-module-a-table';
 import 'zova-module-a-openapi';
-import type { IDetailsScope, IPermissionHintGeneral } from 'zova-module-a-openapi';
+import type { IDetailsScope, IPermissionHintDetailsAction } from 'zova-module-a-openapi';
 
 import { ControllerBlockDetails } from '../component/blockDetails/controller.jsx';
 
 export type TypeDetailsCheckPermission = (
   actionName?: string,
-  permissionHint?: IPermissionHintGeneral,
+  permissionHint?: IPermissionHintDetailsAction,
 ) => boolean;
 
 declare module 'zova-module-a-openapi' {

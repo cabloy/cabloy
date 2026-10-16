@@ -15,7 +15,6 @@ import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 
 import { filterDetailsRowActions } from '../lib/detailsPermissions.js';
-import { checkFormScene } from '../lib/utils.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceDetailsActionRowRecord {
@@ -39,11 +38,13 @@ export class TableCellActionOperationsRow extends BeanBase implements ITableCell
     const actions = options.actions;
     if (!actions || actions.length === 0) return false;
     const $$details = $celScope.$$details!;
-    const actionsVisible = actions.filter(action => {
-      return checkFormScene($$details.formScene, action.options?.permission);
-    });
+    const actionsAllowed = filterDetailsRowActions(
+      $$details.formScene,
+      $$details.checkPermission.bind($$details),
+      actions,
+    );
     const renders: TypeTableCellRenderComponent[] = [];
-    for (const action of actionsVisible) {
+    for (const action of actionsAllowed) {
       const actionName = action.name;
       const actionRender = action.render;
       if (!actionRender) throw new Error(`should specify action render: ${actionName}`);

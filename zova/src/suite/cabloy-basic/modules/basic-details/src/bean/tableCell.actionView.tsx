@@ -53,6 +53,7 @@ export class TableCellActionView extends BeanBase implements ITableCellRender {
             icon: options.dialogOptions?.icon,
             title: options.dialogOptions?.title ?? this.scope.locale.ViewDetail(),
             dialogOptions: options.dialogOptions,
+            checkPermission: $$details.checkPermission.bind($$details),
           } satisfies IDialogFormOptions);
           serverDetail.openDialogForm();
         }}

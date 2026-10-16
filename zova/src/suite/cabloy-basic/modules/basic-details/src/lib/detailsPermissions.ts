@@ -1,5 +1,5 @@
 import type {
-  IPermissionHintGeneral,
+  IPermissionHintDetailsAction,
   IResourceRenderDetailsActionBulkOptionsAction,
   IResourceRenderDetailsActionRowOptionsAction,
   TypeFormScene,
@@ -12,7 +12,7 @@ import { checkFormScene } from './utils.js';
 
 export interface IDetailsPermissionAction {
   name?: string;
-  options?: { permission?: IPermissionHintGeneral };
+  options?: { permission?: IPermissionHintDetailsAction };
 }
 
 export function createDetailsPermissionChecker(
@@ -21,7 +21,7 @@ export function createDetailsPermissionChecker(
   checkPermission: (
     permissions: TypeOpenapiPermissions | undefined,
     actionName?: string,
-    permissionHint?: IPermissionHintGeneral,
+    permissionHint?: IPermissionHintDetailsAction,
     currentData?: Record<string, unknown>,
   ) => boolean,
 ): TypeDetailsCheckPermission {
@@ -36,7 +36,9 @@ export function isDetailsActionAllowed(
   action: IDetailsPermissionAction,
 ): boolean {
   const permissionHint = action.options?.permission;
-  return checkFormScene(formScene, permissionHint) && checkPermission(action.name, permissionHint);
+  if (!checkFormScene(formScene, permissionHint)) return false;
+  if (permissionHint?.mode === 'formScene' && !permissionHint.actionInherit) return true;
+  return checkPermission(action.name, permissionHint);
 }
 
 export function filterDetailsActions<TAction extends IDetailsPermissionAction>(

@@ -71,7 +71,9 @@ Before implementation, verify:
 - tenant, identity, authorization, ownership, privacy, lifecycle, transaction, concurrency, idempotency, audit, and recovery constraints are defined for the task’s risk;
 - the requested change does not broaden scope or create a competing persistence, identity, or API authority.
 
-When authority records conflict, stop. Update the authoritative PRD, SRS, or ADR through `cabloy-spec-generation`, then propagate the change through WBS, ATP, evidence assumptions, and progress. Do not reconcile a conflict by silently editing a downstream status or implementation plan.
+Apply readiness to the selected increment and its real dependency graph. Record each blocker with its affected branch, decision owner and finite closure condition in existing records; keep future refinements and release-only questions separate. Do not require the new implementation's runtime ATP evidence before implementation starts, but retain required predecessor evidence and any specifically mandated pre-implementation qualification. When blocked, surface one meaningful, independently verifiable alternative if available, without executing it unapproved or changing formal dependencies/status to bypass the blocker. A foundation-only subincrement needs concrete integration value, checks and explicit scope approval; it does not complete the parent WBS.
+
+When authority records conflict, stop the affected work. Update the authoritative PRD, SRS, or ADR through `cabloy-spec-generation`, then propagate the change through WBS, ATP, evidence assumptions, and progress. Do not reconcile a conflict by silently editing a downstream status or implementation plan. A return to planning must name the new fact, material authority question or blocker to resolve and its exit condition; do not restart a preparation/review cycle merely to restate accepted direction. Batch related decisions and report stalled convergence if further refinement has no justified new value.
 
 ## 4. Special gates
 
@@ -123,7 +125,7 @@ Excluded operations: <init/reset/deploy/provider/etc.>
 Next action: <one action after confirmation>
 ```
 
-Require explicit confirmation. If the user changes scope, rebuild the dossier and re-check dependencies and authority. A prior confirmation does not authorize a new task, phase, provider operation, or destructive command.
+Require explicit confirmation unless this same bounded dossier already has valid explicit approval. Reuse unchanged approval across skill handoffs, session continuations and implementation substeps after checking current revision/worktree attribution and evidence applicability. Revision change alone requires an impact check, not automatic reapproval. Refresh affected dossier parts and obtain renewed approval for material scope/authority/dependency/safety changes, newly observed risks or conditions specified by the approval. A prior confirmation does not authorize a new task, phase, provider operation, or destructive command. Once ready and approved, proceed with the coherent implementation/verification sequence rather than requesting the same permission or another planning round by default.
 
 ## 6. Specialist routing
 

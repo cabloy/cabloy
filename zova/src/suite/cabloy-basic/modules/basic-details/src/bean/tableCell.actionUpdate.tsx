@@ -53,6 +53,7 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
             icon: options.dialogOptions?.icon,
             title: options.dialogOptions?.title ?? this.scope.locale.EditDetail(),
             dialogOptions: options.dialogOptions,
+            checkPermission: $$details.checkPermission.bind($$details),
             onSubmitData: (
               data: TypeFormOnSubmitData<Record<string, any>>,
               dialog: AppModalItem,
