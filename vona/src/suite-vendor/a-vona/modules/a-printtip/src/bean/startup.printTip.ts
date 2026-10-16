@@ -18,7 +18,7 @@ const __tipEnd = '=================== tip: end =====================';
 })
 export class StartupPrintTip extends BeanBase implements IStartupExecute {
   async execute() {
-    if (this.app.meta.env.LOGGER_DUMMY === 'true') return;
+    if (process.env.VONA_DB_RESET === 'true' || this.app.meta.env.LOGGER_DUMMY === 'true') return;
     setTimeout(async () => {
       await this._print();
     }, this.scope.config.delay);
