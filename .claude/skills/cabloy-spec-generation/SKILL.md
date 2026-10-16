@@ -69,6 +69,16 @@ Ask only for missing inputs in a compact clarification pass:
 
 Label recommendations as proposals. A request for comprehensiveness is not permission to invent security or business decisions.
 
+### Planning convergence
+
+For the next bounded increment, keep a finite blocker/exit checklist in the existing owning records, not a new planning hierarchy. Name each material unresolved decision, why it blocks this increment, its decision owner and closure condition; separate deferrable details and future increments. Batch related decisions into a compact review rather than mechanically splitting preparation, review and reconfirmation into separate rounds.
+
+Before proposing more planning, identify the blocker or material uncertainty it addresses, the new fact or decision value expected, and the exit condition or resulting implementation handoff. If another pass merely restates accepted direction or leaves the same blockers without a justified new approach, report the stalled convergence and recommend a concrete decision, bounded feasibility check or scope disposition instead of another micro-plan. Do not impose a fixed round limit or weaken security requirements to force code.
+
+Apply blockers only along actual dependencies, not to the whole suite by default. Surface one meaningful, independently verifiable implementation candidate on an unaffected branch when available; do not invent one or use empty scaffolding/document counts as progress. A foundation-only increment must have explicit integration value and its own checks, and must not be reported as completion of its parent feature. If none is ready, state the exact reason.
+
+Stop refining when the selected increment's material contracts, dependencies, scope, safety constraints and verification plan are sufficient. Request only missing execution approval, or hand off within existing explicit approval whose scope and conditions remain valid. Reopen settled decisions only for a material change or newly observed risk. Generation/design approval alone still does not authorize implementation; runtime ATP proof and release approval remain later gates, not proof that must already exist for the new implementation to start.
+
 ## 6. Confirm generation scope
 
 Before writing, present the edition/root, mode, identity/path, intended ownership, outcomes/scope, site strategy/target tuple classification, affected records, justified omissions/extensions, unresolved gates, and initial status/evidence policy. Include planned chart eligibility and README language.

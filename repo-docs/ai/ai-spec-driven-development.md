@@ -73,6 +73,18 @@ Before source work begins, an **execution dossier** makes the unit explicit: tar
 
 This structure lets a team pause, review, or transfer work without treating an unfinished implementation as verified. See [Execute an Approved Cabloy Specification Increment](/ai/playbook-spec-execution) for the readiness gates, routing rules, evidence protocol, and handoff format.
 
+## Converge planning into implementation
+
+Planning should resolve the material blockers of the next bounded increment, not specify every future detail before any code is written. Keep a finite blocker/exit checklist in the existing owning records: the unresolved decision, why it blocks this increment, its decision owner, and the condition that closes it. Separate deferrable details and later increments; batch related decisions instead of turning each clarification into another preparation and review cycle.
+
+Before adding a planning pass, explain which blocker or material uncertainty it addresses, what new fact or decision value it should provide, and how it ends. If the next pass only restates an accepted direction without a justified new approach to the remaining blockers, report stalled convergence and recommend a concrete decision, bounded feasibility check, or scope disposition. A larger document or another review is not delivery progress by itself.
+
+Blockers follow actual dependencies, not the whole suite by default. A blocked identity integration does not necessarily block an independent capability whose own contracts, dependencies, safety boundary, and verification plan are ready. Conversely, a frontend change that depends on an unresolved response contract cannot bypass that dependency by calling itself an independent increment. Surface a meaningful, independently verifiable candidate for approval when available; if none exists, state why. Foundation-only work is useful only when it has explicit integration value and checks, not merely an empty scaffold presented as feature completion.
+
+Planning is sufficient for an increment when its material contracts, dependencies, scope, safety constraints, and verification plan are settled. At that point, request any missing execution approval or proceed within valid existing approval. Reuse an unchanged approved dossier after checking current revision, worktree attribution, and evidence applicability; a skill handoff, resumed session, or ordinary implementation substep is not a reason to request the same permission again. Material changes, newly observed risks, and the approval's own conditions can require renewed approval; prior approval never covers unrelated tasks or unapproved external/destructive operations.
+
+This is not a fixed limit on planning rounds or a relaxation of security requirements. Preserve mandatory reviews, predecessor proof, and any specifically required pre-implementation qualification. The new implementation's runtime ATP proof normally follows implementation; it must not become an impossible prerequisite to writing that implementation. Evidence and release gates still control later verification and release claims. A genuine new risk can reopen planning, but the return should name the affected blocker and its exit condition rather than restart open-ended refinement.
+
 ## Contract Loop is complementary
 
 [Contract Loop](/fullstack/contract-loop-playbook) is Cabloy's bidirectional Vona↔Zova synchronization model. It determines where fullstack contract truth lives, which generated handoff must be refreshed, and how to recover from forward-chain, reverse-chain, consumer, or local-dependency drift.

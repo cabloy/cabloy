@@ -90,9 +90,13 @@ Classify targets as observed existing, proposed new, or explicitly approved new.
 
 Require explicit dossier approval before source changes, meaningful verification, or evidence/status updates. Generation approval, design/ADR acceptance, and this execution approval are separate; silence is not approval.
 
+Reuse an already explicitly approved dossier when the target, scope, authority, dependencies, safety conditions and permitted operations remain valid. Check current revision/worktree attribution and evidence applicability; a revision change alone calls for an impact check, not automatic reapproval. Do not request the same approval again merely because a skill handoff, session continuation or implementation substep occurred. Refresh affected parts and seek renewed approval only when a material change, newly observed risk or the approval's own conditions require it. Existing approval never expands to another task or an unapproved external/destructive operation.
+
 ## Step 5: Apply readiness gates
 
-Stop and route back to the relevant planning authority if any of the following applies:
+Apply these gates to the selected increment and its actual dependencies, not every unresolved detail in the suite. Separate start-readiness from the runtime evidence this increment will produce and from later release gates; predecessor proof remains mandatory. If blocked, name the exact condition, affected branch and closure criterion in the existing records. Recommend a meaningful dependency-ready alternative for approval when one exists, without silently changing the target or its status. A smaller subincrement of a blocked WBS requires a justified independent boundary and explicit approval; it cannot bypass a controlling safety gate or claim parent completion.
+
+Stop and route only the affected authority questions back to planning if any of the following applies:
 
 - the suite identity, ownership, or target boundary is unresolved;
 - PRD/SRS/ADR/WBS/test-plan records contradict one another;
@@ -105,6 +109,8 @@ Stop and route back to the relevant planning authority if any of the following a
 - the requested work would expand scope or silently create a competing persistence, identity, or API authority.
 
 A task may be marked `in-progress` only when approved execution actually starts. Do not edit progress merely to reserve a task.
+
+Once the selected increment is ready and explicitly approved, execute its coherent implementation and verification steps without adding another preparation/review cycle by default. Any proposed planning return must identify the new fact, material authority question or concrete blocker it resolves and a finite exit condition; restating accepted direction is not sufficient. Batch related unresolved decisions rather than serializing each into another micro-plan. Preserve all mandatory reviews and safety/authorization gates; no round quota forces implementation.
 
 ## Step 6: Route the approved increment
 
