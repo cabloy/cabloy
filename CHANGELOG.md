@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.1.214
+
+### Improvements
+
+- Enhance the AI specification.
+- Refactor database reset logic.
+- Improve `printTip` output.
+
 ## 5.1.213
 
 ### Bug Fixes
