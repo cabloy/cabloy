@@ -22,7 +22,6 @@ export interface IDecoratorStartupOptions
 
 export interface IInstanceStartupOptions {
   force?: boolean;
-  deferAfter?: boolean;
   configInstanceBase?: ConfigInstanceBase;
 }
 

@@ -232,7 +232,7 @@ In the current runtime behavior:
 - in `test` and `dev`, the default instance is started eagerly
 - in production-style flows, configured static instances are started from `config.instance.instances`
 
-A practical timeline is:
+For ordinary startup without newly created development databases, a practical timeline is:
 
 1. run non-instance startups with `after !== true` during app start
 2. run non-instance startups with `after === true` during app ready
@@ -240,6 +240,19 @@ A practical timeline is:
 4. run instance startups with `after !== true`
 5. mark `appReadyInstances[instanceName] = true`
 6. run instance startups with `after === true`
+
+Explicit development preparation through `npm run db:reset` has a different app-ready order in **Cabloy Basic and Cabloy Start**. After database migration, it completes the default instance and then each newly created isolated instance before running non-instance after-startups:
+
+1. run the instance's startups with `after !== true`, including instance initialization
+2. for the newly created default instance (`''`) only, run module `seed()` hooks for test/dev convenience fixtures
+3. consume the instance's creation bookkeeping and mark it ready
+4. run that instance's startups with `after === true`
+5. repeat for the next instance, without seeding isolated targets such as `isolateTest`
+6. run non-instance startups with `after === true`; reset keeps its own listener disabled
+
+Each instance completes this sequence in one queued startup task. Ordinary queued readiness requests skip reinitialization once the instance is ready; explicitly forced startup requests retain their force behavior through instance after-startups. There is no all-instances atomic readiness guarantee: if a later instance fails, an earlier instance may already have completed its after-startups. The failure still stops preparation before application-level after-startups.
+
+Test-mode default seeding retains its existing lifecycle after default instance startup. Ordinary dev startup reuses existing databases without seeding. See [Managed development database preparation](/backend/migration-and-changes#managed-development-database-preparation) for reset safety and seed ownership.
 
 This is why startup should be read together with the instance and datasource story rather than as a purely global boot topic.
 

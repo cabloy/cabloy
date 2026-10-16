@@ -63,19 +63,13 @@ export class ServiceStartup extends BeanBase {
     const createdInstances = this.$scope.version.service.database.createdInstanceNames;
     const preparingDev = this.app.meta.isDev && createdInstances.length > 0;
     if (preparingDev) {
-      // Initialize and seed fresh instances before listeners or queue workers start.
+      // Prepare each fresh instance before application-level after-startups.
       const instanceNames = [
         '',
         ...createdInstances.filter(name => name !== ''),
       ] as (keyof IInstanceRecord)[];
       for (const instanceName of instanceNames) {
-        await this._appReadyInstanceStartup(instanceName, true, true);
-      }
-      for (const instanceName of instanceNames) {
-        await this.bean.executor.newCtx(() => this.runStartupInstanceAfter(instanceName), {
-          dbInfo: { level: 1 },
-          instanceName,
-        });
+        await this._appReadyInstanceStartup(instanceName, true);
       }
     }
 
@@ -118,17 +112,12 @@ export class ServiceStartup extends BeanBase {
     );
   }
 
-  private async _appReadyInstanceStartup(
-    instanceName: keyof IInstanceRecord,
-    wait: boolean,
-    deferAfter?: boolean,
-  ) {
+  private async _appReadyInstanceStartup(instanceName: keyof IInstanceRecord, wait: boolean) {
     const res = this.$scope.instance.service.instance.instanceStartupIsolate(instanceName, {
       force:
         this.app.meta.isDev &&
         (process.env.VONA_DB_RESET === 'true' ||
           this.$scope.version.service.database.createdInstanceNames.includes(instanceName)),
-      deferAfter,
     });
     if (wait) {
       await res;
@@ -218,10 +207,11 @@ export class ServiceStartup extends BeanBase {
       this.app.meta.isDev &&
       this.$scope.version.service.database.createdInstanceNames.includes(instanceName)
     ) {
-      await this.$scope.version.service.version.__instanceSeed(instanceName);
+      if (instanceName === '') {
+        await this.$scope.version.service.version.__instanceSeed(instanceName);
+      }
       this.$scope.version.service.database.consumeCreatedInstance(instanceName);
     }
-    if (options?.deferAfter) return;
     await this.runStartupInstanceAfter(instanceName, options);
   }
 
