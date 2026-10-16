@@ -35,6 +35,24 @@ function reconcileGovernancePackageJson(sourceRoot) {
     projectPackage.scripts[name] = command;
     changed = true;
   }
+  // An older upgrader is already running when it installs this bootstrap, so adopt
+  // the new root command here too without replacing project-owned customizations.
+  const contractScriptName = 'contract:generate:isolated';
+  const contractCommand = sourcePackage.scripts?.[contractScriptName];
+  if (contractCommand) {
+    if (!Object.hasOwn(projectPackage.scripts ?? {}, contractScriptName)) {
+      projectPackage.scripts ??= {};
+      projectPackage.scripts[contractScriptName] = contractCommand;
+      changed = true;
+      // eslint-disable-next-line no-console
+      console.log(`[init] Added missing package.json scripts.${contractScriptName}`);
+    } else if (projectPackage.scripts[contractScriptName] !== contractCommand) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `[init] Preserved customized package.json scripts.${contractScriptName}; incoming command: ${contractCommand}`,
+      );
+    }
+  }
   if (changed) {
     writeFileSync(projectPackagePath, `${JSON.stringify(projectPackage, null, 2)}\n`);
     // eslint-disable-next-line no-console

@@ -491,6 +491,18 @@ export type ApiSchemaBasicMetricsDtoMetricsQueue =
   components['schemas']['basic-metrics.dto.metricsQueue'];
 export type ApiSchemaBasicMetricsDtoMetricsQueuePartial =
   Partial<ApiSchemaBasicMetricsDtoMetricsQueue>;
+export type ApiSchemaALayoutprofileDtoLayoutProfile_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
+  components['schemas']['a-layoutprofile.dto.layoutProfile_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+export type ApiSchemaALayoutprofileDtoLayoutProfile_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
+  Partial<ApiSchemaALayoutprofileDtoLayoutProfile_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
+export type ApiSchemaALayoutprofileDtoLayoutProfile =
+  components['schemas']['a-layoutprofile.dto.layoutProfile'];
+export type ApiSchemaALayoutprofileDtoLayoutProfilePartial =
+  Partial<ApiSchemaALayoutprofileDtoLayoutProfile>;
+export type ApiSchemaALayoutprofileDtoLayoutProfileSave =
+  components['schemas']['a-layoutprofile.dto.layoutProfileSave'];
+export type ApiSchemaALayoutprofileDtoLayoutProfileSavePartial =
+  Partial<ApiSchemaALayoutprofileDtoLayoutProfileSave>;
 export type ApiSchemaAFileDtoFileUploadPolicyResponse =
   components['schemas']['a-file.dto.fileUploadPolicyResponse'];
 export type ApiSchemaAFileDtoFileUploadPolicyResponsePartial =

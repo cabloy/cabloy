@@ -23,6 +23,7 @@ describe('role.test.ts', { concurrency: false }, () => {
 
       await app.bean.passport.signinMock();
       const passport = await app.bean.executor.performAction('get', '/home/user/passport/current');
+      assert.equal(passport.instanceId, app.ctx.instance.id);
       const passportRegisteredUser = passport.roles.find(
         (role: any) => role.name === 'registeredUser',
       );

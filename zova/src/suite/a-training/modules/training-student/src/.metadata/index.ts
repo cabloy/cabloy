@@ -26,7 +26,7 @@ declare module 'zova-module-training-student' {
 }
 /** model: end */
 /** model: begin */
-import { ModelStudent } from '../model/student.js';
+import type { ModelStudent } from '../model/student.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -57,7 +57,7 @@ declare module 'zova-module-training-student' {
 }
 /** api: end */
 /** api: begin */
-import { ApiTrainingStudent } from '../api/trainingStudent.js';
+import type { ApiTrainingStudent } from '../api/trainingStudent.js';
 export interface IModuleApi {
   'trainingStudent': ApiTrainingStudent;
 }
@@ -97,7 +97,7 @@ declare module 'zova-module-training-student' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import { ApiSchemaTrainingStudent } from '../apiSchema/trainingStudent.js';
+import type { ApiSchemaTrainingStudent } from '../apiSchema/trainingStudent.js';
 export interface IModuleApiSchema {
   'trainingStudent': ApiSchemaTrainingStudent;
 }
@@ -128,7 +128,7 @@ declare module 'zova-module-training-student' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerFormFieldLevel } from '../component/formFieldLevel/controller.jsx';
+import type { ControllerFormFieldLevel } from '../component/formFieldLevel/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -208,9 +208,9 @@ declare module 'zova-module-training-student' {
 }
 /** tableCell: end */
 /** tableCell: begin */
-import { TableCellActionDeleteForce } from '../bean/tableCell.actionDeleteForce.jsx';
-import { TableCellActionSummary } from '../bean/tableCell.actionSummary.jsx';
-import { TableCellLevel } from '../bean/tableCell.level.jsx';
+import type { TableCellActionDeleteForce } from '../bean/tableCell.actionDeleteForce.jsx';
+import type { TableCellActionSummary } from '../bean/tableCell.actionSummary.jsx';
+import type { TableCellLevel } from '../bean/tableCell.level.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {

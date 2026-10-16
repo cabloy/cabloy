@@ -1,13 +1,24 @@
-import type { IDecoratorModelOptions, UseQueryOptions } from 'zova-module-a-model';
+import type {
+  IDecoratorModelOptions,
+  ModelPersistenceToken,
+  ServiceStorage,
+  UseQueryOptions,
+} from 'zova-module-a-model';
 
 import {
   RouteLocationNormalizedLoaded,
   RouteLocationNormalizedLoadedGeneric,
 } from '@cabloy/vue-router';
 import { mutate } from 'mutate-on-copy';
+import { shallowReactive } from 'vue';
 import { deepEqual, deepExtend, TypeEventOff } from 'zova';
 import { BeanModelBase, Model } from 'zova-module-a-model';
-import { IPageMeta, IRouteViewRouteItem, IRouteViewRouteMeta } from 'zova-module-a-router';
+import {
+  IPageMeta,
+  IRouteViewRouteItem,
+  IRouteViewRouteMeta,
+  TypeRouteDiscardReason,
+} from 'zova-module-a-router';
 
 import {
   ModelTabsOptions,
@@ -19,6 +30,15 @@ import {
 
 export interface IModelOptionsTabs extends IDecoratorModelOptions, ModelTabsOptionsBase {}
 
+interface TabsReadiness {
+  ctx: { disposed: boolean };
+  persistence: ServiceStorage;
+  token: ModelPersistenceToken;
+  ready: boolean;
+  promise?: Promise<void>;
+  work: (() => void)[];
+}
+
 @Model<IModelOptionsTabs>({
   enableSelector: true,
   max: -1,
@@ -27,7 +47,29 @@ export interface IModelOptionsTabs extends IDecoratorModelOptions, ModelTabsOpti
 })
 export class ModelTabs extends BeanModelBase {
   tabsOptions: ModelTabsOptions;
-  tabs: RouteTab[];
+  private _tabsState: RouteTab[];
+  private _tabsReadiness?: TabsReadiness;
+  private _tabsDisposed = false;
+  private _offPersistence?: () => void;
+
+  get tabs(): RouteTab[] {
+    if (this._tabsDisposed || this.ctx.disposed) return [];
+    if (!this.tabsOptions?.cache) return this._tabsState ?? [];
+    const readiness = this._getTabsReadiness();
+    if (!readiness.ready) {
+      this._startTabsRestore(readiness);
+      return [];
+    }
+    return this._tabsState;
+  }
+
+  set tabs(value: RouteTab[]) {
+    if (this._tabsDisposed || this.ctx.disposed) return;
+    // The pending array is only a projection, never a write/default for storage.
+    if (this.tabsOptions.cache && !this._getTabsReadiness().ready) return;
+    this._tabsState = value;
+  }
+
   componentKeyCurrent?: string;
   tabKeyCurrent?: string;
   tabCurrentIndex: number;
@@ -36,7 +78,9 @@ export class ModelTabs extends BeanModelBase {
   private _eventSsrHmrReload: TypeEventOff;
 
   protected async __init__(scene: string, options?: ModelTabsOptions) {
+    const ctx = this.ctx;
     await super.__init__(scene);
+    if (this._tabsDisposed || ctx.disposed) return;
     this.bean._setBean('$$modelTabs', this);
     // options
     this.tabsOptions = deepExtend({}, this.$onionOptions, options);
@@ -71,25 +115,30 @@ export class ModelTabs extends BeanModelBase {
     const queryOptionsTabs: UseQueryOptions<RouteTab[]> = {
       queryKey: ['tabs'],
       meta: {
-        defaultData: this._getInitialTabs(),
+        // Memory query metadata is dehydrated; only DB state can retain a factory.
+        defaultData: this.tabsOptions.cache ? () => this._getInitialTabs() : this._getInitialTabs(),
       },
     };
     if (this.tabsOptions.cache) {
-      this.tabs = this.$useStateLocalAsync(queryOptionsTabs);
+      this._tabsState = this.$useStateLocalAsync(queryOptionsTabs);
+      const persistence = this.$modelPersistence;
+      this._offPersistence = persistence.subscribe(() => {
+        if (!this._tabsDisposed && !this.ctx.disposed) {
+          this._startTabsRestore(this._getTabsReadiness());
+        }
+      });
+      // Keep initial ordering, but do not initialize a route from an obsolete
+      // restore if identity changes while the model itself is being loaded.
+      while (!this._tabsDisposed && !this.ctx.disposed) {
+        const readiness = this._getTabsReadiness();
+        await this._startTabsRestore(readiness);
+        if (this._isTabsReadinessCurrent(readiness)) break;
+      }
     } else {
-      this.tabs = this.$useStateMem(queryOptionsTabs);
+      this._tabsState = this.$useStateMem(queryOptionsTabs);
+      this._initializeTabs();
     }
-    // load cache
-    if (this.tabsOptions.cache) {
-      // await this.$ensureStateLocalAsync(this.tabKeyCurrent);
-      await this.$ensureStateLocalAsync(this.tabs);
-    }
-    // reset pageDirty
-    this._resetAllPageDirty();
-    // first route
-    if (this.$currentRoute) {
-      this.forwardRoute(this.$currentRoute);
-    }
+    if (this._tabsDisposed || this.ctx.disposed) return;
     // event
     if (process.env.CLIENT && this.sys.config.ssr.hmr) {
       this._eventSsrHmrReload = this.sys.meta.event.on('a-ssrhmr:reload', async (_data, next) => {
@@ -109,9 +158,81 @@ export class ModelTabs extends BeanModelBase {
   }
 
   protected __dispose__() {
+    this._tabsDisposed = true;
+    this._offPersistence?.();
+    this._tabsReadiness?.work.splice(0);
     if (this._eventSsrHmrReload) {
       this._eventSsrHmrReload();
+      this._eventSsrHmrReload = undefined!;
     }
+  }
+
+  private _getTabsReadiness(): TabsReadiness {
+    const persistence = this.$modelPersistence;
+    let readiness = this._tabsReadiness;
+    if (!readiness || !persistence.current(readiness.token)) {
+      readiness?.work.splice(0);
+      readiness = shallowReactive({
+        ctx: this.ctx,
+        persistence,
+        token: persistence.capture(),
+        ready: false,
+        work: [],
+      });
+      this._tabsReadiness = readiness;
+    }
+    return readiness;
+  }
+
+  private _isTabsReadinessCurrent(readiness: TabsReadiness) {
+    return (
+      !this._tabsDisposed &&
+      !readiness.ctx.disposed &&
+      this._tabsReadiness === readiness &&
+      readiness.persistence.current(readiness.token)
+    );
+  }
+
+  private _startTabsRestore(readiness: TabsReadiness): Promise<void> {
+    if (!readiness.promise) {
+      // One actual backing read per epoch: repeated render/watch reads share it.
+      const state = this._tabsState;
+      readiness.promise = this.$ensureStateLocalAsync(state).then(() => {
+        if (!this._isTabsReadinessCurrent(readiness)) return;
+        readiness.ready = true;
+        this._initializeTabs();
+        for (const work of readiness.work.splice(0)) {
+          if (!this._isTabsReadinessCurrent(readiness)) break;
+          work();
+        }
+      });
+      void readiness.promise.catch(error => {
+        if (this._isTabsReadinessCurrent(readiness)) this.$errorHandler(error);
+      });
+    }
+    return readiness.promise;
+  }
+
+  private _initializeTabs() {
+    this._resetAllPageDirty();
+    if (this.$currentRoute) this.forwardRoute(this.$currentRoute);
+  }
+
+  private _deferTabsWork(work: () => void): boolean {
+    if (this._tabsDisposed || this.ctx.disposed) return true;
+    if (!this.tabsOptions.cache) return false;
+    const readiness = this._getTabsReadiness();
+    if (readiness.ready) return false;
+    readiness.work.push(work);
+    this._startTabsRestore(readiness);
+    return true;
+  }
+
+  private _captureTabsOperation() {
+    const ctx = this.ctx;
+    const persistence = this.$modelPersistence;
+    const token = persistence.capture();
+    return () => !this._tabsDisposed && !ctx.disposed && persistence.current(token);
   }
 
   get cache() {
@@ -120,6 +241,7 @@ export class ModelTabs extends BeanModelBase {
 
   // need not async
   addTab(tab: RouteTabTransient, affix?: boolean): boolean {
+    if (this._deferTabsWork(() => this.addTab(tab, affix))) return false;
     const res = this._addTab(tab, affix);
     // current
     this.tabKeyCurrent = res ? tab.tabKey : undefined;
@@ -129,6 +251,7 @@ export class ModelTabs extends BeanModelBase {
 
   // need not async
   _addTab(tab: Partial<RouteTabTransient>, affix?: boolean): boolean {
+    if (this._deferTabsWork(() => this._addTab(tab, affix))) return false;
     const tabKey = tab.tabKey;
     if (!tabKey) return false;
     // tab
@@ -179,10 +302,12 @@ export class ModelTabs extends BeanModelBase {
   }
 
   resetAllTabInfos() {
+    if (this._deferTabsWork(() => this.resetAllTabInfos())) return;
     this.tabs = this._getInitialTabs() as RouteTab[];
   }
 
   updateAllTabInfos(tabInitials?: RouteTabInitial[]) {
+    if (this._deferTabsWork(() => this.updateAllTabInfos(tabInitials))) return;
     for (const tab of this.tabs) {
       const tabInitial = tabInitials?.find(item => item.tabKey === tab.tabKey);
       this.updateTabInfo(tab.tabKey, tabInitial);
@@ -190,6 +315,7 @@ export class ModelTabs extends BeanModelBase {
   }
 
   updateTabInfo(tabKey?: string, tabInitial?: RouteTabInitial) {
+    if (this._deferTabsWork(() => this.updateTabInfo(tabKey, tabInitial))) return;
     if (!tabKey) return;
     // tabs
     const [index, tabOld] = this.findTab(tabKey);
@@ -205,6 +331,9 @@ export class ModelTabs extends BeanModelBase {
   }
 
   updateTabItemPageMeta(tabKey?: string, componentKey?: string, pageMeta?: IPageMeta) {
+    if (this._deferTabsWork(() => this.updateTabItemPageMeta(tabKey, componentKey, pageMeta))) {
+      return false;
+    }
     if (!tabKey || !componentKey) return false;
     // tab
     const [index, tab] = this.findTab(tabKey);
@@ -227,11 +356,27 @@ export class ModelTabs extends BeanModelBase {
     return true;
   }
 
-  async deleteTab(tabKey?: string, noActiveNext?: boolean) {
-    if (!tabKey) return;
+  async deleteTab(
+    tabKey?: string,
+    noActiveNext?: boolean,
+    reason: TypeRouteDiscardReason | false = 'workspaceClose',
+  ) {
+    if (this._tabsDisposed || this.ctx.disposed || !tabKey) return;
+    const current = this._captureTabsOperation();
     // tabs
-    const [index] = this.findTab(tabKey);
-    if (index === -1) return;
+    const [index, tab] = this.findTab(tabKey);
+    if (index === -1 || !tab) return;
+    const cleanup = reason
+      ? this.$router.notifyRouteDiscard(
+          reason,
+          (tab.items ?? []).map(item => ({
+            fullPath: item.fullPath,
+            componentKey: item.componentKey,
+            tabKey,
+          })),
+          this.selector,
+        )
+      : undefined;
     // active next
     let tabKeyActiveNext;
     if (!noActiveNext && index === this.tabCurrentIndex) {
@@ -246,14 +391,22 @@ export class ModelTabs extends BeanModelBase {
     this.tabs = mutate(this.tabs, copyState => {
       copyState.splice(index, 1);
     });
+    await cleanup;
+    if (!current()) return;
     // active next
     if (tabKeyActiveNext) {
       await this.activeTab(tabKeyActiveNext);
     }
   }
 
-  async deleteTabItem(tabKey?: string, componentKey?: string, noActiveNext?: boolean) {
-    if (!tabKey || !componentKey) return false;
+  async deleteTabItem(
+    tabKey?: string,
+    componentKey?: string,
+    noActiveNext?: boolean,
+    reason: TypeRouteDiscardReason | false = 'taskClose',
+  ) {
+    if (this._tabsDisposed || this.ctx.disposed || !tabKey || !componentKey) return false;
+    const current = this._captureTabsOperation();
     if (tabKey === componentKey) return false; // not delete first tabItem
     // tab
     const [index, tab] = this.findTab(tabKey);
@@ -265,9 +418,16 @@ export class ModelTabs extends BeanModelBase {
     // deleteTab if length===1
     if (tab.items.length === 1 && !tab.affix) {
       // delete tab
-      await this.deleteTab(tabKey, noActiveNext);
+      await this.deleteTab(tabKey, noActiveNext, reason);
       return true;
     }
+    const cleanup = reason
+      ? this.$router.notifyRouteDiscard(
+          reason,
+          [{ fullPath: tab.items[indexItem].fullPath, componentKey, tabKey }],
+          this.selector,
+        )
+      : undefined;
     // active next
     let componentKeyActiveNext;
     if (!noActiveNext && componentKey === this.componentKeyCurrent) {
@@ -286,6 +446,8 @@ export class ModelTabs extends BeanModelBase {
     this.tabs = mutate(this.tabs, copyState => {
       copyState.splice(index, 1, tabNew);
     });
+    await cleanup;
+    if (!current()) return false;
     // active next
     if (componentKeyActiveNext) {
       await this.activeTabItem(tabKey, componentKeyActiveNext);
@@ -306,6 +468,7 @@ export class ModelTabs extends BeanModelBase {
   }
 
   updateTab(tab: Partial<RouteTabTransient>) {
+    if (this._deferTabsWork(() => this.updateTab(tab))) return;
     const tabKey = tab.tabKey!;
     const [index, tabOld] = this.findTab(tabKey);
     if (index === -1 || !tabOld) return;
@@ -342,7 +505,7 @@ export class ModelTabs extends BeanModelBase {
   }
 
   async activeTab(tabKey?: string) {
-    if (!tabKey) return;
+    if (this._tabsDisposed || this.ctx.disposed || !tabKey) return;
     const [_, tab] = this.findTab(tabKey);
     if (!tab) return;
     // should not updateTab here
@@ -355,7 +518,7 @@ export class ModelTabs extends BeanModelBase {
   }
 
   async activeTabItem(tabKey?: string, componentKey?: string) {
-    if (!tabKey || !componentKey) return;
+    if (this._tabsDisposed || this.ctx.disposed || !tabKey || !componentKey) return;
     const [_, tab] = this.findTab(tabKey);
     if (!tab) return;
     const tabItem = tab.items?.find(item => item.componentKey === componentKey);
@@ -422,6 +585,8 @@ export class ModelTabs extends BeanModelBase {
   }
 
   async pruneTabs() {
+    if (this._tabsDisposed || this.ctx.disposed) return;
+    const current = this._captureTabsOperation();
     let max = this.tabsOptions.max;
     if (max === undefined || max === -1) return;
     if (max < 1) max = 1;
@@ -437,12 +602,14 @@ export class ModelTabs extends BeanModelBase {
         }
       }
       if (!tabKey) break;
-      await this.deleteTab(tabKey, true);
+      await this.deleteTab(tabKey, true, false);
+      if (!current()) return;
     }
   }
 
   async pruneTabItems(tabKey?: string) {
-    if (!tabKey) return;
+    if (this._tabsDisposed || this.ctx.disposed || !tabKey) return;
+    const current = this._captureTabsOperation();
     let maxItems = this.tabsOptions.maxItems;
     if (maxItems === undefined || maxItems === -1) return;
     if (maxItems < 1) maxItems = 1;
@@ -460,7 +627,8 @@ export class ModelTabs extends BeanModelBase {
         }
       }
       if (!componentKey) break;
-      await this.deleteTabItem(tabKey, componentKey, true);
+      await this.deleteTabItem(tabKey, componentKey, true, false);
+      if (!current()) return;
     }
   }
 
@@ -518,16 +686,20 @@ export class ModelTabs extends BeanModelBase {
   }
 
   backRoute(route: RouteLocationNormalizedLoadedGeneric) {
+    if (this._deferTabsWork(() => this.backRoute(route))) return;
     const [tabKey, componentKey] = this.findTabItemByFullPath(route.fullPath);
-    this.deleteTabItem(tabKey, componentKey, true);
+    // The router emits the Back notification once; replace/pruning are not explicit discards.
+    void this.deleteTabItem(tabKey, componentKey, true, false);
   }
 
   forwardRoute(route: RouteLocationNormalizedLoadedGeneric) {
+    if (this._deferTabsWork(() => this.forwardRoute(route))) return;
     const routeMeta = this.prepareRouteMeta(route);
     this.addTab(routeMeta);
   }
 
   public setPageMeta(route: RouteLocationNormalizedLoadedGeneric, pageMeta: IPageMeta) {
+    if (this._deferTabsWork(() => this.setPageMeta(route, pageMeta))) return;
     const [tabKey, componentKey] = this.findTabItemByFullPath(route.fullPath);
     this.updateTabItemPageMeta(tabKey, componentKey, pageMeta);
   }

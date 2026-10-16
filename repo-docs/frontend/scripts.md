@@ -68,7 +68,7 @@ npm run deps:vona
 npm run test:e2e cabloy-basic home-user-account
 ```
 
-The sole managed `npm run test:e2e` command starts a fresh local Vona worker with `--workers=1 --flavor=normal --mode=test`, then runs the selected specs against Vona integrated SSR. Test-mode startup initializes test resources without a separate `db:reset`; browser commands consume already-built artifacts and do not rebuild them. Confirm exclusive ownership of the effective test database, `_local` Redis namespace, public/runtime paths, `APP_NAME`, API origin, and listener before startup; a free port alone is insufficient.
+The sole managed `npm run test:e2e` command starts a fresh local Vona worker with `--workers=1 --flavor=normal --mode=test`, then runs the selected specs against Vona integrated SSR. Test-mode startup initializes test resources without a separate `db:reset`; browser commands consume already-built artifacts and do not rebuild them. In both Cabloy Basic and Cabloy Start, the root wrapper allocates run-owned test identity, database and Redis namespaces, generated/runtime/public paths, and a loopback listener independently of ordinary dev. A running same-checkout dev process alone is not a blocker. Check actual overlap with those test resources and custom external resources, and coordinate overlapping shared build/dependency writes; do not require dev shutdown or worktree/environment setup solely for these tests. See [Test isolation and development data](/reference/repo-scripts#test-isolation-and-development-data) for the ownership and preparation boundaries.
 
 Place flat spec basenames directly after the npm script name. Use npm's `--` delimiter before Playwright options. With no names, every spec in `repo-e2e/specs` runs. Native `--grep` and `--grep-invert` remain available, and repeatable `--tag` values require all listed tags:
 
@@ -95,7 +95,7 @@ Cabloy Start does not expose the Basic Commerce wrapper family.
 
 ## Start SSR browser acceptance
 
-The Start Web and Admin browser baseline exercises Vona integrated SSR dispatch at the effective local test-mode server port. Prepare current SSR and REST artifacts, then use the managed local command:
+The Start Web and Admin browser baseline exercises Vona integrated SSR dispatch at the managed run's dynamically allocated loopback listener, independently of the ordinary dev listener. Prepare current SSR and REST artifacts, then use the managed local command:
 
 ```bash
 npm run build:zova
@@ -118,7 +118,7 @@ npm run test:e2e cabloy-admin -- --tag @admin --tag @cabloy-admin
 npm run test:e2e cabloy-start -- --grep ATP-START-FLOW-01
 ```
 
-Start does not support externally managed E2E targets: `E2E_BASE_URL` must be unset. The command requires the configured local port to be available and starts one Vona worker with `--flavor=normal --mode=test`; Playwright does not reuse an existing process. Test-mode startup initializes test state. Confirm exclusive ownership of the test database, Redis namespace, and public/runtime paths before running it. The command does not replace the paired build/dependency-sync prerequisite; do not change shared environment identity or ports to avoid a busy resource.
+Start does not support externally managed E2E targets: `E2E_BASE_URL` must be unset. Like Basic, its root wrapper allocates run-specific test identity, database and Redis namespaces, generated/runtime/public paths, and a loopback listener, then starts one Vona worker with `--workers=1 --flavor=normal --mode=test`; Playwright does not reuse an existing process. It can run alongside ordinary same-checkout dev without requiring the configured dev port to be free. Test-mode startup initializes test state without a separate `db:reset`. Apply the same [test-resource ownership and shared-preparation checks](/reference/repo-scripts#test-isolation-and-development-data); the command does not replace the paired build/dependency-sync prerequisite or authorize shared environment/port changes.
 
 ## Zova script model
 

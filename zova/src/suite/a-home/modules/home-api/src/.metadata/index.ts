@@ -106,14 +106,14 @@ declare module 'zova-module-home-api' {
 }
 /** api: end */
 /** api: begin */
-import { ApiCaptcha } from '../api/captcha.js';
-import { ApiHome } from '../api/home.js';
-import { ApiHomeBaseMenu } from '../api/homeBaseMenu.js';
-import { ApiHomeBasePermission } from '../api/homeBasePermission.js';
-import { ApiHomeBaseSiteCatalog } from '../api/homeBaseSiteCatalog.js';
-import { ApiHomeUserAccount } from '../api/homeUserAccount.js';
-import { ApiHomeUserPassport } from '../api/homeUserPassport.js';
-import { ApiTestSsrToolOne } from '../api/testSsrToolOne.js';
+import type { ApiCaptcha } from '../api/captcha.js';
+import type { ApiHome } from '../api/home.js';
+import type { ApiHomeBaseMenu } from '../api/homeBaseMenu.js';
+import type { ApiHomeBasePermission } from '../api/homeBasePermission.js';
+import type { ApiHomeBaseSiteCatalog } from '../api/homeBaseSiteCatalog.js';
+import type { ApiHomeUserAccount } from '../api/homeUserAccount.js';
+import type { ApiHomeUserPassport } from '../api/homeUserPassport.js';
+import type { ApiTestSsrToolOne } from '../api/testSsrToolOne.js';
 export interface IModuleApi {
   'captcha': ApiCaptcha;
 'home': ApiHome;
@@ -251,14 +251,14 @@ declare module 'zova-module-home-api' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import { ApiSchemaCaptcha } from '../apiSchema/captcha.js';
-import { ApiSchemaHome } from '../apiSchema/home.js';
-import { ApiSchemaHomeBaseMenu } from '../apiSchema/homeBaseMenu.js';
-import { ApiSchemaHomeBasePermission } from '../apiSchema/homeBasePermission.js';
-import { ApiSchemaHomeBaseSiteCatalog } from '../apiSchema/homeBaseSiteCatalog.js';
-import { ApiSchemaHomeUserAccount } from '../apiSchema/homeUserAccount.js';
-import { ApiSchemaHomeUserPassport } from '../apiSchema/homeUserPassport.js';
-import { ApiSchemaTestSsrToolOne } from '../apiSchema/testSsrToolOne.js';
+import type { ApiSchemaCaptcha } from '../apiSchema/captcha.js';
+import type { ApiSchemaHome } from '../apiSchema/home.js';
+import type { ApiSchemaHomeBaseMenu } from '../apiSchema/homeBaseMenu.js';
+import type { ApiSchemaHomeBasePermission } from '../apiSchema/homeBasePermission.js';
+import type { ApiSchemaHomeBaseSiteCatalog } from '../apiSchema/homeBaseSiteCatalog.js';
+import type { ApiSchemaHomeUserAccount } from '../apiSchema/homeUserAccount.js';
+import type { ApiSchemaHomeUserPassport } from '../apiSchema/homeUserPassport.js';
+import type { ApiSchemaTestSsrToolOne } from '../apiSchema/testSsrToolOne.js';
 export interface IModuleApiSchema {
   'captcha': ApiSchemaCaptcha;
 'home': ApiSchemaHome;
@@ -313,7 +313,7 @@ declare module 'zova-module-home-api' {
 }
 /** service: end */
 /** service: begin */
-import { ServiceJwtAdapter } from '../service/jwtAdapter.js';
+import type { ServiceJwtAdapter } from '../service/jwtAdapter.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {

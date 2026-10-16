@@ -41,6 +41,15 @@ export function schemaRenderReadonly<T extends z.ZodType>(
   };
 }
 
+export function schemaRenderDraft<T extends z.ZodType>(
+  enabled: boolean = true,
+  scene?: TypeFormSchemaScene,
+) {
+  return function (schema: T): T {
+    return _generalSchemaRest(schema, { draft: enabled }, scene);
+  };
+}
+
 export function schemaRenderDisableNotifyChanged<T extends z.ZodType>(
   disableNotifyChanged: boolean = true,
   scene?: TypeSchemaScene,

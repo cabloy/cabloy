@@ -17,6 +17,7 @@ import { cast } from 'zova';
 
 import type { MaybeRefDeep, NoUnknown } from '../../common/types.js';
 
+import { getPersistenceQueue } from '../../lib/persistenceQueue.js';
 import { BeanModelCookie } from './bean.model.cookie.js';
 
 export class BeanModelQuery extends BeanModelCookie {
@@ -83,12 +84,16 @@ export class BeanModelQuery extends BeanModelCookie {
   }
 
   async $clear() {
-    const queries = this.$queryClient.getQueryCache().getAll();
-    for (const query of queries) {
-      query?.setData(undefined);
-    }
-    // remove all db cache
-    await localforage.clear();
+    const queue = getPersistenceQueue(localforage);
+    // Invalidate in-flight restores and scheduled persisters before clearing memory.
+    queue.invalidateAll();
+    const clear = process.env.SERVER
+      ? Promise.resolve()
+      : queue.enqueue(async () => {
+          await localforage.clear();
+        });
+    this.$modelPersistence.clear();
+    await clear;
   }
 
   $normalizeFilters<T extends {}>(filters?: T): T {

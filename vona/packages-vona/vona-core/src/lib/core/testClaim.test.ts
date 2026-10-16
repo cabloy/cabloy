@@ -93,7 +93,13 @@ test('exclusive central claim has canonical immutable UTC creation time and priv
     assert.equal(lstatSync(claimPath).mode & 0o777, 0o600);
     assert.equal(lstatSync(path.dirname(claimPath)).mode & 0o777, 0o700);
     await assert.rejects(createTestClaim(f.projectPath, runId, 'unit', owner), { code: 'EEXIST' });
-    await createTestClaim(f.projectPath, '20261013010203-deadbeef', 'e2e', owner);
+    const contractClaim = await createTestClaim(
+      f.projectPath,
+      '20261013010203-deadbeef',
+      'contract',
+      owner,
+    );
+    assert.equal((await loadTestClaim(contractClaim.claimPath)).kind, 'contract');
     assert.deepEqual(
       manifest.locals.map(item => item.kind),
       ['generated', 'data'],
@@ -134,6 +140,7 @@ test('manifest validation rejects filename drift, secret snapshots and arbitrary
   try {
     const { manifest, claimPath } = await createTestClaim(f.projectPath, runId, 'unit', owner);
     assert.throws(() => validateTestClaim(manifest, `${claimPath}.other`));
+    assert.throws(() => validateTestClaim({ ...manifest, kind: 'unknown' }));
     assert.throws(() => validateTestClaim({ ...manifest, password: 'secret' }));
     assert.throws(() => validateTestClaim({ ...manifest, createdAt: '2026-10-14T01:02:03.000Z' }));
     assert.throws(() =>

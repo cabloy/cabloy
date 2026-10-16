@@ -35,6 +35,7 @@ export interface ISchemaObjectExtensionFieldRest extends ITableColumnOptions {
   'visible'?: boolean;
   'disableNotifyChanged'?: boolean;
   'readonly'?: boolean;
+  'draft'?: boolean;
   'onEffect'?: TypeFormFieldOnEffect;
   //
   'render'?: TypeFormFieldRenderComponentNormal | TypeTableCellRenderComponentNormal;
@@ -70,6 +71,7 @@ export type TypeSchemaScene = 'table' | TypeFormSchemaScene;
 export type TypeFormSchemaScene = 'form' | 'form-view' | 'form-create' | 'filter';
 
 export const renderFormFieldTopPropsSystem = [
+  'draft',
   'order',
   'table',
   'form',

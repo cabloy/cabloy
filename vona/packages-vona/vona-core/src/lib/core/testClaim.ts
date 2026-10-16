@@ -16,7 +16,7 @@ import {
 export const TEST_CLAIM_URL_ENV = 'VONA_TEST_CLAIM_URL';
 export const TEST_CLAIM_TOKEN_ENV = 'VONA_TEST_CLAIM_TOKEN';
 export const TEST_CLAIM_DIRECTORY = '.vona-test-claim';
-export type TestClaimKind = 'unit' | 'cov' | 'e2e';
+export type TestClaimKind = 'unit' | 'cov' | 'e2e' | 'contract';
 export type TestClaimEnv = Record<string, string | undefined>;
 export interface TestClaimOwner {
   pid: number;
@@ -237,7 +237,7 @@ export function validateTestClaim(value: unknown, claimPath?: string): TestClaim
   const p = getTestClaimPaths(m.projectPath, m.runId);
   if (claimPath && path.resolve(claimPath) !== p.claimPath)
     throw new Error('Test claim filename or checkout mismatch');
-  oneOf(m.kind, ['unit', 'cov', 'e2e']);
+  oneOf(m.kind, ['unit', 'cov', 'e2e', 'contract']);
   keys(m.owner, ['pid', 'startTime', 'host']);
   integer(m.owner.pid, 1);
   text(m.owner.startTime);

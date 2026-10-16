@@ -5,7 +5,7 @@ import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
 import { classes } from 'typestyle';
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
-import { ZFormField } from 'zova-module-a-form';
+import { constFieldBindingSlot, ZFormField } from 'zova-module-a-form';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {
@@ -37,6 +37,7 @@ export class ControllerFormFieldInput extends BeanControllerBase {
     return (
       <ZFormField
         {...this.$props}
+        {...{ [constFieldBindingSlot]: true }}
         slotDefault={({ propsBucket, props }, $$formField) => {
           const className = !propsBucket.needHandleBorder
             ? props.class

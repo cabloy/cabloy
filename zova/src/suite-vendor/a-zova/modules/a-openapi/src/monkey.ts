@@ -8,6 +8,7 @@ import type { ModelSdk } from './model/sdk.js';
 
 export class Monkey extends BeanSimple implements IMonkeyBeanInit, IMonkeyAppInitialize {
   private _modelSdk: Ref<ModelSdk | undefined> = ref();
+  private _sdkGeneration = 0;
 
   async beanInit(bean: BeanContainer, beanInstance: BeanBase) {
     const self = this;
@@ -36,10 +37,11 @@ export class Monkey extends BeanSimple implements IMonkeyBeanInit, IMonkeyAppIni
   }
 
   private async _loadSdk() {
-    this._modelSdk.value = await this.app.bean._getBeanSelector(
-      'a-openapi.model.sdk',
-      true,
-      this.app.meta.locale.current,
-    );
+    const generation = ++this._sdkGeneration;
+    const locale = this.app.meta.locale.current;
+    const sdk = await this.app.bean._getBeanSelector('a-openapi.model.sdk', true, locale);
+    if (generation === this._sdkGeneration && locale === this.app.meta.locale.current) {
+      this._modelSdk.value = sdk;
+    }
   }
 }

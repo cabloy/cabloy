@@ -1,0 +1,91 @@
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import {
+  ROOT_DIR,
+  runIsolatedProcess,
+  withIsolatedVona,
+  withIsolatedRun,
+} from './runIsolatedTest.ts';
+
+const OPENAPI_VERSION = 'V31';
+const SOURCE_TIMEOUT_MS = 30_000;
+
+export function getOpenapiSource(port: number) {
+  return `http://127.0.0.1:${port}/swagger/json?version=${OPENAPI_VERSION}`;
+}
+
+export function getOpenapiGeneratorCommand(args: string[]) {
+  if (args.some(arg => /^--projectPath(?:=|$)/.test(arg))) {
+    throw new Error(
+      'Isolated OpenAPI generation uses the current Zova project; projectPath overrides are unsupported',
+    );
+  }
+  return {
+    command: process.execPath,
+    args: [
+      './zova/packages-cli/cli/src/bin/zova.ts',
+      '--projectPath=zova',
+      ':openapi:generate',
+      ...args,
+    ],
+    cwd: ROOT_DIR,
+  };
+}
+
+export async function validateOpenapiSource(source: string) {
+  let response: Response;
+  try {
+    response = await fetch(source, {
+      signal: AbortSignal.timeout(SOURCE_TIMEOUT_MS),
+      redirect: 'error',
+    });
+  } catch (error) {
+    throw new Error('Isolated OpenAPI source request failed', { cause: error });
+  }
+  if (!response.ok) {
+    throw new Error(`Isolated OpenAPI source returned HTTP ${response.status}`);
+  }
+  let document: unknown;
+  try {
+    document = await response.json();
+  } catch (error) {
+    throw new Error('Isolated OpenAPI source returned invalid JSON', { cause: error });
+  }
+  if (!document || typeof document !== 'object' || Array.isArray(document)) {
+    throw new Error('Isolated OpenAPI source returned an invalid document');
+  }
+  const record = document as Record<string, unknown>;
+  if (
+    (typeof record.openapi !== 'string' && typeof record.swagger !== 'string') ||
+    !record.paths ||
+    typeof record.paths !== 'object' ||
+    Array.isArray(record.paths)
+  ) {
+    throw new Error('Isolated OpenAPI source returned an invalid document');
+  }
+}
+
+export async function generateOpenapiIsolated(args: string[]) {
+  const command = getOpenapiGeneratorCommand(args);
+  if (process.env.E2E_BASE_URL !== undefined) {
+    throw new Error(
+      'E2E_BASE_URL is unsupported; isolated OpenAPI generation manages a local test-mode target.',
+    );
+  }
+  return await withIsolatedRun('contract', async ({ env, port }) => {
+    const source = getOpenapiSource(port);
+    await withIsolatedVona(port, env, async () => {
+      await validateOpenapiSource(source);
+      await runIsolatedProcess(command.command, command.args, command.cwd, {
+        ...env,
+        OPENAPI_SOURCE_URL: source,
+        VONA_TEST_READY_KEY: undefined,
+      });
+    });
+  });
+}
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
+  await generateOpenapiIsolated(process.argv.slice(2));
+}

@@ -15,7 +15,10 @@ After a contract-loop change, verify the branch that actually applies.
 - DTO and validation align
 - OpenAPI output reflects the intended shape
 - module ownership is constrained
-- regeneration commands completed successfully
+- AI-driven SDK generation used the source-confirmed isolated entrypoint by default, regardless of development-service reachability; any direct-source exception has an explicit reason
+- the effective project/module source resolves to the intended contract source; explicit source overrides did not silently bypass isolation
+- regeneration commands completed successfully; isolated failures remained visible rather than falling back silently to development Swagger
+- isolated resources were cleaned after success or retained as failure evidence, and shared SDK/schema/metadata writes were coordinated and inspected without assuming automatic rollback
 - generated SDK or schema outputs are updated
 - thin model facades and downstream consumers still align with the regenerated contract
 - `npm run tsc`

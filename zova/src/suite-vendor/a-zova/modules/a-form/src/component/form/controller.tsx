@@ -12,7 +12,7 @@ import {
 } from '@tanstack/vue-form';
 import { useSelector } from '@tanstack/vue-store';
 import { SchemaObject } from 'openapi3-ts/oas31';
-import { VNode } from 'vue';
+import { markRaw, nextTick, VNode } from 'vue';
 import { z } from 'zod';
 import { $ZodIssue } from 'zod/v4/core';
 import { cast, deepEqual, deepExtend, objectAssignReactive, UseScope } from 'zova';
@@ -31,9 +31,15 @@ import {
   TypeFormSchemaScene,
 } from 'zova-module-a-openapi';
 
+import type { ISchemaRefreshContext } from '../../lib/schemaRefresh.js';
 import type { IResolvedFormLayoutNode, IResolvedFormLayoutTab } from '../../types/formLayout.js';
 
 import { BeanControllerFormBase } from '../../lib/beanControllerFormBase.js';
+import {
+  createSchemaRefreshContract,
+  schemaRefreshFingerprint,
+  SchemaRefreshTracker,
+} from '../../lib/schemaRefresh.js';
 import {
   IFormScope,
   RevalidateLogicProps,
@@ -56,6 +62,7 @@ export interface ControllerFormProps<TFormData extends {} = {}, TSubmitMeta = ne
   data?: TFormData;
   schema?: SchemaObject;
   schemaScene?: TypeFormSchemaScene;
+  localePresentationRefresh?: { identity: string };
   zodSchema?: z.ZodObject<any>;
   validateOnDynamic?: boolean;
   validateOnDynamicLogic?: RevalidateLogicProps;
@@ -69,6 +76,7 @@ export interface ControllerFormProps<TFormData extends {} = {}, TSubmitMeta = ne
   onSubmitData?: TypeFormOnSubmit<TFormData, TSubmitMeta>;
   onShowError?: TypeFormOnShowError<TFormData, TSubmitMeta>;
   onChanged?: (data: TFormData) => void;
+  onSchemaRefreshed?: (data: TFormData) => void;
   slotDefault?: (form: ControllerForm<TFormData, TSubmitMeta>) => VNode;
   slotHeader?: (form: ControllerForm<TFormData, TSubmitMeta>) => VNode;
   slotBody?: (children: VNode, form: ControllerForm<TFormData, TSubmitMeta>) => VNode;
@@ -91,6 +99,11 @@ export class ControllerForm<
   properties: ISchemaObjectExtensionField[] | undefined;
   zovaJsx: ZovaJsx;
   fieldCelEnv: typeof celEnvBase;
+  schemaRefresh: Omit<ISchemaRefreshContext, 'configuration' | 'eligible'>;
+  private _schemaRefreshTracker = markRaw(new SchemaRefreshTracker());
+  private _schemaRefreshEpoch = 0;
+  private _schemaRefreshPending = false;
+  private _schemaRefreshDisposed = false;
 
   @UseScope()
   $$scopeOpenapi: ScopeModuleAOpenapi;
@@ -114,6 +127,37 @@ export class ControllerForm<
     this.properties = this.$computed(() => {
       return this.$sdk.loadSchemaProperties(this.schema, this.$props.schemaScene);
     });
+    this.schemaRefresh = this.$computed(() => {
+      const locale = this.app.meta.locale.current;
+      const schema = this.schema;
+      const policy = this.$props.localePresentationRefresh;
+      const contract = schema
+        ? createSchemaRefreshContract(schema, this.properties ?? [], reference => {
+            return this.$sdk.getSchema(reference).data;
+          })
+        : { ready: !policy, fields: {} };
+      if (schema && this.$sdk.selector !== locale) contract.ready = false;
+      return {
+        locale,
+        identity: policy?.identity,
+        epoch: this._schemaRefreshEpoch,
+        scene: schemaRefreshFingerprint([
+          this.$props.schemaScene,
+          this.formMeta,
+          this.formProvider,
+          this.$props.zodSchema,
+          this.$props.validateOnDynamic,
+          this.$props.validateOnDynamicLogic,
+        ]),
+        enabled: !!policy && !this.$props.zodSchema,
+        contract,
+      };
+    });
+    this.$watch(
+      () => this.schemaRefresh.contract,
+      contract => this._schemaRefreshTracker.prune(contract),
+      { flush: 'sync' },
+    );
     this.fieldCelEnv = this._getFieldCelEnv();
     this.zovaJsx = this.bean._newBeanSimple(
       ZovaJsx,
@@ -124,6 +168,7 @@ export class ControllerForm<
     this.$watch(
       () => this.$props.data,
       (newValue, oldValue) => {
+        ++this._schemaRefreshEpoch;
         if (deepEqual(newValue, oldValue)) return;
         this.reset(this.$props.data);
       },
@@ -138,7 +183,47 @@ export class ControllerForm<
     return !error && this.formState.isValid;
   }
 
+  protected __dispose__() {
+    this._schemaRefreshDisposed = true;
+    ++this._schemaRefreshEpoch;
+    this._schemaRefreshTracker.clear();
+  }
+
+  public hasSchemaRefresh(name: string) {
+    return this._schemaRefreshTracker.has(name);
+  }
+
+  public consumeSchemaRefresh(name: string, configuration: string, eligible: boolean) {
+    return this._schemaRefreshTracker.consume(name, {
+      ...this.schemaRefresh,
+      configuration,
+      eligible,
+    });
+  }
+
+  public schemaFieldRefreshed() {
+    if (this._schemaRefreshPending || !this.$props.onSchemaRefreshed) return;
+    this._schemaRefreshPending = true;
+    const epoch = this._schemaRefreshEpoch;
+    const locale = this.app.meta.locale.current;
+    const { identity, scene } = this.schemaRefresh;
+    void nextTick(() => {
+      this._schemaRefreshPending = false;
+      if (
+        !this._schemaRefreshDisposed &&
+        epoch === this._schemaRefreshEpoch &&
+        locale === this.app.meta.locale.current &&
+        identity === this.schemaRefresh.identity &&
+        scene === this.schemaRefresh.scene &&
+        this.schemaRefresh.contract.ready
+      ) {
+        this.$props.onSchemaRefreshed?.(this.form.state.values);
+      }
+    });
+  }
+
   public reset(values?: TFormData, opts?: { keepDefaultValues?: boolean }): TFormData {
+    ++this._schemaRefreshEpoch;
     this.form.reset(values ?? ({} as TFormData), opts);
     return this.form.state.values;
   }

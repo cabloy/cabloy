@@ -59,20 +59,39 @@ Representative use case:
 
 Example: generate OpenAPI-based frontend services for module `training-student`.
 
+The direct command is the fast path when a development Swagger service is already available:
+
 ```bash
 npm run zova :openapi:generate training-student
 ```
 
-## Build the rest-contract output
-
-For Cabloy Basic, representative contract-build commands include:
+In Cabloy Basic, when generation should use a fresh isolated test-mode Vona service instead:
 
 ```bash
-cd zova && npm run build:rest:cabloyBasicAdmin
-cd zova && npm run build:rest:cabloyBasicWeb
+npm run contract:generate:isolated -- training-student
 ```
 
-This matters because SDK generation and rest-contract build steps are related, but not identical.
+The isolated command uses the same generator and preserves module ownership validation, but manages a disposable service, claim, and test resources without starting Playwright. Generated files under `zova/src/**` are shared workspace output, not run-owned temporary files; serialize concurrent SDK generation and do not expect automatic rollback.
+
+The project-level source resolver accepts `OPENAPI_SOURCE_URL` as a complete OpenAPI document URL. It takes precedence over `API_BASE_URL` for generation only and does not change runtime `OPENAPI_BASE_URL_*` request targets:
+
+```bash
+OPENAPI_SOURCE_URL=https://example.test/swagger/json?version=V31 \
+npm run zova :openapi:generate training-student
+```
+
+The override changes the project default source. Explicit module sources in module config or project `modules` config retain their existing precedence; remove or align those overrides when the module must use the isolated service. Do not commit source URLs containing credentials or access tokens. Existing project `openapi.config.ts` files are not overwritten by `:openapi:config`; merge the resolver when upgrading an older project manually.
+
+## Build the rest-contract output
+
+SDK generation and flavor builds are separate steps. When refreshed frontend output must be handed back to Vona, use the paired SSR/REST build for each affected flavor, then synchronize dependencies. For Cabloy Basic Admin:
+
+```bash
+npm run build:zova:admin
+npm run deps:vona
+```
+
+Also run `npm run build:zova:web` before dependency synchronization when Web is affected. Do not use `build:rest:*` alone for this reverse handoff; the SSR bundle and REST output must move together. See [Contract Loop Playbook](/fullstack/contract-loop-playbook#reverse-chain-playbook).
 
 ## Important convention
 

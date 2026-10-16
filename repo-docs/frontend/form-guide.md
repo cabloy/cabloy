@@ -239,7 +239,15 @@ The callback receives the current `ControllerFormField` instance. It is a field-
 Zova invokes it in two important situations:
 
 1. after the field controller has created its field binding and finished its initialization;
-2. after a schema-property change updates the field options and calls `resetField(this.name)`.
+2. after a material schema or field-configuration change updates the field options and calls `resetField(this.name)`. Parent validation changes, such as `required[]`, count even when the field property itself is unchanged.
+
+Field refresh always resets field state; there is no blanket reset-suppression option. A form can opt into `localePresentationRefresh` with a stable owner identity when supported schema annotations are display-only for that form. Generic Basic resource entry forms provide their resource/record/scene identity automatically. On a compatible locale transition, the field installs current validators, resets, silently restores its current raw live value, refreshes applicable local validation, and only then invokes `onFieldStateReady`.
+
+Compatibility is conservative: resolved value/validation truth, defaults, references, canonical bindings, and the field's own renderer/options/readonly metadata must remain unchanged. Only recognized schema titles/descriptions, validation-message strings, and titles in the known Basic Form Layout tab/group grammar can differ. Unknown metadata, explicit effects or opaque validation do not authorize restoration. Unrelated static sibling renderer labels do not invalidate an independent field; a field whose own renderer options change still follows normal reset semantics. The known Basic Details renderer owns a nested form, including its exact hidden `_name` auxiliary row schema; descendant behavior stays within that boundary. Arbitrary hidden fields and direct cross-field effects do not receive this exception. This policy assumes permitted annotations are presentation-only, not that arbitrary custom renderers or CEL programs have been proven equivalent.
+
+Replacing an inline `slotDefault` or `onFieldStateReady` closure during ordinary rendering is not itself a material schema change. The latest readiness callback is used when a real refresh occurs. Custom slots remain opaque for automatic value replay; the canonical Basic Input renderer's internal binding slot is a narrowly supported exception, not permission for arbitrary custom slots.
+
+Cold schema loading does not consume the previous comparison facts; a remounted field finalizes after its binding is mounted and behavior initialization is complete. Explicit `reset(...)`, incoming-data replacement, or owner/scene changes invalidate preservation. No stored draft is read or replayed during a locale refresh, and standalone forms retain ordinary reset behavior unless they opt in. TanStack's ordinary reset may retain a value when neither the field nor form has a defined default; ineligibility means no extra value replay, not guaranteed erasure.
 
 The second timing is important: write the external value in the callback **after** the reset, because a write made before `resetField(...)` can be overwritten. If an external API later creates or refreshes the value, synchronize that API result explicitly as well; `onFieldStateReady` does not fetch, retry, or observe external resources for you.
 
@@ -721,6 +729,14 @@ This Student pattern is recommended because:
 - Student-specific UI can deepen later without breaking the contract-first structure
 
 This is also why Cabloy can provide complete CRUD-style form pages with a strong schema-driven surface instead of requiring every page to hand-build form wiring from scratch.
+
+### Unsaved resource drafts
+
+In Cabloy Basic's generic resource entry pages, create and edit forms enable IndexedDB draft recovery by default. After a full browser reload, Recover applies eligible unsaved input to the form without submitting or writing a business record. Successful submission, explicit discard, ordinary Back and task/workspace close delete the corresponding draft; switching between still-open tasks retains it. Standalone `ZForm` forms are not automatically opted into this resource capability.
+
+Draft policy comes from the current schema: normal declared editable fields are included, while readonly, sensitive, file/upload and unsupported values are excluded. Use `@Api.field(ZovaRender.draft(false))` for additional sensitive fields or subtrees, or a scene-specific exclusion such as `ZovaRender.draft(false, 'form-create')`. Resource/global opt-outs and a configurable 24-hour default retention are available.
+
+See [Resource Entry Page Deep Dive: Recovering unsaved create/edit drafts](/frontend/resource-entry-page-deep-dive#recovering-unsaved-create-edit-drafts) for the configuration examples, lifecycle, nested-detail behavior and browser-storage boundaries. Draft storage is not encryption, and two browser tabs with the same resource/task identity share a draft key rather than receiving independent draft sessions.
 
 Read together with:
 

@@ -284,7 +284,7 @@ This is useful for larger persisted client state that should outlive a page sess
 
 ### Initialize and ensure async-local state
 
-Assign the state property before awaiting it. When later initialization depends on the restored value, establish an explicit restore boundary with `$ensureStateLocalAsync(...)`. It waits for the pending initial restore to settle; it does not force another load and does not guarantee a defined result:
+Assign the state property before awaiting it. When later initialization depends on the restored value, establish an explicit restore boundary with `$ensureStateLocalAsync(...)`. It waits for the pending restore to settle; it does not force another load and does not guarantee a defined result:
 
 ```typescript
 protected async __init__() {
@@ -302,7 +302,9 @@ protected async __init__() {
 }
 ```
 
-`meta.defaultData` is a fallback: it initializes the state only when no persisted value is restored. If neither provides a value, the ensured result can still be `undefined`. The router-tabs model follows this assign-then-ensure sequence before it continues with route initialization.
+`meta.defaultData` is a fallback: it initializes the state only when no persisted value is restored. If neither provides a value, the ensured result can still be `undefined`. For async-local state, prefer a factory such as `defaultData: () => []` for mutable defaults that must be fresh on each restore. Do not carry that function into an SSR-dehydrated memory query: query metadata is transferred with its state and must remain serializable. Use a serializable default value for that branch.
+
+Readiness is not permanent: an IndexedDB persistence-scope reset can make an already initialized async-local state pending again. Consumers must wait for the current restore before acting on its value; `$ensureStateLocalAsync(...)` does not pin an earlier scope or turn future reads into synchronous ones. For synchronous render consumers, keep the persisted backing state separate from a neutral current-scope projection and coordinate restore completion in the owning model. Do not persist that neutral projection or retain the previous scope's value while waiting. The router-tabs model uses this boundary for its writable array facade and route initialization.
 
 Persisted local and async-local state should be updated by replacing or assigning the model field so its custom-ref setter can update query state and persist the new value:
 
@@ -350,6 +352,25 @@ Representative behaviors include:
 - setting persisted state to `undefined` removes the persisted record
 
 This is why model helpers are better understood as state-runtime helpers, not only convenience wrappers.
+
+### IndexedDB environment isolation
+
+DB persistence automatically namespaces each physical record by application name and the environment tuple `[instanceId, siteId, userId]`, followed by the model-owned query identity. This applies to `$useStateLocalAsync(...)` and to remote queries whose effective persister uses `db`. Selectors and custom/simplified storage keys remain business keys; they cannot bypass the environment namespace. Logical Query Cache keys and SSR hydration keys do not acquire these dimensions. Sync `local` and `cookie` storage, `mem`, and `persister: false` keep their existing behavior.
+
+The Passport model supplies instance and user identity through the neutral `$modelPersistence` context. Both server and client use the same rule:
+
+- before Passport supplies a user, `instanceId` and `userId` are `null`;
+- after Passport supplies a user, use the response's top-level `instanceId` and that user's `id`;
+- `siteId` comes from the current SSR site's `SITE_ID`, independently of Passport;
+- absent values normalize to `null`; non-null IDs normalize to strings, including valid zero values.
+
+The backend composes Passport `instanceId` from the active Vona instance. No separate bootstrap request or special instance-only SSR handoff is needed. A null scope is usable immediately, not a pending state. A business that needs instance isolation before Passport has a user must include that extra distinction in its own key.
+
+A real tuple change invalidates old DB-backed in-memory state as well as changing disk keys. Existing query observers stay attached, active remote queries refetch under the new identity, and async-local state reloads on its next read/ensure. Obsolete asynchronous work cannot publish into the new identity. A same-scope Passport refresh does not reset state. The initial scope installation preserves eligible query data transferred through SSR; later login or identity switches do not adopt old data. Do not copy pre-user state into an authenticated scope implicitly.
+
+`$clear()` deliberately still clears the **entire** shared IndexedDB store, not only the current tuple. Accepted writes are ordered before clear and obsolete pending persistence work cannot repopulate it. This is useful for logout in a user-facing browser, but is not a server-side authorization boundary or cross-tab session protocol.
+
+Unscoped legacy DB records are not read or automatically migrated. After upgrading, previously persisted DB state starts fresh; changing a business selector likewise does not migrate its old records. Keep using stable resource inputs in logical keys rather than repeating the environment tuple there.
 
 ## SSR-sensitive state choices
 

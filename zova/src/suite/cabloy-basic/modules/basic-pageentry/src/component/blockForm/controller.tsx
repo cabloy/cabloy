@@ -38,12 +38,19 @@ export class ControllerBlockForm extends BeanControllerBase {
         class={this.$props.class}
         controllerRef={ref => {
           this.formRef = ref;
-          $$pageEntry.formRef = ref;
+          $$pageEntry.formReady(ref);
         }}
         formTag="div"
-        data={$$pageEntry.formData}
+        data={$$pageEntry.editorData}
         schema={$$pageEntry.formSchema}
         schemaScene={$$pageEntry.schemaScene}
+        localePresentationRefresh={{
+          identity: JSON.stringify([
+            $$pageEntry.resource,
+            $$pageEntry.entryId ?? null,
+            $$pageEntry.formScene,
+          ]),
+        }}
         formMeta={$$pageEntry.formMeta}
         formProvider={$$pageEntry.formProvider}
         blocks={this.$props.blocks}
@@ -56,8 +63,9 @@ export class ControllerBlockForm extends BeanControllerBase {
           });
         }}
         onChanged={data => {
-          $$pageEntry.setPageMeta(data, true);
+          $$pageEntry.formChanged(data);
         }}
+        onSchemaRefreshed={data => $$pageEntry.formSchemaRefreshed(data)}
       ></ZForm>
     );
   }

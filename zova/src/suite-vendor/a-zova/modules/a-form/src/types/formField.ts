@@ -28,6 +28,8 @@ export type HTMLInputElementType =
   | 'tel'
   | 'email';
 export const constFieldProps = '$$FieldProps';
+// Internal: the renderer supplies its own form-value binding slot.
+export const constFieldBindingSlot = '$$FieldBindingSlot';
 
 export interface IFormFieldScope<TParentData extends {} = {}> {
   name: string;

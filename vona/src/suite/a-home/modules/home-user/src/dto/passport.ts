@@ -1,3 +1,4 @@
+import type { TableIdentity } from 'table-identity';
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
 import { DtoAuth } from 'vona-module-a-auth';
@@ -11,6 +12,9 @@ export interface IDtoOptionsPassport extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsPassport>()
 export class DtoPassport {
+  @Api.field(v.nullable(), v.tableIdentity())
+  instanceId: TableIdentity | null;
+
   @Api.field()
   user: DtoPassportUser;
 

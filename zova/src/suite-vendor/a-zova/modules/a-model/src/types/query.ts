@@ -12,11 +12,14 @@ import type {
 } from '@tanstack/vue-query';
 import type { DebuggerOptions, UnwrapNestedRefs } from 'vue';
 
+import type { ServiceStorage } from '../service/storage.js';
+
 import 'zova';
 
 declare module 'zova' {
   export interface BeanBase {
     $queryClient: ReturnType<typeof useQueryClient>;
+    $modelPersistence: ServiceStorage;
   }
 }
 

@@ -38,6 +38,7 @@ import {
   runIsolatedTest,
   verifyReadyProof,
   waitForReady,
+  withIsolatedRun,
 } from './runIsolatedTest.ts';
 
 const isolationSource = resolve(
@@ -53,6 +54,10 @@ test('public test scripts delegate to the isolated runner without recursion', ()
   const working = JSON.parse(readFileSync(resolve(ROOT_DIR, 'vona/package.json'), 'utf8'));
   assert.equal(root.scripts.test, 'cd vona && npm run test');
   assert.equal(root.scripts['test:e2e'], 'node scripts/runIsolatedTest.ts e2e');
+  assert.equal(
+    root.scripts['contract:generate:isolated'],
+    'node scripts/generateOpenapiIsolated.ts',
+  );
   assert.equal(original.scripts.test, 'node ../scripts/runIsolatedTest.ts unit');
   assert.equal(original.scripts.cov, 'node ../scripts/runIsolatedTest.ts unit --coverage');
   assert.equal(working.scripts.test, original.scripts.test);
@@ -140,6 +145,91 @@ test('creates exclusive manifest claims and refuses stale or symlinked roots', a
     );
   } finally {
     rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('contract runs clean owned roots on success and retain failed-run evidence', async () => {
+  const root = mkdtempSync(join(realpathSync(tmpdir()), 'cabloy-contract-run-'));
+  mkdirSync(join(root, 'vona'));
+  writeFileSync(join(root, '__CABLOY_BASIC__'), '');
+  let claimPath = '';
+  let dataRoot = '';
+  let generatedRoot = '';
+  try {
+    assert.equal(
+      await withIsolatedRun(
+        'contract',
+        async context => {
+          ({ claimPath, dataRoot, generatedRoot } = context);
+          assert.equal((await loadTestClaim(claimPath)).kind, 'contract');
+          assert.equal(context.env.META_MODE, 'test');
+          assert.equal(context.env.VONA_DB_RESET, undefined);
+          assert.equal(context.env.VONA_TEST_READY_KEY, undefined);
+          assert.ok(existsSync(join(dataRoot, '.vona-test-owner')));
+          return 'generated';
+        },
+        root,
+      ),
+      'generated',
+    );
+    assert.equal(existsSync(claimPath), false);
+    assert.equal(existsSync(dataRoot), false);
+    assert.equal(existsSync(generatedRoot), false);
+    await assert.rejects(
+      withIsolatedRun(
+        'contract',
+        async context => {
+          ({ claimPath, dataRoot, generatedRoot } = context);
+          throw new Error('generator failed');
+        },
+        root,
+      ),
+      /generator failed/,
+    );
+    assert.equal((await loadTestClaim(claimPath)).status, 'failed');
+    assert.equal(existsSync(dataRoot), true);
+    assert.equal(existsSync(generatedRoot), true);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('readiness retries signed not-ready responses and rejects server exit or timeout', async () => {
+  const key = 'a'.repeat(64);
+  let requests = 0;
+  const listener = createServer((req, res) => {
+    requests++;
+    res.writeHead(requests === 1 ? 503 : 200, {
+      'content-type': 'application/json',
+      'x-vona-test-proof': createHmac('sha256', key)
+        .update(String(req.headers['x-vona-test-challenge']))
+        .digest('hex'),
+    });
+    res.end(JSON.stringify({ status: requests === 1 ? 'starting' : 'ok' }));
+  });
+  await new Promise<void>(resolve => listener.listen(0, '127.0.0.1', resolve));
+  const address = listener.address();
+  assert.ok(address && typeof address !== 'string');
+  const pending = { wait: () => new Promise(() => {}), stop: async () => undefined } as never;
+  try {
+    await waitForReady(address.port, pending, key, 2000);
+    assert.equal(requests, 2);
+    await assert.rejects(waitForReady(address.port, pending, key, 0), /did not become ready/);
+    await assert.rejects(
+      waitForReady(
+        address.port,
+        {
+          wait: async () => ({ type: 'drained', failed: true }),
+          stop: async () => ({ type: 'drained', failed: true }),
+        },
+        key,
+      ),
+      /exited before readiness/,
+    );
+  } finally {
+    await new Promise<void>((resolve, reject) =>
+      listener.close(error => (error ? reject(error) : resolve())),
+    );
   }
 });
 

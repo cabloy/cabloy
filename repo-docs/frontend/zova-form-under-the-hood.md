@@ -318,10 +318,15 @@ Its callback receives the current `ControllerFormField<TParentData>` instance. T
 _getFormFieldOptions()
   -> _formField.api.update(options)
   -> form.resetField(name)
+  -> optional compatible-locale live-value restoration and current validation
   -> onFieldStateReady(formField)
 ```
 
 The callback must follow `resetField(...)`. A custom field may hold a value outside the form controller—for example, a widget value or an externally created challenge object—and a value written before the reset can be replaced by the reset's default value. The callback provides the replay point where the custom field can write its current external value back through `formField.setValue(...)` or the owning form setter.
+
+The form owns detached, last-ready comparison facts keyed by canonical field name. Fields observe the current resolved form contract as well as their declared configuration, so parent `required[]` or reference-target changes refresh validators even when a projected property is unchanged. Loading gaps do not overwrite those facts. A previously known field remount defers finalization until its binding has mounted and its behavior initialization has completed; provisional creation does not seed over an existing empty value.
+
+`localePresentationRefresh` is an explicit presentation-only policy, not permission to skip reset. Eligible refreshes restore only the current raw value, including `undefined`, without firing input listeners or `onChanged`; old errors and field metadata are never replayed. Explicit reset/data replacement changes the preservation epoch. The compatibility helper resolves current references and compares complete value/validation truth, with strict field renderer/options and ancestor behavior checks. See [Form Guide](/frontend/form-guide#initialize-external-state-with-onfieldstateready) for the supported display exceptions and conservative limits.
 
 This lifecycle is separate from external data changes. If an API creates or refreshes the external value later, synchronize that result in the API completion path too. Likewise, user input should continue to update the field through `formField.setValue(...)`, while value-change effects belong to the normal field effect/input surfaces. `onFieldStateReady` is not a per-value-change listener and does not fetch, retry, or wait for a renderer DOM node.
 

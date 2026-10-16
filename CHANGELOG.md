@@ -1,5 +1,30 @@
 # Changelog
 
+## 5.1.212
+
+### Features
+
+- Add OpenAPI SDK skills.
+
+## 5.1.211
+
+### Features
+
+- Add an OpenAPI SDK.
+- Add draft functionality.
+
+## 5.1.210
+
+### Features
+
+- Add draft recovery.
+
+## 5.1.209
+
+### Features
+
+- Add draft recovery.
+
 ## 5.1.208
 
 ### Improvements

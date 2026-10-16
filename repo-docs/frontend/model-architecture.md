@@ -236,6 +236,10 @@ Representative source files:
 
 A key design detail is that persistence is treated as an extension of model-owned query state rather than as a separate unrelated subsystem.
 
+DB records have a physical application/environment namespace: application name plus `[instanceId, siteId, userId]`. Passport supplies instance/user identity using the same rule on server and client; before a Passport user exists, both values are null. The site value comes independently from `SITE_ID`, and missing values normalize to null. This is persistence isolation, not a change to business query keys or sync local/cookie storage.
+
+The app-owned `$modelPersistence` context also coordinates DB-backed query state on an identity change. It invalidates obsolete work and clears old in-memory values in place while keeping live observers usable. Initial SSR-hydrated query data can be adopted once; a later login does not promote old or pre-user data into the new scope. `$clear()` remains a full-store clear. See [IndexedDB environment isolation](./model-state-guide.md#indexeddb-environment-isolation) for the lifecycle and upgrade boundaries.
+
 ## SSR behavior
 
 Zova Model is SSR-aware.
