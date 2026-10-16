@@ -214,11 +214,11 @@ The current source confirms:
 
 That means the details action family is scene-aware in a different way from `tableActionBulk`.
 
-A practical current example from backend DTO metadata is:
+A practical details example from backend DTO metadata is:
 
 ```tsx
 ZovaRender.detailsActionBulk('basic-details:actionCreate', {
-  permission: { formScene: ['create', 'edit'] },
+  permission: { mode: 'formScene', formScene: ['create', 'edit'] },
 });
 ```
 
@@ -226,15 +226,17 @@ and:
 
 ```tsx
 ZovaRender.detailsActionRow('basic-details:actionDelete', {
-  permission: { formScene: ['create', 'edit'] },
+  permission: { mode: 'formScene', formScene: ['create', 'edit'] },
 });
 ```
+
+For default detail CRUD actions, `permission.mode: 'formScene'` makes the intent explicit: the enclosing form scene controls visibility and no independent action permission check is performed. Custom detail actions should use `permission.mode: 'action'`; an explicit `actionInherit` also takes the action-checking path. If `mode` is omitted, the runtime uses the conservative action-checking path rather than inferring behavior from the action name.
 
 So the correct distinction is:
 
 - `tableActionBulk` does not currently support `formScene`
-- `detailsActionBulk` does support `formScene`
-- `detailsActionRow` also supports `formScene`
+- `detailsActionBulk` supports `formScene` and the detail-specific `mode`
+- `detailsActionRow` supports `formScene` and the detail-specific `mode`
 
 ## 7. Why bulk actions are different today
 

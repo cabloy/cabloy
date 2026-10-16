@@ -52,6 +52,12 @@ export interface IPermissionHintTableActionBulk {
   public?: boolean;
 }
 
-export interface IPermissionHintDetailsActionRow extends IPermissionHintGeneral {}
+export type TypeDetailsPermissionMode = 'formScene' | 'action';
 
-export interface IPermissionHintDetailsActionBulk extends IPermissionHintGeneral {}
+export interface IPermissionHintDetailsAction extends IPermissionHintGeneral {
+  mode?: TypeDetailsPermissionMode;
+}
+
+export interface IPermissionHintDetailsActionRow extends IPermissionHintDetailsAction {}
+
+export interface IPermissionHintDetailsActionBulk extends IPermissionHintDetailsAction {}

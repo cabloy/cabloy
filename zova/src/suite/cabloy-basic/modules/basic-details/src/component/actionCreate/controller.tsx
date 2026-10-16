@@ -47,6 +47,7 @@ export class ControllerActionCreate extends BeanControllerBase {
             icon: this.$props.dialogOptions?.icon,
             title: this.$props.dialogOptions?.title ?? this.scope.locale.AddDetail(),
             dialogOptions: this.$props.dialogOptions,
+            checkPermission: $$details.checkPermission.bind($$details),
             onSubmitData: (
               data: TypeFormOnSubmitData<Record<string, any>>,
               dialog: AppModalItem,

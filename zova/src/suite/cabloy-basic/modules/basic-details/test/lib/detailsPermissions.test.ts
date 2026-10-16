@@ -1,4 +1,8 @@
-import type { IPermissionHintGeneral, TypeOpenapiPermissions } from 'zova-module-a-openapi';
+import type {
+  IPermissionHintDetailsAction,
+  IPermissionHintGeneral,
+  TypeOpenapiPermissions,
+} from 'zova-module-a-openapi';
 
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -122,4 +126,195 @@ test('row details actions use the same enclosing Resource checker and form-scene
     ['allowed'],
   );
   assert.deepEqual(calls, ['allowed', 'denied']);
+});
+
+test('form-scene CRUD actions do not invoke the enclosing permission checker', () => {
+  const calls: string[] = [];
+  const actions = ['create', 'update', 'delete'].map(name => ({
+    name,
+    options: { permission: { mode: 'formScene', formScene: ['create', 'edit'] } },
+  }));
+  const allowed = filterDetailsRowActions(
+    'edit',
+    actionName => {
+      calls.push(actionName!);
+      return false;
+    },
+    actions as any,
+  );
+
+  assert.deepEqual(
+    allowed.map(action => action.name),
+    ['create', 'update', 'delete'],
+  );
+  assert.deepEqual(calls, []);
+});
+
+test('form-scene CRUD actions are filtered before permission checks in view', () => {
+  const calls: string[] = [];
+  const action = {
+    name: 'update',
+    options: { permission: { mode: 'formScene', formScene: ['create', 'edit'] } },
+  };
+
+  const allowed = filterDetailsRowActions(
+    'view',
+    actionName => {
+      calls.push(actionName!);
+      return true;
+    },
+    [action] as any,
+  );
+
+  assert.deepEqual(allowed, []);
+  assert.deepEqual(calls, []);
+});
+
+test('action mode uses the literal action name and inherited hint', () => {
+  const calls: Array<[string | undefined, IPermissionHintDetailsAction | undefined]> = [];
+  const permissionHint = {
+    mode: 'action',
+    actionInherit: 'approve',
+    formScene: ['create', 'edit'],
+  };
+  const allowed = filterDetailsRowActions(
+    'edit',
+    (actionName, hint) => {
+      calls.push([actionName, hint]);
+      return true;
+    },
+    [{ name: 'approve', options: { permission: permissionHint } }] as any,
+  );
+
+  assert.deepEqual(
+    allowed.map(action => action.name),
+    ['approve'],
+  );
+  assert.deepEqual(calls, [['approve', permissionHint]]);
+});
+
+test('omitted mode checks custom actions without inferring CRUD permissions', () => {
+  const calls: string[] = [];
+  const actions = ['create', 'update', 'delete'].map(name => ({ name }));
+  const allowed = filterDetailsRowActions(
+    'create',
+    actionName => {
+      calls.push(actionName!);
+      return actionName === 'update';
+    },
+    actions as any,
+  );
+
+  assert.deepEqual(
+    allowed.map(action => action.name),
+    ['update'],
+  );
+  assert.deepEqual(calls, ['create', 'update', 'delete']);
+});
+
+test('form-scene mode with action inheritance still invokes the checker', () => {
+  const calls: Array<[string | undefined, IPermissionHintDetailsAction | undefined]> = [];
+  const permissionHint = {
+    mode: 'formScene',
+    actionInherit: 'grant',
+    formScene: ['create', 'edit'],
+  };
+  const allowed = filterDetailsRowActions(
+    'create',
+    (actionName, hint) => {
+      calls.push([actionName, hint]);
+      return actionName === 'update';
+    },
+    [{ name: 'update', options: { permission: permissionHint } }] as any,
+  );
+
+  assert.deepEqual(
+    allowed.map(action => action.name),
+    ['update'],
+  );
+  assert.deepEqual(calls, [['update', permissionHint]]);
+});
+
+test('view scene hides nested write actions before permission checks', () => {
+  const calls: string[] = [];
+  const actions = [
+    {
+      name: 'create',
+      options: { permission: { mode: 'formScene', formScene: ['create', 'edit'] } },
+    },
+    {
+      name: 'update',
+      options: { permission: { mode: 'formScene', formScene: ['create', 'edit'] } },
+    },
+    {
+      name: 'delete',
+      options: { permission: { mode: 'formScene', formScene: ['create', 'edit'] } },
+    },
+    { name: 'view', options: { permission: { actionInherit: 'view' } } },
+  ];
+
+  const allowed = filterDetailsRowActions(
+    'view',
+    actionName => {
+      calls.push(actionName!);
+      return actionName === 'view';
+    },
+    actions as any,
+  );
+
+  assert.deepEqual(
+    allowed.map(action => action.name),
+    ['view'],
+  );
+  assert.deepEqual(calls, ['view']);
+});
+
+test('view scene preserves explicit inherited write actions', () => {
+  const calls: string[] = [];
+  const actions = [
+    { name: 'update', options: { permission: { actionInherit: 'grant', formScene: ['view'] } } },
+  ];
+
+  const allowed = filterDetailsRowActions(
+    'view',
+    (actionName, permissionHint) => {
+      calls.push(actionName!);
+      return actionName === 'update' && permissionHint?.actionInherit === 'grant';
+    },
+    actions as any,
+  );
+
+  assert.deepEqual(
+    allowed.map(action => action.name),
+    ['update'],
+  );
+  assert.deepEqual(calls, ['update']);
+});
+
+test('explicit action inheritance and custom actions are preserved', () => {
+  const calls: Array<[string | undefined, IPermissionHintGeneral | undefined]> = [];
+  const explicitHint = { actionInherit: 'grant', formScene: ['create', 'edit'] };
+  const customHint = { mode: 'action', formScene: ['create', 'edit'] };
+  const actions = [
+    { name: 'update', options: { permission: explicitHint } },
+    { name: 'archive', options: { permission: customHint } },
+  ];
+
+  const allowed = filterDetailsRowActions(
+    'create',
+    (actionName, permissionHint) => {
+      calls.push([actionName, permissionHint]);
+      return true;
+    },
+    actions as any,
+  );
+
+  assert.deepEqual(
+    allowed.map(action => action.name),
+    ['update', 'archive'],
+  );
+  assert.deepEqual(calls, [
+    ['update', explicitHint],
+    ['archive', customHint],
+  ]);
 });

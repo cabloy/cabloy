@@ -81,14 +81,26 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
     // blocks
     const blocks = schemaRow?.rest?.blocks;
     if (!blocks || blocks.length === 0) return;
-    const checkPermission: TypeDetailsCheckPermission = createDetailsPermissionChecker(
-      () =>
-        (formFieldRenderContext.celScope as { permissions?: TypeOpenapiPermissions }).permissions,
-      () => $$formField.$$form.formState.values as Record<string, unknown>,
-      (permissions, actionName, permissionHint, currentData) => {
-        return this.$passport.checkPermission(permissions, actionName, permissionHint, currentData);
-      },
-    );
+    const inheritedCheckPermission = (
+      formFieldRenderContext.celScope as {
+        checkPermission?: TypeDetailsCheckPermission;
+      }
+    ).checkPermission;
+    const checkPermission: TypeDetailsCheckPermission =
+      inheritedCheckPermission ??
+      createDetailsPermissionChecker(
+        () =>
+          (formFieldRenderContext.celScope as { permissions?: TypeOpenapiPermissions }).permissions,
+        () => $$formField.$$form.formState.values as Record<string, unknown>,
+        (permissions, actionName, permissionHint, currentData) => {
+          return this.$passport.checkPermission(
+            permissions,
+            actionName,
+            permissionHint,
+            currentData,
+          );
+        },
+      );
     const domBlocks: VNode[] = [];
     blocks.forEach((block, index) => {
       const options = deepExtend(
