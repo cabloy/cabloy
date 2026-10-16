@@ -241,16 +241,18 @@ For ordinary startup without newly created development databases, a practical ti
 5. mark `appReadyInstances[instanceName] = true`
 6. run instance startups with `after === true`
 
-Explicit development preparation through `npm run db:reset` has a different app-ready order in **Cabloy Basic and Cabloy Start**. After database migration, it completes the default instance and then each newly created isolated instance before running non-instance after-startups:
+Explicit development preparation through `npm run db:reset` is a data-preparation flow in **Cabloy Basic and Cabloy Start**. It retains non-instance startups with `after !== true`, including database migration and database-name preparation, then completes the default instance and each newly created isolated instance:
 
 1. run the instance's startups with `after !== true`, including instance initialization
 2. for the newly created default instance (`''`) only, run module `seed()` hooks for test/dev convenience fixtures
 3. consume the instance's creation bookkeeping and mark it ready
-4. run that instance's startups with `after === true`
-5. repeat for the next instance, without seeding isolated targets such as `isolateTest`
-6. run non-instance startups with `after === true`; reset keeps its own listener disabled
+4. repeat for the next instance, without seeding isolated targets such as `isolateTest`
 
-Each instance completes this sequence in one queued startup task. Ordinary queued readiness requests skip reinitialization once the instance is ready; explicitly forced startup requests retain their force behavior through instance after-startups. There is no all-instances atomic readiness guarantee: if a later instance fails, an earlier instance may already have completed its after-startups. The failure still stops preparation before application-level after-startups.
+Reset skips all instance and non-instance startups with `after === true` before dispatch. This excludes schedule loading, runtime JSON generation, development tips, queue-worker preloading, and HTTP listening, including their startup execution logs. Normal dev startup retains these runtime tasks and generates runtime JSON when the server starts. Skipping queue-worker preloading does not disable queues: an explicit queue push can still create a worker lazily, and fire-and-forget jobs are not automatically drained by reset.
+
+Reset-required preparation must belong to migrations, `init()`, `seed()`, or a non-after startup; do not depend on an after-startup for required data. This phase filter does not bypass independent framework monkey hooks such as `appStarted`, or application teardown.
+
+Each instance completes preparation in one queued startup task. Ordinary queued readiness requests skip reinitialization once the instance is ready, even though its after-startups were skipped. A failed default seed leaves its creation marker unconsumed and its readiness unset. There is no all-instances atomic readiness guarantee: if a later instance fails, an earlier instance may already be ready; the failure still stops preparation. Outside reset, explicitly forced startup requests retain their force behavior through instance after-startups.
 
 Test-mode default seeding retains its existing lifecycle after default instance startup. Ordinary dev startup reuses existing databases without seeding. See [Managed development database preparation](/backend/migration-and-changes#managed-development-database-preparation) for reset safety and seed ownership.
 

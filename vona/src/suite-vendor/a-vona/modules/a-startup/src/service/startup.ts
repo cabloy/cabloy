@@ -73,11 +73,14 @@ export class ServiceStartup extends BeanBase {
       }
     }
 
-    // run startups: after
-    for (const startup of this._startups) {
-      const startupOptions = startup.beanOptions.options;
-      if (!startupOptions?.instance && startupOptions?.after === true) {
-        await this.runStartup(startup.name, null);
+    // db:reset prepares data without starting runtime services.
+    if (!(this.app.meta.isDev && process.env.VONA_DB_RESET === 'true')) {
+      // run startups: after
+      for (const startup of this._startups) {
+        const startupOptions = startup.beanOptions.options;
+        if (!startupOptions?.instance && startupOptions?.after === true) {
+          await this.runStartup(startup.name, null);
+        }
       }
     }
 
@@ -221,6 +224,8 @@ export class ServiceStartup extends BeanBase {
   ) {
     // set flag
     this.app.meta.appReadyInstances[instanceName] = true;
+    // Keep readiness checks from reentering initialization even when runtime startups are skipped.
+    if (this.app.meta.isDev && process.env.VONA_DB_RESET === 'true') return;
     // run startups: after
     for (const startup of this._startups) {
       const startupOptions = startup.beanOptions.options;

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
+import { afterEach, beforeEach, describe, it } from 'node:test';
 
 import { ServiceInstance } from '../../a-instance/src/service/instance.ts';
 import { ServiceStartup } from '../src/service/startup.ts';
@@ -14,13 +14,18 @@ function fixture(created: string[] = []) {
       isTest: false,
       appReady: true,
       appReadyInstances: {} as Record<string, boolean>,
+      env: {},
     },
     config: { server: { listen: { disable: false } } },
   };
   const service = Object.create(ServiceStartup.prototype) as ServiceStartup;
   const startups = [
+    { name: 'a-version:databaseInit', beanOptions: { options: {} } },
+    { name: 'a-version:databaseName', beanOptions: { options: {} } },
     { name: 'a-version:instanceInit', beanOptions: { options: { instance: true } } },
+    { name: 'a-schedule:loadSchedules', beanOptions: { options: { instance: true, after: true } } },
     { name: 'a-runtime:runtime', beanOptions: { options: { instance: true, after: true } } },
+    { name: 'a-printtip:printTip', beanOptions: { options: { instance: true, after: true } } },
     { name: 'a-queue:loadQueueWorkers', beanOptions: { options: { instance: true, after: true } } },
     { name: 'a-web:listen', beanOptions: { options: { after: true } } },
   ];
@@ -44,6 +49,9 @@ function fixture(created: string[] = []) {
         version: {
           service: {
             database: {
+              prepareDevDatabases: async () => {
+                calls.push('prepareDevDatabases');
+              },
               get createdInstanceNames() {
                 return [...pending];
               },
@@ -70,26 +78,81 @@ function fixture(created: string[] = []) {
   service.runStartup = async (name, instance, options) => {
     calls.push(`${name}:${instance}`);
     optionsSeen.push({ name, instance: instance as string | null, force: options?.force });
-    if (name !== 'a-version:instanceInit' && instance !== null) {
+    if (
+      startups.find(startup => startup.name === name)?.beanOptions.options.after === true &&
+      instance !== null
+    ) {
       assert.equal(app.meta.appReadyInstances[instance as string], true);
     }
   };
-  return { service, app, calls, pending, instanceService, optionsSeen };
+  return { service, app, calls, pending, instanceService, optionsSeen, startups };
 }
 
 const defaultCalls = [
   'a-version:instanceInit:',
   'seed:',
+  'a-schedule:loadSchedules:',
   'a-runtime:runtime:',
+  'a-printtip:printTip:',
   'a-queue:loadQueueWorkers:',
 ];
 const isolateCalls = [
   'a-version:instanceInit:isolateTest',
+  'a-schedule:loadSchedules:isolateTest',
   'a-runtime:runtime:isolateTest',
+  'a-printtip:printTip:isolateTest',
   'a-queue:loadQueueWorkers:isolateTest',
 ];
 
 describe('creation-driven dev seed', { concurrency: false }, () => {
+  let previousReset: string | undefined;
+  beforeEach(() => {
+    previousReset = process.env.VONA_DB_RESET;
+    delete process.env.VONA_DB_RESET;
+  });
+  afterEach(() => {
+    if (previousReset === undefined) delete process.env.VONA_DB_RESET;
+    else process.env.VONA_DB_RESET = previousReset;
+  });
+
+  it('skips all after-startups during reset while completing data preparation', async () => {
+    process.env.VONA_DB_RESET = 'true';
+    const { service, app, calls, pending, optionsSeen, startups } = fixture(['', 'isolateTest']);
+    startups.push(
+      { name: 'test:prepareApp', beanOptions: { options: { after: false } } },
+      { name: 'test:prepareInstance', beanOptions: { options: { instance: true, after: false } } },
+      { name: 'test:afterApp', beanOptions: { options: { after: true } } },
+      { name: 'test:afterInstance', beanOptions: { options: { instance: true, after: true } } },
+    );
+    await service.appStart();
+    await service.appReady();
+    assert.deepEqual(calls, [
+      'prepareDevDatabases',
+      'a-version:databaseInit:null',
+      'a-version:databaseName:null',
+      'test:prepareApp:null',
+      'a-version:instanceInit:',
+      'test:prepareInstance:',
+      'seed:',
+      'a-version:instanceInit:isolateTest',
+      'test:prepareInstance:isolateTest',
+    ]);
+    assert.equal(app.config.server.listen.disable, true);
+    assert.equal(pending.size, 0);
+    assert.deepEqual(app.meta.appReadyInstances, { '': true, 'isolateTest': true });
+    assert.equal(optionsSeen.find(call => call.name === 'a-version:databaseInit')?.force, true);
+    assert.ok(
+      optionsSeen.filter(call => call.instance !== null).every(call => call.force === true),
+    );
+  });
+
+  it('retains after-startups when the reset flag is false', async () => {
+    process.env.VONA_DB_RESET = 'false';
+    const { service, calls } = fixture(['', 'isolateTest']);
+    await service.appReady();
+    assert.deepEqual(calls, [...defaultCalls, ...isolateCalls, 'a-web:listen:null']);
+  });
+
   it('seeds only default and completes each instance before application after-startups', async () => {
     const { service, calls, pending, app, optionsSeen, instanceService } = fixture([
       '',
@@ -122,7 +185,8 @@ describe('creation-driven dev seed', { concurrency: false }, () => {
     assert.ok(!calls.some(call => call.startsWith('seed:')));
   });
 
-  it('retains default-only test seeding through its existing lifecycle', async () => {
+  it('retains default-only test seeding through its existing lifecycle even with the reset flag', async () => {
+    process.env.VONA_DB_RESET = 'true';
     const { service, app, calls } = fixture();
     app.meta.isDev = false;
     app.meta.isTest = true;
@@ -130,7 +194,9 @@ describe('creation-driven dev seed', { concurrency: false }, () => {
     assert.deepEqual(calls, [
       'a-web:listen:null',
       'a-version:instanceInit:',
+      'a-schedule:loadSchedules:',
       'a-runtime:runtime:',
+      'a-printtip:printTip:',
       'a-queue:loadQueueWorkers:',
       'seed:',
     ]);
@@ -162,9 +228,42 @@ describe('creation-driven dev seed', { concurrency: false }, () => {
     assert.deepEqual(calls, defaultCalls);
   });
 
-  for (const phase of ['init', 'seed']) {
-    it(`skips queued broadcast-style startup requests received during ${phase}`, async () => {
-      const { service, calls, instanceService } = fixture(['']);
+  for (const failure of ['seed', 'isolate init']) {
+    it(`preserves reset failure state when ${failure} fails`, async () => {
+      process.env.VONA_DB_RESET = 'true';
+      const { service, app, calls, pending } = fixture(['', 'isolateTest']);
+      if (failure === 'seed') {
+        (service as any).$scope.version.service.version.__instanceSeed = async () => {
+          throw new Error('seed failed');
+        };
+      } else {
+        const runStartup = service.runStartup.bind(service);
+        service.runStartup = async (name, instance, options) => {
+          if (name === 'a-version:instanceInit' && instance === 'isolateTest') {
+            throw new Error('isolate init failed');
+          }
+          await runStartup(name, instance, options);
+        };
+      }
+      await assert.rejects(service.appReady(), new RegExp(`${failure} failed`));
+      assert.deepEqual([...pending], failure === 'seed' ? ['', 'isolateTest'] : ['isolateTest']);
+      assert.deepEqual(app.meta.appReadyInstances, failure === 'seed' ? {} : { '': true });
+      assert.deepEqual(
+        calls,
+        failure === 'seed' ? ['a-version:instanceInit:'] : ['a-version:instanceInit:', 'seed:'],
+      );
+    });
+  }
+
+  for (const [phase, reset] of [
+    ['init', false],
+    ['seed', false],
+    ['init', true],
+    ['seed', true],
+  ] as const) {
+    it(`skips queued broadcast-style startup requests received during ${phase} (reset=${reset})`, async () => {
+      if (reset) process.env.VONA_DB_RESET = 'true';
+      const { service, calls, instanceService, app, pending } = fixture(['']);
       const entered = Promise.withResolvers<void>();
       const release = Promise.withResolvers<void>();
       const enqueued = Promise.withResolvers<void>();
@@ -206,7 +305,12 @@ describe('creation-driven dev seed', { concurrency: false }, () => {
         await Promise.all([startup, delivery]);
       }
       assert.equal(delivered, true);
-      assert.deepEqual(calls, [...defaultCalls, 'a-web:listen:null']);
+      assert.equal(app.meta.appReadyInstances[''], true);
+      assert.equal(pending.size, 0);
+      assert.deepEqual(
+        calls,
+        reset ? ['a-version:instanceInit:', 'seed:'] : [...defaultCalls, 'a-web:listen:null'],
+      );
     });
   }
 
