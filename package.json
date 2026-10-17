@@ -62,6 +62,8 @@
     "spec:charts": "node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs",
     "spec:charts:check": "node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs --check",
     "spec:check": "node ./repo-agent-governance/tools/spec-audit/audit.mjs",
+    "evidence:sanitize": "node repo-agent-governance/tools/evidence-paths/sanitize.mjs sanitize",
+    "evidence:check": "node repo-agent-governance/tools/evidence-paths/sanitize.mjs check",
     "docs:dev": "pnpm --dir repo-docs docs:dev",
     "docs:build": "pnpm --dir repo-docs docs:build",
     "docs:preview": "pnpm --dir repo-docs docs:preview",

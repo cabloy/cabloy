@@ -147,6 +147,23 @@ test('governance adoption creates state and is idempotent', () => {
   });
 });
 
+test('evidence commands are distributed through both governance reconciliation paths', () => {
+  const packageJson = JSON.parse(readFileSync(resolve(ROOT_DIR, 'package.json'), 'utf8'));
+  const bootstrap = readFileSync(resolve(ROOT_DIR, 'scripts/bootstrapAgentGovernance.mjs'), 'utf8');
+  const upgrade = readFileSync(resolve(ROOT_DIR, 'scripts/upgrade.ts'), 'utf8');
+  const bootstrapList = bootstrap.match(/const GOVERNANCE_SCRIPT_NAMES = \[([\s\S]*?)\];/)[1];
+  const upgradeList = upgrade.match(/const governanceScripts = \[([\s\S]*?)\];/)[1];
+  for (const mode of ['sanitize', 'check']) {
+    const name = `evidence:${mode}`;
+    assert.equal(
+      packageJson.scripts[name],
+      `node repo-agent-governance/tools/evidence-paths/sanitize.mjs ${mode}`,
+    );
+    assert.ok(bootstrapList.includes(`'${name}'`));
+    assert.ok(upgradeList.includes(`'${name}'`));
+  }
+});
+
 test('initializer adopts canonical adapters for a fresh transition package', () => {
   withFixture(root => {
     const scriptsDirectory = resolve(root, 'scripts');
@@ -179,6 +196,8 @@ test('initializer preserves a legacy-customized adapter during a staged upgrade'
     writeFileSync(resolve(root, 'CLAUDE.md'), 'legacy project customization\n');
     const projectPackage = JSON.parse(readFileSync(resolve(ROOT_DIR, 'package.json'), 'utf8'));
     delete projectPackage.scripts['spec:check'];
+    delete projectPackage.scripts['evidence:sanitize'];
+    projectPackage.scripts['evidence:check'] = 'node obsolete-evidence-check.mjs';
     projectPackage.scripts['project:custom'] = 'node project-owned.mjs';
     writeFileSync(resolve(root, 'package.json'), JSON.stringify(projectPackage));
 
@@ -207,6 +226,12 @@ test('initializer preserves a legacy-customized adapter during a staged upgrade'
       updatedPackage.scripts['spec:check'],
       'node ./repo-agent-governance/tools/spec-audit/audit.mjs',
     );
+    for (const mode of ['sanitize', 'check']) {
+      assert.equal(
+        updatedPackage.scripts[`evidence:${mode}`],
+        `node repo-agent-governance/tools/evidence-paths/sanitize.mjs ${mode}`,
+      );
+    }
     assert.equal(updatedPackage.scripts['project:custom'], 'node project-owned.mjs');
   });
 });

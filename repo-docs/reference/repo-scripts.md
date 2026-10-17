@@ -116,6 +116,38 @@ A legacy suite with a different WBS or progress-table layout is not chart-compat
 
 These commands do not create planning authority, implement a WBS task, execute an ATP, produce acceptance evidence, or replace traceability/status review. Confirm the active root `package.json` and script input expectations before assuming equivalent behavior in Cabloy Start or another repository.
 
+## Evidence path sanitization
+
+The dependency-free path tool lives in `repo-agent-governance/tools/evidence-paths/sanitize.mjs`. It sanitizes caller-supplied UTF-8 stdin, or independently checks explicitly selected files/directories without rewriting them:
+
+```bash
+npm run --silent evidence:sanitize -- --help
+npm run --silent evidence:check -- -- repo-specs/example/evidence
+# Declare another checkout or external root; use the same mappings when checking.
+npm run --silent evidence:sanitize -- --map '/synthetic/other-checkout=MAIN_CHECKOUT'
+npm run --silent evidence:check -- --map '/synthetic/other-checkout=MAIN_CHECKOUT' -- evidence.pending.txt
+```
+
+The last two commands illustrate a **synthetic** root, not a detected local location. `sanitize` waits for stdin; it does not run a producer. Use quiet npm output so npm banners are not mixed into the retained stream. Default checkout discovery comes from the tool's installed location, not the shell working directory; `--repo-root ROOT` overrides it. Repeatable `--map ROOT=ALIAS` declares additional absolute roots with stable uppercase aliases, such as `MAIN_CHECKOUT`. Longest matching roots win at path-segment boundaries. Checkout paths become repository-root-relative; explicit external mappings become `<ALIAS>/suffix`. Choose aliases that distinguish unrelated roots and review any sensitive suffixes.
+
+### Capture before retaining
+
+Combine producer stdout/stderr **before** sanitization, never `tee` or spool raw output first. Use a new output filename, check sanitizer status, and retain the actual producer result, including failures. See [Verify narrowly and retain evidence](/ai/playbook-spec-execution#verify-narrowly-and-retain-evidence) for a Bash pipeline with immediate per-stage status capture. Zsh uses `pipestatus` instead of Bash `PIPESTATUS`. `pipefail` prevents a passing sanitizer from masking an upstream failure, but it does not preserve every stage's exact code. A failed sanitizer may leave earlier sanitized lines; partial output must not be accepted as evidence. The tool does not automatically intercept terminal or agent-tool output and does not authorize capturing secret-bearing streams.
+
+### Coverage and result boundaries
+
+Sanitization and checking share the same matcher. They recognize configured roots and bounded machine-local home/temp conventions, not every slash-prefixed path. Known private paths become `<PRIVATE_PATH>`; configured mappings take precedence so useful checkout-relative locations survive. Supported forms include POSIX home/temp paths, Windows drive/UNC paths, JSON-escaped backslashes and local `file:` URLs. Quote whitespace-containing path tokens; unquoted tokens end at whitespace or prose delimiters. Ordinary non-file URLs and generic API/container paths are not treated as filesystem paths. Other machine roots must be declared explicitly; unusual escaping, unknown filesystem locations, and sensitive relative suffixes still require manual review. This is **path-only tooling**, not a secret scanner or safe-publication certificate. Review credentials, tokens, customer data, and provider identifiers separately before retention/sharing.
+
+Input must be UTF-8 text with lines no larger than 1 MiB; checked files are limited to 8 MiB each. Streaming handles split UTF-8/path chunks, CRLF and final unterminated lines; invalid encoding, NUL/non-text controls and oversized lines fail rather than emitting raw fragments. Disable producer color/terminal controls using its supported option (for example, `NO_COLOR=1` when honored); ANSI escape sequences are not silently stripped. The checker recursively visits explicit scopes in deterministic order, including hidden entries. It does not follow symlinks (including selected-scope ancestors), open special files, or read `.env*` files/directories. Select the canonical scope path when a system temp-directory alias is itself a symlink. Keep the scope tree stable while scanning; this is not an adversarial filesystem snapshot. Encountering unsupported, excluded or unreadable inputs means incomplete coverage, not clean success. Scope checks to reviewed evidence artifacts, not an arbitrary repository root. Diagnostics identify safe relative scope labels and line numbers, never matched source text or raw absolute scan roots.
+
+| Exit | Meaning                                                                                           |
+| ---- | ------------------------------------------------------------------------------------------------- |
+| `0`  | Sanitization completed, or the complete selected check scope has no recognized paths.             |
+| `1`  | Checker detected recognized local paths.                                                          |
+| `2`  | Usage, I/O, encoding, size-limit or incomplete-scan failure; this takes precedence over findings. |
+
+A clean check proves only declared path-recognition coverage. It does not prove producer success, ATP completion, approval, or release readiness. Preserve diagnostic codes, line/column locations, failures, exit codes and source hashes. Source hashes refer to original source bytes; label historical path-redacted diffs as non-byte-exact and not apply-ready. Tests run under `npm run test:agent-governance`; `spec:check` intentionally excludes evidence and is not a privacy checker.
+
 ## Agent-governance maintenance
 
 Use these Cabloy Basic maintenance commands when changing shared agent rules, root skill bundles, or adapter tooling:

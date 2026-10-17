@@ -18,6 +18,7 @@ const required = [
   'repo-agent-governance/tools/contract-loop/core.mjs',
   'repo-agent-governance/tools/contract-loop/hook-runtime.mjs',
   'repo-agent-governance/tools/spec-audit/audit.mjs',
+  'repo-agent-governance/tools/evidence-paths/sanitize.mjs',
   'repo-agent-governance/tools/spec-charts/spec-parser.mjs',
   'repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs',
   'repo-agent-governance/skills/cabloy-spec-generation/SKILL.md',

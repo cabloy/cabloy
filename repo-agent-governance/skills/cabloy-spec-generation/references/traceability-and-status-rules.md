@@ -113,6 +113,8 @@ A retained evidence entry should include:
 
 Evidence must be synthetic or redacted. Never retain credentials, raw tokens, signed callback state, secrets, live provider identifiers, or real customer/payment data merely to prove a scenario.
 
+Plan machine-local path sanitization before durable retention, including compiler stderr and exception stacks. Preserve useful repository-relative locations, failures, exit codes, and original source hashes; use stable aliases for external roots. Follow `cabloy-spec-execution`'s `references/status-and-evidence.md` retention/check procedure and the public command reference at `repo-docs/reference/repo-scripts.md#evidence-path-sanitization`. Path checking covers declared patterns only; it is not secret scanning, producer success, or ATP proof.
+
 A planned command is not a result. A code reading, design review, manual walkthrough, or single screenshot is not by itself sufficient for `verified` unless the applicable test plan explicitly defines it as adequate proof and the result is retained.
 
 ## Waivers
