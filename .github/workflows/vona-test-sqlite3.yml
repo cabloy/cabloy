@@ -8,15 +8,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, macos-latest]
         node-version: [24]
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     env:
       PNPM_CONFIG_MINIMUM_RELEASE_AGE: 0
+      DATABASE_DEFAULT_CLIENT: sqlite3
     services:
       redis:
-        image: redis:latest
+        image: ${{ matrix.os == 'ubuntu-latest' && 'redis:latest' || '' }}
         ports:
           - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -25,19 +32,45 @@ jobs:
       - uses: pnpm/action-setup@v5
         with:
           version: 11.5.2
+      - name: start Redis on macOS
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          brew install redis
+          redis_bin="$(brew --prefix redis)/bin"
+          redis_log="$RUNNER_TEMP/redis.log"
+          if ! "$redis_bin/redis-server" --bind 127.0.0.1 --port 6379 \
+            --daemonize yes --save '' --appendonly no --logfile "$redis_log"; then
+            if [[ -f "$redis_log" ]]; then
+              cat "$redis_log"
+            fi
+            exit 1
+          fi
+          for attempt in {1..30}; do
+            if response="$("$redis_bin/redis-cli" -h 127.0.0.1 -p 6379 ping 2>&1)" &&
+              [[ "$response" == PONG ]]; then
+              exit 0
+            fi
+            sleep 1
+          done
+          printf '::error::Redis readiness failed: %s\n' "$response"
+          if [[ -f "$redis_log" ]]; then
+            cat "$redis_log"
+          fi
+          exit 1
       - name: init
         run: npm run init
       - name: run A-Pay focused gate
-        run: DATABASE_DEFAULT_CLIENT=sqlite3 npm run vona :bin:test -- test-pay/test/paymentSession.test.ts test-pay/test/payMock.test.ts test-pay/test/paypalProvider.test.ts test-pay/test/paypalLifecycle.test.ts test-pay/test/stripeProvider.test.ts test-pay/test/stripeLifecycle.test.ts test-pay/test/outbox.test.ts test-pay/test/webhook.test.ts --flavor=normal
+        run: npm run vona :bin:test -- test-pay/test/paymentSession.test.ts test-pay/test/payMock.test.ts test-pay/test/paypalProvider.test.ts test-pay/test/paypalLifecycle.test.ts test-pay/test/stripeProvider.test.ts test-pay/test/stripeLifecycle.test.ts test-pay/test/outbox.test.ts test-pay/test/webhook.test.ts --flavor=normal
         working-directory: vona
       - name: run Commerce payment, shipment, and refund lifecycle gate
-        run: DATABASE_DEFAULT_CLIENT=sqlite3 npm run vona :bin:test -- commerce-trade/test/paymentOutcome.test.ts commerce-trade/test/reservationExpiry.test.ts commerce-trade/test/shipment.test.ts commerce-trade/test/refundLifecycle.test.ts --flavor=normal
+        run: npm run vona :bin:test -- commerce-trade/test/paymentOutcome.test.ts commerce-trade/test/reservationExpiry.test.ts commerce-trade/test/shipment.test.ts commerce-trade/test/refundLifecycle.test.ts --flavor=normal
         working-directory: vona
-      - run: DATABASE_DEFAULT_CLIENT=sqlite3 npm run test
+      - run: npm run test
         working-directory: vona
-      - run: DATABASE_DEFAULT_CLIENT=sqlite3 npm run build -- --flavor=ci
+      - run: npm run build -- --flavor=ci
         working-directory: vona
       - run: pnpm -C ./dist/ci install
         working-directory: vona
-      - run: DATABASE_DEFAULT_CLIENT=sqlite3 npm run play -- --mode=prod --flavor=ci
+      - run: npm run play -- --mode=prod --flavor=ci
         working-directory: vona
