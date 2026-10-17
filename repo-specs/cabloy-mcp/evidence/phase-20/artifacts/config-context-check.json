@@ -1,0 +1,264 @@
+{
+  "revision": "0cdd3ae480e59ea4505b43b9de92ffdaa7240f34",
+  "node": "v24.8.0",
+  "typescript": "5.9.3",
+  "worktree": "dirty; source hashes below identify the tested increment, not HEAD alone",
+  "sourceManifest": [
+    {
+      "file": "vona/src/backend/config/config/config.ts",
+      "sha256": "803bdd73d7f7ac2e462f1756bbe139bf4bd47c67d727eae5ebce639247b77e7d"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/package.json",
+      "sha256": "711b2dec7665836f913269c9b324d0c33a196b990136f3ae224c854da4a10ad9"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/.metadata/index.ts",
+      "sha256": "0696ed4f69b9306574cc621db6b7c1a6062f6353174cf229ebac74ea3de9d138"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/.metadata/this.ts",
+      "sha256": "aaef190ff59a110c6f8bfc3c747de7de8ac3c5632c9db51015685d8ee89aa7f9"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/config/config.ts",
+      "sha256": "6bbb8b5ccc727a04916ae502bebd7bd08364be4f3be78f42a2779037f4ede789"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/index.ts",
+      "sha256": "f4647b73af7b437ce395e05d542fba01df83d66cf2ac66e4bed7bc37ef5f83d6"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/types/index.ts",
+      "sha256": "a99a396d4677cb791c54d87594204ee83eadec9c1490d9781911e6a1d3e010df"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/config.test.ts",
+      "sha256": "20fb911876c7e616bf12101ba415330cf130956f0d54fd892d186652188c846e"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.build.json",
+      "sha256": "6ea541d926141acbdc30e13505f5696e646fb9409f192f272d54d8ad48e74bf6"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json",
+      "sha256": "849cf8b95a62dc85210347e0c4f3089811b64d335a07787a301639a4039cde9e"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/package.json",
+      "sha256": "bc99ce01cc64798b4a8eebbdd4b988e5c0612da41a8631b4a55619e14a3be3a8"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/tsconfig.base.json",
+      "sha256": "55f09759b97097995c365d52b77e04ca699ff73128b8c4e76a5f3e265a275a86"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/tsconfig.json",
+      "sha256": "38cb0252aeaf8e43b0d6d6e72e0fa90c1243758cd9b1963144ed0706238e429d"
+    }
+  ],
+  "structure": "passed; manifests, references, generated config augmentation; no route/schema source",
+  "discoveredModules": 111,
+  "discoveredMcp": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp",
+  "typecheck": {
+    "current": [
+      {
+        "file": "vona/packages-vona/vona-core/src/lib/framework/processMaster.ts",
+        "line": 30,
+        "code": 2339,
+        "message": "Property 'on' does not exist on type 'Cluster'."
+      },
+      {
+        "file": "vona/packages-vona/vona-core/src/lib/framework/processMaster.ts",
+        "line": 40,
+        "code": 2339,
+        "message": "Property 'on' does not exist on type 'Cluster'."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-socket/src/service/socket.ts",
+        "line": 32,
+        "code": 2345,
+        "message": "Argument of type 'import(\"http\").IncomingMessage' is not assignable to parameter of type 'import(\"node:http\").IncomingMessage'.\n  Property 'signal' is missing in type 'import(\"http\").IncomingMessage' but required in type 'import(\"node:http\").IncomingMessage'."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/lib/beanSsrSiteBase.ts",
+        "line": 67,
+        "code": 2345,
+        "message": "Argument of type 'import(\"http\").IncomingMessage' is not assignable to parameter of type 'import(\"node:http\").IncomingMessage'.\n  Property 'signal' is missing in type 'import(\"http\").IncomingMessage' but required in type 'import(\"node:http\").IncomingMessage'."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/lib/beanSsrSiteBase.ts",
+        "line": 75,
+        "code": 2741,
+        "message": "Property 'signal' is missing in type 'import(\"http\").IncomingMessage' but required in type 'import(\"node:http\").IncomingMessage'."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/lib/beanSsrSiteBase.ts",
+        "line": 75,
+        "code": 2741,
+        "message": "Property 'writeInformation' is missing in type 'import(\"http\").ServerResponse<import(\"http\").IncomingMessage>' but required in type 'import(\"node:http\").ServerResponse<import(\"node:http\").IncomingMessage>'."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/lib/beanSsrSiteBase.ts",
+        "line": 141,
+        "code": 2322,
+        "message": "Type 'IncomingMessage | IncomingMessage' is not assignable to type 'IncomingMessage'.\n  Property 'signal' is missing in type 'import(\"http\").IncomingMessage' but required in type 'import(\"node:http\").IncomingMessage'."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/lib/beanSsrSiteBase.ts",
+        "line": 142,
+        "code": 2322,
+        "message": "Type 'ServerResponse<IncomingMessage> | ServerResponse<...>' is not assignable to type 'ServerResponse<IncomingMessage>'.\n  Property 'writeInformation' is missing in type 'import(\"http\").ServerResponse<import(\"http\").IncomingMessage>' but required in type 'import(\"node:http\").ServerResponse<import(\"node:http\").IncomingMessage>'."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/service/devProxy.ts",
+        "line": 48,
+        "code": 2769,
+        "message": "No overload matches this call.\n  The last overload gave the following error.\n    Argument of type '(req: http.IncomingMessage) => void' is not assignable to parameter of type '() => void'.\n      Target signature provides too few arguments. Expected 1 or more, but got 0."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/service/devProxy.ts",
+        "line": 54,
+        "code": 2769,
+        "message": "No overload matches this call.\n  The last overload gave the following error.\n    Argument of type '(err: Error, req: http.IncomingMessage) => any' is not assignable to parameter of type '() => void'.\n      Target signature provides too few arguments. Expected 2 or more, but got 0."
+      },
+      {
+        "file": "vona/src/suite/a-training/modules/training-record/src/dto/detailRecordSubjectResItem.tsx",
+        "line": 22,
+        "code": 2353,
+        "message": "Object literal may only specify known properties, and 'mode' does not exist in type 'IPermissionHintDetailsActionBulk'."
+      },
+      {
+        "file": "vona/src/suite/a-training/modules/training-record/src/dto/detailRecordSubjectResItem.tsx",
+        "line": 56,
+        "code": 2353,
+        "message": "Object literal may only specify known properties, and 'mode' does not exist in type 'IPermissionHintDetailsActionRow'."
+      },
+      {
+        "file": "vona/src/suite/a-training/modules/training-record/src/dto/detailRecordSubjectResItem.tsx",
+        "line": 59,
+        "code": 2353,
+        "message": "Object literal may only specify known properties, and 'mode' does not exist in type 'IPermissionHintDetailsActionRow'."
+      },
+      {
+        "file": "vona/src/suite/a-training/modules/training-student/src/dto/detailRecordResItem.tsx",
+        "line": 22,
+        "code": 2353,
+        "message": "Object literal may only specify known properties, and 'mode' does not exist in type 'IPermissionHintDetailsActionBulk'."
+      },
+      {
+        "file": "vona/src/suite/a-training/modules/training-student/src/dto/detailRecordResItem.tsx",
+        "line": 57,
+        "code": 2353,
+        "message": "Object literal may only specify known properties, and 'mode' does not exist in type 'IPermissionHintDetailsActionRow'."
+      },
+      {
+        "file": "vona/src/suite/a-training/modules/training-student/src/dto/detailRecordResItem.tsx",
+        "line": 60,
+        "code": 2353,
+        "message": "Object literal may only specify known properties, and 'mode' does not exist in type 'IPermissionHintDetailsActionRow'."
+      }
+    ],
+    "baseline": [
+      {
+        "file": "vona/packages-vona/vona-core/src/lib/framework/processMaster.ts",
+        "line": 30,
+        "code": 2339,
+        "message": "Property 'on' does not exist on type 'Cluster'."
+      },
+      {
+        "file": "vona/packages-vona/vona-core/src/lib/framework/processMaster.ts",
+        "line": 40,
+        "code": 2339,
+        "message": "Property 'on' does not exist on type 'Cluster'."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-socket/src/service/socket.ts",
+        "line": 32,
+        "code": 2345,
+        "message": "Argument of type 'import(\"http\").IncomingMessage' is not assignable to parameter of type 'import(\"node:http\").IncomingMessage'.\n  Property 'signal' is missing in type 'import(\"http\").IncomingMessage' but required in type 'import(\"node:http\").IncomingMessage'."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/lib/beanSsrSiteBase.ts",
+        "line": 67,
+        "code": 2345,
+        "message": "Argument of type 'import(\"http\").IncomingMessage' is not assignable to parameter of type 'import(\"node:http\").IncomingMessage'.\n  Property 'signal' is missing in type 'import(\"http\").IncomingMessage' but required in type 'import(\"node:http\").IncomingMessage'."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/lib/beanSsrSiteBase.ts",
+        "line": 75,
+        "code": 2741,
+        "message": "Property 'signal' is missing in type 'import(\"http\").IncomingMessage' but required in type 'import(\"node:http\").IncomingMessage'."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/lib/beanSsrSiteBase.ts",
+        "line": 75,
+        "code": 2741,
+        "message": "Property 'writeInformation' is missing in type 'import(\"http\").ServerResponse<import(\"http\").IncomingMessage>' but required in type 'import(\"node:http\").ServerResponse<import(\"node:http\").IncomingMessage>'."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/lib/beanSsrSiteBase.ts",
+        "line": 141,
+        "code": 2322,
+        "message": "Type 'IncomingMessage | IncomingMessage' is not assignable to type 'IncomingMessage'.\n  Property 'signal' is missing in type 'import(\"http\").IncomingMessage' but required in type 'import(\"node:http\").IncomingMessage'."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/lib/beanSsrSiteBase.ts",
+        "line": 142,
+        "code": 2322,
+        "message": "Type 'ServerResponse<IncomingMessage> | ServerResponse<...>' is not assignable to type 'ServerResponse<IncomingMessage>'.\n  Property 'writeInformation' is missing in type 'import(\"http\").ServerResponse<import(\"http\").IncomingMessage>' but required in type 'import(\"node:http\").ServerResponse<import(\"node:http\").IncomingMessage>'."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/service/devProxy.ts",
+        "line": 48,
+        "code": 2769,
+        "message": "No overload matches this call.\n  The last overload gave the following error.\n    Argument of type '(req: http.IncomingMessage) => void' is not assignable to parameter of type '() => void'.\n      Target signature provides too few arguments. Expected 1 or more, but got 0."
+      },
+      {
+        "file": "vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/service/devProxy.ts",
+        "line": 54,
+        "code": 2769,
+        "message": "No overload matches this call.\n  The last overload gave the following error.\n    Argument of type '(err: Error, req: http.IncomingMessage) => any' is not assignable to parameter of type '() => void'.\n      Target signature provides too few arguments. Expected 2 or more, but got 0."
+      },
+      {
+        "file": "vona/src/suite/a-training/modules/training-record/src/dto/detailRecordSubjectResItem.tsx",
+        "line": 22,
+        "code": 2353,
+        "message": "Object literal may only specify known properties, and 'mode' does not exist in type 'IPermissionHintDetailsActionBulk'."
+      },
+      {
+        "file": "vona/src/suite/a-training/modules/training-record/src/dto/detailRecordSubjectResItem.tsx",
+        "line": 56,
+        "code": 2353,
+        "message": "Object literal may only specify known properties, and 'mode' does not exist in type 'IPermissionHintDetailsActionRow'."
+      },
+      {
+        "file": "vona/src/suite/a-training/modules/training-record/src/dto/detailRecordSubjectResItem.tsx",
+        "line": 59,
+        "code": 2353,
+        "message": "Object literal may only specify known properties, and 'mode' does not exist in type 'IPermissionHintDetailsActionRow'."
+      },
+      {
+        "file": "vona/src/suite/a-training/modules/training-student/src/dto/detailRecordResItem.tsx",
+        "line": 22,
+        "code": 2353,
+        "message": "Object literal may only specify known properties, and 'mode' does not exist in type 'IPermissionHintDetailsActionBulk'."
+      },
+      {
+        "file": "vona/src/suite/a-training/modules/training-student/src/dto/detailRecordResItem.tsx",
+        "line": 57,
+        "code": 2353,
+        "message": "Object literal may only specify known properties, and 'mode' does not exist in type 'IPermissionHintDetailsActionRow'."
+      },
+      {
+        "file": "vona/src/suite/a-training/modules/training-student/src/dto/detailRecordResItem.tsx",
+        "line": 60,
+        "code": 2353,
+        "message": "Object literal may only specify known properties, and 'mode' does not exist in type 'IPermissionHintDetailsActionRow'."
+      }
+    ],
+    "identical": true,
+    "clean": false
+  },
+  "limitation": "An equal diagnostic set is a delta check, not a clean typecheck or installed application integration proof."
+}

@@ -1,5 +1,7 @@
 # Phase 10 Evidence Index
 
+Local paths in retained artifacts follow the [evidence redaction conventions](../README.md). These presentation-only substitutions do not rerun verification or alter recorded outcomes.
+
 ## WBS-MCP-10-01
 
 - **Historical planning verification:** [2026-10-05 summary](./planning-verification.md) and [detailed artifact](./artifacts/2026-10-05-561971f9-wbs-10-01-planning-checks.md), scoped to revision `561971f9` before DEC-MCP-01's concrete design was accepted. Its `implementation-complete` implication does not carry over to the current WBS register.

@@ -2,11 +2,11 @@
 
 ## Delivery Objective
 
-Deliver a security-first remote MCP capability for Cabloy Basic that lets an authorized external AI application discover and invoke a reviewed subset of existing business controller operations. The delivery must preserve Vona identity, instance, RBAC, data-scope, DTO/OpenAPI, controller guard, transaction, audit, and resource ownership boundaries. This plan covers the revised accepted overall `cabloy-mcp` normal-suite/module design, still planned new source; the planning directory is `repo-specs/cabloy-mcp/`, while existing `WBS-MCP-*` IDs remain unchanged. It does not authorize source scaffolding, provider deployment, or production exposure.
+Deliver a security-first remote MCP capability for Cabloy Basic that lets an authorized external AI application discover and invoke a reviewed subset of existing business controller operations. The delivery must preserve Vona identity, instance, RBAC, data-scope, DTO/OpenAPI, controller guard, transaction, audit, and resource ownership boundaries. This plan covers the revised accepted overall `cabloy-mcp` normal-suite/module design. Initial scaffold/configuration and application integration now exist under separately approved bounded increments recorded in the [phase-20 index](./evidence/phase-20/index.md), not as endpoint-readiness or ATP proof; the planning directory is `repo-specs/cabloy-mcp/`, while existing `WBS-MCP-*` IDs remain unchanged. It does not authorize source scaffolding, provider deployment, or production exposure.
 
 ## Delivery Principles
 
-- Treat the accepted `cabloy-mcp` normal suite and module, including DEC-MCP-01's initial manifest/discovery/default-off configuration design, as planned new source until a separate bounded execution dossier is approved; do not claim source exists or that later integration gates are decided.
+- Distinguish the initial `cabloy-mcp` scaffold/configuration and application integration now recorded in the phase-20 index from still-gated runtime integration and ATP proof. ADR 0001's 2026-10-17 user-directed bounded supersession sets module-owned `enabled: app.meta.env.CABLOY_MCP_ENABLED !== 'false'` (default enabled; only literal `false` disables), with no standard application MCP `enabled` environment mapping. Generic framework application overrides still merge after module defaults. This supersedes only default-off/literal-`true` application opt-in, not OAuth/host/registry/policy fail-closed readiness. Historical Phase-10 declarations below retain their original acceptance/closure scope; no ID, status, dependency or ATP closure changes.
 - Establish the OAuth resource-server and trusted host/instance boundary before exposing tools.
 - Use Vona/OpenAPI/DTO contract truth first; generate a candidate catalog, then apply independent MCP metadata, risk, representation, and deployment policy.
 - Keep a server-owned immutable operation registry. Never map an untrusted tool name or argument to an arbitrary route.
@@ -80,7 +80,7 @@ Traceability: `PRD-MCP-ACCESS-01`, `SRS-MCP-TRANSPORT-01`, `SRS-MCP-TRANSPORT-02
 
 Dependencies: `WBS-MCP-10-01`, `WBS-MCP-10-02`.
 
-Source areas: proposed `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/`; existing Vona router/middleware registration; selected MCP transport implementation. ADR 0002 accepts DEC-MCP-02's transport design only; it does not authorize source or claim the target module exists. Target-module compilation and real HTTP remain checks under a separately approved bounded execution dossier.
+Source areas: initial scaffold/configuration at `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/` and application integration now exist under the separately approved bounded increments in the [phase-20 index](./evidence/phase-20/index.md); existing Vona router/middleware registration; selected MCP transport implementation. ADR 0002 accepts DEC-MCP-02's transport design only; initial configuration/integration does not complete the transport task. Transport source integration, target-module compilation and real HTTP remain separately approved execution/verification checks; no ATP closure is claimed.
 
 Tasks:
 
@@ -306,18 +306,18 @@ Traceability: `PRD-MCP-SAFETY-04`, `SRS-MCP-OPS-03`, `SRS-MCP-OPS-04`, `SRS-MCP-
 
 Dependencies: `WBS-MCP-50-01`.
 
-Source areas: proposed module configuration/registration; existing deployment/configuration ownership; root contract/test commands.
+Source areas: initial module configuration/registration and application integration recorded in the [phase-20 index](./evidence/phase-20/index.md); remaining operational configuration and existing deployment/configuration ownership; root contract/test commands. Existing initial source is not completion or ATP proof for this task.
 
 Tasks:
 
-- Provide fail-closed endpoint and per-tool disablement without weakening ordinary HTTP API behavior.
+- Provide endpoint and per-tool disablement without weakening ordinary HTTP API behavior. Verify the 2026-10-17 bounded activation contract: module-owned `enabled: app.meta.env.CABLOY_MCP_ENABLED !== 'false'`, enabled by default and disabled only by literal `false`, no standard application MCP `enabled` environment mapping, and separately supported generic framework application overrides merged after defaults. Flag enablement must never bypass fail-closed OAuth/host/registry/policy or operational readiness.
 - Validate configuration ownership for issuer, keys, resource metadata, host-instance bindings, tool enablement, limits, and audit sinks; keep secrets outside planning/source records.
 - Run the narrow contract loop and applicable type/test/lint/format checks after implementation; the selected AS Zova interaction requires its approved flavor's paired SSR/REST build before `npm run deps:vona`, without treating a site/flavor candidate as approved source.
 - Prepare a bounded release dossier containing ATP results, revision/environment/procedure/artifact references, unresolved waivers, and production approval.
 
 Acceptance checks:
 
-- Missing OAuth/host/registry/adapter configuration disables the affected MCP surface and never invokes a business controller.
+- The module-owned environment expression yields an enabled flag for unset/empty/`true`/other non-`false` values and a disabled flag only for literal `false`, without a standard application MCP `enabled` mapping; generic application override precedence is independently verified. Missing or invalid required OAuth/host/registry/adapter/policy configuration still blocks the affected MCP surface and never invokes a business controller, including with the default-enabled flag.
 - Ordinary HTTP authorization remains unchanged when MCP is disabled.
 - Release closure requires every applicable ATP and no expired waiver; planning audit/chart checks are reported separately from runtime proof.
 

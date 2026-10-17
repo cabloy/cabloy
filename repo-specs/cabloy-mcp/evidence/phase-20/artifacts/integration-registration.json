@@ -1,0 +1,78 @@
+{
+  "revision": "0cdd3ae480e59ea4505b43b9de92ffdaa7240f34",
+  "node": "v24.8.0",
+  "discoveredModules": 111,
+  "registration": "passed: generated package, installed local workspace link, application import and module type symlink",
+  "previousAuthoredSourceHashes": "unchanged",
+  "sourceManifest": [
+    {
+      "file": "vona/src/backend/config/config/config.ts",
+      "sha256": "803bdd73d7f7ac2e462f1756bbe139bf4bd47c67d727eae5ebce639247b77e7d"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/package.json",
+      "sha256": "711b2dec7665836f913269c9b324d0c33a196b990136f3ae224c854da4a10ad9"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/.metadata/index.ts",
+      "sha256": "0696ed4f69b9306574cc621db6b7c1a6062f6353174cf229ebac74ea3de9d138"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/.metadata/this.ts",
+      "sha256": "aaef190ff59a110c6f8bfc3c747de7de8ac3c5632c9db51015685d8ee89aa7f9"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/config/config.ts",
+      "sha256": "6bbb8b5ccc727a04916ae502bebd7bd08364be4f3be78f42a2779037f4ede789"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/index.ts",
+      "sha256": "f4647b73af7b437ce395e05d542fba01df83d66cf2ac66e4bed7bc37ef5f83d6"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/types/index.ts",
+      "sha256": "a99a396d4677cb791c54d87594204ee83eadec9c1490d9781911e6a1d3e010df"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/config.test.ts",
+      "sha256": "20fb911876c7e616bf12101ba415330cf130956f0d54fd892d186652188c846e"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.build.json",
+      "sha256": "6ea541d926141acbdc30e13505f5696e646fb9409f192f272d54d8ad48e74bf6"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json",
+      "sha256": "849cf8b95a62dc85210347e0c4f3089811b64d335a07787a301639a4039cde9e"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/package.json",
+      "sha256": "bc99ce01cc64798b4a8eebbdd4b988e5c0612da41a8631b4a55619e14a3be3a8"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/tsconfig.base.json",
+      "sha256": "55f09759b97097995c365d52b77e04ca699ff73128b8c4e76a5f3e265a275a86"
+    },
+    {
+      "file": "vona/src/suite/cabloy-mcp/tsconfig.json",
+      "sha256": "38cb0252aeaf8e43b0d6d6e72e0fa90c1243758cd9b1963144ed0706238e429d"
+    },
+    {
+      "file": "vona/package.json",
+      "sha256": "db3377fc3f96300527c292ad9b6f643d00e9818f600cbea66dac6a94afb9239c"
+    },
+    {
+      "file": "vona/package.original.json",
+      "sha256": "ce313425f2806fc7be7243dffd61b0820dbbaafe039fee7fd4339b87cfa1eab2"
+    },
+    {
+      "file": "vona/pnpm-lock.yaml",
+      "sha256": "c863033418af34d8ff5fb9d4a2b9b068a9cdc21874b2e003a249be0f9699688b"
+    },
+    {
+      "file": "vona/src/backend/typing/modules.d.ts",
+      "sha256": "028a7f49b333ad1b439803d2375c760066d25c3e986635f0a38ddf5fad38a239"
+    }
+  ],
+  "limitation": "No app startup, composite build, endpoint or ATP proof is claimed."
+}

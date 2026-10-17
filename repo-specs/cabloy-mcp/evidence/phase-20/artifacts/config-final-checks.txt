@@ -1,0 +1,102 @@
+Configuration increment static checks; not runtime ATP evidence.
+
+$ npm run spec:check -- cabloy-mcp
+
+> cabloy@5.1.214 spec:check
+> node ./repo-agent-governance/tools/spec-audit/audit.mjs cabloy-mcp
+
+repo-specs/cabloy-mcp: complete planning structure passed (68 definitions).
+Complete-baseline structure and explicit exact-ID chain.
+Static structure only; approval, semantic sufficiency, implementation, and evidence authenticity require human review.
+
+exit: 0
+
+$ npm run spec:charts -- cabloy-mcp
+
+> cabloy@5.1.214 spec:charts
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs cabloy-mcp
+
+generated implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-mcp (en; 0/12 verified).
+
+exit: 0
+
+$ npm run spec:charts:check -- cabloy-mcp
+
+> cabloy@5.1.214 spec:charts:check
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs --check cabloy-mcp
+
+checked implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-mcp (en; 0/12 verified).
+
+exit: 0
+
+$ node_modules/.bin/oxfmt --check vona/src/suite/cabloy-mcp vona/src/backend/config/config/config.ts repo-specs/cabloy-mcp/progress.md repo-specs/cabloy-mcp/evidence/phase-20
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 182ms on 17 files using 12 threads.
+
+exit: 0
+
+$ git diff --check
+
+exit: 0
+
+$ git status --short
+ M repo-specs/cabloy-mcp/progress.md
+ M vona/src/backend/config/config/config.ts
+?? repo-specs/cabloy-mcp/evidence/phase-20/
+?? vona/src/suite/cabloy-mcp/
+
+exit: 0
+
+$ git diff --stat
+ repo-specs/cabloy-mcp/progress.md        | 6 +++++-
+ vona/src/backend/config/config/config.ts | 6 +++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+exit: 0
+
+$ git -C <MAIN_CHECKOUT> status --short
+
+exit: 0
+
+$ git -C <MAIN_CHECKOUT> rev-parse HEAD
+ff20438ef58e7d379872bf1b46e6a686caee9041
+
+exit: 0
+
+Final rerun after retaining logs as nonignored .txt artifacts:
+
+$ npm run spec:check -- cabloy-mcp
+
+> cabloy@5.1.214 spec:check
+> node ./repo-agent-governance/tools/spec-audit/audit.mjs cabloy-mcp
+
+repo-specs/cabloy-mcp: complete planning structure passed (68 definitions).
+Complete-baseline structure and explicit exact-ID chain.
+Static structure only; approval, semantic sufficiency, implementation, and evidence authenticity require human review.
+
+exit: 0
+
+$ npm run spec:charts:check -- cabloy-mcp
+
+> cabloy@5.1.214 spec:charts:check
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs --check cabloy-mcp
+
+checked implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-mcp (en; 0/12 verified).
+
+exit: 0
+
+$ node_modules/.bin/oxfmt --check vona/src/suite/cabloy-mcp vona/src/backend/config/config/config.ts repo-specs/cabloy-mcp/progress.md repo-specs/cabloy-mcp/evidence/phase-20
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 187ms on 17 files using 12 threads.
+
+exit: 0
+
+$ git diff --check
+
+exit: 0
+
+Preservation assertions passed: tested source hashes unchanged; tracked changes only app config/progress; untracked only new suite and Phase20 evidence; staging empty; main clean at unchanged ff20438ef5. No tracked lockfile or environment changes. All three text logs are nonignored.

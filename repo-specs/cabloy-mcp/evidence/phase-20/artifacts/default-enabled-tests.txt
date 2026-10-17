@@ -1,0 +1,29 @@
+(node:98086) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ MCP configuration foundation
+  ✔ defaults on and returns independent configuration objects (1.211333ms)
+  ✔ stays enabled for undefined without an application mapping (0.252625ms)
+  ✔ stays enabled for "" without an application mapping (0.103959ms)
+  ✔ stays enabled for "true" without an application mapping (0.089375ms)
+  ✔ stays enabled for "0" without an application mapping (0.707375ms)
+  ✔ stays enabled for "1" without an application mapping (0.077125ms)
+  ✔ stays enabled for "FALSE" without an application mapping (0.073167ms)
+  ✔ stays enabled for "False" without an application mapping (0.075125ms)
+  ✔ stays enabled for "TRUE" without an application mapping (0.083417ms)
+  ✔ stays enabled for "True" without an application mapping (0.123875ms)
+  ✔ stays enabled for " false" without an application mapping (0.087583ms)
+  ✔ stays enabled for "false " without an application mapping (0.056125ms)
+  ✔ stays enabled for " true" without an application mapping (0.034625ms)
+  ✔ stays enabled for "true " without an application mapping (0.032375ms)
+  ✔ disables only for literal false in the module configuration (0.062166ms)
+  ✔ keeps an explicit application disablement over the enabled module default (0.047959ms)
+  ✔ keeps an explicit application override over the environment-derived module value (0.035667ms)
+✔ MCP configuration foundation (3.706625ms)
+ℹ tests 17
+ℹ suites 1
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 375.058375

@@ -1,0 +1,52 @@
+$ npm run deps:vona
+
+> cabloy@5.1.214 deps:vona
+> pnpm --dir vona run vona :tools:deps
+
+Scope: all 156 workspace projects
+? Verifying lockfile against supply-chain policies (1377 entries)...
+✓ Lockfile passes supply-chain policies (1377 entries in 4ms)
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Progress: resolved 62, reused 50, downloaded 0, added 0
+Progress: resolved 209, reused 209, downloaded 0, added 0
+Progress: resolved 210, reused 209, downloaded 0, added 0
+Progress: resolved 210, reused 210, downloaded 0, added 0
+Progress: resolved 212, reused 212, downloaded 0, added 0
+Progress: resolved 213, reused 213, downloaded 0, added 0
+Progress: resolved 866, reused 752, downloaded 0, added 0
+Progress: resolved 1342, reused 1242, downloaded 0, added 0
+Progress: resolved 1344, reused 1244, downloaded 0, added 0
+Progress: resolved 1345, reused 1244, downloaded 0, added 0
+Progress: resolved 1361, reused 1261, downloaded 0, added 0
+Progress: resolved 1362, reused 1261, downloaded 0, added 0
+Progress: resolved 1375, reused 1275, downloaded 0, added 0
+[WARN] 4 deprecated subdependencies found: glob@7.2.3, inflight@1.0.6, prebuild-install@7.1.3, sourcemap-codec@1.4.8
+Packages: +11 -1
++++++++++++-
+Progress: resolved 1376, reused 1276, downloaded 0, added 11, done
+[WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+
+Done in 20.7s using pnpm v11.5.2
+$ node ./packages-cli/cli/src/bin/vona.ts :tools:deps
+vona api:tools:deps at vona
+
+No files found matching the given patterns.
+Finished in 48ms on 0 files using 1 threads.
+===> pnpm install
+Scope: all 156 workspace projects
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Progress: resolved 213, reused 213, downloaded 0, added 0
+Progress: resolved 214, reused 213, downloaded 0, added 0
+Progress: resolved 1342, reused 1242, downloaded 0, added 0
+Progress: resolved 1357, reused 1257, downloaded 0, added 0
+Progress: resolved 1361, reused 1261, downloaded 0, added 0
+Progress: resolved 1369, reused 1269, downloaded 0, added 0
+Progress: resolved 1376, reused 1276, downloaded 0, added 0
+[WARN] 4 deprecated subdependencies found: glob@7.2.3, inflight@1.0.6, prebuild-install@7.1.3, sourcemap-codec@1.4.8
+Already up to date
+Progress: resolved 1376, reused 1276, downloaded 0, added 0, done
+[WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+
+Done in 14.8s using pnpm v11.5.2
+
+exit: 0

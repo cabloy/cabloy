@@ -1,0 +1,3 @@
+$ node_modules/.bin/oxlint --disable-nested-config vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/config/config.ts vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/types/index.ts vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/config.test.ts vona/src/backend/config/config/config.ts
+
+exit: 0

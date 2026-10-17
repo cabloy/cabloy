@@ -2,7 +2,7 @@
 
 ## Purpose and Authority
 
-This plan defines verification strategy, executable acceptance scenarios, fixtures, evidence requirements, and release proof for the accepted overall `cabloy-mcp` remote access design, whose source and runtime proof remain pending. It completes the traceability chain:
+This plan defines verification strategy, executable acceptance scenarios, fixtures, evidence requirements, and release proof for the accepted overall `cabloy-mcp` remote access design. Initial scaffold/configuration and application integration now exist under separately approved bounded increments recorded in the [phase-20 index](./evidence/phase-20/index.md); endpoint readiness and ATP/runtime acceptance proof remain pending. It completes the traceability chain:
 
 ```text
 PRD requirement -> SRS contract -> PDP/WBS task -> ATP scenario -> observed evidence
@@ -419,24 +419,24 @@ Traceability: `PRD-MCP-SAFETY-03`, `SRS-MCP-PRIVACY-01`, `SRS-MCP-OPS-01`, `SRS-
 
 Setup:
 
-- After a separately approved scaffold exists, inspect the generated `5.0.0` suite/module manifests, suite `workspace:^` module dependency, module `a-vona: 5.0.0` lifecycle dependency, absence of MCP-owned `fileVersion`/schema, and discovered/generated application registration; do not substitute planning text for observed output.
-- Prepare default module configuration (`enabled: false`), literal application `CABLOY_MCP_ENABLED=true` opt-in, non-`true` inputs, enabled/disabled endpoint and per-tool policy states, missing OAuth configuration, missing host mapping, invalid registry/adapter, and ordinary HTTP calls to the same underlying controller.
+- Initial scaffold/configuration and application integration exist under the separately approved increments in the [phase-20 index](./evidence/phase-20/index.md). In a separately approved ATP procedure, inspect the generated initial `5.0.0` suite/module manifests, suite `workspace:^` module dependency, module `a-vona: 5.0.0` lifecycle dependency, absence of MCP-owned `fileVersion`/schema, and discovered/generated application registration; do not substitute planning text or initial-source proof for this ATP.
+- Prepare module-owned `enabled: app.meta.env.CABLOY_MCP_ENABLED !== 'false'` cases: unset, empty, literal `false`, literal `true`, and another non-`false` string. Only literal `false` disables the module flag. Inspect the absence of the standard application MCP `enabled` environment mapping; separately prepare an explicit generic framework application override to verify merge precedence without reinstating an opt-in requirement. Include enabled/disabled endpoint and per-tool policy states, missing OAuth configuration, missing host mapping, invalid registry/adapter or policy, and ordinary HTTP calls to the same underlying controller.
 
 Procedure:
 
-- Confirm the generated module is discoverable without handwritten registration, then compare default-off behavior, non-`true` inputs, and explicit application opt-in; remove each required MCP security configuration item and attempt list/call operations.
+- Confirm the generated module is discoverable without handwritten registration and the module owns the environment expression without a standard application MCP `enabled` mapping. Compare unset/empty/`true`/other non-`false` values (flag enabled) with literal `false` (flag disabled); separately verify an explicitly supplied generic application override merges after defaults. Remove each required OAuth/host/registry/policy configuration item and attempt list/call operations with the module flag enabled.
 - Disable the endpoint and individual tool, then call the ordinary HTTP API with its normal authentication before and after MCP disablement.
 
 Expected result:
 
-- The actual generated manifests and registration match DEC-MCP-01; mere module discovery never enables MCP. Default-off, non-`true` inputs, and incomplete opt-in all fail closed without business-controller dispatch.
-- Disabled or incomplete MCP configuration returns stable unavailable/failure-closed results and never invokes a business controller.
+- The actual initial manifests and registration match DEC-MCP-01. Module configuration owns `app.meta.env.CABLOY_MCP_ENABLED !== 'false'`, with no standard application MCP `enabled` environment mapping. Unset, empty, `true` and other non-`false` strings yield an enabled module flag; only literal `false` disables it. Explicit generic framework application overrides retain their normal later merge precedence without making application opt-in mandatory.
+- Discovery or an enabled flag never establishes readiness. Literal-`false` disablement, an explicit generic disabling override, and missing/invalid required OAuth/host/registry/adapter/policy configuration return stable unavailable/failure-closed results and never invoke a business controller. Default enablement with incomplete security configuration is still denied.
 - Ordinary HTTP authorization and behavior are unchanged by MCP disablement.
 - Operator telemetry identifies the configuration class without exposing secret values.
 
 Minimum proof:
 
-- Retain source revision, generated manifest/registration excerpts, default/override configuration state labels (not secret values), dispatch counters, ordinary HTTP comparison, result classes, and redacted operator artifact.
+- Retain source revision, generated manifest/registration excerpts, module configuration ownership and absence-of-standard-application-mapping assertions, the unset/empty/literal-`false`/literal-`true`/other-value state matrix, separate generic application override precedence results, independent readiness denial/dispatch counters, ordinary HTTP comparison, result classes, and redacted operator artifact. State labels, not secret values, are retained; these prospective requirements do not close this ATP.
 
 Traceability: `PRD-MCP-SAFETY-04`, `SRS-MCP-OPS-03`, `SRS-MCP-OPS-04`, `SRS-MCP-UI-01`, `SRS-MCP-UI-02`, `WBS-MCP-50-02`.
 

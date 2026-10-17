@@ -1,0 +1,654 @@
+$ vona/node_modules/.bin/tsc --noEmit --incremental false -p vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json
+vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json(3,3): error TS6379: Composite projects may not disable incremental compilation.
+
+exit: 2
+
+Corrected invocation: retain project composite/incremental semantics; temporary build info only.
+$ vona/node_modules/.bin/tsc --noEmit --tsBuildInfoFile <TEMP_DIR>/module.tsbuildinfo -p vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json
+vona/packages-vona/vona-core/src/index.ts(3,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './lib/index.ts' from file 'vona/packages-vona/vona-core/src/index.ts'
+    Imported via '../../lib/index.ts' from file 'vona/packages-vona/vona-core/src/types/context/contextBase.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/addon/addon.ts(5,53): error TS6307: File 'vona/packages-vona/vona-core/src/lib/addon/sharp.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './sharp.ts' from file 'vona/packages-vona/vona-core/src/lib/addon/addon.ts'
+    Imported via './sharp.ts' from file 'vona/packages-vona/vona-core/src/lib/addon/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/addon/addon.ts(6,33): error TS6307: File 'vona/packages-vona/vona-core/src/lib/addon/sqlite3.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './sqlite3.ts' from file 'vona/packages-vona/vona-core/src/lib/addon/addon.ts'
+    Imported via './sqlite3.ts' from file 'vona/packages-vona/vona-core/src/lib/addon/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/addon/sqlite3.ts(7,35): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/config.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../core/config.ts' from file 'vona/packages-vona/vona-core/src/lib/addon/sqlite3.ts'
+    Imported via './config.ts' from file 'vona/packages-vona/vona-core/src/lib/core/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/beanAopBase.ts(1,26): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/beanBase.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './beanBase.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanAopBase.ts'
+    Imported via './beanBase.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts'
+    Imported via './beanBase.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanAopMethodBase.ts'
+    Imported via './beanBase.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/index.ts'
+    Imported via '../beanBase.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeBase.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/beanBase.ts(3,62): error TS6307: File 'vona/packages-vona/vona-core/src/types/interface/logger.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../../types/interface/logger.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanBase.ts'
+    Imported via '../../../types/interface/logger.ts' from file 'vona/packages-vona/vona-core/src/lib/core/logger/appLogger.ts'
+    Imported via './logger.ts' from file 'vona/packages-vona/vona-core/src/types/interface/index.ts'
+    Imported via '../../../types/interface/logger.ts' from file 'vona/packages-vona/vona-core/src/lib/core/logger/utils.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/beanBase.ts(5,42): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeContainer.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './scope/beanScopeContainer.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanBase.ts'
+    Imported via './beanScopeContainer.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/scope/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts(21,59): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/beanBaseSimple.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './beanBaseSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts'
+    Imported via './beanBaseSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanBase.ts'
+    Imported via './beanBaseSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/index.ts'
+    Imported via '../beanBaseSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeBase.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/beanSimple.ts(1,34): error TS6307: File 'vona/packages-vona/vona-core/src/types/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../../types/index.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanSimple.ts'
+    Imported via '../../types/index.ts' from file 'vona/packages-vona/vona-core/src/lib/utils/util.ts'
+    Imported via '../../types/index.ts' from file 'vona/packages-vona/vona-core/src/lib/utils/util.ts'
+    Imported via '../../types/index.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts'
+    Imported via '../../types/index.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts'
+    Imported via '../../types/index.ts' from file 'vona/packages-vona/vona-core/src/lib/core/meta.ts'
+    Imported via '../../types/index.ts' from file 'vona/packages-vona/vona-core/src/lib/core/meta.ts'
+    Imported via '../../types/index.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/start.ts'
+    Imported via '../../types/index.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/start.ts'
+    Imported via '../../types/index.ts' from file 'vona/packages-vona/vona-core/src/lib/module/locales.ts'
+    Imported via './types/index.ts' from file 'vona/packages-vona/vona-core/src/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/beanAopBase.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './beanAopBase.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/index.ts'
+    Imported via './beanAopBase.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/index.ts(2,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/beanAopMethodBase.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/index.ts(7,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/index.ts(8,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/scope/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/config/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/config/type.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/constant/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/constant/type.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/error/beanScopeError.ts(1,35): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/error/type.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/beanScopeError.ts'
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/beanScopeErrorImpl.ts'
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/error/beanScopeError.ts(4,36): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/error/beanScopeErrorImpl.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './beanScopeErrorImpl.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/beanScopeError.ts'
+    Imported via './beanScopeErrorImpl.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/error/errorApplication.ts(1,41): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/error/errorInternal.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './errorInternal.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/errorApplication.ts'
+    Imported via './resource/error/errorInternal.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/type.ts'
+    Imported via './errorInternal.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/index.ts'
+    Imported via '../bean/resource/error/errorInternal.ts' from file 'vona/packages-vona/vona-core/src/lib/locale/en-us.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/error/errorApplication.ts(2,35): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/error/errorObject.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './errorObject.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/errorApplication.ts'
+    Imported via './errorObject.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/type.ts'
+    Imported via './errorObject.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/beanScopeErrorImpl.ts'
+    Imported via './errorObject.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/error/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/error/beanScopeError.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './beanScopeError.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/index.ts'
+    Imported via '../resource/error/beanScopeError.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeBase.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/error/index.ts(4,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './errorClass.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/index.ts'
+    Imported via '../bean/resource/error/errorClass.ts' from file 'vona/packages-vona/vona-core/src/lib/module/errors.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/error/index.ts(5,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/error/errorGlobal.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/config/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/index.ts(2,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/constant/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/index.ts(3,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/error/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/index.ts(4,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/locale/appLocale.ts(8,31): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/utils.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './utils.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/appLocale.ts'
+    Imported via './utils.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/locale/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/appLocale.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/resource/locale/index.ts(2,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/beanScopeLocale.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './beanScopeLocale.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/index.ts'
+    Imported via '../resource/locale/beanScopeLocale.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeBase.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeBase.ts(10,32): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeScene.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './beanScopeScene.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeBase.ts'
+    Imported via './beanScopeScene.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/scope/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeBase.ts(11,31): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeUtil.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './beanScopeUtil.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeBase.ts'
+    Imported via './beanScopeUtil.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/scope/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeContainer.ts(3,28): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/beanSimple.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeContainer.ts'
+    Imported via '../bean/beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/core/resource.ts'
+    Imported via '../bean/beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/utils/util.ts'
+    Imported via '../bean/beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/core/hmrDeps.ts'
+    Imported via './beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanBaseSimple.ts'
+    Imported via './beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts'
+    Imported via '../bean/beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/core/meta.ts'
+    Imported via '../bean/beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/core/hmr.ts'
+    Imported via '../../bean/beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/core/logger/appLogger.ts'
+    Imported via './beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/index.ts'
+    Imported via '../../beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/beanScopeError.ts'
+    Imported via '../../beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/beanScopeErrorImpl.ts'
+    Imported via '../../beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts'
+    Imported via '../../beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/appLocale.ts'
+    Imported via '../../beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/beanScopeLocale.ts'
+    Imported via '../beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeScene.ts'
+    Imported via '../beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeUtil.ts'
+    Imported via '../bean/beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/module/loader.ts'
+    Imported via '../bean/beanSimple.ts' from file 'vona/packages-vona/vona-core/src/lib/module/module.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/scope/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/scope/beanScopeBase.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/type.ts(3,39): error TS6307: File 'vona/packages-vona/vona-core/src/types/utils/type.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../../types/utils/type.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/type.ts'
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/types/utils/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/bean/type.ts(4,39): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/interface/beanOptions.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../decorator/interface/beanOptions.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/type.ts'
+    Imported via '../interface/beanOptions.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/beanInfo.ts'
+    Imported via '../decorator/interface/beanOptions.ts' from file 'vona/packages-vona/vona-core/src/lib/utils/util.ts'
+    Imported via '../interface/beanOptions.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/createBeanDecorator.ts'
+    Imported via '../interface/beanOptions.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/util.ts'
+    Imported via './beanOptions.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/interface/index.ts'
+    Imported via '../decorator/interface/beanOptions.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanBaseSimple.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/application.ts(6,33): error TS6307: File 'vona/packages-vona/vona-core/src/types/config/config.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../../types/config/config.ts' from file 'vona/packages-vona/vona-core/src/lib/core/application.ts'
+    Imported via '../config/config.ts' from file 'vona/packages-vona/vona-core/src/types/context/contextBase.ts'
+    Imported via '../config/config.ts' from file 'vona/packages-vona/vona-core/src/types/application/app.ts'
+    Imported via './config.ts' from file 'vona/packages-vona/vona-core/src/types/config/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/application.ts(7,34): error TS6307: File 'vona/packages-vona/vona-core/src/types/context/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../../types/context/index.ts' from file 'vona/packages-vona/vona-core/src/lib/core/application.ts'
+    Imported via './index.ts' from file 'vona/packages-vona/vona-core/src/types/context/contextBase.ts'
+    Imported via '../../types/context/index.ts' from file 'vona/packages-vona/vona-core/src/lib/core/asyncLocalStorage.ts'
+    Imported via '../../types/context/index.ts' from file 'vona/packages-vona/vona-core/src/lib/core/context.ts'
+    Imported via './context/index.ts' from file 'vona/packages-vona/vona-core/src/types/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/application.ts(8,39): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/error/errorApplication.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../bean/resource/error/errorApplication.ts' from file 'vona/packages-vona/vona-core/src/lib/core/application.ts'
+    Imported via './errorApplication.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/application.ts(9,64): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/type.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../bean/type.ts' from file 'vona/packages-vona/vona-core/src/lib/core/application.ts'
+    Imported via '../bean/type.ts' from file 'vona/packages-vona/vona-core/src/lib/core/resource.ts'
+    Imported via '../bean/type.ts' from file 'vona/packages-vona/vona-core/src/lib/utils/util.ts'
+    Imported via '../../bean/type.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/use.ts'
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts'
+    Imported via '../../lib/bean/type.ts' from file 'vona/packages-vona/vona-core/src/types/config/locale.ts'
+    Imported via '../../type.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/error/errorGlobal.ts'
+    Imported via '../../type.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/utils.ts'
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/application.ts(12,31): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../bean/beanContainer.ts' from file 'vona/packages-vona/vona-core/src/lib/core/application.ts'
+    Imported via '../bean/beanContainer.ts' from file 'vona/packages-vona/vona-core/src/lib/core/context.ts'
+    Imported via './beanContainer.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/application.ts(15,39): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/asyncLocalStorage.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/application.ts(16,29): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/context.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/application.ts(17,25): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/meta.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './meta.ts' from file 'vona/packages-vona/vona-core/src/lib/core/application.ts'
+    Imported via './meta.ts' from file 'vona/packages-vona/vona-core/src/lib/core/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/application.ts(18,30): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/response.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/config.ts(9,40): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/isolationGuard.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './isolationGuard.ts' from file 'vona/packages-vona/vona-core/src/lib/core/config.ts'
+    Imported via './isolationGuard.ts' from file 'vona/packages-vona/vona-core/src/lib/core/index.ts'
+    Imported via '../core/isolationGuard.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/start.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/index.ts(6,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/locales.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './locales.ts' from file 'vona/packages-vona/vona-core/src/lib/core/index.ts'
+    Imported via '../core/locales.ts' from file 'vona/packages-vona/vona-core/src/lib/module/locales.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/index.ts(7,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/logger/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/index.ts(11,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/testClaim.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './testClaim.ts' from file 'vona/packages-vona/vona-core/src/lib/core/index.ts'
+    Imported via '../core/testClaim.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/start.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/locales.ts(1,18): error TS6307: File 'vona/packages-vona/vona-core/src/lib/locale/en-us.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/locales.ts(2,18): error TS6307: File 'vona/packages-vona/vona-core/src/lib/locale/zh-cn.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/logger/index.ts(2,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/logger/utils.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/meta.ts(10,33): error TS6307: File 'vona/packages-vona/vona-core/src/types/interface/monkey.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../../types/interface/monkey.ts' from file 'vona/packages-vona/vona-core/src/lib/core/meta.ts'
+    Imported via '../interface/monkey.ts' from file 'vona/packages-vona/vona-core/src/types/application/app.ts'
+    Imported via './monkey.ts' from file 'vona/packages-vona/vona-core/src/types/interface/bootstrap.ts'
+    Imported via './monkey.ts' from file 'vona/packages-vona/vona-core/src/types/interface/module.ts'
+    Imported via './monkey.ts' from file 'vona/packages-vona/vona-core/src/types/interface/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/meta.ts(18,28): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/ctxCounter.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/meta.ts(19,24): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/hmr.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './hmr.ts' from file 'vona/packages-vona/vona-core/src/lib/core/meta.ts'
+    Imported via './hmr.ts' from file 'vona/packages-vona/vona-core/src/lib/core/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/meta.ts(20,27): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/logger/appLogger.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './logger/appLogger.ts' from file 'vona/packages-vona/vona-core/src/lib/core/meta.ts'
+    Imported via './appLogger.ts' from file 'vona/packages-vona/vona-core/src/lib/core/logger/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/resource.ts(12,22): error TS6307: File 'vona/packages-vona/vona-core/src/types/utils/cast.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../../types/utils/cast.ts' from file 'vona/packages-vona/vona-core/src/lib/core/resource.ts'
+    Imported via '../../types/utils/cast.ts' from file 'vona/packages-vona/vona-core/src/lib/core/application.ts'
+    Imported via '../../types/utils/cast.ts' from file 'vona/packages-vona/vona-core/src/lib/core/context.ts'
+    Imported via './cast.ts' from file 'vona/packages-vona/vona-core/src/types/utils/index.ts'
+    Imported via '../../../../types/utils/cast.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/appLocale.ts'
+    Imported via '../../../../types/utils/cast.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/utils.ts'
+    Imported via '../../../types/utils/cast.ts' from file 'vona/packages-vona/vona-core/src/lib/core/logger/utils.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/resource.ts(14,24): error TS6307: File 'vona/packages-vona/vona-core/src/lib/framework/useApp.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../framework/useApp.ts' from file 'vona/packages-vona/vona-core/src/lib/core/resource.ts'
+    Imported via '../framework/useApp.ts' from file 'vona/packages-vona/vona-core/src/lib/utils/zod-enhance.ts'
+    Imported via '../framework/useApp.ts' from file 'vona/packages-vona/vona-core/src/lib/core/application.ts'
+    Imported via '../../../framework/useApp.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/utils.ts'
+    Imported via '../../framework/useApp.ts' from file 'vona/packages-vona/vona-core/src/lib/core/logger/utils.ts'
+    Imported via './useApp.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/processMaster.ts'
+    Imported via './useApp.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/processWorker.ts'
+    Imported via './useApp.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/core/resource.ts(15,48): error TS6307: File 'vona/packages-vona/vona-core/src/lib/mappedClass/utils.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../mappedClass/utils.ts' from file 'vona/packages-vona/vona-core/src/lib/core/resource.ts'
+    Imported via './utils.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/mixinClass.ts'
+    Imported via './utils.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/omitClass.ts'
+    Imported via './utils.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/partialClass.ts'
+    Imported via './utils.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/pickClassInner.ts'
+    Imported via './utils.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/class/beanInfo.ts(3,29): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/metadata.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../../core/metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/beanInfo.ts'
+    Imported via './metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/core/resource.ts'
+    Imported via '../core/metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/utils.ts'
+    Imported via '../core/metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/type.ts'
+    Imported via '../core/metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/utils.ts'
+    Imported via './metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/core/resource.ts'
+    Imported via '../../core/metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/util.ts'
+    Imported via '../../core/metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/global.ts'
+    Imported via '../../core/metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/proxyDisable.ts'
+    Imported via '../../core/metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/use.ts'
+    Imported via '../../core/metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/use.ts'
+    Imported via '../../core/metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/virtual.ts'
+    Imported via '../core/metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts'
+    Imported via '../core/metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts'
+    Imported via './metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/core/context.ts'
+    Imported via './metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/core/meta.ts'
+    Imported via './metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/core/meta.ts'
+    Imported via './metadata.ts' from file 'vona/packages-vona/vona-core/src/lib/core/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/class/beanInfo.ts(4,41): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/resource.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../../core/resource.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/beanInfo.ts'
+    Imported via './resource.ts' from file 'vona/packages-vona/vona-core/src/lib/core/hmrDeps.ts'
+    Imported via '../../core/resource.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/createBeanDecorator.ts'
+    Imported via '../../core/resource.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/util.ts'
+    Imported via '../../core/resource.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/global.ts'
+    Imported via '../../core/resource.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/proxyDisable.ts'
+    Imported via '../../core/resource.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/use.ts'
+    Imported via '../../core/resource.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/virtual.ts'
+    Imported via '../core/resource.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts'
+    Imported via '../core/resource.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanBaseSimple.ts'
+    Imported via './resource.ts' from file 'vona/packages-vona/vona-core/src/lib/core/context.ts'
+    Imported via './resource.ts' from file 'vona/packages-vona/vona-core/src/lib/core/meta.ts'
+    Imported via './resource.ts' from file 'vona/packages-vona/vona-core/src/lib/core/meta.ts'
+    Imported via './resource.ts' from file 'vona/packages-vona/vona-core/src/lib/core/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/class/createBeanDecorator.ts(4,28): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/hmrDeps.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../../core/hmrDeps.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/createBeanDecorator.ts'
+    Imported via './hmrDeps.ts' from file 'vona/packages-vona/vona-core/src/lib/core/index.ts'
+    Imported via '../core/hmrDeps.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/extendClass.ts'
+    Imported via '../core/hmrDeps.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/mixinClass.ts'
+    Imported via '../core/hmrDeps.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/omitClass.ts'
+    Imported via '../core/hmrDeps.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/partialClass.ts'
+    Imported via '../core/hmrDeps.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/pickClass.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/class/createBeanDecorator.ts(6,50): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/class/util.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/class/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/class/beanInfo.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/class/index.ts(2,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/class/createBeanDecorator.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/class/index.ts(3,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/class/global.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/class/index.ts(4,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/class/proxyDisable.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/class/index.ts(5,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/class/use.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/class/index.ts(6,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/class/virtual.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/class/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/index.ts(2,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/interface/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/index.ts(3,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/type/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/interface/beanOptions.ts(1,36): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../index.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/interface/beanOptions.ts'
+    Imported via '../decorator/index.ts' from file 'vona/packages-vona/vona-core/src/lib/core/resource.ts'
+    Imported via '../decorator/index.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/utils.ts'
+    Imported via '../index.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/use.ts'
+    Imported via '../decorator/index.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts'
+    Imported via '../decorator/index.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts'
+    Imported via './decorator/index.ts' from file 'vona/packages-vona/vona-core/src/lib/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/interface/index.ts(2,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/interface/useOptions.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/type/index.ts(2,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/type/containerScope.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/type/index.ts(3,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/type/function.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/type/index.ts(4,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/type/injectionScope.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/decorator/type/index.ts(5,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/type/string.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/framework/bootstrap.ts(5,43): error TS6307: File 'vona/packages-vona/vona-core/src/lib/framework/cluster.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/framework/cluster.ts(5,44): error TS6307: File 'vona/packages-vona/vona-core/src/lib/framework/createApp.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './createApp.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/cluster.ts'
+    Imported via './createApp.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/framework/cluster.ts(6,37): error TS6307: File 'vona/packages-vona/vona-core/src/lib/framework/processMaster.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/framework/cluster.ts(7,35): error TS6307: File 'vona/packages-vona/vona-core/src/lib/framework/processWorker.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/framework/createApp.ts(9,28): error TS6307: File 'vona/packages-vona/vona-core/src/lib/utils/jsx-enhance.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/framework/createApp.ts(12,23): error TS6307: File 'vona/packages-vona/vona-core/src/lib/framework/start.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/framework/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/framework/bootstrap.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/framework/start.ts(7,30): error TS6307: File 'vona/packages-vona/vona-core/src/lib/module/loader.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/framework/useApp.ts(6,39): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/testIsolation.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../core/testIsolation.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/useApp.ts'
+    Imported via './testIsolation.ts' from file 'vona/packages-vona/vona-core/src/lib/core/isolationGuard.ts'
+    Imported via './testIsolation.ts' from file 'vona/packages-vona/vona-core/src/lib/core/config.ts'
+    Imported via './testIsolation.ts' from file 'vona/packages-vona/vona-core/src/lib/core/testClaim.ts'
+    Imported via './testIsolation.ts' from file 'vona/packages-vona/vona-core/src/lib/core/index.ts'
+    Imported via '../core/testIsolation.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/createApp.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/framework/useApp.ts(7,28): error TS6307: File 'vona/packages-vona/vona-core/src/lib/utils/util.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/useApp.ts'
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/addon/sharp.ts'
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/core/config.ts'
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/addon/sqlite3.ts'
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/core/resource.ts'
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts'
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanBaseSimple.ts'
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/core/application.ts'
+    Imported via '../../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/core/logger/appLogger.ts'
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/bootstrap.ts'
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/createApp.ts'
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/module/config.ts'
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/module/constant.ts'
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/module/errors.ts'
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/module/locales.ts'
+    Imported via '../utils/util.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/start.ts'
+    Imported via './util.ts' from file 'vona/packages-vona/vona-core/src/lib/utils/zod-openapi.ts'
+    Imported via './util.ts' from file 'vona/packages-vona/vona-core/src/lib/utils/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './bean/index.ts' from file 'vona/packages-vona/vona-core/src/lib/index.ts'
+    Imported via '../bean/index.ts' from file 'vona/packages-vona/vona-core/src/lib/core/meta.ts'
+    Imported via '../bean/index.ts' from file 'vona/packages-vona/vona-core/src/lib/core/meta.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/index.ts(2,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/index.ts(4,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/framework/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/index.ts(5,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/mappedClass/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/index.ts(6,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/utils/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/index.ts(7,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/addon/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/mappedClass/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/mappedClass/mappedClass.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/mappedClass/mappedClass.ts(1,29): error TS6307: File 'vona/packages-vona/vona-core/src/lib/mappedClass/extendClass.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/mappedClass/mappedClass.ts(2,28): error TS6307: File 'vona/packages-vona/vona-core/src/lib/mappedClass/mixinClass.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/mappedClass/mappedClass.ts(3,27): error TS6307: File 'vona/packages-vona/vona-core/src/lib/mappedClass/omitClass.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/mappedClass/mappedClass.ts(4,30): error TS6307: File 'vona/packages-vona/vona-core/src/lib/mappedClass/partialClass.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/mappedClass/mappedClass.ts(5,27): error TS6307: File 'vona/packages-vona/vona-core/src/lib/mappedClass/pickClass.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/mappedClass/pickClass.ts(2,36): error TS6307: File 'vona/packages-vona/vona-core/src/lib/mappedClass/pickClassInner.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './pickClassInner.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/pickClass.ts'
+    Imported via './pickClassInner.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/pickClass.ts'
+    Imported via './pickClassInner.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/mappedClass/utils.ts(3,75): error TS6307: File 'vona/packages-vona/vona-core/src/lib/mappedClass/type.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/utils.ts'
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/utils.ts'
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/module/loader.ts(2,24): error TS6307: File 'vona/packages-vona/vona-core/src/lib/module/config.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './config.ts' from file 'vona/packages-vona/vona-core/src/lib/module/loader.ts'
+    Imported via '../../../../../../packages-vona/vona-core/src/lib/module/config.ts' from file 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/config.test.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/module/loader.ts(3,27): error TS6307: File 'vona/packages-vona/vona-core/src/lib/module/constant.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/module/loader.ts(4,24): error TS6307: File 'vona/packages-vona/vona-core/src/lib/module/errors.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/module/loader.ts(5,25): error TS6307: File 'vona/packages-vona/vona-core/src/lib/module/locales.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/module/loader.ts(6,29): error TS6307: File 'vona/packages-vona/vona-core/src/lib/module/module.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/utils/index.ts(1,34): error TS6307: File 'vona/packages-vona/vona-core/src/lib/utils/zod-openapi.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/utils/index.ts(3,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/utils/protocolKey.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/utils/index.ts(4,15): error TS6307: File 'vona/packages-vona/vona-core/src/lib/utils/retry.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/utils/util.ts(30,38): error TS6307: File 'vona/packages-vona/vona-core/src/lib/utils/zod-enhance.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './zod-enhance.ts' from file 'vona/packages-vona/vona-core/src/lib/utils/util.ts'
+    Imported via './zod-enhance.ts' from file 'vona/packages-vona/vona-core/src/lib/utils/util.ts'
+    Imported via '../utils/zod-enhance.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/createApp.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/utils/util.ts(33,30): error TS6307: File 'vona/packages-vona/vona-core/src/lib/addon/addon.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../addon/addon.ts' from file 'vona/packages-vona/vona-core/src/lib/utils/util.ts'
+    Imported via './addon.ts' from file 'vona/packages-vona/vona-core/src/lib/addon/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/lib/utils/zod-enhance.ts(7,36): error TS6307: File 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/type.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../bean/resource/locale/type.ts' from file 'vona/packages-vona/vona-core/src/lib/utils/zod-enhance.ts'
+    Imported via '../../lib/bean/resource/locale/type.ts' from file 'vona/packages-vona/vona-core/src/types/config/locale.ts'
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/appLocale.ts'
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/appLocale.ts'
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/utils.ts'
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/utils.ts'
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/beanScopeLocale.ts'
+    Imported via './type.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/locale/index.ts'
+    Imported via '../bean/resource/locale/type.ts' from file 'vona/packages-vona/vona-core/src/lib/utils/protocolKey.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/application/app.ts(3,38): error TS6307: File 'vona/packages-vona/vona-core/src/lib/core/application.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../../lib/core/application.ts' from file 'vona/packages-vona/vona-core/src/types/application/app.ts'
+    Imported via '../../lib/core/application.ts' from file 'vona/packages-vona/vona-core/src/types/context/index.ts'
+    Imported via '../core/application.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/useApp.ts'
+    Imported via '../core/application.ts' from file 'vona/packages-vona/vona-core/src/lib/utils/zod-enhance.ts'
+    Imported via '../core/application.ts' from file 'vona/packages-vona/vona-core/src/lib/addon/sqlite3.ts'
+    Imported via './application.ts' from file 'vona/packages-vona/vona-core/src/lib/core/config.ts'
+    Imported via './application.ts' from file 'vona/packages-vona/vona-core/src/lib/core/isolationGuard.ts'
+    Imported via '../core/application.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts'
+    Imported via './application.ts' from file 'vona/packages-vona/vona-core/src/lib/core/asyncLocalStorage.ts'
+    Imported via '../../lib/core/application.ts' from file 'vona/packages-vona/vona-core/src/types/interface/module.ts'
+    Imported via '../core/application.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/beanSimple.ts'
+    Imported via '../../../core/application.ts' from file 'vona/packages-vona/vona-core/src/lib/bean/resource/config/type.ts'
+    Imported via './application.ts' from file 'vona/packages-vona/vona-core/src/lib/core/index.ts'
+    Imported via '../core/application.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/bootstrap.ts'
+    Imported via '../core/application.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/createApp.ts'
+    Imported via '../core/application.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/start.ts'
+    Imported via '../core/application.ts' from file 'vona/packages-vona/vona-core/src/lib/module/config.ts'
+    Imported via '../core/application.ts' from file 'vona/packages-vona/vona-core/src/lib/module/constant.ts'
+    Imported via '../core/application.ts' from file 'vona/packages-vona/vona-core/src/lib/module/errors.ts'
+    Imported via '../core/application.ts' from file 'vona/packages-vona/vona-core/src/lib/module/locales.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/application/app.ts(5,44): error TS6307: File 'vona/packages-vona/vona-core/src/types/config/locale.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../config/locale.ts' from file 'vona/packages-vona/vona-core/src/types/application/app.ts'
+    Imported via './locale.ts' from file 'vona/packages-vona/vona-core/src/types/config/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/application/app.ts(7,36): error TS6307: File 'vona/packages-vona/vona-core/src/types/utils/env.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../utils/env.ts' from file 'vona/packages-vona/vona-core/src/types/application/app.ts'
+    Imported via './env.ts' from file 'vona/packages-vona/vona-core/src/types/utils/index.ts'
+    Imported via '../../types/utils/env.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/createApp.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/application/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/types/application/app.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './app.ts' from file 'vona/packages-vona/vona-core/src/types/application/index.ts'
+    Imported via '../../types/application/app.ts' from file 'vona/packages-vona/vona-core/src/lib/core/application.ts'
+    Imported via '../application/app.ts' from file 'vona/packages-vona/vona-core/src/types/interface/bootstrap.ts'
+    Imported via '../../types/application/app.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/createApp.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/config/config.ts(4,35): error TS6307: File 'vona/packages-vona/vona-core/src/types/utils/powerPartial.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../utils/powerPartial.ts' from file 'vona/packages-vona/vona-core/src/types/config/config.ts'
+    Imported via '../../types/utils/powerPartial.ts' from file 'vona/packages-vona/vona-core/src/lib/core/config.ts'
+    Imported via '../utils/powerPartial.ts' from file 'vona/packages-vona/vona-core/src/types/config/locale.ts'
+    Imported via './powerPartial.ts' from file 'vona/packages-vona/vona-core/src/types/utils/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/context/contextBase.ts(3,38): error TS6307: File 'vona/packages-vona/vona-core/src/types/config/instance.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../config/instance.ts' from file 'vona/packages-vona/vona-core/src/types/context/contextBase.ts'
+    Imported via '../../types/config/instance.ts' from file 'vona/packages-vona/vona-core/src/lib/core/context.ts'
+    Imported via './instance.ts' from file 'vona/packages-vona/vona-core/src/types/config/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/context/index.ts(4,34): error TS6307: File 'vona/packages-vona/vona-core/src/types/context/contextBase.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './contextBase.ts' from file 'vona/packages-vona/vona-core/src/types/context/index.ts'
+    Imported via './contextBase.ts' from file 'vona/packages-vona/vona-core/src/types/context/index.ts'
+    Imported via '../../types/context/contextBase.ts' from file 'vona/packages-vona/vona-core/src/lib/core/context.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/context/index.ts(5,36): error TS6307: File 'vona/packages-vona/vona-core/src/types/context/contextOthers.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/context/index.ts(6,35): error TS6307: File 'vona/packages-vona/vona-core/src/types/context/contextState.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './contextState.ts' from file 'vona/packages-vona/vona-core/src/types/context/index.ts'
+    Imported via './contextState.ts' from file 'vona/packages-vona/vona-core/src/types/context/index.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/enum/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/types/enum/appEvent.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/types/application/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/index.ts(2,15): error TS6307: File 'vona/packages-vona/vona-core/src/types/config/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/index.ts(4,15): error TS6307: File 'vona/packages-vona/vona-core/src/types/enum/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/index.ts(5,15): error TS6307: File 'vona/packages-vona/vona-core/src/types/interface/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/index.ts(6,15): error TS6307: File 'vona/packages-vona/vona-core/src/types/utils/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/interface/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/types/interface/bootstrap.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './bootstrap.ts' from file 'vona/packages-vona/vona-core/src/types/interface/index.ts'
+    Imported via '../../types/interface/bootstrap.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/bootstrap.ts'
+    Imported via '../../types/interface/bootstrap.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/cluster.ts'
+    Imported via '../../types/interface/bootstrap.ts' from file 'vona/packages-vona/vona-core/src/lib/framework/createApp.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/interface/index.ts(3,15): error TS6307: File 'vona/packages-vona/vona-core/src/types/interface/module.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/utils/index.ts(2,15): error TS6307: File 'vona/packages-vona/vona-core/src/types/utils/demo.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/utils/index.ts(4,15): error TS6307: File 'vona/packages-vona/vona-core/src/types/utils/omitNever.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona-core/src/types/utils/type.ts(1,36): error TS6307: File 'vona/packages-vona/vona-core/src/lib/decorator/type/constructable.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '../../lib/decorator/type/constructable.ts' from file 'vona/packages-vona/vona-core/src/types/utils/type.ts'
+    Imported via '../type/constructable.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/createBeanDecorator.ts'
+    Imported via '../decorator/type/constructable.ts' from file 'vona/packages-vona/vona-core/src/lib/core/hmrDeps.ts'
+    Imported via '../type/constructable.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/class/util.ts'
+    Imported via './constructable.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/type/index.ts'
+    Imported via '../../lib/decorator/type/constructable.ts' from file 'vona/packages-vona/vona-core/src/types/interface/monkey.ts'
+    Imported via '../../lib/decorator/type/constructable.ts' from file 'vona/packages-vona/vona-core/src/types/interface/module.ts'
+    Imported via '../decorator/type/constructable.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/extendClass.ts'
+    Imported via '../decorator/type/constructable.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/mixinClass.ts'
+    Imported via '../decorator/type/constructable.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/omitClass.ts'
+    Imported via '../decorator/type/constructable.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/partialClass.ts'
+    Imported via '../decorator/type/constructable.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/pickClass.ts'
+    Imported via '../decorator/type/constructable.ts' from file 'vona/packages-vona/vona-core/src/lib/mappedClass/pickClassInner.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/packages-vona/vona/src/index.ts(1,15): error TS6307: File 'vona/packages-vona/vona-core/src/index.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via 'vona-core' from file 'vona/packages-vona/vona/src/index.ts' with packageId 'vona-core/src/index.ts@5.1.46'
+    Imported via '../../index.ts' from file 'vona/packages-vona/vona-core/src/types/config/config.ts'
+    Imported via '../../../index.ts' from file 'vona/packages-vona/vona-core/src/lib/decorator/interface/useOptions.ts'
+  File is ECMAScript module because 'vona/packages-vona/vona-core/package.json' has field "type" with value "module"
+vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/config.test.ts(8,34): error TS6307: File 'vona/src/backend/config/config/config.ts' is not listed within the file list of project 'vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'vona/package.json' has field "type" with value "module"
+
+exit: 2
+
+Source-only semantic check: inherited composite file-list enforcement disabled, no outputs/references changed.
+$ vona/node_modules/.bin/tsc --noEmit --composite false --incremental false -p vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json
+
+exit: 0

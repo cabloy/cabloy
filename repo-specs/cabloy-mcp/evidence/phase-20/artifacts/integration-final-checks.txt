@@ -1,0 +1,92 @@
+Integration final static checks; not composite/build/runtime ATP evidence.
+
+$ node_modules/.bin/oxlint --disable-nested-config vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/config/config.ts vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/types/index.ts vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/config.test.ts vona/src/backend/config/config/config.ts repo-specs/cabloy-mcp/evidence/phase-20/artifacts/integration-check.mjs
+repo-specs/cabloy-mcp/evidence/phase-20/artifacts/integration-check.mjs:52:1: error eslint(no-console): Unexpected console statement. help: Supported methods are: warn, error.
+repo-specs/cabloy-mcp/evidence/phase-20/artifacts/integration-check.mjs:22:18: error antfu(no-top-level-await): Do not use top-level await
+repo-specs/cabloy-mcp/evidence/phase-20/artifacts/integration-check.mjs:23:85: error @stylistic(comma-dangle): Missing trailing comma.
+repo-specs/cabloy-mcp/evidence/phase-20/artifacts/integration-check.mjs:25:14: error antfu(no-top-level-await): Do not use top-level await
+
+exit: 1
+
+Rerun after correcting evidence harness script lint (top-level await and stdout style); no product source changes.
+
+$ node_modules/.bin/oxlint --disable-nested-config vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/config/config.ts vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/types/index.ts vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/config.test.ts vona/src/backend/config/config/config.ts repo-specs/cabloy-mcp/evidence/phase-20/artifacts/integration-check.mjs
+repo-specs/cabloy-mcp/evidence/phase-20/artifacts/integration-check.mjs:53:5: error eslint(prefer-template): Unexpected string concatenation. help: Use template literals instead of string concatenation.
+repo-specs/cabloy-mcp/evidence/phase-20/artifacts/integration-check.mjs:8:1: error antfu(no-import-node-modules-by-path): Do not import modules in `node_modules` folder by path
+
+exit: 1
+
+Final rerun after script-only lint corrections; no lint suppressions.
+
+$ node_modules/.bin/oxlint --disable-nested-config vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/config/config.ts vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/types/index.ts vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/config.test.ts vona/src/backend/config/config/config.ts repo-specs/cabloy-mcp/evidence/phase-20/artifacts/integration-check.mjs
+
+exit: 0
+
+$ npm run spec:check -- cabloy-mcp
+
+> cabloy@5.1.214 spec:check
+> node ./repo-agent-governance/tools/spec-audit/audit.mjs cabloy-mcp
+
+repo-specs/cabloy-mcp: complete planning structure passed (68 definitions).
+Complete-baseline structure and explicit exact-ID chain.
+Static structure only; approval, semantic sufficiency, implementation, and evidence authenticity require human review.
+
+exit: 0
+
+$ npm run spec:charts -- cabloy-mcp
+
+> cabloy@5.1.214 spec:charts
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs cabloy-mcp
+
+generated implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-mcp (en; 0/12 verified).
+
+exit: 0
+
+$ npm run spec:charts:check -- cabloy-mcp
+
+> cabloy@5.1.214 spec:charts:check
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs --check cabloy-mcp
+
+checked implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-mcp (en; 0/12 verified).
+
+exit: 0
+
+$ node_modules/.bin/oxfmt --check vona/src/suite/cabloy-mcp vona/src/backend/config/config/config.ts repo-specs/cabloy-mcp/progress.md repo-specs/cabloy-mcp/evidence/phase-20
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 189ms on 20 files using 12 threads.
+
+exit: 0
+
+$ git diff --check
+
+exit: 0
+
+$ git status --short
+ M repo-specs/cabloy-mcp/progress.md
+ M vona/pnpm-lock.yaml
+ M vona/src/backend/config/config/config.ts
+?? repo-specs/cabloy-mcp/evidence/phase-20/
+?? vona/src/suite/cabloy-mcp/
+
+exit: 0
+
+$ git diff --stat
+ repo-specs/cabloy-mcp/progress.md        |  10 ++-
+ vona/pnpm-lock.yaml                      | 111 ++++++++++++++++++++-----------
+ vona/src/backend/config/config/config.ts |   6 +-
+ 3 files changed, 88 insertions(+), 39 deletions(-)
+
+exit: 0
+
+$ git -C <MAIN_CHECKOUT> status --short
+
+exit: 0
+
+$ git -C <MAIN_CHECKOUT> rev-parse HEAD
+ff20438ef58e7d379872bf1b46e6a686caee9041
+
+exit: 0
+
+Preservation assertions passed: main clean at unchanged ff20438ef5; staging empty; HEAD unchanged; authored configuration hashes unchanged; root lockfile/package.original unchanged; generated Vona lock delta retained exactly. No tracked environment/schema/frontend or unrelated source edits.

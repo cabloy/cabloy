@@ -1,0 +1,26 @@
+$ node --experimental-transform-types --test vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/config.test.ts
+(node:16707) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ MCP configuration foundation
+  ✔ defaults off and returns independent configuration objects (0.74675ms)
+  ✔ does not opt in for undefined (0.27125ms)
+  ✔ does not opt in for "" (0.094458ms)
+  ✔ does not opt in for "false" (0.101083ms)
+  ✔ does not opt in for "1" (0.842709ms)
+  ✔ does not opt in for "TRUE" (0.0725ms)
+  ✔ does not opt in for "True" (0.070333ms)
+  ✔ does not opt in for " true" (0.075417ms)
+  ✔ does not opt in for "true " (0.087042ms)
+  ✔ maps only literal true and applies the override after module defaults (0.154209ms)
+  ✔ keeps an explicit application disablement over an enabled module default (0.075792ms)
+✔ MCP configuration foundation (3.095458ms)
+ℹ tests 11
+ℹ suites 1
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 303.920709
+
+exit: 0

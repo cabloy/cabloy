@@ -1,0 +1,3 @@
+$ vona/node_modules/.bin/tsc --noEmit --composite false --incremental false -p vona/tsconfig.json
+
+exit: 0
