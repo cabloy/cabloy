@@ -48,10 +48,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
-        with:
-          # Exclude CLI templates whose filenames are invalid on Windows.
-          # Cone mode also includes root files needed by the npm entrypoints.
-          sparse-checkout: repo-agent-governance
       - uses: actions/setup-node@v6
         with:
           node-version: 24
