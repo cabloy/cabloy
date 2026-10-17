@@ -8,7 +8,7 @@ The suite’s `test-plan.md` owns ATP definitions, procedures, expected outcomes
 
 For ordinary execution that does not change authority:
 
-1. retain actual evidence;
+1. sanitize and review actual evidence before durable retention;
 2. update a dedicated phase/ATP evidence record when the suite convention supports it;
 3. update a rollout or operational handoff record when it is part of the established suite flow;
 4. update `progress.md` with derived status, evidence pointers, blockers, and next proof;
@@ -51,6 +51,33 @@ A dedicated ATP evidence record should include:
 Do not retain credentials, raw tokens, signed callback state, secrets, live provider identifiers, or real customer/payment data. Redaction is part of the evidence record, not an informal afterthought.
 
 Do not create an empty `evidence/` directory, placeholder `EVD-*` record, or fabricated artifact merely to satisfy a traceability table. A command written in a test plan or dossier is prospective until it is actually executed and retained.
+
+## Machine-local paths before retention
+
+Sanitize compiler output, CLI banners, stderr, exception stacks, and path-bearing JSON/diffs before saving or sharing them. Paths inside the observed checkout should be repository-root-relative, not relative to the evidence file. Use stable aliases such as `<MAIN_CHECKOUT>` for other roots; do not collapse unrelated roots into the same identity. Avoid raw intermediate logs and `tee` before sanitization. This does not intercept tool/terminal output automatically; callers must route both producer streams through the sanitizer. Do not capture secret-bearing output merely because a path tool is present.
+
+Verify the active root scripts first. The path-only commands are:
+
+```bash
+# Bash; use a new output filename, never overwrite an existing record.
+set -o pipefail
+set -o noclobber
+npm run --silent test:agent-governance 2>&1 | npm run --silent evidence:sanitize > evidence.pending.txt
+stage_status=( "${PIPESTATUS[@]}" )
+printf 'producer_exit=%s sanitizer_exit=%s\n' "${stage_status[0]}" "${stage_status[1]}"
+# Only check/retain the artifact if sanitizer_exit is 0; preserve producer failure.
+if [ "${stage_status[1]}" -eq 0 ]; then
+  npm run --silent evidence:check -- -- evidence.pending.txt
+fi
+```
+
+The producer above is an example verification command, not authorization to run unrelated tests. Retain evidence only after evaluating **both** producer and sanitizer statuses and reviewing sensitive data. `pipefail` prevents a failed producer from appearing successful because sanitization succeeded; it does not preserve every stage's exact exit code. When exact codes matter, capture Bash's `PIPESTATUS` immediately after the pipeline (Zsh: `pipestatus`) before running another command, and record each result. Do not let `set -e` abort before capturing a known failing verification result. A failed sanitizer may already have emitted earlier sanitized lines: its partial output is not acceptable evidence.
+
+The pipeline above is Bash-specific. For Windows/PowerShell, consult `repo-docs/reference/repo-scripts.md#windows-and-powershell`: preserve UTF-8 bytes and each native process's exit status; PowerShell's final `$LASTEXITCODE` alone does not record both stages. Do not reuse Bash/Zsh status syntax in PowerShell or retain a raw intermediate file to work around encoding.
+
+The tool defaults to its owning checkout, not the shell's working directory. `--repo-root` changes that root; repeatable `--map 'ROOT=ALIAS'` declares other absolute roots without retaining their physical locations in output. Use the same mappings for sanitization and checking. Consult `repo-docs/reference/repo-scripts.md#evidence-path-sanitization` for supported path forms, scan limits and exit codes. Unknown roots/encodings and semantic paths need manual review; the checker must not be described as a universal privacy or secret scanner. Excluded or unsupported inputs mean incomplete coverage, not clean evidence. Keep checks explicitly scoped to the intended artifacts rather than a broad repository scan.
+
+Preserve command flags, diagnostic codes, line/column information, failures, exit codes, and source-file hashes. Source hashes refer to original source bytes, not sanitized log bytes. A path-redacted historical patch is not byte-exact or apply-ready; label it accordingly. Redaction is presentation-only, not a rerun, new approval, ATP success, or status advancement. A passing path check proves only the declared path-recognition coverage and does not replace secret/customer-data review or the test plan's evidence gate.
 
 ## Status vocabulary
 

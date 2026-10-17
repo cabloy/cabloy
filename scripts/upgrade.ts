@@ -294,6 +294,8 @@ function reconcileGovernancePackageJson(dryRun?: boolean): void {
     'test:agent-governance',
     'contract:gate',
     'spec:check',
+    'evidence:sanitize',
+    'evidence:check',
   ];
   const managedScripts = [...baselineScripts, ...governanceScripts];
   let changed = false;

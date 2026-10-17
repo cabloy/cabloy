@@ -10,6 +10,8 @@ const GOVERNANCE_SCRIPT_NAMES = [
   'spec:charts',
   'spec:charts:check',
   'spec:check',
+  'evidence:sanitize',
+  'evidence:check',
   'agent:governance:render',
   'agent:governance:check',
   'agent:governance:adopt',

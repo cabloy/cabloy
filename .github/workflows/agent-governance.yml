@@ -38,3 +38,22 @@ jobs:
           npm run spec:charts:check -- home-user
       - name: build documentation
         run: npm run docs:build
+
+  evidence-platforms:
+    name: evidence paths (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: verify native evidence tooling
+        run: node --test repo-agent-governance/tests/evidence-paths.test.mjs
+      - name: verify sanitizer command entrypoint
+        run: npm run --silent evidence:sanitize -- --help
+      - name: verify checker command entrypoint
+        run: npm run --silent evidence:check -- --help

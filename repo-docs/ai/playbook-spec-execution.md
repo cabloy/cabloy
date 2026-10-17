@@ -102,10 +102,28 @@ The execution workflow supplies the approved dossier and preserves the boundary;
 Use the narrowest approved check first, then follow the linked ATP procedures and applicable release gates.
 
 1. run the scoped verification specified by the increment
-2. retain observed evidence using the suite's existing convention
-3. redact secrets, credentials, raw tokens, customer data, and provider identifiers
+2. sanitize machine-local paths and review secrets, credentials, raw tokens, customer data, and provider identifiers **before** durable retention or sharing
+3. retain only reviewed, redacted observed evidence using the suite's existing convention
 4. record failures, waivers, invalidation, and supersession rather than erasing history
 5. update evidence before updating derived progress
+
+For path-bearing output, combine producer stdout/stderr before sanitizing; do not save a raw intermediate log or use `tee` ahead of the sanitizer. For example, in Bash, using a new output filename (do not enable `set -e` before capturing a known failing verification result):
+
+```bash
+set -o pipefail
+set -o noclobber
+npm run --silent test:agent-governance 2>&1 | npm run --silent evidence:sanitize > evidence.pending.txt
+stage_status=( "${PIPESTATUS[@]}" )
+printf 'producer_exit=%s sanitizer_exit=%s\n' "${stage_status[0]}" "${stage_status[1]}"
+# Only check/retain the artifact if sanitizer_exit is 0; preserve producer failure.
+if [ "${stage_status[1]}" -eq 0 ]; then
+  npm run --silent evidence:check -- -- evidence.pending.txt
+fi
+```
+
+Choose the producer from the approved verification scope; this example does not authorize unrelated tests. Evaluate both producer and sanitizer statuses before accepting the artifact. `pipefail` catches upstream failure, but exact per-stage exit codes require immediately capturing Bash `PIPESTATUS` or Zsh `pipestatus` before another command. A failed sanitizer may leave partial sanitized output; do not accept it as evidence. A clean path check cannot turn a failed test into a pass. This pipeline is Bash-specific; Windows/PowerShell requires deliberate UTF-8 handling and separate native process statuses. See [Windows and PowerShell](/reference/repo-scripts#windows-and-powershell) rather than reusing Bash/Zsh syntax.
+
+The sanitizer preserves checkout-relative locations and uses aliases for external roots. It does not automatically intercept terminal/tool output, recognize every absolute path, remove secrets, or certify safe publication. Review remaining sensitive data separately. Preserve original failures, diagnostic meaning and source hashes; label sanitized historical diffs as path-redacted, not byte-exact/apply-ready. See [Evidence path sanitization](/reference/repo-scripts#evidence-path-sanitization) for mappings, supported coverage and incomplete-scan behavior.
 
 Use status precisely:
 
