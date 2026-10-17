@@ -644,10 +644,10 @@ export class CliToolsMasterDetail extends BeanCliBase {
   private _detailDtoTemplates() {
     const { argv } = this.context;
     return [
-      [argv.detailDtoBaseName, '<%=argv.detailDtoBaseName%>.tsx_'],
-      [argv.detailDtoMutateName, '<%=argv.detailDtoMutateName%>.tsx_'],
-      [argv.detailDtoViewName, '<%=argv.detailDtoViewName%>.tsx_'],
-      [argv.detailDtoResItemName, '<%=argv.detailDtoResItemName%>.tsx_'],
+      [argv.detailDtoBaseName, '{{detailDtoBaseName}}.tsx_'],
+      [argv.detailDtoMutateName, '{{detailDtoMutateName}}.tsx_'],
+      [argv.detailDtoViewName, '{{detailDtoViewName}}.tsx_'],
+      [argv.detailDtoResItemName, '{{detailDtoResItemName}}.tsx_'],
     ] as const;
   }
 
