@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.215
+
+### Features
+
+- Add support for skills.
+
 ## 5.1.214
 
 ### Improvements
