@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.216
+
+### Features
+
+- Apply feature updates.
+
+### Improvements
+
+- Update the agent governance configuration.
+
 ## 5.1.215
 
 ### Features
