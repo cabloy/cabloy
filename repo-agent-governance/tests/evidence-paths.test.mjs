@@ -52,6 +52,19 @@ function cli(args, input = '', options = {}) {
   });
 }
 
+async function symlinkOrSkip(t, target, path, type) {
+  try {
+    await symlink(target, path, type);
+    return true;
+  } catch (error) {
+    if (process.platform === 'win32' && ['EPERM', 'EACCES', 'ENOTSUP'].includes(error.code)) {
+      t.skip(`Windows ${type} link creation unavailable (${error.code})`);
+      return false;
+    }
+    throw error;
+  }
+}
+
 function sink() {
   let text = '';
   const stream = new Writable({
@@ -84,9 +97,61 @@ test('module import is inert and repo default is anchored to the tool rather tha
   assert.equal(imported.status, 0);
   assert.equal(imported.stdout, '');
   assert.equal(imported.stderr, '');
-  const result = cli(['sanitize'], `${DEFAULT_REPO_ROOT}/sample.mjs\n`, { cwd });
+  const result = cli(['sanitize'], `${join(DEFAULT_REPO_ROOT, 'sample.mjs')}\n`, { cwd });
   assert.equal(result.status, 0);
   assert.equal(result.stdout, 'sample.mjs\n');
+});
+
+test('native paths with spaces and Unicode work in matchers, CLI arguments and checker scopes', async t => {
+  const root = await fixture(t, {
+    'repo space-é/source 文件.txt': 'clean\n',
+    'mapped space-🙂/evidence.txt': '/home/Secret/a\n',
+  });
+  const repoRoot = join(root, 'repo space-é');
+  const mappedRoot = join(root, 'mapped space-🙂');
+  const source = join(repoRoot, 'source 文件.txt');
+  const evidence = join(mappedRoot, 'evidence.txt');
+  const nativeMatcher = createMatcher({ repoRoot, maps: [{ root: mappedRoot, alias: 'OTHER' }] });
+  const input = `"${source}":3:4\n"${evidence}"\n${pathToFileURL(source).href}\n`;
+  const expected = '"source 文件.txt":3:4\n"<OTHER>/evidence.txt"\nsource 文件.txt\n';
+  assert.equal(nativeMatcher.find(input).length, 3);
+  assert.equal(nativeMatcher.sanitize(input), expected);
+  assert.equal(nativeMatcher.find(expected).length, 0);
+  const sanitized = cli(
+    ['sanitize', '--repo-root', repoRoot, '--map', `${mappedRoot}=OTHER`],
+    input,
+  );
+  assert.equal(sanitized.status, 0);
+  assert.equal(sanitized.stdout, expected);
+  assert.equal(sanitized.stderr, '');
+
+  const checked = await checkPaths([root], { matcher: nativeMatcher });
+  assert.deepEqual(checked, {
+    status: 1,
+    diagnostics: ['scope-1/mapped space-🙂/evidence.txt:1 PATH_FOUND'],
+  });
+  const command = cli(['check', '--repo-root', repoRoot, '--', root]);
+  assert.equal(command.status, checked.status);
+  assert.equal(command.stdout, `${checked.diagnostics.join('\n')}\n`);
+  assert.equal(command.stderr, '');
+  assert.deepEqual(await checkPaths([source, evidence], { matcher: nativeMatcher }), {
+    status: 1,
+    diagnostics: ['scope-2/evidence.txt:1 PATH_FOUND'],
+  });
+  const relative = cli(['check', '--', 'source 文件.txt', '../mapped space-🙂/evidence.txt'], '', {
+    cwd: repoRoot,
+  });
+  assert.equal(relative.status, 1);
+  assert.equal(relative.stdout, 'scope-2/evidence.txt:1 PATH_FOUND\n');
+  assert.equal(relative.stderr, '');
+  if (process.platform === 'win32') {
+    assert.deepEqual(
+      await checkPaths([source.replaceAll('\\', '/'), evidence.replaceAll('\\', '/')], {
+        matcher: nativeMatcher,
+      }),
+      { status: 1, diagnostics: ['scope-2/evidence.txt:1 PATH_FOUND'] },
+    );
+  }
 });
 
 test('checkout, explicit aliases, overlap priority and root boundary semantics', () => {
@@ -388,20 +453,16 @@ test('checker scans sorted recursive text of any extension, only reports safe lo
   assert.equal(cli(['check', '--', join(root, 'clean')]).status, 0);
 });
 
-test('checker excludes env, symlink and non-text inputs with incomplete precedence', async t => {
+test('checker excludes env and non-text inputs with incomplete precedence', async t => {
   const root = await fixture(t, {
     '.env.secret': '/home/Secret/env\n',
     '.env-dir/nested': '/home/Secret/nested\n',
     'binary.any': Buffer.from([0, 1, 2]),
     'invalid.any': Buffer.from([0xff]),
     'private.txt': '/home/Secret/private\n',
-    'unreadable': 'private',
     'oversized': Buffer.alloc(FILE_LIMIT + 1, 97),
     'long-line': Buffer.alloc(LINE_LIMIT + 1, 97),
   });
-  await chmod(join(root, 'unreadable'), 0);
-  t.after(() => chmod(join(root, 'unreadable'), 0o600).catch(() => {}));
-  await symlink(join(root, 'private.txt'), join(root, 'link'));
   const result = await checkPaths([root], { matcher });
   assert.equal(result.status, 2);
   assert.deepEqual(result.diagnostics, [
@@ -409,27 +470,109 @@ test('checker excludes env, symlink and non-text inputs with incomplete preceden
     'scope-1/.env.secret:0 ENV_EXCLUDED',
     'scope-1/binary.any:0 BINARY',
     'scope-1/invalid.any:0 INVALID_UTF8',
-    'scope-1/link:0 SYMLINK_EXCLUDED',
     'scope-1/long-line:0 LINE_LIMIT',
     'scope-1/oversized:0 SIZE_LIMIT',
     'scope-1/private.txt:1 PATH_FOUND',
-    'scope-1/unreadable:0 UNREADABLE',
   ]);
   const resultCli = cli(['check', '--', root]);
   assert.equal(resultCli.status, 2);
+  assert.equal(resultCli.stdout, `${result.diagnostics.join('\n')}\n`);
+  assert.equal(resultCli.stderr, '');
   assert.doesNotMatch(resultCli.stdout + resultCli.stderr, /Secret|\/home\/|evidence-paths-[^/ ]/u);
-  const direct = await checkPaths([join(root, '.env-dir/nested'), join(root, 'link')], { matcher });
-  assert.deepEqual(direct.diagnostics, ['scope-1:0 ENV_EXCLUDED', 'scope-2:0 SYMLINK_EXCLUDED']);
-  await symlink(root, join(root, 'directory-link'));
-  assert.deepEqual(
-    (await checkPaths([join(root, 'directory-link/private.txt')], { matcher })).diagnostics,
-    ['scope-1:0 SYMLINK_EXCLUDED'],
-  );
+  assert.deepEqual(await checkPaths([join(root, '.env-dir/nested')], { matcher }), {
+    status: 2,
+    diagnostics: ['scope-1:0 ENV_EXCLUDED'],
+  });
 });
 
-test('special files are excluded before open and missing scopes reveal no root', async t => {
-  const root = await fixture(t);
-  if (process.platform !== 'win32') {
+test(
+  'checker treats POSIX mode-zero files as unreadable even for privileged runners',
+  {
+    skip:
+      process.platform === 'win32'
+        ? 'Windows readability is determined by ACL/open errors, not POSIX mode bits'
+        : false,
+  },
+  async t => {
+    const root = await fixture(t, { unreadable: '/home/Secret/a\n' });
+    const path = join(root, 'unreadable');
+    await chmod(path, 0);
+    try {
+      assert.deepEqual(await checkPaths([path], { matcher }), {
+        status: 2,
+        diagnostics: ['scope-1/unreadable:0 UNREADABLE'],
+      });
+      assert.deepEqual(await checkPaths([root], { matcher }), {
+        status: 2,
+        diagnostics: ['scope-1/unreadable:0 UNREADABLE'],
+      });
+      const result = cli(['check', '--', path]);
+      assert.equal(result.status, 2);
+      assert.equal(result.stdout, 'scope-1/unreadable:0 UNREADABLE\n');
+      assert.equal(result.stderr, '');
+    } finally {
+      await chmod(path, 0o600);
+    }
+  },
+);
+
+test('checker excludes file symlinks as explicit scopes and directory entries', async t => {
+  const root = await fixture(t, { 'private.txt': '/home/Secret/private\n' });
+  const link = join(root, 'link');
+  if (!(await symlinkOrSkip(t, join(root, 'private.txt'), link, 'file'))) return;
+  assert.deepEqual(await checkPaths([link], { matcher }), {
+    status: 2,
+    diagnostics: ['scope-1:0 SYMLINK_EXCLUDED'],
+  });
+  const result = await checkPaths([root], { matcher });
+  assert.deepEqual(result, {
+    status: 2,
+    diagnostics: ['scope-1/link:0 SYMLINK_EXCLUDED', 'scope-1/private.txt:1 PATH_FOUND'],
+  });
+  const command = cli(['check', '--', root]);
+  assert.equal(command.status, result.status);
+  assert.equal(command.stdout, `${result.diagnostics.join('\n')}\n`);
+  assert.equal(command.stderr, '');
+});
+
+async function checkDirectoryLink(t, type) {
+  const root = await fixture(t, { 'target/private.txt': '/home/Secret/private\n' });
+  const link = join(root, 'directory-link');
+  if (!(await symlinkOrSkip(t, join(root, 'target'), link, type))) return;
+  assert.deepEqual(await checkPaths([link, join(link, 'private.txt')], { matcher }), {
+    status: 2,
+    diagnostics: ['scope-1:0 SYMLINK_EXCLUDED', 'scope-2:0 SYMLINK_EXCLUDED'],
+  });
+  assert.deepEqual(await checkPaths([root], { matcher }), {
+    status: 2,
+    diagnostics: [
+      'scope-1/directory-link:0 SYMLINK_EXCLUDED',
+      'scope-1/target/private.txt:1 PATH_FOUND',
+    ],
+  });
+  const command = cli(['check', '--', join(link, 'private.txt')]);
+  assert.equal(command.status, 2);
+  assert.equal(command.stdout, 'scope-1:0 SYMLINK_EXCLUDED\n');
+  assert.equal(command.stderr, '');
+}
+
+test('checker excludes directory symlinks and symlink scope ancestors', async t => {
+  await checkDirectoryLink(t, 'dir');
+});
+
+test(
+  'checker excludes Windows junctions and junction scope ancestors',
+  { skip: process.platform !== 'win32' ? 'Windows junction capability test' : false },
+  async t => {
+    await checkDirectoryLink(t, 'junction');
+  },
+);
+
+test(
+  'special files are excluded before open',
+  { skip: process.platform === 'win32' ? 'mkfifo requires POSIX' : false },
+  async t => {
+    const root = await fixture(t);
     const fifo = join(root, 'fifo');
     const made = spawnSync('mkfifo', [fifo]);
     assert.equal(made.status, 0);
@@ -437,27 +580,115 @@ test('special files are excluded before open and missing scopes reveal no root',
       status: 2,
       diagnostics: ['scope-1/fifo:0 SPECIAL_EXCLUDED'],
     });
-  }
+  },
+);
+
+test('missing scopes reveal no root', async t => {
+  const root = await fixture(t);
   const missing = cli(['check', '--', join(root, 'private-identity/missing')]);
   assert.equal(missing.status, 2);
   assert.equal(missing.stdout, 'scope-1:0 UNREADABLE\n');
   assert.equal(missing.stderr, '');
 });
 
-test('diagnostic filenames are sanitized and escape line/control/colon characters', async t => {
-  const name = 'evil\n\u001B\u202E:name';
-  const root = await fixture(t, {
-    [name]: '/home/Secret/a\n',
-    [String.raw`C:\Users\Secret\file`]: '/home/Secret/a\n',
+test('portable diagnostic filenames escape Unicode formatting characters', async t => {
+  const name = 'evil\u202E name-é.txt';
+  const root = await fixture(t, { [name]: '/home/Secret/a\n' });
+  const result = await checkPaths([root, join(root, name)], { matcher });
+  assert.deepEqual(result, {
+    status: 1,
+    diagnostics: [
+      'scope-1/evil\\u202e name-é.txt:1 PATH_FOUND',
+      'scope-2/evil\\u202e name-é.txt:1 PATH_FOUND',
+    ],
   });
-  const result = await checkPaths([root], { matcher });
-  assert.equal(result.status, 1);
-  assert.deepEqual(result.diagnostics, [
-    'scope-1/<PRIVATE_PATH>:1 PATH_FOUND',
-    'scope-1/evil\\u000a\\u001b\\u202e\\u003aname:1 PATH_FOUND',
-  ]);
-  assert.doesNotMatch(result.diagnostics.join('\n'), /Secret/u);
+  const command = cli(['check', '--', root, join(root, name)]);
+  assert.equal(command.status, result.status);
+  assert.equal(command.stdout, `${result.diagnostics.join('\n')}\n`);
+  assert.equal(command.stderr, '');
 });
+
+test(
+  'POSIX diagnostic filenames sanitize Windows-looking paths and escape line/control/colon characters',
+  {
+    skip:
+      process.platform === 'win32'
+        ? 'These literal filename characters are illegal on Windows'
+        : false,
+  },
+  async t => {
+    const name = 'evil\n\u001B\u202E:name';
+    const privateName = String.raw`C:\Users\Secret\file`;
+    const root = await fixture(t, {
+      [name]: '/home/Secret/a\n',
+      [privateName]: '/home/Secret/a\n',
+    });
+    assert.deepEqual(await checkPaths([root], { matcher }), {
+      status: 1,
+      diagnostics: [
+        'scope-1/<PRIVATE_PATH>:1 PATH_FOUND',
+        'scope-1/evil\\u000a\\u001b\\u202e\\u003aname:1 PATH_FOUND',
+      ],
+    });
+    const direct = await checkPaths([join(root, privateName), join(root, name)], { matcher });
+    assert.deepEqual(direct, {
+      status: 1,
+      diagnostics: [
+        'scope-1/<PRIVATE_PATH>:1 PATH_FOUND',
+        'scope-2/evil\\u000a\\u001b\\u202e\\u003aname:1 PATH_FOUND',
+      ],
+    });
+    const command = cli(['check', '--', join(root, privateName), join(root, name)]);
+    assert.equal(command.status, direct.status);
+    assert.equal(command.stdout, `${direct.diagnostics.join('\n')}\n`);
+    assert.equal(command.stderr, '');
+    assert.doesNotMatch(command.stdout, /Secret/u);
+  },
+);
+
+test(
+  'POSIX literal backslashes remain filename characters in explicit scopes and directory scans',
+  { skip: process.platform === 'win32' ? 'Backslash is a path separator on Windows' : false },
+  async t => {
+    const name = String.raw`literal\file.txt`;
+    const directory = String.raw`literal\directory`;
+    const root = await fixture(t, {
+      [name]: '/home/Secret/a\n',
+      [join(directory, 'evidence.txt')]: '/home/Secret/b\n',
+    });
+    assert.deepEqual(await checkPaths([join(root, name)], { matcher }), {
+      status: 1,
+      diagnostics: ['scope-1/literal\\u005cfile.txt:1 PATH_FOUND'],
+    });
+    assert.deepEqual(await checkPaths([join(root, directory)], { matcher }), {
+      status: 1,
+      diagnostics: ['scope-1/evidence.txt:1 PATH_FOUND'],
+    });
+    assert.deepEqual(await checkPaths([join(root, directory, 'evidence.txt')], { matcher }), {
+      status: 1,
+      diagnostics: ['scope-1/evidence.txt:1 PATH_FOUND'],
+    });
+    const result = await checkPaths([root], { matcher });
+    assert.deepEqual(result, {
+      status: 1,
+      diagnostics: [
+        'scope-1/literal\\u005cdirectory/evidence.txt:1 PATH_FOUND',
+        'scope-1/literal\\u005cfile.txt:1 PATH_FOUND',
+      ],
+    });
+    const command = cli(['check', '--', join(root, name), root]);
+    assert.equal(command.status, 1);
+    assert.equal(
+      command.stdout,
+      [
+        'scope-1/literal\\u005cfile.txt:1 PATH_FOUND',
+        ...result.diagnostics.map(label => label.replace('scope-1/', 'scope-2/')),
+        '',
+      ].join('\n'),
+    );
+    assert.equal(command.stderr, '');
+  },
+);
 
 test('sanitized files are clean under the same shared checker', async t => {
   const raw = '/synthetic/checkout/file:1:2\n/synthetic/other/file\nfile:///Users/Secret/file\n';

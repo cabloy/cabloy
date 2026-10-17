@@ -1,7 +1,7 @@
 import { constants, realpathSync } from 'node:fs';
 import { lstat, open, readdir } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
-import { basename, join, parse, resolve } from 'node:path';
+import { basename, join, parse, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const DEFAULT_REPO_ROOT = resolve(fileURLToPath(import.meta.url), '../../../..');
@@ -302,7 +302,8 @@ function binary(bytes) {
 async function ancestorExclusion(path) {
   const root = parse(path).root;
   let current = root;
-  for (const part of path.slice(root.length).split(/[/\\]/u)) {
+  // resolve() normalizes native separators; POSIX backslashes remain literal filename characters.
+  for (const part of path.slice(root.length).split(sep)) {
     if (!part) continue;
     if (part.startsWith('.env')) return 'ENV_EXCLUDED';
     current = join(current, part);
@@ -369,8 +370,8 @@ export async function checkPaths(scopes, { matcher = createMatcher() } = {}) {
       report(label, 0, 'SIZE_LIMIT');
       return;
     }
-    // Do not treat privileged test runners' ability to read mode-000 files as evidence of readability.
-    if ((stat.mode & 0o444) === 0) {
+    // POSIX mode-000 files remain unreadable even for privileged runners; Windows relies on open/ACL errors.
+    if (process.platform !== 'win32' && (stat.mode & 0o444) === 0) {
       report(label, 0, 'UNREADABLE');
       return;
     }

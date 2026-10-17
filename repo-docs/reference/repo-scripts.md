@@ -134,6 +134,40 @@ The last two commands illustrate a **synthetic** root, not a detected local loca
 
 Combine producer stdout/stderr **before** sanitization, never `tee` or spool raw output first. Use a new output filename, check sanitizer status, and retain the actual producer result, including failures. See [Verify narrowly and retain evidence](/ai/playbook-spec-execution#verify-narrowly-and-retain-evidence) for a Bash pipeline with immediate per-stage status capture. Zsh uses `pipestatus` instead of Bash `PIPESTATUS`. `pipefail` prevents a passing sanitizer from masking an upstream failure, but it does not preserve every stage's exact code. A failed sanitizer may leave earlier sanitized lines; partial output must not be accepted as evidence. The tool does not automatically intercept terminal or agent-tool output and does not authorize capturing secret-bearing streams.
 
+### Windows and PowerShell
+
+The tool uses Node's native filesystem APIs on Windows, Linux and macOS; it requires the repository's Node.js version (`>=24.4.0`). Path-text recognition is cross-platform independently of the host OS. Native filesystem behavior is checked by the `evidence-platforms` CI matrix on Ubuntu, Windows and macOS. A configured matrix is not a successful run: inspect the actual job results before claiming all three platforms are verified.
+
+From the repository root, PowerShell can invoke the CLI directly:
+
+```powershell
+node .\repo-agent-governance\tools\evidence-paths\sanitize.mjs --help
+node .\repo-agent-governance\tools\evidence-paths\sanitize.mjs check -- '.\evidence.pending.txt'
+$checkExit = $LASTEXITCODE
+# 0 = clean, 1 = paths found, 2 = incomplete/error
+```
+
+For a **synthetic input smoke test only**, not evidence capture from a real producer:
+
+```powershell
+$previousOutputEncoding = $OutputEncoding
+try {
+  $OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+  'Unicode sample: café C:\Users\Synthetic\private\log.txt' |
+    node .\repo-agent-governance\tools\evidence-paths\sanitize.mjs sanitize
+  $sanitizeExit = $LASTEXITCODE
+  # Expected output: Unicode sample: café <PRIVATE_PATH>
+} finally {
+  $OutputEncoding = $previousOutputEncoding
+}
+```
+
+Bash `pipefail`/`PIPESTATUS` and Zsh `pipestatus` are not PowerShell syntax. `$LASTEXITCODE` after a native pipeline is not a record of every stage's status. For real producer capture, use the Bash example in a Bash environment, or orchestration that explicitly observes both native processes and supplies UTF-8 bytes without a raw spool; do not claim the synthetic example preserves a producer exit code. Never accept evidence based only on the last pipeline command succeeding.
+
+Prefer PowerShell 7.4+ for native byte-stream pipelines/redirection. Windows PowerShell 5.1 and text cmdlets can transcode output or create UTF-16 files; merely setting `$OutputEncoding` does not make all redirection byte-transparent. The sanitizer rejects invalid UTF-8/binary input rather than guessing an encoding. Avoid inserting text cmdlets into a byte-preserving capture pipeline, and preserve stderr and exit statuses deliberately. Do not change platform encoding globally.
+
+POSIX mode-bit and unusual-filename tests are explicitly platform-specific. Windows permission failures are determined by native file-open/read errors, not simulated with POSIX `chmod(0)`. Symlink tests use Windows directory junctions where possible; unavailable file-symlink privileges are reported as capability skips, not successful coverage. The scan's no-symlink, no-environment-file and stable-filesystem requirements apply on every platform.
+
 ### Coverage and result boundaries
 
 Sanitization and checking share the same matcher. They recognize configured roots and bounded machine-local home/temp conventions, not every slash-prefixed path. Known private paths become `<PRIVATE_PATH>`; configured mappings take precedence so useful checkout-relative locations survive. Supported forms include POSIX home/temp paths, Windows drive/UNC paths, JSON-escaped backslashes and local `file:` URLs. Quote whitespace-containing path tokens; unquoted tokens end at whitespace or prose delimiters. Ordinary non-file URLs and generic API/container paths are not treated as filesystem paths. Other machine roots must be declared explicitly; unusual escaping, unknown filesystem locations, and sensitive relative suffixes still require manual review. This is **path-only tooling**, not a secret scanner or safe-publication certificate. Review credentials, tokens, customer data, and provider identifiers separately before retention/sharing.
