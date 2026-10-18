@@ -127,6 +127,55 @@ Only `src/lib/productionRequestOwner.ts`, `test/support/productionBoundaryFixtur
 
 This finite C1/C2 design surface is accepted; no further generic preparation or reconfirmation of unchanged design is needed. Precise C3 source/command/managed-resource/evidence approval is still required. No runtime result, WBS advancement or full ATP closure is claimed; WBS-MCP-20-01/Phase 20 stay blocked and verified remains 0/12.
 
+## Proposed controller-preserving native ingress profile (2026-10-18)
+
+**Proposed compatibility refinement, not an amendment already accepted with DEC-MCP-02.** The separately authorized concentrated F3-B/R/E disposition at clean `d05c4c3d12f3421b6f80cb2281ec2b19b8f93754` selects the following recommendation for independent disposition. Original controller/Aspect, protocol and SDK design acceptance is preserved; no production source, registration, wire result or new execution authority follows. See [dossier section 16](../wbs-mcp-20-01-execution-dossier.md#16-concrete-f3-bre-mechanism-disposition-2026-10-18).
+
+### Supported terminal and specific missing entrypoint
+
+The [web owner](../../../vona/src/suite-vendor/a-vona/modules/a-web/src/main.ts), lines 30–83, exposes `app[SymbolRouterMiddleware]`, invoked with `ctx`, separately from its app-wide cached system composition. On **registered decorated routes**, the [router](../../../vona/src/suite-vendor/a-vona/modules/a-web/src/bean/bean.router.ts), lines 172–234, establishes route/params/query and invokes route-start, global middleware, guards, interceptors, pipes, route-tail/local middleware and container-resolved controller invocation, including applicable method AOP. This is the proposed terminal, not temporary raw registration or a direct method call. It does **not** replay system middleware.
+
+Recommend a supported `a-web` **admitted-native-request profile/entrypoint** with server-built admission, fixed executor options, immutable predeclared system allowlist, Koa `handleRequest` and the decorated router terminal. Together with ADR 0007's early context hook and ADR 0004's ready-existing path, it must validate the expected controller/action/method and framework-issued receipt; missing/mismatched receipt denies without ordinary resolver fallback. These are new framework capabilities, not current `_callback()` options. Retain synchronous startup wrapping, construction-time `next()` exactly once, no captured startup authority, and exactly-once unchanged delegation for clearly non-MCP request pairs/receiver semantics. Do not mutate singleton system caches, global getters/proxy, prototypes or warmed controller composition.
+
+### Dedicated system profile
+
+Recommend **an empty generic-system allowlist** for claimed MCP/selected metadata traffic, followed by the decorated router. This deliberately replaces—not reproduces—the ordinary HTTP system contract:
+
+| Excluded system owner        | Explicit replacement / retained boundary                                                                             |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `trace`, `httpLog`           | ADR 0008's safe diagnostic prevention and separately selected audit/telemetry; no raw headers/URL/exception logging. |
+| `notfound`, `overrideMethod` | Fixed native unmatched/method behavior and raw-ingress override rejection before executor/routing.                   |
+| `health`, `metrics`          | Not MCP handlers; ordinary traffic keeps its existing composition.                                                   |
+| `app`, `instance`            | Nonwaiting completed-startup/close checks and read-only existing-ready admission; no lazy initialization.            |
+| `cors`                       | Explicit reviewed Origin policy, preserving invalid-Origin 403; no inherited preflight permission.                   |
+| `securities`                 | Explicit reviewed native response-header/security policy.                                                            |
+| `static`                     | No static/SSR preemption of the reserved endpoint.                                                                   |
+
+The observed dependency spine is `trace → httpLog → notfound → overrideMethod → app → instance → cors → securities → static`; health and metrics are additional nodes. Source/generated ordering is not runtime enablement or precedence proof. New graph members must be classified or fail profile validation; do not silently inherit them. Origin, security-header, metadata and production numeric policies remain independently gated, not assumed supplied by the empty list.
+
+### Dedicated ingress-controller route profile
+
+Disable all nine inspected generic global route onions **on ingress actions only**, using the existing `Aspect.middlewareGlobal`, `Aspect.guardGlobal` and `Aspect.interceptorGlobal` with `enable: false`:
+
+| Stage / onion                                   | Proposed disposition                                                                                                                                                     |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Middleware `a-core:gate`                        | Replace with dedicated admission guard checking receipt/destination/binding/current availability.                                                                        |
+| Middleware `a-ssr:ssrPassport`                  | Disable SSR redirect/return-URL behavior.                                                                                                                                |
+| Guard `a-user:passport`                         | Replace with dedicated MCP OAuth admission, with explicit public-metadata/method policy; `public: true` alone still permits generic token extraction/anonymous Passport. |
+| Guard `demo-demonstration:demonstration`        | Disable even when default-disabled; MCP POST is not itself a domain write. Actual business action retains demonstration restrictions.                                    |
+| Interceptor `a-datasharding:datasharding`       | Disable transport-level business-datasource switching; action dispatch retains its datasource ownership.                                                                 |
+| Interceptor `a-openapischema:openapiSchema`     | Disable `x-vona-openapi-schema` diversion to schema generation/framework success.                                                                                        |
+| Interceptors `a-body:bodyReq`, `a-body:bodyRes` | Disable as already accepted: one bounded MCP reader/native writer, no generic parser/envelope.                                                                           |
+| Interceptor `a-ratelimit:rateLimit`             | Disable explicitly even when default-disabled; use reviewed MCP staged limits rather than generic HTTP identity keys/logging.                                            |
+
+Retain route discovery, lookup, route-start/tail/completion, guard/interceptor/pipe machinery, container resolution and applicable method AOP. Use native `ctx.req/res` without decorated body/other arguments. Keep ingress `ctx.onionsDynamic` unset: [onion precedence](../../../vona/src/suite-vendor/a-vona/modules/a-onion/src/service/onion_.ts), lines 260–309, 373–400, permits dynamic options to override route options. A controller-local dedicated guard must deny receipt absence, including advice-excluded graphs; it cannot repair the missing early boundary. Fresh graph/config checks must reject unclassified new route onions or method AOP. Do not copy ingress disables, public policy or options to business `performAction`; its Passport/RBAC/role/demonstration guards, pipes, datasource/AOP and domain checks remain unchanged.
+
+### Raw target ownership and collision policy
+
+`//mcp` is declaration syntax; `/mcp` is the wire target. Recommend admitting only canonical origin-form `/mcp` and the separately selected metadata target. Claim and deny query-bearing, encoded, absolute-form, malformed or normalized aliases that could resolve there **before executor/instance work**, rather than delegating them. The inspected router can strip query/fragment, decode eligible encoding and accept HTTP(S) absolute-form (for example `/mcp?...`, `/%6dcp`, `/mcp#...`, `https://authority/mcp`). Target authority never supplies binding. Freeze and validate supported slash/trailing/case/decoding assumptions; unknown ambiguity fails closed. Bound classifier work under the later F3-N budget; clearly unrelated traffic delegates unchanged.
+
+Validate ownership across POST/GET/DELETE and every other method, selected metadata routes, duplicate root declarations, wildcard/parameter/constraint/fallback matches, advice exclusion and module graph absence versus present-but-unavailable. Identical-route duplicate errors alone do not reserve the endpoint. Effective installed graph/AOP order, controller receipt, system exclusions and ordinary-route regression require separately approved real HTTP proof; the completed F1/F2 construction probe does not supply it. This resolves the proposed profile choice, not production readiness or F3-S/N/F4 gates.
+
 ## References
 
 - [MCP Streamable HTTP, 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http)
