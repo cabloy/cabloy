@@ -1,0 +1,2544 @@
+# Sanitized display only; not an apply-ready patch or qualification.
+diff --git a/vona/src/suite-vendor/a-test/modules/test-vona/src/.metadata/index.ts b/vona/src/suite-vendor/a-test/modules/test-vona/src/.metadata/index.ts
+index 41c10c7642..9d387af433 100644
+--- a/vona/src/suite-vendor/a-test/modules/test-vona/src/.metadata/index.ts
++++ b/vona/src/suite-vendor/a-test/modules/test-vona/src/.metadata/index.ts
+@@ -2,71 +2,6 @@
+ import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore,IModelRelationHasOne,IModelRelationBelongsTo,IModelRelationHasMany,IModelRelationBelongsToMany } from 'vona-module-a-orm';
+ import type { TypeEntityOptionsFields,TypeControllerOptionsActions } from 'vona-module-a-openapi';
+ import type { TableIdentity } from 'table-identity';
+-/** aop: begin */
+-export * from '../bean/aop.regExp.ts';
+-export * from '../bean/aop.simple.ts';
+-
+-import { type IDecoratorAopOptions } from 'vona-module-a-aspect';
+-declare module 'vona-module-a-aspect' {
+-
+-    export interface IAopRecord {
+-      'test-vona:regExp': IDecoratorAopOptions;
+-'test-vona:simple': IDecoratorAopOptions;
+-    }
+-
+-
+-}
+-declare module 'vona-module-test-vona' {
+-
+-        export interface AopRegExp {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
+-
+-          export interface AopRegExp {
+-            get $beanFullName(): 'test-vona.aop.regExp';
+-            get $onionName(): 'test-vona:regExp';
+-            get $onionOptions(): IDecoratorAopOptions;
+-          }
+-
+-        export interface AopSimple {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
+-
+-          export interface AopSimple {
+-            get $beanFullName(): 'test-vona.aop.simple';
+-            get $onionName(): 'test-vona:simple';
+-            get $onionOptions(): IDecoratorAopOptions;
+-          }
+-}
+-/** aop: end */
+-/** aopMethod: begin */
+-export * from '../bean/aopMethod.test.ts';
+-import type { IAopMethodOptionsTest } from '../bean/aopMethod.test.ts';
+-import 'vona-module-a-aspect';
+-declare module 'vona-module-a-aspect' {
+-
+-    export interface IAopMethodRecord {
+-      'test-vona:test': IAopMethodOptionsTest;
+-    }
+-
+-
+-}
+-declare module 'vona-module-test-vona' {
+-
+-        export interface AopMethodTest {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
+-
+-          export interface AopMethodTest {
+-            get $beanFullName(): 'test-vona.aopMethod.test';
+-            get $onionName(): 'test-vona:test';
+-            get $onionOptions(): IAopMethodOptionsTest;
+-          }
+-}
+-/** aopMethod: end */
+ /** entity: begin */
+ export * from '../entity/category.ts';
+ export * from '../entity/order.ts';
+@@ -1089,1223 +1024,1301 @@ declare module 'vona-module-a-orm' {
+   }
+ }
+ /** model: end */
+-/** bean: begin */
+-export * from '../bean/bean.testCtx.ts';
+-
+-import 'vona';
+-declare module 'vona' {
+-
+-
+-}
+-declare module 'vona-module-test-vona' {
+-
+-        export interface BeanTestCtx {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
+-}
+-/** bean: end */
+-/** bean: begin */
+-import type { BeanTestCtx } from '../bean/bean.testCtx.ts';
+-import 'vona';
+-declare module 'vona' {
+-  export interface IBeanRecordGlobal {
+-    'testCtx': BeanTestCtx;
+-  }
+-}
+-/** bean: end */
+-/** service: begin */
+-export * from '../service/aopMethod.ts';
+-export * from '../service/caching.ts';
+-export * from '../service/category.ts';
+-export * from '../service/order.ts';
+-export * from '../service/post.ts';
+-export * from '../service/product.ts';
+-export * from '../service/retryable.ts';
+-export * from '../service/test.ts';
+-export * from '../service/testApp.ts';
+-export * from '../service/testClass.ts';
+-export * from '../service/testData.ts';
+-export * from '../service/transaction.ts';
+-export * from '../service/user.ts';
++/** schedule: begin */
++export * from '../bean/schedule.test.ts';
++export * from '../bean/schedule.test3.ts';
+ 
+-import 'vona-module-a-bean';
+-declare module 'vona-module-a-bean' {
++import { type IDecoratorScheduleOptions } from 'vona-module-a-schedule';
++declare module 'vona-module-a-schedule' {
+ 
+-    export interface IServiceRecord {
+-      'test-vona:aopMethod': never;
+-'test-vona:caching': never;
+-'test-vona:category': never;
+-'test-vona:order': never;
+-'test-vona:post': never;
+-'test-vona:product': never;
+-'test-vona:retryable': never;
+-'test-vona:test': never;
+-'test-vona:testApp': never;
+-'test-vona:testClass': never;
+-'test-vona:testData': never;
+-'test-vona:transaction': never;
+-'test-vona:user': never;
++    export interface IScheduleRecord {
++      'test-vona:test': IDecoratorScheduleOptions;
++'test-vona:test3': IDecoratorScheduleOptions;
+     }
+ 
+ 
+ }
+ declare module 'vona-module-test-vona' {
+ 
+-        export interface ServiceAopMethod {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
+-
+-          export interface ServiceAopMethod {
+-            get $beanFullName(): 'test-vona.service.aopMethod';
+-            get $onionName(): 'test-vona:aopMethod';
+-          }
+-
+-        export interface ServiceCaching {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
+-
+-          export interface ServiceCaching {
+-            get $beanFullName(): 'test-vona.service.caching';
+-            get $onionName(): 'test-vona:caching';
+-          }
+-
+-        export interface ServiceCategory {
++        export interface ScheduleTest {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ServiceCategory {
+-            get $beanFullName(): 'test-vona.service.category';
+-            get $onionName(): 'test-vona:category';
++          export interface ScheduleTest {
++            get $beanFullName(): 'test-vona.schedule.test';
++            get $onionName(): 'test-vona:test';
++            get $onionOptions(): IDecoratorScheduleOptions;
+           }
+ 
+-        export interface ServiceOrder {
++        export interface ScheduleTest3 {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ServiceOrder {
+-            get $beanFullName(): 'test-vona.service.order';
+-            get $onionName(): 'test-vona:order';
++          export interface ScheduleTest3 {
++            get $beanFullName(): 'test-vona.schedule.test3';
++            get $onionName(): 'test-vona:test3';
++            get $onionOptions(): IDecoratorScheduleOptions;
+           }
++}
++/** schedule: end */
++/** dto: begin */
++export * from '../dto/categoryTree.ts';
++export * from '../dto/orderCreate.ts';
++export * from '../dto/orderQuery.ts';
++export * from '../dto/orderQueryPage.ts';
++export * from '../dto/orderSelectRes.ts';
++export * from '../dto/orderSelectResItem.ts';
++export * from '../dto/orderUpdate.ts';
++export * from '../dto/postAggregate.ts';
++export * from '../dto/postCreate.ts';
++export * from '../dto/postGroup.ts';
++export * from '../dto/postSelectReq.ts';
++export * from '../dto/postSelectRes.ts';
++export * from '../dto/postSelectResItem.tsx';
++export * from '../dto/profile.ts';
++export * from '../dto/roleLazy.ts';
++export * from '../dto/serializerArray.ts';
++export * from '../dto/serializerLazy.ts';
++export * from '../dto/serializerSimple.ts';
++export * from '../dto/user.ts';
++export * from '../dto/userCreate.ts';
++export * from '../dto/userLazy.ts';
++export * from '../dto/userUpdate.ts';
++import type { IDtoOptionsCategoryTree } from '../dto/categoryTree.ts';
++import type { IDtoOptionsOrderCreate } from '../dto/orderCreate.ts';
++import type { IDtoOptionsOrderQuery } from '../dto/orderQuery.ts';
++import type { IDtoOptionsOrderQueryPage } from '../dto/orderQueryPage.ts';
++import type { IDtoOptionsOrderSelectRes } from '../dto/orderSelectRes.ts';
++import type { IDtoOptionsOrderSelectResItem } from '../dto/orderSelectResItem.ts';
++import type { IDtoOptionsOrderUpdate } from '../dto/orderUpdate.ts';
++import type { IDtoOptionsPostAggregate } from '../dto/postAggregate.ts';
++import type { IDtoOptionsPostCreate } from '../dto/postCreate.ts';
++import type { IDtoOptionsPostGroup } from '../dto/postGroup.ts';
++import type { IDtoOptionsPostSelectReq } from '../dto/postSelectReq.ts';
++import type { IDtoOptionsPostSelectRes } from '../dto/postSelectRes.ts';
++import type { IDtoOptionsPostSelectResItem } from '../dto/postSelectResItem.tsx';
++import type { IDtoOptionsProfile } from '../dto/profile.ts';
++import type { IDtoOptionsRoleLazy } from '../dto/roleLazy.ts';
++import type { IDtoOptionsSerializerArray } from '../dto/serializerArray.ts';
++import type { IDtoOptionsSerializerLazy } from '../dto/serializerLazy.ts';
++import type { IDtoOptionsSerializerSimple } from '../dto/serializerSimple.ts';
++import type { IDtoOptionsUser } from '../dto/user.ts';
++import type { IDtoOptionsUserCreate } from '../dto/userCreate.ts';
++import type { IDtoOptionsUserLazy } from '../dto/userLazy.ts';
++import type { IDtoOptionsUserUpdate } from '../dto/userUpdate.ts';
++import 'vona-module-a-web';
++declare module 'vona-module-a-web' {
+ 
+-        export interface ServicePost {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
++    export interface IDtoRecord {
++      'test-vona:categoryTree': IDtoOptionsCategoryTree;
++'test-vona:orderCreate': IDtoOptionsOrderCreate;
++'test-vona:orderQuery': IDtoOptionsOrderQuery;
++'test-vona:orderQueryPage': IDtoOptionsOrderQueryPage;
++'test-vona:orderSelectRes': IDtoOptionsOrderSelectRes;
++'test-vona:orderSelectResItem': IDtoOptionsOrderSelectResItem;
++'test-vona:orderUpdate': IDtoOptionsOrderUpdate;
++'test-vona:postAggregate': IDtoOptionsPostAggregate;
++'test-vona:postCreate': IDtoOptionsPostCreate;
++'test-vona:postGroup': IDtoOptionsPostGroup;
++'test-vona:postSelectReq': IDtoOptionsPostSelectReq;
++'test-vona:postSelectRes': IDtoOptionsPostSelectRes;
++'test-vona:postSelectResItem': IDtoOptionsPostSelectResItem;
++'test-vona:profile': IDtoOptionsProfile;
++'test-vona:roleLazy': IDtoOptionsRoleLazy;
++'test-vona:serializerArray': IDtoOptionsSerializerArray;
++'test-vona:serializerLazy': IDtoOptionsSerializerLazy;
++'test-vona:serializerSimple': IDtoOptionsSerializerSimple;
++'test-vona:user': IDtoOptionsUser;
++'test-vona:userCreate': IDtoOptionsUserCreate;
++'test-vona:userLazy': IDtoOptionsUserLazy;
++'test-vona:userUpdate': IDtoOptionsUserUpdate;
++    }
+ 
+-          export interface ServicePost {
+-            get $beanFullName(): 'test-vona.service.post';
+-            get $onionName(): 'test-vona:post';
+-          }
+ 
+-        export interface ServiceProduct {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
++}
++declare module 'vona-module-test-vona' {
+ 
+-          export interface ServiceProduct {
+-            get $beanFullName(): 'test-vona.service.product';
+-            get $onionName(): 'test-vona:product';
+-          }
++}
++/** dto: end */
++/** dto: begin */
++import type { DtoCategoryTree } from '../dto/categoryTree.ts';
++import type { DtoOrderCreate } from '../dto/orderCreate.ts';
++import type { DtoOrderQuery } from '../dto/orderQuery.ts';
++import type { DtoOrderQueryPage } from '../dto/orderQueryPage.ts';
++import type { DtoOrderSelectRes } from '../dto/orderSelectRes.ts';
++import type { DtoOrderSelectResItem } from '../dto/orderSelectResItem.ts';
++import type { DtoOrderUpdate } from '../dto/orderUpdate.ts';
++import type { DtoPostAggregate } from '../dto/postAggregate.ts';
++import type { DtoPostCreate } from '../dto/postCreate.ts';
++import type { DtoPostGroup } from '../dto/postGroup.ts';
++import type { DtoPostSelectReq } from '../dto/postSelectReq.ts';
++import type { DtoPostSelectRes } from '../dto/postSelectRes.ts';
++import type { DtoPostSelectResItem } from '../dto/postSelectResItem.tsx';
++import type { DtoProfile } from '../dto/profile.ts';
++import type { DtoRoleLazy } from '../dto/roleLazy.ts';
++import type { DtoSerializerArray } from '../dto/serializerArray.ts';
++import type { DtoSerializerLazy } from '../dto/serializerLazy.ts';
++import type { DtoSerializerSimple } from '../dto/serializerSimple.ts';
++import type { DtoUser } from '../dto/user.ts';
++import type { DtoUserCreate } from '../dto/userCreate.ts';
++import type { DtoUserLazy } from '../dto/userLazy.ts';
++import type { DtoUserUpdate } from '../dto/userUpdate.ts';
++declare module 'vona-module-test-vona' {
+ 
+-        export interface ServiceRetryable {
++    export interface IDtoOptionsCategoryTree {
++      fields?: TypeEntityOptionsFields<DtoCategoryTree, IDtoOptionsCategoryTree[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsOrderCreate {
++      fields?: TypeEntityOptionsFields<DtoOrderCreate, IDtoOptionsOrderCreate[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsOrderQuery {
++      fields?: TypeEntityOptionsFields<DtoOrderQuery, IDtoOptionsOrderQuery[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsOrderQueryPage {
++      fields?: TypeEntityOptionsFields<DtoOrderQueryPage, IDtoOptionsOrderQueryPage[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsOrderSelectRes {
++      fields?: TypeEntityOptionsFields<DtoOrderSelectRes, IDtoOptionsOrderSelectRes[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsOrderSelectResItem {
++      fields?: TypeEntityOptionsFields<DtoOrderSelectResItem, IDtoOptionsOrderSelectResItem[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsOrderUpdate {
++      fields?: TypeEntityOptionsFields<DtoOrderUpdate, IDtoOptionsOrderUpdate[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsPostAggregate {
++      fields?: TypeEntityOptionsFields<DtoPostAggregate, IDtoOptionsPostAggregate[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsPostCreate {
++      fields?: TypeEntityOptionsFields<DtoPostCreate, IDtoOptionsPostCreate[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsPostGroup {
++      fields?: TypeEntityOptionsFields<DtoPostGroup, IDtoOptionsPostGroup[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsPostSelectReq {
++      fields?: TypeEntityOptionsFields<DtoPostSelectReq, IDtoOptionsPostSelectReq[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsPostSelectRes {
++      fields?: TypeEntityOptionsFields<DtoPostSelectRes, IDtoOptionsPostSelectRes[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsPostSelectResItem {
++      fields?: TypeEntityOptionsFields<DtoPostSelectResItem, IDtoOptionsPostSelectResItem[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsProfile {
++      fields?: TypeEntityOptionsFields<DtoProfile, IDtoOptionsProfile[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsRoleLazy {
++      fields?: TypeEntityOptionsFields<DtoRoleLazy, IDtoOptionsRoleLazy[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsSerializerArray {
++      fields?: TypeEntityOptionsFields<DtoSerializerArray, IDtoOptionsSerializerArray[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsSerializerLazy {
++      fields?: TypeEntityOptionsFields<DtoSerializerLazy, IDtoOptionsSerializerLazy[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsSerializerSimple {
++      fields?: TypeEntityOptionsFields<DtoSerializerSimple, IDtoOptionsSerializerSimple[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsUser {
++      fields?: TypeEntityOptionsFields<DtoUser, IDtoOptionsUser[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsUserCreate {
++      fields?: TypeEntityOptionsFields<DtoUserCreate, IDtoOptionsUserCreate[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsUserLazy {
++      fields?: TypeEntityOptionsFields<DtoUserLazy, IDtoOptionsUserLazy[TypeSymbolKeyFieldsMore]>;
++    }
++
++    export interface IDtoOptionsUserUpdate {
++      fields?: TypeEntityOptionsFields<DtoUserUpdate, IDtoOptionsUserUpdate[TypeSymbolKeyFieldsMore]>;
++    }
++}
++/** dto: end */
++/** controller: begin */
++export * from '../controller/bean.ts';
++export * from '../controller/cacheMem.ts';
++export * from '../controller/cacheRedis.ts';
++export * from '../controller/dtoTest.ts';
++export * from '../controller/guardPassport.ts';
++export * from '../controller/onion.ts';
++export * from '../controller/order.ts';
++export * from '../controller/passport.ts';
++export * from '../controller/performAction.ts';
++export * from '../controller/post.ts';
++export * from '../controller/queue.ts';
++export * from '../controller/serializer.ts';
++export * from '../controller/summer.ts';
++export * from '../controller/tail.ts';
++export * from '../controller/transaction.ts';
++export * from '../controller/upload.ts';
++import type { IControllerOptionsBean } from '../controller/bean.ts';
++import type { IControllerOptionsCacheMem } from '../controller/cacheMem.ts';
++import type { IControllerOptionsCacheRedis } from '../controller/cacheRedis.ts';
++import type { IControllerOptionsDtoTest } from '../controller/dtoTest.ts';
++import type { IControllerOptionsGuardPassport } from '../controller/guardPassport.ts';
++import type { IControllerOptionsOnion } from '../controller/onion.ts';
++import type { IControllerOptionsOrder } from '../controller/order.ts';
++import type { IControllerOptionsPassport } from '../controller/passport.ts';
++import type { IControllerOptionsPerformAction } from '../controller/performAction.ts';
++import type { IControllerOptionsPost } from '../controller/post.ts';
++import type { IControllerOptionsQueue } from '../controller/queue.ts';
++import type { IControllerOptionsSerializer } from '../controller/serializer.ts';
++import type { IControllerOptionsSummer } from '../controller/summer.ts';
++import type { IControllerOptionsTail } from '../controller/tail.ts';
++import type { IControllerOptionsTransaction } from '../controller/transaction.ts';
++import type { IControllerOptionsUpload } from '../controller/upload.ts';
++import 'vona-module-a-web';
++declare module 'vona-module-a-web' {
++
++    export interface IControllerRecord {
++      'test-vona:bean': IControllerOptionsBean;
++'test-vona:cacheMem': IControllerOptionsCacheMem;
++'test-vona:cacheRedis': IControllerOptionsCacheRedis;
++'test-vona:dtoTest': IControllerOptionsDtoTest;
++'test-vona:guardPassport': IControllerOptionsGuardPassport;
++'test-vona:onion': IControllerOptionsOnion;
++'test-vona:order': IControllerOptionsOrder;
++'test-vona:passport': IControllerOptionsPassport;
++'test-vona:performAction': IControllerOptionsPerformAction;
++'test-vona:post': IControllerOptionsPost;
++'test-vona:queue': IControllerOptionsQueue;
++'test-vona:serializer': IControllerOptionsSerializer;
++'test-vona:summer': IControllerOptionsSummer;
++'test-vona:tail': IControllerOptionsTail;
++'test-vona:transaction': IControllerOptionsTransaction;
++'test-vona:upload': IControllerOptionsUpload;
++    }
++
++
++}
++declare module 'vona-module-test-vona' {
++
++        export interface ControllerBean {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ServiceRetryable {
+-            get $beanFullName(): 'test-vona.service.retryable';
+-            get $onionName(): 'test-vona:retryable';
++          export interface ControllerBean {
++            get $beanFullName(): 'test-vona.controller.bean';
++            get $onionName(): 'test-vona:bean';
++            get $onionOptions(): IControllerOptionsBean;
+           }
+ 
+-        export interface ServiceTest {
++        export interface ControllerCacheMem {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ServiceTest {
+-            get $beanFullName(): 'test-vona.service.test';
+-            get $onionName(): 'test-vona:test';
++          export interface ControllerCacheMem {
++            get $beanFullName(): 'test-vona.controller.cacheMem';
++            get $onionName(): 'test-vona:cacheMem';
++            get $onionOptions(): IControllerOptionsCacheMem;
+           }
+ 
+-        export interface ServiceTestApp {
++        export interface ControllerCacheRedis {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ServiceTestApp {
+-            get $beanFullName(): 'test-vona.service.testApp';
+-            get $onionName(): 'test-vona:testApp';
++          export interface ControllerCacheRedis {
++            get $beanFullName(): 'test-vona.controller.cacheRedis';
++            get $onionName(): 'test-vona:cacheRedis';
++            get $onionOptions(): IControllerOptionsCacheRedis;
+           }
+ 
+-        export interface ServiceTestClass {
++        export interface ControllerDtoTest {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ServiceTestClass {
+-            get $beanFullName(): 'test-vona.service.testClass';
+-            get $onionName(): 'test-vona:testClass';
++          export interface ControllerDtoTest {
++            get $beanFullName(): 'test-vona.controller.dtoTest';
++            get $onionName(): 'test-vona:dtoTest';
++            get $onionOptions(): IControllerOptionsDtoTest;
+           }
+ 
+-        export interface ServiceTestData {
++        export interface ControllerGuardPassport {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ServiceTestData {
+-            get $beanFullName(): 'test-vona.service.testData';
+-            get $onionName(): 'test-vona:testData';
++          export interface ControllerGuardPassport {
++            get $beanFullName(): 'test-vona.controller.guardPassport';
++            get $onionName(): 'test-vona:guardPassport';
++            get $onionOptions(): IControllerOptionsGuardPassport;
+           }
+ 
+-        export interface ServiceTransaction {
++        export interface ControllerOnion {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ServiceTransaction {
+-            get $beanFullName(): 'test-vona.service.transaction';
+-            get $onionName(): 'test-vona:transaction';
++          export interface ControllerOnion {
++            get $beanFullName(): 'test-vona.controller.onion';
++            get $onionName(): 'test-vona:onion';
++            get $onionOptions(): IControllerOptionsOnion;
+           }
+ 
+-        export interface ServiceUser {
++        export interface ControllerOrder {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ServiceUser {
+-            get $beanFullName(): 'test-vona.service.user';
+-            get $onionName(): 'test-vona:user';
++          export interface ControllerOrder {
++            get $beanFullName(): 'test-vona.controller.order';
++            get $onionName(): 'test-vona:order';
++            get $onionOptions(): IControllerOptionsOrder;
+           }
+-}
+-/** service: end */
+-/** service: begin */
+-import type { ServiceAopMethod } from '../service/aopMethod.ts';
+-import type { ServiceCaching } from '../service/caching.ts';
+-import type { ServiceCategory } from '../service/category.ts';
+-import type { ServiceOrder } from '../service/order.ts';
+-import type { ServicePost } from '../service/post.ts';
+-import type { ServiceProduct } from '../service/product.ts';
+-import type { ServiceRetryable } from '../service/retryable.ts';
+-import type { ServiceTest } from '../service/test.ts';
+-import type { ServiceTestApp } from '../service/testApp.ts';
+-import type { ServiceTestClass } from '../service/testClass.ts';
+-import type { ServiceTestData } from '../service/testData.ts';
+-import type { ServiceTransaction } from '../service/transaction.ts';
+-import type { ServiceUser } from '../service/user.ts';
+-export interface IModuleService {
+-  'aopMethod': ServiceAopMethod;
+-'caching': ServiceCaching;
+-'category': ServiceCategory;
+-'order': ServiceOrder;
+-'post': ServicePost;
+-'product': ServiceProduct;
+-'retryable': ServiceRetryable;
+-'test': ServiceTest;
+-'testApp': ServiceTestApp;
+-'testClass': ServiceTestClass;
+-'testData': ServiceTestData;
+-'transaction': ServiceTransaction;
+-'user': ServiceUser;
+-}
+-/** service: end */
+-/** service: begin */
+-
+-import 'vona';
+-declare module 'vona' {
+-  export interface IBeanRecordGeneral {
+-    'test-vona.service.aopMethod': ServiceAopMethod;
+-'test-vona.service.caching': ServiceCaching;
+-'test-vona.service.category': ServiceCategory;
+-'test-vona.service.order': ServiceOrder;
+-'test-vona.service.post': ServicePost;
+-'test-vona.service.product': ServiceProduct;
+-'test-vona.service.retryable': ServiceRetryable;
+-'test-vona.service.test': ServiceTest;
+-'test-vona.service.testApp': ServiceTestApp;
+-'test-vona.service.testClass': ServiceTestClass;
+-'test-vona.service.testData': ServiceTestData;
+-'test-vona.service.transaction': ServiceTransaction;
+-'test-vona.service.user': ServiceUser;
+-  }
+-}
+-/** service: end */
+-/** broadcast: begin */
+-export * from '../bean/broadcast.test.ts';
+-
+-import { type IDecoratorBroadcastOptions } from 'vona-module-a-broadcast';
+-declare module 'vona-module-a-broadcast' {
+-
+-    export interface IBroadcastRecord {
+-      'test-vona:test': IDecoratorBroadcastOptions;
+-    }
+-
+ 
+-}
+-declare module 'vona-module-test-vona' {
+-
+-        export interface BroadcastTest {
++        export interface ControllerPassport {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface BroadcastTest {
+-            get $beanFullName(): 'test-vona.broadcast.test';
+-            get $onionName(): 'test-vona:test';
+-            get $onionOptions(): IDecoratorBroadcastOptions;
++          export interface ControllerPassport {
++            get $beanFullName(): 'test-vona.controller.passport';
++            get $onionName(): 'test-vona:passport';
++            get $onionOptions(): IControllerOptionsPassport;
+           }
+-}
+-/** broadcast: end */
+-/** broadcast: begin */
+-import type { BroadcastTest } from '../bean/broadcast.test.ts';
+-export interface IModuleBroadcast {
+-  'test': BroadcastTest;
+-}
+-/** broadcast: end */
+-/** cacheMem: begin */
+-export * from '../bean/cacheMem.test.ts';
+-
+-import { type IDecoratorCacheMemOptions } from 'vona-module-a-cache';
+-declare module 'vona-module-a-cache' {
+-
+-    export interface ICacheMemRecord {
+-      'test-vona:test': IDecoratorCacheMemOptions;
+-    }
+-
+-
+-}
+-declare module 'vona-module-test-vona' {
+ 
+-        export interface CacheMemTest {
++        export interface ControllerPerformAction {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface CacheMemTest {
+-            get $beanFullName(): 'test-vona.cacheMem.test';
+-            get $onionName(): 'test-vona:test';
+-            get $onionOptions(): IDecoratorCacheMemOptions;
++          export interface ControllerPerformAction {
++            get $beanFullName(): 'test-vona.controller.performAction';
++            get $onionName(): 'test-vona:performAction';
++            get $onionOptions(): IControllerOptionsPerformAction;
+           }
+-}
+-/** cacheMem: end */
+-/** cacheMem: begin */
+-import type { CacheMemTest } from '../bean/cacheMem.test.ts';
+-export interface IModuleCacheMem {
+-  'test': CacheMemTest;
+-}
+-/** cacheMem: end */
+-/** cacheRedis: begin */
+-export * from '../bean/cacheRedis.post.ts';
+-export * from '../bean/cacheRedis.test.ts';
+-
+-import { type IDecoratorCacheRedisOptions } from 'vona-module-a-cache';
+-declare module 'vona-module-a-cache' {
+-
+-    export interface ICacheRedisRecord {
+-      'test-vona:post': IDecoratorCacheRedisOptions;
+-'test-vona:test': IDecoratorCacheRedisOptions;
+-    }
+-
+ 
+-}
+-declare module 'vona-module-test-vona' {
+-
+-        export interface CacheRedisPost {
++        export interface ControllerPost {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface CacheRedisPost {
+-            get $beanFullName(): 'test-vona.cacheRedis.post';
++          export interface ControllerPost {
++            get $beanFullName(): 'test-vona.controller.post';
+             get $onionName(): 'test-vona:post';
+-            get $onionOptions(): IDecoratorCacheRedisOptions;
++            get $onionOptions(): IControllerOptionsPost;
+           }
+ 
+-        export interface CacheRedisTest {
++        export interface ControllerQueue {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface CacheRedisTest {
+-            get $beanFullName(): 'test-vona.cacheRedis.test';
+-            get $onionName(): 'test-vona:test';
+-            get $onionOptions(): IDecoratorCacheRedisOptions;
++          export interface ControllerQueue {
++            get $beanFullName(): 'test-vona.controller.queue';
++            get $onionName(): 'test-vona:queue';
++            get $onionOptions(): IControllerOptionsQueue;
+           }
+-}
+-/** cacheRedis: end */
+-/** cacheRedis: begin */
+-import type { CacheRedisPost } from '../bean/cacheRedis.post.ts';
+-import type { CacheRedisTest } from '../bean/cacheRedis.test.ts';
+-export interface IModuleCacheRedis {
+-  'post': CacheRedisPost;
+-'test': CacheRedisTest;
+-}
+-/** cacheRedis: end */
+-/** event: begin */
+-export * from '../bean/event.helloEcho.ts';
+-
+-import 'vona';
+-declare module 'vona' {
+ 
+-
+-}
+-declare module 'vona-module-test-vona' {
+-
+-        export interface EventHelloEcho {
++        export interface ControllerSerializer {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface EventHelloEcho {
+-            get $beanFullName(): 'test-vona.event.helloEcho';
+-            get $onionName(): 'test-vona:helloEcho';
++          export interface ControllerSerializer {
++            get $beanFullName(): 'test-vona.controller.serializer';
++            get $onionName(): 'test-vona:serializer';
++            get $onionOptions(): IControllerOptionsSerializer;
+           }
+-}
+-/** event: end */
+-/** event: begin */
+-import type { EventHelloEcho } from '../bean/event.helloEcho.ts';
+-export interface IModuleEvent {
+-  'helloEcho': EventHelloEcho;
+-}
+-/** event: end */
+-/** event: begin */
+-import type { TypeEventHelloEchoData, TypeEventHelloEchoResult } from '../bean/event.helloEcho.ts';
+-import type { EventOn } from 'vona-module-a-event';
+-declare module 'vona-module-a-event' {
+-  export interface IEventRecord {
+-    'test-vona:helloEcho': EventOn<TypeEventHelloEchoData, TypeEventHelloEchoResult>;
+-  }
+-}
+-/** event: end */
+-/** eventListener: begin */
+-export * from '../bean/eventListener.helloEcho.ts';
+ 
+-import { type IDecoratorEventListenerOptions } from 'vona-module-a-event';
+-declare module 'vona-module-a-event' {
+-
+-    export interface IEventListenerRecord {
+-      'test-vona:helloEcho': IDecoratorEventListenerOptions;
+-    }
+-
+-
+-}
+-declare module 'vona-module-test-vona' {
+-
+-        export interface EventListenerHelloEcho {
++        export interface ControllerSummer {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface EventListenerHelloEcho {
+-            get $beanFullName(): 'test-vona.eventListener.helloEcho';
+-            get $onionName(): 'test-vona:helloEcho';
+-            get $onionOptions(): IDecoratorEventListenerOptions;
++          export interface ControllerSummer {
++            get $beanFullName(): 'test-vona.controller.summer';
++            get $onionName(): 'test-vona:summer';
++            get $onionOptions(): IControllerOptionsSummer;
+           }
+-}
+-/** eventListener: end */
+-/** meta: begin */
+-export * from '../bean/meta.asset.ts';
+-export * from '../bean/meta.static.ts';
+-export * from '../bean/meta.version.ts';
+-
+-import 'vona-module-a-meta';
+-declare module 'vona-module-a-meta' {
+-
+-    export interface IMetaRecord {
+-      'test-vona:asset': never;
+-'test-vona:static': never;
+-'test-vona:version': never;
+-    }
+-
+-
+-}
+-declare module 'vona-module-test-vona' {
+ 
+-        export interface MetaAsset {
++        export interface ControllerTail {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface MetaAsset {
+-            get $beanFullName(): 'test-vona.meta.asset';
+-            get $onionName(): 'test-vona:asset';
++          export interface ControllerTail {
++            get $beanFullName(): 'test-vona.controller.tail';
++            get $onionName(): 'test-vona:tail';
++            get $onionOptions(): IControllerOptionsTail;
+           }
+ 
+-        export interface MetaStatic {
++        export interface ControllerTransaction {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface MetaStatic {
+-            get $beanFullName(): 'test-vona.meta.static';
+-            get $onionName(): 'test-vona:static';
++          export interface ControllerTransaction {
++            get $beanFullName(): 'test-vona.controller.transaction';
++            get $onionName(): 'test-vona:transaction';
++            get $onionOptions(): IControllerOptionsTransaction;
+           }
+ 
+-        export interface MetaVersion {
++        export interface ControllerUpload {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface MetaVersion {
+-            get $beanFullName(): 'test-vona.meta.version';
+-            get $onionName(): 'test-vona:version';
++          export interface ControllerUpload {
++            get $beanFullName(): 'test-vona.controller.upload';
++            get $onionName(): 'test-vona:upload';
++            get $onionOptions(): IControllerOptionsUpload;
+           }
+ }
+-/** meta: end */
+-/** meta static: begin */
+-import type { MetaStatic } from '../bean/meta.static.ts';
+-/** meta static: end */
+-/** meta asset: begin */
+-import type { MetaAsset } from '../bean/meta.asset.ts';
+-/** meta asset: end */
+-/** queue: begin */
+-export * from '../bean/queue.test.ts';
+-
+-import { type IDecoratorQueueOptions } from 'vona-module-a-queue';
+-declare module 'vona-module-a-queue' {
+-
+-    export interface IQueueRecord {
+-      'test-vona:test': IDecoratorQueueOptions;
++/** controller: end */
++/** controller: begin */
++// @ts-ignore ignore
++import type { ControllerBean } from '../controller/bean.ts';
++// @ts-ignore ignore
++import type { ControllerCacheMem } from '../controller/cacheMem.ts';
++// @ts-ignore ignore
++import type { ControllerCacheRedis } from '../controller/cacheRedis.ts';
++// @ts-ignore ignore
++import type { ControllerDtoTest } from '../controller/dtoTest.ts';
++// @ts-ignore ignore
++import type { ControllerGuardPassport } from '../controller/guardPassport.ts';
++// @ts-ignore ignore
++import type { ControllerOnion } from '../controller/onion.ts';
++// @ts-ignore ignore
++import type { ControllerOrder } from '../controller/order.ts';
++// @ts-ignore ignore
++import type { ControllerPassport } from '../controller/passport.ts';
++// @ts-ignore ignore
++import type { ControllerPerformAction } from '../controller/performAction.ts';
++// @ts-ignore ignore
++import type { ControllerPost } from '../controller/post.ts';
++// @ts-ignore ignore
++import type { ControllerQueue } from '../controller/queue.ts';
++// @ts-ignore ignore
++import type { ControllerSerializer } from '../controller/serializer.ts';
++// @ts-ignore ignore
++import type { ControllerSummer } from '../controller/summer.ts';
++// @ts-ignore ignore
++import type { ControllerTail } from '../controller/tail.ts';
++// @ts-ignore ignore
++import type { ControllerTransaction } from '../controller/transaction.ts';
++// @ts-ignore ignore
++import type { ControllerUpload } from '../controller/upload.ts';
++declare module 'vona-module-test-vona' {
++
++    export interface IControllerOptionsBean {
++      actions?: TypeControllerOptionsActions<ControllerBean>;
+     }
+ 
++    export interface IControllerOptionsCacheMem {
++      actions?: TypeControllerOptionsActions<ControllerCacheMem>;
++    }
+ 
+-}
+-declare module 'vona-module-test-vona' {
++    export interface IControllerOptionsCacheRedis {
++      actions?: TypeControllerOptionsActions<ControllerCacheRedis>;
++    }
+ 
+-        export interface QueueTest {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
++    export interface IControllerOptionsDtoTest {
++      actions?: TypeControllerOptionsActions<ControllerDtoTest>;
++    }
+ 
+-          export interface QueueTest {
+-            get $beanFullName(): 'test-vona.queue.test';
+-            get $onionName(): 'test-vona:test';
+-            get $onionOptions(): IDecoratorQueueOptions;
+-          }
+-}
+-/** queue: end */
+-/** queue: begin */
+-import type { QueueTest } from '../bean/queue.test.ts';
+-export interface IModuleQueue {
+-  'test': QueueTest;
+-}
+-/** queue: end */
+-/** schedule: begin */
+-export * from '../bean/schedule.test.ts';
+-export * from '../bean/schedule.test3.ts';
++    export interface IControllerOptionsGuardPassport {
++      actions?: TypeControllerOptionsActions<ControllerGuardPassport>;
++    }
+ 
+-import { type IDecoratorScheduleOptions } from 'vona-module-a-schedule';
+-declare module 'vona-module-a-schedule' {
++    export interface IControllerOptionsOnion {
++      actions?: TypeControllerOptionsActions<ControllerOnion>;
++    }
+ 
+-    export interface IScheduleRecord {
+-      'test-vona:test': IDecoratorScheduleOptions;
+-'test-vona:test3': IDecoratorScheduleOptions;
++    export interface IControllerOptionsOrder {
++      actions?: TypeControllerOptionsActions<ControllerOrder>;
+     }
+ 
++    export interface IControllerOptionsPassport {
++      actions?: TypeControllerOptionsActions<ControllerPassport>;
++    }
+ 
+-}
+-declare module 'vona-module-test-vona' {
++    export interface IControllerOptionsPerformAction {
++      actions?: TypeControllerOptionsActions<ControllerPerformAction>;
++    }
+ 
+-        export interface ScheduleTest {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
++    export interface IControllerOptionsPost {
++      actions?: TypeControllerOptionsActions<ControllerPost>;
++    }
+ 
+-          export interface ScheduleTest {
+-            get $beanFullName(): 'test-vona.schedule.test';
+-            get $onionName(): 'test-vona:test';
+-            get $onionOptions(): IDecoratorScheduleOptions;
+-          }
++    export interface IControllerOptionsQueue {
++      actions?: TypeControllerOptionsActions<ControllerQueue>;
++    }
+ 
+-        export interface ScheduleTest3 {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
++    export interface IControllerOptionsSerializer {
++      actions?: TypeControllerOptionsActions<ControllerSerializer>;
++    }
+ 
+-          export interface ScheduleTest3 {
+-            get $beanFullName(): 'test-vona.schedule.test3';
+-            get $onionName(): 'test-vona:test3';
+-            get $onionOptions(): IDecoratorScheduleOptions;
+-          }
+-}
+-/** schedule: end */
+-/** serializerTransform: begin */
+-export * from '../bean/serializerTransform.email.ts';
+-import type { ISerializerTransformOptionsEmail } from '../bean/serializerTransform.email.ts';
+-import 'vona-module-a-serialization';
+-declare module 'vona-module-a-serialization' {
++    export interface IControllerOptionsSummer {
++      actions?: TypeControllerOptionsActions<ControllerSummer>;
++    }
+ 
+-    export interface ISerializerTransformRecord {
+-      'test-vona:email': ISerializerTransformOptionsEmail;
++    export interface IControllerOptionsTail {
++      actions?: TypeControllerOptionsActions<ControllerTail>;
+     }
+ 
++    export interface IControllerOptionsTransaction {
++      actions?: TypeControllerOptionsActions<ControllerTransaction>;
++    }
+ 
++    export interface IControllerOptionsUpload {
++      actions?: TypeControllerOptionsActions<ControllerUpload>;
++    }
+ }
+-declare module 'vona-module-test-vona' {
+-
+-        export interface SerializerTransformEmail {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
++declare module 'vona-module-a-web' {
++  export interface IApiPathGetRecord{
++        '/test/vona/bean/test': undefined;
++'/test/vona/bean/service': undefined;
++'/test/vona/dtoTest/getUserLazy': undefined;
++'/test/vona/dtoTest/getUserDynamic': undefined;
++'/test/vona/dtoTest/getUserStats': undefined;
++'/test/vona/dtoTest/getUserStatsGroup': undefined;
++'/test/vona/dtoTest/getCategoryTree': undefined;
++'/test/vona/dtoTest/getCategoryTree2': undefined;
++'/test/vona/guardPassport/testRoleName': undefined;
++'/test/vona/guardPassport/testRoleNameFail': undefined;
++'/test/vona/guardPassport/testRoleNameControllerShouldNotExecute': undefined;
++'/test/vona/guardPassport/testPublic': undefined;
++'/test/vona/guardPassport/testActivatedFalse': undefined;
++'/': undefined;
++'/test/vona/onion/echo3/:userId': undefined;
++'/test/vona/onion/echo5': undefined;
++'/test/vona/onion/echo6': undefined;
++'/test/vona/onion/echo7': undefined;
++'/test/vona/order/findAll': undefined;
++'/test/vona/order/findMany': undefined;
++'/test/vona/passport/echo/:name': undefined;
++'/test/vona/passport/isAuthenticated': undefined;
++'/test/vona/performAction/rateLimitController': undefined;
++'/test/vona/performAction/rateLimit': undefined;
++'/test/vona/performAction/rateLimitExempt': undefined;
++'/test/vona/post/group': undefined;
++'/test/vona/post/aggregate': undefined;
++'/test/vona/post/findManyEcho': undefined;
++'/test/vona/post/findMany': undefined;
++    }
++export interface IApiPathPostRecord{
++        '/test/vona/cacheMem': undefined;
++'/test/vona/cacheRedis': undefined;
++'/test/vona/dtoTest/createUser': undefined;
++'//echo': undefined;
++'/test/vona/onion/echo2/:userId/:userName': undefined;
++'/test/vona/onion/echo4': undefined;
++'/test/vona/order/create': undefined;
++'/test/vona/order/update/:id': undefined;
++'/test/vona/passport/login': undefined;
++'/test/vona/passport/refresh': undefined;
++'/test/vona/passport/logout': undefined;
++'/test/vona/performAction/echo': undefined;
++'/test/vona/queue/pushAsync': undefined;
++'/test/vona/queue/push': undefined;
++'/test/vona/serializer/echoSimple': undefined;
++'/test/vona/serializer/echoArray': undefined;
++'/test/vona/serializer/echoLazy': undefined;
++'/test/vona/summer': undefined;
++'/test/vona/tail': undefined;
++'/test/vona/transaction/fail': undefined;
++'/test/vona/transaction/success': undefined;
++'/test/vona/upload/fields': undefined;
++'/test/vona/upload/file': undefined;
++'/test/vona/upload/strict': undefined;
++'/test/vona/upload/files': undefined;
++    }
++export interface IApiPathPatchRecord{
++        '/test/vona/dtoTest/updateUser/:id': undefined;
++    }
+ 
+-          export interface SerializerTransformEmail {
+-            get $beanFullName(): 'test-vona.serializerTransform.email';
+-            get $onionName(): 'test-vona:email';
+-            get $onionOptions(): ISerializerTransformOptionsEmail;
+-          }
+ }
+-/** serializerTransform: end */
+-/** summerCache: begin */
+-export * from '../bean/summerCache.caching.ts';
+-export * from '../bean/summerCache.test.ts';
++import 'vona-module-a-openapi';
++  declare module 'vona-module-a-openapi' {
++    export interface IResourceRecord {
++      'test-vona:guardPassport': never;
++    }
++  }
+ 
+-import { type IDecoratorSummerCacheOptions } from 'vona-module-a-summer';
+-declare module 'vona-module-a-summer' {
++/** controller: end */
++/** aop: begin */
++export * from '../bean/aop.mcpIngressProbe.ts';
++export * from '../bean/aop.regExp.ts';
++export * from '../bean/aop.simple.ts';
+ 
+-    export interface ISummerCacheRecord {
+-      'test-vona:caching': IDecoratorSummerCacheOptions;
+-'test-vona:test': IDecoratorSummerCacheOptions;
++import { type IDecoratorAopOptions } from 'vona-module-a-aspect';
++declare module 'vona-module-a-aspect' {
++
++    export interface IAopRecord {
++      'test-vona:mcpIngressProbe': IDecoratorAopOptions;
++'test-vona:regExp': IDecoratorAopOptions;
++'test-vona:simple': IDecoratorAopOptions;
+     }
+ 
+ 
+ }
+ declare module 'vona-module-test-vona' {
+ 
+-        export interface SummerCacheCaching {
++        export interface AopMcpIngressProbe {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface SummerCacheCaching {
+-            get $beanFullName(): 'test-vona.summerCache.caching';
+-            get $onionName(): 'test-vona:caching';
+-            get $onionOptions(): IDecoratorSummerCacheOptions;
++          export interface AopMcpIngressProbe {
++            get $beanFullName(): 'test-vona.aop.mcpIngressProbe';
++            get $onionName(): 'test-vona:mcpIngressProbe';
++            get $onionOptions(): IDecoratorAopOptions;
+           }
+ 
+-        export interface SummerCacheTest {
++        export interface AopRegExp {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface SummerCacheTest {
+-            get $beanFullName(): 'test-vona.summerCache.test';
+-            get $onionName(): 'test-vona:test';
+-            get $onionOptions(): IDecoratorSummerCacheOptions;
++          export interface AopRegExp {
++            get $beanFullName(): 'test-vona.aop.regExp';
++            get $onionName(): 'test-vona:regExp';
++            get $onionOptions(): IDecoratorAopOptions;
++          }
++
++        export interface AopSimple {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
++
++          export interface AopSimple {
++            get $beanFullName(): 'test-vona.aop.simple';
++            get $onionName(): 'test-vona:simple';
++            get $onionOptions(): IDecoratorAopOptions;
+           }
+ }
+-/** summerCache: end */
+-/** summerCache: begin */
+-import type { SummerCacheCaching } from '../bean/summerCache.caching.ts';
+-import type { SummerCacheTest } from '../bean/summerCache.test.ts';
+-export interface IModuleSummerCache {
+-  'caching': SummerCacheCaching;
+-'test': SummerCacheTest;
+-}
+-/** summerCache: end */
+-/** dto: begin */
+-export * from '../dto/categoryTree.ts';
+-export * from '../dto/orderCreate.ts';
+-export * from '../dto/orderQuery.ts';
+-export * from '../dto/orderQueryPage.ts';
+-export * from '../dto/orderSelectRes.ts';
+-export * from '../dto/orderSelectResItem.ts';
+-export * from '../dto/orderUpdate.ts';
+-export * from '../dto/postAggregate.ts';
+-export * from '../dto/postCreate.ts';
+-export * from '../dto/postGroup.ts';
+-export * from '../dto/postSelectReq.ts';
+-export * from '../dto/postSelectRes.ts';
+-export * from '../dto/postSelectResItem.tsx';
+-export * from '../dto/profile.ts';
+-export * from '../dto/roleLazy.ts';
+-export * from '../dto/serializerArray.ts';
+-export * from '../dto/serializerLazy.ts';
+-export * from '../dto/serializerSimple.ts';
+-export * from '../dto/user.ts';
+-export * from '../dto/userCreate.ts';
+-export * from '../dto/userLazy.ts';
+-export * from '../dto/userUpdate.ts';
+-import type { IDtoOptionsCategoryTree } from '../dto/categoryTree.ts';
+-import type { IDtoOptionsOrderCreate } from '../dto/orderCreate.ts';
+-import type { IDtoOptionsOrderQuery } from '../dto/orderQuery.ts';
+-import type { IDtoOptionsOrderQueryPage } from '../dto/orderQueryPage.ts';
+-import type { IDtoOptionsOrderSelectRes } from '../dto/orderSelectRes.ts';
+-import type { IDtoOptionsOrderSelectResItem } from '../dto/orderSelectResItem.ts';
+-import type { IDtoOptionsOrderUpdate } from '../dto/orderUpdate.ts';
+-import type { IDtoOptionsPostAggregate } from '../dto/postAggregate.ts';
+-import type { IDtoOptionsPostCreate } from '../dto/postCreate.ts';
+-import type { IDtoOptionsPostGroup } from '../dto/postGroup.ts';
+-import type { IDtoOptionsPostSelectReq } from '../dto/postSelectReq.ts';
+-import type { IDtoOptionsPostSelectRes } from '../dto/postSelectRes.ts';
+-import type { IDtoOptionsPostSelectResItem } from '../dto/postSelectResItem.tsx';
+-import type { IDtoOptionsProfile } from '../dto/profile.ts';
+-import type { IDtoOptionsRoleLazy } from '../dto/roleLazy.ts';
+-import type { IDtoOptionsSerializerArray } from '../dto/serializerArray.ts';
+-import type { IDtoOptionsSerializerLazy } from '../dto/serializerLazy.ts';
+-import type { IDtoOptionsSerializerSimple } from '../dto/serializerSimple.ts';
+-import type { IDtoOptionsUser } from '../dto/user.ts';
+-import type { IDtoOptionsUserCreate } from '../dto/userCreate.ts';
+-import type { IDtoOptionsUserLazy } from '../dto/userLazy.ts';
+-import type { IDtoOptionsUserUpdate } from '../dto/userUpdate.ts';
+-import 'vona-module-a-web';
+-declare module 'vona-module-a-web' {
++/** aop: end */
++/** aopMethod: begin */
++export * from '../bean/aopMethod.test.ts';
++import type { IAopMethodOptionsTest } from '../bean/aopMethod.test.ts';
++import 'vona-module-a-aspect';
++declare module 'vona-module-a-aspect' {
+ 
+-    export interface IDtoRecord {
+-      'test-vona:categoryTree': IDtoOptionsCategoryTree;
+-'test-vona:orderCreate': IDtoOptionsOrderCreate;
+-'test-vona:orderQuery': IDtoOptionsOrderQuery;
+-'test-vona:orderQueryPage': IDtoOptionsOrderQueryPage;
+-'test-vona:orderSelectRes': IDtoOptionsOrderSelectRes;
+-'test-vona:orderSelectResItem': IDtoOptionsOrderSelectResItem;
+-'test-vona:orderUpdate': IDtoOptionsOrderUpdate;
+-'test-vona:postAggregate': IDtoOptionsPostAggregate;
+-'test-vona:postCreate': IDtoOptionsPostCreate;
+-'test-vona:postGroup': IDtoOptionsPostGroup;
+-'test-vona:postSelectReq': IDtoOptionsPostSelectReq;
+-'test-vona:postSelectRes': IDtoOptionsPostSelectRes;
+-'test-vona:postSelectResItem': IDtoOptionsPostSelectResItem;
+-'test-vona:profile': IDtoOptionsProfile;
+-'test-vona:roleLazy': IDtoOptionsRoleLazy;
+-'test-vona:serializerArray': IDtoOptionsSerializerArray;
+-'test-vona:serializerLazy': IDtoOptionsSerializerLazy;
+-'test-vona:serializerSimple': IDtoOptionsSerializerSimple;
+-'test-vona:user': IDtoOptionsUser;
+-'test-vona:userCreate': IDtoOptionsUserCreate;
+-'test-vona:userLazy': IDtoOptionsUserLazy;
+-'test-vona:userUpdate': IDtoOptionsUserUpdate;
++    export interface IAopMethodRecord {
++      'test-vona:test': IAopMethodOptionsTest;
+     }
+ 
+ 
+ }
+ declare module 'vona-module-test-vona' {
+ 
++        export interface AopMethodTest {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
++
++          export interface AopMethodTest {
++            get $beanFullName(): 'test-vona.aopMethod.test';
++            get $onionName(): 'test-vona:test';
++            get $onionOptions(): IAopMethodOptionsTest;
++          }
++}
++/** aopMethod: end */
++/** bean: begin */
++export * from '../bean/bean.testCtx.ts';
++
++import 'vona';
++declare module 'vona' {
++
++
+ }
+-/** dto: end */
+-/** dto: begin */
+-import type { DtoCategoryTree } from '../dto/categoryTree.ts';
+-import type { DtoOrderCreate } from '../dto/orderCreate.ts';
+-import type { DtoOrderQuery } from '../dto/orderQuery.ts';
+-import type { DtoOrderQueryPage } from '../dto/orderQueryPage.ts';
+-import type { DtoOrderSelectRes } from '../dto/orderSelectRes.ts';
+-import type { DtoOrderSelectResItem } from '../dto/orderSelectResItem.ts';
+-import type { DtoOrderUpdate } from '../dto/orderUpdate.ts';
+-import type { DtoPostAggregate } from '../dto/postAggregate.ts';
+-import type { DtoPostCreate } from '../dto/postCreate.ts';
+-import type { DtoPostGroup } from '../dto/postGroup.ts';
+-import type { DtoPostSelectReq } from '../dto/postSelectReq.ts';
+-import type { DtoPostSelectRes } from '../dto/postSelectRes.ts';
+-import type { DtoPostSelectResItem } from '../dto/postSelectResItem.tsx';
+-import type { DtoProfile } from '../dto/profile.ts';
+-import type { DtoRoleLazy } from '../dto/roleLazy.ts';
+-import type { DtoSerializerArray } from '../dto/serializerArray.ts';
+-import type { DtoSerializerLazy } from '../dto/serializerLazy.ts';
+-import type { DtoSerializerSimple } from '../dto/serializerSimple.ts';
+-import type { DtoUser } from '../dto/user.ts';
+-import type { DtoUserCreate } from '../dto/userCreate.ts';
+-import type { DtoUserLazy } from '../dto/userLazy.ts';
+-import type { DtoUserUpdate } from '../dto/userUpdate.ts';
+ declare module 'vona-module-test-vona' {
+ 
+-    export interface IDtoOptionsCategoryTree {
+-      fields?: TypeEntityOptionsFields<DtoCategoryTree, IDtoOptionsCategoryTree[TypeSymbolKeyFieldsMore]>;
+-    }
++        export interface BeanTestCtx {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
++}
++/** bean: end */
++/** bean: begin */
++import type { BeanTestCtx } from '../bean/bean.testCtx.ts';
++import 'vona';
++declare module 'vona' {
++  export interface IBeanRecordGlobal {
++    'testCtx': BeanTestCtx;
++  }
++}
++/** bean: end */
++/** service: begin */
++export * from '../service/aopMethod.ts';
++export * from '../service/caching.ts';
++export * from '../service/category.ts';
++export * from '../service/order.ts';
++export * from '../service/post.ts';
++export * from '../service/product.ts';
++export * from '../service/retryable.ts';
++export * from '../service/test.ts';
++export * from '../service/testApp.ts';
++export * from '../service/testClass.ts';
++export * from '../service/testData.ts';
++export * from '../service/transaction.ts';
++export * from '../service/user.ts';
+ 
+-    export interface IDtoOptionsOrderCreate {
+-      fields?: TypeEntityOptionsFields<DtoOrderCreate, IDtoOptionsOrderCreate[TypeSymbolKeyFieldsMore]>;
+-    }
++import 'vona-module-a-bean';
++declare module 'vona-module-a-bean' {
+ 
+-    export interface IDtoOptionsOrderQuery {
+-      fields?: TypeEntityOptionsFields<DtoOrderQuery, IDtoOptionsOrderQuery[TypeSymbolKeyFieldsMore]>;
++    export interface IServiceRecord {
++      'test-vona:aopMethod': never;
++'test-vona:caching': never;
++'test-vona:category': never;
++'test-vona:order': never;
++'test-vona:post': never;
++'test-vona:product': never;
++'test-vona:retryable': never;
++'test-vona:test': never;
++'test-vona:testApp': never;
++'test-vona:testClass': never;
++'test-vona:testData': never;
++'test-vona:transaction': never;
++'test-vona:user': never;
+     }
+ 
+-    export interface IDtoOptionsOrderQueryPage {
+-      fields?: TypeEntityOptionsFields<DtoOrderQueryPage, IDtoOptionsOrderQueryPage[TypeSymbolKeyFieldsMore]>;
+-    }
+ 
+-    export interface IDtoOptionsOrderSelectRes {
+-      fields?: TypeEntityOptionsFields<DtoOrderSelectRes, IDtoOptionsOrderSelectRes[TypeSymbolKeyFieldsMore]>;
+-    }
++}
++declare module 'vona-module-test-vona' {
+ 
+-    export interface IDtoOptionsOrderSelectResItem {
+-      fields?: TypeEntityOptionsFields<DtoOrderSelectResItem, IDtoOptionsOrderSelectResItem[TypeSymbolKeyFieldsMore]>;
+-    }
++        export interface ServiceAopMethod {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
+ 
+-    export interface IDtoOptionsOrderUpdate {
+-      fields?: TypeEntityOptionsFields<DtoOrderUpdate, IDtoOptionsOrderUpdate[TypeSymbolKeyFieldsMore]>;
+-    }
++          export interface ServiceAopMethod {
++            get $beanFullName(): 'test-vona.service.aopMethod';
++            get $onionName(): 'test-vona:aopMethod';
++          }
+ 
+-    export interface IDtoOptionsPostAggregate {
+-      fields?: TypeEntityOptionsFields<DtoPostAggregate, IDtoOptionsPostAggregate[TypeSymbolKeyFieldsMore]>;
+-    }
++        export interface ServiceCaching {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
+ 
+-    export interface IDtoOptionsPostCreate {
+-      fields?: TypeEntityOptionsFields<DtoPostCreate, IDtoOptionsPostCreate[TypeSymbolKeyFieldsMore]>;
+-    }
++          export interface ServiceCaching {
++            get $beanFullName(): 'test-vona.service.caching';
++            get $onionName(): 'test-vona:caching';
++          }
+ 
+-    export interface IDtoOptionsPostGroup {
+-      fields?: TypeEntityOptionsFields<DtoPostGroup, IDtoOptionsPostGroup[TypeSymbolKeyFieldsMore]>;
+-    }
++        export interface ServiceCategory {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
+ 
+-    export interface IDtoOptionsPostSelectReq {
+-      fields?: TypeEntityOptionsFields<DtoPostSelectReq, IDtoOptionsPostSelectReq[TypeSymbolKeyFieldsMore]>;
+-    }
++          export interface ServiceCategory {
++            get $beanFullName(): 'test-vona.service.category';
++            get $onionName(): 'test-vona:category';
++          }
+ 
+-    export interface IDtoOptionsPostSelectRes {
+-      fields?: TypeEntityOptionsFields<DtoPostSelectRes, IDtoOptionsPostSelectRes[TypeSymbolKeyFieldsMore]>;
+-    }
++        export interface ServiceOrder {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
+ 
+-    export interface IDtoOptionsPostSelectResItem {
+-      fields?: TypeEntityOptionsFields<DtoPostSelectResItem, IDtoOptionsPostSelectResItem[TypeSymbolKeyFieldsMore]>;
+-    }
++          export interface ServiceOrder {
++            get $beanFullName(): 'test-vona.service.order';
++            get $onionName(): 'test-vona:order';
++          }
+ 
+-    export interface IDtoOptionsProfile {
+-      fields?: TypeEntityOptionsFields<DtoProfile, IDtoOptionsProfile[TypeSymbolKeyFieldsMore]>;
+-    }
++        export interface ServicePost {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
+ 
+-    export interface IDtoOptionsRoleLazy {
+-      fields?: TypeEntityOptionsFields<DtoRoleLazy, IDtoOptionsRoleLazy[TypeSymbolKeyFieldsMore]>;
+-    }
++          export interface ServicePost {
++            get $beanFullName(): 'test-vona.service.post';
++            get $onionName(): 'test-vona:post';
++          }
+ 
+-    export interface IDtoOptionsSerializerArray {
+-      fields?: TypeEntityOptionsFields<DtoSerializerArray, IDtoOptionsSerializerArray[TypeSymbolKeyFieldsMore]>;
+-    }
++        export interface ServiceProduct {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
+ 
+-    export interface IDtoOptionsSerializerLazy {
+-      fields?: TypeEntityOptionsFields<DtoSerializerLazy, IDtoOptionsSerializerLazy[TypeSymbolKeyFieldsMore]>;
+-    }
++          export interface ServiceProduct {
++            get $beanFullName(): 'test-vona.service.product';
++            get $onionName(): 'test-vona:product';
++          }
+ 
+-    export interface IDtoOptionsSerializerSimple {
+-      fields?: TypeEntityOptionsFields<DtoSerializerSimple, IDtoOptionsSerializerSimple[TypeSymbolKeyFieldsMore]>;
+-    }
++        export interface ServiceRetryable {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
+ 
+-    export interface IDtoOptionsUser {
+-      fields?: TypeEntityOptionsFields<DtoUser, IDtoOptionsUser[TypeSymbolKeyFieldsMore]>;
+-    }
++          export interface ServiceRetryable {
++            get $beanFullName(): 'test-vona.service.retryable';
++            get $onionName(): 'test-vona:retryable';
++          }
+ 
+-    export interface IDtoOptionsUserCreate {
+-      fields?: TypeEntityOptionsFields<DtoUserCreate, IDtoOptionsUserCreate[TypeSymbolKeyFieldsMore]>;
+-    }
++        export interface ServiceTest {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
+ 
+-    export interface IDtoOptionsUserLazy {
+-      fields?: TypeEntityOptionsFields<DtoUserLazy, IDtoOptionsUserLazy[TypeSymbolKeyFieldsMore]>;
+-    }
++          export interface ServiceTest {
++            get $beanFullName(): 'test-vona.service.test';
++            get $onionName(): 'test-vona:test';
++          }
+ 
+-    export interface IDtoOptionsUserUpdate {
+-      fields?: TypeEntityOptionsFields<DtoUserUpdate, IDtoOptionsUserUpdate[TypeSymbolKeyFieldsMore]>;
+-    }
++        export interface ServiceTestApp {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
++
++          export interface ServiceTestApp {
++            get $beanFullName(): 'test-vona.service.testApp';
++            get $onionName(): 'test-vona:testApp';
++          }
++
++        export interface ServiceTestClass {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
++
++          export interface ServiceTestClass {
++            get $beanFullName(): 'test-vona.service.testClass';
++            get $onionName(): 'test-vona:testClass';
++          }
++
++        export interface ServiceTestData {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
++
++          export interface ServiceTestData {
++            get $beanFullName(): 'test-vona.service.testData';
++            get $onionName(): 'test-vona:testData';
++          }
++
++        export interface ServiceTransaction {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
++
++          export interface ServiceTransaction {
++            get $beanFullName(): 'test-vona.service.transaction';
++            get $onionName(): 'test-vona:transaction';
++          }
++
++        export interface ServiceUser {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
++
++          export interface ServiceUser {
++            get $beanFullName(): 'test-vona.service.user';
++            get $onionName(): 'test-vona:user';
++          }
+ }
+-/** dto: end */
+-/** controller: begin */
+-export * from '../controller/bean.ts';
+-export * from '../controller/cacheMem.ts';
+-export * from '../controller/cacheRedis.ts';
+-export * from '../controller/dtoTest.ts';
+-export * from '../controller/guardPassport.ts';
+-export * from '../controller/onion.ts';
+-export * from '../controller/order.ts';
+-export * from '../controller/passport.ts';
+-export * from '../controller/performAction.ts';
+-export * from '../controller/post.ts';
+-export * from '../controller/queue.ts';
+-export * from '../controller/serializer.ts';
+-export * from '../controller/summer.ts';
+-export * from '../controller/tail.ts';
+-export * from '../controller/transaction.ts';
+-export * from '../controller/upload.ts';
+-import type { IControllerOptionsBean } from '../controller/bean.ts';
+-import type { IControllerOptionsCacheMem } from '../controller/cacheMem.ts';
+-import type { IControllerOptionsCacheRedis } from '../controller/cacheRedis.ts';
+-import type { IControllerOptionsDtoTest } from '../controller/dtoTest.ts';
+-import type { IControllerOptionsGuardPassport } from '../controller/guardPassport.ts';
+-import type { IControllerOptionsOnion } from '../controller/onion.ts';
+-import type { IControllerOptionsOrder } from '../controller/order.ts';
+-import type { IControllerOptionsPassport } from '../controller/passport.ts';
+-import type { IControllerOptionsPerformAction } from '../controller/performAction.ts';
+-import type { IControllerOptionsPost } from '../controller/post.ts';
+-import type { IControllerOptionsQueue } from '../controller/queue.ts';
+-import type { IControllerOptionsSerializer } from '../controller/serializer.ts';
+-import type { IControllerOptionsSummer } from '../controller/summer.ts';
+-import type { IControllerOptionsTail } from '../controller/tail.ts';
+-import type { IControllerOptionsTransaction } from '../controller/transaction.ts';
+-import type { IControllerOptionsUpload } from '../controller/upload.ts';
+-import 'vona-module-a-web';
+-declare module 'vona-module-a-web' {
++/** service: end */
++/** service: begin */
++import type { ServiceAopMethod } from '../service/aopMethod.ts';
++import type { ServiceCaching } from '../service/caching.ts';
++import type { ServiceCategory } from '../service/category.ts';
++import type { ServiceOrder } from '../service/order.ts';
++import type { ServicePost } from '../service/post.ts';
++import type { ServiceProduct } from '../service/product.ts';
++import type { ServiceRetryable } from '../service/retryable.ts';
++import type { ServiceTest } from '../service/test.ts';
++import type { ServiceTestApp } from '../service/testApp.ts';
++import type { ServiceTestClass } from '../service/testClass.ts';
++import type { ServiceTestData } from '../service/testData.ts';
++import type { ServiceTransaction } from '../service/transaction.ts';
++import type { ServiceUser } from '../service/user.ts';
++export interface IModuleService {
++  'aopMethod': ServiceAopMethod;
++'caching': ServiceCaching;
++'category': ServiceCategory;
++'order': ServiceOrder;
++'post': ServicePost;
++'product': ServiceProduct;
++'retryable': ServiceRetryable;
++'test': ServiceTest;
++'testApp': ServiceTestApp;
++'testClass': ServiceTestClass;
++'testData': ServiceTestData;
++'transaction': ServiceTransaction;
++'user': ServiceUser;
++}
++/** service: end */
++/** service: begin */
++
++import 'vona';
++declare module 'vona' {
++  export interface IBeanRecordGeneral {
++    'test-vona.service.aopMethod': ServiceAopMethod;
++'test-vona.service.caching': ServiceCaching;
++'test-vona.service.category': ServiceCategory;
++'test-vona.service.order': ServiceOrder;
++'test-vona.service.post': ServicePost;
++'test-vona.service.product': ServiceProduct;
++'test-vona.service.retryable': ServiceRetryable;
++'test-vona.service.test': ServiceTest;
++'test-vona.service.testApp': ServiceTestApp;
++'test-vona.service.testClass': ServiceTestClass;
++'test-vona.service.testData': ServiceTestData;
++'test-vona.service.transaction': ServiceTransaction;
++'test-vona.service.user': ServiceUser;
++  }
++}
++/** service: end */
++/** broadcast: begin */
++export * from '../bean/broadcast.test.ts';
++
++import { type IDecoratorBroadcastOptions } from 'vona-module-a-broadcast';
++declare module 'vona-module-a-broadcast' {
+ 
+-    export interface IControllerRecord {
+-      'test-vona:bean': IControllerOptionsBean;
+-'test-vona:cacheMem': IControllerOptionsCacheMem;
+-'test-vona:cacheRedis': IControllerOptionsCacheRedis;
+-'test-vona:dtoTest': IControllerOptionsDtoTest;
+-'test-vona:guardPassport': IControllerOptionsGuardPassport;
+-'test-vona:onion': IControllerOptionsOnion;
+-'test-vona:order': IControllerOptionsOrder;
+-'test-vona:passport': IControllerOptionsPassport;
+-'test-vona:performAction': IControllerOptionsPerformAction;
+-'test-vona:post': IControllerOptionsPost;
+-'test-vona:queue': IControllerOptionsQueue;
+-'test-vona:serializer': IControllerOptionsSerializer;
+-'test-vona:summer': IControllerOptionsSummer;
+-'test-vona:tail': IControllerOptionsTail;
+-'test-vona:transaction': IControllerOptionsTransaction;
+-'test-vona:upload': IControllerOptionsUpload;
++    export interface IBroadcastRecord {
++      'test-vona:test': IDecoratorBroadcastOptions;
+     }
+ 
+ 
+ }
+ declare module 'vona-module-test-vona' {
+ 
+-        export interface ControllerBean {
++        export interface BroadcastTest {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ControllerBean {
+-            get $beanFullName(): 'test-vona.controller.bean';
+-            get $onionName(): 'test-vona:bean';
+-            get $onionOptions(): IControllerOptionsBean;
++          export interface BroadcastTest {
++            get $beanFullName(): 'test-vona.broadcast.test';
++            get $onionName(): 'test-vona:test';
++            get $onionOptions(): IDecoratorBroadcastOptions;
+           }
++}
++/** broadcast: end */
++/** broadcast: begin */
++import type { BroadcastTest } from '../bean/broadcast.test.ts';
++export interface IModuleBroadcast {
++  'test': BroadcastTest;
++}
++/** broadcast: end */
++/** cacheMem: begin */
++export * from '../bean/cacheMem.test.ts';
+ 
+-        export interface ControllerCacheMem {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
++import { type IDecoratorCacheMemOptions } from 'vona-module-a-cache';
++declare module 'vona-module-a-cache' {
+ 
+-          export interface ControllerCacheMem {
+-            get $beanFullName(): 'test-vona.controller.cacheMem';
+-            get $onionName(): 'test-vona:cacheMem';
+-            get $onionOptions(): IControllerOptionsCacheMem;
+-          }
++    export interface ICacheMemRecord {
++      'test-vona:test': IDecoratorCacheMemOptions;
++    }
+ 
+-        export interface ControllerCacheRedis {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
+ 
+-          export interface ControllerCacheRedis {
+-            get $beanFullName(): 'test-vona.controller.cacheRedis';
+-            get $onionName(): 'test-vona:cacheRedis';
+-            get $onionOptions(): IControllerOptionsCacheRedis;
+-          }
++}
++declare module 'vona-module-test-vona' {
+ 
+-        export interface ControllerDtoTest {
++        export interface CacheMemTest {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ControllerDtoTest {
+-            get $beanFullName(): 'test-vona.controller.dtoTest';
+-            get $onionName(): 'test-vona:dtoTest';
+-            get $onionOptions(): IControllerOptionsDtoTest;
++          export interface CacheMemTest {
++            get $beanFullName(): 'test-vona.cacheMem.test';
++            get $onionName(): 'test-vona:test';
++            get $onionOptions(): IDecoratorCacheMemOptions;
+           }
++}
++/** cacheMem: end */
++/** cacheMem: begin */
++import type { CacheMemTest } from '../bean/cacheMem.test.ts';
++export interface IModuleCacheMem {
++  'test': CacheMemTest;
++}
++/** cacheMem: end */
++/** cacheRedis: begin */
++export * from '../bean/cacheRedis.post.ts';
++export * from '../bean/cacheRedis.test.ts';
+ 
+-        export interface ControllerGuardPassport {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
++import { type IDecoratorCacheRedisOptions } from 'vona-module-a-cache';
++declare module 'vona-module-a-cache' {
+ 
+-          export interface ControllerGuardPassport {
+-            get $beanFullName(): 'test-vona.controller.guardPassport';
+-            get $onionName(): 'test-vona:guardPassport';
+-            get $onionOptions(): IControllerOptionsGuardPassport;
+-          }
++    export interface ICacheRedisRecord {
++      'test-vona:post': IDecoratorCacheRedisOptions;
++'test-vona:test': IDecoratorCacheRedisOptions;
++    }
+ 
+-        export interface ControllerOnion {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
+ 
+-          export interface ControllerOnion {
+-            get $beanFullName(): 'test-vona.controller.onion';
+-            get $onionName(): 'test-vona:onion';
+-            get $onionOptions(): IControllerOptionsOnion;
+-          }
++}
++declare module 'vona-module-test-vona' {
+ 
+-        export interface ControllerOrder {
++        export interface CacheRedisPost {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ControllerOrder {
+-            get $beanFullName(): 'test-vona.controller.order';
+-            get $onionName(): 'test-vona:order';
+-            get $onionOptions(): IControllerOptionsOrder;
++          export interface CacheRedisPost {
++            get $beanFullName(): 'test-vona.cacheRedis.post';
++            get $onionName(): 'test-vona:post';
++            get $onionOptions(): IDecoratorCacheRedisOptions;
+           }
+ 
+-        export interface ControllerPassport {
++        export interface CacheRedisTest {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ControllerPassport {
+-            get $beanFullName(): 'test-vona.controller.passport';
+-            get $onionName(): 'test-vona:passport';
+-            get $onionOptions(): IControllerOptionsPassport;
++          export interface CacheRedisTest {
++            get $beanFullName(): 'test-vona.cacheRedis.test';
++            get $onionName(): 'test-vona:test';
++            get $onionOptions(): IDecoratorCacheRedisOptions;
+           }
++}
++/** cacheRedis: end */
++/** cacheRedis: begin */
++import type { CacheRedisPost } from '../bean/cacheRedis.post.ts';
++import type { CacheRedisTest } from '../bean/cacheRedis.test.ts';
++export interface IModuleCacheRedis {
++  'post': CacheRedisPost;
++'test': CacheRedisTest;
++}
++/** cacheRedis: end */
++/** event: begin */
++export * from '../bean/event.helloEcho.ts';
+ 
+-        export interface ControllerPerformAction {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
++import 'vona';
++declare module 'vona' {
+ 
+-          export interface ControllerPerformAction {
+-            get $beanFullName(): 'test-vona.controller.performAction';
+-            get $onionName(): 'test-vona:performAction';
+-            get $onionOptions(): IControllerOptionsPerformAction;
+-          }
+ 
+-        export interface ControllerPost {
++}
++declare module 'vona-module-test-vona' {
++
++        export interface EventHelloEcho {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ControllerPost {
+-            get $beanFullName(): 'test-vona.controller.post';
+-            get $onionName(): 'test-vona:post';
+-            get $onionOptions(): IControllerOptionsPost;
++          export interface EventHelloEcho {
++            get $beanFullName(): 'test-vona.event.helloEcho';
++            get $onionName(): 'test-vona:helloEcho';
+           }
++}
++/** event: end */
++/** event: begin */
++import type { EventHelloEcho } from '../bean/event.helloEcho.ts';
++export interface IModuleEvent {
++  'helloEcho': EventHelloEcho;
++}
++/** event: end */
++/** event: begin */
++import type { TypeEventHelloEchoData, TypeEventHelloEchoResult } from '../bean/event.helloEcho.ts';
++import type { EventOn } from 'vona-module-a-event';
++declare module 'vona-module-a-event' {
++  export interface IEventRecord {
++    'test-vona:helloEcho': EventOn<TypeEventHelloEchoData, TypeEventHelloEchoResult>;
++  }
++}
++/** event: end */
++/** eventListener: begin */
++export * from '../bean/eventListener.helloEcho.ts';
+ 
+-        export interface ControllerQueue {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
++import { type IDecoratorEventListenerOptions } from 'vona-module-a-event';
++declare module 'vona-module-a-event' {
+ 
+-          export interface ControllerQueue {
+-            get $beanFullName(): 'test-vona.controller.queue';
+-            get $onionName(): 'test-vona:queue';
+-            get $onionOptions(): IControllerOptionsQueue;
+-          }
++    export interface IEventListenerRecord {
++      'test-vona:helloEcho': IDecoratorEventListenerOptions;
++    }
+ 
+-        export interface ControllerSerializer {
+-          /** @internal */
+-          get scope(): ScopeModuleTestVona;
+-        }
+ 
+-          export interface ControllerSerializer {
+-            get $beanFullName(): 'test-vona.controller.serializer';
+-            get $onionName(): 'test-vona:serializer';
+-            get $onionOptions(): IControllerOptionsSerializer;
+-          }
++}
++declare module 'vona-module-test-vona' {
+ 
+-        export interface ControllerSummer {
++        export interface EventListenerHelloEcho {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ControllerSummer {
+-            get $beanFullName(): 'test-vona.controller.summer';
+-            get $onionName(): 'test-vona:summer';
+-            get $onionOptions(): IControllerOptionsSummer;
++          export interface EventListenerHelloEcho {
++            get $beanFullName(): 'test-vona.eventListener.helloEcho';
++            get $onionName(): 'test-vona:helloEcho';
++            get $onionOptions(): IDecoratorEventListenerOptions;
+           }
++}
++/** eventListener: end */
++/** meta: begin */
++export * from '../bean/meta.asset.ts';
++export * from '../bean/meta.static.ts';
++export * from '../bean/meta.version.ts';
+ 
+-        export interface ControllerTail {
++import 'vona-module-a-meta';
++declare module 'vona-module-a-meta' {
++
++    export interface IMetaRecord {
++      'test-vona:asset': never;
++'test-vona:static': never;
++'test-vona:version': never;
++    }
++
++
++}
++declare module 'vona-module-test-vona' {
++
++        export interface MetaAsset {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ControllerTail {
+-            get $beanFullName(): 'test-vona.controller.tail';
+-            get $onionName(): 'test-vona:tail';
+-            get $onionOptions(): IControllerOptionsTail;
++          export interface MetaAsset {
++            get $beanFullName(): 'test-vona.meta.asset';
++            get $onionName(): 'test-vona:asset';
+           }
+ 
+-        export interface ControllerTransaction {
++        export interface MetaStatic {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+-        }
+-
+-          export interface ControllerTransaction {
+-            get $beanFullName(): 'test-vona.controller.transaction';
+-            get $onionName(): 'test-vona:transaction';
+-            get $onionOptions(): IControllerOptionsTransaction;
++        }
++
++          export interface MetaStatic {
++            get $beanFullName(): 'test-vona.meta.static';
++            get $onionName(): 'test-vona:static';
+           }
+ 
+-        export interface ControllerUpload {
++        export interface MetaVersion {
+           /** @internal */
+           get scope(): ScopeModuleTestVona;
+         }
+ 
+-          export interface ControllerUpload {
+-            get $beanFullName(): 'test-vona.controller.upload';
+-            get $onionName(): 'test-vona:upload';
+-            get $onionOptions(): IControllerOptionsUpload;
++          export interface MetaVersion {
++            get $beanFullName(): 'test-vona.meta.version';
++            get $onionName(): 'test-vona:version';
+           }
+ }
+-/** controller: end */
+-/** controller: begin */
+-// @ts-ignore ignore
+-import type { ControllerBean } from '../controller/bean.ts';
+-// @ts-ignore ignore
+-import type { ControllerCacheMem } from '../controller/cacheMem.ts';
+-// @ts-ignore ignore
+-import type { ControllerCacheRedis } from '../controller/cacheRedis.ts';
+-// @ts-ignore ignore
+-import type { ControllerDtoTest } from '../controller/dtoTest.ts';
+-// @ts-ignore ignore
+-import type { ControllerGuardPassport } from '../controller/guardPassport.ts';
+-// @ts-ignore ignore
+-import type { ControllerOnion } from '../controller/onion.ts';
+-// @ts-ignore ignore
+-import type { ControllerOrder } from '../controller/order.ts';
+-// @ts-ignore ignore
+-import type { ControllerPassport } from '../controller/passport.ts';
+-// @ts-ignore ignore
+-import type { ControllerPerformAction } from '../controller/performAction.ts';
+-// @ts-ignore ignore
+-import type { ControllerPost } from '../controller/post.ts';
+-// @ts-ignore ignore
+-import type { ControllerQueue } from '../controller/queue.ts';
+-// @ts-ignore ignore
+-import type { ControllerSerializer } from '../controller/serializer.ts';
+-// @ts-ignore ignore
+-import type { ControllerSummer } from '../controller/summer.ts';
+-// @ts-ignore ignore
+-import type { ControllerTail } from '../controller/tail.ts';
+-// @ts-ignore ignore
+-import type { ControllerTransaction } from '../controller/transaction.ts';
+-// @ts-ignore ignore
+-import type { ControllerUpload } from '../controller/upload.ts';
+-declare module 'vona-module-test-vona' {
+-
+-    export interface IControllerOptionsBean {
+-      actions?: TypeControllerOptionsActions<ControllerBean>;
+-    }
++/** meta: end */
++/** meta static: begin */
++import type { MetaStatic } from '../bean/meta.static.ts';
++/** meta static: end */
++/** meta asset: begin */
++import type { MetaAsset } from '../bean/meta.asset.ts';
++/** meta asset: end */
++/** queue: begin */
++export * from '../bean/queue.test.ts';
+ 
+-    export interface IControllerOptionsCacheMem {
+-      actions?: TypeControllerOptionsActions<ControllerCacheMem>;
+-    }
++import { type IDecoratorQueueOptions } from 'vona-module-a-queue';
++declare module 'vona-module-a-queue' {
+ 
+-    export interface IControllerOptionsCacheRedis {
+-      actions?: TypeControllerOptionsActions<ControllerCacheRedis>;
++    export interface IQueueRecord {
++      'test-vona:test': IDecoratorQueueOptions;
+     }
+ 
+-    export interface IControllerOptionsDtoTest {
+-      actions?: TypeControllerOptionsActions<ControllerDtoTest>;
+-    }
+ 
+-    export interface IControllerOptionsGuardPassport {
+-      actions?: TypeControllerOptionsActions<ControllerGuardPassport>;
+-    }
++}
++declare module 'vona-module-test-vona' {
+ 
+-    export interface IControllerOptionsOnion {
+-      actions?: TypeControllerOptionsActions<ControllerOnion>;
+-    }
++        export interface QueueTest {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
+ 
+-    export interface IControllerOptionsOrder {
+-      actions?: TypeControllerOptionsActions<ControllerOrder>;
+-    }
++          export interface QueueTest {
++            get $beanFullName(): 'test-vona.queue.test';
++            get $onionName(): 'test-vona:test';
++            get $onionOptions(): IDecoratorQueueOptions;
++          }
++}
++/** queue: end */
++/** queue: begin */
++import type { QueueTest } from '../bean/queue.test.ts';
++export interface IModuleQueue {
++  'test': QueueTest;
++}
++/** queue: end */
++/** serializerTransform: begin */
++export * from '../bean/serializerTransform.email.ts';
++import type { ISerializerTransformOptionsEmail } from '../bean/serializerTransform.email.ts';
++import 'vona-module-a-serialization';
++declare module 'vona-module-a-serialization' {
+ 
+-    export interface IControllerOptionsPassport {
+-      actions?: TypeControllerOptionsActions<ControllerPassport>;
++    export interface ISerializerTransformRecord {
++      'test-vona:email': ISerializerTransformOptionsEmail;
+     }
+ 
+-    export interface IControllerOptionsPerformAction {
+-      actions?: TypeControllerOptionsActions<ControllerPerformAction>;
+-    }
+ 
+-    export interface IControllerOptionsPost {
+-      actions?: TypeControllerOptionsActions<ControllerPost>;
+-    }
++}
++declare module 'vona-module-test-vona' {
+ 
+-    export interface IControllerOptionsQueue {
+-      actions?: TypeControllerOptionsActions<ControllerQueue>;
+-    }
++        export interface SerializerTransformEmail {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
+ 
+-    export interface IControllerOptionsSerializer {
+-      actions?: TypeControllerOptionsActions<ControllerSerializer>;
+-    }
++          export interface SerializerTransformEmail {
++            get $beanFullName(): 'test-vona.serializerTransform.email';
++            get $onionName(): 'test-vona:email';
++            get $onionOptions(): ISerializerTransformOptionsEmail;
++          }
++}
++/** serializerTransform: end */
++/** summerCache: begin */
++export * from '../bean/summerCache.caching.ts';
++export * from '../bean/summerCache.test.ts';
+ 
+-    export interface IControllerOptionsSummer {
+-      actions?: TypeControllerOptionsActions<ControllerSummer>;
+-    }
++import { type IDecoratorSummerCacheOptions } from 'vona-module-a-summer';
++declare module 'vona-module-a-summer' {
+ 
+-    export interface IControllerOptionsTail {
+-      actions?: TypeControllerOptionsActions<ControllerTail>;
++    export interface ISummerCacheRecord {
++      'test-vona:caching': IDecoratorSummerCacheOptions;
++'test-vona:test': IDecoratorSummerCacheOptions;
+     }
+ 
+-    export interface IControllerOptionsTransaction {
+-      actions?: TypeControllerOptionsActions<ControllerTransaction>;
+-    }
+ 
+-    export interface IControllerOptionsUpload {
+-      actions?: TypeControllerOptionsActions<ControllerUpload>;
+-    }
+ }
+-declare module 'vona-module-a-web' {
+-  export interface IApiPathGetRecord{
+-        '/test/vona/bean/test': undefined;
+-'/test/vona/bean/service': undefined;
+-'/test/vona/dtoTest/getUserLazy': undefined;
+-'/test/vona/dtoTest/getUserDynamic': undefined;
+-'/test/vona/dtoTest/getUserStats': undefined;
+-'/test/vona/dtoTest/getUserStatsGroup': undefined;
+-'/test/vona/dtoTest/getCategoryTree': undefined;
+-'/test/vona/dtoTest/getCategoryTree2': undefined;
+-'/test/vona/guardPassport/testRoleName': undefined;
+-'/test/vona/guardPassport/testRoleNameFail': undefined;
+-'/test/vona/guardPassport/testRoleNameControllerShouldNotExecute': undefined;
+-'/test/vona/guardPassport/testPublic': undefined;
+-'/test/vona/guardPassport/testActivatedFalse': undefined;
+-'/': undefined;
+-'/test/vona/onion/echo3/:userId': undefined;
+-'/test/vona/onion/echo5': undefined;
+-'/test/vona/onion/echo6': undefined;
+-'/test/vona/onion/echo7': undefined;
+-'/test/vona/order/findAll': undefined;
+-'/test/vona/order/findMany': undefined;
+-'/test/vona/passport/echo/:name': undefined;
+-'/test/vona/passport/isAuthenticated': undefined;
+-'/test/vona/performAction/rateLimitController': undefined;
+-'/test/vona/performAction/rateLimit': undefined;
+-'/test/vona/performAction/rateLimitExempt': undefined;
+-'/test/vona/post/group': undefined;
+-'/test/vona/post/aggregate': undefined;
+-'/test/vona/post/findManyEcho': undefined;
+-'/test/vona/post/findMany': undefined;
+-    }
+-export interface IApiPathPostRecord{
+-        '/test/vona/cacheMem': undefined;
+-'/test/vona/cacheRedis': undefined;
+-'/test/vona/dtoTest/createUser': undefined;
+-'//echo': undefined;
+-'/test/vona/onion/echo2/:userId/:userName': undefined;
+-'/test/vona/onion/echo4': undefined;
+-'/test/vona/order/create': undefined;
+-'/test/vona/order/update/:id': undefined;
+-'/test/vona/passport/login': undefined;
+-'/test/vona/passport/refresh': undefined;
+-'/test/vona/passport/logout': undefined;
+-'/test/vona/performAction/echo': undefined;
+-'/test/vona/queue/pushAsync': undefined;
+-'/test/vona/queue/push': undefined;
+-'/test/vona/serializer/echoSimple': undefined;
+-'/test/vona/serializer/echoArray': undefined;
+-'/test/vona/serializer/echoLazy': undefined;
+-'/test/vona/summer': undefined;
+-'/test/vona/tail': undefined;
+-'/test/vona/transaction/fail': undefined;
+-'/test/vona/transaction/success': undefined;
+-'/test/vona/upload/fields': undefined;
+-'/test/vona/upload/file': undefined;
+-'/test/vona/upload/strict': undefined;
+-'/test/vona/upload/files': undefined;
+-    }
+-export interface IApiPathPatchRecord{
+-        '/test/vona/dtoTest/updateUser/:id': undefined;
+-    }
++declare module 'vona-module-test-vona' {
+ 
+-}
+-import 'vona-module-a-openapi';
+-  declare module 'vona-module-a-openapi' {
+-    export interface IResourceRecord {
+-      'test-vona:guardPassport': never;
+-    }
+-  }
++        export interface SummerCacheCaching {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
+ 
+-/** controller: end */
++          export interface SummerCacheCaching {
++            get $beanFullName(): 'test-vona.summerCache.caching';
++            get $onionName(): 'test-vona:caching';
++            get $onionOptions(): IDecoratorSummerCacheOptions;
++          }
++
++        export interface SummerCacheTest {
++          /** @internal */
++          get scope(): ScopeModuleTestVona;
++        }
++
++          export interface SummerCacheTest {
++            get $beanFullName(): 'test-vona.summerCache.test';
++            get $onionName(): 'test-vona:test';
++            get $onionOptions(): IDecoratorSummerCacheOptions;
++          }
++}
++/** summerCache: end */
++/** summerCache: begin */
++import type { SummerCacheCaching } from '../bean/summerCache.caching.ts';
++import type { SummerCacheTest } from '../bean/summerCache.test.ts';
++export interface IModuleSummerCache {
++  'caching': SummerCacheCaching;
++'test': SummerCacheTest;
++}
++/** summerCache: end */
+ /** config: begin */
+ export * from '../config/config.ts';
+ import type { config } from '../config/config.ts';
+diff --git a/vona/src/suite-vendor/a-test/modules/test-vona/src/bean/aop.mcpIngressProbe.ts b/vona/src/suite-vendor/a-test/modules/test-vona/src/bean/aop.mcpIngressProbe.ts
+new file mode 100644
+index 0000000000..c92f0d5ac2
+--- /dev/null
++++ b/vona/src/suite-vendor/a-test/modules/test-vona/src/bean/aop.mcpIngressProbe.ts
+@@ -0,0 +1,78 @@
++import type { IncomingMessage, ServerResponse } from 'node:http';
++import type { AopAction } from 'vona-module-a-aspect';
++
++import { BeanAopBase } from 'vona';
++import { Aop } from 'vona-module-a-aspect';
++
++type NativeListener = (req: IncomingMessage, res: ServerResponse) => unknown;
++interface CallbackSurface {
++  _callback(): NativeListener;
++}
++type Mode = 'wrap' | 'transparent';
++
++@Aop({ match: /^a-web\.startup\.listen$/, meta: { mode: 'test' } })
++export class AopMcpIngressProbe extends BeanAopBase {
++  private session?: {
++    acquire: (original: NativeListener) => NativeListener;
++  };
++  private acquisitions = 0;
++  private invocations = 0;
++
++  arm(mode: Mode, witness?: (req: IncomingMessage, res: ServerResponse) => boolean) {
++    if (!this.app.meta.isTest || this.session || !['wrap', 'transparent'].includes(mode)) {
++      throw new Error('probe_arm_rejected');
++    }
++    if (mode === 'wrap' && typeof witness !== 'function') {
++      throw new Error('probe_witness_required');
++    }
++    const state = {
++      interceptions: 0,
++      nextCalls: 0,
++      calls: 0,
++      identityMatches: 0,
++      originalFunction: false,
++      returnedFunction: false,
++      sameReturn: false,
++      closed: false,
++    };
++    let observe = witness;
++    const wrapper: NativeListener = (req, res) => {
++      if (state.closed || this.invocations >= 4) throw new Error('probe_call_rejected');
++      this.invocations++;
++      state.calls++;
++      if (observe?.(req, res) !== true) throw new Error('probe_identity_failed');
++      state.identityMatches++;
++      return 'mcp_ingress_probe';
++    };
++    const session = {
++      acquire: (original: NativeListener) => {
++        state.interceptions++;
++        state.nextCalls++;
++        state.originalFunction = typeof original === 'function';
++        if (!state.originalFunction) throw new Error('probe_original_not_function');
++        const returned = mode === 'wrap' ? wrapper : original;
++        state.returnedFunction = typeof returned === 'function';
++        state.sameReturn = returned === original;
++        return returned;
++      },
++    };
++    // Only this bounded session is retained; no original listener or native pair is stored.
++    this.session = session;
++    return {
++      snapshot: () => ({ ...state, armed: this.session === session, referencesReleased: !observe }),
++      close: () => {
++        state.closed = true;
++        observe = undefined;
++        if (this.session === session) this.session = undefined;
++      },
++    };
++  }
++
++  _callback: AopAction<CallbackSurface, '_callback'> = (_args, next) => {
++    const session = this.session;
++    if (!session) return next();
++    if (this.acquisitions >= 4) throw new Error('probe_acquisition_rejected');
++    this.acquisitions++;
++    return session.acquire(next());
++  };
++}
+diff --git a/vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/ingressProxy.test.ts b/vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/ingressProxy.test.ts
+new file mode 100644
+index 0000000000..f8ee871b31
+--- /dev/null
++++ b/vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/ingressProxy.test.ts
+@@ -0,0 +1,147 @@
++import type { IncomingMessage, ServerResponse } from 'node:http';
++
++import assert from 'node:assert/strict';
++import { describe, it } from 'node:test';
++import { app } from 'vona-mock';
++
++interface ProbeState {
++  interceptions: number;
++  nextCalls: number;
++  calls: number;
++  identityMatches: number;
++  originalFunction: boolean;
++  returnedFunction: boolean;
++  sameReturn: boolean;
++  closed: boolean;
++  armed: boolean;
++  referencesReleased: boolean;
++}
++interface Session {
++  snapshot(): ProbeState;
++  close(): void;
++}
++interface Probe {
++  arm(mode: 'wrap' | 'transparent', witness?: (req: IncomingMessage, res: ServerResponse) => boolean): Session;
++}
++interface StartupSurface {
++  _callback(): (req: IncomingMessage, res: ServerResponse) => unknown;
++}
++
++let sequence = 0;
++let retainedBytes = 0;
++function event(t: { diagnostic: (value: string) => void }, alias: 'included' | 'excluded', values: Record<string, number | boolean>) {
++  assert.equal(sequence < 32, true, 'event_count_limit');
++  assert.match(alias, /^[\x20-\x7E]{1,64}$/u, 'event_alias');
++  const keys = ['matched', 'wrapped', 'transparent', 'closed', 'calls', 'listenerRestored'];
++  assert.equal(Object.keys(values).every(key => keys.includes(key)), true, 'event_keys');
++  assert.equal(Object.values(values).every(value => typeof value === 'boolean' || (Number.isSafeInteger(value) && value >= 0)), true, 'event_values');
++  const line = JSON.stringify({ alias, proof: 'startup-proxy', outcome: 'observed', seq: sequence + 1, ...values });
++  const bytes = Buffer.byteLength(line);
++  assert.equal(bytes <= 512 && retainedBytes + bytes <= 16 * 1024, true, 'event_byte_limit');
++  sequence++;
++  retainedBytes += bytes;
++  t.diagnostic(line);
++}
++
++// No test-vona import: the excluded graph must stay excluded even during assertions.
++describe('ingress proxy no-listener qualification', { concurrency: false, timeout: 60_000 }, () => {
++  it('qualifies the command-selected fresh owner graph', { timeout: 15_000 }, t => {
++    const sessions: Session[] = [];
++    const before = app.listeners('error');
++    let listenerRestored = false;
++    let matched = false;
++    let wrapped = false;
++    let transparent = false;
++    let calls = 0;
++    let excluded = false;
++    let failed = false;
++    try {
++      assert.equal(process.env.PROJECT_DISABLED_SUITES === undefined || process.env.PROJECT_DISABLED_SUITES === '', true, 'suite_exclusion_not_selected');
++      const disabled = process.env.PROJECT_DISABLED_MODULES;
++      assert.equal(disabled === undefined || disabled === '' || disabled === 'test-vona', true, 'module_exclusion_not_selected');
++      excluded = disabled === 'test-vona';
++      assert.equal(app.meta.isTest, true, 'test_mode_required');
++      assert.equal(app.meta.appStarted, true, 'started_singleton_required');
++      assert.equal(app.config.server.listen.disable, true, 'listener_disabled_required');
++      assert.equal(app.server == null, true, 'no_app_server_required');
++      assert.equal(!!app.meta.modules['a-web'], true, 'web_required');
++      assert.equal(!!app.meta.modules['cabloy-mcp'], true, 'mcp_required');
++      assert.equal(!!app.meta.modules['test-vona'], !excluded, 'owner_graph');
++      const aop = app.bean._getBean('a-aspectutils.service.aop') as unknown as {
++        findAopsMatched(name: string): string[] | undefined;
++      };
++      matched = (aop.findAopsMatched('a-web.startup.listen') ?? []).includes('test-vona.aop.mcpIngressProbe');
++      assert.equal(matched, !excluded, 'owner_advice_match');
++      const startup = app.bean._getBean('a-web.startup.listen' as never) as unknown as StartupSurface;
++      if (excluded) {
++        assert.equal(typeof startup._callback(), 'function', 'excluded_sync_listener');
++      } else {
++        const probe = app.bean._getBean('test-vona.aop.mcpIngressProbe' as never) as unknown as Probe;
++        const pairs = [
++          { req: Object.create(null) as IncomingMessage, res: Object.create(null) as ServerResponse },
++          { req: Object.create(null) as IncomingMessage, res: Object.create(null) as ServerResponse },
++        ];
++        let pairIndex = 0;
++        const wrap = probe.arm('wrap', (req, res) => {
++          const pair = pairs[pairIndex++];
++          return pair?.req === req && pair.res === res;
++        });
++        sessions.push(wrap);
++        try {
++          const listener = startup._callback();
++          assert.equal(typeof listener, 'function', 'wrapped_sync_listener');
++          const acquired = wrap.snapshot();
++          assert.equal(acquired.interceptions, 1, 'one_interception');
++          assert.equal(acquired.nextCalls, 1, 'one_next');
++          assert.equal(acquired.originalFunction && acquired.returnedFunction && !acquired.sameReturn, true, 'distinct_wrapper');
++          for (const pair of pairs) {
++            assert.equal(listener(pair.req, pair.res) === 'mcp_ingress_probe', true, 'fixed_probe_result');
++          }
++          const state = wrap.snapshot();
++          assert.equal(state.calls, 2, 'two_local_calls');
++          assert.equal(state.identityMatches, 2, 'two_local_identities');
++          calls = state.calls;
++          wrapped = true;
++        } finally {
++          wrap.close();
++        }
++        assert.equal(wrap.snapshot().closed && !wrap.snapshot().armed && wrap.snapshot().referencesReleased, true, 'wrap_released');
++        const observe = probe.arm('transparent');
++        sessions.push(observe);
++        try {
++          assert.equal(typeof startup._callback(), 'function', 'transparent_sync_listener');
++          const state = observe.snapshot();
++          assert.equal(state.interceptions === 1 && state.nextCalls === 1 && state.sameReturn, true, 'exact_original_return');
++          assert.equal(state.calls, 0, 'no_original_invocation');
++          transparent = true;
++        } finally {
++          observe.close();
++        }
++        const wrapBefore = wrap.snapshot();
++        const observeBefore = observe.snapshot();
++        assert.equal(typeof startup._callback(), 'function', 'unarmed_sync_listener');
++        assert.deepEqual(wrap.snapshot(), wrapBefore, 'unarmed_wrap_unchanged');
++        assert.deepEqual(observe.snapshot(), observeBefore, 'unarmed_observer_unchanged');
++      }
++    } catch {
++      failed = true;
++    } finally {
++      for (const session of sessions) {
++        session.close();
++        const state = session.snapshot();
++        if (!state.closed || state.armed || !state.referencesReleased) failed = true;
++      }
++      const after = app.listeners('error');
++      if (before.length === 0 && after.length === 1 && after[0] === app.onerror) {
++        app.removeListener('error', app.onerror);
++      }
++      const restored = app.listeners('error');
++      listenerRestored = restored.length === before.length && restored.every((listener, index) => listener === before[index]);
++      if (!listenerRestored) failed = true;
++    }
++    if (failed) throw new Error('ingress_proxy_qualification_failed');
++    event(t, excluded ? 'excluded' : 'included', {
++      matched, wrapped, transparent, calls, closed: sessions.every(session => session.snapshot().closed), listenerRestored,
++    });
++  });
++});
