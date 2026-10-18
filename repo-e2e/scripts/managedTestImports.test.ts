@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { relative, resolve } from 'node:path';
+import { dirname, relative, resolve } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
@@ -51,6 +51,14 @@ test('fixture import gate allows type-only imports and catches runtime bypass fo
   );
 });
 
+test('fixture import gate rejects absolute imports even when they point to managedTest', () => {
+  const spec = resolve(specRoot, 'example.spec.ts');
+  assert.deepEqual(
+    violations(`import { test } from ${JSON.stringify(fixturePath.replaceAll('\\', '/'))};`, spec),
+    ['application spec must import test from managedTest'],
+  );
+});
+
 test('production gate rejects directory links, including Windows junctions', async () => {
   const root = await mkdtemp(resolve(tmpdir(), 'cabloy-managed-directory-link-'));
   try {
@@ -68,7 +76,8 @@ test('production gate rejects directory links, including Windows junctions', asy
 });
 
 test('production gate rejects file symlinks when supported', async t => {
-  const root = await mkdtemp(resolve(tmpdir(), 'cabloy-managed-file-link-'));
+  // Windows OS temp and the checkout may be on different drives, preventing relative imports.
+  const root = await mkdtemp(resolve(dirname(fixturePath), '.cabloy-managed-file-link-'));
   try {
     const spec = resolve(root, 'application.spec.ts');
     const managedPath = relative(root, fixturePath).replaceAll('\\', '/');
@@ -95,7 +104,7 @@ test('production gate rejects file symlinks when supported', async t => {
 });
 
 test('production gate rejects empty trees and bypasses in nested specs', async () => {
-  const root = await mkdtemp(resolve(tmpdir(), 'cabloy-managed-imports-'));
+  const root = await mkdtemp(resolve(dirname(fixturePath), '.cabloy-managed-imports-'));
   try {
     await assert.rejects(assertManagedTestImports(root), /no specs/);
     const nested = resolve(root, 'nested');
