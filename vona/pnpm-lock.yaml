@@ -741,8 +741,8 @@ importers:
         specifier: npm:@cabloy/zod@4.3.8
         version: '@cabloy/zod@4.3.8'
       zova:
-        specifier: ^5.1.167
-        version: 5.1.167(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
+        specifier: ^5.1.171
+        version: 5.1.171(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
       zova-jsx:
         specifier: ^1.1.92
         version: 1.1.92(typescript@5.9.3)
@@ -759,8 +759,8 @@ importers:
         specifier: ^5.1.35
         version: 5.1.35
       zova-module-a-form:
-        specifier: ^5.1.51
-        version: 5.1.51(vue@3.5.43(typescript@5.9.3))
+        specifier: ^5.1.54
+        version: 5.1.54(vue@3.5.43(typescript@5.9.3))
       zova-module-a-icon:
         specifier: ^5.1.27
         version: 5.1.27
@@ -771,20 +771,20 @@ importers:
         specifier: ^5.0.3
         version: 5.0.3
       zova-module-a-model:
-        specifier: ^5.1.37
-        version: 5.1.37(vue@3.5.43(typescript@5.9.3))
+        specifier: ^5.1.38
+        version: 5.1.38(vue@3.5.43(typescript@5.9.3))
       zova-module-a-openapi:
-        specifier: ^5.1.55
-        version: 5.1.55
+        specifier: ^5.1.57
+        version: 5.1.57
       zova-module-a-pay:
         specifier: ^5.0.9
         version: 5.0.9
       zova-module-a-router:
-        specifier: ^5.1.41
-        version: 5.1.41
+        specifier: ^5.1.42
+        version: 5.1.42
       zova-module-a-routertabs:
-        specifier: ^5.1.34
-        version: 5.1.34
+        specifier: ^5.1.35
+        version: 5.1.35
       zova-module-a-ssr:
         specifier: ^5.1.40
         version: 5.1.40
@@ -798,8 +798,8 @@ importers:
         specifier: ^5.0.5
         version: 5.0.5
       zova-module-rest-resource:
-        specifier: ^5.1.55
-        version: 5.1.55
+        specifier: ^5.1.56
+        version: 5.1.56
 
   .zova-rest/cabloy-commerce-admin:
     dependencies:
@@ -15300,16 +15300,16 @@ snapshots:
       zova-module-a-behaviors: 5.1.22
       zova-module-a-command: 5.1.35
       zova-module-a-fetch: 5.1.25
-      zova-module-a-form: 5.1.51(vue@3.5.43(typescript@5.9.3))
+      zova-module-a-form: 5.1.54(vue@3.5.43(typescript@5.9.3))
       zova-module-a-icon: 5.1.27
       zova-module-a-interceptor: 5.1.31
       zova-module-a-logger: 5.1.28
       zova-module-a-meta: 5.1.22
-      zova-module-a-model: 5.1.37(vue@3.5.43(typescript@5.9.3))
-      zova-module-a-openapi: 5.1.55
-      zova-module-a-router: 5.1.41
+      zova-module-a-model: 5.1.38(vue@3.5.43(typescript@5.9.3))
+      zova-module-a-openapi: 5.1.57
+      zova-module-a-router: 5.1.42
       zova-module-a-routerstack: 5.1.29
-      zova-module-a-routertabs: 5.1.34
+      zova-module-a-routertabs: 5.1.35
       zova-module-a-ssr: 5.1.40
       zova-module-a-ssrhmr: 5.1.23
       zova-module-a-ssrserver: 5.1.26

@@ -6,7 +6,8 @@ import { registerHooks } from 'node:module';
 import { describe, test } from 'node:test';
 import ts from 'typescript';
 
-const healthUrl = new URL('../src/bean/middlewareSystem.health.ts', import.meta.url).href;
+const healthUrl = new URL('../src/bean/middlewareSystem.health.ts?fixture=health', import.meta.url)
+  .href;
 const identityUrl = new URL(
   '../../../../../../packages-vona/vona-core/src/lib/core/testIsolation.ts',
   import.meta.url,
@@ -43,7 +44,7 @@ const hooks = registerHooks({
     return nextLoad(url, context);
   },
 });
-const { MiddlewareSystemHealth } = await import('../src/bean/middlewareSystem.health.ts');
+const { MiddlewareSystemHealth } = await import(healthUrl);
 hooks.deregister();
 
 const runId = '20261014010203-a1b2c3d4';

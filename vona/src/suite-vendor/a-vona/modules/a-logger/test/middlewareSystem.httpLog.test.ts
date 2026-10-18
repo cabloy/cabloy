@@ -4,7 +4,10 @@ import { registerHooks } from 'node:module';
 import { test } from 'node:test';
 import ts from 'typescript';
 
-const middlewareUrl = new URL('../src/bean/middlewareSystem.httpLog.ts', import.meta.url).href;
+const middlewareUrl = new URL(
+  '../src/bean/middlewareSystem.httpLog.ts?fixture=httpLog',
+  import.meta.url,
+).href;
 const hooks = registerHooks({
   resolve(specifier, context, nextResolve) {
     if (context.parentURL === middlewareUrl) {
@@ -36,7 +39,7 @@ const hooks = registerHooks({
     return nextLoad(url, context);
   },
 });
-const { MiddlewareSystemHttpLog } = await import('../src/bean/middlewareSystem.httpLog.ts');
+const { MiddlewareSystemHttpLog } = await import(middlewareUrl);
 hooks.deregister();
 
 for (const path of ['/health/ready', '/health/test-stop']) {

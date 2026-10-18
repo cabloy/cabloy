@@ -29,7 +29,8 @@ export class ModelCart extends BeanModelBase {
       mutationFn: async (body: ApiApiCommerceTradeCartaddItemRequestBody) => {
         return await this.scope.api.commerceTradeCart.addItem(body);
       },
-      onSuccess: async () => {
+      onSuccess: async cart => {
+        this.$setQueryData(['current'], cart);
         await this.$invalidateQueries({ queryKey: ['current'] });
       },
     });
@@ -47,7 +48,8 @@ export class ModelCart extends BeanModelBase {
       }) => {
         return await this.scope.api.commerceTradeCart.updateItem(body, { params: { id } });
       },
-      onSuccess: async () => {
+      onSuccess: async cart => {
+        this.$setQueryData(['current'], cart);
         await this.$invalidateQueries({ queryKey: ['current'] });
       },
     });
@@ -59,7 +61,8 @@ export class ModelCart extends BeanModelBase {
       mutationFn: async (id: string) => {
         return await this.scope.api.commerceTradeCart.deleteItem({ params: { id } });
       },
-      onSuccess: async () => {
+      onSuccess: async cart => {
+        this.$setQueryData(['current'], cart);
         await this.$invalidateQueries({ queryKey: ['current'] });
       },
     });
@@ -93,7 +96,8 @@ export class ModelCart extends BeanModelBase {
       mutationFn: async () => {
         return await this.scope.api.commerceTradeCart.clear();
       },
-      onSuccess: async () => {
+      onSuccess: async cart => {
+        this.$setQueryData(['current'], cart);
         await this.$invalidateQueries({ queryKey: ['current'] });
       },
     });

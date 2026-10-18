@@ -801,7 +801,7 @@ test(
 
       const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
       await page.getByRole('button', { name: 'Add to cart', exact: true }).click();
-      await addResponse;
+      expect((await addResponse).ok()).toBeTruthy();
 
       await page.getByRole('link', { name: /^Cart/ }).click();
       await expect(page).toHaveURL(/\/commerce\/commerce\/trade\/cart(?:\/|$)/);
@@ -1343,7 +1343,7 @@ test(
       await expect(page.getByText('$45.99')).toBeVisible();
       const addResponse = waitForApiResponse(page, 'POST', '/api/commerce/trade/cart/items');
       await page.getByRole('button', { name: 'Add to cart', exact: true }).click();
-      await addResponse;
+      expect((await addResponse).ok()).toBeTruthy();
       await page.getByRole('link', { name: /^Cart/ }).click();
       await expect(page).toHaveURL(/\/commerce\/commerce\/trade\/cart(?:\/|$)/);
       await page.getByRole('link', { name: 'Checkout', exact: true }).click();
@@ -1662,6 +1662,10 @@ test(
         /\/commerce-admin\/rest\/resource\/commerce-promotion(?:%3A|:|%253A)couponTemplate\/create(?:[/?#]|$)/,
       );
 
+      await expect(adminPage.locator('html')).toHaveAttribute(
+        'data-zova-hydrated',
+        'commerceAdmin',
+      );
       for (const groupName of [
         'Basic Information',
         'Discount Policy',
@@ -1765,6 +1769,10 @@ test(
       expectTableIdentity(parentId);
 
       await adminPage.goto(categoryCreatePath, { waitUntil: 'load' });
+      await expect(adminPage.locator('html')).toHaveAttribute(
+        'data-zova-hydrated',
+        'commerceAdmin',
+      );
       const parentPublication = adminPage
         .getByRole('group', { name: 'Published' })
         .getByRole('combobox');
