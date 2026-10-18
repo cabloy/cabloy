@@ -86,6 +86,24 @@ For Vona integrated SSR, the allocated E2E origin is supplied to Zova at runtime
 
 For deliberate **dev-mode** database preparation, `npm run db:reset` is a separate, destructive command: in a single process, it clears validated application-owned Redis keys, drops and recreates managed disposable development databases, reruns migrations and instance initialization, then runs module `seed()` hooks. It requires `database.testDatabase: true` in the dev configuration and a connection outside the disposable database. Ordinary `npm run dev` and `npm run dev:one` only reuse existing managed databases; if any required target is missing, startup fails promptly with an instruction to run `npm run db:reset`. They do not create databases, perform creation-time Redis cleanup, or seed. Never run `db:reset` against development data you need to retain. Upgrades do not reset existing development data or repeat its seeds. See [Development database preparation](#development-database-preparation) and [Migration and Changes](/backend/migration-and-changes#local-development-workflow).
 
+### Native Windows unit tests
+
+The Cabloy Basic SQLite CI workflow includes a native Windows runner alongside Ubuntu and macOS. Configuration of a matrix is not proof of a successful run: inspect the infrastructure gate and the complete test/build/install/play job before claiming verified platform compatibility.
+
+On Windows, the managed unit-test entrypoint requires Node.js with npm, PowerShell 7 (`pwsh.exe` on `PATH`), local NTFS storage, and a reachable Redis service. PowerShell is an internal helper dependency, not a required interactive terminal. From either CMD or PowerShell, use the same public command:
+
+```text
+npm run test
+```
+
+The Node runner explicitly invokes its checked-in Windows helper; it does not interpret PowerShell code in the caller's shell or download a helper runtime. It uses a non-breakaway Windows Job Object to contain the test process tree, with job membership established at process creation and kill-on-close ownership. Claim directories and files use protected private Windows ACLs and reject unsafe reparse points and hardlinks. Flushed file contents and same-volume atomic updates provide the supported local-NTFS process-crash publication contract; this is not a claim of POSIX directory-fsync equivalence or power-loss durability.
+
+A missing native capability, unsafe claim storage, ambiguous process identity, or unproven job drainage fails closed. Failed/interrupted runs retain their claims; helper disappearance alone never authorizes cleanup. Do not bypass these checks with raw test commands or remove retained resources without verifying ownership. The npm CLI is resolved from the npm invocation or its standard location beside the Node installation; a pnpm executable is not substituted for npm's JavaScript entrypoint.
+
+The Windows CI Redis setup uses a pinned, checksum-verified [third-party Redis Windows development distribution](https://github.com/redis-windows/redis-windows/releases/tag/8.2.10) with its bundled Cygwin runtime, bound to loopback. This is not an official Redis Windows port or a production deployment recommendation. Local users must provision Redis deliberately; `npm run test` does not install it.
+
+Managed browser E2E on Windows remains unsupported and is rejected before allocating test resources. This unit-test support does not establish Windows support for the separate browser lifecycle or POSIX graceful-signal behavior.
+
 ## Specification planning and derived charts
 
 The current Cabloy Basic root scripts also expose:

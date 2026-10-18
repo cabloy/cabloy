@@ -1,10 +1,15 @@
 import { randomBytes, timingSafeEqual } from 'node:crypto';
-import { constants, lstatSync } from 'node:fs';
-import { mkdir, open, rename, unlink } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import path from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 
+import {
+  assertTestClaimFilesystemSafePath,
+  createTestClaimFile,
+  ensureTestClaimPrivateDirectory,
+  readTestClaimFile,
+  replaceTestClaimFile,
+} from './testClaimFilesystem.ts';
 import {
   assertDisposableDatabaseName,
   getDatabaseTestPrefix,
@@ -62,6 +67,8 @@ export interface TestClaimProcess {
   stage: 'pending' | 'registered' | 'drained';
   pid?: number;
   pgid?: number;
+  containment?: 'windows-job';
+  jobId?: string;
   startTime?: string;
   host?: string;
   profilePath?: string;
@@ -114,20 +121,7 @@ export function getTestClaimCreatedAt(runId: string) {
 }
 
 export function assertTestClaimSafePath(file: string, allowMissing = true) {
-  let current = path.resolve(file);
-  while (true) {
-    try {
-      const stat = lstatSync(current);
-      if (stat.isSymbolicLink() || (current !== path.resolve(file) && !stat.isDirectory())) {
-        throw new Error('Unsafe test claim path');
-      }
-    } catch (error) {
-      if (!allowMissing || (error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
-    }
-    const parent = path.dirname(current);
-    if (parent === current) break;
-    current = parent;
-  }
+  assertTestClaimFilesystemSafePath(file, allowMissing);
 }
 
 function record(value: unknown): asserts value is Record<string, any> {
@@ -302,17 +296,43 @@ export function validateTestClaim(value: unknown, claimPath?: string): TestClaim
   array(m.processes);
   unique(m.processes.map(item => item.id));
   for (const proc of m.processes) {
-    keys(proc, ['id', 'role', 'stage', 'pid', 'pgid', 'startTime', 'host', 'profilePath']);
+    keys(proc, [
+      'id',
+      'role',
+      'stage',
+      'pid',
+      'pgid',
+      'containment',
+      'jobId',
+      'startTime',
+      'host',
+      'profilePath',
+    ]);
     label(proc.id);
     oneOf(proc.role, ['guardian', 'browser', 'cleanup']);
     if (proc.host !== undefined) text(proc.host);
     oneOf(proc.stage, ['pending', 'registered', 'drained']);
+    if (proc.containment !== undefined) oneOf(proc.containment, ['windows-job']);
+    if (proc.containment === 'windows-job') {
+      if (proc.pgid !== undefined || proc.role !== 'guardian' || proc.profilePath !== undefined)
+        throw new Error('Invalid Windows test claim containment');
+      text(proc.jobId);
+      if (!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(proc.jobId))
+        throw new Error('Invalid Windows test claim job identity');
+    } else if (proc.jobId !== undefined) {
+      throw new Error('Windows test claim job needs explicit containment');
+    }
     const hasIdentity =
       proc.pid !== undefined || proc.pgid !== undefined || proc.startTime !== undefined;
     if (hasIdentity || proc.stage !== 'pending') {
       integer(proc.pid, 1);
-      integer(proc.pgid, 1);
+      if (proc.containment !== 'windows-job') integer(proc.pgid, 1);
       text(proc.startTime);
+      if (proc.containment === 'windows-job') {
+        if (!/^[1-9]\d{0,19}$/.test(proc.startTime))
+          throw new Error('Invalid Windows test claim process creation time');
+        text(proc.host);
+      }
     }
     if (proc.profilePath !== undefined) {
       text(proc.profilePath);
@@ -329,42 +349,14 @@ export function validateTestClaim(value: unknown, claimPath?: string): TestClaim
   return m;
 }
 
-function assertPrivateFile(file: string) {
-  assertTestClaimSafePath(file, false);
-  const stat = lstatSync(file);
-  if (
-    !stat.isFile() ||
-    stat.nlink !== 1 ||
-    (stat.mode & 0o077) !== 0 ||
-    (process.getuid && stat.uid !== process.getuid())
-  ) {
-    throw new Error('Unsafe test claim file');
-  }
-}
 export async function loadTestClaim(claimPath: string) {
-  assertPrivateFile(claimPath);
-  const handle = await open(claimPath, constants.O_RDONLY | constants.O_NOFOLLOW);
-  try {
-    const stat = await handle.stat();
-    if (!stat.isFile() || stat.size > 4 * 1024 * 1024) throw new Error('Invalid test claim file');
-    return validateTestClaim(parseTestClaimJson(await handle.readFile('utf8')), claimPath);
-  } finally {
-    await handle.close();
-  }
+  return validateTestClaim(parseTestClaimJson(await readTestClaimFile(claimPath)), claimPath);
 }
 function parseTestClaimJson(source: string) {
   // Claim identities stay literal even when @cabloy/json5 revives ISO strings.
   return JSON.parse(source, function (this: Record<string, unknown>, key: string) {
     return this[key];
   });
-}
-async function syncDirectory(directory: string) {
-  const handle = await open(directory, constants.O_RDONLY);
-  try {
-    await handle.sync();
-  } finally {
-    await handle.close();
-  }
 }
 export async function createTestClaim(
   projectPath: string,
@@ -373,10 +365,7 @@ export async function createTestClaim(
   owner: TestClaimOwner,
 ) {
   const p = getTestClaimPaths(projectPath, runId);
-  assertTestClaimSafePath(p.claimDirectory);
-  await mkdir(p.claimDirectory, { mode: 0o700 }).catch(error => {
-    if (error.code !== 'EEXIST') throw error;
-  });
+  await ensureTestClaimPrivateDirectory(p.claimDirectory);
   // The directory is shared across runs; an existing directory is valid, never an existing claim.
   return createClaimFile(p, runId, kind, owner);
 }
@@ -386,15 +375,6 @@ async function createClaimFile(
   kind: TestClaimKind,
   owner: TestClaimOwner,
 ) {
-  assertTestClaimSafePath(p.claimDirectory, false);
-  const directoryStat = lstatSync(p.claimDirectory);
-  if (
-    !directoryStat.isDirectory() ||
-    (directoryStat.mode & 0o077) !== 0 ||
-    (process.getuid && directoryStat.uid !== process.getuid())
-  ) {
-    throw new Error('Unsafe shared test claim directory');
-  }
   const manifest: TestClaimManifest = {
     version: 1,
     runId,
@@ -413,18 +393,7 @@ async function createClaimFile(
     cleanup: { processes: false, databases: false, redis: false, locals: false },
   };
   validateTestClaim(manifest, p.claimPath);
-  const handle = await open(
-    p.claimPath,
-    constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW,
-    0o600,
-  );
-  try {
-    await handle.writeFile(`${JSON.stringify(manifest, null, 2)}\n`);
-    await handle.sync();
-  } finally {
-    await handle.close();
-  }
-  await syncDirectory(p.claimDirectory);
+  await createTestClaimFile(p.claimPath, `${JSON.stringify(manifest, null, 2)}\n`);
   return { claimPath: p.claimPath, manifest };
 }
 
@@ -436,27 +405,7 @@ export async function writeTestClaim(claimPath: string, manifest: TestClaimManif
     if (!isDeepStrictEqual(previous[key], manifest[key]))
       throw new Error('Test claim identity is immutable');
   }
-  const temp = `${claimPath}.${randomBytes(12).toString('hex')}.tmp`;
-  const handle = await open(
-    temp,
-    constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW,
-    0o600,
-  );
-  try {
-    try {
-      await handle.writeFile(`${JSON.stringify(manifest, null, 2)}\n`);
-      await handle.sync();
-    } finally {
-      await handle.close();
-    }
-    assertPrivateFile(claimPath);
-    await rename(temp, claimPath);
-    await syncDirectory(path.dirname(claimPath));
-  } finally {
-    await unlink(temp).catch(error => {
-      if (error.code !== 'ENOENT') throw error;
-    });
-  }
+  await replaceTestClaimFile(claimPath, `${JSON.stringify(manifest, null, 2)}\n`);
 }
 
 function applyEvent(m: TestClaimManifest, event: TestClaimEvent) {
@@ -484,7 +433,13 @@ function applyEvent(m: TestClaimManifest, event: TestClaimEvent) {
           throw new Error('Process needs a write-ahead intent');
         m.processes.push(event.process);
       } else {
-        if (old.role !== event.process.role) throw new Error('Test claim process identity changed');
+        if (
+          old.role !== event.process.role ||
+          old.containment !== event.process.containment ||
+          old.jobId !== event.process.jobId
+        ) {
+          throw new Error('Test claim process identity changed');
+        }
         if (
           event.process.profilePath !== undefined &&
           old.profilePath !== event.process.profilePath

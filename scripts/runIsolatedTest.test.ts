@@ -15,6 +15,7 @@ import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { test } from 'node:test';
+import { pathToFileURL } from 'node:url';
 
 import type { VonaApplication } from '../vona/packages-vona/vona-core/src/lib/core/application.ts';
 
@@ -32,6 +33,7 @@ import {
   createTestRunId,
   getUnitTestCommands,
   reserveTestRun,
+  resolveNpmCli,
   resolveCabloyEdition,
   ROOT_DIR,
   runIsolatedProcess,
@@ -65,7 +67,11 @@ test('public test scripts delegate to the isolated runner without recursion', ()
 
   const commands = getUnitTestCommands(['--coverage', '--ci', 'src/test/example.test.ts']);
   assert.deepEqual(commands, [
-    { command: 'npm', args: ['run', 'prerun'], cwd: resolve(ROOT_DIR, 'vona') },
+    {
+      command: process.execPath,
+      args: [resolveNpmCli(), 'run', 'prerun'],
+      cwd: resolve(ROOT_DIR, 'vona'),
+    },
     {
       command: process.execPath,
       args: [
@@ -84,6 +90,72 @@ test('public test scripts delegate to the isolated runner without recursion', ()
     '--ci=true',
   ]);
 });
+
+test('resolves the npm JavaScript entrypoint without a command shell', () => {
+  const root = mkdtempSync(join(realpathSync(tmpdir()), 'cabloy npm argv '));
+  try {
+    const cli = join(root, 'node_modules', 'npm', 'bin', 'npm-cli.js');
+    mkdirSync(join(root, 'node_modules', 'npm', 'bin'), { recursive: true });
+    writeFileSync(cli, '');
+    const executable = join(root, process.platform === 'win32' ? 'node.exe' : 'node');
+    assert.equal(resolveNpmCli({}, executable), realpathSync(cli));
+    assert.equal(resolveNpmCli({ npm_execpath: cli }, '/missing/node'), realpathSync(cli));
+    assert.throws(
+      () => resolveNpmCli({ npm_execpath: join(root, 'pnpm.cjs') }, join(root, 'missing', 'node')),
+      /Cannot resolve npm CLI/,
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test(
+  'public npm test entrypoint can be invoked from CMD and PowerShell',
+  {
+    skip: process.platform !== 'win32' ? 'Native Windows shells are required' : false,
+  },
+  () => {
+    const root = mkdtempSync(join(realpathSync(tmpdir()), 'cabloy shell entry '));
+    try {
+      writeFileSync(join(root, '__CABLOY_BASIC__'), '');
+      mkdirSync(join(root, 'vona'));
+      const entry = resolve(ROOT_DIR, 'scripts/runIsolatedTest.ts');
+      writeFileSync(
+        join(root, 'package.json'),
+        JSON.stringify({
+          private: true,
+          scripts: { test: `node "${entry}" unit` },
+        }),
+      );
+      for (const [command, args] of [
+        ['cmd.exe', ['/d', '/s', '/c', 'npm run test -- --ci']],
+        [
+          'pwsh.exe',
+          [
+            '-NoLogo',
+            '-NoProfile',
+            '-NonInteractive',
+            '-Command',
+            'npm run test -- --ci; exit $LASTEXITCODE',
+          ],
+        ],
+      ] as const) {
+        const result = spawnSync(command, [...args], {
+          cwd: root,
+          env: { ...process.env, E2E_BASE_URL: 'https://example.invalid' },
+          encoding: 'utf8',
+          timeout: 30_000,
+        });
+        assert.equal(result.error, undefined);
+        assert.notEqual(result.status, 0);
+        assert.match(result.stderr, /E2E_BASE_URL is unsupported/);
+        assert.equal(existsSync(join(root, 'vona', '.vona-test-claim')), false);
+      }
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  },
+);
 
 test('accepts either Cabloy edition and rejects ambiguous or missing markers', () => {
   const root = mkdtempSync(join(tmpdir(), 'cabloy-run-edition-'));
@@ -132,12 +204,12 @@ test('creates exclusive manifest claims and refuses stale or symlinked roots', a
     assert.equal(readFileSync(join(staleRoot, 'business-data'), 'utf8'), 'keep');
     assert.equal(existsSync(join(staleRoot, '.vona-test-owner')), false);
     const linkedRoot = join(vonaDir, `.vona-test-${id}`);
-    symlinkSync(staleRoot, linkedRoot);
+    symlinkSync(staleRoot, linkedRoot, process.platform === 'win32' ? 'junction' : 'dir');
     assert.throws(() => createOwned(linkedRoot, id), /already exists/);
     assert.equal(readFileSync(join(staleRoot, 'business-data'), 'utf8'), 'keep');
 
     const linked = join(root, 'linked');
-    symlinkSync(vonaDir, linked);
+    symlinkSync(vonaDir, linked, process.platform === 'win32' ? 'junction' : 'dir');
     await assert.rejects(reserveTestRun(linked, '20261014010204-d4e5f6a7'), /Unsafe/);
     assert.equal(
       existsSync(join(vonaDir, '.vona-test-claim', '20261014010204-d4e5f6a7.json')),
@@ -294,7 +366,7 @@ test('rejects external E2E targets before creating run directories', async () =>
 
 test('resolves distinct run paths and rejects invalid identity without touching dev paths', () => {
   const script = `
-    import { resolveVonaLocalPaths, getTestAppName } from ${JSON.stringify(isolationSource)};
+    import { resolveVonaLocalPaths, getTestAppName } from ${JSON.stringify(pathToFileURL(isolationSource).href)};
     const project = '/project/vona';
     const a = resolveVonaLocalPaths(project, 'test', '20261014010203-a1b2c3d4');
     const b = resolveVonaLocalPaths(project, 'test', '20261014010203-d4e5f6a7');
@@ -316,7 +388,7 @@ test('owner checks reject unowned paths and symlinked leaves', () => {
   const root = mkdtempSync(join(tmpdir(), 'cabloy-test-isolation-'));
   const id = '20261014010203-a1b2c3d4';
   const script = `
-    import { assertTestRunOwner } from ${JSON.stringify(isolationSource)};
+    import { assertTestRunOwner } from ${JSON.stringify(pathToFileURL(isolationSource).href)};
     const [unowned, linked] = process.argv.slice(1);
     try { assertTestRunOwner(unowned, ${JSON.stringify(id)}); process.exit(1); } catch {}
     try { assertTestRunOwner(linked, ${JSON.stringify(id)}); process.exit(2); } catch {}
@@ -328,7 +400,7 @@ test('owner checks reject unowned paths and symlinked leaves', () => {
     const unowned = join(root, 'unowned');
     mkdirSync(unowned);
     const linked = join(root, 'linked');
-    symlinkSync(owned, linked);
+    symlinkSync(owned, linked, process.platform === 'win32' ? 'junction' : 'dir');
     const result = spawnSync(
       process.execPath,
       ['--input-type=module', '-e', script, unowned, linked],
@@ -345,7 +417,6 @@ test('owner checks reject unowned paths and symlinked leaves', () => {
 });
 
 test('waits for descendants before reporting a successful child exit', async () => {
-  if (process.platform === 'win32') return;
   const root = mkdtempSync(join(tmpdir(), 'cabloy-process-group-'));
   const flag = join(root, 'descendant-finished');
   try {
@@ -367,7 +438,6 @@ test('waits for descendants before reporting a successful child exit', async () 
 });
 
 test('a guardian waits for an inherited-group descendant before success', async () => {
-  if (process.platform === 'win32') return;
   const root = mkdtempSync(join(resolve(ROOT_DIR, 'vona'), '.e2e-group-test-'));
   const flag = join(root, 'server-finished');
   try {
@@ -408,7 +478,13 @@ test('managed guardians journal registration and drainage for successful and fai
     for (const item of claim.processes) {
       assert.equal(item.stage, 'drained');
       assert.equal(item.role, 'guardian');
-      assert.equal(item.pid, item.pgid);
+      if (process.platform === 'win32') {
+        assert.equal(item.containment, 'windows-job');
+        assert.equal(item.pgid, undefined);
+        assert.ok(item.jobId);
+      } else {
+        assert.equal(item.pid, item.pgid);
+      }
       assert.ok(item.host);
       assert.ok(item.startTime);
     }
@@ -419,20 +495,26 @@ test('managed guardians journal registration and drainage for successful and fai
 });
 
 test('does not report success when a child exits nonzero', async () => {
-  if (process.platform === 'win32') return;
   await assert.rejects(
     runIsolatedProcess(process.execPath, ['-e', 'process.exit(7)'], ROOT_DIR, { ...process.env }),
     /Isolated test exited: 7/,
   );
 });
 
-test('interrupts an owned group and waits for its graceful child shutdown', async () => {
-  if (process.platform === 'win32') return;
-  const root = mkdtempSync(join(resolve(ROOT_DIR, 'vona'), '.guardian-interrupt-test-'));
-  const readyFile = join(root, 'ready');
-  const stoppedFile = join(root, 'stopped');
-  try {
-    const script = `
+test(
+  'interrupts an owned group and waits for its graceful child shutdown',
+  {
+    skip:
+      process.platform === 'win32'
+        ? 'Windows cancellation terminates the Job; POSIX graceful signals are not supported'
+        : false,
+  },
+  async () => {
+    const root = mkdtempSync(join(resolve(ROOT_DIR, 'vona'), '.guardian-interrupt-test-'));
+    const readyFile = join(root, 'ready');
+    const stoppedFile = join(root, 'stopped');
+    try {
+      const script = `
       import { writeFileSync } from 'node:fs';
       writeFileSync(process.argv[1], 'ready');
       process.on('SIGINT', () => {
@@ -443,24 +525,25 @@ test('interrupts an owned group and waits for its graceful child shutdown', asyn
       });
       setInterval(() => {}, 1000);
     `;
-    const pending = runIsolatedProcess(
-      process.execPath,
-      ['--input-type=module', '-e', script, readyFile, stoppedFile],
-      ROOT_DIR,
-      { ...process.env },
-    );
-    const deadline = Date.now() + 5000;
-    while (!existsSync(readyFile) && Date.now() < deadline) {
-      await new Promise(resolvePromise => setTimeout(resolvePromise, 50));
+      const pending = runIsolatedProcess(
+        process.execPath,
+        ['--input-type=module', '-e', script, readyFile, stoppedFile],
+        ROOT_DIR,
+        { ...process.env },
+      );
+      const deadline = Date.now() + 5000;
+      while (!existsSync(readyFile) && Date.now() < deadline) {
+        await new Promise(resolvePromise => setTimeout(resolvePromise, 50));
+      }
+      assert.ok(existsSync(readyFile));
+      process.emit('SIGINT');
+      await assert.rejects(pending, /Isolated test exited/);
+      assert.ok(existsSync(stoppedFile));
+    } finally {
+      rmSync(root, { recursive: true, force: true });
     }
-    assert.ok(existsSync(readyFile));
-    process.emit('SIGINT');
-    await assert.rejects(pending, /Isolated test exited/);
-    assert.ok(existsSync(stoppedFile));
-  } finally {
-    rmSync(root, { recursive: true, force: true });
-  }
-});
+  },
+);
 
 test('rejects merged paths, Redis prefixes, and database overrides before cleanup', () => {
   const root = mkdtempSync(join(resolve(ROOT_DIR, 'vona'), '.isolation-guard-test-'));

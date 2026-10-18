@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: [24]
     runs-on: ${{ matrix.os }}
     env:
@@ -58,13 +58,47 @@ jobs:
             cat "$redis_log"
           fi
           exit 1
+      - name: start Redis on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          # Pinned third-party development build; retain its bundled Cygwin runtime.
+          $archive = Join-Path $env:RUNNER_TEMP 'redis-8.2.10.zip'
+          $directory = Join-Path $env:RUNNER_TEMP 'redis-8.2.10'
+          Invoke-WebRequest 'https://github.com/redis-windows/redis-windows/releases/download/8.2.10/Redis-8.2.10-Windows-x64-cygwin.zip' -OutFile $archive
+          $expected = '92d9bdde87ed52bf859a677e5197d8ac855ba78d9940d457881723ae960df429'
+          if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expected) {
+            throw 'Redis archive checksum mismatch'
+          }
+          Expand-Archive $archive -DestinationPath $directory
+          $servers = @(Get-ChildItem $directory -Recurse -Filter redis-server.exe)
+          if ($servers.Count -ne 1) { throw 'Expected one Redis server executable' }
+          $redisDirectory = $servers[0].DirectoryName
+          $cli = Join-Path $redisDirectory 'redis-cli.exe'
+          $config = Join-Path $redisDirectory 'ci.conf'
+          @('bind 127.0.0.1', 'port 6379', 'protected-mode yes', 'save ""', 'appendonly no', 'daemonize no', 'logfile redis.log') |
+            Set-Content $config -Encoding utf8NoBOM
+          $server = Start-Process $servers[0].FullName -ArgumentList 'ci.conf' -WorkingDirectory $redisDirectory -PassThru
+          for ($attempt = 0; $attempt -lt 30; $attempt++) {
+            $server.Refresh()
+            if ($server.HasExited) { break }
+            $response = & $cli -h 127.0.0.1 -p 6379 ping 2>&1
+            if ($LASTEXITCODE -eq 0 -and "$response".Trim() -eq 'PONG') { exit 0 }
+            Start-Sleep -Seconds 1
+          }
+          $log = Join-Path $redisDirectory 'redis.log'
+          if (Test-Path $log) { Get-Content $log }
+          throw 'Redis did not become ready'
       - name: init
         run: npm run init
+      - name: run isolated test infrastructure gate
+        run: node --test scripts/testClaimProcesses.test.ts scripts/runIsolatedTest.test.ts scripts/testClaimCleanup.test.ts scripts/testProcessGuardianWindows.test.ts vona/packages-vona/vona-core/src/lib/core/testClaim.test.ts vona/packages-vona/vona-core/src/lib/core/testClaimFilesystem.test.ts
       - name: run A-Pay focused gate
-        run: npm run vona :bin:test -- test-pay/test/paymentSession.test.ts test-pay/test/payMock.test.ts test-pay/test/paypalProvider.test.ts test-pay/test/paypalLifecycle.test.ts test-pay/test/stripeProvider.test.ts test-pay/test/stripeLifecycle.test.ts test-pay/test/outbox.test.ts test-pay/test/webhook.test.ts --flavor=normal
+        run: npm run test -- test-pay/test/paymentSession.test.ts test-pay/test/payMock.test.ts test-pay/test/paypalProvider.test.ts test-pay/test/paypalLifecycle.test.ts test-pay/test/stripeProvider.test.ts test-pay/test/stripeLifecycle.test.ts test-pay/test/outbox.test.ts test-pay/test/webhook.test.ts
         working-directory: vona
       - name: run Commerce payment, shipment, and refund lifecycle gate
-        run: npm run vona :bin:test -- commerce-trade/test/paymentOutcome.test.ts commerce-trade/test/reservationExpiry.test.ts commerce-trade/test/shipment.test.ts commerce-trade/test/refundLifecycle.test.ts --flavor=normal
+        run: npm run test -- commerce-trade/test/paymentOutcome.test.ts commerce-trade/test/reservationExpiry.test.ts commerce-trade/test/shipment.test.ts commerce-trade/test/refundLifecycle.test.ts
         working-directory: vona
       - run: npm run test
         working-directory: vona

@@ -3,8 +3,9 @@ import type { ChildProcess } from 'node:child_process';
 import { spawn } from 'node:child_process';
 import { createHmac, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { realpathSync } from 'node:fs';
 import { createServer } from 'node:net';
-import { dirname, resolve } from 'node:path';
+import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
@@ -19,6 +20,7 @@ import {
   reapExpiredTestClaims,
 } from './testClaimCleanup.ts';
 import { inspectTestProcess, isTestClaimInactive } from './testClaimProcesses.ts';
+import { startWindowsOwnedProcess } from './testProcessGuardianWindows.ts';
 
 export const ROOT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OWNER_FILE = '.vona-test-owner';
@@ -92,9 +94,7 @@ export async function startOwnedProcess(
   cwd: string,
   env: NodeJS.ProcessEnv,
 ): Promise<OwnedProcess> {
-  if (process.platform === 'win32') {
-    throw new Error('Isolated test process-tree cleanup requires POSIX process groups');
-  }
+  if (process.platform === 'win32') return startWindowsOwnedProcess(command, args, cwd, env);
   const processId = randomUUID();
   const managed = hasTestClaimTransport(env);
   const registration = { id: processId, role: 'guardian', stage: 'pending' as const };
@@ -384,10 +384,27 @@ export async function waitForReady(
   throw new Error('Isolated Vona server did not become ready with a valid ownership proof');
 }
 
+export function resolveNpmCli(
+  env: NodeJS.ProcessEnv = process.env,
+  execPath = process.execPath,
+): string {
+  const candidates = [
+    env.npm_execpath,
+    resolve(dirname(execPath), 'node_modules/npm/bin/npm-cli.js'),
+    resolve(dirname(execPath), '../lib/node_modules/npm/bin/npm-cli.js'),
+  ];
+  for (const candidate of candidates) {
+    if (!candidate || !existsSync(candidate)) continue;
+    const file = realpathSync(candidate);
+    if (basename(file) === 'npm-cli.js' && basename(dirname(dirname(file))) === 'npm') return file;
+  }
+  throw new Error('Cannot resolve npm CLI; run through npm or install npm beside Node.js');
+}
+
 export function getUnitTestCommands(args: string[]) {
   const vonaDir = resolve(ROOT_DIR, 'vona');
   return [
-    { command: 'npm', args: ['run', 'prerun'], cwd: vonaDir },
+    { command: process.execPath, args: [resolveNpmCli(), 'run', 'prerun'], cwd: vonaDir },
     {
       command: process.execPath,
       args: [
@@ -468,6 +485,12 @@ export async function withIsolatedRun<T>(
       SERVER_SERVE_HOST: undefined,
       TMPDIR: resolve(dataRoot, 'tmp'),
     };
+    if (process.platform === 'win32') {
+      for (const key of Object.keys(env)) {
+        if (['TEMP', 'TMP', 'TMPDIR'].includes(key.toUpperCase())) delete env[key];
+      }
+      env.TEMP = env.TMP = env.TMPDIR = resolve(dataRoot, 'tmp');
+    }
     await broker.update({ type: 'status', status: 'running' });
     result = await callback({
       runId,
@@ -504,6 +527,11 @@ export async function withIsolatedRun<T>(
 }
 
 export async function runIsolatedTest(kind: 'unit' | 'e2e', args: string[]) {
+  if (kind === 'e2e' && process.platform === 'win32') {
+    throw new Error(
+      'Managed browser E2E is not supported on Windows; native unit tests are supported',
+    );
+  }
   if (process.env.E2E_BASE_URL !== undefined) {
     throw new Error(
       'E2E_BASE_URL is unsupported; the E2E runner manages a local test-mode target.',

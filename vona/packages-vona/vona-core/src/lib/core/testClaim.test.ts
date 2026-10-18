@@ -1,5 +1,6 @@
 import '@cabloy/json5';
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import {
   chmodSync,
   lstatSync,
@@ -33,7 +34,20 @@ import {
   validateTestClaim,
   writeTestClaim,
 } from './testClaim.ts';
+import { assertTestClaimPrivateDirectory, readTestClaimFile } from './testClaimFilesystem.ts';
 import { getTestAppName } from './testIsolation.ts';
+
+function setUnsafePermissions(file: string, directory = false) {
+  if (process.platform === 'win32') {
+    // icacls receives exact argv: no CMD/PowerShell string interpolation.
+    execFileSync('icacls.exe', [file, '/grant', '*S-1-1-0:(R)'], {
+      windowsHide: true,
+      stdio: 'pipe',
+    });
+  } else {
+    chmodSync(file, directory ? 0o755 : 0o644);
+  }
+}
 
 const runId = '20261013010203-a1b2c3d4';
 const owner = { pid: process.pid, startTime: 'test-process-start', host: hostname() };
@@ -90,8 +104,13 @@ test('exclusive central claim has canonical immutable UTC creation time and priv
     assert.equal(claimPath, path.join(f.projectPath, '.vona-test-claim', `${runId}.json`));
     assert.equal(manifest.createdAt, '2026-10-13T01:02:03.000Z');
     assert.ok(JSON.parse('{"createdAt":"2026-10-13T01:02:03.000Z"}').createdAt instanceof Date);
-    assert.equal(lstatSync(claimPath).mode & 0o777, 0o600);
-    assert.equal(lstatSync(path.dirname(claimPath)).mode & 0o777, 0o700);
+    if (process.platform === 'win32') {
+      assert.equal(await assertTestClaimPrivateDirectory(path.dirname(claimPath), false), true);
+      assert.equal(typeof (await readTestClaimFile(claimPath)), 'string');
+    } else {
+      assert.equal(lstatSync(claimPath).mode & 0o777, 0o600);
+      assert.equal(lstatSync(path.dirname(claimPath)).mode & 0o777, 0o700);
+    }
     await assert.rejects(createTestClaim(f.projectPath, runId, 'unit', owner), { code: 'EEXIST' });
     const contractClaim = await createTestClaim(
       f.projectPath,
@@ -121,14 +140,19 @@ test('claim creation rejects symlink paths and permissive shared directories', a
   try {
     const directory = getTestClaimPaths(f.projectPath, runId).claimDirectory;
     mkdirSync(path.join(f.root, 'outside'));
-    symlinkSync(path.join(f.root, 'outside'), directory);
+    symlinkSync(
+      path.join(f.root, 'outside'),
+      directory,
+      process.platform === 'win32' ? 'junction' : 'dir',
+    );
     await assert.rejects(createTestClaim(f.projectPath, runId, 'unit', owner), /Unsafe/);
     rmSync(directory, { recursive: true, force: true });
     mkdirSync(directory, { mode: 0o755 });
+    setUnsafePermissions(directory, true);
     await assert.rejects(createTestClaim(f.projectPath, runId, 'unit', owner), /Unsafe/);
     rmSync(directory, { recursive: true, force: true });
     const { claimPath } = await createTestClaim(f.projectPath, runId, 'unit', owner);
-    chmodSync(claimPath, 0o644);
+    setUnsafePermissions(claimPath);
     await assert.rejects(loadTestClaim(claimPath), /Unsafe/);
   } finally {
     f.dispose();
@@ -370,6 +394,66 @@ test('database confirmations and process registration cannot precede allocation 
       process: { id: proc.id, role: proc.role, stage: 'drained' },
     });
     assert.equal((await loadTestClaim(claimPath)).processes[0].stage, 'drained');
+  } finally {
+    await broker?.close();
+    f.dispose();
+  }
+});
+
+test('Windows process claim identity is explicit, write-ahead and immutable without fabricated pgid', async () => {
+  const f = fixture();
+  let broker: Awaited<ReturnType<typeof startTestClaimBroker>> | undefined;
+  try {
+    const { claimPath, manifest } = await createTestClaim(f.projectPath, runId, 'unit', owner);
+    const pending = {
+      id: 'windows-guardian',
+      role: 'guardian',
+      stage: 'pending' as const,
+      containment: 'windows-job' as const,
+      jobId: '12345678-1234-1234-1234-123456789abc',
+    };
+    validateTestClaim({ ...manifest, processes: [pending] });
+    for (const invalid of [
+      { ...pending, pgid: 42 },
+      { ...pending, containment: undefined },
+      { ...pending, role: 'browser' },
+      { ...pending, jobId: 'not-a-job' },
+      { ...pending, stage: 'registered', pid: 42, startTime: 'posix-start', host: hostname() },
+      { ...pending, stage: 'registered', pid: 42, startTime: '133000000000000000' },
+    ])
+      assert.throws(() => validateTestClaim({ ...manifest, processes: [invalid] }));
+    broker = await startTestClaimBroker(claimPath);
+    await broker.update({ type: 'process', process: pending });
+    await assert.rejects(
+      broker.update({ type: 'process', process: { ...pending, stage: 'drained' } }),
+      /Pending/,
+    );
+    const registered = {
+      ...pending,
+      stage: 'registered' as const,
+      pid: 42,
+      startTime: '133000000000000000',
+      host: hostname(),
+    };
+    await broker.update({ type: 'process', process: registered });
+    await assert.rejects(
+      broker.update({
+        type: 'process',
+        process: { ...registered, jobId: '12345678-1234-1234-1234-123456789abd' },
+      }),
+      /identity/,
+    );
+    await assert.rejects(
+      broker.update({
+        type: 'process',
+        process: { ...registered, containment: undefined, jobId: undefined, pgid: 42 },
+      }),
+      /identity/,
+    );
+    await broker.update({ type: 'process', process: { ...registered, stage: 'drained' } });
+    const processClaim = (await loadTestClaim(claimPath)).processes[0];
+    assert.equal(processClaim.stage, 'drained');
+    assert.equal(processClaim.pgid, undefined);
   } finally {
     await broker?.close();
     f.dispose();

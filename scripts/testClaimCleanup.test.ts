@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import {
   chmod,
   lstat,
@@ -22,6 +23,7 @@ import {
   loadTestClaim,
   writeTestClaim,
 } from '../vona/packages-vona/vona-core/src/lib/core/testClaim.ts';
+import { createTestClaimFile } from '../vona/packages-vona/vona-core/src/lib/core/testClaimFilesystem.ts';
 import {
   getTestAppName,
   getDatabaseTestPrefix,
@@ -204,7 +206,11 @@ test('live, missing inspector, drifted config, malformed manifest and unmarked r
       if (reason === 'unmarked') await rm(path.join(f.manifest.locals[0].path, '.vona-test-owner'));
       if (reason === 'symlink') {
         await rm(f.manifest.locals[0].path, { recursive: true });
-        await symlink(path.join(f.project, '.app'), f.manifest.locals[0].path);
+        await symlink(
+          path.join(f.project, '.app'),
+          f.manifest.locals[0].path,
+          process.platform === 'win32' ? 'junction' : 'dir',
+        );
       }
       const result = await cleanTestClaim(f.claimPath, {
         isInactive: reason === 'inspector' ? undefined : async () => reason !== 'live',
@@ -250,10 +256,9 @@ test('exclusive cleaners skip contenders; orphaned old lock is never taken over'
   }
   const second = await fixture();
   try {
-    await writeFile(
+    await createTestClaimFile(
       `${second.claimPath}.cleanup.lock`,
       JSON.stringify({ pid: 999999, startTime: 'ancient', token: 'orphan' }),
-      { mode: 0o600 },
     );
     const result = await reapExpiredTestClaims(second.project, {
       now: Date.parse(second.manifest.createdAt) + 10000,
@@ -271,12 +276,23 @@ test('exclusive cleaners skip contenders; orphaned old lock is never taken over'
 test('unsafe shared directories fail invocation; legacy directories warn and remain', async () => {
   const f = await fixture();
   try {
-    await chmod(path.dirname(f.claimPath), 0o777);
-    await assert.rejects(
-      reapExpiredTestClaims(f.project, { isInactive: inactive }),
-      /Unsafe shared/,
-    );
-    await chmod(path.dirname(f.claimPath), 0o700);
+    if (process.platform === 'win32') {
+      execFileSync('icacls.exe', [path.dirname(f.claimPath), '/grant', '*S-1-1-0:(R)'], {
+        windowsHide: true,
+        stdio: 'pipe',
+      });
+    } else {
+      await chmod(path.dirname(f.claimPath), 0o777);
+    }
+    await assert.rejects(reapExpiredTestClaims(f.project, { isInactive: inactive }), /Unsafe/);
+    if (process.platform === 'win32') {
+      execFileSync('icacls.exe', [path.dirname(f.claimPath), '/remove:g', '*S-1-1-0'], {
+        windowsHide: true,
+        stdio: 'pipe',
+      });
+    } else {
+      await chmod(path.dirname(f.claimPath), 0o700);
+    }
     const legacy = path.join(f.project, `.vona-test-claim-${runId}`);
     await mkdir(legacy);
     const warnings: string[] = [];

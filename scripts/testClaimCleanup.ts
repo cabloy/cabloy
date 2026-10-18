@@ -1,8 +1,5 @@
 import { spawn } from 'node:child_process';
-import { randomBytes } from 'node:crypto';
-import { constants } from 'node:fs';
-import { lstat, open, readdir, rm, unlink } from 'node:fs/promises';
-import os from 'node:os';
+import { lstat, readdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -18,6 +15,11 @@ import {
   TEST_CLAIM_DIRECTORY,
   writeTestClaim,
 } from '../vona/packages-vona/vona-core/src/lib/core/testClaim.ts';
+import {
+  acquireTestClaimCleanupLock,
+  assertTestClaimPrivateDirectory,
+  deleteTestClaimFile,
+} from '../vona/packages-vona/vona-core/src/lib/core/testClaimFilesystem.ts';
 import { assertTestRunOwner } from '../vona/packages-vona/vona-core/src/lib/core/testIsolation.ts';
 
 export interface TestClaimCleanupSession {
@@ -52,24 +54,6 @@ export function parseTestClaimTtlSeconds(
   return Number(value);
 }
 
-async function assertSharedDirectory(directory: string, missingAllowed = true) {
-  assertTestClaimSafePath(directory, missingAllowed);
-  let stat;
-  try {
-    stat = await lstat(directory);
-  } catch (error) {
-    if (missingAllowed && (error as NodeJS.ErrnoException).code === 'ENOENT') return false;
-    throw error;
-  }
-  if (
-    !stat.isDirectory() ||
-    (stat.mode & 0o077) !== 0 ||
-    (process.getuid && stat.uid !== process.getuid())
-  ) {
-    throw new Error('Unsafe shared test claim directory');
-  }
-  return true;
-}
 async function exists(file: string) {
   try {
     await lstat(file);
@@ -84,7 +68,9 @@ async function validateLocalRoots(claim: TestClaimManifest) {
     assertTestClaimSafePath(local.path);
     if (!(await exists(local.path))) continue;
     if (local.stage === 'released') throw new Error('Released local test resource reappeared');
-    const marker = await lstat(path.join(local.path, '.vona-test-owner'));
+    const markerPath = path.join(local.path, '.vona-test-owner');
+    assertTestClaimSafePath(markerPath, false);
+    const marker = await lstat(markerPath);
     if (marker.isSymbolicLink() || !marker.isFile() || marker.nlink !== 1)
       throw new Error('Unsafe test owner marker');
     assertTestRunOwner(local.path, claim.runId);
@@ -97,7 +83,7 @@ export async function cleanTestClaim(
 ): Promise<TestClaimCleanupResult> {
   claimPath = path.resolve(claimPath);
   // An unsafe shared namespace is fatal to the invocation, not a skippable claim.
-  await assertSharedDirectory(path.dirname(claimPath), false);
+  await assertTestClaimPrivateDirectory(path.dirname(claimPath), false);
   const warn = options.warn ?? (() => {});
   const skip = (reason: string): TestClaimCleanupResult => {
     warn(`Retained test claim ${path.basename(claimPath)}: ${reason}`);
@@ -114,25 +100,15 @@ export async function cleanTestClaim(
   const lockPath = `${claimPath}.cleanup.lock`;
   let lock;
   try {
-    assertTestClaimSafePath(lockPath);
-    lock = await open(
-      lockPath,
-      constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW,
-      0o600,
-    );
+    lock = await acquireTestClaimCleanupLock(lockPath);
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'EEXIST')
       return skip('cleanup lock present; inspect manually, age never permits takeover');
     return skip('cannot acquire safe cleanup lock');
   }
-  const token = randomBytes(24).toString('hex');
   let session: TestClaimCleanupSession | undefined;
   let sequenceStarted = false;
   try {
-    await lock.writeFile(
-      `${JSON.stringify({ pid: process.pid, hostname: os.hostname(), startTime: String(Date.now() - process.uptime() * 1000), token })}\n`,
-    );
-    await lock.sync();
     // Re-read after locking; the runner must have closed its single inventory broker.
     claim = await loadTestClaim(claimPath);
     await validateLocalRoots(claim);
@@ -194,7 +170,7 @@ export async function cleanTestClaim(
     await writeTestClaim(claimPath, claim);
     // Validate once more before releasing the inventory, always last.
     await loadTestClaim(claimPath);
-    await unlink(claimPath);
+    await deleteTestClaimFile(claimPath);
     return { status: 'cleaned' };
   } catch {
     const reason = sequenceStarted
@@ -204,16 +180,9 @@ export async function cleanTestClaim(
     return { status: sequenceStarted ? 'failed' : 'skipped', reason };
   } finally {
     if (session) await session.close().catch(() => {});
-    await lock.close();
     // Do not remove a replacement lock. No automatic orphan-lock takeover.
     try {
-      const handle = await open(lockPath, constants.O_RDONLY | constants.O_NOFOLLOW);
-      try {
-        const value = JSON.parse(await handle.readFile('utf8'));
-        if (value.token === token) await unlink(lockPath);
-      } finally {
-        await handle.close();
-      }
+      await lock.release();
     } catch {
       warn(`Retained cleanup lock ${path.basename(lockPath)}: manual inspection required`);
     }
@@ -240,7 +209,7 @@ export async function reapExpiredTestClaims(
     if (legacyRun && !(await exists(path.join(directory, `${legacyRun[1]}.json`))))
       warn(`Legacy inventory-less test root retained: ${item.name}`);
   }
-  if (!(await assertSharedDirectory(directory))) return [];
+  if (!(await assertTestClaimPrivateDirectory(directory))) return [];
   const results: TestClaimCleanupResult[] = [];
   for (const name of await readdir(directory)) {
     if (name.endsWith('.cleanup.lock')) {
