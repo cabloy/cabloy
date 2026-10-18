@@ -422,7 +422,8 @@ test('waits for descendants before reporting a successful child exit', async () 
   try {
     const script = `
       import { spawn } from 'node:child_process';
-      const child = spawn(process.execPath, ['-e', 'setTimeout(() => require("node:fs").writeFileSync(process.argv[1], "done"), 400) ', process.argv[1]], { stdio: 'ignore' });
+      // Avoid libuv's parent-owned kill-on-close Job on Windows; the outer Job still owns this child.
+      const child = spawn(process.execPath, ['-e', 'setTimeout(() => require("node:fs").writeFileSync(process.argv[1], "done"), 400)', process.argv[1]], { stdio: 'ignore', detached: process.platform === 'win32' });
       child.unref();
     `;
     await runIsolatedProcess(
@@ -443,7 +444,8 @@ test('a guardian waits for an inherited-group descendant before success', async 
   try {
     const script = `
       import { spawn } from 'node:child_process';
-      const child = spawn(process.execPath, ['-e', 'setTimeout(() => require("node:fs").writeFileSync(process.argv[1], "done"), 400)', process.argv[1]], { stdio: 'ignore' });
+      // Preserve the inherited POSIX group, but avoid libuv's kill-on-close Job on Windows.
+      const child = spawn(process.execPath, ['-e', 'setTimeout(() => require("node:fs").writeFileSync(process.argv[1], "done"), 400)', process.argv[1]], { stdio: 'ignore', detached: process.platform === 'win32' });
       child.unref();
     `;
     await runIsolatedProcess(

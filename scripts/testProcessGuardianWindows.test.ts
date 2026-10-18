@@ -191,8 +191,20 @@ test(
     assert.match(first.startTime, /^\d{17,20}$/);
     assert.equal((await inspectWindowsProcesses([process.pid, process.pid])).length, 1);
     assert.equal(await inspectWindowsProcess(0xffffffff), undefined);
-    // PID4 is the protected Windows System process: denial must not be absence.
-    await assert.rejects(inspectWindowsProcess(4), /OpenProcess|GetProcessTimes/);
+    // Hosted administrators may inspect System. Only access denial is an alternative to a live identity.
+    let system;
+    try {
+      system = await inspectWindowsProcess(4);
+    } catch (error) {
+      assert.ok(error instanceof Error);
+      assert.match(error.message, /Win32Exception \(5\): (?:OpenProcess\(4\)|GetProcessTimes)/);
+      return;
+    }
+    assert.ok(system, 'Windows System must not be reported absent');
+    assert.equal(system.pid, 4);
+    assert.equal(system.host, first.host);
+    assert.equal(system.state, 'running');
+    assert.match(system.startTime, /^\d{17,20}$/);
   },
 );
 
@@ -416,7 +428,11 @@ test(
       const owner = await inspectWindowsProcess(process.pid);
       assert.ok(owner);
       const runId = `20261018010203-${randomUUID().replaceAll('-', '').slice(0, 8)}`;
-      const { claimPath } = await createTestClaim(project, runId, 'unit', owner);
+      const { claimPath } = await createTestClaim(project, runId, 'unit', {
+        pid: owner.pid,
+        startTime: owner.startTime,
+        host: owner.host,
+      });
       broker = await startTestClaimBroker(claimPath);
       const env = { ...process.env, ...broker.env, META_MODE: 'test', VONA_TEST_RUN_ID: runId };
       const registration = {
@@ -487,7 +503,11 @@ test(
       const owner = await inspectWindowsProcess(process.pid);
       assert.ok(owner);
       const runId = `20261018010203-${randomUUID().replaceAll('-', '').slice(0, 8)}`;
-      const { claimPath } = await createTestClaim(project, runId, 'unit', owner);
+      const { claimPath } = await createTestClaim(project, runId, 'unit', {
+        pid: owner.pid,
+        startTime: owner.startTime,
+        host: owner.host,
+      });
       broker = await startTestClaimBroker(claimPath);
       const env = { ...process.env, ...broker.env, META_MODE: 'test', VONA_TEST_RUN_ID: runId };
       const child = await startWindowsOwnedProcess(

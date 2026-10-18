@@ -235,12 +235,17 @@ test('normalization whitelists endpoint identity and exact physical Redis prefix
     tls: false,
     db: 0,
   });
-  assert.deepEqual(normalizeTestClaimRedisEndpoint({ path: '/run/redis.sock', db: 2 }), {
+  const socketPath = path.resolve('/run/redis.sock');
+  assert.deepEqual(normalizeTestClaimRedisEndpoint({ path: socketPath, db: 2 }), {
     transport: 'socket',
-    socketPath: '/run/redis.sock',
+    socketPath,
     db: 2,
     tls: false,
   });
+  assert.throws(() => normalizeTestClaimRedisEndpoint({ path: 'relative/redis.sock' }), /socket/);
+  if (process.platform === 'win32') {
+    assert.throws(() => normalizeTestClaimRedisEndpoint({ path: '/run/redis.sock' }), /socket/);
+  }
 });
 
 test('normalization rejects unresolved or custom targets and captures pg socket port', () => {
@@ -253,24 +258,37 @@ test('normalization rejects unresolved or custom targets and captures pg socket 
       ),
     /explicit/,
   );
+  const socketPath = path.resolve('/run/postgresql');
+  const socketEndpoint = {
+    dialect: 'pg',
+    transport: 'socket',
+    socketPath,
+    port: 5433,
+    tls: false,
+    adminDatabase: 'postgres',
+  };
   assert.deepEqual(
     normalizeTestClaimDatabaseEndpoint(
-      { client: 'pg', connection: { host: '/run/postgresql', port: 5433 } },
+      { client: 'pg', connection: { socketPath, port: 5433 } },
       '/vona',
       runId,
     ),
-    {
-      dialect: 'pg',
-      transport: 'socket',
-      socketPath: '/run/postgresql',
-      port: 5433,
-      tls: false,
-      adminDatabase: 'postgres',
-    },
+    socketEndpoint,
   );
+  const unixHost = { client: 'pg', connection: { host: '/run/postgresql', port: 5433 } };
+  if (process.platform === 'win32') {
+    assert.throws(() => normalizeTestClaimDatabaseEndpoint(unixHost, '/vona', runId), /socket/);
+  } else {
+    assert.deepEqual(normalizeTestClaimDatabaseEndpoint(unixHost, '/vona', runId), socketEndpoint);
+  }
+  for (const connection of [{ socketPath }, { host: '/run/postgresql' }]) {
+    assert.throws(() =>
+      normalizeTestClaimDatabaseEndpoint({ client: 'pg', connection }, '/vona', runId),
+    );
+  }
   assert.throws(() =>
     normalizeTestClaimDatabaseEndpoint(
-      { client: 'pg', connection: { host: '/run/postgresql' } },
+      { client: 'pg', connection: { socketPath: 'relative/postgresql', port: 5433 } },
       '/vona',
       runId,
     ),
