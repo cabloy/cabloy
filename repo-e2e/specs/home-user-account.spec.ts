@@ -536,6 +536,10 @@ test(
       expect(profile.ok()).toBeTruthy();
       const profileBody = (await profile.json()).data;
       expect(profileBody.avatar).toEqual(expect.any(String));
+      const avatarResponse = await request.get(profileBody.avatar);
+      expect(avatarResponse.ok()).toBeTruthy();
+      expect(avatarResponse.headers()['content-type']).toMatch(/^image\//);
+      expect((await avatarResponse.body()).length).toBeGreaterThan(0);
       expect(pageErrors).toEqual([]);
       expect(consoleErrors).toEqual([]);
     } finally {

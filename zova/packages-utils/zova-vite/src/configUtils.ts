@@ -275,7 +275,7 @@ export function createConfigUtils(
     for (const moduleName in modules) {
       const module = modules[moduleName];
       //
-      let test = module.root;
+      let test = module.root.replace(/\\/g, '/');
       let index = test.indexOf(appDir);
       if (index > -1) {
         test = test.substring(index + appDir.length);
