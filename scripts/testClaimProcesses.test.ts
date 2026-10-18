@@ -117,20 +117,30 @@ test('Windows job inactivity requires durable drainage and absence of the exact 
     (await isTestClaimInactive({ owner, processes: [drained] }, false, async () => [])).inactive,
     true,
   );
-  assert.equal(
-    (
-      await isTestClaimInactive({ owner, processes: [drained] }, false, async () => [
-        {
-          pid: 200,
-          startTime: 'different-created-time',
-          host: hostname(),
-          state: 'running',
-          args: '',
-        },
-      ])
-    ).inactive,
-    false,
-  );
+  for (const [pid, reason] of [
+    [owner.pid, 'claim owner PID is still present'],
+    [drained.pid, 'registered Windows job owner is still present'],
+  ] as const) {
+    let inspections = 0;
+    const inactivity = await isTestClaimInactive(
+      { owner, processes: [drained] },
+      false,
+      async () => {
+        inspections++;
+        return [
+          {
+            pid,
+            startTime: 'different-created-time',
+            host: hostname(),
+            state: 'running',
+            args: '',
+          },
+        ];
+      },
+    );
+    assert.deepEqual(inactivity, { inactive: false, reason });
+    assert.equal(inspections, 1);
+  }
   assert.equal(
     (
       await isTestClaimInactive(

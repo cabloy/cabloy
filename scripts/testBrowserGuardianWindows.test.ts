@@ -63,12 +63,41 @@ function json<T>(file: string): T | undefined {
     throw error;
   }
 }
-async function absent(pids: number[]) {
-  await until(
-    async () => ((await inspectWindowsProcesses(pids)).length === 0 ? true : undefined),
-    30_000,
-  );
+async function exited(
+  identities: { pid: number; startTime: string }[],
+  inspect = inspectWindowsProcesses,
+) {
+  return await until(async () => {
+    const snapshots = await inspect(identities.map(item => item.pid));
+    return identities.every(
+      identity =>
+        !snapshots.some(item => item.pid === identity.pid && item.startTime === identity.startTime),
+    )
+      ? snapshots
+      : undefined;
+  }, 30_000);
 }
+test('exit observation accepts PID reuse but returns the occupied snapshot for cleanup checks', async () => {
+  const identities = [{ pid: 100, startTime: '134000000000000000' }];
+  const snapshots = [
+    {
+      pid: 100,
+      startTime: '134000000000000001',
+      host: 'test-host',
+      state: 'running' as const,
+      args: '',
+    },
+  ];
+  let inspections = 0;
+  const observed = await exited(identities, async pids => {
+    assert.deepEqual(pids, [100]);
+    inspections++;
+    return inspections === 1 ? [{ ...snapshots[0], ...identities[0] }] : snapshots;
+  });
+  assert.equal(observed, snapshots);
+  assert.equal(inspections, 2);
+});
+
 function closePromise(child: ChildProcess) {
   return new Promise<{ code: number | null; signal: NodeJS.Signals | null }>((resolve, reject) => {
     child.once('error', reject);
@@ -195,9 +224,9 @@ for (const mode of ['normal', 'cancel', 'controller-death', 'helper-death'] as c
         assert.ok(sentinelIdentity);
         const record = await until(() => {
           const value = json<{
-            worker: { pid: number };
-            browser: { pid: number };
-            processes: { pid: number }[];
+            worker: { pid: number; startTime: string };
+            browser: { pid: number; startTime: string };
+            processes: { pid: number; startTime: string }[];
             locator: string;
           }>(browserPath);
           if (value && existsSync(pageReadyPath)) return value;
@@ -220,13 +249,7 @@ for (const mode of ['normal', 'cancel', 'controller-death', 'helper-death'] as c
         assert.notEqual(record.locator, 'inherited-spoof');
         assert.notEqual(record.worker.pid, record.browser.pid);
         assert.ok(record.processes.some(item => item.pid === record.browser.pid));
-        const ownedPids = [
-          ...new Set([
-            record.worker.pid,
-            record.browser.pid,
-            ...record.processes.map(item => item.pid),
-          ]),
-        ];
+        const ownedIdentities = [record.worker, record.browser, ...record.processes];
         if (mode === 'normal') writeFileSync(releasePath, 'close');
         else if (mode === 'cancel') controller.send('stop');
         else if (mode === 'controller-death') controller.kill('SIGKILL');
@@ -242,7 +265,12 @@ for (const mode of ['normal', 'cancel', 'controller-death', 'helper-death'] as c
             void controllerClosed.finally(() => clearTimeout(timer)).catch(() => {});
           }),
         ]);
-        await absent([...ownedPids, registered.pid!]);
+        // Compare exact identities: a later native inspector can reuse an exited PID itself.
+        const snapshots = await exited([
+          ...ownedIdentities,
+          { pid: registered.pid!, startTime: registered.startTime! },
+          manifest.owner,
+        ]);
         assert.deepEqual(await inspectWindowsProcess(sentinel.pid!), sentinelIdentity);
         const retained = await loadTestClaim(claimPath);
         assert.equal(retained.processes.length, 1); // No per-browser intents/registration/drainage on Windows.
@@ -257,7 +285,24 @@ for (const mode of ['normal', 'cancel', 'controller-death', 'helper-death'] as c
           if (mode === 'normal')
             assert.equal(completed.result.result.code, 0, completed.diagnostics);
           assert.equal(retained.processes[0].stage, 'drained');
-          assert.equal((await isTestClaimInactive(retained)).inactive, true);
+          // Cleanup deliberately blocks reused PIDs too. Evaluate the same native snapshot
+          // used above, not a second inspector that can change PID occupancy between checks.
+          const inactivity = await isTestClaimInactive(retained, false, async () => snapshots);
+          const occupied = snapshots.some(item =>
+            [retained.owner.pid, retained.processes[0].pid].includes(item.pid),
+          );
+          assert.deepEqual(
+            inactivity,
+            occupied
+              ? {
+                  inactive: false,
+                  reason: snapshots.some(item => item.pid === retained.owner.pid)
+                    ? 'claim owner PID is still present'
+                    : 'registered Windows job owner is still present',
+                }
+              : { inactive: true },
+            JSON.stringify({ snapshots, owner: retained.owner, guardian: retained.processes[0] }),
+          );
         } else {
           assert.equal(retained.processes[0].stage, 'registered');
           assert.equal((await isTestClaimInactive(retained)).inactive, false);
