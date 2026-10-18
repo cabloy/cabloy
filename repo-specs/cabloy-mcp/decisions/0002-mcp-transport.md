@@ -103,6 +103,28 @@ Selected `server@2.3.0` / `node@2.1.1` are not installed in the MCP module at th
 
 Future successful checks can qualify selected modern wire behavior over real Node HTTP and the Vona executor/ALS/raw-router core, JSON/request-scoped SSE, error containment and synthetic lifetime. They cannot qualify controller `//mcp` discovery/Aspect overrides, full system middleware ordering or ordinary-route regression, production Host/instance/OAuth admission, business cancellation, deployment quotas or audit. All original full-integration checks above remain open. Partial qualification cannot complete `ATP-MCP-TRANSPORT-01` or `WBS-MCP-20-01`.
 
+## Proposed unregistered request-owner refinement (2026-10-18)
+
+**Proposed — C1/C2 acceptance and C3 execution remain separate and outstanding.** The user authorized the concentrated design-disposition step after [dossier section 10](../wbs-mcp-20-01-execution-dossier.md#10-production-integration-candidate--unregistered-request-ownership-seam-2026-10-18) was prepared. Agreement to perform that step does not select its acceptance result. The scoped check at clean `9e6f7bb7720819cdd7bd0b4cb6ec3c2352d9e98f` found only the candidate dossier/README commit since preparation at `6478ea6844b4b2d36bb040d05252268901ecfa26`, with no source or upstream contract delta. This proposed refinement is recorded against that HEAD plus the six attributed ADR/SRS/dossier/README edits; it does not modify the original transport acceptance or the historical native-core acceptance/execution.
+
+Select one library callable around **admission before executor invocation and ownership of its entire continuation**. Its inputs are native request/response objects, an explicit server-owned binding provider, bounded ownership settings, an approved callback and an executor continuation. For this no-listener qualification only, admission is synthetic, not production Host/proxy/OAuth validation. [ADR 0007](./0007-mcp-context-passport-executor.md#proposed-unregistered-request-owner-contract-2026-10-18) owns trusted options, settlement and the real-versus-controlled proof split; [ADR 0008](./0008-mcp-limits-audit-telemetry-redaction.md#proposed-no-listener-owner-budgets-and-sinks-2026-10-18) owns this distinct harness's ceilings and sinks. None of these proposals accepts production DEC-MCP-04/07/08 as a whole.
+
+The seam-only failure gate proposes the following empty-body precommit outcomes, not MCP/OAuth protocol mappings:
+
+| Condition                                                         | Status |
+| ----------------------------------------------------------------- | ------ |
+| Explicit binding denial                                           | `403`  |
+| Missing, ambiguous or unavailable binding; closed/unhealthy owner | `503`  |
+| Capacity exhausted, with no waiting queue                         | `429`  |
+| Owned execution deadline                                          | `504`  |
+| Unexpected binding-provider or executor failure                   | `500`  |
+
+The first committed response is never rewritten. Once committed/ended/destroyed, cancellation may terminate the owned synthetic response but must not append another envelope, headers, body or raw exception. There is no fake `401` challenge. Failure reporting uses request-local pure state and must neither invoke default framework logging/rendering nor reacquire disposed scoped beans. This fixed empty-failure gate is not a general production JSON/SSE writer, SDK redactor or native wire/backpressure qualification.
+
+Only `src/lib/productionRequestOwner.ts`, `test/support/productionBoundaryFixture.ts` and `test/productionBoundary.test.ts` under the existing MCP module are proposed new targets. No listener, route/controller, startup, AOP, application getter/configuration mutation, module-index export, SDK call, body reader, dependency addition or business dispatch is selected. Existing `transport.ts`/`transportIngress.ts` stay fixture-only and unchanged. Explicit direct wiring does not prove supported standard-startup interception; eventual installation, full system/controller/Aspect error ownership, native server/parser limits, collision/ordinary-route/disablement/shutdown behavior, production binding and OAuth metadata remain activation gates. The source check does not declare production integration impossible.
+
+This finite design surface is ready for explicit C1/C2 disposition, not another generic preparation cycle. Even acceptance would still require precise C3 source/command/managed-resource/evidence approval. No runtime result, WBS advancement or full ATP closure is claimed; WBS-MCP-20-01/Phase 20 stay blocked and verified remains 0/12.
+
 ## References
 
 - [MCP Streamable HTTP, 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http)

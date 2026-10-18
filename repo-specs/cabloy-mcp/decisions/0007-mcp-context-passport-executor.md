@@ -90,6 +90,23 @@ Observed [ALS disposal](../../../vona/packages-vona/vona-core/src/lib/core/async
 
 The bounded design was explicitly accepted on 2026-10-18 with `zhennann` as accountable reviewer and fixture implementation/sanitized-artifact custodian. Full Passport/instance/datasource isolation, business cancellation and commit uncertainty remain under the original DEC-MCP-07 gates. This proposal supplies no runtime evidence and cannot close the dispatch or transport ATPs.
 
+## Proposed unregistered request-owner contract (2026-10-18)
+
+**Proposed, not a C1 acceptance or C3 execution approval.** The revision, authorized disposition work and absence of an explicit acceptance result are recorded in [ADR 0002](./0002-mcp-transport.md#proposed-unregistered-request-owner-refinement-2026-10-18). Production DEC-MCP-07 remains Proposed. This is a no-business ownership port, not the per-tool identity/context factory proposed above.
+
+- Invoke one explicit server-owned binding provider before any executor call. Missing, ambiguous, unavailable or denied binding makes zero executor calls. Do not infer identity or instance from Host/forwarding headers, token, `ctx.host`, ambient Passport or current context. Synthetic admission does not qualify production enabled-instance, issuer/resource or local-identity policy.
+- Construct a new executor options object from only an admitted explicit non-null instance name (`''` only when deliberately selected), literal `innerAccess: false`, `dbInfo: { level: 0 }` and native `req/res`. Do not spread caller controls or inherit Passport, `extraData` or a transaction. Selecting a level is not proof of independent transaction stores; no business transaction/Passport isolation result is claimed here.
+- Invoke the supplied executor once per admitted request and wrap its callback before work with `ctx.respond = false` and a request-local pure failure callback. Await callback-owned work and cleanup and the **whole** executor promise, including successful completion callbacks and normal ALS disposal. Keep response terminal, cancellation, work, cleanup, scope observation, executor settlement and capacity separate; a callback return or rejected executor promise alone does not prove cleanup.
+- Bind cancellation before provider/work begins. Disconnect/deadline stops new work/writes and signals cooperative cancellation; it does not settle an outstanding provider, callback or cleanup task. Never detach a timeout race or release healthy capacity until response terminal and every applicable owner actually settle with normal cleanup observed. Cleanup fault or unproven cleanup closes owner admission and marks it unhealthy, without normal release, counter repair or successful shutdown claims. Late callbacks retain pure state only. Use the fixed pre-/postcommit gate in ADR 0002.
+
+### Separate proof classes
+
+**Real healthy executor/ALS:** scoped setup/assertions own `mockCtx(...)`, each competing operation has its own boundary, and a managed seeded instance is read-only. Missing seed is a failed prerequisite, not permission to create/reseed. Explicit work/disposal barriers and bounded state projections must show exactly-once continuation invocation, complete executor settlement and normal scope disposal before healthy release, including overlap/disconnect with capacity held. No persisted test resource is selected.
+
+**Controlled fault continuation:** inject rejection before callback, during callback, after callback/commit stage and at disposal stage to test containment, fixed failure output and unhealthy admission. These stages are labels in a controlled continuation, not real failing commits/disposers or recovery proof. Do not poison the shared singleton with a throwing disposer to obtain an assertion; release every deliberately held task in `finally`. Synthetic response doubles prove no second write, not native finish/close delivery or backpressure.
+
+Both classes must count provider/executor calls and capacity transitions, retain the classification in evidence and prove inert import/no registration. The proposed seven checks and exact three-file boundary remain in [dossier section 10](../wbs-mcp-20-01-execution-dossier.md#proposed-paths-and-independent-proof). No automatic AOP/startup installation, full ordinary-route regression, OAuth/Passport, business cancellation/rollback, failed-disposal repair or domain side-effect proof follows. [ADR 0008](./0008-mcp-limits-audit-telemetry-redaction.md#proposed-no-listener-owner-budgets-and-sinks-2026-10-18) supplies this harness's proposed budgets; old fixture approval does not approve this new owner.
+
 ## References
 
 - [A-MCP planning index](../README.md)
