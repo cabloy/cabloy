@@ -71,6 +71,46 @@ Do **not** infer acceptance from this draft or a planning audit. Before configur
 
 This ADR proposes no source/configuration change or runtime/ATP proof. Planning checks do not accept DEC-MCP-04 or permit endpoint exposure. WBS-MCP-20-03 remains downstream of WBS-MCP-20-02.
 
+## Proposed nonpublic qualification ingress (2026-10-17)
+
+**Bounded fixture design accepted on 2026-10-18; production DEC-MCP-04 remains Proposed.** The user explicitly accepted all four G1–G4 items, including this partial scope reduction and direct-only ingress policy, under the revision, seven-document attribution and `zhennann` review/custody boundary recorded in [ADR 0002](./0002-mcp-transport.md#proposed-bounded-native-core-qualification-2026-10-17). The 2026-10-17 proposal heading is retained for chronology and stable links. Acceptance is limited to this no-business fixture; it does not approve G5 source execution or prove runtime behavior. Use one root-managed single-file test process using the existing app singleton. Source inspection found no reusable per-test fully started app factory: `createApp`/`vona-mock.app` use the singleton, and constructing another `VonaApplication` changes the global resource app pointer. Do not create a second app or change proxy/origin/getter configuration to simulate isolation.
+
+### Composition and ownership
+
+1. Set command-local `SERVER_LISTEN_DISABLE=true` before managed startup. Before registering anything, require test mode, a valid managed-run identity, effective `server.listen.disable === true`, **no `app.server`**, and absence of the proposed POST/GET/DELETE routes. A merely non-listening but existing default server does not satisfy this proposal. Failure stops the fixture without changing config, killing a process or choosing another shared port.
+2. A serial `describe(..., { concurrency: false })` owns temporary `app.bean.router.register(method, 'cabloy-mcp', '//mcp', true, handler)` entries and exact matching `unRegister` cleanup. Existing `combineApiPath` maps this raw declaration to `/mcp`; this does not prove decorated controller registration. The selected test file is the only test selection in this invocation; do not run this fixture concurrently with other suites against the singleton.
+3. The fixture owns `listen(0, '127.0.0.1')`. Derive its **test-only HTTP** authority from the actual allocated address. Do not edit `.env` or standard ports. Admit requests before `executor.newCtx`, because executor reads/resolves instance name before its callback enters `handleRequest`. Mark admitted request objects in a private fixture-owned `WeakSet`; raw handlers deny requests not admitted by that listener. The marker is an in-process ownership check, not a remote credential.
+4. Use explicit `instanceName: null`, `innerAccess: false`, native `req/res`, no `extraData`/Passport/state delegation, no transaction and no per-request `dbInfo` switch. Invoke only the real raw router middleware through `handleRequest`, not the full system chain. Null means **no tenant/business execution** here, never a denial marker or authorized default instance in production. Setup/assertions that access scoped Vona state own `mockCtx(...)`; each deliberately competing scoped operation owns a separate boundary. Do not wrap incoming listener callbacks in a shared caller context.
+5. In `finally`, close admission, stop accepting connections, signal and await owned requests/work/cleanup, close owned sockets/timers/listener, then unregister only the exact owned routes. Leave app shutdown to the managed runner; do not call shared `app.close()`. Failure to settle is qualification failure under ADR 0007, not permission to free capacity and continue.
+
+### Direct-only fixture policy and denials
+
+This fixture supports no proxy. Require the loopback peer and exactly one raw Host field exactly equal to `127.0.0.1:<allocated-port>`; no alternate DNS case/alias, IPv6, trailing dot, comma list or omitted/different port. Reject every `Forwarded` and `X-Forwarded-*` field. Allow absent Origin or exactly the fixture's `http://127.0.0.1:<allocated-port>` origin; present empty, duplicate, `null`, alternate or malformed Origin is invalid. This HTTP-only local exception does not qualify canonical production HTTPS, proxy trust or a host/resource/instance map.
+
+Require the exact raw `/mcp` target with no query/fragment/absolute-form target. Reject query input altogether and any instance-selector header, including configured selector names and `x-vona-instance-name`; reject Authorization, Cookie and Proxy-Authorization instead of accepting real credentials. Reject method-override headers (`X-HTTP-Method-Override`, `X-Method-Override`, `X-HTTP-Method`) and `_method` body input; query override is already excluded. No normal override middleware runs. Duplicate singleton protocol/framing fields and conflicting/ambiguous content length or transfer encoding fail closed; never treat Node header truncation as validation. Only identity content encoding is supported. GET/DELETE receive `405` with `Allow: POST`; other unsupported methods are also denied, with no executor/business dispatch. POST then follows ADR 0002's representation/metadata/wire checks.
+
+| Condition, in check order                                              | Proposed fixture response before executor                    |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Invalid present Origin                                                 | `403`, empty body; preserve this even without authentication |
+| Unsafe peer/Host, forwarding or credential/selector input              | `403`, empty body                                            |
+| Wrong target                                                           | `404`, empty body                                            |
+| Override or ambiguous framing/duplicate singleton input                | `400`, empty body                                            |
+| Unsupported method                                                     | `405`, empty body, `Allow: POST`                             |
+| Unsupported Content-Type/encoding or unacceptable response negotiation | `415` / `406` respectively, empty body                       |
+| Header/URL bounds                                                      | `431` / `414` respectively, empty body                       |
+| Body too large / receive timeout                                       | `413` / `408`, empty body                                    |
+| Active capacity exhausted                                              | `429`, empty body, no waiting queue                          |
+
+Node's own early parser/header rejection may instead close the connection or return its native bounded `400`/`431`; do not invent a JSON-RPC body for traffic never admitted by the listener. Retain safe outcome categories, not raw denied inputs. Semantic JSON/protocol validation belongs to ADR 0002 after ingress bounds; rejected ingress must show zero executor/router entry, not just a zero business-dispatch counter.
+
+### Source anchors and limits
+
+Observed owners: [executor](../../../vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts) (`newCtx` and pre-callback instance lookup), [router](../../../vona/src/suite-vendor/a-vona/modules/a-web/src/bean/bean.router.ts) (`register`/`unRegister` versus controller composition), [web composition](../../../vona/src/suite-vendor/a-vona/modules/a-web/src/main.ts) (`SymbolRouterMiddleware` separate from system middleware), [managed runner](../../../scripts/runIsolatedTest.ts), [test bootstrap](../../../vona/packages-cli/cli-set-api/toolsIsolate/test.ts), and [listen startup](../../../vona/src/suite-vendor/a-vona/modules/a-web/src/bean/startup.listen.ts).
+
+The runner inherits command environment without overriding `SERVER_LISTEN_DISABLE`; application config consumes it and startup checks disablement. These are source observations, not an effective-runtime result; the startup assertions remain mandatory. Managed startup still prepares isolated DB/Redis/runtime and seeds before the selected file. No test or listener has been run for this proposal.
+
+The accountable decision owner remains `zhennann`; the 2026-10-18 bounded fixture acceptance does **not** accept the production DEC-MCP-04 proposal, supply a deployment operator, or close `ATP-MCP-INSTANCE-01`. Production selection, OAuth metadata, two-instance/direct/proxied behavior and ordinary-route regression remain separately gated.
+
 ## References
 
 - [A-MCP planning index](../README.md)

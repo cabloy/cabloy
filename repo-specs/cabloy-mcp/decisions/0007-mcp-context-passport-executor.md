@@ -63,6 +63,33 @@ Before accepting `DEC-MCP-07`, `zhennann` must separately review and record:
 
 This is a proposed planning contract, not runtime proof. No MCP controller, authentication provider, context factory, enabled tool, or ATP result is created by writing it.
 
+## Proposed transport-only lifetime (2026-10-17)
+
+**Bounded fixture design accepted on 2026-10-18; production DEC-MCP-07 remains Proposed.** The user explicitly accepted all four G1–G4 items, including the ownership, settlement, cleanup-held capacity proof and dedicated owned-child watchdog below, under the revision, seven-document attribution and `zhennann` review/custody boundary recorded in [ADR 0002](./0002-mcp-transport.md#proposed-bounded-native-core-qualification-2026-10-17). The 2026-10-17 proposal heading is retained for chronology and stable links. This is not a business-context exception, G5 execution approval or runtime evidence. The [native-core qualification](./0002-mcp-transport.md#proposed-bounded-native-core-qualification-2026-10-17) uses explicit `instanceName: null` only for a no-tenant, no-Passport, no-business HTTP fixture. It does not relax the rejection of null for authenticated tool execution above. No `performAction`, identity projection, persistence, transaction, retry, external side effect or durable recovery owner is added. Direct helper code has no global bean/controller registration; the test harness owns listener/router integration.
+
+### Proposed request ownership
+
+Create an operation owner from pure Node state before executor entry. A fresh handler factory creates a server per request; no shared closure captures `ctx`, headers, state, Passport or beans. Bind abort listeners before work begins. Explicitly track:
+
+- adapter settlement, synthetic task settlement and transport/server cleanup settlement;
+- response commitment, `finish` and premature `close`/error;
+- cancellation requested/observed;
+- request-scope disposer observation, whole executor promise settlement and exactly-once slot release.
+
+Register every task/timer/listener when created. The executor callback awaits adapter work, every synthetic task and request-owned cleanup; the listener awaits the **whole** `newCtx()` promise, including context completion callbacks and ALS disposal, before releasing capacity. The pinned SDK's promise and close/disposal semantics must first be inspected and then tested; a `Promise<void>` signature is not that proof. A pure Node late error handler must not reacquire a disposed bean.
+
+Premature disconnect, `req.aborted`, response error or execution deadline enters one idempotent cancellation path. Normal `finish` followed by `close` is not cancellation. Propagate the signal through supported SDK APIs and all synthetic waits; stop new work/writes, but continue to await actual work and cleanup. Do not resolve the scope or release a slot at abort, `close` or a timeout race. HTTP delivery, cancellation request, settled work and disposed scope remain different facts. No fixture result claims rollback or domain cancellation.
+
+### Finite proof and failure policy
+
+Use explicit work and cleanup barriers. Start two independent HTTP operations and observe their separate contexts/server owners. Disconnect one while holding its cleanup barrier; assert its slot remains occupied and its scope has not disposed. A third request is denied without being queued; after explicit barrier release, observe actual settlement, scope disposal and only then slot release. Each deliberately competing scoped setup/assertion owns its own top-level `mockCtx(...)`; do not nest all request work under one test context or rely on runner concurrency. Compare context/capacity baseline and final values without retaining raw context objects as evidence.
+
+All barriers, drain waits and synthetic tasks cooperate with cancellation and have the [ADR 0008 fixture ceilings](./0008-mcp-limits-audit-telemetry-redaction.md#proposed-native-core-fixture-budgets-and-sinks-2026-10-17). Fixture disposers are bounded and nonthrowing; cleanup failures are converted to fixed outcome categories and cause test failure, not swallowed success. If an SDK task does not settle, close admission and fail the dedicated managed invocation under its owned-child watchdog; do not manufacture completion, reuse the affected slot/context or kill an unrelated process. The accepted design requires a harness-owned watchdog installed before listener creation: at a case/suite ceiling close admission and signal cooperative shutdown; if still live after a further 1-second grace, emit only a fixed failure enum and exit **this dedicated test child** nonzero. The existing managed parent propagates child failure and retains its claim/resources for inspection; do not claim normal app shutdown, cleanup or settlement. This hard failure exit is not used in a shared test selection and never signals a dev process. A node:test timeout alone is not the watchdog; verify the owned-child/nonzero propagation path before HTTP cases.
+
+Observed [ALS disposal](../../../vona/packages-vona/vona-core/src/lib/core/asyncLocalStorage.ts) awaits container disposal and then decrements the context counter. [Container disposal](../../../vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts) stops if a disposer throws. Thus a throwing disposer can skip later disposal and the decrement. An outer listener catch contains the rejection but cannot repair that skipped cleanup. This candidate does not qualify arbitrary disposal-failure recovery; unexpected disposal failure closes admission and fails the run. Fixing framework disposal/listener behavior would require a separately scoped change, not an implicit prerequisite or authorization here.
+
+The bounded design was explicitly accepted on 2026-10-18 with `zhennann` as accountable reviewer and fixture implementation/sanitized-artifact custodian. Full Passport/instance/datasource isolation, business cancellation and commit uncertainty remain under the original DEC-MCP-07 gates. This proposal supplies no runtime evidence and cannot close the dispatch or transport ATPs.
+
 ## References
 
 - [A-MCP planning index](../README.md)
