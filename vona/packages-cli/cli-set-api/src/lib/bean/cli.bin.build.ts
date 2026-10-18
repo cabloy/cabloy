@@ -298,7 +298,10 @@ export class CliBinBuild extends BeanCliBase {
       );
     }
     const inputOptions: RollupOptions = {
-      input: path.join(projectPath, '.vona/bootstrap.ts'),
+      input: {
+        bootstrap: path.join(projectPath, '.vona/bootstrap.ts'),
+        app: path.join(projectPath, '.vona/app.ts'),
+      },
       plugins,
       external: Object.keys(externals),
       onLog: (level: LogLevel, log: RollupLog, defaultHandler: LogOrStringHandler) => {
