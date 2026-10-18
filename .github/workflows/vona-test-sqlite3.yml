@@ -104,6 +104,9 @@ jobs:
         working-directory: vona
       - run: npm run build -- --flavor=ci
         working-directory: vona
+        env:
+          # The full backend bundle exceeds the macOS runner's default 2 GiB V8 heap.
+          NODE_OPTIONS: --max-old-space-size=4096
       - run: pnpm -C ./dist/ci install
         working-directory: vona
       - run: npm run play -- --mode=prod --flavor=ci
