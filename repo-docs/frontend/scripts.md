@@ -79,6 +79,8 @@ npm run test:e2e a-commerce -- --tag @web --tag @smoke
 
 For the complete Basic tag vocabulary and managed-runner argument boundaries, see [Repo Scripts](/reference/repo-scripts#ssr-browser-checks). `E2E_BASE_URL` must be unset: externally managed targets are unsupported.
 
+Cabloy Basic's Chromium Basic/Commerce CI baselines configure Ubuntu, Windows, and macOS; a matrix declaration is not evidence that all six combinations passed. On native Windows, public commands work from CMD or PowerShell and require PowerShell 7 on `PATH`, local NTFS storage, reachable Redis, installed Chromium, and ready paired SSR/REST artifacts. Managed browsers inherit a registered non-breakaway Windows Job; both worker and browser membership are verified through its owning helper, and cleanup requires whole-Job drainage rather than browser close alone. Normal Windows server teardown uses authenticated cooperative shutdown; failures or interruption retain claims and resources. POSIX browsers retain independent process-group verification. See [Native Windows managed tests](/reference/repo-scripts#native-windows-managed-tests) for the prerequisites, lifecycle, and coverage limits; this is not a claim about Cabloy Start's Windows browser support.
+
 ## Cabloy Start root wrappers
 
 Cabloy Start is the public MIT-licensed edition. Its default root wrappers use the `cabloyStartAdmin` and `cabloyStartWeb` flavors:

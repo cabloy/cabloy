@@ -165,7 +165,14 @@ test('native implementation has no post-creation Job assignment or historical PI
     /CREATE_SUSPENDED \| CREATE_UNICODE_ENVIRONMENT \| EXTENDED_STARTUPINFO_PRESENT/,
   );
   assert.match(code, /rootExited && active == 0/);
-  assert.doesNotMatch(code, /extern.*AssignProcessToJobObject|taskkill|BREAKAWAY_OK/);
+  assert.match(code, /CreateJobObjectW\(IntPtr.Zero, null\)/);
+  assert.match(code, /SetHandleInformation\(job, HANDLE_FLAG_INHERIT, 0\)/);
+  assert.match(code, /CreationTime\(process\) == creation/);
+  assert.match(code, /IsProcessInJob\(process, job, out inJob\)/);
+  assert.doesNotMatch(
+    code,
+    /extern.*AssignProcessToJobObject|taskkill|BREAKAWAY_OK|DuplicateHandle/,
+  );
 });
 
 test(
@@ -246,6 +253,69 @@ test(
     } finally {
       job?.stop();
       if (job) await job.wait().catch(() => {});
+      f.dispose();
+    }
+  },
+);
+
+test(
+  'private Job verifier requires exact live PID/FILETIME and rejects outsiders and another owned Job',
+  nativeOptions,
+  async () => {
+    const f = fixture();
+    const secondRoot = join(f.root, 'second');
+    mkdirSync(secondRoot);
+    const sentinel = spawn(process.execPath, ['-e', 'setInterval(()=>{},1000)'], {
+      stdio: 'ignore',
+    });
+    const sentinelClosed = new Promise<void>(resolve => sentinel.once('close', () => resolve()));
+    let job: WindowsNativeJob | undefined;
+    let other: WindowsNativeJob | undefined;
+    try {
+      job = (await launch(treeCode, [f.root])).job;
+      other = (await launch(treeCode, [secondRoot])).job;
+      await Promise.all([job.started, other.started]);
+      const pids = await treePids(f.root);
+      const otherPids = await treePids(secondRoot);
+      const identities = await inspectWindowsProcesses([...pids, ...otherPids, sentinel.pid!]);
+      const find = (pid: number) => {
+        const identity = identities.find(item => item.pid === pid);
+        assert.ok(identity);
+        return identity;
+      };
+      assert.deepEqual(await Promise.all(pids.map(pid => job!.contains(find(pid)))), [
+        true,
+        true,
+        true,
+      ]);
+      assert.equal(
+        await job.contains({ ...find(pids[0]), startTime: '133000000000000000' }),
+        false,
+      );
+      assert.equal(await job.contains({ pid: 0xffffffff, startTime: '133000000000000000' }), false);
+      assert.equal(await job.contains(find(sentinel.pid!)), false);
+      assert.equal(await job.contains(find(otherPids[0])), false);
+      assert.equal(await other.contains(find(otherPids[0])), true);
+      assert.equal(await other.contains(find(pids[0])), false);
+      await assert.rejects(
+        job.contains({ pid: 0, startTime: '133000000000000000' }),
+        /unavailable or invalid/,
+      );
+      await assert.rejects(
+        job.contains({ pid: pids[0], startTime: 'not-FILETIME' }),
+        /unavailable or invalid/,
+      );
+      job.stop();
+      await assert.rejects(job.contains(find(pids[0])), /unavailable or invalid/);
+      assert.equal((await job.wait()).failed, true);
+      await absent(pids);
+      assert.deepEqual(await inspectWindowsProcess(sentinel.pid!), find(sentinel.pid!));
+    } finally {
+      job?.stop();
+      other?.stop();
+      await Promise.all([job?.wait().catch(() => {}), other?.wait().catch(() => {})]);
+      sentinel.kill();
+      await sentinelClosed;
       f.dispose();
     }
   },

@@ -38,6 +38,9 @@ import {
   ROOT_DIR,
   runIsolatedProcess,
   runIsolatedTest,
+  startOwnedProcess,
+  requestIsolatedVonaStop,
+  withIsolatedVona,
   verifyReadyProof,
   waitForReady,
   withIsolatedRun,
@@ -620,3 +623,282 @@ test('rejects merged paths, Redis prefixes, and database overrides before cleanu
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+function shutdownFixture(
+  options: {
+    readyFailure?: boolean;
+    requestFailure?: boolean;
+    fallbackFailure?: boolean;
+    drainageFailure?: boolean;
+    earlyExit?: boolean;
+    hang?: boolean;
+    code?: number;
+  } = {},
+) {
+  const events: string[] = [];
+  let finish!: (result: import('./runIsolatedTest.ts').GuardianResult) => void;
+  const result = {
+    type: 'drained' as const,
+    failed: !!options.drainageFailure,
+    result: { code: options.code ?? 0, signal: null },
+  };
+  const waited = new Promise<import('./runIsolatedTest.ts').GuardianResult>(resolve => {
+    finish = resolve;
+  });
+  const server = {
+    wait: () => waited,
+    stop: async () => {
+      events.push('force-stop');
+      if (options.fallbackFailure) throw new Error('fallback failed');
+      finish(result);
+      return result;
+    },
+  };
+  const dependencies = {
+    platform: 'win32' as const,
+    shutdownTimeoutMs: 30,
+    start: async () => {
+      events.push('start');
+      return server;
+    },
+    ready: async () => {
+      events.push('ready');
+      if (options.earlyExit) {
+        finish(result);
+        await Promise.resolve();
+      }
+      if (options.readyFailure) throw new Error('readiness failed');
+    },
+    requestStop: async () => {
+      events.push('cooperative-stop');
+      if (options.requestFailure) throw new Error('authorization failed');
+      if (!options.hang) finish(result);
+    },
+  };
+  return { dependencies, events, server };
+}
+
+test('Windows verified-readiness teardown requests cooperative shutdown then waits without force-stop', async () => {
+  const f = shutdownFixture();
+  const before = process.listenerCount('SIGINT');
+  assert.equal(
+    await withIsolatedVona(
+      1234,
+      { VONA_TEST_RUN_ID: '20261014010203-a1b2c3d4' },
+      async () => {
+        f.events.push('callback');
+        return 'done';
+      },
+      f.dependencies,
+    ),
+    'done',
+  );
+  assert.deepEqual(f.events, ['start', 'ready', 'callback', 'cooperative-stop']);
+  assert.equal(process.listenerCount('SIGINT'), before);
+});
+
+for (const options of [
+  { requestFailure: true },
+  { hang: true },
+  { drainageFailure: true },
+  { code: 1 },
+]) {
+  test(`Windows cooperative failure always force-stops and fails (${JSON.stringify(options)})`, async () => {
+    const f = shutdownFixture(options);
+    await assert.rejects(withIsolatedVona(1234, {}, async () => {}, f.dependencies));
+    assert.deepEqual(f.events, ['start', 'ready', 'cooperative-stop', 'force-stop']);
+  });
+}
+
+test('Windows readiness failure or early exit never requests cooperative shutdown', async () => {
+  for (const options of [{ readyFailure: true }, { earlyExit: true }]) {
+    const f = shutdownFixture(options);
+    await assert.rejects(withIsolatedVona(1234, {}, async () => {}, f.dependencies));
+    assert.deepEqual(f.events, ['start', 'ready', 'force-stop']);
+  }
+});
+
+test('Windows interruption is failure and uses force-stop, not authenticated normal shutdown', async () => {
+  const f = shutdownFixture();
+  await assert.rejects(
+    withIsolatedVona(
+      1234,
+      {},
+      async () => {
+        process.emit('SIGINT');
+      },
+      f.dependencies,
+    ),
+    /interrupted/,
+  );
+  assert.equal(f.events.includes('cooperative-stop'), false);
+  assert.ok(f.events.includes('force-stop'));
+});
+
+test('callback, cooperative shutdown and fallback errors all survive', async () => {
+  const f = shutdownFixture({ requestFailure: true, fallbackFailure: true });
+  await assert.rejects(
+    withIsolatedVona(
+      1234,
+      {},
+      async () => {
+        throw new Error('callback failed');
+      },
+      f.dependencies,
+    ),
+    (error: unknown) => {
+      assert.ok(error instanceof AggregateError);
+      assert.equal(error.errors[0].message, 'callback failed');
+      assert.ok(error.errors[1] instanceof AggregateError);
+      assert.deepEqual(
+        error.errors[1].errors.map((e: Error) => e.message),
+        ['authorization failed', 'fallback failed'],
+      );
+      return true;
+    },
+  );
+});
+
+test('callback error survives a clean Windows cooperative shutdown', async () => {
+  const f = shutdownFixture();
+  await assert.rejects(
+    withIsolatedVona(
+      1234,
+      {},
+      async () => {
+        throw new Error('callback failed');
+      },
+      f.dependencies,
+    ),
+    /callback failed/,
+  );
+  assert.deepEqual(f.events, ['start', 'ready', 'cooperative-stop']);
+});
+
+test('POSIX teardown preserves the existing stop path', async () => {
+  const f = shutdownFixture();
+  await withIsolatedVona(1234, {}, async () => {}, { ...f.dependencies, platform: 'darwin' });
+  assert.deepEqual(f.events, ['start', 'ready', 'force-stop']);
+});
+
+test('shutdown HTTP request uses distinct nonce-bound domains and rejects invalid acknowledgments or redirects', async () => {
+  const key = 'a'.repeat(64);
+  const runId = '20261014010203-a1b2c3d4';
+  let mode = 'ok';
+  let requests = 0;
+  const listener = createServer((req, res) => {
+    requests++;
+    assert.equal(req.method, 'POST');
+    assert.equal(req.url, '/health/test-stop');
+    const nonce = req.headers['x-vona-test-stop-nonce'];
+    assert.match(String(nonce), /^[a-f0-9]{32}$/);
+    const payload = `${runId}\nPOST\n/health/test-stop\n${nonce}`;
+    const sign = (value: string) => createHmac('sha256', key).update(value).digest('hex');
+    assert.equal(
+      req.headers['x-vona-test-stop-authorization'],
+      sign(`vona-test-stop-request-v1\n${payload}`),
+    );
+    assert.equal(JSON.stringify(req.headers).includes(key), false);
+    if (mode === 'timeout') return;
+    if (mode === 'redirect') {
+      res.writeHead(307, { location: '/health/test-stop' });
+      res.end();
+      return;
+    }
+    const proof =
+      mode === 'ready-proof' ? sign(String(nonce)) : sign(`vona-test-stop-ack-v1\n${payload}`);
+    res.writeHead(mode === 'refuse' ? 403 : 200, {
+      'x-vona-test-stop-proof': mode === 'bad-proof' ? 'f'.repeat(64) : proof,
+    });
+    res.end(JSON.stringify({ status: mode === 'bad-body' ? 'ok' : 'stopping' }));
+  });
+  await new Promise<void>(resolve => listener.listen(0, '127.0.0.1', resolve));
+  const address = listener.address();
+  assert.ok(address && typeof address !== 'string');
+  try {
+    await requestIsolatedVonaStop(address.port, runId, key);
+    for (mode of ['bad-proof', 'ready-proof', 'refuse', 'bad-body', 'redirect', 'timeout']) {
+      const before = requests;
+      await assert.rejects(requestIsolatedVonaStop(address.port, runId, key, 40));
+      assert.equal(requests, before + 1);
+    }
+  } finally {
+    listener.closeAllConnections();
+    await new Promise<void>((resolve, reject) =>
+      listener.close(error => (error ? reject(error) : resolve())),
+    );
+  }
+});
+
+test(
+  'cooperative worker exit retains native guardian full drainage proof (Windows Job on Windows)',
+  { timeout: 30_000 },
+  async () => {
+    const root = mkdtempSync(join(realpathSync(tmpdir()), 'cabloy cooperative worker '));
+    const marker = join(root, 'closed');
+    const descendant = join(root, 'descendant');
+    const port = await allocateTestPort();
+    const workerUrl = new URL(
+      '../vona/packages-vona/vona-core/src/lib/framework/processWorker.ts',
+      import.meta.url,
+    ).href;
+    const source = `
+    import { createServer } from 'node:http';
+    import { createHmac } from 'node:crypto';
+    import { spawn } from 'node:child_process';
+    import { writeFileSync } from 'node:fs';
+    import { registerHooks } from 'node:module';
+    const workerUrl = ${JSON.stringify(workerUrl)};
+    globalThis.closeMock = async () => {
+      await new Promise(resolve => setTimeout(resolve, 50));
+      writeFileSync(${JSON.stringify(marker)}, 'closed');
+    };
+    registerHooks({ resolve(specifier, context, nextResolve) {
+      if (context.parentURL === workerUrl) {
+        const source = {
+          '@cabloy/utils': 'export async function catchError(fn) { try { return [await fn()]; } catch (error) { return [undefined, error]; } } export function catchErrorSync(fn) { try { return [fn()]; } catch (error) { return [undefined, error]; } }',
+          './useApp.ts': 'export const closeApp = globalThis.closeMock; export function useApp() {}',
+        }[specifier];
+        if (source) return { url: 'data:text/javascript,' + encodeURIComponent(source), shortCircuit: true };
+      }
+      return nextResolve(specifier, context);
+    } });
+    const { closeProcessWorker } = await import(workerUrl);
+    const sign = payload => createHmac('sha256', process.env.VONA_TEST_READY_KEY).update(payload).digest('hex');
+    const listener = createServer((req, res) => {
+      if (req.url === '/health/ready') {
+        res.writeHead(200, { 'x-vona-test-proof': sign(String(req.headers['x-vona-test-challenge'])) });
+        res.end(JSON.stringify({ status: 'ok' }));
+        return;
+      }
+      const payload = process.env.VONA_TEST_RUN_ID + '\\nPOST\\n/health/test-stop\\n' + req.headers['x-vona-test-stop-nonce'];
+      if (req.method !== 'POST' || req.url !== '/health/test-stop' || req.headers['x-vona-test-stop-authorization'] !== sign('vona-test-stop-request-v1\\n' + payload)) {
+        res.writeHead(403); res.end(); return;
+      }
+      const child = spawn(process.execPath, ['-e', 'setTimeout(() => require("node:fs").writeFileSync(process.argv[1], "done"), 300)', ${JSON.stringify(descendant)}], { stdio: 'ignore', detached: process.platform === 'win32' });
+      child.unref();
+      res.writeHead(200, { 'x-vona-test-stop-proof': sign('vona-test-stop-ack-v1\\n' + payload) });
+      res.once('finish', () => void closeProcessWorker());
+      res.end(JSON.stringify({ status: 'stopping' }));
+    });
+    listener.listen(${port}, '127.0.0.1');
+  `;
+    try {
+      await withIsolatedVona(
+        port,
+        { ...process.env, META_MODE: 'test', VONA_TEST_RUN_ID: '20261014010203-a1b2c3d4' },
+        async () => {},
+        {
+          platform: 'win32',
+          start: (_command, _args, cwd, env) =>
+            startOwnedProcess(process.execPath, ['--input-type=module', '-e', source], cwd, env),
+          ready: waitForReady,
+        },
+      );
+      assert.equal(readFileSync(marker, 'utf8'), 'closed');
+      assert.equal(readFileSync(descendant, 'utf8'), 'done');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  },
+);

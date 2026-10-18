@@ -36,6 +36,11 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/** Playwright interprets positional file filters as regexes, including on Windows. */
+export function buildSpecFilter(specPath: string): string {
+  return `^${escapeRegExp(specPath.replaceAll('\\', '/'))}$`;
+}
+
 export function buildTagGrep(tags: string[]): string | undefined {
   if (tags.length === 0) return undefined;
   return tags.map(tag => `(?=.*${escapeRegExp(tag)})`).join('');

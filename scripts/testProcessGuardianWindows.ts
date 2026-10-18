@@ -2,18 +2,24 @@ import { randomUUID } from 'node:crypto';
 
 import type { GuardianResult, OwnedProcess } from './runIsolatedTest.ts';
 
-import { sendTestClaimEvent } from '../vona/packages-vona/vona-core/src/lib/core/testClaim.ts';
+import {
+  hasTestClaimTransport,
+  registerTestClaimWindowsJobVerifier,
+  sendTestClaimEvent,
+  TEST_CLAIM_WINDOWS_GUARDIAN_ENV,
+} from '../vona/packages-vona/vona-core/src/lib/core/testClaim.ts';
 import {
   createWindowsNativeJob,
   inspectWindowsProcess,
 } from '../vona/packages-vona/vona-core/src/lib/core/testProcessWindowsNative.ts';
 
-/** Windows unit-test containment. The external PS7 helper alone owns the native Job. */
+/** Windows test containment. The external PS7 helper alone owns the native Job. */
 export async function startWindowsOwnedProcess(
   command: string,
   args: string[],
   cwd: string,
   env: NodeJS.ProcessEnv,
+  nativeOutput?: Parameters<typeof createWindowsNativeJob>[1],
 ): Promise<OwnedProcess> {
   if (process.platform !== 'win32')
     throw new Error('Windows owned processes require native Windows and PowerShell 7 (pwsh)');
@@ -27,13 +33,22 @@ export async function startWindowsOwnedProcess(
   // Write-ahead ACK must precede even spawning the native owner. Registration failures
   // deliberately leave pending records; absence of a helper is not drainage evidence.
   await sendTestClaimEvent(env, { type: 'process', process: registration });
-  const native = await createWindowsNativeJob({
-    jobId: registration.jobId,
-    command,
-    args,
-    cwd,
-    env,
-  });
+  const childEnv = { ...env };
+  for (const key of Object.keys(childEnv)) {
+    if (key.toUpperCase() === TEST_CLAIM_WINDOWS_GUARDIAN_ENV) delete childEnv[key];
+  }
+  childEnv[TEST_CLAIM_WINDOWS_GUARDIAN_ENV] = registration.id;
+  const native = await createWindowsNativeJob(
+    {
+      jobId: registration.jobId,
+      command,
+      args,
+      cwd,
+      env: childEnv,
+    },
+    nativeOutput,
+  );
+  let removeVerifier: (() => void) | undefined;
   let stopping = false;
   const interrupt = () => {
     stopping = true;
@@ -52,36 +67,43 @@ export async function startWindowsOwnedProcess(
     ) {
       throw new Error('Windows native helper identity changed before durable registration');
     }
-    await sendTestClaimEvent(env, {
-      type: 'process',
-      process: {
-        ...registration,
-        stage: 'registered',
-        pid: identity.pid,
-        startTime: identity.startTime,
-        host: identity.host,
-      },
-    });
+    const registered = {
+      ...registration,
+      stage: 'registered' as const,
+      pid: identity.pid,
+      startTime: identity.startTime,
+      host: identity.host,
+    };
+    await sendTestClaimEvent(env, { type: 'process', process: registered });
+    if (hasTestClaimTransport(env)) {
+      removeVerifier = await registerTestClaimWindowsJobVerifier(env, registered, async target => {
+        if (stopping || target.host !== identity.host) return false;
+        return await native.contains(target);
+      });
+    }
     if (stopping) throw new Error('Windows isolated process startup interrupted');
     // Only a successful durable registered ACK can authorize native CreateProcessW.
     native.authorize();
     await native.started;
     if (stopping) throw new Error('Windows isolated process startup interrupted');
-    const completed = native.wait().then(async (result): Promise<GuardianResult> => {
-      // wait() already verified BOTH native active0/root-exit proof and successful
-      // helper process exit. Helper crashes never reach this claim transition.
-      await sendTestClaimEvent(env, {
-        type: 'process',
-        process: {
-          ...registration,
-          stage: 'drained',
-          pid: identity.pid,
-          startTime: identity.startTime,
-          host: identity.host,
-        },
-      });
-      return { ...result, failed: result.failed || stopping };
-    });
+    const completed = native
+      .wait()
+      .then(async (result): Promise<GuardianResult> => {
+        // wait() already verified BOTH native active0/root-exit proof and successful
+        // helper process exit. Helper crashes never reach this claim transition.
+        await sendTestClaimEvent(env, {
+          type: 'process',
+          process: {
+            ...registration,
+            stage: 'drained',
+            pid: identity.pid,
+            startTime: identity.startTime,
+            host: identity.host,
+          },
+        });
+        return { ...result, failed: result.failed || stopping };
+      })
+      .finally(() => removeVerifier?.());
     void completed.catch(() => {});
     return {
       wait: () => completed,
@@ -101,6 +123,7 @@ export async function startWindowsOwnedProcess(
       },
     };
   } catch (error) {
+    removeVerifier?.();
     native.stop();
     try {
       await Promise.race([

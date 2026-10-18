@@ -21,6 +21,7 @@ async function fixture(
     group?: number;
     noProfile?: boolean;
     exited?: boolean;
+    platform?: NodeJS.Platform;
   } = {},
 ) {
   const root = await realpath(await mkdtemp(join(tmpdir(), 'cabloy-managed-browser-')));
@@ -72,7 +73,9 @@ async function fixture(
       VONA_TEST_CLAIM_URL: 'http://127.0.0.1:1234/event',
       VONA_TEST_CLAIM_TOKEN: 'a'.repeat(64),
       TMPDIR: temporaryRoot,
+      ...(options.platform === 'win32' ? { TEMP: temporaryRoot, TMP: temporaryRoot } : {}),
     },
+    platform: options.platform ?? 'linux',
     projectPath,
     sendEvent: async (_env: NodeJS.ProcessEnv, event: TestClaimEvent) => {
       const stage = event.type === 'process' ? event.process.stage : event.type;
@@ -85,12 +88,23 @@ async function fixture(
       if (options.fault === 'inspect') throw new Error('inspection failed');
       return {
         pid,
-        pgid: options.group ?? pid,
-        startTime: 'Wed Oct 14 01:02:03 2026',
+        ...(options.platform === 'win32' ? {} : { pgid: options.group ?? pid }),
+        startTime: options.platform === 'win32' ? '134000000000000000' : 'Wed Oct 14 01:02:03 2026',
         host: 'test-host',
         state: 'S',
         args: '',
       };
+    },
+    assertWindowsJob: async (
+      _env: NodeJS.ProcessEnv,
+      identity: { pid: number; startTime: string; host: string },
+    ) => {
+      const role = identity.pid === process.pid ? 'worker' : 'browser';
+      calls.push(`job-${role}`);
+      assert.equal(identity.startTime, '134000000000000000');
+      assert.equal(identity.host, 'test-host');
+      assert.equal(Object.hasOwn(identity, 'pgid'), false);
+      if (options.fault === `job-${role}`) throw new Error('designated Job membership unavailable');
     },
     waitForGroupExit: async (pgid: number) => {
       calls.push('wait');
@@ -277,7 +291,7 @@ for (const invalid of ['tmpdir', 'owner', 'transport', 'connect', 'symlink']) {
       if (invalid === 'transport') f.dependencies.env.VONA_TEST_CLAIM_TOKEN = '';
       if (invalid === 'symlink') {
         await rm(f.temporaryRoot, { recursive: true });
-        await symlink(f.root, f.temporaryRoot);
+        await symlink(f.root, f.temporaryRoot, process.platform === 'win32' ? 'junction' : 'dir');
       }
       const options =
         invalid === 'connect'
@@ -359,6 +373,104 @@ test('rejects an explicit external profile argument before launch', async () => 
       /outside its run-owned area/,
     );
     assert.deepEqual(f.calls, []);
+  } finally {
+    await f.dispose();
+  }
+});
+
+test('Windows proves worker and browser Job membership without per-browser POSIX claims', async () => {
+  const f = await fixture({ platform: 'win32' });
+  try {
+    await useManagedBrowser(
+      f.browserOptions,
+      async () => {
+        f.calls.push('use');
+      },
+      f.dependencies,
+    );
+    assert.deepEqual(f.calls, [
+      'inspect',
+      'job-worker',
+      'launch',
+      'inspect',
+      'job-browser',
+      'connect',
+      'use',
+      'close',
+    ]);
+    assert.deepEqual(f.events, []);
+  } finally {
+    await f.dispose();
+  }
+});
+
+for (const fault of ['job-worker', 'job-browser', 'launch', 'inspect', 'connect', 'close']) {
+  test(`Windows fails closed on ${fault} without acknowledging browser drainage`, async () => {
+    const f = await fixture({ platform: 'win32', fault });
+    try {
+      await assert.rejects(useManagedBrowser(f.browserOptions, async () => {}, f.dependencies));
+      assert.deepEqual(f.events, []);
+      assert.ok(!f.calls.includes('wait'));
+      if (['job-worker', 'inspect'].includes(fault)) assert.ok(!f.calls.includes('launch'));
+      if (fault === 'job-browser') {
+        assert.ok(f.calls.includes('close'));
+        assert.ok(!f.calls.includes('connect'));
+      }
+    } finally {
+      await f.dispose();
+    }
+  });
+}
+
+for (const variable of ['TEMP', 'TMP', 'TMPDIR', 'temp']) {
+  test(`Windows rejects inherited ${variable} outside its run before browser launch`, async () => {
+    const f = await fixture({ platform: 'win32' });
+    try {
+      const env: NodeJS.ProcessEnv = { ...f.dependencies.env, [variable]: '/unowned' };
+      await assert.rejects(
+        useManagedBrowser(f.browserOptions, async () => {}, { ...f.dependencies, env }),
+        /run-owned temporary paths/,
+      );
+      assert.deepEqual(f.calls, []);
+    } finally {
+      await f.dispose();
+    }
+  });
+}
+
+test('Windows normalizes custom temporary environment names without mutating caller options', async () => {
+  const f = await fixture({ platform: 'win32' });
+  const env = { temp: '/unowned', Tmp: '/unowned', tmpdir: '/unowned', CUSTOM: 'keep' };
+  try {
+    await useManagedBrowser(
+      { ...f.browserOptions, launchOptions: { env } },
+      async () => {},
+      f.dependencies,
+    );
+    assert.deepEqual(f.launchedOptions()?.env, {
+      TEMP: f.temporaryRoot,
+      TMP: f.temporaryRoot,
+      TMPDIR: f.temporaryRoot,
+      CUSTOM: 'keep',
+    });
+    assert.equal(env.temp, '/unowned');
+    assert.equal(env.Tmp, '/unowned');
+    assert.equal(env.tmpdir, '/unowned');
+  } finally {
+    await f.dispose();
+  }
+});
+
+test('Windows closes a browser with an escaping actual profile without connecting', async () => {
+  const f = await fixture({ platform: 'win32', profile: '/unowned/profile' });
+  try {
+    await assert.rejects(
+      useManagedBrowser(f.browserOptions, async () => {}, f.dependencies),
+      /outside its run-owned area/,
+    );
+    assert.deepEqual(f.events, []);
+    assert.ok(f.calls.includes('close'));
+    assert.ok(!f.calls.includes('connect'));
   } finally {
     await f.dispose();
   }

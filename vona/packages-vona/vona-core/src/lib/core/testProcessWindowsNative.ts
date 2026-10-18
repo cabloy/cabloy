@@ -42,6 +42,8 @@ export interface WindowsNativeJob {
   started: Promise<void>;
   wait: () => Promise<WindowsNativeResult>;
   authorize: () => void;
+  /** Exact live PID/FILETIME membership in this helper's private Job; never arbitrary Job membership. */
+  contains: (identity: { pid: number; startTime: string }) => Promise<boolean>;
   stop: () => void;
   /** Closing this pipe is the parent-death protocol; it never signals a historical PID. */
   disconnect: () => void;
@@ -225,11 +227,25 @@ export async function createWindowsNativeJob(
   let stopping = false;
   let didClose = false;
   let timeout: NodeJS.Timeout | undefined;
+  const queries = new Map<
+    string,
+    { result: ReturnType<typeof deferred<boolean>>; timer: NodeJS.Timeout }
+  >();
+  const rejectQueries = (error: Error, preserveResponses = false) => {
+    for (const { result, timer } of queries.values()) {
+      clearTimeout(timer);
+      result.reject(error);
+    }
+    // Stop can race with valid replies already in the pipe. Keep only their bounded
+    // correlation records until the helper replies or closes, never grant success.
+    if (!preserveResponses) queries.clear();
+  };
   const disconnect = () => {
     if (!child.stdin.destroyed) child.stdin.end();
   };
   const fail = (error: Error) => {
     failure ??= error;
+    rejectQueries(error);
     ready.reject(error);
     started.reject(error);
     closed.reject(error);
@@ -276,7 +292,21 @@ export async function createWindowsNativeJob(
         phase = 'started';
         clearTimeout(timeout);
         started.resolve();
+      } else if (value.type === 'containment' && phase === 'started') {
+        if (
+          typeof value.requestId !== 'string' ||
+          value.jobId !== config.jobId ||
+          typeof value.contained !== 'boolean'
+        ) {
+          throw new Error('Invalid Windows native containment response');
+        }
+        const query = queries.get(value.requestId);
+        if (!query) throw new Error('Unknown Windows native containment response');
+        queries.delete(value.requestId);
+        clearTimeout(query.timer);
+        query.result.resolve(value.contained && !stopping && !failure && !didClose);
       } else if (value.type === 'drained' && phase === 'started') {
+        rejectQueries(new Error('Windows native Job has drained'));
         if (
           !Number.isSafeInteger(value.code) ||
           (value.code as number) < 0 ||
@@ -299,6 +329,7 @@ export async function createWindowsNativeJob(
   );
   child.once('close', (code, signal) => {
     didClose = true;
+    rejectQueries(new Error('Windows native Job helper is no longer live'));
     clearTimeout(timeout);
     void (async () => {
       try {
@@ -346,6 +377,7 @@ export async function createWindowsNativeJob(
   const stop = () => {
     if (stopping) return;
     stopping = true;
+    rejectQueries(new Error('Windows native Job is stopping'), true);
     if (proof) proof.failed = true;
     if (!didClose) {
       clearTimeout(timeout);
@@ -365,6 +397,42 @@ export async function createWindowsNativeJob(
         throw new Error('Windows native launch authorization is no longer valid');
       phase = 'authorized';
       child.stdin.write(frame({ type: 'authorize', jobId: config.jobId }));
+    },
+    contains: async identity => {
+      if (
+        phase !== 'started' ||
+        stopping ||
+        didClose ||
+        failure ||
+        queries.size >= 32 ||
+        !Number.isSafeInteger(identity.pid) ||
+        identity.pid <= 0 ||
+        identity.pid > 0xffffffff ||
+        typeof identity.startTime !== 'string' ||
+        !/^[1-9]\d{0,19}$/.test(identity.startTime)
+      ) {
+        throw new Error('Windows native containment query is unavailable or invalid');
+      }
+      const requestId = randomBytes(16).toString('hex');
+      const result = deferred<boolean>();
+      const timer = setTimeout(() => {
+        fail(new Error('Windows native containment query timed out'));
+      }, 4000);
+      queries.set(requestId, { result, timer });
+      try {
+        child.stdin.write(
+          frame({
+            type: 'containment',
+            requestId,
+            jobId: config.jobId,
+            pid: identity.pid,
+            startTime: identity.startTime,
+          }),
+        );
+      } catch (error) {
+        fail(errorOf(error));
+      }
+      return await result.promise;
     },
     stop,
     disconnect: stop,

@@ -72,6 +72,7 @@ namespace Cabloy
         [DllImport("kernel32.dll", SetLastError = true)] static extern bool SetInformationJobObject(IntPtr job, int infoClass, ref EXTENDED_LIMIT info, uint length);
         [DllImport("kernel32.dll", SetLastError = true)] static extern bool QueryInformationJobObject(IntPtr job, int infoClass, out BASIC_ACCOUNTING info, uint length, IntPtr returned);
         [DllImport("kernel32.dll", SetLastError = true)] static extern bool TerminateJobObject(IntPtr job, uint code);
+        [DllImport("kernel32.dll", SetLastError = true)] static extern bool IsProcessInJob(IntPtr process, IntPtr job, [MarshalAs(UnmanagedType.Bool)] out bool result);
         [DllImport("kernel32.dll", SetLastError = true)] static extern bool SetHandleInformation(IntPtr handle, uint mask, uint flags);
         [DllImport("kernel32.dll", SetLastError = true)] static extern bool CloseHandle(IntPtr handle);
         [DllImport("kernel32.dll", SetLastError = true)] static extern bool InitializeProcThreadAttributeList(IntPtr list, int count, int flags, ref IntPtr size);
@@ -183,6 +184,32 @@ namespace Cabloy
                 return 0;
             }
         }
+        static void Containment(IntPtr job, string jobId, string frame) {
+            using (var request = JsonDocument.Parse(frame, new JsonDocumentOptions { MaxDepth = 16 })) {
+                var query = request.RootElement;
+                if (query.GetProperty("type").GetString() != "containment" || query.GetProperty("jobId").GetString() != jobId)
+                    throw new IOException("Invalid native containment request");
+                string requestId = query.GetProperty("requestId").GetString();
+                string creation = query.GetProperty("startTime").GetString();
+                if (!System.Text.RegularExpressions.Regex.IsMatch(requestId ?? "", "^[a-f0-9]{32}$") ||
+                    !System.Text.RegularExpressions.Regex.IsMatch(creation ?? "", "^[1-9][0-9]{0,19}$"))
+                    throw new IOException("Invalid native containment identity");
+                uint pid = query.GetProperty("pid").GetUInt32();
+                if (pid == 0) throw new IOException("Invalid native containment PID");
+                bool contained = false;
+                IntPtr process = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | SYNCHRONIZE, false, pid);
+                // Missing, denied, terminated, mismatched and query errors all deny, never infer membership.
+                if (process != IntPtr.Zero) {
+                    try {
+                        bool inJob;
+                        contained = !Exited(process) && CreationTime(process) == creation &&
+                            IsProcessInJob(process, job, out inJob) && inJob && !Exited(process);
+                    } catch { contained = false; }
+                    finally { Close(ref process); }
+                }
+                Emit(new { type = "containment", requestId = requestId, jobId = jobId, contained = contained });
+            }
+        }
         static int Job() {
             IntPtr job = IntPtr.Zero, attributes = IntPtr.Zero, jobValue = IntPtr.Zero, handlesValue = IntPtr.Zero, environment = IntPtr.Zero;
             IntPtr outWrite = IntPtr.Zero, errWrite = IntPtr.Zero, input = IntPtr.Zero;
@@ -256,9 +283,20 @@ namespace Cabloy
                             uint active = Active(job);
                             if (rootExited && rootExitAt < 0) rootExitAt = clock.ElapsedMilliseconds;
                             if (control.IsCompleted && !terminated) {
-                                // EOF, explicit stop, malformed input, and protocol reader faults all terminate.
-                                failed = true; terminated = true; stopAt = clock.ElapsedMilliseconds;
-                                Check(TerminateJobObject(job, 1), "TerminateJobObject(parent stop/disconnect)");
+                                bool disconnect = false;
+                                try {
+                                    string frame = control.GetAwaiter().GetResult();
+                                    if (frame == null) disconnect = true;
+                                    else {
+                                        Containment(job, jobId, frame);
+                                        control = Task.Run(() => ReadFrame());
+                                    }
+                                } catch { disconnect = true; }
+                                if (disconnect) {
+                                    // EOF, explicit stop, malformed input, and reader faults still terminate.
+                                    failed = true; terminated = true; stopAt = clock.ElapsedMilliseconds;
+                                    Check(TerminateJobObject(job, 1), "TerminateJobObject(parent stop/disconnect)");
+                                }
                             }
                             if (rootExited && active == 0) break;
                             if (!terminated && rootExitAt >= 0 && clock.ElapsedMilliseconds - rootExitAt >= 1000) {

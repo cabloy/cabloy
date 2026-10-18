@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import test from 'node:test';
 
-import { buildTagGrep, combineGreps, parseE2eArgs } from './runE2eArgs.ts';
+import { buildSpecFilter, buildTagGrep, combineGreps, parseE2eArgs } from './runE2eArgs.ts';
 
 function withSpecs(callback: (specsDir: string) => void): void {
   const tempDir = mkdtempSync(resolve(tmpdir(), 'cabloy-e2e-args-'));
@@ -68,6 +68,21 @@ test('rejects removed clean and fast options', () => {
       assert.throws(() => parseE2eArgs(['account', option], specsDir), /Unsupported E2E option/);
     }
   });
+});
+
+test('spec filters normalize Windows paths and escape regex syntax literally', () => {
+  for (const specPath of [
+    '/synthetic/café 中文 [work]+(tree).$/specs/cabloy-basic.spec.ts',
+    'C:\\synthetic\\café 中文 [work]+(tree).$\\specs\\cabloy-basic.spec.ts',
+    '\\\\server\\share with spaces\\café [work]\\specs\\a-commerce.spec.ts',
+  ]) {
+    const normalized = specPath.replaceAll('\\', '/');
+    const filter = new RegExp(buildSpecFilter(specPath));
+    assert.match(normalized, filter);
+    assert.doesNotMatch(`${normalized}.unselected`, filter);
+    assert.doesNotMatch(`prefix${normalized}`, filter);
+    assert.doesNotMatch(normalized.replace('.spec.ts', 'XspecXts'), filter);
+  }
 });
 
 test('combines tags with an existing grep expression', () => {

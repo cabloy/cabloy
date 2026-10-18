@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
 import { createServer } from 'node:http';
+import { resolve } from 'node:path';
 import { test } from 'node:test';
 
 import type { GuardianResult, OwnedProcess } from './runIsolatedTest.ts';
@@ -46,7 +47,7 @@ test('launches only a loopback single-worker test-mode Vona service', () => {
     '--flavor=normal',
     '--mode=test',
   ]);
-  assert.equal(command.cwd, `${ROOT_DIR}/vona`);
+  assert.equal(command.cwd, resolve(ROOT_DIR, 'vona'));
   assert.deepEqual(command.env, {
     CUSTOM: 'keep',
     VONA_TEST_READY_KEY: 'test-key',
@@ -81,6 +82,9 @@ function lifecycleFixture(options: { readyFailure?: boolean; stopFailure?: boole
     finish,
     result,
     dependencies: {
+      // These legacy fixtures assert POSIX signal/stop semantics; Windows cooperative
+      // shutdown is exercised separately with explicit platform injection.
+      platform: 'darwin' as const,
       start: async () => {
         events.push('start');
         return server;

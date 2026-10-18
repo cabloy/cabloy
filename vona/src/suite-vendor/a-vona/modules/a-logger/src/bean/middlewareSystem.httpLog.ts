@@ -22,7 +22,7 @@ export class MiddlewareSystemHttpLog extends BeanBase implements IMiddlewareSyst
       req.headers,
       ctx.path,
       this.app.meta.env.VONA_TEST_RUN_ID,
-      'x-vona-test-challenge',
+      ['x-vona-test-challenge', 'x-vona-test-stop-nonce', 'x-vona-test-stop-authorization'],
     );
     this.$loggerChild('req').http(() => JSON.stringify(req));
     const profiler = this.$loggerChild('res').startTimer();
@@ -33,7 +33,7 @@ export class MiddlewareSystemHttpLog extends BeanBase implements IMiddlewareSyst
       ctx.res.getHeaders(),
       ctx.path,
       this.app.meta.env.VONA_TEST_RUN_ID,
-      'x-vona-test-proof',
+      ['x-vona-test-proof', 'x-vona-test-stop-proof'],
     );
     const res = {
       url: ctx.req.url,

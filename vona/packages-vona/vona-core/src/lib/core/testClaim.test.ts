@@ -18,6 +18,7 @@ import { test } from 'node:test';
 import {
   assertTestClaimDatabaseClient,
   assertTestClaimRedisClient,
+  assertTestClaimWindowsJob,
   buildTestClaimResourceInventory,
   createTestClaim,
   getTestClaimCreatedAt,
@@ -29,7 +30,9 @@ import {
   normalizeTestClaimRedisEndpoint,
   registerTestClaimDatabaseCreation,
   registerTestClaimResourceInventory,
+  registerTestClaimWindowsJobVerifier,
   sendTestClaimEvent,
+  TEST_CLAIM_WINDOWS_GUARDIAN_ENV,
   startTestClaimBroker,
   validateTestClaim,
   writeTestClaim,
@@ -472,6 +475,177 @@ test('Windows process claim identity is explicit, write-ahead and immutable with
     const processClaim = (await loadTestClaim(claimPath)).processes[0];
     assert.equal(processClaim.stage, 'drained');
     assert.equal(processClaim.pgid, undefined);
+  } finally {
+    await broker?.close();
+    f.dispose();
+  }
+});
+
+test('Windows containment query is authenticated, transient, E2E-only and requires the exact live registered verifier', async () => {
+  for (const kind of ['e2e', 'unit', 'cov', 'contract'] as const) {
+    const f = fixture();
+    let broker: Awaited<ReturnType<typeof startTestClaimBroker>> | undefined;
+    try {
+      const { claimPath } = await createTestClaim(f.projectPath, runId, kind, owner);
+      broker = await startTestClaimBroker(claimPath);
+      const pending = {
+        id: 'windows-e2e-guardian',
+        role: 'guardian',
+        stage: 'pending' as const,
+        containment: 'windows-job' as const,
+        jobId: '12345678-1234-1234-1234-123456789abc',
+      };
+      const registered = {
+        ...pending,
+        stage: 'registered' as const,
+        pid: 42,
+        startTime: '133000000000000000',
+        host: hostname(),
+      };
+      const identity = { pid: 123, startTime: '133000000000000001', host: hostname() };
+      const env = { ...transportEnv(broker.env), [TEST_CLAIM_WINDOWS_GUARDIAN_ENV]: pending.id };
+      const denied = (environment = env, processIdentity = identity) =>
+        assert.rejects(
+          assertTestClaimWindowsJob(environment, processIdentity),
+          /containment verification failed/,
+        );
+      await denied();
+      await assert.rejects(
+        registerTestClaimWindowsJobVerifier(env, registered, async () => true),
+        /durable/,
+      );
+      await broker.update({ type: 'process', process: pending });
+      await denied();
+      await broker.update({ type: 'process', process: registered });
+      await denied(); // A durable record and copied locator are not a live capability.
+      let calls = 0;
+      const remove = await registerTestClaimWindowsJobVerifier(env, registered, async target => {
+        calls++;
+        return target.pid === identity.pid && target.startTime === identity.startTime;
+      });
+      const before = readFileSync(claimPath, 'utf8');
+      if (kind === 'e2e') {
+        await assertTestClaimWindowsJob(env, identity);
+        assert.equal(calls, 1);
+        await denied({ ...env, VONA_TEST_CLAIM_TOKEN: '0'.repeat(64) });
+        await denied({ ...env, VONA_TEST_RUN_ID: '20261013010203-deadbeef' });
+        await denied({ ...env, [TEST_CLAIM_WINDOWS_GUARDIAN_ENV]: 'copied-locator' });
+        await denied(env, { ...identity, host: 'other-host' });
+        assert.equal(calls, 1);
+        await denied(env, { ...identity, pid: 124 });
+        await denied(env, { ...identity, startTime: '133000000000000002' });
+        await denied(env, { ...identity, startTime: 'not-FILETIME' });
+        assert.equal(calls, 3);
+      } else {
+        await denied();
+        assert.equal(calls, 0);
+      }
+      assert.equal(readFileSync(claimPath, 'utf8'), before);
+      remove();
+      await denied();
+      const removeFailing = await registerTestClaimWindowsJobVerifier(env, registered, async () => {
+        throw new Error('helper lost');
+      });
+      await denied();
+      removeFailing();
+      const removeDrained = await registerTestClaimWindowsJobVerifier(
+        env,
+        registered,
+        async () => true,
+      );
+      await broker.update({ type: 'process', process: { ...registered, stage: 'drained' } });
+      await denied();
+      removeDrained();
+      const manifest = await loadTestClaim(claimPath);
+      assert.equal(manifest.version, 1);
+      assert.equal(manifest.processes.length, 1);
+      assert.equal(manifest.processes[0].role, 'guardian');
+    } finally {
+      await broker?.close();
+      f.dispose();
+    }
+  }
+});
+
+test('containment response cannot outlive verifier revocation or a durable drained transition', async () => {
+  const f = fixture();
+  let broker: Awaited<ReturnType<typeof startTestClaimBroker>> | undefined;
+  try {
+    const { claimPath } = await createTestClaim(f.projectPath, runId, 'e2e', owner);
+    broker = await startTestClaimBroker(claimPath);
+    const pending = {
+      id: 'guardian',
+      role: 'guardian',
+      stage: 'pending' as const,
+      containment: 'windows-job' as const,
+      jobId: '12345678-1234-1234-1234-123456789abc',
+    };
+    const registered = {
+      ...pending,
+      stage: 'registered' as const,
+      pid: 42,
+      startTime: '133000000000000000',
+      host: hostname(),
+    };
+    const env = { ...transportEnv(broker.env), [TEST_CLAIM_WINDOWS_GUARDIAN_ENV]: pending.id };
+    await broker.update({ type: 'process', process: pending });
+    await broker.update({ type: 'process', process: registered });
+    for (const revoke of ['local', 'durable']) {
+      let entered!: () => void;
+      const entry = new Promise<void>(resolve => {
+        entered = resolve;
+      });
+      let release!: (contained: boolean) => void;
+      const remove = await registerTestClaimWindowsJobVerifier(env, registered, async () => {
+        entered();
+        return await new Promise<boolean>(resolve => {
+          release = resolve;
+        });
+      });
+      const queried = assertTestClaimWindowsJob(env, {
+        pid: 123,
+        startTime: '133000000000000001',
+        host: hostname(),
+      });
+      const rejected = assert.rejects(queried, /containment verification failed/);
+      await entry;
+      if (revoke === 'local') remove();
+      else await broker.update({ type: 'process', process: { ...registered, stage: 'drained' } });
+      release(true);
+      await rejected;
+      remove();
+    }
+    assert.equal((await loadTestClaim(claimPath)).processes.length, 1);
+  } finally {
+    await broker?.close();
+    f.dispose();
+  }
+});
+
+test('containment cannot be registered through persisted events or a copied remote broker transport', async () => {
+  await assert.rejects(assertTestClaimWindowsJob({}, owner), /containment verification failed/);
+  const f = fixture();
+  let broker: Awaited<ReturnType<typeof startTestClaimBroker>> | undefined;
+  try {
+    const { claimPath } = await createTestClaim(f.projectPath, runId, 'e2e', owner);
+    broker = await startTestClaimBroker(claimPath);
+    const env = transportEnv(broker.env);
+    const response = await fetch(env.VONA_TEST_CLAIM_URL, {
+      method: 'POST',
+      headers: {
+        'authorization': `Bearer ${env.VONA_TEST_CLAIM_TOKEN}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ type: 'containment', guardianId: 'guardian', process: owner }),
+    });
+    assert.equal(response.status, 409);
+    const script = `import {registerTestClaimWindowsJobVerifier} from ${JSON.stringify(new URL('./testClaim.ts', import.meta.url).href)};
+      try { await registerTestClaimWindowsJobVerifier(JSON.parse(process.argv[1]),{},async()=>true); process.exit(1); }
+      catch(error) { if(!/local claim broker/.test(error.message)) throw error; }`;
+    execFileSync(process.execPath, ['--input-type=module', '-e', script, JSON.stringify(env)], {
+      stdio: 'pipe',
+    });
+    assert.equal((await loadTestClaim(claimPath)).processes.length, 0);
   } finally {
     await broker?.close();
     f.dispose();
