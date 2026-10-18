@@ -15,6 +15,8 @@ import { hostname, tmpdir } from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
 
+import type { TestClaimEnv } from './testClaim.ts';
+
 import {
   assertTestClaimDatabaseClient,
   assertTestClaimRedisClient,
@@ -96,7 +98,7 @@ function appFixture(projectPath: string) {
     },
   };
 }
-function transportEnv(env: Record<string, string | undefined>) {
+function transportEnv(env: TestClaimEnv): TestClaimEnv {
   return { ...env, META_MODE: 'test', VONA_TEST_RUN_ID: runId };
 }
 
@@ -503,7 +505,10 @@ test('Windows containment query is authenticated, transient, E2E-only and requir
         host: hostname(),
       };
       const identity = { pid: 123, startTime: '133000000000000001', host: hostname() };
-      const env = { ...transportEnv(broker.env), [TEST_CLAIM_WINDOWS_GUARDIAN_ENV]: pending.id };
+      const env: TestClaimEnv = {
+        ...transportEnv(broker.env),
+        [TEST_CLAIM_WINDOWS_GUARDIAN_ENV]: pending.id,
+      };
       const denied = (environment = env, processIdentity = identity) =>
         assert.rejects(
           assertTestClaimWindowsJob(environment, processIdentity),
@@ -630,7 +635,7 @@ test('containment cannot be registered through persisted events or a copied remo
     const { claimPath } = await createTestClaim(f.projectPath, runId, 'e2e', owner);
     broker = await startTestClaimBroker(claimPath);
     const env = transportEnv(broker.env);
-    const response = await fetch(env.VONA_TEST_CLAIM_URL, {
+    const response = await fetch(env.VONA_TEST_CLAIM_URL!, {
       method: 'POST',
       headers: {
         'authorization': `Bearer ${env.VONA_TEST_CLAIM_TOKEN}`,
