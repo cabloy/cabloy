@@ -27,6 +27,13 @@ export class BoundaryResponse extends EventEmitter {
   destroys = 0;
   bytes = 0;
   autoFinish = true;
+  teardown?: () => void;
+
+  override off(...args: Parameters<EventEmitter['off']>): this {
+    super.off(...args);
+    if (args[0] === 'error') this.teardown?.();
+    return this;
+  }
 
   end(payload?: string) {
     assert.equal(this.writableEnded || this.destroyed, false, 'duplicate_end');

@@ -52,6 +52,12 @@ export interface ProductionRequestState {
   fault: boolean;
 }
 
+export interface ProductionOwnerDrainReport {
+  readonly outcome: 'drained' | 'faulted';
+  readonly pendingAdmittedRuns: 0;
+  readonly quarantinedReservations: number;
+}
+
 export function createProductionRequestOwner(limits: typeof productionOwnerLimits) {
   let healthy =
     limits?.reservations === 2 && limits?.executionMs === 5_000 && limits?.cleanupMs === 1_000;
@@ -59,12 +65,28 @@ export function createProductionRequestOwner(limits: typeof productionOwnerLimit
   let active = 0;
   let reservations = 0;
   let releases = 0;
+  let pendingAdmittedRuns = 0;
+  let drainPromise: Promise<Readonly<ProductionOwnerDrainReport>> | undefined;
+  let drainResolve: ((report: Readonly<ProductionOwnerDrainReport>) => void) | undefined;
   const cancellations = new Set<() => void>();
 
   function unhealthy() {
     healthy = false;
     open = false;
     for (const cancel of cancellations) cancel();
+  }
+
+  function resolveDrain() {
+    if (!drainResolve || pendingAdmittedRuns !== 0) return;
+    const resolve = drainResolve;
+    drainResolve = undefined;
+    resolve(
+      Object.freeze({
+        outcome: healthy && active === 0 ? 'drained' : 'faulted',
+        pendingAdmittedRuns: 0,
+        quarantinedReservations: active,
+      }),
+    );
   }
 
   async function run<C extends ProductionOwnerContext>(
@@ -159,135 +181,163 @@ export function createProductionRequestOwner(limits: typeof productionOwnerLimit
     req.once('aborted', disconnect);
 
     try {
-      if (!open || !healthy) {
-        fail(503);
-        await terminal;
-        return Object.freeze({ ...state });
-      }
-      if (active >= productionOwnerLimits.reservations) {
-        fail(429);
-        await terminal;
-        return Object.freeze({ ...state });
-      }
-      reserved = true;
-      active++;
-      reservations++;
-      cancellations.add(cancel);
-      executionTimer = setTimeout(fail, productionOwnerLimits.executionMs, 504);
-      if (req.aborted || state.terminal) cancel();
-      if (!state.cancelled) {
-        let binding: ProductionBinding | undefined;
-        state.providerCalls++;
-        try {
-          binding = await ports.binding(abort.signal);
-        } catch {
-          fail(500);
-        } finally {
-          state.providerSettled = true;
+      try {
+        if (!open || !healthy) {
+          fail(503);
+          await terminal;
+          return Object.freeze({ ...state });
         }
+        if (active >= productionOwnerLimits.reservations) {
+          fail(429);
+          await terminal;
+          return Object.freeze({ ...state });
+        }
+        reserved = true;
+        pendingAdmittedRuns++;
+        active++;
+        reservations++;
+        cancellations.add(cancel);
+        executionTimer = setTimeout(fail, productionOwnerLimits.executionMs, 504);
+        if (req.aborted || state.terminal) cancel();
         if (!state.cancelled) {
-          if (binding?.outcome === 'denied') {
-            fail(403);
-          } else if (binding?.outcome !== 'admitted' || typeof binding.instanceName !== 'string') {
-            fail(503);
-          } else {
-            state.executorCalls++;
-            try {
-              await ports.execute(
-                ctx => {
-                  state.callbackCalls++;
-                  if (state.callbackCalls !== 1) {
-                    state.fault = true;
-                    unhealthy();
-                    fail(500);
-                    return Promise.resolve();
-                  }
-                  callbackDone = (async () => {
-                    try {
-                      ctx.respond = false;
-                      ctx.onerror = responseError;
-                      if (!state.cancelled) await ports.work(ctx, abort.signal);
-                    } catch {
+          let binding: ProductionBinding | undefined;
+          state.providerCalls++;
+          try {
+            binding = await ports.binding(abort.signal);
+          } catch {
+            fail(500);
+          } finally {
+            state.providerSettled = true;
+          }
+          if (!state.cancelled) {
+            if (binding?.outcome === 'denied') {
+              fail(403);
+            } else if (
+              binding?.outcome !== 'admitted' ||
+              typeof binding.instanceName !== 'string'
+            ) {
+              fail(503);
+            } else {
+              state.executorCalls++;
+              try {
+                await ports.execute(
+                  ctx => {
+                    state.callbackCalls++;
+                    if (state.callbackCalls !== 1) {
+                      state.fault = true;
+                      unhealthy();
                       fail(500);
-                    } finally {
-                      state.workSettled = true;
-                      observeCleanup();
-                      try {
-                        await ports.cleanup(abort.signal);
-                        state.cleanupSettled = true;
-                      } catch {
-                        state.fault = true;
-                        unhealthy();
-                        fail(500);
-                      }
+                      return Promise.resolve();
                     }
-                  })();
-                  return callbackDone;
-                },
-                {
-                  instanceName: binding.instanceName,
-                  innerAccess: false,
-                  dbInfo: { level: 0 },
-                  req,
-                  res,
-                },
-                () => {
-                  state.scopeDisposed = true;
-                },
-              );
-            } catch {
-              // Rejection alone never proves scope cleanup or permits slot reuse.
-              state.fault = true;
-              unhealthy();
-              fail(500);
-            } finally {
-              state.executorSettled = true;
-              await callbackDone;
-            }
-            if (!state.scopeDisposed || state.callbackCalls !== 1 || !state.cleanupSettled) {
-              state.fault = true;
-              unhealthy();
-              fail(500);
+                    callbackDone = (async () => {
+                      try {
+                        ctx.respond = false;
+                        ctx.onerror = responseError;
+                        if (!state.cancelled) await ports.work(ctx, abort.signal);
+                      } catch {
+                        fail(500);
+                      } finally {
+                        state.workSettled = true;
+                        observeCleanup();
+                        try {
+                          await ports.cleanup(abort.signal);
+                          state.cleanupSettled = true;
+                        } catch {
+                          state.fault = true;
+                          unhealthy();
+                          fail(500);
+                        }
+                      }
+                    })();
+                    return callbackDone;
+                  },
+                  {
+                    instanceName: binding.instanceName,
+                    innerAccess: false,
+                    dbInfo: { level: 0 },
+                    req,
+                    res,
+                  },
+                  () => {
+                    state.scopeDisposed = true;
+                  },
+                );
+              } catch {
+                // Rejection alone never proves scope cleanup or permits slot reuse.
+                state.fault = true;
+                unhealthy();
+                fail(500);
+              } finally {
+                state.executorSettled = true;
+                await callbackDone;
+              }
+              if (!state.scopeDisposed || state.callbackCalls !== 1 || !state.cleanupSettled) {
+                state.fault = true;
+                unhealthy();
+                fail(500);
+              }
             }
           }
         }
+        if (!state.executorCalls) {
+          state.providerSettled = true;
+          state.workSettled = true;
+          state.cleanupSettled = true;
+        }
+        if (cleanupTimer) {
+          clearTimeout(cleanupTimer);
+          cleanupTimer = undefined;
+        }
+        await terminal;
+        if (
+          !state.fault &&
+          state.providerSettled &&
+          state.workSettled &&
+          state.cleanupSettled &&
+          (!state.executorCalls || (state.executorSettled && state.scopeDisposed))
+        ) {
+          active--;
+          releases++;
+          state.released = true;
+        }
+        return Object.freeze({ ...state });
+      } finally {
+        completed = true;
+        if (executionTimer) clearTimeout(executionTimer);
+        if (cleanupTimer) clearTimeout(cleanupTimer);
+        cancellations.delete(cancel);
+        req.off('aborted', disconnect);
+        res.off('finish', finish);
+        res.off('close', close);
+        res.off('error', responseError);
       }
-      if (!state.executorCalls) {
-        state.providerSettled = true;
-        state.workSettled = true;
-        state.cleanupSettled = true;
+    } catch (error) {
+      if (reserved) {
+        healthy = false;
+        open = false;
       }
-      if (cleanupTimer) {
-        clearTimeout(cleanupTimer);
-        cleanupTimer = undefined;
-      }
-      await terminal;
-      if (
-        !state.fault &&
-        state.providerSettled &&
-        state.workSettled &&
-        state.cleanupSettled &&
-        (!state.executorCalls || (state.executorSettled && state.scopeDisposed))
-      ) {
-        active--;
-        releases++;
-        state.released = true;
-      }
-      return Object.freeze({ ...state });
+      throw error;
     } finally {
-      completed = true;
-      if (executionTimer) clearTimeout(executionTimer);
-      if (cleanupTimer) clearTimeout(cleanupTimer);
-      cancellations.delete(cancel);
-      req.off('aborted', disconnect);
-      res.off('finish', finish);
-      res.off('close', close);
-      res.off('error', responseError);
+      // Slot release and cancellation removal precede this complete teardown boundary.
+      if (reserved) {
+        pendingAdmittedRuns--;
+        resolveDrain();
+      }
     }
   }
 
   return {
     run,
+    drain(): Promise<Readonly<ProductionOwnerDrainReport>> {
+      if (drainPromise) return drainPromise;
+      drainPromise = new Promise(resolve => {
+        drainResolve = resolve;
+      });
+      open = false;
+      for (const cancel of cancellations) cancel();
+      resolveDrain();
+      return drainPromise;
+    },
     close() {
       open = false;
       for (const cancel of cancellations) cancel();

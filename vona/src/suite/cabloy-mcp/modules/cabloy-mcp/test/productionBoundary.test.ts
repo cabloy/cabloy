@@ -5,7 +5,10 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { SymbolBeanContainerInstances } from 'vona';
 import { app } from 'vona-mock';
 
-import type { ProductionOwnerContext } from '../src/lib/productionRequestOwner.ts';
+import type {
+  ProductionOwnerContext,
+  ProductionOwnerDrainReport,
+} from '../src/lib/productionRequestOwner.ts';
 
 import {
   createProductionRequestOwner,
@@ -50,6 +53,26 @@ function record(
     current.close();
     throw new Error('event_budget_failed');
   }
+}
+
+function drainReport(
+  report: Readonly<ProductionOwnerDrainReport>,
+  outcome: 'drained' | 'faulted',
+  quarantinedReservations: number,
+) {
+  assert.equal(Object.isFrozen(report), true, 'frozen_drain_report');
+  assert.deepEqual(Object.keys(report).sort(), [
+    'outcome',
+    'pendingAdmittedRuns',
+    'quarantinedReservations',
+  ]);
+  assert.deepEqual(report, { outcome, pendingAdmittedRuns: 0, quarantinedReservations });
+}
+
+function listenersCleared(io: ReturnType<typeof boundaryIO>) {
+  assert.equal(io.request.listenerCount('aborted'), 0);
+  for (const event of ['finish', 'close', 'error'])
+    assert.equal(io.response.listenerCount(event), 0);
 }
 
 // Runner owns the shared application and its fresh managed seed lifecycle.
@@ -509,6 +532,438 @@ describe(
           }
           await Promise.allSettled(tasks);
         }
+      },
+    );
+
+    it(
+      'empty and close-before-drain retain one exact promise and closed gate',
+      { timeout: 15_000 },
+      async t => {
+        for (const closeFirst of [false, true]) {
+          const current = owner();
+          if (closeFirst) current.close();
+          const draining = current.drain();
+          assert.equal(current.snapshot().open, false);
+          assert.equal(current.drain(), draining);
+          drainReport(await draining, 'drained', 0);
+          assert.equal(current.drain(), draining);
+          current.close();
+          const io = boundaryIO();
+          const fixture = controlledPorts(io);
+          const result = await current.run(io.req, io.res, fixture.ports);
+          assert.equal(result.status, 503);
+          assert.deepEqual(fixture.counts, { provider: 0, executor: 0, cleanup: 0 });
+          listenersCleared(io);
+          record(
+            t,
+            closeFirst ? 'drain-after-close' : 'drain-empty',
+            'synthetic-boundary',
+            current,
+            503,
+            false,
+            true,
+          );
+        }
+      },
+    );
+
+    it(
+      'provider and abort-listener reentry share a published drain and closed admission',
+      { timeout: 15_000 },
+      async t => {
+        const current = owner();
+        const io = boundaryIO();
+        const fixture = controlledPorts(io);
+        const held = barrier();
+        const entered = barrier();
+        let providerDrain: ReturnType<typeof current.drain> | undefined;
+        let abortDrain: ReturnType<typeof current.drain> | undefined;
+        let aborts = 0;
+        let signal: AbortSignal | undefined;
+        const onAbort = () => {
+          aborts++;
+          abortDrain = current.drain();
+          assert.equal(current.snapshot().open, false);
+          io.response.end();
+        };
+        fixture.ports.binding = async value => {
+          fixture.counts.provider++;
+          signal = value;
+          value.addEventListener('abort', onAbort, { once: true });
+          providerDrain = current.drain();
+          entered.release();
+          await held.promise;
+          return { outcome: 'admitted', instanceName: '' };
+        };
+        const task = current.run(io.req, io.res, fixture.ports);
+        let settled = false;
+        const draining = current.drain();
+        const observed = draining.then(() => {
+          settled = true;
+        });
+        try {
+          await waitFor(entered.promise);
+          assert.equal(providerDrain, draining);
+          assert.equal(abortDrain, draining);
+          current.close();
+          current.drain();
+          assert.equal(aborts, 1);
+          await turns();
+          assert.equal(io.response.writableFinished, true);
+          assert.equal(settled, false, 'originating_provider_still_owned');
+          assert.equal(current.snapshot().active, 1);
+        } finally {
+          held.release();
+          await task;
+          await observed;
+          signal?.removeEventListener('abort', onAbort);
+        }
+        drainReport(await draining, 'drained', 0);
+        assert.equal(current.snapshot().releases, 1);
+        assert.equal(fixture.counts.executor, 0);
+        listenersCleared(io);
+        record(t, 'drain-reentry', 'synthetic-boundary', current, 0, true, true);
+      },
+    );
+
+    for (const stage of ['provider', 'work', 'cleanup', 'executor', 'disposal'] as const) {
+      it(
+        `drain joins independently held ${stage} after cancellation and terminal`,
+        { timeout: 15_000 },
+        async t => {
+          const current = owner();
+          const io = boundaryIO();
+          const fixture = controlledPorts(io);
+          const held = barrier();
+          const entered = barrier();
+          let signal: AbortSignal | undefined;
+          const onAbort = () => {
+            if (!io.response.writableEnded) io.response.end();
+          };
+          async function hold() {
+            entered.release();
+            await held.promise;
+          }
+          fixture.ports.binding = async value => {
+            fixture.counts.provider++;
+            signal = value;
+            value.addEventListener('abort', onAbort, { once: true });
+            if (stage === 'provider') await hold();
+            return { outcome: 'admitted', instanceName: '' };
+          };
+          fixture.ports.work = async () => {
+            if (stage === 'work') await hold();
+            if (!io.response.writableEnded) io.response.end();
+          };
+          fixture.ports.cleanup = async () => {
+            fixture.counts.cleanup++;
+            if (stage === 'cleanup') await hold();
+          };
+          let disposed = false;
+          fixture.ports.execute = async (callback, _options, observeDisposed) => {
+            fixture.counts.executor++;
+            await callback(fixture.ctx);
+            if (stage === 'disposal') await hold();
+            // A synthetic observation, not a real framework disposer.
+            disposed = true;
+            observeDisposed();
+            if (stage === 'executor') await hold();
+          };
+          const task = current.run(io.req, io.res, fixture.ports);
+          let draining: ReturnType<typeof current.drain> | undefined;
+          let settled = false;
+          let observed: Promise<void> | undefined;
+          try {
+            await waitFor(entered.promise);
+            draining = current.drain();
+            observed = draining.then(() => {
+              settled = true;
+            });
+            await turns();
+            assert.equal(io.response.writableFinished, true);
+            assert.equal(settled, false);
+            assert.equal(disposed, stage === 'executor');
+            assert.equal(current.snapshot().active, 1);
+            assert.equal(current.snapshot().releases, 0);
+          } finally {
+            held.release();
+            await task;
+            await observed;
+            signal?.removeEventListener('abort', onAbort);
+          }
+          drainReport(await draining!, 'drained', 0);
+          assert.equal(current.snapshot().releases, 1);
+          listenersCleared(io);
+          record(t, `drain-held-${stage}`, 'synthetic-boundary', current, 0, true, true);
+        },
+      );
+    }
+
+    it(
+      'drain joins held terminal and the release-to-outer-teardown gap',
+      { timeout: 15_000 },
+      async t => {
+        const current = owner();
+        const io = boundaryIO();
+        const fixture = controlledPorts(io);
+        io.response.autoFinish = false;
+        const workDone = barrier();
+        const execute = fixture.ports.execute;
+        fixture.ports.execute = async (...args) => {
+          await execute(...args);
+          workDone.release();
+        };
+        let settled = false;
+        let gapObserved = false;
+        let gapStillPending = false;
+        let gapDrain: ReturnType<typeof current.drain> | undefined;
+        io.response.teardown = () => {
+          gapObserved = true;
+          assert.equal(current.snapshot().active, 0, 'normal_release_precedes_teardown');
+          gapDrain = current.drain();
+          queueMicrotask(() => {
+            gapStillPending = !settled;
+          });
+        };
+        const task = current.run(io.req, io.res, fixture.ports);
+        let draining: ReturnType<typeof current.drain> | undefined;
+        let observed: Promise<void> | undefined;
+        try {
+          await waitFor(workDone.promise);
+          draining = current.drain();
+          observed = draining.then(() => {
+            settled = true;
+          });
+          await turns();
+          assert.equal(settled, false);
+          assert.equal(current.snapshot().active, 1);
+          io.response.finish();
+          await task;
+          await observed;
+          assert.equal(gapObserved && gapStillPending, true);
+          assert.equal(gapDrain, draining);
+          drainReport(await draining, 'drained', 0);
+        } finally {
+          io.response.finish();
+          await task;
+          await observed;
+          io.response.teardown = undefined;
+        }
+        listenersCleared(io);
+        record(t, 'drain-terminal-teardown', 'synthetic-boundary', current, 200, true, true);
+      },
+    );
+
+    for (const stage of ['provider', 'cleanup'] as const) {
+      it(
+        `drain never treats ${stage} observation overrun as settlement`,
+        { timeout: 15_000 },
+        async t => {
+          const current = owner();
+          const io = boundaryIO();
+          const fixture = controlledPorts(io);
+          const held = barrier();
+          const entered = barrier();
+          if (stage === 'provider') {
+            fixture.ports.binding = async () => {
+              fixture.counts.provider++;
+              entered.release();
+              await held.promise;
+              return { outcome: 'admitted', instanceName: '' };
+            };
+          } else {
+            fixture.ports.cleanup = async () => {
+              fixture.counts.cleanup++;
+              entered.release();
+              await held.promise;
+            };
+          }
+          const task = current.run(io.req, io.res, fixture.ports);
+          let draining: ReturnType<typeof current.drain> | undefined;
+          let settled = false;
+          let observed: Promise<void> | undefined;
+          try {
+            await waitFor(entered.promise);
+            draining = current.drain();
+            observed = draining.then(() => {
+              settled = true;
+            });
+            await delay(1_100);
+            assert.equal(current.snapshot().healthy, false);
+            assert.equal(current.snapshot().active, 1);
+            assert.equal(settled, false);
+          } finally {
+            held.release();
+            await task;
+            await observed;
+          }
+          drainReport(await draining!, 'faulted', 1);
+          assert.equal(current.snapshot().releases, 0);
+          listenersCleared(io);
+          record(
+            t,
+            `drain-overrun-${stage}`,
+            'controlled-fault',
+            current,
+            io.response.statusCode,
+            false,
+            true,
+          );
+        },
+      );
+    }
+
+    for (const before of [true, false]) {
+      it(
+        `controlled fault ${before ? 'before' : 'during'} drain persists`,
+        { timeout: 15_000 },
+        async t => {
+          const current = owner();
+          const io = boundaryIO();
+          const fixture = controlledPorts(io);
+          const entered = barrier();
+          const held = barrier();
+          fixture.ports.cleanup = async () => {
+            entered.release();
+            await held.promise;
+            throw new Error('synthetic_private_error');
+          };
+          const task = current.run(io.req, io.res, fixture.ports);
+          let draining: ReturnType<typeof current.drain> | undefined;
+          try {
+            await waitFor(entered.promise);
+            if (before) {
+              held.release();
+              await task;
+            }
+            draining = current.drain();
+          } finally {
+            held.release();
+            await task;
+          }
+          drainReport(await draining!, 'faulted', 1);
+          assert.equal(current.drain(), draining);
+          listenersCleared(io);
+          record(
+            t,
+            before ? 'drain-fault-before' : 'drain-fault-during',
+            'controlled-fault',
+            current,
+            500,
+            false,
+            true,
+          );
+        },
+      );
+    }
+
+    for (const stage of ['admitted', 'teardown'] as const) {
+      for (const before of [true, false]) {
+        it(
+          `${stage} outer rejection ${before ? 'before' : 'during'} drain preserves caller failure`,
+          { timeout: 15_000 },
+          async t => {
+            const current = owner();
+            const io = boundaryIO();
+            const fixture = controlledPorts(io);
+            const failure = new Error('synthetic_private_error');
+            let reentrant: ReturnType<typeof current.drain> | undefined;
+            const reject = () => {
+              if (!before) reentrant = current.drain();
+              throw failure;
+            };
+            if (stage === 'teardown') io.response.teardown = reject;
+            else Object.defineProperty(io.request, 'aborted', { get: reject });
+            const task = current.run(io.req, io.res, fixture.ports);
+            // Attach a consumed rejection branch immediately; no global rejection instrumentation.
+            const checked = assert.rejects(task, error => error === failure);
+            try {
+              await checked;
+              const draining = current.drain();
+              if (!before) assert.equal(reentrant, draining);
+              drainReport(await draining, 'faulted', stage === 'admitted' ? 1 : 0);
+              assert.equal(current.snapshot().healthy, false);
+              assert.equal(current.snapshot().releases, stage === 'admitted' ? 0 : 1);
+              assert.equal(current.drain(), draining);
+              await turns();
+            } finally {
+              io.response.teardown = undefined;
+              await checked;
+            }
+            listenersCleared(io);
+            record(
+              t,
+              `drain-reject-${stage}-${before ? 'before' : 'during'}`,
+              'controlled-fault',
+              current,
+              0,
+              stage === 'teardown',
+              io.response.writableFinished,
+            );
+          },
+        );
+      }
+    }
+
+    it(
+      'nonadmitted saturation and closed-response waits remain outside drain',
+      { timeout: 15_000 },
+      async t => {
+        const current = owner();
+        const held = barrier();
+        const ios = [boundaryIO(), boundaryIO()];
+        const tasks = ios.map(io => {
+          const fixture = controlledPorts(io);
+          fixture.ports.binding = async () => {
+            await held.promise;
+            return { outcome: 'admitted', instanceName: '' };
+          };
+          return current.run(io.req, io.res, fixture.ports);
+        });
+        const denied = [boundaryIO(), boundaryIO()];
+        const deniedFixtures = denied.map(io => controlledPorts(io));
+        for (const io of denied) io.response.autoFinish = false;
+        let firstSettled = false;
+        let secondSettled = false;
+        const first = current
+          .run(denied[0].req, denied[0].res, deniedFixtures[0].ports)
+          .then(result => {
+            firstSettled = true;
+            return result;
+          });
+        const draining = current.drain();
+        const second = current
+          .run(denied[1].req, denied[1].res, deniedFixtures[1].ports)
+          .then(result => {
+            secondSettled = true;
+            return result;
+          });
+        try {
+          held.release();
+          for (const io of ios) io.response.end();
+          await Promise.all(tasks);
+          drainReport(await draining, 'drained', 0);
+          assert.equal(firstSettled || secondSettled, false);
+          assert.equal(denied[0].response.statusCode, 429);
+          assert.equal(denied[1].response.statusCode, 503);
+          for (const fixture of deniedFixtures)
+            assert.deepEqual(fixture.counts, { provider: 0, executor: 0, cleanup: 0 });
+          assert.equal(
+            denied.every(io => io.response.listenerCount('error') === 1),
+            true,
+          );
+          assert.equal(current.snapshot().releases, 2);
+        } finally {
+          held.release();
+          for (const io of ios) {
+            if (!io.response.writableEnded) io.response.end();
+          }
+          for (const io of denied) io.response.finish();
+          await Promise.allSettled([...tasks, first, second]);
+          await draining;
+        }
+        for (const io of [...ios, ...denied]) listenersCleared(io);
+        record(t, 'drain-excludes-nonadmitted', 'synthetic-boundary', current, 503, true, true);
       },
     );
 
