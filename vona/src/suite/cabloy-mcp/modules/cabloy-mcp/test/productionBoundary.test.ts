@@ -1,8 +1,17 @@
+import type { RequestBoundary } from 'vona';
+
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { after, describe, it } from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
-import { SymbolBeanContainerInstances } from 'vona';
+import {
+  captureRequestBoundary,
+  createDiagnosticLogger,
+  createRequestBoundary,
+  getRequestBoundary,
+  runWithRequestBoundary,
+  SymbolBeanContainerInstances,
+} from 'vona';
 import { app } from 'vona-mock';
 
 import type {
@@ -14,6 +23,7 @@ import {
   createProductionRequestOwner,
   productionOwnerLimits,
 } from '../src/lib/productionRequestOwner.ts';
+import { createRequestBoundaryOwner } from '../src/lib/requestBoundaryOwner.ts';
 import {
   barrier,
   boundaryIO,
@@ -22,10 +32,16 @@ import {
   turns,
   waitFor,
 } from './support/productionBoundaryFixture.ts';
+import { controlledScope } from './support/requestBoundaryFoundationFixture.ts';
 
 const owners: ReturnType<typeof createProductionRequestOwner>[] = [];
 function owner() {
   const result = createProductionRequestOwner(productionOwnerLimits);
+  owners.push(result);
+  return result;
+}
+function boundaryOwner() {
+  const result = createRequestBoundaryOwner(productionOwnerLimits);
   owners.push(result);
   return result;
 }
@@ -145,12 +161,13 @@ describe(
         const fixture = controlledPorts(io);
         const entered = barrier();
         const release = barrier();
-        fixture.ports.execute = async (callback, _options, disposed) => {
+        fixture.ports.execute = async (callback, _options, lifecycle) => {
           fixture.counts.executor++;
+          lifecycle.initializeContext(fixture.ctx);
           await callback(fixture.ctx);
           entered.release();
           await release.promise;
-          disposed();
+          lifecycle.onScopeOutcome('disposed');
         };
         let settled = false;
         const task = current.run(io.req, io.res, fixture.ports).then(result => {
@@ -198,10 +215,14 @@ describe(
           stages.callback++;
           if (stage === 'during') await held.promise;
         };
-        fixture.ports.execute = async callback => {
+        fixture.ports.execute = async (callback, _options, lifecycle) => {
           fixture.counts.executor++;
           try {
-            if (stage === 'before') throw new Error('synthetic_private_error');
+            if (stage === 'before') {
+              lifecycle.onScopeOutcome('not_created');
+              throw new Error('synthetic_private_error');
+            }
+            lifecycle.initializeContext(fixture.ctx);
             const work = callback(fixture.ctx);
             if (stage === 'during') throw new Error('synthetic_private_error');
             await work;
@@ -404,7 +425,7 @@ describe(
       'real healthy executor overlap, disconnect, work and scoped disposal',
       { timeout: 15_000 },
       async t => {
-        const current = owner();
+        const current = boundaryOwner();
         const work = barrier();
         const workEntered = barrier();
         const disposal = barrier();
@@ -425,7 +446,7 @@ describe(
           app.bean.executor.mockCtx(
             async () => {
               const fixture = controlledPorts(io);
-              fixture.ports.execute = async (callback, options, observeDisposed) => {
+              fixture.ports.execute = async (callback, options, lifecycle) => {
                 calls++;
                 assert.deepEqual(Object.keys(options).sort(), [
                   'dbInfo',
@@ -470,9 +491,19 @@ describe(
                     req: options.req,
                     res: options.res,
                   },
+                  {
+                    initializeContext(ctx) {
+                      assert.equal(getRequestBoundary() !== undefined, true);
+                      lifecycle.initializeContext(ctx);
+                      assert.equal(ctx.respond, false, 'early_native_ownership');
+                    },
+                    onScopeOutcome(outcome) {
+                      assert.equal(witness, true, 'actual_disposal_before_outcome');
+                      lifecycle.onScopeOutcome(outcome);
+                    },
+                  },
                 );
                 assert.equal(witness, true, 'normal_disposal_witness');
-                observeDisposed();
               };
               fixture.ports.work = async (ctx: ProductionOwnerContext, signal) => {
                 assert.equal(ctx.respond, false);
@@ -660,13 +691,14 @@ describe(
             if (stage === 'cleanup') await hold();
           };
           let disposed = false;
-          fixture.ports.execute = async (callback, _options, observeDisposed) => {
+          fixture.ports.execute = async (callback, _options, lifecycle) => {
             fixture.counts.executor++;
+            lifecycle.initializeContext(fixture.ctx);
             await callback(fixture.ctx);
             if (stage === 'disposal') await hold();
             // A synthetic observation, not a real framework disposer.
             disposed = true;
-            observeDisposed();
+            lifecycle.onScopeOutcome('disposed');
             if (stage === 'executor') await hold();
           };
           const task = current.run(io.req, io.res, fixture.ports);
@@ -964,6 +996,240 @@ describe(
         }
         for (const io of [...ios, ...denied]) listenersCleared(io);
         record(t, 'drain-excludes-nonadmitted', 'synthetic-boundary', current, 503, true, true);
+      },
+    );
+
+    it(
+      'composition boundary precedes provider and survives cleanup and outer teardown',
+      { timeout: 15_000 },
+      async t => {
+        assert.equal(app.meta.env.SERVER_LISTEN_DISABLE, 'true');
+        assert.equal(app.server, undefined);
+        const current = boundaryOwner();
+        const io = boundaryIO();
+        const fixture = controlledPorts(io);
+        let boundary: RequestBoundary | undefined;
+        const checked = () => assert.equal(getRequestBoundary(), boundary);
+        fixture.ports.binding = async () => {
+          boundary = getRequestBoundary();
+          assert.notEqual(boundary, undefined);
+          await turns();
+          checked();
+          return { outcome: 'admitted', instanceName: '' };
+        };
+        const execute = fixture.ports.execute;
+        fixture.ports.execute = async (...args) => {
+          checked();
+          await execute(...args);
+          checked();
+        };
+        fixture.ports.work = async ctx => {
+          checked();
+          assert.equal(ctx.respond, false);
+          io.response.end();
+        };
+        fixture.ports.cleanup = async () => {
+          await turns();
+          checked();
+        };
+        io.response.teardown = checked;
+        const result = await current.run(io.req, io.res, fixture.ports);
+        assert.equal(result.scopeOutcome, 'disposed');
+        assert.equal(result.released, true);
+        assert.equal(result.portFault, false);
+        assert.equal(getRequestBoundary(), undefined);
+        listenersCleared(io);
+        record(t, 'composition-lifetime', 'synthetic-boundary', current, 200, true, true);
+      },
+    );
+
+    it(
+      'composition early initializer owns setup failure despite actual healthy disposal',
+      { timeout: 15_000 },
+      async t => {
+        const current = boundaryOwner();
+        const io = boundaryIO();
+        const fixture = controlledPorts(io);
+        let disposed = 0;
+        fixture.ports.execute = async (_callback, options, lifecycle) => {
+          await app.bean.executor.newCtx(
+            async () => assert.fail('setup_failure_must_not_enter_work'),
+            { ...options, instanceName: null },
+            {
+              initializeContext(ctx) {
+                lifecycle.initializeContext(ctx);
+                assert.equal(ctx.respond, false);
+                const instances = (
+                  ctx.bean as unknown as {
+                    [SymbolBeanContainerInstances]: Record<string, unknown>;
+                  }
+                )[SymbolBeanContainerInstances];
+                instances['composition-setup-witness'] = {
+                  async __dispose__() {
+                    assert.notEqual(getRequestBoundary(), undefined);
+                    disposed++;
+                  },
+                };
+                ctx.onerror(new Error('synthetic_private_error'));
+                throw new Error('synthetic_setup_failure');
+              },
+              onScopeOutcome: lifecycle.onScopeOutcome,
+            },
+          );
+        };
+        const result = await app.bean.executor.mockCtx(
+          () => current.run(io.req, io.res, fixture.ports),
+          { instanceName: null, innerAccess: false },
+        );
+        assert.equal(disposed, 1);
+        assert.equal(result.scopeOutcome, 'disposed');
+        assert.equal(result.callbackCalls, 0);
+        assert.equal(result.scopeDisposed, true);
+        assert.equal(result.fault, true);
+        assert.equal(result.released, false);
+        assert.equal(io.response.bytes, 0);
+        drainReport(await current.drain(), 'faulted', 1);
+        record(t, 'composition-setup-fault', 'real-healthy', current, 500, false, true);
+      },
+    );
+
+    it(
+      'composition controlled creation and disposal failures preserve actual scope outcomes',
+      { timeout: 15_000 },
+      async t => {
+        for (const stage of ['creation', 'disposal'] as const) {
+          const current = boundaryOwner();
+          const io = boundaryIO();
+          const fixture = controlledPorts(io);
+          const local = controlledScope({
+            failCreation: stage === 'creation',
+            failDispose: stage === 'disposal',
+          });
+          fixture.ports.execute = async (callback, _options, lifecycle) => {
+            await local.executor.newCtx(
+              () => callback(local.context),
+              { instanceName: null, innerAccess: false, dbInfo: { level: 0 } },
+              {
+                initializeContext(ctx) {
+                  lifecycle.initializeContext(ctx);
+                  local.initialize();
+                },
+                onScopeOutcome: lifecycle.onScopeOutcome,
+              },
+            );
+          };
+          const result = await current.run(io.req, io.res, fixture.ports);
+          assert.equal(
+            result.scopeOutcome,
+            stage === 'creation' ? 'not_created' : 'dispose_failed',
+          );
+          assert.equal(result.scopeDisposed, false);
+          assert.equal(result.released, false);
+          assert.equal(result.fault, true);
+          assert.equal(result.portFault, false);
+          assert.equal(local.counts.decrement, 0);
+          drainReport(await current.drain(), 'faulted', 1);
+          record(t, `composition-${stage}`, 'controlled-fault', current, 500, false, true);
+        }
+      },
+    );
+
+    it(
+      'composition rejects missing duplicate and mismatched lifecycle observations',
+      { timeout: 15_000 },
+      async t => {
+        for (const mode of ['missing-init', 'missing-outcome', 'duplicate', 'mismatch'] as const) {
+          const current = boundaryOwner();
+          const io = boundaryIO();
+          const fixture = controlledPorts(io);
+          fixture.ports.execute = async (callback, _options, lifecycle) => {
+            if (mode !== 'missing-init') lifecycle.initializeContext(fixture.ctx);
+            await callback(mode === 'mismatch' ? { ...fixture.ctx } : fixture.ctx);
+            if (mode !== 'missing-outcome') lifecycle.onScopeOutcome('disposed');
+            if (mode === 'duplicate') lifecycle.onScopeOutcome('disposed');
+          };
+          const result = await current.run(io.req, io.res, fixture.ports);
+          assert.equal(result.portFault, true);
+          assert.equal(result.fault, true);
+          assert.equal(result.released, false);
+          if (mode === 'missing-outcome') assert.equal(result.scopeOutcome, 'pending');
+          drainReport(await current.drain(), 'faulted', 1);
+          record(t, `composition-${mode}`, 'controlled-fault', current, 500, false, true);
+        }
+      },
+    );
+
+    it(
+      'composition boundary faults fail closed before executor or after healthy work',
+      { timeout: 15_000 },
+      async t => {
+        for (const stage of ['provider', 'cleanup'] as const) {
+          const current = boundaryOwner();
+          const io = boundaryIO();
+          const fixture = controlledPorts(io);
+          const report = () => captureRequestBoundary()!.reportFailure('diagnostic_failed');
+          if (stage === 'provider') {
+            fixture.ports.binding = async () => {
+              report();
+              return { outcome: 'admitted', instanceName: '' };
+            };
+          } else {
+            fixture.ports.cleanup = async () => report();
+          }
+          const result = await current.run(io.req, io.res, fixture.ports);
+          assert.equal(result.portFault, true);
+          assert.equal(result.released, false);
+          assert.equal(result.executorCalls, stage === 'provider' ? 0 : 1);
+          drainReport(await current.drain(), 'faulted', 1);
+          record(t, `composition-port-${stage}`, 'controlled-fault', current, 500, false, true);
+        }
+      },
+    );
+
+    it(
+      'composition suppresses diagnostic evaluation and refuses boundary replacement',
+      { timeout: 15_000 },
+      async t => {
+        const current = boundaryOwner();
+        const io = boundaryIO();
+        const fixture = controlledPorts(io);
+        let reads = 0;
+        const payload = Object.defineProperty({}, 'message', {
+          get() {
+            reads++;
+            throw new Error('diagnostic_must_not_evaluate');
+          },
+        });
+        let sinks = 0;
+        const logger = createDiagnosticLogger({
+          info() {
+            sinks++;
+          },
+        } as unknown as Parameters<typeof createDiagnosticLogger>[0]);
+        fixture.ports.binding = async () => {
+          logger.info(payload);
+          logger.info(() => {
+            reads++;
+            return 'private';
+          });
+          return { outcome: 'admitted', instanceName: '' };
+        };
+        assert.equal(captureRequestBoundary(), undefined);
+        assert.equal((await current.run(io.req, io.res, fixture.ports)).released, true);
+        assert.equal(reads, 0);
+        assert.equal(sinks, 0);
+        assert.equal(captureRequestBoundary(), undefined);
+        logger.info('ordinary');
+        assert.equal(sinks, 1);
+        const other = boundaryIO();
+        const otherFixture = controlledPorts(other);
+        assert.throws(() =>
+          runWithRequestBoundary(createRequestBoundary(), () =>
+            current.run(other.req, other.res, otherFixture.ports),
+          ),
+        );
+        assert.equal(otherFixture.counts.provider, 0);
+        record(t, 'composition-diagnostic-seam', 'source-scope', current, 200, true, true);
       },
     );
 

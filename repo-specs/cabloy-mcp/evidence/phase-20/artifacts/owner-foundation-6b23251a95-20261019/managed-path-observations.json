@@ -1,0 +1,30 @@
+[
+  {
+    "capture": "a4-foundation-baseline.log",
+    "run": "20261019115551-e6b89817",
+    "claimExists": false,
+    "registrationExists": false,
+    "runtimeExists": false
+  },
+  {
+    "capture": "p11-production-baseline.log",
+    "run": "20261019115614-739057d5",
+    "claimExists": false,
+    "registrationExists": false,
+    "runtimeExists": false
+  },
+  {
+    "capture": "p10-foundation-post.log",
+    "run": "20261019120526-357d7c21",
+    "claimExists": false,
+    "registrationExists": false,
+    "runtimeExists": false
+  },
+  {
+    "capture": "p11-production-post.log",
+    "run": "20261019120549-57271b74",
+    "claimExists": false,
+    "registrationExists": false,
+    "runtimeExists": false
+  }
+]

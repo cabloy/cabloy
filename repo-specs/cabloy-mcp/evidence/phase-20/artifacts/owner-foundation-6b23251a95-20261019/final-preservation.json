@@ -1,0 +1,13 @@
+{
+  "head": "6b23251a95e961b2aa87d84f7fc797d4a3271c98",
+  "indexEmpty": true,
+  "snapshotCount": 5923,
+  "environmentPathsNotRead": 17,
+  "changed": [
+    "repo-specs/cabloy-mcp/evidence/phase-20/index.md",
+    "repo-specs/cabloy-mcp/progress.md",
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md"
+  ],
+  "sourceChanged": false,
+  "adapterAbsent": true
+}

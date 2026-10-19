@@ -17,6 +17,7 @@ import type { ServiceTelemetry } from '../../../../../../suite-vendor/a-vona/mod
 
 import { VonaAsyncLocalStorage } from '../../../../../../../packages-vona/vona-core/src/lib/core/asyncLocalStorage.ts';
 import { BeanExecutor } from '../../../../../../suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts';
+import { ServiceTransactionAsyncLocalStorage } from '../../../../../../suite-vendor/a-vona/modules/a-orm/src/service/transactionAsyncLocalStorage_.ts';
 
 type Span = ReturnType<ServiceTelemetry['startSpan']>;
 
@@ -361,6 +362,20 @@ export function controlledScope(options: { failDispose?: boolean; failCreation?:
     bean: {
       get() {
         return {
+          _getBean(token: unknown) {
+            assert.equal(token, ServiceTransactionAsyncLocalStorage, 'transaction_storage_token');
+            assert.equal(initialized, true, 'initializer_before_transaction_storage');
+            assert.equal(storage.getStore(), context, 'transaction_storage_context');
+            assert.equal(counts.database, 0, 'transaction_storage_before_database');
+            return {
+              async run(fn: () => unknown, isolate: boolean) {
+                assert.equal(isolate, true, 'independent_transaction_scope');
+                assert.equal(typeof fn, 'function', 'transaction_continuation');
+                assert.equal(counts.commits, 0, 'transaction_storage_before_commits');
+                return await fn();
+              },
+            };
+          },
           database: {
             async switchDb(fn: () => unknown) {
               counts.database++;

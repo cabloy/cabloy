@@ -94,7 +94,7 @@ export function controlledPorts(io: ReturnType<typeof boundaryIO>) {
       counts.provider++;
       return { outcome: 'admitted', instanceName: '' };
     },
-    async execute(callback, options, disposed) {
+    async execute(callback, options, lifecycle) {
       counts.executor++;
       assert.deepEqual(Object.keys(options).sort(), [
         'dbInfo',
@@ -107,8 +107,9 @@ export function controlledPorts(io: ReturnType<typeof boundaryIO>) {
       assert.equal(options.innerAccess, false);
       assert.deepEqual(options.dbInfo, { level: 0 });
       assert.equal(options.req === io.req && options.res === io.res, true, 'native_pair');
+      lifecycle.initializeContext(ctx);
       await callback(ctx);
-      disposed();
+      lifecycle.onScopeOutcome('disposed');
     },
     async work() {
       io.response.end();

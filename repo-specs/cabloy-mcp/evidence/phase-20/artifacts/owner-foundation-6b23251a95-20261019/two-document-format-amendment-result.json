@@ -1,0 +1,34 @@
+{
+  "authority": "Explicit approval of two-document formatting and one exact-path format recheck; no other producers or source changes.",
+  "results": [
+    {
+      "label": "d1-format-two-document-helper",
+      "producerExit": 0,
+      "sanitizerExit": 0,
+      "observerOverrun": false
+    },
+    {
+      "label": "d1-format-two-document-recheck",
+      "producerExit": 0,
+      "sanitizerExit": 0,
+      "observerOverrun": false
+    }
+  ],
+  "documentHashes": {
+    "repo-specs/cabloy-mcp/progress.md": {
+      "before": "640dcd0055e024fbb6023aed57d1e2a81525ab2f1ccc0eff5a39df9e78015e8a",
+      "after": "943d9d6372e4a29a67bc26f9237b1383322581e50566fa34283b9df127d2613c"
+    },
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/owner-foundation-6b23251a95-20261019/composition-source-hashes.md": {
+      "before": "75364f7eef1ec8dbfa36634fe2b9c8d0737844ab559589ff62542ef5bd89fe00",
+      "after": "260c60eacd738c6f1a4b207a3a27a820e8516abb6eefbfd92efc3eaa6dcd6f53"
+    }
+  },
+  "changedPriorInputs": [
+    "repo-specs/cabloy-mcp/progress.md",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/owner-foundation-6b23251a95-20261019/composition-source-hashes.md"
+  ],
+  "tableCellAndProseContentUnchanged": true,
+  "qualifiedSourceFrameworkFingerprintsUnchanged": 9,
+  "priorAuditAndEvidenceChecks": "Retained for their recorded input bytes; not rerun. Only table layout changed in these two documents. New captures do not attest to their own path-check coverage."
+}

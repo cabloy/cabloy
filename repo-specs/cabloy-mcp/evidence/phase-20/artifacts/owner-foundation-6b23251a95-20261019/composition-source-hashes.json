@@ -1,0 +1,11 @@
+{
+  "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/productionRequestOwner.ts": "7dace04ff4b850a17b5b2f6419233473ee76c2155b40e07085423e8c68e1b3c9",
+  "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/requestBoundaryOwner.ts": "e851e1989297f5b918f8343c18dc1b01052becc0e3b60ca319178ac11e5b553f",
+  "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/productionBoundary.test.ts": "3334ecbdee1a844e791614b115acc8e449f1570172f208efa57b6f2cd93a6e84",
+  "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/productionBoundaryFixture.ts": "e6d94a7b2ee10def7dd3e7c79bf79c08eee098bb42a4744ba7b8d9c96e257433",
+  "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/requestBoundaryFoundationFixture.ts": "b0aef4a0712f751f3eaa6f9c6af5d9ab699ec34990bae901436fa6344daeb145",
+  "vona/packages-vona/vona-core/src/lib/core/requestBoundary.ts": "c44177ef43b03d13da639a5e6d916223812246db6ac97a516a62bea18c480bdb",
+  "vona/packages-vona/vona-core/src/lib/core/asyncLocalStorage.ts": "5d1f7794a5ed72b70e9d3360147d38dce1a04129b35d8902bd01e566adea3338",
+  "vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts": "c938c5b3d72da0803a751aa5efc82d258ba5224493a9528d98414f4130dbe23b",
+  "vona/src/suite-vendor/a-vona/modules/a-executor/src/types/executor.ts": "e38d2902f591831e288bb7321ef8d6b26bdada439942d84c5816fda156a40046"
+}

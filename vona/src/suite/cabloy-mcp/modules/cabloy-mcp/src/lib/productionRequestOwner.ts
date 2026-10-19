@@ -24,14 +24,22 @@ export interface ProductionExecutorOptions {
   res: ServerResponse;
 }
 
+export type ProductionScopeOutcome = 'not_created' | 'disposed' | 'dispose_failed';
+
+export interface ProductionExecutorLifecycle<C extends ProductionOwnerContext> {
+  initializeContext(ctx: C): void;
+  onScopeOutcome(outcome: ProductionScopeOutcome): void;
+}
+
 export interface ProductionOwnerPorts<C extends ProductionOwnerContext> {
   binding: (signal: AbortSignal) => Promise<ProductionBinding | undefined>;
-  // The integration must observe normal scope disposal independently of rejection.
+  // Trusted lifecycle ports, separate from executor options and client input.
   execute: (
     callback: (ctx: C) => Promise<void>,
     options: ProductionExecutorOptions,
-    scopeDisposed: () => void,
+    lifecycle: ProductionExecutorLifecycle<C>,
   ) => Promise<void>;
+  boundaryFault?: () => boolean;
   work: (ctx: C, signal: AbortSignal) => Promise<void>;
   cleanup: (signal: AbortSignal) => Promise<void>;
 }
@@ -46,6 +54,8 @@ export interface ProductionRequestState {
   workSettled: boolean;
   cleanupSettled: boolean;
   scopeDisposed: boolean;
+  scopeOutcome: ProductionScopeOutcome | 'pending';
+  portFault: boolean;
   executorSettled: boolean;
   terminal: boolean;
   released: boolean;
@@ -104,6 +114,8 @@ export function createProductionRequestOwner(limits: typeof productionOwnerLimit
       workSettled: false,
       cleanupSettled: false,
       scopeDisposed: false,
+      scopeOutcome: 'pending',
+      portFault: false,
       executorSettled: false,
       terminal: res.writableFinished || res.destroyed,
       released: false,
@@ -121,7 +133,21 @@ export function createProductionRequestOwner(limits: typeof productionOwnerLimit
     let failed = false;
     let completed = false;
     let callbackDone: Promise<void> | undefined;
+    let initializedContext: C | undefined;
 
+    function portFault() {
+      state.portFault = true;
+      state.fault = true;
+      unhealthy();
+      fail(500);
+    }
+    function checkBoundary() {
+      try {
+        if (ports.boundaryFault?.()) portFault();
+      } catch {
+        portFault();
+      }
+    }
     function observeCleanup() {
       if (!cleanupTimer) {
         cleanupTimer = setTimeout(() => {
@@ -209,6 +235,7 @@ export function createProductionRequestOwner(limits: typeof productionOwnerLimit
           } finally {
             state.providerSettled = true;
           }
+          checkBoundary();
           if (!state.cancelled) {
             if (binding?.outcome === 'denied') {
               fail(403);
@@ -223,16 +250,17 @@ export function createProductionRequestOwner(limits: typeof productionOwnerLimit
                 await ports.execute(
                   ctx => {
                     state.callbackCalls++;
-                    if (state.callbackCalls !== 1) {
-                      state.fault = true;
-                      unhealthy();
-                      fail(500);
+                    if (
+                      state.callbackCalls !== 1 ||
+                      initializedContext !== ctx ||
+                      state.scopeOutcome !== 'pending'
+                    ) {
+                      portFault();
                       return Promise.resolve();
                     }
                     callbackDone = (async () => {
                       try {
-                        ctx.respond = false;
-                        ctx.onerror = responseError;
+                        checkBoundary();
                         if (!state.cancelled) await ports.work(ctx, abort.signal);
                       } catch {
                         fail(500);
@@ -258,8 +286,34 @@ export function createProductionRequestOwner(limits: typeof productionOwnerLimit
                     req,
                     res,
                   },
-                  () => {
-                    state.scopeDisposed = true;
+                  {
+                    initializeContext(ctx) {
+                      if (initializedContext || state.scopeOutcome !== 'pending' || completed) {
+                        portFault();
+                        throw new Error('Invalid owner context initialization');
+                      }
+                      initializedContext = ctx;
+                      ctx.respond = false;
+                      ctx.onerror = responseError;
+                    },
+                    onScopeOutcome(outcome) {
+                      if (
+                        completed ||
+                        state.scopeOutcome !== 'pending' ||
+                        !['not_created', 'disposed', 'dispose_failed'].includes(outcome) ||
+                        (outcome === 'not_created' && initializedContext !== undefined)
+                      ) {
+                        portFault();
+                        return;
+                      }
+                      state.scopeOutcome = outcome;
+                      state.scopeDisposed = outcome === 'disposed';
+                      if (outcome === 'dispose_failed') {
+                        state.fault = true;
+                        unhealthy();
+                        fail(500);
+                      }
+                    },
                   },
                 );
               } catch {
@@ -271,6 +325,8 @@ export function createProductionRequestOwner(limits: typeof productionOwnerLimit
                 state.executorSettled = true;
                 await callbackDone;
               }
+              checkBoundary();
+              if (state.scopeOutcome === 'pending') portFault();
               if (!state.scopeDisposed || state.callbackCalls !== 1 || !state.cleanupSettled) {
                 state.fault = true;
                 unhealthy();
@@ -289,6 +345,7 @@ export function createProductionRequestOwner(limits: typeof productionOwnerLimit
           cleanupTimer = undefined;
         }
         await terminal;
+        checkBoundary();
         if (
           !state.fault &&
           state.providerSettled &&

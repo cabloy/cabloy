@@ -1,0 +1,15 @@
+{
+  "changed": [
+    "repo-specs/cabloy-mcp/evidence/phase-20/index.md",
+    "repo-specs/cabloy-mcp/progress.md",
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/productionRequestOwner.ts",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/productionBoundary.test.ts",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/productionBoundaryFixture.ts",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/requestBoundaryFoundationFixture.ts"
+  ],
+  "unchanged": 5916,
+  "environmentNotRead": 17,
+  "head": "6b23251a95e961b2aa87d84f7fc797d4a3271c98",
+  "indexEmpty": true
+}
