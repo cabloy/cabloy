@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.217
+
+### Features
+
+- Add end-to-end testing on Windows.
+
+### Improvements
+
+- Improve Windows support and end-to-end test coverage.
+- Update the SQLite test workflow.
+- Update claim tests.
+
 ## 5.1.216
 
 ### Features
