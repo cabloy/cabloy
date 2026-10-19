@@ -13,28 +13,36 @@ import type {
 
 import { BeanSimple } from '../../bean/beanSimple.ts';
 import { deepExtend } from '../../utils/util.ts';
+import { getRequestBoundary } from '../requestBoundary.ts';
+import { createDiagnosticLogger, getSuppressedDiagnosticLogger } from './diagnosticLogger.ts';
 
 const SymbolLoggerInstances = Symbol('SymbolLoggerInstances');
+const SymbolRawLoggerInstances = Symbol('SymbolRawLoggerInstances');
 
 export class AppLogger extends BeanSimple {
   private [SymbolLoggerInstances]: Record<keyof ILoggerClientRecord, Winston.Logger> = {} as any;
+  private [SymbolRawLoggerInstances]: Record<keyof ILoggerClientRecord, Winston.Logger> = {} as any;
 
   public async dispose() {
-    for (const key in this[SymbolLoggerInstances]) {
-      const logger = this[SymbolLoggerInstances][key];
+    for (const key in this[SymbolRawLoggerInstances]) {
+      const logger = this[SymbolRawLoggerInstances][key];
       await _closeLogger(logger);
     }
   }
 
   get(clientName?: keyof ILoggerClientRecord) {
+    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
     clientName = clientName || 'default';
     if (!this[SymbolLoggerInstances][clientName]) {
-      this[SymbolLoggerInstances][clientName] = this._createClient(clientName);
+      const raw = this._createClient(clientName);
+      this[SymbolRawLoggerInstances][clientName] = raw;
+      this[SymbolLoggerInstances][clientName] = createDiagnosticLogger(raw);
     }
     return this[SymbolLoggerInstances][clientName];
   }
 
   child(childName?: keyof ILoggerChildRecord, clientName?: keyof ILoggerClientRecord) {
+    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
     const logger = this.get(clientName);
     if (!childName) return logger;
     return logger.child({ name: childName });

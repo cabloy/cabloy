@@ -1,6 +1,13 @@
 import type { Context, Span, SpanOptions } from '@opentelemetry/api';
 
-import { context, propagation, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
+import {
+  context,
+  INVALID_SPAN_CONTEXT,
+  propagation,
+  ROOT_CONTEXT,
+  SpanKind,
+  trace,
+} from '@opentelemetry/api';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { W3CTraceContextPropagator } from '@opentelemetry/core';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
@@ -11,12 +18,15 @@ import {
   TraceIdRatioBasedSampler,
 } from '@opentelemetry/sdk-trace-base';
 import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
-import { BeanBase } from 'vona';
+import { BeanBase, captureRequestBoundary, getRequestBoundary } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
 import type { ITelemetryCarrier } from '../types/telemetry.ts';
 
 import { createIngressTrustChecker } from '../lib/ingress.ts';
+import { endHttpSpan, recordSpanException } from '../lib/spanDiagnostics.ts';
+
+const nonRecordingSpan = trace.wrapSpanContext(INVALID_SPAN_CONTEXT);
 
 const carrierGetter = {
   get(carrier: ITelemetryCarrier, key: string) {
@@ -44,10 +54,12 @@ export class ServiceTelemetry extends BeanBase {
   private _enabled = false;
 
   get enabled() {
+    if (getRequestBoundary()) return false;
     return this._enabled;
   }
 
   init() {
+    if (getRequestBoundary()) return;
     if (this._provider || this._enabled) return;
     const config = this.scope.config;
     this._isTrustedIngress = createIngressTrustChecker(config.ingress);
@@ -96,64 +108,64 @@ export class ServiceTelemetry extends BeanBase {
   }
 
   get activeContext() {
+    if (getRequestBoundary()) return ROOT_CONTEXT;
     return this.ctx?.state.telemetry?.context ?? context.active();
   }
 
   extractCarrier(carrier?: ITelemetryCarrier) {
+    if (getRequestBoundary()) return ROOT_CONTEXT;
     if (!carrier) return context.active();
     return propagation.extract(context.active(), carrier, carrierGetter);
   }
 
   isTrustedIngress(peerAddress?: string, internalHeaderValue?: string) {
+    if (getRequestBoundary()) return false;
     this._isTrustedIngress ??= createIngressTrustChecker(this.scope.config.ingress);
     return this._isTrustedIngress(peerAddress, internalHeaderValue);
   }
 
   extractHttpIngressCarrier(trusted: boolean, carrier: ITelemetryCarrier) {
+    if (getRequestBoundary()) return ROOT_CONTEXT;
     return trusted ? this.extractCarrier(carrier) : this.extractCarrier();
   }
 
-  injectCarrier(source = this.activeContext): ITelemetryCarrier {
+  injectCarrier(source?: Context): ITelemetryCarrier {
+    if (getRequestBoundary()) return { version: 1 };
     const carrier: ITelemetryCarrier = { version: 1 };
-    propagation.inject(source, carrier, carrierSetter);
+    propagation.inject(source === undefined ? this.activeContext : source, carrier, carrierSetter);
     return carrier;
   }
 
-  startSpan(name: string, options?: SpanOptions, parent = this.activeContext) {
-    return trace.getTracer('vona-module-a-telemetry').startSpan(name, options, parent);
+  startSpan(name: string, options?: SpanOptions, parent?: Context) {
+    if (getRequestBoundary()) return nonRecordingSpan;
+    return trace
+      .getTracer('vona-module-a-telemetry')
+      .startSpan(name, options, parent === undefined ? this.activeContext : parent);
   }
 
   withSpan<RESULT>(span: Span, fn: () => RESULT): RESULT {
+    if (getRequestBoundary()) return fn();
     const active = trace.setSpan(this.activeContext, span);
     return context.with(active, fn);
   }
 
-  createContext(span: Span, parent = this.activeContext) {
-    return trace.setSpan(parent, span);
+  createContext(span: Span, parent?: Context) {
+    if (getRequestBoundary()) return ROOT_CONTEXT;
+    return trace.setSpan(parent === undefined ? this.activeContext : parent, span);
   }
 
   recordException(span: Span, error: unknown) {
-    if (error instanceof Error) {
-      span.recordException(error);
-      span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-      return;
-    }
-    span.setStatus({ code: SpanStatusCode.ERROR, message: String(error) });
+    if (getRequestBoundary()) return;
+    recordSpanException(span, error, captureRequestBoundary());
   }
 
   endHttpSpan(span: Span, statusCode: number, aborted = false) {
-    if (aborted || statusCode >= 500) {
-      span.setStatus({
-        code: SpanStatusCode.ERROR,
-        message: aborted ? 'client aborted' : undefined,
-      });
-    }
-    span.setAttribute('http.response.status_code', statusCode);
-    if (aborted) span.setAttribute('vona.http.aborted', true);
-    span.end();
+    if (getRequestBoundary()) return;
+    endHttpSpan(span, statusCode, aborted);
   }
 
   getLogContext() {
+    if (getRequestBoundary()) return;
     if (!this._enabled) return;
     const spanContext = trace.getSpanContext(this.activeContext);
     if (!spanContext || !trace.isSpanContextValid(spanContext)) return;
@@ -166,6 +178,7 @@ export class ServiceTelemetry extends BeanBase {
   }
 
   createServerSpan(method: string, parent: Context) {
+    if (getRequestBoundary()) return nonRecordingSpan;
     return this.startSpan(`HTTP ${method}`, { kind: SpanKind.SERVER }, parent);
   }
 
@@ -175,6 +188,7 @@ export class ServiceTelemetry extends BeanBase {
     controllerBeanFullName: string,
     action: string,
   ) {
+    if (getRequestBoundary()) return;
     const span = this.ctx.state.telemetry?.serverSpan;
     if (!span) return;
     span.updateName(`HTTP ${method.toUpperCase()} ${routePath}`);

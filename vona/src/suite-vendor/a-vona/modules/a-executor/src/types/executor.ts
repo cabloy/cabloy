@@ -1,4 +1,11 @@
-import type { ContextState, IInstanceRecord, ILocaleRecord, PowerPartial } from 'vona';
+import type {
+  ContextState,
+  IInstanceRecord,
+  ILocaleRecord,
+  PowerPartial,
+  VonaContext,
+  VonaScopeOutcomeObserver,
+} from 'vona';
 import type { ConfigOnions } from 'vona-module-a-onion';
 import type { IDbInfo, ITransactionOptions } from 'vona-module-a-orm';
 
@@ -13,6 +20,11 @@ export interface INewCtxExtraData {
 
 export interface INewCtxOptions extends INewCtxBaseOptions {
   dbInfo?: Partial<IDbInfo>;
+}
+
+export interface INewCtxLifecycle {
+  initializeContext?: (ctx: VonaContext) => void;
+  onScopeOutcome?: VonaScopeOutcomeObserver;
 }
 
 export interface INewCtxBaseOptions {

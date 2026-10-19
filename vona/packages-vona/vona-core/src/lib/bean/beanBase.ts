@@ -4,6 +4,8 @@ import type { ILoggerChildRecord, ILoggerClientRecord } from '../../types/interf
 // import type { IModuleLocaleText } from './resource/locale/type.ts';
 import type { IBeanScopeContainer } from './scope/beanScopeContainer.ts';
 
+import { getSuppressedDiagnosticLogger } from '../core/logger/diagnosticLogger.ts';
+import { getRequestBoundary } from '../core/requestBoundary.ts';
 import { BeanBaseSimple, SymbolBeanInstanceKey, SymbolModuleBelong } from './beanBaseSimple.ts';
 
 // const SymbolText = Symbol('SymbolText');
@@ -30,6 +32,7 @@ export class BeanBase extends BeanBaseSimple {
   }
 
   protected $loggerClient(clientName: keyof ILoggerClientRecord = 'default') {
+    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
     if (!this[SymbolLogger][clientName]) {
       this[SymbolLogger][clientName] = this.app.meta.logger
         .get(clientName)
@@ -42,6 +45,7 @@ export class BeanBase extends BeanBaseSimple {
     childName: keyof ILoggerChildRecord,
     clientName: keyof ILoggerClientRecord = 'default',
   ) {
+    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
     if (!this[SymbolLoggerChildren][clientName])
       this[SymbolLoggerChildren][clientName] = {} as never;
     if (!this[SymbolLoggerChildren][clientName][childName]) {

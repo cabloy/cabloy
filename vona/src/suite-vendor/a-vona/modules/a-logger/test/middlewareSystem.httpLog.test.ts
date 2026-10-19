@@ -8,11 +8,18 @@ const middlewareUrl = new URL(
   '../src/bean/middlewareSystem.httpLog.ts?fixture=httpLog',
   import.meta.url,
 ).href;
+const boundaryFixture = `data:text/javascript,${encodeURIComponent(`
+  export class BeanBase {}
+  let boundary;
+  export function getRequestBoundary() { return boundary; }
+  export function setBoundary(value) { boundary = value; }
+`)}`;
+const { setBoundary } = await import(boundaryFixture);
 const hooks = registerHooks({
   resolve(specifier, context, nextResolve) {
     if (context.parentURL === middlewareUrl) {
+      if (specifier === 'vona') return { url: boundaryFixture, shortCircuit: true };
       const source = {
-        'vona': 'export class BeanBase {}',
         'vona-module-a-aspect': 'export function MiddlewareSystem() { return () => {}; }',
         'pino-std-serializers':
           'export default { req: req => ({ headers: req.headers, url: req.url }) };',
@@ -41,6 +48,31 @@ const hooks = registerHooks({
 });
 const { MiddlewareSystemHttpLog } = await import(middlewareUrl);
 hooks.deregister();
+
+test('HTTP logger skips context and diagnostic access inside a request boundary', async () => {
+  const middleware = Object.create(MiddlewareSystemHttpLog.prototype);
+  for (const key of ['app', 'ctx', '$loggerChild']) {
+    Object.defineProperty(middleware, key, {
+      get() {
+        assert.fail('protected diagnostic access');
+      },
+    });
+  }
+  let calls = 0;
+  setBoundary({ diagnostics: 'suppress' });
+  try {
+    assert.equal(
+      await middleware.execute({}, async () => {
+        calls++;
+        return 23;
+      }),
+      23,
+    );
+    assert.equal(calls, 1);
+  } finally {
+    setBoundary(undefined);
+  }
+});
 
 for (const path of ['/health/ready', '/health/test-stop']) {
   test(`HTTP logger redacts request authorization and response proof at ${path} without mutating headers`, async () => {
