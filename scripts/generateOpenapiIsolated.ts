@@ -15,6 +15,17 @@ export function getOpenapiSource(port: number) {
   return `http://127.0.0.1:${port}/swagger/json?version=${OPENAPI_VERSION}`;
 }
 
+export function parseIsolatedOpenapiArgs(args: string[]) {
+  const flag = '--skip-expired-claim-reaping';
+  if (args.some(arg => arg.startsWith(`${flag}=`))) {
+    throw new Error(`${flag} is a standalone flag`);
+  }
+  return {
+    generatorArgs: args.filter(arg => arg !== flag),
+    skipExpiredClaimReaping: args.includes(flag),
+  };
+}
+
 export function getOpenapiGeneratorCommand(args: string[]) {
   if (args.some(arg => /^--projectPath(?:=|$)/.test(arg))) {
     throw new Error(
@@ -67,23 +78,29 @@ export async function validateOpenapiSource(source: string) {
 }
 
 export async function generateOpenapiIsolated(args: string[]) {
-  const command = getOpenapiGeneratorCommand(args);
+  const { generatorArgs, skipExpiredClaimReaping } = parseIsolatedOpenapiArgs(args);
+  const command = getOpenapiGeneratorCommand(generatorArgs);
   if (process.env.E2E_BASE_URL !== undefined) {
     throw new Error(
       'E2E_BASE_URL is unsupported; isolated OpenAPI generation manages a local test-mode target.',
     );
   }
-  return await withIsolatedRun('contract', async ({ env, port }) => {
-    const source = getOpenapiSource(port);
-    await withIsolatedVona(port, env, async () => {
-      await validateOpenapiSource(source);
-      await runIsolatedProcess(command.command, command.args, command.cwd, {
-        ...env,
-        OPENAPI_SOURCE_URL: source,
-        VONA_TEST_READY_KEY: undefined,
+  return await withIsolatedRun(
+    'contract',
+    async ({ env, port }) => {
+      const source = getOpenapiSource(port);
+      await withIsolatedVona(port, env, async () => {
+        await validateOpenapiSource(source);
+        await runIsolatedProcess(command.command, command.args, command.cwd, {
+          ...env,
+          OPENAPI_SOURCE_URL: source,
+          VONA_TEST_READY_KEY: undefined,
+        });
       });
-    });
-  });
+    },
+    ROOT_DIR,
+    { skipExpiredClaimReaping },
+  );
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {

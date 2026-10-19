@@ -19,6 +19,7 @@ const lifecycleSource = `
     '../../types/index.ts': 'export const EnumAppEvent = { AppStartError: "error", AppStarted: "started" };',
     '../core/isolationGuard.ts': 'export function assertIsolatedTestConfig() {}',
     '../core/testClaim.ts': 'export function registerTestClaimResourceInventory() {}',
+    '../core/testFreshness.ts': 'export async function assertFreshTestResources() { await globalThis.phase("Freshness"); }',
     '../module/loader.ts': 'export class ModuleLoader { async execute() { await globalThis.phase("Load"); } }',
     '../utils/util.ts': 'export function deepExtend(target, source) { Object.assign(target, source); }',
   };
@@ -62,7 +63,7 @@ const lifecycleSource = `
     },
   };
   const start = new Start(app);
-  const order = ['Config', 'Load', 'Start', 'Ready', 'Started'];
+  const order = ['Config', 'Freshness', 'Load', 'Start', 'Ready', 'Started'];
   if (failingPhase) {
     await assert.rejects(start.start(), error => error === failure);
     assert.equal(app.meta.appStartError, failure);
@@ -85,13 +86,13 @@ const lifecycleSource = `
     ...(failingPhase ? ['error'] : []),
   ]);
   if (reachesStarted) {
-    assert.deepEqual(events[0].phases, ['Config', 'Load', 'Start', 'Ready']);
+    assert.deepEqual(events[0].phases, ['Config', 'Freshness', 'Load', 'Start', 'Ready']);
   }
   assert.equal(await readFile(lockPath, 'utf8'), lockContents);
   console.log('verified');
 `;
 
-for (const failingPhase of ['', 'Config', 'Load', 'Start', 'Ready', 'Started']) {
+for (const failingPhase of ['', 'Config', 'Freshness', 'Load', 'Start', 'Ready', 'Started']) {
   test(`Start ignores the legacy preparation lock on ${failingPhase ? `${failingPhase} failure` : 'success'}`, async () => {
     const root = await mkdtemp(path.join(await realpath(tmpdir()), 'vona-start-'));
     try {

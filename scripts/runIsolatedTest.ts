@@ -546,19 +546,39 @@ export interface IsolatedRunContext {
   env: NodeJS.ProcessEnv;
 }
 
-export async function withIsolatedRun<T>(
+export interface IsolatedRunOptions {
+  skipExpiredClaimReaping?: boolean;
+}
+
+export async function reapBeforeIsolatedRun(
   kind: 'unit' | 'cov' | 'e2e' | 'contract',
-  callback: (context: IsolatedRunContext) => Promise<T>,
-  rootDir = ROOT_DIR,
-): Promise<T> {
-  resolveCabloyEdition(rootDir);
-  const vonaDir = resolve(rootDir, 'vona');
-  await reapExpiredTestClaims(vonaDir, {
+  vonaDir: string,
+  options: IsolatedRunOptions = {},
+  reap: typeof reapExpiredTestClaims = reapExpiredTestClaims,
+): Promise<void> {
+  if (options.skipExpiredClaimReaping) {
+    if (kind !== 'contract') {
+      throw new Error('Skipping expired claim reaping is supported only for contract generation');
+    }
+    return;
+  }
+  await reap(vonaDir, {
     ttlSeconds: parseTestClaimTtlSeconds(),
     now: Date.now(),
     isInactive: claim => isTestClaimInactive(claim),
     warn: message => console.error(message),
   });
+}
+
+export async function withIsolatedRun<T>(
+  kind: 'unit' | 'cov' | 'e2e' | 'contract',
+  callback: (context: IsolatedRunContext) => Promise<T>,
+  rootDir = ROOT_DIR,
+  options: IsolatedRunOptions = {},
+): Promise<T> {
+  resolveCabloyEdition(rootDir);
+  const vonaDir = resolve(rootDir, 'vona');
+  await reapBeforeIsolatedRun(kind, vonaDir, options);
   const runId = createTestRunId();
   const dataRoot = resolve(vonaDir, `.app-test-${runId}`);
   const generatedRoot = resolve(vonaDir, `.vona-test-${runId}`);
@@ -580,6 +600,7 @@ export async function withIsolatedRun<T>(
       META_MODE: 'test',
       VONA_DB_RESET: undefined,
       VONA_TEST_RUN_ID: runId,
+      VONA_TEST_REQUIRE_FRESH_RESOURCES: options.skipExpiredClaimReaping ? 'true' : undefined,
       VONA_TEST_READY_KEY: undefined,
       VONA_TEST_SERVER_ORIGIN: undefined,
       APP_NAME: `cabtest${runId}`,
@@ -631,6 +652,9 @@ export async function withIsolatedRun<T>(
 }
 
 export async function runIsolatedTest(kind: 'unit' | 'e2e', args: string[]) {
+  if (args.some(arg => /^--skip-expired-claim-reaping(?:=|$)/.test(arg))) {
+    throw new Error('--skip-expired-claim-reaping is supported only for contract generation');
+  }
   if (process.env.E2E_BASE_URL !== undefined) {
     throw new Error(
       'E2E_BASE_URL is unsupported; the E2E runner manages a local test-mode target.',

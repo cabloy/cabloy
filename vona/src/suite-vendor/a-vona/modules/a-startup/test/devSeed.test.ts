@@ -217,7 +217,7 @@ describe('creation-driven dev seed', { concurrency: false }, () => {
     const { service, app, calls, pending } = fixture(['', 'isolateTest']);
     const runStartup = service.runStartup.bind(service);
     service.runStartup = async (name, instance, options) => {
-      if (name === 'a-version:instanceInit' && instance === 'isolateTest') {
+      if (name === 'a-version:instanceInit' && String(instance) === 'isolateTest') {
         throw new Error('isolate init failed');
       }
       await runStartup(name, instance, options);
@@ -239,7 +239,7 @@ describe('creation-driven dev seed', { concurrency: false }, () => {
       } else {
         const runStartup = service.runStartup.bind(service);
         service.runStartup = async (name, instance, options) => {
-          if (name === 'a-version:instanceInit' && instance === 'isolateTest') {
+          if (name === 'a-version:instanceInit' && String(instance) === 'isolateTest') {
             throw new Error('isolate init failed');
           }
           await runStartup(name, instance, options);

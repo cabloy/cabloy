@@ -5,6 +5,8 @@ import { isNil } from '@cabloy/utils';
 import fse from 'fs-extra';
 import {
   assertIsolatedTestConfig,
+  assertFreshTestResourcesReady,
+  requiresFreshTestResources,
   BeanBase,
   cast,
   getRuntimePathPhysicalRoot,
@@ -242,6 +244,10 @@ export class ServiceStartup extends BeanBase {
   private async _clearResources() {
     if (!this.app.meta.isTest) return;
     assertIsolatedTestConfig(this.app);
+    if (requiresFreshTestResources()) {
+      assertFreshTestResourcesReady(this.app);
+      return;
+    }
     // redis
     await this.$scope.redis.service.redis.clearAllData();
     // .app/public

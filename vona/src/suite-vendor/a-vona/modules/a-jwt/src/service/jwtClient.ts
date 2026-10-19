@@ -53,10 +53,7 @@ export class ServiceJwtClient extends BeanBase {
     const [res, error] = await catchError(() => {
       return this._signInner(payloadData, options);
     });
-    this.$loggerChild('jwt').debug(
-      () =>
-        `jwt.sign: client:${this._clientName}, token:${res}${error ? `, error: ${error.message}` : ''}`,
-    );
+    this.$loggerChild('jwt').debug(() => `jwt.sign: ${error ? 'failed' : 'completed'}`);
     if (error) throw error;
     return res;
   }
@@ -99,10 +96,7 @@ export class ServiceJwtClient extends BeanBase {
     const [res, error] = await catchError(() => {
       return this._verifyInner(token, options);
     });
-    this.$loggerChild('jwt').debug(
-      () =>
-        `jwt.verify: client:${this._clientName}, token:${token}${error ? `, error: ${error.message}` : ''}`,
-    );
+    this.$loggerChild('jwt').debug(() => `jwt.verify: ${error ? 'failed' : 'completed'}`);
     if (error) throw error;
     return res;
   }

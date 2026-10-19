@@ -4,6 +4,7 @@ import type { VonaApplication } from '../core/application.ts';
 import { EnumAppEvent } from '../../types/index.ts';
 import { assertIsolatedTestConfig } from '../core/isolationGuard.ts';
 import { registerTestClaimResourceInventory } from '../core/testClaim.ts';
+import { assertFreshTestResources } from '../core/testFreshness.ts';
 import { ModuleLoader } from '../module/loader.ts';
 import { deepExtend } from '../utils/util.ts';
 
@@ -18,6 +19,7 @@ export class Start {
     const app = this.app;
     try {
       await this._start_appConfig();
+      await assertFreshTestResources(app);
       await this._start_appLoad();
       await this._start_appStart();
       await this._start_appReady();
