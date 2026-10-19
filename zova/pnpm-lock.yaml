@@ -136,7 +136,7 @@ importers:
         specifier: workspace:^
         version: link:packages-zova/zova
       zova-jsx:
-        specifier: ^1.1.92
+        specifier: ^1.1.93
         version: link:packages-utils/zova-jsx
       zova-module-a-api:
         specifier: workspace:^
@@ -455,7 +455,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.5
       zova-cli-set-front:
-        specifier: ^1.2.112
+        specifier: ^1.2.113
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -564,7 +564,7 @@ importers:
         specifier: ^1.1.17
         version: link:../../packages-utils/zova-openapi
       zova-vite:
-        specifier: ^1.1.48
+        specifier: ^1.1.49
         version: link:../../packages-utils/zova-vite
     devDependencies:
       clean-package:
@@ -732,7 +732,7 @@ importers:
         specifier: ^3.5.38
         version: 3.5.42(typescript@5.9.3)
       zova-core:
-        specifier: ^5.1.92
+        specifier: ^5.1.93
         version: link:../../packages-zova/zova-core
     devDependencies:
       clean-package:
@@ -873,10 +873,10 @@ importers:
   packages-zova/zova:
     dependencies:
       zova-core:
-        specifier: ^5.1.92
+        specifier: ^5.1.93
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.170
+        specifier: ^5.1.171
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -1139,7 +1139,7 @@ importers:
         specifier: ^5.1.37
         version: link:modules/a-zod
       zova-module-a-zova:
-        specifier: ^5.1.108
+        specifier: ^5.1.109
         version: link:modules/a-zova
 
   src/suite-vendor/a-zova/modules/a-api:
@@ -1472,7 +1472,7 @@ importers:
         specifier: ^3.7.2
         version: 3.7.2
       zova-jsx:
-        specifier: ^1.1.92
+        specifier: ^1.1.93
         version: link:../../../../../packages-utils/zova-jsx
     devDependencies:
       '@cabloy/cli':
