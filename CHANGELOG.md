@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.220
+
+### Features
+
+- Add request boundary lifecycle support and diagnostic suppression.
+
+### Improvements
+
+- Speed up REST declaration builds with oxc.
+- Enhance the REST build process.
+- Update setup documentation to use `npm create cabloy@latest`.
+
 ## 5.1.219
 
 ### Improvements
