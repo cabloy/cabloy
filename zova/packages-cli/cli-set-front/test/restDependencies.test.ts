@@ -149,6 +149,92 @@ import 'alpha/subpath';
     );
     assert.deepEqual(extractRestDependencies(''), []);
   });
+
+  it('rejects malformed declarations instead of returning partial dependencies', () => {
+    assert.throws(
+      () => extractRestDependencies("import 'valid-package';\nexport type Broken = {"),
+      /Invalid REST declaration at index\.d\.mts:2:23: .+/,
+    );
+  });
+
+  it('rejects path and type reference directives', () => {
+    for (const [kind, target] of [
+      ['path', './external.d.ts'],
+      ['types', 'external-types'],
+    ]) {
+      assert.throws(
+        () =>
+          extractRestDependencies(`/// <reference ${kind}="${target}" />\nimport 'valid-package';`),
+        {
+          message:
+            `Unsupported REST declaration reference directive: ${kind} ${JSON.stringify(target)}. ` +
+            'The current REST bundling workflow does not support this directive.',
+        },
+      );
+    }
+  });
+
+  it('does not treat compiler lib references as package dependencies', () => {
+    assert.deepEqual(
+      extractRestDependencies(`
+/// <reference lib="esnext" />
+/// <reference no-default-lib="true" />
+import 'real-package';
+`),
+      ['real-package'],
+    );
+  });
+
+  it('rejects empty and incomplete scoped package references', () => {
+    for (const specifier of ['', '@scope', '@scope/', '@/package', '@']) {
+      assert.throws(
+        () => extractRestDependencies(`import '${specifier}';`),
+        /(?:Invalid|Unsupported) REST declaration package reference:/,
+      );
+    }
+  });
+
+  it('rejects colon-containing package references that are not URL schemes', () => {
+    for (const specifier of ['@scope/package:invalid', 'package/subpath:invalid']) {
+      assert.throws(
+        () => extractRestDependencies(`export * from '${specifier}';`),
+        /Unsupported REST declaration package reference:/,
+      );
+    }
+  });
+
+  it('rejects nonliteral import types and non-string module specifiers', () => {
+    assert.throws(
+      () => extractRestDependencies('export type Value = import(PackageName).Value;'),
+      /Unsupported REST declaration import type/,
+    );
+    assert.throws(
+      () => extractRestDependencies('export type Value = import(42).Value;'),
+      /Unsupported REST declaration module specifier/,
+    );
+  });
+
+  it('rejects dynamic import calls instead of silently omitting their dependencies', () => {
+    assert.throws(
+      () => extractRestDependencies("const value = import('runtime-package');"),
+      /Unsupported REST declaration dynamic import/,
+    );
+  });
+
+  it('retains external import assignments and ignores internal import aliases', () => {
+    assert.deepEqual(
+      extractRestDependencies(`
+import Scoped = require('@scope/legacy/subpath');
+import Local = require('./local.js');
+import Builtin = require('node:fs');
+import Internal = require('#internal');
+import Remote = require('https://example.invalid/module.js');
+declare namespace Existing { interface Value {} }
+import Alias = Existing.Value;
+`),
+      ['@scope/legacy'],
+    );
+  });
 });
 
 describe('extractRestDependencyVersions', () => {
