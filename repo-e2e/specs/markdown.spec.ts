@@ -590,15 +590,26 @@ test(
       await linkInput.fill('');
       await linkInput.press('Enter');
       await expect(editor.locator('h1 a')).toHaveCount(0);
+      const persistedText = `Link removal saved ${suffix}`;
+      await editor.press('ControlOrMeta+End');
+      await editor.press('Enter');
+      await editor.pressSequentially(persistedText);
+      const productUpdate = waitForApiResponse(
+        adminPage,
+        'PATCH',
+        `${productActionPath}/${productId}`,
+      );
       await adminPage.getByRole('button', { name: 'Submit', exact: true }).click();
+      expect((await productUpdate).ok()).toBeTruthy();
       const productResponseAfterLinkRemoval = await adminPage.request.get(
         `${productActionPath}/${productId}`,
         { headers },
       );
       expect(productResponseAfterLinkRemoval.ok()).toBeTruthy();
-      expect(
-        (await productResponseAfterLinkRemoval.json()).productContentForm.descriptionMarkdown,
-      ).not.toContain('https://example.com/updated');
+      const savedMarkdown = (await productResponseAfterLinkRemoval.json()).productContentForm
+        .descriptionMarkdown;
+      expect(savedMarkdown).toContain(persistedText);
+      expect(savedMarkdown).not.toContain('https://example.com/updated');
       expect(adminPageErrors).toEqual([]);
       expect(adminConsoleErrors).toEqual([]);
     } finally {

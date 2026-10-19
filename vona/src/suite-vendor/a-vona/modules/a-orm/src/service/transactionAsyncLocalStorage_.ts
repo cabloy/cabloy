@@ -18,9 +18,9 @@ export class ServiceTransactionAsyncLocalStorage extends BeanBase {
     return this.transactionStorage.getStore()!;
   }
 
-  async run<RESULT>(fn: FunctionAsync<RESULT>): Promise<RESULT> {
-    // only once
-    if (this.transactionState) {
+  async run<RESULT>(fn: FunctionAsync<RESULT>, isolate = false): Promise<RESULT> {
+    // Delegated calls and datasource switches share state; independent contexts do not.
+    if (!isolate && this.transactionState) {
       return fn();
     }
     const transactionState = this.bean._newBean(ServiceTransactionState);

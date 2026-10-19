@@ -2,10 +2,13 @@ export function redactIsolatedReadyHeader<HEADERS extends Record<string, unknown
   headers: HEADERS,
   path: string,
   runId: string | undefined,
-  header: string,
+  header: string | string[],
 ): HEADERS {
-  if (path !== '/health/ready' || !runId) return headers;
+  if (!['/health/ready', '/health/test-stop'].includes(path) || !runId) return headers;
   const redacted = { ...headers };
-  delete redacted[header];
+  const names = (Array.isArray(header) ? header : [header]).map(name => name.toLowerCase());
+  for (const name of Object.keys(redacted)) {
+    if (names.includes(name.toLowerCase())) delete redacted[name];
+  }
   return redacted;
 }

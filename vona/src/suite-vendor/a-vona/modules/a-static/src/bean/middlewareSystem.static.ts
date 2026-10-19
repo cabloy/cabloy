@@ -161,7 +161,7 @@ async function _getFullPathInner(
 ): Promise<string | undefined> {
   // trim prefix
   if (options.apiStaticPrefix !== '/') {
-    const filePrefix = path.normalize(options.apiStaticPrefix.replace(/^\//, ''));
+    const filePrefix = path.posix.normalize(options.apiStaticPrefix.replace(/^\//, ''));
     if (filename.indexOf(filePrefix) !== 0) {
       return;
       // cannot throw error
@@ -170,7 +170,7 @@ async function _getFullPathInner(
     filename = filename.slice(filePrefix.length);
   }
   // check
-  const parts = filename.split(path.sep);
+  const parts = filename.split('/');
   const wordFirst = parts.shift();
   // public
   if (wordFirst === 'public') {

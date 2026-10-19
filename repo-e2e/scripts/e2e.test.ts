@@ -17,7 +17,7 @@ test('rejects a defined E2E_BASE_URL before loading local configuration', () => 
 });
 
 test('isolated E2E target follows the assigned listener', () => {
-  const entrypoint = fileURLToPath(new URL('./e2e.ts', import.meta.url));
+  const entrypoint = new URL('./e2e.ts', import.meta.url).href;
   const result = spawnSync(
     process.execPath,
     [

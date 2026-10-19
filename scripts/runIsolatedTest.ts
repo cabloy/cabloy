@@ -3,8 +3,9 @@ import type { ChildProcess } from 'node:child_process';
 import { spawn } from 'node:child_process';
 import { createHmac, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { realpathSync } from 'node:fs';
 import { createServer } from 'node:net';
-import { dirname, resolve } from 'node:path';
+import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
@@ -19,6 +20,7 @@ import {
   reapExpiredTestClaims,
 } from './testClaimCleanup.ts';
 import { inspectTestProcess, isTestClaimInactive } from './testClaimProcesses.ts';
+import { startWindowsOwnedProcess } from './testProcessGuardianWindows.ts';
 
 export const ROOT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OWNER_FILE = '.vona-test-owner';
@@ -92,9 +94,7 @@ export async function startOwnedProcess(
   cwd: string,
   env: NodeJS.ProcessEnv,
 ): Promise<OwnedProcess> {
-  if (process.platform === 'win32') {
-    throw new Error('Isolated test process-tree cleanup requires POSIX process groups');
-  }
+  if (process.platform === 'win32') return startWindowsOwnedProcess(command, args, cwd, env);
   const processId = randomUUID();
   const managed = hasTestClaimTransport(env);
   const registration = { id: processId, role: 'guardian', stage: 'pending' as const };
@@ -255,11 +255,85 @@ export function getIsolatedVonaCommand(port: number, env: NodeJS.ProcessEnv, rea
   };
 }
 
+interface IsolatedVonaDependencies {
+  start: typeof startOwnedProcess;
+  ready: typeof waitForReady;
+  platform?: NodeJS.Platform;
+  requestStop?: typeof requestIsolatedVonaStop;
+  shutdownTimeoutMs?: number;
+}
+
+export async function requestIsolatedVonaStop(
+  port: number,
+  runId: string | undefined,
+  key: string,
+  timeoutMs = 1500,
+) {
+  if (!runId || !/^\d{14}-[a-f0-9]{8}$/.test(runId) || !/^[a-f0-9]{64}$/.test(key)) {
+    throw new Error('Invalid isolated Vona shutdown identity');
+  }
+  const nonce = randomBytes(16).toString('hex');
+  const payload = `${runId}\nPOST\n/health/test-stop\n${nonce}`;
+  const response = await fetch(`http://127.0.0.1:${port}/health/test-stop`, {
+    method: 'POST',
+    redirect: 'error',
+    signal: AbortSignal.timeout(timeoutMs),
+    headers: {
+      'x-vona-test-stop-nonce': nonce,
+      'x-vona-test-stop-authorization': createHmac('sha256', key)
+        .update(`vona-test-stop-request-v1\n${payload}`)
+        .digest('hex'),
+    },
+  });
+  const proof = response.headers.get('x-vona-test-stop-proof');
+  const expected = createHmac('sha256', key).update(`vona-test-stop-ack-v1\n${payload}`).digest();
+  if (
+    response.status !== 200 ||
+    !proof ||
+    !/^[a-f0-9]{64}$/.test(proof) ||
+    !timingSafeEqual(expected, Buffer.from(proof, 'hex')) ||
+    ((await response.json()) as { status?: string }).status !== 'stopping'
+  ) {
+    throw new Error('Isolated Vona shutdown refused or acknowledgment proof was invalid');
+  }
+}
+
+async function stopVonaCooperatively(
+  port: number,
+  env: NodeJS.ProcessEnv,
+  readyKey: string,
+  server: OwnedProcess,
+  dependencies: IsolatedVonaDependencies,
+) {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      (async () => {
+        await (dependencies.requestStop ?? requestIsolatedVonaStop)(
+          port,
+          env.VONA_TEST_RUN_ID,
+          readyKey,
+        );
+        return await server.wait();
+      })(),
+      new Promise<never>((_, reject) => {
+        timeout = setTimeout(
+          () =>
+            reject(new Error('Isolated Vona cooperative shutdown did not prove drainage in time')),
+          dependencies.shutdownTimeoutMs ?? 20_000,
+        );
+      }),
+    ]);
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export async function withIsolatedVona<T>(
   port: number,
   env: NodeJS.ProcessEnv,
   callback: () => Promise<T>,
-  dependencies = { start: startOwnedProcess, ready: waitForReady },
+  dependencies: IsolatedVonaDependencies = { start: startOwnedProcess, ready: waitForReady },
 ): Promise<T> {
   const readyKey = randomBytes(32).toString('hex');
   const command = getIsolatedVonaCommand(port, env, readyKey);
@@ -284,8 +358,43 @@ export async function withIsolatedVona<T>(
   let operationError: Error | undefined;
   let shutdownError: Error | undefined;
   let result: T | undefined;
+  let ready = false;
+  const windows = (dependencies.platform ?? process.platform) === 'win32';
+  const shutdown = async () => {
+    const cooperative = windows && ready && !interrupted && !exitedEarly;
+    try {
+      const stopped = cooperative
+        ? await stopVonaCooperatively(port, env, readyKey, server, dependencies)
+        : await server.stop();
+      if (
+        stopped.failed ||
+        interrupted ||
+        exitedEarly ||
+        stopped.result?.code !== 0 ||
+        (windows && !!stopped.result?.signal)
+      ) {
+        throw new Error(
+          'Isolated Vona server did not stop cleanly, exited early, or run was interrupted',
+        );
+      }
+    } catch (error) {
+      // Force-stop remains a failed-run fallback, never successful Windows teardown.
+      if (cooperative) {
+        try {
+          await server.stop();
+        } catch (fallbackError) {
+          throw new AggregateError(
+            [error, fallbackError],
+            'Isolated Vona cooperative shutdown and failure-stop failed',
+          );
+        }
+      }
+      throw error;
+    }
+  };
   try {
     await dependencies.ready(port, server, readyKey);
+    ready = true;
     if (interrupted) throw new Error('Isolated Vona run interrupted');
     result = await callback();
   } catch (error) {
@@ -293,12 +402,7 @@ export async function withIsolatedVona<T>(
   } finally {
     stopping = true;
     try {
-      const stopped = await server.stop();
-      if (stopped.failed || interrupted || exitedEarly || stopped.result?.code !== 0) {
-        shutdownError = new Error(
-          'Isolated Vona server did not stop cleanly, exited early, or run was interrupted',
-        );
-      }
+      await shutdown();
     } catch (error) {
       shutdownError = toError(error);
     } finally {
@@ -384,10 +488,27 @@ export async function waitForReady(
   throw new Error('Isolated Vona server did not become ready with a valid ownership proof');
 }
 
+export function resolveNpmCli(
+  env: NodeJS.ProcessEnv = process.env,
+  execPath = process.execPath,
+): string {
+  const candidates = [
+    env.npm_execpath,
+    resolve(dirname(execPath), 'node_modules/npm/bin/npm-cli.js'),
+    resolve(dirname(execPath), '../lib/node_modules/npm/bin/npm-cli.js'),
+  ];
+  for (const candidate of candidates) {
+    if (!candidate || !existsSync(candidate)) continue;
+    const file = realpathSync(candidate);
+    if (basename(file) === 'npm-cli.js' && basename(dirname(dirname(file))) === 'npm') return file;
+  }
+  throw new Error('Cannot resolve npm CLI; run through npm or install npm beside Node.js');
+}
+
 export function getUnitTestCommands(args: string[]) {
   const vonaDir = resolve(ROOT_DIR, 'vona');
   return [
-    { command: 'npm', args: ['run', 'prerun'], cwd: vonaDir },
+    { command: process.execPath, args: [resolveNpmCli(), 'run', 'prerun'], cwd: vonaDir },
     {
       command: process.execPath,
       args: [
@@ -468,6 +589,12 @@ export async function withIsolatedRun<T>(
       SERVER_SERVE_HOST: undefined,
       TMPDIR: resolve(dataRoot, 'tmp'),
     };
+    if (process.platform === 'win32') {
+      for (const key of Object.keys(env)) {
+        if (['TEMP', 'TMP', 'TMPDIR'].includes(key.toUpperCase())) delete env[key];
+      }
+      env.TEMP = env.TMP = env.TMPDIR = resolve(dataRoot, 'tmp');
+    }
     await broker.update({ type: 'status', status: 'running' });
     result = await callback({
       runId,

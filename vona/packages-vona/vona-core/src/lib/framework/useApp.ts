@@ -35,9 +35,9 @@ export async function createGeneralApp(
     }
   }
   if (process.env.META_MODE === 'prod') {
-    const testFile = path.join(projectPath, `dist/${process.env.META_FLAVOR}/bootstrap.js`);
+    const testFile = path.join(projectPath, `dist/${process.env.META_FLAVOR}/app.js`);
     const testInstance = await import(pathToHref(testFile));
-    return await testInstance.appBootstrap;
+    return await testInstance.createSingleApp();
   } else {
     const testFile = path.join(
       resolveVonaLocalPaths(projectPath, process.env.META_MODE).generatedRoot,

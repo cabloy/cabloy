@@ -96,11 +96,90 @@ test('inactivity fails closed for active, reused, pending and uninspectable proc
   );
 });
 
+test('Windows job inactivity requires durable drainage and absence of the exact owner PID', async () => {
+  const owner = { pid: 100, startTime: 'owner-start', host: hostname() };
+  const registered = {
+    id: 'guardian',
+    role: 'guardian',
+    stage: 'registered' as const,
+    containment: 'windows-job' as const,
+    jobId: '69a52c48-6bc4-46ce-9655-b0379117ad61',
+    pid: 200,
+    startTime: '134000000000000000',
+    host: hostname(),
+  };
+  assert.equal(
+    (await isTestClaimInactive({ owner, processes: [registered] }, false, async () => [])).inactive,
+    false,
+  );
+  const drained = { ...registered, stage: 'drained' as const };
+  assert.equal(
+    (await isTestClaimInactive({ owner, processes: [drained] }, false, async () => [])).inactive,
+    true,
+  );
+  for (const [pid, reason] of [
+    [owner.pid, 'claim owner PID is still present'],
+    [drained.pid, 'registered Windows job owner is still present'],
+  ] as const) {
+    let inspections = 0;
+    const inactivity = await isTestClaimInactive(
+      { owner, processes: [drained] },
+      false,
+      async () => {
+        inspections++;
+        return [
+          {
+            pid,
+            startTime: 'different-created-time',
+            host: hostname(),
+            state: 'running',
+            args: '',
+          },
+        ];
+      },
+    );
+    assert.deepEqual(inactivity, { inactive: false, reason });
+    assert.equal(inspections, 1);
+  }
+  assert.equal(
+    (
+      await isTestClaimInactive(
+        { owner, processes: [{ ...drained, jobId: undefined }] },
+        false,
+        async () => [],
+      )
+    ).inactive,
+    false,
+  );
+  assert.equal(
+    (
+      await isTestClaimInactive(
+        { owner, processes: [{ ...drained, pgid: 200 }] },
+        false,
+        async () => [],
+      )
+    ).inactive,
+    false,
+  );
+  await assert.rejects(
+    isTestClaimInactive({ owner, processes: [drained] }, false, async () => {
+      throw new Error('native inspection unavailable');
+    }),
+    /native inspection unavailable/,
+  );
+});
+
 test('identifies the current process without publishing environment values', async () => {
   const identity = await inspectTestProcess(process.pid);
   assert.equal(identity.pid, process.pid);
-  assert.ok(identity.pgid > 0);
   assert.ok(identity.startTime);
   assert.ok(identity.host);
-  await assert.rejects(waitForTestProcessGroupExit(identity.pgid, 0), /did not drain/);
+  if (process.platform === 'win32') {
+    assert.equal(identity.pgid, undefined);
+    assert.match(identity.startTime, /^[1-9]\d+$/);
+    await assert.rejects(waitForTestProcessGroupExit(process.pid, 0), /unsupported/);
+  } else {
+    assert.ok(identity.pgid! > 0);
+    await assert.rejects(waitForTestProcessGroupExit(identity.pgid!, 0), /did not drain/);
+  }
 });

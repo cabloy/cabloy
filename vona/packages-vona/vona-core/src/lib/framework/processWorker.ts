@@ -20,13 +20,16 @@ async function _closeInner() {
   process.exit(err ? 1 : 0);
 }
 
+// The authenticated test health endpoint uses the same guard and cleanup as signals.
+export async function closeProcessWorker() {
+  if (__closing) return;
+  __closing = true;
+  await _closeInner();
+}
+
 export function handleProcessWork() {
   ['SIGINT', 'SIGTERM', 'SIGUSR2'].forEach(signal => {
-    process.on(signal, async () => {
-      if (__closing) return;
-      __closing = true;
-      await _closeInner();
-    });
+    process.on(signal, closeProcessWorker);
   });
   process.on('uncaughtException', async err => {
     const app = useApp();

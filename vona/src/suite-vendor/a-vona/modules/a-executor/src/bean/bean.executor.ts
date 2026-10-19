@@ -4,6 +4,7 @@ import type { IApiPathRecordMethodMap } from 'vona-module-a-web';
 import { isNil } from '@cabloy/utils';
 import { BeanBase, captureRequestBoundary } from 'vona';
 import { Bean } from 'vona-module-a-bean';
+import { ServiceTransactionAsyncLocalStorage } from 'vona-module-a-orm';
 
 import type { INewCtxLifecycle, INewCtxOptions, IPerformActionOptions } from '../types/executor.ts';
 
@@ -142,7 +143,7 @@ export class BeanExecutor extends BeanBase {
             __delegateProperties(context, options.extraData);
           }
         }
-        return await fn();
+        return await this.bean._getBean(ServiceTransactionAsyncLocalStorage).run(fn, isolate);
       };
       return onScopeOutcome
         ? await this.app.ctxStorage.runObserved(context, execute, onScopeOutcome)

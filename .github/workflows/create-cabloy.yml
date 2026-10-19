@@ -1,0 +1,137 @@
+name: create-cabloy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  create:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      DATABASE_DEFAULT_CLIENT: sqlite3
+      PNPM_CONFIG_MINIMUM_RELEASE_AGE: 0
+    services:
+      redis:
+        image: ${{ matrix.os == 'ubuntu-latest' && 'redis:latest' || '' }}
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@v5
+        with:
+          version: 11.5.2
+      - name: start Redis on macOS
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          brew install redis
+          redis_bin="$(brew --prefix redis)/bin"
+          redis_log="$RUNNER_TEMP/redis.log"
+          if ! "$redis_bin/redis-server" --bind 127.0.0.1 --port 6379 \
+            --daemonize yes --save '' --appendonly no --logfile "$redis_log"; then
+            if [[ -f "$redis_log" ]]; then
+              cat "$redis_log"
+            fi
+            exit 1
+          fi
+          for attempt in {1..30}; do
+            if response="$("$redis_bin/redis-cli" -h 127.0.0.1 -p 6379 ping 2>&1)" &&
+              [[ "$response" == PONG ]]; then
+              exit 0
+            fi
+            sleep 1
+          done
+          printf '::error::Redis readiness failed: %s\n' "$response"
+          if [[ -f "$redis_log" ]]; then
+            cat "$redis_log"
+          fi
+          exit 1
+      - name: start Redis on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          # Pinned third-party development build; retain its bundled Cygwin runtime.
+          $archive = Join-Path $env:RUNNER_TEMP 'redis-8.2.10.zip'
+          $directory = Join-Path $env:RUNNER_TEMP 'redis-8.2.10'
+          Invoke-WebRequest 'https://github.com/redis-windows/redis-windows/releases/download/8.2.10/Redis-8.2.10-Windows-x64-cygwin.zip' -OutFile $archive
+          $expected = '92d9bdde87ed52bf859a677e5197d8ac855ba78d9940d457881723ae960df429'
+          if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expected) {
+            throw 'Redis archive checksum mismatch'
+          }
+          Expand-Archive $archive -DestinationPath $directory
+          $servers = @(Get-ChildItem $directory -Recurse -Filter redis-server.exe)
+          if ($servers.Count -ne 1) { throw 'Expected one Redis server executable' }
+          $redisDirectory = $servers[0].DirectoryName
+          $cli = Join-Path $redisDirectory 'redis-cli.exe'
+          $config = Join-Path $redisDirectory 'ci.conf'
+          @('bind 127.0.0.1', 'port 6379', 'protected-mode yes', 'save ""', 'appendonly no', 'daemonize no', 'logfile redis.log') |
+            Set-Content $config -Encoding utf8NoBOM
+          $server = Start-Process $servers[0].FullName -ArgumentList 'ci.conf' -WorkingDirectory $redisDirectory -PassThru
+          for ($attempt = 0; $attempt -lt 30; $attempt++) {
+            $server.Refresh()
+            if ($server.HasExited) { break }
+            $response = & $cli -h 127.0.0.1 -p 6379 ping 2>&1
+            if ($LASTEXITCODE -eq 0 -and "$response".Trim() -eq 'PONG') { exit 0 }
+            Start-Sleep -Seconds 1
+          }
+          $log = Join-Path $redisDirectory 'redis.log'
+          if (Test-Path $log) { Get-Content $log }
+          throw 'Redis did not become ready'
+      - name: create project
+        run: npm create cabloy cabloy-app
+      - name: verify project initialization
+        working-directory: cabloy-app
+        run: >-
+          node --input-type=module -e
+          "import { existsSync } from 'node:fs'; const required = ['.cabloy-version', 'package.json', 'vona/package.json', 'zova/package.json', 'node_modules', 'vona/node_modules', 'zova/node_modules', 'zova/dist']; const missing = required.filter(file => !existsSync(file)); if (missing.length) { console.error('Project initialization is incomplete:', missing.join(', ')); process.exit(1); }"
+      - name: reset database
+        working-directory: cabloy-app
+        run: npm run db:reset
+      - name: run unit tests
+        working-directory: cabloy-app
+        run: npm run test
+      - name: install Chromium on Linux
+        if: runner.os == 'Linux'
+        working-directory: cabloy-app
+        run: npx playwright install --with-deps chromium
+      - name: install Chromium on Windows and macOS
+        if: runner.os != 'Linux'
+        working-directory: cabloy-app
+        run: npx playwright install chromium
+      - name: run end-to-end tests
+        working-directory: cabloy-app
+        run: npm run test:e2e
+      - name: build Vona
+        working-directory: cabloy-app
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+        run: npm run build:vona
+      - name: upload Playwright artifacts
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-artifacts-create-cabloy-${{ matrix.os }}
+          path: |
+            cabloy-app/vona/.app-test-*/playwright-report/
+            cabloy-app/vona/.app-test-*/test-results/
+          include-hidden-files: true
+          if-no-files-found: ignore

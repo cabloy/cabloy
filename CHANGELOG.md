@@ -1,5 +1,34 @@
 # Changelog
 
+## 5.1.219
+
+### Improvements
+
+- Refresh the Zova lockfile after compensation rerun preparation.
+- Update the Vona zova-core patch for v5.1.93.
+
+## 5.1.218
+
+### Features
+
+- Add Vite and Rolldown support.
+
+### Improvements
+
+- Add the `create-cabloy.yml` configuration.
+
+## 5.1.217
+
+### Features
+
+- Add end-to-end testing on Windows.
+
+### Improvements
+
+- Improve Windows support and end-to-end test coverage.
+- Update the SQLite test workflow.
+- Update claim tests.
+
 ## 5.1.216
 
 ### Features

@@ -122,7 +122,7 @@ export class AppUtil extends BeanSimple {
     const globalPrefix = '/api/static';
     if (!staticPath) staticPath = '';
     // safe
-    staticPath = path.normalize(staticPath);
+    staticPath = path.posix.normalize(staticPath.replace(/\\/g, '/'));
     if (staticPath.includes('..')) throw new Error(`unsafe path: ${staticPath}`);
     // ignore globalPrefix
     if (staticPath.startsWith('//')) return staticPath.substring(1);

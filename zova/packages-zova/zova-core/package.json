@@ -1,6 +1,6 @@
 {
   "name": "zova-core",
-  "version": "5.1.92",
+  "version": "5.1.93",
   "gitHead": "2c5c19284bab738e492856189acb6fad74b8a7b7",
   "description": "A vue3 framework with ioc",
   "keywords": [
@@ -76,7 +76,7 @@
   "devDependencies": {
     "clean-package": "^2.2.0",
     "rimraf": "^6.1.3",
-    "vite": "^8.0.14"
+    "vite": "^8.3.4"
   },
   "clean-package": {
     "indent": 2,

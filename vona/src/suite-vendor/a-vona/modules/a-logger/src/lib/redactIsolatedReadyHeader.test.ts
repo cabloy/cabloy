@@ -3,6 +3,22 @@ import { test } from 'node:test';
 
 import { redactIsolatedReadyHeader } from './redactIsolatedReadyHeader.ts';
 
+test('redacts isolated shutdown authorization and proof case-insensitively', () => {
+  const headers = {
+    'X-Vona-Test-Stop-Authorization': 'authorization-value',
+    'x-vona-test-stop-nonce': 'nonce-value',
+    'X-VONA-TEST-STOP-PROOF': 'proof-value',
+    'content-type': 'application/json',
+  };
+  const logged = redactIsolatedReadyHeader(headers, '/health/test-stop', 'managed-run', [
+    'x-vona-test-stop-authorization',
+    'x-vona-test-stop-nonce',
+    'x-vona-test-stop-proof',
+  ]);
+  assert.deepEqual(logged, { 'content-type': 'application/json' });
+  assert.equal(headers['X-Vona-Test-Stop-Authorization'], 'authorization-value');
+});
+
 test('redacts isolated readiness challenge and proof without changing live headers', () => {
   const runId = '20261014010203-a1b2c3d4';
   const req = { 'x-vona-test-challenge': 'challenge-value', 'accept': 'application/json' };

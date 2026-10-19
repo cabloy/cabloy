@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { relative, resolve } from 'node:path';
+import { dirname, relative, resolve } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
@@ -51,8 +51,60 @@ test('fixture import gate allows type-only imports and catches runtime bypass fo
   );
 });
 
-test('production gate rejects empty trees, bypasses in nested specs, and symlinks', async () => {
-  const root = await mkdtemp(resolve(tmpdir(), 'cabloy-managed-imports-'));
+test('fixture import gate rejects absolute imports even when they point to managedTest', () => {
+  const spec = resolve(specRoot, 'example.spec.ts');
+  assert.deepEqual(
+    violations(`import { test } from ${JSON.stringify(fixturePath.replaceAll('\\', '/'))};`, spec),
+    ['application spec must import test from managedTest'],
+  );
+});
+
+test('production gate rejects directory links, including Windows junctions', async () => {
+  const root = await mkdtemp(resolve(tmpdir(), 'cabloy-managed-directory-link-'));
+  try {
+    const nested = resolve(root, 'nested');
+    await mkdir(nested);
+    await symlink(
+      nested,
+      resolve(root, 'linked'),
+      process.platform === 'win32' ? 'junction' : 'dir',
+    );
+    await assert.rejects(assertManagedTestImports(root), /cannot contain symlinks/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('production gate rejects file symlinks when supported', async t => {
+  // Windows OS temp and the checkout may be on different drives, preventing relative imports.
+  const root = await mkdtemp(resolve(dirname(fixturePath), '.cabloy-managed-file-link-'));
+  try {
+    const spec = resolve(root, 'application.spec.ts');
+    const managedPath = relative(root, fixturePath).replaceAll('\\', '/');
+    await writeFile(spec, `import { test } from ${JSON.stringify(managedPath)};`);
+    await assertManagedTestImports(root);
+    try {
+      await symlink(spec, resolve(root, 'linked.spec.ts'), 'file');
+    } catch (error) {
+      if (
+        process.platform === 'win32' &&
+        ['EPERM', 'EACCES', 'ENOTSUP'].includes((error as NodeJS.ErrnoException).code ?? '')
+      ) {
+        t.skip(
+          `Windows file symlink creation unavailable (${(error as NodeJS.ErrnoException).code})`,
+        );
+        return;
+      }
+      throw error;
+    }
+    await assert.rejects(assertManagedTestImports(root), /cannot contain symlinks/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('production gate rejects empty trees and bypasses in nested specs', async () => {
+  const root = await mkdtemp(resolve(dirname(fixturePath), '.cabloy-managed-imports-'));
   try {
     await assert.rejects(assertManagedTestImports(root), /no specs/);
     const nested = resolve(root, 'nested');
@@ -66,8 +118,6 @@ test('production gate rejects empty trees, bypasses in nested specs, and symlink
     const managedPath = relative(nested, fixturePath).replaceAll('\\', '/');
     await writeFile(spec, `import { test } from ${JSON.stringify(managedPath)};`);
     await assertManagedTestImports(root);
-    await symlink(spec, resolve(root, 'linked.spec.ts'));
-    await assert.rejects(assertManagedTestImports(root), /cannot contain symlinks/);
   } finally {
     await rm(root, { recursive: true, force: true });
   }

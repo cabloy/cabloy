@@ -38,6 +38,7 @@ export function createDiagnosticLogger(raw: Winston.Logger): Winston.Logger {
 
 function createFacade(raw?: Winston.Logger): Winston.Logger {
   const methods = new Map<PropertyKey, (...args: any[]) => any>();
+  const handlers = new WeakMap<object, Winston.ExceptionHandler | Winston.RejectionHandler>();
   const inertProfiler = Object.freeze({
     get logger() {
       return getSuppressedDiagnosticLogger();
@@ -68,6 +69,10 @@ function createFacade(raw?: Winston.Logger): Winston.Logger {
       }
       if (!raw) return undefined;
       const value = Reflect.get(raw, key, raw);
+      if ((key === 'exceptions' || key === 'rejections') && value) {
+        if (!handlers.has(value)) handlers.set(value, wrapHandler(value, raw, facade));
+        return handlers.get(value);
+      }
       if (typeof value !== 'function') return value;
       if (!methods.has(key)) {
         methods.set(key, (...args: any[]) => {
@@ -82,6 +87,34 @@ function createFacade(raw?: Winston.Logger): Winston.Logger {
     },
   });
   return facade;
+}
+
+function wrapHandler<T extends Winston.ExceptionHandler | Winston.RejectionHandler>(
+  raw: T,
+  rawLogger: Winston.Logger,
+  logger: Winston.Logger,
+): T {
+  const methods = new Map<PropertyKey, (...args: any[]) => any>();
+  const handler = new Proxy({} as T, {
+    get(_target, key) {
+      if (key === 'logger') return logger;
+      const value = Reflect.get(raw, key, raw);
+      if (typeof value !== 'function') return value;
+      if (!methods.has(key)) {
+        methods.set(key, (...args: any[]) => {
+          const result = Reflect.apply(value, raw, args);
+          if (result === raw) return handler;
+          return result === rawLogger ? logger : result;
+        });
+      }
+      return methods.get(key);
+    },
+    set(_target, key, value) {
+      if (key === 'logger') return false;
+      return Reflect.set(raw, key, value, raw);
+    },
+  });
+  return handler;
 }
 
 function wrapProfiler(raw: Winston.Profiler, logger: Winston.Logger): Winston.Profiler {

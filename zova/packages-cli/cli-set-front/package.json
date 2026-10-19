@@ -1,6 +1,6 @@
 {
   "name": "zova-cli-set-front",
-  "version": "1.2.111",
+  "version": "1.2.113",
   "gitHead": "6f675a8cc46d596142c591c28a40cc4d82fcc6cc",
   "description": "zova cli-set-front",
   "keywords": [
@@ -61,16 +61,16 @@
     "globby": "^14.1.0",
     "gogocode": "^1.0.55",
     "rimraf": "^5.0.5",
-    "rolldown": "^1.0.0-rc.11",
+    "rolldown": "^1.2.14",
     "rolldown-plugin-dts": "^0.22.5",
     "svgo": "^3.2.0",
     "tsdown": "^0.21.7",
     "typescript": "^5.9.3",
     "urllib": "^4.6.11",
-    "vite": "^8.0.14",
+    "vite": "^8.3.4",
     "yaml": "^2.8.3",
     "zova-openapi": "^1.1.17",
-    "zova-vite": "^1.1.47"
+    "zova-vite": "^1.1.49"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",

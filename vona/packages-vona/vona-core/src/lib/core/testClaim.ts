@@ -1,10 +1,15 @@
 import { randomBytes, timingSafeEqual } from 'node:crypto';
-import { constants, lstatSync } from 'node:fs';
-import { mkdir, open, rename, unlink } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import path from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 
+import {
+  assertTestClaimFilesystemSafePath,
+  createTestClaimFile,
+  ensureTestClaimPrivateDirectory,
+  readTestClaimFile,
+  replaceTestClaimFile,
+} from './testClaimFilesystem.ts';
 import {
   assertDisposableDatabaseName,
   getDatabaseTestPrefix,
@@ -15,6 +20,8 @@ import {
 
 export const TEST_CLAIM_URL_ENV = 'VONA_TEST_CLAIM_URL';
 export const TEST_CLAIM_TOKEN_ENV = 'VONA_TEST_CLAIM_TOKEN';
+/** A locator only. Containment still requires the registered guardian's live native verifier. */
+export const TEST_CLAIM_WINDOWS_GUARDIAN_ENV = 'VONA_TEST_WINDOWS_GUARDIAN_ID';
 export const TEST_CLAIM_DIRECTORY = '.vona-test-claim';
 export type TestClaimKind = 'unit' | 'cov' | 'e2e' | 'contract';
 export type TestClaimEnv = Record<string, string | undefined>;
@@ -62,6 +69,8 @@ export interface TestClaimProcess {
   stage: 'pending' | 'registered' | 'drained';
   pid?: number;
   pgid?: number;
+  containment?: 'windows-job';
+  jobId?: string;
   startTime?: string;
   host?: string;
   profilePath?: string;
@@ -114,20 +123,7 @@ export function getTestClaimCreatedAt(runId: string) {
 }
 
 export function assertTestClaimSafePath(file: string, allowMissing = true) {
-  let current = path.resolve(file);
-  while (true) {
-    try {
-      const stat = lstatSync(current);
-      if (stat.isSymbolicLink() || (current !== path.resolve(file) && !stat.isDirectory())) {
-        throw new Error('Unsafe test claim path');
-      }
-    } catch (error) {
-      if (!allowMissing || (error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
-    }
-    const parent = path.dirname(current);
-    if (parent === current) break;
-    current = parent;
-  }
+  assertTestClaimFilesystemSafePath(file, allowMissing);
 }
 
 function record(value: unknown): asserts value is Record<string, any> {
@@ -302,17 +298,43 @@ export function validateTestClaim(value: unknown, claimPath?: string): TestClaim
   array(m.processes);
   unique(m.processes.map(item => item.id));
   for (const proc of m.processes) {
-    keys(proc, ['id', 'role', 'stage', 'pid', 'pgid', 'startTime', 'host', 'profilePath']);
+    keys(proc, [
+      'id',
+      'role',
+      'stage',
+      'pid',
+      'pgid',
+      'containment',
+      'jobId',
+      'startTime',
+      'host',
+      'profilePath',
+    ]);
     label(proc.id);
     oneOf(proc.role, ['guardian', 'browser', 'cleanup']);
     if (proc.host !== undefined) text(proc.host);
     oneOf(proc.stage, ['pending', 'registered', 'drained']);
+    if (proc.containment !== undefined) oneOf(proc.containment, ['windows-job']);
+    if (proc.containment === 'windows-job') {
+      if (proc.pgid !== undefined || proc.role !== 'guardian' || proc.profilePath !== undefined)
+        throw new Error('Invalid Windows test claim containment');
+      text(proc.jobId);
+      if (!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(proc.jobId))
+        throw new Error('Invalid Windows test claim job identity');
+    } else if (proc.jobId !== undefined) {
+      throw new Error('Windows test claim job needs explicit containment');
+    }
     const hasIdentity =
       proc.pid !== undefined || proc.pgid !== undefined || proc.startTime !== undefined;
     if (hasIdentity || proc.stage !== 'pending') {
       integer(proc.pid, 1);
-      integer(proc.pgid, 1);
+      if (proc.containment !== 'windows-job') integer(proc.pgid, 1);
       text(proc.startTime);
+      if (proc.containment === 'windows-job') {
+        if (!/^[1-9]\d{0,19}$/.test(proc.startTime))
+          throw new Error('Invalid Windows test claim process creation time');
+        text(proc.host);
+      }
     }
     if (proc.profilePath !== undefined) {
       text(proc.profilePath);
@@ -329,42 +351,14 @@ export function validateTestClaim(value: unknown, claimPath?: string): TestClaim
   return m;
 }
 
-function assertPrivateFile(file: string) {
-  assertTestClaimSafePath(file, false);
-  const stat = lstatSync(file);
-  if (
-    !stat.isFile() ||
-    stat.nlink !== 1 ||
-    (stat.mode & 0o077) !== 0 ||
-    (process.getuid && stat.uid !== process.getuid())
-  ) {
-    throw new Error('Unsafe test claim file');
-  }
-}
 export async function loadTestClaim(claimPath: string) {
-  assertPrivateFile(claimPath);
-  const handle = await open(claimPath, constants.O_RDONLY | constants.O_NOFOLLOW);
-  try {
-    const stat = await handle.stat();
-    if (!stat.isFile() || stat.size > 4 * 1024 * 1024) throw new Error('Invalid test claim file');
-    return validateTestClaim(parseTestClaimJson(await handle.readFile('utf8')), claimPath);
-  } finally {
-    await handle.close();
-  }
+  return validateTestClaim(parseTestClaimJson(await readTestClaimFile(claimPath)), claimPath);
 }
 function parseTestClaimJson(source: string) {
   // Claim identities stay literal even when @cabloy/json5 revives ISO strings.
   return JSON.parse(source, function (this: Record<string, unknown>, key: string) {
     return this[key];
   });
-}
-async function syncDirectory(directory: string) {
-  const handle = await open(directory, constants.O_RDONLY);
-  try {
-    await handle.sync();
-  } finally {
-    await handle.close();
-  }
 }
 export async function createTestClaim(
   projectPath: string,
@@ -373,10 +367,7 @@ export async function createTestClaim(
   owner: TestClaimOwner,
 ) {
   const p = getTestClaimPaths(projectPath, runId);
-  assertTestClaimSafePath(p.claimDirectory);
-  await mkdir(p.claimDirectory, { mode: 0o700 }).catch(error => {
-    if (error.code !== 'EEXIST') throw error;
-  });
+  await ensureTestClaimPrivateDirectory(p.claimDirectory);
   // The directory is shared across runs; an existing directory is valid, never an existing claim.
   return createClaimFile(p, runId, kind, owner);
 }
@@ -386,15 +377,6 @@ async function createClaimFile(
   kind: TestClaimKind,
   owner: TestClaimOwner,
 ) {
-  assertTestClaimSafePath(p.claimDirectory, false);
-  const directoryStat = lstatSync(p.claimDirectory);
-  if (
-    !directoryStat.isDirectory() ||
-    (directoryStat.mode & 0o077) !== 0 ||
-    (process.getuid && directoryStat.uid !== process.getuid())
-  ) {
-    throw new Error('Unsafe shared test claim directory');
-  }
   const manifest: TestClaimManifest = {
     version: 1,
     runId,
@@ -413,18 +395,7 @@ async function createClaimFile(
     cleanup: { processes: false, databases: false, redis: false, locals: false },
   };
   validateTestClaim(manifest, p.claimPath);
-  const handle = await open(
-    p.claimPath,
-    constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW,
-    0o600,
-  );
-  try {
-    await handle.writeFile(`${JSON.stringify(manifest, null, 2)}\n`);
-    await handle.sync();
-  } finally {
-    await handle.close();
-  }
-  await syncDirectory(p.claimDirectory);
+  await createTestClaimFile(p.claimPath, `${JSON.stringify(manifest, null, 2)}\n`);
   return { claimPath: p.claimPath, manifest };
 }
 
@@ -436,27 +407,7 @@ export async function writeTestClaim(claimPath: string, manifest: TestClaimManif
     if (!isDeepStrictEqual(previous[key], manifest[key]))
       throw new Error('Test claim identity is immutable');
   }
-  const temp = `${claimPath}.${randomBytes(12).toString('hex')}.tmp`;
-  const handle = await open(
-    temp,
-    constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW,
-    0o600,
-  );
-  try {
-    try {
-      await handle.writeFile(`${JSON.stringify(manifest, null, 2)}\n`);
-      await handle.sync();
-    } finally {
-      await handle.close();
-    }
-    assertPrivateFile(claimPath);
-    await rename(temp, claimPath);
-    await syncDirectory(path.dirname(claimPath));
-  } finally {
-    await unlink(temp).catch(error => {
-      if (error.code !== 'ENOENT') throw error;
-    });
-  }
+  await replaceTestClaimFile(claimPath, `${JSON.stringify(manifest, null, 2)}\n`);
 }
 
 function applyEvent(m: TestClaimManifest, event: TestClaimEvent) {
@@ -484,7 +435,13 @@ function applyEvent(m: TestClaimManifest, event: TestClaimEvent) {
           throw new Error('Process needs a write-ahead intent');
         m.processes.push(event.process);
       } else {
-        if (old.role !== event.process.role) throw new Error('Test claim process identity changed');
+        if (
+          old.role !== event.process.role ||
+          old.containment !== event.process.containment ||
+          old.jobId !== event.process.jobId
+        ) {
+          throw new Error('Test claim process identity changed');
+        }
         if (
           event.process.profilePath !== undefined &&
           old.profilePath !== event.process.profilePath
@@ -577,11 +534,131 @@ function applyEvent(m: TestClaimManifest, event: TestClaimEvent) {
   validateTestClaim(m);
 }
 
+interface WindowsJobContainmentQuery {
+  runId: string;
+  guardianId: string;
+  process: TestClaimOwner;
+}
+type WindowsJobVerifier = (identity: TestClaimOwner) => Promise<boolean>;
+// Native verifiers are controller-local capabilities, never HTTP registrations or journal data.
+const liveWindowsBrokers = new Map<
+  string,
+  {
+    url: string;
+    register: (guardian: TestClaimProcess, verify: WindowsJobVerifier) => Promise<() => void>;
+  }
+>();
+
+function validateWindowsJobQuery(value: unknown): asserts value is WindowsJobContainmentQuery {
+  keys(value, ['runId', 'guardianId', 'process']);
+  const query = value as WindowsJobContainmentQuery;
+  resolveTestRunId('test', query.runId);
+  label(query.guardianId);
+  keys(query.process, ['pid', 'startTime', 'host']);
+  integer(query.process.pid, 1, 0xffffffff);
+  text(query.process.startTime);
+  if (!/^[1-9]\d{0,19}$/.test(query.process.startTime))
+    throw new Error('Invalid Windows containment creation time');
+  text(query.process.host);
+}
+
+/** Only the controller hosting this authenticated broker can attach its sole native Job owner. */
+export async function registerTestClaimWindowsJobVerifier(
+  env: TestClaimEnv,
+  guardian: TestClaimProcess,
+  verify: WindowsJobVerifier,
+): Promise<() => void> {
+  if (!hasTestClaimTransport(env)) throw new Error('Windows containment requires a claim broker');
+  if (!resolveTestRunId(env.META_MODE!, env.VONA_TEST_RUN_ID))
+    throw new Error('Windows containment requires test identity');
+  const broker = liveWindowsBrokers.get(env[TEST_CLAIM_TOKEN_ENV]!);
+  if (!broker || broker.url !== env[TEST_CLAIM_URL_ENV])
+    throw new Error('Windows containment verifier must belong to the local claim broker');
+  return await broker.register(guardian, verify);
+}
+
 export async function startTestClaimBroker(claimPath: string) {
   await loadTestClaim(claimPath);
   const token = randomBytes(32).toString('hex');
   let queue: Promise<void> = Promise.resolve();
   let closing = false;
+  const verifiers = new Map<string, { guardian: TestClaimProcess; verify: WindowsJobVerifier }>();
+  let queries = 0;
+  const containment = async (query: unknown) => {
+    validateWindowsJobQuery(query);
+    if (closing || queries >= 32) throw new Error('Windows containment verifier unavailable');
+    queries++;
+    try {
+      await queue;
+      const manifest = await loadTestClaim(claimPath);
+      const live = verifiers.get(query.guardianId);
+      const guardian = manifest.processes.find(item => item.id === query.guardianId);
+      if (
+        manifest.kind !== 'e2e' ||
+        manifest.runId !== query.runId ||
+        guardian?.stage !== 'registered' ||
+        guardian.role !== 'guardian' ||
+        guardian.containment !== 'windows-job' ||
+        guardian.host !== query.process.host ||
+        !live ||
+        !isDeepStrictEqual(live.guardian, guardian)
+      ) {
+        throw new Error('Windows containment requires a registered live E2E guardian');
+      }
+      let timer: NodeJS.Timeout | undefined;
+      try {
+        const verified = await Promise.race([
+          live.verify(query.process),
+          new Promise<never>((_, reject) => {
+            timer = setTimeout(
+              () => reject(new Error('Windows containment query timed out')),
+              5000,
+            );
+          }),
+        ]);
+        await queue;
+        const current = await loadTestClaim(claimPath);
+        if (
+          !verified ||
+          closing ||
+          verifiers.get(query.guardianId) !== live ||
+          !isDeepStrictEqual(
+            current.processes.find(item => item.id === query.guardianId),
+            guardian,
+          )
+        ) {
+          throw new Error('Windows process is not in the designated live Job');
+        }
+      } finally {
+        clearTimeout(timer);
+      }
+    } finally {
+      queries--;
+    }
+  };
+  const register = async (guardian: TestClaimProcess, verify: WindowsJobVerifier) => {
+    await queue;
+    const manifest = await loadTestClaim(claimPath);
+    if (
+      closing ||
+      guardian.role !== 'guardian' ||
+      guardian.stage !== 'registered' ||
+      guardian.containment !== 'windows-job' ||
+      typeof verify !== 'function' ||
+      verifiers.has(guardian.id) ||
+      !isDeepStrictEqual(
+        manifest.processes.find(item => item.id === guardian.id),
+        guardian,
+      )
+    ) {
+      throw new Error('Windows containment verifier needs a durable registered guardian');
+    }
+    const live = { guardian: structuredClone(guardian), verify };
+    verifiers.set(guardian.id, live);
+    return () => {
+      if (verifiers.get(guardian.id) === live) verifiers.delete(guardian.id);
+    };
+  };
   const update = (event: TestClaimEvent) => {
     if (closing) return Promise.reject(new Error('Test claim broker is closed'));
     const result = queue.then(async () => {
@@ -597,7 +674,7 @@ export async function startTestClaimBroker(claimPath: string) {
     const expected = `Bearer ${token}`;
     if (
       req.method !== 'POST' ||
-      req.url !== '/event' ||
+      !['/event', '/containment'].includes(req.url!) ||
       typeof auth !== 'string' ||
       Buffer.byteLength(auth) !== Buffer.byteLength(expected) ||
       !timingSafeEqual(Buffer.from(auth), Buffer.from(expected))
@@ -612,7 +689,8 @@ export async function startTestClaimBroker(claimPath: string) {
         body += chunk.toString('utf8');
         if (Buffer.byteLength(body) > 1024 * 1024) throw new Error('Test claim event too large');
       }
-      await update(parseTestClaimJson(body));
+      if (req.url === '/containment') await containment(parseTestClaimJson(body));
+      else await update(parseTestClaimJson(body));
       res.writeHead(204).end();
     } catch {
       res.writeHead(409).end('Test claim registration rejected');
@@ -626,14 +704,18 @@ export async function startTestClaimBroker(claimPath: string) {
   });
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('Cannot bind test claim broker');
+  const url = `http://127.0.0.1:${address.port}/event`;
+  liveWindowsBrokers.set(token, { url, register });
   return {
     env: {
-      [TEST_CLAIM_URL_ENV]: `http://127.0.0.1:${address.port}/event`,
+      [TEST_CLAIM_URL_ENV]: url,
       [TEST_CLAIM_TOKEN_ENV]: token,
     },
     update,
     async close() {
       closing = true;
+      liveWindowsBrokers.delete(token);
+      verifiers.clear();
       await new Promise<void>((resolve, reject) =>
         server.close(error => (error ? reject(error) : resolve())),
       );
@@ -685,6 +767,32 @@ export async function sendTestClaimEvent(env: TestClaimEnv, event: TestClaimEven
     if (response.status !== 204) throw new Error('Registration rejected');
   } catch {
     throw new Error('Managed test allocation registration failed');
+  }
+}
+
+/** A transient authenticated gate: success is live exact membership, never a durable process event. */
+export async function assertTestClaimWindowsJob(env: TestClaimEnv, identity: TestClaimOwner) {
+  try {
+    if (!hasTestClaimTransport(env)) throw new Error('Missing test claim transport');
+    const query: WindowsJobContainmentQuery = {
+      runId: env.VONA_TEST_RUN_ID!,
+      guardianId: env[TEST_CLAIM_WINDOWS_GUARDIAN_ENV]!,
+      process: { pid: identity.pid, startTime: identity.startTime, host: identity.host },
+    };
+    validateWindowsJobQuery(query);
+    const response = await fetch(new URL('/containment', env[TEST_CLAIM_URL_ENV]!), {
+      method: 'POST',
+      headers: {
+        'authorization': `Bearer ${env[TEST_CLAIM_TOKEN_ENV]}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(query),
+      signal: AbortSignal.timeout(7000),
+      redirect: 'error',
+    });
+    if (response.status !== 204) throw new Error('Containment rejected');
+  } catch {
+    throw new Error('Managed Windows browser containment verification failed');
   }
 }
 

@@ -2,11 +2,16 @@ import { execFile } from 'node:child_process';
 import { hostname } from 'node:os';
 import { promisify } from 'node:util';
 
+import {
+  inspectWindowsProcess,
+  inspectWindowsProcesses,
+} from '../vona/packages-vona/vona-core/src/lib/core/testProcessWindowsNative.ts';
+
 const execFileAsync = promisify(execFile);
 
 export interface TestProcessIdentity {
   pid: number;
-  pgid: number;
+  pgid?: number;
   startTime: string;
   host: string;
 }
@@ -39,7 +44,7 @@ export function parseTestProcesses(output: string): TestProcessSnapshot[] {
 
 export async function inspectTestProcesses(): Promise<TestProcessSnapshot[]> {
   if (process.platform === 'win32') {
-    throw new Error('Isolated test process inspection requires POSIX');
+    throw new Error('Windows process inspection requires explicit owned PIDs');
   }
   const { stdout } = await execFileAsync(
     'ps',
@@ -50,6 +55,11 @@ export async function inspectTestProcesses(): Promise<TestProcessSnapshot[]> {
 }
 
 export async function inspectTestProcess(pid: number): Promise<TestProcessSnapshot> {
+  if (process.platform === 'win32') {
+    const item = await inspectWindowsProcess(pid);
+    if (!item) throw new Error('Cannot identify isolated test process');
+    return item;
+  }
   const item = (await inspectTestProcesses()).find(
     item => item.pid === pid && !item.state.startsWith('Z'),
   );
@@ -63,6 +73,8 @@ export interface TestClaimProcessRecord {
   stage: 'pending' | 'registered' | 'drained';
   pid?: number;
   pgid?: number;
+  containment?: 'windows-job';
+  jobId?: string;
   startTime?: string;
   host?: string;
   profilePath?: string;
@@ -74,12 +86,27 @@ export async function isTestClaimInactive(
     processes: TestClaimProcessRecord[];
   },
   allowCurrentOwner = false,
-  inspect: () => Promise<TestProcessSnapshot[]> = inspectTestProcesses,
+  inspect?: () => Promise<TestProcessSnapshot[]>,
 ): Promise<{ inactive: boolean; reason?: string }> {
   if (claim.owner.host !== hostname()) {
     return { inactive: false, reason: 'claim belongs to another or unidentified host' };
   }
-  const processes = (await inspect()).filter(item => !item.state.startsWith('Z'));
+  if (
+    !inspect &&
+    process.platform === 'win32' &&
+    claim.processes.some(item => item.containment !== 'windows-job')
+  ) {
+    return { inactive: false, reason: 'POSIX process ownership cannot be inspected on Windows' };
+  }
+  const snapshots = inspect
+    ? await inspect()
+    : process.platform === 'win32'
+      ? await inspectWindowsProcesses([
+          claim.owner.pid,
+          ...claim.processes.flatMap(item => (item.pid ? [item.pid] : [])),
+        ])
+      : await inspectTestProcesses();
+  const processes = snapshots.filter(item => !item.state.startsWith('Z'));
   const owner = processes.find(item => item.pid === claim.owner.pid);
   if (
     owner &&
@@ -91,16 +118,23 @@ export async function isTestClaimInactive(
     if (registered.stage === 'pending') {
       return { inactive: false, reason: 'process launch registration is incomplete' };
     }
-    if (
-      !registered.pid ||
-      !registered.pgid ||
-      !registered.startTime ||
-      registered.host !== hostname()
-    ) {
+    if (!registered.pid || !registered.startTime || registered.host !== hostname()) {
       return {
         inactive: false,
         reason: 'process identity is incomplete or belongs to another host',
       };
+    }
+    if (registered.containment === 'windows-job') {
+      if (!registered.jobId || registered.pgid !== undefined || registered.stage !== 'drained') {
+        return { inactive: false, reason: 'Windows job drainage is unproven' };
+      }
+      if (processes.some(item => item.pid === registered.pid)) {
+        return { inactive: false, reason: 'registered Windows job owner is still present' };
+      }
+      continue;
+    }
+    if (!registered.pgid || registered.jobId !== undefined) {
+      return { inactive: false, reason: 'POSIX process group identity is incomplete' };
     }
     if (processes.some(item => item.pid === registered.pid || item.pgid === registered.pgid)) {
       return { inactive: false, reason: 'registered process or group is still present' };
@@ -116,6 +150,8 @@ export async function isTestClaimInactive(
 }
 
 export async function waitForTestProcessGroupExit(pgid: number, timeoutMs = 10_000) {
+  if (process.platform === 'win32')
+    throw new Error('POSIX browser process groups are unsupported on Windows');
   if (!Number.isSafeInteger(pgid) || pgid <= 0) throw new Error('Invalid isolated process group');
   const deadline = Date.now() + timeoutMs;
   while (true) {

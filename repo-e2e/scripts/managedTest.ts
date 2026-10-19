@@ -24,6 +24,7 @@ import {
 } from '../../scripts/testClaimProcesses.ts';
 import {
   assertTestClaimSafePath,
+  assertTestClaimWindowsJob,
   getTestClaimPaths,
   hasTestClaimTransport,
   sendTestClaimEvent,
@@ -49,6 +50,11 @@ interface ManagedBrowserDependencies {
   sendEvent: (env: NodeJS.ProcessEnv, event: TestClaimEvent) => Promise<void>;
   inspectProcess: (pid: number) => Promise<TestProcessSnapshot>;
   waitForGroupExit: (pgid: number) => Promise<void>;
+  platform?: NodeJS.Platform;
+  assertWindowsJob?: (
+    env: NodeJS.ProcessEnv,
+    identity: { pid: number; startTime: string; host: string },
+  ) => Promise<void>;
 }
 
 function assertWithin(root: string, target: string) {
@@ -94,6 +100,8 @@ export async function useManagedBrowser(
   },
 ) {
   const { env } = dependencies;
+  const windows = (dependencies.platform ?? process.platform) === 'win32';
+  const assertWindowsJob = dependencies.assertWindowsJob ?? assertTestClaimWindowsJob;
   const runId = env.VONA_TEST_RUN_ID;
   if (!runId || !hasTestClaimTransport(env)) {
     throw new Error('Managed browser requires an isolated test claim transport');
@@ -103,8 +111,16 @@ export async function useManagedBrowser(
   const { dataRoot } = getTestClaimPaths(dependencies.projectPath, runId);
   const temporaryRoot = resolve(dataRoot, 'tmp');
   assertTestRunOwner(dataRoot, runId);
-  if (env.TMPDIR !== temporaryRoot || !lstatSync(temporaryRoot).isDirectory()) {
-    throw new Error('Managed browser requires the inherited run-owned TMPDIR');
+  const tempKeys = windows
+    ? Object.keys(env).filter(key => ['TEMP', 'TMP', 'TMPDIR'].includes(key.toUpperCase()))
+    : ['TMPDIR'];
+  if (
+    (windows &&
+      !['TEMP', 'TMP', 'TMPDIR'].every(name => tempKeys.some(key => key.toUpperCase() === name))) ||
+    tempKeys.some(key => env[key] !== temporaryRoot) ||
+    !lstatSync(temporaryRoot).isDirectory()
+  ) {
+    throw new Error('Managed browser requires inherited run-owned temporary paths');
   }
   assertWithin(dataRoot, temporaryRoot);
 
@@ -120,16 +136,37 @@ export async function useManagedBrowser(
   }
   // Browser profile creation happens in the Playwright worker's inherited
   // TMPDIR. A custom browser environment must not redirect child temp writes.
-  if (launchOptions.env) launchOptions.env = { ...launchOptions.env, TMPDIR: temporaryRoot };
+  if (launchOptions.env) {
+    const browserEnv = { ...launchOptions.env };
+    if (windows) {
+      for (const key of Object.keys(browserEnv)) {
+        if (['TEMP', 'TMP', 'TMPDIR'].includes(key.toUpperCase())) delete browserEnv[key];
+      }
+      browserEnv.TEMP = temporaryRoot;
+      browserEnv.TMP = temporaryRoot;
+    }
+    launchOptions.env = { ...browserEnv, TMPDIR: temporaryRoot };
+  }
+  if (windows) {
+    const identity = await dependencies.inspectProcess(process.pid);
+    if (identity.pid !== process.pid || !identity.startTime || identity.state.startsWith('Z')) {
+      throw new Error('Managed browser worker has no live process identity');
+    }
+    await assertWindowsJob(env, {
+      pid: identity.pid,
+      startTime: identity.startTime,
+      host: identity.host,
+    });
+  }
   const processRecord: TestClaimProcess = {
     id: randomUUID(),
     role: 'browser',
     stage: 'pending',
     profilePath: temporaryRoot,
   };
-  // Acknowledgement precedes spawning. A rejected launch leaves this intent
-  // pending: launchServer may have spawned before it rejects or the worker dies.
-  await dependencies.sendEvent(env, { type: 'process', process: processRecord });
+  // POSIX browsers own independent groups; Windows browsers inherit the verified
+  // guardian Job. Only that guardian can acknowledge whole-Job drainage.
+  if (!windows) await dependencies.sendEvent(env, { type: 'process', process: processRecord });
   const server = await options.browserType.launchServer({
     handleSIGINT: false,
     ...launchOptions,
@@ -147,25 +184,37 @@ export async function useManagedBrowser(
       child.exitCode !== null ||
       child.signalCode !== null ||
       identity.pid !== child.pid ||
-      identity.pgid !== child.pid ||
       !identity.startTime ||
-      identity.state.startsWith('Z')
+      identity.state.startsWith('Z') ||
+      (!windows && identity.pgid !== child.pid)
     ) {
-      throw new Error('Managed browser has no independent live process group');
+      throw new Error(
+        windows
+          ? 'Managed browser has no live process identity'
+          : 'Managed browser has no independent live process group',
+      );
     }
     const profilePath = discoverBrowserProfile(child.spawnargs) ?? temporaryRoot;
     assertWithin(temporaryRoot, profilePath);
-    const record: TestClaimProcess = {
-      ...processRecord,
-      stage: 'registered',
-      pid: identity.pid,
-      pgid: identity.pgid,
-      startTime: identity.startTime,
-      host: identity.host,
-      profilePath,
-    };
-    await dependencies.sendEvent(env, { type: 'process', process: record });
-    registration = record;
+    if (windows) {
+      await assertWindowsJob(env, {
+        pid: identity.pid,
+        startTime: identity.startTime,
+        host: identity.host,
+      });
+    } else {
+      const record: TestClaimProcess = {
+        ...processRecord,
+        stage: 'registered',
+        pid: identity.pid,
+        pgid: identity.pgid,
+        startTime: identity.startTime,
+        host: identity.host,
+        profilePath,
+      };
+      await dependencies.sendEvent(env, { type: 'process', process: record });
+      registration = record;
+    }
     const browser = await options.browserType.connect(server.wsEndpoint(), { slowMo });
     await use(browser);
   } finally {
