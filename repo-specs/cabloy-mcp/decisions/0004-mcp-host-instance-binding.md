@@ -140,6 +140,12 @@ This proposes **checkpoint semantics**: a committed change visible to the author
 
 These choices are decision-ready Proposed refinements of SRS-MCP-INSTANCE-01/02 and SRS-MCP-DISPATCH-04. Deployment trust/normalization/resource/issuer and actual readiness operators remain under their existing gates. Selecting this bounded mechanism later does not accept the whole ADR or authorize framework edits, runtime resources, ATP or release.
 
+## Accepted bounded B mechanism disposition (2026-10-18)
+
+After the section-16 report explicitly recommended accepting its three bounded B/R/E semantic rows with all limits and selecting the independent opt-in foundation, `zhennann` replied “同意，请执行下一步”. This later reply **accepts the B mechanism above for bounded design only**, recorded at clean `ecd83146dd8808a6de36c6eb84fc757ee43dd96b` before the current planning edits. The preceding Proposed investigation remains historical; this is not inferred from its earlier preparation approval.
+
+Accepted scope is existing-ready read-only admission, separate completed-startup/config snapshot and ready-existing executor capability, exact uncached two-row registry check with explicit datasource/identity continuity, config pinning before consumers, no registering/startup fallback or positive admission cache, finite outstanding-query ownership and the stated final-checkpoint race semantics. It does not promise atomic fleet revocation, cancellation or complete ABA detection, choose schema/version/live trust/map/datasource/operator values, or qualify DB/driver sinks. Whole DEC-MCP-04 and the production F3-B row remain Proposed/gated. Only the independent foundation is selected next; B's readiness/database/startup implementation is excluded from that candidate. [Dossier section 17](../wbs-mcp-20-01-execution-dossier.md#17-bounded-bre-acceptance-and-exact-foundation-execution-package-2026-10-18) records the concrete execution package awaiting separate approval. No source/runtime, ATP or release follows from this acceptance.
+
 ## References
 
 - [A-MCP planning index](../README.md)

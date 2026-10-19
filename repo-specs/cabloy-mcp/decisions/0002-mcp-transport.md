@@ -176,6 +176,12 @@ Retain route discovery, lookup, route-start/tail/completion, guard/interceptor/p
 
 Validate ownership across POST/GET/DELETE and every other method, selected metadata routes, duplicate root declarations, wildcard/parameter/constraint/fallback matches, advice exclusion and module graph absence versus present-but-unavailable. Identical-route duplicate errors alone do not reserve the endpoint. Effective installed graph/AOP order, controller receipt, system exclusions and ordinary-route regression require separately approved real HTTP proof; the completed F1/F2 construction probe does not supply it. This resolves the proposed profile choice, not production readiness or F3-S/N/F4 gates.
 
+## Accepted bounded R mechanism disposition (2026-10-18)
+
+After the section-16 report recommended accepting all three bounded B/R/E rows with their stated limits and selecting the independent opt-in foundation, `zhennann` replied “同意，请执行下一步”. This later reply **accepts the controller-preserving R refinement above for bounded design only**, recorded at clean `ecd83146dd8808a6de36c6eb84fc757ee43dd96b` before current planning edits, not inferred from the earlier investigation approval. Original DEC-MCP-02 transport/protocol/SDK acceptance remains unchanged.
+
+Accepted scope is the supported admitted-native entrypoint ending in the registered decorated router, the empty generic-system allowlist and explicit replacements, the exact nine ingress-only route-onion disables, unchanged business-action authority, fixed early receipt/config handoff, canonical-target claim-and-deny/collision policy and fail-closed profile validation. The identified entrypoint is still new, not an observed API. This accepts neither live Origin/security/metadata values nor effective installed graph/order/native wire proof, production source/registration or whole F3-R completion. Those production gates remain Proposed. The selected independent foundation supplies early ownership/diagnostic primitives only; R's `a-web` profile/controller/route/startup integration is excluded. [Dossier section 17](../wbs-mcp-20-01-execution-dossier.md#17-bounded-bre-acceptance-and-exact-foundation-execution-package-2026-10-18) consolidates one exact execution package for separate approval. No new protocol status mapping, runtime/resource or release permission is implied.
+
 ## References
 
 - [MCP Streamable HTTP, 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http)

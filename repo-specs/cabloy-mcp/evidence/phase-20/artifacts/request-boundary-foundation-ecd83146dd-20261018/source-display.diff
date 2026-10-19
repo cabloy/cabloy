@@ -1,0 +1,2670 @@
+diff --git a/vona/packages-vona/vona-core/src/lib/core/requestBoundary.ts b/vona/packages-vona/vona-core/src/lib/core/requestBoundary.ts
+new file mode 100644
+index 0000000000..ed35cad75a
+--- /dev/null
++++ b/vona/packages-vona/vona-core/src/lib/core/requestBoundary.ts
+@@ -0,0 +1,89 @@
++import { AsyncLocalStorage } from 'node:async_hooks';
++
++export type RequestBoundaryFailure =
++  | 'observer_failed'
++  | 'diagnostic_failed'
++  | 'late_callback_failed';
++export type VonaScopeOutcome = 'not_created' | 'disposed' | 'dispose_failed';
++export type VonaScopeOutcomeObserver = (outcome: VonaScopeOutcome) => void;
++
++declare const requestBoundaryBrand: unique symbol;
++
++export interface RequestBoundary {
++  readonly [requestBoundaryBrand]: true;
++}
++
++export interface RequestBoundaryCapture {
++  readonly diagnostics: 'suppress';
++  reportFailure(failure: RequestBoundaryFailure): void;
++  snapshot(): Readonly<{ portFault: boolean }>;
++}
++
++const boundaries = new WeakMap<RequestBoundary, RequestBoundaryCapture>();
++const boundaryStorage = new AsyncLocalStorage<RequestBoundary>();
++
++export function createRequestBoundary(options?: {
++  readonly onFailure?: (failure: RequestBoundaryFailure) => void;
++}): RequestBoundary {
++  const onFailure = options?.onFailure;
++  const boundary = Object.freeze({}) as RequestBoundary;
++  let portFault = false;
++  let reporting = false;
++  const reported = new Set<RequestBoundaryFailure>();
++  const capture: RequestBoundaryCapture = Object.freeze({
++    diagnostics: 'suppress',
++    reportFailure(failure: RequestBoundaryFailure) {
++      if (
++        failure !== 'observer_failed' &&
++        failure !== 'diagnostic_failed' &&
++        failure !== 'late_callback_failed'
++      ) {
++        portFault = true;
++        return;
++      }
++      portFault = true;
++      if (reported.has(failure)) return;
++      reported.add(failure);
++      if (reporting || !onFailure) return;
++      reporting = true;
++      try {
++        const result: unknown = onFailure(failure);
++        if (result && (typeof result === 'object' || typeof result === 'function')) {
++          const then = (result as PromiseLike<unknown>).then;
++          if (typeof then === 'function') {
++            portFault = true;
++            void new Promise<unknown>((resolve, reject) => {
++              then.call(result, resolve, reject);
++            }).catch(() => {});
++          }
++        }
++      } catch {
++        portFault = true;
++      } finally {
++        reporting = false;
++      }
++    },
++    snapshot() {
++      return Object.freeze({ portFault });
++    },
++  });
++  boundaries.set(boundary, capture);
++  return boundary;
++}
++
++export function runWithRequestBoundary<T>(boundary: RequestBoundary, continuation: () => T): T {
++  if (!boundaries.has(boundary)) throw new Error('Invalid request boundary');
++  const current = boundaryStorage.getStore();
++  if (current && current !== boundary) throw new Error('Request boundary cannot be replaced');
++  if (current === boundary) return continuation();
++  return boundaryStorage.run(boundary, continuation);
++}
++
++export function getRequestBoundary(): RequestBoundary | undefined {
++  return boundaryStorage.getStore();
++}
++
++export function captureRequestBoundary(): RequestBoundaryCapture | undefined {
++  const boundary = boundaryStorage.getStore();
++  return boundary ? boundaries.get(boundary) : undefined;
++}
+diff --git a/vona/packages-vona/vona-core/src/lib/core/index.ts b/vona/packages-vona/vona-core/src/lib/core/index.ts
+index e1683fb104..339f92e0c1 100644
+--- a/vona/packages-vona/vona-core/src/lib/core/index.ts
++++ b/vona/packages-vona/vona-core/src/lib/core/index.ts
+@@ -7,6 +7,19 @@ export * from './locales.ts';
+ export * from './logger/index.ts';
+ export * from './meta.ts';
+ export * from './metadata.ts';
++export type {
++  RequestBoundary,
++  RequestBoundaryCapture,
++  RequestBoundaryFailure,
++  VonaScopeOutcome,
++  VonaScopeOutcomeObserver,
++} from './requestBoundary.ts';
++export {
++  captureRequestBoundary,
++  createRequestBoundary,
++  getRequestBoundary,
++  runWithRequestBoundary,
++} from './requestBoundary.ts';
+ export * from './resource.ts';
+ export * from './testClaim.ts';
+ export * from './testIsolation.ts';
+diff --git a/vona/packages-vona/vona-core/src/lib/core/asyncLocalStorage.ts b/vona/packages-vona/vona-core/src/lib/core/asyncLocalStorage.ts
+index 2b2f033ced..5909fd815c 100644
+--- a/vona/packages-vona/vona-core/src/lib/core/asyncLocalStorage.ts
++++ b/vona/packages-vona/vona-core/src/lib/core/asyncLocalStorage.ts
+@@ -2,9 +2,17 @@ import { AsyncLocalStorage } from 'node:async_hooks';
+ 
+ import type { VonaContext } from '../../types/context/index.ts';
+ import type { VonaApplication } from './application.ts';
++import type {
++  RequestBoundaryCapture,
++  VonaScopeOutcome,
++  VonaScopeOutcomeObserver,
++} from './requestBoundary.ts';
++
++import { captureRequestBoundary } from './requestBoundary.ts';
+ 
+ export class VonaAsyncLocalStorage extends AsyncLocalStorage<VonaContext> {
+   app: VonaApplication;
++  private readonly observedRuns = new WeakMap<VonaContext, { settled: boolean }>();
+ 
+   constructor(app: VonaApplication) {
+     super();
+@@ -20,18 +28,82 @@ export class VonaAsyncLocalStorage extends AsyncLocalStorage<VonaContext> {
+     if (store === this.app.currentContext) {
+       return await callback(...args);
+     }
+-    return super.run(
+-      store,
+-      async (...args) => {
+-        try {
+-          this.app.meta.ctxCounter.increment();
+-          return await callback(...args);
+-        } finally {
+-          await store.bean.dispose();
+-          this.app.meta.ctxCounter.decrement();
++    if (this.observedRuns.has(store)) throw new Error('Context scope already owned');
++    return this._runOwned(store, () => callback(...args));
++  }
++
++  async runObserved<R>(
++    store: VonaContext,
++    callback: () => R,
++    observer: VonaScopeOutcomeObserver,
++  ): Promise<R> {
++    if (store === this.app.currentContext || this.observedRuns.has(store)) {
++      throw new Error('Context scope already owned');
++    }
++    const frame = { settled: false };
++    this.observedRuns.set(store, frame);
++    try {
++      return await this._runOwned(store, callback, observer);
++    } finally {
++      frame.settled = true;
++    }
++  }
++
++  private _runOwned<R>(
++    store: VonaContext,
++    callback: () => R,
++    observer?: VonaScopeOutcomeObserver,
++  ): Promise<R> {
++    const capture = captureRequestBoundary();
++    return super.run(store, async () => {
++      try {
++        this.app.meta.ctxCounter.increment();
++        return await callback();
++      } finally {
++        await this._disposeOwned(store, observer, capture);
++      }
++    });
++  }
++
++  private async _disposeOwned(
++    store: VonaContext,
++    observer: VonaScopeOutcomeObserver | undefined,
++    capture: RequestBoundaryCapture | undefined,
++  ): Promise<void> {
++    try {
++      await store.bean.dispose();
++    } catch (error) {
++      this._notifyScopeOutcome(observer, 'dispose_failed', capture);
++      throw error;
++    }
++    try {
++      this.app.meta.ctxCounter.decrement();
++    } catch (error) {
++      capture?.reportFailure('diagnostic_failed');
++      throw error;
++    }
++    this._notifyScopeOutcome(observer, 'disposed', capture);
++  }
++
++  private _notifyScopeOutcome(
++    observer: VonaScopeOutcomeObserver | undefined,
++    outcome: VonaScopeOutcome,
++    capture: RequestBoundaryCapture | undefined,
++  ): void {
++    if (!observer) return;
++    try {
++      const result: unknown = observer(outcome);
++      if (result && (typeof result === 'object' || typeof result === 'function')) {
++        const then = (result as PromiseLike<unknown>).then;
++        if (typeof then === 'function') {
++          capture?.reportFailure('observer_failed');
++          void new Promise<unknown>((resolve, reject) => {
++            then.call(result, resolve, reject);
++          }).catch(() => {});
+         }
+-      },
+-      ...args,
+-    );
++      }
++    } catch {
++      capture?.reportFailure('observer_failed');
++    }
+   }
+ }
+diff --git a/vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts b/vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts
+index 9013b16f33..6cbf2c76ee 100644
+--- a/vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts
++++ b/vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts
+@@ -1,11 +1,11 @@
+-import type { FunctionAsync } from 'vona';
++import type { FunctionAsync, VonaContext } from 'vona';
+ import type { IApiPathRecordMethodMap } from 'vona-module-a-web';
+ 
+ import { isNil } from '@cabloy/utils';
+-import { BeanBase } from 'vona';
++import { BeanBase, captureRequestBoundary } from 'vona';
+ import { Bean } from 'vona-module-a-bean';
+ 
+-import type { INewCtxOptions, IPerformActionOptions } from '../types/executor.ts';
++import type { INewCtxLifecycle, INewCtxOptions, IPerformActionOptions } from '../types/executor.ts';
+ 
+ import { __delegateProperties } from '../lib/utils.ts';
+ 
+@@ -29,6 +29,7 @@ export class BeanExecutor extends BeanBase {
+   async newCtxIsolate<RESULT>(
+     fn: FunctionAsync<RESULT>,
+     options?: INewCtxOptions,
++    lifecycle?: INewCtxLifecycle,
+   ): Promise<RESULT> {
+     options = Object.assign({}, options);
+     // instanceName !== undefined means isolate
+@@ -38,83 +39,133 @@ export class BeanExecutor extends BeanBase {
+       options.locale = options.locale === undefined ? this.ctx?.locale : options.locale;
+       options.tz = options.tz === undefined ? this.ctx?.tz : options.tz;
+     }
+-    return this.newCtx(fn, options);
++    return this.newCtx(fn, options, lifecycle);
+   }
+ 
+-  async mockCtx<RESULT>(fn: FunctionAsync<RESULT>, options?: INewCtxOptions): Promise<RESULT> {
++  async mockCtx<RESULT>(
++    fn: FunctionAsync<RESULT>,
++    options?: INewCtxOptions,
++    lifecycle?: INewCtxLifecycle,
++  ): Promise<RESULT> {
+     options = Object.assign({}, options);
+     options.dbInfo = isNil(options.dbInfo) ? { level: 1 } : options.dbInfo;
+     options.instanceName =
+       options.instanceName === undefined ? (this.ctx?.instanceName ?? '') : options.instanceName;
+     options.instance = !isNil(options.instanceName);
+-    return this.newCtx(fn, options);
++    return this.newCtx(fn, options, lifecycle);
+   }
+ 
+-  async newCtx<RESULT>(fn: FunctionAsync<RESULT>, options?: INewCtxOptions): Promise<RESULT> {
+-    return this._newCtxInnerStep1(() => {
+-      if (isNil(options?.dbInfo)) return this._newCtxInnerStep2(fn, options);
+-      return this.bean.database.switchDb(() => {
+-        return this._newCtxInnerStep2(fn, options);
+-      }, options?.dbInfo);
+-    }, options);
++  async newCtx<RESULT>(
++    fn: FunctionAsync<RESULT>,
++    options?: INewCtxOptions,
++    lifecycle?: INewCtxLifecycle,
++  ): Promise<RESULT> {
++    return this._newCtxInnerStep1(
++      () => {
++        if (isNil(options?.dbInfo)) return this._newCtxInnerStep2(fn, options);
++        return this.bean.database.switchDb(() => {
++          return this._newCtxInnerStep2(fn, options);
++        }, options?.dbInfo);
++      },
++      options,
++      lifecycle,
++    );
+   }
+ 
+   private async _newCtxInnerStep1<RESULT>(
+     fn: FunctionAsync<RESULT>,
+-    options?: INewCtxOptions,
++    options: INewCtxOptions = {},
++    lifecycle?: INewCtxLifecycle,
+   ): Promise<RESULT> {
+-    options = Object.assign({}, options);
+-    // innerAccess
+-    const innerAccess = options.innerAccess !== false;
+-    // isolate
+-    const isolate =
+-      !this.ctx ||
+-      options.instanceName !== undefined ||
+-      (!innerAccess && this.ctx?.instanceName === null);
+-    const ctxCaller = !isolate && this.ctx ? this.ctx : undefined;
+-    // locale/tz/instanceName
+-    if (!isolate && this.ctx) {
+-      options.locale = options.locale === undefined ? this.ctx.locale : options.locale;
+-      options.tz = options.tz === undefined ? this.ctx.tz : options.tz;
+-      options.instanceName =
+-        options.instanceName === undefined
+-          ? !innerAccess && this.ctx.instanceName === null
+-            ? undefined
+-            : this.ctx.instanceName
+-          : options.instanceName;
+-    }
+-    // run
+-    const ctx = this.app.createAnonymousContext(options.req, options.res);
+-    return await this.app.ctxStorage.run(ctx, async () => {
++    const capture = captureRequestBoundary();
++    const onScopeOutcome = lifecycle?.onScopeOutcome;
++    let ctx: VonaContext | undefined;
++    try {
++      options = Object.assign({}, options);
+       // innerAccess
+-      ctx.innerAccess = innerAccess;
+-      // locale
+-      if (options.locale !== undefined) {
+-        ctx.locale = options.locale;
+-      }
+-      // tz
+-      if (options.tz !== undefined) {
+-        ctx.tz = options.tz;
++      const innerAccess = options.innerAccess !== false;
++      // isolate
++      const isolate =
++        !this.ctx ||
++        options.instanceName !== undefined ||
++        (!innerAccess && this.ctx?.instanceName === null);
++      const ctxCaller = !isolate && this.ctx ? this.ctx : undefined;
++      // locale/tz/instanceName
++      if (!isolate && this.ctx) {
++        options.locale = options.locale === undefined ? this.ctx.locale : options.locale;
++        options.tz = options.tz === undefined ? this.ctx.tz : options.tz;
++        options.instanceName =
++          options.instanceName === undefined
++            ? !innerAccess && this.ctx.instanceName === null
++              ? undefined
++              : this.ctx.instanceName
++            : options.instanceName;
+       }
+-      // instanceName: undefined/null is different
+-      if (options.instanceName !== undefined) {
+-        ctx.instanceName = options.instanceName;
+-      }
+-      // ctxCaller
+-      if (ctxCaller) {
+-        // delegateProperties
+-        __delegateProperties(ctx, ctxCaller);
++      // run
++      ctx = this.app.createAnonymousContext(options.req, options.res);
++      const context = ctx;
++      const execute = async () => {
++        const initialized: unknown = lifecycle?.initializeContext?.(context);
++        if (initialized && (typeof initialized === 'object' || typeof initialized === 'function')) {
++          const then = (initialized as PromiseLike<unknown>).then;
++          if (typeof then === 'function') {
++            await new Promise<unknown>((resolve, reject) => {
++              then.call(initialized, resolve, reject);
++            }).catch(() => undefined);
++            throw new Error('Context initializer must be synchronous');
++          }
++        }
++        // innerAccess
++        context.innerAccess = innerAccess;
++        // locale
++        if (options.locale !== undefined) {
++          context.locale = options.locale;
++        }
++        // tz
++        if (options.tz !== undefined) {
++          context.tz = options.tz;
++        }
++        // instanceName: undefined/null is different
++        if (options.instanceName !== undefined) {
++          context.instanceName = options.instanceName;
++        }
+         // ctxCaller
+-        ctx.ctxCaller = ctxCaller;
+-      } else {
+-        // isolate: extraData
+-        if (options.extraData) {
++        if (ctxCaller) {
+           // delegateProperties
+-          __delegateProperties(ctx, options.extraData);
++          __delegateProperties(context, ctxCaller);
++          // ctxCaller
++          context.ctxCaller = ctxCaller;
++        } else {
++          // isolate: extraData
++          if (options.extraData) {
++            // delegateProperties
++            __delegateProperties(context, options.extraData);
++          }
++        }
++        return await fn();
++      };
++      return onScopeOutcome
++        ? await this.app.ctxStorage.runObserved(context, execute, onScopeOutcome)
++        : await this.app.ctxStorage.run(context, execute);
++    } catch (error) {
++      if (!ctx && onScopeOutcome) {
++        try {
++          const result: unknown = onScopeOutcome('not_created');
++          if (result && (typeof result === 'object' || typeof result === 'function')) {
++            const then = (result as PromiseLike<unknown>).then;
++            if (typeof then === 'function') {
++              capture?.reportFailure('observer_failed');
++              void new Promise<unknown>((resolve, reject) => {
++                then.call(result, resolve, reject);
++              }).catch(() => {});
++            }
++          }
++        } catch {
++          capture?.reportFailure('observer_failed');
+         }
+       }
+-      return await fn();
+-    });
++      throw error;
++    }
+   }
+ 
+   private async _newCtxInnerStep2<RESULT>(
+diff --git a/vona/src/suite-vendor/a-vona/modules/a-executor/src/types/executor.ts b/vona/src/suite-vendor/a-vona/modules/a-executor/src/types/executor.ts
+index b2644f4b83..e8e91eb057 100644
+--- a/vona/src/suite-vendor/a-vona/modules/a-executor/src/types/executor.ts
++++ b/vona/src/suite-vendor/a-vona/modules/a-executor/src/types/executor.ts
+@@ -1,4 +1,11 @@
+-import type { ContextState, IInstanceRecord, ILocaleRecord, PowerPartial } from 'vona';
++import type {
++  ContextState,
++  IInstanceRecord,
++  ILocaleRecord,
++  PowerPartial,
++  VonaContext,
++  VonaScopeOutcomeObserver,
++} from 'vona';
+ import type { ConfigOnions } from 'vona-module-a-onion';
+ import type { IDbInfo, ITransactionOptions } from 'vona-module-a-orm';
+ 
+@@ -15,6 +22,11 @@ export interface INewCtxOptions extends INewCtxBaseOptions {
+   dbInfo?: Partial<IDbInfo>;
+ }
+ 
++export interface INewCtxLifecycle {
++  initializeContext?: (ctx: VonaContext) => void;
++  onScopeOutcome?: VonaScopeOutcomeObserver;
++}
++
+ export interface INewCtxBaseOptions {
+   locale?: keyof ILocaleRecord;
+   tz?: string;
+diff --git a/vona/packages-vona/vona-core/src/lib/bean/beanBase.ts b/vona/packages-vona/vona-core/src/lib/bean/beanBase.ts
+index 413ab7470f..7524508290 100644
+--- a/vona/packages-vona/vona-core/src/lib/bean/beanBase.ts
++++ b/vona/packages-vona/vona-core/src/lib/bean/beanBase.ts
+@@ -4,6 +4,8 @@ import type { ILoggerChildRecord, ILoggerClientRecord } from '../../types/interf
+ // import type { IModuleLocaleText } from './resource/locale/type.ts';
+ import type { IBeanScopeContainer } from './scope/beanScopeContainer.ts';
+ 
++import { getSuppressedDiagnosticLogger } from '../core/logger/diagnosticLogger.ts';
++import { getRequestBoundary } from '../core/requestBoundary.ts';
+ import { BeanBaseSimple, SymbolBeanInstanceKey, SymbolModuleBelong } from './beanBaseSimple.ts';
+ 
+ // const SymbolText = Symbol('SymbolText');
+@@ -30,6 +32,7 @@ export class BeanBase extends BeanBaseSimple {
+   }
+ 
+   protected $loggerClient(clientName: keyof ILoggerClientRecord = 'default') {
++    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
+     if (!this[SymbolLogger][clientName]) {
+       this[SymbolLogger][clientName] = this.app.meta.logger
+         .get(clientName)
+@@ -42,6 +45,7 @@ export class BeanBase extends BeanBaseSimple {
+     childName: keyof ILoggerChildRecord,
+     clientName: keyof ILoggerClientRecord = 'default',
+   ) {
++    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
+     if (!this[SymbolLoggerChildren][clientName])
+       this[SymbolLoggerChildren][clientName] = {} as never;
+     if (!this[SymbolLoggerChildren][clientName][childName]) {
+diff --git a/vona/packages-vona/vona-core/src/lib/core/logger/appLogger.ts b/vona/packages-vona/vona-core/src/lib/core/logger/appLogger.ts
+index 1bf88635da..2a6e36395e 100644
+--- a/vona/packages-vona/vona-core/src/lib/core/logger/appLogger.ts
++++ b/vona/packages-vona/vona-core/src/lib/core/logger/appLogger.ts
+@@ -13,28 +13,36 @@ import type {
+ 
+ import { BeanSimple } from '../../bean/beanSimple.ts';
+ import { deepExtend } from '../../utils/util.ts';
++import { getRequestBoundary } from '../requestBoundary.ts';
++import { createDiagnosticLogger, getSuppressedDiagnosticLogger } from './diagnosticLogger.ts';
+ 
+ const SymbolLoggerInstances = Symbol('SymbolLoggerInstances');
++const SymbolRawLoggerInstances = Symbol('SymbolRawLoggerInstances');
+ 
+ export class AppLogger extends BeanSimple {
+   private [SymbolLoggerInstances]: Record<keyof ILoggerClientRecord, Winston.Logger> = {} as any;
++  private [SymbolRawLoggerInstances]: Record<keyof ILoggerClientRecord, Winston.Logger> = {} as any;
+ 
+   public async dispose() {
+-    for (const key in this[SymbolLoggerInstances]) {
+-      const logger = this[SymbolLoggerInstances][key];
++    for (const key in this[SymbolRawLoggerInstances]) {
++      const logger = this[SymbolRawLoggerInstances][key];
+       await _closeLogger(logger);
+     }
+   }
+ 
+   get(clientName?: keyof ILoggerClientRecord) {
++    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
+     clientName = clientName || 'default';
+     if (!this[SymbolLoggerInstances][clientName]) {
+-      this[SymbolLoggerInstances][clientName] = this._createClient(clientName);
++      const raw = this._createClient(clientName);
++      this[SymbolRawLoggerInstances][clientName] = raw;
++      this[SymbolLoggerInstances][clientName] = createDiagnosticLogger(raw);
+     }
+     return this[SymbolLoggerInstances][clientName];
+   }
+ 
+   child(childName?: keyof ILoggerChildRecord, clientName?: keyof ILoggerClientRecord) {
++    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
+     const logger = this.get(clientName);
+     if (!childName) return logger;
+     return logger.child({ name: childName });
+diff --git a/vona/packages-vona/vona-core/src/lib/core/logger/utils.ts b/vona/packages-vona/vona-core/src/lib/core/logger/utils.ts
+index 0d3b54c4f1..b547e28dd8 100644
+--- a/vona/packages-vona/vona-core/src/lib/core/logger/utils.ts
++++ b/vona/packages-vona/vona-core/src/lib/core/logger/utils.ts
+@@ -11,10 +11,18 @@ import type {
+ 
+ import { cast } from '../../../types/utils/cast.ts';
+ import { useApp } from '../../framework/useApp.ts';
++import { getRequestBoundary } from '../requestBoundary.ts';
+ 
+ const SymbolLoggerMessage = Symbol('SymbolLoggerMessage');
+ 
+-export const formatLoggerAxiosError = Winston.format((einfo, { stack, cause }: any) => {
++export const formatLoggerBoundary = Winston.format(info => {
++  if (getRequestBoundary()) return false;
++  return info;
++});
++
++export const formatLoggerAxiosError = Winston.format((einfo, opts: any) => {
++  if (getRequestBoundary()) return false;
++  const { stack, cause } = opts;
+   if (
+     (einfo instanceof Error && einfo.constructor.name.includes('AxiosError')) ||
+     einfo.name === 'AxiosError' ||
+@@ -39,10 +47,16 @@ export const formatLoggerAxiosError = Winston.format((einfo, { stack, cause }: a
+ });
+ 
+ export const formatLoggerErrors = (opts: ILoggerFormatOpts) => {
+-  return Winston.format.combine(formatLoggerAxiosError(opts), Winston.format.errors(opts));
++  if (getRequestBoundary()) return formatLoggerBoundary();
++  return Winston.format.combine(
++    formatLoggerBoundary(),
++    formatLoggerAxiosError(opts),
++    Winston.format.errors(opts),
++  );
+ };
+ 
+ export const formatLoggerCtx = Winston.format((info, _opts: any) => {
++  if (getRequestBoundary()) return false;
+   const app = useApp();
+   if (!app.ctx) return info;
+   if (app.ctx.method) info.method = app.ctx.method;
+@@ -60,12 +74,14 @@ export const formatLoggerCtx = Winston.format((info, _opts: any) => {
+ });
+ 
+ export const formatLoggerDummy = Winston.format(info => {
++  if (getRequestBoundary()) return false;
+   const app = useApp();
+   if (app.meta.env.LOGGER_DUMMY === 'true') return false;
+   return info;
+ });
+ 
+ export const formatLoggerFilter = Winston.format(((info: any, opts: ILoggerFormatFilterOpts) => {
++  if (getRequestBoundary()) return false;
+   // check client
+   const child = typeof opts.child === 'function' ? opts.child() : opts.child;
+   if (child && !child.includes(info.name)) {
+@@ -90,8 +106,11 @@ export const formatLoggerFilter = Winston.format(((info: any, opts: ILoggerForma
+ }) as any);
+ 
+ export const formatLoggerConsole = (clientInfo: ILoggerOptionsClientInfo) => {
+-  return Winston.format.printf(
+-    ({ timestamp, level, stack, message, name, beanFullName, durationMs, ...meta }) => {
++  return Winston.format.combine(
++    formatLoggerBoundary(),
++    Winston.format.printf(info => {
++      if (getRequestBoundary()) return '';
++      const { timestamp, level, stack, message, name, beanFullName, durationMs, ...meta } = info;
+       const textClientName =
+         clientInfo.clientName === 'default' ? '' : ` ${chalk.cyan(`[${clientInfo.clientName}]`)}`;
+       const textName = name ? ` ${chalk.cyan(`[${name}]`)}` : '';
+@@ -101,11 +120,12 @@ export const formatLoggerConsole = (clientInfo: ILoggerOptionsClientInfo) => {
+       const textDurationMs = durationMs !== undefined ? ` ${chalk.cyan(`+${durationMs}ms`)}` : '';
+       const textStack = stack ? `\n${stack}` : '';
+       return `${timestamp} ${level}${textClientName}${textName}${textBeanFullName}${textMeta}${textMessage}${textDurationMs}${textStack}`;
+-    },
++    }),
+   );
+ };
+ 
+ function __formatLoggerFilterCheckInfo(info) {
++  if (getRequestBoundary()) return false;
+   if (typeof info.message === 'function') {
+     if (info.message[SymbolLoggerMessage] === undefined) {
+       info.message[SymbolLoggerMessage] = info.message();
+diff --git a/vona/packages-vona/vona-core/src/lib/core/logger/index.ts b/vona/packages-vona/vona-core/src/lib/core/logger/index.ts
+index 61ccb0a283..d1c25ff32a 100644
+--- a/vona/packages-vona/vona-core/src/lib/core/logger/index.ts
++++ b/vona/packages-vona/vona-core/src/lib/core/logger/index.ts
+@@ -1,2 +1,3 @@
+ export * from './appLogger.ts';
++export { createDiagnosticLogger, getSuppressedDiagnosticLogger } from './diagnosticLogger.ts';
+ export * from './utils.ts';
+diff --git a/vona/packages-vona/vona-core/src/lib/core/logger/diagnosticLogger.ts b/vona/packages-vona/vona-core/src/lib/core/logger/diagnosticLogger.ts
+new file mode 100644
+index 0000000000..5d9c45e41a
+--- /dev/null
++++ b/vona/packages-vona/vona-core/src/lib/core/logger/diagnosticLogger.ts
+@@ -0,0 +1,105 @@
++import type * as Winston from 'winston';
++
++import { captureRequestBoundary, getRequestBoundary } from '../requestBoundary.ts';
++
++const loggingMethods = new Set([
++  'log',
++  'error',
++  'warn',
++  'info',
++  'http',
++  'verbose',
++  'debug',
++  'silly',
++]);
++
++function completeWrite(args: unknown[]) {
++  const callback = typeof args[1] === 'function' ? args[1] : args[2];
++  if (typeof callback === 'function') {
++    try {
++      callback();
++    } catch {
++      captureRequestBoundary()?.reportFailure('diagnostic_failed');
++    }
++  }
++  return true;
++}
++
++const suppressedLogger = createFacade();
++
++export function getSuppressedDiagnosticLogger(): Winston.Logger {
++  return suppressedLogger;
++}
++
++export function createDiagnosticLogger(raw: Winston.Logger): Winston.Logger {
++  if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
++  return createFacade(raw);
++}
++
++function createFacade(raw?: Winston.Logger): Winston.Logger {
++  const methods = new Map<PropertyKey, (...args: any[]) => any>();
++  const inertProfiler = Object.freeze({
++    get logger() {
++      return getSuppressedDiagnosticLogger();
++    },
++    done: () => getSuppressedDiagnosticLogger(),
++  });
++  const facade = new Proxy({} as Winston.Logger, {
++    get(_target, key) {
++      if (
++        loggingMethods.has(key as string) ||
++        ['write', 'child', 'startTimer', 'profile'].includes(key as string)
++      ) {
++        if (!methods.has(key)) {
++          methods.set(key, (...args: any[]) => {
++            if (!raw || getRequestBoundary()) {
++              if (key === 'write') return completeWrite(args);
++              if (key === 'child') return getSuppressedDiagnosticLogger();
++              if (key === 'startTimer') return inertProfiler;
++              return facade;
++            }
++            const result = Reflect.apply(Reflect.get(raw, key, raw), raw, args);
++            if (key === 'child') return createFacade(result as Winston.Logger);
++            if (key === 'startTimer') return wrapProfiler(result as Winston.Profiler, facade);
++            return result === raw ? facade : result;
++          });
++        }
++        return methods.get(key);
++      }
++      if (!raw) return undefined;
++      const value = Reflect.get(raw, key, raw);
++      if (typeof value !== 'function') return value;
++      if (!methods.has(key)) {
++        methods.set(key, (...args: any[]) => {
++          const result = Reflect.apply(value, raw, args);
++          return result === raw ? facade : result;
++        });
++      }
++      return methods.get(key);
++    },
++    set(_target, key, value) {
++      return raw ? Reflect.set(raw, key, value, raw) : true;
++    },
++  });
++  return facade;
++}
++
++function wrapProfiler(raw: Winston.Profiler, logger: Winston.Logger): Winston.Profiler {
++  return new Proxy({} as Winston.Profiler, {
++    get(_target, key) {
++      if (key === 'logger') return logger;
++      if (key === 'done') {
++        return (...args: any[]) => {
++          if (getRequestBoundary()) return logger;
++          const result = Reflect.apply(raw.done, raw, args);
++          return result === raw.logger ? logger : result;
++        };
++      }
++      return Reflect.get(raw, key, raw);
++    },
++    set(_target, key, value) {
++      if (key === 'logger') return false;
++      return Reflect.set(raw, key, value, raw);
++    },
++  });
++}
+diff --git a/vona/src/suite-vendor/a-vona/modules/a-logger/src/bean/bean.logger.ts b/vona/src/suite-vendor/a-vona/modules/a-logger/src/bean/bean.logger.ts
+index b2b17f9b69..da88e7d6da 100644
+--- a/vona/src/suite-vendor/a-vona/modules/a-logger/src/bean/bean.logger.ts
++++ b/vona/src/suite-vendor/a-vona/modules/a-logger/src/bean/bean.logger.ts
+@@ -9,11 +9,14 @@ import type * as Transport from 'winston-transport';
+ 
+ import {
+   BeanBase,
++  formatLoggerBoundary,
+   formatLoggerConsole,
+   formatLoggerCtx,
+   formatLoggerDummy,
+   formatLoggerErrors,
+   formatLoggerFilter,
++  getRequestBoundary,
++  getSuppressedDiagnosticLogger,
+ } from 'vona';
+ import { Bean } from 'vona-module-a-bean';
+ import * as Winston from 'winston';
+@@ -39,10 +42,12 @@ export class BeanLogger extends BeanBase {
+   }
+ 
+   public get default(): Winston.Logger {
++    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
+     return this.app.meta.logger.get();
+   }
+ 
+   public get(clientName?: keyof ILoggerClientRecord): Winston.Logger {
++    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
+     return this.app.meta.logger.get(clientName);
+   }
+ 
+@@ -50,11 +55,13 @@ export class BeanLogger extends BeanBase {
+     childName: keyof ILoggerChildRecord,
+     clientName?: keyof ILoggerClientRecord,
+   ): Winston.Logger {
++    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
+     return this.app.meta.logger.get(clientName).child({ name: childName });
+   }
+ 
+   public makeFormatBase(opts: ILoggerFormatOpts) {
+     return Winston.format.combine(
++      formatLoggerBoundary(),
+       formatLoggerErrors(opts),
+       formatLoggerCtx(),
+       Winston.format.splat(),
+@@ -71,6 +78,7 @@ export class BeanLogger extends BeanBase {
+     return this.app.meta.logger.createTransportFile(fileName, clientInfo, {
+       level: levelStrict ?? 'silly',
+       format: Winston.format.combine(
++        formatLoggerBoundary(),
+         formatLoggerFilter({
+           child: childStrict ?? clientInfo.child,
+           level: levelStrict ?? clientInfo.level,
+@@ -85,6 +93,7 @@ export class BeanLogger extends BeanBase {
+     return new Winston.transports.Console({
+       level: 'silly',
+       format: Winston.format.combine(
++        formatLoggerBoundary(),
+         formatLoggerDummy(),
+         formatLoggerFilter({ child: clientInfo.child, level: clientInfo.level, silly: true }),
+         Winston.format.colorize(),
+diff --git a/vona/src/suite-vendor/a-vona/modules/a-logger/src/bean/middlewareSystem.httpLog.ts b/vona/src/suite-vendor/a-vona/modules/a-logger/src/bean/middlewareSystem.httpLog.ts
+index 0706bc9166..85e1e5a5de 100644
+--- a/vona/src/suite-vendor/a-vona/modules/a-logger/src/bean/middlewareSystem.httpLog.ts
++++ b/vona/src/suite-vendor/a-vona/modules/a-logger/src/bean/middlewareSystem.httpLog.ts
+@@ -5,7 +5,7 @@ import type {
+ } from 'vona-module-a-aspect';
+ 
+ import StdSerializers from 'pino-std-serializers';
+-import { BeanBase } from 'vona';
++import { BeanBase, getRequestBoundary } from 'vona';
+ import { MiddlewareSystem } from 'vona-module-a-aspect';
+ 
+ import { redactIsolatedReadyHeader } from '../lib/redactIsolatedReadyHeader.ts';
+@@ -15,6 +15,7 @@ export interface IMiddlewareSystemOptionsHttpLog extends IDecoratorMiddlewareSys
+ @MiddlewareSystem<IMiddlewareSystemOptionsHttpLog>()
+ export class MiddlewareSystemHttpLog extends BeanBase implements IMiddlewareSystemExecute {
+   async execute(_options: IMiddlewareSystemOptionsHttpLog, next: Next) {
++    if (getRequestBoundary()) return next();
+     const ctx = this.ctx;
+     // start
+     const req = StdSerializers.req(ctx.req);
+diff --git a/vona/src/suite-vendor/a-vona/modules/a-logger/src/bean/aopMethod.log.ts b/vona/src/suite-vendor/a-vona/modules/a-logger/src/bean/aopMethod.log.ts
+index bf681d52ad..72d0b735e1 100644
+--- a/vona/src/suite-vendor/a-vona/modules/a-logger/src/bean/aopMethod.log.ts
++++ b/vona/src/suite-vendor/a-vona/modules/a-logger/src/bean/aopMethod.log.ts
+@@ -8,7 +8,7 @@ import type {
+ import type winston from 'winston';
+ 
+ import { evaluateExpressions } from '@cabloy/utils';
+-import { BeanAopMethodBase, SymbolBeanFullName } from 'vona';
++import { BeanAopMethodBase, getRequestBoundary, SymbolBeanFullName } from 'vona';
+ import { AopMethod } from 'vona-module-a-aspect';
+ 
+ export interface IAopMethodOptionsLog extends IDecoratorAopMethodOptions {
+@@ -28,6 +28,7 @@ export class AopMethodLog
+   implements IAopMethodGet, IAopMethodSet, IAopMethodExecute
+ {
+   get(options: IAopMethodOptionsLog, next: NextSync, receiver: any, prop: string): any {
++    if (getRequestBoundary()) return next();
+     const context = this._getContext(options, receiver);
+     const message = `${receiver[SymbolBeanFullName]}#${prop}(get)`;
+     const logger = this.app.meta.logger.child(options.childName, options.clientName);
+@@ -51,6 +52,7 @@ export class AopMethodLog
+     receiver: any,
+     prop: string,
+   ): boolean {
++    if (getRequestBoundary()) return next();
+     const context = this._getContext(options, receiver);
+     const message = `${receiver[SymbolBeanFullName]}#${prop}(set)`;
+     const logger = this.app.meta.logger.child(options.childName, options.clientName);
+@@ -74,6 +76,7 @@ export class AopMethodLog
+     receiver: any,
+     prop: string,
+   ): Promise<any> | any {
++    if (getRequestBoundary()) return next();
+     const context = this._getContext(options, receiver);
+     const message = `${receiver[SymbolBeanFullName]}#${prop}`;
+     const logger = this.app.meta.logger.child(options.childName, options.clientName);
+diff --git a/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/service/telemetry.ts b/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/service/telemetry.ts
+index b3f45e5352..409d60d784 100644
+--- a/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/service/telemetry.ts
++++ b/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/service/telemetry.ts
+@@ -1,6 +1,13 @@
+ import type { Context, Span, SpanOptions } from '@opentelemetry/api';
+ 
+-import { context, propagation, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
++import {
++  context,
++  INVALID_SPAN_CONTEXT,
++  propagation,
++  ROOT_CONTEXT,
++  SpanKind,
++  trace,
++} from '@opentelemetry/api';
+ import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
+ import { W3CTraceContextPropagator } from '@opentelemetry/core';
+ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
+@@ -11,12 +18,15 @@ import {
+   TraceIdRatioBasedSampler,
+ } from '@opentelemetry/sdk-trace-base';
+ import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+-import { BeanBase } from 'vona';
++import { BeanBase, captureRequestBoundary, getRequestBoundary } from 'vona';
+ import { Service } from 'vona-module-a-bean';
+ 
+ import type { ITelemetryCarrier } from '../types/telemetry.ts';
+ 
+ import { createIngressTrustChecker } from '../lib/ingress.ts';
++import { endHttpSpan, recordSpanException } from '../lib/spanDiagnostics.ts';
++
++const nonRecordingSpan = trace.wrapSpanContext(INVALID_SPAN_CONTEXT);
+ 
+ const carrierGetter = {
+   get(carrier: ITelemetryCarrier, key: string) {
+@@ -44,10 +54,12 @@ export class ServiceTelemetry extends BeanBase {
+   private _enabled = false;
+ 
+   get enabled() {
++    if (getRequestBoundary()) return false;
+     return this._enabled;
+   }
+ 
+   init() {
++    if (getRequestBoundary()) return;
+     if (this._provider || this._enabled) return;
+     const config = this.scope.config;
+     this._isTrustedIngress = createIngressTrustChecker(config.ingress);
+@@ -96,64 +108,64 @@ export class ServiceTelemetry extends BeanBase {
+   }
+ 
+   get activeContext() {
++    if (getRequestBoundary()) return ROOT_CONTEXT;
+     return this.ctx?.state.telemetry?.context ?? context.active();
+   }
+ 
+   extractCarrier(carrier?: ITelemetryCarrier) {
++    if (getRequestBoundary()) return ROOT_CONTEXT;
+     if (!carrier) return context.active();
+     return propagation.extract(context.active(), carrier, carrierGetter);
+   }
+ 
+   isTrustedIngress(peerAddress?: string, internalHeaderValue?: string) {
++    if (getRequestBoundary()) return false;
+     this._isTrustedIngress ??= createIngressTrustChecker(this.scope.config.ingress);
+     return this._isTrustedIngress(peerAddress, internalHeaderValue);
+   }
+ 
+   extractHttpIngressCarrier(trusted: boolean, carrier: ITelemetryCarrier) {
++    if (getRequestBoundary()) return ROOT_CONTEXT;
+     return trusted ? this.extractCarrier(carrier) : this.extractCarrier();
+   }
+ 
+-  injectCarrier(source = this.activeContext): ITelemetryCarrier {
++  injectCarrier(source?: Context): ITelemetryCarrier {
++    if (getRequestBoundary()) return { version: 1 };
+     const carrier: ITelemetryCarrier = { version: 1 };
+-    propagation.inject(source, carrier, carrierSetter);
++    propagation.inject(source === undefined ? this.activeContext : source, carrier, carrierSetter);
+     return carrier;
+   }
+ 
+-  startSpan(name: string, options?: SpanOptions, parent = this.activeContext) {
+-    return trace.getTracer('vona-module-a-telemetry').startSpan(name, options, parent);
++  startSpan(name: string, options?: SpanOptions, parent?: Context) {
++    if (getRequestBoundary()) return nonRecordingSpan;
++    return trace
++      .getTracer('vona-module-a-telemetry')
++      .startSpan(name, options, parent === undefined ? this.activeContext : parent);
+   }
+ 
+   withSpan<RESULT>(span: Span, fn: () => RESULT): RESULT {
++    if (getRequestBoundary()) return fn();
+     const active = trace.setSpan(this.activeContext, span);
+     return context.with(active, fn);
+   }
+ 
+-  createContext(span: Span, parent = this.activeContext) {
+-    return trace.setSpan(parent, span);
++  createContext(span: Span, parent?: Context) {
++    if (getRequestBoundary()) return ROOT_CONTEXT;
++    return trace.setSpan(parent === undefined ? this.activeContext : parent, span);
+   }
+ 
+   recordException(span: Span, error: unknown) {
+-    if (error instanceof Error) {
+-      span.recordException(error);
+-      span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+-      return;
+-    }
+-    span.setStatus({ code: SpanStatusCode.ERROR, message: String(error) });
++    if (getRequestBoundary()) return;
++    recordSpanException(span, error, captureRequestBoundary());
+   }
+ 
+   endHttpSpan(span: Span, statusCode: number, aborted = false) {
+-    if (aborted || statusCode >= 500) {
+-      span.setStatus({
+-        code: SpanStatusCode.ERROR,
+-        message: aborted ? 'client aborted' : undefined,
+-      });
+-    }
+-    span.setAttribute('http.response.status_code', statusCode);
+-    if (aborted) span.setAttribute('vona.http.aborted', true);
+-    span.end();
++    if (getRequestBoundary()) return;
++    endHttpSpan(span, statusCode, aborted);
+   }
+ 
+   getLogContext() {
++    if (getRequestBoundary()) return;
+     if (!this._enabled) return;
+     const spanContext = trace.getSpanContext(this.activeContext);
+     if (!spanContext || !trace.isSpanContextValid(spanContext)) return;
+@@ -166,6 +178,7 @@ export class ServiceTelemetry extends BeanBase {
+   }
+ 
+   createServerSpan(method: string, parent: Context) {
++    if (getRequestBoundary()) return nonRecordingSpan;
+     return this.startSpan(`HTTP ${method}`, { kind: SpanKind.SERVER }, parent);
+   }
+ 
+@@ -175,6 +188,7 @@ export class ServiceTelemetry extends BeanBase {
+     controllerBeanFullName: string,
+     action: string,
+   ) {
++    if (getRequestBoundary()) return;
+     const span = this.ctx.state.telemetry?.serverSpan;
+     if (!span) return;
+     span.updateName(`HTTP ${method.toUpperCase()} ${routePath}`);
+diff --git a/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/bean/middlewareSystem.trace.ts b/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/bean/middlewareSystem.trace.ts
+index 99a64fb2e9..159c4e934f 100644
+--- a/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/bean/middlewareSystem.trace.ts
++++ b/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/bean/middlewareSystem.trace.ts
+@@ -1,4 +1,3 @@
+-import type { Span } from '@opentelemetry/api';
+ import type { Next } from 'vona';
+ import type {
+   IDecoratorMiddlewareSystemOptions,
+@@ -6,9 +5,11 @@ import type {
+ } from 'vona-module-a-aspect';
+ 
+ import { context } from '@opentelemetry/api';
+-import { BeanBase, uuidv4 } from 'vona';
++import { BeanBase, captureRequestBoundary, getRequestBoundary, uuidv4 } from 'vona';
+ import { MiddlewareSystem } from 'vona-module-a-aspect';
+ 
++import { createHttpSpanEnd, recordSpanException } from '../lib/spanDiagnostics.ts';
++
+ export interface IMiddlewareSystemOptionsTrace extends IDecoratorMiddlewareSystemOptions {}
+ 
+ @MiddlewareSystem<IMiddlewareSystemOptionsTrace>({
+@@ -16,6 +17,7 @@ export interface IMiddlewareSystemOptionsTrace extends IDecoratorMiddlewareSyste
+ })
+ export class MiddlewareSystemTrace extends BeanBase implements IMiddlewareSystemExecute {
+   async execute(_options: IMiddlewareSystemOptionsTrace, next: Next) {
++    if (getRequestBoundary()) return next();
+     const telemetry = this.$scope.telemetry.service.telemetry;
+     if (!telemetry.enabled || this.ctx.state.telemetry?.internalAction) return next();
+ 
+@@ -37,11 +39,10 @@ export class MiddlewareSystemTrace extends BeanBase implements IMiddlewareSystem
+     ctx.state.telemetry = { requestId, context: active, serverSpan: span };
+     ctx.set(requestIdHeader, requestId);
+ 
+-    const finish = () => this._end(span, ctx.res.statusCode || ctx.status || 500, false);
+-    const close = () =>
+-      this._end(span, ctx.res.statusCode || ctx.status || 499, !ctx.res.writableEnded);
+-    ctx.res.once('finish', finish);
+-    ctx.res.once('close', close);
++    const capture = captureRequestBoundary();
++    const terminal = createHttpSpanEnd(span, ctx.res, capture);
++    ctx.res.once('finish', terminal.finish);
++    ctx.res.once('close', terminal.close);
+ 
+     try {
+       const result = await context.with(active, next);
+@@ -55,16 +56,10 @@ export class MiddlewareSystemTrace extends BeanBase implements IMiddlewareSystem
+       }
+       return result;
+     } catch (err) {
+-      telemetry.recordException(span, err);
++      recordSpanException(span, err, capture);
+       throw err;
+     }
+   }
+-
+-  private _end(span: Span, statusCode: number, aborted: boolean) {
+-    if (!span || this.ctx.state.telemetry?.serverSpanEnded) return;
+-    this.ctx.state.telemetry!.serverSpanEnded = true;
+-    this.$scope.telemetry.service.telemetry.endHttpSpan(span, statusCode, aborted);
+-  }
+ }
+ 
+ function normalizeRequestId(value?: string) {
+diff --git a/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/bean/bean.telemetry.ts b/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/bean/bean.telemetry.ts
+index c63c130eb9..10961342a7 100644
+--- a/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/bean/bean.telemetry.ts
++++ b/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/bean/bean.telemetry.ts
+@@ -1,7 +1,7 @@
+ import type { Span, SpanOptions } from '@opentelemetry/api';
+ 
+ import { INVALID_SPAN_CONTEXT, trace } from '@opentelemetry/api';
+-import { BeanBase } from 'vona';
++import { BeanBase, getRequestBoundary } from 'vona';
+ import { Bean } from 'vona-module-a-bean';
+ 
+ const nonRecordingSpan = trace.wrapSpanContext(INVALID_SPAN_CONTEXT);
+@@ -9,25 +9,30 @@ const nonRecordingSpan = trace.wrapSpanContext(INVALID_SPAN_CONTEXT);
+ @Bean()
+ export class BeanTelemetry extends BeanBase {
+   get enabled() {
++    if (getRequestBoundary()) return false;
+     return this.scope.service.telemetry.enabled;
+   }
+ 
+   startSpan(name: string, options?: SpanOptions): Span {
++    if (getRequestBoundary()) return nonRecordingSpan;
+     const telemetry = this.scope.service.telemetry;
+     return telemetry.enabled ? telemetry.startSpan(name, options) : nonRecordingSpan;
+   }
+ 
+   withSpan<RESULT>(span: Span, fn: () => RESULT): RESULT {
++    if (getRequestBoundary()) return fn();
+     const telemetry = this.scope.service.telemetry;
+     return telemetry.enabled ? telemetry.withSpan(span, fn) : fn();
+   }
+ 
+   recordException(span: Span, error: unknown) {
++    if (getRequestBoundary()) return;
+     const telemetry = this.scope.service.telemetry;
+     if (telemetry.enabled) telemetry.recordException(span, error);
+   }
+ 
+   withNamedSpan<RESULT>(name: string, fn: () => RESULT, options?: SpanOptions): RESULT {
++    if (getRequestBoundary()) return fn();
+     const span = this.startSpan(name, options);
+     try {
+       const result = this.withSpan(span, fn);
+@@ -52,6 +57,7 @@ export class BeanTelemetry extends BeanBase {
+   }
+ 
+   private _recordAndEndSpan(span: Span, error: unknown) {
++    if (getRequestBoundary()) return;
+     try {
+       this.recordException(span, error);
+     } catch {}
+@@ -59,6 +65,7 @@ export class BeanTelemetry extends BeanBase {
+   }
+ 
+   private _endSpan(span: Span) {
++    if (getRequestBoundary()) return;
+     try {
+       span.end();
+     } catch {}
+diff --git a/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/lib/spanDiagnostics.ts b/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/lib/spanDiagnostics.ts
+new file mode 100644
+index 0000000000..ff68614bcf
+--- /dev/null
++++ b/vona/src/suite-vendor/a-vona/modules/a-telemetry/src/lib/spanDiagnostics.ts
+@@ -0,0 +1,70 @@
++import type { Span } from '@opentelemetry/api';
++import type { RequestBoundaryCapture } from 'vona';
++
++import { SpanStatusCode } from '@opentelemetry/api';
++import { captureRequestBoundary, getRequestBoundary } from 'vona';
++
++export interface HttpSpanResponse {
++  readonly statusCode: number;
++  readonly writableEnded: boolean;
++  removeListener: (event: 'finish' | 'close', listener: () => void) => unknown;
++}
++
++export function recordSpanException(
++  span: Span,
++  error: unknown,
++  capture?: RequestBoundaryCapture,
++): void {
++  if (capture || getRequestBoundary()) return;
++  if (error instanceof Error) {
++    span.recordException(error);
++    span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
++    return;
++  }
++  span.setStatus({ code: SpanStatusCode.ERROR, message: String(error) });
++}
++
++export function endHttpSpan(span: Span, statusCode: number, aborted = false): void {
++  if (getRequestBoundary()) return;
++  if (aborted || statusCode >= 500) {
++    span.setStatus({
++      code: SpanStatusCode.ERROR,
++      message: aborted ? 'client aborted' : undefined,
++    });
++  }
++  span.setAttribute('http.response.status_code', statusCode);
++  if (aborted) span.setAttribute('vona.http.aborted', true);
++  span.end();
++}
++
++export function createHttpSpanEnd(
++  span: Span,
++  response: HttpSpanResponse,
++  capture?: RequestBoundaryCapture,
++): Readonly<{ finish(): void; close(): void }> {
++  capture ??= captureRequestBoundary();
++  const reportFailure = () => capture?.reportFailure('late_callback_failed');
++  let ended = false;
++  const finish = () => end(false);
++  const close = () => end(true);
++  function end(closed: boolean) {
++    if (ended) return;
++    ended = true;
++    try {
++      response.removeListener(closed ? 'finish' : 'close', closed ? finish : close);
++    } catch {
++      reportFailure();
++    }
++    if (capture || getRequestBoundary()) return;
++    try {
++      endHttpSpan(
++        span,
++        response.statusCode || (closed ? 499 : 500),
++        closed && !response.writableEnded,
++      );
++    } catch {
++      reportFailure();
++    }
++  }
++  return Object.freeze({ finish, close });
++}
+diff --git a/vona/src/suite-vendor/a-vona/modules/a-executor/src/service/executor.ts b/vona/src/suite-vendor/a-vona/modules/a-executor/src/service/executor.ts
+index 2dcff6d955..04da688a79 100644
+--- a/vona/src/suite-vendor/a-vona/modules/a-executor/src/service/executor.ts
++++ b/vona/src/suite-vendor/a-vona/modules/a-executor/src/service/executor.ts
+@@ -1,7 +1,7 @@
+ import type { IApiPathRecordMethodMap } from 'vona-module-a-web';
+ 
+ import { combineParamsAndQuery } from '@cabloy/utils';
+-import { BeanBase, cast, deepExtend } from 'vona';
++import { BeanBase, cast, deepExtend, getRequestBoundary } from 'vona';
+ import { Aspect } from 'vona-module-a-aspect';
+ import { Service } from 'vona-module-a-bean';
+ 
+@@ -19,8 +19,8 @@ export class ServiceExecutor extends BeanBase {
+   ): Promise<any> {
+     // app
+     const app = this.app;
+-    const telemetry = this.$scope.telemetry.service.telemetry;
+-    const span = telemetry.enabled
++    const telemetry = getRequestBoundary() ? undefined : this.$scope.telemetry.service.telemetry;
++    const span = telemetry?.enabled
+       ? telemetry.startSpan(`vona.action ${method.toUpperCase()}`, {
+           attributes: { 'vona.action.internal': true, 'http.request.method': method.toUpperCase() },
+         })
+@@ -83,16 +83,16 @@ export class ServiceExecutor extends BeanBase {
+             state: {
+               ...options?.extraData?.state,
+               telemetry: span
+-                ? { context: telemetry.createContext(span), span, internalAction: true }
++                ? { context: telemetry!.createContext(span), span, internalAction: true }
+                 : undefined,
+             },
+           },
+         },
+       );
+     try {
+-      return await (span ? telemetry.withSpan(span, execute) : execute());
++      return await (span ? telemetry!.withSpan(span, execute) : execute());
+     } catch (err) {
+-      if (span) telemetry.recordException(span, err);
++      if (span) telemetry!.recordException(span, err);
+       throw err;
+     } finally {
+       span?.end();
+diff --git a/vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/requestBoundaryFoundation.test.ts b/vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/requestBoundaryFoundation.test.ts
+new file mode 100644
+index 0000000000..1fda29200b
+--- /dev/null
++++ b/vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/requestBoundaryFoundation.test.ts
+@@ -0,0 +1,998 @@
++import type { RequestBoundary, RequestBoundaryCapture, VonaScopeOutcome } from 'vona';
++
++import assert from 'node:assert/strict';
++import { readFile } from 'node:fs/promises';
++import { describe, it } from 'node:test';
++import {
++  AppLogger,
++  BeanBase,
++  captureRequestBoundary,
++  createRequestBoundary,
++  formatLoggerAxiosError,
++  formatLoggerConsole,
++  formatLoggerCtx,
++  formatLoggerDummy,
++  formatLoggerErrors,
++  formatLoggerFilter,
++  getRequestBoundary,
++  getSuppressedDiagnosticLogger,
++  runWithRequestBoundary,
++  SymbolBeanContainerInstances,
++} from 'vona';
++import { app } from 'vona-mock';
++
++import { ServiceExecutor } from '../../../../../suite-vendor/a-vona/modules/a-executor/src/service/executor.ts';
++import { SymbolRouterMiddleware } from '../../../../../suite-vendor/a-vona/modules/a-executor/src/types/executor.ts';
++import { AopMethodLog } from '../../../../../suite-vendor/a-vona/modules/a-logger/src/bean/aopMethod.log.ts';
++import { MiddlewareSystemHttpLog } from '../../../../../suite-vendor/a-vona/modules/a-logger/src/bean/middlewareSystem.httpLog.ts';
++import { BeanTelemetry } from '../../../../../suite-vendor/a-vona/modules/a-telemetry/src/bean/bean.telemetry.ts';
++import {
++  createHttpSpanEnd,
++  endHttpSpan,
++  recordSpanException,
++} from '../../../../../suite-vendor/a-vona/modules/a-telemetry/src/lib/spanDiagnostics.ts';
++import { ServiceTelemetry } from '../../../../../suite-vendor/a-vona/modules/a-telemetry/src/service/telemetry.ts';
++import {
++  barrier,
++  controlledScope,
++  getterProbe,
++  heldBarrier,
++  LocalResponse,
++  memoryLogger,
++  observe,
++  projection,
++  rejectsIdentity,
++  spanFixture,
++  turns,
++} from './support/requestBoundaryFoundationFixture.ts';
++
++const ROOT_CONTEXT = Object.getOwnPropertyDescriptor(
++  ServiceTelemetry.prototype,
++  'activeContext',
++)!.get!.call({ ctx: undefined });
++const contextOptions = { instanceName: null, innerAccess: false } as const;
++function witness(ctx: any, dispose: () => Promise<void>) {
++  ctx.bean[SymbolBeanContainerInstances]['request-boundary-foundation-witness'] = {
++    __dispose__: dispose,
++  };
++}
++function countReads(target: object, key: PropertyKey, counts: { reads: number }) {
++  Object.defineProperty(target, key, {
++    get() {
++      counts.reads++;
++      throw new Error();
++    },
++  });
++}
++function noReads(probe: ReturnType<typeof getterProbe>) {
++  assert.deepEqual(probe.counts, { reads: 0, lazy: 0, sql: 0, string: 0 });
++}
++
++// The managed runner owns startup, disposable seeds and shutdown, with no listener.
++// Local diagnostic collaborators prove seams, not an installed HTTP/OAuth graph.
++describe(
++  'request boundary foundation qualification',
++  { concurrency: false, timeout: 120_000 },
++  () => {
++    it(
++      '1 capability precedes context and preserves synchronous and async ownership',
++      { timeout: 15_000 },
++      async t => {
++        assert.equal(app.meta.env.SERVER_LISTEN_DISABLE, 'true');
++        assert.equal(app.server, undefined);
++        assert.equal(getRequestBoundary(), undefined);
++        assert.equal(captureRequestBoundary(), undefined);
++        const boundary = createRequestBoundary();
++        const other = createRequestBoundary();
++        let deniedCalls = 0;
++        assert.equal(Object.isFrozen(boundary), true);
++        assert.throws(() =>
++          runWithRequestBoundary({} as RequestBoundary, () => {
++            deniedCalls++;
++          }),
++        );
++        const error = new Error();
++        assert.equal(
++          runWithRequestBoundary(boundary, () => 17),
++          17,
++        );
++        assert.throws(
++          () =>
++            runWithRequestBoundary(boundary, () => {
++              throw error;
++            }),
++          value => value === error,
++        );
++        const value = Promise.resolve(23);
++        assert.equal(
++          runWithRequestBoundary(boundary, () => value),
++          value,
++        );
++        const failure = Promise.reject(error);
++        assert.equal(
++          runWithRequestBoundary(boundary, () => failure),
++          failure,
++        );
++        await rejectsIdentity(failure, error);
++        await runWithRequestBoundary(boundary, async () => {
++          assert.equal(getRequestBoundary(), boundary);
++          const capture = captureRequestBoundary()!;
++          assert.equal(Object.isFrozen(capture), true);
++          assert.equal(capture.diagnostics, 'suppress');
++          assert.deepEqual(Object.keys(capture).sort(), [
++            'diagnostics',
++            'reportFailure',
++            'snapshot',
++          ]);
++          assert.deepEqual(capture.snapshot(), { portFault: false });
++          assert.throws(() =>
++            runWithRequestBoundary(other, () => {
++              deniedCalls++;
++            }),
++          );
++          await runWithRequestBoundary(boundary, async () => {
++            await turns();
++            assert.equal(getRequestBoundary(), boundary);
++            assert.equal(captureRequestBoundary(), capture);
++          });
++        });
++        assert.equal(deniedCalls, 0);
++        assert.equal(getRequestBoundary(), undefined);
++        projection(t, 'capability', { deniedCalls, cleared: getRequestBoundary() === undefined });
++      },
++    );
++
++    it(
++      '2 synchronous initialization precedes controlled setup and actual healthy throw disposal',
++      { timeout: 15_000 },
++      async t => {
++        const local = controlledScope();
++        const outcomes: VonaScopeOutcome[] = [];
++        let calls = 0;
++        assert.equal(
++          await local.executor.newCtx(
++            async () => {
++              calls++;
++              return 19;
++            },
++            {
++              instanceName: null,
++              innerAccess: false,
++              locale: 'en-us',
++              tz: 'UTC',
++              dbInfo: { level: 0 },
++            },
++            {
++              initializeContext(ctx) {
++                assert.equal(ctx, local.context);
++                assert.equal(local.storage.getStore(), ctx);
++                assert.deepEqual(local.counts, {
++                  increment: 1,
++                  decrement: 0,
++                  dispose: 0,
++                  remaining: 0,
++                  setup: 0,
++                  commits: 0,
++                  database: 0,
++                });
++                local.initialize();
++              },
++              onScopeOutcome(outcome) {
++                outcomes.push(outcome);
++              },
++            },
++          ),
++          19,
++        );
++        assert.equal(calls, 1);
++        assert.equal(local.counts.database, 1);
++        assert.equal(local.counts.commits, 1);
++        assert.deepEqual(outcomes, ['disposed']);
++
++        const error = new Error();
++        let disposed = 0;
++        let business = 0;
++        const healthy: VonaScopeOutcome[] = [];
++        await rejectsIdentity(
++          app.bean.executor.mockCtx(
++            async () => {
++              business++;
++            },
++            contextOptions,
++            {
++              initializeContext(ctx) {
++                assert.equal(app.ctx, ctx);
++                witness(ctx, async () => {
++                  disposed++;
++                });
++                throw error;
++              },
++              onScopeOutcome(outcome) {
++                healthy.push(outcome);
++              },
++            },
++          ),
++          error,
++        );
++        assert.equal(business, 0);
++        assert.equal(disposed, 1);
++        assert.deepEqual(healthy, ['disposed']);
++
++        const held = heldBarrier();
++        const entered = barrier();
++        const misuse = controlledScope();
++        const misuseOutcomes: VonaScopeOutcome[] = [];
++        let settled = false;
++        const task = misuse.executor.newCtx(
++          async () => {
++            business++;
++          },
++          contextOptions,
++          {
++            initializeContext: (() => {
++              entered.release();
++              return held.promise;
++            }) as () => void,
++            onScopeOutcome(outcome) {
++              misuseOutcomes.push(outcome);
++            },
++          },
++        );
++        const rejection = assert.rejects(
++          task,
++          error =>
++            error instanceof Error && error.message === 'Context initializer must be synchronous',
++        );
++        const joined = rejection.then(() => {
++          settled = true;
++        });
++        try {
++          await observe(entered.promise);
++          await turns();
++          assert.equal(settled, false);
++          assert.equal(misuse.counts.setup, 0);
++          assert.equal(misuse.counts.dispose, 0);
++          assert.deepEqual(misuseOutcomes, []);
++        } finally {
++          held.release();
++          await joined;
++        }
++        assert.equal(held.expired, false);
++        assert.equal(business, 0);
++        assert.deepEqual(misuseOutcomes, ['disposed']);
++        projection(t, 'initializer', {
++          calls,
++          disposed,
++          business,
++          setup: misuse.counts.setup,
++          settled,
++        });
++      },
++    );
++
++    it(
++      '3 independent real mockCtx overlap does not bleed protected policy',
++      { timeout: 15_000 },
++      async t => {
++        const local = memoryLogger();
++        const boundary = createRequestBoundary();
++        const held = heldBarrier();
++        const entered = barrier();
++        const contexts = new WeakSet<object>();
++        let count = 0;
++        const tasks = [true, false].map(protectedCall => {
++          const execute = () =>
++            app.bean.executor.mockCtx(async () => {
++              assert.equal(contexts.has(app.ctx), false);
++              contexts.add(app.ctx);
++              assert.equal(getRequestBoundary(), protectedCall ? boundary : undefined);
++              count++;
++              if (count === 2) entered.release();
++              await held.promise;
++              assert.equal(getRequestBoundary(), protectedCall ? boundary : undefined);
++              local.logger.error('local');
++            }, contextOptions);
++          return protectedCall ? runWithRequestBoundary(boundary, execute) : execute();
++        });
++        try {
++          await observe(entered.promise);
++          assert.deepEqual(local.counts(), [0, 0, 0, 0]);
++          held.release();
++          await Promise.all(tasks);
++          await turns();
++          assert.deepEqual(local.counts(), [1, 0, 0, 1]);
++          assert.equal(getRequestBoundary(), undefined);
++        } finally {
++          held.release();
++          await Promise.allSettled(tasks);
++          await local.close();
++        }
++        assert.equal(held.expired, false);
++        projection(t, 'overlap', {
++          contexts: count,
++          protectedSinks: 0,
++          ordinarySinks: local.counts()[0],
++        });
++      },
++    );
++
++    it(
++      '4 real local Winston gates every supported input before evaluation and formatting',
++      { timeout: 15_000 },
++      async t => {
++        const local = memoryLogger();
++        const probe = getterProbe();
++        const boundary = createRequestBoundary();
++        let writes = 0;
++        try {
++          runWithRequestBoundary(boundary, () => {
++            for (const level of [
++              'error',
++              'warn',
++              'info',
++              'http',
++              'verbose',
++              'debug',
++              'silly',
++            ] as const) {
++              local.logger[level](probe.payload);
++              local.logger[level](probe.error);
++              local.logger[level](probe.axios);
++              local.logger[level](probe.lazy as any, probe.payload);
++            }
++            local.logger.log(probe.payload as any);
++            local.logger.log('error', probe.payload as any, probe.payload);
++            assert.equal(
++              local.logger.write(probe.payload, () => {
++                writes++;
++              }),
++              true,
++            );
++            local.logger.child(probe.payload).error(probe.payload);
++            local.logger.startTimer().done(probe.payload);
++            local.logger.profile('local', probe.payload);
++            const formats = [
++              formatLoggerAxiosError({ stack: true, cause: true }),
++              formatLoggerErrors(probe.payload),
++              formatLoggerCtx(),
++              formatLoggerDummy(),
++              formatLoggerFilter(probe.payload as any),
++              formatLoggerConsole(probe.payload as any),
++            ];
++            for (const format of formats)
++              assert.equal(format.transform(probe.payload as any, probe.payload), false);
++          });
++          await turns();
++          noReads(probe);
++          assert.equal(writes, 1);
++          assert.deepEqual(local.counts(), [0, 0, 0, 0]);
++          local.logger.error('local');
++          local.logger.warn('local');
++          local.logger.http('local');
++          await turns();
++          assert.deepEqual(local.counts(), [1, 1, 1, 3]);
++          projection(t, 'winston', { ...probe.counts, writes, ordinarySinks: local.counts()[3] });
++        } finally {
++          await local.close();
++        }
++      },
++    );
++
++    it(
++      '5 preacquired handles resume but protected children, timers and first lookups stay inert',
++      { timeout: 15_000 },
++      async t => {
++        const local = memoryLogger();
++        const child = local.logger.child({ name: 'local' });
++        const timer = local.logger.startTimer();
++        const probe = getterProbe();
++        let protectedChild!: typeof child;
++        let protectedTimer!: typeof timer;
++        let creations = 0;
++        const factory = new AppLogger();
++        Object.defineProperty(factory, '_createClient', {
++          value() {
++            creations++;
++            return local.raw;
++          },
++        });
++        class LocalBean extends BeanBase {
++          logger() {
++            return this.$loggerClient();
++          }
++          child() {
++            return this.$loggerChild('req');
++          }
++        }
++        const bean = new LocalBean();
++        Object.defineProperty(bean, 'app', { value: { meta: { logger: factory } } });
++        const failures = { calls: 0 };
++        let capture!: RequestBoundaryCapture;
++        const boundary = createRequestBoundary({
++          onFailure() {
++            failures.calls++;
++            capture.reportFailure('diagnostic_failed');
++            capture.reportFailure('late_callback_failed');
++            throw new Error();
++          },
++        });
++        try {
++          runWithRequestBoundary(boundary, () => {
++            capture = captureRequestBoundary()!;
++            child.error(probe.payload);
++            timer.done(probe.payload);
++            assert.notEqual(timer.logger, local.raw);
++            protectedChild = local.logger.child(probe.payload);
++            protectedTimer = local.logger.startTimer();
++            assert.equal(factory.get(), getSuppressedDiagnosticLogger());
++            assert.equal(factory.child('req'), getSuppressedDiagnosticLogger());
++            assert.equal(bean.logger(), getSuppressedDiagnosticLogger());
++            assert.equal(bean.child(), getSuppressedDiagnosticLogger());
++            assert.equal(creations, 0);
++            capture.reportFailure('diagnostic_failed');
++            capture.reportFailure('diagnostic_failed');
++          });
++          assert.equal(failures.calls, 1);
++          assert.deepEqual(capture.snapshot(), { portFault: true });
++          let asyncCapture!: RequestBoundaryCapture;
++          runWithRequestBoundary(
++            createRequestBoundary({ onFailure: (() => Promise.reject(new Error())) as () => void }),
++            () => {
++              asyncCapture = captureRequestBoundary()!;
++              asyncCapture.reportFailure('diagnostic_failed');
++            },
++          );
++          await turns();
++          assert.equal(
++            asyncCapture.snapshot().portFault,
++            true,
++            'async_port_is_unsupported_not_a_lifetime_guarantee',
++          );
++          protectedChild.error(probe.payload);
++          protectedTimer.done(probe.payload);
++          protectedTimer.logger.error(probe.payload);
++          noReads(probe);
++          assert.equal(creations, 0);
++          child.error('local');
++          const ordinary = factory.get();
++          assert.notEqual(ordinary, getSuppressedDiagnosticLogger());
++          assert.notEqual(ordinary, local.raw);
++          assert.equal(factory.get(), ordinary);
++          bean.logger().error('local');
++          bean.child().error('local');
++          assert.equal(creations, 1);
++          await turns();
++          assert.deepEqual(local.counts(), [3, 0, 0, 3]);
++          projection(t, 'factory', {
++            ...probe.counts,
++            creations,
++            failures: failures.calls,
++            portFault: capture.snapshot().portFault,
++          });
++        } finally {
++          await local.close();
++        }
++      },
++    );
++
++    it(
++      '6 actual HTTP log function bypasses diagnostic receiver and serializer ports',
++      { timeout: 15_000 },
++      async t => {
++        const counts = { reads: 0 };
++        const receiver: any = {};
++        for (const key of ['ctx', 'app', '$loggerChild']) countReads(receiver, key, counts);
++        const probe = getterProbe();
++        let calls = 0;
++        const execute = (next: () => Promise<any>) =>
++          runWithRequestBoundary(createRequestBoundary(), () =>
++            MiddlewareSystemHttpLog.prototype.execute.call(receiver, probe.payload as any, next),
++          );
++        await execute(async () => {
++          calls++;
++        });
++        const error = new Error();
++        await rejectsIdentity(
++          execute(async () => {
++            calls++;
++            throw error;
++          }),
++          error,
++        );
++        assert.equal(calls, 2);
++        assert.equal(counts.reads, 0);
++        noReads(probe);
++        projection(t, 'http-seam', { calls, diagnosticReads: counts.reads, ...probe.counts });
++      },
++    );
++
++    it(
++      '7 actual action AOP and inner executor seams preserve business without diagnostic reads',
++      { timeout: 15_000 },
++      async t => {
++        const counts = { reads: 0 };
++        const receiver: any = {};
++        for (const key of ['app', '_getContext', '_logResult', '_logError'])
++          countReads(receiver, key, counts);
++        const probe = getterProbe();
++        const result = Object.create(null);
++        const boundary = createRequestBoundary();
++        const aop = AopMethodLog.prototype;
++        runWithRequestBoundary(boundary, () => {
++          assert.equal(
++            aop.get.call(receiver, probe.payload as any, () => result, probe.payload, 'local'),
++            result,
++          );
++          assert.equal(
++            aop.set.call(
++              receiver,
++              probe.payload as any,
++              probe.payload,
++              () => true,
++              probe.payload,
++              'local',
++            ),
++            true,
++          );
++          assert.equal(
++            aop.execute.call(
++              receiver,
++              probe.payload as any,
++              probe.payload as any,
++              () => result,
++              probe.payload,
++              'local',
++            ),
++            result,
++          );
++          const error = probe.error;
++          assert.throws(
++            () =>
++              aop.execute.call(
++                receiver,
++                probe.payload as any,
++                [] as any,
++                () => {
++                  throw error;
++                },
++                probe.payload,
++                'local',
++              ),
++            value => value === error,
++          );
++        });
++        await rejectsIdentity(
++          runWithRequestBoundary(boundary, () =>
++            aop.execute.call(
++              receiver,
++              probe.payload as any,
++              [] as any,
++              async () => {
++                throw probe.error;
++              },
++              probe.payload,
++              'local',
++            ),
++          ) as Promise<unknown>,
++          probe.error,
++        );
++
++        const ctx: any = { req: { headers: {} }, res: {}, request: {}, status: 200, body: result };
++        let calls = 0;
++        const own: any = {
++          ctx,
++          app: {
++            async [SymbolRouterMiddleware]() {
++              calls++;
++            },
++            util: {
++              createError() {
++                return probe.error;
++              },
++            },
++          },
++          bean: {
++            executor: {
++              async newCtx(fn: () => Promise<unknown>) {
++                return await fn();
++              },
++            },
++          },
++        };
++        countReads(own, '$scope', counts);
++        assert.equal(
++          await runWithRequestBoundary(boundary, () =>
++            ServiceExecutor.prototype.performActionInner.call(own, 'get', '/local'),
++          ),
++          result,
++        );
++        ctx.status = 500;
++        ctx.body = {};
++        await rejectsIdentity(
++          runWithRequestBoundary(boundary, () =>
++            ServiceExecutor.prototype.performActionInner.call(own, 'get', '/local'),
++          ),
++          probe.error,
++        );
++        assert.equal(calls, 2);
++        assert.equal(counts.reads, 0);
++        noReads(probe);
++        projection(t, 'action-seam', { calls, diagnosticReads: counts.reads, ...probe.counts });
++      },
++    );
++
++    it(
++      '8 actual telemetry facade service and pure helpers prevent protected evaluation',
++      { timeout: 15_000 },
++      async t => {
++        const counts = { reads: 0 };
++        const receiver: any = {};
++        for (const key of ['scope', 'ctx', 'activeContext', '_enabled'])
++          countReads(receiver, key, counts);
++        const probe = getterProbe();
++        const { span, counts: spans } = spanFixture();
++        const facade = BeanTelemetry.prototype;
++        const service = ServiceTelemetry.prototype;
++        let calls = 0;
++        runWithRequestBoundary(createRequestBoundary(), () => {
++          assert.equal(
++            Object.getOwnPropertyDescriptor(facade, 'enabled')!.get!.call(receiver),
++            false,
++          );
++          Object.getOwnPropertyDescriptor(service, 'activeContext')!.get!.call(receiver);
++          Object.getOwnPropertyDescriptor(service, 'enabled')!.get!.call(receiver);
++          assert.equal(
++            facade.startSpan.call(receiver, 'local', probe.payload).isRecording(),
++            false,
++          );
++          assert.equal(
++            facade.withSpan.call(receiver, span, () => {
++              calls++;
++              return 7;
++            }),
++            7,
++          );
++          facade.recordException.call(receiver, span, probe.error);
++          service.startSpan.call(receiver, 'local', probe.payload);
++          service.injectCarrier.call(receiver);
++          service.createContext.call(receiver, span);
++          assert.equal(
++            service.withSpan.call(receiver, span, () => {
++              calls++;
++              return 9;
++            }),
++            9,
++          );
++          service.recordException.call(receiver, span, probe.error);
++          service.recordException.call(receiver, span, probe.payload);
++          service.getLogContext.call(receiver);
++          service.createServerSpan.call(receiver, probe.payload as any, ROOT_CONTEXT);
++          service.enrichHttpSpan.call(receiver, probe.payload as any, 'local', 'local', 'local');
++          recordSpanException(span, probe.error);
++          recordSpanException(span, probe.payload);
++        });
++        assert.equal(calls, 2);
++        assert.equal(counts.reads, 0);
++        noReads(probe);
++        assert.deepEqual(spans, { exception: 0, status: 0, attribute: 0, end: 0, name: 0 });
++        recordSpanException(span, new Error());
++        recordSpanException(span, 3);
++        endHttpSpan(span, 503);
++        assert.deepEqual(spans, { exception: 1, status: 3, attribute: 1, end: 1, name: 0 });
++        projection(t, 'telemetry', {
++          calls,
++          diagnosticReads: counts.reads,
++          ...probe.counts,
++          ordinaryEnds: spans.end,
++        });
++      },
++    );
++
++    it(
++      '9 actual healthy disposer barrier owns outcome until successful whole settlement',
++      { timeout: 15_000 },
++      async t => {
++        const held = heldBarrier();
++        const entered = barrier();
++        const outcomes: VonaScopeOutcome[] = [];
++        let disposed = 0;
++        let settled = false;
++        const task = app.bean.executor.mockCtx(
++          async () => {
++            witness(app.ctx, async () => {
++              disposed++;
++              entered.release();
++              await held.promise;
++            });
++            assert.equal(await app.ctxStorage.run(app.ctx, async () => 29), 29);
++            return 31;
++          },
++          contextOptions,
++          {
++            onScopeOutcome(outcome) {
++              outcomes.push(outcome);
++            },
++          },
++        );
++        const joined = task.then(value => {
++          settled = true;
++          return value;
++        });
++        try {
++          await observe(entered.promise);
++          assert.equal(disposed, 1);
++          assert.equal(settled, false);
++          assert.deepEqual(outcomes, []);
++          held.release();
++          assert.equal(await joined, 31);
++          assert.deepEqual(outcomes, ['disposed']);
++        } finally {
++          held.release();
++          await Promise.allSettled([joined]);
++        }
++        assert.equal(held.expired, false);
++        projection(t, 'healthy-disposal', { disposed, settled, outcomes: outcomes.length });
++      },
++    );
++
++    it(
++      '10 controlled actual ALS creation disposal precedence counters and observed reentry',
++      { timeout: 15_000 },
++      async t => {
++        const missing = controlledScope({ failCreation: true });
++        const absent: VonaScopeOutcome[] = [];
++        let calls = 0;
++        await rejectsIdentity(
++          missing.executor.newCtx(
++            async () => {
++              calls++;
++            },
++            contextOptions,
++            {
++              onScopeOutcome(outcome) {
++                absent.push(outcome);
++              },
++            },
++          ),
++          missing.creationError,
++        );
++        assert.equal(calls, 0);
++        assert.deepEqual(absent, ['not_created']);
++        assert.equal(missing.counts.increment, 0);
++        const local = controlledScope({ failDispose: true });
++        local.initialize();
++        const outcomes: VonaScopeOutcome[] = [];
++        const businessError = new Error();
++        await rejectsIdentity(
++          local.storage.runObserved(
++            local.context,
++            async () => {
++              throw businessError;
++            },
++            outcome => {
++              outcomes.push(outcome);
++            },
++          ),
++          local.disposalError,
++        );
++        assert.deepEqual(outcomes, ['dispose_failed']);
++        assert.equal(local.counts.increment, 1);
++        assert.equal(local.counts.decrement, 0);
++        assert.equal(local.counts.dispose, 1);
++        assert.equal(local.counts.remaining, 0);
++        const healthy = controlledScope();
++        healthy.initialize();
++        const observed: VonaScopeOutcome[] = [];
++        let nested = 0;
++        await healthy.storage.runObserved(
++          healthy.context,
++          async () => {
++            await assert.rejects(
++              healthy.storage.runObserved(
++                healthy.context,
++                () => {
++                  nested++;
++                },
++                outcome => {
++                  observed.push(outcome);
++                },
++              ),
++            );
++            assert.equal(await healthy.storage.run(healthy.context, () => 37), 37);
++          },
++          outcome => {
++            observed.push(outcome);
++          },
++        );
++        assert.equal(nested, 0);
++        assert.deepEqual(observed, ['disposed']);
++        assert.equal(healthy.counts.increment, 1);
++        assert.equal(healthy.counts.decrement, 1);
++        assert.equal(healthy.counts.dispose, 1);
++        const failures: string[] = [];
++        const boundary = createRequestBoundary({
++          onFailure(failure) {
++            failures.push(failure);
++          },
++        });
++        const observer = controlledScope();
++        observer.initialize();
++        assert.equal(
++          await runWithRequestBoundary(boundary, () =>
++            observer.storage.runObserved(
++              observer.context,
++              () => 41,
++              () => {
++                throw new Error();
++              },
++            ),
++          ),
++          41,
++        );
++        assert.deepEqual(failures, ['observer_failed']);
++        const asyncObserver = controlledScope();
++        asyncObserver.initialize();
++        let asyncCapture!: RequestBoundaryCapture;
++        const asyncBoundary = createRequestBoundary();
++        assert.equal(
++          await runWithRequestBoundary(asyncBoundary, () => {
++            asyncCapture = captureRequestBoundary()!;
++            return asyncObserver.storage.runObserved(asyncObserver.context, () => 43, (() =>
++              Promise.reject(new Error())) as () => void);
++          }),
++          43,
++        );
++        await turns();
++        assert.equal(
++          asyncCapture.snapshot().portFault,
++          true,
++          'async_observer_is_unsupported_not_a_lifetime_guarantee',
++        );
++        const rejected = controlledScope();
++        rejected.initialize();
++        await rejectsIdentity(
++          runWithRequestBoundary(createRequestBoundary(), () =>
++            rejected.storage.runObserved(
++              rejected.context,
++              () => {
++                throw businessError;
++              },
++              () => {
++                throw new Error();
++              },
++            ),
++          ),
++          businessError,
++        );
++        projection(t, 'controlled-als', {
++          notCreated: absent.length,
++          disposeFailed: outcomes.length,
++          decrement: local.counts.decrement,
++          remaining: local.counts.remaining,
++          nested,
++        });
++      },
++    );
++
++    it(
++      '11 pure late terminal helper after real disposal ends once without scoped lookup',
++      { timeout: 15_000 },
++      async t => {
++        for (const terminal of ['finish', 'close'] as const) {
++          const response = new LocalResponse();
++          response.writableEnded = terminal === 'finish';
++          const { span, counts } = spanFixture();
++          let callbacks!: ReturnType<typeof createHttpSpanEnd>;
++          let disposed = 0;
++          await app.bean.executor.mockCtx(async () => {
++            witness(app.ctx, async () => {
++              disposed++;
++            });
++            callbacks = createHttpSpanEnd(span, response);
++            response.once('finish', callbacks.finish);
++            response.once('close', callbacks.close);
++          }, contextOptions);
++          assert.equal(disposed, 1);
++          assert.equal(Object.isFrozen(callbacks), true);
++          response.emit(terminal);
++          callbacks.finish();
++          callbacks.close();
++          assert.equal(counts.end, 1);
++          assert.equal(response.listenerCount('finish'), 0);
++          assert.equal(response.listenerCount('close'), 0);
++        }
++        const response = new LocalResponse();
++        let removals = 0;
++        Object.defineProperty(response, 'removeListener', {
++          value(event: string, listener: () => void) {
++            removals++;
++            LocalResponse.prototype.removeListener.call(response, event, listener);
++            if (event === 'close') throw new Error();
++          },
++        });
++        const broken = spanFixture(true);
++        let capture!: RequestBoundaryCapture;
++        let callbacks!: ReturnType<typeof createHttpSpanEnd>;
++        let failureCalls = 0;
++        const boundary = createRequestBoundary({
++          onFailure() {
++            failureCalls++;
++            throw new Error();
++          },
++        });
++        await runWithRequestBoundary(boundary, () =>
++          app.bean.executor.mockCtx(async () => {
++            capture = captureRequestBoundary()!;
++            callbacks = createHttpSpanEnd(broken.span, response, capture);
++            response.once('finish', callbacks.finish);
++            response.once('close', callbacks.close);
++          }, contextOptions),
++        );
++        assert.doesNotThrow(() => response.emit('finish'));
++        assert.doesNotThrow(() => callbacks.close());
++        assert.equal(broken.counts.end, 0, 'captured_suppression_survives_disposal');
++        assert.equal(removals, 2);
++        assert.equal(failureCalls, 1);
++        assert.deepEqual(capture.snapshot(), { portFault: true });
++        assert.equal(response.listenerCount('close'), 0);
++        projection(t, 'late-terminal', {
++          protectedEnds: broken.counts.end,
++          removals,
++          failureCalls,
++          portFault: capture.snapshot().portFault,
++        });
++      },
++    );
++
++    it(
++      '12 unmarked local diagnostic defaults remain ordinary and helper import is inert',
++      { timeout: 15_000 },
++      async t => {
++        const local = memoryLogger();
++        const span = spanFixture();
++        let activeReads = 0;
++        const receiver = {
++          get activeContext() {
++            activeReads++;
++            return ROOT_CONTEXT;
++          },
++        };
++        try {
++          local.logger.write({ level: 'error', message: 'local' });
++          local.logger.child({ name: 'local' }).warn('local');
++          local.logger.startTimer().done({ level: 'http', message: 'local' });
++          await turns();
++          assert.deepEqual(local.counts(), [1, 1, 1, 3]);
++          ServiceTelemetry.prototype.injectCarrier.call(receiver);
++          ServiceTelemetry.prototype.startSpan.call(receiver, 'local');
++          ServiceTelemetry.prototype.createContext.call(receiver, span.span);
++          assert.equal(activeReads, 3);
++          const error = new Error();
++          assert.throws(
++            () =>
++              ServiceTelemetry.prototype.withSpan.call(receiver, span.span, () => {
++                throw error;
++              }),
++            value => value === error,
++          );
++          const metadataUrl = new URL('../src/.metadata/index.ts', import.meta.url);
++          const before = await readFile(metadataUrl, 'utf8');
++          const server = app.server;
++          await import('../../../../../../packages-vona/vona-core/src/lib/core/requestBoundary.ts');
++          await import('../../../../../suite-vendor/a-vona/modules/a-telemetry/src/lib/spanDiagnostics.ts');
++          assert.equal(await readFile(metadataUrl, 'utf8'), before);
++          assert.equal(app.server, server);
++          assert.equal(app.server, undefined);
++          assert.equal(getRequestBoundary(), undefined);
++          projection(t, 'ordinary', {
++            activeReads,
++            sinks: local.counts()[3],
++            listenerAbsent: app.server === undefined,
++          });
++        } finally {
++          await local.close();
++        }
++      },
++    );
++  },
++);
+diff --git a/vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/requestBoundaryFoundationFixture.ts b/vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/requestBoundaryFoundationFixture.ts
+new file mode 100644
+index 0000000000..8947b617de
+--- /dev/null
++++ b/vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/requestBoundaryFoundationFixture.ts
+@@ -0,0 +1,385 @@
++import type { VonaApplication, VonaContext } from 'vona';
++
++import assert from 'node:assert/strict';
++import { EventEmitter } from 'node:events';
++import { setImmediate as nextTurn } from 'node:timers/promises';
++import {
++  createDiagnosticLogger,
++  formatLoggerBoundary,
++  formatLoggerConsole,
++  formatLoggerErrors,
++  formatLoggerFilter,
++} from 'vona';
++import * as Winston from 'winston';
++import Transport from 'winston-transport';
++
++import type { ServiceTelemetry } from '../../../../../../suite-vendor/a-vona/modules/a-telemetry/src/service/telemetry.ts';
++
++import { VonaAsyncLocalStorage } from '../../../../../../../packages-vona/vona-core/src/lib/core/asyncLocalStorage.ts';
++import { BeanExecutor } from '../../../../../../suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts';
++
++type Span = ReturnType<ServiceTelemetry['startSpan']>;
++
++export function barrier() {
++  let release!: () => void;
++  const promise = new Promise<void>(resolve => {
++    release = resolve;
++  });
++  return { promise, release };
++}
++
++// Expiry observes a budget violation; it does not settle or release the held work.
++export function heldBarrier() {
++  const held = barrier();
++  let expired = false;
++  const timer = setTimeout(() => {
++    expired = true;
++  }, 5_000);
++  return {
++    promise: held.promise,
++    release() {
++      clearTimeout(timer);
++      held.release();
++    },
++    get expired() {
++      return expired;
++    },
++  };
++}
++
++// Callers still release and join the original continuation in finally.
++export function observe<T>(promise: Promise<T>): Promise<T> {
++  return new Promise<T>((resolve, reject) => {
++    const timer = setTimeout(() => reject(new Error('foundation_observation_expired')), 1_000);
++    promise.then(
++      value => {
++        clearTimeout(timer);
++        resolve(value);
++      },
++      error => {
++        clearTimeout(timer);
++        reject(error);
++      },
++    );
++  });
++}
++
++export async function turns() {
++  await nextTurn();
++  await nextTurn();
++}
++
++let retainedEvents = 0;
++let retainedBytes = 0;
++export function projection(
++  t: { diagnostic(message: string): void },
++  alias:
++    | 'capability'
++    | 'initializer'
++    | 'overlap'
++    | 'winston'
++    | 'factory'
++    | 'http-seam'
++    | 'action-seam'
++    | 'telemetry'
++    | 'healthy-disposal'
++    | 'controlled-als'
++    | 'late-terminal'
++    | 'ordinary',
++  counters: Record<string, number | boolean>,
++) {
++  for (const [key, value] of Object.entries(counters)) {
++    assert.match(key, /^[a-z][a-z0-9]{0,63}$/i);
++    assert.equal(
++      typeof value === 'boolean' || (Number.isSafeInteger(value) && Number(value) >= 0),
++      true,
++    );
++  }
++  const event = JSON.stringify({ alias, ...counters });
++  const bytes = Buffer.byteLength(event);
++  assert.equal(
++    alias.length <= 64 &&
++      bytes <= 512 &&
++      retainedEvents < 512 &&
++      retainedBytes + bytes <= 256 * 1024,
++    true,
++    'projection_budget',
++  );
++  retainedEvents++;
++  retainedBytes += bytes;
++  t.diagnostic(event);
++}
++
++export async function rejectsIdentity(promise: Promise<unknown>, expected: unknown) {
++  await assert.rejects(promise, error => error === expected);
++}
++
++export function getterProbe() {
++  const counts = { reads: 0, lazy: 0, sql: 0, string: 0 };
++  const read = () => {
++    counts.reads++;
++    return 'local';
++  };
++  const payload: Record<PropertyKey, any> = {};
++  for (const key of [
++    'message',
++    'stack',
++    'cause',
++    'name',
++    'isAxiosError',
++    'config',
++    'request',
++    'response',
++    'context',
++    'metadata',
++    'level',
++  ]) {
++    Object.defineProperty(payload, key, { enumerable: true, get: read });
++  }
++  Object.defineProperty(payload, Symbol.toPrimitive, {
++    value() {
++      counts.string++;
++      return 'local';
++    },
++  });
++  const error = new Error();
++  for (const key of ['stack', 'message', 'cause']) {
++    Object.defineProperty(error, key, { configurable: true, enumerable: true, get: read });
++  }
++  const axios = Object.create(error);
++  Object.defineProperty(axios, 'isAxiosError', {
++    enumerable: true,
++    get() {
++      counts.reads++;
++      return true;
++    },
++  });
++  Object.defineProperty(axios, 'config', {
++    enumerable: true,
++    get() {
++      counts.reads++;
++      return { url: 'local' };
++    },
++  });
++  const sql = {
++    toQuery() {
++      counts.sql++;
++      return 'local';
++    },
++  };
++  const lazy = () => {
++    counts.lazy++;
++    return sql.toQuery();
++  };
++  return { counts, payload, error, axios, lazy };
++}
++
++export function spanFixture(throwEnd = false) {
++  const counts = { exception: 0, status: 0, attribute: 0, end: 0, name: 0 };
++  const span = {
++    recordException() {
++      counts.exception++;
++      return span;
++    },
++    setStatus() {
++      counts.status++;
++      return span;
++    },
++    setAttribute() {
++      counts.attribute++;
++      return span;
++    },
++    setAttributes() {
++      counts.attribute++;
++      return span;
++    },
++    updateName() {
++      counts.name++;
++      return span;
++    },
++    end() {
++      counts.end++;
++      if (throwEnd) throw new Error();
++    },
++    isRecording() {
++      return true;
++    },
++    spanContext() {
++      return { traceId: '0'.repeat(32), spanId: '0'.repeat(16), traceFlags: 0 };
++    },
++    addEvent() {
++      return span;
++    },
++    addLink() {
++      return span;
++    },
++    addLinks() {
++      return span;
++    },
++  } as unknown as Span;
++  return { span, counts };
++}
++
++export class LocalResponse extends EventEmitter {
++  statusCode = 200;
++  writableEnded = true;
++}
++
++class MemoryTransport extends Transport {
++  count = 0;
++  override log(_info: unknown, callback: () => void) {
++    this.count++;
++    callback();
++  }
++}
++
++export function memoryLogger() {
++  const levels = ['error', 'warn', 'http'] as const;
++  const sinks = levels.map(
++    level =>
++      new MemoryTransport({
++        level: 'silly',
++        format: Winston.format.combine(
++          formatLoggerBoundary(),
++          formatLoggerErrors({ stack: true, cause: true }),
++          formatLoggerFilter({ level, strict: true } as any),
++          Winston.format.json(),
++        ),
++      }),
++  );
++  sinks.push(
++    new MemoryTransport({
++      level: 'silly',
++      format: Winston.format.combine(
++        formatLoggerBoundary(),
++        formatLoggerErrors({ stack: true, cause: true }),
++        formatLoggerFilter({ level: 'silly' } as any),
++        Winston.format.splat(),
++        Winston.format.timestamp(),
++        formatLoggerConsole({ clientName: 'default' } as any),
++      ),
++    }),
++  );
++  const raw = Winston.createLogger({
++    level: 'silly',
++    format: formatLoggerBoundary(),
++    transports: sinks,
++  });
++  const logger = createDiagnosticLogger(raw);
++  return {
++    raw,
++    logger,
++    sinks,
++    counts() {
++      return sinks.map(sink => sink.count);
++    },
++    async close() {
++      try {
++        await new Promise<void>(resolve => {
++          raw.end(resolve);
++        });
++      } finally {
++        raw.close();
++        for (const sink of sinks) sink.close?.();
++      }
++    },
++  };
++}
++
++// Only the ALS implementation is real here. No second VonaApplication is created.
++export function controlledScope(options: { failDispose?: boolean; failCreation?: boolean } = {}) {
++  const counts = {
++    increment: 0,
++    decrement: 0,
++    dispose: 0,
++    remaining: 0,
++    setup: 0,
++    commits: 0,
++    database: 0,
++  };
++  const creationError = new Error();
++  const disposalError = new Error();
++  let initialized = false;
++  let storage!: VonaAsyncLocalStorage;
++  const state: Record<string, any> = { instanceName: null };
++  const context: any = {
++    state: {},
++    request: { headers: {} },
++    bean: {
++      async dispose() {
++        counts.dispose++;
++        if (options.failDispose) throw disposalError;
++        counts.remaining++;
++      },
++    },
++    async commitsDone() {
++      counts.commits++;
++    },
++  };
++  for (const key of ['innerAccess', 'locale', 'tz', 'instanceName']) {
++    Object.defineProperty(context, key, {
++      get() {
++        if (key !== 'instanceName') counts.setup++;
++        return state[key];
++      },
++      set(value) {
++        assert.equal(initialized, true, 'initializer_before_setup');
++        counts.setup++;
++        state[key] = value;
++      },
++    });
++  }
++  const app: any = {
++    get currentContext() {
++      return storage.getStore();
++    },
++    meta: {
++      ctxCounter: {
++        increment() {
++          counts.increment++;
++        },
++        decrement() {
++          counts.decrement++;
++        },
++      },
++    },
++    createAnonymousContext() {
++      if (options.failCreation) throw creationError;
++      return context;
++    },
++  };
++  storage = new VonaAsyncLocalStorage(app as VonaApplication);
++  app.ctxStorage = storage;
++  const executor: any = new BeanExecutor();
++  Object.defineProperties(executor, {
++    app: { value: app },
++    ctx: {
++      get() {
++        return storage.getStore();
++      },
++    },
++    bean: {
++      get() {
++        return {
++          database: {
++            async switchDb(fn: () => unknown) {
++              counts.database++;
++              return await fn();
++            },
++          },
++        };
++      },
++    },
++  });
++  return {
++    storage,
++    executor: executor as BeanExecutor,
++    context: context as VonaContext,
++    counts,
++    creationError,
++    disposalError,
++    initialize() {
++      initialized = true;
++    },
++  };
++}
