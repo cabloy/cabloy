@@ -9,9 +9,34 @@ import type { GuardianResult, OwnedProcess } from './runIsolatedTest.ts';
 import {
   getOpenapiGeneratorCommand,
   getOpenapiSource,
+  parseIsolatedOpenapiArgs,
   validateOpenapiSource,
 } from './generateOpenapiIsolated.ts';
 import { getIsolatedVonaCommand, ROOT_DIR, withIsolatedVona } from './runIsolatedTest.ts';
+
+test('contract reaping opt-out is explicit and removed from generator arguments', () => {
+  const original = ['training-student', '--skip-expired-claim-reaping', '--nometadata'];
+  const parsed = parseIsolatedOpenapiArgs(original);
+  assert.deepEqual(parsed, {
+    generatorArgs: ['training-student', '--nometadata'],
+    skipExpiredClaimReaping: true,
+  });
+  assert.deepEqual(original, ['training-student', '--skip-expired-claim-reaping', '--nometadata']);
+  assert.equal(
+    getOpenapiGeneratorCommand(parsed.generatorArgs).args.includes('--skip-expired-claim-reaping'),
+    false,
+  );
+  assert.deepEqual(parseIsolatedOpenapiArgs(['training-student']), {
+    generatorArgs: ['training-student'],
+    skipExpiredClaimReaping: false,
+  });
+  for (const value of ['true', 'false', '']) {
+    assert.throws(
+      () => parseIsolatedOpenapiArgs([`--skip-expired-claim-reaping=${value}`]),
+      /standalone flag/,
+    );
+  }
+});
 
 test('builds the isolated Swagger source from the allocated port', () => {
   assert.equal(getOpenapiSource(7123), 'http://127.0.0.1:7123/swagger/json?version=V31');

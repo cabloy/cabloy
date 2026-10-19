@@ -21,7 +21,7 @@ Before creating a new Cabloy project, make sure your environment has:
 ## 2. Create a new project
 
 ```bash
-npm create cabloy
+npm create cabloy@latest
 ```
 
 The generated project includes `repo-agent-governance/` plus committed adapters for Claude Code, Codex, and Cursor. This path creates a Cabloy Basic project baseline. Open it in a supported coding agent and start with the project-specific guidance; regenerate adapters from the canonical governance source rather than editing generated files directly.
@@ -52,13 +52,13 @@ npm create cabloy
 #### Windows Command Prompt
 
 ```cmd
-set pnpm_config_minimum_release_age=0 && npm create cabloy
+set pnpm_config_minimum_release_age=0 && npm create cabloy@latest
 ```
 
 #### macOS / Linux
 
 ```bash
-pnpm_config_minimum_release_age=0 npm create cabloy
+pnpm_config_minimum_release_age=0 npm create cabloy@latest
 ```
 
 ## 3. Start Vona integrated SSR

@@ -9,6 +9,8 @@ import {
   BeanBase,
   assertDisposableDatabaseName as assertDisposableDatabaseNameCore,
   assertIsolatedTestPath,
+  assertFreshTestResourcesReady,
+  requiresFreshTestResources,
   assertTestRunOwner,
   resolveVonaLocalPaths,
   withIsolatedTestDatabaseDiscovery,
@@ -39,6 +41,7 @@ interface IDevDatabasePreparation {
 }
 
 const devDatabasePreparations = new WeakMap<VonaApplication, IDevDatabasePreparation>();
+const freshDatabaseCreations = new WeakMap<VonaApplication, Map<string, string>>();
 
 export function assertDisposableDatabaseName(
   databaseName: string,
@@ -318,7 +321,7 @@ export class ServiceDatabase extends BeanBase {
     // client
     const client = this.bean.database.current.client;
     // get current database name
-    const databaseName = client.getDatabaseName();
+    const currentDatabaseName = client.getDatabaseName();
     const sqliteRoot =
       client.db.dialectName === 'better-sqlite3'
         ? resolveVonaLocalPaths(
@@ -327,9 +330,12 @@ export class ServiceDatabase extends BeanBase {
             this.app.meta.env.VONA_TEST_RUN_ID,
           ).sqliteRoot
         : undefined;
-    const currentFilename = sqliteRoot ? path.basename(databaseName, '.db') : databaseName;
+    const currentFilename = sqliteRoot
+      ? path.basename(currentDatabaseName, '.db')
+      : currentDatabaseName;
     const isTestDatabase = currentFilename.startsWith(databasePrefix);
-    if (isTestDatabase) assertDisposableDatabaseName(databaseName, databasePrefix, sqliteRoot);
+    if (isTestDatabase)
+      assertDisposableDatabaseName(currentDatabaseName, databasePrefix, sqliteRoot);
     if (
       this.app.meta.isTest &&
       this.app.meta.env.VONA_TEST_RUN_ID &&
@@ -337,11 +343,32 @@ export class ServiceDatabase extends BeanBase {
       !isTestDatabase
     ) {
       throw new Error(
-        `Isolated test database is outside its disposable namespace: ${databaseName}`,
+        `Isolated test database is outside its disposable namespace: ${currentDatabaseName}`,
       );
     }
     // test db
     if (this.app.meta.isTest) {
+      if (requiresFreshTestResources()) {
+        assertFreshTestResourcesReady(this.app);
+        const key = `${client.clientName}\0${databasePrefix}`;
+        const created = freshDatabaseCreations.get(this.app);
+        if (isTestDatabase) {
+          if (created?.get(key) !== currentDatabaseName) {
+            throw new Error('Strict test cannot reuse an unowned database');
+          }
+          return;
+        }
+        if ((await this.__fetchDatabases(client, instanceName, configInstanceBase)).length !== 0) {
+          throw new Error('Strict test database namespace is no longer fresh');
+        }
+        const name = await this.__createDatabase(client, instanceName, configInstanceBase);
+        assertDisposableDatabaseName(name, databasePrefix, sqliteRoot);
+        const creations = created ?? new Map<string, string>();
+        creations.set(key, name);
+        freshDatabaseCreations.set(this.app, creations);
+        await client.changeConfigConnectionAndReloadWorker(name);
+        return;
+      }
       // check
       if (isTestDatabase) {
         // donothing

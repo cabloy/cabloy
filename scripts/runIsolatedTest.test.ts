@@ -33,6 +33,7 @@ import {
   createTestRunId,
   getUnitTestCommands,
   reserveTestRun,
+  reapBeforeIsolatedRun,
   resolveNpmCli,
   resolveCabloyEdition,
   ROOT_DIR,
@@ -50,6 +51,97 @@ const isolationSource = resolve(
   ROOT_DIR,
   'vona/packages-vona/vona-core/src/lib/core/testIsolation.ts',
 );
+
+test('claim reaping defaults remain enabled and contract opt-out never calls the reaper', async () => {
+  const calls: string[] = [];
+  const reap = async (projectPath: string) => {
+    calls.push(projectPath);
+    return [];
+  };
+  for (const kind of ['unit', 'cov', 'e2e', 'contract'] as const) {
+    await reapBeforeIsolatedRun(kind, '/synthetic/vona', {}, reap);
+  }
+  assert.deepEqual(calls, [
+    '/synthetic/vona',
+    '/synthetic/vona',
+    '/synthetic/vona',
+    '/synthetic/vona',
+  ]);
+  await reapBeforeIsolatedRun(
+    'contract',
+    '/synthetic/vona',
+    { skipExpiredClaimReaping: true },
+    async () => {
+      throw new Error('historical reaper must not run');
+    },
+  );
+  for (const kind of ['unit', 'cov', 'e2e'] as const) {
+    await assert.rejects(
+      reapBeforeIsolatedRun(kind, '/synthetic/vona', { skipExpiredClaimReaping: true }, reap),
+      /supported only for contract generation/,
+    );
+  }
+  assert.equal(calls.length, 4);
+});
+
+test('public test entrypoints reject contract-only flags before claim reaping', () => {
+  const runnerUrl = new URL('./runIsolatedTest.ts', import.meta.url).href;
+  const source = `
+    import assert from 'node:assert/strict';
+    import { registerHooks } from 'node:module';
+    globalThis.cleanupCalls = [];
+    registerHooks({ resolve(specifier, context, nextResolve) {
+      if (context.parentURL === ${JSON.stringify(runnerUrl)} && specifier === './testClaimCleanup.ts') {
+        const source = \`
+          export function parseTestClaimTtlSeconds() { return 1; }
+          export async function reapExpiredTestClaims() {
+            globalThis.cleanupCalls.push('reap');
+            throw new Error('unexpected claim reaping');
+          }
+          export async function cleanTestClaim() {
+            globalThis.cleanupCalls.push('clean');
+            throw new Error('unexpected claim cleanup');
+          }
+        \`;
+        return { url: 'data:text/javascript,' + encodeURIComponent(source), shortCircuit: true };
+      }
+      return nextResolve(specifier, context);
+    } });
+    const { runIsolatedTest } = await import(${JSON.stringify(runnerUrl)});
+    for (const [kind, args] of [['unit', []], ['unit', ['--coverage']], ['e2e', []]]) {
+      for (const suffix of ['', '=true', '=false', '=']) {
+        await assert.rejects(
+          runIsolatedTest(kind, [...args, '--skip-expired-claim-reaping' + suffix]),
+          /--skip-expired-claim-reaping is supported only for contract generation/,
+        );
+        assert.deepEqual(globalThis.cleanupCalls, []);
+      }
+    }
+    await assert.rejects(runIsolatedTest('unit', []), /unexpected claim reaping/);
+    assert.deepEqual(globalThis.cleanupCalls, ['reap']);
+  `;
+  const result = spawnSync(process.execPath, ['--input-type=module', '-e', source], {
+    cwd: ROOT_DIR,
+    env: { ...process.env, E2E_BASE_URL: undefined },
+    encoding: 'utf8',
+    timeout: 10_000,
+  });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test('claim reaping errors propagate without retries', async () => {
+  const error = new Error('synthetic reaper failure');
+  let calls = 0;
+  await assert.rejects(
+    reapBeforeIsolatedRun('contract', '/synthetic/vona', {}, async () => {
+      calls++;
+      throw error;
+    }),
+    value => value === error,
+  );
+  assert.equal(calls, 1);
+});
 
 test('public test scripts delegate to the isolated runner without recursion', () => {
   const root = JSON.parse(readFileSync(resolve(ROOT_DIR, 'package.json'), 'utf8'));
@@ -223,51 +315,71 @@ test('creates exclusive manifest claims and refuses stale or symlinked roots', a
   }
 });
 
-test('contract runs clean owned roots on success and retain failed-run evidence', async () => {
-  const root = mkdtempSync(join(realpathSync(tmpdir()), 'cabloy-contract-run-'));
-  mkdirSync(join(root, 'vona'));
-  writeFileSync(join(root, '__CABLOY_BASIC__'), '');
-  let claimPath = '';
-  let dataRoot = '';
-  let generatedRoot = '';
-  try {
-    assert.equal(
-      await withIsolatedRun(
-        'contract',
-        async context => {
-          ({ claimPath, dataRoot, generatedRoot } = context);
-          assert.equal((await loadTestClaim(claimPath)).kind, 'contract');
-          assert.equal(context.env.META_MODE, 'test');
-          assert.equal(context.env.VONA_DB_RESET, undefined);
-          assert.equal(context.env.VONA_TEST_READY_KEY, undefined);
-          assert.ok(existsSync(join(dataRoot, '.vona-test-owner')));
-          return 'generated';
-        },
-        root,
-      ),
-      'generated',
-    );
-    assert.equal(existsSync(claimPath), false);
-    assert.equal(existsSync(dataRoot), false);
-    assert.equal(existsSync(generatedRoot), false);
-    await assert.rejects(
-      withIsolatedRun(
-        'contract',
-        async context => {
-          ({ claimPath, dataRoot, generatedRoot } = context);
-          throw new Error('generator failed');
-        },
-        root,
-      ),
-      /generator failed/,
-    );
-    assert.equal((await loadTestClaim(claimPath)).status, 'failed');
-    assert.equal(existsSync(dataRoot), true);
-    assert.equal(existsSync(generatedRoot), true);
-  } finally {
-    rmSync(root, { recursive: true, force: true });
-  }
-});
+for (const marker of ['__CABLOY_BASIC__', '__CABLOY_START__']) {
+  test(
+    `contract runs clean owned roots on success and retain failed-run evidence for ${marker}`,
+    { concurrency: false },
+    async () => {
+      const root = mkdtempSync(join(realpathSync(tmpdir()), 'cabloy-contract-run-'));
+      mkdirSync(join(root, 'vona'));
+      writeFileSync(join(root, marker), '');
+      let claimPath = '';
+      let dataRoot = '';
+      let generatedRoot = '';
+      const previous = process.env.VONA_TEST_REQUIRE_FRESH_RESOURCES;
+      try {
+        process.env.VONA_TEST_REQUIRE_FRESH_RESOURCES = 'true';
+        await withIsolatedRun(
+          'contract',
+          async context => {
+            assert.equal(context.env.VONA_TEST_REQUIRE_FRESH_RESOURCES, undefined);
+          },
+          root,
+        );
+        assert.equal(
+          await withIsolatedRun(
+            'contract',
+            async context => {
+              ({ claimPath, dataRoot, generatedRoot } = context);
+              assert.equal((await loadTestClaim(claimPath)).kind, 'contract');
+              assert.equal(context.env.META_MODE, 'test');
+              assert.equal(context.env.VONA_DB_RESET, undefined);
+              assert.equal(context.env.VONA_TEST_READY_KEY, undefined);
+              assert.equal(context.env.VONA_TEST_REQUIRE_FRESH_RESOURCES, 'true');
+              assert.ok(existsSync(join(dataRoot, '.vona-test-owner')));
+              return 'generated';
+            },
+            root,
+            { skipExpiredClaimReaping: true },
+          ),
+          'generated',
+        );
+        assert.equal(existsSync(claimPath), false);
+        assert.equal(existsSync(dataRoot), false);
+        assert.equal(existsSync(generatedRoot), false);
+        await assert.rejects(
+          withIsolatedRun(
+            'contract',
+            async context => {
+              ({ claimPath, dataRoot, generatedRoot } = context);
+              throw new Error('generator failed');
+            },
+            root,
+            { skipExpiredClaimReaping: true },
+          ),
+          /generator failed/,
+        );
+        assert.equal((await loadTestClaim(claimPath)).status, 'failed');
+        assert.equal(existsSync(dataRoot), true);
+        assert.equal(existsSync(generatedRoot), true);
+      } finally {
+        if (previous === undefined) delete process.env.VONA_TEST_REQUIRE_FRESH_RESOURCES;
+        else process.env.VONA_TEST_REQUIRE_FRESH_RESOURCES = previous;
+        rmSync(root, { recursive: true, force: true });
+      }
+    },
+  );
+}
 
 test('readiness retries signed not-ready responses and rejects server exit or timeout', async () => {
   const key = 'a'.repeat(64);

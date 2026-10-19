@@ -23,3 +23,4 @@ export {
 export * from './resource.ts';
 export * from './testClaim.ts';
 export * from './testIsolation.ts';
+export * from './testFreshness.ts';
