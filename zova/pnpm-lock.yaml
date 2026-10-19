@@ -455,7 +455,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.5
       zova-cli-set-front:
-        specifier: ^1.2.111
+        specifier: ^1.2.112
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -564,7 +564,7 @@ importers:
         specifier: ^1.1.17
         version: link:../../packages-utils/zova-openapi
       zova-vite:
-        specifier: ^1.1.47
+        specifier: ^1.1.48
         version: link:../../packages-utils/zova-vite
     devDependencies:
       clean-package:
