@@ -9,11 +9,14 @@ import type * as Transport from 'winston-transport';
 
 import {
   BeanBase,
+  formatLoggerBoundary,
   formatLoggerConsole,
   formatLoggerCtx,
   formatLoggerDummy,
   formatLoggerErrors,
   formatLoggerFilter,
+  getRequestBoundary,
+  getSuppressedDiagnosticLogger,
 } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 import * as Winston from 'winston';
@@ -39,10 +42,12 @@ export class BeanLogger extends BeanBase {
   }
 
   public get default(): Winston.Logger {
+    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
     return this.app.meta.logger.get();
   }
 
   public get(clientName?: keyof ILoggerClientRecord): Winston.Logger {
+    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
     return this.app.meta.logger.get(clientName);
   }
 
@@ -50,11 +55,13 @@ export class BeanLogger extends BeanBase {
     childName: keyof ILoggerChildRecord,
     clientName?: keyof ILoggerClientRecord,
   ): Winston.Logger {
+    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
     return this.app.meta.logger.get(clientName).child({ name: childName });
   }
 
   public makeFormatBase(opts: ILoggerFormatOpts) {
     return Winston.format.combine(
+      formatLoggerBoundary(),
       formatLoggerErrors(opts),
       formatLoggerCtx(),
       Winston.format.splat(),
@@ -71,6 +78,7 @@ export class BeanLogger extends BeanBase {
     return this.app.meta.logger.createTransportFile(fileName, clientInfo, {
       level: levelStrict ?? 'silly',
       format: Winston.format.combine(
+        formatLoggerBoundary(),
         formatLoggerFilter({
           child: childStrict ?? clientInfo.child,
           level: levelStrict ?? clientInfo.level,
@@ -85,6 +93,7 @@ export class BeanLogger extends BeanBase {
     return new Winston.transports.Console({
       level: 'silly',
       format: Winston.format.combine(
+        formatLoggerBoundary(),
         formatLoggerDummy(),
         formatLoggerFilter({ child: clientInfo.child, level: clientInfo.level, silly: true }),
         Winston.format.colorize(),

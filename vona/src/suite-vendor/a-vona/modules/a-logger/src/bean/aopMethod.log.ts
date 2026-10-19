@@ -8,7 +8,7 @@ import type {
 import type winston from 'winston';
 
 import { evaluateExpressions } from '@cabloy/utils';
-import { BeanAopMethodBase, SymbolBeanFullName } from 'vona';
+import { BeanAopMethodBase, getRequestBoundary, SymbolBeanFullName } from 'vona';
 import { AopMethod } from 'vona-module-a-aspect';
 
 export interface IAopMethodOptionsLog extends IDecoratorAopMethodOptions {
@@ -28,6 +28,7 @@ export class AopMethodLog
   implements IAopMethodGet, IAopMethodSet, IAopMethodExecute
 {
   get(options: IAopMethodOptionsLog, next: NextSync, receiver: any, prop: string): any {
+    if (getRequestBoundary()) return next();
     const context = this._getContext(options, receiver);
     const message = `${receiver[SymbolBeanFullName]}#${prop}(get)`;
     const logger = this.app.meta.logger.child(options.childName, options.clientName);
@@ -51,6 +52,7 @@ export class AopMethodLog
     receiver: any,
     prop: string,
   ): boolean {
+    if (getRequestBoundary()) return next();
     const context = this._getContext(options, receiver);
     const message = `${receiver[SymbolBeanFullName]}#${prop}(set)`;
     const logger = this.app.meta.logger.child(options.childName, options.clientName);
@@ -74,6 +76,7 @@ export class AopMethodLog
     receiver: any,
     prop: string,
   ): Promise<any> | any {
+    if (getRequestBoundary()) return next();
     const context = this._getContext(options, receiver);
     const message = `${receiver[SymbolBeanFullName]}#${prop}`;
     const logger = this.app.meta.logger.child(options.childName, options.clientName);

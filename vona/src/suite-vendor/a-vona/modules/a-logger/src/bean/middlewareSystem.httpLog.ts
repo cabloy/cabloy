@@ -5,7 +5,7 @@ import type {
 } from 'vona-module-a-aspect';
 
 import StdSerializers from 'pino-std-serializers';
-import { BeanBase } from 'vona';
+import { BeanBase, getRequestBoundary } from 'vona';
 import { MiddlewareSystem } from 'vona-module-a-aspect';
 
 import { redactIsolatedReadyHeader } from '../lib/redactIsolatedReadyHeader.ts';
@@ -15,6 +15,7 @@ export interface IMiddlewareSystemOptionsHttpLog extends IDecoratorMiddlewareSys
 @MiddlewareSystem<IMiddlewareSystemOptionsHttpLog>()
 export class MiddlewareSystemHttpLog extends BeanBase implements IMiddlewareSystemExecute {
   async execute(_options: IMiddlewareSystemOptionsHttpLog, next: Next) {
+    if (getRequestBoundary()) return next();
     const ctx = this.ctx;
     // start
     const req = StdSerializers.req(ctx.req);

@@ -11,10 +11,18 @@ import type {
 
 import { cast } from '../../../types/utils/cast.ts';
 import { useApp } from '../../framework/useApp.ts';
+import { getRequestBoundary } from '../requestBoundary.ts';
 
 const SymbolLoggerMessage = Symbol('SymbolLoggerMessage');
 
-export const formatLoggerAxiosError = Winston.format((einfo, { stack, cause }: any) => {
+export const formatLoggerBoundary = Winston.format(info => {
+  if (getRequestBoundary()) return false;
+  return info;
+});
+
+export const formatLoggerAxiosError = Winston.format((einfo, opts: any) => {
+  if (getRequestBoundary()) return false;
+  const { stack, cause } = opts;
   if (
     (einfo instanceof Error && einfo.constructor.name.includes('AxiosError')) ||
     einfo.name === 'AxiosError' ||
@@ -39,10 +47,16 @@ export const formatLoggerAxiosError = Winston.format((einfo, { stack, cause }: a
 });
 
 export const formatLoggerErrors = (opts: ILoggerFormatOpts) => {
-  return Winston.format.combine(formatLoggerAxiosError(opts), Winston.format.errors(opts));
+  if (getRequestBoundary()) return formatLoggerBoundary();
+  return Winston.format.combine(
+    formatLoggerBoundary(),
+    formatLoggerAxiosError(opts),
+    Winston.format.errors(opts),
+  );
 };
 
 export const formatLoggerCtx = Winston.format((info, _opts: any) => {
+  if (getRequestBoundary()) return false;
   const app = useApp();
   if (!app.ctx) return info;
   if (app.ctx.method) info.method = app.ctx.method;
@@ -60,12 +74,14 @@ export const formatLoggerCtx = Winston.format((info, _opts: any) => {
 });
 
 export const formatLoggerDummy = Winston.format(info => {
+  if (getRequestBoundary()) return false;
   const app = useApp();
   if (app.meta.env.LOGGER_DUMMY === 'true') return false;
   return info;
 });
 
 export const formatLoggerFilter = Winston.format(((info: any, opts: ILoggerFormatFilterOpts) => {
+  if (getRequestBoundary()) return false;
   // check client
   const child = typeof opts.child === 'function' ? opts.child() : opts.child;
   if (child && !child.includes(info.name)) {
@@ -90,8 +106,11 @@ export const formatLoggerFilter = Winston.format(((info: any, opts: ILoggerForma
 }) as any);
 
 export const formatLoggerConsole = (clientInfo: ILoggerOptionsClientInfo) => {
-  return Winston.format.printf(
-    ({ timestamp, level, stack, message, name, beanFullName, durationMs, ...meta }) => {
+  return Winston.format.combine(
+    formatLoggerBoundary(),
+    Winston.format.printf(info => {
+      if (getRequestBoundary()) return '';
+      const { timestamp, level, stack, message, name, beanFullName, durationMs, ...meta } = info;
       const textClientName =
         clientInfo.clientName === 'default' ? '' : ` ${chalk.cyan(`[${clientInfo.clientName}]`)}`;
       const textName = name ? ` ${chalk.cyan(`[${name}]`)}` : '';
@@ -101,11 +120,12 @@ export const formatLoggerConsole = (clientInfo: ILoggerOptionsClientInfo) => {
       const textDurationMs = durationMs !== undefined ? ` ${chalk.cyan(`+${durationMs}ms`)}` : '';
       const textStack = stack ? `\n${stack}` : '';
       return `${timestamp} ${level}${textClientName}${textName}${textBeanFullName}${textMeta}${textMessage}${textDurationMs}${textStack}`;
-    },
+    }),
   );
 };
 
 function __formatLoggerFilterCheckInfo(info) {
+  if (getRequestBoundary()) return false;
   if (typeof info.message === 'function') {
     if (info.message[SymbolLoggerMessage] === undefined) {
       info.message[SymbolLoggerMessage] = info.message();

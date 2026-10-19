@@ -1,7 +1,7 @@
 import type { IApiPathRecordMethodMap } from 'vona-module-a-web';
 
 import { combineParamsAndQuery } from '@cabloy/utils';
-import { BeanBase, cast, deepExtend } from 'vona';
+import { BeanBase, cast, deepExtend, getRequestBoundary } from 'vona';
 import { Aspect } from 'vona-module-a-aspect';
 import { Service } from 'vona-module-a-bean';
 
@@ -19,8 +19,8 @@ export class ServiceExecutor extends BeanBase {
   ): Promise<any> {
     // app
     const app = this.app;
-    const telemetry = this.$scope.telemetry.service.telemetry;
-    const span = telemetry.enabled
+    const telemetry = getRequestBoundary() ? undefined : this.$scope.telemetry.service.telemetry;
+    const span = telemetry?.enabled
       ? telemetry.startSpan(`vona.action ${method.toUpperCase()}`, {
           attributes: { 'vona.action.internal': true, 'http.request.method': method.toUpperCase() },
         })
@@ -83,16 +83,16 @@ export class ServiceExecutor extends BeanBase {
             state: {
               ...options?.extraData?.state,
               telemetry: span
-                ? { context: telemetry.createContext(span), span, internalAction: true }
+                ? { context: telemetry!.createContext(span), span, internalAction: true }
                 : undefined,
             },
           },
         },
       );
     try {
-      return await (span ? telemetry.withSpan(span, execute) : execute());
+      return await (span ? telemetry!.withSpan(span, execute) : execute());
     } catch (err) {
-      if (span) telemetry.recordException(span, err);
+      if (span) telemetry!.recordException(span, err);
       throw err;
     } finally {
       span?.end();

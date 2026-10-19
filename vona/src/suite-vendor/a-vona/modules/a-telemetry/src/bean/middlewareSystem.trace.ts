@@ -1,4 +1,3 @@
-import type { Span } from '@opentelemetry/api';
 import type { Next } from 'vona';
 import type {
   IDecoratorMiddlewareSystemOptions,
@@ -6,8 +5,10 @@ import type {
 } from 'vona-module-a-aspect';
 
 import { context } from '@opentelemetry/api';
-import { BeanBase, uuidv4 } from 'vona';
+import { BeanBase, captureRequestBoundary, getRequestBoundary, uuidv4 } from 'vona';
 import { MiddlewareSystem } from 'vona-module-a-aspect';
+
+import { createHttpSpanEnd, recordSpanException } from '../lib/spanDiagnostics.ts';
 
 export interface IMiddlewareSystemOptionsTrace extends IDecoratorMiddlewareSystemOptions {}
 
@@ -16,6 +17,7 @@ export interface IMiddlewareSystemOptionsTrace extends IDecoratorMiddlewareSyste
 })
 export class MiddlewareSystemTrace extends BeanBase implements IMiddlewareSystemExecute {
   async execute(_options: IMiddlewareSystemOptionsTrace, next: Next) {
+    if (getRequestBoundary()) return next();
     const telemetry = this.$scope.telemetry.service.telemetry;
     if (!telemetry.enabled || this.ctx.state.telemetry?.internalAction) return next();
 
@@ -37,11 +39,10 @@ export class MiddlewareSystemTrace extends BeanBase implements IMiddlewareSystem
     ctx.state.telemetry = { requestId, context: active, serverSpan: span };
     ctx.set(requestIdHeader, requestId);
 
-    const finish = () => this._end(span, ctx.res.statusCode || ctx.status || 500, false);
-    const close = () =>
-      this._end(span, ctx.res.statusCode || ctx.status || 499, !ctx.res.writableEnded);
-    ctx.res.once('finish', finish);
-    ctx.res.once('close', close);
+    const capture = captureRequestBoundary();
+    const terminal = createHttpSpanEnd(span, ctx.res, capture);
+    ctx.res.once('finish', terminal.finish);
+    ctx.res.once('close', terminal.close);
 
     try {
       const result = await context.with(active, next);
@@ -55,15 +56,9 @@ export class MiddlewareSystemTrace extends BeanBase implements IMiddlewareSystem
       }
       return result;
     } catch (err) {
-      telemetry.recordException(span, err);
+      recordSpanException(span, err, capture);
       throw err;
     }
-  }
-
-  private _end(span: Span, statusCode: number, aborted: boolean) {
-    if (!span || this.ctx.state.telemetry?.serverSpanEnded) return;
-    this.ctx.state.telemetry!.serverSpanEnded = true;
-    this.$scope.telemetry.service.telemetry.endHttpSpan(span, statusCode, aborted);
   }
 }
 
