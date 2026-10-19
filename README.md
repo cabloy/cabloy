@@ -27,7 +27,7 @@ Learn more about [Vona + Zova Integration](https://cabloy.com/fullstack/vona-zov
 Create a new Cabloy Basic project:
 
 ```bash
-npm create cabloy
+npm create cabloy@latest
 ```
 
 For Cabloy Start, clone the [Cabloy Start repository](https://github.com/cabloy/cabloy-start) and run `npm run init` from its root. See the [Fullstack Quickstart](https://cabloy.com/fullstack/quickstart) for prerequisites and development commands.

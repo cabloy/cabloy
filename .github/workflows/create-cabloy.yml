@@ -97,7 +97,7 @@ jobs:
           if (Test-Path $log) { Get-Content $log }
           throw 'Redis did not become ready'
       - name: create project
-        run: npm create cabloy cabloy-app
+        run: npm create cabloy@latest cabloy-app
       - name: verify project initialization
         working-directory: cabloy-app
         run: >-
