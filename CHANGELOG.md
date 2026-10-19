@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.218
+
+### Features
+
+- Add Vite and Rolldown support.
+
+### Improvements
+
+- Add the `create-cabloy.yml` configuration.
+
 ## 5.1.217
 
 ### Features
