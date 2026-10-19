@@ -24,7 +24,7 @@ importers:
     dependencies:
       '@babel/core':
         specifier: ^7.29.0
-        version: 7.29.7
+        version: 7.29.7(supports-color@5.5.0)
       '@babel/traverse':
         specifier: ^7.29.0
         version: 7.29.8
@@ -81,7 +81,7 @@ importers:
         version: 11.4.0
       ioredis:
         specifier: ^5.10.1
-        version: 5.11.1
+        version: 5.11.1(supports-color@5.5.0)
       knex:
         specifier: ^3.3.0
         version: 3.3.0(better-sqlite3@12.11.1)
@@ -560,6 +560,9 @@ importers:
       '@tanstack/vue-table':
         specifier: ^8.21.3
         version: 8.21.3(vue@3.5.43(typescript@5.9.3))
+      '@zhennann/currency':
+        specifier: ^2.0.4
+        version: 2.0.4
       openapi3-ts:
         specifier: ^4.6.1
         version: 4.6.1
@@ -581,15 +584,24 @@ importers:
       zova-module-a-api:
         specifier: ^5.1.22
         version: 5.1.22
+      zova-module-a-app:
+        specifier: ^5.1.26
+        version: 5.1.26
       zova-module-a-bean:
         specifier: ^5.1.36
         version: 5.1.36
       zova-module-a-behavior:
         specifier: ^5.1.26
         version: 5.1.26
+      zova-module-a-behaviors:
+        specifier: ^5.1.22
+        version: 5.1.22
       zova-module-a-command:
         specifier: ^5.1.35
         version: 5.1.35
+      zova-module-a-fetch:
+        specifier: ^5.1.25
+        version: 5.1.25
       zova-module-a-form:
         specifier: ^5.1.54
         version: 5.1.54(vue@3.5.43(typescript@5.9.3))
@@ -602,6 +614,12 @@ importers:
       zova-module-a-layoutprofile:
         specifier: ^5.0.3
         version: 5.0.3
+      zova-module-a-logger:
+        specifier: ^5.1.28
+        version: 5.1.28
+      zova-module-a-meta:
+        specifier: ^5.1.22
+        version: 5.1.22
       zova-module-a-model:
         specifier: ^5.1.38
         version: 5.1.38(vue@3.5.43(typescript@5.9.3))
@@ -611,24 +629,48 @@ importers:
       zova-module-a-pay:
         specifier: ^5.0.9
         version: 5.0.9
+      zova-module-a-rbac:
+        specifier: ^5.0.1
+        version: 5.0.1
       zova-module-a-router:
         specifier: ^5.1.42
         version: 5.1.42
+      zova-module-a-routerstack:
+        specifier: ^5.1.29
+        version: 5.1.29
       zova-module-a-routertabs:
         specifier: ^5.1.35
         version: 5.1.35
       zova-module-a-ssr:
         specifier: ^5.1.40
         version: 5.1.40
+      zova-module-a-ssrhmr:
+        specifier: ^5.1.23
+        version: 5.1.23
+      zova-module-a-ssrserver:
+        specifier: ^5.1.26
+        version: 5.1.26
       zova-module-a-style:
         specifier: ^5.1.35
         version: 5.1.35
       zova-module-a-table:
         specifier: ^5.1.44
         version: 5.1.44(vue@3.5.43(typescript@5.9.3))
+      zova-module-a-zod:
+        specifier: ^5.1.37
+        version: 5.1.37
+      zova-module-a-zova:
+        specifier: ^5.1.109
+        version: 5.1.109(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
       zova-module-pay-mock:
         specifier: ^5.0.5
         version: 5.0.5
+      zova-module-pay-paypal:
+        specifier: ^5.0.2
+        version: 5.0.2
+      zova-module-pay-stripe:
+        specifier: ^5.0.2
+        version: 5.0.2
       zova-module-rest-resource:
         specifier: ^5.1.56
         version: 5.1.56
@@ -644,6 +686,9 @@ importers:
       '@tanstack/vue-table':
         specifier: ^8.21.3
         version: 8.21.3(vue@3.5.43(typescript@5.9.3))
+      '@zhennann/currency':
+        specifier: ^2.0.4
+        version: 2.0.4
       openapi3-ts:
         specifier: ^4.6.1
         version: 4.6.1
@@ -665,15 +710,24 @@ importers:
       zova-module-a-api:
         specifier: ^5.1.22
         version: 5.1.22
+      zova-module-a-app:
+        specifier: ^5.1.26
+        version: 5.1.26
       zova-module-a-bean:
         specifier: ^5.1.36
         version: 5.1.36
       zova-module-a-behavior:
         specifier: ^5.1.26
         version: 5.1.26
+      zova-module-a-behaviors:
+        specifier: ^5.1.22
+        version: 5.1.22
       zova-module-a-command:
         specifier: ^5.1.35
         version: 5.1.35
+      zova-module-a-fetch:
+        specifier: ^5.1.25
+        version: 5.1.25
       zova-module-a-form:
         specifier: ^5.1.54
         version: 5.1.54(vue@3.5.43(typescript@5.9.3))
@@ -686,6 +740,12 @@ importers:
       zova-module-a-layoutprofile:
         specifier: ^5.0.3
         version: 5.0.3
+      zova-module-a-logger:
+        specifier: ^5.1.28
+        version: 5.1.28
+      zova-module-a-meta:
+        specifier: ^5.1.22
+        version: 5.1.22
       zova-module-a-model:
         specifier: ^5.1.38
         version: 5.1.38(vue@3.5.43(typescript@5.9.3))
@@ -695,24 +755,48 @@ importers:
       zova-module-a-pay:
         specifier: ^5.0.9
         version: 5.0.9
+      zova-module-a-rbac:
+        specifier: ^5.0.1
+        version: 5.0.1
       zova-module-a-router:
         specifier: ^5.1.42
         version: 5.1.42
+      zova-module-a-routerstack:
+        specifier: ^5.1.29
+        version: 5.1.29
       zova-module-a-routertabs:
         specifier: ^5.1.35
         version: 5.1.35
       zova-module-a-ssr:
         specifier: ^5.1.40
         version: 5.1.40
+      zova-module-a-ssrhmr:
+        specifier: ^5.1.23
+        version: 5.1.23
+      zova-module-a-ssrserver:
+        specifier: ^5.1.26
+        version: 5.1.26
       zova-module-a-style:
         specifier: ^5.1.35
         version: 5.1.35
       zova-module-a-table:
         specifier: ^5.1.44
         version: 5.1.44(vue@3.5.43(typescript@5.9.3))
+      zova-module-a-zod:
+        specifier: ^5.1.37
+        version: 5.1.37
+      zova-module-a-zova:
+        specifier: ^5.1.109
+        version: 5.1.109(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
       zova-module-pay-mock:
         specifier: ^5.0.5
         version: 5.0.5
+      zova-module-pay-paypal:
+        specifier: ^5.0.2
+        version: 5.0.2
+      zova-module-pay-stripe:
+        specifier: ^5.0.2
+        version: 5.0.2
       zova-module-rest-resource:
         specifier: ^5.1.56
         version: 5.1.56
@@ -812,6 +896,9 @@ importers:
       '@tanstack/vue-table':
         specifier: ^8.21.3
         version: 8.21.3(vue@3.5.43(typescript@5.9.3))
+      '@zhennann/currency':
+        specifier: ^2.0.4
+        version: 2.0.4
       openapi3-ts:
         specifier: ^4.6.1
         version: 4.6.1
@@ -833,15 +920,24 @@ importers:
       zova-module-a-api:
         specifier: ^5.1.22
         version: 5.1.22
+      zova-module-a-app:
+        specifier: ^5.1.26
+        version: 5.1.26
       zova-module-a-bean:
         specifier: ^5.1.36
         version: 5.1.36
       zova-module-a-behavior:
         specifier: ^5.1.26
         version: 5.1.26
+      zova-module-a-behaviors:
+        specifier: ^5.1.22
+        version: 5.1.22
       zova-module-a-command:
         specifier: ^5.1.35
         version: 5.1.35
+      zova-module-a-fetch:
+        specifier: ^5.1.25
+        version: 5.1.25
       zova-module-a-form:
         specifier: ^5.1.54
         version: 5.1.54(vue@3.5.43(typescript@5.9.3))
@@ -854,6 +950,12 @@ importers:
       zova-module-a-layoutprofile:
         specifier: ^5.0.3
         version: 5.0.3
+      zova-module-a-logger:
+        specifier: ^5.1.28
+        version: 5.1.28
+      zova-module-a-meta:
+        specifier: ^5.1.22
+        version: 5.1.22
       zova-module-a-model:
         specifier: ^5.1.38
         version: 5.1.38(vue@3.5.43(typescript@5.9.3))
@@ -863,24 +965,48 @@ importers:
       zova-module-a-pay:
         specifier: ^5.0.9
         version: 5.0.9
+      zova-module-a-rbac:
+        specifier: ^5.0.1
+        version: 5.0.1
       zova-module-a-router:
         specifier: ^5.1.42
         version: 5.1.42
+      zova-module-a-routerstack:
+        specifier: ^5.1.29
+        version: 5.1.29
       zova-module-a-routertabs:
         specifier: ^5.1.35
         version: 5.1.35
       zova-module-a-ssr:
         specifier: ^5.1.40
         version: 5.1.40
+      zova-module-a-ssrhmr:
+        specifier: ^5.1.23
+        version: 5.1.23
+      zova-module-a-ssrserver:
+        specifier: ^5.1.26
+        version: 5.1.26
       zova-module-a-style:
         specifier: ^5.1.35
         version: 5.1.35
       zova-module-a-table:
         specifier: ^5.1.44
         version: 5.1.44(vue@3.5.43(typescript@5.9.3))
+      zova-module-a-zod:
+        specifier: ^5.1.37
+        version: 5.1.37
+      zova-module-a-zova:
+        specifier: ^5.1.109
+        version: 5.1.109(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
       zova-module-pay-mock:
         specifier: ^5.0.5
         version: 5.0.5
+      zova-module-pay-paypal:
+        specifier: ^5.0.2
+        version: 5.0.2
+      zova-module-pay-stripe:
+        specifier: ^5.0.2
+        version: 5.0.2
       zova-module-rest-resource:
         specifier: ^5.1.56
         version: 5.1.56
@@ -2895,7 +3021,7 @@ importers:
     dependencies:
       ioredis:
         specifier: ^5.10.1
-        version: 5.11.1
+        version: 5.11.1(supports-color@5.5.0)
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -5423,6 +5549,9 @@ packages:
   '@zhennann/common-bin@4.0.1':
     resolution: {integrity: sha512-76gun6uGtvHyJcUotV37VWCI9K8oDeOVG+xdjuL6+K4njwtSZ9AWSK8Dfuaao4PkeJKAWpQm222Q5bQLpx1NfQ==}
     engines: {node: '>= 14.0.0'}
+
+  '@zhennann/currency@2.0.4':
+    resolution: {integrity: sha512-+RmlCeTGcM4QbR02MA3Ypb8vAo7LdcI+2m2ZRPC8KsrxFtAkO5IxACFGF7HUMuv8AJOdX+9RGHzZltSvJvcP5Q==}
 
   '@zhennann/ejs@3.0.1':
     resolution: {integrity: sha512-AkfhJ8D8X+sLyBTl5Lrp7nT0Gg4apE+9CcPk5EFolC3O0Qhom4QDUJxaczElsSyNzbSAkFNRzcNW9MTeJQOv3w==}
@@ -8944,6 +9073,9 @@ packages:
   zova-module-a-pay@5.0.9:
     resolution: {integrity: sha512-Chl6EKp30HBOGFCJXbla2/lS19WhzQyTZwgYmsL3nnG9Vt2TeUlb82vsYCVuDcy0cgmxVaWjPF7dzKL/r3Pfng==}
 
+  zova-module-a-rbac@5.0.1:
+    resolution: {integrity: sha512-WaR/6G1+HMQuzDAGetr3BuAOwiBfOm+FyGrM9l+V0PJZkrUryZHl+ltGYcca4KZghPmDZUyrxm5bq6ruzK5xHg==}
+
   zova-module-a-router@5.1.42:
     resolution: {integrity: sha512-/kpRuFC1V14zVx7KLtYZJTqhPgSpn3kyhJ/iqbKSjEUu1oTCu9nE0KzF+/RV8AigeZu+GgJSRR9ngl8efSlxXA==}
 
@@ -8976,6 +9108,12 @@ packages:
 
   zova-module-pay-mock@5.0.5:
     resolution: {integrity: sha512-PFbNz1g2MDVp3NdvKV37WFzHTQ2awSPTD5iexkkOOloAaItmt/KYoV7xadM46wHUCSQZcZQ1SZdgDaUFev+R4Q==}
+
+  zova-module-pay-paypal@5.0.2:
+    resolution: {integrity: sha512-GJsNidU+paka5+b46h3EFjuPRAN6P7Deh/0QbrFjG8cA9+aHLm13KVukbyg+tmJL/sgoPLYvcewllkDbeTWl+Q==}
+
+  zova-module-pay-stripe@5.0.2:
+    resolution: {integrity: sha512-nv7o323EUwc6o7sJEchRNU/1dfB42BVjPzbr1SHi6Pwk52rzvOAW2C0eSlJCtgk45t5CaLfg8VET3FEMs0L8aw==}
 
   zova-module-rest-resource@5.1.56:
     resolution: {integrity: sha512-JJ25Z6I3KixofC2wn3VKi7sQmjbwayE1wqD+Y18rOW1XeYRPh+WfPHnqAwvBcA7YQ1tw1oCzQVN3s/58zSOLEA==}
@@ -9290,6 +9428,26 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/core@7.29.7(supports-color@5.5.0)':
+    dependencies:
+      '@babel/code-frame': 7.29.7
+      '@babel/generator': 7.29.8
+      '@babel/helper-compilation-targets': 7.29.7
+      '@babel/helper-module-transforms': 7.29.7(@babel/core@7.29.7(supports-color@5.5.0))
+      '@babel/helpers': 7.29.7
+      '@babel/parser': 7.29.9
+      '@babel/template': 7.29.7
+      '@babel/traverse': 7.29.8
+      '@babel/types': 7.29.8
+      '@jridgewell/remapping': 2.3.5
+      convert-source-map: 2.0.0
+      debug: 4.4.3(supports-color@5.5.0)
+      gensync: 1.0.0-beta.2
+      json5: 2.2.3
+      semver: 6.3.1
+    transitivePeerDependencies:
+      - supports-color
+
   '@babel/generator@7.29.8':
     dependencies:
       '@babel/parser': 7.29.9
@@ -9336,6 +9494,15 @@ snapshots:
     dependencies:
       '@babel/traverse': 7.29.8
       '@babel/types': 7.29.8
+    transitivePeerDependencies:
+      - supports-color
+
+  '@babel/helper-module-transforms@7.29.7(@babel/core@7.29.7(supports-color@5.5.0))':
+    dependencies:
+      '@babel/core': 7.29.7(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.29.7
+      '@babel/helper-validator-identifier': 7.29.7
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -10315,7 +10482,7 @@ snapshots:
 
   '@sesamecare-oss/redlock@1.4.0(ioredis@5.11.1)':
     dependencies:
-      ioredis: 5.11.1
+      ioredis: 5.11.1(supports-color@5.5.0)
 
   '@sindresorhus/merge-streams@2.3.0': {}
 
@@ -11141,6 +11308,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@zhennann/currency@2.0.4': {}
+
   '@zhennann/ejs@3.0.1': {}
 
   '@zhennann/svg-captcha@1.5.2':
@@ -11369,7 +11538,7 @@ snapshots:
   bullmq@5.81.5:
     dependencies:
       cron-parser: 4.9.0
-      ioredis: 5.11.1
+      ioredis: 5.11.1(supports-color@5.5.0)
       msgpackr: 2.0.5
       node-abort-controller: 3.1.1
       semver: 7.8.5
@@ -12492,7 +12661,7 @@ snapshots:
 
   interpret@2.2.0: {}
 
-  ioredis@5.11.1:
+  ioredis@5.11.1(supports-color@5.5.0):
     dependencies:
       '@ioredis/commands': 1.10.0
       cluster-key-slot: 1.1.1
@@ -15137,6 +15306,8 @@ snapshots:
 
   zova-module-a-pay@5.0.9: {}
 
+  zova-module-a-rbac@5.0.1: {}
+
   zova-module-a-router@5.1.42: {}
 
   zova-module-a-routerstack@5.1.29: {}
@@ -15193,6 +15364,10 @@ snapshots:
       - vue
 
   zova-module-pay-mock@5.0.5: {}
+
+  zova-module-pay-paypal@5.0.2: {}
+
+  zova-module-pay-stripe@5.0.2: {}
 
   zova-module-rest-resource@5.1.56: {}
 
