@@ -15,6 +15,7 @@ import type { AppResource } from './resource.ts';
 import { EnumAppEvent } from '../../types/index.ts';
 import { BeanSimple } from '../bean/beanSimple.ts';
 import { AppLocale, BeanScopeContainer } from '../bean/index.ts';
+import { closeCompletedReadiness, createCompletedReadiness } from './completedReadiness.ts';
 import { CtxCounter } from './ctxCounter.ts';
 import { AppHmr } from './hmr.ts';
 import { AppLogger } from './logger/appLogger.ts';
@@ -51,6 +52,8 @@ export class AppMeta extends BeanSimple {
   hmrCacheLocaleModules: TypeModuleResourceLocaleModules;
   hmrCacheConfigModules: IBeanScopeConfig;
   //
+  completedReadiness: ReturnType<typeof createCompletedReadiness>;
+
   appReady: boolean;
   appReadyInstances: Record<string, boolean>;
   //
@@ -61,6 +64,7 @@ export class AppMeta extends BeanSimple {
   appClosed: boolean;
 
   protected __init__(env: VonaConfigEnv) {
+    this.completedReadiness = createCompletedReadiness(this.app);
     // env
     this.env = env;
     this._prepareEnv();
@@ -121,6 +125,7 @@ export class AppMeta extends BeanSimple {
   }
 
   async close() {
+    closeCompletedReadiness(this.completedReadiness);
     if (!this[SymbolClosePromise]) {
       this[SymbolClosePromise] = this._closeInner();
     }

@@ -1,12 +1,27 @@
-import type { FunctionAsync, VonaContext } from 'vona';
+import type { ExistingReadyCapability, FunctionAsync, VonaContext } from 'vona';
+import type { ServiceDb } from 'vona-module-a-orm';
 import type { IApiPathRecordMethodMap } from 'vona-module-a-web';
 
 import { isNil } from '@cabloy/utils';
-import { BeanBase, captureRequestBoundary } from 'vona';
+import {
+  BeanBase,
+  captureRequestBoundary,
+  isExistingReadyContext,
+  pinExistingReadyContext,
+  resolveExistingReadyCapability,
+} from 'vona';
 import { Bean } from 'vona-module-a-bean';
-import { ServiceTransactionAsyncLocalStorage } from 'vona-module-a-orm';
+import {
+  ServiceDatabaseAsyncLocalStorage,
+  ServiceTransactionAsyncLocalStorage,
+} from 'vona-module-a-orm';
 
-import type { INewCtxLifecycle, INewCtxOptions, IPerformActionOptions } from '../types/executor.ts';
+import type {
+  INewCtxLifecycle,
+  INewCtxOptions,
+  INewCtxReadyExistingOptions,
+  IPerformActionOptions,
+} from '../types/executor.ts';
 
 import { __delegateProperties } from '../lib/utils.ts';
 
@@ -16,12 +31,14 @@ export class BeanExecutor extends BeanBase {
     METHOD extends keyof IApiPathRecordMethodMap,
     PATH extends keyof IApiPathRecordMethodMap[METHOD],
   >(method: METHOD, path: PATH, options?: IPerformActionOptions): Promise<any> {
+    this._assertOrdinaryContext();
     // url
     const url = this.app.util.combineApiPath(path as any, '', true, true);
     return await this.scope.service.executor.performActionInner(method, url, options);
   }
 
   runInBackground(fn: FunctionAsync<void>) {
+    this._assertOrdinaryContext();
     return this.bean.database.switchDbIsolate(() => {
       return this.newCtx(fn);
     });
@@ -32,6 +49,7 @@ export class BeanExecutor extends BeanBase {
     options?: INewCtxOptions,
     lifecycle?: INewCtxLifecycle,
   ): Promise<RESULT> {
+    this._assertOrdinaryContext();
     options = Object.assign({}, options);
     // instanceName !== undefined means isolate
     options.instanceName =
@@ -48,6 +66,7 @@ export class BeanExecutor extends BeanBase {
     options?: INewCtxOptions,
     lifecycle?: INewCtxLifecycle,
   ): Promise<RESULT> {
+    this._assertOrdinaryContext();
     options = Object.assign({}, options);
     options.dbInfo = isNil(options.dbInfo) ? { level: 1 } : options.dbInfo;
     options.instanceName =
@@ -61,6 +80,7 @@ export class BeanExecutor extends BeanBase {
     options?: INewCtxOptions,
     lifecycle?: INewCtxLifecycle,
   ): Promise<RESULT> {
+    this._assertOrdinaryContext();
     return this._newCtxInnerStep1(
       () => {
         if (isNil(options?.dbInfo)) return this._newCtxInnerStep2(fn, options);
@@ -71,6 +91,106 @@ export class BeanExecutor extends BeanBase {
       options,
       lifecycle,
     );
+  }
+
+  private _assertOrdinaryContext() {
+    if (isExistingReadyContext(this.ctx)) throw new Error('Existing-ready rebinding unavailable');
+  }
+
+  async newCtxReadyExisting<RESULT>(
+    capability: ExistingReadyCapability,
+    fn: FunctionAsync<RESULT>,
+    options?: INewCtxReadyExistingOptions,
+    lifecycle?: INewCtxLifecycle,
+  ): Promise<RESULT> {
+    this._assertOrdinaryContext();
+    const capture = captureRequestBoundary();
+    const owner = this.app.meta.completedReadiness;
+    const resolved = owner && resolveExistingReadyCapability(owner, capability, this.app);
+    if (!capture || capture.snapshot().portFault || !resolved)
+      throw new Error('Existing-ready unavailable');
+    const data = (value: object | undefined, allowed: readonly string[]) => {
+      const result: Record<string, any> = Object.create(null);
+      if (value === undefined) return result;
+      if (!value || typeof value !== 'object')
+        throw new Error('Existing-ready options unavailable');
+      const proto = Object.getPrototypeOf(value);
+      if (proto !== null && proto !== Object.prototype)
+        throw new Error('Existing-ready options unavailable');
+      for (const key of Reflect.ownKeys(value)) {
+        if (typeof key !== 'string' || !allowed.includes(key))
+          throw new Error('Existing-ready options unavailable');
+        const desc = Object.getOwnPropertyDescriptor(value, key)!;
+        if (!('value' in desc)) throw new Error('Existing-ready options unavailable');
+        result[key] = desc.value;
+      }
+      return result;
+    };
+    const selected = data(options, ['req', 'res', 'locale', 'tz']);
+    const hooks = data(lifecycle, ['initializeContext', 'onScopeOutcome']);
+    if (
+      (selected.locale !== undefined && typeof selected.locale !== 'string') ||
+      (selected.tz !== undefined && typeof selected.tz !== 'string') ||
+      (hooks.initializeContext !== undefined && typeof hooks.initializeContext !== 'function') ||
+      (hooks.onScopeOutcome !== undefined && typeof hooks.onScopeOutcome !== 'function')
+    ) {
+      throw new Error('Existing-ready options unavailable');
+    }
+    if (typeof fn !== 'function') throw new Error('Existing-ready unavailable');
+    let context: VonaContext;
+    try {
+      context = this.app.createAnonymousContext(selected.req, selected.res);
+    } catch (error) {
+      try {
+        const observed: unknown = hooks.onScopeOutcome?.('not_created');
+        if (observed && (typeof observed === 'object' || typeof observed === 'function')) {
+          const then = (observed as PromiseLike<unknown>).then;
+          if (typeof then === 'function') {
+            capture.reportFailure('observer_failed');
+            void new Promise<unknown>((resolve, reject) =>
+              then.call(observed, resolve, reject),
+            ).catch(() => {});
+          }
+        }
+      } catch {
+        capture.reportFailure('observer_failed');
+      }
+      throw error;
+    }
+    const execute = async () => {
+      if (!pinExistingReadyContext(owner, capability, this.app, context))
+        throw new Error('Existing-ready unavailable');
+      if (selected.locale !== undefined) context.locale = selected.locale;
+      if (selected.tz !== undefined) context.tz = selected.tz;
+      const initialized: unknown = hooks.initializeContext?.(context);
+      if (initialized && (typeof initialized === 'object' || typeof initialized === 'function')) {
+        const then = (initialized as PromiseLike<unknown>).then;
+        if (typeof then === 'function') {
+          await new Promise<unknown>((resolve, reject) =>
+            then.call(initialized, resolve, reject),
+          ).catch(() => undefined);
+          throw new Error('Context initializer must be synchronous');
+        }
+      }
+      if (
+        !resolveExistingReadyCapability(owner, capability, this.app) ||
+        capture.snapshot().portFault
+      ) {
+        throw new Error('Existing-ready unavailable');
+      }
+      const database = this.bean._getBean(ServiceDatabaseAsyncLocalStorage);
+      const transaction = this.bean._getBean(ServiceTransactionAsyncLocalStorage);
+      return database.dbStorage.run(resolved.handle as ServiceDb, () =>
+        transaction.run(async () => {
+          const result = await fn();
+          await context.commitsDone();
+          return result;
+        }, true),
+      );
+    };
+    return hooks.onScopeOutcome
+      ? this.app.ctxStorage.runObserved(context, execute, hooks.onScopeOutcome)
+      : this.app.ctxStorage.run(context, execute);
   }
 
   private async _newCtxInnerStep1<RESULT>(

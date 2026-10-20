@@ -31,6 +31,7 @@ const lifecycleSource = `
       return nextResolve(specifier, context);
     },
   });
+  const { createCompletedReadiness } = await import(new URL('../core/completedReadiness.ts', startUrl).href);
   const { Start } = await import(startUrl);
   const [projectPath, lockPath, lockContents, failingPhase] = process.argv.slice(1);
   const phases = [];
@@ -39,6 +40,13 @@ const lifecycleSource = `
   globalThis.phase = async phase => {
     assert.equal(await readFile(lockPath, 'utf8'), lockContents);
     phases.push(phase);
+    assert.equal(app.meta.completedReadiness.snapshot().application, 'starting');
+    if (phase === 'Started') {
+      assert.equal(app.meta.appReady, true);
+      assert.equal(app.meta.appStarted, true);
+      await Promise.resolve();
+      assert.equal(app.meta.completedReadiness.snapshot().application, 'starting');
+    }
     if (phase === failingPhase) throw failure;
   };
   const config = {
@@ -62,6 +70,7 @@ const lifecycleSource = `
       events.push({ event, error, phases: [...phases] });
     },
   };
+  app.meta.completedReadiness = createCompletedReadiness(app);
   const start = new Start(app);
   const order = ['Config', 'Freshness', 'Load', 'Start', 'Ready', 'Started'];
   if (failingPhase) {
@@ -76,6 +85,7 @@ const lifecycleSource = `
     assert.deepEqual(phases, order);
     assert.equal(app.meta.appStartError, undefined);
   }
+  assert.equal(app.meta.completedReadiness.snapshot().application, failingPhase ? 'failed' : 'ready');
   const reachesStarted = !failingPhase || failingPhase === 'Started';
   assert.equal(app.meta.appStarted, reachesStarted ? true : undefined);
   const reachesReady = reachesStarted || failingPhase === 'Ready';
