@@ -106,4 +106,5 @@ Before inventing a custom implementation path:
 - For docs changes: run the docs build and verify links/navigation where practical.
 - For code-generation or workflow guidance changes: verify that the referenced scripts and command families still exist.
 - For code changes: prefer the narrowest meaningful verification first, then use shared root scripts when broader confidence is needed.
+- Keep frontend and backend verification proportional to the change: cover critical behavior using existing infrastructure, not exhaustive upfront test matrices or bespoke source-evaluation/mock harnesses. Prefer a few critical-flow E2E scenarios for frontend work and the smallest meaningful service/model/API/integration tests for backend work; add focused regressions for actual defects. Preserve applicable security, SSR, data-consistency, migration, and acceptance requirements.
 - Any change to `meta.version.ts` requires running `npm run test` so the test database is reinitialized and schema/data consistency issues surface early.

@@ -79,11 +79,13 @@ When the active edition and installed modules provide `@Passport.rbac(...)` and 
 
 ## Verification follow-up
 
-- unit tests
-- `db:reset` or migration verification
-- `npm run test`
-- `npm run tsc`
-- `npm run build`
+- focused critical-business-path tests using existing Vona service/model, controller/API, or integration infrastructure; browser E2E is not the default backend layer
+- focused regressions for actual defects; avoid exhaustive upfront mock/fake matrices and bespoke harnesses
+- applicable authentication/authorization, tenant-isolation, transaction, concurrency, idempotency, migration, and acceptance checks
+- relevant format, lint, and type checks using the smallest supported scope
+- `npm run test`, including the required run after `meta.version.ts` changes
+- migration verification when affected; `db:reset` remains destructive and requires explicit approval
+- `npm run build` only when the affected artifact or acceptance boundary requires it
 
 ## Escalation rule
 

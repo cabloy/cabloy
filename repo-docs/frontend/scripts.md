@@ -49,6 +49,14 @@ npm run build:zova:commerce:admin
 
 The `dev:zova:*` commands start the Zova development server, which uses `9000` in the Cabloy Basic default environment. Use this Zova standalone SSR entry for page, route, and hydration iteration. It may be used as Vona's development proxy target, but direct access to `9000` does not prove the Vona request boundary or integrated acceptance.
 
+## Proportionate frontend verification
+
+For frontend changes, prefer a few critical user flows through the existing E2E infrastructure, together with relevant lightweight format, lint, and type checks. Select scenarios by the behavior being changed rather than running every spec or building exhaustive isolated-test matrices. Reuse the edition-aware preparation and spec/tag/`--grep` filtering below; prepare only the affected artifacts when they have changed.
+
+Do not introduce custom source-evaluation loaders or extensive fake dependencies by default for ordinary page interactions. When an actual problem is fixed, add a focused regression test that reproduces it. Targeted unit and framework tests remain useful when they provide direct, low-cost proof; comprehensive upfront coverage is not a delivery prerequisite.
+
+This preference does not relax applicable SSR/hydration, authentication, authorization, contract, or acceptance requirements, and UI coverage never replaces server-side enforcement. Managed E2E resource isolation remains required. If runtime verification is unavailable or not authorized, report the gap rather than adding substitute test machinery; live Provider and destructive operations retain their separate authorization boundaries.
+
 ## Vona integrated SSR browser acceptance
 
 The default Basic Web and Admin sites have browser smoke commands that exercise Vona integrated SSR through Vona SSR dispatch at the managed run's dynamically allocated test listener, not through the ordinary Vona development listener (`7102` by default) or the Zova standalone SSR development-server port. Vona supplies the API origin at runtime, so no Zova `.env` change or rebuild is needed solely for the test port; see [Runtime API origins in Vona integrated SSR](/fullstack/ssr-entry-modes#runtime-api-origins-in-vona-integrated-ssr).
