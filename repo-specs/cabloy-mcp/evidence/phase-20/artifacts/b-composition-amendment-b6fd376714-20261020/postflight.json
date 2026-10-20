@@ -1,0 +1,102 @@
+{
+  "head": "b6fd376714714d95485da06c82327d54afd6cd84",
+  "mainHeadAtProducers": "cb0fe12162edab398907ff0924a08637f81b8fc6",
+  "mainHeadAtPostflight": "cad4da3337fb437e55bf9308b328fe5f5684ddd7",
+  "scope": "Support-only formatting amendment; stopped at AF4 lint failure",
+  "sourceHashes": {
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/existingReadyBoundaryIntegration.test.ts": "21c7ce83b5e644e286fa2b896d1bce8d3f361316341d98486e4a4b9ad10111fb",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/existingReadyBoundaryIntegrationFixture.ts": "dba69d6c2d9ab888f23e3a2a07eacedc846b8bb89e39359bf151ba0c971f50eb"
+  },
+  "observed": {
+    "AF0": {
+      "exitCode": 0,
+      "durationMs": 262,
+      "captureValid": true,
+      "accepted": true
+    },
+    "AF1": {
+      "exitCode": 0,
+      "durationMs": 12639,
+      "captureValid": true,
+      "accepted": true
+    },
+    "AF2": {
+      "exitCode": 0,
+      "durationMs": 5274,
+      "captureValid": true,
+      "accepted": true
+    },
+    "AF3": {
+      "exitCode": 0,
+      "durationMs": 207,
+      "captureValid": true,
+      "accepted": true
+    },
+    "AF4": {
+      "exitCode": 1,
+      "durationMs": 1150,
+      "captureValid": true,
+      "accepted": false
+    }
+  },
+  "failure": {
+    "producer": "AF4",
+    "exitCode": 1,
+    "file": "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/existingReadyBoundaryIntegration.test.ts",
+    "diagnostics": [
+      {
+        "line": 108,
+        "column": 11,
+        "rule": "@stylistic(quotes)",
+        "message": "Strings must use singlequote."
+      },
+      {
+        "line": 120,
+        "column": 26,
+        "rule": "@stylistic(quotes)",
+        "message": "Strings must use singlequote."
+      }
+    ]
+  },
+  "formatClassification": "Support formatter changed layout/optional trailing comma only; failed whitespace assertion and shell continuation to AF1 retained in format-classification.json. No repair/retry after AF4.",
+  "historicalFailurePreserved": "Original I3 unchanged.",
+  "postflightFailedAssertion": {
+    "exitCode": 1,
+    "description": "Initial postflight required original main dirty status; external commit made it clean and advanced HEAD. No record written by failed attempt. Read-only classification found exactly the frozen 23 governance/docs paths and identical bytes, no framework/test changes; assistant did not commit or synchronize."
+  },
+  "externalMainDisposition": {
+    "externallyCommittedPaths": 23,
+    "allOriginalDirtyBytesPreserved": true,
+    "cleanAtPostflight": true,
+    "sourceQualificationUnaffected": "No MCP or framework execution input changed; no automatic resync or budget expansion."
+  },
+  "unexecuted": [
+    "AF5 eight-group managed composition",
+    "AF6 twelve-case foundation and forty-case owner regression"
+  ],
+  "actualBudget": {
+    "formatterInvocations": 1,
+    "verificationProducers": 4,
+    "managedInvocations": 0,
+    "implicitDepsPasses": 1
+  },
+  "custody": "No managed runtime or private WAL fixture created; runtime disposal/cleanup unproved.",
+  "preservation": {
+    "protectedNonEnvironmentPaths": 6140,
+    "allProtectedBytesUnchanged": true,
+    "finalSourceHashesUnchanged": true,
+    "environmentContentsRead": false,
+    "existingDocumentsAndProgressUnchanged": true
+  },
+  "captureReview": "Complete sanitized AF0-AF4 logs and JSON projections reviewed; no identified credentials/raw tokens/private payloads/machine-local paths. Not exhaustive secret scanning or authenticity proof.",
+  "localSanitizedLogHashes": {
+    "AF0.log": "adf3e6dcadac0076fb7a3215d9fc2d98fe9369a61e3fa724a784248cbeb59a65",
+    "AF1.log": "6462c103284b035c7db04aaf7ddec853e735d1554de4981e17d49dabf697433c",
+    "AF2.log": "e9ce062815d763d6aa83d1661de109e545de44b6e44100eb68ba0ec77c3c1376",
+    "AF3.log": "d7adb1073c677e692365ce6ce86bc52ce72fc448a5b3219716b2b4b6bacdce90",
+    "AF4.log": "d2f6025ed92d1002e8b043150c276bc3195e0346fd16c512f720c1fbb404a487"
+  },
+  "retentionLimit": "Full sanitized logs locally ignored; JSON artifacts untracked retainable. No evidence:check, authority-audit or chart invocation performed.",
+  "status": "Draft not qualified or implementation-complete; parent WBS/Phase20 blocked, full ATP open, verified 0/12, production P1-P3 unresolved. No main write, commit or push by assistant.",
+  "nextAction": "Approve exact two non-interpolated SQL string quote corrections at test lines108/120 preserving runtime SQL bytes, then six final-byte checks each once, first failure stops; no other source/behavior change."
+}

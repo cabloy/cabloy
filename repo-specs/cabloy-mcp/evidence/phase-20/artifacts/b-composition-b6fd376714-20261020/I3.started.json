@@ -1,0 +1,10 @@
+{
+  "label": "I3",
+  "head": "b6fd376714714d95485da06c82327d54afd6cd84",
+  "command": "./node_modules/.bin/oxfmt --check vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/existingReadyBoundaryIntegration.test.ts vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/existingReadyBoundaryIntegrationFixture.ts",
+  "sourceHashes": {
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/existingReadyBoundaryIntegration.test.ts": "21c7ce83b5e644e286fa2b896d1bce8d3f361316341d98486e4a4b9ad10111fb",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/existingReadyBoundaryIntegrationFixture.ts": "6d0f33c679925ef5f7283e7773fc6c8a70919e8f189738349d2ebe6e2f52cbd0"
+  },
+  "budgetConsumed": true
+}

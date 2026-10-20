@@ -1,0 +1,58 @@
+{
+  "head": "b6fd376714714d95485da06c82327d54afd6cd84",
+  "mainHead": "cb0fe12162edab398907ff0924a08637f81b8fc6",
+  "scope": "Section21 exact two authored test paths; stopped at first failing producer",
+  "sourceHashes": {
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/existingReadyBoundaryIntegration.test.ts": "21c7ce83b5e644e286fa2b896d1bce8d3f361316341d98486e4a4b9ad10111fb",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/existingReadyBoundaryIntegrationFixture.ts": "6d0f33c679925ef5f7283e7773fc6c8a70919e8f189738349d2ebe6e2f52cbd0"
+  },
+  "observed": {
+    "I1": {
+      "exitCode": 0,
+      "durationMs": 12644,
+      "captureValid": true,
+      "accepted": true
+    },
+    "I2": {
+      "exitCode": 0,
+      "durationMs": 9140,
+      "captureValid": true,
+      "accepted": true
+    },
+    "I3": {
+      "exitCode": 1,
+      "durationMs": 254,
+      "captureValid": true,
+      "accepted": false
+    }
+  },
+  "failure": "I3 oxfmt --check reports support/existingReadyBoundaryIntegrationFixture.ts only. Main test file not reported. No formatting correction or retry performed.",
+  "unexecuted": [
+    "I4 lint",
+    "I5 eight-group managed composition",
+    "I6 twelve-case foundation and forty-case owner regression"
+  ],
+  "actualBudget": {
+    "producers": 3,
+    "managedInvocations": 0,
+    "implicitDepsPasses": 1
+  },
+  "custody": "No managed test invocation or private WAL fixture was created by execution; runtime disposal/cleanup remain unproved. Composite/deps shared outputs are not runtime resource evidence.",
+  "preservation": {
+    "protectedNonEnvironmentPaths": 6140,
+    "allProtectedBytesUnchanged": true,
+    "sourceHashesUnchanged": true,
+    "mainCleanUnchanged": true,
+    "environmentContentsRead": false,
+    "noExistingDocumentOrProgressEdits": true
+  },
+  "captureReview": "Complete sanitized I1-I3 logs and JSON projections manually reviewed; no identified credentials/raw tokens/private payloads/machine-local paths. Path sanitization is not exhaustive secret scanning or authenticity proof.",
+  "localSanitizedLogHashes": {
+    "I1.log": "4a44cdbd504fc1983a67c67d0d056db5762a4b3528033a5104c9185e07f24d27",
+    "I2.log": "4204da0728f7138b7cd955ad912986f323bb896ee31e8ed384810229a0c41d9c",
+    "I3.log": "0fc34f1687bad70a3ec82c0d99e4ad6a495ff8b4d3e2c7d79e4552e7bacb77a5"
+  },
+  "retentionLimit": "Complete sanitized .log captures are local ignored artifacts; JSON dispositions/source hashes are untracked retainable artifacts. No evidence checker was run for this bundle; no new documentary budget inferred.",
+  "status": "Two-path draft authored, not qualified or implementation-complete. Parent WBS/Phase20 blocked, full ATPs open, verified 0/12. Production P1-P3 unresolved. No main write, commit or push.",
+  "nextAction": "Separately approve exact support-file formatting correction and a fresh bounded final-byte verification amendment. Original I3 failure remains historical; do not resume I4-I6 automatically."
+}

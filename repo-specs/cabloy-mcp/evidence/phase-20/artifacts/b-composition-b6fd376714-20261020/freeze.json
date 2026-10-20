@@ -1,0 +1,16 @@
+{
+  "head": "b6fd376714714d95485da06c82327d54afd6cd84",
+  "mainHead": "cb0fe12162edab398907ff0924a08637f81b8fc6",
+  "edition": "Basic",
+  "worktree": "Two approved untracked test files; base alone does not reproduce dirty-source proof",
+  "sourceHashes": {
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/existingReadyBoundaryIntegration.test.ts": "21c7ce83b5e644e286fa2b896d1bce8d3f361316341d98486e4a4b9ad10111fb",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/existingReadyBoundaryIntegrationFixture.ts": "6d0f33c679925ef5f7283e7773fc6c8a70919e8f189738349d2ebe6e2f52cbd0"
+  },
+  "protectedInventoryCount": 6140,
+  "protectedInventorySha256": "e402fb92a18e6bd1c525dd0bec4df6816981d027e0ba0c908fcf117446547589",
+  "excludedEnvironmentCount": 17,
+  "environmentContentsRead": false,
+  "budget": "I1-I6 each once; no correction/retry; two managed invocations; three implicit deps passes",
+  "proofLimit": "Real native registry and runner-owned context/ALS/commit/disposal with synthetic data-only publication, inert handle, controlled clocks/barriers/faults; no production authority or ORM SQL."
+}

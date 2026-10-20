@@ -1,0 +1,10 @@
+{
+  "label": "AF4",
+  "head": "b6fd376714714d95485da06c82327d54afd6cd84",
+  "command": "./node_modules/.bin/oxlint --disable-nested-config vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/existingReadyBoundaryIntegration.test.ts vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/existingReadyBoundaryIntegrationFixture.ts",
+  "sourceHashes": {
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/existingReadyBoundaryIntegration.test.ts": "21c7ce83b5e644e286fa2b896d1bce8d3f361316341d98486e4a4b9ad10111fb",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/existingReadyBoundaryIntegrationFixture.ts": "dba69d6c2d9ab888f23e3a2a07eacedc846b8bb89e39359bf151ba0c971f50eb"
+  },
+  "budgetConsumed": true
+}

@@ -1,0 +1,11 @@
+{
+  "supportBeforeSha256": "6d0f33c679925ef5f7283e7773fc6c8a70919e8f189738349d2ebe6e2f52cbd0",
+  "supportAfterSha256": "dba69d6c2d9ab888f23e3a2a07eacedc846b8bb89e39359bf151ba0c971f50eb",
+  "classification": "Formatter wrapped the captureCompletedInstance call differently and removed its optional trailing argument comma. No changed value, import, control flow or behavior.",
+  "failedAssertion": {
+    "exitCode": 1,
+    "description": "Whitespace-only comparison was too strict: approved formatter also removed an optional trailing comma. Shell lacked && after Python, so freeze and AF1 still ran and passed. Failure preserved; no source repair or producer retry."
+  },
+  "readOnlyReconciliation": "Full displayed diff reviewed; equality after whitespace/optional-trailing-comma normalization passed. Support-only formatter scope remains valid.",
+  "budget": "AF0 and AF1 consumed once; AF2-AF6 not yet started"
+}

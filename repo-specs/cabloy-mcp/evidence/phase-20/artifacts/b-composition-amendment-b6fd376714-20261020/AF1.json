@@ -1,0 +1,28 @@
+{
+  "label": "AF1",
+  "head": "b6fd376714714d95485da06c82327d54afd6cd84",
+  "command": "./vona/node_modules/.bin/tsc --noEmit --composite false --incremental false -p vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json",
+  "code": 0,
+  "signal": null,
+  "durationMs": 12639,
+  "bytes": [
+    0,
+    0
+  ],
+  "captureValid": true,
+  "overflow": false,
+  "spawnFailed": false,
+  "scopeValid": true,
+  "sourceUnchanged": true,
+  "sourceHashes": {
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/existingReadyBoundaryIntegration.test.ts": "21c7ce83b5e644e286fa2b896d1bce8d3f361316341d98486e4a4b9ad10111fb",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/existingReadyBoundaryIntegrationFixture.ts": "dba69d6c2d9ab888f23e3a2a07eacedc846b8bb89e39359bf151ba0c971f50eb"
+  },
+  "outputSourceHashes": {
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/existingReadyBoundaryIntegration.test.ts": "21c7ce83b5e644e286fa2b896d1bce8d3f361316341d98486e4a4b9ad10111fb",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/existingReadyBoundaryIntegrationFixture.ts": "dba69d6c2d9ab888f23e3a2a07eacedc846b8bb89e39359bf151ba0c971f50eb"
+  },
+  "mainExternalEditsPreserved": true,
+  "accepted": true,
+  "limit": "Producer acceptance only. Runtime requires substantive test count and cleaned/custody reconciliation. No retry or source repair authority; observation grants no signals."
+}
