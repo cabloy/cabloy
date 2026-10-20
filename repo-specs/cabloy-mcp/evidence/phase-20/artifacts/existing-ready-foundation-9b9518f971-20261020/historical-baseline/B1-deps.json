@@ -1,0 +1,34 @@
+{
+  "label": "B1-deps",
+  "command": "npm run deps:vona",
+  "code": 0,
+  "signal": null,
+  "spawnFailed": false,
+  "durationMs": 1743,
+  "observationExceeded": false,
+  "overflow": false,
+  "bytes": [
+    144,
+    54
+  ],
+  "captureValid": true,
+  "sourceHashes": {
+    "vona/packages-vona/vona-core/src/lib/core/completedReadiness.ts": null,
+    "vona/packages-vona/vona-core/src/lib/core/meta.ts": "88cb391ae1cdf63b4506e12fa6df28784f2299a8be548b2fb97272340fa74151",
+    "vona/packages-vona/vona-core/src/lib/framework/start.ts": "a83289b153b2c548fce39e81f91ac649292747b7948dd6681f1e0b688c6cbf4c",
+    "vona/packages-vona/vona-core/src/lib/core/context.ts": "f986c6aa651b0a4fac8aeb563c00c998f80d4c6f4f5f5b97ea85f6632d67978c",
+    "vona/packages-vona/vona-core/src/lib/core/index.ts": "0093f20e6c24f0a5858c11f3fa478be5c3949c1533aa57b7866d671a67e79b7b",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/lib/existingReadyAdmission.ts": null,
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/service/instance.ts": "319c60b93171dc33a761ea0c8c8737b2dd8dc7f270d237bab51d081ef4cf2985",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/bean/bean.instance.ts": "84193f6387cacdff1faac687c2c2967ff73105ed689a55258215dcf7cc349bd9",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts": "c938c5b3d72da0803a751aa5efc82d258ba5224493a9528d98414f4130dbe23b",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/src/types/executor.ts": "e38d2902f591831e288bb7321ef8d6b26bdada439942d84c5816fda156a40046",
+    "vona/packages-vona/vona-core/src/lib/core/completedReadiness.test.ts": null,
+    "vona/packages-vona/vona-core/src/lib/framework/start.test.ts": "fd64ca980de00d69335d439c2b9aa9e5350aac5ada3b0608343d76af2ee55db7",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/test/existingReadyAdmission.test.ts": null,
+    "vona/src/suite-vendor/a-vona/modules/a-executor/test/readyExisting.test.ts": null
+  },
+  "preservedDrift": [],
+  "status": "",
+  "sanitizer": "passed"
+}

@@ -1,0 +1,13 @@
+{
+  "label": "D5",
+  "command": "npm run docs:build",
+  "inputHashes": {
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md": "d0a3a8545ead9d7f87521c7529330bacdee3e4697eca6c6ce02763532fe55889",
+    "repo-specs/cabloy-mcp/progress.md": "071707be7f953050cd83f94a2315898fe587569dca74ee857c244accfef8bdc6",
+    "repo-specs/cabloy-mcp/evidence/phase-20/index.md": "3be1b14b330be1be76e0467381aff7df9070c811ea2fbb05c9abd93b760681fc",
+    "repo-specs/cabloy-mcp/evidence/phase-20/existing-ready-foundation-qualification.md": "41a93cced2c0c46a94fbcc29ad8723946fd873b2aa6b3d872e94e2dea1692db8",
+    "repo-specs/cabloy-mcp/implementation-gantt.svg": "afe7bde77e82ce15065056df40987b315dd37591bc7787619b7a2a6efe5aa7e1",
+    "repo-specs/cabloy-mcp/implementation-burndown.svg": "cb337e4ec944612f1243b658b353501cee37a6d27899969de14229cb69cc6e3d"
+  },
+  "head": "9b9518f97110ae2a1286345dc0dedddadbc26e6d"
+}

@@ -1,0 +1,127 @@
+{
+  "head": "9b9518f97110ae2a1286345dc0dedddadbc26e6d",
+  "mainHead": "8cd5fbc654f4f6f9a3c8c804af55f84c328edbb9",
+  "historicalBase": "5901a258220a2a9885ec540cce6a6b2ef244c2b4",
+  "historicalDirtyBytes": true,
+  "equality": [
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/core/completedReadiness.ts",
+      "historicalSha256": "f0038f6ee9ab501c1636151d7d68edc59e4d2e30a41e851e68d22d5013e67383",
+      "currentSha256": "f0038f6ee9ab501c1636151d7d68edc59e4d2e30a41e851e68d22d5013e67383",
+      "mainSha256": "f0038f6ee9ab501c1636151d7d68edc59e4d2e30a41e851e68d22d5013e67383",
+      "historicalMatch": true,
+      "mainMatch": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/core/meta.ts",
+      "historicalSha256": "806086260c4d82db1f8ef7e8fd3c5e3a4003220b8ef066fd973b6802a7577d97",
+      "currentSha256": "806086260c4d82db1f8ef7e8fd3c5e3a4003220b8ef066fd973b6802a7577d97",
+      "mainSha256": "806086260c4d82db1f8ef7e8fd3c5e3a4003220b8ef066fd973b6802a7577d97",
+      "historicalMatch": true,
+      "mainMatch": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/framework/start.ts",
+      "historicalSha256": "3f54b65df529ff9076130111bd6cdffac5fcd463ed8e22bdbb0a46d37fc5d69e",
+      "currentSha256": "3f54b65df529ff9076130111bd6cdffac5fcd463ed8e22bdbb0a46d37fc5d69e",
+      "mainSha256": "3f54b65df529ff9076130111bd6cdffac5fcd463ed8e22bdbb0a46d37fc5d69e",
+      "historicalMatch": true,
+      "mainMatch": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/core/context.ts",
+      "historicalSha256": "9d509844036141d76c8a647ad6c9c903da7ca06f92d39a3c7a96bd8e2899e592",
+      "currentSha256": "9d509844036141d76c8a647ad6c9c903da7ca06f92d39a3c7a96bd8e2899e592",
+      "mainSha256": "9d509844036141d76c8a647ad6c9c903da7ca06f92d39a3c7a96bd8e2899e592",
+      "historicalMatch": true,
+      "mainMatch": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/core/index.ts",
+      "historicalSha256": "75777315b0a580cc7025805d2c6d984a033a0f4fb6bb224a6cb3420ac33a4396",
+      "currentSha256": "75777315b0a580cc7025805d2c6d984a033a0f4fb6bb224a6cb3420ac33a4396",
+      "mainSha256": "75777315b0a580cc7025805d2c6d984a033a0f4fb6bb224a6cb3420ac33a4396",
+      "historicalMatch": true,
+      "mainMatch": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-instance/src/lib/existingReadyAdmission.ts",
+      "historicalSha256": "a7a3dfe664a600adb8e997bfb84c752fe92582e24876051297087fed4bad969c",
+      "currentSha256": "a7a3dfe664a600adb8e997bfb84c752fe92582e24876051297087fed4bad969c",
+      "mainSha256": "a7a3dfe664a600adb8e997bfb84c752fe92582e24876051297087fed4bad969c",
+      "historicalMatch": true,
+      "mainMatch": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-instance/src/service/instance.ts",
+      "historicalSha256": "3a86890c5a85462b3e76012e83494a17a804f4c034e9030b05ab3f3e3440cbb4",
+      "currentSha256": "b89d41ab28386f1f5fc9070bb70e891dcf92fe16d483017b3d0147e5a93015eb",
+      "mainSha256": "b89d41ab28386f1f5fc9070bb70e891dcf92fe16d483017b3d0147e5a93015eb",
+      "historicalMatch": false,
+      "mainMatch": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-instance/src/bean/bean.instance.ts",
+      "historicalSha256": "10da06ea1a0ed9c5ec1bb080c1f3648a4f99cae5f461477d3fd1586ca6357a60",
+      "currentSha256": "10da06ea1a0ed9c5ec1bb080c1f3648a4f99cae5f461477d3fd1586ca6357a60",
+      "mainSha256": "10da06ea1a0ed9c5ec1bb080c1f3648a4f99cae5f461477d3fd1586ca6357a60",
+      "historicalMatch": true,
+      "mainMatch": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts",
+      "historicalSha256": "97d1ce845d21e8aceeb58f81bf74198797bee699cafd458226a0860ac009f2cf",
+      "currentSha256": "d7e71136bff54ddf1d3ebadc4ffe7249ab7bc0679aa9d08b0bb925883f9f33cc",
+      "mainSha256": "d7e71136bff54ddf1d3ebadc4ffe7249ab7bc0679aa9d08b0bb925883f9f33cc",
+      "historicalMatch": false,
+      "mainMatch": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-executor/src/types/executor.ts",
+      "historicalSha256": "c610e5eebe35580114220b90d854644ffda247dd1f7da656c3ae66dd0949d503",
+      "currentSha256": "c610e5eebe35580114220b90d854644ffda247dd1f7da656c3ae66dd0949d503",
+      "mainSha256": "c610e5eebe35580114220b90d854644ffda247dd1f7da656c3ae66dd0949d503",
+      "historicalMatch": true,
+      "mainMatch": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/core/completedReadiness.test.ts",
+      "historicalSha256": "178e5bc55d0eceacdd802078bfe143763157626cf6bae99f8b533112fd2e0693",
+      "currentSha256": "178e5bc55d0eceacdd802078bfe143763157626cf6bae99f8b533112fd2e0693",
+      "mainSha256": "178e5bc55d0eceacdd802078bfe143763157626cf6bae99f8b533112fd2e0693",
+      "historicalMatch": true,
+      "mainMatch": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/framework/start.test.ts",
+      "historicalSha256": "6eb24308eee559b3555da4f3cd74c657a9a6e66eb644f2e61b29cbe19cfe0b30",
+      "currentSha256": "6eb24308eee559b3555da4f3cd74c657a9a6e66eb644f2e61b29cbe19cfe0b30",
+      "mainSha256": "6eb24308eee559b3555da4f3cd74c657a9a6e66eb644f2e61b29cbe19cfe0b30",
+      "historicalMatch": true,
+      "mainMatch": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-instance/test/existingReadyAdmission.test.ts",
+      "historicalSha256": "96230e3f97b687c5f04cf9815423100d7fa8b22c38246ac97e1bb49f753bd53a",
+      "currentSha256": "50ffcfb84830f9f784b8cc81677e1222cdd1798e2fc0a87013da8ab173dd039f",
+      "mainSha256": "50ffcfb84830f9f784b8cc81677e1222cdd1798e2fc0a87013da8ab173dd039f",
+      "historicalMatch": false,
+      "mainMatch": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-executor/test/readyExisting.test.ts",
+      "historicalSha256": "bc4c93ac87052282d643c4536a0a02e1efba1c510803b7bcd49a4c3741a388a7",
+      "currentSha256": "f9e7aac215845fc7ed5669024a26f9671a993427fbcd5e50246fbd36991f8acf",
+      "mainSha256": "f9e7aac215845fc7ed5669024a26f9671a993427fbcd5e50246fbd36991f8acf",
+      "historicalMatch": false,
+      "mainMatch": true
+    }
+  ],
+  "sourceOnlyAttribution": "Four later changes are intentional main-owned queue-context/commit-tail deltas; no source modifications or whole-foundation requalification",
+  "additionalPaths": {
+    "vona/src/suite-vendor/a-vona/modules/a-executor/test/readyExistingCommit.test.ts": "210e5f94ee90c63f4dea2da235741eb29cb3352c2bbc2ced33935b55d6496f33",
+    "vona/packages-utils/process-helper/src/index.ts": "eb60ca93d90d37e506f117e7913cad526b1d735bda07d992857b6db1ed717dc9",
+    "vona/packages-utils/process-helper/src/index.test.ts": "ec18f260daa30d5e86dcfde48e1a12b59b51f6b3a9976ee8bae3ed94731e589e"
+  },
+  "proofLimit": "No final-byte passing evidence for later deltas found in inspected local B bundles; not a claim about external test execution"
+}

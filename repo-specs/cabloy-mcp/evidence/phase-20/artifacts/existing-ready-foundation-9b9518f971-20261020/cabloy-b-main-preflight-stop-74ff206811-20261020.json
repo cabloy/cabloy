@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-20",
+  "head": "74ff2068114a7cdbb30744dc27bb60f75dca26bd",
+  "scope": "section-20 Basic main preflight",
+  "outcome": "stopped before B1 on newly observed unclassified lockfile modification",
+  "initialObservedStatus": "clean",
+  "stopStatus": " M zova/pnpm-lock.yaml\n",
+  "unexpectedPath": "zova/pnpm-lock.yaml",
+  "delta": {
+    "dependency": "zova-cli-set-front",
+    "from": "^1.2.114",
+    "to": "^1.2.115",
+    "linkVersionUnchanged": true
+  },
+  "headHash": "4792234acee7ebd6c9cd50cddeeb4416e70ac7e33ed59a30e766fdbab50b7e13",
+  "observedHash": "46f8ae7d622414e65a03834eadf7507079f7d506b86d81e1c399c5e1ff552755",
+  "frameworkSourceAuthored": false,
+  "approvedProducersExecuted": [],
+  "baselineBudgetsConsumed": 0,
+  "baselineHarnessExit": 1,
+  "automaticRetry": false,
+  "revertResetStashCommitPush": false,
+  "resourceInitialization": false,
+  "nextCondition": "Attribute the external main lockfile change and establish stable prerequisite state before approved baselines; do not discard it"
+}

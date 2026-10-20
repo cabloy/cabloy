@@ -1,0 +1,1081 @@
+{
+  "head": "9b9518f97110ae2a1286345dc0dedddadbc26e6d",
+  "copiedRecords": 119,
+  "inventory": [
+    {
+      "source": "historical-baseline/B1-deps.json",
+      "originalSha256": "e48c69db15084e998c600578ca3b1d4a5d4bd7679b982bff69e45a0243c12dfa",
+      "originalBytes": 2011,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B1-deps.json",
+      "retainedSha256": "e48c69db15084e998c600578ca3b1d4a5d4bd7679b982bff69e45a0243c12dfa",
+      "retainedBytes": 2011,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B1-deps.log",
+      "originalSha256": "0f41acf11cc2f25ff27d3bd2c3c00569114af54f71a6d5d980f79774169e7fec",
+      "originalBytes": 2232,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B1-deps.log",
+      "retainedSha256": "0f41acf11cc2f25ff27d3bd2c3c00569114af54f71a6d5d980f79774169e7fec",
+      "retainedBytes": 2232,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B10-devSeed.json",
+      "originalSha256": "bdbd4675abd342d1beef9bcef60feb72b8a33cef684afccfbba6feb55fc23fdc",
+      "originalBytes": 2128,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B10-devSeed.json",
+      "retainedSha256": "bdbd4675abd342d1beef9bcef60feb72b8a33cef684afccfbba6feb55fc23fdc",
+      "retainedBytes": 2128,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B10-devSeed.log",
+      "originalSha256": "e9a88e33d2d23dfe9ec582bf524a04d7510524f3c1cbe78bfc35020d41b3fece",
+      "originalBytes": 9987,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B10-devSeed.log",
+      "retainedSha256": "e9a88e33d2d23dfe9ec582bf524a04d7510524f3c1cbe78bfc35020d41b3fece",
+      "retainedBytes": 9987,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B11-instance.json",
+      "originalSha256": "773081d750cec00d1f9d202e4533c9c183f18e8d2b0daa1c22520e34419dc2cb",
+      "originalBytes": 2128,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B11-instance.json",
+      "retainedSha256": "773081d750cec00d1f9d202e4533c9c183f18e8d2b0daa1c22520e34419dc2cb",
+      "retainedBytes": 2128,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B11-instance.log",
+      "originalSha256": "aec5cee0528816e01e7eba5d0bdb7ff2a50a3e3e678b2f223eece661fd241de6",
+      "originalBytes": 9767,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B11-instance.log",
+      "retainedSha256": "aec5cee0528816e01e7eba5d0bdb7ff2a50a3e3e678b2f223eece661fd241de6",
+      "retainedBytes": 9767,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B2-core.json",
+      "originalSha256": "d8098b4d77b20c5058dfad7a618833bf90358d687a6e65feac81fde5e09330d9",
+      "originalBytes": 2112,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B2-core.json",
+      "retainedSha256": "d8098b4d77b20c5058dfad7a618833bf90358d687a6e65feac81fde5e09330d9",
+      "retainedBytes": 2112,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B2-core.log",
+      "originalSha256": "45697cc53df19de75548d9dd8cc5d9a85720e044aac2bc5c1ad5a55649165a82",
+      "originalBytes": 2286,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B2-core.log",
+      "retainedSha256": "45697cc53df19de75548d9dd8cc5d9a85720e044aac2bc5c1ad5a55649165a82",
+      "retainedBytes": 2286,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B3-instance.json",
+      "originalSha256": "ef51d5cad2d899e203c56cf66cda1d2c43fdcb04951378cd6ac3c311cc86cd48",
+      "originalBytes": 2136,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B3-instance.json",
+      "retainedSha256": "ef51d5cad2d899e203c56cf66cda1d2c43fdcb04951378cd6ac3c311cc86cd48",
+      "retainedBytes": 2136,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B3-instance.log",
+      "originalSha256": "e8d1ab08f786ce8ea7dc383e16ccfd08812c346912d56322b6a2c202fdaa796d",
+      "originalBytes": 2329,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B3-instance.log",
+      "retainedSha256": "e8d1ab08f786ce8ea7dc383e16ccfd08812c346912d56322b6a2c202fdaa796d",
+      "retainedBytes": 2329,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B4-executor.json",
+      "originalSha256": "eacc4828f8b9536697bdaa89f61a7553aab6275481d6259cae98641ba54abda5",
+      "originalBytes": 2136,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B4-executor.json",
+      "retainedSha256": "eacc4828f8b9536697bdaa89f61a7553aab6275481d6259cae98641ba54abda5",
+      "retainedBytes": 2136,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B4-executor.log",
+      "originalSha256": "f7077c8cb10cd1c9f5a62672c1681341f9f13ab1c66470bb3a87a229b7f55342",
+      "originalBytes": 2329,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B4-executor.log",
+      "retainedSha256": "f7077c8cb10cd1c9f5a62672c1681341f9f13ab1c66470bb3a87a229b7f55342",
+      "retainedBytes": 2329,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B5-composite.json",
+      "originalSha256": "d504cdb7787f4fa7d192283f1ba5f840945d7da4b8e602cf2c3b3e27338f2084",
+      "originalBytes": 2024,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B5-composite.json",
+      "retainedSha256": "d504cdb7787f4fa7d192283f1ba5f840945d7da4b8e602cf2c3b3e27338f2084",
+      "retainedBytes": 2024,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B5-composite.log",
+      "originalSha256": "ceeb389ec1aaccc7db32cec2a5c2f94d14642481386de092696101cf78207ad0",
+      "originalBytes": 3221,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B5-composite.log",
+      "retainedSha256": "ceeb389ec1aaccc7db32cec2a5c2f94d14642481386de092696101cf78207ad0",
+      "retainedBytes": 3221,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B6-start.json",
+      "originalSha256": "d8d71a0b31531fd4849dd199a95a6e50d411461e9ea938ed6620b08a7206c55d",
+      "originalBytes": 2066,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B6-start.json",
+      "retainedSha256": "d8d71a0b31531fd4849dd199a95a6e50d411461e9ea938ed6620b08a7206c55d",
+      "retainedBytes": 2066,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/B6-start.log",
+      "originalSha256": "c68dc83300c4e4dbca5b379d48057c005bc7990a0ed44a8895ce055e83f4ad36",
+      "originalBytes": 2850,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/B6-start.log",
+      "retainedSha256": "c68dc83300c4e4dbca5b379d48057c005bc7990a0ed44a8895ce055e83f4ad36",
+      "retainedBytes": 2850,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/baseline-outcome.json",
+      "originalSha256": "75ad9873a7572ac36b5e610b463d4186c1d44e004f9482ebf873c2cf1212a872",
+      "originalBytes": 882,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/baseline-outcome.json",
+      "retainedSha256": "75ad9873a7572ac36b5e610b463d4186c1d44e004f9482ebf873c2cf1212a872",
+      "retainedBytes": 882,
+      "projection": false
+    },
+    {
+      "source": "historical-baseline/preflight.json",
+      "originalSha256": "831b741ba8da2872d360b12d9f709f6c08090f3ec40a4adfd812eec9f5c2e3af",
+      "originalBytes": 3737,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-baseline/preflight.json",
+      "retainedSha256": "831b741ba8da2872d360b12d9f709f6c08090f3ec40a4adfd812eec9f5c2e3af",
+      "retainedBytes": 3737,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B14.json",
+      "originalSha256": "28c48fa6ff23b6c3d4d4c4c4c291950d88b612f2d1a5987d901a02690f2a6cfd",
+      "originalBytes": 4331,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B14.json",
+      "retainedSha256": "28c48fa6ff23b6c3d4d4c4c4c291950d88b612f2d1a5987d901a02690f2a6cfd",
+      "retainedBytes": 4331,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B14.log",
+      "originalSha256": "9e00a2675e83587d82af8010ffd8746ef3b2b68e3b8a825f69d1cfbf693bca8d",
+      "originalBytes": 5465,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B14.log",
+      "retainedSha256": "9e00a2675e83587d82af8010ffd8746ef3b2b68e3b8a825f69d1cfbf693bca8d",
+      "retainedBytes": 5465,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B15-amendment.json",
+      "originalSha256": "9176121ce6ea7721b8306773e62b5f6217a1466ce45b2286932cb302e8ed2e56",
+      "originalBytes": 4357,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B15-amendment.json",
+      "retainedSha256": "9176121ce6ea7721b8306773e62b5f6217a1466ce45b2286932cb302e8ed2e56",
+      "retainedBytes": 4357,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B15-amendment.log",
+      "originalSha256": "6783e760533d2fb561f28387f4446ed582d614438ac83178f4fd2a11962e4a62",
+      "originalBytes": 5395,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B15-amendment.log",
+      "retainedSha256": "6783e760533d2fb561f28387f4446ed582d614438ac83178f4fd2a11962e4a62",
+      "retainedBytes": 5395,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B15-correction.json",
+      "originalSha256": "94baf36926408f8034304e0ab1da32f82ef84173005e8be726bc0c52c425a556",
+      "originalBytes": 4360,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B15-correction.json",
+      "retainedSha256": "94baf36926408f8034304e0ab1da32f82ef84173005e8be726bc0c52c425a556",
+      "retainedBytes": 4360,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B15-correction.log",
+      "originalSha256": "54022f8d0ce22b8319c707a07523cf66d8c990ece4d08b1c24b58702c3e9f23b",
+      "originalBytes": 6233,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B15-correction.log",
+      "retainedSha256": "54022f8d0ce22b8319c707a07523cf66d8c990ece4d08b1c24b58702c3e9f23b",
+      "retainedBytes": 6233,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B15.json",
+      "originalSha256": "11b400b4d0dcadc7c43ce75e20125907225684a65ce2c2a4b8828f478e4bf1a9",
+      "originalBytes": 4350,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B15.json",
+      "retainedSha256": "11b400b4d0dcadc7c43ce75e20125907225684a65ce2c2a4b8828f478e4bf1a9",
+      "retainedBytes": 4350,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B15.log",
+      "originalSha256": "c0af8815036f69381f76cd9563d1129a24048e9c16d02bcaf06fe96833f90f4b",
+      "originalBytes": 13308,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B15.log",
+      "retainedSha256": "c0af8815036f69381f76cd9563d1129a24048e9c16d02bcaf06fe96833f90f4b",
+      "retainedBytes": 13308,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B2-correction.json",
+      "originalSha256": "6ba48b2f33744961c7e48b6cbfb2e0169baaf1f69eabde0f3cad4758c6b9adf6",
+      "originalBytes": 3493,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B2-correction.json",
+      "retainedSha256": "6ba48b2f33744961c7e48b6cbfb2e0169baaf1f69eabde0f3cad4758c6b9adf6",
+      "retainedBytes": 3493,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B2-correction.log",
+      "originalSha256": "d0fe892c0e3057f07356ee0fc6303a2820f5dbf16e52c7bc436e0990a871d7fe",
+      "originalBytes": 3667,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B2-correction.log",
+      "retainedSha256": "d0fe892c0e3057f07356ee0fc6303a2820f5dbf16e52c7bc436e0990a871d7fe",
+      "retainedBytes": 3667,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B2.json",
+      "originalSha256": "dd4cde2633ba60a446fcdf14f38afc691289f1c48eb898c6ba6fa0df837744ca",
+      "originalBytes": 3482,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B2.json",
+      "retainedSha256": "dd4cde2633ba60a446fcdf14f38afc691289f1c48eb898c6ba6fa0df837744ca",
+      "retainedBytes": 3482,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B2.log",
+      "originalSha256": "a7df6192f64824d4a37d7c00e63357b2e15a934829c8ffa89658c09b21bea164",
+      "originalBytes": 3656,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B2.log",
+      "retainedSha256": "a7df6192f64824d4a37d7c00e63357b2e15a934829c8ffa89658c09b21bea164",
+      "retainedBytes": 3656,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B3-correction.json",
+      "originalSha256": "c4e04690aeba01fd2d95d7db9f7d4beb1576987a530c50ab2f47a449cc56eb48",
+      "originalBytes": 3513,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B3-correction.json",
+      "retainedSha256": "c4e04690aeba01fd2d95d7db9f7d4beb1576987a530c50ab2f47a449cc56eb48",
+      "retainedBytes": 3513,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B3-correction.log",
+      "originalSha256": "dca8ee9cbc6525a776ec69e63557b4b9aa5e5b37ff1fca0d81efc6f01e0c1111",
+      "originalBytes": 3706,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B3-correction.log",
+      "retainedSha256": "dca8ee9cbc6525a776ec69e63557b4b9aa5e5b37ff1fca0d81efc6f01e0c1111",
+      "retainedBytes": 3706,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B3.json",
+      "originalSha256": "d110a91977d3187f8131689c7ccc9f60259062e99ee4db71a87418ac6d3dda37",
+      "originalBytes": 3504,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B3.json",
+      "retainedSha256": "d110a91977d3187f8131689c7ccc9f60259062e99ee4db71a87418ac6d3dda37",
+      "retainedBytes": 3504,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B3.log",
+      "originalSha256": "272e1f81d148f0b91030f3d878c4b69d08a8c6050186f81501646ea1783b1f49",
+      "originalBytes": 4137,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B3.log",
+      "retainedSha256": "272e1f81d148f0b91030f3d878c4b69d08a8c6050186f81501646ea1783b1f49",
+      "retainedBytes": 4137,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B4-correction.json",
+      "originalSha256": "7e11868294f2ddc77c9bb8b130f328394bbb75999f99456286165ba20612a9e8",
+      "originalBytes": 3513,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B4-correction.json",
+      "retainedSha256": "7e11868294f2ddc77c9bb8b130f328394bbb75999f99456286165ba20612a9e8",
+      "retainedBytes": 3513,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B4-correction.log",
+      "originalSha256": "f40426aa4de58832fb8cc22d4c13790025769dc11c8b9960138c536032a5cdec",
+      "originalBytes": 3706,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B4-correction.log",
+      "retainedSha256": "f40426aa4de58832fb8cc22d4c13790025769dc11c8b9960138c536032a5cdec",
+      "retainedBytes": 3706,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B4.json",
+      "originalSha256": "4691cc98f4441f77454f3855927f1a9d0824188cb87ce76bde59f3a3c9c92e00",
+      "originalBytes": 3502,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B4.json",
+      "retainedSha256": "4691cc98f4441f77454f3855927f1a9d0824188cb87ce76bde59f3a3c9c92e00",
+      "retainedBytes": 3502,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B4.log",
+      "originalSha256": "e620782b72fce33fae80957e0b9eb5a59763fbe5fb076c79492b9090876bd7b9",
+      "originalBytes": 3695,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B4.log",
+      "retainedSha256": "e620782b72fce33fae80957e0b9eb5a59763fbe5fb076c79492b9090876bd7b9",
+      "retainedBytes": 3695,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B5.json",
+      "originalSha256": "2c654d88c01777f7766f8f7a897ef0443c65e4dac46050693b429041e53d35c2",
+      "originalBytes": 3390,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B5.json",
+      "retainedSha256": "2c654d88c01777f7766f8f7a897ef0443c65e4dac46050693b429041e53d35c2",
+      "retainedBytes": 3390,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B5.log",
+      "originalSha256": "d0c9f0b8ef71875d60a5ca7fd8aa5e47ecb3bdc6a6678b1b5592198b9c618eff",
+      "originalBytes": 4328,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B5.log",
+      "retainedSha256": "d0c9f0b8ef71875d60a5ca7fd8aa5e47ecb3bdc6a6678b1b5592198b9c618eff",
+      "retainedBytes": 4328,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B7.json",
+      "originalSha256": "5115f375c02424ca5d4e77ee290ddc873225ef8080016f679a7f741ddf1fb0ea",
+      "originalBytes": 3457,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B7.json",
+      "retainedSha256": "5115f375c02424ca5d4e77ee290ddc873225ef8080016f679a7f741ddf1fb0ea",
+      "retainedBytes": 3457,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B7.log",
+      "originalSha256": "2859bd9f52105bd4f243493f1b511be66ea0b18fde4065dff26f51a508758b12",
+      "originalBytes": 4230,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B7.log",
+      "retainedSha256": "2859bd9f52105bd4f243493f1b511be66ea0b18fde4065dff26f51a508758b12",
+      "retainedBytes": 4230,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B8.json",
+      "originalSha256": "9ad02e21de9e5c1b1c37afb551f48ad1958ae5abcdfd5c6bb4c3e676104bb1f6",
+      "originalBytes": 3524,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B8.json",
+      "retainedSha256": "9ad02e21de9e5c1b1c37afb551f48ad1958ae5abcdfd5c6bb4c3e676104bb1f6",
+      "retainedBytes": 3524,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B8.log",
+      "originalSha256": "f6b4afda1d048c98bb68159dfda50d68d961e1ca0df3883d3c8e56c6e62b6485",
+      "originalBytes": 10310,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B8.log",
+      "retainedSha256": "f6b4afda1d048c98bb68159dfda50d68d961e1ca0df3883d3c8e56c6e62b6485",
+      "retainedBytes": 10310,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B9.json",
+      "originalSha256": "d1979fd6dc044022e1d531e629a75f46acd0ad1f871b851af338066dceb6d556",
+      "originalBytes": 3515,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B9.json",
+      "retainedSha256": "d1979fd6dc044022e1d531e629a75f46acd0ad1f871b851af338066dceb6d556",
+      "retainedBytes": 3515,
+      "projection": false
+    },
+    {
+      "source": "historical-final/B9.log",
+      "originalSha256": "a657c5dc6c882f1cb988823c19a99b2b8d0110244c4af6cc6bf12584ca7efdd0",
+      "originalBytes": 10167,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/B9.log",
+      "retainedSha256": "a657c5dc6c882f1cb988823c19a99b2b8d0110244c4af6cc6bf12584ca7efdd0",
+      "retainedBytes": 10167,
+      "projection": false
+    },
+    {
+      "source": "historical-final/amendment-authorization.json",
+      "originalSha256": "70a5358e1510a6612ff877dba471e3829596986a38ab7a48e2ed8d7a54d80b57",
+      "originalBytes": 2290,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/amendment-authorization.json",
+      "retainedSha256": "70a5358e1510a6612ff877dba471e3829596986a38ab7a48e2ed8d7a54d80b57",
+      "retainedBytes": 2290,
+      "projection": false
+    },
+    {
+      "source": "historical-final/amendment-checkpoint.json",
+      "originalSha256": "70703234cb950c8b688e9276834e6475e804c87ad4ddc3cae12fcd76d284fd1a",
+      "originalBytes": 1588,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/amendment-checkpoint.json",
+      "retainedSha256": "70703234cb950c8b688e9276834e6475e804c87ad4ddc3cae12fcd76d284fd1a",
+      "retainedBytes": 1588,
+      "projection": false
+    },
+    {
+      "source": "historical-final/amendment-handoff.md",
+      "originalSha256": "f81bf208015c39388971dda93462b5d7a4ba93f208db9d13677cd9a4bcea6933",
+      "originalBytes": 2845,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/amendment-handoff.md",
+      "retainedSha256": "f81bf208015c39388971dda93462b5d7a4ba93f208db9d13677cd9a4bcea6933",
+      "retainedBytes": 2845,
+      "projection": false
+    },
+    {
+      "source": "historical-final/amendment-invocations.json",
+      "originalSha256": "d3fdd2b61a8f9481e29c26ebb0bb9984b565014f20d01b3a647585e8199eb6ea",
+      "originalBytes": 634,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/amendment-invocations.json",
+      "retainedSha256": "d3fdd2b61a8f9481e29c26ebb0bb9984b565014f20d01b3a647585e8199eb6ea",
+      "retainedBytes": 634,
+      "projection": false
+    },
+    {
+      "source": "historical-final/author-format.json",
+      "originalSha256": "e4a1e2aa2514710e3a9d1999ced10dd7a320fa44eb53e20ad56161a43ec47e52",
+      "originalBytes": 3126,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/author-format.json",
+      "retainedSha256": "e4a1e2aa2514710e3a9d1999ced10dd7a320fa44eb53e20ad56161a43ec47e52",
+      "retainedBytes": 3126,
+      "projection": false
+    },
+    {
+      "source": "historical-final/freeze-and-budget.json",
+      "originalSha256": "8be9bf8919a61729609425f8721996b8512d7ecb1df58286dd3d17b901fcfe2e",
+      "originalBytes": 3320,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/freeze-and-budget.json",
+      "retainedSha256": "8be9bf8919a61729609425f8721996b8512d7ecb1df58286dd3d17b901fcfe2e",
+      "retainedBytes": 3320,
+      "projection": false
+    },
+    {
+      "source": "historical-final/import-boundary-diagnosis.md",
+      "originalSha256": "2f9a27fc00689bcf28f5abec3733a36085996bf6700f7d69c18281b225e7d4b2",
+      "originalBytes": 3087,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/import-boundary-diagnosis.md",
+      "retainedSha256": "2f9a27fc00689bcf28f5abec3733a36085996bf6700f7d69c18281b225e7d4b2",
+      "retainedBytes": 3087,
+      "projection": false
+    },
+    {
+      "source": "historical-final/paused-handoff.json",
+      "originalSha256": "d9afddc77266c5070aaf727c7f63fa89d498420695dce5da5580762916f6eab4",
+      "originalBytes": 36211,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/historical-final/paused-handoff.json",
+      "retainedSha256": "d9afddc77266c5070aaf727c7f63fa89d498420695dce5da5580762916f6eab4",
+      "retainedBytes": 36211,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B14.json",
+      "originalSha256": "1d3015da5f634673541e8e8d442bd6738445db5cac910ac0e77067b5c2b50bd4",
+      "originalBytes": 4351,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B14.json",
+      "retainedSha256": "1d3015da5f634673541e8e8d442bd6738445db5cac910ac0e77067b5c2b50bd4",
+      "retainedBytes": 4351,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B14.log",
+      "originalSha256": "c8b75df34cb28860503668f97af27a22f1b6a3aee6cb6a0b983b15fd3ba99a91",
+      "originalBytes": 5485,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B14.log",
+      "retainedSha256": "c8b75df34cb28860503668f97af27a22f1b6a3aee6cb6a0b983b15fd3ba99a91",
+      "retainedBytes": 5485,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B14.started.json",
+      "originalSha256": "352f6a3d20c5d57ff1ac6bde2a94e8c6a2fa334a7858d0fa3d2f758ed0c8872e",
+      "originalBytes": 3105,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B14.started.json",
+      "retainedSha256": "352f6a3d20c5d57ff1ac6bde2a94e8c6a2fa334a7858d0fa3d2f758ed0c8872e",
+      "retainedBytes": 3105,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B15.json",
+      "originalSha256": "591ee7511473ad1b04de324fee653c9f565b1510fad340dbe6a8beab8f7e1251",
+      "originalBytes": 4370,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B15.json",
+      "retainedSha256": "591ee7511473ad1b04de324fee653c9f565b1510fad340dbe6a8beab8f7e1251",
+      "retainedBytes": 4370,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B15.log",
+      "originalSha256": "5c434873ea0220a7ce7082a7657546f28d3fe9761f5abb2b1a4ed1e8d0dce99d",
+      "originalBytes": 5829,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B15.log",
+      "retainedSha256": "5c434873ea0220a7ce7082a7657546f28d3fe9761f5abb2b1a4ed1e8d0dce99d",
+      "retainedBytes": 5829,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B15.started.json",
+      "originalSha256": "7b5497d954e8a37353f1601c28309dd443bf0cb232aa2b5daff68e12a22aac96",
+      "originalBytes": 3122,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B15.started.json",
+      "retainedSha256": "7b5497d954e8a37353f1601c28309dd443bf0cb232aa2b5daff68e12a22aac96",
+      "retainedBytes": 3122,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B2.json",
+      "originalSha256": "c6a40708d0705949f15250f3c0d02db784b8b3b9ecf269af8833ff34bdc958b9",
+      "originalBytes": 3502,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B2.json",
+      "retainedSha256": "c6a40708d0705949f15250f3c0d02db784b8b3b9ecf269af8833ff34bdc958b9",
+      "retainedBytes": 3502,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B2.log",
+      "originalSha256": "d47e608a4c78e3c49231703e5b50607f7d43533babfb2c91c352e1dbfacc59e1",
+      "originalBytes": 3676,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B2.log",
+      "retainedSha256": "d47e608a4c78e3c49231703e5b50607f7d43533babfb2c91c352e1dbfacc59e1",
+      "retainedBytes": 3676,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B2.started.json",
+      "originalSha256": "0a9c27bbe85d2e3df1dfde3dedc519ac85a1b8cc63032c751c97229e0e9fe52e",
+      "originalBytes": 2257,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B2.started.json",
+      "retainedSha256": "0a9c27bbe85d2e3df1dfde3dedc519ac85a1b8cc63032c751c97229e0e9fe52e",
+      "retainedBytes": 2257,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B3.json",
+      "originalSha256": "111ecf1cf907ee50c21d0c18a85bab36ba694171812620229ec0f7eac6f87e69",
+      "originalBytes": 3522,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B3.json",
+      "retainedSha256": "111ecf1cf907ee50c21d0c18a85bab36ba694171812620229ec0f7eac6f87e69",
+      "retainedBytes": 3522,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B3.log",
+      "originalSha256": "29cce327bd7ca04aa1a00dfd7015bb4b0a965860c742a401189a39a7e6497aa2",
+      "originalBytes": 3715,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B3.log",
+      "retainedSha256": "29cce327bd7ca04aa1a00dfd7015bb4b0a965860c742a401189a39a7e6497aa2",
+      "retainedBytes": 3715,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B3.started.json",
+      "originalSha256": "19c6e1408559a0a029ccd2b977b6151656f15cf5be7139f1212649669299d7ce",
+      "originalBytes": 2276,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B3.started.json",
+      "retainedSha256": "19c6e1408559a0a029ccd2b977b6151656f15cf5be7139f1212649669299d7ce",
+      "retainedBytes": 2276,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B4.json",
+      "originalSha256": "df1bfa96f376e2b20d3e997d5dfbb1df4802f53603fe15ee823b34a360a9c6bb",
+      "originalBytes": 3522,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B4.json",
+      "retainedSha256": "df1bfa96f376e2b20d3e997d5dfbb1df4802f53603fe15ee823b34a360a9c6bb",
+      "retainedBytes": 3522,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B4.log",
+      "originalSha256": "e8aaf06d5191a0d1391be2ad44eab0ba2d73efac1910dff191fcf660ebd88a40",
+      "originalBytes": 3715,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B4.log",
+      "retainedSha256": "e8aaf06d5191a0d1391be2ad44eab0ba2d73efac1910dff191fcf660ebd88a40",
+      "retainedBytes": 3715,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B4.started.json",
+      "originalSha256": "56e59b2ab0e0c0421463d866bb3b2cd90d20eea65d4a21fbcd5b83b50d631458",
+      "originalBytes": 2276,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B4.started.json",
+      "retainedSha256": "56e59b2ab0e0c0421463d866bb3b2cd90d20eea65d4a21fbcd5b83b50d631458",
+      "retainedBytes": 2276,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B5.json",
+      "originalSha256": "1eb8ce1316e9c5937eacfc62e6e5e6f3b0a766d58625c301bbd3fe2da3952c2d",
+      "originalBytes": 3409,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B5.json",
+      "retainedSha256": "1eb8ce1316e9c5937eacfc62e6e5e6f3b0a766d58625c301bbd3fe2da3952c2d",
+      "retainedBytes": 3409,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B5.log",
+      "originalSha256": "2392c88208b790d6eee41fea9a713a1eca83ab09cbfd7c4896834fb5fc2886bd",
+      "originalBytes": 4607,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B5.log",
+      "retainedSha256": "2392c88208b790d6eee41fea9a713a1eca83ab09cbfd7c4896834fb5fc2886bd",
+      "retainedBytes": 4607,
+      "projection": false
+    },
+    {
+      "source": "import-validation/B5.started.json",
+      "originalSha256": "ba03833cd873057b65358ebde1649a07241d6a2b79e7ea23f6c20a6605ef6d39",
+      "originalBytes": 2161,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/B5.started.json",
+      "retainedSha256": "ba03833cd873057b65358ebde1649a07241d6a2b79e7ea23f6c20a6605ef6d39",
+      "retainedBytes": 2161,
+      "projection": false
+    },
+    {
+      "source": "import-validation/freeze.json",
+      "originalSha256": "dad46b83d0e3c448d7267b6ff3c1a0cc85885926305afc095cb2f36ea99d4184",
+      "originalBytes": 5540,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/freeze.json",
+      "retainedSha256": "dad46b83d0e3c448d7267b6ff3c1a0cc85885926305afc095cb2f36ea99d4184",
+      "retainedBytes": 5540,
+      "projection": false
+    },
+    {
+      "source": "import-validation/handoff.json",
+      "originalSha256": "957dbd5393d5c32a11f5e8a1702ea97a64412efa73e3d816d74c67f1fd738b98",
+      "originalBytes": 4527,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/import-validation/handoff.json",
+      "retainedSha256": "957dbd5393d5c32a11f5e8a1702ea97a64412efa73e3d816d74c67f1fd738b98",
+      "retainedBytes": 4527,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B10.json",
+      "originalSha256": "deab450072fbe3acf0df964b7c535502b5c5d62532b6ed90b9f1484fa6bad43a",
+      "originalBytes": 3530,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B10.json",
+      "retainedSha256": "deab450072fbe3acf0df964b7c535502b5c5d62532b6ed90b9f1484fa6bad43a",
+      "retainedBytes": 3530,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B10.log",
+      "originalSha256": "33f829b4a4eeb002685d0b79c1df9e66c7f94b64373e20cc8718949b915213e2",
+      "originalBytes": 11180,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B10.log",
+      "retainedSha256": "33f829b4a4eeb002685d0b79c1df9e66c7f94b64373e20cc8718949b915213e2",
+      "retainedBytes": 11180,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B10.started.json",
+      "originalSha256": "34eed068c6c0d2598afbb0072ed680499550c934f90017f4dd2c8881e96241cb",
+      "originalBytes": 2263,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B10.started.json",
+      "retainedSha256": "34eed068c6c0d2598afbb0072ed680499550c934f90017f4dd2c8881e96241cb",
+      "retainedBytes": 2263,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B11.json",
+      "originalSha256": "268396330e16a8718d4e05525743f921fcd2973549faaf75d40554fc3a27a203",
+      "originalBytes": 3530,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B11.json",
+      "retainedSha256": "268396330e16a8718d4e05525743f921fcd2973549faaf75d40554fc3a27a203",
+      "retainedBytes": 3530,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B11.log",
+      "originalSha256": "cf9e0885102360a3e0f0e7bbeb557246af440933fc49db61c95fbd2c2a08323a",
+      "originalBytes": 11165,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B11.log",
+      "retainedSha256": "cf9e0885102360a3e0f0e7bbeb557246af440933fc49db61c95fbd2c2a08323a",
+      "retainedBytes": 11165,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B11.started.json",
+      "originalSha256": "d2b9695e98ec1d2ade08e4fa8c8d4b9d4a378359e174001e130041c0a9f7dc83",
+      "originalBytes": 2264,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B11.started.json",
+      "retainedSha256": "d2b9695e98ec1d2ade08e4fa8c8d4b9d4a378359e174001e130041c0a9f7dc83",
+      "retainedBytes": 2264,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B14.json",
+      "originalSha256": "e8871e5c69cd78ebf44db6252f9a8a160f880ee8e66820252857b4508c1f22a7",
+      "originalBytes": 4351,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B14.json",
+      "retainedSha256": "e8871e5c69cd78ebf44db6252f9a8a160f880ee8e66820252857b4508c1f22a7",
+      "retainedBytes": 4351,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B14.log",
+      "originalSha256": "e42114e794f624b6a41ca2913b0587bc17425a244af74aff9f66e69501ae8fb3",
+      "originalBytes": 5485,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B14.log",
+      "retainedSha256": "e42114e794f624b6a41ca2913b0587bc17425a244af74aff9f66e69501ae8fb3",
+      "retainedBytes": 5485,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B14.started.json",
+      "originalSha256": "052ea75b000003d82454143dbd1c4c673c6b910111372296e36b6c86f1542c61",
+      "originalBytes": 3105,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B14.started.json",
+      "retainedSha256": "052ea75b000003d82454143dbd1c4c673c6b910111372296e36b6c86f1542c61",
+      "retainedBytes": 3105,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B15.json",
+      "originalSha256": "77660703f4eba3659d82f43d7aba849e292b78f854a2a9e6b447519ca2db270e",
+      "originalBytes": 4367,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B15.json",
+      "retainedSha256": "77660703f4eba3659d82f43d7aba849e292b78f854a2a9e6b447519ca2db270e",
+      "retainedBytes": 4367,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B15.log",
+      "originalSha256": "12eeb338bf151883e057a3b8afbc959b5165ae3b6507ea749a9e268428cfbfbb",
+      "originalBytes": 5405,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B15.log",
+      "retainedSha256": "12eeb338bf151883e057a3b8afbc959b5165ae3b6507ea749a9e268428cfbfbb",
+      "retainedBytes": 5405,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B15.started.json",
+      "originalSha256": "0cda67ea4a29fc2880a6166ca7a314d553a3b7d2e05053cb623b5bdb83a634eb",
+      "originalBytes": 3122,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B15.started.json",
+      "retainedSha256": "0cda67ea4a29fc2880a6166ca7a314d553a3b7d2e05053cb623b5bdb83a634eb",
+      "retainedBytes": 3122,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B3.json",
+      "originalSha256": "d23a2f3ec3b2defe9a202d557e3d1fc0db11ec04537493a2ee39f3e5620edd83",
+      "originalBytes": 3522,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B3.json",
+      "retainedSha256": "d23a2f3ec3b2defe9a202d557e3d1fc0db11ec04537493a2ee39f3e5620edd83",
+      "retainedBytes": 3522,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B3.log",
+      "originalSha256": "f88873148807328d3172531c52794a160d217ced56797d9e0570aa0225c72989",
+      "originalBytes": 3715,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B3.log",
+      "retainedSha256": "f88873148807328d3172531c52794a160d217ced56797d9e0570aa0225c72989",
+      "retainedBytes": 3715,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B3.started.json",
+      "originalSha256": "e8c8bf122752124946661624d05620ccbeecce4ad8b0992e2d7d960cb834d74c",
+      "originalBytes": 2276,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B3.started.json",
+      "retainedSha256": "e8c8bf122752124946661624d05620ccbeecce4ad8b0992e2d7d960cb834d74c",
+      "retainedBytes": 2276,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B4.json",
+      "originalSha256": "429b110522dd5d492c1d5f216c136a25d6292697766bbb9878483bcc86dc3519",
+      "originalBytes": 3522,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B4.json",
+      "retainedSha256": "429b110522dd5d492c1d5f216c136a25d6292697766bbb9878483bcc86dc3519",
+      "retainedBytes": 3522,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B4.log",
+      "originalSha256": "945f3667a8c32c8c79507ade12bfc815a35b57a49f5874e9000fb3d7cdcf3dfe",
+      "originalBytes": 3715,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B4.log",
+      "retainedSha256": "945f3667a8c32c8c79507ade12bfc815a35b57a49f5874e9000fb3d7cdcf3dfe",
+      "retainedBytes": 3715,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B4.started.json",
+      "originalSha256": "098ad35e11df3271480347cae29cabed52294e1abd64c3fea06f0b15cedd0412",
+      "originalBytes": 2276,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B4.started.json",
+      "retainedSha256": "098ad35e11df3271480347cae29cabed52294e1abd64c3fea06f0b15cedd0412",
+      "retainedBytes": 2276,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B5.json",
+      "originalSha256": "47f35f5b28e29edf15615c14229668b3dbe73acb1ca089e53bb47437348d37c0",
+      "originalBytes": 3409,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B5.json",
+      "retainedSha256": "47f35f5b28e29edf15615c14229668b3dbe73acb1ca089e53bb47437348d37c0",
+      "retainedBytes": 3409,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B5.log",
+      "originalSha256": "09d521415725a7f779df1fc775b50f73f40b4b9c97a26328855be62f26c71ed0",
+      "originalBytes": 4604,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B5.log",
+      "retainedSha256": "09d521415725a7f779df1fc775b50f73f40b4b9c97a26328855be62f26c71ed0",
+      "retainedBytes": 4604,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B5.started.json",
+      "originalSha256": "ecd42b871bab0e25dd3f4bd8eaebae1552d45ec317a56800e54ed0e9cb84813d",
+      "originalBytes": 2161,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B5.started.json",
+      "retainedSha256": "ecd42b871bab0e25dd3f4bd8eaebae1552d45ec317a56800e54ed0e9cb84813d",
+      "retainedBytes": 2161,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B6.json",
+      "originalSha256": "a16f6758e9b6d272ef00b913174c2b949d43169cf2c352f6bdea295f57475873",
+      "originalBytes": 3470,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B6.json",
+      "retainedSha256": "a16f6758e9b6d272ef00b913174c2b949d43169cf2c352f6bdea295f57475873",
+      "retainedBytes": 3470,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B6.log",
+      "originalSha256": "a5860c486de757e870564f947f7ae305e4a177767fcca9d4c1c320860582a86a",
+      "originalBytes": 4249,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B6.log",
+      "retainedSha256": "a5860c486de757e870564f947f7ae305e4a177767fcca9d4c1c320860582a86a",
+      "retainedBytes": 4249,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B6.started.json",
+      "originalSha256": "c741f712ffeb61f64909828e7f5e4f32d5f636a491072bbe8221a9992045d302",
+      "originalBytes": 2208,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B6.started.json",
+      "retainedSha256": "c741f712ffeb61f64909828e7f5e4f32d5f636a491072bbe8221a9992045d302",
+      "retainedBytes": 2208,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B7.json",
+      "originalSha256": "c78b5e2980ff7a671bc7e53e191bfb73e99d3b650a72d06c038376e49f861529",
+      "originalBytes": 3477,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B7.json",
+      "retainedSha256": "c78b5e2980ff7a671bc7e53e191bfb73e99d3b650a72d06c038376e49f861529",
+      "retainedBytes": 3477,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B7.log",
+      "originalSha256": "96d6ff8835dcfce2d7e82b7cee721526786478daf3e29d71775c095bb75260b7",
+      "originalBytes": 4250,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B7.log",
+      "retainedSha256": "96d6ff8835dcfce2d7e82b7cee721526786478daf3e29d71775c095bb75260b7",
+      "retainedBytes": 4250,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B7.started.json",
+      "originalSha256": "e34109328bffad5965caaeb08c788d5cdbc6febfb69e0ad5b6af06853fce9041",
+      "originalBytes": 2216,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B7.started.json",
+      "retainedSha256": "e34109328bffad5965caaeb08c788d5cdbc6febfb69e0ad5b6af06853fce9041",
+      "retainedBytes": 2216,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B8.json",
+      "originalSha256": "2459f3a8e988107b923f15619a4b53db1c74210b142253da867a7e33aa67be14",
+      "originalBytes": 3544,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B8.json",
+      "retainedSha256": "2459f3a8e988107b923f15619a4b53db1c74210b142253da867a7e33aa67be14",
+      "retainedBytes": 3544,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B8.log",
+      "originalSha256": "763a4b33f5136ce39482ebf07038d8d795cec0d6cebcf112a7c7d5526c6272da",
+      "originalBytes": 10324,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B8.log",
+      "retainedSha256": "763a4b33f5136ce39482ebf07038d8d795cec0d6cebcf112a7c7d5526c6272da",
+      "retainedBytes": 10324,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B8.started.json",
+      "originalSha256": "45bf8165b9b0f7e12481ec5879122f057127983526f9aa7c097f415114f15877",
+      "originalBytes": 2278,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B8.started.json",
+      "retainedSha256": "45bf8165b9b0f7e12481ec5879122f057127983526f9aa7c097f415114f15877",
+      "retainedBytes": 2278,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B9.json",
+      "originalSha256": "0b4782f857e325b6e07c5aea2c46e5c01187091a91682f13ea6ce4aabf85a27f",
+      "originalBytes": 3535,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B9.json",
+      "retainedSha256": "0b4782f857e325b6e07c5aea2c46e5c01187091a91682f13ea6ce4aabf85a27f",
+      "retainedBytes": 3535,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B9.log",
+      "originalSha256": "1bd39c61935e94452df7221c1e37dbd0245881ba8c77a650a76a340ab2115e98",
+      "originalBytes": 10189,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B9.log",
+      "retainedSha256": "1bd39c61935e94452df7221c1e37dbd0245881ba8c77a650a76a340ab2115e98",
+      "retainedBytes": 10189,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/B9.started.json",
+      "originalSha256": "ca13f337959e4bbb14ab7b49ac34f66643b40ff81e9bfd8a3dffb928dfbdf2a8",
+      "originalBytes": 2269,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/B9.started.json",
+      "retainedSha256": "ca13f337959e4bbb14ab7b49ac34f66643b40ff81e9bfd8a3dffb928dfbdf2a8",
+      "retainedBytes": 2269,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/freeze.json",
+      "originalSha256": "bc1537aa6fc8cea3638e259d0e21c9bcfb6c851fd2bd44e52e1eac9c3a09c983",
+      "originalBytes": 9471,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/freeze.json",
+      "retainedSha256": "bc1537aa6fc8cea3638e259d0e21c9bcfb6c851fd2bd44e52e1eac9c3a09c983",
+      "retainedBytes": 9471,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/handoff.json",
+      "originalSha256": "dabab2fb34e59390229a3357bf7cd178a58a5a82e5a0afd7994453f3e9de6782",
+      "originalBytes": 10151,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/handoff.json",
+      "retainedSha256": "dabab2fb34e59390229a3357bf7cd178a58a5a82e5a0afd7994453f3e9de6782",
+      "retainedBytes": 10151,
+      "projection": false
+    },
+    {
+      "source": "layout-validation/handoff.md",
+      "originalSha256": "df9c34e3f24bc805b04cfda4aed214df073b2e937eb2a6e127b3562c5c2de817",
+      "originalBytes": 3086,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/layout-validation/handoff.md",
+      "retainedSha256": "df9c34e3f24bc805b04cfda4aed214df073b2e937eb2a6e127b3562c5c2de817",
+      "retainedBytes": 3086,
+      "projection": false
+    },
+    {
+      "source": "compatibility/B12.json",
+      "originalSha256": "deb50c3b527387a8d41a748292c5bddcc3f5c81c9f948322ce06392a0ac231ab",
+      "originalBytes": 3287,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/compatibility/B12.json",
+      "retainedSha256": "deb50c3b527387a8d41a748292c5bddcc3f5c81c9f948322ce06392a0ac231ab",
+      "retainedBytes": 3287,
+      "projection": false
+    },
+    {
+      "source": "compatibility/B12.log",
+      "originalSha256": "c0b9b42a1d3b12829ee1343d9fcfd7cad754b4ce54acbe79133b729333e3cb97",
+      "originalBytes": 11883,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/compatibility/B12.log",
+      "retainedSha256": "c0b9b42a1d3b12829ee1343d9fcfd7cad754b4ce54acbe79133b729333e3cb97",
+      "retainedBytes": 11883,
+      "projection": false
+    },
+    {
+      "source": "compatibility/B12.started.json",
+      "originalSha256": "eb330ed64646e31644a212a06ee9d17831674d99efe4a14edad8137aa0630fc1",
+      "originalBytes": 2290,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/compatibility/B12.started.json",
+      "retainedSha256": "eb330ed64646e31644a212a06ee9d17831674d99efe4a14edad8137aa0630fc1",
+      "retainedBytes": 2290,
+      "projection": false
+    },
+    {
+      "source": "compatibility/B13.json",
+      "originalSha256": "d6dec3311d4daa2786b5522b11c616c54963c63a10301517b2f6b094b3bcfe24",
+      "originalBytes": 3281,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/compatibility/B13.json",
+      "retainedSha256": "d6dec3311d4daa2786b5522b11c616c54963c63a10301517b2f6b094b3bcfe24",
+      "retainedBytes": 3281,
+      "projection": false
+    },
+    {
+      "source": "compatibility/B13.log",
+      "originalSha256": "8d1d590de961a699a38168b2b1a5ad8dd84afeb3eeb422180333c93d4948eb96",
+      "originalBytes": 20480,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/compatibility/B13.log",
+      "retainedSha256": "8d1d590de961a699a38168b2b1a5ad8dd84afeb3eeb422180333c93d4948eb96",
+      "retainedBytes": 20480,
+      "projection": false
+    },
+    {
+      "source": "compatibility/B13.started.json",
+      "originalSha256": "e63eb711cc2e446748b28f956489921157d05e212f5b6017a9da10e25ef4a8ad",
+      "originalBytes": 2283,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/compatibility/B13.started.json",
+      "retainedSha256": "e63eb711cc2e446748b28f956489921157d05e212f5b6017a9da10e25ef4a8ad",
+      "retainedBytes": 2283,
+      "projection": false
+    },
+    {
+      "source": "compatibility/freeze.json",
+      "originalSha256": "f430e6b6cc305a98d3e5f8252892c249259cc87aeca1c7a0324bf1a1c2b8b2c6",
+      "originalBytes": 857674,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/compatibility/freeze.json",
+      "retainedSha256": "52edf22908be2ea7d3a4a6184227c65687e37369d8ab81835a246d7eafb5572a",
+      "retainedBytes": 4313,
+      "projection": true
+    },
+    {
+      "source": "cabloy-b-main-preflight-stop-74ff206811-20261020.json",
+      "originalSha256": "7b51239ba77fd7dfa849465ff721068f431e3cda5e9c1c97c8be66dc594c644f",
+      "originalBytes": 1025,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/cabloy-b-main-preflight-stop-74ff206811-20261020.json",
+      "retainedSha256": "7b51239ba77fd7dfa849465ff721068f431e3cda5e9c1c97c8be66dc594c644f",
+      "retainedBytes": 1025,
+      "projection": false
+    },
+    {
+      "source": "cabloy-b-main-authoring-stop-2370ff26fe-20261020.json",
+      "originalSha256": "a4df7772a3c6fa7a51f7a609a7a0680b273ce78203131adef0edf3df327ef754",
+      "originalBytes": 3528,
+      "retained": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/existing-ready-foundation-9b9518f971-20261020/cabloy-b-main-authoring-stop-2370ff26fe-20261020.json",
+      "retainedSha256": "a4df7772a3c6fa7a51f7a609a7a0680b273ce78203131adef0edf3df327ef754",
+      "retainedBytes": 3528,
+      "projection": false
+    }
+  ],
+  "capturePolicy": "Original bounded captures preserved with complete-buffer supported path sanitation; compatibility freeze retains source hashes and projects full tracked inventory to count/digest",
+  "humanReview": "Separate bounded read-only sensitivity review report; no universal secret scanning or authenticity claim",
+  "approval": "Approved bounded compatibility/evidence handoff; no source execution expansion, staging or commit",
+  "documentaryResults": "See documentary dispositions; never infer pass from planned commands"
+}

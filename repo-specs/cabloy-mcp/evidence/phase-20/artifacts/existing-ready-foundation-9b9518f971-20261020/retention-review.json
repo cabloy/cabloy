@@ -1,0 +1,13 @@
+{
+  "scope": "119 original records across five B evidence stages and two standalone preflight/authoring stop records; original mjs harnesses excluded",
+  "originalBytes": 1388138,
+  "originalKinds": { "json": 75, "log": 41, "md": 3 },
+  "physicalLines": 14436,
+  "method": "Read-only full-byte UTF-8/pattern/JSON-structure inspection with targeted contextual reading; supported complete-buffer path sanitation applied again when retaining",
+  "findings": [],
+  "disposition": "No high-confidence credential/raw-token/private-payload or machine-absolute-path redaction location identified in this bounded review",
+  "sizeCoverage": "Original JSON files below 8 MiB/file and 1 MiB/line; largest original compatibility freeze 857674 bytes, largest JSON line 1001 bytes",
+  "projection": "Compatibility freeze full tracked filename/hash map retained only as count/digest, fourteen foundation source hashes and two compatibility target hashes; original remains local",
+  "history": "41 log captures do not mean 41 invocations: cumulative B count is 44, including three historical wrong-checkout calls without complete approved capture; invocation accounting and custody gaps remain explicit",
+  "limits": "Not a formal exhaustive secret scan, universal privacy check, source execution proof, external-evidence search or authenticity/acceptance approval. Filenames/hash-only configuration inventory is not configuration payload. Test run/claim IDs remain custody evidence. No third standalone record was intended or inspected."
+}

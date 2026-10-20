@@ -1,0 +1,38 @@
+{
+  "label": "B7",
+  "head": "5901a258220a2a9885ec540cce6a6b2ef244c2b4",
+  "checkout": "Basic main",
+  "command": "node --test vona/packages-vona/vona-core/src/lib/core/completedReadiness.test.ts",
+  "code": 0,
+  "signal": null,
+  "durationMs": 89,
+  "observationExceeded": false,
+  "spawnFailed": false,
+  "overflow": false,
+  "bytes": [
+    640,
+    0
+  ],
+  "captureValid": true,
+  "tests": "4",
+  "sourceHashes": {
+    "vona/packages-vona/vona-core/src/lib/core/completedReadiness.ts": "06012b772401571c4cb4d54df02bfb7df8ea101dd26dfb39e9ffbc2f70b02deb",
+    "vona/packages-vona/vona-core/src/lib/core/meta.ts": "806086260c4d82db1f8ef7e8fd3c5e3a4003220b8ef066fd973b6802a7577d97",
+    "vona/packages-vona/vona-core/src/lib/framework/start.ts": "2c81bb24cb5dc63112555c7e0d38d03dd430b98d467a88213b4748e307b25fe0",
+    "vona/packages-vona/vona-core/src/lib/core/context.ts": "9d509844036141d76c8a647ad6c9c903da7ca06f92d39a3c7a96bd8e2899e592",
+    "vona/packages-vona/vona-core/src/lib/core/index.ts": "906fff5b0df4ab936ffc3fc6f755605eae026ce9cb6d32fdfff435572717f5fd",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/lib/existingReadyAdmission.ts": "499bbe033e60aecfa4187ece0e929dc848bdc75eb1de3111d7bd8290d9ecfd7b",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/service/instance.ts": "c3284c8bfaa2bbd70dcffdec19db9a40158e4847c156660b26b15b289b2582ee",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/bean/bean.instance.ts": "000a4ffccab34b880111b30476393e2a81f18839a54b4c9b99fd0545d56d7a4c",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts": "0f73535d2ea9e81a529c56e9873ff42e23db1ba7c7a774acd142d08d089634a7",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/src/types/executor.ts": "c610e5eebe35580114220b90d854644ffda247dd1f7da656c3ae66dd0949d503",
+    "vona/packages-vona/vona-core/src/lib/core/completedReadiness.test.ts": "a0b17de4776a2979a4a2a6395f0e6198cf78725869146297ed6e439b44dc714c",
+    "vona/packages-vona/vona-core/src/lib/framework/start.test.ts": "6eb24308eee559b3555da4f3cd74c657a9a6e66eb644f2e61b29cbe19cfe0b30",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/test/existingReadyAdmission.test.ts": "567f50f84223d5a1ff620d54725484a06b1722b7a2d3cf88db54b53ec3d5096d",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/test/readyExisting.test.ts": "005bd77ae0d75a44e4cedb355790cbce8c5390ec4b262200de97fbf9e0b45607"
+  },
+  "trackedDrift": [],
+  "status": " M vona/packages-vona/vona-core/src/lib/core/context.ts\n M vona/packages-vona/vona-core/src/lib/core/index.ts\n M vona/packages-vona/vona-core/src/lib/core/meta.ts\n M vona/packages-vona/vona-core/src/lib/framework/start.test.ts\n M vona/packages-vona/vona-core/src/lib/framework/start.ts\n M vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts\n M vona/src/suite-vendor/a-vona/modules/a-executor/src/types/executor.ts\n M vona/src/suite-vendor/a-vona/modules/a-instance/src/bean/bean.instance.ts\n M vona/src/suite-vendor/a-vona/modules/a-instance/src/service/instance.ts\n?? vona/packages-vona/vona-core/src/lib/core/completedReadiness.test.ts\n?? vona/packages-vona/vona-core/src/lib/core/completedReadiness.ts\n?? vona/src/suite-vendor/a-vona/modules/a-executor/test/\n?? vona/src/suite-vendor/a-vona/modules/a-instance/src/lib/\n?? vona/src/suite-vendor/a-vona/modules/a-instance/test/\n",
+  "sourceScopeOnly": true,
+  "sanitizer": "passed; path-only sanitation, not secret scanning"
+}

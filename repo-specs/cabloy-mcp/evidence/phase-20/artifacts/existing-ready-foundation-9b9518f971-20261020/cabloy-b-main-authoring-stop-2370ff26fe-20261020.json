@@ -1,0 +1,67 @@
+{
+  "checkout": "Basic main",
+  "head": "2370ff26fed422d59ca2080975c52ad5e3bf293c",
+  "result": "paused during partial fourteen-path authoring; outside-scope changes remain unattributed",
+  "baseline": {
+    "evidenceDirectory": "cabloy-b-main-baseline-2370ff26fe-20261020",
+    "applicableProducers": 8,
+    "allExitZero": true,
+    "finishedAt": "2026-10-20T05:22:33.913Z",
+    "postEditVerificationRun": false,
+    "custodyQualification": "B10 retained warnings for historical claims 20261018035033-b1690613 and 20261018035558-84a8a822; exit zero and graceful shutdown are not complete cleanup proof"
+  },
+  "outsideScope": [
+    {
+      "path": "zova/package.original.json",
+      "sha256": "b7085b5f8d2406d6df4bf44d99f953610c9e185095913daea230c0604dee44d7",
+      "modifiedAt": "2026-10-20T05:26:15.335Z",
+      "difference": "Removes vue-tsc devDependency"
+    },
+    {
+      "path": "zova/pnpm-lock.yaml",
+      "sha256": "4c3d85c4bfd5d7d922709776768e3d7594402c88ec1c69d6cafb31c7f7fde249",
+      "modifiedAt": "2026-10-20T05:26:20.470Z",
+      "difference": "Removes vue-tsc and its now-unused dependency tree and peer-resolution suffixes"
+    }
+  ],
+  "additionalObservation": {
+    "path": "zova/package.json",
+    "sha256": "2ca99eacfa9fe73b54b5ce776ddbea61f1ed8a37e6a53bd322e081c32ef0dc80",
+    "modifiedAt": "2026-10-20T05:26:15.450Z",
+    "vueTscDevDependencyAbsent": true,
+    "trackedStatusNotListed": true
+  },
+  "attribution": {
+    "bothTestAuthorsStopped": true,
+    "testAuthorsReportDriftPresentBeforeTheirFirstWrite": true,
+    "testAuthorsDenyEditingZovaFiles": true,
+    "authorIdentityEstablished": false,
+    "observation": "File modification times follow completion of the baseline capture. Timing is supporting information, not author attribution.",
+    "processObservation": "Read-only process classification found no identified current install/add/remove/update process. The inspected process with Basic main cwd is a long-running language-server child; this does not establish who authored the changes or guarantee absence of overlapping preparation."
+  },
+  "partialSource": {
+    "scope": "Previously approved fourteen framework and test paths in Basic main",
+    "testsAuthored": "Three new suites, four serial groups each, plus existing Start test edits",
+    "verified": false,
+    "knownProviderTestGap": "Real queued publication config is not independently pinned/inspected; current frozen-config assertion uses a separately synthesized publication",
+    "otherOpenWork": "Source completion, ordinary-startup compatibility, final semantics/runtime/style, resource custody qualification and final source hashes remain open"
+  },
+  "preservation": {
+    "outsideScopeFilesReverted": false,
+    "partialSourceDiscarded": false,
+    "dependencyInstallOrRetry": false,
+    "postEditProducerStarted": false,
+    "signalsOrManualResourceCleanup": false,
+    "commitOrPush": false,
+    "returnSynchronization": false,
+    "mcpSpecsOrTestsCopiedToMain": false
+  },
+  "formalStatus": {
+    "WBS-MCP-20-01": "blocked",
+    "phase20": "blocked",
+    "verified": "0/12",
+    "implementationComplete": false,
+    "productionOrReleaseComplete": false
+  },
+  "resumeCriterion": "Establish ownership and stable completion of the exact Zova dependency changes and assess shared preparation/dependency impact. Preserve those bytes; do not treat them as an authorized baseline exclusion solely because they are frontend files. Continue unchanged approved scope only after the attribution gate is satisfied."
+}

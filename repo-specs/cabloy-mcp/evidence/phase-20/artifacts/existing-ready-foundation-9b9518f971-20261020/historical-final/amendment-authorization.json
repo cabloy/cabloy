@@ -1,0 +1,38 @@
+{
+  "scope": "Frozen fourteen-path Basic main B foundation verification only",
+  "approval": "User approved the immediately preceding finite verification amendment with 同意，请执行下一步",
+  "head": "5901a258220a2a9885ec540cce6a6b2ef244c2b4",
+  "sourceHashAuthority": "paused-handoff.json sourceHashes; enforced before every producer",
+  "additionalInvocations": { "B7": 1, "B8": 1, "B9": 1, "B15": 1 },
+  "remainingOriginalInvocationsSelected": ["B14", "B2-correction", "B3-correction", "B4-correction", "B5 final", "B6 final", "B10 final", "B11 final"],
+  "maximumSelectedTotalsIncludingHistoricalWrongCheckoutCalls": {
+    "B1": 1, "B2": 3, "B3": 3, "B4": 3, "B5": 2, "B6": 2,
+    "B7": 3, "B8": 3, "B9": 3, "B10": 2, "B11": 2, "B14": 1, "B15": 3
+  },
+  "selectedTotal": 31,
+  "selectedManagedTotal": 10,
+  "selectedDepsTotal": 13,
+  "stop": "First producer failure stops dependent checks; no automatic extra retry or source authoring",
+  "cleanupCustodyReadOnlyFollowUp": {
+    "source": "Completed bounded read-only agent report, not a new runtime operation",
+    "codeBackedRunnerSuccessAttestations": [
+      "20261020065417-023b2bb0", "20261020065439-903da372",
+      "20261020052147-214d604b", "20261020052210-fd21d8e6"
+    ],
+    "wrongCheckoutCustodyUnproved": ["20261020064910-683bbe7b", "20261020064928-d54bd8f9"],
+    "basis": "Runner requires guardian drainage and cleanTestClaim status cleaned before successful return; cleanup releases resources and removes claim last",
+    "sourceReferences": [
+      "scripts/runIsolatedTest.ts:194-204,451-476,625-714",
+      "scripts/testProcessGuardian.ts:82-119",
+      "scripts/testClaimCleanup.ts:112-174",
+      "scripts/testClaimProcesses.ts:83-149"
+    ],
+    "limits": [
+      "Not independent durable per-resource cleanup receipts",
+      "Exact claim, cleanup-lock, data-root and generated-root absence for all six IDs does not independently prove database or Redis removal",
+      "Two older retained-claim warnings remain historical; no checkout-wide cleanup claim",
+      "Wrong-checkout runs lack original approved complete-buffer captures"
+    ]
+  },
+  "excluded": ["commit", "push", "return synchronization", "MCP B12/B13", "production integration", "parent WBS/ATP promotion", "manual reset/reap/signals"]
+}

@@ -1,0 +1,22 @@
+{
+  "label": "B4",
+  "head": "5901a258220a2a9885ec540cce6a6b2ef244c2b4",
+  "sourceHashes": {
+    "vona/packages-vona/vona-core/src/lib/core/completedReadiness.ts": "f0038f6ee9ab501c1636151d7d68edc59e4d2e30a41e851e68d22d5013e67383",
+    "vona/packages-vona/vona-core/src/lib/core/meta.ts": "806086260c4d82db1f8ef7e8fd3c5e3a4003220b8ef066fd973b6802a7577d97",
+    "vona/packages-vona/vona-core/src/lib/framework/start.ts": "3f54b65df529ff9076130111bd6cdffac5fcd463ed8e22bdbb0a46d37fc5d69e",
+    "vona/packages-vona/vona-core/src/lib/core/context.ts": "9d509844036141d76c8a647ad6c9c903da7ca06f92d39a3c7a96bd8e2899e592",
+    "vona/packages-vona/vona-core/src/lib/core/index.ts": "75777315b0a580cc7025805d2c6d984a033a0f4fb6bb224a6cb3420ac33a4396",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/lib/existingReadyAdmission.ts": "a7a3dfe664a600adb8e997bfb84c752fe92582e24876051297087fed4bad969c",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/service/instance.ts": "3a86890c5a85462b3e76012e83494a17a804f4c034e9030b05ab3f3e3440cbb4",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/bean/bean.instance.ts": "10da06ea1a0ed9c5ec1bb080c1f3648a4f99cae5f461477d3fd1586ca6357a60",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts": "97d1ce845d21e8aceeb58f81bf74198797bee699cafd458226a0860ac009f2cf",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/src/types/executor.ts": "c610e5eebe35580114220b90d854644ffda247dd1f7da656c3ae66dd0949d503",
+    "vona/packages-vona/vona-core/src/lib/core/completedReadiness.test.ts": "178e5bc55d0eceacdd802078bfe143763157626cf6bae99f8b533112fd2e0693",
+    "vona/packages-vona/vona-core/src/lib/framework/start.test.ts": "6eb24308eee559b3555da4f3cd74c657a9a6e66eb644f2e61b29cbe19cfe0b30",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/test/existingReadyAdmission.test.ts": "96230e3f97b687c5f04cf9815423100d7fa8b22c38246ac97e1bb49f753bd53a",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/test/readyExisting.test.ts": "bc4c93ac87052282d643c4536a0a02e1efba1c510803b7bcd49a4c3741a388a7"
+  },
+  "command": "./vona/node_modules/.bin/tsc --noEmit --composite false --incremental false -p vona/src/suite-vendor/a-vona/modules/a-executor/tsconfig.json",
+  "countsAsActualInvocation": true
+}

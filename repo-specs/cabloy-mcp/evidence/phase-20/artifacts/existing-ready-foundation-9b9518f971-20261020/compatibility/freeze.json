@@ -1,0 +1,63 @@
+{
+  "head": "9b9518f97110ae2a1286345dc0dedddadbc26e6d",
+  "checkout": "MCP worktree",
+  "edition": "Basic",
+  "worktree": "clean",
+  "mainHead": "8cd5fbc654f4f6f9a3c8c804af55f84c328edbb9",
+  "sourceHashes": {
+    "vona/packages-vona/vona-core/src/lib/core/completedReadiness.ts": "f0038f6ee9ab501c1636151d7d68edc59e4d2e30a41e851e68d22d5013e67383",
+    "vona/packages-vona/vona-core/src/lib/core/meta.ts": "806086260c4d82db1f8ef7e8fd3c5e3a4003220b8ef066fd973b6802a7577d97",
+    "vona/packages-vona/vona-core/src/lib/framework/start.ts": "3f54b65df529ff9076130111bd6cdffac5fcd463ed8e22bdbb0a46d37fc5d69e",
+    "vona/packages-vona/vona-core/src/lib/core/context.ts": "9d509844036141d76c8a647ad6c9c903da7ca06f92d39a3c7a96bd8e2899e592",
+    "vona/packages-vona/vona-core/src/lib/core/index.ts": "75777315b0a580cc7025805d2c6d984a033a0f4fb6bb224a6cb3420ac33a4396",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/lib/existingReadyAdmission.ts": "a7a3dfe664a600adb8e997bfb84c752fe92582e24876051297087fed4bad969c",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/service/instance.ts": "b89d41ab28386f1f5fc9070bb70e891dcf92fe16d483017b3d0147e5a93015eb",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/bean/bean.instance.ts": "10da06ea1a0ed9c5ec1bb080c1f3648a4f99cae5f461477d3fd1586ca6357a60",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts": "d7e71136bff54ddf1d3ebadc4ffe7249ab7bc0679aa9d08b0bb925883f9f33cc",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/src/types/executor.ts": "c610e5eebe35580114220b90d854644ffda247dd1f7da656c3ae66dd0949d503",
+    "vona/packages-vona/vona-core/src/lib/core/completedReadiness.test.ts": "178e5bc55d0eceacdd802078bfe143763157626cf6bae99f8b533112fd2e0693",
+    "vona/packages-vona/vona-core/src/lib/framework/start.test.ts": "6eb24308eee559b3555da4f3cd74c657a9a6e66eb644f2e61b29cbe19cfe0b30",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/test/existingReadyAdmission.test.ts": "50ffcfb84830f9f784b8cc81677e1222cdd1798e2fc0a87013da8ab173dd039f",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/test/readyExisting.test.ts": "f9e7aac215845fc7ed5669024a26f9671a993427fbcd5e50246fbd36991f8acf"
+  },
+  "changedSinceHistoricalFreeze": [
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/service/instance.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/test/existingReadyAdmission.test.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/test/readyExisting.test.ts"
+  ],
+  "authorization": "User manually merged main and explicitly requested continuation of the previously proposed bounded MCP compatibility/evidence handoff. Reuse section-20 B12/B13 branch; one invocation each this freeze, no automatic retry or main requalification.",
+  "scope": "MCP regression compatibility only; not qualification of later queue-context or commit-tail foundation changes or process-helper changes",
+  "budgets": {
+    "B12": {
+      "usedBefore": 0,
+      "thisFreezeMaximum": 1,
+      "originalMaximum": 3
+    },
+    "B13": {
+      "usedBefore": 0,
+      "thisFreezeMaximum": 1,
+      "originalMaximum": 3
+    }
+  },
+  "capture": {
+    "perStreamBytes": 2097152,
+    "combinedBytes": 4194304,
+    "fatalUtf8": true,
+    "wholeBufferPathSanitation": true,
+    "secretScanning": false
+  },
+  "resources": "Standard managed run-specific DB/Redis/runtime/public/claim/guardian and eligible expired-claim handling; command-local SERVER_LISTEN_DISABLE=true. No manual reset/reap/signals, environment edits, second app or test-owned app.close.",
+  "historicalCounts": {
+    "total": 42,
+    "managed": 10,
+    "deps": 15
+  },
+  "trackedInventoryCount": 6013,
+  "trackedInventorySha256": "6edb1cf8daf4055c1558b5b8cf3a971c8abbec8d84f3222efcc53cbd57307ba6",
+  "trackedInventoryProjection": "Full tracked map remains local in original capture; source and target hashes retained here",
+  "compatibilityTargetHashes": {
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/requestBoundaryFoundation.test.ts": "7827747885e0a7aebaa97ceb4b8c4c322f994cbc14ecb1cfbe9b80e79c19b9f4",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/productionBoundary.test.ts": "3334ecbdee1a844e791614b115acc8e449f1570172f208efa57b6f2cd93a6e84"
+  }
+}

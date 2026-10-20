@@ -1,0 +1,49 @@
+{
+  "head": "2370ff26fed422d59ca2080975c52ad5e3bf293c",
+  "result": "all applicable baselines passed",
+  "producerCount": 8,
+  "sourceAuthored": false,
+  "returnSynchronization": false,
+  "results": [
+    {
+      "label": "B1-deps",
+      "code": 0,
+      "durationMs": 1743
+    },
+    {
+      "label": "B2-core",
+      "code": 0,
+      "durationMs": 5189
+    },
+    {
+      "label": "B3-instance",
+      "code": 0,
+      "durationMs": 25757
+    },
+    {
+      "label": "B4-executor",
+      "code": 0,
+      "durationMs": 22092
+    },
+    {
+      "label": "B5-composite",
+      "code": 0,
+      "durationMs": 8435
+    },
+    {
+      "label": "B6-start",
+      "code": 0,
+      "durationMs": 1026
+    },
+    {
+      "label": "B10-devSeed",
+      "code": 0,
+      "durationMs": 265929
+    },
+    {
+      "label": "B11-instance",
+      "code": 0,
+      "durationMs": 27375
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "head": "5901a258220a2a9885ec540cce6a6b2ef244c2b4",
+  "checkout": "Basic main",
+  "edition": "Basic",
+  "paths": [
+    "vona/packages-vona/vona-core/src/lib/core/completedReadiness.ts",
+    "vona/packages-vona/vona-core/src/lib/core/meta.ts",
+    "vona/packages-vona/vona-core/src/lib/framework/start.ts",
+    "vona/packages-vona/vona-core/src/lib/core/context.ts",
+    "vona/packages-vona/vona-core/src/lib/core/index.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/lib/existingReadyAdmission.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/service/instance.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/bean/bean.instance.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/src/types/executor.ts",
+    "vona/packages-vona/vona-core/src/lib/core/completedReadiness.test.ts",
+    "vona/packages-vona/vona-core/src/lib/framework/start.test.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/test/existingReadyAdmission.test.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/test/readyExisting.test.ts"
+  ],
+  "sourceHashes": {
+    "vona/packages-vona/vona-core/src/lib/core/completedReadiness.ts": "f0038f6ee9ab501c1636151d7d68edc59e4d2e30a41e851e68d22d5013e67383",
+    "vona/packages-vona/vona-core/src/lib/core/meta.ts": "806086260c4d82db1f8ef7e8fd3c5e3a4003220b8ef066fd973b6802a7577d97",
+    "vona/packages-vona/vona-core/src/lib/framework/start.ts": "3f54b65df529ff9076130111bd6cdffac5fcd463ed8e22bdbb0a46d37fc5d69e",
+    "vona/packages-vona/vona-core/src/lib/core/context.ts": "9d509844036141d76c8a647ad6c9c903da7ca06f92d39a3c7a96bd8e2899e592",
+    "vona/packages-vona/vona-core/src/lib/core/index.ts": "75777315b0a580cc7025805d2c6d984a033a0f4fb6bb224a6cb3420ac33a4396",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/lib/existingReadyAdmission.ts": "a7a3dfe664a600adb8e997bfb84c752fe92582e24876051297087fed4bad969c",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/service/instance.ts": "3a86890c5a85462b3e76012e83494a17a804f4c034e9030b05ab3f3e3440cbb4",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/bean/bean.instance.ts": "10da06ea1a0ed9c5ec1bb080c1f3648a4f99cae5f461477d3fd1586ca6357a60",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts": "97d1ce845d21e8aceeb58f81bf74198797bee699cafd458226a0860ac009f2cf",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/src/types/executor.ts": "c610e5eebe35580114220b90d854644ffda247dd1f7da656c3ae66dd0949d503",
+    "vona/packages-vona/vona-core/src/lib/core/completedReadiness.test.ts": "178e5bc55d0eceacdd802078bfe143763157626cf6bae99f8b533112fd2e0693",
+    "vona/packages-vona/vona-core/src/lib/framework/start.test.ts": "6eb24308eee559b3555da4f3cd74c657a9a6e66eb644f2e61b29cbe19cfe0b30",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/test/existingReadyAdmission.test.ts": "252c5ad7cacf2f31245dea6093e0eae40abf33088b2cffb052fdc65cd7af8ac8",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/test/readyExisting.test.ts": "22888b23c392f7097c865de84b310d2c590d65470a8003f2d0b99f7f412ada73"
+  },
+  "supersedesFinalByteApplicabilityOnly": "prior paused-handoff.json; historical results remain retained",
+  "changesSincePriorFreeze": [
+    "vona/packages-vona/vona-core/src/lib/core/index.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/lib/existingReadyAdmission.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/service/instance.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/src/bean/bean.instance.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-instance/test/existingReadyAdmission.test.ts",
+    "vona/src/suite-vendor/a-vona/modules/a-executor/test/readyExisting.test.ts"
+  ],
+  "authorization": "User approved immediately preceding proposal: refreeze current source; B2/B3/B4/B15 one additional invocation each; other producers use remaining allocations. No source edits or automatic retries.",
+  "priorCounts": {
+    "actualInvocationCounts": {
+      "B1": 1,
+      "B2": 3,
+      "B3": 3,
+      "B4": 3,
+      "B5": 2,
+      "B6": 1,
+      "B7": 2,
+      "B8": 2,
+      "B9": 2,
+      "B10": 1,
+      "B11": 1,
+      "B14": 1,
+      "B15": 3
+    },
+    "total": 25,
+    "managed": 6,
+    "deps": 9,
+    "availableApprovedAmendments": {
+      "B7": 1,
+      "B8": 1,
+      "B9": 1,
+      "B15": 0
+    },
+    "B5ScopedCorrectionAvailable": 1,
+    "allRuntimeAfterCompositeFailureNotStarted": true,
+    "sourceChangesThisAmendment": 0,
+    "evidence": "amendment-checkpoint.json",
+    "limits": "Remaining allocation is not permission to bypass failed composite prerequisite or broaden source contract"
+  },
+  "newAllowances": {
+    "B2": 1,
+    "B3": 1,
+    "B4": 1,
+    "B15": 1
+  },
+  "order": [
+    "B2",
+    "B3",
+    "B4",
+    "B5",
+    "B14",
+    "B15",
+    "B6",
+    "B7",
+    "B8",
+    "B9",
+    "B10",
+    "B11"
+  ],
+  "maximumInvocationsThisFreeze": {
+    "B2": 1,
+    "B3": 1,
+    "B4": 1,
+    "B5": 1,
+    "B14": 1,
+    "B15": 1,
+    "B6": 1,
+    "B7": 1,
+    "B8": 1,
+    "B9": 1,
+    "B10": 1,
+    "B11": 1
+  },
+  "exclusions": [
+    "B1 rerun",
+    "B12/B13",
+    "commit/push",
+    "return synchronization",
+    "source edits",
+    "production activation",
+    "manual reset/reap/signals"
+  ],
+  "capture": "2 MiB per stream / 4 MiB combined, fatal UTF-8, complete-buffer path sanitation; not secret scanning or acceptance proof"
+}

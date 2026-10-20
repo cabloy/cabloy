@@ -1,0 +1,31 @@
+{
+  "actualInvocationCounts": {
+    "B1": 1,
+    "B2": 3,
+    "B3": 3,
+    "B4": 3,
+    "B5": 2,
+    "B6": 1,
+    "B7": 2,
+    "B8": 2,
+    "B9": 2,
+    "B10": 1,
+    "B11": 1,
+    "B14": 1,
+    "B15": 3
+  },
+  "total": 25,
+  "managed": 6,
+  "deps": 9,
+  "availableApprovedAmendments": {
+    "B7": 1,
+    "B8": 1,
+    "B9": 1,
+    "B15": 0
+  },
+  "B5ScopedCorrectionAvailable": 1,
+  "allRuntimeAfterCompositeFailureNotStarted": true,
+  "sourceChangesThisAmendment": 0,
+  "evidence": "amendment-checkpoint.json",
+  "limits": "Remaining allocation is not permission to bypass failed composite prerequisite or broaden source contract"
+}

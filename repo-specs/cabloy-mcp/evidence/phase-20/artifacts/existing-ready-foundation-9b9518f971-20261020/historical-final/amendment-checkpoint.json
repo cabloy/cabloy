@@ -1,0 +1,71 @@
+{
+  "status": "B5 composite failure; runtime producers not started",
+  "results": [
+    {
+      "label": "B15-amendment",
+      "code": 0,
+      "durationMs": 1285,
+      "frozenHashesMatch": true,
+      "trackedDrift": [],
+      "captureValid": true
+    },
+    {
+      "label": "B14",
+      "code": 0,
+      "durationMs": 182,
+      "frozenHashesMatch": true,
+      "trackedDrift": [],
+      "captureValid": true
+    },
+    {
+      "label": "B2-correction",
+      "code": 0,
+      "durationMs": 1360,
+      "frozenHashesMatch": true,
+      "trackedDrift": [],
+      "captureValid": true
+    },
+    {
+      "label": "B3-correction",
+      "code": 0,
+      "durationMs": 11016,
+      "frozenHashesMatch": true,
+      "trackedDrift": [],
+      "captureValid": true
+    },
+    {
+      "label": "B4-correction",
+      "code": 0,
+      "durationMs": 10815,
+      "frozenHashesMatch": true,
+      "trackedDrift": [],
+      "captureValid": true
+    },
+    {
+      "label": "B5",
+      "code": 1,
+      "durationMs": 5960,
+      "frozenHashesMatch": true,
+      "trackedDrift": [],
+      "captureValid": true
+    }
+  ],
+  "error": "TS2878 unsafe cross-project relative import rewrite in first composite build project",
+  "remainingUnstarted": [
+    "B6",
+    "B7-amendment",
+    "B8-amendment",
+    "B9-amendment",
+    "B10",
+    "B11"
+  ],
+  "amendmentUsed": {
+    "B15": 1,
+    "B7": 0,
+    "B8": 0,
+    "B9": 0
+  },
+  "sourceChangesThisAmendment": 0,
+  "diagnosis": "Read-only scoped import-boundary investigation pending; no source change or producer retry yet",
+  "historyPreserved": true
+}
