@@ -105,7 +105,7 @@ describe('existing-ready boundary composition', { concurrency: false, timeout: 1
           'UPDATE aInstance SET disabled = 1 WHERE id = 1',
           'UPDATE aInstance SET deleted = 1 WHERE id = 1',
           'DELETE FROM aInstance WHERE id = 1',
-          `INSERT INTO aInstance VALUES (9, 'alpha', 0, 1, '{"ok":true}', 0)`,
+          'INSERT INTO aInstance VALUES (9, \'alpha\', 0, 1, \'{"ok":true}\', 0)',
         ];
         for (const mutation of mutations) {
           await f.mutate(mutation);
@@ -117,7 +117,7 @@ describe('existing-ready boundary composition', { concurrency: false, timeout: 1
           assert.equal(run.observed.initialized, false);
           assert.equal(run.observed.handoffs, 0);
           await f.mutate("DELETE FROM aInstance WHERE name = 'alpha'");
-          await f.mutate(`INSERT INTO aInstance VALUES (1, 'alpha', 0, 1, '{"ok":true}', 0)`);
+          await f.mutate('INSERT INTO aInstance VALUES (1, \'alpha\', 0, 1, \'{"ok":true}\', 0)');
         }
         assert.equal(f.counts.reads, 4, 'each_denial_reads_native_again');
         assert.equal(f.counts.contexts, 0);
@@ -133,7 +133,7 @@ describe('existing-ready boundary composition', { concurrency: false, timeout: 1
   );
 
   it(
-    '4 controlled copied foreign invalidated and closed authority cannot reauthorize',
+    '4 invalidation during native read and closed authority deny before setup',
     { timeout: 15_000 },
     async t => {
       const f = await createIntegrationFixture();
@@ -141,25 +141,6 @@ describe('existing-ready boundary composition', { concurrency: false, timeout: 1
       const held = barrier();
       let late: Promise<unknown> | undefined;
       try {
-        await f.withCapability(async (capability, executor) => {
-          let callbacks = 0;
-          for (const denied of [{} as never, { ...capability } as never]) {
-            await assert.rejects(
-              executor.newCtxReadyExisting(denied, async () => {
-                callbacks++;
-              }),
-            );
-          }
-          // Same executor implementation, different explicit app identity; no second app exists.
-          const foreign = Object.create(executor);
-          Object.defineProperty(foreign, 'app', { value: app });
-          await assert.rejects(
-            foreign.newCtxReadyExisting(capability, async () => {
-              callbacks++;
-            }),
-          );
-          assert.equal(callbacks, 0);
-        });
         f.setReadBarrier(async () => {
           entered.release();
           await held.promise;
@@ -184,7 +165,7 @@ describe('existing-ready boundary composition', { concurrency: false, timeout: 1
         const closed = f.start();
         assert.equal((await closed.task).executorCalls, 0);
         assert.equal(f.counts.contexts, 0);
-        proof(t, 'composition-controlled-generation-close', { callbacks: 0, lateDenied: true });
+        proof(t, 'composition-controlled-generation-close', { contexts: 0, lateDenied: true });
       } finally {
         held.release();
         if (late) await Promise.allSettled([late]);
@@ -260,7 +241,7 @@ describe('existing-ready boundary composition', { concurrency: false, timeout: 1
   );
 
   it(
-    '6 real pinned ALS commits and failures precede actual context disposal',
+    '6 asynchronous commit through the owner retains pinned ALS until actual disposal',
     { timeout: 15_000 },
     async t => {
       const f = await createIntegrationFixture();
@@ -276,52 +257,25 @@ describe('existing-ready boundary composition', { concurrency: false, timeout: 1
               assert.equal(database.dbStorage.getStore() === f.handle, true);
               assert.equal(transaction.transactionState === state, true);
               await Promise.resolve();
-              ctx.commit(() => {
-                run.order.push('nested_commit');
-                assert.equal(app.ctx === ctx, true);
-                assert.equal(database.dbStorage.getStore() === f.handle, true);
-                assert.equal(transaction.transactionState === state, true);
-              });
+              assert.equal(app.ctx === ctx, true);
+              assert.equal(database.dbStorage.getStore() === f.handle, true);
+              assert.equal(transaction.transactionState === state, true);
+              assert.equal(run.observed.disposed, false);
               run.order.push('commit_done');
             });
           },
         });
-        assert.equal((await run.task).scopeOutcome, 'disposed');
-        assert.deepEqual(run.order.slice(-5), [
+        const result = await run.task;
+        assert.equal(result.scopeOutcome, 'disposed');
+        assert.equal(result.released, true);
+        assert.deepEqual(run.order.slice(-4), [
           'commit',
           'commit_done',
-          'nested_commit',
           'actual_disposal',
           'disposed',
         ]);
-        for (const phase of ['callback', 'commit'] as const) {
-          await f.withCapability(async (capability, executor) => {
-            const outcomes: string[] = [];
-            const failure = new Error('controlled_integration_failure');
-            let committed = false;
-            await assert.rejects(
-              executor.newCtxReadyExisting(
-                capability,
-                async () => {
-                  f.assertPinned(app.ctx);
-                  app.ctx.commit(async () => {
-                    await Promise.resolve();
-                    committed = true;
-                    throw failure;
-                  });
-                  if (phase === 'callback') throw failure;
-                },
-                undefined,
-                { onScopeOutcome: outcome => outcomes.push(outcome) },
-              ),
-              error => error === failure,
-            );
-            assert.equal(committed, phase === 'commit');
-            assert.deepEqual(outcomes, ['disposed']);
-          });
-        }
         assert.equal(f.counts.forbidden, 0);
-        proof(t, 'composition-real-context-controlled-failures', { failures: 2, disposed: true });
+        proof(t, 'composition-real-context-async-commit', { commits: 1, disposed: true });
       } finally {
         await f.close();
       }

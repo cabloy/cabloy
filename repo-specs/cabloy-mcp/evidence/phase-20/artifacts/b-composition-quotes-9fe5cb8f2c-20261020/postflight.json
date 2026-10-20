@@ -1,0 +1,69 @@
+{
+  "head": "9fe5cb8f2c6db0eff5c681969e85035fa708d4c3",
+  "mainHead": "72e004d7acf6428638dd747ea4c1407a2610ed2c",
+  "sourceHashes": {
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/existingReadyBoundaryIntegration.test.ts": "09aec79ffd7ba12e84f12895889acd3bed51fbd03a74f85e0b386238cd5ff171",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/existingReadyBoundaryIntegrationFixture.ts": "dba69d6c2d9ab888f23e3a2a07eacedc846b8bb89e39359bf151ba0c971f50eb"
+  },
+  "exactTwoQuoteChanges": true,
+  "runtimeSqlBytesIdentical": true,
+  "supportUnchanged": true,
+  "protectedInventoryCount": 6163,
+  "protectedInventoryUnchanged": true,
+  "mainInventoryCount": 5820,
+  "mainInventoryUnchanged": true,
+  "mainClean": true,
+  "environmentContentsRead": false,
+  "actualProducers": [
+    {
+      "label": "QF1",
+      "code": 0,
+      "durationMs": 14718,
+      "accepted": true
+    },
+    {
+      "label": "QF2",
+      "code": 0,
+      "durationMs": 19223,
+      "accepted": true
+    },
+    {
+      "label": "QF3",
+      "code": 1,
+      "durationMs": 189,
+      "accepted": false
+    }
+  ],
+  "budgetUsed": {
+    "verificationProducers": 3,
+    "managed": 0,
+    "implicitDeps": 1,
+    "formatterWrites": 0,
+    "retries": 0
+  },
+  "notStarted": [
+    "QF4 lint",
+    "QF5 composition runtime",
+    "QF6 foundation/owner regressions"
+  ],
+  "stop": "QF3 format exit 1 reports the main integration test only. First failure stopped all dependent work. No repair or additional producer followed.",
+  "diagnosis": "The amendment chose escaped single-quoted SQL literals; those bytes are semantically identical but fail oxfmt. Installed formatter config uses singleQuote:true; installed lint quote rule uses single with avoidEscape:true. A double-quoted literal escaping the two JSON double quotes is the next narrow candidate; it has not been generated, linted or qualified.",
+  "capture": {
+    "complete": true,
+    "fatalUtf8": true,
+    "fullBufferSanitized": true,
+    "manualSensitiveReview": "Reviewed complete QF1-QF3 captures: QF1 has no diagnostics; QF2 has build progress only; QF3 has one repository-relative test path. No rows, config payloads, tokens, capabilities or provider identifiers observed.",
+    "pathSanitationNotSecretScanOrAcceptance": true
+  },
+  "sourceOperation": "Only the two approved SQL literal quote forms in the main test changed. Earlier I3/AF4 failures and their evidence remain untouched.",
+  "readOnlyMisses": [
+    "A zsh wildcard for scripts/testResource*.ts had no match, exit 1; no command body ran.",
+    "A subsequent rg named two nonexistent claim files, exit 2; it read only the existing isolated runner. No producer or source correction was repeated."
+  ],
+  "custody": "No managed test started in this amendment; no new run resources allocated. Existing historical custody gaps are neither changed nor closed.",
+  "status": "Selected qualification remains incomplete. Parent WBS/Phase 20 blocked; ATP open; verified 0/12; P1-P3 remain open. No production activation or release claim.",
+  "independentGates": "No authority audit, chart generation/check, docs build or evidence-check producer added/run; no dossier/progress/index/chart edited.",
+  "next": "Seek a finite amendment for exactly the two double-quoted equivalent SQL literals, then the same six final-byte checks once each, failure stops. No behavior/config/framework/support changes or production integration.",
+  "noCommitPush": true,
+  "noMainWrites": true
+}

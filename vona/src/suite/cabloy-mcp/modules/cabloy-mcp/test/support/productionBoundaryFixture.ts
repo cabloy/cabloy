@@ -9,6 +9,8 @@ import type {
   ProductionOwnerPorts,
 } from '../../src/lib/productionRequestOwner.ts';
 
+import { boundedProof } from './boundedProof.ts';
+
 export function barrier() {
   let release!: () => void;
   const promise = new Promise<void>(resolve => {
@@ -140,8 +142,7 @@ export async function waitFor(promise: Promise<unknown>) {
   }
 }
 
-let sequence = 0;
-let bytes = 0;
+const serializeEvent = boundedProof();
 export function safeEvent(
   alias: string,
   proof: 'real-healthy' | 'controlled-fault' | 'synthetic-boundary' | 'source-scope',
@@ -154,12 +155,5 @@ export function safeEvent(
   },
 ) {
   assert.match(alias, /^[\x20-\x7E]{1,64}$/u, 'case_alias');
-  assert.equal(sequence < 512, true, 'event_count_limit');
-  const event = { alias, proof, outcome: 'observed', seq: ++sequence, ...values };
-  const line = JSON.stringify(event);
-  const length = Buffer.byteLength(line);
-  assert.equal(length <= 512, true, 'event_byte_limit');
-  assert.equal(bytes + length <= 256 * 1024, true, 'total_event_byte_limit');
-  bytes += length;
-  return line;
+  return serializeEvent(seq => ({ alias, proof, outcome: 'observed', seq, ...values }));
 }

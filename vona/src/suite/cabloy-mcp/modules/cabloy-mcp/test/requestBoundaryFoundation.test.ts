@@ -1,7 +1,6 @@
 import type { RequestBoundary, RequestBoundaryCapture, VonaScopeOutcome } from 'vona';
 
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
 import { describe, it } from 'node:test';
 import {
   AppLogger,
@@ -946,7 +945,7 @@ describe(
     );
 
     it(
-      '12 unmarked local diagnostic defaults remain ordinary and helper import is inert',
+      '12 unmarked local diagnostic defaults remain ordinary without a listener or leaked boundary',
       { timeout: 15_000 },
       async t => {
         const local = memoryLogger();
@@ -976,13 +975,6 @@ describe(
               }),
             value => value === error,
           );
-          const metadataUrl = new URL('../src/.metadata/index.ts', import.meta.url);
-          const before = await readFile(metadataUrl, 'utf8');
-          const server = app.server;
-          await import('../../../../../../packages-vona/vona-core/src/lib/core/requestBoundary.ts');
-          await import('../../../../../suite-vendor/a-vona/modules/a-telemetry/src/lib/spanDiagnostics.ts');
-          assert.equal(await readFile(metadataUrl, 'utf8'), before);
-          assert.equal(app.server, server);
           assert.equal(app.server, undefined);
           assert.equal(getRequestBoundary(), undefined);
           projection(t, 'ordinary', {

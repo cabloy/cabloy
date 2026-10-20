@@ -1,0 +1,11 @@
+{
+  "label": "QF1",
+  "head": "9fe5cb8f2c6db0eff5c681969e85035fa708d4c3",
+  "mainHead": "72e004d7acf6428638dd747ea4c1407a2610ed2c",
+  "command": "./vona/node_modules/.bin/tsc --noEmit --composite false --incremental false -p vona/src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json",
+  "sourceHashes": {
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/existingReadyBoundaryIntegration.test.ts": "09aec79ffd7ba12e84f12895889acd3bed51fbd03a74f85e0b386238cd5ff171",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/existingReadyBoundaryIntegrationFixture.ts": "dba69d6c2d9ab888f23e3a2a07eacedc846b8bb89e39359bf151ba0c971f50eb"
+  },
+  "budgetConsumed": true
+}

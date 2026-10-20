@@ -11,6 +11,7 @@ import { app } from 'vona-mock';
 import type { ProtectedSqliteRegistry } from '../../../../../../suite-vendor/a-vona/modules/a-ormdialect/src/lib/protectedSqliteRegistry.ts';
 
 import { createProtectedSqliteRegistryForTest } from '../../../../../../suite-vendor/a-vona/modules/a-ormdialect/src/lib/protectedSqliteRegistry.ts';
+import { boundedProof } from './boundedProof.ts';
 
 const require = createRequire(import.meta.url);
 const Database = require('better-sqlite3') as new (
@@ -275,8 +276,7 @@ export async function createProtectedSqliteFixture(journal: 'wal' | 'delete' = '
   };
 }
 
-let eventCount = 0;
-let eventBytes = 0;
+const serializeProof = boundedProof();
 export function proof(t: TestContext, alias: string, counts: Record<string, number | boolean>) {
   assert.match(alias, /^[a-z0-9-]{1,64}$/);
   for (const value of Object.values(counts)) {
@@ -285,14 +285,12 @@ export function proof(t: TestContext, alias: string, counts: Record<string, numb
       true,
     );
   }
-  const event = JSON.stringify({
-    proofClass: 'bounded-qualification',
-    alias,
-    sequence: ++eventCount,
-    ...counts,
-  });
-  const bytes = Buffer.byteLength(event);
-  eventBytes += bytes;
-  assert.equal(eventCount <= 512 && bytes <= 512 && eventBytes <= 256 * 1024, true);
-  t.diagnostic(event);
+  t.diagnostic(
+    serializeProof(sequence => ({
+      proofClass: 'bounded-qualification',
+      alias,
+      sequence,
+      ...counts,
+    })),
+  );
 }

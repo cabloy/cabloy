@@ -1,0 +1,19 @@
+{
+  "head": "9fe5cb8f2c6db0eff5c681969e85035fa708d4c3",
+  "mainHead": "72e004d7acf6428638dd747ea4c1407a2610ed2c",
+  "edition": "Basic",
+  "sourceBeforeHashes": {
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/existingReadyBoundaryIntegration.test.ts": "21c7ce83b5e644e286fa2b896d1bce8d3f361316341d98486e4a4b9ad10111fb",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/existingReadyBoundaryIntegrationFixture.ts": "dba69d6c2d9ab888f23e3a2a07eacedc846b8bb89e39359bf151ba0c971f50eb"
+  },
+  "protectedInventoryCount": 6163,
+  "protectedInventorySha256": "c1f26aae4e52be98410f4caedebec943bfec7051d94b00bdabc4426495351203",
+  "mainInventoryCount": 5820,
+  "mainInventorySha256": "61f64f383be0d5addd06ca692358a5559c34b6d99083651a34e8dba3dfadc84c",
+  "excludedEnvironmentCount": 17,
+  "environmentContentsRead": false,
+  "sharedPreparationWritersObserved": 0,
+  "impact": "External commits retain both prior source bytes. Selected readiness/admission/executor/ORM/reader and isolated-runner sources unchanged since b6fd376714. Release/version/lock changes and test-mode mail suppression preserved, not reinstalled or reverted. Fresh qualification uses current inputs; previous runtime proof is not promoted.",
+  "authority": "User approved exactly two SQL quote corrections with identical runtime bytes, then six final-byte checks each once; first failure stops.",
+  "budget": "QF1-QF6 once each; two managed and three implicit prerun/deps passes; no formatter, repair, retry, broad audit or documentation producer."
+}
