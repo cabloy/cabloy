@@ -1,8 +1,38 @@
 import assert from 'node:assert/strict';
+import { execFile } from 'node:child_process';
+import { registerHooks } from 'node:module';
 import { afterEach, beforeEach, describe, it } from 'node:test';
+import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 
-import { ServiceInstance } from '../../a-instance/src/service/instance.ts';
-import { ServiceStartup } from '../src/service/startup.ts';
+// Only bypass bean registration; exercise real startup methods with local fixtures.
+const serviceUrls = [
+  new URL('../../a-instance/src/service/instance.ts', import.meta.url).href,
+  new URL('../src/service/startup.ts', import.meta.url).href,
+];
+const hooks = registerHooks({
+  resolve(specifier, context, nextResolve) {
+    if (serviceUrls.includes(context.parentURL!) && specifier === 'vona-module-a-bean') {
+      return {
+        url: 'data:text/javascript,export function Service() { return () => {}; }',
+        shortCircuit: true,
+      };
+    }
+    return nextResolve(specifier, context);
+  },
+});
+const { ServiceInstance, ServiceStartup } = await (async () => {
+  try {
+    return {
+      ...(await import('../../a-instance/src/service/instance.ts')),
+      ...(await import('../src/service/startup.ts')),
+    };
+  } finally {
+    hooks.deregister();
+  }
+})();
+type ServiceInstance = InstanceType<typeof ServiceInstance>;
+type ServiceStartup = InstanceType<typeof ServiceStartup>;
 
 function fixture(created: string[] = []) {
   const calls: string[] = [];
@@ -105,6 +135,35 @@ const isolateCalls = [
 ];
 
 describe('creation-driven dev seed', { concurrency: false }, () => {
+  // Keep reset-flag mutations out of the managed runner's concurrent test process.
+  if (process.env.VONA_TEST_RUN_ID !== undefined) {
+    it('runs dev seed cases in an isolated process', async () => {
+      const loader = import.meta.resolve('ts-node-maintained/esm');
+      const projectRoot = new URL('../../../../../../', import.meta.url);
+      const registerSource = `import { register } from 'node:module'; register(${JSON.stringify(loader)}, ${JSON.stringify(projectRoot.href)});`;
+      const env = Object.fromEntries(Object.entries(process.env)) as NodeJS.ProcessEnv;
+      delete env.VONA_TEST_RUN_ID;
+      delete env.NODE_TEST_CONTEXT;
+      delete env.VONA_DB_RESET;
+      env.TS_NODE_PROJECT = fileURLToPath(new URL('tsconfig.json', projectRoot));
+      const { stdout } = await promisify(execFile)(
+        process.execPath,
+        [
+          '--import',
+          `data:text/javascript,${encodeURIComponent(registerSource)}`,
+          '--test',
+          '--test-reporter=tap',
+          '--test-name-pattern=creation-driven dev seed',
+          fileURLToPath(import.meta.url),
+        ],
+        { env, timeout: 30_000 },
+      );
+      assert.match(stdout, /# fail 0\b/);
+      assert.match(stdout, /# pass 16\b/);
+    });
+    return;
+  }
+
   let previousReset: string | undefined;
   beforeEach(() => {
     previousReset = process.env.VONA_DB_RESET;
