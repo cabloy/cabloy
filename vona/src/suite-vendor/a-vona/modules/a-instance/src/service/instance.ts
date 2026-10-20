@@ -3,7 +3,15 @@ import type { IInstanceStartupOptions } from 'vona-module-a-startup';
 
 import { isNil, sleep } from '@cabloy/utils';
 import async from 'async';
-import { BeanBase, deepExtend } from 'vona';
+import { AsyncResource } from 'node:async_hooks';
+import {
+  BeanBase,
+  beginCompletedInstance,
+  captureCompletedInstance,
+  deepExtend,
+  finishCompletedInstance,
+  invalidateCompletedInstance,
+} from 'vona';
 import { Service } from 'vona-module-a-bean';
 
 import type { IInstanceStartupQueueInfo } from '../entity/instance.ts';
@@ -74,6 +82,9 @@ export class ServiceInstance extends BeanBase {
   async resetAllCaches() {
     const instanceNames = Object.keys(this.__cacheIntancesConfig);
     for (const instanceName of instanceNames) {
+      invalidateCompletedInstance(this.app.meta.completedReadiness, instanceName);
+    }
+    for (const instanceName of instanceNames) {
       await this.app.bean.executor.newCtx(
         async () => {
           await this.resetCache(instanceName as any);
@@ -84,26 +95,41 @@ export class ServiceInstance extends BeanBase {
   }
 
   async resetCache(instanceName: keyof IInstanceRecord) {
+    invalidateCompletedInstance(this.app.meta.completedReadiness, instanceName);
     await this._cacheInstanceConfig(instanceName, true);
   }
 
-  private async _cacheInstanceConfig(instanceName: keyof IInstanceRecord, force?: boolean) {
+  private async _cacheInstanceConfig(
+    instanceName: keyof IInstanceRecord,
+    force?: boolean,
+    attempt?: object,
+    preparedBase?: ConfigInstanceBase,
+  ) {
     if (this.__cacheIntancesConfig[instanceName] && !force) return;
     let instance = await this.bean.instance.get(instanceName);
     if (!instance) this.app.throw(403);
     instance = instance!;
-    // config
-    const configInstanceBase = this.getConfigInstanceBase(instanceName);
-    const instanceConfigDb = instance.config ? JSON.parse(instance.config) : undefined;
+    // Capture persisted input before any other lifecycle operation can replace its cache.
+    const row = {
+      id: instance.id,
+      name: instance.name,
+      disabled: instance.disabled,
+      isolate: instance.isolate,
+      config: instance.config ?? null,
+    };
+    const configInstanceBase = preparedBase ?? this.getConfigInstanceBase(instanceName);
+    const instanceConfigDb = row.config ? JSON.parse(row.config) : undefined;
     // cache configs
-    this.__cacheIntancesConfig[instanceName] = deepExtend(
-      {},
-      this.app.config,
-      configInstanceBase?.config,
-      instanceConfigDb,
-      {
-        instance: undefined,
-      },
+    const merged = deepExtend({}, this.app.config, configInstanceBase?.config, instanceConfigDb, {
+      instance: undefined,
+    });
+    this.__cacheIntancesConfig[instanceName] = merged;
+    return captureCompletedInstance(
+      this.app.meta.completedReadiness,
+      instanceName,
+      attempt,
+      row,
+      merged,
     );
   }
 
@@ -111,6 +137,7 @@ export class ServiceInstance extends BeanBase {
     instanceName: keyof IInstanceRecord,
     options?: IInstanceStartupOptions,
   ) {
+    invalidateCompletedInstance(this.app.meta.completedReadiness, instanceName);
     await this.bean.executor.newCtx(
       async () => {
         await this.instanceStartup(instanceName, options);
@@ -121,27 +148,35 @@ export class ServiceInstance extends BeanBase {
 
   // options: force/instanceBase
   async instanceStartup(instanceName: keyof IInstanceRecord, options?: IInstanceStartupOptions) {
-    if (!options) options = {};
+    const owner = this.app.meta.completedReadiness;
+    const attempt = beginCompletedInstance(owner, instanceName);
+    options = { ...options };
     if (!options.configInstanceBase) {
       const configInstanceBase = this.getConfigInstanceBase(instanceName);
       options.configInstanceBase = configInstanceBase;
     }
-    // cache instance config
-    await this._cacheInstanceConfig(instanceName, options?.force);
+    // Preparation is serialized with startup below; publication never rereads a later cache.
+    const startupOptions = options;
+    const prepare = async () =>
+      this._cacheInstanceConfig(
+        instanceName,
+        startupOptions.force,
+        attempt,
+        startupOptions.configInstanceBase,
+      );
     // queue within the same worker
     if (!this.__queueInstanceStartup[instanceName]) {
       this.__queueInstanceStartup[instanceName] = async.queue(
-        (info: IInstanceStartupQueueInfo, cb: Function) => {
+        (
+          info: IInstanceStartupQueueInfo & { execute: (skip: boolean) => Promise<void> },
+          cb: Function,
+        ) => {
           // check again
           const force = info.options?.force;
-          if (this.ctx.app.meta.appReadyInstances[info.instanceName] && !force) {
-            info.resolve();
-            cb();
-            return;
-          }
+          const skip = !!this.app.meta.appReadyInstances[info.instanceName] && !force;
           // startup
-          this.$scope.startup.service.startup
-            .runStartupInstance(info.instanceName, info.options)
+          info
+            .execute(skip)
             .then(() => {
               info.resolve();
               cb();
@@ -158,7 +193,19 @@ export class ServiceInstance extends BeanBase {
       // options
       if (!options) options = { force: false, configInstanceBase: undefined };
       // queue push
-      const info: IInstanceStartupQueueInfo = { resolve, reject, instanceName, options };
+      const info: IInstanceStartupQueueInfo & { execute: (skip: boolean) => Promise<void> } = {
+        resolve,
+        reject,
+        instanceName,
+        options,
+        // The queue advances in the preceding worker's async context, not this caller's.
+        execute: AsyncResource.bind(async skip => {
+          const captured = await prepare();
+          if (skip) return;
+          await this.$scope.startup.service.startup.runStartupInstance(instanceName, options);
+          finishCompletedInstance(owner, instanceName, attempt, captured);
+        }),
+      };
       this.__queueInstanceStartup[instanceName].push(info);
     });
   }

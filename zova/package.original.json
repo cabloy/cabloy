@@ -85,7 +85,6 @@
     "typescript": "^5.9.3",
     "vite": "^8.3.4",
     "vite-plugin-fake-server-turbo": "^3.0.18",
-    "vue-tsc": "^3.3.1",
     "zova-vite": "workspace:^",
     "textlint": "^15.7.0",
     "textlint-rule-en-no-mixed-period": "^3.0.2",

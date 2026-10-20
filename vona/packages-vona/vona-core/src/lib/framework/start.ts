@@ -2,6 +2,10 @@ import type { VonaConfig, VonaConfigOptional } from '../../types/index.ts';
 import type { VonaApplication } from '../core/application.ts';
 
 import { EnumAppEvent } from '../../types/index.ts';
+import {
+  beginCompletedApplication,
+  finishCompletedApplication,
+} from '../core/completedReadiness.ts';
 import { assertIsolatedTestConfig } from '../core/isolationGuard.ts';
 import { registerTestClaimResourceInventory } from '../core/testClaim.ts';
 import { assertFreshTestResources } from '../core/testFreshness.ts';
@@ -17,6 +21,8 @@ export class Start {
 
   async start() {
     const app = this.app;
+    const owner = app.meta.completedReadiness;
+    const attempt = beginCompletedApplication(owner);
     try {
       await this._start_appConfig();
       await assertFreshTestResources(app);
@@ -24,7 +30,9 @@ export class Start {
       await this._start_appStart();
       await this._start_appReady();
       await this._start_appStarted();
+      finishCompletedApplication(owner, attempt, true);
     } catch (err) {
+      finishCompletedApplication(owner, attempt, false);
       // record
       app.meta.appStartError = err as Error;
       // event: appReadyError

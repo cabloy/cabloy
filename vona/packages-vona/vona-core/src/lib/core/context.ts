@@ -5,6 +5,7 @@ import type { MetadataKey } from './metadata.ts';
 
 import { cast } from '../../types/utils/cast.ts';
 import { BeanContainer } from '../bean/beanContainer.ts';
+import { getExistingReadyContextConfig } from './completedReadiness.ts';
 import { appResource } from './resource.ts';
 
 const BEAN = Symbol.for('Context#__bean');
@@ -46,6 +47,8 @@ export const contextBase: ContextBase = {
   },
   get config() {
     const self = cast(this);
+    const pinned = getExistingReadyContextConfig(self);
+    if (pinned) return pinned as any;
     const serviceInstance = cast(self.app.bean._getBean('a-instance.service.instance' as never));
     return serviceInstance.getConfig(self.instanceName) || self.app.config;
   },

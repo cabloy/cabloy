@@ -1,5 +1,16 @@
 export * from './application.ts';
 export * from './config.ts';
+export {
+  beginCompletedInstance,
+  captureCompletedInstance,
+  createCompletedReadiness,
+  finishCompletedInstance,
+  invalidateCompletedInstance,
+  isExistingReadyContext,
+  pinExistingReadyContext,
+  resolveExistingReadyCapability,
+} from './completedReadiness.ts';
+export type { CompletedReadiness, ExistingReadyCapability } from './completedReadiness.ts';
 export * from './hmr.ts';
 export * from './hmrDeps.ts';
 export * from './isolationGuard.ts';

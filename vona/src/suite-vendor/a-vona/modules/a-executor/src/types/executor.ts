@@ -22,6 +22,13 @@ export interface INewCtxOptions extends INewCtxBaseOptions {
   dbInfo?: Partial<IDbInfo>;
 }
 
+export interface INewCtxReadyExistingOptions {
+  req?: any;
+  res?: any;
+  locale?: keyof ILocaleRecord;
+  tz?: string;
+}
+
 export interface INewCtxLifecycle {
   initializeContext?: (ctx: VonaContext) => void;
   onScopeOutcome?: VonaScopeOutcomeObserver;

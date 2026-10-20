@@ -1,7 +1,7 @@
 import type { IInstanceRecord, VonaConfig } from 'vona';
 
 import { isNil } from '@cabloy/utils';
-import { BeanBase } from 'vona';
+import { BeanBase, invalidateCompletedInstance } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
 import type { EntityInstance } from '../entity/instance.ts';
@@ -83,12 +83,14 @@ export class BeanInstance extends BeanBase {
   async reload(instanceName?: keyof IInstanceRecord) {
     const instanceName2 = instanceName ?? this.ctx.instanceName;
     if (isNil(instanceName2)) throw new Error('Should specify the instanceName');
+    invalidateCompletedInstance(this.app.meta.completedReadiness, instanceName2);
     await this.reloadWorker(instanceName2);
     // broadcast
     this.scope.broadcast.reload.emit(instanceName2);
   }
 
   async reloadWorker(instanceName: keyof IInstanceRecord) {
+    invalidateCompletedInstance(this.app.meta.completedReadiness, instanceName);
     await this.scope.service.instance.instanceStartupIsolate(instanceName, { force: true });
   }
 }
