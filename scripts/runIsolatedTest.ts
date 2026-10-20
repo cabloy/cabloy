@@ -15,6 +15,13 @@ import {
   startTestClaimBroker,
 } from '../vona/packages-vona/vona-core/src/lib/core/testClaim.ts';
 import {
+  discardNativeOutput,
+  guardianStdio,
+  reportIsolatedDiagnostic,
+  strictGenerationFailure,
+  usesStrictGeneration,
+} from './strictGenerationDiagnostics.ts';
+import {
   cleanTestClaim,
   parseTestClaimTtlSeconds,
   reapExpiredTestClaims,
@@ -94,7 +101,16 @@ export async function startOwnedProcess(
   cwd: string,
   env: NodeJS.ProcessEnv,
 ): Promise<OwnedProcess> {
-  if (process.platform === 'win32') return startWindowsOwnedProcess(command, args, cwd, env);
+  const strict = usesStrictGeneration(env);
+  if (process.platform === 'win32') {
+    return startWindowsOwnedProcess(
+      command,
+      args,
+      cwd,
+      env,
+      strict ? discardNativeOutput() : undefined,
+    );
+  }
   const processId = randomUUID();
   const managed = hasTestClaimTransport(env);
   const registration = { id: processId, role: 'guardian', stage: 'pending' as const };
@@ -102,7 +118,7 @@ export async function startOwnedProcess(
   const guardian: ChildProcess = spawn(process.execPath, [GUARDIAN_FILE], {
     cwd: ROOT_DIR,
     env,
-    stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
+    stdio: guardianStdio(strict),
     detached: true,
   });
   let drained: GuardianResult | undefined;
@@ -335,9 +351,15 @@ export async function withIsolatedVona<T>(
   callback: () => Promise<T>,
   dependencies: IsolatedVonaDependencies = { start: startOwnedProcess, ready: waitForReady },
 ): Promise<T> {
+  const strict = usesStrictGeneration(env);
   const readyKey = randomBytes(32).toString('hex');
   const command = getIsolatedVonaCommand(port, env, readyKey);
-  const server = await dependencies.start(command.command, command.args, command.cwd, command.env);
+  let server: OwnedProcess;
+  try {
+    server = await dependencies.start(command.command, command.args, command.cwd, command.env);
+  } catch (error) {
+    throw strict ? strictGenerationFailure('startup') : error;
+  }
   let stopping = false;
   let exitedEarly = false;
   void server.wait().then(
@@ -351,7 +373,9 @@ export async function withIsolatedVona<T>(
   let interrupted = false;
   const onInterrupt = () => {
     interrupted = true;
-    void server.stop().catch(console.error);
+    void server
+      .stop()
+      .catch(error => reportIsolatedDiagnostic(strict, 'interrupt-stop-failed', error));
   };
   process.on('SIGINT', onInterrupt);
   process.on('SIGTERM', onInterrupt);
@@ -398,19 +422,22 @@ export async function withIsolatedVona<T>(
     if (interrupted) throw new Error('Isolated Vona run interrupted');
     result = await callback();
   } catch (error) {
-    operationError = toError(error);
+    operationError = strict
+      ? strictGenerationFailure(ready ? 'operation' : 'startup', error)
+      : toError(error);
   } finally {
     stopping = true;
     try {
       await shutdown();
     } catch (error) {
-      shutdownError = toError(error);
+      shutdownError = strict ? strictGenerationFailure('shutdown') : toError(error);
     } finally {
       process.off('SIGINT', onInterrupt);
       process.off('SIGTERM', onInterrupt);
     }
   }
   if (operationError && shutdownError) {
+    if (strict) throw strictGenerationFailure('operation-and-shutdown');
     throw new AggregateError(
       [operationError, shutdownError],
       'Isolated Vona operation and shutdown failed',
@@ -427,11 +454,19 @@ export async function runIsolatedProcess(
   cwd: string,
   env: NodeJS.ProcessEnv,
 ) {
-  const child = await startOwnedProcess(command, args, cwd, env);
+  const strict = usesStrictGeneration(env);
+  let child: OwnedProcess;
+  try {
+    child = await startOwnedProcess(command, args, cwd, env);
+  } catch (error) {
+    throw strict ? strictGenerationFailure('generator') : error;
+  }
   let interrupted = false;
   const onInterrupt = () => {
     interrupted = true;
-    void child.stop().catch(console.error);
+    void child
+      .stop()
+      .catch(error => reportIsolatedDiagnostic(strict, 'interrupt-stop-failed', error));
   };
   process.on('SIGINT', onInterrupt);
   process.on('SIGTERM', onInterrupt);
@@ -440,6 +475,8 @@ export async function runIsolatedProcess(
     if (result.failed || interrupted || result.result?.code !== 0) {
       throw new Error(`Isolated test exited: ${result.result?.signal ?? result.result?.code}`);
     }
+  } catch (error) {
+    throw strict ? strictGenerationFailure('generator') : error;
   } finally {
     process.off('SIGINT', onInterrupt);
     process.off('SIGTERM', onInterrupt);
@@ -576,6 +613,20 @@ export async function withIsolatedRun<T>(
   rootDir = ROOT_DIR,
   options: IsolatedRunOptions = {},
 ): Promise<T> {
+  try {
+    return await withIsolatedRunInternal(kind, callback, rootDir, options);
+  } catch (error) {
+    throw options.skipExpiredClaimReaping ? strictGenerationFailure('preparation', error) : error;
+  }
+}
+
+async function withIsolatedRunInternal<T>(
+  kind: 'unit' | 'cov' | 'e2e' | 'contract',
+  callback: (context: IsolatedRunContext) => Promise<T>,
+  rootDir: string,
+  options: IsolatedRunOptions,
+): Promise<T> {
+  const strict = options.skipExpiredClaimReaping === true;
   resolveCabloyEdition(rootDir);
   const vonaDir = resolve(rootDir, 'vona');
   await reapBeforeIsolatedRun(kind, vonaDir, options);
@@ -632,21 +683,33 @@ export async function withIsolatedRun<T>(
     await broker?.update({ type: 'status', status: 'failed' }).catch(() => {
       console.error('Could not record failed test status; claim retained');
     });
-    throw error;
+    throw strict ? strictGenerationFailure('run', error) : error;
   } finally {
     if (!completed) {
-      console.error(`Isolated test claim and resources retained for inspection: ${claimPath}`);
+      reportIsolatedDiagnostic(
+        strict,
+        'failed-resources-retained',
+        `Isolated test claim and resources retained for inspection: ${claimPath}`,
+      );
     }
     await broker?.close();
   }
-  const cleanup = await cleanTestClaim(claimPath, {
-    projectPath: vonaDir,
-    isInactive: claim => isTestClaimInactive(claim, true),
-    warn: message => console.error(message),
-  });
-  if (cleanup.status !== 'cleaned') {
-    console.error(`Isolated test claim retained for inspection: ${claimPath}`);
-    throw new Error('Isolated test succeeded but resource cleanup did not complete');
+  try {
+    const cleanup = await cleanTestClaim(claimPath, {
+      projectPath: vonaDir,
+      isInactive: claim => isTestClaimInactive(claim, true),
+      warn: message => reportIsolatedDiagnostic(strict, 'cleanup-warning', message),
+    });
+    if (cleanup.status !== 'cleaned') {
+      reportIsolatedDiagnostic(
+        strict,
+        'cleanup-incomplete-claim-retained',
+        `Isolated test claim retained for inspection: ${claimPath}`,
+      );
+      throw new Error('Isolated test succeeded but resource cleanup did not complete');
+    }
+  } catch (error) {
+    throw strict ? strictGenerationFailure('cleanup') : error;
   }
   return result as T;
 }

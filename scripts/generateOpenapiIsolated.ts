@@ -7,6 +7,7 @@ import {
   withIsolatedVona,
   withIsolatedRun,
 } from './runIsolatedTest.ts';
+import { strictGenerationFailure } from './strictGenerationDiagnostics.ts';
 
 const OPENAPI_VERSION = 'V31';
 const SOURCE_TIMEOUT_MS = 30_000;
@@ -78,6 +79,15 @@ export async function validateOpenapiSource(source: string) {
 }
 
 export async function generateOpenapiIsolated(args: string[]) {
+  const strict = args.some(arg => /^--skip-expired-claim-reaping(?:=|$)/.test(arg));
+  try {
+    return await generateOpenapiIsolatedInternal(args);
+  } catch (error) {
+    throw strict ? strictGenerationFailure('run', error) : error;
+  }
+}
+
+async function generateOpenapiIsolatedInternal(args: string[]) {
   const { generatorArgs, skipExpiredClaimReaping } = parseIsolatedOpenapiArgs(args);
   const command = getOpenapiGeneratorCommand(generatorArgs);
   if (process.env.E2E_BASE_URL !== undefined) {
@@ -104,5 +114,12 @@ export async function generateOpenapiIsolated(args: string[]) {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
-  await generateOpenapiIsolated(process.argv.slice(2));
+  const args = process.argv.slice(2);
+  try {
+    await generateOpenapiIsolated(args);
+  } catch (error) {
+    if (!args.some(arg => /^--skip-expired-claim-reaping(?:=|$)/.test(arg))) throw error;
+    console.error(strictGenerationFailure('run', error).message);
+    process.exitCode = 1;
+  }
 }

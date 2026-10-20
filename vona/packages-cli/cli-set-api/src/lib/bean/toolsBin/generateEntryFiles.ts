@@ -10,6 +10,7 @@ import type { VonaBinConfigOptions } from './types.ts';
 
 import { resolveTemplatePath } from '../../../utils.ts';
 import { copyTemplateFile, getEnvMeta } from '../../utils.ts';
+import { validateGenerationPaths } from './validateGenerationPaths.ts';
 // import { generateZod } from './generateZod.ts';
 
 export async function generateEntryFiles(
@@ -18,6 +19,7 @@ export async function generateEntryFiles(
   modulesMeta: Awaited<ReturnType<typeof glob>>,
   env: NodeJS.ProcessEnv,
 ) {
+  const strict = validateGenerationPaths(configMeta, configOptions);
   // config
   await __generateConfig();
   // modules meta
@@ -103,7 +105,10 @@ export async function generateEntryFiles(
   }
 
   async function __generateEnvJson() {
-    const contentDest = `export default ${JSON.stringify(env, null, 2)} as unknown as NodeJS.ProcessEnv;\n`;
+    // Strict generation retains the selected app.meta.env surface, never its resolved values.
+    const contentDest = strict
+      ? `const keys = ${JSON.stringify(Object.keys(env).filter(key => env[key] !== undefined))};\nexport default Object.fromEntries(keys.filter(key => process.env[key] !== undefined).map(key => [key, process.env[key]])) as NodeJS.ProcessEnv;\n`
+      : `export default ${JSON.stringify(env, null, 2)} as unknown as NodeJS.ProcessEnv;\n`;
     // output
     const fileDest = path.join(configOptions.appDir, configOptions.runtimeDir, 'env.ts');
     fse.ensureFileSync(fileDest);

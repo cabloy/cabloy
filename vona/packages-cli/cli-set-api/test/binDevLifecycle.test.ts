@@ -26,7 +26,7 @@ const source = `
     '@cabloy/cli': 'export class BeanCliBase {}',
     'nodemon': 'export default globalThis.nodemonMock;',
     'rimraf': 'export function rimraf() { throw new Error("Unexpected cleanup"); }',
-    'vona-core': 'export function resolveVonaLocalPaths() { throw new Error("Unexpected app access"); }',
+    'vona-core': 'export function resolveVonaLocalPaths() { throw new Error("Unexpected app access"); } export function requiresFreshTestResources() { return false; }',
     '../utils.ts': 'export function getImportEsm() { return "--import=./.vona/register.js"; }',
     './toolsBin/generateVonaMeta.ts': 'export function generateVonaMeta() { throw new Error("Unexpected generation"); }',
   };

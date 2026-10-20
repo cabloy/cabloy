@@ -46,6 +46,7 @@ import {
   waitForReady,
   withIsolatedRun,
 } from './runIsolatedTest.ts';
+import { StrictGenerationError } from './strictGenerationDiagnostics.ts';
 
 const isolationSource = resolve(
   ROOT_DIR,
@@ -367,7 +368,14 @@ for (const marker of ['__CABLOY_BASIC__', '__CABLOY_START__']) {
             root,
             { skipExpiredClaimReaping: true },
           ),
-          /generator failed/,
+          error => {
+            assert.ok(error instanceof StrictGenerationError);
+            assert.equal(error.stage, 'run');
+            assert.equal(error.message, 'Strict contract generation failed: run');
+            assert.doesNotMatch(error.stack ?? '', /generator failed/);
+            assert.equal(error.cause, undefined);
+            return true;
+          },
         );
         assert.equal((await loadTestClaim(claimPath)).status, 'failed');
         assert.equal(existsSync(dataRoot), true);
