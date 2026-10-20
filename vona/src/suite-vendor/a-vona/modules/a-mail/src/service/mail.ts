@@ -13,6 +13,11 @@ export class ServiceMail extends BeanBase {
   async sendById(id: TableIdentity) {
     const mail = await this.scope.model.mail.getById(id);
     if (!mail) return;
+    if (this.app.meta.isTest) {
+      await this.scope.model.mail.delete({ id });
+      this.$logger.info('Test mode: skipped external mail send.');
+      return;
+    }
     const clientName = mail.client;
     // client
     let client = this._getClient(clientName);
