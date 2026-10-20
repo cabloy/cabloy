@@ -4,7 +4,11 @@ This guide explains the most important Vona testing workflows in the Cabloy mono
 
 ## Why testing is emphasized
 
-Test-driven development remains a strong default in the Cabloy monorepo.
+Keep testing proportional to the backend change: cover critical business behavior using the existing Vona testing infrastructure, and add focused regression coverage when actual problems are fixed. Choose the smallest meaningful service/model, controller/API, or integration boundary for the changed contract; browser E2E is not the default backend test layer.
+
+Test-driven development and targeted unit or framework tests remain useful when they clarify and directly prove new or changed behavior. Exhaustive upfront mock/fake matrices and bespoke harnesses are not a delivery prerequisite.
+
+Preserve applicable authentication/authorization, tenant-isolation, transaction, concurrency, idempotency, migration, and acceptance checks without turning them into an unrelated mandatory matrix. The context, fixture, and resource-isolation rules below still apply, including the required `npm run test` after `meta.version.ts` changes. Missing runtime access must be reported, not worked around with unauthorized resets or substitute test machinery.
 
 Vona’s testing story is valuable because it is closely integrated with:
 

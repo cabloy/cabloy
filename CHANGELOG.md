@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.222
+
+### Features
+
+- Apply feature updates, including MCP-related changes.
+
+### Improvements
+
+- Add end-to-end tests and email-sending tests.
+- Update the pnpm lockfile.
+
 ## 5.1.221
 
 ### Features

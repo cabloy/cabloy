@@ -237,7 +237,11 @@ Especially relevant pages include:
 
 Always end with a verification path that matches the scope of the backend change.
 
-Typical shared checks include:
+Prefer focused tests of critical business behavior using the existing Vona testing infrastructure. Choose the smallest meaningful service/model, controller/API, or integration boundary for the changed contract; browser E2E is not the default backend test layer. Avoid exhaustive upfront mock/fake matrices and bespoke harnesses. Add focused regression coverage when actual defects are fixed; targeted unit and framework tests remain useful when they directly prove new or changed behavior.
+
+Keep relevant static checks scope-dependent and preserve applicable authentication/authorization, tenant-isolation, transaction, concurrency, idempotency, migration, and acceptance requirements. These are selected by the affected behavior, not a mandatory matrix for every change. Retain `mockCtx(...)` ownership, test-resource isolation, precise fixture cleanup, and the required `npm run test` after `meta.version.ts` changes. Missing runtime access is a reported gap, not permission to reset resources or invent substitute test machinery. See [Unit Testing](../../../repo-docs/backend/unit-testing.md).
+
+Shared checks, when applicable, include:
 
 - `npm run test`
 - `npm run tsc`

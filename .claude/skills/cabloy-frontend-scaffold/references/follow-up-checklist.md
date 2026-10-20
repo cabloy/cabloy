@@ -42,10 +42,12 @@ After generating or extending a frontend thread, check which follow-up layers ap
 
 ## Verification follow-up
 
-- `npm run tsc`
-- `npm run build:zova`
-- flavor-specific checks
-- route or SSR verification
+- relevant format, lint, and type checks using the smallest supported scope
+- a few affected critical user flows through existing E2E scenarios, selected by spec, tag, or `--grep`
+- focused regressions for actual defects; no exhaustive upfront fake matrices or custom source-evaluation harnesses
+- affected-flavor artifact preparation when runtime verification needs updated output
+- applicable route, SSR/hydration, authentication, authorization, and contract checks; do not replace server-side enforcement with UI coverage
+- report unavailable or unauthorized runtime proof explicitly; do not create substitute test machinery
 
 ## Escalation rule
 

@@ -278,7 +278,11 @@ Especially relevant pages include:
 
 Always end with a verification path that matches the scope of the frontend change.
 
-Typical shared checks include:
+For ordinary frontend changes, prefer a few critical user flows through the existing E2E infrastructure, selected by affected behavior with spec names, tags, or `--grep`. Reuse existing scenarios or extend them narrowly; do not require exhaustive isolated-test matrices, extensive fake dependencies, or custom source-evaluation loaders before delivery. When an actual problem is fixed, add focused regression coverage. Targeted unit or framework tests remain useful when they efficiently prove the behavior being changed; this is not a ban on existing tests or managed test-resource isolation.
+
+Keep relevant format, lint, and type checks lightweight and scope-dependent. Prepare only the affected flavor's required artifacts for runtime verification. Preserve applicable route, SSR/hydration, authentication, authorization, contract, and acceptance checks; frontend E2E does not replace server-side enforcement. If runtime verification is unavailable or not authorized, report the gap rather than building a substitute harness. See [Frontend Scripts](../../../repo-docs/frontend/scripts.md) for edition-aware preparation and filtered E2E commands.
+
+Shared checks, when applicable, include:
 
 - `npm run tsc`
 - `npm run build:zova`
