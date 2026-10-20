@@ -1,0 +1,42 @@
+{
+  "head": "e2761af5b61b5683fa48a126f26ca2f258f47edc",
+  "mainHead": "cb0fe12162edab398907ff0924a08637f81b8fc6",
+  "edition": "Basic",
+  "documents": {
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md": "fae49887e357abd77fd03da7d9b751979384f62be8ffef5a3e19347d6d2a219f",
+    "repo-specs/cabloy-mcp/progress.md": "5e5e774644806c15dfcf0b03c6ff4a88caed931d36bba292bfe289733e1f0bdd"
+  },
+  "charts": {
+    "repo-specs/cabloy-mcp/implementation-gantt.svg": "afe7bde77e82ce15065056df40987b315dd37591bc7787619b7a2a6efe5aa7e1",
+    "repo-specs/cabloy-mcp/implementation-burndown.svg": "cb337e4ec944612f1243b658b353501cee37a6d27899969de14229cb69cc6e3d"
+  },
+  "excludedEnvironmentPaths": [
+    "vona/env/.env",
+    "vona/env/.env.dev",
+    "vona/env/.env.dev.play",
+    "vona/env/.env.prod",
+    "vona/env/.env.prod.ci",
+    "vona/env/.env.prod.docker",
+    "vona/env/.env.test",
+    "zova/env/.env",
+    "zova/env/.env.admin",
+    "zova/env/.env.cabloyBasicAdmin",
+    "zova/env/.env.cabloyBasicWeb",
+    "zova/env/.env.cabloyCommerce",
+    "zova/env/.env.cabloyCommerceAdmin",
+    "zova/env/.env.ssr.admin",
+    "zova/env/.env.ssr.production",
+    "zova/env/.env.ssr.web",
+    "zova/env/.env.web"
+  ],
+  "proposedPathsAbsent": [
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/existingReadyBoundaryIntegration.test.ts",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/existingReadyBoundaryIntegrationFixture.ts"
+  ],
+  "budget": "Q0 exact two-record author format once; Q1-Q6 documentary checks once each, no automatic retry; no source/runtime/deps. Both streams 2MiB each/4MiB combined, fatal UTF8, complete-buffer path sanitation; no signals.",
+  "protectedInventoryCount": 6120,
+  "protectedInventorySha256": "635bbb2a00f4f5ac77b2bef75dade618580b04d91852b2a78b4a84ef7fa2e3cf",
+  "inventoryLimit": "Full original inventory remains in local capture; projection is count/digest, not per-file retained proof. Environment contents were not read; scope protected by unchanged Git diff.",
+  "sourceScope": "No source authored; proposed integration paths remain absent. Prior V/B source proof stays snapshot-scoped.",
+  "approval": "Preparation/documentary execution only; candidate source/runtime is unapproved."
+}

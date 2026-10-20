@@ -1,0 +1,32 @@
+{
+  "head": "e2761af5b61b5683fa48a126f26ca2f258f47edc",
+  "mainHead": "cb0fe12162edab398907ff0924a08637f81b8fc6",
+  "scope": "Finite documentary preparation only; no candidate source or runtime execution",
+  "documentaryResults": {
+    "Q0": { "exitCode": 0, "durationMs": 697 },
+    "Q1": { "exitCode": 0, "durationMs": 652 },
+    "Q2": { "exitCode": 0, "durationMs": 251, "definitions": 68 },
+    "Q3": { "exitCode": 0, "durationMs": 131 },
+    "Q4": { "exitCode": 0, "durationMs": 144, "language": "en", "verified": "0/12" },
+    "Q5": { "exitCode": 0, "durationMs": 11560, "warning": "Existing minified chunks above 500 kB; nonfatal" },
+    "Q6": { "exitCode": 0, "durationMs": 227 }
+  },
+  "captureReview": "Complete sanitized producer streams Q0-Q6 reviewed; no credential, raw-token, private-payload or machine-local-path finding identified. JSON command/input/output/disposition projections reviewed. Not exhaustive secret scanning or authenticity certification.",
+  "preservation": {
+    "protectedNonEnvironmentPaths": 6120,
+    "allProtectedBytesUnchanged": true,
+    "finalCheckedDocumentChartHashesMatch": true,
+    "chartsByteIdenticalToBaseline": true,
+    "mainCleanUnchanged": true,
+    "proposedTestPathsStillAbsent": true,
+    "progressSemanticChange": "Only WBS-MCP-20-01 Next action, line 123; all status/other field/other row contents unchanged",
+    "progressFormatterPaddingOnlyLines": [119, 120, 121, 122, 124, 125, 126, 127, 128, 129, 130, 131, 132],
+    "environmentContentsRead": false
+  },
+  "failedPostflightAssertion": {
+    "exitCode": 1,
+    "description": "Initial byte-strict progress comparison expected one changed line and failed after authorized Q0 realigned table padding. Read-only classification confirmed padding changes and exactly one selected semantic cell. A semantic-preservation check then passed; no source/document correction, producer retry or erased failure."
+  },
+  "coverageLimit": "This postflight record is later than Q6 and is not covered by Q6. Q6 also cannot check its own final capture. Prior checked input hashes remain unchanged. Path checking is not secret scanning or ATP/design/execution approval.",
+  "status": "Parent WBS and Phase 20 blocked, full ATPs open, verified 0/12. Production P1-P3 remain unresolved. Two-path test-only composition candidate requires explicit execution approval. No commit or push."
+}

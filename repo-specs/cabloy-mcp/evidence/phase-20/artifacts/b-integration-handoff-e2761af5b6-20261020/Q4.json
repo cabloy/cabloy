@@ -1,0 +1,33 @@
+{
+  "label": "Q4",
+  "head": "e2761af5b61b5683fa48a126f26ca2f258f47edc",
+  "command": "npm run spec:charts:check -- cabloy-mcp",
+  "code": 0,
+  "signal": null,
+  "durationMs": 144,
+  "bytes": [
+    252,
+    0
+  ],
+  "captureValid": true,
+  "overflow": false,
+  "spawnFailed": false,
+  "inputHashes": {
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md": "fcc96c96f84ab1e574b8f24aea96e45593d124b0b9424406808228bb9b8edbe0",
+    "repo-specs/cabloy-mcp/progress.md": "d19fdd615328ff663c60052102cac6d397f3aa166e64ee911ac87be76cbacab5",
+    "repo-specs/cabloy-mcp/implementation-gantt.svg": "afe7bde77e82ce15065056df40987b315dd37591bc7787619b7a2a6efe5aa7e1",
+    "repo-specs/cabloy-mcp/implementation-burndown.svg": "cb337e4ec944612f1243b658b353501cee37a6d27899969de14229cb69cc6e3d"
+  },
+  "outputHashes": {
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md": "fcc96c96f84ab1e574b8f24aea96e45593d124b0b9424406808228bb9b8edbe0",
+    "repo-specs/cabloy-mcp/progress.md": "d19fdd615328ff663c60052102cac6d397f3aa166e64ee911ac87be76cbacab5",
+    "repo-specs/cabloy-mcp/implementation-gantt.svg": "afe7bde77e82ce15065056df40987b315dd37591bc7787619b7a2a6efe5aa7e1",
+    "repo-specs/cabloy-mcp/implementation-burndown.svg": "cb337e4ec944612f1243b658b353501cee37a6d27899969de14229cb69cc6e3d"
+  },
+  "protectedDrift": [],
+  "unexpectedWrites": [],
+  "scopeValid": true,
+  "mainUnchanged": true,
+  "accepted": true,
+  "limit": "Documentary only; not runtime/design/execution approval. Q6 cannot check its own later capture. Path sanitation is not secret scanning or authenticity proof."
+}
