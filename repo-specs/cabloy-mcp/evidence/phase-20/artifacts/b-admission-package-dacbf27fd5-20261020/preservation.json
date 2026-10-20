@@ -1,0 +1,32 @@
+{
+  "head": "dacbf27fd51cbbf15ed1f9f190310d3876999a97",
+  "sourceHashes": {
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/lib/protectedSqliteRegistry.ts": "55c77b5abcbce5911e9a34c83a882a5b1288b5be0f3ce44e17ee8137fb5c25b2",
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/index.ts": "e45e5febcc9e780159f501076d33a6a3afd53a8eeb8b835ecb70658497cba3be",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/protectedSqliteRegistry.test.ts": "cd0e2ca0d37a2a7c1baf43d4d7dab87f3aae8612ffbad3b2ee46604320f74e2c",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/protectedSqliteRegistryFixture.ts": "a5e9248f2c280aed5b3039b94da1e03c532107f6036dd28fd2f3d1cd440b7fb9"
+  },
+  "preservedTrackedFiles": 5990,
+  "preservedDrift": [],
+  "progressOnlySelectedNextAction": true,
+  "status": " M repo-specs/cabloy-mcp/evidence/phase-20/index.md\n M repo-specs/cabloy-mcp/evidence/phase-20/protected-sqlite-registry-qualification.md\n M repo-specs/cabloy-mcp/progress.md\n M repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md\n?? repo-specs/cabloy-mcp/evidence/phase-20/artifacts/b-admission-package-dacbf27fd5-20261020/\n",
+  "captureFiles": [
+    "preflight.json",
+    "document-format-authoring.json",
+    "document-format-authoring.log",
+    "D1-format.json",
+    "D1-format.log",
+    "D2-authority.json",
+    "D2-authority.log",
+    "D3-charts.json",
+    "D3-charts.log",
+    "D4-chart-freshness.json",
+    "D4-chart-freshness.log",
+    "D5-docs.json",
+    "D5-docs.log",
+    "D6-evidence-paths.json",
+    "D6-evidence-paths.log"
+  ],
+  "captureReview": "Path sanitation completed per capture. Manual sensitive-content review remains a separate observation; evidence path check does not certify itself or this final preservation record.",
+  "noRuntimeDepsOrSourceChecks": true
+}

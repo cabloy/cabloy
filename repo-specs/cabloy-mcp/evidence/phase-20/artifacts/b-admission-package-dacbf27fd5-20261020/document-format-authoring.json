@@ -1,0 +1,34 @@
+{
+  "label": "document-format-authoring",
+  "command": "./node_modules/.bin/oxfmt --write repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md repo-specs/cabloy-mcp/evidence/phase-20/index.md repo-specs/cabloy-mcp/evidence/phase-20/protected-sqlite-registry-qualification.md",
+  "code": 0,
+  "signal": null,
+  "spawnFailed": false,
+  "durationMs": 575,
+  "observationExceeded": false,
+  "overflow": false,
+  "bytes": [
+    47,
+    0
+  ],
+  "captureValid": true,
+  "sourceHashes": {
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/lib/protectedSqliteRegistry.ts": "55c77b5abcbce5911e9a34c83a882a5b1288b5be0f3ce44e17ee8137fb5c25b2",
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/index.ts": "e45e5febcc9e780159f501076d33a6a3afd53a8eeb8b835ecb70658497cba3be",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/protectedSqliteRegistry.test.ts": "cd0e2ca0d37a2a7c1baf43d4d7dab87f3aae8612ffbad3b2ee46604320f74e2c",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/protectedSqliteRegistryFixture.ts": "a5e9248f2c280aed5b3039b94da1e03c532107f6036dd28fd2f3d1cd440b7fb9"
+  },
+  "preservedTrackedFiles": 5990,
+  "preservedDrift": [],
+  "documentaryHashes": {
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md": "d8b11d78dd5a997708b366c957d96a706d255734a768560b2bc6f6dc0a6fc653",
+    "repo-specs/cabloy-mcp/progress.md": "8fc7f376e393337c3b1f750227350f853dd6909700a9cd406d2b233373e39e84",
+    "repo-specs/cabloy-mcp/evidence/phase-20/index.md": "c1d2ac5eef4475b2965a4b5577a9707d93bf92e23bb47a53ad53957a3dcec73a",
+    "repo-specs/cabloy-mcp/evidence/phase-20/protected-sqlite-registry-qualification.md": "37936273dbaeb7e490a87c43735c698ef7c7017b309d8fda66a7d17fe60b86b9"
+  },
+  "chartHashes": {
+    "repo-specs/cabloy-mcp/implementation-gantt.svg": "afe7bde77e82ce15065056df40987b315dd37591bc7787619b7a2a6efe5aa7e1",
+    "repo-specs/cabloy-mcp/implementation-burndown.svg": "cb337e4ec944612f1243b658b353501cee37a6d27899969de14229cb69cc6e3d"
+  },
+  "sanitizer": "passed"
+}

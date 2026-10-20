@@ -1,0 +1,27 @@
+{
+  "head": "dacbf27fd51cbbf15ed1f9f190310d3876999a97",
+  "edition": "Basic",
+  "authority": "User approved section-19 documentary reconciliation and finite B package preparation only; scoped documentary verification, no source/runtime/deps checks",
+  "initialWorktree": "clean before documentary authoring; currently exactly four attributed documentary edits",
+  "sourceHashes": {
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/lib/protectedSqliteRegistry.ts": "55c77b5abcbce5911e9a34c83a882a5b1288b5be0f3ce44e17ee8137fb5c25b2",
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/index.ts": "e45e5febcc9e780159f501076d33a6a3afd53a8eeb8b835ecb70658497cba3be",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/protectedSqliteRegistry.test.ts": "cd0e2ca0d37a2a7c1baf43d4d7dab87f3aae8612ffbad3b2ee46604320f74e2c",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/protectedSqliteRegistryFixture.ts": "a5e9248f2c280aed5b3039b94da1e03c532107f6036dd28fd2f3d1cd440b7fb9"
+  },
+  "localMain": "74ff2068114a7cdbb30744dc27bb60f75dca26bd",
+  "preservedTrackedFiles": 5990,
+  "preservationFingerprint": "378591be64556c6c009d54adec8a6c8c2e10ab819e4854964a26214773e88c9f",
+  "documentaryHashes": {
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md": "bd698d68997eebf3f49d9488f5dd197965cdc0b10efe2866f6d9248a4e15420a",
+    "repo-specs/cabloy-mcp/progress.md": "8fc7f376e393337c3b1f750227350f853dd6909700a9cd406d2b233373e39e84",
+    "repo-specs/cabloy-mcp/evidence/phase-20/index.md": "c1d2ac5eef4475b2965a4b5577a9707d93bf92e23bb47a53ad53957a3dcec73a",
+    "repo-specs/cabloy-mcp/evidence/phase-20/protected-sqlite-registry-qualification.md": "f3c901604ba6c7c0a960cc6e1f294205877ca6a4e1b7461141b09ab3f6920f7e"
+  },
+  "mainRegressionAvailability": {
+    "devSeed": true,
+    "instance": true,
+    "MCPFoundation": false,
+    "MCPOwner": false
+  }
+}
