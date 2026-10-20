@@ -1,0 +1,211 @@
+{
+  "head": "7a96e258c9386d0e6efdcdf6ebe4fbe34a091de0",
+  "mainHead": "cb0fe12162edab398907ff0924a08637f81b8fc6",
+  "copiedRecords": 25,
+  "inventory": [
+    {
+      "file": "V1.json",
+      "originalSha256": "1243f3034de043d8d1cca7e8f5b6bf089d1b8023893309cecac52dad2455452a",
+      "originalBytes": 3313,
+      "retainedSha256": "1243f3034de043d8d1cca7e8f5b6bf089d1b8023893309cecac52dad2455452a",
+      "retainedBytes": 3313,
+      "projection": false
+    },
+    {
+      "file": "V1.log",
+      "originalSha256": "af6f1b81aa92937d311ae10b9cd7491e7587a62dc3e40941d80ba7e89a8d6582",
+      "originalBytes": 3968,
+      "retainedSha256": "af6f1b81aa92937d311ae10b9cd7491e7587a62dc3e40941d80ba7e89a8d6582",
+      "retainedBytes": 3968,
+      "projection": false
+    },
+    {
+      "file": "V1.started.json",
+      "originalSha256": "926f5b4ecf435d672da56071c7e228cbe2aaedcd575b6bb99378ecf0c312ac9b",
+      "originalBytes": 2618,
+      "retainedSha256": "926f5b4ecf435d672da56071c7e228cbe2aaedcd575b6bb99378ecf0c312ac9b",
+      "retainedBytes": 2618,
+      "projection": false
+    },
+    {
+      "file": "V2.json",
+      "originalSha256": "3e633436f1878a25f07bac9eda6a546285f803406794fd5489410be9251bb7fd",
+      "originalBytes": 3293,
+      "retainedSha256": "3e633436f1878a25f07bac9eda6a546285f803406794fd5489410be9251bb7fd",
+      "retainedBytes": 3293,
+      "projection": false
+    },
+    {
+      "file": "V2.log",
+      "originalSha256": "6d02b71663ea341e7e75dca781691e77e2ad425f8b2fdeab75c3485e95dedcd6",
+      "originalBytes": 3486,
+      "retainedSha256": "6d02b71663ea341e7e75dca781691e77e2ad425f8b2fdeab75c3485e95dedcd6",
+      "retainedBytes": 3486,
+      "projection": false
+    },
+    {
+      "file": "V2.started.json",
+      "originalSha256": "d885b788cbe10b85b6c6f6f260ab2a153ce6b512e3df111d7cfa6b9cded213e4",
+      "originalBytes": 2694,
+      "retainedSha256": "d885b788cbe10b85b6c6f6f260ab2a153ce6b512e3df111d7cfa6b9cded213e4",
+      "retainedBytes": 2694,
+      "projection": false
+    },
+    {
+      "file": "V3.json",
+      "originalSha256": "7f22ed0c63545d6c0e59f7ba3f97616219d7d825911ed7d932cf7c447a666ce5",
+      "originalBytes": 3293,
+      "retainedSha256": "7f22ed0c63545d6c0e59f7ba3f97616219d7d825911ed7d932cf7c447a666ce5",
+      "retainedBytes": 3293,
+      "projection": false
+    },
+    {
+      "file": "V3.log",
+      "originalSha256": "d7e632b306f138db3adefb0dcaadfd4df5ca68b0c99dac47eb9393a44d15876a",
+      "originalBytes": 3486,
+      "retainedSha256": "d7e632b306f138db3adefb0dcaadfd4df5ca68b0c99dac47eb9393a44d15876a",
+      "retainedBytes": 3486,
+      "projection": false
+    },
+    {
+      "file": "V3.started.json",
+      "originalSha256": "630ea44581f6e8501270d5a4386bf7c74fbee334e6eddd138fc22fd352aa64f3",
+      "originalBytes": 2694,
+      "retainedSha256": "630ea44581f6e8501270d5a4386bf7c74fbee334e6eddd138fc22fd352aa64f3",
+      "retainedBytes": 2694,
+      "projection": false
+    },
+    {
+      "file": "V4.json",
+      "originalSha256": "f538752e1c348a3d7ba5d9e0cf56e9534b040c6c3047e8a45d1cb1b25a883a9f",
+      "originalBytes": 3278,
+      "retainedSha256": "f538752e1c348a3d7ba5d9e0cf56e9534b040c6c3047e8a45d1cb1b25a883a9f",
+      "retainedBytes": 3278,
+      "projection": false
+    },
+    {
+      "file": "V4.log",
+      "originalSha256": "c28bf9e308d13af2d5571ab8a6131fc1144cd51903232f3625ee45a994769419",
+      "originalBytes": 3458,
+      "retainedSha256": "c28bf9e308d13af2d5571ab8a6131fc1144cd51903232f3625ee45a994769419",
+      "retainedBytes": 3458,
+      "projection": false
+    },
+    {
+      "file": "V4.started.json",
+      "originalSha256": "4b858f4fc8487d34cbda92aeb43837ef8fc52160c396535fba84424cfe76f5cf",
+      "originalBytes": 2681,
+      "retainedSha256": "4b858f4fc8487d34cbda92aeb43837ef8fc52160c396535fba84424cfe76f5cf",
+      "retainedBytes": 2681,
+      "projection": false
+    },
+    {
+      "file": "V5.json",
+      "originalSha256": "17f258088dccb8abd0ea961401de08b387a330c25d950ff2731c9b0321f12503",
+      "originalBytes": 3181,
+      "retainedSha256": "17f258088dccb8abd0ea961401de08b387a330c25d950ff2731c9b0321f12503",
+      "retainedBytes": 3181,
+      "projection": false
+    },
+    {
+      "file": "V5.log",
+      "originalSha256": "ac871c8d7bff5e5e683a2c0f78e71dd10a7f5008d4517d5f20885f4e0d4cfe3b",
+      "originalBytes": 4442,
+      "retainedSha256": "ac871c8d7bff5e5e683a2c0f78e71dd10a7f5008d4517d5f20885f4e0d4cfe3b",
+      "retainedBytes": 4442,
+      "projection": false
+    },
+    {
+      "file": "V5.started.json",
+      "originalSha256": "6cc6580078d4c70656d5f111d9d21b1a36e5be858af55ec1dd7b401ada24908f",
+      "originalBytes": 2579,
+      "retainedSha256": "6cc6580078d4c70656d5f111d9d21b1a36e5be858af55ec1dd7b401ada24908f",
+      "retainedBytes": 2579,
+      "projection": false
+    },
+    {
+      "file": "V6.json",
+      "originalSha256": "f393b086a90445f3aac426de801d7ab8e248137c075cc79a40d2b6812fd2dac5",
+      "originalBytes": 3673,
+      "retainedSha256": "f393b086a90445f3aac426de801d7ab8e248137c075cc79a40d2b6812fd2dac5",
+      "retainedBytes": 3673,
+      "projection": false
+    },
+    {
+      "file": "V6.log",
+      "originalSha256": "a2cef53db39b568276ea6b1554cb9d0b4a0316d0b89f366265c64a9f989111e4",
+      "originalBytes": 4358,
+      "retainedSha256": "a2cef53db39b568276ea6b1554cb9d0b4a0316d0b89f366265c64a9f989111e4",
+      "retainedBytes": 4358,
+      "projection": false
+    },
+    {
+      "file": "V6.started.json",
+      "originalSha256": "0598d2358c930cc5692de8b280bf5b1b5d38c92b48924064ffd5da2f78e5a464",
+      "originalBytes": 3074,
+      "retainedSha256": "0598d2358c930cc5692de8b280bf5b1b5d38c92b48924064ffd5da2f78e5a464",
+      "retainedBytes": 3074,
+      "projection": false
+    },
+    {
+      "file": "V7.json",
+      "originalSha256": "16ee779aea5837d85fe7b33a6fa39b1dfcc03cd71ae809485ee38e48cf2fc1af",
+      "originalBytes": 3689,
+      "retainedSha256": "16ee779aea5837d85fe7b33a6fa39b1dfcc03cd71ae809485ee38e48cf2fc1af",
+      "retainedBytes": 3689,
+      "projection": false
+    },
+    {
+      "file": "V7.log",
+      "originalSha256": "6875e83e211712f18c0f2f996c456c4ca3e98688a1b9a7345d57705d1489e389",
+      "originalBytes": 4279,
+      "retainedSha256": "6875e83e211712f18c0f2f996c456c4ca3e98688a1b9a7345d57705d1489e389",
+      "retainedBytes": 4279,
+      "projection": false
+    },
+    {
+      "file": "V7.started.json",
+      "originalSha256": "0306aad59eb3b31d0dc6a4a0c2eeb279af2d4b277b4be5f3f403ed9a263931e7",
+      "originalBytes": 3091,
+      "retainedSha256": "0306aad59eb3b31d0dc6a4a0c2eeb279af2d4b277b4be5f3f403ed9a263931e7",
+      "retainedBytes": 3091,
+      "projection": false
+    },
+    {
+      "file": "V8.json",
+      "originalSha256": "8b91cabf654278e35b68ffdaa8c6468e34d37014f329a3586d99edbb043d940a",
+      "originalBytes": 3898,
+      "retainedSha256": "8b91cabf654278e35b68ffdaa8c6468e34d37014f329a3586d99edbb043d940a",
+      "retainedBytes": 3898,
+      "projection": false
+    },
+    {
+      "file": "V8.log",
+      "originalSha256": "3fd30cd8dfca1f51557012fa6ddf38fb688bf8c371cc3b4b86c8cbabe365b4e5",
+      "originalBytes": 11698,
+      "retainedSha256": "3fd30cd8dfca1f51557012fa6ddf38fb688bf8c371cc3b4b86c8cbabe365b4e5",
+      "retainedBytes": 11698,
+      "projection": false
+    },
+    {
+      "file": "V8.started.json",
+      "originalSha256": "a54361b9d612f9454857ea5d83c0479f6a6b6a679ac0c863f28aeec0c53ba718",
+      "originalBytes": 2842,
+      "retainedSha256": "a54361b9d612f9454857ea5d83c0479f6a6b6a679ac0c863f28aeec0c53ba718",
+      "retainedBytes": 2842,
+      "projection": false
+    },
+    {
+      "file": "freeze.json",
+      "originalSha256": "425504674d3923185dcffce46db6de77528ac0f70e3486a5c20440493bde1a72",
+      "originalBytes": 880855,
+      "retainedSha256": "9a40c62d88fce79967daaab2d5606951ac861b815b296f514747e56b47f01970",
+      "retainedBytes": 7596,
+      "projection": true
+    }
+  ],
+  "review": "Complete sanitized stream review plus JSON structure review before retention. No credential/raw-token/private-payload or machine-local path finding identified; not exhaustive secret scanning or authenticity certification.",
+  "projection": "Only full tracked freeze map projected to count/digest; source hashes and commands retained. No environment payload read.",
+  "budget": "V1-V8 once each, 8 producers, 1 managed, 2 prerun/deps passes. Historical B44/managed12/deps17 unchanged. Combined bounded-family accounting B+V=52 producers,13 managed,19 deps; excludes separate documentary family and external main runs.",
+  "scope": "Only later queue-context/commit-tail/process-helper exact-source proof. No source edits or B12/B13 repeat, parent/ATP/release promotion."
+}

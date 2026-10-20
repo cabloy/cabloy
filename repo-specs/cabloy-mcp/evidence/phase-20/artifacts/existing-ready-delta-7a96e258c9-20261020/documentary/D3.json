@@ -1,0 +1,37 @@
+{
+  "label": "D3",
+  "head": "7a96e258c9386d0e6efdcdf6ebe4fbe34a091de0",
+  "command": "npm run spec:charts -- cabloy-mcp",
+  "code": 0,
+  "signal": null,
+  "durationMs": 129,
+  "captureValid": true,
+  "overflow": false,
+  "spawnFailed": false,
+  "bytes": [
+    240,
+    0
+  ],
+  "inputHashes": {
+    "repo-specs/cabloy-mcp/evidence/phase-20/existing-ready-foundation-qualification.md": "db084a1c627d9ad8c8e36c295a94b75ffc68cff8760d441535f2f0c1e4487e5c",
+    "repo-specs/cabloy-mcp/evidence/phase-20/index.md": "fda1adc8f604f50c121f1d8550824366d960fbef01e26c9702792047e905723b",
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md": "fae49887e357abd77fd03da7d9b751979384f62be8ffef5a3e19347d6d2a219f",
+    "repo-specs/cabloy-mcp/progress.md": "5e5e774644806c15dfcf0b03c6ff4a88caed931d36bba292bfe289733e1f0bdd",
+    "repo-specs/cabloy-mcp/implementation-gantt.svg": "afe7bde77e82ce15065056df40987b315dd37591bc7787619b7a2a6efe5aa7e1",
+    "repo-specs/cabloy-mcp/implementation-burndown.svg": "cb337e4ec944612f1243b658b353501cee37a6d27899969de14229cb69cc6e3d"
+  },
+  "outputHashes": {
+    "repo-specs/cabloy-mcp/evidence/phase-20/existing-ready-foundation-qualification.md": "db084a1c627d9ad8c8e36c295a94b75ffc68cff8760d441535f2f0c1e4487e5c",
+    "repo-specs/cabloy-mcp/evidence/phase-20/index.md": "fda1adc8f604f50c121f1d8550824366d960fbef01e26c9702792047e905723b",
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md": "fae49887e357abd77fd03da7d9b751979384f62be8ffef5a3e19347d6d2a219f",
+    "repo-specs/cabloy-mcp/progress.md": "5e5e774644806c15dfcf0b03c6ff4a88caed931d36bba292bfe289733e1f0bdd",
+    "repo-specs/cabloy-mcp/implementation-gantt.svg": "afe7bde77e82ce15065056df40987b315dd37591bc7787619b7a2a6efe5aa7e1",
+    "repo-specs/cabloy-mcp/implementation-burndown.svg": "cb337e4ec944612f1243b658b353501cee37a6d27899969de14229cb69cc6e3d"
+  },
+  "protectedDrift": [],
+  "unexpectedWrites": [],
+  "scopeValid": true,
+  "accepted": true,
+  "scope": "Documentary only; not runtime ATP proof",
+  "pathCheckLimit": "D6 cannot check its own final capture. Path check is not secret scanning or acceptance proof."
+}

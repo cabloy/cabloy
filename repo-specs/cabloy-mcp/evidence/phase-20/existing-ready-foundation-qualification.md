@@ -8,7 +8,7 @@ The original section-20 preparation approval did not authorize source execution.
 
 Basic main is the sole framework source of truth. The historical main qualification used base `5901a258220a2a9885ec540cce6a6b2ef244c2b4` plus fourteen identified dirty source/test paths; the commit alone does not reproduce those bytes. The user subsequently merged main back and requested “我已经将main分支的代码手工合并到当前工作区。请你继续”. Current compatibility preflight observed **clean** MCP `9b9518f97110ae2a1286345dc0dedddadbc26e6d`, main `8cd5fbc654f4f6f9a3c8c804af55f84c328edbb9`, and only the Basic edition marker. This continuation changed evidence/derived records only, not framework or MCP source.
 
-**Disposition:** historical bounded foundation qualification completed on its frozen bytes; current independent MCP compatibility passed **52 tests**. The merged foundation as a whole is **not requalified**: later main changes have distinct missing execution evidence. Parent WBS/Phase 20 remain **blocked**, full ATPs **open**, verified **0/12**. No production provisioning, admission registration, activation or release is implied.
+**Disposition:** historical bounded foundation qualification completed on its frozen bytes; independent MCP compatibility passed **52 tests** at `9b9518f971`. The [later synchronized-delta qualification](#later-synchronized-delta-qualification-2026-10-20) now closes the named queue-context/commit-tail/process-helper proof gap with **18 passing tests** and six static checks on frozen `7a96e258c9` bytes. This is not a whole-foundation rerun or production qualification. Parent WBS/Phase 20 remain **blocked**, full ATPs **open**, verified **0/12**. No production provisioning, admission registration, activation or release is implied.
 
 ## Implemented supported class and proof distinctions
 
@@ -112,4 +112,67 @@ Authoring-format commands and documentary producers are separate, not concealed 
 
 This handoff's separate documentary family is exact changed Markdown format, full `spec:check`, chart generation, chart freshness, docs build and exact-record/new-directory path check, each once plus at most one scoped correction. [Documentary captures](./artifacts/existing-ready-foundation-9b9518f971-20261020/documentary/) identify actual command exits, bounded stream validity and frozen input hashes; their presence/result must be observed, not presumed. They do not self-certify their own final capture. Authority audit, chart freshness and human execution/ATP evidence remain independent; earlier documentary passes do not qualify these later records. No PRD/SRS/ADR/WBS/test-plan authority or unrelated progress status changed.
 
-**Single next action:** obtain existing source-linked passing execution evidence for the later main queue-context/commit-tail/process-helper changes, or separately approve their narrow affected verification if that evidence is unavailable. This is a proof handoff, not approval of a new production provisioner, a repeated design round or a whole-foundation rerun. No commit/push, destructive cleanup, second application/test-owned `app.close()`, global diagnostic/origin patches, schema/metadata/frontend/generated-consumer edit, production/provider operation or release occurred. Parent blocked, ATPs open and verified 0/12 remain unchanged.
+**Historical next action, superseded below:** obtain existing source-linked passing execution evidence for the later main queue-context/commit-tail/process-helper changes, or separately approve their narrow affected verification if that evidence is unavailable. That handoff did not itself authorize a new production provisioner, repeated design round or whole-foundation rerun. No commit/push, destructive cleanup, second application/test-owned `app.close()`, global diagnostic/origin patches, schema/metadata/frontend/generated-consumer edit, production/provider operation or release occurred. Parent blocked, ATPs open and verified 0/12 remained unchanged.
+
+## Later synchronized-delta qualification (2026-10-20)
+
+### Approval, source attribution and reused evidence
+
+After the preceding handoff, a read-only investigation found newer main execution captures: queue-context/admission **5**, executor **4** and separate commit-lifecycle **3** cases explicitly passed in a full run reporting **565 passed, 0 failed, 12 skipped**, exit 0, run `20261020113656-39ab0525`. Those captures lacked an execution-time source-hash freeze and preceded creation of main `cb0fe12162`; they support case/checkout/chronology linkage, not retrospective exact-byte qualification. No passing process-helper six-case capture was found in that inspected set. These observations narrow the earlier bounded absence finding without rewriting its historical scope or adding external-main invocations to this session's B budget. The new qualification below supplies its own direct proof; it does not depend on those external captures for acceptance.
+
+Main `cb0fe12162edab398907ff0924a08637f81b8fc6` introduced three test-only changes over `8cd5fbc654`: executor disposal assertions, HTTP-log suite serialization and devSeed child-process isolation. No target production file changed. Before synchronization, only the executor test differed between main and MCP. Its global application-counter comparisons were removed in favor of the local disposal lifecycle outcome; pinned commit ordering, failure propagation, scope restoration and listener preservation remain. The separate inert commit test retains its locally owned active-count assertion.
+
+The user then reported “main分支有新的变更，已经同步到当前工作区。请你再次验证”. Following the preceding finite eight-producer proposal, this explicitly requested verification of the synchronized current checkout. Preflight observed clean MCP **`7a96e258c9386d0e6efdcdf6ebe4fbe34a091de0`**, clean main **`cb0fe12162edab398907ff0924a08637f81b8fc6`**, Basic only, and exact equality for **17/17** target files: the original fourteen plus the separate commit test and process-helper source/test. Only `readyExisting.test.ts` changed within those targets since MCP `9b9518f971`. No synchronization, source correction, package/configuration/lock edit or dependency installation was performed by this verification.
+
+[New frozen inputs](./artifacts/existing-ready-delta-7a96e258c9-20261020/freeze.json) retain all seventeen source hashes and the commands. The original full **6,110 tracked-file** hash inventory remains local; the retained record projects it to count/digest rather than publishing an unnecessary full filename map. Each producer checked the full original inventory before and after execution, clean current status and unchanged main. The old manifest remains a historical comparison at its recorded heads, not a claim that later checkouts still match.
+
+### Exact procedures and observed results
+
+Each command ran from the synchronized MCP root **once**, with no source edit, retry, signal or corrective cycle. [V1](./artifacts/existing-ready-delta-7a96e258c9-20261020/V1.json) through [V8](./artifacts/existing-ready-delta-7a96e258c9-20261020/V8.json) retain individual dispositions, source hashes and complete sanitized `.log` companions. All exited **0**, had valid captures and no tracked drift; skipped/cancelled/todo counts were zero for both test producers.
+
+| Producer | Actual check                                                 | Observed result     | Duration  |
+| -------- | ------------------------------------------------------------ | ------------------- | --------- |
+| V1       | Direct process-helper controlled termination tests           | 6 passed, 0 failed  | 100 ms    |
+| V2       | a-instance direct no-emit                                    | Exit 0              | 13,575 ms |
+| V3       | a-executor direct no-emit                                    | Exit 0              | 11,697 ms |
+| V4       | process-helper direct no-emit                                | Exit 0              | 549 ms    |
+| V5       | Vona composite, 15 project/suite entries                     | Exit 0              | 44,048 ms |
+| V6       | Exact seven-file format check                                | Exit 0              | 206 ms    |
+| V7       | Exact seven-file lint check                                  | Exit 0              | 1,168 ms  |
+| V8       | Managed admission/executor/commit-lifecycle targets together | 12 passed, 0 failed | 21,427 ms |
+
+```sh
+node --test vona/packages-utils/process-helper/src/index.test.ts
+./vona/node_modules/.bin/tsc --noEmit --composite false --incremental false -p vona/src/suite-vendor/a-vona/modules/a-instance/tsconfig.json
+./vona/node_modules/.bin/tsc --noEmit --composite false --incremental false -p vona/src/suite-vendor/a-vona/modules/a-executor/tsconfig.json
+./vona/node_modules/.bin/tsc --noEmit --composite false --incremental false -p vona/packages-utils/process-helper/tsconfig.json
+npm --prefix vona run tsc
+```
+
+V6 used `./node_modules/.bin/oxfmt --check`; V7 used `./node_modules/.bin/oxlint --disable-nested-config`, each with exactly these seven paths:
+
+- `vona/src/suite-vendor/a-vona/modules/a-instance/src/service/instance.ts`;
+- `vona/src/suite-vendor/a-vona/modules/a-instance/test/existingReadyAdmission.test.ts`;
+- `vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts`;
+- `vona/src/suite-vendor/a-vona/modules/a-executor/test/readyExisting.test.ts`;
+- `vona/src/suite-vendor/a-vona/modules/a-executor/test/readyExistingCommit.test.ts`;
+- `vona/packages-utils/process-helper/src/index.ts`;
+- `vona/packages-utils/process-helper/src/index.test.ts`.
+
+V8's exact managed command was:
+
+```sh
+SERVER_LISTEN_DISABLE=true node scripts/runIsolatedTest.ts unit src/suite-vendor/a-vona/modules/a-instance/test/existingReadyAdmission.test.ts src/suite-vendor/a-vona/modules/a-executor/test/readyExisting.test.ts src/suite-vendor/a-vona/modules/a-executor/test/readyExistingCommit.test.ts
+```
+
+V1 verifies all four zero/nonzero/null-code/signal combinations, stderr with signal and spawn-error identity. Signals are synthetic child events; the fixture does not send OS signals or spawn a real child. Test-scoped spawn mocking and the one helper-instance log mock are not global console/prototype/logger patches. V8 explicitly passed all **5 admission + 4 executor + 3 commit-lifecycle** business cases; exit 0 or a runner marker alone was not sufficient. Queue caller-context interleaving, async/nested commit completion, callback/commit failure disposal and scope restoration are controlled local proofs, not live-driver/native transaction or real OAuth/HTTP evidence. No second application or test-owned `app.close()` was introduced.
+
+### Capture, custody, accounting and remaining gate
+
+V8 run **`20261020122923-f15ae055`** exited without a signal and reported graceful shutdown. Its exact claim, cleanup-lock, runtime-data and generated-run paths were checked absent. Standard runner success requires `cleanTestClaim` status `cleaned`; this is runner cleanup attestation plus bounded local absence, not independent remote DB/Redis receipts. Historical failed/uncertain custody remains unchanged. Command-local listener disable did not change shared identity, ports or environment files. Managed disposable initialization remains runner-owned, not a manual database-reset authorization.
+
+Capture limits remained **2 MiB per stream / 4 MiB combined**, fatal UTF-8, terminal/newline normalization and complete-buffer supported path sanitation. No overflow, truncation or fake timeout settlement occurred. Observation thresholds did not trigger signals. [Retention inventory and review limits](./artifacts/existing-ready-delta-7a96e258c9-20261020/retention-manifest.json) cover **25** original records: the freeze, eight start records, eight dispositions and eight full logs. Complete sanitized streams and JSON structures were reviewed before retention; no high-confidence credential/raw-token/private-payload or machine-local-path finding was identified. This is not exhaustive secret scanning or authenticity certification; ignored logs are local, unstaged and not committed proof.
+
+Historical B counts stay **44 producers / 12 managed / 17 deps passes**. The separate V family adds exactly **8 / 1 / 2**, because V5 composite and V8 managed each include one prerun/deps. Combined bounded-family totals are **52 / 13 / 19**, excluding documentary operations and external-main runs. B12/B13 were not repeated. The separate documentary family is exact four-record format, full authority audit, chart generation, chart freshness, docs build and scoped evidence-path check, each once; its [captures](./artifacts/existing-ready-delta-7a96e258c9-20261020/documentary/) determine actual results. No earlier documentary pass qualifies these later edits, and D6 cannot check the final capture it produces.
+
+**Disposition and single next action:** the later queue-context/commit-tail/process-helper proof gap is closed within the frozen supported class. Hand off these bounded results as prerequisites for a separately scoped production B-admission integration package; do not execute that package or repeat settled foundation design automatically. Historical source qualification and B12/B13 retain their own snapshot limits. Whole-foundation requalification, production provisioner/admission registration, B/R composition, OAuth/host/instance/native HTTP/downstream diagnostic evidence and activation/release remain separate gates. WBS-MCP-20-01/Phase 20 remain **blocked**, full ATPs **open**, verified **0/12**.
