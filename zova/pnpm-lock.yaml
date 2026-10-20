@@ -598,11 +598,11 @@ importers:
   packages-cli/cli:
     dependencies:
       '@cabloy/cli':
-        specifier: ^3.1.29
-        version: 3.1.29(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
+        specifier: ^3.1.30
+        version: 3.1.30(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
       '@cabloy/process-helper':
-        specifier: ^3.1.8
-        version: 3.1.8
+        specifier: ^3.1.9
+        version: 3.1.9
       fs-extra:
         specifier: ^11.3.5
         version: 11.4.0
@@ -610,7 +610,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.5
       zova-cli-set-front:
-        specifier: ^1.2.115
+        specifier: ^1.2.116
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -632,8 +632,8 @@ importers:
         specifier: ^7.28.6
         version: 7.29.7(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2)
       '@cabloy/cli':
-        specifier: ^3.1.29
-        version: 3.1.29(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
+        specifier: ^3.1.30
+        version: 3.1.30(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
       '@cabloy/extend':
         specifier: ^3.2.8
         version: 3.2.8
@@ -1031,7 +1031,7 @@ importers:
         specifier: ^5.1.93
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.171
+        specifier: ^5.1.172
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -1294,7 +1294,7 @@ importers:
         specifier: ^5.1.37
         version: link:modules/a-zod
       zova-module-a-zova:
-        specifier: ^5.1.109
+        specifier: ^5.1.110
         version: link:modules/a-zova
 
   src/suite-vendor/a-zova/modules/a-api:
@@ -1631,8 +1631,8 @@ importers:
         version: link:../../../../../packages-utils/zova-jsx
     devDependencies:
       '@cabloy/cli':
-        specifier: ^3.1.29
-        version: 3.1.29(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
+        specifier: ^3.1.30
+        version: 3.1.30(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
       '@types/luxon':
         specifier: ^3.7.1
         version: 3.7.5
@@ -2505,6 +2505,9 @@ packages:
   '@cabloy/cli@3.1.29':
     resolution: {integrity: sha512-2a8VLq6tGrJ5+sNa0JHGFSjRG7HEJWnKZXGmT14eawN7l3qwoQwsRKSfRwaeeOHKa3GfKUOFSco+B+Lf6+q2Mw==}
 
+  '@cabloy/cli@3.1.30':
+    resolution: {integrity: sha512-x8wx31Cv0+iTBkB6RSdw0JSTyULX1qJTZTOPH3VeGCTXZNelikbqrV63m97yqdABgZOPJe5mlF/Jd+UUKhpVgA==}
+
   '@cabloy/compose@2.1.9':
     resolution: {integrity: sha512-b+EB7EDQz7dDdrvFEmRIpGpW0jvDEmYGChSbKx0wzki6AGCj0z3lNm4qnkgM5+CTQIKBU2FmvDcQjU5r6Cj6SA==}
 
@@ -2547,6 +2550,9 @@ packages:
 
   '@cabloy/process-helper@3.1.8':
     resolution: {integrity: sha512-83nWFHAEc+PlX5YwUso9qK+dd2MAUb/xK2Ea3ALYjCH8+kIq5fyhAABlsuTEPBlaQ1nuLc769cC9dcvrBa14gw==}
+
+  '@cabloy/process-helper@3.1.9':
+    resolution: {integrity: sha512-+IzWt9JtGK1cg1uX/YqbpejmSUNC3EQoCCRxxCvuTzC8GH6a7yJO78q500ctfLMjvnDYfUIH1B+dX5j138VnOA==}
 
   '@cabloy/quasar-app-vite@2.5.10':
     resolution: {integrity: sha512-Eakz4xfhliimv63QNZYukgskNuSBHY0J8cpBd9h5eRIb326QZpCjBWP9MmGq/SQeHpo5KHgDI2a+ggqaVHyWQg==}
@@ -9009,6 +9015,34 @@ snapshots:
       - supports-color
       - vue
 
+  '@cabloy/cli@3.1.30(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))':
+    dependencies:
+      '@babel/parser': 7.29.8
+      '@cabloy/module-glob': 5.3.18
+      '@cabloy/module-info': 2.0.3
+      '@cabloy/process-helper': 3.1.9
+      '@cabloy/utils': 2.1.27
+      '@cabloy/word-utils': link:packages-utils/word-utils
+      '@npmcli/config': 10.12.0
+      '@zhennann/common-bin': 4.0.1(supports-color@10.2.2)
+      '@zhennann/ejs': 3.0.1
+      boxen: 4.2.0
+      chalk: 3.0.0
+      cli-table3: 0.6.5
+      deep-equal: 2.2.3
+      enquirer: 2.4.1
+      fs-extra: 11.4.0
+      globby: 16.2.4
+      gogocode: 1.0.55(vue@3.5.42(typescript@5.9.3))
+      is-type-of: 2.2.0
+      istextorbinary: 3.3.0
+      semver: 7.8.5
+      tmp: 0.2.7
+      urllib: 4.9.0
+    transitivePeerDependencies:
+      - supports-color
+      - vue
+
   '@cabloy/compose@2.1.9': {}
 
   '@cabloy/deps@1.1.8': {}
@@ -9083,6 +9117,8 @@ snapshots:
       yargs-parser: 21.1.1
 
   '@cabloy/process-helper@3.1.8': {}
+
+  '@cabloy/process-helper@3.1.9': {}
 
   '@cabloy/quasar-app-vite@2.5.10(@cabloy/vue-router@4.4.18(vue@3.5.42(typescript@5.9.3)))(@types/node@22.20.2)(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(jiti@2.7.0)(quasar@2.32.2)(rolldown@1.2.14)(sass@1.104.1)(supports-color@10.2.2)(terser@5.51.2)(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3))(yaml@2.9.1)':
     dependencies:
