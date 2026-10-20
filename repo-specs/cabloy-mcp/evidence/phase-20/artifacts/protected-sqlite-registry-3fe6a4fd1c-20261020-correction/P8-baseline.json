@@ -1,0 +1,18 @@
+{
+  "label": "P8-baseline",
+  "command": "node scripts/runIsolatedTest.ts unit src/suite/cabloy-mcp/modules/cabloy-mcp/test/requestBoundaryFoundation.test.ts",
+  "environment": "SERVER_LISTEN_DISABLE=true",
+  "code": 0,
+  "signal": null,
+  "spawnFailed": false,
+  "durationMs": 19238,
+  "observationExceeded": false,
+  "overflow": false,
+  "bytes": [
+    8837,
+    80
+  ],
+  "captureValid": true,
+  "sharedDrift": [],
+  "sanitizer": "passed"
+}

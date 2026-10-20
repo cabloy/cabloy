@@ -1,0 +1,23 @@
+{
+  "label": "D3",
+  "command": "npm run spec:charts -- cabloy-mcp",
+  "code": 0,
+  "signal": null,
+  "spawnFailed": false,
+  "durationMs": 132,
+  "observationExceeded": false,
+  "overflow": false,
+  "bytes": [
+    240,
+    0
+  ],
+  "captureValid": true,
+  "sharedDrift": [],
+  "documentaryHashes": {
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md": "76c497e2add4faad2d7442695df310f5c7a7121a52c3bb69aaa4b82c39b8db87",
+    "repo-specs/cabloy-mcp/progress.md": "8ebb9f1804ae3c9dfc678c5fbd3b54689970050433991fbdee51fc9961f03694",
+    "repo-specs/cabloy-mcp/evidence/phase-20/index.md": "8f69beb974a333aa4adf6c1f948c545585f632fc3dfe2182633b26f89f8c6185",
+    "repo-specs/cabloy-mcp/evidence/phase-20/protected-sqlite-registry-qualification.md": "2837621c679cbfef1fc6d8b0d2d32767fd3d0b0fbfea1ae4a2c6062386981a94"
+  },
+  "sanitizer": "passed"
+}

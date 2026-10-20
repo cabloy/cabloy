@@ -1,0 +1,24 @@
+{
+  "label": "source-format",
+  "command": "./node_modules/.bin/oxfmt --write vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/lib/protectedSqliteRegistry.ts vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/index.ts vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/protectedSqliteRegistry.test.ts vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/protectedSqliteRegistryFixture.ts",
+  "environment": "inherited unchanged",
+  "code": 0,
+  "signal": null,
+  "spawnFailed": false,
+  "durationMs": 353,
+  "observationExceeded": false,
+  "overflow": false,
+  "bytes": [
+    46,
+    0
+  ],
+  "captureValid": true,
+  "sharedDrift": [],
+  "sourceHashes": {
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/lib/protectedSqliteRegistry.ts": "0123df11726c258c81ceaf2ea43755b9c161f45dabec54b037d71fe7ca9d44b1",
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/index.ts": "e45e5febcc9e780159f501076d33a6a3afd53a8eeb8b835ecb70658497cba3be",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/protectedSqliteRegistry.test.ts": "6925cab0c7ffe2cebe297a6456141754c711a60c023bb81f860f62f44b0b8b61",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/protectedSqliteRegistryFixture.ts": "7aac55ea7ff6b866f7e42d1b76659c162d94f6371b4985812da3b2353855a6f2"
+  },
+  "sanitizer": "passed"
+}

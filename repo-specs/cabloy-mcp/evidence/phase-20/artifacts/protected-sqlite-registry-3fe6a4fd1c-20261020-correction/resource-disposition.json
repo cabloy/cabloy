@@ -1,0 +1,77 @@
+{
+  "method": "read-only exists checks of exact observed run paths; runner exit 0 requires cleanTestClaim cleaned; not Redis forensics; no manual cleanup",
+  "observations": [
+    {
+      "label": "P8-baseline",
+      "runId": "20261020023605-61fed9f0",
+      "code": 0,
+      "gracefulShutdown": true,
+      "runnerRetained": false,
+      "paths": {
+        "dataExists": false,
+        "generatedExists": false,
+        "claimExists": false
+      }
+    },
+    {
+      "label": "P9-baseline",
+      "runId": "20261020023624-25fbd6c5",
+      "code": 0,
+      "gracefulShutdown": true,
+      "runnerRetained": false,
+      "paths": {
+        "dataExists": false,
+        "generatedExists": false,
+        "claimExists": false
+      }
+    },
+    {
+      "label": "P7-final",
+      "runId": "20261020024644-91d861ba",
+      "code": 1,
+      "gracefulShutdown": true,
+      "runnerRetained": true,
+      "paths": {
+        "dataExists": true,
+        "generatedExists": true,
+        "claimExists": true
+      }
+    },
+    {
+      "label": "P7-correction",
+      "runId": "20261020024815-3106e193",
+      "code": 0,
+      "gracefulShutdown": true,
+      "runnerRetained": false,
+      "paths": {
+        "dataExists": false,
+        "generatedExists": false,
+        "claimExists": false
+      }
+    },
+    {
+      "label": "P8-final",
+      "runId": "20261020024832-e21930f5",
+      "code": 0,
+      "gracefulShutdown": true,
+      "runnerRetained": false,
+      "paths": {
+        "dataExists": false,
+        "generatedExists": false,
+        "claimExists": false
+      }
+    },
+    {
+      "label": "P9-final",
+      "runId": "20261020024849-423f32c6",
+      "code": 0,
+      "gracefulShutdown": true,
+      "runnerRetained": false,
+      "paths": {
+        "dataExists": false,
+        "generatedExists": false,
+        "claimExists": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "label": "P9-final",
+  "command": "node scripts/runIsolatedTest.ts unit src/suite/cabloy-mcp/modules/cabloy-mcp/test/productionBoundary.test.ts",
+  "environment": "SERVER_LISTEN_DISABLE=true",
+  "code": 0,
+  "signal": null,
+  "spawnFailed": false,
+  "durationMs": 26288,
+  "observationExceeded": false,
+  "overflow": false,
+  "bytes": [
+    17445,
+    80
+  ],
+  "captureValid": true,
+  "sharedDrift": [],
+  "sourceHashes": {
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/lib/protectedSqliteRegistry.ts": "55c77b5abcbce5911e9a34c83a882a5b1288b5be0f3ce44e17ee8137fb5c25b2",
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/index.ts": "e45e5febcc9e780159f501076d33a6a3afd53a8eeb8b835ecb70658497cba3be",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/protectedSqliteRegistry.test.ts": "cd0e2ca0d37a2a7c1baf43d4d7dab87f3aae8612ffbad3b2ee46604320f74e2c",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/protectedSqliteRegistryFixture.ts": "a5e9248f2c280aed5b3039b94da1e03c532107f6036dd28fd2f3d1cd440b7fb9"
+  },
+  "sanitizer": "passed"
+}

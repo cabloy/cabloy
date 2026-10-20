@@ -1,0 +1,9 @@
+{
+  "scope": "complete producer logs and dispositions; no universal secret-scan claim",
+  "artifact": "P6-final.log",
+  "redacted": "four quoted malformed fixture literal occurrences; lint rule, location, failure and advice preserved",
+  "beforeSha256": "290c66e1da67d82def80117a05d02c63ce456da6fc1dcb5953c2a08d55f19bcc",
+  "afterSha256": "cf87aa61b9b8a8c7f9759f9ff0b5ce41f5efa634406e76bc71798dd8f318781d",
+  "protectedPayloadsObservedElsewhere": false,
+  "ordinaryManagedFailureStacksRetained": true
+}

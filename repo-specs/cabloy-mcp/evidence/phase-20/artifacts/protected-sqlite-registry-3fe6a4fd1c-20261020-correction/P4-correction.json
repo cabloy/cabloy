@@ -1,0 +1,24 @@
+{
+  "label": "P4-correction",
+  "command": "pnpm --dir vona run tsc",
+  "environment": "inherited unchanged",
+  "code": 0,
+  "signal": null,
+  "spawnFailed": false,
+  "durationMs": 5110,
+  "observationExceeded": false,
+  "overflow": false,
+  "bytes": [
+    1306,
+    42
+  ],
+  "captureValid": true,
+  "sharedDrift": [],
+  "sourceHashes": {
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/lib/protectedSqliteRegistry.ts": "55c77b5abcbce5911e9a34c83a882a5b1288b5be0f3ce44e17ee8137fb5c25b2",
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/index.ts": "e45e5febcc9e780159f501076d33a6a3afd53a8eeb8b835ecb70658497cba3be",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/protectedSqliteRegistry.test.ts": "cd0e2ca0d37a2a7c1baf43d4d7dab87f3aae8612ffbad3b2ee46604320f74e2c",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/protectedSqliteRegistryFixture.ts": "6f75d1d7dae0bac444b62e99f8ca99f4e5be69d2ae7baa5748e9e66ee7f857a2"
+  },
+  "sanitizer": "passed"
+}

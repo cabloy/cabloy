@@ -1,0 +1,18 @@
+{
+  "label": "P1-baseline",
+  "command": "npm run deps:vona",
+  "environment": "inherited unchanged",
+  "code": 0,
+  "signal": null,
+  "spawnFailed": false,
+  "durationMs": 2213,
+  "observationExceeded": false,
+  "overflow": false,
+  "bytes": [
+    184,
+    54
+  ],
+  "captureValid": true,
+  "sharedDrift": [],
+  "sanitizer": "passed"
+}

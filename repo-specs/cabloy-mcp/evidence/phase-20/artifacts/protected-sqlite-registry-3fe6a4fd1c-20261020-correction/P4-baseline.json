@@ -1,0 +1,18 @@
+{
+  "label": "P4-baseline",
+  "command": "pnpm --dir vona run tsc",
+  "environment": "inherited unchanged",
+  "code": 0,
+  "signal": null,
+  "spawnFailed": false,
+  "durationMs": 5146,
+  "observationExceeded": false,
+  "overflow": false,
+  "bytes": [
+    1299,
+    42
+  ],
+  "captureValid": true,
+  "sharedDrift": [],
+  "sanitizer": "passed"
+}

@@ -1,0 +1,60 @@
+{
+  "head": "3fe6a4fd1c305e5079fe2d018e90b37380514a40",
+  "node": "v24.8.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "betterSqlite3": "12.11.1",
+  "knex": "3.3.0",
+  "tarn": "3.1.2",
+  "nativeSha256": "c6fac315df023cf5efec45a3511e6515c6b0f7461a4a284b1b7a79c7ef8febe7",
+  "source": {
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/lib/protectedSqliteRegistry.ts": {
+      "before": "a425b6a41fcd0799577d2bd9604f7b26c06f9702f416a04b9ca4070600825543",
+      "after": "55c77b5abcbce5911e9a34c83a882a5b1288b5be0f3ce44e17ee8137fb5c25b2"
+    },
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/index.ts": {
+      "before": "e45e5febcc9e780159f501076d33a6a3afd53a8eeb8b835ecb70658497cba3be",
+      "after": "e45e5febcc9e780159f501076d33a6a3afd53a8eeb8b835ecb70658497cba3be"
+    },
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/protectedSqliteRegistry.test.ts": {
+      "before": "fdbd1b8b8f85a9ecadf8b1148c6792f653df81e6d61727cf1bf7cc6dfd61b4b0",
+      "after": "cd0e2ca0d37a2a7c1baf43d4d7dab87f3aae8612ffbad3b2ee46604320f74e2c"
+    },
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/protectedSqliteRegistryFixture.ts": {
+      "before": "a27d9328d90e814edfdc7527b31cf596d3d7ed8297e6876137121f3f2a81b46f",
+      "after": "a5e9248f2c280aed5b3039b94da1e03c532107f6036dd28fd2f3d1cd440b7fb9"
+    }
+  },
+  "sharedCount": 815,
+  "sharedDrift": [],
+  "trackedChanged": [
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/index.ts"
+  ],
+  "untracked": [
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P1-baseline.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P2-baseline.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P2-correction.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P2-final.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P3-baseline.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P3-correction.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P3-final.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P4-baseline.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P4-correction.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P4-final.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P5-correction.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P5-final.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P6-correction.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P6-final.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P7-correction.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P7-final.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P8-baseline.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P8-final.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/P9-baseline.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/preflight.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/source-format-correction.json",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/protected-sqlite-registry-3fe6a4fd1c-20261020-correction/source-format.json",
+    "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/lib/protectedSqliteRegistry.ts",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/protectedSqliteRegistry.test.ts",
+    "vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/support/protectedSqliteRegistryFixture.ts"
+  ]
+}
