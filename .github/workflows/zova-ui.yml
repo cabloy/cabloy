@@ -17,9 +17,9 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@v6
         with:
-          version: 11.5.2
+          version: '12.14.0'
       - name: init
         run: npm run init
       - name: suite

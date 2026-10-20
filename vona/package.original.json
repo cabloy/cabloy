@@ -2,7 +2,7 @@
   "name": "vona",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@11.5.2",
+  "packageManager": "pnpm@12.14.0",
   "description": "Vona is an intuitive, elegant and powerful Node.js framework for rapidly developing enterprise applications of any size",
   "repository": {
     "type": "git",
@@ -15,7 +15,8 @@
   },
   "homepage": "https://github.com/vonajs/vona#readme",
   "engines": {
-    "node": ">=24.4.0"
+    "node": ">=24.4.0",
+    "pnpm": ">=11.5.2"
   },
   "scripts": {
     "vona": "node ./packages-cli/cli/src/bin/vona.ts",

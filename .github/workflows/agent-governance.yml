@@ -17,9 +17,9 @@ jobs:
       PNPM_CONFIG_MINIMUM_RELEASE_AGE: 0
     steps:
       - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@v6
         with:
-          version: 11.5.2
+          version: '12.14.0'
       - uses: actions/setup-node@v6
         with:
           node-version: 24

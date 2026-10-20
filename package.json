@@ -109,5 +109,5 @@
     "node": ">=24.4.0",
     "pnpm": ">=11.5.2"
   },
-  "packageManager": "pnpm@11.5.2"
+  "packageManager": "pnpm@12.14.0"
 }
