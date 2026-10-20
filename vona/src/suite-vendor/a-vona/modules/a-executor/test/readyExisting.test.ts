@@ -161,7 +161,8 @@ describe('ready-existing executor', { concurrency: false, timeout: 120_000 }, ()
     'pins before initializer and drains commit tails in the bound scope before disposal',
     { timeout: 15_000 },
     async () => {
-      assert.equal(app.server, undefined);
+      // The managed runner owns its listener; executor scopes must leave it unchanged.
+      const server = app.server;
       const registry = {},
         route = {},
         handle = {};
@@ -292,6 +293,7 @@ describe('ready-existing executor', { concurrency: false, timeout: 120_000 }, ()
           }
         });
       });
+      assert.ok(app.server === server, 'executor scopes must preserve the runner-owned listener');
     },
   );
 

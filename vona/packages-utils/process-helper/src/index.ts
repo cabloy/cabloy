@@ -172,12 +172,17 @@ export class ProcessHelper {
       proc.once('error', err => {
         reject(err);
       });
-      proc.once('exit', code => {
+      proc.once('exit', (code, signal) => {
         // if (options.gracefull) childs.delete(proc);
-        if (code) {
-          const message = stderr || `spawn ${cmd} ${args.join(' ')} fail, exit code: ${code}`;
+        if (code !== 0) {
+          const status = signal ? `signal: ${signal}` : `exit code: ${code}`;
+          const message =
+            signal || code === null
+              ? `${stderr ? `${stderr}\n` : ''}spawn ${cmd} ${args.join(' ')} fail, ${status}`
+              : stderr || `spawn ${cmd} ${args.join(' ')} fail, ${status}`;
           const err = new Error(message);
-          (err as any).code = 10000 + Number(code);
+          if (code !== null) (err as any).code = 10000 + code;
+          (err as any).signal = signal;
           return reject(err);
         }
         resolve(stdout);
