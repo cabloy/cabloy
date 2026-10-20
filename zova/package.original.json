@@ -14,7 +14,7 @@
     "url": "git+https://github.com/zovajs/zova.git"
   },
   "type": "module",
-  "packageManager": "pnpm@11.5.2",
+  "packageManager": "pnpm@12.14.0",
   "scripts": {
     "zova": "node ./packages-cli/cli/src/bin/zova.ts",
     "dev": "npm run dev:ssr:admin",
@@ -96,6 +96,7 @@
     "oxlint": "^1.77.0"
   },
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=24.4.0",
+    "pnpm": ">=11.5.2"
   }
 }

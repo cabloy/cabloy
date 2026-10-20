@@ -12,17 +12,11 @@ import {
   mergeTestClaimRedisOptions,
 } from './testClaim.ts';
 import { resolveVonaLocalPaths } from './testIsolation.ts';
+import { requiresFreshTestResources } from './testStrictMode.ts';
 
-export const TEST_REQUIRE_FRESH_RESOURCES_ENV = 'VONA_TEST_REQUIRE_FRESH_RESOURCES';
+export { requiresFreshTestResources, TEST_REQUIRE_FRESH_RESOURCES_ENV } from './testStrictMode.ts';
+
 const freshApps = new WeakSet<VonaApplication>();
-
-export function requiresFreshTestResources() {
-  const value = process.env[TEST_REQUIRE_FRESH_RESOURCES_ENV];
-  if (value !== undefined && value !== 'true') {
-    throw new Error('Invalid strict test resource freshness flag');
-  }
-  return value === 'true';
-}
 
 export function assertFreshTestResourcesReady(app: VonaApplication) {
   if (!requiresFreshTestResources()) return;

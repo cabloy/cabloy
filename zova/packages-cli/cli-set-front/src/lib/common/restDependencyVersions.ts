@@ -29,7 +29,7 @@ export async function extractRestDependencyVersions(
 ): Promise<Record<string, string>> {
   const lockfilePath = path.join(projectPath, 'pnpm-lock.yaml');
   const lockfileContent = await fse.readFile(lockfilePath, 'utf8');
-  const parsedLockfile = yaml.parse(lockfileContent) as ParsedLockfile;
+  const parsedLockfile = parseWorkspaceLockfile(lockfileContent);
   const depsVersion: Record<string, string> = {};
 
   for (const dep of deps) {
@@ -64,6 +64,27 @@ export async function extractRestDependencyVersions(
   }
 
   return depsVersion;
+}
+
+function parseWorkspaceLockfile(content: string): ParsedLockfile {
+  const documents = yaml.parseAllDocuments(content);
+  for (const document of documents) {
+    if (document.errors.length) throw document.errors[0];
+  }
+
+  // pnpm 12 places the workspace lock after its package-manager/config dependency lock.
+  const document = documents.findLast(({ contents }) => {
+    return (
+      contents !== null &&
+      !(yaml.isScalar(contents) && contents.value === null && contents.source === '')
+    );
+  });
+  if (!document || !yaml.isMap(document.contents) || !yaml.isMap(document.get('importers', true))) {
+    throw new Error(
+      'Invalid pnpm-lock.yaml: expected a workspace document with an importers mapping.',
+    );
+  }
+  return document.toJS() as ParsedLockfile;
 }
 
 function getPackageDependencyRangeFromLock(

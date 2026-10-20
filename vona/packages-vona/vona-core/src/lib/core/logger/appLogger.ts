@@ -14,6 +14,7 @@ import type {
 import { BeanSimple } from '../../bean/beanSimple.ts';
 import { deepExtend } from '../../utils/util.ts';
 import { getRequestBoundary } from '../requestBoundary.ts';
+import { requiresFreshTestResources } from '../testStrictMode.ts';
 import { createDiagnosticLogger, getSuppressedDiagnosticLogger } from './diagnosticLogger.ts';
 
 const SymbolLoggerInstances = Symbol('SymbolLoggerInstances');
@@ -31,7 +32,9 @@ export class AppLogger extends BeanSimple {
   }
 
   get(clientName?: keyof ILoggerClientRecord) {
-    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
+    if (requiresFreshTestResources() || getRequestBoundary()) {
+      return getSuppressedDiagnosticLogger();
+    }
     clientName = clientName || 'default';
     if (!this[SymbolLoggerInstances][clientName]) {
       const raw = this._createClient(clientName);
@@ -42,7 +45,9 @@ export class AppLogger extends BeanSimple {
   }
 
   child(childName?: keyof ILoggerChildRecord, clientName?: keyof ILoggerClientRecord) {
-    if (getRequestBoundary()) return getSuppressedDiagnosticLogger();
+    if (requiresFreshTestResources() || getRequestBoundary()) {
+      return getSuppressedDiagnosticLogger();
+    }
     const logger = this.get(clientName);
     if (!childName) return logger;
     return logger.child({ name: childName });
@@ -120,6 +125,9 @@ export class AppLogger extends BeanSimple {
       | Winston.transports.FileTransportOptions
       | DailyRotateFile.DailyRotateFileTransportOptions,
   ) {
+    if (requiresFreshTestResources()) {
+      throw new Error('Strict test file logger transport is disabled');
+    }
     const dirname = this.app.config.logger.baseDir;
     if (!fse.existsSync(dirname)) {
       const [_, err] = catchErrorSync(() => {

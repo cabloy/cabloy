@@ -73,6 +73,8 @@ npm run contract:generate:isolated -- training-student
 
 The isolated command uses the same generator and preserves module ownership validation, but manages a disposable service, claim, and test resources without starting Playwright. Generated files under `zova/src/**` are shared workspace output, not run-owned temporary files; serialize concurrent SDK generation and do not expect automatic rollback.
 
+For an explicitly authorized run that must skip historical-claim reaping, use the standalone `--skip-expired-claim-reaping` flag. In this strict lane, generated environment source contains selected keys rather than resolved values, configuration reaches the bootstrap child in memory, service/generator stdout and stderr are discarded, and framework file logging is prevented before transport construction. Failures remain failures with categorical diagnostics and retained current-run claims/resources; there is no automatic retry or fallback to development Swagger. This is not a network or arbitrary-filesystem sandbox, and it does not authorize Provider operations or prove custom seed/logging behavior. See [Strict isolated generation](/reference/repo-scripts#test-isolation-and-development-data) for resource and diagnostic boundaries.
+
 The project-level source resolver accepts `OPENAPI_SOURCE_URL` as a complete OpenAPI document URL. It takes precedence over `API_BASE_URL` for generation only and does not change runtime `OPENAPI_BASE_URL_*` request targets:
 
 ```bash

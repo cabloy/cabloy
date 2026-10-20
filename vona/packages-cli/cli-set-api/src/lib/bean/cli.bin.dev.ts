@@ -5,7 +5,7 @@ import { BeanCliBase } from '@cabloy/cli';
 import { spawn } from 'node:child_process';
 import nodemon from 'nodemon';
 import { rimraf } from 'rimraf';
-import { resolveVonaLocalPaths } from 'vona-core';
+import { requiresFreshTestResources, resolveVonaLocalPaths } from 'vona-core';
 
 import type { VonaBinConfigOptions } from './toolsBin/types.ts';
 
@@ -48,16 +48,21 @@ export class CliBinDev extends BeanCliBase {
     const workers = resolveTestWorkers(mode, argv.workers);
     const flavor: VonaMetaFlavor = argv.flavor || 'normal';
     const configMeta: VonaConfigMeta = { flavor, mode };
+    const strict = requiresFreshTestResources();
     const paths = resolveVonaLocalPaths(projectPath, mode);
+    if (strict && (mode !== 'test' || !paths.runId)) {
+      throw new Error('Strict generation requires an isolated test run in test mode');
+    }
     const configOptions: VonaBinConfigOptions = {
       appDir: projectPath,
       runtimeDir: paths.generatedDir,
       workers,
     };
     try {
-      const { modulesMeta } = await generateVonaMeta(configMeta, configOptions);
+      const { env, modulesMeta } = await generateVonaMeta(configMeta, configOptions);
       if (mode === 'test') {
-        await this._runTest(projectPath);
+        if (strict) await this._runTest(projectPath, env);
+        else await this._runTest(projectPath);
       } else {
         await this._run(projectPath, modulesMeta);
       }
@@ -66,7 +71,11 @@ export class CliBinDev extends BeanCliBase {
     }
   }
 
-  async _runTest(projectPath: string) {
+  async _runTest(projectPath: string, resolvedEnv?: NodeJS.ProcessEnv) {
+    const strict = requiresFreshTestResources();
+    if (strict && !resolvedEnv) {
+      throw new Error('Strict generation requires resolved environment handoff');
+    }
     const generatedDir = resolveVonaLocalPaths(projectPath, 'test').generatedDir;
     const child = spawn(
       process.execPath,
@@ -74,6 +83,7 @@ export class CliBinDev extends BeanCliBase {
       {
         cwd: projectPath,
         stdio: 'inherit',
+        ...(strict ? { env: { ...process.env, ...resolvedEnv } } : {}),
       },
     );
     const forwardSignal = (signal: NodeJS.Signals) => child.kill(signal);

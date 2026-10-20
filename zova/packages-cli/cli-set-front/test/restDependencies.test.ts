@@ -238,6 +238,143 @@ import Alias = Existing.Value;
 });
 
 describe('extractRestDependencyVersions', () => {
+  const managementLockfile = `---
+lockfileVersion: '9.0'
+importers:
+  .:
+    configDependencies: {}
+    packageManagerDependencies:
+      pnpm:
+        specifier: 12.14.0
+        version: 12.14.0
+    dependencies:
+      root-package:
+        version: 99.0.0
+      management-only:
+        version: 99.0.0
+`;
+  const workspaceLockfile = `lockfileVersion: '9.0'
+importers:
+  .:
+    dependencies:
+      root-package:
+        version: 1.2.3
+      alias-package:
+        specifier: npm:@scope/package@^2.0.0
+        version: '@scope/package@2.0.4'
+  src/module/example:
+    dependencies:
+      owned-package:
+        version: 3.1.7(vue@3.5.42)
+`;
+
+  for (const trailingDocument of ['', '---\n# empty document\n']) {
+    it(`uses the workspace document of a pnpm 12 lockfile${trailingDocument ? ' with a trailing empty document' : ''}`, async () => {
+      await withFixture(async projectPath => {
+        await writeLockfile(
+          projectPath,
+          `${managementLockfile}---\n${workspaceLockfile}${trailingDocument}`,
+        );
+        assert.deepEqual(
+          await extractRestDependencyVersions(
+            projectPath,
+            ['root-package', 'alias-package', 'owned-package'],
+            ['src/module/example'],
+          ),
+          {
+            'root-package': '^1.2.3',
+            'alias-package': 'npm:@scope/package@^2.0.0',
+            'owned-package': '^3.1.7',
+          },
+        );
+        for (const dependency of ['management-only', 'pnpm']) {
+          await assert.rejects(
+            extractRestDependencyVersions(projectPath, [dependency]),
+            /Unable to resolve REST dependency version/,
+          );
+        }
+      });
+    });
+  }
+
+  it('accepts a single workspace document with an explicit start marker', async () => {
+    await withFixture(async projectPath => {
+      await writeLockfile(projectPath, `---\n${workspaceLockfile}`);
+      assert.deepEqual(await extractRestDependencyVersions(projectPath, ['root-package']), {
+        'root-package': '^1.2.3',
+      });
+    });
+  });
+
+  for (const [label, invalidDocument, code] of [
+    ['malformed YAML', 'importers: [\n', 'BAD_INDENT'],
+    ['duplicate keys', 'importers: {}\nimporters: {}\n', 'DUPLICATE_KEY'],
+  ]) {
+    for (const position of ['management', 'workspace']) {
+      it(`rejects ${label} in the ${position} document before installed-package fallback`, async () => {
+        await withFixture(async projectPath => {
+          const content =
+            position === 'management'
+              ? `${invalidDocument}---\n${workspaceLockfile}`
+              : `${managementLockfile}---\n${invalidDocument}`;
+          await writeLockfile(projectPath, content);
+          await writePackage(projectPath, 'node_modules/root-package', { version: '5.0.0' });
+          await assert.rejects(extractRestDependencyVersions(projectPath, ['root-package']), {
+            name: 'YAMLParseError',
+            code,
+          });
+        });
+      });
+    }
+  }
+
+  for (const [label, invalidDocument] of [
+    ['empty', ''],
+    ['comment-only', '# no lockfile\n'],
+    ['empty marked', '---\n# no lockfile\n'],
+    ['null', 'null\n'],
+    ['tilde null', '~\n'],
+    ['empty string', '""\n'],
+    ['scalar', 'invalid\n'],
+    ['sequence', '- invalid\n'],
+    ['missing importers', "lockfileVersion: '9.0'\n"],
+    ['null importers', 'importers: null\n'],
+    ['scalar importers', 'importers: invalid\n'],
+    ['sequence importers', 'importers: []\n'],
+  ]) {
+    it(`rejects a ${label} workspace document`, async () => {
+      await withFixture(async projectPath => {
+        await writePackage(projectPath, 'node_modules/root-package', { version: '5.0.0' });
+        await writeLockfile(projectPath, invalidDocument);
+        await assert.rejects(
+          extractRestDependencyVersions(projectPath, ['root-package']),
+          /Invalid pnpm-lock.yaml: expected a workspace document with an importers mapping/,
+        );
+        if (
+          invalidDocument.trim() &&
+          !invalidDocument.startsWith('#') &&
+          !invalidDocument.startsWith('---')
+        ) {
+          await writeLockfile(projectPath, `${workspaceLockfile}---\n${invalidDocument}`);
+          await assert.rejects(
+            extractRestDependencyVersions(projectPath, ['root-package']),
+            /Invalid pnpm-lock.yaml: expected a workspace document with an importers mapping/,
+          );
+        }
+      });
+    });
+  }
+
+  it('allows installed-package fallback with an empty workspace importer map', async () => {
+    await withFixture(async projectPath => {
+      await writeLockfile(projectPath, `${managementLockfile}---\nimporters: {}\n`);
+      await writePackage(projectPath, 'node_modules/root-package', { version: '5.0.0' });
+      assert.deepEqual(await extractRestDependencyVersions(projectPath, ['root-package']), {
+        'root-package': '^5.0.0',
+      });
+    });
+  });
+
   it('uses the root importer range when the dependency is declared there', async () => {
     await withFixture(async projectPath => {
       await writeLockfile(
