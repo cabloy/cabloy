@@ -17,7 +17,7 @@ test('cleanup helper launches via process.execPath and resolves only fake source
     await writeFile(path.join(project, 'package.json'), '{"type":"module"}');
     await writeFile(
       path.join(project, 'tsconfig.json'),
-      '{"compilerOptions":{"module":"NodeNext","moduleResolution":"NodeNext","target":"ESNext","allowImportingTsExtensions":true},"ts-node":{"transpileOnly":true}}',
+      '{"compilerOptions":{"module":"NodeNext","moduleResolution":"NodeNext","target":"ESNext","allowImportingTsExtensions":true}}',
     );
     await writeFile(
       path.join(configDir, 'config.ts'),

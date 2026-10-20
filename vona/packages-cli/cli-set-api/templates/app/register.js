@@ -1,4 +1,4 @@
 import { register } from 'node:module';
 import { pathToFileURL } from 'node:url';
 
-register('ts-node-maintained/esm', pathToFileURL('./'));
+register('@swc-node/register/esm', pathToFileURL('./'));

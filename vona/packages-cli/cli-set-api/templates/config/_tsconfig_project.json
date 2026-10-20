@@ -12,8 +12,5 @@
     "src/backend/typing"
   ],
   "exclude": [],
-  "ts-node": {
-    "swc": true
-  },
   "references": []
 }

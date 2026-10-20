@@ -126,7 +126,7 @@ describe('Redis clearAllData ownership', () => {
   // process rather than mutating the runner's process-global environment.
   if (process.env.VONA_TEST_RUN_ID !== undefined) {
     it('runs ordinary-app ownership cases without inheriting the isolated runner ID', async () => {
-      const loader = import.meta.resolve('ts-node-maintained/esm');
+      const loader = import.meta.resolve('@swc-node/register/esm');
       const projectRoot = new URL('../../../../../../', import.meta.url);
       const registerSource = `import { register } from 'node:module'; register(${JSON.stringify(loader)}, ${JSON.stringify(projectRoot.href)});`;
       const env = Object.fromEntries(Object.entries(process.env)) as NodeJS.ProcessEnv;

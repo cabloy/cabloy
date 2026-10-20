@@ -165,12 +165,5 @@ export class CliBinDev extends BeanCliBase {
           console.log('App restarted due to: ', files);
         });
     });
-    // await this.helper.spawnExe({
-    //   cmd: 'node',
-    //   args: ['--experimental-transform-types', '--loader=ts-node/esm', '.vona/bootstrap.ts'],
-    //   options: {
-    //     cwd: projectPath,
-    //   },
-    // });
   }
 }
