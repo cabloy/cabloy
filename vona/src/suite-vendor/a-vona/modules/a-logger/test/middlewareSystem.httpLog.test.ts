@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { registerHooks } from 'node:module';
-import { test } from 'node:test';
+import { describe, test } from 'node:test';
 import ts from 'typescript';
 
 const middlewareUrl = new URL(
@@ -49,64 +49,66 @@ const hooks = registerHooks({
 const { MiddlewareSystemHttpLog } = await import(middlewareUrl);
 hooks.deregister();
 
-test('HTTP logger skips context and diagnostic access inside a request boundary', async () => {
-  const middleware = Object.create(MiddlewareSystemHttpLog.prototype);
-  for (const key of ['app', 'ctx', '$loggerChild']) {
-    Object.defineProperty(middleware, key, {
-      get() {
-        assert.fail('protected diagnostic access');
-      },
+describe('HTTP logger', { concurrency: false }, () => {
+  test('HTTP logger skips context and diagnostic access inside a request boundary', async () => {
+    const middleware = Object.create(MiddlewareSystemHttpLog.prototype);
+    for (const key of ['app', 'ctx', '$loggerChild']) {
+      Object.defineProperty(middleware, key, {
+        get() {
+          assert.fail('protected diagnostic access');
+        },
+      });
+    }
+    let calls = 0;
+    setBoundary({ diagnostics: 'suppress' });
+    try {
+      assert.equal(
+        await middleware.execute({}, async () => {
+          calls++;
+          return 23;
+        }),
+        23,
+      );
+      assert.equal(calls, 1);
+    } finally {
+      setBoundary(undefined);
+    }
+  });
+
+  for (const path of ['/health/ready', '/health/test-stop']) {
+    test(`HTTP logger redacts request authorization and response proof at ${path} without mutating headers`, async () => {
+      const headers = {
+        'x-vona-test-challenge': 'secret-challenge',
+        'X-Vona-Test-Stop-Authorization': 'secret-authorization',
+        'x-vona-test-stop-nonce': 'secret-nonce',
+        'accept': 'application/json',
+      };
+      const responseHeaders = {
+        'x-vona-test-proof': 'secret-readiness',
+        'X-Vona-Test-Stop-Proof': 'secret-ack',
+        'content-type': 'application/json',
+      };
+      const logs: string[] = [];
+      const middleware = Object.create(MiddlewareSystemHttpLog.prototype);
+      Object.assign(middleware, {
+        app: { meta: { env: { VONA_TEST_RUN_ID: '20261014010203-a1b2c3d4' } } },
+        ctx: {
+          path,
+          req: { url: path, headers },
+          res: { statusCode: 200, getHeaders: () => responseHeaders },
+        },
+        $loggerChild: () => ({
+          http: (message: () => string) => logs.push(message()),
+          startTimer: () => ({ done: ({ message }: { message: string }) => logs.push(message) }),
+        }),
+      });
+      await middleware.execute({}, async () => {});
+      assert.equal(logs.length, 2);
+      assert.equal(logs.join('\n').includes('secret-'), false);
+      assert.match(logs[0], /application\/json/);
+      assert.match(logs[1], /application\/json/);
+      assert.equal(headers['X-Vona-Test-Stop-Authorization'], 'secret-authorization');
+      assert.equal(responseHeaders['X-Vona-Test-Stop-Proof'], 'secret-ack');
     });
-  }
-  let calls = 0;
-  setBoundary({ diagnostics: 'suppress' });
-  try {
-    assert.equal(
-      await middleware.execute({}, async () => {
-        calls++;
-        return 23;
-      }),
-      23,
-    );
-    assert.equal(calls, 1);
-  } finally {
-    setBoundary(undefined);
   }
 });
-
-for (const path of ['/health/ready', '/health/test-stop']) {
-  test(`HTTP logger redacts request authorization and response proof at ${path} without mutating headers`, async () => {
-    const headers = {
-      'x-vona-test-challenge': 'secret-challenge',
-      'X-Vona-Test-Stop-Authorization': 'secret-authorization',
-      'x-vona-test-stop-nonce': 'secret-nonce',
-      'accept': 'application/json',
-    };
-    const responseHeaders = {
-      'x-vona-test-proof': 'secret-readiness',
-      'X-Vona-Test-Stop-Proof': 'secret-ack',
-      'content-type': 'application/json',
-    };
-    const logs: string[] = [];
-    const middleware = Object.create(MiddlewareSystemHttpLog.prototype);
-    Object.assign(middleware, {
-      app: { meta: { env: { VONA_TEST_RUN_ID: '20261014010203-a1b2c3d4' } } },
-      ctx: {
-        path,
-        req: { url: path, headers },
-        res: { statusCode: 200, getHeaders: () => responseHeaders },
-      },
-      $loggerChild: () => ({
-        http: (message: () => string) => logs.push(message()),
-        startTimer: () => ({ done: ({ message }: { message: string }) => logs.push(message) }),
-      }),
-    });
-    await middleware.execute({}, async () => {});
-    assert.equal(logs.length, 2);
-    assert.equal(logs.join('\n').includes('secret-'), false);
-    assert.match(logs[0], /application\/json/);
-    assert.match(logs[1], /application\/json/);
-    assert.equal(headers['X-Vona-Test-Stop-Authorization'], 'secret-authorization');
-    assert.equal(responseHeaders['X-Vona-Test-Stop-Proof'], 'secret-ack');
-  });
-}

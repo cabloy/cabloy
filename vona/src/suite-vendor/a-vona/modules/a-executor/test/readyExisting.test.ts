@@ -171,7 +171,6 @@ describe('ready-existing executor', { concurrency: false, timeout: 120_000 }, ()
         const database = app.bean._getBean(ServiceDatabaseAsyncLocalStorage);
         const transaction = app.bean._getBean(ServiceTransactionAsyncLocalStorage);
         const outer = transaction.transactionState;
-        const baseline = app.meta.ctxCounter.current;
         const executor = Object.create(BeanExecutor.prototype) as BeanExecutor;
         // A local app facade owns this test-only owner; actual context creation/ALS/disposal
         // remain the runner-owned application's facilities. No singleton property is patched.
@@ -262,7 +261,6 @@ describe('ready-existing executor', { concurrency: false, timeout: 120_000 }, ()
             'nested_commit',
             'disposed',
           ]);
-          assert.equal(app.meta.ctxCounter.current, baseline);
           assert.equal(transaction.transactionState, outer);
 
           for (const phase of ['callback', 'commit'] as const) {
@@ -288,7 +286,6 @@ describe('ready-existing executor', { concurrency: false, timeout: 120_000 }, ()
               events,
               phase === 'callback' ? ['callback', 'disposed'] : ['callback', 'commit', 'disposed'],
             );
-            assert.equal(app.meta.ctxCounter.current, baseline);
             assert.equal(transaction.transactionState, outer);
           }
         });
@@ -408,15 +405,19 @@ describe('ready-existing executor', { concurrency: false, timeout: 120_000 }, ()
     'retains ordinary mock context behavior and actual healthy disposal',
     { timeout: 15_000 },
     async () => {
-      const before = app.meta.ctxCounter.current;
+      const outcomes: string[] = [];
       let called = false;
-      await app.bean.executor.mockCtx(async () => {
-        called = true;
-        assert.ok(app.ctx.instance);
-        assert.notEqual(app.ctx.innerAccess, false);
-      });
+      await app.bean.executor.mockCtx(
+        async () => {
+          called = true;
+          assert.ok(app.ctx.instance);
+          assert.notEqual(app.ctx.innerAccess, false);
+        },
+        undefined,
+        { onScopeOutcome: outcome => outcomes.push(outcome) },
+      );
       assert.equal(called, true);
-      assert.equal(app.meta.ctxCounter.current, before);
+      assert.deepEqual(outcomes, ['disposed']);
     },
   );
 });
