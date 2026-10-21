@@ -65,14 +65,16 @@ export type TypeDtoMutateRelationResult<
   TTopLevel extends boolean | undefined = undefined,
   TColumns = undefined,
   REFKEY = undefined,
-> = TypeDtoMutateRelationResultEntity<
-  TRecord,
-  TColumns extends string | string[] ? TColumns : TypeUtilGetParamsColumns<TOptionsRelation>,
-  TMutateTypeTopLevel,
-  TColumnsOmitDefault,
-  TTopLevel,
-  REFKEY
-> &
+> = (TOptionsRelation extends { dtoClass: Constructable<infer TDto> }
+  ? TypeDtoMutateRelationResultDto<TDto, TMutateTypeTopLevel, TTopLevel, REFKEY>
+  : TypeDtoMutateRelationResultEntity<
+      TRecord,
+      TColumns extends string | string[] ? TColumns : TypeUtilGetParamsColumns<TOptionsRelation>,
+      TMutateTypeTopLevel,
+      TColumnsOmitDefault,
+      TTopLevel,
+      REFKEY
+    >) &
   (TModel extends BeanModelMeta
     ? OmitNever<
         TypeDtoMutateRelationResultMergeInclude<
@@ -158,6 +160,17 @@ type TypeDtoMutateRelationResultMergeWithRelation<
         >
       : never;
 
+// Relation options supply the default dtoClass; an include wrapper may override it.
+type TypeUtilGetDtoMutateRelationParams<Relation, IncludeWrapper> = IncludeWrapper extends {
+  dtoClass: Constructable<unknown>;
+}
+  ? IncludeWrapper
+  : TypeUtilGetRelationOptions<Relation> extends {
+        dtoClass: infer TDtoClass extends Constructable<unknown>;
+      }
+    ? (IncludeWrapper extends {} ? IncludeWrapper : {}) & { dtoClass: TDtoClass }
+    : IncludeWrapper;
+
 type TypeUtilGetDtoMutateRelationEntityByType<
   TMutateTypeTopLevel extends TypeDtoMutateType,
   Relation,
@@ -167,7 +180,7 @@ type TypeUtilGetDtoMutateRelationEntityByType<
   TypeUtilGetRelationEntity<Relation>,
   TypeUtilGetRelationType<Relation>,
   TypeUtilGetRelationModel<Relation>,
-  IncludeWrapper,
+  TypeUtilGetDtoMutateRelationParams<Relation, IncludeWrapper>,
   TypeUtilGetColumnsFromRelationAndIncludeWrapper<Relation, IncludeWrapper>,
   TypeUtilGetRelationKey<Relation>
 >;
@@ -210,6 +223,22 @@ type TypeUtilGetDtoMutateEntityByType<
               REFKEY
             >
           | undefined;
+
+// dtoClass supplies its own fields, so neither columns nor default entity omissions apply.
+// Nested mutations still remove the parent key and patch identity/deletion fields that exist.
+type TypeDtoMutateRelationResultDto<
+  TDto,
+  TMutateTypeTopLevel extends TypeDtoMutateType,
+  TTopLevel extends boolean | undefined,
+  REFKEY,
+> = TTopLevel extends false
+  ? Omit<
+      TMutateTypeTopLevel extends 'create'
+        ? Omit<TDto, 'id' | 'deleted'>
+        : Partial<Pick<TDto, Extract<keyof TDto, 'id' | 'deleted'>>> & Omit<TDto, 'id' | 'deleted'>,
+      Extract<keyof TDto, REFKEY>
+    >
+  : TDto;
 
 type TypeDtoMutateRelationResultEntity<
   TRecord,
