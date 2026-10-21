@@ -106,25 +106,37 @@ test('Vona keeps its legacy default and visits the same graph with native', asyn
       [dir, suiteRoot, moduleRoot].map(cwd => [['-b'], { cwd }]),
     );
     for (const force of [false, true]) {
-      writeFileSync(report, '');
-      await cli._tsc(dir, force, 'native');
-      const nativeCalls = readFileSync(report, 'utf8')
-        .trim()
-        .split('\n')
-        .map(line => JSON.parse(line));
-      assert.deepEqual(
-        nativeCalls,
-        [dir, suiteRoot, moduleRoot].map(cwd => ({
-          cwd,
-          args: force ? ['-b', '--force'] : ['-b'],
-          compiler: '@typescript/native',
-        })),
-      );
+      for (const builders of [undefined, 1, 2]) {
+        writeFileSync(report, '');
+        await cli._tsc(dir, force, 'native', builders);
+        const nativeCalls = readFileSync(report, 'utf8')
+          .trim()
+          .split('\n')
+          .map(line => JSON.parse(line));
+        const args = force ? ['-b', '--force'] : ['-b'];
+        if (builders !== undefined) args.push('--builders', String(builders));
+        assert.deepEqual(
+          nativeCalls,
+          [dir, suiteRoot, moduleRoot].map(cwd => ({
+            cwd,
+            args,
+            compiler: '@typescript/native',
+          })),
+        );
+      }
     }
     assert.equal(calls.length, 3, 'native must not use the legacy binary helper');
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test('Vona rejects invalid or legacy builder limits before starting compilation', async () => {
+  const cli = Object.create(CliBinTsc.prototype);
+  for (const builders of [0, -1, 1.5, Number.NaN, Infinity, Number.MAX_SAFE_INTEGER + 1]) {
+    await assert.rejects(cli._tsc(root, true, 'native', builders), /positive safe integer/);
+  }
+  await assert.rejects(cli._tsc(root, true, 'typescript', 1), /requires --compiler=native/);
 });
 
 test('root commands separate incremental and forced native checks', () => {

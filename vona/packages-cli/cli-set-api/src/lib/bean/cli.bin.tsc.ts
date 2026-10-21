@@ -8,6 +8,7 @@ declare module '@cabloy/cli' {
   interface ICommandArgv {
     force: boolean;
     compiler: TypeScriptCompiler;
+    builders: number;
   }
 }
 
@@ -18,10 +19,23 @@ export class CliBinTsc extends BeanCliBase {
     await super.execute();
     const projectPath = argv.projectPath;
     const force = argv.force;
-    await this._tsc(projectPath, force, argv.compiler ?? 'typescript');
+    await this._tsc(projectPath, force, argv.compiler ?? 'typescript', argv.builders);
   }
 
-  async _tsc(projectPath: string, force: boolean, compiler: TypeScriptCompiler = 'typescript') {
+  async _tsc(
+    projectPath: string,
+    force: boolean,
+    compiler: TypeScriptCompiler = 'typescript',
+    builders?: number,
+  ) {
+    if (builders !== undefined) {
+      if (!Number.isSafeInteger(builders) || builders < 1) {
+        throw new Error('--builders must be a positive safe integer');
+      }
+      if (compiler !== 'native') {
+        throw new Error('--builders requires --compiler=native');
+      }
+    }
     const suiteNames = Object.keys(this.modulesMeta.suites).filter(
       suiteName => !this.modulesMeta.suites[suiteName].info.node_modules,
     );
@@ -39,6 +53,9 @@ export class CliBinTsc extends BeanCliBase {
     const tscArgs = ['-b'];
     if (force) {
       tscArgs.push('--force');
+    }
+    if (builders !== undefined) {
+      tscArgs.push('--builders', String(builders));
     }
     const check = async (cwd: string) => {
       if (compiler === 'native') {
