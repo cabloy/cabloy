@@ -179,7 +179,7 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "044824fcfceff8153b722b8239d81d939286cb05ec03f75e78cfd03afe465f5a",
+      "sha256": "a7aae017823a738fbf031424bb68b6cd982f0832102dfbe7320eacaf713919f8",
       "source": "skills/cabloy-spec-execution/references/execution-protocol.md",
       "target": ".agents/skills/cabloy-spec-execution/references/execution-protocol.md"
     },
@@ -249,7 +249,7 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "846d81a0c8067900c4bcf3b9a854ca831cf4f0d2a184511fc6a01560da3b8dcb",
+      "sha256": "02ef6d9b6ac9f6746508b343281a2160ed55a05039f7c21677e216acde579792",
       "source": "skills/cabloy-spec-generation/SKILL.md",
       "target": ".agents/skills/cabloy-spec-generation/SKILL.md"
     },
@@ -515,7 +515,7 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "044824fcfceff8153b722b8239d81d939286cb05ec03f75e78cfd03afe465f5a",
+      "sha256": "a7aae017823a738fbf031424bb68b6cd982f0832102dfbe7320eacaf713919f8",
       "source": "skills/cabloy-spec-execution/references/execution-protocol.md",
       "target": ".claude/skills/cabloy-spec-execution/references/execution-protocol.md"
     },
@@ -585,7 +585,7 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "846d81a0c8067900c4bcf3b9a854ca831cf4f0d2a184511fc6a01560da3b8dcb",
+      "sha256": "02ef6d9b6ac9f6746508b343281a2160ed55a05039f7c21677e216acde579792",
       "source": "skills/cabloy-spec-generation/SKILL.md",
       "target": ".claude/skills/cabloy-spec-generation/SKILL.md"
     },
@@ -683,7 +683,7 @@
     {
       "adapter": "cursor",
       "category": "policy",
-      "sha256": "b8453cbb90a6b75014615dea5ffb8f8e6b31be1e5c3392c1dc4bc0f4456adb57",
+      "sha256": "27ddaa18de3cd88e11dc20c0ad626fe07d5b6231f08243e3fbece7242dcbdc9a",
       "source": "policies/repository.md",
       "target": ".cursor/rules/cabloy-governance.mdc"
     },
@@ -865,7 +865,7 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "044824fcfceff8153b722b8239d81d939286cb05ec03f75e78cfd03afe465f5a",
+      "sha256": "a7aae017823a738fbf031424bb68b6cd982f0832102dfbe7320eacaf713919f8",
       "source": "skills/cabloy-spec-execution/references/execution-protocol.md",
       "target": ".cursor/skills/cabloy-spec-execution/references/execution-protocol.md"
     },
@@ -935,7 +935,7 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "846d81a0c8067900c4bcf3b9a854ca831cf4f0d2a184511fc6a01560da3b8dcb",
+      "sha256": "02ef6d9b6ac9f6746508b343281a2160ed55a05039f7c21677e216acde579792",
       "source": "skills/cabloy-spec-generation/SKILL.md",
       "target": ".cursor/skills/cabloy-spec-generation/SKILL.md"
     },
@@ -1005,14 +1005,14 @@
     {
       "adapter": "codex",
       "category": "policy",
-      "sha256": "18d072d31b706f8eadda5d757ee3db7d69c4a7ea5e4c14dc33ab3ac307ae89e0",
+      "sha256": "e5929a9b3fa63d76faa596fcd24a9faa4fc8bcadd3eae2e99507ac0b33567efe",
       "source": "policies/repository.md",
       "target": "AGENTS.md"
     },
     {
       "adapter": "claude",
       "category": "policy",
-      "sha256": "18d072d31b706f8eadda5d757ee3db7d69c4a7ea5e4c14dc33ab3ac307ae89e0",
+      "sha256": "e5929a9b3fa63d76faa596fcd24a9faa4fc8bcadd3eae2e99507ac0b33567efe",
       "source": "policies/repository.md",
       "target": "CLAUDE.md"
     }
