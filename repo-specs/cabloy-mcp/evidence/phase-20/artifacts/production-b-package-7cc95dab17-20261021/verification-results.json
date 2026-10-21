@@ -1,0 +1,96 @@
+[
+  {
+    "label": "01-format-write",
+    "command": [
+      "./node_modules/.bin/oxfmt",
+      "--write",
+      "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+      "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+      "repo-specs/cabloy-mcp/progress.md"
+    ],
+    "producer_exit": 0,
+    "sanitizer_exit": 0,
+    "elapsed_seconds": 0.67,
+    "stdout_bytes": 47,
+    "stderr_bytes": 0,
+    "log": "01-format-write.log"
+  },
+  {
+    "label": "02-format-check",
+    "command": [
+      "./node_modules/.bin/oxfmt",
+      "--check",
+      "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+      "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+      "repo-specs/cabloy-mcp/progress.md"
+    ],
+    "producer_exit": 0,
+    "sanitizer_exit": 0,
+    "elapsed_seconds": 0.606,
+    "stdout_bytes": 113,
+    "stderr_bytes": 0,
+    "log": "02-format-check.log"
+  },
+  {
+    "label": "03-authority-audit",
+    "command": [
+      "npm",
+      "run",
+      "spec:check",
+      "--",
+      "cabloy-mcp"
+    ],
+    "producer_exit": 0,
+    "sanitizer_exit": 0,
+    "elapsed_seconds": 0.195,
+    "stdout_bytes": 351,
+    "stderr_bytes": 0,
+    "log": "03-authority-audit.log"
+  },
+  {
+    "label": "04-charts-generate",
+    "command": [
+      "npm",
+      "run",
+      "spec:charts",
+      "--",
+      "cabloy-mcp"
+    ],
+    "producer_exit": 0,
+    "sanitizer_exit": 0,
+    "elapsed_seconds": 0.131,
+    "stdout_bytes": 240,
+    "stderr_bytes": 0,
+    "log": "04-charts-generate.log"
+  },
+  {
+    "label": "05-charts-check",
+    "command": [
+      "npm",
+      "run",
+      "spec:charts:check",
+      "--",
+      "cabloy-mcp"
+    ],
+    "producer_exit": 0,
+    "sanitizer_exit": 0,
+    "elapsed_seconds": 0.125,
+    "stdout_bytes": 252,
+    "stderr_bytes": 0,
+    "log": "05-charts-check.log"
+  },
+  {
+    "label": "06-docs-build",
+    "command": [
+      "npm",
+      "run",
+      "docs:build"
+    ],
+    "producer_exit": 0,
+    "sanitizer_exit": 0,
+    "elapsed_seconds": 10.073,
+    "stdout_bytes": 110,
+    "stderr_bytes": 492,
+    "log": "06-docs-build.log"
+  }
+]

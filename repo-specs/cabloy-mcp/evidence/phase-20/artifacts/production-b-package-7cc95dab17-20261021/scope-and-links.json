@@ -1,0 +1,98 @@
+{
+  "progress_semantic_changes": [
+    {
+      "row": "`WBS-MCP-20-01`",
+      "column_index": 5
+    }
+  ],
+  "local_links_checked": [
+    {
+      "record": "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+      "link": "./evidence/phase-20/artifacts/production-b-package-7cc95dab17-20261021/",
+      "exists": true,
+      "anchor_checked": false
+    },
+    {
+      "record": "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+      "link": "./wbs-mcp-20-01-execution-dossier.md#21-b-admission-integration-handoff-and-bounded-composition-candidate-2026-10-20",
+      "exists": true,
+      "anchor_checked": true
+    },
+    {
+      "record": "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+      "link": "./prd.md",
+      "exists": true,
+      "anchor_checked": false
+    },
+    {
+      "record": "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+      "link": "./srs.md",
+      "exists": true,
+      "anchor_checked": false
+    },
+    {
+      "record": "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+      "link": "./pdp-wbs.md",
+      "exists": true,
+      "anchor_checked": false
+    },
+    {
+      "record": "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+      "link": "./test-plan.md",
+      "exists": true,
+      "anchor_checked": false
+    },
+    {
+      "record": "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+      "link": "./evidence/phase-20/test-suite-consolidation.md",
+      "exists": true,
+      "anchor_checked": false
+    },
+    {
+      "record": "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+      "link": "../../repo-docs/reference/repo-scripts.md",
+      "exists": true,
+      "anchor_checked": false
+    },
+    {
+      "record": "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+      "link": "./evidence/phase-20/artifacts/production-b-package-7cc95dab17-20261021/",
+      "exists": true,
+      "anchor_checked": false
+    },
+    {
+      "record": "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+      "link": "./wbs-mcp-20-01-production-b-package.md",
+      "exists": true,
+      "anchor_checked": false
+    },
+    {
+      "record": "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+      "link": "./evidence/phase-20/test-suite-consolidation.md",
+      "exists": true,
+      "anchor_checked": false
+    },
+    {
+      "record": "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+      "link": "./evidence/phase-20/artifacts/production-b-package-7cc95dab17-20261021/",
+      "exists": true,
+      "anchor_checked": false
+    }
+  ],
+  "source_files_unchanged": 29,
+  "main_status_at_postflight": [
+    " M vona/packages-utils/module-glob/src/index.ts",
+    "?? vona/packages-utils/module-glob/src/suites.ts"
+  ],
+  "main_clean_at_postflight": false,
+  "main_head_at_postflight": "94adf9942349a498adc94232847fe25f4d1f3a82",
+  "main_writes_by_this_preparation": false,
+  "external_change_note": "Two module-glob paths changed after clean preflight; not touched or attributed to this preparation. No source/runtime execution follows. Recheck main attribution before future execution.",
+  "runtime_commands_run": false,
+  "environment_content_read": false,
+  "initial_scope_probe": {
+    "exit": 1,
+    "diagnostic": "AssertionError: separator row Next action width counted alongside selected cell",
+    "correction": "Ignore Markdown alignment separator rows; compare every remaining stripped cell. No author-record correction or production retry."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "mcp_base_revision": "7cc95dab17a45e6e9a53eb1b78bed1d2b111529f",
+  "document_sha256": {
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md": "22387394feeb4729d3493c9ebbd1d72547b4f595cd712c5dea624568bb8ea94b",
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md": "beacd02f07158a63577e999a35bc339a5386095062caa8a06627daa702593a77",
+    "repo-specs/cabloy-mcp/progress.md": "2484f9598d3c6ea2d2d305243742c57d8048671fc7141875ac6d9cb73cb8d7e9",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/production-b-package-7cc95dab17-20261021/README.md": "f347b2ab6807e3451337a722202129603ed807405891b43e2b3b3f7da0c9f8a9"
+  },
+  "tracked_document_diff_sha256": "1aa3b54a22271c52f34ddf2329bb85a54a2c0da4d53b7d8186d4a348dfd0d089",
+  "tracked_diff_paths": [
+    "repo-specs/cabloy-mcp/progress.md",
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md"
+  ],
+  "source_files_unchanged": 29,
+  "main_postflight_status": [
+    " M vona/packages-utils/module-glob/package.json",
+    " M vona/packages-utils/module-glob/src/index.ts",
+    "?? vona/packages-utils/module-glob/src/suites.ts",
+    "?? vona/packages-utils/module-glob/test/"
+  ],
+  "interpretation": "Dirty documentary result; no source or runtime qualification."
+}

@@ -1,0 +1,159 @@
+{
+  "kind": "documentary-only",
+  "results": [
+    {
+      "label": "00-artifact-format-stdin",
+      "producer_exit": 0,
+      "input_bytes": 4012,
+      "output_bytes": 4012,
+      "sanitizer_exit": null,
+      "note": "Formatter stdout is the formatted document, not a producer log; no environment/source operation."
+    },
+    {
+      "label": "01-format-write",
+      "command": [
+        "./node_modules/.bin/oxfmt",
+        "--write",
+        "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+        "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+        "repo-specs/cabloy-mcp/progress.md"
+      ],
+      "producer_exit": 0,
+      "sanitizer_exit": 0,
+      "elapsed_seconds": 0.561,
+      "stdout_bytes": 47,
+      "stderr_bytes": 0,
+      "log": "01-format-write.log",
+      "observation_overrun": false
+    },
+    {
+      "label": "02-format-check",
+      "command": [
+        "./node_modules/.bin/oxfmt",
+        "--check",
+        "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+        "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+        "repo-specs/cabloy-mcp/progress.md"
+      ],
+      "producer_exit": 0,
+      "sanitizer_exit": 0,
+      "elapsed_seconds": 0.548,
+      "stdout_bytes": 113,
+      "stderr_bytes": 0,
+      "log": "02-format-check.log",
+      "observation_overrun": false
+    },
+    {
+      "label": "03-authority-audit",
+      "command": [
+        "npm",
+        "run",
+        "--silent",
+        "spec:check",
+        "--",
+        "cabloy-mcp"
+      ],
+      "producer_exit": 0,
+      "sanitizer_exit": 0,
+      "elapsed_seconds": 0.214,
+      "stdout_bytes": 252,
+      "stderr_bytes": 0,
+      "log": "03-authority-audit.log",
+      "observation_overrun": false
+    },
+    {
+      "label": "04-charts-generate",
+      "command": [
+        "npm",
+        "run",
+        "--silent",
+        "spec:charts",
+        "--",
+        "cabloy-mcp"
+      ],
+      "producer_exit": 0,
+      "sanitizer_exit": 0,
+      "elapsed_seconds": 0.129,
+      "stdout_bytes": 114,
+      "stderr_bytes": 0,
+      "log": "04-charts-generate.log",
+      "observation_overrun": false
+    },
+    {
+      "label": "05-charts-check",
+      "command": [
+        "npm",
+        "run",
+        "--silent",
+        "spec:charts:check",
+        "--",
+        "cabloy-mcp"
+      ],
+      "producer_exit": 0,
+      "sanitizer_exit": 0,
+      "elapsed_seconds": 0.125,
+      "stdout_bytes": 112,
+      "stderr_bytes": 0,
+      "log": "05-charts-check.log",
+      "observation_overrun": false
+    },
+    {
+      "label": "06-docs-build",
+      "command": [
+        "npm",
+        "run",
+        "--silent",
+        "docs:build"
+      ],
+      "producer_exit": 0,
+      "sanitizer_exit": 0,
+      "elapsed_seconds": 9.782,
+      "stdout_bytes": 46,
+      "stderr_bytes": 492,
+      "log": "06-docs-build.log",
+      "observation_overrun": false
+    },
+    {
+      "label": "07-evidence-paths",
+      "command": [
+        "npm",
+        "run",
+        "--silent",
+        "evidence:check",
+        "--",
+        "--map",
+        "<MAIN_CHECKOUT>=MAIN_CHECKOUT",
+        "--map",
+        "<PRIVATE_HOME>=PRIVATE_HOME",
+        "--",
+        "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+        "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+        "repo-specs/cabloy-mcp/progress.md",
+        "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/production-b-attachments-7cc95dab17-20261021"
+      ],
+      "producer_exit": 0,
+      "sanitizer_exit": 0,
+      "elapsed_seconds": 0.185,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0,
+      "log": "07-evidence-paths.log",
+      "observation_overrun": false
+    },
+    {
+      "label": "08-diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "producer_exit": 0,
+      "sanitizer_exit": 0,
+      "elapsed_seconds": 0.024,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0,
+      "log": "08-diff-check.log",
+      "observation_overrun": false
+    }
+  ],
+  "checker_self_output_not_covered": true
+}

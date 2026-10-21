@@ -1,0 +1,84 @@
+{
+  "kind": "final-documentary-byte-identities-only",
+  "authors": [
+    {
+      "path": "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+      "bytes": 56070,
+      "sha256": "b6d331220dca615c5560ebd3e363c25efd4289b9aef022b70ab12aa55496b7dc"
+    },
+    {
+      "path": "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+      "bytes": 384828,
+      "sha256": "582e75a61cecc71291120dd79756d461a03bd52622894d410de8adb22d7a6113"
+    },
+    {
+      "path": "repo-specs/cabloy-mcp/progress.md",
+      "bytes": 257359,
+      "sha256": "dd59cfdd577caf36d7e9dd89fe448b8c9f96f1fec491d91efeab4f0372106613"
+    }
+  ],
+  "tracked_diff_sha256": "423c9b062bf8013d123adad91c99737e45b185cc522e3e616bf4b510030bc84a",
+  "bundle_files_excluding_this_manifest": [
+    {
+      "path": "01-format-write.log",
+      "bytes": 287,
+      "sha256": "096cb25122203479214bf395cc1f2b13b46faced957bd3831ef3baa24b0e13db"
+    },
+    {
+      "path": "02-format-check.log",
+      "bytes": 353,
+      "sha256": "fafb4b1e33e03828d4f74c53c33e3a91be2cc20daa551140d439b7a291196101"
+    },
+    {
+      "path": "03-authority-audit.log",
+      "bytes": 352,
+      "sha256": "0e1b4e8af96635c3b624416b26d7eeff3c9772b3ebdcf17682c3eeb60ac9ddfe"
+    },
+    {
+      "path": "04-charts-generate.log",
+      "bytes": 215,
+      "sha256": "36dc478ddc274fbc29d7ee8599bf52e54f223e6bce4516578f535df1b50abaf2"
+    },
+    {
+      "path": "05-charts-check.log",
+      "bytes": 219,
+      "sha256": "1f599a7f22963657dc5b79a20fc56c3ba8233e973e7c4bfdbd61e550c8e94bde"
+    },
+    {
+      "path": "06-docs-build.log",
+      "bytes": 600,
+      "sha256": "8ed68370f3ac55c2829955afb7b9852aea621d5cbb60135a4d69e7266bf64fae"
+    },
+    {
+      "path": "07-evidence-paths.log",
+      "bytes": 436,
+      "sha256": "74cfde1b57696c469225111d3809ec3bb132ca6f0572f28805734af234e6f8c1"
+    },
+    {
+      "path": "08-diff-check.log",
+      "bytes": 66,
+      "sha256": "25d8df68788a94bd81b719a1f97c8d91112fbee4a8dd0167cf6df6c0a13827a7"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4256,
+      "sha256": "23c5b5cb06b0beb3a43fb917a1804fc60190d5f3e20aa433b04e13c90c8ee607"
+    },
+    {
+      "path": "preflight.json",
+      "bytes": 2490,
+      "sha256": "11c072cd300ac592de5d04c2fbe93c19412cb1b117b6680b066ddf6ebf4fcceb"
+    },
+    {
+      "path": "preservation.json",
+      "bytes": 15050,
+      "sha256": "620d2c554823a77fc8701cf247a955d901d36e73c48c60ec915095e8ed74d145"
+    },
+    {
+      "path": "verification-results.json",
+      "bytes": 4077,
+      "sha256": "d237efe68ba7933e11bd1cfe14a363416137b134b1c775e6007ef0e19490a6cd"
+    }
+  ],
+  "limitations": "No self-hash; byte identity only, not authenticity, apply-ready patch, policy acceptance or runtime qualification."
+}

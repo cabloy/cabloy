@@ -1,0 +1,54 @@
+{
+  "kind": "documentary-attachment-design-preflight-only",
+  "date": "2026-10-21",
+  "mcp_base_revision": "7cc95dab17a45e6e9a53eb1b78bed1d2b111529f",
+  "main_revision": "9a919ef141c9851e5df134866242a904cb3aef57",
+  "edition": "Basic-only in both checkouts",
+  "main_clean": true,
+  "carried_changes": [
+    "repo-specs/cabloy-mcp/progress.md",
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+    "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/production-b-package-7cc95dab17-20261021/"
+  ],
+  "prior_source_inventory": {
+    "path": "../production-b-package-7cc95dab17-20261021/source-inventory.json",
+    "sha256": "ef2dd04c39a1efeb35db69a4fbd987bebd299c95863a9b4bd50e23baa667ccea",
+    "observed_source_count": 29,
+    "all_main_and_mcp_hashes_recomputed": true,
+    "all_equal_to_each_other_and_prior_inventory": true
+  },
+  "main_delta_since_prior_package": [
+    "vona/packages-utils/module-glob/package.json",
+    "vona/packages-utils/module-glob/src/index.ts",
+    "vona/packages-utils/module-glob/src/suites.ts",
+    "vona/packages-utils/module-glob/test/suites.test.ts"
+  ],
+  "main_delta_disposition": "External committed work, inspected read-only; no B foundation path changed. Current suites binding normalizes separators, assigns suite ownership and removes modules whose suite is absent. No current runtime-discovery proof is inferred.",
+  "carried_author_document_hashes": [
+    {
+      "path": "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+      "bytes": 34154,
+      "sha256": "22387394feeb4729d3493c9ebbd1d72547b4f595cd712c5dea624568bb8ea94b"
+    },
+    {
+      "path": "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+      "bytes": 381102,
+      "sha256": "beacd02f07158a63577e999a35bc339a5386095062caa8a06627daa702593a77"
+    },
+    {
+      "path": "repo-specs/cabloy-mcp/progress.md",
+      "bytes": 238263,
+      "sha256": "2484f9598d3c6ea2d2d305243742c57d8048671fc7141875ac6d9cb73cb8d7e9"
+    }
+  ],
+  "carried_documentary_bundle": {
+    "file_count": 16,
+    "sorted_path_hash_manifest_sha256": "29465ae9b4ae1a9c2f1ea1302110dd71200a9cef591897427a45f4331a6d2dfb"
+  },
+  "permitted_operations": "Current MCP-worktree package/dossier/selected Next action and proportionate documentary verification only",
+  "production_contract_acceptance": false,
+  "main_write_authority": false,
+  "environment_content_read": false,
+  "runtime_verification": false
+}

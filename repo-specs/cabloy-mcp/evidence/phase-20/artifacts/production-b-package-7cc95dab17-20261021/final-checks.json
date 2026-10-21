@@ -1,0 +1,7 @@
+[
+  {
+    "command": "[\"./node_modules/.bin/oxfmt\", \"--write\", \"repo-specs/cabloy-mcp/evidence/phase-20/artifacts/production-b-package-7cc95dab17-20261021/README.md\"]",
+    "producer_exit": 2,
+    "sanitizer_exit": 0
+  }
+]

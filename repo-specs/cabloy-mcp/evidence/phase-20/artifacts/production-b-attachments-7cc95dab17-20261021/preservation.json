@@ -1,0 +1,318 @@
+{
+  "kind": "documentary-preservation-only",
+  "checks": {
+    "all_29_original_sources_equal_and_unchanged": true,
+    "old_bundle_unchanged": true,
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md_prefix_preserved": true,
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md_prefix_preserved": true,
+    "only_selected_next_action_semantic_change": true,
+    "main_clean": true,
+    "main_revision_unchanged": true,
+    "only_expected_tracked_changes": true,
+    "extra_inspected_sources_equal": true,
+    "both_factory_candidate_paths_absent": true
+  },
+  "original_sources": [
+    {
+      "path": "package.json",
+      "main_sha256": "c0d406b92bfecd9f6b9dfbf3c96375e883c2375b2248964ae70041d357b70b67",
+      "mcp_sha256": "c0d406b92bfecd9f6b9dfbf3c96375e883c2375b2248964ae70041d357b70b67",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/package.original.json",
+      "main_sha256": "571cfe9c49d2a8905be4cb390f934df9d281087756e86cbaee0f793cf83deeca",
+      "mcp_sha256": "571cfe9c49d2a8905be4cb390f934df9d281087756e86cbaee0f793cf83deeca",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "scripts/typecheck.ts",
+      "main_sha256": "d0a91dbd41bc7e5c083e604268ae6e5b8b83056dfbd975dabb47a162037f3a77",
+      "mcp_sha256": "d0a91dbd41bc7e5c083e604268ae6e5b8b83056dfbd975dabb47a162037f3a77",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "scripts/runIsolatedTest.ts",
+      "main_sha256": "17eff1d80ff25cc46590898a7863331fefb572ec818341731a0a2fddac51141e",
+      "mcp_sha256": "17eff1d80ff25cc46590898a7863331fefb572ec818341731a0a2fddac51141e",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/packages-cli/cli-set-api/src/lib/typescriptRunner.ts",
+      "main_sha256": "d2014c53be5609324bce12d832bbfc1a0403d2e8803fa6fc6516d858d6266355",
+      "mcp_sha256": "d2014c53be5609324bce12d832bbfc1a0403d2e8803fa6fc6516d858d6266355",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/core/completedReadiness.ts",
+      "main_sha256": "f0038f6ee9ab501c1636151d7d68edc59e4d2e30a41e851e68d22d5013e67383",
+      "mcp_sha256": "f0038f6ee9ab501c1636151d7d68edc59e4d2e30a41e851e68d22d5013e67383",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/core/completedReadiness.test.ts",
+      "main_sha256": "178e5bc55d0eceacdd802078bfe143763157626cf6bae99f8b533112fd2e0693",
+      "mcp_sha256": "178e5bc55d0eceacdd802078bfe143763157626cf6bae99f8b533112fd2e0693",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/core/index.ts",
+      "main_sha256": "75777315b0a580cc7025805d2c6d984a033a0f4fb6bb224a6cb3420ac33a4396",
+      "mcp_sha256": "75777315b0a580cc7025805d2c6d984a033a0f4fb6bb224a6cb3420ac33a4396",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/core/meta.ts",
+      "main_sha256": "806086260c4d82db1f8ef7e8fd3c5e3a4003220b8ef066fd973b6802a7577d97",
+      "mcp_sha256": "806086260c4d82db1f8ef7e8fd3c5e3a4003220b8ef066fd973b6802a7577d97",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/core/asyncLocalStorage.ts",
+      "main_sha256": "5d1f7794a5ed72b70e9d3360147d38dce1a04129b35d8902bd01e566adea3338",
+      "mcp_sha256": "5d1f7794a5ed72b70e9d3360147d38dce1a04129b35d8902bd01e566adea3338",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/bean/beanContainer.ts",
+      "main_sha256": "5e062413083b43320c12d1d958e03004914c9b32df9ca1a53c81591dc6c5fc3b",
+      "mcp_sha256": "5e062413083b43320c12d1d958e03004914c9b32df9ca1a53c81591dc6c5fc3b",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/backend/config/config/config.ts",
+      "main_sha256": "66ef0e6295695e4570e60aba3263a9d974d49fc6a61195192a2ca206754c1333",
+      "mcp_sha256": "66ef0e6295695e4570e60aba3263a9d974d49fc6a61195192a2ca206754c1333",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/backend/config/config/config.prod.ts",
+      "main_sha256": "f322ba1e012af027129042d34bf698acd5aee63640d19c89b585fe9494e0fb82",
+      "mcp_sha256": "f322ba1e012af027129042d34bf698acd5aee63640d19c89b585fe9494e0fb82",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-instance/src/entity/instance.ts",
+      "main_sha256": "c1b2539619c5cd6d962dcbd6eb0cf571e326eafc82173aaa023020515cc5a75f",
+      "mcp_sha256": "c1b2539619c5cd6d962dcbd6eb0cf571e326eafc82173aaa023020515cc5a75f",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-instance/src/bean/meta.version.ts",
+      "main_sha256": "8da485044babed86e95a657c7451c47c5d58a038f5cadf634898b3e82890ccbd",
+      "mcp_sha256": "8da485044babed86e95a657c7451c47c5d58a038f5cadf634898b3e82890ccbd",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-instance/src/bean/bean.instance.ts",
+      "main_sha256": "10da06ea1a0ed9c5ec1bb080c1f3648a4f99cae5f461477d3fd1586ca6357a60",
+      "mcp_sha256": "10da06ea1a0ed9c5ec1bb080c1f3648a4f99cae5f461477d3fd1586ca6357a60",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-instance/src/model/instance.ts",
+      "main_sha256": "b37ec64aed4bd506719bc45b2537589e70c10b2af38d58da649d4996067c9ca7",
+      "mcp_sha256": "b37ec64aed4bd506719bc45b2537589e70c10b2af38d58da649d4996067c9ca7",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-instance/src/lib/existingReadyAdmission.ts",
+      "main_sha256": "a7a3dfe664a600adb8e997bfb84c752fe92582e24876051297087fed4bad969c",
+      "mcp_sha256": "a7a3dfe664a600adb8e997bfb84c752fe92582e24876051297087fed4bad969c",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-instance/src/service/instance.ts",
+      "main_sha256": "b89d41ab28386f1f5fc9070bb70e891dcf92fe16d483017b3d0147e5a93015eb",
+      "mcp_sha256": "b89d41ab28386f1f5fc9070bb70e891dcf92fe16d483017b3d0147e5a93015eb",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-instance/test/existingReadyAdmission.test.ts",
+      "main_sha256": "50ffcfb84830f9f784b8cc81677e1222cdd1798e2fc0a87013da8ab173dd039f",
+      "mcp_sha256": "50ffcfb84830f9f784b8cc81677e1222cdd1798e2fc0a87013da8ab173dd039f",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-startup/src/service/startup.ts",
+      "main_sha256": "e9bc75173b32f6d0a3349723027a72ad1e2e6a1bd18b1e7485143bb2586d9bad",
+      "mcp_sha256": "e9bc75173b32f6d0a3349723027a72ad1e2e6a1bd18b1e7485143bb2586d9bad",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-orm/src/service/database.ts",
+      "main_sha256": "097c847251a58dea768f97ab599ee0fe42ab7b4c4e0a240946b1b923b5f881d1",
+      "mcp_sha256": "097c847251a58dea768f97ab599ee0fe42ab7b4c4e0a240946b1b923b5f881d1",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-orm/src/service/databaseClient_.ts",
+      "main_sha256": "15b6e6e6efcc73f0581b8280d5c314bfba1bdc9fd8119fe2b6b56c719970d6bf",
+      "mcp_sha256": "15b6e6e6efcc73f0581b8280d5c314bfba1bdc9fd8119fe2b6b56c719970d6bf",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-orm/src/bean/bean.database.ts",
+      "main_sha256": "982b8ff4d8a8f7aa73bb64ee8a577b324e12f6a4dcdd83731ec2cbbfd31737ea",
+      "mcp_sha256": "982b8ff4d8a8f7aa73bb64ee8a577b324e12f6a4dcdd83731ec2cbbfd31737ea",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-orm/src/extend/tableBuilder.ts",
+      "main_sha256": "5cf93be867794621a12372b7c6a8abe3054a8df09e6f63e70dc4c4e90cff70ef",
+      "mcp_sha256": "5cf93be867794621a12372b7c6a8abe3054a8df09e6f63e70dc4c4e90cff70ef",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/lib/protectedSqliteRegistry.ts",
+      "main_sha256": "55c77b5abcbce5911e9a34c83a882a5b1288b5be0f3ce44e17ee8137fb5c25b2",
+      "mcp_sha256": "55c77b5abcbce5911e9a34c83a882a5b1288b5be0f3ce44e17ee8137fb5c25b2",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/bean/databaseDialect.betterSqlite3.ts",
+      "main_sha256": "553e164a7ba9370de4a29bde5e578a2d34ba25e9ee80eee965e323204faee245",
+      "mcp_sha256": "553e164a7ba9370de4a29bde5e578a2d34ba25e9ee80eee965e323204faee245",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts",
+      "main_sha256": "d7e71136bff54ddf1d3ebadc4ffe7249ab7bc0679aa9d08b0bb925883f9f33cc",
+      "mcp_sha256": "d7e71136bff54ddf1d3ebadc4ffe7249ab7bc0679aa9d08b0bb925883f9f33cc",
+      "unchanged_from_prior": true
+    },
+    {
+      "path": "repo-docs/reference/repo-scripts.md",
+      "main_sha256": "2fd6ffad3caa82c634c49733b521ca62ed1304aa268f6199871a5b5294737170",
+      "mcp_sha256": "2fd6ffad3caa82c634c49733b521ca62ed1304aa268f6199871a5b5294737170",
+      "unchanged_from_prior": true
+    }
+  ],
+  "additional_source_hashes": [
+    {
+      "path": "vona/tsconfig.json",
+      "main_sha256": "5a848d2c944105c50532742c55b059abba042c6be9168aa45681dfe25031c606",
+      "mcp_sha256": "5a848d2c944105c50532742c55b059abba042c6be9168aa45681dfe25031c606",
+      "equal": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/framework/start.ts",
+      "main_sha256": "3f54b65df529ff9076130111bd6cdffac5fcd463ed8e22bdbb0a46d37fc5d69e",
+      "mcp_sha256": "3f54b65df529ff9076130111bd6cdffac5fcd463ed8e22bdbb0a46d37fc5d69e",
+      "equal": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/module/config.ts",
+      "main_sha256": "c6a30bb8ff0ca66cc630ad79cc0418f461c7890417fb467dff1d12f0adf7bc64",
+      "mcp_sha256": "c6a30bb8ff0ca66cc630ad79cc0418f461c7890417fb467dff1d12f0adf7bc64",
+      "equal": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/module/loader.ts",
+      "main_sha256": "769aeea63afd9b0b93a4b741548b3d8ec760ca89447c77fd03ea070b9497d7e7",
+      "mcp_sha256": "769aeea63afd9b0b93a4b741548b3d8ec760ca89447c77fd03ea070b9497d7e7",
+      "equal": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/module/module.ts",
+      "main_sha256": "257b1a89cced0081474b681631a34c6a9b4d674c314a3b83894ce29287db417d",
+      "mcp_sha256": "257b1a89cced0081474b681631a34c6a9b4d674c314a3b83894ce29287db417d",
+      "equal": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/core/logger/appLogger.ts",
+      "main_sha256": "86ee1e8d5a9741c59453c132fcba609876d1adaca79c3e3575faf7cb1450467e",
+      "mcp_sha256": "86ee1e8d5a9741c59453c132fcba609876d1adaca79c3e3575faf7cb1450467e",
+      "equal": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-error/src/config/config.ts",
+      "main_sha256": "d942ab1196681ec999629890cb106dc2a0da173f506dd62bd8900e08bfb4ced0",
+      "mcp_sha256": "d942ab1196681ec999629890cb106dc2a0da173f506dd62bd8900e08bfb4ced0",
+      "equal": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-error/src/lib/onerror.ts",
+      "main_sha256": "754f9083ab1caf62eb63866fc801c69d06b3608e956ae96cae5b1923af8fd64b",
+      "mcp_sha256": "754f9083ab1caf62eb63866fc801c69d06b3608e956ae96cae5b1923af8fd64b",
+      "equal": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-web/src/config/config.ts",
+      "main_sha256": "18a96d8584165fffc13f3fc84ea21792dcac3bb75ec570f4e3cd3810dd3893af",
+      "mcp_sha256": "18a96d8584165fffc13f3fc84ea21792dcac3bb75ec570f4e3cd3810dd3893af",
+      "equal": true
+    },
+    {
+      "path": "vona/packages-utils/extend/src/index.ts",
+      "main_sha256": "5943585111833591a60d4dffeeacce17da645888b4289e2afa4e49959304783b",
+      "mcp_sha256": "5943585111833591a60d4dffeeacce17da645888b4289e2afa4e49959304783b",
+      "equal": true
+    },
+    {
+      "path": "vona/packages-vona/vona/package.json",
+      "main_sha256": "711b86c7c2ca3e9b7932ab5d8ea43a800b0bb1635c0e3e62376ec8ab50913c06",
+      "mcp_sha256": "711b86c7c2ca3e9b7932ab5d8ea43a800b0bb1635c0e3e62376ec8ab50913c06",
+      "equal": true
+    },
+    {
+      "path": "vona/packages-vona/vona-core/package.json",
+      "main_sha256": "ef89321a5da69e71dfd35ba7e5ba2de65344f1012d0bc5fc111ee2006ed0a6ce",
+      "mcp_sha256": "ef89321a5da69e71dfd35ba7e5ba2de65344f1012d0bc5fc111ee2006ed0a6ce",
+      "equal": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-instance/src/index.ts",
+      "main_sha256": "d374a747a60faa0132b1684c53034a1abdc84e2d54398bbeafa9ab062a31ca0d",
+      "mcp_sha256": "d374a747a60faa0132b1684c53034a1abdc84e2d54398bbeafa9ab062a31ca0d",
+      "equal": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-orm/src/index.ts",
+      "main_sha256": "a2ea926dbdc34cf9978243054ec2093c65b07ea9919cc4ccb1af645ee80576c6",
+      "mcp_sha256": "a2ea926dbdc34cf9978243054ec2093c65b07ea9919cc4ccb1af645ee80576c6",
+      "equal": true
+    },
+    {
+      "path": "vona/src/suite-vendor/a-vona/modules/a-ormdialect/src/index.ts",
+      "main_sha256": "e45e5febcc9e780159f501076d33a6a3afd53a8eeb8b835ecb70658497cba3be",
+      "mcp_sha256": "e45e5febcc9e780159f501076d33a6a3afd53a8eeb8b835ecb70658497cba3be",
+      "equal": true
+    }
+  ],
+  "progress_changes": [
+    {
+      "row": "`WBS-MCP-20-01`",
+      "column": 5
+    }
+  ],
+  "local_links": [
+    {
+      "from": "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+      "target": "./evidence/phase-20/artifacts/production-b-attachments-7cc95dab17-20261021/",
+      "valid": true
+    },
+    {
+      "from": "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+      "target": "./wbs-mcp-20-01-production-b-package.md#10-later-attachment-disposition--bounded-successor-proposed-2026-10-21",
+      "valid": true
+    },
+    {
+      "from": "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+      "target": "./evidence/phase-20/artifacts/production-b-attachments-7cc95dab17-20261021/",
+      "valid": true
+    },
+    {
+      "from": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/production-b-attachments-7cc95dab17-20261021/README.md",
+      "target": "../../../../wbs-mcp-20-01-production-b-package.md#10-later-attachment-disposition--bounded-successor-proposed-2026-10-21",
+      "valid": true
+    },
+    {
+      "from": "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/production-b-attachments-7cc95dab17-20261021/README.md",
+      "target": "../../../../wbs-mcp-20-01-execution-dossier.md#23-finite-production-b-attachment-disposition-and-independent-candidate-2026-10-21",
+      "valid": true
+    }
+  ],
+  "prior_failures_preserved": true,
+  "runtime_or_contract_acceptance": false
+}

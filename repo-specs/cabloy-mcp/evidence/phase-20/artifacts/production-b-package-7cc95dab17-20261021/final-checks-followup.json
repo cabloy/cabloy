@@ -1,0 +1,64 @@
+{
+  "results": [
+    {
+      "operation": "evidence README stdin formatting",
+      "producer_exit": 0
+    },
+    {
+      "command": [
+        "./node_modules/.bin/oxfmt",
+        "--check",
+        "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+        "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+        "repo-specs/cabloy-mcp/progress.md"
+      ],
+      "producer_exit": 0,
+      "sanitizer_exit": 0
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "producer_exit": 0,
+      "sanitizer_exit": 0
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "--silent",
+        "evidence:check",
+        "--",
+        "--map",
+        "<MAIN_CHECKOUT>=MAIN_CHECKOUT",
+        "--",
+        "repo-specs/cabloy-mcp/wbs-mcp-20-01-production-b-package.md",
+        "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md",
+        "repo-specs/cabloy-mcp/progress.md",
+        "repo-specs/cabloy-mcp/evidence/phase-20/artifacts/production-b-package-7cc95dab17-20261021"
+      ],
+      "producer_exit": 0,
+      "sanitizer_exit": 0
+    }
+  ],
+  "prior_followup_capture_guard": {
+    "exit": 1,
+    "producer_evidence_check_exit": 0,
+    "reason": "npm --map ROOT=ALIAS banner is a semantic option form not replaced by path sanitizer; raw/partial capture discarded",
+    "resolution": "silent npm; explicit stable-alias command descriptor; final logs sanitized and manually reviewed"
+  },
+  "source_files_unchanged": 29,
+  "tracked_paths": [
+    "repo-specs/cabloy-mcp/progress.md",
+    "repo-specs/cabloy-mcp/wbs-mcp-20-01-execution-dossier.md"
+  ],
+  "main_external_status": [
+    " M vona/packages-utils/module-glob/package.json",
+    " M vona/packages-utils/module-glob/src/index.ts",
+    "?? vona/packages-utils/module-glob/src/suites.ts",
+    "?? vona/packages-utils/module-glob/test/"
+  ],
+  "main_writes_by_this_preparation": false
+}
