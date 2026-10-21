@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.226
+
+### Features
+- Add rules.
+
+### Bug Fixes
+- Fix module glob handling on Windows.
+- Correct issues in `test.ts`.
+
+### Improvements
+- Refactor TypeScript compilation code.
+
 ## 5.1.225
 
 ### Features
