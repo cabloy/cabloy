@@ -7,6 +7,8 @@ export default defineConfig(
       // root original
       '**/.claude',
       '**/.vscode',
+      // Preserve retained evidence bytes and hashes.
+      'repo-specs/**/evidence/**',
       // glob patterns (from vona & zova, already work from root)
       '**/node_modules',
       '**/dist',
