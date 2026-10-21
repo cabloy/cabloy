@@ -6,14 +6,14 @@ This guide explains the fastest way to start a Cabloy fullstack project.
 
 Before creating a new Cabloy project, make sure your environment has:
 
-| Name         | Version    |
-| ------------ | ---------- |
-| `pnpm`       | `>=11.5.2` |
-| `Node.js`    | `>=24.4.0` |
-| `Redis`      | `>=7.2.6`  |
-| `SQLite3`    | `Built-in` |
-| `MySQL`      | `>=8`      |
-| `PostgreSQL` | `>=16`     |
+| Name         | Version     |
+| ------------ | ----------- |
+| `pnpm`       | `>=12.14.0` |
+| `Node.js`    | `>=24.4.0`  |
+| `Redis`      | `>=7.2.6`   |
+| `SQLite3`    | `Built-in`  |
+| `MySQL`      | `>=8`       |
+| `PostgreSQL` | `>=16`      |
 
 - `Redis`: powers queue, schedule, startup, broadcast, caching, two-layer cache, and redlock
 - `SQLite3`: if you use `better-sqlite3`, set up `node-gyp` before installing dependencies
@@ -36,9 +36,9 @@ For the Start onboarding distinction, read [Cabloy Editions: Cabloy Start](/edit
 
 If you are not sure which edition you are using or which one to choose, read [Cabloy Editions](/editions/overview).
 
-### pnpm 11 supply-chain protection note
+### pnpm 12 supply-chain protection note
 
-`pnpm` 11 enables the `minimumReleaseAge` supply-chain protection by default. Newly published packages may be blocked for a short time window before `pnpm` allows installation.
+`pnpm` 12 enables the `minimumReleaseAge` supply-chain protection by default. Newly published packages may be blocked for a short time window before `pnpm` allows installation.
 
 This matters for `npm create cabloy` because the command downloads Cabloy from npm and then automatically runs `npm run init`. If your environment blocks newly published packages during that flow, temporarily set `pnpm_config_minimum_release_age=0` for the current shell session and rerun the command.
 
@@ -46,7 +46,7 @@ This matters for `npm create cabloy` because the command downloads Cabloy from n
 
 ```powershell
 $env:pnpm_config_minimum_release_age = "0"
-npm create cabloy
+npm create cabloy@latest
 ```
 
 #### Windows Command Prompt

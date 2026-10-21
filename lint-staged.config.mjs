@@ -5,6 +5,8 @@ const OXFMT_IGNORE_PATTERNS = [
   // root original
   '**/.claude',
   '**/.vscode',
+  // Preserve retained evidence bytes and hashes.
+  'repo-specs/**/evidence/**',
   // file type patterns
   '*.min.js',
   '*.code-snippets',

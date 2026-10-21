@@ -7,6 +7,8 @@ export default defineConfig(
       // root original
       '**/.claude',
       '**/.vscode',
+      // Preserve retained evidence bytes and hashes.
+      'repo-specs/**/evidence/**',
       // file type patterns (from vona & zova)
       '*.min.js',
       '*.code-snippets',

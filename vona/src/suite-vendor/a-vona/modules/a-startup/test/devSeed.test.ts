@@ -138,7 +138,7 @@ describe('creation-driven dev seed', { concurrency: false }, () => {
   // Keep reset-flag mutations out of the managed runner's concurrent test process.
   if (process.env.VONA_TEST_RUN_ID !== undefined) {
     it('runs dev seed cases in an isolated process', async () => {
-      const loader = import.meta.resolve('ts-node-maintained/esm');
+      const loader = import.meta.resolve('@swc-node/register/esm');
       const projectRoot = new URL('../../../../../../', import.meta.url);
       const registerSource = `import { register } from 'node:module'; register(${JSON.stringify(loader)}, ${JSON.stringify(projectRoot.href)});`;
       const env = Object.fromEntries(Object.entries(process.env)) as NodeJS.ProcessEnv;

@@ -963,6 +963,9 @@ async function release(options: ReleaseOptions): Promise<void> {
   }
 
   runGovernancePreflight(options.dryRun);
+  if (!options.changelogOnly && !options.releaseOnly) {
+    execInherited('npm run tsc', options.dryRun);
+  }
 
   // Determine the version to use
   let version: string;

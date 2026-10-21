@@ -12,9 +12,6 @@
     "src/backend/typing"
   ],
   "exclude": [],
-  "ts-node": {
-    "swc": true
-  },
   "references": [
     {
       "path": "packages-utils/compose"

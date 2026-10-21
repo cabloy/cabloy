@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url';
 
 // Register before dynamically importing source config/framework (decorators and
 // workspace TS exports). Dependencies resolve from this checkout's Vona install.
-register(import.meta.resolve('ts-node-maintained/esm'), pathToFileURL(`${process.cwd()}/`));
+register(import.meta.resolve('@swc-node/register/esm'), pathToFileURL(`${process.cwd()}/`));
 const require = createRequire(pathToFileURL(path.join(process.cwd(), 'package.json')));
 let queue = Promise.resolve();
 let claim: import('vona-core').TestClaimManifest | undefined;

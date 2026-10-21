@@ -44,11 +44,42 @@ Cabloy Basic exposes these shared root scripts:
 - `npm run contract:generate:isolated`
 - `npm run db:reset`
 - `npm run tsc`
+- `npm run tsc:force`
+- `npm run tsc:native`
+- `npm run tsc:legacy`
+- `npm run test:typecheck`
 - `npm run docs:dev`
 - `npm run docs:build`
 - `npm run docs:preview`
 
 `npm run init` prepares all Cabloy Basic SSR and REST artifacts with `npm run build:zova:all`, which sequentially builds the Basic and Commerce flavor batches before Vona initialization. Use `build:zova` or `build:zova:commerce` for focused artifact refreshes; use `build:zova:all` only when every shipped Basic flavor must be prepared.
+
+## TypeScript toolchains in Cabloy Basic
+
+Cabloy Basic keeps two TypeScript toolchains: root `@typescript/native` is the exact npm alias `npm:typescript@7.0.2`, while classic `typescript` 5.9.3 remains available for compiler-API consumers and existing tooling. The alias changes the dependency name, not the executable name: its package still declares `bin.tsc`, not a separate `native` or `tsgo` command.
+
+Use the explicit root commands to select the verification toolchain:
+
+| Root command                         | Scope                                                                                                                              |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run tsc` / `npm run tsc:native` | Check Zova, then the complete Vona graph, with native TypeScript; reuse Vona incremental results.                                  |
+| `npm run tsc:force`                  | Check the same scopes with native TypeScript, forcing Vona to rebuild.                                                             |
+| `npm run tsc:legacy`                 | Check the same scopes with classic TypeScript.                                                                                     |
+| `npm run tsc:zova:native`            | Check Zova with native TypeScript.                                                                                                 |
+| `npm run tsc:zova:legacy`            | Check Zova with classic TypeScript.                                                                                                |
+| `npm run tsc:vona:native`            | Check the complete Vona graph with native TypeScript, reusing incremental results.                                                 |
+| `npm run tsc:vona:native:force`      | Force native checking of the complete Vona graph.                                                                                  |
+| `npm run test:typecheck`             | Test compiler selection, argument and failure propagation, Vona graph traversal, and installed compiler versions/API availability. |
+
+`scripts/typecheck.ts` delegates to the package-resolving runner in `vona/packages-cli/cli-set-api/src/lib/typescriptRunner.ts`. It resolves `@typescript/native` or `typescript` from the target workspace, reads that package's `bin.tsc`, and invokes it directly with Node. Native Vona checks use the same runner. This avoids relying on `PATH` or a shared `.bin/tsc` name to identify the selected compiler.
+
+Both explicit Zova checks use `tsconfig.vue-tsc.json` with `--noEmit --incremental false`. Native Vona checks retain build mode (`-b`), visiting the project, every local suite, and every standalone local module, rather than replacing that graph with a root-only no-emit check. The default native check omits `--force`; `tsc:force` adds it without changing the traversal scope. Zova's cache policy is unchanged, so the force distinction applies to Vona. The explicit legacy check continues to force a rebuild. Vona's emitted files and build-info artifacts are shared between compiler versions: run native and legacy checks **serially**, and coordinate them with other operations writing the same artifacts. After switching from TS5 back to native, run `npm run tsc:force` before relying on incremental checks. Forced rebuilding prevents one compiler's incremental state from standing in for verification by the other; it does not isolate their output.
+
+Root `npm run tsc` delegates to incremental `tsc:native` for daily development; use `tsc:force` for full forced verification and `tsc:legacy` for comparison or fallback. The nested Vona and Zova `tsc` defaults, frontend `prerun`, build commands, package publish emitters, and REST emitters remain unchanged. Classic TypeScript remains installed for compiler-JavaScript-API consumers, including SWC configuration loading, Rollup integration, and OpenAPI generation; the existing REST native-preview emitter dependency is also retained.
+
+The native alias is installed at the repository root, not in either nested workspace. Run `pnpm install` at the root after updating the checkout; a missing alias fails with an installation diagnostic rather than silently selecting the legacy compiler. A standalone Vona project using `--compiler=native` must install that alias in its project or an ancestor. Do not use a bare root `tsc`/`pnpm exec tsc` to choose a compiler, because both packages declare the same binary name.
+
+The `vona-tsc` CI workflow runs root `npm run test:typecheck`, then root `npm run tsc:legacy`, after its existing initialization. The root release workflow runs `npm run tsc` before versioning/publishing (excluding changelog-only and GitHub-release-only runs), and its post-release compensation verification uses the same default entrypoint. CI therefore uses the forced classic TypeScript check, while release checks use native TypeScript with Vona's incremental behavior. Check the active repository before assuming the same aliases or commands exist in Cabloy Start.
 
 ## Test isolation and development data {#test-isolation-and-development-data}
 
@@ -106,7 +137,7 @@ For deliberate **dev-mode** database preparation, `npm run db:reset` is a separa
 
 <span id="native-windows-unit-tests"></span>
 
-The Cabloy Basic SQLite unit-test workflow and Chromium application E2E workflow configure native Windows runners alongside Ubuntu and macOS. Each E2E suite has its own three-OS matrix with `fail-fast: false`, Node.js 24, pnpm 11.5.2, and SQLite. Basic selects `cabloy-basic home-user-account`; Commerce selects `a-commerce markdown` and retains its explicit Commerce artifact build and Vona dependency synchronization. A configured matrix is not proof of a successful run: inspect the focused gates, real Windows Chromium lifecycle regressions, and all six hosted Basic/Commerce suite-and-OS results before claiming verified platform compatibility.
+The Cabloy Basic SQLite unit-test workflow and Chromium application E2E workflow configure native Windows runners alongside Ubuntu and macOS. Each E2E suite has its own three-OS matrix with `fail-fast: false`, Node.js 24, pnpm 12.14.0, and SQLite. Basic selects `cabloy-basic home-user-account`; Commerce selects `a-commerce markdown` and retains its explicit Commerce artifact build and Vona dependency synchronization. A configured matrix is not proof of a successful run: inspect the focused gates, real Windows Chromium lifecycle regressions, and all six hosted Basic/Commerce suite-and-OS results before claiming verified platform compatibility.
 
 On Windows, the managed test entrypoints require Node.js with npm, PowerShell 7 (`pwsh.exe` on `PATH`), local NTFS storage, and a reachable Redis service. E2E also requires Playwright's Chromium installation and current SSR/REST artifacts with Vona dependencies synchronized. PowerShell is an internal helper dependency, not a required interactive terminal. From either CMD or PowerShell, use the same public commands:
 

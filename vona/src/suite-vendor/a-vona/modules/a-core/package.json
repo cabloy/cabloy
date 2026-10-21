@@ -1,6 +1,6 @@
 {
   "name": "vona-module-a-core",
-  "version": "5.1.64",
+  "version": "5.1.65",
   "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
   "description": "",
   "keywords": [
@@ -56,6 +56,7 @@
   },
   "devDependencies": {
     "@cabloy/cli": "workspace:^",
+    "@swc-node/register": "^1.12.1",
     "@swc/core": "^1.15.26",
     "@swc/helpers": "^0.5.21",
     "@types/babel__core": "^7.20.5",
@@ -69,7 +70,6 @@
     "cross-env": "^7.0.3",
     "gogocode": "^1.0.55",
     "rimraf": "^6.1.3",
-    "ts-node-maintained": "^10.9.6",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
     "vona-mock": "workspace:^",
@@ -111,6 +111,7 @@
     },
     "globalDependenciesDev": {
       "@cabloy/cli": true,
+      "@swc-node/register": true,
       "@swc/core": true,
       "@swc/helpers": true,
       "@types/babel__core": true,
@@ -122,7 +123,6 @@
       "@types/retry": true,
       "cross-env": true,
       "gogocode": true,
-      "ts-node-maintained": true,
       "tslib": true,
       "typescript": true,
       "vona-mock": true,

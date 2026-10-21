@@ -37,8 +37,5 @@
     "src/backend/play",
     "src/backend/typing"
   ],
-  "exclude": [],
-  "ts-node": {
-    "swc": true
-  }
+  "exclude": []
 }

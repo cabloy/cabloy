@@ -1,5 +1,42 @@
 # Changelog
 
+## 5.1.225
+
+### Features
+
+- Apply feature updates.
+
+### Bug Fixes
+
+- Fix test CI.
+
+### Improvements
+
+- Update the pnpm version.
+
+## 5.1.224
+
+### Features
+
+- Update functionality.
+
+### Improvements
+
+- Update the release script.
+
+## 5.1.223
+
+### Features
+
+- Add a CLI test command.
+
+### Improvements
+
+- Replace ts-node with swc-core.
+- Refactor TypeScript compilation.
+- Update isolated test coverage.
+- Update dependency lockfile.
+
 ## 5.1.222
 
 ### Features
