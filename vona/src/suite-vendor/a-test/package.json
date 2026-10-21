@@ -1,14 +1,14 @@
 {
   "name": "vona-suite-a-test",
-  "version": "5.0.55",
+  "version": "5.0.56",
   "description": "",
   "author": "",
   "files": [],
   "type": "module",
   "dependencies": {
-    "vona-module-test-file": "^5.0.9",
+    "vona-module-test-file": "^5.0.10",
     "vona-module-test-markdown": "^5.0.3",
-    "vona-module-test-pay": "^5.0.9"
+    "vona-module-test-pay": "^5.0.10"
   },
   "title": "a-test"
 }
