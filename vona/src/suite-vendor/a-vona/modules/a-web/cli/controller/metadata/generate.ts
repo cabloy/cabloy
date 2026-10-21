@@ -1,10 +1,11 @@
+import type { types as t } from '@babel/core';
 import type { IMetadataCustomGenerateOptions } from '@cabloy/cli';
 
 import { combineApiPathControllerAndActionRaw } from '@cabloy/utils';
 import { toUpperCaseFirstChar } from '@cabloy/word-utils';
 
 export default async function (options: IMetadataCustomGenerateOptions): Promise<string> {
-  const { sceneName, moduleName, globFiles } = options;
+  const { sceneName, moduleName, globFiles, cli } = options;
   const contentResources: string[] = [];
   const contentImports: string[] = [];
   const contentActions: string[] = [];
@@ -22,11 +23,25 @@ export default async function (options: IMetadataCustomGenerateOptions): Promise
     export interface ${opionsName} {
       actions?: TypeControllerOptionsActions<${className}>;
     }`);
+    const file = cli.helper.gogocode(fileContent, {
+      parseOptions: { sourceType: 'module', plugins: ['typescript', 'decorators-legacy'] },
+    }).node as t.File;
+    const declaration = file.program.body
+      .map(statement =>
+        statement.type === 'ExportNamedDeclaration' || statement.type === 'ExportDefaultDeclaration'
+          ? statement.declaration
+          : statement,
+      )
+      .find(
+        (node): node is t.ClassDeclaration =>
+          node?.type === 'ClassDeclaration' && node.id?.name === className,
+      );
+    if (!declaration) continue;
     // controllerPath
-    const controllerPath = __parseControllerPath(fileContent);
+    const controllerPath = __parseControllerPath(declaration);
     if (controllerPath === false) continue;
     // actionPath;
-    const actionPaths = __parseActionPaths(fileContent);
+    const actionPaths = __parseActionPaths(declaration);
     for (const [method, actionPath] of actionPaths) {
       if (!contentPaths[method]) contentPaths[method] = [];
       const apiPath = __combineApiPath(moduleName, controllerPath, actionPath);
@@ -81,36 +96,65 @@ ${contentResources2}
   return content;
 }
 
-function __parseControllerPath(fileContent: string): string | false {
-  let matched = fileContent.match(
-    /@Controller<.*?>\(\{[\s\S]*?path: ('[^']*')[\s\S]*?\}[\s\S]*?\)\s*export class/,
-  );
-  if (!matched) {
-    matched = fileContent.match(/@Controller<.*?>\(([^)]*)\)/);
+function __parseControllerPath(declaration: t.ClassDeclaration): string | false {
+  for (const decorator of declaration.decorators ?? []) {
+    const call = decorator.expression;
+    if (
+      call.type !== 'CallExpression' ||
+      call.callee.type !== 'Identifier' ||
+      call.callee.name !== 'Controller'
+    ) {
+      continue;
+    }
+    const argument = call.arguments[0];
+    if (!argument) return '';
+    if (argument.type === 'StringLiteral') return argument.value;
+    if (argument.type !== 'ObjectExpression') return false;
+    // Read the last explicit path; a later spread/computed key makes it dynamic.
+    for (const property of argument.properties.toReversed()) {
+      if (property.type === 'SpreadElement' || property.computed) return false;
+      const key = property.key;
+      if (
+        (key.type === 'Identifier' && key.name === 'path') ||
+        (key.type === 'StringLiteral' && key.value === 'path')
+      ) {
+        return property.type === 'ObjectProperty' && property.value.type === 'StringLiteral'
+          ? property.value.value
+          : false;
+      }
+    }
+    return '';
   }
-  if (!matched) return false;
-  const controllerPath = matched[1];
-  if (controllerPath === '') return '';
-  return controllerPath.split(',')[0].replaceAll("'", '');
+  return false;
 }
 
-function __parseActionPaths(fileContent: string): [string, string][] {
+function __parseActionPaths(declaration: t.ClassDeclaration): [string, string][] {
   const actionPaths: [string, string][] = [];
-  const matches = fileContent.match(
-    /(@Web\.get|@Web\.post|@Web\.delete|@Web\.put|@Web\.patch)\([\s\S]*?\)/g,
-  );
-  if (!matches) return [];
-  for (const match of matches) {
-    const matches2 = match.match(/@([^(]*)\(([\s\S]*?)\)/);
-    if (!matches2) throw new Error('parse action path error');
-    let actionPath = matches2[2];
-    if (actionPath !== '' && !actionPath.startsWith("'")) continue; // exclude regexp
-    if (actionPath.startsWith("'")) {
-      const pos = actionPath.indexOf("'", 1);
-      actionPath = actionPath.substring(1, pos);
+  for (const member of declaration.body.body) {
+    if (member.type !== 'ClassMethod') continue;
+    for (const decorator of member.decorators ?? []) {
+      const call = decorator.expression;
+      if (call.type !== 'CallExpression') continue;
+      const callee = call.callee;
+      if (
+        callee.type !== 'MemberExpression' ||
+        callee.computed ||
+        callee.object.type !== 'Identifier' ||
+        callee.object.name !== 'Web' ||
+        callee.property.type !== 'Identifier' ||
+        !['get', 'post', 'delete', 'put', 'patch'].includes(callee.property.name)
+      ) {
+        continue;
+      }
+      const argument = call.arguments[0];
+      // Options-only and no-argument decorators map to the root action route.
+      // RegExp and other dynamic expressions cannot supply static route metadata.
+      if (!argument || argument.type === 'ObjectExpression') {
+        actionPaths.push([toUpperCaseFirstChar(callee.property.name), '']);
+      } else if (argument.type === 'StringLiteral') {
+        actionPaths.push([toUpperCaseFirstChar(callee.property.name), argument.value]);
+      }
     }
-    const method = toUpperCaseFirstChar(matches2[1].substring(4));
-    actionPaths.push([method, actionPath]);
   }
   return actionPaths;
 }

@@ -1,7 +1,9 @@
 import { oxcLintConfigVue } from '@cabloy/lint';
 import { defineConfig } from 'oxlint';
 
-export default defineConfig(
+import { resolveOxlintPlugins } from './scripts/oxlintPlugins.ts';
+
+const config = defineConfig(
   oxcLintConfigVue({
     ignorePatterns: [
       // root original
@@ -69,3 +71,5 @@ export default defineConfig(
     ],
   }),
 );
+
+export default resolveOxlintPlugins(config);

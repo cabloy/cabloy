@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "5.1.226",
+  "version": "5.1.227",
   "gitHead": "2c5c19284bab738e492856189acb6fad74b8a7b7",
   "description": "A Node.js fullstack framework",
   "keywords": [
@@ -98,8 +98,8 @@
     "lerna": "^10.0.0",
     "lint-staged": "^17.0.5",
     "minimist": "^1.2.8",
-    "oxfmt": "^0.62.0",
-    "oxlint": "^1.77.0",
+    "oxfmt": "^0.74.0",
+    "oxlint": "^1.89.0",
     "tar": "^7.5.22",
     "textlint": "^15.7.0",
     "textlint-rule-en-no-mixed-period": "^3.0.2",
