@@ -641,7 +641,6 @@ test(
     try {
       const script = `
       import { writeFileSync } from 'node:fs';
-      writeFileSync(process.argv[1], 'ready');
       process.on('SIGINT', () => {
         setTimeout(() => {
           writeFileSync(process.argv[2], 'stopped');
@@ -649,6 +648,7 @@ test(
         }, 150);
       });
       setInterval(() => {}, 1000);
+      writeFileSync(process.argv[1], 'ready');
     `;
       const pending = runIsolatedProcess(
         process.execPath,
