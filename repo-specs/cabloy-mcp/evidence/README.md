@@ -16,3 +16,5 @@ For future retained evidence, normalize repository paths and redact external mac
 
 - [Phase 10 evidence](./phase-10/index.md)
 - [Phase 20 evidence](./phase-20/index.md)
+- [Single product-search business slice](./business-products-search.md) — partial catalog/dispatch proof, not production or full ATP closure.
+- [Product search → detail business slice](./business-product-detail.md) — scoped verification history and context limits; no production or full ATP closure.
