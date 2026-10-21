@@ -29,7 +29,6 @@ publicHoistPattern:
   - '*cabloy*'
   - '*@cabloy*'
   - '*why-is-node-running*'
-  - '*ts-node*'
   - zod
 
 overrides:
