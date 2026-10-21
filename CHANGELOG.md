@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.1.223
+
+### Features
+
+- Add a CLI test command.
+
+### Improvements
+
+- Replace ts-node with swc-core.
+- Refactor TypeScript compilation.
+- Update isolated test coverage.
+- Update dependency lockfile.
+
 ## 5.1.222
 
 ### Features
