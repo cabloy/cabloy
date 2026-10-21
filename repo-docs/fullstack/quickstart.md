@@ -46,7 +46,7 @@ This matters for `npm create cabloy` because the command downloads Cabloy from n
 
 ```powershell
 $env:pnpm_config_minimum_release_age = "0"
-npm create cabloy
+npm create cabloy@latest
 ```
 
 #### Windows Command Prompt
