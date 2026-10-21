@@ -1,3 +1,7 @@
+import type { TableIdentity } from 'table-identity';
+import type { IPerformActionOptions } from 'vona-module-a-executor';
+import type { IApiPathRecordMethodMap } from 'vona-module-a-web';
+
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
@@ -35,7 +39,10 @@ function createAddress(suffix: string): DtoAddressMineCreate {
   };
 }
 
-async function performAs(accessToken: string, method: string, path: string, options = {}) {
+async function performAs<
+  METHOD extends keyof IApiPathRecordMethodMap,
+  PATH extends keyof IApiPathRecordMethodMap[METHOD],
+>(accessToken: string, method: METHOD, path: PATH, options: IPerformActionOptions = {}) {
   return await app.bean.executor.newCtxIsolate(async () => {
     return await app.bean.executor.performAction(method, path, {
       ...options,
@@ -92,18 +99,37 @@ describe('addressOwnership.test.ts', () => {
 
   it('denies anonymous Admin and Web Address actions', async () => {
     await app.bean.executor.mockCtx(async () => {
-      for (const [method, path, options] of [
-        ['get', actionPath, {}],
-        ['get', `${actionPath}/:id`, { params: { id: 999999 } }],
-        ['get', minePath, {}],
-        ['get', viewMinePath, { params: { id: 999999 } }],
-        ['post', createMinePath, { body: createAddress('anonymous') }],
-        ['patch', updateMinePath, { params: { id: 999999 }, body: createAddress('anonymous') }],
-        ['delete', deleteMinePath, { params: { id: 999999 } }],
-      ] as const) {
-        const [_, err] = await catchError(() =>
-          app.bean.executor.performAction(method, path, { ...options, innerAccess: false }),
-        );
+      for (const action of [
+        () => app.bean.executor.performAction('get', actionPath, { innerAccess: false }),
+        () =>
+          app.bean.executor.performAction('get', `${actionPath}/:id`, {
+            params: { id: 999999 },
+            innerAccess: false,
+          }),
+        () => app.bean.executor.performAction('get', minePath, { innerAccess: false }),
+        () =>
+          app.bean.executor.performAction('get', viewMinePath, {
+            params: { id: 999999 },
+            innerAccess: false,
+          }),
+        () =>
+          app.bean.executor.performAction('post', createMinePath, {
+            body: createAddress('anonymous'),
+            innerAccess: false,
+          }),
+        () =>
+          app.bean.executor.performAction('patch', updateMinePath, {
+            params: { id: 999999 },
+            body: createAddress('anonymous'),
+            innerAccess: false,
+          }),
+        () =>
+          app.bean.executor.performAction('delete', deleteMinePath, {
+            params: { id: 999999 },
+            innerAccess: false,
+          }),
+      ]) {
+        const [_, err] = await catchError(action);
         assert.equal(err?.code, 401);
       }
     });
@@ -111,7 +137,7 @@ describe('addressOwnership.test.ts', () => {
 
   it('derives Web ownership from Passport and treats foreign rows as absent', async () => {
     await app.bean.executor.mockCtx(async () => {
-      let addressId: number | undefined;
+      let addressId: TableIdentity | undefined;
       try {
         const suffix = createTestId();
         const customerA = await registerAndSignin(`address-a-${suffix}`);
@@ -121,6 +147,7 @@ describe('addressOwnership.test.ts', () => {
           body: { ...addressData, userId: customerB.user.id, iid: 999999 } as any,
         });
 
+        assert.ok(addressId !== undefined);
         const persisted = await app.scope('commerce-member').model.address.getById(addressId);
         assert.equal(String(persisted?.userId), String(customerA.user.id));
         assert.equal(persisted?.iid, app.ctx.instance.id);
@@ -201,7 +228,7 @@ describe('addressOwnership.test.ts', () => {
 
   it('exposes active-instance Address inspection only to systemAdmin', async () => {
     await app.bean.executor.mockCtx(async () => {
-      let addressId: number | undefined;
+      let addressId: TableIdentity | undefined;
       try {
         const suffix = createTestId();
         const customer = await registerAndSignin(`address-admin-${suffix}`);
@@ -238,7 +265,7 @@ describe('addressOwnership.test.ts', () => {
   });
 
   it('treats another instance Address as absent on Web actions', async () => {
-    let addressId: number | undefined;
+    let addressId: TableIdentity | undefined;
     let customerDefault!: Awaited<ReturnType<typeof registerAndSignin>>;
     const addressDefault = createAddress('default');
     try {

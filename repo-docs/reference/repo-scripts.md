@@ -44,9 +44,8 @@ Cabloy Basic exposes these shared root scripts:
 - `npm run contract:generate:isolated`
 - `npm run db:reset`
 - `npm run tsc`
-- `npm run tsc:force`
-- `npm run tsc:native`
-- `npm run tsc:legacy`
+- `npm run tsc:zova`
+- `npm run tsc:vona`
 - `npm run test:typecheck`
 - `npm run docs:dev`
 - `npm run docs:build`
@@ -58,28 +57,28 @@ Cabloy Basic exposes these shared root scripts:
 
 Cabloy Basic keeps two TypeScript toolchains: root `@typescript/native` is the exact npm alias `npm:typescript@7.0.2`, while classic `typescript` 5.9.3 remains available for compiler-API consumers and existing tooling. The alias changes the dependency name, not the executable name: its package still declares `bin.tsc`, not a separate `native` or `tsgo` command.
 
-Use the explicit root commands to select the verification toolchain:
+Use the root commands to select the workspace scope:
 
-| Root command                         | Scope                                                                                                                              |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run tsc` / `npm run tsc:native` | Check Zova, then the complete Vona graph, with native TypeScript; reuse Vona incremental results.                                  |
-| `npm run tsc:force`                  | Check the same scopes with native TypeScript, forcing Vona to rebuild.                                                             |
-| `npm run tsc:legacy`                 | Check the same scopes with classic TypeScript.                                                                                     |
-| `npm run tsc:zova:native`            | Check Zova with native TypeScript.                                                                                                 |
-| `npm run tsc:zova:legacy`            | Check Zova with classic TypeScript.                                                                                                |
-| `npm run tsc:vona:native`            | Check the complete Vona graph with native TypeScript, reusing incremental results.                                                 |
-| `npm run tsc:vona:native:force`      | Force native checking of the complete Vona graph.                                                                                  |
-| `npm run test:typecheck`             | Test compiler selection, argument and failure propagation, Vona graph traversal, and installed compiler versions/API availability. |
+| Root command             | Scope                                                                                                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run tsc`            | Check Zova, then Vona, through their workspace defaults: single-project, no-emit checks with native TypeScript and incremental caching disabled.                          |
+| `npm run tsc:zova`       | Check Zova through its workspace `tsc` script.                                                                                                                            |
+| `npm run tsc:vona`       | Check Vona through its workspace `tsc` script.                                                                                                                            |
+| `npm run test:typecheck` | Test compiler selection, argument and failure propagation, daily-check configuration/scripts, CLI command registration, and installed compiler versions/API availability. |
 
-`scripts/typecheck.ts` delegates to the package-resolving runner in `vona/packages-cli/cli-set-api/src/lib/typescriptRunner.ts`. It resolves `@typescript/native` or `typescript` from the target workspace, reads that package's `bin.tsc`, and invokes it directly with Node. Native Vona checks use the same runner. This avoids relying on `PATH` or a shared `.bin/tsc` name to identify the selected compiler.
+`scripts/typecheck.ts` delegates to the package-resolving runner in `scripts/typescriptRunner.ts`. It resolves `@typescript/native` or `typescript` from the target workspace, reads that package's `bin.tsc`, and invokes it directly with Node. Native Vona checks use the same runner. This avoids relying on `PATH` or a shared `.bin/tsc` name to identify the selected compiler.
 
-Both explicit Zova checks use `tsconfig.vue-tsc.json` with `--noEmit --incremental false`. Native Vona checks retain build mode (`-b`), visiting the project, every local suite, and every standalone local module, rather than replacing that graph with a root-only no-emit check. The default native check omits `--force`; `tsc:force` adds it without changing the traversal scope. Zova's cache policy is unchanged, so the force distinction applies to Vona. The explicit legacy check continues to force a rebuild. Vona's emitted files and build-info artifacts are shared between compiler versions: run native and legacy checks **serially**, and coordinate them with other operations writing the same artifacts. After switching from TS5 back to native, run `npm run tsc:force` before relying on incremental checks. Forced rebuilding prevents one compiler's incremental state from standing in for verification by the other; it does not isolate their output.
+Explicit native and legacy checks use `--noEmit --incremental false`: Zova selects `tsconfig.vue-tsc.json`, and Vona selects `tsconfig.json`. Vona's daily config has no `include` or project `references`; default source discovery is filtered by `exclude`, following Zova's approach. Backend/application/module source and module tests are checked together in one program. CLI tooling, package-directory roots, dependencies, distribution output, and generated runtime/REST directories are excluded from initial discovery. Exclusions are not import barriers: required framework/package source and hidden module metadata still participate through imports. Unreferenced hidden helpers and generated `.vona` bootstraps are not independent daily-check roots.
 
-Root `npm run tsc` delegates to incremental `tsc:native` for daily development; use `tsc:force` for full forced verification and `tsc:legacy` for comparison or fallback. The nested Vona and Zova `tsc` defaults, frontend `prerun`, build commands, package publish emitters, and REST emitters remain unchanged. Classic TypeScript remains installed for compiler-JavaScript-API consumers, including SWC configuration loading, Rollup integration, and OpenAPI generation; the existing REST native-preview emitter dependency is also retained.
+Root `npm run tsc` runs `tsc:zova`, then `tsc:vona`; these are the only root `tsc` entrypoints. Compiler selection remains in the nested workspaces: use `pnpm --dir zova run tsc:legacy` or `pnpm --dir vona run tsc:legacy` for comparison or fallback, and the corresponding workspace `tsc:native` scripts for explicit native checks. The former `tsc:force`, `tsc:vona:native:force`, and nested Vona `tsc:native:force` aliases have been removed: these source checks neither run a project build nor emit declarations/build-info files. Each module's existing publication scripts remain responsible for its declaration output; there is no separate root declaration-validation workflow.
 
-The native alias is installed at the repository root, not in either nested workspace. Run `pnpm install` at the root after updating the checkout; a missing alias fails with an installation diagnostic rather than silently selecting the legacy compiler. A standalone Vona project using `--compiler=native` must install that alias in its project or an ancestor. Do not use a bare root `tsc`/`pnpm exec tsc` to choose a compiler, because both packages declare the same binary name.
+In both nested workspaces, `npm run tsc` delegates to `npm run tsc:native`. Native and legacy checks first run `npm run prerun`, then invoke the selected compiler with incremental caching disabled. Root workspace aliases delegate to these scripts too, so dependency and generated metadata preparation is not bypassed. Each workspace's `prerun` runs only its `:tools:deps` command; it does not call `tsc`, avoiding recursive script execution. Preparation may refresh generated metadata or dependency manifests and install changed dependencies, while the compiler step itself emits no declarations or build-info files.
 
-The `vona-tsc` CI workflow runs root `npm run test:typecheck`, then root `npm run tsc:legacy`, after its existing initialization. The root release workflow runs `npm run tsc` before versioning/publishing (excluding changelog-only and GitHub-release-only runs), and its post-release compensation verification uses the same default entrypoint. CI therefore uses the forced classic TypeScript check, while release checks use native TypeScript with Vona's incremental behavior. Check the active repository before assuming the same aliases or commands exist in Cabloy Start.
+Zova development and build entrypoints call `npm run prerun` before Quasar or REST emission to prepare dependencies and generated metadata without automatically running a typecheck. Run `npm run tsc`, `npm run tsc:native`, or `npm run tsc:legacy` explicitly inside the Zova workspace when source typechecking is needed. The former multi-project Vona CLI command `:bin:tsc` has been removed; use the project checking scripts instead. Module publication configurations and REST emitters are unchanged. Classic TypeScript remains installed for compiler-JavaScript-API consumers, including SWC configuration loading, Rollup integration, and OpenAPI generation; the existing REST native-preview emitter dependency is also retained.
+
+The native alias is installed at the repository root, not in either nested workspace. Run `pnpm install` at the root after updating the checkout; a missing alias fails with an installation diagnostic rather than silently selecting the legacy compiler. Do not use a bare root `tsc`/`pnpm exec tsc` to choose a compiler, because both packages declare the same binary name.
+
+The `vona-tsc` CI workflow runs root `npm run test:typecheck`, then root `npm run tsc`, after its existing initialization. The root release workflow runs `npm run tsc` before versioning/publishing (excluding changelog-only and GitHub-release-only runs), and its post-release compensation verification uses the same default entrypoint. CI and release checks therefore both use native TypeScript source checks through the workspace defaults, with incremental caching disabled. Check the active repository before assuming the same aliases or commands exist in Cabloy Start.
 
 ## Test isolation and development data {#test-isolation-and-development-data}
 

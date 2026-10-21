@@ -1,22 +1,24 @@
+import type { TableIdentity } from 'table-identity';
+
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { after, before, describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
 
 interface IFixture {
-  categoryId?: number;
-  productId?: number;
-  skuId?: number;
-  balanceId?: number;
-  templateId?: number;
-  grantId?: number;
-  addressId?: number;
-  cartId?: number;
-  userId?: number;
+  categoryId?: TableIdentity;
+  productId?: TableIdentity;
+  skuId?: TableIdentity;
+  balanceId?: TableIdentity;
+  templateId?: TableIdentity;
+  grantId?: TableIdentity;
+  addressId?: TableIdentity;
+  cartId?: TableIdentity;
+  userId?: TableIdentity;
   customerName?: string;
-  orderId?: number;
-  paymentAttemptId?: number;
-  paymentSessionId?: number;
+  orderId?: TableIdentity;
+  paymentAttemptId?: TableIdentity;
+  paymentSessionId?: TableIdentity;
 }
 
 async function cleanup(fixture: IFixture) {
@@ -117,6 +119,7 @@ async function createPaidOrder(suffix: string): Promise<IFixture> {
       lifecycle: 'active',
     },
   });
+  assert.ok(fixture.skuId !== undefined);
   fixture.balanceId = (
     await app.scope('commerce-trade').service.stockBalance.adjustStock({
       skuId: fixture.skuId,
@@ -172,6 +175,7 @@ async function createPaidOrder(suffix: string): Promise<IFixture> {
   await app
     .scope('commerce-trade')
     .model.cartItem.insert({ cartId: cart.id, skuId: fixture.skuId, quantity: 1 });
+  assert.ok(fixture.addressId !== undefined);
   const checkout = await app.scope('commerce-trade').service.order.checkout({
     addressId: fixture.addressId,
     couponGrantId: fixture.grantId,
@@ -264,7 +268,7 @@ async function waitForPostgresWaiter(waiterPid: number, holderPid: number): Prom
   assert.fail(`PostgreSQL backend ${waiterPid} was not blocked by backend ${holderPid}`);
 }
 
-describe('refundLifecycle.test.ts', { concurrency: false, sequential: true }, () => {
+describe('refundLifecycle.test.ts', { concurrency: false }, () => {
   let releaseTestLock: (() => void) | undefined;
 
   before(async () => {
@@ -363,6 +367,7 @@ describe('refundLifecycle.test.ts', { concurrency: false, sequential: true }, ()
         const executed = await order.executeRefund(fixture.orderId!);
         await assert.rejects(order.executeRefund(fixture.orderId!), { status: 409 });
         const pay = app.scope('a-pay');
+        assert.ok(executed.refundOperationId !== undefined);
         const refundOperation = await pay.model.refundOperation.getById(executed.refundOperationId);
         const providerOperation = await pay.model.providerOperation.get({
           refundOperationId: refundOperation?.id,
@@ -427,7 +432,8 @@ describe('refundLifecycle.test.ts', { concurrency: false, sequential: true }, ()
             where: { refundRequestId: approved.refundRequestId },
           });
           const [audit] = audits.filter(item => item.toRefundState === 'failed');
-          assert.equal(audit?.idempotencyKey.length <= 100, true);
+          assert.ok(audit?.idempotencyKey !== undefined);
+          assert.equal(audit.idempotencyKey.length <= 100, true);
           assert.equal(audit?.correlationId.length <= 100, true);
         });
       }
@@ -844,14 +850,11 @@ describe('refundLifecycle.test.ts', { concurrency: false, sequential: true }, ()
         Object.assign(fixture, await createPaidOrder(randomUUID().slice(0, 12)));
         await app.bean.passport.signout();
         await assert.rejects(
-          app.bean.executor.performAction(
-            'post',
-            `/commerce/trade/order/${fixture.orderId}/requestRefund`,
-            {
-              innerAccess: false,
-              body: { reason: 'anonymous', idempotencyKey: 'anonymous-1' },
-            },
-          ),
+          app.bean.executor.performAction('post', '/commerce/trade/order/:id/requestRefund', {
+            params: { id: fixture.orderId },
+            innerAccess: false,
+            body: { reason: 'anonymous', idempotencyKey: 'anonymous-1' },
+          }),
           (error: any) => error.code === 401,
         );
         await app.bean.passport.signinMock(fixture.customerName as any);
@@ -860,14 +863,11 @@ describe('refundLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           idempotencyKey: 'customer-1',
         });
         await assert.rejects(
-          app.bean.executor.performAction(
-            'post',
-            `/commerce/trade/order/${fixture.orderId}/approveRefund`,
-            {
-              innerAccess: false,
-              body: { reason: 'not admin', idempotencyKey: 'not-admin-1' },
-            },
-          ),
+          app.bean.executor.performAction('post', '/commerce/trade/order/:id/approveRefund', {
+            params: { id: fixture.orderId },
+            innerAccess: false,
+            body: { reason: 'not admin', idempotencyKey: 'not-admin-1' },
+          }),
           (error: any) => error.code === 403,
         );
       } finally {

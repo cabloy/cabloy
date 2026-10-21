@@ -5,7 +5,6 @@ import binDbReset from './command/bin.dbReset.ts';
 import binDev from './command/bin.dev.ts';
 import binPlay from './command/bin.play.ts';
 import binTest from './command/bin.test.ts';
-import binTsc from './command/bin.tsc.ts';
 import createBean from './command/create.bean.ts';
 import createModule from './command/create.module.ts';
 import createSuite from './command/create.suite.ts';
@@ -41,7 +40,6 @@ export const commands = {
     dev: binDev,
     play: binPlay,
     test: binTest,
-    tsc: binTsc,
   },
   create: {
     suite: createSuite,

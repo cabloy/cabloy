@@ -1,3 +1,5 @@
+import type { TableIdentity } from 'table-identity';
+
 import { catchError } from '@cabloy/utils';
 import fse from 'fs-extra';
 import assert from 'node:assert';
@@ -6,7 +8,7 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
-function assertViewInternalFieldsAbsent(view: Record<string, unknown>) {
+function assertViewInternalFieldsAbsent(view: object) {
   assert.equal('provider' in view, false);
   assert.equal('resourceId' in view, false);
   assert.equal('clientName' in view, false);
@@ -28,8 +30,8 @@ describe('fileNative.test.ts', () => {
   it('action:file:native upload/get/download/delete', async () => {
     await app.bean.executor.mockCtx(async () => {
       const filePath = path.join(os.tmpdir(), 'test-file-native.txt');
-      let fileId: number | undefined;
-      let privateFileId: number | undefined;
+      let fileId: TableIdentity | undefined;
+      let privateFileId: TableIdentity | undefined;
       await fse.writeFile(filePath, 'hello file-native');
       try {
         const file = await app.bean.file.upload(
@@ -58,11 +60,12 @@ describe('fileNative.test.ts', () => {
         assert.equal(publicUrl.includes('/api/static/'), true);
 
         const view = await app.bean.file.resolveView(file.id);
-        assert.equal(view?.id, file.id);
+        assert.ok(view);
+        assert.equal(view.id, file.id);
         assert.equal(typeof view?.uploadedAt, 'object');
         assert.equal(view?.downloadUrl.includes('/api/static/'), true);
         assert.equal(view?.signed, false);
-        assertViewInternalFieldsAbsent(view ?? {});
+        assertViewInternalFieldsAbsent(view);
 
         const privateFile = await app.bean.file.upload(
           'file-native:native',
@@ -84,13 +87,14 @@ describe('fileNative.test.ts', () => {
         assert.equal(privateUrlParsed.searchParams.has('token'), true);
 
         const privateView = await app.bean.file.resolveView(privateFile.id);
-        assert.equal(privateView?.id, privateFile.id);
+        assert.ok(privateView);
+        assert.equal(privateView.id, privateFile.id);
         assert.equal(typeof privateView?.uploadedAt, 'object');
-        const privateViewUrlParsed = new URL(privateView!.downloadUrl);
+        const privateViewUrlParsed = new URL(privateView.downloadUrl);
         assert.equal(privateViewUrlParsed.pathname.endsWith('/file/download'), true);
         assert.equal(privateViewUrlParsed.searchParams.get('fileId'), String(privateFile.id));
         assert.equal(privateView?.signed, true);
-        assertViewInternalFieldsAbsent(privateView ?? {});
+        assertViewInternalFieldsAbsent(privateView);
 
         const publicDownload = await app.bean.file.download(file.id);
         assert.equal(publicDownload.kind, 'buffer');

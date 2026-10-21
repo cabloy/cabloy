@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
-describe('application.test.ts', { concurrency: false, sequential: true }, () => {
+describe('application.test.ts', { concurrency: false }, () => {
   const fallbackHost = () => {
     const port = app.meta.env.SERVER_LISTEN_PORT;
     return port ? `localhost:${port}` : 'localhost';

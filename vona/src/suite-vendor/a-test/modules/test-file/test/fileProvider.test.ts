@@ -1,3 +1,4 @@
+import type { EntityFileProvider } from 'vona-module-a-file';
 import type { IFileProviderCloudflareClientOptions } from 'vona-module-file-cloudflare';
 
 import assert from 'node:assert';
@@ -56,23 +57,25 @@ describe('fileProvider.test.ts', () => {
     await app.bean.executor.mockCtx(async () => {
       const model = app.bean.fileProvider.scope.model.fileProvider;
       const clientName = `json-null-${Date.now()}`;
-      let providerId: number | undefined;
+      let providerId: EntityFileProvider['id'] | undefined;
+      // Deliberately bypass API nullability only to test SQL NULL persistence.
+      const nullClientOptions = null as unknown as EntityFileProvider['clientOptions'];
       try {
         const provider = await model.insert({
           providerName: 'file-native:native',
           clientName,
-          clientOptions: null,
+          clientOptions: nullClientOptions,
         });
-        providerId = provider.id as number;
+        providerId = provider.id;
         assert.equal((await model.get({ id: providerId, clientOptions: null }))?.id, providerId);
 
         await model.updateById(providerId, { clientOptions: { public: true } });
         assert.equal(await model.get({ id: providerId, clientOptions: null }), undefined);
 
-        await model.updateById(providerId, { clientOptions: null });
+        await model.updateById(providerId, { clientOptions: nullClientOptions });
         assert.equal((await model.get({ id: providerId, clientOptions: null }))?.id, providerId);
       } finally {
-        if (providerId !== undefined) await model.delete({ id: providerId });
+        if (providerId !== undefined) await model.deleteById(providerId);
       }
     });
   });

@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { runTypeScript } from '../vona/packages-cli/cli-set-api/src/lib/typescriptRunner.ts';
+import { runTypeScript } from './typescriptRunner.ts';
 
 const [compiler, workspace, ...args] = process.argv.slice(2);
 if ((compiler !== 'native' && compiler !== 'typescript') || !['vona', 'zova'].includes(workspace)) {

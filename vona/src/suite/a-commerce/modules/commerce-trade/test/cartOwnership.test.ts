@@ -1,3 +1,5 @@
+import type { IPerformActionOptions } from 'vona-module-a-executor';
+import type { IApiPathRecordMethodMap } from 'vona-module-a-web';
 import type { DtoCartAddItem, DtoCartUpdateItem } from 'vona-module-commerce-trade';
 
 import { catchError } from '@cabloy/utils';
@@ -22,7 +24,10 @@ function cartItem(skuId: number, quantity = 1): DtoCartAddItem {
   return { skuId, quantity };
 }
 
-async function performAs(accessToken: string, method: string, path: string, options = {}) {
+async function performAs<
+  METHOD extends keyof IApiPathRecordMethodMap,
+  PATH extends keyof IApiPathRecordMethodMap[METHOD],
+>(accessToken: string, method: METHOD, path: PATH, options: IPerformActionOptions = {}) {
   return await app.bean.executor.newCtxIsolate(async () => {
     return await app.bean.executor.performAction(method, path, {
       ...options,
@@ -106,16 +111,28 @@ describe('cartOwnership.test.ts', { concurrency: false }, () => {
 
   it('denies anonymous cart actions', async () => {
     await app.bean.executor.mockCtx(async () => {
-      for (const [method, path, options] of [
-        ['get', actionPath, {}],
-        ['post', `${actionPath}/items`, { body: cartItem(1) }],
-        ['patch', `${actionPath}/items/:id`, { params: { id: 999999 }, body: { quantity: 1 } }],
-        ['delete', `${actionPath}/items/:id`, { params: { id: 999999 } }],
-        ['delete', `${actionPath}/items`, {}],
-      ] as const) {
-        const [_, err] = await catchError(() =>
-          app.bean.executor.performAction(method, path, { ...options, innerAccess: false }),
-        );
+      for (const action of [
+        () => app.bean.executor.performAction('get', actionPath, { innerAccess: false }),
+        () =>
+          app.bean.executor.performAction('post', `${actionPath}/items`, {
+            body: cartItem(1),
+            innerAccess: false,
+          }),
+        () =>
+          app.bean.executor.performAction('patch', `${actionPath}/items/:id`, {
+            params: { id: 999999 },
+            body: { quantity: 1 },
+            innerAccess: false,
+          }),
+        () =>
+          app.bean.executor.performAction('delete', `${actionPath}/items/:id`, {
+            params: { id: 999999 },
+            innerAccess: false,
+          }),
+        () =>
+          app.bean.executor.performAction('delete', `${actionPath}/items`, { innerAccess: false }),
+      ]) {
+        const [_, err] = await catchError(action);
         assert.equal(err?.code, 401);
       }
     });

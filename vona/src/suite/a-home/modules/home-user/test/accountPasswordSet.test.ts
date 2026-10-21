@@ -15,7 +15,7 @@ interface IAccountPasswordSetFixture {
   email?: string;
 }
 
-describe('accountPasswordSet.test.ts', { concurrency: false, sequential: true }, () => {
+describe('accountPasswordSet.test.ts', { concurrency: false }, () => {
   const releases: Array<() => void> = [];
 
   before(async () => {
@@ -587,6 +587,7 @@ async function configurePasswordSet(
   return await app.bean.executor.mockCtx(async () => {
     const options =
       app.bean.onion.middlewareSystem.getOnionSlice('a-security:cors').beanOptions.options;
+    assert.ok(options);
     const whiteListPrevious = options.whiteList;
     options.whiteList = Array.isArray(whiteList) ? [...whiteList] : whiteList;
     return () => {

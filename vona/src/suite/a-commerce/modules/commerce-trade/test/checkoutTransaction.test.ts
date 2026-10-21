@@ -152,7 +152,7 @@ async function assertRollback(fixture: IFixture) {
   );
 }
 
-describe('checkoutTransaction.test.ts', { concurrency: false, sequential: true }, () => {
+describe('checkoutTransaction.test.ts', { concurrency: false }, () => {
   let releaseTestLock: (() => void) | undefined;
 
   before(async () => {
@@ -179,13 +179,14 @@ describe('checkoutTransaction.test.ts', { concurrency: false, sequential: true }
         await app.bean.passport.signinMock(customerName as any);
         let fixture: IFixture | undefined;
         try {
-          fixture = await createFixture(suffix);
+          const createdFixture = await createFixture(suffix);
+          fixture = createdFixture;
           const [_, error] = await catchError(() =>
             app.scope('commerce-trade').service.order.checkoutForTest(
               {
-                addressId: fixture.addressId,
-                couponGrantId: fixture.grantId,
-                correlationId: fixture.correlationId,
+                addressId: createdFixture.addressId,
+                couponGrantId: createdFixture.grantId,
+                correlationId: createdFixture.correlationId,
               },
               async currentStage => {
                 if (currentStage === stage) throw new Error(`checkout test failure: ${stage}`);

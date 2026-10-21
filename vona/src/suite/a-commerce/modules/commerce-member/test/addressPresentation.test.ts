@@ -1,3 +1,6 @@
+import type { IPerformActionOptions } from 'vona-module-a-executor';
+import type { IApiPathRecordMethodMap } from 'vona-module-a-web';
+
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
@@ -51,7 +54,10 @@ function createAddress(suffix: string): DtoAddressMineCreate {
   };
 }
 
-async function performAs(accessToken: string, method: string, path: string, options = {}) {
+async function performAs<
+  METHOD extends keyof IApiPathRecordMethodMap,
+  PATH extends keyof IApiPathRecordMethodMap[METHOD],
+>(accessToken: string, method: METHOD, path: PATH, options: IPerformActionOptions = {}) {
   return await app.bean.executor.newCtxIsolate(async () => {
     return await app.bean.executor.performAction(method, path, {
       ...options,

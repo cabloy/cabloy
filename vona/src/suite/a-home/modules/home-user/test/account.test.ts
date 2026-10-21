@@ -57,7 +57,8 @@ describe('account.test.ts', { concurrency: false }, () => {
       await app.bean.executor.mockCtx(async () => {
         const user = await app.bean.user.findOneById(fixture!.userId);
         assert.equal(user?.name, `${fixture!.name}-updated`);
-        assert.equal((user as Record<string, unknown>)?.ignored, undefined);
+        assert.ok(user);
+        assert.equal('ignored' in user, false);
       });
 
       await app.bean.executor.mockCtx(async () => {
@@ -117,7 +118,6 @@ describe('account.test.ts', { concurrency: false }, () => {
               clientName: policy.clientName,
               imageScene: policy.imageScene,
               meta: policy.meta,
-              public: policy.public,
             },
           );
           imageId = uploaded.id;

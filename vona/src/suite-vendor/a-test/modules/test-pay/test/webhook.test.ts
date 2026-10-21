@@ -84,8 +84,8 @@ function createCommand(rawBody: string, paymentSessionId: number) {
 }
 
 function sign(rawBody: string, clientName: 'default' | 'secondary' = 'default') {
-  const options = app.bean.payProvider.getOptions('pay-mock:mock', clientName);
-  assert.equal(typeof options.secretWebhook, 'string');
+  const options = app.bean.payProvider.resolveByName('pay-mock:mock', clientName).clientOptions;
+  assert.ok(typeof options.secretWebhook === 'string');
   return createHmac('sha256', options.secretWebhook).update(rawBody).digest('hex');
 }
 
@@ -104,7 +104,7 @@ async function countFacts(paymentSessionId: number) {
   return { inboxes, audits, outbox };
 }
 
-describe('webhook.test.ts', { concurrency: false, sequential: true }, () => {
+describe('webhook.test.ts', { concurrency: false }, () => {
   let releaseTestLock: (() => void) | undefined;
 
   before(async () => {

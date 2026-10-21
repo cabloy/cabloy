@@ -1,4 +1,6 @@
-import type { IFileUploadPolicyResolved } from 'vona-module-a-file';
+import type { TableIdentity } from 'table-identity';
+import type { EntityFileProvider, IFileUploadPolicyResolved } from 'vona-module-a-file';
+import type { IFileProviderCloudflareClientOptions } from 'vona-module-file-cloudflare';
 
 import { catchError } from '@cabloy/utils';
 import fse from 'fs-extra';
@@ -9,11 +11,12 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 import { $apiPath } from 'vona-module-a-openapiutils';
+import { ServiceFileCloudflare } from 'vona-module-file-cloudflare';
 
 const textFile = Buffer.from('hello upload');
 const uploadFilenameChinese = '更新地址.txt';
 
-function assertInternalFieldsAbsent(data: Record<string, unknown>) {
+function assertInternalFieldsAbsent(data: object) {
   assert.equal('provider' in data, false);
   assert.equal('resourceId' in data, false);
   assert.equal('clientName' in data, false);
@@ -62,7 +65,7 @@ describe('fileUpload.test.ts', () => {
   it('action:file:upload api', async () => {
     await app.bean.executor.mockCtx(async () => {
       const jwt = await app.bean.passport.signinMock('admin');
-      const fileIds: number[] = [];
+      const fileIds: TableIdentity[] = [];
       try {
         const uploadPolicyUrl = app.util.getAbsoluteUrlByApiPath('/file/upload-policy');
         const uploadPolicyRes = await fetch(uploadPolicyUrl, {
@@ -123,22 +126,23 @@ describe('fileUpload.test.ts', () => {
         clientName: 'test-upload',
       });
       const clientOptionsRaw = provider.clientOptions;
-      const fileIds: number[] = [];
-      const fileCloudflare = app.bean._getBean('file-cloudflare.service.fileCloudflare' as never);
+      const fileIds: TableIdentity[] = [];
+      const fileCloudflare = app.bean._getBean(ServiceFileCloudflare);
       const uploadRaw = fileCloudflare.upload;
       const uploadUrlRaw = fileCloudflare.uploadUrl;
       try {
+        const clientOptions: IFileProviderCloudflareClientOptions = {
+          endpoint: 'https://account123.r2.cloudflarestorage.com',
+          accessKeyId: 'access-key',
+          secretAccessKey: 'secret-key',
+          bucket: 'bucket-a',
+          deliveryBaseUrl: 'https://cdn.example.com/files',
+          public: false,
+        };
         await app.bean.fileProvider.scope.model.fileProvider.updateById(provider.id, {
-          clientOptions: {
-            endpoint: 'https://account123.r2.cloudflarestorage.com',
-            accessKeyId: 'access-key',
-            secretAccessKey: 'secret-key',
-            bucket: 'bucket-a',
-            deliveryBaseUrl: 'https://cdn.example.com/files',
-            public: false,
-          } as any,
+          clientOptions,
         });
-        fileCloudflare.upload = async (input: any) => {
+        fileCloudflare.upload = async input => {
           return {
             resourceId: 'cf-upload-url-api-1',
             bucket: 'bucket-a',
@@ -152,8 +156,9 @@ describe('fileUpload.test.ts', () => {
             meta: input.meta,
           };
         };
-        fileCloudflare.uploadUrl = async (input: any) => {
+        fileCloudflare.uploadUrl = async input => {
           assert.equal(input.url, 'https://example.com/upload-url.txt');
+          assert.ok(input.policy);
           assert.equal(input.policy.fileScene, 'test-file:cloudflareFile');
           return {
             resourceId: 'cf-upload-url-api-1',
@@ -239,7 +244,8 @@ describe('fileUpload.test.ts', () => {
         fileCloudflare.upload = uploadRaw;
         fileCloudflare.uploadUrl = uploadUrlRaw;
         await app.bean.fileProvider.scope.model.fileProvider.updateById(provider.id, {
-          clientOptions: clientOptionsRaw ?? null,
+          // Restore SQL NULL as well as configured JSON at the persistence boundary.
+          clientOptions: (clientOptionsRaw ?? null) as EntityFileProvider['clientOptions'],
         });
         await app.bean.passport.signout();
       }
@@ -249,8 +255,8 @@ describe('fileUpload.test.ts', () => {
   it('action:file:download api private token behavior', async () => {
     await app.bean.executor.mockCtx(async () => {
       const filePath = path.join(os.tmpdir(), 'test-file-download-route.txt');
-      let privateFileId: number | undefined;
-      let otherPrivateFileId: number | undefined;
+      let privateFileId: TableIdentity | undefined;
+      let otherPrivateFileId: TableIdentity | undefined;
       await fse.writeFile(filePath, textFile);
       try {
         const privateFile = await app.bean.file.upload(

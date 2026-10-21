@@ -31,7 +31,7 @@ A new wrapper is a planned addition until implementation creates it in the durab
 
 ## 2. Target selection
 
-The normal unit of work is one WBS item. A phase may be selected only when the phase is a finite, explicitly approved batch and the WBS defines its task set and closure boundary.
+The normal unit of work is one WBS item. A phase may be selected only when the phase is a finite, explicitly approved batch and the WBS defines its task set and closure boundary. Use the existing scope and authority description to identify the observable business, framework, or tooling outcome and the minimum connected implementation path that delivers it; include supporting work only where that path or a concrete material risk requires it.
 
 A valid target dossier names:
 
@@ -71,7 +71,7 @@ Before implementation, verify:
 - tenant, identity, authorization, ownership, privacy, lifecycle, transaction, concurrency, idempotency, audit, and recovery constraints are defined for the task’s risk;
 - the requested change does not broaden scope or create a competing persistence, identity, or API authority.
 
-Apply readiness to the selected increment and its real dependency graph. Record each blocker with its affected branch, decision owner and finite closure condition in existing records; keep future refinements and release-only questions separate. Do not require the new implementation's runtime ATP evidence before implementation starts, but retain required predecessor evidence and any specifically mandated pre-implementation qualification. When blocked, surface one meaningful, independently verifiable alternative if available, without executing it unapproved or changing formal dependencies/status to bypass the blocker. A foundation-only subincrement needs concrete integration value, checks and explicit scope approval; it does not complete the parent WBS.
+Apply readiness to the selected increment and its real dependency graph. Record each blocker with its affected branch, decision owner and finite closure condition in existing records; keep future refinements and release-only questions separate. Do not require the new implementation's runtime ATP evidence before implementation starts, but retain required predecessor evidence and any specifically mandated pre-implementation qualification. When blocked, surface one meaningful, independently verifiable alternative if available, without executing it unapproved or changing formal dependencies/status to bypass the blocker. A foundation-only subincrement needs a named existing or approved-scope consumer and integration path, or a concrete invariant, defect, or material risk it addresses, plus checks and explicit scope approval. A planned consumer need not already exist in source, but hypothetical reuse and isolated passing helper tests do not establish integration value. Such work does not complete the parent WBS.
 
 When authority records conflict, stop the affected work. Update the authoritative PRD, SRS, or ADR through `cabloy-spec-generation`, then propagate the change through WBS, ATP, evidence assumptions, and progress. Do not reconcile a conflict by silently editing a downstream status or implementation plan. A return to planning must name the new fact, material authority question or blocker to resolve and its exit condition; do not restart a preparation/review cycle merely to restate accepted direction. Batch related decisions and report stalled convergence if further refinement has no justified new value.
 
@@ -142,6 +142,10 @@ The coordinator may pass the dossier to the specialist; it should not duplicate 
 ## 7. Verification and stopping
 
 Start with the narrowest meaningful check, then execute linked ATP procedures and only the required release gates. Explicitly preserve test-owned fixture cleanup, separate `mockCtx(...)` boundaries for competing Vona operations, synthetic/redacted data, and the test plan’s database/flavor requirements.
+
+Verify the approved connected outcome, not merely supporting helper behavior. Once that outcome and its applicable required checks are satisfied, stop optional abstraction, hardening, and cleanup; report remaining improvements without automatically implementing them. Keep any outstanding acceptance or release gates explicit rather than claiming full completion. This does not waive necessary security, tenant isolation, privacy, lifecycle correctness, migration, or mandatory evidence requirements.
+
+After user correction, redirect the affected approach rather than rename, relocate, or repackage rejected work. Reassess only the affected scope and preserve valid unchanged approvals; the correction does not itself authorize destructive cleanup or a different feature.
 
 Stop and report rather than guessing when:
 

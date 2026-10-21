@@ -1,3 +1,4 @@
+import type { TableIdentity } from 'table-identity';
 import type { DtoStockAdjust, EntityStockBalance } from 'vona-module-commerce-trade';
 
 import { catchError } from '@cabloy/utils';
@@ -145,12 +146,13 @@ describe('stockBalance.test.ts', { concurrency: false }, () => {
       let fixture: IStockFixture | undefined;
       await app.bean.passport.signinMock();
       try {
-        fixture = await createSku(createTestId());
+        const createdFixture = await createSku(createTestId());
+        fixture = createdFixture;
         const balance = await adjustStock(
-          stockAdjust(fixture.skuId, 2, `${fixture.skuId}-initial`),
+          stockAdjust(createdFixture.skuId, 2, `${createdFixture.skuId}-initial`),
         );
         const [_, err] = await catchError(() =>
-          adjustStock(stockAdjust(fixture.skuId, -3, `${fixture.skuId}-reject`)),
+          adjustStock(stockAdjust(createdFixture.skuId, -3, `${createdFixture.skuId}-reject`)),
         );
         assert.equal(err?.code, 409);
         assert.match(err?.message ?? '', /negative/);
@@ -294,8 +296,8 @@ describe('stockBalance.test.ts', { concurrency: false }, () => {
   it('hides foreign stock balances and audits from operator read APIs', async () => {
     const suffix = createTestId();
     let fixture: IStockFixture | undefined;
-    let balanceId!: number;
-    let auditId!: number;
+    let balanceId!: TableIdentity;
+    let auditId!: TableIdentity;
     const reason = `stock read isolation ${suffix}`;
     const correlationId = `stock-read-isolation-${suffix}`;
     try {

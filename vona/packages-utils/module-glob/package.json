@@ -1,6 +1,6 @@
 {
   "name": "@cabloy/module-glob",
-  "version": "5.3.18",
+  "version": "5.3.19",
   "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
   "description": "cabloy module-glob",
   "keywords": [
@@ -27,6 +27,7 @@
     "access": "public"
   },
   "scripts": {
+    "test": "node --test test/*.test.ts",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "tsc:publish": "npm run clean && node ../../packages-cli/cli/src/bin/vona.ts :bin:buildGeneral && tsc",
     "prepublishOnly": "npm run tsc:publish",
