@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.225
+
+### Features
+- Apply feature updates.
+
+### Bug Fixes
+- Fix test CI.
+
+### Improvements
+- Update the pnpm version.
+
 ## 5.1.224
 
 ### Features
