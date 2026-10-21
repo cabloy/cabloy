@@ -11,7 +11,7 @@ Contributions to Cabloy Basic source, tests, tooling, and documentation are welc
 
 ## Set up a development checkout
 
-You need Git, Node.js `>=24.4.0`, pnpm `>=11.5.2`, Redis `>=7.2.6`, and one documented development database baseline: SQLite, MySQL `>=8`, or PostgreSQL `>=16`. SQLite setups using `better-sqlite3` may also require a native build toolchain for `node-gyp`.
+You need Git, Node.js `>=24.4.0`, pnpm `>=12.14.0`, Redis `>=7.2.6`, and one documented development database baseline: SQLite, MySQL `>=8`, or PostgreSQL `>=16`. SQLite setups using `better-sqlite3` may also require a native build toolchain for `node-gyp`.
 
 ```bash
 git clone https://github.com/cabloy/cabloy.git
@@ -21,7 +21,7 @@ npm run init
 
 `npm run init` is more than a package install: it installs multiple workspaces, prepares generated local configuration, initializes and synchronizes Vona and Zova, and generates required frontend and backend artifacts. Run it intentionally rather than as a retry for an unrelated narrow change.
 
-CI workflows run after pushes to `main`; do not assume that every pull request is automatically validated. The SQLite unit-test and Chromium Basic/Commerce E2E workflows configure Ubuntu, Windows, and macOS with Node.js 24 and pnpm 11.5.2. Matrix configuration alone is not proof that the platform gates or all six Basic/Commerce E2E combinations passed. For maintained edition and onboarding guidance, see [Cabloy Editions](https://cabloy.com/editions/overview#cabloy-basic).
+CI workflows run after pushes to `main`; do not assume that every pull request is automatically validated. The SQLite unit-test and Chromium Basic/Commerce E2E workflows configure Ubuntu, Windows, and macOS with Node.js 24 and pnpm 12.14.0. Matrix configuration alone is not proof that the platform gates or all six Basic/Commerce E2E combinations passed. For maintained edition and onboarding guidance, see [Cabloy Editions](https://cabloy.com/editions/overview#cabloy-basic).
 
 ## Develop and validate
 

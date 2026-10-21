@@ -19,7 +19,7 @@ const ROOT_DIR = resolve(__dirname, '..');
 const VONA_DIR = resolve(ROOT_DIR, 'vona');
 const ZOVA_DIR = resolve(ROOT_DIR, 'zova');
 const REPO_DOCS_DIR = resolve(ROOT_DIR, 'repo-docs');
-const PNPM_VERSION = '11.5.2';
+const PNPM_VERSION = '12.14.0';
 const VERSION_MARKER_FILE = '.cabloy-version';
 
 // --- Helpers ---
@@ -52,11 +52,10 @@ function pnpmInstall(cwd = ROOT_DIR): void {
 
 function checkPnpm(): void {
   const version = execQuiet('pnpm --version').trimEnd();
-  const [major, minor, patch] = version.split('.').map(item => Number.parseInt(item, 10) || 0);
-  const lowerMajor = major < 11;
-  const lowerMinor = major === 11 && minor < 5;
-  const lowerPatch = major === 11 && minor === 5 && patch < 2;
-  if (lowerMajor || lowerMinor || lowerPatch) {
+  const [major, minor] = version.split('.').map(item => Number.parseInt(item, 10) || 0);
+  const lowerMajor = major < 12;
+  const lowerMinor = major === 12 && minor < 14;
+  if (lowerMajor || lowerMinor) {
     throw new Error(`pnpm should >= ${PNPM_VERSION}, current: ${version}`);
   }
 }

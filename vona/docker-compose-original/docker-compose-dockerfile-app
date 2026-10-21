@@ -1,6 +1,6 @@
 FROM node:24
 
-RUN corepack enable && corepack prepare pnpm@11.5.2 --activate
+RUN corepack enable && corepack prepare pnpm@12.14.0 --activate
 
 RUN mkdir -p /opt/node/app/dist
 WORKDIR /opt/node/app
