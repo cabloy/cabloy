@@ -1,11 +1,16 @@
 import type { TypeDecoratorRules } from 'vona-module-a-openapiutils';
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
-import { ZodMetadata } from '@cabloy/zod-openapi';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
-import { $schema, Api, getTargetDecoratorRules, v } from 'vona-module-a-openapiutils';
+import {
+  $makeMetadata,
+  $schema,
+  Api,
+  getTargetDecoratorRules,
+  v,
+} from 'vona-module-a-openapiutils';
 import { $Dto, $relationDynamic } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
 import { ModelPost } from 'vona-module-test-vona';
@@ -109,8 +114,10 @@ describe('dtoMutate.test.ts', () => {
   it('action:dtoMutate:preserveOpenapiMetadataAcrossSchemaReplacement', async () => {
     await app.bean.executor.mockCtx(async () => {
       const rules = getTargetDecoratorRules(DtoSchemaLikeParent.prototype);
-      const metadataChildren = ZodMetadata.getOpenapiMetadata(rules.children!);
-      const metadataChild = ZodMetadata.getOpenapiMetadata(rules.child!);
+      assert.ok(rules.children);
+      assert.ok(rules.child);
+      const metadataChildren = $makeMetadata(rules.children);
+      const metadataChild = $makeMetadata(rules.child);
       assert.equal(
         typeof metadataChildren?.serializerTransforms?.['a-serialization:custom']?.custom,
         'function',
@@ -129,11 +136,16 @@ describe('dtoMutate.test.ts', () => {
       assert.equal(res.children[0].name, 'kevin');
       assert.equal(res.child.name, 'tom');
       const apiJson = await app.bean.openapi.generateJsonOfClass(DtoSchemaLikeParent);
+      assert.ok(apiJson.components?.schemas);
       const component = Object.values(apiJson.components.schemas).find(item => {
-        return item.properties?.children && item.properties?.child;
+        return !('$ref' in item) && item.properties?.children && item.properties?.child;
       });
-      assert.ok(component);
-      assert.equal(component.properties.children.title, 'Children');
+      assert.ok(component && !('$ref' in component));
+      assert.ok(component.properties?.children);
+      const children = component.properties.children;
+      assert.ok(!('$ref' in children));
+      assert.equal(children.title, 'Children');
+      assert.ok(component.properties.child && '$ref' in component.properties.child);
       assert.equal(typeof component.properties.child.$ref, 'string');
     });
   });

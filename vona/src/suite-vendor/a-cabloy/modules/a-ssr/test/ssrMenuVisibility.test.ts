@@ -12,7 +12,7 @@ function createMenus() {
   return [
     { name: 'test:public', title: 'Public', group: 'root' },
     { name: 'test:dynamic', title: 'Dynamic', roles: [], group: 'root' },
-    { name: 'test:static', title: 'Static', roles: ['member'] },
+    { name: 'test:static', title: 'Static', roles: ['registeredUser'] },
   ] as any;
 }
 
@@ -20,7 +20,7 @@ describe('ssrMenuVisibility.test.ts', () => {
   it('distinguishes public, dynamic-only, and static leaves', () => {
     const menus = createMenus();
     assert.deepEqual(
-      resolveSsrMenuVisibilityDefault(menus, roles => roles.includes('member')),
+      resolveSsrMenuVisibilityDefault(menus, roles => roles.includes('registeredUser')),
       [menus[0], menus[2]],
     );
     assert.deepEqual(
@@ -44,7 +44,7 @@ describe('ssrMenuVisibility.test.ts', () => {
       {
         name: 'test:private',
         title: 'Private',
-        roles: ['member'],
+        roles: ['registeredUser'],
         policyRevision: 'private',
         associationState: 'private',
       },

@@ -6,7 +6,13 @@ import { appResource } from 'vona';
 import { app } from 'vona-mock';
 import { getTargetDecoratorRules } from 'vona-module-a-openapiutils';
 import { $Dto, $relationDynamic } from 'vona-module-a-orm';
-import { ModelPost, ModelPostContent, ModelRole, ModelRoleUser } from 'vona-module-test-vona';
+import {
+  ModelPost,
+  ModelPostContent,
+  ModelRole,
+  ModelRoleUser,
+  ModelUser,
+} from 'vona-module-test-vona';
 
 describe('dtoGet.test.ts', () => {
   it('action:dtoGet', async () => {
@@ -97,8 +103,7 @@ describe('dtoGet.test.ts', () => {
       const DtoCategoryChain = $Dto.get('test-vona:categoryChain', {
         columns: ['id', 'name', 'categoryIdParent'],
       });
-      const _apiJson = await app.bean.openapi.generateJsonOfClass(DtoCategoryChain);
-      // console.log(JSON.stringify(apiJson.components));
+      await app.bean.openapi.generateJsonOfClass(DtoCategoryChain);
     });
   });
 });

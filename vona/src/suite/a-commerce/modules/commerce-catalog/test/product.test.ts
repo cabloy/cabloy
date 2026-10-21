@@ -68,6 +68,7 @@ describe('product.test.ts', { concurrency: false }, () => {
           title: `__Tom-${suffix}__`,
           published: false,
           description: 'This is a test',
+          productContentForm: undefined,
         };
         const productId = await app.bean.executor.performAction(
           'post',
@@ -82,6 +83,7 @@ describe('product.test.ts', { concurrency: false }, () => {
           title: `__TomNew-${suffix}__`,
           published: true,
           description: 'This is a test',
+          productContentForm: undefined,
         };
         assert.equal(!!productId, true);
         const selectRes: DtoProductSelectRes = await app.bean.executor.performAction(

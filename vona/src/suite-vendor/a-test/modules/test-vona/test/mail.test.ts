@@ -16,10 +16,10 @@ describe('mail.test.ts', () => {
               assert.equal(id, 1);
               return {
                 get client() {
-                  assert.fail('test-mode mail must not read the client');
+                  return assert.fail('test-mode mail must not read the client');
                 },
                 get message() {
-                  assert.fail('test-mode mail must not read message content');
+                  return assert.fail('test-mode mail must not read message content');
                 },
               };
             },
@@ -58,10 +58,10 @@ describe('mail.test.ts', () => {
         },
       },
       get app() {
-        assert.fail('missing mail must return before checking runtime mode');
+        return assert.fail('missing mail must return before checking runtime mode');
       },
       get $logger() {
-        assert.fail('missing mail must not log suppression');
+        return assert.fail('missing mail must not log suppression');
       },
     };
     await ServiceMail.prototype.sendById.call(own, 1);
@@ -87,7 +87,7 @@ describe('mail.test.ts', () => {
         return undefined;
       },
       get $logger() {
-        assert.fail('non-test mail must not log suppression');
+        return assert.fail('non-test mail must not log suppression');
       },
     };
     await assert.rejects(ServiceMail.prototype.sendById.call(own, 1), {

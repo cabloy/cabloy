@@ -1,23 +1,25 @@
+import type { TableIdentity } from 'table-identity';
+
 import assert from 'node:assert';
 import { createHmac, randomUUID } from 'node:crypto';
 import { after, before, describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
 
 interface IFixture {
-  categoryId?: number;
-  productId?: number;
-  skuId?: number;
-  balanceId?: number;
-  templateId?: number;
-  grantId?: number;
-  addressId?: number;
-  cartId?: number;
-  userId?: number;
+  categoryId?: TableIdentity;
+  productId?: TableIdentity;
+  skuId?: TableIdentity;
+  balanceId?: TableIdentity;
+  templateId?: TableIdentity;
+  grantId?: TableIdentity;
+  addressId?: TableIdentity;
+  cartId?: TableIdentity;
+  userId?: TableIdentity;
   customerName?: string;
   checkoutCorrelationId?: string;
-  orderId?: number;
-  paymentAttemptId?: number;
-  paymentSessionId?: number;
+  orderId?: TableIdentity;
+  paymentAttemptId?: TableIdentity;
+  paymentSessionId?: TableIdentity;
 }
 
 async function cleanup(fixture: IFixture) {
@@ -112,6 +114,7 @@ async function createCheckoutFixture(suffix: string, withCoupon = true): Promise
       lifecycle: 'active',
     },
   });
+  assert.ok(fixture.skuId !== undefined);
   fixture.balanceId = (
     await app.scope('commerce-trade').service.stockBalance.adjustStock({
       skuId: fixture.skuId,
@@ -173,6 +176,7 @@ async function createCheckoutFixture(suffix: string, withCoupon = true): Promise
     quantity: 1,
   });
   fixture.checkoutCorrelationId = `payment-checkout-${suffix}`;
+  assert.ok(fixture.addressId !== undefined);
   const checkout = await app.scope('commerce-trade').service.order.checkout({
     addressId: fixture.addressId,
     couponGrantId: fixture.grantId,
@@ -184,7 +188,7 @@ async function createCheckoutFixture(suffix: string, withCoupon = true): Promise
   return fixture;
 }
 
-describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () => {
+describe('paymentOutcome.test.ts', { concurrency: false }, () => {
   const releaseTestLocks: Array<() => void> = [];
 
   before(async () => {
@@ -223,8 +227,9 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
           providerCaptureId: `capture-${eventId}`,
         });
         const options = app.bean.payProvider.getOptions('pay-mock:mock', 'default');
-        assert.equal(typeof options.secretWebhook, 'string');
-        const signature = createHmac('sha256', options.secretWebhook).update(rawBody).digest('hex');
+        const secretWebhook = options.secretWebhook;
+        assert.ok(typeof secretWebhook === 'string');
+        const signature = createHmac('sha256', secretWebhook).update(rawBody).digest('hex');
         const webhookPath = app.util.getAbsoluteUrlByApiPath('/pay/webhook/pay-mock:mock/default');
         const webhookUrl = webhookPath.startsWith('http')
           ? webhookPath
@@ -635,17 +640,23 @@ describe('paymentOutcome.test.ts', { concurrency: false, sequential: true }, () 
             innerAccess: false,
           }),
         () =>
-          app.bean.executor.performAction('get', '/commerce/trade/order/viewMine/1', {
+          app.bean.executor.performAction('get', '/commerce/trade/order/viewMine/:id', {
+            params: { id: 1 },
             innerAccess: false,
           }),
         () =>
-          app.bean.executor.performAction('get', '/commerce/trade/order/1', {
+          app.bean.executor.performAction('get', '/commerce/trade/order/:id', {
+            params: { id: 1 },
             innerAccess: false,
           }),
         () =>
-          app.bean.executor.performAction('get', '/pay/payment-session/1', {
-            innerAccess: false,
-          }),
+          app
+            .scope('a-executor')
+            .service.executor.performActionInner(
+              'get',
+              app.util.combineApiPath('/pay/payment-session/1', '', true, true),
+              { innerAccess: false },
+            ),
       ];
       for (const request of requests) {
         await assert.rejects(request(), (error: any) => error.code === 401);

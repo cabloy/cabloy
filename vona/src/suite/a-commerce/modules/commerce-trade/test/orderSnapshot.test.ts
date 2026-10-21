@@ -1,3 +1,5 @@
+import type { TableIdentity } from 'table-identity';
+
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
@@ -5,16 +7,16 @@ import { after, before, describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
 
 interface IFixture {
-  categoryId?: number;
-  productId?: number;
-  skuId?: number;
-  addressId?: number;
-  cartId?: number;
-  orderId?: number;
-  paymentAttemptId?: number;
-  couponTemplateId?: number;
-  couponGrantId?: number;
-  userId?: number;
+  categoryId?: TableIdentity;
+  productId?: TableIdentity;
+  skuId?: TableIdentity;
+  addressId?: TableIdentity;
+  cartId?: TableIdentity;
+  orderId?: TableIdentity;
+  paymentAttemptId?: TableIdentity;
+  couponTemplateId?: TableIdentity;
+  couponGrantId?: TableIdentity;
+  userId?: TableIdentity;
 }
 
 async function cleanup(fixture: IFixture) {
@@ -171,15 +173,21 @@ describe('orderSnapshot.test.ts', { concurrency: false }, () => {
           },
         );
 
+        const productId = fixture.productId;
+        const addressId = fixture.addressId;
+        const skuId = fixture.skuId;
+        assert.ok(productId !== undefined);
+        assert.ok(addressId !== undefined);
+        assert.ok(skuId !== undefined);
         const created = await app.scope('commerce-trade').service.order.createSnapshot({
-          addressId: fixture.addressId,
+          addressId,
           couponGrantId: fixture.couponGrantId,
           correlationId: `snapshot-order-${suffix}`,
           lines: [{ skuId: fixture.skuId, quantity: 2 }],
         });
         fixture.orderId = created.order.id as number;
         const replay = await app.scope('commerce-trade').service.order.createSnapshot({
-          addressId: fixture.addressId,
+          addressId,
           couponGrantId: fixture.couponGrantId,
           correlationId: `snapshot-order-${suffix}`,
           lines: [{ skuId: fixture.skuId, quantity: 2 }],
@@ -188,9 +196,9 @@ describe('orderSnapshot.test.ts', { concurrency: false }, () => {
         assert.equal(replay.lines[0].id, created.lines[0].id);
         const [_, conflict] = await catchError(() =>
           app.scope('commerce-trade').service.order.createSnapshot({
-            addressId: fixture.addressId,
+            addressId,
             correlationId: `snapshot-order-${suffix}`,
-            lines: [{ skuId: fixture.skuId, quantity: 1 }],
+            lines: [{ skuId, quantity: 1 }],
           }),
         );
         assert.equal(conflict?.code, 409);
@@ -203,7 +211,7 @@ describe('orderSnapshot.test.ts', { concurrency: false }, () => {
           { name: 'Color', value: 'Black' },
         ]);
 
-        await app.scope('commerce-catalog').model.product.updateById(fixture.productId, {
+        await app.scope('commerce-catalog').model.product.updateById(productId, {
           title: 'Changed product title',
           published: false,
         });
@@ -213,7 +221,7 @@ describe('orderSnapshot.test.ts', { concurrency: false }, () => {
           attributes: [{ name: 'Color', value: 'Blue' }],
           lifecycle: 'inactive',
         });
-        await app.scope('commerce-member').model.address.updateById(fixture.addressId, {
+        await app.scope('commerce-member').model.address.updateById(addressId, {
           city: 'Oakland',
           addressLine1: 'Changed address',
         });
@@ -337,8 +345,12 @@ describe('orderSnapshot.test.ts', { concurrency: false }, () => {
           skuId: fixture.skuId,
           quantity: 1,
         });
+        const productId = fixture.productId;
+        const addressId = fixture.addressId;
+        assert.ok(productId !== undefined);
+        assert.ok(addressId !== undefined);
         const checkout = await app.scope('commerce-trade').service.order.checkout({
-          addressId: fixture.addressId,
+          addressId,
           couponGrantId: fixture.couponGrantId,
           correlationId: `refund-snapshot-checkout-${suffix}`,
         });
@@ -351,7 +363,7 @@ describe('orderSnapshot.test.ts', { concurrency: false }, () => {
             idempotencyKey: `refund-snapshot-payment-${suffix}`,
           });
 
-        await app.scope('commerce-catalog').model.product.updateById(fixture.productId, {
+        await app.scope('commerce-catalog').model.product.updateById(productId, {
           title: 'Changed refund product title',
           published: false,
         });
@@ -361,7 +373,7 @@ describe('orderSnapshot.test.ts', { concurrency: false }, () => {
           attributes: [{ name: 'Color', value: 'Blue' }],
           lifecycle: 'inactive',
         });
-        await app.scope('commerce-member').model.address.updateById(fixture.addressId, {
+        await app.scope('commerce-member').model.address.updateById(addressId, {
           city: 'Oakland',
           addressLine1: 'Changed refund address',
         });
@@ -417,13 +429,9 @@ describe('orderSnapshot.test.ts', { concurrency: false }, () => {
             lineTotalCents: 1299,
           },
         );
-        const liveProduct = await app
-          .scope('commerce-catalog')
-          .model.product.getById(fixture.productId);
+        const liveProduct = await app.scope('commerce-catalog').model.product.getById(productId);
         const liveSku = await app.scope('commerce-catalog').model.sku.getById(fixture.skuId);
-        const liveAddress = await app
-          .scope('commerce-member')
-          .model.address.getById(fixture.addressId);
+        const liveAddress = await app.scope('commerce-member').model.address.getById(addressId);
         const liveCoupon = await app
           .scope('commerce-promotion')
           .model.couponTemplate.getById(fixture.couponTemplateId);

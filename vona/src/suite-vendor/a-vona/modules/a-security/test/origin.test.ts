@@ -177,6 +177,7 @@ async function withWhiteList(whiteList: string | string[], fn: () => Promise<voi
   await app.bean.executor.mockCtx(async () => {
     const options =
       app.bean.onion.middlewareSystem.getOnionSlice('a-security:cors').beanOptions.options;
+    assert.ok(options);
     const whiteListPrevious = options.whiteList;
     options.whiteList = Array.isArray(whiteList) ? [...whiteList] : whiteList;
     try {

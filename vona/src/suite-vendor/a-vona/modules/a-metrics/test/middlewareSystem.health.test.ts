@@ -110,16 +110,21 @@ function fixture() {
 }
 
 function withServerEnv(callback: () => Promise<void>) {
-  const names = ['META_MODE', 'VONA_TEST_RUN_ID', 'VONA_TEST_READY_KEY'] as const;
-  const old = names.map(name => process.env[name]);
+  const old = {
+    META_MODE: process.env.META_MODE,
+    VONA_TEST_RUN_ID: process.env.VONA_TEST_RUN_ID,
+    VONA_TEST_READY_KEY: process.env.VONA_TEST_READY_KEY,
+  };
   process.env.META_MODE = 'test';
   process.env.VONA_TEST_RUN_ID = runId;
   process.env.VONA_TEST_READY_KEY = key;
   return callback().finally(() => {
-    for (const [index, name] of names.entries()) {
-      if (old[index] === undefined) delete process.env[name];
-      else process.env[name] = old[index];
-    }
+    if (old.META_MODE === undefined) Reflect.deleteProperty(process.env, 'META_MODE');
+    else process.env.META_MODE = old.META_MODE;
+    if (old.VONA_TEST_RUN_ID === undefined) delete process.env.VONA_TEST_RUN_ID;
+    else process.env.VONA_TEST_RUN_ID = old.VONA_TEST_RUN_ID;
+    if (old.VONA_TEST_READY_KEY === undefined) delete process.env.VONA_TEST_READY_KEY;
+    else process.env.VONA_TEST_READY_KEY = old.VONA_TEST_READY_KEY;
   });
 }
 
@@ -276,15 +281,31 @@ describe('authenticated managed shutdown', { concurrency: false }, () => {
     });
   }
 
-  for (const [name, value] of [
-    ['META_MODE', 'dev'],
-    ['VONA_TEST_RUN_ID', '20261014010203-d4e5f6a7'],
-    ['VONA_TEST_READY_KEY', 'not-a-key'],
-  ] as const) {
+  const invalidServerEnv: [string, () => void][] = [
+    [
+      'META_MODE',
+      () => {
+        process.env.META_MODE = 'dev';
+      },
+    ],
+    [
+      'VONA_TEST_RUN_ID',
+      () => {
+        process.env.VONA_TEST_RUN_ID = '20261014010203-d4e5f6a7';
+      },
+    ],
+    [
+      'VONA_TEST_READY_KEY',
+      () => {
+        process.env.VONA_TEST_READY_KEY = 'not-a-key';
+      },
+    ],
+  ];
+  for (const [name, change] of invalidServerEnv) {
     test(`shutdown requires matching server-only ${name}`, async () => {
       await withServerEnv(async () => {
         const f = fixture();
-        process.env[name] = value;
+        change();
         await f.execute();
         assert.equal(f.ctx.status, 404);
         assert.equal(f.ctx.res.listenerCount('finish'), 0);

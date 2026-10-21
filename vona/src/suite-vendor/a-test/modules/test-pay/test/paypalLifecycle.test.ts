@@ -1,3 +1,5 @@
+import type { TableIdentity } from 'table-identity';
+
 import { ApiError } from '@cabloy/paypal-server-sdk';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
@@ -5,17 +7,17 @@ import { after, before, describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
 
 interface IFixture {
-  categoryId?: number;
-  productId?: number;
-  skuId?: number;
-  balanceId?: number;
-  addressId?: number;
-  cartId?: number;
-  userId?: number;
+  categoryId?: TableIdentity;
+  productId?: TableIdentity;
+  skuId?: TableIdentity;
+  balanceId?: TableIdentity;
+  addressId?: TableIdentity;
+  cartId?: TableIdentity;
+  userId?: TableIdentity;
   customerName?: string;
-  orderId?: number;
-  paymentAttemptId?: number;
-  paymentSessionId?: number;
+  orderId?: TableIdentity;
+  paymentAttemptId?: TableIdentity;
+  paymentSessionId?: TableIdentity;
 }
 
 interface IGatewayState {
@@ -237,6 +239,7 @@ async function createCheckout(suffix: string, providerCandidateKey = 'paypal'): 
       lifecycle: 'active',
     },
   });
+  assert.ok(fixture.skuId !== undefined);
   fixture.balanceId = (
     await app.scope('commerce-trade').service.stockBalance.adjustStock({
       skuId: fixture.skuId,
@@ -244,11 +247,11 @@ async function createCheckout(suffix: string, providerCandidateKey = 'paypal'): 
       reason: 'PayPal lifecycle fixture',
       correlationId: `paypal-stock-${suffix}`,
     })
-  ).id as number;
+  ).id;
   await app.bean.passport.signout();
   fixture.customerName = `paypal-customer-${suffix}`;
   const customer = await app.bean.user.register({ name: fixture.customerName }, true);
-  fixture.userId = customer.id as number;
+  fixture.userId = customer.id;
   await app.bean.passport.signinMock(fixture.customerName as any);
   const userId = app.bean.passport.currentUser!.id;
   fixture.addressId = await app.bean.executor.performAction(
@@ -267,24 +270,25 @@ async function createCheckout(suffix: string, providerCandidateKey = 'paypal'): 
     },
   );
   const cart = await app.scope('commerce-trade').model.cart.insert({ userId });
-  fixture.cartId = cart.id as number;
+  fixture.cartId = cart.id;
   await app.scope('commerce-trade').model.cartItem.insert({
     cartId: cart.id,
     skuId: fixture.skuId,
     quantity: 1,
   });
+  assert.ok(fixture.addressId !== undefined);
   const checkout = await app.scope('commerce-trade').service.order.checkout({
     addressId: fixture.addressId,
     correlationId: `paypal-checkout-${suffix}`,
     providerCandidateKey,
   });
-  fixture.orderId = checkout.orderId as number;
-  fixture.paymentAttemptId = checkout.paymentAttemptId as number;
-  fixture.paymentSessionId = checkout.paymentSessionId as number;
+  fixture.orderId = checkout.orderId;
+  fixture.paymentAttemptId = checkout.paymentAttemptId;
+  fixture.paymentSessionId = checkout.paymentSessionId;
   return fixture;
 }
 
-async function callbackToken(sessionId: number, purpose: 'return' | 'cancel') {
+async function callbackToken(sessionId: TableIdentity, purpose: 'return' | 'cancel') {
   const session = await app.scope('a-pay').model.paymentSession.getById(sessionId);
   assert.ok(session);
   const callbackUrl = (await app.scope('a-pay').service.paymentCallback.createUrls(session))[
@@ -299,7 +303,7 @@ async function callbackToken(sessionId: number, purpose: 'return' | 'cancel') {
   return callbackUrl;
 }
 
-describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, () => {
+describe('paypalLifecycle.test.ts', { concurrency: false }, () => {
   const releases: Array<() => void> = [];
 
   before(async () => {
@@ -363,7 +367,7 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           assert.notEqual(started.providerCorrelationReference, String(started.id));
           assert.notEqual(started.providerInvoiceReference, String(fixture.paymentAttemptId));
 
-          const returnUrl = await callbackToken(started.id as number, 'return');
+          const returnUrl = await callbackToken(started.id, 'return');
           const returnState = new URL(returnUrl).searchParams.get('state');
           assert.ok(returnState);
           const callback = await pay.service.paymentCallback.consume('return', returnState);
@@ -421,9 +425,9 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
           const pay = app.scope('a-pay');
           const started = await pay.service.paymentSession.start(fixture.paymentSessionId!);
-          const returnState = new URL(
-            await callbackToken(started.id as number, 'return'),
-          ).searchParams.get('state');
+          const returnState = new URL(await callbackToken(started.id, 'return')).searchParams.get(
+            'state',
+          );
           assert.ok(returnState);
           await assert.rejects(
             app.bean.executor.performAction('get', '/pay/payment-callback/return', {
@@ -494,9 +498,9 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
           const pay = app.scope('a-pay');
           const started = await pay.service.paymentSession.start(fixture.paymentSessionId!);
-          const returnState = new URL(
-            await callbackToken(started.id as number, 'return'),
-          ).searchParams.get('state');
+          const returnState = new URL(await callbackToken(started.id, 'return')).searchParams.get(
+            'state',
+          );
           assert.ok(returnState);
           await assert.rejects(
             app.bean.executor.performAction('get', '/pay/payment-callback/return', {
@@ -578,13 +582,13 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
               supplementary_data: { related_ids: { order_id: state.orderId } },
             },
           });
-          const verified = await pay.bean.payProvider.get('pay-paypal:paypal').verifyWebhook(
+          const verified = await app.bean.payProvider.get('pay-paypal:paypal').verifyWebhook(
             {
               rawBody,
               body: JSON.parse(rawBody),
               headers: { 'paypal-transmission-id': 'transmission-test' },
             },
-            pay.bean.payProvider.getOptions('pay-paypal:paypal', 'default'),
+            app.bean.payProvider.getOptions('pay-paypal:paypal', 'default'),
           );
           await pay.service.webhook.receive({
             providerName: 'pay-paypal:paypal',
@@ -637,7 +641,7 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           assert.ok(session);
           const started = await pay.service.paymentSession.start(session.id);
           state.orderStatus = 'VOIDED';
-          const cancelUrl = await callbackToken(started.id as number, 'cancel');
+          const cancelUrl = await callbackToken(started.id, 'cancel');
           const cancelState = new URL(cancelUrl).searchParams.get('state');
           assert.ok(cancelState);
           await assert.rejects(
@@ -703,7 +707,7 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
           assert.ok(session);
           const started = await pay.service.paymentSession.start(session.id);
-          const cancelUrl = await callbackToken(started.id as number, 'cancel');
+          const cancelUrl = await callbackToken(started.id, 'cancel');
           const cancelState = new URL(cancelUrl).searchParams.get('state');
           assert.ok(cancelState);
           await assert.rejects(
@@ -764,9 +768,9 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)), {});
           const pay = app.scope('a-pay');
           const started = await pay.service.paymentSession.start(fixture.paymentSessionId!);
-          const cancelState = new URL(
-            await callbackToken(started.id as number, 'cancel'),
-          ).searchParams.get('state');
+          const cancelState = new URL(await callbackToken(started.id, 'cancel')).searchParams.get(
+            'state',
+          );
           assert.ok(cancelState);
           await assert.rejects(
             app.bean.executor.performAction('get', '/pay/payment-callback/cancel', {
@@ -822,7 +826,7 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           const session = await pay.model.paymentSession.getById(fixture.paymentSessionId!);
           assert.ok(session);
           const started = await pay.service.paymentSession.start(session.id);
-          const returnUrl = await callbackToken(started.id as number, 'return');
+          const returnUrl = await callbackToken(started.id, 'return');
           const token = new URL(returnUrl).searchParams.get('state');
           assert.ok(token);
           const unsafeState = await app.bean.jwt.get('oauthstate').sign(
@@ -1099,13 +1103,13 @@ describe('paypalLifecycle.test.ts', { concurrency: false, sequential: true }, ()
               supplementary_data: { related_ids: { capture_id: state.captureId } },
             },
           });
-          const verified = await pay.bean.payProvider.get('pay-paypal:paypal').verifyWebhook(
+          const verified = await app.bean.payProvider.get('pay-paypal:paypal').verifyWebhook(
             {
               rawBody,
               body: JSON.parse(rawBody),
               headers: { 'paypal-transmission-id': 'webhook-refunded-test' },
             },
-            pay.bean.payProvider.getOptions('pay-paypal:paypal', 'default'),
+            app.bean.payProvider.getOptions('pay-paypal:paypal', 'default'),
           );
           assert.equal(verified.refundOperationId, executed.refundOperationId);
           await pay.service.webhook.receive({

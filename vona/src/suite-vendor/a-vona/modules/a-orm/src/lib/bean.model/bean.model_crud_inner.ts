@@ -5,6 +5,8 @@ import { isNil } from '@cabloy/utils';
 import { cast } from 'vona';
 
 import type {
+  IBuildModelCountParams,
+  IBuildModelSelectParams,
   IModelCountParams,
   IModelGetOptionsGeneral,
   IModelIncrementParams,
@@ -63,7 +65,9 @@ export class BeanModelCrudInner<TRecord extends {}> extends BeanModelView<TRecor
     return result;
   }
 
-  protected async _select<T extends IModelSelectParams<TRecord>>(
+  protected async _select<
+    T extends IModelSelectParams<TRecord> | IBuildModelSelectParams<TRecord, undefined, never>,
+  >(
     table?: keyof ITableRecord,
     params?: T,
     options?: IModelMethodOptionsGeneral,
@@ -141,7 +145,7 @@ export class BeanModelCrudInner<TRecord extends {}> extends BeanModelView<TRecor
 
   protected async _count(
     table?: keyof ITableRecord,
-    params?: IModelCountParams<TRecord>,
+    params?: IModelCountParams<TRecord> | IBuildModelCountParams<TRecord, undefined, never>,
     options?: IModelMethodOptionsGeneral,
   ): Promise<string | undefined> {
     // table

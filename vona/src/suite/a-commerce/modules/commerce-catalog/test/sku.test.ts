@@ -43,6 +43,7 @@ describe('sku.test.ts', { concurrency: false }, () => {
           categoryId,
           title: '__SkuProduct__',
           published: true,
+          productContentForm: undefined,
         };
         const productId = await app.bean.executor.performAction(
           'post',

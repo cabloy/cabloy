@@ -7,7 +7,7 @@ const activationConsumePath = '/home/user/account/activation/consume';
 const activationConsumerUrl = 'https://account.example.test/home/user/activation';
 const activationConsumerUrlAdmin = 'https://account.example.test/admin/home/user/activation';
 
-describe('accountActivation.test.ts', { concurrency: false, sequential: true }, () => {
+describe('accountActivation.test.ts', { concurrency: false }, () => {
   const releases: Array<() => void> = [];
   let restoreConfig: (() => void) | undefined;
 
@@ -211,6 +211,7 @@ async function configureActivation() {
   return await app.bean.executor.mockCtx(async () => {
     const options =
       app.bean.onion.middlewareSystem.getOnionSlice('a-security:cors').beanOptions.options;
+    assert.ok(options);
     const whiteListPrevious = options.whiteList;
     options.whiteList = ['https://account.example.test'];
     return () => {

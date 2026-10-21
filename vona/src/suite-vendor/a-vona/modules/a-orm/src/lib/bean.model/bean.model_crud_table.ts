@@ -1,10 +1,10 @@
 import type { TableIdentity } from 'table-identity';
 
 import type {
-  IModelCountParams,
+  IBuildModelCountParams,
+  IBuildModelSelectParams,
   IModelGetOptionsGeneral,
   IModelMethodOptionsGeneral,
-  IModelSelectParams,
   IModelUpdateOptionsGeneral,
   ITableRecord,
   TypeModelWhere,
@@ -23,7 +23,7 @@ export class BeanModelCrudTable<TRecord extends {}> extends BeanModelCrudInner<T
 
   async select(
     table: keyof ITableRecord,
-    params?: Omit<IModelSelectParams<TRecord>, 'include' | 'with'>,
+    params?: Omit<IBuildModelSelectParams<TRecord, undefined, never>, 'include' | 'with'>,
     options?: IModelMethodOptionsGeneral,
   ): Promise<TRecord[]> {
     return await this._select(table, params, options);
@@ -39,7 +39,7 @@ export class BeanModelCrudTable<TRecord extends {}> extends BeanModelCrudInner<T
 
   async count(
     table: keyof ITableRecord,
-    params?: IModelCountParams<TRecord>,
+    params?: IBuildModelCountParams<TRecord, undefined, never>,
     options?: IModelMethodOptionsGeneral,
   ): Promise<string | undefined> {
     return await this._count(table, params, options);

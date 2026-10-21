@@ -119,18 +119,17 @@ describe('skuUniqueness.test.ts', { concurrency: false }, () => {
       await createFixture(fixture, suffix, 2);
       const sourceIds = await runInContext(async () => {
         const catalog = app.scope('commerce-catalog');
-        const skus = [];
+        const skuIds: TableIdentity[] = [];
         for (let index = 0; index < 2; index++) {
-          skus.push(
-            await catalog.service.sku.create({
-              productId: fixture.productIds[index]!,
-              code: sourceCodes[index]!,
-              priceCents: 100,
-              lifecycle: 'draft',
-            }),
-          );
+          const sku = await catalog.service.sku.create({
+            productId: fixture.productIds[index]!,
+            code: sourceCodes[index]!,
+            priceCents: 100,
+            lifecycle: 'draft',
+          });
+          skuIds.push(sku.id);
         }
-        return skus.map(sku => sku.id);
+        return skuIds;
       });
       const results = await Promise.allSettled(
         sourceIds.map((skuId, index) =>

@@ -1,4 +1,3 @@
-import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { after, before, describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
@@ -85,32 +84,28 @@ describe('error.test.ts', { concurrency: false }, () => {
 
   it('context:redirect:trustedExternal', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const [_, fallbackError] = await catchError(() => {
-        app.ctx.redirect(`${app.util.protocol}://${app.util.host}/authorize`);
+      assert.throws(() => app.ctx.redirect(`${app.util.protocol}://${app.util.host}/authorize`), {
+        code: 302,
+        status: 302,
+        message: `${app.util.protocol}://${app.util.host}/authorize`,
       });
-      assert.equal(fallbackError?.code, 302);
-      assert.equal(fallbackError?.status, 302);
-      assert.equal(fallbackError?.message, `${app.util.protocol}://${app.util.host}/authorize`);
 
-      const [__, untrustedError] = await catchError(() => {
-        app.ctx.redirect('https://request.example.test/authorize');
+      assert.throws(() => app.ctx.redirect('https://request.example.test/authorize'), {
+        code: 403,
+        status: 403,
       });
-      assert.equal(untrustedError?.code, 403);
-      assert.equal(untrustedError?.status, 403);
 
-      const [___, trustedError] = await catchError(() => {
-        app.ctx.redirect('https://provider.example.test/authorize', { trustedExternal: true });
-      });
-      assert.equal(trustedError?.code, 302);
-      assert.equal(trustedError?.status, 302);
-      assert.equal(trustedError?.message, 'https://provider.example.test/authorize');
+      assert.throws(
+        () =>
+          app.ctx.redirect('https://provider.example.test/authorize', { trustedExternal: true }),
+        { code: 302, status: 302, message: 'https://provider.example.test/authorize' },
+      );
 
-      const [____, legacyError] = await catchError(() => {
-        app.ctx.redirect('/legacy', 301);
+      assert.throws(() => app.ctx.redirect('/legacy', 301), {
+        code: 301,
+        status: 301,
+        message: '/legacy',
       });
-      assert.equal(legacyError?.code, 301);
-      assert.equal(legacyError?.status, 301);
-      assert.equal(legacyError?.message, '/legacy');
     });
   });
 });

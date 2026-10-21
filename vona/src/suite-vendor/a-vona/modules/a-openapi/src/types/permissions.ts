@@ -31,7 +31,9 @@ export interface IOpenapiPermissionActionRbac {
 export type IOpenapiPermissionAction = boolean | IOpenapiPermissionActionRbac;
 
 export type IOpenapiPermissionModeActionActions = {
-  [K in keyof IResourceTableActionRecord]?: IOpenapiPermissionAction; // IResourceTableActionRecord[K];
+  [K in keyof IResourceTableActionRecord]?: IOpenapiPermissionAction;
+} & {
+  [action: string]: IOpenapiPermissionAction | undefined;
 };
 
 export interface IOpenapiPermissions {

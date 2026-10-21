@@ -182,7 +182,11 @@ describe('rbacCatalogGuard.test.ts', { concurrency: false }, () => {
 
   it('rejects class-level RBAC decoration', () => {
     class Controller {}
-    assert.throws(() => Passport.rbac()(Controller), /must decorate an action/);
+    // Deliberately misuse the method decorator as a class decorator to test runtime rejection.
+    assert.throws(
+      () => (Passport.rbac() as unknown as ClassDecorator)(Controller),
+      /must decorate an action/,
+    );
   });
 
   it('resolves aliases to the terminal same-controller grant identity', () => {

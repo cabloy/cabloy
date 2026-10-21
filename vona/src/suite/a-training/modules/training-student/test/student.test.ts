@@ -106,13 +106,20 @@ describe('student.test.ts', { concurrency: false }, () => {
       );
       const operation = apiJson.paths?.['/api/training/student/bulk/delete']?.post;
       assert.equal(operation?.operationId, 'TrainingStudent_deleteBulk');
-      const requestSchema = operation?.requestBody?.content?.['application/json']?.schema as any;
-      const requestSchemaRef = requestSchema?.$ref;
-      assert.ok(requestSchemaRef);
+      const requestBody = operation?.requestBody;
+      assert.ok(requestBody);
+      assert.ok(!('$ref' in requestBody));
+      const requestSchema = requestBody.content['application/json']?.schema;
+      assert.ok(requestSchema && '$ref' in requestSchema);
+      const requestSchemaRef = requestSchema.$ref;
+      assert.ok(typeof requestSchemaRef === 'string');
       const requestSchemaName = requestSchemaRef.replace('#/components/schemas/', '');
-      const component = apiJson.components?.schemas?.[requestSchemaName] as any;
-      assert.equal(component?.properties?.ids?.minItems, 1);
-      assert.equal(component?.properties?.ids?.maxItems, 100);
+      const component = apiJson.components?.schemas?.[requestSchemaName];
+      assert.ok(component && !('$ref' in component));
+      const idsSchema = component.properties?.ids;
+      assert.ok(idsSchema && !('$ref' in idsSchema));
+      assert.equal(idsSchema.minItems, 1);
+      assert.equal(idsSchema.maxItems, 100);
     });
   });
 
@@ -562,17 +569,22 @@ describe('student.test.ts', { concurrency: false }, () => {
       await app.bean.passport.signinMock();
       let studentId: string | undefined;
       try {
-        studentId = await app.bean.executor.performAction('post', '/training/student', {
-          body: { name: '__DeleteBulkIdempotent__', mobile: '13891234567', level: 1 },
-        });
+        const createdStudentId = await app.bean.executor.performAction(
+          'post',
+          '/training/student',
+          {
+            body: { name: '__DeleteBulkIdempotent__', mobile: '13891234567', level: 1 },
+          },
+        );
+        studentId = createdStudentId;
         const deleted = await app.bean.executor.performAction(
           'post',
           '/training/student/bulk/delete',
-          { body: { ids: [studentId, studentId, '-1'] } },
+          { body: { ids: [createdStudentId, createdStudentId, '-1'] } },
         );
         assert.equal(deleted, null);
         assert.equal(
-          await app.scope('training-student').model.student.getById(studentId),
+          await app.scope('training-student').model.student.getById(createdStudentId),
           undefined,
         );
       } finally {

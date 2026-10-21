@@ -1,20 +1,22 @@
+import type { TableIdentity } from 'table-identity';
+
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { after, before, describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
 
 interface IFixture {
-  categoryId?: number;
-  productId?: number;
-  skuId?: number;
-  balanceId?: number;
-  addressId?: number;
-  cartId?: number;
-  userId?: number;
+  categoryId?: TableIdentity;
+  productId?: TableIdentity;
+  skuId?: TableIdentity;
+  balanceId?: TableIdentity;
+  addressId?: TableIdentity;
+  cartId?: TableIdentity;
+  userId?: TableIdentity;
   customerName?: string;
-  orderId?: number;
-  paymentAttemptId?: number;
-  paymentSessionId?: number;
+  orderId?: TableIdentity;
+  paymentAttemptId?: TableIdentity;
+  paymentSessionId?: TableIdentity;
 }
 
 interface IGatewayState {
@@ -212,6 +214,7 @@ async function createCheckout(suffix: string): Promise<IFixture> {
       lifecycle: 'active',
     },
   });
+  assert.ok(fixture.skuId !== undefined);
   fixture.balanceId = (
     await app.scope('commerce-trade').service.stockBalance.adjustStock({
       skuId: fixture.skuId,
@@ -219,11 +222,11 @@ async function createCheckout(suffix: string): Promise<IFixture> {
       reason: 'Stripe lifecycle fixture',
       correlationId: `stripe-stock-${suffix}`,
     })
-  ).id as number;
+  ).id;
   await app.bean.passport.signout();
   fixture.customerName = `stripe-customer-${suffix}`;
   const customer = await app.bean.user.register({ name: fixture.customerName }, true);
-  fixture.userId = customer.id as number;
+  fixture.userId = customer.id;
   await app.bean.passport.signinMock(fixture.customerName as any);
   const userId = app.bean.passport.currentUser!.id;
   fixture.addressId = await app.bean.executor.performAction(
@@ -242,24 +245,25 @@ async function createCheckout(suffix: string): Promise<IFixture> {
     },
   );
   const cart = await app.scope('commerce-trade').model.cart.insert({ userId });
-  fixture.cartId = cart.id as number;
+  fixture.cartId = cart.id;
   await app.scope('commerce-trade').model.cartItem.insert({
     cartId: cart.id,
     skuId: fixture.skuId,
     quantity: 1,
   });
+  assert.ok(fixture.addressId !== undefined);
   const checkout = await app.scope('commerce-trade').service.order.checkout({
     addressId: fixture.addressId,
     correlationId: `stripe-checkout-${suffix}`,
     providerCandidateKey: 'stripe',
   });
-  fixture.orderId = checkout.orderId as number;
-  fixture.paymentAttemptId = checkout.paymentAttemptId as number;
-  fixture.paymentSessionId = checkout.paymentSessionId as number;
+  fixture.orderId = checkout.orderId;
+  fixture.paymentAttemptId = checkout.paymentAttemptId;
+  fixture.paymentSessionId = checkout.paymentSessionId;
   return fixture;
 }
 
-async function callbackToken(sessionId: number) {
+async function callbackToken(sessionId: TableIdentity) {
   const session = await app.scope('a-pay').model.paymentSession.getById(sessionId);
   assert.ok(session);
   const callbackUrl = (await app.scope('a-pay').service.paymentCallback.createUrls(session))
@@ -273,7 +277,10 @@ async function callbackToken(sessionId: number) {
   return callbackUrl;
 }
 
-async function consumeReturnCallback(sessionId: number, gateway: ReturnType<typeof createGateway>) {
+async function consumeReturnCallback(
+  sessionId: TableIdentity,
+  gateway: ReturnType<typeof createGateway>,
+) {
   const state = new URL(await callbackToken(sessionId)).searchParams.get('state');
   assert.ok(state);
   await assert.rejects(
@@ -285,7 +292,7 @@ async function consumeReturnCallback(sessionId: number, gateway: ReturnType<type
   );
 }
 
-async function dispatchPaymentOutcome(paymentSessionId: number) {
+async function dispatchPaymentOutcome(paymentSessionId: TableIdentity) {
   const pay = app.scope('a-pay');
   const outbox = await pay.model.outboxEvent.get({
     paymentSessionId,
@@ -297,7 +304,7 @@ async function dispatchPaymentOutcome(paymentSessionId: number) {
   return outbox;
 }
 
-describe('stripeLifecycle.test.ts', { concurrency: false, sequential: true }, () => {
+describe('stripeLifecycle.test.ts', { concurrency: false }, () => {
   const releases: Array<() => void> = [];
 
   before(async () => {
@@ -352,8 +359,8 @@ describe('stripeLifecycle.test.ts', { concurrency: false, sequential: true }, ()
             providerInvoiceReference: started.providerInvoiceReference,
           });
           assert.equal(started.providerOrderId, state.checkoutSessionId);
-          await consumeReturnCallback(started.id as number, gateway);
-          const outbox = await dispatchPaymentOutcome(started.id as number);
+          await consumeReturnCallback(started.id, gateway);
+          const outbox = await dispatchPaymentOutcome(started.id);
           const order = await app.scope('commerce-trade').model.order.getById(fixture.orderId!);
           const attempt = await app
             .scope('commerce-payment')
@@ -429,13 +436,13 @@ describe('stripeLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           const rawBody = JSON.stringify({
             id: `stripe-webhook-${started.id}`,
           });
-          const verified = await pay.bean.payProvider.get('pay-stripe:stripe').verifyWebhook(
+          const verified = await app.bean.payProvider.get('pay-stripe:stripe').verifyWebhook(
             {
               rawBody,
               body: JSON.parse(rawBody),
               headers: { 'stripe-signature': 'stripe-signature-test' },
             },
-            pay.bean.payProvider.getOptions('pay-stripe:stripe', 'default'),
+            app.bean.payProvider.getOptions('pay-stripe:stripe', 'default'),
           );
           await pay.service.webhook.receive({
             providerName: 'pay-stripe:stripe',
@@ -506,7 +513,7 @@ describe('stripeLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           Object.assign(fixture, await createCheckout(randomUUID().slice(0, 12)));
           const pay = app.scope('a-pay');
           const started = await pay.service.paymentSession.start(fixture.paymentSessionId!);
-          await consumeReturnCallback(started.id as number, gateway);
+          await consumeReturnCallback(started.id, gateway);
           const operation = await pay.model.providerOperation.get({
             paymentSessionId: started.id,
             kind: 'confirm',
@@ -530,7 +537,7 @@ describe('stripeLifecycle.test.ts', { concurrency: false, sequential: true }, ()
           });
           assert.equal(await pay.service.providerOperation.queueDue(), 1);
           assert.equal((await pay.model.paymentSession.getById(started.id))?.state, 'succeeded');
-          await dispatchPaymentOutcome(started.id as number);
+          await dispatchPaymentOutcome(started.id);
           assert.equal(
             (await app.scope('commerce-trade').model.order.getById(fixture.orderId!))?.state,
             'paid',

@@ -1,9 +1,14 @@
+import type { TableIdentity } from 'table-identity';
+import type { EntityFileProvider } from 'vona-module-a-file';
+import type { IFileProviderCloudflareClientOptions } from 'vona-module-file-cloudflare';
+
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
+import { ServiceFileCloudflare } from 'vona-module-file-cloudflare';
 
-function assertPublicFieldsOnly(data: Record<string, unknown>) {
+function assertPublicFieldsOnly(data: object) {
   assert.equal('provider' in data, false);
   assert.equal('resourceId' in data, false);
   assert.equal('clientName' in data, false);
@@ -24,17 +29,17 @@ function assertPublicFieldsOnly(data: Record<string, unknown>) {
 describe('fileCloudflareMapping.test.ts', () => {
   it('action:file:cloudflare download url and direct upload mapping', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const fileCloudflare = app.bean._getBean('file-cloudflare.service.fileCloudflare' as never);
+      const fileCloudflare = app.bean._getBean(ServiceFileCloudflare);
       const finalizeDirectUploadRaw = fileCloudflare.finalizeDirectUpload;
       const fileProvider = await app.bean.fileProvider.get({
         providerName: 'file-cloudflare:cloudflare',
         clientName: 'default',
       });
       const clientOptionsRaw = fileProvider.clientOptions;
-      let fileId: number | undefined;
+      let fileId: TableIdentity | undefined;
       const headObjectCalls: Array<{ bucket?: string; objectKey?: string }> = [];
       try {
-        fileCloudflare.finalizeDirectUpload = async (file: any) => {
+        fileCloudflare.finalizeDirectUpload = async file => {
           headObjectCalls.push({ bucket: file.bucket, objectKey: file.objectKey });
           return {
             resourceId: file.resourceId,
@@ -49,19 +54,18 @@ describe('fileCloudflareMapping.test.ts', () => {
             deliveryBaseUrl: file.deliveryBaseUrl,
           };
         };
+        const clientOptions: IFileProviderCloudflareClientOptions = {
+          endpoint: 'https://account123.r2.cloudflarestorage.com',
+          accessKeyId: 'access-key',
+          secretAccessKey: 'secret-key',
+          bucket: 'bucket-a',
+          deliveryBaseUrl: 'https://cdn.example.com/files',
+          public: true,
+        };
         await app.bean.fileProvider.scope.model.fileProvider.updateById(fileProvider.id, {
-          clientOptions: {
-            endpoint: 'https://account123.r2.cloudflarestorage.com',
-            accessKeyId: 'access-key',
-            secretAccessKey: 'secret-key',
-            bucket: 'bucket-a',
-            deliveryBaseUrl: 'https://cdn.example.com/files',
-            public: true,
-          } as any,
+          clientOptions,
         });
-        const fileCloudflareService = app.bean._getBean(
-          'file-cloudflare.service.fileCloudflare' as never,
-        );
+        const fileCloudflareService = app.bean._getBean(ServiceFileCloudflare);
 
         const publicUrl = await fileCloudflareService.getDownloadUrl(
           {
@@ -69,7 +73,7 @@ describe('fileCloudflareMapping.test.ts', () => {
             objectKey: 'folder/file.txt',
             public: true,
             deliveryBaseUrl: 'https://cdn.example.com/files',
-          } as any,
+          },
           {
             endpoint: 'https://account123.r2.cloudflarestorage.com',
             accessKeyId: 'access-key',
@@ -134,13 +138,12 @@ describe('fileCloudflareMapping.test.ts', () => {
         assert.equal(draftDownload, undefined);
         assert.equal(draftDownloadErr?.code, 403);
 
-        const finalizedDirectUpload = await (app.bean.file as any).finalizeDirectUpload(
-          beanDirectUpload.id,
-        );
+        const finalizedDirectUpload = await app.bean.file.finalizeDirectUpload(beanDirectUpload.id);
         assert.equal(headObjectCalls.length, 1);
         assert.equal(headObjectCalls[0].bucket, 'bucket-a');
         assert.equal(typeof headObjectCalls[0].objectKey, 'string');
-        assert.equal(headObjectCalls[0].objectKey?.length > 0, true);
+        assert.ok(headObjectCalls[0].objectKey);
+        assert.equal(headObjectCalls[0].objectKey.length > 0, true);
         assert.equal(finalizedDirectUpload.size, 12);
         assert.equal(finalizedDirectUpload.contentType, 'text/plain');
         assert.equal(finalizedDirectUpload.etag, 'etag-finalized');
@@ -158,7 +161,8 @@ describe('fileCloudflareMapping.test.ts', () => {
         if (fileId) await app.bean.file.scope.model.file.deleteById(fileId);
         fileCloudflare.finalizeDirectUpload = finalizeDirectUploadRaw;
         await app.bean.fileProvider.scope.model.fileProvider.updateById(fileProvider.id, {
-          clientOptions: clientOptionsRaw ?? null,
+          // Restore SQL NULL as well as configured JSON at the persistence boundary.
+          clientOptions: (clientOptionsRaw ?? null) as EntityFileProvider['clientOptions'],
         });
       }
     });

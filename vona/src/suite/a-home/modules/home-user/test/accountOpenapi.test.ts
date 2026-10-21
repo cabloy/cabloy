@@ -1,3 +1,11 @@
+import type {
+  OpenAPIObject,
+  OperationObject,
+  ReferenceObject,
+  SchemaObject,
+} from 'openapi3-ts/oas31';
+import type { ISchemaObjectExtensionField } from 'vona-module-a-openapi';
+
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
@@ -59,44 +67,23 @@ describe('accountOpenapi.test.ts', () => {
         assert.deepEqual(operation.tags, ['HomeUserAccount']);
         assert.equal(!operation.security, expectation.isPublic);
         if (['issuePasswordSetLink', 'requestPasswordReset'].includes(expectation.action)) {
-          assert.ok(operation.requestBody);
-          const schema = (
-            operation.requestBody as { content?: { 'application/json'?: { schema?: any } } }
-          ).content?.['application/json']?.schema;
-          assert.ok(schema);
-          const schemaRef = (schema as { $ref?: string }).$ref;
-          assert.ok(schemaRef);
-          const schemaName = schemaRef.replace('#/components/schemas/', '');
-          const schemaResolved = doc.components?.schemas?.[schemaName];
-          assert.ok(schemaResolved);
+          const schemaResolved = requestSchema(doc, operation);
           assert.ok(schemaResolved.properties?.consumerUrl);
           assert.ok(schemaResolved.required?.includes('consumerUrl'));
           if (expectation.action === 'issuePasswordSetLink') {
-            assert.equal(schemaResolved.properties?.email?.format, 'email');
+            assert.equal(inlineSchema(schemaResolved.properties?.email).format, 'email');
             assert.ok(schemaResolved.required?.includes('email'));
           }
         }
         if (expectation.action === 'consumeActivation') {
-          const schema = (
-            operation.requestBody as { content?: { 'application/json'?: { schema?: any } } }
-          ).content?.['application/json']?.schema;
-          const schemaRef = (schema as { $ref?: string })?.$ref;
-          assert.ok(schemaRef);
-          const schemaName = schemaRef.replace('#/components/schemas/', '');
-          const schemaResolved = doc.components?.schemas?.[schemaName];
+          const schemaResolved = requestSchema(doc, operation);
           assert.deepEqual(Object.keys(schemaResolved?.properties ?? {}), ['token']);
           assert.deepEqual(schemaResolved?.required, ['token']);
-          assert.equal(schemaResolved?.properties?.token?.minLength, 32);
-          assert.equal(schemaResolved?.properties?.token?.maxLength, 255);
+          assert.equal(inlineSchema(schemaResolved.properties?.token).minLength, 32);
+          assert.equal(inlineSchema(schemaResolved.properties?.token).maxLength, 255);
         }
         if (expectation.action === 'changePassword') {
-          const schema = (
-            operation.requestBody as { content?: { 'application/json'?: { schema?: any } } }
-          ).content?.['application/json']?.schema;
-          const schemaRef = (schema as { $ref?: string })?.$ref;
-          assert.ok(schemaRef);
-          const schemaName = schemaRef.replace('#/components/schemas/', '');
-          const schemaResolved = doc.components?.schemas?.[schemaName];
+          const schemaResolved = requestSchema(doc, operation);
           assert.deepEqual(Object.keys(schemaResolved?.properties ?? {}), [
             'currentPassword',
             'newPassword',
@@ -112,23 +99,19 @@ describe('accountOpenapi.test.ts', () => {
             ['newPassword', 'home-user::NewPassword'],
             ['passwordConfirm', 'home-user::PasswordConfirm'],
           ]) {
-            const property = schemaResolved?.properties?.[field];
+            const property = inlineSchema(schemaResolved.properties?.[field]);
             assert.equal(property?.title?.toString(), title);
             assert.equal(property?.minLength, 6);
             assert.equal(property?.maxLength, 20);
             assert.equal(property?.rest?.form?.render, 'basic-input:formFieldInput');
-            assert.deepEqual(property?.rest?.form?.options, { type: 'password' });
+            const form = property.rest?.form;
+            assert.ok(form && 'options' in form);
+            assert.deepEqual(form.options, { type: 'password' });
             assert.equal(property?.rest?.form?.required, true);
           }
         }
         if (expectation.action === 'updateProfile') {
-          const schema = (
-            operation.requestBody as { content?: { 'application/json'?: { schema?: any } } }
-          ).content?.['application/json']?.schema;
-          const schemaRef = (schema as { $ref?: string })?.$ref;
-          assert.ok(schemaRef);
-          const schemaName = schemaRef.replace('#/components/schemas/', '');
-          const schemaResolved = doc.components?.schemas?.[schemaName];
+          const schemaResolved = requestSchema(doc, operation);
           assert.deepEqual(Object.keys(schemaResolved?.properties ?? {}), [
             'name',
             'avatar',
@@ -142,13 +125,19 @@ describe('accountOpenapi.test.ts', () => {
             ['locale', 'home-user::AccountLocale'],
             ['tz', 'home-user::AccountTimezone'],
           ]) {
-            assert.equal(schemaResolved?.properties?.[field]?.title?.toString(), title);
+            assert.equal(inlineSchema(schemaResolved.properties?.[field]).title?.toString(), title);
           }
-          assert.equal(schemaResolved?.properties?.name?.minLength, 1);
-          assert.equal(schemaResolved?.properties?.name?.maxLength, 100);
-          assert.deepEqual(schemaResolved?.properties?.avatar?.type, ['string', 'null']);
-          assert.deepEqual(schemaResolved?.properties?.locale?.type, ['string', 'null']);
-          assert.deepEqual(schemaResolved?.properties?.tz?.type, ['string', 'null']);
+          assert.equal(inlineSchema(schemaResolved.properties?.name).minLength, 1);
+          assert.equal(inlineSchema(schemaResolved.properties?.name).maxLength, 100);
+          assert.deepEqual(inlineSchema(schemaResolved.properties?.avatar).type, [
+            'string',
+            'null',
+          ]);
+          assert.deepEqual(inlineSchema(schemaResolved.properties?.locale).type, [
+            'string',
+            'null',
+          ]);
+          assert.deepEqual(inlineSchema(schemaResolved.properties?.tz).type, ['string', 'null']);
           assert.equal(schemaResolved?.properties?.avatarImageId, undefined);
           assert.equal(schemaResolved?.properties?.avatarFileId, undefined);
         }
@@ -156,3 +145,25 @@ describe('accountOpenapi.test.ts', () => {
     });
   });
 });
+
+function inlineSchema(
+  schema: ReferenceObject | SchemaObject | undefined,
+): ISchemaObjectExtensionField {
+  assert.ok(schema);
+  assert.ok(!('$ref' in schema));
+  return schema;
+}
+
+function requestSchema(
+  doc: OpenAPIObject,
+  operation: OperationObject,
+): ISchemaObjectExtensionField {
+  const body = operation.requestBody;
+  assert.ok(body);
+  assert.ok(!('$ref' in body));
+  const schema = body.content['application/json']?.schema;
+  assert.ok(schema && '$ref' in schema);
+  assert.ok(typeof schema.$ref === 'string');
+  const schemaName = schema.$ref.replace('#/components/schemas/', '');
+  return inlineSchema(doc.components?.schemas?.[schemaName]);
+}

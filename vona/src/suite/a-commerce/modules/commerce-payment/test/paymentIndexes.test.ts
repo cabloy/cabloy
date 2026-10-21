@@ -16,6 +16,7 @@ import {
   resolveVonaLocalPaths,
 } from 'vona';
 import { app } from 'vona-mock';
+import { MetaVersion } from 'vona-module-a-index';
 import { ServiceDatabaseAsyncLocalStorage, ServiceDatabaseClient } from 'vona-module-a-orm';
 
 const expectedIndexes = {
@@ -198,7 +199,7 @@ describe('paymentIndexes.test.ts', { concurrency: false }, () => {
           assert.ok(indexesBefore.some(item => item.name === retainedIndex));
 
           const update = async () => {
-            await app.bean._getBean('a-index.meta.version').update({ version: -1 });
+            await app.bean._getBean(MetaVersion).update({ version: -1 });
           };
           for (let pass = 0; pass < 2; pass++) {
             await update();

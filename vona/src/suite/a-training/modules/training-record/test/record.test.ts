@@ -1,14 +1,13 @@
 import type { DtoRecordCreate, DtoRecordUpdate } from 'vona-module-training-record';
 import type { DtoStudentCreate } from 'vona-module-training-student';
 
-import { ZodMetadata } from '@cabloy/zod-openapi';
 import fse from 'fs-extra';
 import assert from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
-import { getTargetDecoratorRules } from 'vona-module-a-openapiutils';
+import { $makeMetadata, getTargetDecoratorRules } from 'vona-module-a-openapiutils';
 
 import { DtoDetailRecordSubjectResItem } from '../src/dto/detailRecordSubjectResItem.tsx';
 import { DtoRecordSelectReq } from '../src/dto/recordSelectReq.tsx';
@@ -31,7 +30,8 @@ describe('record.test.ts', () => {
       assert.equal(subjectComponent.required?.includes('_lineNumber'), false);
 
       const selectReqRules = getTargetDecoratorRules(DtoRecordSelectReq.prototype);
-      const studentIdMetadata = ZodMetadata.getOpenapiMetadata(selectReqRules.studentId!);
+      assert.ok(selectReqRules.studentId);
+      const studentIdMetadata = $makeMetadata(selectReqRules.studentId);
       assert.equal(selectReqRules.studentId?.type, 'optional');
       assert.deepEqual(studentIdMetadata?.filter, {
         table: 'trainingStudent',
@@ -52,13 +52,18 @@ describe('record.test.ts', () => {
         'V31',
       );
       const parameters = controllerApiJson.paths?.['/api/training/record']?.get?.parameters ?? [];
-      const studentIdParameter = parameters.find(parameter => parameter.name === 'studentId');
+      const studentIdParameter = parameters.find(
+        parameter => !('$ref' in parameter) && parameter.name === 'studentId',
+      );
       assert.ok(studentIdParameter);
+      assert.ok(!('$ref' in studentIdParameter));
       assert.equal(studentIdParameter.in, 'query');
       assert.equal(studentIdParameter.required, false);
-      assert.deepEqual(studentIdParameter.schema?.type, ['string', 'null']);
+      assert.ok(studentIdParameter.schema);
+      assert.ok(!('$ref' in studentIdParameter.schema));
+      assert.deepEqual(studentIdParameter.schema.type, ['string', 'null']);
       assert.equal(
-        parameters.some(parameter => parameter.name === 'studentName'),
+        parameters.some(parameter => !('$ref' in parameter) && parameter.name === 'studentName'),
         false,
       );
 
@@ -93,7 +98,7 @@ describe('record.test.ts', () => {
     await app.bean.executor.mockCtx(async () => {
       const studentData: DtoStudentCreate = {
         name: '__Student__',
-        description: 'This is a student for record test',
+        content: { descriptionMarkdown: 'This is a student for record test' },
         mobile: '13812345678',
         level: 1,
         trainingRecords: [],

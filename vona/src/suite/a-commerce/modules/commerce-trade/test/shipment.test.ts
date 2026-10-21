@@ -69,7 +69,7 @@ async function createPaidOrder(suffix: string): Promise<IFixture> {
   return fixture;
 }
 
-describe('shipment.test.ts', { concurrency: false, sequential: true }, () => {
+describe('shipment.test.ts', { concurrency: false }, () => {
   let releaseTestLock: (() => void) | undefined;
 
   before(async () => {
@@ -85,9 +85,11 @@ describe('shipment.test.ts', { concurrency: false, sequential: true }, () => {
       const fixture: IFixture = {};
       try {
         Object.assign(fixture, await createPaidOrder(randomUUID().slice(0, 12)));
-        const actionPath = `/commerce/trade/order/${fixture.orderId}/ship`;
+        const actionPath = '/commerce/trade/order/:id/ship';
+        const params = { id: fixture.orderId };
         const [_, anonymousError] = await catchError(() =>
           app.bean.executor.performAction('post', actionPath, {
+            params,
             body: { carrier: 'Cabloy Express', trackingNumber: 'CAB-100' },
             innerAccess: false,
           }),
@@ -96,6 +98,7 @@ describe('shipment.test.ts', { concurrency: false, sequential: true }, () => {
         await app.bean.passport.signinMock(fixture.customerName as any);
         const [__, customerError] = await catchError(() =>
           app.bean.executor.performAction('post', actionPath, {
+            params,
             body: { carrier: 'Cabloy Express', trackingNumber: 'CAB-100' },
             innerAccess: false,
           }),
@@ -104,10 +107,12 @@ describe('shipment.test.ts', { concurrency: false, sequential: true }, () => {
         await app.bean.passport.signout();
         await app.bean.passport.signinMock();
         const first = await app.bean.executor.performAction('post', actionPath, {
+          params,
           body: { carrier: '  Cabloy Express  ', trackingNumber: '  CAB-100  ' },
           innerAccess: false,
         });
         const replay = await app.bean.executor.performAction('post', actionPath, {
+          params,
           body: { carrier: 'Cabloy Express', trackingNumber: 'CAB-100' },
           innerAccess: false,
         });

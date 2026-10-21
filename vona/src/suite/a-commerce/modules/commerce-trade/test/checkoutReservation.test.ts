@@ -1,3 +1,5 @@
+import type { TableIdentity } from 'table-identity';
+
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
@@ -5,22 +7,22 @@ import { after, before, describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
 
 interface IFixture {
-  categoryId?: number;
-  productId?: number;
-  skuId?: number;
-  balanceId?: number;
-  cartId?: number;
-  cartItemId?: number;
-  addressId?: number;
-  orderId?: number;
-  orderLineId?: number;
-  paymentAttemptId?: number;
-  orderAuditId?: number;
-  reservationId?: number;
-  stockAuditIds?: number[];
-  couponTemplateId?: number;
-  couponGrantId?: number;
-  userId?: number;
+  categoryId?: TableIdentity;
+  productId?: TableIdentity;
+  skuId?: TableIdentity;
+  balanceId?: TableIdentity;
+  cartId?: TableIdentity;
+  cartItemId?: TableIdentity;
+  addressId?: TableIdentity;
+  orderId?: TableIdentity;
+  orderLineId?: TableIdentity;
+  paymentAttemptId?: TableIdentity;
+  orderAuditId?: TableIdentity;
+  reservationId?: TableIdentity;
+  stockAuditIds?: TableIdentity[];
+  couponTemplateId?: TableIdentity;
+  couponGrantId?: TableIdentity;
+  userId?: TableIdentity;
 }
 
 async function cleanup(fixture: IFixture) {
@@ -113,6 +115,7 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
             lifecycle: 'active',
           },
         });
+        assert.ok(fixture.skuId !== undefined);
         fixture.balanceId = (
           await app.scope('commerce-trade').service.stockBalance.adjustStock({
             skuId: fixture.skuId,
@@ -246,6 +249,7 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
               lifecycle: 'active',
             },
           });
+          assert.ok(local.skuId !== undefined);
           local.balanceId = (
             await app.scope('commerce-trade').service.stockBalance.adjustStock({
               skuId: local.skuId,
@@ -339,6 +343,8 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
       );
 
       await app.bean.executor.mockCtx(async () => {
+        const cartItemId = local.cartItemId;
+        assert.ok(cartItemId !== undefined);
         const assertNoPartialWrites = async (correlationId: string) => {
           assert.equal(
             await app.scope('commerce-trade').model.order.get({ correlationId }),
@@ -349,7 +355,7 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
             undefined,
           );
           assert.equal(
-            (await app.scope('commerce-trade').model.cartItem.getById(local.cartItemId))?.quantity,
+            (await app.scope('commerce-trade').model.cartItem.getById(cartItemId))?.quantity,
             1,
           );
           const balance = await app
@@ -435,6 +441,7 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
             lifecycle: 'active',
           })
         ).id as number;
+        assert.ok(fixture.skuId !== undefined);
         fixture.balanceId = (
           await app.scope('commerce-trade').service.stockBalance.adjustStock({
             skuId: fixture.skuId,
@@ -521,6 +528,8 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
         )?.id as number;
         assert.equal(result.payableTotalCents, 799);
 
+        assert.ok(fixture.productId !== undefined);
+        assert.ok(fixture.addressId !== undefined);
         await app.scope('commerce-catalog').model.product.updateById(fixture.productId, {
           title: 'Changed checkout product',
           published: false,
@@ -609,6 +618,7 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
             lifecycle: 'active',
           },
         });
+        assert.ok(fixture.skuId !== undefined);
         const balance = await app.scope('commerce-trade').service.stockBalance.adjustStock({
           skuId: fixture.skuId,
           delta: 1,
@@ -644,6 +654,7 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
         });
         fixture.cartItemId = cartItem.id as number;
 
+        assert.ok(fixture.addressId !== undefined);
         const result = await app.scope('commerce-trade').service.order.checkout({
           addressId: fixture.addressId,
           correlationId: `checkout-${suffix}`,
@@ -691,10 +702,10 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
 
     const suffix = randomUUID().slice(0, 12);
     const fixture: {
-      categoryId?: number;
-      productId?: number;
-      skuId?: number;
-      balanceId?: number;
+      categoryId?: TableIdentity;
+      productId?: TableIdentity;
+      skuId?: TableIdentity;
+      balanceId?: TableIdentity;
       customers: Array<{
         name: string;
         userId: number;
@@ -776,6 +787,7 @@ describe('checkoutReservation.test.ts', { concurrency: false }, () => {
               lifecycle: 'active',
             },
           });
+          assert.ok(fixture.skuId !== undefined);
           const balance = await trade.service.stockBalance.adjustStock({
             skuId: fixture.skuId,
             delta: 1,

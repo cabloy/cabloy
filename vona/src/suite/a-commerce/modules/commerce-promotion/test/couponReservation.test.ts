@@ -1,3 +1,5 @@
+import type { TableIdentity } from 'table-identity';
+
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
@@ -13,7 +15,7 @@ interface IFixture {
   userId?: number;
   templateIds?: number[];
   grantIds?: number[];
-  userIds?: number[];
+  userIds?: TableIdentity[];
 }
 
 function createTestId() {
@@ -36,7 +38,7 @@ async function cleanup(fixture: IFixture) {
   }
   for (const userId of userIds) {
     await app.scope('home-user').model.roleUser.delete({ userId });
-    await app.bean.user.removeById(userId);
+    if (userId !== undefined) await app.bean.user.removeById(userId);
   }
 }
 
@@ -199,10 +201,15 @@ describe('couponReservation.test.ts', { concurrency: false }, () => {
           reason: 'test reserve',
         });
         assert.equal(replay.couponGrant.id, grant.id);
+        const wrongCustomer = await app.bean.user.register(
+          { name: `coupon-wrong-customer-${suffix}` },
+          true,
+        );
+        (fixture.userIds ??= []).push(wrongCustomer.id);
         const [, wrongCustomerError] = await catchError(() =>
           coupon.reserve({
             couponGrantId: grant.id,
-            userId: customer.id + 10_000,
+            userId: wrongCustomer.id,
             orderId: 100_001,
             eligibleSubtotalCents: 1_200,
             currency: 'USD',
@@ -434,16 +441,18 @@ describe('couponReservation.test.ts', { concurrency: false }, () => {
           customer.id as number,
           `reserve-exhausted-${suffix}`,
         );
-        for (const [grant, label] of [
-          [disabledGrant, 'disabled'],
-          [expiredGrant, 'expired'],
-          [usageExhaustedGrant, 'usage-exhausted'],
-        ] as const) {
+        for (const [index, [grant, label]] of (
+          [
+            [disabledGrant, 'disabled'],
+            [expiredGrant, 'expired'],
+            [usageExhaustedGrant, 'usage-exhausted'],
+          ] as const
+        ).entries()) {
           const [_, error] = await catchError(() =>
             coupon.reserve({
               couponGrantId: grant.id,
               userId: customer.id,
-              orderId: 200_000 + grant.id,
+              orderId: 200_000 + index,
               eligibleSubtotalCents: 1_000,
               currency: 'USD',
               correlationId: `reserve-${label}-${suffix}`,

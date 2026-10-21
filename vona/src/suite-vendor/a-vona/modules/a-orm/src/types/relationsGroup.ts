@@ -5,6 +5,8 @@ import type {
   TypeUtilGetParamsColumns,
   TypeUtilGetParamsGroups,
   TypeUtilGetRelationOptionsGroups,
+  TypeUtilEntitySelector,
+  TypeUtilPrepareColumns,
 } from './relations.ts';
 import type {
   TypeModelAggrRelationResultAggr,
@@ -21,9 +23,9 @@ export type TypeModelGroupRelationResult<TRecord, TOptions> = TypeModelGroupRela
   TypeUtilGetParamsColumns<TOptions>
 >;
 
-export type TypeModelGroupRelationResultGroups<TRecord, Aggrs, Groups, Columns> = Groups extends
-  | string
-  | string[]
+export type TypeModelGroupRelationResultGroups<TRecord, Aggrs, Groups, Columns> = [Groups] extends [
+  string | string[],
+]
   ? TypeModelGroupRelationResultGroupsObject<TRecord, Groups, Columns> &
       (Aggrs extends {}
         ? TypeRecordAggrsValuesToObject<
@@ -36,11 +38,11 @@ export type TypeModelGroupRelationResultGroups<TRecord, Aggrs, Groups, Columns> 
         : {})
   : {}; // not use undefined
 
-export type TypeModelGroupRelationResultGroupsObject<TRecord, Groups, Columns> = Columns extends
-  | string
-  | string[]
-  ? { [K in TypeUtilAggrPrepareColumns<Columns>]: K extends keyof TRecord ? TRecord[K] : never }
-  : Groups extends string | string[]
+export type TypeModelGroupRelationResultGroupsObject<TRecord, Groups, Columns> = [Columns] extends [
+  string | string[],
+]
+  ? TypeUtilEntitySelector<TRecord, TypeUtilPrepareColumns<Columns>>
+  : [Groups] extends [string | string[]]
     ? { [K in TypeUtilAggrPrepareColumns<Groups>]: K extends keyof TRecord ? TRecord[K] : never }
     : {};
 
@@ -68,8 +70,8 @@ export type TypeModelSelectGroupParamsColumns<
   TypeModelAggrRelationResultAggrsToNumberType<TypeModelAggrRelationResultAggrs<Aggrs>>;
 
 export type TypeModelAggrRelationResultAggrsToNumberType<Columns> = {
-  [K in keyof Columns]: string;
-}; // not use BigNumber or number | string
+  [K in keyof Columns]: number | string;
+};
 
 export type TypeUtilGetGroupsFromRelationAndIncludeWrapper<
   Relation,

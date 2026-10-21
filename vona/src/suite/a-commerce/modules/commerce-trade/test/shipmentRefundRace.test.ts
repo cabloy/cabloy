@@ -168,7 +168,7 @@ async function assertPersistedRefundOutcome(
   assert.deepEqual(refundAudits.map(item => item.toRefundState).sort(), expected.refundAuditStates);
 }
 
-describe('shipmentRefundRace.test.ts', { concurrency: false, sequential: true }, () => {
+describe('shipmentRefundRace.test.ts', { concurrency: false }, () => {
   let releaseTestLock: (() => void) | undefined;
 
   before(async () => {
@@ -321,7 +321,12 @@ describe('shipmentRefundRace.test.ts', { concurrency: false, sequential: true },
       const releaseShipment = Promise.withResolvers<void>();
       let shipmentPid: number | undefined;
       let ship: Promise<unknown> | undefined;
-      let results: PromiseSettledResult<unknown>[] | undefined;
+      let results:
+        | [
+            PromiseSettledResult<Awaited<typeof approveRefund>>,
+            PromiseSettledResult<Awaited<typeof ship>>,
+          ]
+        | undefined;
       try {
         await waitForHolderStage(entered.promise, approveRefund, 'refund approval');
         assert.notEqual(holderPid, undefined);
@@ -352,7 +357,7 @@ describe('shipmentRefundRace.test.ts', { concurrency: false, sequential: true },
       } finally {
         releaseShipment.resolve();
         release.resolve();
-        results = await Promise.allSettled([approveRefund, ship].filter(Boolean));
+        results = await Promise.allSettled([approveRefund, ship]);
       }
       const [approvalResult, shipmentResult] = results!;
       const message = JSON.stringify(results);
@@ -431,7 +436,12 @@ describe('shipmentRefundRace.test.ts', { concurrency: false, sequential: true },
       const releaseShipment = Promise.withResolvers<void>();
       let shipmentPid: number | undefined;
       let ship: Promise<unknown> | undefined;
-      let results: PromiseSettledResult<unknown>[] | undefined;
+      let results:
+        | [
+            PromiseSettledResult<Awaited<typeof executeRefund>>,
+            PromiseSettledResult<Awaited<typeof ship>>,
+          ]
+        | undefined;
       try {
         await waitForHolderStage(entered.promise, executeRefund, 'refund execution');
         assert.notEqual(holderPid, undefined);
@@ -462,7 +472,7 @@ describe('shipmentRefundRace.test.ts', { concurrency: false, sequential: true },
       } finally {
         releaseShipment.resolve();
         release.resolve();
-        results = await Promise.allSettled([executeRefund, ship].filter(Boolean));
+        results = await Promise.allSettled([executeRefund, ship]);
       }
       const [refundResult, shipmentResult] = results!;
       const message = JSON.stringify(results);

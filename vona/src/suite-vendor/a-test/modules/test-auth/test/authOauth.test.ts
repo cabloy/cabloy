@@ -15,7 +15,8 @@ describe('authOauth.test.ts', () => {
       });
       assert.equal(error?.code, 302);
       assert.equal(error?.status, 302);
-      const location = new URL(error?.message);
+      assert.ok(error);
+      const location = new URL(error.message);
       assert.equal(location.origin, 'https://github.com');
       assert.equal(location.pathname, '/login/oauth/authorize');
       assert.equal(location.searchParams.get('client_id'), 'Shoule specify clientID');

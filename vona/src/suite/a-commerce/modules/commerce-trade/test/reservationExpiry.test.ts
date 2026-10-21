@@ -1,3 +1,5 @@
+import type { TableIdentity } from 'table-identity';
+
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { after, before, describe, it } from 'node:test';
@@ -6,19 +8,19 @@ import { acquireTestLock, app } from 'vona-mock';
 import { BeanScheduleOrderExpiry } from '../src/bean/bean.scheduleOrderExpiry.ts';
 
 interface IFixture {
-  categoryId?: number;
-  productId?: number;
-  skuId?: number;
-  balanceId?: number;
-  userId?: number;
-  couponTemplateId?: number;
-  couponGrantId?: number;
-  cartId?: number;
-  addressId?: number;
-  orderId?: number;
-  orderLineId?: number;
-  reservationId?: number;
-  paymentAttemptId?: number;
+  categoryId?: TableIdentity;
+  productId?: TableIdentity;
+  skuId?: TableIdentity;
+  balanceId?: TableIdentity;
+  userId?: TableIdentity;
+  couponTemplateId?: TableIdentity;
+  couponGrantId?: TableIdentity;
+  cartId?: TableIdentity;
+  addressId?: TableIdentity;
+  orderId?: TableIdentity;
+  orderLineId?: TableIdentity;
+  reservationId?: TableIdentity;
+  paymentAttemptId?: TableIdentity;
 }
 
 async function cleanup(fixture: IFixture) {
@@ -92,6 +94,7 @@ async function createExpiredCheckoutFixture(suffix: string): Promise<IFixture> {
         lifecycle: 'active',
       },
     });
+    assert.ok(fixture.skuId !== undefined);
     fixture.balanceId = (
       await app.scope('commerce-trade').service.stockBalance.adjustStock({
         skuId: fixture.skuId,
@@ -122,6 +125,7 @@ async function createExpiredCheckoutFixture(suffix: string): Promise<IFixture> {
       skuId: fixture.skuId,
       quantity: 1,
     });
+    assert.ok(fixture.addressId !== undefined);
     const created = await app.scope('commerce-trade').service.order.checkout({
       addressId: fixture.addressId,
       correlationId: `schedule-expiry-${suffix}`,
@@ -144,7 +148,7 @@ async function createExpiredCheckoutFixture(suffix: string): Promise<IFixture> {
   }
 }
 
-describe('reservationExpiry.test.ts', { concurrency: false, sequential: true }, () => {
+describe('reservationExpiry.test.ts', { concurrency: false }, () => {
   let releaseTestLock: (() => void) | undefined;
 
   before(async () => {
@@ -192,6 +196,7 @@ describe('reservationExpiry.test.ts', { concurrency: false, sequential: true }, 
             lifecycle: 'active',
           },
         });
+        assert.ok(fixture.skuId !== undefined);
         const balance = await app.scope('commerce-trade').service.stockBalance.adjustStock({
           skuId: fixture.skuId,
           delta: 1,
@@ -242,6 +247,7 @@ describe('reservationExpiry.test.ts', { concurrency: false, sequential: true }, 
           skuId: fixture.skuId,
           quantity: 1,
         });
+        assert.ok(fixture.addressId !== undefined);
         const created = await app.scope('commerce-trade').service.order.checkout({
           addressId: fixture.addressId,
           couponGrantId: fixture.couponGrantId,
@@ -342,9 +348,7 @@ describe('reservationExpiry.test.ts', { concurrency: false, sequential: true }, 
       );
 
       await app.bean.executor.mockCtx(async () => {
-        await app.bean
-          ._getBean<BeanScheduleOrderExpiry>('commerce-trade.schedule.beanScheduleOrderExpiry')
-          .execute();
+        await app.bean._getBean(BeanScheduleOrderExpiry).execute();
         const order = await app
           .scope('commerce-trade')
           .model.order.getById(defaultFixture!.orderId!);
@@ -357,9 +361,7 @@ describe('reservationExpiry.test.ts', { concurrency: false, sequential: true }, 
         assert.equal(order?.state, 'expired');
         assert.equal(reservation?.state, 'released');
         assert.equal(paymentAttempt?.state, 'cancelled');
-        await app.bean
-          ._getBean<BeanScheduleOrderExpiry>('commerce-trade.schedule.beanScheduleOrderExpiry')
-          .execute();
+        await app.bean._getBean(BeanScheduleOrderExpiry).execute();
         const audits = await app.scope('commerce-trade').model.orderAudit.select({
           where: { orderId: defaultFixture!.orderId! },
           orders: [['id', 'asc']],
@@ -385,9 +387,7 @@ describe('reservationExpiry.test.ts', { concurrency: false, sequential: true }, 
           assert.equal(reservation?.state, 'reserved');
           assert.equal(paymentAttempt?.state, 'created');
 
-          await app.bean
-            ._getBean<BeanScheduleOrderExpiry>('commerce-trade.schedule.beanScheduleOrderExpiry')
-            .execute();
+          await app.bean._getBean(BeanScheduleOrderExpiry).execute();
           assert.equal(
             (await app.scope('commerce-trade').model.order.getById(shareFixture!.orderId!))?.state,
             'expired',
@@ -408,9 +408,7 @@ describe('reservationExpiry.test.ts', { concurrency: false, sequential: true }, 
             )?.state,
             'cancelled',
           );
-          await app.bean
-            ._getBean<BeanScheduleOrderExpiry>('commerce-trade.schedule.beanScheduleOrderExpiry')
-            .execute();
+          await app.bean._getBean(BeanScheduleOrderExpiry).execute();
           const audits = await app.scope('commerce-trade').model.orderAudit.select({
             where: { orderId: shareFixture!.orderId! },
             orders: [['id', 'asc']],

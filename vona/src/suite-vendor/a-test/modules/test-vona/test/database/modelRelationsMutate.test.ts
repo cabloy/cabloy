@@ -52,7 +52,7 @@ describe('modelRelationsMutate.test.ts', () => {
       );
       assert.equal(post?.postContent?.content, `${prefix}:postContentApple`);
       // update: users
-      const _usersUpdate = await scopeTest.model.user.update(
+      await scopeTest.model.user.update(
         {
           id: users[0].id,
           posts: [
@@ -112,7 +112,7 @@ describe('modelRelationsMutate.test.ts', () => {
       assert.equal(usersUpdateCheck?.roles.length, 1);
       assert.equal(usersUpdateCheck?.roles[0].id, roles[1].id);
       // mutate: users
-      const _usersMutate = await scopeTest.model.user.mutate(
+      await scopeTest.model.user.mutate(
         {
           id: users[0].id,
           posts: [
@@ -239,7 +239,7 @@ describe('modelRelationsMutate.test.ts', () => {
       );
       assert.equal(post?.postContent?.content, `${prefix}:postContentApple`);
       // update: users
-      const _usersUpdate = await scopeTest.model.user.update(
+      await scopeTest.model.user.update(
         {
           id: users[0].id,
           posts: [
@@ -299,7 +299,7 @@ describe('modelRelationsMutate.test.ts', () => {
       assert.equal(usersUpdateCheck?.roles.length, 1);
       assert.equal(usersUpdateCheck?.roles[0].id, roles[1].id);
       // mutate: users
-      const _usersMutate = await scopeTest.model.user.mutate(
+      await scopeTest.model.user.mutate(
         {
           id: users[0].id,
           posts: [

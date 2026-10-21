@@ -38,7 +38,7 @@ async function cleanup(fixture: IFixture) {
   await app.bean.passport.signout();
 }
 
-describe('payMock.test.ts', { concurrency: false, sequential: true }, () => {
+describe('payMock.test.ts', { concurrency: false }, () => {
   let releaseTestLock: (() => void) | undefined;
 
   before(async () => {
