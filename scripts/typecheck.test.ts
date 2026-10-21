@@ -7,11 +7,8 @@ import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { CliBinTsc } from '../vona/packages-cli/cli-set-api/src/lib/bean/cli.bin.tsc.ts';
-import {
-  resolveTypeScriptCompiler,
-  runTypeScript,
-} from '../vona/packages-cli/cli-set-api/src/lib/typescriptRunner.ts';
+import { commands } from '../vona/packages-cli/cli-set-api/src/lib/commands.ts';
+import { resolveTypeScriptCompiler, runTypeScript } from './typescriptRunner.ts';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 
@@ -65,78 +62,11 @@ test('selects exact packages, preserving compiler argv, cwd and failures', async
   }
 });
 
-test('Vona keeps its legacy default and visits the same graph with native', async () => {
-  const dir = realpathSync(mkdtempSync(path.join(tmpdir(), 'cabloy-check-graph-')));
-  try {
-    const report = path.join(dir, 'calls.jsonl');
-    writeCompiler(dir, '@typescript/native', report);
-    const suiteRoot = path.join(dir, 'suite');
-    const moduleRoot = path.join(dir, 'standalone');
-    mkdirSync(suiteRoot);
-    mkdirSync(moduleRoot);
-    const calls: unknown[] = [];
-    const cli = Object.create(CliBinTsc.prototype);
-    Object.defineProperties(cli, {
-      modulesMeta: {
-        value: {
-          suites: {
-            local: { root: suiteRoot, info: { originalName: 'local' } },
-            external: { info: { node_modules: true } },
-          },
-          modulesArray: [
-            { root: moduleRoot, info: { originalName: 'standalone' } },
-            { suite: 'local', info: {} },
-            { info: { node_modules: true } },
-          ],
-        },
-      },
-      helper: {
-        value: {
-          processHelper: {
-            tsc: async (...args: unknown[]) => {
-              calls.push(args);
-            },
-          },
-        },
-      },
-    });
-    await cli._tsc(dir, false);
-    assert.deepEqual(
-      calls,
-      [dir, suiteRoot, moduleRoot].map(cwd => [['-b'], { cwd }]),
-    );
-    for (const force of [false, true]) {
-      for (const builders of [undefined, 1, 2]) {
-        writeFileSync(report, '');
-        await cli._tsc(dir, force, 'native', builders);
-        const nativeCalls = readFileSync(report, 'utf8')
-          .trim()
-          .split('\n')
-          .map(line => JSON.parse(line));
-        const args = force ? ['-b', '--force'] : ['-b'];
-        if (builders !== undefined) args.push('--builders', String(builders));
-        assert.deepEqual(
-          nativeCalls,
-          [dir, suiteRoot, moduleRoot].map(cwd => ({
-            cwd,
-            args,
-            compiler: '@typescript/native',
-          })),
-        );
-      }
-    }
-    assert.equal(calls.length, 3, 'native must not use the legacy binary helper');
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
-});
-
-test('Vona rejects invalid or legacy builder limits before starting compilation', async () => {
-  const cli = Object.create(CliBinTsc.prototype);
-  for (const builders of [0, -1, 1.5, Number.NaN, Infinity, Number.MAX_SAFE_INTEGER + 1]) {
-    await assert.rejects(cli._tsc(root, true, 'native', builders), /positive safe integer/);
-  }
-  await assert.rejects(cli._tsc(root, true, 'typescript', 1), /requires --compiler=native/);
+test('Vona command discovery omits the retired typecheck CLI and retains builds', () => {
+  assert.equal(Object.hasOwn(commands.bin, 'tsc'), false);
+  assert.equal(commands.bin.build.bean, 'bin.build');
+  assert.equal(commands.bin.buildModule.bean, 'bin.buildModule');
+  assert.equal(commands.bin.buildGeneral.bean, 'bin.buildGeneral');
 });
 
 test('daily checks and CI use single-project workspace defaults', () => {
