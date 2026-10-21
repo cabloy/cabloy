@@ -586,7 +586,7 @@ function verifyCompensationPatch(dryRun?: boolean): void {
   // eslint-disable-next-line
   console.log('\n✅ Verifying the refreshed zova-core patch...');
   execInherited('pnpm exec tsc -p tsconfig.json --noEmit', dryRun, { cwd: VONA_DIR });
-  execInherited('npm run tsc:force', dryRun);
+  execInherited('npm run tsc', dryRun);
 }
 
 function commitCompensationChanges(targetVersion: string, dryRun?: boolean): void {
@@ -964,7 +964,7 @@ async function release(options: ReleaseOptions): Promise<void> {
 
   runGovernancePreflight(options.dryRun);
   if (!options.changelogOnly && !options.releaseOnly) {
-    execInherited('npm run tsc:force', options.dryRun);
+    execInherited('npm run tsc', options.dryRun);
   }
 
   // Determine the version to use
