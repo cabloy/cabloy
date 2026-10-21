@@ -139,16 +139,20 @@ test('Vona rejects invalid or legacy builder limits before starting compilation'
   await assert.rejects(cli._tsc(root, true, 'typescript', 1), /requires --compiler=native/);
 });
 
-test('daily checks use single-project scripts and retain legacy in CI', () => {
+test('daily checks and CI use single-project workspace defaults', () => {
   const scripts = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8')).scripts;
   const vonaScripts = JSON.parse(
     readFileSync(path.join(root, 'vona/package.original.json'), 'utf8'),
   ).scripts;
-  assert.equal(scripts.tsc, 'npm run tsc:native');
-  assert.equal(scripts['tsc:native'], 'npm run tsc:zova:native && npm run tsc:vona:native');
-  assert.equal(scripts['tsc:force'], undefined);
-  assert.equal(scripts['tsc:vona:native'], 'pnpm --dir vona run tsc:native');
-  assert.equal(scripts['tsc:vona:native:force'], undefined);
+  assert.deepEqual(
+    Object.keys(scripts)
+      .filter(name => name === 'tsc' || name.startsWith('tsc:'))
+      .sort(),
+    ['tsc', 'tsc:vona', 'tsc:zova'],
+  );
+  assert.equal(scripts.tsc, 'npm run tsc:zova && npm run tsc:vona');
+  assert.equal(scripts['tsc:zova'], 'pnpm --dir zova run tsc');
+  assert.equal(scripts['tsc:vona'], 'pnpm --dir vona run tsc');
   assert.equal(vonaScripts['tsc:native:force'], undefined);
   for (const workspace of ['vona', 'zova']) {
     const workspaceScripts = JSON.parse(
@@ -187,12 +191,9 @@ test('daily checks use single-project scripts and retain legacy in CI', () => {
       }
     }
   }
-  assert.equal(scripts['tsc:legacy'], 'npm run tsc:zova:legacy && pnpm --dir vona run tsc:legacy');
-  assert.equal(scripts['tsc:zova:native'], 'pnpm --dir zova run tsc:native');
-  assert.equal(scripts['tsc:zova:legacy'], 'pnpm --dir zova run tsc:legacy');
   const workflow = readFileSync(path.join(root, '.github/workflows/vona-tsc.yml'), 'utf8');
-  assert.match(workflow, /run: npm run tsc:legacy\s*$/m);
-  assert.doesNotMatch(workflow, /run:.*tsc(?::[\w-]+)*native|npm run tsc:force/);
+  assert.match(workflow, /run: npm run tsc\s*$/m);
+  assert.doesNotMatch(workflow, /run:.*\btsc:[\w-]+/);
 });
 
 test('Vona daily config discovers source and tests without changing publication config', () => {
