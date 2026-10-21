@@ -27,6 +27,7 @@
     "access": "public"
   },
   "scripts": {
+    "test": "node --test test/*.test.ts",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "tsc:publish": "npm run clean && node ../../packages-cli/cli/src/bin/vona.ts :bin:buildGeneral && tsc",
     "prepublishOnly": "npm run tsc:publish",
