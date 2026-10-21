@@ -4,6 +4,7 @@ import type { VonaConfigMeta, VonaMetaFlavor, VonaMetaMode } from '@cabloy/modul
 import { BeanCliBase } from '@cabloy/cli';
 import { catchError } from '@cabloy/utils';
 import fse from 'fs-extra';
+import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { rimraf } from 'rimraf';
 import { resolveVonaLocalPaths } from 'vona-core';
@@ -17,6 +18,26 @@ declare module '@cabloy/cli' {
   interface ICommandArgv {
     coverage?: boolean;
     flavor?: VonaMetaFlavor;
+  }
+}
+
+export async function runTestChild(args: string[], projectPath: string): Promise<void> {
+  const child = spawn(process.execPath, args, { cwd: projectPath, stdio: 'inherit' });
+  const onInterrupt = () => child.kill('SIGINT');
+  const onTerminate = () => child.kill('SIGTERM');
+  process.on('SIGINT', onInterrupt);
+  process.on('SIGTERM', onTerminate);
+  try {
+    await new Promise<void>((resolve, reject) => {
+      child.once('error', reject);
+      child.once('close', (code, signal) => {
+        if (code === 0) resolve();
+        else reject(new Error(`Test child exited: ${signal ?? code}`));
+      });
+    });
+  } finally {
+    process.off('SIGINT', onInterrupt);
+    process.off('SIGTERM', onTerminate);
   }
 }
 
@@ -82,13 +103,7 @@ export class CliBinTest extends BeanCliBase {
       patterns.join(','),
     ]);
     // args = args.concat(['--experimental-transform-types', getImportEsm(), testFile, projectPath, (!!argv.coverage).toString(), patterns.join(',')]);
-    await this.helper.spawnExe({
-      cmd: 'node',
-      args,
-      options: {
-        cwd: projectPath,
-      },
-    });
+    await runTestChild(args, projectPath);
   }
 
   async _outputCoverageReportViewer(projectPath: string) {
