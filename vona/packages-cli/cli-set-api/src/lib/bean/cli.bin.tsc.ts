@@ -1,8 +1,13 @@
 import { BeanCliBase } from '@cabloy/cli';
 
+import type { TypeScriptCompiler } from '../typescriptRunner.ts';
+
+import { runTypeScript } from '../typescriptRunner.ts';
+
 declare module '@cabloy/cli' {
   interface ICommandArgv {
     force: boolean;
+    compiler: TypeScriptCompiler;
   }
 }
 
@@ -13,10 +18,10 @@ export class CliBinTsc extends BeanCliBase {
     await super.execute();
     const projectPath = argv.projectPath;
     const force = argv.force;
-    await this._tsc(projectPath, force);
+    await this._tsc(projectPath, force, argv.compiler ?? 'typescript');
   }
 
-  async _tsc(projectPath: string, force: boolean) {
+  async _tsc(projectPath: string, force: boolean, compiler: TypeScriptCompiler = 'typescript') {
     const suiteNames = Object.keys(this.modulesMeta.suites).filter(
       suiteName => !this.modulesMeta.suites[suiteName].info.node_modules,
     );
@@ -35,22 +40,29 @@ export class CliBinTsc extends BeanCliBase {
     if (force) {
       tscArgs.push('--force');
     }
+    const check = async (cwd: string) => {
+      if (compiler === 'native') {
+        await runTypeScript(compiler, tscArgs, { projectPath, cwd });
+      } else {
+        await this.helper.processHelper.tsc(tscArgs, { cwd });
+      }
+    };
     // tsc: project
     // eslint-disable-next-line
     console.log(`===>  ${++counter}/${count} project`);
-    await this.helper.processHelper.tsc(tscArgs, { cwd: projectPath });
+    await check(projectPath);
     // suites
     for (const key of suiteNames) {
       const suite = this.modulesMeta.suites[key];
       // eslint-disable-next-line
       console.log(`===>  ${++counter}/${count} suite: ${suite.info.originalName}`);
-      await this.helper.processHelper.tsc(tscArgs, { cwd: suite.root });
+      await check(suite.root);
     }
     // modules
     for (const module of modulesArray) {
       // eslint-disable-next-line
       console.log(`===>  ${++counter}/${count} module: ${module.info.originalName}`);
-      await this.helper.processHelper.tsc(tscArgs, { cwd: module.root });
+      await check(module.root);
     }
     // end
     const timeEnd = Date.now();

@@ -22,6 +22,7 @@ jobs:
           version: '12.14.0'
       - name: init
         run: npm run init
-      - name: tsc
-        run: npm run tsc
-        working-directory: vona
+      - name: typecheck runner tests
+        run: npm run test:typecheck
+      - name: forced native typecheck
+        run: npm run tsc:force
