@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.224
+
+### Features
+
+- Update functionality.
+
+### Improvements
+
+- Update the release script.
+
 ## 5.1.223
 
 ### Features
