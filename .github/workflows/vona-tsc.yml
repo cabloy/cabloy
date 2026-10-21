@@ -24,8 +24,5 @@ jobs:
         run: npm run init
       - name: typecheck runner tests
         run: npm run test:typecheck
-      - name: forced native typecheck
-        run: |
-          npm run tsc:zova:native
-          # Native build mode otherwise checks multiple referenced projects concurrently.
-          npm run tsc:vona:native:force -- --builders=1
+      - name: legacy typecheck
+        run: npm run tsc:legacy

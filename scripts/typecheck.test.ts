@@ -139,7 +139,7 @@ test('Vona rejects invalid or legacy builder limits before starting compilation'
   await assert.rejects(cli._tsc(root, true, 'typescript', 1), /requires --compiler=native/);
 });
 
-test('root commands separate incremental and forced native checks', () => {
+test('root commands retain optional native checks and use legacy in CI', () => {
   const scripts = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8')).scripts;
   const vonaScripts = JSON.parse(
     readFileSync(path.join(root, 'vona/package.original.json'), 'utf8'),
@@ -155,6 +155,14 @@ test('root commands separate incremental and forced native checks', () => {
   );
   assert.equal(vonaScripts['tsc:native:force'], `${vonaScripts['tsc:native']} --force`);
   assert.equal(vonaScripts['tsc:legacy'], 'npm run prerun && npm run vona :bin:tsc -- --force');
+  assert.equal(scripts['tsc:legacy'], 'npm run tsc:zova:legacy && pnpm --dir vona run tsc:legacy');
+  assert.equal(
+    scripts['tsc:zova:legacy'],
+    'node scripts/typecheck.ts typescript zova --noEmit --incremental false --project tsconfig.vue-tsc.json',
+  );
+  const workflow = readFileSync(path.join(root, '.github/workflows/vona-tsc.yml'), 'utf8');
+  assert.match(workflow, /run: npm run tsc:legacy\s*$/m);
+  assert.doesNotMatch(workflow, /run:.*tsc(?::[\w-]+)*native|npm run tsc:force/);
 });
 
 test('release dry-run keeps forced checks before publishing only', () => {
