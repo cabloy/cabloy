@@ -526,8 +526,8 @@ importers:
         version: link:src/suite/a-training/modules/training-student
     devDependencies:
       '@cabloy/cli':
-        specifier: ^3.1.30
-        version: 3.1.30(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
+        specifier: ^3.1.31
+        version: 3.1.31(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
       '@cabloy/lint':
         specifier: ^5.1.35
         version: 5.1.35(@typescript-eslint/eslint-plugin@8.70.0(@typescript-eslint/parser@8.70.0(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3))(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.70.0(supports-color@10.2.2)(typescript@5.9.3))(@typescript-eslint/utils@8.70.0(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3))(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(oxfmt@0.62.0)(oxlint@1.82.0)(supports-color@10.2.2)(typescript@5.9.3)(vue-eslint-parser@10.4.1(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2))
@@ -598,8 +598,8 @@ importers:
   packages-cli/cli:
     dependencies:
       '@cabloy/cli':
-        specifier: ^3.1.30
-        version: 3.1.30(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
+        specifier: ^3.1.31
+        version: 3.1.31(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
       '@cabloy/process-helper':
         specifier: ^3.1.9
         version: 3.1.9
@@ -610,7 +610,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.5
       zova-cli-set-front:
-        specifier: ^1.2.116
+        specifier: ^1.2.117
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -632,8 +632,8 @@ importers:
         specifier: ^7.28.6
         version: 7.29.7(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2)
       '@cabloy/cli':
-        specifier: ^3.1.30
-        version: 3.1.30(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
+        specifier: ^3.1.31
+        version: 3.1.31(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
       '@cabloy/extend':
         specifier: ^3.2.8
         version: 3.2.8
@@ -719,7 +719,7 @@ importers:
         specifier: ^1.1.17
         version: link:../../packages-utils/zova-openapi
       zova-vite:
-        specifier: ^1.1.49
+        specifier: ^1.1.50
         version: link:../../packages-utils/zova-vite
     devDependencies:
       clean-package:
@@ -928,8 +928,8 @@ importers:
         specifier: ^3.2.8
         version: 3.2.8
       '@cabloy/module-glob':
-        specifier: ^5.3.18
-        version: 5.3.18
+        specifier: ^5.3.19
+        version: 5.3.19
       '@cabloy/module-info':
         specifier: ^2.0.3
         version: 2.0.3
@@ -1031,7 +1031,7 @@ importers:
         specifier: ^5.1.93
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.172
+        specifier: ^5.1.173
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -1294,7 +1294,7 @@ importers:
         specifier: ^5.1.37
         version: link:modules/a-zod
       zova-module-a-zova:
-        specifier: ^5.1.110
+        specifier: ^5.1.111
         version: link:modules/a-zova
 
   src/suite-vendor/a-zova/modules/a-api:
@@ -1631,8 +1631,8 @@ importers:
         version: link:../../../../../packages-utils/zova-jsx
     devDependencies:
       '@cabloy/cli':
-        specifier: ^3.1.30
-        version: 3.1.30(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
+        specifier: ^3.1.31
+        version: 3.1.31(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
       '@types/luxon':
         specifier: ^3.7.1
         version: 3.7.5
@@ -2502,8 +2502,8 @@ packages:
   '@bufbuild/protobuf@2.15.0':
     resolution: {integrity: sha512-DAheWUkVr/SJTWCc+lg9dhY0eN4SaWlf4+bG1KzHeXbnqt0AfB/NX0Z+VunGlM1ki1B4zVvye27MpKh/svySUA==}
 
-  '@cabloy/cli@3.1.30':
-    resolution: {integrity: sha512-x8wx31Cv0+iTBkB6RSdw0JSTyULX1qJTZTOPH3VeGCTXZNelikbqrV63m97yqdABgZOPJe5mlF/Jd+UUKhpVgA==}
+  '@cabloy/cli@3.1.31':
+    resolution: {integrity: sha512-pxq9JpTHuFCTxVvm3uqrZ56vCrC3YbvcB6jDBGeY+itMF4ilrGP82kVzlXIgdTaP696wEkLTXUI05fuSQfjqCA==}
 
   '@cabloy/compose@2.1.9':
     resolution: {integrity: sha512-b+EB7EDQz7dDdrvFEmRIpGpW0jvDEmYGChSbKx0wzki6AGCj0z3lNm4qnkgM5+CTQIKBU2FmvDcQjU5r6Cj6SA==}
@@ -2533,8 +2533,8 @@ packages:
   '@cabloy/localeutil@2.1.9':
     resolution: {integrity: sha512-77kvjOkRtRQ/eBuzzPYz8Zg09qRMb2ZAhq0admDK0BnS/OzLWs42rHENm0X1GNDlaSYr6ayD746SIeQHmD+j3Q==}
 
-  '@cabloy/module-glob@5.3.18':
-    resolution: {integrity: sha512-8O5nTC8qgtqq1HjKJGkf2VRIhVFtEvPezro9s/XBj/fDn7aWU1iBLNFYnjSriqjj4Y6QP4QMEA8IYYSfDZ3l5Q==}
+  '@cabloy/module-glob@5.3.19':
+    resolution: {integrity: sha512-Wi/ePGizAN9HHVERkaqp0EbIEl8Gq8x/NER+SGz+nla5xZIFN5sq0lb4xqtNfllAyAiPOLVl+rytjXb98VENIA==}
 
   '@cabloy/module-info@2.0.3':
     resolution: {integrity: sha512-nFWTFUU64H6ENITdD0hB2zJ9yoWYfpHz/EjBEt8fAY3WM6d+6k1ZhARYE/bv9envRi5owNxUP12kIZ67s8NXGQ==}
@@ -8981,10 +8981,10 @@ snapshots:
 
   '@bufbuild/protobuf@2.15.0': {}
 
-  '@cabloy/cli@3.1.30(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))':
+  '@cabloy/cli@3.1.31(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))':
     dependencies:
       '@babel/parser': 7.29.8
-      '@cabloy/module-glob': 5.3.18
+      '@cabloy/module-glob': 5.3.19
       '@cabloy/module-info': 2.0.3
       '@cabloy/process-helper': 3.1.9
       '@cabloy/utils': 2.1.27
@@ -9060,7 +9060,7 @@ snapshots:
 
   '@cabloy/localeutil@2.1.9': {}
 
-  '@cabloy/module-glob@5.3.18':
+  '@cabloy/module-glob@5.3.19':
     dependencies:
       '@cabloy/module-info': 2.0.3
       '@cabloy/utils': 2.1.27
