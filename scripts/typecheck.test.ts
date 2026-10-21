@@ -139,30 +139,112 @@ test('Vona rejects invalid or legacy builder limits before starting compilation'
   await assert.rejects(cli._tsc(root, true, 'typescript', 1), /requires --compiler=native/);
 });
 
-test('root commands retain optional native checks and use legacy in CI', () => {
+test('daily checks use single-project scripts and retain legacy in CI', () => {
   const scripts = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8')).scripts;
   const vonaScripts = JSON.parse(
     readFileSync(path.join(root, 'vona/package.original.json'), 'utf8'),
   ).scripts;
   assert.equal(scripts.tsc, 'npm run tsc:native');
   assert.equal(scripts['tsc:native'], 'npm run tsc:zova:native && npm run tsc:vona:native');
-  assert.equal(scripts['tsc:force'], 'npm run tsc:zova:native && npm run tsc:vona:native:force');
+  assert.equal(scripts['tsc:force'], undefined);
   assert.equal(scripts['tsc:vona:native'], 'pnpm --dir vona run tsc:native');
-  assert.equal(scripts['tsc:vona:native:force'], 'pnpm --dir vona run tsc:native:force');
-  assert.equal(
-    vonaScripts['tsc:native'],
-    'npm run prerun && npm run vona :bin:tsc -- --compiler=native',
-  );
-  assert.equal(vonaScripts['tsc:native:force'], `${vonaScripts['tsc:native']} --force`);
-  assert.equal(vonaScripts['tsc:legacy'], 'npm run prerun && npm run vona :bin:tsc -- --force');
+  assert.equal(scripts['tsc:vona:native:force'], undefined);
+  assert.equal(vonaScripts['tsc:native:force'], undefined);
+  for (const workspace of ['vona', 'zova']) {
+    const workspaceScripts = JSON.parse(
+      readFileSync(path.join(root, workspace, 'package.original.json'), 'utf8'),
+    ).scripts;
+    const project = workspace === 'vona' ? 'tsconfig.json' : 'tsconfig.vue-tsc.json';
+    assert.equal(workspaceScripts.tsc, 'npm run tsc:native');
+    assert.equal(workspaceScripts.prerun, `npm run ${workspace} :tools:deps`);
+    for (const [variant, compiler] of [
+      ['native', 'native'],
+      ['legacy', 'typescript'],
+    ]) {
+      assert.equal(
+        workspaceScripts[`tsc:${variant}`],
+        `npm run prerun && node ../scripts/typecheck.ts ${compiler} ${workspace} --noEmit --incremental false --project ${project}`,
+      );
+    }
+    assert.deepEqual(
+      JSON.parse(readFileSync(path.join(root, workspace, 'package.json'), 'utf8')).scripts,
+      workspaceScripts,
+    );
+    if (workspace === 'zova') {
+      for (const [name, command] of Object.entries(workspaceScripts)) {
+        if (
+          name.startsWith('dev:') ||
+          name.startsWith('build:spa') ||
+          name.startsWith('build:ssr:') ||
+          name.startsWith('build:rest:')
+        ) {
+          if (name.endsWith('Batch')) continue;
+          assert.ok(
+            (command as string).startsWith('npm run prerun && '),
+            `${name} must prepare without an automatic typecheck`,
+          );
+        }
+      }
+    }
+  }
   assert.equal(scripts['tsc:legacy'], 'npm run tsc:zova:legacy && pnpm --dir vona run tsc:legacy');
-  assert.equal(
-    scripts['tsc:zova:legacy'],
-    'node scripts/typecheck.ts typescript zova --noEmit --incremental false --project tsconfig.vue-tsc.json',
-  );
+  assert.equal(scripts['tsc:zova:native'], 'pnpm --dir zova run tsc:native');
+  assert.equal(scripts['tsc:zova:legacy'], 'pnpm --dir zova run tsc:legacy');
   const workflow = readFileSync(path.join(root, '.github/workflows/vona-tsc.yml'), 'utf8');
   assert.match(workflow, /run: npm run tsc:legacy\s*$/m);
   assert.doesNotMatch(workflow, /run:.*tsc(?::[\w-]+)*native|npm run tsc:force/);
+});
+
+test('Vona daily config discovers source and tests without changing publication config', () => {
+  const require = createRequire(path.join(root, 'vona/package.json'));
+  const ts = require('typescript');
+  const configFile = path.join(root, 'vona/tsconfig.json');
+  const config = JSON.parse(readFileSync(configFile, 'utf8'));
+  assert.equal(config.include, undefined);
+  assert.equal(config.references, undefined);
+  const host = {
+    ...ts.sys,
+    onUnRecoverableConfigFileDiagnostic(diagnostic) {
+      assert.fail(ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'));
+    },
+  };
+  const parsed = ts.getParsedCommandLineOfConfigFile(configFile, {}, host);
+  assert.deepEqual(parsed.errors, []);
+  assert.equal(parsed.projectReferences, undefined);
+  assert.equal(parsed.options.noEmit, true);
+  assert.equal(parsed.options.composite, false);
+  assert.equal(parsed.options.declaration, false);
+  assert.equal(parsed.options.declarationMap, false);
+  const files = new Set(
+    parsed.fileNames.map(file =>
+      path.relative(path.join(root, 'vona'), file).split(path.sep).join('/'),
+    ),
+  );
+  for (const file of [
+    'src/backend/typing/modules.d.ts',
+    'src/suite/a-training/modules/training-student/src/index.ts',
+    'src/suite/a-training/modules/training-student/test/student.test.ts',
+    'src/suite-vendor/a-test/modules/test-vona/test/application.test.ts',
+  ]) {
+    assert.ok(files.has(file), `${file} must be discovered`);
+  }
+  for (const file of files) {
+    assert.doesNotMatch(file, /(^|\/)(?:node_modules|dist|cli)\//);
+    assert.doesNotMatch(
+      file,
+      /^(?:packages-cli|packages-utils|packages-vona|coverage|\.app[^/]*|\.vona[^/]*|\.zova-rest)\//,
+    );
+  }
+  const publish = ts.getParsedCommandLineOfConfigFile(
+    path.join(root, 'vona/src/suite/a-training/modules/training-student/tsconfig.build.json'),
+    {},
+    host,
+  );
+  assert.deepEqual(publish.errors, []);
+  assert.equal(publish.options.composite, true);
+  assert.equal(publish.options.declaration, true);
+  assert.equal(publish.options.emitDeclarationOnly, true);
+  assert.equal(publish.options.noEmit, false);
 });
 
 test('release dry-run keeps default checks before publishing only', () => {
