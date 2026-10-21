@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.227
+
+### Features
+
+- Add oxfmt support.
+- Add oxlint support.
+
 ## 5.1.226
 
 ### Features
