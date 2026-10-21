@@ -99,7 +99,7 @@
     "lint-staged": "^17.0.5",
     "minimist": "^1.2.8",
     "oxfmt": "^0.62.0",
-    "oxlint": "^1.77.0",
+    "oxlint": "^1.89.0",
     "tar": "^7.5.22",
     "textlint": "^15.7.0",
     "textlint-rule-en-no-mixed-period": "^3.0.2",
