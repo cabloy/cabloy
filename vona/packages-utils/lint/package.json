@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "clean-package": "^2.2.0",
-    "oxfmt": "^0.62.0",
+    "oxfmt": "^0.74.0",
     "oxlint": "^1.89.0",
     "rimraf": "^6.1.3"
   },
