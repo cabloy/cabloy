@@ -3,7 +3,7 @@ import { request } from 'node:http';
 import { connect } from 'node:net';
 import { after, before, describe, it } from 'node:test';
 
-import { createNativeTransportFixture } from './support/nativeTransportFixture.ts';
+import { createNativeTransportFixture } from '../test/support/nativeTransportFixture.ts';
 
 const version = '2026-07-28';
 const meta = {

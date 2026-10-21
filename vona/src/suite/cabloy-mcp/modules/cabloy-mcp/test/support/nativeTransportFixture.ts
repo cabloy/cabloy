@@ -117,7 +117,7 @@ export interface NativeTransportFixture {
   close: () => Promise<void>;
 }
 
-const selectedFile = 'src/suite/cabloy-mcp/modules/cabloy-mcp/test/transport.test.ts';
+const selectedFile = 'src/suite/cabloy-mcp/modules/cabloy-mcp/qualification/transport.test.ts';
 const methods = ['POST', 'GET', 'DELETE'] as const;
 const modes = new Set([
   'json',
@@ -173,7 +173,7 @@ function assertDedicatedChild() {
     process.argv.length === 5 &&
     process.argv[2] !== undefined &&
     resolve(process.argv[2], selectedFile) ===
-      fileURLToPath(new URL('../transport.test.ts', import.meta.url));
+      fileURLToPath(new URL('../../qualification/transport.test.ts', import.meta.url));
   if (
     !app.meta.isTest ||
     env.META_MODE !== 'test' ||

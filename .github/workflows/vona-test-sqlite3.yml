@@ -93,7 +93,7 @@ jobs:
       - name: init
         run: npm run init
       - name: run isolated test infrastructure gate
-        run: node --test scripts/testClaimProcesses.test.ts scripts/runIsolatedTest.test.ts scripts/testClaimCleanup.test.ts scripts/testProcessGuardianWindows.test.ts vona/packages-vona/vona-core/src/lib/core/testClaim.test.ts vona/packages-vona/vona-core/src/lib/core/testClaimFilesystem.test.ts vona/packages-vona/vona-core/src/lib/framework/bootstrap.test.ts vona/packages-vona/vona-core/src/lib/framework/useApp.test.ts vona/packages-cli/cli-set-api/test/binBuildEntries.test.ts
+        run: node --test scripts/testClaimProcesses.test.ts scripts/runIsolatedTest.test.ts scripts/testClaimCleanup.test.ts scripts/testProcessGuardianWindows.test.ts vona/packages-vona/vona-core/src/lib/core/testClaim.test.ts vona/packages-vona/vona-core/src/lib/core/testClaimFilesystem.test.ts vona/packages-vona/vona-core/src/lib/framework/bootstrap.test.ts vona/packages-vona/vona-core/src/lib/framework/useApp.test.ts vona/packages-cli/cli-set-api/test/binBuildEntries.test.ts vona/packages-cli/cli-set-api/test/binTestPatterns.test.ts
       - name: run A-Pay focused gate
         run: npm run test -- test-pay/test/paymentSession.test.ts test-pay/test/payMock.test.ts test-pay/test/paypalProvider.test.ts test-pay/test/paypalLifecycle.test.ts test-pay/test/stripeProvider.test.ts test-pay/test/stripeLifecycle.test.ts test-pay/test/outbox.test.ts test-pay/test/webhook.test.ts
         working-directory: vona
