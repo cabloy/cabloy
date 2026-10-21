@@ -526,8 +526,8 @@ importers:
         version: link:src/suite/a-training/modules/training-student
     devDependencies:
       '@cabloy/cli':
-        specifier: ^3.1.29
-        version: 3.1.29(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
+        specifier: ^3.1.30
+        version: 3.1.30(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
       '@cabloy/lint':
         specifier: ^5.1.35
         version: 5.1.35(@typescript-eslint/eslint-plugin@8.70.0(@typescript-eslint/parser@8.70.0(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3))(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.70.0(supports-color@10.2.2)(typescript@5.9.3))(@typescript-eslint/utils@8.70.0(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3))(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(oxfmt@0.62.0)(oxlint@1.82.0)(supports-color@10.2.2)(typescript@5.9.3)(vue-eslint-parser@10.4.1(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2))
@@ -2502,9 +2502,6 @@ packages:
   '@bufbuild/protobuf@2.15.0':
     resolution: {integrity: sha512-DAheWUkVr/SJTWCc+lg9dhY0eN4SaWlf4+bG1KzHeXbnqt0AfB/NX0Z+VunGlM1ki1B4zVvye27MpKh/svySUA==}
 
-  '@cabloy/cli@3.1.29':
-    resolution: {integrity: sha512-2a8VLq6tGrJ5+sNa0JHGFSjRG7HEJWnKZXGmT14eawN7l3qwoQwsRKSfRwaeeOHKa3GfKUOFSco+B+Lf6+q2Mw==}
-
   '@cabloy/cli@3.1.30':
     resolution: {integrity: sha512-x8wx31Cv0+iTBkB6RSdw0JSTyULX1qJTZTOPH3VeGCTXZNelikbqrV63m97yqdABgZOPJe5mlF/Jd+UUKhpVgA==}
 
@@ -2547,9 +2544,6 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: ^5.x
-
-  '@cabloy/process-helper@3.1.8':
-    resolution: {integrity: sha512-83nWFHAEc+PlX5YwUso9qK+dd2MAUb/xK2Ea3ALYjCH8+kIq5fyhAABlsuTEPBlaQ1nuLc769cC9dcvrBa14gw==}
 
   '@cabloy/process-helper@3.1.9':
     resolution: {integrity: sha512-+IzWt9JtGK1cg1uX/YqbpejmSUNC3EQoCCRxxCvuTzC8GH6a7yJO78q500ctfLMjvnDYfUIH1B+dX5j138VnOA==}
@@ -8987,34 +8981,6 @@ snapshots:
 
   '@bufbuild/protobuf@2.15.0': {}
 
-  '@cabloy/cli@3.1.29(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))':
-    dependencies:
-      '@babel/parser': 7.29.8
-      '@cabloy/module-glob': 5.3.18
-      '@cabloy/module-info': 2.0.3
-      '@cabloy/process-helper': 3.1.8
-      '@cabloy/utils': 2.1.27
-      '@cabloy/word-utils': link:packages-utils/word-utils
-      '@npmcli/config': 10.12.0
-      '@zhennann/common-bin': 4.0.1(supports-color@10.2.2)
-      '@zhennann/ejs': 3.0.1
-      boxen: 4.2.0
-      chalk: 3.0.0
-      cli-table3: 0.6.5
-      deep-equal: 2.2.3
-      enquirer: 2.4.1
-      fs-extra: 11.4.0
-      globby: 16.2.4
-      gogocode: 1.0.55(vue@3.5.42(typescript@5.9.3))
-      is-type-of: 2.2.0
-      istextorbinary: 3.3.0
-      semver: 7.8.5
-      tmp: 0.2.7
-      urllib: 4.9.0
-    transitivePeerDependencies:
-      - supports-color
-      - vue
-
   '@cabloy/cli@3.1.30(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))':
     dependencies:
       '@babel/parser': 7.29.8
@@ -9115,8 +9081,6 @@ snapshots:
       supports-color: 10.2.2
       typescript: 5.9.3
       yargs-parser: 21.1.1
-
-  '@cabloy/process-helper@3.1.8': {}
 
   '@cabloy/process-helper@3.1.9': {}
 
