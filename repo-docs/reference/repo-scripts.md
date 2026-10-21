@@ -79,7 +79,7 @@ Root `npm run tsc` delegates to incremental `tsc:native` for daily development; 
 
 The native alias is installed at the repository root, not in either nested workspace. Run `pnpm install` at the root after updating the checkout; a missing alias fails with an installation diagnostic rather than silently selecting the legacy compiler. A standalone Vona project using `--compiler=native` must install that alias in its project or an ancestor. Do not use a bare root `tsc`/`pnpm exec tsc` to choose a compiler, because both packages declare the same binary name.
 
-The `vona-tsc` CI workflow runs root `npm run test:typecheck`, then root `npm run tsc:force`, after its existing initialization. The root release workflow also runs `tsc:force` before versioning/publishing (excluding changelog-only and GitHub-release-only runs), and its post-release compensation verification uses the same forced entrypoint. These gates retain forced verification even though daily checking is incremental. Check the active repository before assuming the same aliases or commands exist in Cabloy Start.
+The `vona-tsc` CI workflow runs root `npm run test:typecheck`, then root `npm run tsc:legacy`, after its existing initialization. The root release workflow runs `npm run tsc` before versioning/publishing (excluding changelog-only and GitHub-release-only runs), and its post-release compensation verification uses the same default entrypoint. CI therefore uses the forced classic TypeScript check, while release checks use native TypeScript with Vona's incremental behavior. Check the active repository before assuming the same aliases or commands exist in Cabloy Start.
 
 ## Test isolation and development data {#test-isolation-and-development-data}
 

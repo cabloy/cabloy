@@ -165,7 +165,7 @@ test('root commands retain optional native checks and use legacy in CI', () => {
   assert.doesNotMatch(workflow, /run:.*tsc(?::[\w-]+)*native|npm run tsc:force/);
 });
 
-test('release dry-run keeps forced checks before publishing only', () => {
+test('release dry-run keeps default checks before publishing only', () => {
   for (const [mode, shouldCheck] of [
     ['--publish-only', true],
     ['--changelog-only', false],
@@ -178,10 +178,11 @@ test('release dry-run keeps forced checks before publishing only', () => {
     });
     assert.equal(result.error, undefined);
     assert.equal(result.status, 0, result.stderr);
-    const check = result.stdout.indexOf('[dry-run] npm run tsc:force');
+    const lines = result.stdout.split(/\r?\n/).map(line => line.trim());
+    const check = lines.indexOf('[dry-run] npm run tsc');
     assert.equal(check !== -1, shouldCheck, mode);
     if (shouldCheck) {
-      assert.ok(result.stdout.indexOf('[dry-run] npm publish') > check);
+      assert.ok(lines.indexOf('[dry-run] npm publish') > check);
     }
   }
 });
