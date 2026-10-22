@@ -1,10 +1,15 @@
+import type { SchemaObject } from 'openapi3-ts/oas31';
 import type { TableIdentity } from 'table-identity';
+import type { TypeFormOnSubmitData } from 'zova-module-a-form';
 import type { IJsxRenderContextTableCell } from 'zova-module-a-table';
 
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
+import { ZForm } from 'zova-module-a-form';
+import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZButton } from 'zova-module-basic-button';
 
+import type { ApiApiCommerceTradeOrdershipRequestBody } from '../../api/commerceTradeOrder.js';
 import type { ITableCellOptionsActionShip } from '../../bean/tableCell.actionShip.js';
 import type { ModelOrder } from '../../model/order.js';
 
@@ -20,74 +25,70 @@ export class ControllerTableCellActionShip extends BeanControllerBase {
   @Use({ beanFullName: 'commerce-trade.model.order' })
   $$modelOrder: ModelOrder;
 
-  carrier = '';
-  trackingNumber = '';
-  confirmed = false;
+  draft: ApiApiCommerceTradeOrdershipRequestBody = { carrier: '', trackingNumber: '' };
+  schema?: SchemaObject;
+
+  get apiSchemasShip() {
+    return this.scope.apiSchema.commerceTradeOrder.ship();
+  }
 
   private get _mutation() {
     const orderId = this.$$renderContext.cellContext.row.id as TableIdentity;
     return this.$$modelOrder.ship(orderId);
   }
 
-  private get _valid() {
-    return !!this.carrier.trim() && !!this.trackingNumber.trim() && this.confirmed;
-  }
-
-  private async _ship(close: () => void) {
+  private async _submit(
+    data: TypeFormOnSubmitData<ApiApiCommerceTradeOrdershipRequestBody>,
+    close: () => void,
+  ) {
     const mutation = this._mutation;
-    if (!this._valid || mutation.isPending) return;
-    const carrier = this.carrier.trim();
-    const trackingNumber = this.trackingNumber.trim();
-    await mutation.mutateAsync({ carrier, trackingNumber });
+    if (mutation.isPending) return;
+    const confirmed = await this.$performCommand('basic-commands:confirm', {
+      text: this.scope.locale.ShipOrderConfirm(),
+    });
+    if (!confirmed) return;
+    await mutation.mutateAsync(data.value);
     close();
   }
 
-  private _openDialog() {
-    this.carrier = '';
-    this.trackingNumber = '';
-    this.confirmed = false;
+  private async _openDialog() {
+    await $QueryEnsureLoaded(() => this.apiSchemasShip.sdk);
+    if (!this.schema) {
+      this.schema = this.$computed(() => this.apiSchemasShip.requestBody);
+    }
+    this.draft = { carrier: '', trackingNumber: '' };
     this.$appModal.dialog(
       {
         title: this.scope.locale.ShipOrder(),
-        slotDefault: () => (
-          <div class="space-y-3">
-            <input
-              class="input input-bordered w-full"
-              name="carrier"
-              placeholder="Carrier"
-              v-model={this.carrier}
-            />
-            <input
-              class="input input-bordered w-full"
-              name="trackingNumber"
-              placeholder="Tracking number"
-              v-model={this.trackingNumber}
-            />
-            <label class="label cursor-pointer justify-start gap-2">
-              <input
-                class="checkbox checkbox-sm"
-                name="confirmed"
-                type="checkbox"
-                v-model={this.confirmed}
-              />
-              <span class="label-text text-xs">{this.scope.locale.Confirm()}</span>
-            </label>
-          </div>
-        ),
-        slotActions: dialog => (
-          <>
-            {this._mutation.isPending && <span class="loading loading-spinner text-primary"></span>}
-            <button class="btn btn-ghost" type="button" onClick={dialog.close}>
-              {this.scope.locale.Cancel()}
-            </button>
-            <ZButton
-              class="btn btn-primary"
-              disabled={!this._valid || this._mutation.isPending}
-              onPerform={() => this._ship(dialog.close)}
-            >
-              {this.scope.locale.ShipOrder()}
-            </ZButton>
-          </>
+        slotDefault: dialog => (
+          <ZForm
+            data={this.draft}
+            schema={this.schema}
+            onSubmitData={data => this._submit(data, dialog.close)}
+            onShowError={async ({ error }) => {
+              await this.$performCommand('basic-commands:alert', {
+                type: 'error',
+                text: error.message,
+              });
+            }}
+            slotFooter={$$form => (
+              <div class="flex justify-end gap-2">
+                {$$form.formState.isSubmitting && (
+                  <span class="loading loading-spinner text-primary"></span>
+                )}
+                <button class="btn btn-ghost" type="button" onClick={dialog.close}>
+                  {this.scope.locale.Cancel()}
+                </button>
+                <button
+                  class="btn btn-primary"
+                  disabled={$$form.formState.isSubmitting || this._mutation.isPending}
+                  type="submit"
+                >
+                  {this.scope.locale.ShipOrder()}
+                </button>
+              </div>
+            )}
+          ></ZForm>
         ),
       },
       {

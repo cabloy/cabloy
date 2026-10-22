@@ -7,6 +7,8 @@ export default {
   Available: 'Available',
   Cart: 'Cart',
   CartItem: 'Cart Item',
+  Carrier: 'Carrier',
+  TrackingNumber: 'Tracking number',
   CorrelationId: 'Correlation ID',
   Currency: 'Currency',
   Delta: 'Delta',

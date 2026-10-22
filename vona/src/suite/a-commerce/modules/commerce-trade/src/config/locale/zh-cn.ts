@@ -7,6 +7,8 @@ export default {
   Available: '可用库存',
   Cart: '购物车',
   CartItem: '购物车商品',
+  Carrier: '承运商',
+  TrackingNumber: '运单号',
   CorrelationId: '关联 ID',
   Currency: '货币',
   Delta: '调整数量',
