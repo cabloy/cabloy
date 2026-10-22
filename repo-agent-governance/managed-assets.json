@@ -186,7 +186,7 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "40e84d9f067d010a48ee6b9a0b47f8014f46cbd5e17db0982f85600662bb25de",
+      "sha256": "9ec7a5dd8b7c1a5d561a96562ee754c148e1d14db953d3629075af89e38613d3",
       "source": "skills/cabloy-spec-execution/references/status-and-evidence.md",
       "target": ".agents/skills/cabloy-spec-execution/references/status-and-evidence.md"
     },
@@ -522,7 +522,7 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "40e84d9f067d010a48ee6b9a0b47f8014f46cbd5e17db0982f85600662bb25de",
+      "sha256": "9ec7a5dd8b7c1a5d561a96562ee754c148e1d14db953d3629075af89e38613d3",
       "source": "skills/cabloy-spec-execution/references/status-and-evidence.md",
       "target": ".claude/skills/cabloy-spec-execution/references/status-and-evidence.md"
     },
@@ -872,7 +872,7 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "40e84d9f067d010a48ee6b9a0b47f8014f46cbd5e17db0982f85600662bb25de",
+      "sha256": "9ec7a5dd8b7c1a5d561a96562ee754c148e1d14db953d3629075af89e38613d3",
       "source": "skills/cabloy-spec-execution/references/status-and-evidence.md",
       "target": ".cursor/skills/cabloy-spec-execution/references/status-and-evidence.md"
     },
