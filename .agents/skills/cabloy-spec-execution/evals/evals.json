@@ -35,11 +35,13 @@
     {
       "id": 4,
       "prompt": "Implement WBS-ABC-30-01, which adds a persisted field to an existing entity. Just choose the migration version that seems consistent with nearby modules and continue.",
-      "expected_output": "Requires an explicit decision about whether vonaModule.fileVersion increments before editing migration metadata, does not invent migration history, and includes the required full test consequence if meta.version.ts changes.",
+      "expected_output": "Requires an explicit decision about whether vonaModule.fileVersion increments before editing migration metadata, does not invent migration history, and plans managed isolated verification of affected migration behavior, preferably with focused tests. Separates development-database updates from test verification and preserves explicit reset approval.",
       "files": ["files/scenarios.json"],
       "expectations": [
         "Asks direct fileVersion strategy before migration edits.",
-        "Includes npm run test consequence if meta.version.ts changes."
+        "Plans managed focused tests for affected migration behavior without requiring the full suite solely for a meta.version.ts edit.",
+        "States that isolated tests do not update dev data; normal startup applies pending migrations, not already-applied positive-numbered branches.",
+        "Keeps reset approval separate from the fileVersion decision and uses a new migration when data must be preserved."
       ]
     },
     {

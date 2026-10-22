@@ -61,7 +61,7 @@ When the user decides not to create new migration history:
 2. fold the schema change into the current version path;
 3. do not create a new migration branch.
 
-For the complete migration lifecycle and test requirement, see [Migration and Changes](/backend/migration-and-changes#decide-whether-to-increment-fileversion).
+Normal startup does not replay an already-applied positive-numbered migration branch. Managed focused tests exercise the edited path on an isolated test database, not the development database. A no-bump decision does not authorize a destructive dev reset; use a new incremental migration when existing data must be preserved. See [Migration and Changes](/backend/migration-and-changes#local-development-workflow) for the verification and development-database decision paths.
 
 ## Inspect the existing resource thread
 
@@ -195,7 +195,8 @@ Choose checks that match the layers changed:
 
 - inspect generated schema/OpenAPI after structure-shaping field changes;
 - run the narrow resource test and relevant typecheck;
-- run `npm run test` for any `meta.version.ts` change so the test database is recreated and migration consistency is exercised;
+- verify affected migration, initialization, or seed behavior through managed isolated tests, preferably focused; focused runs still prepare a fresh test database, so a `meta.version.ts` edit alone does not require the full suite;
+- decide development-database updates separately: tests do not update dev data, pending migrations apply through normal startup, and replaying an already-applied positive-numbered branch on disposable dev data requires explicit reset approval;
 - run the relevant frontend metadata/build/dependency synchronization when custom renderer resources are involved;
 - verify action-level serializer behavior with an API test when `v.serializer*` metadata changes returned fields;
 - for join-backed filters and sorting, inspect transformed `where`, `orders`, and `joins`, then exercise the resource endpoint so metadata-only success cannot hide incorrect query behavior.

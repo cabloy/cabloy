@@ -115,6 +115,8 @@ Then:
 2. fold the schema change into the current version path
 3. do not create a new migration branch
 
+An already-applied positive-numbered migration branch does not replay during normal startup. Managed focused tests exercise the edited branch on a fresh isolated test database, not the development database. Recreating disposable dev data requires separate explicit reset approval; a no-bump decision does not grant it. If existing data must be preserved, resolve a new incremental migration strategy instead. See [Migration and Changes](../../../repo-docs/backend/migration-and-changes.md#local-development-workflow).
+
 ## Step 4: Inspect the current backend thread first
 
 Before proposing or making edits, inspect the existing thread:

@@ -194,7 +194,8 @@ Typical checks include:
 - confirm detail schema/index support is present
 - confirm both modules’ `.metadata/index.ts` outputs reflect the expected nested detail DTOs
 - if standalone mode applies, confirm the detail module still exposes its standalone resource surface
-- if this workflow changes `meta.version.ts`, run `npm run test` so the test database is reinitialized and schema/data consistency issues surface early
+- verify migration, initialization, or seed changes through managed isolated tests covering the affected aggregate and detail behavior; focused runs still prepare the test database, so a `meta.version.ts` edit alone does not require the full suite
+- decide development-database updates separately: isolated tests do not update dev data, normal startup applies pending migrations, and replaying an already-applied positive-numbered branch on disposable dev data requires explicit reset approval; use a new migration to preserve existing data
 
 ## Response pattern
 

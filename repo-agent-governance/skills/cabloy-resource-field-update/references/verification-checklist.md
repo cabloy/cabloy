@@ -11,32 +11,28 @@ This means the task changed storage shape, such as:
 - `meta.version.ts`
 - module `fileVersion`
 
-Run:
+Verify affected migration, initialization, or seed behavior through the managed isolated test entrypoint. Prefer focused tests that cover the changed resource:
 
 ```bash
-npm run test
+npm run test -- 'src/module/<module-name>/test/**/*.ts'
 ```
 
-Reason:
+Resolve the actual test path for suite-owned modules. A focused managed run still recreates its isolated test database and runs migrations, initialization, and seeds; a `meta.version.ts` edit alone does not require the full suite. Expand coverage according to actual impact, including upgrade behavior when applicable; fresh-database preparation alone does not prove an existing-data upgrade.
 
-- the test database should be reinitialized so schema/version mismatches surface early
+Development-database updates are a separate decision. Tests do not update dev data. Normal startup applies pending migrations to existing prepared databases, but does not replay an already-applied positive-numbered branch. Recreating disposable dev data requires explicit reset approval; a no-bump decision is not authorization. Use a new incremental migration when data must be preserved. See [Migration and Changes](../../../../repo-docs/backend/migration-and-changes.md#local-development-workflow).
 
-## 2. If the change is narrower
+## 2. For all backend field changes
 
-Start with the narrowest meaningful checks first.
+Start with the narrowest meaningful checks, including when persistence changed.
 
-Typical sequence:
+Typical root-level sequence:
 
 ```bash
-cd vona && npm run tsc
-cd vona && npm test -- <resource-test>.test.ts
+npm run tsc:vona
+npm run test -- 'src/module/<module-name>/test/**/*.ts'
 ```
 
-Use this for:
-
-- validation-only refinement
-- locale updates for a field
-- renderer metadata changes on an existing persisted field
+For validation-only refinements, locale updates, or renderer metadata changes on an existing field, select relevant checks without inventing a migration requirement.
 
 ## 3. If custom frontend renderers were introduced
 

@@ -79,7 +79,7 @@ When authority records conflict, stop the affected work. Update the authoritativ
 
 ### Persisted schema and file version
 
-If implementation may add or alter a persisted field, table, relation, index, or `meta.version.ts` path, ask before editing whether `vonaModule.fileVersion` should increment. Do not infer the answer from neighboring modules. If `meta.version.ts` changes, the repository rule requires `npm run test` after the change; include this in the dossier and evidence plan.
+If implementation may add or alter a persisted field, table, relation, index, or `meta.version.ts` path, ask before editing whether `vonaModule.fileVersion` should increment. Do not infer the answer from neighboring modules. Include managed isolated verification of affected migration, initialization, or seed behavior in the dossier and evidence plan; focused tests still prepare the test database, and a `meta.version.ts` edit alone does not require the full suite. Record development-database updates separately: tests do not update dev data, normal startup applies pending migrations, and replaying an already-applied positive-numbered branch on disposable dev data requires separate explicit reset approval. A no-bump decision is not reset authorization; use a new migration when existing data must be preserved.
 
 ### Contract loop
 

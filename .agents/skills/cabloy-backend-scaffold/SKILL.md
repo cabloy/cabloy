@@ -200,7 +200,7 @@ For persisted test data, classify each record as a durable module seed or a test
 Check whether the feature needs:
 
 - unit tests
-- `db:reset` or migration verification
+- managed isolated migration verification and a separate development-database update decision
 - controller action testing
 - broader `test` / `tsc` / `build` checks
 
@@ -239,7 +239,7 @@ Always end with a verification path that matches the scope of the backend change
 
 Prefer focused tests of critical business behavior using the existing Vona testing infrastructure. Choose the smallest meaningful service/model, controller/API, or integration boundary for the changed contract; browser E2E is not the default backend test layer. Avoid exhaustive upfront mock/fake matrices and bespoke harnesses. Add focused regression coverage when actual defects are fixed; targeted unit and framework tests remain useful when they directly prove new or changed behavior.
 
-Keep relevant static checks scope-dependent and preserve applicable authentication/authorization, tenant-isolation, transaction, concurrency, idempotency, migration, and acceptance requirements. These are selected by the affected behavior, not a mandatory matrix for every change. Retain `mockCtx(...)` ownership, test-resource isolation, precise fixture cleanup, and the required `npm run test` after `meta.version.ts` changes. Missing runtime access is a reported gap, not permission to reset resources or invent substitute test machinery. See [Unit Testing](../../../repo-docs/backend/unit-testing.md).
+Keep relevant static checks scope-dependent and preserve applicable authentication/authorization, tenant-isolation, transaction, concurrency, idempotency, migration, and acceptance requirements. These are selected by the affected behavior, not a mandatory matrix for every change. Retain `mockCtx(...)` ownership, test-resource isolation, and precise fixture cleanup. Verify migration, initialization, or seed changes through managed isolated tests covering the affected behavior; focused tests still prepare the test database, so a `meta.version.ts` edit alone does not require the full suite. Tests do not update development databases; decide the development migration/reset path separately using [Migration and Changes](../../../repo-docs/backend/migration-and-changes.md#local-development-workflow). Missing runtime access is a reported gap, not permission to reset resources or invent substitute test machinery. See [Unit Testing](../../../repo-docs/backend/unit-testing.md).
 
 Shared checks, when applicable, include:
 
@@ -251,7 +251,7 @@ Narrower checks may include:
 
 - module test updates
 - route/controller action verification
-- migration reset flow
+- focused managed migration tests; development reset only with separate explicit approval
 - CRUD workflow test coverage
 
 ## Response pattern
