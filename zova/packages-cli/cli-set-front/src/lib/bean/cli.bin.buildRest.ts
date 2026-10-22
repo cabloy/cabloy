@@ -186,6 +186,9 @@ export class CliBinBuildRest extends BeanCliBase {
       outDir,
       tsconfig: 'tsconfig.rest.json',
       clean: false,
+      checks: {
+        namespaceConflict: false,
+      },
       dts: {
         resolver: 'oxc',
         generator: 'tsgo',
