@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.1.228
+
+### Features
+- Add trade ship order support.
+- Update node-related functionality.
+
+### Bug Fixes
+- Ensure the commerce locale schema is ready before opening dialogs.
+
+### Improvements
+- Clarify isolated migration verification and development database updates in the documentation.
+- Update CLI REST build tooling.
+
 ## 5.1.227
 
 ### Features
