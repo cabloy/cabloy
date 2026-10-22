@@ -55,14 +55,20 @@ Apply when the user explicitly wants to demonstrate custom renderer development:
 
 ## Verification follow-up
 
-### If persistence changed
+### Backend checks
 
-- `npm run test`
+- relevant typecheck, such as `cd vona && npm run tsc`
+- focused managed tests, such as `npm run test -- 'src/module/<module-name>/test/**/*.ts'` from the repository root; resolve the actual path for suite-owned modules
+- if persistence, initialization, or seed behavior changed, cover that behavior in the managed run; focused tests still prepare a fresh isolated test database, so a `meta.version.ts` edit alone does not require the full suite
+- expand coverage according to actual impact, including upgrade behavior when applicable
 
-### If the change is narrower
+### Development-database follow-up
 
-- `cd vona && npm run tsc`
-- `cd vona && npm test -- <resource-test>.test.ts`
+- isolated tests do not update development data
+- normal startup applies pending migrations to existing prepared databases
+- an already-applied positive-numbered migration branch does not replay on startup; recreating disposable dev data requires separate explicit reset approval, even after a no-bump decision
+- use a new incremental migration when existing data must be preserved
+- see [Migration and Changes](../../../../repo-docs/backend/migration-and-changes.md#local-development-workflow) for lifecycle and reset safety
 
 ### If custom frontend renderers were introduced
 

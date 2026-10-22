@@ -24,6 +24,8 @@ Do not use `progress.md` to add requirements, technical contracts, acceptance pr
 
 ## Evidence layout
 
+Retain the minimum sufficient evidence required by the test plan and attribution rules below. Prefer existing test-runner reports, redacted logs, and concise ATP/progress pointers rather than duplicating their contents across receipt layers. Do not create full input snapshots, exhaustive hash manifests, custom evidence verifiers, or multilayer receipts by default; new evidence machinery needs an explicit test-plan requirement or a concrete attribution/integrity risk that existing artifacts cannot address. Preserving source hashes during sanitization does not require inventing a new all-input hashing system. Keep mandatory revision/worktree attribution, actual failures, privacy review, and historical evidence intact unless a separate approved consolidation follows the lifecycle rules below.
+
 Prefer the scalable phase/ATP layout for newly observed proof when the suite permits extensions:
 
 ```text
@@ -103,6 +105,14 @@ not-started -> in-progress -> implementation-complete -> verified
 A genuinely documentary/design-only task can instead follow `not-started -> in-progress -> planning-complete`, but only when its formal WBS declaration contains `Completion mode: planning-only.`, its own checks have revision-scoped documentary evidence, and a named reviewer explicitly records the planning-closure disposition. `authority-only` traceability is not this opt-in. `planning-complete` satisfies a predecessor dependency edge but never grants successor execution approval, accepts another ADR, completes source, or passes a linked prospective runtime ATP. The Gantt shows its status separately; verified totals and the burndown's active-minus-verified remainder still count only `verified`. `implementation-complete`, `waived` and `deferred` are not completed prerequisites. `blocked`, `waived`, and `deferred` are explicit states, not shortcuts to completion. Mark an implementation task `in-progress` only after approved implementation or verification actually begins. A generated file, successful scaffold, passing typecheck, code review, manual walkthrough, screenshot, or unrelated broad test pass cannot by itself produce `verified`.
 
 A task may be `implementation-complete` when source work is complete but an ATP, browser check, paired build, release gate, redaction decision, or durable artifact remains. A phase can be verified without implying that a separately defined integration or release phase is verified.
+
+## Evidence lifecycle and consolidation
+
+Retain artifacts for a named ongoing development need, an applicable acceptance/retention requirement, or unique information still needed to explain a result. Creation alone and hypothetical future usefulness are not reasons for permanent retention. Maintained source-controlled business tests provide ongoing regression protection; historical run artifacts record only what happened for their attributed revision and do not prove changed code remains correct.
+
+Keep current delivery state, coverage gaps, and blockers concise in the existing progress/phase records. Retain key acceptance results and only the supporting primary evidence and revision/dirty-worktree attribution they still require. Move durable discoveries needed for further development into the owning source tests, design record, or issue/handoff instead of depending on an artifact chain. Retired one-shot runners, resolved diagnostic detail, repeated inventories/snapshots, and documentary receipts need not remain permanently when they have no such purpose or unique information.
+
+Inspect before deleting or overwriting historical material and obtain explicit approval for the consolidation/deletion scope, including replacement of any earlier unchanged-retention commitment. Preserve meaningful successes, failures, waivers, and gaps truthfully; retain primary proof required by continuing acceptance claims. Update incoming links and state when old hash-based verifiers are retired or no longer applicable rather than recreating their dependency chains. Do not delete by extension or Git status, replace the clutter with a giant archive or a new manifest/checker system, or promote acceptance status. Reorganizing existing evidence alone does not require rerunning business tests; verify affected references and records with existing tools. This guidance does not itself authorize cleanup or override a controlling retention requirement.
 
 ## Historical evidence and supersession
 

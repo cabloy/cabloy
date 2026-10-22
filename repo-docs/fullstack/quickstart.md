@@ -9,7 +9,7 @@ Before creating a new Cabloy project, make sure your environment has:
 | Name         | Version     |
 | ------------ | ----------- |
 | `pnpm`       | `>=12.14.0` |
-| `Node.js`    | `>=24.4.0`  |
+| `Node.js`    | `>=24.11.0` |
 | `Redis`      | `>=7.2.6`   |
 | `SQLite3`    | `Built-in`  |
 | `MySQL`      | `>=8`       |

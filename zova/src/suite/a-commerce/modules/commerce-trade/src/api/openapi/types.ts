@@ -95,22 +95,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/auth/mock/authorize': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['AuthMock_authorize'];
-    put?: never;
-    post: operations['AuthMock_authorizePost'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/captcha/create': {
     parameters: {
       query?: never;
@@ -1303,8 +1287,10 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** List Students */
     get: operations['TrainingStudent_select'];
     put?: never;
+    /** Create Student */
     post: operations['TrainingStudent_create'];
     delete?: never;
     options?: never;
@@ -1319,12 +1305,15 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** View Student */
     get: operations['TrainingStudent_view'];
     put?: never;
     post?: never;
+    /** Delete Student */
     delete: operations['TrainingStudent_delete'];
     options?: never;
     head?: never;
+    /** Update Student */
     patch: operations['TrainingStudent_update'];
     trace?: never;
   };
@@ -1335,9 +1324,27 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** View Student Summary */
     get: operations['TrainingStudent_summary'];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/training/student/bulk/delete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Bulk Delete Students */
+    post: operations['TrainingStudent_deleteBulk'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1354,6 +1361,7 @@ export interface paths {
     get?: never;
     put?: never;
     post?: never;
+    /** Permanently Delete Student */
     delete: operations['TrainingStudent_deleteForce'];
     options?: never;
     head?: never;
@@ -1371,6 +1379,54 @@ export interface paths {
     put?: never;
     post?: never;
     delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/layoutprofile/load': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['Layoutprofile_load'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/layoutprofile/save': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Layoutprofile_save'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/layoutprofile/reset': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['Layoutprofile_reset'];
     options?: never;
     head?: never;
     patch?: never;
@@ -2608,6 +2664,7 @@ export interface components {
     };
     'home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
+          instanceId: number | string | undefined;
           user: components['schemas']['home-user.dto.passportUser'];
           auth: components['schemas']['a-auth.dto.auth'];
           roles: components['schemas']['home-user.entity.role'][];
@@ -2674,12 +2731,15 @@ export interface components {
           }
         | undefined;
       siteIds: string[];
+      /** @default false */
+      builtin?: boolean;
     };
     'home-user.dto.passportJwt': {
       passport: components['schemas']['home-user.dto.passport'];
       jwt: components['schemas']['a-jwt.dto.jwtToken'];
     };
     'home-user.dto.passport': {
+      instanceId: number | string | undefined;
       user: components['schemas']['home-user.dto.passportUser'];
       auth: components['schemas']['a-auth.dto.auth'];
       roles: components['schemas']['home-user.entity.role'][];
@@ -3155,7 +3215,9 @@ export interface components {
       shippedAt: Date;
     };
     'commerce-trade.dto.orderShip': {
+      /** @description Carrier */
       carrier: string;
+      /** @description Tracking number */
       trackingNumber: string;
     };
     'commerce-trade.dto.orderSelectRes': {
@@ -3550,6 +3612,7 @@ export interface components {
       /** @description Description */
       description?: string | undefined;
     };
+    /** @description Create product */
     'commerce-catalog.dto.productCreate': {
       /** @description Product title */
       title: string;
@@ -3674,7 +3737,8 @@ export interface components {
           descriptionHtml?: string | undefined;
         }
       | undefined;
-    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7':
+    /** @description Product details */
+    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_a2f92cabb46b0630848b50414c0d4c60efb47a57':
       | {
           /**
            * Format: date-time
@@ -3729,6 +3793,7 @@ export interface components {
           };
         }
       | undefined;
+    /** @description Update product */
     'commerce-catalog.dto.productUpdate': {
       /** @description Product title */
       title: string;
@@ -3948,6 +4013,7 @@ export interface components {
       siteId: string;
       title: string;
     };
+    /** @description Add Student Training Record */
     'training-record.dto.recordCreate': {
       /** @description Training Record Name */
       name: string;
@@ -4089,7 +4155,8 @@ export interface components {
       /** @default true */
       signed?: boolean;
     };
-    'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+    /** @description View Student Training Record */
+    'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347':
       | {
           /**
            * Format: date-time
@@ -4164,6 +4231,7 @@ export interface components {
             | undefined;
         }
       | undefined;
+    /** @description Edit Student Training Record */
     'training-record.dto.recordUpdate': {
       /** @description Training Record Name */
       name: string;
@@ -4208,6 +4276,7 @@ export interface components {
         | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
         | undefined;
     };
+    /** @description Add Student */
     'training-student.dto.studentCreate': {
       /** @description Student Name */
       name: string;
@@ -4289,7 +4358,7 @@ export interface components {
               | undefined;
           }[]
         | undefined;
-      studentContentForm?: {
+      content?: {
         /** @description Description Markdown */
         descriptionMarkdown?: string | undefined;
       };
@@ -4412,7 +4481,8 @@ export interface components {
           signed?: boolean;
         }
       | undefined;
-    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1d66fd9b41b42bee7a7709e4c1b00556fdb4dae3':
+    /** @description View Student */
+    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60':
       | {
           /**
            * Format: date-time
@@ -4519,10 +4589,7 @@ export interface components {
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
               | undefined;
           }[];
-          studentContentForm?: {
-            /** @description ID */
-            id: number | string;
-            studentId: number | string;
+          content?: {
             /** @description Description Markdown */
             descriptionMarkdown?: string | undefined;
           };
@@ -4530,8 +4597,10 @@ export interface components {
           _trainingRecords?:
             | components['schemas']['training-student.dto.detailRecordResItem'][]
             | undefined;
+          _descriptionMarkdown?: string | undefined;
         }
       | undefined;
+    /** @description Edit Student */
     'training-student.dto.studentUpdate': {
       /** @description Student Name */
       name: string;
@@ -4620,7 +4689,7 @@ export interface components {
               | undefined;
           }[]
         | undefined;
-      studentContentForm?: {
+      content?: {
         /**
          * @description Deleted
          * @default false
@@ -4646,7 +4715,7 @@ export interface components {
           /** @description Training Stage */
           level: 1 | 2 | 3;
           /** @description Description */
-          description?: string | undefined;
+          descriptionMarkdown?: string | undefined;
           /** @description Description HTML */
           descriptionHtml?: string | undefined;
           /** @description Level Title */
@@ -4657,6 +4726,9 @@ export interface components {
           summaryText: string;
         }
       | undefined;
+    'training-student.dto.studentDeleteBulk': {
+      ids: (number | string)[];
+    };
     'basic-metrics.dto.metricsSnapshot': {
       enabled: boolean;
       runtime: components['schemas']['basic-metrics.dto.metricsRuntime'];
@@ -4683,6 +4755,41 @@ export interface components {
           }
         | undefined;
       schedulers?: number | undefined;
+    };
+    'a-layoutprofile.dto.layoutProfile_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          /** @enum {number} */
+          version: 1;
+          schemaFingerprint?: string | undefined;
+          columns: {
+            key: string;
+            visible: true | false;
+            width: 'auto' | number;
+          }[];
+        }
+      | undefined;
+    'a-layoutprofile.dto.layoutProfile': {
+      /** @enum {number} */
+      version: 1;
+      schemaFingerprint?: string | undefined;
+      columns: {
+        key: string;
+        visible: true | false;
+        width: 'auto' | number;
+      }[];
+    };
+    'a-layoutprofile.dto.layoutProfileSave': {
+      layoutKey: string;
+      profile: {
+        /** @enum {number} */
+        version: 1;
+        schemaFingerprint?: string | undefined;
+        columns: {
+          key: string;
+          visible: true | false;
+          width: 'auto' | number;
+        }[];
+      };
     };
     'a-file.dto.fileUploadPolicyResponse': {
       fileScene: string;
@@ -5404,61 +5511,6 @@ export interface operations {
       cookie?: never;
     };
     requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-  };
-  AuthMock_authorize: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-  };
-  AuthMock_authorizePost: {
-    parameters: {
-      query: {
-        redirect_uri: string;
-        state: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': {
-          username: string;
-        };
-      };
-    };
     responses: {
       200: {
         headers: {
@@ -7591,7 +7643,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7'];
+            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_a2f92cabb46b0630848b50414c0d4c60efb47a57'];
           };
         };
       };
@@ -7912,7 +7964,7 @@ export interface operations {
         pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
-        studentId?: number | undefined;
+        studentId?: string | undefined;
       };
       header?: never;
       path?: never;
@@ -7982,7 +8034,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+            data?: components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347'];
           };
         };
       };
@@ -8129,7 +8181,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1d66fd9b41b42bee7a7709e4c1b00556fdb4dae3'];
+            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60'];
           };
         };
       };
@@ -8218,6 +8270,34 @@ export interface operations {
     };
     authToken: true;
   };
+  TrainingStudent_deleteBulk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['training-student.dto.studentDeleteBulk'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   TrainingStudent_deleteForce: {
     parameters: {
       query?: never;
@@ -8262,6 +8342,86 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['basic-metrics.dto.metricsSnapshot'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Layoutprofile_load: {
+    parameters: {
+      query: {
+        layoutKey: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['a-layoutprofile.dto.layoutProfile_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Layoutprofile_save: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-layoutprofile.dto.layoutProfileSave'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-layoutprofile.dto.layoutProfile'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Layoutprofile_reset: {
+    parameters: {
+      query: {
+        layoutKey: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
           };
         };
       };

@@ -71,7 +71,9 @@ When the change belongs in the current version path rather than new migration hi
 2. fold the schema change into the current version path;
 3. do not create a new migration branch.
 
-Ask before choosing this strategy; do not infer migration history from the field change alone. Any change to `meta.version.ts` requires `npm run test` so the test database is recreated and schema/data consistency is exercised.
+Ask before choosing this strategy; do not infer migration history from the field change alone. Normal startup does not replay an already-applied positive-numbered migration branch. Editing that branch affects fresh installations and isolated test preparation, not a development database that has already applied it. A no-bump decision is not authorization to reset development data; if existing data must be preserved, agree on a new incremental migration instead.
+
+Verify changes to migration, initialization, or seed behavior through managed isolated tests covering the affected behavior, preferably focused. A `meta.version.ts` edit alone does not require the full suite. See [Local development workflow](#local-development-workflow) for the separate verification and development-database decisions.
 
 ## `meta.version`
 
@@ -186,29 +188,33 @@ A practical sequence is:
 1. decide whether to increment `fileVersion`
 2. add or adjust entity/model structure
 3. update the current or new `meta.version` path to match that decision
-4. rerun migration locally
-5. verify the contract through tests and controller actions
+4. verify migration and resource behavior through managed isolated tests
+5. separately decide whether and how to update the development database
 
 This keeps schema change, backend contract change, and verification tightly connected.
 
 ## Local development workflow
 
-One important distinction for local development is:
+Keep two questions separate: **how to verify the change** and **how to update development data**. Isolated tests do not update development databases, and a development reset is not a substitute for tests.
 
-- when iterating locally, you often want to recreate the database and re-run migration logic without bumping `fileVersion`
+| Need                                                                                   | Path                                             | Boundary                                                                                                 |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| Verify migration, initialization, seed, and affected resource behavior                 | Managed isolated tests, preferably focused       | Even a focused run prepares a fresh test database; it does not change dev data.                          |
+| Apply a new module or pending versioned migration to an existing prepared dev database | Normal application startup                       | Applies pending versions without resetting existing data; ordinary dev startup does not repeat `seed()`. |
+| Replay an edited, already-applied positive-numbered branch on disposable dev data      | Separately approved `npm run db:reset`           | Destructive recreation; a no-bump decision does not authorize reset.                                     |
+| Update an existing database while preserving business data                             | A new incremental migration, then normal startup | Do not rely on editing an already-applied branch or use reset.                                           |
 
-Representative commands:
+For example, from the repository root:
 
 ```bash
-npm run test
-npm run db:reset
+npm run test -- 'src/module/<module-name>/test/**/*.ts'
 ```
 
-A practical decision rule is:
+Resolve the actual path for suite-owned modules. Select tests that cover the affected migration and contract behavior; expand coverage according to actual impact, not merely the presence of a `meta.version.ts` edit. Fresh-database preparation proves the fresh-install path, not every existing-data upgrade; verify upgrade behavior when the change requires it. See [Unit Testing](/backend/unit-testing#execute-tests).
 
-- use `db:reset` to recreate the disposable **dev-mode** databases, rerun migrations and instance initialization, and then invoke module `seed()` hooks; it deletes existing matching development databases, so do not run it against data you need to keep
-- `db:reset` requires `database.testDatabase: true` in dev config and a connection outside the disposable database; it refuses to reset a configured non-disposable database
-- use `test` when you need **test-mode** verification of migration, controller behavior, and the broader generated contract thread; E2E also remains test-mode
+The replay rule above concerns positive-numbered migration branches. The special version `0` and `fileVersion: -1` lifecycle paths retain their always-run semantics; they are not a reason to move a versioned schema change into an always-run branch.
+
+`db:reset` requires explicit approval, `database.testDatabase: true` in dev config, and a connection outside the disposable database. It refuses to reset a configured non-disposable database. Follow the lifecycle and concurrency precautions below before an approved reset.
 
 ### Managed development database preparation
 
@@ -239,7 +245,8 @@ Also ask:
 
 1. does this change require a `fileVersion` increment?
 2. does `meta.version` need an `update`, `init`, or `seed` branch?
-3. should the local verification path include `test` or `db:reset`?
-4. does the change affect the CRUD-generated thread or frontend-facing API contract as well?
+3. which managed focused tests verify the affected migration and resource behavior, and does the actual impact require broader coverage?
+4. does the development database need pending migrations through startup, a separately approved disposable reset, or a new data-preserving migration?
+5. does the change affect the CRUD-generated thread or frontend-facing API contract as well?
 
 That prevents schema changes from being documented in code but never integrated into the module lifecycle.

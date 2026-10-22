@@ -205,6 +205,7 @@ Check whether the feature needs:
 - style/theme/icon updates
 - wrapper usage review
 - async interaction ownership: for a button-only action, return or await the complete action through `ZButton onPerform`, choose one error presentation owner rather than combining its generic alert with local query/error UI, and do not mirror the same lifecycle with button-local `loading` / `disabled` state; retain explicit state only for independently initiated or broader shared work
+- business row actions that require additional input: prefer a compact trigger and a focused dialog unless deliberate inline editing is intended; follow the [TableCell dialog pattern](../../../repo-docs/frontend/table-cell-cookbook.md#collect-input-for-a-business-row-action-in-a-dialog) for schema-backed forms where suitable, existing mutation ownership, success-only closure, failure input retention, and dialog-scoped E2E verification
 - async-loading or controllerRef implications
 
 ### Verification
@@ -279,6 +280,8 @@ Especially relevant pages include:
 Always end with a verification path that matches the scope of the frontend change.
 
 For ordinary frontend changes, prefer a few critical user flows through the existing E2E infrastructure, selected by affected behavior with spec names, tags, or `--grep`. Reuse existing scenarios or extend them narrowly; do not require exhaustive isolated-test matrices, extensive fake dependencies, or custom source-evaluation loaders before delivery. When an actual problem is fixed, add focused regression coverage. Targeted unit or framework tests remain useful when they efficiently prove the behavior being changed; this is not a ban on existing tests or managed test-resource isolation.
+
+Business E2E should primarily assert user actions, visible business outcomes, and persistence after save/reload. Do not turn architecture guidance into default browser assertions about Controller/IoC object identity, model instances, or Query/cache internals. Assert those internals only for an explicit architecture/framework acceptance contract or a focused regression, preferably at the smallest suitable unit, framework, or integration layer. This does not remove architecture requirements or server-side safety checks.
 
 Keep relevant format, lint, and type checks lightweight and scope-dependent. Prepare only the affected flavor's required artifacts for runtime verification. Preserve applicable route, SSR/hydration, authentication, authorization, contract, and acceptance checks; frontend E2E does not replace server-side enforcement. If runtime verification is unavailable or not authorized, report the gap rather than building a substitute harness. See [Frontend Scripts](../../../repo-docs/frontend/scripts.md) for edition-aware preparation and filtered E2E commands.
 

@@ -69,7 +69,7 @@ function pathEnd(text, start, quoted) {
   let end = start;
   while (end < text.length) {
     const char = text[end];
-    if (/[\r\n\t"'`<>(){}[\]|,;!?]/u.test(char) || (!quoted && /\s/u.test(char))) break;
+    if (/[\p{Cc}"'`<>(){}[\]|,;!?]/u.test(char) || (!quoted && /\s/u.test(char))) break;
     // Preserve stack line/column suffixes (and keep other colon-delimited prose out).
     if (char === ':') break;
     end++;
@@ -119,14 +119,15 @@ export function createMatcher({ repoRoot = DEFAULT_REPO_ROOT, maps = [] } = {}) 
   );
 
   const sep = '(?:\\\\{1,2}|/)';
-  const account = '[^/\\\\\\s"\'`<>(){}[\\]|,;:!?]+(?: [^/\\\\\\s"\'`<>(){}[\\]|,;:!?]+)*';
+  const account =
+    '[^/\\\\\\s\\p{Cc}"\'`<>(){}[\\]|,;:!?]+(?: [^/\\\\\\s\\p{Cc}"\'`<>(){}[\\]|,;:!?]+)*';
   const known = [
-    new RegExp(`/(?:Users|home)/${account}`, 'y'),
+    new RegExp(`/(?:Users|home)/${account}`, 'uy'),
     /\/(?:private\/)?tmp/y,
     /\/(?:private\/)?var\/folders/y,
-    new RegExp(`[A-Z]:${sep}(?:Users${sep}${account}|(?:Windows${sep})?Temp)`, 'iy'),
+    new RegExp(`[A-Z]:${sep}(?:Users${sep}${account}|(?:Windows${sep})?Temp)`, 'iuy'),
     // UNC is a filesystem convention; forward-slash protocol-relative URLs are not.
-    /\\{2,4}[^\\/\s"'`<>(){}[\]|,;:!?]+\\{1,2}[^\\/\s"'`<>(){}[\]|,;:!?]+/y,
+    /\\{2,4}[^\\/\s\p{Cc}"'`<>(){}[\]|,;:!?]+\\{1,2}[^\\/\s\p{Cc}"'`<>(){}[\]|,;:!?]+/uy,
   ];
 
   function recognizeAt(text, start, quoted = false) {
@@ -135,7 +136,7 @@ export function createMatcher({ repoRoot = DEFAULT_REPO_ROOT, maps = [] } = {}) 
       const match = entry.regex.exec(text);
       if (!match) continue;
       const after = start + match[0].length;
-      if (after < text.length && !/[/\\\s"'`<>(){}[\]|,;:!?]/u.test(text[after])) continue;
+      if (after < text.length && !/[/\\\s\p{Cc}"'`<>(){}[\]|,;:!?]/u.test(text[after])) continue;
       const end = pathEnd(text, after, quoted);
       const tail = normalizeTail(text.slice(after, end), entry.windows).replace(/^\/+|\/+$/gu, '');
       const replacement =
@@ -153,7 +154,7 @@ export function createMatcher({ repoRoot = DEFAULT_REPO_ROOT, maps = [] } = {}) 
       const match = regex.exec(text);
       if (!match) continue;
       const after = start + match[0].length;
-      if (after < text.length && !/[/\\\s"'`<>(){}[\]|,;:!?]/u.test(text[after])) continue;
+      if (after < text.length && !/[/\\\s\p{Cc}"'`<>(){}[\]|,;:!?]/u.test(text[after])) continue;
       return { end: pathEnd(text, after, quoted), replacement: '<PRIVATE_PATH>' };
     }
     return null;
@@ -163,7 +164,7 @@ export function createMatcher({ repoRoot = DEFAULT_REPO_ROOT, maps = [] } = {}) 
     if (typeof text !== 'string') fail('INVALID_TEXT');
     const matches = [];
     // Skip non-file URLs as units, including their paths, query strings and fragments.
-    const urls = /[A-Za-z][A-Za-z0-9+.-]{0,31}:\/\/[^\s"'`<>(){}[\]|]+/gu;
+    const urls = /[A-Za-z][A-Za-z0-9+.-]{0,31}:\/\/[^\s\p{Cc}"'`<>(){}[\]|]+/gu;
     const protectedUrls = [...text.matchAll(urls)];
     let urlIndex = 0;
     for (let index = 0; index < text.length; index++) {
@@ -262,7 +263,6 @@ export async function sanitizeStream(input, output, { matcher = createMatcher() 
         parts.push(bytes.subarray(start, end));
         if (newline < 0) break;
         const line = Buffer.concat(parts, length);
-        if (binary(line)) fail('BINARY');
         const text = decode(line);
         await write(output, `${matcher.sanitize(text)}\n`);
         parts = [];
@@ -272,7 +272,6 @@ export async function sanitizeStream(input, output, { matcher = createMatcher() 
     }
     if (length) {
       const line = Buffer.concat(parts, length);
-      if (binary(line)) fail('BINARY');
       await write(output, matcher.sanitize(decode(line)));
     }
     if (outputFailed) fail('OUTPUT_ERROR');
@@ -464,10 +463,11 @@ Stack :line:column suffixes are preserved. Non-file URLs, unrelated API/containe
 paths and unknown absolute roots are left unchanged: this is NOT a universal secret
 scanner. Use explicit maps for other local roots; inspect output before publication.
 UTF-8 decoding is fatal, with a 1 MiB byte limit per line (including CR, excluding LF).
-NUL, DEL and non-text C0 controls are rejected; tab, LF, form feed and CR are allowed.
+sanitize preserves control characters without interpreting or stripping them; they do
+not cause BINARY rejection. LF separates lines; CR counts toward the line byte limit.
 Only complete validated lines are emitted; earlier sanitized lines may survive failure.
-check limits each file to 8 MiB, treats NUL/non-text controls as binary, and reports only
-scope-N/relative-filename:line CODE, never source lines or absolute scan roots.
+check limits each file to 8 MiB and treats NUL, DEL and non-text C0 controls as binary.
+It reports only scope-N/relative-filename:line CODE, never source lines or absolute scan roots.
 Symlinks (including scope ancestors), special files, .env* files/directories, unreadable,
 binary, invalid UTF-8 and over-limit files make checking incomplete. Scope trees must
 remain stable while scanning; this is not an adversarial filesystem snapshot.

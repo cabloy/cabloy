@@ -83,8 +83,8 @@ When the active edition and installed modules provide `@Passport.rbac(...)` and 
 - focused regressions for actual defects; avoid exhaustive upfront mock/fake matrices and bespoke harnesses
 - applicable authentication/authorization, tenant-isolation, transaction, concurrency, idempotency, migration, and acceptance checks
 - relevant format, lint, and type checks using the smallest supported scope
-- `npm run test`, including the required run after `meta.version.ts` changes
-- migration verification when affected; `db:reset` remains destructive and requires explicit approval
+- managed isolated tests for affected migration, initialization, and seed behavior, preferably focused; expand to the full suite for actual impact, not merely a `meta.version.ts` edit
+- a separate development-database decision: normal startup applies pending migrations, while replaying an already-applied positive-numbered branch on disposable dev data requires an explicitly approved `db:reset`; preserve existing data with a new migration
 - `npm run build` only when the affected artifact or acceptance boundary requires it
 
 ## Escalation rule

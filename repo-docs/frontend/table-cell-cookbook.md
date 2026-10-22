@@ -343,6 +343,38 @@ A practical rule is:
 - let the cell resource own the render interaction
 - let the command bean or model layer own the actual action semantics
 
+### Collect input for a business row action in a dialog
+
+When a row action needs additional business input, such as shipment details or a stock-adjustment reason, prefer a compact button in the cell and collect the input in a focused dialog. Keep deliberate inline-editing workflows inline; this is not a requirement to put every table action in a dialog.
+
+Use the following interaction boundaries:
+
+1. **Open from the target row.** Keep the cell responsible for the trigger and row context. For caller-owned content, use the ordinary `this.$appModal.dialog(...)` with `slotDefault` and `slotActions`; use a routed dialog only when the workflow needs routed pages. See [Routed Dialog Guide](/frontend/routed-dialog-guide#choose-the-right-primitive).
+2. **Collect operation-specific input.** Prefer the operation's generated `$apiSchema` or the owning `ModelResource` schema with automatic `ZForm` rendering when the contract already describes the fields. Keep localized schema access reactive, and do not copy backend field metadata into the controller. Use manual or mixed fields only for a concrete interaction need, such as UI-only confirmation. See [API Schema Guide](/frontend/api-schema-guide#direct-schema-driven-form-pattern) and [Form Guide](/frontend/form-guide#preserve-the-automatic-custom-rendering-boundary).
+3. **Submit through the existing action owner.** Keep the draft local to the interaction, but reuse the existing command or semantic model facade for business execution. For an action on the same resource, retain its existing `ModelResource` mutation and cache owner rather than adding dialog-local fetch/cache state or manual list refreshes. See [Resource Model Cookbook](/frontend/model-resource-cookbook#recipe-4-inside-that-facade-add-a-row-level-custom-mutation).
+4. **Keep one complete submission lifecycle.** Validate and normalize input as required by the operation, and prevent duplicate submission at the boundary that owns all submit paths. Return or await the whole action through `ZButton.onPerform` for a button-only action; use form submission state and error handling when `ZForm` owns submission. Reflect broader mutation pending state only when it is needed beyond that button's own lifecycle. Choose one error presentation owner, not competing alerts. See [Behavior Guide](/frontend/behavior-guide#perform-a-standalone-asynchronous-button-action).
+5. **Close only after success.** Await the mutation before calling the dialog's `close()`. On failure, keep the dialog and entered values available for correction or retry; do not close in `finally`. Cancel or dismissal must not initiate a mutation, but closing the dialog does not cancel an already submitted request. Choose confirmation, draft reset/recovery, and dismissal behavior from the business workflow rather than copying one example's checkbox, width, or reset policy.
+
+For a schema-driven form, keep its submit controls in `ZForm.slotFooter` when appropriate so that validation and native-form submission remain one path. The dialog's `slotActions` is not a reason to introduce a second submission owner.
+
+Apply these schema-driven form details where they fit the operation:
+
+- **Submit same-shaped data directly.** When the validated form data has the same shape as the operation's request DTO, pass `data.value` directly to the existing mutation, for example `await mutation.mutateAsync(data.value)`. Build a separate payload only when the operation needs a real projection, conversion, or removal of UI-only fields. Do not enumerate fields or duplicate normalization merely to reconstruct the same request; when the backend already owns normalization, leave it there. Schema validation does not imply that every operation trims its input.
+- **Await business confirmation inside `onSubmitData`.** If the operation requires a confirmation prompt, await it after form validation and before the mutation in the same returned or awaited submit handler. Button submission and Enter then share validation, confirmation, pending state, and error handling. A declined confirmation should return without mutating or closing the form, preserving the draft. Do not put confirmation only in the submit button's click handler or introduce a confirmation checkbox unless the business workflow calls for one.
+- **Prepare lazy schemas at the opening boundary when appropriate.** For a low-frequency dialog, opening can await `$QueryEnsureLoaded(() => this.apiSchemasShip.sdk)` before rendering the form. Resolve `apiSchemasShip` through a getter for the current runtime and derive `requestBody` reactively, such as with `$computed`. Ensure the current locale's SDK on every opening, even if the reactive derivation was installed earlier; do not retain a facade or schema snapshot from a previous locale. If preparation is extracted into a helper, await SDK readiness on every call and use `if (!this.schema)` only to create the computed derivation once. Do not place `if (this.schema) return` before the SDK check: an existing computed does not prove that the current locale's SDK is loaded. Extracting a helper is optional; the important boundary is repeated readiness checks versus one-time derivation setup. This is an optional loading boundary, not a requirement to defer every form's schema until interaction.
+
+The Cabloy Basic shipment example is `zova/src/suite/a-commerce/modules/commerce-trade/src/component/tableCellActionShip/controller.tsx`: `_openDialog()` calls `_ensureSchema()` to prepare the current schema, `ZForm` renders the contract fields automatically, and `_submit()` awaits confirmation and `mutateAsync(data.value)` before closing. Its dialog width, draft-reset policy, and backend normalization are operation-specific choices, not additional form rules.
+
+Extend an existing critical-flow E2E scenario rather than creating a separate harness:
+
+- locate the trigger within the intended order or resource row, then locate fields and submit controls within the opened dialog
+- check that the cell no longer exposes the dialog's input fields, and that invalid input cannot submit
+- check cancellation and the chosen reopen/draft policy
+- check successful submission, dialog closure, and the refreshed resource state
+- when covering a submission failure, assert that the dialog retains the draft, presents the intended error, and allows retry after pending state clears
+
+In Cabloy Basic, the ordinary dialog can be located with `getByRole('dialog')`; assert its visible heading rather than assuming the title also supplies its accessible name. Verify the active edition's modal adapter before reusing UI-specific selectors.
+
 ## Pattern 5: Row-action composition with `tableActionRow`
 
 Use this pattern when one cell should show several row actions together.

@@ -366,27 +366,62 @@ test('stream fatal UTF-8 and line limit never emit raw fragments of the failing 
   await assert.rejects(streamed(['/Users/Secret/raw']), /^Error: INVALID_INPUT$/u);
 });
 
-test('stream rejects binary control bytes on complete and final lines without raw fragments', async () => {
-  for (const byte of [0, 1, 27, 127]) {
-    for (const ending of ['', '\n']) {
-      const bytes = Buffer.concat([
-        Buffer.from('/Users/Secret/file '),
-        Buffer.from([byte]),
-        Buffer.from(ending),
-      ]);
-      const output = sink();
-      await assert.rejects(
-        sanitizeStream(Readable.from([bytes]), output.stream, { matcher }),
-        /^Error: BINARY$/u,
-      );
-      assert.equal(output.text(), '');
-      const result = cli(['sanitize'], bytes);
-      assert.equal(result.status, 2);
-      assert.equal(result.stdout, '');
-      assert.equal(result.stderr, 'evidence-paths: BINARY\n');
-    }
+test('stream preserves controls on complete and final lines while sanitizing paths', async () => {
+  const controls = '\u0000\u0001\u001B\u007F';
+  const input = `${controls}/Users/Secret/file${controls} /Users/Secret${controls} /synthetic/checkout/a${controls} file:///Users/Secret/file${controls}`;
+  const expected = `${controls}<PRIVATE_PATH>${controls} <PRIVATE_PATH>${controls} a${controls} <PRIVATE_PATH>${controls}`;
+  for (const ending of ['', '\n']) {
+    const bytes = Buffer.from(input + ending);
+    assert.equal(await streamed([bytes]), expected + ending);
+    const result = cli(['sanitize', '--repo-root', '/synthetic/checkout'], bytes);
+    assert.equal(result.status, 0);
+    assert.equal(result.stdout, expected + ending);
+    assert.equal(result.stderr, '');
   }
   assert.equal(await streamed([Buffer.from('plain\ttext\f\r\n')]), 'plain\ttext\f\r\n');
+});
+
+test('stream preserves ANSI sequences and controls across UTF-8 chunks and lines', async () => {
+  const input = 'ok\r\n\r\né🙂\u001B[31m /Users/Secret/file\u001B[0m\u0000';
+  const expected = 'ok\r\n\r\né🙂\u001B[31m <PRIVATE_PATH>\u001B[0m\u0000';
+  for (const ending of ['', '\n']) {
+    const bytes = Buffer.from(input + ending);
+    for (const chunks of [[bytes], Array.from(bytes, byte => Buffer.from([byte]))]) {
+      assert.equal(await streamed(chunks), expected + ending);
+      const output = sink();
+      const errors = sink();
+      assert.equal(
+        await runCli(['sanitize'], {
+          input: Readable.from(chunks),
+          output: output.stream,
+          error: errors.stream,
+        }),
+        0,
+      );
+      assert.equal(output.text(), expected + ending);
+      assert.equal(errors.text(), '');
+    }
+  }
+});
+
+test('line byte limits still apply to control-containing input', async () => {
+  for (const ending of ['', '\n']) {
+    const bytes = Buffer.concat([
+      Buffer.from([27]),
+      Buffer.alloc(LINE_LIMIT, 97),
+      Buffer.from(ending),
+    ]);
+    const output = sink();
+    await assert.rejects(
+      sanitizeStream(Readable.from([bytes]), output.stream, { matcher }),
+      /^Error: LINE_LIMIT$/u,
+    );
+    assert.equal(output.text(), '');
+    const result = cli(['sanitize'], bytes);
+    assert.equal(result.status, 2);
+    assert.equal(result.stdout, '');
+    assert.equal(result.stderr, 'evidence-paths: LINE_LIMIT\n');
+  }
 });
 
 test('stream input/output failures and CLI diagnostics never expose raw exception text or stacks', async () => {

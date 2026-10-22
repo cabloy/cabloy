@@ -61,6 +61,7 @@ export default {
   Confirm: '确认',
   Cancel: '取消',
   ShipOrder: '发货',
+  ShipOrderConfirm: '确定使用填写的物流信息发货吗？',
   RequestRefund: '申请退款',
   RefundRequestHelp: '退款仅适用于整单且尚未发货的订单。',
   RefundReason: '退款原因',

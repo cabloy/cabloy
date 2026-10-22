@@ -8,7 +8,7 @@ Keep testing proportional to the backend change: cover critical business behavio
 
 Test-driven development and targeted unit or framework tests remain useful when they clarify and directly prove new or changed behavior. Exhaustive upfront mock/fake matrices and bespoke harnesses are not a delivery prerequisite.
 
-Preserve applicable authentication/authorization, tenant-isolation, transaction, concurrency, idempotency, migration, and acceptance checks without turning them into an unrelated mandatory matrix. The context, fixture, and resource-isolation rules below still apply, including the required `npm run test` after `meta.version.ts` changes. Missing runtime access must be reported, not worked around with unauthorized resets or substitute test machinery.
+Preserve applicable authentication/authorization, tenant-isolation, transaction, concurrency, idempotency, migration, and acceptance checks without turning them into an unrelated mandatory matrix. The context, fixture, and resource-isolation rules below still apply. Verify changes to migration, initialization, or seed behavior through managed isolated tests covering the affected behavior, preferably focused; a `meta.version.ts` edit alone does not require the full suite. Missing runtime access must be reported, not worked around with unauthorized resets or substitute test machinery.
 
 Vona’s testing story is valuable because it is closely integrated with:
 
@@ -42,7 +42,13 @@ npm run vona :create:test student -- --module=training-student
 
 ## Execute tests
 
-From the root repository:
+From the repository root, prefer a focused run for a bounded module change:
+
+```bash
+npm run test -- 'src/module/<module-name>/test/**/*.ts'
+```
+
+Resolve the actual test path for suite-owned modules. Positional patterns select test files, not a reduced database-preparation lifecycle. Focused managed tests still exercise fresh migration, initialization, and seeds; assert the affected resource behavior and cover existing-data upgrades when applicable. Expand to the full suite according to actual impact:
 
 ```bash
 npm run test
@@ -57,7 +63,7 @@ A typical Vona test flow includes:
 5. run the test files
 6. close the shared application after the test run
 
-In Cabloy Basic and Cabloy Start, root `npm run test` delegates to `vona/`'s `npm run test`; both allocate an isolated test identity, database and Redis namespace, Vona generated/runtime/public paths, and loopback listener. They can run in the same checkout as an ordinary development server without resetting or mutating that server's business data. Even a targeted run performs the test-mode setup. The Vona `npm run cov` script uses the same isolation; raw `:bin:test` commands do not. Shared build/dependency preparation may still write to shared artifacts, and custom external resources need separate isolation. See [Repo Scripts](/reference/repo-scripts#test-isolation-and-development-data).
+In Cabloy Basic and Cabloy Start, root `npm run test` delegates to `vona/`'s `npm run test`; both allocate an isolated test identity, database and Redis namespace, Vona generated/runtime/public paths, and loopback listener. They can run in the same checkout as an ordinary development server without resetting or mutating that server's business data. Even a targeted run performs the test-mode setup. Passing tests do not update the development database; choose its migration or explicitly approved reset path separately using [Migration and Changes](/backend/migration-and-changes#local-development-workflow). The Vona `npm run cov` script uses the same isolation; raw `:bin:test` commands do not. Shared build/dependency preparation may still write to shared artifacts, and custom external resources need separate isolation. See [Repo Scripts](/reference/repo-scripts#test-isolation-and-development-data).
 
 The runner owns this application lifecycle. Test files import the shared app from `vona-mock` and must not create or close it themselves:
 

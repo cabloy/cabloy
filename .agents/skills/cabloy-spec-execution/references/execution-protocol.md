@@ -79,7 +79,7 @@ When authority records conflict, stop the affected work. Update the authoritativ
 
 ### Persisted schema and file version
 
-If implementation may add or alter a persisted field, table, relation, index, or `meta.version.ts` path, ask before editing whether `vonaModule.fileVersion` should increment. Do not infer the answer from neighboring modules. If `meta.version.ts` changes, the repository rule requires `npm run test` after the change; include this in the dossier and evidence plan.
+If implementation may add or alter a persisted field, table, relation, index, or `meta.version.ts` path, ask before editing whether `vonaModule.fileVersion` should increment. Do not infer the answer from neighboring modules. Include managed isolated verification of affected migration, initialization, or seed behavior in the dossier and evidence plan; focused tests still prepare the test database, and a `meta.version.ts` edit alone does not require the full suite. Record development-database updates separately: tests do not update dev data, normal startup applies pending migrations, and replaying an already-applied positive-numbered branch on disposable dev data requires separate explicit reset approval. A no-bump decision is not reset authorization; use a new migration when existing data must be preserved.
 
 ### Contract loop
 
@@ -115,6 +115,7 @@ Source ownership: <observed paths and proposed paths>
 Specialist route: <backend/frontend/contract-loop/specialist>
 Safety/contract constraints: <tenant, auth, lifecycle, transaction, SSR, migration, privacy>
 Verification: <exact approved ATP procedures and commands>
+Failure handling: <bounded in-scope diagnosis/repair/reruns, limits, and explicit stop conditions; or stop/report only>
 Evidence: <required revision/environment/procedure/result/redacted artifact>
 Target classes: <observed existing / proposed new / explicitly approved new; design checks, ADR and planned additions>
 Quality gates: <authority audit; chart input eligibility/model/freshness; human approval/evidence>
@@ -147,10 +148,12 @@ Verify the approved connected outcome, not merely supporting helper behavior. On
 
 After user correction, redirect the affected approach rather than rename, relocate, or repackage rejected work. Reassess only the affected scope and preserve valid unchanged approvals; the correction does not itself authorize destructive cleanup or a different feature.
 
+The approved dossier may cover bounded in-scope diagnosis, implementation/test repair, and reruns, including locator corrections. Record the first failure and subsequent attempts, then complete that connected work within the stated limits without another approval for each substep. Do not weaken expected business/security outcomes, skip required checks, or expand scope to obtain a pass. If repair/reruns are not authorized, the limit is reached, or the user explicitly required first-failure stopping, stop and report. This permission is prospective and never overrides an existing narrower approval.
+
 Stop and report rather than guessing when:
 
 - a command to run is not yet observed, or a creation path lacks the explicit approved-new design/ADR/execution boundary; future source absence alone is not a blocker for an approved creation task;
-- a test fails or a required artifact is missing;
+- a failed test or missing required artifact cannot be resolved within the approved repair/rerun boundary, or an explicit stop condition applies;
 - the working tree becomes attribution-ambiguous;
 - a specialist discovers a requirement or contract change;
 - a planned external/destructive operation is needed;

@@ -1,6 +1,6 @@
 {
   "name": "create-cabloy",
-  "version": "5.0.13",
+  "version": "5.0.14",
   "gitHead": "2c5c19284bab738e492856189acb6fad74b8a7b7",
   "description": "Create a new Cabloy project - npm create cabloy",
   "keywords": [
@@ -40,6 +40,6 @@
     "unbuild": "^3.5.0"
   },
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=24.11.0"
   }
 }

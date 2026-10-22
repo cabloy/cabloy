@@ -1,5 +1,38 @@
 # Changelog
 
+## 5.1.230
+
+### Features
+
+- Apply feature updates (details not specified in commit messages).
+
+## 5.1.229
+
+### Features
+
+- Update functionality.
+
+### Improvements
+
+- Update `source-map-js` to version 1.2.2 in the documentation dependencies.
+- Refresh the pnpm lockfile.
+
+## 5.1.228
+
+### Features
+
+- Add trade ship order support.
+- Update node-related functionality.
+
+### Bug Fixes
+
+- Ensure the commerce locale schema is ready before opening dialogs.
+
+### Improvements
+
+- Clarify isolated migration verification and development database updates in the documentation.
+- Update CLI REST build tooling.
+
 ## 5.1.227
 
 ### Features

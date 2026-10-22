@@ -68,6 +68,7 @@ export default {
   Confirm: 'Confirm',
   Cancel: 'Cancel',
   ShipOrder: 'Ship order',
+  ShipOrderConfirm: 'Ship this order with the entered shipment details?',
   RequestRefund: 'Request refund',
   RefundRequestHelp: 'Refunds are for the whole unshipped order only.',
   RefundReason: 'Reason for refund',

@@ -52,9 +52,10 @@ export class ControllerTableCellActionAdjustStock extends BeanControllerBase {
   }
 
   private async _ensureSchema() {
-    if (this.schema) return;
     await $QueryEnsureLoaded(() => this.apiSchemasStockAdjust.sdk);
-    this.schema = this.$computed(() => this.apiSchemasStockAdjust.requestBody);
+    if (!this.schema) {
+      this.schema = this.$computed(() => this.apiSchemasStockAdjust.requestBody);
+    }
   }
 
   private async _submit(data: TypeFormOnSubmitData<StockAdjustmentDraft>, close: () => void) {

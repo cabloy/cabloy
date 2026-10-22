@@ -712,6 +712,9 @@ importers:
 
   .zova-rest/cabloy-basic-admin:
     dependencies:
+      '@cabloy/module-info':
+        specifier: ^2.0.3
+        version: 2.0.3
       '@cabloy/vue-router':
         specifier: ^4.4.18
         version: 4.4.18(vue@3.5.43(typescript@5.9.3))
@@ -838,6 +841,9 @@ importers:
 
   .zova-rest/cabloy-basic-web:
     dependencies:
+      '@cabloy/module-info':
+        specifier: ^2.0.3
+        version: 2.0.3
       '@cabloy/vue-router':
         specifier: ^4.4.18
         version: 4.4.18(vue@3.5.43(typescript@5.9.3))
@@ -964,6 +970,9 @@ importers:
 
   .zova-rest/cabloy-commerce:
     dependencies:
+      '@cabloy/module-info':
+        specifier: ^2.0.3
+        version: 2.0.3
       '@cabloy/vue-router':
         specifier: ^4.4.18
         version: 4.4.18(vue@3.5.43(typescript@5.9.3))
@@ -1090,6 +1099,9 @@ importers:
 
   .zova-rest/cabloy-commerce-admin:
     dependencies:
+      '@cabloy/module-info':
+        specifier: ^2.0.3
+        version: 2.0.3
       '@cabloy/vue-router':
         specifier: ^4.4.18
         version: 4.4.18(vue@3.5.43(typescript@5.9.3))
