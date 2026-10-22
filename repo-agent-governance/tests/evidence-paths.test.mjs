@@ -369,24 +369,95 @@ test('stream fatal UTF-8 and line limit never emit raw fragments of the failing 
 test('stream rejects binary control bytes on complete and final lines without raw fragments', async () => {
   for (const byte of [0, 1, 27, 127]) {
     for (const ending of ['', '\n']) {
-      const bytes = Buffer.concat([
-        Buffer.from('/Users/Secret/file '),
-        Buffer.from([byte]),
-        Buffer.from(ending),
-      ]);
-      const output = sink();
-      await assert.rejects(
-        sanitizeStream(Readable.from([bytes]), output.stream, { matcher }),
-        /^Error: BINARY$/u,
-      );
-      assert.equal(output.text(), '');
-      const result = cli(['sanitize'], bytes);
-      assert.equal(result.status, 2);
-      assert.equal(result.stdout, '');
-      assert.equal(result.stderr, 'evidence-paths: BINARY\n');
+      for (const prefix of ['', '/Users/Secret/file ']) {
+        const bytes = Buffer.concat([
+          Buffer.from(prefix),
+          Buffer.from([byte]),
+          Buffer.from(ending),
+        ]);
+        const bytePosition = Buffer.byteLength(prefix) + 1;
+        const output = sink();
+        await assert.rejects(
+          sanitizeStream(Readable.from([bytes]), output.stream, { matcher }),
+          error => {
+            assert.equal(String(error), 'Error: BINARY');
+            assert.equal(error.code, 'BINARY');
+            assert.deepEqual(error.details, { byte, line: 1, bytePosition });
+            return true;
+          },
+        );
+        assert.equal(output.text(), '');
+        const result = cli(['sanitize'], bytes);
+        assert.equal(result.status, 2);
+        assert.equal(result.stdout, '');
+        assert.equal(
+          result.stderr,
+          `evidence-paths: BINARY byte=${byte} line=1 byte-position=${bytePosition}\n`,
+        );
+      }
     }
   }
   assert.equal(await streamed([Buffer.from('plain\ttext\f\r\n')]), 'plain\ttext\f\r\n');
+});
+
+test('binary diagnostics use original byte positions across chunks and input lines', async () => {
+  for (const ending of ['', '\n']) {
+    const bytes = Buffer.concat([
+      Buffer.from('ok\r\n\r\né🙂'),
+      Buffer.from([27, 0]),
+      Buffer.from('/Users/Secret/file'),
+      Buffer.from(ending),
+    ]);
+    for (const chunks of [[bytes], Array.from(bytes, byte => Buffer.from([byte]))]) {
+      const output = sink();
+      await assert.rejects(
+        sanitizeStream(Readable.from(chunks), output.stream, { matcher }),
+        error => {
+          assert.equal(String(error), 'Error: BINARY');
+          assert.equal(error.code, 'BINARY');
+          assert.deepEqual(error.details, { byte: 27, line: 3, bytePosition: 7 });
+          return true;
+        },
+      );
+      assert.equal(output.text(), 'ok\r\n\r\n');
+      const cliOutput = sink();
+      const errors = sink();
+      assert.equal(
+        await runCli(['sanitize'], {
+          input: Readable.from(chunks),
+          output: cliOutput.stream,
+          error: errors.stream,
+        }),
+        2,
+      );
+      assert.equal(cliOutput.text(), 'ok\r\n\r\n');
+      assert.equal(errors.text(), 'evidence-paths: BINARY byte=27 line=3 byte-position=7\n');
+    }
+    const result = cli(['sanitize'], bytes);
+    assert.equal(result.status, 2);
+    assert.equal(result.stdout, 'ok\r\n\r\n');
+    assert.equal(result.stderr, 'evidence-paths: BINARY byte=27 line=3 byte-position=7\n');
+  }
+});
+
+test('line limits retain precedence over binary diagnostics', async () => {
+  for (const ending of ['', '\n']) {
+    const bytes = Buffer.concat([
+      Buffer.from([27]),
+      Buffer.alloc(LINE_LIMIT, 97),
+      Buffer.from(ending),
+    ]);
+    const output = sink();
+    await assert.rejects(
+      sanitizeStream(Readable.from([bytes]), output.stream, { matcher }),
+      /^Error: LINE_LIMIT$/u,
+    );
+    assert.equal(output.text(), '');
+    const result = cli(['sanitize'], bytes);
+    assert.equal(result.status, 2);
+    assert.equal(result.stdout, '');
+    assert.equal(result.stderr, 'evidence-paths: LINE_LIMIT\n');
+  }
 });
 
 test('stream input/output failures and CLI diagnostics never expose raw exception text or stacks', async () => {

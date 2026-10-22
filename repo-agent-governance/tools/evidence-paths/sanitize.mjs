@@ -9,14 +9,15 @@ export const LINE_LIMIT = 1024 * 1024;
 export const FILE_LIMIT = 8 * 1024 * 1024;
 
 class SafeError extends Error {
-  constructor(code) {
+  constructor(code, details) {
     super(code);
     this.code = code;
+    this.details = details;
   }
 }
 
-function fail(code) {
-  throw new SafeError(code);
+function fail(code, details) {
+  throw new SafeError(code, details);
 }
 
 function rootInfo(value) {
@@ -247,6 +248,7 @@ export async function sanitizeStream(input, output, { matcher = createMatcher() 
   output.on('error', onError);
   let parts = [];
   let length = 0;
+  let lineNumber = 1;
   try {
     for await (const chunk of input) {
       if (outputFailed) fail('OUTPUT_ERROR');
@@ -262,9 +264,10 @@ export async function sanitizeStream(input, output, { matcher = createMatcher() 
         parts.push(bytes.subarray(start, end));
         if (newline < 0) break;
         const line = Buffer.concat(parts, length);
-        if (binary(line)) fail('BINARY');
+        rejectBinary(line, lineNumber);
         const text = decode(line);
         await write(output, `${matcher.sanitize(text)}\n`);
+        lineNumber++;
         parts = [];
         length = 0;
         start = newline + 1;
@@ -272,7 +275,7 @@ export async function sanitizeStream(input, output, { matcher = createMatcher() 
     }
     if (length) {
       const line = Buffer.concat(parts, length);
-      if (binary(line)) fail('BINARY');
+      rejectBinary(line, lineNumber);
       await write(output, matcher.sanitize(decode(line)));
     }
     if (outputFailed) fail('OUTPUT_ERROR');
@@ -293,10 +296,19 @@ function safeFilename(value, matcher) {
     );
 }
 
-function binary(bytes) {
-  return bytes.some(
+function binaryIndex(bytes) {
+  return bytes.findIndex(
     byte => byte === 0 || byte === 127 || (byte < 32 && ![9, 10, 12, 13].includes(byte)),
   );
+}
+
+function binary(bytes) {
+  return binaryIndex(bytes) >= 0;
+}
+
+function rejectBinary(bytes, line) {
+  const index = binaryIndex(bytes);
+  if (index >= 0) fail('BINARY', { byte: bytes[index], line, bytePosition: index + 1 });
 }
 
 async function ancestorExclusion(path) {
@@ -465,6 +477,9 @@ paths and unknown absolute roots are left unchanged: this is NOT a universal sec
 scanner. Use explicit maps for other local roots; inspect output before publication.
 UTF-8 decoding is fatal, with a 1 MiB byte limit per line (including CR, excluding LF).
 NUL, DEL and non-text C0 controls are rejected; tab, LF, form feed and CR are allowed.
+sanitize BINARY diagnostics report only the first rejected decimal byte, 1-based input
+line and byte-position within that original UTF-8 line. LF advances the line; CR counts
+as a byte, not a line boundary. No text from the rejected line is reported.
 Only complete validated lines are emitted; earlier sanitized lines may survive failure.
 check limits each file to 8 MiB, treats NUL/non-text controls as binary, and reports only
 scope-N/relative-filename:line CODE, never source lines or absolute scan roots.
@@ -530,8 +545,23 @@ export async function runCli(
     return result.status;
   } catch (caught) {
     const code = caught instanceof SafeError ? caught.code : 'INTERNAL_ERROR';
+    let diagnostic = code;
+    if (caught instanceof SafeError && code === 'BINARY') {
+      const { byte, line, bytePosition } = caught.details ?? {};
+      if (
+        Number.isInteger(byte) &&
+        byte >= 0 &&
+        byte <= 255 &&
+        Number.isSafeInteger(line) &&
+        line > 0 &&
+        Number.isSafeInteger(bytePosition) &&
+        bytePosition > 0
+      ) {
+        diagnostic += ` byte=${byte} line=${line} byte-position=${bytePosition}`;
+      }
+    }
     try {
-      await write(error, `evidence-paths: ${code}\n`);
+      await write(error, `evidence-paths: ${diagnostic}\n`);
     } catch {
       /* no unsafe fallback */
     }
