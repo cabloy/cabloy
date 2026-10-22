@@ -51,11 +51,15 @@ export class ControllerTableCellActionShip extends BeanControllerBase {
     close();
   }
 
-  private async _openDialog() {
+  private async _ensureSchema() {
     await $QueryEnsureLoaded(() => this.apiSchemasShip.sdk);
     if (!this.schema) {
       this.schema = this.$computed(() => this.apiSchemasShip.requestBody);
     }
+  }
+
+  private async _openDialog() {
+    await this._ensureSchema();
     this.draft = { carrier: '', trackingNumber: '' };
     this.$appModal.dialog(
       {
