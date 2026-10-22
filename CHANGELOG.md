@@ -3,9 +3,11 @@
 ## 5.1.229
 
 ### Features
+
 - Update functionality.
 
 ### Improvements
+
 - Update `source-map-js` to version 1.2.2 in the documentation dependencies.
 - Refresh the pnpm lockfile.
 
