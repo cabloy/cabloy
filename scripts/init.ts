@@ -19,6 +19,7 @@ const ROOT_DIR = resolve(__dirname, '..');
 const VONA_DIR = resolve(ROOT_DIR, 'vona');
 const ZOVA_DIR = resolve(ROOT_DIR, 'zova');
 const REPO_DOCS_DIR = resolve(ROOT_DIR, 'repo-docs');
+const NODE_VERSION = '24.11.0';
 const PNPM_VERSION = '12.14.0';
 const VERSION_MARKER_FILE = '.cabloy-version';
 
@@ -48,6 +49,18 @@ function execQuiet(cmd: string, cwd = ROOT_DIR): string {
 
 function pnpmInstall(cwd = ROOT_DIR): void {
   exec('pnpm install --config.confirmModulesPurge=false --no-frozen-lockfile', cwd);
+}
+
+function checkNode(): void {
+  const version = process.versions.node;
+  const current = version.split('.').map(Number);
+  const minimum = NODE_VERSION.split('.').map(Number);
+  for (let i = 0; i < minimum.length; i++) {
+    if (current[i] > minimum[i]) return;
+    if (current[i] < minimum[i]) {
+      throw new Error(`Node.js should >= ${NODE_VERSION}, current: ${version}`);
+    }
+  }
 }
 
 function checkPnpm(): void {
@@ -295,6 +308,7 @@ function initRepoDocs(): void {
 
 // --- Main ---
 
+checkNode();
 checkPnpm();
 exec('node scripts/bootstrapAgentGovernance.mjs');
 pnpmInstall();
