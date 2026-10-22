@@ -936,22 +936,55 @@ test(
         await expect(adminPage.getByRole('button', { name: 'Submit', exact: true })).toHaveCount(0);
         await adminPage.getByRole('button', { name: 'Back', exact: true }).click();
         await expect(orderRow).toBeVisible();
-        const carrierInput = orderRow.getByPlaceholder('Carrier');
-        const trackingNumberInput = orderRow.getByPlaceholder('Tracking number');
-        const confirmationCheckbox = orderRow.getByRole('checkbox');
+        const openShipmentButton = orderRow.getByRole('button', {
+          name: 'Ship order',
+          exact: true,
+        });
+        await expect(openShipmentButton).toHaveCount(1);
+        await expect(orderRow.locator('input')).toHaveCount(0);
+        await openShipmentButton.click();
+        const shipmentDialog = adminPage.getByRole('dialog');
+        await expect(shipmentDialog).toBeVisible();
+        await expect(
+          shipmentDialog.getByRole('heading', { name: 'Ship order', exact: true }),
+        ).toBeVisible();
+        const carrierInput = shipmentDialog.getByPlaceholder('Carrier');
+        const trackingNumberInput = shipmentDialog.getByPlaceholder('Tracking number');
+        const confirmationCheckbox = shipmentDialog.getByRole('checkbox');
+        const submitShipmentButton = shipmentDialog.getByRole('button', {
+          name: 'Ship order',
+          exact: true,
+        });
+        await expect(submitShipmentButton).toBeDisabled();
         await carrierInput.fill(shipmentCarrier);
         await trackingNumberInput.fill(shipmentTrackingNumber);
         await confirmationCheckbox.check();
-        await expect(carrierInput).toHaveValue(shipmentCarrier);
-        await expect(trackingNumberInput).toHaveValue(shipmentTrackingNumber);
-        await expect(confirmationCheckbox).toBeChecked();
+        await expect(submitShipmentButton).toBeEnabled();
+        await shipmentDialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+        await expect(shipmentDialog).toHaveCount(0);
+        await expect(orderRow).toContainText('Paid');
+        await openShipmentButton.click();
+        await expect(carrierInput).toHaveValue('');
+        await expect(trackingNumberInput).toHaveValue('');
+        await expect(confirmationCheckbox).not.toBeChecked();
+        await expect(submitShipmentButton).toBeDisabled();
+        await carrierInput.fill('   ');
+        await trackingNumberInput.fill(shipmentTrackingNumber);
+        await confirmationCheckbox.check();
+        await expect(submitShipmentButton).toBeDisabled();
+        await carrierInput.fill(shipmentCarrier);
+        await confirmationCheckbox.uncheck();
+        await expect(submitShipmentButton).toBeDisabled();
+        await confirmationCheckbox.check();
+        await expect(submitShipmentButton).toBeEnabled();
         const shipmentResponse = waitForApiResponse(
           adminPage,
           'POST',
           `/api/commerce/trade/order/${checkout.orderId}/ship`,
         );
-        await orderRow.getByRole('button', { name: 'Ship order', exact: true }).click();
+        await submitShipmentButton.click();
         expect((await shipmentResponse).ok()).toBeTruthy();
+        await expect(shipmentDialog).toHaveCount(0);
         await expect(orderRow).toContainText('Shipped');
         expect(adminPageErrors).toEqual([]);
       } finally {

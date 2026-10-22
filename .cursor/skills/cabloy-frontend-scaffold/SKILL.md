@@ -205,6 +205,7 @@ Check whether the feature needs:
 - style/theme/icon updates
 - wrapper usage review
 - async interaction ownership: for a button-only action, return or await the complete action through `ZButton onPerform`, choose one error presentation owner rather than combining its generic alert with local query/error UI, and do not mirror the same lifecycle with button-local `loading` / `disabled` state; retain explicit state only for independently initiated or broader shared work
+- business row actions that require additional input: prefer a compact trigger and a focused dialog unless deliberate inline editing is intended; follow the [TableCell dialog pattern](../../../repo-docs/frontend/table-cell-cookbook.md#collect-input-for-a-business-row-action-in-a-dialog) for schema-backed forms where suitable, existing mutation ownership, success-only closure, failure input retention, and dialog-scoped E2E verification
 - async-loading or controllerRef implications
 
 ### Verification
