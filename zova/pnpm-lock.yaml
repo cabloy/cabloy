@@ -610,7 +610,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.5
       zova-cli-set-front:
-        specifier: ^1.2.118
+        specifier: ^1.2.119
         version: link:../cli-set-front
     devDependencies:
       clean-package:
