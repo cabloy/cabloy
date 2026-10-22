@@ -11,7 +11,7 @@ Contributions to Cabloy Basic source, tests, tooling, and documentation are welc
 
 ## Set up a development checkout
 
-You need Git, Node.js `>=24.4.0`, pnpm `>=12.14.0`, Redis `>=7.2.6`, and one documented development database baseline: SQLite, MySQL `>=8`, or PostgreSQL `>=16`. SQLite setups using `better-sqlite3` may also require a native build toolchain for `node-gyp`.
+You need Git, Node.js `>=24.11.0`, pnpm `>=12.14.0`, Redis `>=7.2.6`, and one documented development database baseline: SQLite, MySQL `>=8`, or PostgreSQL `>=16`. SQLite setups using `better-sqlite3` may also require a native build toolchain for `node-gyp`.
 
 ```bash
 git clone https://github.com/cabloy/cabloy.git

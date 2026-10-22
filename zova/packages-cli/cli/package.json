@@ -50,6 +50,9 @@
     "clean-package": "^2.2.0",
     "rimraf": "^6.1.3"
   },
+  "engines": {
+    "node": ">=24.11.0"
+  },
   "clean-package": {
     "indent": 2,
     "replace": {

@@ -19,7 +19,7 @@ Use this page when you are contributing backend work in the framework repository
 | Name       | Version   |
 | ---------- | --------- |
 | pnpm       | >=12.14.0 |
-| Node.js    | >=24.8.0  |
+| Node.js    | >=24.11.0 |
 | Redis      | >=7.2.6   |
 | Sqlite3    | Built-in  |
 | MySQL      | >=8       |

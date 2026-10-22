@@ -154,6 +154,7 @@ export class CliBinBuildRest extends BeanCliBase {
       format: ['esm'],
       outDir,
       tsconfig: 'tsconfig.rest.json',
+      dts: false,
       plugins: [svgResolverPlugin()],
       deps: {
         alwaysBundle: (_id: string) => {
@@ -187,7 +188,7 @@ export class CliBinBuildRest extends BeanCliBase {
       clean: false,
       dts: {
         resolver: 'oxc',
-        tsgo: true,
+        generator: 'tsgo',
         eager: true,
         tsconfig: 'tsconfig.rest.json',
         emitDtsOnly: true,
