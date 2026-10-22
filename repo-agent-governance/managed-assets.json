@@ -95,7 +95,7 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "b883f2b01ab79d51b23e899be43a1c90a821db916490f50c4b28958eedf36b6e",
+      "sha256": "c3233550631e7782834811d3bd73b9b823b0bd429a681cedff85e24128b9ed35",
       "source": "skills/cabloy-frontend-scaffold/SKILL.md",
       "target": ".agents/skills/cabloy-frontend-scaffold/SKILL.md"
     },
@@ -179,14 +179,14 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "4f1b4b87b2c0d2ff485c58c8f891189fd3dc7914d66af806c1a808d22cd94124",
+      "sha256": "64615460c3bec383bb0010ddc1412e7fa8f122bbb3f87cfe5c824891fe247e6c",
       "source": "skills/cabloy-spec-execution/references/execution-protocol.md",
       "target": ".agents/skills/cabloy-spec-execution/references/execution-protocol.md"
     },
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "17fd93c93c94e5a5b36bcea2c70e779d031b8158b99d03556e8d358e80ad7893",
+      "sha256": "40e84d9f067d010a48ee6b9a0b47f8014f46cbd5e17db0982f85600662bb25de",
       "source": "skills/cabloy-spec-execution/references/status-and-evidence.md",
       "target": ".agents/skills/cabloy-spec-execution/references/status-and-evidence.md"
     },
@@ -431,7 +431,7 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "b883f2b01ab79d51b23e899be43a1c90a821db916490f50c4b28958eedf36b6e",
+      "sha256": "c3233550631e7782834811d3bd73b9b823b0bd429a681cedff85e24128b9ed35",
       "source": "skills/cabloy-frontend-scaffold/SKILL.md",
       "target": ".claude/skills/cabloy-frontend-scaffold/SKILL.md"
     },
@@ -515,14 +515,14 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "4f1b4b87b2c0d2ff485c58c8f891189fd3dc7914d66af806c1a808d22cd94124",
+      "sha256": "64615460c3bec383bb0010ddc1412e7fa8f122bbb3f87cfe5c824891fe247e6c",
       "source": "skills/cabloy-spec-execution/references/execution-protocol.md",
       "target": ".claude/skills/cabloy-spec-execution/references/execution-protocol.md"
     },
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "17fd93c93c94e5a5b36bcea2c70e779d031b8158b99d03556e8d358e80ad7893",
+      "sha256": "40e84d9f067d010a48ee6b9a0b47f8014f46cbd5e17db0982f85600662bb25de",
       "source": "skills/cabloy-spec-execution/references/status-and-evidence.md",
       "target": ".claude/skills/cabloy-spec-execution/references/status-and-evidence.md"
     },
@@ -781,7 +781,7 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "b883f2b01ab79d51b23e899be43a1c90a821db916490f50c4b28958eedf36b6e",
+      "sha256": "c3233550631e7782834811d3bd73b9b823b0bd429a681cedff85e24128b9ed35",
       "source": "skills/cabloy-frontend-scaffold/SKILL.md",
       "target": ".cursor/skills/cabloy-frontend-scaffold/SKILL.md"
     },
@@ -865,14 +865,14 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "4f1b4b87b2c0d2ff485c58c8f891189fd3dc7914d66af806c1a808d22cd94124",
+      "sha256": "64615460c3bec383bb0010ddc1412e7fa8f122bbb3f87cfe5c824891fe247e6c",
       "source": "skills/cabloy-spec-execution/references/execution-protocol.md",
       "target": ".cursor/skills/cabloy-spec-execution/references/execution-protocol.md"
     },
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "17fd93c93c94e5a5b36bcea2c70e779d031b8158b99d03556e8d358e80ad7893",
+      "sha256": "40e84d9f067d010a48ee6b9a0b47f8014f46cbd5e17db0982f85600662bb25de",
       "source": "skills/cabloy-spec-execution/references/status-and-evidence.md",
       "target": ".cursor/skills/cabloy-spec-execution/references/status-and-evidence.md"
     },

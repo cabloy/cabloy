@@ -24,6 +24,8 @@ Do not use `progress.md` to add requirements, technical contracts, acceptance pr
 
 ## Evidence layout
 
+Retain the minimum sufficient evidence required by the test plan and attribution rules below. Prefer existing test-runner reports, redacted logs, and concise ATP/progress pointers rather than duplicating their contents across receipt layers. Do not create full input snapshots, exhaustive hash manifests, custom evidence verifiers, or multilayer receipts by default; new evidence machinery needs an explicit test-plan requirement or a concrete attribution/integrity risk that existing artifacts cannot address. Preserving source hashes during sanitization does not require inventing a new all-input hashing system. Keep mandatory revision/worktree attribution, actual failures, privacy review, and historical evidence intact.
+
 Prefer the scalable phase/ATP layout for newly observed proof when the suite permits extensions:
 
 ```text
