@@ -209,10 +209,15 @@ namespace Cabloy {
                     bool created = false;
                     try {
                         Write(temp, bytes); created = true;
-                        using (SafeFileHandle h = Open(file, false, GenericRead)) Private(h);
-                        // No COPY_ALLOWED: same-directory local-NTFS replacement only.
-                        // Both files are flushed first. Failure is never acknowledged.
-                        Check(MoveFileExW(temp, file, 1 | 8)); created = false;
+                        for (int attempt = 0; ; attempt++) {
+                            using (SafeFileHandle h = Open(file, false, GenericRead)) Private(h);
+                            // No COPY_ALLOWED: same-directory local-NTFS replacement only.
+                            // Both files are flushed first. Failure is never acknowledged.
+                            if (MoveFileExW(temp, file, 1 | 8)) { created = false; break; }
+                            int error = Marshal.GetLastWin32Error();
+                            if ((error != 32 && error != 33) || attempt >= 10) throw new Win32Exception(error);
+                            System.Threading.Thread.Sleep(100);
+                        }
                         using (SafeFileHandle h = Open(file, false, GenericRead)) { if (Read(h) != content) throw Unsafe(); }
                     } finally {
                         if (created) {
@@ -222,8 +227,8 @@ namespace Cabloy {
                     return result;
                 }
             } catch (Win32Exception e) {
-                return new Dictionary<string, object> { { "ok", false }, { "code", e.NativeErrorCode == 80 || e.NativeErrorCode == 183 ? "EEXIST" : e.NativeErrorCode == 2 || e.NativeErrorCode == 3 ? "ENOENT" : "EUNSAFE" } };
-            } catch { return new Dictionary<string, object> { { "ok", false }, { "code", "EUNSAFE" } }; }
+                return new Dictionary<string, object> { { "ok", false }, { "code", e.NativeErrorCode == 80 || e.NativeErrorCode == 183 ? "EEXIST" : e.NativeErrorCode == 2 || e.NativeErrorCode == 3 ? "ENOENT" : e.NativeErrorCode == 32 || e.NativeErrorCode == 33 ? "EBUSY" : e.NativeErrorCode == 5 ? "EACCES" : "EUNSAFE" }, { "nativeCode", e.NativeErrorCode } };
+            } catch { return new Dictionary<string, object> { { "ok", false }, { "code", "EUNSAFE" }, { "nativeCode", 0 } }; }
         }
     }
 }

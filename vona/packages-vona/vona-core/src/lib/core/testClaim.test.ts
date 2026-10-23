@@ -11,6 +11,7 @@ import {
   rmSync,
   symlinkSync,
 } from 'node:fs';
+import { createServer } from 'node:http';
 import { hostname, tmpdir } from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
@@ -360,6 +361,81 @@ test('broker serializes simultaneous updates and acknowledges durable intent bef
   } finally {
     await broker?.close();
     f.dispose();
+  }
+});
+
+test('broker reports safe failure phases without acknowledging invalid or unreadable claims', async () => {
+  const f = fixture();
+  let broker: Awaited<ReturnType<typeof startTestClaimBroker>> | undefined;
+  try {
+    const { claimPath } = await createTestClaim(f.projectPath, runId, 'unit', owner);
+    broker = await startTestClaimBroker(claimPath);
+    const env = transportEnv(broker.env);
+    const before = await readTestClaimFile(claimPath);
+    await assert.rejects(
+      sendTestClaimEvent(env, { type: 'status', status: 'SECRET_INVALID_STATUS' as any }),
+      { message: 'Managed test allocation registration failed (HTTP 409, validate)' },
+    );
+    assert.equal(await readTestClaimFile(claimPath), before);
+    await assert.rejects(
+      sendTestClaimEvent(
+        { ...env, VONA_TEST_CLAIM_TOKEN: '0'.repeat(64) },
+        { type: 'status', status: 'running' },
+      ),
+      { message: 'Managed test allocation registration failed (HTTP 403)' },
+    );
+    rmSync(claimPath);
+    await assert.rejects(sendTestClaimEvent(env, { type: 'status', status: 'running' }), {
+      message:
+        /^Managed test allocation registration failed \(HTTP 409, read, ENOENT(?:, native [23])?\)$/,
+    });
+  } finally {
+    await broker?.close();
+    f.dispose();
+  }
+});
+
+test('registration diagnostics accept only categorical headers and never response bodies', async () => {
+  let headers: Record<string, string> = {
+    'x-vona-claim-phase': 'write',
+    'x-vona-claim-code': 'EBUSY',
+    'x-vona-claim-native-code': '32',
+  };
+  const server = createServer((req, res) => {
+    req.resume();
+    res.writeHead(409, headers).end('SECRET_RESPONSE_BODY');
+  });
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address !== 'string');
+    const env = transportEnv({
+      VONA_TEST_CLAIM_URL: `http://127.0.0.1:${address.port}/event`,
+      VONA_TEST_CLAIM_TOKEN: 'a'.repeat(64),
+    });
+    await assert.rejects(sendTestClaimEvent(env, { type: 'status', status: 'running' }), {
+      message: 'Managed test allocation registration failed (HTTP 409, write, EBUSY, native 32)',
+    });
+    headers = {
+      'x-vona-claim-phase': 'SECRET_PATH',
+      'x-vona-claim-code': 'SECRET_TOKEN',
+      'x-vona-claim-native-code': '999999',
+    };
+    await assert.rejects(sendTestClaimEvent(env, { type: 'status', status: 'running' }), {
+      message: 'Managed test allocation registration failed (HTTP 409)',
+    });
+    await new Promise<void>((resolve, reject) =>
+      server.close(error => (error ? reject(error) : resolve())),
+    );
+    await assert.rejects(sendTestClaimEvent(env, { type: 'status', status: 'running' }), {
+      message: 'Managed test allocation registration failed (transport)',
+    });
+  } finally {
+    if (server.listening) {
+      await new Promise<void>((resolve, reject) =>
+        server.close(error => (error ? reject(error) : resolve())),
+      );
+    }
   }
 });
 
