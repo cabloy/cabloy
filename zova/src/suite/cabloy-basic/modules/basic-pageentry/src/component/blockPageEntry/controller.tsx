@@ -110,7 +110,9 @@ export class ControllerBlockPageEntry<TData extends {} = {}> extends BeanControl
       return this.$$modelResource.getFormSchema(this.formMeta);
     });
     this.formData = this.$computed(() => {
-      return this.$$modelResource.getFormData(this.formMeta, this.entryId) as TData | undefined;
+      return this.projectFormData(
+        this.$$modelResource.getFormData(this.formMeta, this.entryId) as TData | undefined,
+      );
     });
     // jsx
     this._prepareJsx();
@@ -149,6 +151,10 @@ export class ControllerBlockPageEntry<TData extends {} = {}> extends BeanControl
     this._draftDisposed = true;
     ++this._draftSession;
     this._offDraftDiscard?.();
+  }
+
+  protected projectFormData(data: TData | undefined): TData | undefined {
+    return data;
   }
 
   private _setEditorBaseline(data: TData | undefined) {
@@ -372,7 +378,7 @@ export class ControllerBlockPageEntry<TData extends {} = {}> extends BeanControl
       let baseline = this._baseline;
       if (this._draftIdentity?.mode === 'edit') {
         const result = await this.queryData!.refetch({ throwOnError: true });
-        baseline = result.data as TData | undefined;
+        baseline = this.projectFormData(result.data as TData | undefined);
       }
       if (!current()) return;
       const schema = this._getDraftSchema();
