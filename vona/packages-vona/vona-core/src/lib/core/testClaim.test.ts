@@ -1,6 +1,8 @@
 import '@cabloy/json5';
+import type { Socket } from 'node:net';
+
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import {
   chmodSync,
   lstatSync,
@@ -392,6 +394,133 @@ test('broker reports safe failure phases without acknowledging invalid or unread
   } finally {
     await broker?.close();
     f.dispose();
+  }
+});
+
+test(
+  'registration uses fresh connections after a blocked startup without replaying events',
+  { timeout: 45000 },
+  async () => {
+    const requests: {
+      connection: string | undefined;
+      authorization: string | undefined;
+      event: unknown;
+      socket: Socket;
+    }[] = [];
+    const server = createServer(async (req, res) => {
+      let body = '';
+      for await (const chunk of req) body += chunk.toString();
+      requests.push({
+        connection: req.headers.connection,
+        authorization: req.headers.authorization,
+        event: JSON.parse(body),
+        socket: req.socket,
+      });
+      res.writeHead(204).end();
+    });
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+    let child: ReturnType<typeof spawn> | undefined;
+    let exited: Promise<number | null> | undefined;
+    let spawnError: Error | undefined;
+    try {
+      const address = server.address();
+      assert.ok(address && typeof address !== 'string');
+      const env = transportEnv({
+        VONA_TEST_CLAIM_URL: `http://127.0.0.1:${address.port}/event`,
+        VONA_TEST_CLAIM_TOKEN: 'a'.repeat(64),
+      });
+      const events = [
+        { type: 'status', status: 'running' },
+        { type: 'status', status: 'failed' },
+      ];
+      const script = `
+      import { setImmediate } from 'node:timers/promises';
+      import { sendTestClaimEvent } from ${JSON.stringify(new URL('./testClaim.ts', import.meta.url).href)};
+      const [env, events] = JSON.parse(process.argv[1]);
+      await sendTestClaimEvent(env, events[0]);
+      await setImmediate();
+      // Let the parent broker expire an idle connection while startup blocks this event loop.
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 6500);
+      await sendTestClaimEvent(env, events[1]);
+    `;
+      child = spawn(
+        process.execPath,
+        ['--input-type=module', '-e', script, JSON.stringify([env, events])],
+        {
+          stdio: 'ignore',
+          windowsHide: true,
+          timeout: 30000,
+          killSignal: 'SIGKILL',
+        },
+      );
+      child.once('error', error => {
+        spawnError = error;
+      });
+      exited = new Promise(resolve => child!.once('close', code => resolve(code)));
+      assert.equal(await exited, 0, 'claim client child failed');
+      assert.equal(spawnError, undefined);
+      assert.deepEqual(
+        requests.map(request => request.event),
+        events,
+      );
+      assert.deepEqual(
+        requests.map(request => request.connection),
+        ['close', 'close'],
+      );
+      assert.ok(
+        requests.every(request => request.authorization === `Bearer ${env.VONA_TEST_CLAIM_TOKEN}`),
+      );
+      assert.notEqual(requests[0].socket, requests[1].socket);
+    } finally {
+      if (child && child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');
+      await exited;
+      server.closeAllConnections();
+      await new Promise<void>((resolve, reject) =>
+        server.close(error => (error ? reject(error) : resolve())),
+      );
+    }
+  },
+);
+
+test('containment requests do not reuse broker connections', async () => {
+  const requests: { connection: string | undefined; url: string | undefined; socket: Socket }[] =
+    [];
+  const server = createServer((req, res) => {
+    req.resume();
+    req.on('end', () => {
+      requests.push({ connection: req.headers.connection, url: req.url, socket: req.socket });
+      res.writeHead(204).end();
+    });
+  });
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address !== 'string');
+    const env = {
+      ...transportEnv({
+        VONA_TEST_CLAIM_URL: `http://127.0.0.1:${address.port}/event`,
+        VONA_TEST_CLAIM_TOKEN: 'a'.repeat(64),
+      }),
+      [TEST_CLAIM_WINDOWS_GUARDIAN_ENV]: 'windows-e2e-guardian',
+    };
+    const identity = { pid: 123, startTime: '133000000000000001', host: hostname() };
+    await assertTestClaimWindowsJob(env, identity);
+    await new Promise(resolve => setImmediate(resolve));
+    await assertTestClaimWindowsJob(env, identity);
+    assert.deepEqual(
+      requests.map(request => request.url),
+      ['/containment', '/containment'],
+    );
+    assert.deepEqual(
+      requests.map(request => request.connection),
+      ['close', 'close'],
+    );
+    assert.notEqual(requests[0].socket, requests[1].socket);
+  } finally {
+    server.closeAllConnections();
+    await new Promise<void>((resolve, reject) =>
+      server.close(error => (error ? reject(error) : resolve())),
+    );
   }
 });
 

@@ -780,6 +780,8 @@ export async function sendTestClaimEvent(env: TestClaimEnv, event: TestClaimEven
       method: 'POST',
       headers: {
         'authorization': `Bearer ${env[TEST_CLAIM_TOKEN_ENV]}`,
+        // Startup can block past the broker's idle timeout; never reuse a stale socket.
+        'connection': 'close',
         'content-type': 'application/json',
       },
       body: JSON.stringify(event),
@@ -818,6 +820,8 @@ export async function assertTestClaimWindowsJob(env: TestClaimEnv, identity: Tes
       method: 'POST',
       headers: {
         'authorization': `Bearer ${env[TEST_CLAIM_TOKEN_ENV]}`,
+        // Startup can block past the broker's idle timeout; never reuse a stale socket.
+        'connection': 'close',
         'content-type': 'application/json',
       },
       body: JSON.stringify(query),
