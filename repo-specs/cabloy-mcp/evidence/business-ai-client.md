@@ -6,7 +6,7 @@ On 2026-10-22, after an actual Claude Code protocol rejection, the user explicit
 
 Cabloy Basic, branch `worktree-spec-basic-cabloy-mcp`, base `6d04bab6f046329a881cfc7b46d01b29d4412f6a`, plus attributable dirty/untracked source. Preserve the carried local-runtime/category/generated changes: the complete tree is not authored by this increment and the base alone is insufficient to reproduce it. Historical [category proof](./business-categories.md) retains its original hashes/results, not current transport compatibility proof.
 
-**Current outcome:** local compatibility and parsing-isolation checks passed; the later [user-supplied real Claude Code journey](#real-claude-code-business-proof-2026-10-23) also proves connection, three sequential returned-ID calls, faithful Chinese output and client exit 0. Server graceful shutdown was supplied, but that run's root-command exit code was not. Earlier pending statements below describe their historical checkpoints and are superseded only for the observed local AI business outcome. Production OAuth/controller/modern-only requirements, blocked MCP parents, open full ATPs and verified **0/12** are unchanged.
+**Current outcome:** local compatibility and parsing-isolation checks passed. The historical [Commerce-backed real Claude Code journey](#real-claude-code-business-proof-2026-10-23) retains its unknown server root exit. The separately approved [independent mcp-test real-client proof](#independent-mcp-test-real-client-proof-2026-10-23) now supplies connection, three sequential returned-ID calls, faithful Chinese output, client exit 0, reported cost US$0.02581, server graceful shutdown and `server_exit=0`. These are user-supplied runtime observations, not independently captured launch/configuration or cleanup attestations. Earlier pending statements remain historical; the new proof closes only the migrated local business-journey gap. Production OAuth/controller/modern-only requirements, blocked MCP parents, open full ATPs and verified **0/12** are unchanged.
 
 ## Actual earlier client failure
 
@@ -231,3 +231,52 @@ This supersedes the earlier real-AI-business pending handoff, not the retained f
 ### Recording checks
 
 Documentation-only verification passed: public docs build in 10.23 seconds (existing chunk-size warning), complete MCP authority audit with 68 definitions, English implementation-chart generation and freshness retaining 0/12 verified, 13 guide Bash blocks via `bash -n`, guide relative links and new evidence heading anchors, scoped machine-path check, two formatter-matched guide/progress files and `git diff --check`. Evidence/index are formatter-ignored and manually inspected. Retained excerpts were manually checked to exclude machine paths, credentials and private run/session identifiers; supported path checking is not secret scanning. The final diff is limited to the four approved documentation records; regenerated charts have no byte changes. No model, application startup, source edit, dependency install, frontend build, main synchronization, commit or push was performed. These checks validate the recording and derived views, not independent runtime capture or production acceptance.
+
+## Independent mcp-test real-client proof (2026-10-23)
+
+### Approval, authority and attribution
+
+The user explicitly selected the finite real-client verification dossier in this session, including one external client call with a US$1 CLI budget and independent-terminal execution, followed by sanitized evidence/index/progress and applicable chart updates. The unchanged scope excludes source edits, new features, production activation, credential/configuration changes, persistent registration, resets, automatic retries and commit/push. `zhennann` remains reviewer/evidence custodian. This is a verification-only subincrement of the delivered local `WBS-MCP-20-01` / `WBS-MCP-30-01` / `WBS-MCP-40-01` contribution, not execution or closure of those blocked parents.
+
+Controlling records are the [accepted independent migration](../decisions/0002-mcp-transport.md#accepted-independent-mcp-test-migration-2026-10-23), [bounded WBS contribution](../pdp-wbs.md#approved-independent-mcp-test-contribution-2026-10-23), [independent proof procedure](../test-plan.md#independent-mcp-test-proof-2026-10-23) and [real-client observation requirements](../test-plan.md#local-stateless-compatibility-proof-2026-10-22). Linked partial ATPs remain `ATP-MCP-TRANSPORT-01`, `ATP-MCP-CONTRACT-01`, `ATP-MCP-CALL-01` and `ATP-MCP-CALL-03`; full procedures are not closed. The [migration evidence](./business-categories.md#independent-mcp-test-migration-2026-10-23) retains separate Commerce-excluded managed/native-SDK proof; it is not reattributed as this client run.
+
+Cabloy Basic, branch `worktree-spec-basic-cabloy-mcp`, clean recording checkout `f06254fb78f0dddd900a58ef557af48aeea6b287` before documentation edits; the same clean revision was observed during the terminal handoff. This identifies the recording/source checkout, not an independent attestation of the user's server process or installed dependencies. The user supplied runtime excerpts and exits in this conversation, not a complete independently captured transcript or server-source hash. Subsequent dirty changes belong only to documentation/evidence and derived views, not the runtime source.
+
+### Procedure and minimized observations
+
+The instructed server invocation was `npm run mcp:test:local -- --seconds 180`, wrapped to print `server_exit`. The user supplied its actual loopback `/mcp` URL. The client handoff used the existing [public independent-terminal procedure](../../../repo-docs/backend/mcp-commerce-local.md#8-real-ai-client-walkthrough-claude-code-21236-tested): one `claude --bare --print` call, strict inline HTTP MCP configuration, no built-in tools, exact three-tool allowlist, `--permission-mode manual`, disabled slash commands/browser/session persistence, `--max-budget-usd 1`, verbose stream JSON and the existing sequential returned-ID Chinese shopping prompt. This is the instructed procedure; no shell invocation echo or preflight-success output was supplied, so actual enforcement of every flag/auth prerequisite is not attested. No assistant-executed client/server call or retry occurred.
+
+| Observation | Supplied result |
+| --- | --- |
+| Client / connection | Claude Code `2.1.236`; `commerce_local` connected |
+| Available tools | Exactly `commerce_categories_list`, `commerce_products_search`, `commerce_product_detail` with MCP namespace |
+| First call | Category listing with empty arguments; Electronics returned |
+| Second call | Search uses the actual returned Electronics ID, `pageNo: 1`, `pageSize: 1` |
+| Third call | Detail uses the product ID returned by search; category/product identities match |
+| Ordering and content | Each result precedes the next call; three observed calls, no observed parallel call or retry; text JSON and structured results agree |
+| Product | Wireless Headphones; `priceCents: 9999`, `available: 11` |
+| SKU facts | `HEADPHONES-BLACK`: `priceCents: 9999`, `available: 8`; `HEADPHONES-WHITE`: `priceCents: 10999`, `available: 3` |
+| Final answer | Chinese explanation matches the returned product/SKU/availability facts, preserves raw `priceCents` and explicitly leaves currency unknown |
+| Client outcome | `is_error: false`, subtype `success`, terminal reason `completed`, stop reason `end_turn`, four turns; `client_exit=0`; no permission denials |
+| Reported cost | US$0.02581, below US$1; no reported budget exhaustion |
+| Same server run | User supplied `App shutdown gracefully` and `server_exit=0` after the natural-expiry handoff |
+
+Retain only these observations: machine/client/plugin paths, allocated port, process/session/message/tool-call identities and full row/startup dumps are omitted. Catalogue IDs are represented by returned-ID equality. The limited product/SKU facts are necessary to compare the answer, not real customer or payment data.
+
+### Configuration, lifecycle and acceptance limits
+
+Startup reported model identifier `gpt-6.1-sol`, permission mode `default`, API-key source `none` and loaded plugins, despite the instructed `--bare`/`manual` profile. It also emitted an unrecognized-model warning; subsequent actual tool results and success show that warning did not prevent this business run. No provider, credential source, flag enforcement or reason for the configuration discrepancy is inferred. Keep the existing safe procedure unchanged; neither permissions/authentication/plugin isolation nor arbitrary model/provider compatibility is qualified by this run.
+
+Both client and server exits are supplied for this same run, unlike the earlier Commerce-backed proof. User-reported graceful shutdown/root exit supports the instructed normal-expiry handoff, not independent elapsed-time measurement, complete external-resource deletion audit, interruption recovery, SQL cancellation or production lifecycle proof. The earlier run's unknown root exit remains unknown; this result does not repair its history.
+
+**Disposition:** the independent mcp-test local real-client three-read business journey passed within the supplied-observation boundary. This supersedes only the migrated real-client pending handoff; prior failures, migration/native proof and the historical Commerce-backed client result remain intact. Parent WBS rows stay `blocked`, full ATPs remain open and verified stays **0/12**. No further model call is needed for this bounded business outcome. Next single action: use the delivered canonical walkthrough; any new business capability requires separate finite scope/approval, not automatic OAuth, cart/checkout or foundation expansion.
+
+### Recording verification
+
+- `npm run spec:check -- cabloy-mcp` passed with 68 definitions; producer/path-sanitizer exits `0 0`. This checks definition/reference structure, not human approval, authentic runtime capture or full ATP acceptance.
+- `npm run spec:charts -- cabloy-mcp` and `npm run spec:charts:check -- cabloy-mcp` passed, each producer/path-sanitizer exits `0 0`. English charts retain 0/12 verified and have no byte changes. Suite README title/language is unchanged; no chart-input omission.
+- `npm run docs:build` passed in 10.77 seconds with the existing chunk-size warning; producer/ANSI-filter/path-sanitizer exits `0 0 0`. No public guide or frontend source was changed.
+- All 153 local links/Markdown heading targets in the three changed records resolved. `npm run format --` with those exact paths passed one matched progress file; the two ignored evidence files were manually inspected. `npm run evidence:check -- --` with the same three paths and `git diff --check` passed. Supported path checking is not secret scanning; manual review excluded credentials, raw initialization/session dumps, machine paths, allocated port, process identities and private run/database identifiers.
+- Dirty attribution is limited to `repo-specs/cabloy-mcp/evidence/README.md`, `repo-specs/cabloy-mcp/evidence/business-ai-client.md` and `repo-specs/cabloy-mcp/progress.md`. Before adding this verification section, `git diff --binary HEAD --` over those exact ordered paths had SHA-256 `8d55f34776fad2e5089284954b337a3807f73ec5b64347722bd0b0d894879209` (46 insertions, 3 deletions). That checkpoint digest identifies the observed outcome/index/progress patch, not this later check-summary text, runtime source changes or a whole-tree attestation. Runtime source remains at the clean recording revision above; no new regression claim is made.
+
+No source test, client/server startup, model call, dependency installation, environment/configuration change, main synchronization, reset, commit or push was performed by the assistant in this recording increment. These checks validate retained documentation and derived views; the actual business/lifecycle results remain explicitly user-supplied.
