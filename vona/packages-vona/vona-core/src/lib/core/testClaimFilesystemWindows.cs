@@ -210,12 +210,17 @@ namespace Cabloy {
                     try {
                         Write(temp, bytes); created = true;
                         for (int attempt = 0; ; attempt++) {
-                            using (SafeFileHandle h = Open(file, false, GenericRead)) Private(h);
-                            // No COPY_ALLOWED: same-directory local-NTFS replacement only.
-                            // Both files are flushed first. Failure is never acknowledged.
-                            if (MoveFileExW(temp, file, 1 | 8)) { created = false; break; }
-                            int error = Marshal.GetLastWin32Error();
-                            if ((error != 32 && error != 33) || attempt >= 10) throw new Win32Exception(error);
+                            try {
+                                // Surface denied delete sharing as a sharing violation, not a rename access denial.
+                                // Close our own non-delete-sharing handle before attempting the rename.
+                                using (SafeFileHandle h = Open(file, false, GenericRead | DeleteAccess)) Private(h);
+                                // No COPY_ALLOWED: same-directory local-NTFS replacement of the flushed temporary file.
+                                // Failure is never acknowledged.
+                                Check(MoveFileExW(temp, file, 1 | 8));
+                                created = false; break;
+                            } catch (Win32Exception e) {
+                                if ((e.NativeErrorCode != 32 && e.NativeErrorCode != 33) || attempt >= 10) throw;
+                            }
                             System.Threading.Thread.Sleep(100);
                         }
                         using (SafeFileHandle h = Open(file, false, GenericRead)) { if (Read(h) != content) throw Unsafe(); }

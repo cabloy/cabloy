@@ -224,13 +224,24 @@ test(
     try {
       await createTestClaimFile(f.file, 'previous committed inventory');
       release = await holdWindowsClaimFile(f.file);
+      assert.equal(await readTestClaimFile(f.file), 'previous committed inventory');
+      let settled = false;
       // Attach a rejection handler before polling, including the failure path.
       replacement = replaceTestClaimFile(f.file, 'new committed inventory').then(
-        () => undefined,
-        error => error,
+        () => {
+          settled = true;
+        },
+        error => {
+          settled = true;
+          return error;
+        },
       );
       const deadline = Date.now() + 10000;
       while (!(await readdir(f.directory)).some(name => name.endsWith('.tmp'))) {
+        if (settled) {
+          assert.equal(await replacement, undefined);
+          assert.fail('replacement completed before the held handle was released');
+        }
         assert.ok(Date.now() < deadline, 'replacement temporary file was not observed');
         await new Promise(resolve => setTimeout(resolve, 10));
       }
@@ -256,6 +267,7 @@ test(
     try {
       await createTestClaimFile(f.file, 'previous committed inventory');
       release = await holdWindowsClaimFile(f.file);
+      assert.equal(await readTestClaimFile(f.file), 'previous committed inventory');
       const started = performance.now();
       await assert.rejects(replaceTestClaimFile(f.file, 'uncommitted'), {
         code: 'EBUSY',
@@ -273,6 +285,64 @@ test(
     } finally {
       await release?.();
       await f.close();
+    }
+  },
+);
+
+test(
+  'Windows replacement rejects a read-only target without changing its contents or attributes',
+  { skip: process.platform !== 'win32' },
+  async () => {
+    const f = await fixture();
+    const attributes = (script: string) =>
+      execFileSync(
+        'pwsh',
+        [
+          '-NoLogo',
+          '-NoProfile',
+          '-NonInteractive',
+          '-Command',
+          `$ErrorActionPreference='Stop';${script}`,
+        ],
+        {
+          windowsHide: true,
+          encoding: 'utf8',
+          env: { ...process.env, VONA_CLAIM_TEST_FILE: f.file },
+        },
+      ).trim();
+    let original: number | undefined;
+    try {
+      await createTestClaimFile(f.file, 'previous committed inventory');
+      original = Number(
+        attributes('[int][System.IO.File]::GetAttributes($env:VONA_CLAIM_TEST_FILE)'),
+      );
+      assert.ok(Number.isInteger(original));
+      const readOnly = (original & ~128) | 1;
+      attributes(
+        `[System.IO.File]::SetAttributes($env:VONA_CLAIM_TEST_FILE,[System.IO.FileAttributes]${readOnly})`,
+      );
+      assert.equal(await readTestClaimFile(f.file), 'previous committed inventory');
+      await assert.rejects(replaceTestClaimFile(f.file, 'uncommitted'), {
+        code: 'EACCES',
+        nativeCode: 5,
+        message: 'Unsafe Windows test claim filesystem operation (EACCES, nativeCode=5)',
+      });
+      assert.equal(await readTestClaimFile(f.file), 'previous committed inventory');
+      assert.equal(
+        Number(attributes('[int][System.IO.File]::GetAttributes($env:VONA_CLAIM_TEST_FILE)')),
+        readOnly,
+      );
+      assert.deepEqual(await readdir(f.directory), ['claim.json']);
+    } finally {
+      try {
+        if (original !== undefined) {
+          attributes(
+            `[System.IO.File]::SetAttributes($env:VONA_CLAIM_TEST_FILE,[System.IO.FileAttributes]${original})`,
+          );
+        }
+      } finally {
+        await f.close();
+      }
     }
   },
 );
