@@ -1,5 +1,22 @@
 # Changelog
 
+## 5.1.231
+
+### Features
+
+- Add commerce functionality.
+- Add formatting support.
+- Apply feature updates.
+
+### Bug Fixes
+
+- Fix Windows tests.
+- Patch Zod integration.
+
+### Improvements
+
+- Update the controller implementation.
+
 ## 5.1.230
 
 ### Features
