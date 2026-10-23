@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.233
+
+### Features
+
+- Apply feature updates.
+
+### Improvements
+
+- Migrate JavaScript code to TypeScript.
+
 ## 5.1.232
 
 ### Improvements
