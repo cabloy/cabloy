@@ -107,10 +107,14 @@ Existing normal Vona suites include `cabloy-basic`. The absence of a `cabloy-mcp
 
 ```text
 vona/src/suite/cabloy-mcp/
-└── modules/cabloy-mcp/
+└── modules/
+    ├── cabloy-mcp/  # generic MCP capabilities
+    └── mcp-test/    # approved dev/test catalog and local example
 ```
 
 The suite generator defaults to `src/suite`, matching this target. Its not-yet-run status was a pre-scaffold observation; the phase-20 index records subsequent approved initial source/configuration and application integration. DEC-MCP-01 fixes the initial `5.0.0` manifests: the suite composes `vona-module-cabloy-mcp` via `workspace:^`; the module starts with empty library `dependencies`, `vonaModule.dependencies` containing only `a-vona: 5.0.0`, and no `fileVersion` or `meta.version.ts`. The CLI-generated project references, metadata, module registration, and application dependency are not handwritten. Under ADR 0001's 2026-10-17 bounded supersession, module `src/config/config.ts` owns typed `enabled: app.meta.env.CABLOY_MCP_ENABLED !== 'false'` configuration: default enabled, only literal `false` disables. Application `vona/src/backend/config/config/config.ts` has no standard MCP `enabled` environment mapping; generic framework application overrides remain supported after defaults. Initial source does not establish OAuth/host/registry/policy readiness, endpoint exposure or ATP proof. The MCP SDK versions and transport integration design are selected by DEC-MCP-02; installation/transport runtime proof and OAuth libraries and the remaining protocol/controller/bean/service layout details retain their respective DEC-MCP-03 through DEC-MCP-08 or bounded execution-dossier gates, not assumed runnable paths. The module must not create a new tenant, Passport, RBAC, or business-resource authority. It owns MCP transport adaptation, discovery projection, policy enforcement, dispatch isolation, and protocol-facing errors; existing domain modules retain business authorization and persistence ownership.
+
+The [approved 2026-10-23 migration](./decisions/0002-mcp-transport.md#accepted-independent-mcp-test-migration-2026-10-23) adds same-suite dev/test-only `mcp-test`, with one-way `mcp-test → cabloy-mcp` reuse. It owns the independent static catalog DTO/controller/service and migrated three-tool local example; Basic's `a-commerce` is no longer a business/runtime prerequisite and is excluded from this example's application composition. No persistence or shopping writes are added. Current canonical command is `mcp:test:local`, with `mcp:commerce:local` retained as an alias to the same launcher. [Migration evidence](./evidence/business-categories.md#independent-mcp-test-migration-2026-10-23) records 41/41 Commerce-excluded managed tests, separate core qualification 1/1 and the actual native SDK returned-ID journey with normal TTL/root exit 0. Initial topology and Commerce-backed proof above remain historical; this bounded delivery does not close production/full ATPs or provide new real-Claude proof.
 
 ## Document Authority
 

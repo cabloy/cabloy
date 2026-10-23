@@ -438,6 +438,7 @@ export default defineConfig({
           text: 'API & Testing',
           items: [
             { text: 'OpenAPI Guide', link: '/backend/openapi-guide' },
+            { text: 'Local MCP Test Catalog', link: '/backend/mcp-commerce-local' },
             {
               text: 'Backend Contract Emission Specimen',
               link: '/backend/backend-contract-emission-specimen',

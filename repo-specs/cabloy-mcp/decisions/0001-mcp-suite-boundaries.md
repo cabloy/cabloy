@@ -115,6 +115,10 @@ Before the relevant implementation increments begin, resolve and record the rema
 9. for AS-owned shared state, follow ADR 0009's selected database-backed same-commit atomicity and Zova-presentation directions and separately decide its physical module/store/schema, site/admission, browser interaction, retention and consistency; if any task proposes schema work, ask whether the owning `vonaModule.fileVersion` is incremented before editing the migration path, and require a separate boundary change for new MCP resource-module persistence;
 10. a separate bounded `cabloy-spec-execution` dossier with explicit source/scaffolding/provider/runtime authorization for the selected implementation task.
 
+## Accepted independent test-business ownership (2026-10-23)
+
+`zhennann` explicitly approved the bounded `mcp-test` migration plan at clean `9f98519ebec9e025197d92005916e02f918e459a`. Add dev/test-only `mcp-test` within this suite, depending on `cabloy-mcp`, never the reverse. It owns the synthetic read-only catalog fixture, DTO/controller/service and local business composition; generic MCP remains business-independent. No Entity/Model, schema, seed or `fileVersion` is added. This is not a second production Commerce or identity authority. The initial single-module scaffold above remains historical. [ADR 0002](./0002-mcp-transport.md#accepted-independent-mcp-test-migration-2026-10-23) defines the finite connected delivery and unchanged security limits; later shopping/persistence requires its own bounded approval.
+
 ## Related Records
 
 - [A-MCP planning index](../README.md)

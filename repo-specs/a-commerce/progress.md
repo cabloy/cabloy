@@ -60,6 +60,10 @@
 
 The current [presentation matrix](./presentation-contracts.md) records SKU View/List response-only `product: { id, title }`, Stock Balance/Audit current-scope `sku: { id, code }` labels, and SKU List readonly `available` with an authorized Adjust Stock row action. These were added after the original Phase-80 acceptance revisions. The inspected source at `9f4493bd8c` contains their implementation and test definitions, but this documentation-only review has not run those tests or linked a retained passing CI job for the later revisions. Keep the original WBS rows historically `verified` without upgrading their proof to cover follow-up changes; use the [follow-up evidence gate](./test-plan.md#later-source-follow-ups-current-shape-versus-retained-acceptance) for any new closure assertion. This is a proof gap, not a new WBS status or an authorization to change payment scope.
 
+## Commerce reconciliation (2026-10-23)
+
+The [main/worktree reconciliation record](./test-plan.md#mainworktree-reconciliation-of-059c5779d3-2026-10-23) retains the intrinsic cart repair on Basic main, removal of MCP-only Commerce Category additions, fresh focused regressions and complete backend/frontend source byte equality. Existing public Product APIs remain. The [historical Category disposition](../cabloy-mcp/evidence/business-categories.md#historical-disposition-2026-10-23) points to independent `mcp-test` ownership; historical WBS verification and release statuses are unchanged.
+
 ## Update Rules
 
 1. Update this file when a WBS item changes state, a blocker appears or clears, or durable acceptance evidence is recorded.

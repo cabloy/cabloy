@@ -4,6 +4,9 @@
   "references": [
     {
       "path": "modules/cabloy-mcp/tsconfig.build.json"
+    },
+    {
+      "path": "modules/mcp-test/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]

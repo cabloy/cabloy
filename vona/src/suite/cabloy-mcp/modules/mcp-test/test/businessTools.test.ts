@@ -3,11 +3,17 @@ import type { JSONRPCMessage, JSONRPCRequest, Server } from '@modelcontextprotoc
 import { InMemoryTransport } from '@modelcontextprotocol/server';
 import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
+import { appResource, runWithZodQueryCoercion } from 'vona';
 import { acquireTestLock, app } from 'vona-mock';
 import { $schema } from 'vona-module-a-openapiutils';
-import { DtoProductPublicDetail, DtoProductPublicSelectRes } from 'vona-module-commerce-catalog';
 
+import { DtoCategoryPublic } from '../src/dto/categoryPublic.tsx';
+import { DtoCategoryPublicSelectReq } from '../src/dto/categoryPublicSelectReq.tsx';
+import { DtoCategoryPublicSelectRes } from '../src/dto/categoryPublicSelectRes.tsx';
+import { DtoProductPublicDetail } from '../src/dto/productPublicDetail.tsx';
+import { DtoProductPublicSelectRes } from '../src/dto/productPublicSelectRes.tsx';
 import { createBusinessToolServer } from '../src/lib/businessTools.ts';
+import { ServiceCatalog } from '../src/service/catalog.ts';
 
 async function connect(server: Server) {
   const [client, transport] = InMemoryTransport.createLinkedPair();
@@ -39,42 +45,157 @@ async function connect(server: Server) {
 
 const toolName = 'commerce_products_search';
 const detailToolName = 'commerce_product_detail';
+const categoryToolName = 'commerce_categories_list';
 
 describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => {
   let release: (() => void) | undefined;
   before(async () => {
-    release = await acquireTestLock('a-commerce');
+    assert.ok(app.meta.modules['mcp-test'], 'fixture module is loaded');
+    assert.ok(app.meta.modules['cabloy-mcp'], 'core module is loaded');
+    if ((process.env.PROJECT_DISABLED_SUITES ?? '').split(',').includes('a-commerce')) {
+      assert.deepEqual(
+        Object.keys(app.meta.modules).filter(
+          name => name.startsWith('commerce-') || name === 'test-pay',
+        ),
+        [],
+        'disabled Commerce modules are absent from the actual runtime composition',
+      );
+    }
+    release = await acquireTestLock('mcp-test');
   });
   after(() => release?.());
 
-  it('discovers both DTO-backed tools and queries the real public controller anonymously', async () => {
+  it('restores business query semantics beneath native protocol parsing for all three DTO-backed tools', async () => {
+    await app.bean.executor.mockCtx(() =>
+      runWithZodQueryCoercion(false, async () => {
+        const client = await connect(await createBusinessToolServer(app));
+        try {
+          const listed = await client.request('tools/list');
+          assert.deepEqual(
+            listed.result.tools.map((tool: any) => tool.name),
+            [toolName, detailToolName, categoryToolName],
+          );
+          const categoryTool = listed.result.tools[2];
+          const document = await runWithZodQueryCoercion(true, () =>
+            app.bean.openapi.generateJsonOfClasses(
+              [DtoCategoryPublicSelectReq, DtoCategoryPublicSelectRes, DtoCategoryPublic],
+              'V31',
+            ),
+          );
+          const schemas = document.components!.schemas!;
+          assert.deepEqual(categoryTool.inputSchema, {
+            ...schemas[appResource.getBeanFullName(DtoCategoryPublicSelectReq)!],
+            additionalProperties: false,
+          });
+          const responseSchema = schemas[appResource.getBeanFullName(DtoCategoryPublicSelectRes)!];
+          assert.ok('properties' in responseSchema);
+          assert.deepEqual(categoryTool.outputSchema.properties, responseSchema.properties);
+          assert.deepEqual(
+            categoryTool.outputSchema.components.schemas[
+              appResource.getBeanFullName(DtoCategoryPublic)!
+            ],
+            schemas[appResource.getBeanFullName(DtoCategoryPublic)!],
+          );
+          assert.deepEqual(Object.keys(categoryTool.inputSchema.properties).sort(), [
+            'pageNo',
+            'pageSize',
+          ]);
+          assert.equal(categoryTool.inputSchema.properties.pageNo.type, 'integer');
+          assert.equal(categoryTool.inputSchema.properties.pageNo.minimum, 1);
+          assert.equal(categoryTool.inputSchema.properties.pageNo.default, 1);
+          assert.equal(categoryTool.inputSchema.properties.pageSize.type, 'integer');
+          assert.equal(categoryTool.inputSchema.properties.pageSize.minimum, 1);
+          assert.equal(categoryTool.inputSchema.properties.pageSize.default, 20);
+          assert.equal(categoryTool.inputSchema.properties.pageSize.maximum, 100);
+          assert.equal(categoryTool.annotations.readOnlyHint, true);
+          const tool = listed.result.tools[0];
+          assert.equal(tool.annotations.readOnlyHint, true);
+          assert.equal(tool.inputSchema.properties.pageSize.maximum, 100);
+          assert.equal(tool.inputSchema.additionalProperties, false);
+          assert.equal(tool.outputSchema.properties.total.type, 'string');
+          assert.ok(tool.outputSchema.components.schemas);
+          const args = { title: 'Wireless Headphones', pageNo: 1, pageSize: 1 };
+          const response = await client.request('tools/call', { name: toolName, arguments: args });
+          assert.equal(response.error, undefined);
+          assert.notEqual(response.result.isError, true);
+          const output = response.result.structuredContent;
+          const direct = await runWithZodQueryCoercion(true, () =>
+            app.bean.executor.performAction('get', '/mcp/test/catalog/products', {
+              query: args,
+              innerAccess: false,
+            }),
+          );
+          assert.deepEqual(
+            output,
+            await runWithZodQueryCoercion(true, () =>
+              $schema(DtoProductPublicSelectRes).parseAsync(direct),
+            ),
+          );
+          assert.equal(output.list.length, 1);
+          assert.equal(output.list[0].title, 'Wireless Headphones');
+          assert.equal(typeof output.total, 'string');
+          assert.deepEqual(Object.keys(output).sort(), [
+            'list',
+            'pageCount',
+            'pageNo',
+            'pageSize',
+            'total',
+          ]);
+          assert.deepEqual(Object.keys(output.list[0]).sort(), [
+            'available',
+            'categoryId',
+            'categoryName',
+            'description',
+            'id',
+            'priceCents',
+            'skuAvailables',
+            'title',
+          ]);
+          assert.deepEqual(Object.keys(output.list[0].skuAvailables[0]).sort(), [
+            'available',
+            'code',
+            'id',
+            'priceCents',
+          ]);
+          assert.deepEqual(JSON.parse(response.result.content[0].text), output);
+          // The existing optional DTO normalizes an empty title to an omitted filter.
+          const emptyTitle = await client.request('tools/call', {
+            name: toolName,
+            arguments: { title: '', pageSize: 1 },
+          });
+          const omittedTitle = await client.request('tools/call', {
+            name: toolName,
+            arguments: { pageSize: 1 },
+          });
+          assert.equal(emptyTitle.error, undefined);
+          assert.notEqual(emptyTitle.result.isError, true);
+          assert.deepEqual(
+            emptyTitle.result.structuredContent,
+            omittedTitle.result.structuredContent,
+          );
+        } finally {
+          await client.close();
+        }
+      }),
+    );
+  });
+
+  it('lists public categories then searches and reads a product using returned identities', async () => {
     await app.bean.executor.mockCtx(async () => {
       const client = await connect(await createBusinessToolServer(app));
       try {
-        const listed = await client.request('tools/list');
-        assert.deepEqual(
-          listed.result.tools.map((tool: any) => tool.name),
-          [toolName, detailToolName],
-        );
-        const tool = listed.result.tools[0];
-        assert.equal(tool.annotations.readOnlyHint, true);
-        assert.equal(tool.inputSchema.properties.pageSize.maximum, 100);
-        assert.equal(tool.inputSchema.additionalProperties, false);
-        assert.equal(tool.outputSchema.properties.total.type, 'string');
-        assert.ok(tool.outputSchema.components.schemas);
-        const args = { title: 'Wireless Headphones', pageNo: 1, pageSize: 1 };
-        const response = await client.request('tools/call', { name: toolName, arguments: args });
+        const response = await client.request('tools/call', { name: categoryToolName });
         assert.equal(response.error, undefined);
         assert.notEqual(response.result.isError, true);
         const output = response.result.structuredContent;
         const direct = await app.bean.executor.performAction(
           'get',
-          '/commerce/catalog/product/public',
-          { query: args, innerAccess: false },
+          '/mcp/test/catalog/categories',
+          { query: { pageNo: 1, pageSize: 20 }, innerAccess: false },
         );
-        assert.deepEqual(output, await $schema(DtoProductPublicSelectRes).parseAsync(direct));
-        assert.equal(output.list.length, 1);
-        assert.equal(output.list[0].title, 'Wireless Headphones');
+        assert.deepEqual(output, await $schema(DtoCategoryPublicSelectRes).parseAsync(direct));
+        assert.equal(output.pageNo, 1);
+        assert.equal(output.pageSize, 20);
         assert.equal(typeof output.total, 'string');
         assert.deepEqual(Object.keys(output).sort(), [
           'list',
@@ -83,38 +204,71 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           'pageSize',
           'total',
         ]);
-        assert.deepEqual(Object.keys(output.list[0]).sort(), [
-          'available',
-          'categoryId',
-          'categoryName',
-          'description',
-          'id',
-          'priceCents',
-          'skuAvailables',
-          'title',
-        ]);
-        assert.deepEqual(Object.keys(output.list[0].skuAvailables[0]).sort(), [
-          'available',
-          'code',
-          'id',
-          'priceCents',
-        ]);
-        assert.deepEqual(JSON.parse(response.result.content[0].text), output);
-        // The existing optional DTO normalizes an empty title to an omitted filter.
-        const emptyTitle = await client.request('tools/call', {
-          name: toolName,
-          arguments: { title: '', pageSize: 1 },
-        });
-        const omittedTitle = await client.request('tools/call', {
-          name: toolName,
-          arguments: { pageSize: 1 },
-        });
-        assert.equal(emptyTitle.error, undefined);
-        assert.notEqual(emptyTitle.result.isError, true);
+        for (const category of output.list) {
+          assert.deepEqual(category, await $schema(DtoCategoryPublic).parseAsync(category));
+          assert.deepEqual(
+            Object.keys(JSON.parse(JSON.stringify(category))).sort(),
+            category.description === undefined ? ['id', 'name'] : ['description', 'id', 'name'],
+          );
+        }
+        // In-memory results retain undefined optional fields; text uses JSON wire semantics.
         assert.deepEqual(
-          emptyTitle.result.structuredContent,
-          omittedTitle.result.structuredContent,
+          JSON.parse(response.result.content[0].text),
+          JSON.parse(JSON.stringify(output)),
         );
+        const explicitDefaults = await client.request('tools/call', {
+          name: categoryToolName,
+          arguments: { pageNo: 1, pageSize: 20 },
+        });
+        assert.equal(explicitDefaults.error, undefined);
+        assert.notEqual(explicitDefaults.result.isError, true);
+        assert.deepEqual(explicitDefaults.result.structuredContent, output);
+        assert.ok(output.list.some((category: any) => category.name === 'Empty'));
+        const electronics = output.list.find((category: any) => category.name === 'Electronics');
+        assert.ok(electronics, 'read-only static fixture provides the stocked category');
+        const search = await client.request('tools/call', {
+          name: toolName,
+          arguments: { categoryId: electronics.id, pageSize: 1 },
+        });
+        assert.equal(search.error, undefined);
+        assert.notEqual(search.result.isError, true);
+        assert.equal(search.result.structuredContent.list.length, 1);
+        const product = search.result.structuredContent.list[0];
+        assert.equal(product.categoryId, electronics.id);
+        const detail = await client.request('tools/call', {
+          name: detailToolName,
+          arguments: { id: product.id },
+        });
+        assert.equal(detail.error, undefined);
+        assert.notEqual(detail.result.isError, true);
+        assert.equal(detail.result.structuredContent.id, product.id);
+        assert.equal(detail.result.structuredContent.categoryId, electronics.id);
+        for (const args of [
+          { pageNo: 0 },
+          { pageSize: 0 },
+          { pageNo: 1.5 },
+          { pageSize: 1.5 },
+          { pageSize: 101 },
+          { pageNo: '1' },
+          { pageSize: true },
+          { unknown: true },
+          { title: 'Electronics' },
+          { iid: 1 },
+          { instanceName: 'shareTest' },
+          { route: '/mcp/test/catalog/categories' },
+          { innerAccess: true },
+          { headers: { authorization: 'synthetic-forbidden' } },
+        ]) {
+          const rejected = await client.request('tools/call', {
+            name: categoryToolName,
+            arguments: args,
+          });
+          assert.deepEqual(
+            rejected.error,
+            { code: -32602, message: 'Invalid tool arguments' },
+            JSON.stringify(args),
+          );
+        }
       } finally {
         await client.close();
       }
@@ -147,13 +301,13 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const output = response.result.structuredContent;
         const direct = await app.bean.executor.performAction(
           'get',
-          '/commerce/catalog/product/public/:id',
+          '/mcp/test/catalog/products/:id',
           { params: { id }, innerAccess: false },
         );
         assert.deepEqual(output, await $schema(DtoProductPublicDetail).parseAsync(direct));
         assert.equal(output.id, id);
         assert.equal(output.title, 'Wireless Headphones');
-        assert.equal(output.descriptionHtml, undefined);
+        assert.equal(output.descriptionHtml, '<p>Synthetic wireless audio</p>');
         assert.deepEqual(Object.keys(output).sort(), [
           'available',
           'categoryId',
@@ -198,7 +352,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           { id: [] },
           { id, iid: 1 },
           { id, instanceName: 'shareTest' },
-          { id, route: '/commerce/catalog/product' },
+          { id, route: '/mcp/test/catalog/products' },
           { id, innerAccess: true },
           { id, headers: { authorization: 'synthetic-forbidden' } },
         ]) {
@@ -233,10 +387,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         });
         id = search.result.structuredContent.list[0].id;
         const absentId = String(Number.MAX_SAFE_INTEGER);
-        assert.equal(
-          await app.scope('commerce-catalog').model.product.getById(absentId),
-          undefined,
-        );
+        assert.equal(await app.bean._getBean(ServiceCatalog).findPublicById(absentId), undefined);
         const response = await client.request('tools/call', {
           name: detailToolName,
           arguments: { id: absentId },
@@ -288,7 +439,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           { pageNo: 0 },
           { iid: 1 },
           { instanceName: 'shareTest' },
-          { route: '/commerce/catalog/product' },
+          { route: '/mcp/test/catalog/products' },
           { innerAccess: true },
           { headers: { authorization: 'synthetic-forbidden' } },
         ]) {

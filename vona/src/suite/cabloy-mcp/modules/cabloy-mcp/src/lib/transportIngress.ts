@@ -38,7 +38,8 @@ const overrideHeaders = new Set(['x-http-method-override', 'x-method-override', 
 const credentialHeaders = new Set(['authorization', 'cookie', 'proxy-authorization']);
 
 /**
- * Pure admission for the direct-only, no-business fixture, not production ingress.
+ * Direct-only admission for the synthetic fixture and explicit local commerce
+ * verification entry; neither is production ingress.
  * Undefined admits. Denials contain no caller-controlled values or diagnostics.
  * The listener must separately enforce native parser/receive bounds before this
  * function, and body, capacity and lifetime bounds after it.

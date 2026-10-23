@@ -49,6 +49,22 @@ The owner of an existing controller/API operation whose DTO, OpenAPI metadata, g
 - Per-request context isolation, controlled headers, request limits, rate limits, audit, telemetry, and redacted protocol errors.
 - Contract, security, concurrency, tenant-isolation, and protocol acceptance scenarios.
 
+### Bounded local verification exception (2026-10-22)
+
+The [accepted local commerce disposition in ADR 0002](./decisions/0002-mcp-transport.md#accepted-local-commerce-verification-disposition-2026-10-22) explicitly permits a separate manual loopback-only `mcp:commerce:local` entry for external-client discovery and search → detail using exactly `commerce_products_search` and `commerce_product_detail`, managed disposable test resources, fixed default instance and real guarded public reads. Anonymous access is allowed only for those two reads in that isolated process; this is not a production OAuth or protected-tool exception. It is a bounded contribution under `PRD-MCP-ACCESS-01`, `PRD-MCP-ACCESS-03` and `PRD-MCP-CONTRACT-01`, not a new requirement or launch criterion. The old synthetic fixture's no-business limitation, all production requirements, dependencies, full ATP checks, parent blocked statuses and verified count 0/12 remain unchanged. Approval is prospective; this amendment supplies no source/runtime proof.
+
+### Approved three-tool extension (2026-10-22)
+
+After delivery of the two-tool local runtime, `zhennann` explicitly approved the combined planning, design and bounded execution plan for category discovery → returned category ID → Product search → returned Product ID → detail. The [later ADR 0002 disposition](./decisions/0002-mcp-transport.md#accepted-three-tool-category-extension-2026-10-22) extends only the local exception to exactly `commerce_categories_list`, `commerce_products_search`, `commerce_product_detail`, using Commerce's flat published directory under the [Commerce catalogue requirements](../a-commerce/prd.md#catalogue). The preceding two-tool approval remains historical, not proof of this extension. Existing `PRD-MCP-ACCESS-01`, `PRD-MCP-ACCESS-03`, `PRD-MCP-CONTRACT-01`, all transport/resource/security constraints and production gates remain unchanged; parent statuses stay blocked, full ATPs open and verified 0/12. This amendment is authority, not new runtime evidence.
+
+### Approved local client compatibility (2026-10-22)
+
+Following the observed Claude Code protocol rejection, `zhennann` approved [ADR 0002's local stateless compatibility amendment](./decisions/0002-mcp-transport.md#accepted-local-stateless-client-compatibility-2026-10-22) and finite execution plan. Only the managed three-tool local entry gains SDK-native legacy initialization/initialized acknowledgement alongside strict modern serving. No new tool, business requirement, production protocol/OAuth exception or launch criterion is added. All other local safety/resource conditions and blocked/full-ATP/0-of-12 boundaries remain; actual AI-client success requires separate observed proof.
+
+### Approved independent test catalog (2026-10-23)
+
+The [subsequent accepted migration](./decisions/0002-mcp-transport.md#accepted-independent-mcp-test-migration-2026-10-23) replaces Commerce ownership only for the local three-tool example. Same-suite `mcp-test` owns a minimal synthetic read-only catalog and ordinary guarded API; generic `cabloy-mcp` has no business dependency. Keep the three `commerce_*` names for compatibility and the returned-ID journey under `PRD-MCP-ACCESS-01`, `PRD-MCP-ACCESS-03`, `PRD-MCP-CONTRACT-01`. Basic's `a-commerce` source, data and lifecycle are not prerequisites and are not modified. No shopping writes or production authority is added. Historical approvals/proof above remain scoped to their old owner; full ATPs/open dependencies and verified 0/12 remain unchanged.
+
 ### Deferred
 
 - A general-purpose OAuth authorization-server UI or identity provider managed by Cabloy itself. The selected integrated `a-auth` logical AS for the MCP-specific opaque-token profile has a separate, blocked delivery scope: a narrow Zova-presented, AS-controlled per-request authorization interaction is selected for design, while its concrete site/flavor, admission and shared grant/token implementation still require approval. This does not create a general-purpose UI or automatically add an independent Zova site. The first profile issues no refresh tokens; any later refresh profile needs a separate authority change.

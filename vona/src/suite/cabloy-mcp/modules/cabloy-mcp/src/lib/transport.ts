@@ -11,7 +11,8 @@ import {
 import { EventEmitter } from 'node:events';
 import { STATUS_CODES } from 'node:http';
 
-// Test-only native core. Nothing in this file registers a route or owns a listener.
+// Synthetic native core; the bounded body reader is also used by the explicitly
+// approved local commerce verification entry. No route or listener is registered here.
 const BODY_BYTES = 16 * 1024;
 const FRAME_BYTES = 2 * 1024;
 const RESPONSE_BYTES = 16 * 1024;
