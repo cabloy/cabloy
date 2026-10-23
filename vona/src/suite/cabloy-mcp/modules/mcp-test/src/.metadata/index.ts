@@ -127,6 +127,32 @@ declare module 'vona-module-a-web' {
 }
 
 /** controller: end */
+/** middlewareSystem: begin */
+export * from '../bean/middlewareSystem.mcp.ts';
+import type { IMiddlewareSystemOptionsMcp } from '../bean/middlewareSystem.mcp.ts';
+import 'vona-module-a-aspect';
+declare module 'vona-module-a-aspect' {
+
+    export interface IMiddlewareSystemRecord {
+      'mcp-test:mcp': IMiddlewareSystemOptionsMcp;
+    }
+
+
+}
+declare module 'vona-module-mcp-test' {
+
+        export interface MiddlewareSystemMcp {
+          /** @internal */
+          get scope(): ScopeModuleMcpTest;
+        }
+
+          export interface MiddlewareSystemMcp {
+            get $beanFullName(): 'mcp-test.middlewareSystem.mcp';
+            get $onionName(): 'mcp-test:mcp';
+            get $onionOptions(): IMiddlewareSystemOptionsMcp;
+          }
+}
+/** middlewareSystem: end */
 /** service: begin */
 export * from '../service/catalog.ts';
 
@@ -167,6 +193,9 @@ declare module 'vona' {
   }
 }
 /** service: end */
+/** monkey: begin */
+export * from '../monkey.ts';
+/** monkey: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil } from 'vona';
 import { Scope } from 'vona-module-a-bean';

@@ -6,7 +6,7 @@ import { Readable } from 'node:stream';
 import { describe, it } from 'node:test';
 
 import { createFixtureResponseGate, readFixtureBody } from '../src/lib/transport.ts';
-import { checkFixtureIngress } from '../src/lib/transportIngress.ts';
+import { checkFixtureIngress, checkProtocolIngress } from '../src/lib/transportIngress.ts';
 
 const version = '2026-07-28';
 const meta = {
@@ -125,6 +125,41 @@ function boundedResult(size: number) {
 }
 
 describe('MCP transport guards', { concurrency: false }, () => {
+  it('shares protocol checks without the standalone local authority policy', () => {
+    const rawHeaders = [
+      'Host',
+      'dev.example.test:7102',
+      'Origin',
+      'https://client.example.test',
+      'Content-Type',
+      'application/json',
+      'Accept',
+      'application/json, text/event-stream',
+      'X-Vona-Instance-Name',
+      'shareTest',
+    ];
+    const input = {
+      rawHeaders,
+      target: '/mcp',
+      method: 'POST',
+      instanceHeader: 'x-vona-instance-name',
+    };
+    assert.equal(checkProtocolIngress(input), undefined);
+    assert.equal(ingress({ rawHeaders, peer: '192.0.2.1' })?.status, 403);
+    for (const [extra, status] of [
+      [['Authorization', 'synthetic'], 403],
+      [['Forwarded', 'for=192.0.2.1'], 403],
+      [['X-Vona-Instance-Name', 'shareTest'], 400],
+      [['X-HTTP-Method-Override', 'GET'], 400],
+      [['X-Large', 'x'.repeat(2049)], 431],
+    ] as const) {
+      assert.equal(
+        checkProtocolIngress({ ...input, rawHeaders: [...rawHeaders, ...extra] })?.status,
+        status,
+      );
+    }
+    assert.equal(checkProtocolIngress({ ...input, method: 'GET' })?.status, 405);
+  });
   it('enforces pure ingress security and fixed denial precedence', () => {
     assert.equal(ingress(), undefined);
     const base = [

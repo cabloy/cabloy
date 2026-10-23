@@ -1,12 +1,17 @@
 import { Buffer } from 'node:buffer';
 
-export interface IFixtureIngressInput {
-  peer: string | undefined;
-  /** Server-owned authority derived from the fixture's allocated IPv4 listener. */
-  host: string;
+export interface IProtocolIngressInput {
   rawHeaders: readonly string[];
   target: string | undefined;
   method: string | undefined;
+  /** Optional framework instance header permitted as a singleton. */
+  instanceHeader?: string;
+}
+
+export interface IFixtureIngressInput extends Omit<IProtocolIngressInput, 'instanceHeader'> {
+  peer: string | undefined;
+  /** Server-owned authority derived from the fixture's allocated IPv4 listener. */
+  host: string;
   instanceHeaders: readonly string[];
 }
 
@@ -47,8 +52,23 @@ const credentialHeaders = new Set(['authorization', 'cookie', 'proxy-authorizati
 export function checkFixtureIngress(
   input: IFixtureIngressInput,
 ): IFixtureIngressDenial | undefined {
+  return checkIngress(input, input);
+}
+
+/** Protocol/framing checks without fixture-local peer, Host or Origin policy. */
+export function checkProtocolIngress(
+  input: IProtocolIngressInput,
+): IFixtureIngressDenial | undefined {
+  return checkIngress(input);
+}
+
+function checkIngress(
+  input: IProtocolIngressInput,
+  local?: IFixtureIngressInput,
+): IFixtureIngressDenial | undefined {
   const headers = new Map<string, { value: string; count: number }>();
-  const selectors = new Set(input.instanceHeaders.map(name => name.toLowerCase()));
+  const instanceHeader = input.instanceHeader?.toLowerCase();
+  const selectors = new Set(local?.instanceHeaders.map(name => name.toLowerCase()));
   selectors.add('x-vona-instance-name');
   let unsafeHeader = false;
   let malformedHeaders = input.rawHeaders.length % 2 !== 0;
@@ -64,7 +84,11 @@ export function checkFixtureIngress(
     const previous = headers.get(name);
     if (previous) {
       previous.count++;
-      if (singletonHeaders.has(name) || name.startsWith('mcp-')) {
+      if (
+        singletonHeaders.has(name) ||
+        name.startsWith('mcp-') ||
+        (!local && (name === 'host' || name === 'origin' || name === instanceHeader))
+      ) {
         duplicateSingleton = true;
       }
     } else {
@@ -77,7 +101,7 @@ export function checkFixtureIngress(
       name === 'forwarded' ||
       name.startsWith('x-forwarded-') ||
       credentialHeaders.has(name) ||
-      selectors.has(name)
+      (selectors.has(name) && (local || name !== instanceHeader))
     ) {
       unsafeHeader = true;
     }
@@ -88,25 +112,26 @@ export function checkFixtureIngress(
     headerBytes += Buffer.byteLength(rawName, 'utf8') + valueBytes + 4;
   }
 
-  // Keep Origin first, including duplicate, empty and literal null values.
-  const origin = headers.get('origin');
-  if (origin && (origin.count !== 1 || origin.value !== `http://${input.host}`)) {
-    return { status: 403 };
+  if (local) {
+    // Keep the standalone fixture's original authority and denial precedence.
+    const origin = headers.get('origin');
+    if (origin && (origin.count !== 1 || origin.value !== `http://${local.host}`)) {
+      return { status: 403 };
+    }
+    const expectedHost = /^127\.0\.0\.1:([1-9]\d{0,4})$/.exec(local.host);
+    const host = headers.get('host');
+    if (
+      local.peer !== '127.0.0.1' ||
+      !expectedHost ||
+      Number(expectedHost[1]) > 65535 ||
+      !host ||
+      host.count !== 1 ||
+      host.value !== local.host
+    ) {
+      return { status: 403 };
+    }
   }
-
-  const expectedHost = /^127\.0\.0\.1:([1-9]\d{0,4})$/.exec(input.host);
-  const host = headers.get('host');
-  if (
-    input.peer !== '127.0.0.1' ||
-    !expectedHost ||
-    Number(expectedHost[1]) > 65535 ||
-    !host ||
-    host.count !== 1 ||
-    host.value !== input.host ||
-    unsafeHeader
-  ) {
-    return { status: 403 };
-  }
+  if (unsafeHeader) return { status: 403 };
 
   // Oversized targets get the specific URL-bound denial rather than generic 404.
   if (

@@ -14,6 +14,7 @@ The retained lockfile patch is a **path-redacted historical diff**, not a byte-f
 
 For future retained evidence, normalize repository paths and redact external machine paths before writing or sharing command output, including compiler stderr and exception stacks. Runtime path resolution may still require absolute paths internally; do not persist those host-specific values. Prefer the phase summary and targeted excerpts over loading entire historical logs.
 
+- [Dev shared-listener MCP qualification](./dev-shared-listener.md) — original same-listener journey, instance resolution, local ingress/drain and standalone proof; [later authority correction](./dev-shared-listener.md#shared-ingress-authority-correction-2026-10-23) supersedes middleware-mode/shared-locality rules with module-only dev/test inclusion and nonlocal Host/Origin acceptance, final 4/4 shared plus 15/15 standalone/guard tests, retained failure and current hashes. No remote-machine/ordinary-dev/new-real-client or production acceptance; parents blocked/0-of-12.
 - [Phase 10 evidence](./phase-10/index.md)
 - [Phase 20 evidence](./phase-20/index.md)
 - [Single product-search business slice](./business-products-search.md) — partial catalog/dispatch proof, not production or full ATP closure.
