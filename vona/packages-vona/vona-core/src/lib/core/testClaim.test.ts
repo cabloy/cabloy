@@ -395,6 +395,94 @@ test('broker reports safe failure phases without acknowledging invalid or unread
   }
 });
 
+test('registration waits beyond ten seconds for acknowledgement without replaying the event', async () => {
+  const received = Promise.withResolvers<() => void>();
+  let requests = 0;
+  const server = createServer((req, res) => {
+    requests++;
+    req.resume();
+    req.on('end', () => received.resolve(() => res.writeHead(204).end()));
+  });
+  let registration: Promise<void> | undefined;
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address !== 'string');
+    const env = transportEnv({
+      VONA_TEST_CLAIM_URL: `http://127.0.0.1:${address.port}/event`,
+      VONA_TEST_CLAIM_TOKEN: 'a'.repeat(64),
+    });
+    let settled = false;
+    registration = sendTestClaimEvent(env, { type: 'status', status: 'running' });
+    void registration.then(
+      () => {
+        settled = true;
+      },
+      () => {
+        settled = true;
+      },
+    );
+    const acknowledge = await received.promise;
+    await new Promise(resolve => setTimeout(resolve, 11000));
+    assert.equal(settled, false);
+    assert.equal(requests, 1);
+    acknowledge();
+    await registration;
+    assert.equal(requests, 1);
+  } finally {
+    server.closeAllConnections();
+    await registration?.catch(() => {});
+    await new Promise<void>((resolve, reject) =>
+      server.close(error => (error ? reject(error) : resolve())),
+    );
+  }
+});
+
+test(
+  'registration has a finite acknowledgement deadline and fails closed without replay',
+  { concurrency: false },
+  async t => {
+    const controller = new AbortController();
+    const timeout = AbortSignal.timeout.bind(AbortSignal);
+    let requests = 0;
+    const server = createServer(req => {
+      requests++;
+      req.resume();
+      req.on('end', () => {
+        timeout(20).addEventListener('abort', () => controller.abort(), { once: true });
+      });
+    });
+    const deadlines: number[] = [];
+    let registration: Promise<void> | undefined;
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+    const mock = t.mock.method(AbortSignal, 'timeout', (milliseconds: number) => {
+      deadlines.push(milliseconds);
+      return controller.signal;
+    });
+    try {
+      const address = server.address();
+      assert.ok(address && typeof address !== 'string');
+      const env = transportEnv({
+        VONA_TEST_CLAIM_URL: `http://127.0.0.1:${address.port}/event`,
+        VONA_TEST_CLAIM_TOKEN: 'a'.repeat(64),
+      });
+      registration = sendTestClaimEvent(env, { type: 'status', status: 'running' });
+      await assert.rejects(registration, {
+        message: 'Managed test allocation registration failed (transport)',
+      });
+      assert.deepEqual(deadlines, [120000]);
+      assert.equal(requests, 1);
+    } finally {
+      mock.mock.restore();
+      server.closeAllConnections();
+      await registration?.catch(() => {});
+      await new Promise<void>((resolve, reject) =>
+        server.close(error => (error ? reject(error) : resolve())),
+      );
+    }
+  },
+);
+
 test('registration diagnostics accept only categorical headers and never response bodies', async () => {
   let headers: Record<string, string> = {
     'x-vona-claim-phase': 'write',

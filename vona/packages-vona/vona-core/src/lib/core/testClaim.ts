@@ -783,7 +783,8 @@ export async function sendTestClaimEvent(env: TestClaimEnv, event: TestClaimEven
         'content-type': 'application/json',
       },
       body: JSON.stringify(event),
-      signal: AbortSignal.timeout(10000),
+      // Includes the serialized queue and durable Windows filesystem work (30s per operation).
+      signal: AbortSignal.timeout(120000),
       redirect: 'error',
     });
   } catch {
