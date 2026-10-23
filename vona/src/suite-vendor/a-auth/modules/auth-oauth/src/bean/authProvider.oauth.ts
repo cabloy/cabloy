@@ -43,6 +43,7 @@ const app = useApp();
       clientSecret: app.meta.env.AUTH_GITHUB_CLIENTSECRET || 'Shoule specify clientSecret',
     },
   },
+  useMockForDev: app.meta.env.AUTH_USEMOCKFORDEV !== 'false',
 })
 export class AuthProviderOauth extends BeanAuthProviderOauth2Base {
   async strategy(
