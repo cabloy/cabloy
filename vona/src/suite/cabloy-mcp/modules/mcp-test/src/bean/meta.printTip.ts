@@ -1,0 +1,15 @@
+import type { IMetaPrintTipExecute, TypeMetaPrintTipResult } from 'vona-module-a-printtip';
+
+import { BeanBase } from 'vona';
+import { Meta } from 'vona-module-a-meta';
+
+@Meta()
+export class MetaPrintTip extends BeanBase implements IMetaPrintTipExecute {
+  async execute(): Promise<TypeMetaPrintTipResult> {
+    if (!this.$scope['cabloy-mcp'].config.enabled) return;
+    return {
+      title: 'mcp',
+      message: this.app.util.getAbsoluteUrl('/mcp'),
+    };
+  }
+}

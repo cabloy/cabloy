@@ -193,6 +193,31 @@ declare module 'vona' {
   }
 }
 /** service: end */
+/** meta: begin */
+export * from '../bean/meta.printTip.ts';
+
+import 'vona-module-a-meta';
+declare module 'vona-module-a-meta' {
+
+    export interface IMetaRecord {
+      'mcp-test:printTip': never;
+    }
+
+
+}
+declare module 'vona-module-mcp-test' {
+
+        export interface MetaPrintTip {
+          /** @internal */
+          get scope(): ScopeModuleMcpTest;
+        }
+
+          export interface MetaPrintTip {
+            get $beanFullName(): 'mcp-test.meta.printTip';
+            get $onionName(): 'mcp-test:printTip';
+          }
+}
+/** meta: end */
 /** monkey: begin */
 export * from '../monkey.ts';
 /** monkey: end */
