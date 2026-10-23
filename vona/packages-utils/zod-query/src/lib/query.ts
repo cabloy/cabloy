@@ -10,13 +10,16 @@ interface IParsePayload {
 }
 
 let ZodMetadata: any;
-export function setParseAdapter(zodMetadata: any) {
+let shouldAdapt: (() => boolean) | undefined;
+export function setParseAdapter(zodMetadata: any, policy?: () => boolean) {
   ZodMetadata = zodMetadata;
+  shouldAdapt = policy;
   (z.core as any).setParseAdapter(__parseAdapter);
 }
 
 function __parseAdapter(inst: z.ZodType, parse) {
   return (payload: IParsePayload, _) => {
+    if (shouldAdapt?.() === false) return parse(payload, _);
     const type = inst.type;
     switch (type) {
       case 'string':
