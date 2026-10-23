@@ -662,9 +662,17 @@ export async function startTestClaimBroker(claimPath: string) {
   const update = (event: TestClaimEvent) => {
     if (closing) return Promise.reject(new Error('Test claim broker is closed'));
     const result = queue.then(async () => {
-      const manifest = await loadTestClaim(claimPath);
-      applyEvent(manifest, event);
-      await writeTestClaim(claimPath, manifest);
+      let phase = 'read';
+      try {
+        const manifest = await loadTestClaim(claimPath);
+        phase = 'validate';
+        applyEvent(manifest, event);
+        phase = 'write';
+        await writeTestClaim(claimPath, manifest);
+      } catch (error) {
+        if (error instanceof Error) Object.assign(error, { testClaimPhase: phase });
+        throw error;
+      }
     });
     queue = result.catch(() => {});
     return result;
@@ -692,8 +700,21 @@ export async function startTestClaimBroker(claimPath: string) {
       if (req.url === '/containment') await containment(parseTestClaimJson(body));
       else await update(parseTestClaimJson(body));
       res.writeHead(204).end();
-    } catch {
-      res.writeHead(409).end('Test claim registration rejected');
+    } catch (error) {
+      const failure = error as { testClaimPhase?: string; code?: string; nativeCode?: number };
+      const headers: Record<string, string> = {};
+      if (['read', 'validate', 'write'].includes(failure?.testClaimPhase!))
+        headers['x-vona-claim-phase'] = failure.testClaimPhase!;
+      if (['EEXIST', 'ENOENT', 'EBUSY', 'EACCES', 'EUNSAFE'].includes(failure?.code!))
+        headers['x-vona-claim-code'] = failure.code!;
+      if (
+        Number.isInteger(failure?.nativeCode) &&
+        failure.nativeCode! >= 0 &&
+        failure.nativeCode! <= 65535
+      ) {
+        headers['x-vona-claim-native-code'] = String(failure.nativeCode);
+      }
+      res.writeHead(409, headers).end('Test claim registration rejected');
     }
   });
   server.requestTimeout = 10000;
@@ -753,20 +774,35 @@ export function hasTestClaimTransport(env: TestClaimEnv = process.env) {
 }
 export async function sendTestClaimEvent(env: TestClaimEnv, event: TestClaimEvent) {
   if (!hasTestClaimTransport(env)) return;
+  let response: Response;
   try {
-    const response = await fetch(env[TEST_CLAIM_URL_ENV]!, {
+    response = await fetch(env[TEST_CLAIM_URL_ENV]!, {
       method: 'POST',
       headers: {
         'authorization': `Bearer ${env[TEST_CLAIM_TOKEN_ENV]}`,
+        // Startup can block past the broker's idle timeout; never reuse a stale socket.
+        'connection': 'close',
         'content-type': 'application/json',
       },
       body: JSON.stringify(event),
-      signal: AbortSignal.timeout(10000),
+      // Includes the serialized queue and durable Windows filesystem work (30s per operation).
+      signal: AbortSignal.timeout(120000),
       redirect: 'error',
     });
-    if (response.status !== 204) throw new Error('Registration rejected');
   } catch {
-    throw new Error('Managed test allocation registration failed');
+    throw new Error('Managed test allocation registration failed (transport)');
+  }
+  if (response.status !== 204) {
+    const details = [`HTTP ${response.status}`];
+    const phase = response.headers.get('x-vona-claim-phase');
+    const code = response.headers.get('x-vona-claim-code');
+    const nativeCode = response.headers.get('x-vona-claim-native-code');
+    if (['read', 'validate', 'write'].includes(phase!)) details.push(phase!);
+    if (['EEXIST', 'ENOENT', 'EBUSY', 'EACCES', 'EUNSAFE'].includes(code!)) details.push(code!);
+    if (nativeCode && /^\d{1,5}$/.test(nativeCode) && Number(nativeCode) <= 65535)
+      details.push(`native ${nativeCode}`);
+    await response.body?.cancel().catch(() => {});
+    throw new Error(`Managed test allocation registration failed (${details.join(', ')})`);
   }
 }
 
@@ -784,6 +820,8 @@ export async function assertTestClaimWindowsJob(env: TestClaimEnv, identity: Tes
       method: 'POST',
       headers: {
         'authorization': `Bearer ${env[TEST_CLAIM_TOKEN_ENV]}`,
+        // Startup can block past the broker's idle timeout; never reuse a stale socket.
+        'connection': 'close',
         'content-type': 'application/json',
       },
       body: JSON.stringify(query),

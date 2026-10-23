@@ -4,9 +4,11 @@ import { TypeRenderComponentJsx } from 'zova-jsx';
 import type { IPermissionHintDetailsActionRow } from '../permissions.js';
 
 export type IResourceDetailsActionRowNameRecord = {
-  [KEY in keyof IResourceDetailsActionRowRecord as KEY extends `${string}:action${infer Name}`
-    ? Uncapitalize<Name>
-    : KEY]: IResourceDetailsActionRowRecord[KEY];
+  [
+    KEY in keyof IResourceDetailsActionRowRecord as KEY extends `${string}:action${infer Name}`
+      ? Uncapitalize<Name>
+      : KEY
+  ]: IResourceDetailsActionRowRecord[KEY];
 };
 
 export interface IResourceDetailsActionRowRecord {}

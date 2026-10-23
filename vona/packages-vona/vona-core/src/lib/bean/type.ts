@@ -7,9 +7,9 @@ import type { TypeErrorsInternal } from './resource/error/errorInternal.ts';
 export interface IBeanRecordGlobal {}
 export interface IBeanRecordGeneral {}
 export type TypeBeanRecordGeneralSelector<SCENE extends keyof IBeanSceneRecord> = {
-  [K in keyof IBeanRecordGeneral as K extends `${string}.${SCENE}.${string}`
-    ? K
-    : never]: IBeanRecordGeneral[K];
+  [
+    K in keyof IBeanRecordGeneral as K extends `${string}.${SCENE}.${string}` ? K : never
+  ]: IBeanRecordGeneral[K];
 };
 export type TypeBeanRecordGeneralSelectorKeys<SCENE extends keyof IBeanSceneRecord> =
   keyof TypeBeanRecordGeneralSelector<SCENE>;

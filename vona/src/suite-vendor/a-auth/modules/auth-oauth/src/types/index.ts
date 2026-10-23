@@ -1,5 +1,6 @@
 declare module 'vona' {
   export interface VonaConfigEnv {
+    AUTH_USEMOCKFORDEV: 'true' | 'false' | undefined;
     AUTH_GITHUB_CLIENTID: string | undefined;
     AUTH_GITHUB_CLIENTSECRET: string | undefined;
   }

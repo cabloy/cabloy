@@ -64,6 +64,10 @@ The current [presentation matrix](./presentation-contracts.md) records SKU View/
 
 The [main/worktree reconciliation record](./test-plan.md#mainworktree-reconciliation-of-059c5779d3-2026-10-23) retains the intrinsic cart repair on Basic main, removal of MCP-only Commerce Category additions, fresh focused regressions and complete backend/frontend source byte equality. Existing public Product APIs remain. The [historical Category disposition](../cabloy-mcp/evidence/business-categories.md#historical-disposition-2026-10-23) points to independent `mcp-test` ownership; historical WBS verification and release statuses are unchanged.
 
+## Cart contract maintenance (2026-10-23)
+
+The intrinsic zero-stock cart DTO defect is repaired on Basic main, with [scoped main evidence](./test-plan.md#cart-zero-stock-maintenance-on-basic-main-2026-10-23): 12/12 managed Cart/Catalog tests, isolated Trade generation with no tracked generated delta, paired Commerce artifact/dependency handoff, module types and changed-source style passed. This bounded maintenance does not change historical WBS verification or release status and adds no MCP-owned Commerce feature.
+
 ## Update Rules
 
 1. Update this file when a WBS item changes state, a blocker appears or clears, or durable acceptance evidence is recorded.

@@ -62,12 +62,17 @@ function decode(source: string): { exists?: boolean; content?: string } {
     throw new Error('Windows test claim filesystem helper returned an invalid response');
   }
   if (!value || value.ok !== true) {
+    const code = ['EEXIST', 'ENOENT', 'EBUSY', 'EACCES', 'EUNSAFE'].includes(value?.code)
+      ? value.code
+      : 'EUNSAFE';
+    const nativeCode =
+      Number.isInteger(value?.nativeCode) && value.nativeCode >= 0 && value.nativeCode <= 65535
+        ? value.nativeCode
+        : 0;
     const error = new Error(
-      value?.code === 'EEXIST'
-        ? 'Test claim file already exists'
-        : `Unsafe Windows test claim filesystem operation (${value?.code ?? 'unknown'})`,
+      `Unsafe Windows test claim filesystem operation (${code}, nativeCode=${nativeCode})`,
     );
-    Object.assign(error, { code: value?.code ?? 'EUNSAFE' });
+    Object.assign(error, { code, nativeCode });
     throw error;
   }
   return value;

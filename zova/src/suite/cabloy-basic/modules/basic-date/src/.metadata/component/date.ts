@@ -51,7 +51,9 @@ declare module 'zova-module-a-bean' {
   export interface IVonaComponentRecord {
     'basic-date:date': ControllerDateProps &
       ControllerDateModels & {
-        [KEY in keyof ControllerDateModels as TypePropValueFromModel<KEY>]: ControllerDateModels[KEY];
+        [
+          KEY in keyof ControllerDateModels as TypePropValueFromModel<KEY>
+        ]: ControllerDateModels[KEY];
       } & {
         [KEY in keyof ControllerDateModels as TypePropUpdateFromModel<KEY>]: (
           value: ControllerDateModels[KEY],

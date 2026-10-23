@@ -18,7 +18,9 @@ export type ZSelectProps = {
   controllerRef?: (ref: ControllerSelect) => void;
 } & ControllerSelectProps &
   ControllerSelectModels & {
-    [KEY in keyof ControllerSelectModels as TypePropValueFromModel<KEY>]: ControllerSelectModels[KEY];
+    [
+      KEY in keyof ControllerSelectModels as TypePropValueFromModel<KEY>
+    ]: ControllerSelectModels[KEY];
   } & {
     [KEY in keyof ControllerSelectModels as TypePropUpdateFromModel<KEY>]: (
       value: ControllerSelectModels[KEY],
@@ -29,7 +31,9 @@ type TypeModelArguments = {
 };
 type ControllerInnerProps = TypeControllerInnerProps<
   ControllerSelectProps & {
-    [KEY in keyof ControllerSelectModels as TypePropValueFromModel<KEY>]: ControllerSelectModels[KEY];
+    [
+      KEY in keyof ControllerSelectModels as TypePropValueFromModel<KEY>
+    ]: ControllerSelectModels[KEY];
   },
   keyof typeof ControllerSelect.$propsDefault
 >;
@@ -51,7 +55,9 @@ declare module 'zova-module-a-bean' {
   export interface IVonaComponentRecord {
     'basic-select:select': ControllerSelectProps &
       ControllerSelectModels & {
-        [KEY in keyof ControllerSelectModels as TypePropValueFromModel<KEY>]: ControllerSelectModels[KEY];
+        [
+          KEY in keyof ControllerSelectModels as TypePropValueFromModel<KEY>
+        ]: ControllerSelectModels[KEY];
       } & {
         [KEY in keyof ControllerSelectModels as TypePropUpdateFromModel<KEY>]: (
           value: ControllerSelectModels[KEY],

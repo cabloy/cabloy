@@ -1,5 +1,29 @@
 # Changelog
 
+## 5.1.232
+
+### Improvements
+
+- Refresh the Zova lockfile after preparing the compensation rerun.
+- Update the Vona zova-core patch for v5.1.94.
+
+## 5.1.231
+
+### Features
+
+- Add commerce functionality.
+- Add formatting support.
+- Apply feature updates.
+
+### Bug Fixes
+
+- Fix Windows tests.
+- Patch Zod integration.
+
+### Improvements
+
+- Update the controller implementation.
+
 ## 5.1.230
 
 ### Features

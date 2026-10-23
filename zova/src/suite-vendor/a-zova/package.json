@@ -1,6 +1,6 @@
 {
   "name": "zova-suite-a-zova",
-  "version": "5.1.173",
+  "version": "5.1.174",
   "gitHead": "2c5c19284bab738e492856189acb6fad74b8a7b7",
   "description": "zova",
   "license": "MIT",
@@ -11,7 +11,7 @@
     "zova-module-a-api": "^5.1.22",
     "zova-module-a-app": "^5.1.26",
     "zova-module-a-bean": "^5.1.36",
-    "zova-module-a-behavior": "^5.1.26",
+    "zova-module-a-behavior": "^5.1.27",
     "zova-module-a-behaviors": "^5.1.22",
     "zova-module-a-command": "^5.1.35",
     "zova-module-a-fetch": "^5.1.25",
@@ -21,7 +21,7 @@
     "zova-module-a-logger": "^5.1.28",
     "zova-module-a-meta": "^5.1.22",
     "zova-module-a-model": "^5.1.38",
-    "zova-module-a-openapi": "^5.1.57",
+    "zova-module-a-openapi": "^5.1.58",
     "zova-module-a-router": "^5.1.42",
     "zova-module-a-routerstack": "^5.1.29",
     "zova-module-a-routertabs": "^5.1.35",
@@ -30,8 +30,8 @@
     "zova-module-a-ssrserver": "^5.1.26",
     "zova-module-a-style": "^5.1.35",
     "zova-module-a-table": "^5.1.44",
-    "zova-module-a-zod": "^5.1.37",
-    "zova-module-a-zova": "^5.1.111"
+    "zova-module-a-zod": "^5.1.38",
+    "zova-module-a-zova": "^5.1.112"
   },
   "title": "a-zova"
 }

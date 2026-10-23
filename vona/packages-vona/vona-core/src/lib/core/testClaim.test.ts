@@ -1,6 +1,8 @@
 import '@cabloy/json5';
+import type { Socket } from 'node:net';
+
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import {
   chmodSync,
   lstatSync,
@@ -11,6 +13,7 @@ import {
   rmSync,
   symlinkSync,
 } from 'node:fs';
+import { createServer } from 'node:http';
 import { hostname, tmpdir } from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
@@ -360,6 +363,296 @@ test('broker serializes simultaneous updates and acknowledges durable intent bef
   } finally {
     await broker?.close();
     f.dispose();
+  }
+});
+
+test('broker reports safe failure phases without acknowledging invalid or unreadable claims', async () => {
+  const f = fixture();
+  let broker: Awaited<ReturnType<typeof startTestClaimBroker>> | undefined;
+  try {
+    const { claimPath } = await createTestClaim(f.projectPath, runId, 'unit', owner);
+    broker = await startTestClaimBroker(claimPath);
+    const env = transportEnv(broker.env);
+    const before = await readTestClaimFile(claimPath);
+    await assert.rejects(
+      sendTestClaimEvent(env, { type: 'status', status: 'SECRET_INVALID_STATUS' as any }),
+      { message: 'Managed test allocation registration failed (HTTP 409, validate)' },
+    );
+    assert.equal(await readTestClaimFile(claimPath), before);
+    await assert.rejects(
+      sendTestClaimEvent(
+        { ...env, VONA_TEST_CLAIM_TOKEN: '0'.repeat(64) },
+        { type: 'status', status: 'running' },
+      ),
+      { message: 'Managed test allocation registration failed (HTTP 403)' },
+    );
+    rmSync(claimPath);
+    await assert.rejects(sendTestClaimEvent(env, { type: 'status', status: 'running' }), {
+      message:
+        /^Managed test allocation registration failed \(HTTP 409, read, ENOENT(?:, native [23])?\)$/,
+    });
+  } finally {
+    await broker?.close();
+    f.dispose();
+  }
+});
+
+test(
+  'registration uses fresh connections after a blocked startup without replaying events',
+  { timeout: 45000 },
+  async () => {
+    const requests: {
+      connection: string | undefined;
+      authorization: string | undefined;
+      event: unknown;
+      socket: Socket;
+    }[] = [];
+    const server = createServer(async (req, res) => {
+      let body = '';
+      for await (const chunk of req) body += chunk.toString();
+      requests.push({
+        connection: req.headers.connection,
+        authorization: req.headers.authorization,
+        event: JSON.parse(body),
+        socket: req.socket,
+      });
+      res.writeHead(204).end();
+    });
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+    let child: ReturnType<typeof spawn> | undefined;
+    let exited: Promise<number | null> | undefined;
+    let spawnError: Error | undefined;
+    try {
+      const address = server.address();
+      assert.ok(address && typeof address !== 'string');
+      const env = transportEnv({
+        VONA_TEST_CLAIM_URL: `http://127.0.0.1:${address.port}/event`,
+        VONA_TEST_CLAIM_TOKEN: 'a'.repeat(64),
+      });
+      const events = [
+        { type: 'status', status: 'running' },
+        { type: 'status', status: 'failed' },
+      ];
+      const script = `
+      import { setImmediate } from 'node:timers/promises';
+      import { sendTestClaimEvent } from ${JSON.stringify(new URL('./testClaim.ts', import.meta.url).href)};
+      const [env, events] = JSON.parse(process.argv[1]);
+      await sendTestClaimEvent(env, events[0]);
+      await setImmediate();
+      // Let the parent broker expire an idle connection while startup blocks this event loop.
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 6500);
+      await sendTestClaimEvent(env, events[1]);
+    `;
+      child = spawn(
+        process.execPath,
+        ['--input-type=module', '-e', script, JSON.stringify([env, events])],
+        {
+          stdio: 'ignore',
+          windowsHide: true,
+          timeout: 30000,
+          killSignal: 'SIGKILL',
+        },
+      );
+      child.once('error', error => {
+        spawnError = error;
+      });
+      exited = new Promise(resolve => child!.once('close', code => resolve(code)));
+      assert.equal(await exited, 0, 'claim client child failed');
+      assert.equal(spawnError, undefined);
+      assert.deepEqual(
+        requests.map(request => request.event),
+        events,
+      );
+      assert.deepEqual(
+        requests.map(request => request.connection),
+        ['close', 'close'],
+      );
+      assert.ok(
+        requests.every(request => request.authorization === `Bearer ${env.VONA_TEST_CLAIM_TOKEN}`),
+      );
+      assert.notEqual(requests[0].socket, requests[1].socket);
+    } finally {
+      if (child && child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');
+      await exited;
+      server.closeAllConnections();
+      await new Promise<void>((resolve, reject) =>
+        server.close(error => (error ? reject(error) : resolve())),
+      );
+    }
+  },
+);
+
+test('containment requests do not reuse broker connections', async () => {
+  const requests: { connection: string | undefined; url: string | undefined; socket: Socket }[] =
+    [];
+  const server = createServer((req, res) => {
+    req.resume();
+    req.on('end', () => {
+      requests.push({ connection: req.headers.connection, url: req.url, socket: req.socket });
+      res.writeHead(204).end();
+    });
+  });
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address !== 'string');
+    const env = {
+      ...transportEnv({
+        VONA_TEST_CLAIM_URL: `http://127.0.0.1:${address.port}/event`,
+        VONA_TEST_CLAIM_TOKEN: 'a'.repeat(64),
+      }),
+      [TEST_CLAIM_WINDOWS_GUARDIAN_ENV]: 'windows-e2e-guardian',
+    };
+    const identity = { pid: 123, startTime: '133000000000000001', host: hostname() };
+    await assertTestClaimWindowsJob(env, identity);
+    await new Promise(resolve => setImmediate(resolve));
+    await assertTestClaimWindowsJob(env, identity);
+    assert.deepEqual(
+      requests.map(request => request.url),
+      ['/containment', '/containment'],
+    );
+    assert.deepEqual(
+      requests.map(request => request.connection),
+      ['close', 'close'],
+    );
+    assert.notEqual(requests[0].socket, requests[1].socket);
+  } finally {
+    server.closeAllConnections();
+    await new Promise<void>((resolve, reject) =>
+      server.close(error => (error ? reject(error) : resolve())),
+    );
+  }
+});
+
+test('registration waits beyond ten seconds for acknowledgement without replaying the event', async () => {
+  const received = Promise.withResolvers<() => void>();
+  let requests = 0;
+  const server = createServer((req, res) => {
+    requests++;
+    req.resume();
+    req.on('end', () => received.resolve(() => res.writeHead(204).end()));
+  });
+  let registration: Promise<void> | undefined;
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address !== 'string');
+    const env = transportEnv({
+      VONA_TEST_CLAIM_URL: `http://127.0.0.1:${address.port}/event`,
+      VONA_TEST_CLAIM_TOKEN: 'a'.repeat(64),
+    });
+    let settled = false;
+    registration = sendTestClaimEvent(env, { type: 'status', status: 'running' });
+    void registration.then(
+      () => {
+        settled = true;
+      },
+      () => {
+        settled = true;
+      },
+    );
+    const acknowledge = await received.promise;
+    await new Promise(resolve => setTimeout(resolve, 11000));
+    assert.equal(settled, false);
+    assert.equal(requests, 1);
+    acknowledge();
+    await registration;
+    assert.equal(requests, 1);
+  } finally {
+    server.closeAllConnections();
+    await registration?.catch(() => {});
+    await new Promise<void>((resolve, reject) =>
+      server.close(error => (error ? reject(error) : resolve())),
+    );
+  }
+});
+
+test(
+  'registration has a finite acknowledgement deadline and fails closed without replay',
+  { concurrency: false },
+  async t => {
+    const controller = new AbortController();
+    const timeout = AbortSignal.timeout.bind(AbortSignal);
+    let requests = 0;
+    const server = createServer(req => {
+      requests++;
+      req.resume();
+      req.on('end', () => {
+        timeout(20).addEventListener('abort', () => controller.abort(), { once: true });
+      });
+    });
+    const deadlines: number[] = [];
+    let registration: Promise<void> | undefined;
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+    const mock = t.mock.method(AbortSignal, 'timeout', (milliseconds: number) => {
+      deadlines.push(milliseconds);
+      return controller.signal;
+    });
+    try {
+      const address = server.address();
+      assert.ok(address && typeof address !== 'string');
+      const env = transportEnv({
+        VONA_TEST_CLAIM_URL: `http://127.0.0.1:${address.port}/event`,
+        VONA_TEST_CLAIM_TOKEN: 'a'.repeat(64),
+      });
+      registration = sendTestClaimEvent(env, { type: 'status', status: 'running' });
+      await assert.rejects(registration, {
+        message: 'Managed test allocation registration failed (transport)',
+      });
+      assert.deepEqual(deadlines, [120000]);
+      assert.equal(requests, 1);
+    } finally {
+      mock.mock.restore();
+      server.closeAllConnections();
+      await registration?.catch(() => {});
+      await new Promise<void>((resolve, reject) =>
+        server.close(error => (error ? reject(error) : resolve())),
+      );
+    }
+  },
+);
+
+test('registration diagnostics accept only categorical headers and never response bodies', async () => {
+  let headers: Record<string, string> = {
+    'x-vona-claim-phase': 'write',
+    'x-vona-claim-code': 'EBUSY',
+    'x-vona-claim-native-code': '32',
+  };
+  const server = createServer((req, res) => {
+    req.resume();
+    res.writeHead(409, headers).end('SECRET_RESPONSE_BODY');
+  });
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address !== 'string');
+    const env = transportEnv({
+      VONA_TEST_CLAIM_URL: `http://127.0.0.1:${address.port}/event`,
+      VONA_TEST_CLAIM_TOKEN: 'a'.repeat(64),
+    });
+    await assert.rejects(sendTestClaimEvent(env, { type: 'status', status: 'running' }), {
+      message: 'Managed test allocation registration failed (HTTP 409, write, EBUSY, native 32)',
+    });
+    headers = {
+      'x-vona-claim-phase': 'SECRET_PATH',
+      'x-vona-claim-code': 'SECRET_TOKEN',
+      'x-vona-claim-native-code': '999999',
+    };
+    await assert.rejects(sendTestClaimEvent(env, { type: 'status', status: 'running' }), {
+      message: 'Managed test allocation registration failed (HTTP 409)',
+    });
+    await new Promise<void>((resolve, reject) =>
+      server.close(error => (error ? reject(error) : resolve())),
+    );
+    await assert.rejects(sendTestClaimEvent(env, { type: 'status', status: 'running' }), {
+      message: 'Managed test allocation registration failed (transport)',
+    });
+  } finally {
+    if (server.listening) {
+      await new Promise<void>((resolve, reject) =>
+        server.close(error => (error ? reject(error) : resolve())),
+      );
+    }
   }
 });
 
