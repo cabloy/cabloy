@@ -53,6 +53,7 @@ async function run() {
   try {
     app = await createGeneralApp(VONA_DIR);
     if (
+      !app ||
       !app.meta.isTest ||
       app.meta.env.VONA_TEST_RUN_ID !== runId ||
       app.meta.env.SERVER_LISTEN_DISABLE !== 'true' ||
