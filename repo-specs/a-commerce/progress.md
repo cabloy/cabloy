@@ -60,6 +60,10 @@
 
 The current [presentation matrix](./presentation-contracts.md) records SKU View/List response-only `product: { id, title }`, Stock Balance/Audit current-scope `sku: { id, code }` labels, and SKU List readonly `available` with an authorized Adjust Stock row action. These were added after the original Phase-80 acceptance revisions. The inspected source at `9f4493bd8c` contains their implementation and test definitions, but this documentation-only review has not run those tests or linked a retained passing CI job for the later revisions. Keep the original WBS rows historically `verified` without upgrading their proof to cover follow-up changes; use the [follow-up evidence gate](./test-plan.md#later-source-follow-ups-current-shape-versus-retained-acceptance) for any new closure assertion. This is a proof gap, not a new WBS status or an authorization to change payment scope.
 
+## Cart contract maintenance (2026-10-23)
+
+The intrinsic zero-stock cart DTO defect is repaired on Basic main, with [scoped main evidence](./test-plan.md#cart-zero-stock-maintenance-on-basic-main-2026-10-23): 12/12 managed Cart/Catalog tests, isolated Trade generation with no tracked generated delta, paired Commerce artifact/dependency handoff, module types and changed-source style passed. This bounded maintenance does not change historical WBS verification or release status and adds no MCP-owned Commerce feature.
+
 ## Update Rules
 
 1. Update this file when a WBS item changes state, a blocker appears or clears, or durable acceptance evidence is recorded.

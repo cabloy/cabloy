@@ -29,6 +29,6 @@ export class DtoCartItem {
   @Api.field(v.required(), z.number().int().nonnegative())
   priceCents: number;
 
-  @Api.field(v.required(), z.number().int().positive())
+  @Api.field(v.required(), z.number().int().nonnegative())
   available: number;
 }
