@@ -7,7 +7,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { acquireTestLock, app } from 'vona-mock';
 import { fixtureIngressLimits } from 'vona-module-cabloy-mcp';
 
-import { closeDevTransport, devTransportSnapshot } from '../src/lib/devTransport.ts';
+import { closeDevTransport, devTransportSnapshot } from '../src/lib/mcpTransport.ts';
 import { ServiceCatalog } from '../src/service/catalog.ts';
 
 const version = '2026-07-28';

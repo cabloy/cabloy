@@ -24,8 +24,8 @@ function fail(res: ServerResponse, status: number, allow?: string) {
 
 const exchanges = new WeakMap<VonaApplication, ReturnType<typeof createBusinessTransport>>();
 
-/** Shared dev/test ingress; guarded business actions retain their own permissions. */
-export async function handleDevRequest(
+/** Shared-listener MCP ingress; guarded business actions retain their own permissions. */
+export async function handleMcpRequest(
   app: VonaApplication,
   req: IncomingMessage,
   res: ServerResponse,
