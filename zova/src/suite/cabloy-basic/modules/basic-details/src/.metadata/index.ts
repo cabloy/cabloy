@@ -1,6 +1,6 @@
 // eslint-disable
 /** service: begin */
-export * from '../service/detail.jsx';
+export * from '../service/detail.tsx';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
@@ -26,7 +26,7 @@ declare module 'zova-module-basic-details' {
 }
 /** service: end */
 /** service: begin */
-import { ServiceDetail } from '../service/detail.jsx';
+import type { ServiceDetail } from '../service/detail.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,12 +35,12 @@ declare module 'zova' {
 }
 /** service: end */
 /** controller: begin */
-export * from '../component/actionCreate/controller.jsx';
-export * from '../component/blockDetails/controller.jsx';
-export * from '../component/blockForm/controller.jsx';
-export * from '../component/blockTable/controller.jsx';
-export * from '../component/blockToolbarBulk/controller.jsx';
-export * from '../component/formFieldDetails/controller.jsx';
+export * from '../component/actionCreate/controller.tsx';
+export * from '../component/blockDetails/controller.tsx';
+export * from '../component/blockForm/controller.tsx';
+export * from '../component/blockTable/controller.tsx';
+export * from '../component/blockToolbarBulk/controller.tsx';
+export * from '../component/formFieldDetails/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -81,12 +81,12 @@ declare module 'zova-module-basic-details' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerActionCreate } from '../component/actionCreate/controller.jsx';
-import { ControllerBlockDetails } from '../component/blockDetails/controller.jsx';
-import { ControllerBlockForm } from '../component/blockForm/controller.jsx';
-import { ControllerBlockTable } from '../component/blockTable/controller.jsx';
-import { ControllerBlockToolbarBulk } from '../component/blockToolbarBulk/controller.jsx';
-import { ControllerFormFieldDetails } from '../component/formFieldDetails/controller.jsx';
+import type { ControllerActionCreate } from '../component/actionCreate/controller.tsx';
+import type { ControllerBlockDetails } from '../component/blockDetails/controller.tsx';
+import type { ControllerBlockForm } from '../component/blockForm/controller.tsx';
+import type { ControllerBlockTable } from '../component/blockTable/controller.tsx';
+import type { ControllerBlockToolbarBulk } from '../component/blockToolbarBulk/controller.tsx';
+import type { ControllerFormFieldDetails } from '../component/formFieldDetails/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -101,18 +101,18 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/actionCreate.js';
-import { ZActionCreate } from './component/actionCreate.js';
-export * from './component/blockDetails.js';
-import { ZBlockDetails } from './component/blockDetails.js';
-export * from './component/blockForm.js';
-import { ZBlockForm } from './component/blockForm.js';
-export * from './component/blockTable.js';
-import { ZBlockTable } from './component/blockTable.js';
-export * from './component/blockToolbarBulk.js';
-import { ZBlockToolbarBulk } from './component/blockToolbarBulk.js';
-export * from './component/formFieldDetails.js';
-import { ZFormFieldDetails } from './component/formFieldDetails.js';
+export * from './component/actionCreate.ts';
+import { ZActionCreate } from './component/actionCreate.ts';
+export * from './component/blockDetails.ts';
+import { ZBlockDetails } from './component/blockDetails.ts';
+export * from './component/blockForm.ts';
+import { ZBlockForm } from './component/blockForm.ts';
+export * from './component/blockTable.ts';
+import { ZBlockTable } from './component/blockTable.ts';
+export * from './component/blockToolbarBulk.ts';
+import { ZBlockToolbarBulk } from './component/blockToolbarBulk.ts';
+export * from './component/formFieldDetails.ts';
+import { ZFormFieldDetails } from './component/formFieldDetails.ts';
 export const components = {
   'actionCreate': ZActionCreate,
 'blockDetails': ZBlockDetails,
@@ -142,16 +142,16 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** tableCell: begin */
-export * from '../bean/tableCell.actionDelete.jsx';
-export * from '../bean/tableCell.actionOperationsRow.jsx';
-export * from '../bean/tableCell.actionUpdate.jsx';
-export * from '../bean/tableCell.actionView.jsx';
-export * from '../bean/tableCell.lineNumber.jsx';
-import { ITableCellOptionsActionDelete } from '../bean/tableCell.actionDelete.jsx';
-import { ITableCellOptionsActionOperationsRow } from '../bean/tableCell.actionOperationsRow.jsx';
-import { ITableCellOptionsActionUpdate } from '../bean/tableCell.actionUpdate.jsx';
-import { ITableCellOptionsActionView } from '../bean/tableCell.actionView.jsx';
-import { ITableCellOptionsLineNumber } from '../bean/tableCell.lineNumber.jsx';
+export * from '../bean/tableCell.actionDelete.tsx';
+export * from '../bean/tableCell.actionOperationsRow.tsx';
+export * from '../bean/tableCell.actionUpdate.tsx';
+export * from '../bean/tableCell.actionView.tsx';
+export * from '../bean/tableCell.lineNumber.tsx';
+import { ITableCellOptionsActionDelete } from '../bean/tableCell.actionDelete.tsx';
+import { ITableCellOptionsActionOperationsRow } from '../bean/tableCell.actionOperationsRow.tsx';
+import { ITableCellOptionsActionUpdate } from '../bean/tableCell.actionUpdate.tsx';
+import { ITableCellOptionsActionView } from '../bean/tableCell.actionView.tsx';
+import { ITableCellOptionsLineNumber } from '../bean/tableCell.lineNumber.tsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
 
@@ -224,11 +224,11 @@ declare module 'zova-module-basic-details' {
 }
 /** tableCell: end */
 /** tableCell: begin */
-import { TableCellActionDelete } from '../bean/tableCell.actionDelete.jsx';
-import { TableCellActionOperationsRow } from '../bean/tableCell.actionOperationsRow.jsx';
-import { TableCellActionUpdate } from '../bean/tableCell.actionUpdate.jsx';
-import { TableCellActionView } from '../bean/tableCell.actionView.jsx';
-import { TableCellLineNumber } from '../bean/tableCell.lineNumber.jsx';
+import type { TableCellActionDelete } from '../bean/tableCell.actionDelete.tsx';
+import type { TableCellActionOperationsRow } from '../bean/tableCell.actionOperationsRow.tsx';
+import type { TableCellActionUpdate } from '../bean/tableCell.actionUpdate.tsx';
+import type { TableCellActionView } from '../bean/tableCell.actionView.tsx';
+import type { TableCellLineNumber } from '../bean/tableCell.lineNumber.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -241,8 +241,8 @@ declare module 'zova' {
 }
 /** tableCell: end */
 /** command: begin */
-export * from '../bean/command.delete.jsx';
-import { ICommandOptionsDelete } from '../bean/command.delete.jsx';
+export * from '../bean/command.delete.tsx';
+import { ICommandOptionsDelete } from '../bean/command.delete.tsx';
 import 'zova-module-a-command';
 declare module 'zova-module-a-command' {
 
@@ -267,7 +267,7 @@ declare module 'zova-module-basic-details' {
 }
 /** command: end */
 /** command: begin */
-import { CommandDelete } from '../bean/command.delete.jsx';
+import type { CommandDelete } from '../bean/command.delete.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -276,7 +276,7 @@ declare module 'zova' {
 }
 /** command: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

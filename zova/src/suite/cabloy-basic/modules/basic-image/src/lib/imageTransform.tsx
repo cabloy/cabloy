@@ -4,7 +4,7 @@ import { nextTick, reactive } from 'vue';
 import { CircleStencil, Cropper, RectangleStencil } from 'vue-advanced-cropper';
 import { ClientOnly } from 'zova';
 
-import type { IImageTransformOptions } from '../types/image.js';
+import type { IImageTransformOptions } from '../types/image.ts';
 import 'vue-advanced-cropper/dist/style.css';
 
 export interface IImageResizeOptions {

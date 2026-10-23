@@ -1,7 +1,7 @@
 import type { IBeanRecord, Next, NextSync, OmitNever } from 'zova';
 
-import type { ServiceOnion } from '../service/onion_.js';
-import type { IOnionOptionsDeps, IOnionOptionsEnable, IOnionOptionsMatch } from './onion';
+import type { ServiceOnion } from '../service/onion_.ts';
+import type { IOnionOptionsDeps, IOnionOptionsEnable, IOnionOptionsMatch } from './onion.ts';
 
 export type AopActionNext<P, R> = R extends Promise<any> ? Next<P, Awaited<R>> : NextSync<P, R>;
 

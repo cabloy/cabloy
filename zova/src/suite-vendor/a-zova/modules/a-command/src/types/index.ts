@@ -1,3 +1,3 @@
-export * from './command.js';
-export * from './commandJsx.js';
-export * from './performCommand.js';
+export * from './command.ts';
+export * from './commandJsx.ts';
+export * from './performCommand.ts';

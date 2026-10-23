@@ -4,7 +4,7 @@ import type { IComponentOptions } from 'zova';
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
-import type { IBehaviorOptionsPerform, TypeBehaviorOnError } from '../../bean/behavior.perform.jsx';
+import type { IBehaviorOptionsPerform, TypeBehaviorOnError } from '../../bean/behavior.perform.tsx';
 
 export interface ControllerButtonProps extends Omit<ButtonHTMLAttributes, 'onError'> {
   loading?: boolean;

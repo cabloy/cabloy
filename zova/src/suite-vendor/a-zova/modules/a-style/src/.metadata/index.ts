@@ -1,6 +1,6 @@
 // eslint-disable
 /** bean: begin */
-export * from '../bean/bean.theme.js';
+export * from '../bean/bean.theme.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -22,7 +22,7 @@ declare module 'zova-module-a-style' {
 }
 /** bean: end */
 /** bean: begin */
-import { BeanTheme } from '../bean/bean.theme.js';
+import type { BeanTheme } from '../bean/bean.theme.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -31,11 +31,11 @@ declare module 'zova' {
 }
 /** bean: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** monkey: begin */
-export * from '../monkey.js';
+export * from '../monkey.ts';
 /** monkey: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig } from 'zova';

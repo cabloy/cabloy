@@ -3,7 +3,7 @@ import type { VNode } from 'vue';
 import { classes } from 'typestyle';
 import { nextTick, reactive } from 'vue';
 
-import { IImagePreviewItem, resolveImagePreviewUrl } from './preview.js';
+import { IImagePreviewItem, resolveImagePreviewUrl } from './preview.ts';
 
 interface IImagePreviewDialogState {
   activeIndex: number;

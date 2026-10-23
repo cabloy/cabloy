@@ -2,7 +2,7 @@ import type { BeanBase, BeanContainer, IMonkeyAppInitialize, IMonkeyBeanInit } f
 
 import { BeanSimple } from 'zova';
 
-import { BeanFetch } from './bean/bean.fetch.js';
+import { BeanFetch } from './bean/bean.fetch.ts';
 
 export class Monkey extends BeanSimple implements IMonkeyAppInitialize, IMonkeyBeanInit {
   async appInitialize() {

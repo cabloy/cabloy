@@ -2,9 +2,9 @@ import type { VNode } from 'vue';
 
 import { createVNode } from 'vue';
 
-import type { IIconRecord } from '../types/icon.js';
+import type { IIconRecord } from '../types/icon.ts';
 
-import { ZIcon } from '../.metadata/index.js';
+import { ZIcon } from '../.metadata/index.ts';
 
 export function $icon<K extends keyof IIconRecord>(
   name: K,

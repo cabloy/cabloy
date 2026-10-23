@@ -1,7 +1,7 @@
 // eslint-disable
 /** controller: begin */
-export * from '../component/formFieldSelect/controller.jsx';
-export * from '../component/select/controller.jsx';
+export * from '../component/formFieldSelect/controller.tsx';
+export * from '../component/select/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -22,8 +22,8 @@ declare module 'zova-module-basic-select' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerFormFieldSelect } from '../component/formFieldSelect/controller.jsx';
-import { ControllerSelect } from '../component/select/controller.jsx';
+import type { ControllerFormFieldSelect } from '../component/formFieldSelect/controller.tsx';
+import type { ControllerSelect } from '../component/select/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -34,10 +34,10 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/formFieldSelect.js';
-import { ZFormFieldSelect } from './component/formFieldSelect.js';
-export * from './component/select.js';
-import { ZSelect } from './component/select.js';
+export * from './component/formFieldSelect.ts';
+import { ZFormFieldSelect } from './component/formFieldSelect.ts';
+export * from './component/select.ts';
+import { ZSelect } from './component/select.ts';
 export const components = {
   'formFieldSelect': ZFormFieldSelect,
 'select': ZSelect,
@@ -55,8 +55,8 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** tableCell: begin */
-export * from '../bean/tableCell.select.jsx';
-import { ITableCellOptionsSelect } from '../bean/tableCell.select.jsx';
+export * from '../bean/tableCell.select.tsx';
+import { ITableCellOptionsSelect } from '../bean/tableCell.select.tsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
 
@@ -81,7 +81,7 @@ declare module 'zova-module-basic-select' {
 }
 /** tableCell: end */
 /** tableCell: begin */
-import { TableCellSelect } from '../bean/tableCell.select.jsx';
+import type { TableCellSelect } from '../bean/tableCell.select.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {

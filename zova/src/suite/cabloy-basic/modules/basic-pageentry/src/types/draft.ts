@@ -2,7 +2,7 @@ import type { SchemaObject } from 'openapi3-ts/oas31';
 import type { ModelPersistenceToken } from 'zova-module-a-model';
 import type { ISchemaObjectExtensionField, TypeFormSchemaScene } from 'zova-module-a-openapi';
 
-import type { ModelDraft } from '../model/draft.js';
+import type { ModelDraft } from '../model/draft.ts';
 
 export interface IDraftIdentity {
   context: ModelPersistenceToken;

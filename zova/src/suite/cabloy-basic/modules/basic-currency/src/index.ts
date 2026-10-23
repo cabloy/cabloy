@@ -1,2 +1,2 @@
-export * from './.metadata/index.js';
-export * from './lib/index.js';
+export * from './.metadata/index.ts';
+export * from './lib/index.ts';

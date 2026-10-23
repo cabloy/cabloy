@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerFormFieldDateProps } from '../../component/formFieldDate/controller.jsx';
+import type { ControllerFormFieldDateProps } from '../../component/formFieldDate/controller.tsx';
 
-import { ControllerFormFieldDate } from '../../component/formFieldDate/controller.jsx';
+import { ControllerFormFieldDate } from '../../component/formFieldDate/controller.tsx';
 export type ZFormFieldDateProps = {
   controllerRef?: (ref: ControllerFormFieldDate) => void;
 } & ControllerFormFieldDateProps;

@@ -103,6 +103,22 @@ test('Redis scans escaped literal prefixes, deletes bounded batches and leaves d
   assert.ok(fake.closed);
 });
 
+test('Redis scan work is independent of deletion batches and forwards empty-page cursors', async () => {
+  const fake = redis([]);
+  const cursors: string[] = [];
+  const counts: number[] = [];
+  fake.connection.scan = async (cursor, _match, _pattern, _count, size) => {
+    cursors.push(cursor);
+    counts.push(size);
+    return cursor === '0' ? ['42', []] : ['0', ['owned:1', 'owned:2', 'owned:3']];
+  };
+  await clearExactRedisPrefix(fake.connection, 'owned:', validate, { batchSize: 2 });
+  assert.deepEqual(cursors, ['0', '42']);
+  assert.deepEqual(counts, [1024, 1024]);
+  assert.deepEqual(fake.deleted, [['owned:1', 'owned:2'], ['owned:3']]);
+  assert.ok(fake.closed);
+});
+
 test('Redis rejects a foreign key before deleting any batch', async () => {
   const fake = redis(['owned:1', 'development:sentinel']);
   await assert.rejects(

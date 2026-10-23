@@ -21,13 +21,13 @@ import { ZSelect, ZSelectProps } from 'zova-module-basic-select';
 import { resourcePickerPageHostKey } from 'zova-module-rest-resource';
 import { ModelResource } from 'zova-module-rest-resource';
 
-import type { TypeResourcePickerSelectionMode } from '../../lib/resourcePicker.js';
+import type { TypeResourcePickerSelectionMode } from '../../lib/resourcePicker.ts';
 
 import {
   normalizeResourcePickerIds,
   resolveResourcePickerValue,
-} from '../../lib/resourcePicker.js';
-import { createResourcePickerPageHost } from '../../lib/resourcePickerPageHost.js';
+} from '../../lib/resourcePicker.ts';
+import { createResourcePickerPageHost } from '../../lib/resourcePickerPageHost.ts';
 
 export type TypeResourcePickerMode = 'select' | 'routedDialog';
 

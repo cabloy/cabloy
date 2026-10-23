@@ -9,7 +9,7 @@ import type {
   TypeOnionOptionsMatchRule,
 } from 'zova-module-a-bean';
 
-import type { BeanFetch } from '../bean/bean.fetch.js';
+import type { BeanFetch } from '../bean/bean.fetch.ts';
 
 export type NextInterceptorRequest = (config?: AxiosRequestConfig) => Promise<AxiosRequestConfig>;
 export type NextInterceptorResponse = (response?: AxiosResponse) => Promise<AxiosResponse>;

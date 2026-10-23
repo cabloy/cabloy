@@ -9,7 +9,7 @@ import { VNode } from 'vue';
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
-import { filterDetailsBulkActions } from '../../lib/detailsPermissions.js';
+import { filterDetailsBulkActions } from '../../lib/detailsPermissions.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {

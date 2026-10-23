@@ -1,8 +1,8 @@
 import type { IModuleRoute } from 'zova-module-a-router';
 
-import { ZPageLogin } from './.metadata/page/login.js';
-import { ZPagePasswordResetRequest } from './.metadata/page/passwordResetRequest.js';
-import { ZPageRegister } from './.metadata/page/register.js';
+import { ZPageLogin } from './.metadata/page/login.ts';
+import { ZPagePasswordResetRequest } from './.metadata/page/passwordResetRequest.ts';
+import { ZPageRegister } from './.metadata/page/register.ts';
 
 export const routes: IModuleRoute[] = [
   //

@@ -1,7 +1,7 @@
 import { BeanRenderBase, SymbolController } from 'zova';
 import { Render } from 'zova-module-a-bean';
 
-import { IFormFieldRenderContext } from '../../types/formField.js';
+import { IFormFieldRenderContext } from '../../types/formField.ts';
 
 @Render()
 export class RenderFormField<TParentData extends {} = {}> extends BeanRenderBase {

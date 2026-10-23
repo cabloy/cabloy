@@ -2,9 +2,9 @@ import * as ModuleInfo from '@cabloy/module-info';
 import { RouteLocationNormalizedLoadedGeneric } from '@cabloy/vue-router';
 import { Service } from 'zova-module-a-bean';
 
-import { BeanRouter } from '../bean/bean.router.js';
-import { BeanRouterGuardsBase } from '../bean/bean.routerGuardsBase.js';
-import { NavigationDirection, NavigationInformation, NavigationType } from '../types/router.js';
+import { BeanRouter } from '../bean/bean.router.ts';
+import { BeanRouterGuardsBase } from '../bean/bean.routerGuardsBase.ts';
+import { NavigationDirection, NavigationInformation, NavigationType } from '../types/router.ts';
 
 @Service()
 export class ServiceRouterGuards extends BeanRouterGuardsBase {

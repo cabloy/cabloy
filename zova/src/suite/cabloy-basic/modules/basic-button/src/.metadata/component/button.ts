@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerButtonProps } from '../../component/button/controller.jsx';
+import type { ControllerButtonProps } from '../../component/button/controller.tsx';
 
-import { ControllerButton } from '../../component/button/controller.jsx';
+import { ControllerButton } from '../../component/button/controller.tsx';
 export type ZButtonProps = {
   controllerRef?: (ref: ControllerButton) => void;
 } & ControllerButtonProps;

@@ -8,7 +8,7 @@ import {
   IRouteViewRouteMeta,
 } from 'zova-module-a-router';
 
-import type { ModelTabs } from '../../model/tabs.js';
+import type { ModelTabs } from '../../model/tabs.ts';
 
 export interface ControllerRouterViewTabsProps extends IRouterViewPropsBase {}
 

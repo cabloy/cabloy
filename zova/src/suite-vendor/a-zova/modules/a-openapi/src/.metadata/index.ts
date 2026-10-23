@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/sdk.js';
-import { IModelOptionsSdk } from '../model/sdk.js';
+export * from '../model/sdk.ts';
+import { IModelOptionsSdk } from '../model/sdk.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-a-openapi' {
 }
 /** model: end */
 /** model: begin */
-import { ModelSdk } from '../model/sdk.js';
+import type { ModelSdk } from '../model/sdk.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** sys: begin */
-export * from '../bean/sys.sdk.js';
+export * from '../bean/sys.sdk.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-a-openapi' {
 }
 /** sys: end */
 /** sys: begin */
-import { SysSdk } from '../bean/sys.sdk.js';
+import type { SysSdk } from '../bean/sys.sdk.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -66,11 +66,11 @@ declare module 'zova' {
 }
 /** sys: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** monkey: begin */
-export * from '../monkey.js';
+export * from '../monkey.ts';
 /** monkey: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig } from 'zova';

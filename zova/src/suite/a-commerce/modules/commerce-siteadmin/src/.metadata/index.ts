@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/operator.js';
-import { IModelOptionsOperator } from '../model/operator.js';
+export * from '../model/operator.ts';
+import { IModelOptionsOperator } from '../model/operator.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-commerce-siteadmin' {
 }
 /** model: end */
 /** model: begin */
-import { ModelOperator } from '../model/operator.js';
+import type { ModelOperator } from '../model/operator.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/commerceSiteadminOperator.js';
+export * from '../api/commerceSiteadminOperator.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-commerce-siteadmin' {
 }
 /** api: end */
 /** api: begin */
-import { ApiCommerceSiteadminOperator } from '../api/commerceSiteadminOperator.js';
+import type { ApiCommerceSiteadminOperator } from '../api/commerceSiteadminOperator.ts';
 export interface IModuleApi {
   'commerceSiteadminOperator': ApiCommerceSiteadminOperator;
 }
@@ -72,10 +72,10 @@ declare module 'zova' {
 }
 /** api: end */
 /** openapi: begin */
-export * from '../api/openapi/index.js';
+export * from '../api/openapi/index.ts';
 /** openapi: end */
 /** apiSchema: begin */
-export * from '../apiSchema/commerceSiteadminOperator.js';
+export * from '../apiSchema/commerceSiteadminOperator.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -97,7 +97,7 @@ declare module 'zova-module-commerce-siteadmin' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import { ApiSchemaCommerceSiteadminOperator } from '../apiSchema/commerceSiteadminOperator.js';
+import type { ApiSchemaCommerceSiteadminOperator } from '../apiSchema/commerceSiteadminOperator.ts';
 export interface IModuleApiSchema {
   'commerceSiteadminOperator': ApiSchemaCommerceSiteadminOperator;
 }
@@ -112,7 +112,7 @@ declare module 'zova' {
 }
 /** apiSchema: end */
 /** controller: begin */
-export * from '../page/dashboard/controller.jsx';
+export * from '../page/dashboard/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -128,7 +128,7 @@ declare module 'zova-module-commerce-siteadmin' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerPageDashboard } from '../page/dashboard/controller.jsx';
+import type { ControllerPageDashboard } from '../page/dashboard/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -137,8 +137,8 @@ declare module 'zova' {
 }
 /** controller: end */
 /** pages: begin */
-export * from './page/dashboard.js';
-export * from '../routes.js';
+export * from './page/dashboard.ts';
+export * from '../routes.ts';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
@@ -161,7 +161,7 @@ declare module 'zova-module-commerce-siteadmin' {
 /** pages: end */
 
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

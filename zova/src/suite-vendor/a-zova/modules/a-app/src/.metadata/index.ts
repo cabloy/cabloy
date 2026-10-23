@@ -1,6 +1,6 @@
 // eslint-disable
 /** controller: begin */
-export * from '../component/app/controller.jsx';
+export * from '../component/app/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -16,7 +16,7 @@ declare module 'zova-module-a-app' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerApp } from '../component/app/controller.jsx';
+import type { ControllerApp } from '../component/app/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -26,8 +26,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/app.js';
-import { ZApp } from './component/app.js';
+export * from './component/app.ts';
+import { ZApp } from './component/app.ts';
 export const components = {
   'app': ZApp,
 };
@@ -42,8 +42,8 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig } from 'zova';

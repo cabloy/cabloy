@@ -5,7 +5,7 @@ import {
   codeBlockLanguages,
   getCodeBlockLanguage,
   isCodeBlockLanguage,
-} from '../../src/lib/codeBlockLanguages.js';
+} from '../../src/lib/codeBlockLanguages.ts';
 
 test('Code block languages contain stable unique identifiers', () => {
   assert.equal(new Set(codeBlockLanguages).size, codeBlockLanguages.length);

@@ -3,7 +3,7 @@ import type { IOpenapiPermissionActionRbac } from 'zova-module-a-openapi';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { matchPermissionAction } from '../../src/lib/permissionActionMatcher.js';
+import { matchPermissionAction } from '../../src/lib/permissionActionMatcher.ts';
 
 const action = (
   matcher: IOpenapiPermissionActionRbac['matcher'],

@@ -15,10 +15,10 @@ import type {
   ZovaApplication,
 } from 'zova';
 
-import type { BeanRouter } from '../bean/bean.router.js';
-import type { BeanRouterViewBase } from '../lib/routerViewBase.js';
-import type { IPageHost } from './pageHost.js';
-import type { IGetPagePathOptions, IGotoPageOptions } from './utils.js';
+import type { BeanRouter } from '../bean/bean.router.ts';
+import type { BeanRouterViewBase } from '../lib/routerViewBase.tsx';
+import type { IPageHost } from './pageHost.ts';
+import type { IGetPagePathOptions, IGotoPageOptions } from './utils.ts';
 import 'vue-router';
 
 export type Lazy<T> = () => Promise<T>;

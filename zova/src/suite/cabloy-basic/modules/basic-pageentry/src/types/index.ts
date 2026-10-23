@@ -1,1 +1,1 @@
-export * from './pageEntry.js';
+export * from './pageEntry.ts';

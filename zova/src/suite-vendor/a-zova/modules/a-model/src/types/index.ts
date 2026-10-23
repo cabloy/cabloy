@@ -1,2 +1,2 @@
-export * from './model.js';
-export * from './query.js';
+export * from './model.ts';
+export * from './query.ts';

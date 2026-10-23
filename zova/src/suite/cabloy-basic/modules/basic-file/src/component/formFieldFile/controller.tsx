@@ -10,15 +10,15 @@ import { Controller } from 'zova-module-a-bean';
 import { ZFormField } from 'zova-module-a-form';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 
-import type { IFilePreviewItem } from '../../types/file.js';
+import type { IFilePreviewItem } from '../../types/file.ts';
 
 import {
   formatFileDate,
   formatFileSize,
   inferFileRelationName,
   resolveFileDownloadUrl,
-} from '../../lib/index.js';
-import { ModelFile } from '../../model/file.js';
+} from '../../lib/index.ts';
+import { ModelFile } from '../../model/file.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {

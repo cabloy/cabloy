@@ -9,7 +9,7 @@ import {
   draftBaselineSignature,
   projectDraftValues,
   restoreDraftValues,
-} from '../../src/lib/draftSchema.js';
+} from '../../src/lib/draftSchema.ts';
 
 const dateTime = { type: 'string', format: 'date-time' } satisfies SchemaObject;
 const iso = '2026-10-15T08:30:00.000Z';

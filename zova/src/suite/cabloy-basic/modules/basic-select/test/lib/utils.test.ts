@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { isSelectValueEqual } from '../../src/lib/utils.js';
+import { isSelectValueEqual } from '../../src/lib/utils.ts';
 
 test('Select values preserve standard string matching', () => {
   assert.equal(isSelectValueEqual(7, '7'), true);

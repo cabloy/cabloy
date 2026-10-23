@@ -1,7 +1,7 @@
 // eslint-disable
 /** controller: begin */
-export * from '../component/formFieldMarkdown/controller.jsx';
-export * from '../component/markdownHtml/controller.jsx';
+export * from '../component/formFieldMarkdown/controller.tsx';
+export * from '../component/markdownHtml/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -22,8 +22,8 @@ declare module 'zova-module-basic-markdown' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerFormFieldMarkdown } from '../component/formFieldMarkdown/controller.jsx';
-import { ControllerMarkdownHtml } from '../component/markdownHtml/controller.jsx';
+import type { ControllerFormFieldMarkdown } from '../component/formFieldMarkdown/controller.tsx';
+import type { ControllerMarkdownHtml } from '../component/markdownHtml/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -34,10 +34,10 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/formFieldMarkdown.js';
-import { ZFormFieldMarkdown } from './component/formFieldMarkdown.js';
-export * from './component/markdownHtml.js';
-import { ZMarkdownHtml } from './component/markdownHtml.js';
+export * from './component/formFieldMarkdown.ts';
+import { ZFormFieldMarkdown } from './component/formFieldMarkdown.ts';
+export * from './component/markdownHtml.ts';
+import { ZMarkdownHtml } from './component/markdownHtml.ts';
 export const components = {
   'formFieldMarkdown': ZFormFieldMarkdown,
 'markdownHtml': ZMarkdownHtml,
@@ -55,8 +55,8 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** render: begin */
-export * from '../component/formFieldMarkdown/render.jsx';
-export * from '../component/markdownHtml/render.jsx';
+export * from '../component/formFieldMarkdown/render.tsx';
+export * from '../component/markdownHtml/render.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -77,8 +77,8 @@ declare module 'zova-module-basic-markdown' {
 }
 /** render: end */
 /** render: begin */
-import { RenderFormFieldMarkdown } from '../component/formFieldMarkdown/render.jsx';
-import { RenderMarkdownHtml } from '../component/markdownHtml/render.jsx';
+import type { RenderFormFieldMarkdown } from '../component/formFieldMarkdown/render.tsx';
+import type { RenderMarkdownHtml } from '../component/markdownHtml/render.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -88,8 +88,8 @@ declare module 'zova' {
 }
 /** render: end */
 /** style: begin */
-export * from '../component/formFieldMarkdown/style.js';
-export * from '../component/markdownHtml/style.js';
+export * from '../component/formFieldMarkdown/style.ts';
+export * from '../component/markdownHtml/style.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -110,8 +110,8 @@ declare module 'zova-module-basic-markdown' {
 }
 /** style: end */
 /** style: begin */
-import { StyleFormFieldMarkdown } from '../component/formFieldMarkdown/style.js';
-import { StyleMarkdownHtml } from '../component/markdownHtml/style.js';
+import type { StyleFormFieldMarkdown } from '../component/formFieldMarkdown/style.ts';
+import type { StyleMarkdownHtml } from '../component/markdownHtml/style.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -121,7 +121,7 @@ declare module 'zova' {
 }
 /** style: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

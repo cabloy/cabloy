@@ -1,10 +1,10 @@
 import type { TableIdentity } from 'table-identity';
 
-import type { TypeFormScene } from './formMeta.js';
-import type { IResourceFormActionRowNameRecord } from './resource/formActionRow.js';
-import type { IResourceTableActionRecord } from './resource/tableAction.js';
-import type { IResourceTableActionBulkNameRecord } from './resource/tableActionBulk.js';
-import type { IResourceTableActionRowNameRecord } from './resource/tableActionRow.js';
+import type { TypeFormScene } from './formMeta.ts';
+import type { IResourceFormActionRowNameRecord } from './resource/formActionRow.ts';
+import type { IResourceTableActionRecord } from './resource/tableAction.ts';
+import type { IResourceTableActionBulkNameRecord } from './resource/tableActionBulk.ts';
+import type { IResourceTableActionRowNameRecord } from './resource/tableActionRow.ts';
 
 export interface IOpenapiPermissionActionMatcherRule {
   field: string;

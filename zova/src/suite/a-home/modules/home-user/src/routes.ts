@@ -1,9 +1,9 @@
 import { IModuleRoute } from 'zova-module-a-router';
 
-import { ZPageAccount } from './.metadata/page/account.js';
-import { ZPageActivation } from './.metadata/page/activation.js';
-import { ZPagePasswordReset } from './.metadata/page/passwordReset.js';
-import { ZPagePasswordSet } from './.metadata/page/passwordSet.js';
+import { ZPageAccount } from './.metadata/page/account.ts';
+import { ZPageActivation } from './.metadata/page/activation.ts';
+import { ZPagePasswordReset } from './.metadata/page/passwordReset.ts';
+import { ZPagePasswordSet } from './.metadata/page/passwordSet.ts';
 
 export const routes: IModuleRoute[] = [
   {

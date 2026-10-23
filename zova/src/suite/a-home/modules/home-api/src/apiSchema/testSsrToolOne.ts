@@ -6,7 +6,7 @@ import { ApiSchema } from 'zova-module-a-api';
 import {
   ApiApiTestSsrToolOnetestGetPath,
   ApiApiTestSsrToolOnetestPath,
-} from '../api/testSsrToolOne.js';
+} from '../api/testSsrToolOne.ts';
 
 @ApiSchema()
 export class ApiSchemaTestSsrToolOne extends BeanBase {

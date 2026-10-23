@@ -1,6 +1,6 @@
 import { $protocolKey } from 'zova';
 
-import type { IFilePreviewItem } from '../types/file.js';
+import type { IFilePreviewItem } from '../types/file.ts';
 
 export function inferFileRelationName(fieldName?: string, relationName?: string) {
   if (relationName) return relationName;

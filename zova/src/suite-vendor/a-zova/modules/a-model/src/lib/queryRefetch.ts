@@ -1,6 +1,6 @@
 import type { Query, RefetchOptions } from '@tanstack/query-core';
 
-import type { QueryRefetchOptions } from '../types/query.js';
+import type { QueryRefetchOptions } from '../types/query.ts';
 
 type QueryRefetch<TResult> = (options?: RefetchOptions) => Promise<TResult>;
 type QueryRefetchWithFetchOptions<TResult> = (

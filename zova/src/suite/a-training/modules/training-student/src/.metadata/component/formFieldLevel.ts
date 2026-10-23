@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerFormFieldLevelProps } from '../../component/formFieldLevel/controller.jsx';
+import type { ControllerFormFieldLevelProps } from '../../component/formFieldLevel/controller.tsx';
 
-import { ControllerFormFieldLevel } from '../../component/formFieldLevel/controller.jsx';
+import { ControllerFormFieldLevel } from '../../component/formFieldLevel/controller.tsx';
 export type ZFormFieldLevelProps = {
   controllerRef?: (ref: ControllerFormFieldLevel) => void;
 } & ControllerFormFieldLevelProps;

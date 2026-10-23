@@ -6,7 +6,7 @@ import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZButton } from 'zova-module-basic-button';
 import { ZPage } from 'zova-module-home-base';
 
-import { ModelCart } from '../../model/cart.js';
+import { ModelCart } from '../../model/cart.ts';
 
 export const ControllerPageCartSchemaParams = z.object({});
 export const ControllerPageCartSchemaQuery = z.object({});

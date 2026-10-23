@@ -4,8 +4,8 @@ import type {
   TypeTableCellRenderComponent,
 } from 'zova-module-a-openapi';
 
-import type { ControllerTable } from '../component/table/controller.jsx';
-import type { TypeTableCellRender } from './tableColumn.js';
+import type { ControllerTable } from '../component/table/controller.tsx';
+import type { TypeTableCellRender } from './tableColumn.ts';
 
 export type TypeTable<TData extends {} = {}> = ReturnType<typeof useVueTable<TData>>;
 

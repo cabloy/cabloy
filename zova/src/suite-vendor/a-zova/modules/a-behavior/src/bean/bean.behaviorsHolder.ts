@@ -3,11 +3,11 @@ import { BeanBase, deepEqual, disposeInstance, Use } from 'zova';
 import { Bean } from 'zova-module-a-bean';
 import { Log } from 'zova-module-a-logger';
 
-import type { IBehaviors, IBehaviorTag } from '../types/behavior.js';
+import type { IBehaviors, IBehaviorTag } from '../types/behavior.ts';
 
-import { $UseBehavior } from '../lib/useBehavior.js';
-import { ServiceComposer } from '../service/composer.js';
-import { BeanBehavior } from './bean.behavior.js';
+import { $UseBehavior } from '../lib/useBehavior.ts';
+import { ServiceComposer } from '../service/composer.ts';
+import { BeanBehavior } from './bean.behavior.ts';
 
 export interface IBehaviorsHolderOptions {
   behaviors: IBehaviors | (() => IBehaviors);

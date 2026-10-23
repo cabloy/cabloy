@@ -3,7 +3,7 @@ import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZPage } from 'zova-module-home-base';
 
-import { ModelAccount } from '../../model/account.js';
+import { ModelAccount } from '../../model/account.ts';
 
 export const ControllerPageActivationSchemaQuery = z.object({
   token: z.preprocess(

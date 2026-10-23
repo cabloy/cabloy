@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/test.js';
-import { IModelOptionsTest } from '../model/test.js';
+export * from '../model/test.ts';
+import { IModelOptionsTest } from '../model/test.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-demo-basic' {
 }
 /** model: end */
 /** model: begin */
-import type { ModelTest } from '../model/test.js';
+import type { ModelTest } from '../model/test.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,27 +35,27 @@ declare module 'zova' {
 }
 /** model: end */
 /** controller: begin */
-export * from '../component/actionView/controller.jsx';
-export * from '../component/card/controller.jsx';
-export * from '../component/controllerBoundaryProbe/controller.jsx';
-export * from '../component/controllerBoundaryProbeInline/controller.jsx';
-export * from '../component/controllerBoundaryProbeOverride/controller.jsx';
-export * from '../component/formFieldTest/controller.jsx';
-export * from '../component/tableCellTest/controller.jsx';
-export * from '../page/component/controller.jsx';
-export * from '../page/controllerBoundary/controller.jsx';
-export * from '../page/locale/controller.jsx';
-export * from '../page/routeParams/controller.jsx';
-export * from '../page/routeQuery/controller.jsx';
-export * from '../page/routeQueryB/controller.jsx';
-export * from '../page/routedDialog/controller.jsx';
-export * from '../page/routedDialogDetail/controller.jsx';
-export * from '../page/routedDialogEntry/controller.jsx';
-export * from '../page/state/controller.jsx';
-export * from '../page/style/controller.jsx';
-export * from '../page/toolMinimal/controller.jsx';
-export * from '../page/toolOne/controller.jsx';
-export * from '../page/toolTwo/controller.jsx';
+export * from '../component/actionView/controller.tsx';
+export * from '../component/card/controller.tsx';
+export * from '../component/controllerBoundaryProbe/controller.tsx';
+export * from '../component/controllerBoundaryProbeInline/controller.tsx';
+export * from '../component/controllerBoundaryProbeOverride/controller.tsx';
+export * from '../component/formFieldTest/controller.tsx';
+export * from '../component/tableCellTest/controller.tsx';
+export * from '../page/component/controller.tsx';
+export * from '../page/controllerBoundary/controller.tsx';
+export * from '../page/locale/controller.tsx';
+export * from '../page/routeParams/controller.tsx';
+export * from '../page/routeQuery/controller.tsx';
+export * from '../page/routeQueryB/controller.tsx';
+export * from '../page/routedDialog/controller.tsx';
+export * from '../page/routedDialogDetail/controller.tsx';
+export * from '../page/routedDialogEntry/controller.tsx';
+export * from '../page/state/controller.tsx';
+export * from '../page/style/controller.tsx';
+export * from '../page/toolMinimal/controller.tsx';
+export * from '../page/toolOne/controller.tsx';
+export * from '../page/toolTwo/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -171,27 +171,27 @@ declare module 'zova-module-demo-basic' {
 }
 /** controller: end */
 /** controller: begin */
-import type { ControllerActionView } from '../component/actionView/controller.jsx';
-import type { ControllerCard } from '../component/card/controller.jsx';
-import type { ControllerControllerBoundaryProbe } from '../component/controllerBoundaryProbe/controller.jsx';
-import type { ControllerControllerBoundaryProbeInline } from '../component/controllerBoundaryProbeInline/controller.jsx';
-import type { ControllerControllerBoundaryProbeOverride } from '../component/controllerBoundaryProbeOverride/controller.jsx';
-import type { ControllerFormFieldTest } from '../component/formFieldTest/controller.jsx';
-import type { ControllerTableCellTest } from '../component/tableCellTest/controller.jsx';
-import type { ControllerPageComponent } from '../page/component/controller.jsx';
-import type { ControllerPageControllerBoundary } from '../page/controllerBoundary/controller.jsx';
-import type { ControllerPageLocale } from '../page/locale/controller.jsx';
-import type { ControllerPageRouteParams } from '../page/routeParams/controller.jsx';
-import type { ControllerPageRouteQuery } from '../page/routeQuery/controller.jsx';
-import type { ControllerPageRouteQueryB } from '../page/routeQueryB/controller.jsx';
-import type { ControllerPageRoutedDialog } from '../page/routedDialog/controller.jsx';
-import type { ControllerPageRoutedDialogDetail } from '../page/routedDialogDetail/controller.jsx';
-import type { ControllerPageRoutedDialogEntry } from '../page/routedDialogEntry/controller.jsx';
-import type { ControllerPageState } from '../page/state/controller.jsx';
-import type { ControllerPageStyle } from '../page/style/controller.jsx';
-import type { ControllerPageToolMinimal } from '../page/toolMinimal/controller.jsx';
-import type { ControllerPageToolOne } from '../page/toolOne/controller.jsx';
-import type { ControllerPageToolTwo } from '../page/toolTwo/controller.jsx';
+import type { ControllerActionView } from '../component/actionView/controller.tsx';
+import type { ControllerCard } from '../component/card/controller.tsx';
+import type { ControllerControllerBoundaryProbe } from '../component/controllerBoundaryProbe/controller.tsx';
+import type { ControllerControllerBoundaryProbeInline } from '../component/controllerBoundaryProbeInline/controller.tsx';
+import type { ControllerControllerBoundaryProbeOverride } from '../component/controllerBoundaryProbeOverride/controller.tsx';
+import type { ControllerFormFieldTest } from '../component/formFieldTest/controller.tsx';
+import type { ControllerTableCellTest } from '../component/tableCellTest/controller.tsx';
+import type { ControllerPageComponent } from '../page/component/controller.tsx';
+import type { ControllerPageControllerBoundary } from '../page/controllerBoundary/controller.tsx';
+import type { ControllerPageLocale } from '../page/locale/controller.tsx';
+import type { ControllerPageRouteParams } from '../page/routeParams/controller.tsx';
+import type { ControllerPageRouteQuery } from '../page/routeQuery/controller.tsx';
+import type { ControllerPageRouteQueryB } from '../page/routeQueryB/controller.tsx';
+import type { ControllerPageRoutedDialog } from '../page/routedDialog/controller.tsx';
+import type { ControllerPageRoutedDialogDetail } from '../page/routedDialogDetail/controller.tsx';
+import type { ControllerPageRoutedDialogEntry } from '../page/routedDialogEntry/controller.tsx';
+import type { ControllerPageState } from '../page/state/controller.tsx';
+import type { ControllerPageStyle } from '../page/style/controller.tsx';
+import type { ControllerPageToolMinimal } from '../page/toolMinimal/controller.tsx';
+import type { ControllerPageToolOne } from '../page/toolOne/controller.tsx';
+import type { ControllerPageToolTwo } from '../page/toolTwo/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -220,29 +220,29 @@ declare module 'zova' {
 }
 /** controller: end */
 /** pages: begin */
-export * from './page/component.js';
-export * from './page/controllerBoundary.js';
-import { NSControllerPageControllerBoundary } from './page/controllerBoundary.js';
-export * from './page/locale.js';
-export * from './page/routeParams.js';
-import { NSControllerPageRouteParams } from './page/routeParams.js';
-export * from './page/routeQuery.js';
-import { NSControllerPageRouteQuery } from './page/routeQuery.js';
-export * from './page/routeQueryB.js';
-import { NSControllerPageRouteQueryB } from './page/routeQueryB.js';
-export * from './page/routedDialog.js';
-export * from './page/routedDialogDetail.js';
-import { NSControllerPageRoutedDialogDetail } from './page/routedDialogDetail.js';
-export * from './page/routedDialogEntry.js';
-import { NSControllerPageRoutedDialogEntry } from './page/routedDialogEntry.js';
-export * from './page/state.js';
-export * from './page/style.js';
-export * from './page/toolMinimal.js';
-export * from './page/toolOne.js';
-import { NSControllerPageToolOne } from './page/toolOne.js';
-export * from './page/toolTwo.js';
-import { NSControllerPageToolTwo } from './page/toolTwo.js';
-export * from '../routes.js';
+export * from './page/component.ts';
+export * from './page/controllerBoundary.ts';
+import { NSControllerPageControllerBoundary } from './page/controllerBoundary.ts';
+export * from './page/locale.ts';
+export * from './page/routeParams.ts';
+import { NSControllerPageRouteParams } from './page/routeParams.ts';
+export * from './page/routeQuery.ts';
+import { NSControllerPageRouteQuery } from './page/routeQuery.ts';
+export * from './page/routeQueryB.ts';
+import { NSControllerPageRouteQueryB } from './page/routeQueryB.ts';
+export * from './page/routedDialog.ts';
+export * from './page/routedDialogDetail.ts';
+import { NSControllerPageRoutedDialogDetail } from './page/routedDialogDetail.ts';
+export * from './page/routedDialogEntry.ts';
+import { NSControllerPageRoutedDialogEntry } from './page/routedDialogEntry.ts';
+export * from './page/state.ts';
+export * from './page/style.ts';
+export * from './page/toolMinimal.ts';
+export * from './page/toolOne.ts';
+import { NSControllerPageToolOne } from './page/toolOne.ts';
+export * from './page/toolTwo.ts';
+import { NSControllerPageToolTwo } from './page/toolTwo.ts';
+export * from '../routes.ts';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
@@ -339,20 +339,20 @@ $query: NSControllerPageToolTwo.QueryOutput;
 /** pages: end */
 
 /** components: begin */
-export * from './component/actionView.js';
-import { ZActionView } from './component/actionView.js';
-export * from './component/card.js';
-import { ZCard } from './component/card.js';
-export * from './component/controllerBoundaryProbe.js';
-import { ZControllerBoundaryProbe } from './component/controllerBoundaryProbe.js';
-export * from './component/controllerBoundaryProbeInline.js';
-import { ZControllerBoundaryProbeInline } from './component/controllerBoundaryProbeInline.js';
-export * from './component/controllerBoundaryProbeOverride.js';
-import { ZControllerBoundaryProbeOverride } from './component/controllerBoundaryProbeOverride.js';
-export * from './component/formFieldTest.js';
-import { ZFormFieldTest } from './component/formFieldTest.js';
-export * from './component/tableCellTest.js';
-import { ZTableCellTest } from './component/tableCellTest.js';
+export * from './component/actionView.ts';
+import { ZActionView } from './component/actionView.ts';
+export * from './component/card.ts';
+import { ZCard } from './component/card.ts';
+export * from './component/controllerBoundaryProbe.ts';
+import { ZControllerBoundaryProbe } from './component/controllerBoundaryProbe.ts';
+export * from './component/controllerBoundaryProbeInline.ts';
+import { ZControllerBoundaryProbeInline } from './component/controllerBoundaryProbeInline.ts';
+export * from './component/controllerBoundaryProbeOverride.ts';
+import { ZControllerBoundaryProbeOverride } from './component/controllerBoundaryProbeOverride.ts';
+export * from './component/formFieldTest.ts';
+import { ZFormFieldTest } from './component/formFieldTest.ts';
+export * from './component/tableCellTest.ts';
+import { ZTableCellTest } from './component/tableCellTest.ts';
 export const components = {
   'actionView': ZActionView,
 'card': ZCard,
@@ -385,7 +385,7 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** render: begin */
-export * from '../page/toolOne/render.jsx';
+export * from '../page/toolOne/render.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -401,7 +401,7 @@ declare module 'zova-module-demo-basic' {
 }
 /** render: end */
 /** render: begin */
-import type { RenderPageToolOne } from '../page/toolOne/render.jsx';
+import type { RenderPageToolOne } from '../page/toolOne/render.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -410,8 +410,8 @@ declare module 'zova' {
 }
 /** render: end */
 /** behavior: begin */
-export * from '../bean/behavior.formFieldLayout.jsx';
-import { IBehaviorOptionsFormFieldLayout } from '../bean/behavior.formFieldLayout.jsx';
+export * from '../bean/behavior.formFieldLayout.tsx';
+import { IBehaviorOptionsFormFieldLayout } from '../bean/behavior.formFieldLayout.tsx';
 import 'zova-module-a-behavior';
 declare module 'zova-module-a-behavior' {
 
@@ -436,7 +436,7 @@ declare module 'zova-module-demo-basic' {
 }
 /** behavior: end */
 /** behavior: begin */
-import type { BehaviorFormFieldLayout } from '../bean/behavior.formFieldLayout.jsx';
+import type { BehaviorFormFieldLayout } from '../bean/behavior.formFieldLayout.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -464,8 +464,8 @@ declare module 'vue/jsx-runtime' {
 }
 /** behaviors: end */
 /** tableCell: begin */
-export * from '../bean/tableCell.test.jsx';
-import { ITableCellOptionsTest } from '../bean/tableCell.test.jsx';
+export * from '../bean/tableCell.test.tsx';
+import { ITableCellOptionsTest } from '../bean/tableCell.test.tsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
 
@@ -490,7 +490,7 @@ declare module 'zova-module-demo-basic' {
 }
 /** tableCell: end */
 /** tableCell: begin */
-import type { TableCellTest } from '../bean/tableCell.test.jsx';
+import type { TableCellTest } from '../bean/tableCell.test.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -499,7 +499,7 @@ declare module 'zova' {
 }
 /** tableCell: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

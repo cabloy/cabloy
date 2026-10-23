@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/draft.js';
-import { IModelOptionsDraft } from '../model/draft.js';
+export * from '../model/draft.ts';
+import { IModelOptionsDraft } from '../model/draft.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-basic-pageentry' {
 }
 /** model: end */
 /** model: begin */
-import type { ModelDraft } from '../model/draft.js';
+import type { ModelDraft } from '../model/draft.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** bean: begin */
-export * from '../bean/bean.draftCoordinator.js';
+export * from '../bean/bean.draftCoordinator.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-basic-pageentry' {
 }
 /** bean: end */
 /** bean: begin */
-import type { BeanDraftCoordinator } from '../bean/bean.draftCoordinator.js';
+import type { BeanDraftCoordinator } from '../bean/bean.draftCoordinator.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -66,9 +66,9 @@ declare module 'zova' {
 }
 /** bean: end */
 /** controller: begin */
-export * from '../component/blockForm/controller.jsx';
-export * from '../component/blockPageEntry/controller.jsx';
-export * from '../component/blockToolbarRow/controller.jsx';
+export * from '../component/blockForm/controller.tsx';
+export * from '../component/blockPageEntry/controller.tsx';
+export * from '../component/blockToolbarRow/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -94,9 +94,9 @@ declare module 'zova-module-basic-pageentry' {
 }
 /** controller: end */
 /** controller: begin */
-import type { ControllerBlockForm } from '../component/blockForm/controller.jsx';
-import type { ControllerBlockPageEntry } from '../component/blockPageEntry/controller.jsx';
-import type { ControllerBlockToolbarRow } from '../component/blockToolbarRow/controller.jsx';
+import type { ControllerBlockForm } from '../component/blockForm/controller.tsx';
+import type { ControllerBlockPageEntry } from '../component/blockPageEntry/controller.tsx';
+import type { ControllerBlockToolbarRow } from '../component/blockToolbarRow/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -108,12 +108,12 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/blockForm.js';
-import { ZBlockForm } from './component/blockForm.js';
-export * from './component/blockPageEntry.js';
-import { ZBlockPageEntry } from './component/blockPageEntry.js';
-export * from './component/blockToolbarRow.js';
-import { ZBlockToolbarRow } from './component/blockToolbarRow.js';
+export * from './component/blockForm.ts';
+import { ZBlockForm } from './component/blockForm.ts';
+export * from './component/blockPageEntry.ts';
+import { ZBlockPageEntry } from './component/blockPageEntry.ts';
+export * from './component/blockToolbarRow.ts';
+import { ZBlockToolbarRow } from './component/blockToolbarRow.ts';
 export const components = {
   'blockForm': ZBlockForm,
 'blockPageEntry': ZBlockPageEntry,
@@ -134,14 +134,14 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** monkey: begin */
-export * from '../monkey.js';
+export * from '../monkey.ts';
 /** monkey: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig, TypeModuleLocales, TypeLocaleBase } from 'zova';

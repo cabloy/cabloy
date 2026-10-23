@@ -7,7 +7,7 @@ import {
   IRouteViewRouteMeta,
 } from 'zova-module-a-router';
 
-import type { ModelStack } from '../../model/stack.js';
+import type { ModelStack } from '../../model/stack.ts';
 
 export interface ControllerRouterViewStackProps extends IRouterViewPropsBase {
   pageHostProviders?: Record<string, unknown>;

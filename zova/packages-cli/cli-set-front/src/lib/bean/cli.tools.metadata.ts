@@ -26,7 +26,7 @@ import { generateOptionsPackage } from './toolsMetadata/generateOptionsPackage.t
 import { generateScope } from './toolsMetadata/generateScope.ts';
 import { generateScopeResources } from './toolsMetadata/generateScopeResources.ts';
 import { generateScopeResourcesMeta } from './toolsMetadata/generateScopeResourcesMeta.ts';
-import { globAllTsFiles } from './toolsMetadata/utils.ts';
+import { escapeRegExp, globAllTsFiles } from './toolsMetadata/utils.ts';
 
 declare module '@cabloy/cli' {
   interface ICommandArgv {
@@ -215,12 +215,33 @@ export class CliToolsMetadata extends BeanCliBase {
 
   async _generateThis(moduleName: string, relativeNameCapitalize: string, modulePath: string) {
     const thisDest = path.join(modulePath, 'src/.metadata/this.ts');
-    if (await fse.pathExists(thisDest)) return;
+    const exportLine = `export { ScopeModule${relativeNameCapitalize} as ScopeModule } from './index.ts';`;
+    if (await fse.pathExists(thisDest)) {
+      const content = await fse.readFile(thisDest, 'utf8');
+      const migrated = this._migrateOwnedExport(content, exportLine);
+      if (migrated !== content) await fse.writeFile(thisDest, migrated);
+      return;
+    }
     const content = `export const __ThisModule__ = '${moduleName}';
-export { ScopeModule${relativeNameCapitalize} as ScopeModule } from './index.js';
+${exportLine}
 `;
     // save
     await fse.writeFile(thisDest, content);
+  }
+
+  _migrateOwnedExport(content: string, exportLine: string) {
+    const pattern = escapeRegExp(exportLine)
+      .replace('\\.ts', '\\.(?:js|ts)')
+      .replaceAll("'", '[\'"]');
+    let seen = false;
+    return content.replace(
+      new RegExp(`^([ \\t]*)${pattern}([ \\t]*)(\\r?)(\\n|$)`, 'gm'),
+      (_line, indent, trailing, carriageReturn, newline) => {
+        if (seen) return '';
+        seen = true;
+        return `${indent}${exportLine}${trailing}${carriageReturn}${newline}`;
+      },
+    );
   }
 
   async _prependExportIfNeeded(
@@ -229,6 +250,7 @@ export { ScopeModule${relativeNameCapitalize} as ScopeModule } from './index.js'
     sourceFile: string,
     modulePath: string,
   ) {
+    jsContent = this._migrateOwnedExport(jsContent, exportLine);
     const sourcePath = path.join(modulePath, sourceFile);
     if ((await fse.pathExists(sourcePath)) && !jsContent.includes(exportLine)) {
       return `${exportLine}\n${jsContent}`;
@@ -244,25 +266,25 @@ export { ScopeModule${relativeNameCapitalize} as ScopeModule } from './index.js'
     }
     jsContent = await this._prependExportIfNeeded(
       jsContent,
-      "export * from './types/index.js';",
+      "export * from './types/index.ts';",
       'src/types/index.ts',
       modulePath,
     );
     jsContent = await this._prependExportIfNeeded(
       jsContent,
-      "export * from './lib/index.js';",
+      "export * from './lib/index.ts';",
       'src/lib/index.ts',
       modulePath,
     );
     jsContent = await this._prependExportIfNeeded(
       jsContent,
-      "export * from './.metadata/locales.js';",
+      "export * from './.metadata/locales.ts';",
       'src/.metadata/locales.ts',
       modulePath,
     );
     jsContent = await this._prependExportIfNeeded(
       jsContent,
-      "export * from './.metadata/index.js';",
+      "export * from './.metadata/index.ts';",
       'src/.metadata/index.ts',
       modulePath,
     );

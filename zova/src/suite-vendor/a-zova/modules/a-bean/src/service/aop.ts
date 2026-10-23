@@ -2,17 +2,17 @@ import type { BeanAopMethodBase, Constructable, IBeanRecord } from 'zova';
 
 import { appMetadata, appResource, BeanBase, ProxyDisable, Use } from 'zova';
 
-import type { IAopRecord, IDecoratorAopOptions } from '../types/aop.js';
-import type { IOnionItem, IOnionSlice } from '../types/onion.js';
+import type { IAopRecord, IDecoratorAopOptions } from '../types/aop.ts';
+import type { IOnionItem, IOnionSlice } from '../types/onion.ts';
 
-import { SysOnion } from '../bean/sys.onion.js';
-import { Service } from '../lib/bean.js';
+import { SysOnion } from '../bean/sys.onion.ts';
+import { Service } from '../lib/bean.ts';
 import {
   IAopMethodRecord,
   IDecoratorAopMethodOptions,
   IUseAopMethodPropMetadata,
   SymbolDecoratorUseAopMethod,
-} from '../types/aopMethod.js';
+} from '../types/aopMethod.ts';
 
 type AopMethodsMatchedAll = Record<string, IUseAopMethodPropMetadata[]>;
 

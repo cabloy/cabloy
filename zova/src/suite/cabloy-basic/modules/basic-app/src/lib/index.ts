@@ -1,1 +1,1 @@
-export * from './appModalItem.js';
+export * from './appModalItem.ts';

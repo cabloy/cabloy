@@ -15,10 +15,10 @@ import type {
 import localforage from 'localforage';
 import { cast } from 'zova';
 
-import type { MaybeRefDeep, NoUnknown } from '../../common/types.js';
+import type { MaybeRefDeep, NoUnknown } from '../../common/types.ts';
 
-import { getPersistenceQueue } from '../../lib/persistenceQueue.js';
-import { BeanModelCookie } from './bean.model.cookie.js';
+import { getPersistenceQueue } from '../../lib/persistenceQueue.ts';
+import { BeanModelCookie } from './bean.model.cookie.ts';
 
 export class BeanModelQuery extends BeanModelCookie {
   $setQueryData<

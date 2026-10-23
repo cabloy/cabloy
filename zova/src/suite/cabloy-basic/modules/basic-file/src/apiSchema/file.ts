@@ -10,7 +10,7 @@ import {
   ApiApiFilefinalizeDirectUploadPath,
   ApiApiFileuploadUrlPath,
   ApiApiFiledownloadPath,
-} from '../api/file.js';
+} from '../api/file.ts';
 
 @ApiSchema()
 export class ApiSchemaFile extends BeanBase {

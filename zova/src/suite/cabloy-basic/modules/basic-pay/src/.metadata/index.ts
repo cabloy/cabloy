@@ -1,6 +1,6 @@
 // eslint-disable
 /** controller: begin */
-export * from '../component/paymentNextAction/controller.jsx';
+export * from '../component/paymentNextAction/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -16,7 +16,7 @@ declare module 'zova-module-basic-pay' {
 }
 /** controller: end */
 /** controller: begin */
-import type { ControllerPaymentNextAction } from '../component/paymentNextAction/controller.jsx';
+import type { ControllerPaymentNextAction } from '../component/paymentNextAction/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -26,8 +26,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/paymentNextAction.js';
-import { ZPaymentNextAction } from './component/paymentNextAction.js';
+export * from './component/paymentNextAction.ts';
+import { ZPaymentNextAction } from './component/paymentNextAction.ts';
 export const components = {
   'paymentNextAction': ZPaymentNextAction,
 };

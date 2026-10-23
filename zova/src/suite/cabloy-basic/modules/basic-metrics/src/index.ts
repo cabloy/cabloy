@@ -1,2 +1,2 @@
-export * from './.metadata/index.js';
-export * from './routes.js';
+export * from './.metadata/index.ts';
+export * from './routes.ts';

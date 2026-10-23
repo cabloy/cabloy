@@ -3,7 +3,7 @@ import type { IDecoratorModelOptions } from 'zova-module-a-model';
 
 import { BeanModelBase, Model } from 'zova-module-a-model';
 
-import type { ApiApiCommerceTradeOrderrequestRefundRequestBody } from '../api/commerceTradeOrder.js';
+import type { ApiApiCommerceTradeOrderrequestRefundRequestBody } from '../api/commerceTradeOrder.ts';
 
 export interface IModelOptionsOrderMine extends IDecoratorModelOptions {}
 

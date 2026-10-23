@@ -1,6 +1,6 @@
 import { metadataCustomSnippet } from '@cabloy/cli';
 
-const __snippet_declare = "import { ZPage<%=argv.nameMeta.fullCapitalize%> } from './.metadata/page/<%=argv.pageName%>.js';\n";
+const __snippet_declare = "import { ZPage<%=argv.nameMeta.fullCapitalize%> } from './.metadata/page/<%=argv.pageName%>.ts';\n";
 const __snippet_body = '{ path: \'<%=argv.moduleInfo.name!==argv.pageName?argv.pageName:""%>\', component: ZPage<%=argv.nameMeta.fullCapitalize%> },';
 
 export default metadataCustomSnippet({

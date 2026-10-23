@@ -1,4 +1,4 @@
-import type { ScopeModule } from '../.metadata/this.js';
+import type { ScopeModule } from '../.metadata/this.ts';
 import 'zova';
 
 declare module 'zova' {

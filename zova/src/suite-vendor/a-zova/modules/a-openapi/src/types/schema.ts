@@ -1,7 +1,7 @@
 import type { OpenAPIObject, SchemaObject } from 'openapi3-ts/oas31';
 import type { ModelUseQueryReturnType } from 'zova-module-a-model';
 
-import type { IOpenapiSdkItem } from './sdk.js';
+import type { IOpenapiSdkItem } from './sdk.ts';
 
 export interface IOpenapiSchema {
   doc: OpenAPIObject;

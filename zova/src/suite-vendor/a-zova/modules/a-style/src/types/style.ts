@@ -1,6 +1,6 @@
 import type { cssRaw, cssRule, style } from 'typestyle';
 
-import type { BeanTheme } from '../bean/bean.theme.js';
+import type { BeanTheme } from '../bean/bean.theme.ts';
 import 'zova';
 
 declare module 'zova' {

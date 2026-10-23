@@ -1,7 +1,7 @@
 import { BeanStyleBase } from 'zova';
 import { Style } from 'zova-module-a-bean';
 
-import { richTextContentStyle } from '../../lib/richTextContentStyle.js';
+import { richTextContentStyle } from '../../lib/richTextContentStyle.ts';
 
 @Style()
 export class StyleMarkdownHtml extends BeanStyleBase {

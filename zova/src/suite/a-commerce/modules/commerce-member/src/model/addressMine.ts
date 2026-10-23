@@ -6,7 +6,7 @@ import { BeanModelBase, Model } from 'zova-module-a-model';
 import type {
   ApiApiCommerceMemberAddresscreateMineRequestBody,
   ApiApiCommerceMemberAddressupdateMineRequestBody,
-} from '../api/commerceMemberAddress.js';
+} from '../api/commerceMemberAddress.ts';
 
 export interface IModelOptionsAddressMine extends IDecoratorModelOptions {}
 

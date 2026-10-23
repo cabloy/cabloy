@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerBlockFormLayoutProps } from '../../component/blockFormLayout/controller.jsx';
+import type { ControllerBlockFormLayoutProps } from '../../component/blockFormLayout/controller.tsx';
 
-import { ControllerBlockFormLayout } from '../../component/blockFormLayout/controller.jsx';
+import { ControllerBlockFormLayout } from '../../component/blockFormLayout/controller.tsx';
 export type ZBlockFormLayoutProps = {
   controllerRef?: (ref: ControllerBlockFormLayout) => void;
 } & ControllerBlockFormLayoutProps;

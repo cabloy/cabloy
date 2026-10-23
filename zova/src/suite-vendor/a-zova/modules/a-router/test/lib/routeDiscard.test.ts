@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import type { BeanRouter } from '../../src/bean/bean.router.js';
-import type { IRouteDiscardEvent } from '../../src/types/routeDiscard.js';
+import type { BeanRouter } from '../../src/bean/bean.router.ts';
+import type { IRouteDiscardEvent } from '../../src/types/routeDiscard.ts';
 
-import { dispatchRouteDiscard } from '../../src/lib/routeDiscard.js';
+import { dispatchRouteDiscard } from '../../src/lib/routeDiscard.ts';
 
 const router = {} as BeanRouter;
 

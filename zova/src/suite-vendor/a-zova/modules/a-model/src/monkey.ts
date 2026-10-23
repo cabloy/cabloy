@@ -11,7 +11,7 @@ import { useQueryClient } from '@tanstack/vue-query';
 import { markRaw } from 'vue';
 import { BeanSimple } from 'zova';
 
-import { ServiceStorage } from './service/storage.js';
+import { ServiceStorage } from './service/storage.ts';
 
 export class Monkey
   extends BeanSimple

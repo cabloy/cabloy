@@ -1,9 +1,9 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/layout.js';
-export * from '../model/menu.js';
-import { IModelOptionsLayout } from '../model/layout.js';
-import { IModelOptionsMenu } from '../model/menu.js';
+export * from '../model/layout.ts';
+export * from '../model/menu.ts';
+import { IModelOptionsLayout } from '../model/layout.ts';
+import { IModelOptionsMenu } from '../model/menu.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -40,8 +40,8 @@ declare module 'zova-module-home-layoutweb' {
 }
 /** model: end */
 /** model: begin */
-import { ModelLayout } from '../model/layout.js';
-import { ModelMenu } from '../model/menu.js';
+import type { ModelLayout } from '../model/layout.ts';
+import type { ModelMenu } from '../model/menu.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -51,7 +51,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** controller: begin */
-export * from '../component/layoutWeb/controller.jsx';
+export * from '../component/layoutWeb/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -67,7 +67,7 @@ declare module 'zova-module-home-layoutweb' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerLayoutWeb } from '../component/layoutWeb/controller.jsx';
+import type { ControllerLayoutWeb } from '../component/layoutWeb/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -77,8 +77,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/layoutWeb.js';
-import { ZLayoutWeb } from './component/layoutWeb.js';
+export * from './component/layoutWeb.ts';
+import { ZLayoutWeb } from './component/layoutWeb.ts';
 export const components = {
   'layoutWeb': ZLayoutWeb,
 };
@@ -93,13 +93,13 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** render: begin */
-export * from '../component/layoutWeb/render.content.jsx';
-export * from '../component/layoutWeb/render.header.jsx';
-export * from '../component/layoutWeb/render.locale.jsx';
-export * from '../component/layoutWeb/render.tabs.jsx';
-export * from '../component/layoutWeb/render.theme.jsx';
-export * from '../component/layoutWeb/render.jsx';
-export * from '../component/layoutWeb/render.user.jsx';
+export * from '../component/layoutWeb/render.content.tsx';
+export * from '../component/layoutWeb/render.header.tsx';
+export * from '../component/layoutWeb/render.locale.tsx';
+export * from '../component/layoutWeb/render.tabs.tsx';
+export * from '../component/layoutWeb/render.theme.tsx';
+export * from '../component/layoutWeb/render.tsx';
+export * from '../component/layoutWeb/render.user.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -145,13 +145,13 @@ declare module 'zova-module-home-layoutweb' {
 }
 /** render: end */
 /** render: begin */
-import { RenderContent } from '../component/layoutWeb/render.content.jsx';
-import { RenderHeader } from '../component/layoutWeb/render.header.jsx';
-import { RenderLocale } from '../component/layoutWeb/render.locale.jsx';
-import { RenderTabs } from '../component/layoutWeb/render.tabs.jsx';
-import { RenderTheme } from '../component/layoutWeb/render.theme.jsx';
-import { RenderLayoutWeb } from '../component/layoutWeb/render.jsx';
-import { RenderUser } from '../component/layoutWeb/render.user.jsx';
+import type { RenderContent } from '../component/layoutWeb/render.content.tsx';
+import type { RenderHeader } from '../component/layoutWeb/render.header.tsx';
+import type { RenderLocale } from '../component/layoutWeb/render.locale.tsx';
+import type { RenderTabs } from '../component/layoutWeb/render.tabs.tsx';
+import type { RenderTheme } from '../component/layoutWeb/render.theme.tsx';
+import type { RenderLayoutWeb } from '../component/layoutWeb/render.tsx';
+import type { RenderUser } from '../component/layoutWeb/render.user.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -166,11 +166,11 @@ declare module 'zova' {
 }
 /** render: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig, TypeModuleLocales, TypeLocaleBase } from 'zova';

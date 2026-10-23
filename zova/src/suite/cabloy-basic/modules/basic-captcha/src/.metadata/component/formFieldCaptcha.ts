@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerFormFieldCaptchaProps } from '../../component/formFieldCaptcha/controller.jsx';
+import type { ControllerFormFieldCaptchaProps } from '../../component/formFieldCaptcha/controller.tsx';
 
-import { ControllerFormFieldCaptcha } from '../../component/formFieldCaptcha/controller.jsx';
+import { ControllerFormFieldCaptcha } from '../../component/formFieldCaptcha/controller.tsx';
 export type ZFormFieldCaptchaProps = {
   controllerRef?: (ref: ControllerFormFieldCaptcha) => void;
 } & ControllerFormFieldCaptchaProps;

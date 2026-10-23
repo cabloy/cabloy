@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { createZovaComponentPage } from 'zova';
 
-import { ControllerPageAddress } from '../../page/address/controller.jsx';
+import { ControllerPageAddress } from '../../page/address/controller.tsx';
 import {
   ControllerPageAddressSchemaParams,
   ControllerPageAddressSchemaQuery,
-} from '../../page/address/controller.jsx';
+} from '../../page/address/controller.tsx';
 export namespace NSControllerPageAddress {
   export const paramsSchema = ControllerPageAddressSchemaParams;
   export type ParamsInput = z.input<typeof ControllerPageAddressSchemaParams>;

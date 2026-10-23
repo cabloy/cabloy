@@ -11,9 +11,9 @@ import { prepareComponentOptions, useController } from 'zova';
 import type {
   ControllerDateModels,
   ControllerDateProps,
-} from '../../component/date/controller.jsx';
+} from '../../component/date/controller.tsx';
 
-import { ControllerDate } from '../../component/date/controller.jsx';
+import { ControllerDate } from '../../component/date/controller.tsx';
 export type ZDateProps = {
   controllerRef?: (ref: ControllerDate) => void;
 } & ControllerDateProps &

@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerFormFieldTextareaProps } from '../../component/formFieldTextarea/controller.jsx';
+import type { ControllerFormFieldTextareaProps } from '../../component/formFieldTextarea/controller.tsx';
 
-import { ControllerFormFieldTextarea } from '../../component/formFieldTextarea/controller.jsx';
+import { ControllerFormFieldTextarea } from '../../component/formFieldTextarea/controller.tsx';
 export type ZFormFieldTextareaProps = {
   controllerRef?: (ref: ControllerFormFieldTextarea) => void;
 } & ControllerFormFieldTextareaProps;

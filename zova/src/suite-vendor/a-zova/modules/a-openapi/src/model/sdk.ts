@@ -10,7 +10,7 @@ import {
   Model,
 } from 'zova-module-a-model';
 
-import { SysSdk } from '../bean/sys.sdk.js';
+import { SysSdk } from '../bean/sys.sdk.ts';
 import {
   getSchemaOfRequestBody,
   getSchemaOfRequestQuery,
@@ -18,11 +18,11 @@ import {
   getSchemaOfResponseBody,
   loadSchemaProperties,
   schemaToZodSchema,
-} from '../lib/schema.js';
-import { TypeOpenapiPermissions } from '../types/permissions.js';
-import { ISchemaObjectExtensionField, TypeSchemaScene } from '../types/rest.js';
-import { IOpenapiSchemas, TypeOpenapiSchemasSdk } from '../types/schema.js';
-import { TypeRequestMethod } from '../types/sdk.js';
+} from '../lib/schema.ts';
+import { TypeOpenapiPermissions } from '../types/permissions.ts';
+import { ISchemaObjectExtensionField, TypeSchemaScene } from '../types/rest.ts';
+import { IOpenapiSchemas, TypeOpenapiSchemasSdk } from '../types/schema.ts';
+import { TypeRequestMethod } from '../types/sdk.ts';
 
 const __schemaRefPrefix = '#/components/schemas/';
 

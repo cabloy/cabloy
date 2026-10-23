@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerFormFieldResourcePickerProps } from '../../component/formFieldResourcePicker/controller.jsx';
+import type { ControllerFormFieldResourcePickerProps } from '../../component/formFieldResourcePicker/controller.tsx';
 
-import { ControllerFormFieldResourcePicker } from '../../component/formFieldResourcePicker/controller.jsx';
+import { ControllerFormFieldResourcePicker } from '../../component/formFieldResourcePicker/controller.tsx';
 export type ZFormFieldResourcePickerProps = {
   controllerRef?: (ref: ControllerFormFieldResourcePicker) => void;
 } & ControllerFormFieldResourcePickerProps;

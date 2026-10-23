@@ -11,7 +11,7 @@ import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { IFormMeta } from 'zova-module-a-openapi';
 import { ApiSchemaTestSsrDtoTestBodyPartial } from 'zova-module-home-api';
 
-import { ModelTest } from '../../model/test.js';
+import { ModelTest } from '../../model/test.ts';
 
 export const ControllerPageToolOneSchemaParams = z.object({
   id: z.number().optional(),

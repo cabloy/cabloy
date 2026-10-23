@@ -7,7 +7,7 @@ import {
   ApiApiPayPaymentSessionstartPath,
   ApiApiPayPaymentSessionreconcilePath,
   ApiApiPayPaymentSessionviewPath,
-} from '../api/payPaymentSession.js';
+} from '../api/payPaymentSession.ts';
 
 @ApiSchema()
 export class ApiSchemaPayPaymentSession extends BeanBase {

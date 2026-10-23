@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import { ControllerRouterViewEmpty } from '../../component/routerViewEmpty/controller.jsx';
+import { ControllerRouterViewEmpty } from '../../component/routerViewEmpty/controller.tsx';
 export type ZRouterViewEmptyProps = {
   controllerRef?: (ref: ControllerRouterViewEmpty) => void;
 };

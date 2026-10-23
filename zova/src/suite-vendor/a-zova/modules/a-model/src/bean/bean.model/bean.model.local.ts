@@ -1,6 +1,6 @@
 import type { Query } from '@tanstack/vue-query';
 
-import { BeanModelPersister } from './bean.model.persister.js';
+import { BeanModelPersister } from './bean.model.persister.ts';
 
 export class BeanModelLocal extends BeanModelPersister {
   $serializeLocal(obj?: Query) {

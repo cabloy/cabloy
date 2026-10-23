@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/todo.js';
-import { IModelOptionsTodo } from '../model/todo.js';
+export * from '../model/todo.ts';
+import { IModelOptionsTodo } from '../model/todo.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-demo-todo' {
 }
 /** model: end */
 /** model: begin */
-import { ModelTodo } from '../model/todo.js';
+import type { ModelTodo } from '../model/todo.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/todo.js';
+export * from '../api/todo.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-demo-todo' {
 }
 /** api: end */
 /** api: begin */
-import { ApiTodo } from '../api/todo.js';
+import type { ApiTodo } from '../api/todo.ts';
 export interface IModuleApi {
   'todo': ApiTodo;
 }
@@ -75,8 +75,8 @@ declare module 'zova' {
 
 /** openapi: end */
 /** controller: begin */
-export * from '../page/item/controller.jsx';
-export * from '../page/todo/controller.jsx';
+export * from '../page/item/controller.tsx';
+export * from '../page/todo/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -97,8 +97,8 @@ declare module 'zova-module-demo-todo' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerPageItem } from '../page/item/controller.jsx';
-import { ControllerPageTodo } from '../page/todo/controller.jsx';
+import type { ControllerPageItem } from '../page/item/controller.tsx';
+import type { ControllerPageTodo } from '../page/todo/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -108,10 +108,10 @@ declare module 'zova' {
 }
 /** controller: end */
 /** pages: begin */
-export * from './page/item.js';
-import { NSControllerPageItem } from './page/item.js';
-export * from './page/todo.js';
-export * from '../routes.js';
+export * from './page/item.ts';
+import { NSControllerPageItem } from './page/item.ts';
+export * from './page/todo.ts';
+export * from '../routes.ts';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {

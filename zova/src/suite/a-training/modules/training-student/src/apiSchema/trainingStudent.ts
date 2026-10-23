@@ -12,7 +12,7 @@ import {
   ApiApiTrainingStudentsummaryPath,
   ApiApiTrainingStudentdeleteBulkPath,
   ApiApiTrainingStudentdeleteForcePath,
-} from '../api/trainingStudent.js';
+} from '../api/trainingStudent.ts';
 
 @ApiSchema()
 export class ApiSchemaTrainingStudent extends BeanBase {

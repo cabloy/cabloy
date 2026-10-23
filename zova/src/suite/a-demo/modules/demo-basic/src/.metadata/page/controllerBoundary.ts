@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { createZovaComponentPage } from 'zova';
 
-import { ControllerPageControllerBoundary } from '../../page/controllerBoundary/controller.jsx';
+import { ControllerPageControllerBoundary } from '../../page/controllerBoundary/controller.tsx';
 import {
   ControllerPageControllerBoundarySchemaParams,
   ControllerPageControllerBoundarySchemaQuery,
-} from '../../page/controllerBoundary/controller.jsx';
+} from '../../page/controllerBoundary/controller.tsx';
 export namespace NSControllerPageControllerBoundary {
   export const paramsSchema = ControllerPageControllerBoundarySchemaParams;
   export type ParamsInput = z.input<typeof ControllerPageControllerBoundarySchemaParams>;

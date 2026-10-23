@@ -1,7 +1,7 @@
 import type http from 'node:http';
 import type { SSRContextState, TypeSsrSitePerformAction } from 'zova-module-a-ssr';
 
-import type { ServiceSsrHandler } from '../service/ssrHandler.js';
+import type { ServiceSsrHandler } from '../service/ssrHandler.ts';
 import 'zova';
 
 export type TypeEventResolvePathResult = string | true | undefined;

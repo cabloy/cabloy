@@ -4,7 +4,7 @@ import { BeanRenderBase } from 'zova';
 import { Render } from 'zova-module-a-bean';
 import { ZItemLink } from 'zova-module-home-base';
 
-import { TypeMenuItem, TypeMenuTree } from '../../.metadata/index.js';
+import { TypeMenuItem, TypeMenuTree } from '../../.metadata/index.ts';
 
 @Render()
 export class RenderMenu extends BeanRenderBase {

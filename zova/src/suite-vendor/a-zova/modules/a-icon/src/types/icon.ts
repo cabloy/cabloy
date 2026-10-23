@@ -1,5 +1,5 @@
-import type { SysIcon } from '../bean/sys.icon.js';
-import type { IconGroup } from '../lib/iconGroup.js';
+import type { SysIcon } from '../bean/sys.icon.ts';
+import type { IconGroup } from '../lib/iconGroup.ts';
 
 export interface IIconRecord {}
 

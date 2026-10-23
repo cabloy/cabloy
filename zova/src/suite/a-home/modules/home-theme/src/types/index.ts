@@ -1,2 +1,2 @@
-export * from './style.js';
-export * from './themeToken.js';
+export * from './style.ts';
+export * from './themeToken.ts';

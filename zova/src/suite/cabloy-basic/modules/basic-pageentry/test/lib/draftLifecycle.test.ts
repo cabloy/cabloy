@@ -5,14 +5,14 @@ import { setImmediate as tick } from 'node:timers/promises';
 import ts from 'typescript';
 import { computed, effectScope, markRaw, nextTick, reactive, watch } from 'vue';
 
-import type { IDraftEnvelope, IDraftIdentity } from '../../src/types/draft.js';
+import type { IDraftEnvelope, IDraftIdentity } from '../../src/types/draft.ts';
 
 import {
   createDraftSchema,
   draftBaselineSignature,
   projectDraftValues,
   restoreDraftValues,
-} from '../../src/lib/draftSchema.js';
+} from '../../src/lib/draftSchema.ts';
 
 function deferred<T = void>() {
   let resolve!: (value: T) => void;

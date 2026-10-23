@@ -19,7 +19,7 @@ export default metadataCustomSnippet({
       ast = ast.replace(" } from 'zova';", ", Use } from 'zova';");
     }
     ast = ast
-      .replace("from 'zova-module-a-bean';", `from 'zova-module-a-bean';\nimport { ${argv.renderClassName} } from './render.${argv.renderName}.jsx';`)
+      .replace("from 'zova-module-a-bean';", `from 'zova-module-a-bean';\nimport { ${argv.renderClassName} } from './render.${argv.renderName}.tsx';`)
       .replace(
         'extends BeanRenderBase {',
         `extends BeanRenderBase {\n  @Use()\n  $$$$render${argv.renderNameCapitalize}: ${argv.renderClassName};\n`,

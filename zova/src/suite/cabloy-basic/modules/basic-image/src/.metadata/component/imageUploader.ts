@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerImageUploaderProps } from '../../component/imageUploader/controller.jsx';
+import type { ControllerImageUploaderProps } from '../../component/imageUploader/controller.tsx';
 
-import { ControllerImageUploader } from '../../component/imageUploader/controller.jsx';
+import { ControllerImageUploader } from '../../component/imageUploader/controller.tsx';
 export type ZImageUploaderProps = {
   controllerRef?: (ref: ControllerImageUploader) => void;
 } & ControllerImageUploaderProps;

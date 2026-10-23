@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/student.js';
-import { IModelOptionsStudent } from '../model/student.js';
+export * from '../model/student.ts';
+import { IModelOptionsStudent } from '../model/student.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-training-student' {
 }
 /** model: end */
 /** model: begin */
-import type { ModelStudent } from '../model/student.js';
+import type { ModelStudent } from '../model/student.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/trainingStudent.js';
+export * from '../api/trainingStudent.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-training-student' {
 }
 /** api: end */
 /** api: begin */
-import type { ApiTrainingStudent } from '../api/trainingStudent.js';
+import type { ApiTrainingStudent } from '../api/trainingStudent.ts';
 export interface IModuleApi {
   'trainingStudent': ApiTrainingStudent;
 }
@@ -72,10 +72,10 @@ declare module 'zova' {
 }
 /** api: end */
 /** openapi: begin */
-export * from '../api/openapi/index.js';
+export * from '../api/openapi/index.ts';
 /** openapi: end */
 /** apiSchema: begin */
-export * from '../apiSchema/trainingStudent.js';
+export * from '../apiSchema/trainingStudent.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -97,7 +97,7 @@ declare module 'zova-module-training-student' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import type { ApiSchemaTrainingStudent } from '../apiSchema/trainingStudent.js';
+import type { ApiSchemaTrainingStudent } from '../apiSchema/trainingStudent.ts';
 export interface IModuleApiSchema {
   'trainingStudent': ApiSchemaTrainingStudent;
 }
@@ -112,7 +112,7 @@ declare module 'zova' {
 }
 /** apiSchema: end */
 /** controller: begin */
-export * from '../component/formFieldLevel/controller.jsx';
+export * from '../component/formFieldLevel/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -128,7 +128,7 @@ declare module 'zova-module-training-student' {
 }
 /** controller: end */
 /** controller: begin */
-import type { ControllerFormFieldLevel } from '../component/formFieldLevel/controller.jsx';
+import type { ControllerFormFieldLevel } from '../component/formFieldLevel/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -138,8 +138,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/formFieldLevel.js';
-import { ZFormFieldLevel } from './component/formFieldLevel.js';
+export * from './component/formFieldLevel.ts';
+import { ZFormFieldLevel } from './component/formFieldLevel.ts';
 export const components = {
   'formFieldLevel': ZFormFieldLevel,
 };
@@ -154,12 +154,12 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** tableCell: begin */
-export * from '../bean/tableCell.actionDeleteForce.jsx';
-export * from '../bean/tableCell.actionSummary.jsx';
-export * from '../bean/tableCell.level.jsx';
-import { ITableCellOptionsActionDeleteForce } from '../bean/tableCell.actionDeleteForce.jsx';
-import { ITableCellOptionsActionSummary } from '../bean/tableCell.actionSummary.jsx';
-import { ITableCellOptionsLevel } from '../bean/tableCell.level.jsx';
+export * from '../bean/tableCell.actionDeleteForce.tsx';
+export * from '../bean/tableCell.actionSummary.tsx';
+export * from '../bean/tableCell.level.tsx';
+import { ITableCellOptionsActionDeleteForce } from '../bean/tableCell.actionDeleteForce.tsx';
+import { ITableCellOptionsActionSummary } from '../bean/tableCell.actionSummary.tsx';
+import { ITableCellOptionsLevel } from '../bean/tableCell.level.tsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
 
@@ -208,9 +208,9 @@ declare module 'zova-module-training-student' {
 }
 /** tableCell: end */
 /** tableCell: begin */
-import type { TableCellActionDeleteForce } from '../bean/tableCell.actionDeleteForce.jsx';
-import type { TableCellActionSummary } from '../bean/tableCell.actionSummary.jsx';
-import type { TableCellLevel } from '../bean/tableCell.level.jsx';
+import type { TableCellActionDeleteForce } from '../bean/tableCell.actionDeleteForce.tsx';
+import type { TableCellActionSummary } from '../bean/tableCell.actionSummary.tsx';
+import type { TableCellLevel } from '../bean/tableCell.level.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -221,7 +221,7 @@ declare module 'zova' {
 }
 /** tableCell: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

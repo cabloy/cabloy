@@ -1,3 +1,3 @@
-export * from './model.js';
-export * from './modelPersistence.js';
-export * from './utils.js';
+export * from './model.ts';
+export * from './modelPersistence.ts';
+export * from './utils.ts';

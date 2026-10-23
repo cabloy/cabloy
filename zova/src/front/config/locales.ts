@@ -1,5 +1,5 @@
-import en_us from './locale/en-us.js';
-import zh_cn from './locale/zh-cn.js';
+import en_us from './locale/en-us.ts';
+import zh_cn from './locale/zh-cn.ts';
 
 export const locales = {
   'en-us': en_us,

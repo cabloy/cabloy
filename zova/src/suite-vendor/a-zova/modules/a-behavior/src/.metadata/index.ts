@@ -1,8 +1,8 @@
 // eslint-disable
 /** bean: begin */
-export * from '../bean/bean.behavior.js';
-export * from '../bean/bean.behaviorBase.js';
-export * from '../bean/bean.behaviorsHolder.js';
+export * from '../bean/bean.behavior.ts';
+export * from '../bean/bean.behaviorBase.ts';
+export * from '../bean/bean.behaviorsHolder.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -35,9 +35,9 @@ declare module 'zova-module-a-behavior' {
 }
 /** bean: end */
 /** bean: begin */
-import { BeanBehavior } from '../bean/bean.behavior.js';
-import { BeanBehaviorBase } from '../bean/bean.behaviorBase.js';
-import { BeanBehaviorsHolder } from '../bean/bean.behaviorsHolder.js';
+import type { BeanBehavior } from '../bean/bean.behavior.ts';
+import type { BeanBehaviorBase } from '../bean/bean.behaviorBase.ts';
+import type { BeanBehaviorsHolder } from '../bean/bean.behaviorsHolder.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -48,7 +48,7 @@ declare module 'zova' {
 }
 /** bean: end */
 /** service: begin */
-export * from '../service/composer.js';
+export * from '../service/composer.ts';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
@@ -74,7 +74,7 @@ declare module 'zova-module-a-behavior' {
 }
 /** service: end */
 /** service: begin */
-import { ServiceComposer } from '../service/composer.js';
+import type { ServiceComposer } from '../service/composer.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -83,7 +83,7 @@ declare module 'zova' {
 }
 /** service: end */
 /** controller: begin */
-export * from '../component/behavior/controller.jsx';
+export * from '../component/behavior/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -99,7 +99,7 @@ declare module 'zova-module-a-behavior' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerBehavior } from '../component/behavior/controller.jsx';
+import type { ControllerBehavior } from '../component/behavior/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -109,8 +109,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/behavior.js';
-import { ZBehavior } from './component/behavior.js';
+export * from './component/behavior.ts';
+import { ZBehavior } from './component/behavior.ts';
 export const components = {
   'behavior': ZBehavior,
 };
@@ -125,7 +125,7 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** behavior: begin */
-export * from '../bean/behavior.root_.js';
+export * from '../bean/behavior.root_.ts';
 
 import 'zova-module-a-behavior';
 declare module 'zova-module-a-behavior' {

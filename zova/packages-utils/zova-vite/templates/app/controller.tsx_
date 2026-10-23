@@ -1,6 +1,6 @@
 import { App, getCurrentInstance } from 'vue';
 import { BeanControllerPageBase, PluginZova, ZovaApplication } from 'zova';
-import { getPluginZovaOptions } from './utils.js';
+import { getPluginZovaOptions } from './utils.ts';
 
 export class ControllerPageApp extends BeanControllerPageBase {
   protected async __init__() {

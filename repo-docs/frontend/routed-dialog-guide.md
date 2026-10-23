@@ -42,7 +42,7 @@ A routed-dialog target is an ordinary module page route. Do not invent a separat
 For a static target, keep the usual static-route convention: omit `name` unless the route has a documented named-route requirement.
 
 ```typescript
-import { ZPageCustomerPicker } from './.metadata/page/customerPicker.js';
+import { ZPageCustomerPicker } from './.metadata/page/customerPicker.ts';
 
 export const routes: IModuleRoute[] = [
   {
@@ -55,7 +55,7 @@ export const routes: IModuleRoute[] = [
 For a route with dynamic params, continue to declare `name`. This is required for the generated typed `$params` contract.
 
 ```typescript
-import { ZPageCustomerDetail } from './.metadata/page/customerDetail.js';
+import { ZPageCustomerDetail } from './.metadata/page/customerDetail.ts';
 
 export const routes: IModuleRoute[] = [
   {

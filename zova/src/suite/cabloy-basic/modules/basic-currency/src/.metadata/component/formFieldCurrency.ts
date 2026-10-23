@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerFormFieldCurrencyProps } from '../../component/formFieldCurrency/controller.jsx';
+import type { ControllerFormFieldCurrencyProps } from '../../component/formFieldCurrency/controller.tsx';
 
-import { ControllerFormFieldCurrency } from '../../component/formFieldCurrency/controller.jsx';
+import { ControllerFormFieldCurrency } from '../../component/formFieldCurrency/controller.tsx';
 export type ZFormFieldCurrencyProps = {
   controllerRef?: (ref: ControllerFormFieldCurrency) => void;
 } & ControllerFormFieldCurrencyProps;

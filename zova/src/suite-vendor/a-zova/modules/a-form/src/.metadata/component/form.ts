@@ -3,10 +3,10 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerFormProps } from '../../component/form/controller.jsx';
+import type { ControllerFormProps } from '../../component/form/controller.tsx';
 
-import { ControllerForm } from '../../component/form/controller.jsx';
-import { RenderForm } from '../../component/form/render.jsx';
+import { ControllerForm } from '../../component/form/controller.tsx';
+import { RenderForm } from '../../component/form/render.tsx';
 export type ZFormProps<TFormData extends {} = {}, TSubmitMeta = never> = {
   controllerRef?: (ref: ControllerForm<TFormData, TSubmitMeta>) => void;
 } & ControllerFormProps<TFormData, TSubmitMeta>;

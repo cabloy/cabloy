@@ -3,8 +3,8 @@ import type { BeanRouter, IRouteDiscardEvent } from 'zova-module-a-router';
 import { BeanBase } from 'zova';
 import { Bean } from 'zova-module-a-bean';
 
-import type { ModelDraft } from '../model/draft.js';
-import type { IDraftEditor, IDraftEnvelope, IDraftIdentity } from '../types/draft.js';
+import type { ModelDraft } from '../model/draft.ts';
+import type { IDraftEditor, IDraftEnvelope, IDraftIdentity } from '../types/draft.ts';
 
 interface IDraftSession {
   generation: number;

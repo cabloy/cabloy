@@ -1,6 +1,6 @@
 import type { IJsxRenderContextBase } from 'zova-module-a-openapi';
 
-import type { ICommandRecord, SymbolCommandResult } from './command.js';
+import type { ICommandRecord, SymbolCommandResult } from './command.ts';
 import 'zova';
 
 declare module 'zova' {

@@ -17,9 +17,9 @@ import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
 import { formMetaFromFormScene, ZFormField } from 'zova-module-a-form';
 
-import type { TypeDetailsCheckPermission } from '../../types/details.js';
+import type { TypeDetailsCheckPermission } from '../../types/details.ts';
 
-import { createDetailsPermissionChecker } from '../../lib/detailsPermissions.js';
+import { createDetailsPermissionChecker } from '../../lib/detailsPermissions.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {

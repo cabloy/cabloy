@@ -9,7 +9,7 @@ import { CurrencyOptions } from '@zhennann/currency';
 import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 
-import { currencyFormat } from '../lib/utils.js';
+import { currencyFormat } from '../lib/utils.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableCellRecord {

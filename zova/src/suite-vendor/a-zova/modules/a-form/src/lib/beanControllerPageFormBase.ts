@@ -10,7 +10,7 @@ import { useForm } from '@tanstack/vue-form';
 import { markRaw } from 'vue';
 import { BeanControllerPageBase } from 'zova';
 
-import { TypeForm } from '../types/form.js';
+import { TypeForm } from '../types/form.ts';
 
 export class BeanControllerPageFormBase<
   TFormData extends {} = {},

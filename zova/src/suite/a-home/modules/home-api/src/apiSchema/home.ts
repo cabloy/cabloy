@@ -3,7 +3,7 @@ import type { IApiSchemaOptions } from 'zova-module-a-api';
 import { BeanBase } from 'zova';
 import { ApiSchema } from 'zova-module-a-api';
 
-import { ApiApiHomeindexPath } from '../api/home.js';
+import { ApiApiHomeindexPath } from '../api/home.ts';
 
 @ApiSchema()
 export class ApiSchemaHome extends BeanBase {

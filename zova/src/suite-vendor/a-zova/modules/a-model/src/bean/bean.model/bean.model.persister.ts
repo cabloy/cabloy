@@ -6,15 +6,15 @@ import { hashKey } from '@tanstack/vue-query';
 import localforage from 'localforage';
 import { SymbolBeanFullName } from 'zova';
 
-import type { ModelPersistenceToken } from '../../lib/modelPersistence.js';
-import type { QueryMetaPersister } from '../../types/index.js';
+import type { ModelPersistenceToken } from '../../lib/modelPersistence.ts';
+import type { QueryMetaPersister } from '../../types/index.ts';
 
-import { CookieWrapper } from '../../common/cookieWrapper.js';
-import { getModelPersistenceStorageKey } from '../../lib/modelPersistence.js';
-import { getPersistenceQueue } from '../../lib/persistenceQueue.js';
-import { createQueryPersister } from '../../lib/queryPersister.js';
-import { resolveMaxAgeTime } from '../../types/index.js';
-import { BeanModelLast } from './bean.model.last.js';
+import { CookieWrapper } from '../../common/cookieWrapper.ts';
+import { getModelPersistenceStorageKey } from '../../lib/modelPersistence.ts';
+import { getPersistenceQueue } from '../../lib/persistenceQueue.ts';
+import { createQueryPersister } from '../../lib/queryPersister.ts';
+import { resolveMaxAgeTime } from '../../types/index.ts';
+import { BeanModelLast } from './bean.model.last.ts';
 
 export class BeanModelPersister extends BeanModelLast {
   private _persisterRestoreErrors = new Set<string>();

@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerActionSubmitProps } from '../../component/actionSubmit/controller.jsx';
+import type { ControllerActionSubmitProps } from '../../component/actionSubmit/controller.tsx';
 
-import { ControllerActionSubmit } from '../../component/actionSubmit/controller.jsx';
+import { ControllerActionSubmit } from '../../component/actionSubmit/controller.tsx';
 export type ZActionSubmitProps = {
   controllerRef?: (ref: ControllerActionSubmit) => void;
 } & ControllerActionSubmitProps;

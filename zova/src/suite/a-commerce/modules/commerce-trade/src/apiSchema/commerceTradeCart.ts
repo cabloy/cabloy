@@ -9,7 +9,7 @@ import {
   ApiApiCommerceTradeCartclearPath,
   ApiApiCommerceTradeCartdeleteItemPath,
   ApiApiCommerceTradeCartupdateItemPath,
-} from '../api/commerceTradeCart.js';
+} from '../api/commerceTradeCart.ts';
 
 @ApiSchema()
 export class ApiSchemaCommerceTradeCart extends BeanBase {

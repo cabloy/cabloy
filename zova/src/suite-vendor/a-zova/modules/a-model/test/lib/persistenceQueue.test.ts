@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { getPersistenceQueue, PersistenceQueue } from '../../src/lib/persistenceQueue.js';
+import { getPersistenceQueue, PersistenceQueue } from '../../src/lib/persistenceQueue.ts';
 
 function deferred() {
   let resolve!: () => void;

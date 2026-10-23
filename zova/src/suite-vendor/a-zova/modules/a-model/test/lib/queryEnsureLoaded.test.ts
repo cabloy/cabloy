@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { $QueryEnsureLoaded } from '../../src/lib/utils.js';
+import { $QueryEnsureLoaded } from '../../src/lib/utils.ts';
 
 type QueryResult<T> = {
   data: T | undefined;

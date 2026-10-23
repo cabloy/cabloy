@@ -9,7 +9,7 @@ import {
   draftBaselineSignature,
   projectDraftValues,
   restoreDraftValues,
-} from '../../src/lib/draftSchema.js';
+} from '../../src/lib/draftSchema.ts';
 
 interface ITestSchema extends Omit<ISchemaObjectExtensionField, 'properties' | 'items'> {
   properties?: Record<string, ITestSchema>;

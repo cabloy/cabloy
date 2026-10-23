@@ -4,10 +4,10 @@ import type { BeanBase, BeanContainer } from 'zova';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import type { IRoutedDialogContext } from '../../src/types/appModal.js';
+import type { IRoutedDialogContext } from '../../src/types/appModal.ts';
 
-import { Monkey } from '../../src/monkey.js';
-import { routedDialogContextKey } from '../../src/types/appModal.js';
+import { Monkey } from '../../src/monkey.ts';
+import { routedDialogContextKey } from '../../src/types/appModal.ts';
 
 function createBean() {
   const lookups: string[] = [];

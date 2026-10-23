@@ -7,7 +7,7 @@ import {
   ApiApiCaptchacreatePath,
   ApiApiCaptcharefreshPath,
   ApiApiCaptchaverifyImmediatePath,
-} from '../api/captcha.js';
+} from '../api/captcha.ts';
 
 @ApiSchema()
 export class ApiSchemaCaptcha extends BeanBase {

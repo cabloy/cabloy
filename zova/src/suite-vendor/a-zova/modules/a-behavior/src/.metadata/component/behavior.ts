@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerBehaviorProps } from '../../component/behavior/controller.jsx';
+import type { ControllerBehaviorProps } from '../../component/behavior/controller.tsx';
 
-import { ControllerBehavior } from '../../component/behavior/controller.jsx';
+import { ControllerBehavior } from '../../component/behavior/controller.tsx';
 export type ZBehaviorProps = {
   controllerRef?: (ref: ControllerBehavior) => void;
 } & ControllerBehaviorProps;

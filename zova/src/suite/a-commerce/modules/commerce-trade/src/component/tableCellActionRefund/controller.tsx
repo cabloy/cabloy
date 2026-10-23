@@ -9,9 +9,9 @@ import { ZButton } from 'zova-module-basic-button';
 import type {
   ApiSchemaCommerceTradeDtoOrderSelectResItem,
   ApiSchemaCommerceTradeDtoRefundRecoveryView,
-} from '../../api/openapi/schemas.js';
-import type { ITableCellOptionsActionRefund } from '../../bean/tableCell.actionRefund.js';
-import type { ModelOrder } from '../../model/order.js';
+} from '../../api/openapi/schemas.ts';
+import type { ITableCellOptionsActionRefund } from '../../bean/tableCell.actionRefund.tsx';
+import type { ModelOrder } from '../../model/order.ts';
 
 export interface ControllerTableCellActionRefundProps extends ITableCellOptionsActionRefund {}
 

@@ -2,9 +2,9 @@ import type { MetadataKey } from 'zova';
 
 import { appMetadata, registerMappedClassMetadataKey } from 'zova';
 
-import type { IAopMethodRecord, IUseAopMethodPropMetadata } from '../types/aopMethod.js';
+import type { IAopMethodRecord, IUseAopMethodPropMetadata } from '../types/aopMethod.ts';
 
-import { SymbolDecoratorUseAopMethod } from '../types/aopMethod.js';
+import { SymbolDecoratorUseAopMethod } from '../types/aopMethod.ts';
 
 export function UseAopMethod<T extends keyof IAopMethodRecord>(
   aopMethodName: T,

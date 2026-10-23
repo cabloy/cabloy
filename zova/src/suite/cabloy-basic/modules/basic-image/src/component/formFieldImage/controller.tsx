@@ -13,18 +13,18 @@ import { ZFormField } from 'zova-module-a-form';
 import type {
   IImageUploaderRenderState,
   IImageUploaderResult,
-} from '../imageUploader/controller.jsx';
+} from '../imageUploader/controller.tsx';
 
-import { ZImageUploader } from '../../.metadata/component/imageUploader.js';
+import { ZImageUploader } from '../../.metadata/component/imageUploader.ts';
 import 'vue-advanced-cropper/dist/style.css';
 
-import { IImageResizeOptions } from '../../lib/imageTransform.jsx';
+import { IImageResizeOptions } from '../../lib/imageTransform.tsx';
 import {
   buildImagePreviewTitle,
   inferImageRelationName,
   resolveImagePreviewUrl,
-} from '../../lib/preview.js';
-import { openImagePreviewDialog } from '../../lib/previewDialog.jsx';
+} from '../../lib/preview.ts';
+import { openImagePreviewDialog } from '../../lib/previewDialog.tsx';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {

@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerControllerBoundaryProbeProps } from '../../component/controllerBoundaryProbe/controller.jsx';
+import type { ControllerControllerBoundaryProbeProps } from '../../component/controllerBoundaryProbe/controller.tsx';
 
-import { ControllerControllerBoundaryProbe } from '../../component/controllerBoundaryProbe/controller.jsx';
+import { ControllerControllerBoundaryProbe } from '../../component/controllerBoundaryProbe/controller.tsx';
 export type ZControllerBoundaryProbeProps = {
   controllerRef?: (ref: ControllerControllerBoundaryProbe) => void;
 } & ControllerControllerBoundaryProbeProps;

@@ -1,3 +1,3 @@
-export * from './style.js';
-export * from './theme.js';
-export * from './themeBase.js';
+export * from './style.ts';
+export * from './theme.ts';
+export * from './themeBase.ts';

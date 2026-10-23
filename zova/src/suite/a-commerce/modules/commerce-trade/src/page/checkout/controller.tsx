@@ -7,7 +7,7 @@ import { ModelAddressMine } from 'zova-module-commerce-member';
 import { ModelCoupon } from 'zova-module-commerce-promotion';
 import { ZPage } from 'zova-module-home-base';
 
-import { ModelCart } from '../../model/cart.js';
+import { ModelCart } from '../../model/cart.ts';
 
 export const ControllerPageCheckoutSchemaParams = z.object({});
 export const ControllerPageCheckoutSchemaQuery = z.object({});

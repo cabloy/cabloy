@@ -21,15 +21,15 @@ import * as ModuleInfo from '@cabloy/module-info';
 import { onActivated, onBeforeUnmount, onDeactivated, shallowReactive } from 'vue';
 import { BeanControllerPageBase, BeanSimple, cast, useComputed } from 'zova';
 
-import type { BeanRouter } from './bean/bean.router.js';
-import type { SysRouter } from './bean/sys.router.js';
-import type { IPageHost } from './types/pageHost.js';
-import type { TypePageSchema } from './types/router.js';
+import type { BeanRouter } from './bean/bean.router.ts';
+import type { SysRouter } from './bean/sys.router.ts';
+import type { IPageHost } from './types/pageHost.ts';
+import type { TypePageSchema } from './types/router.ts';
 
-import { pageHostKey, routerViewKey } from './lib/const.js';
-import { getCurrentRoute, getPageRoute, getRealRouteName, getRouteMatched } from './lib/utils.js';
-import { ServiceRouterGuards } from './service/routerGuards.js';
-import { SymbolRouterHistory } from './types/utils.js';
+import { pageHostKey, routerViewKey } from './lib/const.ts';
+import { getCurrentRoute, getPageRoute, getRealRouteName, getRouteMatched } from './lib/utils.ts';
+import { ServiceRouterGuards } from './service/routerGuards.ts';
+import { SymbolRouterHistory } from './types/utils.ts';
 
 export class Monkey
   extends BeanSimple

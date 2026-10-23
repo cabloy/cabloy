@@ -2,7 +2,7 @@ import 'zova-module-a-table';
 import 'zova-module-a-openapi';
 import type { IDetailsScope, IPermissionHintDetailsAction } from 'zova-module-a-openapi';
 
-import { ControllerBlockDetails } from '../component/blockDetails/controller.jsx';
+import { ControllerBlockDetails } from '../component/blockDetails/controller.tsx';
 
 export type TypeDetailsCheckPermission = (
   actionName?: string,

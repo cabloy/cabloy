@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerActionViewProps } from '../../component/actionView/controller.jsx';
+import type { ControllerActionViewProps } from '../../component/actionView/controller.tsx';
 
-import { ControllerActionView } from '../../component/actionView/controller.jsx';
+import { ControllerActionView } from '../../component/actionView/controller.tsx';
 export type ZActionViewProps = {
   controllerRef?: (ref: ControllerActionView) => void;
 } & ControllerActionViewProps;

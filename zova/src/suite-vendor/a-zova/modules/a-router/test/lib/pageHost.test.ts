@@ -3,8 +3,8 @@ import type { BeanBase, BeanContainer } from 'zova';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { pageHostKey } from '../../src/lib/const.js';
-import { Monkey } from '../../src/monkey.js';
+import { pageHostKey } from '../../src/lib/const.ts';
+import { Monkey } from '../../src/monkey.ts';
 
 function createBean() {
   const lookups: string[] = [];

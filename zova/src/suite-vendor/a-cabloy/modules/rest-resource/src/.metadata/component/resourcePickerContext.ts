@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerResourcePickerContextProps } from '../../component/resourcePickerContext/controller.jsx';
+import type { ControllerResourcePickerContextProps } from '../../component/resourcePickerContext/controller.tsx';
 
-import { ControllerResourcePickerContext } from '../../component/resourcePickerContext/controller.jsx';
+import { ControllerResourcePickerContext } from '../../component/resourcePickerContext/controller.tsx';
 export type ZResourcePickerContextProps = {
   controllerRef?: (ref: ControllerResourcePickerContext) => void;
 } & ControllerResourcePickerContextProps;

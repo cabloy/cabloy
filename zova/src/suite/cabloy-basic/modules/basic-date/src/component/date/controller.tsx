@@ -1,9 +1,9 @@
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
-import type { TypeDateInputType } from '../../types/date.js';
+import type { TypeDateInputType } from '../../types/date.ts';
 
-import { dateFromInputValue, dateToInputValue } from '../../lib/utils.js';
+import { dateFromInputValue, dateToInputValue } from '../../lib/utils.ts';
 
 export interface ControllerDateProps {
   type?: TypeDateInputType;

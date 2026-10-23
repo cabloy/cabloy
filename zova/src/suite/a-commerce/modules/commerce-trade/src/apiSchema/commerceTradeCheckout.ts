@@ -6,7 +6,7 @@ import { ApiSchema } from 'zova-module-a-api';
 import {
   ApiApiCommerceTradeCheckoutpaymentMethodsPath,
   ApiApiCommerceTradeCheckoutcreatePath,
-} from '../api/commerceTradeCheckout.js';
+} from '../api/commerceTradeCheckout.ts';
 
 @ApiSchema()
 export class ApiSchemaCommerceTradeCheckout extends BeanBase {

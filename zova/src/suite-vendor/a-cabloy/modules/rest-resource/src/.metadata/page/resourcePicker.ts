@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { createZovaComponentPage } from 'zova';
 
-import { ControllerPageResourcePicker } from '../../page/resourcePicker/controller.jsx';
-import { ControllerPageResourcePickerSchemaParams } from '../../page/resourcePicker/controller.jsx';
+import { ControllerPageResourcePicker } from '../../page/resourcePicker/controller.tsx';
+import { ControllerPageResourcePickerSchemaParams } from '../../page/resourcePicker/controller.tsx';
 export namespace NSControllerPageResourcePicker {
   export const paramsSchema = ControllerPageResourcePickerSchemaParams;
   export type ParamsInput = z.input<typeof ControllerPageResourcePickerSchemaParams>;

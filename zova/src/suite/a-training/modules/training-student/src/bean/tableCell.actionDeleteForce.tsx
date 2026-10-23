@@ -10,7 +10,7 @@ import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 import { ZButton } from 'zova-module-basic-button';
 
-import type { ModelStudent } from '../model/student.js';
+import type { ModelStudent } from '../model/student.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableActionRowRecord {

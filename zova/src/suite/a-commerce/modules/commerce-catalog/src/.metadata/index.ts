@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/catalogue.js';
-import { IModelOptionsCatalogue } from '../model/catalogue.js';
+export * from '../model/catalogue.ts';
+import { IModelOptionsCatalogue } from '../model/catalogue.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-commerce-catalog' {
 }
 /** model: end */
 /** model: begin */
-import { ModelCatalogue } from '../model/catalogue.js';
+import type { ModelCatalogue } from '../model/catalogue.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/commerceCatalogProduct.js';
+export * from '../api/commerceCatalogProduct.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-commerce-catalog' {
 }
 /** api: end */
 /** api: begin */
-import { ApiCommerceCatalogProduct } from '../api/commerceCatalogProduct.js';
+import type { ApiCommerceCatalogProduct } from '../api/commerceCatalogProduct.ts';
 export interface IModuleApi {
   'commerceCatalogProduct': ApiCommerceCatalogProduct;
 }
@@ -72,10 +72,10 @@ declare module 'zova' {
 }
 /** api: end */
 /** openapi: begin */
-export * from '../api/openapi/index.js';
+export * from '../api/openapi/index.ts';
 /** openapi: end */
 /** apiSchema: begin */
-export * from '../apiSchema/commerceCatalogProduct.js';
+export * from '../apiSchema/commerceCatalogProduct.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -97,7 +97,7 @@ declare module 'zova-module-commerce-catalog' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import { ApiSchemaCommerceCatalogProduct } from '../apiSchema/commerceCatalogProduct.js';
+import type { ApiSchemaCommerceCatalogProduct } from '../apiSchema/commerceCatalogProduct.ts';
 export interface IModuleApiSchema {
   'commerceCatalogProduct': ApiSchemaCommerceCatalogProduct;
 }
@@ -112,8 +112,8 @@ declare module 'zova' {
 }
 /** apiSchema: end */
 /** controller: begin */
-export * from '../page/catalogue/controller.jsx';
-export * from '../page/product/controller.jsx';
+export * from '../page/catalogue/controller.tsx';
+export * from '../page/product/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -134,8 +134,8 @@ declare module 'zova-module-commerce-catalog' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerPageCatalogue } from '../page/catalogue/controller.jsx';
-import { ControllerPageProduct } from '../page/product/controller.jsx';
+import type { ControllerPageCatalogue } from '../page/catalogue/controller.tsx';
+import type { ControllerPageProduct } from '../page/product/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -145,11 +145,11 @@ declare module 'zova' {
 }
 /** controller: end */
 /** pages: begin */
-export * from './page/catalogue.js';
-import { NSControllerPageCatalogue } from './page/catalogue.js';
-export * from './page/product.js';
-import { NSControllerPageProduct } from './page/product.js';
-export * from '../routes.js';
+export * from './page/catalogue.ts';
+import { NSControllerPageCatalogue } from './page/catalogue.ts';
+export * from './page/product.ts';
+import { NSControllerPageProduct } from './page/product.ts';
+export * from '../routes.ts';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
@@ -188,7 +188,7 @@ $query: NSControllerPageProduct.QueryOutput;
 /** pages: end */
 
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

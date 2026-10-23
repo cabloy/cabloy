@@ -1,6 +1,6 @@
 // eslint-disable
 /** controller: begin */
-export * from '../component/formFieldCurrency/controller.jsx';
+export * from '../component/formFieldCurrency/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -16,7 +16,7 @@ declare module 'zova-module-basic-currency' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerFormFieldCurrency } from '../component/formFieldCurrency/controller.jsx';
+import type { ControllerFormFieldCurrency } from '../component/formFieldCurrency/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -26,8 +26,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/formFieldCurrency.js';
-import { ZFormFieldCurrency } from './component/formFieldCurrency.js';
+export * from './component/formFieldCurrency.ts';
+import { ZFormFieldCurrency } from './component/formFieldCurrency.ts';
 export const components = {
   'formFieldCurrency': ZFormFieldCurrency,
 };
@@ -42,8 +42,8 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** tableCell: begin */
-export * from '../bean/tableCell.currency.jsx';
-import { ITableCellOptionsCurrency } from '../bean/tableCell.currency.jsx';
+export * from '../bean/tableCell.currency.tsx';
+import { ITableCellOptionsCurrency } from '../bean/tableCell.currency.tsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
 
@@ -68,7 +68,7 @@ declare module 'zova-module-basic-currency' {
 }
 /** tableCell: end */
 /** tableCell: begin */
-import { TableCellCurrency } from '../bean/tableCell.currency.jsx';
+import type { TableCellCurrency } from '../bean/tableCell.currency.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {

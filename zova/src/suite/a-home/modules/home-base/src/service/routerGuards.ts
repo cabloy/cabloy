@@ -4,7 +4,7 @@ import { catchError } from '@cabloy/utils';
 import { Service } from 'zova-module-a-bean';
 import { BeanRouterGuardsBase } from 'zova-module-a-router';
 
-import { isRoleSiteAdmitted } from '../lib/roleSiteAdmission.js';
+import { isRoleSiteAdmitted } from '../lib/roleSiteAdmission.ts';
 
 @Service()
 export class ServiceRouterGuards extends BeanRouterGuardsBase {

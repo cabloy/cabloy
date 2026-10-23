@@ -12,7 +12,7 @@ import { Controller } from 'zova-module-a-bean';
 import {
   groupTableActionBulkActions,
   resolveTableActionBulkDynamicProps,
-} from '../../lib/selection.js';
+} from '../../lib/selection.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {

@@ -18,7 +18,7 @@ import type {
   IResolvedFormLayoutSection,
   IResolvedFormLayoutTab,
   IResolvedFormLayoutTabs,
-} from '../types/formLayout.js';
+} from '../types/formLayout.ts';
 
 export function resolveFormLayout(
   layout: IFormLayout,

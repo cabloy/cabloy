@@ -5,7 +5,7 @@ import { useVueTable } from '@tanstack/vue-table';
 import { markRaw } from 'vue';
 import { BeanControllerPageBase } from 'zova';
 
-import { TypeTable } from '../types/table.js';
+import { TypeTable } from '../types/table.ts';
 
 export class BeanControllerPageTableBase<TData extends {} = {}> extends BeanControllerPageBase {
   table: TypeTable<TData>;

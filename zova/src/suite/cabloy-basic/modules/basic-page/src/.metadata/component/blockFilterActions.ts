@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerBlockFilterActionsProps } from '../../component/blockFilterActions/controller.jsx';
+import type { ControllerBlockFilterActionsProps } from '../../component/blockFilterActions/controller.tsx';
 
-import { ControllerBlockFilterActions } from '../../component/blockFilterActions/controller.jsx';
+import { ControllerBlockFilterActions } from '../../component/blockFilterActions/controller.tsx';
 export type ZBlockFilterActionsProps = {
   controllerRef?: (ref: ControllerBlockFilterActions) => void;
 } & ControllerBlockFilterActionsProps;

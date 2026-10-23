@@ -6,7 +6,7 @@ import { ApiSchema } from 'zova-module-a-api';
 import {
   ApiApiCommerceCatalogProductselectPublicPath,
   ApiApiCommerceCatalogProductviewPublicPath,
-} from '../api/commerceCatalogProduct.js';
+} from '../api/commerceCatalogProduct.ts';
 
 @ApiSchema()
 export class ApiSchemaCommerceCatalogProduct extends BeanBase {

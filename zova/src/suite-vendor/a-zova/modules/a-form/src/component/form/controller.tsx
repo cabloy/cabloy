@@ -31,22 +31,22 @@ import {
   TypeFormSchemaScene,
 } from 'zova-module-a-openapi';
 
-import type { ISchemaRefreshContext } from '../../lib/schemaRefresh.js';
-import type { IResolvedFormLayoutNode, IResolvedFormLayoutTab } from '../../types/formLayout.js';
+import type { ISchemaRefreshContext } from '../../lib/schemaRefresh.ts';
+import type { IResolvedFormLayoutNode, IResolvedFormLayoutTab } from '../../types/formLayout.ts';
 
-import { BeanControllerFormBase } from '../../lib/beanControllerFormBase.js';
+import { BeanControllerFormBase } from '../../lib/beanControllerFormBase.ts';
 import {
   createSchemaRefreshContract,
   schemaRefreshFingerprint,
   SchemaRefreshTracker,
-} from '../../lib/schemaRefresh.js';
+} from '../../lib/schemaRefresh.ts';
 import {
   IFormScope,
   RevalidateLogicProps,
   TypeFormOnShowError,
   TypeFormOnSubmit,
   TypeFormOnSubmitInvalid,
-} from '../../types/form.js';
+} from '../../types/form.ts';
 import {
   constFieldProps,
   IFormFieldOptions,
@@ -54,8 +54,8 @@ import {
   IFormFieldScope,
   IJsxRenderContextForm,
   IJsxRenderContextFormField,
-} from '../../types/formField.js';
-import { ControllerFormField } from '../formField/controller.jsx';
+} from '../../types/formField.ts';
+import { ControllerFormField } from '../formField/controller.tsx';
 
 export interface ControllerFormProps<TFormData extends {} = {}, TSubmitMeta = never> {
   formTag?: string;

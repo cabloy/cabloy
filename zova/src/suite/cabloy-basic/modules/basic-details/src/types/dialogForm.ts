@@ -3,7 +3,7 @@ import { IIconRecord } from 'zova-module-a-icon';
 import { TypeFormScene, TypeFormSchemaScene } from 'zova-module-a-openapi';
 import { AppModalItem, IModalDialogOptions } from 'zova-module-basic-app';
 
-import type { TypeDetailsCheckPermission } from './details.js';
+import type { TypeDetailsCheckPermission } from './details.ts';
 
 export interface IDialogFormOptions<TData extends {} = {}> {
   locale: {

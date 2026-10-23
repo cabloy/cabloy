@@ -30,7 +30,7 @@ import {
   selectionKey,
   selectionRowId,
   TypeResourcePickerSelectionMode,
-} from '../../lib/selection.js';
+} from '../../lib/selection.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {

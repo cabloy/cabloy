@@ -1,6 +1,6 @@
 import { IModuleRoute } from 'zova-module-a-router';
 
-import { ZPageHome } from './.metadata/page/home.js';
+import { ZPageHome } from './.metadata/page/home.ts';
 
 export const routes: IModuleRoute[] = [
   {

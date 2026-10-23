@@ -4,7 +4,7 @@ import { VNode } from 'vue';
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
-import { ControllerForm } from '../form/controller.jsx';
+import { ControllerForm } from '../form/controller.tsx';
 
 export interface ControllerFormFieldBlankProps<TParentData extends {} = {}, TSubmitMeta = never> {
   slotDefault?: (form: ControllerForm<TParentData, TSubmitMeta>) => VNode | undefined;

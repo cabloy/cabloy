@@ -8,9 +8,9 @@ import type {
 
 import { BeanSimple } from 'zova';
 
-import { definePropertyScopeBase } from './lib/utils.js';
-import { ServiceRouterGuards } from './service/routerGuards.js';
-import { ServiceSsr } from './service/ssr.js';
+import { definePropertyScopeBase } from './lib/utils.ts';
+import { ServiceRouterGuards } from './service/routerGuards.ts';
+import { ServiceSsr } from './service/ssr.ts';
 
 export class Monkey
   extends BeanSimple

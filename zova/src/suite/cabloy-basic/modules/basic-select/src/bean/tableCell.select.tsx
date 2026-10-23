@@ -8,8 +8,8 @@ import type {
 import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 
-import { ZSelectProps } from '../.metadata/index.js';
-import { isSelectValueEqual } from '../lib/utils.js';
+import { ZSelectProps } from '../.metadata/index.ts';
+import { isSelectValueEqual } from '../lib/utils.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableCellRecord {

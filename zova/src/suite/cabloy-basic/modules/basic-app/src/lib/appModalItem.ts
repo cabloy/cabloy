@@ -1,5 +1,5 @@
-import type { ServiceAppModal } from '../service/appModal.js';
-import type { IModalItem } from '../types/appModal.js';
+import type { ServiceAppModal } from '../service/appModal.ts';
+import type { IModalItem } from '../types/appModal.ts';
 
 export class AppModalItem {
   private serviceAppModal: ServiceAppModal;

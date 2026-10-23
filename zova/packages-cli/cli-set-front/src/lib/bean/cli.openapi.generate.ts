@@ -192,7 +192,7 @@ export const OpenApiBaseURL = (sys: ZovaSys) => {
     const indexFile = path.join(module.root, 'src/api/openapi/index.ts');
     await fse.outputFile(
       indexFile,
-      "export * from './baseURL.js';\nexport * from './schemas.js';\nexport * from './types.js';",
+      "export * from './baseURL.ts';\nexport * from './schemas.ts';\nexport * from './types.ts';",
     );
     await this.helper.formatFile({ fileName: indexFile });
     return cache;
@@ -218,7 +218,7 @@ export const OpenApiBaseURL = (sys: ZovaSys) => {
     }
     let contentSchemas = typeSchemas.join('\n');
     if (contentSchemas.includes('components["schemas"]')) {
-      contentSchemas = `import type { components } from './types.js';\n${contentSchemas}`;
+      contentSchemas = `import type { components } from './types.ts';\n${contentSchemas}`;
     }
     contentSchemas = `// eslint-disable\n${contentSchemas}`;
     return contentSchemas;
@@ -419,11 +419,11 @@ export const OpenApiBaseURL = (sys: ZovaSys) => {
     if (contentTypes2.includes('paths[')) importsOpenapiType.push('paths');
     const contentImportsOpenapiValue =
       importsOpenapiValue.length > 0
-        ? `import { ${importsOpenapiValue.join(', ')} } from './openapi/index.js';`
+        ? `import { ${importsOpenapiValue.join(', ')} } from './openapi/index.ts';`
         : '';
     const contentImportsOpenapiType =
       importsOpenapiType.length > 0
-        ? `import type { ${importsOpenapiType.join(', ')} } from './openapi/index.js';`
+        ? `import type { ${importsOpenapiType.join(', ')} } from './openapi/index.ts';`
         : '';
     const contentImportsOpenapi = [contentImportsOpenapiValue, contentImportsOpenapiType]
       .filter(item => !!item)
@@ -457,7 +457,7 @@ export class Api${apiName} extends BeanApiBase {
     }
     const contentImportsApiPath =
       importsApiPath.length > 0
-        ? `import { ${importsApiPath.join(', ')} } from '../api/${apiNameLower}.js';`
+        ? `import { ${importsApiPath.join(', ')} } from '../api/${apiNameLower}.ts';`
         : '';
     const apiMetaContent = `import { BeanBase } from 'zova';
 import { ApiMeta } from 'zova-module-a-api';

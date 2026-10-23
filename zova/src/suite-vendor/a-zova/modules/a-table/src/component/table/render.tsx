@@ -4,7 +4,7 @@ import { FlexRender } from '@tanstack/vue-table';
 import { BeanRenderBase } from 'zova';
 import { Render } from 'zova-module-a-bean';
 
-import { TableColumnIdSelection } from '../../types/table.js';
+import { TableColumnIdSelection } from '../../types/table.ts';
 
 @Render()
 export class RenderTable extends BeanRenderBase {

@@ -1,10 +1,10 @@
 import type { IModuleRoute } from 'zova-module-a-router';
 
-import { ZPageEntry } from './.metadata/page/entry.js';
-import { ZPageEntryCreate } from './.metadata/page/entryCreate.js';
-import { ZPageResource } from './.metadata/page/resource.js';
-import { ZPageResourcePicker } from './.metadata/page/resourcePicker.js';
-import { resourceRouteMeta, resourceTabKey } from './lib/resourceRouteMeta.js';
+import { ZPageEntry } from './.metadata/page/entry.ts';
+import { ZPageEntryCreate } from './.metadata/page/entryCreate.ts';
+import { ZPageResource } from './.metadata/page/resource.ts';
+import { ZPageResourcePicker } from './.metadata/page/resourcePicker.ts';
+import { resourceRouteMeta, resourceTabKey } from './lib/resourceRouteMeta.ts';
 
 export const routes: IModuleRoute[] = [
   {

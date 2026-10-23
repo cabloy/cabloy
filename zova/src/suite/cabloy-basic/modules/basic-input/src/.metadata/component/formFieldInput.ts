@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerFormFieldInputProps } from '../../component/formFieldInput/controller.jsx';
+import type { ControllerFormFieldInputProps } from '../../component/formFieldInput/controller.tsx';
 
-import { ControllerFormFieldInput } from '../../component/formFieldInput/controller.jsx';
+import { ControllerFormFieldInput } from '../../component/formFieldInput/controller.tsx';
 export type ZFormFieldInputProps = {
   controllerRef?: (ref: ControllerFormFieldInput) => void;
 } & ControllerFormFieldInputProps;

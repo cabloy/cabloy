@@ -1,6 +1,6 @@
 import { createZovaComponentPage } from 'zova';
 
-import { ControllerPageErrorNotFound } from '../../page/errorNotFound/controller.jsx';
+import { ControllerPageErrorNotFound } from '../../page/errorNotFound/controller.tsx';
 
 export const ZPageErrorNotFound = createZovaComponentPage(
   ControllerPageErrorNotFound,

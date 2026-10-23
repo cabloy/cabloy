@@ -10,7 +10,7 @@ import { classes } from 'typestyle';
 import { BeanBase, ClientOnly } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 
-import type { IImagePreviewItem } from '../lib/index.js';
+import type { IImagePreviewItem } from '../lib/index.ts';
 
 import {
   buildImagePreviewTitle,
@@ -21,7 +21,7 @@ import {
   resolveImagePreviewUrl,
   summarizeImageRelationPreviewValue,
   summarizeImageUrlPreviewValue,
-} from '../lib/index.js';
+} from '../lib/index.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableCellRecord {

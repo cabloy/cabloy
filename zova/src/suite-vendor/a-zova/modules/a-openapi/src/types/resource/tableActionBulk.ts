@@ -3,7 +3,7 @@ import type { TableIdentity } from 'table-identity';
 import { types } from 'typestyle';
 import { TypeRenderComponentJsx } from 'zova-jsx';
 
-import type { IPermissionHintTableActionBulk } from '../permissions.js';
+import type { IPermissionHintTableActionBulk } from '../permissions.ts';
 
 export type IResourceTableActionBulkNameRecord = {
   [

@@ -1,7 +1,7 @@
 // eslint-disable
 /** css: begin */
-export * from '../bean/css.base.js';
-import { ICssOptionsBase } from '../bean/css.base.js';
+export * from '../bean/css.base.ts';
+import { ICssOptionsBase } from '../bean/css.base.ts';
 import 'zova-module-a-style';
 declare module 'zova-module-a-style' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-home-theme' {
 }
 /** css: end */
 /** css: begin */
-import { CssBase } from '../bean/css.base.js';
+import type { CssBase } from '../bean/css.base.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -35,10 +35,10 @@ declare module 'zova' {
 }
 /** css: end */
 /** theme: begin */
-export * from '../bean/theme.default.js';
-export * from '../bean/theme.orange.js';
-import { IThemeOptionsDefault } from '../bean/theme.default.js';
-import { IThemeOptionsOrange } from '../bean/theme.orange.js';
+export * from '../bean/theme.default.ts';
+export * from '../bean/theme.orange.ts';
+import { IThemeOptionsDefault } from '../bean/theme.default.ts';
+import { IThemeOptionsOrange } from '../bean/theme.orange.ts';
 import 'zova-module-a-style';
 declare module 'zova-module-a-style' {
 
@@ -75,8 +75,8 @@ declare module 'zova-module-home-theme' {
 }
 /** theme: end */
 /** theme: begin */
-import { ThemeDefault } from '../bean/theme.default.js';
-import { ThemeOrange } from '../bean/theme.orange.js';
+import type { ThemeDefault } from '../bean/theme.default.ts';
+import type { ThemeOrange } from '../bean/theme.orange.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {

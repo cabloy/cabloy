@@ -11,8 +11,8 @@ import { isDeepStrictEqual } from 'node:util';
 import { computed, customRef, effectScope, markRaw, reactive, shallowReactive, watch } from 'vue';
 import { SymbolBeanFullName } from 'zova';
 
-import { BeanModelUseState } from '../../../a-model/src/bean/bean.model/bean.model.useState.js';
-import { ModelPersistenceContext } from '../../../a-model/src/lib/modelPersistence.js';
+import { BeanModelUseState } from '../../../a-model/src/bean/bean.model/bean.model.useState.ts';
+import { ModelPersistenceContext } from '../../../a-model/src/lib/modelPersistence.ts';
 
 // Only imports/decorators are removed; every tabs/state/persister method below is
 // production code. Real Vue refs and QueryObservers model the reactive IoC owner.

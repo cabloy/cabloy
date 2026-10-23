@@ -16,9 +16,9 @@ import { formSceneFromFormMeta } from 'zova-module-a-form';
 import { $QueryEnsureLoaded, BeanModelBase, Model } from 'zova-module-a-model';
 import { ScopeModuleAOpenapi, SymbolOpenapiSchemaName } from 'zova-module-a-openapi';
 
-import { prepareDeleteRequestConfig } from '../lib/deleteRequest.js';
-import { runMutationSuccess } from '../lib/mutationSuccess.js';
-import { validateSelectedIds } from '../lib/selectedIds.js';
+import { prepareDeleteRequestConfig } from '../lib/deleteRequest.ts';
+import { runMutationSuccess } from '../lib/mutationSuccess.ts';
+import { validateSelectedIds } from '../lib/selectedIds.ts';
 
 export interface IModelOptionsResource extends IDecoratorModelOptions {}
 

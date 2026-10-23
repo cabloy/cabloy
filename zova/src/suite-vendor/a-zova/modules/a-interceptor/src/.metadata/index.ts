@@ -1,15 +1,15 @@
 // eslint-disable
 /** interceptor: begin */
-export * from '../bean/interceptor.body.js';
-export * from '../bean/interceptor.headers.js';
-export * from '../bean/interceptor.jwt.js';
-export * from '../bean/interceptor.mock.js';
-export * from '../bean/interceptor.performAction.js';
-import { IInterceptorOptionsBody } from '../bean/interceptor.body.js';
-import { IInterceptorOptionsHeaders } from '../bean/interceptor.headers.js';
-import { IInterceptorOptionsJwt } from '../bean/interceptor.jwt.js';
-import { IInterceptorOptionsMock } from '../bean/interceptor.mock.js';
-import { IInterceptorOptionsPerformAction } from '../bean/interceptor.performAction.js';
+export * from '../bean/interceptor.body.ts';
+export * from '../bean/interceptor.headers.ts';
+export * from '../bean/interceptor.jwt.ts';
+export * from '../bean/interceptor.mock.ts';
+export * from '../bean/interceptor.performAction.ts';
+import { IInterceptorOptionsBody } from '../bean/interceptor.body.ts';
+import { IInterceptorOptionsHeaders } from '../bean/interceptor.headers.ts';
+import { IInterceptorOptionsJwt } from '../bean/interceptor.jwt.ts';
+import { IInterceptorOptionsMock } from '../bean/interceptor.mock.ts';
+import { IInterceptorOptionsPerformAction } from '../bean/interceptor.performAction.ts';
 import 'zova-module-a-fetch';
 declare module 'zova-module-a-fetch' {
 
@@ -82,11 +82,11 @@ declare module 'zova-module-a-interceptor' {
 }
 /** interceptor: end */
 /** interceptor: begin */
-import { InterceptorBody } from '../bean/interceptor.body.js';
-import { InterceptorHeaders } from '../bean/interceptor.headers.js';
-import { InterceptorJwt } from '../bean/interceptor.jwt.js';
-import { InterceptorMock } from '../bean/interceptor.mock.js';
-import { InterceptorPerformAction } from '../bean/interceptor.performAction.js';
+import type { InterceptorBody } from '../bean/interceptor.body.ts';
+import type { InterceptorHeaders } from '../bean/interceptor.headers.ts';
+import type { InterceptorJwt } from '../bean/interceptor.jwt.ts';
+import type { InterceptorMock } from '../bean/interceptor.mock.ts';
+import type { InterceptorPerformAction } from '../bean/interceptor.performAction.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -99,8 +99,8 @@ declare module 'zova' {
 }
 /** interceptor: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig } from 'zova';

@@ -1,6 +1,6 @@
 import type { BeanBase, BeanContainer } from 'zova';
 
-import { __ThisModule__ } from '../.metadata/this.js';
+import { __ThisModule__ } from '../.metadata/this.ts';
 
 export function definePropertyScopeBase(bean: BeanContainer, beanInstance: BeanBase): void {
   // $scopeBase

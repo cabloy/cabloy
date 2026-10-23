@@ -1,1 +1,1 @@
-export * from './.metadata/index.js';
+export * from './.metadata/index.ts';

@@ -1,6 +1,6 @@
 // eslint-disable
 /** controller: begin */
-export * from '../component/formFieldCaptcha/controller.jsx';
+export * from '../component/formFieldCaptcha/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -16,7 +16,7 @@ declare module 'zova-module-basic-captcha' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerFormFieldCaptcha } from '../component/formFieldCaptcha/controller.jsx';
+import type { ControllerFormFieldCaptcha } from '../component/formFieldCaptcha/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -26,8 +26,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/formFieldCaptcha.js';
-import { ZFormFieldCaptcha } from './component/formFieldCaptcha.js';
+export * from './component/formFieldCaptcha.ts';
+import { ZFormFieldCaptcha } from './component/formFieldCaptcha.ts';
 export const components = {
   'formFieldCaptcha': ZFormFieldCaptcha,
 };
@@ -42,7 +42,7 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

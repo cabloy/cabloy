@@ -1,3 +1,3 @@
-export * from './const.js';
-export * from './routerViewBase.jsx';
-export * from './utils.js';
+export * from './const.ts';
+export * from './routerViewBase.tsx';
+export * from './utils.ts';

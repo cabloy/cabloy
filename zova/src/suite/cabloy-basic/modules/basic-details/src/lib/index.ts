@@ -1,2 +1,2 @@
-export * from './detailsPermissions.js';
-export * from './utils.js';
+export * from './detailsPermissions.ts';
+export * from './utils.ts';

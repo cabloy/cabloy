@@ -10,9 +10,9 @@ import type { UnwrapNestedRefs } from 'vue';
 import { hashKey, useMutation } from '@tanstack/vue-query';
 import { cast } from 'zova';
 
-import type { MaybeRefDeep } from '../../common/types.js';
+import type { MaybeRefDeep } from '../../common/types.ts';
 
-import { BeanModelUseStateGeneral } from './bean.model.useStateGeneral.js';
+import { BeanModelUseStateGeneral } from './bean.model.useStateGeneral.ts';
 
 const SymbolUseMutations = Symbol('SymbolUseMutations');
 

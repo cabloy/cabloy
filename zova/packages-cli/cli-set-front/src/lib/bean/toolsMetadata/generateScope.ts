@@ -42,7 +42,7 @@ export async function generateScope(
   // combine
   const content = `/** scope: begin */
 import { ${contentImports.join(', ')} } from 'zova';
-import { Scope } from '${moduleName === 'a-bean' ? '../lib/scope.js' : 'zova-module-a-bean'}';
+import { Scope } from '${moduleName === 'a-bean' ? '../lib/scope.ts' : 'zova-module-a-bean'}';
 
 @Scope()
 export class ScopeModule${relativeNameCapitalize} extends BeanScopeBase {}

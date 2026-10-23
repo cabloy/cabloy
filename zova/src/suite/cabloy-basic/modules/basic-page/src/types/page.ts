@@ -4,8 +4,8 @@ import 'zova-module-a-form';
 import 'zova-module-a-table';
 import 'zova-module-a-openapi';
 
-import { ControllerBlockFilter } from '../component/blockFilter/controller.jsx';
-import { ControllerBlockPage } from '../component/blockPage/controller.jsx';
+import { ControllerBlockFilter } from '../component/blockFilter/controller.tsx';
+import { ControllerBlockPage } from '../component/blockPage/controller.tsx';
 
 export interface IPageFilterScope extends IPageScope {
   $$filter?: ControllerBlockFilter;

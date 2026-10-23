@@ -15,9 +15,9 @@ import type {
 import { DeepKeys } from '@tanstack/vue-form';
 import { types } from 'typestyle';
 
-import type { ControllerForm } from '../component/form/controller.jsx';
-import type { ControllerFormField } from '../component/formField/controller.jsx';
-import type { IFormScope, TypeBehaviorFormFieldOptions } from './form.js';
+import type { ControllerForm } from '../component/form/controller.tsx';
+import type { ControllerFormField } from '../component/formField/controller.tsx';
+import type { IFormScope, TypeBehaviorFormFieldOptions } from './form.ts';
 
 export type HTMLInputElementType =
   | 'text'

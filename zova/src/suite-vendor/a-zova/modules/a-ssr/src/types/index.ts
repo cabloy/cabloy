@@ -1,2 +1,2 @@
-export * from './config.js';
-export * from './ssr.js';
+export * from './config.ts';
+export * from './ssr.ts';

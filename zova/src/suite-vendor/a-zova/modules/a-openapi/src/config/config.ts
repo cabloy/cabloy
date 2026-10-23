@@ -1,6 +1,6 @@
 import type { ZovaSys } from 'zova';
 
-import { IFormProvider } from '../types/formProvider.js';
+import { IFormProvider } from '../types/formProvider.ts';
 
 export const config = (_sys: ZovaSys) => {
   return {

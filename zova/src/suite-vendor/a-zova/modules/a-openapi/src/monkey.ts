@@ -4,7 +4,7 @@ import type { BeanBase, BeanContainer, IMonkeyAppInitialize, IMonkeyBeanInit } f
 import { ref, watch } from 'vue';
 import { BeanSimple } from 'zova';
 
-import type { ModelSdk } from './model/sdk.js';
+import type { ModelSdk } from './model/sdk.ts';
 
 export class Monkey extends BeanSimple implements IMonkeyBeanInit, IMonkeyAppInitialize {
   private _modelSdk: Ref<ModelSdk | undefined> = ref();

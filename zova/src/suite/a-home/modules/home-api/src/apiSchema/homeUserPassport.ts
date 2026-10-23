@@ -14,7 +14,7 @@ import {
   ApiApiHomeUserPassportrefreshAuthTokenPath,
   ApiApiHomeUserPassportcreatePassportJwtFromOauthCodePath,
   ApiApiHomeUserPassportcreateTempAuthTokenPath,
-} from '../api/homeUserPassport.js';
+} from '../api/homeUserPassport.ts';
 
 @ApiSchema()
 export class ApiSchemaHomeUserPassport extends BeanBase {

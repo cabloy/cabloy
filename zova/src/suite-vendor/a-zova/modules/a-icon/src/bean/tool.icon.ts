@@ -1,8 +1,8 @@
 import { BeanBase, Use } from 'zova';
 import { Tool } from 'zova-module-a-bean';
 
-import { IIconInfo, IIconMeta } from '../types/icon.js';
-import { SysIcon } from './sys.icon.js';
+import { IIconInfo, IIconMeta } from '../types/icon.ts';
+import { SysIcon } from './sys.icon.ts';
 
 @Tool()
 export class ToolIcon extends BeanBase {

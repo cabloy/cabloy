@@ -1,8 +1,8 @@
 // eslint-disable
 /** service: begin */
-export * from '../service/routerGuards.js';
-export * from '../service/ssr.js';
-export * from '../service/ssrLayout.js';
+export * from '../service/routerGuards.ts';
+export * from '../service/ssr.ts';
+export * from '../service/ssrLayout.ts';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
@@ -52,9 +52,9 @@ declare module 'zova-module-home-base' {
 }
 /** service: end */
 /** service: begin */
-import { ServiceRouterGuards } from '../service/routerGuards.js';
-import { ServiceSsr } from '../service/ssr.js';
-import { ServiceSsrLayout } from '../service/ssrLayout.js';
+import type { ServiceRouterGuards } from '../service/routerGuards.ts';
+import type { ServiceSsr } from '../service/ssr.ts';
+import type { ServiceSsrLayout } from '../service/ssrLayout.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -65,13 +65,13 @@ declare module 'zova' {
 }
 /** service: end */
 /** controller: begin */
-export * from '../component/itemLink/controller.jsx';
-export * from '../component/page/controller.jsx';
-export * from '../component/siteEntryTables/controller.jsx';
-export * from '../page/authCallback/controller.jsx';
-export * from '../page/errorAccessDenied/controller.jsx';
-export * from '../page/errorExpired/controller.jsx';
-export * from '../page/errorNotFound/controller.jsx';
+export * from '../component/itemLink/controller.tsx';
+export * from '../component/page/controller.tsx';
+export * from '../component/siteEntryTables/controller.tsx';
+export * from '../page/authCallback/controller.tsx';
+export * from '../page/errorAccessDenied/controller.tsx';
+export * from '../page/errorExpired/controller.tsx';
+export * from '../page/errorNotFound/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -117,13 +117,13 @@ declare module 'zova-module-home-base' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerItemLink } from '../component/itemLink/controller.jsx';
-import { ControllerPage } from '../component/page/controller.jsx';
-import { ControllerSiteEntryTables } from '../component/siteEntryTables/controller.jsx';
-import { ControllerPageAuthCallback } from '../page/authCallback/controller.jsx';
-import { ControllerPageErrorAccessDenied } from '../page/errorAccessDenied/controller.jsx';
-import { ControllerPageErrorExpired } from '../page/errorExpired/controller.jsx';
-import { ControllerPageErrorNotFound } from '../page/errorNotFound/controller.jsx';
+import type { ControllerItemLink } from '../component/itemLink/controller.tsx';
+import type { ControllerPage } from '../component/page/controller.tsx';
+import type { ControllerSiteEntryTables } from '../component/siteEntryTables/controller.tsx';
+import type { ControllerPageAuthCallback } from '../page/authCallback/controller.tsx';
+import type { ControllerPageErrorAccessDenied } from '../page/errorAccessDenied/controller.tsx';
+import type { ControllerPageErrorExpired } from '../page/errorExpired/controller.tsx';
+import type { ControllerPageErrorNotFound } from '../page/errorNotFound/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -138,13 +138,13 @@ declare module 'zova' {
 }
 /** controller: end */
 /** pages: begin */
-export * from './page/authCallback.js';
-import { NSControllerPageAuthCallback } from './page/authCallback.js';
-export * from './page/errorAccessDenied.js';
-export * from './page/errorExpired.js';
-import { NSControllerPageErrorExpired } from './page/errorExpired.js';
-export * from './page/errorNotFound.js';
-export * from '../routes.js';
+export * from './page/authCallback.ts';
+import { NSControllerPageAuthCallback } from './page/authCallback.ts';
+export * from './page/errorAccessDenied.ts';
+export * from './page/errorExpired.ts';
+import { NSControllerPageErrorExpired } from './page/errorExpired.ts';
+export * from './page/errorNotFound.ts';
+export * from '../routes.ts';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
@@ -180,12 +180,12 @@ export interface ControllerPageErrorExpired {
 /** pages: end */
 
 /** components: begin */
-export * from './component/itemLink.js';
-import { ZItemLink } from './component/itemLink.js';
-export * from './component/page.js';
-import { ZPage } from './component/page.js';
-export * from './component/siteEntryTables.js';
-import { ZSiteEntryTables } from './component/siteEntryTables.js';
+export * from './component/itemLink.ts';
+import { ZItemLink } from './component/itemLink.ts';
+export * from './component/page.ts';
+import { ZPage } from './component/page.ts';
+export * from './component/siteEntryTables.ts';
+import { ZSiteEntryTables } from './component/siteEntryTables.ts';
 export const components = {
   'itemLink': ZItemLink,
 'page': ZPage,
@@ -206,20 +206,20 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** monkey: begin */
-export * from '../monkey.js';
+export * from '../monkey.ts';
 /** monkey: end */
 /** monkeySys: begin */
-export * from '../monkeySys.js';
+export * from '../monkeySys.ts';
 /** monkeySys: end */
 /** main: begin */
-export * from '../main.js';
+export * from '../main.ts';
 /** main: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig, TypeModuleLocales, TypeLocaleBase } from 'zova';

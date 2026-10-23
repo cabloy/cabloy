@@ -2,7 +2,7 @@ import type { IDecoratorModelOptions } from 'zova-module-a-model';
 
 import { BeanModelBase, Model } from 'zova-module-a-model';
 
-import type { IDraftEnvelope } from '../types/draft.js';
+import type { IDraftEnvelope } from '../types/draft.ts';
 
 export interface IModelOptionsDraft extends IDecoratorModelOptions {}
 

@@ -11,9 +11,9 @@ import { toRaw } from 'vue';
 import { z } from 'zod';
 import { cast, deepExtend } from 'zova';
 
-import type { ISchemaObjectExtensionField, TypeSchemaScene } from '../types/rest.js';
+import type { ISchemaObjectExtensionField, TypeSchemaScene } from '../types/rest.ts';
 
-import { OrderUnknownBase } from '../types/database.js';
+import { OrderUnknownBase } from '../types/database.ts';
 
 const __FilterColumnsIgnore = ['columns', 'where', 'orders', 'pageNo', 'pageSize'];
 

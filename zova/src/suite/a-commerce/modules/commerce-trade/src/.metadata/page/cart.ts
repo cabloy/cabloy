@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { createZovaComponentPage } from 'zova';
 
-import { ControllerPageCart } from '../../page/cart/controller.jsx';
+import { ControllerPageCart } from '../../page/cart/controller.tsx';
 import {
   ControllerPageCartSchemaParams,
   ControllerPageCartSchemaQuery,
-} from '../../page/cart/controller.jsx';
+} from '../../page/cart/controller.tsx';
 export namespace NSControllerPageCart {
   export const paramsSchema = ControllerPageCartSchemaParams;
   export type ParamsInput = z.input<typeof ControllerPageCartSchemaParams>;

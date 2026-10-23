@@ -1,4 +1,4 @@
-import { TypeSchemaScene } from './rest.js';
+import { TypeSchemaScene } from './rest.ts';
 
 export type TypeSchemaOrderLevel = 'core' | 'business' | 'max';
 

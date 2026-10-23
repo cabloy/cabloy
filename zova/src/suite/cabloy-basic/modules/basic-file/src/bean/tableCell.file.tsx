@@ -8,13 +8,13 @@ import type {
 import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 
-import type { IFilePreviewItem } from '../types/file.js';
+import type { IFilePreviewItem } from '../types/file.ts';
 
 import {
   collectFileRelationPreviewItems,
   inferFileRelationName,
   resolveFileDownloadUrl,
-} from '../lib/index.js';
+} from '../lib/index.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableCellRecord {

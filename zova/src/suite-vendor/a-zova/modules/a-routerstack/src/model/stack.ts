@@ -11,7 +11,7 @@ import {
   ModelStackOptionsBase,
   RouteTab,
   RouteTabTransient,
-} from '../types/stack.js';
+} from '../types/stack.ts';
 
 export interface IModelOptionsStack extends IDecoratorModelOptions, ModelStackOptionsBase {}
 

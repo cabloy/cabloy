@@ -3,7 +3,7 @@ import { Bean } from 'zova-module-a-bean';
 import { BeanModelBase } from 'zova-module-a-model';
 import { ScopeModuleASsr } from 'zova-module-a-ssr';
 
-import type { IThemeBase, IThemeHandler, IThemeRecord } from '../types/index.js';
+import type { IThemeBase, IThemeHandler, IThemeRecord } from '../types/index.ts';
 
 export type ThemeDarkMode = 'auto' | boolean;
 

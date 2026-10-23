@@ -3,7 +3,7 @@ import { experimental_createQueryPersister } from '@tanstack/query-persist-clien
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { createQueryPersister } from '../../src/lib/queryPersister.js';
+import { createQueryPersister } from '../../src/lib/queryPersister.ts';
 
 type Value = { value: string };
 

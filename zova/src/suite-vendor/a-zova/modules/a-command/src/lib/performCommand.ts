@@ -3,7 +3,7 @@ import type { IJsxRenderContextBase } from 'zova-module-a-openapi';
 
 import { beanFullNameFromOnionName, deepExtend } from 'zova';
 
-import type { ICommandRecord, SymbolCommandResult } from '../types/command.js';
+import type { ICommandRecord, SymbolCommandResult } from '../types/command.ts';
 
 export function $performCommand<T extends keyof ICommandRecord>(
   sys: ZovaSys,

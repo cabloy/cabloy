@@ -2,7 +2,7 @@ import { BeanRenderBase, Use } from 'zova';
 import { Render } from 'zova-module-a-bean';
 import { ZIcon } from 'zova-module-a-icon';
 
-import type { RenderLayoutWeb } from './render.jsx';
+import type { RenderLayoutWeb } from './render.tsx';
 
 @Render()
 export class RenderHeader extends BeanRenderBase {

@@ -22,7 +22,7 @@ async function generateMonkey_common(modulePath: string, commandName: string) {
   if (!(await fse.pathExists(monkeyFile))) return '';
   // combine
   const content = `/** ${commandName}: begin */
-export * from '../${commandName}.js';
+export * from '../${commandName}.ts';
 /** ${commandName}: end */
 `;
   return content;
@@ -33,7 +33,7 @@ async function generateMain_common(modulePath: string, commandName: string) {
   if (!(await fse.pathExists(monkeyFile))) return '';
   // combine
   const content = `/** ${commandName}: begin */
-export * from '../${commandName}.js';
+export * from '../${commandName}.ts';
 /** ${commandName}: end */
 `;
   return content;

@@ -7,10 +7,10 @@ import { BeanControllerBase, IComponentOptions, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { BeanBehaviorsHolder, IBehaviorItem } from 'zova-module-a-behavior';
 
-import type { ControllerForm } from '../form/controller.jsx';
+import type { ControllerForm } from '../form/controller.tsx';
 
-import { schemaRefreshFingerprint } from '../../lib/schemaRefresh.js';
-import { TypeFormField } from '../../types/form.js';
+import { schemaRefreshFingerprint } from '../../lib/schemaRefresh.ts';
+import { TypeFormField } from '../../types/form.ts';
 import {
   constFieldBindingSlot,
   constFieldProps,
@@ -19,7 +19,7 @@ import {
   IFormFieldRenderContext,
   IFormFieldRenderContextProps,
   IFormFieldRenderContextPropsBucket,
-} from '../../types/formField.js';
+} from '../../types/formField.ts';
 
 export interface ControllerFormFieldProps<
   TParentData extends {} = {},

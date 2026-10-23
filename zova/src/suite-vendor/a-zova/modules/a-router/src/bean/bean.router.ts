@@ -9,14 +9,14 @@ import type {
 import { BeanBase, Use } from 'zova';
 import { Bean } from 'zova-module-a-bean';
 
-import { dispatchRouteDiscard } from '../lib/routeDiscard.js';
-import { RouterGuardDisposers } from '../lib/routerGuardDisposers.js';
-import { BeanRouterViewBase } from '../lib/routerViewBase.js';
-import { ModelPageData } from '../model/pageData.js';
-import { IPageMeta } from '../types/pageMeta.js';
-import { IRouteDiscardItem, TypeRouteDiscardReason } from '../types/routeDiscard.js';
-import { TypeErrorListener } from '../types/router.js';
-import { SysRouter } from './sys.router.js';
+import { dispatchRouteDiscard } from '../lib/routeDiscard.ts';
+import { RouterGuardDisposers } from '../lib/routerGuardDisposers.ts';
+import { BeanRouterViewBase } from '../lib/routerViewBase.tsx';
+import { ModelPageData } from '../model/pageData.ts';
+import { IPageMeta } from '../types/pageMeta.ts';
+import { IRouteDiscardItem, TypeRouteDiscardReason } from '../types/routeDiscard.ts';
+import { TypeErrorListener } from '../types/router.ts';
+import { SysRouter } from './sys.router.ts';
 
 export interface BeanRouterInitOptions {
   mainRouter?: boolean;

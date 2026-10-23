@@ -1,5 +1,5 @@
 // eslint-disable
-import type { components } from './types.js';
+import type { components } from './types.ts';
 export type ApiSchemaTestVonaDtoPostCreate = components['schemas']['test-vona.dto.postCreate'];
 export type ApiSchemaTestVonaDtoPostCreatePartial = Partial<ApiSchemaTestVonaDtoPostCreate>;
 export type ApiSchemaTestVonaDtoUserCreate = components['schemas']['test-vona.dto.userCreate'];

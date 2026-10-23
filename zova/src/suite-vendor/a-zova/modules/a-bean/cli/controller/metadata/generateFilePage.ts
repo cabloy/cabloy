@@ -15,7 +15,7 @@ export async function generateFilePage(
   const {
     name,
     nameCapitalize,
-    controllerExtJs,
+    controllerExtTs,
     importRenderFirst,
     hasRenderFirst,
     classNameRenderFirst,
@@ -29,7 +29,7 @@ export async function generateFilePage(
   // controller
   contentImports.push("import { createZovaComponentPage } from 'zova';");
   contentImports.push(
-    `import { ControllerPage${nameCapitalize} } from '../../page/${name}/controller${controllerExtJs}';`,
+    `import { ControllerPage${nameCapitalize} } from '../../page/${name}/controller${controllerExtTs}';`,
   );
   // render
   if (hasRenderFirst) {
@@ -45,7 +45,7 @@ export async function generateFilePage(
   if (hasSchemaQuery) _contentImports_parts.push(nameSchemaQuery);
   if (_contentImports_parts.length > 0) {
     contentImports.push(
-      `import { ${_contentImports_parts.join(', ')} } from '../../page/${name}/controller${controllerExtJs}';`,
+      `import { ${_contentImports_parts.join(', ')} } from '../../page/${name}/controller${controllerExtTs}';`,
     );
   }
   //

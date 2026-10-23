@@ -11,9 +11,9 @@ import { prepareComponentOptions, useController } from 'zova';
 import type {
   ControllerSelectModels,
   ControllerSelectProps,
-} from '../../component/select/controller.jsx';
+} from '../../component/select/controller.tsx';
 
-import { ControllerSelect } from '../../component/select/controller.jsx';
+import { ControllerSelect } from '../../component/select/controller.tsx';
 export type ZSelectProps = {
   controllerRef?: (ref: ControllerSelect) => void;
 } & ControllerSelectProps &

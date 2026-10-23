@@ -12,7 +12,7 @@ import {
   ApiApiHomeUserAccountconsumePasswordSetPath,
   ApiApiHomeUserAccountrequestPasswordResetPath,
   ApiApiHomeUserAccountconsumePasswordResetPath,
-} from '../api/homeUserAccount.js';
+} from '../api/homeUserAccount.ts';
 
 @ApiSchema()
 export class ApiSchemaHomeUserAccount extends BeanBase {

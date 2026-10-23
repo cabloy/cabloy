@@ -4,7 +4,7 @@ import { BeanBase, cast, deepExtend, SymbolErrorInstanceInfo, Use } from 'zova';
 import { IOnionItem, IOnionSlice, SysOnion, TypeComposer } from 'zova-module-a-bean';
 import { Service } from 'zova-module-a-bean';
 
-import type { BeanFetch } from '../bean/bean.fetch.js';
+import type { BeanFetch } from '../bean/bean.fetch.ts';
 import type {
   IDecoratorInterceptorOptions,
   IInterceptorRecord,
@@ -12,7 +12,7 @@ import type {
   IInterceptorRequestError,
   IInterceptorResponse,
   IInterceptorResponseError,
-} from '../types/interceptor.js';
+} from '../types/interceptor.ts';
 
 @Service()
 export class ServiceComposer extends BeanBase {

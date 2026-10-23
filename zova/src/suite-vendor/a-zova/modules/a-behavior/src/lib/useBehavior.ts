@@ -1,6 +1,6 @@
 import type { Component } from 'vue';
 
-import type { IBehaviorItem, IBehaviorRecord } from '../types/behavior.js';
+import type { IBehaviorItem, IBehaviorRecord } from '../types/behavior.ts';
 
 export function $UseBehavior<T extends keyof IBehaviorRecord>(
   behaviorName: T,

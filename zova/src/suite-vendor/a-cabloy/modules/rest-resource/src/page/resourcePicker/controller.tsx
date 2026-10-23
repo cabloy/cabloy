@@ -10,11 +10,11 @@ import { ZPage } from 'zova-module-home-base';
 import type {
   IResourcePickerPageContext,
   IResourcePickerPageHost,
-} from '../../lib/resourcePicker.js';
-import type { ModelResource } from '../../model/resource.js';
+} from '../../lib/resourcePicker.ts';
+import type { ModelResource } from '../../model/resource.ts';
 
-import { ZResourcePickerContext } from '../../.metadata/component/resourcePickerContext.js';
-import { resourcePickerPageHostKey } from '../../lib/resourcePicker.js';
+import { ZResourcePickerContext } from '../../.metadata/component/resourcePickerContext.ts';
+import { resourcePickerPageHostKey } from '../../lib/resourcePicker.ts';
 
 export const ControllerPageResourcePickerSchemaParams = z.object({
   resource: z.string(),
@@ -82,4 +82,4 @@ export class ControllerPageResourcePicker extends BeanControllerPageBase {
   }
 }
 
-export type { IResourcePickerPageContext } from '../../lib/resourcePicker.js';
+export type { IResourcePickerPageContext } from '../../lib/resourcePicker.ts';

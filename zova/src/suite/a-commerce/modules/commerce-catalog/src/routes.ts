@@ -1,7 +1,7 @@
 import { IModuleRoute } from 'zova-module-a-router';
 
-import { ZPageCatalogue } from './.metadata/page/catalogue.js';
-import { ZPageProduct } from './.metadata/page/product.js';
+import { ZPageCatalogue } from './.metadata/page/catalogue.ts';
+import { ZPageProduct } from './.metadata/page/product.ts';
 
 export const routes: IModuleRoute[] = [
   {

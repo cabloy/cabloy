@@ -14,7 +14,7 @@ import type {
 } from '@tanstack/vue-form';
 import type { UnwrapNestedRefs } from 'vue';
 
-import type { ControllerForm } from '../component/form/controller.jsx';
+import type { ControllerForm } from '../component/form/controller.tsx';
 
 export type TypeForm<
   TFormData = unknown,

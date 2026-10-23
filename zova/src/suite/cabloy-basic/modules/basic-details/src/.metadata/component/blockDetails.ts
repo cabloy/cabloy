@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerBlockDetailsProps } from '../../component/blockDetails/controller.jsx';
+import type { ControllerBlockDetailsProps } from '../../component/blockDetails/controller.tsx';
 
-import { ControllerBlockDetails } from '../../component/blockDetails/controller.jsx';
+import { ControllerBlockDetails } from '../../component/blockDetails/controller.tsx';
 export type ZBlockDetailsProps<TData extends {} = {}> = {
   controllerRef?: (ref: ControllerBlockDetails<TData>) => void;
 } & ControllerBlockDetailsProps<TData>;

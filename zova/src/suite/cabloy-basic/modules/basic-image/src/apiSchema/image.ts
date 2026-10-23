@@ -10,7 +10,7 @@ import {
   ApiApiImagefinalizeDirectUploadPath,
   ApiApiImageuploadUrlPath,
   ApiApiImagedeliveryPath,
-} from '../api/image.js';
+} from '../api/image.ts';
 
 @ApiSchema()
 export class ApiSchemaImage extends BeanBase {

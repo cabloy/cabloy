@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/pageData.js';
-import { IModelOptionsPageData } from '../model/pageData.js';
+export * from '../model/pageData.ts';
+import { IModelOptionsPageData } from '../model/pageData.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-a-router' {
 }
 /** model: end */
 /** model: begin */
-import type { ModelPageData } from '../model/pageData.js';
+import type { ModelPageData } from '../model/pageData.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** sys: begin */
-export * from '../bean/sys.router.js';
+export * from '../bean/sys.router.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-a-router' {
 }
 /** sys: end */
 /** sys: begin */
-import type { SysRouter } from '../bean/sys.router.js';
+import type { SysRouter } from '../bean/sys.router.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -66,8 +66,8 @@ declare module 'zova' {
 }
 /** sys: end */
 /** bean: begin */
-export * from '../bean/bean.router.js';
-export * from '../bean/bean.routerGuardsBase.js';
+export * from '../bean/bean.router.ts';
+export * from '../bean/bean.routerGuardsBase.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -89,8 +89,8 @@ declare module 'zova-module-a-router' {
 }
 /** bean: end */
 /** bean: begin */
-import type { BeanRouter } from '../bean/bean.router.js';
-import type { BeanRouterGuardsBase } from '../bean/bean.routerGuardsBase.js';
+import type { BeanRouter } from '../bean/bean.router.ts';
+import type { BeanRouterGuardsBase } from '../bean/bean.routerGuardsBase.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -100,7 +100,7 @@ declare module 'zova' {
 }
 /** bean: end */
 /** service: begin */
-export * from '../service/routerGuards.js';
+export * from '../service/routerGuards.ts';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
@@ -126,7 +126,7 @@ declare module 'zova-module-a-router' {
 }
 /** service: end */
 /** service: begin */
-import type { ServiceRouterGuards } from '../service/routerGuards.js';
+import type { ServiceRouterGuards } from '../service/routerGuards.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -135,7 +135,7 @@ declare module 'zova' {
 }
 /** service: end */
 /** controller: begin */
-export * from '../component/routerViewEmpty/controller.jsx';
+export * from '../component/routerViewEmpty/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -151,7 +151,7 @@ declare module 'zova-module-a-router' {
 }
 /** controller: end */
 /** controller: begin */
-import type { ControllerRouterViewEmpty } from '../component/routerViewEmpty/controller.jsx';
+import type { ControllerRouterViewEmpty } from '../component/routerViewEmpty/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -161,8 +161,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/routerViewEmpty.js';
-import { ZRouterViewEmpty } from './component/routerViewEmpty.js';
+export * from './component/routerViewEmpty.ts';
+import { ZRouterViewEmpty } from './component/routerViewEmpty.ts';
 export const components = {
   'routerViewEmpty': ZRouterViewEmpty,
 };
@@ -177,14 +177,14 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** monkey: begin */
-export * from '../monkey.js';
+export * from '../monkey.ts';
 /** monkey: end */
 /** monkeySys: begin */
-export * from '../monkeySys.js';
+export * from '../monkeySys.ts';
 /** monkeySys: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig } from 'zova';

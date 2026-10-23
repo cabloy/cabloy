@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerRouterViewStackProps } from '../../component/routerViewStack/controller.jsx';
+import type { ControllerRouterViewStackProps } from '../../component/routerViewStack/controller.tsx';
 
-import { ControllerRouterViewStack } from '../../component/routerViewStack/controller.jsx';
+import { ControllerRouterViewStack } from '../../component/routerViewStack/controller.tsx';
 export type ZRouterViewStackProps = {
   controllerRef?: (ref: ControllerRouterViewStack) => void;
 } & ControllerRouterViewStackProps;

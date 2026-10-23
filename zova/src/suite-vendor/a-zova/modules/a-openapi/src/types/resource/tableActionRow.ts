@@ -2,7 +2,7 @@ import { TableIdentity } from 'table-identity';
 import { types } from 'typestyle';
 import { TypeRenderComponentJsx } from 'zova-jsx';
 
-import type { IPermissionHintTableActionRow } from '../permissions.js';
+import type { IPermissionHintTableActionRow } from '../permissions.ts';
 
 export type IResourceTableActionRowNameRecord = {
   [

@@ -32,12 +32,12 @@ import {
 import { isJsxComponent, ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
 
-import type { ITableMeta, TypeColumn, TypeTableGetColumns } from '../../types/table.js';
+import type { ITableMeta, TypeColumn, TypeTableGetColumns } from '../../types/table.ts';
 import type {
   IDecoratorTableCellOptions,
   IJsxRenderContextTableCell,
   ITableCellRender,
-} from '../../types/tableCell.js';
+} from '../../types/tableCell.ts';
 import type {
   IJsxRenderContextTableColumn,
   ITableCellRenderColumnProps,
@@ -45,13 +45,13 @@ import type {
   ITableColumnScope,
   ITableScope,
   TypeTableCellRender,
-} from '../../types/tableColumn.js';
-import type { ITableLayout } from '../../types/tableLayout.js';
+} from '../../types/tableColumn.ts';
+import type { ITableLayout } from '../../types/tableLayout.ts';
 
-import { BeanControllerTableBase } from '../../lib/beanControllerTableBase.js';
-import { TableColumnIdSelection } from '../../types/table.js';
-import { ITableCellRenderColumnOptions } from '../../types/tableColumn.js';
-import { reconcileTableLayout } from '../../types/tableLayout.js';
+import { BeanControllerTableBase } from '../../lib/beanControllerTableBase.ts';
+import { TableColumnIdSelection } from '../../types/table.ts';
+import { ITableCellRenderColumnOptions } from '../../types/tableColumn.ts';
+import { reconcileTableLayout } from '../../types/tableLayout.ts';
 
 export interface ControllerTableProps<TData extends {} = {}> {
   data?: TData[];

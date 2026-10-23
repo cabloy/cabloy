@@ -1,9 +1,9 @@
 // eslint-disable
 /** command: begin */
-export * from '../bean/command.expr.jsx';
-export * from '../bean/command.log.jsx';
-import { ICommandOptionsExpr } from '../bean/command.expr.jsx';
-import { ICommandOptionsLog } from '../bean/command.log.jsx';
+export * from '../bean/command.expr.tsx';
+export * from '../bean/command.log.tsx';
+import { ICommandOptionsExpr } from '../bean/command.expr.tsx';
+import { ICommandOptionsLog } from '../bean/command.log.tsx';
 import 'zova-module-a-command';
 declare module 'zova-module-a-command' {
 
@@ -40,8 +40,8 @@ declare module 'zova-module-basic-commandssync' {
 }
 /** command: end */
 /** command: begin */
-import { CommandExpr } from '../bean/command.expr.jsx';
-import { CommandLog } from '../bean/command.log.jsx';
+import type { CommandExpr } from '../bean/command.expr.tsx';
+import type { CommandLog } from '../bean/command.log.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {

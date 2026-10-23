@@ -1,19 +1,19 @@
 import type { IModuleRoute } from 'zova-module-a-router';
 
-import { ZPageComponent } from './.metadata/page/component.js';
-import { ZPageControllerBoundary } from './.metadata/page/controllerBoundary.js';
-import { ZPageLocale } from './.metadata/page/locale.js';
-import { ZPageRoutedDialog } from './.metadata/page/routedDialog.js';
-import { ZPageRoutedDialogDetail } from './.metadata/page/routedDialogDetail.js';
-import { ZPageRoutedDialogEntry } from './.metadata/page/routedDialogEntry.js';
-import { ZPageRouteParams } from './.metadata/page/routeParams.js';
-import { ZPageRouteQuery } from './.metadata/page/routeQuery.js';
-import { ZPageRouteQueryB } from './.metadata/page/routeQueryB.js';
-import { ZPageState } from './.metadata/page/state.js';
-import { ZPageStyle } from './.metadata/page/style.js';
-import { ZPageToolMinimal } from './.metadata/page/toolMinimal.js';
-import { ZPageToolOne } from './.metadata/page/toolOne.js';
-import { ZPageToolTwo } from './.metadata/page/toolTwo.js';
+import { ZPageComponent } from './.metadata/page/component.ts';
+import { ZPageControllerBoundary } from './.metadata/page/controllerBoundary.ts';
+import { ZPageLocale } from './.metadata/page/locale.ts';
+import { ZPageRoutedDialog } from './.metadata/page/routedDialog.ts';
+import { ZPageRoutedDialogDetail } from './.metadata/page/routedDialogDetail.ts';
+import { ZPageRoutedDialogEntry } from './.metadata/page/routedDialogEntry.ts';
+import { ZPageRouteParams } from './.metadata/page/routeParams.ts';
+import { ZPageRouteQuery } from './.metadata/page/routeQuery.ts';
+import { ZPageRouteQueryB } from './.metadata/page/routeQueryB.ts';
+import { ZPageState } from './.metadata/page/state.ts';
+import { ZPageStyle } from './.metadata/page/style.ts';
+import { ZPageToolMinimal } from './.metadata/page/toolMinimal.ts';
+import { ZPageToolOne } from './.metadata/page/toolOne.ts';
+import { ZPageToolTwo } from './.metadata/page/toolTwo.ts';
 
 export const routes: IModuleRoute[] = [
   { path: 'state', component: ZPageState, meta: { requiresAuth: false, ssrProfile: 'public' } },

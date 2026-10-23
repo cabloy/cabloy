@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/paymentSession.js';
-import { IModelOptionsPaymentSession } from '../model/paymentSession.js';
+export * from '../model/paymentSession.ts';
+import { IModelOptionsPaymentSession } from '../model/paymentSession.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-a-pay' {
 }
 /** model: end */
 /** model: begin */
-import type { ModelPaymentSession } from '../model/paymentSession.js';
+import type { ModelPaymentSession } from '../model/paymentSession.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/payPaymentSession.js';
+export * from '../api/payPaymentSession.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-a-pay' {
 }
 /** api: end */
 /** api: begin */
-import type { ApiPayPaymentSession } from '../api/payPaymentSession.js';
+import type { ApiPayPaymentSession } from '../api/payPaymentSession.ts';
 export interface IModuleApi {
   'payPaymentSession': ApiPayPaymentSession;
 }
@@ -72,10 +72,10 @@ declare module 'zova' {
 }
 /** api: end */
 /** openapi: begin */
-export * from '../api/openapi/index.js';
+export * from '../api/openapi/index.ts';
 /** openapi: end */
 /** apiSchema: begin */
-export * from '../apiSchema/payPaymentSession.js';
+export * from '../apiSchema/payPaymentSession.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -97,7 +97,7 @@ declare module 'zova-module-a-pay' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import type { ApiSchemaPayPaymentSession } from '../apiSchema/payPaymentSession.js';
+import type { ApiSchemaPayPaymentSession } from '../apiSchema/payPaymentSession.ts';
 export interface IModuleApiSchema {
   'payPaymentSession': ApiSchemaPayPaymentSession;
 }
@@ -112,7 +112,7 @@ declare module 'zova' {
 }
 /** apiSchema: end */
 /** service: begin */
-export * from '../service/paymentCoordinator.js';
+export * from '../service/paymentCoordinator.ts';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
@@ -138,7 +138,7 @@ declare module 'zova-module-a-pay' {
 }
 /** service: end */
 /** service: begin */
-import type { ServicePaymentCoordinator } from '../service/paymentCoordinator.js';
+import type { ServicePaymentCoordinator } from '../service/paymentCoordinator.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {

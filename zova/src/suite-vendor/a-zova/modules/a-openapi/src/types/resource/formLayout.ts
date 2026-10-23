@@ -1,4 +1,4 @@
-import type { IResourceRenderBlockOptionsBlock } from './block.js';
+import type { IResourceRenderBlockOptionsBlock } from './block.ts';
 
 export interface IFormLayout {
   children: IFormLayoutNode[];

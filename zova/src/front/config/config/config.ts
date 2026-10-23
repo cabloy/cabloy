@@ -9,7 +9,7 @@ import type { IThemeRecord } from 'zova-module-a-style';
 import { colorizer, combine, errors, splatter, timestamp } from '@cabloy/logger';
 import { formatLoggerConsole, formatLoggerFilter } from 'zova';
 
-import { renderError, renderLoading } from './render.jsx';
+import { renderError, renderLoading } from './render.tsx';
 
 export default function (sys: ZovaSys) {
   const config: ZovaConfigOptional = {};

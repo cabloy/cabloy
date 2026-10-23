@@ -1,6 +1,6 @@
 import { IModuleRoute } from 'zova-module-a-router';
 
-import { ZPageAddress } from './.metadata/page/address.js';
+import { ZPageAddress } from './.metadata/page/address.ts';
 
 export const routes: IModuleRoute[] = [
   {

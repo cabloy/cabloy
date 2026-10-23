@@ -11,7 +11,7 @@ import {
   createDetailsPermissionChecker,
   filterDetailsBulkActions,
   filterDetailsRowActions,
-} from '../../src/lib/detailsPermissions.js';
+} from '../../src/lib/detailsPermissions.ts';
 
 test('details permission checker lazily reads the current enclosing Resource projection', () => {
   let permissions: TypeOpenapiPermissions | undefined = true;

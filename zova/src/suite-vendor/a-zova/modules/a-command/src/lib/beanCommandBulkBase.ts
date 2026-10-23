@@ -2,7 +2,7 @@ import type { IJsxRenderContextBase, IJsxRenderContextPage } from 'zova-module-a
 
 import { BeanBase } from 'zova';
 
-import type { ICommandBulkOptionsBase } from '../types/command.js';
+import type { ICommandBulkOptionsBase } from '../types/command.ts';
 
 export class BeanCommandBulkBase extends BeanBase {
   getResource(options: ICommandBulkOptionsBase, renderContext: IJsxRenderContextBase) {

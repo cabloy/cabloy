@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerItemLinkProps } from '../../component/itemLink/controller.jsx';
+import type { ControllerItemLinkProps } from '../../component/itemLink/controller.tsx';
 
-import { ControllerItemLink } from '../../component/itemLink/controller.jsx';
+import { ControllerItemLink } from '../../component/itemLink/controller.tsx';
 export type ZItemLinkProps = {
   controllerRef?: (ref: ControllerItemLink) => void;
 } & ControllerItemLinkProps;

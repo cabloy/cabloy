@@ -1,6 +1,6 @@
 import type { ISchemaObjectExtensionField } from 'zova-module-a-openapi';
 
-import { TableColumnIdSelection } from './table.js';
+import { TableColumnIdSelection } from './table.ts';
 
 export type TypeTableLayoutWidth = number | 'auto';
 

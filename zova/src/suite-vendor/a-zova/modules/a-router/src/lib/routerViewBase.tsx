@@ -4,10 +4,10 @@ import { RouterView } from '@cabloy/vue-router';
 import { h, KeepAlive, Transition } from 'vue';
 import { BeanControllerBase, cast } from 'zova';
 
-import type { IPageMeta } from '../types/pageMeta.js';
-import type { IRouterViewSlotParams, IRouteViewRouteMeta } from '../types/routerView.js';
+import type { IPageMeta } from '../types/pageMeta.ts';
+import type { IRouterViewSlotParams, IRouteViewRouteMeta } from '../types/routerView.ts';
 
-import { pageRouteKey, routerViewKey } from './const.js';
+import { pageRouteKey, routerViewKey } from './const.ts';
 
 export interface IRouterViewPropsBase {}
 

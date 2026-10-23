@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { createZovaComponentPage } from 'zova';
 
-import { ControllerPageToolTwo } from '../../page/toolTwo/controller.jsx';
+import { ControllerPageToolTwo } from '../../page/toolTwo/controller.tsx';
 import {
   ControllerPageToolTwoSchemaParams,
   ControllerPageToolTwoSchemaQuery,
-} from '../../page/toolTwo/controller.jsx';
+} from '../../page/toolTwo/controller.tsx';
 export namespace NSControllerPageToolTwo {
   export const paramsSchema = ControllerPageToolTwoSchemaParams;
   export type ParamsInput = z.input<typeof ControllerPageToolTwoSchemaParams>;

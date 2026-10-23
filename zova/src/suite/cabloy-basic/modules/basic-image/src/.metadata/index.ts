@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/image.js';
-import { IModelOptionsImage } from '../model/image.js';
+export * from '../model/image.ts';
+import { IModelOptionsImage } from '../model/image.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-basic-image' {
 }
 /** model: end */
 /** model: begin */
-import { ModelImage } from '../model/image.js';
+import type { ModelImage } from '../model/image.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/image.js';
+export * from '../api/image.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-basic-image' {
 }
 /** api: end */
 /** api: begin */
-import { ApiImage } from '../api/image.js';
+import type { ApiImage } from '../api/image.ts';
 export interface IModuleApi {
   'image': ApiImage;
 }
@@ -72,10 +72,10 @@ declare module 'zova' {
 }
 /** api: end */
 /** openapi: begin */
-export * from '../api/openapi/index.js';
+export * from '../api/openapi/index.ts';
 /** openapi: end */
 /** apiSchema: begin */
-export * from '../apiSchema/image.js';
+export * from '../apiSchema/image.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -97,7 +97,7 @@ declare module 'zova-module-basic-image' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import { ApiSchemaImage } from '../apiSchema/image.js';
+import type { ApiSchemaImage } from '../apiSchema/image.ts';
 export interface IModuleApiSchema {
   'image': ApiSchemaImage;
 }
@@ -112,8 +112,8 @@ declare module 'zova' {
 }
 /** apiSchema: end */
 /** controller: begin */
-export * from '../component/formFieldImage/controller.jsx';
-export * from '../component/imageUploader/controller.jsx';
+export * from '../component/formFieldImage/controller.tsx';
+export * from '../component/imageUploader/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -134,8 +134,8 @@ declare module 'zova-module-basic-image' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerFormFieldImage } from '../component/formFieldImage/controller.jsx';
-import { ControllerImageUploader } from '../component/imageUploader/controller.jsx';
+import type { ControllerFormFieldImage } from '../component/formFieldImage/controller.tsx';
+import type { ControllerImageUploader } from '../component/imageUploader/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -146,10 +146,10 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/formFieldImage.js';
-import { ZFormFieldImage } from './component/formFieldImage.js';
-export * from './component/imageUploader.js';
-import { ZImageUploader } from './component/imageUploader.js';
+export * from './component/formFieldImage.ts';
+import { ZFormFieldImage } from './component/formFieldImage.ts';
+export * from './component/imageUploader.ts';
+import { ZImageUploader } from './component/imageUploader.ts';
 export const components = {
   'formFieldImage': ZFormFieldImage,
 'imageUploader': ZImageUploader,
@@ -167,8 +167,8 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** tableCell: begin */
-export * from '../bean/tableCell.image.jsx';
-import { ITableCellOptionsImage } from '../bean/tableCell.image.jsx';
+export * from '../bean/tableCell.image.tsx';
+import { ITableCellOptionsImage } from '../bean/tableCell.image.tsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
 
@@ -193,7 +193,7 @@ declare module 'zova-module-basic-image' {
 }
 /** tableCell: end */
 /** tableCell: begin */
-import { TableCellImage } from '../bean/tableCell.image.jsx';
+import type { TableCellImage } from '../bean/tableCell.image.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -202,7 +202,7 @@ declare module 'zova' {
 }
 /** tableCell: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

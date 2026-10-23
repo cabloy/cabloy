@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/tabs.js';
-import { IModelOptionsTabs } from '../model/tabs.js';
+export * from '../model/tabs.ts';
+import { IModelOptionsTabs } from '../model/tabs.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-a-routertabs' {
 }
 /** model: end */
 /** model: begin */
-import { ModelTabs } from '../model/tabs.js';
+import type { ModelTabs } from '../model/tabs.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** controller: begin */
-export * from '../component/routerViewTabs/controller.jsx';
+export * from '../component/routerViewTabs/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -51,7 +51,7 @@ declare module 'zova-module-a-routertabs' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerRouterViewTabs } from '../component/routerViewTabs/controller.jsx';
+import type { ControllerRouterViewTabs } from '../component/routerViewTabs/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -61,8 +61,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/routerViewTabs.js';
-import { ZRouterViewTabs } from './component/routerViewTabs.js';
+export * from './component/routerViewTabs.ts';
+import { ZRouterViewTabs } from './component/routerViewTabs.ts';
 export const components = {
   'routerViewTabs': ZRouterViewTabs,
 };

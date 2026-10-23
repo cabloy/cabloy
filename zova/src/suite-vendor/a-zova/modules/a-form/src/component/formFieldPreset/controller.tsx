@@ -2,9 +2,9 @@ import { BeanControllerBase, IComponentOptions, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ISchemaRenderComponentPresetRecord } from 'zova-module-a-openapi';
 
-import type { ControllerForm } from '../form/controller.jsx';
+import type { ControllerForm } from '../form/controller.tsx';
 
-import { IFormFieldPresetOptions } from '../../types/formField.js';
+import { IFormFieldPresetOptions } from '../../types/formField.ts';
 
 export interface ControllerFormFieldPresetProps<
   PresetName extends keyof ISchemaRenderComponentPresetRecord = never,

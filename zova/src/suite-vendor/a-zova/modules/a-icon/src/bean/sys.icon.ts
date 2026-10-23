@@ -2,8 +2,8 @@ import { reactive } from 'vue';
 import { BeanBase } from 'zova';
 import { Sys } from 'zova-module-a-bean';
 
-import { IconGroup } from '../lib/iconGroup.js';
-import { IIconInfo, IIconMeta, TypeIconModules, TypeIconSymbols } from '../types/icon.js';
+import { IconGroup } from '../lib/iconGroup.ts';
+import { IIconInfo, IIconMeta, TypeIconModules, TypeIconSymbols } from '../types/icon.ts';
 
 const XMLNS = 'http://www.w3.org/2000/svg';
 const XMLNS_LINK = 'http://www.w3.org/1999/xlink';

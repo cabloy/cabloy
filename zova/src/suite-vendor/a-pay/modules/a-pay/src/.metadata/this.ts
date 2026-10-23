@@ -1,2 +1,2 @@
 export const __ThisModule__ = 'a-pay';
-export { ScopeModuleAPay as ScopeModule } from './index.js';
+export { ScopeModuleAPay as ScopeModule } from './index.ts';

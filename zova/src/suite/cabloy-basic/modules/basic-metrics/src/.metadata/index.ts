@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/metrics.js';
-import { IModelOptionsMetrics } from '../model/metrics.js';
+export * from '../model/metrics.ts';
+import { IModelOptionsMetrics } from '../model/metrics.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-basic-metrics' {
 }
 /** model: end */
 /** model: begin */
-import { ModelMetrics } from '../model/metrics.js';
+import type { ModelMetrics } from '../model/metrics.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/basicMetricsMetrics.js';
+export * from '../api/basicMetricsMetrics.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-basic-metrics' {
 }
 /** api: end */
 /** api: begin */
-import { ApiBasicMetricsMetrics } from '../api/basicMetricsMetrics.js';
+import type { ApiBasicMetricsMetrics } from '../api/basicMetricsMetrics.ts';
 export interface IModuleApi {
   'basicMetricsMetrics': ApiBasicMetricsMetrics;
 }
@@ -75,7 +75,7 @@ declare module 'zova' {
 
 /** openapi: end */
 /** controller: begin */
-export * from '../page/dashboard/controller.jsx';
+export * from '../page/dashboard/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -91,7 +91,7 @@ declare module 'zova-module-basic-metrics' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerPageDashboard } from '../page/dashboard/controller.jsx';
+import type { ControllerPageDashboard } from '../page/dashboard/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -100,8 +100,8 @@ declare module 'zova' {
 }
 /** controller: end */
 /** pages: begin */
-export * from './page/dashboard.js';
-export * from '../routes.js';
+export * from './page/dashboard.ts';
+export * from '../routes.ts';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {

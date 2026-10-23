@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerRouterViewTabsProps } from '../../component/routerViewTabs/controller.jsx';
+import type { ControllerRouterViewTabsProps } from '../../component/routerViewTabs/controller.tsx';
 
-import { ControllerRouterViewTabs } from '../../component/routerViewTabs/controller.jsx';
+import { ControllerRouterViewTabs } from '../../component/routerViewTabs/controller.tsx';
 export type ZRouterViewTabsProps = {
   controllerRef?: (ref: ControllerRouterViewTabs) => void;
 } & ControllerRouterViewTabsProps;

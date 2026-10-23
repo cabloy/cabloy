@@ -8,7 +8,7 @@ import { ZFormField } from 'zova-module-a-form';
 import { ZIcon } from 'zova-module-a-icon';
 import { ZImageUploader } from 'zova-module-basic-image';
 
-import { codeBlockLanguages, getCodeBlockLanguage } from '../../lib/codeBlockLanguages.js';
+import { codeBlockLanguages, getCodeBlockLanguage } from '../../lib/codeBlockLanguages.ts';
 
 @Render()
 export class RenderFormFieldMarkdown extends BeanRenderBase {

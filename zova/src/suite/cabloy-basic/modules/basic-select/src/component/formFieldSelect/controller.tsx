@@ -7,8 +7,8 @@ import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField, ZFormFieldPreset } from 'zova-module-a-form';
 
-import { ZSelect, ZSelectProps } from '../../.metadata/component/select.js';
-import { isSelectValueEqual } from '../../lib/utils.js';
+import { ZSelect, ZSelectProps } from '../../.metadata/component/select.ts';
+import { isSelectValueEqual } from '../../lib/utils.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {

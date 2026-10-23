@@ -2,7 +2,6 @@ export interface IControllerInfo {
   type: string;
   name: string;
   nameCapitalize: string;
-  controllerExtJs: string;
   controllerExtTs: string;
   componentOptions: string;
   hasComponentOptions: boolean;

@@ -5,12 +5,12 @@ import { useQuery } from '@tanstack/vue-query';
 import type {
   DefinedInitialQueryOptions,
   UndefinedInitialQueryOptions,
-} from '../../common/types.js';
-import type { ModelUseQueryDefinedReturnType, ModelUseQueryReturnType } from '../../types/query.js';
+} from '../../common/types.ts';
+import type { ModelUseQueryDefinedReturnType, ModelUseQueryReturnType } from '../../types/query.ts';
 
-import { createQueryRefetch } from '../../lib/queryRefetch.js';
-import { resolveStaleTime } from '../../types/index.js';
-import { BeanModelQuery } from './bean.model.query.js';
+import { createQueryRefetch } from '../../lib/queryRefetch.ts';
+import { resolveStaleTime } from '../../types/index.ts';
+import { BeanModelQuery } from './bean.model.query.ts';
 
 export class BeanModelUseQuery extends BeanModelQuery {
   $useQuery<

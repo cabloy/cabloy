@@ -6,9 +6,9 @@ import type {
   TypeOpenapiPermissions,
 } from 'zova-module-a-openapi';
 
-import type { TypeDetailsCheckPermission } from '../types/details.js';
+import type { TypeDetailsCheckPermission } from '../types/details.ts';
 
-import { checkFormScene } from './utils.js';
+import { checkFormScene } from './utils.ts';
 
 export interface IDetailsPermissionAction {
   name?: string;

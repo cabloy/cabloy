@@ -9,7 +9,7 @@ import type {
 
 import { BeanSimple } from 'zova';
 
-import type { ModelPassport } from './model/passport.js';
+import type { ModelPassport } from './model/passport.ts';
 
 export class Monkey
   extends BeanSimple

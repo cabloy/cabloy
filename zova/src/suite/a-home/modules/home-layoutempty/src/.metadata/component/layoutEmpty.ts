@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerLayoutEmptyProps } from '../../component/layoutEmpty/controller.jsx';
+import type { ControllerLayoutEmptyProps } from '../../component/layoutEmpty/controller.tsx';
 
-import { ControllerLayoutEmpty } from '../../component/layoutEmpty/controller.jsx';
+import { ControllerLayoutEmpty } from '../../component/layoutEmpty/controller.tsx';
 export type ZLayoutEmptyProps = {
   controllerRef?: (ref: ControllerLayoutEmpty) => void;
 } & ControllerLayoutEmptyProps;

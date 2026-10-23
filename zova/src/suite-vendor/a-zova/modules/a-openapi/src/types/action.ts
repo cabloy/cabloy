@@ -3,9 +3,9 @@ import type { ZovaJsx } from 'zova-jsx';
 
 import { TableIdentity } from 'table-identity';
 
-import type { IResourceTableSelectionPayload } from './resource/tableActionBulk.js';
+import type { IResourceTableSelectionPayload } from './resource/tableActionBulk.ts';
 
-import { TypeOpenapiPermissions } from './permissions.js';
+import { TypeOpenapiPermissions } from './permissions.ts';
 
 export interface IJsxRenderContextBase {
   app: ZovaApplication;

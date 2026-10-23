@@ -9,9 +9,9 @@ import { ZForm } from 'zova-module-a-form';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZButton } from 'zova-module-basic-button';
 
-import type { ApiApiCommerceTradeOrdershipRequestBody } from '../../api/commerceTradeOrder.js';
-import type { ITableCellOptionsActionShip } from '../../bean/tableCell.actionShip.js';
-import type { ModelOrder } from '../../model/order.js';
+import type { ApiApiCommerceTradeOrdershipRequestBody } from '../../api/commerceTradeOrder.ts';
+import type { ITableCellOptionsActionShip } from '../../bean/tableCell.actionShip.tsx';
+import type { ModelOrder } from '../../model/order.ts';
 
 export interface ControllerTableCellActionShipProps extends ITableCellOptionsActionShip {}
 

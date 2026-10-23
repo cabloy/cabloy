@@ -13,15 +13,15 @@ import { deepExtend } from 'zova';
 import type {
   DefinedInitialQueryOptions,
   UndefinedInitialQueryOptions,
-} from '../../common/types.js';
+} from '../../common/types.ts';
 import type {
   ModelUseQueryDefinedReturnType,
   ModelUseQueryReturnType,
   QueryMetaPersister,
   UseQueryComputedOptions,
-} from '../../types/query.js';
+} from '../../types/query.ts';
 
-import { BeanModelUseQuery } from './bean.model.useQuery.js';
+import { BeanModelUseQuery } from './bean.model.useQuery.ts';
 
 const SymbolUseQueries = Symbol('SymbolUseQueries');
 const SymbolUseComputeds = Symbol('SymbolUseComputeds');

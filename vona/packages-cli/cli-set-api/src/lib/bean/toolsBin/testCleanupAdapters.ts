@@ -88,7 +88,9 @@ export async function clearExactRedisPrefix(
         'MATCH',
         `${escapeRedisCleanupPattern(prefix)}*`,
         'COUNT',
-        batchSize,
+        // MATCH still traverses the whole database; keep scan work separate from
+        // the bounded deletion batches to avoid excessive round trips.
+        1024,
       );
       if (
         !Array.isArray(result) ||

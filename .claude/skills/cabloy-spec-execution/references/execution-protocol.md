@@ -130,13 +130,13 @@ Require explicit confirmation unless this same bounded dossier already has valid
 
 ## 6. Specialist routing
 
-| Task shape                                                                | Primary route                                       | Coordinator must preserve                                                                          |
-| ------------------------------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Vona module/bean/service/model/entity/DTO/validation/migration/test       | `cabloy-backend-scaffold`                           | CLI-first generation, tenant/security review, migration/index/version gate, tests, OpenAPI impact  |
-| Zova page/component/route/model/metadata/SSR/test                         | `cabloy-frontend-scaffold`                          | route metadata, state ownership, hydration equivalence, emitted import suffixes, flavor/site proof |
-| OpenAPI, SDK/schema, generated consumer, reverse metadata, stale consumer | `cabloy-contract-loop`                              | source-first direction, paired SSR/REST reverse build, `deps:vona`, no hand edits                  |
-| master-detail, resource-field, module removal                             | corresponding specialist skill                      | specialized ownership and cleanup order                                                            |
-| requirement, architecture, scope, identity, or authority change           | `cabloy-spec-generation` / `cabloy-domain-planning` | no implementation around unresolved authority                                                      |
+| Task shape                                                                | Primary route                                       | Coordinator must preserve                                                                                |
+| ------------------------------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Vona module/bean/service/model/entity/DTO/validation/migration/test       | `cabloy-backend-scaffold`                           | CLI-first generation, tenant/security review, migration/index/version gate, tests, OpenAPI impact        |
+| Zova page/component/route/model/metadata/SSR/test                         | `cabloy-frontend-scaffold`                          | route metadata, state ownership, hydration equivalence, actual source import suffixes, flavor/site proof |
+| OpenAPI, SDK/schema, generated consumer, reverse metadata, stale consumer | `cabloy-contract-loop`                              | source-first direction, paired SSR/REST reverse build, `deps:vona`, no hand edits                        |
+| master-detail, resource-field, module removal                             | corresponding specialist skill                      | specialized ownership and cleanup order                                                                  |
+| requirement, architecture, scope, identity, or authority change           | `cabloy-spec-generation` / `cabloy-domain-planning` | no implementation around unresolved authority                                                            |
 
 The coordinator may pass the dossier to the specialist; it should not duplicate the specialist’s detailed command tree.
 

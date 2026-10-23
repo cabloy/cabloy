@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerTableCellActionAdjustStockProps } from '../../component/tableCellActionAdjustStock/controller.jsx';
+import type { ControllerTableCellActionAdjustStockProps } from '../../component/tableCellActionAdjustStock/controller.tsx';
 
-import { ControllerTableCellActionAdjustStock } from '../../component/tableCellActionAdjustStock/controller.jsx';
+import { ControllerTableCellActionAdjustStock } from '../../component/tableCellActionAdjustStock/controller.tsx';
 export type ZTableCellActionAdjustStockProps = {
   controllerRef?: (ref: ControllerTableCellActionAdjustStock) => void;
 } & ControllerTableCellActionAdjustStockProps;

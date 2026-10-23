@@ -6,7 +6,7 @@ import { ApiSchema } from 'zova-module-a-api';
 import {
   ApiApiPayMockMockPaymentcompletePath,
   ApiApiPayMockMockPaymentcompleteRefundPath,
-} from '../api/payMockMockPayment.js';
+} from '../api/payMockMockPayment.ts';
 
 @ApiSchema()
 export class ApiSchemaPayMockMockPayment extends BeanBase {

@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerTableCellActionRefundProps } from '../../component/tableCellActionRefund/controller.jsx';
+import type { ControllerTableCellActionRefundProps } from '../../component/tableCellActionRefund/controller.tsx';
 
-import { ControllerTableCellActionRefund } from '../../component/tableCellActionRefund/controller.jsx';
+import { ControllerTableCellActionRefund } from '../../component/tableCellActionRefund/controller.tsx';
 export type ZTableCellActionRefundProps = {
   controllerRef?: (ref: ControllerTableCellActionRefund) => void;
 } & ControllerTableCellActionRefundProps;

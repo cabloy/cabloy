@@ -6,7 +6,7 @@ import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPage } from 'zova-module-home-base';
 
-import type { ModelResource } from '../../model/resource.js';
+import type { ModelResource } from '../../model/resource.ts';
 
 export const ControllerPageResourceSchemaParams = z.object({
   resource: z.string(),

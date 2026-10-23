@@ -2,9 +2,9 @@ import type { IApiActionOptions } from 'zova-module-a-api';
 
 import { Api, BeanApiBase } from 'zova-module-a-api';
 
-import type { paths } from './openapi/index.js';
+import type { paths } from './openapi/index.ts';
 
-import { OpenApiBaseURL } from './openapi/index.js';
+import { OpenApiBaseURL } from './openapi/index.ts';
 
 /** HomeBaseMenu_retrieveMenus */
 export const ApiApiHomeBaseMenuretrieveMenusPath = '/api/home/base/menu/{publicPath?}';

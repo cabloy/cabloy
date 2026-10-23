@@ -4,9 +4,9 @@ import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 import { ISchemaRenderComponentPresetRecord } from 'zova-module-a-openapi';
 
-import type { ControllerFormFieldPresetProps } from '../../component/formFieldPreset/controller.jsx';
+import type { ControllerFormFieldPresetProps } from '../../component/formFieldPreset/controller.tsx';
 
-import { ControllerFormFieldPreset } from '../../component/formFieldPreset/controller.jsx';
+import { ControllerFormFieldPreset } from '../../component/formFieldPreset/controller.tsx';
 export type ZFormFieldPresetProps<
   PresetName extends keyof ISchemaRenderComponentPresetRecord = never,
 > = {

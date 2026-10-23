@@ -3,10 +3,10 @@ import type { CookieOptions } from 'zova';
 
 import { BeanSimple } from 'zova';
 
-import type { QueryMetaPersister } from '../types/index.js';
+import type { QueryMetaPersister } from '../types/index.ts';
 
-import { __ThisModule__ } from '../.metadata/this.js';
-import { resolveMaxAgeTime } from '../types/index.js';
+import { __ThisModule__ } from '../.metadata/this.ts';
+import { resolveMaxAgeTime } from '../types/index.ts';
 
 export class CookieWrapper extends BeanSimple {
   options: QueryMetaPersister;

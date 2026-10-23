@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/layoutprofile.js';
-import { IModelOptionsLayoutProfile } from '../model/layoutprofile.js';
+export * from '../model/layoutprofile.ts';
+import { IModelOptionsLayoutProfile } from '../model/layoutprofile.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-a-layoutprofile' {
 }
 /** model: end */
 /** model: begin */
-import type { ModelLayoutProfile } from '../model/layoutprofile.js';
+import type { ModelLayoutProfile } from '../model/layoutprofile.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/layoutprofile.js';
+export * from '../api/layoutprofile.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-a-layoutprofile' {
 }
 /** api: end */
 /** api: begin */
-import type { ApiLayoutprofile } from '../api/layoutprofile.js';
+import type { ApiLayoutprofile } from '../api/layoutprofile.ts';
 export interface IModuleApi {
   'layoutprofile': ApiLayoutprofile;
 }
@@ -72,10 +72,10 @@ declare module 'zova' {
 }
 /** api: end */
 /** openapi: begin */
-export * from '../api/openapi/index.js';
+export * from '../api/openapi/index.ts';
 /** openapi: end */
 /** apiSchema: begin */
-export * from '../apiSchema/layoutprofile.js';
+export * from '../apiSchema/layoutprofile.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -97,7 +97,7 @@ declare module 'zova-module-a-layoutprofile' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import type { ApiSchemaLayoutprofile } from '../apiSchema/layoutprofile.js';
+import type { ApiSchemaLayoutprofile } from '../apiSchema/layoutprofile.ts';
 export interface IModuleApiSchema {
   'layoutprofile': ApiSchemaLayoutprofile;
 }

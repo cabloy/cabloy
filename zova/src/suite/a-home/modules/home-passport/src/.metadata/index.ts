@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/passport.js';
-import { IModelOptionsPassport } from '../model/passport.js';
+export * from '../model/passport.ts';
+import { IModelOptionsPassport } from '../model/passport.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-home-passport' {
 }
 /** model: end */
 /** model: begin */
-import { ModelPassport } from '../model/passport.js';
+import type { ModelPassport } from '../model/passport.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,11 +35,11 @@ declare module 'zova' {
 }
 /** model: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** monkey: begin */
-export * from '../monkey.js';
+export * from '../monkey.ts';
 /** monkey: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig } from 'zova';

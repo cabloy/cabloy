@@ -1,1 +1,1 @@
-export * from './file.js';
+export * from './file.ts';

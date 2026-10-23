@@ -3,8 +3,8 @@ import { h } from 'vue';
 import { cast } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
-import { pageRouteKey } from '../../lib/const.js';
-import { BeanRouterViewBase } from '../../lib/routerViewBase.js';
+import { pageRouteKey } from '../../lib/const.ts';
+import { BeanRouterViewBase } from '../../lib/routerViewBase.tsx';
 
 @Controller()
 export class ControllerRouterViewEmpty extends BeanRouterViewBase {

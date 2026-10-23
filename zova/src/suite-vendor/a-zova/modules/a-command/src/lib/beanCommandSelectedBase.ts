@@ -4,7 +4,7 @@ import type { IJsxRenderContextBase, IJsxRenderContextPage } from 'zova-module-a
 import { isNil } from '@cabloy/utils';
 import { BeanBase } from 'zova';
 
-import type { ICommandSelectedOptionsBase } from '../types/command.js';
+import type { ICommandSelectedOptionsBase } from '../types/command.ts';
 
 export class BeanCommandSelectedBase extends BeanBase {
   getResourceAndIds(

@@ -3,7 +3,7 @@ import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZButton } from 'zova-module-basic-button';
 
-import { ModelMetrics } from '../../model/metrics.js';
+import { ModelMetrics } from '../../model/metrics.ts';
 
 @Controller()
 export class ControllerPageDashboard extends BeanControllerPageBase {

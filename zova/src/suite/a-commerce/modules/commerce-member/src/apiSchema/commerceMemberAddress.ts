@@ -11,7 +11,7 @@ import {
   ApiApiCommerceMemberAddressdeleteMinePath,
   ApiApiCommerceMemberAddressselectPath,
   ApiApiCommerceMemberAddressviewPath,
-} from '../api/commerceMemberAddress.js';
+} from '../api/commerceMemberAddress.ts';
 
 @ApiSchema()
 export class ApiSchemaCommerceMemberAddress extends BeanBase {

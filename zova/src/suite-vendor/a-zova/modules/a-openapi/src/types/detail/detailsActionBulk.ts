@@ -1,7 +1,7 @@
 import { types } from 'typestyle';
 import { TypeRenderComponentJsx } from 'zova-jsx';
 
-import type { IPermissionHintDetailsActionBulk } from '../permissions.js';
+import type { IPermissionHintDetailsActionBulk } from '../permissions.ts';
 
 export type IResourceDetailsActionBulkNameRecord = {
   [

@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import type { ISchemaObjectExtensionField } from '../../src/types/rest.js';
+import type { ISchemaObjectExtensionField } from '../../src/types/rest.ts';
 
-import { loadSchemaProperties } from '../../src/lib/schema.js';
+import { loadSchemaProperties } from '../../src/lib/schema.ts';
 
 const onGetSchema = () => undefined;
 

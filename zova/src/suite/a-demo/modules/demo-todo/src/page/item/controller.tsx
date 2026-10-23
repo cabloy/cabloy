@@ -3,7 +3,7 @@ import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZPage } from 'zova-module-home-base';
 
-import { ModelTodo } from '../../model/todo.js';
+import { ModelTodo } from '../../model/todo.ts';
 
 export const ControllerPageItemSchemaParams = z.object({
   id: z.string(),

@@ -13,10 +13,10 @@ import type {
 import { isNavigationFailure } from '@cabloy/vue-router';
 import { BeanSimple, cast } from 'zova';
 
-import type { SSRMetaOptions } from './types/ssr.js';
+import type { SSRMetaOptions } from './types/ssr.ts';
 
-import { createSsrNavigationSync } from './lib/ssrNavigation.js';
-import { useMeta } from './lib/useMeta.js';
+import { createSsrNavigationSync } from './lib/ssrNavigation.ts';
+import { useMeta } from './lib/useMeta.ts';
 
 export class Monkey
   extends BeanSimple

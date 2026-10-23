@@ -7,7 +7,7 @@ import {
   ApiApiLayoutprofileloadPath,
   ApiApiLayoutprofilesavePath,
   ApiApiLayoutprofileresetPath,
-} from '../api/layoutprofile.js';
+} from '../api/layoutprofile.ts';
 
 @ApiSchema()
 export class ApiSchemaLayoutprofile extends BeanBase {

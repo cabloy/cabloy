@@ -3,10 +3,10 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerFormFieldProps } from '../../component/formField/controller.jsx';
+import type { ControllerFormFieldProps } from '../../component/formField/controller.tsx';
 
-import { ControllerFormField } from '../../component/formField/controller.jsx';
-import { RenderFormField } from '../../component/formField/render.jsx';
+import { ControllerFormField } from '../../component/formField/controller.tsx';
+import { RenderFormField } from '../../component/formField/render.tsx';
 export type ZFormFieldProps<TParentData extends {} = {}> = {
   controllerRef?: (ref: ControllerFormField<TParentData>) => void;
 } & ControllerFormFieldProps<TParentData>;

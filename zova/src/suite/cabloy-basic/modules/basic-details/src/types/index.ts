@@ -1,3 +1,3 @@
-export * from './details.js';
-export * from './dialogForm.js';
-export * from './detail.js';
+export * from './details.ts';
+export * from './dialogForm.ts';
+export * from './detail.ts';

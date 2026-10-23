@@ -9,9 +9,9 @@ import type {
 
 import { appResource, BeanSimple, cast } from 'zova';
 
-import type { ScopeModule } from './.metadata/this.js';
+import type { ScopeModule } from './.metadata/this.ts';
 
-import { __ThisModule__ } from './.metadata/this.js';
+import { __ThisModule__ } from './.metadata/this.ts';
 
 export class Monkey extends BeanSimple implements IMonkeyModule, IMonkeyBeanInit {
   private _moduleSelf: IModule;

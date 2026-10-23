@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerActionRefreshProps } from '../../component/actionRefresh/controller.jsx';
+import type { ControllerActionRefreshProps } from '../../component/actionRefresh/controller.tsx';
 
-import { ControllerActionRefresh } from '../../component/actionRefresh/controller.jsx';
+import { ControllerActionRefresh } from '../../component/actionRefresh/controller.tsx';
 export type ZActionRefreshProps = {
   controllerRef?: (ref: ControllerActionRefresh) => void;
 } & ControllerActionRefreshProps;
