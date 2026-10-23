@@ -138,8 +138,9 @@ In practice, Zova can still preserve the ergonomic class-based development exper
 Use a getter when injection arguments must be prepared dynamically. The getter must explicitly identify the target bean with `beanFullName`; `usePrepareArg(...)` supplies initialization arguments only and does not resolve the target bean.
 
 ```typescript
-import { Use, usePrepareArg } from 'zova';
 import type { ServiceSsrLayout } from 'zova-module-home-base';
+
+import { Use, usePrepareArg } from 'zova';
 
 class ControllerLayout {
   @Use({ beanFullName: 'home-base.service.ssrLayout' })

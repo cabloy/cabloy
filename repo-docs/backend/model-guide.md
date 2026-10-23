@@ -29,6 +29,7 @@ Representative pattern:
 
 ```typescript
 import { BeanModelBase, Model } from 'vona-module-a-orm';
+
 import { EntityStudent } from '../entity/student.ts';
 
 @Model({ entity: EntityStudent })

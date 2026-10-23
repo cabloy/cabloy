@@ -88,8 +88,8 @@ static $componentOptions: IComponentOptions = {
 Application configuration supplies the shared renderer contract:
 
 ```ts
-import type { ZovaContext } from 'zova';
 import type { VNodeChild } from 'vue';
+import type { ZovaContext } from 'zova';
 
 config.boundary = {
   loading: {

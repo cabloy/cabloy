@@ -12,9 +12,9 @@ export type IBeanRecord = IBeanRecordGeneral & IBeanRecordLocal;
 export type TypeBeanRecordKeys = keyof IBeanRecord;
 
 export type TypeBeanRecordGeneralSelector<SCENE extends keyof IBeanSceneRecord> = {
-  [K in keyof IBeanRecordGeneral as K extends `${string}.${SCENE}.${string}`
-    ? K
-    : never]: IBeanRecordGeneral[K];
+  [
+    K in keyof IBeanRecordGeneral as K extends `${string}.${SCENE}.${string}` ? K : never
+  ]: IBeanRecordGeneral[K];
 };
 export type TypeBeanRecordGeneralSelectorKeys<SCENE extends keyof IBeanSceneRecord> =
   keyof TypeBeanRecordGeneralSelector<SCENE>;
@@ -23,9 +23,9 @@ export type TypeBeanRecordGeneralSelectorSpecificName<
   SCENE extends keyof IBeanSceneRecord,
   NAME extends string,
 > = {
-  [K in keyof IBeanRecordGeneral as K extends `${string}.${SCENE}.${NAME}`
-    ? K
-    : never]: IBeanRecordGeneral[K];
+  [
+    K in keyof IBeanRecordGeneral as K extends `${string}.${SCENE}.${NAME}` ? K : never
+  ]: IBeanRecordGeneral[K];
 };
 
 export type TypeBeanRecordGeneralSelectorSpecificNameKeys<

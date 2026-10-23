@@ -16,11 +16,13 @@ import type {
 export type TypeEntityTableColumnNames<EntityMeta extends { $table: string } | undefined> =
   EntityMeta extends { $table: string }
     ? keyof {
-        [K in keyof EntityMeta as K extends '$table' | '$comment' | '$default'
-          ? never
-          : K extends string
-            ? `${EntityMeta['$table']}.${K}`
-            : never]: EntityMeta[K];
+        [
+          K in keyof EntityMeta as K extends '$table' | '$comment' | '$default'
+            ? never
+            : K extends string
+              ? `${EntityMeta['$table']}.${K}`
+              : never
+        ]: EntityMeta[K];
       }
     : never;
 export type TypeEntityTableColumnNamesShort<Entity> = keyof Entity;

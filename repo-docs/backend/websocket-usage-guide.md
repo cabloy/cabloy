@@ -63,6 +63,7 @@ Representative structure:
 
 ```typescript
 import type { IDecoratorSocketNamespaceOptions } from 'vona-module-a-socket';
+
 import { BeanSocketNamespaceBase, SocketNamespace } from 'vona-module-a-socket';
 
 declare module 'vona-module-a-socket' {
@@ -242,6 +243,7 @@ import type {
   ISocketConnectionExecute,
 } from 'vona-module-a-socket';
 import type { WebSocket } from 'ws';
+
 import { BeanBase } from 'vona';
 import { SocketConnection } from 'vona-module-a-socket';
 
@@ -284,6 +286,7 @@ Representative generated shape:
 import type { Next } from 'vona';
 import type { IDecoratorSocketPacketOptions, ISocketPacketExecute } from 'vona-module-a-socket';
 import type { WebSocket } from 'ws';
+
 import { BeanBase } from 'vona';
 import { SocketPacket } from 'vona-module-a-socket';
 

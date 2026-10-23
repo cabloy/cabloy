@@ -6,15 +6,15 @@ import { createVNode } from 'vue';
 import { BeanBehaviorBase, Behavior } from 'zova-module-a-behavior';
 
 export interface IBehaviorPropsInputPerform {
-  'class'?: unknown;
-  'disabled'?: boolean | '' | 'true' | 'false';
-  'onClick'?: (e: MouseEvent) => unknown;
+  class?: unknown;
+  disabled?: boolean | '' | 'true' | 'false';
+  onClick?: (e: MouseEvent) => unknown;
   ['aria-busy']?: boolean | 'true' | 'false';
 }
 
 export interface IBehaviorPropsOutputPerform extends IBehaviorPropsInputPerform {
-  'disabled'?: boolean;
-  'onClick'?: (e: MouseEvent) => unknown;
+  disabled?: boolean;
+  onClick?: (e: MouseEvent) => unknown;
   ['aria-busy']?: boolean | 'true' | 'false';
 }
 

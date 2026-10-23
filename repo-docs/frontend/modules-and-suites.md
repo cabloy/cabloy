@@ -115,6 +115,7 @@ and `.jsx` for a `.tsx` target:
 
 ```ts
 import type { ModelStudent } from '../model/student.js';
+
 import { RenderCard } from './render.card.jsx';
 ```
 
