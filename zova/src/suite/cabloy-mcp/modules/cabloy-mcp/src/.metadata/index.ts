@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/authorization.js';
-import { IModelOptionsAuthorization } from '../model/authorization.js';
+export * from '../model/authorization.ts';
+import { IModelOptionsAuthorization } from '../model/authorization.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-cabloy-mcp' {
 }
 /** model: end */
 /** model: begin */
-import type { ModelAuthorization } from '../model/authorization.js';
+import type { ModelAuthorization } from '../model/authorization.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/authorization.js';
+export * from '../api/authorization.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-cabloy-mcp' {
 }
 /** api: end */
 /** api: begin */
-import type { ApiAuthorization } from '../api/authorization.js';
+import type { ApiAuthorization } from '../api/authorization.ts';
 export interface IModuleApi {
   'authorization': ApiAuthorization;
 }
@@ -72,10 +72,10 @@ declare module 'zova' {
 }
 /** api: end */
 /** openapi: begin */
-export * from '../api/openapi/index.js';
+export * from '../api/openapi/index.ts';
 /** openapi: end */
 /** apiSchema: begin */
-export * from '../apiSchema/authorization.js';
+export * from '../apiSchema/authorization.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -97,7 +97,7 @@ declare module 'zova-module-cabloy-mcp' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import type { ApiSchemaAuthorization } from '../apiSchema/authorization.js';
+import type { ApiSchemaAuthorization } from '../apiSchema/authorization.ts';
 export interface IModuleApiSchema {
   'authorization': ApiSchemaAuthorization;
 }
@@ -112,7 +112,7 @@ declare module 'zova' {
 }
 /** apiSchema: end */
 /** controller: begin */
-export * from '../page/consent/controller.jsx';
+export * from '../page/consent/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -128,7 +128,7 @@ declare module 'zova-module-cabloy-mcp' {
 }
 /** controller: end */
 /** controller: begin */
-import type { ControllerPageConsent } from '../page/consent/controller.jsx';
+import type { ControllerPageConsent } from '../page/consent/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -137,9 +137,9 @@ declare module 'zova' {
 }
 /** controller: end */
 /** pages: begin */
-export * from './page/consent.js';
-import { NSControllerPageConsent } from './page/consent.js';
-export * from '../routes.js';
+export * from './page/consent.ts';
+import { NSControllerPageConsent } from './page/consent.ts';
+export * from '../routes.ts';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
@@ -166,7 +166,7 @@ declare module 'zova-module-cabloy-mcp' {
 /** pages: end */
 
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';
