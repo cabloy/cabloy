@@ -6,7 +6,7 @@ import { ApiSchema } from 'zova-module-a-api';
 import {
   ApiApiAuthorizationsummaryPath,
   ApiApiAuthorizationdecisionPath,
-} from '../api/authorization.js';
+} from '../api/authorization.ts';
 
 @ApiSchema()
 export class ApiSchemaAuthorization extends BeanBase {
