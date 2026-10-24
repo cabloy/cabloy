@@ -1,7 +1,7 @@
 // eslint-disable
 /** bean: begin */
-export * from '../bean/bean.fetch.js';
-export * from '../bean/bean.interceptorBase.js';
+export * from '../bean/bean.fetch.ts';
+export * from '../bean/bean.interceptorBase.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -23,8 +23,8 @@ declare module 'zova-module-a-fetch' {
 }
 /** bean: end */
 /** bean: begin */
-import { BeanFetch } from '../bean/bean.fetch.js';
-import { BeanInterceptorBase } from '../bean/bean.interceptorBase.js';
+import type { BeanFetch } from '../bean/bean.fetch.ts';
+import type { BeanInterceptorBase } from '../bean/bean.interceptorBase.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -34,7 +34,7 @@ declare module 'zova' {
 }
 /** bean: end */
 /** service: begin */
-export * from '../service/composer.js';
+export * from '../service/composer.ts';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
@@ -60,7 +60,7 @@ declare module 'zova-module-a-fetch' {
 }
 /** service: end */
 /** service: begin */
-import { ServiceComposer } from '../service/composer.js';
+import type { ServiceComposer } from '../service/composer.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -69,11 +69,11 @@ declare module 'zova' {
 }
 /** service: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** monkey: begin */
-export * from '../monkey.js';
+export * from '../monkey.ts';
 /** monkey: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig } from 'zova';

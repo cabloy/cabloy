@@ -1,7 +1,7 @@
 import type { OperationObject } from 'openapi3-ts/oas31';
 
-import type { ModelSdk } from '../model/sdk.js';
-import type { IOpenapiSchemaMeta } from './schema.js';
+import type { ModelSdk } from '../model/sdk.ts';
+import type { IOpenapiSchemaMeta } from './schema.ts';
 
 export const SymbolOpenapiSchemaName = '__schemaName__';
 

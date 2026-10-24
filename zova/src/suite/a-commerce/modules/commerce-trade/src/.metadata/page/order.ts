@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { createZovaComponentPage } from 'zova';
 
-import { ControllerPageOrder } from '../../page/order/controller.jsx';
+import { ControllerPageOrder } from '../../page/order/controller.tsx';
 import {
   ControllerPageOrderSchemaParams,
   ControllerPageOrderSchemaQuery,
-} from '../../page/order/controller.jsx';
+} from '../../page/order/controller.tsx';
 export namespace NSControllerPageOrder {
   export const paramsSchema = ControllerPageOrderSchemaParams;
   export type ParamsInput = z.input<typeof ControllerPageOrderSchemaParams>;

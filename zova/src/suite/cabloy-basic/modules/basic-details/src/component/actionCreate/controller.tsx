@@ -11,8 +11,8 @@ import { TypeFormOnSubmitData } from 'zova-module-a-form';
 import { IIconRecord } from 'zova-module-a-icon';
 import { ZButton } from 'zova-module-basic-button';
 
-import { ServiceDetail } from '../../service/detail.jsx';
-import { IDialogFormOptions } from '../../types/dialogForm.js';
+import { ServiceDetail } from '../../service/detail.tsx';
+import { IDialogFormOptions } from '../../types/dialogForm.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceDetailsActionBulkRecord {

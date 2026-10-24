@@ -1,9 +1,9 @@
 import { BeanBase } from 'zova';
 import { Bean } from 'zova-module-a-bean';
 
-import type { IBehaviors } from '../types/behavior.js';
+import type { IBehaviors } from '../types/behavior.ts';
 
-import { ServiceComposer } from '../service/composer.js';
+import { ServiceComposer } from '../service/composer.ts';
 
 @Bean()
 export class BeanBehavior extends BeanBase {

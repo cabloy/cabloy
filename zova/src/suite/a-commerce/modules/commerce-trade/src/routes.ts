@@ -1,10 +1,10 @@
 import { IModuleRoute } from 'zova-module-a-router';
 
-import { ZPageCart } from './.metadata/page/cart.js';
-import { ZPageCheckout } from './.metadata/page/checkout.js';
-import { ZPageOrder } from './.metadata/page/order.js';
-import { ZPageOrders } from './.metadata/page/orders.js';
-import { ZPagePayment } from './.metadata/page/payment.js';
+import { ZPageCart } from './.metadata/page/cart.ts';
+import { ZPageCheckout } from './.metadata/page/checkout.ts';
+import { ZPageOrder } from './.metadata/page/order.ts';
+import { ZPageOrders } from './.metadata/page/orders.ts';
+import { ZPagePayment } from './.metadata/page/payment.ts';
 
 export const routes: IModuleRoute[] = [
   {

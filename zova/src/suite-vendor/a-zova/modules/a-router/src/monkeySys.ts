@@ -4,9 +4,9 @@ import type { ErrorSSR } from 'zova-module-a-ssr';
 
 import { BeanSimple, cast, isHttpUrl } from 'zova';
 
-import type { SysRouter } from './bean/sys.router.js';
-import type { TypeGotoPageResult } from './types/router.js';
-import type { IGotoPageOptions } from './types/utils.js';
+import type { SysRouter } from './bean/sys.router.ts';
+import type { TypeGotoPageResult } from './types/router.ts';
+import type { IGotoPageOptions } from './types/utils.ts';
 
 export class MonkeySys
   extends BeanSimple

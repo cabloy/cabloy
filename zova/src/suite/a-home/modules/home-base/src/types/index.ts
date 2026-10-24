@@ -1,1 +1,1 @@
-export * from './scopeBase.js';
+export * from './scopeBase.ts';

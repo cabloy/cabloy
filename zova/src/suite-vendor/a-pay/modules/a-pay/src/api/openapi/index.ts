@@ -1,3 +1,3 @@
-export * from './baseURL.js';
-export * from './schemas.js';
-export * from './types.js';
+export * from './baseURL.ts';
+export * from './schemas.ts';
+export * from './types.ts';

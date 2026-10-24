@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { createZovaComponentPage } from 'zova';
 
-import { ControllerPageCatalogue } from '../../page/catalogue/controller.jsx';
+import { ControllerPageCatalogue } from '../../page/catalogue/controller.tsx';
 import {
   ControllerPageCatalogueSchemaParams,
   ControllerPageCatalogueSchemaQuery,
-} from '../../page/catalogue/controller.jsx';
+} from '../../page/catalogue/controller.tsx';
 export namespace NSControllerPageCatalogue {
   export const paramsSchema = ControllerPageCatalogueSchemaParams;
   export type ParamsInput = z.input<typeof ControllerPageCatalogueSchemaParams>;

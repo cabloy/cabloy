@@ -7,7 +7,7 @@ import {
   createDraftSchema,
   projectDraftValues,
   restoreDraftValues,
-} from '../../src/lib/draftSchema.js';
+} from '../../src/lib/draftSchema.ts';
 
 function compile(
   properties: Record<string, any>,

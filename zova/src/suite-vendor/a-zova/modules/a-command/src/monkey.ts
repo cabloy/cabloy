@@ -3,9 +3,9 @@ import type { IJsxRenderContextBase } from 'zova-module-a-openapi';
 
 import { BeanSimple, cast } from 'zova';
 
-import type { ICommandRecord } from './types/command.js';
+import type { ICommandRecord } from './types/command.ts';
 
-import { $performCommand } from './lib/performCommand.js';
+import { $performCommand } from './lib/performCommand.ts';
 
 export class Monkey extends BeanSimple implements IMonkeyBeanInit {
   async beanInit(bean: BeanContainer, beanInstance: BeanBase) {

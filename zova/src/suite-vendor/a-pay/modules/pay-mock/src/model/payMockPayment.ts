@@ -6,7 +6,7 @@ import { BeanModelBase, Model } from 'zova-module-a-model';
 import {
   ApiApiPayMockMockPaymentcompleteRefundRequestBody,
   ApiApiPayMockMockPaymentcompleteRequestBody,
-} from '../api/payMockMockPayment.js';
+} from '../api/payMockMockPayment.ts';
 
 export interface IModelOptionsPayMockPayment extends IDecoratorModelOptions {}
 

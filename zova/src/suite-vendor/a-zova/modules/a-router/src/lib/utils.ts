@@ -10,7 +10,7 @@ import type { ZovaContext } from 'zova';
 import { routerViewLocationKey } from '@cabloy/vue-router';
 import { inject } from 'vue';
 
-import { pageRouteKey } from './const.js';
+import { pageRouteKey } from './const.ts';
 
 export function getRouteMatched(
   route: RouteLocationNormalizedLoaded,

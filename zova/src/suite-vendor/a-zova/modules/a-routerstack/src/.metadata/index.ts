@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/stack.js';
-import { IModelOptionsStack } from '../model/stack.js';
+export * from '../model/stack.ts';
+import { IModelOptionsStack } from '../model/stack.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-a-routerstack' {
 }
 /** model: end */
 /** model: begin */
-import { ModelStack } from '../model/stack.js';
+import type { ModelStack } from '../model/stack.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** controller: begin */
-export * from '../component/routerViewStack/controller.jsx';
+export * from '../component/routerViewStack/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -51,7 +51,7 @@ declare module 'zova-module-a-routerstack' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerRouterViewStack } from '../component/routerViewStack/controller.jsx';
+import type { ControllerRouterViewStack } from '../component/routerViewStack/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -61,8 +61,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/routerViewStack.js';
-import { ZRouterViewStack } from './component/routerViewStack.js';
+export * from './component/routerViewStack.ts';
+import { ZRouterViewStack } from './component/routerViewStack.ts';
 export const components = {
   'routerViewStack': ZRouterViewStack,
 };

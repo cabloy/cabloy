@@ -2,9 +2,9 @@
 import { extend } from '@cabloy/extend';
 import { BeanSimple, cast } from 'zova';
 
-import type { SSRContext, SSRMetaOptions, SSRMetaOptionsWrapper } from '../types/ssr.js';
+import type { SSRContext, SSRMetaOptions, SSRMetaOptionsWrapper } from '../types/ssr.ts';
 
-import { unevalPatch } from './utils.js';
+import { unevalPatch } from './utils.ts';
 
 export class CtxSSRMetaStore extends BeanSimple {
   private _updateId: number = 0;

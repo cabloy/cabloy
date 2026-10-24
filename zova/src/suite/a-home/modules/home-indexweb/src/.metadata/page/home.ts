@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { createZovaComponentPage } from 'zova';
 
-import { ControllerPageHome } from '../../page/home/controller.jsx';
-import { ControllerPageHomeSchemaParams } from '../../page/home/controller.jsx';
+import { ControllerPageHome } from '../../page/home/controller.tsx';
+import { ControllerPageHomeSchemaParams } from '../../page/home/controller.tsx';
 export namespace NSControllerPageHome {
   export const paramsSchema = ControllerPageHomeSchemaParams;
   export type ParamsInput = z.input<typeof ControllerPageHomeSchemaParams>;

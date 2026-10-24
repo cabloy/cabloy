@@ -41,14 +41,13 @@ function _parseControllerInfo(
   globFile: IGlobBeanFile,
 ): IControllerInfo | undefined {
   const { className, fileContent, fileNameJSRelative, file } = globFile;
-  const matches = fileNameJSRelative.match(/..\/(.+?)\/(.+?)\/controller(.jsx?)$/);
+  const matches = fileNameJSRelative.match(/^\.\.\/(page|component)\/(.+?)\/controller(\.tsx?)$/);
   if (!matches) return;
   const type = matches[1];
   if (!['page', 'component'].includes(type)) return;
   const name = matches[2];
   const nameCapitalize = toUpperCaseFirstChar(name);
-  const controllerExtJs = matches[3];
-  const controllerExtTs = controllerExtJs.replace('.js', '.ts');
+  const controllerExtTs = matches[3];
   // componentOptions
   const componentOptionsMatched = fileContent.match(
     /static \$componentOptions[^=]* = (\{[\s\S]*?\});/,
@@ -80,7 +79,7 @@ function _parseControllerInfo(
   const fileRenderFirst = path.join(options.modulePath, `src/${type}/${name}/render.tsx`);
   const hasRenderFirst = fse.existsSync(fileRenderFirst);
   const classNameRenderFirst = `Render${type === 'page' ? 'Page' : ''}${nameCapitalize}`;
-  const importRenderFirst = `import { ${classNameRenderFirst} } from '../../${type}/${name}/render.jsx';`;
+  const importRenderFirst = `import { ${classNameRenderFirst} } from '../../${type}/${name}/render.tsx';`;
   const fileRenderOthers = globbySync(`src/${type}/${name}/render.*.tsx`, {
     cwd: options.modulePath,
   });
@@ -92,13 +91,13 @@ function _parseControllerInfo(
   );
   const importRenderOthers: string[] = nameRenderOthers.map(
     item =>
-      `import { ${`Render${type === 'page' ? 'Page' : ''}${toUpperCaseFirstChar(item)}`} } from '../../${type}/${name}/render.${item}.jsx';`,
+      `import { ${`Render${type === 'page' ? 'Page' : ''}${toUpperCaseFirstChar(item)}`} } from '../../${type}/${name}/render.${item}.tsx';`,
   );
   // style
   const fileStyleFirst = path.join(options.modulePath, `src/${type}/${name}/style.ts`);
   const hasStyleFirst = fse.existsSync(fileStyleFirst);
   const classNameStyleFirst = `Style${type === 'page' ? 'Page' : ''}${nameCapitalize}`;
-  const importStyleFirst = `import { ${classNameStyleFirst} } from '../../${type}/${name}/style.js';`;
+  const importStyleFirst = `import { ${classNameStyleFirst} } from '../../${type}/${name}/style.ts';`;
   const fileStyleOthers = globbySync(`src/${type}/${name}/style.*.ts`, { cwd: options.modulePath });
   const nameStyleOthers: string[] = fileStyleOthers.map(item => /style\.(.*)\.ts/.exec(item)![1]);
   const classNameStyleOthers: string[] = nameStyleOthers.map(
@@ -106,14 +105,13 @@ function _parseControllerInfo(
   );
   const importStyleOthers: string[] = nameStyleOthers.map(
     item =>
-      `import { ${`Style${type === 'page' ? 'Page' : ''}${toUpperCaseFirstChar(item)}`} } from '../../${type}/${name}/style.${item}.js';`,
+      `import { ${`Style${type === 'page' ? 'Page' : ''}${toUpperCaseFirstChar(item)}`} } from '../../${type}/${name}/style.${item}.ts';`,
   );
   // ok
   return {
     type,
     name,
     nameCapitalize,
-    controllerExtJs,
     controllerExtTs,
     componentOptions,
     hasComponentOptions,

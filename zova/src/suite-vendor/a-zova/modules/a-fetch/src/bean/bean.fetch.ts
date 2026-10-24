@@ -5,9 +5,9 @@ import { markRaw } from 'vue';
 import { BeanBase, deepExtend } from 'zova';
 import { Bean } from 'zova-module-a-bean';
 
-import type { IBeanFetchOptions } from '../types/interceptor.js';
+import type { IBeanFetchOptions } from '../types/interceptor.ts';
 
-import { ServiceComposer } from '../service/composer.js';
+import { ServiceComposer } from '../service/composer.ts';
 
 const SymbolFetch = Symbol('SymbolFetch');
 

@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { createZovaComponentPage } from 'zova';
 
-import { ControllerPagePayment } from '../../page/payment/controller.jsx';
+import { ControllerPagePayment } from '../../page/payment/controller.tsx';
 import {
   ControllerPagePaymentSchemaParams,
   ControllerPagePaymentSchemaQuery,
-} from '../../page/payment/controller.jsx';
+} from '../../page/payment/controller.tsx';
 export namespace NSControllerPagePayment {
   export const paramsSchema = ControllerPagePaymentSchemaParams;
   export type ParamsInput = z.input<typeof ControllerPagePaymentSchemaParams>;

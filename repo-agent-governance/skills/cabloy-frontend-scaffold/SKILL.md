@@ -125,21 +125,26 @@ Do not throw away the generated structure and rewrite it from scratch unless the
 
 ### Relative import suffix follow-up
 
-For Zova application modules under `zova/src/module/**`, `zova/src/module-vendor/**`,
-`zova/src/suite/**/modules/**`, and `zova/src/suite-vendor/**/modules/**`, relative
-imports and exports name the emitted ESM file:
+In Zova application TypeScript/TSX source, authored or generated, relative imports
+and exports name the actual source file:
 
-- a `.ts` target uses `.js`
-- a `.tsx` target uses `.jsx`
+- a `.ts` target uses `.ts`
+- a `.tsx` target uses `.tsx`
 
-Apply this to ordinary and type-only imports, relative re-exports, and module tests.
-Keep the generated `.js`/`.jsx` specifiers as the baseline after CLI generation or
-metadata refresh; manual follow-up imports must use the same emitted suffix.
+Apply this to ordinary and type-only imports, relative re-exports, module tests,
+frontend entry/config source, and generated application metadata. Application
+modules include `zova/src/module/**`, `zova/src/module-vendor/**`,
+`zova/src/suite/**/modules/**`, and `zova/src/suite-vendor/**/modules/**`.
+Keep generated `.ts`/`.tsx` specifiers as the baseline after CLI generation or
+metadata refresh; manual follow-up imports must use the same source suffix.
+If generation produces an emitted suffix for a TypeScript target, correct the
+owning template or generator and regenerate, rather than hand-patching its output.
 
-Do not apply this rule globally. Preserve deliberate `.ts`/`.tsx` imports in
-`zova/packages-utils/**` and `zova/packages-zova/**`; do not normalize Vona, CLI or
-template source, dependencies, generated output, or build artifacts. Never use a
-repository-wide suffix replacement: inspect only the affected module thread.
+Preserve the existing `.ts`/`.tsx` imports in `zova/packages-utils/**` and
+`zova/packages-zova/**`. Leave bare package names, asset imports, real JavaScript
+targets, compiled runtime loaders, and package exports unchanged. Do not normalize
+Vona, dependencies, or build artifacts. Never use a repository-wide suffix
+replacement: inspect only the affected application source and its generation path.
 
 ## Step 5: Apply frontend follow-up logic deliberately
 
@@ -215,7 +220,7 @@ Check whether the feature needs:
 - typecheck
 - build
 - metadata regeneration verification
-- scoped relative-import verification: check the affected Zova module tree for accidental `.ts`/`.tsx` relative specifiers, while excluding intentional package source under `zova/packages-utils/**` and `zova/packages-zova/**`
+- scoped relative-import verification: check that affected authored and regenerated application source uses the actual `.ts`/`.tsx` target suffix, not stale `.js`/`.jsx` or extensionless TypeScript paths; preserve bare packages, assets, real JavaScript targets, compiled runtime loaders, and package exports
 - SSR or route-path verification
 - hydration-time initial-render equivalence when SSR, private state, browser-only state, or async model state changes
 - edition-specific flavor, SSR site baseline, and project-asset verification

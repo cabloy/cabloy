@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerTableCellTestProps } from '../../component/tableCellTest/controller.jsx';
+import type { ControllerTableCellTestProps } from '../../component/tableCellTest/controller.tsx';
 
-import { ControllerTableCellTest } from '../../component/tableCellTest/controller.jsx';
+import { ControllerTableCellTest } from '../../component/tableCellTest/controller.tsx';
 export type ZTableCellTestProps = {
   controllerRef?: (ref: ControllerTableCellTest) => void;
 } & ControllerTableCellTestProps;

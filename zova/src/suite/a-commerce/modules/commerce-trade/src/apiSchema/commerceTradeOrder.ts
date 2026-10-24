@@ -16,7 +16,7 @@ import {
   ApiApiCommerceTradeOrdershipPath,
   ApiApiCommerceTradeOrderselectPath,
   ApiApiCommerceTradeOrderviewPath,
-} from '../api/commerceTradeOrder.js';
+} from '../api/commerceTradeOrder.ts';
 
 @ApiSchema()
 export class ApiSchemaCommerceTradeOrder extends BeanBase {

@@ -1,3 +1,3 @@
-export * from './beanControllerPageTableBase.js';
-export * from './beanControllerTableBase.js';
-export * from './tableCell.js';
+export * from './beanControllerPageTableBase.ts';
+export * from './beanControllerTableBase.ts';
+export * from './tableCell.ts';

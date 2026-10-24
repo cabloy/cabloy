@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerFormFieldDateRangeProps } from '../../component/formFieldDateRange/controller.jsx';
+import type { ControllerFormFieldDateRangeProps } from '../../component/formFieldDateRange/controller.tsx';
 
-import { ControllerFormFieldDateRange } from '../../component/formFieldDateRange/controller.jsx';
+import { ControllerFormFieldDateRange } from '../../component/formFieldDateRange/controller.tsx';
 export type ZFormFieldDateRangeProps = {
   controllerRef?: (ref: ControllerFormFieldDateRange) => void;
 } & ControllerFormFieldDateRangeProps;

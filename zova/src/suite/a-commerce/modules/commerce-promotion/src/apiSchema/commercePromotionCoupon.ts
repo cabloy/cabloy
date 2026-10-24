@@ -3,7 +3,7 @@ import type { IApiSchemaOptions } from 'zova-module-a-api';
 import { BeanBase } from 'zova';
 import { ApiSchema } from 'zova-module-a-api';
 
-import { ApiApiCommercePromotionCouponminePath } from '../api/commercePromotionCoupon.js';
+import { ApiApiCommercePromotionCouponminePath } from '../api/commercePromotionCoupon.ts';
 
 @ApiSchema()
 export class ApiSchemaCommercePromotionCoupon extends BeanBase {

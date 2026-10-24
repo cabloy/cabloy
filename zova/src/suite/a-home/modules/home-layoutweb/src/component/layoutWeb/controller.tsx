@@ -4,8 +4,8 @@ import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ModelTabs, ModelTabsOptions, RouteTabInitial } from 'zova-module-a-routertabs';
 import { IServiceSsrLayoutOptions, ServiceSsrLayout } from 'zova-module-home-base';
 
-import { ModelLayout } from '../../model/layout.js';
-import { ModelMenu } from '../../model/menu.js';
+import { ModelLayout } from '../../model/layout.ts';
+import { ModelMenu } from '../../model/menu.ts';
 
 export interface ControllerLayoutWebProps {}
 

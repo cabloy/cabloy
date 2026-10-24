@@ -1,1 +1,1 @@
-export * from './passport.js';
+export * from './passport.ts';

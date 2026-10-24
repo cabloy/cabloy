@@ -1,6 +1,6 @@
 import { createZovaComponentPage } from 'zova';
 
-import { ControllerPagePasswordResetRequest } from '../../page/passwordResetRequest/controller.jsx';
+import { ControllerPagePasswordResetRequest } from '../../page/passwordResetRequest/controller.tsx';
 
 export const ZPagePasswordResetRequest = createZovaComponentPage(
   ControllerPagePasswordResetRequest,

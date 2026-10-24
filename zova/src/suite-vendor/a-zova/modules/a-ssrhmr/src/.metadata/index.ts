@@ -1,10 +1,10 @@
 // eslint-disable
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** monkeySys: begin */
-export * from '../monkeySys.js';
+export * from '../monkeySys.ts';
 /** monkeySys: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig } from 'zova';

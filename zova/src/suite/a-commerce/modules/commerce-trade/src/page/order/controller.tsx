@@ -5,7 +5,7 @@ import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZButton } from 'zova-module-basic-button';
 import { ZPage } from 'zova-module-home-base';
 
-import { ModelOrderMine } from '../../model/orderMine.js';
+import { ModelOrderMine } from '../../model/orderMine.ts';
 
 export const ControllerPageOrderSchemaParams = z.object({
   id: z.string(),

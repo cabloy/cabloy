@@ -1,13 +1,13 @@
 // eslint-disable
 /** api: begin */
-export * from '../api/captcha.js';
-export * from '../api/home.js';
-export * from '../api/homeBaseMenu.js';
-export * from '../api/homeBasePermission.js';
-export * from '../api/homeBaseSiteCatalog.js';
-export * from '../api/homeUserAccount.js';
-export * from '../api/homeUserPassport.js';
-export * from '../api/testSsrToolOne.js';
+export * from '../api/captcha.ts';
+export * from '../api/home.ts';
+export * from '../api/homeBaseMenu.ts';
+export * from '../api/homeBasePermission.ts';
+export * from '../api/homeBaseSiteCatalog.ts';
+export * from '../api/homeUserAccount.ts';
+export * from '../api/homeUserPassport.ts';
+export * from '../api/testSsrToolOne.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -106,14 +106,14 @@ declare module 'zova-module-home-api' {
 }
 /** api: end */
 /** api: begin */
-import type { ApiCaptcha } from '../api/captcha.js';
-import type { ApiHome } from '../api/home.js';
-import type { ApiHomeBaseMenu } from '../api/homeBaseMenu.js';
-import type { ApiHomeBasePermission } from '../api/homeBasePermission.js';
-import type { ApiHomeBaseSiteCatalog } from '../api/homeBaseSiteCatalog.js';
-import type { ApiHomeUserAccount } from '../api/homeUserAccount.js';
-import type { ApiHomeUserPassport } from '../api/homeUserPassport.js';
-import type { ApiTestSsrToolOne } from '../api/testSsrToolOne.js';
+import type { ApiCaptcha } from '../api/captcha.ts';
+import type { ApiHome } from '../api/home.ts';
+import type { ApiHomeBaseMenu } from '../api/homeBaseMenu.ts';
+import type { ApiHomeBasePermission } from '../api/homeBasePermission.ts';
+import type { ApiHomeBaseSiteCatalog } from '../api/homeBaseSiteCatalog.ts';
+import type { ApiHomeUserAccount } from '../api/homeUserAccount.ts';
+import type { ApiHomeUserPassport } from '../api/homeUserPassport.ts';
+import type { ApiTestSsrToolOne } from '../api/testSsrToolOne.ts';
 export interface IModuleApi {
   'captcha': ApiCaptcha;
 'home': ApiHome;
@@ -142,17 +142,17 @@ declare module 'zova' {
 }
 /** api: end */
 /** openapi: begin */
-export * from '../api/openapi/index.js';
+export * from '../api/openapi/index.ts';
 /** openapi: end */
 /** apiSchema: begin */
-export * from '../apiSchema/captcha.js';
-export * from '../apiSchema/home.js';
-export * from '../apiSchema/homeBaseMenu.js';
-export * from '../apiSchema/homeBasePermission.js';
-export * from '../apiSchema/homeBaseSiteCatalog.js';
-export * from '../apiSchema/homeUserAccount.js';
-export * from '../apiSchema/homeUserPassport.js';
-export * from '../apiSchema/testSsrToolOne.js';
+export * from '../apiSchema/captcha.ts';
+export * from '../apiSchema/home.ts';
+export * from '../apiSchema/homeBaseMenu.ts';
+export * from '../apiSchema/homeBasePermission.ts';
+export * from '../apiSchema/homeBaseSiteCatalog.ts';
+export * from '../apiSchema/homeUserAccount.ts';
+export * from '../apiSchema/homeUserPassport.ts';
+export * from '../apiSchema/testSsrToolOne.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -251,14 +251,14 @@ declare module 'zova-module-home-api' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import type { ApiSchemaCaptcha } from '../apiSchema/captcha.js';
-import type { ApiSchemaHome } from '../apiSchema/home.js';
-import type { ApiSchemaHomeBaseMenu } from '../apiSchema/homeBaseMenu.js';
-import type { ApiSchemaHomeBasePermission } from '../apiSchema/homeBasePermission.js';
-import type { ApiSchemaHomeBaseSiteCatalog } from '../apiSchema/homeBaseSiteCatalog.js';
-import type { ApiSchemaHomeUserAccount } from '../apiSchema/homeUserAccount.js';
-import type { ApiSchemaHomeUserPassport } from '../apiSchema/homeUserPassport.js';
-import type { ApiSchemaTestSsrToolOne } from '../apiSchema/testSsrToolOne.js';
+import type { ApiSchemaCaptcha } from '../apiSchema/captcha.ts';
+import type { ApiSchemaHome } from '../apiSchema/home.ts';
+import type { ApiSchemaHomeBaseMenu } from '../apiSchema/homeBaseMenu.ts';
+import type { ApiSchemaHomeBasePermission } from '../apiSchema/homeBasePermission.ts';
+import type { ApiSchemaHomeBaseSiteCatalog } from '../apiSchema/homeBaseSiteCatalog.ts';
+import type { ApiSchemaHomeUserAccount } from '../apiSchema/homeUserAccount.ts';
+import type { ApiSchemaHomeUserPassport } from '../apiSchema/homeUserPassport.ts';
+import type { ApiSchemaTestSsrToolOne } from '../apiSchema/testSsrToolOne.ts';
 export interface IModuleApiSchema {
   'captcha': ApiSchemaCaptcha;
 'home': ApiSchemaHome;
@@ -287,7 +287,7 @@ declare module 'zova' {
 }
 /** apiSchema: end */
 /** service: begin */
-export * from '../service/jwtAdapter.js';
+export * from '../service/jwtAdapter.ts';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
@@ -313,7 +313,7 @@ declare module 'zova-module-home-api' {
 }
 /** service: end */
 /** service: begin */
-import type { ServiceJwtAdapter } from '../service/jwtAdapter.js';
+import type { ServiceJwtAdapter } from '../service/jwtAdapter.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {

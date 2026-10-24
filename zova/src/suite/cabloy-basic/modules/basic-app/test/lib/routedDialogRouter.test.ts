@@ -2,7 +2,7 @@ import { createRouter } from '@cabloy/vue-router';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { RoutedDialogHistory } from '../../src/lib/routedDialogHistory.js';
+import { RoutedDialogHistory } from '../../src/lib/routedDialogHistory.ts';
 
 function createRouterWithHistory() {
   const routedDialogHistory = new RoutedDialogHistory();

@@ -6,10 +6,10 @@ import type {
   IOnionOptionsMatch,
   IOnionOptionsMeta,
   TypeOnionOptionsMatchRules,
-} from '../types/onion.js';
+} from '../types/onion.ts';
 
-import { Sys } from '../lib/bean.js';
-import { ServiceOnion } from '../service/onion_.js';
+import { Sys } from '../lib/bean.ts';
+import { ServiceOnion } from '../service/onion_.ts';
 
 @ProxyDisable()
 @Sys()

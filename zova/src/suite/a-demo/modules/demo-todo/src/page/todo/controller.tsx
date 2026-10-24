@@ -5,9 +5,9 @@ import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPage } from 'zova-module-home-base';
 
-import type { ApiTodoEntity } from '../../api/todo.js';
+import type { ApiTodoEntity } from '../../api/todo.ts';
 
-import { ModelTodo } from '../../model/todo.js';
+import { ModelTodo } from '../../model/todo.ts';
 
 @Controller()
 export class ControllerPageTodo extends BeanControllerPageBase {

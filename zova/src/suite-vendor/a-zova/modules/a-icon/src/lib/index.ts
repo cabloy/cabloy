@@ -1,3 +1,3 @@
-export * from './iconGroup.js';
-export * from './useZovaIcon.js';
-export * from './utils.js';
+export * from './iconGroup.ts';
+export * from './useZovaIcon.ts';
+export * from './utils.ts';

@@ -1,6 +1,6 @@
 // eslint-disable
 /** controller: begin */
-export * from '../page/home/controller.jsx';
+export * from '../page/home/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -16,7 +16,7 @@ declare module 'zova-module-home-indexweb' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerPageHome } from '../page/home/controller.jsx';
+import type { ControllerPageHome } from '../page/home/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -25,9 +25,9 @@ declare module 'zova' {
 }
 /** controller: end */
 /** pages: begin */
-export * from './page/home.js';
-import { NSControllerPageHome } from './page/home.js';
-export * from '../routes.js';
+export * from './page/home.ts';
+import { NSControllerPageHome } from './page/home.ts';
+export * from '../routes.ts';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {

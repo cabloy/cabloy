@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import type { ISchemaRefreshContext } from '../../src/lib/schemaRefresh.js';
+import type { ISchemaRefreshContext } from '../../src/lib/schemaRefresh.ts';
 
 import {
   createSchemaRefreshContract,
   schemaRefreshFingerprint,
   SchemaRefreshTracker,
-} from '../../src/lib/schemaRefresh.js';
+} from '../../src/lib/schemaRefresh.ts';
 
 function contract(
   name: Record<string, unknown> = {},

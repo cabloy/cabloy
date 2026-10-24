@@ -1,25 +1,25 @@
 // eslint-disable
 /** command: begin */
-export * from '../bean/command.alert.jsx';
-export * from '../bean/command.confirm.jsx';
-export * from '../bean/command.copy.jsx';
-export * from '../bean/command.create.jsx';
-export * from '../bean/command.delete.jsx';
-export * from '../bean/command.deleteBulk.jsx';
-export * from '../bean/command.edit.jsx';
-export * from '../bean/command.prompt.jsx';
-export * from '../bean/command.setValue.jsx';
-export * from '../bean/command.view.jsx';
-import { ICommandOptionsAlert } from '../bean/command.alert.jsx';
-import { ICommandOptionsConfirm } from '../bean/command.confirm.jsx';
-import { ICommandOptionsCopy } from '../bean/command.copy.jsx';
-import { ICommandOptionsCreate } from '../bean/command.create.jsx';
-import { ICommandOptionsDelete } from '../bean/command.delete.jsx';
-import { ICommandOptionsDeleteBulk } from '../bean/command.deleteBulk.jsx';
-import { ICommandOptionsEdit } from '../bean/command.edit.jsx';
-import { ICommandOptionsPrompt } from '../bean/command.prompt.jsx';
-import { ICommandOptionsSetValue } from '../bean/command.setValue.jsx';
-import { ICommandOptionsView } from '../bean/command.view.jsx';
+export * from '../bean/command.alert.tsx';
+export * from '../bean/command.confirm.tsx';
+export * from '../bean/command.copy.tsx';
+export * from '../bean/command.create.tsx';
+export * from '../bean/command.delete.tsx';
+export * from '../bean/command.deleteBulk.tsx';
+export * from '../bean/command.edit.tsx';
+export * from '../bean/command.prompt.tsx';
+export * from '../bean/command.setValue.tsx';
+export * from '../bean/command.view.tsx';
+import { ICommandOptionsAlert } from '../bean/command.alert.tsx';
+import { ICommandOptionsConfirm } from '../bean/command.confirm.tsx';
+import { ICommandOptionsCopy } from '../bean/command.copy.tsx';
+import { ICommandOptionsCreate } from '../bean/command.create.tsx';
+import { ICommandOptionsDelete } from '../bean/command.delete.tsx';
+import { ICommandOptionsDeleteBulk } from '../bean/command.deleteBulk.tsx';
+import { ICommandOptionsEdit } from '../bean/command.edit.tsx';
+import { ICommandOptionsPrompt } from '../bean/command.prompt.tsx';
+import { ICommandOptionsSetValue } from '../bean/command.setValue.tsx';
+import { ICommandOptionsView } from '../bean/command.view.tsx';
 import 'zova-module-a-command';
 declare module 'zova-module-a-command' {
 
@@ -152,16 +152,16 @@ declare module 'zova-module-basic-commands' {
 }
 /** command: end */
 /** command: begin */
-import { CommandAlert } from '../bean/command.alert.jsx';
-import { CommandConfirm } from '../bean/command.confirm.jsx';
-import { CommandCopy } from '../bean/command.copy.jsx';
-import { CommandCreate } from '../bean/command.create.jsx';
-import { CommandDelete } from '../bean/command.delete.jsx';
-import { CommandDeleteBulk } from '../bean/command.deleteBulk.jsx';
-import { CommandEdit } from '../bean/command.edit.jsx';
-import { CommandPrompt } from '../bean/command.prompt.jsx';
-import { CommandSetValue } from '../bean/command.setValue.jsx';
-import { CommandView } from '../bean/command.view.jsx';
+import type { CommandAlert } from '../bean/command.alert.tsx';
+import type { CommandConfirm } from '../bean/command.confirm.tsx';
+import type { CommandCopy } from '../bean/command.copy.tsx';
+import type { CommandCreate } from '../bean/command.create.tsx';
+import type { CommandDelete } from '../bean/command.delete.tsx';
+import type { CommandDeleteBulk } from '../bean/command.deleteBulk.tsx';
+import type { CommandEdit } from '../bean/command.edit.tsx';
+import type { CommandPrompt } from '../bean/command.prompt.tsx';
+import type { CommandSetValue } from '../bean/command.setValue.tsx';
+import type { CommandView } from '../bean/command.view.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {

@@ -1,6 +1,6 @@
 // eslint-disable
 /** controller: begin */
-export * from '../component/button/controller.jsx';
+export * from '../component/button/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -16,7 +16,7 @@ declare module 'zova-module-basic-button' {
 }
 /** controller: end */
 /** controller: begin */
-import type { ControllerButton } from '../component/button/controller.jsx';
+import type { ControllerButton } from '../component/button/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -26,8 +26,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/button.js';
-import { ZButton } from './component/button.js';
+export * from './component/button.ts';
+import { ZButton } from './component/button.ts';
 export const components = {
   'button': ZButton,
 };
@@ -42,8 +42,8 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** behavior: begin */
-export * from '../bean/behavior.perform.jsx';
-import { IBehaviorOptionsPerform } from '../bean/behavior.perform.jsx';
+export * from '../bean/behavior.perform.tsx';
+import { IBehaviorOptionsPerform } from '../bean/behavior.perform.tsx';
 import 'zova-module-a-behavior';
 declare module 'zova-module-a-behavior' {
 
@@ -68,7 +68,7 @@ declare module 'zova-module-basic-button' {
 }
 /** behavior: end */
 /** behavior: begin */
-import type { BehaviorPerform } from '../bean/behavior.perform.jsx';
+import type { BehaviorPerform } from '../bean/behavior.perform.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {

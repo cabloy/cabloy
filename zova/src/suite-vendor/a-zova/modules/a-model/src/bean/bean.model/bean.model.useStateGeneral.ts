@@ -3,11 +3,11 @@ import type { DefaultError, QueryClient, QueryKey, UseQueryOptions } from '@tans
 import type {
   DefinedInitialQueryOptions,
   UndefinedInitialQueryOptions,
-} from '../../common/types.js';
-import type { ModelUseQueryDefinedReturnType, ModelUseQueryReturnType } from '../../types/query.js';
-import type { StateType } from '../../types/query.js';
+} from '../../common/types.ts';
+import type { ModelUseQueryDefinedReturnType, ModelUseQueryReturnType } from '../../types/query.ts';
+import type { StateType } from '../../types/query.ts';
 
-import { BeanModelUseState } from './bean.model.useState.js';
+import { BeanModelUseState } from './bean.model.useState.ts';
 
 export class BeanModelUseStateGeneral extends BeanModelUseState {
   $useState<

@@ -1,7 +1,7 @@
 // eslint-disable
 /** behavior: begin */
-export * from '../bean/behavior.focus.js';
-import { IBehaviorOptionsFocus } from '../bean/behavior.focus.js';
+export * from '../bean/behavior.focus.ts';
+import { IBehaviorOptionsFocus } from '../bean/behavior.focus.ts';
 import 'zova-module-a-behavior';
 declare module 'zova-module-a-behavior' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-a-behaviors' {
 }
 /** behavior: end */
 /** behavior: begin */
-import { BehaviorFocus } from '../bean/behavior.focus.js';
+import type { BehaviorFocus } from '../bean/behavior.focus.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {

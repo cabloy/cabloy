@@ -1,5 +1,5 @@
-import { IJsxRenderContextBase } from '../action.js';
-import { IFormMeta } from '../formMeta.js';
+import { IJsxRenderContextBase } from '../action.ts';
+import { IFormMeta } from '../formMeta.ts';
 
 export interface IDetailScope {
   formMeta?: IFormMeta;

@@ -2,7 +2,7 @@ import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 
-import { ModelOperator } from '../../model/operator.js';
+import { ModelOperator } from '../../model/operator.ts';
 
 @Controller()
 export class ControllerPageDashboard extends BeanControllerPageBase {

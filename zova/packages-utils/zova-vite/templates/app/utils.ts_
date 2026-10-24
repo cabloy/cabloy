@@ -1,9 +1,9 @@
-import { locales } from '../../src/front/config/locales.js';
-<%=sysMonkey?"import { SysMonkey } from '../../src/front/config/monkeySys.js';":''%>
-<%=appMonkey?"import { AppMonkey } from '../../src/front/config/monkey.js';":''%>
-import config from '../config.js';
-import { env } from '../env.js';
-import { modulesMeta } from '../modules-meta.js';
+import { locales } from '../../src/front/config/locales.ts';
+<%=sysMonkey?"import { SysMonkey } from '../../src/front/config/monkeySys.ts';":''%>
+<%=appMonkey?"import { AppMonkey } from '../../src/front/config/monkey.ts';":''%>
+import config from '../config.ts';
+import { env } from '../env.ts';
+import { modulesMeta } from '../modules-meta.ts';
 
 const options = {
   modulesMeta,

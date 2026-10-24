@@ -26,15 +26,15 @@ import { $QueriesEnsureLoaded } from 'zova-module-a-model';
 import { ZButton } from 'zova-module-basic-button';
 import { ModelResource } from 'zova-module-rest-resource';
 
-import type { BeanDraftCoordinator } from '../../bean/bean.draftCoordinator.js';
-import type { IDraftEditor, IDraftEnvelope, IDraftIdentity } from '../../types/draft.js';
+import type { BeanDraftCoordinator } from '../../bean/bean.draftCoordinator.ts';
+import type { IDraftEditor, IDraftEnvelope, IDraftIdentity } from '../../types/draft.ts';
 
 import {
   createDraftSchema,
   draftBaselineSignature,
   projectDraftValues,
   restoreDraftValues,
-} from '../../lib/draftSchema.js';
+} from '../../lib/draftSchema.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {

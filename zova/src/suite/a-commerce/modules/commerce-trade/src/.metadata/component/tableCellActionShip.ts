@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerTableCellActionShipProps } from '../../component/tableCellActionShip/controller.jsx';
+import type { ControllerTableCellActionShipProps } from '../../component/tableCellActionShip/controller.tsx';
 
-import { ControllerTableCellActionShip } from '../../component/tableCellActionShip/controller.jsx';
+import { ControllerTableCellActionShip } from '../../component/tableCellActionShip/controller.tsx';
 export type ZTableCellActionShipProps = {
   controllerRef?: (ref: ControllerTableCellActionShip) => void;
 } & ControllerTableCellActionShipProps;

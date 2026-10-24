@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/payMockPayment.js';
-import { IModelOptionsPayMockPayment } from '../model/payMockPayment.js';
+export * from '../model/payMockPayment.ts';
+import { IModelOptionsPayMockPayment } from '../model/payMockPayment.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-pay-mock' {
 }
 /** model: end */
 /** model: begin */
-import { ModelPayMockPayment } from '../model/payMockPayment.js';
+import type { ModelPayMockPayment } from '../model/payMockPayment.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/payMockMockPayment.js';
+export * from '../api/payMockMockPayment.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-pay-mock' {
 }
 /** api: end */
 /** api: begin */
-import { ApiPayMockMockPayment } from '../api/payMockMockPayment.js';
+import type { ApiPayMockMockPayment } from '../api/payMockMockPayment.ts';
 export interface IModuleApi {
   'payMockMockPayment': ApiPayMockMockPayment;
 }
@@ -72,10 +72,10 @@ declare module 'zova' {
 }
 /** api: end */
 /** openapi: begin */
-export * from '../api/openapi/index.js';
+export * from '../api/openapi/index.ts';
 /** openapi: end */
 /** apiSchema: begin */
-export * from '../apiSchema/payMockMockPayment.js';
+export * from '../apiSchema/payMockMockPayment.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -97,7 +97,7 @@ declare module 'zova-module-pay-mock' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import { ApiSchemaPayMockMockPayment } from '../apiSchema/payMockMockPayment.js';
+import type { ApiSchemaPayMockMockPayment } from '../apiSchema/payMockMockPayment.ts';
 export interface IModuleApiSchema {
   'payMockMockPayment': ApiSchemaPayMockMockPayment;
 }

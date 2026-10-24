@@ -7,7 +7,7 @@ import { ZIcon } from 'zova-module-a-icon';
 import { ZRouterViewTabs } from 'zova-module-a-routertabs';
 import { closeNearestDetails } from 'zova-module-home-base';
 
-import type { TypeMenuGroup, TypeMenuItem } from '../../model/menu.js';
+import type { TypeMenuGroup, TypeMenuItem } from '../../model/menu.ts';
 
 type TypeMenuLeaf = Exclude<TypeMenuItem, TypeMenuGroup>;
 

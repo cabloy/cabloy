@@ -1,7 +1,7 @@
 import type { VNodeChild } from 'vue';
 import type { IFormMeta } from 'zova-module-a-openapi';
 
-import type { IRouteViewRouteItem, IRouteViewTabCurrent } from './routerView.js';
+import type { IRouteViewRouteItem, IRouteViewTabCurrent } from './routerView.ts';
 
 export interface IPageMeta {
   pageTitle?: string;

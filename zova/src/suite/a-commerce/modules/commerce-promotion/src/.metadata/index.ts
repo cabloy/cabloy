@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/coupon.js';
-import { IModelOptionsCoupon } from '../model/coupon.js';
+export * from '../model/coupon.ts';
+import { IModelOptionsCoupon } from '../model/coupon.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-commerce-promotion' {
 }
 /** model: end */
 /** model: begin */
-import { ModelCoupon } from '../model/coupon.js';
+import type { ModelCoupon } from '../model/coupon.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/commercePromotionCoupon.js';
+export * from '../api/commercePromotionCoupon.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-commerce-promotion' {
 }
 /** api: end */
 /** api: begin */
-import { ApiCommercePromotionCoupon } from '../api/commercePromotionCoupon.js';
+import type { ApiCommercePromotionCoupon } from '../api/commercePromotionCoupon.ts';
 export interface IModuleApi {
   'commercePromotionCoupon': ApiCommercePromotionCoupon;
 }
@@ -72,10 +72,10 @@ declare module 'zova' {
 }
 /** api: end */
 /** openapi: begin */
-export * from '../api/openapi/index.js';
+export * from '../api/openapi/index.ts';
 /** openapi: end */
 /** apiSchema: begin */
-export * from '../apiSchema/commercePromotionCoupon.js';
+export * from '../apiSchema/commercePromotionCoupon.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -97,7 +97,7 @@ declare module 'zova-module-commerce-promotion' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import { ApiSchemaCommercePromotionCoupon } from '../apiSchema/commercePromotionCoupon.js';
+import type { ApiSchemaCommercePromotionCoupon } from '../apiSchema/commercePromotionCoupon.ts';
 export interface IModuleApiSchema {
   'commercePromotionCoupon': ApiSchemaCommercePromotionCoupon;
 }

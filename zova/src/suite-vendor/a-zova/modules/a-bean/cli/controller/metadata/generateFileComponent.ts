@@ -16,7 +16,7 @@ export async function generateFileComponent(
     type,
     name,
     nameCapitalize,
-    controllerExtJs,
+    controllerExtTs,
     hasComponentOptions,
     nameProps,
     hasProps,
@@ -61,7 +61,7 @@ export async function generateFileComponent(
   if (hasProps) _contentImportTypeController.push(nameProps);
   if (_contentImportTypeController.length > 0) {
     contentImports.push(
-      `import type { ${_contentImportTypeController.join(', ')} } from '../../component/${name}/controller${controllerExtJs}';`,
+      `import type { ${_contentImportTypeController.join(', ')} } from '../../component/${name}/controller${controllerExtTs}';`,
     );
   }
   if (type === 'component' && name === 'routedDialog') {
@@ -74,7 +74,7 @@ export async function generateFileComponent(
   contentImports.push("import { prepareComponentOptions, useController } from 'zova';");
   // controller
   contentImports.push(
-    `import { ${className} } from '../../component/${name}/controller${controllerExtJs}';`,
+    `import { ${className} } from '../../component/${name}/controller${controllerExtTs}';`,
   );
   // render
   if (hasRenderFirst) {

@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { createZovaComponentPage } from 'zova';
 
-import { ControllerPageEntry } from '../../page/entry/controller.jsx';
-import { ControllerPageEntrySchemaParams } from '../../page/entry/controller.jsx';
+import { ControllerPageEntry } from '../../page/entry/controller.tsx';
+import { ControllerPageEntrySchemaParams } from '../../page/entry/controller.tsx';
 export namespace NSControllerPageEntry {
   export const paramsSchema = ControllerPageEntrySchemaParams;
   export type ParamsInput = z.input<typeof ControllerPageEntrySchemaParams>;

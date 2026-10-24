@@ -79,8 +79,8 @@ export class CliRefactorRenameComponent extends BeanCliBase {
     let content = (await fse.readFile(routesFile)).toString();
     //
     content = content.replace(
-      `import { ZPage${argv.nameMeta.shortCapitalize} } from './.metadata/page/${argv.nameMeta.short}.js';`,
-      `import { ZPage${argv.componentNameNewCapitalize} } from './.metadata/page/${argv.componentNameNew}.js';`,
+      `import { ZPage${argv.nameMeta.shortCapitalize} } from './.metadata/page/${argv.nameMeta.short}.ts';`,
+      `import { ZPage${argv.componentNameNewCapitalize} } from './.metadata/page/${argv.componentNameNew}.ts';`,
     );
     //
     const ast = gogocode(content);

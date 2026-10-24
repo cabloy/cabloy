@@ -1,7 +1,7 @@
 import type { ComponentInternalInstance, VNode } from 'vue';
 import type { ZovaConfigEnv, ZovaConfigSsrProfile, ZovaConfigSsrResponseCachePolicy } from 'zova';
 
-import type { CtxSSR } from '../lib/ssr.js';
+import type { CtxSSR } from '../lib/ssr.ts';
 import 'zova';
 
 export interface ErrorSSR extends Error {

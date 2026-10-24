@@ -1,7 +1,7 @@
 import { BeanBase } from 'zova';
 import { Service } from 'zova-module-a-bean';
 
-import type { TypePaymentNextAction } from '../types/payment.js';
+import type { TypePaymentNextAction } from '../types/payment.ts';
 
 @Service()
 export class ServicePaymentCoordinator extends BeanBase {

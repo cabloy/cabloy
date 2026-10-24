@@ -3,7 +3,7 @@ import type { IApiSchemaOptions } from 'zova-module-a-api';
 import { BeanBase } from 'zova';
 import { ApiSchema } from 'zova-module-a-api';
 
-import { ApiApiCommerceSiteadminOperatorcontextPath } from '../api/commerceSiteadminOperator.js';
+import { ApiApiCommerceSiteadminOperatorcontextPath } from '../api/commerceSiteadminOperator.ts';
 
 @ApiSchema()
 export class ApiSchemaCommerceSiteadminOperator extends BeanBase {

@@ -1,4 +1,4 @@
-import type { CssBase } from '../bean/css.base.js';
+import type { CssBase } from '../bean/css.base.ts';
 import 'zova';
 
 declare module 'zova' {

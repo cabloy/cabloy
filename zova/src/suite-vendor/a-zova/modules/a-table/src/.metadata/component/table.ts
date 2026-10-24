@@ -3,10 +3,10 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerTableProps } from '../../component/table/controller.jsx';
+import type { ControllerTableProps } from '../../component/table/controller.tsx';
 
-import { ControllerTable } from '../../component/table/controller.jsx';
-import { RenderTable } from '../../component/table/render.jsx';
+import { ControllerTable } from '../../component/table/controller.tsx';
+import { RenderTable } from '../../component/table/render.tsx';
 export type ZTableProps<TData extends {} = {}> = {
   controllerRef?: (ref: ControllerTable<TData>) => void;
 } & ControllerTableProps<TData>;

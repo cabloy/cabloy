@@ -10,7 +10,7 @@ import {
   createSchemaRefreshContract,
   schemaRefreshFingerprint,
   SchemaRefreshTracker,
-} from '../../src/lib/schemaRefresh.js';
+} from '../../src/lib/schemaRefresh.ts';
 
 function deferred<T = void>() {
   let resolve!: (value: T) => void;

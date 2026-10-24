@@ -8,7 +8,7 @@ import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPaymentNextAction } from 'zova-module-basic-pay';
 import { ZPage } from 'zova-module-home-base';
 
-import { ModelOrderMine } from '../../model/orderMine.js';
+import { ModelOrderMine } from '../../model/orderMine.ts';
 
 export const ControllerPagePaymentSchemaParams = z.object({
   paymentSessionId: z.string(),

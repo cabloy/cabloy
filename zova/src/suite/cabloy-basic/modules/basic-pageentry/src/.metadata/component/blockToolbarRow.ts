@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerBlockToolbarRowProps } from '../../component/blockToolbarRow/controller.jsx';
+import type { ControllerBlockToolbarRowProps } from '../../component/blockToolbarRow/controller.tsx';
 
-import { ControllerBlockToolbarRow } from '../../component/blockToolbarRow/controller.jsx';
+import { ControllerBlockToolbarRow } from '../../component/blockToolbarRow/controller.tsx';
 export type ZBlockToolbarRowProps = {
   controllerRef?: (ref: ControllerBlockToolbarRow) => void;
 } & ControllerBlockToolbarRowProps;

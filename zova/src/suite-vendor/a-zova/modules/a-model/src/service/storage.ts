@@ -4,9 +4,9 @@ import { dehydrate, hydrate, QueryCache, QueryClient, VueQueryPlugin } from '@ta
 import { BeanBase, deepExtend } from 'zova';
 import { Service } from 'zova-module-a-bean';
 
-import type { ModelPersistenceToken, ModelPersistenceValues } from '../lib/modelPersistence.js';
+import type { ModelPersistenceToken, ModelPersistenceValues } from '../lib/modelPersistence.ts';
 
-import { ModelPersistenceContext } from '../lib/modelPersistence.js';
+import { ModelPersistenceContext } from '../lib/modelPersistence.ts';
 
 @Service()
 export class ServiceStorage extends BeanBase {

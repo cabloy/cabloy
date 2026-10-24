@@ -7,7 +7,7 @@ import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ControllerForm, ZFormFieldPreset } from 'zova-module-a-form';
 
-import { currencyFormat, currencyUpdate } from '../../lib/utils.js';
+import { currencyFormat, currencyUpdate } from '../../lib/utils.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {

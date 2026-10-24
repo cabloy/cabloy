@@ -3,7 +3,7 @@ import type { IApiSchemaOptions } from 'zova-module-a-api';
 import { BeanBase } from 'zova';
 import { ApiSchema } from 'zova-module-a-api';
 
-import { ApiApiCommerceTradeStockBalanceadjustStockPath } from '../api/commerceTradeStockBalance.js';
+import { ApiApiCommerceTradeStockBalanceadjustStockPath } from '../api/commerceTradeStockBalance.ts';
 
 @ApiSchema()
 export class ApiSchemaCommerceTradeStockBalance extends BeanBase {

@@ -1,4 +1,4 @@
-import type { DataQuery } from '../types/query.js';
+import type { DataQuery } from '../types/query.ts';
 
 export type TypeQueryEnsureLoadedFn<TData, TError = Error | null> = () =>
   | DataQuery<TData, TError>

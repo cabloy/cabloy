@@ -1,9 +1,9 @@
 import type { IModuleRoute } from 'zova-module-a-router';
 
-import { ZPageAuthCallback } from './.metadata/page/authCallback.js';
-import { ZPageErrorAccessDenied } from './.metadata/page/errorAccessDenied.js';
-import { ZPageErrorExpired } from './.metadata/page/errorExpired.js';
-import { ZPageErrorNotFound } from './.metadata/page/errorNotFound.js';
+import { ZPageAuthCallback } from './.metadata/page/authCallback.ts';
+import { ZPageErrorAccessDenied } from './.metadata/page/errorAccessDenied.ts';
+import { ZPageErrorExpired } from './.metadata/page/errorExpired.ts';
+import { ZPageErrorNotFound } from './.metadata/page/errorNotFound.ts';
 
 export const routes: IModuleRoute[] = [
   {

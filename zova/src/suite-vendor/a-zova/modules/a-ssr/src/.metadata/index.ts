@@ -1,6 +1,6 @@
 // eslint-disable
 /** sys: begin */
-export * from '../bean/sys.ssrState.js';
+export * from '../bean/sys.ssrState.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -22,7 +22,7 @@ declare module 'zova-module-a-ssr' {
 }
 /** sys: end */
 /** sys: begin */
-import { SysSsrState } from '../bean/sys.ssrState.js';
+import type { SysSsrState } from '../bean/sys.ssrState.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -31,14 +31,14 @@ declare module 'zova' {
 }
 /** sys: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** monkey: begin */
-export * from '../monkey.js';
+export * from '../monkey.ts';
 /** monkey: end */
 /** monkeySys: begin */
-export * from '../monkeySys.js';
+export * from '../monkeySys.ts';
 /** monkeySys: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig } from 'zova';

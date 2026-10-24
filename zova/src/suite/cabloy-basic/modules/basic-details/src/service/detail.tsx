@@ -21,7 +21,7 @@ import {
 } from 'zova-module-a-openapi';
 import { AppModalItem } from 'zova-module-basic-app';
 
-import { IDialogFormOptions } from '../types/dialogForm.js';
+import { IDialogFormOptions } from '../types/dialogForm.ts';
 
 @Service()
 export class ServiceDetail<TData extends {} = {}> extends BeanBase {

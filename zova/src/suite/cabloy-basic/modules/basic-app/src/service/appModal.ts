@@ -2,8 +2,8 @@ import { shallowReactive } from 'vue';
 import { BeanBase } from 'zova';
 import { Service } from 'zova-module-a-bean';
 
-import { AppModalItem } from '../lib/appModalItem.js';
-import { RoutedDialogHistory } from '../lib/routedDialogHistory.js';
+import { AppModalItem } from '../lib/appModalItem.ts';
+import { RoutedDialogHistory } from '../lib/routedDialogHistory.ts';
 import {
   IModalAlertOptions,
   IModalConfirmOptions,
@@ -18,7 +18,7 @@ import {
   IModalRoutedDialogState,
   IRoutedDialogContext,
   IRoutedDialogHandle,
-} from '../types/appModal.js';
+} from '../types/appModal.ts';
 
 @Service()
 export class ServiceAppModal extends BeanBase {

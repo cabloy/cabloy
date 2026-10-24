@@ -3,9 +3,9 @@
   "compilerOptions": {
     "composite": false,
     "sourceMap": false,
-    "allowImportingTsExtensions": false,
+    "allowImportingTsExtensions": true,
     "noEmit": false,
-    "rewriteRelativeImportExtensions": false,
+    "rewriteRelativeImportExtensions": true,
     "verbatimModuleSyntax": false
   },
   "references": [],

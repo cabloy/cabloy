@@ -1,4 +1,4 @@
-import type { BeanRouter } from '../bean/bean.router.js';
+import type { BeanRouter } from '../bean/bean.router.ts';
 
 export type TypeRouteDiscardReason = 'back' | 'taskClose' | 'workspaceClose';
 

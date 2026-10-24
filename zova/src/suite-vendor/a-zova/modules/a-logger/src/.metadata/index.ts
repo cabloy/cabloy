@@ -1,7 +1,7 @@
 // eslint-disable
 /** aopMethod: begin */
-export * from '../bean/aopMethod.log.js';
-import { IAopMethodOptionsLog } from '../bean/aopMethod.log.js';
+export * from '../bean/aopMethod.log.ts';
+import { IAopMethodOptionsLog } from '../bean/aopMethod.log.ts';
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-a-logger' {
 }
 /** aopMethod: end */
 /** aopMethod: begin */
-import { AopMethodLog } from '../bean/aopMethod.log.js';
+import type { AopMethodLog } from '../bean/aopMethod.log.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {

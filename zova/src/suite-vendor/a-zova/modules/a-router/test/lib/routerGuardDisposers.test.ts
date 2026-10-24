@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { RouterGuardDisposers } from '../../src/lib/routerGuardDisposers.js';
+import { RouterGuardDisposers } from '../../src/lib/routerGuardDisposers.ts';
 
 test('router guard disposers release every callback only once', () => {
   const disposers = new RouterGuardDisposers();

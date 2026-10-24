@@ -9,7 +9,7 @@ import type {
 import { $protocolKey } from 'zova';
 import { BeanInterceptorBase, Interceptor } from 'zova-module-a-fetch';
 
-import type { IJwtAdapter, IJwtInfo } from '../types/jwt.js';
+import type { IJwtAdapter, IJwtInfo } from '../types/jwt.ts';
 
 export interface IInterceptorOptionsJwt extends IDecoratorInterceptorOptions {
   jwtAdapter?: string;

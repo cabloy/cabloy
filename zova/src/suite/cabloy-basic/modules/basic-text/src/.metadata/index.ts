@@ -1,6 +1,6 @@
 // eslint-disable
 /** controller: begin */
-export * from '../component/formFieldTextarea/controller.jsx';
+export * from '../component/formFieldTextarea/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -16,7 +16,7 @@ declare module 'zova-module-basic-text' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerFormFieldTextarea } from '../component/formFieldTextarea/controller.jsx';
+import type { ControllerFormFieldTextarea } from '../component/formFieldTextarea/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -26,8 +26,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/formFieldTextarea.js';
-import { ZFormFieldTextarea } from './component/formFieldTextarea.js';
+export * from './component/formFieldTextarea.ts';
+import { ZFormFieldTextarea } from './component/formFieldTextarea.ts';
 export const components = {
   'formFieldTextarea': ZFormFieldTextarea,
 };
@@ -42,10 +42,10 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** tableCell: begin */
-export * from '../bean/tableCell.text.jsx';
-export * from '../bean/tableCell.textarea.jsx';
-import { ITableCellOptionsText } from '../bean/tableCell.text.jsx';
-import { ITableCellOptionsTextarea } from '../bean/tableCell.textarea.jsx';
+export * from '../bean/tableCell.text.tsx';
+export * from '../bean/tableCell.textarea.tsx';
+import { ITableCellOptionsText } from '../bean/tableCell.text.tsx';
+import { ITableCellOptionsTextarea } from '../bean/tableCell.textarea.tsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
 
@@ -82,8 +82,8 @@ declare module 'zova-module-basic-text' {
 }
 /** tableCell: end */
 /** tableCell: begin */
-import { TableCellText } from '../bean/tableCell.text.jsx';
-import { TableCellTextarea } from '../bean/tableCell.textarea.jsx';
+import type { TableCellText } from '../bean/tableCell.text.tsx';
+import type { TableCellTextarea } from '../bean/tableCell.textarea.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {

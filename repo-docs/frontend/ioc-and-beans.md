@@ -112,7 +112,7 @@ The most important design point is that cross-module access should prefer bean i
 Same-module injection can stay class-oriented and concise:
 
 ```typescript
-import { ModelTodo } from '../../bean/model.todo.js';
+import { ModelTodo } from '../../bean/model.todo.ts';
 
 class ControllerTodo {
   @Use()

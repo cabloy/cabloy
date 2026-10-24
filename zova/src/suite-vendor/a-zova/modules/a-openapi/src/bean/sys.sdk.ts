@@ -6,13 +6,13 @@ import { IApiSchemaOptions } from 'zova-module-a-api';
 import { Sys } from 'zova-module-a-bean';
 import { BeanFetch } from 'zova-module-a-fetch';
 
-import { IOpenapiSchema } from '../types/schema.js';
+import { IOpenapiSchema } from '../types/schema.ts';
 import {
   IOpenapiSdkBootstrap,
   IOpenapiSdkItem,
   SymbolOpenapiSchemaName,
   TypeRequestMethod,
-} from '../types/sdk.js';
+} from '../types/sdk.ts';
 
 // const PATH_PARAM_RE = /\{([^{}/]+)\}/g;
 

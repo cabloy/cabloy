@@ -20,7 +20,7 @@ import { common, createLowlight } from 'lowlight';
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
-import { getCodeBlockLanguage, isCodeBlockLanguage } from '../../lib/codeBlockLanguages.js';
+import { getCodeBlockLanguage, isCodeBlockLanguage } from '../../lib/codeBlockLanguages.ts';
 
 const markdownImageScene = 'a-markdown:markdown';
 const lowlight = createLowlight(common);

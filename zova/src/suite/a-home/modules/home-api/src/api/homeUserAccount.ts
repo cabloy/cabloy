@@ -2,9 +2,9 @@ import type { IApiActionOptions } from 'zova-module-a-api';
 
 import { Api, BeanApiBase } from 'zova-module-a-api';
 
-import type { components, paths } from './openapi/index.js';
+import type { components, paths } from './openapi/index.ts';
 
-import { OpenApiBaseURL } from './openapi/index.js';
+import { OpenApiBaseURL } from './openapi/index.ts';
 
 /** HomeUserAccount_current */
 export const ApiApiHomeUserAccountcurrentPath = '/api/home/user/account/current';

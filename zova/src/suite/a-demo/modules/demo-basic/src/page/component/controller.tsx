@@ -2,9 +2,9 @@ import { BeanControllerPageBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZPage } from 'zova-module-home-base';
 
-import type { ControllerCard } from '../../.metadata/index.jsx';
+import type { ControllerCard } from '../../.metadata/index.ts';
 
-import { ZCard } from '../../.metadata/index.jsx';
+import { ZCard } from '../../.metadata/index.ts';
 
 @Controller()
 export class ControllerPageComponent extends BeanControllerPageBase {

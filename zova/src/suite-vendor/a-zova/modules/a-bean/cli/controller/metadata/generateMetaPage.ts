@@ -28,13 +28,13 @@ export async function generateMetaPage(
     const { name, hasSchemaParams, hasSchemaQuery } = controllerInfo;
     const namespace = `NS${className}`;
     const namespaceRest = _combineModuleNameControllerName(moduleName, className);
-    contentImports.push(`export * from './page/${name}.js';`);
+    contentImports.push(`export * from './page/${name}.ts';`);
     if (hasSchemaParams || hasSchemaQuery) {
-      contentImports.push(`import { ${namespace} } from './page/${name}.js';`);
+      contentImports.push(`import { ${namespace} } from './page/${name}.ts';`);
       // rest
       const restIndexFileRelative = path.relative(
         srcDirRest,
-        path.join(options.modulePath, `src/.metadata/page/${name}.js`),
+        path.join(options.modulePath, `src/.metadata/page/${name}.ts`),
       );
       contentImportsRest.push(
         `import { ${namespace} as ${namespaceRest} } from '${restIndexFileRelative}';`,
@@ -102,7 +102,7 @@ export async function generateMetaPage(
   // combine
   const content = `/** pages: begin */
 ${contentImports.join('\n')}
-export * from '../routes.js';
+export * from '../routes.ts';
 ${contentPathRecords.length > 0 ? "import { TypePagePathSchema } from 'zova-module-a-router';" : ''}
 import 'zova';
 declare module 'zova-module-a-router' {

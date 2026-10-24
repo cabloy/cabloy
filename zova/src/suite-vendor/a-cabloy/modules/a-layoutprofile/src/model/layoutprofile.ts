@@ -7,7 +7,7 @@ import type {
   ApiApiLayoutprofileresetResponseBody,
   ApiApiLayoutprofilesaveRequestBody,
   ApiApiLayoutprofilesaveResponseBody,
-} from '../api/layoutprofile.js';
+} from '../api/layoutprofile.ts';
 
 export interface IModelOptionsLayoutProfile extends IDecoratorModelOptions {
   enableSelector: true;

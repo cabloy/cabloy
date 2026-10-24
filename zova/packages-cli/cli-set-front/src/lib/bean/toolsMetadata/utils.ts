@@ -42,12 +42,8 @@ export async function globAllTsFiles(
     if (fileName.startsWith('_')) continue;
     const parts = fileName.split('.').slice(0, -1);
     const isIgnore = checkIgnoreOfParts(parts);
-    const fileNameJS = fileName.replace('.ts', '.js').replace('.tsx', '.jsx');
-    const fileNameJSRelative = path
-      .relative(pathMetadata, filePath)
-      .replace(/\\/g, '/')
-      .replace('.ts', '.js')
-      .replace('.tsx', '.jsx');
+    const fileNameJS = fileName;
+    const fileNameJSRelative = path.relative(pathMetadata, filePath).replace(/\\/g, '/');
     const fileContent = fse.readFileSync(filePath).toString();
     const isVirtual = fileContent.includes('@Virtual()');
     const isPreload = fileContent.includes('@Preload()');

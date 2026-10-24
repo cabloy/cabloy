@@ -1,3 +1,3 @@
-export * from './.metadata/locales.js';
-export * from './.metadata/index.js';
-export * from './lib/resourcePicker.js';
+export * from './.metadata/locales.ts';
+export * from './.metadata/index.ts';
+export * from './lib/resourcePicker.ts';

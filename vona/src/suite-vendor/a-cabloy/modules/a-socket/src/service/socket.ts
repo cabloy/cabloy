@@ -75,8 +75,13 @@ export class ServiceSocket extends BeanBase {
           this.bean.socket.addClient(ws);
           // compose
           await this._getComposeSocketConnections(ws.namespace)({ method: 'enter', ws });
+          if (ws.readyState !== WebSocket.OPEN) {
+            this.bean.socket.removeClient(ws);
+            return;
+          }
         } catch (err: any) {
           this.app.handleError(err);
+          this.bean.socket.removeClient(ws);
           // terminate
           ws.terminate();
           return;

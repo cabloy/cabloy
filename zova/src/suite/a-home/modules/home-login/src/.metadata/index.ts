@@ -1,8 +1,8 @@
 // eslint-disable
 /** controller: begin */
-export * from '../page/login/controller.jsx';
-export * from '../page/passwordResetRequest/controller.jsx';
-export * from '../page/register/controller.jsx';
+export * from '../page/login/controller.tsx';
+export * from '../page/passwordResetRequest/controller.tsx';
+export * from '../page/register/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -28,9 +28,9 @@ declare module 'zova-module-home-login' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerPageLogin } from '../page/login/controller.jsx';
-import { ControllerPagePasswordResetRequest } from '../page/passwordResetRequest/controller.jsx';
-import { ControllerPageRegister } from '../page/register/controller.jsx';
+import type { ControllerPageLogin } from '../page/login/controller.tsx';
+import type { ControllerPagePasswordResetRequest } from '../page/passwordResetRequest/controller.tsx';
+import type { ControllerPageRegister } from '../page/register/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -41,10 +41,10 @@ declare module 'zova' {
 }
 /** controller: end */
 /** pages: begin */
-export * from './page/login.js';
-export * from './page/passwordResetRequest.js';
-export * from './page/register.js';
-export * from '../routes.js';
+export * from './page/login.ts';
+export * from './page/passwordResetRequest.ts';
+export * from './page/register.ts';
+export * from '../routes.ts';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
@@ -69,7 +69,7 @@ declare module 'zova-module-home-login' {
 /** pages: end */
 
 /** render: begin */
-export * from '../page/login/render.jsx';
+export * from '../page/login/render.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -85,7 +85,7 @@ declare module 'zova-module-home-login' {
 }
 /** render: end */
 /** render: begin */
-import { RenderPageLogin } from '../page/login/render.jsx';
+import type { RenderPageLogin } from '../page/login/render.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -94,8 +94,8 @@ declare module 'zova' {
 }
 /** render: end */
 /** behavior: begin */
-export * from '../bean/behavior.formFieldLayoutLogin.jsx';
-import { IBehaviorOptionsFormFieldLayoutLogin } from '../bean/behavior.formFieldLayoutLogin.jsx';
+export * from '../bean/behavior.formFieldLayoutLogin.tsx';
+import { IBehaviorOptionsFormFieldLayoutLogin } from '../bean/behavior.formFieldLayoutLogin.tsx';
 import 'zova-module-a-behavior';
 declare module 'zova-module-a-behavior' {
 
@@ -120,7 +120,7 @@ declare module 'zova-module-home-login' {
 }
 /** behavior: end */
 /** behavior: begin */
-import { BehaviorFormFieldLayoutLogin } from '../bean/behavior.formFieldLayoutLogin.jsx';
+import type { BehaviorFormFieldLayoutLogin } from '../bean/behavior.formFieldLayoutLogin.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -148,7 +148,7 @@ declare module 'vue/jsx-runtime' {
 }
 /** behaviors: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

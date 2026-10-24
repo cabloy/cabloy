@@ -8,8 +8,8 @@ import type {
 import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 
-import { dateFormatUtil } from '../lib/utils.js';
-import { TypeDateFormatPreset } from '../types/date.js';
+import { dateFormatUtil } from '../lib/utils.ts';
+import { TypeDateFormatPreset } from '../types/date.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableCellRecord {

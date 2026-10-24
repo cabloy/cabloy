@@ -1,3 +1,3 @@
-export * from './api.js';
-export * from './apiMeta.js';
-export * from './apiSchema.js';
+export * from './api.ts';
+export * from './apiMeta.ts';
+export * from './apiSchema.ts';

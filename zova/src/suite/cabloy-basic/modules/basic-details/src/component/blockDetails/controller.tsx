@@ -13,7 +13,7 @@ import {
 } from 'zova-module-a-openapi';
 import { BeanControllerTableBase } from 'zova-module-a-table';
 
-import type { TypeDetailsCheckPermission } from '../../types/details.js';
+import type { TypeDetailsCheckPermission } from '../../types/details.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {

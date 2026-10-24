@@ -3,8 +3,8 @@ import type { ISchemaObjectExtensionField } from 'zova-module-a-openapi';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { TableColumnIdSelection } from '../../src/types/table.js';
-import { reconcileTableLayout } from '../../src/types/tableLayout.js';
+import { TableColumnIdSelection } from '../../src/types/table.ts';
+import { reconcileTableLayout } from '../../src/types/tableLayout.ts';
 
 function createProperties(...properties: ISchemaObjectExtensionField[]) {
   return properties;

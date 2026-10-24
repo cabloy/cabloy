@@ -1,6 +1,6 @@
 // eslint-disable
 /** service: begin */
-export * from '../service/appModal.js';
+export * from '../service/appModal.ts';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
@@ -26,7 +26,7 @@ declare module 'zova-module-basic-app' {
 }
 /** service: end */
 /** service: begin */
-import type { ServiceAppModal } from '../service/appModal.js';
+import type { ServiceAppModal } from '../service/appModal.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** service: end */
 /** controller: begin */
-export * from '../component/routedDialog/controller.jsx';
+export * from '../component/routedDialog/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -51,7 +51,7 @@ declare module 'zova-module-basic-app' {
 }
 /** controller: end */
 /** controller: begin */
-import type { ControllerRoutedDialog } from '../component/routedDialog/controller.jsx';
+import type { ControllerRoutedDialog } from '../component/routedDialog/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -61,8 +61,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/routedDialog.js';
-import { ZRoutedDialog } from './component/routedDialog.js';
+export * from './component/routedDialog.ts';
+import { ZRoutedDialog } from './component/routedDialog.ts';
 export const components = {
   'routedDialog': ZRoutedDialog,
 };
@@ -77,8 +77,8 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** behavior: begin */
-export * from '../bean/behavior.appModal.jsx';
-import { IBehaviorOptionsAppModal } from '../bean/behavior.appModal.jsx';
+export * from '../bean/behavior.appModal.tsx';
+import { IBehaviorOptionsAppModal } from '../bean/behavior.appModal.tsx';
 import 'zova-module-a-behavior';
 declare module 'zova-module-a-behavior' {
 
@@ -103,7 +103,7 @@ declare module 'zova-module-basic-app' {
 }
 /** behavior: end */
 /** behavior: begin */
-import type { BehaviorAppModal } from '../bean/behavior.appModal.jsx';
+import type { BehaviorAppModal } from '../bean/behavior.appModal.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -131,17 +131,17 @@ declare module 'vue/jsx-runtime' {
 }
 /** behaviors: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** monkey: begin */
-export * from '../monkey.js';
+export * from '../monkey.ts';
 /** monkey: end */
 /** monkeySys: begin */
-export * from '../monkeySys.js';
+export * from '../monkeySys.ts';
 /** monkeySys: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig, TypeModuleLocales, TypeLocaleBase } from 'zova';

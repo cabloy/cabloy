@@ -1,9 +1,9 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/layout.js';
-export * from '../model/menu.js';
-import { IModelOptionsLayout } from '../model/layout.js';
-import { IModelOptionsMenu } from '../model/menu.js';
+export * from '../model/layout.ts';
+export * from '../model/menu.ts';
+import { IModelOptionsLayout } from '../model/layout.ts';
+import { IModelOptionsMenu } from '../model/menu.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -40,8 +40,8 @@ declare module 'zova-module-home-layoutadmin' {
 }
 /** model: end */
 /** model: begin */
-import { ModelLayout } from '../model/layout.js';
-import { ModelMenu } from '../model/menu.js';
+import type { ModelLayout } from '../model/layout.ts';
+import type { ModelMenu } from '../model/menu.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -51,7 +51,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** controller: begin */
-export * from '../component/layoutAdmin/controller.jsx';
+export * from '../component/layoutAdmin/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -67,7 +67,7 @@ declare module 'zova-module-home-layoutadmin' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerLayoutAdmin } from '../component/layoutAdmin/controller.jsx';
+import type { ControllerLayoutAdmin } from '../component/layoutAdmin/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -77,8 +77,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/layoutAdmin.js';
-import { ZLayoutAdmin } from './component/layoutAdmin.js';
+export * from './component/layoutAdmin.ts';
+import { ZLayoutAdmin } from './component/layoutAdmin.ts';
 export const components = {
   'layoutAdmin': ZLayoutAdmin,
 };
@@ -93,15 +93,15 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** render: begin */
-export * from '../component/layoutAdmin/render.content.jsx';
-export * from '../component/layoutAdmin/render.header.jsx';
-export * from '../component/layoutAdmin/render.locale.jsx';
-export * from '../component/layoutAdmin/render.menu.jsx';
-export * from '../component/layoutAdmin/render.sidebar.jsx';
-export * from '../component/layoutAdmin/render.tabs.jsx';
-export * from '../component/layoutAdmin/render.theme.jsx';
-export * from '../component/layoutAdmin/render.jsx';
-export * from '../component/layoutAdmin/render.user.jsx';
+export * from '../component/layoutAdmin/render.content.tsx';
+export * from '../component/layoutAdmin/render.header.tsx';
+export * from '../component/layoutAdmin/render.locale.tsx';
+export * from '../component/layoutAdmin/render.menu.tsx';
+export * from '../component/layoutAdmin/render.sidebar.tsx';
+export * from '../component/layoutAdmin/render.tabs.tsx';
+export * from '../component/layoutAdmin/render.theme.tsx';
+export * from '../component/layoutAdmin/render.tsx';
+export * from '../component/layoutAdmin/render.user.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -157,15 +157,15 @@ declare module 'zova-module-home-layoutadmin' {
 }
 /** render: end */
 /** render: begin */
-import { RenderContent } from '../component/layoutAdmin/render.content.jsx';
-import { RenderHeader } from '../component/layoutAdmin/render.header.jsx';
-import { RenderLocale } from '../component/layoutAdmin/render.locale.jsx';
-import { RenderMenu } from '../component/layoutAdmin/render.menu.jsx';
-import { RenderSidebar } from '../component/layoutAdmin/render.sidebar.jsx';
-import { RenderTabs } from '../component/layoutAdmin/render.tabs.jsx';
-import { RenderTheme } from '../component/layoutAdmin/render.theme.jsx';
-import { RenderLayoutAdmin } from '../component/layoutAdmin/render.jsx';
-import { RenderUser } from '../component/layoutAdmin/render.user.jsx';
+import type { RenderContent } from '../component/layoutAdmin/render.content.tsx';
+import type { RenderHeader } from '../component/layoutAdmin/render.header.tsx';
+import type { RenderLocale } from '../component/layoutAdmin/render.locale.tsx';
+import type { RenderMenu } from '../component/layoutAdmin/render.menu.tsx';
+import type { RenderSidebar } from '../component/layoutAdmin/render.sidebar.tsx';
+import type { RenderTabs } from '../component/layoutAdmin/render.tabs.tsx';
+import type { RenderTheme } from '../component/layoutAdmin/render.theme.tsx';
+import type { RenderLayoutAdmin } from '../component/layoutAdmin/render.tsx';
+import type { RenderUser } from '../component/layoutAdmin/render.user.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -182,7 +182,7 @@ declare module 'zova' {
 }
 /** render: end */
 /** style: begin */
-export * from '../component/layoutAdmin/style.js';
+export * from '../component/layoutAdmin/style.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -198,7 +198,7 @@ declare module 'zova-module-home-layoutadmin' {
 }
 /** style: end */
 /** style: begin */
-import { StyleLayoutAdmin } from '../component/layoutAdmin/style.js';
+import type { StyleLayoutAdmin } from '../component/layoutAdmin/style.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -207,11 +207,11 @@ declare module 'zova' {
 }
 /** style: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig, TypeModuleLocales, TypeLocaleBase } from 'zova';

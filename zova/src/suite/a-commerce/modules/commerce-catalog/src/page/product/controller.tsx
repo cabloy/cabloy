@@ -9,7 +9,7 @@ import { ZButton } from 'zova-module-basic-button';
 import { ZMarkdownHtml } from 'zova-module-basic-markdown';
 import { ZPage } from 'zova-module-home-base';
 
-import { ModelCatalogue } from '../../model/catalogue.js';
+import { ModelCatalogue } from '../../model/catalogue.ts';
 
 export const ControllerPageProductSchemaParams = z.object({
   id: z.string(),

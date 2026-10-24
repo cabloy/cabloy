@@ -3,7 +3,7 @@ import type { IFormLayout, ISchemaObjectExtensionField } from 'zova-module-a-ope
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { resolveFormLayout } from '../../src/lib/formLayout.js';
+import { resolveFormLayout } from '../../src/lib/formLayout.ts';
 
 function createProperties(...properties: ISchemaObjectExtensionField[]) {
   return properties;

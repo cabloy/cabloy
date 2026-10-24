@@ -1,6 +1,6 @@
 // eslint-disable
 /** service: begin */
-export * from '../service/ssrHandler.js';
+export * from '../service/ssrHandler.ts';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
@@ -26,7 +26,7 @@ declare module 'zova-module-a-ssrserver' {
 }
 /** service: end */
 /** service: begin */
-import { ServiceSsrHandler } from '../service/ssrHandler.js';
+import type { ServiceSsrHandler } from '../service/ssrHandler.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** service: end */
 /** monkeySys: begin */
-export * from '../monkeySys.js';
+export * from '../monkeySys.ts';
 /** monkeySys: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil } from 'zova';

@@ -8,7 +8,7 @@ import { TypeFormOnSubmitData, ZForm } from 'zova-module-a-form';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPage } from 'zova-module-home-base';
 
-import { ModelAccount } from '../../model/account.js';
+import { ModelAccount } from '../../model/account.ts';
 
 type PasswordResetFormData = Omit<ApiApiHomeUserAccountconsumePasswordResetRequestBody, 'token'>;
 

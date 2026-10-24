@@ -81,6 +81,7 @@
     "@quasar/app-vite": "npm:@cabloy/quasar-app-vite@^2.5.10",
     "@types/node": "^22.19.17",
     "@vitejs/plugin-vue": "^6.0.7",
+    "code-inspector-plugin": "2.0.9",
     "concurrently": "^10.0.4",
     "quasar-app-extension-zova": "^1.3.2",
     "sass": "^1.101.0",

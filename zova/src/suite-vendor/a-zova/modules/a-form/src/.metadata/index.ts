@@ -1,9 +1,9 @@
 // eslint-disable
 /** controller: begin */
-export * from '../component/form/controller.jsx';
-export * from '../component/formField/controller.jsx';
-export * from '../component/formFieldBlank/controller.jsx';
-export * from '../component/formFieldPreset/controller.jsx';
+export * from '../component/form/controller.tsx';
+export * from '../component/formField/controller.tsx';
+export * from '../component/formFieldBlank/controller.tsx';
+export * from '../component/formFieldPreset/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -34,10 +34,10 @@ declare module 'zova-module-a-form' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerForm } from '../component/form/controller.jsx';
-import { ControllerFormField } from '../component/formField/controller.jsx';
-import { ControllerFormFieldBlank } from '../component/formFieldBlank/controller.jsx';
-import { ControllerFormFieldPreset } from '../component/formFieldPreset/controller.jsx';
+import type { ControllerForm } from '../component/form/controller.tsx';
+import type { ControllerFormField } from '../component/formField/controller.tsx';
+import type { ControllerFormFieldBlank } from '../component/formFieldBlank/controller.tsx';
+import type { ControllerFormFieldPreset } from '../component/formFieldPreset/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -50,14 +50,14 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/form.js';
-import { ZForm } from './component/form.js';
-export * from './component/formField.js';
-import { ZFormField } from './component/formField.js';
-export * from './component/formFieldBlank.js';
-import { ZFormFieldBlank } from './component/formFieldBlank.js';
-export * from './component/formFieldPreset.js';
-import { ZFormFieldPreset } from './component/formFieldPreset.js';
+export * from './component/form.ts';
+import { ZForm } from './component/form.ts';
+export * from './component/formField.ts';
+import { ZFormField } from './component/formField.ts';
+export * from './component/formFieldBlank.ts';
+import { ZFormFieldBlank } from './component/formFieldBlank.ts';
+export * from './component/formFieldPreset.ts';
+import { ZFormFieldPreset } from './component/formFieldPreset.ts';
 export const components = {
   'form': ZForm,
 'formField': ZFormField,
@@ -81,8 +81,8 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** render: begin */
-export * from '../component/form/render.jsx';
-export * from '../component/formField/render.jsx';
+export * from '../component/form/render.tsx';
+export * from '../component/formField/render.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -103,8 +103,8 @@ declare module 'zova-module-a-form' {
 }
 /** render: end */
 /** render: begin */
-import { RenderForm } from '../component/form/render.jsx';
-import { RenderFormField } from '../component/formField/render.jsx';
+import type { RenderForm } from '../component/form/render.tsx';
+import type { RenderFormField } from '../component/formField/render.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -114,8 +114,8 @@ declare module 'zova' {
 }
 /** render: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig } from 'zova';

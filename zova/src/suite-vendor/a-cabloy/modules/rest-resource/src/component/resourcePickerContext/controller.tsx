@@ -1,9 +1,9 @@
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
-import type { IResourcePickerPageContext } from '../../page/resourcePicker/controller.js';
+import type { IResourcePickerPageContext } from '../../page/resourcePicker/controller.tsx';
 
-import { resourcePickerPageContextKey } from '../../lib/resourcePicker.js';
+import { resourcePickerPageContextKey } from '../../lib/resourcePicker.ts';
 
 export interface ControllerResourcePickerContextProps {
   context: IResourcePickerPageContext;

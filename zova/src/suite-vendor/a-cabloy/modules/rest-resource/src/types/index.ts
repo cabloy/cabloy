@@ -1,3 +1,3 @@
-export * from './pageEntryWrapper.js';
-export * from './pageWrapper.js';
-export * from './resource.js';
+export * from './pageEntryWrapper.ts';
+export * from './pageWrapper.ts';
+export * from './resource.ts';

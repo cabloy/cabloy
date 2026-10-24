@@ -1,3 +1,3 @@
-import { BeanModelUseMutation } from './bean.model.useMutation.js';
+import { BeanModelUseMutation } from './bean.model.useMutation.ts';
 
 export class BeanModelFirst extends BeanModelUseMutation {}

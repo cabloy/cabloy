@@ -5,7 +5,7 @@ import { BeanControllerBase, cast } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZRouterViewStack } from 'zova-module-a-routerstack';
 
-import { IModalRoutedDialogItem, routedDialogContextKey } from '../../types/appModal.js';
+import { IModalRoutedDialogItem, routedDialogContextKey } from '../../types/appModal.ts';
 
 export interface ControllerRoutedDialogProps {
   item: IModalRoutedDialogItem;

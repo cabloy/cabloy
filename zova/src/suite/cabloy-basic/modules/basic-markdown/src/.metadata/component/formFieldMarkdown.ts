@@ -3,11 +3,11 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerFormFieldMarkdownProps } from '../../component/formFieldMarkdown/controller.jsx';
+import type { ControllerFormFieldMarkdownProps } from '../../component/formFieldMarkdown/controller.tsx';
 
-import { ControllerFormFieldMarkdown } from '../../component/formFieldMarkdown/controller.jsx';
-import { RenderFormFieldMarkdown } from '../../component/formFieldMarkdown/render.jsx';
-import { StyleFormFieldMarkdown } from '../../component/formFieldMarkdown/style.js';
+import { ControllerFormFieldMarkdown } from '../../component/formFieldMarkdown/controller.tsx';
+import { RenderFormFieldMarkdown } from '../../component/formFieldMarkdown/render.tsx';
+import { StyleFormFieldMarkdown } from '../../component/formFieldMarkdown/style.ts';
 export type ZFormFieldMarkdownProps = {
   controllerRef?: (ref: ControllerFormFieldMarkdown) => void;
 } & ControllerFormFieldMarkdownProps;

@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/file.js';
-import { IModelOptionsFile } from '../model/file.js';
+export * from '../model/file.ts';
+import { IModelOptionsFile } from '../model/file.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-basic-file' {
 }
 /** model: end */
 /** model: begin */
-import { ModelFile } from '../model/file.js';
+import type { ModelFile } from '../model/file.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,7 +35,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/file.js';
+export * from '../api/file.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -57,7 +57,7 @@ declare module 'zova-module-basic-file' {
 }
 /** api: end */
 /** api: begin */
-import { ApiFile } from '../api/file.js';
+import type { ApiFile } from '../api/file.ts';
 export interface IModuleApi {
   'file': ApiFile;
 }
@@ -72,10 +72,10 @@ declare module 'zova' {
 }
 /** api: end */
 /** openapi: begin */
-export * from '../api/openapi/index.js';
+export * from '../api/openapi/index.ts';
 /** openapi: end */
 /** apiSchema: begin */
-export * from '../apiSchema/file.js';
+export * from '../apiSchema/file.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -97,7 +97,7 @@ declare module 'zova-module-basic-file' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import { ApiSchemaFile } from '../apiSchema/file.js';
+import type { ApiSchemaFile } from '../apiSchema/file.ts';
 export interface IModuleApiSchema {
   'file': ApiSchemaFile;
 }
@@ -112,7 +112,7 @@ declare module 'zova' {
 }
 /** apiSchema: end */
 /** controller: begin */
-export * from '../component/formFieldFile/controller.jsx';
+export * from '../component/formFieldFile/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -128,7 +128,7 @@ declare module 'zova-module-basic-file' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerFormFieldFile } from '../component/formFieldFile/controller.jsx';
+import type { ControllerFormFieldFile } from '../component/formFieldFile/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -138,8 +138,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/formFieldFile.js';
-import { ZFormFieldFile } from './component/formFieldFile.js';
+export * from './component/formFieldFile.ts';
+import { ZFormFieldFile } from './component/formFieldFile.ts';
 export const components = {
   'formFieldFile': ZFormFieldFile,
 };
@@ -154,8 +154,8 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** tableCell: begin */
-export * from '../bean/tableCell.file.jsx';
-import { ITableCellOptionsFile } from '../bean/tableCell.file.jsx';
+export * from '../bean/tableCell.file.tsx';
+import { ITableCellOptionsFile } from '../bean/tableCell.file.tsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
 
@@ -180,7 +180,7 @@ declare module 'zova-module-basic-file' {
 }
 /** tableCell: end */
 /** tableCell: begin */
-import { TableCellFile } from '../bean/tableCell.file.jsx';
+import type { TableCellFile } from '../bean/tableCell.file.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -189,7 +189,7 @@ declare module 'zova' {
 }
 /** tableCell: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

@@ -1,7 +1,7 @@
 import { BeanBase, cast } from 'zova';
 import { Sys } from 'zova-module-a-bean';
 
-import { SSRContextState, SSRContextStateDefer } from '../types/ssr.js';
+import { SSRContextState, SSRContextStateDefer } from '../types/ssr.ts';
 
 const SymbolSSRState = Symbol('SymbolSSRState');
 const SymbolSSRStateDefer = Symbol('SymbolSSRStateDefer');

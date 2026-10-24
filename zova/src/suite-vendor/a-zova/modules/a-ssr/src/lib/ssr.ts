@@ -7,7 +7,7 @@ import { defu } from 'defu';
 import { normalizeClass, normalizeStyle, ref, useSSRContext } from 'vue';
 import { BeanSimple } from 'zova';
 
-import type { SysSsrState } from '../bean/sys.ssrState.js';
+import type { SysSsrState } from '../bean/sys.ssrState.ts';
 import type {
   ISsrProfileOptions,
   ISsrRouteProfileOptions,
@@ -17,10 +17,10 @@ import type {
   SSRControllerLoadErrorSnapshot,
   TypeSsrProfile,
   TypeSsrSitePerformAction,
-} from '../types/ssr.js';
+} from '../types/ssr.ts';
 
-import { CtxSSRMetaStore } from './ssrMetaStore.js';
-import { resolveSsrProfile, resolveSsrProfileOptions } from './ssrProfile.js';
+import { CtxSSRMetaStore } from './ssrMetaStore.ts';
+import { resolveSsrProfile, resolveSsrProfileOptions } from './ssrProfile.ts';
 
 const SymbolIsRuntimeSsrPreHydration = Symbol('SymbolIsRuntimeSsrPreHydration');
 const SymbolSSRContext = Symbol('SymbolSSRContext');

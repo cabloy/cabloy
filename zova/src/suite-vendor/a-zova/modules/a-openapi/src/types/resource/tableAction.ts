@@ -1,11 +1,11 @@
 import {
   IResourceTableActionBulkNameRecord,
   IResourceTableActionBulkRecord,
-} from './tableActionBulk.js';
+} from './tableActionBulk.ts';
 import {
   IResourceTableActionRowNameRecord,
   IResourceTableActionRowRecord,
-} from './tableActionRow.js';
+} from './tableActionRow.ts';
 
 export type IResourceTableActionNameRecord = IResourceTableActionRowNameRecord &
   IResourceTableActionBulkNameRecord;

@@ -11,7 +11,7 @@ That route record is the framework-level description of how the page is reached,
 ## Representative route record
 
 ```typescript
-import { ZPageCounter } from './.metadata/page/counter.js';
+import { ZPageCounter } from './.metadata/page/counter.ts';
 
 export const routes: IModuleRoute[] = [
   {

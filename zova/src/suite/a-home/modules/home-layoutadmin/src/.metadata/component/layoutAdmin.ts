@@ -3,11 +3,11 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerLayoutAdminProps } from '../../component/layoutAdmin/controller.jsx';
+import type { ControllerLayoutAdminProps } from '../../component/layoutAdmin/controller.tsx';
 
-import { ControllerLayoutAdmin } from '../../component/layoutAdmin/controller.jsx';
-import { RenderLayoutAdmin } from '../../component/layoutAdmin/render.jsx';
-import { StyleLayoutAdmin } from '../../component/layoutAdmin/style.js';
+import { ControllerLayoutAdmin } from '../../component/layoutAdmin/controller.tsx';
+import { RenderLayoutAdmin } from '../../component/layoutAdmin/render.tsx';
+import { StyleLayoutAdmin } from '../../component/layoutAdmin/style.ts';
 export type ZLayoutAdminProps = {
   controllerRef?: (ref: ControllerLayoutAdmin) => void;
 } & ControllerLayoutAdminProps;

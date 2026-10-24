@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import { ControllerApp } from '../../component/app/controller.jsx';
+import { ControllerApp } from '../../component/app/controller.tsx';
 export type ZAppProps = {
   controllerRef?: (ref: ControllerApp) => void;
 };

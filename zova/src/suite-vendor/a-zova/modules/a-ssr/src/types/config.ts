@@ -1,5 +1,5 @@
 import '@cabloy/vue-router';
-import type { ISsrRouteProfileOptions, TypeSsrProfile } from './ssr.js';
+import type { ISsrRouteProfileOptions, TypeSsrProfile } from './ssr.ts';
 
 export interface ISsrConfig {
   cookieThemeDarkDefault: boolean;

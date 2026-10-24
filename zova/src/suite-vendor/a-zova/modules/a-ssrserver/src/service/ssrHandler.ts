@@ -10,7 +10,7 @@ import { Service } from 'zova-module-a-bean';
 import { SysRouter } from 'zova-module-a-router';
 import { resolveSsrProfile, resolveSsrProfileOptions } from 'zova-module-a-ssr';
 
-import { ISsrHandlerRenderOptionsInner, TypeEventResolvePathResult } from '../types/ssr.js';
+import { ISsrHandlerRenderOptionsInner, TypeEventResolvePathResult } from '../types/ssr.ts';
 
 const jsRE = /\.js$/;
 const cssRE = /\.css$/;

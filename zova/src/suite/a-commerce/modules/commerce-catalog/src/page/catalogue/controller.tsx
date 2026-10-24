@@ -5,7 +5,7 @@ import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPage } from 'zova-module-home-base';
 
-import { ModelCatalogue } from '../../model/catalogue.js';
+import { ModelCatalogue } from '../../model/catalogue.ts';
 
 export const ControllerPageCatalogueSchemaParams = z.object({
   locale: z.string().optional(),

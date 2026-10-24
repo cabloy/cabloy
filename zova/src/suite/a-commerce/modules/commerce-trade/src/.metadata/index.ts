@@ -1,13 +1,13 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/cart.js';
-export * from '../model/order.js';
-export * from '../model/orderMine.js';
-export * from '../model/stockBalance.js';
-import { IModelOptionsCart } from '../model/cart.js';
-import { IModelOptionsOrder } from '../model/order.js';
-import { IModelOptionsOrderMine } from '../model/orderMine.js';
-import { IModelOptionsStockBalance } from '../model/stockBalance.js';
+export * from '../model/cart.ts';
+export * from '../model/order.ts';
+export * from '../model/orderMine.ts';
+export * from '../model/stockBalance.ts';
+import { IModelOptionsCart } from '../model/cart.ts';
+import { IModelOptionsOrder } from '../model/order.ts';
+import { IModelOptionsOrderMine } from '../model/orderMine.ts';
+import { IModelOptionsStockBalance } from '../model/stockBalance.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -68,10 +68,10 @@ declare module 'zova-module-commerce-trade' {
 }
 /** model: end */
 /** model: begin */
-import type { ModelCart } from '../model/cart.js';
-import type { ModelOrder } from '../model/order.js';
-import type { ModelOrderMine } from '../model/orderMine.js';
-import type { ModelStockBalance } from '../model/stockBalance.js';
+import type { ModelCart } from '../model/cart.ts';
+import type { ModelOrder } from '../model/order.ts';
+import type { ModelOrderMine } from '../model/orderMine.ts';
+import type { ModelStockBalance } from '../model/stockBalance.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -83,10 +83,10 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/commerceTradeCart.js';
-export * from '../api/commerceTradeCheckout.js';
-export * from '../api/commerceTradeOrder.js';
-export * from '../api/commerceTradeStockBalance.js';
+export * from '../api/commerceTradeCart.ts';
+export * from '../api/commerceTradeCheckout.ts';
+export * from '../api/commerceTradeOrder.ts';
+export * from '../api/commerceTradeStockBalance.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -141,10 +141,10 @@ declare module 'zova-module-commerce-trade' {
 }
 /** api: end */
 /** api: begin */
-import type { ApiCommerceTradeCart } from '../api/commerceTradeCart.js';
-import type { ApiCommerceTradeCheckout } from '../api/commerceTradeCheckout.js';
-import type { ApiCommerceTradeOrder } from '../api/commerceTradeOrder.js';
-import type { ApiCommerceTradeStockBalance } from '../api/commerceTradeStockBalance.js';
+import type { ApiCommerceTradeCart } from '../api/commerceTradeCart.ts';
+import type { ApiCommerceTradeCheckout } from '../api/commerceTradeCheckout.ts';
+import type { ApiCommerceTradeOrder } from '../api/commerceTradeOrder.ts';
+import type { ApiCommerceTradeStockBalance } from '../api/commerceTradeStockBalance.ts';
 export interface IModuleApi {
   'commerceTradeCart': ApiCommerceTradeCart;
 'commerceTradeCheckout': ApiCommerceTradeCheckout;
@@ -165,13 +165,13 @@ declare module 'zova' {
 }
 /** api: end */
 /** openapi: begin */
-export * from '../api/openapi/index.js';
+export * from '../api/openapi/index.ts';
 /** openapi: end */
 /** apiSchema: begin */
-export * from '../apiSchema/commerceTradeCart.js';
-export * from '../apiSchema/commerceTradeCheckout.js';
-export * from '../apiSchema/commerceTradeOrder.js';
-export * from '../apiSchema/commerceTradeStockBalance.js';
+export * from '../apiSchema/commerceTradeCart.ts';
+export * from '../apiSchema/commerceTradeCheckout.ts';
+export * from '../apiSchema/commerceTradeOrder.ts';
+export * from '../apiSchema/commerceTradeStockBalance.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -226,10 +226,10 @@ declare module 'zova-module-commerce-trade' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import type { ApiSchemaCommerceTradeCart } from '../apiSchema/commerceTradeCart.js';
-import type { ApiSchemaCommerceTradeCheckout } from '../apiSchema/commerceTradeCheckout.js';
-import type { ApiSchemaCommerceTradeOrder } from '../apiSchema/commerceTradeOrder.js';
-import type { ApiSchemaCommerceTradeStockBalance } from '../apiSchema/commerceTradeStockBalance.js';
+import type { ApiSchemaCommerceTradeCart } from '../apiSchema/commerceTradeCart.ts';
+import type { ApiSchemaCommerceTradeCheckout } from '../apiSchema/commerceTradeCheckout.ts';
+import type { ApiSchemaCommerceTradeOrder } from '../apiSchema/commerceTradeOrder.ts';
+import type { ApiSchemaCommerceTradeStockBalance } from '../apiSchema/commerceTradeStockBalance.ts';
 export interface IModuleApiSchema {
   'commerceTradeCart': ApiSchemaCommerceTradeCart;
 'commerceTradeCheckout': ApiSchemaCommerceTradeCheckout;
@@ -250,14 +250,14 @@ declare module 'zova' {
 }
 /** apiSchema: end */
 /** controller: begin */
-export * from '../component/tableCellActionAdjustStock/controller.jsx';
-export * from '../component/tableCellActionRefund/controller.jsx';
-export * from '../component/tableCellActionShip/controller.jsx';
-export * from '../page/cart/controller.jsx';
-export * from '../page/checkout/controller.jsx';
-export * from '../page/order/controller.jsx';
-export * from '../page/orders/controller.jsx';
-export * from '../page/payment/controller.jsx';
+export * from '../component/tableCellActionAdjustStock/controller.tsx';
+export * from '../component/tableCellActionRefund/controller.tsx';
+export * from '../component/tableCellActionShip/controller.tsx';
+export * from '../page/cart/controller.tsx';
+export * from '../page/checkout/controller.tsx';
+export * from '../page/order/controller.tsx';
+export * from '../page/orders/controller.tsx';
+export * from '../page/payment/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -308,14 +308,14 @@ declare module 'zova-module-commerce-trade' {
 }
 /** controller: end */
 /** controller: begin */
-import type { ControllerTableCellActionAdjustStock } from '../component/tableCellActionAdjustStock/controller.jsx';
-import type { ControllerTableCellActionRefund } from '../component/tableCellActionRefund/controller.jsx';
-import type { ControllerTableCellActionShip } from '../component/tableCellActionShip/controller.jsx';
-import type { ControllerPageCart } from '../page/cart/controller.jsx';
-import type { ControllerPageCheckout } from '../page/checkout/controller.jsx';
-import type { ControllerPageOrder } from '../page/order/controller.jsx';
-import type { ControllerPageOrders } from '../page/orders/controller.jsx';
-import type { ControllerPagePayment } from '../page/payment/controller.jsx';
+import type { ControllerTableCellActionAdjustStock } from '../component/tableCellActionAdjustStock/controller.tsx';
+import type { ControllerTableCellActionRefund } from '../component/tableCellActionRefund/controller.tsx';
+import type { ControllerTableCellActionShip } from '../component/tableCellActionShip/controller.tsx';
+import type { ControllerPageCart } from '../page/cart/controller.tsx';
+import type { ControllerPageCheckout } from '../page/checkout/controller.tsx';
+import type { ControllerPageOrder } from '../page/order/controller.tsx';
+import type { ControllerPageOrders } from '../page/orders/controller.tsx';
+import type { ControllerPagePayment } from '../page/payment/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -331,17 +331,17 @@ declare module 'zova' {
 }
 /** controller: end */
 /** pages: begin */
-export * from './page/cart.js';
-import { NSControllerPageCart } from './page/cart.js';
-export * from './page/checkout.js';
-import { NSControllerPageCheckout } from './page/checkout.js';
-export * from './page/order.js';
-import { NSControllerPageOrder } from './page/order.js';
-export * from './page/orders.js';
-import { NSControllerPageOrders } from './page/orders.js';
-export * from './page/payment.js';
-import { NSControllerPagePayment } from './page/payment.js';
-export * from '../routes.js';
+export * from './page/cart.ts';
+import { NSControllerPageCart } from './page/cart.ts';
+export * from './page/checkout.ts';
+import { NSControllerPageCheckout } from './page/checkout.ts';
+export * from './page/order.ts';
+import { NSControllerPageOrder } from './page/order.ts';
+export * from './page/orders.ts';
+import { NSControllerPageOrders } from './page/orders.ts';
+export * from './page/payment.ts';
+import { NSControllerPagePayment } from './page/payment.ts';
+export * from '../routes.ts';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
@@ -403,12 +403,12 @@ $query: NSControllerPagePayment.QueryOutput;
 /** pages: end */
 
 /** components: begin */
-export * from './component/tableCellActionAdjustStock.js';
-import { ZTableCellActionAdjustStock } from './component/tableCellActionAdjustStock.js';
-export * from './component/tableCellActionRefund.js';
-import { ZTableCellActionRefund } from './component/tableCellActionRefund.js';
-export * from './component/tableCellActionShip.js';
-import { ZTableCellActionShip } from './component/tableCellActionShip.js';
+export * from './component/tableCellActionAdjustStock.ts';
+import { ZTableCellActionAdjustStock } from './component/tableCellActionAdjustStock.ts';
+export * from './component/tableCellActionRefund.ts';
+import { ZTableCellActionRefund } from './component/tableCellActionRefund.ts';
+export * from './component/tableCellActionShip.ts';
+import { ZTableCellActionShip } from './component/tableCellActionShip.ts';
 export const components = {
   'tableCellActionAdjustStock': ZTableCellActionAdjustStock,
 'tableCellActionRefund': ZTableCellActionRefund,
@@ -429,12 +429,12 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** tableCell: begin */
-export * from '../bean/tableCell.actionAdjustStock.jsx';
-export * from '../bean/tableCell.actionRefund.jsx';
-export * from '../bean/tableCell.actionShip.jsx';
-import { ITableCellOptionsActionAdjustStock } from '../bean/tableCell.actionAdjustStock.jsx';
-import { ITableCellOptionsActionRefund } from '../bean/tableCell.actionRefund.jsx';
-import { ITableCellOptionsActionShip } from '../bean/tableCell.actionShip.jsx';
+export * from '../bean/tableCell.actionAdjustStock.tsx';
+export * from '../bean/tableCell.actionRefund.tsx';
+export * from '../bean/tableCell.actionShip.tsx';
+import { ITableCellOptionsActionAdjustStock } from '../bean/tableCell.actionAdjustStock.tsx';
+import { ITableCellOptionsActionRefund } from '../bean/tableCell.actionRefund.tsx';
+import { ITableCellOptionsActionShip } from '../bean/tableCell.actionShip.tsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
 
@@ -483,9 +483,9 @@ declare module 'zova-module-commerce-trade' {
 }
 /** tableCell: end */
 /** tableCell: begin */
-import type { TableCellActionAdjustStock } from '../bean/tableCell.actionAdjustStock.jsx';
-import type { TableCellActionRefund } from '../bean/tableCell.actionRefund.jsx';
-import type { TableCellActionShip } from '../bean/tableCell.actionShip.jsx';
+import type { TableCellActionAdjustStock } from '../bean/tableCell.actionAdjustStock.tsx';
+import type { TableCellActionRefund } from '../bean/tableCell.actionRefund.tsx';
+import type { TableCellActionShip } from '../bean/tableCell.actionShip.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -496,7 +496,7 @@ declare module 'zova' {
 }
 /** tableCell: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

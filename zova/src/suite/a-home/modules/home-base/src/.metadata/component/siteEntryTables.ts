@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import { ControllerSiteEntryTables } from '../../component/siteEntryTables/controller.jsx';
+import { ControllerSiteEntryTables } from '../../component/siteEntryTables/controller.tsx';
 export type ZSiteEntryTablesProps = {
   controllerRef?: (ref: ControllerSiteEntryTables) => void;
 };

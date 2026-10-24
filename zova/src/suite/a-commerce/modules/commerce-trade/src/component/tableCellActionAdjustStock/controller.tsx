@@ -9,9 +9,9 @@ import { ZForm } from 'zova-module-a-form';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZButton } from 'zova-module-basic-button';
 
-import type { ApiApiCommerceTradeStockBalanceadjustStockRequestBody } from '../../api/commerceTradeStockBalance.js';
-import type { ITableCellOptionsActionAdjustStock } from '../../bean/tableCell.actionAdjustStock.js';
-import type { ModelStockBalance } from '../../model/stockBalance.js';
+import type { ApiApiCommerceTradeStockBalanceadjustStockRequestBody } from '../../api/commerceTradeStockBalance.ts';
+import type { ITableCellOptionsActionAdjustStock } from '../../bean/tableCell.actionAdjustStock.tsx';
+import type { ModelStockBalance } from '../../model/stockBalance.ts';
 
 export interface ControllerTableCellActionAdjustStockProps extends ITableCellOptionsActionAdjustStock {}
 

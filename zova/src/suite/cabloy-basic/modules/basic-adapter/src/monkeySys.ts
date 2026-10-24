@@ -2,7 +2,7 @@ import type { IMonkeySysInitialize } from 'zova';
 
 import { BeanSimple, deepExtend } from 'zova';
 
-import { __ThisModule__ } from './.metadata/this.js';
+import { __ThisModule__ } from './.metadata/this.ts';
 
 export class MonkeySys extends BeanSimple implements IMonkeySysInitialize {
   async sysInitialize() {

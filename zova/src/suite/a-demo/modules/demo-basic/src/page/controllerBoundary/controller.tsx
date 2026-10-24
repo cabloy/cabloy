@@ -7,7 +7,7 @@ import {
   ZControllerBoundaryProbe,
   ZControllerBoundaryProbeInline,
   ZControllerBoundaryProbeOverride,
-} from '../../.metadata/index.jsx';
+} from '../../.metadata/index.ts';
 
 export const ControllerPageControllerBoundarySchemaParams = z.object({});
 

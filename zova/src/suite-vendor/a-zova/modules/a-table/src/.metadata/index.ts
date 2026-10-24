@@ -1,6 +1,6 @@
 // eslint-disable
 /** controller: begin */
-export * from '../component/table/controller.jsx';
+export * from '../component/table/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -16,7 +16,7 @@ declare module 'zova-module-a-table' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerTable } from '../component/table/controller.jsx';
+import type { ControllerTable } from '../component/table/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -26,8 +26,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/table.js';
-import { ZTable } from './component/table.js';
+export * from './component/table.ts';
+import { ZTable } from './component/table.ts';
 export const components = {
   'table': ZTable,
 };
@@ -42,7 +42,7 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** render: begin */
-export * from '../component/table/render.jsx';
+export * from '../component/table/render.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -58,7 +58,7 @@ declare module 'zova-module-a-table' {
 }
 /** render: end */
 /** render: begin */
-import { RenderTable } from '../component/table/render.jsx';
+import type { RenderTable } from '../component/table/render.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -67,8 +67,8 @@ declare module 'zova' {
 }
 /** render: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig } from 'zova';

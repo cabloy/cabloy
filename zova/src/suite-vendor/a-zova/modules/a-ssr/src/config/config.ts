@@ -1,6 +1,6 @@
 import type { ZovaSys } from 'zova';
 
-import type { ISsrConfig } from '../types/config.js';
+import type { ISsrConfig } from '../types/config.ts';
 
 export const config = (sys: ZovaSys) => {
   const ssrConfig: ISsrConfig = {

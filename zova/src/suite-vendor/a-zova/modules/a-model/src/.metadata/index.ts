@@ -1,6 +1,6 @@
 // eslint-disable
 /** bean: begin */
-export * from '../bean/bean.modelBase.js';
+export * from '../bean/bean.modelBase.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -12,7 +12,7 @@ declare module 'zova-module-a-model' {
 }
 /** bean: end */
 /** bean: begin */
-import { BeanModelBase } from '../bean/bean.modelBase.js';
+import type { BeanModelBase } from '../bean/bean.modelBase.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -21,7 +21,7 @@ declare module 'zova' {
 }
 /** bean: end */
 /** service: begin */
-export * from '../service/storage.js';
+export * from '../service/storage.ts';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
@@ -47,7 +47,7 @@ declare module 'zova-module-a-model' {
 }
 /** service: end */
 /** service: begin */
-import { ServiceStorage } from '../service/storage.js';
+import type { ServiceStorage } from '../service/storage.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -56,11 +56,11 @@ declare module 'zova' {
 }
 /** service: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** monkey: begin */
-export * from '../monkey.js';
+export * from '../monkey.ts';
 /** monkey: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig } from 'zova';

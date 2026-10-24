@@ -3,7 +3,7 @@ import type { IApiSchemaOptions } from 'zova-module-a-api';
 import { BeanBase } from 'zova';
 import { ApiSchema } from 'zova-module-a-api';
 
-import { ApiApiHomeBaseSiteCatalogselectPath } from '../api/homeBaseSiteCatalog.js';
+import { ApiApiHomeBaseSiteCatalogselectPath } from '../api/homeBaseSiteCatalog.ts';
 
 @ApiSchema()
 export class ApiSchemaHomeBaseSiteCatalog extends BeanBase {

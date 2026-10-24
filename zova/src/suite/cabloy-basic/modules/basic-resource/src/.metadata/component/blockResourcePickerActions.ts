@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerBlockResourcePickerActionsProps } from '../../component/blockResourcePickerActions/controller.jsx';
+import type { ControllerBlockResourcePickerActionsProps } from '../../component/blockResourcePickerActions/controller.tsx';
 
-import { ControllerBlockResourcePickerActions } from '../../component/blockResourcePickerActions/controller.jsx';
+import { ControllerBlockResourcePickerActions } from '../../component/blockResourcePickerActions/controller.tsx';
 export type ZBlockResourcePickerActionsProps = {
   controllerRef?: (ref: ControllerBlockResourcePickerActions) => void;
 } & ControllerBlockResourcePickerActionsProps;

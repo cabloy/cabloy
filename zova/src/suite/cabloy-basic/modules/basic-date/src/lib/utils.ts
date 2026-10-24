@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 
-import { ITableCellOptionsDate } from '../bean/tableCell.date.jsx';
-import { TypeDateInputType } from '../types/date.js';
+import { ITableCellOptionsDate } from '../bean/tableCell.date.tsx';
+import { TypeDateInputType } from '../types/date.ts';
 
 export function dateFormatUtil(value: any, options?: ITableCellOptionsDate) {
   if (!value) return;

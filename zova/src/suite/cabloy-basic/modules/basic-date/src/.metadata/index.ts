@@ -1,9 +1,9 @@
 // eslint-disable
 /** controller: begin */
-export * from '../component/date/controller.jsx';
-export * from '../component/dateRange/controller.jsx';
-export * from '../component/formFieldDate/controller.jsx';
-export * from '../component/formFieldDateRange/controller.jsx';
+export * from '../component/date/controller.tsx';
+export * from '../component/dateRange/controller.tsx';
+export * from '../component/formFieldDate/controller.tsx';
+export * from '../component/formFieldDateRange/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -34,10 +34,10 @@ declare module 'zova-module-basic-date' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerDate } from '../component/date/controller.jsx';
-import { ControllerDateRange } from '../component/dateRange/controller.jsx';
-import { ControllerFormFieldDate } from '../component/formFieldDate/controller.jsx';
-import { ControllerFormFieldDateRange } from '../component/formFieldDateRange/controller.jsx';
+import type { ControllerDate } from '../component/date/controller.tsx';
+import type { ControllerDateRange } from '../component/dateRange/controller.tsx';
+import type { ControllerFormFieldDate } from '../component/formFieldDate/controller.tsx';
+import type { ControllerFormFieldDateRange } from '../component/formFieldDateRange/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -50,14 +50,14 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/date.js';
-import { ZDate } from './component/date.js';
-export * from './component/dateRange.js';
-import { ZDateRange } from './component/dateRange.js';
-export * from './component/formFieldDate.js';
-import { ZFormFieldDate } from './component/formFieldDate.js';
-export * from './component/formFieldDateRange.js';
-import { ZFormFieldDateRange } from './component/formFieldDateRange.js';
+export * from './component/date.ts';
+import { ZDate } from './component/date.ts';
+export * from './component/dateRange.ts';
+import { ZDateRange } from './component/dateRange.ts';
+export * from './component/formFieldDate.ts';
+import { ZFormFieldDate } from './component/formFieldDate.ts';
+export * from './component/formFieldDateRange.ts';
+import { ZFormFieldDateRange } from './component/formFieldDateRange.ts';
 export const components = {
   'date': ZDate,
 'dateRange': ZDateRange,
@@ -81,8 +81,8 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** tableCell: begin */
-export * from '../bean/tableCell.date.jsx';
-import { ITableCellOptionsDate } from '../bean/tableCell.date.jsx';
+export * from '../bean/tableCell.date.tsx';
+import { ITableCellOptionsDate } from '../bean/tableCell.date.tsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
 
@@ -107,7 +107,7 @@ declare module 'zova-module-basic-date' {
 }
 /** tableCell: end */
 /** tableCell: begin */
-import { TableCellDate } from '../bean/tableCell.date.jsx';
+import type { TableCellDate } from '../bean/tableCell.date.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {

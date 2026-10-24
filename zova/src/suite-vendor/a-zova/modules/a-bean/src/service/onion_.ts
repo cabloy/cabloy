@@ -16,10 +16,10 @@ import type {
   IOnionOptionsMatch,
   IOnionSlice,
   TypeOnionOptionsMatchRule,
-} from '../types/onion.js';
+} from '../types/onion.ts';
 
-import { SysOnion } from '../bean/sys.onion.js';
-import { Service } from '../lib/bean.js';
+import { SysOnion } from '../bean/sys.onion.ts';
+import { Service } from '../lib/bean.ts';
 
 // const SymbolOnionsEnabled = Symbol('SymbolOnionsEnabled');
 // const SymbolOnionsEnabledWrapped = Symbol('SymbolOnionsEnabledWrapped');

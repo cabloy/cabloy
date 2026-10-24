@@ -5,7 +5,7 @@ import { isNil } from '@cabloy/utils';
 import { TableIdentity } from 'table-identity';
 import { BeanBase } from 'zova';
 
-import type { ICommandRowOptionsBase } from '../types/command.js';
+import type { ICommandRowOptionsBase } from '../types/command.ts';
 
 export class BeanCommandRowBase extends BeanBase {
   getResourceAndId(options: ICommandRowOptionsBase, renderContext: IJsxRenderContextBase) {

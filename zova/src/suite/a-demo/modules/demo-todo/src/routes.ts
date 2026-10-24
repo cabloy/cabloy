@@ -1,7 +1,7 @@
 import type { IModuleRoute } from 'zova-module-a-router';
 
-import { ZPageItem } from './.metadata/page/item.js';
-import { ZPageTodo } from './.metadata/page/todo.js';
+import { ZPageItem } from './.metadata/page/item.ts';
+import { ZPageTodo } from './.metadata/page/todo.ts';
 
 export const routes: IModuleRoute[] = [
   { path: 'todo', component: ZPageTodo, meta: { ssrProfile: 'session' } },

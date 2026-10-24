@@ -3,7 +3,7 @@ import type { IApiSchemaOptions } from 'zova-module-a-api';
 import { BeanBase } from 'zova';
 import { ApiSchema } from 'zova-module-a-api';
 
-import { ApiApiHomeBaseMenuretrieveMenusPath } from '../api/homeBaseMenu.js';
+import { ApiApiHomeBaseMenuretrieveMenusPath } from '../api/homeBaseMenu.ts';
 
 @ApiSchema()
 export class ApiSchemaHomeBaseMenu extends BeanBase {

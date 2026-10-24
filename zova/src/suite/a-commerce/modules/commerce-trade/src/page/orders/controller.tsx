@@ -4,7 +4,7 @@ import { Controller } from 'zova-module-a-bean';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPage } from 'zova-module-home-base';
 
-import { ModelOrderMine } from '../../model/orderMine.js';
+import { ModelOrderMine } from '../../model/orderMine.ts';
 
 export const ControllerPageOrdersSchemaParams = z.object({});
 export const ControllerPageOrdersSchemaQuery = z.object({});

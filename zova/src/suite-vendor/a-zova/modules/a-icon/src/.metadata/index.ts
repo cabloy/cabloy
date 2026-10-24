@@ -1,6 +1,6 @@
 // eslint-disable
 /** sys: begin */
-export * from '../bean/sys.icon.js';
+export * from '../bean/sys.icon.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -22,7 +22,7 @@ declare module 'zova-module-a-icon' {
 }
 /** sys: end */
 /** sys: begin */
-import { SysIcon } from '../bean/sys.icon.js';
+import type { SysIcon } from '../bean/sys.icon.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -31,7 +31,7 @@ declare module 'zova' {
 }
 /** sys: end */
 /** tool: begin */
-export * from '../bean/tool.icon.js';
+export * from '../bean/tool.icon.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -53,7 +53,7 @@ declare module 'zova-module-a-icon' {
 }
 /** tool: end */
 /** tool: begin */
-import { ToolIcon } from '../bean/tool.icon.js';
+import type { ToolIcon } from '../bean/tool.icon.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -62,7 +62,7 @@ declare module 'zova' {
 }
 /** tool: end */
 /** controller: begin */
-export * from '../component/icon/controller.jsx';
+export * from '../component/icon/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -78,7 +78,7 @@ declare module 'zova-module-a-icon' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerIcon } from '../component/icon/controller.jsx';
+import type { ControllerIcon } from '../component/icon/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -88,8 +88,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/icon.js';
-import { ZIcon } from './component/icon.js';
+export * from './component/icon.ts';
+import { ZIcon } from './component/icon.ts';
 export const components = {
   'icon': ZIcon,
 };
@@ -104,11 +104,11 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 /** monkeySys: begin */
-export * from '../monkeySys.js';
+export * from '../monkeySys.ts';
 /** monkeySys: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig } from 'zova';

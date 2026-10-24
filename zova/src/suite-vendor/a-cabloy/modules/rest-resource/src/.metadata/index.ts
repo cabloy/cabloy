@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/resource.js';
-import { IModelOptionsResource } from '../model/resource.js';
+export * from '../model/resource.ts';
+import { IModelOptionsResource } from '../model/resource.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-rest-resource' {
 }
 /** model: end */
 /** model: begin */
-import type { ModelResource } from '../model/resource.js';
+import type { ModelResource } from '../model/resource.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,11 +35,11 @@ declare module 'zova' {
 }
 /** model: end */
 /** controller: begin */
-export * from '../component/resourcePickerContext/controller.jsx';
-export * from '../page/entry/controller.jsx';
-export * from '../page/entryCreate/controller.jsx';
-export * from '../page/resource/controller.jsx';
-export * from '../page/resourcePicker/controller.jsx';
+export * from '../component/resourcePickerContext/controller.tsx';
+export * from '../page/entry/controller.tsx';
+export * from '../page/entryCreate/controller.tsx';
+export * from '../page/resource/controller.tsx';
+export * from '../page/resourcePicker/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -70,11 +70,11 @@ declare module 'zova-module-rest-resource' {
 }
 /** controller: end */
 /** controller: begin */
-import type { ControllerResourcePickerContext } from '../component/resourcePickerContext/controller.jsx';
-import type { ControllerPageEntry } from '../page/entry/controller.jsx';
-import type { ControllerPageEntryCreate } from '../page/entryCreate/controller.jsx';
-import type { ControllerPageResource } from '../page/resource/controller.jsx';
-import type { ControllerPageResourcePicker } from '../page/resourcePicker/controller.jsx';
+import type { ControllerResourcePickerContext } from '../component/resourcePickerContext/controller.tsx';
+import type { ControllerPageEntry } from '../page/entry/controller.tsx';
+import type { ControllerPageEntryCreate } from '../page/entryCreate/controller.tsx';
+import type { ControllerPageResource } from '../page/resource/controller.tsx';
+import type { ControllerPageResourcePicker } from '../page/resourcePicker/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -87,15 +87,15 @@ declare module 'zova' {
 }
 /** controller: end */
 /** pages: begin */
-export * from './page/entry.js';
-import { NSControllerPageEntry } from './page/entry.js';
-export * from './page/entryCreate.js';
-import { NSControllerPageEntryCreate } from './page/entryCreate.js';
-export * from './page/resource.js';
-import { NSControllerPageResource } from './page/resource.js';
-export * from './page/resourcePicker.js';
-import { NSControllerPageResourcePicker } from './page/resourcePicker.js';
-export * from '../routes.js';
+export * from './page/entry.ts';
+import { NSControllerPageEntry } from './page/entry.ts';
+export * from './page/entryCreate.ts';
+import { NSControllerPageEntryCreate } from './page/entryCreate.ts';
+export * from './page/resource.ts';
+import { NSControllerPageResource } from './page/resource.ts';
+export * from './page/resourcePicker.ts';
+import { NSControllerPageResourcePicker } from './page/resourcePicker.ts';
+export * from '../routes.ts';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
@@ -150,8 +150,8 @@ export interface ControllerPageResourcePicker {
 /** pages: end */
 
 /** components: begin */
-export * from './component/resourcePickerContext.js';
-import { ZResourcePickerContext } from './component/resourcePickerContext.js';
+export * from './component/resourcePickerContext.ts';
+import { ZResourcePickerContext } from './component/resourcePickerContext.ts';
 export const components = {
   'resourcePickerContext': ZResourcePickerContext,
 };

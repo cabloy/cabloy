@@ -6,7 +6,7 @@ import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField } from 'zova-module-a-form';
 
-import { ZDateRange } from '../../.metadata/component/dateRange.js';
+import { ZDateRange } from '../../.metadata/component/dateRange.ts';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {

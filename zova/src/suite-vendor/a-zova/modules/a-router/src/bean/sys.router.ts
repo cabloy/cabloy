@@ -19,14 +19,14 @@ import {
 import { BeanBase, cast, deepExtend, isHttpUrl } from 'zova';
 import { Sys } from 'zova-module-a-bean';
 
-import { getCurrentRoute, getRealRouteName, getRouteMatched, isRouterName } from '../lib/utils.js';
+import { getCurrentRoute, getRealRouteName, getRouteMatched, isRouterName } from '../lib/utils.ts';
 import {
   IModuleRoute,
   IModuleRouteComponent,
   IPageNameRecord,
   IPagePathRecord,
-} from '../types/router.js';
-import { SymbolRouterHistory } from '../types/utils.js';
+} from '../types/router.ts';
+import { SymbolRouterHistory } from '../types/utils.ts';
 
 export interface SysRouter extends Router {}
 

@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { createZovaComponentPage } from 'zova';
 
-import { ControllerPageRoutedDialogEntry } from '../../page/routedDialogEntry/controller.jsx';
+import { ControllerPageRoutedDialogEntry } from '../../page/routedDialogEntry/controller.tsx';
 import {
   ControllerPageRoutedDialogEntrySchemaParams,
   ControllerPageRoutedDialogEntrySchemaQuery,
-} from '../../page/routedDialogEntry/controller.jsx';
+} from '../../page/routedDialogEntry/controller.tsx';
 export namespace NSControllerPageRoutedDialogEntry {
   export const paramsSchema = ControllerPageRoutedDialogEntrySchemaParams;
   export type ParamsInput = z.input<typeof ControllerPageRoutedDialogEntrySchemaParams>;

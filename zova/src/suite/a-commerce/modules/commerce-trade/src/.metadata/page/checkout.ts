@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { createZovaComponentPage } from 'zova';
 
-import { ControllerPageCheckout } from '../../page/checkout/controller.jsx';
+import { ControllerPageCheckout } from '../../page/checkout/controller.tsx';
 import {
   ControllerPageCheckoutSchemaParams,
   ControllerPageCheckoutSchemaQuery,
-} from '../../page/checkout/controller.jsx';
+} from '../../page/checkout/controller.tsx';
 export namespace NSControllerPageCheckout {
   export const paramsSchema = ControllerPageCheckoutSchemaParams;
   export type ParamsInput = z.input<typeof ControllerPageCheckoutSchemaParams>;

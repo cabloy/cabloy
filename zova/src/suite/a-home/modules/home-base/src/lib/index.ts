@@ -1,2 +1,2 @@
-export * from './roleSiteAdmission.js';
-export * from './utils.js';
+export * from './roleSiteAdmission.ts';
+export * from './utils.ts';

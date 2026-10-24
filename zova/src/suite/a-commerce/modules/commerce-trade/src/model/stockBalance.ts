@@ -8,7 +8,7 @@ import { BeanModelBase, Model } from 'zova-module-a-model';
 import type {
   ApiApiCommerceTradeStockBalanceadjustStockRequestBody,
   ApiApiCommerceTradeStockBalanceadjustStockResponseBody,
-} from '../api/commerceTradeStockBalance.js';
+} from '../api/commerceTradeStockBalance.ts';
 
 export interface IModelOptionsStockBalance extends IDecoratorModelOptions {}
 

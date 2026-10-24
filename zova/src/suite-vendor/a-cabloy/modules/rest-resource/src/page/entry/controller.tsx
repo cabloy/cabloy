@@ -16,7 +16,7 @@ import { formMetaFromFormScene } from 'zova-module-a-form';
 import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPage } from 'zova-module-home-base';
 
-import type { ModelResource } from '../../model/resource.js';
+import type { ModelResource } from '../../model/resource.ts';
 
 export const ControllerPageEntrySchemaParams = z.object({
   resource: z.string(),

@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerBlockPagerProps } from '../../component/blockPager/controller.jsx';
+import type { ControllerBlockPagerProps } from '../../component/blockPager/controller.tsx';
 
-import { ControllerBlockPager } from '../../component/blockPager/controller.jsx';
+import { ControllerBlockPager } from '../../component/blockPager/controller.tsx';
 export type ZBlockPagerProps = {
   controllerRef?: (ref: ControllerBlockPager) => void;
 } & ControllerBlockPagerProps;

@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerActionDeleteBulkProps } from '../../component/actionDeleteBulk/controller.jsx';
+import type { ControllerActionDeleteBulkProps } from '../../component/actionDeleteBulk/controller.tsx';
 
-import { ControllerActionDeleteBulk } from '../../component/actionDeleteBulk/controller.jsx';
+import { ControllerActionDeleteBulk } from '../../component/actionDeleteBulk/controller.tsx';
 export type ZActionDeleteBulkProps = {
   controllerRef?: (ref: ControllerActionDeleteBulk) => void;
 } & ControllerActionDeleteBulkProps;

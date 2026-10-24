@@ -1,7 +1,7 @@
 import type { Next, NextSync, OmitNever } from 'zova';
 
-import type { ServiceOnion } from '../service/onion_.js';
-import type { IOnionOptionsEnable } from './onion.js';
+import type { ServiceOnion } from '../service/onion_.ts';
+import type { IOnionOptionsEnable } from './onion.ts';
 
 export const SymbolDecoratorUseAopMethod = Symbol('SymbolDecoratorUseAopMethod');
 export interface IUseAopMethodPropMetadata<T extends keyof IAopMethodRecord = never> {

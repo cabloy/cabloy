@@ -12,7 +12,7 @@ import type {
   ApiApiCommerceTradeOrderrejectRefundRequestBody,
   ApiApiCommerceTradeOrderretryRefundRequestBody,
   ApiApiCommerceTradeOrdershipRequestBody,
-} from '../api/commerceTradeOrder.js';
+} from '../api/commerceTradeOrder.ts';
 
 export interface IModelOptionsOrder extends IDecoratorModelOptions {}
 

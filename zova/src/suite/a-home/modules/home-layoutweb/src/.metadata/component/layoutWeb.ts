@@ -3,10 +3,10 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerLayoutWebProps } from '../../component/layoutWeb/controller.jsx';
+import type { ControllerLayoutWebProps } from '../../component/layoutWeb/controller.tsx';
 
-import { ControllerLayoutWeb } from '../../component/layoutWeb/controller.jsx';
-import { RenderLayoutWeb } from '../../component/layoutWeb/render.jsx';
+import { ControllerLayoutWeb } from '../../component/layoutWeb/controller.tsx';
+import { RenderLayoutWeb } from '../../component/layoutWeb/render.tsx';
 export type ZLayoutWebProps = {
   controllerRef?: (ref: ControllerLayoutWeb) => void;
 } & ControllerLayoutWebProps;

@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { stripTypeScriptTypes } from 'node:module';
 import test from 'node:test';
 
-import { ModelPersistenceContext } from '../../src/lib/modelPersistence.js';
+import { ModelPersistenceContext } from '../../src/lib/modelPersistence.ts';
 
 const tick = () => new Promise<void>(resolve => setTimeout(resolve, 0));
 

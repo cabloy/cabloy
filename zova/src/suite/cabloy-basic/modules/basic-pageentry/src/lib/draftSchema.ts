@@ -1,7 +1,7 @@
 import type { SchemaObject } from 'openapi3-ts/oas31';
 import type { ISchemaObjectExtensionField } from 'zova-module-a-openapi';
 
-import type { IDraftProjection, IDraftSchemaOptions } from '../types/draft.js';
+import type { IDraftProjection, IDraftSchemaOptions } from '../types/draft.ts';
 
 interface IDraftNode {
   kind: 'scalar' | 'object' | 'array';

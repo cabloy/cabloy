@@ -5,12 +5,12 @@ import test from 'node:test';
 import { computed, markRaw, reactive, shallowReactive } from 'vue';
 import { SymbolBeanFullName } from 'zova';
 
-import { BeanModelUseState } from '../../src/bean/bean.model/bean.model.useState.js';
+import { BeanModelUseState } from '../../src/bean/bean.model/bean.model.useState.ts';
 import {
   getModelPersistenceStorageKey,
   ModelPersistenceContext,
-} from '../../src/lib/modelPersistence.js';
-import { getPersistenceQueue } from '../../src/lib/persistenceQueue.js';
+} from '../../src/lib/modelPersistence.ts';
+import { getPersistenceQueue } from '../../src/lib/persistenceQueue.ts';
 
 function deferred<T>() {
   let resolve!: (value: T) => void;

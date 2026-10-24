@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerBlockFormProps } from '../../component/blockForm/controller.jsx';
+import type { ControllerBlockFormProps } from '../../component/blockForm/controller.tsx';
 
-import { ControllerBlockForm } from '../../component/blockForm/controller.jsx';
+import { ControllerBlockForm } from '../../component/blockForm/controller.tsx';
 export type ZBlockFormProps = {
   controllerRef?: (ref: ControllerBlockForm) => void;
 } & ControllerBlockFormProps;

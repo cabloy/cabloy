@@ -7,8 +7,8 @@ export async function generateConfig(modulePath: string) {
   if (!(await fse.pathExists(configFile))) return '';
   // combine
   const content = `/** config: begin */
-export * from '../config/config.js';
-import { config } from '../config/config.js';
+export * from '../config/config.ts';
+import { config } from '../config/config.ts';
 /** config: end */
 `;
   return content;
@@ -19,8 +19,8 @@ export async function generateConstant(modulePath: string) {
   if (!(await fse.pathExists(constantFile))) return '';
   // combine
   const content = `/** constant: begin */
-export * from '../config/constants.js';
-import { constants } from '../config/constants.js';
+export * from '../config/constants.ts';
+import { constants } from '../config/constants.ts';
 /** constant: end */
 `;
   return content;
@@ -35,7 +35,7 @@ export async function generateLocale1(modulePath: string) {
   for (const file of files) {
     const localeName = path.basename(file, '.ts');
     const className = `locale_${localeName.replace('-', '_')}`;
-    contentImports.push(`import ${className} from '../config/locale/${localeName}.js';`);
+    contentImports.push(`import ${className} from '../config/locale/${localeName}.ts';`);
     contentLocales.push(`  '${localeName}': ${className},`);
   }
   // combine
@@ -52,7 +52,7 @@ export async function generateLocale2(contentLocales: string) {
   if (!contentLocales) return '';
   // combine
   const content = `/** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 `;
   return content;
@@ -63,8 +63,8 @@ export async function generateError(modulePath: string) {
   if (!(await fse.pathExists(errorFile))) return '';
   // combine
   const content = `/** error: begin */
-export * from '../config/errors.js';
-import { errors } from '../config/errors.js';
+export * from '../config/errors.ts';
+import { errors } from '../config/errors.ts';
 /** error: end */
 `;
   return content;

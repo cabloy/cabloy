@@ -1,8 +1,8 @@
 import type { ZovaSys } from 'zova';
 import type { TypeMetaRecordSelectorSpecificNameKeys } from 'zova-module-a-meta';
 
-import type { ICssRecord } from '../types/css.js';
-import type { IThemeRecord } from '../types/theme.js';
+import type { ICssRecord } from '../types/css.ts';
+import type { IThemeRecord } from '../types/theme.ts';
 
 export const config = (_sys: ZovaSys) => {
   return {

@@ -14,7 +14,7 @@ import { IPermissionHintGeneral, TypeOpenapiPermissions } from 'zova-module-a-op
 import { ApiApiHomeUserPassportloginOauthPath, OpenApiBaseURL } from 'zova-module-home-api';
 import { isRoleSiteAdmitted } from 'zova-module-home-base';
 
-import { matchPermissionAction } from '../lib/permissionActionMatcher.js';
+import { matchPermissionAction } from '../lib/permissionActionMatcher.ts';
 
 export interface IModelOptionsPassport extends IDecoratorModelOptions {}
 

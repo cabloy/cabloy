@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerFormFieldBlankProps } from '../../component/formFieldBlank/controller.jsx';
+import type { ControllerFormFieldBlankProps } from '../../component/formFieldBlank/controller.tsx';
 
-import { ControllerFormFieldBlank } from '../../component/formFieldBlank/controller.jsx';
+import { ControllerFormFieldBlank } from '../../component/formFieldBlank/controller.tsx';
 export type ZFormFieldBlankProps<TParentData extends {} = {}, TSubmitMeta = never> = {
   controllerRef?: (ref: ControllerFormFieldBlank<TParentData, TSubmitMeta>) => void;
 } & ControllerFormFieldBlankProps<TParentData, TSubmitMeta>;

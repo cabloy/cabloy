@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerCardProps } from '../../component/card/controller.jsx';
+import type { ControllerCardProps } from '../../component/card/controller.tsx';
 
-import { ControllerCard } from '../../component/card/controller.jsx';
+import { ControllerCard } from '../../component/card/controller.tsx';
 export type ZCardProps = {
   controllerRef?: (ref: ControllerCard) => void;
 } & ControllerCardProps;

@@ -1,7 +1,7 @@
 import type { RouteLocationNormalizedLoaded } from '@cabloy/vue-router';
 import type { ComponentInternalInstance } from 'vue';
 
-import type { IPageMeta } from './pageMeta.js';
+import type { IPageMeta } from './pageMeta.ts';
 
 export interface IRouteViewRouteItemBase {
   componentKey: string;

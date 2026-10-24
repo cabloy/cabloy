@@ -3,10 +3,10 @@ import type { BeanBase, BeanContainer, IMonkeyBeanInit, IMonkeyModule } from 'zo
 
 import { BeanSimple } from 'zova';
 
-import type { ServiceAppModal } from './service/appModal.js';
-import type { IRoutedDialogContext } from './types/appModal.js';
+import type { ServiceAppModal } from './service/appModal.ts';
+import type { IRoutedDialogContext } from './types/appModal.ts';
 
-import { routedDialogContextKey } from './types/appModal.js';
+import { routedDialogContextKey } from './types/appModal.ts';
 
 export class Monkey extends BeanSimple implements IMonkeyModule, IMonkeyBeanInit {
   private _moduleSelf: IModule;

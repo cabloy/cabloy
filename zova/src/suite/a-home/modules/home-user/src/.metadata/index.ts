@@ -1,7 +1,7 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/account.js';
-import { IModelOptionsAccount } from '../model/account.js';
+export * from '../model/account.ts';
+import { IModelOptionsAccount } from '../model/account.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -26,7 +26,7 @@ declare module 'zova-module-home-user' {
 }
 /** model: end */
 /** model: begin */
-import { ModelAccount } from '../model/account.js';
+import type { ModelAccount } from '../model/account.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -35,10 +35,10 @@ declare module 'zova' {
 }
 /** model: end */
 /** controller: begin */
-export * from '../page/account/controller.jsx';
-export * from '../page/activation/controller.jsx';
-export * from '../page/passwordReset/controller.jsx';
-export * from '../page/passwordSet/controller.jsx';
+export * from '../page/account/controller.tsx';
+export * from '../page/activation/controller.tsx';
+export * from '../page/passwordReset/controller.tsx';
+export * from '../page/passwordSet/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -69,10 +69,10 @@ declare module 'zova-module-home-user' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerPageAccount } from '../page/account/controller.jsx';
-import { ControllerPageActivation } from '../page/activation/controller.jsx';
-import { ControllerPagePasswordReset } from '../page/passwordReset/controller.jsx';
-import { ControllerPagePasswordSet } from '../page/passwordSet/controller.jsx';
+import type { ControllerPageAccount } from '../page/account/controller.tsx';
+import type { ControllerPageActivation } from '../page/activation/controller.tsx';
+import type { ControllerPagePasswordReset } from '../page/passwordReset/controller.tsx';
+import type { ControllerPagePasswordSet } from '../page/passwordSet/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -84,14 +84,14 @@ declare module 'zova' {
 }
 /** controller: end */
 /** pages: begin */
-export * from './page/account.js';
-export * from './page/activation.js';
-import { NSControllerPageActivation } from './page/activation.js';
-export * from './page/passwordReset.js';
-import { NSControllerPagePasswordReset } from './page/passwordReset.js';
-export * from './page/passwordSet.js';
-import { NSControllerPagePasswordSet } from './page/passwordSet.js';
-export * from '../routes.js';
+export * from './page/account.ts';
+export * from './page/activation.ts';
+import { NSControllerPageActivation } from './page/activation.ts';
+export * from './page/passwordReset.ts';
+import { NSControllerPagePasswordReset } from './page/passwordReset.ts';
+export * from './page/passwordSet.ts';
+import { NSControllerPagePasswordSet } from './page/passwordSet.ts';
+export * from '../routes.ts';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
@@ -133,7 +133,7 @@ export interface ControllerPagePasswordSet {
 /** pages: end */
 
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

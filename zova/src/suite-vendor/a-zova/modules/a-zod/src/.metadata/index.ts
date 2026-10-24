@@ -1,6 +1,6 @@
 // eslint-disable
 /** tool: begin */
-export * from '../bean/tool.v.js';
+export * from '../bean/tool.v.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -22,7 +22,7 @@ declare module 'zova-module-a-zod' {
 }
 /** tool: end */
 /** tool: begin */
-import { ToolV } from '../bean/tool.v.js';
+import type { ToolV } from '../bean/tool.v.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -31,7 +31,7 @@ declare module 'zova' {
 }
 /** tool: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

@@ -1,9 +1,9 @@
 // eslint-disable
 /** model: begin */
-export * from '../model/address.js';
-export * from '../model/addressMine.js';
-import { IModelOptionsAddress } from '../model/address.js';
-import { IModelOptionsAddressMine } from '../model/addressMine.js';
+export * from '../model/address.ts';
+export * from '../model/addressMine.ts';
+import { IModelOptionsAddress } from '../model/address.ts';
+import { IModelOptionsAddressMine } from '../model/addressMine.ts';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
 
@@ -40,8 +40,8 @@ declare module 'zova-module-commerce-member' {
 }
 /** model: end */
 /** model: begin */
-import { ModelAddress } from '../model/address.js';
-import { ModelAddressMine } from '../model/addressMine.js';
+import type { ModelAddress } from '../model/address.ts';
+import type { ModelAddressMine } from '../model/addressMine.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -51,7 +51,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** api: begin */
-export * from '../api/commerceMemberAddress.js';
+export * from '../api/commerceMemberAddress.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -73,7 +73,7 @@ declare module 'zova-module-commerce-member' {
 }
 /** api: end */
 /** api: begin */
-import { ApiCommerceMemberAddress } from '../api/commerceMemberAddress.js';
+import type { ApiCommerceMemberAddress } from '../api/commerceMemberAddress.ts';
 export interface IModuleApi {
   'commerceMemberAddress': ApiCommerceMemberAddress;
 }
@@ -88,10 +88,10 @@ declare module 'zova' {
 }
 /** api: end */
 /** openapi: begin */
-export * from '../api/openapi/index.js';
+export * from '../api/openapi/index.ts';
 /** openapi: end */
 /** apiSchema: begin */
-export * from '../apiSchema/commerceMemberAddress.js';
+export * from '../apiSchema/commerceMemberAddress.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -113,7 +113,7 @@ declare module 'zova-module-commerce-member' {
 }
 /** apiSchema: end */
 /** apiSchema: begin */
-import { ApiSchemaCommerceMemberAddress } from '../apiSchema/commerceMemberAddress.js';
+import type { ApiSchemaCommerceMemberAddress } from '../apiSchema/commerceMemberAddress.ts';
 export interface IModuleApiSchema {
   'commerceMemberAddress': ApiSchemaCommerceMemberAddress;
 }
@@ -128,7 +128,7 @@ declare module 'zova' {
 }
 /** apiSchema: end */
 /** controller: begin */
-export * from '../page/address/controller.jsx';
+export * from '../page/address/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -144,7 +144,7 @@ declare module 'zova-module-commerce-member' {
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerPageAddress } from '../page/address/controller.jsx';
+import type { ControllerPageAddress } from '../page/address/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -153,9 +153,9 @@ declare module 'zova' {
 }
 /** controller: end */
 /** pages: begin */
-export * from './page/address.js';
-import { NSControllerPageAddress } from './page/address.js';
-export * from '../routes.js';
+export * from './page/address.ts';
+import { NSControllerPageAddress } from './page/address.ts';
+export * from '../routes.ts';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
@@ -183,7 +183,7 @@ $query: NSControllerPageAddress.QueryOutput;
 /** pages: end */
 
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

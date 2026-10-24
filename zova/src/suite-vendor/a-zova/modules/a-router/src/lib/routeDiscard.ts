@@ -1,4 +1,4 @@
-import type { IRouteDiscardEvent } from '../types/routeDiscard.js';
+import type { IRouteDiscardEvent } from '../types/routeDiscard.ts';
 
 export function dispatchRouteDiscard(
   event: Omit<IRouteDiscardEvent, 'waitUntil'>,

@@ -3,9 +3,9 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerActionColumnConfigProps } from '../../component/actionColumnConfig/controller.jsx';
+import type { ControllerActionColumnConfigProps } from '../../component/actionColumnConfig/controller.tsx';
 
-import { ControllerActionColumnConfig } from '../../component/actionColumnConfig/controller.jsx';
+import { ControllerActionColumnConfig } from '../../component/actionColumnConfig/controller.tsx';
 export type ZActionColumnConfigProps = {
   controllerRef?: (ref: ControllerActionColumnConfig) => void;
 } & ControllerActionColumnConfigProps;

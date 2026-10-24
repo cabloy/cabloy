@@ -13,9 +13,9 @@ import { ZPage } from 'zova-module-home-base';
 import type {
   ApiApiCommerceMemberAddresscreateMineRequestBody,
   ApiApiCommerceMemberAddressmineResponseBody,
-} from '../../api/commerceMemberAddress.js';
+} from '../../api/commerceMemberAddress.ts';
 
-import { ModelAddressMine } from '../../model/addressMine.js';
+import { ModelAddressMine } from '../../model/addressMine.ts';
 
 export const ControllerPageAddressSchemaParams = z.object({});
 export const ControllerPageAddressSchemaQuery = z.object({});

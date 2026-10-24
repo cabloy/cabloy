@@ -10,9 +10,9 @@ import { computed, provide, shallowReactive } from 'vue';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerRoutedDialogProps } from '../../component/routedDialog/controller.jsx';
+import type { ControllerRoutedDialogProps } from '../../component/routedDialog/controller.tsx';
 
-import { ControllerRoutedDialog } from '../../component/routedDialog/controller.jsx';
+import { ControllerRoutedDialog } from '../../component/routedDialog/controller.tsx';
 export type ZRoutedDialogProps = {
   controllerRef?: (ref: ControllerRoutedDialog) => void;
 } & ControllerRoutedDialogProps;

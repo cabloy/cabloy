@@ -1,7 +1,7 @@
 // eslint-disable
 /** controller: begin */
-export * from '../component/blockResourcePickerActions/controller.jsx';
-export * from '../component/formFieldResourcePicker/controller.jsx';
+export * from '../component/blockResourcePickerActions/controller.tsx';
+export * from '../component/formFieldResourcePicker/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -22,8 +22,8 @@ declare module 'zova-module-basic-resource' {
 }
 /** controller: end */
 /** controller: begin */
-import type { ControllerBlockResourcePickerActions } from '../component/blockResourcePickerActions/controller.jsx';
-import type { ControllerFormFieldResourcePicker } from '../component/formFieldResourcePicker/controller.jsx';
+import type { ControllerBlockResourcePickerActions } from '../component/blockResourcePickerActions/controller.tsx';
+import type { ControllerFormFieldResourcePicker } from '../component/formFieldResourcePicker/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -34,10 +34,10 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/blockResourcePickerActions.js';
-import { ZBlockResourcePickerActions } from './component/blockResourcePickerActions.js';
-export * from './component/formFieldResourcePicker.js';
-import { ZFormFieldResourcePicker } from './component/formFieldResourcePicker.js';
+export * from './component/blockResourcePickerActions.ts';
+import { ZBlockResourcePickerActions } from './component/blockResourcePickerActions.ts';
+export * from './component/formFieldResourcePicker.ts';
+import { ZFormFieldResourcePicker } from './component/formFieldResourcePicker.ts';
 export const components = {
   'blockResourcePickerActions': ZBlockResourcePickerActions,
 'formFieldResourcePicker': ZFormFieldResourcePicker,
@@ -55,8 +55,8 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** tableCell: begin */
-export * from '../bean/tableCell.resourcePicker.jsx';
-import { ITableCellOptionsResourcePicker } from '../bean/tableCell.resourcePicker.jsx';
+export * from '../bean/tableCell.resourcePicker.tsx';
+import { ITableCellOptionsResourcePicker } from '../bean/tableCell.resourcePicker.tsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
 
@@ -81,7 +81,7 @@ declare module 'zova-module-basic-resource' {
 }
 /** tableCell: end */
 /** tableCell: begin */
-import type { TableCellResourcePicker } from '../bean/tableCell.resourcePicker.jsx';
+import type { TableCellResourcePicker } from '../bean/tableCell.resourcePicker.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -90,7 +90,7 @@ declare module 'zova' {
 }
 /** tableCell: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

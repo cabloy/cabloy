@@ -1,1 +1,1 @@
-export * from './meta.js';
+export * from './meta.ts';

@@ -3,11 +3,11 @@ import type { TypeControllerInnerProps } from 'zova';
 import { defineComponent } from 'vue';
 import { prepareComponentOptions, useController } from 'zova';
 
-import type { ControllerMarkdownHtmlProps } from '../../component/markdownHtml/controller.jsx';
+import type { ControllerMarkdownHtmlProps } from '../../component/markdownHtml/controller.tsx';
 
-import { ControllerMarkdownHtml } from '../../component/markdownHtml/controller.jsx';
-import { RenderMarkdownHtml } from '../../component/markdownHtml/render.jsx';
-import { StyleMarkdownHtml } from '../../component/markdownHtml/style.js';
+import { ControllerMarkdownHtml } from '../../component/markdownHtml/controller.tsx';
+import { RenderMarkdownHtml } from '../../component/markdownHtml/render.tsx';
+import { StyleMarkdownHtml } from '../../component/markdownHtml/style.ts';
 export type ZMarkdownHtmlProps = {
   controllerRef?: (ref: ControllerMarkdownHtml) => void;
 } & ControllerMarkdownHtmlProps;

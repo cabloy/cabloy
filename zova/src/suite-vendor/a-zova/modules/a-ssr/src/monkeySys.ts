@@ -3,9 +3,9 @@ import type { IMonkeyModuleSys, IMonkeySysContextInitialize, ZovaContext } from 
 
 import { BeanSimple } from 'zova';
 
-import type { SysSsrState } from './bean/sys.ssrState.js';
+import type { SysSsrState } from './bean/sys.ssrState.ts';
 
-import { CtxSSR } from './lib/ssr.js';
+import { CtxSSR } from './lib/ssr.ts';
 
 export class MonkeySys extends BeanSimple implements IMonkeyModuleSys, IMonkeySysContextInitialize {
   private _moduleSelf: IModule;

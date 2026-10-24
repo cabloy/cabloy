@@ -1,5 +1,37 @@
 # Changelog
 
+## 5.1.236
+
+### Bug Fixes
+
+- Fix `code-inspector-plugin`.
+
+## 5.1.235
+
+### Improvements
+
+- Update the scripts documentation.
+
+## 5.1.234
+
+### Features
+
+- Add support for `code-inspector-plugin`.
+
+### Bug Fixes
+
+- Fix socket CORS handling.
+
+## 5.1.233
+
+### Features
+
+- Apply feature updates.
+
+### Improvements
+
+- Migrate JavaScript code to TypeScript.
+
 ## 5.1.232
 
 ### Improvements

@@ -10,7 +10,7 @@ import { ZIcon } from 'zova-module-a-icon';
 import { TableCell } from 'zova-module-a-table';
 import { ZButton } from 'zova-module-basic-button';
 
-import { ICommandOptionsDelete } from './command.delete.jsx';
+import { ICommandOptionsDelete } from './command.delete.tsx';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceDetailsActionRowRecord {

@@ -26,7 +26,7 @@ import {
   RouteTab,
   RouteTabInitial,
   RouteTabTransient,
-} from '../types/tabs.js';
+} from '../types/tabs.ts';
 
 export interface IModelOptionsTabs extends IDecoratorModelOptions, ModelTabsOptionsBase {}
 

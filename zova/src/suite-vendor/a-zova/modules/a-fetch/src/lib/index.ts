@@ -1,2 +1,2 @@
-export * from './const.js';
-export * from './interceptor.js';
+export * from './const.ts';
+export * from './interceptor.ts';

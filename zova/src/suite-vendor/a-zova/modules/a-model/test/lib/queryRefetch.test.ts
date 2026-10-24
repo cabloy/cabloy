@@ -3,7 +3,7 @@ import type { Query, RefetchOptions } from '@tanstack/query-core';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { createQueryRefetch } from '../../src/lib/queryRefetch.js';
+import { createQueryRefetch } from '../../src/lib/queryRefetch.ts';
 
 type Result = { data: string };
 

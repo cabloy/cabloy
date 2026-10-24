@@ -11,10 +11,10 @@ import type {
 import { classes, createTypeStyle, cssRaw, cssRule, style } from 'typestyle';
 import { beanFullNameFromOnionName, BeanSimple, SymbolBeanFullName, useComputed } from 'zova';
 
-import type { ScopeModule } from './.metadata/this.js';
+import type { ScopeModule } from './.metadata/this.ts';
 
-import { __ThisModule__ } from './.metadata/this.js';
-import { BeanTheme } from './bean/bean.theme.js';
+import { __ThisModule__ } from './.metadata/this.ts';
+import { BeanTheme } from './bean/bean.theme.ts';
 
 export class Monkey
   extends BeanSimple

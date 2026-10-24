@@ -1,6 +1,6 @@
 // eslint-disable
 /** sys: begin */
-export * from '../bean/sys.onion.js';
+export * from '../bean/sys.onion.ts';
 
 import 'zova';
 declare module 'zova' {
@@ -22,7 +22,7 @@ declare module 'zova-module-a-bean' {
 }
 /** sys: end */
 /** sys: begin */
-import { SysOnion } from '../bean/sys.onion.js';
+import type { SysOnion } from '../bean/sys.onion.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -31,8 +31,8 @@ declare module 'zova' {
 }
 /** sys: end */
 /** service: begin */
-export * from '../service/aop.js';
-export * from '../service/onion_.js';
+export * from '../service/aop.ts';
+export * from '../service/onion_.ts';
 
 import 'zova-module-a-bean';
 declare module 'zova-module-a-bean' {
@@ -58,7 +58,7 @@ declare module 'zova-module-a-bean' {
 }
 /** service: end */
 /** service: begin */
-import { ServiceAop } from '../service/aop.js';
+import type { ServiceAop } from '../service/aop.ts';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
@@ -67,11 +67,11 @@ declare module 'zova' {
 }
 /** service: end */
 /** monkeySys: begin */
-export * from '../monkeySys.js';
+export * from '../monkeySys.ts';
 /** monkeySys: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil } from 'zova';
-import { Scope } from '../lib/scope.js';
+import { Scope } from '../lib/scope.ts';
 
 @Scope()
 export class ScopeModuleABean extends BeanScopeBase {}

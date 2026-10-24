@@ -23,7 +23,7 @@ import {
   ModalRoutedDialogTopGutter,
   ModalType,
   ModalWidth,
-} from '../types/appModal.js';
+} from '../types/appModal.ts';
 
 export interface IBehaviorPropsInputAppModal {}
 

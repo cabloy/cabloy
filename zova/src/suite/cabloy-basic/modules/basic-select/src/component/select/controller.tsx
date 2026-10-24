@@ -3,7 +3,7 @@ import { VNode } from 'vue';
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
-import { isSelectValueEqual } from '../../lib/utils.js';
+import { isSelectValueEqual } from '../../lib/utils.ts';
 
 export interface ControllerSelectProps {
   placeholder?: string;

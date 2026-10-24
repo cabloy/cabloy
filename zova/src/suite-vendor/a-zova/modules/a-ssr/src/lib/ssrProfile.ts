@@ -5,7 +5,7 @@ import type {
   ISsrResponseCachePolicy,
   ISsrRouteProfileOptions,
   TypeSsrProfile,
-} from '../types/ssr.js';
+} from '../types/ssr.ts';
 
 export function resolveSsrProfile(
   routeProfile: TypeSsrProfile | undefined,

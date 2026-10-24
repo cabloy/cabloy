@@ -2,11 +2,11 @@ import type { VNode } from 'vue';
 
 import { disposeInstance } from 'zova';
 
-import type { ServiceComposer } from '../service/composer.js';
-import type { IBehaviors, IDecoratorBehaviorOptions, NextBehavior } from '../types/behavior.js';
+import type { ServiceComposer } from '../service/composer.ts';
+import type { IBehaviors, IDecoratorBehaviorOptions, NextBehavior } from '../types/behavior.ts';
 
-import { Behavior } from '../lib/behavior.js';
-import { BeanBehaviorBase } from './bean.behaviorBase.js';
+import { Behavior } from '../lib/behavior.ts';
+import { BeanBehaviorBase } from './bean.behaviorBase.ts';
 
 export interface IBehaviorPropsInputRoot {}
 

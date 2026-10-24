@@ -5,8 +5,8 @@ import { BeanModelBase, Model } from 'zova-module-a-model';
 import type {
   ApiApiCommerceTradeCartaddItemRequestBody,
   ApiApiCommerceTradeCartupdateItemRequestBody,
-} from '../api/commerceTradeCart.js';
-import type { ApiApiCommerceTradeCheckoutcreateRequestBody } from '../api/commerceTradeCheckout.js';
+} from '../api/commerceTradeCart.ts';
+import type { ApiApiCommerceTradeCheckoutcreateRequestBody } from '../api/commerceTradeCheckout.ts';
 
 export interface IModelOptionsCart extends IDecoratorModelOptions {}
 

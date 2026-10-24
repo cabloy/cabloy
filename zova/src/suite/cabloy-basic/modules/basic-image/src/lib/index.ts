@@ -1,3 +1,3 @@
-export * from './imageTransform.js';
-export * from './preview.js';
-export * from './previewDialog.js';
+export * from './imageTransform.tsx';
+export * from './preview.ts';
+export * from './previewDialog.tsx';

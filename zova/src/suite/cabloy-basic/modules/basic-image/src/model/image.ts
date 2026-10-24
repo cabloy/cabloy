@@ -2,7 +2,7 @@ import type { IDecoratorModelOptions } from 'zova-module-a-model';
 
 import { BeanModelBase, Model } from 'zova-module-a-model';
 
-import type { ApiApiImagegetUploadPolicyResponseBody } from '../api/image.js';
+import type { ApiApiImagegetUploadPolicyResponseBody } from '../api/image.ts';
 
 export interface IModelOptionsImage extends IDecoratorModelOptions {}
 

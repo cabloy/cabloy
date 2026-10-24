@@ -14,7 +14,7 @@ export async function generateScopeResourcesMeta(
   if (globFiles.length === 0) return '';
   // combine
   const content = `/** meta ${metaName}: begin */
-import { Meta${toUpperCaseFirstChar(metaName)} } from '../bean/meta.${metaName}.js';
+import { Meta${toUpperCaseFirstChar(metaName)} } from '../bean/meta.${metaName}.ts';
 /** meta ${metaName}: end */
 `;
   return content;

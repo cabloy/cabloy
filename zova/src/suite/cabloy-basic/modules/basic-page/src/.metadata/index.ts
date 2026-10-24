@@ -1,11 +1,11 @@
 // eslint-disable
 /** controller: begin */
-export * from '../component/blockFilter/controller.jsx';
-export * from '../component/blockFilterActions/controller.jsx';
-export * from '../component/blockPage/controller.jsx';
-export * from '../component/blockPager/controller.jsx';
-export * from '../component/blockTable/controller.jsx';
-export * from '../component/blockToolbarBulk/controller.jsx';
+export * from '../component/blockFilter/controller.tsx';
+export * from '../component/blockFilterActions/controller.tsx';
+export * from '../component/blockPage/controller.tsx';
+export * from '../component/blockPager/controller.tsx';
+export * from '../component/blockTable/controller.tsx';
+export * from '../component/blockToolbarBulk/controller.tsx';
 
 import 'zova';
 declare module 'zova' {
@@ -46,12 +46,12 @@ declare module 'zova-module-basic-page' {
 }
 /** controller: end */
 /** controller: begin */
-import type { ControllerBlockFilter } from '../component/blockFilter/controller.jsx';
-import type { ControllerBlockFilterActions } from '../component/blockFilterActions/controller.jsx';
-import type { ControllerBlockPage } from '../component/blockPage/controller.jsx';
-import type { ControllerBlockPager } from '../component/blockPager/controller.jsx';
-import type { ControllerBlockTable } from '../component/blockTable/controller.jsx';
-import type { ControllerBlockToolbarBulk } from '../component/blockToolbarBulk/controller.jsx';
+import type { ControllerBlockFilter } from '../component/blockFilter/controller.tsx';
+import type { ControllerBlockFilterActions } from '../component/blockFilterActions/controller.tsx';
+import type { ControllerBlockPage } from '../component/blockPage/controller.tsx';
+import type { ControllerBlockPager } from '../component/blockPager/controller.tsx';
+import type { ControllerBlockTable } from '../component/blockTable/controller.tsx';
+import type { ControllerBlockToolbarBulk } from '../component/blockToolbarBulk/controller.tsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -66,18 +66,18 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
-export * from './component/blockFilter.js';
-import { ZBlockFilter } from './component/blockFilter.js';
-export * from './component/blockFilterActions.js';
-import { ZBlockFilterActions } from './component/blockFilterActions.js';
-export * from './component/blockPage.js';
-import { ZBlockPage } from './component/blockPage.js';
-export * from './component/blockPager.js';
-import { ZBlockPager } from './component/blockPager.js';
-export * from './component/blockTable.js';
-import { ZBlockTable } from './component/blockTable.js';
-export * from './component/blockToolbarBulk.js';
-import { ZBlockToolbarBulk } from './component/blockToolbarBulk.js';
+export * from './component/blockFilter.ts';
+import { ZBlockFilter } from './component/blockFilter.ts';
+export * from './component/blockFilterActions.ts';
+import { ZBlockFilterActions } from './component/blockFilterActions.ts';
+export * from './component/blockPage.ts';
+import { ZBlockPage } from './component/blockPage.ts';
+export * from './component/blockPager.ts';
+import { ZBlockPager } from './component/blockPager.ts';
+export * from './component/blockTable.ts';
+import { ZBlockTable } from './component/blockTable.ts';
+export * from './component/blockToolbarBulk.ts';
+import { ZBlockToolbarBulk } from './component/blockToolbarBulk.ts';
 export const components = {
   'blockFilter': ZBlockFilter,
 'blockFilterActions': ZBlockFilterActions,
@@ -107,7 +107,7 @@ export interface IZovaComponentRecord {
 }
 /** components: end */
 /** locale: begin */
-import { locales } from './locales.js';
+import { locales } from './locales.ts';
 /** locale: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';

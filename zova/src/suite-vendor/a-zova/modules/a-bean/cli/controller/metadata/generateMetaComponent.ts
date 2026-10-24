@@ -19,8 +19,8 @@ export function generateMetaComponent(
     const { name, nameCapitalize } = controllerInfo;
     const componentFullName = `${moduleName}:${name}`;
     const componentName2 = `Z${nameCapitalize}`;
-    contentImports.push(`export * from './component/${name}.js';`);
-    contentImports.push(`import { ${componentName2} } from './component/${name}.js';`);
+    contentImports.push(`export * from './component/${name}.ts';`);
+    contentImports.push(`import { ${componentName2} } from './component/${name}.ts';`);
     contentComponents.push(`'${name}': ${componentName2},`);
     contentRecords.push(`'${componentFullName}': ${className};`);
     contentRecords2.push(`'${componentFullName}': typeof ${componentName2};`);

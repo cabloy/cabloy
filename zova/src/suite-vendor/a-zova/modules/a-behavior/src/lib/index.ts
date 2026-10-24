@@ -1,2 +1,2 @@
-export * from './behavior.js';
-export * from './useBehavior.js';
+export * from './behavior.ts';
+export * from './useBehavior.ts';
