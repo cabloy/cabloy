@@ -7,7 +7,7 @@ import { Arg, Controller, Web } from 'vona-module-a-web';
 import { DtoAuthorizationDecision } from '../dto/authorizationDecision.ts';
 import { DtoAuthorizationRedirect } from '../dto/authorizationRedirect.ts';
 import { DtoAuthorizationSummary } from '../dto/authorizationSummary.ts';
-import { getMcpAuthConfig, OAuthError } from '../lib/authorization.ts';
+import { getMcpIssuer, OAuthError } from '../lib/authorization.ts';
 
 export interface IControllerOptionsAuthorization extends IDecoratorControllerOptions {}
 
@@ -26,8 +26,7 @@ export class ControllerAuthorization extends BeanBase {
   async decision(@Arg.body() data: DtoAuthorizationDecision): Promise<DtoAuthorizationRedirect> {
     this.ctx.set('Cache-Control', 'no-store');
     this.ctx.set('Referrer-Policy', 'no-referrer');
-    const config = getMcpAuthConfig(this.app);
-    const issuer = new URL(config.issuer);
+    const issuer = new URL(getMcpIssuer(this.app));
     const origin = this.ctx.get('origin');
     // Use the existing exact-origin policy, never the permissive CORS predicate.
     if (!this.bean.security.checkOriginExact(origin, issuer.host)) {

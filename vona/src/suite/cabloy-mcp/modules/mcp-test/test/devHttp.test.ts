@@ -1,5 +1,4 @@
 import type { IncomingHttpHeaders, OutgoingHttpHeaders } from 'node:http';
-import type { IMcpAuthConfig } from 'vona-module-mcp-auth';
 
 import assert from 'node:assert/strict';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
@@ -8,6 +7,7 @@ import { after, before, describe, it } from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
 import { acquireTestLock, app } from 'vona-mock';
 import { fixtureIngressLimits } from 'vona-module-cabloy-mcp';
+import { getMcpIssuer } from 'vona-module-mcp-auth';
 
 import { closeDevTransport, devTransportSnapshot } from '../src/lib/mcpTransport.ts';
 import { ServiceCatalog } from '../src/service/catalog.ts';
@@ -20,7 +20,8 @@ let port: number;
 let bearer: string;
 let origin: string;
 let resource: string;
-const clientId = 'mcp-dev-http-test';
+let clientId: string;
+let dynamicClientId: string | undefined;
 let redirectUri: string;
 let fixtureUserId: string | undefined;
 let fixtureAuthId: string | undefined;
@@ -92,6 +93,7 @@ function openHttp(
     method: options.method ?? 'POST',
     agent: false,
     headers: {
+      'host': new URL(origin).host,
       'content-type': 'application/json',
       'accept': 'application/json, text/event-stream',
       'connection': 'close',
@@ -204,37 +206,40 @@ function output(response: Awaited<ReturnType<typeof send>>) {
 // No test creates another application/listener or changes global origin configuration.
 describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
   let release: (() => void) | undefined;
-  let previousConfig: IMcpAuthConfig;
   before(async () => {
     assert.ok(app.server?.listening, 'managed application listener must be enabled');
     const address = app.server.address();
     assert.ok(address && typeof address === 'object');
     port = address.port;
-    origin = `http://127.0.0.1:${port}`;
-    resource = `${origin}/mcp`;
+    resource = getMcpIssuer(app);
+    origin = new URL(resource).origin;
     redirectUri = `${origin}/mcp-test-callback`;
     release = await acquireTestLock('mcp-test');
-    previousConfig = app.config.modules['mcp-auth'];
-    app.config.modules['mcp-auth'] = {
-      issuer: origin,
-      resources: [{ resource, instanceName: '' }],
-      clients: [
-        {
-          clientId,
-          name: 'Managed MCP test',
-          redirectUris: [redirectUri],
-          authentication: 'none',
-          resources: [resource],
-        },
-      ],
-      pendingTtl: 600,
-      codeTtl: 60,
-      tokenTtl: 900,
-      allowLoopbackHttp: true,
-    };
+    const registration = await openHttp({
+      target: '/mcp/register',
+      headers: {
+        'host': new URL(origin).host,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        client_name: 'Managed MCP dynamic test',
+        redirect_uris: [redirectUri],
+        token_endpoint_auth_method: 'none',
+        grant_types: ['authorization_code'],
+        response_types: ['code'],
+      }),
+    }).response;
+    assert.equal(registration.status, 201);
+    assert.equal(registration.body.token_endpoint_auth_method, 'none');
+    assert.deepEqual(registration.body.redirect_uris, [redirectUri]);
+    assert.equal(registration.body.scope, 'mcp:read');
+    assert.match(registration.body.client_id, /^[\w-]{43}$/);
+    assert.equal(typeof registration.body.client_id, 'string');
+    dynamicClientId = registration.body.client_id as string;
+    clientId = dynamicClientId;
     // Selector probes may touch this shared instance through the ordinary request lifecycle.
     // Finish its managed startup before writing default-instance authorization fixtures.
-    await app.bean.executor.mockCtx(async () => {}, { instanceName: 'shareTest' });
+    await app.bean.executor.mockCtx(async () => {}, { instanceName: 'shareTest' as any });
     await app.bean.executor.mockCtx(
       async () => {
         const user = await app.bean.user.register({ name: `mcp-dev-http-${randomUUID()}` }, true);
@@ -268,6 +273,9 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
               requestDigest: createHash('sha256').update(requestId).digest('hex'),
             });
           }
+          if (dynamicClientId) {
+            await app.scope('mcp-auth').model.client.delete({ clientId: dynamicClientId });
+          }
           if (browserToken) {
             await app.bean.passport.checkAuthToken(browserToken);
             await app.bean.passport.signout();
@@ -283,7 +291,6 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         { instanceName: '' },
       );
     } finally {
-      if (previousConfig) app.config.modules['mcp-auth'] = previousConfig;
       release?.();
     }
   });
@@ -342,7 +349,124 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     assert.ok(app.server?.listening, 'per-request cleanup does not close shared server');
   });
 
-  it('uses only the registered canonical instance and rejects conflicting selectors before dispatch', async () => {
+  it('enforces the direct DCR HTTP boundary and rejects malformed registration requests', async () => {
+    const validBody = JSON.stringify({
+      client_name: 'HTTP negative-case client',
+      redirect_uris: [`${origin}/negative-callback`],
+      token_endpoint_auth_method: 'none',
+      grant_types: ['authorization_code'],
+      response_types: ['code'],
+    });
+    const assertError = async (
+      options: Parameters<typeof openHttp>[0],
+      status: number,
+      code: string,
+    ) => {
+      const response = await openHttp(options).response;
+      assert.equal(response.status, status);
+      assert.equal(response.body.error, code);
+      assert.equal(response.headers['cache-control'], 'no-store');
+    };
+
+    await assertError({ method: 'GET', target: '/mcp/register' }, 405, 'invalid_request');
+    await assertError(
+      { target: '/mcp/register?unexpected=1', body: validBody },
+      400,
+      'invalid_request',
+    );
+    await assertError(
+      {
+        target: '/mcp/register',
+        body: validBody,
+        headers: { authorization: 'Bearer forbidden' },
+      },
+      403,
+      'invalid_request',
+    );
+    await assertError(
+      {
+        target: '/mcp/register',
+        body: validBody,
+        headers: { 'content-type': 'text/plain' },
+      },
+      415,
+      'invalid_client_metadata',
+    );
+    await assertError(
+      {
+        target: '/mcp/register',
+        body: validBody,
+        headers: { 'content-encoding': 'gzip' },
+      },
+      415,
+      'invalid_client_metadata',
+    );
+    await assertError(
+      {
+        target: '/mcp/register',
+        body: 'x'.repeat(16385),
+      },
+      413,
+      'invalid_client_metadata',
+    );
+    await assertError(
+      {
+        target: '/mcp/register',
+        body: '{"client_name":"duplicate","client_name":"duplicate","redirect_uris":["https://client.example.test/callback"]}',
+      },
+      400,
+      'invalid_client_metadata',
+    );
+    await assertError(
+      {
+        target: '/mcp/register',
+        body: JSON.stringify({ ...JSON.parse(validBody), resource }),
+      },
+      400,
+      'invalid_client_metadata',
+    );
+    await assertError(
+      {
+        target: '/mcp/register',
+        body: JSON.stringify({
+          ...JSON.parse(validBody),
+          redirect_uris: [`${origin}/negative-callback#fragment`],
+        }),
+      },
+      400,
+      'invalid_redirect_uri',
+    );
+    await assertError(
+      {
+        target: '/mcp/register',
+        body: validBody,
+        headers: { forwarded: 'for=192.0.2.1' },
+      },
+      400,
+      'invalid_request',
+    );
+    await assertError(
+      {
+        target: '/mcp/register?instanceName=shareTest',
+        body: validBody,
+      },
+      400,
+      'invalid_request',
+    );
+
+    const metadata = await openHttp({
+      target: '/.well-known/oauth-authorization-server/mcp',
+      method: 'GET',
+    }).response;
+    assert.equal(metadata.status, 200);
+    assert.equal(metadata.body.issuer, resource);
+    assert.equal(metadata.body.authorization_endpoint, `${resource}/auth`);
+    assert.equal(metadata.body.token_endpoint, `${resource}/token`);
+    assert.equal(metadata.body.registration_endpoint, `${resource}/register`);
+    assert.equal(metadata.headers['cache-control'], 'no-store');
+  });
+
+  it('uses only the automatically resolved canonical instance and rejects conflicting selectors before dispatch', async () => {
     const params = { name: categoriesName, arguments: {} };
     const contexts = devTransportSnapshot(app)?.contexts ?? 0;
     const queryField = app.config.instance.queryField!;
@@ -361,7 +485,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     }
   });
 
-  it('requires allowlisted authority and bearer while retaining protocol guards and cancellation ownership', async () => {
+  it('requires canonical backend authority and bearer while retaining protocol guards and cancellation ownership', async () => {
     assert.equal(
       (await send('tools/list', {}, { headers: { origin: 'https://client.example.test' } })).status,
       200,
@@ -446,7 +570,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     assert.equal(metadata.status, 200);
     assert.deepEqual(metadata.body, {
       resource,
-      authorization_servers: [origin],
+      authorization_servers: [resource],
       scopes_supported: ['mcp:read'],
       bearer_methods_supported: ['header'],
     });
@@ -521,7 +645,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       const config = app.config.modules['mcp-auth'];
       const contexts = devTransportSnapshot(app)?.contexts;
       try {
-        app.config.modules['mcp-auth'] = { ...config, issuer: '', resources: [], clients: [] };
+        app.config.modules['mcp-auth'] = { ...config, tokenTtl: 0 };
         assert.equal((await send('tools/list')).status, 503);
         assert.equal(devTransportSnapshot(app)?.contexts, contexts);
       } finally {

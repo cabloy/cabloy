@@ -7,11 +7,13 @@ import { Service } from 'vona-module-a-bean';
 
 import type { DtoAuthorizationSummary } from '../dto/authorizationSummary.ts';
 import type { EntityAuthorization } from '../entity/authorization.tsx';
-import type { IMcpAuthConfig, IMcpAuthResource } from '../types/index.ts';
+import type { IMcpAuthConfig, IMcpAuthResource, IMcpAuthResolvedClient } from '../types/index.ts';
 
 import {
   equalDigest,
   getMcpAuthConfig,
+  getMcpIssuer,
+  resolveMcpResource,
   OAuthError,
   requiredOAuthParameter,
   sha256,
@@ -24,8 +26,7 @@ const opaquePattern = /^[\w-]{43}$/;
 export class ServiceAuthorization extends BeanBase {
   async authorize(params: URLSearchParams, resource: IMcpAuthResource): Promise<string> {
     const config = this.configForResource(resource.resource);
-    const registered = config.resources.find(item => item.resource === resource.resource)!;
-    if (registered.instanceName !== resource.instanceName) throw new OAuthError('invalid_target');
+    if (this.ctx.instanceName !== resource.instanceName) throw new OAuthError('invalid_target');
     this.ensureAutocommit();
     validateOAuthParameters(params, [
       'response_type',
@@ -39,13 +40,9 @@ export class ServiceAuthorization extends BeanBase {
     ]);
     if (params.get('response_type') !== 'code') throw new OAuthError('unsupported_response_type');
     if (params.get('resource') !== resource.resource) throw new OAuthError('invalid_target');
-    const client = config.clients.find(item => item.clientId === params.get('client_id'));
+    const client = await this.resolveClient(params.get('client_id') ?? '', resource.resource);
     const redirectUri = requiredOAuthParameter(params, 'redirect_uri');
-    if (
-      !client ||
-      !client.resources.includes(resource.resource) ||
-      !client.redirectUris.includes(redirectUri)
-    ) {
+    if (!client || !client.redirectUris.includes(redirectUri)) {
       throw new OAuthError('invalid_request');
     }
     const scope = params.get('scope') ?? 'mcp:read';
@@ -60,7 +57,7 @@ export class ServiceAuthorization extends BeanBase {
     await this.scope.model.authorization.insert({
       requestDigest: sha256(request),
       clientId: client.clientId,
-      issuer: config.issuer,
+      issuer: getMcpIssuer(this.app),
       resource: resource.resource,
       redirectUri,
       scope,
@@ -81,7 +78,7 @@ export class ServiceAuthorization extends BeanBase {
     await this.currentPassport();
     const row = await this.pending(request);
     const config = this.configForResource(row.resource);
-    const client = this.validateBindings(row, config);
+    const client = await this.validateBindings(row, config);
     return {
       clientName: client.name,
       resource: row.resource,
@@ -96,7 +93,7 @@ export class ServiceAuthorization extends BeanBase {
     const passport = await this.currentPassport();
     const row = await this.pending(request);
     const config = this.configForResource(row.resource);
-    this.validateBindings(row, config);
+    await this.validateBindings(row, config);
     const now = Date.now();
     const code = allow ? randomBytes(32).toString('base64url') : '';
     const expiresAt = allow ? now + config.codeTtl * 1000 : now;
@@ -119,7 +116,7 @@ export class ServiceAuthorization extends BeanBase {
     if (allow) redirect.searchParams.set('code', code);
     else redirect.searchParams.set('error', 'access_denied');
     if (row.oauthState) redirect.searchParams.set('state', row.oauthState);
-    redirect.searchParams.set('iss', config.issuer);
+    redirect.searchParams.set('iss', getMcpIssuer(this.app));
     return { redirectUrl: redirect.href };
   }
 
@@ -145,7 +142,7 @@ export class ServiceAuthorization extends BeanBase {
       throw new OAuthError('unsupported_grant_type');
     const resource = requiredOAuthParameter(params, 'resource');
     const config = this.configForResource(resource);
-    const client = this.authenticateClient(config, params, authorization);
+    const client = await this.authenticateClient(config, params, authorization, resource);
     const code = requiredOAuthParameter(params, 'code');
     const verifier = requiredOAuthParameter(params, 'code_verifier');
     const redirectUri = requiredOAuthParameter(params, 'redirect_uri');
@@ -170,7 +167,7 @@ export class ServiceAuthorization extends BeanBase {
       .where('codeExpiresAt', '>', Date.now())
       .first();
     if (!row) throw new OAuthError('invalid_grant');
-    this.validateBindings(row, config);
+    await this.validateBindings(row, config);
     await this.loadPassport(row.userId, row.authId, 'invalid_grant', 400);
     const token = randomBytes(32).toString('base64url');
     const now = Date.now();
@@ -213,7 +210,7 @@ export class ServiceAuthorization extends BeanBase {
       .first();
     if (!row) throw new OAuthError('invalid_token', 401);
     if (row.scope !== 'mcp:read') throw new OAuthError('insufficient_scope', 403);
-    this.validateBindings(row, config, 'invalid_token', 401);
+    await this.validateBindings(row, config, 'invalid_token', 401);
     return await this.loadPassport(row.userId, row.authId, 'invalid_token', 401);
   }
 
@@ -257,10 +254,11 @@ export class ServiceAuthorization extends BeanBase {
 
   private configForResource(resource: string): IMcpAuthConfig {
     const config = getMcpAuthConfig(this.app);
-    const registration = config.resources.find(item => item.resource === resource);
+    const issuer = getMcpIssuer(this.app);
+    const binding = resolveMcpResource(this.app, new URL(issuer).host);
     if (
-      !registration ||
-      this.ctx.instanceName !== registration.instanceName ||
+      resource !== binding.resource ||
+      this.ctx.instanceName !== binding.instanceName ||
       !this.ctx.instance
     ) {
       throw new OAuthError('invalid_target');
@@ -268,19 +266,18 @@ export class ServiceAuthorization extends BeanBase {
     return config;
   }
 
-  private validateBindings(
+  private async validateBindings(
     row: EntityAuthorization,
-    config: IMcpAuthConfig,
+    _config: IMcpAuthConfig,
     error = 'invalid_grant',
     status = 400,
-  ) {
-    const client = config.clients.find(item => item.clientId === row.clientId);
+  ): Promise<IMcpAuthResolvedClient> {
+    const client = await this.resolveClient(row.clientId, row.resource);
     if (
-      row.issuer !== config.issuer ||
+      row.issuer !== getMcpIssuer(this.app) ||
       !client ||
-      !client.resources.includes(row.resource) ||
       !client.redirectUris.includes(row.redirectUri) ||
-      row.scope !== 'mcp:read'
+      row.scope !== client.scope
     ) {
       throw new OAuthError(error, status);
     }
@@ -386,11 +383,12 @@ export class ServiceAuthorization extends BeanBase {
     return { user, auth, roles };
   }
 
-  private authenticateClient(
-    config: IMcpAuthConfig,
+  private async authenticateClient(
+    _config: IMcpAuthConfig,
     params: URLSearchParams,
     authorization: string | undefined,
-  ) {
+    resource: string,
+  ): Promise<IMcpAuthResolvedClient> {
     let clientId = params.get('client_id');
     let secret: string | undefined;
     if (authorization !== undefined) {
@@ -410,16 +408,25 @@ export class ServiceAuthorization extends BeanBase {
         throw new OAuthError('invalid_client', 401);
       }
     }
-    const client = config.clients.find(item => item.clientId === clientId);
+    const client = await this.resolveClient(clientId ?? '', resource);
     if (
       !client ||
       (client.authentication === 'none' && authorization !== undefined) ||
       (client.authentication === 'client_secret_basic' &&
-        (secret === undefined || !equalDigest(sha256(secret), client.secretSha256!)))
+        (secret === undefined ||
+          !client.secretSha256 ||
+          !equalDigest(sha256(secret), client.secretSha256)))
     ) {
       throw new OAuthError('invalid_client', 401);
     }
     return client;
+  }
+
+  private async resolveClient(
+    clientId: string,
+    resource: string,
+  ): Promise<IMcpAuthResolvedClient | undefined> {
+    return await this.scope.service.registration.resolve(clientId, resource);
   }
 
   private ensureAutocommit(): void {

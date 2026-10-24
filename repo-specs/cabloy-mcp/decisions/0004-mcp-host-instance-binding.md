@@ -1,5 +1,9 @@
 # ADR 0004: Proposed MCP Host-to-Instance Binding
 
+## Current bounded authority supersession (2026-10-24)
+
+For the approved browser-to-MCP slice, [ADR 0010](./0010-mcp-browser-execution-profile.md) supersedes the MCP-specific host/resource/instance map proposed below: issuer and resource both derive as exact `${origin}/mcp` from root backend `server.serve.protocol`/`host`. Nonproduction may use the existing requestless `http://localhost:<SERVER_LISTEN_PORT>` fallback; production requires its public serve pair. Arbitrary Host/proxy values cannot mint authority. Validate Host against canonical authority, reject instance selectors and use existing automatic instance routing in a fresh selector-free context, without a separate MCP resource/instance registry. Canonical AS metadata is `/.well-known/oauth-authorization-server/mcp`; PRM remains `/.well-known/oauth-protected-resource/mcp`. This is a bounded simplification, not production proxy qualification or whole-ADR acceptance. The proposal and earlier evidence below retain their historical scope; no new runtime result follows.
+
 ## Status
 
 Proposed — design draft for `DEC-MCP-04`, not an accepted trust configuration, proxy deployment, source implementation, or `ATP-MCP-INSTANCE-01` result. The accountable decision owner is `zhennann`. The actual public hosts, instance names, proxy operator, issuer/resource registration, and trust settings are `TODO(confirm)`; no live endpoints or credentials belong in this record.

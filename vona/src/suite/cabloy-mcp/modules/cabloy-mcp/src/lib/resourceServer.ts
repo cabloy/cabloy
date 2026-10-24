@@ -2,11 +2,11 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { VonaApplication } from 'vona';
 import type { IMcpAuthResource } from 'vona-module-mcp-auth';
 
-import { getMcpAuthConfig, OAuthError, resolveMcpResource } from 'vona-module-mcp-auth';
+import { getMcpIssuer, OAuthError, resolveMcpResource } from 'vona-module-mcp-auth';
 
 export const mcpResourceMetadataPath = '/.well-known/oauth-protected-resource/mcp';
 
-/** Authority is selected only from the validated server registry, never proxy headers. */
+/** Authority is selected only from the backend public origin, never proxy headers. */
 export function resolveMcpRequestResource(app: VonaApplication, req: IncomingMessage) {
   const hosts: string[] = [];
   for (let index = 0; index < req.rawHeaders.length; index += 2) {
@@ -20,7 +20,7 @@ export function mcpResourceChallenge(
   resource: IMcpAuthResource,
   error?: 'invalid_token' | 'insufficient_scope',
 ) {
-  // Both URLs come exclusively from validated configuration.
+  // Both URLs come exclusively from the backend-derived authority.
   const metadata = new URL(mcpResourceMetadataPath, resource.resource).href;
   return `Bearer resource_metadata="${metadata}"${error ? `, error="${error}"` : ''}${error === 'insufficient_scope' ? ', scope="mcp:read"' : ''}`;
 }
@@ -101,10 +101,10 @@ export function handleMcpResourceMetadata(
       throw new OAuthError('invalid_request', 405);
     }
     const resource = resolveMcpRequestResource(app, req);
-    const config = getMcpAuthConfig(app);
+    const issuer = getMcpIssuer(app);
     body = {
       resource: resource.resource,
-      authorization_servers: [config.issuer],
+      authorization_servers: [issuer],
       scopes_supported: ['mcp:read'],
       bearer_methods_supported: ['header'],
     };

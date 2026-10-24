@@ -2,7 +2,11 @@ import type { VonaApplication } from 'vona';
 
 import { createHash, timingSafeEqual } from 'node:crypto';
 
-import type { IMcpAuthConfig, IMcpAuthResource } from '../types/index.ts';
+import type {
+  IMcpAuthConfig,
+  IMcpAuthResource,
+  IMcpAuthRegistrationConfig,
+} from '../types/index.ts';
 
 export class OAuthError extends Error {
   constructor(
@@ -26,6 +30,12 @@ export function equalDigest(left: string, right: string): boolean {
   );
 }
 
+export function validateConfiguredRedirectUri(value: string, allowLoopbackHttp: boolean): URL {
+  const url = configuredUrl(value, allowLoopbackHttp);
+  if (url.href !== value) throw new OAuthError('invalid_redirect_uri');
+  return url;
+}
+
 function configuredUrl(value: string, allowLoopbackHttp: boolean): URL {
   if (typeof value !== 'string' || value.length > 2048) throw new OAuthError('server_error', 503);
   let url: URL;
@@ -47,100 +57,71 @@ function configuredUrl(value: string, allowLoopbackHttp: boolean): URL {
   return url;
 }
 
-/** Validate authored registrations, including the intentionally disabled empty default. */
+/** Validate operational policy independently of runtime authority. */
 export function validateMcpAuthConfig(config: IMcpAuthConfig): IMcpAuthConfig {
   const invalid = () => {
     throw new OAuthError('server_error', 503);
   };
-  if (
-    !config ||
-    typeof config.issuer !== 'string' ||
-    !Array.isArray(config.resources) ||
-    !Array.isArray(config.clients) ||
-    typeof config.allowLoopbackHttp !== 'boolean'
-  ) {
+  if (!config || typeof config.allowLoopbackHttp !== 'boolean') {
     invalid();
   }
+  const registration: IMcpAuthRegistrationConfig = {
+    maxBodyBytes: config.registration?.maxBodyBytes ?? 16384,
+    maxRedirectUris: config.registration?.maxRedirectUris ?? 16,
+    rateLimit: config.registration?.rateLimit ?? 10,
+    rateLimitWindow: config.registration?.rateLimitWindow ?? 600,
+  };
+  config.registration = registration;
   for (const ttl of [config.pendingTtl, config.codeTtl, config.tokenTtl]) {
     if (!Number.isSafeInteger(ttl) || ttl <= 0 || ttl > 86400) invalid();
   }
-  if (!config.issuer) {
-    if (config.resources.length || config.clients.length) invalid();
-    return config;
-  }
-  const issuer = configuredUrl(config.issuer, config.allowLoopbackHttp);
-  if (issuer.origin !== config.issuer) invalid();
-  const resources = new Set<string>();
-  const hosts = new Set<string>();
-  for (const item of config.resources) {
-    if (!item || typeof item.instanceName !== 'string') invalid();
-    const url = configuredUrl(item.resource, config.allowLoopbackHttp);
-    // Initial profile is integrated, same-origin AS/Site/resource, not remote federation.
-    if (
-      url.origin !== issuer.origin ||
-      url.pathname !== '/mcp' ||
-      url.search ||
-      item.resource.includes('?') ||
-      url.href !== item.resource ||
-      resources.has(item.resource) ||
-      hosts.has(url.host)
-    ) {
-      invalid();
-    }
-    resources.add(item.resource);
-    hosts.add(url.host);
-  }
-  const clientIds = new Set<string>();
-  for (const client of config.clients) {
-    if (
-      !client ||
-      typeof client.clientId !== 'string' ||
-      !client.clientId ||
-      client.clientId.length > 255 ||
-      typeof client.name !== 'string' ||
-      !client.name ||
-      client.name.length > 255 ||
-      clientIds.has(client.clientId) ||
-      !Array.isArray(client.redirectUris) ||
-      !client.redirectUris.length ||
-      !Array.isArray(client.resources) ||
-      !client.resources.length ||
-      new Set(client.redirectUris).size !== client.redirectUris.length ||
-      new Set(client.resources).size !== client.resources.length
-    ) {
-      invalid();
-    }
-    clientIds.add(client.clientId);
-    for (const redirectUri of client.redirectUris) {
-      const url = configuredUrl(redirectUri, config.allowLoopbackHttp);
-      if (url.href !== redirectUri) invalid();
-    }
-    if (client.resources.some(resource => !resources.has(resource))) invalid();
-    if (client.authentication === 'client_secret_basic') {
-      if (!client.secretSha256 || !/^[a-f0-9]{64}$/.test(client.secretSha256)) invalid();
-    } else if (client.authentication !== 'none' || client.secretSha256 !== undefined) {
-      invalid();
-    }
+  if (
+    registration.maxBodyBytes < 1024 ||
+    registration.maxBodyBytes > 1024 * 1024 ||
+    registration.maxRedirectUris < 1 ||
+    registration.maxRedirectUris > 64 ||
+    registration.rateLimit < 1 ||
+    registration.rateLimit > 10000 ||
+    registration.rateLimitWindow < 1 ||
+    registration.rateLimitWindow > 86400
+  ) {
+    invalid();
   }
   return config;
 }
 
 export function getMcpAuthConfig(app: VonaApplication): IMcpAuthConfig {
-  // One root-owned registry is shared by pre-instance ingress and scoped services.
-  // Instance-local overrides must not create a second authority mapping.
-  const config = validateMcpAuthConfig(app.config.modules['mcp-auth']);
-  if (!config.issuer || !config.resources.length || !config.clients.length) {
-    throw new OAuthError('temporarily_unavailable', 503);
-  }
-  return config;
+  return validateMcpAuthConfig(app.config.modules['mcp-auth']);
 }
 
-/** Host selects only a canonical registered resource; it never creates an authority. */
-export function resolveMcpResource(app: VonaApplication, host: string): IMcpAuthResource {
+/** Use the backend public origin, never request or proxy headers, as authority. */
+export function getMcpIssuer(app: VonaApplication): string {
   const config = getMcpAuthConfig(app);
-  const resource = config.resources.find(item => new URL(item.resource).host === host);
-  if (!resource) throw new OAuthError('invalid_target');
-  return resource;
+  const { protocol, host } = app.config.server.serve;
+  if (app.meta.isProd && (!protocol || !host)) {
+    throw new OAuthError('temporarily_unavailable', 503);
+  }
+  const port = app.meta.env.SERVER_LISTEN_PORT;
+  const origin = `${protocol || 'http'}://${host || (port ? `localhost:${port}` : 'localhost')}`;
+  const url = configuredUrl(origin, config.allowLoopbackHttp);
+  if (url.origin !== origin) throw new OAuthError('server_error', 503);
+  return `${origin}/mcp`;
+}
+
+/** Resolve normal server routing without caller selectors or ambient tenant state. */
+export function resolveMcpResource(app: VonaApplication, host: string): IMcpAuthResource {
+  const resource = getMcpIssuer(app);
+  const url = new URL(resource);
+  if (url.host !== host) throw new OAuthError('invalid_target');
+  const ctx = app.createAnonymousContext({
+    headers: { host },
+    method: 'POST',
+    url: '/mcp',
+    socket: { encrypted: url.protocol === 'https:' },
+  });
+  const instanceName = ctx.instanceName;
+  if (typeof instanceName !== 'string') throw new OAuthError('invalid_target');
+  return { resource, instanceName };
 }
 
 export function validateOAuthParameters(params: URLSearchParams, allowed: string[]): void {

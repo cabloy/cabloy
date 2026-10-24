@@ -1,22 +1,27 @@
 import type { TableIdentity } from 'table-identity';
 
 import assert from 'node:assert/strict';
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
-import { describe, it } from 'node:test';
+import { createHash, randomUUID } from 'node:crypto';
+import { before, describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
 
-import type { IMcpAuthConfig } from '../src/types/index.ts';
+import type {
+  IMcpAuthConfig,
+  IMcpAuthResource,
+  TypeMcpClientAuthentication,
+} from '../src/types/index.ts';
 
 import { config as defaultConfig } from '../src/config/config.ts';
 import {
   getMcpAuthConfig,
+  getMcpIssuer,
   OAuthError,
   resolveMcpResource,
   sha256,
   validateMcpAuthConfig,
 } from '../src/lib/authorization.ts';
 
-const resource = { resource: 'https://mcp.example.test/mcp', instanceName: '' };
+let resource: IMcpAuthResource;
 const verifier = 'v'.repeat(43);
 const challenge = createHash('sha256').update(verifier).digest('base64url');
 const callback = 'https://client.example.test/callback?existing=1';
@@ -24,6 +29,8 @@ const password = 'mcp-authorization-test-password';
 
 interface Fixture {
   config: IMcpAuthConfig;
+  clientId: string;
+  clientSecret?: string;
   userId: TableIdentity;
   name: string;
 }
@@ -75,35 +82,41 @@ async function asUser<T>(fixture: Fixture, operation: () => Promise<T>): Promise
     }
   });
 }
-async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
+async function withFixture(
+  operation: (fixture: Fixture) => Promise<void>,
+  authentication: TypeMcpClientAuthentication = 'none',
+) {
   // Same lock as the RS tests: both temporarily own the global registration fixture.
   const release = await acquireTestLock('mcp-test');
   const original = structuredClone(app.config.modules['mcp-auth']);
   const name = `mcp-auth-${randomUUID()}`;
-  const clientId = `client-${randomUUID()}`;
+  let clientId: string | undefined;
+  let clientSecret: string | undefined;
   let userId: TableIdentity | undefined;
   let authId: TableIdentity | undefined;
   let profileId: TableIdentity | undefined;
   const config: IMcpAuthConfig = {
-    issuer: 'https://mcp.example.test',
-    resources: [resource],
-    clients: [
-      {
-        clientId,
-        name: 'Test client',
-        redirectUris: [callback],
-        authentication: 'none',
-        resources: [resource.resource],
-      },
-    ],
+    registration: { ...defaultConfig(app).registration! },
     pendingTtl: 600,
     codeTtl: 60,
     tokenTtl: 900,
-    allowLoopbackHttp: false,
+    allowLoopbackHttp: true,
   };
   try {
     Object.assign(app.config.modules['mcp-auth'], config);
     await app.bean.executor.mockCtx(async () => {
+      const registered = await app.scope('mcp-auth').service.registration.register(
+        {
+          client_name: 'Test client',
+          redirect_uris: [callback],
+          token_endpoint_auth_method: authentication,
+          grant_types: ['authorization_code'],
+          response_types: ['code'],
+        },
+        resource,
+      );
+      clientId = registered.client_id;
+      clientSecret = registered.client_secret;
       const user = await app.bean.user.register({ name }, true);
       userId = user.id;
       const profile = await app
@@ -113,17 +126,14 @@ async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
       const auth = await app.scope('a-auth').model.auth.get({ userId });
       authId = auth!.id;
     });
-    await operation({ config, userId: userId!, name });
+    await operation({ config, clientId: clientId!, clientSecret, userId: userId!, name });
   } finally {
     try {
       await app.bean.executor.mockCtx(async () => {
-        await model()
-          .builderSelect()
-          .whereIn(
-            'clientId',
-            config.clients.map(client => client.clientId),
-          )
-          .delete();
+        if (clientId !== undefined) {
+          await model().builderSelect().where({ clientId }).delete();
+          await app.scope('mcp-auth').model.client.delete({ clientId });
+        }
         if (authId !== undefined) await app.scope('a-auth').model.auth.deleteById(authId);
         if (profileId !== undefined)
           await app.scope('auth-simple').model.authSimple.deleteById(profileId);
@@ -140,7 +150,7 @@ async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
 }
 async function issueCode(fixture: Fixture) {
   const request = await app.bean.executor.mockCtx(() =>
-    service().authorize(authorizationParams(fixture.config.clients[0].clientId), resource),
+    service().authorize(authorizationParams(fixture.clientId), resource),
   );
   const decision = await asUser(fixture, () => service().decide(request, true));
   const code = new URL(decision.redirectUrl).searchParams.get('code')!;
@@ -148,67 +158,88 @@ async function issueCode(fixture: Fixture) {
 }
 async function redeem(fixture: Fixture, code: string) {
   return await app.bean.executor.mockCtx(() =>
-    service().exchange(tokenParams(fixture.config.clients[0].clientId, code), undefined),
+    service().exchange(tokenParams(fixture.clientId, code), undefined),
   );
 }
 
 describe('authorization.test.ts', { concurrency: false }, () => {
-  it('validates closed defaults, canonical allowlists, redirects and issuer policy', () => {
-    assert.deepEqual(validateMcpAuthConfig(defaultConfig(app)), {
-      issuer: '',
-      resources: [],
-      clients: [],
+  before(() => {
+    const issuer = getMcpIssuer(app);
+    resource = resolveMcpResource(app, new URL(issuer).host);
+  });
+
+  it('validates policy defaults and derives issuer and exact host authority from the backend', async () => {
+    const config = defaultConfig(app);
+    assert.deepEqual(validateMcpAuthConfig(config), {
+      registration: {
+        maxBodyBytes: 16384,
+        maxRedirectUris: 16,
+        rateLimit: 10,
+        rateLimitWindow: 600,
+      },
       pendingTtl: 600,
       codeTtl: 60,
       tokenTtl: 900,
-      allowLoopbackHttp: false,
+      allowLoopbackHttp: true,
     });
-    const config: IMcpAuthConfig = {
-      ...defaultConfig(app),
-      issuer: 'https://mcp.example.test',
-      resources: [resource],
-      clients: [
-        {
-          clientId: 'client',
-          name: 'Client',
-          redirectUris: [callback],
-          authentication: 'none',
-          resources: [resource.resource],
-        },
-      ],
-    };
     assert.equal(validateMcpAuthConfig(config), config);
     for (const patch of [
-      { issuer: 'https://mcp.example.test/path' },
-      { resources: [{ ...resource, resource: `${resource.resource}?query=1` }] },
-      { resources: [resource, resource] },
-      {
-        clients: [
-          { ...config.clients[0], redirectUris: ['https://client.example.test/#fragment'] },
-        ],
-      },
-      { clients: [{ ...config.clients[0], authentication: 'client_secret_basic' as const }] },
       { tokenTtl: 0 },
+      { pendingTtl: 86401 },
+      { codeTtl: 1.5 },
+      { registration: { ...config.registration!, maxRedirectUris: 0 } },
+      { registration: { ...config.registration!, maxBodyBytes: 1023 } },
+      { registration: { ...config.registration!, rateLimit: 0 } },
+      { registration: { ...config.registration!, rateLimitWindow: 0 } },
     ]) {
       assert.throws(() => validateMcpAuthConfig({ ...config, ...patch }), OAuthError);
     }
-    const local = {
-      ...config,
-      issuer: 'http://127.0.0.1:7102',
-      resources: [{ resource: 'http://127.0.0.1:7102/mcp', instanceName: '' }],
-      clients: [],
-    };
-    assert.throws(() => validateMcpAuthConfig(local), OAuthError);
-    assert.equal(validateMcpAuthConfig({ ...local, allowLoopbackHttp: true }).issuer, local.issuer);
+    assert.equal(
+      validateMcpAuthConfig({ ...config, allowLoopbackHttp: false }).allowLoopbackHttp,
+      false,
+    );
+
+    const { protocol, host } = app.config.server.serve;
+    const port = app.meta.env.SERVER_LISTEN_PORT;
+    const origin = `${protocol || 'http'}://${host || (port ? `localhost:${port}` : 'localhost')}`;
+    assert.equal(getMcpIssuer(app), `${origin}/mcp`);
+    assert.equal(resource.resource, getMcpIssuer(app));
+    const url = new URL(resource.resource);
+    const automatic = app.createAnonymousContext({
+      headers: { host: url.host },
+      method: 'POST',
+      url: '/mcp',
+      socket: { encrypted: url.protocol === 'https:' },
+    });
+    assert.equal(resource.instanceName, automatic.instanceName);
+    assert.deepEqual(resolveMcpResource(app, url.host), resource);
+    for (const wrongHost of [
+      'attacker.example.test',
+      `${url.host}.attacker.example.test`,
+      `${url.host},attacker.example.test`,
+      `${url.host}/mcp`,
+      url.port ? url.hostname : `${url.hostname}:12345`,
+    ]) {
+      assert.throws(
+        () => resolveMcpResource(app, wrongHost),
+        error => error instanceof OAuthError && error.oauthError === 'invalid_target',
+      );
+    }
+    await app.bean.executor.mockCtx(
+      async () => {
+        assert.ok(app.currentContext);
+        assert.notEqual(app.currentContext.instanceName, resource.instanceName);
+        assert.deepEqual(resolveMcpResource(app, url.host), resource);
+      },
+      { instanceName: 'shareTest' as any },
+    );
   });
 
   it('uses existing real login and one-row digests through approval, exchange and revocation', async () => {
     await withFixture(async fixture => {
-      const clientId = fixture.config.clients[0].clientId;
+      const clientId = fixture.clientId;
       const request = await app.bean.executor.mockCtx(async () => {
-        assert.equal(getMcpAuthConfig(app).issuer, fixture.config.issuer);
-        assert.deepEqual(resolveMcpResource(app, 'mcp.example.test'), resource);
-        assert.throws(() => resolveMcpResource(app, 'attacker.example.test'), OAuthError);
+        assert.deepEqual(getMcpAuthConfig(app), fixture.config);
         return await service().authorize(authorizationParams(clientId), resource);
       });
       await app.bean.executor.mockCtx(() =>
@@ -261,7 +292,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
 
   it('rejects invalid contracts before persistence and enforces current instance and confidentiality', async () => {
     await withFixture(async fixture => {
-      const clientId = fixture.config.clients[0].clientId;
+      const clientId = fixture.clientId;
       await app.bean.executor.mockCtx(async () => {
         for (const [name, value, error] of [
           ['redirect_uri', 'https://evil.example/callback', 'invalid_request'],
@@ -296,15 +327,24 @@ describe('authorization.test.ts', { concurrency: false }, () => {
         await expectOAuth(() => service().exchange(wrongRedirect, undefined), 'invalid_grant');
       });
       const token = await redeem(fixture, code);
+      await app.bean.executor.mockCtx(
+        async () => {
+          await expectOAuth(
+            () => service().authorize(authorizationParams(clientId), resource),
+            'invalid_target',
+          );
+          await expectOAuth(
+            () => service().lookup(token.access_token, resource.resource),
+            'invalid_target',
+          );
+        },
+        { instanceName: 'shareTest' as any },
+      );
       await app.bean.executor.mockCtx(async () => {
-        fixture.config.resources[0] = { ...resource, instanceName: 'shareTest' };
-        Object.assign(app.config.modules['mcp-auth'], fixture.config);
         await expectOAuth(
-          () => service().lookup(token.access_token, resource.resource),
+          () => service().lookup(token.access_token, 'https://other.example.test/mcp'),
           'invalid_target',
         );
-        fixture.config.resources[0] = resource;
-        Object.assign(app.config.modules['mcp-auth'], fixture.config);
         await app.scope('home-user').model.user.updateById(fixture.userId, { activated: false });
         await expectOAuth(
           () => service().lookup(token.access_token, resource.resource),
@@ -342,7 +382,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
 
   it('denies and expires pending/code state without issuing, and rejects ambient issuance transactions', async () => {
     await withFixture(async fixture => {
-      const clientId = fixture.config.clients[0].clientId;
+      const clientId = fixture.clientId;
       const request = await app.bean.executor.mockCtx(() =>
         service().authorize(authorizationParams(clientId), resource),
       );
@@ -384,38 +424,38 @@ describe('authorization.test.ts', { concurrency: false }, () => {
     });
   });
 
-  it('authenticates preregistered confidential clients by Basic digest only', async () => {
+  it('authenticates dynamically registered confidential clients by Basic digest only', async () => {
     await withFixture(async fixture => {
-      const secret = randomBytes(32).toString('base64url');
-      fixture.config.clients[0].authentication = 'client_secret_basic';
-      fixture.config.clients[0].secretSha256 = sha256(secret);
-      Object.assign(app.config.modules['mcp-auth'], fixture.config);
+      const secret = fixture.clientSecret!;
+      assert.ok(secret);
       const { code } = await issueCode(fixture);
-      const params = tokenParams(fixture.config.clients[0].clientId, code);
+      const params = tokenParams(fixture.clientId, code);
       await app.bean.executor.mockCtx(async () => {
+        const client = await app.scope('mcp-auth').model.client.get({ clientId: fixture.clientId });
+        assert.equal(client!.secretSha256, sha256(secret));
+        assert.notEqual(client!.secretSha256, secret);
         await expectOAuth(() => service().exchange(params, undefined), 'invalid_client');
         params.delete('client_id');
         const basic = (value: string) =>
-          `Basic ${Buffer.from(`${encodeURIComponent(fixture.config.clients[0].clientId)}:${encodeURIComponent(value)}`).toString('base64')}`;
+          `Basic ${Buffer.from(`${encodeURIComponent(fixture.clientId)}:${encodeURIComponent(value)}`).toString('base64')}`;
         await expectOAuth(() => service().exchange(params, basic('wrong')), 'invalid_client');
         const token = await service().exchange(params, basic(secret));
         assert.equal(
           (await service().lookup(token.access_token, resource.resource)).user!.id,
           fixture.userId,
         );
-        fixture.config.clients[0].redirectUris = ['https://client.example.test/changed'];
-        Object.assign(app.config.modules['mcp-auth'], fixture.config);
+        await app.scope('mcp-auth').service.registration.disable(fixture.clientId);
         await expectOAuth(
           () => service().lookup(token.access_token, resource.resource),
           'invalid_token',
         );
       });
-    });
+    }, 'client_secret_basic');
   });
 
   it('has exactly one durable decision and redemption winner across separate contexts', async () => {
     await withFixture(async fixture => {
-      const clientId = fixture.config.clients[0].clientId;
+      const clientId = fixture.clientId;
       const request = await app.bean.executor.mockCtx(() =>
         service().authorize(authorizationParams(clientId), resource),
       );

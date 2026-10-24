@@ -4,12 +4,15 @@ import type { TypeEntityOptionsFields,TypeControllerOptionsActions } from 'vona-
 import type { TableIdentity } from 'table-identity';
 /** entity: begin */
 export * from '../entity/authorization.tsx';
+export * from '../entity/client.tsx';
 import type { IEntityOptionsAuthorization } from '../entity/authorization.tsx';
+import type { IEntityOptionsClient } from '../entity/client.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
 
     export interface IEntityRecord {
       'mcp-auth:authorization': IEntityOptionsAuthorization;
+'mcp-auth:client': IEntityOptionsClient;
     }
 
 
@@ -20,16 +23,21 @@ declare module 'vona-module-mcp-auth' {
 /** entity: end */
 /** entity: begin */
 import type { EntityAuthorization } from '../entity/authorization.tsx';
+import type { EntityClient } from '../entity/client.tsx';
 export interface IModuleEntity {
   'authorization': EntityAuthorizationMeta;
+'client': EntityClientMeta;
 }
 /** entity: end */
 /** entity: begin */
 export type EntityAuthorizationTableName = 'mcpAuthAuthorization';
+export type EntityClientTableName = 'mcpAuthClient';
 export type EntityAuthorizationMeta=TypeEntityMeta<EntityAuthorization,EntityAuthorizationTableName>;
+export type EntityClientMeta=TypeEntityMeta<EntityClient,EntityClientTableName>;
 declare module 'vona-module-a-orm' {
   export interface ITableRecord {
     'mcpAuthAuthorization': EntityAuthorizationMeta;
+'mcpAuthClient': EntityClientMeta;
   }
 }
 declare module 'vona-module-mcp-auth' {
@@ -37,16 +45,23 @@ declare module 'vona-module-mcp-auth' {
     export interface IEntityOptionsAuthorization {
       fields?: TypeEntityOptionsFields<EntityAuthorization, IEntityOptionsAuthorization[TypeSymbolKeyFieldsMore]>;
     }
+
+    export interface IEntityOptionsClient {
+      fields?: TypeEntityOptionsFields<EntityClient, IEntityOptionsClient[TypeSymbolKeyFieldsMore]>;
+    }
 }
 /** entity: end */
 /** model: begin */
 export * from '../model/authorization.ts';
+export * from '../model/client.ts';
 import type { IModelOptionsAuthorization } from '../model/authorization.ts';
+import type { IModelOptionsClient } from '../model/client.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
 
     export interface IModelRecord {
       'mcp-auth:authorization': IModelOptionsAuthorization;
+'mcp-auth:client': IModelOptionsClient;
     }
 
 
@@ -63,12 +78,25 @@ declare module 'vona-module-mcp-auth' {
             get $onionName(): 'mcp-auth:authorization';
             get $onionOptions(): IModelOptionsAuthorization;
           }
+
+        export interface ModelClient {
+          /** @internal */
+          get scope(): ScopeModuleMcpAuth;
+        }
+
+          export interface ModelClient {
+            get $beanFullName(): 'mcp-auth.model.client';
+            get $onionName(): 'mcp-auth:client';
+            get $onionOptions(): IModelOptionsClient;
+          }
 }
 /** model: end */
 /** model: begin */
 import type { ModelAuthorization } from '../model/authorization.ts';
+import type { ModelClient } from '../model/client.ts';
 export interface IModuleModel {
   'authorization': ModelAuthorization;
+'client': ModelClient;
 }
 /** model: end */
 /** model: begin */
@@ -77,6 +105,7 @@ import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
     'mcp-auth.model.authorization': ModelAuthorization;
+'mcp-auth.model.client': ModelClient;
   }
 }
 /** model: end */
@@ -122,10 +151,52 @@ declare module 'vona-module-mcp-auth' {
 updateById<T extends IModelUpdateOptions<EntityAuthorization,ModelAuthorization>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityAuthorization,ModelAuthorization, T>, options?: T): Promise<TypeModelMutateRelationData<EntityAuthorization,ModelAuthorization, T>>;
 deleteById<T extends IModelDeleteOptions<EntityAuthorization,ModelAuthorization>>(id: TableIdentity, options?: T): Promise<void>;
     }
+export interface ModelClient {
+      [SymbolKeyEntity]: EntityClient;
+      [SymbolKeyEntityMeta]: EntityClientMeta;
+      [SymbolKeyModelOptions]: IModelOptionsClient;
+      get<T extends IModelGetOptions<EntityClient,ModelClient>>(where: TypeModelWhere<EntityClient>, options?: T): Promise<TypeModelRelationResult<EntityClient, ModelClient, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
+      getForUpdate<T extends IModelGetOptions<EntityClient,ModelClient>>(where: TypeModelWhere<EntityClient>, options?: T): Promise<TypeModelRelationResult<EntityClient, ModelClient, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
+      getByIdForUpdate<T extends IModelGetOptions<EntityClient,ModelClient>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityClient, ModelClient, T> | undefined>;
+      mget<T extends IModelGetOptions<EntityClient,ModelClient>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityClient, ModelClient, T>[]>;
+      selectAndCount<T extends IModelSelectParams<EntityClient,ModelClient,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityClient, ModelClient, T>>;
+      select<T extends IModelSelectParams<EntityClient,ModelClient,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityClient, ModelClient, T>[]>;
+      insert<T extends IModelInsertOptions<EntityClient,ModelClient>>(data?: TypeModelMutateRelationData<EntityClient,ModelClient, T>, options?: T): Promise<TypeModelMutateRelationData<EntityClient,ModelClient, T, true>>;
+      insertBulk<T extends IModelInsertOptions<EntityClient,ModelClient>>(items: TypeModelMutateRelationData<EntityClient,ModelClient, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityClient,ModelClient, T, true>[]>;
+      update<T extends IModelUpdateOptions<EntityClient,ModelClient>>(data: TypeModelMutateRelationData<EntityClient,ModelClient, T>, options?: T): Promise<TypeModelMutateRelationData<EntityClient,ModelClient, T>>;
+      updateBulk<T extends IModelUpdateOptions<EntityClient,ModelClient>>(items: TypeModelMutateRelationData<EntityClient,ModelClient, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityClient,ModelClient, T>[]>;
+      delete<T extends IModelDeleteOptions<EntityClient,ModelClient>>(where?: TypeModelWhere<EntityClient>, options?: T): Promise<void>;
+      deleteBulk<T extends IModelDeleteOptions<EntityClient,ModelClient>>(ids: TableIdentity[], options?: T): Promise<void>;
+      mutate<T extends IModelMutateOptions<EntityClient,ModelClient>>(data?: TypeModelMutateRelationData<EntityClient,ModelClient, T>, options?: T): Promise<TypeModelMutateRelationData<EntityClient,ModelClient, T>>;
+      mutateBulk<T extends IModelMutateOptions<EntityClient,ModelClient>>(items: TypeModelMutateRelationData<EntityClient,ModelClient, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityClient,ModelClient, T>[]>;
+      count<T extends IModelSelectCountParams<EntityClient,ModelClient,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<string | undefined>;
+      increment<T extends IModelIncrementParams<EntityClient,ModelClient,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      decrement<T extends IModelIncrementParams<EntityClient,ModelClient,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      aggregate<T extends IModelSelectAggrParams<EntityClient,ModelClient,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelAggrRelationResult<T>>;
+      group<T extends IModelSelectGroupParams<EntityClient,ModelClient,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelGroupRelationResult<EntityClient, T>[]>;
+      getById<T extends IModelGetOptions<EntityClient,ModelClient>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityClient, ModelClient, T> | undefined>;
+updateById<T extends IModelUpdateOptions<EntityClient,ModelClient>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityClient,ModelClient, T>, options?: T): Promise<TypeModelMutateRelationData<EntityClient,ModelClient, T>>;
+deleteById<T extends IModelDeleteOptions<EntityClient,ModelClient>>(id: TableIdentity, options?: T): Promise<void>;
+getByName<T extends IModelGetOptions<EntityClient,ModelClient>>(name?: string, options?: T): Promise<TypeModelRelationResult<EntityClient, ModelClient, T> | undefined>;
+getByNameEqI<T extends IModelGetOptions<EntityClient,ModelClient>>(name?: string, options?: T): Promise<TypeModelRelationResult<EntityClient, ModelClient, T> | undefined>;
+selectByName<T extends IModelSelectParams<EntityClient,ModelClient,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityClient, ModelClient, T>[]>;
+selectByNameEqI<T extends IModelSelectParams<EntityClient,ModelClient,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityClient, ModelClient, T>[]>;
+    }
 }
 declare module 'vona-module-a-orm' {
   export interface IModelClassRecord {
     'mcp-auth:authorization': ModelAuthorization;
+'mcp-auth:client': ModelClient;
   }
 }
 /** model: end */
@@ -207,10 +278,10 @@ declare module 'vona-module-mcp-auth' {
 }
 declare module 'vona-module-a-web' {
   export interface IApiPathGetRecord{
-        '/mcp/auth/summary': undefined;
+        '//mcp/auth/summary': undefined;
     }
 export interface IApiPathPostRecord{
-        '/mcp/auth/decision': undefined;
+        '//mcp/auth/decision': undefined;
     }
 
 }
@@ -244,12 +315,14 @@ declare module 'vona-module-mcp-auth' {
 /** middlewareSystem: end */
 /** service: begin */
 export * from '../service/authorization.ts';
+export * from '../service/registration.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
 
     export interface IServiceRecord {
       'mcp-auth:authorization': never;
+'mcp-auth:registration': never;
     }
 
 
@@ -265,12 +338,24 @@ declare module 'vona-module-mcp-auth' {
             get $beanFullName(): 'mcp-auth.service.authorization';
             get $onionName(): 'mcp-auth:authorization';
           }
+
+        export interface ServiceRegistration {
+          /** @internal */
+          get scope(): ScopeModuleMcpAuth;
+        }
+
+          export interface ServiceRegistration {
+            get $beanFullName(): 'mcp-auth.service.registration';
+            get $onionName(): 'mcp-auth:registration';
+          }
 }
 /** service: end */
 /** service: begin */
 import type { ServiceAuthorization } from '../service/authorization.ts';
+import type { ServiceRegistration } from '../service/registration.ts';
 export interface IModuleService {
   'authorization': ServiceAuthorization;
+'registration': ServiceRegistration;
 }
 /** service: end */
 /** service: begin */
@@ -279,6 +364,7 @@ import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
     'mcp-auth.service.authorization': ServiceAuthorization;
+'mcp-auth.service.registration': ServiceRegistration;
   }
 }
 /** service: end */

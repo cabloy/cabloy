@@ -7,30 +7,45 @@ import { Meta } from 'vona-module-a-meta';
 export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
   async update(options: IMetaVersionUpdateOptions) {
     if (options.version !== 1) return;
-    const entity = this.scope.entity.authorization;
-    await this.bean.model.createTable(entity.$table, table => {
+    const authorization = this.scope.entity.authorization;
+    await this.bean.model.createTable(authorization.$table, table => {
       table.basicFields();
-      table.string(entity.requestDigest, 64).notNullable();
-      table.string(entity.clientId, 255).notNullable();
-      table.string(entity.issuer, 2048).notNullable();
-      table.string(entity.resource, 2048).notNullable();
-      table.string(entity.redirectUri, 2048).notNullable();
-      table.string(entity.scope, 255).notNullable();
-      table.string(entity.oauthState, 2048).notNullable();
-      table.string(entity.codeChallenge, 43).notNullable();
-      table.string(entity.state, 32).notNullable();
-      table.bigInteger(entity.pendingExpiresAt).notNullable();
-      table.bigInteger(entity.expiresAt).notNullable();
-      table.string(entity.codeDigest, 64).notNullable();
-      table.bigInteger(entity.codeExpiresAt).notNullable();
-      table.string(entity.tokenDigest, 64).notNullable();
-      table.bigInteger(entity.tokenExpiresAt).notNullable();
-      table.tableIdentity(entity.userId);
-      table.tableIdentity(entity.authId);
-      table.index(['iid', entity.requestDigest]);
-      table.index(['iid', entity.codeDigest]);
-      table.index(['iid', entity.tokenDigest]);
-      table.index(['iid', entity.expiresAt]);
+      table.string(authorization.requestDigest, 64).notNullable();
+      table.string(authorization.clientId, 255).notNullable();
+      table.string(authorization.issuer, 2048).notNullable();
+      table.string(authorization.resource, 2048).notNullable();
+      table.string(authorization.redirectUri, 2048).notNullable();
+      table.string(authorization.scope, 255).notNullable();
+      table.string(authorization.oauthState, 2048).notNullable();
+      table.string(authorization.codeChallenge, 43).notNullable();
+      table.string(authorization.state, 32).notNullable();
+      table.bigInteger(authorization.pendingExpiresAt).notNullable();
+      table.bigInteger(authorization.expiresAt).notNullable();
+      table.string(authorization.codeDigest, 64).notNullable();
+      table.bigInteger(authorization.codeExpiresAt).notNullable();
+      table.string(authorization.tokenDigest, 64).notNullable();
+      table.bigInteger(authorization.tokenExpiresAt).notNullable();
+      table.tableIdentity(authorization.userId);
+      table.tableIdentity(authorization.authId);
+      table.index(['iid', authorization.requestDigest]);
+      table.index(['iid', authorization.codeDigest]);
+      table.index(['iid', authorization.tokenDigest]);
+      table.index(['iid', authorization.expiresAt]);
+    });
+    const client = this.scope.entity.client;
+    await this.bean.model.createTable(client.$table, table => {
+      table.basicFields();
+      table.string(client.clientId, 255).notNullable();
+      table.string(client.name, 255).notNullable();
+      table.json(client.redirectUris).notNullable();
+      table.string(client.authentication, 32).notNullable();
+      table.string(client.secretSha256, 64).nullable();
+      table.string(client.resource, 2048).notNullable();
+      table.string(client.scope, 255).notNullable();
+      table.string(client.state, 32).notNullable();
+      table.bigInteger(client.clientIdIssuedAt).notNullable();
+      table.index(['iid', client.clientId]);
+      table.index(['iid', client.resource, client.state]);
     });
   }
 }

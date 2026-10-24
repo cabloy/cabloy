@@ -1,0 +1,172 @@
+import { randomBytes } from 'node:crypto';
+import { BeanBase } from 'vona';
+import { Service } from 'vona-module-a-bean';
+
+import type {
+  IMcpAuthConfig,
+  IMcpAuthRegistrationRequest,
+  IMcpAuthRegistrationResponse,
+  IMcpAuthResource,
+  IMcpAuthResolvedClient,
+  TypeMcpClientAuthentication,
+} from '../types/index.ts';
+
+import {
+  getMcpAuthConfig,
+  getMcpIssuer,
+  resolveMcpResource,
+  OAuthError,
+  sha256,
+  validateConfiguredRedirectUri,
+} from '../lib/authorization.ts';
+
+const clientNamePattern = /^\S(?:[\s\S]{0,254}\S)?$/;
+
+@Service()
+export class ServiceRegistration extends BeanBase {
+  async register(
+    request: IMcpAuthRegistrationRequest,
+    resource: IMcpAuthResource,
+  ): Promise<IMcpAuthRegistrationResponse> {
+    const config = getMcpAuthConfig(this.app);
+    const binding = resolveMcpResource(this.app, new URL(getMcpIssuer(this.app)).host);
+    if (
+      resource.resource !== binding.resource ||
+      resource.instanceName !== binding.instanceName ||
+      this.ctx.instanceName !== binding.instanceName ||
+      !this.ctx.instance
+    ) {
+      throw new OAuthError('invalid_target');
+    }
+    const parsed = this.validateRequest(request, config);
+    const issuedAt = Math.floor(Date.now() / 1000);
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const clientId = randomBytes(32).toString('base64url');
+      const existing = await this.scope.model.client.get({ clientId });
+      if (existing) continue;
+      try {
+        await this.scope.model.client.insert({
+          clientId,
+          name: parsed.clientName,
+          redirectUris: parsed.redirectUris,
+          authentication: parsed.authentication,
+          resource: resource.resource,
+          scope: 'mcp:read',
+          state: 'active',
+          clientIdIssuedAt: issuedAt,
+          ...(parsed.secretSha256 ? { secretSha256: parsed.secretSha256 } : {}),
+        });
+      } catch (error) {
+        if (attempt < 2) continue;
+        throw error;
+      }
+      return {
+        client_id: clientId,
+        client_id_issued_at: issuedAt,
+        client_name: parsed.clientName,
+        redirect_uris: parsed.redirectUris,
+        token_endpoint_auth_method: parsed.authentication,
+        grant_types: ['authorization_code'],
+        response_types: ['code'],
+        scope: 'mcp:read',
+        ...(parsed.secret
+          ? { client_secret: parsed.secret, client_secret_expires_at: 0 as const }
+          : {}),
+      };
+    }
+    throw new OAuthError('temporarily_unavailable', 503);
+  }
+
+  async resolve(clientId: string, resource: string): Promise<IMcpAuthResolvedClient | undefined> {
+    getMcpAuthConfig(this.app);
+    const client = await this.scope.model.client.get({ clientId });
+    if (
+      !client ||
+      client.state !== 'active' ||
+      client.resource !== resource ||
+      client.scope !== 'mcp:read'
+    ) {
+      return undefined;
+    }
+    return {
+      clientId: client.clientId,
+      name: client.name,
+      redirectUris: client.redirectUris,
+      authentication: client.authentication,
+      ...(client.secretSha256 ? { secretSha256: client.secretSha256 } : {}),
+      resources: [client.resource],
+      scope: 'mcp:read',
+      state: client.state,
+      clientIdIssuedAt: Number(client.clientIdIssuedAt),
+    };
+  }
+
+  async disable(clientId: string): Promise<void> {
+    await this.scope.model.client
+      .builderSelect()
+      .where({ clientId, state: 'active' })
+      .update({ state: 'revoked' });
+  }
+
+  private validateRequest(request: IMcpAuthRegistrationRequest, config: IMcpAuthConfig) {
+    if (!request || typeof request !== 'object') throw new OAuthError('invalid_client_metadata');
+    const keys = Object.keys(request);
+    const allowed = new Set([
+      'client_name',
+      'redirect_uris',
+      'token_endpoint_auth_method',
+      'grant_types',
+      'response_types',
+    ]);
+    if (keys.some(key => !allowed.has(key))) throw new OAuthError('invalid_client_metadata');
+    if (typeof request.client_name !== 'string' || !clientNamePattern.test(request.client_name)) {
+      throw new OAuthError('invalid_client_metadata');
+    }
+    if (
+      !Array.isArray(request.redirect_uris) ||
+      request.redirect_uris.length === 0 ||
+      request.redirect_uris.length > config.registration!.maxRedirectUris ||
+      new Set(request.redirect_uris).size !== request.redirect_uris.length
+    ) {
+      throw new OAuthError('invalid_redirect_uri');
+    }
+    for (const redirectUri of request.redirect_uris) {
+      if (typeof redirectUri !== 'string') throw new OAuthError('invalid_redirect_uri');
+      try {
+        validateConfiguredRedirectUri(redirectUri, config.allowLoopbackHttp);
+      } catch (error) {
+        if (error instanceof OAuthError && error.oauthError === 'invalid_redirect_uri') throw error;
+        throw new OAuthError('invalid_redirect_uri');
+      }
+    }
+    if (
+      request.grant_types !== undefined &&
+      (!Array.isArray(request.grant_types) ||
+        request.grant_types.length !== 1 ||
+        request.grant_types[0] !== 'authorization_code')
+    ) {
+      throw new OAuthError('invalid_client_metadata');
+    }
+    if (
+      request.response_types !== undefined &&
+      (!Array.isArray(request.response_types) ||
+        request.response_types.length !== 1 ||
+        request.response_types[0] !== 'code')
+    ) {
+      throw new OAuthError('invalid_client_metadata');
+    }
+    const authentication: TypeMcpClientAuthentication =
+      request.token_endpoint_auth_method ?? 'none';
+    if (authentication !== 'none' && authentication !== 'client_secret_basic') {
+      throw new OAuthError('invalid_client_metadata');
+    }
+    const secret =
+      authentication === 'client_secret_basic' ? randomBytes(32).toString('base64url') : undefined;
+    return {
+      clientName: request.client_name,
+      redirectUris: request.redirect_uris,
+      authentication,
+      ...(secret ? { secret, secretSha256: sha256(secret) } : {}),
+    };
+  }
+}

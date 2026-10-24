@@ -8,7 +8,14 @@ import type { BeanSsrSiteBase, IDecoratorSsrSiteOptions } from 'vona-module-a-ss
 import { BeanBase } from 'vona';
 import { MiddlewareSystem } from 'vona-module-a-aspect';
 
-import { getMcpAuthConfig, OAuthError, resolveMcpResource } from '../lib/authorization.ts';
+import type { IMcpAuthRegistrationRequest } from '../types/index.ts';
+
+import {
+  getMcpAuthConfig,
+  getMcpIssuer,
+  OAuthError,
+  resolveMcpResource,
+} from '../lib/authorization.ts';
 
 export interface IMiddlewareSystemOptionsAuthorization extends IDecoratorMiddlewareSystemOptions {}
 
@@ -17,7 +24,8 @@ const paths = new Set([
   '/mcp/token',
   '/mcp/auth/summary',
   '/mcp/auth/decision',
-  '/.well-known/oauth-authorization-server',
+  '/mcp/register',
+  '/.well-known/oauth-authorization-server/mcp',
 ]);
 
 @MiddlewareSystem<IMiddlewareSystemOptionsAuthorization>({
@@ -54,7 +62,6 @@ export class MiddlewareSystemAuthorization extends BeanBase implements IMiddlewa
         throw new OAuthError('invalid_request');
       }
       this.singletonHeader('origin');
-      const resource = resolveMcpResource(this.app, host);
       const instanceQuery = this.app.config.instance.queryField;
       const instanceHeader = this.app.config.instance.headerField;
       if (
@@ -65,23 +72,40 @@ export class MiddlewareSystemAuthorization extends BeanBase implements IMiddlewa
       ) {
         throw new OAuthError('invalid_request');
       }
-      // Host is only an exact registry selector, never an issuer/resource authority.
+      const resource = resolveMcpResource(this.app, host);
+      const issuer = getMcpIssuer(this.app);
       this.ctx.instanceName = resource.instanceName as typeof this.ctx.instanceName;
       const config = getMcpAuthConfig(this.app);
-      if (this.ctx.path === '/.well-known/oauth-authorization-server') {
+      if (this.ctx.path === '/.well-known/oauth-authorization-server/mcp') {
         this.requireMethod('GET');
         if (url.search) throw new OAuthError('invalid_request');
         this.ctx.body = {
-          issuer: config.issuer,
-          authorization_endpoint: `${config.issuer}/mcp/auth`,
-          token_endpoint: `${config.issuer}/mcp/token`,
+          issuer,
+          authorization_endpoint: `${issuer}/auth`,
+          token_endpoint: `${issuer}/token`,
           response_types_supported: ['code'],
           grant_types_supported: ['authorization_code'],
           code_challenge_methods_supported: ['S256'],
           token_endpoint_auth_methods_supported: ['none', 'client_secret_basic'],
           scopes_supported: ['mcp:read'],
           authorization_response_iss_parameter_supported: true,
+          registration_endpoint: `${issuer}/register`,
         };
+        return;
+      }
+      if (this.ctx.path === '/mcp/register') {
+        this.requireMethod('POST');
+        if (url.search) throw new OAuthError('invalid_request');
+        if (this.singletonHeader('authorization') || this.singletonHeader('cookie')) {
+          throw new OAuthError('invalid_request', 403);
+        }
+        await this.admitRegistration();
+        await this.app.scope('a-instance').service.instance.initInstance();
+        const request = (await this.readJson(
+          config.registration!.maxBodyBytes,
+        )) as unknown as IMcpAuthRegistrationRequest;
+        this.ctx.status = 201;
+        this.ctx.body = await this.scope.service.registration.register(request, resource);
         return;
       }
       if (this.ctx.path === '/mcp/auth/summary' || this.ctx.path === '/mcp/auth/decision') {
@@ -127,6 +151,32 @@ export class MiddlewareSystemAuthorization extends BeanBase implements IMiddlewa
     }
   }
 
+  private async admitRegistration(): Promise<void> {
+    const registration = getMcpAuthConfig(this.app).registration!;
+    let result;
+    try {
+      result = await this.app.scope('a-ratelimit').service.rateLimit.admit({
+        mode: 'enforce',
+        limit: registration.rateLimit,
+        windowMs: registration.rateLimitWindow * 1000,
+        key: 'ip',
+        name: 'mcp-register',
+        route: { method: 'POST', path: '/mcp/register' },
+        headers: true,
+      });
+    } catch (error) {
+      if (error instanceof OAuthError) throw error;
+      throw new OAuthError('temporarily_unavailable', 503);
+    }
+    this.ctx.set('RateLimit-Limit', String(result.limit));
+    this.ctx.set('RateLimit-Remaining', String(result.remaining));
+    this.ctx.set('RateLimit-Reset', String(Math.max(1, Math.ceil(result.resetAfterMs / 1000))));
+    if (!result.allowed) {
+      this.ctx.set('Retry-After', String(result.retryAfterSeconds));
+      throw new OAuthError('temporarily_unavailable', 429);
+    }
+  }
+
   private requireMethod(method: string) {
     if (this.ctx.method !== method) {
       this.ctx.set('Allow', method);
@@ -142,6 +192,121 @@ export class MiddlewareSystemAuthorization extends BeanBase implements IMiddlewa
       value = this.ctx.req.rawHeaders[index + 1];
     }
     return value;
+  }
+
+  private async readJson(maxBytes: number): Promise<Record<string, unknown>> {
+    const contentType = this.singletonHeader('content-type');
+    if (!/^application\/json(?:;\s*charset=utf-8)?$/i.test(contentType ?? '')) {
+      throw new OAuthError('invalid_client_metadata', 415);
+    }
+    if (this.singletonHeader('content-encoding'))
+      throw new OAuthError('invalid_client_metadata', 415);
+    if (this.singletonHeader('content-length')) {
+      const length = Number(this.singletonHeader('content-length'));
+      if (!Number.isSafeInteger(length) || length < 0 || length > maxBytes) {
+        throw new OAuthError('invalid_client_metadata', 413);
+      }
+    }
+    const chunks: Buffer[] = [];
+    let size = 0;
+    for await (const chunk of this.ctx.req) {
+      const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      size += buffer.length;
+      if (size > maxBytes) throw new OAuthError('invalid_client_metadata', 413);
+      chunks.push(buffer);
+    }
+    let body: string;
+    try {
+      body = new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks));
+      if (!body.trim()) throw new Error('empty');
+      this.assertJsonObjectWithoutDuplicateKeys(body);
+      const value = JSON.parse(body);
+      if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('object');
+      return value as Record<string, unknown>;
+    } catch {
+      throw new OAuthError('invalid_client_metadata');
+    }
+  }
+
+  private assertJsonObjectWithoutDuplicateKeys(body: string): void {
+    let index = 0;
+    const whitespace = () => {
+      while (/\s/.test(body[index] ?? '')) index++;
+    };
+    const string = (): string => {
+      const start = index;
+      if (body[index++] !== '"') throw new Error('string');
+      while (index < body.length) {
+        const character = body[index++];
+        if (character === '\\') {
+          if (index >= body.length) throw new Error('escape');
+          index++;
+        } else if (character === '"') {
+          const raw = body.slice(start, index);
+          const value = JSON.parse(raw);
+          if (typeof value !== 'string') throw new Error('string');
+          return value;
+        }
+      }
+      throw new Error('string');
+    };
+    const value = () => {
+      whitespace();
+      const character = body[index];
+      if (character === '{') {
+        index++;
+        whitespace();
+        const keys = new Set<string>();
+        if (body[index] === '}') {
+          index++;
+          return;
+        }
+        while (true) {
+          const key = string();
+          if (keys.has(key)) throw new Error('duplicate');
+          keys.add(key);
+          whitespace();
+          if (body[index++] !== ':') throw new Error('colon');
+          value();
+          whitespace();
+          if (body[index] === '}') {
+            index++;
+            return;
+          }
+          if (body[index++] !== ',') throw new Error('comma');
+          whitespace();
+        }
+      }
+      if (character === '[') {
+        index++;
+        whitespace();
+        if (body[index] === ']') {
+          index++;
+          return;
+        }
+        while (true) {
+          value();
+          whitespace();
+          if (body[index] === ']') {
+            index++;
+            return;
+          }
+          if (body[index++] !== ',') throw new Error('comma');
+          whitespace();
+        }
+      }
+      if (character === '"') {
+        string();
+        return;
+      }
+      if (!character || ',]}'.includes(character)) throw new Error('value');
+      while (index < body.length && !/\\s/.test(body[index]) && !',]}'.includes(body[index])) {
+        index++;
+      }
+    };
+    value();
+    whitespace();
+    if (index !== body.length) throw new Error('trailing');
   }
 
   private async readForm(): Promise<URLSearchParams> {

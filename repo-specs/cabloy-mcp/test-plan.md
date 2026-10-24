@@ -10,6 +10,20 @@ PRD requirement -> SRS contract -> PDP/WBS task -> ATP scenario -> observed evid
 
 The [PRD](./prd.md) owns product outcomes; the [SRS](./srs.md) owns technical contracts; the [PDP/WBS](./pdp-wbs.md) owns sequencing and completion checks. `ATP-MCP-*` declarations are scenarios, not evidence or status. Planning, static audits, and chart generation never prove runtime acceptance.
 
+## Current bounded browser authorization verification contract (2026-10-24)
+
+For the approved browser-to-MCP increment, [ADR 0010](./decisions/0010-mcp-browser-execution-profile.md) and the [current SRS contract](./srs.md#current-bounded-browser-authorization-contract-2026-10-24) supersede incompatible legacy setup/procedures below, including `ATP-MCP-AUTH-03`'s `a-auth` ownership, pre-registered/static-client assumptions, authored issuer/resource/instance map and unimplemented bridge/receipt/qualified-clock/fleet gates. Retain compatible OAuth, tenant, privacy, single-winner and no-refresh requirements; historical proof remains limited to its recorded revision.
+
+The simplification needs focused checks, not a new test result asserted by this plan:
+
+- Verify issuer **and** resource equal exact `${origin}/mcp`, derived from root backend `server.serve.protocol`/`host`, with canonical AS metadata `/.well-known/oauth-authorization-server/mcp`, unchanged PRM `/.well-known/oauth-protected-resource/mcp`, and endpoints `/mcp/auth`, `/mcp/token`, `/mcp/register`. Cover nonproduction requestless `http://localhost:<SERVER_LISTEN_PORT>` fallback and production public-serve-pair requirement; hostile Host/proxy values cannot mint authority. Validate Host and existing automatic routing in a fresh selector-free context, without an MCP registry.
+- Verify bounded RFC 7591 DCR and `registration_endpoint` follow existing AS/MCP ingress availability without `registration.enabled`; retain body/redirect and rate limits and public/confidential `none`/`client_secret_basic` behavior. Keep exact redirects, PKCE S256, consent, account/identity checks, code replay rejection and real Bearer MCP calls unchanged.
+- Verify module-default `allowLoopbackHttp: true` permits HTTP only for exact `localhost`, `127.0.0.1` or `[::1]`, rejects arbitrary HTTP/lookalikes, and supports explicit `false`.
+- Run the connected managed browser flow under normal defaults, without special E2E backend configuration injection/helper. Do not reintroduce injected issuer/resources, a DCR switch or loopback opt-in to make it pass. Preserve existing SSR/login/consent/hydration/privacy coverage.
+- Verify old origin-only issuer grants/codes/tokens fail exact comparison and need new authorization; do not relax matching, rewrite state or reset. Schema and `mcp-auth` `fileVersion: 1` are unchanged. Existing-database v1 non-replay limits remain.
+
+These are prospective checks for the approved slice, not full ATP completion, production qualification or permission to run tests/reset in this documentation-only task.
+
 ## Scope, Quality Priorities, and Risk
 
 Verification prioritizes:

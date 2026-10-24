@@ -49,6 +49,7 @@
     "dependencies": {
       "a-vona": "5.0.0",
       "a-auth": "5.0.0",
+      "a-ratelimit": "5.0.0",
       "a-ssr": "5.0.0"
     }
   }
