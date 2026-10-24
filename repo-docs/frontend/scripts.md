@@ -49,9 +49,9 @@ npm run build:zova:commerce:admin
 
 The `dev:zova:*` commands start the Zova development server, which uses `9000` in the Cabloy Basic default environment. Use this Zova standalone SSR entry for page, route, and hydration iteration. It may be used as Vona's development proxy target, but direct access to `9000` does not prove the Vona request boundary or integrated acceptance.
 
-## Click-to-source inspection in Cabloy Basic
+## Click-to-source inspection in Cabloy Basic and Cabloy Start
 
-Cabloy Basic enables `code-inspector-plugin` in Zova development builds. Start either `npm run dev:zova:admin` or `npm run dev:zova:web`, then open the corresponding Zova standalone SSR page. Admin and Web share the worktree's development ports; run them sequentially, not concurrently.
+Cabloy Basic and Cabloy Start enable `code-inspector-plugin` in Zova development builds. In the active edition's repository, start either `npm run dev:zova:admin` or `npm run dev:zova:web`, then open the corresponding Zova standalone SSR page. The wrappers select `cabloyBasicAdmin` / `cabloyBasicWeb` in Basic and `cabloyStartAdmin` / `cabloyStartWeb` in Start. Admin and Web share the worktree's development ports; run them sequentially, not concurrently.
 
 Hold **Option+Shift** on macOS or **Alt+Shift** on Windows/Linux, move over an element, and click to open its authored TSX location. This works with TSX in Controllers and split Render beans; it does not require converting them into Vue SFCs. Fragments have no independent DOM node, and custom-component roots may point to implementation markup rather than the caller's component tag.
 
