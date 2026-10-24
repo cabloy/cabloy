@@ -11,6 +11,8 @@ export default {
   RequestExpires: 'Request expires',
   AuthorizationReadScopeHelp:
     'mcp:read allows read-only MCP tools. Your existing account permissions still apply.',
+  AuthorizationAllScopeHelp:
+    'mcp:all allows all MCP capabilities, including changes to data, within your existing account permissions. It does not grant administrator access.',
   Deny: 'Deny',
   Approve: 'Approve',
 };

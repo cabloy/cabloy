@@ -22,7 +22,7 @@ For the independent anonymous, credential-rejecting standalone fixture, use [Loc
 | Client registration                | RFC 7591 DCR only; available with the existing AS/MCP ingress         |
 | Public client authentication       | `none`                                                                |
 | Confidential client authentication | `client_secret_basic`                                                 |
-| Scope                              | `mcp:read` for the existing read-only tools                           |
+| Scopes                             | `mcp:all` (new-registration default) and narrower `mcp:read`          |
 | Pending authorization lifetime     | **10 minutes** by default                                             |
 | Authorization code lifetime        | **60 seconds** by default; one use                                    |
 | Access token lifetime              | **15 minutes** by default; opaque MCP-specific token                  |
@@ -64,7 +64,24 @@ Content-Type: application/json
 }
 ```
 
-The response is direct JSON with HTTP `201`, a server-issued opaque `client_id`, exact redirect URIs, fixed `mcp:read` scope, and the supported grant/response/authentication metadata. Confidential registration with `client_secret_basic` returns the secret only in that response; the server stores only its digest. Redirect URIs must be exact HTTPS values, or HTTP for exactly `localhost`, `127.0.0.1` or `[::1]` while `allowLoopbackHttp` is true (the module default). An explicit `false` disables that exception; lookalikes, other loopback addresses and arbitrary HTTP hosts are not allowed. Unknown metadata, duplicate members, forwarded headers, instance selectors, query strings, oversized/malformed JSON, and unsupported metadata are rejected. The server fixes the resource to the derived canonical `${origin}/mcp`; clients cannot register a resource or scope of their choice.
+The response is direct JSON with HTTP `201`, a server-issued opaque `client_id`, exact redirect URIs, the canonical registered scope, and the supported grant/response/authentication metadata. Confidential registration with `client_secret_basic` returns the secret only in that response; the server stores only its digest. Redirect URIs must be exact HTTPS values, or HTTP for exactly `localhost`, `127.0.0.1` or `[::1]` while `allowLoopbackHttp` is true (the module default). An explicit `false` disables that exception; lookalikes, other loopback addresses and arbitrary HTTP hosts are not allowed. Unknown metadata, duplicate members, forwarded headers, instance selectors, query strings, oversized/malformed JSON, and unsupported metadata are rejected. The server fixes the resource to the derived canonical `${origin}/mcp`; clients can select only the supported scopes, not arbitrary resource or scope vocabulary.
+
+### Scope ceiling and client configuration
+
+- **New DCR registration:** omitted `scope` defaults to `mcp:all`. Explicit `mcp:all` and `mcp:read` are supported. A valid space-separated list `mcp:all mcp:read` or `mcp:read mcp:all` is accepted and canonicalized to `mcp:all`.
+- **Authorization:** explicit `scope` uses the same supported values and list canonicalization; omitted `scope` inherits that client's registered ceiling, not an unconditional `mcp:all` default. An `mcp:all` registration may authorize either `mcp:all` or narrowed `mcp:read`; an `mcp:read` registration cannot authorize `mcp:all`. The approved scope remains bound through consent, code exchange and token use.
+- **Existing clients and tokens:** existing `mcp:read` registrations, grants and tokens are not promoted by the new default. Requesting broader access requires a new `mcp:all` registration and fresh explicit authorization; do not rewrite persisted bindings.
+- **Local authority:** both scopes remain bounded by the current user's RBAC, resource ownership, data scope and tenant/instance. `mcp:all` is not administrator or cross-tenant authority. The existing three catalog tools remain read-only and work with either scope; this change adds no mutation tools or dispatch registry. Before exposing any future actual mutation, enforce its required scope at tool dispatch so `mcp:read` cannot execute it. Such mutation dispatch enforcement is a future requirement, not an existing capability claim.
+
+No client scope configuration is needed for the new-registration default. To explicitly narrow Codex authorization, use top-level `scopes` in the server's MCP configuration table, not in its HTTP headers:
+
+```toml
+[mcp_servers.cabloy]
+url = "https://mcp.example.com/mcp"
+scopes = ["mcp:read"]
+```
+
+For clients that request both `authorization_code` and `refresh_token` during DCR, the server accepts the request but registers and returns only `grant_types: ["authorization_code"]`. This remains capability negotiation, not refresh support: discovery advertises only the authorization-code grant, token exchange returns no refresh token, and a refresh grant is rejected. Refresh-only requests, unrelated or duplicate grants, and unsupported scopes (including `offline_access`) remain invalid registration metadata.
 
 Before using the flow, the operator must ensure:
 
@@ -109,7 +126,7 @@ The former origin-only issuer (for example `https://mcp.example.com`) differs fr
 
 ### 1. Start a fresh authorization request
 
-After DCR registration, the client creates a fresh PKCE verifier and its S256 challenge, then opens `/mcp/auth` in the browser. Request parameters identify `response_type=code`, the server-issued `client_id`, exact registered `redirect_uri`, canonical `resource`, `scope=mcp:read`, `code_challenge` and `code_challenge_method=S256`. Keep and verify client-generated OAuth `state` for callback correlation.
+After DCR registration, the client creates a fresh PKCE verifier and its S256 challenge, then opens `/mcp/auth` in the browser. Request parameters identify `response_type=code`, the server-issued `client_id`, exact registered `redirect_uri`, canonical `resource`, optional `scope`, `code_challenge` and `code_challenge_method=S256`. Omit `scope` to inherit the registered ceiling, or send `scope=mcp:read` to request narrower read access from an `mcp:all` registration. Keep and verify client-generated OAuth `state` for callback correlation.
 
 The AS validates client, redirect, resource, scope, instance and PKCE before redirecting toward a client callback, including error callbacks. Malformed/duplicate parameters and mismatched bindings are rejected, not silently normalized into a different authorization.
 
@@ -154,6 +171,12 @@ Each protected request checks current expiry, revocation, registration and accou
 ## Verification and operational limits
 
 This profile initially targets SQLite on Vona's primary datasource and ordinary application wall-clock deadlines under a correctly maintained host clock. It does not establish cross-dialect, multi-worker, cross-host, qualified nonrollback-clock, synchronous browser-logout/token-revocation or production guarantees. Expiry and current revocation checks must not depend on background cleanup.
+
+The dual-scope amendment on 2026-10-24 passed focused native typechecks for backend `mcp-auth`, `cabloy-mcp` and `mcp-test`, plus the frontend `cabloy-mcp` module. Managed backend regression passed **33 tests, 0 failed** across authorization, registration, shared-listener HTTP and transport guards. Coverage includes new-registration default `mcp:all`, canonicalization of both discovered scopes, inherited read ceilings, all-to-read narrowing through consent/code/token/lookup, escalation and invalid stored-scope rejection, and actual read-tool access with both scopes. Existing PKCE, one-use redemption, revocation and no-refresh regressions remain covered. Paired Admin and Web SSR/REST builds and `deps:vona` completed before the managed integrated-SSR browser run, which passed **4 scenarios**: default-all and explicit-read successful journeys, denial, and invalid requests. Both managed test commands exited **0**. Targeted formatting/lint, diff whitespace, and 186 relative file links across seven changed Markdown files passed; fragment anchors were not checked. The formal docs build exited **0** with its chunk-size warning and does not build this suite-local guide. This is fixture-based coverage, not proof of an installed Codex App retry, mutation-scope separation for future tools, or production qualification. No development database reset, environment/port change, or service restart was performed.
+
+The following checks predate the dual-scope amendment and retain their original scope; they do not verify the new defaults or scope-ceiling behavior.
+
+The bounded DCR compatibility follow-up on 2026-10-24 passed focused native typechecks for `mcp-auth` and `mcp-test`, **27 backend tests, 0 failed**, and **3 browser scenarios**, with both managed test commands exiting **0**. Registration accepts the Codex-style requested grant pair plus `scope: "mcp:read"`, while responses/discovery retain only the authorization-code grant and token exchange issues no refresh token. Service regressions reject broader scope, refresh-only, unrelated and duplicate grants; HTTP regressions verify refresh requests remain rejected. Browser fixtures use the compatible request through login, explicit consent, PKCE and Bearer tool access. This is fixture-based compatibility coverage, not evidence of a successful installed Codex App authentication. Targeted formatting, diff whitespace, all three relative file links in this guide and the formal docs build passed; the build retained its chunk-size warning and does not build this suite-local guide. The first backend attempt passed 26/27: the new refresh rejection assertion expected `unsupported_grant_type`, but its unsupported `refresh_token` parameter was rejected earlier as `invalid_request`. The assertion was corrected to cover both existing rejection layers without changing the token endpoint; the complete rerun passed, and failed-run resources were not manually removed.
 
 The authority/configuration simplification was verified on 2026-10-24 without the special E2E backend configuration injection/helper. Focused native typechecks passed for `mcp-auth`, `cabloy-mcp` and `mcp-test`. The managed backend command passed **26 tests, 0 failed**, covering authorization, registration, shared-listener HTTP and transport guards; the managed browser command passed **3 scenarios** using normal module defaults and the listener's root-origin configuration. Both commands exited **0**. Browser coverage includes exact pathful issuer/discovery endpoints, DCR → login/consent → PKCE → real Bearer tools, denial/terminal handling and invalid requests. Targeted formatting, diff whitespace and 264 relative file links across 10 changed Markdown files passed. The formal docs build exited **0** with a chunk-size warning; it does not itself build this suite-local guide.
 

@@ -3,6 +3,8 @@ export interface IMcpAuthResource {
   instanceName: string;
 }
 
+export type TypeMcpScope = 'mcp:all' | 'mcp:read';
+
 export type TypeMcpClientAuthentication = 'none' | 'client_secret_basic';
 
 export type TypeMcpClientRegistrationState = 'active' | 'revoked';
@@ -18,8 +20,9 @@ export interface IMcpAuthRegistrationRequest {
   client_name: string;
   redirect_uris: string[];
   token_endpoint_auth_method?: TypeMcpClientAuthentication;
-  grant_types?: ['authorization_code'];
+  grant_types?: Array<'authorization_code' | 'refresh_token'>;
   response_types?: ['code'];
+  scope?: string;
 }
 
 export interface IMcpAuthRegistrationResponse {
@@ -30,7 +33,7 @@ export interface IMcpAuthRegistrationResponse {
   token_endpoint_auth_method: TypeMcpClientAuthentication;
   grant_types: ['authorization_code'];
   response_types: ['code'];
-  scope: 'mcp:read';
+  scope: TypeMcpScope;
   client_secret?: string;
   client_secret_expires_at?: 0;
 }
@@ -42,7 +45,7 @@ export interface IMcpAuthResolvedClient {
   authentication: TypeMcpClientAuthentication;
   secretSha256?: string;
   resources: string[];
-  scope: 'mcp:read';
+  scope: TypeMcpScope;
   state: TypeMcpClientRegistrationState;
   clientIdIssuedAt?: number;
 }

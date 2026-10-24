@@ -2,7 +2,12 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { VonaApplication } from 'vona';
 import type { IMcpAuthResource } from 'vona-module-mcp-auth';
 
-import { getMcpIssuer, OAuthError, resolveMcpResource } from 'vona-module-mcp-auth';
+import {
+  getMcpIssuer,
+  mcpSupportedScopes,
+  OAuthError,
+  resolveMcpResource,
+} from 'vona-module-mcp-auth';
 
 export const mcpResourceMetadataPath = '/.well-known/oauth-protected-resource/mcp';
 
@@ -105,7 +110,7 @@ export function handleMcpResourceMetadata(
     body = {
       resource: resource.resource,
       authorization_servers: [issuer],
-      scopes_supported: ['mcp:read'],
+      scopes_supported: mcpSupportedScopes,
       bearer_methods_supported: ['header'],
     };
   } catch (error) {

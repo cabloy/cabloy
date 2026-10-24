@@ -13,6 +13,9 @@ import {
   equalDigest,
   getMcpAuthConfig,
   getMcpIssuer,
+  isMcpScope,
+  mcpScopeIncludes,
+  parseMcpScope,
   resolveMcpResource,
   OAuthError,
   requiredOAuthParameter,
@@ -45,8 +48,8 @@ export class ServiceAuthorization extends BeanBase {
     if (!client || !client.redirectUris.includes(redirectUri)) {
       throw new OAuthError('invalid_request');
     }
-    const scope = params.get('scope') ?? 'mcp:read';
-    if (scope !== 'mcp:read') throw new OAuthError('invalid_scope');
+    const scope = params.has('scope') ? parseMcpScope(params.get('scope')) : client.scope;
+    if (!scope || !mcpScopeIncludes(client.scope, scope)) throw new OAuthError('invalid_scope');
     const challenge = requiredOAuthParameter(params, 'code_challenge');
     if (params.get('code_challenge_method') !== 'S256' || !opaquePattern.test(challenge)) {
       throw new OAuthError('invalid_request');
@@ -209,7 +212,7 @@ export class ServiceAuthorization extends BeanBase {
       .where('tokenExpiresAt', '>', Date.now())
       .first();
     if (!row) throw new OAuthError('invalid_token', 401);
-    if (row.scope !== 'mcp:read') throw new OAuthError('insufficient_scope', 403);
+    if (!isMcpScope(row.scope)) throw new OAuthError('insufficient_scope', 403);
     await this.validateBindings(row, config, 'invalid_token', 401);
     return await this.loadPassport(row.userId, row.authId, 'invalid_token', 401);
   }
@@ -277,7 +280,8 @@ export class ServiceAuthorization extends BeanBase {
       row.issuer !== getMcpIssuer(this.app) ||
       !client ||
       !client.redirectUris.includes(row.redirectUri) ||
-      row.scope !== client.scope
+      !isMcpScope(row.scope) ||
+      !mcpScopeIncludes(client.scope, row.scope)
     ) {
       throw new OAuthError(error, status);
     }

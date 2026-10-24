@@ -6,6 +6,7 @@ import type {
   IMcpAuthConfig,
   IMcpAuthResource,
   IMcpAuthRegistrationConfig,
+  TypeMcpScope,
 } from '../types/index.ts';
 
 export class OAuthError extends Error {
@@ -16,6 +17,30 @@ export class OAuthError extends Error {
     super(oauthError);
     this.name = 'OAuthError';
   }
+}
+
+export const mcpSupportedScopes = ['mcp:all', 'mcp:read'] as const;
+
+export function isMcpScope(value: unknown): value is TypeMcpScope {
+  return value === 'mcp:all' || value === 'mcp:read';
+}
+
+/** Normalize only supported OAuth scope lists, never unknown or malformed tokens. */
+export function parseMcpScope(value: unknown): TypeMcpScope | undefined {
+  if (typeof value !== 'string') return undefined;
+  const scopes = value.split(' ');
+  if (
+    scopes.length > 2 ||
+    scopes.some(scope => !isMcpScope(scope)) ||
+    new Set(scopes).size !== scopes.length
+  ) {
+    return undefined;
+  }
+  return scopes.includes('mcp:all') ? 'mcp:all' : 'mcp:read';
+}
+
+export function mcpScopeIncludes(ceiling: TypeMcpScope, scope: TypeMcpScope): boolean {
+  return ceiling === 'mcp:all' || ceiling === scope;
 }
 
 export function sha256(value: string): string {

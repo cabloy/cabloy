@@ -85,6 +85,7 @@ async function asUser<T>(fixture: Fixture, operation: () => Promise<T>): Promise
 async function withFixture(
   operation: (fixture: Fixture) => Promise<void>,
   authentication: TypeMcpClientAuthentication = 'none',
+  registrationScope?: string,
 ) {
   // Same lock as the RS tests: both temporarily own the global registration fixture.
   const release = await acquireTestLock('mcp-test');
@@ -112,6 +113,7 @@ async function withFixture(
           token_endpoint_auth_method: authentication,
           grant_types: ['authorization_code'],
           response_types: ['code'],
+          ...(registrationScope === undefined ? {} : { scope: registrationScope }),
         },
         resource,
       );
@@ -248,6 +250,12 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       await app.bean.executor.mockCtx(() =>
         expectOAuth(() => service().decide(request, true), 'access_denied'),
       );
+      await app.bean.executor.mockCtx(async () => {
+        const client = await app.scope('mcp-auth').model.client.get({ clientId });
+        assert.equal(client?.scope, 'mcp:all');
+        const pending = await model().get({ requestDigest: sha256(request) });
+        assert.equal(pending?.scope, 'mcp:read');
+      });
       const decision = await asUser(fixture, async () => {
         const summary = await service().summary(request);
         assert.equal(summary.clientName, 'Test client');
@@ -261,13 +269,18 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       assert.equal(redirect.searchParams.get('existing'), '1');
       assert.equal(redirect.searchParams.get('state'), 'client-state');
       const code = redirect.searchParams.get('code')!;
+      await app.bean.executor.mockCtx(async () => {
+        assert.equal((await model().get({ codeDigest: sha256(code) }))?.scope, 'mcp:read');
+      });
       const token = await redeem(fixture, code);
       assert.equal(token.token_type, 'Bearer');
       assert.equal(token.expires_in, 900);
+      assert.equal(token.scope, 'mcp:read');
       await app.bean.executor.mockCtx(async () => {
         const rows = await model().builderSelect().where({ clientId });
         assert.equal(rows.length, 1);
         assert.equal(rows[0].requestDigest, sha256(request));
+        assert.equal(rows[0].scope, 'mcp:read');
         assert.equal(rows[0].codeDigest, '');
         assert.equal(rows[0].tokenDigest, sha256(token.access_token));
         assert.ok(!JSON.stringify(rows).includes(token.access_token));
@@ -290,6 +303,210 @@ describe('authorization.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('inherits the registered scope and canonicalizes requests for both discovered scopes', async () => {
+    for (const [registrationScope, requestedScope, expected] of [
+      [undefined, undefined, 'mcp:all'],
+      ['mcp:read', undefined, 'mcp:read'],
+      [undefined, 'mcp:all', 'mcp:all'],
+      [undefined, 'mcp:all mcp:read', 'mcp:all'],
+      [undefined, 'mcp:read mcp:all', 'mcp:all'],
+    ] as const) {
+      await withFixture(
+        async fixture => {
+          const params = authorizationParams(fixture.clientId);
+          if (requestedScope === undefined) params.delete('scope');
+          else params.set('scope', requestedScope);
+          const request = await app.bean.executor.mockCtx(() =>
+            service().authorize(params, resource),
+          );
+          await app.bean.executor.mockCtx(async () => {
+            assert.equal((await model().get({ requestDigest: sha256(request) }))?.scope, expected);
+          });
+          const decision = await asUser(fixture, async () => {
+            assert.equal((await service().summary(request)).scope, expected);
+            return await service().decide(request, true);
+          });
+          const code = new URL(decision.redirectUrl).searchParams.get('code')!;
+          await app.bean.executor.mockCtx(async () => {
+            assert.equal((await model().get({ codeDigest: sha256(code) }))?.scope, expected);
+          });
+          const token = await redeem(fixture, code);
+          assert.equal(token.scope, expected);
+          await app.bean.executor.mockCtx(async () => {
+            assert.equal(
+              (await model().get({ tokenDigest: sha256(token.access_token) }))?.scope,
+              expected,
+            );
+            const passport = await service().lookup(token.access_token, resource.resource);
+            assert.equal(String(passport.user!.id), String(fixture.userId));
+            const client = await app
+              .scope('mcp-auth')
+              .service.registration.resolve(fixture.clientId, resource.resource);
+            assert.equal(client?.scope, registrationScope ?? 'mcp:all');
+          });
+        },
+        'none',
+        registrationScope,
+      );
+    }
+  });
+
+  it('rejects read-client escalation before persisting an authorization', async () => {
+    await withFixture(
+      async fixture => {
+        await app.bean.executor.mockCtx(async () => {
+          for (const scope of ['mcp:all', 'mcp:all mcp:read', 'mcp:read mcp:all']) {
+            const params = authorizationParams(fixture.clientId);
+            params.set('scope', scope);
+            await expectOAuth(() => service().authorize(params, resource), 'invalid_scope');
+          }
+          assert.equal(
+            (await model().builderSelect().where({ clientId: fixture.clientId })).length,
+            0,
+          );
+          assert.equal(
+            (
+              await app
+                .scope('mcp-auth')
+                .service.registration.resolve(fixture.clientId, resource.resource)
+            )?.scope,
+            'mcp:read',
+          );
+        });
+      },
+      'none',
+      'mcp:read',
+    );
+  });
+
+  it('rechecks client-scope containment at summary, decision, exchange and token lookup', async () => {
+    await withFixture(async fixture => {
+      const clientId = fixture.clientId;
+      const params = authorizationParams(clientId);
+      params.delete('scope');
+      const request = await app.bean.executor.mockCtx(() => service().authorize(params, resource));
+      const setClientScope = async (scope: string) => {
+        await app.bean.executor.mockCtx(async () => {
+          await app
+            .scope('mcp-auth')
+            .model.client.builderSelect()
+            .where({ clientId })
+            .update({ scope });
+        });
+      };
+      await setClientScope('mcp:read');
+      await asUser(fixture, async () => {
+        await expectOAuth(() => service().summary(request), 'invalid_grant');
+        await expectOAuth(() => service().decide(request, true), 'invalid_grant');
+      });
+      await app.bean.executor.mockCtx(async () => {
+        const row = await model().get({ requestDigest: sha256(request) });
+        assert.equal(row?.state, 'pending');
+        assert.equal(row?.scope, 'mcp:all');
+        assert.equal(row?.codeDigest, '');
+      });
+      await setClientScope('mcp:all');
+      const decision = await asUser(fixture, () => service().decide(request, true));
+      const code = new URL(decision.redirectUrl).searchParams.get('code')!;
+      await setClientScope('mcp:read');
+      await expectOAuth(() => redeem(fixture, code), 'invalid_grant');
+      await app.bean.executor.mockCtx(async () => {
+        const row = await model().get({ codeDigest: sha256(code) });
+        assert.equal(row?.state, 'codeReady');
+        assert.equal(row?.tokenDigest, '');
+      });
+      await setClientScope('mcp:all');
+      const token = await redeem(fixture, code);
+      assert.equal(token.scope, 'mcp:all');
+      await setClientScope('mcp:read');
+      await app.bean.executor.mockCtx(async () => {
+        await expectOAuth(
+          () => service().lookup(token.access_token, resource.resource),
+          'invalid_token',
+        );
+      });
+    });
+  });
+
+  it('rejects noncanonical persisted authorization scopes without silently promoting them', async () => {
+    await withFixture(async fixture => {
+      const request = await app.bean.executor.mockCtx(() =>
+        service().authorize(authorizationParams(fixture.clientId), resource),
+      );
+      await app.bean.executor.mockCtx(async () => {
+        await model()
+          .builderSelect()
+          .where({ requestDigest: sha256(request) })
+          .update({ scope: 'mcp:all mcp:read' });
+      });
+      await asUser(fixture, async () => {
+        await expectOAuth(() => service().summary(request), 'invalid_grant');
+        await expectOAuth(() => service().decide(request, true), 'invalid_grant');
+      });
+      await app.bean.executor.mockCtx(async () => {
+        const row = await model().get({ requestDigest: sha256(request) });
+        assert.equal(row?.state, 'pending');
+        assert.equal(row?.scope, 'mcp:all mcp:read');
+        assert.equal(row?.codeDigest, '');
+        await model()
+          .builderSelect()
+          .where({ requestDigest: sha256(request) })
+          .update({ scope: 'mcp:read' });
+      });
+      const decision = await asUser(fixture, () => service().decide(request, true));
+      const code = new URL(decision.redirectUrl).searchParams.get('code')!;
+      await app.bean.executor.mockCtx(async () => {
+        await model()
+          .builderSelect()
+          .where({ requestDigest: sha256(request) })
+          .update({ scope: 'mcp:all mcp:read' });
+        await expectOAuth(
+          () => service().exchange(tokenParams(fixture.clientId, code), undefined),
+          'invalid_grant',
+        );
+        const row = await model().get({ requestDigest: sha256(request) });
+        assert.equal(row?.state, 'codeReady');
+        assert.equal(row?.tokenDigest, '');
+        await model()
+          .builderSelect()
+          .where({ requestDigest: sha256(request) })
+          .update({ scope: 'mcp:read' });
+      });
+      const token = await redeem(fixture, code);
+      assert.equal(token.scope, 'mcp:read');
+      await app.bean.executor.mockCtx(async () => {
+        for (const scope of [
+          '',
+          'mcp:write',
+          'mcp:all mcp:read',
+          'mcp:read mcp:all',
+          ' mcp:read',
+        ]) {
+          await model()
+            .builderSelect()
+            .where({ requestDigest: sha256(request) })
+            .update({ scope });
+          await assert.rejects(
+            () => service().lookup(token.access_token, resource.resource),
+            error =>
+              error instanceof OAuthError &&
+              error.oauthError === 'insufficient_scope' &&
+              error.status === 403,
+          );
+          assert.equal((await model().get({ requestDigest: sha256(request) }))?.scope, scope);
+        }
+        await model()
+          .builderSelect()
+          .where({ requestDigest: sha256(request) })
+          .update({ scope: 'mcp:read' });
+        assert.equal(
+          String((await service().lookup(token.access_token, resource.resource)).user!.id),
+          String(fixture.userId),
+        );
+      });
+    });
+  });
+
   it('rejects invalid contracts before persistence and enforces current instance and confidentiality', async () => {
     await withFixture(async fixture => {
       const clientId = fixture.clientId;
@@ -298,6 +515,13 @@ describe('authorization.test.ts', { concurrency: false }, () => {
           ['redirect_uri', 'https://evil.example/callback', 'invalid_request'],
           ['resource', 'https://evil.example/mcp', 'invalid_target'],
           ['scope', 'mcp:write', 'invalid_scope'],
+          ['scope', '', 'invalid_scope'],
+          ['scope', 'mcp:read mcp:read', 'invalid_scope'],
+          ['scope', 'mcp:all mcp:all', 'invalid_scope'],
+          ['scope', 'mcp:all  mcp:read', 'invalid_scope'],
+          ['scope', 'mcp:all\tmcp:read', 'invalid_scope'],
+          ['scope', ' mcp:all', 'invalid_scope'],
+          ['scope', 'mcp:all offline_access', 'invalid_scope'],
           ['code_challenge_method', 'plain', 'invalid_request'],
         ]) {
           const params = authorizationParams(clientId);

@@ -29,7 +29,7 @@ let fixtureAuthSimpleId: string | undefined;
 let browserToken: string;
 const ownedRequests: string[] = [];
 
-async function redeemBearer() {
+async function redeemBearer(scope: 'mcp:all' | 'mcp:read' = 'mcp:read') {
   const verifier = randomBytes(32).toString('base64url');
   const requestId = await app.bean.executor.mockCtx(
     async () => {
@@ -39,7 +39,7 @@ async function redeemBearer() {
           client_id: clientId,
           redirect_uri: redirectUri,
           resource,
-          scope: 'mcp:read',
+          scope,
           code_challenge_method: 'S256',
           code_challenge: createHash('sha256').update(verifier).digest('base64url'),
         }),
@@ -72,7 +72,8 @@ async function redeemBearer() {
   }).response;
   assert.equal(token.status, 200);
   assert.equal(token.body.token_type, 'Bearer');
-  assert.equal(token.body.scope, 'mcp:read');
+  assert.equal(token.body.scope, scope);
+  assert.equal('refresh_token' in token.body, false);
   return token.body.access_token as string;
 }
 
@@ -225,14 +226,17 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         client_name: 'Managed MCP dynamic test',
         redirect_uris: [redirectUri],
         token_endpoint_auth_method: 'none',
-        grant_types: ['authorization_code'],
+        grant_types: ['authorization_code', 'refresh_token'],
         response_types: ['code'],
+        scope: 'mcp:all mcp:read',
       }),
     }).response;
     assert.equal(registration.status, 201);
     assert.equal(registration.body.token_endpoint_auth_method, 'none');
     assert.deepEqual(registration.body.redirect_uris, [redirectUri]);
-    assert.equal(registration.body.scope, 'mcp:read');
+    assert.equal(registration.body.scope, 'mcp:all');
+    assert.deepEqual(registration.body.grant_types, ['authorization_code']);
+    assert.equal('refresh_token' in registration.body, false);
     assert.match(registration.body.client_id, /^[\w-]{43}$/);
     assert.equal(typeof registration.body.client_id, 'string');
     dynamicClientId = registration.body.client_id as string;
@@ -300,7 +304,11 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     const discovered = await send('server/discover');
     assert.equal(discovered.status, 200);
     assert.deepEqual(discovered.body.result.supportedVersions, [version]);
-    for (const legacy of [false, true]) {
+    const allToken = await redeemBearer('mcp:all');
+    for (const { token, legacy } of [bearer, allToken].flatMap(token =>
+      [false, true].map(legacy => ({ token, legacy })),
+    )) {
+      const headers = { authorization: `Bearer ${token}` };
       if (legacy) {
         const initialized = await send(
           'initialize',
@@ -309,19 +317,19 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
             capabilities: {},
             clientInfo: { name: 'dev-http-test', version: '1' },
           },
-          { legacy },
+          { legacy, headers },
         );
         assert.equal(initialized.status, 200);
         assert.equal(initialized.body.result.protocolVersion, '2025-11-25');
       }
-      const listed = await send('tools/list', {}, { legacy });
+      const listed = await send('tools/list', {}, { legacy, headers });
       assert.equal(listed.status, 200);
       assert.deepEqual(
         listed.body.result.tools.map((tool: any) => tool.name),
         [searchName, detailName, categoriesName],
       );
       const call = async (name: string, args: Record<string, unknown>) =>
-        output(await send('tools/call', { name, arguments: args }, { legacy }));
+        output(await send('tools/call', { name, arguments: args }, { legacy, headers }));
       const categories = await call(categoriesName, {});
       const electronics = categories.list.find((item: any) => item.name === 'Electronics');
       assert.ok(electronics);
@@ -463,7 +471,34 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     assert.equal(metadata.body.authorization_endpoint, `${resource}/auth`);
     assert.equal(metadata.body.token_endpoint, `${resource}/token`);
     assert.equal(metadata.body.registration_endpoint, `${resource}/register`);
+    assert.deepEqual(metadata.body.grant_types_supported, ['authorization_code']);
+    assert.deepEqual(metadata.body.scopes_supported, ['mcp:all', 'mcp:read']);
     assert.equal(metadata.headers['cache-control'], 'no-store');
+
+    const refresh = await openHttp({
+      target: '/mcp/token',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        client_id: clientId,
+        refresh_token: 'not-issued',
+        resource,
+      }).toString(),
+    }).response;
+    assert.equal(refresh.status, 400);
+    assert.equal(refresh.body.error, 'invalid_request');
+    assert.equal(refresh.headers['cache-control'], 'no-store');
+    const unsupportedGrant = await openHttp({
+      target: '/mcp/token',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        client_id: clientId,
+        resource,
+      }).toString(),
+    }).response;
+    assert.equal(unsupportedGrant.status, 400);
+    assert.equal(unsupportedGrant.body.error, 'unsupported_grant_type');
   });
 
   it('uses only the automatically resolved canonical instance and rejects conflicting selectors before dispatch', async () => {
@@ -571,7 +606,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     assert.deepEqual(metadata.body, {
       resource,
       authorization_servers: [resource],
-      scopes_supported: ['mcp:read'],
+      scopes_supported: ['mcp:all', 'mcp:read'],
       bearer_methods_supported: ['header'],
     });
     assert.equal(metadata.headers['cache-control'], 'no-store');

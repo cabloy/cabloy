@@ -4,7 +4,7 @@ import { Controller } from 'zova-module-a-bean';
 import { ZButton } from 'zova-module-basic-button';
 import { ZPage } from 'zova-module-home-base';
 
-import { ModelAuthorization } from '../../model/authorization.js';
+import { ModelAuthorization } from '../../model/authorization.ts';
 
 export const ControllerPageConsentSchemaQuery = z.object({
   request: z.string().min(1),
@@ -36,6 +36,7 @@ export class ControllerPageConsent extends BeanControllerPageBase {
   protected render() {
     const query = this.querySummary;
     const summary = query?.data;
+    const scopes = summary?.scope.split(' ').filter(Boolean) ?? [];
     return (
       <ZPage>
         <main class="flex min-h-screen items-center justify-center bg-base-200 px-4 py-10">
@@ -70,14 +71,11 @@ export class ControllerPageConsent extends BeanControllerPageBase {
                       </dt>
                       <dd>
                         <ul class="mt-1 flex flex-wrap gap-2">
-                          {summary.scope
-                            .split(' ')
-                            .filter(Boolean)
-                            .map(scope => (
-                              <li key={scope} class="badge badge-outline">
-                                {scope}
-                              </li>
-                            ))}
+                          {scopes.map(scope => (
+                            <li key={scope} class="badge badge-outline">
+                              {scope}
+                            </li>
+                          ))}
                         </ul>
                       </dd>
                     </div>
@@ -92,9 +90,15 @@ export class ControllerPageConsent extends BeanControllerPageBase {
                       </dd>
                     </div>
                   </dl>
-                  <p class="text-sm text-base-content/70">
-                    {this.scope.locale.AuthorizationReadScopeHelp()}
-                  </p>
+                  {scopes.includes('mcp:all') ? (
+                    <p class="text-sm text-base-content/70">
+                      {this.scope.locale.AuthorizationAllScopeHelp()}
+                    </p>
+                  ) : scopes.includes('mcp:read') ? (
+                    <p class="text-sm text-base-content/70">
+                      {this.scope.locale.AuthorizationReadScopeHelp()}
+                    </p>
+                  ) : null}
                   <div class="card-actions justify-end gap-3">
                     <ZButton class="btn btn-outline" onPerform={() => this.decide(false)}>
                       {this.scope.locale.Deny()}

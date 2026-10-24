@@ -10,6 +10,12 @@ const consentPath = '/cabloy/mcp/consent';
 const unavailableText =
   'This authorization request is invalid, expired, or no longer available. Start again from the application.';
 const protocolVersion = '2026-07-28';
+const readScopeHelp =
+  'mcp:read allows read-only MCP tools. Your existing account permissions still apply.';
+const allScopeHelp =
+  'mcp:all allows all MCP capabilities, including changes to data, within your existing account permissions. It does not grant administrator access.';
+
+type McpScope = 'mcp:all' | 'mcp:read';
 
 type RegisteredClient = {
   clientId: string;
@@ -20,6 +26,7 @@ type RegisteredClient = {
 async function registerClient(
   request: APIRequestContext,
   origin: string,
+  scope?: McpScope,
 ): Promise<RegisteredClient> {
   const response = await request.post('/mcp/register', {
     headers: { 'content-type': 'application/json' },
@@ -27,8 +34,9 @@ async function registerClient(
       client_name: MCP_E2E_CLIENT_NAME,
       redirect_uris: [`${origin}${MCP_E2E_CALLBACK_PATH}`],
       token_endpoint_auth_method: 'none',
-      grant_types: ['authorization_code'],
+      grant_types: ['authorization_code', 'refresh_token'],
       response_types: ['code'],
+      ...(scope === undefined ? {} : { scope }),
     },
   });
   expect(response.status()).toBe(201);
@@ -37,7 +45,7 @@ async function registerClient(
   expect(body.token_endpoint_auth_method).toBe('none');
   expect(body.grant_types).toEqual(['authorization_code']);
   expect(body.response_types).toEqual(['code']);
-  expect(body.scope).toBe('mcp:read');
+  expect(body.scope).toBe(scope ?? 'mcp:all');
   expect(body.redirect_uris).toEqual([`${origin}${MCP_E2E_CALLBACK_PATH}`]);
   expect(typeof body.client_id === 'string' && /^[\w-]{43}$/.test(body.client_id)).toBe(true);
   return {
@@ -57,7 +65,12 @@ test.beforeEach(() => {
   }
 });
 
-function createAuthorization(origin: string, clientId: string, redirectUri: string) {
+function createAuthorization(
+  origin: string,
+  clientId: string,
+  redirectUri: string,
+  scope?: McpScope,
+) {
   const verifier = randomBytes(32).toString('base64url');
   const state = randomBytes(16).toString('hex');
   const resource = `${origin}/mcp`;
@@ -66,7 +79,7 @@ function createAuthorization(origin: string, clientId: string, redirectUri: stri
     response_type: 'code',
     redirect_uri: redirectUri,
     resource,
-    scope: 'mcp:read',
+    ...(scope === undefined ? {} : { scope }),
     code_challenge: createHash('sha256').update(verifier).digest('base64url'),
     code_challenge_method: 'S256',
     state,
@@ -123,7 +136,12 @@ async function beginAnonymousAuthorization(page: Page, authorization: Authorizat
   return pendingPath;
 }
 
-async function loginAndReadConsent(page: Page, pendingPath: string, origin: string) {
+async function loginAndReadConsent(
+  page: Page,
+  pendingPath: string,
+  origin: string,
+  scope: McpScope = 'mcp:all',
+) {
   // Read-only shared account fixture already used by the existing Basic E2Es.
   const username = page.getByPlaceholder('Your Username');
   const password = page.getByPlaceholder('Your Password');
@@ -146,7 +164,14 @@ async function loginAndReadConsent(page: Page, pendingPath: string, origin: stri
   ).toBeVisible();
   await expect(page.getByText(MCP_E2E_CLIENT_NAME, { exact: true })).toBeVisible();
   await expect(page.getByText(`${origin}/mcp`, { exact: true })).toBeVisible();
-  await expect(page.getByText('mcp:read', { exact: true })).toBeVisible();
+  expect((await summaryResponse.json()).data.scope).toBe(scope);
+  await expect(page.getByText(scope, { exact: true })).toBeVisible();
+  await expect(
+    page.getByText(scope === 'mcp:all' ? allScopeHelp : readScopeHelp, { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(scope === 'mcp:all' ? readScopeHelp : allScopeHelp, { exact: true }),
+  ).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Approve', exact: true })).toBeEnabled();
   await expect(page.getByRole('button', { name: 'Deny', exact: true })).toBeEnabled();
   expect((await page.context().cookies()).some(cookie => cookie.name === 'token')).toBe(true);
@@ -227,97 +252,107 @@ async function callMcp(
   });
 }
 
-test(
-  'MCP browser authorization: anonymous login, explicit approval, PKCE exchange and bearer tools',
-  { tag: ['@web', '@ssr', '@mcp', '@flow'] },
-  async ({ page, request, baseURL }) => {
-    test.setTimeout(60_000);
-    if (!baseURL) throw new Error('Managed E2E origin unavailable');
-    const origin = new URL(baseURL).origin;
-    const issuer = `${origin}/mcp`;
-    const metadata = await request.get('/.well-known/oauth-authorization-server/mcp');
-    expect(metadata.status()).toBe(200);
-    expect(metadata.headers()['cache-control']).toBe('no-store');
-    expect(await metadata.json()).toMatchObject({
-      issuer,
-      authorization_endpoint: `${issuer}/auth`,
-      token_endpoint: `${issuer}/token`,
-      registration_endpoint: `${issuer}/register`,
-    });
-    const resourceMetadata = await request.get('/.well-known/oauth-protected-resource/mcp');
-    expect(resourceMetadata.status()).toBe(200);
-    expect(await resourceMetadata.json()).toMatchObject({
-      resource: issuer,
-      authorization_servers: [issuer],
-    });
-    const client = await registerClient(request, origin);
-    const authorization = createAuthorization(origin, client.clientId, client.redirectUri);
-    const errors = collectBrowserErrors(page);
-    const pendingPath = await beginAnonymousAuthorization(page, authorization);
-    await loginAndReadConsent(page, pendingPath, authorization.origin);
+for (const scenario of [
+  { name: 'omitted scope defaults to mcp:all', scope: undefined, expectedScope: 'mcp:all' },
+  { name: 'explicit mcp:read', scope: 'mcp:read', expectedScope: 'mcp:read' },
+] as const) {
+  test(
+    `MCP browser authorization: ${scenario.name}, anonymous login, explicit approval, PKCE exchange and bearer tools`,
+    { tag: ['@web', '@ssr', '@mcp', '@flow'] },
+    async ({ page, request, baseURL }) => {
+      test.setTimeout(60_000);
+      if (!baseURL) throw new Error('Managed E2E origin unavailable');
+      const origin = new URL(baseURL).origin;
+      const issuer = `${origin}/mcp`;
+      const metadata = await request.get('/.well-known/oauth-authorization-server/mcp');
+      expect(metadata.status()).toBe(200);
+      expect(metadata.headers()['cache-control']).toBe('no-store');
+      expect(await metadata.json()).toMatchObject({
+        issuer,
+        authorization_endpoint: `${issuer}/auth`,
+        token_endpoint: `${issuer}/token`,
+        registration_endpoint: `${issuer}/register`,
+      });
+      const resourceMetadata = await request.get('/.well-known/oauth-protected-resource/mcp');
+      expect(resourceMetadata.status()).toBe(200);
+      expect(await resourceMetadata.json()).toMatchObject({
+        resource: issuer,
+        authorization_servers: [issuer],
+      });
+      const client = await registerClient(request, origin, scenario.scope);
+      const authorization = createAuthorization(
+        origin,
+        client.clientId,
+        client.redirectUri,
+        scenario.scope,
+      );
+      const errors = collectBrowserErrors(page);
+      const pendingPath = await beginAnonymousAuthorization(page, authorization);
+      await loginAndReadConsent(page, pendingPath, authorization.origin, scenario.expectedScope);
 
-    // Existing SSR cookies admit a direct document request, while private query
-    // data remains absent until hydration (no token/bridge bootstrap of our own).
-    const document = await page.request.get(pendingPath);
-    expect(document.ok()).toBe(true);
-    expect(document.headers()['cache-control']).toBe('private, no-store');
-    const html = await document.text();
-    expect(html).toContain('Loading authorization request');
-    expect(html).not.toContain(MCP_E2E_CLIENT_NAME);
-    expect(html).not.toContain('data-zova-hydrated');
-    const summary = waitForApiResponse(page, 'GET', '/mcp/auth/summary');
-    await page.reload({ waitUntil: 'load' });
-    expect((await summary).ok()).toBe(true);
-    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
-    await expect(page.getByText(MCP_E2E_CLIENT_NAME, { exact: true })).toBeVisible();
+      // Existing SSR cookies admit a direct document request, while private query
+      // data remains absent until hydration (no token/bridge bootstrap of our own).
+      const document = await page.request.get(pendingPath);
+      expect(document.ok()).toBe(true);
+      expect(document.headers()['cache-control']).toBe('private, no-store');
+      const html = await document.text();
+      expect(html).toContain('Loading authorization request');
+      expect(html).not.toContain(MCP_E2E_CLIENT_NAME);
+      expect(html).not.toContain('data-zova-hydrated');
+      const summary = waitForApiResponse(page, 'GET', '/mcp/auth/summary');
+      await page.reload({ waitUntil: 'load' });
+      expect((await summary).ok()).toBe(true);
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(page.getByText(MCP_E2E_CLIENT_NAME, { exact: true })).toBeVisible();
 
-    const callback = await decideAndCaptureCallback(page, authorization, true);
-    expect(callback.searchParams.has('error')).toBe(false);
-    const code = callback.searchParams.get('code');
-    if (!code) throw new Error('Approval callback did not contain an authorization code');
-    const exchange = await redeem(request, authorization, client.clientId, code);
-    expect(exchange.status()).toBe(200);
-    expect(exchange.headers()['cache-control']).toBe('no-store');
-    const token = await exchange.json();
-    expect(token.token_type).toBe('Bearer');
-    expect(token.scope).toBe('mcp:read');
-    expect(token.expires_in).toBe(900);
-    expect(token.refresh_token === undefined).toBe(true);
-    expect(typeof token.access_token === 'string' && /^[\w-]{43}$/.test(token.access_token)).toBe(
-      true,
-    );
-    expect(token.access_token === code).toBe(false);
+      const callback = await decideAndCaptureCallback(page, authorization, true);
+      expect(callback.searchParams.has('error')).toBe(false);
+      const code = callback.searchParams.get('code');
+      if (!code) throw new Error('Approval callback did not contain an authorization code');
+      const exchange = await redeem(request, authorization, client.clientId, code);
+      expect(exchange.status()).toBe(200);
+      expect(exchange.headers()['cache-control']).toBe('no-store');
+      const token = await exchange.json();
+      expect(token.token_type).toBe('Bearer');
+      expect(token.scope).toBe(scenario.expectedScope);
+      expect(token.expires_in).toBe(900);
+      expect(token.refresh_token === undefined).toBe(true);
+      expect(typeof token.access_token === 'string' && /^[\w-]{43}$/.test(token.access_token)).toBe(
+        true,
+      );
+      expect(token.access_token === code).toBe(false);
 
-    const anonymous = await callMcp(request, 'server/discover');
-    expect(anonymous.status()).toBe(401);
-    expect(anonymous.headers()['www-authenticate']).toContain('Bearer');
-    const discovery = await callMcp(request, 'server/discover', {}, token.access_token);
-    expect(discovery.status()).toBe(200);
-    expect((await discovery.json()).result.supportedVersions).toContain(protocolVersion);
-    const categories = await callMcp(
-      request,
-      'tools/call',
-      { name: 'commerce_categories_list', arguments: {} },
-      token.access_token,
-    );
-    expect(categories.status()).toBe(200);
-    const result = (await categories.json()).result;
-    expect(result.isError === true).toBe(false);
-    expect(
-      result.structuredContent.list.some((item: { name: string }) => item.name === 'Electronics'),
-    ).toBe(true);
-    expect(
-      result.structuredContent.list.some((item: { name: string }) => item.name === 'Private'),
-    ).toBe(false);
+      const anonymous = await callMcp(request, 'server/discover');
+      expect(anonymous.status()).toBe(401);
+      expect(anonymous.headers()['www-authenticate']).toContain('Bearer');
+      const discovery = await callMcp(request, 'server/discover', {}, token.access_token);
+      expect(discovery.status()).toBe(200);
+      expect((await discovery.json()).result.supportedVersions).toContain(protocolVersion);
+      const categories = await callMcp(
+        request,
+        'tools/call',
+        { name: 'commerce_categories_list', arguments: {} },
+        token.access_token,
+      );
+      expect(categories.status()).toBe(200);
+      const result = (await categories.json()).result;
+      expect(result.isError === true).toBe(false);
+      expect(
+        result.structuredContent.list.some((item: { name: string }) => item.name === 'Electronics'),
+      ).toBe(true);
+      expect(
+        result.structuredContent.list.some((item: { name: string }) => item.name === 'Private'),
+      ).toBe(false);
 
-    const replay = await redeem(request, authorization, client.clientId, code);
-    expect(replay.status()).toBe(400);
-    expect((await replay.json()).error).toBe('invalid_grant');
-    expect(errors).toEqual({ page: 0, console: 0, hydration: 0 });
-    // AS rows live only in this root-run-owned disposable database, which the
-    // managed runner removes. The shared seeded account/catalogue are read-only.
-  },
-);
+      const replay = await redeem(request, authorization, client.clientId, code);
+      expect(replay.status()).toBe(400);
+      expect((await replay.json()).error).toBe('invalid_grant');
+      expect(errors).toEqual({ page: 0, console: 0, hydration: 0 });
+      // AS rows live only in this root-run-owned disposable database, which the
+      // managed runner removes. The shared seeded account/catalogue are read-only.
+    },
+  );
+}
 
 test(
   'MCP browser authorization: denial returns only access_denied and closes the pending request',

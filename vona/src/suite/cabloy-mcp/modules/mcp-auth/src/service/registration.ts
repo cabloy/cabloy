@@ -14,6 +14,8 @@ import type {
 import {
   getMcpAuthConfig,
   getMcpIssuer,
+  isMcpScope,
+  parseMcpScope,
   resolveMcpResource,
   OAuthError,
   sha256,
@@ -51,7 +53,7 @@ export class ServiceRegistration extends BeanBase {
           redirectUris: parsed.redirectUris,
           authentication: parsed.authentication,
           resource: resource.resource,
-          scope: 'mcp:read',
+          scope: parsed.scope,
           state: 'active',
           clientIdIssuedAt: issuedAt,
           ...(parsed.secretSha256 ? { secretSha256: parsed.secretSha256 } : {}),
@@ -68,7 +70,7 @@ export class ServiceRegistration extends BeanBase {
         token_endpoint_auth_method: parsed.authentication,
         grant_types: ['authorization_code'],
         response_types: ['code'],
-        scope: 'mcp:read',
+        scope: parsed.scope,
         ...(parsed.secret
           ? { client_secret: parsed.secret, client_secret_expires_at: 0 as const }
           : {}),
@@ -84,7 +86,7 @@ export class ServiceRegistration extends BeanBase {
       !client ||
       client.state !== 'active' ||
       client.resource !== resource ||
-      client.scope !== 'mcp:read'
+      !isMcpScope(client.scope)
     ) {
       return undefined;
     }
@@ -95,7 +97,7 @@ export class ServiceRegistration extends BeanBase {
       authentication: client.authentication,
       ...(client.secretSha256 ? { secretSha256: client.secretSha256 } : {}),
       resources: [client.resource],
-      scope: 'mcp:read',
+      scope: client.scope,
       state: client.state,
       clientIdIssuedAt: Number(client.clientIdIssuedAt),
     };
@@ -117,6 +119,7 @@ export class ServiceRegistration extends BeanBase {
       'token_endpoint_auth_method',
       'grant_types',
       'response_types',
+      'scope',
     ]);
     if (keys.some(key => !allowed.has(key))) throw new OAuthError('invalid_client_metadata');
     if (typeof request.client_name !== 'string' || !clientNamePattern.test(request.client_name)) {
@@ -142,8 +145,12 @@ export class ServiceRegistration extends BeanBase {
     if (
       request.grant_types !== undefined &&
       (!Array.isArray(request.grant_types) ||
-        request.grant_types.length !== 1 ||
-        request.grant_types[0] !== 'authorization_code')
+        request.grant_types.length > 2 ||
+        !request.grant_types.includes('authorization_code') ||
+        new Set(request.grant_types).size !== request.grant_types.length ||
+        request.grant_types.some(
+          grant => grant !== 'authorization_code' && grant !== 'refresh_token',
+        ))
     ) {
       throw new OAuthError('invalid_client_metadata');
     }
@@ -155,6 +162,8 @@ export class ServiceRegistration extends BeanBase {
     ) {
       throw new OAuthError('invalid_client_metadata');
     }
+    const scope = request.scope === undefined ? 'mcp:all' : parseMcpScope(request.scope);
+    if (!scope) throw new OAuthError('invalid_client_metadata');
     const authentication: TypeMcpClientAuthentication =
       request.token_endpoint_auth_method ?? 'none';
     if (authentication !== 'none' && authentication !== 'client_secret_basic') {
@@ -164,6 +173,7 @@ export class ServiceRegistration extends BeanBase {
       authentication === 'client_secret_basic' ? randomBytes(32).toString('base64url') : undefined;
     return {
       clientName: request.client_name,
+      scope,
       redirectUris: request.redirect_uris,
       authentication,
       ...(secret ? { secret, secretSha256: sha256(secret) } : {}),

@@ -84,7 +84,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
     assert.equal(response.token_endpoint_auth_method, 'none');
     assert.deepEqual(response.grant_types, ['authorization_code']);
     assert.deepEqual(response.response_types, ['code']);
-    assert.equal(response.scope, 'mcp:read');
+    assert.equal(response.scope, 'mcp:all');
     assert.equal('client_secret' in response, false);
 
     await app.bean.executor.mockCtx(async () => {
@@ -92,11 +92,12 @@ describe('registration.test.ts', { concurrency: false }, () => {
       assert.ok(row);
       assert.equal(row.name, publicRequest.client_name);
       assert.equal(row.resource, resource.resource);
-      assert.equal(row.scope, 'mcp:read');
+      assert.equal(row.scope, 'mcp:all');
       assert.equal(row.state, 'active');
       assert.equal(row.secretSha256, null);
       const resolved = await service().resolve(response.client_id, resource.resource);
       assert.equal(resolved?.clientId, response.client_id);
+      assert.equal(resolved?.scope, 'mcp:all');
       assert.deepEqual(resolved?.redirectUris, [redirectUri]);
       assert.equal(await service().resolve('unregistered-client', resource.resource), undefined);
       assert.equal(
@@ -109,6 +110,72 @@ describe('registration.test.ts', { concurrency: false }, () => {
       await service().disable(response.client_id);
       assert.equal(await service().resolve(response.client_id, resource.resource), undefined);
     });
+  });
+
+  it('stores explicit scopes canonically and preserves read-only registrations', async () => {
+    for (const [scope, expected] of [
+      ['mcp:read', 'mcp:read'],
+      ['mcp:all', 'mcp:all'],
+      ['mcp:all mcp:read', 'mcp:all'],
+      ['mcp:read mcp:all', 'mcp:all'],
+    ]) {
+      const response = await app.bean.executor.mockCtx(() =>
+        service().register({ ...publicRequest, scope }, resource),
+      );
+      clientIds.push(response.client_id);
+      assert.equal(response.scope, expected);
+      await app.bean.executor.mockCtx(async () => {
+        assert.equal((await model().get({ clientId: response.client_id }))?.scope, expected);
+        assert.equal(
+          (await service().resolve(response.client_id, resource.resource))?.scope,
+          expected,
+        );
+      });
+    }
+  });
+
+  it('does not normalize invalid persisted registration scopes into authority', async () => {
+    const response = await app.bean.executor.mockCtx(() =>
+      service().register({ ...publicRequest, scope: 'mcp:read' }, resource),
+    );
+    clientIds.push(response.client_id);
+    await app.bean.executor.mockCtx(async () => {
+      for (const scope of ['', 'mcp:write', 'mcp:all mcp:read', 'mcp:read mcp:all']) {
+        await model().builderSelect().where({ clientId: response.client_id }).update({ scope });
+        assert.equal(await service().resolve(response.client_id, resource.resource), undefined);
+        assert.equal((await model().get({ clientId: response.client_id }))?.scope, scope);
+      }
+    });
+  });
+
+  it('negotiates Codex-style requested grants without granting refresh or broader scope', async () => {
+    for (const grant_types of [
+      ['authorization_code', 'refresh_token'],
+      ['refresh_token', 'authorization_code'],
+    ] as const) {
+      const response = await app.bean.executor.mockCtx(() =>
+        service().register(
+          {
+            ...publicRequest,
+            client_name: 'Codex-style test client',
+            grant_types: [...grant_types],
+            scope: 'mcp:read',
+          },
+          resource,
+        ),
+      );
+      clientIds.push(response.client_id);
+      assert.deepEqual(response.grant_types, ['authorization_code']);
+      assert.deepEqual(response.response_types, ['code']);
+      assert.equal(response.scope, 'mcp:read');
+      assert.equal('refresh_token' in response, false);
+      assert.equal('client_secret' in response, false);
+      await app.bean.executor.mockCtx(async () => {
+        const resolved = await service().resolve(response.client_id, resource.resource);
+        assert.equal(resolved?.scope, 'mcp:read');
+        assert.deepEqual(resolved?.resources, [resource.resource]);
+      });
+    }
   });
 
   it('rejects resource and tenant selectors instead of accepting caller-authored authority', async () => {
@@ -173,6 +240,45 @@ describe('registration.test.ts', { concurrency: false }, () => {
         'invalid_client_metadata',
       ],
       ['null grant metadata', { ...publicRequest, grant_types: null }, 'invalid_client_metadata'],
+      ...[
+        [],
+        ['authorization_code', 'client_credentials'],
+        ['authorization_code', 'authorization_code'],
+        ['authorization_code', 'refresh_token', 'refresh_token'],
+        'authorization_code',
+      ].map(
+        grant_types =>
+          ['invalid grant set', { ...publicRequest, grant_types }, 'invalid_client_metadata'] as [
+            string,
+            unknown,
+            string,
+          ],
+      ),
+      ...[
+        '',
+        'mcp:write',
+        'offline_access',
+        'mcp:read offline_access',
+        ' mcp:read',
+        'mcp:all ',
+        ' ',
+        'mcp:read mcp:read',
+        'mcp:all mcp:all',
+        'mcp:all mcp:read mcp:read',
+        'mcp:all  mcp:read',
+        'mcp:all\tmcp:read',
+        'mcp:read\nmcp:all',
+        'mcp:all offline_access',
+        null,
+        ['mcp:read'],
+      ].map(
+        scope =>
+          ['invalid scope metadata', { ...publicRequest, scope }, 'invalid_client_metadata'] as [
+            string,
+            unknown,
+            string,
+          ],
+      ),
       [
         'nonloopback HTTP redirect',
         { ...publicRequest, redirect_uris: ['http://client.example.test/callback'] },

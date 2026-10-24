@@ -13,6 +13,7 @@ import type { IMcpAuthRegistrationRequest } from '../types/index.ts';
 import {
   getMcpAuthConfig,
   getMcpIssuer,
+  mcpSupportedScopes,
   OAuthError,
   resolveMcpResource,
 } from '../lib/authorization.ts';
@@ -87,7 +88,7 @@ export class MiddlewareSystemAuthorization extends BeanBase implements IMiddlewa
           grant_types_supported: ['authorization_code'],
           code_challenge_methods_supported: ['S256'],
           token_endpoint_auth_methods_supported: ['none', 'client_secret_basic'],
-          scopes_supported: ['mcp:read'],
+          scopes_supported: mcpSupportedScopes,
           authorization_response_iss_parameter_supported: true,
           registration_endpoint: `${issuer}/register`,
         };
