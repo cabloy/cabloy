@@ -24,6 +24,8 @@ export default defineConfig(ctx => {
             injectTo: resolveEntry('client-entry.js'),
             match: /\.tsx$/,
             exclude: /\/\.metadata\//,
+            // Component roots may be fragments or teleports; locate their native TSX instead.
+            escapeTags: [/^[A-Z]/, /\./],
             pathType: 'absolute',
             server: 'close',
             skipSnippets: ['console'],
