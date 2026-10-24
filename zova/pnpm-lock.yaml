@@ -443,6 +443,9 @@ importers:
       zova-module-basic-text:
         specifier: workspace:^
         version: link:src/suite/cabloy-basic/modules/basic-text
+      zova-module-cabloy-mcp:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-mcp/modules/cabloy-mcp
       zova-module-commerce-catalog:
         specifier: workspace:^
         version: link:src/suite/a-commerce/modules/commerce-catalog
@@ -2293,6 +2296,21 @@ importers:
         version: 6.1.3
 
   src/suite/cabloy-basic/modules/basic-text:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/cabloy-mcp:
+    dependencies:
+      zova-module-cabloy-mcp:
+        specifier: ^5.0.0
+        version: link:modules/cabloy-mcp
+
+  src/suite/cabloy-mcp/modules/cabloy-mcp:
     devDependencies:
       clean-package:
         specifier: ^2.2.0

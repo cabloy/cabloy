@@ -16,7 +16,7 @@ This contributes partially to WBS-MCP-20-01, WBS-MCP-30-01 and WBS-MCP-40-01 und
 - One active/no queue; exact direct-only Host/Origin/path and credential/selector denial; 16 KiB body, 1 MiB complete JSON output, actual two-second receive and ten-second execution deadlines. Abort is not SQL cancellation: actual handler promises, SDK close and executor continuation/disposal remain owned before capacity release. Response-limit failure is sanitized and propagated to the close owner rather than silently reported as success.
 - At most 600 serving seconds; normal TTL stops admission, drains and closes the app before managed cleanup. Interruption/failure may retain claims/resources. No hard-kill, reset, environment change or cleanup workaround.
 
-The [public walkthrough](../../../repo-docs/backend/mcp-commerce-local.md) and API & Testing navigation provide complete modern discover/list/search/detail requests. No production/OAuth, protected tools, main/core/framework, persistence, frontend, profile/lifecycle/ORM foundation, generic registry, dependency install, commit or push was performed.
+The [public walkthrough](../../../vona/src/suite/cabloy-mcp/docs/mcp-commerce-local.md) and API & Testing navigation provide complete modern discover/list/search/detail requests. No production/OAuth, protected tools, main/core/framework, persistence, frontend, profile/lifecycle/ORM foundation, generic registry, dependency install, commit or push was performed.
 
 ## Observed failures and corrections
 

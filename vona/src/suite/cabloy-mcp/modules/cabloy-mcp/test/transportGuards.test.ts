@@ -160,6 +160,65 @@ describe('MCP transport guards', { concurrency: false }, () => {
     }
     assert.equal(checkProtocolIngress({ ...input, method: 'GET' })?.status, 405);
   });
+  it('admits exactly one bearer only in the protected shared-listener profile', () => {
+    const rawHeaders = [
+      'Host',
+      'resource.example.test',
+      'Content-Type',
+      'application/json',
+      'Accept',
+      'application/json, text/event-stream',
+    ];
+    const input = { target: '/mcp', method: 'POST', rawHeaders, authentication: 'bearer' as const };
+    assert.equal(checkProtocolIngress(input)?.status, 401);
+    const bearer = [...rawHeaders, 'Authorization', 'Bearer opaque-token_1'];
+    assert.equal(checkProtocolIngress({ ...input, rawHeaders: bearer }), undefined);
+    assert.equal(
+      ingress({ rawHeaders: [...bearer.slice(2), 'Host', '127.0.0.1:12345'] })?.status,
+      403,
+    );
+    for (const credential of ['', 'Basic abc', 'Bearer', 'Bearer a b', 'Bearer a, Bearer b']) {
+      assert.equal(
+        checkProtocolIngress({ ...input, rawHeaders: [...rawHeaders, 'Authorization', credential] })
+          ?.status,
+        401,
+      );
+    }
+    assert.equal(
+      checkProtocolIngress({ ...input, rawHeaders: [...bearer, 'authorization', 'Bearer other'] })
+        ?.status,
+      401,
+    );
+    for (const name of [
+      'Cookie',
+      'Proxy-Authorization',
+      'Forwarded',
+      'X-Forwarded-Authorization',
+    ]) {
+      assert.equal(
+        checkProtocolIngress({ ...input, rawHeaders: [...bearer, name, 'credential'] })?.status,
+        403,
+      );
+    }
+    assert.equal(
+      checkProtocolIngress({
+        ...input,
+        rawHeaders: [...bearer, 'Content-Length', '1', 'Transfer-Encoding', 'chunked'],
+      })?.status,
+      400,
+    );
+    assert.equal(
+      checkProtocolIngress({ ...input, rawHeaders: [...bearer, 'X-Large', 'x'.repeat(2049)] })
+        ?.status,
+      431,
+    );
+    assert.equal(
+      checkProtocolIngress({ ...input, rawHeaders: bearer, target: '/mcp?access_token=opaque' })
+        ?.status,
+      404,
+    );
+  });
+
   it('enforces pure ingress security and fixed denial precedence', () => {
     assert.equal(ingress(), undefined);
     const base = [

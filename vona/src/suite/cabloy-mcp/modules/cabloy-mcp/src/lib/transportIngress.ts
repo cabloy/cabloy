@@ -6,9 +6,14 @@ export interface IProtocolIngressInput {
   method: string | undefined;
   /** Optional framework instance header permitted as a singleton. */
   instanceHeader?: string;
+  /** Explicit shared-listener profile; fixtures always reject credentials. */
+  authentication?: 'bearer';
 }
 
-export interface IFixtureIngressInput extends Omit<IProtocolIngressInput, 'instanceHeader'> {
+export interface IFixtureIngressInput extends Omit<
+  IProtocolIngressInput,
+  'instanceHeader' | 'authentication'
+> {
   peer: string | undefined;
   /** Server-owned authority derived from the fixture's allocated IPv4 listener. */
   host: string;
@@ -67,6 +72,7 @@ function checkIngress(
   local?: IFixtureIngressInput,
 ): IFixtureIngressDenial | undefined {
   const headers = new Map<string, { value: string; count: number }>();
+  const bearer = !local && input.authentication === 'bearer';
   const instanceHeader = input.instanceHeader?.toLowerCase();
   const selectors = new Set(local?.instanceHeaders.map(name => name.toLowerCase()));
   selectors.add('x-vona-instance-name');
@@ -100,7 +106,7 @@ function checkIngress(
     if (
       name === 'forwarded' ||
       name.startsWith('x-forwarded-') ||
-      credentialHeaders.has(name) ||
+      (credentialHeaders.has(name) && !(bearer && name === 'authorization')) ||
       (selectors.has(name) && (local || name !== instanceHeader))
     ) {
       unsafeHeader = true;
@@ -188,6 +194,16 @@ function checkIngress(
     oversizedValue
   ) {
     return { status: 431 };
+  }
+  if (bearer) {
+    const authorization = headers.get('authorization');
+    if (
+      !authorization ||
+      authorization.count !== 1 ||
+      !/^Bearer [\w.~+/-]+=*$/i.test(authorization.value)
+    ) {
+      return { status: 401 };
+    }
   }
   return undefined;
 }

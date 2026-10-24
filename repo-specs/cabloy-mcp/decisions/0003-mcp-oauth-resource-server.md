@@ -1,6 +1,10 @@
 # ADR 0003: MCP OAuth Resource-Server Boundary
 
-## Status
+## Current bounded supersession (2026-10-23)
+
+[ADR 0010](./0010-mcp-browser-execution-profile.md) controls the approved browser-to-MCP increment: AS ownership moves to backend `cabloy-mcp/modules/mcp-auth`, consent presentation to Zova `cabloy-mcp/modules/cabloy-mcp`, and existing SSR cookie/login/API authentication is reused without a new bridge. It supersedes incompatible unimplemented ownership/mechanism gates and former preparation handoffs below, not OAuth/tenant/local-authorization invariants. Historical design-only status and evidence limits below are not current execution blockers for that approved slice, nor proof of runtime or release acceptance.
+
+## Historical status
 
 **Accepted for design only — not implementation, configuration, or runtime proof.** On 2026-10-09, the accountable decision owner `zhennann` accepted the bounded design disposition recorded in [the AS design review dossier](../wbs-mcp-20-04-as-design-review.md): keep `cabloy-mcp` as a separate resource server, support pre-registered public/confidential clients with Authorization Code + PKCE S256, use MCP-specific opaque access tokens with current server-owned lookup, and use **no refresh-token issuance in the first profile**. On 2026-10-10, `zhennann` selected an integrated `a-auth` logical AS route and accepted responsibility for AS implementation and operations. The separately operated AS remains an alternative only through a future decision. The separately recorded [ADR 0009](./0009-mcp-as-state-boundary.md) permits planning for AS-owned shared authorization state and, as revised on 2026-10-11, selects one AS-owned database-backed authority with code consumption and token activation in one atomic commit and Zova presentation of the AS per-request approval/denial as **bounded design directions**. It does not assume a default explicit multi-statement transaction or authorize a physical database, schema, Zova site/flavor/SSR/admission, identity/session/CSRF implementation, durable consent record, provider, endpoint, dependency, source, OAuth operation, or ATP. The earlier deny-on-JWKS-refresh-failure sub-policy remains only for a future JWT/JWKS alternative and is not the selected opaque-token profile.
 

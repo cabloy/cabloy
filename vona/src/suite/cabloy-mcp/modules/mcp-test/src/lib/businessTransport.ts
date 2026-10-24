@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { IInstanceRecord, VonaApplication } from 'vona';
+import type { IMcpAuthResource } from 'vona-module-cabloy-mcp';
 
 import { toNodeHandler } from '@modelcontextprotocol/node';
 import {
@@ -10,9 +11,20 @@ import {
   WebStandardStreamableHTTPServerTransport,
 } from '@modelcontextprotocol/server';
 import { runWithZodQueryCoercion } from 'vona';
-import { FixtureTransportError, readFixtureBody } from 'vona-module-cabloy-mcp';
+import {
+  authenticateMcpResource,
+  FixtureTransportError,
+  mcpResourceChallenge,
+  OAuthError,
+  readFixtureBody,
+} from 'vona-module-cabloy-mcp';
 
 import { createBusinessToolServer } from './businessTools.ts';
+
+export interface IBusinessTransportAuthentication {
+  token: string;
+  resource: IMcpAuthResource;
+}
 
 const RESPONSE_BYTES = 1024 * 1024;
 const messages = new Map([
@@ -40,7 +52,13 @@ function errorBody(code: number, id: unknown = null) {
   };
 }
 
-export function fail(res: ServerResponse, status: number, code = -32000, allow?: string) {
+export function fail(
+  res: ServerResponse,
+  status: number,
+  code = -32000,
+  allow?: string,
+  challenge?: string,
+) {
   if (res.destroyed || res.writableEnded) return;
   if (res.headersSent) {
     res.destroy();
@@ -51,6 +69,7 @@ export function fail(res: ServerResponse, status: number, code = -32000, allow?:
     'cache-control': 'no-store',
     'connection': 'close',
     ...(allow ? { allow } : {}),
+    ...(challenge ? { 'www-authenticate': challenge } : {}),
   });
   res.end(JSON.stringify(errorBody(code)));
 }
@@ -111,6 +130,7 @@ export function createBusinessTransport(app: VonaApplication, initializeInstance
     res: ServerResponse,
     abort: AbortController,
     instanceName: keyof IInstanceRecord | undefined,
+    authentication: IBusinessTransportAuthentication | undefined,
   ) {
     const disconnected = () => {
       if (!res.writableFinished) abort.abort();
@@ -153,6 +173,37 @@ export function createBusinessTransport(app: VonaApplication, initializeInstance
               return;
             }
           }
+          if (initializeInstance) {
+            if (!authentication) {
+              fail(res, 401);
+              return;
+            }
+            try {
+              await authenticateMcpResource(app, authentication.token, authentication.resource);
+            } catch (error) {
+              const scope =
+                error instanceof OAuthError && error.oauthError === 'insufficient_scope';
+              const status = scope
+                ? 403
+                : error instanceof OAuthError && error.status === 401
+                  ? 401
+                  : 503;
+              fail(
+                res,
+                status,
+                -32000,
+                undefined,
+                status === 401 || scope
+                  ? mcpResourceChallenge(
+                      authentication.resource,
+                      scope ? 'insufficient_scope' : 'invalid_token',
+                    )
+                  : undefined,
+              );
+              return;
+            }
+          }
+          if (abort.signal.aborted) return;
           await runWithZodQueryCoercion(false, async () => {
             let business: Awaited<ReturnType<typeof createBusinessToolServer>> | undefined;
             let legacy: WebStandardStreamableHTTPServerTransport | undefined;
@@ -280,13 +331,18 @@ export function createBusinessTransport(app: VonaApplication, initializeInstance
   let closure: Promise<void> | undefined;
   return {
     snapshot: () => ({ active: current ? 1 : 0, contexts, settled, closing }),
-    async handle(req: IncomingMessage, res: ServerResponse, instanceName?: keyof IInstanceRecord) {
+    async handle(
+      req: IncomingMessage,
+      res: ServerResponse,
+      instanceName?: keyof IInstanceRecord,
+      authentication?: IBusinessTransportAuthentication,
+    ) {
       if (closing) return fail(res, 503);
       if (current) return fail(res, 429);
       const abort = new AbortController();
       const owned = { abort, res, done: Promise.resolve() };
       current = owned;
-      owned.done = execute(req, res, abort, instanceName).finally(() => {
+      owned.done = execute(req, res, abort, instanceName, authentication).finally(() => {
         if (current === owned) current = undefined;
       });
       await owned.done;

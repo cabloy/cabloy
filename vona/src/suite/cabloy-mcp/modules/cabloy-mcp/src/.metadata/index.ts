@@ -1,4 +1,30 @@
 // eslint-disable
+/** middlewareSystem: begin */
+export * from '../bean/middlewareSystem.resourceMetadata.ts';
+import type { IMiddlewareSystemOptionsResourceMetadata } from '../bean/middlewareSystem.resourceMetadata.ts';
+import 'vona-module-a-aspect';
+declare module 'vona-module-a-aspect' {
+
+    export interface IMiddlewareSystemRecord {
+      'cabloy-mcp:resourceMetadata': IMiddlewareSystemOptionsResourceMetadata;
+    }
+
+
+}
+declare module 'vona-module-cabloy-mcp' {
+
+        export interface MiddlewareSystemResourceMetadata {
+          /** @internal */
+          get scope(): ScopeModuleCabloyMcp;
+        }
+
+          export interface MiddlewareSystemResourceMetadata {
+            get $beanFullName(): 'cabloy-mcp.middlewareSystem.resourceMetadata';
+            get $onionName(): 'cabloy-mcp:resourceMetadata';
+            get $onionOptions(): IMiddlewareSystemOptionsResourceMetadata;
+          }
+}
+/** middlewareSystem: end */
 /** meta: begin */
 export * from '../bean/meta.printTip.ts';
 

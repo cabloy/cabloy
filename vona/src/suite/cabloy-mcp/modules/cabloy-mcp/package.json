@@ -32,7 +32,8 @@
   },
   "dependencies": {
     "@modelcontextprotocol/node": "2.1.1",
-    "@modelcontextprotocol/server": "2.3.0"
+    "@modelcontextprotocol/server": "2.3.0",
+    "vona-module-mcp-auth": "workspace:*"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",
@@ -49,7 +50,8 @@
   "title": "cabloy-mcp",
   "vonaModule": {
     "dependencies": {
-      "a-vona": "5.0.0"
+      "a-vona": "5.0.0",
+      "mcp-auth": "5.0.0"
     }
   }
 }

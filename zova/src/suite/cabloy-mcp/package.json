@@ -1,0 +1,12 @@
+{
+  "name": "zova-suite-cabloy-mcp",
+  "version": "5.0.0",
+  "description": "",
+  "author": "",
+  "files": [],
+  "type": "module",
+  "dependencies": {
+    "zova-module-cabloy-mcp": "^5.0.0"
+  },
+  "title": "cabloy-mcp"
+}

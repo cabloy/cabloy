@@ -1,6 +1,8 @@
-import type { OutgoingHttpHeaders } from 'node:http';
+import type { IncomingHttpHeaders, OutgoingHttpHeaders } from 'node:http';
+import type { IMcpAuthConfig } from 'vona-module-mcp-auth';
 
 import assert from 'node:assert/strict';
+import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { request } from 'node:http';
 import { after, before, describe, it } from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -15,6 +17,63 @@ const categoriesName = 'commerce_categories_list';
 const searchName = 'commerce_products_search';
 const detailName = 'commerce_product_detail';
 let port: number;
+let bearer: string;
+let origin: string;
+let resource: string;
+const clientId = 'mcp-dev-http-test';
+let redirectUri: string;
+let fixtureUserId: string | undefined;
+let fixtureAuthId: string | undefined;
+let fixtureAuthSimpleId: string | undefined;
+let browserToken: string;
+const ownedRequests: string[] = [];
+
+async function redeemBearer() {
+  const verifier = randomBytes(32).toString('base64url');
+  const requestId = await app.bean.executor.mockCtx(
+    async () => {
+      return await app.scope('mcp-auth').service.authorization.authorize(
+        new URLSearchParams({
+          response_type: 'code',
+          client_id: clientId,
+          redirect_uri: redirectUri,
+          resource,
+          scope: 'mcp:read',
+          code_challenge_method: 'S256',
+          code_challenge: createHash('sha256').update(verifier).digest('base64url'),
+        }),
+        { resource, instanceName: '' },
+      );
+    },
+    { instanceName: '' },
+  );
+  ownedRequests.push(requestId);
+  const decided = await openHttp({
+    target: '/mcp/auth/decision',
+    headers: { authorization: `Bearer ${browserToken}`, origin },
+    body: JSON.stringify({ request: requestId, allow: true }),
+  }).response;
+  assert.equal(decided.status, 200);
+  const callback = new URL(decided.body.data.redirectUrl);
+  const code = callback.searchParams.get('code');
+  assert.ok(code);
+  const token = await openHttp({
+    target: '/mcp/token',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'authorization_code',
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      resource,
+      code,
+      code_verifier: verifier,
+    }).toString(),
+  }).response;
+  assert.equal(token.status, 200);
+  assert.equal(token.body.token_type, 'Bearer');
+  assert.equal(token.body.scope, 'mcp:read');
+  return token.body.access_token as string;
+}
 
 function openHttp(
   options: {
@@ -40,35 +99,41 @@ function openHttp(
       ...options.headers,
     },
   });
-  const response = new Promise<{ status: number; body: any }>((resolve, reject) => {
-    const timer = setTimeout(() => req.destroy(new Error('Dev MCP HTTP timeout')), 15000);
-    req.once('error', error => {
-      clearTimeout(timer);
-      reject(error);
-    });
-    req.once('response', res => {
-      const chunks: Buffer[] = [];
-      let size = 0;
-      res.on('data', (chunk: Buffer) => {
-        size += chunk.length;
-        if (size > 1024 * 1024) res.destroy(new Error('Dev MCP response limit'));
-        else chunks.push(chunk);
-      });
-      res.once('error', error => {
+  const response = new Promise<{ status: number; body: any; headers: IncomingHttpHeaders }>(
+    (resolve, reject) => {
+      const timer = setTimeout(() => req.destroy(new Error('Dev MCP HTTP timeout')), 15000);
+      req.once('error', error => {
         clearTimeout(timer);
         reject(error);
       });
-      res.once('end', () => {
-        clearTimeout(timer);
-        try {
-          const text = Buffer.concat(chunks).toString('utf8');
-          resolve({ status: res.statusCode!, body: text ? JSON.parse(text) : undefined });
-        } catch (error) {
+      req.once('response', res => {
+        const chunks: Buffer[] = [];
+        let size = 0;
+        res.on('data', (chunk: Buffer) => {
+          size += chunk.length;
+          if (size > 1024 * 1024) res.destroy(new Error('Dev MCP response limit'));
+          else chunks.push(chunk);
+        });
+        res.once('error', error => {
+          clearTimeout(timer);
           reject(error);
-        }
+        });
+        res.once('end', () => {
+          clearTimeout(timer);
+          try {
+            const text = Buffer.concat(chunks).toString('utf8');
+            resolve({
+              status: res.statusCode!,
+              body: text ? JSON.parse(text) : undefined,
+              headers: res.headers,
+            });
+          } catch (error) {
+            reject(error);
+          }
+        });
       });
-    });
-  });
+    },
+  );
   void response.catch(() => {});
   if (options.partial) req.write(body);
   else req.end(body);
@@ -105,6 +170,7 @@ async function send(
           },
     }),
     headers: {
+      authorization: `Bearer ${bearer}`,
       ...(options.legacy
         ? method === 'initialize'
           ? {}
@@ -138,14 +204,89 @@ function output(response: Awaited<ReturnType<typeof send>>) {
 // No test creates another application/listener or changes global origin configuration.
 describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
   let release: (() => void) | undefined;
+  let previousConfig: IMcpAuthConfig;
   before(async () => {
     assert.ok(app.server?.listening, 'managed application listener must be enabled');
     const address = app.server.address();
     assert.ok(address && typeof address === 'object');
     port = address.port;
+    origin = `http://127.0.0.1:${port}`;
+    resource = `${origin}/mcp`;
+    redirectUri = `${origin}/mcp-test-callback`;
     release = await acquireTestLock('mcp-test');
+    previousConfig = app.config.modules['mcp-auth'];
+    app.config.modules['mcp-auth'] = {
+      issuer: origin,
+      resources: [{ resource, instanceName: '' }],
+      clients: [
+        {
+          clientId,
+          name: 'Managed MCP test',
+          redirectUris: [redirectUri],
+          authentication: 'none',
+          resources: [resource],
+        },
+      ],
+      pendingTtl: 600,
+      codeTtl: 60,
+      tokenTtl: 900,
+      allowLoopbackHttp: true,
+    };
+    // Selector probes may touch this shared instance through the ordinary request lifecycle.
+    // Finish its managed startup before writing default-instance authorization fixtures.
+    await app.bean.executor.mockCtx(async () => {}, { instanceName: 'shareTest' });
+    await app.bean.executor.mockCtx(
+      async () => {
+        const user = await app.bean.user.register({ name: `mcp-dev-http-${randomUUID()}` }, true);
+        fixtureUserId = String(user.id);
+        const authSimple = await app
+          .scope('auth-simple')
+          .service.authSimple.createForUser(user.id, 'mcp-test-password');
+        assert.ok(authSimple);
+        fixtureAuthSimpleId = String(authSimple.id);
+        const auth = await app.scope('a-auth').model.auth.get({ userId: user.id });
+        assert.ok(auth);
+        fixtureAuthId = String(auth.id);
+        const currentUser = await app.bean.user.findOneById(user.id);
+        const jwt = await app.bean.passport.signin({
+          user: currentUser,
+          auth,
+          roles: await app.bean.role.findAllByUserId(user.id),
+        });
+        browserToken = jwt.accessToken;
+      },
+      { instanceName: '' },
+    );
+    bearer = await redeemBearer();
   });
-  after(() => release?.());
+  after(async () => {
+    try {
+      await app.bean.executor.mockCtx(
+        async () => {
+          for (const requestId of ownedRequests) {
+            await app.scope('mcp-auth').model.authorization.delete({
+              requestDigest: createHash('sha256').update(requestId).digest('hex'),
+            });
+          }
+          if (browserToken) {
+            await app.bean.passport.checkAuthToken(browserToken);
+            await app.bean.passport.signout();
+          }
+          if (fixtureAuthId) await app.scope('a-auth').model.auth.deleteById(fixtureAuthId);
+          if (fixtureAuthSimpleId)
+            await app.scope('auth-simple').model.authSimple.deleteById(fixtureAuthSimpleId);
+          if (fixtureUserId) {
+            await app.scope('home-user').model.roleUser.delete({ userId: fixtureUserId });
+            await app.bean.user.removeById(fixtureUserId);
+          }
+        },
+        { instanceName: '' },
+      );
+    } finally {
+      if (previousConfig) app.config.modules['mcp-auth'] = previousConfig;
+      release?.();
+    }
+  });
 
   it('shares discovery, modern/legacy three-tool flows and ordinary catalog routes on one listener', async () => {
     const server = app.server;
@@ -201,11 +342,9 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     assert.ok(app.server?.listening, 'per-request cleanup does not close shared server');
   });
 
-  it('uses optional instanceName and framework query/header fallback without leaking default fixture data', async () => {
+  it('uses only the registered canonical instance and rejects conflicting selectors before dispatch', async () => {
     const params = { name: categoriesName, arguments: {} };
-    for (const target of ['/mcp', '/mcp?instanceName=']) {
-      assert.ok(output(await send('tools/call', params, { target })).list.length > 0);
-    }
+    const contexts = devTransportSnapshot(app)?.contexts ?? 0;
     const queryField = app.config.instance.queryField!;
     const headerField = app.config.instance.headerField!;
     for (const options of [
@@ -213,53 +352,31 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       { target: `/mcp?${encodeURIComponent(queryField)}=shareTest` },
       { headers: { [headerField]: 'shareTest' } },
       { target: '/mcp?instanceName=', headers: { [headerField]: 'shareTest' } },
-    ]) {
-      const categories = output(await send('tools/call', params, options));
-      assert.deepEqual(categories.list, []);
-      assert.equal(categories.total, '0');
+      { target: '/mcp?instanceName=unconfigured' },
+    ])
+      assert.equal((await send('tools/call', params, options)).status, 403);
+    assert.equal(devTransportSnapshot(app)?.contexts ?? 0, contexts);
+    for (const target of ['/mcp', '/mcp?instanceName=']) {
+      assert.ok(output(await send('tools/call', params, { target })).list.length > 0);
     }
-    const products = output(await send('tools/call', { name: searchName, arguments: {} }));
-    const absent = await send(
-      'tools/call',
-      {
-        name: detailName,
-        arguments: { id: products.list[0].id },
-      },
-      { target: '/mcp?instanceName=shareTest' },
-    );
-    assert.equal(absent.status, 200);
-    assert.equal(absent.body.result.isError, true);
-    assert.equal(absent.body.result.structuredContent, undefined);
-    assert.deepEqual(absent.body.result.content, [{ type: 'text', text: 'Product not found' }]);
-    assert.equal(
-      (await send('tools/call', params, { target: '/mcp?instanceName=unconfigured' })).status,
-      423,
-    );
-    assert.equal(
-      (await send('tools/call', params, { headers: { [headerField]: 'null' } })).status,
-      403,
-    );
-    assert.ok(output(await send('tools/call', params)).list.length > 0);
   });
 
-  it('allows nonlocal authority while retaining protocol guards and cancellation ownership', async () => {
-    for (const headers of [
-      { host: `dev.example.test:${port}` },
-      { origin: 'https://client.example.test' },
-      { host: 'dev.example.test', origin: 'https://client.example.test' },
-    ]) {
-      // Explicit scope isolates ingress policy from normal host-based instance resolution.
-      assert.equal(
-        (await send('tools/list', {}, { headers, target: '/mcp?instanceName=shareTest' })).status,
-        200,
-      );
-    }
+  it('requires allowlisted authority and bearer while retaining protocol guards and cancellation ownership', async () => {
+    assert.equal(
+      (await send('tools/list', {}, { headers: { origin: 'https://client.example.test' } })).status,
+      200,
+    );
     for (const [options, status] of [
+      [{ headers: { host: `unregistered.example.test:${port}` } }, 400],
       [{ headers: { forwarded: 'for=192.0.2.1' } }, 403],
-      [{ headers: { authorization: 'synthetic-forbidden' } }, 403],
+      [{ headers: { cookie: 'token=forbidden' } }, 403],
+      [{ headers: { 'proxy-authorization': 'Bearer forbidden' } }, 403],
+      [{ headers: { authorization: 'synthetic-forbidden' } }, 401],
+      [{ headers: { authorization: ['Bearer first', 'Bearer second'] } }, 401],
       [{ target: '/mcp?instanceName=shareTest&instanceName=' }, 400],
+      [{ target: '/mcp?access_token=forbidden' }, 400],
       [{ target: '/mcp?unexpected=1' }, 400],
-    ] as const) {
+    ] as [{ headers?: OutgoingHttpHeaders; target?: string }, number][]) {
       assert.equal((await send('tools/list', {}, options)).status, status);
     }
     const instanceHeader = app.config.instance.headerField;
@@ -275,13 +392,17 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           'tools/list',
           {},
           {
-            headers: { [instanceHeader]: 'x'.repeat(fixtureIngressLimits.headerValueBytes + 1) },
+            headers: { 'x-large': 'x'.repeat(fixtureIngressLimits.headerValueBytes + 1) },
           },
         )
       ).status,
       431,
     );
-    const pending = openHttp({ body: '{', partial: true, headers: { 'content-length': '100' } });
+    const pending = openHttp({
+      body: '{',
+      partial: true,
+      headers: { 'content-length': '100', 'authorization': `Bearer ${bearer}` },
+    });
     try {
       await waitFor(() => devTransportSnapshot(app)?.active === 1);
       assert.equal((await send('tools/list')).status, 429);
@@ -291,6 +412,175 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     }
     assert.equal((await send('tools/list')).status, 200);
     assert.ok(app.server?.listening);
+  });
+
+  it('installs current server-owned Passport into guarded business actions without forwarding bearer credentials', async t => {
+    const original = ServiceCatalog.prototype.selectPublic;
+    const observed = t.mock.method(
+      ServiceCatalog.prototype,
+      'selectPublic',
+      async function (this: ServiceCatalog, ...args: Parameters<ServiceCatalog['selectPublic']>) {
+        assert.equal(String(this.bean.passport.currentUser?.id), fixtureUserId);
+        assert.equal(String(this.bean.passport.currentAuth?.id), fixtureAuthId);
+        assert.ok(this.bean.passport.isAuthenticated);
+        assert.equal(this.ctx.innerAccess, false);
+        assert.equal(this.ctx.req.headers.authorization, undefined);
+        assert.equal(this.ctx.req.headers.cookie, undefined);
+        assert.equal(this.ctx.req.headers['proxy-authorization'], undefined);
+        return await original.apply(this, args);
+      },
+    );
+    try {
+      output(await send('tools/call', { name: searchName, arguments: {} }));
+      assert.equal(observed.mock.callCount(), 1);
+    } finally {
+      observed.mock.restore();
+    }
+  });
+
+  it('publishes direct resource metadata and rejects missing, JWT, revoked and expired tokens without business dispatch', async t => {
+    const metadata = await openHttp({
+      method: 'GET',
+      target: '/.well-known/oauth-protected-resource/mcp',
+    }).response;
+    assert.equal(metadata.status, 200);
+    assert.deepEqual(metadata.body, {
+      resource,
+      authorization_servers: [origin],
+      scopes_supported: ['mcp:read'],
+      bearer_methods_supported: ['header'],
+    });
+    assert.equal(metadata.headers['cache-control'], 'no-store');
+    const missing = await openHttp({
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
+    }).response;
+    assert.equal(missing.status, 401);
+    assert.equal(
+      missing.headers['www-authenticate'],
+      `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource/mcp"`,
+    );
+    const held = t.mock.method(ServiceCatalog.prototype, 'selectPublic', async () => {
+      throw new Error('unauthorized business dispatch');
+    });
+    try {
+      for (const token of ['a'.repeat(43), browserToken]) {
+        const denied = await send(
+          'tools/call',
+          { name: searchName, arguments: {} },
+          { headers: { authorization: `Bearer ${token}` } },
+        );
+        assert.equal(denied.status, 401);
+        assert.match(String(denied.headers['www-authenticate']), /error="invalid_token"/);
+      }
+      for (const mode of ['revoked', 'expired'] as const) {
+        const token = await redeemBearer();
+        await app.bean.executor.mockCtx(
+          async () => {
+            if (mode === 'revoked') {
+              await app.scope('mcp-auth').service.authorization.revoke(token);
+            } else {
+              await app
+                .scope('mcp-auth')
+                .model.authorization.builderSelect()
+                .where({ tokenDigest: createHash('sha256').update(token).digest('hex') })
+                .update({ tokenExpiresAt: Date.now() - 1 });
+            }
+          },
+          { instanceName: '' },
+        );
+        assert.equal(
+          (
+            await send(
+              'tools/call',
+              { name: searchName, arguments: {} },
+              { headers: { authorization: `Bearer ${token}` } },
+            )
+          ).status,
+          401,
+        );
+      }
+      const insufficient = await redeemBearer();
+      await app.bean.executor.mockCtx(
+        async () => {
+          await app
+            .scope('mcp-auth')
+            .model.authorization.builderSelect()
+            .where({ tokenDigest: createHash('sha256').update(insufficient).digest('hex') })
+            .update({ scope: '' });
+        },
+        { instanceName: '' },
+      );
+      const forbidden = await send(
+        'tools/call',
+        { name: searchName, arguments: {} },
+        { headers: { authorization: `Bearer ${insufficient}` } },
+      );
+      assert.equal(forbidden.status, 403);
+      assert.match(String(forbidden.headers['www-authenticate']), /error="insufficient_scope"/);
+      assert.equal(held.mock.callCount(), 0);
+      const config = app.config.modules['mcp-auth'];
+      const contexts = devTransportSnapshot(app)?.contexts;
+      try {
+        app.config.modules['mcp-auth'] = { ...config, issuer: '', resources: [], clients: [] };
+        assert.equal((await send('tools/list')).status, 503);
+        assert.equal(devTransportSnapshot(app)?.contexts, contexts);
+      } finally {
+        app.config.modules['mcp-auth'] = config;
+      }
+    } finally {
+      held.mock.restore();
+    }
+  });
+
+  it('rejects anonymous, cross-origin, missing-origin and GET decisions without changing pending state', async () => {
+    const verifier = randomBytes(32).toString('base64url');
+    const requestId = await app.bean.executor.mockCtx(
+      async () =>
+        app.scope('mcp-auth').service.authorization.authorize(
+          new URLSearchParams({
+            response_type: 'code',
+            client_id: clientId,
+            redirect_uri: redirectUri,
+            resource,
+            scope: 'mcp:read',
+            code_challenge_method: 'S256',
+            code_challenge: createHash('sha256').update(verifier).digest('base64url'),
+          }),
+          { resource, instanceName: '' },
+        ),
+      { instanceName: '' },
+    );
+    ownedRequests.push(requestId);
+    const readPending = async () =>
+      app.bean.executor.mockCtx(
+        async () =>
+          app
+            .scope('mcp-auth')
+            .model.authorization.builderSelect()
+            .where({ requestDigest: createHash('sha256').update(requestId).digest('hex') })
+            .first(),
+        { instanceName: '' },
+      );
+    const pending = await readPending();
+    assert.ok(pending);
+    assert.equal(pending.state, 'pending');
+    const body = JSON.stringify({ request: requestId, allow: true });
+    for (const [headers, status] of [
+      [{ origin }, 401],
+      [{ authorization: `Bearer ${browserToken}`, origin: 'https://attacker.example.test' }, 403],
+      [{ authorization: `Bearer ${browserToken}` }, 403],
+    ] as [OutgoingHttpHeaders, number][]) {
+      const rejected = await openHttp({ target: '/mcp/auth/decision', headers, body }).response;
+      assert.equal(rejected.status, status);
+      assert.deepEqual(await readPending(), pending);
+    }
+    const get = await openHttp({
+      method: 'GET',
+      target: `/mcp/auth/decision?request=${encodeURIComponent(requestId)}&allow=true`,
+      headers: { authorization: `Bearer ${browserToken}`, origin },
+    }).response;
+    assert.ok(get.status === 404 || get.status === 405);
+    assert.deepEqual(await readPending(), pending);
   });
 
   it('drains actual app-owned tool work without closing the shared listener', async t => {
