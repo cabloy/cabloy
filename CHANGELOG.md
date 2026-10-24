@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.236
+
+### Bug Fixes
+
+- Fix `code-inspector-plugin`.
+
 ## 5.1.235
 
 ### Improvements
