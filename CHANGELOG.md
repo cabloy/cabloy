@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.234
+
+### Features
+
+- Add support for `code-inspector-plugin`.
+
+### Bug Fixes
+
+- Fix socket CORS handling.
+
 ## 5.1.233
 
 ### Features
