@@ -49,6 +49,18 @@ npm run build:zova:commerce:admin
 
 The `dev:zova:*` commands start the Zova development server, which uses `9000` in the Cabloy Basic default environment. Use this Zova standalone SSR entry for page, route, and hydration iteration. It may be used as Vona's development proxy target, but direct access to `9000` does not prove the Vona request boundary or integrated acceptance.
 
+## Click-to-source inspection in Cabloy Basic
+
+Cabloy Basic enables `code-inspector-plugin` in Zova development builds. Start either `npm run dev:zova:admin` or `npm run dev:zova:web`, then open the corresponding Zova standalone SSR page. Admin and Web share the worktree's development ports; run them sequentially, not concurrently.
+
+Hold **Option+Shift** on macOS or **Alt+Shift** on Windows/Linux, move over an element, and click to open its authored TSX location. This works with TSX in Controllers and split Render beans; it does not require converting them into Vue SFCs. Fragments have no independent DOM node, and custom-component roots may point to implementation markup rather than the caller's component tag.
+
+The application configuration in `zova/quasar.config.ts` uses the browser URI handler `vscode://file/{file}:{line}:{column}`. VS Code must be installed and registered for that scheme; the browser may ask for permission to open it. To use another compatible editor, change `behavior.target` to its supported URI scheme. Actual editor opening depends on that local browser/OS setup.
+
+The integration closes the plugin's auxiliary server (`server: 'close'`) and disables its server-based locate action (`behavior.locate: false`), so source navigation adds no inspector listener. AI features are not enabled. Source locations use absolute local paths in development; do not publish development HTML or bundles. Production builds do not register the inspector or include its injected source attributes/client code.
+
+Quasar SSR uses an explicitly resolved client entry for the inspector UI, while source attributes are generated for both development SSR and client renders. Console-warning suppression is disabled so hydration diagnostics remain visible. The dependency belongs in the authored `zova/package.original.json`; the workspace manifest is generated. Its optional terminal dependency's build script is explicitly disabled in `zova/pnpm-workspace.yaml` because source inspection does not require a native terminal.
+
 ## Proportionate frontend verification
 
 For frontend changes, prefer a few critical user flows through the existing E2E infrastructure, together with relevant lightweight format, lint, and type checks. Select scenarios by the behavior being changed rather than running every spec or building exhaustive isolated-test matrices. Reuse the edition-aware preparation and spec/tag/`--grep` filtering below; prepare only the affected artifacts when they have changed.

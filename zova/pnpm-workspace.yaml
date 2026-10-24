@@ -56,4 +56,5 @@ allowBuilds:
   '@zhennann/ejs': true
   esbuild: true
   micromark: true
+  node-pty: false
   vue-demi: true

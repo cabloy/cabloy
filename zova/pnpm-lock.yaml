@@ -546,6 +546,9 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^6.0.7
         version: 6.0.8(vite@8.3.4(@types/node@22.20.2)(esbuild@0.25.12)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.42(typescript@5.9.3))
+      code-inspector-plugin:
+        specifier: 2.0.9
+        version: 2.0.9(supports-color@10.2.2)
       concurrently:
         specifier: ^10.0.4
         version: 10.0.5
@@ -610,7 +613,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.5
       zova-cli-set-front:
-        specifier: ^1.2.119
+        specifier: ^1.2.120
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -719,7 +722,7 @@ importers:
         specifier: ^1.1.17
         version: link:../../packages-utils/zova-openapi
       zova-vite:
-        specifier: ^1.1.50
+        specifier: ^1.1.51
         version: link:../../packages-utils/zova-vite
     devDependencies:
       clean-package:
@@ -1031,7 +1034,7 @@ importers:
         specifier: ^5.1.94
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.174
+        specifier: ^5.1.175
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -1135,13 +1138,13 @@ importers:
   src/suite-vendor/a-cabloy:
     dependencies:
       zova-module-a-layoutprofile:
-        specifier: ^5.0.3
+        specifier: ^5.0.4
         version: link:modules/a-layoutprofile
       zova-module-a-rbac:
-        specifier: ^5.0.1
+        specifier: ^5.0.2
         version: link:modules/a-rbac
       zova-module-rest-resource:
-        specifier: ^5.1.56
+        specifier: ^5.1.57
         version: link:modules/rest-resource
 
   src/suite-vendor/a-cabloy/modules/a-layoutprofile:
@@ -1174,16 +1177,16 @@ importers:
   src/suite-vendor/a-pay:
     dependencies:
       zova-module-a-pay:
-        specifier: ^5.0.9
+        specifier: ^5.0.10
         version: link:modules/a-pay
       zova-module-pay-mock:
-        specifier: ^5.0.5
+        specifier: ^5.0.6
         version: link:modules/pay-mock
       zova-module-pay-paypal:
-        specifier: ^5.0.2
+        specifier: ^5.0.3
         version: link:modules/pay-paypal
       zova-module-pay-stripe:
-        specifier: ^5.0.2
+        specifier: ^5.0.3
         version: link:modules/pay-stripe
 
   src/suite-vendor/a-pay/modules/a-pay:
@@ -1225,76 +1228,76 @@ importers:
   src/suite-vendor/a-zova:
     dependencies:
       zova-module-a-api:
-        specifier: ^5.1.22
+        specifier: ^5.1.23
         version: link:modules/a-api
       zova-module-a-app:
-        specifier: ^5.1.26
+        specifier: ^5.1.27
         version: link:modules/a-app
       zova-module-a-bean:
-        specifier: ^5.1.36
+        specifier: ^5.1.37
         version: link:modules/a-bean
       zova-module-a-behavior:
-        specifier: ^5.1.27
+        specifier: ^5.1.28
         version: link:modules/a-behavior
       zova-module-a-behaviors:
-        specifier: ^5.1.22
+        specifier: ^5.1.23
         version: link:modules/a-behaviors
       zova-module-a-command:
-        specifier: ^5.1.35
+        specifier: ^5.1.36
         version: link:modules/a-command
       zova-module-a-fetch:
-        specifier: ^5.1.25
+        specifier: ^5.1.26
         version: link:modules/a-fetch
       zova-module-a-form:
-        specifier: ^5.1.54
+        specifier: ^5.1.55
         version: link:modules/a-form
       zova-module-a-icon:
-        specifier: ^5.1.27
+        specifier: ^5.1.28
         version: link:modules/a-icon
       zova-module-a-interceptor:
-        specifier: ^5.1.31
+        specifier: ^5.1.32
         version: link:modules/a-interceptor
       zova-module-a-logger:
-        specifier: ^5.1.28
+        specifier: ^5.1.29
         version: link:modules/a-logger
       zova-module-a-meta:
-        specifier: ^5.1.22
+        specifier: ^5.1.23
         version: link:modules/a-meta
       zova-module-a-model:
-        specifier: ^5.1.38
+        specifier: ^5.1.39
         version: link:modules/a-model
       zova-module-a-openapi:
-        specifier: ^5.1.58
+        specifier: ^5.1.59
         version: link:modules/a-openapi
       zova-module-a-router:
-        specifier: ^5.1.42
+        specifier: ^5.1.43
         version: link:modules/a-router
       zova-module-a-routerstack:
-        specifier: ^5.1.29
+        specifier: ^5.1.30
         version: link:modules/a-routerstack
       zova-module-a-routertabs:
-        specifier: ^5.1.35
+        specifier: ^5.1.36
         version: link:modules/a-routertabs
       zova-module-a-ssr:
-        specifier: ^5.1.40
+        specifier: ^5.1.41
         version: link:modules/a-ssr
       zova-module-a-ssrhmr:
-        specifier: ^5.1.23
+        specifier: ^5.1.24
         version: link:modules/a-ssrhmr
       zova-module-a-ssrserver:
-        specifier: ^5.1.26
+        specifier: ^5.1.27
         version: link:modules/a-ssrserver
       zova-module-a-style:
-        specifier: ^5.1.35
+        specifier: ^5.1.36
         version: link:modules/a-style
       zova-module-a-table:
-        specifier: ^5.1.44
+        specifier: ^5.1.45
         version: link:modules/a-table
       zova-module-a-zod:
-        specifier: ^5.1.38
+        specifier: ^5.1.39
         version: link:modules/a-zod
       zova-module-a-zova:
-        specifier: ^5.1.112
+        specifier: ^5.1.113
         version: link:modules/a-zova
 
   src/suite-vendor/a-zova/modules/a-api:
@@ -2630,6 +2633,35 @@ packages:
 
   '@cacheable/utils@2.5.0':
     resolution: {integrity: sha512-buipgOVDkkPXNR5+xBpDw7Zk2n1EvU7qBJCNUcL7rhQ//kfpOXPAvQ511Os0vpLYJ1pZnvudNytkQt2hst3wqA==}
+
+  '@code-inspector/core@2.0.9':
+    resolution: {integrity: sha512-7WkUlXfpwM95+KY5ra3KyivQGy0fUBq9dFcoI481LJKKnZNzwRW6kUkQF2hVP7zTj8TDy5esCMw8YuOwI8HhsQ==}
+    peerDependencies:
+      '@anthropic-ai/claude-agent-sdk': ^0.2.29
+      '@openai/codex-sdk': ^0.106.0
+      '@opencode-ai/sdk': ^1.2.24
+    peerDependenciesMeta:
+      '@anthropic-ai/claude-agent-sdk':
+        optional: true
+      '@openai/codex-sdk':
+        optional: true
+      '@opencode-ai/sdk':
+        optional: true
+
+  '@code-inspector/esbuild@2.0.9':
+    resolution: {integrity: sha512-uiddojMyD4HUtJ8pVq4/Iu0AgILaRZoe/zXJUK2ibqWdP6XtjIWCTLfvDL8IO9tOOxuEi+0SsRwr/Y8CEN5sTQ==}
+
+  '@code-inspector/mako@2.0.9':
+    resolution: {integrity: sha512-HGb8oHXEj2fGnD5AtdUzFhMXkuRAXenKT1iCV53B8gFgiV5ddSrln+/mPQZt3v3FTu3TyQNd3aaHtPpSW+B0vg==}
+
+  '@code-inspector/turbopack@2.0.9':
+    resolution: {integrity: sha512-uNTPCkDxS+4htXOKTJf+yEjYqKDFLIczILQ41dMqD5z9rbSDJkU/bvMs+8RcGUks0f7cB+TtRQyQCfwoFW1atA==}
+
+  '@code-inspector/vite@2.0.9':
+    resolution: {integrity: sha512-XXwb3Cyz70Y8OqP7H7umKVM1RrfmWtKBZ7JrrtlwraEaRRefo70+guuQZr6vuNm8lOT2VHgsG1bH9wqs7WrrXw==}
+
+  '@code-inspector/webpack@2.0.9':
+    resolution: {integrity: sha512-sauXo+GD6QIlqSymNtDTQOyrQid8er71Kr3Jh07viUKd1+U10//EML/tb/IpOzutwauizJeQslKqAvDV+Nqc9w==}
 
   '@colors/colors@1.5.0':
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
@@ -5434,6 +5466,10 @@ packages:
     resolution: {integrity: sha512-4D3B6Wf41KOYRFdszmDqMCGq5VV/uMAB273JILmO+3jAlh8X4qDtdtgCR3fxtbLEMzSx22QdhnDcJvu2u1fVwg==}
     engines: {node: '>=8'}
 
+  chalk@4.1.1:
+    resolution: {integrity: sha512-diHzdDKxcU+bAsUboHLPEDQiw0qEe0qd7SYUn3HgcFlWgbDcfLGswOHYeGrHKzG9z6UYf01d9VFMfZxPM1xZSg==}
+    engines: {node: '>=10'}
+
   chalk@4.1.2:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
@@ -5514,6 +5550,9 @@ packages:
   clone-deep@4.0.1:
     resolution: {integrity: sha512-neHB9xuzh/wk0dIHweyAXv2aPGZIVk3pLMe+/RNzINf17fe0OG96QroktYAUm7SM1PBnzTabaLboqqxDyMU+SQ==}
     engines: {node: '>=6'}
+
+  code-inspector-plugin@2.0.9:
+    resolution: {integrity: sha512-0CApBNHqPTrcbOL/1n4JJS0Wy0CGYTRmJVWY8qI0wkYmmeT/LhaQZ1EIGQNuHLepZn4SA/XWd+4No+8gshpRNA==}
 
   color-convert@1.9.3:
     resolution: {integrity: sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==}
@@ -6792,6 +6831,9 @@ packages:
   kolorist@1.8.0:
     resolution: {integrity: sha512-Y+60/zizpJ3HRH8DCss+q95yr6145JXZo46OTpFvDZWLfRCE4qChOyk1b26nMaNpfHHgxagk9dXT5OP0Tfe+dQ==}
 
+  launch-ide@1.4.10:
+    resolution: {integrity: sha512-MqkYz5/dYDtBkvcDmz6tr2uFWU8AqRnrI+kLwcVmV83QZ/uhN0yns9GUQyLZJ5CJ5pglm8xko65JGcyzyI3dBQ==}
+
   lazystream@1.0.1:
     resolution: {integrity: sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw==}
     engines: {node: '>= 0.6.3'}
@@ -7350,6 +7392,9 @@ packages:
     resolution: {integrity: sha512-iwpZdvW6Umz12ICmu9IYPRxg0tOLGmU3Tq2tKetejCj3oZd7b2nUXwP3a7QA5M9glWy8wlPS1G3RwM/CdsUbdQ==}
     engines: {node: '>=8.0.0'}
 
+  node-pty@1.1.0:
+    resolution: {integrity: sha512-20JqtutY6JPXTUnL0ij1uad7Qe1baT46lyolh2sSENDd4sTzKZ4nmAFkeAARDKwmlLjPx6XKRlwRUxwjOy+lUg==}
+
   node-releases@2.0.55:
     resolution: {integrity: sha512-mIrE/Cw9y+9Au6dS5vDKDhQza9YvG6w+ZrS6X+ZzA7yFW/soAeaups4Qzn1bL6g5FVy8WtP79+0j82oPIbqRjQ==}
     engines: {node: '>=18'}
@@ -7585,6 +7630,10 @@ packages:
 
   pnpm-workspace-yaml@1.9.1:
     resolution: {integrity: sha512-Xj/T2X6DNAWbtk/9UQ0/TJRswltiHZevmcMjqoL7WrpJi67lu3qaslU4+I+zJ8wtwqmuvAE0KkB8rbv2ZdogBg==}
+
+  portfinder@1.0.38:
+    resolution: {integrity: sha512-rEwq/ZHlJIKw++XtLAO8PPuOQA/zaPJOZJ37BVuN97nLpMJeuDVLVGRwbFoBgLudgdTMP2hdRJP++H+8QOA3vg==}
+    engines: {node: '>= 10.12'}
 
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
@@ -8813,6 +8862,18 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
+  ws@8.22.0:
+    resolution: {integrity: sha512-Ydggc987+RO0AnWtZ/7Wq9FtNvcrL1b/RO0ud9mWjUPgDrsAAwQSF51sm2hm1XofbU/4jkpGEsLFsZZxU+1DOg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   wsl-utils@1.0.0:
     resolution: {integrity: sha512-Hl0ZOAs672vg+06kfujwRhoS6/jehvULrlFkuF2dRu6pHgA8U06h3xqNIqNNU1LTXPcedxByAR4GS6pwQK0mgA==}
     engines: {node: '>=20'}
@@ -9421,6 +9482,77 @@ snapshots:
     dependencies:
       hashery: 1.5.1
       keyv: 5.6.0
+
+  '@code-inspector/core@2.0.9(supports-color@10.2.2)':
+    dependencies:
+      '@vue/compiler-dom': 3.5.13
+      chalk: 4.1.2
+      launch-ide: 1.4.10
+      portfinder: 1.0.38(supports-color@10.2.2)
+      ws: 8.22.0
+    optionalDependencies:
+      node-pty: 1.1.0
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@code-inspector/esbuild@2.0.9(supports-color@10.2.2)':
+    dependencies:
+      '@code-inspector/core': 2.0.9(supports-color@10.2.2)
+    transitivePeerDependencies:
+      - '@anthropic-ai/claude-agent-sdk'
+      - '@openai/codex-sdk'
+      - '@opencode-ai/sdk'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@code-inspector/mako@2.0.9(supports-color@10.2.2)':
+    dependencies:
+      '@code-inspector/core': 2.0.9(supports-color@10.2.2)
+    transitivePeerDependencies:
+      - '@anthropic-ai/claude-agent-sdk'
+      - '@openai/codex-sdk'
+      - '@opencode-ai/sdk'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@code-inspector/turbopack@2.0.9(supports-color@10.2.2)':
+    dependencies:
+      '@code-inspector/core': 2.0.9(supports-color@10.2.2)
+      '@code-inspector/webpack': 2.0.9(supports-color@10.2.2)
+    transitivePeerDependencies:
+      - '@anthropic-ai/claude-agent-sdk'
+      - '@openai/codex-sdk'
+      - '@opencode-ai/sdk'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@code-inspector/vite@2.0.9(supports-color@10.2.2)':
+    dependencies:
+      '@code-inspector/core': 2.0.9(supports-color@10.2.2)
+      chalk: 4.1.1
+    transitivePeerDependencies:
+      - '@anthropic-ai/claude-agent-sdk'
+      - '@openai/codex-sdk'
+      - '@opencode-ai/sdk'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@code-inspector/webpack@2.0.9(supports-color@10.2.2)':
+    dependencies:
+      '@code-inspector/core': 2.0.9(supports-color@10.2.2)
+    transitivePeerDependencies:
+      - '@anthropic-ai/claude-agent-sdk'
+      - '@openai/codex-sdk'
+      - '@opencode-ai/sdk'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
 
   '@colors/colors@1.5.0':
     optional: true
@@ -11718,6 +11850,11 @@ snapshots:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
 
+  chalk@4.1.1:
+    dependencies:
+      ansi-styles: 4.3.0
+      supports-color: 7.2.0
+
   chalk@4.1.2:
     dependencies:
       ansi-styles: 4.3.0
@@ -11805,6 +11942,23 @@ snapshots:
       is-plain-object: 2.0.4
       kind-of: 6.0.3
       shallow-clone: 3.0.1
+
+  code-inspector-plugin@2.0.9(supports-color@10.2.2):
+    dependencies:
+      '@code-inspector/core': 2.0.9(supports-color@10.2.2)
+      '@code-inspector/esbuild': 2.0.9(supports-color@10.2.2)
+      '@code-inspector/mako': 2.0.9(supports-color@10.2.2)
+      '@code-inspector/turbopack': 2.0.9(supports-color@10.2.2)
+      '@code-inspector/vite': 2.0.9(supports-color@10.2.2)
+      '@code-inspector/webpack': 2.0.9(supports-color@10.2.2)
+      chalk: 4.1.1
+    transitivePeerDependencies:
+      - '@anthropic-ai/claude-agent-sdk'
+      - '@openai/codex-sdk'
+      - '@opencode-ai/sdk'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
 
   color-convert@1.9.3:
     dependencies:
@@ -13218,6 +13372,11 @@ snapshots:
 
   kolorist@1.8.0: {}
 
+  launch-ide@1.4.10:
+    dependencies:
+      chalk: 4.1.2
+      dotenv: 16.6.1
+
   lazystream@1.0.1:
     dependencies:
       readable-stream: 2.3.8
@@ -13946,6 +14105,11 @@ snapshots:
 
   node-hex@1.0.1: {}
 
+  node-pty@1.1.0:
+    dependencies:
+      node-addon-api: 7.1.1
+    optional: true
+
   node-releases@2.0.55: {}
 
   nopt@9.0.0:
@@ -14197,6 +14361,13 @@ snapshots:
   pnpm-workspace-yaml@1.9.1:
     dependencies:
       yaml: 2.9.1
+
+  portfinder@1.0.38(supports-color@10.2.2):
+    dependencies:
+      async: 3.2.6
+      debug: 4.4.3(supports-color@10.2.2)
+    transitivePeerDependencies:
+      - supports-color
 
   possible-typed-array-names@1.1.0: {}
 
@@ -15624,6 +15795,8 @@ snapshots:
       strip-ansi: 7.2.0
 
   wrappy@1.0.2: {}
+
+  ws@8.22.0: {}
 
   wsl-utils@1.0.0:
     dependencies:
