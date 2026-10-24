@@ -34,7 +34,9 @@ export class ServiceRateLimit extends BeanBase {
     const identity = this._getIdentity(policy);
     const identityHash = createHash('sha256').update(identity).digest('base64url');
     const policyName = policy.name ?? `${route.controllerBeanFullName}:${String(route.action)}`;
-    const routeName = `${route.routeMethod}:${route.routePathRaw}`;
+    const routeName = policy.route
+      ? `${policy.route.method}:${policy.route.path}`
+      : `${route.routeMethod}:${route.routePathRaw}`;
     const windowStart = Math.floor(now / policy.windowMs) * policy.windowMs;
     const instanceName = this.ctx.instanceName ?? 'default';
     return [

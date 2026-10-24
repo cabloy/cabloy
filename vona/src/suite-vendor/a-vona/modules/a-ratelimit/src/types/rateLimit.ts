@@ -7,6 +7,10 @@ export interface IRateLimitPolicy {
   windowMs: number;
   key: RateLimitKey;
   name?: string;
+  route?: {
+    method: string;
+    path: string;
+  };
   headers: boolean;
 }
 
