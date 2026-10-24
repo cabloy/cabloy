@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.235
+
+### Improvements
+
+- Update the scripts documentation.
+
 ## 5.1.234
 
 ### Features
