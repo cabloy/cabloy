@@ -3,6 +3,7 @@
 ## 5.1.239
 
 ### Improvements
+
 - Normalize release workspace formatting.
 - Refresh the Vona zova-core patch for v5.1.95.
 
