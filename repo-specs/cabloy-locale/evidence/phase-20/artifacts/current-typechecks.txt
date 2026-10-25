@@ -1,0 +1,49 @@
+
+> cabloy@5.1.236 tsc:zova
+> pnpm --dir zova run tsc
+
+$ npm run tsc:native
+
+> tsc:native
+> npm run prerun && node ../scripts/typecheck.ts native zova --noEmit --incremental false --project tsconfig.vue-tsc.json
+
+
+> prerun
+> npm run zova :tools:deps
+
+
+> zova
+> node ./packages-cli/cli/src/bin/zova.ts :tools:deps
+
+zova front:tools:deps at zova
+
+Finished in 32ms on 1 files using 1 threads.
+===> pnpm install
+Scope: all 103 workspace projects
+[WARN] The store at <PRIVATE_PATH> is not used because packages cannot be hard linked from it into this project. Using the store at <PNPM_STORE>/v11 instead. Set storeDir to choose the store.
+✓ Lockfile passes supply-chain policies (verified 3h ago)
+Progress: resolved 0, reused 376, downloaded 0, added 0
+[WARN] 4 deprecated subdependencies found: glob@10.5.0, glob@7.2.3, inflight@1.0.6, sourcemap-codec@1.4.8
+Already up to date
+Progress: resolved 0, reused 532, downloaded 0, added 0, done
+[WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+Done in 2.4s using pnpm v12.14.0
+
+> cabloy@5.1.236 tsc:vona
+> pnpm --dir vona run tsc
+
+$ npm run tsc:native
+
+> tsc:native
+> npm run prerun && node ../scripts/typecheck.ts native vona --noEmit --incremental false --project tsconfig.json
+
+
+> prerun
+> npm run vona :tools:deps
+
+
+> vona
+> node ./packages-cli/cli/src/bin/vona.ts :tools:deps
+
+vona api:tools:deps at vona
+

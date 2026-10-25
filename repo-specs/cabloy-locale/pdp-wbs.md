@@ -6,7 +6,7 @@ Deliver modular Japanese and Traditional Chinese resources with explicit languag
 
 ## Delivery Principles
 
-- Preserve the accepted boundary in [ADR 0001](./decisions/0001-locale-module-boundaries.md).
+- Preserve the accepted boundary in [ADR 0001](./decisions/0001-locale-module-boundaries.md), with the narrowly superseding provider export/generation decision in [ADR 0002](./decisions/0002-locale-provider-resource-export.md).
 - Separate design acceptance, planning checks, bounded execution approval, implementation completion, ATP proof, and release approval.
 - Use existing CLI scaffolding and regeneration families. Never patch generated consumers or dependency definitions by hand.
 - Keep translation inventory/review separate from framework wiring; both are required for full support.
@@ -61,7 +61,7 @@ Tasks:
 - Implement capability-gated envelope registration, absent-target filtering, first-wins scoped precedence, and Zova provider import/install before preload without target eager loading.
 - Add Vona root language policy, migrate existing default consumers, and implement subset-capable item typing plus central active-locale normalization on both stacks.
 - Apply enabled-item policy consistently to cookie/preference/current assignment/SSR route inputs and menus; preserve explicit lookup semantics and canonical route consistency.
-- Make provider metadata generation work with only ja-jp, preserving ordinary target key ownership and Zova source suffix conventions.
+- Author the Japanese `src/locales` language map and `localesProvider` module entrypoint export outside ordinary locale generation. Verify that normal metadata regeneration preserves those exports and capability metadata, creates no provider-owned English-base locale key/helper surface, and preserves ordinary target key ownership and Zova source suffix conventions.
 - Supply a bounded initial Japanese dictionary for actual home-base/layout consumers and at least one existing locale-bearing lazy target selected from current source. Exercise backend scoped text plus a preload initialization consumer through existing test infrastructure.
 - Preserve root defaults/offerings unless a deliberately scoped test/configuration enables Japanese; do not enable it merely by installing the pack.
 
@@ -69,9 +69,11 @@ Acceptance checks:
 
 - ATP-LOC-01, ATP-LOC-02, and ATP-LOC-03 pass for the Japanese slice with retained source revision, fixture/config variant, exact commands, assertions, and results.
 - A real existing consumer reads Japanese from its target scope, and installed-but-disabled Japanese cannot become active through supported runtime inputs.
-- Generated metadata shows locale capability; no dummy English dictionary, bogus modules message key, target eager import, or hand-edited generated consumer is used.
+- Generated module metadata shows locale capability; authored `localesProvider` exports remain intact after normal regeneration, and provider scope has no ordinary English-base locale key/helper inference. No dummy English dictionary, bogus modules message key, target eager import, or hand-edited generated consumer is used.
 - Narrow type/generation checks and existing English/Simplified Chinese regression assertions pass.
 - This closes a bounded Japanese mechanism slice only, not complete translation coverage, HMR hardening, SSR release proof, or the two-language feature.
+
+Current-revision reconciliation: the historical phase-20 closure covered a different dirty source snapshot. Under accepted ADR 0002, re-establish the applicable ATP-LOC-01/02/03 results at the current implementation using the relocated locale-test modules and the authored export-preservation contract. Retain current redacted primary results durably and reconcile the existing evidence index before successors use this dependency. This is a bounded proof refresh within WBS-LOC-20-01, not a new baseline review or permission to execute adjacent tasks.
 
 ### Phase 30: Full Dictionaries and Development Correctness
 

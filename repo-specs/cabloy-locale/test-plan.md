@@ -2,7 +2,7 @@
 
 ## Purpose and Authority
 
-This document defines executable acceptance and minimum proof for the [SRS](./srs.md), linked to the [PRD](./prd.md) and [WBS](./pdp-wbs.md). All procedures are prospective. Creating this file, accepting the ADR, running spec audits, or generating charts executes none of these scenarios.
+This document defines executable acceptance and minimum proof for the [SRS](./srs.md), linked to the [PRD](./prd.md) and [WBS](./pdp-wbs.md). Procedure definitions are not execution results. Historical Japanese-slice results are retained in the [phase-20 index](./evidence/phase-20/index.md); the separately approved [current proof refresh](./evidence/phase-20/current-proof.md) re-establishes the bounded Japanese slice after the resource-contract change accepted in [ADR 0002](./decisions/0002-locale-provider-resource-export.md). Creating or updating this file, accepting an ADR, running spec audits, or generating charts executes none of these scenarios.
 
 ## Scope, Quality Priorities, and Risk
 
@@ -20,10 +20,10 @@ Priorities are correct registration/precedence, language-policy isolation from i
 
 Reuse existing infrastructure, with focused regressions rather than a bespoke source-evaluation harness:
 
-- [Backend locale tests](../../vona/src/suite-vendor/a-test/modules/test-vona/test/locale.test.ts) for scoped/global lookup and backend policy.
-- Vona/Zova CLI metadata-generator tests for provider-only language files; existing [frontend source import tests](../../zova/packages-cli/cli-set-front/test/sourceImports.test.ts) and [entry generation tests](../../zova/packages-utils/zova-vite/test/generateEntryFiles.test.ts) are observed locations.
-- Existing SysModule/SysLocale and module-glob test conventions for early/lazy installation and metadata discovery.
-- Existing [Basic E2E suite](../../repo-e2e/specs/cabloy-basic.spec.ts) for language/schema/draft and browser critical flows. Add the smallest suitable assertions; do not require unrelated domain scenarios solely because locale is shared.
+- Existing [backend locale tests](../../vona/src/suite-vendor/a-test/modules/test-vona/test/locale.test.ts) retain original-language lookup regressions. Current [locale-test provider tests](../../vona/src/suite/cabloy-locale/modules/locale-test/test/provider.test.ts), [registry tests](../../vona/src/suite/cabloy-locale/modules/locale-test/test/locales.test.ts), and [policy tests](../../vona/src/suite/cabloy-locale/modules/locale-test/test/localePolicy.test.ts) own the relocated Japanese/policy assertions.
+- Provider export-preservation/single-language generation regressions under ADR 0002 now live in [Vona tooling tests](../../vona/packages-cli/cli-set-api/test/localeMetadata.test.ts) and [Zova tooling tests](../../zova/packages-cli/cli-set-front/test/localeMetadata.test.ts), added during the approved proof refresh. These are new export-preservation tests, not the historical provider-aware-generator implementation. Existing [frontend source import tests](../../zova/packages-cli/cli-set-front/test/sourceImports.test.ts) and [entry generation tests](../../zova/packages-utils/zova-vite/test/generateEntryFiles.test.ts) are supporting checks, not substitutes for provider assertions.
+- Current [frontend locale runtime tests](../../zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts) exercise SysModule/SysLocale early/lazy installation and policy fixtures; module-glob conventions support metadata discovery.
+- The independent [locale E2E suite](../../repo-e2e/specs/cabloy-locale.spec.ts) owns existing locale browser regressions; [Basic E2E](../../repo-e2e/specs/cabloy-basic.spec.ts) retains shared SSR/schema/draft flows. Add the smallest suitable assertions; do not require unrelated domain scenarios solely because locale is shared.
 - Provider-local or existing tooling test placement for deterministic inventory and placeholder checks, selected during bounded implementation. Such a check is a planned addition, not a current command.
 
 ## Fixtures, Cleanup, Privacy, and Data Minimization
@@ -38,7 +38,7 @@ Use managed root test/E2E isolation for runtime procedures. Existing ordinary de
 
 After approved execution, retain scenario/task/contract links, exact source revision and relevant diff hashes, config/pack variants, environment and flavor/Site, exact command/procedure, owned fixtures and cleanup, assertions, exit code, observed result, and durable redacted artifacts. Record translation reviewer identity/disposition and reviewed dictionary revision separately from automated parity output. A temporary waiver requires owner, reason, expiry, and compensating control; required two-language coverage is not silently waived.
 
-Before durable retention, sanitize machine-local paths with the existing evidence tools and manually inspect remaining sensitive material. Keep repository-relative paths, failure details, exit codes, and original source hashes. Path checking is not secret scanning, producer success, or acceptance proof. No evidence ID or empty evidence directory exists at baseline creation.
+Before durable retention, sanitize machine-local paths with the existing evidence tools and manually inspect remaining sensitive material. Keep repository-relative paths, failure details, exit codes, and original source hashes. Path checking is not secret scanning, producer success, or acceptance proof. New proof must have a durable, nonignored artifact or explicitly identified durable CI location; a checkout-local ignored log alone does not meet retention. Preserve existing historical logs without silently deleting or replacing them. No evidence ID or empty evidence directory exists at baseline creation.
 
 ## Acceptance Scenario Catalogue
 
@@ -47,11 +47,11 @@ Before durable retention, sanitize machine-local paths with the existing evidenc
 Setup:
 
 - Use actual Japanese provider modules and representative home-base/layout consumers; identify an existing locale-bearing lazy module and a preload initialization consumer from active metadata.
-- Include provider-only ja-jp and zh-tw generation fixtures without en-us; retain ordinary module English-base generation fixtures.
+- Include provider-only ja-jp and zh-tw fixtures with authored `src/locales` maps and `localesProvider` entrypoint exports, without en-us or ordinary `src/config/locale` files; retain ordinary module English-base generation fixtures. These zh-tw fixtures do not constitute delivered Traditional Chinese modules.
 
 Procedure:
 
-- Regenerate module metadata with the supported CLI; inspect capability flags and typecheck generated exports/scopes.
+- Regenerate module metadata with the supported CLI; inspect capability flags, confirm authored provider maps and entrypoint exports survive unchanged, and typecheck the resulting exports/scopes. Assert provider scope has no ordinary English-base locale key/helper inference or generated ordinary locale resource; ordinary target inference remains intact. Provider dictionaries are not discovered by the ordinary locale generator.
 - Start the Zova loader through existing runtime test infrastructure and assert translation availability inside the preload consumer's initialization boundary.
 - Observe the lazy target remains uninstalled until use, then load it and read the same contributed key again.
 - In Vona, read scoped text at moduleLoaded or a later supported context; verify ordinary moduleLoading lifecycle order remains unchanged.
@@ -59,13 +59,13 @@ Procedure:
 
 Expected result:
 
-- Correct capability metadata and valid single-language resource exports; no dummy base dictionary, bogus modules key, target eager import, or duplicated provider installation.
+- Correct capability metadata and preserved, valid single-language `localesProvider` exports, with no generated provider-owned English-base scope/helper surface. No dummy base dictionary, bogus modules key, target eager import, or duplicated provider installation.
 - Preload receives provider text, lazy targets remain lazy, and later target defaults do not overwrite provider values.
 - Vona supported consumers obtain text without a new preload subsystem or false moduleLoading guarantee.
 
 Minimum proof:
 
-- Generated metadata excerpt, typecheck result, initialization/lazy-state assertions, actual scoped text results, revision and pack/config variants, exact procedure, and redacted logs.
+- Generated capability/scope excerpt, authored export-preservation and ordinary-module regression assertions, typecheck result, initialization/lazy-state assertions, actual scoped text results, revision and pack/config variants, exact procedure, and durable redacted logs.
 
 Traceability: `PRD-LOC-01`, `PRD-LOC-03`, `PRD-LOC-06`, `SRS-LOC-01`, `SRS-LOC-03`, `SRS-LOC-04`, `SRS-LOC-10`, `WBS-LOC-20-01`, `WBS-LOC-30-01`.
 
@@ -279,7 +279,7 @@ npm run docs:build
 
 ## Release Closure Gate
 
-No ATP is currently executed. Full feature release readiness requires both reviewed dictionaries and all applicable scenario proof for the candidate revision, relevant type/build/docs checks, no unresolved required issue, and a truthful progress register. Runtime acceptance does not grant release/publication approval. No migration or reset is required by the approved scope.
+The current Japanese-slice proof refresh under ADR 0002 closes only WBS-LOC-20-01; historical results retain their separate source limits. Full feature release readiness requires both reviewed dictionaries and all applicable scenario proof for the candidate revision, relevant type/build/docs checks, no unresolved required issue, and a truthful progress register. Runtime acceptance does not grant release/publication approval. No migration or reset is required by the approved scope.
 
 ## Related Records
 

@@ -1,0 +1,124 @@
+WBS-LOC-20-01 / ATP-LOC-01 focused metadata proof refresh
+Revision: c6bbe87564acbc19af6c7667a104a3b2e71a8afc
+Node: v24.8.0
+Test source SHA-256:
+586eeab6832f14cc6933dd76d88d921496305bc0010355fd9516cafb4ba4c70a  vona/packages-cli/cli-set-api/test/localeMetadata.test.ts
+3bebbda2517e1a8739522d1ca631479c27d358c8cb929f38dacc00ed72f9697c  zova/packages-cli/cli-set-front/test/localeMetadata.test.ts
+Command: SWC_NODE_PROJECT=vona/tsconfig.json node --import=./vona/node_modules/@swc-node/register/esm/esm-register.mjs --test vona/packages-cli/cli-set-api/test/localeMetadata.test.ts zova/packages-cli/cli-set-front/test/localeMetadata.test.ts
+
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@swc-node/register' imported from .
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:268:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:858:18)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:743:35)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:318:38)
+    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:696:36)
+    at TracingChannel.tracePromise (node:diagnostics_channel:344:14) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v24.8.0
+✖ vona/packages-cli/cli-set-api/test/localeMetadata.test.ts (66.672541ms)
+
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@swc-node/register' imported from .
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:268:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:858:18)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:743:35)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:318:38)
+    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:696:36)
+    at TracingChannel.tracePromise (node:diagnostics_channel:344:14) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v24.8.0
+✖ zova/packages-cli/cli-set-front/test/localeMetadata.test.ts (63.786583ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 76.2295
+
+✖ failing tests:
+
+test at vona/packages-cli/cli-set-api/test/localeMetadata.test.ts:1:1
+✖ vona/packages-cli/cli-set-api/test/localeMetadata.test.ts (66.672541ms)
+  'test failed'
+
+test at zova/packages-cli/cli-set-front/test/localeMetadata.test.ts:1:1
+✖ zova/packages-cli/cli-set-front/test/localeMetadata.test.ts (63.786583ms)
+  'test failed'
+producer_status=1 sanitizer_status=0 artifact_writer_status=0
+
+Rerun 2: loader resolved from Vona working directory
+Command (cwd vona): SWC_NODE_PROJECT=tsconfig.json node --import=@swc-node/register/esm-register --test packages-cli/cli-set-api/test/localeMetadata.test.ts ../zova/packages-cli/cli-set-front/test/localeMetadata.test.ts
+✔ preserves an authored ja-jp-only provider through ordinary metadata generation (44.491667ms)
+✔ preserves an authored zh-tw-only provider through ordinary metadata generation (20.446542ms)
+✔ retains ordinary en-us locale resources, English-base scope and $locale helper (25.484125ms)
+✔ preserves an authored ja-jp-only provider through ordinary metadata generation (61.634541ms)
+✔ preserves an authored zh-tw-only provider through ordinary metadata generation (28.707792ms)
+✔ retains ordinary en-us locale resources, English-base scope and locale helper (22.971542ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2033.884084
+producer_status=0 sanitizer_status=0 artifact_writer_status=0
+
+Rerun 3: final test sources plus existing focused companion regressions
+Test source SHA-256:
+a9e4bbf929d996812405d5bc3a6b89daa24f5af9274fd6b73797808f718841e2  vona/packages-cli/cli-set-api/test/localeMetadata.test.ts
+82322f9522a7d1d6ba58f3b3472acc6f00e7669d03bf3992620b950c928a720e  zova/packages-cli/cli-set-front/test/localeMetadata.test.ts
+Command (cwd vona): SWC_NODE_PROJECT=tsconfig.json node --import=@swc-node/register/esm-register --test packages-cli/cli-set-api/test/localeMetadata.test.ts packages-cli/cli-set-api/test/indexSnippets.test.ts ../zova/packages-cli/cli-set-front/test/localeMetadata.test.ts ../zova/packages-cli/cli-set-front/test/sourceImports.test.ts
+▶ CRUD index snippets
+  ✔ resolves the shared index helper from source (1.852875ms)
+  ✔ basic merges name into an existing detail index (8.073667ms)
+  ✔ start merges name into an existing detail index (1.30575ms)
+✔ CRUD index snippets (11.709666ms)
+✔ preserves an authored ja-jp-only provider through ordinary metadata generation (26.9565ms)
+✔ preserves an authored zh-tw-only provider through ordinary metadata generation (9.917167ms)
+✔ retains ordinary en-us locale resources, English-base scope and $locale helper (7.894ms)
+✔ preserves an authored ja-jp-only provider through ordinary metadata generation (27.960333ms)
+✔ preserves an authored zh-tw-only provider through ordinary metadata generation (15.121292ms)
+✔ retains ordinary en-us locale resources, English-base scope and locale helper (11.795625ms)
+✔ keeps source suffixes in filename fields and uses them in metadata imports (14.618083ms)
+✔ generates wrappers from source controller, render and style extensions (7.924667ms)
+✔ migrates only generator-owned exports and remains idempotent (3.472375ms)
+✔ keeps compiled custom-generator lookup on dist-cli JavaScript (1.685417ms)
+✔ generates OpenAPI value and type consumers with source suffixes (121.836917ms)
+ℹ tests 14
+ℹ suites 1
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1419.58275
+producer_status=0 sanitizer_status=0 artifact_writer_status=0
+
+Final scope and evidence checks
+Manual sensitive review: full retained artifact inspected; no sensitive values or remaining machine-local paths observed. Sanitizer coverage is bounded and is not secret scanning.
+Limits: tooling-only temporary fixtures; no generated-source typecheck, runtime preload/lazy proof, browser/SSR proof, full ATP acceptance, installs, builds, database tests, checkout generation, production changes, or commits. Node v24.8.0 is below the declared >=24.11.0 minimum.
+evidence_check_producer_status=1 sanitizer_status=0 artifact_writer_status=0
+
+Evidence check rerun: previous wrapper stopped on git no-index new-file diff status 1, with no whitespace diagnostics; evidence:check had not run.
+Command: npm run --silent evidence:check -- -- <artifact> vona/packages-cli/cli-set-api/test/localeMetadata.test.ts zova/packages-cli/cli-set-front/test/localeMetadata.test.ts
+evidence_check_producer_status=0 sanitizer_status=0 artifact_writer_status=0

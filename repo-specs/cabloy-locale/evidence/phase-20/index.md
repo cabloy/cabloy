@@ -1,6 +1,48 @@
 # Japanese Connected Increment Evidence
 
-## Scope and Authority
+## Current Applicability: Proof Refreshed
+
+The separately approved WBS-LOC-20-01 proof refresh completed on 2026-10-25. [Current revision-scoped proof](./current-proof.md) records base `c6bbe87564`, dirty implementation digest `0ca3d8077b0bd5a3ea8bcc412dfecc17b0b5c7e634d6166b977eec923028607b`, supported Node 24.11.0, six new tooling cases / 14 passing companion tests, 19 frontend regressions, 9 managed backend tests, both typechecks, paired Admin/Web SSR+REST builds then deps:vona, and 2 passing independent E2E scenarios. Final producer and sanitizer exits were independently observed as 0. New primary results are nonignored `.txt` additions; no commit was authorized.
+
+**Current disposition: WBS-LOC-20-01 verified for the bounded Japanese mechanism slice.** The predecessor proof edge is restored; successor execution still requires its own approval. Full dictionaries, attributed language review, HMR and complete two-language integration/release proof remain open.
+
+### Current Record and Chart Checks
+
+The [current record-check artifact](./artifacts/current-record-checks.txt) retains the final formatter, authority audit, chart generation and freshness results; its chained producer also ran scoped evidence checking and `git diff --check`. Producer and sanitizer both exited 0. The [closure recheck](./artifacts/current-closure-checks.txt) also passed after final bookkeeping, confirmed unchanged implementation attribution, and confirmed current primary artifacts are nonignored.
+
+- `npm run spec:check -- cabloy-locale`: passed, 32 definitions and complete exact-ID chain; static planning structure only.
+- `npm run spec:charts -- cabloy-locale` and `npm run spec:charts:check -- cabloy-locale`: passed, both English derived views fresh, 1/6 verified. Both SVGs were rendered together in Chromium and visually inspected: titles, task/status labels and scope counts are readable without clipping or overlap. The deterministic candidate is WBS-LOC-30-01; the progress register recommends independently verifiable WBS-LOC-30-02 instead. Neither view authorizes successor execution.
+- Scoped evidence/path checks and `git diff --check`: passed. Manual sensitive-content review remains subject to the limits in the current proof; these checks are not secret scanning or ATP proof.
+- The user approval remains the bounded WBS-LOC-20-01 dossier; no human terminology review, release approval or successor approval is inferred.
+
+### Prior Applicability Review: Rerun Was Required
+
+Review date: 2026-10-25. Source reviewed: clean commit `c6bbe87564acbc19af6c7667a104a3b2e71a8afc`, followed by approved documentation-only alignment. The remainder of this index preserves the original dirty-snapshot results and failures as history; its original closure wording does **not** establish current-implementation verification.
+
+The user explicitly approved retaining `src/locales` + `localesProvider` and aligning the affected specifications/static checks in [ADR 0002](../../decisions/0002-locale-provider-resource-export.md). That approval does not authorize new source work or ATP execution. The current implementation differs materially from the historical digest below:
+
+- Providers now author `src/locales` and export `resource.localesProvider`; both runtimes consume that property rather than ordinary provider `resource.locales`.
+- Ordinary metadata generator sources are unchanged from the original baseline. The two `localeMetadata.test.ts` files claimed below are not present at the reviewed commit. Historical generator results therefore do not prove the revised authored-export-preservation contract.
+- Corresponding backend registry/policy/managed provider tests now live under `vona/src/suite/cabloy-locale/modules/locale-test/test/`; frontend runtime tests live under `zova/src/suite/cabloy-locale/modules/locale-test/test/`. Their coverage is not presumed deleted, but historical selectors and passing results cannot be transferred to the changed source without rerun.
+- All 22 historical artifact logs remain present in this checkout. They are ignored by the repository's `**/*.log` rule and are not tracked in the reviewed commits; no alternate durable location is recorded. They are not missing locally, but their repository-durable retention is not established. This update neither deletes them nor claims to repair their retention.
+
+**Disposition at that review, superseded by the current proof above:** WBS-LOC-20-01 was `implementation-complete`, with applicable ATP-LOC-01/02/03 proof requiring rerun and bounded export-preservation regression coverage still to be established. The historical `verified` disposition remains attributable only to its recorded dirty implementation, not current source. WBS-LOC-30-01 and WBS-LOC-30-02 could not use that predecessor edge until the proof refresh.
+
+Finite closure: under a separately approved execution dossier, verify CLI metadata/capability and authored export preservation for single-language providers and ordinary regressions; run the current Japanese registry/startup/policy/managed tests and applicable type/build/sync/browser checks; retain nonignored redacted primary results with exact revision/dirty attribution, commands, exits and cleanup. Update this index and progress after observed results. Do not require full dictionaries, attributed terminology review, HMR, or later full SSR/validation release coverage to close this specific gap. No ATP or product build was run during this documentation alignment.
+
+## Documentation Alignment Checks
+
+On 2026-10-25, after the explicit ADR 0002 design/documentation approval, Claude Code performed the bounded alignment at base `c6bbe87564` with only suite specifications/evidence-applicability records and derived SVGs changed. Actual commands and outcomes:
+
+| Command | Exit | Observed result |
+| --- | --- | --- |
+| `npm run spec:check -- cabloy-locale` | 0 | Complete planning structure and exact-ID chain passed, 32 definitions. |
+| `npm run spec:charts -- cabloy-locale` | 0 | Both English derived SVGs regenerated, 0/6 currently verified. |
+| `npm run spec:charts:check -- cabloy-locale` | 0 | Both regenerated views fresh, 0/6 currently verified. |
+
+These are static documentary results, not ATP execution, source verification, successor authorization or human terminology review. The table retains the relevant command results without publishing machine-local paths or sensitive payloads. Historical primary logs below were not modified, deleted or newly verified by this alignment. Runtime proof remains open.
+
+## Historical Scope and Authority
 
 - Date: 2026-10-25 (local); producer timestamps use UTC.
 - Edition: Cabloy Basic.

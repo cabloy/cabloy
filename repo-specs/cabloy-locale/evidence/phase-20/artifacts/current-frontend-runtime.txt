@@ -1,0 +1,37 @@
+(node:6496) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ keeps source suffixes in filename fields and uses them in metadata imports (9.209666ms)
+✔ generates wrappers from source controller, render and style extensions (15.8925ms)
+✔ migrates only generator-owned exports and remains idempotent (3.282667ms)
+✔ keeps compiled custom-generator lookup on dist-cli JavaScript (1.3585ms)
+✔ generates OpenAPI value and type consumers with source suffixes (150.612333ms)
+(node:6497) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ generated application entry files retain actual source suffixes (20.422542ms)
+(node:6498) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ SSR navigation rollback restores the prior locale from a non-locale route (0.523708ms)
+✔ SSR navigation keeps destination profile and locale after success (0.115333ms)
+✔ matched locale routes canonicalize disabled, noncanonical and default input through actual router (4.039666ms)
+(node:6499) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ SSR profiles resolve route metadata before flavor defaults (9.272541ms)
+✔ SSR profiles reject invalid values (0.522792ms)
+✔ SSR profile options enforce the public cookie boundary (0.606542ms)
+✔ SSR public profiles disable default caching without URL locale metadata (0.125125ms)
+✔ SSR route options override locale-aware cache defaults (0.076375ms)
+✔ SSR profile options are fresh immutable snapshots (0.147125ms)
+(node:6500) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ provider resources precede real a-bean preload, client lazy demo remains lazy (server=false) (6.88025ms)
+✔ provider resources precede real a-bean preload, client lazy demo remains lazy (server=true) (1.503958ms)
+✔ active locale policy normalizes cookies, preferences/setters and route-menu subsets, but not explicit lookup (0.429375ms)
+✔ config layers replace only the enabled locale set and reject invalid policy (0.651042ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1546.802834

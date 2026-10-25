@@ -6,6 +6,8 @@ Accepted
 
 The user explicitly approved the analyzed locale-module design, then confirmed the complete English planning scope and design-status policy in this conversation. This acceptance covers the durable decisions below only. It is not a claim that target source exists, that the generated baseline has received revision-scoped closure review, or that implementation/acceptance/release has been authorized.
 
+On 2026-10-25, accepted [ADR 0002](./0002-locale-provider-resource-export.md) superseded only the ordinary-resource-export and provider-aware-generator portions of decisions 3 and 8. Their original wording below is retained as design history; ADR 0002 and the updated SRS govern the current `src/locales` / `localesProvider` contract. All other boundaries remain in force.
+
 ## Background
 
 Cabloy Basic currently has ordinary module locale resources and project-level cross-module overrides, but no active locale-capability registration phase. Additional languages must be reusable modules rather than edits scattered through every target. Existing backend language negotiation infers availability from dictionaries, whereas application enablement must be explicit and independent of installed resources.

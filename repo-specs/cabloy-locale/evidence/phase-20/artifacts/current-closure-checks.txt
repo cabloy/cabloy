@@ -1,0 +1,14 @@
+
+> cabloy@5.1.236 spec:check
+> node ./repo-agent-governance/tools/spec-audit/audit.mjs cabloy-locale
+
+repo-specs/cabloy-locale: complete planning structure passed (32 definitions).
+Complete-baseline structure and explicit exact-ID chain.
+Static structure only; approval, semantic sufficiency, implementation, and evidence authenticity require human review.
+
+> cabloy@5.1.236 spec:charts:check
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs --check cabloy-locale
+
+checked implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-locale (en; 1/6 verified).
+Final implementation diff SHA-256: 0ca3d8077b0bd5a3ea8bcc412dfecc17b0b5c7e634d6166b977eec923028607b
+Current primary artifacts are nonignored; source attribution unchanged.

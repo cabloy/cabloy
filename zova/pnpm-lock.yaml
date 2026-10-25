@@ -512,6 +512,9 @@ importers:
       zova-module-locale-jajp:
         specifier: workspace:^
         version: link:src/suite/cabloy-locale/modules/locale-jajp
+      zova-module-locale-test:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-locale/modules/locale-test
       zova-module-pay-mock:
         specifier: workspace:^
         version: link:src/suite-vendor/a-pay/modules/pay-mock
