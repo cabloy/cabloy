@@ -408,4 +408,35 @@ Selected tested-source SHA-256 fingerprints (repository-relative, no runtime dep
 | `vona/src/suite/cabloy-mcp/modules/mcp-test/test/businessTools.test.ts` | `566408a918129bddf3ea4dd2e6033a243ab92f692bedcba800c9139de43079e4` |
 | `vona/src/suite/cabloy-mcp/modules/mcp-test/test/devHttp.test.ts` | `cc8d0c609d1c9109b970f8f29d3767553d3668a98a3e49eb034dde462b583699` |
 
-No new real-client invocation, browser E2E, production ingress, environment/port edit, development reset, restart, process kill, credential-store access, live diagnostic registration, commit, push or deployment is included. A real-Codex retest should repeat the existing category → search → detail and six-field student-summary journey using an already-authorized student, without writes or permission changes. It remains pending for the generic replacement. Parent WBS rows remain blocked, full ATPs open and verified **0/12** unchanged.
+No new real-client invocation, browser E2E, production ingress, environment/port edit, development reset, restart, process kill, credential-store access, live diagnostic registration, commit, push or deployment is included. A real-Codex retest should repeat the existing category → search → detail and six-field student-summary journey using an already-authorized student, without writes or permission changes. At that handoff it remained pending for the generic replacement; the [subsequent user-reported replay](#user-reported-codex-generic-mapper-replay-success-recorded-2026-10-25) closes only that bounded happy-path gap. Parent WBS rows remain blocked, full ATPs open and verified **0/12** unchanged.
+
+## User-reported Codex generic mapper replay success (recorded 2026-10-25)
+
+### Attribution and procedure
+
+The user approved the finite generic-replacement real-Codex replay after authority synchronization, then supplied the four successful sequential tool outcomes in this conversation. This is **user-reported client evidence**, not an assistant-executed retry or independently captured tool-event transcript. It supersedes only the generic mapper's pending real-client happy-path handoff, not the earlier failures or separately attributed handwritten-adapter results.
+
+Recording baseline: Cabloy Basic `b2659120712f74a96b5d3b2d60104372d38a6262`, branch `worktree-spec-basic-cabloy-mcp`, with seven approved authority-document edits already present: README, PRD, SRS, PDP/WBS, test plan and ADRs 0005/0006. Their pre-recording `git diff --binary` SHA-256 was `8140e35e5fbdfda62999685e8c7864eeb3783d08e7212b9965593fc6b3703a89`; the dirty documentary baseline is not reproducible from the base commit alone. All six selected implementation/test fingerprints above matched during preflight. Neither those checkout fingerprints nor this recording baseline attest the exact source or dependencies served during the user's calls.
+
+The supplied procedure used existing authenticated MCP server `test`, MCP tools only, and prohibited direct HTTP, alternative data sources, business writes, fixture creation and permission changes. It required categories → returned Electronics ID → filtered Wireless Headphones search → returned product ID → detail, followed by a summary read using an existing student already viewable by the signed-in account. The user reports completing all steps in order, with no retries or permission changes. This finite verification contributes to `WBS-MCP-30-01/30-02/40-01` and bounded portions of `ATP-MCP-CONTRACT-01/02/03` and `ATP-MCP-CALL-01/02`, under `SRS-MCP-CATALOG-01/02/03/04` and `SRS-MCP-DISPATCH-01/02`; it does not close those whole records.
+
+### Minimized observations
+
+| Step | Actual client tool reported | User-reported result |
+| --- | --- | --- |
+| Categories | `mcp__test__commerce_categories_list` | Electronics found; its returned ID was used for search |
+| Search | `mcp__test__commerce_products_search` | Returned a product using that category ID |
+| Detail | `mcp__test__commerce_product_detail` | Product ID matches search; search/detail category IDs both match the category-list result |
+| Student summary | `mcp__test__training_student_summary` | Returned student ID matches input; exactly the six approved fields and consistent summary |
+
+The product actually returned `priceCents = 9999` and `available = 11`. The student result contained exactly `id`, `name`, `level`, `levelTitle`, `descriptionLength`, `summaryText`, without `mobile`, `descriptionMarkdown` or `descriptionHtml`. The user reports the summary's name, level, level title and description length agree with the corresponding fields. Raw catalog/student identities, student name and summary body are omitted; equality checks retain the useful observation. No credential, token, cookie, signed callback state or machine-local path is retained.
+
+### Disposition and limits
+
+**Passed: user-reported bounded real-Codex generic-mapper four-read happy path.** The current replay is distinct from the old handwritten-adapter successes and closes the selected replacement's client gap within this attribution boundary. Exact client version, granted scope, account/instance details, runtime source hash, client/server exit codes, cost and full OAuth/wire transcript were not supplied. Separate inspection of output schemas/reachable definitions and equality of JSON text versus structured content were not reported and are not inferred from field checks. Successful reads do not prove scope-negative behavior, role revocation, cross-instance denial, both transport modes or absence of every possible server-side effect.
+
+No further client retry is needed for this bounded outcome. Parent WBS rows remain blocked, full ATPs open and verified **0/12** unchanged; neither production readiness nor a new implementation increment follows. This recording changes documentation only, without source changes, assistant-driven client/model calls, resets/seeding, permission grants, environment/port changes, service restarts, commit or push.
+
+### Recording checks
+
+`spec:check` passed **68 definitions**; chart generation/freshness passed in English with **0/12 verified** and no chart-byte changes. `docs:build` exited **0** in 10.02 seconds with the existing chunk-size warning; it does not build these suite/spec records themselves. Targeted formatting passed for eight matched Markdown files; this formatter-ignored evidence record was manually reviewed. All **476 local Markdown targets** across the changed records resolved, and incoming links to this new replay fragment were checked; other fragments and external URLs were not checked. WBS execution-register rows, WBS/ATP headings and dependency lines remained unchanged. Scoped evidence-path and diff-whitespace checks passed; new prose was manually reviewed for credentials, machine-local paths and student identifiers. Path checking is not secret scanning or runtime acceptance. No backend/browser tests or real-client calls were rerun for this documentary recording.

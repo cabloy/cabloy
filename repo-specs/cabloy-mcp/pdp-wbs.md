@@ -230,20 +230,22 @@ Traceability: `PRD-MCP-CONTRACT-01`, `PRD-MCP-CONTRACT-02`, `SRS-MCP-CATALOG-01`
 
 Dependencies: `WBS-MCP-20-01`.
 
-Source areas: existing OpenAPI generator/DTO metadata and enabled controller/router registrations; proposed MCP annotation or authored-manifest contract; proposed catalog builder and registry. [ADR 0005](./decisions/0005-mcp-tool-catalog-registry.md) is a Proposed input, not DEC-MCP-05 approval or source authorization.
+Source areas: existing OpenAPI generator/DTO metadata and enabled controller/router registrations; native `a-openapiutils` MCP metadata and `cabloy-mcp` mapper; broader proposed production policy/registry. [ADR 0005](./decisions/0005-mcp-tool-catalog-registry.md#accepted-bounded-controller-action-mapper-disposition-2026-10-25) records the accepted bounded mapper disposition while the whole DEC-MCP-05 remains Proposed.
+
+Current bounded contribution: the [2026-10-25 mapper contract](./srs.md#current-bounded-controller-action-mapper-contract-2026-10-25) and [existing implementation evidence](./evidence/business-ai-client.md#explicit-opt-in-controller-action-mapping-2026-10-25) govern authenticated dev/test shared ingress, not production registry closure. The authority synchronization changes no task dependency/status, full ATP result or verified 0/12. The [subsequent user-reported real Codex replay](./evidence/business-ai-client.md#user-reported-codex-generic-mapper-replay-success-recorded-2026-10-25) separately passes the generic replacement's bounded four-read happy path; it does not replace remaining full-task proof, and prior handwritten-tool success remains separately attributed.
 
 Tasks:
 
-- Collect versioned OpenAPI JSON internally and prove a unique enabled controller/action/request-mapping match for each candidate; validate DTO reference and response-envelope projection without treating OpenAPI presence as an allowlist.
-- Choose independent MCP exclusion and annotation or manifest ownership without cyclic dependencies; require reviewed explicit public tool names, safe descriptions, metadata/risk signals, and adapter declarations before inclusion.
-- Define deterministic diagnostic identity and stable public naming, collision/rename handling, schema revision/freshness, hard `@Api.exclude()` behavior, startup validation, and atomic in-memory registry snapshot without new MCP persistence.
+- Extract opted-in Actions' V31 contracts with `generateJsonOfControllerAction(..., { includeExcluded: true })` and prove enabled-controller/registered-route ownership; validate DTO references and response projection without treating ordinary OpenAPI publication as an allowlist.
+- Preserve default-closed `@mcp.tool()` metadata in `a-openapiutils`: method opt-in or class opt-in including future supported registered Actions, never helpers, with no opt-out. Method defaults override class values and `output.pick` arrays replace. Runtime/SDK mapping belongs to `cabloy-mcp`.
+- Validate default `module_controller_action` names or method-only overrides, collisions, descriptions, projections and schema freshness. Keep `@Api.exclude()` ordinary publication/cache behavior independent from MCP extraction. Broader production startup/atomic snapshot and deployment-policy design remains Proposed, without new MCP persistence.
 - Separate structural registry refresh from deployment policy, per-subject `tools/list`, and call-time authorization; settle locale, cache, cursor, HMR/restart, and multi-worker drift behavior against the selected protocol.
 - Keep candidate, eligible, enabled, visible, and call-authorized states distinct; DEC-MCP-06 still owns the final shape/risk/confirmation approval.
 
 Acceptance checks:
 
 - DTO/OpenAPI schema changes flow into the candidate contract without hand-editing generated consumers; enabled router identity, emitted operation, schema and registry snapshot agree at the serving revision.
-- MCP exclusion can hide an operation while OpenAPI remains available; an upstream API exclusion cannot be reintroduced, and unannotated/unreviewed operations are not enabled.
+- Undecorated Actions remain absent unless their class opts in; method-only selection narrows exposure without an opt-out. Class opt-in includes future supported registered Actions but not helpers. Explicit MCP opt-in may include API-excluded Actions while ordinary OpenAPI publication remains unchanged; disabled/unregistered Actions stay absent. Invalid/duplicate names or unknown projection fields fail configuration; unsupported opted-in shapes are omitted with diagnostics.
 - Duplicate public names, stale entries/caches, unsupported references, missing operation ownership, worker mismatch, and metadata-policy conflicts fail closed and are visible to operators.
 - A per-subject list/cursor neither leaks another subject's tools nor authorizes a later call after policy/role/registry changes; ordinary non-MCP OpenAPI/API behavior is unchanged.
 
@@ -253,7 +255,9 @@ Traceability: `PRD-MCP-ACCESS-02`, `PRD-MCP-CONTRACT-03`, `PRD-MCP-IDENTITY-03`,
 
 Dependencies: `WBS-MCP-30-01`.
 
-Source areas: candidate catalog; existing controller guards/RBAC/data-scope conventions; Vona executor result/serializer behavior; deployment policy configuration. [ADR 0006](./decisions/0006-mcp-tool-eligibility-risk-results.md) is a Proposed DEC-MCP-06 input, not approval of a risk exception or any first tool.
+Source areas: candidate catalog; existing controller guards/RBAC/data-scope conventions; Vona executor result/serializer behavior; deployment policy configuration. [ADR 0006](./decisions/0006-mcp-tool-eligibility-risk-results.md#accepted-bounded-mapper-scope-and-result-disposition-2026-10-25) records the existing bounded mapper scope/result approval; the whole production DEC-MCP-06 remains Proposed, not a new risk exception.
+
+Current bounded contribution: request-local validated scope filters `mcp:read` lists and rejects mutation calls before dispatch; `mcp:all` grants no business authority. Truthful explicit/inherited `readOnly` precedes GET convention, which is not effect proof. JSON/200 eligibility, unsupported-Action diagnostics, projected runtime/schema closure and safe result errors follow the current SRS mapper contract. These do not implement the proposed production confirmation/audit/role-filtered catalog or complete this parent task.
 
 Tasks:
 
@@ -266,7 +270,7 @@ Acceptance checks:
 
 - A GET with business side effects is not classified read-only by method alone; unreviewed, deceptive-hint, externally irreversible, and unsupported operations cannot enter the enabled set by OpenAPI presence or deployment opt-in alone.
 - `tools/list` hides disallowed tools and `tools/call` repeats relevant current authorization and argument-specific row checks; a listed operation is not a row-level grant.
-- The first approved catalog contains only representations and operations with a documented safe MCP adapter, approved domain/field/side-effect review, and deployment policy; no tool is asserted to be approved by this ADR.
+- Outside the accepted bounded dev/test disposition, production enablement still requires documented adapter, domain/field/side-effect review and deployment policy. Recording existing mapper/student-summary approval neither approves another tool nor clears these production gates.
 - Execution and result tests prove field minimization and schema conformity for each enabled shape, reject unapproved response fields/unsupported status without raw fallback, and distinguish downstream effect from result delivery after post-execution failure.
 
 ### Phase 40: Guarded dispatch and isolation
@@ -279,14 +283,14 @@ Traceability: `PRD-MCP-ACCESS-03`, `PRD-MCP-SAFETY-01`, `SRS-MCP-AUTH-03`, `SRS-
 
 Dependencies: `WBS-MCP-30-02`.
 
-Source areas: proposed MCP tool-call adapter; `bean.executor.performAction(...)`; existing controller guards/AOP; approved registry. [ADR 0007](./decisions/0007-mcp-context-passport-executor.md) is a Proposed DEC-MCP-07 input, not approval of the context factory, executor options, or runtime execution.
+Source areas: existing bounded MCP Controller Action adapter; `bean.executor.performAction(...)`; existing controller guards/AOP; broader proposed production registry/context integration. [ADR 0007](./decisions/0007-mcp-context-passport-executor.md) remains Proposed for the whole production DEC-MCP-07; it does not negate the separately approved dev/test contribution under the current SRS mapper contract. No new context foundation or source execution is authorized by this record synchronization.
 
 Tasks:
 
-- Resolve only server-owned tool names and map validated arguments to declared method/path/params/query/body fields.
+- Resolve only server-owned tool names and bind the registered `ContextRoute.routePathRaw`. Validate original Action contracts and map flat single-location objects, declared multi-location groups, wrapped scalar/array bodies and strict empty arguments; reject unknown fields/empty path segments. Enforce validated `mcp:read` mutation denial before dispatch.
 - Invoke the **inner action** with `innerAccess: false` and a fresh server-built options object; validate trusted minimal headers and reject caller-controlled authorization, query tokens, instance, onions, state and `authToken`. Apply a reviewed bounded execution policy without assuming current executor options provide abort/deadline/cancellation.
 - Prove route guard/AOP and domain policy coverage separately from OAuth, enabled-instance admission, HTTP body limits, origin and other system-middleware controls bypassed by router-only executor invocation; check downstream AOP argument/result and JWT diagnostic redaction.
-- Adapt only explicitly reviewed Cabloy 200-status executor/unwrapped results to a minimized, runtime-validated MCP JSON value; check optional output-schema/structured-content and compatibility-text consistency, and classify unsupported statuses/shapes and post-execution failures safely.
+- Adapt ordinary typed JSON/200 results to minimized, runtime-validated output and reachable schema closure. For the bounded mapper, objects are direct structured content; arrays/scalars use `{ result: value }`, and text represents the same structured object. Missing object/undefined returns `Resource not found`; authorization/Action/output failure returns `Action failed`, never raw fallback. Unsupported opted-in shapes are omitted with diagnostics. A result failure does not imply rollback of an effect.
 - Reject unknown tools, unknown/dangerous fields, route-like arguments, and caller-supplied authorization/host/cookie/tenant controls.
 
 Acceptance checks:

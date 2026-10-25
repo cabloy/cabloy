@@ -218,6 +218,8 @@ Traceability: `PRD-MCP-IDENTITY-01`, `PRD-MCP-IDENTITY-03`, `SRS-MCP-AUTH-01`, `
 
 ### ATP-MCP-AUTH-02: Authorization intersection and call-time recheck
 
+Bounded mapper coverage: use validated request-local `mcp:read`/`mcp:all` and synthetic read/mutation Actions to prove read-only listing and direct mutation denial **before dispatch** under `mcp:read`, even for known names. `mcp:all` must still preserve ordinary guards/RBAC and instance/resource scope; missing/unsupported scope fails closed. Explicit/inherited `readOnly` and GET fallback must be distinguished from actual-effect review. This is the current dev/test subset, not proof of a fully role/data-filtered list, production confirmation/audit policy or this full ATP. Retain scope/list/call/negative-dispatch assertions without tokens. Existing checks remain historical; this update executes none.
+
 Setup:
 
 - Prepare two local subjects with different roles/data ownership and OAuth tokens with narrow/broad scopes.
@@ -326,11 +328,11 @@ Procedure:
 
 - Compare the declared MCP input/output schema, normalized references, actual enabled router identity, fixed controller/action/method/path mapping, and runtime response shape with emitted OpenAPI/DTO metadata.
 - Change a source DTO/operation metadata field in a controlled revision, regenerate, and inspect OpenAPI-cache, HMR/restart, registry snapshot and second-worker freshness/drift behavior.
-- Attempt to invoke an orphaned, excluded, disabled, stale, ambiguous, or wrong-worker registry entry; separately change role/policy after listing and try to call the formerly visible name.
+- Attempt to invoke an orphaned, non-opted-in, disabled, stale, ambiguous, or wrong-worker registry entry; distinguish ordinary API publication exclusion from MCP selection. Separately change role/policy after listing and try to call the formerly visible name.
 
 Expected result:
 
-- The candidate reflects approved DTO/OpenAPI truth through a deterministic transformation; no hand-edited generated consumer is required. An emitted single-action schema alone cannot admit a disabled or API-excluded router action.
+- The candidate reflects approved DTO/OpenAPI truth through deterministic projection without hand-edited generated consumers. A single-Action schema cannot admit a disabled/unregistered router Action. An opted-in API-excluded Action is different: V31 excluded-inclusive contract extraction may admit it while ordinary OpenAPI export remains excluded; test both extraction orders/cache separation.
 - Drift, missing ownership, unsupported references/extensions, schema/serialization disagreement, worker mismatch, or stale entries fail the catalog check or prevent dispatch.
 - Runtime does not silently retain an obsolete schema/route; revoking policy/role after list prevents subsequent call even when the structural snapshot remains valid.
 
@@ -342,30 +344,36 @@ Traceability: `PRD-MCP-CONTRACT-01`, `SRS-MCP-CATALOG-01`, `SRS-MCP-API-01`, `SR
 
 ### ATP-MCP-CONTRACT-02: MCP exclusion, metadata, and stable-name collisions
 
+The historical heading/anchor is retained; current selection is default-closed explicit opt-in, with no exclusion/opt-out. Apply the accepted dev/test mapper contract and ADR 0005 disposition; broader production list/cache/worker-policy acceptance remains open, not an implemented mapper capability.
+
 Setup:
 
-- Prepare operations that are API-excluded (controller and action), MCP-excluded only, explicitly named, unnamed/unreviewed, duplicate-named, and annotated with risk/confirmation/output-adapter metadata. Include a refactor/rename case, an alternate locale, a controller/action metadata conflict, and a deployment-disabled entry.
+- Prepare an undecorated controller/Action, a method-opted-in Action, a class-opted-in controller with supported registered Actions and a non-Action helper, plus an added supported Action. Include controller/action `@Api.exclude()`, disabled/unregistered Actions, default and method-override names, duplicates/invalid names, class defaults and method overrides, locale metadata and output projections.
+- Keep broader production deployment/subject-policy and cursor/cache fixtures separate from this bounded mapper subset; neither opt-in nor this plan approves a new business tool.
 
 Procedure:
 
-- Build the catalog and inspect registered route, emitted operation, candidate, eligible, deployment-enabled, subject-visible, and call-authorized states separately.
-- Change MCP metadata while leaving OpenAPI exposure intact; introduce a stable-name collision, a bean/action rename with an unchanged public tool name, an invalid schema reference, a metadata inheritance conflict, a locale change, and a disabled deployment policy.
-- List tools under two subjects and instances, then change policy/role and retry a paginated cursor and `tools/call`; inspect the selected MCP revision's completed list fields, private caching rules, and bounded error classes.
+- Inspect enabled controller/registered Action, V31 extracted operation, opt-in, supported shape, scope-visible tool and guarded call separately. Generate ordinary and excluded-inclusive contracts in both orders and compare normal OpenAPI publication/cache results.
+- Compare method-only selection with class selection, future registered Action inclusion and helper omission. Check method overrides, replacement of inherited `output.pick` arrays, method-only name overrides, default `module_controller_action` identity and locale-stable naming.
+- Introduce duplicate/invalid names and unknown projection fields; inspect configuration failures. Introduce unsupported opted-in shapes/references and inspect omission/`server.diagnostics`, not guessed adapters. For a refactor requiring compatibility, preserve the old public name explicitly rather than assuming default names survive source identity changes.
+- Separately, for later approved production list-policy work, test subjects/instances, revocation, private caches/cursors and selected protocol list fields. Do not credit scope filtering alone as this broader proof.
 
 Expected result:
 
-- API-excluded operations never reappear in MCP; MCP-only exclusion hides an otherwise OpenAPI-visible operation, while ordinary OpenAPI/API behavior remains unchanged.
-- An unannotated or unreviewed operation is not enabled; presentation text and risk hints are preserved only as reviewed metadata, not interpreted as authorization.
-- A stable reviewed public name survives a checked internal refactor, and locale changes affect presentation only. Duplicate names, invalid metadata conflicts, and unsupported schemas fail deterministically; no nondeterministic winner is callable.
-- A private, subject-filtered list (or its cursor/cache entry) never exposes another subject or instance's tools and cannot authorize a call after revocation; required list response fields match the approved protocol revision.
+- Without method or class opt-in an Action is absent, even if OpenAPI-published. Class opt-in includes future supported registered Actions but never helpers; method-only decoration narrows selection without an opt-out. Disabled/unregistered Actions remain absent.
+- Opted-in API-excluded Actions may be tools without changing ordinary OpenAPI exclusion. Native metadata remains in `a-openapiutils`; mapper/SDK runtime remains in `cabloy-mcp`. No handwritten generated metadata or duplicated DTO is required.
+- Method values override class defaults; arrays replace. Default/override names obey the 1–128 ASCII letter/digit/`_`/`-` grammar and uniqueness; locale changes presentation only. Invalid/duplicate names and unknown projection fields fail configuration. Unsupported opted-in shapes are omitted with bounded diagnostics; no nondeterministic winner or raw-schema/output fallback is callable.
+- Listing is not a capability grant: scope checks precede dispatch and ordinary business authorization remains effective. Full production role/data-policy-filtered list/cache/cursor proof remains a separate unmet part of this ATP.
 
 Minimum proof:
 
-- Retain metadata/manifest fixture and source revision, catalog state and stable-name tables, collision/conflict diagnostics, locale/policy changes, redacted list/cache/call outcomes, and generated output.
+- Retain source revision, metadata/selection/inheritance/name tables, both ordinary/inclusive schema-generation orders, configuration and unsupported-Action diagnostics, scope/list/call assertions and generated schema closure. Retain later production-policy proof separately when executed. Existing automated evidence is revision-bound; the [subsequent user-reported real Codex replay](./evidence/business-ai-client.md#user-reported-codex-generic-mapper-replay-success-recorded-2026-10-25) separately passes only the generic replacement's four-read happy path. It does not supply unreported schema/text-versus-structured inspection, negative-scope or production-policy proof, or complete this ATP.
 
 Traceability: `PRD-MCP-CONTRACT-02`, `SRS-MCP-CATALOG-02`, `SRS-MCP-CATALOG-04`, `SRS-MCP-API-02`, `WBS-MCP-30-01`.
 
 ### ATP-MCP-CONTRACT-03: Unsafe shape and side-effect classification
+
+Bounded mapper subset: check ordinary typed JSON/200 support and omission of unsupported opted-in files/uploads/streams, native request/response bindings, header-dependent contracts, custom wrappers and non-200 responses, with `server.diagnostics` controller/action/reason and no dispatch. Test truthful explicit/inherited `readOnly` and GET inference separately: the mapper does not detect effects, implement trusted confirmation, or prove production domain-review policy. Synthetic mutation scope tests approve no business mutation. The broader prospective risk cases below remain open and must not be reported as mapper-delivered controls.
 
 Setup:
 
@@ -392,6 +400,8 @@ Traceability: `PRD-MCP-CONTRACT-03`, `PRD-MCP-SAFETY-01`, `SRS-MCP-CATALOG-03`, 
 
 ### ATP-MCP-CALL-01: Valid JSON tool call and result adaptation
 
+Bounded mapper subset: prove flat single-object-location input, grouped multi-location `params`/`query`/`body`, wrapped scalar/array body and strict empty input; reject unknown fields/empty path strings and reuse original Action runtime validators. Check top-level `output.pick` runtime minimization and reachable schema closure, direct object structured content, `{ result: value }` for array/scalar (including declared scalar null), and equivalent JSON text from that same structured object. Undefined or missing object/null must return safe `Resource not found`; authorization, Action and output-validation failure must return `Action failed`, never raw fallback. For the existing student summary, assert exactly `id`, `name`, `level`, `levelTitle`, `descriptionLength`, `summaryText`, no mobile/full notes in results or reachable schema, and unchanged student-view permission. Projection is not anonymization. These checks do not complete the broader limits/audit/effect cases below or supply pending real-client replay.
+
 Setup:
 
 - Use one approved fixed registry entry backed by a synthetic 200-status controller operation with declared path/query/body mapping and JSON result; include an OpenAPI 200 envelope, an unwrapped executor result, a declared-field projection with an extra sensitive field, and optional `outputSchema`.
@@ -416,6 +426,8 @@ Minimum proof:
 Traceability: `PRD-MCP-ACCESS-03`, `SRS-MCP-DISPATCH-01`, `SRS-MCP-DISPATCH-02`, `SRS-MCP-TRANSPORT-03`, `WBS-MCP-40-01`.
 
 ### ATP-MCP-CALL-02: Guarded fixed dispatch and executor-option rejection
+
+Bounded mapper subset: verify the binding uses the registered `ContextRoute.routePathRaw`, including an effective route-prefix case, with server-built options and `innerAccess: false` on the Action. Check known mutation-name denial before dispatch for `mcp:read`, ordinary RBAC/instance/resource denial under `mcp:all`, and rejection of extra route/identity/executor controls. Validated scope is request-local, not shared app exchange state or a Passport property. This is not production context/fleet/system-middleware qualification or full ATP closure.
 
 Setup:
 

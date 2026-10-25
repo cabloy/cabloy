@@ -42,7 +42,7 @@ The owner of an existing controller/API operation whose DTO, OpenAPI metadata, g
 - OAuth protected-resource discovery and per-request bearer-token validation, including issuer, audience/resource, expiry, scope, and subject checks.
 - Trusted endpoint-host to active-instance binding and rejection of conflicting instance selectors.
 - Candidate tool discovery from generated OpenAPI/DTO metadata.
-- Independent MCP exclusion metadata and MCP-specific descriptive/risk metadata.
+- Independent, default-closed MCP opt-in and MCP-specific descriptive/read-classification metadata; ordinary OpenAPI publication is a separate concern.
 - A fixed, server-owned operation registry that maps each exposed tool to one known controller method/path and known input/output adaptation.
 - `tools/list` filtering and `tools/call` authorization for the current OAuth subject, instance, scope, RBAC, data scope, deployment policy, and operation risk.
 - JSON-compatible input and output adaptation through the existing executor route path with `innerAccess: false`.
@@ -72,6 +72,12 @@ At clean `47d41c84fe`, `zhennann` approved [ADR 0002's bounded dev amendment](./
 ### Superseding shared-ingress access amendment (2026-10-23)
 
 The [later user correction in ADR 0002](./decisions/0002-mcp-transport.md#accepted-shared-ingress-authority-simplification-2026-10-23) supersedes the preceding middleware-mode and shared local-peer/Host/Origin restrictions only. Dev/test-only `mcp-test` module inclusion is the sole mode gate; shared ingress adds no local-authority allowlist. Business API authorization remains authoritative through fixed guarded `innerAccess: false` actions; all three fixture reads are public and anonymous. No credential forwarding, authentication, OAuth or CORS is added. Protocol/body checks, limits, instance scope and actual-work/drain remain, while standalone strict loopback/Host/Origin, fixed-default selector rejection and TTL are unchanged. Historical approvals/evidence and existing requirement/ATP links remain; no new result, launch criterion or WBS status follows (parents blocked, full ATPs open, verified 0/12).
+
+### Approved explicit opt-in Controller Action mapper (2026-10-25)
+
+The [existing implementation/approval record](./evidence/business-ai-client.md#explicit-opt-in-controller-action-mapping-2026-10-25) records the user's replacement of the proposed exclusion model with **default closed, explicit `@mcp.tool()` opt-in, no opt-out**, independently of `@Api.exclude()`. This is the current bounded contract under `PRD-MCP-CONTRACT-01`/`02`/`03`, `PRD-MCP-IDENTITY-03` and `PRD-MCP-SAFETY-01`, refined by the [current SRS mapper contract](./srs.md#current-bounded-controller-action-mapper-contract-2026-10-25) and the bounded dispositions in ADR 0005/0006. It applies only to authenticated dev/test shared ingress: reuse registered Actions, DTO/OpenAPI truth and runtime validators, fixed guarded dispatch and ordinary business permissions. `mcp:read` filters read-only tools and denies mutation calls before dispatch; `mcp:all` does not grant business authority. GET inference is not side-effect proof.
+
+The delivered student-summary consumer minimizes schema/results to six approved fields without changing student-view permission. The anonymous standalone entry remains exactly three synthetic tools and does not discover business Actions. This synchronization records existing approval, not a new production ingress, confirmation system, business mutation or runtime result. ADR 0005/0006 remain Proposed as whole production designs. Historical failures/proof remain retained; real Codex replay after the generic replacement is pending, parent tasks remain blocked, full ATPs open and verified 0/12.
 
 ### Deferred
 
@@ -136,7 +142,7 @@ The server rejects missing/invalid OAuth, wrong resource/audience, instance mism
 ### Contract and tool governance
 
 - **PRD-MCP-CONTRACT-01**: MCP candidate schemas are derived from the current Vona DTO/OpenAPI contract rather than duplicated manually in an unrelated tool definition. Traceability: `SRS-MCP-CATALOG-01`, `WBS-MCP-30-01`, `ATP-MCP-CONTRACT-01`.
-- **PRD-MCP-CONTRACT-02**: A controller operation can be explicitly excluded from MCP independently of whether it remains visible in Swagger/OpenAPI, and MCP-specific metadata can describe stable naming, risk, confirmation, and adaptation rules. Traceability: `SRS-MCP-CATALOG-02`, WBS-MCP-30-01`, `ATP-MCP-CONTRACT-02`.
+- **PRD-MCP-CONTRACT-02**: MCP exposure is closed by default and requires explicit `@mcp.tool()` opt-in independently of ordinary Swagger/OpenAPI publication. Method opt-in selects one registered Action; class opt-in includes supported registered Actions, including future additions, without an opt-out. MCP metadata describes naming, description, read classification and output minimization; it grants no authorization or side-effect safety proof. The current bounded dev/test mapper does not implement the broader proposed production confirmation policy. Traceability: `SRS-MCP-CATALOG-02`, `WBS-MCP-30-01`, `ATP-MCP-CONTRACT-02`.
 - **PRD-MCP-CONTRACT-03**: The default candidate policy does not automatically expose operations whose input/output or side-effect semantics cannot be represented safely as first-increment JSON tools. Traceability: `SRS-MCP-CATALOG-03`, `WBS-MCP-30-02`, `ATP-MCP-CONTRACT-03`.
 
 ### Safe execution and operations
@@ -149,7 +155,7 @@ The server rejects missing/invalid OAuth, wrong resource/audience, instance mism
 ## Business Rules
 
 - OpenAPI export is a candidate source, not a final authorization or safety decision.
-- `@Api.exclude()` is a hard upstream exclusion; a separate `@Mcp.exclude()` is proposed for MCP-only exclusion.
+- `@Api.exclude()` controls ordinary OpenAPI publication, not MCP exposure. Explicit MCP opt-in may use an API-excluded registered Action's contract without changing ordinary publication. There is no `@mcp.exclude()` or other opt-out; leave a controller undecorated and opt in selected methods for a narrower surface.
 - Tool names are stable server-owned identifiers and cannot be derived from a potentially colliding `operationId` without collision detection and a deterministic naming policy.
 - Visibility in `tools/list` does not authorize every possible argument in `tools/call`; authorization is repeated at call time.
 - HTTP method is not a side-effect classification. GET operations that mutate state remain high-risk or excluded until explicitly classified.
