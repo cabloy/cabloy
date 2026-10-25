@@ -10,6 +10,10 @@ After separately approving [ADR 0002](../../decisions/0002-locale-provider-resou
 
 **Disposition: verified for WBS-LOC-20-01's bounded Japanese slice.** The current proof below supersedes the historical dirty-snapshot results for this predecessor edge. It does not close full dictionaries, human terminology review, Traditional Chinese delivery, HMR, complete two-language SSR/validation integration, public guidance or release acceptance. Both phase-30 tasks still require separate execution approval.
 
+## Subsequent Test Removal
+
+After this proof refresh, the user requested removal of both dedicated CLI `localeMetadata.test.ts` files as unnecessary. They have been removed; the commands, hashes and results below describe the tested snapshot before removal, not retained regression coverage or the current implementation digest. Historical logs are preserved. Product runtime and generator sources are unchanged by this removal.
+
 ## Source and Environment Attribution
 
 - Active linked worktree/branch: `spec-basic-cabloy-locale` / `worktree-spec-basic-cabloy-locale`; all edits stayed inside that worktree.

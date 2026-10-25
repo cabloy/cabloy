@@ -6,6 +6,10 @@ The separately approved WBS-LOC-20-01 proof refresh completed on 2026-10-25. [Cu
 
 **Current disposition: WBS-LOC-20-01 verified for the bounded Japanese mechanism slice.** The predecessor proof edge is restored; successor execution still requires its own approval. Full dictionaries, attributed language review, HMR and complete two-language integration/release proof remain open.
 
+### Subsequent Test Removal
+
+The user subsequently requested removal of both dedicated CLI `localeMetadata.test.ts` files as unnecessary. The files have been removed. The tooling test counts and dirty implementation digest above refer to the proof-refresh snapshot before removal; they are not claims of retained regression coverage or the current digest. Historical commands, hashes and logs remain preserved in the [proof record](./current-proof.md#subsequent-test-removal). Product runtime and generator sources were not changed.
+
 ### Current Record and Chart Checks
 
 The [current record-check artifact](./artifacts/current-record-checks.txt) retains the final formatter, authority audit, chart generation and freshness results; its chained producer also ran scoped evidence checking and `git diff --check`. Producer and sanitizer both exited 0. The [closure recheck](./artifacts/current-closure-checks.txt) also passed after final bookkeeping, confirmed unchanged implementation attribution, and confirmed current primary artifacts are nonignored.
