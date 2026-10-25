@@ -39,6 +39,15 @@ export default async function (app: VonaApplication) {
     mode: env.META_MODE,
   };
 
+  // Language availability is application policy, independent of installed dictionaries.
+  config.locale = {
+    items: {
+      'en-us': 'LanguageEnglish',
+      'zh-cn': 'LanguageChinese',
+    },
+    default: 'en-us',
+  };
+
   // instance
   config.instance = {
     getInstanceName: undefined,

@@ -2,6 +2,7 @@ import type { VonaConfigMeta } from '@cabloy/module-info';
 
 import type { ConfigLogger, IBeanScopeConfig } from '../../index.ts';
 import type { PowerPartial } from '../utils/powerPartial.ts';
+import type { ConfigLocale } from './locale.ts';
 
 // @ts-ignore ignore the throw type check of 'development'
 export interface VonaConfig {
@@ -31,6 +32,7 @@ export interface VonaConfig {
     maxIpsCount: number;
   };
   logger: ConfigLogger;
+  locale: ConfigLocale;
   //
   modules: IBeanScopeConfig;
 }

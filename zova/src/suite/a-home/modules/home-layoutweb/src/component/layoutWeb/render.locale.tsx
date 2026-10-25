@@ -8,7 +8,7 @@ export class RenderLocale extends BeanRenderBase {
   public render() {
     const currentRoute = this.$currentRoute;
     const metaLocale = currentRoute?.meta?.locale;
-    const locales = currentRoute?.meta?.locales ?? this.sys.config.locale.items;
+    const locales = this.app.meta.locale.getItems(currentRoute?.meta?.locales);
     return (
       <li>
         <details>

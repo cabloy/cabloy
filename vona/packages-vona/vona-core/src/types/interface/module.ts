@@ -17,6 +17,7 @@ export interface IModuleResource {
   Main: new () => IModuleMain;
   Monkey: new () => IMonkeyModule & IMonkeySystem;
   locales: TypeModuleResourceLocales;
+  localesProvider: TypeModuleResourceLocales;
   errors: TypeModuleResourceErrors;
   config: TypeModuleResourceConfig;
   constants: unknown;

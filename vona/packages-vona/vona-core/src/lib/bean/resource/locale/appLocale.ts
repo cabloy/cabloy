@@ -5,11 +5,11 @@ import type { ILocaleRecord, IModuleLocale, IModuleLocaleText } from './type.ts'
 import { cast } from '../../../../types/utils/cast.ts';
 import { BeanSimple } from '../../beanSimple.ts';
 import { LocaleModuleNameSeparator } from './type.ts';
-import { isLocaleMagic } from './utils.ts';
+import { isLocaleMagic, resolveLocale } from './utils.ts';
 
 export class AppLocale extends BeanSimple {
   get current(): keyof ILocaleRecord {
-    return this.ctx ? this.ctx.locale : 'en-us';
+    return this.ctx ? this.ctx.locale : resolveLocale(undefined, this.app.config.locale);
   }
 
   set current(value: keyof ILocaleRecord) {

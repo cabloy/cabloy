@@ -11,7 +11,7 @@ import type { VonaApplication } from '../core/application.ts';
 import { useApp } from '../framework/useApp.ts';
 
 export type ZodLocaleError = () => { localeError: z.core.$ZodErrorMap };
-export type ZodLocaleErrors = Record<keyof ILocaleRecord, ZodLocaleError>;
+export type ZodLocaleErrors = Partial<Record<keyof ILocaleRecord, ZodLocaleError>>;
 
 const queryCoercion = new AsyncLocalStorage<boolean>();
 

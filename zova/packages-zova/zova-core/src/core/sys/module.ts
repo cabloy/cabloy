@@ -29,6 +29,7 @@ export class SysModule extends BeanSimple {
   public async initialize(modulesMeta: PluginZovaModulesMeta) {
     this.modulesMeta = modulesMeta;
     await this._loadAllMonkeysAndSyncsAndPreloads();
+    await this._requireAllSpecifics('locale');
     await this._requireAllSpecifics('preload');
     await this._requireAllSpecifics('monkey');
     await this._requireAllSpecifics('sync');
@@ -123,7 +124,8 @@ export class SysModule extends BeanSimple {
         process.env.SERVER ||
         info.capabilities?.monkey ||
         info.capabilities?.sync ||
-        info.capabilities?.preload;
+        info.capabilities?.preload ||
+        info.capabilities?.locale;
       if (shouldLoad) {
         const moduleResource = module.resource as any;
         if (typeof moduleResource === 'function') {
@@ -159,7 +161,7 @@ export class SysModule extends BeanSimple {
     }
   }
 
-  private async _requireAllSpecifics(capabilityName: 'preload' | 'monkey' | 'sync') {
+  private async _requireAllSpecifics(capabilityName: 'locale' | 'preload' | 'monkey' | 'sync') {
     const modulesMeta = this._ensureModulesMeta();
     const moduleNames = modulesMeta.moduleNames.filter(moduleName => {
       const module = modulesMeta.modules[moduleName];
@@ -182,7 +184,10 @@ export class SysModule extends BeanSimple {
       const module = modulesMeta.modules[moduleName];
       const info = module.info;
       const shouldInstall =
-        !info.capabilities?.monkey && !info.capabilities?.sync && !info.capabilities?.preload;
+        !info.capabilities?.locale &&
+        !info.capabilities?.monkey &&
+        !info.capabilities?.sync &&
+        !info.capabilities?.preload;
       if (shouldInstall) {
         await this._install(moduleName, module);
       }
@@ -257,7 +262,14 @@ export class SysModule extends BeanSimple {
   }
 
   private _registerLocales(module: IModule) {
-    this.sys.meta.locale._registerLocales(module.info.relativeName, module.resource.locales);
+    if (module.info.capabilities?.locale) {
+      this.sys.meta.locale._registerProviderLocales(
+        module.resource.localesProvider,
+        this._ensureModulesMeta().modules,
+      );
+    } else {
+      this.sys.meta.locale._registerLocales(module.info.relativeName, module.resource.locales);
+    }
   }
 
   private _registerConstants(module: IModule) {

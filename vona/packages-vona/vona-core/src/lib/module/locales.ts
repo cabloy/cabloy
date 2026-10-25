@@ -1,34 +1,56 @@
 import type { IModule } from '@cabloy/module-info';
 
-import type { TypeModuleResourceLocales, VonaLocaleOptional } from '../../types/index.ts';
+import type {
+  ILocaleProviderResource,
+  TypeModuleResourceLocales,
+  VonaLocaleOptional,
+} from '../../types/index.ts';
 import type { VonaApplication } from '../core/application.ts';
 
 import localesDefault from '../core/locales.ts';
 import { deepExtend } from '../utils/util.ts';
 
 export default async function (app: VonaApplication, modules: Record<string, IModule>) {
-  // all locales
-  app.meta.locales = localesDefault;
+  // Each application owns its registry; never add provider/project data to imported resources.
+  app.meta.locales = deepExtend({}, localesDefault);
   app.meta.localeModules = {};
 
-  // load locales
-  await loadLocales();
+  const localesAll = await app.options.locales();
+  // Preserve existing project global/module override semantics.
+  for (const locale in localesAll.localesDefault) {
+    _initLocales(locale, localesAll.localesDefault[locale]);
+  }
+  for (const locale in localesAll.localesModules) {
+    _initLocales(locale, localesAll.localesModules[locale]);
+  }
 
-  async function loadLocales() {
-    const localesAll = await app.options.locales();
-    // project locales default
-    for (const locale in localesAll.localesDefault) {
-      _initLocales(locale, localesAll.localesDefault[locale]);
+  // Providers precede all ordinary dictionaries, independent of their module order.
+  for (const moduleName of Object.keys(modules)) {
+    const module = modules[moduleName];
+    if (!module.info.capabilities?.locale) continue;
+    const locales = module.resource.localesProvider;
+    if (!locales) continue;
+    for (const locale of Object.keys(locales)) {
+      const resource = locales[locale] as ILocaleProviderResource;
+      const globals = Object.fromEntries(
+        Object.entries(resource).filter(
+          ([key, value]) => key !== 'modules' && typeof value === 'string',
+        ),
+      );
+      app.meta.locales[locale] = Object.assign({}, globals, app.meta.locales[locale]);
+      for (const target of Object.keys(resource.modules ?? {})) {
+        // Metadata membership is sufficient; no target import, install or dependency is needed.
+        if (!Object.hasOwn(modules, target)) continue;
+        _registerLocale(target, locale, resource.modules![target]);
+      }
     }
-    // project locales modules
-    for (const locale in localesAll.localesModules) {
-      _initLocales(locale, localesAll.localesModules[locale]);
-    }
-    // app cache
-    app.meta.hmrCacheLocaleModules = deepExtend({}, app.meta.localeModules);
-    // module locales
-    for (const moduleName in modules) {
-      const module = modules[moduleName];
+  }
+
+  // Preserve project/provider precedence when ordinary target dictionaries are reloaded.
+  app.meta.hmrCacheLocaleModules = deepExtend({}, app.meta.localeModules);
+  for (const moduleName of Object.keys(modules)) {
+    const module = modules[moduleName];
+    if (!module.info.capabilities?.locale) {
       _registerLocales(moduleName, module.resource.locales);
     }
   }
@@ -36,7 +58,6 @@ export default async function (app: VonaApplication, modules: Record<string, IMo
   function _initLocales(locale: string, locales: VonaLocaleOptional | undefined) {
     if (!locales) return;
     if (!locales.modules) {
-      // override
       app.meta.locales[locale] = Object.assign({}, app.meta.locales[locale], locales);
     } else {
       const moduleMap = locales.modules;
@@ -54,9 +75,7 @@ export default async function (app: VonaApplication, modules: Record<string, IMo
   }
 
   function _registerLocale(moduleName: string, locale: string, moduleLocales: object) {
-    // locales: not override
     app.meta.locales[locale] = Object.assign({}, moduleLocales, app.meta.locales[locale]);
-    // localeModules
     if (!app.meta.localeModules[moduleName]) app.meta.localeModules[moduleName] = {};
     app.meta.localeModules[moduleName][locale] = Object.assign(
       {},

@@ -3,6 +3,30 @@ import type {
   RouteLocationResolvedGeneric,
 } from '@cabloy/vue-router';
 
+import { combineParamsAndQuery } from '@cabloy/utils';
+
+// Keep the matched route/alias and existing optional-default URL policy. No new identity.
+export function getCanonicalLocaleRoutePath(
+  route: TypeSsrNavigationRoute,
+  locale: { normalize(value: unknown): string },
+  defaultLocale: string,
+): string | undefined {
+  if (!route.meta.locale) return;
+  const value = locale.normalize(route.params?.locale);
+  const canonical = value === defaultLocale ? '' : value;
+  if ((route.params?.locale ?? '') === canonical) return;
+  // A synthetic layout parent may retain its original path while its child matches
+  // the public alias. The deepest matching record owns the actual destination URL.
+  const matched = route.matched.findLast(record => record.path.includes(':locale'));
+  if (!matched) return;
+  const path =
+    combineParamsAndQuery(matched.path, {
+      params: { ...route.params, locale: canonical || undefined },
+      query: route.query,
+    }) + (route.hash ?? '');
+  return path !== route.fullPath ? path : undefined;
+}
+
 export type TypeSsrNavigationRoute = RouteLocationNormalizedGeneric | RouteLocationResolvedGeneric;
 
 export interface ISsrNavigationSync {

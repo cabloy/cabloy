@@ -188,6 +188,37 @@ class QueueAdd {}
 
 That means queue behavior is not only asynchronous. It also participates in concurrency, isolation, and consistency policy.
 
+### Finished-job retention
+
+The global `a-queue` worker defaults are `removeOnComplete: { count: 0 }` and `removeOnFail: { count: 0 }`. Jobs are removed immediately on success or final failure, not on intermediate failures that will be retried. This removes finished job records, not the BullMQ events stream: `pushAsync` still receives completion results and final errors through `QueueEvents`.
+
+For queue-specific retention, set `options.worker` explicitly. Worker removal options take BullMQ `KeepJobs` objects, not booleans; for example, retain up to 100 completed and 100 failed jobs:
+
+```typescript
+@Queue({
+  options: {
+    worker: {
+      removeOnComplete: { count: 100 },
+      removeOnFail: { count: 100 },
+    },
+  },
+})
+class QueueAdd {}
+```
+
+For ordinary `push` / `pushAsync` jobs, `options.job` can instead set `removeOnComplete` / `removeOnFail` to `false` (retain without automatic removal) or a bounded object such as `{ count: 100 }`. Job-level values override worker defaults; per-push `jobOptions` override the corresponding `options.job` values:
+
+```typescript
+await this.scope.queue.add.push(data, {
+  jobOptions: {
+    removeOnComplete: { count: 100 },
+    removeOnFail: false,
+  },
+});
+```
+
+Changing the defaults does not automatically purge previously retained jobs. Retain records when later job lookups or manual retries are needed. Custom `jobId` duplicate suppression lasts only while that job exists; after removal, the same ID can be submitted again. Bounded retention is not an exact TTL or a permanent deduplication guarantee.
+
 ## Configure queues in app config
 
 Queue options can also be overridden in app config.

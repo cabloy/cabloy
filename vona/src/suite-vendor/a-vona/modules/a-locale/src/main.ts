@@ -1,6 +1,6 @@
 import type { IModuleMain, VonaContext } from 'vona';
 
-import { BeanSimple } from 'vona';
+import { BeanSimple, resolveEnabledLocale, resolveLocale, validateLocaleConfig } from 'vona';
 
 import type { I18nConfigLocale, I18nConfigTz } from './config/config.ts';
 
@@ -15,11 +15,12 @@ export class Main extends BeanSimple implements IModuleMain {
   async moduleLoading() {}
   async moduleLoaded() {
     const options = this.app.scope(__ThisModule__).config;
+    validateLocaleConfig(this.app.config.locale);
     this.app.context.__getLocale = function (this: VonaContext) {
       return __getLocale(this, options.locale);
     };
     this.app.context.__setLocale = function (this: VonaContext, locale: string) {
-      return __setLocale(this, locale);
+      return __setLocale(this, locale, options.locale);
     };
     this.app.context.__getTz = function (this: VonaContext) {
       return __getTz(this, options.tz);
@@ -32,8 +33,8 @@ export class Main extends BeanSimple implements IModuleMain {
   async configLoaded(_config: any) {}
 }
 
-function __setLocale(ctx: VonaContext, locale: string) {
-  ctx[SymbolLocale] = locale;
+function __setLocale(ctx: VonaContext, locale: string, options: I18nConfigLocale) {
+  ctx[SymbolLocale] = resolveLocale(locale, ctx.app.config.locale, options.localeAlias);
   ctx[SymbolLocaleOrigin] = 'set';
 }
 
@@ -42,7 +43,7 @@ function __getLocale(ctx: VonaContext, options: I18nConfigLocale) {
     return ctx[SymbolLocale];
   }
 
-  const localeNames = Object.keys(ctx.app.meta.locales);
+  const policy = ctx.app.config.locale;
 
   const queryField = options.queryField;
   const headerField = options.headerField;
@@ -89,9 +90,10 @@ function __getLocale(ctx: VonaContext, options: I18nConfigLocale) {
         }
         if (languages.length > 0) {
           for (let i = 0; i < languages.length; i++) {
-            const lang = formatLocale(languages[i]);
-            if (localeNames.includes(lang) || options.localeAlias[lang]) {
-              locale = lang;
+            const lang = resolveEnabledLocale(languages[i], policy, options.localeAlias);
+            if (lang) {
+              // Keep the input until final resolution so an alias is applied only once.
+              locale = languages[i];
               localeOrigin = 'header';
               break;
             }
@@ -104,23 +106,8 @@ function __getLocale(ctx: VonaContext, options: I18nConfigLocale) {
     }
   }
 
-  // all missing, set it to defaultLocale
-  if (!locale) {
-    locale = options.defaultLocale;
-    localeOrigin = 'default';
-  }
-
-  // cookie alias
-  if ((locale as string) in options.localeAlias) {
-    locale = options.localeAlias[locale as string];
-  }
-
-  locale = formatLocale(locale);
-
-  // validate locale
-  if (!localeNames.includes(locale)) {
-    locale = options.defaultLocale;
-  }
+  if (!locale) localeOrigin = 'default';
+  locale = resolveLocale(locale, policy, options.localeAlias);
 
   // if header not send, set the locale cookie
   if (cookieField && options.writeCookie && cookieLocale !== locale && !ctx.headerSent) {
@@ -215,11 +202,6 @@ function updateCookie(ctx: VonaContext, options: I18nConfigLocale | I18nConfigTz
     overwrite: true,
   };
   ctx.cookies.set(options.cookieField!, locale, cookieOptions);
-}
-
-function formatLocale(locale) {
-  // support zh_CN, en_US => zh-CN, en-US
-  return parseTokenSafe(locale).replace('_', '-').toLowerCase();
 }
 
 function parseTokenSafe(token?: string) {

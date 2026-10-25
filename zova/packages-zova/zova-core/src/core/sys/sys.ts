@@ -9,7 +9,7 @@ import type { ZovaConstant } from './constant.ts';
 import { BeanContainer } from '../../bean/beanContainer.ts';
 import { cast } from '../../types/utils/cast.ts';
 import { zodEnhanceSys } from '../../utils/zod-enhance.ts';
-import { configDefault } from './config.ts';
+import { configDefault, validateLocaleConfig } from './config.ts';
 import { constantDefault } from './constant.ts';
 import { SysMeta } from './meta.ts';
 import { appResource } from './resource.ts';
@@ -123,8 +123,13 @@ export class ZovaSys {
   private async _combineConfig(config: TypeModuleResourceConfig[]): Promise<ZovaConfig> {
     const _config = deepExtend({}, configDefault(this.env));
     for (const configFn of config) {
-      deepExtend(_config, await configFn(this));
+      const layer = await configFn(this);
+      deepExtend(_config, layer);
+      // The enabled set is a policy replacement, not an additive dictionary.
+      const items = (layer as Partial<ZovaConfig>).locale?.items;
+      if (items !== undefined) _config.locale.items = { ...items };
     }
+    validateLocaleConfig(_config.locale);
     return _config;
   }
 

@@ -1,13 +1,12 @@
-import type { ILocaleRecord, IProtocolKeyRecord, VonaApplication } from 'vona';
+import type { IProtocolKeyRecord, VonaApplication } from 'vona';
 
 import { $protocolKey } from 'vona';
 
 export interface I18nConfigLocale {
-  defaultLocale: keyof ILocaleRecord;
   queryField?: keyof IProtocolKeyRecord;
   headerField?: keyof IProtocolKeyRecord;
   cookieField?: string;
-  localeAlias: any;
+  localeAlias: Record<string, string>;
   writeCookie: boolean;
   cookieMaxAge: number;
   cookieDomain?: string;
@@ -31,7 +30,6 @@ export interface I18nConfig {
 export function config(_app: VonaApplication) {
   return {
     locale: {
-      defaultLocale: 'en-us',
       queryField: $protocolKey('x-vona-locale'),
       headerField: $protocolKey('x-vona-locale'),
       cookieField: 'locale',
