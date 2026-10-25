@@ -1,0 +1,295 @@
+
+> cabloy@5.1.236 test
+> cd vona && npm run test locale-test/test/locales.test.ts
+
+
+> test
+> node ../scripts/runIsolatedTest.ts unit locale-test/test/locales.test.ts
+
+
+> prerun
+> npm run vona :tools:deps
+
+
+> vona
+> node ./packages-cli/cli/src/bin/vona.ts :tools:deps
+
+vona api:tools:deps at vona
+
+vona api:bin:test at vona
+
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+2026-10-25T12:32:41.931Z silly [a-startup.service.startup] startup: a-version:databaseInit, pid: 29788
+2026-10-25T12:32:41.996Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:32:41.997Z silly [a-version.service.database] {"method":"POST"} database: vona/.app-test-20261025123234-8a45a6cd/sqlite3/vona-test-cabtest20261025123234-8a45a6cd-s-20261025-203241.db, pid: 29788
+2026-10-25T12:32:43.893Z info [a-version.service.version] {"method":"POST"} {
+  "a-version": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-auth": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "auth-simple": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-instance": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-mail": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-pay": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-member": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-payment": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "home-user": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-promotion": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-trade": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-catalog": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-record": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-recordsubject": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-student": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-datasource": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-layoutprofile": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-status": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-rest": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-vona": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  }
+}
+2026-10-25T12:32:43.894Z silly [a-version.service.version] {"method":"POST"} All modules are checked successfully!
+2026-10-25T12:32:43.926Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:32:43.926Z silly [a-version.service.database] {"method":"POST"} database: vona/.app-test-20261025123234-8a45a6cd/sqlite3/vona-test-cabtest202610-i-Uje2WmYB9W-20261025-203243.db, pid: 29788
+2026-10-25T12:32:45.995Z info [a-version.service.version] {"method":"POST"} {
+  "a-version": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-auth": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "auth-simple": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-instance": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-mail": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-pay": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-member": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-payment": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "home-user": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-promotion": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-trade": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-catalog": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-record": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-recordsubject": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-student": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-datasource": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-layoutprofile": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-status": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-rest": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-vona": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  }
+}
+2026-10-25T12:32:45.995Z silly [a-version.service.version] {"method":"POST"} All modules are checked successfully!
+2026-10-25T12:32:45.995Z silly [a-startup.service.startup] startup: a-version:databaseName, pid: 29788
+2026-10-25T12:32:45.997Z silly [a-startup.service.startup] startup: a-web:listen, pid: 29788
+2026-10-25T12:32:46.159Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-version:instanceInit, pid: 29788
+2026-10-25T12:32:50.015Z silly [a-version.service.version] {"method":"POST"} The instance is initialized successfully: default
+2026-10-25T12:32:50.042Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-schedule:loadSchedules, pid: 29788
+2026-10-25T12:32:50.093Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-runtime:runtime, pid: 29788
+2026-10-25T12:32:50.115Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-queue:loadQueueWorkers, pid: 29788
+2026-10-25T12:32:53.550Z silly [a-version.service.version] {"method":"POST"} The instance is seeded successfully: default
+✔ provider registration is target-scoped, metadata-filtered and ordered before ordinary defaults (1.460834ms)
+✖ ordinary locale service reload restarts to preserve clean-start scoped and global precedence (0.647084ms)
+✔ provider modules envelope never becomes global text (0.09525ms)
+✔ active locale policy validates own enabled items independently of dictionary availability (0.312541ms)
+✔ root config layers replace explicit locale.items subsets, retaining the sole default (37.113541ms)
+✔ ---done--- (0.080667ms)
+App shutdown gracefully: 29788
+ℹ tests 5
+ℹ suites 1
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 117.461458
+
+✖ failing tests:
+
+test at src/suite/cabloy-locale/modules/locale-test/test/locales.test.ts:161:1
+✖ ordinary locale service reload restarts to preserve clean-start scoped and global precedence (0.647084ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (vona/src/suite/cabloy-locale/modules/locale-test/test/locales.test.ts:256:9)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: [Function (anonymous)],
+    operator: 'rejects',
+    diff: 'simple'
+  }
+vona/packages-cli/cli-set-api/toolsIsolate/test.ts:111
+            throw new Error('node:test reported failed tests');
+                  ^
+
+Error: node:test reported failed tests
+    at testRun (vona/packages-cli/cli-set-api/toolsIsolate/test.ts:111:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async vona/packages-cli/cli-set-api/toolsIsolate/test.ts:18:1
+
+Node.js v24.11.0
+Error: Test child exited: 1
+    at ChildProcess.<anonymous> (vona/packages-cli/cli-set-api/src/lib/bean/cli.bin.test.ts:35:21)
+    at Object.onceWrapper (node:events:623:26)
+    at ChildProcess.emit (node:events:508:28)
+    at maybeClose (node:internal/child_process:1101:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:305:5)
+Isolated test claim and resources retained for inspection: vona/.vona-test-claim/20261025123234-8a45a6cd.json
+scripts/runIsolatedTest.ts:476
+      throw new Error(`Isolated test exited: ${result.result?.signal ?? result.result?.code}`);
+            ^
+
+Error: Isolated test exited: 1
+    at runIsolatedProcess (scripts/runIsolatedTest.ts:476:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async scripts/runIsolatedTest.ts:731:11
+    at async withIsolatedRunInternal (scripts/runIsolatedTest.ts:671:14)
+    at async withIsolatedRun (scripts/runIsolatedTest.ts:617:12)
+    at async runIsolatedTest (scripts/runIsolatedTest.ts:726:3)
+    at async scripts/runIsolatedTest.ts:750:3
+
+Node.js v24.11.0
+producer_exit=1 sanitizer_exit=0

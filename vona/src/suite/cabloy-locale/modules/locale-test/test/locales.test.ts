@@ -11,6 +11,7 @@ import {
 import defaults from '../../../../../../packages-vona/vona-core/src/lib/core/locales.ts';
 import { Start } from '../../../../../../packages-vona/vona-core/src/lib/framework/start.ts';
 import loadLocales from '../../../../../../packages-vona/vona-core/src/lib/module/locales.ts';
+import { ServiceHmr } from '../../../../../suite-vendor/a-vona/modules/a-hmr/src/service/hmr.ts';
 
 function module(locales: object, provider = false) {
   return {
@@ -127,6 +128,109 @@ test('provider registration is target-scoped, metadata-filtered and ordered befo
   await loadLocales(secondApp, {});
   assert.equal(Object.hasOwn(secondApp.meta.locales, 'ja-jp'), false);
   assert.notEqual(secondApp.meta.locales['en-us'], app.meta.locales['en-us']);
+});
+
+test('ordinary locale service reload restarts to preserve clean-start scoped and global precedence', async () => {
+  const dictionaries = [
+    Object.freeze({
+      OrdinaryOnly: 'before',
+      Collision: 'first before',
+      RemovedOnly: 'removed on reload',
+      ProviderWins: 'ordinary before',
+      ProjectWins: 'ordinary before',
+    }),
+    Object.freeze({
+      OrdinaryOnly: 'after',
+      Collision: 'first after',
+      RemovedOnly: 'removed on reload',
+      ProviderWins: 'ordinary after',
+      ProjectWins: 'ordinary after',
+    }),
+    Object.freeze({ OrdinaryOnly: 'after deletion' }),
+  ];
+  const provider = Object.freeze({
+    'ja-jp': Object.freeze({
+      modules: Object.freeze({
+        'target-one': Object.freeze({ ProviderWins: 'provider', ProjectWins: 'provider loses' }),
+      }),
+    }),
+  });
+  const project = Object.freeze({
+    localesDefault: Object.freeze({ 'ja-jp': Object.freeze({ ProjectGlobal: 'project global' }) }),
+    localesModules: Object.freeze({
+      'ja-jp': Object.freeze({
+        modules: Object.freeze({ 'target-one': Object.freeze({ ProjectWins: 'project' }) }),
+      }),
+    }),
+  });
+  const second = Object.freeze({ Collision: 'second ordinary' });
+  const modulesFor = (dictionary: object) => ({
+    'target-one': module({ 'ja-jp': dictionary }),
+    'provider': module(provider, true),
+    'target-two': module({ 'ja-jp': second }),
+  });
+  const start = async (dictionary: object) => {
+    const app = appFixture();
+    app.options.locales = async () => project;
+    await loadLocales(app, modulesFor(dictionary) as any);
+    return app;
+  };
+  let app = await start(dictionaries[0]);
+  assert.equal(app.meta.text.locale('ja-jp', 'OrdinaryOnly'), 'before');
+  assert.equal(app.meta.text.locale('ja-jp', 'Collision'), 'first before');
+  assert.equal(app.meta.text.locale('ja-jp', 'RemovedOnly'), 'removed on reload');
+
+  for (const [index, dictionary] of dictionaries.entries()) {
+    if (index === 0) continue;
+    const before = structuredClone([
+      app.meta.locales,
+      app.meta.localeModules,
+      app.meta.hmrCacheLocaleModules,
+    ]);
+    const restart = new Error('test-owned worker restart');
+    let reloads = 0;
+    let cacheClears = 0;
+    app.bean = {
+      worker: {
+        reload: () => {
+          reloads++;
+          throw restart;
+        },
+      },
+      openapi: {
+        clearAllCaches: async () => {
+          cacheClears++;
+        },
+      },
+    };
+    const service: any = new ServiceHmr();
+    Object.defineProperty(service, 'app', { value: app });
+    await assert.rejects(service._reloadLocale(), error => error === restart);
+    assert.equal(reloads, 1);
+    assert.equal(cacheClears, 0);
+    assert.deepEqual(
+      [app.meta.locales, app.meta.localeModules, app.meta.hmrCacheLocaleModules],
+      before,
+    );
+
+    // Emulate the signalled worker's fresh registration, not a merge into stale globals.
+    app = await start(dictionary);
+    const text = (key: string) => app.meta.text.locale('ja-jp', key);
+    assert.equal(text('target-one::OrdinaryOnly'), dictionary.OrdinaryOnly);
+    assert.equal(text('OrdinaryOnly'), dictionary.OrdinaryOnly);
+    assert.equal(text('target-one::ProjectWins'), 'project');
+    assert.equal(text('target-one::ProviderWins'), 'provider');
+    assert.equal(text('ProjectGlobal'), 'project global');
+    assert.equal(text('Collision'), index === 1 ? 'first after' : 'second ordinary');
+    assert.equal(text('target-two::Collision'), 'second ordinary');
+    assert.equal(text('RemovedOnly'), index === 1 ? 'removed on reload' : 'RemovedOnly');
+    assert.equal(
+      text('target-one::RemovedOnly'),
+      index === 1 ? 'removed on reload' : 'RemovedOnly',
+    );
+    assert.equal(Object.hasOwn(app.meta.locales['ja-jp'], 'modules'), false);
+    assert.equal(app.meta.localeModules.provider, undefined);
+  }
 });
 
 test('provider modules envelope never becomes global text', async () => {

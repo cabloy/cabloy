@@ -1,0 +1,188 @@
+WBS-LOC-30-02 frontend lifecycle focused regression
+Attempt 1; current runtime fixtures may be under coordinator-owned watcher exercise.
+Command: node --experimental-transform-types --test zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+v24.11.0
+(node:31170) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ provider resources precede real a-bean preload, client lazy demo remains lazy (server=false) (6.861166ms)
+✔ provider resources precede real a-bean preload, client lazy demo remains lazy (server=true) (1.581208ms)
+✔ real Sys full-reload hook disposes provider state and reinitializes like fresh startup (8.49975ms)
+✔ disposed SysLocale can register current project/provider resources without removed contributions (0.669292ms)
+✔ active locale policy normalizes cookies, preferences/setters and route-menu subsets, but not explicit lookup (0.478792ms)
+✔ config layers replace only the enabled locale set and reject invalid policy (0.466ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 312.766416
+test_exit=0
+
+Attempt 2; added raw-key fallback for removed target and constrained scope collaborator.
+Command: node --experimental-transform-types --test zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+(node:79262) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ provider resources precede real a-bean preload, client lazy demo remains lazy (server=false) (8.037667ms)
+✔ provider resources precede real a-bean preload, client lazy demo remains lazy (server=true) (1.393791ms)
+✔ real Sys full-reload hook disposes provider state and reinitializes like fresh startup (6.882833ms)
+✔ disposed SysLocale can register current project/provider resources without removed contributions (0.455ms)
+✔ active locale policy normalizes cookies, preferences/setters and route-menu subsets, but not explicit lookup (0.306583ms)
+✔ config layers replace only the enabled locale set and reject invalid policy (0.320458ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 343.5595
+test_exit=0
+Command: npm run format -- zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+> cabloy@5.1.236 format
+> oxfmt --check zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 25ms on 1 files using 12 threads.
+format_exit=0
+Command: npm run lint -- zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+> cabloy@5.1.236 lint
+> oxlint --disable-nested-config zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+lint_exit=0
+
+Attempt 3; a-bean fixture retains real preload+monkey capabilities.
+
+Command: node --experimental-transform-types --test zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+(node:9467) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ provider resources precede real a-bean preload, client lazy demo remains lazy (server=false) (5.092042ms)
+✔ provider resources precede real a-bean preload, client lazy demo remains lazy (server=true) (1.508084ms)
+✔ real Sys full-reload hook disposes provider state and reinitializes like fresh startup (9.381333ms)
+✔ disposed SysLocale can register current project/provider resources without removed contributions (0.548584ms)
+✔ active locale policy normalizes cookies, preferences/setters and route-menu subsets, but not explicit lookup (0.365042ms)
+✔ config layers replace only the enabled locale set and reject invalid policy (1.221125ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 448.026
+test_exit=0
+Command: npm run format -- zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+> cabloy@5.1.236 format
+> oxfmt --check zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 32ms on 1 files using 12 threads.
+format_exit=0
+Command: npm run lint -- zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+> cabloy@5.1.236 lint
+> oxlint --disable-nested-config zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+lint_exit=0
+
+Final restored-source verification (coordinator confirms all watcher fixture paths restored).
+
+WBS: WBS-LOC-30-02; scope: frontend focused lifecycle regression only; no watcher acceptance claim.
+base_revision=e6324778c8d8aeab1b5faa5402300039b3fd226d
+Worktree: dirty shared phase-30; attributable authored source is only zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts.
+source_sha256=9b8550eb8ca32577cdbeff31338eb8a283e0dd46ddecc61abca443e838ff7dce  zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+source_diff_sha256=efef7296537042f82382a4ccb51c488d9d13f00f82a9bf2fb177b74b6a8a762d  -
+v24.11.0
+Command: node --experimental-transform-types --test zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+(node:18242) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ provider resources precede real a-bean preload, client lazy demo remains lazy (server=false) (6.459541ms)
+✔ provider resources precede real a-bean preload, client lazy demo remains lazy (server=true) (1.557334ms)
+✔ real Sys full-reload hook disposes provider state and reinitializes like fresh startup (10.947583ms)
+✔ disposed SysLocale can register current project/provider resources without removed contributions (1.131375ms)
+✔ active locale policy normalizes cookies, preferences/setters and route-menu subsets, but not explicit lookup (0.438875ms)
+✔ config layers replace only the enabled locale set and reject invalid policy (0.434208ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 595.732834
+test_exit=0
+Command: node scripts/typecheck.ts native zova --noEmit --incremental false --project tsconfig.json
+src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts(324,3): error TS2322: Type 'string' is not assignable to type 'boolean'.
+src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts(326,43): error TS2790: The operand of a 'delete' operator must be optional.
+TypeScript (native) failed: exit code 1
+typecheck_exit=1
+Command: npm run format -- zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+> cabloy@5.1.236 format
+> oxfmt --check zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 43ms on 1 files using 12 threads.
+format_exit=0
+Command: npm run lint -- zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+> cabloy@5.1.236 lint
+> oxlint --disable-nested-config zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+lint_exit=0
+Command: git diff --check -- zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+diff_check_exit=0
+
+Restored-source rerun after test-only ambient DEV typing correction; preceding TS2322/TS2790 failure retained.
+base_revision=e6324778c8d8aeab1b5faa5402300039b3fd226d
+source_sha256=a98633510e413564a0671ba0ce78fd7fb3635f09a578cf8d60c645b39dcaa986  zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+source_diff_sha256=020ebcc82c5330bf7b506be8897f2571387f62472c1272d9e08e9277e051a2f7  -
+v24.11.0
+Command: node --experimental-transform-types --test zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+(node:51841) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ provider resources precede real a-bean preload, client lazy demo remains lazy (server=false) (4.779334ms)
+✔ provider resources precede real a-bean preload, client lazy demo remains lazy (server=true) (1.494875ms)
+✔ real Sys full-reload hook disposes provider state and reinitializes like fresh startup (7.548125ms)
+✔ disposed SysLocale can register current project/provider resources without removed contributions (0.729708ms)
+✔ active locale policy normalizes cookies, preferences/setters and route-menu subsets, but not explicit lookup (0.473583ms)
+✔ config layers replace only the enabled locale set and reject invalid policy (0.459208ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 417.944958
+test_exit=0
+Command: node scripts/typecheck.ts native zova --noEmit --incremental false --project tsconfig.json
+typecheck_exit=0
+Command: npm run format -- zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+> cabloy@5.1.236 format
+> oxfmt --check zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 27ms on 1 files using 12 threads.
+format_exit=0
+Command: npm run lint -- zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+> cabloy@5.1.236 lint
+> oxlint --disable-nested-config zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+lint_exit=0
+Command: git diff --check -- zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+diff_check_exit=0

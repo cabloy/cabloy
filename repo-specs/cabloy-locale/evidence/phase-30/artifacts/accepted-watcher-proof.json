@@ -1,0 +1,540 @@
+{
+  "revision": "e6324778c8d8aeab1b5faa5402300039b3fd226d",
+  "command": "node repo-specs/cabloy-locale/evidence/phase-30/watcher-proof.mjs",
+  "fixtures": [
+    {
+      "stack": "vona",
+      "paths": [
+        "vona/src/backend/config/locale/en-us.ts",
+        "vona/src/suite/a-home/modules/home-base/src/config/locale/en-us.ts",
+        "vona/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-base.ts",
+        "vona/src/suite/cabloy-locale/modules/locale-jajp/src/locales/index.ts"
+      ],
+      "keys": [
+        "LocReloadProject",
+        "LocReloadProvider",
+        "LocReloadAggregator",
+        "LocReloadHelper",
+        "LocReloadKey",
+        "LocReloadContribution",
+        "LocReloadOrdinary",
+        "LocReloadTargetOnly"
+      ],
+      "locale": "en-us",
+      "policyUnchanged": true
+    },
+    {
+      "file": "vona/src/backend/config/locale/en-us.ts",
+      "originalSha256": "36dfc41ef796c736c6b95ec93c483da01095bd4408836f659961c7c74d24f676",
+      "fixture": "import type { VonaLocaleOptional } from 'vona';\n\nconst localeDefault = {};\n\nconst localeModules: VonaLocaleOptional = {};\nlocaleModules.modules = { 'home-base': { LocReloadProject: 'project' } } as any;\n\nexport { localeDefault, localeModules };\n"
+    },
+    {
+      "file": "vona/src/suite/a-home/modules/home-base/src/config/locale/en-us.ts",
+      "originalSha256": "2f3e469384948dca0a45fdc1e3475ad0e90c4ccbccead8108bb525bf7efcc57a",
+      "fixture": "export default {\n  LocReloadProject: 'ordinary loses',\n  LocReloadProvider: 'ordinary loses',\n  LocReloadOrdinary: 'ordinary-0',\n  SiteAll: 'All Sites',\n};\n"
+    },
+    {
+      "file": "vona/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-base.ts",
+      "originalSha256": "8113f421433654dc65ad6043fd3c6808ade40b33cccf1045e1d0961c3cd231cd",
+      "fixture": "export default {\n  LocReloadProject: 'provider loses',\n  LocReloadProvider: 'provider',\n  LocReloadHelper: 'helper-0',\n  LocReloadKey: 'key-0',\n\n  SiteAll: 'すべてのサイト',\n};\n"
+    },
+    {
+      "file": "vona/src/suite/cabloy-locale/modules/locale-jajp/src/locales/index.ts",
+      "originalSha256": "481aabb7a4e8372ef751d5339020e08cb80c498b9bc4d35d3bf2cbfcb8928d24",
+      "fixture": "/** locale provider: begin */\nimport locale_ja_jp from './ja-jp.ts';\n\nexport const localesProvider = {\n  'ja-jp': locale_ja_jp,\n  'en-us': {\n    modules: {\n      'home-base': {\n        ...Object.fromEntries(Object.entries(locale_ja_jp.modules['home-base']).filter(([key]) => key.startsWith('LocReload'))),\n        LocReloadAggregator: 'aggregator-0',\n        LocReloadContribution: 'contribution-0',\n      },\n      'home-index': { LocReloadContribution: 'contribution-0', LocReloadTargetOnly: 'target-only-0' },\n    },\n  },\n};\n/** locale provider: end */\n"
+    },
+    {
+      "file": "vona/src/suite/a-home/modules/home-base/src/main.ts",
+      "originalSha256": "13be5f528700dda66db29647a89b8c61e4d77004f7b2f11f45f8f4765aa33814",
+      "instrumentation": "\n    console.log('LOC_RELOAD_PROOF ' + JSON.stringify({ pid: process.pid, scoped: [\"LocReloadProject\",\"LocReloadProvider\",\"LocReloadAggregator\",\"LocReloadHelper\",\"LocReloadKey\",\"LocReloadContribution\",\"LocReloadOrdinary\",\"LocReloadTargetOnly\"].map(key => this.app.meta.locale.getText(false, key === 'LocReloadTargetOnly' ? 'home-index' : 'home-base', 'en-us', key)), global: [\"LocReloadProject\",\"LocReloadProvider\",\"LocReloadAggregator\",\"LocReloadHelper\",\"LocReloadKey\",\"LocReloadContribution\",\"LocReloadOrdinary\",\"LocReloadTargetOnly\"].map(key => this.app.meta.locale.getText(false, undefined, 'en-us', key)) }));"
+    },
+    {
+      "stack": "zova",
+      "paths": [
+        "zova/src/front/config/locale/en-us.ts",
+        "zova/src/suite/a-home/modules/home-base/src/config/locale/en-us.ts",
+        "zova/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-base.ts",
+        "zova/src/suite/cabloy-locale/modules/locale-jajp/src/locales/index.ts"
+      ],
+      "keys": [
+        "LocReloadProject",
+        "LocReloadProvider",
+        "LocReloadAggregator",
+        "LocReloadHelper",
+        "LocReloadKey",
+        "LocReloadContribution",
+        "LocReloadOrdinary",
+        "LocReloadTargetOnly"
+      ],
+      "locale": "en-us",
+      "policyUnchanged": true
+    },
+    {
+      "file": "zova/src/front/config/locale/en-us.ts",
+      "originalSha256": "ec43d8f85f2f1c040d38baa56de5ae47f94c0ff5fc579cabc15c5a0c21444bdf",
+      "fixture": "import type { ZovaLocaleOptional } from 'zova';\n\nexport default {\n  modules: { 'home-base': { LocReloadProject: 'project' } },\n} as ZovaLocaleOptional;\n"
+    },
+    {
+      "file": "zova/src/suite/a-home/modules/home-base/src/config/locale/en-us.ts",
+      "originalSha256": "44d688a6c9f05efcbb8e98e14623a2df3602d49652885b4e7f61e58b2d20f039",
+      "fixture": "export default {\n  LocReloadProject: 'ordinary loses',\n  LocReloadProvider: 'ordinary loses',\n  LocReloadOrdinary: 'ordinary-0',\n  Home: 'Home',\n  GoHome: 'Go Home',\n  Retry: 'Retry',\n  LanguageEnglish: 'English',\n  LanguageChinese: 'Chinese',\n  LanguageJapanese: 'Japanese',\n  VonaIntegratedSsr: 'Vona integrated SSR',\n  ZovaStandaloneSsr: 'Zova standalone SSR',\n  SsrSite: 'SSR Site',\n  Url: 'URL',\n  SiteWeb: 'Web',\n  SiteAdmin: 'Admin',\n  SiteCommerceWeb: 'Commerce-Web',\n  SiteCommerceAdmin: 'Commerce-Admin',\n};\n"
+    },
+    {
+      "file": "zova/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-base.ts",
+      "originalSha256": "d8c3ae99f11bf2eeef781fddb37ccd5aa14cedcb99a35349f024a9d9b174d573",
+      "fixture": "export default {\n  LocReloadProject: 'provider loses',\n  LocReloadProvider: 'provider',\n  LocReloadHelper: 'helper-0',\n  LocReloadKey: 'key-0',\n\n  Home: 'ホーム',\n  GoHome: 'ホームへ',\n  Retry: '再試行',\n  LanguageEnglish: '英語',\n  LanguageChinese: '中国語',\n  LanguageJapanese: '日本語',\n  VonaIntegratedSsr: 'Vona 統合 SSR',\n  ZovaStandaloneSsr: 'Zova スタンドアロン SSR',\n  SsrSite: 'SSR サイト',\n  Url: 'URL',\n  SiteWeb: 'Web',\n  SiteAdmin: '管理画面',\n  SiteCommerceWeb: 'コマース Web',\n  SiteCommerceAdmin: 'コマース管理画面',\n};\n"
+    },
+    {
+      "file": "zova/src/suite/cabloy-locale/modules/locale-jajp/src/locales/index.ts",
+      "originalSha256": "481aabb7a4e8372ef751d5339020e08cb80c498b9bc4d35d3bf2cbfcb8928d24",
+      "fixture": "/** locale provider: begin */\nimport locale_ja_jp from './ja-jp.ts';\n\nexport const localesProvider = {\n  'ja-jp': locale_ja_jp,\n  'en-us': {\n    modules: {\n      'home-base': {\n        ...Object.fromEntries(Object.entries(locale_ja_jp.modules['home-base']).filter(([key]) => key.startsWith('LocReload'))),\n        LocReloadAggregator: 'aggregator-0',\n        LocReloadContribution: 'contribution-0',\n      },\n      'home-indexweb': { LocReloadContribution: 'contribution-0', LocReloadTargetOnly: 'target-only-0' },\n    },\n  },\n};\n/** locale provider: end */\n"
+    }
+  ],
+  "backend": [
+    {
+      "stage": "baseline",
+      "snapshot": {
+        "pid": 85124,
+        "scoped": [
+          "project",
+          "provider",
+          "aggregator-0",
+          "helper-0",
+          "key-0",
+          "contribution-0",
+          "ordinary-0",
+          "target-only-0"
+        ],
+        "global": [
+          "project",
+          "provider",
+          "aggregator-0",
+          "helper-0",
+          "key-0",
+          "contribution-0",
+          "ordinary-0",
+          "target-only-0"
+        ]
+      }
+    },
+    {
+      "stage": 1,
+      "edited": "vona/src/suite/a-home/modules/home-base/src/config/locale/en-us.ts",
+      "sha256": "df08083b8a3aba48892601d99524f5bdabb14ccda8d4b4dde3e57a7f53587420",
+      "snapshot": {
+        "pid": 85304,
+        "scoped": [
+          "project",
+          "provider",
+          "aggregator-0",
+          "helper-0",
+          "key-0",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ],
+        "global": [
+          "project",
+          "provider",
+          "aggregator-0",
+          "helper-0",
+          "key-0",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ]
+      }
+    },
+    {
+      "stage": 2,
+      "edited": "vona/src/suite/cabloy-locale/modules/locale-jajp/src/locales/index.ts",
+      "sha256": "b20633d58130b2d4181cdbc4cbef30468d0fd0457d8bc3acdf3a0b6414f2d9f7",
+      "snapshot": {
+        "pid": 85664,
+        "scoped": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-0",
+          "key-0",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ],
+        "global": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-0",
+          "key-0",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ]
+      }
+    },
+    {
+      "stage": 3,
+      "edited": "vona/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-base.ts",
+      "sha256": "deda9786c6c05c22c0139ef5178c64bca12c0ce01f31ef5feaf4bbf3122e6340",
+      "snapshot": {
+        "pid": 86068,
+        "scoped": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "key-0",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ],
+        "global": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "key-0",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ]
+      }
+    },
+    {
+      "stage": 4,
+      "edited": "vona/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-base.ts",
+      "sha256": "0aeee62251466a889bc7f8dbddb2b0cdb89dce7b463b7ae205014a87b36807f8",
+      "snapshot": {
+        "pid": 86530,
+        "scoped": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "LocReloadKey",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ],
+        "global": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "LocReloadKey",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ]
+      }
+    },
+    {
+      "stage": 5,
+      "edited": "vona/src/suite/cabloy-locale/modules/locale-jajp/src/locales/index.ts",
+      "sha256": "b120703e044ab2a9d986fb1807071e8a89f3654f6356036001ec3be2afa92b09",
+      "snapshot": {
+        "pid": 86920,
+        "scoped": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "LocReloadKey",
+          "LocReloadContribution",
+          "ordinary-1",
+          "LocReloadTargetOnly"
+        ],
+        "global": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "LocReloadKey",
+          "LocReloadContribution",
+          "ordinary-1",
+          "LocReloadTargetOnly"
+        ]
+      }
+    },
+    {
+      "stage": "clean-start",
+      "snapshot": {
+        "pid": 87545,
+        "scoped": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "LocReloadKey",
+          "LocReloadContribution",
+          "ordinary-1",
+          "LocReloadTargetOnly"
+        ],
+        "global": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "LocReloadKey",
+          "LocReloadContribution",
+          "ordinary-1",
+          "LocReloadTargetOnly"
+        ]
+      },
+      "equivalent": true
+    }
+  ],
+  "frontend": [
+    {
+      "stage": "baseline",
+      "snapshot": {
+        "document": "1792932686122.4",
+        "scoped": [
+          "project",
+          "provider",
+          "aggregator-0",
+          "helper-0",
+          "key-0",
+          "contribution-0",
+          "ordinary-0",
+          "target-only-0"
+        ],
+        "global": [
+          "project",
+          "provider",
+          "aggregator-0",
+          "helper-0",
+          "key-0",
+          "contribution-0",
+          "ordinary-0",
+          "target-only-0"
+        ]
+      },
+      "startupErrors": [
+        "Failed to fetch dynamically imported module: http://localhost:9002/src/suite/a-home/modules/home-passport/src/index.ts"
+      ]
+    },
+    {
+      "stage": 1,
+      "edited": "zova/src/suite/a-home/modules/home-base/src/config/locale/en-us.ts",
+      "sha256": "42e4e422ceda0cb9a3dea049d72ee102fa31427a0599a6ea3acb3a3667761184",
+      "snapshot": {
+        "document": "1792932696119.7",
+        "scoped": [
+          "project",
+          "provider",
+          "aggregator-0",
+          "helper-0",
+          "key-0",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ],
+        "global": [
+          "project",
+          "provider",
+          "aggregator-0",
+          "helper-0",
+          "key-0",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ]
+      },
+      "automaticDocumentReload": true
+    },
+    {
+      "stage": 2,
+      "edited": "zova/src/suite/cabloy-locale/modules/locale-jajp/src/locales/index.ts",
+      "sha256": "0e6877593d8b7ad446df85b8174eca061f6eafceee6b3ad2c04ce79d2828bcb5",
+      "snapshot": {
+        "document": "1792932699348.7",
+        "scoped": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-0",
+          "key-0",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ],
+        "global": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-0",
+          "key-0",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ]
+      },
+      "automaticDocumentReload": true
+    },
+    {
+      "stage": 3,
+      "edited": "zova/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-base.ts",
+      "sha256": "49144da01a0f0b304a8ccd2226e0696a7547e30a82e0076cfc84d82d2113a66f",
+      "snapshot": {
+        "document": "1792932702074.3",
+        "scoped": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "key-0",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ],
+        "global": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "key-0",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ]
+      },
+      "automaticDocumentReload": true
+    },
+    {
+      "stage": 4,
+      "edited": "zova/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-base.ts",
+      "sha256": "6e58ef39466007f8073232738e82576946db0c6c119dfb2d4a9297833a56121e",
+      "snapshot": {
+        "document": "1792932704478.5",
+        "scoped": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "LocReloadKey",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ],
+        "global": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "LocReloadKey",
+          "contribution-0",
+          "ordinary-1",
+          "target-only-0"
+        ]
+      },
+      "automaticDocumentReload": true
+    },
+    {
+      "stage": 5,
+      "edited": "zova/src/suite/cabloy-locale/modules/locale-jajp/src/locales/index.ts",
+      "sha256": "b120703e044ab2a9d986fb1807071e8a89f3654f6356036001ec3be2afa92b09",
+      "snapshot": {
+        "document": "1792932706760.9",
+        "scoped": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "LocReloadKey",
+          "LocReloadContribution",
+          "ordinary-1",
+          "LocReloadTargetOnly"
+        ],
+        "global": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "LocReloadKey",
+          "LocReloadContribution",
+          "ordinary-1",
+          "LocReloadTargetOnly"
+        ]
+      },
+      "automaticDocumentReload": true
+    },
+    {
+      "stage": "clean-start",
+      "snapshot": {
+        "document": "1792932722339.1",
+        "scoped": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "LocReloadKey",
+          "LocReloadContribution",
+          "ordinary-1",
+          "LocReloadTargetOnly"
+        ],
+        "global": [
+          "project",
+          "provider",
+          "aggregator-1",
+          "helper-1",
+          "LocReloadKey",
+          "LocReloadContribution",
+          "ordinary-1",
+          "LocReloadTargetOnly"
+        ]
+      },
+      "equivalent": true,
+      "browserErrors": []
+    }
+  ],
+  "result": "passed",
+  "restored": [
+    {
+      "file": "vona/src/suite/a-home/modules/home-base/src/config/locale/en-us.ts",
+      "sha256": "2f3e469384948dca0a45fdc1e3475ad0e90c4ccbccead8108bb525bf7efcc57a",
+      "restored": true
+    },
+    {
+      "file": "vona/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-base.ts",
+      "sha256": "8113f421433654dc65ad6043fd3c6808ade40b33cccf1045e1d0961c3cd231cd",
+      "restored": true
+    },
+    {
+      "file": "vona/src/suite/cabloy-locale/modules/locale-jajp/src/locales/index.ts",
+      "sha256": "481aabb7a4e8372ef751d5339020e08cb80c498b9bc4d35d3bf2cbfcb8928d24",
+      "restored": true
+    },
+    {
+      "file": "vona/src/backend/config/locale/en-us.ts",
+      "sha256": "36dfc41ef796c736c6b95ec93c483da01095bd4408836f659961c7c74d24f676",
+      "restored": true
+    },
+    {
+      "file": "vona/src/suite/a-home/modules/home-base/src/main.ts",
+      "sha256": "13be5f528700dda66db29647a89b8c61e4d77004f7b2f11f45f8f4765aa33814",
+      "restored": true
+    },
+    {
+      "file": "zova/src/suite/a-home/modules/home-base/src/config/locale/en-us.ts",
+      "sha256": "44d688a6c9f05efcbb8e98e14623a2df3602d49652885b4e7f61e58b2d20f039",
+      "restored": true
+    },
+    {
+      "file": "zova/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-base.ts",
+      "sha256": "d8c3ae99f11bf2eeef781fddb37ccd5aa14cedcb99a35349f024a9d9b174d573",
+      "restored": true
+    },
+    {
+      "file": "zova/src/suite/cabloy-locale/modules/locale-jajp/src/locales/index.ts",
+      "sha256": "481aabb7a4e8372ef751d5339020e08cb80c498b9bc4d35d3bf2cbfcb8928d24",
+      "restored": true
+    },
+    {
+      "file": "zova/src/front/config/locale/en-us.ts",
+      "sha256": "ec43d8f85f2f1c040d38baa56de5ae47f94c0ff5fc579cabc15c5a0c21444bdf",
+      "restored": true
+    }
+  ]
+}

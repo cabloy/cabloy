@@ -1,0 +1,40 @@
+
+> cabloy@5.1.236 dev:one
+> cd vona && npm run dev:one
+
+
+> dev:one
+> npm run prerun && npm run vona :bin:dev -- --workers=1 --flavor=normal
+
+
+> prerun
+> npm run vona :tools:deps
+
+
+> vona
+> node ./packages-cli/cli/src/bin/vona.ts :tools:deps
+
+vona api:tools:deps at <REPO_ROOT>/vona
+
+
+> vona
+> node ./packages-cli/cli/src/bin/vona.ts :bin:dev --workers=1 --flavor=normal
+
+vona api:bin:dev at <REPO_ROOT>/vona
+
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+LOC_RELOAD_PROOF {"pid":16505,"scoped":["project","provider","aggregator-1","helper-1","LocReloadKey","LocReloadContribution","ordinary-1"],"global":["project","provider","aggregator-1","helper-1","LocReloadKey","LocReloadContribution","ordinary-1"]}
+2026-10-25T12:43:23.783Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:43:23.783Z silly [a-version.service.database] {"method":"POST"} database: <REPO_ROOT>/vona/.app/sqlite3/vona-test-spec-basic-cabloy-locale-s-20261024-221236.db, pid: 16505
+2026-10-25T12:43:23.784Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:43:23.784Z silly [a-version.service.database] {"method":"POST"} database: <REPO_ROOT>/vona/.app/sqlite3/vona-test-spec-basic-ca-i-7ed-ttzfKJ-20261024-221236.db, pid: 16505
+2026-10-25T12:43:23.787Z silly [a-startup.service.startup] startup: a-version:databaseName, pid: 16505
+2026-10-25T12:43:23.788Z silly [a-startup.service.startup] startup: a-web:listen, pid: 16505
+2026-10-25T12:43:23.802Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-queue:loadQueueWorkers, pid: 16505
+[hmr] ready: 16505
+2026-10-25T12:43:38.041Z silly [ssr hmr] ready
+[hmr] stop: 16505
+App shutdown gracefully: 16505
+Master shutdown gracefully: 16428
+
+owned_wrapper_exit={"code":null,"signal":"SIGINT"}

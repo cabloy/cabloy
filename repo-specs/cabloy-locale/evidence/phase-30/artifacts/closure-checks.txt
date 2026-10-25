@@ -1,0 +1,50 @@
+WBS-LOC-30-02 final documentary closure checks
+base_revision=e6324778c8d8aeab1b5faa5402300039b3fd226d
+Formatter note: default scoped write formatted README/progress but skipped ignored evidence files. Explicit --ignore-path /dev/null on the evidence pair returned exit 2 (all targets excluded); no evidence-format pass claimed. Runtime artifacts were not reformatted.
+Command: npm run spec:check -- cabloy-locale
+
+> cabloy@5.1.236 spec:check
+> node ./repo-agent-governance/tools/spec-audit/audit.mjs cabloy-locale
+
+repo-specs/cabloy-locale: complete planning structure passed (32 definitions).
+Complete-baseline structure and explicit exact-ID chain.
+Static structure only; approval, semantic sufficiency, implementation, and evidence authenticity require human review.
+
+exit=0
+Command: npm run spec:charts -- cabloy-locale
+
+> cabloy@5.1.236 spec:charts
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs cabloy-locale
+
+generated implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-locale (en; 2/6 verified).
+
+exit=0
+Command: npm run spec:charts:check -- cabloy-locale
+
+> cabloy@5.1.236 spec:charts:check
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs --check cabloy-locale
+
+checked implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-locale (en; 2/6 verified).
+
+exit=0
+Command: npm run evidence:check -- -- repo-specs/cabloy-locale/evidence/phase-30
+
+> cabloy@5.1.236 evidence:check
+> node repo-agent-governance/tools/evidence-paths/sanitize.mjs check -- repo-specs/cabloy-locale/evidence/phase-30
+
+
+exit=0
+Command: npm run format -- repo-specs/cabloy-locale/README.md repo-specs/cabloy-locale/progress.md vona/src/suite-vendor/a-vona/modules/a-hmr/src/service/hmr.ts vona/src/suite/cabloy-locale/modules/locale-test/test/locales.test.ts zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+> cabloy@5.1.236 format
+> oxfmt --check repo-specs/cabloy-locale/README.md repo-specs/cabloy-locale/progress.md vona/src/suite-vendor/a-vona/modules/a-hmr/src/service/hmr.ts vona/src/suite/cabloy-locale/modules/locale-test/test/locales.test.ts zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts
+
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 37ms on 5 files using 12 threads.
+
+exit=0
+Command: git diff --check
+
+exit=0

@@ -1,0 +1,80 @@
+
+> cabloy@5.1.236 dev:zova:web
+> cd zova && npm run dev:ssr:cabloyBasicWeb
+
+
+> dev:ssr:cabloyBasicWeb
+> npm run prerun && quasar dev --mode ssr --flavor cabloyBasicWeb
+
+
+> prerun
+> npm run zova :tools:deps
+
+
+> zova
+> node ./packages-cli/cli/src/bin/zova.ts :tools:deps
+
+zova front:tools:deps at <REPO_ROOT>/zova
+
+
+ .d88888b.
+d88P" "Y88b
+888     888
+888     888 888  888  8888b.  .d8888b   8888b.  888d888
+888     888 888  888     "88b 88K          "88b 888P"
+888 Y8b 888 888  888 .d888888 "Y8888b. .d888888 888
+Y88b.Y8b88P Y88b 888 888  888      X88 888  888 888
+ "Y888888"   "Y88888 "Y888888  88888P' "Y888888 888
+       Y8b
+
+ App • Using quasar.config.ts in "ts" format
+ App • Running "zova" Quasar App Extension...
+ App • Extension(zova): Extending quasar.config file configuration...
+ App •  TIP  • 🚀  You (or an AE) specified an explicit quasar.config file > devServer > port. It is recommended to use a different devServer > port for each Quasar mode to avoid browser cache issues. Example: ctx.mode.ssr ? 9100 : ...
+ App • Extension(zova): Running beforeDev hook...
+ App • Extension(zova): Running "extendSSRWebserverConf(esbuildConf)"
+ App •  WAIT  • Compiling of SSR Webserver with Esbuild in progress...
+ App •  DONE  • SSR Webserver compiled with success by Esbuild • 4ms
+
+ App • Extension(zova): Extending Vite config
+8:44:06 PM [vite] (client) Re-optimizing dependencies because vite config has changed
+ App • Extension(zova): Extending Vite config
+8:44:06 PM [vite] (ssr) connected.
+ App •  WAIT  • Booting Webserver...
+ App •  DONE  • Webserver is ready • 10ms
+
+
+ » Reported at............ 10/25/2026 8:44:06 PM
+ » App dir................ <REPO_ROOT>/zova
+ » App URL................ http://localhost:9002/
+                           http://192.168.1.4:9002/
+ » Dev mode............... ssr
+ » Pkg quasar............. v2.32.2
+ » Pkg @quasar/app-vite... v2.5.10
+ » Browser target......... es2015|firefox115|chrome115|safari16.4
+ » Node target............ node24
+
+8:44:06 PM [vite] (client) optimized dependencies changed. reloading
+/*! 🌼 daisyUI 5.7.37 */
+8:44:08 PM [vite] (client) dependencies optimized: vue, @quasar/app-vite/wrappers, @cabloy/compose, @cabloy/extend, @cabloy/json5, @cabloy/localeutil, @cabloy/module-info, @cabloy/utils, @cabloy/vue-runtime-core, @cabloy/zod-errors-custom, @cabloy/zod-openapi, @cabloy/zod-query, @vue/reactivity, @vue/runtime-dom, @vue/shared, deep-equal, fecha, reflect-metadata, vue-plugin-render-freeze, vue/jsx-runtime
+8:44:08 PM [vite] (client) optimized dependencies changed. reloading
+
+============ Zova Meta ============
+vite mode ......... development
+app mode .......... ssr
+flavor ............ cabloyBasicWeb
+
+
+2026-10-25T12:44:15.329Z silly [ssr hmr] ready
+
+ App •  Rendered  • / • 9189ms
+
+ App •  Rendered  • / • 56ms
+8:44:17 PM [vite] (client) dependencies optimized: @cabloy/deps, @cabloy/json-schema-to-zod, @cabloy/socket, @cabloy/vue-router, @tanstack/query-core, @tanstack/query-persist-client-core, @tanstack/vue-form, @tanstack/vue-query, @tanstack/vue-store, axios, debounce, defu, devalue, localforage, openapi3-ts/oas30, openapi3-ts/oas31, typestyle, vue-router, zod, zod/locales
+8:44:17 PM [vite] (client) optimized dependencies changed. reloading
+8:44:17 PM [vite] (client) [Unhandled rejection] TypeError: Failed to fetch dynamically imported module: http://localhost:9002/src/suite/a-home/modules/home-passport/src/index.ts
+
+
+ App •  Rendered  • / • 58ms
+
+owned_wrapper_exit={"code":null,"signal":"SIGINT"}

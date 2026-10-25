@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { EventEmitter } from 'node:events';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
@@ -211,6 +212,216 @@ for (const server of [false, true]) {
     assert.equal(japanese.modules['missing-target'], undefined);
   });
 }
+
+function createReloadOptions(stage: number, viteHot = new EventEmitter()) {
+  const { 'demo-basic': demoProvider, ...remainingTargets } = japanese.modules;
+  const modules = {
+    'a-bean': {
+      info: { relativeName: 'a-bean', capabilities: { preload: true, monkey: true } },
+      resource: async () => ({ MonkeySys: BeanMonkeySys }),
+    },
+    'home-base': {
+      info: { relativeName: 'home-base' },
+      resource: async () => ({
+        locales: {
+          'ja-jp': {
+            LifecycleProject: `ordinary ${stage}`,
+            LifecycleProvider: `ordinary ${stage}`,
+            LifecycleRemoved: `ordinary ${stage}`,
+          },
+          'en-us': { LifecycleEnglish: 'English fallback' },
+        },
+      }),
+    },
+    'demo-basic': {
+      info: { relativeName: 'demo-basic' },
+      resource: async () => ({ locales: { 'en-us': demoEnglish, 'zh-cn': demoChinese } }),
+    },
+    'locale-jajp': {
+      info: { relativeName: 'locale-jajp', capabilities: { locale: true } },
+      resource: async () => ({
+        localesProvider: {
+          'ja-jp': {
+            ...(stage < 3 ? { LifecycleGlobalRemoved: 'global provider' } : {}),
+            modules: {
+              ...remainingTargets,
+              'home-base': {
+                ...japanese.modules['home-base'],
+                LifecycleProject: 'provider loses to project',
+                LifecycleProvider: stage < 2 ? 'provider initial' : 'provider changed',
+                ...(stage < 3 ? { LifecycleRemoved: 'provider removed later' } : {}),
+              },
+              ...(stage < 4
+                ? { 'demo-basic': { ...demoProvider, LifecycleTargetOnly: 'provider target' } }
+                : {}),
+            },
+          },
+        },
+      }),
+    },
+    'locale-second': {
+      info: { relativeName: 'locale-second', capabilities: { locale: true } },
+      resource: async () => ({
+        localesProvider: {
+          'ja-jp': {
+            modules: { 'home-base': { LifecycleProvider: 'second provider loses' } },
+          },
+        },
+      }),
+    },
+  };
+  return {
+    modulesMeta: { moduleNames: Object.keys(modules), modules },
+    locales: { 'ja-jp': { modules: { 'home-base': { LifecycleProject: 'project' } } } },
+    config: [
+      () => ({
+        locale: {
+          default: 'en-us',
+          storeKey: 'locale',
+          items: { 'en-us': 'English', 'zh-cn': 'Chinese' },
+        },
+        modules: {},
+        logger: { clients: { default: { format: { transform: () => false } } } },
+      }),
+    ],
+    env: { SITE_ID: 'locale-test', META_MODE: 'development' },
+    // Only the event transport is a fixture; ZovaSys registers and removes its real hook.
+    viteHot,
+  };
+}
+
+function readReloadTexts(sys: any) {
+  const globalText = sys.meta.locale.createLocaleText();
+  const lookups = [
+    ['home-base', 'LifecycleProject'],
+    ['home-base', 'LifecycleProvider'],
+    ['home-base', 'LifecycleRemoved'],
+    ['home-base', 'LifecycleEnglish'],
+    ['home-base', 'LifecycleGlobalRemoved'],
+    ['demo-basic', 'HelloWorld'],
+    ['demo-basic', 'LifecycleTargetOnly'],
+  ];
+  return lookups.map(([moduleName, key]) => {
+    const scope = sys.bean._newBeanSimple(BeanScopeLocale, false, moduleName);
+    const scoped = scope[key].locale('ja-jp');
+    const qualified = globalText.locale('ja-jp', `${moduleName}::${key}`);
+    const global = globalText.locale('ja-jp', key);
+    assert.equal(scoped, qualified, `${moduleName}::${key}: scoped/qualified`);
+    assert.equal(scoped, global, `${moduleName}::${key}: scoped/global`);
+    return scoped;
+  });
+}
+
+test('real Sys full-reload hook disposes provider state and reinitializes like fresh startup', async t => {
+  setServer(t, true);
+  // As in createRuntime(), module-scope construction is outside these resource-loader fixtures.
+  // Keep the real container, SysMeta, loader and locale initialization/disposal methods.
+  t.mock.method(BeanContainer.prototype, '_getBean', async (name: string) => {
+    assert.match(name, /\.scope\.module$/);
+    return undefined;
+  });
+  const env = process.env as unknown as Record<string, string | undefined>;
+  const previousDev = env.DEV;
+  env.DEV = 'true';
+  t.after(() => {
+    if (previousDev === undefined) delete env.DEV;
+    else env.DEV = previousDev;
+  });
+  const sys = new ZovaSys();
+  const hot = new EventEmitter();
+  t.after(() => {
+    sys.close();
+    hot.removeAllListeners();
+  });
+
+  const stages = ['initial', 'ordinary edit', 'provider edit', 'key removal', 'target removal'];
+  await sys.initialize(createReloadOptions(0, hot) as any);
+  for (const [stage, label] of stages.entries()) {
+    assert.equal(hot.listenerCount('vite:beforeFullReload'), 1, label);
+    assert.deepEqual(readReloadTexts(sys), [
+      'project',
+      stage < 2 ? 'provider initial' : 'provider changed',
+      stage < 3 ? 'provider removed later' : `ordinary ${stage}`,
+      'English fallback',
+      stage < 3 ? 'global provider' : 'LifecycleGlobalRemoved',
+      stage < 4 ? japanese.modules['demo-basic'].HelloWorld : demoEnglish.HelloWorld,
+      stage < 4 ? 'provider target' : 'LifecycleTargetOnly',
+    ]);
+    assert.equal(Object.hasOwn(sys.meta.locale.locales['ja-jp'], 'modules'), false);
+    assert.equal(sys.meta.locale.localeModules['locale-jajp'], undefined);
+
+    const fresh = new ZovaSys();
+    try {
+      await fresh.initialize(createReloadOptions(stage) as any);
+      assert.deepEqual(sys.meta.locale.locales, fresh.meta.locale.locales, label);
+      assert.deepEqual(sys.meta.locale.localeModules, fresh.meta.locale.localeModules, label);
+      assert.deepEqual(readReloadTexts(sys), readReloadTexts(fresh), label);
+    } finally {
+      fresh.close();
+    }
+
+    const oldRegistry = sys.meta.locale;
+    const oldLoader = sys.meta.module;
+    const oldContainer = sys.bean;
+    // Deliver the lifecycle event directly; this is not Vite watcher acceptance proof.
+    assert.equal(hot.emit('vite:beforeFullReload', { path: '*' }), true);
+    assert.equal(hot.listenerCount('vite:beforeFullReload'), 0, label);
+    assert.deepEqual(oldRegistry.locales, {});
+    assert.deepEqual(oldRegistry.localeModules, {});
+    assert.equal(oldLoader.getModulesMeta(), undefined);
+    sys.close(); // Closing twice must not prevent the next real initialize().
+    if (stage < stages.length - 1) {
+      await sys.initialize(createReloadOptions(stage + 1, hot) as any);
+      assert.notEqual(sys.meta.locale, oldRegistry);
+      assert.notEqual(sys.meta.module, oldLoader);
+      assert.notEqual(sys.bean, oldContainer);
+    }
+  }
+});
+
+test('disposed SysLocale can register current project/provider resources without removed contributions', async t => {
+  setServer(t, true);
+  const sys = createRuntime();
+  const registry: SysLocale = sys.meta.locale;
+  const initial = createReloadOptions(0);
+  await registry.initialize(initial.locales as any);
+  await sys.meta.module.initialize(initial.modulesMeta as any);
+  assert.equal(
+    registry.getText(false, 'home-base', 'ja-jp' as any, 'LifecycleRemoved'),
+    'provider removed later',
+  );
+  assert.equal(
+    registry.getText(false, 'demo-basic', 'ja-jp' as any, 'HelloWorld'),
+    japanese.modules['demo-basic'].HelloWorld,
+  );
+
+  registry.dispose();
+  assert.deepEqual(registry.locales, {});
+  assert.deepEqual(registry.localeModules, {});
+  const current = createReloadOptions(4);
+  // A full Sys reinitialization creates a new loader, not an incremental merge into installed modules.
+  sys.meta.module = Object.assign(new SysModule(), { sys });
+  await registry.initialize(current.locales as any);
+  await sys.meta.module.initialize(current.modulesMeta as any);
+  assert.equal(sys.meta.locale, registry);
+  assert.equal(registry.getText(false, 'home-base', 'ja-jp' as any, 'LifecycleProject'), 'project');
+  assert.equal(
+    registry.getText(false, 'home-base', 'ja-jp' as any, 'LifecycleProvider'),
+    'provider changed',
+  );
+  assert.equal(
+    registry.getText(false, 'home-base', 'ja-jp' as any, 'LifecycleRemoved'),
+    'ordinary 4',
+  );
+  assert.equal(
+    registry.getText(false, undefined, 'ja-jp' as any, 'LifecycleGlobalRemoved'),
+    'LifecycleGlobalRemoved',
+  );
+  assert.equal(
+    registry.getText(false, 'demo-basic', 'ja-jp' as any, 'HelloWorld'),
+    demoEnglish.HelloWorld,
+  );
+});
 
 test('active locale policy normalizes cookies, preferences/setters and route-menu subsets, but not explicit lookup', t => {
   setServer(t, false);

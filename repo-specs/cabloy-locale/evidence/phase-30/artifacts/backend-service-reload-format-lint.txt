@@ -1,0 +1,7 @@
+v24.11.0
+Finished in 42ms on 2 files using 12 threads.
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 35ms on 2 files using 12 threads.
+producer_exit=0 sanitizer_exit=0

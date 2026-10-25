@@ -1,0 +1,133 @@
+
+> cabloy@5.1.236 dev:one
+> cd vona && npm run dev:one
+
+
+> dev:one
+> npm run prerun && npm run vona :bin:dev -- --workers=1 --flavor=normal
+
+
+> prerun
+> npm run vona :tools:deps
+
+
+> vona
+> node ./packages-cli/cli/src/bin/vona.ts :tools:deps
+
+vona api:tools:deps at <REPO_ROOT>/vona
+
+
+> vona
+> node ./packages-cli/cli/src/bin/vona.ts :bin:dev --workers=1 --flavor=normal
+
+vona api:bin:dev at <REPO_ROOT>/vona
+
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+LOC_RELOAD_PROOF {"pid":85124,"scoped":["project","provider","aggregator-0","helper-0","key-0","contribution-0","ordinary-0","target-only-0"],"global":["project","provider","aggregator-0","helper-0","key-0","contribution-0","ordinary-0","target-only-0"]}
+2026-10-25T12:50:36.683Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:50:36.683Z silly [a-version.service.database] {"method":"POST"} database: <REPO_ROOT>/vona/.app/sqlite3/vona-test-spec-basic-cabloy-locale-s-20261024-221236.db, pid: 85124
+2026-10-25T12:50:36.683Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:50:36.683Z silly [a-version.service.database] {"method":"POST"} database: <REPO_ROOT>/vona/.app/sqlite3/vona-test-spec-basic-ca-i-7ed-ttzfKJ-20261024-221236.db, pid: 85124
+2026-10-25T12:50:36.686Z silly [a-startup.service.startup] startup: a-version:databaseInit, pid: 85124
+2026-10-25T12:50:36.710Z silly [a-version.service.version] {"method":"POST"} All modules are checked successfully!
+2026-10-25T12:50:36.723Z silly [a-version.service.version] {"method":"POST"} All modules are checked successfully!
+2026-10-25T12:50:36.723Z silly [a-startup.service.startup] startup: a-version:databaseName, pid: 85124
+2026-10-25T12:50:36.724Z silly [a-startup.service.startup] startup: a-web:listen, pid: 85124
+2026-10-25T12:50:36.738Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-version:instanceInit, pid: 85124
+2026-10-25T12:50:36.752Z silly [a-version.service.version] {"method":"POST"} The instance is initialized successfully: default
+2026-10-25T12:50:36.757Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-schedule:loadSchedules, pid: 85124
+2026-10-25T12:50:36.798Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-runtime:runtime, pid: 85124
+2026-10-25T12:50:36.814Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-printtip:printTip, pid: 85124
+2026-10-25T12:50:36.815Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-queue:loadQueueWorkers, pid: 85124
+2026-10-25T12:50:36.826Z silly [a-printtip.startup.printTip] {"method":"POST"} 
+=================== tip: begin ===================
+[development credential diagnostic redacted]
+[a-auth] passport callback: http://localhost:7104/api/auth/passport/callback
+[a-swagger] swagger: http://localhost:7104/swagger
+[a-swagger] rapidoc: http://localhost:7104/rapidoc
+[home-index] home: http://localhost:7104
+=================== tip: end =====================
+[hmr] ready: 85124
+[hmr] stop: 85124
+App shutdown gracefully: 85124
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+LOC_RELOAD_PROOF {"pid":85304,"scoped":["project","provider","aggregator-0","helper-0","key-0","contribution-0","ordinary-1","target-only-0"],"global":["project","provider","aggregator-0","helper-0","key-0","contribution-0","ordinary-1","target-only-0"]}
+2026-10-25T12:50:39.231Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:50:39.231Z silly [a-version.service.database] {"method":"POST"} database: <REPO_ROOT>/vona/.app/sqlite3/vona-test-spec-basic-cabloy-locale-s-20261024-221236.db, pid: 85304
+2026-10-25T12:50:39.232Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:50:39.232Z silly [a-version.service.database] {"method":"POST"} database: <REPO_ROOT>/vona/.app/sqlite3/vona-test-spec-basic-ca-i-7ed-ttzfKJ-20261024-221236.db, pid: 85304
+2026-10-25T12:50:39.234Z silly [a-startup.service.startup] startup: a-version:databaseName, pid: 85304
+2026-10-25T12:50:39.235Z silly [a-startup.service.startup] startup: a-web:listen, pid: 85304
+2026-10-25T12:50:39.247Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-queue:loadQueueWorkers, pid: 85304
+[hmr] ready: 85304
+[hmr] reload: src/suite/cabloy-locale/modules/locale-jajp/src/locales/index.ts
+[hmr] stop: 85304
+App shutdown gracefully: 85304
+App restarted due to:  [
+  '<REPO_ROOT>/vona/src/suite/cabloy-locale/modules/locale-jajp/src/locales/index.ts'
+]
+Master shutdown gracefully: 85117
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+LOC_RELOAD_PROOF {"pid":85664,"scoped":["project","provider","aggregator-1","helper-0","key-0","contribution-0","ordinary-1","target-only-0"],"global":["project","provider","aggregator-1","helper-0","key-0","contribution-0","ordinary-1","target-only-0"]}
+2026-10-25T12:50:43.938Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:50:43.938Z silly [a-version.service.database] {"method":"POST"} database: <REPO_ROOT>/vona/.app/sqlite3/vona-test-spec-basic-cabloy-locale-s-20261024-221236.db, pid: 85664
+2026-10-25T12:50:43.938Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:50:43.939Z silly [a-version.service.database] {"method":"POST"} database: <REPO_ROOT>/vona/.app/sqlite3/vona-test-spec-basic-ca-i-7ed-ttzfKJ-20261024-221236.db, pid: 85664
+2026-10-25T12:50:43.941Z silly [a-startup.service.startup] startup: a-version:databaseName, pid: 85664
+2026-10-25T12:50:43.942Z silly [a-startup.service.startup] startup: a-web:listen, pid: 85664
+2026-10-25T12:50:43.954Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-queue:loadQueueWorkers, pid: 85664
+[hmr] ready: 85664
+App restarted due to:  [
+  '<REPO_ROOT>/vona/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-base.ts'
+]
+[hmr] stop: 85664
+App shutdown gracefully: 85664
+Master shutdown gracefully: 85650
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+LOC_RELOAD_PROOF {"pid":86068,"scoped":["project","provider","aggregator-1","helper-1","key-0","contribution-0","ordinary-1","target-only-0"],"global":["project","provider","aggregator-1","helper-1","key-0","contribution-0","ordinary-1","target-only-0"]}
+2026-10-25T12:50:48.658Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:50:48.658Z silly [a-version.service.database] {"method":"POST"} database: <REPO_ROOT>/vona/.app/sqlite3/vona-test-spec-basic-cabloy-locale-s-20261024-221236.db, pid: 86068
+2026-10-25T12:50:48.659Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:50:48.659Z silly [a-version.service.database] {"method":"POST"} database: <REPO_ROOT>/vona/.app/sqlite3/vona-test-spec-basic-ca-i-7ed-ttzfKJ-20261024-221236.db, pid: 86068
+2026-10-25T12:50:48.662Z silly [a-startup.service.startup] startup: a-version:databaseName, pid: 86068
+2026-10-25T12:50:48.662Z silly [a-startup.service.startup] startup: a-web:listen, pid: 86068
+2026-10-25T12:50:48.674Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-queue:loadQueueWorkers, pid: 86068
+[hmr] ready: 86068
+App restarted due to:  [
+  '<REPO_ROOT>/vona/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-base.ts'
+]
+[hmr] stop: 86068
+App shutdown gracefully: 86068
+Master shutdown gracefully: 86046
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+LOC_RELOAD_PROOF {"pid":86530,"scoped":["project","provider","aggregator-1","helper-1","LocReloadKey","contribution-0","ordinary-1","target-only-0"],"global":["project","provider","aggregator-1","helper-1","LocReloadKey","contribution-0","ordinary-1","target-only-0"]}
+2026-10-25T12:50:53.556Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:50:53.557Z silly [a-version.service.database] {"method":"POST"} database: <REPO_ROOT>/vona/.app/sqlite3/vona-test-spec-basic-cabloy-locale-s-20261024-221236.db, pid: 86530
+2026-10-25T12:50:53.557Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:50:53.557Z silly [a-version.service.database] {"method":"POST"} database: <REPO_ROOT>/vona/.app/sqlite3/vona-test-spec-basic-ca-i-7ed-ttzfKJ-20261024-221236.db, pid: 86530
+2026-10-25T12:50:53.560Z silly [a-startup.service.startup] startup: a-version:databaseName, pid: 86530
+2026-10-25T12:50:53.561Z silly [a-startup.service.startup] startup: a-web:listen, pid: 86530
+2026-10-25T12:50:53.573Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-queue:loadQueueWorkers, pid: 86530
+[hmr] ready: 86530
+[hmr] reload: src/suite/cabloy-locale/modules/locale-jajp/src/locales/index.ts
+[hmr] stop: 86530
+App shutdown gracefully: 86530
+App restarted due to:  [
+  '<REPO_ROOT>/vona/src/suite/cabloy-locale/modules/locale-jajp/src/locales/index.ts'
+]
+Master shutdown gracefully: 86461
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+LOC_RELOAD_PROOF {"pid":86920,"scoped":["project","provider","aggregator-1","helper-1","LocReloadKey","LocReloadContribution","ordinary-1","LocReloadTargetOnly"],"global":["project","provider","aggregator-1","helper-1","LocReloadKey","LocReloadContribution","ordinary-1","LocReloadTargetOnly"]}
+2026-10-25T12:50:58.192Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:50:58.192Z silly [a-version.service.database] {"method":"POST"} database: <REPO_ROOT>/vona/.app/sqlite3/vona-test-spec-basic-cabloy-locale-s-20261024-221236.db, pid: 86920
+2026-10-25T12:50:58.192Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-25T12:50:58.192Z silly [a-version.service.database] {"method":"POST"} database: <REPO_ROOT>/vona/.app/sqlite3/vona-test-spec-basic-ca-i-7ed-ttzfKJ-20261024-221236.db, pid: 86920
+2026-10-25T12:50:58.195Z silly [a-startup.service.startup] startup: a-version:databaseName, pid: 86920
+2026-10-25T12:50:58.196Z silly [a-startup.service.startup] startup: a-web:listen, pid: 86920
+2026-10-25T12:50:58.207Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-queue:loadQueueWorkers, pid: 86920
+[hmr] ready: 86920
+[hmr] stop: 86920
+App shutdown gracefully: 86920
+Master shutdown gracefully: 86917
+
+owned_wrapper_exit={"code":null,"signal":"SIGINT"}

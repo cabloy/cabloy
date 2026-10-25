@@ -1,0 +1,34 @@
+WBS-LOC-30-02 final post-edit recheck
+reload_only_diff_sha256=d06bc7368741e1fbbd1aa03b82068220040aa949413ab6c65b6b3f3f268bb3b6
+Accepted report: passed, backend 7 / frontend 7, no cleanup error.
+All 9 fixture paths still match restoration hashes.
+SVGs rendered and visually inspected; no observed label collision/clipping.
+Command: npm run spec:check -- cabloy-locale
+
+> cabloy@5.1.236 spec:check
+> node ./repo-agent-governance/tools/spec-audit/audit.mjs cabloy-locale
+
+repo-specs/cabloy-locale: complete planning structure passed (32 definitions).
+Complete-baseline structure and explicit exact-ID chain.
+Static structure only; approval, semantic sufficiency, implementation, and evidence authenticity require human review.
+
+exit=0
+Command: npm run spec:charts:check -- cabloy-locale
+
+> cabloy@5.1.236 spec:charts:check
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs --check cabloy-locale
+
+checked implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-locale (en; 2/6 verified).
+
+exit=0
+Command: npm run evidence:check -- -- repo-specs/cabloy-locale/evidence/phase-30
+
+> cabloy@5.1.236 evidence:check
+> node repo-agent-governance/tools/evidence-paths/sanitize.mjs check -- repo-specs/cabloy-locale/evidence/phase-30
+
+
+exit=0
+Command: git diff --check
+
+exit=0
+Targeted final privacy/presentation patterns: 30 UTF-8 files, no matches; bounded check, not universal secret scanning.
