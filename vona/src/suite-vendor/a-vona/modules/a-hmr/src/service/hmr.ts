@@ -34,7 +34,7 @@ export class ServiceHmr extends BeanBase {
       if (sceneName === '_error') {
         await this._reloadError(moduleName!, fileModule.errors);
       } else if (sceneName === '_locale') {
-        await this._reloadLocale(moduleName!, fileModule.default, file);
+        await this._reloadLocale();
       } else if (sceneName === '_config') {
         await this._reloadConfig(moduleName!, fileModule.config);
       } else if (sceneName === '_constant') {
@@ -50,17 +50,10 @@ export class ServiceHmr extends BeanBase {
     deepExtend(this.app.meta.error.ebErrors[moduleName], errors);
   }
 
-  private async _reloadLocale(moduleName: string, moduleLocales: {}, file: string) {
-    const locale = path.basename(file, '.ts');
-    // localeModules
-    if (!this.app.meta.localeModules[moduleName]) this.app.meta.localeModules[moduleName] = {};
-    this.app.meta.localeModules[moduleName][locale] = Object.assign(
-      {},
-      moduleLocales,
-      this.app.meta.hmrCacheLocaleModules[moduleName]?.[locale],
-    );
-    // openapi
-    await this.bean.openapi.clearAllCaches();
+  private async _reloadLocale() {
+    // Ordinary dictionaries also contribute to the ordered global fallback map.
+    // Restart to remove stale values and restore project/provider precedence in both maps.
+    this.app.bean.worker.reload();
   }
 
   private async _reloadConfig(moduleName: string, config: TypeModuleResourceConfig) {
