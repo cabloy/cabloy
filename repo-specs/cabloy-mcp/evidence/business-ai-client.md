@@ -6,7 +6,7 @@ On 2026-10-22, after an actual Claude Code protocol rejection, the user explicit
 
 Cabloy Basic, branch `worktree-spec-basic-cabloy-mcp`, base `6d04bab6f046329a881cfc7b46d01b29d4412f6a`, plus attributable dirty/untracked source. Preserve the carried local-runtime/category/generated changes: the complete tree is not authored by this increment and the base alone is insufficient to reproduce it. Historical [category proof](./business-categories.md) retains its original hashes/results, not current transport compatibility proof.
 
-**Current outcome:** local compatibility and parsing-isolation checks passed. The historical [Commerce-backed real Claude Code journey](#real-claude-code-business-proof-2026-10-23) retains its unknown server root exit. The separately approved [independent mcp-test real-client proof](#independent-mcp-test-real-client-proof-2026-10-23) now supplies connection, three sequential returned-ID calls, faithful Chinese output, client exit 0, reported cost US$0.02581, server graceful shutdown and `server_exit=0`. These are user-supplied runtime observations, not independently captured launch/configuration or cleanup attestations. Earlier pending statements remain historical; the new proof closes only the migrated local business-journey gap. Production OAuth/controller/modern-only requirements, blocked MCP parents, open full ATPs and verified **0/12** are unchanged.
+**Current outcome:** local compatibility and parsing-isolation checks passed. The historical [Commerce-backed real Claude Code journey](#real-claude-code-business-proof-2026-10-23) retains its unknown server root exit. The separately approved [independent mcp-test real-client proof](#independent-mcp-test-real-client-proof-2026-10-23) now supplies connection, three sequential returned-ID calls, faithful Chinese output, client exit 0, reported cost US$0.02581, server graceful shutdown and `server_exit=0`. These are user-supplied runtime observations, not independently captured launch/configuration or cleanup attestations. Earlier pending statements remain historical; the new proof closes only the migrated local business-journey gap. The later [user-reported Codex OAuth and fixture-tool success](#user-reported-codex-oauth-and-fixture-tool-success-recorded-2026-10-25) adds real authenticated-client happy-path evidence separately from those anonymous local runs. Production OAuth/controller/modern-only requirements, blocked MCP parents, open full ATPs and verified **0/12** are unchanged.
 
 ## Actual earlier client failure
 
@@ -280,3 +280,34 @@ Both client and server exits are supplied for this same run, unlike the earlier 
 - Dirty attribution is limited to `repo-specs/cabloy-mcp/evidence/README.md`, `repo-specs/cabloy-mcp/evidence/business-ai-client.md` and `repo-specs/cabloy-mcp/progress.md`. Before adding this verification section, `git diff --binary HEAD --` over those exact ordered paths had SHA-256 `8d55f34776fad2e5089284954b337a3807f73ec5b64347722bd0b0d894879209` (46 insertions, 3 deletions). That checkpoint digest identifies the observed outcome/index/progress patch, not this later check-summary text, runtime source changes or a whole-tree attestation. Runtime source remains at the clean recording revision above; no new regression claim is made.
 
 No source test, client/server startup, model call, dependency installation, environment/configuration change, main synchronization, reset, commit or push was performed by the assistant in this recording increment. These checks validate retained documentation and derived views; the actual business/lifecycle results remain explicitly user-supplied.
+
+## User-reported Codex OAuth and fixture-tool success (recorded 2026-10-25)
+
+### Attribution and procedure
+
+After the native DCR compatibility fix, the user reported successful real Codex App authentication, then requested a test prompt and confirmed its results in this conversation. They subsequently approved recording this bounded outcome. This is a retained user report, not an assistant-executed client retry or independently captured runtime transcript. The current [browser authorization profile](../decisions/0010-mcp-browser-execution-profile.md) and [suite guide](../../../vona/src/suite/cabloy-mcp/docs/mcp-browser-authorization.md) govern this flow; the preceding anonymous standalone evidence keeps its historical scope.
+
+Recording began at clean Cabloy Basic checkout `ca9d34c948cb1e3b18b2319d02b651c2d4fc0a82` on branch `worktree-spec-basic-cabloy-mcp`. That revision includes the committed native-registration compatibility fix. It is the documentation baseline, not an attestation of the exact server source/dependencies used during the earlier run; no run-time source hash was captured. Earlier read-only diagnosis identified Codex App `26.1016.61520` (build `21421`), bundled Codex `0.163.0-alpha.11.1`; the user did not separately reconfirm the successful run's version. No new credential/configuration inspection was performed for this recording.
+
+The supplied prompt targeted configured MCP server `test` at the existing local shared `/mcp` endpoint. It required MCP tools only (no local files, direct HTTP or substitute data source): list categories, use the returned Electronics category ID to search for Wireless Headphones, then use the returned product ID for detail. It prohibited writes and requested tool names, key results and ID/value comparisons. This records the instructed procedure and the user's confirmation below; a complete tool-event trace was not supplied.
+
+### Minimized observations and disposition
+
+| Observation | User-reported result |
+| --- | --- |
+| Authentication | `Authentication complete. You may close this window.` |
+| Business calls | All category, product-search and product-detail tool calls succeeded |
+| Identity consistency | Search/detail product IDs match; their category IDs match each other and the category-list result |
+| Fixture values | `priceCents = 9999`, `available = 11`, as expected for the instructed product |
+
+The current three fixture tools are `commerce_categories_list`, `commerce_products_search` and `commerce_product_detail`; these names describe the tested catalog, not independently captured event names. Raw catalog IDs are omitted in favor of equality observations. The exact granted scope, complete DCR/consent/PKCE/token exchange wire sequence, permission/account/instance details, client/server exits, cost and cleanup were not supplied. Successful read calls alone do not distinguish `mcp:all` from `mcp:read`. Do not copy the earlier Claude run's exits, TTL, SKU details or cost into this result. No token, cookie, authorization code, client secret, machine path or credential-bearing callback URL is retained.
+
+**Disposition:** the user-observed installed-Codex authentication and three-read fixture business journey passed. This closes that bounded real-client happy-path gap after the native DCR fix, without reclassifying the separate automated **15 backend tests / 4 browser scenarios** as real-client proof. It does not establish negative authorization behavior in the real App, mutation-scope enforcement, production tool exposure/deployment, complete lifecycle cleanup or full ATP acceptance. Parent WBS rows remain `blocked`, full ATPs open and verified **0/12** unchanged. No repeat real-client call or new authentication foundation is required for this outcome; a next business increment needs a concrete selected action and bounded approval.
+
+### Recording checks
+
+- `npm run spec:check -- cabloy-mcp` passed (68 definitions); `npm run spec:charts:check -- cabloy-mcp` passed with unchanged charts and **0/12** verified. These are structural/derived-view checks, not new runtime acceptance.
+- `npm run docs:build` exited **0** in 10.13 seconds with the existing chunk-size warning. It does not build these suite-local/spec records.
+- All **153 relative file links** across the three changed records resolved, and the new evidence heading anchor was checked; other fragments and external URLs were not checked. Targeted `npm run format --` passed for two matched files; this evidence file is formatter-ignored and was manually reviewed. `npm run evidence:check -- --` on the three changed records and `git diff --check` passed. Path checking is not secret scanning; the new record was also manually checked for credentials and machine-local identifiers.
+
+This recording modifies only this evidence record, `repo-specs/cabloy-mcp/progress.md` and the suite browser-authorization guide. No source test, client/server startup, model call, live diagnostic registration, environment/port change, database reset, commit or push is performed by this increment.
