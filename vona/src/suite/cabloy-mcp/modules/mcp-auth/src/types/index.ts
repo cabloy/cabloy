@@ -17,6 +17,7 @@ export interface IMcpAuthRegistrationConfig {
 }
 
 export interface IMcpAuthRegistrationRequest {
+  application_type?: 'native';
   client_name: string;
   redirect_uris: string[];
   token_endpoint_auth_method?: TypeMcpClientAuthentication;

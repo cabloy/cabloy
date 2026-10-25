@@ -31,6 +31,7 @@ async function registerClient(
   const response = await request.post('/mcp/register', {
     headers: { 'content-type': 'application/json' },
     data: {
+      application_type: 'native',
       client_name: MCP_E2E_CLIENT_NAME,
       redirect_uris: [`${origin}${MCP_E2E_CALLBACK_PATH}`],
       token_endpoint_auth_method: 'none',
@@ -44,6 +45,8 @@ async function registerClient(
   const body = await response.json();
   expect(body.token_endpoint_auth_method).toBe('none');
   expect(body.grant_types).toEqual(['authorization_code']);
+  expect(body).not.toHaveProperty('application_type');
+  expect(body).not.toHaveProperty('refresh_token');
   expect(body.response_types).toEqual(['code']);
   expect(body.scope).toBe(scope ?? 'mcp:all');
   expect(body.redirect_uris).toEqual([`${origin}${MCP_E2E_CALLBACK_PATH}`]);

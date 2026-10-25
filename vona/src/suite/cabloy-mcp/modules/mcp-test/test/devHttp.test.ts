@@ -223,6 +223,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
+        application_type: 'native',
         client_name: 'Managed MCP dynamic test',
         redirect_uris: [redirectUri],
         token_endpoint_auth_method: 'none',
@@ -237,6 +238,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     assert.equal(registration.body.scope, 'mcp:all');
     assert.deepEqual(registration.body.grant_types, ['authorization_code']);
     assert.equal('refresh_token' in registration.body, false);
+    assert.equal('application_type' in registration.body, false);
     assert.match(registration.body.client_id, /^[\w-]{43}$/);
     assert.equal(typeof registration.body.client_id, 'string');
     dynamicClientId = registration.body.client_id as string;
@@ -425,10 +427,20 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       400,
       'invalid_client_metadata',
     );
+    for (const application_type of ['web', null]) {
+      await assertError(
+        {
+          target: '/mcp/register',
+          body: JSON.stringify({ ...JSON.parse(validBody), application_type }),
+        },
+        400,
+        'invalid_client_metadata',
+      );
+    }
     await assertError(
       {
         target: '/mcp/register',
-        body: JSON.stringify({ ...JSON.parse(validBody), resource }),
+        body: JSON.stringify({ ...JSON.parse(validBody), application_type: 'native', resource }),
       },
       400,
       'invalid_client_metadata',

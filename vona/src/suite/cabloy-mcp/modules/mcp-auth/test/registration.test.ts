@@ -114,16 +114,18 @@ describe('registration.test.ts', { concurrency: false }, () => {
 
   it('stores explicit scopes canonically and preserves read-only registrations', async () => {
     for (const [scope, expected] of [
+      [undefined, 'mcp:all'],
       ['mcp:read', 'mcp:read'],
       ['mcp:all', 'mcp:all'],
       ['mcp:all mcp:read', 'mcp:all'],
       ['mcp:read mcp:all', 'mcp:all'],
     ]) {
       const response = await app.bean.executor.mockCtx(() =>
-        service().register({ ...publicRequest, scope }, resource),
+        service().register({ ...publicRequest, application_type: 'native', scope }, resource),
       );
       clientIds.push(response.client_id);
       assert.equal(response.scope, expected);
+      assert.equal('application_type' in response, false);
       await app.bean.executor.mockCtx(async () => {
         assert.equal((await model().get({ clientId: response.client_id }))?.scope, expected);
         assert.equal(
@@ -158,6 +160,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
           {
             ...publicRequest,
             client_name: 'Codex-style test client',
+            application_type: 'native',
             grant_types: [...grant_types],
             scope: 'mcp:read',
           },
@@ -168,6 +171,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
       assert.deepEqual(response.grant_types, ['authorization_code']);
       assert.deepEqual(response.response_types, ['code']);
       assert.equal(response.scope, 'mcp:read');
+      assert.equal('application_type' in response, false);
       assert.equal('refresh_token' in response, false);
       assert.equal('client_secret' in response, false);
       await app.bean.executor.mockCtx(async () => {
@@ -213,6 +217,19 @@ describe('registration.test.ts', { concurrency: false }, () => {
         { ...publicRequest, resource: resource.resource },
         'invalid_client_metadata',
       ],
+      [
+        'native with unknown field',
+        { ...publicRequest, application_type: 'native', resource: resource.resource },
+        'invalid_client_metadata',
+      ],
+      ...['web', 'other', '', 'Native', ' native', 'native ', null, 1, true, [], {}].map(
+        application_type =>
+          [
+            'invalid application type',
+            { ...publicRequest, application_type },
+            'invalid_client_metadata',
+          ] as [string, unknown, string],
+      ),
       ['empty name', { ...publicRequest, client_name: '' }, 'invalid_client_metadata'],
       [
         'fragment redirect',

@@ -114,6 +114,7 @@ export class ServiceRegistration extends BeanBase {
     if (!request || typeof request !== 'object') throw new OAuthError('invalid_client_metadata');
     const keys = Object.keys(request);
     const allowed = new Set([
+      'application_type',
       'client_name',
       'redirect_uris',
       'token_endpoint_auth_method',
@@ -122,6 +123,10 @@ export class ServiceRegistration extends BeanBase {
       'scope',
     ]);
     if (keys.some(key => !allowed.has(key))) throw new OAuthError('invalid_client_metadata');
+    // Request-only compatibility hint; it does not change registered metadata or redirect policy.
+    if (request.application_type !== undefined && request.application_type !== 'native') {
+      throw new OAuthError('invalid_client_metadata');
+    }
     if (typeof request.client_name !== 'string' || !clientNamePattern.test(request.client_name)) {
       throw new OAuthError('invalid_client_metadata');
     }
