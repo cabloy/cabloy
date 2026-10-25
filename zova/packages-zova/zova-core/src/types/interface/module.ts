@@ -28,6 +28,7 @@ export interface IModuleResource {
   Main: Constructable<IModuleMain>;
   Monkey: Constructable<IMonkeyModule & IMonkeyApp & IMonkeyController>;
   locales: TypeModuleResourceLocales;
+  localesProvider: TypeModuleResourceLocales;
   errors: TypeModuleResourceErrors;
   config: TypeModuleResourceConfig;
   constants: unknown;

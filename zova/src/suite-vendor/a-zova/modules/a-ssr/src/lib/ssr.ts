@@ -1,7 +1,10 @@
+import type {
+  RouteLocationNormalizedGeneric,
+  RouteLocationResolvedGeneric,
+} from '@cabloy/vue-router';
 import type { ComponentInternalInstance, Ref, VNode } from 'vue';
 import type { Functionable, IControllerLoadEvent, ILocaleRecord, ZovaContext } from 'zova';
 
-import { RouteLocationNormalizedGeneric, RouteLocationResolvedGeneric } from '@cabloy/vue-router';
 import { includeBooleanAttr, isBooleanAttr, isString, stringifyStyle } from '@vue/shared';
 import { defu } from 'defu';
 import { normalizeClass, normalizeStyle, ref, useSSRContext } from 'vue';
@@ -20,6 +23,7 @@ import type {
 } from '../types/ssr.ts';
 
 import { CtxSSRMetaStore } from './ssrMetaStore.ts';
+import { getCanonicalLocaleRoutePath } from './ssrNavigation.ts';
 import { resolveSsrProfile, resolveSsrProfileOptions } from './ssrProfile.ts';
 
 const SymbolIsRuntimeSsrPreHydration = Symbol('SymbolIsRuntimeSsrPreHydration');
@@ -212,6 +216,14 @@ export class CtxSSR extends BeanSimple {
   public _setLocale(route: RouteLocationResolvedGeneric | RouteLocationNormalizedGeneric) {
     if (route.meta.locale) {
       this.app.meta.locale.current = route.params?.locale as unknown as keyof ILocaleRecord;
+      if (process.env.SERVER) {
+        const canonicalPath = getCanonicalLocaleRoutePath(
+          route,
+          this.app.meta.locale,
+          this.sys.config.locale.default,
+        );
+        if (canonicalPath) this.app.$redirect(canonicalPath);
+      }
     }
   }
 

@@ -97,6 +97,10 @@ async function __prepareConfig(app: VonaApplication): Promise<VonaConfigOptional
   const configItemsRes = await Promise.all(configItemsPromise);
   for (const configItem of configItemsRes) {
     if (configItem) {
+      // An explicit language subset replaces the preceding policy, not its individual keys.
+      if (configItem.locale && Object.hasOwn(configItem.locale, 'items') && config.locale) {
+        delete config.locale.items;
+      }
       deepExtend(config, configItem);
     }
   }

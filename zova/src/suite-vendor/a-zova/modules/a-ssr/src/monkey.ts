@@ -15,7 +15,7 @@ import { BeanSimple, cast } from 'zova';
 
 import type { SSRMetaOptions } from './types/ssr.ts';
 
-import { createSsrNavigationSync } from './lib/ssrNavigation.ts';
+import { createSsrNavigationSync, getCanonicalLocaleRoutePath } from './lib/ssrNavigation.ts';
 import { useMeta } from './lib/useMeta.ts';
 
 export class Monkey
@@ -60,6 +60,13 @@ export class Monkey
           },
         });
         router.beforeEach(to => {
+          const canonicalPath = getCanonicalLocaleRoutePath(
+            to,
+            this.app.meta.locale,
+            this.sys.config.locale.default,
+          );
+          if (canonicalPath)
+            return { path: canonicalPath, query: to.query, hash: to.hash, replace: true };
           navigationSync.beforeEach(to);
         });
         router.afterEach((to, from, failure) => {

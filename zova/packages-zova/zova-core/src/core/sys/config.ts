@@ -87,7 +87,7 @@ export interface ZovaConfig {
   locale: {
     default: keyof ILocaleRecord;
     storeKey: string;
-    items: Record<keyof ILocaleRecord, string>;
+    items: Partial<Record<keyof ILocaleRecord, string>>;
   };
   tz: {
     storeKey: string;
@@ -105,3 +105,30 @@ export interface ZovaConfig {
 }
 
 export type ZovaConfigOptional = PowerPartial<ZovaConfig>;
+
+export function validateLocaleConfig(locale: ZovaConfig['locale']) {
+  if (!locale?.items || Object.keys(locale.items).length === 0) {
+    throw new Error('config.locale.items must contain at least one enabled locale');
+  }
+  for (const [key, label] of Object.entries(locale.items)) {
+    if (
+      !key ||
+      key.trim().toLowerCase().replaceAll('_', '-') !== key ||
+      typeof label !== 'string'
+    ) {
+      throw new Error(`config.locale.items contains an invalid locale: ${key}`);
+    }
+  }
+  if (!Object.hasOwn(locale.items, locale.default)) {
+    throw new Error('config.locale.default must be an enabled own key of config.locale.items');
+  }
+}
+
+export function normalizeLocale(value: unknown, locale: ZovaConfig['locale']): keyof ILocaleRecord {
+  validateLocaleConfig(locale);
+  const canonical =
+    typeof value === 'string' ? value.trim().toLowerCase().replaceAll('_', '-') : '';
+  return Object.hasOwn(locale.items, canonical)
+    ? (canonical as keyof ILocaleRecord)
+    : locale.default;
+}

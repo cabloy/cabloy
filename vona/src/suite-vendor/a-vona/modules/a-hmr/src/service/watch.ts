@@ -15,6 +15,7 @@ const __pathesWatch = [
   'src/backend/config/config/*.tsx',
   '**/src/config/errors.ts',
   '**/src/config/locale/*.ts',
+  '**/src/locales/*.ts',
   '**/src/config/config.ts',
   '**/src/config/constants.ts',
   '**/src/controller/*.ts(x)?',
