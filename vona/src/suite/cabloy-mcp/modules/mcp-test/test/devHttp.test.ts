@@ -578,6 +578,77 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         errorResult(await call(studentId, token), 'Action failed');
         assert.equal(observedCalls.at(-1)!.roleNames.includes('systemAdmin'), false);
       }
+      // A test-only policy separates select from view without adding any role membership.
+      const { ServiceStudent } = await import('vona-module-training-student');
+      const summary = t.mock.method(ServiceStudent.prototype, 'summary');
+      const policyCalls: Array<{ action: string; policyActionKey: string }> = [];
+      const controllerBeanFullName = 'training-student.controller.student';
+      const off = app.scope('a-rbac').event.resolvePolicy.on((request, next) => {
+        if (
+          String(app.bean.passport.currentUser?.id) !== userId ||
+          app.ctx.instanceName !== '' ||
+          request.action.controllerBeanFullName !== controllerBeanFullName
+        ) {
+          return next();
+        }
+        assert.equal(String(app.bean.passport.currentAuth?.id), fixtureAuthId);
+        assert.equal(
+          app.bean.passport.currentRoles?.some(role => role.name === 'systemAdmin'),
+          false,
+        );
+        policyCalls.push({
+          action: request.action.action,
+          policyActionKey: request.policyActionKey,
+        });
+        return {
+          allowed: request.policyActionKey === `${controllerBeanFullName}#select`,
+          actionKey: request.action.actionKey,
+          action: request.action,
+        };
+      });
+      try {
+        for (const { token, legacy } of [bearer, allToken].flatMap(token =>
+          [false, true].map(legacy => ({ token, legacy })),
+        )) {
+          const foundResponse = await lookup({ name }, token, legacy);
+          const found = output(foundResponse);
+          assert.deepEqual(found, {
+            list: [{ id: studentId, name, level }],
+            total: '1',
+            pageNo: 1,
+            pageSize: 10,
+            pageCount: 1,
+          });
+          const deniedResponse = await call(found.list[0].id, token, legacy);
+          errorResult(deniedResponse, 'Action failed');
+          assert.equal(summary.mock.callCount(), 0, 'view denial prevents summary service work');
+          for (const response of [foundResponse, deniedResponse]) {
+            const wire = JSON.stringify(response.body.result);
+            for (const secret of [mobile, '138****5678', descriptionMarkdown]) {
+              assert.equal(wire.includes(secret), false);
+            }
+            for (const field of ['mobile', 'descriptionMarkdown', 'descriptionHtml']) {
+              assert.equal(wire.includes(`"${field}"`), false);
+            }
+          }
+        }
+        assert.deepEqual(
+          policyCalls,
+          Array.from({ length: 4 })
+            .fill([
+              { action: 'lookup', policyActionKey: `${controllerBeanFullName}#select` },
+              { action: 'summary', policyActionKey: `${controllerBeanFullName}#view` },
+            ])
+            .flat(),
+          'the real guard resolves distinct inherited permissions on every transport/scope pair',
+        );
+      } finally {
+        off();
+        summary.mock.restore();
+      }
+      errorResult(await lookup({ name }), 'Action failed');
+      errorResult(await call(studentId), 'Action failed');
+      assert.equal(policyCalls.length, 8, 'the exact test policy listener was removed');
       // Basic has no custom grant provider. Exercise its supported unrestricted role
       // through the ordinary membership API, without mutating the shared role itself.
       await app.bean.executor.mockCtx(
@@ -658,7 +729,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         assert.equal(current.userId, userId);
         assert.equal(current.authId, fixtureAuthId);
       }
-      assert.equal(observedCalls.length, 14, 'every read traverses its fixed guarded action');
+      assert.equal(observedCalls.length, 24, 'every read traverses its fixed guarded action');
       await app.bean.executor.mockCtx(
         async () => {
           assert.equal(await app.bean.role.removeUserId(adminRoleId!, userId), true);
