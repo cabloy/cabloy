@@ -509,6 +509,9 @@ importers:
       zova-module-home-user:
         specifier: workspace:^
         version: link:src/suite/a-home/modules/home-user
+      zova-module-locale-jajp:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-locale/modules/locale-jajp
       zova-module-pay-mock:
         specifier: workspace:^
         version: link:src/suite-vendor/a-pay/modules/pay-mock
@@ -2296,6 +2299,33 @@ importers:
         version: 6.1.3
 
   src/suite/cabloy-basic/modules/basic-text:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/cabloy-locale:
+    dependencies:
+      zova-module-locale-jajp:
+        specifier: ^5.0.0
+        version: link:modules/locale-jajp
+      zova-module-locale-test:
+        specifier: ^5.0.0
+        version: link:modules/locale-test
+
+  src/suite/cabloy-locale/modules/locale-jajp:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/cabloy-locale/modules/locale-test:
     devDependencies:
       clean-package:
         specifier: ^2.2.0

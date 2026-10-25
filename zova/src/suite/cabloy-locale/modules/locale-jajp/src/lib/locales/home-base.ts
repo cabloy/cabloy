@@ -1,0 +1,16 @@
+export default {
+  Home: 'ホーム',
+  GoHome: 'ホームへ',
+  Retry: '再試行',
+  LanguageEnglish: '英語',
+  LanguageChinese: '中国語',
+  LanguageJapanese: '日本語',
+  VonaIntegratedSsr: 'Vona 統合 SSR',
+  ZovaStandaloneSsr: 'Zova スタンドアロン SSR',
+  SsrSite: 'SSR サイト',
+  Url: 'URL',
+  SiteWeb: 'Web',
+  SiteAdmin: '管理画面',
+  SiteCommerceWeb: 'コマース Web',
+  SiteCommerceAdmin: 'コマース管理画面',
+};

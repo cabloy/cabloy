@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base",
+  "compilerOptions": {},
+  "references": [
+    {
+      "path": "modules/locale-jajp/tsconfig.build.json"
+    },
+    {
+      "path": "modules/locale-test/tsconfig.build.json"
+    }
+  ],
+  "exclude": ["modules"]
+}
