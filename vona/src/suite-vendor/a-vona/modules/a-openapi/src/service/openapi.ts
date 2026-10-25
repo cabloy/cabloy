@@ -1,3 +1,4 @@
+import type { RouteConfig } from '@cabloy/zod-to-openapi';
 import type {
   OpenAPIObject as OpenAPIObject30,
   SchemaObject as SchemaObject30,
@@ -36,6 +37,11 @@ import {
 import { SymbolRequestMappingHandler } from 'vona-module-a-web';
 import { z } from 'zod';
 
+import type {
+  IControllerActionContract,
+  IControllerActionRequest,
+  IGenerateJsonOfControllerActionOptions,
+} from '../types/contract.ts';
 import type { RouteHandlerArgumentMetaDecorator } from '../types/decorator.ts';
 
 const __ArgumentTypes = ['param', 'query', 'body', 'headers', 'fields', 'field', 'files', 'file'];
@@ -180,6 +186,7 @@ export class ServiceOpenapi extends BeanBase {
     moduleName: string,
     controller: Constructable,
     actionKey?: string,
+    options: IGenerateJsonOfControllerActionOptions = {},
   ) {
     // info
     const info = ModuleInfo.parseInfo(moduleName)!;
@@ -193,14 +200,21 @@ export class ServiceOpenapi extends BeanBase {
       SymbolOpenApiOptions,
       controller,
     );
-    if (controllerOpenApiOptions?.exclude) return;
+    if (controllerOpenApiOptions?.exclude && !options.includeExcluded) return;
     // descs
     const descs = Object.getOwnPropertyDescriptors(controller.prototype);
     const actionKeys = actionKey ? [actionKey] : Object.keys(descs);
     for (const actionKey of actionKeys) {
-      const desc = descs[actionKey];
+      let desc = descs[actionKey];
+      if (actionKey && !desc) {
+        let prototype = Object.getPrototypeOf(controller.prototype);
+        while (prototype && !desc) {
+          desc = Object.getOwnPropertyDescriptor(prototype, actionKey)!;
+          prototype = Object.getPrototypeOf(prototype);
+        }
+      }
       if (['constructor'].includes(actionKey)) continue;
-      if (!desc.value || typeof desc.value !== 'function') continue;
+      if (!desc?.value || typeof desc.value !== 'function') continue;
       this._registerControllerAction(
         registry,
         info,
@@ -211,6 +225,7 @@ export class ServiceOpenapi extends BeanBase {
         controllerOpenApiOptions,
         actionKey,
         desc,
+        options,
       );
     }
   }
@@ -225,6 +240,7 @@ export class ServiceOpenapi extends BeanBase {
     controllerOpenApiOptions: IOpenapiOptions | undefined,
     actionKey: string,
     _desc: PropertyDescriptor,
+    options: IGenerateJsonOfControllerActionOptions,
   ) {
     // app
     const app = this.app;
@@ -235,7 +251,7 @@ export class ServiceOpenapi extends BeanBase {
       controller.prototype,
       actionKey,
     );
-    if (actionOpenApiOptions?.exclude) return;
+    if (actionOpenApiOptions?.exclude && !options.includeExcluded) return;
 
     // actionPath/actionMethod
     if (!appMetadata.hasMetadata(SymbolRequestMappingHandler, controller.prototype, actionKey))
@@ -302,7 +318,66 @@ export class ServiceOpenapi extends BeanBase {
     });
   }
 
+  /** Resolve validators in the current context; do not retain across locale changes. */
+  public getControllerActionContract(
+    controller: Constructable,
+    actionKey: string,
+  ): IControllerActionContract {
+    const beanOptions = appResource.getBean(controller);
+    if (!beanOptions) throw new Error('invalid controller');
+    const info = ModuleInfo.parseInfo(beanOptions.module)!;
+    const actionOpenApiOptions = appMetadata.getMetadata<IOpenapiOptions>(
+      SymbolOpenApiOptions,
+      controller.prototype,
+      actionKey,
+    );
+    const controllerOpenApiOptions = appMetadata.getMetadata<IOpenapiOptions>(
+      SymbolOpenApiOptions,
+      controller,
+    );
+    const { request } = this._groupRequestSchemas(
+      info,
+      controller,
+      actionKey,
+      actionOpenApiOptions,
+      controllerOpenApiOptions,
+    );
+    return {
+      request,
+      response: this._getBodySchema(controller, actionKey, actionOpenApiOptions),
+      contentType: actionOpenApiOptions?.contentType || 'application/json',
+      openapiOptions: actionOpenApiOptions,
+      argsMeta: this._getArgsMeta(controller, actionKey) ?? [],
+    };
+  }
+
   private _collectRequest(
+    info: ModuleInfo.IModuleInfo,
+    controller: Constructable,
+    actionKey: string,
+    actionOpenApiOptions: IOpenapiOptions | undefined,
+    controllerOpenApiOptions: IOpenapiOptions | undefined,
+  ) {
+    const { request: schemas, isUpload } = this._groupRequestSchemas(
+      info,
+      controller,
+      actionKey,
+      actionOpenApiOptions,
+      controllerOpenApiOptions,
+    );
+    const { body, ...request } = schemas;
+    if (!body) return request as RouteConfig['request'];
+    const contentType = isUpload ? 'multipart/form-data' : 'application/json';
+    return {
+      ...request,
+      body: {
+        required: isUpload || !body.safeParse(undefined).success,
+        content: { [contentType]: { schema: body } },
+      },
+    } as RouteConfig['request'];
+  }
+
+  private _groupRequestSchemas(
     info: ModuleInfo.IModuleInfo,
     controller: Constructable,
     actionKey: string,
@@ -316,12 +391,11 @@ export class ServiceOpenapi extends BeanBase {
       actionOpenApiOptions,
       controllerOpenApiOptions,
     );
-    if (!argsMeta) return;
     // args
     const argsMapWithField: any = {};
     const argsMapIsolate: any = {};
     let isUpload;
-    for (const argMeta of argsMeta) {
+    for (const argMeta of argsMeta ?? []) {
       if (!argMeta) continue;
       if (!__ArgumentTypes.includes(argMeta.type)) continue;
       if (['fields', 'field', 'files', 'file'].includes(argMeta.type)) {
@@ -339,7 +413,7 @@ export class ServiceOpenapi extends BeanBase {
       }
     }
     // request
-    const request: any = {};
+    const request: IControllerActionRequest = {};
     if (isUpload) {
       const schemaObj: any = {};
       // not check argsMapIsolate.fields
@@ -348,16 +422,7 @@ export class ServiceOpenapi extends BeanBase {
       if (argsMapWithField.files) Object.assign(schemaObj, argsMapWithField.files);
       if (argsMapWithField.file) Object.assign(schemaObj, argsMapWithField.file);
       if (argsMapIsolate.files) schemaObj.blobs = argsMapIsolate.files;
-      const schema = z.object(schemaObj);
-      // body
-      request.body = {
-        required: true,
-        content: {
-          'multipart/form-data': {
-            schema,
-          },
-        },
-      };
+      request.body = z.object(schemaObj);
     } else {
       for (const argumentType of __ArgumentTypes) {
         let schema: z.ZodType | undefined = argsMapIsolate[argumentType];
@@ -375,26 +440,12 @@ export class ServiceOpenapi extends BeanBase {
             `Invalid Openapi argument type: ${info.relativeName}:${controller.name}.${actionKey}#${argumentType}`,
           );
         }
-        // record
-        if (argumentType === 'body') {
-          // body
-          request.body = {
-            required: !schema.safeParse(undefined).success,
-            content: {
-              'application/json': {
-                schema,
-              },
-            },
-          };
-        } else {
-          // others
-          const name = argumentType === 'param' ? 'params' : argumentType;
-          request[name] = schema;
-        }
+        const name = argumentType === 'param' ? 'params' : argumentType;
+        request[name] = schema;
       }
     }
 
-    return request;
+    return { request, isUpload: !!isUpload };
   }
 
   private _collectResponses(
@@ -431,19 +482,31 @@ export class ServiceOpenapi extends BeanBase {
     actionOpenApiOptions: IOpenapiOptions | undefined,
     contentType: string,
   ) {
-    // bodySchema
-    let bodySchema: z.ZodType;
-    if (actionOpenApiOptions?.bodySchema) {
-      bodySchema = actionOpenApiOptions.bodySchema;
-    } else {
-      const metaType = appMetadata.getDesignReturntype(controller.prototype, actionKey);
-      bodySchema = $schema(metaType as any);
-    }
+    const bodySchema = this._getBodySchema(controller, actionKey, actionOpenApiOptions);
     // wrapper
     if (contentType !== 'application/json') return bodySchema;
     if (actionOpenApiOptions?.bodySchemaWrapper === false) return bodySchema;
     const wrapper = actionOpenApiOptions?.bodySchemaWrapper ?? bodySchemaWrapperDefault;
     return wrapper(bodySchema);
+  }
+
+  private _getBodySchema(
+    controller: Constructable,
+    actionKey: string,
+    actionOpenApiOptions: IOpenapiOptions | undefined,
+  ): z.ZodType {
+    if (actionOpenApiOptions?.bodySchema) return actionOpenApiOptions.bodySchema;
+    const metaType = appMetadata.getDesignReturntype(controller.prototype, actionKey);
+    return $schema(metaType as any);
+  }
+
+  private _getArgsMeta(controller: Constructable, actionKey: string) {
+    const argsMeta = appMetadata.getMetadata<RouteHandlerArgumentMetaDecorator[]>(
+      SymbolRouteHandlersArgumentsMeta,
+      controller.prototype,
+      actionKey,
+    );
+    return argsMeta?.map(item => item && { ...item, pipes: item.pipes?.slice() });
   }
 
   private _prepareArgsMeta(
@@ -453,11 +516,7 @@ export class ServiceOpenapi extends BeanBase {
     controllerOpenApiOptions: IOpenapiOptions | undefined,
   ) {
     // meta
-    let argsMeta = appMetadata.getMetadata<RouteHandlerArgumentMetaDecorator[]>(
-      SymbolRouteHandlersArgumentsMeta,
-      controller.prototype,
-      actionKey,
-    );
+    let argsMeta = this._getArgsMeta(controller, actionKey);
     // headers
     const objHeaders = Object.assign(
       {} as any,
@@ -467,7 +526,7 @@ export class ServiceOpenapi extends BeanBase {
     if (isEmptyObject(objHeaders)) return argsMeta;
     // merge
     if (!argsMeta) argsMeta = [];
-    let argHeaders = argsMeta.find(item => item.type === 'headers' && !item.field);
+    let argHeaders = argsMeta.find(item => item?.type === 'headers' && !item.field);
     if (!argHeaders) {
       argHeaders = { type: 'headers', field: undefined, schema: z.object(objHeaders) } as any;
       argsMeta.push(argHeaders!);
