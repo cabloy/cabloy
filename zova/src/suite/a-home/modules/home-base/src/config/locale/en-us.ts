@@ -4,6 +4,7 @@ export default {
   Retry: 'Retry',
   LanguageEnglish: 'English',
   LanguageChinese: 'Chinese',
+  LanguageJapanese: 'Japanese',
   VonaIntegratedSsr: 'Vona integrated SSR',
   ZovaStandaloneSsr: 'Zova standalone SSR',
   SsrSite: 'SSR Site',

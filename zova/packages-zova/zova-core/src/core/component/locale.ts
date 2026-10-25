@@ -12,6 +12,7 @@ import type {
 import { BeanSimple } from '../../bean/beanSimple.ts';
 import { LocaleModuleNameSeparator } from '../../bean/resource/locale/type.ts';
 import { cast } from '../../types/index.ts';
+import { normalizeLocale } from '../sys/config.ts';
 
 const SymbolLocaleCurrent = Symbol('SymbolLocaleCurrent');
 const SymbolTzCurrent = Symbol('SymbolTzCurrent');
@@ -31,17 +32,26 @@ export class AppLocale extends BeanSimple {
     if (!locale) {
       locale = this.metaCookie.getItem(this.sys.config.locale.storeKey);
     }
-    if (!locale) locale = this.sys.config.locale.default;
-    return locale as keyof ILocaleRecord;
+    return this.normalize(locale);
   }
 
   set current(value: keyof ILocaleRecord | '' | undefined) {
-    if (!value) value = this.sys.config.locale.default;
+    value = this.normalize(value);
     if (this[SymbolLocaleCurrent].value === value) return;
     this[SymbolLocaleCurrent].value = value;
     if (this._cookieEnabled()) {
       this.metaCookie.setItem(this.sys.config.locale.storeKey, value);
     }
+  }
+
+  public normalize(value: unknown): keyof ILocaleRecord {
+    return normalizeLocale(value, this.sys.config.locale);
+  }
+
+  public getItems(items?: Partial<Record<keyof ILocaleRecord, string>>) {
+    const enabled = this.sys.config.locale.items;
+    if (!items) return enabled;
+    return Object.fromEntries(Object.entries(items).filter(([key]) => Object.hasOwn(enabled, key)));
   }
 
   private _cookieEnabled() {

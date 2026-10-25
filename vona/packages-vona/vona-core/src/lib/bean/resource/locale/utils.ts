@@ -1,5 +1,6 @@
+import type { ConfigLocale } from '../../../../types/config/locale.ts';
 import type { IBeanScopeLocale } from '../../type.ts';
-import type { ILocaleMagic } from './type.ts';
+import type { ILocaleMagic, ILocaleRecord } from './type.ts';
 
 import { cast } from '../../../../types/utils/cast.ts';
 import { useApp } from '../../../framework/useApp.ts';
@@ -58,4 +59,48 @@ export function text(strings: any, ...expressions: any): any {
 
 export function isLocaleMagic(str: string | object) {
   return typeof str === 'object' && cast(str).toJSON;
+}
+
+export function canonicalizeLocale(value: unknown): string {
+  return typeof value === 'string' ? value.trim().replaceAll('_', '-').toLowerCase() : '';
+}
+
+export function validateLocaleConfig(config: ConfigLocale): void {
+  const items = config?.items;
+  if (!items || typeof items !== 'object' || Object.keys(items).length === 0) {
+    throw new Error('config.locale.items must contain at least one enabled locale');
+  }
+  for (const key of Object.keys(items)) {
+    if (!key || canonicalizeLocale(key) !== key || typeof items[key] !== 'string') {
+      throw new Error(`config.locale.items contains an invalid locale: ${key}`);
+    }
+  }
+  if (
+    typeof config.default !== 'string' ||
+    !Object.hasOwn(items, config.default) ||
+    canonicalizeLocale(config.default) !== config.default
+  ) {
+    throw new Error('config.locale.default must be an enabled config.locale.items key');
+  }
+}
+
+/** Resolve an enabled input without allowing aliases to expand the configured set. */
+export function resolveEnabledLocale(
+  value: unknown,
+  config: ConfigLocale,
+  aliases: Record<string, string> = {},
+): keyof ILocaleRecord | undefined {
+  validateLocaleConfig(config);
+  let locale = canonicalizeLocale(value);
+  if (Object.hasOwn(aliases, locale)) locale = canonicalizeLocale(aliases[locale]);
+  return Object.hasOwn(config.items, locale) ? (locale as keyof ILocaleRecord) : undefined;
+}
+
+/** Active-language selection only; explicit translation lookup remains independent. */
+export function resolveLocale(
+  value: unknown,
+  config: ConfigLocale,
+  aliases?: Record<string, string>,
+): keyof ILocaleRecord {
+  return resolveEnabledLocale(value, config, aliases) ?? config.default;
 }
