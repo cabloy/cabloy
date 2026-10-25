@@ -1,11 +1,14 @@
 import type { TableIdentity } from 'table-identity';
 import type { IQueryParams } from 'vona-module-a-orm';
 
-import { BeanBase } from 'vona';
+import { BeanBase, cast } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { Core } from 'vona-module-a-core';
+import { Op } from 'vona-module-a-orm';
 
 import type { DtoStudentCreate } from '../dto/studentCreate.tsx';
+import type { DtoStudentLookupReq } from '../dto/studentLookupReq.tsx';
+import type { DtoStudentLookupRes } from '../dto/studentLookupRes.tsx';
 import type { DtoStudentSelectRes } from '../dto/studentSelectRes.tsx';
 import type { DtoStudentSummary } from '../dto/studentSummary.tsx';
 import type { DtoStudentUpdate } from '../dto/studentUpdate.tsx';
@@ -41,6 +44,27 @@ export class ServiceStudent extends BeanBase {
 
   async select(params?: IQueryParams<ModelStudent>): Promise<DtoStudentSelectRes> {
     return await this.scope.model.student.selectAndCount(params);
+  }
+
+  async lookup(query: DtoStudentLookupReq): Promise<DtoStudentLookupRes> {
+    const model = this.scope.model.student;
+    const pattern = `%${query.name.replace(/[!%_]/g, '!$&')}%`;
+    const where = {
+      // Keep the raw predicate nested so Model can add its instance/deleted constraints.
+      [Op.not]: cast(model.raw("?? not like ? escape '!'", ['name', pattern])),
+      ...(query.level === undefined ? {} : { level: query.level }),
+    };
+    const result = await model.selectAndCount({
+      columns: ['id', 'name', 'level'],
+      where,
+      orders: [['id', 'asc']],
+      limit: query.pageSize,
+      offset: (query.pageNo - 1) * query.pageSize,
+    });
+    return {
+      ...result,
+      list: result.list.map(({ id, name, level }) => ({ id, name, level })),
+    };
   }
 
   async view(id: TableIdentity): Promise<DtoStudentView | undefined> {

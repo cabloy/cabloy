@@ -19,6 +19,7 @@ const categoriesName = 'commerce_categories_list';
 const searchName = 'commerce_products_search';
 const detailName = 'commerce_product_detail';
 const studentSummaryName = 'training_student_summary';
+const studentLookupName = 'training_student_lookup';
 const statusName = 'mcp_test_action_status';
 const effectName = 'mcp_test_action_effect';
 const studentSummaryFields = [
@@ -349,7 +350,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           'mcp_test_action_scalar',
           'mcp_test_action_array',
           ...(token === allToken ? [effectName] : []),
-          ...(app.meta.modules['training-student'] ? [studentSummaryName] : []),
+          ...(app.meta.modules['training-student'] ? [studentLookupName, studentSummaryName] : []),
         ].sort(),
       );
       if (app.meta.modules['training-student']) {
@@ -471,7 +472,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     }
   });
 
-  it('guards persisted student summaries with current roles across modern/legacy read scopes and instance boundaries', async t => {
+  it('guards student lookup-to-summary with current roles across modern/legacy read scopes and instance boundaries', async t => {
     if (!app.meta.modules['training-student']) {
       t.skip('training-student is not active');
       return;
@@ -521,6 +522,12 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         { name: studentSummaryName, arguments: { id } },
         { legacy, headers: { authorization: `Bearer ${token}` } },
       );
+    const lookup = (query: Record<string, unknown>, token = bearer, legacy = false) =>
+      send(
+        'tools/call',
+        { name: studentLookupName, arguments: query },
+        { legacy, headers: { authorization: `Bearer ${token}` } },
+      );
     const errorResult = (response: Awaited<ReturnType<typeof send>>, text: string) => {
       assert.equal(response.status, 200);
       assert.equal(response.body.error, undefined);
@@ -554,7 +561,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       await app.bean.executor.mockCtx(
         async () => {
           const student = await app.scope('training-student').model.student.insert({
-            name: `Other-instance student ${randomUUID()}`,
+            name,
             mobile,
             level,
           });
@@ -565,8 +572,9 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       assert.ok(studentId);
       assert.ok(otherStudentId);
       assert.ok(adminRoleId);
-      // Neither OAuth read scope grants ordinary users student-view authority.
+      // Neither OAuth scope grants ordinary users student-select or student-view authority.
       for (const token of [bearer, allToken]) {
+        errorResult(await lookup({ name }, token), 'Action failed');
         errorResult(await call(studentId, token), 'Action failed');
         assert.equal(observedCalls.at(-1)!.roleNames.includes('systemAdmin'), false);
       }
@@ -590,7 +598,23 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       for (const { token, legacy } of [bearer, allToken].flatMap(token =>
         [false, true].map(legacy => ({ token, legacy })),
       )) {
-        const response = await call(studentId, token, legacy);
+        const foundResponse = await lookup({ name: `  ${name}  `, level }, token, legacy);
+        const found = output(foundResponse);
+        assert.deepEqual(found, {
+          list: [{ id: studentId, name, level }],
+          total: '1',
+          pageNo: 1,
+          pageSize: 10,
+          pageCount: 1,
+        });
+        const lookupCall = observedCalls.at(-1)!;
+        assert.equal(lookupCall.path, '/training/student/lookup');
+        assert.deepEqual(lookupCall.options, {
+          query: { name, level, pageNo: 1, pageSize: 10 },
+          innerAccess: false,
+        });
+        assert.equal(JSON.stringify(foundResponse.body.result).includes(mobile), false);
+        const response = await call(found.list[0].id, token, legacy);
         const summary = output(response);
         assert.deepEqual(summary, expected);
         assert.deepEqual(Object.keys(summary).sort(), studentSummaryFields);
@@ -624,13 +648,17 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       assert.deepEqual(otherInstance, missing);
       for (const current of observedCalls) {
         assert.equal(current.method, 'get');
-        assert.equal(current.path, '/training/student/summary/:id');
-        const options = current.options as { params: { id: string }; innerAccess: boolean };
-        assert.deepEqual(options, { params: { id: options.params.id }, innerAccess: false });
+        if (current.path === '/training/student/summary/:id') {
+          const options = current.options as { params: { id: string }; innerAccess: boolean };
+          assert.deepEqual(options, { params: { id: options.params.id }, innerAccess: false });
+        } else {
+          assert.equal(current.path, '/training/student/lookup');
+          assert.equal((current.options as { innerAccess: boolean }).innerAccess, false);
+        }
         assert.equal(current.userId, userId);
         assert.equal(current.authId, fixtureAuthId);
       }
-      assert.equal(observedCalls.length, 8, 'every read traverses the fixed guarded action');
+      assert.equal(observedCalls.length, 14, 'every read traverses its fixed guarded action');
       await app.bean.executor.mockCtx(
         async () => {
           assert.equal(await app.bean.role.removeUserId(adminRoleId!, userId), true);
@@ -638,6 +666,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         },
         { instanceName: '' },
       );
+      errorResult(await lookup({ name }), 'Action failed');
       errorResult(await call(studentId), 'Action failed');
       assert.equal(observedCalls.at(-1)!.roleNames.includes('systemAdmin'), false);
     } finally {

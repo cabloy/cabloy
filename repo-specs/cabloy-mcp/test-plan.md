@@ -346,10 +346,12 @@ Traceability: `PRD-MCP-CONTRACT-01`, `SRS-MCP-CATALOG-01`, `SRS-MCP-API-01`, `SR
 
 The historical heading/anchor is retained; current selection is default-closed explicit opt-in, with no exclusion/opt-out. Apply the accepted dev/test mapper contract and ADR 0005 disposition; broader production list/cache/worker-policy acceptance remains open, not an implemented mapper capability.
 
+Approved lookup subset (2026-10-25; prospective): under the [SRS lookup amendment](./srs.md#approved-new-student-lookup-amendment-2026-10-25), inspect `training_student_lookup` method opt-in with explicit `readOnly: true`, its narrow input and ordinary `listAndCount` output schema. Assert only `name`, `level`, `pageNo`, `pageSize` inputs; exactly `id`, `name`, `level` per list item; no private fields in reachable schema. Check read-scope visibility without changing ordinary select, summary or generic mapper contracts. Retain revision-scoped schema/assertion proof when executed; no lookup execution has passed by this amendment, and the parent ATP stays open.
+
 Setup:
 
 - Prepare an undecorated controller/Action, a method-opted-in Action, a class-opted-in controller with supported registered Actions and a non-Action helper, plus an added supported Action. Include controller/action `@Api.exclude()`, disabled/unregistered Actions, default and method-override names, duplicates/invalid names, class defaults and method overrides, locale metadata and output projections.
-- Keep broader production deployment/subject-policy and cursor/cache fixtures separate from this bounded mapper subset; neither opt-in nor this plan approves a new business tool.
+- Keep broader production deployment/subject-policy and cursor/cache fixtures separate from this bounded mapper subset; opt-in alone approves no business tool. The separate SRS lookup amendment records explicit approval only for the new bounded `training_student_lookup`.
 
 Procedure:
 
@@ -373,6 +375,8 @@ Traceability: `PRD-MCP-CONTRACT-02`, `SRS-MCP-CATALOG-02`, `SRS-MCP-CATALOG-04`,
 
 ### ATP-MCP-CONTRACT-03: Unsafe shape and side-effect classification
 
+Approved lookup subset (2026-10-25; prospective): review the new Action as a side-effect-free read with explicit `readOnly: true`, ordinary select-permission inheritance and current-instance scope, not summary view authority. Verify the narrow Action/DTO supplies the three-field item contract without nested mapper projection or private-field/schema leakage. The [SRS lookup amendment](./srs.md#approved-new-student-lookup-amendment-2026-10-25) approves this tool only; retain its bounded classification/assertions when executed, without production risk-policy approval or parent ATP closure.
+
 Bounded mapper subset: check ordinary typed JSON/200 support and omission of unsupported opted-in files/uploads/streams, native request/response bindings, header-dependent contracts, custom wrappers and non-200 responses, with `server.diagnostics` controller/action/reason and no dispatch. Test truthful explicit/inherited `readOnly` and GET inference separately: the mapper does not detect effects, implement trusted confirmation, or prove production domain-review policy. Synthetic mutation scope tests approve no business mutation. The broader prospective risk cases below remain open and must not be reported as mapper-delivered controls.
 
 Setup:
@@ -388,7 +392,7 @@ Procedure:
 
 Expected result:
 
-- JSON-compatible, explicitly classified operations may become candidates, but only domain/operator-reviewed and deployment-approved read or bounded reversible operations may enter an enabled set; this plan itself does not approve one. Unsafe/unclassified/destructive/open-world shapes and misleading hints cannot enable or appear as safe reads; GET side effects are mutations.
+- JSON-compatible, explicitly classified operations may become candidates, but only domain/operator-reviewed and deployment-approved read or bounded reversible operations may enter an enabled set; the generic scenario itself approves none beyond the separately approved bounded SRS lookup amendment. Unsafe/unclassified/destructive/open-world shapes and misleading hints cannot enable or appear as safe reads; GET side effects are mutations.
 - Confirmation-required operations remain disabled without an approved, server-verifiable, subject/client/instance/tool/arguments-bound and replay-safe grant; caller booleans, hints, a prior list, or optional elicitation alone do not grant one. Explicitly reviewed low-risk mutations without a per-call-confirmation requirement still face normal scope, RBAC, row scope, and audit checks.
 - Excluded operations cannot be reached through a guessed tool name or route-like arguments, and neither list visibility nor broad scopes disclose an unrelated row. Unsupported executor statuses or unsafe result fields never fall back to raw data.
 
@@ -399,6 +403,13 @@ Minimum proof:
 Traceability: `PRD-MCP-CONTRACT-03`, `PRD-MCP-SAFETY-01`, `SRS-MCP-CATALOG-03`, `WBS-MCP-30-02`.
 
 ### ATP-MCP-CALL-01: Valid JSON tool call and result adaptation
+
+Approved lookup critical-flow subset (2026-10-25; prospective), governed by the [SRS lookup amendment](./srs.md#approved-new-student-lookup-amendment-2026-10-25):
+
+- Use managed synthetic fixtures under the existing context/cleanup rules: matching and nonmatching names, literal `%`/`_`, multiple levels and enough matches to cross a page boundary. No development-data writes, grants, reset or environment changes.
+- Check required `name`, trimming, blank rejection and the 100-character bound; literal contains matching must not expand wildcard characters. Check optional level `1`/`2`/`3` and reject invalid levels. Check integer pagination, omitted defaults `pageNo: 1`/`pageSize: 10`, `pageNo >= 1`, `pageSize` bounds `1..20` and rejection of fractional/out-of-range values. Assert fixed `id` ascending ordering, page boundaries and no-match results.
+- Assert the ordinary `listAndCount` envelope has `list`, string `total`, `pageNo`, `pageSize`, `pageCount`; every item is exactly `id`, `name`, `level`. Compare runtime structured content, equivalent JSON text and reachable schema for private-field absence; do not change mapper, ordinary select, summary or persistence schema to satisfy the checks.
+- Retain revision, exact targeted command/procedure, synthetic fixture/cleanup assertions, expected/observed results and redacted schema/response proof only after execution. A later **separate real Codex handoff** should list/call lookup using already-authorized read-only data, then call summary only with existing view authority; retain that actual client outcome separately. Neither targeted checks nor client replay is claimed passed here or closes this full ATP, the blocked parent tasks or verified 0/12.
 
 Bounded mapper subset: prove flat single-object-location input, grouped multi-location `params`/`query`/`body`, wrapped scalar/array body and strict empty input; reject unknown fields/empty path strings and reuse original Action runtime validators. Check top-level `output.pick` runtime minimization and reachable schema closure, direct object structured content, `{ result: value }` for array/scalar (including declared scalar null), and equivalent JSON text from that same structured object. Undefined or missing object/null must return safe `Resource not found`; authorization, Action and output-validation failure must return `Action failed`, never raw fallback. For the existing student summary, assert exactly `id`, `name`, `level`, `levelTitle`, `descriptionLength`, `summaryText`, no mobile/full notes in results or reachable schema, and unchanged student-view permission. Projection is not anonymization. These checks do not complete the broader limits/audit/effect cases below or supply pending real-client replay.
 
@@ -426,6 +437,8 @@ Minimum proof:
 Traceability: `PRD-MCP-ACCESS-03`, `SRS-MCP-DISPATCH-01`, `SRS-MCP-DISPATCH-02`, `SRS-MCP-TRANSPORT-03`, `WBS-MCP-40-01`.
 
 ### ATP-MCP-CALL-02: Guarded fixed dispatch and executor-option rejection
+
+Approved lookup critical-flow subset (2026-10-25; prospective): use isolated synthetic contexts to prove `training_student_lookup` succeeds under existing select authority for either valid `mcp:read` or `mcp:all`, fails without select authority and returns only the current instance's matches. A select-authorized subject without view authority may use lookup but still cannot call summary; do not add grants to development users. Reject extra `where`, `columns`, `orders`, `iid` and route/identity/executor controls before dispatch. Retain guard/dispatch assertions, synthetic instance/permission labels and redacted results when executed. This checks the [approved lookup boundary](./srs.md#approved-new-student-lookup-amendment-2026-10-25), not a new authorization/context foundation, production qualification or a passing ATP claim.
 
 Bounded mapper subset: verify the binding uses the registered `ContextRoute.routePathRaw`, including an effective route-prefix case, with server-built options and `innerAccess: false` on the Action. Check known mutation-name denial before dispatch for `mcp:read`, ordinary RBAC/instance/resource denial under `mcp:all`, and rejection of extra route/identity/executor controls. Validated scope is request-local, not shared app exchange state or a Passport property. This is not production context/fleet/system-middleware qualification or full ATP closure.
 

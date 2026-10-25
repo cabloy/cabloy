@@ -76,15 +76,22 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   });
   after(() => release?.());
 
-  it('keeps the student tool out of the default composition and validates its shared contract', async () => {
+  it('keeps both student tools out of the default composition and validates their shared contracts', async () => {
     await app.bean.executor.mockCtx(async () => {
       const standalone = await connect(await createBusinessToolServer(app));
       try {
-        const rejected = await standalone.request('tools/call', {
-          name: 'training_student_summary',
-          arguments: { id: '1' },
-        });
-        assert.equal(rejected.error.code, -32602);
+        const listed = await standalone.request('tools/list');
+        assert.deepEqual(
+          listed.result.tools.map((tool: any) => tool.name),
+          [toolName, detailToolName, categoryToolName],
+        );
+        for (const name of ['training_student_lookup', 'training_student_summary']) {
+          const rejected = await standalone.request('tools/call', {
+            name,
+            arguments: name === 'training_student_lookup' ? { name: 'Student' } : { id: '1' },
+          });
+          assert.equal(rejected.error.code, -32602);
+        }
       } finally {
         await standalone.close();
       }
@@ -101,15 +108,119 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             effectToolName,
             scalarToolName,
             arrayToolName,
-            ...(app.meta.modules['training-student'] ? ['training_student_summary'] : []),
+            ...(app.meta.modules['training-student']
+              ? ['training_student_lookup', 'training_student_summary']
+              : []),
           ].sort(),
         );
         const student = listed.result.tools.find(
           (tool: any) => tool.name === 'training_student_summary',
         );
+        const lookup = listed.result.tools.find(
+          (tool: any) => tool.name === 'training_student_lookup',
+        );
         if (!app.meta.modules['training-student']) {
           assert.equal(student, undefined);
+          assert.equal(lookup, undefined);
           return;
+        }
+        assert.ok(lookup);
+        assert.deepEqual(Object.keys(lookup.inputSchema.properties).sort(), [
+          'level',
+          'name',
+          'pageNo',
+          'pageSize',
+        ]);
+        assert.deepEqual(lookup.inputSchema.required, ['name']);
+        assert.equal(lookup.inputSchema.additionalProperties, false);
+        assert.equal(lookup.inputSchema.properties.name.type, 'string');
+        assert.equal(lookup.inputSchema.properties.name.minLength, 1);
+        assert.equal(lookup.inputSchema.properties.name.maxLength, 100);
+        // OpenAPI represents an optional property with null; runtime input still rejects null.
+        assert.deepEqual(lookup.inputSchema.properties.level.type, ['integer', 'null']);
+        assert.equal(lookup.inputSchema.properties.level.minimum, 1);
+        assert.equal(lookup.inputSchema.properties.level.maximum, 3);
+        assert.equal(lookup.inputSchema.properties.pageNo.type, 'integer');
+        assert.equal(lookup.inputSchema.properties.pageNo.minimum, 1);
+        assert.equal(lookup.inputSchema.properties.pageNo.default, 1);
+        assert.equal(lookup.inputSchema.properties.pageSize.type, 'integer');
+        assert.equal(lookup.inputSchema.properties.pageSize.minimum, 1);
+        assert.equal(lookup.inputSchema.properties.pageSize.maximum, 20);
+        assert.equal(lookup.inputSchema.properties.pageSize.default, 10);
+        assert.equal(lookup.annotations.readOnlyHint, true);
+        assert.deepEqual(Object.keys(lookup.outputSchema.properties).sort(), [
+          'list',
+          'pageCount',
+          'pageNo',
+          'pageSize',
+          'total',
+        ]);
+        assert.equal(lookup.outputSchema.properties.total.type, 'string');
+        assert.equal(lookup.outputSchema.properties.list.type, 'array');
+        const item =
+          lookup.outputSchema.components.schemas['training-student.dto.studentLookupItem'];
+        assert.equal(
+          lookup.outputSchema.properties.list.items.$ref,
+          '#/components/schemas/training-student.dto.studentLookupItem',
+        );
+        assert.deepEqual(Object.keys(item.properties).sort(), ['id', 'level', 'name']);
+        assert.deepEqual(item.required.toSorted(), ['id', 'level', 'name']);
+        for (const field of ['mobile', 'notes', 'descriptionMarkdown', 'descriptionHtml', 'rest']) {
+          assert.equal(
+            JSON.stringify(lookup.inputSchema).includes(`"${field}"`),
+            false,
+            `lookup input schema excludes ${field}`,
+          );
+          assert.equal(
+            JSON.stringify(lookup.outputSchema).includes(`"${field}"`),
+            false,
+            `lookup output schema excludes ${field}`,
+          );
+        }
+        for (const args of [
+          undefined,
+          {},
+          { name: null },
+          { name: true },
+          { name: 1 },
+          { name: [] },
+          { name: {} },
+          { name: '' },
+          { name: '   ' },
+          { name: 'x'.repeat(101) },
+          { name: 'Student', level: 0 },
+          { name: 'Student', level: 4 },
+          { name: 'Student', level: 1.5 },
+          { name: 'Student', level: null },
+          { name: 'Student', level: '1' },
+          { name: 'Student', pageNo: 0 },
+          { name: 'Student', pageNo: 1.5 },
+          { name: 'Student', pageNo: '1' },
+          { name: 'Student', pageSize: 0 },
+          { name: 'Student', pageSize: 21 },
+          { name: 'Student', pageSize: 1.5 },
+          { name: 'Student', pageSize: true },
+          ...[
+            'unknown',
+            'where',
+            'columns',
+            'orders',
+            'executor',
+            'disableInstance',
+            'iid',
+            'route',
+            'method',
+            'headers',
+            'innerAccess',
+            'instanceName',
+            'userId',
+          ].map(key => ({ name: 'Student', [key]: 'injected' })),
+        ]) {
+          const rejected = await shared.request('tools/call', {
+            name: lookup.name,
+            arguments: args,
+          });
+          assert.equal(rejected.error?.code, -32602, JSON.stringify(args));
         }
         assert.ok(student);
         assert.deepEqual(Object.keys(student.inputSchema.properties), ['id']);
@@ -147,6 +258,77 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         }
       } finally {
         await shared.close();
+      }
+    });
+  });
+
+  it('normalizes lookup queries and projects nested student output without business-role grants', async t => {
+    if (!app.meta.modules['training-student']) return;
+    await app.bean.executor.mockCtx(async () => {
+      const client = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
+      const raw = {
+        list: [
+          {
+            id: '123',
+            name: '__MCP lookup__',
+            level: 2,
+            mobile: 'private-mobile',
+            notes: 'private-notes',
+            descriptionMarkdown: 'private-markdown',
+            descriptionHtml: '<p>private-notes</p>',
+            rest: { render: 'private-renderer' },
+          },
+        ],
+        total: '1',
+        pageCount: 1,
+        pageNo: 1,
+        pageSize: 10,
+      };
+      // Isolate query binding and output parsing; real permissions remain covered by devHttp.
+      const action = t.mock.method(
+        app.bean.executor,
+        'performAction',
+        async (..._args: Parameters<typeof app.bean.executor.performAction>) => raw,
+      );
+      try {
+        const response = await client.request('tools/call', {
+          name: 'training_student_lookup',
+          arguments: { name: '  Student  ' },
+        });
+        assert.equal(response.error, undefined);
+        assert.notEqual(response.result.isError, true);
+        assert.deepEqual(action.mock.calls[0].arguments, [
+          'get',
+          '/training/student/lookup',
+          { query: { name: 'Student', pageNo: 1, pageSize: 10 }, innerAccess: false },
+        ]);
+        assert.deepEqual(response.result.structuredContent, {
+          list: [{ id: '123', name: '__MCP lookup__', level: 2 }],
+          total: '1',
+          pageCount: 1,
+          pageNo: 1,
+          pageSize: 10,
+        });
+        assert.deepEqual(
+          JSON.parse(response.result.content[0].text),
+          response.result.structuredContent,
+        );
+        for (const level of [1, 2, 3]) {
+          const args = { name: 'x'.repeat(100), level, pageNo: 2, pageSize: level === 1 ? 1 : 20 };
+          const accepted = await client.request('tools/call', {
+            name: 'training_student_lookup',
+            arguments: args,
+          });
+          assert.equal(accepted.error, undefined);
+          assert.notEqual(accepted.result.isError, true);
+          assert.deepEqual(action.mock.calls.at(-1)!.arguments[2], {
+            query: args,
+            innerAccess: false,
+          });
+        }
+      } finally {
+        action.mock.restore();
+        await client.close();
       }
     });
   });

@@ -234,6 +234,8 @@ Source areas: existing OpenAPI generator/DTO metadata and enabled controller/rou
 
 Current bounded contribution: the [2026-10-25 mapper contract](./srs.md#current-bounded-controller-action-mapper-contract-2026-10-25) and [existing implementation evidence](./evidence/business-ai-client.md#explicit-opt-in-controller-action-mapping-2026-10-25) govern authenticated dev/test shared ingress, not production registry closure. The authority synchronization changes no task dependency/status, full ATP result or verified 0/12. The [subsequent user-reported real Codex replay](./evidence/business-ai-client.md#user-reported-codex-generic-mapper-replay-success-recorded-2026-10-25) separately passes the generic replacement's bounded four-read happy path; it does not replace remaining full-task proof, and prior handwritten-tool success remains separately attributed.
 
+Approved new finite contribution (2026-10-25): implement `training_student_lookup` under the [SRS lookup amendment](./srs.md#approved-new-student-lookup-amendment-2026-10-25), using a narrow `training-student` Action/DTO and method-only explicit `readOnly: true` opt-in through existing authenticated dev/test shared ingress. Check the exact input/result and reachable schema under `ATP-MCP-CONTRACT-02`; no mapper, ordinary select, summary or persistence-schema change. Existing evidence does not cover this new tool. This contribution leaves parent blocked status, dependencies, full ATPs and verified 0/12 unchanged.
+
 Tasks:
 
 - Extract opted-in Actions' V31 contracts with `generateJsonOfControllerAction(..., { includeExcluded: true })` and prove enabled-controller/registered-route ownership; validate DTO references and response projection without treating ordinary OpenAPI publication as an allowlist.
@@ -259,6 +261,8 @@ Source areas: candidate catalog; existing controller guards/RBAC/data-scope conv
 
 Current bounded contribution: request-local validated scope filters `mcp:read` lists and rejects mutation calls before dispatch; `mcp:all` grants no business authority. Truthful explicit/inherited `readOnly` precedes GET convention, which is not effect proof. JSON/200 eligibility, unsupported-Action diagnostics, projected runtime/schema closure and safe result errors follow the current SRS mapper contract. These do not implement the proposed production confirmation/audit/role-filtered catalog or complete this parent task.
 
+Approved new finite contribution (2026-10-25): apply the [SRS lookup amendment](./srs.md#approved-new-student-lookup-amendment-2026-10-25) to `training_student_lookup`: explicit read-only classification, select-permission inheritance distinct from summary view, current-instance scope and exactly `id`, `name`, `level` per item with no private-field/schema leakage. Target `ATP-MCP-CONTRACT-03` for this bounded review and `ATP-MCP-CALL-02` for guarded denial; no new production policy/confirmation foundation, grants or development writes. Broader ADRs remain Proposed, parent blocked and verified 0/12 unchanged.
+
 Tasks:
 
 - Obtain a per-action domain-owner/operator review of shape, guarded route/data scope, input/output field projection, side effects, reversibility, idempotency, sensitivity, and external interactions independently of HTTP method; require explicit allowlist/policy/scope ownership before eligibility.
@@ -270,7 +274,7 @@ Acceptance checks:
 
 - A GET with business side effects is not classified read-only by method alone; unreviewed, deceptive-hint, externally irreversible, and unsupported operations cannot enter the enabled set by OpenAPI presence or deployment opt-in alone.
 - `tools/list` hides disallowed tools and `tools/call` repeats relevant current authorization and argument-specific row checks; a listed operation is not a row-level grant.
-- Outside the accepted bounded dev/test disposition, production enablement still requires documented adapter, domain/field/side-effect review and deployment policy. Recording existing mapper/student-summary approval neither approves another tool nor clears these production gates.
+- Outside the accepted bounded dev/test disposition, production enablement still requires documented adapter, domain/field/side-effect review and deployment policy. Existing mapper/student-summary approval alone approves no other tool; the separate lookup amendment approves only `training_student_lookup` and clears none of these production gates.
 - Execution and result tests prove field minimization and schema conformity for each enabled shape, reject unapproved response fields/unsupported status without raw fallback, and distinguish downstream effect from result delivery after post-execution failure.
 
 ### Phase 40: Guarded dispatch and isolation
@@ -284,6 +288,8 @@ Traceability: `PRD-MCP-ACCESS-03`, `PRD-MCP-SAFETY-01`, `SRS-MCP-AUTH-03`, `SRS-
 Dependencies: `WBS-MCP-30-02`.
 
 Source areas: existing bounded MCP Controller Action adapter; `bean.executor.performAction(...)`; existing controller guards/AOP; broader proposed production registry/context integration. [ADR 0007](./decisions/0007-mcp-context-passport-executor.md) remains Proposed for the whole production DEC-MCP-07; it does not negate the separately approved dev/test contribution under the current SRS mapper contract. No new context foundation or source execution is authorized by this record synchronization.
+
+Approved new finite contribution (2026-10-25): dispatch `training_student_lookup` through the unchanged mapper under the [SRS lookup amendment](./srs.md#approved-new-student-lookup-amendment-2026-10-25). Target `ATP-MCP-CALL-01`/`ATP-MCP-CALL-02` for name/level/pagination validation, fixed `id` ascending order, ordinary `listAndCount` envelope, three-field items, select/view separation, current-instance isolation and rejection of query/executor controls. Later real Codex replay is a separate handoff, not existing proof. No ordinary select/summary/schema change, dev writes/grants/reset/environment change or parent closure; dependencies/statuses, broader Proposed ADRs and verified 0/12 remain unchanged.
 
 Tasks:
 

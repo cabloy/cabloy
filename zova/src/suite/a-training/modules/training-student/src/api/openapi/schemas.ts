@@ -463,6 +463,14 @@ export type ApiSchemaAImageDtoImageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1
   components['schemas']['a-image.dto.imageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6'];
 export type ApiSchemaAImageDtoImageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6Partial =
   Partial<ApiSchemaAImageDtoImageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6>;
+export type ApiSchemaTrainingStudentDtoStudentLookupRes =
+  components['schemas']['training-student.dto.studentLookupRes'];
+export type ApiSchemaTrainingStudentDtoStudentLookupResPartial =
+  Partial<ApiSchemaTrainingStudentDtoStudentLookupRes>;
+export type ApiSchemaTrainingStudentDtoStudentLookupItem =
+  components['schemas']['training-student.dto.studentLookupItem'];
+export type ApiSchemaTrainingStudentDtoStudentLookupItemPartial =
+  Partial<ApiSchemaTrainingStudentDtoStudentLookupItem>;
 export type ApiSchemaTrainingStudentDtoStudentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60 =
   components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60'];
 export type ApiSchemaTrainingStudentDtoStudentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60Partial =
@@ -491,6 +499,39 @@ export type ApiSchemaBasicMetricsDtoMetricsQueue =
   components['schemas']['basic-metrics.dto.metricsQueue'];
 export type ApiSchemaBasicMetricsDtoMetricsQueuePartial =
   Partial<ApiSchemaBasicMetricsDtoMetricsQueue>;
+export type ApiSchemaMcpAuthDtoAuthorizationSummary =
+  components['schemas']['mcp-auth.dto.authorizationSummary'];
+export type ApiSchemaMcpAuthDtoAuthorizationSummaryPartial =
+  Partial<ApiSchemaMcpAuthDtoAuthorizationSummary>;
+export type ApiSchemaMcpAuthDtoAuthorizationRedirect =
+  components['schemas']['mcp-auth.dto.authorizationRedirect'];
+export type ApiSchemaMcpAuthDtoAuthorizationRedirectPartial =
+  Partial<ApiSchemaMcpAuthDtoAuthorizationRedirect>;
+export type ApiSchemaMcpAuthDtoAuthorizationDecision =
+  components['schemas']['mcp-auth.dto.authorizationDecision'];
+export type ApiSchemaMcpAuthDtoAuthorizationDecisionPartial =
+  Partial<ApiSchemaMcpAuthDtoAuthorizationDecision>;
+export type ApiSchemaMcpTestDtoCategoryPublicSelectRes =
+  components['schemas']['mcp-test.dto.categoryPublicSelectRes'];
+export type ApiSchemaMcpTestDtoCategoryPublicSelectResPartial =
+  Partial<ApiSchemaMcpTestDtoCategoryPublicSelectRes>;
+export type ApiSchemaMcpTestDtoCategoryPublic =
+  components['schemas']['mcp-test.dto.categoryPublic'];
+export type ApiSchemaMcpTestDtoCategoryPublicPartial = Partial<ApiSchemaMcpTestDtoCategoryPublic>;
+export type ApiSchemaMcpTestDtoProductPublicSelectRes =
+  components['schemas']['mcp-test.dto.productPublicSelectRes'];
+export type ApiSchemaMcpTestDtoProductPublicSelectResPartial =
+  Partial<ApiSchemaMcpTestDtoProductPublicSelectRes>;
+export type ApiSchemaMcpTestDtoProductPublic = components['schemas']['mcp-test.dto.productPublic'];
+export type ApiSchemaMcpTestDtoProductPublicPartial = Partial<ApiSchemaMcpTestDtoProductPublic>;
+export type ApiSchemaMcpTestDtoProductPublicSku =
+  components['schemas']['mcp-test.dto.productPublicSku'];
+export type ApiSchemaMcpTestDtoProductPublicSkuPartial =
+  Partial<ApiSchemaMcpTestDtoProductPublicSku>;
+export type ApiSchemaMcpTestDtoProductPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
+  components['schemas']['mcp-test.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+export type ApiSchemaMcpTestDtoProductPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
+  Partial<ApiSchemaMcpTestDtoProductPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
 export type ApiSchemaALayoutprofileDtoLayoutProfile_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
   components['schemas']['a-layoutprofile.dto.layoutProfile_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
 export type ApiSchemaALayoutprofileDtoLayoutProfile_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =

@@ -6,6 +6,7 @@ import { ApiSchema } from 'zova-module-a-api';
 import {
   ApiApiTrainingStudentselectPath,
   ApiApiTrainingStudentcreatePath,
+  ApiApiTrainingStudentlookupPath,
   ApiApiTrainingStudentviewPath,
   ApiApiTrainingStudentdeletePath,
   ApiApiTrainingStudentupdatePath,
@@ -22,6 +23,10 @@ export class ApiSchemaTrainingStudent extends BeanBase {
 
   create(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiTrainingStudentcreatePath, 'post', options);
+  }
+
+  lookup(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiTrainingStudentlookupPath, 'get', options);
   }
 
   view(options?: IApiSchemaOptions) {

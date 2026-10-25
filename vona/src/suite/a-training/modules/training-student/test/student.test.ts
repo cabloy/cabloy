@@ -1,6 +1,7 @@
 import type { DtoStudentSelectRes, EntityStudent } from 'vona-module-training-student';
 
 import assert from 'node:assert';
+import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { appMetadata } from 'vona';
 import { app } from 'vona-mock';
@@ -11,6 +12,8 @@ import {
   DtoStudentUpdate,
   DtoStudentView,
 } from 'vona-module-training-student';
+
+import type { DtoStudentLookupRes } from '../src/dto/studentLookupRes.tsx';
 
 import { DtoDetailRecordResItem } from '../src/dto/detailRecordResItem.tsx';
 import { DtoStudentSummary } from '../src/dto/studentSummary.tsx';
@@ -78,6 +81,7 @@ describe('student.test.ts', { concurrency: false }, () => {
       const expectedSummaries = {
         create: ['post', '/api/training/student', 'Create Student'],
         select: ['get', '/api/training/student', 'List Students'],
+        lookup: ['get', '/api/training/student/lookup', 'Find Students'],
         view: ['get', '/api/training/student/{id}', 'View Student'],
         update: ['patch', '/api/training/student/{id}', 'Update Student'],
         summary: ['get', '/api/training/student/summary/{id}', 'View Student Summary'],
@@ -266,6 +270,171 @@ describe('student.test.ts', { concurrency: false }, () => {
             .scope('training-student')
             .model.student.deleteById(studentId, { disableDeleted: true });
         }
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
+  it('action:student:lookup', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      const training = app.scope('training-student');
+      const prefix = `L${randomUUID().slice(0, 6)}`;
+      const literals = ['%', '_', '!', "'", '\\'];
+      const literalName = literals.map(literal => `${prefix}${literal}`).join('|');
+      const expected: DtoStudentLookupRes['list'] = [];
+      let foreignStudentId: string | undefined;
+      const lookup = (query: object): Promise<DtoStudentLookupRes> =>
+        app.bean.executor.performAction('get', '/training/student/lookup', {
+          query,
+          innerAccess: false,
+        });
+      try {
+        // Name order deliberately differs from insertion/ID order.
+        for (const [name, level] of [
+          [`Z-${literalName}`, 1],
+          [`A-${prefix}-plain`, 2],
+          [`M-${literalName}`, 1],
+        ] as const) {
+          const student = await training.model.student.insert({
+            name,
+            mobile: '13812345678',
+            level,
+          });
+          expected.push({ id: student.id, name: student.name, level });
+        }
+        await training.model.studentContent.insert({
+          studentId: expected[0].id,
+          descriptionMarkdown: 'Private lookup notes',
+          descriptionHtml: '<p>Private lookup notes</p>',
+        });
+        await app.bean.executor.mockCtx(
+          async () => {
+            const student = await app.scope('training-student').model.student.insert({
+              name: expected[0].name,
+              mobile: '13987654321',
+              level: 1,
+            });
+            foreignStudentId = String(student.id);
+          },
+          { instanceName: 'shareTest' as any },
+        );
+
+        const defaults = await lookup({ name: `  ${prefix}  ` });
+        assert.deepEqual(defaults, {
+          list: expected,
+          total: '3',
+          pageNo: 1,
+          pageSize: 10,
+          pageCount: 1,
+        });
+        for (const item of defaults.list) {
+          assert.deepEqual(Object.keys(item).sort(), ['id', 'level', 'name']);
+        }
+        assert.ok(BigInt(String(expected[0].id)) < BigInt(String(expected[1].id)));
+        assert.ok(BigInt(String(expected[1].id)) < BigInt(String(expected[2].id)));
+        assert.deepEqual(
+          await training.service.student.lookup({ name: prefix, pageNo: 1, pageSize: 10 }),
+          defaults,
+          'the service itself excludes mobile, content, relations and UI fields',
+        );
+        for (const literal of literals) {
+          assert.deepEqual(
+            await lookup({ name: `${prefix}${literal}` }),
+            { ...defaults, list: [expected[0], expected[2]], total: '2' },
+            `${literal} is a bound literal, not wildcard or SQL syntax`,
+          );
+        }
+        const filtered = await lookup({ name: prefix, level: 2 });
+        assert.deepEqual(filtered, { ...defaults, list: [expected[1]], total: '1' });
+        assert.deepEqual(await lookup({ name: prefix, level: 3 }), {
+          ...defaults,
+          list: [],
+          total: '0',
+          pageCount: 0,
+        });
+        for (const [pageNo, list] of [
+          [1, expected.slice(0, 2)],
+          [2, expected.slice(2)],
+          [3, []],
+        ] as const) {
+          assert.deepEqual(await lookup({ name: prefix, pageNo, pageSize: 2 }), {
+            list,
+            total: '3',
+            pageNo,
+            pageSize: 2,
+            pageCount: 2,
+          });
+        }
+        assert.equal(
+          await training.service.student.summary(foreignStudentId!),
+          undefined,
+          'lookup cannot turn a foreign-instance match into a local summary',
+        );
+      } finally {
+        try {
+          for (const student of expected.reverse()) {
+            await training.model.studentContent.delete(
+              { studentId: student.id },
+              { disableDeleted: true },
+            );
+            await training.model.student.deleteById(student.id, { disableDeleted: true });
+          }
+        } finally {
+          try {
+            if (foreignStudentId) {
+              await app.bean.executor.mockCtx(
+                async () => {
+                  await app
+                    .scope('training-student')
+                    .model.student.deleteById(foreignStudentId!, { disableDeleted: true });
+                },
+                { instanceName: 'shareTest' as any },
+              );
+            }
+          } finally {
+            await app.bean.passport.signout();
+          }
+        }
+      }
+    });
+  });
+
+  it('action:student:lookup rejects invalid input and query controls', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      try {
+        const invalidQueries = [
+          {},
+          { name: '' },
+          { name: '   ' },
+          { name: 'a'.repeat(101) },
+          ...[0, 4, 1.5, 'invalid'].map(level => ({ name: 'Lookup', level })),
+          ...[0, -1, 1.5].map(pageNo => ({ name: 'Lookup', pageNo })),
+          ...[0, -1, 1.5, 21].map(pageSize => ({ name: 'Lookup', pageSize })),
+          ...Object.entries({
+            where: { name: 'Lookup' },
+            orders: [['name', 'desc']],
+            columns: ['mobile'],
+            include: { content: true },
+            filter: { name: 'Lookup' },
+            offset: 0,
+            limit: 100,
+            instanceName: 'shareTest',
+          }).map(([key, value]) => ({ name: 'Lookup', [key]: value })),
+        ];
+        for (const query of invalidQueries) {
+          await assert.rejects(
+            () =>
+              app.bean.executor.performAction('get', '/training/student/lookup', {
+                query,
+                innerAccess: false,
+              }),
+            { code: 422 },
+            JSON.stringify(query),
+          );
+        }
+      } finally {
         await app.bean.passport.signout();
       }
     });
@@ -685,6 +854,7 @@ describe('student.test.ts', { concurrency: false }, () => {
       const expectedInherits = {
         create: undefined,
         select: undefined,
+        lookup: `${controllerBeanFullName}#select`,
         view: undefined,
         update: undefined,
         summary: `${controllerBeanFullName}#view`,
