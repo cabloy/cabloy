@@ -57,6 +57,29 @@ Schedule parameters can also include:
 
 This matters because recurring jobs often have the same consistency concerns as ordinary queue jobs.
 
+### Finished-run retention
+
+Scheduled runs inherit the selected queue's worker policy, including the global `a-queue` defaults: remove immediately on success or final failure, but not during intermediate retries. See [Finished-job retention](/backend/queue-guide#finished-job-retention) for worker overrides and operational caveats.
+
+Schedules call BullMQ `upsertJobScheduler` directly, bypassing the normal queue-push `options.job` merge. To override retention for a schedule, use `templateOptions`, for example to retain up to 100 successful and 100 failed runs:
+
+```typescript
+@Schedule({
+  repeat: { every: 3000 },
+  templateOptions: {
+    removeOnComplete: { count: 100 },
+    removeOnFail: { count: 100 },
+  },
+})
+export class ScheduleLog extends BeanBase implements IScheduleExecute {
+  async execute() {
+    console.log(Date.now());
+  }
+}
+```
+
+These options govern finished runs, not the recurring scheduler definition; changing them does not automatically purge old retained runs.
+
 ## Enable/disable and environment scoping
 
 Like queues, schedules can be enabled or disabled and scoped to flavor or mode.

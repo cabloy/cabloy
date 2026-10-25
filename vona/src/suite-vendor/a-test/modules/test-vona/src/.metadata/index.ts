@@ -2215,18 +2215,31 @@ import type { MetaStatic } from '../bean/meta.static.ts';
 import type { MetaAsset } from '../bean/meta.asset.ts';
 /** meta asset: end */
 /** queue: begin */
+export * from '../bean/queue.retained.ts';
 export * from '../bean/queue.test.ts';
 
 import { type IDecoratorQueueOptions } from 'vona-module-a-queue';
 declare module 'vona-module-a-queue' {
 
     export interface IQueueRecord {
-      'test-vona:test': IDecoratorQueueOptions;
+      'test-vona:retained': IDecoratorQueueOptions;
+'test-vona:test': IDecoratorQueueOptions;
     }
 
 
 }
 declare module 'vona-module-test-vona' {
+
+        export interface QueueRetained {
+          /** @internal */
+          get scope(): ScopeModuleTestVona;
+        }
+
+          export interface QueueRetained {
+            get $beanFullName(): 'test-vona.queue.retained';
+            get $onionName(): 'test-vona:retained';
+            get $onionOptions(): IDecoratorQueueOptions;
+          }
 
         export interface QueueTest {
           /** @internal */
@@ -2241,9 +2254,11 @@ declare module 'vona-module-test-vona' {
 }
 /** queue: end */
 /** queue: begin */
+import type { QueueRetained } from '../bean/queue.retained.ts';
 import type { QueueTest } from '../bean/queue.test.ts';
 export interface IModuleQueue {
-  'test': QueueTest;
+  'retained': QueueRetained;
+'test': QueueTest;
 }
 /** queue: end */
 /** serializerTransform: begin */

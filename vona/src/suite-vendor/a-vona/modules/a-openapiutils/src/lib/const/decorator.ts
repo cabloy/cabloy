@@ -2,6 +2,7 @@ export const SymbolRouteHandlersArgumentsMeta = Symbol('SymbolRouteHandlersArgum
 export const SymbolRouteHandlersArgumentsValue = Symbol('SymbolRouteHandlersArgumentsValue');
 
 export const SymbolOpenApiOptions = Symbol('SymbolOpenApiOptions');
+export const SymbolMcpOptions = Symbol('SymbolMcpOptions');
 export const SymbolControllerResource = Symbol('SymbolControllerResource');
 export const SymbolDecoratorRule = Symbol('SymbolDecoratorRule');
 export const SymbolDecoratorDtoOpenapi = Symbol('SymbolDecoratorDtoOpenapi');

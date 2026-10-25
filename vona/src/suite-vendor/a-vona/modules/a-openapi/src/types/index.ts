@@ -1,5 +1,6 @@
 import '@cabloy/zod-query';
 
+export * from './contract.ts';
 export * from './decorator.ts';
 export * from './formMeta.ts';
 export * from './order.ts';

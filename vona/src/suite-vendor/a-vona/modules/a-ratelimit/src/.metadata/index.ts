@@ -25,6 +25,32 @@ declare module 'vona-module-a-ratelimit' {
           }
 }
 /** interceptor: end */
+/** middlewareSystem: begin */
+export * from '../bean/middlewareSystem.aggregate.ts';
+import type { IMiddlewareSystemOptionsAggregate } from '../bean/middlewareSystem.aggregate.ts';
+import 'vona-module-a-aspect';
+declare module 'vona-module-a-aspect' {
+
+    export interface IMiddlewareSystemRecord {
+      'a-ratelimit:aggregate': IMiddlewareSystemOptionsAggregate;
+    }
+
+
+}
+declare module 'vona-module-a-ratelimit' {
+
+        export interface MiddlewareSystemAggregate {
+          /** @internal */
+          get scope(): ScopeModuleARatelimit;
+        }
+
+          export interface MiddlewareSystemAggregate {
+            get $beanFullName(): 'a-ratelimit.middlewareSystem.aggregate';
+            get $onionName(): 'a-ratelimit:aggregate';
+            get $onionOptions(): IMiddlewareSystemOptionsAggregate;
+          }
+}
+/** middlewareSystem: end */
 /** service: begin */
 export * from '../service/rateLimit.ts';
 

@@ -8,6 +8,8 @@ Broadcast lets one worker emit a message that multiple worker processes can rece
 
 This is important because some business logic is not point-to-point background work. It is multi-worker coordination work.
 
+The current broadcast transport uses nonpersistent Redis Pub/Sub, not BullMQ jobs. It has no retained job history or queue-style retention options such as `removeOnComplete` / `removeOnFail`.
+
 ## Create a broadcast
 
 Example: create a broadcast named `echo` in module `training-student`.

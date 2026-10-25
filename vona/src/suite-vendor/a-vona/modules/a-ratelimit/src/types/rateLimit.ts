@@ -14,6 +14,11 @@ export interface IRateLimitPolicy {
   headers: boolean;
 }
 
+export interface IRateLimitAggregatePolicy {
+  mode: RateLimitMode;
+  limit: number;
+}
+
 export interface IRateLimitResult {
   allowed: boolean;
   limit: number;
