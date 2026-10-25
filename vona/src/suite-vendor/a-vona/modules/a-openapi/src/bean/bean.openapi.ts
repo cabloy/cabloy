@@ -8,6 +8,8 @@ import { Bean } from 'vona-module-a-bean';
 import { Caching } from 'vona-module-a-caching';
 import { $schema } from 'vona-module-a-openapiutils';
 
+import type { IGenerateJsonOfControllerActionOptions } from '../types/contract.ts';
+
 @Bean()
 export class BeanOpenapi extends BeanBase {
   public async clearAllCaches() {
@@ -65,11 +67,11 @@ export class BeanOpenapi extends BeanBase {
   }
 
   protected generateJsonOfControllerActionCacheKey(info: ICachingActionKeyInfo) {
-    const [controller, actionKey, version] = info.args;
+    const [controller, actionKey, version, options] = info.args;
     const beanOptions = appResource.getBean(controller)!;
     const beanFullName = beanOptions.beanFullName;
     const locale = this.ctx.locale;
-    return `${info.prop}_${beanFullName}_${actionKey}_${version ?? 'V31'}_${locale}`;
+    return `${info.prop}_${beanFullName}_${actionKey}_${version ?? 'V31'}_${locale}_${options?.includeExcluded === true}`;
   }
 
   @Caching.get({ cacheName: 'a-openapi:json', cacheKeyFn: 'generateJsonCacheKey' })
@@ -94,6 +96,7 @@ export class BeanOpenapi extends BeanBase {
     controller: Constructable,
     actionKey: string,
     version: K = 'V31' as any,
+    options: IGenerateJsonOfControllerActionOptions = {},
   ): Promise<IOpenapiObject[K]> {
     const registry = new OpenAPIRegistry();
     const beanOptions = appResource.getBean(controller);
@@ -103,6 +106,7 @@ export class BeanOpenapi extends BeanBase {
       beanOptions.module,
       controller,
       actionKey,
+      options,
     );
     const generator =
       version === 'V30'
