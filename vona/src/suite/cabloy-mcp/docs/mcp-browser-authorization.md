@@ -10,9 +10,28 @@ MCP client → /mcp/auth → existing SSR Site → consent page
           → registered client callback → /mcp/token → Bearer-authenticated /mcp
 ```
 
-Backend `mcp-auth` in the `cabloy-mcp` suite owns OAuth authorization state, decisions, codes and tokens. Backend `cabloy-mcp` validates MCP access, while dev/test-only `mcp-test` continues to own the shared `/mcp` endpoint and the three read-only catalog tools. The consent page belongs to Zova's `cabloy-mcp` suite/module. This does not introduce a production tool registry or management console.
+Backend `mcp-auth` in the `cabloy-mcp` suite owns OAuth authorization state, decisions, codes and tokens. Backend `cabloy-mcp` validates MCP access and maps explicitly opted-in Controller Actions to tools; dev/test-only `mcp-test` owns the shared `/mcp` endpoint and composes it through `createControllerToolServer(app, scope)`. This includes the three read-only catalog actions and the conditional [student summary tool](#student-summary-business-read), plus supported opted-in actions enabled in the current mode. The consent page belongs to Zova's `cabloy-mcp` suite/module. This does not introduce production ingress or a management console.
 
 For the independent anonymous, credential-rejecting standalone fixture, use [Local MCP Test Catalog](./mcp-commerce-local.md). Do not send OAuth tokens to that launcher.
+
+## Student summary business read
+
+When `training-student` is active, the authenticated shared endpoint also lists **`training_student_summary`**. It accepts only `{ "id": "<existing student ID>" }` and invokes the existing guarded `GET /training/student/summary/:id` action with `innerAccess: false`. The action retains its inherited student `view` RBAC, serializer, current authenticated user, and ordinary instance-scoped model read. It is not an owner-only self-service action. Neither `mcp:all` nor `mcp:read` grants student permission; both scopes permit this read only when the current business authorization allows it.
+
+The validated result contains exactly `id`, `name`, `level`, `levelTitle`, `descriptionLength`, and `summaryText`, identically represented as JSON text and structured content. Metadata comes from a projection of the existing summary DTO. Mobile and full Markdown/HTML notes are omitted from the advertised schema and result. This is field minimization, not anonymization: the name and summary remain business data. Missing records, including records outside the current instance, produce a safe not-found tool result; denied or failed reads return a generic failure without exception details. Invalid arguments are protocol errors. Clients cannot supply routes, methods, credentials, instance/user selectors, or executor options.
+
+The shared endpoint now discovers supported, explicitly opted-in Controller Actions rather than adding this tool through a student-specific adapter. Its method-level `@mcp.tool()` preserves the explicit name and six-field `output.pick`; the HTTP DTO and permissions stay unchanged. Without the training module, this tool is absent, but other enabled opted-in actions remain eligible. The independent anonymous launcher always retains exactly its three synthetic fixtures and does not use the mapper or expose this business tool. See [MCP Controller Tools](./mcp-controller-tools.md) for class/method opt-in, contract mapping and diagnostics.
+
+For a manual check of the mapper-backed shared endpoint:
+
+1. Use a freshly authorized shared-server connection and an existing student that the signed-in account may already view. List tools and confirm `training_student_summary` and its six-field output schema. Do not use a disposable automated-test ID or create seed data merely for this check.
+2. Call it with `{ "id": "<existing student ID>" }`. Check identity and exactly `id`, `name`, `level`, `levelTitle`, `descriptionLength`, `summaryText`; JSON text and structured content must agree. Check that neither schema definitions nor results retain mobile or full notes.
+3. With a separately authorized `mcp:read` connection, confirm only read-only tools are listed. If a supported mutation tool is enabled, a direct call by its known name must also be rejected. `mcp:all` may expose both classifications but must retain ordinary action authorization; do not execute business writes merely to check discovery.
+4. If an opted-in tool is missing, inspect the factory server's `diagnostics` (`controller`, `action`, `reason`) on the server side. Unsupported contracts are omitted; diagnostic details are not client errors. A business permission error is not a reason to bypass RBAC or grant a role.
+
+This is a procedure, not a claim of new passing results. The [earlier automated qualification](../../../../../repo-specs/cabloy-mcp/evidence/business-ai-client.md#student-summary-business-tool-automated-qualification-2026-10-25) and real-client report below predate replacement of the student-specific adapter and do not revalidate the mapper.
+
+On 2026-10-25, before that replacement, the user reported Codex server `test` discovered this tool and invoked `mcp__test__training_student_summary` successfully. The returned ID matched the input, the result contained exactly the six fields, and mobile/full notes were absent. They reported no writes or role-permission changes. This passed the bounded real-client happy path for the earlier integration; the [retained acceptance record](../../../../../repo-specs/cabloy-mcp/evidence/business-ai-client.md#user-reported-codex-student-summary-success-recorded-2026-10-25) omits raw student name/ID and keeps exact scope, version and served-source attribution unknown. The mapper-backed replacement has not been revalidated by that historical report. Earlier negative authorization and instance-isolation checks remain automated historical coverage, not proof for this replacement, production readiness or full ATP closure.
 
 ## Supported first profile
 
@@ -71,7 +90,7 @@ The response is direct JSON with HTTP `201`, a server-issued opaque `client_id`,
 - **New DCR registration:** omitted `scope` defaults to `mcp:all`. Explicit `mcp:all` and `mcp:read` are supported. A valid space-separated list `mcp:all mcp:read` or `mcp:read mcp:all` is accepted and canonicalized to `mcp:all`.
 - **Authorization:** explicit `scope` uses the same supported values and list canonicalization; omitted `scope` inherits that client's registered ceiling, not an unconditional `mcp:all` default. An `mcp:all` registration may authorize either `mcp:all` or narrowed `mcp:read`; an `mcp:read` registration cannot authorize `mcp:all`. The approved scope remains bound through consent, code exchange and token use.
 - **Existing clients and tokens:** existing `mcp:read` registrations, grants and tokens are not promoted by the new default. Requesting broader access requires a new `mcp:all` registration and fresh explicit authorization; do not rewrite persisted bindings.
-- **Local authority:** both scopes remain bounded by the current user's RBAC, resource ownership, data scope and tenant/instance. `mcp:all` is not administrator or cross-tenant authority. The existing three catalog tools remain read-only and work with either scope; this change adds no mutation tools or dispatch registry. Before exposing any future actual mutation, enforce its required scope at tool dispatch so `mcp:read` cannot execute it. Such mutation dispatch enforcement is a future requirement, not an existing capability claim.
+- **Local authority:** both scopes remain bounded by the current user's RBAC, resource ownership, data scope and tenant/instance. `mcp:all` is not administrator or cross-tenant authority. The mapper enforces scope at both `tools/list` and `tools/call`: `mcp:read` lists/calls only tools classified read-only; `mcp:all` permits both classifications without bypassing business guards. The three catalog actions remain read-only and work with either scope. Classification uses action `readOnly`, then controller default, then GET inference; GET is a convention, not proof of no side effects. Opt-in is closed by default, and there is no exclusion option after class opt-in; decorate selected methods when only a subset is safe to expose.
 
 No client scope configuration is needed for the new-registration default. To explicitly narrow Codex authorization, use top-level `scopes` in the server's MCP configuration table, not in its HTTP headers:
 
@@ -175,6 +194,10 @@ Each protected request checks current expiry, revocation, registration and accou
 - **MCP access denied:** distinguish token/scope failure from current local authorization. A valid token does not create a local role or a cross-instance entitlement.
 
 ## Verification and operational limits
+
+The Controller Action mapper replacement is qualified separately in the [opt-in mapping evidence](../../../../../repo-specs/cabloy-mcp/evidence/business-ai-client.md#explicit-opt-in-controller-action-mapping-2026-10-25). Its focused shared authorization/student regression passes **34/34**, including ordinary RBAC/instance behavior and read-scope denial before test-only writes in modern and legacy modes. Earlier real-Codex catalog/student acceptance is historical; a real-client retest of the generic replacement remains separate.
+
+The retained results below describe their original increments. They predate the Controller Action mapper replacement and are not new verification of its discovery, projection or scope enforcement. No replacement acceptance is inferred from the earlier Codex reports.
 
 This profile initially targets SQLite on Vona's primary datasource and ordinary application wall-clock deadlines under a correctly maintained host clock. It does not establish cross-dialect, multi-worker, cross-host, qualified nonrollback-clock, synchronous browser-logout/token-revocation or production guarantees. Expiry and current revocation checks must not depend on background cleanup.
 

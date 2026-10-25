@@ -4,7 +4,7 @@ import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
 import { Core } from 'vona-module-a-core';
-import { Api, Resource, v } from 'vona-module-a-openapiutils';
+import { Api, mcp, Resource, v } from 'vona-module-a-openapiutils';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 import { z } from 'zod';
@@ -64,6 +64,14 @@ export class ControllerStudent extends BeanBase {
     await this.scope.service.student.update(id, student);
   }
 
+  @mcp.tool({
+    name: 'training_student_summary',
+    description:
+      'Read a student summary by ID using your current student-view permission and instance. Excludes mobile and full notes.',
+    output: {
+      pick: ['id', 'name', 'level', 'levelTitle', 'descriptionLength', 'summaryText'],
+    },
+  })
   @Web.get('summary/:id', { summary: $locale('StudentSummary') })
   @Api.body(v.optional(), v.object(DtoStudentSummary))
   @Core.serializer()

@@ -1,18 +1,22 @@
 import type { JSONRPCMessage, JSONRPCRequest, Server } from '@modelcontextprotocol/server';
+import type { IMcpToolOptions } from 'vona-module-a-openapiutils';
 
 import { InMemoryTransport } from '@modelcontextprotocol/server';
 import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
-import { appResource, runWithZodQueryCoercion } from 'vona';
+import { appMetadata, appResource, runWithZodQueryCoercion } from 'vona';
 import { acquireTestLock, app } from 'vona-mock';
-import { $schema } from 'vona-module-a-openapiutils';
+import { $schema, mcp, SymbolMcpOptions } from 'vona-module-a-openapiutils';
 
+import { ControllerCatalog } from '../src/controller/catalog.ts';
+import { ControllerToolFixture, toolFixtureState } from '../src/controller/toolFixture.ts';
 import { DtoCategoryPublic } from '../src/dto/categoryPublic.tsx';
 import { DtoCategoryPublicSelectReq } from '../src/dto/categoryPublicSelectReq.tsx';
 import { DtoCategoryPublicSelectRes } from '../src/dto/categoryPublicSelectRes.tsx';
 import { DtoProductPublicDetail } from '../src/dto/productPublicDetail.tsx';
 import { DtoProductPublicSelectRes } from '../src/dto/productPublicSelectRes.tsx';
 import { createBusinessToolServer } from '../src/lib/businessTools.ts';
+import { createSharedBusinessToolServer } from '../src/lib/sharedBusinessTools.ts';
 import { ServiceCatalog } from '../src/service/catalog.ts';
 
 async function connect(server: Server) {
@@ -46,12 +50,19 @@ async function connect(server: Server) {
 const toolName = 'commerce_products_search';
 const detailToolName = 'commerce_product_detail';
 const categoryToolName = 'commerce_categories_list';
+const statusToolName = 'mcp_test_action_status';
+const effectToolName = 'mcp_test_action_effect';
+const scalarToolName = 'mcp_test_action_scalar';
+const arrayToolName = 'mcp_test_action_array';
 
 describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => {
   let release: (() => void) | undefined;
   before(async () => {
     assert.ok(app.meta.modules['mcp-test'], 'fixture module is loaded');
     assert.ok(app.meta.modules['cabloy-mcp'], 'core module is loaded');
+    if ((process.env.PROJECT_DISABLED_SUITES ?? '').split(',').includes('a-training')) {
+      assert.equal(app.meta.modules['training-student'], undefined);
+    }
     if ((process.env.PROJECT_DISABLED_SUITES ?? '').split(',').includes('a-commerce')) {
       assert.deepEqual(
         Object.keys(app.meta.modules).filter(
@@ -64,6 +75,382 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     release = await acquireTestLock('mcp-test');
   });
   after(() => release?.());
+
+  it('keeps the student tool out of the default composition and validates its shared contract', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const standalone = await connect(await createBusinessToolServer(app));
+      try {
+        const rejected = await standalone.request('tools/call', {
+          name: 'training_student_summary',
+          arguments: { id: '1' },
+        });
+        assert.equal(rejected.error.code, -32602);
+      } finally {
+        await standalone.close();
+      }
+      const shared = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+      try {
+        const listed = await shared.request('tools/list');
+        assert.deepEqual(
+          listed.result.tools.map((tool: any) => tool.name).sort(),
+          [
+            categoryToolName,
+            toolName,
+            detailToolName,
+            statusToolName,
+            effectToolName,
+            scalarToolName,
+            arrayToolName,
+            ...(app.meta.modules['training-student'] ? ['training_student_summary'] : []),
+          ].sort(),
+        );
+        const student = listed.result.tools.find(
+          (tool: any) => tool.name === 'training_student_summary',
+        );
+        if (!app.meta.modules['training-student']) {
+          assert.equal(student, undefined);
+          return;
+        }
+        assert.ok(student);
+        assert.deepEqual(Object.keys(student.inputSchema.properties), ['id']);
+        assert.deepEqual(student.inputSchema.required, ['id']);
+        assert.equal(student.inputSchema.additionalProperties, false);
+        assert.deepEqual(Object.keys(student.outputSchema.properties).sort(), [
+          'descriptionLength',
+          'id',
+          'level',
+          'levelTitle',
+          'name',
+          'summaryText',
+        ]);
+        for (const field of ['mobile', 'descriptionMarkdown', 'descriptionHtml']) {
+          assert.equal(JSON.stringify(student).includes(`\"${field}\"`), false);
+        }
+        assert.equal(student.annotations.readOnlyHint, true);
+        for (const args of [
+          {},
+          { id: null },
+          { id: true },
+          { id: [] },
+          { id: {} },
+          { id: '' },
+          ...['route', 'method', 'headers', 'innerAccess', 'instanceName', 'userId'].map(key => ({
+            id: '1',
+            [key]: 'injected',
+          })),
+        ]) {
+          const rejected = await shared.request('tools/call', {
+            name: student.name,
+            arguments: args,
+          });
+          assert.equal(rejected.error?.code, -32602, JSON.stringify(args));
+        }
+      } finally {
+        await shared.close();
+      }
+    });
+  });
+
+  it('requires an explicit authorization scope and blocks write tools before ordinary Action dispatch', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await assert.rejects(
+        () => createSharedBusinessToolServer(app),
+        /MCP authorization scope required/,
+      );
+      const initial = toolFixtureState.count;
+      const read = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
+      const all = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+      try {
+        const readTools = (await read.request('tools/list')).result.tools;
+        const allTools = (await all.request('tools/list')).result.tools;
+        assert.equal(
+          readTools.some((tool: any) => tool.name === effectToolName),
+          false,
+        );
+        assert.equal(
+          allTools.some((tool: any) => tool.name === effectToolName),
+          true,
+        );
+        const status = readTools.find((tool: any) => tool.name === statusToolName);
+        assert.ok(status);
+        assert.equal(status.annotations.readOnlyHint, true);
+        assert.deepEqual(status.inputSchema.properties, {});
+        const effect = allTools.find((tool: any) => tool.name === effectToolName);
+        assert.equal(effect.annotations.readOnlyHint, false);
+        assert.deepEqual(Object.keys(effect.inputSchema.properties).sort(), ['body', 'params']);
+        assert.deepEqual(effect.inputSchema.required.toSorted(), ['body', 'params']);
+        assert.equal(effect.inputSchema.additionalProperties, false);
+        const args = { params: { label: 'scope-proof' }, body: { amount: 2 } };
+        const denied = await read.request('tools/call', { name: effectToolName, arguments: args });
+        assert.equal(denied.error?.code, -32602);
+        assert.equal(toolFixtureState.count, initial, 'denied calls do not reach the controller');
+        const closed = await all.request('tools/call', {
+          name: 'mcp-test_toolFixture_closed',
+          arguments: {},
+        });
+        assert.equal(closed.error?.code, -32602, 'unannotated sibling Actions remain closed');
+        for (const arguments_ of [
+          { label: 'scope-proof', amount: 2 },
+          { params: { label: 'scope-proof', innerAccess: true }, body: { amount: 2 } },
+          { params: { label: 'scope-proof' }, body: { amount: 4 } },
+          { ...args, innerAccess: true },
+        ]) {
+          const rejected = await all.request('tools/call', {
+            name: effectToolName,
+            arguments: arguments_,
+          });
+          assert.equal(rejected.error?.code, -32602);
+          assert.equal(toolFixtureState.count, initial);
+        }
+        // The fixture is public, not an RBAC proof; devHttp retains real student-role checks.
+        const accepted = await all.request('tools/call', { name: effectToolName, arguments: args });
+        assert.equal(accepted.error, undefined);
+        assert.notEqual(accepted.result.isError, true);
+        assert.deepEqual(accepted.result.structuredContent, {
+          count: initial + 2,
+          label: 'scope-proof',
+        });
+        const current = await read.request('tools/call', { name: statusToolName });
+        assert.deepEqual(current.result.structuredContent, { count: initial + 2 });
+      } finally {
+        toolFixtureState.count = initial;
+        await read.close();
+        await all.close();
+      }
+    });
+  });
+
+  it('inherits class opt-in defaults, retains local names and rejects invalid exposure configuration', async t => {
+    await app.bean.executor.mockCtx(async () => {
+      const original = appMetadata.getMetadata;
+      let configuration:
+        | 'defaults'
+        | 'override'
+        | 'pick-replacement'
+        | 'invalid-name'
+        | 'duplicate'
+        | 'invalid-pick' = 'defaults';
+      const metadata = t.mock.method(
+        appMetadata,
+        'getMetadata',
+        function (...args: Parameters<typeof original>) {
+          const [key, target, action] = args;
+          const value = original.apply(appMetadata, args) as IMcpToolOptions | undefined;
+          if (key !== SymbolMcpOptions) return value;
+          if (target === ControllerToolFixture && action === undefined) {
+            if (configuration === 'defaults' || configuration === 'override') {
+              return { description: 'Fixture class default', readOnly: false };
+            }
+            if (configuration === 'pick-replacement') return { output: { pick: ['count'] } };
+          }
+          if (target === ControllerToolFixture.prototype && configuration === 'pick-replacement') {
+            if (action === 'effect') return { ...value, output: { pick: ['label'] } };
+            if (action === 'scalar' || action === 'array') return { ...value, output: undefined };
+          }
+          if (target === ControllerToolFixture.prototype && action === 'status') {
+            if (configuration === 'defaults') return { ...value, readOnly: true };
+            if (configuration === 'override') {
+              return {
+                ...value,
+                name: 'mcp_test_overridden_status',
+                description: 'Local description',
+                readOnly: true,
+              };
+            }
+            if (configuration === 'invalid-name') return { ...value, name: 'invalid tool name' };
+            if (configuration === 'duplicate') return { ...value, name: categoryToolName };
+            if (configuration === 'invalid-pick')
+              return { ...value, output: { pick: ['missing'] } };
+          }
+          return value;
+        },
+      );
+      try {
+        assert.deepEqual(appMetadata.getMetadata(SymbolMcpOptions, ControllerCatalog), {});
+        const client = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+        try {
+          const tools = (await client.request('tools/list')).result.tools;
+          const status = tools.find((tool: any) => tool.name === statusToolName);
+          assert.equal(status.description, 'Fixture class default');
+          assert.equal(
+            status.annotations.readOnlyHint,
+            true,
+            'local options override class defaults',
+          );
+          const closed = tools.find((tool: any) => tool.name === 'mcp-test_toolFixture_closed');
+          assert.ok(closed, 'class opt-in exposes representable sibling Actions');
+          assert.equal(closed.description, 'Fixture class default');
+          assert.equal(closed.annotations.readOnlyHint, false);
+        } finally {
+          await client.close();
+        }
+        configuration = 'override';
+        const overridden = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
+        try {
+          const tools = (await overridden.request('tools/list')).result.tools;
+          assert.equal(
+            tools.some((tool: any) => tool.name === statusToolName),
+            false,
+          );
+          const status = tools.find((tool: any) => tool.name === 'mcp_test_overridden_status');
+          assert.ok(status);
+          assert.equal(status.description, 'Local description');
+          assert.equal(status.annotations.readOnlyHint, true);
+        } finally {
+          await overridden.close();
+        }
+        configuration = 'pick-replacement';
+        const projected = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+        const initial = toolFixtureState.count;
+        try {
+          const tool = (await projected.request('tools/list')).result.tools.find(
+            (tool: any) => tool.name === effectToolName,
+          );
+          assert.deepEqual(Object.keys(tool.outputSchema.properties), ['label']);
+          const response = await projected.request('tools/call', {
+            name: effectToolName,
+            arguments: { params: { label: 'pick-replacement' }, body: { amount: 1 } },
+          });
+          assert.deepEqual(response.result.structuredContent, { label: 'pick-replacement' });
+          assert.deepEqual(JSON.parse(response.result.content[0].text), {
+            label: 'pick-replacement',
+          });
+        } finally {
+          toolFixtureState.count = initial;
+          await projected.close();
+        }
+        for (const [mode, expected] of [
+          ['invalid-name', /Invalid or duplicate MCP tool name/],
+          ['duplicate', /Invalid or duplicate MCP tool name/],
+          ['invalid-pick', /Invalid MCP output.pick/],
+        ] as const) {
+          configuration = mode;
+          await assert.rejects(() => createSharedBusinessToolServer(app, 'mcp:all'), expected);
+        }
+        assert.throws(
+          () => (mcp.tool as any)({ name: 'class-name-is-not-valid' })(class {}),
+          /name is only valid on a controller action/,
+        );
+      } finally {
+        metadata.mock.restore();
+      }
+    });
+  });
+
+  it('keeps excluded Action contracts out of public caches, wraps scalar/array output and diagnoses unsupported Actions', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const publicBefore = await app.bean.openapi.generateJsonOfControllerAction(
+        ControllerToolFixture,
+        'scalar',
+        'V31',
+      );
+      assert.deepEqual(Object.keys(publicBefore.paths ?? {}), []);
+      const contract = await app.bean.openapi.generateJsonOfControllerAction(
+        ControllerToolFixture,
+        'scalar',
+        'V31',
+        { includeExcluded: true },
+      );
+      assert.equal(Object.keys(contract.paths ?? {}).length, 1);
+      const server = await createSharedBusinessToolServer(app, 'mcp:read');
+      const client = await connect(server);
+      try {
+        assert.ok(
+          server.diagnostics.some(
+            item =>
+              item.controller === 'mcp-test.controller.toolFixture' &&
+              item.action === 'unsupported' &&
+              item.reason.includes('Only JSON/200 Actions'),
+          ),
+        );
+        const tools = (await client.request('tools/list')).result.tools;
+        assert.equal(
+          tools.some((tool: any) => tool.name === 'mcp_test_action_unsupported'),
+          false,
+        );
+        for (const [name, expected] of [
+          [scalarToolName, 7],
+          [arrayToolName, ['safe', 'array']],
+        ] as const) {
+          const tool = tools.find((tool: any) => tool.name === name);
+          assert.deepEqual(Object.keys(tool.outputSchema.properties), ['result']);
+          const response = await client.request('tools/call', { name });
+          assert.equal(response.error, undefined);
+          assert.notEqual(response.result.isError, true);
+          assert.deepEqual(response.result.structuredContent, { result: expected });
+          assert.deepEqual(JSON.parse(response.result.content[0].text), { result: expected });
+        }
+        const rejected = await client.request('tools/call', {
+          name: 'mcp_test_action_unsupported',
+        });
+        assert.equal(rejected.error?.code, -32602);
+      } finally {
+        await client.close();
+      }
+      const publicAfter = await app.bean.openapi.generateJsonOfControllerAction(
+        ControllerToolFixture,
+        'scalar',
+        'V31',
+      );
+      assert.deepEqual(
+        publicAfter,
+        publicBefore,
+        'includeExcluded does not poison the public cache',
+      );
+    });
+  });
+
+  it('projects student output and fails closed on invalid retained fields', async t => {
+    if (!app.meta.modules['training-student']) return;
+    await app.bean.executor.mockCtx(async () => {
+      const client = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+      const executor = app.bean.executor;
+      const raw = {
+        id: '123',
+        name: '__MCP projection__',
+        level: 2,
+        levelTitle: '2',
+        descriptionLength: 7,
+        summaryText: 'A safe summary',
+        mobile: 'private-mobile',
+        descriptionMarkdown: 'private-notes',
+        descriptionHtml: '<p>private-notes</p>',
+        extra: 'private-extra',
+      };
+      // Isolate output parsing only; guarded real controller behavior is covered by devHttp.
+      const action = t.mock.method(executor, 'performAction', async () => raw);
+      try {
+        const call = () =>
+          client.request('tools/call', {
+            name: 'training_student_summary',
+            arguments: { id: '123' },
+          });
+        const response = await call();
+        assert.equal(response.error, undefined);
+        assert.notEqual(response.result.isError, true);
+        assert.deepEqual(response.result.structuredContent, {
+          id: raw.id,
+          name: raw.name,
+          level: raw.level,
+          levelTitle: raw.levelTitle,
+          descriptionLength: raw.descriptionLength,
+          summaryText: raw.summaryText,
+        });
+        assert.deepEqual(
+          JSON.parse(response.result.content[0].text),
+          response.result.structuredContent,
+        );
+        action.mock.mockImplementation(async () => ({ ...raw, summaryText: undefined }));
+        const invalid = await call();
+        assert.equal(invalid.result.isError, true);
+        assert.equal(invalid.result.structuredContent, undefined);
+        assert.deepEqual(invalid.result.content, [{ type: 'text', text: 'Action failed' }]);
+      } finally {
+        action.mock.restore();
+        await client.close();
+      }
+    });
+  });
 
   it('restores business query semantics beneath native protocol parsing for all three DTO-backed tools', async () => {
     await app.bean.executor.mockCtx(() =>

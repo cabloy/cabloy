@@ -6,9 +6,11 @@ import { request } from 'node:http';
 import { after, before, describe, it } from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
 import { acquireTestLock, app } from 'vona-mock';
+import { BeanExecutor } from 'vona-module-a-executor';
 import { fixtureIngressLimits } from 'vona-module-cabloy-mcp';
 import { getMcpIssuer } from 'vona-module-mcp-auth';
 
+import { toolFixtureState } from '../src/controller/toolFixture.ts';
 import { closeDevTransport, devTransportSnapshot } from '../src/lib/mcpTransport.ts';
 import { ServiceCatalog } from '../src/service/catalog.ts';
 
@@ -16,6 +18,17 @@ const version = '2026-07-28';
 const categoriesName = 'commerce_categories_list';
 const searchName = 'commerce_products_search';
 const detailName = 'commerce_product_detail';
+const studentSummaryName = 'training_student_summary';
+const statusName = 'mcp_test_action_status';
+const effectName = 'mcp_test_action_effect';
+const studentSummaryFields = [
+  'id',
+  'name',
+  'level',
+  'levelTitle',
+  'descriptionLength',
+  'summaryText',
+].sort();
 let port: number;
 let bearer: string;
 let origin: string;
@@ -301,7 +314,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     }
   });
 
-  it('shares discovery, modern/legacy three-tool flows and ordinary catalog routes on one listener', async () => {
+  it('shares discovery, modern/legacy catalog flows and ordinary catalog routes on one listener', async () => {
     const server = app.server;
     const discovered = await send('server/discover');
     assert.equal(discovered.status, 200);
@@ -327,9 +340,38 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       const listed = await send('tools/list', {}, { legacy, headers });
       assert.equal(listed.status, 200);
       assert.deepEqual(
-        listed.body.result.tools.map((tool: any) => tool.name),
-        [searchName, detailName, categoriesName],
+        listed.body.result.tools.map((tool: any) => tool.name).sort(),
+        [
+          searchName,
+          detailName,
+          categoriesName,
+          statusName,
+          'mcp_test_action_scalar',
+          'mcp_test_action_array',
+          ...(token === allToken ? [effectName] : []),
+          ...(app.meta.modules['training-student'] ? [studentSummaryName] : []),
+        ].sort(),
       );
+      if (app.meta.modules['training-student']) {
+        const studentTool = listed.body.result.tools.find(
+          (tool: any) => tool.name === studentSummaryName,
+        );
+        assert.ok(studentTool);
+        assert.deepEqual(Object.keys(studentTool.inputSchema.properties), ['id']);
+        assert.deepEqual(studentTool.inputSchema.required, ['id']);
+        assert.equal(studentTool.inputSchema.additionalProperties, false);
+        assert.deepEqual(
+          Object.keys(studentTool.outputSchema.properties).sort(),
+          studentSummaryFields,
+        );
+        assert.deepEqual(studentTool.outputSchema.required.toSorted(), studentSummaryFields);
+        assert.equal(studentTool.annotations.readOnlyHint, true);
+        assert.equal(studentTool.annotations.destructiveHint, false);
+        for (const field of ['mobile', 'descriptionMarkdown', 'descriptionHtml']) {
+          assert.equal(JSON.stringify(studentTool.inputSchema).includes(`"${field}"`), false);
+          assert.equal(JSON.stringify(studentTool.outputSchema).includes(`"${field}"`), false);
+        }
+      }
       const call = async (name: string, args: Record<string, unknown>) =>
         output(await send('tools/call', { name, arguments: args }, { legacy, headers }));
       const categories = await call(categoriesName, {});
@@ -357,6 +399,283 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     );
     assert.equal(app.server, server);
     assert.ok(app.server?.listening, 'per-request cleanup does not close shared server');
+  });
+
+  it('filters write discovery and rejects read-scope calls before dispatch across modern and legacy transports', async t => {
+    const initial = toolFixtureState.count;
+    const allToken = await redeemBearer('mcp:all');
+    const original = BeanExecutor.prototype.performAction;
+    const calls: Array<{
+      method: unknown;
+      path: unknown;
+      options: unknown;
+      userId: string;
+      authId: string;
+    }> = [];
+    const observed = t.mock.method(
+      BeanExecutor.prototype,
+      'performAction',
+      async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
+        calls.push({
+          method: args[0],
+          path: args[1],
+          options: args[2],
+          userId: String(this.bean.passport.currentUser?.id),
+          authId: String(this.bean.passport.currentAuth?.id),
+        });
+        return await original.apply(this, args);
+      },
+    );
+    try {
+      for (const legacy of [false, true]) {
+        const invoke = (token: string, name: string, args: Record<string, unknown> = {}) =>
+          send(
+            'tools/call',
+            { name, arguments: args },
+            {
+              legacy,
+              headers: { authorization: `Bearer ${token}` },
+            },
+          );
+        const args = { params: { label: 'http-scope-proof' }, body: { amount: 1 } };
+        const beforeDenied = toolFixtureState.count;
+        const beforeDispatch = calls.length;
+        const denied = await invoke(bearer, effectName, args);
+        assert.equal(denied.status, 200);
+        assert.equal(denied.body.error?.code, -32602);
+        assert.equal(denied.body.result, undefined);
+        assert.equal(calls.length, beforeDispatch, 'scope is checked before performAction');
+        assert.equal(toolFixtureState.count, beforeDenied);
+        const closed = await invoke(allToken, 'mcp-test_toolFixture_closed');
+        assert.equal(closed.body.error?.code, -32602);
+        assert.equal(calls.length, beforeDispatch, 'an unannotated sibling is not dispatchable');
+        // Public fixture proves scope and Passport handoff, not RBAC; student tests below do that.
+        const accepted = output(await invoke(allToken, effectName, args));
+        assert.deepEqual(accepted, { count: beforeDenied + 1, label: 'http-scope-proof' });
+        const dispatched = calls.at(-1)!;
+        assert.deepEqual(dispatched, {
+          method: 'post',
+          path: '/mcp/test/actions/effect/:label',
+          options: { ...args, innerAccess: false },
+          userId: fixtureUserId,
+          authId: fixtureAuthId,
+        });
+        assert.deepEqual(output(await invoke(bearer, statusName)), { count: beforeDenied + 1 });
+        assert.equal(calls.at(-1)!.method, 'get');
+        assert.equal(calls.at(-1)!.path, '/mcp/test/actions/status');
+        assert.deepEqual(calls.at(-1)!.options, { innerAccess: false });
+      }
+    } finally {
+      toolFixtureState.count = initial;
+      observed.mock.restore();
+    }
+  });
+
+  it('guards persisted student summaries with current roles across modern/legacy read scopes and instance boundaries', async t => {
+    if (!app.meta.modules['training-student']) {
+      t.skip('training-student is not active');
+      return;
+    }
+    assert.ok(fixtureUserId);
+    const userId = fixtureUserId;
+    const name = `MCP student ${randomUUID()}`;
+    const mobile = '13812345678';
+    const descriptionMarkdown = `# Private student notes\n\n${randomUUID()}`;
+    const level = 2;
+    let studentId: string | undefined;
+    let otherStudentId: string | undefined;
+    let adminRoleId: string | undefined;
+    let membershipOwned = false;
+    const allToken = await redeemBearer('mcp:all');
+    const observedCalls: Array<{
+      method: unknown;
+      path: unknown;
+      options: unknown;
+      userId: string;
+      authId: string;
+      roleNames: string[];
+      serialized?: Record<string, unknown>;
+    }> = [];
+    const original = BeanExecutor.prototype.performAction;
+    const observed = t.mock.method(
+      BeanExecutor.prototype,
+      'performAction',
+      async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
+        const call: (typeof observedCalls)[number] = {
+          method: args[0],
+          path: args[1],
+          options: args[2],
+          userId: String(this.bean.passport.currentUser?.id),
+          authId: String(this.bean.passport.currentAuth?.id),
+          roleNames: (this.bean.passport.currentRoles ?? []).map(role => role.name),
+        };
+        observedCalls.push(call);
+        const result = await original.apply(this, args);
+        call.serialized = result;
+        return result;
+      },
+    );
+    const call = (id: string, token = bearer, legacy = false) =>
+      send(
+        'tools/call',
+        { name: studentSummaryName, arguments: { id } },
+        { legacy, headers: { authorization: `Bearer ${token}` } },
+      );
+    const errorResult = (response: Awaited<ReturnType<typeof send>>, text: string) => {
+      assert.equal(response.status, 200);
+      assert.equal(response.body.error, undefined);
+      assert.equal(response.body.result.isError, true);
+      assert.equal(response.body.result.structuredContent, undefined);
+      assert.deepEqual(response.body.result.content, [{ type: 'text', text }]);
+      return response.body.result;
+    };
+    try {
+      await app.bean.executor.mockCtx(
+        async () => {
+          const training = app.scope('training-student');
+          const student = await training.model.student.insert({ name, mobile, level });
+          studentId = String(student.id);
+          await training.model.studentContent.insert({
+            studentId: student.id,
+            descriptionMarkdown,
+            descriptionHtml: app.bean.markdown.renderHtml(descriptionMarkdown),
+          });
+          const role = await app.scope('home-user').model.role.getByName('systemAdmin');
+          assert.ok(role, 'existing shared systemAdmin role is read-only');
+          adminRoleId = String(role.id);
+          assert.equal(
+            await app.scope('home-user').model.roleUser.get({ userId, roleId: role.id }),
+            undefined,
+            'the OAuth fixture starts without the unrestricted role',
+          );
+        },
+        { instanceName: '' },
+      );
+      await app.bean.executor.mockCtx(
+        async () => {
+          const student = await app.scope('training-student').model.student.insert({
+            name: `Other-instance student ${randomUUID()}`,
+            mobile,
+            level,
+          });
+          otherStudentId = String(student.id);
+        },
+        { instanceName: 'shareTest' as any },
+      );
+      assert.ok(studentId);
+      assert.ok(otherStudentId);
+      assert.ok(adminRoleId);
+      // Neither OAuth read scope grants ordinary users student-view authority.
+      for (const token of [bearer, allToken]) {
+        errorResult(await call(studentId, token), 'Action failed');
+        assert.equal(observedCalls.at(-1)!.roleNames.includes('systemAdmin'), false);
+      }
+      // Basic has no custom grant provider. Exercise its supported unrestricted role
+      // through the ordinary membership API, without mutating the shared role itself.
+      await app.bean.executor.mockCtx(
+        async () => {
+          membershipOwned = await app.bean.role.addUserId(adminRoleId!, userId);
+          assert.equal(membershipOwned, true);
+        },
+        { instanceName: '' },
+      );
+      const expected = {
+        id: studentId,
+        name,
+        level,
+        levelTitle: String(level),
+        descriptionLength: descriptionMarkdown.length,
+        summaryText: `${name} is in level ${level}. Description length: ${descriptionMarkdown.length}.`,
+      };
+      for (const { token, legacy } of [bearer, allToken].flatMap(token =>
+        [false, true].map(legacy => ({ token, legacy })),
+      )) {
+        const response = await call(studentId, token, legacy);
+        const summary = output(response);
+        assert.deepEqual(summary, expected);
+        assert.deepEqual(Object.keys(summary).sort(), studentSummaryFields);
+        const current = observedCalls.at(-1)!;
+        assert.ok(
+          current.roleNames.includes('systemAdmin'),
+          'existing tokens reload current roles',
+        );
+        assert.equal(current.serialized?.mobile, '138****5678', 'controller serializer ran');
+        assert.equal(current.serialized?.descriptionMarkdown, descriptionMarkdown);
+        assert.deepEqual(
+          {
+            ...Object.fromEntries(
+              studentSummaryFields.map(field => [field, current.serialized?.[field]]),
+            ),
+            id: String(current.serialized?.id),
+          },
+          expected,
+          'MCP projects the serialized guarded action result',
+        );
+        const wire = JSON.stringify(response.body.result);
+        for (const secret of [mobile, '138****5678', descriptionMarkdown]) {
+          assert.equal(wire.includes(secret), false);
+        }
+        for (const field of ['mobile', 'descriptionMarkdown', 'descriptionHtml']) {
+          assert.equal(wire.includes(`"${field}"`), false);
+        }
+      }
+      const missing = errorResult(await call('-1'), 'Resource not found');
+      const otherInstance = errorResult(await call(otherStudentId), 'Resource not found');
+      assert.deepEqual(otherInstance, missing);
+      for (const current of observedCalls) {
+        assert.equal(current.method, 'get');
+        assert.equal(current.path, '/training/student/summary/:id');
+        const options = current.options as { params: { id: string }; innerAccess: boolean };
+        assert.deepEqual(options, { params: { id: options.params.id }, innerAccess: false });
+        assert.equal(current.userId, userId);
+        assert.equal(current.authId, fixtureAuthId);
+      }
+      assert.equal(observedCalls.length, 8, 'every read traverses the fixed guarded action');
+      await app.bean.executor.mockCtx(
+        async () => {
+          assert.equal(await app.bean.role.removeUserId(adminRoleId!, userId), true);
+          membershipOwned = false;
+        },
+        { instanceName: '' },
+      );
+      errorResult(await call(studentId), 'Action failed');
+      assert.equal(observedCalls.at(-1)!.roleNames.includes('systemAdmin'), false);
+    } finally {
+      try {
+        try {
+          await app.bean.executor.mockCtx(
+            async () => {
+              if (membershipOwned && adminRoleId) {
+                await app.bean.role.removeUserId(adminRoleId, userId);
+                membershipOwned = false;
+              }
+              if (studentId) {
+                await app
+                  .scope('training-student')
+                  .model.studentContent.delete({ studentId }, { disableDeleted: true });
+                await app
+                  .scope('training-student')
+                  .model.student.deleteById(studentId, { disableDeleted: true });
+              }
+            },
+            { instanceName: '' },
+          );
+        } finally {
+          if (otherStudentId) {
+            await app.bean.executor.mockCtx(
+              async () => {
+                await app
+                  .scope('training-student')
+                  .model.student.deleteById(otherStudentId!, { disableDeleted: true });
+              },
+              { instanceName: 'shareTest' as any },
+            );
+          }
+        }
+      } finally {
+        observed.mock.restore();
+      }
+    }
   });
 
   it('enforces the direct DCR HTTP boundary and rejects malformed registration requests', async () => {

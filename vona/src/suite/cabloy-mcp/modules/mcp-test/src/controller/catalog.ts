@@ -2,7 +2,7 @@ import type { TableIdentity } from 'table-identity';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
-import { Api, v } from 'vona-module-a-openapiutils';
+import { Api, mcp, v } from 'vona-module-a-openapiutils';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
@@ -14,8 +14,14 @@ import { DtoProductPublicSelectRes } from '../dto/productPublicSelectRes.tsx';
 
 export interface IControllerOptionsCatalog extends IDecoratorControllerOptions {}
 
+@mcp.tool()
 @Controller<IControllerOptionsCatalog>({ path: '/mcp/test/catalog' })
 export class ControllerCatalog extends BeanBase {
+  @mcp.tool({
+    name: 'commerce_categories_list',
+    description:
+      'List published categories in the synthetic MCP test directory, including categories without available products.',
+  })
   @Web.get('categories')
   @Api.body(DtoCategoryPublicSelectRes)
   @Passport.public()
@@ -25,6 +31,10 @@ export class ControllerCatalog extends BeanBase {
     return this.scope.service.catalog.categories(query);
   }
 
+  @mcp.tool({
+    name: 'commerce_products_search',
+    description: 'Search published, available products using the synthetic MCP test catalog.',
+  })
   @Web.get('products')
   @Api.body(DtoProductPublicSelectRes)
   @Passport.public()
@@ -34,6 +44,10 @@ export class ControllerCatalog extends BeanBase {
     return this.scope.service.catalog.selectPublic(query);
   }
 
+  @mcp.tool({
+    name: 'commerce_product_detail',
+    description: 'View one published, available product using the synthetic MCP test catalog.',
+  })
   @Web.get('products/:id')
   @Api.body(v.optional(), v.object(DtoProductPublicDetail))
   @Passport.public()

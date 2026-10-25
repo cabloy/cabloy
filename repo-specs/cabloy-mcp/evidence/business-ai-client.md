@@ -311,3 +311,101 @@ The current three fixture tools are `commerce_categories_list`, `commerce_produc
 - All **153 relative file links** across the three changed records resolved, and the new evidence heading anchor was checked; other fragments and external URLs were not checked. Targeted `npm run format --` passed for two matched files; this evidence file is formatter-ignored and was manually reviewed. `npm run evidence:check -- --` on the three changed records and `git diff --check` passed. Path checking is not secret scanning; the new record was also manually checked for credentials and machine-local identifiers.
 
 This recording modifies only this evidence record, `repo-specs/cabloy-mcp/progress.md` and the suite browser-authorization guide. No source test, client/server startup, model call, live diagnostic registration, environment/port change, database reset, commit or push is performed by this increment.
+
+## Student summary business tool automated qualification (2026-10-25)
+
+### Delivered boundary
+
+The next separately approved increment adds `training_student_summary` to the authenticated dev/test shared `/mcp` endpoint when `training-student` is active. Implementation started from clean `4911a8fd5d914438d127d2c64a43f730f8345e5b` on `worktree-spec-basic-cabloy-mcp`; the tests below exercise that baseline plus the current uncommitted MCP source/test diff. This is Basic's persisted reference-business action, not production customer-data qualification.
+
+The fixed adapter derives input/output metadata from the existing `DtoStudentSummary`, accepts only `id`, and invokes `GET /training/student/summary/:id` with `innerAccess: false`. The existing controller's inherited student `view` RBAC and serializer remain authoritative. The response is parsed/projected to exactly `id`, `name`, `level`, `levelTitle`, `descriptionLength`, and `summaryText`; mobile and full Markdown/HTML notes are excluded from schemas, structured data, and text. Invalid required output fails closed. Vona's existing scalar coercion is retained, rather than claiming native JSON-type rejection for all DTO output fields.
+
+Shared modern/legacy transports select this fixed composition after restoring current Passport. The existing tracked-work settlement is reused. The anonymous independent launcher remains fixture-only, and inactive Training leaves the shared catalog at three tools. No core domain dependency, domain-module change, generic registry, production ingress, write tool, schema/fileVersion change, or durable seed is introduced.
+
+### Automated observations and retained failures
+
+- The contract/standalone managed run passed **17/17**, exit **0**, with `SERVER_LISTEN_DISABLE=true` as required by the standalone tests. Schema/input/projection tests cover the six-field contract, excluded fields, invalid required output, rejected extra dispatch/identity options, and the default server's rejection of the student tool. Existing local modern/legacy HTTP, ingress, deadline, response-bound, and held-work drain regressions passed.
+- A separate managed run with `PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=true` passed **9/9**, exit **0**, confirming the optional module is absent and the shared catalog retains three tools. The projection test's early return when Training is absent is not evidence that student execution was tested in that run.
+- Shared HTTP tests exercise real persisted student/content fixtures and an ordinary OAuth-authenticated user. Both `mcp:read` and `mcp:all` are denied before role assignment. Adding the existing `systemAdmin` role through the supported membership API allows the **same already-issued tokens** to read through modern and legacy modes; removal restores denial. This qualifies current-role reload and Basic's supported unrestricted-role allow path, **not a custom non-admin grant provider**. The shared role is unchanged; only test-owned user membership is written and removed.
+- A delegating executor spy observes the fixed guarded call and masked mobile in the controller result before MCP projection; the actual controller/service/model and RBAC remain in use. A permitted reader gets the same safe not-found outcome for missing and other-instance IDs. Test-owned membership/content/student records are cleaned in `finally` using precise identities and separate instance contexts.
+- The first contract run failed **1/9**, exit **1**, because an object supplied as an invalid string was coerced by the existing Vona schema; the negative now removes a required field. The next mixed run passed contract **9/9** but failed standalone **8/8**, exit **1**, because its required disabled default listener was not selected; rerunning with the documented process-local test option passed. The first shared/domain run passed **22/23**, exit **1**, because an error assertion excluded SDK-owned `_meta`/`resultType`; the following shared run passed **8/9**, exit **1**, because a direct controller numeric ID was compared with the projected string ID without normalizing it. Assertions were corrected without weakening permission, field, or instance boundaries. Failed-run claims/resources were retained by the managed runner; no manual cleanup/reset was performed.
+
+The final combined shared HTTP/student regression run passed **23/23**, exit **0** (9 shared HTTP tests and 14 student tests). Native no-emit typechecks for `mcp-test` and `training-student` passed; final six-file TypeScript formatting/lint passed. The docs build exited **0** in 10.92 seconds with the existing chunk-size warning; it does not build suite/spec records themselves. `spec:check` passed 68 definitions; `spec:charts:check` retained **0/12** verified. All **155 relative file links** in the three changed guidance/evidence records resolved, including the new student anchors; other fragments and external URLs were not checked. Targeted docs formatting passed for two matched files; this ignored evidence file was manually reviewed. Evidence-path and diff-whitespace checks passed. These path checks are not secret scanning; new prose was also manually checked for credentials and machine-local identifiers.
+
+These observations are automated service/transport proof only. No Codex student-tool call or new model invocation was executed. The earlier user-reported Codex catalog success remains a separate result, not proof of this new tool.
+
+### Handoff and limits
+
+At the automated handoff, live student-tool acceptance was pending an existing authorized safe student ID supplied by the user. The [subsequent user-reported Codex result](#user-reported-codex-student-summary-success-recorded-2026-10-25) closes that bounded happy-path gap; the automated observations above remain separately attributed. Do not reuse disposable test IDs or seed/reset development data. No service restart, environment/port edit, credential-store access, live diagnostic registration, commit/push, production qualification, or full ATP closure follows. Parent WBS rows remain blocked and verified **0/12** unchanged.
+
+## User-reported Codex student summary success (recorded 2026-10-25)
+
+### Attribution and minimized observations
+
+After the student-tool implementation, the user supplied the real Codex output in this conversation and approved recording its successful result. This is user-reported runtime evidence, not an assistant-executed retry or independently captured tool transcript. Recording began at `4911a8fd5d914438d127d2c64a43f730f8345e5b` on `worktree-spec-basic-cabloy-mcp`, with the preceding student-tool source/test and three documentation changes still uncommitted. That checkout state identifies the recording baseline, not the exact bytes served during the user's call.
+
+The supplied procedure targeted MCP server `test`, required MCP tools only, and prohibited writes or permission changes. The user reported:
+
+| Observation | User-reported result |
+| --- | --- |
+| Discovery | Server `test` provides `training_student_summary` |
+| Actual client tool | `mcp__test__training_student_summary` |
+| Identity | Returned student ID exactly matches the supplied ID |
+| Output fields | Exactly `id`, `name`, `level`, `levelTitle`, `descriptionLength`, `summaryText` |
+| Summary values | `level = 2`, `levelTitle = "2"`, `descriptionLength = 48`; summary text agrees with the returned name, level and length |
+| Excluded fields | No `mobile`, `descriptionMarkdown` or `descriptionHtml` |
+| Effects | No creation, update, deletion or role-permission modification reported |
+
+The raw student identity and name are deliberately omitted; equality and summary consistency preserve the useful check without retaining those business identifiers. No credential, full note, machine-local path or callback URL is retained. The exact client version, granted scope, account roles, instance identity, full OAuth/wire sequence and runtime source hash were not supplied. A successful call does not distinguish `mcp:all` from `mcp:read`, prove both transport modes, or establish the absence of every possible server-side effect.
+
+### Disposition
+
+**Passed: bounded real-Codex student-summary happy path.** The user observed discovery and successful execution of the persisted business read with matching identity and the minimized six-field result. Live student-tool acceptance is no longer pending. The earlier **23/23** shared HTTP/student, **17/17** contract/standalone and **9/9** Training-disabled results remain historical automated evidence; they were not rerun or reclassified as real-client proof for this recording. Ordinary-user denial, role revocation and cross-instance isolation remain covered by those automated checks, not by this successful client call.
+
+This closes the selected business-tool increment's real-client gap, not production ingress/deployment, write-scope enforcement or full ATP/release acceptance. Parent WBS rows remain blocked, full ATPs open and verified **0/12** unchanged. This follow-up changes only this evidence record, progress and the suite guide; no source change, runtime/client invocation, model call, seed/reset, environment change, restart, commit or push is performed.
+
+### Recording checks
+
+The docs build exited **0** in 10.25 seconds with the existing chunk-size warning; it does not build these suite/spec records. `spec:check` passed **68 definitions**, and `spec:charts:check` passed with **0/12** verified unchanged. All **157 relative file links** across the three records resolved and all three links to the new acceptance anchor were checked; other fragments and external URLs were not checked. Targeted formatting passed for the two matched files; this formatter-ignored evidence record was manually reviewed. Evidence-path and diff-whitespace checks passed. Path checking is not secret scanning; new prose was also manually reviewed for credentials and machine-local identifiers. No backend/browser tests or client calls were rerun for this documentation-only follow-up.
+
+## Explicit opt-in Controller Action mapping (2026-10-25)
+
+### Approved boundary and implementation
+
+The user superseded the proposed default-open/exclude model with **default closed, explicit `@mcp.tool()` opt-in, no `@mcp.exclude()`** and approved the revised implementation plan. Work continues from `4911a8fd5d914438d127d2c64a43f730f8345e5b` on `worktree-spec-basic-cabloy-mcp`, preserving the preceding uncommitted student/evidence changes. Earlier real-Codex catalog/student reports describe the handwritten adapters; they do not accept this generic replacement.
+
+A lightweight decorator in `a-openapiutils` marks a controller or individual registered Action and supports description, effective read-only classification and top-level output picks; public names are method-only. Method options override class defaults and pick arrays replace inherited picks. GET is a classification convention, not evidence of no side effects. Ordinary unannotated Actions remain unavailable.
+
+The mapper in `cabloy-mcp` intersects enabled controller/registered-route metadata, extracts per-Action V31 OpenAPI with an explicit cache-separated `includeExcluded` option and reuses the original runtime validators. Ordinary `@Api.exclude()` remains independent. Fixed path/query/JSON-body bindings reject execution-control fields and dispatch through the registered raw route with `innerAccess: false`. JSON/200 is the supported profile; unsupported contracts produce diagnostics rather than untyped approximations. Output picks minimize actual data and reachable schema definitions; failures do not fall back to raw output. Objects are direct structured results, with scalar/array results wrapped as `{result: value}`.
+
+Authorization lookup now returns request-local `{passport, scope}` through one token-validation path. Both shared transport modes pass the validated scope into composition; `mcp:read` filters discovery and denies direct write-tool calls before dispatch, while `mcp:all` still requires business authorization. No scope is stored on Passport or the app-level exchange. Student summary and the three shared catalog Actions use annotations and thin generic composition. The independent anonymous launcher remains exactly three fixtures. Observable write tests use a test-mode-only in-memory controller, not a production registration or new persisted business mutation.
+
+### Retained failures and verification
+
+Early managed attempts exposed a generated-schema mismatch: the student runtime validator was already an optional object, while V31 emitted `type: ['object', 'null']`. The first run passed **15/19**, and the diagnostic rerun with the additional scalar/array test passed **15/20**; both exited **1** at tool construction. Only object/null successful output is normalized to object, retaining safe not-found behavior and the six-field projection. No arbitrary union branch or raw-output fallback was introduced.
+
+The next run passed **16/20**, exit **1**: schema cloning rejected locale metadata methods, and fixed dispatch used the already-prefixed route, causing ordinary executor 404s. A focused diagnostic run passed **9/12**, exit **1**, confirming the executor route mismatch after JSON-wire schema cloning fixed discovery. Dispatch now uses existing `ContextRoute.routePathRaw`, allowing the executor to apply the configured prefix once. Temporary diagnostics were removed. Initial test-only tuple/spread/unused-import type errors and mapper-only lint/format failures were corrected; they are not passing checks. A later combined invocation incorrectly disabled the listener needed by `devHttp`: **44 passed, 0 failed, 10 cancelled**, exit **1**, with the shared suite rejected in its before hook. Standalone and shared tests therefore require separate correctly configured runs. All failed-run resources remain under managed-runner ownership; no manual cleanup/reset followed.
+
+Final correctly configured managed selections:
+
+- With the application listener enabled, `npm run test -- src/suite/cabloy-mcp/modules/mcp-test/test/devHttp.test.ts src/suite/cabloy-mcp/modules/mcp-auth/test/authorization.test.ts src/suite/a-training/modules/training-student/test/student.test.ts` passed **34/34**, exit **0**. This covers real persisted student reads, denied/allowed/revoked role behavior on the same tokens, serializer/projection, missing/foreign-instance equivalence, current Passport/scope lookup and modern/legacy deny-before-write dispatch. Each test-owned persisted resource is removed through precise finally cleanup; the supported unrestricted role is reused, not modified.
+- `SERVER_LISTEN_DISABLE=true npm run test -- src/suite/cabloy-mcp/modules/mcp-test/test/businessTools.test.ts src/suite/cabloy-mcp/modules/mcp-test/test/localHttp.test.ts` passed **20/20**, exit **0**. Coverage includes opt-in/default closure, class/method precedence and replacement picks, fixed mixed bindings/no-args, invalid raw input/control fields, output/schema minimization, invalid retained output, excluded OpenAPI cache separation, unsupported diagnostics, scalar/array wrappers and the unchanged anonymous three-tool modern/legacy launcher with its existing bounds/drain checks.
+
+- `PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=true npm run test -- src/suite/cabloy-mcp/modules/mcp-test/test/businessTools.test.ts` passed **12/12**, exit **0**. The shared catalog omits student summary while retaining the three catalog reads plus test-only fixture Actions; standalone remains exactly three fixtures. Student-only test branches return early when Training is absent and do not prove student execution in this run.
+
+All commands use Node **24.11.0** and the root managed test entrypoint. Six affected module native no-emit typechecks passed with `--incremental false --composite false`: `a-openapi`, `a-openapiutils`, `cabloy-mcp`, `mcp-auth`, `mcp-test` and `training-student`. A later `mcp-test` check after the final raw-route correction also passed. Exact changed-source formatting/lint and diff-whitespace checks passed. Initial public-guide formatting failed and was corrected with the scoped formatter. Documentation builds pass with the existing chunk-size warning; they do not build suite/spec records. `spec:check` passed **68 definitions**, and `spec:charts:check` retained **0/12** verified.
+
+Final documentation verification passed **171 local Markdown targets** and **76 explicit fragments** across the public guide, suite guide, progress and evidence, plus five source paths, ten root scripts, factory definition/export/composition and the navigation entry. The last docs build exited **0**. Subsequent evidence additions were prose and the source-hash table, not new link targets/headings. Evidence-path and whitespace checks passed; new prose was manually reviewed for credentials and machine-local paths. Path checking is not secret scanning or acceptance proof.
+
+Selected tested-source SHA-256 fingerprints (repository-relative, no runtime deployment attestation):
+
+| Source | SHA-256 |
+| --- | --- |
+| `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/controllerTools.ts` | `7e529b3e5e832654670a56cb1cc32ee37b6fad8cd5aa79f280c6b631454e468a` |
+| `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/controllerToolSchema.ts` | `5890622c15fd470563055d150a39f8bbfdfd1128b3e6db2c2a292cc853742b96` |
+| `vona/src/suite-vendor/a-vona/modules/a-openapi/src/service/openapi.ts` | `3da6d7e9afd233f8445cdbcb03383029e4c5124b9907be63e05d6b065d790099` |
+| `vona/src/suite-vendor/a-vona/modules/a-openapiutils/src/lib/decorator/mcp.ts` | `ebc6628bc2f07306e398bb6c6d783a2f0c32b5fe7cee1cbaaa6f2a3a158ce571` |
+| `vona/src/suite/cabloy-mcp/modules/mcp-test/test/businessTools.test.ts` | `566408a918129bddf3ea4dd2e6033a243ab92f692bedcba800c9139de43079e4` |
+| `vona/src/suite/cabloy-mcp/modules/mcp-test/test/devHttp.test.ts` | `cc8d0c609d1c9109b970f8f29d3767553d3668a98a3e49eb034dde462b583699` |
+
+No new real-client invocation, browser E2E, production ingress, environment/port edit, development reset, restart, process kill, credential-store access, live diagnostic registration, commit, push or deployment is included. A real-Codex retest should repeat the existing category → search → detail and six-field student-summary journey using an already-authorized student, without writes or permission changes. It remains pending for the generic replacement. Parent WBS rows remain blocked, full ATPs open and verified **0/12** unchanged.

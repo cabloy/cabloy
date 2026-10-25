@@ -39,10 +39,11 @@ export async function authenticateMcpResource(
   if (!app.ctx?.instance || app.ctx.instanceName !== resource.instanceName) {
     throw new OAuthError('invalid_token', 401);
   }
-  const passport = await app
+  const authorization = await app
     .scope('mcp-auth')
-    .service.authorization.lookup(token, resource.resource);
-  await app.bean.passport.setCurrent(passport);
+    .service.authorization.lookupContext(token, resource.resource);
+  await app.bean.passport.setCurrent(authorization.passport);
+  return authorization;
 }
 
 /** Strip opaque credentials before either framework or SDK/business dispatch. */

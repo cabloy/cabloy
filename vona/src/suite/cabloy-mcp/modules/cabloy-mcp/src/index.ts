@@ -1,5 +1,7 @@
 export * from './.metadata/index.ts';
 export * from './types/index.ts';
+export { createControllerToolServer } from './lib/controllerTools.ts';
+export type { IControllerToolDiagnostic } from './lib/controllerTools.ts';
 export {
   authenticateMcpResource,
   handleMcpResourceMetadata,

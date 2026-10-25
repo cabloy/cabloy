@@ -110,7 +110,9 @@ export async function createBusinessToolServer(
     server.setRequestHandler('tools/list', () =>
       track(async () => {
         if (!app.ctx) throw new ProtocolError(-32603, 'Request context required');
-        return { tools: [searchTool, detailTool, categoriesTool] };
+        return {
+          tools: [searchTool, detailTool, categoriesTool],
+        };
       }),
     );
     server.setRequestHandler('tools/call', request =>

@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { IInstanceRecord, VonaApplication } from 'vona';
 import type { IMcpAuthResource } from 'vona-module-cabloy-mcp';
+import type { TypeMcpScope } from 'vona-module-mcp-auth';
 
 import { toNodeHandler } from '@modelcontextprotocol/node';
 import {
@@ -119,7 +120,14 @@ async function boundedResponse(response: Response, requestId: unknown): Promise<
 }
 
 /** One worker-owned exchange slot shared by local and dev HTTP ingress. */
-export function createBusinessTransport(app: VonaApplication, initializeInstance = false) {
+export function createBusinessTransport(
+  app: VonaApplication,
+  initializeInstance = false,
+  createServer: (
+    app: VonaApplication,
+    scope?: TypeMcpScope,
+  ) => ReturnType<typeof createBusinessToolServer> = createBusinessToolServer,
+) {
   let closing = false;
   let contexts = 0;
   let settled = 0;
@@ -173,13 +181,19 @@ export function createBusinessTransport(app: VonaApplication, initializeInstance
               return;
             }
           }
+          let authorizationScope: TypeMcpScope | undefined;
           if (initializeInstance) {
             if (!authentication) {
               fail(res, 401);
               return;
             }
             try {
-              await authenticateMcpResource(app, authentication.token, authentication.resource);
+              const authorization = await authenticateMcpResource(
+                app,
+                authentication.token,
+                authentication.resource,
+              );
+              authorizationScope = authorization.scope;
             } catch (error) {
               const scope =
                 error instanceof OAuthError && error.oauthError === 'insufficient_scope';
@@ -209,7 +223,7 @@ export function createBusinessTransport(app: VonaApplication, initializeInstance
             let legacy: WebStandardStreamableHTTPServerTransport | undefined;
             const handler = createMcpHandler(
               async () => {
-                business = await createBusinessToolServer(app);
+                business = await createServer(app, authorizationScope);
                 return business;
               },
               {
@@ -235,7 +249,7 @@ export function createBusinessTransport(app: VonaApplication, initializeInstance
                         keepAliveMs: 0,
                         maxRequestBodySize: 16 * 1024,
                       });
-                      business = await createBusinessToolServer(app);
+                      business = await createServer(app, authorizationScope);
                       await business.connect(legacy);
                       signal.throwIfAborted();
                       let cancel!: () => void;

@@ -84,12 +84,15 @@ declare module 'vona-module-mcp-test' {
 /** dto: end */
 /** controller: begin */
 export * from '../controller/catalog.ts';
+export * from '../controller/toolFixture.ts';
 import type { IControllerOptionsCatalog } from '../controller/catalog.ts';
+import type { IControllerOptionsToolFixture } from '../controller/toolFixture.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
 
     export interface IControllerRecord {
       'mcp-test:catalog': IControllerOptionsCatalog;
+'mcp-test:toolFixture': IControllerOptionsToolFixture;
     }
 
 
@@ -106,15 +109,32 @@ declare module 'vona-module-mcp-test' {
             get $onionName(): 'mcp-test:catalog';
             get $onionOptions(): IControllerOptionsCatalog;
           }
+
+        export interface ControllerToolFixture {
+          /** @internal */
+          get scope(): ScopeModuleMcpTest;
+        }
+
+          export interface ControllerToolFixture {
+            get $beanFullName(): 'mcp-test.controller.toolFixture';
+            get $onionName(): 'mcp-test:toolFixture';
+            get $onionOptions(): IControllerOptionsToolFixture;
+          }
 }
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
 import type { ControllerCatalog } from '../controller/catalog.ts';
+// @ts-ignore ignore
+import type { ControllerToolFixture } from '../controller/toolFixture.ts';
 declare module 'vona-module-mcp-test' {
 
     export interface IControllerOptionsCatalog {
       actions?: TypeControllerOptionsActions<ControllerCatalog>;
+    }
+
+    export interface IControllerOptionsToolFixture {
+      actions?: TypeControllerOptionsActions<ControllerToolFixture>;
     }
 }
 declare module 'vona-module-a-web' {
@@ -122,6 +142,11 @@ declare module 'vona-module-a-web' {
         '/mcp/test/catalog/categories': undefined;
 '/mcp/test/catalog/products': undefined;
 '/mcp/test/catalog/products/:id': undefined;
+'/mcp/test/actions/status': undefined;
+'/mcp/test/actions/closed': undefined;
+    }
+export interface IApiPathPostRecord{
+        '/mcp/test/actions/effect/:label': undefined;
     }
 
 }

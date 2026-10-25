@@ -288,8 +288,14 @@ describe('authorization.test.ts', { concurrency: false }, () => {
         assert.equal(String(passport.user!.id), String(fixture.userId));
         assert.ok(passport.auth);
         assert.ok(passport.roles?.some(role => role.name === 'registeredUser'));
+        const context = await service().lookupContext(token.access_token, resource.resource);
+        assert.equal(context.scope, 'mcp:read');
+        assert.deepEqual(context.passport, passport);
         await app.scope('home-user').model.roleUser.delete({ userId: fixture.userId });
         assert.deepEqual((await service().lookup(token.access_token, resource.resource)).roles, []);
+        const current = await service().lookupContext(token.access_token, resource.resource);
+        assert.equal(current.scope, 'mcp:read');
+        assert.deepEqual(current.passport.roles, []);
         await expectOAuth(
           () => service().exchange(tokenParams(clientId, code), undefined),
           'invalid_grant',
@@ -297,6 +303,10 @@ describe('authorization.test.ts', { concurrency: false }, () => {
         await service().revoke(token.access_token);
         await expectOAuth(
           () => service().lookup(token.access_token, resource.resource),
+          'invalid_token',
+        );
+        await expectOAuth(
+          () => service().lookupContext(token.access_token, resource.resource),
           'invalid_token',
         );
       });
@@ -339,6 +349,9 @@ describe('authorization.test.ts', { concurrency: false }, () => {
             );
             const passport = await service().lookup(token.access_token, resource.resource);
             assert.equal(String(passport.user!.id), String(fixture.userId));
+            const context = await service().lookupContext(token.access_token, resource.resource);
+            assert.equal(context.scope, expected);
+            assert.deepEqual(context.passport, passport);
             const client = await app
               .scope('mcp-auth')
               .service.registration.resolve(fixture.clientId, resource.resource);
@@ -422,6 +435,10 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       await app.bean.executor.mockCtx(async () => {
         await expectOAuth(
           () => service().lookup(token.access_token, resource.resource),
+          'invalid_token',
+        );
+        await expectOAuth(
+          () => service().lookupContext(token.access_token, resource.resource),
           'invalid_token',
         );
       });

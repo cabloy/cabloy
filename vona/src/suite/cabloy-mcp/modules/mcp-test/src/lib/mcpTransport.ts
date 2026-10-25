@@ -113,9 +113,10 @@ export async function handleMcpRequest(
   // Remove credentials and caller selectors before creating the isolated ctx/SDK request.
   sanitizeMcpRequest(app, req);
   const { createBusinessTransport } = await import('./businessTransport.ts');
+  const { createSharedBusinessToolServer } = await import('./sharedBusinessTools.ts');
   let exchange = exchanges.get(app);
   if (!exchange) {
-    exchange = createBusinessTransport(app, true);
+    exchange = createBusinessTransport(app, true, createSharedBusinessToolServer);
     exchanges.set(app, exchange);
   }
   await exchange.handle(req, res, resource.instanceName as keyof IInstanceRecord, {

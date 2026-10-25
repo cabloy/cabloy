@@ -7,7 +7,12 @@ import { Service } from 'vona-module-a-bean';
 
 import type { DtoAuthorizationSummary } from '../dto/authorizationSummary.ts';
 import type { EntityAuthorization } from '../entity/authorization.tsx';
-import type { IMcpAuthConfig, IMcpAuthResource, IMcpAuthResolvedClient } from '../types/index.ts';
+import type {
+  IMcpAuthConfig,
+  IMcpAuthResource,
+  IMcpAuthResolvedClient,
+  TypeMcpScope,
+} from '../types/index.ts';
 
 import {
   equalDigest,
@@ -204,6 +209,13 @@ export class ServiceAuthorization extends BeanBase {
   }
 
   async lookup(token: string, resource: string): Promise<IPassport> {
+    return (await this.lookupContext(token, resource)).passport;
+  }
+
+  async lookupContext(
+    token: string,
+    resource: string,
+  ): Promise<{ passport: IPassport; scope: TypeMcpScope }> {
     const config = this.configForResource(resource);
     if (!opaquePattern.test(token)) throw new OAuthError('invalid_token', 401);
     const row = await this.scope.model.authorization
@@ -214,7 +226,8 @@ export class ServiceAuthorization extends BeanBase {
     if (!row) throw new OAuthError('invalid_token', 401);
     if (!isMcpScope(row.scope)) throw new OAuthError('insufficient_scope', 403);
     await this.validateBindings(row, config, 'invalid_token', 401);
-    return await this.loadPassport(row.userId, row.authId, 'invalid_token', 401);
+    const passport = await this.loadPassport(row.userId, row.authId, 'invalid_token', 401);
+    return { passport, scope: row.scope };
   }
 
   async revoke(token: string): Promise<void> {
