@@ -1,6 +1,14 @@
 # A-MCP Internal Planning
 
+## Current simplified two-read MVP (2026-10-26)
+
+The user explicitly accepted a simpler MVP and requested removal of the production-mode blanket 503, then approved the bounded authority/source/test/check plan. The [current SRS](./srs.md#approved-simplified-mvp-production-admission-2026-10-26), [ADR 0008 disposition](./decisions/0008-mcp-limits-audit-telemetry-redaction.md#accepted-simplified-two-read-mvp-disposition-2026-10-26), [finite dossier](./pdp-wbs.md#simplified-mvp-production-entry-dossier-2026-10-26) and [proof supplement](./test-plan.md#simplified-mvp-production-admission-proof-2026-10-26) take precedence over the historical migration availability clause below. Normal ingress permits recognized dev/test/prod through the same OAuth/current-permission/instance/two-tool controls; unknown modes, readiness/closing/disablement and invalid required authority still deny.
+
+Dedicated protected audit, audit-outage fail-closed behavior and deployment-wide fine-grained quotas are deferred, not production prerequisites for this MVP or delivered capabilities. Existing bounds, per-worker admission, minimized output and actual-work settlement remain. This scope disposition does not deploy the app, change live data/permissions, pass full ATPs or claim audit compliance. Historical evidence remains revision-bound; unrelated dependencies and restricted-client verification remain open.
+
 ## Approved normal-module ownership migration (2026-10-26)
+
+Historical migration record; the later MVP disposition above supersedes its production-denial/audit-before-production clause only.
 
 The user explicitly authorized authority synchronization, accepted the bounded design and approved execution as three distinct dispositions. The [SRS amendment](./srs.md#approved-normal-module-ownership-amendment-2026-10-26) and [ADR 0010 ownership disposition](./decisions/0010-mcp-browser-execution-profile.md#accepted-normal-module-ownership-disposition-2026-10-26) govern the planned move of authenticated business `/mcp`, its app-owned exchange and close drain from dev/test-only `mcp-test` to normal `cabloy-mcp`, working without the fixture module. Earlier owner/module-inclusion-only mode-gate records below remain historical, not the migration contract. This records approval and planned ownership, not delivered source or new runtime proof.
 

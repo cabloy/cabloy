@@ -2,7 +2,7 @@
 
 Opt an existing Vona Controller Action into MCP mapping with `@mcp.tool()`. Reuse its request/response contract and ordinary authorization rather than writing a second business implementation. Opt-in alone does **not** expose an action on normal `/mcp`; that endpoint also requires exact server-owned construction admission.
 
-The current normal integration is the authenticated **dev/test shared `/mcp` endpoint** in Cabloy Basic, owned by `cabloy-mcp`, not `mcp-test`. Production and unknown modes return **503** until protected audit and operational controls are separately accepted. `cabloy-mcp` remains enabled by default: only the literal environment value `CABLOY_MCP_ENABLED=false` disables it. Readiness, shutdown and disabled-state checks also fail closed. The independent anonymous standalone catalog remains exactly three synthetic fixture tools owned by the `mcp-test` launcher; none is admitted on normal `/mcp`.
+The current normal integration is the authenticated **shared `/mcp` endpoint** in Cabloy Basic, owned by `cabloy-mcp`, not `mcp-test`. Recognized dev/test/prod modes use the same OAuth, business-authorization and instance boundary; production is not rejected solely by mode. Unknown modes and invalid required authority configuration still fail closed. Dedicated protected audit, audit-delivery gating and deployment-wide fine-grained quotas are deferred for this two-read MVP; no audit compliance or deployment qualification is claimed. `cabloy-mcp` remains enabled by default: only the literal environment value `CABLOY_MCP_ENABLED=false` disables it. Readiness, shutdown and disabled-state checks also fail closed. The independent anonymous standalone catalog remains exactly three synthetic fixture tools owned by the `mcp-test` launcher; none is admitted on normal `/mcp`.
 
 ## Opt in explicitly
 
@@ -96,7 +96,7 @@ Pass the validated authorization scope, `mcp:read` or `mcp:all`, and dispatch wi
 
 ### Student permission-aware discovery
 
-On the authenticated dev/test shared endpoint, `training_student_lookup` is listed only when the current request passes the actual lookup Action guards (inherited student-select permission); `training_student_summary` is listed only when it passes the summary Action guards (inherited student-view permission). Neither permission implies the other:
+On the authenticated shared endpoint, `training_student_lookup` is listed only when the current request passes the actual lookup Action guards (inherited student-select permission); `training_student_summary` is listed only when it passes the summary Action guards (inherited student-view permission). Neither permission implies the other:
 
 | Current student authority | Student tools listed |
 | ------------------------- | -------------------- |

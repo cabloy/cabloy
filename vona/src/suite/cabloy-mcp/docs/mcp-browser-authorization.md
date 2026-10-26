@@ -12,7 +12,7 @@ MCP client → /mcp/auth → existing SSR Site → consent page
 
 Backend `mcp-auth` in the `cabloy-mcp` suite owns OAuth authorization state, decisions, codes and tokens. Backend `cabloy-mcp` now owns normal shared `/mcp`: its `middlewareSystem.mcp.ts` delegates to `mcpTransport.ts`, `businessTransport.ts` owns authenticated exchanges and settlement, `sharedBusinessTools.ts` composes exact tool admission, and `monkey.ts` drains transport work on application close. `mcp-test` is not the normal endpoint owner. The consent page belongs to Zova's `cabloy-mcp` suite/module; no management console is introduced.
 
-Normal `/mcp` is operational only in **dev/test**; production and unknown modes return **503** until protected audit and operational controls are separately accepted. Enabled-by-default behavior is unchanged: only the literal environment value `CABLOY_MCP_ENABLED=false` disables `cabloy-mcp`. Not-ready, closing and disabled ingress also returns 503. A trusted public serve pair alone does not enable production ingress.
+Normal `/mcp` accepts recognized **dev/test/prod** modes through the same authenticated, permission-checked boundary. Production is no longer rejected solely by mode. Unknown modes, not-ready, closing and disabled ingress still return 503; production also requires the explicit trusted public serve pair described below. Enabled-by-default behavior is unchanged: only the literal environment value `CABLOY_MCP_ENABLED=false` disables `cabloy-mcp`. Dedicated protected audit, audit-delivery gating and deployment-wide fine-grained quotas are deferred for this two-read MVP, not implemented capabilities or production prerequisites. Existing per-worker bounds remain; no audit compliance or actual deployment qualification is claimed.
 
 Construction admission is exactly `training-student.controller.student` actions `lookup` and `summary`. This controls both listing and known-name direct calls; `@mcp.tool()` opt-in alone is not normal exposure. When optional `training-student` is absent, normal `/mcp` has an empty catalog, with no fallback. The three synthetic `commerce_*` tools and anonymous standalone entry remain **`mcp-test` launcher only**, never part of normal shared `/mcp`.
 
@@ -30,7 +30,7 @@ The shared endpoint maps only its two exactly admitted, supported and explicitly
 
 For a manual check of the mapper-backed shared endpoint:
 
-1. Use a freshly authorized dev/test shared-server connection and an existing student that the signed-in account may already view. List tools: only the two admitted student reads may appear, each according to its independent select/view authority. Confirm `training_student_summary` and its six-field output schema for a view-authorized account. If select is also authorized, lookup may supply a returned ID; do not assume either permission grants the other. Do not use a disposable automated-test ID or create seed data merely for this check.
+1. Use a freshly authorized shared-server connection and an existing student that the signed-in account may already view. List tools: only the two admitted student reads may appear, each according to its independent select/view authority. Confirm `training_student_summary` and its six-field output schema for a view-authorized account. If select is also authorized, lookup may supply a returned ID; do not assume either permission grants the other. Do not use a disposable automated-test ID or create seed data merely for this check.
 2. Call summary with `{ "id": "<existing student ID>" }`. Check identity and exactly `id`, `name`, `level`, `levelTitle`, `descriptionLength`, `summaryText`; JSON text and structured content must agree. Check that neither schema definitions nor results retain mobile or full notes.
 3. With a separately authorized `mcp:read` connection, confirm the same permission-eligible read surface. `mcp:all` does not expand normal admission. Fixture and other non-admitted tool names must be absent and unavailable to direct calls under either scope; do not execute business writes or use the three-tool commerce journey as this endpoint's expected result. An absent training module means an empty list, not a fixture fallback.
 4. If an expected admitted tool is missing, check module availability and current select/view authority, then inspect the factory server's `diagnostics` (`controller`, `action`, `reason`) on the server side for unsupported contracts. Non-admitted actions are never constructed and need not have diagnostics. Diagnostic details are not client errors. A business permission error is not a reason to bypass RBAC or grant a role.
@@ -116,7 +116,7 @@ The source trace matching bundled Codex `0.163.0-alpha.11.1` is pinned to [Codex
 
 Before using the flow, the operator must ensure:
 
-- Dev/test uses a trusted root backend `server.serve.protocol`/`host` pair or the requestless localhost listener fallback. A future production profile requires a trusted public pair **and** separately accepted protected audit/operational controls; current normal `/mcp` still returns 503 there. Do not author `mcp-auth.issuer` or `mcp-auth.resources`.
+- Dev/test uses a trusted root backend `server.serve.protocol`/`host` pair or the requestless localhost listener fallback. Production requires the explicit trusted public pair and follows the same ready/enabled, OAuth, current business-permission and instance checks; there is no additional audit-delivery gate for this MVP. Do not author `mcp-auth.issuer` or `mcp-auth.resources`.
 - Existing automatic instance routing resolves an enabled instance after Host validation, without client selectors or an MCP mapping registry.
 - An enabled SSR Site's built flavor contains the shared consent page and normal role admission permits the intended user.
 - Registration body/redirect and rate limits remain bounded, with an operational policy for the resulting AS-owned client records. There is no separate DCR enablement step.
@@ -124,7 +124,7 @@ Before using the flow, the operator must ensure:
 
 Missing or inconsistent configuration fails closed. An arbitrary Host header, instance selector, tool argument or token value cannot establish OAuth resource/instance authority. Registration does not authenticate a user, grant local Cabloy roles or tenant access, issue MCP access, or bypass data scope.
 
-Authority belongs to root backend `server.serve`; module limits, TTLs and the narrow loopback exception belong to `config.modules['mcp-auth']`. The following illustrates the shape only; **it is not a provisioned or verified deployment**, does not lift normal `/mcp`'s production 503 gate, and does not request writing deployment settings or environment files.
+Authority belongs to root backend `server.serve`; module limits, TTLs and the narrow loopback exception belong to `config.modules['mcp-auth']`. The following illustrates the shape only; **it is not a provisioned or verified deployment** and does not request writing deployment settings or environment files. A serve pair establishes canonical authority, not authentication, business permission or readiness.
 
 ```ts
 // Root backend public origin for a production deployment (illustrative only).
@@ -198,7 +198,7 @@ Each protected request checks current expiry, revocation, registration and accou
 - **Decision rejected:** check current login/account state, request lifetime and trusted origin. Do not replace an authenticated POST with a GET or introduce CSRF bootstrap to bypass the normal client chain.
 - **Code exchange rejected:** check exact redirect/client/resource binding, the original verifier, expiry and previous use. Reauthorize instead of replaying or recovering a credential.
 - **MCP access denied:** distinguish token/scope failure from current local authorization. A valid token does not create a local role or a cross-instance entitlement.
-- **503 or an empty/missing tool list:** current normal ingress requires dev/test, enabled and ready application state, and no shutdown in progress. Production/unknown modes remain closed pending protected audit acceptance; do not bypass the gate. An absent training module yields an empty catalog; student select/view authority independently filters the two admitted reads. `commerce_*` tools belong only to the standalone launcher, not shared `/mcp`.
+- **503 or an empty/missing tool list:** normal ingress requires a recognized dev/test/prod mode, enabled and ready application state, no shutdown in progress, and valid required authority configuration (including an explicit public serve pair in production). Unknown modes remain closed; production is not denied solely by mode. Dedicated audit delivery is not an MVP availability gate. An absent training module yields an empty catalog; student select/view authority independently filters the two admitted reads. `commerce_*` tools belong only to the standalone launcher, not shared `/mcp`.
 
 ## Verification and operational limits
 

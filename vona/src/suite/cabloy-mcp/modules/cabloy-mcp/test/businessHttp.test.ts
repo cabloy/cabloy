@@ -470,12 +470,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     }
   });
 
-  it('denies production and unknown modes before any downstream application or request access', async () => {
-    for (const meta of [
-      { isDev: false, isTest: false, mode: 'production' },
-      { isDev: false, isTest: false, mode: 'unknown' },
-      {},
-    ]) {
+  it('denies unknown modes before any downstream application or request access', async () => {
+    for (const meta of [{ isDev: false, isTest: false, isProd: false, mode: 'unknown' }, {}]) {
       let status = 0;
       let headers: Record<string, string> = {};
       let body = '';
@@ -519,6 +515,99 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         error: { code: -32000, message: 'Request rejected' },
       });
       assert.equal(mcpTransportSnapshot(deniedApp), undefined);
+    }
+  });
+
+  it('admits production to authentication while retaining readiness and authority denials', async () => {
+    for (const scenario of ['ready', 'not-ready', 'closing', 'disabled', 'missing-authority']) {
+      let status = 0;
+      let headers: Record<string, string> = {};
+      let body = '';
+      let contexts = 0;
+      const productionApp = {
+        meta: {
+          isDev: false,
+          isTest: false,
+          isProd: true,
+          mode: 'prod',
+          env: { META_MODE: 'prod' },
+          appReady: scenario !== 'not-ready',
+          appClose: scenario === 'closing',
+        },
+        scope(name: string) {
+          assert.equal(name, 'cabloy-mcp');
+          return { config: { enabled: scenario !== 'disabled' } };
+        },
+        config: {
+          instance: { queryField: 'instanceName', headerField: 'x-vona-instance-name' },
+          server: {
+            serve:
+              scenario === 'missing-authority'
+                ? {}
+                : { protocol: 'https', host: 'mcp.example.test' },
+          },
+          modules: {
+            'mcp-auth': {
+              pendingTtl: 600,
+              codeTtl: 60,
+              tokenTtl: 900,
+              allowLoopbackHttp: true,
+            },
+          },
+        },
+        createAnonymousContext(input: unknown) {
+          contexts++;
+          assert.deepEqual(input, {
+            headers: { host: 'mcp.example.test' },
+            method: 'POST',
+            url: '/mcp',
+            socket: { encrypted: true },
+          });
+          return { instanceName: '' };
+        },
+        get bean() {
+          return assert.fail('admission fixtures must not enter business execution');
+        },
+      } as unknown as VonaApplication;
+      const req = {
+        url: '/mcp',
+        method: 'POST',
+        rawHeaders: [
+          'host',
+          'mcp.example.test',
+          'content-type',
+          'application/json',
+          'accept',
+          'application/json, text/event-stream',
+        ],
+      } as unknown as IncomingMessage;
+      const res = {
+        destroyed: false,
+        writableEnded: false,
+        writeHead(code: number, values: Record<string, string>) {
+          status = code;
+          headers = values;
+        },
+        end(value: string) {
+          body = value;
+        },
+      } as unknown as ServerResponse;
+      await handleMcpRequest(productionApp, req, res);
+      assert.equal(status, scenario === 'ready' ? 401 : 503, scenario);
+      assert.equal(contexts, scenario === 'ready' ? 1 : 0, scenario);
+      assert.equal(headers['cache-control'], 'no-store');
+      assert.equal(
+        headers['www-authenticate'],
+        scenario === 'ready'
+          ? 'Bearer resource_metadata="https://mcp.example.test/.well-known/oauth-protected-resource/mcp"'
+          : undefined,
+      );
+      assert.deepEqual(JSON.parse(body), {
+        jsonrpc: '2.0',
+        id: null,
+        error: { code: -32000, message: 'Request rejected' },
+      });
+      assert.equal(mcpTransportSnapshot(productionApp), undefined);
     }
   });
 

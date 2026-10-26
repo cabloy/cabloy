@@ -62,6 +62,23 @@ Scoped work owns `app.bean.executor.mockCtx(...)`; each intentionally competing 
 
 Finite exit is normal ownership without fixtures, only two approved Actions admitted, preserved permission/instance/privacy and actual-work drain, optional Training/independent standalone behavior, tested production denial and required focused checks with truthful retained outcomes. Stop on an exact unresolved failure without widening scope. Protected audit sink/failure/retention and related production controls under `ATP-MCP-OPS-01` remain outstanding; logs/redaction are not substitutes, and production-denial removal requires separate accepted controls/execution. No deployment/activation, live grants/data changes, audit store/fleet/registry foundation, frontend work, reset/init, reinstall, environment/port changes, historical nonexit investigation/cleanup, restricted-client replay, commit/push or adjacent WBS delivery. Whole Proposed ADRs and blocked parent dependencies remain unchanged; full ATPs open, verified **0/12**, restricted-client verification independently pending. This supplement claims no new result, evidence/progress update or chart freshness.
 
+## Simplified MVP production admission proof (2026-10-26)
+
+The user accepted the simplified two-read MVP and approved the finite [dossier](./pdp-wbs.md#simplified-mvp-production-entry-dossier-2026-10-26). This later supplement supersedes only the previous ownership proof's production-denial expectation and audit/advanced-quota prerequisite. Under existing `ATP-MCP-TRANSPORT-01`, `ATP-MCP-OPS-01`, `ATP-MCP-OPS-02`, verify:
+
+1. An isolated framework production fixture (`isProd: true`, exact mode `prod`), ready/enabled and with valid synthetic HTTPS public authority, traverses actual ingress/resource resolution to missing-Bearer **401**, canonical resource-metadata challenge and no-store generic body, without exchange/business entry. No audit setting is required.
+2. Unknown/missing classification still denies before downstream access. Production not-ready/closing/disabled state and absent required public serve pair still yield nondiagnostic **503**; do not mutate singleton mode, global origin/proxy or shared configuration.
+3. Reuse the existing HTTP suite for exact two-tool admission, independent current select/view, token/instance/privacy and actual-work drain. Deferred protected audit and deployment-wide fine-grained quotas are not asserted as implemented; production-classification fixtures are not actual production startup/deployment proof.
+
+Run once initially, with bounded repairs/reruns only for actual affected failures:
+
+```sh
+PROJECT_DISABLED_MODULES=mcp-test SERVER_LISTEN_DISABLE=false npm run test -- src/suite/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
+node scripts/typecheck.ts native vona --noEmit --incremental false --composite false --project src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json
+```
+
+Run scoped format/lint/whitespace, docs build/changed links, `npm run spec:check -- cabloy-mcp`, chart generation/freshness and scoped evidence-path checks. Preserve both producer/sanitizer exits, manually review sensitive content and retain failures/revision attribution in existing business-client evidence before progress. Node `v24.8.0` is below required `>=24.11.0`; do not claim supported-runtime qualification. Existing managed disposable resources only; no reset/init, environment changes or live operations. Full ATPs remain open and verified 0/12; no deployment/release follows.
+
 ## Scope, Quality Priorities, and Risk
 
 Verification prioritizes:
@@ -537,6 +554,8 @@ Minimum proof:
 Traceability: `PRD-MCP-SAFETY-02`, `PRD-MCP-SAFETY-03`, `SRS-MCP-DISPATCH-04`, `SRS-MCP-DISPATCH-05`, `SRS-MCP-PRIVACY-01`, `WBS-MCP-40-02`.
 
 ### ATP-MCP-OPS-01: Limits, audit, telemetry, and sensitive-data redaction
+
+Current two-read MVP applicability is governed by the [later focused supplement](#simplified-mvp-production-admission-proof-2026-10-26): dedicated protected audit/audit-outage gating and deployment-wide fine-grained quotas are deferred, not missing MVP prerequisites or passing proof. The broader procedures below remain future hardening; applicable bounded limits and privacy checks remain required.
 
 Setup:
 

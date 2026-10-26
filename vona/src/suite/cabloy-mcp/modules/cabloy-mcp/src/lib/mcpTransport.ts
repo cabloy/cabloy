@@ -39,9 +39,9 @@ export async function handleMcpRequest(
   req: IncomingMessage,
   res: ServerResponse,
 ) {
-  // Production exposure awaits separately accepted protected audit and operational controls.
+  // Recognized runtime modes share the same readiness and authorization boundary.
   if (
-    (!app.meta.isDev && !app.meta.isTest) ||
+    (!app.meta.isDev && !app.meta.isTest && !app.meta.isProd) ||
     !app.meta.appReady ||
     app.meta.appClose ||
     !app.scope('cabloy-mcp').config.enabled

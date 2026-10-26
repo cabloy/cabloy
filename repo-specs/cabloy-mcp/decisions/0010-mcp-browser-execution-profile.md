@@ -26,6 +26,12 @@ Normal-module ownership does **not** authorize production availability: keep def
 
 This is approved design/execution scope, not source delivery, runtime evidence or release qualification. Follow the [prospective proof supplement](../test-plan.md#normal-module-ownership-proof-supplement-2026-10-26); blocked parents/dependencies, open full ATPs and verified 0/12 remain unchanged. Restricted-client verification stays independently pending.
 
+## Accepted simplified MVP production admission (2026-10-26)
+
+The user explicitly accepted the simplified two-read MVP and requested production no longer return unconditional 503, then approved its finite authority/source/test/verification plan. This supersedes only the production-denial/audit-before-production clause of the preceding ownership disposition. Recognized dev/test/prod modes may enter the same authenticated normal `/mcp` chain; unknown modes, not-ready/closing/disabled state and missing/invalid canonical authority still deny. Production retains the explicit public serve pair, OAuth/current Passport, independent student select/view, fixed two-tool admission, instance isolation, minimized output and existing bounds/actual-work drain.
+
+[ADR 0008's later MVP disposition](./0008-mcp-limits-audit-telemetry-redaction.md#accepted-simplified-two-read-mvp-disposition-2026-10-26) defers dedicated protected audit, audit-delivery gating and deployment-wide fine-grained quotas rather than adding a new readiness switch. No AS/browser/storage/DTO/schema/fixture change, deployment or live operation is included. Focused source-linked proof is required under the [MVP supplement](../test-plan.md#simplified-mvp-production-admission-proof-2026-10-26); historical denial evidence is not new production-admission proof, and this decision alone is not full ATP or release qualification.
+
 ## Superseded apparatus and retained limits
 
 Do not implement or relocate the unimplemented existing-`a-auth` aggregate/installation-marker schema, conditional keep-v1/fresh-only adoption package, external receipts, native physical-identity/connection qualification, activation epochs/fleet controls, qualified interval clock/restart continuity, correlation holder/bridge/bootstrap or cross-worker session-incarnation/first-binding synchronization apparatus.

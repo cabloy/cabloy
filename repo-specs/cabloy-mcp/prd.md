@@ -149,7 +149,7 @@ The server rejects missing/invalid OAuth, wrong resource/audience, instance mism
 
 - **PRD-MCP-SAFETY-01**: A tool call dispatches only to a server-owned controller operation through the existing guarded route path and cannot alter `innerAccess`, middleware, authentication, host, cookies, or tenant context through arguments. Traceability: `SRS-MCP-DISPATCH-01`, `SRS-MCP-DISPATCH-03`, `WBS-MCP-40-01`, `ATP-MCP-CALL-02`.
 - **PRD-MCP-SAFETY-02**: The server isolates caller identity and request state for every MCP request, including concurrent requests and nested executor contexts. Traceability: `SRS-MCP-DISPATCH-04`, `WBS-MCP-40-02`, `ATP-MCP-CALL-03`.
-- **PRD-MCP-SAFETY-03**: MCP calls enforce request-size, rate, timeout, and risk policy limits and produce redacted audit/telemetry records without exposing secrets or sensitive business data to the client. Traceability: `SRS-MCP-OPS-01`, `SRS-MCP-OPS-02`, `WBS-MCP-50-01`, `ATP-MCP-OPS-01`.
+- **PRD-MCP-SAFETY-03**: The two-read MVP retains existing ingress/JSON/result bounds, receipt/exchange deadlines, per-worker single-exchange/no-queue admission, actual-work settlement and safe output/error handling. Dedicated protected audit, audit-delivery admission gating and deployment-wide fine-grained quotas are deferred, not MVP production prerequisites or delivered capabilities. Production may proceed through normal OAuth, business authorization, instance and readiness checks; unknown modes remain unavailable. Broader audit/telemetry and keyed-rate governance remain later scope. No credentials or unrelated sensitive business data may be exposed to the client. Traceability: `SRS-MCP-OPS-01`, `SRS-MCP-OPS-02`, `WBS-MCP-50-01`, `ATP-MCP-OPS-01`.
 - **PRD-MCP-SAFETY-04**: A deployment can disable or defer the MCP surface without changing the underlying business APIs or making them less secure for ordinary HTTP callers. Traceability: `SRS-MCP-OPS-03`, `WBS-MCP-50-02`, `ATP-MCP-OPS-02`.
 
 ## Business Rules
@@ -161,7 +161,7 @@ The server rejects missing/invalid OAuth, wrong resource/audience, instance mism
 - HTTP method is not a side-effect classification. GET operations that mutate state remain high-risk or excluded until explicitly classified.
 - The active Vona instance is the tenant boundary. An input field such as `iid` is never an authorization source.
 - The first increment accepts ordinary JSON-compatible request/response shapes only. Multipart, raw body, binary, redirect, streaming, and unsupported status/result forms are excluded or require explicit adapters.
-- Existing controller guards and AOP remain authoritative, but MCP must perform its own OAuth, instance, request-shape, policy, and audit boundary before executor dispatch.
+- Existing controller guards and AOP remain authoritative; MCP performs OAuth, instance, request-shape and fixed-tool admission before executor dispatch. For the approved two-read MVP, dedicated protected audit is deferred rather than a dispatch or production-availability gate.
 - No source, provider, database migration, or deployment is created by this planning baseline.
 
 ## Launch Criteria

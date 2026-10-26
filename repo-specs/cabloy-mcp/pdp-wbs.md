@@ -377,11 +377,21 @@ Acceptance checks:
 - Failure after a domain commit has a documented result/recovery boundary, no false rollback/success claim and no unreviewed replay of a non-idempotent effect.
 - No sensitive request/result content appears in downstream AOP/JWT logging or retained artifacts.
 
+### Simplified MVP production entry dossier (2026-10-26)
+
+The user explicitly accepted the simplified MVP/production-mode change and approved this bounded execution plan. The [PRD safety scope](./prd.md#safe-execution-and-operations), [SRS amendment](./srs.md#approved-simplified-mvp-production-admission-2026-10-26) and [ADR 0008 disposition](./decisions/0008-mcp-limits-audit-telemetry-redaction.md#accepted-simplified-two-read-mvp-disposition-2026-10-26) supersede only the preceding migration dossier's production-denial/audit prerequisite for exactly the existing two student reads. This is an independent contribution to `WBS-MCP-20-01`, `WBS-MCP-50-01`, `WBS-MCP-50-02`; preserve unrelated parent dependencies and pending proof.
+
+At clean Basic `c4106108f05d`, change only `cabloy-mcp/src/lib/mcpTransport.ts` to recognize `isProd` alongside dev/test, retaining unknown/readiness/closing/disablement denial and all downstream security/lifetime behavior. Adapt `cabloy-mcp/test/businessHttp.test.ts` detached fixtures: production with explicit canonical authority reaches missing-Bearer 401; unknown mode and production not-ready/closing/disabled/missing-authority retain 503 without business work. No singleton mode/origin/proxy mutation, scaffold, metadata generation, DTO/schema/frontend or AS change.
+
+Run the [focused proof package](./test-plan.md#simplified-mvp-production-admission-proof-2026-10-26), update current guidance and retain only attributable outcomes in existing business-client evidence/progress/charts. Deferred protected audit/audit-outage gating and deployment-wide fine-grained quotas are not active MVP blockers; existing per-worker limits do not claim those capabilities. Finite exit: production enters normal checks, retained denials/security regression pass and records agree. No deployment, live-user/data operation, environment change, reset/init, reinstall, main write, commit/push or full ATP/parent completion is authorized.
+
 ### Phase 50: Operations, release hardening, and handoff
 
 Dependencies: `WBS-MCP-40-01`, `WBS-MCP-40-02`.
 
 #### WBS-MCP-50-01: Add limits, audit, telemetry, and redaction
+
+MVP applicability: the [later bounded dossier](#simplified-mvp-production-entry-dossier-2026-10-26) defers dedicated protected audit, audit-delivery gating and deployment-wide fine-grained quotas; the broader tasks below remain future hardening, not prerequisites for this two-read MVP.
 
 Traceability: `PRD-MCP-SAFETY-03`, `SRS-MCP-PRIVACY-01`, `SRS-MCP-OPS-01`, `SRS-MCP-OPS-02`, `SRS-MCP-TRANSPORT-03`, `SRS-MCP-NFR-02`, `SRS-MCP-NFR-03`, `ATP-MCP-OPS-01`.
 
