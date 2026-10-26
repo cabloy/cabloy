@@ -94,7 +94,7 @@ Frontend locale resources have two distinct authoring paths:
 | Ordinary module dictionary | `src/config/locale/<locale>.ts`                      | Generated `locales`        | Define the module's own message keys and default wording |
 | Language provider          | `src/locales/<locale>.ts` and `src/locales/index.ts` | Authored `localesProvider` | Supply translations for multiple target modules          |
 
-For example, `training-student` retains ownership of keys such as `Name` and their business meaning. `locale-jajp` translates those keys into Japanese; it does not acquire the student module's business ownership or generate its own `scope.locale.Name()`.
+For example, `training-student` retains ownership of keys such as `Name` and their business meaning. An application-authored Japanese provider translates those keys; it does not acquire the student module's business ownership or generate its own `scope.locale.Name()`. The provider below is an authoring example, not a bundled language pack.
 
 A provider declares its capability in the module's `package.json`:
 
@@ -137,9 +137,9 @@ export const localesProvider = {
 export { localesProvider } from './locales/index.ts';
 ```
 
-`modules` is resource structure, not a translatable message key. The runtime registers this example under `training-student`, not under the provider's `locale-jajp` scope. Providers can also contribute top-level global strings, but global resources and scoped dictionaries occupy different lookup levels; a same-named global key is not a universal override of every module.
+`modules` is resource structure, not a translatable message key. The runtime registers this example under `training-student`, not under the provider's own scope. Providers can also contribute top-level global strings, but global resources and scoped dictionaries occupy different lookup levels; a same-named global key is not a universal override of every module.
 
-Larger providers can compose per-target files from `src/lib/locales/<target-module>.ts`, importing them into `src/locales/ja-jp.ts` with the actual `.ts` source suffix. Helper filenames are not locale IDs. The existing `cabloy-locale` suite provides `locale-jajp` (`ja-jp`) and `locale-zhtw` (`zh-tw`). Installing a provider does not enable its language; see [Locale enablement and defaults](/frontend/environment-config-guide#locale-enablement-and-defaults).
+Larger providers can compose per-target files from `src/lib/locales/<target-module>.ts`, importing them into `src/locales/ja-jp.ts` with the actual `.ts` source suffix. Helper filenames are not locale IDs. Author or install the provider modules your application needs; framework support alone does not supply Japanese or Traditional Chinese dictionaries. Installing a provider does not enable its language; see [Locale enablement and defaults](/frontend/environment-config-guide#locale-enablement-and-defaults).
 
 ### Override precedence and missing-message fallback
 

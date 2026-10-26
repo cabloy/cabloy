@@ -32,7 +32,7 @@ This makes localization part of the module model rather than a single global str
 
 ### Cross-module language providers
 
-A language provider supplies translations for existing target modules without taking ownership of their message keys. Cabloy Basic includes paired Vona/Zova `locale-jajp` (`ja-jp`) and `locale-zhtw` (`zh-tw`) providers. Installing a provider supplies resources; it does **not** enable that language in application policy.
+A language provider supplies translations for existing target modules without taking ownership of their message keys. The framework supports provider modules on both Vona and Zova; the Japanese (`ja-jp`) resources below illustrate an application-authored provider, not a bundled language pack. Author or install the providers your application needs. Installing a provider supplies resources; it does **not** enable that language in application policy.
 
 A Vona provider declares `vonaModule.capabilities.locale: true` in its `package.json` and authors a separate export:
 
@@ -64,10 +64,10 @@ For a target's scoped key, registration precedence is **project target override 
 
 ### Generation and reload boundaries
 
-From the repository root:
+From the repository root, refresh metadata for an existing module, replacing `<module>` with its relative module name:
 
 ```bash
-npm run vona :tools:metadata locale-jajp
+npm run vona :tools:metadata <module>
 ```
 
 Metadata generation still handles ordinary `src/config/locale` resources; it neither discovers nor generates the provider's `src/locales` map. Keep `localesProvider` and its entrypoint export authored. Do not add dummy provider `en-us` files or expect English-base key/scope inference for provider-owned resources. `:init:locale` initializes **ordinary** locale resources, not a provider scaffold. Do not hand-edit generated consumers to add provider dictionaries.
