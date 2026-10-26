@@ -107,7 +107,11 @@ export class BeanPermission extends BeanBase {
     return typeof permission === 'boolean' ? permission : permission.allowed;
   }
 
-  /** Checks current guards without permission events, result caches or matcher projection. */
+  /**
+   * Checks current guards without permission events, result caches or matcher projection.
+   * A true result does not authorize individual records or prepare data scope/owner values.
+   * The target action's RBAC decision is not retained; scoped operations must authorize separately.
+   */
   public async checkPermissionActionGuards(
     resource: keyof IResourceRecord,
     actionKey: string,
