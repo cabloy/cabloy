@@ -646,3 +646,25 @@ Source trace establishes the boundary, not the root cause. `vona/packages-vona/v
 `scripts/runIsolatedTest.ts:681-713` marks failed execution and retains resources; validated cleanup follows successful execution. Retention matches the existing [managed-run lifecycle](../../../repo-docs/reference/repo-scripts.md#test-isolation-and-development-data): interrupted/failed runs keep claims and resources. A later authorized managed invocation may consider claims older than the configured TTL (default one day), but only after the existing ownership, process, endpoint, path and lock checks. This investigation neither executes that lane nor changes its TTL, authorizes deletion, or promises cleanup will succeed. The successful unchanged rerun remains the **21/21, exit 0** behavior proof; it does not repair or reclassify the first interrupted attempt.
 
 Bounded investigation disposition: recorded-process contention is no longer observed; resources are intentionally left retained; original nonexit cause remains unproven. Progress formatting, authority audit (**68 definitions**), English chart generation/freshness (**0/12 verified**), scoped evidence-path checking and diff whitespace checks pass for the updated records. No chart diff or infrastructure/source change is introduced by this investigation. No business runtime test or public-docs build was rerun for these evidence/progress-only additions. This closes the approved inspection/recording work, not root-cause repair, resource cleanup, full ATP acceptance or a successor implementation.
+
+### User-reported restricted-client verification stopped before discovery (2026-10-26)
+
+The user separately approved the finite real-client student permission-aware discovery check: use an existing independently known restricted identity and existing authorized target only; no account creation, permission changes, reauthentication, restart or expanded querying. This Claude Code session exposes neither student MCP tools nor control of the user's Codex session. No server `tools/list` or business call was issued by the assistant; absence of tools from this assistant session is not server permission-filtering evidence.
+
+The user then reported:
+
+| Observation | User-reported result |
+| --- | --- |
+| Permission category | Unknown; no independent identity-permission evidence in the current context. Stopped. |
+| Tool directory versus expected authority | Not assessed; tool visibility cannot establish the permission category. |
+| Business read | Not executed. |
+| Result-field checks | Not executed. |
+| Client version | Unknown. |
+
+This is a user-reported **precondition stop**, not a passed or failed discovery assertion, authorization denial or observed server defect. No student identity, record content, token or raw response was supplied or retained. Existing automated results remain separately attributed and do not substitute for this missing real-client evidence.
+
+Recording preflight observes Cabloy Basic, a clean worktree at `31127a17de29f787758697a4a30bec201eb4aa3b` (`Merge branch 'main' into worktree-spec-basic-cabloy-mcp`), rather than the earlier dirty implementation baseline. This recording changes only this evidence and progress; it neither reruns nor requalifies earlier runtime proof for the merged revision or the connected client. Served revision, connection identity, scope and independent select/view authority remain unestablished.
+
+**Disposition:** restricted-client acceptance remains **open/pending**, solely at the missing independent permission-category prerequisite; directory, reads and fields are untested. Do not infer authority from catalog visibility, guess a target, grant permissions, inspect credentials, repeat the both-permissions happy path, or retry this procedure without new qualifying facts. Resume only when an existing authorized identity has independently established select/view authority; any later read additionally needs an authorized target in that client context. This prerequisite blocks this real-client verification branch, not unrelated business work. Parent WBS rows remain blocked, full ATPs open and verified **0/12** unchanged. No source, permission, connection, environment, database, process, deployment, commit or push operation is performed by this recording.
+
+Recording checks pass: progress formatting, `spec:check` (**68 definitions**), English chart generation/freshness (**0/12 verified**, no SVG diff), scoped evidence-path checking and diff whitespace. The added evidence prose was manually reviewed; the formatter ignores this evidence file. The new progress link matches this heading. No business/client test or public-docs build was rerun for this evidence/progress-only update; structural/path checks do not establish runtime acceptance or secret scanning.
