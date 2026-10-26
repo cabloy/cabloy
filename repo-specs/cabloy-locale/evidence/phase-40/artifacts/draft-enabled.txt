@@ -1,0 +1,252 @@
+Node: 24.11.0
+Command: VONA_TEST_LOCALE_POLICY=both npm run test:e2e -- cabloy-basic --grep 'ATP-BASIC-DRAFT-(07|08|11):'
+Producer exit: 0
+
+
+> cabloy@5.1.239 test:e2e
+> node scripts/runIsolatedTest.ts e2e cabloy-basic --grep ATP-BASIC-DRAFT-(07|08|11):
+
+vona api:bin:dev at vona
+
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+2026-10-26T08:56:47.250Z silly [a-startup.service.startup] startup: a-version:databaseInit, pid: 59887
+2026-10-26T08:56:47.310Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-26T08:56:47.310Z silly [a-version.service.database] {"method":"POST"} database: vona/.app-test-20261026085642-02576660/sqlite3/vona-test-cabtest20261026085642-02576660-s-20261026-165647.db, pid: 59887
+2026-10-26T08:56:50.057Z info [a-version.service.version] {"method":"POST"} {
+  "a-version": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-auth": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "auth-simple": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-instance": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-mail": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-pay": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-member": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-payment": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "home-user": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-promotion": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-trade": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-catalog": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-record": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-recordsubject": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-student": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-datasource": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-layoutprofile": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-status": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-rest": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-vona": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  }
+}
+2026-10-26T08:56:50.058Z silly [a-version.service.version] {"method":"POST"} All modules are checked successfully!
+2026-10-26T08:56:50.089Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-26T08:56:50.089Z silly [a-version.service.database] {"method":"POST"} database: vona/.app-test-20261026085642-02576660/sqlite3/vona-test-cabtest202610-i-sa6cN7_BzN-20261026-165650.db, pid: 59887
+2026-10-26T08:56:53.558Z info [a-version.service.version] {"method":"POST"} {
+  "a-version": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-auth": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "auth-simple": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-instance": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-mail": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-pay": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-member": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-payment": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "home-user": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-promotion": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-trade": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-catalog": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-record": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-recordsubject": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-student": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-datasource": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-layoutprofile": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-status": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-rest": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-vona": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  }
+}
+2026-10-26T08:56:53.559Z silly [a-version.service.version] {"method":"POST"} All modules are checked successfully!
+2026-10-26T08:56:53.559Z silly [a-startup.service.startup] startup: a-version:databaseName, pid: 59887
+2026-10-26T08:56:53.560Z silly [a-startup.service.startup] startup: a-web:listen, pid: 59887
+2026-10-26T08:56:53.808Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-version:instanceInit, pid: 59887
+2026-10-26T08:56:59.068Z silly [a-version.service.version] {"method":"POST"} The instance is initialized successfully: default
+2026-10-26T08:56:59.070Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-schedule:loadSchedules, pid: 59887
+2026-10-26T08:56:59.219Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-runtime:runtime, pid: 59887
+2026-10-26T08:56:59.327Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-queue:loadQueueWorkers, pid: 59887
+2026-10-26T08:57:04.353Z silly [a-version.service.version] {"method":"POST"} The instance is seeded successfully: default
+
+===> <PRIVATE_PATH> node_modules/.pnpm/@playwright+test@1.62.1/node_modules/@playwright/test/cli.js test --config repo-e2e/config/playwright.config.ts ^repo-e2e/specs/cabloy-basic\.spec\.ts$ --grep ATP-BASIC-DRAFT-(07|08|11):
+
+Running 3 tests using 1 worker
+
+(node:61089) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 repo-e2e/specs/cabloy-basic.spec.ts:1801:1 › ATP-BASIC-DRAFT-07: failed create validation retains recoverable incomplete input @admin @flow (5.3s)
+2026-10-26T08:57:12.558Z error [a-error.filter.error] {"code":"ERR_STREAM_PREMATURE_CLOSE","headerSent":true,"method":"GET","path":"/admin/assets/a-routertabs-J-JAkIVS.js"} Premature close
+Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+    at ServerResponse.<anonymous> (node:internal/streams/pipeline:422:29)
+    at ServerResponse.emit (node:events:520:35)
+    at emitCloseNT (node:_http_server:1066:10)
+    at Socket.onServerResponseClose (node:_http_server:285:5)
+    at Socket.emit (node:events:520:35)
+    at TCP.<anonymous> (node:net:346:12)
+  ✓  2 repo-e2e/specs/cabloy-basic.spec.ts:1837:1 › ATP-BASIC-DRAFT-08: locale changes preserve recovered dirty input and current-schema persistence @admin @flow (7.6s)
+2026-10-26T08:57:20.312Z error [a-error.filter.error] {"code":"ERR_STREAM_PREMATURE_CLOSE","headerSent":true,"method":"GET","path":"/admin/assets/a-routertabs-J-JAkIVS.js"} Premature close
+Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+    at ServerResponse.<anonymous> (node:internal/streams/pipeline:422:29)
+    at ServerResponse.emit (node:events:520:35)
+    at emitCloseNT (node:_http_server:1066:10)
+    at Socket.onServerResponseClose (node:_http_server:285:5)
+    at Socket.emit (node:events:520:35)
+    at TCP.<anonymous> (node:net:346:12)
+  ✓  3 repo-e2e/specs/cabloy-basic.spec.ts:1954:1 › ATP-BASIC-DRAFT-11: edit locale refresh preserves recovered names but resets translated level options to the server baseline @admin @flow @ssr (8.2s)
+
+  3 passed (22.2s)
+E2E target: http://127.0.0.1:50392
+App shutdown gracefully: 59887

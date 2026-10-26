@@ -1,0 +1,57 @@
+Node: 24.11.0
+Command: node --test vona/packages-cli/cli-set-api/test/strictGenerationPrivacy.test.ts && npm run tsc:zova && npm run tsc:vona
+Producer exit: 0
+
+✔ strict generation and direct writer reject invalid mode/run/directory/owners before env or writes (2.791875ms)
+✔ strict generation writes only selected keys, including on later failure; projection reads child env (2.556875ms)
+✔ managed locale policy is opt-in and survives the generated environment projection (1.266666ms)
+✔ strict _dev hands resolved derived values to spawn and preserves inherited control keys (2.979458ms)
+✔ test-mode nonzero exits, signals and spawn errors reject and remove forwarding listeners (0.312167ms)
+✔ ordinary test generation retains literal env and inherited spawn semantics (0.643167ms)
+✔ ordinary nodemon restart/quit and crash lifecycle remains supervised in memory (0.455042ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 87.486291
+
+> cabloy@5.1.239 tsc:zova
+> pnpm --dir zova run tsc
+
+$ npm run tsc:native
+
+> tsc:native
+> npm run prerun && node ../scripts/typecheck.ts native zova --noEmit --incremental false --project tsconfig.vue-tsc.json
+
+
+> prerun
+> npm run zova :tools:deps
+
+
+> zova
+> node ./packages-cli/cli/src/bin/zova.ts :tools:deps
+
+zova front:tools:deps at zova
+
+
+> cabloy@5.1.239 tsc:vona
+> pnpm --dir vona run tsc
+
+$ npm run tsc:native
+
+> tsc:native
+> npm run prerun && node ../scripts/typecheck.ts native vona --noEmit --incremental false --project tsconfig.json
+
+
+> prerun
+> npm run vona :tools:deps
+
+
+> vona
+> node ./packages-cli/cli/src/bin/vona.ts :tools:deps
+
+vona api:tools:deps at vona
+

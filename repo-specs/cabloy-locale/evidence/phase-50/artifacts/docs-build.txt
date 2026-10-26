@@ -1,0 +1,23 @@
+Node: 24.11.0
+Command: npm run docs:build
+Producer exit: 0
+Sanitizer exit: 0
+
+
+> cabloy@5.1.239 docs:build
+> pnpm --dir repo-docs docs:build
+
+$ vitepress build .
+
+  vitepress v1.6.4
+
+- building client + server bundles...
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ building client + server bundles...
+- rendering pages...
+✓ rendering pages...
+build complete in 10.07s.

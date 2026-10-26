@@ -1,0 +1,51 @@
+Node: 24.11.0
+Initial static audit after status reconciliation failed: progress.md:47 [dependency-state] WBS-LOC-50-01 Completed task still has an unfinished recorded prerequisite: WBS-LOC-40-01. Corrected readiness row to blocked; no authority or acceptance bypass.
+Manual review replaced fallback pnpm-store path with <FALLBACK_PNPM_STORE>; diagnostic preserved. No secrets/customer data found in new verification output.
+
+Command: ./node_modules/.bin/oxfmt --write repo-specs/cabloy-locale/README.md repo-specs/cabloy-locale/progress.md
+Producer exit: 0
+Sanitizer exit: 0
+Finished in 25ms on 2 files using 12 threads.
+
+
+Command: npm run spec:charts -- cabloy-locale
+Producer exit: 0
+Sanitizer exit: 0
+
+> cabloy@5.1.239 spec:charts
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs cabloy-locale
+
+generated implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-locale (en; 3/6 verified).
+
+
+Command: npm run spec:charts:check -- cabloy-locale
+Producer exit: 0
+Sanitizer exit: 0
+
+> cabloy@5.1.239 spec:charts:check
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs --check cabloy-locale
+
+checked implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-locale (en; 3/6 verified).
+
+
+Command: npm run spec:check -- cabloy-locale
+Producer exit: 0
+Sanitizer exit: 0
+
+> cabloy@5.1.239 spec:check
+> node ./repo-agent-governance/tools/spec-audit/audit.mjs cabloy-locale
+
+repo-specs/cabloy-locale: complete planning structure passed (32 definitions).
+Complete-baseline structure and explicit exact-ID chain.
+Static structure only; approval, semantic sufficiency, implementation, and evidence authenticity require human review.
+
+
+Command: npm run --silent evidence:check -- -- repo-specs/cabloy-locale/evidence/phase-40/artifacts/simplification-checks.txt repo-specs/cabloy-locale/evidence/phase-40/index.md repo-specs/cabloy-locale/evidence/phase-50/index.md
+Producer exit: 0
+Sanitizer exit: 0
+
+
+Command: git diff --check
+Producer exit: 0
+Sanitizer exit: 0
+

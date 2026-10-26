@@ -1,0 +1,239 @@
+Node: 24.11.0
+Command: VONA_TEST_LOCALE_POLICY=both npm run test:e2e -- cabloy-locale
+Producer exit: 0
+
+
+> cabloy@5.1.239 test:e2e
+> node scripts/runIsolatedTest.ts e2e cabloy-locale
+
+vona api:bin:dev at vona
+
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+2026-10-26T08:56:06.808Z silly [a-startup.service.startup] startup: a-version:databaseInit, pid: 57357
+2026-10-26T08:56:06.879Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-26T08:56:06.879Z silly [a-version.service.database] {"method":"POST"} database: vona/.app-test-20261026085601-824f1d9b/sqlite3/vona-test-cabtest20261026085601-824f1d9b-s-20261026-165606.db, pid: 57357
+2026-10-26T08:56:10.052Z info [a-version.service.version] {"method":"POST"} {
+  "a-version": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-auth": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "auth-simple": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-instance": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-mail": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-pay": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-member": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-payment": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "home-user": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-promotion": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-trade": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-catalog": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-record": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-recordsubject": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-student": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-datasource": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-layoutprofile": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-status": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-rest": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-vona": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  }
+}
+2026-10-26T08:56:10.053Z silly [a-version.service.version] {"method":"POST"} All modules are checked successfully!
+2026-10-26T08:56:10.088Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-26T08:56:10.089Z silly [a-version.service.database] {"method":"POST"} database: vona/.app-test-20261026085601-824f1d9b/sqlite3/vona-test-cabtest202610-i-X85ypGPgfS-20261026-165610.db, pid: 57357
+2026-10-26T08:56:13.580Z info [a-version.service.version] {"method":"POST"} {
+  "a-version": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-auth": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "auth-simple": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-instance": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-mail": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-pay": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-member": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-payment": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "home-user": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-promotion": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-trade": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-catalog": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-record": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-recordsubject": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-student": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-datasource": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-layoutprofile": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-status": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-rest": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-vona": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  }
+}
+2026-10-26T08:56:13.580Z silly [a-version.service.version] {"method":"POST"} All modules are checked successfully!
+2026-10-26T08:56:13.580Z silly [a-startup.service.startup] startup: a-version:databaseName, pid: 57357
+2026-10-26T08:56:13.582Z silly [a-startup.service.startup] startup: a-web:listen, pid: 57357
+2026-10-26T08:56:13.839Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-version:instanceInit, pid: 57357
+2026-10-26T08:56:18.904Z silly [a-version.service.version] {"method":"POST"} The instance is initialized successfully: default
+2026-10-26T08:56:18.904Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-schedule:loadSchedules, pid: 57357
+2026-10-26T08:56:18.980Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-runtime:runtime, pid: 57357
+2026-10-26T08:56:19.151Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-queue:loadQueueWorkers, pid: 57357
+2026-10-26T08:56:23.439Z silly [a-version.service.version] {"method":"POST"} The instance is seeded successfully: default
+
+===> <PRIVATE_PATH> node_modules/.pnpm/@playwright+test@1.62.1/node_modules/@playwright/test/cli.js test --config repo-e2e/config/playwright.config.ts ^repo-e2e/specs/cabloy-locale\.spec\.ts$
+
+Running 5 tests using 1 worker
+
+(node:58589) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  1 repo-e2e/specs/cabloy-locale.spec.ts:66:1 › ATP-LOC-03: installed Japanese stays disabled while configured Web languages work @web @smoke
+  ✓  2 repo-e2e/specs/cabloy-locale.spec.ts:115:1 › ATP-LOC-04: enabled Japanese and Taiwan Traditional Chinese Web SSR and hydration remain locale-scoped @web @ssr @smoke (2.0s)
+  ✓  3 repo-e2e/specs/cabloy-locale.spec.ts:175:1 › ATP-LOC-04: enabled Japanese and Taiwan Traditional Chinese Admin SSR and navigation remain locale-scoped @admin @ssr @smoke (2.4s)
+  ✓  4 repo-e2e/specs/cabloy-locale.spec.ts:225:1 › ATP-LOC-04: concurrent enabled locale requests keep SSR text and canonical URLs isolated @web @ssr (40ms)
+  -  5 repo-e2e/specs/cabloy-locale.spec.ts:249:1 › ATP-LOC-03: Admin language menu excludes installed Japanese and preserves configured selection @admin @smoke
+
+  2 skipped
+  3 passed (5.7s)
+E2E target: http://127.0.0.1:50015
+App shutdown gracefully: 57357

@@ -1,0 +1,11 @@
+Node: 24.11.0
+Command: ./node_modules/.bin/oxfmt --check repo-docs/backend/i18n-guide.md repo-docs/frontend/module-scope.md repo-docs/frontend/system-startup-guide.md repo-docs/frontend/environment-config-guide.md
+Producer exit: 1
+Sanitizer exit: 0
+
+Checking formatting...
+
+repo-docs/frontend/module-scope.md (0ms)
+
+Format issues found in above 1 files. Run without `--check` to fix.
+Finished in 23ms on 4 files using 12 threads.

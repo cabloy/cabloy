@@ -1,0 +1,856 @@
+Node: 24.11.0
+Command: npm run build:zova:admin && npm run build:zova:web && npm run deps:vona
+Producer exit: 0
+
+
+> cabloy@5.1.239 build:zova:admin
+> pnpm --dir zova run build:ssr:cabloyBasicAdmin && pnpm --dir zova run build:rest:cabloyBasicAdmin
+
+$ npm run prerun && quasar build --mode ssr --flavor cabloyBasicAdmin
+
+> prerun
+> npm run zova :tools:deps
+
+
+> zova
+> node ./packages-cli/cli/src/bin/zova.ts :tools:deps
+
+zova front:tools:deps at zova
+
+
+ .d88888b.
+d88P" "Y88b
+888     888
+888     888 888  888  8888b.  .d8888b   8888b.  888d888
+888     888 888  888     "88b 88K          "88b 888P"
+888 Y8b 888 888  888 .d888888 "Y8888b. .d888888 888
+Y88b.Y8b88P Y88b 888 888  888      X88 888  888 888
+ "Y888888"   "Y88888 "Y888888  88888P' "Y888888 888
+       Y8b
+
+
+ Build mode............. ssr
+ Pkg quasar............. v2.32.2
+ Pkg @quasar/app-vite... v2.5.10
+ Pkg vite............... v8.3.4
+ Debugging.............. no
+ Publishing............. no
+
+ App • Using quasar.config.ts in "ts" format
+ App • Running "zova" Quasar App Extension...
+ App • Extension(zova): Extending quasar.config file configuration...
+ App • Extension(zova): Running beforeBuild hook...
+ App • Extension(zova): Extending Vite config
+ App •  WAIT  • Compiling of SSR Client with Vite in progress...
+vite v8.3.4 building client environment for production...
+/*! 🌼 daisyUI 5.7.37 */
+✓ built in 4.07s
+[PLUGIN_TIMINGS] JavaScript callbacks ran for 3.8s of this 4.0s build (95%).
+The slowest callbacks, timed inside each callback (the wait before a callback starts is excluded, the time it awaits is included):
+  - plugin babel-plugin transform (52%, 2.1s, 1996 calls)
+Additional callback time came from the callbacks below and from callbacks under 1s.
+2 callbacks are listed without a time. Their calls overlapped, so the time inside one call includes work from other calls. To find their cost, profile the build with `node --cpu-prof`:
+  - plugin vite:asset load (13 calls)
+  - plugin vite:css transform (3 calls)
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+
+ App •  DONE  • SSR Client compiled with success by Vite • 4096ms
+
+ App • Extension(zova): Extending Vite config
+ App •  WAIT  • Compiling of SSR Server with Vite in progress...
+vite v8.3.4 building ssr environment for production...
+✓ built in 2.97s
+ App •  DONE  • SSR Server compiled with success by Vite • 2975ms
+
+ App • Extension(zova): Running "extendSSRWebserverConf(esbuildConf)"
+ App •  WAIT  • Compiling of SSR Webserver with Esbuild in progress...
+ App •  DONE  • SSR Webserver compiled with success by Esbuild • 46ms
+
+ App •  WAIT  • Compiling of SSR Webserver with Esbuild in progress...
+ App •  DONE  • SSR Webserver compiled with success by Esbuild • 109ms
+
+ Build summary with important files:
+ ╔══════════════════════════════════════════════╦══════════════╦══════════════╗
+ ║                                        Asset ║         Size ║      Gzipped ║
+ ╟──────────────────────────────────────────────╫──────────────╫──────────────╢
+ ║       client/assets/-zova-config-BXdOgQdV.js ║      0.45 KB ║      0.26 KB ║
+ ║              client/assets/a-api-Cb6-yN7_.js ║      6.12 KB ║      1.72 KB ║
+ ║              client/assets/a-app-DdrzDYdN.js ║      5.26 KB ║      1.74 KB ║
+ ║             client/assets/a-bean-RO-TFe7_.js ║     15.14 KB ║      3.67 KB ║
+ ║         client/assets/a-behavior-BagByLZu.js ║     18.98 KB ║      3.84 KB ║
+ ║        client/assets/a-behaviors-DIqggHgJ.js ║      2.31 KB ║      0.83 KB ║
+ ║          client/assets/a-command-A5ILs-U8.js ║      7.78 KB ║      1.86 KB ║
+ ║            client/assets/a-fetch-mColhYcc.js ║     12.98 KB ║      2.97 KB ║
+ ║             client/assets/a-form-D2KIe1iW.js ║     78.52 KB ║     16.14 KB ║
+ ║             client/assets/a-icon-Cmln4mvN.js ║     16.30 KB ║      4.10 KB ║
+ ║      client/assets/a-interceptor-BlhtUVMs.js ║     10.25 KB ║      2.53 KB ║
+ ║    client/assets/a-layoutprofile-D5aQ-Irc.js ║      6.68 KB ║      1.70 KB ║
+ ║           client/assets/a-logger-BhXn9CBG.js ║      5.07 KB ║      1.27 KB ║
+ ║             client/assets/a-meta-BCdJLpPQ.js ║      1.49 KB ║      0.57 KB ║
+ ║            client/assets/a-model-Do5Mcirl.js ║     55.52 KB ║     10.46 KB ║
+ ║          client/assets/a-openapi-HyX8TBet.js ║     27.73 KB ║      5.95 KB ║
+ ║              client/assets/a-pay-Bj53rLyc.js ║      7.29 KB ║      1.66 KB ║
+ ║             client/assets/a-rbac-DHx9u4AQ.js ║      1.00 KB ║      0.46 KB ║
+ ║           client/assets/a-router-Yw1p8t6u.js ║     47.10 KB ║     10.34 KB ║
+ ║      client/assets/a-routerstack-D2Y5-S9p.js ║      8.56 KB ║      2.47 KB ║
+ ║       client/assets/a-routertabs-J-JAkIVS.js ║     28.43 KB ║      6.08 KB ║
+ ║              client/assets/a-ssr-V4WGik1V.js ║     35.57 KB ║      8.51 KB ║
+ ║           client/assets/a-ssrhmr-BIsMWJNo.js ║      3.27 KB ║      1.11 KB ║
+ ║            client/assets/a-style-D2uoSUMn.js ║     14.29 KB ║      3.64 KB ║
+ ║            client/assets/a-table-DHIhbeDp.js ║     32.10 KB ║      7.33 KB ║
+ ║              client/assets/a-zod-D_Xas6NV.js ║      2.68 KB ║      0.91 KB ║
+ ║             client/assets/a-zova-DVIMAvpI.js ║      1.00 KB ║      0.46 KB ║
+ ║              client/assets/axios-DPNW4LqN.js ║    136.39 KB ║     33.58 KB ║
+ ║      client/assets/basic-adapter-CcFLmRJz.js ║      2.47 KB ║      0.84 KB ║
+ ║          client/assets/basic-app-DE7QqShI.js ║     45.65 KB ║      8.66 KB ║
+ ║       client/assets/basic-button-C9ff5Knv.js ║      7.09 KB ║      2.12 KB ║
+ ║      client/assets/basic-captcha-CVbXtj3J.js ║      8.42 KB ║      2.58 KB ║
+ ║     client/assets/basic-commands-CsOeJWVp.js ║      9.87 KB ║      1.98 KB ║
+ ║ client/assets/basic-commandssync-hLN4_1za.js ║      2.71 KB ║      0.84 KB ║
+ ║     client/assets/basic-currency-CPRo0p5z.js ║      7.18 KB ║      2.05 KB ║
+ ║         client/assets/basic-date-B3LfdIXR.js ║     15.00 KB ║      3.29 KB ║
+ ║      client/assets/basic-details-CLEmaQXH.js ║     48.58 KB ║      8.56 KB ║
+ ║         client/assets/basic-file-DQWTlErh.js ║     41.26 KB ║      9.66 KB ║
+ ║         client/assets/basic-form-B73C8NFR.js ║     25.11 KB ║      4.95 KB ║
+ ║        client/assets/basic-image-BhjKUBiG.js ║     68.70 KB ║     14.80 KB ║
+ ║        client/assets/basic-input-Bo7rCcGf.js ║      4.00 KB ║      1.32 KB ║
+ ║     client/assets/basic-markdown-BELIxNCn.js ║     55.33 KB ║     11.63 KB ║
+ ║      client/assets/basic-metrics-9Q0vBIrU.js ║      9.08 KB ║      2.64 KB ║
+ ║         client/assets/basic-page-Z0iKCR-S.js ║     46.97 KB ║      9.31 KB ║
+ ║    client/assets/basic-pageentry-8_fS-zIx.js ║     63.94 KB ║     15.17 KB ║
+ ║          client/assets/basic-pay-DFBCDSua.js ║      6.19 KB ║      1.90 KB ║
+ ║     client/assets/basic-resource-NPxBqtNC.js ║     27.89 KB ║      6.30 KB ║
+ ║       client/assets/basic-select-BTN-__o2.js ║     11.78 KB ║      3.04 KB ║
+ ║        client/assets/basic-table-Dt1QJDnU.js ║     39.12 KB ║      7.79 KB ║
+ ║         client/assets/basic-text-zFYv6nIL.js ║      5.55 KB ║      1.55 KB ║
+ ║            client/assets/browser-DMW0vvjT.js ║     86.66 KB ║     20.90 KB ║
+ ║   client/assets/commerce-catalog-qoyz-CG8.js ║     20.79 KB ║      4.74 KB ║
+ ║    client/assets/commerce-member-B3qUaHHl.js ║     22.81 KB ║      5.13 KB ║
+ ║   client/assets/commerce-payment-oNABi_lZ.js ║      1.07 KB ║      0.47 KB ║
+ ║ client/assets/commerce-promotion-k-xqxuKj.js ║      4.38 KB ║      1.20 KB ║
+ ║ client/assets/commerce-siteadmin-DmZVUPaV.js ║      9.23 KB ║      2.50 KB ║
+ ║   client/assets/commerce-siteweb-OtZ5JnwW.js ║      1.07 KB ║      0.47 KB ║
+ ║     client/assets/commerce-trade-BU0KYPoB.js ║    133.92 KB ║     21.53 KB ║
+ ║           client/assets/debounce-BO-Xzmb1.js ║      2.12 KB ║      0.83 KB ║
+ ║         client/assets/demo-basic-dIvJprRg.js ║     98.25 KB ║     15.27 KB ║
+ ║          client/assets/demo-todo-DMCSBnKl.js ║     16.75 KB ║      3.67 KB ║
+ ║      client/assets/devui-adapter-zsi6zdXH.js ║      4.08 KB ║      1.44 KB ║
+ ║               client/assets/dist-DW1baIuM.js ║      1.99 KB ║      0.75 KB ║
+ ║        client/assets/dist.es2015-Apg-BB-0.js ║      9.24 KB ║      2.73 KB ║
+ ║            client/assets/extends-IJLGmeJm.js ║      0.91 KB ║      0.43 KB ║
+ ║              client/assets/fecha-Bk0qi7oD.js ║    400.33 KB ║     85.78 KB ║
+ ║           client/assets/home-api-Bgqzvkk1.js ║     24.83 KB ║      3.42 KB ║
+ ║          client/assets/home-base-muC7NGTL.js ║     34.91 KB ║     11.02 KB ║
+ ║          client/assets/home-icon-Duk71f8x.js ║      4.50 KB ║      1.05 KB ║
+ ║    client/assets/home-indexadmin-CfGsnp31.js ║      4.54 KB ║      1.49 KB ║
+ ║      client/assets/home-indexweb-DzDlPAFk.js ║      3.61 KB ║      1.12 KB ║
+ ║   client/assets/home-layoutadmin-DbhpJGLE.js ║     43.82 KB ║      9.14 KB ║
+ ║   client/assets/home-layoutempty-BWPGkF_h.js ║      4.29 KB ║      1.43 KB ║
+ ║     client/assets/home-layoutweb-DWVrrbys.js ║     36.38 KB ║      7.80 KB ║
+ ║         client/assets/home-login-DjhLHlJf.js ║     25.86 KB ║      5.71 KB ║
+ ║      client/assets/home-passport-BtImEbth.js ║     15.88 KB ║      3.83 KB ║
+ ║         client/assets/home-theme-BtTUogWm.js ║      4.48 KB ║      1.22 KB ║
+ ║          client/assets/home-user-CxFz23O6.js ║     46.19 KB ║      8.43 KB ║
+ ║              client/assets/index-DLi0gUdj.js ║      0.06 KB ║      0.07 KB ║
+ ║  client/assets/index.esm-bundler-CeLwd5iB.js ║    112.69 KB ║     23.74 KB ║
+ ║                client/assets/lib-Ts668iwk.js ║   1347.94 KB ║    330.01 KB ║
+ ║        client/assets/locale-jajp-DV9rmSCr.js ║     28.72 KB ║      7.72 KB ║
+ ║        client/assets/locale-test-6aELtIej.js ║      1.03 KB ║      0.47 KB ║
+ ║        client/assets/locale-zhtw-6n4x-Bue.js ║     24.67 KB ║      7.27 KB ║
+ ║        client/assets/localforage-B83AW4zh.js ║     63.93 KB ║     12.00 KB ║
+ ║              client/assets/luxon-DMLMA3Ht.js ║    225.85 KB ║     49.47 KB ║
+ ║           client/assets/openapi3-CzJMYsqf.js ║      0.54 KB ║      0.25 KB ║
+ ║           client/assets/pay-mock-C-X_JEkM.js ║      5.35 KB ║      1.32 KB ║
+ ║         client/assets/pay-paypal-C-vB0En_.js ║      1.02 KB ║      0.46 KB ║
+ ║         client/assets/pay-stripe-CoBdVWEz.js ║      1.02 KB ║      0.47 KB ║
+ ║      client/assets/rest-resource-DuS7lont.js ║     37.31 KB ║      6.72 KB ║
+ ║   client/assets/rolldown-runtime-BdGkqNEt.js ║      2.09 KB ║      0.96 KB ║
+ ║                client/assets/src-BRrsO8LH.js ║      0.69 KB ║      0.28 KB ║
+ ║                client/assets/src-CUgn1N6n.js ║      0.59 KB ║      0.23 KB ║
+ ║                client/assets/src-CZwINxcE.js ║      0.17 KB ║      0.14 KB ║
+ ║                client/assets/src-LWiIEkav.js ║      0.39 KB ║      0.20 KB ║
+ ║      client/assets/tanstack-form-BDCKopwH.js ║      6.79 KB ║      1.60 KB ║
+ ║     client/assets/tanstack-query-C_zLzbwW.js ║     15.12 KB ║      3.41 KB ║
+ ║     client/assets/tanstack-query-Co4LevK5.js ║      7.16 KB ║      1.78 KB ║
+ ║     client/assets/tanstack-query-DsLB-cVV.js ║    107.63 KB ║     19.16 KB ║
+ ║     client/assets/tanstack-table-BpWjkt7G.js ║      4.05 KB ║      1.56 KB ║
+ ║     client/assets/tanstack-table-Bu9HvLDc.js ║    102.35 KB ║     19.20 KB ║
+ ║   client/assets/training-student-CPhl5XXb.js ║     21.58 KB ║      5.07 KB ║
+ ║          client/assets/typestyle-BqGKvHu3.js ║      9.71 KB ║      3.07 KB ║
+ ║             client/assets/uneval-SoITdTun.js ║     18.52 KB ║      5.12 KB ║
+ ║        client/assets/useSelector-veWHmiFT.js ║    156.25 KB ║     27.26 KB ║
+ ║                client/assets/vue-B1UFFNH8.js ║    159.92 KB ║     38.71 KB ║
+ ║                client/assets/vue-B308wd2M.js ║     10.01 KB ║      3.10 KB ║
+ ║                client/assets/vue-BDyZdc6O.js ║      9.51 KB ║      3.30 KB ║
+ ║                client/assets/vue-D9L_jTxb.js ║     46.08 KB ║     12.43 KB ║
+ ║                client/assets/vue-DivvVR1_.js ║     40.00 KB ║      9.54 KB ║
+ ║         client/assets/vue-router-DhfmBgbR.js ║     64.60 KB ║     17.95 KB ║
+ ║ client/assets/wrapAsyncGenerator-DhsawSOn.js ║      4.71 KB ║      1.38 KB ║
+ ║               client/assets/zova-0XCoEtmO.js ║     42.96 KB ║      7.26 KB ║
+ ║               client/assets/zova-9bQgcuBT.js ║      2.67 KB ║      0.92 KB ║
+ ║               client/assets/zova-BWbkJpfX.js ║      0.83 KB ║      0.42 KB ║
+ ║               client/assets/zova-BkQq9zM0.js ║    164.13 KB ║     31.93 KB ║
+ ║               client/assets/zova-CF1PBdwK.js ║      0.45 KB ║      0.29 KB ║
+ ║               client/assets/zova-CVAB8MrF.js ║      0.28 KB ║      0.21 KB ║
+ ║               client/assets/zova-CbY6qiHJ.js ║     63.31 KB ║     12.04 KB ║
+ ║               client/assets/zova-CjuEe7GV.js ║     11.03 KB ║      3.00 KB ║
+ ║               client/assets/zova-NzAbH6Y7.js ║     16.87 KB ║      3.72 KB ║
+ ║               client/assets/zova-zuDcqHDO.js ║    608.43 KB ║    100.03 KB ║
+ ║                                   handler.js ║   7732.62 KB ║   1451.55 KB ║
+ ║                                     index.js ║   1223.97 KB ║    311.14 KB ║
+ ║       server/assets/-zova-config-BfNjnpf3.js ║      0.46 KB ║      0.26 KB ║
+ ║              server/assets/a-api-Cmska-jH.js ║      5.67 KB ║      1.62 KB ║
+ ║              server/assets/a-app-BKvD2pB3.js ║      4.79 KB ║      1.61 KB ║
+ ║             server/assets/a-bean-CmNBqHWt.js ║     13.96 KB ║      3.48 KB ║
+ ║         server/assets/a-behavior-DxMOHG_z.js ║     18.07 KB ║      3.64 KB ║
+ ║        server/assets/a-behaviors-BiHIS8AJ.js ║      2.11 KB ║      0.77 KB ║
+ ║          server/assets/a-command-8GMQKoWP.js ║      7.16 KB ║      1.72 KB ║
+ ║            server/assets/a-fetch-HjjlcMPm.js ║     11.42 KB ║      2.77 KB ║
+ ║             server/assets/a-form-C50vEcA3.js ║     68.31 KB ║     14.49 KB ║
+ ║             server/assets/a-icon-CeheTn3n.js ║     14.58 KB ║      3.78 KB ║
+ ║      server/assets/a-interceptor-OUbTgbEP.js ║      9.25 KB ║      2.41 KB ║
+ ║    server/assets/a-layoutprofile-r3UnTRda.js ║      5.71 KB ║      1.46 KB ║
+ ║           server/assets/a-logger-Bg_k6YNt.js ║      5.03 KB ║      1.26 KB ║
+ ║             server/assets/a-meta-BNkqV4ag.js ║      1.49 KB ║      0.57 KB ║
+ ║            server/assets/a-model-DI8YgVkh.js ║     45.90 KB ║      9.03 KB ║
+ ║          server/assets/a-openapi-BYpndiVT.js ║     19.80 KB ║      4.72 KB ║
+ ║              server/assets/a-pay-CxmXSqjr.js ║      6.32 KB ║      1.49 KB ║
+ ║             server/assets/a-rbac-DjtmG912.js ║      1.00 KB ║      0.46 KB ║
+ ║           server/assets/a-router-DVPnAGlb.js ║     39.61 KB ║      9.08 KB ║
+ ║      server/assets/a-routerstack-CWWOboaL.js ║      7.87 KB ║      2.27 KB ║
+ ║       server/assets/a-routertabs-D-LRepPx.js ║     23.92 KB ║      5.14 KB ║
+ ║              server/assets/a-ssr-KmkVeJRR.js ║     30.07 KB ║      7.54 KB ║
+ ║           server/assets/a-ssrhmr-C2CGqDL9.js ║      2.94 KB ║      1.01 KB ║
+ ║        server/assets/a-ssrserver-Blol2-9s.js ║     11.52 KB ║      3.43 KB ║
+ ║            server/assets/a-style-BFCzySTd.js ║     12.25 KB ║      3.23 KB ║
+ ║            server/assets/a-table-oUVZB5Uf.js ║     26.11 KB ║      6.33 KB ║
+ ║              server/assets/a-zod-30eq7aMe.js ║      2.58 KB ║      0.88 KB ║
+ ║             server/assets/a-zova-CG2ykpcF.js ║      1.00 KB ║      0.46 KB ║
+ ║                server/assets/app-BPu8b46r.js ║      2.17 KB ║      0.83 KB ║
+ ║              server/assets/axios-BBTgyznK.js ║    191.17 KB ║     47.12 KB ║
+ ║      server/assets/basic-adapter-DnnIiEAq.js ║      2.34 KB ║      0.79 KB ║
+ ║          server/assets/basic-app-gCPHhepi.js ║     34.30 KB ║      6.85 KB ║
+ ║       server/assets/basic-button-Cql1TvAc.js ║      5.85 KB ║      1.81 KB ║
+ ║      server/assets/basic-captcha-D0Ifhi47.js ║      7.38 KB ║      2.31 KB ║
+ ║     server/assets/basic-commands-C7pnXNnm.js ║      9.32 KB ║      1.85 KB ║
+ ║ server/assets/basic-commandssync-BpkwGUA8.js ║      2.54 KB ║      0.77 KB ║
+ ║     server/assets/basic-currency-Cn6yHpSi.js ║      6.94 KB ║      1.99 KB ║
+ ║         server/assets/basic-date-CoC0O4Rv.js ║     13.81 KB ║      3.05 KB ║
+ ║      server/assets/basic-details-CEvgQ5gP.js ║     43.58 KB ║      7.81 KB ║
+ ║         server/assets/basic-file-eQKescu-.js ║     35.04 KB ║      8.49 KB ║
+ ║         server/assets/basic-form-DdsZab7J.js ║     23.72 KB ║      4.69 KB ║
+ ║        server/assets/basic-image-anU-x6qs.js ║     58.56 KB ║     13.01 KB ║
+ ║        server/assets/basic-input-DFgChYO3.js ║      3.73 KB ║      1.22 KB ║
+ ║     server/assets/basic-markdown-C4GpWteI.js ║     51.49 KB ║     10.91 KB ║
+ ║      server/assets/basic-metrics-BeSv5dmg.js ║      9.10 KB ║      2.54 KB ║
+ ║         server/assets/basic-page-D14GF3Ej.js ║     42.69 KB ║      8.53 KB ║
+ ║    server/assets/basic-pageentry-BwQYJgcX.js ║     51.91 KB ║     12.82 KB ║
+ ║          server/assets/basic-pay-CKruffzx.js ║      5.98 KB ║      1.81 KB ║
+ ║     server/assets/basic-resource-K0MyVX7z.js ║     24.12 KB ║      5.65 KB ║
+ ║       server/assets/basic-select-DYFAx2vC.js ║     10.17 KB ║      2.70 KB ║
+ ║        server/assets/basic-table-DSl34SW_.js ║     35.71 KB ║      7.20 KB ║
+ ║         server/assets/basic-text-D7Zs4Zde.js ║      5.27 KB ║      1.46 KB ║
+ ║   server/assets/commerce-catalog-D1t_vq1-.js ║     19.74 KB ║      4.46 KB ║
+ ║    server/assets/commerce-member-CGIkLT1o.js ║     21.16 KB ║      4.79 KB ║
+ ║   server/assets/commerce-payment-CS3womv9.js ║      1.07 KB ║      0.47 KB ║
+ ║ server/assets/commerce-promotion-BaiKyzPH.js ║      4.16 KB ║      1.12 KB ║
+ ║ server/assets/commerce-siteadmin-ChFoVRnz.js ║      8.97 KB ║      2.41 KB ║
+ ║   server/assets/commerce-siteweb-rcJd67LK.js ║      1.07 KB ║      0.47 KB ║
+ ║     server/assets/commerce-trade-7RE8P1uq.js ║    123.77 KB ║     19.63 KB ║
+ ║           server/assets/debounce-_I559CF2.js ║      2.12 KB ║      0.83 KB ║
+ ║         server/assets/demo-basic-Bc1fdYBS.js ║     98.63 KB ║     14.49 KB ║
+ ║          server/assets/demo-todo-CpVq4uDV.js ║     14.48 KB ║      3.24 KB ║
+ ║      server/assets/devui-adapter-CU3npKwL.js ║      3.81 KB ║      1.38 KB ║
+ ║               server/assets/dist-Cqq44VnH.js ║      1.53 KB ║      0.63 KB ║
+ ║               server/assets/dist-DCQftpdS.js ║    228.44 KB ║     51.84 KB ║
+ ║        server/assets/dist.es2015-DXBdzWc8.js ║      9.24 KB ║      2.73 KB ║
+ ║              server/assets/fecha-CKJ09Noq.js ║   1091.23 KB ║    248.54 KB ║
+ ║   server/assets/follow-redirects-CR_P9mta.js ║    256.96 KB ║     43.02 KB ║
+ ║           server/assets/home-api-BsbsQZPA.js ║     24.58 KB ║      3.36 KB ║
+ ║          server/assets/home-base-BGq3jrdo.js ║     35.65 KB ║     11.23 KB ║
+ ║          server/assets/home-icon-CuRl2gd8.js ║      4.50 KB ║      1.05 KB ║
+ ║    server/assets/home-indexadmin-BBJztnBW.js ║      4.45 KB ║      1.44 KB ║
+ ║      server/assets/home-indexweb-CjAibzgT.js ║      3.58 KB ║      1.11 KB ║
+ ║   server/assets/home-layoutadmin-IElssn8Z.js ║     40.84 KB ║      8.42 KB ║
+ ║   server/assets/home-layoutempty-DdpoqUCx.js ║      4.21 KB ║      1.41 KB ║
+ ║     server/assets/home-layoutweb-pbEFxzdJ.js ║     34.05 KB ║      7.17 KB ║
+ ║         server/assets/home-login-C4spaGub.js ║     24.47 KB ║      5.39 KB ║
+ ║      server/assets/home-passport-tH4sdKZr.js ║     11.64 KB ║      3.10 KB ║
+ ║         server/assets/home-theme-BgT7-IHA.js ║      4.18 KB ║      1.17 KB ║
+ ║          server/assets/home-user-D9OEJUwP.js ║     42.31 KB ║      7.75 KB ║
+ ║  server/assets/index.esm-bundler-DKEzYE1s.js ║    114.19 KB ║     23.68 KB ║
+ ║                server/assets/lib-ChKmdmMd.js ║      0.97 KB ║      0.49 KB ║
+ ║                server/assets/lib-DGZxuVEB.js ║   1341.11 KB ║    329.06 KB ║
+ ║                server/assets/lib-DSaZltQu.js ║     62.10 KB ║     11.58 KB ║
+ ║        server/assets/locale-jajp-NT1tivTA.js ║     28.72 KB ║      7.72 KB ║
+ ║        server/assets/locale-test-B07GiMIQ.js ║      1.03 KB ║      0.47 KB ║
+ ║        server/assets/locale-zhtw-DrAvmP6U.js ║     24.67 KB ║      7.27 KB ║
+ ║        server/assets/localforage-CqC3UxZx.js ║     63.93 KB ║     12.00 KB ║
+ ║              server/assets/luxon-BA-x9iDc.js ║    224.76 KB ║     49.29 KB ║
+ ║                 server/assets/ms-BaIhnLGX.js ║      2.96 KB ║      1.11 KB ║
+ ║           server/assets/openapi3-jOTCAbTj.js ║      0.36 KB ║      0.20 KB ║
+ ║           server/assets/pay-mock-BX4yyCyt.js ║      4.94 KB ║      1.21 KB ║
+ ║         server/assets/pay-paypal-Cjy_hFyw.js ║      1.02 KB ║      0.47 KB ║
+ ║         server/assets/pay-stripe-DKauAb1R.js ║      1.02 KB ║      0.47 KB ║
+ ║      server/assets/rest-resource-GmiKhhO7.js ║     32.38 KB ║      5.92 KB ║
+ ║   server/assets/rolldown-runtime-BfwFQjXX.js ║      2.05 KB ║      0.89 KB ║
+ ║       server/assets/server-entry-DMin7KPK.js ║     82.55 KB ║     16.38 KB ║
+ ║                server/assets/src-AOoM_cTC.js ║      0.39 KB ║      0.20 KB ║
+ ║                server/assets/src-BVlRzFrm.js ║      0.59 KB ║      0.23 KB ║
+ ║                server/assets/src-DK44S1QM.js ║      0.17 KB ║      0.14 KB ║
+ ║                server/assets/src-ekHACHtu.js ║      0.69 KB ║      0.28 KB ║
+ ║                server/assets/src-yJbcMZBZ.js ║      0.23 KB ║      0.16 KB ║
+ ║      server/assets/tanstack-form-CBRrwl2s.js ║      6.10 KB ║      1.42 KB ║
+ ║     server/assets/tanstack-query-BxD0aTcA.js ║     74.36 KB ║     14.83 KB ║
+ ║     server/assets/tanstack-query-CM_eEA74.js ║      5.54 KB ║      1.54 KB ║
+ ║     server/assets/tanstack-query-ChjOYI5f.js ║     14.46 KB ║      3.17 KB ║
+ ║     server/assets/tanstack-table-BXPmnQkK.js ║      3.84 KB ║      1.48 KB ║
+ ║     server/assets/tanstack-table-CnP74CyM.js ║    101.16 KB ║     19.00 KB ║
+ ║   server/assets/training-student-2TwEpHEg.js ║     20.00 KB ║      4.75 KB ║
+ ║          server/assets/typestyle-CryBwtJC.js ║      9.71 KB ║      3.08 KB ║
+ ║             server/assets/uneval-DrJfsGAH.js ║     18.39 KB ║      5.07 KB ║
+ ║        server/assets/useSelector-C6UrYYt6.js ║    121.34 KB ║     22.22 KB ║
+ ║                server/assets/vue-Bgw5rIyP.js ║      2.95 KB ║      1.15 KB ║
+ ║                server/assets/vue-C0GQ3qA-.js ║     44.22 KB ║     11.63 KB ║
+ ║                server/assets/vue-CW6RC3iz.js ║     22.86 KB ║      8.21 KB ║
+ ║                server/assets/vue-CnhJQbOK.js ║     17.77 KB ║      5.03 KB ║
+ ║                server/assets/vue-U1vwFQ6d.js ║     41.50 KB ║      9.72 KB ║
+ ║                server/assets/vue-rmMRt6K6.js ║    165.36 KB ║     38.18 KB ║
+ ║         server/assets/vue-router-Ba6iqXLo.js ║     56.80 KB ║     15.66 KB ║
+ ║               server/assets/zova-BdYcgCcI.js ║    535.49 KB ║     92.38 KB ║
+ ║               server/assets/zova-BotFzctA.js ║      0.65 KB ║      0.35 KB ║
+ ║               server/assets/zova-Bz5HVFb0.js ║     11.03 KB ║      3.00 KB ║
+ ║               server/assets/zova-C0dINEaL.js ║    148.71 KB ║     28.99 KB ║
+ ║               server/assets/zova-C6M_kCzv.js ║     42.96 KB ║      7.27 KB ║
+ ║               server/assets/zova-DkJKHsVA.js ║      0.45 KB ║      0.29 KB ║
+ ║               server/assets/zova-y5CUxbZ9.js ║     14.09 KB ║      3.25 KB ║
+ ║               server/assets/zova-yDd3O_Ij.js ║      0.28 KB ║      0.21 KB ║
+ ║               server/assets/zova-ydA046gM.js ║      1.93 KB ║      0.64 KB ║
+ ║                       server/server-entry.js ║      0.35 KB ║      0.19 KB ║
+ ╟──────────────────────────────────────────────╫──────────────╫──────────────╢
+ ║             client/assets/index-D9U64AmL.css ║      4.96 KB ║      0.97 KB ║
+ ║              client/assets/zova-VcczZGtA.css ║    133.17 KB ║     20.29 KB ║
+ ╟──────────────────────────────────────────────╫──────────────╫──────────────╢
+ ║                         quasar.manifest.json ║    190.65 KB ║            - ║
+ ╠══════════════════════════════════════════════╬══════════════╬══════════════╣
+ ║                         Total JS (254 files) ║  21378.42 KB ║            - ║
+ ║                          Total CSS (2 files) ║    138.13 KB ║            - ║
+ ╚══════════════════════════════════════════════╩══════════════╩══════════════╝
+
+ Build succeeded
+
+ Build mode............. ssr
+ Pkg quasar............. v2.32.2
+ Pkg @quasar/app-vite... v2.5.10
+ Pkg vite............... v8.3.4
+ Debugging.............. no
+ Publishing............. no
+ Browser target......... es2015|firefox115|chrome115|safari16.4
+ Node target............ node24
+ =======================
+ Output folder.......... zova/dist/ssr-cabloyBasicAdmin
+
+ App • Extension(zova): Running afterBuild hook...
+
+============ Zova Meta ============
+vite mode ......... production
+app mode .......... ssr
+flavor ............ cabloyBasicAdmin
+
+
+$ npm run prerun && npm run zova :bin:buildRest -- --flavor cabloyBasicAdmin
+
+> prerun
+> npm run zova :tools:deps
+
+
+> zova
+> node ./packages-cli/cli/src/bin/zova.ts :tools:deps
+
+zova front:tools:deps at zova
+
+
+> zova
+> node ./packages-cli/cli/src/bin/zova.ts :bin:buildRest --flavor cabloyBasicAdmin
+
+zova front:bin:buildRest at zova
+
+write to zova/.zova-rest/package.json
+Finished in 26ms on 1 files using 1 threads.
+write to zova/.zova-rest/component.ts
+write to zova/.zova-rest/index.ts
+write to zova/.zova-rest/inner.ts
+write to zova/.zova-rest/modules.ts
+Finished in 21ms on 1 files using 1 threads.
+write to zova/.zova-rest/render.ts
+write to zova/.zova-rest/rest.ts
+write to zova/.zova-rest/utils.ts
+ℹ config file: zova/package.json 
+ℹ entry: .zova-rest/index.ts
+ℹ target: node24.11.0
+ℹ tsconfig: tsconfig.rest.json
+ℹ Build start
+ℹ dist/rest-cabloyBasicAdmin/index.mjs  12.55 kB │ gzip: 2.01 kB
+ℹ 1 files, total: 12.55 kB
+✔ Build complete in 13ms
+ℹ config file: zova/package.json 
+ℹ entry: .zova-rest/index.ts
+ℹ target: node24.11.0
+ℹ tsconfig: tsconfig.rest.json
+ℹ Build start
+
+ WARN  TypeScript 7.0 does not yet have a stable API and is experimental. Some options will be unavailable.
+
+ℹ Emit types with @typescript/native-preview@7.0.2
+ℹ Hint: consider adding deps.onlyBundle option to avoid unintended bundling of dependencies, or set deps.onlyBundle: false to disable this hint.
+See more at https://tsdown.dev/options/dependencies#deps-onlybundle
+Detected dependencies in bundle:
+- orderedmap
+- prosemirror-model
+- prosemirror-transform
+- prosemirror-view
+- prosemirror-state
+- @tiptap/pm
+- prosemirror-tables
+- @tiptap/core
+- @tiptap/vue-3
+ℹ dist/rest-cabloyBasicAdmin/index.d.mts  2.94 MB
+ℹ 1 files, total: 2.94 MB
+✔ Build complete in 2358ms
+
+> cabloy@5.1.239 build:zova:web
+> pnpm --dir zova run build:ssr:cabloyBasicWeb && pnpm --dir zova run build:rest:cabloyBasicWeb
+
+$ npm run prerun && quasar build --mode ssr --flavor cabloyBasicWeb
+
+> prerun
+> npm run zova :tools:deps
+
+
+> zova
+> node ./packages-cli/cli/src/bin/zova.ts :tools:deps
+
+zova front:tools:deps at zova
+
+
+ .d88888b.
+d88P" "Y88b
+888     888
+888     888 888  888  8888b.  .d8888b   8888b.  888d888
+888     888 888  888     "88b 88K          "88b 888P"
+888 Y8b 888 888  888 .d888888 "Y8888b. .d888888 888
+Y88b.Y8b88P Y88b 888 888  888      X88 888  888 888
+ "Y888888"   "Y88888 "Y888888  88888P' "Y888888 888
+       Y8b
+
+
+ Build mode............. ssr
+ Pkg quasar............. v2.32.2
+ Pkg @quasar/app-vite... v2.5.10
+ Pkg vite............... v8.3.4
+ Debugging.............. no
+ Publishing............. no
+
+ App • Using quasar.config.ts in "ts" format
+ App • Running "zova" Quasar App Extension...
+ App • Extension(zova): Extending quasar.config file configuration...
+ App • Extension(zova): Running beforeBuild hook...
+ App • Extension(zova): Extending Vite config
+ App •  WAIT  • Compiling of SSR Client with Vite in progress...
+vite v8.3.4 building client environment for production...
+/*! 🌼 daisyUI 5.7.37 */
+✓ built in 4.04s
+[PLUGIN_TIMINGS] JavaScript callbacks ran for 3.8s of this 4.0s build (95%).
+The slowest callbacks, timed inside each callback (the wait before a callback starts is excluded, the time it awaits is included):
+  - plugin babel-plugin transform (57%, 2.3s, 1996 calls)
+Additional callback time came from the callbacks below and from callbacks under 1s.
+2 callbacks are listed without a time. Their calls overlapped, so the time inside one call includes work from other calls. To find their cost, profile the build with `node --cpu-prof`:
+  - plugin vite:asset load (13 calls)
+  - plugin vite:css transform (3 calls)
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+
+ App •  DONE  • SSR Client compiled with success by Vite • 4057ms
+
+ App • Extension(zova): Extending Vite config
+ App •  WAIT  • Compiling of SSR Server with Vite in progress...
+vite v8.3.4 building ssr environment for production...
+✓ built in 3.13s
+[PLUGIN_TIMINGS] JavaScript callbacks ran for 3.0s of this 3.1s build (96%).
+The slowest callbacks, timed inside each callback (the wait before a callback starts is excluded, the time it awaits is included):
+  - plugin babel-plugin transform (62%, 1.9s, 2075 calls)
+Additional callback time came from the callbacks below and from callbacks under 1s.
+2 callbacks are listed without a time. Their calls overlapped, so the time inside one call includes work from other calls. To find their cost, profile the build with `node --cpu-prof`:
+  - plugin vite:asset load (13 calls)
+  - plugin vite:css transform (3 calls)
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+
+ App •  DONE  • SSR Server compiled with success by Vite • 3139ms
+
+ App • Extension(zova): Running "extendSSRWebserverConf(esbuildConf)"
+ App •  WAIT  • Compiling of SSR Webserver with Esbuild in progress...
+ App •  DONE  • SSR Webserver compiled with success by Esbuild • 49ms
+
+ App •  WAIT  • Compiling of SSR Webserver with Esbuild in progress...
+ App •  DONE  • SSR Webserver compiled with success by Esbuild • 123ms
+
+ Build summary with important files:
+ ╔══════════════════════════════════════════════╦══════════════╦══════════════╗
+ ║                                        Asset ║         Size ║      Gzipped ║
+ ╟──────────────────────────────────────────────╫──────────────╫──────────────╢
+ ║       client/assets/-zova-config-fccEYuL1.js ║      0.51 KB ║      0.27 KB ║
+ ║              client/assets/a-api-DTcqJdRI.js ║      6.12 KB ║      1.72 KB ║
+ ║              client/assets/a-app-CECgQs55.js ║      5.26 KB ║      1.74 KB ║
+ ║             client/assets/a-bean-DgtRx4IK.js ║     15.14 KB ║      3.67 KB ║
+ ║         client/assets/a-behavior-DIpf-odr.js ║     18.98 KB ║      3.84 KB ║
+ ║        client/assets/a-behaviors-BdvIKZFi.js ║      2.31 KB ║      0.83 KB ║
+ ║          client/assets/a-command-Cz3ZLEA7.js ║      7.78 KB ║      1.87 KB ║
+ ║            client/assets/a-fetch-V7jKT6wZ.js ║     12.98 KB ║      2.97 KB ║
+ ║             client/assets/a-form-DwsAdTUc.js ║     78.52 KB ║     16.14 KB ║
+ ║             client/assets/a-icon-BNNOSNay.js ║     16.30 KB ║      4.10 KB ║
+ ║      client/assets/a-interceptor-DQCXFWEQ.js ║     10.25 KB ║      2.53 KB ║
+ ║    client/assets/a-layoutprofile-C-MFG5-7.js ║      6.68 KB ║      1.70 KB ║
+ ║           client/assets/a-logger-DRkw2Mki.js ║      5.07 KB ║      1.27 KB ║
+ ║             client/assets/a-meta-CcQjudI1.js ║      1.49 KB ║      0.57 KB ║
+ ║            client/assets/a-model-CYoRSZya.js ║     55.52 KB ║     10.47 KB ║
+ ║          client/assets/a-openapi-C_wk00bl.js ║     27.73 KB ║      5.95 KB ║
+ ║              client/assets/a-pay-CYpEvby_.js ║      7.29 KB ║      1.66 KB ║
+ ║             client/assets/a-rbac-VT8D1qzs.js ║      1.00 KB ║      0.46 KB ║
+ ║           client/assets/a-router-Dpmdulsa.js ║     47.10 KB ║     10.34 KB ║
+ ║      client/assets/a-routerstack-D1yJHv3i.js ║      8.56 KB ║      2.46 KB ║
+ ║       client/assets/a-routertabs-DyulVf6i.js ║     28.43 KB ║      6.08 KB ║
+ ║              client/assets/a-ssr-CUB7lYed.js ║     35.57 KB ║      8.50 KB ║
+ ║           client/assets/a-ssrhmr-D9Ozi2VW.js ║      3.27 KB ║      1.11 KB ║
+ ║            client/assets/a-style-tVmKK0Cr.js ║     14.29 KB ║      3.65 KB ║
+ ║            client/assets/a-table-CsXejDo2.js ║     32.10 KB ║      7.33 KB ║
+ ║              client/assets/a-zod-CBRWqXFz.js ║      2.68 KB ║      0.91 KB ║
+ ║             client/assets/a-zova-CofTlPfH.js ║      1.00 KB ║      0.46 KB ║
+ ║              client/assets/axios-DPNW4LqN.js ║    136.39 KB ║     33.58 KB ║
+ ║      client/assets/basic-adapter-CDPlrk9M.js ║      2.47 KB ║      0.84 KB ║
+ ║          client/assets/basic-app-gtpe0wxK.js ║     45.65 KB ║      8.65 KB ║
+ ║       client/assets/basic-button-CtR4lbXK.js ║      7.09 KB ║      2.12 KB ║
+ ║      client/assets/basic-captcha-aBp38wqv.js ║      8.42 KB ║      2.58 KB ║
+ ║     client/assets/basic-commands-FjSXoemQ.js ║      9.87 KB ║      1.98 KB ║
+ ║ client/assets/basic-commandssync-Ct3Wxxvq.js ║      2.71 KB ║      0.83 KB ║
+ ║     client/assets/basic-currency-kDOLYvyz.js ║      7.18 KB ║      2.05 KB ║
+ ║         client/assets/basic-date-DgEFO9z5.js ║     15.00 KB ║      3.29 KB ║
+ ║      client/assets/basic-details-B4zd0m2E.js ║     48.58 KB ║      8.55 KB ║
+ ║         client/assets/basic-file-C_kk6IPm.js ║     41.26 KB ║      9.66 KB ║
+ ║         client/assets/basic-form-C70jmI2_.js ║     25.11 KB ║      4.94 KB ║
+ ║        client/assets/basic-image-C2fduXd7.js ║     68.70 KB ║     14.80 KB ║
+ ║        client/assets/basic-input-CMM4H363.js ║      4.00 KB ║      1.32 KB ║
+ ║     client/assets/basic-markdown-Bb806gXt.js ║     55.33 KB ║     11.63 KB ║
+ ║      client/assets/basic-metrics-DF2XHf_-.js ║      9.08 KB ║      2.64 KB ║
+ ║         client/assets/basic-page-Dm_4uD1z.js ║     46.97 KB ║      9.31 KB ║
+ ║    client/assets/basic-pageentry-D7OlADlz.js ║     63.94 KB ║     15.16 KB ║
+ ║          client/assets/basic-pay-ILXnNTxa.js ║      6.19 KB ║      1.90 KB ║
+ ║     client/assets/basic-resource-C5KfaNhu.js ║     27.89 KB ║      6.30 KB ║
+ ║       client/assets/basic-select-CgkVZQL1.js ║     11.78 KB ║      3.03 KB ║
+ ║        client/assets/basic-table-Bq0UvRCE.js ║     39.12 KB ║      7.79 KB ║
+ ║         client/assets/basic-text-Co7EC0mG.js ║      5.55 KB ║      1.55 KB ║
+ ║            client/assets/browser-DMW0vvjT.js ║     86.66 KB ║     20.90 KB ║
+ ║   client/assets/commerce-catalog-DVOALM3c.js ║     20.79 KB ║      4.74 KB ║
+ ║    client/assets/commerce-member-BUjvruzb.js ║     22.81 KB ║      5.13 KB ║
+ ║   client/assets/commerce-payment-DusHhWtw.js ║      1.07 KB ║      0.46 KB ║
+ ║ client/assets/commerce-promotion-c7H98eBV.js ║      4.38 KB ║      1.20 KB ║
+ ║ client/assets/commerce-siteadmin-D5Um3uRD.js ║      9.23 KB ║      2.51 KB ║
+ ║   client/assets/commerce-siteweb-CxsV6RKJ.js ║      1.07 KB ║      0.46 KB ║
+ ║     client/assets/commerce-trade-D3WH9dFK.js ║    133.92 KB ║     21.53 KB ║
+ ║           client/assets/debounce-BO-Xzmb1.js ║      2.12 KB ║      0.83 KB ║
+ ║         client/assets/demo-basic-BP6yZSpZ.js ║     98.25 KB ║     15.27 KB ║
+ ║          client/assets/demo-todo-D7nx-lNA.js ║     16.75 KB ║      3.67 KB ║
+ ║      client/assets/devui-adapter-BENdNBRR.js ║      4.08 KB ║      1.44 KB ║
+ ║               client/assets/dist-DW1baIuM.js ║      1.99 KB ║      0.75 KB ║
+ ║        client/assets/dist.es2015-Apg-BB-0.js ║      9.24 KB ║      2.73 KB ║
+ ║            client/assets/extends-IJLGmeJm.js ║      0.91 KB ║      0.43 KB ║
+ ║              client/assets/fecha-Bk0qi7oD.js ║    400.33 KB ║     85.78 KB ║
+ ║           client/assets/home-api-DIFZKhDQ.js ║     24.83 KB ║      3.42 KB ║
+ ║          client/assets/home-base-YH8EGmN5.js ║     34.91 KB ║     11.02 KB ║
+ ║          client/assets/home-icon-BcOc3bq4.js ║      4.43 KB ║      1.04 KB ║
+ ║    client/assets/home-indexadmin-CS0ruzMz.js ║      4.54 KB ║      1.49 KB ║
+ ║      client/assets/home-indexweb-C19ZvVVs.js ║      3.61 KB ║      1.12 KB ║
+ ║   client/assets/home-layoutadmin-Pg6LXcLr.js ║     43.82 KB ║      9.14 KB ║
+ ║   client/assets/home-layoutempty-BUU_qCre.js ║      4.29 KB ║      1.42 KB ║
+ ║     client/assets/home-layoutweb-CXgfS9uF.js ║     36.38 KB ║      7.80 KB ║
+ ║         client/assets/home-login-DZ9WUgsL.js ║     25.86 KB ║      5.71 KB ║
+ ║      client/assets/home-passport-Bd6Hqhpb.js ║     15.88 KB ║      3.83 KB ║
+ ║         client/assets/home-theme-C8rrfSpo.js ║      4.48 KB ║      1.22 KB ║
+ ║          client/assets/home-user-BqVFtldQ.js ║     46.19 KB ║      8.42 KB ║
+ ║              client/assets/index-SzdXbjxV.js ║      0.06 KB ║      0.07 KB ║
+ ║  client/assets/index.esm-bundler-CeLwd5iB.js ║    112.69 KB ║     23.74 KB ║
+ ║                client/assets/lib-Ts668iwk.js ║   1347.94 KB ║    330.01 KB ║
+ ║        client/assets/locale-jajp-VovoYY2X.js ║     28.72 KB ║      7.71 KB ║
+ ║        client/assets/locale-test-BPazKoow.js ║      1.03 KB ║      0.46 KB ║
+ ║        client/assets/locale-zhtw-BIVGF7Vr.js ║     24.67 KB ║      7.27 KB ║
+ ║        client/assets/localforage-B83AW4zh.js ║     63.93 KB ║     12.00 KB ║
+ ║              client/assets/luxon-DMLMA3Ht.js ║    225.85 KB ║     49.47 KB ║
+ ║           client/assets/openapi3-CzJMYsqf.js ║      0.54 KB ║      0.25 KB ║
+ ║           client/assets/pay-mock-DpvfPLq_.js ║      5.35 KB ║      1.32 KB ║
+ ║         client/assets/pay-paypal-n7FS5vfx.js ║      1.02 KB ║      0.46 KB ║
+ ║         client/assets/pay-stripe-B91iL7gI.js ║      1.02 KB ║      0.46 KB ║
+ ║      client/assets/rest-resource-DjlncECZ.js ║     37.31 KB ║      6.71 KB ║
+ ║   client/assets/rolldown-runtime-BdGkqNEt.js ║      2.09 KB ║      0.96 KB ║
+ ║                client/assets/src-DayHX3Lr.js ║      0.17 KB ║      0.14 KB ║
+ ║                client/assets/src-Dj3XhguX.js ║      0.69 KB ║      0.28 KB ║
+ ║                client/assets/src-DqZJA2l-.js ║      0.39 KB ║      0.20 KB ║
+ ║                client/assets/src-DuKAiWVN.js ║      0.59 KB ║      0.24 KB ║
+ ║      client/assets/tanstack-form-BDCKopwH.js ║      6.79 KB ║      1.60 KB ║
+ ║     client/assets/tanstack-query-C_zLzbwW.js ║     15.12 KB ║      3.41 KB ║
+ ║     client/assets/tanstack-query-Co4LevK5.js ║      7.16 KB ║      1.78 KB ║
+ ║     client/assets/tanstack-query-DsLB-cVV.js ║    107.63 KB ║     19.16 KB ║
+ ║     client/assets/tanstack-table-BpWjkt7G.js ║      4.05 KB ║      1.56 KB ║
+ ║     client/assets/tanstack-table-Bu9HvLDc.js ║    102.35 KB ║     19.20 KB ║
+ ║   client/assets/training-student-Xa_vgNZ7.js ║     21.58 KB ║      5.07 KB ║
+ ║          client/assets/typestyle-BqGKvHu3.js ║      9.71 KB ║      3.07 KB ║
+ ║             client/assets/uneval-SoITdTun.js ║     18.52 KB ║      5.12 KB ║
+ ║        client/assets/useSelector-veWHmiFT.js ║    156.25 KB ║     27.26 KB ║
+ ║                client/assets/vue-B1UFFNH8.js ║    159.92 KB ║     38.71 KB ║
+ ║                client/assets/vue-B308wd2M.js ║     10.01 KB ║      3.10 KB ║
+ ║                client/assets/vue-BDyZdc6O.js ║      9.51 KB ║      3.30 KB ║
+ ║                client/assets/vue-D9L_jTxb.js ║     46.08 KB ║     12.43 KB ║
+ ║                client/assets/vue-DivvVR1_.js ║     40.00 KB ║      9.54 KB ║
+ ║         client/assets/vue-router-DhfmBgbR.js ║     64.60 KB ║     17.95 KB ║
+ ║ client/assets/wrapAsyncGenerator-DhsawSOn.js ║      4.71 KB ║      1.38 KB ║
+ ║               client/assets/zova-0XCoEtmO.js ║     42.96 KB ║      7.26 KB ║
+ ║               client/assets/zova-9bQgcuBT.js ║      2.67 KB ║      0.92 KB ║
+ ║               client/assets/zova-Bbrud3xl.js ║    164.42 KB ║     32.00 KB ║
+ ║               client/assets/zova-Bm15cv73.js ║     16.87 KB ║      3.71 KB ║
+ ║               client/assets/zova-Bv5RFDlj.js ║      0.83 KB ║      0.42 KB ║
+ ║               client/assets/zova-C5vDDKVJ.js ║     63.39 KB ║     12.08 KB ║
+ ║               client/assets/zova-CF1PBdwK.js ║      0.45 KB ║      0.29 KB ║
+ ║               client/assets/zova-CjuEe7GV.js ║     11.03 KB ║      3.00 KB ║
+ ║               client/assets/zova-gcLzoS_J.js ║      0.28 KB ║      0.21 KB ║
+ ║               client/assets/zova-zuDcqHDO.js ║    608.43 KB ║    100.03 KB ║
+ ║                                   handler.js ║   7732.44 KB ║   1451.62 KB ║
+ ║                                     index.js ║   1223.97 KB ║    311.14 KB ║
+ ║       server/assets/-zova-config-CJjJYmxD.js ║      0.52 KB ║      0.27 KB ║
+ ║              server/assets/a-api-C4FI7TEc.js ║      5.67 KB ║      1.62 KB ║
+ ║              server/assets/a-app-C5syefqH.js ║      4.79 KB ║      1.61 KB ║
+ ║             server/assets/a-bean-D8F7fgzO.js ║     13.96 KB ║      3.48 KB ║
+ ║         server/assets/a-behavior-D5_ixLK3.js ║     18.07 KB ║      3.64 KB ║
+ ║        server/assets/a-behaviors-CKtS_q1P.js ║      2.11 KB ║      0.77 KB ║
+ ║          server/assets/a-command-DJJCSDQw.js ║      7.16 KB ║      1.73 KB ║
+ ║            server/assets/a-fetch-DHknnId0.js ║     11.42 KB ║      2.77 KB ║
+ ║             server/assets/a-form-DaMgg5ON.js ║     68.31 KB ║     14.49 KB ║
+ ║             server/assets/a-icon-C5oAcKQv.js ║     14.58 KB ║      3.78 KB ║
+ ║      server/assets/a-interceptor-D8QryCbL.js ║      9.25 KB ║      2.42 KB ║
+ ║    server/assets/a-layoutprofile-C6pxBvxp.js ║      5.71 KB ║      1.47 KB ║
+ ║           server/assets/a-logger-ClbkStLy.js ║      5.03 KB ║      1.26 KB ║
+ ║             server/assets/a-meta-MvkCoM5W.js ║      1.49 KB ║      0.57 KB ║
+ ║            server/assets/a-model-Bd82OVMJ.js ║     45.90 KB ║      9.03 KB ║
+ ║          server/assets/a-openapi-Cwak9oEv.js ║     19.80 KB ║      4.72 KB ║
+ ║              server/assets/a-pay-CRRzZz1T.js ║      6.32 KB ║      1.49 KB ║
+ ║             server/assets/a-rbac-CILqzeSj.js ║      1.00 KB ║      0.47 KB ║
+ ║           server/assets/a-router-YB7TwplE.js ║     39.61 KB ║      9.08 KB ║
+ ║      server/assets/a-routerstack-lobmit5Z.js ║      7.87 KB ║      2.27 KB ║
+ ║       server/assets/a-routertabs-CYslaDRf.js ║     23.92 KB ║      5.14 KB ║
+ ║              server/assets/a-ssr-DVOU3jh8.js ║     30.07 KB ║      7.55 KB ║
+ ║           server/assets/a-ssrhmr-D_obLiEU.js ║      2.94 KB ║      1.01 KB ║
+ ║        server/assets/a-ssrserver-Dyr-q6Dr.js ║     11.52 KB ║      3.43 KB ║
+ ║            server/assets/a-style-BRoAc-hx.js ║     12.25 KB ║      3.23 KB ║
+ ║            server/assets/a-table-C2YN-Zxe.js ║     26.11 KB ║      6.33 KB ║
+ ║              server/assets/a-zod-BL-8e5e_.js ║      2.58 KB ║      0.88 KB ║
+ ║             server/assets/a-zova-BgLytaRz.js ║      1.00 KB ║      0.46 KB ║
+ ║                server/assets/app-BLAyoZTM.js ║      2.17 KB ║      0.84 KB ║
+ ║              server/assets/axios-BBTgyznK.js ║    191.17 KB ║     47.12 KB ║
+ ║      server/assets/basic-adapter-qtvxwlUu.js ║      2.34 KB ║      0.79 KB ║
+ ║          server/assets/basic-app-aLRAk4AK.js ║     34.30 KB ║      6.85 KB ║
+ ║       server/assets/basic-button-CSu9vQqs.js ║      5.85 KB ║      1.81 KB ║
+ ║      server/assets/basic-captcha-D4RVLNyk.js ║      7.38 KB ║      2.31 KB ║
+ ║     server/assets/basic-commands-CzIZUQGf.js ║      9.32 KB ║      1.85 KB ║
+ ║ server/assets/basic-commandssync-DYyEs99D.js ║      2.54 KB ║      0.77 KB ║
+ ║     server/assets/basic-currency-C81_q--X.js ║      6.94 KB ║      1.99 KB ║
+ ║         server/assets/basic-date-B04RMgvB.js ║     13.81 KB ║      3.05 KB ║
+ ║      server/assets/basic-details-_R2trDhq.js ║     43.58 KB ║      7.81 KB ║
+ ║         server/assets/basic-file-C62pL4YW.js ║     35.04 KB ║      8.49 KB ║
+ ║         server/assets/basic-form-D2YKjMDn.js ║     23.72 KB ║      4.69 KB ║
+ ║        server/assets/basic-image-DlHKjVLm.js ║     58.56 KB ║     13.01 KB ║
+ ║        server/assets/basic-input-4GcsF3Qd.js ║      3.73 KB ║      1.22 KB ║
+ ║     server/assets/basic-markdown-BVw4tmyF.js ║     51.49 KB ║     10.91 KB ║
+ ║      server/assets/basic-metrics-CLPUKr3l.js ║      9.10 KB ║      2.54 KB ║
+ ║         server/assets/basic-page-zSitarGp.js ║     42.69 KB ║      8.53 KB ║
+ ║    server/assets/basic-pageentry-DxKsohPh.js ║     51.91 KB ║     12.82 KB ║
+ ║          server/assets/basic-pay-C0yi3L_W.js ║      5.98 KB ║      1.81 KB ║
+ ║     server/assets/basic-resource-BuePv9sU.js ║     24.12 KB ║      5.64 KB ║
+ ║       server/assets/basic-select-z4BpR7Ow.js ║     10.17 KB ║      2.70 KB ║
+ ║        server/assets/basic-table-DolRayeP.js ║     35.71 KB ║      7.20 KB ║
+ ║         server/assets/basic-text-BoIhSEtb.js ║      5.27 KB ║      1.46 KB ║
+ ║   server/assets/commerce-catalog-BkwtBso3.js ║     19.74 KB ║      4.46 KB ║
+ ║    server/assets/commerce-member-D76GnJF6.js ║     21.16 KB ║      4.79 KB ║
+ ║   server/assets/commerce-payment-B_KpDgEI.js ║      1.07 KB ║      0.47 KB ║
+ ║ server/assets/commerce-promotion-BILKgPcC.js ║      4.16 KB ║      1.12 KB ║
+ ║ server/assets/commerce-siteadmin-Cnr38Kz_.js ║      8.97 KB ║      2.41 KB ║
+ ║   server/assets/commerce-siteweb-BnXvIUfS.js ║      1.07 KB ║      0.47 KB ║
+ ║     server/assets/commerce-trade-NQTH2GKy.js ║    123.77 KB ║     19.63 KB ║
+ ║           server/assets/debounce-_I559CF2.js ║      2.12 KB ║      0.83 KB ║
+ ║         server/assets/demo-basic-DGhrBuIR.js ║     98.63 KB ║     14.49 KB ║
+ ║          server/assets/demo-todo-DsLVa-4O.js ║     14.48 KB ║      3.24 KB ║
+ ║      server/assets/devui-adapter-L9UYjai2.js ║      3.81 KB ║      1.38 KB ║
+ ║               server/assets/dist-Cqq44VnH.js ║      1.53 KB ║      0.63 KB ║
+ ║               server/assets/dist-DCQftpdS.js ║    228.44 KB ║     51.84 KB ║
+ ║        server/assets/dist.es2015-DXBdzWc8.js ║      9.24 KB ║      2.73 KB ║
+ ║              server/assets/fecha-CKJ09Noq.js ║   1091.23 KB ║    248.54 KB ║
+ ║   server/assets/follow-redirects-CR_P9mta.js ║    256.96 KB ║     43.02 KB ║
+ ║           server/assets/home-api-BbIHRaa6.js ║     24.58 KB ║      3.36 KB ║
+ ║          server/assets/home-base-CzHBo_mK.js ║     35.65 KB ║     11.23 KB ║
+ ║          server/assets/home-icon-B4pcDhnB.js ║      4.43 KB ║      1.04 KB ║
+ ║    server/assets/home-indexadmin-Bhnt0dag.js ║      4.45 KB ║      1.45 KB ║
+ ║      server/assets/home-indexweb-DGQaXE94.js ║      3.58 KB ║      1.11 KB ║
+ ║   server/assets/home-layoutadmin-Bz61mdp9.js ║     40.84 KB ║      8.42 KB ║
+ ║   server/assets/home-layoutempty-C0CfaOQf.js ║      4.21 KB ║      1.41 KB ║
+ ║     server/assets/home-layoutweb-DUXF2jYq.js ║     34.05 KB ║      7.18 KB ║
+ ║         server/assets/home-login-Dpfwt88n.js ║     24.47 KB ║      5.39 KB ║
+ ║      server/assets/home-passport-4sSaUBdF.js ║     11.64 KB ║      3.11 KB ║
+ ║         server/assets/home-theme-Cyk3cdcS.js ║      4.18 KB ║      1.17 KB ║
+ ║          server/assets/home-user-C2K9lbDW.js ║     42.31 KB ║      7.76 KB ║
+ ║  server/assets/index.esm-bundler-DKEzYE1s.js ║    114.19 KB ║     23.68 KB ║
+ ║                server/assets/lib-ChKmdmMd.js ║      0.97 KB ║      0.49 KB ║
+ ║                server/assets/lib-DGZxuVEB.js ║   1341.11 KB ║    329.06 KB ║
+ ║                server/assets/lib-DSaZltQu.js ║     62.10 KB ║     11.58 KB ║
+ ║        server/assets/locale-jajp-Oh7YOqlH.js ║     28.72 KB ║      7.72 KB ║
+ ║        server/assets/locale-test-BtCY9o1L.js ║      1.03 KB ║      0.47 KB ║
+ ║        server/assets/locale-zhtw-CNgSodR3.js ║     24.67 KB ║      7.27 KB ║
+ ║        server/assets/localforage-CqC3UxZx.js ║     63.93 KB ║     12.00 KB ║
+ ║              server/assets/luxon-BA-x9iDc.js ║    224.76 KB ║     49.29 KB ║
+ ║                 server/assets/ms-BaIhnLGX.js ║      2.96 KB ║      1.11 KB ║
+ ║           server/assets/openapi3-jOTCAbTj.js ║      0.36 KB ║      0.20 KB ║
+ ║           server/assets/pay-mock-KTKYQ0w0.js ║      4.94 KB ║      1.22 KB ║
+ ║         server/assets/pay-paypal-BUJtgxmT.js ║      1.02 KB ║      0.47 KB ║
+ ║         server/assets/pay-stripe-DfpgPNW1.js ║      1.02 KB ║      0.47 KB ║
+ ║      server/assets/rest-resource-CvBL-sWG.js ║     32.38 KB ║      5.92 KB ║
+ ║   server/assets/rolldown-runtime-BfwFQjXX.js ║      2.05 KB ║      0.89 KB ║
+ ║       server/assets/server-entry-kE89V3yK.js ║     82.63 KB ║     16.43 KB ║
+ ║                server/assets/src-B1RnIXEK.js ║      0.69 KB ║      0.28 KB ║
+ ║                server/assets/src-BfzGB3m6.js ║      0.23 KB ║      0.16 KB ║
+ ║                server/assets/src-C4aQWvP_.js ║      0.59 KB ║      0.23 KB ║
+ ║                server/assets/src-CUvhltff.js ║      0.39 KB ║      0.20 KB ║
+ ║                server/assets/src-jXAJCd-n.js ║      0.17 KB ║      0.14 KB ║
+ ║      server/assets/tanstack-form-CBRrwl2s.js ║      6.10 KB ║      1.42 KB ║
+ ║     server/assets/tanstack-query-BxD0aTcA.js ║     74.36 KB ║     14.83 KB ║
+ ║     server/assets/tanstack-query-CM_eEA74.js ║      5.54 KB ║      1.54 KB ║
+ ║     server/assets/tanstack-query-ChjOYI5f.js ║     14.46 KB ║      3.17 KB ║
+ ║     server/assets/tanstack-table-BXPmnQkK.js ║      3.84 KB ║      1.48 KB ║
+ ║     server/assets/tanstack-table-CnP74CyM.js ║    101.16 KB ║     19.00 KB ║
+ ║   server/assets/training-student-Dd6wc5fG.js ║     20.00 KB ║      4.75 KB ║
+ ║          server/assets/typestyle-CryBwtJC.js ║      9.71 KB ║      3.08 KB ║
+ ║             server/assets/uneval-DrJfsGAH.js ║     18.39 KB ║      5.07 KB ║
+ ║        server/assets/useSelector-C6UrYYt6.js ║    121.34 KB ║     22.22 KB ║
+ ║                server/assets/vue-2ibwQhhi.js ║     17.77 KB ║      5.03 KB ║
+ ║                server/assets/vue-Bgw5rIyP.js ║      2.95 KB ║      1.15 KB ║
+ ║                server/assets/vue-C0GQ3qA-.js ║     44.22 KB ║     11.63 KB ║
+ ║                server/assets/vue-CW6RC3iz.js ║     22.86 KB ║      8.21 KB ║
+ ║                server/assets/vue-U1vwFQ6d.js ║     41.50 KB ║      9.72 KB ║
+ ║                server/assets/vue-rmMRt6K6.js ║    165.36 KB ║     38.18 KB ║
+ ║         server/assets/vue-router-Ba6iqXLo.js ║     56.80 KB ║     15.66 KB ║
+ ║               server/assets/zova-BdYcgCcI.js ║    535.49 KB ║     92.38 KB ║
+ ║               server/assets/zova-BeFB_vJr.js ║     14.09 KB ║      3.25 KB ║
+ ║               server/assets/zova-Bz5HVFb0.js ║     11.03 KB ║      3.00 KB ║
+ ║               server/assets/zova-C6M_kCzv.js ║     42.96 KB ║      7.27 KB ║
+ ║               server/assets/zova-Ca3N5rIg.js ║    149.00 KB ║     29.06 KB ║
+ ║               server/assets/zova-DIRc1X6C.js ║      0.65 KB ║      0.35 KB ║
+ ║               server/assets/zova-DkJKHsVA.js ║      0.45 KB ║      0.29 KB ║
+ ║               server/assets/zova-V_UXirN0.js ║      0.28 KB ║      0.21 KB ║
+ ║               server/assets/zova-ydA046gM.js ║      1.93 KB ║      0.64 KB ║
+ ║                       server/server-entry.js ║      0.35 KB ║      0.19 KB ║
+ ╟──────────────────────────────────────────────╫──────────────╫──────────────╢
+ ║             client/assets/index-D9U64AmL.css ║      4.96 KB ║      0.97 KB ║
+ ║              client/assets/zova-VcczZGtA.css ║    133.17 KB ║     20.29 KB ║
+ ╟──────────────────────────────────────────────╫──────────────╫──────────────╢
+ ║                         quasar.manifest.json ║    180.32 KB ║            - ║
+ ╠══════════════════════════════════════════════╬══════════════╬══════════════╣
+ ║                         Total JS (254 files) ║  21378.96 KB ║            - ║
+ ║                          Total CSS (2 files) ║    138.13 KB ║            - ║
+ ╚══════════════════════════════════════════════╩══════════════╩══════════════╝
+
+ Build succeeded
+
+ Build mode............. ssr
+ Pkg quasar............. v2.32.2
+ Pkg @quasar/app-vite... v2.5.10
+ Pkg vite............... v8.3.4
+ Debugging.............. no
+ Publishing............. no
+ Browser target......... es2015|firefox115|chrome115|safari16.4
+ Node target............ node24
+ =======================
+ Output folder.......... zova/dist/ssr-cabloyBasicWeb
+
+ App • Extension(zova): Running afterBuild hook...
+
+============ Zova Meta ============
+vite mode ......... production
+app mode .......... ssr
+flavor ............ cabloyBasicWeb
+
+
+$ npm run prerun && npm run zova :bin:buildRest -- --flavor cabloyBasicWeb
+
+> prerun
+> npm run zova :tools:deps
+
+
+> zova
+> node ./packages-cli/cli/src/bin/zova.ts :tools:deps
+
+zova front:tools:deps at zova
+
+
+> zova
+> node ./packages-cli/cli/src/bin/zova.ts :bin:buildRest --flavor cabloyBasicWeb
+
+zova front:bin:buildRest at zova
+
+write to zova/.zova-rest/package.json
+Finished in 26ms on 1 files using 1 threads.
+write to zova/.zova-rest/component.ts
+write to zova/.zova-rest/index.ts
+write to zova/.zova-rest/inner.ts
+write to zova/.zova-rest/modules.ts
+Finished in 21ms on 1 files using 1 threads.
+write to zova/.zova-rest/render.ts
+write to zova/.zova-rest/rest.ts
+write to zova/.zova-rest/utils.ts
+ℹ config file: zova/package.json 
+ℹ entry: .zova-rest/index.ts
+ℹ target: node24.11.0
+ℹ tsconfig: tsconfig.rest.json
+ℹ Build start
+ℹ dist/rest-cabloyBasicWeb/index.mjs  12.55 kB │ gzip: 2.01 kB
+ℹ 1 files, total: 12.55 kB
+✔ Build complete in 13ms
+ℹ config file: zova/package.json 
+ℹ entry: .zova-rest/index.ts
+ℹ target: node24.11.0
+ℹ tsconfig: tsconfig.rest.json
+ℹ Build start
+
+ WARN  TypeScript 7.0 does not yet have a stable API and is experimental. Some options will be unavailable.
+
+ℹ Emit types with @typescript/native-preview@7.0.2
+ℹ Hint: consider adding deps.onlyBundle option to avoid unintended bundling of dependencies, or set deps.onlyBundle: false to disable this hint.
+See more at https://tsdown.dev/options/dependencies#deps-onlybundle
+Detected dependencies in bundle:
+- orderedmap
+- prosemirror-model
+- prosemirror-transform
+- prosemirror-view
+- prosemirror-state
+- @tiptap/pm
+- prosemirror-tables
+- @tiptap/core
+- @tiptap/vue-3
+ℹ dist/rest-cabloyBasicWeb/index.d.mts  2.94 MB
+ℹ 1 files, total: 2.94 MB
+✔ Build complete in 2493ms
+
+> cabloy@5.1.239 deps:vona
+> pnpm --dir vona run vona :tools:deps
+
+Scope: all 158 workspace projects
+[WARN] The store at <PRIVATE_PATH> is not used because packages cannot be hard linked from it into this project. Using the store at <FALLBACK_PNPM_STORE> instead. Set storeDir to choose the store.
+✓ Lockfile passes supply-chain policies (verified 17h ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+Done in 553ms using pnpm v12.14.0
+$ node ./packages-cli/cli/src/bin/vona.ts :tools:deps
+vona api:tools:deps at vona
+

@@ -1,0 +1,18 @@
+Node: 24.11.0
+
+Command: npm run --silent evidence:check -- -- repo-specs/cabloy-locale/evidence/phase-50
+Producer exit: 0
+Coverage: all six then-existing phase-50 files, including closure-checks.txt and index.md.
+
+Command: git diff --check
+Producer exit: 0
+
+Procedure: recheck all 37 root-local link occurrences and fragment IDs against the final post-format VitePress output with inline Python HTMLParser.
+Producer exit: 0
+Observed: all targets/anchors exist; four-guide diff remains SHA-256 342159870d7659304ed9bbf9dcd2d9ecc974e73484df3cfdaaada37a8d21bf03.
+
+Procedure: manually review retained phase-50 content and scoped known-local-root check.
+Producer exit: 0
+Observed: records contain public docs diagnostics, repository-relative commands, source attribution and acceptance disposition only. No credentials, raw tokens, signed callback state, secret values, live provider identifiers or customer/payment data found. No unredacted known local roots found. Bounded path recognition is not universal path detection or secret scanning.
+
+No runtime tests/types/paired builds/watcher sequences rerun in phase 50; their applicability is reviewed and linked in index.md. No runtime source change, commit, push, publication, deployment, reset, init, environment edit or dependency recovery performed.
