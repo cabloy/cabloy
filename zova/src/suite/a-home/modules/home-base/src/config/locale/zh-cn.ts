@@ -5,6 +5,7 @@ export default {
   LanguageEnglish: '英语',
   LanguageChinese: '简体中文',
   LanguageJapanese: '日语',
+  LanguageTraditionalChinese: '繁体中文',
   VonaIntegratedSsr: 'Vona 集成式 SSR',
   ZovaStandaloneSsr: 'Zova 独立式 SSR',
   SsrSite: 'SSR 站点',
