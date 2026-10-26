@@ -48,6 +48,24 @@ Representative capabilities include generating JSON for:
 
 This is important because OpenAPI is treated as a first-class framework service, not as an external afterthought.
 
+## MCP mapping and normal ingress admission
+
+In Cabloy Basic, method/class `@mcp.tool()` metadata opts registered Controller Actions into MCP mapping using their existing request/response contracts. It is independent of ordinary OpenAPI publication: `@Api.exclude()` is not an MCP authorization boundary, and publishing an HTTP action does not opt it into MCP. Decorator opt-in alone does **not** expose an action on normal `/mcp`.
+
+Normal shared ingress is owned by `cabloy-mcp` and accepts recognized dev/test/prod modes through the same OAuth and business-authorization boundary. Production is not rejected solely by mode; unknown modes, not-ready, closing, disabled or invalid required authority configuration still fail closed. Dedicated protected audit, audit-delivery gating and deployment-wide fine-grained quotas are deferred for this two-read MVP, not delivered capabilities or production prerequisites. Enabled-by-default behavior is unchanged: only literal `CABLOY_MCP_ENABLED=false` disables it. Construction admission permits exactly `training-student.controller.student` actions `lookup` and `summary`, for both listing and known-name direct calls. Optional training absent means an empty catalog, without fallback. The three synthetic catalog tools and anonymous standalone entry belong only to the `mcp-test` launcher, not shared `/mcp`.
+
+OAuth scope does not grant business authority. Lookup and summary retain independent student select/view permissions, current-instance reads and minimized output; summary's six-field projection does not change its HTTP DTO. Calls retain ordinary Action guards with `innerAccess: false`.
+
+Repository-relative source pointers:
+
+- Opt-in metadata: `vona/src/suite-vendor/a-vona/modules/a-openapiutils/src/lib/decorator/mcp.ts`
+- Contract mapper: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/controllerTools.ts`
+- Normal ingress middleware: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/bean/middlewareSystem.mcp.ts`
+- Ingress checks: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/mcpTransport.ts`
+- Authenticated exchange and settlement: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/businessTransport.ts`
+- Exact admission and discovery: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/sharedBusinessTools.ts`
+- Application-close drain: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/monkey.ts`
+
 ## Validation and OpenAPI are linked
 
 A major theme is that the same validation-oriented declaration surface also drives OpenAPI metadata generation.
