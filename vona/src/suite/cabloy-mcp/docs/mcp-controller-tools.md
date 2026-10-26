@@ -92,6 +92,23 @@ Pass the validated authorization scope, `mcp:read` or `mcp:all`, and dispatch wi
 - `mcp:all` allows both read and mutation classifications, subject to the same business authorization.
 - Every call uses the ordinary action executor with **`innerAccess: false`**, preserving controller guards, RBAC, serialization, current user and instance/data scope. Neither scope nor the decorator grants business permissions or cross-instance access.
 
+### Student permission-aware discovery
+
+On the authenticated dev/test shared endpoint, `training_student_lookup` is listed only when the current request passes the actual lookup Action guards (inherited student-select permission); `training_student_summary` is listed only when it passes the summary Action guards (inherited student-view permission). Neither permission implies the other:
+
+| Current student authority | Student tools listed |
+| ------------------------- | -------------------- |
+| Neither                   | Neither              |
+| Select only               | Lookup only          |
+| View only                 | Summary only         |
+| Both                      | Both                 |
+
+Both read tools remain eligible under `mcp:read` and `mcp:all`; OAuth scope does not grant business authority. Every list checks the current Passport and registered Actions afresh, sequentially on its request context, without executing either student Action or querying student rows. Visibility means Action admission, not that a matching student exists. Call-time guards still run independently, so revocation after a list denies a known-name call.
+
+The shared composition supplies the factory's optional third argument, `{ isToolVisible({ controller, action }): Promise<boolean> }`. This server-owned callback receives registered identities after scope filtering; it is not a client-provided policy or a substitute for call authorization. The student composition uses `permission.checkPermissionActionGuards('training-student:student', action)`, which bypasses permission-result caching and matcher projection while retaining the actual guards and restoring context state. Ordinary denial omits a tool; an unexpected visibility error fails the whole list with a nondiagnostic protocol error, never partial tools or an unfiltered fallback.
+
+This is a bounded student exception: other tools retain scope-only discovery, the no-hook factory retains its previous behavior, and the anonymous standalone still lists exactly its three fixture tools. No production-wide permission-filtered catalog or client cache-invalidation guarantee is implied.
+
 The mapper internally calls `generateJsonOfControllerAction(controller, action, 'V31', { includeExcluded: true })`. This fourth option enables contract extraction for an opted-in action without changing ordinary `@Api.exclude()` behavior. It is not a global OpenAPI-publication switch or an authorization bypass.
 
 ## Supported actions and diagnostics

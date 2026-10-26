@@ -1,5 +1,6 @@
 import type { JSONRPCMessage, JSONRPCRequest, Server } from '@modelcontextprotocol/server';
 import type { IMcpToolOptions } from 'vona-module-a-openapiutils';
+import type { IPassport } from 'vona-module-a-user';
 
 import { InMemoryTransport } from '@modelcontextprotocol/server';
 import assert from 'node:assert/strict';
@@ -55,6 +56,48 @@ const effectToolName = 'mcp_test_action_effect';
 const scalarToolName = 'mcp_test_action_scalar';
 const arrayToolName = 'mcp_test_action_array';
 
+async function withStudentToolPermissions(fn: () => Promise<void>) {
+  await app.bean.executor.mockCtx(async () => {
+    const passportPrevious = app.bean.passport.current;
+    const passport: IPassport = {
+      user: {
+        id: 'mcp-student-contract-user',
+        name: 'MCP student contract fixture',
+        activated: true,
+        accountStatus: 'active',
+      },
+      auth: { id: 'mcp-student-contract-auth' },
+      roles: [],
+    };
+    const context = app.ctx;
+    const controller = 'training-student.controller.student';
+    // A context-local policy grants the real guards, not the discovery checker.
+    // Synthetic Passport state needs no persisted user, role membership or token.
+    const off = app.scope('a-rbac').event.resolvePolicy.on((request, next) => {
+      if (
+        app.ctx !== context ||
+        app.bean.passport.currentUser?.id !== passport.user!.id ||
+        request.action.controllerBeanFullName !== controller ||
+        !['lookup', 'summary'].includes(request.action.action)
+      ) {
+        return next();
+      }
+      assert.equal(app.bean.passport.currentAuth?.id, passport.auth!.id);
+      assert.deepEqual(app.bean.passport.currentRoles, []);
+      const inherited = request.action.action === 'lookup' ? 'select' : 'view';
+      assert.equal(request.policyActionKey, `${controller}#${inherited}`);
+      return { allowed: true, actionKey: request.action.actionKey, action: request.action };
+    });
+    try {
+      await app.bean.passport.setCurrent(passport);
+      await fn();
+    } finally {
+      off();
+      await app.bean.passport.setCurrent(passportPrevious);
+    }
+  });
+}
+
 describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => {
   let release: (() => void) | undefined;
   before(async () => {
@@ -76,8 +119,25 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   });
   after(() => release?.());
 
-  it('keeps both student tools out of the default composition and validates their shared contracts', async () => {
+  it('keeps both student tools out of default/anonymous discovery and validates their authorized shared contracts', async t => {
     await app.bean.executor.mockCtx(async () => {
+      assert.equal(app.bean.passport.isAuthenticated, false);
+      const anonymous = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+      try {
+        const listed = await anonymous.request('tools/list');
+        assert.equal(listed.error, undefined);
+        for (const name of ['training_student_lookup', 'training_student_summary']) {
+          assert.equal(
+            listed.result.tools.some((tool: any) => tool.name === name),
+            false,
+            `anonymous discovery excludes ${name}`,
+          );
+        }
+      } finally {
+        await anonymous.close();
+      }
+    });
+    await withStudentToolPermissions(async () => {
       const standalone = await connect(await createBusinessToolServer(app));
       try {
         const listed = await standalone.request('tools/list');
@@ -96,8 +156,13 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         await standalone.close();
       }
       const shared = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+      const action = t.mock.method(app.bean.executor, 'performAction', async () => {
+        assert.fail('discovery and invalid arguments must not dispatch business Actions');
+      });
       try {
         const listed = await shared.request('tools/list');
+        assert.equal(listed.error, undefined);
+        assert.equal(action.mock.callCount(), 0, 'discovery runs guards without business Actions');
         assert.deepEqual(
           listed.result.tools.map((tool: any) => tool.name).sort(),
           [
@@ -256,15 +321,17 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           });
           assert.equal(rejected.error?.code, -32602, JSON.stringify(args));
         }
+        assert.equal(action.mock.callCount(), 0, 'invalid input never reaches business Actions');
       } finally {
+        action.mock.restore();
         await shared.close();
       }
     });
   });
 
-  it('normalizes lookup queries and projects nested student output without business-role grants', async t => {
+  it('normalizes authorized lookup queries and projects nested student output', async t => {
     if (!app.meta.modules['training-student']) return;
-    await app.bean.executor.mockCtx(async () => {
+    await withStudentToolPermissions(async () => {
       const client = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
       const raw = {
         list: [
@@ -582,9 +649,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
-  it('projects student output and fails closed on invalid retained fields', async t => {
+  it('projects authorized student output and fails closed on invalid retained fields', async t => {
     if (!app.meta.modules['training-student']) return;
-    await app.bean.executor.mockCtx(async () => {
+    await withStudentToolPermissions(async () => {
       const client = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
       const executor = app.bean.executor;
       const raw = {

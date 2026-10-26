@@ -350,29 +350,8 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           'mcp_test_action_scalar',
           'mcp_test_action_array',
           ...(token === allToken ? [effectName] : []),
-          ...(app.meta.modules['training-student'] ? [studentLookupName, studentSummaryName] : []),
         ].sort(),
       );
-      if (app.meta.modules['training-student']) {
-        const studentTool = listed.body.result.tools.find(
-          (tool: any) => tool.name === studentSummaryName,
-        );
-        assert.ok(studentTool);
-        assert.deepEqual(Object.keys(studentTool.inputSchema.properties), ['id']);
-        assert.deepEqual(studentTool.inputSchema.required, ['id']);
-        assert.equal(studentTool.inputSchema.additionalProperties, false);
-        assert.deepEqual(
-          Object.keys(studentTool.outputSchema.properties).sort(),
-          studentSummaryFields,
-        );
-        assert.deepEqual(studentTool.outputSchema.required.toSorted(), studentSummaryFields);
-        assert.equal(studentTool.annotations.readOnlyHint, true);
-        assert.equal(studentTool.annotations.destructiveHint, false);
-        for (const field of ['mobile', 'descriptionMarkdown', 'descriptionHtml']) {
-          assert.equal(JSON.stringify(studentTool.inputSchema).includes(`"${field}"`), false);
-          assert.equal(JSON.stringify(studentTool.outputSchema).includes(`"${field}"`), false);
-        }
-      }
       const call = async (name: string, args: Record<string, unknown>) =>
         output(await send('tools/call', { name, arguments: args }, { legacy, headers }));
       const categories = await call(categoriesName, {});
@@ -470,6 +449,170 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       toolFixtureState.count = initial;
       observed.mock.restore();
     }
+  });
+
+  it('discovers only currently authorized student Actions without business reads and reauthorizes calls', async t => {
+    if (!app.meta.modules['training-student']) {
+      t.skip('Training suite is not composed');
+      return;
+    }
+    const allToken = await redeemBearer('mcp:all');
+    const { ControllerStudent, ModelStudent, ServiceStudent } =
+      await import('vona-module-training-student');
+    const business = [
+      t.mock.method(ControllerStudent.prototype, 'lookup'),
+      t.mock.method(ControllerStudent.prototype, 'summary'),
+      t.mock.method(ServiceStudent.prototype, 'lookup'),
+      t.mock.method(ServiceStudent.prototype, 'summary'),
+      t.mock.method(ModelStudent.prototype, 'select'),
+      t.mock.method(ModelStudent.prototype, 'count'),
+      t.mock.method(ModelStudent.prototype, 'get'),
+    ];
+    const controller = 'training-student.controller.student';
+    let granted: string[] = [];
+    let broken = false;
+    const policyCalls: string[] = [];
+    const off = app.scope('a-rbac').event.resolvePolicy.on((request, next) => {
+      if (
+        String(app.bean.passport.currentUser?.id) !== fixtureUserId ||
+        app.ctx.instanceName !== '' ||
+        request.action.controllerBeanFullName !== controller
+      ) {
+        return next();
+      }
+      assert.equal(String(app.bean.passport.currentAuth?.id), fixtureAuthId);
+      assert.equal(
+        app.bean.passport.currentRoles?.some(role => role.name === 'systemAdmin'),
+        false,
+      );
+      policyCalls.push(request.action.actionKey);
+      if (broken && request.action.action === 'summary') {
+        throw new Error('private discovery failure detail');
+      }
+      // Ordinary non-data-scoped admission deliberately has no matcher terms.
+      return {
+        allowed: granted.includes(request.policyActionKey),
+        actionKey: request.action.actionKey,
+        action: request.action,
+      };
+    });
+    const states = [
+      { permissions: [], names: [] },
+      { permissions: ['select'], names: [studentLookupName] },
+      { permissions: ['view'], names: [studentSummaryName] },
+      { permissions: ['select', 'view'], names: [studentLookupName, studentSummaryName] },
+      { permissions: [], names: [] },
+    ];
+    try {
+      for (const { token, legacy } of [bearer, allToken].flatMap(token =>
+        [false, true].map(legacy => ({ token, legacy })),
+      )) {
+        const options = { legacy, headers: { authorization: `Bearer ${token}` } };
+        let ordinary: string[] | undefined;
+        for (const state of states) {
+          granted = state.permissions.map(permission => `${controller}#${permission}`);
+          const before = policyCalls.length;
+          const listed = await send('tools/list', {}, options);
+          assert.equal(listed.status, 200);
+          assert.equal(listed.body.error, undefined);
+          const tools = listed.body.result.tools;
+          const names = tools.map((tool: any) => tool.name) as string[];
+          assert.deepEqual(
+            names.filter(name => [studentLookupName, studentSummaryName].includes(name)).sort(),
+            state.names.toSorted(),
+          );
+          const otherNames = names
+            .filter(name => ![studentLookupName, studentSummaryName].includes(name))
+            .sort();
+          ordinary ??= otherNames;
+          assert.deepEqual(otherNames, ordinary, 'other tool visibility is unchanged');
+          assert.equal(names.includes(effectName), token === allToken);
+          assert.deepEqual(
+            policyCalls.slice(before).sort(),
+            [`${controller}#lookup`, `${controller}#summary`],
+            'each list freshly checks the actual registered Actions',
+          );
+          const studentTool = tools.find((tool: any) => tool.name === studentSummaryName);
+          if (studentTool) {
+            assert.deepEqual(Object.keys(studentTool.inputSchema.properties), ['id']);
+            assert.deepEqual(studentTool.inputSchema.required, ['id']);
+            assert.equal(studentTool.inputSchema.additionalProperties, false);
+            assert.deepEqual(
+              Object.keys(studentTool.outputSchema.properties).sort(),
+              studentSummaryFields,
+            );
+            assert.deepEqual(studentTool.outputSchema.required.toSorted(), studentSummaryFields);
+            assert.equal(studentTool.annotations.readOnlyHint, true);
+            assert.equal(studentTool.annotations.destructiveHint, false);
+            for (const field of ['mobile', 'descriptionMarkdown', 'descriptionHtml']) {
+              assert.equal(JSON.stringify(studentTool).includes(`"${field}"`), false);
+            }
+          }
+          for (const spy of business) {
+            assert.equal(
+              spy.mock.callCount(),
+              0,
+              'listing never executes student work or row reads',
+            );
+          }
+        }
+        granted = [`${controller}#select`, `${controller}#view`];
+        const visible = await send('tools/list', {}, options);
+        assert.equal(
+          visible.body.result.tools.some((tool: any) => tool.name === studentSummaryName),
+          true,
+        );
+        granted = [];
+        for (const [name, args] of [
+          [studentLookupName, { name: 'unused' }],
+          [studentSummaryName, { id: '-1' }],
+        ] as const) {
+          const denied = await send('tools/call', { name, arguments: args }, options);
+          assert.equal(denied.status, 200);
+          assert.equal(denied.body.result.isError, true);
+          assert.equal(denied.body.result.structuredContent, undefined);
+          assert.deepEqual(denied.body.result.content, [{ type: 'text', text: 'Action failed' }]);
+        }
+        for (const spy of business) {
+          assert.equal(
+            spy.mock.callCount(),
+            0,
+            'revocation rejects before controller/service/model entry',
+          );
+        }
+        granted = [`${controller}#select`, `${controller}#view`];
+        broken = true;
+        const failed = await send('tools/list', {}, options);
+        assert.equal(failed.status, 200);
+        assert.equal(failed.body.error.code, -32603);
+        assert.equal(failed.body.result, undefined, 'no partial or unfiltered fallback');
+        assert.equal(
+          JSON.stringify(failed.body).includes('private discovery failure detail'),
+          false,
+        );
+        broken = false;
+        granted = [`${controller}#view`];
+        const recovered = await send('tools/list', {}, options);
+        assert.deepEqual(
+          recovered.body.result.tools
+            .filter((tool: any) => [studentLookupName, studentSummaryName].includes(tool.name))
+            .map((tool: any) => tool.name),
+          [studentSummaryName],
+        );
+        for (const spy of business) assert.equal(spy.mock.callCount(), 0);
+      }
+    } finally {
+      off();
+      for (const spy of business) spy.mock.restore();
+    }
+    const after = await send('tools/list', {}, { headers: { authorization: `Bearer ${bearer}` } });
+    assert.equal(
+      after.body.result.tools.some((tool: any) =>
+        [studentLookupName, studentSummaryName].includes(tool.name),
+      ),
+      false,
+      'test policy was removed',
+    );
   });
 
   it('guards student lookup-to-summary with current roles across modern/legacy read scopes and instance boundaries', async t => {

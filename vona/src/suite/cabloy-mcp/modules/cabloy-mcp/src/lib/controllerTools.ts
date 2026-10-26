@@ -24,7 +24,17 @@ export interface IControllerToolDiagnostic {
   reason: string;
 }
 
+export interface IControllerToolIdentity {
+  controller: string;
+  action: string;
+}
+
+export interface IControllerToolServerOptions {
+  isToolVisible?(identity: IControllerToolIdentity): Promise<boolean>;
+}
+
 interface IControllerTool {
+  identity: IControllerToolIdentity;
   tool: Tool;
   readOnly: boolean;
   call(args: Record<string, unknown>): Promise<CallToolResult>;
@@ -47,7 +57,11 @@ function failure(message: string): CallToolResult {
 }
 
 /** Opt-in mapping only; every call retains the ordinary Action authorization boundary. */
-export async function createControllerToolServer(app: VonaApplication, scope?: TypeMcpScope) {
+export async function createControllerToolServer(
+  app: VonaApplication,
+  scope?: TypeMcpScope,
+  serverOptions: IControllerToolServerOptions = {},
+) {
   if (scope !== 'mcp:read' && scope !== 'mcp:all') {
     throw new Error('MCP authorization scope required');
   }
@@ -234,6 +248,7 @@ export async function createControllerToolServer(app: VonaApplication, scope?: T
             },
           };
           tools.set(name, {
+            identity: { controller: controller.beanOptions.beanFullName, action: route.action },
             tool,
             readOnly,
             async call(args) {
@@ -299,7 +314,23 @@ export async function createControllerToolServer(app: VonaApplication, scope?: T
     server.setRequestHandler('tools/list', () =>
       track(async () => {
         if (!app.ctx) throw new ProtocolError(-32603, 'Request context required');
-        return { tools: [...tools.values()].filter(allowed).map(item => item.tool) };
+        const visible: Tool[] = [];
+        try {
+          // Guard checks temporarily own route state on this context, so never fan them out.
+          for (const item of tools.values()) {
+            if (!allowed(item)) continue;
+            if (
+              serverOptions.isToolVisible &&
+              !(await serverOptions.isToolVisible({ ...item.identity }))
+            ) {
+              continue;
+            }
+            visible.push(item.tool);
+          }
+        } catch {
+          throw new ProtocolError(-32603, 'Tool discovery failed');
+        }
+        return { tools: visible };
       }),
     );
     server.setRequestHandler('tools/call', request =>
