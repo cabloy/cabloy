@@ -1,0 +1,17 @@
+revision=36756a972a7f5c72627ecdfa5bc0173252cbc73e
+source_diff_since_execution_base=0
+provider=vona/src/suite/cabloy-locale/modules/locale-jajp; capability=true; authored_export=present; generated_ordinary_locale_resource=absent
+provider=vona/src/suite/cabloy-locale/modules/locale-zhtw; capability=true; authored_export=present; generated_ordinary_locale_resource=absent
+provider=zova/src/suite/cabloy-locale/modules/locale-jajp; capability=true; authored_export=present; generated_ordinary_locale_resource=absent
+provider=zova/src/suite/cabloy-locale/modules/locale-zhtw; capability=true; authored_export=present; generated_ordinary_locale_resource=absent
+handoff=zova/dist/rest-cabloyBasicAdmin/index.mjs; installed=vona/node_modules/zova-rest-cabloy-basic-admin/index.mjs; identical=true; sha256=396ee0df65fdd6c65149bac2bf86e27f265590f953a46bb540347950132113b4
+handoff=zova/dist/rest-cabloyBasicAdmin/index.d.mts; installed=vona/node_modules/zova-rest-cabloy-basic-admin/index.d.mts; identical=true; sha256=1cde101760e71f7315bb2a2ec4d211b38e596f6ac39411a9be1533f0ddc261a5
+SSR_release=zova/dist-releases/ssr-cabloyBasicAdmin-5.0.0; handler/index/manifest=present
+new_label_bundle_members=["zova/dist-releases/ssr-cabloyBasicAdmin-5.0.0/client/assets/home-base-Cq2cLKKM.js", "zova/dist-releases/ssr-cabloyBasicAdmin-5.0.0/client/assets/locale-zhtw-CjaR_5E8.js", "zova/dist-releases/ssr-cabloyBasicAdmin-5.0.0/client/assets/locale-jajp-CpOZ5FuW.js"]
+handoff=zova/dist/rest-cabloyBasicWeb/index.mjs; installed=vona/node_modules/zova-rest-cabloy-basic-web/index.mjs; identical=true; sha256=396ee0df65fdd6c65149bac2bf86e27f265590f953a46bb540347950132113b4
+handoff=zova/dist/rest-cabloyBasicWeb/index.d.mts; installed=vona/node_modules/zova-rest-cabloy-basic-web/index.d.mts; identical=true; sha256=1cde101760e71f7315bb2a2ec4d211b38e596f6ac39411a9be1533f0ddc261a5
+SSR_release=zova/dist-releases/ssr-cabloyBasicWeb-5.0.0; handler/index/manifest=present
+new_label_bundle_members=["zova/dist-releases/ssr-cabloyBasicWeb-5.0.0/client/assets/locale-zhtw-BMUXgKfo.js", "zova/dist-releases/ssr-cabloyBasicWeb-5.0.0/client/assets/locale-jajp-D0Oz5N7c.js", "zova/dist-releases/ssr-cabloyBasicWeb-5.0.0/client/assets/home-base-B05Bw2K7.js"]
+managed_test_path=vona/.app-test-20261026050444-6fcb4f89; absent=True
+managed_test_path=vona/.vona-test-20261026050444-6fcb4f89; absent=True
+attribution_exit=0

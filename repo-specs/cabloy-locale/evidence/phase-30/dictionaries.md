@@ -2,7 +2,9 @@
 
 ## Current State
 
-**WBS-LOC-30-01: implementation-complete, not verified.** The user subsequently accepted the completed creation-time installations and explicitly approved continuation with necessary installation side effects of normal dependency generation. Source implementation and automated verification completed without repeating creation, deleting dependencies or explicitly reinstalling. The interruption below is retained chronologically, not the current execution gate. Attributed human terminology review remains outstanding.
+**WBS-LOC-30-01: implementation-complete, not verified.** Current-candidate checks at `36756a972a` passed on 2026-10-26, including inventory, runtime tests, paired builds/sync, types and full scoped style checks; see [current reconciliation](#current-candidate-reconciliation-36756a972a). The existing reviewer declaration applies to `35b0b6b987`, not the subsequently added language-name entry, and complete per-entry dispositions remain absent. Execution approval is not an all-entry language acceptance declaration.
+
+The user previously accepted the completed creation-time installations and explicitly approved necessary installation side effects of normal dependency generation. No creation was repeated, dependency tree deleted or explicit reinstall performed. The interruption below is retained chronologically, not the current execution gate.
 
 ## Authority and Source
 
@@ -93,6 +95,42 @@ Priorities: Instance (`インスタンス` / `執行個體`), training Student (
 Retain reviewer identity, language competence/context, reviewed revision/diff, acceptance or correction disposition, affected keys and unresolved issues in the packet. The reviewer has declared those dispositions and reruns complete, but the per-entry disposition record and rerun artifacts are not yet retained in this checkout. After corrections, rerun coverage and affected runtime/type/build checks and refresh attribution. Only actual revision-scoped review plus retained per-entry dispositions, applicable automatic checks, and rerun evidence can close ATP-LOC-05 and promote WBS-LOC-30-01 to `verified`.
 
 ATP-LOC-01 dictionary wiring/generation checks passed for this candidate. ATP-LOC-05 automatic coverage passed, but its human review gate remains open. WBS-LOC-40-01 and WBS-LOC-50-01 remain not-started; paired builds do not complete full two-language browser/SSR/validation or release acceptance. No commit, push, publication, deployment, reset/init or environment operation was performed.
+
+## Current Candidate Reconciliation: 36756a972a
+
+### Approval, scope, and attribution
+
+On 2026-10-26 the user approved the presented WBS-LOC-30-01-only verification/evidence dossier with “同意，请执行”. The approval covers current inventory/runtime/style/type checks, Basic Admin/Web paired SSR+REST builds followed by `deps:vona`, bounded diagnosis/reruns, and existing evidence/progress/README/chart updates. It does not supply per-entry terminology dispositions, approve neighboring tasks, or authorize reset/init, environment edits, explicit reinstall, commit or publication.
+
+Execution revision: `36756a972a7f5c72627ecdfa5bc0173252cbc73e`, clean worktree before execution. Source, tests and lockfiles remain unchanged from that commit after checks (`git diff --quiet HEAD -- vona zova`, exit 0); only the named evidence and derived records are dirty. Therefore the commit identifies the tested authored source without an additional implementation patch. Earlier dirty digests and results remain historical and are not recomputed or overwritten.
+
+Since reviewed revision `35b0b6b987`, only four Zova dictionary lines changed: `LanguageTraditionalChinese` was added to home-base source `en-us`/`zh-cn` and the Japanese/Traditional provider home-base dictionaries. Their values are respectively `Traditional Chinese`, `繁体中文`, `繁体字中国語`, and `繁體中文`. No runtime, test, loader, manifest or lockfile change occurred in that revision interval. The old no-post-review-source-change assertion and old inventory hash describe the earlier run, not this candidate.
+
+### Actual commands and results
+
+Existing Node 24.11.0 was selected through child-scoped PATH only; pnpm 12.14.0, macOS/Darwin, existing Basic Admin/Web flavors and Site owners. No environment file was read or changed. Managed backend tests owned disposable database/Redis/runtime/listener resources; no manual reset or cleanup was run.
+
+| Exact procedure | Observed result | Primary artifact |
+| --- | --- | --- |
+| `node --experimental-transform-types --test vona/src/suite/cabloy-locale/modules/locale-test/test/coverage.test.ts` | 1/1 passed | [Runtime checks](./artifacts/current-36756a-runtime.txt) |
+| `node --experimental-transform-types --test zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts` | 14/14 passed | [Runtime checks](./artifacts/current-36756a-runtime.txt) |
+| `npm run test -- 'locale-test/test/*.test.ts' 'test-vona/test/locale.test.ts'` | 16/16 passed; graceful shutdown, managed run-owned paths absent afterward | [Runtime checks](./artifacts/current-36756a-runtime.txt), [attribution](./artifacts/current-36756a-attribution.txt) |
+| `npm run build:zova:admin`, then `npm run build:zova:web`, then `npm run deps:vona` | Each command exit 0; SSR and REST built together before sync | [Builds/types](./artifacts/current-36756a-builds-types.txt) |
+| `npm run tsc:zova`, then `npm run tsc:vona` | Each exit 0; native typechecks | [Builds/types](./artifacts/current-36756a-builds-types.txt) |
+| `npm run format -- <129 explicit authored files>`, then `npm run lint -- <same files>` | Full corrected scope passed, no lint diagnostics; exact argument lists retained | [Style rerun](./artifacts/current-36756a-style-rerun.txt) |
+| Read-only provider boundary and generated/installed artifact comparison | Four capability flags/export boundaries intact, no ordinary provider locale resource; both installed REST JS/declaration pairs byte-identical to current build; both SSR releases contain new label | [Attribution](./artifacts/current-36756a-attribution.txt) |
+
+The runtime producer chains its commands with failure propagation; producer, ANSI-normalizer and sanitizer each exited 0. Build/sync/types each have their own captured exit 0. **The first style collection used `mapfile`, unavailable in the installed macOS Bash.** That error is retained in the builds/types artifact; its overall producer exit 0 is not treated as full style success, since only two home-base source files were checked. Replacing collection with `while IFS= read -r` produced the explicit 129-file list (71 Vona, 58 Zova); both full checks passed. No source repair or weakened assertion was needed. Type-transform/build notices remain diagnostic history, not hidden failures.
+
+Current inventory SHA-256: `ce33bb93c3bc3a8c1fcdf9195c2d677502e6a0ff9c0d467a0c57a0b67c9cf2c5`. Per language: Vona 28 targets, 320 module keys, 68 core keys; Zova 23 targets, **386** module keys. Target/key/token/plural checks passed; the callable email entry remains covered. No-authored-key exclusions (85 backend modules, including two with empty dictionaries; 56 frontend modules) are explicitly listed in the checker output. Dependencies, generated bundles and documentation are not promoted into authored dictionary inventory.
+
+The checks cover no pack, either pack, both packs, actual preload/lazy fixtures and configured-language policy. They do not establish the WBS-LOC-40-01 browser/schema/validation/SSR-hydration acceptance. No E2E or full-page SSR procedure was run here. Historical ATP-LOC-01 generation proof remains attributed to its earlier execution; this run adds current runtime, type, build and boundary observations, not a claim of newly rerunning the removed generator tests.
+
+### Evidence review and disposition
+
+Combined producer streams were normalized for ANSI presentation in memory, then passed through `evidence:sanitize` with an explicit `<PNPM_STORE>` mapping before capture; producer and sanitizer statuses were checked separately. Full runtime/build/style artifacts and the short attribution output were reviewed for machine-local paths, credentials/raw tokens, customer data and unsupported controls. None remained observed. This is bounded manual review plus path recognition, not universal secret scanning. New `.txt` artifacts are nonignored; no commit is claimed. Artifact/path/static closure results are retained in [current closure checks](./artifacts/current-36756a-closure.txt): full authority audit passed (32 definitions), both existing English charts were regenerated and freshness passed (2/6 verified), targeted evidence path checks and `git diff --check` passed, all exit 0. The chart bytes are unchanged because status/count/title/language inputs did not change; no styling redesign or new visual-accessibility pass is claimed. These independent static/path gates do not close human terminology acceptance.
+
+**ATP-LOC-05 remains open; WBS-LOC-30-01 remains implementation-complete.** The attributed declaration for `35b0b6b987` is preserved, but no complete per-entry `accept`/`correct`/`query` artifact is present, and the added language-name entry has no explicit review disposition. The user's execution approval is not expanded into a blanket acceptance declaration. Automatic/build/style evidence gaps for this candidate are now filled by the actual current runs, not labelled reviewer-produced outputs. Obtain the actual dispositions or an explicit revision-scoped all-entry acceptance/no-query declaration before creating a disposition table or promoting status. WBS-LOC-40-01 and WBS-LOC-50-01 remain unstarted and unapproved.
 
 ## Retention and Static Closure
 

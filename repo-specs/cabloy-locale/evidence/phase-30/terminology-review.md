@@ -2,13 +2,15 @@
 
 ## Review State
 
-**WBS-LOC-30-01 remains `implementation-complete`, not verified.** This record prepares the attributable human review required by ATP-LOC-05; it does not supply reviewer identity, language approval, or dispositions. No dictionary source was changed while preparing this handoff.
+**WBS-LOC-30-01 remains `implementation-complete`, not verified.** The attributed reviewer declaration below applies to `35b0b6b987`; complete per-entry dispositions are not retained. On 2026-10-26 the user approved the bounded current-candidate verification/evidence dossier with “同意，请执行”. This authorizes execution, not an inferred all-entry `accept` disposition. No dictionary source was changed during this reconciliation.
+
+Current candidate: `36756a972a7f5c72627ecdfa5bc0173252cbc73e`, clean at execution start; only evidence/derived records are dirty afterward. Compared with the reviewed revision, four Zova dictionary lines add `LanguageTraditionalChinese`: source `Traditional Chinese` / `繁体中文`, Japanese `繁体字中国語`, Taiwan Traditional Chinese `繁體中文`. The original review and no-change assertions below remain historical; they do not cover this added entry. Current automatic checks and paired build/sync evidence are recorded in [the current-candidate reconciliation](./dictionaries.md#current-candidate-reconciliation-36756a972a).
 
 - Suite: `cabloy-locale`
 - Edition: Cabloy Basic
 - Task: [WBS-LOC-30-01](../../pdp-wbs.md#wbs-loc-30-01-complete-both-language-packs-against-the-release-inventory)
 - Acceptance procedure: [ATP-LOC-05](../../test-plan.md#atp-loc-05-close-inventory-placeholder-and-terminology-coverage)
-- Current reviewed candidate revision: `35b0b6b9871a0d4679ea230ccdfc4b0a871e673c`
+- Historical reviewed candidate revision: `35b0b6b9871a0d4679ea230ccdfc4b0a871e673c`
 - Implementation base: `6ca3c1d6fc59e7f5c744f2ddc15dbffe9364885e`
 - Retained dirty-worktree implementation digest: `5b5b697a7bd4a1b05eb08b7c556bd19ba559a3849f8d270bf6c4cdcc70943fb6`
 - Current committed-tree diff digest: `bfc50b9ae976c47a4d5fa977aa46db3690fd73b6aca3a8cdc1722d238764f157`
@@ -49,7 +51,7 @@ Review all delivered text in both provider packs, not only the highlighted candi
 - composed resources in each provider's `src/locales/ja-jp.ts`, `src/locales/zh-tw.ts`, and `src/locales/index.ts`
 - core global status/error text, especially keys `226` and `506`
 
-The frozen inventory covers 28 Vona targets and 23 Zova targets per language, with 320 Vona module keys and 385 Zova module keys per language, plus 68 Vona core keys per language. Review every delivered entry and record every exclusion or unresolved question.
+The historical inventory covers 28 Vona targets and 23 Zova targets per language, with 320 Vona module keys and 385 Zova module keys per language, plus 68 Vona core keys per language. At current candidate `36756a972a`, Zova has **386** keys per language; other counts are unchanged. Current source inventory SHA-256: `ce33bb93c3bc3a8c1fcdf9195c2d677502e6a0ff9c0d467a0c57a0b67c9cf2c5`. Review every delivered entry, including the new language name, and record every exclusion or unresolved question. The current automatic reruns do not replace per-entry human dispositions.
 
 For each reviewed entry, record:
 

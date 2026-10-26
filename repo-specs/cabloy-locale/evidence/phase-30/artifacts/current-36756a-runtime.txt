@@ -1,0 +1,309 @@
+Revision: 36756a972a7f5c72627ecdfa5bc0173252cbc73e
+Runtime: v24.11.0
+12.14.0
+
+COMMAND: inventory
+(node:30625) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ both language packs cover the authored release inventory without token or plural loss (137.804083ms)
+ℹ Locale inventory: {"sha256":"ce33bb93c3bc3a8c1fcdf9195c2d677502e6a0ff9c0d467a0c57a0b67c9cf2c5","reports":[{"stack":"vona","locale":"ja-jp","targets":28,"keys":320,"coreKeys":68,"excludedNoAuthoredKeys":["auth-oauth","auth-simple","a-cabloy","a-datasharding","a-datasource","a-layoutprofile","a-markdown","a-socket","a-ssr","a-ssrhmr","a-status","captcha-simple","a-file","file-cloudflare","file-native","a-image","image-cloudflare","image-native","a-pay","pay-mock","pay-paypal","pay-stripe","test-auth","test-cabloy","test-captcha","test-file","test-image","test-markdown","test-pay","a-aspect","a-aspectutils","a-bean","a-beanmutate","a-body","a-broadcast","a-cache","a-caching","a-core","a-election","a-error","a-event","a-executor","a-hmr","a-hmrbase","a-index","a-jwt","a-locale","a-logger","a-mail","a-menu","a-meta","a-metrics","a-onion","a-openapi","a-openapischema","a-ormdialect","a-ormutils","a-permission","a-play","a-printtip","a-queue","a-ratelimit","a-redis","a-redlock","a-retryable","a-runtime","a-schedule","a-security","a-serialization","a-startup","a-static","a-summer","a-swagger","a-telemetry","a-upload","a-vona","a-web","a-worker","a-zod","commerce-payment","commerce-seed","basic-metrics","locale-jajp","locale-test","locale-zhtw"]},{"stack":"vona","locale":"zh-tw","targets":28,"keys":320,"coreKeys":68,"excludedNoAuthoredKeys":["auth-oauth","auth-simple","a-cabloy","a-datasharding","a-datasource","a-layoutprofile","a-markdown","a-socket","a-ssr","a-ssrhmr","a-status","captcha-simple","a-file","file-cloudflare","file-native","a-image","image-cloudflare","image-native","a-pay","pay-mock","pay-paypal","pay-stripe","test-auth","test-cabloy","test-captcha","test-file","test-image","test-markdown","test-pay","a-aspect","a-aspectutils","a-bean","a-beanmutate","a-body","a-broadcast","a-cache","a-caching","a-core","a-election","a-error","a-event","a-executor","a-hmr","a-hmrbase","a-index","a-jwt","a-locale","a-logger","a-mail","a-menu","a-meta","a-metrics","a-onion","a-openapi","a-openapischema","a-ormdialect","a-ormutils","a-permission","a-play","a-printtip","a-queue","a-ratelimit","a-redis","a-redlock","a-retryable","a-runtime","a-schedule","a-security","a-serialization","a-startup","a-static","a-summer","a-swagger","a-telemetry","a-upload","a-vona","a-web","a-worker","a-zod","commerce-payment","commerce-seed","basic-metrics","locale-jajp","locale-test","locale-zhtw"]},{"stack":"zova","locale":"ja-jp","targets":23,"keys":386,"coreKeys":0,"excludedNoAuthoredKeys":["a-layoutprofile","a-rbac","rest-resource","a-pay","pay-mock","pay-paypal","pay-stripe","a-api","a-app","a-bean","a-behavior","a-behaviors","a-command","a-fetch","a-form","a-icon","a-interceptor","a-logger","a-meta","a-model","a-openapi","a-router","a-routerstack","a-routertabs","a-ssr","a-ssrhmr","a-ssrserver","a-style","a-table","a-zova","commerce-payment","commerce-promotion","commerce-siteweb","demo-todo","devui-adapter","home-api","home-icon","home-indexadmin","home-indexweb","home-layoutempty","home-passport","home-theme","basic-adapter","basic-button","basic-commands","basic-commandssync","basic-currency","basic-date","basic-input","basic-metrics","basic-pay","basic-select","basic-text","locale-jajp","locale-test","locale-zhtw"]},{"stack":"zova","locale":"zh-tw","targets":23,"keys":386,"coreKeys":0,"excludedNoAuthoredKeys":["a-layoutprofile","a-rbac","rest-resource","a-pay","pay-mock","pay-paypal","pay-stripe","a-api","a-app","a-bean","a-behavior","a-behaviors","a-command","a-fetch","a-form","a-icon","a-interceptor","a-logger","a-meta","a-model","a-openapi","a-router","a-routerstack","a-routertabs","a-ssr","a-ssrhmr","a-ssrserver","a-style","a-table","a-zova","commerce-payment","commerce-promotion","commerce-siteweb","demo-todo","devui-adapter","home-api","home-icon","home-indexadmin","home-indexweb","home-layoutempty","home-passport","home-theme","basic-adapter","basic-button","basic-commands","basic-commandssync","basic-currency","basic-date","basic-input","basic-metrics","basic-pay","basic-select","basic-text","locale-jajp","locale-test","locale-zhtw"]}]}
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 252.34475
+
+COMMAND: frontend locale runtime
+(node:30657) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ delivered packs precede real preload and preserve lazy targets (none, server=false) (4.959291ms)
+✔ delivered packs precede real preload and preserve lazy targets (locale-jajp, server=false) (1.823917ms)
+✔ delivered packs precede real preload and preserve lazy targets (locale-zhtw, server=false) (0.986833ms)
+✔ delivered packs precede real preload and preserve lazy targets (locale-jajp+locale-zhtw, server=false) (0.912416ms)
+✔ provider resources precede real a-bean preload, client lazy demo remains lazy (server=false) (1.044833ms)
+✔ delivered packs precede real preload and preserve lazy targets (none, server=true) (0.750042ms)
+✔ delivered packs precede real preload and preserve lazy targets (locale-jajp, server=true) (0.797625ms)
+✔ delivered packs precede real preload and preserve lazy targets (locale-zhtw, server=true) (0.7745ms)
+✔ delivered packs precede real preload and preserve lazy targets (locale-jajp+locale-zhtw, server=true) (0.951375ms)
+✔ provider resources precede real a-bean preload, client lazy demo remains lazy (server=true) (0.906709ms)
+✔ real Sys full-reload hook disposes provider state and reinitializes like fresh startup (7.283917ms)
+✔ disposed SysLocale can register current project/provider resources without removed contributions (0.465708ms)
+✔ active locale policy normalizes cookies, preferences/setters and route-menu subsets, but not explicit lookup (0.216958ms)
+✔ config layers replace only the enabled locale set and reject invalid policy (0.345834ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 463.201542
+
+COMMAND: managed backend locale runtime
+
+> cabloy@5.1.239 test
+> cd vona && npm run test locale-test/test/*.test.ts test-vona/test/locale.test.ts
+
+
+> test
+> node ../scripts/runIsolatedTest.ts unit locale-test/test/*.test.ts test-vona/test/locale.test.ts
+
+
+> prerun
+> npm run vona :tools:deps
+
+
+> vona
+> node ./packages-cli/cli/src/bin/vona.ts :tools:deps
+
+vona api:tools:deps at vona
+
+vona api:bin:test at vona
+
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+2026-10-26T05:04:52.133Z silly [a-startup.service.startup] startup: a-version:databaseInit, pid: 31173
+2026-10-26T05:04:52.252Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-26T05:04:52.253Z silly [a-version.service.database] {"method":"POST"} database: vona/.app-test-20261026050444-6fcb4f89/sqlite3/vona-test-cabtest20261026050444-6fcb4f89-s-20261026-130452.db, pid: 31173
+2026-10-26T05:04:54.321Z info [a-version.service.version] {"method":"POST"} {
+  "a-version": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-auth": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "auth-simple": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-instance": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-mail": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-pay": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-member": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-payment": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "home-user": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-promotion": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-trade": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-catalog": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-record": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-recordsubject": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-student": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-datasource": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-layoutprofile": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-status": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-rest": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-vona": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  }
+}
+2026-10-26T05:04:54.322Z silly [a-version.service.version] {"method":"POST"} All modules are checked successfully!
+2026-10-26T05:04:54.357Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-26T05:04:54.357Z silly [a-version.service.database] {"method":"POST"} database: vona/.app-test-20261026050444-6fcb4f89/sqlite3/vona-test-cabtest202610-i-ByAukCzRoQ-20261026-130454.db, pid: 31173
+2026-10-26T05:04:56.616Z info [a-version.service.version] {"method":"POST"} {
+  "a-version": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-auth": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "auth-simple": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-instance": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-mail": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-pay": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-member": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-payment": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "home-user": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-promotion": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-trade": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-catalog": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-record": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-recordsubject": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-student": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-datasource": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-layoutprofile": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-status": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-rest": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-vona": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  }
+}
+2026-10-26T05:04:56.616Z silly [a-version.service.version] {"method":"POST"} All modules are checked successfully!
+2026-10-26T05:04:56.617Z silly [a-startup.service.startup] startup: a-version:databaseName, pid: 31173
+2026-10-26T05:04:56.618Z silly [a-startup.service.startup] startup: a-web:listen, pid: 31173
+2026-10-26T05:04:56.850Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-version:instanceInit, pid: 31173
+2026-10-26T05:05:00.773Z silly [a-version.service.version] {"method":"POST"} The instance is initialized successfully: default
+2026-10-26T05:05:00.774Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-schedule:loadSchedules, pid: 31173
+2026-10-26T05:05:00.818Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-runtime:runtime, pid: 31173
+2026-10-26T05:05:00.839Z silly [a-startup.service.startup] {"method":"POST"} startup instance: a-queue:loadQueueWorkers, pid: 31173
+2026-10-26T05:05:04.355Z silly [a-version.service.version] {"method":"POST"} The instance is seeded successfully: default
+▶ locale.test.ts
+  ✔ action:locale (1.613542ms)
+  ✔ action:locale:plurals (0.948125ms)
+✔ locale.test.ts (3.28175ms)
+✔ both language packs cover the authored release inventory without token or plural loss (168.381959ms)
+ℹ Locale inventory: {"sha256":"ce33bb93c3bc3a8c1fcdf9195c2d677502e6a0ff9c0d467a0c57a0b67c9cf2c5","reports":[{"stack":"vona","locale":"ja-jp","targets":28,"keys":320,"coreKeys":68,"excludedNoAuthoredKeys":["auth-oauth","auth-simple","a-cabloy","a-datasharding","a-datasource","a-layoutprofile","a-markdown","a-socket","a-ssr","a-ssrhmr","a-status","captcha-simple","a-file","file-cloudflare","file-native","a-image","image-cloudflare","image-native","a-pay","pay-mock","pay-paypal","pay-stripe","test-auth","test-cabloy","test-captcha","test-file","test-image","test-markdown","test-pay","a-aspect","a-aspectutils","a-bean","a-beanmutate","a-body","a-broadcast","a-cache","a-caching","a-core","a-election","a-error","a-event","a-executor","a-hmr","a-hmrbase","a-index","a-jwt","a-locale","a-logger","a-mail","a-menu","a-meta","a-metrics","a-onion","a-openapi","a-openapischema","a-ormdialect","a-ormutils","a-permission","a-play","a-printtip","a-queue","a-ratelimit","a-redis","a-redlock","a-retryable","a-runtime","a-schedule","a-security","a-serialization","a-startup","a-static","a-summer","a-swagger","a-telemetry","a-upload","a-vona","a-web","a-worker","a-zod","commerce-payment","commerce-seed","basic-metrics","locale-jajp","locale-test","locale-zhtw"]},{"stack":"vona","locale":"zh-tw","targets":28,"keys":320,"coreKeys":68,"excludedNoAuthoredKeys":["auth-oauth","auth-simple","a-cabloy","a-datasharding","a-datasource","a-layoutprofile","a-markdown","a-socket","a-ssr","a-ssrhmr","a-status","captcha-simple","a-file","file-cloudflare","file-native","a-image","image-cloudflare","image-native","a-pay","pay-mock","pay-paypal","pay-stripe","test-auth","test-cabloy","test-captcha","test-file","test-image","test-markdown","test-pay","a-aspect","a-aspectutils","a-bean","a-beanmutate","a-body","a-broadcast","a-cache","a-caching","a-core","a-election","a-error","a-event","a-executor","a-hmr","a-hmrbase","a-index","a-jwt","a-locale","a-logger","a-mail","a-menu","a-meta","a-metrics","a-onion","a-openapi","a-openapischema","a-ormdialect","a-ormutils","a-permission","a-play","a-printtip","a-queue","a-ratelimit","a-redis","a-redlock","a-retryable","a-runtime","a-schedule","a-security","a-serialization","a-startup","a-static","a-summer","a-swagger","a-telemetry","a-upload","a-vona","a-web","a-worker","a-zod","commerce-payment","commerce-seed","basic-metrics","locale-jajp","locale-test","locale-zhtw"]},{"stack":"zova","locale":"ja-jp","targets":23,"keys":386,"coreKeys":0,"excludedNoAuthoredKeys":["a-layoutprofile","a-rbac","rest-resource","a-pay","pay-mock","pay-paypal","pay-stripe","a-api","a-app","a-bean","a-behavior","a-behaviors","a-command","a-fetch","a-form","a-icon","a-interceptor","a-logger","a-meta","a-model","a-openapi","a-router","a-routerstack","a-routertabs","a-ssr","a-ssrhmr","a-ssrserver","a-style","a-table","a-zova","commerce-payment","commerce-promotion","commerce-siteweb","demo-todo","devui-adapter","home-api","home-icon","home-indexadmin","home-indexweb","home-layoutempty","home-passport","home-theme","basic-adapter","basic-button","basic-commands","basic-commandssync","basic-currency","basic-date","basic-input","basic-metrics","basic-pay","basic-select","basic-text","locale-jajp","locale-test","locale-zhtw"]},{"stack":"zova","locale":"zh-tw","targets":23,"keys":386,"coreKeys":0,"excludedNoAuthoredKeys":["a-layoutprofile","a-rbac","rest-resource","a-pay","pay-mock","pay-paypal","pay-stripe","a-api","a-app","a-bean","a-behavior","a-behaviors","a-command","a-fetch","a-form","a-icon","a-interceptor","a-logger","a-meta","a-model","a-openapi","a-router","a-routerstack","a-routertabs","a-ssr","a-ssrhmr","a-ssrserver","a-style","a-table","a-zova","commerce-payment","commerce-promotion","commerce-siteweb","demo-todo","devui-adapter","home-api","home-icon","home-indexadmin","home-indexweb","home-layoutempty","home-passport","home-theme","basic-adapter","basic-button","basic-commands","basic-commandssync","basic-currency","basic-date","basic-input","basic-metrics","basic-pay","basic-select","basic-text","locale-jajp","locale-test","locale-zhtw"]}]}
+✔ request negotiation and direct setter use root policy, preserve source order and explicit lookup (0.774208ms)
+✔ enabled Japanese works with and without a provider and uses the root default (0.254792ms)
+✔ delivered packs load through the real locale loader (none) (0.3135ms)
+✔ delivered packs load through the real locale loader (locale-jajp) (0.753541ms)
+✔ delivered packs load through the real locale loader (locale-zhtw) (0.872959ms)
+✔ delivered packs load through the real locale loader (locale-jajp+locale-zhtw) (0.7895ms)
+✔ provider registration is target-scoped, metadata-filtered and ordered before ordinary defaults (0.516375ms)
+✔ ordinary locale service reload restarts to preserve clean-start scoped and global precedence (0.508083ms)
+✔ provider modules envelope never becomes global text (0.073958ms)
+✔ active locale policy validates own enabled items independently of dictionary availability (0.230125ms)
+✔ root config layers replace explicit locale.items subsets, retaining the sole default (33.67175ms)
+▶ provider.test.ts
+  ✔ provider: Japanese scoped lookup stays independent of disabled active language (1.175791ms)
+  ✔ provider: Traditional scoped lookup and core globals coexist with Japanese without enabling either (0.708416ms)
+✔ provider.test.ts (1.983625ms)
+✔ ---done--- (0.017417ms)
+App shutdown gracefully: 31173
+ℹ tests 16
+ℹ suites 3
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 301.349125
+producer_exit=0 ansi_normalizer_exit=0 sanitizer_exit=0
