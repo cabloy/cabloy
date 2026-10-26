@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.242
+
+### Bug Fixes
+
+- Correct test failures.
+
+### Improvements
+
+- Enhance CAPTCHA functionality and expand test coverage.
+- Clarify locale provider examples and metadata commands in the documentation.
+- Update dependency lockfile.
+
 ## 5.1.241
 
 ### Features
