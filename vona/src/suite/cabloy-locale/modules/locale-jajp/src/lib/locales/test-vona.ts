@@ -1,4 +1,9 @@
 export default {
+  Name: '名称',
+  Operations: '操作',
+  User: 'ユーザー',
+  UserId: 'ユーザー ID',
+  Test: 'テスト',
   TestHelloWorld: 'こんにちは、世界',
   TestApples_: 'りんご%d個',
   TestApples_0: 'りんごはありません',
@@ -6,4 +11,13 @@ export default {
   TestNameApples_: '%sにはりんごが%d個あります',
   TestNameApples_0_1: '%sにはりんごがありません',
   TestNameApples_1_1: '%sにはりんごが1個あります',
+  Order: '注文',
+  OrderNo: '注文番号',
+  Remark: '備考',
+  Price: '単価',
+  Quantity: '数量',
+  Amount: '金額',
+  Title: 'タイトル',
+  LegacyBusinessError: '従来形式の業務エラー',
+  StructuredConflict: '構造化された競合エラー',
 };

@@ -12,7 +12,9 @@ import { ZovaSys } from '../../../../../../packages-zova/zova-core/src/core/sys/
 import { MonkeySys as BeanMonkeySys } from '../../../../../suite-vendor/a-zova/modules/a-bean/src/monkeySys.ts';
 import demoEnglish from '../../../../a-demo/modules/demo-basic/src/config/locale/en-us.ts';
 import demoChinese from '../../../../a-demo/modules/demo-basic/src/config/locale/zh-cn.ts';
+import { localesProvider as japaneseProvider } from '../../locale-jajp/src/locales/index.ts';
 import japanese from '../../locale-jajp/src/locales/ja-jp.ts';
+import { localesProvider as traditionalProvider } from '../../locale-zhtw/src/locales/index.ts';
 
 function setServer(t: any, server: boolean) {
   const env = process.env as unknown as Record<string, string | undefined>;
@@ -60,12 +62,151 @@ function createAppLocale(sys: any, cookie?: unknown) {
       },
     },
   };
-  const locale = Object.assign(new AppLocale(), { sys, app });
+  const ctx = { meta: { $ssr: { profileOptions: { useCookie: true } } } };
+  const locale = Object.assign(new AppLocale(), { sys, app, ctx });
   app.meta.locale = locale;
   return { locale, values };
 }
 
+const deliveredPacks = [
+  {
+    name: 'locale-jajp',
+    locale: 'ja-jp',
+    resource: japaneseProvider,
+    dictionary: japaneseProvider['ja-jp'],
+  },
+  {
+    name: 'locale-zhtw',
+    locale: 'zh-tw',
+    resource: traditionalProvider,
+    dictionary: traditionalProvider['zh-tw'],
+  },
+] as const;
+
 for (const server of [false, true]) {
+  for (const installed of [[], [deliveredPacks[0]], [deliveredPacks[1]], deliveredPacks]) {
+    const names = installed.map(pack => pack.name).join('+') || 'none';
+    test(`delivered packs precede real preload and preserve lazy targets (${names}, server=${server})`, async t => {
+      setServer(t, server);
+      const sys = createRuntime();
+      const registry: SysLocale = sys.meta.locale;
+      const loader: SysModule = sys.meta.module;
+      const policyBefore = structuredClone(sys.config.locale);
+      const beanManifest = JSON.parse(
+        await readFile(
+          new URL(
+            '../../../../../suite-vendor/a-zova/modules/a-bean/package.json',
+            import.meta.url,
+          ),
+          'utf8',
+        ),
+      );
+      const demoManifest = JSON.parse(
+        await readFile(
+          new URL('../../../../a-demo/modules/demo-basic/package.json', import.meta.url),
+          'utf8',
+        ),
+      );
+      let demoImports = 0;
+      let preloadReads = 0;
+      const providerInstalls: string[] = [];
+      const modules: any = {
+        'a-bean': {
+          info: { relativeName: 'a-bean', capabilities: beanManifest.zovaModule.capabilities },
+          resource: async () => ({ MonkeySys: BeanMonkeySys }),
+        },
+        'home-base': {
+          info: { relativeName: 'home-base' },
+          resource: async () => ({}),
+        },
+        'demo-basic': {
+          info: { relativeName: 'demo-basic', capabilities: demoManifest.zovaModule?.capabilities },
+          resource: async () => {
+            demoImports++;
+            return { locales: { 'en-us': demoEnglish, 'zh-cn': demoChinese } };
+          },
+        },
+      };
+      for (const pack of installed) {
+        const manifest = JSON.parse(
+          await readFile(new URL(`../../${pack.name}/package.json`, import.meta.url), 'utf8'),
+        );
+        modules[pack.name] = {
+          info: { relativeName: pack.name, capabilities: manifest.zovaModule.capabilities },
+          resource: async () => ({ localesProvider: pack.resource }),
+        };
+      }
+      sys.meta.sysMonkey = {
+        moduleLoading(module: any) {
+          if (installed.some(pack => pack.name === module.info.relativeName)) {
+            providerInstalls.push(module.info.relativeName);
+          }
+          if (module.info.relativeName !== 'a-bean') return;
+          preloadReads++;
+          for (const pack of deliveredPacks) {
+            assert.equal(
+              registry.getText(false, 'demo-basic', pack.locale as any, 'HelloWorld'),
+              installed.some(item => item.name === pack.name)
+                ? pack.dictionary.modules['demo-basic'].HelloWorld
+                : 'HelloWorld',
+            );
+          }
+          assert.equal(loader.get('demo-basic'), undefined);
+          assert.equal(demoImports, server ? 1 : 0);
+        },
+      };
+      await registry.initialize();
+      await loader.initialize({ moduleNames: Object.keys(modules), modules } as any);
+      assert.equal(preloadReads, 1);
+      assert.deepEqual(
+        providerInstalls,
+        installed.map(pack => pack.name),
+      );
+      assert.equal(loader.get('demo-basic') !== undefined, server);
+      await loader.use('demo-basic');
+      const { locale: appLocale, values } = createAppLocale(sys, 'JA_JP');
+      const demoScope = Object.assign(new BeanScopeLocale('demo-basic'), {
+        sys,
+        app: (appLocale as any).app,
+      });
+      const homeScope = Object.assign(new BeanScopeLocale('home-base'), {
+        sys,
+        app: (appLocale as any).app,
+      });
+      const hello = (demoScope as any).__get__('HelloWorld');
+      for (const pack of deliveredPacks) {
+        const present = installed.some(item => item.name === pack.name);
+        const expected = present
+          ? pack.dictionary.modules['demo-basic'].HelloWorld
+          : demoEnglish.HelloWorld;
+        assert.equal(hello.locale(pack.locale), expected);
+        assert.equal(
+          appLocale.getText(false, undefined, pack.locale as any, 'demo-basic::HelloWorld'),
+          expected,
+        );
+        assert.equal(Object.hasOwn(registry.locales, pack.locale), present);
+        if (present) {
+          assert.equal(
+            (homeScope as any).__get__('Home').locale(pack.locale),
+            pack.dictionary.modules['home-base'].Home,
+          );
+          assert.equal(Object.hasOwn(registry.locales[pack.locale], 'modules'), false);
+          assert.equal(Object.hasOwn(registry.locales[pack.locale], 'CommerceCatalogue'), false);
+          assert.notEqual(loader.get(pack.name), undefined);
+        }
+        assert.equal(registry.localeModules[pack.name], undefined);
+        appLocale.current = pack.locale as any;
+        assert.equal(appLocale.current, 'en-us');
+        assert.equal(values.get('locale'), 'en-us');
+      }
+      assert.equal(registry.localeModules['commerce-catalog'], undefined);
+      assert.equal(hello(), demoEnglish.HelloWorld);
+      assert.equal(hello.locale('zh-cn'), demoChinese.HelloWorld);
+      assert.equal(demoImports, 1);
+      assert.deepEqual(sys.config.locale, policyBefore);
+    });
+  }
+
   test(`provider resources precede real a-bean preload, client lazy demo remains lazy (server=${server})`, async t => {
     setServer(t, server);
     const sys = createRuntime();

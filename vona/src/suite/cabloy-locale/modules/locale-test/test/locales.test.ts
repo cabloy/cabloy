@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 
 import type { ConfigLocale } from '../../../../../../packages-vona/vona-core/src/types/config/locale.ts';
@@ -11,7 +12,11 @@ import {
 import defaults from '../../../../../../packages-vona/vona-core/src/lib/core/locales.ts';
 import { Start } from '../../../../../../packages-vona/vona-core/src/lib/framework/start.ts';
 import loadLocales from '../../../../../../packages-vona/vona-core/src/lib/module/locales.ts';
+import testEnglish from '../../../../../suite-vendor/a-test/modules/test-vona/src/config/locale/en-us.ts';
+import testChinese from '../../../../../suite-vendor/a-test/modules/test-vona/src/config/locale/zh-cn.ts';
 import { ServiceHmr } from '../../../../../suite-vendor/a-vona/modules/a-hmr/src/service/hmr.ts';
+import { localesProvider as japanese } from '../../locale-jajp/src/locales/index.ts';
+import { localesProvider as traditional } from '../../locale-zhtw/src/locales/index.ts';
 
 function module(locales: object, provider = false) {
   return {
@@ -33,6 +38,80 @@ function appFixture(
   app.meta.locale = locale;
   app.meta.text = locale.createLocaleText();
   return app;
+}
+
+const deliveredPacks = [
+  {
+    name: 'locale-jajp',
+    locale: 'ja-jp',
+    resource: japanese,
+    dictionary: japanese['ja-jp'],
+    hello: 'こんにちは、世界',
+    notFound: '見つかりません',
+  },
+  {
+    name: 'locale-zhtw',
+    locale: 'zh-tw',
+    resource: traditional,
+    dictionary: traditional['zh-tw'],
+    hello: '您好，世界',
+    notFound: '找不到資源',
+  },
+] as const;
+
+for (const installed of [[], [deliveredPacks[0]], [deliveredPacks[1]], deliveredPacks]) {
+  const names = installed.map(pack => pack.name).join('+') || 'none';
+  test(`delivered packs load through the real locale loader (${names})`, async () => {
+    const app = appFixture();
+    const policyBefore = structuredClone(app.config.locale);
+    const modules: any = {
+      'test-vona': module({ 'en-us': testEnglish, 'zh-cn': testChinese }),
+      'home-base': module({}),
+    };
+    for (const pack of installed) {
+      const manifest = JSON.parse(
+        await readFile(new URL(`../../${pack.name}/package.json`, import.meta.url), 'utf8'),
+      );
+      modules[pack.name] = {
+        info: { capabilities: manifest.vonaModule.capabilities },
+        resource: { localesProvider: pack.resource },
+      };
+    }
+    await loadLocales(app, modules);
+    const hello = app.meta.locale.createScopeLocaleText('test-vona', 'TestHelloWorld');
+    for (const pack of deliveredPacks) {
+      const present = installed.some(item => item.name === pack.name);
+      assert.equal(hello.locale(pack.locale), present ? pack.hello : testEnglish.TestHelloWorld);
+      assert.equal(
+        app.meta.text.locale(pack.locale, 'test-vona::TestHelloWorld'),
+        present ? pack.hello : testEnglish.TestHelloWorld,
+      );
+      assert.equal(
+        app.meta.text.locale(pack.locale, '404'),
+        present ? pack.notFound : defaults['en-us']['404'],
+      );
+      assert.equal(Object.hasOwn(app.meta.locales, pack.locale), present);
+      if (present) {
+        assert.equal(
+          app.meta.locale.createScopeLocaleText('home-base', 'SiteAll').locale(pack.locale),
+          pack.dictionary.modules['home-base'].SiteAll,
+        );
+        assert.equal(Object.hasOwn(app.meta.locales[pack.locale], 'modules'), false);
+        assert.equal(app.meta.locales[pack.locale].ProductTitle, undefined);
+      }
+      assert.equal(app.meta.localeModules[pack.name], undefined);
+      assert.equal(resolveLocale(pack.locale, app.config.locale), 'en-us');
+    }
+    // A real translated target is absent: its dictionary must not leak into global fallbacks.
+    assert.equal(app.meta.localeModules['commerce-catalog'], undefined);
+    assert.equal(hello(), testEnglish.TestHelloWorld);
+    assert.equal(hello.locale('zh-cn'), testChinese.TestHelloWorld);
+    for (const locale of ['en-us', 'zh-cn'] as const) {
+      assert.equal(app.meta.text.locale(locale, '404'), defaults[locale]['404']);
+    }
+    assert.equal(app.meta.locale.current, 'en-us');
+    assert.deepEqual(app.config.locale, policyBefore);
+  });
 }
 
 test('provider registration is target-scoped, metadata-filtered and ordered before ordinary defaults', async () => {

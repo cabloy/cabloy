@@ -1,0 +1,43 @@
+
+> cabloy@5.1.239 vona
+> node ./vona/packages-cli/cli/src/bin/vona.ts --projectPath=vona :create:module locale-zhtw --suite=cabloy-locale --ci
+
+vona api:create:module at .
+
+apply changes to vona/src/suite/cabloy-locale/package.json
+Finished in 36ms on 1 files using 1 threads.
+apply changes to vona/src/suite/cabloy-locale/tsconfig.json
+Finished in 26ms on 1 files using 1 threads.
+write to vona/src/suite/cabloy-locale/modules/locale-zhtw/package.json
+Finished in 33ms on 1 files using 1 threads.
+write to vona/src/suite/cabloy-locale/modules/locale-zhtw/tsconfig.build.json
+Finished in 28ms on 1 files using 1 threads.
+write to vona/src/suite/cabloy-locale/modules/locale-zhtw/tsconfig.json
+Finished in 33ms on 1 files using 1 threads.
+write to vona/src/suite/cabloy-locale/modules/locale-zhtw/src/index.ts
+vona api:tools:deps at vona
+
+Finished in 37ms on 1 files using 1 threads.
+===> pnpm install
+Scope: all 158 workspace projects
+[WARN] The store at <PRIVATE_PATH> is not used because packages cannot be hard linked from it into this project. Using the store at <PNPM_STORE> instead. Set storeDir to choose the store.
+? Verifying lockfile against supply-chain policies (1408 entries)...
+✓ Lockfile passes supply-chain policies (1408 entries in 0ms)
+Progress: resolved 0, reused 39, downloaded 0, added 0
+Progress: resolved 0, reused 195, downloaded 0, added 0
+[WARN] 5 deprecated subdependencies found: cron-parser@4.9.0, glob@7.2.3, inflight@1.0.6, prebuild-install@7.1.3, sourcemap-codec@1.4.8
+Packages: +9 -1
++++++++++-
+Progress: resolved 9, reused 473, downloaded 0, added 9, done
+[WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+
+dependencies:
++ vona-module-locale-zhtw <- src/suite/cabloy-locale/modules/locale-zhtw
+
+Done in 4s using pnpm v12.14.0
+vona api:tools:metadata at vona
+
+(1/1)=> locale-zhtw
+Finished in 33ms on 1 files using 1 threads.
+
+producer_exit=0 sanitizer_exit=0

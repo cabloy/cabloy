@@ -1,0 +1,15 @@
+export default {
+  CreateProduct: '新增商品',
+  UpdateProduct: '編輯商品',
+  ProductInfo: '商品資訊',
+  Name: '名稱',
+  Description: '說明',
+  Operations: '操作',
+  Product: '商品',
+  Admin: '管理',
+  Price: '單價',
+  Quantity: '數量',
+  Amount: '金額',
+  ZodErrorStringMin: '至少需要 {{minimum}} 個字元',
+  ZodErrorNumberMin: '不可小於 {{minimum}}',
+};

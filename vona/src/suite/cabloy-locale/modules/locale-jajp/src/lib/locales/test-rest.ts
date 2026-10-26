@@ -1,0 +1,15 @@
+export default {
+  CreateProduct: '商品を作成',
+  UpdateProduct: '商品を編集',
+  ProductInfo: '商品情報',
+  Name: '名称',
+  Description: '説明',
+  Operations: '操作',
+  Product: '商品',
+  Admin: '管理',
+  Price: '単価',
+  Quantity: '数量',
+  Amount: '金額',
+  ZodErrorStringMin: '{{minimum}} 文字以上で入力してください',
+  ZodErrorNumberMin: '{{minimum}} 以上で入力してください',
+};

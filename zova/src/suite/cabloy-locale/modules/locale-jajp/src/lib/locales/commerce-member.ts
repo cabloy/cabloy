@@ -1,0 +1,17 @@
+export default {
+  AddAddress: '住所を追加',
+  AddressLine1: '住所1',
+  AddressLine2: '住所2',
+  Addresses: '住所',
+  AddressesEmpty: '住所がまだ登録されていません。',
+  CancelAddressEdit: 'キャンセル',
+  City: '市区町村',
+  CountryCode: '国コード',
+  DeleteAddress: '削除',
+  EditAddress: '編集',
+  Phone: '電話番号',
+  PostalCode: '郵便番号',
+  RecipientName: '受取人氏名',
+  Region: '都道府県・地域',
+  SaveAddress: '住所を保存',
+};

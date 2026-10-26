@@ -7,7 +7,8 @@
   "type": "module",
   "dependencies": {
     "zova-module-locale-jajp": "^5.0.0",
-    "zova-module-locale-test": "^5.0.0"
+    "zova-module-locale-test": "^5.0.0",
+    "zova-module-locale-zhtw": "^5.0.0"
   },
   "title": "cabloy-locale"
 }

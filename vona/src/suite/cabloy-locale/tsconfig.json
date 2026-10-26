@@ -7,6 +7,9 @@
     },
     {
       "path": "modules/locale-test/tsconfig.build.json"
+    },
+    {
+      "path": "modules/locale-zhtw/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]
