@@ -1,6 +1,6 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
-import { Api } from 'vona-module-a-openapiutils';
+import { Api, v } from 'vona-module-a-openapiutils';
 import { Dto } from 'vona-module-a-web';
 
 export interface IDtoOptionsOperatorContext extends IDecoratorDtoOptions {}
@@ -18,4 +18,7 @@ export class DtoOperatorContext {
 
   @Api.field()
   userName: string;
+
+  @Api.field(v.optional())
+  displayName?: string;
 }

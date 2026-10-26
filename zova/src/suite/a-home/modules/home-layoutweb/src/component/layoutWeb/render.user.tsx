@@ -21,7 +21,9 @@ export class RenderUser extends BeanRenderBase {
                   ) || this.$scopeBase.config.avatar.empty
                 }
               />
-              {this.$passport.user?.name || this.scope.locale.NotLoggedIn()}
+              {this.$passport.isAuthenticated
+                ? this.$passport.displayName
+                : this.scope.locale.NotLoggedIn()}
             </summary>
             <ul class="bg-base-100 rounded-t-none p-2 w-40">
               {this.$passport.isAuthenticated ? (

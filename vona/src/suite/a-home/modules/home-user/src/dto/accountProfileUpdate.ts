@@ -29,8 +29,15 @@ const avatarSchema = avatar.openapi({
 
 @Dto<IDtoOptionsAccountProfileUpdate>()
 export class DtoAccountProfileUpdate {
-  @Api.field(v.title($locale('AccountDisplayName')), v.min(1), v.max(100), v.trim())
-  name: string;
+  @Api.field(
+    v.title($locale('AccountDisplayName')),
+    z.preprocess(
+      // Preserve an explicit clear before optional-string coercion treats '' as omitted.
+      value => (value === '' ? null : value),
+      z.string().trim().max(100).nullable().optional(),
+    ),
+  )
+  displayName?: string | null;
 
   @Api.field(v.title($locale('AccountAvatar')), v.optional(), v.nullable(), avatarSchema)
   avatar?: string | null;

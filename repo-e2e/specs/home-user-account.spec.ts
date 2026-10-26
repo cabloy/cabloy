@@ -383,7 +383,7 @@ test(
 );
 
 test(
-  'ATP-ACCOUNT-WEB-01: signed-in Web menu refreshes after profile save and keeps drafts isolated',
+  'ATP-ACCOUNT-WEB-01: display name refreshes the Web menu without changing the login username',
   { tag: ['@account', '@web', '@flow'] },
   async ({ page, request }, testInfo) => {
     let account: RegisteredAccount | undefined;
@@ -424,14 +424,27 @@ test(
         .poll(() => avatarPreview.evaluate(image => (image as HTMLImageElement).naturalWidth))
         .toBeGreaterThan(0);
 
-      const profileName = `e2e-fixture-home-account-profile-${testInfo.workerIndex}-${crypto.randomUUID()}`;
-      await page
+      const username = page.getByRole('textbox', { name: 'User name', exact: true });
+      await expect(username).toHaveValue(account.username);
+      await expect(username).toHaveAttribute('readonly', '');
+      const displayName = page
         .getByRole('group', { name: 'Display name', exact: true })
-        .getByRole('textbox')
-        .fill(profileName);
+        .getByRole('textbox');
+      await expect(displayName).toHaveValue('');
+      const profileName = `e2e-fixture-home-account-profile-${testInfo.workerIndex}-${crypto.randomUUID()}`;
+      await displayName.fill(`  ${profileName}  `);
       const timezone = page
         .getByRole('group', { name: 'Time zone', exact: true })
         .getByRole('textbox');
+      const inputWidths = await Promise.all(
+        [username, displayName, timezone].map(input =>
+          input.evaluate(element => element.getBoundingClientRect().width),
+        ),
+      );
+      expect(inputWidths[0]).toBeGreaterThan(0);
+      for (const width of inputWidths.slice(1)) {
+        expect(width).toBeCloseTo(inputWidths[0], 0);
+      }
       const browserTimezone = await page.evaluate(
         () => Intl.DateTimeFormat().resolvedOptions().timeZone,
       );
@@ -447,9 +460,21 @@ test(
       const profileResponse = waitForApiResponse(page, 'PATCH', accountProfileApiPath);
       const refreshedPassportResponse = waitForApiResponse(page, 'GET', passportCurrentApiPath);
       await page.getByRole('button', { name: 'Save profile', exact: true }).click();
-      expect((await profileResponse).ok()).toBeTruthy();
-      account.username = profileName;
-      expect((await refreshedPassportResponse).ok()).toBeTruthy();
+      const savedProfileResponse = await profileResponse;
+      expect(savedProfileResponse.ok()).toBeTruthy();
+      expect((await savedProfileResponse.json()).data).toMatchObject({
+        name: account.username,
+        displayName: profileName,
+      });
+      expect(savedProfileResponse.request().postDataJSON()).not.toHaveProperty('name');
+      const savedPassportResponse = await refreshedPassportResponse;
+      expect(savedPassportResponse.ok()).toBeTruthy();
+      expect((await savedPassportResponse.json()).data.user).toMatchObject({
+        name: account.username,
+        displayName: profileName,
+      });
+      await expect(username).toHaveValue(account.username);
+      await expect(displayName).toHaveValue(profileName);
       await expect(page.getByText('Profile saved.', { exact: true })).toBeVisible();
       await expect
         .poll(() =>
@@ -473,6 +498,26 @@ test(
       await expect(page).toHaveURL(accountPath);
       await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
       await expect(userMenu).not.toHaveAttribute('open', '');
+      await expect(username).toHaveValue(account.username);
+      await expect(displayName).toHaveValue(profileName);
+      const originalLogin = await loginAsAccount(request, account.username, account.password);
+      expect(String(originalLogin.id)).toBe(String(account.id));
+
+      await displayName.fill('   ');
+      const clearedProfileResponse = waitForApiResponse(page, 'PATCH', accountProfileApiPath);
+      const clearedPassportResponse = waitForApiResponse(page, 'GET', passportCurrentApiPath);
+      await page.getByRole('button', { name: 'Save profile', exact: true }).click();
+      const clearedProfile = await clearedProfileResponse;
+      expect(clearedProfile.ok()).toBeTruthy();
+      expect(clearedProfile.request().postDataJSON()).toMatchObject({ displayName: null });
+      const clearedProfileBody = (await clearedProfile.json()).data;
+      expect(clearedProfileBody.name).toBe(account.username);
+      expect(clearedProfileBody.displayName).toBeFalsy();
+      expect((await clearedPassportResponse).ok()).toBeTruthy();
+      await expect(displayName).toHaveValue('');
+      await expect(username).toHaveValue(account.username);
+      await expect(userMenu.locator('summary')).toContainText(account.username);
+      await expect(userMenu.locator('summary')).not.toContainText(profileName);
       expect(pageErrors).toEqual([]);
       expect(consoleErrors).toEqual([]);
     } finally {

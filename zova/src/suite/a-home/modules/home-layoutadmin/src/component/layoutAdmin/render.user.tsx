@@ -18,7 +18,7 @@ export class RenderUser extends BeanRenderBase {
                 this.$scopeBase.config.avatar.empty
               }
             />
-            {this.$passport.user?.name}
+            {this.$passport.displayName}
           </summary>
           <ul class="bg-base-100 rounded-t-none p-2 w-32">
             <li>

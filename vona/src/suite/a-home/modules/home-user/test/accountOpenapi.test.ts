@@ -110,25 +110,38 @@ describe('accountOpenapi.test.ts', () => {
             assert.equal(property?.rest?.form?.required, true);
           }
         }
+        if (expectation.action === 'current' || expectation.action === 'updateProfile') {
+          const response = operation.responses?.['200'];
+          assert.ok(response && 'content' in response);
+          const body = resolveSchema(doc, response.content?.['application/json']?.schema);
+          const current = resolveSchema(doc, body.properties?.data);
+          assert.deepEqual(inlineSchema(current.properties?.displayName).type, ['string', 'null']);
+          assert.equal(current.required?.includes('displayName') ?? false, false);
+          assert.equal(inlineSchema(current.properties?.name).type, 'string');
+          assert.ok(current.required?.includes('name'));
+        }
         if (expectation.action === 'updateProfile') {
           const schemaResolved = requestSchema(doc, operation);
           assert.deepEqual(Object.keys(schemaResolved?.properties ?? {}), [
-            'name',
+            'displayName',
             'avatar',
             'locale',
             'tz',
           ]);
-          assert.deepEqual(schemaResolved?.required, ['name']);
+          assert.deepEqual(schemaResolved.required ?? [], []);
+          assert.equal(schemaResolved.properties?.name, undefined);
           for (const [field, title] of [
-            ['name', 'home-user::AccountDisplayName'],
+            ['displayName', 'home-user::AccountDisplayName'],
             ['avatar', 'home-user::AccountAvatar'],
             ['locale', 'home-user::AccountLocale'],
             ['tz', 'home-user::AccountTimezone'],
           ]) {
             assert.equal(inlineSchema(schemaResolved.properties?.[field]).title?.toString(), title);
           }
-          assert.equal(inlineSchema(schemaResolved.properties?.name).minLength, 1);
-          assert.equal(inlineSchema(schemaResolved.properties?.name).maxLength, 100);
+          const displayName = inlineSchema(schemaResolved.properties?.displayName);
+          assert.deepEqual(displayName.type, ['string', 'null']);
+          assert.equal(displayName.maxLength, 100);
+          assert.ok(!displayName.minLength);
           assert.deepEqual(inlineSchema(schemaResolved.properties?.avatar).type, [
             'string',
             'null',
@@ -152,6 +165,20 @@ function inlineSchema(
   assert.ok(schema);
   assert.ok(!('$ref' in schema));
   return schema;
+}
+
+function resolveSchema(
+  doc: OpenAPIObject,
+  schema: ReferenceObject | SchemaObject | undefined,
+): ISchemaObjectExtensionField {
+  assert.ok(schema);
+  if ('$ref' in schema && typeof schema.$ref === 'string') {
+    return resolveSchema(
+      doc,
+      doc.components?.schemas?.[schema.$ref.replace('#/components/schemas/', '')],
+    );
+  }
+  return inlineSchema(schema);
 }
 
 function requestSchema(
