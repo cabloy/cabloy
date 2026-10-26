@@ -2,7 +2,11 @@ import { createHash } from 'node:crypto';
 import { BeanBase, cast } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
-import type { IRateLimitPolicy, IRateLimitResult } from '../types/rateLimit.ts';
+import type {
+  IRateLimitAggregatePolicy,
+  IRateLimitPolicy,
+  IRateLimitResult,
+} from '../types/rateLimit.ts';
 
 @Service()
 export class ServiceRateLimit extends BeanBase {
@@ -14,16 +18,32 @@ export class ServiceRateLimit extends BeanBase {
     this._validatePolicy(policy);
     const now = Date.now();
     const key = this._createKey(policy, now);
-    const result = (await cast(this.clientRedis).rateLimitAdmit(key, String(policy.windowMs))) as [
+    return this._admit(key, policy.limit, policy.windowMs);
+  }
+
+  admitAggregate(policy: IRateLimitAggregatePolicy): Promise<IRateLimitResult> {
+    if (!['observe', 'enforce'].includes(policy.mode)) {
+      throw new Error('rate-limit aggregate mode must be observe or enforce');
+    }
+    if (!Number.isSafeInteger(policy.limit) || policy.limit < 1) {
+      throw new Error('rate-limit aggregate limit must be a positive safe integer');
+    }
+    const windowMs = 1_000;
+    const windowStart = Math.floor(Date.now() / windowMs) * windowMs;
+    return this._admit(`rate-limit:aggregate:v1:${windowStart}`, policy.limit, windowMs);
+  }
+
+  private async _admit(key: string, limit: number, windowMs: number): Promise<IRateLimitResult> {
+    const result = (await cast(this.clientRedis).rateLimitAdmit(key, String(windowMs))) as [
       number | string,
       number | string,
     ];
     const current = Number(result[0]);
     const resetAfterMs = Math.max(0, Number(result[1]));
     return {
-      allowed: current <= policy.limit,
-      limit: policy.limit,
-      remaining: Math.max(0, policy.limit - current),
+      allowed: current <= limit,
+      limit,
+      remaining: Math.max(0, limit - current),
       resetAfterMs,
       retryAfterSeconds: Math.max(1, Math.ceil(resetAfterMs / 1000)),
     };

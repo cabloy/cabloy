@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.240
+
+### Improvements
+
+- Enhance rate limiting.
+- Update hot module replacement (HMR) handling.
+
 ## 5.1.239
 
 ### Improvements
