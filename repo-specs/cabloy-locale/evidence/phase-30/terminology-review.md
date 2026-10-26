@@ -2,7 +2,7 @@
 
 ## Review State
 
-**WBS-LOC-30-01 remains `implementation-complete`, not verified.** The attributed reviewer declaration below applies to `35b0b6b987`; complete per-entry dispositions are not retained. On 2026-10-26 the user approved the bounded current-candidate verification/evidence dossier with “同意，请执行”. This authorizes execution, not an inferred all-entry `accept` disposition. No dictionary source was changed during this reconciliation.
+**WBS-LOC-30-01: verified.** On 2026-10-26, reviewer `zhennann` explicitly declared all current Japanese/Taiwan Traditional Chinese entries accepted, with no corrections or queries, including the added language name. The [current all-entry disposition](#current-all-entry-acceptance-2026-10-26) supersedes the earlier missing-disposition gate. The earlier execution approval alone was not language acceptance. No dictionary source was changed during this reconciliation.
 
 Current candidate: `36756a972a7f5c72627ecdfa5bc0173252cbc73e`, clean at execution start; only evidence/derived records are dirty afterward. Compared with the reviewed revision, four Zova dictionary lines add `LanguageTraditionalChinese`: source `Traditional Chinese` / `繁体中文`, Japanese `繁体字中国語`, Taiwan Traditional Chinese `繁體中文`. The original review and no-change assertions below remain historical; they do not cover this added entry. Current automatic checks and paired build/sync evidence are recorded in [the current-candidate reconciliation](./dictionaries.md#current-candidate-reconciliation-36756a972a).
 
@@ -18,7 +18,27 @@ Current candidate: `36756a972a7f5c72627ecdfa5bc0173252cbc73e`, clean at executio
 
 The two implementation digests use different patch serialization boundaries. The retained `5b5b...` value was calculated from the original dirty worktree, combining the tracked diff with sorted untracked source files. The `bfc50...` value is calculated from the committed tree diff from the same base to the current revision. The source path set and authored bytes are unchanged by the commit; the committed-tree digest is recorded so a reviewer can identify the exact current revision without treating the historical dirty digest as a reproducible commit hash.
 
-## Reviewer Assignment and Declaration
+## Current All-Entry Acceptance: 2026-10-26
+
+Reviewer `zhennann` subsequently supplied this explicit declaration in the conversation:
+
+> 明确声明当前全部日语/台湾繁中词条均为 accept、无 correct/query，并包含新增语言名称
+
+The declaration covers current reviewed revision `6d6d9401f7a5614f7d77ae858c2a53f5b7dc2188`, clean before documentary closure. `git diff --quiet 36756a972a -- vona zova` returned 0: all authored runtime, dictionaries, tests and lockfiles are identical to the tested candidate. Only evidence/derived records changed between those revisions. No correction was requested or made, so existing automatic/build/style proof remains applicable; business checks were not redundantly rerun.
+
+[Complete expanded dispositions](./artifacts/terminology-6d6d94-dispositions.txt) retain the exact declaration and revision followed by one JSON record per delivered entry: stack, locale, target/core, repository-relative path, key, current text, value kind, owning source text/path, `accept`, no correction, no unresolved query, and reviewer attribution. This is **mechanical expansion of the human blanket declaration**, not a new independent AI terminology review or a claim that the reviewer authored the expanded file. Source context uses the inventory's English-preferred union with Chinese-only entries retained. The sole callable key uses synthetic `{inventory-email}` and retains function kind; no real email is retained.
+
+| Stack | Japanese accepted | Taiwan Traditional Chinese accepted | Corrections | Queries |
+| --- | ---: | ---: | ---: | ---: |
+| Vona (320 module + 68 core keys) | 388 | 388 | 0 | 0 |
+| Zova (386 module keys) | 386 | 386 | 0 | 0 |
+| Total | 774 | 774 | 0 | 0 |
+
+All **1,548** entries are accepted. This includes `LanguageTraditionalChinese`: Japanese `繁体字中国語` and Taiwan `繁體中文`, source `Traditional Chinese`. The declaration resolves all historical candidate questions below; their original `OPEN` cells are retained as historical preparation, not current unresolved queries. Earlier revision/hash/no-change statements below remain historical. The existing language competence and domain-context declarations remain the reviewer attribution; no new qualification is invented.
+
+ATP-LOC-05 is closed with this human disposition and the retained current automatic evidence. WBS-LOC-30-01 is verified for dictionary delivery. Full browser/schema/validation/SSR-hydration and release acceptance are not inferred. WBS-LOC-40-01 and WBS-LOC-50-01 remain not-started and require their own execution approval.
+
+## Historical Reviewer Assignment and Declaration
 
 ### Japanese review
 
