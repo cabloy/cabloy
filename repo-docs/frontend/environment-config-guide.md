@@ -101,7 +101,7 @@ The config side follows the same merge pattern with `config.ts`, `config.[meta].
 
 ## Locale enablement and defaults
 
-Installed dictionaries, enabled languages, and the default language are separate concerns. Installing `locale-jajp` or `locale-zhtw` makes translation resources available; it does not add a language choice or change the default. Configure application policy explicitly in the frontend root config, `zova/src/front/config/config/config.ts`, or an applicable config layer:
+Installed dictionaries, enabled languages, and the default language are separate concerns. Authoring or installing a language provider makes its translation resources available; it does not add a language choice or change the default. The Japanese and Traditional Chinese entries below illustrate application policy, not bundled language packs. Configure application policy explicitly in the frontend root config, `zova/src/front/config/config/config.ts`, or an applicable config layer:
 
 ```typescript
 import type { ZovaConfigOptional, ZovaSys } from 'zova';
