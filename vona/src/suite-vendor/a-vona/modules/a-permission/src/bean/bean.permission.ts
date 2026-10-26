@@ -11,7 +11,7 @@ import type { ContextRoute, IRecordResourceNameToRoutePathItem } from 'vona-modu
 import { appResource, BeanBase, beanFullNameFromOnionName } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 import { Caching } from 'vona-module-a-caching';
-import { clearRbacDecision, setRbacDecision, SymbolRbacDecision } from 'vona-module-a-rbac';
+import { clearRbacDecision, getRbacDecision, SymbolRbacDecision } from 'vona-module-a-rbac';
 import {
   composeGuards,
   getCacheControllerRoutes,
@@ -105,6 +105,23 @@ export class BeanPermission extends BeanBase {
   ): Promise<boolean> {
     const permission = await this.retrievePermissionAction(resource, actionKey);
     return typeof permission === 'boolean' ? permission : permission.allowed;
+  }
+
+  /**
+   * Checks current guards without permission events, result caches or matcher projection.
+   * A true result does not authorize individual records or prepare data scope/owner values.
+   * The target action's RBAC decision is not retained; scoped operations must authorize separately.
+   */
+  public async checkPermissionActionGuards(
+    resource: keyof IResourceRecord,
+    actionKey: string,
+  ): Promise<boolean> {
+    if (!Object.hasOwn(recordResourceNameToRoutePath, resource)) return false;
+    const routePathInfo = recordResourceNameToRoutePath[resource];
+    if (!routePathInfo || !appResource.getBean(routePathInfo.controller)) return false;
+    const route = this._getControllerActionRoute(resource, actionKey);
+    if (!route?.route?.meta || !this._matchPassportMeta(route.route.meta)) return false;
+    return await this._evaluatePermissionAction(route, true);
   }
 
   public async retrievePermissionAction(
@@ -201,12 +218,17 @@ export class BeanPermission extends BeanBase {
     return true;
   }
 
-  private async _evaluatePermissionAction(route: ContextRoute): Promise<IOpenapiPermissionAction> {
+  private async _evaluatePermissionAction(route: ContextRoute, guardsOnly: true): Promise<boolean>;
+  private async _evaluatePermissionAction(route: ContextRoute): Promise<IOpenapiPermissionAction>;
+  private async _evaluatePermissionAction(
+    route: ContextRoute,
+    guardsOnly = false,
+  ): Promise<IOpenapiPermissionAction> {
     const ctx = this.ctx as any;
-    const routePrevious = ctx.route;
+    const routeDescriptorPrevious = Object.getOwnPropertyDescriptor(ctx, 'route');
+    const innerAccessDescriptorPrevious = Object.getOwnPropertyDescriptor(ctx, 'innerAccess');
     const innerAccessPrevious = ctx.innerAccess;
-    const rbacDecisionHadOwnProperty = Object.hasOwn(ctx, SymbolRbacDecision);
-    const rbacDecisionPrevious = ctx[SymbolRbacDecision];
+    const rbacDecisionDescriptorPrevious = Object.getOwnPropertyDescriptor(ctx, SymbolRbacDecision);
     try {
       ctx.route = route;
       ctx.innerAccess = false;
@@ -214,19 +236,43 @@ export class BeanPermission extends BeanBase {
       const result = await composeGuards(this.app, route)(this.ctx);
       if (result === false) return false;
       if (!route.route.meta?.[BeanFullNameGuardRbac]) return true;
+      if (guardsOnly) {
+        const action = this.bean.rbacCatalog.getAction(route);
+        const decision = getRbacDecision(this.ctx);
+        return Boolean(
+          action &&
+          Object.hasOwn(ctx, SymbolRbacDecision) &&
+          decision?.allowed === true &&
+          decision.actionKey === action.actionKey &&
+          decision.action?.actionKey === action.actionKey &&
+          decision.action.actionInheritKey === action.actionInheritKey &&
+          decision.action.controllerBeanFullName === action.controllerBeanFullName &&
+          decision.action.action === action.action,
+        );
+      }
       const rbacScopeCurrent = await this.bean.rbacScope.current();
       return rbacScopeCurrent.permissionProjection();
     } catch (err: any) {
       if ([401, 403].includes(err?.code)) return false;
       throw err;
     } finally {
-      if (rbacDecisionHadOwnProperty) {
-        setRbacDecision(ctx, rbacDecisionPrevious);
+      if (rbacDecisionDescriptorPrevious) {
+        Object.defineProperty(ctx, SymbolRbacDecision, rbacDecisionDescriptorPrevious);
       } else {
         clearRbacDecision(ctx);
       }
-      ctx.route = routePrevious;
+      if (routeDescriptorPrevious) {
+        Object.defineProperty(ctx, 'route', routeDescriptorPrevious);
+      } else {
+        delete ctx.route;
+      }
+      // Vona's inherited innerAccess accessor owns its value in a context symbol.
       ctx.innerAccess = innerAccessPrevious;
+      if (innerAccessDescriptorPrevious) {
+        Object.defineProperty(ctx, 'innerAccess', innerAccessDescriptorPrevious);
+      } else {
+        delete ctx.innerAccess;
+      }
     }
   }
 }

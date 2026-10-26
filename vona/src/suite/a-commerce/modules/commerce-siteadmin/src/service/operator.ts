@@ -13,6 +13,7 @@ export class ServiceOperator extends BeanBase {
       instanceName: instanceName ?? '',
       userId: user.id.toString(),
       userName: user.name,
+      displayName: user.displayName,
     };
   }
 }

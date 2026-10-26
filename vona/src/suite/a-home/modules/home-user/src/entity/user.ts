@@ -15,6 +15,9 @@ export class EntityUser extends EntityBase implements IUser {
   @Api.field(v.title($locale('UserName')))
   name: string;
 
+  @Api.field(v.title($locale('AccountDisplayName')), z.string().trim().max(100).optional())
+  displayName?: string;
+
   @Api.field(v.title($locale('UserAvatar')), v.optional())
   avatar?: string;
 

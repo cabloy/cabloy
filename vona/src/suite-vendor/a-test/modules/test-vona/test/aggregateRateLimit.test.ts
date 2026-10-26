@@ -85,7 +85,7 @@ function counter(): AdmitCommand {
   return async () => [++current, 1_000];
 }
 
-describe('aggregate.test.ts', { concurrency: false }, () => {
+describe('aggregateRateLimit.test.ts', { concurrency: false }, () => {
   it('shares an atomic Redis budget across request contexts and expires its counter', async () => {
     const key = `test:aggregate:${randomUUID()}`;
     const redis = cast(app.bean.redis.get('limiter'));

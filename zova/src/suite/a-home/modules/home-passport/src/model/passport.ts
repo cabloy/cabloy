@@ -187,6 +187,10 @@ export class ModelPassport extends BeanModelBase {
     return this.passport?.user;
   }
 
+  get displayName(): string | undefined {
+    return this.user?.displayName || this.user?.name;
+  }
+
   get roles() {
     return this.passport?.roles;
   }

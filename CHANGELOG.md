@@ -1,5 +1,36 @@
 # Changelog
 
+## 5.1.242
+
+### Bug Fixes
+
+- Correct test failures.
+
+### Improvements
+
+- Enhance CAPTCHA functionality and expand test coverage.
+- Clarify locale provider examples and metadata commands in the documentation.
+- Update dependency lockfile.
+
+## 5.1.241
+
+### Features
+
+- Display the user's display name.
+- Add MCP permission support.
+- Add guard-only permission checks.
+
+### Improvements
+
+- Update the OpenAPI guide.
+
+## 5.1.240
+
+### Improvements
+
+- Enhance rate limiting.
+- Update hot module replacement (HMR) handling.
+
 ## 5.1.239
 
 ### Improvements

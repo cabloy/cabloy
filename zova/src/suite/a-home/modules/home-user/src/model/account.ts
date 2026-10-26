@@ -21,8 +21,9 @@ export interface IModelOptionsAccount extends IDecoratorModelOptions {}
 
 export type AccountProfileUpdateCommand = Omit<
   ApiApiHomeUserAccountupdateProfileRequestBody,
-  'avatar' | 'locale' | 'tz'
+  'displayName' | 'avatar' | 'locale' | 'tz'
 > & {
+  displayName?: string | null;
   avatar?: string | null;
   locale?: string | null;
   tz?: string | null;

@@ -62,10 +62,10 @@ describe('permission.test.ts', { concurrency: false }, () => {
       roleIds: ['role-a', 'role-b'],
     });
 
-    const info = cacheInfo('training-student:student', 'select');
+    const info = cacheInfo('test:resource', 'select');
     assert.equal(
       (first as any).retrievePermissionActionByRolesCacheKey(info),
-      'action:training-student:student:select:roles:role-a,role-b',
+      'action:test:resource:select:roles:role-a,role-b',
     );
     assert.equal(
       (first as any).retrievePermissionActionByRolesCacheKey(info),
@@ -78,7 +78,7 @@ describe('permission.test.ts', { concurrency: false }, () => {
       userId: 'user-1',
       roleIds: ['role-a'],
     });
-    const info = cacheInfo('training-student:student', 'select');
+    const info = cacheInfo('test:resource', 'select');
 
     assert.notEqual(
       (permission as any).retrievePermissionActionByRolesCacheKey(info),
@@ -100,10 +100,10 @@ describe('permission.test.ts', { concurrency: false }, () => {
       roleIds: ['role-b'],
     });
 
-    const info = cacheInfo('training-student:student', 'select');
+    const info = cacheInfo('test:resource', 'select');
     assert.equal(
       (first as any).retrievePermissionActionByUserCacheKey(info),
-      'action:training-student:student:select:user:user-1:roles:role-a',
+      'action:test:resource:select:user:user-1:roles:role-a',
     );
     assert.notEqual(
       (first as any).retrievePermissionActionByUserCacheKey(info),
@@ -152,24 +152,21 @@ describe('permission.test.ts', { concurrency: false }, () => {
     });
 
     assert.equal(
-      await permission.retrievePermissionAction('training-student:student', 'ordinary'),
+      await permission.retrievePermissionAction('test:resource' as never, 'ordinary'),
       false,
     );
-    assert.equal(
-      await permission.retrievePermissionAction('training-student:student', 'rbac'),
-      true,
-    );
+    assert.equal(await permission.retrievePermissionAction('test:resource' as never, 'rbac'), true);
     assert.deepEqual(calls, ['roles', 'user']);
   });
 
   it('isolates resource permission snapshots by user', () => {
     const first = createPermission({ userId: 'user-1' });
     const otherUser = createPermission({ userId: 'user-2' });
-    const info = cacheInfo('training-student:student');
+    const info = cacheInfo('test:resource');
 
     assert.equal(
       (first as any).retrievePermissionsCacheKey(info),
-      'user:training-student:student:user:user-1',
+      'user:test:resource:user:user-1',
     );
     assert.notEqual(
       (first as any).retrievePermissionsCacheKey(info),
@@ -333,8 +330,8 @@ describe('permission.test.ts', { concurrency: false }, () => {
       retrievePermissionAction: { value: async () => true },
     });
 
-    assert.equal(await allowed.checkPermissionAction('training-student:student', 'select'), true);
-    assert.equal(await denied.checkPermissionAction('training-student:student', 'select'), false);
-    assert.equal(await legacy.checkPermissionAction('training-student:student', 'select'), true);
+    assert.equal(await allowed.checkPermissionAction('test:resource' as never, 'select'), true);
+    assert.equal(await denied.checkPermissionAction('test:resource' as never, 'select'), false);
+    assert.equal(await legacy.checkPermissionAction('test:resource' as never, 'select'), true);
   });
 });

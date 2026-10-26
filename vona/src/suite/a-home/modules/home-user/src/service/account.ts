@@ -63,7 +63,10 @@ export class ServiceAccount extends BeanBase {
     const locale = this._resolveLocale(command.locale, user.locale);
     const tz = this._resolveTimezone(command.tz, user.tz);
     await this.scope.model.user.updateById(user.id, {
-      name: command.name,
+      displayName:
+        command.displayName === undefined
+          ? user.displayName
+          : command.displayName?.trim() || undefined,
       avatar,
       locale,
       tz,
@@ -218,12 +221,12 @@ export class ServiceAccount extends BeanBase {
       await this.bean.mail.send({
         to: currentUser.email,
         subject: replaceTemplate(this.scope.locale.ActivationEmailSubject(), {
-          userName: currentUser.name,
+          userName: currentUser.displayName || currentUser.name,
           link,
           siteName: this.ctx.instance.title || this.app.meta.env.APP_TITLE,
         }),
         text: replaceTemplate(this.scope.locale.ActivationEmailBody(), {
-          userName: currentUser.name,
+          userName: currentUser.displayName || currentUser.name,
           link,
           siteName: this.ctx.instance.title || this.app.meta.env.APP_TITLE,
         }),
@@ -521,6 +524,7 @@ export class ServiceAccount extends BeanBase {
     const eligibleEmail = user.email?.trim() || undefined;
     return {
       name: user.name,
+      displayName: user.displayName,
       avatar: user.avatar,
       locale: user.locale,
       tz: user.tz,
