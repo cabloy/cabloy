@@ -69,6 +69,58 @@ declare module 'vona-module-a-web' {
 }
 
 /** controller: end */
+/** captchaProvider: begin */
+export * from '../bean/captchaProvider.bound.ts';
+
+import { type IDecoratorCaptchaProviderOptions } from 'vona-module-a-captcha';
+declare module 'vona-module-a-captcha' {
+
+    export interface ICaptchaProviderRecord {
+      'test-captcha:bound': IDecoratorCaptchaProviderOptions;
+    }
+
+
+}
+declare module 'vona-module-test-captcha' {
+
+        export interface CaptchaProviderBound {
+          /** @internal */
+          get scope(): ScopeModuleTestCaptcha;
+        }
+
+          export interface CaptchaProviderBound {
+            get $beanFullName(): 'test-captcha.captchaProvider.bound';
+            get $onionName(): 'test-captcha:bound';
+            get $onionOptions(): IDecoratorCaptchaProviderOptions;
+          }
+}
+/** captchaProvider: end */
+/** captchaScene: begin */
+export * from '../bean/captchaScene.bound.ts';
+
+import { type IDecoratorCaptchaSceneOptions } from 'vona-module-a-captcha';
+declare module 'vona-module-a-captcha' {
+
+    export interface ICaptchaSceneRecord {
+      'test-captcha:bound': IDecoratorCaptchaSceneOptions;
+    }
+
+
+}
+declare module 'vona-module-test-captcha' {
+
+        export interface CaptchaSceneBound {
+          /** @internal */
+          get scope(): ScopeModuleTestCaptcha;
+        }
+
+          export interface CaptchaSceneBound {
+            get $beanFullName(): 'test-captcha.captchaScene.bound';
+            get $onionName(): 'test-captcha:bound';
+            get $onionOptions(): IDecoratorCaptchaSceneOptions;
+          }
+}
+/** captchaScene: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil } from 'vona';
 import { Scope } from 'vona-module-a-bean';

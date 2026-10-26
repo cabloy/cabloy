@@ -47,6 +47,7 @@ describe('operatorAccess.test.ts', () => {
         assert.equal(result.instanceName, app.ctx.instanceName);
         assert.equal(result.userId, app.bean.passport.current!.user!.id.toString());
         assert.equal(result.userName, app.bean.passport.current!.user!.name);
+        assert.equal(result.displayName, app.bean.passport.current!.user!.displayName);
       } finally {
         await app.bean.passport.signout();
       }

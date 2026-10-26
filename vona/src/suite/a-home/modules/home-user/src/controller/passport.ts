@@ -157,6 +157,7 @@ export class ControllerPassport extends BeanBase {
       user: {
         id: user.id,
         name: user.name,
+        displayName: user.displayName,
         avatar: user.avatar,
         email: user.email,
         mobile: user.mobile,

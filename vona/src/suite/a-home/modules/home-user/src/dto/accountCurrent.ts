@@ -12,6 +12,9 @@ export class DtoAccountCurrent {
   name: string;
 
   @Api.field(v.optional())
+  displayName?: string;
+
+  @Api.field(v.optional())
   avatar?: string;
 
   @Api.field(v.optional())

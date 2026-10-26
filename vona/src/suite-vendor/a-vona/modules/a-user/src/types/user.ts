@@ -16,6 +16,7 @@ export interface IUserIdRecord {
 export interface IUser {
   id: TableIdentity;
   name: string;
+  displayName?: string;
   avatar?: string;
   email?: string;
   mobile?: string;

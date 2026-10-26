@@ -2,6 +2,7 @@ export default {
   AccountSettings: 'Account Settings',
   AccountProfile: 'Profile',
   AccountSecurity: 'Account Security',
+  AccountUserName: 'User name',
   AccountDisplayName: 'Display name',
   AccountLocale: 'Locale',
   AccountTimezone: 'Time zone',

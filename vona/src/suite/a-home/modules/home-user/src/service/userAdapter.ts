@@ -13,6 +13,7 @@ export class ServiceUserAdapter extends BeanBase implements IUserAdapter {
   async userOfProfile(profile: IAuthUserProfile): Promise<Partial<IUser>> {
     return {
       name: profile.username!,
+      displayName: profile.displayName?.trim() || undefined,
       email: profile.emails?.[0].value,
       avatar: profile.photos?.[0].value,
       locale: profile.locale || this.ctx.locale,

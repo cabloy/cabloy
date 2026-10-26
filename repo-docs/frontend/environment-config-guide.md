@@ -99,6 +99,49 @@ A representative SSR admin development stack looks like:
 
 The config side follows the same merge pattern with `config.ts`, `config.[meta].ts`, and `.local` variants.
 
+## Locale enablement and defaults
+
+Installed dictionaries, enabled languages, and the default language are separate concerns. Authoring or installing a language provider makes its translation resources available; it does not add a language choice or change the default. The Japanese and Traditional Chinese entries below illustrate application policy, not bundled language packs. Configure application policy explicitly in the frontend root config, `zova/src/front/config/config/config.ts`, or an applicable config layer:
+
+```typescript
+import type { ZovaConfigOptional, ZovaSys } from 'zova';
+
+export default function (_sys: ZovaSys) {
+  const config: ZovaConfigOptional = {};
+
+  config.locale = {
+    default: 'ja-jp',
+    storeKey: 'locale',
+    items: {
+      'en-us': 'LanguageEnglish',
+      'ja-jp': 'LanguageJapanese',
+      'zh-cn': 'LanguageChinese',
+      'zh-tw': 'LanguageTraditionalChinese',
+    },
+  };
+
+  return config;
+}
+```
+
+This is a locale-policy example, not a replacement for the other settings in an existing config file. Additional locale IDs need reachable `ILocaleRecord` declarations, supplied by installed modules or authored interface merging. A type declaration alone neither supplies translations nor enables a language.
+
+- `items` is the enabled locale-code-to-label-key map. The values are message keys used by language selectors, not dictionaries or package names. A configured subset is valid; it need not contain every language declared in `ILocaleRecord`.
+- `default` is the application default and must be an own key of the nonempty `items` map. Invalid policy fails validation rather than being repaired from installed providers.
+- `storeKey` is the frontend locale cookie key. Keep it deliberate when changing preference compatibility; it does not determine which languages are enabled. SSR cookie access still follows the effective SSR profile.
+
+Locale IDs in policy use lowercase, hyphenated form such as `ja-jp` and `zh-tw`. Active-locale input is normalized, so `JA_JP` can resolve to enabled `ja-jp`. Missing, unknown, or disabled selections fall back to `config.locale.default`, including stale saved preferences. Route-specific language menus can narrow the root enabled set, not expand it. This policy governs active-language selection, not an explicit low-level translation lookup such as `this.scope.locale.Name.locale('en-us')`.
+
+Unlike ordinary additive config merging, **each config layer that supplies `locale.items` replaces the entire enabled map**. For example, a later layer with only `items: { 'ja-jp': 'LanguageJapanese' }` removes earlier English and Chinese choices. It must also leave `default` valid, either by retaining an already enabled default or setting `default: 'ja-jp'`. To add one language while preserving others, specify the complete desired map in that layer.
+
+An enabled language may have no installed provider; missing text then uses the normal `en-us` / original-key fallback. Conversely, an installed but disabled language remains unavailable for active selection. Neither case is proof of translation completeness. The configured default does not change missing-message fallback; see [Module Scope](/frontend/module-scope#override-precedence-and-missing-message-fallback).
+
+### Configure frontend and backend roots separately
+
+For a paired application, also configure Vona's root `config.locale.items` and `config.locale.default` in `vona/src/backend/config/config/config.ts` or its applicable config layer. Keep the deployed frontend and backend policies aligned deliberately: neither stack automatically synchronizes its enabled set or default to the other. `APP_LOCALE_DEFAULT` supplies the frontend default only where the frontend config reads it; it does not enable the language or configure the backend root.
+
+The backend default belongs to root `config.locale.default`, not the former module-level `a-locale` `defaultLocale`. Backend negotiation, aliases, cookie/protocol settings, and migration details are covered in [I18n Guide](/backend/i18n-guide). Providers contain shared static text, while the selected language remains app/request-scoped; language policy is not an authorization or tenant boundary.
+
 ## Flavor-aware capability differences
 
 Different SSR flavors can intentionally expose different runtime capabilities rather than behaving identically.

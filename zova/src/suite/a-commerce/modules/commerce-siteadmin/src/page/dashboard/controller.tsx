@@ -19,12 +19,18 @@ export class ControllerPageDashboard extends BeanControllerPageBase {
 
   protected render() {
     const query = this.queryOperatorContext;
+    const operator = query.data!;
+    const user = this.$passport.user;
+    const displayName =
+      user && String(user.id) === String(operator.userId)
+        ? this.$passport.displayName
+        : operator.displayName || operator.userName;
     return (
       <div class="p-6">
         <h1 class="text-2xl font-semibold">{this.scope.locale.CommerceAdministration()}</h1>
         <dl class="mt-4 grid max-w-xl grid-cols-[auto_1fr] gap-x-4 gap-y-2">
           <dt>{this.scope.locale.Operator()}</dt>
-          <dd>{query.data!.userName}</dd>
+          <dd>{displayName}</dd>
           <dt>{this.scope.locale.Instance()}</dt>
           <dd>{query.data!.instanceName || 'default'}</dd>
         </dl>

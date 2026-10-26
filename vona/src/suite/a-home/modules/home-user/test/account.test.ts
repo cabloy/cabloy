@@ -34,19 +34,22 @@ describe('account.test.ts', { concurrency: false }, () => {
             innerAccess: false,
           });
           assert.equal(current.name, fixture!.name);
+          assert.equal(current.displayName, undefined);
           assert.equal(current.hasSimpleAuth, true);
           assert.equal(current.canSendSetPasswordLink, false);
 
           const updated = await app.bean.executor.performAction('patch', profilePath, {
             innerAccess: false,
             body: {
-              name: `${fixture!.name}-updated`,
+              displayName: '  Updated display name  ',
+              name: `${fixture!.name}-must-not-rename`,
               locale: 'en_us',
               tz: 'America/New_York',
               ignored: 'must-not-persist',
             },
           });
-          assert.equal(updated.name, `${fixture!.name}-updated`);
+          assert.equal(updated.name, fixture!.name);
+          assert.equal(updated.displayName, 'Updated display name');
           assert.equal(updated.locale, 'en-us');
           assert.equal(updated.tz, 'America/New_York');
         } finally {
@@ -56,13 +59,23 @@ describe('account.test.ts', { concurrency: false }, () => {
 
       await app.bean.executor.mockCtx(async () => {
         const user = await app.bean.user.findOneById(fixture!.userId);
-        assert.equal(user?.name, `${fixture!.name}-updated`);
+        assert.equal(user?.name, fixture!.name);
+        assert.equal(user?.displayName, 'Updated display name');
         assert.ok(user);
         assert.equal('ignored' in user, false);
+        assert.equal(
+          await app.bean.user.findOneByName(`${fixture!.name}-must-not-rename`),
+          undefined,
+        );
       });
 
       await app.bean.executor.mockCtx(async () => {
-        await app.bean.passport.signinSystem('mock', -10002 as any, `${fixture!.name}-updated`);
+        const jwt = await app.bean.auth.authenticate('auth-simple:simple', {
+          clientName: 'default',
+          state: { intention: 'login' },
+          clientOptions: { username: fixture!.name, password: 'initial-password' },
+        });
+        assert.ok(jwt?.accessToken);
         try {
           const result = await app.bean.executor.performAction('post', passwordChangePath, {
             innerAccess: false,
@@ -88,6 +101,105 @@ describe('account.test.ts', { concurrency: false }, () => {
       });
     } finally {
       if (fixture) await removeFixture(fixture);
+    }
+  });
+
+  it('retains omitted displayName, clears null or blank, and validates the trimmed limit', async () => {
+    let fixture: IAccountFixture | undefined;
+    try {
+      fixture = await createFixture();
+      const displayName = 'd'.repeat(100);
+      const updated = await updateProfile(fixture, { displayName: `  ${displayName}  ` });
+      assert.equal(updated.displayName, displayName);
+      assert.equal(updated.name, fixture.name);
+
+      const retained = await updateProfile(fixture, { locale: 'en-us' });
+      assert.equal(retained.displayName, displayName);
+
+      await app.bean.executor.mockCtx(async () => {
+        await app.bean.passport.signinSystem('mock', -10005 as any, fixture!.name);
+        try {
+          const account = app.scope('home-user').service.account;
+          const result = await account.updateProfile({
+            name: `${fixture!.name}-service-must-not-rename`,
+          } as unknown as Parameters<typeof account.updateProfile>[0]);
+          assert.equal(result.name, fixture!.name);
+          assert.equal(result.displayName, displayName);
+        } finally {
+          await app.bean.passport.signout();
+        }
+      });
+
+      for (const invalid of ['d'.repeat(101), `  ${'d'.repeat(101)}  `]) {
+        await assert.rejects(
+          () => updateProfile(fixture!, { displayName: invalid }),
+          (error: { code?: number }) => error.code === 422,
+        );
+      }
+      await app.bean.executor.mockCtx(async () => {
+        const user = await app.bean.user.findOneById(fixture!.userId);
+        assert.equal(user?.name, fixture!.name);
+        assert.equal(user?.displayName, displayName);
+      });
+
+      for (const empty of [null, ' \t\n ', '']) {
+        await updateProfile(fixture, { displayName: 'Before clearing' });
+        const cleared = await updateProfile(fixture, { displayName: empty });
+        assert.equal(cleared.name, fixture.name);
+        assert.equal(cleared.displayName, undefined);
+        await app.bean.executor.mockCtx(async () => {
+          const user = await app.bean.user.findOneById(fixture!.userId);
+          assert.ok(user);
+          assert.ok(user.displayName == null);
+          await app.bean.passport.signinSystem('mock', -10006 as any, fixture!.name);
+          try {
+            const current = await app.bean.executor.performAction('get', currentPath, {
+              innerAccess: false,
+            });
+            assert.equal(current.displayName, undefined);
+          } finally {
+            await app.bean.passport.signout();
+          }
+        });
+      }
+    } finally {
+      if (fixture) await removeFixture(fixture);
+    }
+  });
+
+  it('allows two users to share displayName while retaining their original username logins', async () => {
+    const fixtures: IAccountFixture[] = [];
+    const displayName = `Shared ${crypto.randomUUID()}`;
+    try {
+      fixtures.push(await createFixture());
+      fixtures.push(await createFixture());
+      for (const fixture of fixtures) {
+        const updated = await updateProfile(fixture, { displayName });
+        assert.equal(updated.name, fixture.name);
+        assert.equal(updated.displayName, displayName);
+      }
+      for (const fixture of fixtures) {
+        await app.bean.executor.mockCtx(async () => {
+          try {
+            const jwt = await app.bean.auth.authenticate('auth-simple:simple', {
+              clientName: 'default',
+              state: { intention: 'login' },
+              clientOptions: { username: fixture.name, password: 'initial-password' },
+            });
+            assert.ok(jwt?.accessToken);
+            assert.equal(app.bean.passport.currentUser?.id.toString(), fixture.userId);
+            const current = await app.bean.executor.performAction('get', currentPath, {
+              innerAccess: false,
+            });
+            assert.equal(current.name, fixture.name);
+            assert.equal(current.displayName, displayName);
+          } finally {
+            await app.bean.passport.signout();
+          }
+        });
+      }
+    } finally {
+      for (const fixture of fixtures.reverse()) await removeFixture(fixture);
     }
   });
 
@@ -133,7 +245,6 @@ describe('account.test.ts', { concurrency: false }, () => {
           const updated = await app.bean.executor.performAction('patch', profilePath, {
             innerAccess: false,
             body: {
-              name: fixture!.name,
               avatar: uploadedUrl,
             },
           });
@@ -145,7 +256,7 @@ describe('account.test.ts', { concurrency: false }, () => {
 
           const preserved = await app.bean.executor.performAction('patch', profilePath, {
             innerAccess: false,
-            body: { name: fixture!.name },
+            body: {},
           });
           assert.equal(preserved.avatar, uploadedUrl);
 
@@ -153,7 +264,6 @@ describe('account.test.ts', { concurrency: false }, () => {
           const thirdPartyUpdated = await app.bean.executor.performAction('patch', profilePath, {
             innerAccess: false,
             body: {
-              name: fixture!.name,
               avatar: thirdPartyAvatar,
             },
           });
@@ -161,7 +271,7 @@ describe('account.test.ts', { concurrency: false }, () => {
 
           const cleared = await app.bean.executor.performAction('patch', profilePath, {
             innerAccess: false,
-            body: { name: fixture!.name, avatar: null },
+            body: { avatar: null },
           });
           assert.equal(cleared.avatar, undefined);
         } finally {
@@ -214,6 +324,20 @@ describe('account.test.ts', { concurrency: false }, () => {
   });
 });
 
+async function updateProfile(fixture: IAccountFixture, body: Record<string, unknown>) {
+  return await app.bean.executor.mockCtx(async () => {
+    await app.bean.passport.signinSystem('mock', -10007 as any, fixture.name);
+    try {
+      return await app.bean.executor.performAction('patch', profilePath, {
+        innerAccess: false,
+        body,
+      });
+    } finally {
+      await app.bean.passport.signout();
+    }
+  });
+}
+
 async function createFixture(): Promise<IAccountFixture> {
   return await app.bean.executor.mockCtx(async () => {
     const name = `account-test-${crypto.randomUUID()}`;
@@ -244,6 +368,7 @@ async function removeFixture(fixture: IAccountFixture): Promise<void> {
   await app.bean.executor.mockCtx(async () => {
     await app.scope('a-auth').model.auth.deleteById(fixture.authId);
     await app.scope('auth-simple').model.authSimple.deleteById(fixture.authSimpleId);
+    await app.scope('home-user').model.roleUser.delete({ userId: fixture.userId });
     await app.bean.user.removeById(fixture.userId);
   });
 }
