@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.241
+
+### Features
+
+- Display the user's display name.
+- Add MCP permission support.
+- Add guard-only permission checks.
+
+### Improvements
+
+- Update the OpenAPI guide.
+
 ## 5.1.240
 
 ### Improvements
