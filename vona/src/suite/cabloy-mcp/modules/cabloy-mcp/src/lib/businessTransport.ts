@@ -1,7 +1,7 @@
+import type { Server } from '@modelcontextprotocol/server';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { IInstanceRecord, VonaApplication } from 'vona';
-import type { IMcpAuthResource } from 'vona-module-cabloy-mcp';
-import type { TypeMcpScope } from 'vona-module-mcp-auth';
+import type { IMcpAuthResource, TypeMcpScope } from 'vona-module-mcp-auth';
 
 import { toNodeHandler } from '@modelcontextprotocol/node';
 import {
@@ -12,15 +12,12 @@ import {
   WebStandardStreamableHTTPServerTransport,
 } from '@modelcontextprotocol/server';
 import { runWithZodQueryCoercion } from 'vona';
-import {
-  authenticateMcpResource,
-  FixtureTransportError,
-  mcpResourceChallenge,
-  OAuthError,
-  readFixtureBody,
-} from 'vona-module-cabloy-mcp';
+import { OAuthError } from 'vona-module-mcp-auth';
 
-import { createBusinessToolServer } from './businessTools.ts';
+import { authenticateMcpResource, mcpResourceChallenge } from './resourceServer.ts';
+import { FixtureTransportError, readFixtureBody } from './transport.ts';
+
+type BusinessToolServer = Server & { settleWork(): Promise<void> };
 
 export interface IBusinessTransportAuthentication {
   token: string;
@@ -119,14 +116,11 @@ async function boundedResponse(response: Response, requestId: unknown): Promise<
   });
 }
 
-/** One worker-owned exchange slot shared by local and dev HTTP ingress. */
+/** One worker-owned exchange slot; each ingress supplies its own tool composition. */
 export function createBusinessTransport(
   app: VonaApplication,
-  initializeInstance = false,
-  createServer: (
-    app: VonaApplication,
-    scope?: TypeMcpScope,
-  ) => ReturnType<typeof createBusinessToolServer> = createBusinessToolServer,
+  initializeInstance: boolean,
+  createServer: (app: VonaApplication, scope?: TypeMcpScope) => Promise<BusinessToolServer>,
 ) {
   let closing = false;
   let contexts = 0;
@@ -219,7 +213,7 @@ export function createBusinessTransport(
           }
           if (abort.signal.aborted) return;
           await runWithZodQueryCoercion(false, async () => {
-            let business: Awaited<ReturnType<typeof createBusinessToolServer>> | undefined;
+            let business: BusinessToolServer | undefined;
             let legacy: WebStandardStreamableHTTPServerTransport | undefined;
             const handler = createMcpHandler(
               async () => {

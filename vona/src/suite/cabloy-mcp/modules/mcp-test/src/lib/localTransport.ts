@@ -2,9 +2,14 @@ import type { VonaApplication } from 'vona';
 
 import { createServer } from 'node:http';
 import { assertTestAppIdentity } from 'vona';
-import { checkFixtureIngress, fixtureIngressLimits } from 'vona-module-cabloy-mcp';
+import {
+  checkFixtureIngress,
+  createBusinessTransport,
+  failBusinessTransport as fail,
+  fixtureIngressLimits,
+} from 'vona-module-cabloy-mcp';
 
-import { createBusinessTransport, fail } from './businessTransport.ts';
+import { createBusinessToolServer } from './businessTools.ts';
 
 /** Dedicated managed-test local verification only; never registered by dev/start. */
 export async function startLocalTransport(app: VonaApplication) {
@@ -23,7 +28,7 @@ export async function startLocalTransport(app: VonaApplication) {
   }
 
   let host = '';
-  const exchange = createBusinessTransport(app);
+  const exchange = createBusinessTransport(app, false, createBusinessToolServer);
   const instanceHeader = app.config.instance.headerField;
   const instanceHeaders = typeof instanceHeader === 'string' ? [instanceHeader] : [];
 

@@ -52,6 +52,9 @@
     "dependencies": {
       "a-vona": "5.0.0",
       "mcp-auth": "5.0.0"
+    },
+    "capabilities": {
+      "monkey": true
     }
   }
 }

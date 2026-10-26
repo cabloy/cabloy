@@ -1,8 +1,8 @@
 # MCP Controller Tools
 
-Expose an existing Vona Controller Action as an MCP tool with `@mcp.tool()`. Reuse its request/response contract and ordinary authorization rather than writing a second business implementation.
+Opt an existing Vona Controller Action into MCP mapping with `@mcp.tool()`. Reuse its request/response contract and ordinary authorization rather than writing a second business implementation. Opt-in alone does **not** expose an action on normal `/mcp`; that endpoint also requires exact server-owned construction admission.
 
-The current integration is the authenticated **dev/test shared `/mcp` endpoint** in Cabloy Basic. It is not a production ingress or production-readiness claim. The independent anonymous standalone catalog remains exactly three synthetic fixture tools; it does not discover business actions.
+The current normal integration is the authenticated **dev/test shared `/mcp` endpoint** in Cabloy Basic, owned by `cabloy-mcp`, not `mcp-test`. Production and unknown modes return **503** until protected audit and operational controls are separately accepted. `cabloy-mcp` remains enabled by default: only the literal environment value `CABLOY_MCP_ENABLED=false` disables it. Readiness, shutdown and disabled-state checks also fail closed. The independent anonymous standalone catalog remains exactly three synthetic fixture tools owned by the `mcp-test` launcher; none is admitted on normal `/mcp`.
 
 ## Opt in explicitly
 
@@ -10,13 +10,15 @@ The current integration is the authenticated **dev/test shared `/mcp` endpoint**
 import { mcp } from 'vona-module-a-openapiutils';
 ```
 
-Exposure is **closed by default**:
+Mapping is **closed by default**:
 
 - A method-level `@mcp.tool()` opts in only that registered Controller Action.
 - A class-level `@mcp.tool()` opts in all supported, registered actions on that controller, with optional shared defaults. It does not expose arbitrary helper methods.
-- There is **no exclusion/opt-out option**. For a narrower surface, leave the class undecorated and decorate selected methods instead. Class opt-in also includes future supported actions added to that controller.
+- There is **no decorator exclusion/opt-out option**. For narrower mapping eligibility, leave the class undecorated and decorate selected methods instead. Class opt-in also includes future supported actions added to that controller, but does not extend normal ingress admission.
 
-MCP metadata is independent of `@Api.*` metadata. `@Api.exclude()` controls ordinary OpenAPI publication, not MCP exposure: an explicitly opted-in action can still become a tool, and an ordinary published HTTP action does not become a tool without MCP opt-in.
+Normal shared composition admits exactly controller `training-student.controller.student`, actions `lookup` and `summary`, through the factory's construction-time `includeTool` callback. Other controllers/actions never enter that server's tool map, so neither `tools/list` nor direct `tools/call` by a known name can reach them. Training is optional: when absent, the normal catalog is empty, without fixture or other opted-in-action fallback.
+
+MCP metadata is independent of `@Api.*` metadata. `@Api.exclude()` controls ordinary OpenAPI publication, not MCP mapping: an explicitly opted-in, admitted action can still become a tool, and an ordinary published HTTP action does not become a tool without MCP opt-in.
 
 ## Example: student summary
 
@@ -86,10 +88,10 @@ import { createControllerToolServer } from 'vona-module-cabloy-mcp';
 const server = await createControllerToolServer(app, scope);
 ```
 
-Pass the validated authorization scope, `mcp:read` or `mcp:all`, and dispatch within the authenticated application request context. Missing or unsupported scope fails closed. This factory creates the tool server, not OAuth ingress or a new authentication mechanism. The current dev/test shared endpoint already uses it.
+Pass the validated authorization scope, `mcp:read` or `mcp:all`, and dispatch within the authenticated application request context. Missing or unsupported scope fails closed. This factory creates the tool server, not OAuth ingress or a new authentication mechanism. The two-argument example is the generic factory API, **not** the normal ingress composition: normal `/mcp` uses `createSharedBusinessToolServer`, which supplies exact construction admission and permission-aware discovery as described below. Do not replace that composition with unrestricted factory discovery.
 
 - `mcp:read` lists **only read-only tools** and rejects direct calls to other tools, even when the caller knows their names.
-- `mcp:all` allows both read and mutation classifications, subject to the same business authorization.
+- `mcp:all` permits both classifications within the constructed catalog, subject to the same business authorization. It does not expand normal admission beyond the two student reads or enable fixture/test mutations.
 - Every call uses the ordinary action executor with **`innerAccess: false`**, preserving controller guards, RBAC, serialization, current user and instance/data scope. Neither scope nor the decorator grants business permissions or cross-instance access.
 
 ### Student permission-aware discovery
@@ -105,9 +107,9 @@ On the authenticated dev/test shared endpoint, `training_student_lookup` is list
 
 Both read tools remain eligible under `mcp:read` and `mcp:all`; OAuth scope does not grant business authority. Every list checks the current Passport and registered Actions afresh, sequentially on its request context, without executing either student Action or querying student rows. Visibility means Action admission, not that a matching student exists. Call-time guards still run independently, so revocation after a list denies a known-name call.
 
-The shared composition supplies the factory's optional third argument, `{ isToolVisible({ controller, action }): Promise<boolean> }`. This server-owned callback receives registered identities after scope filtering; it is not a client-provided policy or a substitute for call authorization. The student composition uses `permission.checkPermissionActionGuards('training-student:student', action)`, which bypasses permission-result caching and matcher projection while retaining the actual guards and restoring context state. Ordinary denial omits a tool; an unexpected visibility error fails the whole list with a nondiagnostic protocol error, never partial tools or an unfiltered fallback.
+The shared composition supplies the factory's optional third argument with two distinct server-owned callbacks: `includeTool({ controller, action }): boolean` gates construction for **both list and direct calls**, while `isToolVisible({ controller, action }): Promise<boolean>` filters discovery after scope filtering. Neither is client-provided policy or a substitute for call authorization. The student visibility check uses `permission.checkPermissionActionGuards('training-student:student', action)`, which bypasses permission-result caching and matcher projection while retaining the actual guards and restoring context state. Ordinary denial omits a tool; an unexpected visibility error fails the whole list with a nondiagnostic protocol error, never partial tools or an unfiltered fallback. Direct calls still execute their actual Action guards independently.
 
-This is a bounded student exception: other tools retain scope-only discovery, the no-hook factory retains its previous behavior, and the anonymous standalone still lists exactly its three fixture tools. No production-wide permission-filtered catalog or client cache-invalidation guarantee is implied.
+This is a bounded normal student surface: other opted-in tools are not constructed on `/mcp`, the no-hook generic factory retains its previous behavior, and the anonymous standalone still lists exactly its three fixture tools only through the `mcp-test` launcher. No production-wide permission-filtered catalog or client cache-invalidation guarantee is implied. Lookup remains a select-authorized, current-instance read returning only student ID, name and level; it does not grant view/summary authority. Summary retains its independent view permission and six-field projection.
 
 The mapper internally calls `generateJsonOfControllerAction(controller, action, 'V31', { includeExcluded: true })`. This fourth option enables contract extraction for an opted-in action without changing ordinary `@Api.exclude()` behavior. It is not a global OpenAPI-publication switch or an authorization bypass.
 
@@ -124,7 +126,11 @@ Repository-relative locations for the current integration:
 - Decorator: `vona/src/suite-vendor/a-vona/modules/a-openapiutils/src/lib/decorator/mcp.ts`
 - Mapper: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/controllerTools.ts`
 - Schema projection: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/controllerToolSchema.ts`
-- Shared endpoint composition: `vona/src/suite/cabloy-mcp/modules/mcp-test/src/lib/sharedBusinessTools.ts`
+- Normal ingress middleware: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/bean/middlewareSystem.mcp.ts`
+- Normal ingress checks: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/mcpTransport.ts`
+- Authenticated exchange and settlement: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/businessTransport.ts`
+- Exact normal tool admission and discovery: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/sharedBusinessTools.ts`
+- Application-close drain: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/monkey.ts`
 - Student example: `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
 
 For the underlying contracts and guards, see [Controller Guide](../../../../../repo-docs/backend/controller-guide.md), [OpenAPI Guide](../../../../../repo-docs/backend/openapi-guide.md), [Validation Guide](../../../../../repo-docs/backend/validation-guide.md) and [RBAC Authorization](../../../../../repo-docs/backend/rbac-authorization.md).

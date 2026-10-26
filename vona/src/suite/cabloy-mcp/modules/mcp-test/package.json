@@ -59,8 +59,7 @@
           "dev",
           "test"
         ]
-      },
-      "monkey": true
+      }
     }
   }
 }

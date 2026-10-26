@@ -1,6 +1,9 @@
 export * from './.metadata/index.ts';
 export * from './types/index.ts';
 export { createControllerToolServer } from './lib/controllerTools.ts';
+export { createSharedBusinessToolServer } from './lib/sharedBusinessTools.ts';
+export { createBusinessTransport, fail as failBusinessTransport } from './lib/businessTransport.ts';
+export { handleMcpRequest, mcpTransportSnapshot, closeMcpTransport } from './lib/mcpTransport.ts';
 export type { IControllerToolDiagnostic } from './lib/controllerTools.ts';
 export {
   authenticateMcpResource,

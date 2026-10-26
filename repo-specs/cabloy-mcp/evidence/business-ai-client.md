@@ -668,3 +668,90 @@ Recording preflight observes Cabloy Basic, a clean worktree at `31127a17de29f787
 **Disposition:** restricted-client acceptance remains **open/pending**, solely at the missing independent permission-category prerequisite; directory, reads and fields are untested. Do not infer authority from catalog visibility, guess a target, grant permissions, inspect credentials, repeat the both-permissions happy path, or retry this procedure without new qualifying facts. Resume only when an existing authorized identity has independently established select/view authority; any later read additionally needs an authorized target in that client context. This prerequisite blocks this real-client verification branch, not unrelated business work. Parent WBS rows remain blocked, full ATPs open and verified **0/12** unchanged. No source, permission, connection, environment, database, process, deployment, commit or push operation is performed by this recording.
 
 Recording checks pass: progress formatting, `spec:check` (**68 definitions**), English chart generation/freshness (**0/12 verified**, no SVG diff), scoped evidence-path checking and diff whitespace. The added evidence prose was manually reviewed; the formatter ignores this evidence file. The new progress link matches this heading. No business/client test or public-docs build was rerun for this evidence/progress-only update; structural/path checks do not establish runtime acceptance or secret scanning.
+
+### Normal-module business ingress migration (2026-10-26)
+
+The user approved the [finite ownership dossier](../pdp-wbs.md#normal-module-ownership-execution-dossier-2026-10-26), including distinct authority synchronization, bounded design and execution dispositions. Cabloy Basic preflight found only `__CABLOY_BASIC__`, clean HEAD `c1949336a67c6edb124777096ba42a57123c4d2e`; the resulting dirty worktree contains this approved connected increment. This contributes only to `WBS-MCP-20-01`, `WBS-MCP-30-01`, `WBS-MCP-30-02`, `WBS-MCP-40-01` and the [bounded ATP supplement](../test-plan.md#normal-module-ownership-proof-supplement-2026-10-26), not their full production acceptance.
+
+**Delivered ownership and admission:** normal `cabloy-mcp` owns the sole authenticated `/mcp` middleware, exchange, exact composition and app-close drain. `mcp-test` retains synthetic controllers/catalog, mapper fixtures and the anonymous standalone launcher, explicitly injecting its factory into the relocated exchange. Normal source has no fixture-module import or required Training dependency. Construction admits exactly the registered, opted-in student `lookup` and `summary` Actions before schema extraction/name collisions; the same map restricts list and direct calls. Fresh independent select/view discovery and guarded calls, current-instance scope, minimized fields, current opaque-token Passport and actual-work settlement remain. Default-enabled/literal-false/application-override semantics are unchanged. Production and unknown runtime modes return nondiagnostic **503 before downstream work**; this is an enforced interim audit gate, not production audit implementation or availability.
+
+Observed CLI operations, all exit **0**:
+
+```sh
+npm run vona :create:bean middlewareSystem mcp -- --module=cabloy-mcp
+npm run vona :init:monkey cabloy-mcp
+npm run vona :tools:metadata cabloy-mcp mcp-test
+```
+
+The generated normal middleware/monkey registrations replace the fixture owner's registration. Metadata generation also synchronizes existing fixture scalar/array/unsupported route typings; no new fixture Action was authored. There is no backend move generator; inspected authored ingress/exchange implementations were relocated, preserving lifecycle internals. No generated metadata was hand-edited.
+
+#### Managed HTTP composition proof
+
+Each command below uses the root managed isolated runner and synthetic test-owned identities/resources, not development data. Shared preparation writes were sequenced; no environment file, global origin/proxy setting or real role was changed.
+
+```sh
+SERVER_LISTEN_DISABLE=false npm run test -- src/suite/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=mcp-test SERVER_LISTEN_DISABLE=false npm run test -- src/suite/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=mcp-test PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
+```
+
+| Composition / run | Observed result | Root exit |
+| --- | --- | --- |
+| First default attempt `20261026061028-28c5e12d` | 11 passed, 1 failed, 0 skipped; 7706.475709 ms | 1 |
+| Corrected default `20261026061153-17e7b381` | 12 passed, 0 failed/skipped/cancelled; 7798.815875 ms | 0 |
+| `mcp-test` excluded `20261026061237-b6f82d82` | 12 passed, 0 failed/skipped/cancelled; 7842.244209 ms | 0 |
+| `mcp-test` and Training excluded `20261026061315-7c5b261d` | 12 passed, 0 failed/skipped/cancelled; 6094.511541 ms | 0 |
+
+The first failure was the drain test's new unauthenticated closing probe: expected 503, observed 401 before exchange admission. The bounded repair adds the existing Bearer to the raw `openHttp()` probe; it does not change runtime precedence. The raw helper is required while work is held because `send()` waits for active work to settle. The failed run's exact runtime, generated registration and claim paths remain present and runner-retained, not manually cleaned or reclassified by later success.
+
+The Training-present runs prove exactly one normal middleware/close owner, modern/native stateless legacy under both `mcp:read` and `mcp:all`, both student reads without `mcp-test`, unavailable synthetic/unapproved known names before `performAction`, four independent select/view categories, no business/row reads during discovery, revocation and unexpected-policy fail-closed behavior, independent summary access without lookup authority, current-role reload, output/schema privacy and current-instance absence. They retain canonical resource/selector, credential stripping, DCR, malformed/revoked/expired-token and consent-boundary checks. Shutdown holds an approved student lookup service call, invokes the actual normal monkey hook, keeps capacity owned until work finishes, rejects closing ingress and leaves the shared listener/metadata route available.
+
+The Training-absent composition explicitly asserts actual module absence, empty authenticated discovery and rejection of both student names for each scope/transport; it also checks closing behavior and shared-listener survival. Three Training-dependent case bodies return early in that composition (discovery policy matrix, persisted student/role behavior and approved-Action Passport inspection); the reporter counts these as passed, not skipped. They do not claim those unavailable business behaviors were exercised without Training. Production/unknown-mode tests call real ingress with explicit metadata/request fixtures whose downstream getters fail if accessed; singleton runtime mode is never mutated. This is code-level denial proof, not a production deployment probe.
+
+Successful composition runs' exact `vona/.app-test-<run>`, `vona/.vona-test-<run>` and `vona/.vona-test-claim/<run>.json` paths were observed absent. Tests preserve scoped `mockCtx(...)`, separate request contexts and precise reverse-order `finally` cleanup, including listeners/mocks/roles and test-owned student/OAuth/user resources. Path absence is local cleanup observation, not an independent database/Redis audit. Historical nonexit resources were neither inspected anew nor manipulated.
+
+#### Mapper, standalone and shared-helper regressions
+
+The initial standalone/config/guard subset passed **33/33**, zero failed/skipped, **23544.770292 ms**, root exit **0**, run `20261026060441-035268b7`. After test migration, the complete approved no-listener package ran:
+
+```sh
+SERVER_LISTEN_DISABLE=true npm run test -- src/suite/cabloy-mcp/modules/mcp-test/test/businessTools.test.ts src/suite/cabloy-mcp/modules/mcp-test/test/localHttp.test.ts src/suite/cabloy-mcp/modules/cabloy-mcp/test/config.test.ts src/suite/cabloy-mcp/modules/cabloy-mcp/test/transportGuards.test.ts
+```
+
+Run `20261026061356-61138dd6` passes **47/47**, five suites, zero failed/cancelled/skipped/todo, **27894.369791 ms**, graceful shutdown and root exit **0**. The fourteen mapper cases retain generic fixture-positive mapping separately from restricted normal composition and prove exclusion before duplicate names/malformed contract extraction without admitting an annotated sibling. Eight standalone HTTP cases retain anonymous three-tool modern/legacy flows, ingress/body boundaries, one-slot/cancellation/actual-work drain, real receive/execution deadlines and oversized-response rejection. Seventeen configuration and eight transport-guard cases remain passing. SDK JSON-notification advisories and expected negative-case diagnostics are not test failures. Both successful subset/full runs' exact runtime, generated registration and claim paths were observed absent. No standalone tool was added to the normal catalog.
+
+#### Static checks and evidence attribution
+
+Both affected native module checks pass, exit **0**:
+
+```sh
+node scripts/typecheck.ts native vona --noEmit --incremental false --composite false --project src/suite/cabloy-mcp/modules/cabloy-mcp/tsconfig.json
+node scripts/typecheck.ts native vona --noEmit --incremental false --composite false --project src/suite/cabloy-mcp/modules/mcp-test/tsconfig.json
+```
+
+One intermediate native check ran while the migrated HTTP test was still being edited and exited **1**, with unused imports and unresolved old synthetic/`closeDevTransport` names in that incomplete test. Completed-test checks and the final closing-probe repair check pass; the intermediate failure is not erased or attributed to unchanged runtime source. Root format/lint pass on all ten changed authored TypeScript paths, with the repaired test checked again. Scoped Markdown formatting and `git diff --check` pass. Public docs build exits **0**, with only the existing large-chunk advisory; sixteen suite-guide local file links and seven fragment links resolve. Public OpenAPI guidance adds no deprecated package-doc citation.
+
+Node is **v24.8.0**, below the root **>=24.11.0** engine requirement; pnpm is **12.14.0**. No upgrade/install was performed. These results do not qualify a supported newer Node runtime. Local raw command logs were used for inspection only and are not durable evidence artifacts; this retained projection omits machine-local roots, credentials, token/callback values and student record contents. Path checking is independent from manual sensitive-data review and does not prove universal secret scanning or ATP acceptance.
+
+SHA-256 of the tested source/test/registration bytes:
+
+| Repository-relative file | SHA-256 |
+| --- | --- |
+| `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/package.json` | `fbb855369d7998087b3e7cf0b2cd3c9064a01a2ee75261c20767a25533b14aa3` |
+| `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/.metadata/index.ts` | `4d4f0ef31ab7fe7f5e67e3695f179fc81b6e80ce6ccc9f6f98e133d9c19f24b3` |
+| `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/bean/middlewareSystem.mcp.ts` | `e7c605582dac01caab69c2607a3840d82a5a69285e89f6957faf63d64a060fc1` |
+| `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/index.ts` | `460d6bd92685c149019af6a5fb0fdc57063121cd0f58d1a4a103c30f0b04612f` |
+| `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/businessTransport.ts` | `4629096b374b32d31320c62d5231a40515887d23c5818a0c451a95276ca98ea2` |
+| `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/controllerTools.ts` | `c1136240fea08ac336b77d52018ac18954becf71836bbe7355ef6832f9a668d2` |
+| `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/mcpTransport.ts` | `53d77655e8d40266a2eefbaa66126ef9735c4d487ce2c922fe387869e09ea854` |
+| `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/sharedBusinessTools.ts` | `62643dd4c505b6dfb017e96addcb250d2cf6792bdb8e94b06a5962ce5b15ebfc` |
+| `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/monkey.ts` | `a6dca387a2beaf31b78f881599785e99fba8799c8c22c3369d5e065f2ebbfa3e` |
+| `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts` | `d1e224a9b83efdb99d373188c3dbe88185751baea2ad9b5d2ef78cf5cbc2f536` |
+| `vona/src/suite/cabloy-mcp/modules/mcp-test/package.json` | `1ef53f77753d26be49a4788ae25dfb7062f84711f2dff8fb96e00550394bf83f` |
+| `vona/src/suite/cabloy-mcp/modules/mcp-test/src/.metadata/index.ts` | `464466194b7a1b8a5b90c14dff2dc619ba1924358676e8d77cca5eb90c966bb7` |
+| `vona/src/suite/cabloy-mcp/modules/mcp-test/src/lib/localTransport.ts` | `ccaeeb1feb9a14642bed3eabbda52f39e3ad7d03148b01b781391e9ece356e8d` |
+| `vona/src/suite/cabloy-mcp/modules/mcp-test/test/businessTools.test.ts` | `b3b3cafbf9b4a10ea9ab7d28916dba5958c0645e77796c5e6e36fdc3726f7e6d` |
+
+Module patch digest **`2d28e50d661a2c4e9ad4e5c20de015dc5696e1b44c9baddd6aa71a794aa94bea`** hashes the binary HEAD diff for lexically sorted tracked changed paths under `vona/src/suite/cabloy-mcp/modules/`, followed by concatenated `git diff --binary --no-index -- /dev/null <path>` output for the six lexically sorted new module paths. It includes removed old owners/test and excludes documentary edits. The baseline SHA alone does not reproduce these dirty bytes, nor do these hashes attest a deployed endpoint or real-client session.
+
+**Final disposition:** all four approved managed compositions and required focused static/docs checks pass on the fingerprinted bytes after the retained test-only repair. Following the progress update, authority audit passes **68 definitions**, English chart generation/freshness passes with **0/12 verified**, scoped evidence-path checks and diff whitespace pass. Charts remain derived views, not ATP or design approval. This closes only the approved normal-module ownership/dev-test business increment. Parent WBS rows remain **blocked**, full ATPs **open**, verified **0/12**; whole Proposed ADRs remain Proposed, protected production audit/controls unresolved, and restricted-client verification independently pending. No real-client replay, development schema/data/permission/environment change, reset/init, install, production activation/deployment, historical-resource cleanup, commit or push occurred. Handoff is the usable normal-owned dev/test two-tool entry, not automatic removal of the production gate or execution of another WBS item.

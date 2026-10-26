@@ -8,6 +8,7 @@ import { after, before, describe, it } from 'node:test';
 import { appMetadata, appResource, runWithZodQueryCoercion } from 'vona';
 import { acquireTestLock, app } from 'vona-mock';
 import { $schema, mcp, SymbolMcpOptions } from 'vona-module-a-openapiutils';
+import { createControllerToolServer, createSharedBusinessToolServer } from 'vona-module-cabloy-mcp';
 
 import { ControllerCatalog } from '../src/controller/catalog.ts';
 import { ControllerToolFixture, toolFixtureState } from '../src/controller/toolFixture.ts';
@@ -17,7 +18,6 @@ import { DtoCategoryPublicSelectRes } from '../src/dto/categoryPublicSelectRes.t
 import { DtoProductPublicDetail } from '../src/dto/productPublicDetail.tsx';
 import { DtoProductPublicSelectRes } from '../src/dto/productPublicSelectRes.tsx';
 import { createBusinessToolServer } from '../src/lib/businessTools.ts';
-import { createSharedBusinessToolServer } from '../src/lib/sharedBusinessTools.ts';
 import { ServiceCatalog } from '../src/service/catalog.ts';
 
 async function connect(server: Server) {
@@ -165,18 +165,10 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.equal(action.mock.callCount(), 0, 'discovery runs guards without business Actions');
         assert.deepEqual(
           listed.result.tools.map((tool: any) => tool.name).sort(),
-          [
-            categoryToolName,
-            toolName,
-            detailToolName,
-            statusToolName,
-            effectToolName,
-            scalarToolName,
-            arrayToolName,
-            ...(app.meta.modules['training-student']
-              ? ['training_student_lookup', 'training_student_summary']
-              : []),
-          ].sort(),
+          (app.meta.modules['training-student']
+            ? ['training_student_lookup', 'training_student_summary']
+            : []
+          ).sort(),
         );
         const student = listed.result.tools.find(
           (tool: any) => tool.name === 'training_student_summary',
@@ -351,7 +343,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         pageNo: 1,
         pageSize: 10,
       };
-      // Isolate query binding and output parsing; real permissions remain covered by devHttp.
+      // Isolate query binding and output parsing; real permissions remain covered by businessHttp.
       const action = t.mock.method(
         app.bean.executor,
         'performAction',
@@ -403,12 +395,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   it('requires an explicit authorization scope and blocks write tools before ordinary Action dispatch', async () => {
     await app.bean.executor.mockCtx(async () => {
       await assert.rejects(
-        () => createSharedBusinessToolServer(app),
+        () => createControllerToolServer(app),
         /MCP authorization scope required/,
       );
       const initial = toolFixtureState.count;
-      const read = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
-      const all = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+      const read = await connect(await createControllerToolServer(app, 'mcp:read'));
+      const all = await connect(await createControllerToolServer(app, 'mcp:all'));
       try {
         const readTools = (await read.request('tools/list')).result.tools;
         const allTools = (await all.request('tools/list')).result.tools;
@@ -451,7 +443,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           assert.equal(rejected.error?.code, -32602);
           assert.equal(toolFixtureState.count, initial);
         }
-        // The fixture is public, not an RBAC proof; devHttp retains real student-role checks.
+        // The fixture is public, not an RBAC proof; businessHttp retains real student-role checks.
         const accepted = await all.request('tools/call', { name: effectToolName, arguments: args });
         assert.equal(accepted.error, undefined);
         assert.notEqual(accepted.result.isError, true);
@@ -516,7 +508,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       );
       try {
         assert.deepEqual(appMetadata.getMetadata(SymbolMcpOptions, ControllerCatalog), {});
-        const client = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+        const client = await connect(await createControllerToolServer(app, 'mcp:all'));
         try {
           const tools = (await client.request('tools/list')).result.tools;
           const status = tools.find((tool: any) => tool.name === statusToolName);
@@ -534,7 +526,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           await client.close();
         }
         configuration = 'override';
-        const overridden = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
+        const overridden = await connect(await createControllerToolServer(app, 'mcp:read'));
         try {
           const tools = (await overridden.request('tools/list')).result.tools;
           assert.equal(
@@ -549,7 +541,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           await overridden.close();
         }
         configuration = 'pick-replacement';
-        const projected = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+        const projected = await connect(await createControllerToolServer(app, 'mcp:all'));
         const initial = toolFixtureState.count;
         try {
           const tool = (await projected.request('tools/list')).result.tools.find(
@@ -574,13 +566,82 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           ['invalid-pick', /Invalid MCP output.pick/],
         ] as const) {
           configuration = mode;
-          await assert.rejects(() => createSharedBusinessToolServer(app, 'mcp:all'), expected);
+          await assert.rejects(() => createControllerToolServer(app, 'mcp:all'), expected);
         }
         assert.throws(
           () => (mcp.tool as any)({ name: 'class-name-is-not-valid' })(class {}),
           /name is only valid on a controller action/,
         );
       } finally {
+        metadata.mock.restore();
+      }
+    });
+  });
+
+  it('excludes identities before duplicate names and malformed contracts, without admitting sibling Actions', async t => {
+    await app.bean.executor.mockCtx(async () => {
+      const original = appMetadata.getMetadata;
+      let invalid: 'duplicate' | 'malformed' = 'duplicate';
+      const metadata = t.mock.method(
+        appMetadata,
+        'getMetadata',
+        function (...args: Parameters<typeof original>) {
+          const [key, target, action] = args;
+          const value = original.apply(appMetadata, args) as IMcpToolOptions | undefined;
+          if (
+            key === SymbolMcpOptions &&
+            target === ControllerToolFixture.prototype &&
+            action === 'status'
+          ) {
+            return invalid === 'duplicate'
+              ? { ...value, name: categoryToolName }
+              : { ...value, output: { pick: ['missing'] } };
+          }
+          return value;
+        },
+      );
+      const openapi = app.scope('a-openapi').service.openapi;
+      const contractOriginal = openapi.getControllerActionContract;
+      const contracts = t.mock.method(
+        openapi,
+        'getControllerActionContract',
+        function (...args: Parameters<typeof contractOriginal>) {
+          assert.equal(args[0], ControllerCatalog, 'excluded identities never extract contracts');
+          assert.equal(args[1], 'categories', 'an annotated sibling is not admitted by prefix');
+          return contractOriginal.apply(openapi, args);
+        },
+      );
+      try {
+        for (const mode of ['duplicate', 'malformed'] as const) {
+          invalid = mode;
+          const server = await createControllerToolServer(app, 'mcp:all', {
+            includeTool: identity =>
+              identity.controller === 'mcp-test.controller.catalog' &&
+              identity.action === 'categories',
+          });
+          const client = await connect(server);
+          try {
+            assert.deepEqual(
+              server.diagnostics,
+              [],
+              'excluded unsupported contracts do not produce diagnostics',
+            );
+            const listed = await client.request('tools/list');
+            assert.deepEqual(
+              listed.result.tools.map((tool: any) => tool.name),
+              [categoryToolName],
+            );
+            for (const name of [toolName, detailToolName, statusToolName, effectToolName]) {
+              const rejected = await client.request('tools/call', { name, arguments: {} });
+              assert.equal(rejected.error?.code, -32602);
+            }
+          } finally {
+            await client.close();
+          }
+        }
+        assert.equal(contracts.mock.callCount(), 2);
+      } finally {
+        contracts.mock.restore();
         metadata.mock.restore();
       }
     });
@@ -601,7 +662,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         { includeExcluded: true },
       );
       assert.equal(Object.keys(contract.paths ?? {}).length, 1);
-      const server = await createSharedBusinessToolServer(app, 'mcp:read');
+      const server = await createControllerToolServer(app, 'mcp:read');
       const client = await connect(server);
       try {
         assert.ok(
@@ -666,7 +727,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         descriptionHtml: '<p>private-notes</p>',
         extra: 'private-extra',
       };
-      // Isolate output parsing only; guarded real controller behavior is covered by devHttp.
+      // Isolate output parsing only; guarded real controller behavior is covered by businessHttp.
       const action = t.mock.method(executor, 'performAction', async () => raw);
       try {
         const call = () =>

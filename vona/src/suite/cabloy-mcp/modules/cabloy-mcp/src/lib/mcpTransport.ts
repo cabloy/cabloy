@@ -1,17 +1,17 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { IInstanceRecord, VonaApplication } from 'vona';
-import type { IMcpAuthResource } from 'vona-module-cabloy-mcp';
+import type { IMcpAuthResource } from 'vona-module-mcp-auth';
 
-import {
-  checkProtocolIngress,
-  fixtureIngressLimits,
-  mcpResourceChallenge,
-  OAuthError,
-  resolveMcpRequestResource,
-  sanitizeMcpRequest,
-} from 'vona-module-cabloy-mcp';
+import { OAuthError } from 'vona-module-mcp-auth';
 
 import type { createBusinessTransport } from './businessTransport.ts';
+
+import {
+  mcpResourceChallenge,
+  resolveMcpRequestResource,
+  sanitizeMcpRequest,
+} from './resourceServer.ts';
+import { checkProtocolIngress, fixtureIngressLimits } from './transportIngress.ts';
 
 function fail(res: ServerResponse, status: number, allow?: string, challenge?: string) {
   if (res.destroyed || res.writableEnded) return;
@@ -39,7 +39,13 @@ export async function handleMcpRequest(
   req: IncomingMessage,
   res: ServerResponse,
 ) {
-  if (!app.meta.appReady || app.meta.appClose || !app.scope('cabloy-mcp').config.enabled) {
+  // Production exposure awaits separately accepted protected audit and operational controls.
+  if (
+    (!app.meta.isDev && !app.meta.isTest) ||
+    !app.meta.appReady ||
+    app.meta.appClose ||
+    !app.scope('cabloy-mcp').config.enabled
+  ) {
     fail(res, 503);
     return;
   }
@@ -125,10 +131,10 @@ export async function handleMcpRequest(
   });
 }
 
-export function devTransportSnapshot(app: VonaApplication) {
+export function mcpTransportSnapshot(app: VonaApplication) {
   return exchanges.get(app)?.snapshot();
 }
 
-export async function closeDevTransport(app: VonaApplication) {
+export async function closeMcpTransport(app: VonaApplication) {
   await exchanges.get(app)?.close();
 }

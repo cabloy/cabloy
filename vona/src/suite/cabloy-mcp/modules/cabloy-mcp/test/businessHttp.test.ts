@@ -1,4 +1,10 @@
-import type { IncomingHttpHeaders, OutgoingHttpHeaders } from 'node:http';
+import type {
+  IncomingHttpHeaders,
+  IncomingMessage,
+  OutgoingHttpHeaders,
+  ServerResponse,
+} from 'node:http';
+import type { VonaApplication } from 'vona';
 
 import assert from 'node:assert/strict';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
@@ -7,12 +13,13 @@ import { after, before, describe, it } from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
 import { acquireTestLock, app } from 'vona-mock';
 import { BeanExecutor } from 'vona-module-a-executor';
-import { fixtureIngressLimits } from 'vona-module-cabloy-mcp';
+import {
+  closeMcpTransport,
+  fixtureIngressLimits,
+  handleMcpRequest,
+  mcpTransportSnapshot,
+} from 'vona-module-cabloy-mcp';
 import { getMcpIssuer } from 'vona-module-mcp-auth';
-
-import { toolFixtureState } from '../src/controller/toolFixture.ts';
-import { closeDevTransport, devTransportSnapshot } from '../src/lib/mcpTransport.ts';
-import { ServiceCatalog } from '../src/service/catalog.ts';
 
 const version = '2026-07-28';
 const categoriesName = 'commerce_categories_list';
@@ -20,8 +27,21 @@ const searchName = 'commerce_products_search';
 const detailName = 'commerce_product_detail';
 const studentSummaryName = 'training_student_summary';
 const studentLookupName = 'training_student_lookup';
-const statusName = 'mcp_test_action_status';
-const effectName = 'mcp_test_action_effect';
+const excludedNames = [
+  categoriesName,
+  searchName,
+  detailName,
+  'mcp_test_action_status',
+  'mcp_test_action_effect',
+  'mcp_test_action_scalar',
+  'mcp_test_action_array',
+  'mcp_test_action_unsupported',
+  'mcp-test_toolFixture_closed',
+  'training-student_student_select',
+];
+const trainingDisabled = (process.env.PROJECT_DISABLED_SUITES ?? '')
+  .split(',')
+  .includes('a-training');
 const studentSummaryFields = [
   'id',
   'name',
@@ -118,7 +138,7 @@ function openHttp(
   });
   const response = new Promise<{ status: number; body: any; headers: IncomingHttpHeaders }>(
     (resolve, reject) => {
-      const timer = setTimeout(() => req.destroy(new Error('Dev MCP HTTP timeout')), 15000);
+      const timer = setTimeout(() => req.destroy(new Error('Business MCP HTTP timeout')), 15000);
       req.once('error', error => {
         clearTimeout(timer);
         reject(error);
@@ -128,7 +148,7 @@ function openHttp(
         let size = 0;
         res.on('data', (chunk: Buffer) => {
           size += chunk.length;
-          if (size > 1024 * 1024) res.destroy(new Error('Dev MCP response limit'));
+          if (size > 1024 * 1024) res.destroy(new Error('Business MCP response limit'));
           else chunks.push(chunk);
         });
         res.once('error', error => {
@@ -160,7 +180,7 @@ function openHttp(
 async function waitFor(predicate: () => boolean) {
   const deadline = Date.now() + 5000;
   while (!predicate()) {
-    assert.ok(Date.now() < deadline, 'dev exchange actually settled');
+    assert.ok(Date.now() < deadline, 'business exchange actually settled');
     await delay(5);
   }
 }
@@ -202,7 +222,7 @@ async function send(
       ...options.headers,
     },
   }).response;
-  if (response.status !== 429) await waitFor(() => !devTransportSnapshot(app)?.active);
+  if (response.status !== 429) await waitFor(() => !mcpTransportSnapshot(app)?.active);
   return response;
 }
 
@@ -217,9 +237,28 @@ function output(response: Awaited<ReturnType<typeof send>>) {
   return result.structuredContent;
 }
 
+function allowStudentAction(action: 'lookup' | 'summary') {
+  const controller = 'training-student.controller.student';
+  return app.scope('a-rbac').event.resolvePolicy.on((request, next) => {
+    if (
+      String(app.bean.passport.currentUser?.id) !== fixtureUserId ||
+      app.ctx.instanceName !== '' ||
+      request.action.controllerBeanFullName !== controller
+    ) {
+      return next();
+    }
+    assert.equal(String(app.bean.passport.currentAuth?.id), fixtureAuthId);
+    return {
+      allowed: request.action.action === action,
+      actionKey: request.action.actionKey,
+      action: request.action,
+    };
+  });
+}
+
 // The root managed test runner owns this listener and disposable instance state.
 // No test creates another application/listener or changes global origin configuration.
-describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
+describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
   let release: (() => void) | undefined;
   before(async () => {
     assert.ok(app.server?.listening, 'managed application listener must be enabled');
@@ -262,7 +301,10 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     await app.bean.executor.mockCtx(async () => {}, { instanceName: 'shareTest' as any });
     await app.bean.executor.mockCtx(
       async () => {
-        const user = await app.bean.user.register({ name: `mcp-dev-http-${randomUUID()}` }, true);
+        const user = await app.bean.user.register(
+          { name: `mcp-business-http-${randomUUID()}` },
+          true,
+        );
         fixtureUserId = String(user.id);
         const authSimple = await app
           .scope('auth-simple')
@@ -315,7 +357,37 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     }
   });
 
-  it('shares discovery, modern/legacy catalog flows and ordinary catalog routes on one listener', async () => {
+  it('owns ingress and close exactly once and shares modern/legacy discovery on the managed listener', async () => {
+    const owners = app.bean.onion.middlewareSystem
+      .getOnionsEnabledCached()
+      .map(item => item.beanOptions.beanFullName)
+      .filter(name =>
+        ['cabloy-mcp.middlewareSystem.mcp', 'mcp-test.middlewareSystem.mcp'].includes(name),
+      );
+    assert.deepEqual(owners, ['cabloy-mcp.middlewareSystem.mcp']);
+    const closeOwners = app.meta.modulesMonkey.filter(
+      module =>
+        ['cabloy-mcp', 'mcp-test'].includes(module.info.relativeName) &&
+        typeof module.monkeyInstance?.appClose === 'function',
+    );
+    assert.deepEqual(
+      closeOwners.map(module => module.info.relativeName),
+      ['cabloy-mcp'],
+    );
+    assert.ok(app.meta.modules['cabloy-mcp']);
+    if ((process.env.PROJECT_DISABLED_MODULES ?? '').split(',').includes('mcp-test')) {
+      assert.equal(app.meta.modules['mcp-test'], undefined);
+    } else {
+      assert.ok(app.meta.modules['mcp-test'], 'default composition retains the synthetic fixtures');
+    }
+    if (trainingDisabled) {
+      assert.equal(app.meta.modules['training-student'], undefined);
+    } else {
+      assert.ok(
+        app.meta.modules['training-student'],
+        'Training absence must be explicitly selected',
+      );
+    }
     const server = app.server;
     const discovered = await send('server/discover');
     assert.equal(discovered.status, 200);
@@ -331,7 +403,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           {
             protocolVersion: '2025-11-25',
             capabilities: {},
-            clientInfo: { name: 'dev-http-test', version: '1' },
+            clientInfo: { name: 'business-http-test', version: '1' },
           },
           { legacy, headers },
         );
@@ -340,122 +412,119 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       }
       const listed = await send('tools/list', {}, { legacy, headers });
       assert.equal(listed.status, 200);
+      assert.equal(listed.body.error, undefined);
       assert.deepEqual(
-        listed.body.result.tools.map((tool: any) => tool.name).sort(),
-        [
-          searchName,
-          detailName,
-          categoriesName,
-          statusName,
-          'mcp_test_action_scalar',
-          'mcp_test_action_array',
-          ...(token === allToken ? [effectName] : []),
-        ].sort(),
+        listed.body.result.tools,
+        [],
+        'ordinary OAuth identity has no student grants',
       );
-      const call = async (name: string, args: Record<string, unknown>) =>
-        output(await send('tools/call', { name, arguments: args }, { legacy, headers }));
-      const categories = await call(categoriesName, {});
-      const electronics = categories.list.find((item: any) => item.name === 'Electronics');
-      assert.ok(electronics);
-      const search = await call(searchName, {
-        categoryId: electronics.id,
-        title: 'Wireless Headphones',
-      });
-      assert.equal(search.list.length, 1);
-      const detail = await call(detailName, { id: search.list[0].id });
-      assert.equal(detail.id, search.list[0].id);
-      assert.equal(detail.categoryId, electronics.id);
-      assert.equal(detail.priceCents, 9999);
-      assert.equal(detail.available, 11);
+      if (trainingDisabled) {
+        for (const [name, args] of [
+          [studentLookupName, { name: 'Student' }],
+          [studentSummaryName, { id: '1' }],
+        ] as const) {
+          const denied = await send('tools/call', { name, arguments: args }, { legacy, headers });
+          assert.equal(denied.status, 200);
+          assert.equal(denied.body.error?.code, -32602);
+          assert.equal(denied.body.result, undefined);
+        }
+      }
     }
-    const ordinary = await openHttp({
-      method: 'GET',
-      target: `${app.config.server.globalPrefix}/mcp/test/catalog/categories`,
-    }).response;
-    assert.equal(ordinary.status, 200);
-    assert.ok(
-      JSON.stringify(ordinary.body).includes('Electronics'),
-      'ordinary router remains active',
-    );
     assert.equal(app.server, server);
     assert.ok(app.server?.listening, 'per-request cleanup does not close shared server');
   });
 
-  it('filters write discovery and rejects read-scope calls before dispatch across modern and legacy transports', async t => {
-    const initial = toolFixtureState.count;
+  it('makes known synthetic and unapproved sibling names uncallable under both scopes and transports', async t => {
     const allToken = await redeemBearer('mcp:all');
     const original = BeanExecutor.prototype.performAction;
-    const calls: Array<{
-      method: unknown;
-      path: unknown;
-      options: unknown;
-      userId: string;
-      authId: string;
-    }> = [];
     const observed = t.mock.method(
       BeanExecutor.prototype,
       'performAction',
       async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
-        calls.push({
-          method: args[0],
-          path: args[1],
-          options: args[2],
-          userId: String(this.bean.passport.currentUser?.id),
-          authId: String(this.bean.passport.currentAuth?.id),
-        });
+        assert.fail(`excluded tool reached performAction: ${String(args[1])}`);
         return await original.apply(this, args);
       },
     );
     try {
-      for (const legacy of [false, true]) {
-        const invoke = (token: string, name: string, args: Record<string, unknown> = {}) =>
-          send(
-            'tools/call',
-            { name, arguments: args },
-            {
-              legacy,
-              headers: { authorization: `Bearer ${token}` },
-            },
+      for (const { token, legacy } of [bearer, allToken].flatMap(token =>
+        [false, true].map(legacy => ({ token, legacy })),
+      )) {
+        const options = { legacy, headers: { authorization: `Bearer ${token}` } };
+        const listed = await send('tools/list', {}, options);
+        assert.equal(listed.status, 200);
+        assert.equal(listed.body.error, undefined);
+        for (const name of excludedNames) {
+          assert.equal(
+            listed.body.result.tools.some((tool: any) => tool.name === name),
+            false,
           );
-        const args = { params: { label: 'http-scope-proof' }, body: { amount: 1 } };
-        const beforeDenied = toolFixtureState.count;
-        const beforeDispatch = calls.length;
-        const denied = await invoke(bearer, effectName, args);
-        assert.equal(denied.status, 200);
-        assert.equal(denied.body.error?.code, -32602);
-        assert.equal(denied.body.result, undefined);
-        assert.equal(calls.length, beforeDispatch, 'scope is checked before performAction');
-        assert.equal(toolFixtureState.count, beforeDenied);
-        const closed = await invoke(allToken, 'mcp-test_toolFixture_closed');
-        assert.equal(closed.body.error?.code, -32602);
-        assert.equal(calls.length, beforeDispatch, 'an unannotated sibling is not dispatchable');
-        // Public fixture proves scope and Passport handoff, not RBAC; student tests below do that.
-        const accepted = output(await invoke(allToken, effectName, args));
-        assert.deepEqual(accepted, { count: beforeDenied + 1, label: 'http-scope-proof' });
-        const dispatched = calls.at(-1)!;
-        assert.deepEqual(dispatched, {
-          method: 'post',
-          path: '/mcp/test/actions/effect/:label',
-          options: { ...args, innerAccess: false },
-          userId: fixtureUserId,
-          authId: fixtureAuthId,
-        });
-        assert.deepEqual(output(await invoke(bearer, statusName)), { count: beforeDenied + 1 });
-        assert.equal(calls.at(-1)!.method, 'get');
-        assert.equal(calls.at(-1)!.path, '/mcp/test/actions/status');
-        assert.deepEqual(calls.at(-1)!.options, { innerAccess: false });
+          const denied = await send('tools/call', { name, arguments: {} }, options);
+          assert.equal(denied.status, 200);
+          assert.equal(denied.body.error?.code, -32602);
+          assert.equal(denied.body.result, undefined);
+        }
       }
+      assert.equal(observed.mock.callCount(), 0, 'restriction precedes ordinary Action dispatch');
     } finally {
-      toolFixtureState.count = initial;
       observed.mock.restore();
     }
   });
 
-  it('discovers only currently authorized student Actions without business reads and reauthorizes calls', async t => {
-    if (!app.meta.modules['training-student']) {
-      t.skip('Training suite is not composed');
-      return;
+  it('denies production and unknown modes before any downstream application or request access', async () => {
+    for (const meta of [
+      { isDev: false, isTest: false, mode: 'production' },
+      { isDev: false, isTest: false, mode: 'unknown' },
+      {},
+    ]) {
+      let status = 0;
+      let headers: Record<string, string> = {};
+      let body = '';
+      const deniedApp = {
+        meta,
+        get scope() {
+          return assert.fail('mode denial must precede scope access');
+        },
+        get config() {
+          return assert.fail('mode denial must precede config access');
+        },
+        get bean() {
+          return assert.fail('mode denial must precede business/context access');
+        },
+      } as unknown as VonaApplication;
+      const req = {
+        get url() {
+          return assert.fail('mode denial must precede request parsing');
+        },
+        get rawHeaders() {
+          return assert.fail('mode denial must precede authentication');
+        },
+      } as unknown as IncomingMessage;
+      const res = {
+        destroyed: false,
+        writableEnded: false,
+        writeHead(code: number, values: Record<string, string>) {
+          status = code;
+          headers = values;
+        },
+        end(value: string) {
+          body = value;
+        },
+      } as unknown as ServerResponse;
+      await handleMcpRequest(deniedApp, req, res);
+      assert.equal(status, 503);
+      assert.equal(headers['cache-control'], 'no-store');
+      assert.deepEqual(JSON.parse(body), {
+        jsonrpc: '2.0',
+        id: null,
+        error: { code: -32000, message: 'Request rejected' },
+      });
+      assert.equal(mcpTransportSnapshot(deniedApp), undefined);
     }
+  });
+
+  it('discovers only currently authorized student Actions without business reads and reauthorizes calls', async t => {
+    if (trainingDisabled) return;
+    assert.ok(app.meta.modules['training-student']);
     const allToken = await redeemBearer('mcp:all');
     const { ControllerStudent, ModelStudent, ServiceStudent } =
       await import('vona-module-training-student');
@@ -508,7 +577,6 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         [false, true].map(legacy => ({ token, legacy })),
       )) {
         const options = { legacy, headers: { authorization: `Bearer ${token}` } };
-        let ordinary: string[] | undefined;
         for (const state of states) {
           granted = state.permissions.map(permission => `${controller}#${permission}`);
           const before = policyCalls.length;
@@ -518,17 +586,12 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           const tools = listed.body.result.tools;
           const names = tools.map((tool: any) => tool.name) as string[];
           assert.deepEqual(
-            names.filter(name => [studentLookupName, studentSummaryName].includes(name)).sort(),
+            names.toSorted(),
             state.names.toSorted(),
+            'only the exact approved Actions are admitted',
           );
-          const otherNames = names
-            .filter(name => ![studentLookupName, studentSummaryName].includes(name))
-            .sort();
-          ordinary ??= otherNames;
-          assert.deepEqual(otherNames, ordinary, 'other tool visibility is unchanged');
-          assert.equal(names.includes(effectName), token === allToken);
           assert.deepEqual(
-            policyCalls.slice(before).sort(),
+            policyCalls.slice(before),
             [`${controller}#lookup`, `${controller}#summary`],
             'each list freshly checks the actual registered Actions',
           );
@@ -615,11 +678,9 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     );
   });
 
-  it('guards student lookup-to-summary with current roles across modern/legacy read scopes and instance boundaries', async t => {
-    if (!app.meta.modules['training-student']) {
-      t.skip('training-student is not active');
-      return;
-    }
+  it('guards independent student lookup and summary with current roles across modern/legacy read scopes and instance boundaries', async t => {
+    if (trainingDisabled) return;
+    assert.ok(app.meta.modules['training-student']);
     assert.ok(fixtureUserId);
     const userId = fixtureUserId;
     const name = `MCP student ${randomUUID()}`;
@@ -726,6 +787,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       const summary = t.mock.method(ServiceStudent.prototype, 'summary');
       const policyCalls: Array<{ action: string; policyActionKey: string }> = [];
       const controllerBeanFullName = 'training-student.controller.student';
+      let viewOnly = false;
       const off = app.scope('a-rbac').event.resolvePolicy.on((request, next) => {
         if (
           String(app.bean.passport.currentUser?.id) !== userId ||
@@ -744,7 +806,8 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           policyActionKey: request.policyActionKey,
         });
         return {
-          allowed: request.policyActionKey === `${controllerBeanFullName}#select`,
+          allowed:
+            request.policyActionKey === `${controllerBeanFullName}#${viewOnly ? 'view' : 'select'}`,
           actionKey: request.action.actionKey,
           action: request.action,
         };
@@ -785,13 +848,27 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
             .flat(),
           'the real guard resolves distinct inherited permissions on every transport/scope pair',
         );
+        viewOnly = true;
+        for (const { token, legacy } of [bearer, allToken].flatMap(token =>
+          [false, true].map(legacy => ({ token, legacy })),
+        )) {
+          errorResult(await lookup({ name }, token, legacy), 'Action failed');
+          const independent = output(await call(studentId, token, legacy));
+          assert.equal(
+            independent.id,
+            studentId,
+            'summary accepts an authorized ID without a successful lookup',
+          );
+          assert.deepEqual(Object.keys(independent).sort(), studentSummaryFields);
+        }
+        assert.equal(summary.mock.callCount(), 4);
       } finally {
         off();
         summary.mock.restore();
       }
       errorResult(await lookup({ name }), 'Action failed');
       errorResult(await call(studentId), 'Action failed');
-      assert.equal(policyCalls.length, 8, 'the exact test policy listener was removed');
+      assert.equal(policyCalls.length, 16, 'the exact test policy listener was removed');
       // Basic has no custom grant provider. Exercise its supported unrestricted role
       // through the ordinary membership API, without mutating the shared role itself.
       await app.bean.executor.mockCtx(
@@ -872,7 +949,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         assert.equal(current.userId, userId);
         assert.equal(current.authId, fixtureAuthId);
       }
-      assert.equal(observedCalls.length, 24, 'every read traverses its fixed guarded action');
+      assert.equal(observedCalls.length, 32, 'every read traverses its fixed guarded action');
       await app.bean.executor.mockCtx(
         async () => {
           assert.equal(await app.bean.role.removeUserId(adminRoleId!, userId), true);
@@ -1076,8 +1153,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
   });
 
   it('uses only the automatically resolved canonical instance and rejects conflicting selectors before dispatch', async () => {
-    const params = { name: categoriesName, arguments: {} };
-    const contexts = devTransportSnapshot(app)?.contexts ?? 0;
+    const contexts = mcpTransportSnapshot(app)?.contexts ?? 0;
     const queryField = app.config.instance.queryField!;
     const headerField = app.config.instance.headerField!;
     for (const options of [
@@ -1087,10 +1163,13 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       { target: '/mcp?instanceName=', headers: { [headerField]: 'shareTest' } },
       { target: '/mcp?instanceName=unconfigured' },
     ])
-      assert.equal((await send('tools/call', params, options)).status, 403);
-    assert.equal(devTransportSnapshot(app)?.contexts ?? 0, contexts);
+      assert.equal((await send('tools/list', {}, options)).status, 403);
+    assert.equal(mcpTransportSnapshot(app)?.contexts ?? 0, contexts);
     for (const target of ['/mcp', '/mcp?instanceName=']) {
-      assert.ok(output(await send('tools/call', params, { target })).list.length > 0);
+      const listed = await send('tools/list', {}, { target });
+      assert.equal(listed.status, 200);
+      assert.equal(listed.body.error, undefined);
+      assert.deepEqual(listed.body.result.tools, []);
     }
   });
 
@@ -1137,22 +1216,28 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       headers: { 'content-length': '100', 'authorization': `Bearer ${bearer}` },
     });
     try {
-      await waitFor(() => devTransportSnapshot(app)?.active === 1);
+      await waitFor(() => mcpTransportSnapshot(app)?.active === 1);
       assert.equal((await send('tools/list')).status, 429);
     } finally {
       pending.req.destroy();
-      await waitFor(() => !devTransportSnapshot(app)?.active);
+      await waitFor(() => !mcpTransportSnapshot(app)?.active);
     }
     assert.equal((await send('tools/list')).status, 200);
     assert.ok(app.server?.listening);
   });
 
-  it('installs current server-owned Passport into guarded business actions without forwarding bearer credentials', async t => {
-    const original = ServiceCatalog.prototype.selectPublic;
+  it('installs current server-owned Passport into approved Actions without forwarding bearer credentials', async t => {
+    if (trainingDisabled) return;
+    const { ServiceStudent } = await import('vona-module-training-student');
+    const original = ServiceStudent.prototype.lookup;
+    const off = allowStudentAction('lookup');
     const observed = t.mock.method(
-      ServiceCatalog.prototype,
-      'selectPublic',
-      async function (this: ServiceCatalog, ...args: Parameters<ServiceCatalog['selectPublic']>) {
+      ServiceStudent.prototype,
+      'lookup',
+      async function (
+        this: InstanceType<typeof ServiceStudent>,
+        ...args: Parameters<InstanceType<typeof ServiceStudent>['lookup']>
+      ) {
         assert.equal(String(this.bean.passport.currentUser?.id), fixtureUserId);
         assert.equal(String(this.bean.passport.currentAuth?.id), fixtureAuthId);
         assert.ok(this.bean.passport.isAuthenticated);
@@ -1164,9 +1249,12 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       },
     );
     try {
-      output(await send('tools/call', { name: searchName, arguments: {} }));
+      output(
+        await send('tools/call', { name: studentLookupName, arguments: { name: randomUUID() } }),
+      );
       assert.equal(observed.mock.callCount(), 1);
     } finally {
+      off();
       observed.mock.restore();
     }
   });
@@ -1192,14 +1280,14 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       missing.headers['www-authenticate'],
       `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource/mcp"`,
     );
-    const held = t.mock.method(ServiceCatalog.prototype, 'selectPublic', async () => {
+    const held = t.mock.method(BeanExecutor.prototype, 'performAction', async () => {
       throw new Error('unauthorized business dispatch');
     });
     try {
       for (const token of ['a'.repeat(43), browserToken]) {
         const denied = await send(
           'tools/call',
-          { name: searchName, arguments: {} },
+          { name: studentLookupName, arguments: { name: 'Student' } },
           { headers: { authorization: `Bearer ${token}` } },
         );
         assert.equal(denied.status, 401);
@@ -1225,7 +1313,7 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           (
             await send(
               'tools/call',
-              { name: searchName, arguments: {} },
+              { name: studentLookupName, arguments: { name: 'Student' } },
               { headers: { authorization: `Bearer ${token}` } },
             )
           ).status,
@@ -1245,18 +1333,18 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       );
       const forbidden = await send(
         'tools/call',
-        { name: searchName, arguments: {} },
+        { name: studentLookupName, arguments: { name: 'Student' } },
         { headers: { authorization: `Bearer ${insufficient}` } },
       );
       assert.equal(forbidden.status, 403);
       assert.match(String(forbidden.headers['www-authenticate']), /error="insufficient_scope"/);
       assert.equal(held.mock.callCount(), 0);
       const config = app.config.modules['mcp-auth'];
-      const contexts = devTransportSnapshot(app)?.contexts;
+      const contexts = mcpTransportSnapshot(app)?.contexts;
       try {
         app.config.modules['mcp-auth'] = { ...config, tokenTtl: 0 };
         assert.equal((await send('tools/list')).status, 503);
-        assert.equal(devTransportSnapshot(app)?.contexts, contexts);
+        assert.equal(mcpTransportSnapshot(app)?.contexts, contexts);
       } finally {
         app.config.modules['mcp-auth'] = config;
       }
@@ -1316,18 +1404,30 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     assert.deepEqual(await readPending(), pending);
   });
 
-  it('drains actual app-owned tool work without closing the shared listener', async t => {
+  it('drains actual approved-Action work without closing the shared listener', async t => {
+    if (trainingDisabled) {
+      await closeMcpTransport(app);
+      assert.equal(mcpTransportSnapshot(app)?.closing, true);
+      assert.equal((await send('tools/list')).status, 503);
+      assert.ok(app.server?.listening);
+      return;
+    }
+    const { ServiceStudent } = await import('vona-module-training-student');
+    const off = allowStudentAction('lookup');
     let resume!: () => void;
     const barrier = new Promise<void>(resolve => {
       resume = resolve;
     });
     let entered = false;
     let workFinished = false;
-    const original = ServiceCatalog.prototype.selectPublic;
+    const original = ServiceStudent.prototype.lookup;
     const held = t.mock.method(
-      ServiceCatalog.prototype,
-      'selectPublic',
-      async function (this: ServiceCatalog, ...args: Parameters<ServiceCatalog['selectPublic']>) {
+      ServiceStudent.prototype,
+      'lookup',
+      async function (
+        this: InstanceType<typeof ServiceStudent>,
+        ...args: Parameters<InstanceType<typeof ServiceStudent>['lookup']>
+      ) {
         entered = true;
         await barrier;
         try {
@@ -1338,42 +1438,44 @@ describe('devHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       },
     );
     const pending = send('tools/call', {
-      name: searchName,
-      arguments: { title: 'Wireless Headphones' },
+      name: studentLookupName,
+      arguments: { name: randomUUID() },
     });
     try {
       await waitFor(() => entered);
       let closed = false;
-      const closure = closeDevTransport(app).then(() => {
+      const closure = app.meta.modules['cabloy-mcp'].monkeyInstance.appClose!().then(() => {
         closed = true;
       });
       await delay(25);
       assert.equal(closed, false, 'transport cancellation is not actual work settlement');
       assert.equal(workFinished, false);
-      assert.equal(devTransportSnapshot(app)?.active, 1);
+      assert.equal(mcpTransportSnapshot(app)?.active, 1);
+      assert.equal(
+        (await openHttp({ headers: { authorization: `Bearer ${bearer}` } }).response).status,
+        503,
+        'closing denies new work while old work drains',
+      );
       resume();
       await closure;
       assert.equal(workFinished, true);
       assert.equal((await pending).status, 503);
-      assert.equal(devTransportSnapshot(app)?.active, 0);
-      assert.equal(devTransportSnapshot(app)?.closing, true);
+      assert.equal(mcpTransportSnapshot(app)?.active, 0);
+      assert.equal(mcpTransportSnapshot(app)?.closing, true);
       assert.equal((await send('tools/list')).status, 503);
       assert.ok(app.server?.listening);
-      assert.equal(
-        (
-          await openHttp({
-            method: 'GET',
-            target: `${app.config.server.globalPrefix}/mcp/test/catalog/categories`,
-          }).response
-        ).status,
-        200,
-      );
+      const metadata = await openHttp({
+        method: 'GET',
+        target: '/.well-known/oauth-protected-resource/mcp',
+      }).response;
+      assert.equal(metadata.status, 200, 'ordinary routes retain the shared listener');
     } finally {
       resume();
       try {
-        await closeDevTransport(app);
+        await closeMcpTransport(app);
         await pending;
       } finally {
+        off();
         held.mock.restore();
       }
     }

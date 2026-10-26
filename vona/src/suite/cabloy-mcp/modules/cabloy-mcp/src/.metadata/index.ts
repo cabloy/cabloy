@@ -1,17 +1,31 @@
 // eslint-disable
 /** middlewareSystem: begin */
+export * from '../bean/middlewareSystem.mcp.ts';
 export * from '../bean/middlewareSystem.resourceMetadata.ts';
+import type { IMiddlewareSystemOptionsMcp } from '../bean/middlewareSystem.mcp.ts';
 import type { IMiddlewareSystemOptionsResourceMetadata } from '../bean/middlewareSystem.resourceMetadata.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
 
     export interface IMiddlewareSystemRecord {
-      'cabloy-mcp:resourceMetadata': IMiddlewareSystemOptionsResourceMetadata;
+      'cabloy-mcp:mcp': IMiddlewareSystemOptionsMcp;
+'cabloy-mcp:resourceMetadata': IMiddlewareSystemOptionsResourceMetadata;
     }
 
 
 }
 declare module 'vona-module-cabloy-mcp' {
+
+        export interface MiddlewareSystemMcp {
+          /** @internal */
+          get scope(): ScopeModuleCabloyMcp;
+        }
+
+          export interface MiddlewareSystemMcp {
+            get $beanFullName(): 'cabloy-mcp.middlewareSystem.mcp';
+            get $onionName(): 'cabloy-mcp:mcp';
+            get $onionOptions(): IMiddlewareSystemOptionsMcp;
+          }
 
         export interface MiddlewareSystemResourceMetadata {
           /** @internal */
@@ -54,6 +68,9 @@ declare module 'vona-module-cabloy-mcp' {
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';
 /** config: end */
+/** monkey: begin */
+export * from '../monkey.ts';
+/** monkey: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig } from 'vona';
 import { Scope } from 'vona-module-a-bean';

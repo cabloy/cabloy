@@ -30,6 +30,7 @@ export interface IControllerToolIdentity {
 }
 
 export interface IControllerToolServerOptions {
+  includeTool?(identity: IControllerToolIdentity): boolean;
   isToolVisible?(identity: IControllerToolIdentity): Promise<boolean>;
 }
 
@@ -71,6 +72,15 @@ export async function createControllerToolServer(
     const routes = getCacheControllerRoutes(app);
     for (const controller of app.bean.onion.controller.getOnionsEnabledCached()) {
       for (const route of routes[controller.beanOptions.beanFullName] ?? []) {
+        if (
+          serverOptions.includeTool &&
+          !serverOptions.includeTool({
+            controller: controller.beanOptions.beanFullName,
+            action: route.action,
+          })
+        ) {
+          continue;
+        }
         const defaults = appMetadata.getMetadata<IMcpToolOptions>(
           SymbolMcpOptions,
           route.controller,
