@@ -8,6 +8,7 @@ const guardBeanName = 'demo-demonstration.guard.demonstration';
 const businessRoute = {
   controllerBeanFullName: 'test.controller.business',
   action: 'write',
+  routePathRaw: '/test/business/write',
 };
 
 function guard() {
@@ -101,7 +102,81 @@ describe('guardDemonstration.test.ts', { concurrency: false }, () => {
     });
   });
 
-  it('exempts the configured authentication and OAuth routes but protects logout', () => {
+  it('allows non-whitelisted logout only in session auth-token mode', async t => {
+    await app.bean.executor.mockCtx(async () => {
+      const passport = app.bean.passport;
+      await passport.signinMock('admin');
+      try {
+        setRequest('POST', { ...businessRoute, routePathRaw: '/home/user/passport/logout' });
+        for (const authTokenMode of ['auth', 'session'] as const) {
+          const getter = t.mock.getter(passport, 'authTokenMode', () => authTokenMode);
+          try {
+            let continued = false;
+            const [result, err] = await catchError(() =>
+              guard().execute(
+                { enable: true, methodsForWrite: ['POST'], usernameWhitelist: [] } as any,
+                async () => {
+                  continued = true;
+                  return true;
+                },
+              ),
+            );
+            if (authTokenMode === 'session') {
+              assert.ifError(err);
+              assert.equal(result, true);
+              assert.equal(continued, true);
+            } else {
+              assert.equal(err?.code, 'demo-demonstration:1001');
+              assert.equal(err?.status, 403);
+              assert.equal(continued, false);
+            }
+          } finally {
+            getter.mock.restore();
+          }
+        }
+      } finally {
+        await passport.signout();
+      }
+    });
+  });
+
+  it('keeps other writes protected in session mode', async t => {
+    await app.bean.executor.mockCtx(async () => {
+      const passport = app.bean.passport;
+      await passport.signinMock('admin');
+      try {
+        const getter = t.mock.getter(passport, 'authTokenMode', () => 'session' as const);
+        try {
+          for (const [method, routePathRaw] of [
+            ['POST', businessRoute.routePathRaw],
+            ['DELETE', '/home/user/passport/logout'],
+            ['POST', '/home/user/passport/logout/'],
+          ]) {
+            setRequest(method, { ...businessRoute, routePathRaw });
+            let continued = false;
+            const [_, err] = await catchError(() =>
+              guard().execute(
+                { enable: true, methodsForWrite: ['POST', 'DELETE'], usernameWhitelist: [] } as any,
+                async () => {
+                  continued = true;
+                  return true;
+                },
+              ),
+            );
+            assert.equal(err?.code, 'demo-demonstration:1001');
+            assert.equal(err?.status, 403);
+            assert.equal(continued, false);
+          }
+        } finally {
+          getter.mock.restore();
+        }
+      } finally {
+        await passport.signout();
+      }
+    });
+  });
+
+  it('exempts the configured authentication and OAuth routes but still selects logout', () => {
     for (const routePathRaw of [
       '/home/user/passport/login',
       '/home/user/passport/login/:module/:providerName/:clientName?',

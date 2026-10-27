@@ -339,6 +339,8 @@ This is a clean example of attaching a behavior to a native element through a ge
 
 ### Perform a standalone asynchronous button action
 
+Both Cabloy Basic and Cabloy Start provide `ZButton`. Prefer it for button actions, including menu actions, rather than rebuilding its action lifecycle with native elements. Keep navigation as links, and use native buttons or lower-level behaviors only when a specific interaction requires them. Resolve component imports and styling from the active edition; the implementation details below describe Cabloy Basic.
+
 Cabloy Basic's `ZButton` attaches the `basic-button:perform` behavior to its native button. `BehaviorPerform` owns the button-local lifecycle for an action passed through `onPerform`:
 
 - loading presentation and `aria-busy`
@@ -362,6 +364,16 @@ Pass the complete interaction promise through `onPerform`. For a button-only act
   {this.scope.locale.Save()}
 </ZButton>
 ```
+
+For a model mutation whose failure should reach the button's error boundary, return or await `mutateAsync()`:
+
+```tsx
+<ZButton onPerform={() => this.$passport.logout().mutateAsync()}>
+  {this.scope.locale.Logout()}
+</ZButton>
+```
+
+`mutate()` returns `void` and consumes the rejection, so even `await mutation.mutate()` cannot deliver that failure to the button's error boundary. `mutateAsync()` returns the complete mutation promise and rejects on failure. Keep success-only navigation and authentication cleanup in the owning mutation; do not move them into `finally` or clear authentication before the request succeeds.
 
 Returning the complete promise is not enough when an API reports its failure as a result value. When a `ZButton` owns the generic error path for a query refetch, await a refetch that rejects on failure:
 

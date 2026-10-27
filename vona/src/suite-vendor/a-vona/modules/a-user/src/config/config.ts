@@ -2,12 +2,15 @@ import type { VonaApplication } from 'vona';
 
 import type { ConfigUser } from '../types/auth.ts';
 
-export function config(_app: VonaApplication) {
+import { $parseAuthTokenMode } from '../lib/auth.ts';
+
+export function config(app: VonaApplication) {
   const configUser: ConfigUser = {
     user: {
       autoActivate: false,
     },
     authToken: {
+      mode: $parseAuthTokenMode(app.meta.env.AUTH_TOKEN_MODE),
       stateless: false,
       strategy: {
         refreshAuthToken: 'refresh',

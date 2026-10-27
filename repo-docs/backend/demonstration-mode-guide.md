@@ -68,7 +68,7 @@ The Guard protects these HTTP methods:
 - `DELETE`
 - `PUT`
 
-Other methods pass through this Guard unchanged. A protected request is allowed only for an eligible whitelisted user. All other protected requests are rejected with:
+Other methods pass through this Guard unchanged. Apart from the built-in authentication routes and the conditional [logout policy](#logout-policy), a protected request is allowed only for an eligible whitelisted user. All other protected requests are rejected with:
 
 | Field                  | Value                                             |
 | ---------------------- | ------------------------------------------------- |
@@ -81,10 +81,6 @@ The Guard depends on Passport-resolved account state, so it makes this decision 
 ## Exempt authentication routes
 
 Demonstration Mode deliberately does not apply to the standard authentication and OAuth routes below. This keeps sign-in, registration, account association and migration, OAuth callbacks, and token flows available while the write policy is active.
-
-In Cabloy Basic, and Cabloy Start, `POST /home/user/passport/logout` is **not exempt**. While Demonstration Mode is enabled, only authenticated, active, non-anonymous whitelisted users may log out; other users receive `403` with `demo-demonstration:1001`.
-
-This prevents ordinary visitors sharing a demo account from revoking other visitors' logins. Whitelisted users remain able to log out. The underlying logout semantics are unchanged: logout revokes the shared login state for the current account and authentication record, not just the current browser session. When Demonstration Mode is disabled, this Guard does not restrict logout.
 
 ```text
 /home/user/passport/register
@@ -99,6 +95,27 @@ This prevents ordinary visitors sharing a demo account from revoking other visit
 ```
 
 These are route templates used by the built-in authentication flows. They are not a general mechanism for bypassing Demonstration Mode on arbitrary URLs.
+
+## Logout policy
+
+Logout is deliberately absent from the unconditional authentication-route exemptions. While Demonstration Mode is enabled, its behavior depends on the validated effective `bean.passport.authTokenMode`:
+
+- **`auth` (default):** `POST /home/user/passport/logout` remains a protected write. Only authenticated, active, non-anonymous whitelisted users may continue; other users receive `403` with `demo-demonstration:1001`. This prevents ordinary visitors sharing a demo account and authentication record from revoking other visitors' logins.
+- **`session`:** the Guard lets `POST /home/user/passport/logout` continue regardless of whitelist membership because logout revokes only the requesting login session. Normal Passport authentication, account-state checks, and other authorization policies still apply. This is not an authentication bypass.
+
+To enable independent logins in a shared demo deployment:
+
+```dotenv
+AUTH_TOKEN_MODE=session
+```
+
+The supported values are `auth` and `session`; the default is `auth`. The equivalent typed project-config setting is `modules['a-user'].authToken.mode`.
+
+Session mode creates a fresh identity for each login in the existing auth-token `token` field, and token refresh preserves that identity. Tabs sharing a credential share one session: logging out from one signs out the others. This is **per login, not per tab**.
+
+Session mode requires stateful tokens and does not support the refresh strategy `reissue`. Password changes, password resets, and initial password setup retain their broader security invalidation behavior. Switching auth-token modes requires coordinated workers and a new login; do not mix modes across workers or expect existing credentials to migrate automatically. See [Auth-token mode](/backend/auth-guide#auth-token-mode) for typed configuration and deployment guidance.
+
+The conditional allowance applies only to `POST` on the exact built-in route template `/home/user/passport/logout`. It does not exempt other write methods or business routes. When Demonstration Mode is disabled, this Guard does not restrict logout, but the configured auth-token mode still determines revocation behavior.
 
 ## Deploy with the `a-demo` suite
 

@@ -30,7 +30,6 @@ export interface IGuardOptionsDemonstration extends IDecoratorGuardOptionsGlobal
   methodsForWrite,
   usernameWhitelist: parseUsernameWhitelist(app.meta.env.DEMONSTRATION_USERNAME_WHITELIST),
   ignore: [
-    // '/home/user/passport/logout',
     '/home/user/passport/register',
     '/home/user/passport/login',
     '/home/user/passport/login/:module/:providerName/:clientName?',
@@ -56,6 +55,14 @@ export class GuardDemonstration extends BeanBase implements IGuardExecute {
 
     const method = this.ctx.method.toUpperCase();
     if (!options.methodsForWrite.some(item => item.toUpperCase() === method)) {
+      return next();
+    }
+
+    if (
+      method === 'POST' &&
+      this.ctx.route?.routePathRaw === '/home/user/passport/logout' &&
+      this.bean.passport.authTokenMode === 'session'
+    ) {
       return next();
     }
 

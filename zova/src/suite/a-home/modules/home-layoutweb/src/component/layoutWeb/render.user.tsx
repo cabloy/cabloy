@@ -1,5 +1,6 @@
 import { BeanRenderBase, ClientOnly } from 'zova';
 import { Render } from 'zova-module-a-bean';
+import { ZButton } from 'zova-module-basic-button';
 import { resolveImagePreviewUrl } from 'zova-module-basic-image';
 import { closeNearestDetails } from 'zova-module-home-base';
 
@@ -39,14 +40,14 @@ export class RenderUser extends BeanRenderBase {
                     </a>
                   </li>
                   <li>
-                    <a
-                      onClick={event => {
-                        this.$passport.logout().mutate();
+                    <ZButton
+                      onPerform={async event => {
                         closeNearestDetails(event);
+                        await this.$passport.logout().mutateAsync();
                       }}
                     >
                       {this.scope.locale.Logout()}
-                    </a>
+                    </ZButton>
                   </li>
                 </>
               ) : (
