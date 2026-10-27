@@ -30,7 +30,7 @@ export interface IGuardOptionsDemonstration extends IDecoratorGuardOptionsGlobal
   methodsForWrite,
   usernameWhitelist: parseUsernameWhitelist(app.meta.env.DEMONSTRATION_USERNAME_WHITELIST),
   ignore: [
-    '/home/user/passport/logout',
+    // '/home/user/passport/logout',
     '/home/user/passport/register',
     '/home/user/passport/login',
     '/home/user/passport/login/:module/:providerName/:clientName?',

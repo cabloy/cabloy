@@ -80,10 +80,13 @@ The Guard depends on Passport-resolved account state, so it makes this decision 
 
 ## Exempt authentication routes
 
-Demonstration Mode deliberately does not apply to the standard authentication and OAuth routes below. This keeps sign-in, sign-out, registration, account association and migration, OAuth callbacks, and token flows available while the write policy is active.
+Demonstration Mode deliberately does not apply to the standard authentication and OAuth routes below. This keeps sign-in, registration, account association and migration, OAuth callbacks, and token flows available while the write policy is active.
+
+In Cabloy Basic, Commerce, and Cabloy Start, `POST /home/user/passport/logout` is **not exempt**. While Demonstration Mode is enabled, only authenticated, active, non-anonymous whitelisted users may log out; other users receive `403` with `demo-demonstration:1001`.
+
+This prevents ordinary visitors sharing a demo account from revoking other visitors' logins. Whitelisted users remain able to log out. The underlying logout semantics are unchanged: logout revokes the shared login state for the current account and authentication record, not just the current browser session. When Demonstration Mode is disabled, this Guard does not restrict logout.
 
 ```text
-/home/user/passport/logout
 /home/user/passport/register
 /home/user/passport/login
 /home/user/passport/login/:module/:providerName/:clientName?

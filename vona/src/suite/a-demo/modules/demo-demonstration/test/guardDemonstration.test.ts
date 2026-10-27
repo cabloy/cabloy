@@ -29,7 +29,7 @@ function isGuardEnabledForRoute(routePathRaw: string, enable = true): boolean {
   return app.bean.onion.checkOnionOptionsEnabled({ ...options, enable }, routePathRaw);
 }
 
-describe('guardDemonstration.test.ts', () => {
+describe('guardDemonstration.test.ts', { concurrency: false }, () => {
   it('parses a trimmed, deduplicated username whitelist and exposes localized errors', async () => {
     assert.deepEqual(parseUsernameWhitelist(' admin, demo, ,admin '), ['admin', 'demo']);
     assert.deepEqual(parseUsernameWhitelist(undefined), []);
@@ -101,11 +101,10 @@ describe('guardDemonstration.test.ts', () => {
     });
   });
 
-  it('excludes only the configured authentication and OAuth route paths', () => {
+  it('exempts the configured authentication and OAuth routes but protects logout', () => {
     for (const routePathRaw of [
       '/home/user/passport/login',
       '/home/user/passport/login/:module/:providerName/:clientName?',
-      '/home/user/passport/logout',
       '/home/user/passport/register',
       '/home/user/passport/associate/:module/:providerName/:clientName?',
       '/home/user/passport/migrate/:module/:providerName/:clientName?',
@@ -116,6 +115,8 @@ describe('guardDemonstration.test.ts', () => {
     ]) {
       assert.equal(isGuardEnabledForRoute(routePathRaw), false);
     }
+    assert.equal(isGuardEnabledForRoute('/home/user/passport/logout'), true);
+    assert.equal(isGuardEnabledForRoute('/home/user/passport/logout', false), false);
     assert.equal(isGuardEnabledForRoute('/test/business/write'), true);
   });
 });
