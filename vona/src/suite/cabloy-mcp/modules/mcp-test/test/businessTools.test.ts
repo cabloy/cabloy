@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
 import { appMetadata, appResource, runWithZodQueryCoercion } from 'vona';
 import { acquireTestLock, app } from 'vona-mock';
-import { $schema, mcp, SymbolMcpOptions } from 'vona-module-a-openapiutils';
+import { $schema, Mcp, SymbolMcpOptions } from 'vona-module-a-openapiutils';
 import { createControllerToolServer, createSharedBusinessToolServer } from 'vona-module-cabloy-mcp';
 
 import { ControllerCatalog } from '../src/controller/catalog.ts';
@@ -569,7 +569,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           await assert.rejects(() => createControllerToolServer(app, 'mcp:all'), expected);
         }
         assert.throws(
-          () => (mcp.tool as any)({ name: 'class-name-is-not-valid' })(class {}),
+          () => (Mcp.tool as any)({ name: 'class-name-is-not-valid' })(class {}),
           /name is only valid on a controller action/,
         );
       } finally {

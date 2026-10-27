@@ -1,19 +1,19 @@
 # MCP Controller Tools
 
-Opt an existing Vona Controller Action into MCP mapping with `@mcp.tool()`. Reuse its request/response contract and ordinary authorization rather than writing a second business implementation. Opt-in alone does **not** expose an action on normal `/mcp`; that endpoint also requires exact server-owned construction admission.
+Opt an existing Vona Controller Action into MCP mapping with `@Mcp.tool()`. Reuse its request/response contract and ordinary authorization rather than writing a second business implementation. Opt-in alone does **not** expose an action on normal `/mcp`; that endpoint also requires exact server-owned construction admission.
 
 The current normal integration is the authenticated **shared `/mcp` endpoint** in Cabloy Basic, owned by `cabloy-mcp`, not `mcp-test`. Recognized dev/test/prod modes use the same OAuth, business-authorization and instance boundary; production is not rejected solely by mode. Unknown modes and invalid required authority configuration still fail closed. Dedicated protected audit, audit-delivery gating and deployment-wide fine-grained quotas are deferred for this two-read MVP; no audit compliance or deployment qualification is claimed. `cabloy-mcp` remains enabled by default: only the literal environment value `CABLOY_MCP_ENABLED=false` disables it. Readiness, shutdown and disabled-state checks also fail closed. The independent anonymous standalone catalog remains exactly three synthetic fixture tools owned by the `mcp-test` launcher; none is admitted on normal `/mcp`.
 
 ## Opt in explicitly
 
 ```ts
-import { mcp } from 'vona-module-a-openapiutils';
+import { Mcp } from 'vona-module-a-openapiutils';
 ```
 
 Mapping is **closed by default**:
 
-- A method-level `@mcp.tool()` opts in only that registered Controller Action.
-- A class-level `@mcp.tool()` opts in all supported, registered actions on that controller, with optional shared defaults. It does not expose arbitrary helper methods.
+- A method-level `@Mcp.tool()` opts in only that registered Controller Action.
+- A class-level `@Mcp.tool()` opts in all supported, registered actions on that controller, with optional shared defaults. It does not expose arbitrary helper methods.
 - There is **no decorator exclusion/opt-out option**. For narrower mapping eligibility, leave the class undecorated and decorate selected methods instead. Class opt-in also includes future supported actions added to that controller, but does not extend normal ingress admission.
 
 Normal shared composition admits exactly controller `training-student.controller.student`, actions `lookup` and `summary`, through the factory's construction-time `includeTool` callback. Other controllers/actions never enter that server's tool map, so neither `tools/list` nor direct `tools/call` by a known name can reach them. Training is optional: when absent, the normal catalog is empty, without fixture or other opted-in-action fallback.
@@ -25,7 +25,7 @@ MCP metadata is independent of `@Api.*` metadata. `@Api.exclude()` controls ordi
 The existing `training-student` summary action adds the following decorator without changing its HTTP DTO, serializer or permissions:
 
 ```ts
-@mcp.tool({
+@Mcp.tool({
   name: 'training_student_summary',
   description:
     'Read a student summary by ID using your current student-view permission and instance. Excludes mobile and full notes.',

@@ -239,7 +239,7 @@ Approved new finite contribution (2026-10-25): implement `training_student_looku
 Tasks:
 
 - Extract opted-in Actions' V31 contracts with `generateJsonOfControllerAction(..., { includeExcluded: true })` and prove enabled-controller/registered-route ownership; validate DTO references and response projection without treating ordinary OpenAPI publication as an allowlist.
-- Preserve default-closed `@mcp.tool()` metadata in `a-openapiutils`: method opt-in or class opt-in including future supported registered Actions, never helpers, with no opt-out. Method defaults override class values and `output.pick` arrays replace. Runtime/SDK mapping belongs to `cabloy-mcp`.
+- Preserve default-closed `@Mcp.tool()` metadata in `a-openapiutils`: method opt-in or class opt-in including future supported registered Actions, never helpers, with no opt-out. Method defaults override class values and `output.pick` arrays replace. Runtime/SDK mapping belongs to `cabloy-mcp`.
 - Validate default `module_controller_action` names or method-only overrides, collisions, descriptions, projections and schema freshness. Keep `@Api.exclude()` ordinary publication/cache behavior independent from MCP extraction. Broader production startup/atomic snapshot and deployment-policy design remains Proposed, without new MCP persistence.
 - Separate structural registry refresh from deployment policy, per-subject `tools/list`, and call-time authorization; settle locale, cache, cursor, HMR/restart, and multi-worker drift behavior against the selected protocol.
 - Keep candidate, eligible, enabled, visible, and call-authorized states distinct; DEC-MCP-06 still owns the final shape/risk/confirmation approval.
