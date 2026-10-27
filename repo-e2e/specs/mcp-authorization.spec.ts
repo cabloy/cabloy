@@ -255,6 +255,86 @@ async function callMcp(
   });
 }
 
+async function verifyStudentTools(page: Page, request: APIRequestContext, token: string) {
+  const accountToken = (await page.context().cookies()).find(
+    cookie => cookie.name === 'token',
+  )?.value;
+  expect(Boolean(accountToken)).toBe(true);
+  const headers = { Authorization: `Bearer ${accountToken}` };
+  const name = `MCP browser E2E ${randomBytes(12).toString('hex')}`;
+  const mobile = '13812345678';
+  const descriptionMarkdown = 'Synthetic MCP browser notes, not part of the tool response.';
+  const level = 1;
+  let studentId: string | number | undefined;
+  try {
+    // Use the existing authenticated REST fixture path, not MCP write authority.
+    const created = await page.request.post('/api/training/student', {
+      headers,
+      data: { name, mobile, level, content: { descriptionMarkdown } },
+    });
+    expect(created.ok()).toBe(true);
+    studentId = (await created.json()).data;
+    expect(['string', 'number']).toContain(typeof studentId);
+
+    const listed = await callMcp(request, 'tools/list', {}, token);
+    expect(listed.status()).toBe(200);
+    expect(
+      (await listed.json()).result.tools.map((tool: { name: string }) => tool.name).sort(),
+    ).toEqual(['training_student_lookup', 'training_student_summary']);
+
+    const lookup = await callMcp(
+      request,
+      'tools/call',
+      { name: 'training_student_lookup', arguments: { name, level } },
+      token,
+    );
+    expect(lookup.status()).toBe(200);
+    const found = (await lookup.json()).result;
+    expect(found.isError === true).toBe(false);
+    expect(found.structuredContent).toEqual({
+      list: [{ id: String(studentId), name, level }],
+      total: '1',
+      pageNo: 1,
+      pageSize: 10,
+      pageCount: 1,
+    });
+
+    const summary = await callMcp(
+      request,
+      'tools/call',
+      { name: 'training_student_summary', arguments: { id: found.structuredContent.list[0].id } },
+      token,
+    );
+    expect(summary.status()).toBe(200);
+    const result = (await summary.json()).result;
+    expect(result.isError === true).toBe(false);
+    expect(result.structuredContent).toEqual({
+      id: String(studentId),
+      name,
+      level,
+      levelTitle: String(level),
+      descriptionLength: descriptionMarkdown.length,
+      summaryText: `${name} is in level ${level}. Description length: ${descriptionMarkdown.length}.`,
+    });
+    for (const response of [found, result]) {
+      const wire = JSON.stringify(response);
+      for (const privateValue of [mobile, '138****5678', descriptionMarkdown]) {
+        expect(wire.includes(privateValue)).toBe(false);
+      }
+      for (const privateField of ['mobile', 'descriptionMarkdown', 'descriptionHtml']) {
+        expect(wire.includes(`"${privateField}"`)).toBe(false);
+      }
+    }
+  } finally {
+    if (studentId !== undefined) {
+      const deleted = await page.request.delete(`/api/training/student/deleteForce/${studentId}`, {
+        headers,
+      });
+      expect(deleted.ok()).toBe(true);
+    }
+  }
+}
+
 for (const scenario of [
   { name: 'omitted scope defaults to mcp:all', scope: undefined, expectedScope: 'mcp:all' },
   { name: 'explicit mcp:read', scope: 'mcp:read', expectedScope: 'mcp:read' },
@@ -331,28 +411,14 @@ for (const scenario of [
       const discovery = await callMcp(request, 'server/discover', {}, token.access_token);
       expect(discovery.status()).toBe(200);
       expect((await discovery.json()).result.supportedVersions).toContain(protocolVersion);
-      const categories = await callMcp(
-        request,
-        'tools/call',
-        { name: 'commerce_categories_list', arguments: {} },
-        token.access_token,
-      );
-      expect(categories.status()).toBe(200);
-      const result = (await categories.json()).result;
-      expect(result.isError === true).toBe(false);
-      expect(
-        result.structuredContent.list.some((item: { name: string }) => item.name === 'Electronics'),
-      ).toBe(true);
-      expect(
-        result.structuredContent.list.some((item: { name: string }) => item.name === 'Private'),
-      ).toBe(false);
+      await verifyStudentTools(page, request, token.access_token);
 
       const replay = await redeem(request, authorization, client.clientId, code);
       expect(replay.status()).toBe(400);
       expect((await replay.json()).error).toBe('invalid_grant');
       expect(errors).toEqual({ page: 0, console: 0, hydration: 0 });
       // AS rows live only in this root-run-owned disposable database, which the
-      // managed runner removes. The shared seeded account/catalogue are read-only.
+      // managed runner removes. The shared seeded account remains read-only.
     },
   );
 }
