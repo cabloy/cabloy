@@ -132,22 +132,28 @@ Traceability: `PRD-LOC-03`, `PRD-LOC-05`, `PRD-LOC-06`, `SRS-LOC-03`, `SRS-LOC-0
 
 Dependencies: `WBS-LOC-30-01`, `WBS-LOC-30-02`.
 
-Source areas: existing Vona/Zova home-base validation adapters; existing Admin/Web selectors; locale-aware backend metadata and frontend schema/resource owners; existing Basic SSR hosts and repo-e2e critical flows; root build/dependency scripts.
+Source areas: existing Admin/Web selectors; locale-aware backend metadata and frontend schema/resource owners; existing Basic SSR hosts and repo-e2e critical flows; root build/dependency scripts. Basic's Vona/Zova home-base validation adapters remain unchanged. Additional vendor validation registrations belong to an explicitly configured business-application consumer through the existing adapters, as documented in the public I18n Guide; this is not a new suite-owned application, Site or flavor.
 
 Tasks:
 
-- Extend current validation mappings for ja-jp/zh-tw and language label keys while preserving optional pack enablement and root default semantics.
-- Verify representative backend schema labels/validation and frontend validation for both new locales using existing owners.
-- Verify schema-driven language switching reacquires reactive schemas and preserves existing drafts instead of storing stale facades.
+- Retain Basic's English/Simplified Chinese validation registrations and ordinary root language policy. Keep provider language labels separate from application-owned vendor validation registration; document the ja-jp/ja and zh-tw/zhTW mapping without enabling it in Basic.
+- Verify representative backend schema labels/validation and frontend validation for both new locales using existing owners at an explicitly configured consumer boundary. Its enabled policy, validation registrations and source/configuration attribution must be named in the execution dossier; installing packs alone is insufficient.
+- Verify schema-driven language switching reacquires reactive schemas and preserves compatible drafts instead of storing stale facades.
 - Cover initial SSR/hydration and subsequent language navigation on existing Admin/Web hosts, including disabled route input, concurrent distinct-locale requests, and English/Simplified Chinese regression.
 - Build affected Basic Admin/Web SSR and REST pairs before deps:vona. If backend contract truth changes, invoke forward regeneration; do not create new APIs or hand-patch generated output to manufacture proof.
 
 Acceptance checks:
 
-- ATP-LOC-03 is rerun for both complete providers; ATP-LOC-04 and ATP-LOC-07 pass with backend/browser/SSR proof as applicable.
+- ATP-LOC-03 is rerun for both complete providers; ATP-LOC-04 and ATP-LOC-07 pass with backend/browser/SSR proof as applicable. Record the enabled consumer's application-owned Zod configuration separately from unchanged Basic-baseline regressions.
 - Typechecks and relevant paired artifact builds succeed; artifact/dependency synchronization is observed rather than assumed.
 - Browser text, schema labels, validation messages, active locale, and canonical URL are coherent without hydration warnings or cross-request preference leakage.
 - No site/flavor/admission change or persistence modification is smuggled into locale integration.
+
+Remaining acceptance boundary after user-directed simplification:
+
+- Retain the historical phase-40 results for their original candidate only. Current focused tests and paired builds do not close the full ATP-LOC-03/04/07 requirements.
+- Before resuming runtime acceptance, obtain a bounded execution dossier approval naming the actual existing consumer/configuration, exact backend/browser procedures, owned setup/cleanup, applicable reused proof and remaining assertions. No new consumer, configuration switch or test machinery is approved by this planning alignment.
+- Do not restore the rejected test-only locale-policy switch, added integration matrix or Basic ja/zhTW registrations, and do not edit shared environment identity to make acceptance runnable. If a suitable approved consumer boundary is unavailable, report that precise runtime prerequisite; keep WBS-LOC-40-01 implementation-complete and WBS-LOC-50-01 blocked rather than waive acceptance or infer release readiness.
 
 ### Phase 50: Documentation and Release Readiness
 

@@ -125,7 +125,7 @@ Traceability: `PRD-LOC-02`, `SRS-LOC-05`, `SRS-LOC-06`, `WBS-LOC-20-01`, `WBS-LO
 
 Setup:
 
-- Built existing Basic Admin/Web SSR and REST artifacts synchronized to Vona; both new languages enabled in the test configuration.
+- Built existing Basic Admin/Web SSR and REST artifacts synchronized to Vona; name and attribute the explicitly configured consumer boundary where both new languages are enabled. Ordinary Basic policy remains en-us/zh-cn; installed dictionaries do not supply this setup.
 - Existing shared Site admission and public/session profiles unchanged; use a synthetic admitted account only where an existing route requires it.
 
 Procedure:
@@ -199,7 +199,8 @@ Traceability: `PRD-LOC-06`, `SRS-LOC-11`, `WBS-LOC-30-02`.
 
 Setup:
 
-- Both packs enabled, current validation adapters configured, representative existing schema-driven form and backend validation path using synthetic values.
+- Both packs enabled at an explicitly configured existing consumer, with a representative existing schema-driven form and backend validation path using synthetic values. Attribute the consumer's source/configuration and application-owned Zod registrations: `ja-jp` to `ja`, `zh-tw` to `zhTW`, backend root default and client-only frontend setup.
+- Basic's ordinary home-base adapters retain only English/Simplified Chinese Zod registrations. Their original-language regression is separate from enabled business-application validation proof; dictionary installation alone is not validation setup.
 
 Procedure:
 
@@ -215,7 +216,7 @@ Expected result:
 
 Minimum proof:
 
-- Backend schema/error assertions, frontend validation and draft-preservation assertions, locale-owner observations, current generated artifact/build results if applicable, revision, procedures, and redacted artifacts.
+- Backend schema/error assertions, frontend validation and compatible draft-preservation assertions, locale-owner observations, current generated artifact/build results if applicable, revision, procedures, and redacted artifacts. Include the enabled consumer's policy/validation-registration attribution and unchanged Basic-baseline regression result. Public configuration examples are guidance, not observed runtime proof.
 
 Traceability: `PRD-LOC-03`, `PRD-LOC-05`, `PRD-LOC-06`, `SRS-LOC-09`, `SRS-LOC-12`, `WBS-LOC-40-01`.
 
@@ -247,6 +248,12 @@ Traceability: `PRD-LOC-06`, `SRS-LOC-12`, `WBS-LOC-50-01`.
 Backend truth remains authoritative for localized schema metadata. If an implementation change affects a DTO/OpenAPI contract, inspect emitted output and use the contract-loop specialist for forward generation. Text-only changes do not require invented schema/endpoint changes. Frontend artifacts require affected SSR and REST pairs before Vona dependency synchronization. For Vona integrated SSR isolated E2E, retain runtime API-origin handoff; do not rebuild or edit API_BASE_URL merely to match an isolated test listener.
 
 No single screenshot, source grep, generated file, or helper test substitutes for the assertions in a scenario. Runtime validation beyond the selected approved increment is deferred, not implicitly authorized.
+
+### Current acceptance boundary after simplification
+
+The [phase-40 simplification record](./evidence/phase-40/index.md#basic-baseline-zod-registration-retained) governs applicability of the historical candidate results, not the definitions above. Basic retains its ordinary language policy and original Zod registrations; the removed test-only policy switch and added integration matrix must not be recreated. Historical successes remain attributable to their original candidate and do not establish current full ATP-LOC-03/04/07 coverage.
+
+Resuming those scenarios requires a separately approved WBS-LOC-40-01 execution dossier naming the actual existing consumer, enabled configuration, validation setup where needed, exact procedures, owned fixtures/cleanup and source-scoped evidence reuse. This alignment neither selects nor creates that consumer/configuration. If the permitted boundary cannot exercise an assertion, retain the specific gap; do not substitute documentation, change Basic defaults or waive the assertion. ATP-LOC-08 full readiness remains dependent on closing WBS-LOC-40-01, while completed public-guidance proof keeps its recorded applicability. No runtime acceptance or release operation is authorized by this planning update.
 
 ## Commands
 
