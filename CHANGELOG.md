@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.243
+
+### Bug Fixes
+
+- Fix warning logging.
+- Fix logout in demonstration mode.
+- Fix Rollup build caching.
+
+### Improvements
+
+- Update the demonstration mode guide.
+
 ## 5.1.242
 
 ### Bug Fixes
