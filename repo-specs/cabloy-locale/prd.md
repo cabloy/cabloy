@@ -8,8 +8,8 @@ Provide maintainable Japanese and Traditional Chinese (Taiwan) language support 
 
 - Let maintainers distribute additional languages without changing every translated module.
 - Let application owners independently choose supported languages and the default.
-- Let users receive consistent localized text, schema labels, and validation messages across existing frontend/backend flows.
-- Preserve application overrides, existing English/Simplified Chinese behavior, startup correctness, and SSR consistency.
+- Supply reviewed localized text and schema-label keys, with guidance for application-owned vendor validation mappings.
+- Preserve application overrides, existing English/Simplified Chinese behavior and framework startup semantics; delivery does not include an enabled business-application consumer or its runtime integration verification.
 
 ## Personas
 
@@ -26,8 +26,8 @@ Provide maintainable Japanese and Traditional Chinese (Taiwan) language support 
 
 - Paired frontend/backend `cabloy-locale` suites, initially `locale-jajp` and `locale-zhtw`.
 - Cross-module Japanese (`ja-jp`) and Traditional Chinese (Taiwan) (`zh-tw`) resources for the current Cabloy Basic source inventory.
-- Necessary core error text, language names, and existing validation-library language mapping.
-- Explicit configured language selection/defaults, early registration, overrides, fallback, metadata generation, development reload behavior, and existing Admin/Web integration.
+- Necessary core error text, language names, schema-label translations, and guidance for application-owned validation-library language mapping.
+- Framework language selection/defaults, early registration, overrides, fallback, metadata generation, and development reload behavior. Existing Admin/Web consumers retain their ownership; this suite does not deliver or verify an application that enables the additional languages.
 - Inventory-based completeness and human terminology review before release.
 
 ### Deferred
@@ -37,12 +37,12 @@ Provide maintainable Japanese and Traditional Chinese (Taiwan) language support 
 
 ### Out of Scope
 
-New business pages, sites, flavors, APIs, persisted resources, identities, tenant rules, migrations, authentication policies, public dynamic registration APIs, and a replacement internationalization engine.
+New business pages, sites, flavors, APIs, persisted resources, identities, tenant rules, migrations, authentication policies, public dynamic registration APIs, and a replacement internationalization engine. Establishing or locating an enabled Japanese/Traditional Chinese business-application consumer and verifying its application-level validation, schema/draft switching, SSR, hydration, navigation or request isolation are also excluded by the user's 2026-10-27 scope correction. These are not prerequisites for this suite's delivery or readiness; excluded checks are not reported as passed.
 
 ## Primary User Journeys
 
 1. A maintainer installs a language pack but does not enable that language; available choices and the default remain unchanged.
-2. An application owner enables Japanese or Traditional Chinese and chooses a configured default; users receive that language in existing application flows.
+2. An application owner may independently enable Japanese or Traditional Chinese and configure vendor validation mappings using the public guidance. Delivering or verifying that application's integration is outside this suite.
 3. A translator updates target-module dictionaries centrally; lazy target loading and development reload preserve the documented precedence.
 4. An application owner overrides selected translated messages; the application-specific wording wins.
 5. A user encounters an untranslated message; existing fallback remains usable instead of failing the page or API.
@@ -53,7 +53,7 @@ New business pages, sites, flavors, APIs, persisted resources, identities, tenan
 - **PRD-LOC-02**: An application owner controls enabled languages and the default independently of installed language resources; unsupported saved or requested language selections cannot activate a disabled language. Traceability: `SRS-LOC-05`, `SRS-LOC-06`.
 - **PRD-LOC-03**: Existing application consumers can use contributed text from their first supported initialization/render boundary, including preload consumers and lazily loaded modules, without inconsistent SSR/client text. Traceability: `SRS-LOC-03`, `SRS-LOC-04`, `SRS-LOC-09`.
 - **PRD-LOC-04**: Application-specific target-module wording takes precedence over language-pack wording, which takes precedence over target defaults; missing messages preserve the established fallback behavior. Traceability: `SRS-LOC-02`, `SRS-LOC-07`.
-- **PRD-LOC-05**: Enabled Japanese and Traditional Chinese have reviewed module text, language names, existing schema labels, and validation messages with intact interpolation and plural conventions; incomplete translation work is not reported as complete support. Traceability: `SRS-LOC-08`, `SRS-LOC-09`.
+- **PRD-LOC-05**: Japanese and Traditional Chinese providers supply reviewed module text, language names, existing schema-label translations and core error text with intact interpolation and plural conventions. Vendor validation registration remains an application-owned choice documented by this suite, not a delivered or runtime-verified application integration; incomplete dictionary work is not reported as complete. Traceability: `SRS-LOC-08`, `SRS-LOC-09`.
 - **PRD-LOC-06**: Maintainers can generate, typecheck, develop, and prepare these language packs using normal repository workflows, without stale language overrides, hand-edited generated consumers, or automatic policy changes. Traceability: `SRS-LOC-01`, `SRS-LOC-10`, `SRS-LOC-11`, `SRS-LOC-12`.
 
 ## Business Rules
@@ -68,9 +68,11 @@ New business pages, sites, flavors, APIs, persisted resources, identities, tenan
 
 ## Launch Criteria
 
-Both language packs are present in both stacks, the accepted SRS contracts pass their applicable ATPs, translation coverage and terminology review have no unresolved release-blocking omission, and evidence is retained for the release revision. Earlier Japanese vertical-slice acceptance does not close the full two-language feature. Existing English/Simplified Chinese consumers remain functional.
+Both language packs are present in both stacks, applicable framework/dictionary/reload proof and public configuration guidance are retained, translation coverage and terminology review have no unresolved required omission, and evidence remains revision scoped. Establishing an enabled business-application consumer and its application-level runtime verification are not launch criteria. ATP-LOC-04 and the former runtime portion of ATP-LOC-07 are no longer required, not passed or temporarily waived; ATP-LOC-03 retains its framework policy scope without a new consumer-integration rerun. Existing English/Simplified Chinese behavior remains unchanged. Publication still requires separate authorization.
 
 ## Requirement Traceability
+
+Stable references to WBS-LOC-40-01 and ATP-LOC-04 below are historical associations only; that task/scenario is outside current scope. ATP-LOC-07 now covers application-configuration guidance under WBS-LOC-50-01, not runtime validation.
 
 | Product requirement | Technical owners                               | Delivery                                                   | Acceptance                                                 |
 | ------------------- | ---------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
@@ -78,7 +80,7 @@ Both language packs are present in both stacks, the accepted SRS contracts pass 
 | PRD-LOC-02          | SRS-LOC-05, SRS-LOC-06                         | WBS-LOC-20-01                                              | ATP-LOC-03                                                 |
 | PRD-LOC-03          | SRS-LOC-03, SRS-LOC-04, SRS-LOC-09             | WBS-LOC-20-01, WBS-LOC-40-01                               | ATP-LOC-01, ATP-LOC-04, ATP-LOC-07                         |
 | PRD-LOC-04          | SRS-LOC-02, SRS-LOC-07                         | WBS-LOC-20-01                                              | ATP-LOC-02                                                 |
-| PRD-LOC-05          | SRS-LOC-08, SRS-LOC-09                         | WBS-LOC-30-01, WBS-LOC-40-01                               | ATP-LOC-05, ATP-LOC-07                                     |
+| PRD-LOC-05          | SRS-LOC-08, SRS-LOC-09                         | WBS-LOC-30-01, WBS-LOC-40-01, WBS-LOC-50-01                | ATP-LOC-05, ATP-LOC-07                                     |
 | PRD-LOC-06          | SRS-LOC-01, SRS-LOC-10, SRS-LOC-11, SRS-LOC-12 | WBS-LOC-20-01, WBS-LOC-30-02, WBS-LOC-40-01, WBS-LOC-50-01 | ATP-LOC-01, ATP-LOC-04, ATP-LOC-06, ATP-LOC-07, ATP-LOC-08 |
 
 ## Related Records

@@ -8,6 +8,8 @@ The user explicitly approved the analyzed locale-module design, then confirmed t
 
 On 2026-10-25, accepted [ADR 0002](./0002-locale-provider-resource-export.md) superseded only the ordinary-resource-export and provider-aware-generator portions of decisions 3 and 8. Their original wording below is retained as design history; ADR 0002 and the updated SRS govern the current `src/locales` / `localesProvider` contract. All other boundaries remain in force.
 
+On 2026-10-27, the user explicitly clarified that this suite need not establish an actual business-application consumer or perform the corresponding runtime integration verification. This narrows decisions 7 and 10 and the validation-integration consequence below: Basic keeps its original English/Simplified Chinese policy and Zod registrations; additional validation mappings are application-owned guidance only. Existing Admin/Web hosts remain compatible consumers, not required enabled-language acceptance targets. Dictionary, framework mechanism and reload proof remain applicable; removed application-level checks are not passed checks. The current PRD/SRS/WBS/test plan govern this revised delivery boundary. No runtime or release operation is authorized by this clarification.
+
 ## Background
 
 Cabloy Basic currently has ordinary module locale resources and project-level cross-module overrides, but no active locale-capability registration phase. Additional languages must be reusable modules rather than edits scattered through every target. Existing backend language negotiation infers availability from dictionaries, whereas application enablement must be explicit and independent of installed resources.

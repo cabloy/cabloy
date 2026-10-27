@@ -6,15 +6,15 @@ This document defines executable acceptance and minimum proof for the [SRS](./sr
 
 ## Scope, Quality Priorities, and Risk
 
-Priorities are correct registration/precedence, language-policy isolation from installed packs, startup/lazy correctness, single-language metadata generation, actual translation coverage, validation/schema switching, SSR equivalence, and development reload correctness. Existing English/Simplified Chinese behavior must remain intact. No new business authorization, database lifecycle, concurrency control, or external provider flow is introduced.
+Priorities are correct registration/precedence, framework language-policy isolation from installed packs, startup/lazy correctness, single-language metadata generation, reviewed dictionary coverage, development reload correctness and accurate application-owned configuration guidance. Per the user's 2026-10-27 correction, establishing an enabled business-application consumer and validating its schema/drafts, vendor errors, SSR, hydration, navigation or request isolation are not required for this suite. Existing English/Simplified Chinese policy and adapters remain unchanged. No new business authorization, database lifecycle, concurrency control, or external provider flow is introduced.
 
 ## Verification Model
 
-| Level                | Purpose                                                                                                                                               | Limit                                                                        |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Narrow               | Focused existing unit/runtime/generator tests and typechecks for the selected increment.                                                              | Does not prove browser, complete vocabulary, SSR, or release closure.        |
-| Contract/integration | Real scoped text, configured selection, emitted locale metadata, validation, and actual loader interactions.                                          | Source inspection or mocked imports alone do not prove integration.          |
-| Full closure         | Both languages' reviewed inventory plus critical existing Admin/Web browser and SSR flows, paired artifacts, docs, and applicable regression results. | No release/publishing authorization; proof is revision/configuration scoped. |
+| Level                | Purpose                                                                                                                                                             | Limit                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Narrow               | Focused existing unit/runtime/generator tests and typechecks for the selected increment.                                                                            | Does not prove browser, complete vocabulary, SSR, or release closure.             |
+| Contract/integration | Real scoped text, configured selection, emitted locale metadata, validation, and actual loader interactions.                                                        | Source inspection or mocked imports alone do not prove integration.               |
+| Full closure         | Both languages' reviewed inventory, retained framework/reload proof and public configuration guidance; no enabled business consumer or application integration run. | No release/publishing authorization or claim that excluded runtime checks passed. |
 
 ## Test Levels and Ownership Locations
 
@@ -23,7 +23,7 @@ Reuse existing infrastructure, with focused regressions rather than a bespoke so
 - Existing [backend locale tests](../../vona/src/suite-vendor/a-test/modules/test-vona/test/locale.test.ts) retain original-language lookup regressions. Current [locale-test provider tests](../../vona/src/suite/cabloy-locale/modules/locale-test/test/provider.test.ts), [registry tests](../../vona/src/suite/cabloy-locale/modules/locale-test/test/locales.test.ts), and [policy tests](../../vona/src/suite/cabloy-locale/modules/locale-test/test/localePolicy.test.ts) own the relocated Japanese/policy assertions.
 - Verify provider export preservation under ADR 0002 through the supported metadata CLI and resulting exports/scopes. The two dedicated `localeMetadata.test.ts` files added during the proof refresh were subsequently removed at the user's request as unnecessary; their recorded executions remain historical evidence, not retained regression tests. Existing [frontend source import tests](../../zova/packages-cli/cli-set-front/test/sourceImports.test.ts) and [entry generation tests](../../zova/packages-utils/zova-vite/test/generateEntryFiles.test.ts) are supporting checks, not substitutes for provider assertions.
 - Current [frontend locale runtime tests](../../zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts) exercise SysModule/SysLocale early/lazy installation and policy fixtures; module-glob conventions support metadata discovery.
-- The independent [locale E2E suite](../../repo-e2e/specs/cabloy-locale.spec.ts) owns existing locale browser regressions; [Basic E2E](../../repo-e2e/specs/cabloy-basic.spec.ts) retains shared SSR/schema/draft flows. Add the smallest suitable assertions; do not require unrelated domain scenarios solely because locale is shared.
+- The independent [locale E2E suite](../../repo-e2e/specs/cabloy-locale.spec.ts) and [Basic E2E](../../repo-e2e/specs/cabloy-basic.spec.ts) remain existing application regressions. No additions or reruns of browser/SSR/schema/draft flows are required by this scope correction.
 - Provider-local or existing tooling test placement for deterministic inventory and placeholder checks, selected during bounded implementation. Such a check is a planned addition, not a current command.
 
 ## Fixtures, Cleanup, Privacy, and Data Minimization
@@ -96,6 +96,8 @@ Traceability: `PRD-LOC-01`, `PRD-LOC-04`, `SRS-LOC-02`, `SRS-LOC-07`, `WBS-LOC-2
 
 ### ATP-LOC-03: Make configured items and default authoritative
 
+Applicability: retain existing framework/policy and original-language proof within its recorded source scope. The former additional enabled-consumer menu/route/navigation integration run is no longer required; the procedures below do not create a new consumer or rerun prerequisite.
+
 Setup:
 
 - Isolated app/config fixtures for: both packs installed with only en-us/zh-cn enabled; ja-jp enabled/default with and without its pack; both new languages enabled; invalid empty items or default outside items.
@@ -106,7 +108,7 @@ Procedure:
 - Resolve backend request/current language and frontend active language using supported entry paths; assert installed-resource changes do not change policy.
 - Exercise no explicit selection, disabled/stale saved values, direct setters, request negotiation, SSR route selection, and navigation restoration.
 - Inspect Admin/Web menus including route-specific subsets. Compare route URL, active locale, SSR text, and hydrated client behavior for disabled matched route input.
-- Initialize invalid policy and capture its explicit error. Rerun both complete providers at consumer integration.
+- Initialize invalid policy and capture its explicit error. Existing framework policy proof retains its recorded applicability; no additional consumer-integration rerun is required.
 
 Expected result:
 
@@ -121,7 +123,9 @@ Minimum proof:
 
 Traceability: `PRD-LOC-02`, `SRS-LOC-05`, `SRS-LOC-06`, `WBS-LOC-20-01`, `WBS-LOC-40-01`.
 
-### ATP-LOC-04: Keep SSR, hydration, and subsequent navigation coherent
+### ATP-LOC-04: Former SSR, hydration, and navigation verification — Not Required
+
+Applicability: removed from current suite delivery/readiness scope by the user's 2026-10-27 correction. The procedure below is retained only to interpret historical evidence, not as a pending test, a pass, a temporary waiver or a prerequisite to establish a consumer. No execution is required.
 
 Setup:
 
@@ -195,30 +199,30 @@ Minimum proof:
 
 Traceability: `PRD-LOC-06`, `SRS-LOC-11`, `WBS-LOC-30-02`.
 
-### ATP-LOC-07: Localize validation and schema-owned UI state
+### ATP-LOC-07: Document application-owned validation and schema boundaries
+
+Applicability: the former enabled-consumer runtime validation/schema/draft procedures are no longer required after the user's 2026-10-27 correction. This ID now retains only guidance checks; historical runtime results keep their original candidate attribution and are not reclassified as current passes.
 
 Setup:
 
-- Both packs enabled at an explicitly configured existing consumer, with a representative existing schema-driven form and backend validation path using synthetic values. Attribute the consumer's source/configuration and application-owned Zod registrations: `ja-jp` to `ja`, `zh-tw` to `zhTW`, backend root default and client-only frontend setup.
-- Basic's ordinary home-base adapters retain only English/Simplified Chinese Zod registrations. Their original-language regression is separate from enabled business-application validation proof; dictionary installation alone is not validation setup.
+- Existing public I18n Guide, unchanged Basic home-base adapters and retained dictionary/guidance evidence. No enabled business consumer is required or created.
 
 Procedure:
 
-- Request locale-aware backend schemas and trigger a known validation error under ja-jp/zh-tw plus original language regressions.
-- Trigger frontend validation using the corresponding Zod mappings.
-- Open the existing schema-driven form, make a draft edit, switch language, and observe current schema-owner projections and text while checking the draft.
-- Verify selector names and compare default language behavior with root configuration.
+- Review that the guide separates installed dictionaries from enabled language policy and vendor validation registration.
+- Check the documented application-owned mappings (`ja-jp` to Zod `ja`, `zh-tw` to `zhTW`), backend root default and client-only frontend boundary against the existing adapter API.
+- Confirm Basic retains its English/Simplified Chinese policy/registrations and schema truth remains backend-owned with current locale-scoped frontend projections. Reuse retained guidance/build proof where applicable; do not run application validation, browser, draft or SSR tests for this scope.
 
 Expected result:
 
-- Representative schema labels and backend/frontend validation messages use the intended locale; no stale schema facade, duplicated metadata, or invented API owner.
-- Draft semantics are preserved, selectors display meaningful language names, and existing English/Simplified Chinese errors still work.
+- Guidance explains application ownership without enabling languages in Basic or claiming dictionary installation localizes vendor errors.
+- No actual configured consumer, runtime integration verification or new schema/API owner is a suite delivery prerequisite.
 
 Minimum proof:
 
-- Backend schema/error assertions, frontend validation and compatible draft-preservation assertions, locale-owner observations, current generated artifact/build results if applicable, revision, procedures, and redacted artifacts. Include the enabled consumer's policy/validation-registration attribution and unchanged Basic-baseline regression result. Public configuration examples are guidance, not observed runtime proof.
+- Revision-scoped guidance/source references, retained applicable documentation proof and an explicit statement that application runtime checks were removed, not passed. Static planning checks alone do not establish a new ATP pass.
 
-Traceability: `PRD-LOC-03`, `PRD-LOC-05`, `PRD-LOC-06`, `SRS-LOC-09`, `SRS-LOC-12`, `WBS-LOC-40-01`.
+Traceability: `PRD-LOC-03`, `PRD-LOC-05`, `PRD-LOC-06`, `SRS-LOC-09`, `SRS-LOC-12`, `WBS-LOC-40-01`, `WBS-LOC-50-01`.
 
 ### ATP-LOC-08: Verify guidance and release-readiness boundaries
 
@@ -228,14 +232,14 @@ Setup:
 
 Procedure:
 
-- Run docs build and verify changed local links/commands/navigation where practical; check instructions against observed CLI/runtime behavior.
-- Check current type/build/regression outcomes and applicability of each retained scenario to the candidate revision.
+- Review retained public docs build/link/command proof and its applicability. These spec-only edits do not require a fresh public-docs build or runtime verification.
+- Reconcile revision-scoped framework/dictionary/reload and guidance results. ATP-LOC-04 and the former runtime portion of ATP-LOC-07 are not required; no consumer, runtime test or artifact rebuild is introduced to replace them.
 - Review language policy migration notes, formatting exclusions, generated-file handling, evidence sanitization, release blockers, and separate publication authorization.
 
 Expected result:
 
 - Guidance accurately distinguishes resources/enablement/default/fallback and old backend configuration migration.
-- All required proof applies or a specific gap remains explicitly open; no publishing, deployment, reset, environment change, or ATP completion is inferred from planning tools.
+- In-scope retained proof and the removed application-integration scope are distinguished. No enabled-consumer prerequisite or associated verification gap blocks readiness. No publishing, deployment, reset, environment change or ATP pass is inferred from planning tools.
 
 Minimum proof:
 
@@ -249,11 +253,13 @@ Backend truth remains authoritative for localized schema metadata. If an impleme
 
 No single screenshot, source grep, generated file, or helper test substitutes for the assertions in a scenario. Runtime validation beyond the selected approved increment is deferred, not implicitly authorized.
 
-### Current acceptance boundary after simplification
+### Current acceptance boundary after the 2026-10-27 scope correction
 
-The [phase-40 simplification record](./evidence/phase-40/index.md#basic-baseline-zod-registration-retained) governs applicability of the historical candidate results, not the definitions above. Basic retains its ordinary language policy and original Zod registrations; the removed test-only policy switch and added integration matrix must not be recreated. Historical successes remain attributable to their original candidate and do not establish current full ATP-LOC-03/04/07 coverage.
+The user explicitly stated that no actual business-application consumer need be established and no corresponding verification is needed. This supersedes the prior requirement for a consumer-identifying WBS-LOC-40-01 runtime dossier. It is a permanent removal from current scope, not a temporary waiver or a successful verification result.
 
-Resuming those scenarios requires a separately approved WBS-LOC-40-01 execution dossier naming the actual existing consumer, enabled configuration, validation setup where needed, exact procedures, owned fixtures/cleanup and source-scoped evidence reuse. This alignment neither selects nor creates that consumer/configuration. If the permitted boundary cannot exercise an assertion, retain the specific gap; do not substitute documentation, change Basic defaults or waive the assertion. ATP-LOC-08 full readiness remains dependent on closing WBS-LOC-40-01, while completed public-guidance proof keeps its recorded applicability. No runtime acceptance or release operation is authorized by this planning update.
+ATP-LOC-03 retains its already recorded framework policy scope without an additional consumer-integration rerun. ATP-LOC-04 is no longer required and its procedure remains historical reference only. ATP-LOC-07 is limited to application-owned configuration guidance; its former validation/schema/draft runtime procedures are not required. No replacement consumer, configuration switch, browser matrix, SSR test or build is required. Basic retains its original policy and Zod registrations.
+
+WBS-LOC-40-01 is retained as `deferred` (out of current scope, not verified), without a required resumption. WBS-LOC-50-01 depends on the verified dictionary/reload tasks rather than this excluded increment. ATP-LOC-08 readiness considers only applicable retained framework/dictionary/reload and guidance proof. Historical evidence is unchanged and retains its original attribution; this scope correction neither proves the excluded runtime behavior nor authorizes publication.
 
 ## Commands
 
@@ -286,7 +292,7 @@ npm run docs:build
 
 ## Release Closure Gate
 
-The current Japanese-slice proof refresh under ADR 0002 closes only WBS-LOC-20-01; historical results retain their separate source limits. Full feature release readiness requires both reviewed dictionaries and all applicable scenario proof for the candidate revision, relevant type/build/docs checks, no unresolved required issue, and a truthful progress register. Runtime acceptance does not grant release/publication approval. No migration or reset is required by the approved scope.
+The current Japanese-slice proof refresh under ADR 0002 closes WBS-LOC-20-01; dictionary/reload and public-guidance proof retain their separate source limits. Current readiness uses both reviewed dictionaries and applicable retained framework/reload/guidance proof with a truthful scope/status register. No enabled business-application consumer or corresponding runtime integration verification is required. Removed checks are not marked passed, and no additional runtime/type/build run is required solely for this spec-only correction. Publication remains separately authorized; no migration or reset follows from this scope.
 
 ## Related Records
 

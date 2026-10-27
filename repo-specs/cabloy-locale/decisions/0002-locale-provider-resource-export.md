@@ -24,7 +24,7 @@ The provider interface and authoring path are explicit, while ordinary generator
 
 Before WBS-LOC-30-01 or WBS-LOC-30-02 can rely on their predecessor, re-establish applicable WBS-LOC-20-01 / ATP-LOC-01/02/03 proof for the current implementation. Retain revision-scoped redacted results durably and reconcile the existing phase-20 evidence without deleting historical successes or failures. Static planning checks cannot close this gate.
 
-No new Site, flavor, API, persistence, migration, authorization boundary, language enablement, dictionary completeness claim, or release operation is introduced. All other ADR 0001 decisions remain in force. This decision does not require another whole-baseline review.
+No new Site, flavor, API, persistence, migration, authorization boundary, language enablement, dictionary completeness claim, or release operation is introduced. Other ADR 0001 boundaries remain in force subject to its recorded 2026-10-27 application-consumer scope clarification; that clarification does not change this provider export/generation decision. This decision does not require another whole-baseline review.
 
 ## Related Records
 
