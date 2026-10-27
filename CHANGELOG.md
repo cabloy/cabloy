@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.245
+
+### Improvements
+
+- Update the home user account tests.
+
 ## 5.1.244
 
 ### Features
