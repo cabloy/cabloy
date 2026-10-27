@@ -7,6 +7,7 @@ export interface VonaConfigEnv {
   VONA_TEST_RUN_ID: string | undefined;
   APP_TITLE: string | undefined;
   APP_VERSION: string | undefined;
+  APP_LOCALE_DEFAULT: string | undefined;
   SERVER_KEYS: string | undefined;
   SERVER_GLOBALPREFIX: string | undefined;
   SERVER_PUBLICDIR: string | undefined;
