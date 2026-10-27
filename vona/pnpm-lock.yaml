@@ -1990,7 +1990,7 @@ importers:
         specifier: ^5.0.3
         version: link:modules/a-markdown
       vona-module-a-rbac:
-        specifier: ^5.0.18
+        specifier: ^5.0.19
         version: link:modules/a-rbac
       vona-module-a-socket:
         specifier: workspace:^
