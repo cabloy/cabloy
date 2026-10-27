@@ -3,9 +3,11 @@
 ## 5.1.246
 
 ### Features
+
 - Add `APP_LOCALE_DEFAULT` to configure the default application locale.
 
 ### Improvements
+
 - Enhance Markdown source mode.
 - Update dependencies in the pnpm lockfile.
 
