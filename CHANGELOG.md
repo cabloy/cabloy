@@ -3,12 +3,15 @@
 ## 5.1.244
 
 ### Features
+
 - Add `ZButton` and `AUTH_TOKEN_MODE`.
 
 ### Bug Fixes
+
 - Fix Babel plugin compatibility on Windows.
 
 ### Improvements
+
 - Refactor `mcp.tool` to `Mcp.tool`.
 
 ## 5.1.243
