@@ -492,8 +492,8 @@ test(
       await expect(userMenu).toHaveCount(1);
       await expect(userMenu.locator('summary')).toContainText(profileName);
       await userMenu.locator('summary').click();
-      const links = userMenu.locator('ul > li > a');
-      await expect(links).toHaveText(['Account Settings', 'Logout']);
+      const actions = userMenu.locator('ul > li > a, ul > li > button');
+      await expect(actions).toHaveText(['Account Settings', 'Logout']);
       await userMenu.getByText('Account Settings', { exact: true }).click();
       await expect(page).toHaveURL(accountPath);
       await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
