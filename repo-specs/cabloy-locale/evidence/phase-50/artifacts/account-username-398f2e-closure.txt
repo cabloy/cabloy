@@ -1,0 +1,78 @@
+Date: 2026-10-27
+Edition: Cabloy Basic
+Base: 398f2e270aac823a6feb0da5eac534e5867798e8
+Working tree: approved prior documentary edits and exactly two authored AccountUserName additions; base alone does not include this candidate.
+Reviewer: zhennann
+Explicit supplemental declaration: 这两个新增译文均 accept，无 correct/query
+Accepted: ja-jp home-user/AccountUserName = ユーザー名; zh-tw home-user/AccountUserName = 使用者名稱.
+Original 1548-entry acceptance remains unchanged; supplemental acceptance yields 1550 accept, zero correct, zero unresolved query.
+Observed source continuity: both source SHA-256 values and two-file binary diff match account-username-398f2e-checks.txt; no correction/source change followed acceptance.
+Source binary diff SHA-256: e81c82b47b8c00a2e18fb18da7f14d98e55e39592523b5aaa298950e6b12b8e0
+Source SHA-256 zova/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-user.ts: 18b8de02b62f2e065ea89375653e8a365ff8e2993cc58166aefd3a7b891a9179
+Source SHA-256 zova/src/suite/cabloy-locale/modules/locale-zhtw/src/lib/locales/home-user.ts: 90af17ad31e09902b85be75ce0bd637e612520f5ba7bdb39be8b698d8199cef4
+Disposition: retained focused inventory/source checks and explicit supplemental human acceptance close ATP-LOC-05 / WBS-LOC-30-01. Applicable retained framework/reload and guidance/build/link review closes revised-scope ATP-LOC-08 / WBS-LOC-50-01. ATP-LOC-07 remains guidance-only. Historical builds are not fresh HEAD builds. WBS-LOC-40-01 / ATP-LOC-04 remain excluded, not passed.
+Boundary: no further source edit, runtime test, application/docs build, artifact generation/sync, dependency operation, environment edit, reset, publication, commit or push. Only deterministic spec charts and narrow static checks follow.
+Privacy review: repository-relative paths, public/synthetic source facts and attributed human declaration only; no secrets or customer data retained. Path checking has bounded recognition; it is not secret scanning or acceptance proof.
+
+Command: node --version
+Producer exit: 0
+Sanitizer exit: 0
+v24.11.0
+
+
+Command: ./node_modules/.bin/oxfmt --write repo-specs/cabloy-locale/README.md repo-specs/cabloy-locale/progress.md repo-specs/cabloy-locale/evidence/phase-30/dictionaries.md repo-specs/cabloy-locale/evidence/phase-30/terminology-review.md repo-specs/cabloy-locale/evidence/phase-50/index.md
+Producer exit: 0
+Sanitizer exit: 0
+Finished in 35ms on 2 files using 12 threads.
+
+
+Command: ./node_modules/.bin/oxfmt --check repo-specs/cabloy-locale/README.md repo-specs/cabloy-locale/progress.md repo-specs/cabloy-locale/evidence/phase-30/dictionaries.md repo-specs/cabloy-locale/evidence/phase-30/terminology-review.md repo-specs/cabloy-locale/evidence/phase-50/index.md
+Producer exit: 0
+Sanitizer exit: 0
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 25ms on 2 files using 12 threads.
+
+
+Command: npm run spec:check -- cabloy-locale
+Producer exit: 0
+Sanitizer exit: 0
+
+> cabloy@5.1.242 spec:check
+> node ./repo-agent-governance/tools/spec-audit/audit.mjs cabloy-locale
+
+repo-specs/cabloy-locale: complete planning structure passed (32 definitions).
+Complete-baseline structure and explicit exact-ID chain.
+Static structure only; approval, semantic sufficiency, implementation, and evidence authenticity require human review.
+
+
+Command: npm run spec:charts -- cabloy-locale
+Producer exit: 0
+Sanitizer exit: 0
+
+> cabloy@5.1.242 spec:charts
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs cabloy-locale
+
+generated implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-locale (en; 4/5 verified).
+
+
+Command: npm run spec:charts:check -- cabloy-locale
+Producer exit: 0
+Sanitizer exit: 0
+
+> cabloy@5.1.242 spec:charts:check
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs --check cabloy-locale
+
+checked implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-locale (en; 4/5 verified).
+
+
+Command: git diff --check
+Producer exit: 0
+Sanitizer exit: 0
+
+
+Command: npm run --silent evidence:check -- -- repo-specs/cabloy-locale/README.md repo-specs/cabloy-locale/progress.md repo-specs/cabloy-locale/evidence/phase-30/dictionaries.md repo-specs/cabloy-locale/evidence/phase-30/terminology-review.md repo-specs/cabloy-locale/evidence/phase-50/index.md repo-specs/cabloy-locale/evidence/phase-50/artifacts/account-username-398f2e-closure.txt
+Producer exit: 0
+Sanitizer exit: 0
+

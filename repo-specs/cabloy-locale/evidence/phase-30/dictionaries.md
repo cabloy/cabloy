@@ -1,6 +1,12 @@
 # Full Dictionary Execution
 
-## Current State
+## Current supplement state — 2026-10-27
+
+**WBS-LOC-30-01: verified; ATP-LOC-05 closed for the supplemented inventory.** Reviewer `zhennann` explicitly stated “这两个新增译文均 accept，无 correct/query” on 2026-10-27, accepting Japanese `ユーザー名` and Taiwan Traditional Chinese `使用者名稱` for `home-user/AccountUserName`. Following the user's explicit next-step execution approval, both Zova home-user provider dictionaries now include AccountUserName. The existing inventory/placeholder checker passed for both stacks/packs, source format/lint and diff checks passed, and Zova now has 387 keys per language (Vona remains 320 module + 68 core). Source inventory SHA-256: `2708abc5da3821fca7e78c0553579276caecadb9b0d12ef28821da7ba3899333`. The [supplement review packet](./terminology-review.md#accountusername-supplement--2026-10-27) contains the exact Japanese/Taiwan wording, context and explicit supplemental human acceptance; [actual checks](./artifacts/account-username-398f2e-checks.txt) retain source attribution and exit codes.
+
+The original 1,548 accepted entries are unchanged; the current 1,550-entry delivery adds only these two translations. No further all-entry review, consumer integration, runtime suite or application build was run or required for this data-only supplement. Human acceptance is recorded from the subsequent explicit declaration, not inferred from execution approval or matching existing home-login terminology. Both source hashes and the two-file diff still match the tested candidate. ATP-LOC-05 is closed with 1,550 accept, zero corrections and zero unresolved queries; the dictionary prerequisite for WBS-LOC-50-01 / ATP-LOC-08 is satisfied. See [current readiness disposition](../phase-50/index.md#accountusername-supplement-disposition--2026-10-27). The records below preserve earlier revision-scoped results; the supplemental acceptance does not turn historical builds into fresh HEAD results.
+
+## Historical State
 
 **WBS-LOC-30-01: verified.** Current-candidate checks at `36756a972a` passed on 2026-10-26, including inventory, runtime tests, paired builds/sync, types and full scoped style checks; see [current reconciliation](#current-candidate-reconciliation-36756a972a). The subsequent explicit human all-entry acceptance, including the added language name, and complete expanded dispositions close ATP-LOC-05; see [final closure](#final-human-review-and-dictionary-closure-2026-10-26). Historical missing-review and failure states below remain attributed to their original execution, not the current gate.
 

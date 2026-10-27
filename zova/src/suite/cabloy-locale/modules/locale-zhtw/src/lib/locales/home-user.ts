@@ -2,6 +2,7 @@ export default {
   AccountSettings: '帳號設定',
   AccountProfile: '個人資料',
   AccountSecurity: '帳號安全性',
+  AccountUserName: '使用者名稱',
   AccountDisplayName: '顯示名稱',
   AccountLocale: '語言與地區',
   AccountTimezone: '時區',

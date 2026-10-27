@@ -1,0 +1,44 @@
+Header sanitizer exit: 0
+Date: 2026-10-27
+Base: 398f2e270aac823a6feb0da5eac534e5867798e8
+Node: v24.11.0
+Approval: user approved the bounded two-dictionary supplement and focused inventory/placeholder checks; not human language acceptance or release.
+Initial dirty scope: prior approved README/progress/phase-50 documentary records/charts and their retained artifact; no unrelated source changes.
+Source scope: zova/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-user.ts, zova/src/suite/cabloy-locale/modules/locale-zhtw/src/lib/locales/home-user.ts
+Source binary diff SHA-256: e81c82b47b8c00a2e18fb18da7f14d98e55e39592523b5aaa298950e6b12b8e0
+Source SHA-256 zova/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-user.ts: 18b8de02b62f2e065ea89375653e8a365ff8e2993cc58166aefd3a7b891a9179
+Source SHA-256 zova/src/suite/cabloy-locale/modules/locale-zhtw/src/lib/locales/home-user.ts: 90af17ad31e09902b85be75ce0bd637e612520f5ba7bdb39be8b698d8199cef4
+Terminology context: AccountUserName labels the account user name, distinct from AccountDisplayName. Japanese ユーザー名 and Taiwan Traditional Chinese 使用者名稱 reuse home-login YourUsername terminology already present in accepted packs. This is source/context consistency, not a new human accept disposition.
+Privacy: only repository-relative source facts/synthetic inventory diagnostics; path recognition is bounded and not secret scanning or acceptance proof. No runtime fixtures, database, listener, builds, generation, dependency sync or release operations.
+
+Command: node --experimental-transform-types --test vona/src/suite/cabloy-locale/modules/locale-test/test/coverage.test.ts
+Producer exit: 0
+Sanitizer exit: 0
+(node:12813) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ both language packs cover the authored release inventory without token or plural loss (119.606375ms)
+ℹ Locale inventory: {"sha256":"2708abc5da3821fca7e78c0553579276caecadb9b0d12ef28821da7ba3899333","reports":[{"stack":"vona","locale":"ja-jp","targets":28,"keys":320,"coreKeys":68,"excludedNoAuthoredKeys":["auth-oauth","auth-simple","a-cabloy","a-datasharding","a-datasource","a-layoutprofile","a-markdown","a-socket","a-ssr","a-ssrhmr","a-status","captcha-simple","a-file","file-cloudflare","file-native","a-image","image-cloudflare","image-native","a-pay","pay-mock","pay-paypal","pay-stripe","test-auth","test-cabloy","test-captcha","test-file","test-image","test-markdown","test-pay","a-aspect","a-aspectutils","a-bean","a-beanmutate","a-body","a-broadcast","a-cache","a-caching","a-core","a-election","a-error","a-event","a-executor","a-hmr","a-hmrbase","a-index","a-jwt","a-locale","a-logger","a-mail","a-menu","a-meta","a-metrics","a-onion","a-openapi","a-openapischema","a-ormdialect","a-ormutils","a-permission","a-play","a-printtip","a-queue","a-ratelimit","a-redis","a-redlock","a-retryable","a-runtime","a-schedule","a-security","a-serialization","a-startup","a-static","a-summer","a-swagger","a-telemetry","a-upload","a-vona","a-web","a-worker","a-zod","commerce-payment","commerce-seed","basic-metrics","locale-jajp","locale-test","locale-zhtw"]},{"stack":"vona","locale":"zh-tw","targets":28,"keys":320,"coreKeys":68,"excludedNoAuthoredKeys":["auth-oauth","auth-simple","a-cabloy","a-datasharding","a-datasource","a-layoutprofile","a-markdown","a-socket","a-ssr","a-ssrhmr","a-status","captcha-simple","a-file","file-cloudflare","file-native","a-image","image-cloudflare","image-native","a-pay","pay-mock","pay-paypal","pay-stripe","test-auth","test-cabloy","test-captcha","test-file","test-image","test-markdown","test-pay","a-aspect","a-aspectutils","a-bean","a-beanmutate","a-body","a-broadcast","a-cache","a-caching","a-core","a-election","a-error","a-event","a-executor","a-hmr","a-hmrbase","a-index","a-jwt","a-locale","a-logger","a-mail","a-menu","a-meta","a-metrics","a-onion","a-openapi","a-openapischema","a-ormdialect","a-ormutils","a-permission","a-play","a-printtip","a-queue","a-ratelimit","a-redis","a-redlock","a-retryable","a-runtime","a-schedule","a-security","a-serialization","a-startup","a-static","a-summer","a-swagger","a-telemetry","a-upload","a-vona","a-web","a-worker","a-zod","commerce-payment","commerce-seed","basic-metrics","locale-jajp","locale-test","locale-zhtw"]},{"stack":"zova","locale":"ja-jp","targets":23,"keys":387,"coreKeys":0,"excludedNoAuthoredKeys":["a-layoutprofile","a-rbac","rest-resource","a-pay","pay-mock","pay-paypal","pay-stripe","a-api","a-app","a-bean","a-behavior","a-behaviors","a-command","a-fetch","a-form","a-icon","a-interceptor","a-logger","a-meta","a-model","a-openapi","a-router","a-routerstack","a-routertabs","a-ssr","a-ssrhmr","a-ssrserver","a-style","a-table","a-zova","commerce-payment","commerce-promotion","commerce-siteweb","demo-todo","devui-adapter","home-api","home-icon","home-indexadmin","home-indexweb","home-layoutempty","home-passport","home-theme","basic-adapter","basic-button","basic-commands","basic-commandssync","basic-currency","basic-date","basic-input","basic-metrics","basic-pay","basic-select","basic-text","locale-jajp","locale-test","locale-zhtw"]},{"stack":"zova","locale":"zh-tw","targets":23,"keys":387,"coreKeys":0,"excludedNoAuthoredKeys":["a-layoutprofile","a-rbac","rest-resource","a-pay","pay-mock","pay-paypal","pay-stripe","a-api","a-app","a-bean","a-behavior","a-behaviors","a-command","a-fetch","a-form","a-icon","a-interceptor","a-logger","a-meta","a-model","a-openapi","a-router","a-routerstack","a-routertabs","a-ssr","a-ssrhmr","a-ssrserver","a-style","a-table","a-zova","commerce-payment","commerce-promotion","commerce-siteweb","demo-todo","devui-adapter","home-api","home-icon","home-indexadmin","home-indexweb","home-layoutempty","home-passport","home-theme","basic-adapter","basic-button","basic-commands","basic-commandssync","basic-currency","basic-date","basic-input","basic-metrics","basic-pay","basic-select","basic-text","locale-jajp","locale-test","locale-zhtw"]}]}
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 234.806458
+
+Command: ./node_modules/.bin/oxfmt --check zova/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-user.ts zova/src/suite/cabloy-locale/modules/locale-zhtw/src/lib/locales/home-user.ts
+Producer exit: 0
+Sanitizer exit: 0
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 41ms on 2 files using 12 threads.
+
+Command: ./node_modules/.bin/oxlint --disable-nested-config zova/src/suite/cabloy-locale/modules/locale-jajp/src/lib/locales/home-user.ts zova/src/suite/cabloy-locale/modules/locale-zhtw/src/lib/locales/home-user.ts
+Producer exit: 0
+Sanitizer exit: 0
+
+Command: git diff --check
+Producer exit: 0
+Sanitizer exit: 0

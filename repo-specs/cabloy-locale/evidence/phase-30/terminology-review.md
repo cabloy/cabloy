@@ -1,6 +1,25 @@
 # Terminology Review Handoff
 
-## Review State
+## AccountUserName Supplement — 2026-10-27
+
+Current review boundary: the user approved “同意，请执行下一步” for the bounded two-dictionary supplement, focused inventory/placeholder verification and readiness reconciliation. That execution approval did not supply language acceptance. On 2026-10-27, reviewer `zhennann` subsequently supplied the explicit supplemental declaration:
+
+> 这两个新增译文均 accept，无 correct/query
+
+The declaration covers exactly the two displayed translations below at base `398f2e270aac823a6feb0da5eac534e5867798e8` plus the retained two-file source diff SHA-256 `e81c82b47b8c00a2e18fb18da7f14d98e55e39592523b5aaa298950e6b12b8e0`. Both source hashes still match the tested candidate; no correction or source change followed acceptance. Base `398f2e270aac823a6feb0da5eac534e5867798e8`, dirty with the preceding approved documentary closeout; exact two-file diff/hash and successful checks are retained in [supplement checks](./artifacts/account-username-398f2e-checks.txt).
+
+| Locale | Target / key | Added text | Source meaning / context | Human disposition |
+| --- | --- | --- | --- | --- |
+| ja-jp | home-user / AccountUserName | `ユーザー名` | `User name` / `用户名`; account user name, distinct from display name | accept; no correct/query; reviewer `zhennann` |
+| zh-tw | home-user / AccountUserName | `使用者名稱` | Same account label, distinct from `AccountDisplayName` | accept; no correct/query; reviewer `zhennann` |
+
+Both values reuse the corresponding already accepted `home-login/YourUsername` wording. Claude Code checked source meaning and consistency; the human acceptance comes from the subsequent explicit declaration above, not that automated review. The original 1,548-entry acceptance remains valid for unchanged entries, and the new declaration accepts the two additions. Current delivered total is 1,550 accepted entries, with zero corrections and zero unresolved queries; no repeated all-entry review was required.
+
+The existing inventory test passes for both stacks/packs, including exact target/key parity, nonempty text, message kind, placeholders/format tokens, plural variants and the callable email entry. Source inventory SHA-256 is `2708abc5da3821fca7e78c0553579276caecadb9b0d12ef28821da7ba3899333`: Vona remains 28 targets / 320 module + 68 core keys per language; Zova is 23 targets / 387 keys per language. Source format/lint and diff checks pass. No test code, generator, metadata, imports, route, API, policy, Zod adapter, runtime state or SSR behavior changed. No application build, consumer/runtime integration verification, dependency sync or publication was performed.
+
+WBS-LOC-30-01 / ATP-LOC-05 are `verified` for the supplemented inventory. The explicit two-entry declaration closes the remaining language gate for WBS-LOC-50-01 / ATP-LOC-08; see [current readiness reconciliation](../phase-50/index.md#accountusername-supplement-disposition--2026-10-27). ATP-LOC-07 guidance review remains satisfied; excluded phase-40 verification is not reinstated. No further terminology decision, implementation approval or broad rerun is pending. Publication remains separate.
+
+## Historical Review State
 
 **WBS-LOC-30-01: verified.** On 2026-10-26, reviewer `zhennann` explicitly declared all current Japanese/Taiwan Traditional Chinese entries accepted, with no corrections or queries, including the added language name. The [current all-entry disposition](#current-all-entry-acceptance-2026-10-26) supersedes the earlier missing-disposition gate. The earlier execution approval alone was not language acceptance. No dictionary source was changed during this reconciliation.
 
