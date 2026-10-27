@@ -189,123 +189,133 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
         role="toolbar"
         aria-label={this.scope.locale.MarkdownToolbar()}
       >
-        {this._toolbarButton(':editor:undo', this.scope.locale.Undo(), () => this.undo(), {
-          disabled: !state.canUndo,
-        })}
-        {this._toolbarButton(':editor:redo', this.scope.locale.Redo(), () => this.redo(), {
-          disabled: !state.canRedo,
-        })}
-        <select
-          class="select select-sm select-bordered w-auto min-w-28"
-          aria-label={this.scope.locale.BlockStyle()}
-          value={state.headingLevel ? `heading-${state.headingLevel}` : 'paragraph'}
-          onMousedown={event => {
-            event.stopPropagation();
-          }}
-          onChange={event => {
-            event.stopPropagation();
-            const value = (event.target as HTMLSelectElement).value;
-            if (value === 'paragraph') {
-              this.setParagraph();
-            } else if (value.startsWith('heading-')) {
-              this.setHeading(Number(value.slice('heading-'.length)) as 1 | 2 | 3 | 4 | 5 | 6);
-            }
-          }}
-        >
-          <option value="paragraph">{this.scope.locale.Paragraph()}</option>
-          <option value="heading-1">{this.scope.locale.Heading1()}</option>
-          <option value="heading-2">{this.scope.locale.Heading2()}</option>
-          <option value="heading-3">{this.scope.locale.Heading3()}</option>
-          <option value="heading-4">{this.scope.locale.Heading4()}</option>
-          <option value="heading-5">{this.scope.locale.Heading5()}</option>
-          <option value="heading-6">{this.scope.locale.Heading6()}</option>
-        </select>
         {this._toolbarButton(
-          ':editor:format-bold',
-          this.scope.locale.Bold(),
-          () => this.toggleBold(),
-          { active: state.bold, disabled: !state.canBold },
+          ':editor:source-outline',
+          this.scope.locale.SourceMode(),
+          () => this.toggleSourceMode(),
+          { active: this.sourceMode, disabled: !this.editor || imageUploader?.isUploading },
         )}
-        {this._toolbarButton(
-          ':editor:format-italic',
-          this.scope.locale.Italic(),
-          () => this.toggleItalic(),
-          { active: state.italic, disabled: !state.canItalic },
+        {!this.sourceMode && (
+          <>
+            {this._toolbarButton(':editor:undo', this.scope.locale.Undo(), () => this.undo(), {
+              disabled: !state.canUndo,
+            })}
+            {this._toolbarButton(':editor:redo', this.scope.locale.Redo(), () => this.redo(), {
+              disabled: !state.canRedo,
+            })}
+            <select
+              class="select select-sm select-bordered w-auto min-w-28"
+              aria-label={this.scope.locale.BlockStyle()}
+              value={state.headingLevel ? `heading-${state.headingLevel}` : 'paragraph'}
+              onMousedown={event => {
+                event.stopPropagation();
+              }}
+              onChange={event => {
+                event.stopPropagation();
+                const value = (event.target as HTMLSelectElement).value;
+                if (value === 'paragraph') {
+                  this.setParagraph();
+                } else if (value.startsWith('heading-')) {
+                  this.setHeading(Number(value.slice('heading-'.length)) as 1 | 2 | 3 | 4 | 5 | 6);
+                }
+              }}
+            >
+              <option value="paragraph">{this.scope.locale.Paragraph()}</option>
+              <option value="heading-1">{this.scope.locale.Heading1()}</option>
+              <option value="heading-2">{this.scope.locale.Heading2()}</option>
+              <option value="heading-3">{this.scope.locale.Heading3()}</option>
+              <option value="heading-4">{this.scope.locale.Heading4()}</option>
+              <option value="heading-5">{this.scope.locale.Heading5()}</option>
+              <option value="heading-6">{this.scope.locale.Heading6()}</option>
+            </select>
+            {this._toolbarButton(
+              ':editor:format-bold',
+              this.scope.locale.Bold(),
+              () => this.toggleBold(),
+              { active: state.bold, disabled: !state.canBold },
+            )}
+            {this._toolbarButton(
+              ':editor:format-italic',
+              this.scope.locale.Italic(),
+              () => this.toggleItalic(),
+              { active: state.italic, disabled: !state.canItalic },
+            )}
+            {this._toolbarButton(
+              ':editor:format-strikethrough',
+              this.scope.locale.Strikethrough(),
+              () => this.toggleStrike(),
+              { active: state.strike, disabled: !state.canStrike },
+            )}
+            {this._toolbarButton(
+              ':editor:code',
+              this.scope.locale.InlineCode(),
+              () => this.toggleCode(),
+              { active: state.code, disabled: !state.canCode },
+            )}
+            {this._toolbarButton(
+              ':editor:insert-link-outline',
+              this.scope.locale.Link(),
+              () => {
+                void this.editLink();
+              },
+              { active: state.link, disabled: !state.canLink },
+            )}
+            {this._toolbarButton(
+              ':editor:bookmark',
+              this.scope.locale.Highlight(),
+              () => this.toggleHighlight(),
+              { active: state.highlight, disabled: !state.canHighlight },
+            )}
+            {this._toolbarButton(
+              ':editor:format-list-bulleted',
+              this.scope.locale.BulletList(),
+              () => this.toggleBulletList(),
+              { active: state.bulletList, disabled: !state.canBulletList },
+            )}
+            {this._toolbarButton(
+              ':editor:format-list-numbered',
+              this.scope.locale.OrderedList(),
+              () => this.toggleOrderedList(),
+              { active: state.orderedList, disabled: !state.canOrderedList },
+            )}
+            {this._toolbarButton(
+              ':editor:task-alt',
+              this.scope.locale.TaskList(),
+              () => this.toggleTaskList(),
+              { active: state.taskList, disabled: !state.canTaskList },
+            )}
+            {this._toolbarButton(
+              ':editor:format-quote',
+              this.scope.locale.Blockquote(),
+              () => this.toggleBlockquote(),
+              { active: state.blockquote, disabled: !state.canBlockquote },
+            )}
+            {this._toolbarButton(
+              ':editor:code-block',
+              this.scope.locale.CodeBlock(),
+              () => this.toggleCodeBlock(),
+              { active: state.codeBlock, disabled: !state.canCodeBlock },
+            )}
+            {this._toolbarButton(
+              ':editor:horizontal-rule',
+              this.scope.locale.HorizontalRule(),
+              () => this.setHorizontalRule(),
+              { disabled: !state.canHorizontalRule },
+            )}
+            {imageUploader &&
+              this._toolbarButton(
+                ':editor:image-outline',
+                this.scope.locale.InsertImage(),
+                () => {
+                  this.beginImageUpload(imageUploader.chooseFiles);
+                },
+                {
+                  disabled: imageUploader.isUploading || imageUploader.policy.pending,
+                },
+              )}
+            {this._renderTablePickerTrigger()}
+          </>
         )}
-        {this._toolbarButton(
-          ':editor:format-strikethrough',
-          this.scope.locale.Strikethrough(),
-          () => this.toggleStrike(),
-          { active: state.strike, disabled: !state.canStrike },
-        )}
-        {this._toolbarButton(
-          ':editor:code',
-          this.scope.locale.InlineCode(),
-          () => this.toggleCode(),
-          { active: state.code, disabled: !state.canCode },
-        )}
-        {this._toolbarButton(
-          ':editor:insert-link-outline',
-          this.scope.locale.Link(),
-          () => {
-            void this.editLink();
-          },
-          { active: state.link, disabled: !state.canLink },
-        )}
-        {this._toolbarButton(
-          ':editor:bookmark',
-          this.scope.locale.Highlight(),
-          () => this.toggleHighlight(),
-          { active: state.highlight, disabled: !state.canHighlight },
-        )}
-        {this._toolbarButton(
-          ':editor:format-list-bulleted',
-          this.scope.locale.BulletList(),
-          () => this.toggleBulletList(),
-          { active: state.bulletList, disabled: !state.canBulletList },
-        )}
-        {this._toolbarButton(
-          ':editor:format-list-numbered',
-          this.scope.locale.OrderedList(),
-          () => this.toggleOrderedList(),
-          { active: state.orderedList, disabled: !state.canOrderedList },
-        )}
-        {this._toolbarButton(
-          ':editor:task-alt',
-          this.scope.locale.TaskList(),
-          () => this.toggleTaskList(),
-          { active: state.taskList, disabled: !state.canTaskList },
-        )}
-        {this._toolbarButton(
-          ':editor:format-quote',
-          this.scope.locale.Blockquote(),
-          () => this.toggleBlockquote(),
-          { active: state.blockquote, disabled: !state.canBlockquote },
-        )}
-        {this._toolbarButton(
-          ':editor:code-block',
-          this.scope.locale.CodeBlock(),
-          () => this.toggleCodeBlock(),
-          { active: state.codeBlock, disabled: !state.canCodeBlock },
-        )}
-        {this._toolbarButton(
-          ':editor:horizontal-rule',
-          this.scope.locale.HorizontalRule(),
-          () => this.setHorizontalRule(),
-          { disabled: !state.canHorizontalRule },
-        )}
-        {imageUploader &&
-          this._toolbarButton(
-            ':editor:image-outline',
-            this.scope.locale.InsertImage(),
-            () => {
-              this.beginImageUpload(imageUploader.chooseFiles);
-            },
-            {
-              disabled: imageUploader.isUploading || imageUploader.policy.pending,
-            },
-          )}
-        {this._renderTablePickerTrigger()}
       </div>
     );
   }
@@ -454,7 +464,7 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
                   !$$formField.field.state.meta.isValid && 'border-error',
                 ]}
                 onClick={() => {
-                  if (!this.readonly) {
+                  if (!this.readonly && !this.sourceMode) {
                     this.editor?.commands.focus();
                   }
                 }}
@@ -476,14 +486,37 @@ export class RenderFormFieldMarkdown extends BeanRenderBase {
                             slotDefault={state => this._renderToolbar(state)}
                           ></ZImageUploader>
                         )}
-                        {!this.readonly && this.editor && this._renderTableToolbar()}
-                        {!this.readonly && this.editor && this._renderCodeBlockToolbar()}
+                        {!this.readonly &&
+                          !this.sourceMode &&
+                          this.editor &&
+                          this._renderTableToolbar()}
+                        {!this.readonly &&
+                          !this.sourceMode &&
+                          this.editor &&
+                          this._renderCodeBlockToolbar()}
                         {this.imageUploadError && (
                           <p class="px-4 pt-3 text-sm text-error" role="alert" aria-live="polite">
                             {this.imageUploadError}
                           </p>
                         )}
-                        <EditorContent editor={this.editor} class={this.cMarkdown} />
+                        <EditorContent
+                          editor={this.editor}
+                          class={this.cMarkdown}
+                          style={{ display: this.sourceMode ? 'none' : undefined }}
+                        />
+                        {this.sourceMode && (
+                          <textarea
+                            class="block min-h-96 w-full resize-y rounded-b-box bg-base-100 p-4 font-mono text-sm text-base-content outline-none"
+                            aria-label={this.scope.locale.MarkdownSource()}
+                            spellcheck={false}
+                            readonly={this.readonly}
+                            value={this.value}
+                            onInput={event => {
+                              this.handleSourceInput((event.target as HTMLTextAreaElement).value);
+                            }}
+                            onBlur={() => this.handleSourceBlur()}
+                          ></textarea>
+                        )}
                       </>
                     ),
                     placeholder: () => <div class="min-h-96 p-4" aria-hidden="true"></div>,

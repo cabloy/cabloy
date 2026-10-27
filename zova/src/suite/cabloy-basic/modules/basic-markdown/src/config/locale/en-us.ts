@@ -22,6 +22,8 @@ export default {
   Link: 'Link',
   LinkUrl: 'Link URL',
   MarkdownToolbar: 'Markdown toolbar',
+  MarkdownSource: 'Markdown source',
+  SourceMode: 'Source editing mode',
   OrderedList: 'Ordered list',
   Paragraph: 'Paragraph',
   PlainText: 'Plain text',
