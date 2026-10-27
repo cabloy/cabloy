@@ -11,7 +11,7 @@ function tool(options: IMcpToolOptions): MethodDecorator;
 function tool(options: IMcpToolOptions = {}): ClassDecorator & MethodDecorator {
   return function (target: object, prop?: MetadataKey, descriptor?: PropertyDescriptor) {
     if (prop === undefined && options.name !== undefined) {
-      throw new Error('mcp.tool name is only valid on a controller action');
+      throw new Error('Mcp.tool name is only valid on a controller action');
     }
     // An options object, including an empty one, is the explicit opt-in marker.
     const metadata = appMetadata.getOwnMetadataMap(
@@ -25,4 +25,4 @@ function tool(options: IMcpToolOptions = {}): ClassDecorator & MethodDecorator {
   } as ClassDecorator & MethodDecorator;
 }
 
-export const mcp = { tool };
+export const Mcp = { tool };
