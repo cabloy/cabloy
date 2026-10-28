@@ -20,7 +20,9 @@ export class RenderTabs extends BeanRenderBase {
       return this._renderMenuItem(tab.info as TypeMenuItem, true, tab.tabKey);
     });
     const domWrapper = (
-      <ul class="menu menu-horizontal w-max min-w-full flex-nowrap gap-1 px-0">{domTabs}</ul>
+      <ul class="menu menu-horizontal w-full flex-wrap gap-1 px-0 lg:w-max lg:min-w-full lg:flex-nowrap">
+        {domTabs}
+      </ul>
     );
     if (!$$modelTabs.cache) return domWrapper;
     return <ClientOnly>{domWrapper}</ClientOnly>;

@@ -1034,7 +1034,7 @@ importers:
         specifier: ^5.1.95
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.176
+        specifier: ^5.1.177
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -1291,7 +1291,7 @@ importers:
         specifier: ^5.1.36
         version: link:modules/a-style
       zova-module-a-table:
-        specifier: ^5.1.45
+        specifier: ^5.1.46
         version: link:modules/a-table
       zova-module-a-zod:
         specifier: ^5.1.39

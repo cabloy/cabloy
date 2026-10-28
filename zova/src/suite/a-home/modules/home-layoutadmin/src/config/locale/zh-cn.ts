@@ -1,5 +1,9 @@
 export default {
   'Home': '首页',
+  'MoreActions': '更多操作',
+  'Language': '语言',
+  'ColorMode': '明暗模式',
+  'Theme': '主题',
   'Logout': '退出登录',
   'Account Settings': '账户设置',
   'LanguageEnglish': '英语',

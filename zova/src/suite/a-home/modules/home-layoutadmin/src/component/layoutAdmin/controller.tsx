@@ -40,14 +40,28 @@ export class ControllerLayoutAdmin extends BeanControllerBase {
   private viewportWidth: number = 0;
   private _windowResizeHandler?: () => void;
 
+  headerActionsOpen = false;
+  headerActionsId = 'home-layoutadmin-header-actions';
+  private _headerActionsElement?: HTMLDivElement;
+  private _headerOutsideHandler: (event: PointerEvent) => void;
+  private _headerClickHandler: (event: MouseEvent) => void;
+
   protected async __init__() {
+    this._headerClickHandler = event => this.onHeaderActionsClick(event);
+    this._headerOutsideHandler = event => {
+      if (event.target instanceof Node && !this._headerActionsElement?.contains(event.target)) {
+        this.closeHeaderActions();
+      }
+    };
     // viewport
     if (process.env.CLIENT) {
       this._windowResizeHandler = () => {
         this.viewportWidth = document.documentElement.clientWidth;
+        this.closeHeaderActions();
       };
       this._windowResizeHandler();
       window.addEventListener('resize', this._windowResizeHandler);
+      document.addEventListener('pointerdown', this._headerOutsideHandler);
     }
     // belowBreakpoint
     this.belowBreakpoint = this.$computed(() => {
@@ -83,8 +97,77 @@ export class ControllerLayoutAdmin extends BeanControllerBase {
   }
 
   protected __dispose__() {
+    this.setHeaderActionsElement();
     if (this._windowResizeHandler) {
       window.removeEventListener('resize', this._windowResizeHandler);
+      document.removeEventListener('pointerdown', this._headerOutsideHandler);
+    }
+  }
+
+  setHeaderActionsElement(element?: HTMLDivElement) {
+    if (element === this._headerActionsElement) return;
+    this._headerActionsElement?.removeEventListener('click', this._headerClickHandler, true);
+    this._headerActionsElement = element;
+    element?.addEventListener('click', this._headerClickHandler, true);
+  }
+
+  toggleHeaderActions() {
+    if (this.headerActionsOpen) {
+      this.closeHeaderActions();
+    } else {
+      this.headerActionsOpen = true;
+    }
+  }
+
+  closeHeaderActions(restoreFocus = false) {
+    this.headerActionsOpen = false;
+    this._headerActionsElement
+      ?.querySelectorAll<HTMLDetailsElement>('details[open]')
+      .forEach(details => {
+        details.open = false;
+      });
+    if (restoreFocus) {
+      this._headerActionsElement?.querySelector<HTMLButtonElement>('button')?.focus();
+    }
+  }
+
+  onHeaderActionsFocusout(event: FocusEvent) {
+    if (
+      this.headerActionsOpen &&
+      (!(event.relatedTarget instanceof Node) ||
+        !this._headerActionsElement?.contains(event.relatedTarget))
+    ) {
+      this.closeHeaderActions();
+    }
+  }
+
+  onHeaderActionsClick(event: MouseEvent) {
+    if (!this.headerActionsOpen || !(event.target instanceof Element)) return;
+    const action = event.target.closest('a, button');
+    if (action?.closest('details') && !action.matches(':disabled, [aria-disabled="true"]')) {
+      this.closeHeaderActions(true);
+    }
+  }
+
+  onHeaderActionsKeydown(event: KeyboardEvent) {
+    if (
+      event.key !== 'Escape' ||
+      event.defaultPrevented ||
+      !(event.target instanceof Element) ||
+      event.target.closest('dialog[open], [role="dialog"]')
+    ) {
+      return;
+    }
+    const details = event.target.closest<HTMLDetailsElement>('details[open]');
+    if (details) {
+      event.preventDefault();
+      event.stopPropagation();
+      details.open = false;
+      details.querySelector<HTMLElement>('summary')?.focus();
+    } else if (this.headerActionsOpen) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.closeHeaderActions(true);
     }
   }
 

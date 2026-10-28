@@ -1,5 +1,7 @@
+import { classes } from 'typestyle';
 import { BeanRenderBase, Use } from 'zova';
 import { Render } from 'zova-module-a-bean';
+import { ZIcon } from 'zova-module-a-icon';
 
 import type { RenderLayoutAdmin } from './render.tsx';
 
@@ -36,13 +38,38 @@ export class RenderHeader extends BeanRenderBase {
           </div>
           <div class="text-xl px-4">{this.sys.env.APP_TITLE}</div>
           <div class="mx-2 min-w-0 flex-2 px-2">{this.$$r.$$renderTabs.renderTabItems()}</div>
-          <div class="hidden flex-none lg:block">
-            <ul class="menu menu-horizontal">
-              {this.$$r.$$renderLocale.render()}
-              {this.$$r.$$renderTheme.renderThemeDark()}
-              {this.$$r.$$renderTheme.renderThemeName()}
-              {this.$$r.$$renderUser.render()}
-            </ul>
+          <div
+            ref={ref => this.setHeaderActionsElement((ref as HTMLDivElement | null) ?? undefined)}
+            class={classes('relative flex-none', this.cHeaderActions)}
+            data-testid="header-actions"
+            onFocusout={event => this.onHeaderActionsFocusout(event)}
+            onKeydown={event => this.onHeaderActionsKeydown(event)}
+          >
+            <button
+              type="button"
+              class="btn btn-square btn-ghost lg:hidden"
+              aria-label={this.scope.locale.MoreActions()}
+              aria-expanded={this.headerActionsOpen}
+              aria-controls={this.headerActionsId}
+              onClick={() => this.toggleHeaderActions()}
+            >
+              <ZIcon name="::more-horiz" width={24} aria-hidden="true" />
+            </button>
+            <div
+              id={this.headerActionsId}
+              class={classes(
+                'header-actions-panel absolute right-0 top-full z-30 rounded-box bg-base-100 shadow-lg lg:static lg:bg-transparent lg:shadow-none',
+                this.headerActionsOpen ? 'block' : 'hidden',
+                'lg:block',
+              )}
+            >
+              <ul class="menu w-full lg:w-auto lg:menu-horizontal">
+                {this.$$r.$$renderLocale.render()}
+                {this.$$r.$$renderTheme.renderThemeDark()}
+                {this.$$r.$$renderTheme.renderThemeName()}
+                {this.$$r.$$renderUser.render()}
+              </ul>
+            </div>
           </div>
         </div>
         <div class="navbar bg-base-300 w-full">{this.$$r.$$renderTabs.renderTabs()}</div>

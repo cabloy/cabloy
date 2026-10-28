@@ -24,7 +24,18 @@ export class RenderUser extends BeanRenderBase {
           <ul class="bg-base-100 rounded-t-none p-2 w-32">
             <li>
               <a
+                href={this.$router.getPagePath('/home/user/account')}
                 onClick={event => {
+                  if (
+                    event.button !== 0 ||
+                    event.metaKey ||
+                    event.ctrlKey ||
+                    event.shiftKey ||
+                    event.altKey
+                  ) {
+                    return;
+                  }
+                  event.preventDefault();
                   this.app.$gotoPage('/home/user/account');
                   closeNearestDetails(event);
                 }}
