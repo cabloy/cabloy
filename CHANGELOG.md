@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.247
+
+### Improvements
+
+- Improve fixed table column behavior on mobile devices.
+
 ## 5.1.246
 
 ### Features
