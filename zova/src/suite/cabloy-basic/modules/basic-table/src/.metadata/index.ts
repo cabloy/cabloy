@@ -4,6 +4,7 @@ export * from '../component/actionColumnConfig/controller.tsx';
 export * from '../component/actionCreate/controller.tsx';
 export * from '../component/actionDeleteBulk/controller.tsx';
 export * from '../component/actionRefresh/controller.tsx';
+export * from '../component/rowOperations/controller.tsx';
 export * from '../component/table/controller.tsx';
 
 import 'zova';
@@ -33,6 +34,11 @@ declare module 'zova-module-basic-table' {
           get scope(): ScopeModuleBasicTable;
         }
 
+        export interface ControllerRowOperations {
+          /** @internal */
+          get scope(): ScopeModuleBasicTable;
+        }
+
         export interface ControllerTable {
           /** @internal */
           get scope(): ScopeModuleBasicTable;
@@ -44,6 +50,7 @@ import type { ControllerActionColumnConfig } from '../component/actionColumnConf
 import type { ControllerActionCreate } from '../component/actionCreate/controller.tsx';
 import type { ControllerActionDeleteBulk } from '../component/actionDeleteBulk/controller.tsx';
 import type { ControllerActionRefresh } from '../component/actionRefresh/controller.tsx';
+import type { ControllerRowOperations } from '../component/rowOperations/controller.tsx';
 import type { ControllerTable } from '../component/table/controller.tsx';
 import 'zova';
 declare module 'zova' {
@@ -52,6 +59,7 @@ declare module 'zova' {
 'basic-table.controller.actionCreate': ControllerActionCreate;
 'basic-table.controller.actionDeleteBulk': ControllerActionDeleteBulk;
 'basic-table.controller.actionRefresh': ControllerActionRefresh;
+'basic-table.controller.rowOperations': ControllerRowOperations;
 'basic-table.controller.table': ControllerTable;
   }
 }
@@ -66,6 +74,8 @@ export * from './component/actionDeleteBulk.ts';
 import { ZActionDeleteBulk } from './component/actionDeleteBulk.ts';
 export * from './component/actionRefresh.ts';
 import { ZActionRefresh } from './component/actionRefresh.ts';
+export * from './component/rowOperations.ts';
+import { ZRowOperations } from './component/rowOperations.ts';
 export * from './component/table.ts';
 import { ZTable } from './component/table.ts';
 export const components = {
@@ -73,6 +83,7 @@ export const components = {
 'actionCreate': ZActionCreate,
 'actionDeleteBulk': ZActionDeleteBulk,
 'actionRefresh': ZActionRefresh,
+'rowOperations': ZRowOperations,
 'table': ZTable,
 };
 import 'zova';
@@ -82,6 +93,7 @@ export interface IComponentRecord {
 'basic-table:actionCreate': ControllerActionCreate;
 'basic-table:actionDeleteBulk': ControllerActionDeleteBulk;
 'basic-table:actionRefresh': ControllerActionRefresh;
+'basic-table:rowOperations': ControllerRowOperations;
 'basic-table:table': ControllerTable;
 }
 export interface IZovaComponentRecord {
@@ -89,6 +101,7 @@ export interface IZovaComponentRecord {
 'basic-table:actionCreate': typeof ZActionCreate;
 'basic-table:actionDeleteBulk': typeof ZActionDeleteBulk;
 'basic-table:actionRefresh': typeof ZActionRefresh;
+'basic-table:rowOperations': typeof ZRowOperations;
 'basic-table:table': typeof ZTable;
 }
 }

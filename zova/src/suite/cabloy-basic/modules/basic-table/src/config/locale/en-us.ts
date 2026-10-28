@@ -1,5 +1,9 @@
 export default {
   Create: 'Create',
+  Edit: 'Edit',
+  Delete: 'Delete',
+  MoreActions: 'More actions',
+  RowActions: 'Row actions',
   DeleteConfirm: 'Are you sure you want to delete this item?',
   SelectAllPageRows: 'Select all rows on this page',
   SelectRow: 'Select row %s',

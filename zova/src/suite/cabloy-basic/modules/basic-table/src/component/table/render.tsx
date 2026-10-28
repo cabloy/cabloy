@@ -1,4 +1,4 @@
-import type { AriaAttributes, CSSProperties } from 'vue';
+import type { AriaAttributes, CSSProperties, ComponentPublicInstance } from 'vue';
 
 import { FlexRender } from '@tanstack/vue-table';
 import { BeanRenderBase } from 'zova';
@@ -9,27 +9,39 @@ import { ControllerTable, TableColumnIdSelection, ZTable } from 'zova-module-a-t
 export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
   public render() {
     return (
-      <ZTable
-        data={this.$props.data}
-        schema={this.$props.schema}
-        schemaOrder={this.$props.schemaOrder}
-        sorting={this.$props.sorting}
-        onSortingChange={this.$props.onSortingChange}
-        enableRowSelection={this.$props.enableRowSelection}
-        selectionMode={this.$props.selectionMode}
-        rowSelection={this.$props.rowSelection}
-        onRowSelectionChange={this.$props.onRowSelectionChange}
-        tableScope={this.$props.tableScope}
-        getColumns={this.$props.getColumns}
-        getRowId={this.$props.getRowId}
-        layout={this.$props.layout}
-        controllerRef={ref => {
-          this.$props?.tableRef?.(ref);
+      <div
+        class="min-w-0 max-w-full overflow-x-auto"
+        data-table-compact={this.compact ? 'true' : 'false'}
+        ref={(element: Element | ComponentPublicInstance | null) => {
+          if (this.ctx.disposed) return;
+          this.setContainer?.((element as HTMLElement | null) ?? undefined);
         }}
-        slotDefault={$$table => {
-          return this._renderTable($$table);
-        }}
-      ></ZTable>
+      >
+        <ZTable
+          data={this.$props.data}
+          schema={this.$props.schema}
+          schemaOrder={this.$props.schemaOrder}
+          sorting={this.$props.sorting}
+          onSortingChange={this.$props.onSortingChange}
+          enableRowSelection={this.$props.enableRowSelection}
+          selectionMode={this.$props.selectionMode}
+          rowSelection={this.$props.rowSelection}
+          onRowSelectionChange={this.$props.onRowSelectionChange}
+          tableScope={this.$props.tableScope}
+          getColumns={this.$props.getColumns}
+          getRowId={this.$props.getRowId}
+          layout={this.$props.layout}
+          compact={this.compact}
+          columnSizing={this.columnSizing}
+          controllerRef={ref => {
+            this.innerTable = ref;
+            this.$props?.tableRef?.(ref);
+          }}
+          slotDefault={$$table => {
+            return this._renderTable($$table);
+          }}
+        ></ZTable>
+      </div>
     );
   }
 
@@ -38,7 +50,9 @@ export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
     const fixed = column.getIsPinned();
     const width = column.getSize();
     return {
-      ...(typeof rest?.width === 'number' ? { width: `${width}px`, minWidth: `${width}px` } : {}),
+      ...(typeof rest?.width === 'number' || typeof this.columnSizing[column.id] === 'number'
+        ? { width: `${width}px`, minWidth: `${width}px` }
+        : {}),
       textAlign: rest?.align,
       position: fixed ? ('sticky' as const) : undefined,
       left: fixed === 'left' ? `${column.getStart('left')}px` : undefined,
@@ -75,6 +89,10 @@ export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
                     onChange={table.getToggleAllPageRowsSelectedHandler()}
                   />
                 )
+              ) : this.compact && this.isOperationsColumn(column.id) ? (
+                <span class="sr-only">
+                  <FlexRender render={headerDefinition} props={header.getContext()}></FlexRender>
+                </span>
               ) : (
                 <FlexRender render={headerDefinition} props={header.getContext()}></FlexRender>
               );

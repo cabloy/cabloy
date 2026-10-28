@@ -16,7 +16,9 @@ declare module 'zova-module-a-openapi' {
   }
 }
 
-export interface ITableCellOptionsActionDelete extends IResourceTableActionRowOptionsBase {}
+export interface ITableCellOptionsActionDelete extends IResourceTableActionRowOptionsBase {
+  showLabel?: boolean;
+}
 
 @TableCell<ITableCellOptionsActionDelete>({
   class: 'btn btn-outline btn-error join-item',
@@ -31,6 +33,7 @@ export class TableCellActionDelete extends BeanBase implements ITableCellRender 
     return (
       <ZButton
         class={options.class}
+        aria-label={this.scope.locale.Delete()}
         onPerform={async () => {
           const confirmed = await $host.$performCommand('basic-commands:confirm', {
             text: this.scope.locale.DeleteConfirm(),
@@ -39,7 +42,8 @@ export class TableCellActionDelete extends BeanBase implements ITableCellRender 
           await $host.$performCommand('basic-commands:delete', options, renderContext);
         }}
       >
-        <ZIcon name="::delete" width={24}></ZIcon>
+        <ZIcon name="::delete" width={24} aria-hidden="true"></ZIcon>
+        {options.showLabel && this.scope.locale.Delete()}
       </ZButton>
     );
   }

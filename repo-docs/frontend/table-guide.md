@@ -162,6 +162,30 @@ Schema metadata remains declarative: author `requiresSelection`, `selectedMaxIds
 
 Selection persists while paging the same result universe and during ordinary refetches. It clears on a material fixed-query change, filter submit/reset, sorting, page-size change, resource change, or a successful selection-consuming mutation. Page-size changes also return to page 1.
 
+## Narrow-container behavior in Cabloy Basic
+
+Cabloy Basic's `ZTable` owns a horizontal scroll container and observes its **available container width**, not the browser viewport or the table's scrollable content width. By default, a container narrower than `768px` uses compact presentation:
+
+- all columns, including row selection, temporarily stop being pinned;
+- `basic-table:actionOperationsRow` uses a compact column and a **More actions** popover instead of parallel buttons;
+- row actions retain their permission checks, confirmations, loading, duplicate-click protection, and error handling;
+- widening the container restores schema-defined pinning and the schema or personal-layout widths.
+
+This is a presentation override, not a schema or personal-layout mutation. Column visibility, order, and saved widths remain unchanged; resizing does not save or reset a layout. Sorting and selection also remain active.
+
+For direct Basic table consumers, configure the threshold or disable automatic compact presentation:
+
+```tsx
+import { ZTable } from 'zova-module-basic-table';
+
+<ZTable data={this.students} schema={this.schemaRow} compactBreakpoint={640} />;
+<ZTable data={this.students} schema={this.schemaRow} compactBreakpoint={false} />;
+```
+
+The default resource-page and details-table blocks inherit this behavior. DOM measurement starts after mounting and initial SSR hydration, so server HTML and the hydration-time initial render use the same presentation. The popover uses the browser's native Popover API to escape table overflow clipping; browsers without that API retain the existing inline actions rather than showing an unusable trigger.
+
+This automatic container policy belongs to the **Cabloy Basic UI adapter**. Do not assume Cabloy Start has the same presentation or breakpoint merely because the editions share the table engine.
+
 ## Step 3: Let schema metadata drive the default columns
 
 In the default path, `ZTable` reads table-scene metadata from the row schema.

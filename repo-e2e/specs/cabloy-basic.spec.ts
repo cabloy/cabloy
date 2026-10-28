@@ -482,6 +482,13 @@ function assertVisualOrder(geometry: IFieldGeometry[]) {
   }
 }
 
+function basicTableWrapper(page: Page) {
+  return page
+    .locator('div[data-table-compact]')
+    .filter({ has: page.locator('table') })
+    .first();
+}
+
 async function getDocumentHorizontalOverflow(page: Page) {
   return page.evaluate(() => {
     return (
@@ -877,7 +884,15 @@ test(
       await page.getByRole('link', { name: 'Student', exact: true }).click();
       await expect(page).toHaveURL(studentResourceUrl);
       await initialSelect;
-      await page.setViewportSize({ width: 800, height: 900 });
+      // Keep the container above the compact breakpoint while forcing real horizontal overflow.
+      const tableWrapper = basicTableWrapper(page);
+      await tableWrapper.evaluate(element => {
+        element.style.width = '800px';
+      });
+      await expect(tableWrapper).toHaveAttribute('data-table-compact', 'false');
+      expect(await tableWrapper.evaluate(element => element.clientWidth)).toBeGreaterThanOrEqual(
+        768,
+      );
 
       const nameSort = page.getByRole('button', { name: 'Sort by name', exact: true });
       const nameHeader = nameSort.locator('xpath=ancestor::th');
@@ -916,10 +931,6 @@ test(
       const ascendingUrl = new URL(ascending.url());
       expect(JSON.parse(ascendingUrl.searchParams.get('orders')!)).toEqual([['name', 'asc']]);
 
-      const tableWrapper = page
-        .locator('div.overflow-x-auto')
-        .filter({ has: page.locator('table') })
-        .first();
       await expect(tableWrapper).toBeVisible();
       const overflow = await tableWrapper.evaluate(element => {
         return element.scrollWidth > element.clientWidth;
@@ -984,15 +995,228 @@ test(
 );
 
 test(
-  'ATP-BASIC-TABLE-03: Training Student row delete handles cancellation, local failures, and retry',
-  { tag: ['@admin', '@flow'] },
+  'ATP-BASIC-TABLE-04: container resizing compacts row actions and narrow SSR reloads hydrate cleanly',
+  { tag: ['@admin', '@flow', '@ssr'] },
   async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const pageErrors = collectPageErrors(page);
+    const consoleErrors = collectConsoleErrors(page);
+    const consoleWarnings: string[] = [];
+    page.on('console', message => {
+      if (
+        message.type() === 'warning' ||
+        /hydration.*mismatch|mismatch.*hydration/i.test(message.text())
+      ) {
+        consoleWarnings.push(message.text());
+      }
+    });
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student]) => {
+      const initialSelect = waitForStudentSelect(page);
+      await page.getByRole('link', { name: 'Student', exact: true }).click();
+      await expect(page).toHaveURL(studentResourceUrl);
+      await initialSelect;
+      await page.getByLabel('Student Name').fill(student.name);
+      const filteredResponse = waitForStudentSelect(page);
+      await page.getByRole('button', { name: 'Search', exact: true }).click();
+      await filteredResponse;
+
+      const wrapper = basicTableWrapper(page);
+      const row = wrapper.locator('tbody tr').filter({
+        has: page.getByRole('link', { name: student.name, exact: true }),
+      });
+      const nameHeader = wrapper
+        .getByRole('button', { name: 'Sort by name', exact: true })
+        .locator('xpath=ancestor::th');
+      const operationsHeader = wrapper.getByRole('columnheader', {
+        name: 'Operations',
+        exact: true,
+      });
+      const operationsCell = row.locator('td').last();
+      const more = row.getByRole('button', { name: 'More actions', exact: true });
+      // CSS locators also see the mounted action group while the native popover is closed.
+      const actions = row.locator('[popover="auto"][role="group"][aria-label="Row actions"]');
+      await expect(row).toHaveCount(1);
+      await expect(wrapper).toHaveAttribute('data-table-compact', 'false');
+      await expect(nameHeader).toHaveCSS('position', 'sticky');
+      await expect(operationsHeader).toHaveCSS('min-width', '360px');
+
+      const profileWrites: string[] = [];
+      const observeProfileWrites = (request: Request) => {
+        const path = new URL(request.url()).pathname;
+        if (
+          (path === '/api/layoutprofile/save' || path === '/api/layoutprofile/reset') &&
+          !request.headers()['x-vona-openapi-schema']
+        ) {
+          profileWrites.push(`${request.method()} ${path}`);
+        }
+      };
+      page.on('request', observeProfileWrites);
+      try {
+        // The viewport stays desktop-sized: only the Basic table's own container changes.
+        for (const width of [360, 320]) {
+          await wrapper.evaluate((element, width) => {
+            element.style.width = `${width}px`;
+          }, width);
+          await expect(wrapper).toHaveAttribute('data-table-compact', 'true');
+          await expect.poll(() => wrapper.evaluate(element => element.clientWidth)).toBe(width);
+          expect(page.viewportSize()?.width).toBe(1440);
+          await expect
+            .poll(() =>
+              wrapper
+                .locator('th, td')
+                .evaluateAll(cells =>
+                  cells.every(cell => getComputedStyle(cell).position !== 'sticky'),
+                ),
+            )
+            .toBe(true);
+          await expect(operationsHeader).toHaveCSS('min-width', '80px');
+          await expect(operationsCell).toHaveCSS('min-width', '80px');
+          await expect
+            .poll(() =>
+              operationsCell.evaluate(element =>
+                Math.abs(element.getBoundingClientRect().width - 80),
+              ),
+            )
+            .toBeLessThanOrEqual(1);
+          await expect(more).toHaveCount(1);
+          await expect(row.getByRole('button')).toHaveCount(1);
+          await expect(actions).toHaveCount(1);
+          await expect(actions).toBeHidden();
+          await expect(actions.locator('button')).toHaveCount(4);
+          await wrapper.evaluate(element => {
+            element.scrollLeft = element.scrollWidth;
+          });
+          const reach = await wrapper.evaluate(element => ({
+            overflow: element.scrollWidth - element.clientWidth,
+            remaining: element.scrollWidth - element.clientWidth - element.scrollLeft,
+          }));
+          expect(reach.overflow).toBeGreaterThan(0);
+          expect(Math.abs(reach.remaining)).toBeLessThanOrEqual(1);
+          await expect(more).toBeInViewport();
+        }
+
+        // Clip below the first row so a normal descendant menu cannot pass this check.
+        await wrapper.evaluate(element => {
+          const table = element.querySelector('table')!;
+          const row = table.querySelector('tbody tr')!;
+          const height = row.getBoundingClientRect().bottom - table.getBoundingClientRect().top;
+          element.style.height = `${Math.ceil(height)}px`;
+          element.style.overflowY = 'hidden';
+        });
+        await more.click();
+        await expect(actions).toBeVisible();
+        await expect(more).toHaveAttribute('aria-expanded', 'true');
+        for (const label of ['Edit', 'Delete', 'Force Delete', 'Summary']) {
+          const action = actions.getByRole('button', { name: label, exact: true });
+          await expect(action).toBeVisible();
+          await expect(action).toHaveText(label);
+        }
+        const deleteAction = actions.getByRole('button', { name: 'Delete', exact: true });
+        const clipping = await deleteAction.evaluate(element => {
+          const wrapper = element.closest('[data-table-compact]')!;
+          const rect = element.getBoundingClientRect();
+          const clip = wrapper.getBoundingClientRect();
+          const x = rect.left + rect.width / 2;
+          const y = rect.top + rect.height / 2;
+          return {
+            outside: y > clip.bottom || y < clip.top || x < clip.left || x > clip.right,
+            hit: element.contains(document.elementFromPoint(x, y)),
+          };
+        });
+        expect(clipping).toEqual({ outside: true, hit: true });
+        await deleteAction.focus();
+        await page.keyboard.press('Escape');
+        await expect(actions).toBeHidden();
+        await expect(more).toHaveAttribute('aria-expanded', 'false');
+        await expect(more).toBeFocused();
+        await more.click();
+        await deleteAction.click();
+        await expect(actions).toBeHidden();
+        await expect(more).toHaveAttribute('aria-expanded', 'false');
+        const confirmDialog = page.getByRole('dialog').filter({
+          hasText: 'Are you sure you want to delete this item?',
+        });
+        await expect(confirmDialog).toBeVisible();
+        await confirmDialog.getByRole('button', { name: 'No', exact: true }).click();
+        await expect(confirmDialog).toHaveCount(0);
+        await expect(row).toHaveCount(1);
+
+        await more.click();
+        await actions.getByRole('button', { name: 'Summary', exact: true }).press('Enter');
+        await expect(actions).toBeHidden();
+        await expect(more).toHaveAttribute('aria-expanded', 'false');
+        const summaryDialog = page.getByRole('dialog').filter({
+          has: page.getByRole('heading', { name: 'Summary', exact: true }),
+        });
+        await expect(summaryDialog).toBeVisible();
+        await page.keyboard.press('Escape');
+        await expect(summaryDialog).toHaveCount(0);
+
+        await wrapper.evaluate(element => {
+          element.style.width = '800px';
+          element.style.removeProperty('height');
+          element.style.removeProperty('overflow-y');
+        });
+        await expect(wrapper).toHaveAttribute('data-table-compact', 'false');
+        await expect(nameHeader).toHaveCSS('position', 'sticky');
+        await expect(operationsHeader).toHaveCSS('position', 'sticky');
+        await expect(operationsHeader).toHaveCSS('min-width', '360px');
+        await expect(operationsCell).toHaveCSS('min-width', '360px');
+        await expect(more).toHaveCount(0);
+        await expect(row.getByRole('button')).toHaveCount(4);
+        expect(profileWrites).toEqual([]);
+
+        for (const width of [320, 390]) {
+          await page.setViewportSize({ width, height: 900 });
+          const response = await page.reload({ waitUntil: 'load' });
+          expect(response?.ok()).toBeTruthy();
+          await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+          await expect(wrapper).toHaveAttribute('data-table-compact', 'true');
+          await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+          await expect(
+            wrapper
+              .locator('tbody tr')
+              .first()
+              .getByRole('button', { name: 'More actions', exact: true }),
+          ).toHaveCount(1);
+        }
+        // Closing the cached Admin tab must unmount the table without ref teardown errors.
+        await page.setViewportSize({ width: 1440, height: 900 });
+        const studentTab = page.getByRole('tab', { name: 'Student', exact: true });
+        await studentTab.hover();
+        await studentTab.locator('.tab-close').click();
+        await expect(studentTab).toHaveCount(0);
+        await expect(wrapper).toHaveCount(0);
+        const reopenedSelect = waitForStudentSelect(page);
+        await page.getByRole('link', { name: 'Student', exact: true }).click();
+        await reopenedSelect;
+        await expect(wrapper).toBeVisible();
+        await expect(wrapper).toHaveAttribute('data-table-compact', 'false');
+        expect(profileWrites).toEqual([]);
+        expect(consoleWarnings).toEqual([]);
+        expect(consoleErrors).toEqual([]);
+        expect(pageErrors).toEqual([]);
+      } finally {
+        page.off('request', observeProfileWrites);
+      }
+    });
+  },
+);
+
+test(
+  'ATP-BASIC-TABLE-03: compact row delete handles cancellation, local failures, and retry',
+  { tag: ['@admin', '@flow'] },
+  async ({ page, request }) => {
     test.setTimeout(120_000);
     page.setDefaultTimeout(10_000);
     await page.setViewportSize({ width: 1440, height: 900 });
     const pageErrors = collectPageErrors(page);
     await loginAsAdmin(page);
 
+    let scenarioError: unknown;
+    let cleanupError: unknown;
     const studentName = `Row Delete E2E ${Date.now()}`;
     const accessToken = (await page.context().cookies()).find(
       cookie => cookie.name === 'token',
@@ -1019,14 +1243,30 @@ test(
       await page.getByRole('button', { name: 'Search', exact: true }).click();
       await filteredResponse;
 
-      const row = page.locator('tbody tr').filter({
+      await page.setViewportSize({ width: 390, height: 900 });
+      const wrapper = basicTableWrapper(page);
+      await expect(wrapper).toHaveAttribute('data-table-compact', 'true');
+      const row = wrapper.locator('tbody tr').filter({
         has: page.getByRole('link', { name: studentName, exact: true }),
       });
-      const deleteButton = row.locator('button.btn-outline.btn-error').first();
+      const more = row.getByRole('button', { name: 'More actions', exact: true });
+      const actions = row.locator('[popover="auto"][role="group"][aria-label="Row actions"]');
+      const deleteButton = actions.getByRole('button', {
+        name: 'Delete',
+        exact: true,
+        includeHidden: true,
+      });
+      const openActions = async () => {
+        if (!(await actions.isVisible())) await more.click();
+        await expect(actions).toBeVisible();
+        await expect(actions.locator('button')).toHaveCount(4);
+      };
       const confirmDialog = page.getByRole('dialog').filter({
         hasText: 'Are you sure you want to delete this item?',
       });
       await expect(row).toHaveCount(1);
+      await expect(actions).toBeHidden();
+      await openActions();
       await expect(deleteButton).toBeVisible();
 
       let cancelledRequestCount = 0;
@@ -1043,10 +1283,15 @@ test(
       page.on('request', cancelledRequestListener);
       try {
         await deleteButton.click();
+        await expect(actions).toBeHidden();
+        await expect(more).toHaveAttribute('aria-expanded', 'false');
         await expect(confirmDialog).toBeVisible();
         await confirmDialog.getByRole('button', { name: 'No', exact: true }).click();
         await expect(confirmDialog).toHaveCount(0);
         await expect(row).toHaveCount(1);
+        await openActions();
+        await expect(deleteButton).toBeEnabled();
+        await expect(deleteButton).not.toHaveAttribute('aria-busy', 'true');
         expect(cancelledRequestCount).toBe(0);
       } finally {
         page.off('request', cancelledRequestListener);
@@ -1058,25 +1303,59 @@ test(
         releaseFailedDelete = resolve;
       });
       const deleteRoute = (url: URL) => url.pathname === `/api/training/student/${studentId}`;
-      const failedDeleteHandler = async (route: Route) => {
+      const failedDeleteErrors: unknown[] = [];
+      const pendingFailedDeletes: Promise<void>[] = [];
+      const failedDeleteHandler = (route: Route) => {
         failureRequestCount++;
-        await failedDeleteHeld;
-        await route.fulfill({
-          status: 500,
-          contentType: 'application/json',
-          body: JSON.stringify({ code: 500, message: 'Row deletion temporarily unavailable' }),
+        const handled = (async () => {
+          await failedDeleteHeld;
+          await route.fulfill({
+            status: 500,
+            contentType: 'application/json',
+            body: JSON.stringify({ code: 500, message: 'Row deletion temporarily unavailable' }),
+          });
+        })().catch(error => {
+          // Report owned route failures after draining, not as detached Playwright errors.
+          failedDeleteErrors.push(error);
         });
+        pendingFailedDeletes.push(handled);
+        return handled;
       };
       await page.route(deleteRoute, failedDeleteHandler);
+      let failureScenarioError: unknown;
       try {
         await deleteButton.click();
         await confirmDialog.getByRole('button', { name: 'Yes', exact: true }).click();
         await expect.poll(() => failureRequestCount).toBe(1);
+        await expect(confirmDialog).toHaveCount(0);
+        await openActions();
         await expect(deleteButton).toBeDisabled();
         await expect(deleteButton).toHaveAttribute('aria-busy', 'true');
         await expect(deleteButton.locator('.loading.loading-spinner')).toHaveCount(1);
-        await deleteButton.click({ force: true });
-        await expect.poll(() => failureRequestCount).toBe(1);
+        const pendingDelete = await deleteButton.elementHandle();
+        expect(pendingDelete).not.toBeNull();
+        try {
+          await page.keyboard.press('Escape');
+          await expect(actions).toBeHidden();
+          await expect(more).toBeFocused();
+          // Closed native popovers hide, rather than replace, the running action component.
+          expect(await pendingDelete!.evaluate(element => element.isConnected)).toBe(true);
+          await expect(deleteButton).toBeDisabled();
+          await expect(deleteButton).toHaveAttribute('aria-busy', 'true');
+          await openActions();
+          expect(
+            await deleteButton.evaluate((element, pending) => element === pending, pendingDelete),
+          ).toBe(true);
+          await expect(deleteButton).toBeDisabled();
+          await expect(deleteButton.locator('.loading.loading-spinner')).toHaveCount(1);
+          await deleteButton.click({ force: true });
+          expect(failureRequestCount).toBe(1);
+          await page.keyboard.press('Escape');
+          await expect(actions).toBeHidden();
+          await expect(more).toBeFocused();
+        } finally {
+          await pendingDelete?.dispose();
+        }
 
         releaseFailedDelete?.();
         const errorDialog = page.getByRole('dialog').filter({
@@ -1090,10 +1369,37 @@ test(
         await expect(deleteButton).toBeEnabled();
         await expect(deleteButton).not.toHaveAttribute('aria-busy', 'true');
         await expect(deleteButton.locator('.loading.loading-spinner')).toHaveCount(0);
+        await openActions();
+        await expect(deleteButton).toBeEnabled();
+        await expect(deleteButton).not.toHaveAttribute('aria-busy', 'true');
+        await page.keyboard.press('Escape');
+        await expect(actions).toBeHidden();
+        await openActions();
+        await expect(deleteButton).toBeEnabled();
+        expect(failureRequestCount).toBe(1);
+      } catch (error) {
+        failureScenarioError = error;
       } finally {
         releaseFailedDelete?.();
-        await page.unroute(deleteRoute, failedDeleteHandler);
+        // A held route must finish before unroute can let that request continue.
+        for (let index = 0; index < pendingFailedDeletes.length; index++) {
+          await pendingFailedDeletes[index];
+        }
+        try {
+          await page.unroute(deleteRoute, failedDeleteHandler);
+        } catch (error) {
+          failedDeleteErrors.push(error);
+        }
       }
+      if (failedDeleteErrors.length) {
+        throw new AggregateError(
+          failureScenarioError === undefined
+            ? failedDeleteErrors
+            : [failureScenarioError, ...failedDeleteErrors],
+          'Compact row delete assertion or route cleanup failed',
+        );
+      }
+      if (failureScenarioError !== undefined) throw failureScenarioError;
 
       const deleteRequest = page.waitForRequest(request => {
         const url = new URL(request.url());
@@ -1123,21 +1429,37 @@ test(
       expect(refetch.ok()).toBeTruthy();
       await expect(row).toHaveCount(0);
       expect(pageErrors).toEqual([]);
+    } catch (error) {
+      scenarioError = error;
     } finally {
       if (studentId !== undefined) {
-        const deleteResponse = await page.request.delete(
-          `/api/training/student/deleteForce/${studentId}`,
-          {
-            headers,
-            timeout: 10_000,
-          },
-        );
-        expect(
-          deleteResponse.ok() || deleteResponse.status() === 404,
-          `Failed to clean up Training Student ${studentName} (${studentId}): ${deleteResponse.status()}`,
-        ).toBeTruthy();
+        try {
+          const deleteResponse = await request.delete(
+            `/api/training/student/deleteForce/${studentId}`,
+            {
+              headers,
+              timeout: 10_000,
+            },
+          );
+          expect(
+            deleteResponse.ok() || deleteResponse.status() === 404,
+            `Failed to clean up Training Student ${studentName} (${studentId}): ${deleteResponse.status()}`,
+          ).toBeTruthy();
+        } catch (error) {
+          cleanupError = error;
+        }
       }
     }
+    if (cleanupError !== undefined) {
+      if (scenarioError !== undefined) {
+        throw new AggregateError(
+          [scenarioError, cleanupError],
+          'Compact row delete assertion and owned fixture cleanup failed',
+        );
+      }
+      throw cleanupError;
+    }
+    if (scenarioError !== undefined) throw scenarioError;
   },
 );
 

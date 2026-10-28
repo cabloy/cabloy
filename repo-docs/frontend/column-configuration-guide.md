@@ -29,6 +29,8 @@ A schema can pin a column to the `left`, `center`, or `right` region. The Move U
 
 A user cannot change a column's fixed region through Column Configuration. The row-selection column is also a runtime-generated column and is never saved in a personal layout.
 
+In Cabloy Basic, a table container narrower than `768px` temporarily disables actual column pinning and presents row operations through a compact popover. This does **not** change a column's schema-defined region or the reorder boundaries in Column Configuration. Saved widths, visibility, and order remain canonical; widening the container restores them. Responsive transitions do not save or reset the profile. Direct Basic `ZTable` consumers can set `compactBreakpoint` to another numeric threshold or `false` to disable this automatic presentation. See [Narrow-container behavior in Cabloy Basic](/frontend/table-guide#narrow-container-behavior-in-cabloy-basic).
+
 ## User workflow
 
 1. Sign in and open a resource list page.
