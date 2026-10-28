@@ -184,7 +184,26 @@ import { ZTable } from 'zova-module-basic-table';
 
 The default resource-page and details-table blocks inherit this behavior. DOM measurement starts after mounting and initial SSR hydration, so server HTML and the hydration-time initial render use the same presentation. The popover uses the browser's native Popover API to escape table overflow clipping; browsers without that API retain the existing inline actions rather than showing an unusable trigger.
 
-This automatic container policy belongs to the **Cabloy Basic UI adapter**. Do not assume Cabloy Start has the same presentation or breakpoint merely because the editions share the table engine.
+## Narrow-container behavior in Cabloy Start
+
+Cabloy Start's `start-page:blockTable` and `start-details:blockTable` provide the same temporary compact policy through their Vuetify adapters. Each block observes its available container width after mounting and initial SSR hydration. The Vuetify table wrapper continues to own horizontal scrolling; the observer does not measure the table's intrinsic content width.
+
+Below the default `768px` threshold:
+
+- columns, including row selection, temporarily stop being pinned;
+- columns rendered by `start-table:actionOperationsRow` or `start-details:actionOperationsRow` use an approximately `80px` Operations column and a **More actions** popover;
+- widening the container restores schema-defined pinning and schema or personal-layout widths, without saving or resetting the layout.
+
+Configure the threshold on the owning Start block, rather than on the shared `a-table` engine:
+
+```ts
+ZovaRender.block('start-page:blockTable', { compactBreakpoint: 640 });
+ZovaRender.block('start-details:blockTable', { compactBreakpoint: false });
+```
+
+The popover retains the original Start action renderers and their permission checks, confirmations, loading, duplicate-click protection, errors, and retries. Clicking an enabled action closes the popover **before** the original action runs; keyboard activation follows the same path. Closing does not unmount a pending action. Escape closes the popover and restores trigger focus; scrolling outside it or resizing closes it as well.
+
+Start uses Vuetify `VMenu` for connected positioning, outside-click dismissal, keyboard handling, and scroll dismissal, not Basic's native Popover API or DaisyUI presentation. Its eager menu host retains the same action subtree through closure and desktop/compact transitions. Actions remain inline during SSR and initial hydration, then move to the menu host when compact; native Popover API support is not required. The shared table engine consumes `compact` and `columnSizing`; it does not itself supply automatic measurement or an edition's row-action UI.
 
 ## Step 3: Let schema metadata drive the default columns
 
