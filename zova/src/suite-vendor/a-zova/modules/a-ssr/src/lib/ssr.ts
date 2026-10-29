@@ -7,6 +7,7 @@ import type { Functionable, IControllerLoadEvent, ILocaleRecord, ZovaContext } f
 
 import { includeBooleanAttr, isBooleanAttr, isString, stringifyStyle } from '@vue/shared';
 import { defu } from 'defu';
+import { Platform } from 'quasar';
 import { normalizeClass, normalizeStyle, ref, useSSRContext } from 'vue';
 import { BeanSimple } from 'zova';
 
@@ -24,7 +25,11 @@ import type {
 
 import { CtxSSRMetaStore } from './ssrMetaStore.ts';
 import { getCanonicalLocaleRoutePath } from './ssrNavigation.ts';
-import { resolveSsrProfile, resolveSsrProfileOptions } from './ssrProfile.ts';
+import {
+  resolveSsrProfile,
+  resolveSsrProfileOptions,
+  resolveSsrResponseCacheExpires,
+} from './ssrProfile.ts';
 
 const SymbolIsRuntimeSsrPreHydration = Symbol('SymbolIsRuntimeSsrPreHydration');
 const SymbolSSRContext = Symbol('SymbolSSRContext');
@@ -210,6 +215,17 @@ export class CtxSSR extends BeanSimple {
     );
     this.state.ssrProfile = ssrProfile;
     this.state.ssrProfileOptions = ssrProfileOptions;
+    if (process.env.SERVER) {
+      const expires = resolveSsrResponseCacheExpires(
+        ssrProfileOptions.responseCache,
+        this.sys.env.META_MODE,
+      );
+      if (ssrProfile === 'public' && expires !== false && expires !== 0) {
+        delete this.state.compactHint;
+      } else {
+        this.state.compactHint = !!Platform.parseSSR(this.context).is.mobile;
+      }
+    }
   }
 
   /** @internal */

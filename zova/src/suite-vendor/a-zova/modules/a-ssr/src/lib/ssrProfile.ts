@@ -1,5 +1,7 @@
 import type { ZovaConfigSsrProfile } from 'zova';
 
+import ms from 'ms';
+
 import type {
   ISsrProfileOptions,
   ISsrResponseCachePolicy,
@@ -16,6 +18,19 @@ export function resolveSsrProfile(
     throw new Error(`invalid SSR profile: ${ssrProfile}`);
   }
   return ssrProfile;
+}
+
+export function resolveSsrResponseCacheExpires(
+  responseCache: ISsrProfileOptions['responseCache'],
+  metaMode: string | undefined,
+): number | false {
+  if (responseCache === false) return false;
+  const responseCacheExpires = responseCache.expires ?? 0;
+  const expires =
+    typeof responseCacheExpires === 'string'
+      ? ms(responseCacheExpires) / 1000
+      : responseCacheExpires;
+  return metaMode === 'development' ? 0 : expires;
 }
 
 export function resolveSsrProfileOptions(

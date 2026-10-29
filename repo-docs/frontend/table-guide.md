@@ -182,7 +182,13 @@ import { ZTable } from 'zova-module-basic-table';
 <ZTable data={this.students} schema={this.schemaRow} compactBreakpoint={false} />;
 ```
 
-The default resource-page and details-table blocks inherit this behavior. DOM measurement starts after mounting and initial SSR hydration, so server HTML and the hydration-time initial render use the same presentation. The popover uses the browser's native Popover API to escape table overflow clipping; browsers without that API retain the existing inline actions rather than showing an unusable trigger.
+The default resource-page and details-table blocks inherit this behavior. When the resolved SSR cache policy emits `public, max-age=${expires}`, SSR omits `compactHint` entirely for every User-Agent. Server HTML and the hydration-time initial render both default to neutral desktop presentation. This keeps the compact presentation independent of User-Agent for public cached HTML, preserves the cache policy, and adds no `Vary: User-Agent` or CDN variation requirement.
+
+For responses outside that public-cache branch—including session/no-store responses, development, and `responseCache: false`—SSR uses a request User-Agent mobile hint for provisional compact presentation and transfers the same value for initial hydration. The hint reduces typical mobile first-paint layout changes; it cannot measure the container or predict tablet mode or every browser accurately.
+
+In both branches, measured container width becomes authoritative after mounting and initial hydration: a mobile request in a wide container uses desktop presentation, while any request in a narrow container becomes compact. `compactBreakpoint: false` disables both provisional and measured compact presentation; a custom numeric threshold applies to actual measurements, not to the provisional mobile classification. SPA startup uses the existing mounted measurement without a server hint.
+
+The popover uses the browser's native Popover API to escape table overflow clipping. Compact action panels stay hidden before hydration, including in unsupported browsers; post-hydration capability detection restores the existing inline actions when the API is unavailable rather than leaving an unusable trigger.
 
 ## Narrow-container behavior in Cabloy Start
 
@@ -203,7 +209,7 @@ ZovaRender.block('start-details:blockTable', { compactBreakpoint: false });
 
 The popover retains the original Start action renderers and their permission checks, confirmations, loading, duplicate-click protection, errors, and retries. Clicking an enabled action closes the popover **before** the original action runs; keyboard activation follows the same path. Closing does not unmount a pending action. Escape closes the popover and restores trigger focus; scrolling outside it or resizing closes it as well.
 
-Start uses Vuetify `VMenu` for connected positioning, outside-click dismissal, keyboard handling, and scroll dismissal, not Basic's native Popover API or DaisyUI presentation. Its eager menu host retains the same action subtree through closure and desktop/compact transitions. Actions remain inline during SSR and initial hydration, then move to the menu host when compact; native Popover API support is not required. The shared table engine consumes `compact` and `columnSizing`; it does not itself supply automatic measurement or an edition's row-action UI.
+Start uses Vuetify `VMenu` for connected positioning, outside-click dismissal, keyboard handling, and scroll dismissal, not Basic's native Popover API or DaisyUI presentation. Its eager menu host retains the same action subtree through closure and desktop/compact transitions. SSR and initial hydration use the same cache-policy-dependent provisional presentation described above. In compact presentation, the retained actions are staged hidden until the menu host exists, then move into that host without a visible inline-action flash or remount; desktop actions stay inline. Post-hydration container measurement takes over, and native Popover API support is not required. The shared table engine consumes `compact` and `columnSizing`; it does not itself supply automatic measurement or an edition's row-action UI.
 
 ## Step 3: Let schema metadata drive the default columns
 

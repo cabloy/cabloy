@@ -45,12 +45,15 @@ export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
     );
   }
 
-  private _getColumnStyle(column: any): CSSProperties {
+  private _getColumnStyle(column: any, $$table: ControllerTable<TData>): CSSProperties {
     const rest = (column.columnDef.meta as any)?.rest;
     const fixed = column.getIsPinned();
-    const width = column.getSize();
+    const compactOperations = this.compact && this.isOperationsColumn(column.id, $$table);
+    const width = compactOperations ? 80 : column.getSize();
     return {
-      ...(typeof rest?.width === 'number' || typeof this.columnSizing[column.id] === 'number'
+      ...(compactOperations ||
+      typeof rest?.width === 'number' ||
+      typeof this.columnSizing[column.id] === 'number'
         ? { width: `${width}px`, minWidth: `${width}px` }
         : {}),
       textAlign: rest?.align,
@@ -89,7 +92,7 @@ export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
                     onChange={table.getToggleAllPageRowsSelectedHandler()}
                   />
                 )
-              ) : this.compact && this.isOperationsColumn(column.id) ? (
+              ) : this.compact && this.isOperationsColumn(column.id, $$table) ? (
                 <span class="sr-only">
                   <FlexRender render={headerDefinition} props={header.getContext()}></FlexRender>
                 </span>
@@ -109,7 +112,7 @@ export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
                 <th
                   key={header.id}
                   class={fixed ? 'bg-base-100' : undefined}
-                  style={this._getColumnStyle(column)}
+                  style={this._getColumnStyle(column, $$table)}
                   aria-sort={sortAria}
                 >
                   {canSort ? (
@@ -141,7 +144,7 @@ export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
                     <td
                       key={cell.id}
                       class={column.getIsPinned() ? 'bg-base-100' : undefined}
-                      style={this._getColumnStyle(column)}
+                      style={this._getColumnStyle(column, $$table)}
                     >
                       {selection ? (
                         <input

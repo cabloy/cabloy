@@ -4,6 +4,10 @@ import { expect, test } from '../scripts/managedTest.ts';
 
 const studentResourceUrl =
   /\/admin\/rest\/resource\/training-student(?:%3A|:|%253A)student(?:[/?#]|$)/;
+const mobileUserAgent =
+  'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
+const desktopUserAgent =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36';
 
 interface IModelPersistenceIdentity {
   appName: string;
@@ -531,6 +535,43 @@ test(
     await expect(page.locator('body')).toBeVisible();
     await expect(page).not.toHaveTitle(/error/i);
     expect(pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-BASIC-SSR-06: public cache omits compact hints while no-store SSR retains them',
+  { tag: ['@web', '@ssr'] },
+  async ({ request }) => {
+    // The same cacheable URL must remain hint-free for mobile, desktop, then mobile requests.
+    for (const userAgent of [mobileUserAgent, desktopUserAgent, mobileUserAgent]) {
+      const response = await request.get('/', {
+        headers: { 'User-Agent': userAgent },
+      });
+      expect(response.ok()).toBeTruthy();
+      expect(response.headers()['cache-control']).toBe('public, max-age=600');
+      expect((response.headers().vary ?? '').toLowerCase().split(/\s*,\s*/)).not.toContain(
+        'user-agent',
+      );
+      const html = await response.text();
+      const state = html.match(/<script[^>]*id="ssr-state-init"[^>]*>([\s\S]*?)<\/script>/)?.[1];
+      expect(state).toBeTruthy();
+      expect(state).not.toContain('compactHint');
+    }
+
+    for (const compactHint of [true, false]) {
+      const response = await request.get('/demo/basic/state', {
+        headers: { 'User-Agent': compactHint ? mobileUserAgent : desktopUserAgent },
+      });
+      expect(response.ok()).toBeTruthy();
+      expect(response.headers()['cache-control']).toBe('no-cache, no-store, must-revalidate');
+      expect((response.headers().vary ?? '').toLowerCase().split(/\s*,\s*/)).not.toContain(
+        'user-agent',
+      );
+      const html = await response.text();
+      const state = html.match(/<script[^>]*id="ssr-state-init"[^>]*>([\s\S]*?)<\/script>/)?.[1];
+      expect(state).toBeTruthy();
+      expect(state?.match(/compactHint\s*:\s*(true|false)/)?.[1]).toBe(String(compactHint));
+    }
   },
 );
 
@@ -1922,6 +1963,168 @@ test(
         expect(pageErrors).toEqual([]);
       } finally {
         page.off('request', observeProfileWrites);
+      }
+    });
+  },
+);
+
+test(
+  'ATP-BASIC-TABLE-05: mobile-UA SSR starts compact before scripts and container width wins after hydration',
+  { tag: ['@admin', '@flow', '@ssr'] },
+  async ({ page, browser }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student]) => {
+      const loaded = waitForStudentSelect(page);
+      await page.getByRole('link', { name: 'Student', exact: true }).click();
+      await expect(page).toHaveURL(studentResourceUrl);
+      await loaded;
+      const listUrl = page.url();
+      const storageState = await page.context().storageState();
+      for (const scenario of [
+        { mobile: true, width: 390, unsupportedPopover: false },
+        { mobile: true, width: 1440, unsupportedPopover: false },
+        { mobile: false, width: 390, unsupportedPopover: false },
+        { mobile: true, width: 390, unsupportedPopover: true },
+      ]) {
+        const context = await browser.newContext({
+          baseURL: new URL(listUrl).origin,
+          storageState,
+          userAgent: scenario.mobile ? mobileUserAgent : desktopUserAgent,
+          viewport: { width: scenario.width, height: 900 },
+        });
+        try {
+          if (scenario.unsupportedPopover) {
+            await context.addInitScript(() => {
+              Object.defineProperty(HTMLElement.prototype, 'showPopover', {
+                configurable: true,
+                value: undefined,
+              });
+            });
+          }
+          const ssrPage = await context.newPage();
+          const pageErrors = collectPageErrors(ssrPage);
+          const consoleErrors = collectConsoleErrors(ssrPage);
+          const hydrationWarnings: string[] = [];
+          ssrPage.on('console', message => {
+            if (/hydration.*mismatch|mismatch.*hydration/i.test(message.text())) {
+              hydrationWarnings.push(message.text());
+            }
+          });
+          let releaseScripts!: () => void;
+          const scriptsHeld = new Promise<void>(resolve => {
+            releaseScripts = resolve;
+          });
+          let heldScripts = 0;
+          const holdExternalScripts = async (route: Route) => {
+            if (route.request().resourceType() === 'script') {
+              heldScripts++;
+              await scriptsHeld;
+            }
+            await route.continue();
+          };
+          await ssrPage.route('**/*', holdExternalScripts);
+          try {
+            const response = await ssrPage.goto(listUrl, { waitUntil: 'commit' });
+            expect(response?.ok()).toBeTruthy();
+            expect(response?.headers()['cache-control']).toBe('private, no-store');
+            expect((response?.headers().vary ?? '').toLowerCase().split(/\s*,\s*/)).not.toContain(
+              'user-agent',
+            );
+            const wrapper = basicTableWrapper(ssrPage);
+            const row = wrapper.locator('tbody tr').filter({
+              has: ssrPage.getByRole('link', { name: student.name, exact: true }),
+            });
+            const operationsHeader = wrapper.getByRole('columnheader', {
+              name: 'Operations',
+              exact: true,
+            });
+            const operationsCell = row.locator('td').last();
+            const more = row.getByRole('button', { name: 'More actions', exact: true });
+            const actions = row.locator('[popover="auto"][role="group"][aria-label="Row actions"]');
+            await expect(row).toHaveCount(1);
+            await ssrPage.waitForFunction(() =>
+              Array.from(
+                document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]'),
+              ).every(link => link.sheet !== null),
+            );
+            await expect.poll(() => heldScripts).toBeGreaterThan(0);
+            await expect(ssrPage.locator('html')).not.toHaveAttribute('data-zova-hydrated');
+            await expect(wrapper).toHaveAttribute('data-table-compact', String(scenario.mobile));
+            if (scenario.mobile) {
+              for (const cell of [operationsHeader, operationsCell]) {
+                await expect(cell).toHaveCSS('width', '80px');
+                await expect(cell).toHaveCSS('min-width', '80px');
+              }
+              const heading = operationsHeader.locator('.sr-only');
+              await expect(heading).toHaveText('Operations');
+              await expect(heading).toHaveCSS('position', 'absolute');
+              await expect(heading).toHaveCSS('width', '1px');
+              await expect(more).toBeVisible();
+              await expect(more).toHaveAttribute('aria-expanded', 'false');
+              await expect(actions).toHaveCount(1);
+              await expect(actions).toBeHidden();
+              await expect(actions.locator('button')).toHaveCount(4);
+              await expect(row.getByRole('button')).toHaveCount(1);
+            } else {
+              await expect(more).toHaveCount(0);
+              await expect(row.getByRole('button')).toHaveCount(4);
+            }
+
+            releaseScripts();
+            await ssrPage.waitForLoadState('load');
+            await expect(ssrPage.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+            const measuredCompact = scenario.width < 768 && !scenario.unsupportedPopover;
+            await expect(wrapper).toHaveAttribute('data-table-compact', String(measuredCompact));
+            if (measuredCompact) {
+              await expect(operationsHeader).toHaveCSS('min-width', '80px');
+              const actionsId = await actions.getAttribute('id');
+              expect(actionsId).toBeTruthy();
+              await expect(more).toHaveAttribute('popovertarget', actionsId!);
+              await expect(more).toHaveAttribute('aria-controls', actionsId!);
+              await more.scrollIntoViewIfNeeded();
+              await more.click();
+              await expect(actions).toBeVisible();
+              await expect(
+                actions.getByRole('button', { name: 'Summary', exact: true }),
+              ).toBeVisible();
+              await ssrPage.keyboard.press('Escape');
+              await expect(actions).toBeHidden();
+              await expect(more).toHaveAttribute('aria-expanded', 'false');
+            } else {
+              if (!scenario.unsupportedPopover) {
+                expect(
+                  await wrapper.evaluate(element => element.clientWidth),
+                ).toBeGreaterThanOrEqual(768);
+              }
+              await expect(operationsHeader).toHaveCSS('min-width', '360px');
+              await expect(more).toHaveCount(0);
+              await expect(row.getByRole('button')).toHaveCount(4);
+              if (scenario.unsupportedPopover) {
+                const summary = row.getByRole('button', { name: 'Summary', exact: true });
+                await summary.scrollIntoViewIfNeeded();
+                await summary.click();
+                const dialog = ssrPage.getByRole('dialog');
+                await expect(dialog).toBeVisible();
+                await expect(
+                  dialog.getByRole('heading', { name: 'Summary', exact: true }),
+                ).toBeVisible();
+                await ssrPage.keyboard.press('Escape');
+                await expect(dialog).toHaveCount(0);
+              }
+            }
+            expect(hydrationWarnings).toEqual([]);
+            expect(consoleErrors).toEqual([]);
+            expect(pageErrors).toEqual([]);
+          } finally {
+            releaseScripts();
+            // Drain released handlers before closing their context, preserving the first failure.
+            await ssrPage.unrouteAll({ behavior: 'wait' });
+          }
+        } finally {
+          await context.close();
+        }
       }
     });
   },

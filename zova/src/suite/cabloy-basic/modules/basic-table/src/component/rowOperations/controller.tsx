@@ -37,6 +37,7 @@ export class ControllerRowOperations extends BeanControllerBase {
     };
     this._id = this.$composable(useId);
     this._cPopover = this.$style({
+      display: 'none',
       position: 'fixed',
       inset: 'auto',
       margin: 0,
@@ -207,7 +208,7 @@ export class ControllerRowOperations extends BeanControllerBase {
             aria-label={label}
             aria-controls={this._id}
             aria-expanded={this._open}
-            {...{ popovertarget: this._id }}
+            {...{ 'popovertarget': this._id, 'data-hydrate-ignore-popovertarget': '' }}
           >
             <ZIcon name="::more-horiz" width={24} aria-hidden="true" />
           </ZButton>

@@ -19,8 +19,8 @@ export class ControllerTable extends BeanControllerBase {
   static $propsDefault = { compactBreakpoint: 768 };
 
   innerTable?: ControllerTableInner<any>;
-  containerWidth: number = 0;
-  popoverSupported: boolean = false;
+  containerWidth: number | undefined;
+  popoverSupported: boolean | undefined;
   private _container?: HTMLElement;
   private _observer?: ResizeObserver;
   private _mounted: boolean = false;
@@ -39,12 +39,9 @@ export class ControllerTable extends BeanControllerBase {
 
   public get compact() {
     const breakpoint = this.$props.compactBreakpoint;
-    return (
-      this.popoverSupported &&
-      breakpoint !== false &&
-      this.containerWidth > 0 &&
-      this.containerWidth < (breakpoint ?? 768)
-    );
+    if (breakpoint === false || this.popoverSupported === false) return false;
+    if (this.containerWidth === undefined) return this.$ssr.state.compactHint === true;
+    return this.containerWidth > 0 && this.containerWidth < (breakpoint ?? 768);
   }
 
   public get columnSizing() {
@@ -57,8 +54,7 @@ export class ControllerTable extends BeanControllerBase {
     return sizing;
   }
 
-  public isOperationsColumn(key: string) {
-    const table = this.innerTable;
+  public isOperationsColumn(key: string, table = this.innerTable) {
     if (!table) return false;
     const scope = table.getColumnScope(key);
     const { render } = table.getColumnComponentPropsTop(key, scope, {});
