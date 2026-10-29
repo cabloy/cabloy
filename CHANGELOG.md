@@ -1,5 +1,22 @@
 # Changelog
 
+## 5.1.248
+
+### Features
+
+- Add tab closing.
+- Add mobile navbar support.
+- Add update functionality.
+
+### Bug Fixes
+
+- Fix teleport behavior.
+
+### Improvements
+
+- Support two-level tabs on mobile.
+- Improve compact hints.
+
 ## 5.1.247
 
 ### Improvements
