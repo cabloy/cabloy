@@ -6,6 +6,7 @@ import { Render } from 'zova-module-a-bean';
 import { $iconName, IIconRecord, ZIcon } from 'zova-module-a-icon';
 import { IRouteViewRouteItem } from 'zova-module-a-router';
 import { RouteTab, ZRouterViewTabs } from 'zova-module-a-routertabs';
+import { ZButton } from 'zova-module-basic-button';
 
 @Render()
 export class RenderTabs extends BeanRenderBase {
@@ -77,22 +78,31 @@ export class RenderTabs extends BeanRenderBase {
       return <ClientOnly>{domWrapper}</ClientOnly>;
     }
 
+    const tabItems = tabCurrent.items.filter(item => item.componentKey !== tabKey);
+    if (!tabItems.length) return;
+    const visibleItems = this.tabItemsCompact
+      ? tabItems.filter(item => item.componentKey === $$modelTabs.componentKeyCurrent)
+      : tabItems;
     const domTabs: VNode[] = [];
-    for (const tabItem of tabCurrent.items) {
-      // ignore first
-      if (tabItem.componentKey === tabKey) continue;
-      const { componentKey, pageMeta } = tabItem;
-      const className =
-        componentKey === $$modelTabs.componentKeyCurrent ? 'tab-active text-primary' : '';
-      const pageContent = pageMeta?.onCustomRender
-        ? pageMeta.onCustomRender(tabItem)
-        : pageMeta?.pageTitle || '';
+    for (const tabItem of visibleItems) {
+      const { componentKey } = tabItem;
+      const current = componentKey === $$modelTabs.componentKeyCurrent;
+      const className = current ? 'tab-active text-primary' : '';
+      const pageContent = this.getTabItemContent(tabItem);
       const tabItemIcon = this.getTabItemIcon(tabItem);
       const domTab = (
         <a
           key={componentKey}
           role="tab"
+          aria-selected={current}
+          tabindex={0}
           class={`tab flex items-center ${className} ${this.cTab}`}
+          onKeydown={event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              void $$modelTabs.activeTabItem(tabKey, componentKey);
+            }
+          }}
           onClick={() => {
             $$modelTabs.activeTabItem(tabKey, componentKey);
           }}
@@ -118,12 +128,88 @@ export class RenderTabs extends BeanRenderBase {
       domTabs.push(domTab);
     }
     const domWrapper = (
-      <div role="tablist" class="tabs tabs-border">
-        {domTabs}
+      <div
+        class={`tab-items ${this.cTabItems} ${this.tabItemsCompact ? 'is-compact' : ''}`}
+        data-testid="tab-items"
+        data-compact={this.tabItemsCompact ? 'true' : 'false'}
+        ref={ref => {
+          if (!this.ctx.disposed)
+            this.setTabItemsElement((ref as HTMLDivElement | null) ?? undefined);
+        }}
+      >
+        <div
+          class={`tab-items-viewport ${this.tabItemsOverflowStart ? 'has-start' : ''} ${this.tabItemsOverflowEnd ? 'has-end' : ''}`}
+        >
+          <div class="tab-items-scroll">
+            <div role="tablist" class="tab-items-content tabs tabs-border">
+              {domTabs}
+            </div>
+          </div>
+        </div>
+        <ZButton
+          class="tab-items-more btn btn-square btn-ghost"
+          data-testid="tab-items-more"
+          aria-label={this.scope.locale.AllTabs()}
+          title={this.scope.locale.AllTabs()}
+          aria-controls={this.tabItemsMenuId}
+          aria-expanded={this.tabItemsMenuOpen}
+          {...{ 'popovertarget': this.tabItemsMenuId, 'data-hydrate-ignore-popovertarget': '' }}
+        >
+          <span aria-hidden="true">▾</span>
+        </ZButton>
+        <div
+          id={this.tabItemsMenuId}
+          ref={ref => {
+            if (!this.ctx.disposed)
+              this.setTabItemsMenuElement((ref as HTMLDivElement | null) ?? undefined);
+          }}
+          {...{ popover: 'auto' }}
+          class={`${this.cTabItemsMenu} bg-base-100 border border-base-300 rounded-box shadow-lg p-2`}
+          data-testid="tab-items-list"
+          role="group"
+          aria-label={this.scope.locale.AllTabs()}
+        >
+          {tabItems.map(tabItem => {
+            const current = tabItem.componentKey === $$modelTabs.componentKeyCurrent;
+            const icon = this.getTabItemIcon(tabItem);
+            return (
+              <div key={tabItem.componentKey} class="tab-items-row flex items-center gap-1">
+                <ZButton
+                  class={`tab-items-select btn btn-ghost ${current ? 'bg-base-200 text-primary' : ''}`}
+                  aria-current={current ? 'page' : undefined}
+                  onPerform={async () => {
+                    this.closeTabItemsMenu();
+                    await $$modelTabs.activeTabItem(tabKey, tabItem.componentKey);
+                  }}
+                >
+                  {!!icon && <ZIcon name={icon} width={20} aria-hidden="true" />}
+                  <span class="tab-items-label">{this.getTabItemContent(tabItem)}</span>
+                  {current && <ZIcon name="::done" width={16} aria-hidden="true" />}
+                </ZButton>
+                <ZButton
+                  class="btn btn-square btn-ghost shrink-0"
+                  aria-label={this.scope.locale.CloseTab(tabItem.pageMeta?.pageTitle || '')}
+                  title={this.scope.locale.CloseTab(tabItem.pageMeta?.pageTitle || '')}
+                  onPerform={async () => {
+                    await $$modelTabs.deleteTabItem(tabKey, tabItem.componentKey, false);
+                    if (tabItems.length === 1) this.closeTabItemsMenu();
+                  }}
+                >
+                  <ZIcon name="::close" width={16} aria-hidden="true" />
+                </ZButton>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
     if (!this.$$modelTabs.cache) return domWrapper;
     return <ClientOnly>{domWrapper}</ClientOnly>;
+  }
+
+  private getTabItemContent(tabItem: IRouteViewRouteItem) {
+    const pageMeta = tabItem.pageMeta;
+    return pageMeta?.onCustomRender ? pageMeta.onCustomRender(tabItem) : pageMeta?.pageTitle || '';
   }
 
   public getTabIcon(tab: RouteTab) {

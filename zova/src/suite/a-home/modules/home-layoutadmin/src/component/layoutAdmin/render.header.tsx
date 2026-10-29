@@ -13,7 +13,7 @@ export class RenderHeader extends BeanRenderBase {
   public render() {
     return (
       <>
-        <div class="navbar bg-base-300 w-full">
+        <div class={classes('navbar bg-base-300 w-full', this.cHeader)}>
           <div class="flex-none">
             <button
               class="btn btn-square btn-ghost"
@@ -36,8 +36,10 @@ export class RenderHeader extends BeanRenderBase {
               </svg>
             </button>
           </div>
-          <div class="text-xl px-4">{this.sys.env.APP_TITLE}</div>
-          <div class="mx-2 min-w-0 flex-2 px-2">{this.$$r.$$renderTabs.renderTabItems()}</div>
+          <div class="header-title text-xl px-4">{this.sys.env.APP_TITLE}</div>
+          <div class="header-navigation mx-2 min-w-0 flex-2 px-2">
+            {this.$$r.$$renderTabs.renderTabItems()}
+          </div>
           <div
             ref={ref => this.setHeaderActionsElement((ref as HTMLDivElement | null) ?? undefined)}
             class={classes('relative flex-none', this.cHeaderActions)}

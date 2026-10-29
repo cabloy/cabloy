@@ -1,6 +1,8 @@
 export default {
   'Home': 'Home',
   'MoreActions': 'More actions',
+  'AllTabs': 'All tabs',
+  'CloseTab': 'Close tab: %s',
   'Language': 'Language',
   'ColorMode': 'Color mode',
   'Theme': 'Theme',

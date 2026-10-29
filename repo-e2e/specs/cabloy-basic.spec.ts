@@ -1439,6 +1439,300 @@ test(
 );
 
 test(
+  'ATP-BASIC-TABS-01: task tabs reveal active drafts, compact by container width and switch or close through All tabs',
+  { tag: ['@admin', '@flow', '@layout'] },
+  async ({ page }, testInfo) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 3, async students => {
+      const effects = collectDraftEffects(page, true);
+      // The existing three-task limit excludes the workspace anchor; do not raise it.
+      const titles = students.map(
+        (student, index) =>
+          `${student.name} task ${index + 1} with a deliberately long unique unsaved tab title`,
+      );
+      for (const [index, student] of students.entries()) {
+        await openStudentDraftEdit(page, student.name, student.id);
+        await studentDraftNameInput(page).fill(titles[index]!);
+        await waitForStudentDraft(page, titles[index]!, student.id);
+      }
+
+      const items = page.getByTestId('tab-items');
+      const more = page.getByTestId('tab-items-more');
+      // A CSS/test-id locator also resolves the native popover while it is closed.
+      const list = page.getByTestId('tab-items-list');
+      const tabs = items.getByRole('tab');
+      const viewport = items.locator('.tab-items-viewport');
+      const scroller = viewport.locator(':scope > .tab-items-scroll');
+      const task = (index: number) => items.getByRole('tab', { name: titles[index], exact: true });
+      const select = (index: number) =>
+        list.locator('.tab-items-select').filter({ hasText: titles[index]! });
+      const expectBounds = async (popup: Locator) => {
+        const bounds = (await popup.boundingBox())!;
+        expect(bounds).not.toBeNull();
+        expect(bounds.x).toBeGreaterThanOrEqual(-1);
+        expect(bounds.y).toBeGreaterThanOrEqual(-1);
+        expect(bounds.x + bounds.width).toBeLessThanOrEqual(page.viewportSize()!.width + 1);
+        expect(bounds.y + bounds.height).toBeLessThanOrEqual(page.viewportSize()!.height + 1);
+      };
+      const openMenu = async (remaining: number[], active?: number, keyboard = false) => {
+        await expect(more).toHaveAccessibleName('All tabs');
+        await expect(more).toHaveJSProperty('tagName', 'BUTTON');
+        await expect(list).toBeHidden();
+        if (keyboard) {
+          await more.focus();
+          await more.press('Enter');
+        } else {
+          await more.click();
+        }
+        await expect(list).toBeVisible();
+        await expect(list).toHaveAttribute('popover', 'auto');
+        await expect(list).toHaveAttribute('role', 'group');
+        await expect(list).toHaveAccessibleName('All tabs');
+        expect(await list.evaluate(element => element.matches(':popover-open'))).toBe(true);
+        await expect(list.locator('.tab-items-row')).toHaveCount(remaining.length);
+        await expect(list.locator('.tab-items-select')).toHaveCount(remaining.length);
+        await expect(list.locator('.tab-items-select').first()).toBeFocused();
+        for (const index of remaining) {
+          const row = list.locator('.tab-items-row').filter({
+            has: page.locator('.tab-items-select').filter({ hasText: titles[index]! }),
+          });
+          await expect(row).toHaveCount(1);
+          await expect(select(index)).toHaveJSProperty('tagName', 'BUTTON');
+          const close = row.getByRole('button', {
+            name: `Close tab: ${titles[index]}`,
+            exact: true,
+          });
+          await expect(close).toBeEnabled();
+          // Switching and closing are sibling actions, never nested buttons.
+          await expect(select(index).locator('button')).toHaveCount(0);
+          await expect(row.getByRole('button')).toHaveCount(2);
+          if (index === active) await expect(select(index)).toHaveAttribute('aria-current', 'page');
+          else await expect(select(index)).not.toHaveAttribute('aria-current', 'page');
+          expect(
+            await select(index).evaluate(element => {
+              const rect = element.getBoundingClientRect();
+              return element.contains(
+                document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2),
+              );
+            }),
+          ).toBe(true);
+        }
+        await expect(list.locator('.tab-items-select[aria-current="page"]')).toHaveCount(
+          active === undefined ? 0 : 1,
+        );
+        await expectBounds(list);
+      };
+      const choose = async (index: number, keyboard = false) => {
+        if (keyboard) {
+          await select(index).focus();
+          await select(index).press('Enter');
+        } else {
+          await select(index).click();
+        }
+        await expect(list).toBeHidden();
+        await expect(page).toHaveURL(
+          new RegExp(`/training-student(?:%3A|:)student/${students[index]!.id}/edit(?:[?#]|$)`),
+        );
+        await expect(studentDraftNameInput(page)).toHaveValue(titles[index]!);
+        await expect(task(index)).toHaveAttribute('aria-selected', 'true');
+      };
+      const expectStrip = async (compact: boolean, count: number) => {
+        await expect(items).toHaveAttribute('data-compact', String(compact));
+        const width = await items.evaluate(element => element.getBoundingClientRect().width);
+        if (compact) expect(width).toBeLessThan(240);
+        else expect(width).toBeGreaterThanOrEqual(240);
+        await expect(tabs).toHaveCount(count);
+        await expect(items.locator('.tab-items-content')).toHaveAttribute('role', 'tablist');
+        await expect(more).toBeVisible();
+        await expect
+          .poll(() =>
+            items.evaluate(element => {
+              const header = element.closest('.navbar')!;
+              const headerBox = header.getBoundingClientRect();
+              const more = header.querySelector('[data-testid="tab-items-more"]')!;
+              const boxes = [element, more].map(node => node.getBoundingClientRect());
+              return (
+                headerBox.left >= -1 &&
+                headerBox.right <= document.documentElement.clientWidth + 1 &&
+                header.scrollWidth <= header.clientWidth + 1 &&
+                boxes.every(
+                  box =>
+                    box.width > 0 &&
+                    box.left >= headerBox.left - 1 &&
+                    box.right <= headerBox.right + 1,
+                )
+              );
+            }),
+          )
+          .toBe(true);
+        await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+      };
+      const expectActiveRevealed = async (index: number) => {
+        await expect
+          .poll(() =>
+            task(index).evaluate(element => {
+              const viewport = element.closest('.tab-items-scroll')!;
+              const tab = element.getBoundingClientRect();
+              const clip = viewport.getBoundingClientRect();
+              return tab.left >= clip.left - 1 && tab.right <= clip.right + 1;
+            }),
+          )
+          .toBe(true);
+      };
+      const close = async (index: number) => {
+        await list
+          .getByRole('button', { name: `Close tab: ${titles[index]}`, exact: true })
+          .click();
+        // Assert the exact persisted identity, not just removal of a rendered row.
+        await expectNoStudentDraft(page, students[index]!.id);
+        await expect(task(index)).toHaveCount(0);
+        await expect(select(index)).toHaveCount(0);
+        // A close action may intentionally leave the list open for consecutive closes.
+        if (await list.isVisible()) await page.keyboard.press('Escape');
+        await expect(list).toBeHidden();
+      };
+
+      await expectStrip(false, 3);
+      await expect(task(2)).toHaveAttribute('aria-selected', 'true');
+      await expectActiveRevealed(2);
+      await expect(list).toBeHidden();
+      await expect(scroller).toHaveJSProperty('tagName', 'DIV');
+      await expect(scroller).toHaveCSS('overflow-x', 'auto');
+
+      // Basic caps tab titles at 130px. Find a naturally constrained header where
+      // all three tasks still render (wrapper >=240px) and actually overflow.
+      const geometries: { width: number; wrapper: number; overflow: number }[] = [];
+      for (const width of [900, 800, 700, 600, 520, 480, 440, 400]) {
+        await page.setViewportSize({ width, height: 900 });
+        const geometry = await items.evaluate(async element => {
+          // Let the container observer and its render settle before choosing a size.
+          await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+          await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+          const scroller = element.querySelector('.tab-items-scroll')!;
+          return {
+            wrapper: element.getBoundingClientRect().width,
+            overflow: scroller.scrollWidth - scroller.clientWidth,
+          };
+        });
+        geometries.push({ width, ...geometry });
+        if (geometry.wrapper >= 240 && geometry.overflow > 1) break;
+        if (geometry.wrapper < 240) break;
+      }
+      expect(
+        geometries.some(geometry => geometry.wrapper >= 240 && geometry.overflow > 1),
+        `Expected real noncompact tab overflow: ${JSON.stringify(geometries)}`,
+      ).toBe(true);
+      await expectStrip(false, 3);
+      await expect
+        .poll(() => scroller.evaluate(element => element.scrollWidth - element.clientWidth))
+        .toBeGreaterThan(1);
+      // Task insertion follows the current model entry, not creation chronology.
+      // Derive the strip edges from its rendered order before testing reveal.
+      const renderedOrder = await tabs.evaluateAll((elements, titles) => {
+        return elements.map(element =>
+          titles.findIndex(title => element.textContent!.includes(title)),
+        );
+      }, titles);
+      expect(renderedOrder.toSorted()).toEqual([0, 1, 2]);
+      const firstTask = renderedOrder[0]!;
+      const lastTask = renderedOrder[renderedOrder.length - 1]!;
+      await openMenu([0, 1, 2], 2);
+      await choose(firstTask);
+      await expectActiveRevealed(firstTask);
+      await expect(viewport).not.toHaveClass(/\bhas-start\b/);
+      await expect(viewport).toHaveClass(/\bhas-end\b/);
+      const firstPosition = await scroller.evaluate(element => element.scrollLeft);
+      const triggerBefore = (await more.boundingBox())!;
+      await scroller.hover();
+      await page.mouse.wheel(10_000, 0);
+      await expect
+        .poll(() => scroller.evaluate(element => element.scrollLeft))
+        .toBeGreaterThan(firstPosition + 1);
+      await expect(viewport).toHaveClass(/\bhas-start\b/);
+      await expect(viewport).not.toHaveClass(/\bhas-end\b/);
+      await openMenu([0, 1, 2], firstTask);
+      await choose(lastTask);
+      await expectActiveRevealed(lastTask);
+      await openMenu([0, 1, 2], lastTask);
+      await choose(firstTask);
+      await expectActiveRevealed(firstTask);
+      await expect(viewport).not.toHaveClass(/\bhas-start\b/);
+      await openMenu([0, 1, 2], firstTask);
+      await choose(lastTask);
+      await expectActiveRevealed(lastTask);
+      await expect
+        .poll(() => scroller.evaluate(element => element.scrollLeft))
+        .toBeGreaterThan(firstPosition + 1);
+      const triggerAfter = (await more.boundingBox())!;
+      for (const key of ['x', 'y', 'width', 'height'] as const) {
+        expect(Math.abs(triggerAfter[key] - triggerBefore[key])).toBeLessThanOrEqual(1);
+      }
+      await openMenu([0, 1, 2], lastTask);
+      await choose(2);
+
+      await page.setViewportSize({ width: 320, height: 900 });
+      await expectStrip(true, 1);
+      await expect(task(2)).toHaveAttribute('aria-selected', 'true');
+      await testInfo.attach('ATP-BASIC-TABS-01-320px-header', {
+        body: await items.locator('xpath=ancestor::*[contains(@class, "navbar")][1]').screenshot(),
+        contentType: 'image/png',
+      });
+      await openMenu([0, 1, 2], 2, true);
+      await testInfo.attach('ATP-BASIC-TABS-01-320px-all-tabs', {
+        body: await list.screenshot(),
+        contentType: 'image/png',
+      });
+      await select(0).focus();
+      await page.keyboard.press('Escape');
+      await expect(list).toBeHidden();
+      await expect(more).toBeFocused();
+      await expect(studentDraftNameInput(page)).toHaveValue(titles[2]!);
+      await openMenu([0, 1, 2], 2, true);
+      await choose(0, true);
+      await expectStrip(true, 1);
+      await openMenu([0, 1, 2], 0);
+      await close(1);
+      await expect(studentDraftNameInput(page)).toHaveValue(titles[0]!);
+      await waitForStudentDraft(page, titles[0]!, students[0]!.id);
+      await waitForStudentDraft(page, titles[2]!, students[2]!.id);
+
+      // The current workspace anchor is not a secondary task. Its compact strip
+      // must be empty, but All tabs must still expose every surviving child.
+      await page.locator('.tabs-lifted').getByRole('tab', { name: 'Student', exact: true }).click();
+      await expect(page).toHaveURL(studentResourceUrl);
+      await expectStrip(true, 0);
+      await openMenu([0, 2]);
+      await choose(0);
+      await expectStrip(true, 1);
+
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await expectStrip(false, 2);
+      await expectActiveRevealed(0);
+      await openMenu([0, 2], 0, true);
+      await page.keyboard.press('Escape');
+      await expect(list).toBeHidden();
+      await expect(more).toBeFocused();
+      await openMenu([0, 2], 0);
+      await close(0);
+      await expect(studentDraftNameInput(page)).toHaveValue(titles[2]!);
+      await expect(task(2)).toHaveAttribute('aria-selected', 'true');
+      await openMenu([2], 2);
+      await close(2);
+      await expect(page).toHaveURL(studentResourceUrl);
+      await expect(tabs).toHaveCount(0);
+      for (const student of students) await expectNoStudentDraft(page, student.id);
+      await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+      expect(effects.mutations).toEqual([]);
+      expect(effects.hydrationWarnings).toEqual([]);
+      expect(effects.consoleErrors).toEqual([]);
+      expect(effects.pageErrors).toEqual([]);
+    });
+  },
+);
+
+test(
   'ATP-BASIC-FLOW-01: cold Admin navigation initializes dynamic resource selectors',
   { tag: ['@admin', '@flow'] },
   async ({ browser }) => {

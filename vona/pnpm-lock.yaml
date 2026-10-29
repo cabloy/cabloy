@@ -1124,8 +1124,8 @@ importers:
         specifier: npm:@cabloy/zod@4.3.8
         version: '@cabloy/zod@4.3.8'
       zova:
-        specifier: ^5.1.177
-        version: 5.1.177(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
+        specifier: ^5.1.178
+        version: 5.1.178(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
       zova-jsx:
         specifier: ^1.1.95
         version: 1.1.95(typescript@5.9.3)
@@ -1202,8 +1202,8 @@ importers:
         specifier: ^5.1.36
         version: 5.1.36
       zova-module-a-table:
-        specifier: ^5.1.45
-        version: 5.1.45(vue@3.5.43(typescript@5.9.3))
+        specifier: ^5.1.46
+        version: 5.1.46(vue@3.5.43(typescript@5.9.3))
       zova-module-a-zod:
         specifier: ^5.1.39
         version: 5.1.39
