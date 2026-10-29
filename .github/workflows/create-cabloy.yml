@@ -96,13 +96,46 @@ jobs:
           $log = Join-Path $redisDirectory 'redis.log'
           if (Test-Path $log) { Get-Content $log }
           throw 'Redis did not become ready'
+      - name: wait for published Cabloy package
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import { appendFileSync, readFileSync } from 'node:fs';
+
+          const expectedVersion = JSON.parse(readFileSync('package.json', 'utf8')).version;
+          const latestUrl = 'https://registry.npmjs.org/cabloy/latest';
+          const deadline = Date.now() + 20 * 60 * 1000;
+          let lastStatus = 'not checked';
+
+          while (Date.now() < deadline) {
+            try {
+              const response = await fetch(latestUrl, { cache: 'no-store' });
+              lastStatus = `${response.status} ${response.statusText}`;
+              if (response.ok) {
+                const metadata = await response.json();
+                if (metadata.version === expectedVersion) break;
+                lastStatus = `latest is ${metadata.version ?? 'unknown'}`;
+              }
+            } catch (error) {
+              lastStatus = error instanceof Error ? error.message : String(error);
+            }
+            console.log(`Waiting for cabloy@${expectedVersion} to become npm latest (${lastStatus})...`);
+            await new Promise(resolve => setTimeout(resolve, 10_000));
+          }
+
+          if (Date.now() >= deadline) {
+            throw new Error(`cabloy@${expectedVersion} was not npm latest within 20 minutes (last status: ${lastStatus})`);
+          }
+
+          appendFileSync(process.env.GITHUB_ENV, `CABLOY_VERSION=${expectedVersion}\n`);
+          NODE
       - name: create project
         run: npm create cabloy@latest cabloy-app
       - name: verify project initialization
         working-directory: cabloy-app
         run: >-
           node --input-type=module -e
-          "import { existsSync } from 'node:fs'; const required = ['.cabloy-version', 'package.json', 'vona/package.json', 'zova/package.json', 'node_modules', 'vona/node_modules', 'zova/node_modules', 'zova/dist']; const missing = required.filter(file => !existsSync(file)); if (missing.length) { console.error('Project initialization is incomplete:', missing.join(', ')); process.exit(1); }"
+          "import { existsSync, readFileSync } from 'node:fs'; const required = ['.cabloy-version', 'package.json', 'vona/package.json', 'zova/package.json', 'node_modules', 'vona/node_modules', 'zova/node_modules', 'zova/dist']; const missing = required.filter(file => !existsSync(file)); const packageVersion = JSON.parse(readFileSync('package.json', 'utf8')).version; if (packageVersion !== process.env.CABLOY_VERSION) { console.error(`Expected cabloy@${process.env.CABLOY_VERSION}, got cabloy@${packageVersion}`); process.exit(1); } if (missing.length) { console.error('Project initialization is incomplete:', missing.join(', ')); process.exit(1); }"
       - name: reset database
         working-directory: cabloy-app
         run: npm run db:reset
