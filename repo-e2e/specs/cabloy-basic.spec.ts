@@ -1597,6 +1597,23 @@ test(
       await expectStrip(false, 3);
       await expect(task(2)).toHaveAttribute('aria-selected', 'true');
       await expectActiveRevealed(2);
+      await task(2).hover();
+      const taskClose = task(2).locator('.tab-close');
+      await expect(taskClose).toBeVisible();
+      await expect(taskClose).toHaveCSS('top', '2px');
+      expect(
+        await taskClose.evaluate(element => {
+          const icon = element.getBoundingClientRect();
+          const tab = element.closest('[role="tab"]')!.getBoundingClientRect();
+          const clip = element.closest('.tab-items-scroll')!.getBoundingClientRect();
+          return (
+            icon.top >= Math.max(tab.top, clip.top) &&
+            icon.bottom <= Math.min(tab.bottom, clip.bottom) &&
+            icon.left >= Math.max(tab.left, clip.left) &&
+            icon.right <= Math.min(tab.right, clip.right)
+          );
+        }),
+      ).toBe(true);
       await expect(list).toBeHidden();
       await expect(scroller).toHaveJSProperty('tagName', 'DIV');
       await expect(scroller).toHaveCSS('overflow-x', 'auto');

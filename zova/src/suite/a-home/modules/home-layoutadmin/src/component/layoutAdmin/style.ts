@@ -44,7 +44,7 @@ export class StyleLayoutAdmin extends BeanStyleBase {
         '& .tab': { flexShrink: 0, height: '48px', gap: '4px' },
         '& .tab > svg': { flexShrink: 0 },
         '& .tab > div': { minWidth: 0 },
-        '& .tab-close': { top: '2px', right: '2px' },
+        '& .tab .tab-close': { top: '2px', right: '2px' },
         '& .tab-items-more': { flex: '0 0 40px', width: '40px', height: '40px', fontSize: '20px' },
         '&.is-compact .tab-items-content': { width: '100%' },
         '&.is-compact .tab': { minWidth: 0, maxWidth: '100%', paddingInline: '12px' },
