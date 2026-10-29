@@ -91,6 +91,8 @@ Those concerns should live elsewhere.
 - [Vona/Zova Install-Time Type Patch](./architecture/vona-zova-install-time-type-patch.md)
 - [SSR Route Typing and Zova Rest Declaration Visibility](./architecture/ssr-route-typing-zova-rest-declaration-visibility.md)
 - [SSR Request-Local Profiles](./architecture/ssr-request-local-profiles.md)
+- [SSR Test-Isolation Baseline — 2026-10-29](./architecture/ssr-test-baseline-2026-10-29.md)
+- [SSR Initialization Owners — 2026-10-29](./architecture/ssr-init-owners-2026-10-29.md)
 - [Anonymous Token Route Pattern](./architecture/anonymous-token-route-pattern.md)
 - [AI Enablement Architecture](./architecture/ai-enablement.md)
 - [User Workspace SSR Strategy](./architecture/user-workspace-ssr-strategy.md)
