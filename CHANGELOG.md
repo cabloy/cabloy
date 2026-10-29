@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.249
+
+### Features
+
+- Update existing functionality.
+
+### Improvements
+
+- Remove textlint.
+
 ## 5.1.248
 
 ### Features
